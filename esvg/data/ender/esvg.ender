@@ -1,0 +1,10 @@
+using "enesim";
+
+namespace "esvg" {
+	abstract "element" : "renderer" {
+	};
+
+	class "svg" : "element" {
+	};
+};
+
