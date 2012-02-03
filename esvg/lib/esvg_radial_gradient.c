@@ -1,0 +1,335 @@
+/* Esvg - SVG
+ * Copyright (C) 2011 Jorge Luis Zapata, Vincent Torri
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library.
+ * If not, see <http://www.gnu.org/licenses/>.
+ */
+#include "Esvg.h"
+#include "esvg_private.h"
+#include "esvg_values.h"
+/*============================================================================*
+ *                                  Local                                     *
+ *============================================================================*/
+#define ESVG_RADIAL_GRADIENT_MAGIC_CHECK(d) \
+	do {\
+		if (!EINA_MAGIC_CHECK(d, ESVG_RADIAL_GRADIENT_MAGIC))\
+			EINA_MAGIC_FAIL(d, ESVG_RADIAL_GRADIENT_MAGIC);\
+	} while(0)
+
+typedef struct _Esvg_Radial_Gradient
+{
+	EINA_MAGIC
+	/* properties */
+	Esvg_Gradient_Units units;
+	Esvg_Coord cx;
+	Esvg_Coord cy;
+	Esvg_Coord fx;
+	Esvg_Coord fy;
+	Esvg_Length rad;
+	/* private */
+	Enesim_Renderer *r;
+	Eina_Bool cx_is_set : 1;
+	Eina_Bool cy_is_set : 1;
+	Eina_Bool fx_is_set : 1;
+	Eina_Bool fy_is_set : 1;
+	Eina_Bool rad_is_set : 1;
+} Esvg_Radial_Gradient;
+
+static Esvg_Radial_Gradient * _esvg_radial_gradient_get(Enesim_Renderer *r)
+{
+	Esvg_Radial_Gradient *thiz;
+
+	thiz = esvg_gradient_data_get(r);
+	ESVG_RADIAL_GRADIENT_MAGIC_CHECK(thiz);
+
+	return thiz;
+}
+/*----------------------------------------------------------------------------*
+ *                       Esvg Paint Server interface                          *
+ *----------------------------------------------------------------------------*/
+static const char * _esvg_radial_gradient_name_get(Enesim_Renderer *r)
+{
+	return "radial_gradient";
+}
+
+static Enesim_Renderer * _radial_gradient_renderer_get(Enesim_Renderer *r,
+		const Esvg_Element_State *state,
+		const Esvg_Attribute_Presentation *attr)
+{
+	Esvg_Radial_Gradient *thiz;
+
+	thiz = _esvg_radial_gradient_get(r);
+	return thiz->r;
+}
+
+static void _radial_gradient_clone(Enesim_Renderer *r, Enesim_Renderer *rr)
+{
+
+}
+
+static Eina_Bool _radial_gradient_setup(Enesim_Renderer *r, Enesim_Renderer *rel, Eina_List *stops)
+{
+	Esvg_Radial_Gradient *thiz;
+	Esvg_Gradient_Stop *stop;
+	Esvg_Gradient_Units gu;
+	Enesim_Rectangle bbox;
+	Eina_List *l;
+	double cx;
+	double cy;
+	double fx;
+	double fy;
+	double rad;
+
+	thiz = _esvg_radial_gradient_get(r);
+	esvg_gradient_units_get(r, &gu);
+	if (gu == ESVG_OBJECT_BOUNDING_BOX)
+	{
+		enesim_renderer_boundings(rel, &bbox);
+	}
+	else
+	{
+		/* use the user space coordiantes */
+		printf("TODO\n");
+	}
+
+	/* cx and cy + r should be the 100% stop */
+	/* fx and fy should be the 0% stop? */
+	cx = esvg_length_final_get(&thiz->cx, bbox.w) + bbox.x;
+	cy = esvg_length_final_get(&thiz->cy, bbox.h) + bbox.y;
+	rad = esvg_length_final_get(&thiz->rad, bbox.w);
+	fx = esvg_length_final_get(&thiz->fx, bbox.w) + bbox.x;
+	fy = esvg_length_final_get(&thiz->fy, bbox.h) + bbox.y;
+
+	printf("%g %g %g %g\n", cx, cy, fx, fy);
+	/* FIXME for now */
+	enesim_renderer_gradient_radial_center_x_set(thiz->r, 140);
+	enesim_renderer_gradient_radial_center_y_set(thiz->r, 70);
+	enesim_renderer_gradient_radial_radius_y_set(thiz->r, 120);
+	enesim_renderer_gradient_radial_radius_x_set(thiz->r, 120);
+
+	EINA_LIST_FOREACH(stops, l, stop)
+	{
+		Enesim_Renderer_Gradient_Stop s;
+
+		enesim_argb_components_from(&s.argb, lrint(stop->stop_opacity * 255),
+				stop->stop_color.r, stop->stop_color.g, stop->stop_color.b);
+		printf("%08x\n", s.argb);
+		if (stop->offset.unit == ESVG_UNIT_LENGTH_PERCENT)
+			s.pos = stop->offset.value / 100.0;
+		else
+		{
+			if (stop->offset.value > 1)
+				s.pos = 1;
+			else if (stop->offset.value < 0)
+				s.pos = 0;
+			else
+				s.pos = stop->offset.value;
+		}
+		enesim_renderer_gradient_stop_add(thiz->r, &s);
+	}
+	return EINA_TRUE;
+}
+
+static Esvg_Gradient_Descriptor _descriptor = {
+	/* .setup =		*/ _radial_gradient_setup,
+	/* .name_get =		*/ _esvg_radial_gradient_name_get,
+	/* .renderer_get =	*/ _radial_gradient_renderer_get,
+	/* .clone =		*/ _radial_gradient_clone,
+};
+/*============================================================================*
+ *                                   API                                      *
+ *============================================================================*/
+EAPI Enesim_Renderer * esvg_radial_gradient_new(void)
+{
+	Esvg_Radial_Gradient *thiz;
+	Enesim_Renderer *r;
+
+	thiz = calloc(1, sizeof(Esvg_Radial_Gradient));
+
+	EINA_MAGIC_SET(thiz, ESVG_RADIAL_GRADIENT_MAGIC);
+
+	r = enesim_renderer_gradient_radial_new();
+	enesim_renderer_gradient_mode_set(r, ENESIM_PAD);
+	thiz->r = r;
+	/* default values */
+
+	r = esvg_gradient_new(&_descriptor, thiz);
+
+	return r;
+}
+
+EAPI void esvg_radial_gradient_cx_set(Enesim_Renderer *r, const Esvg_Coord *cx)
+{
+	Esvg_Radial_Gradient *thiz;
+
+	thiz = _esvg_radial_gradient_get(r);
+	if (!cx)
+	{
+		thiz->cx_is_set = EINA_FALSE;
+	}
+	else
+	{
+		thiz->cx = *cx;
+		thiz->cx_is_set = EINA_TRUE;
+	}
+}
+
+EAPI void esvg_radial_gradient_cx_get(Enesim_Renderer *r, Esvg_Coord *cx)
+{
+	Esvg_Radial_Gradient *thiz;
+
+	if (!cx) return;
+	thiz = _esvg_radial_gradient_get(r);
+	*cx = thiz->cx;
+}
+
+EAPI Eina_Bool esvg_radial_gradient_cx_is_set(Enesim_Renderer *r)
+{
+	Esvg_Radial_Gradient *thiz;
+
+	thiz = _esvg_radial_gradient_get(r);
+	return thiz->cx_is_set;
+}
+
+EAPI void esvg_radial_gradient_cy_set(Enesim_Renderer *r, const Esvg_Coord *cy)
+{
+	Esvg_Radial_Gradient *thiz;
+
+	thiz = _esvg_radial_gradient_get(r);
+	if (!cy)
+	{
+		thiz->cy_is_set = EINA_FALSE;
+	}
+	else
+	{
+		thiz->cy = *cy;
+		thiz->cy_is_set = EINA_TRUE;
+	}
+}
+
+EAPI void esvg_radial_gradient_cy_get(Enesim_Renderer *r, Esvg_Coord *cy)
+{
+	Esvg_Radial_Gradient *thiz;
+
+	if (!cy) return;
+	thiz = _esvg_radial_gradient_get(r);
+	*cy = thiz->cy;
+}
+
+EAPI Eina_Bool esvg_radial_gradient_cy_is_set(Enesim_Renderer *r)
+{
+	Esvg_Radial_Gradient *thiz;
+
+	thiz = _esvg_radial_gradient_get(r);
+	return thiz->cy_is_set;
+}
+
+EAPI void esvg_radial_gradient_fx_set(Enesim_Renderer *r, const Esvg_Coord *fx)
+{
+	Esvg_Radial_Gradient *thiz;
+
+	thiz = _esvg_radial_gradient_get(r);
+	if (!fx)
+	{
+		thiz->fx_is_set = EINA_FALSE;
+	}
+	else
+	{
+		thiz->fx = *fx;
+		thiz->fx_is_set = EINA_TRUE;
+	}
+}
+
+EAPI void esvg_radial_gradient_fx_get(Enesim_Renderer *r, Esvg_Coord *fx)
+{
+	Esvg_Radial_Gradient *thiz;
+
+	if (!fx) return;
+	thiz = _esvg_radial_gradient_get(r);
+	*fx = thiz->fx;
+}
+
+EAPI Eina_Bool esvg_radial_gradient_fx_is_set(Enesim_Renderer *r)
+{
+	Esvg_Radial_Gradient *thiz;
+
+	thiz = _esvg_radial_gradient_get(r);
+	return thiz->fx_is_set;
+}
+
+EAPI void esvg_radial_gradient_fy_set(Enesim_Renderer *r, const Esvg_Coord *fy)
+{
+	Esvg_Radial_Gradient *thiz;
+
+	thiz = _esvg_radial_gradient_get(r);
+	if (!fy)
+	{
+		thiz->fy_is_set = EINA_FALSE;
+	}
+	else
+	{
+		thiz->fy = *fy;
+		thiz->fy_is_set = EINA_TRUE;
+	}
+}
+
+EAPI void esvg_radial_gradient_fy_get(Enesim_Renderer *r, Esvg_Coord *fy)
+{
+	Esvg_Radial_Gradient *thiz;
+
+	if (!fy) return;
+	thiz = _esvg_radial_gradient_get(r);
+	*fy = thiz->fy;
+}
+
+EAPI Eina_Bool esvg_radial_gradient_fy_is_set(Enesim_Renderer *r)
+{
+	Esvg_Radial_Gradient *thiz;
+
+	thiz = _esvg_radial_gradient_get(r);
+	return thiz->fy_is_set;
+}
+
+EAPI void esvg_radial_gradient_r_set(Enesim_Renderer *r, const Esvg_Length *rad)
+{
+	Esvg_Radial_Gradient *thiz;
+
+	thiz = _esvg_radial_gradient_get(r);
+	if (!rad)
+	{
+		thiz->rad_is_set = EINA_FALSE;
+	}
+	else
+	{
+		thiz->rad = *rad;
+		thiz->rad_is_set = EINA_TRUE;
+	}
+}
+
+EAPI void esvg_radial_gradient_r_get(Enesim_Renderer *r, Esvg_Length *rad)
+{
+	Esvg_Radial_Gradient *thiz;
+
+	if (!rad) return;
+	thiz = _esvg_radial_gradient_get(r);
+	*rad = thiz->rad;
+}
+
+EAPI Eina_Bool esvg_radial_gradient_r_is_set(Enesim_Renderer *r)
+{
+	Esvg_Radial_Gradient *thiz;
+
+	thiz = _esvg_radial_gradient_get(r);
+	return thiz->rad_is_set;
+}
