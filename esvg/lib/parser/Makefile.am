@@ -3,10 +3,10 @@ Makefile.in
 
 AM_CPPFLAGS = \
 -I. \
--I$(top_srcdir)/src/include \
--I$(top_srcdir)/src/lib/edom \
--I$(top_builddir)/src/include \
-@EFL_ESVG_BUILD@ \
+-I$(top_builddir) \
+-I$(top_srcdir)/esvg/include \
+-I$(top_srcdir)/edom/include \
+@EGUEB_BUILD@ \
 @ESVG_CFLAGS@
 
 noinst_LTLIBRARIES = libesvg_parser.la

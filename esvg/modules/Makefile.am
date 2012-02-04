@@ -1,4 +1,3 @@
 MAINTAINERCLEANFILES = Makefile.in
 
-SUBDIRS = lib include tests
-
+SUBDIRS = emage

@@ -14,7 +14,7 @@ AC_INIT([egueb], [v_ver], [egueb-devel@googlegroups.com])
 AC_PREREQ([2.60])
 AC_CONFIG_SRCDIR([configure.ac])
 AC_CONFIG_MACRO_DIR([m4])
-AC_CONFIG_HEADERS([src/include/config.h])
+AC_CONFIG_HEADERS([config.h])
 AC_USE_SYSTEM_EXTENSIONS
 
 AM_INIT_AUTOMAKE([1.6 dist-bzip2])
@@ -51,9 +51,32 @@ AC_SUBST([EGUEB_BUILD])
 AC_PROG_CC
 PKG_PROG_PKG_CONFIG
 
+# flex
+AM_PROG_LEX
+if test "x$ac_cv_prog_LEX" = "x"; then
+  AC_MSG_ERROR(Cannot find flex)
+fi
+
+#yacc
+AC_PROG_YACC
+if test "x$ac_cv_prog_YACC" = "x"; then
+  AC_MSG_ERROR(Cannot find bison)
+fi
+
 ### Checks for libraries
 
-PKG_CHECK_MODULES([EINA], [eina >= 1.0.0])
+PKG_CHECK_MODULES([EINA], [eina >= 1.0.99])
+PKG_CHECK_MODULES(ENESIM, [enesim >= 0.0.12])
+PKG_CHECK_MODULES(ETEX, [etex])
+
+AC_MSG_CHECKING([whether emage support is available])
+PKG_CHECK_MODULES([ESVG_EMAGE], [emage >= 0.0.4], [have_emage="yes"], [have_emage="no"])
+AC_MSG_RESULT([${have_emage}])
+
+if test "x${have_emage}" = "xyes" ; then
+   AC_DEFINE(HAVE_EMAGE, [1], [Emage Support])
+fi
+AM_CONDITIONAL(BUILD_EMAGE, [test "x${have_emage}" = "xyes"])
 
 ### Checks for header files
 
@@ -70,8 +93,8 @@ AM_PROG_CC_STDC
 AC_HEADER_STDC
 AC_C_CONST
 AC_C_BIGENDIAN
-EFL_ATTRIBUTE_UNUSED
-EFL_COMPILER_FLAG([-Wall])
+#EFL_ATTRIBUTE_UNUSED
+#EFL_COMPILER_FLAG([-Wall])
 
 ### Checks for linker characteristics
 
@@ -79,16 +102,45 @@ EFL_COMPILER_FLAG([-Wall])
 ### Checks for library functions
 
 ### Substitutions
+EDOM_CFLAGS="$EINA_CFLAGS"
+EDOM_LIBS="$EINA_LIBS"
+AC_SUBST([EDOM_CFLAGS])
+AC_SUBST([EDOM_LIBS])
 
-EGUEB_CFLAGS="$EINA_CFLAGS"
-EGUEB_LIBS="$EINA_LIBS"
-AC_SUBST([EGUEB_CFLAGS])
-AC_SUBST([EGUEB_LIBS])
+ECSS_CFLAGS="$EINA_CFLAGS"
+ECSS_LIBS="$EINA_LIBS"
+AC_SUBST([ECSS_CFLAGS])
+AC_SUBST([ECSS_LIBS])
 
+ESVG_CFLAGS="$EINA_CFLAGS $ENESIM_CFLAGS -DENESIM_EXTENSION $ETEX_CFLAGS" 
+ESVG_LIBS="$EINA_LIBS $ENESIM_LIBS $ETEX_LIBS" 
+AC_SUBST([ESVG_CFLAGS])
+AC_SUBST([ESVG_LIBS])
+
+# FIXME make this use_foo conditional on the programs/headers/whatever found
+use_dom="yes"
+use_css="yes"
+use_svg="yes"
 
 ## Make the debug preprocessor configurable
 
 AC_OUTPUT([
+edom/Makefile
+edom/include/Makefile
+edom/lib/Makefile
+ecss/Makefile
+ecss/tests/Makefile
+ecss/include/Makefile
+ecss/lib/Makefile
+esvg/Makefile
+esvg/bin/Makefile
+esvg/lib/Makefile
+esvg/lib/parser/Makefile
+esvg/include/Makefile
+esvg/modules/Makefile
+esvg/modules/emage/Makefile
+esvg/data/Makefile
+esvg/data/ender/Makefile
 Makefile
 esvg.pc
 ecss.pc
@@ -109,9 +161,9 @@ echo
 echo
 echo "Configuration Options Summary:"
 echo
-echo "DOM support.................................: $(use_dom)"
-echo "CSS support.................................: $(use_css)"
-echo "SVG support.................................. $(use_svg)"
+echo "DOM support.................................: ${use_dom}"
+echo "CSS support.................................: ${use_css}"
+echo "SVG support.................................. ${use_svg}"
 echo
 echo "Installation Path...........................: ${prefix}"
 echo

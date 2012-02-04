@@ -2,9 +2,9 @@ MAINTAINERCLEANFILES = Makefile.in
 
 AM_CPPFLAGS = \
 -I. \
--I$(top_srcdir)/src/include \
--I$(top_builddir)/src/include \
-@EFL_ECSS_BUILD@ \
+-I$(top_srcdir)/ecss/include \
+-I$(top_builddir) \
+@EGUEB_BUILD@ \
 @ECSS_CFLAGS@
 
 AM_YFLAGS = -d -p ecss_

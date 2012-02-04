@@ -18,6 +18,32 @@
 #ifndef _EDOM_H
 #define _EDOM_H
 
+#ifdef EAPI
+# undef EAPI
+#endif
+
+#ifdef _WIN32
+# ifdef EGUEB_BUILD
+#  ifdef DLL_EXPORT
+#   define EAPI __declspec(dllexport)
+#  else
+#   define EAPI
+#  endif /* ! DLL_EXPORT */
+# else
+#  define EAPI __declspec(dllimport)
+# endif /* ! EGUEB_BUILD */
+#else
+# ifdef __GNUC__
+#  if __GNUC__ >= 4
+#   define EAPI __attribute__ ((visibility("default")))
+#  else
+#   define EAPI
+#  endif
+# else
+#  define EAPI
+# endif
+#endif
+
 typedef struct _Edom_Parser Edom_Parser;
 typedef struct _Edom_Tag Edom_Tag;
 typedef struct _Edom_Context Edom_Context;

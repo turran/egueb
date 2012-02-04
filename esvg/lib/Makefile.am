@@ -1,13 +1,13 @@
 MAINTAINERCLEANFILES = Makefile.in
 
-SUBDIRS = edom parser
+SUBDIRS = parser
 
 AM_CPPFLAGS = \
 -I. \
--I$(top_srcdir)/src/include \
--I$(top_srcdir)/src/lib/edom \
--I$(top_builddir)/src/include \
-@EFL_ESVG_BUILD@ \
+-I$(top_builddir)/ \
+-I$(top_srcdir)/edom/include \
+-I$(top_srcdir)/esvg/include \
+@EGUEB_BUILD@ \
 @ESVG_CFLAGS@
 
 lib_LTLIBRARIES = libesvg.la
@@ -40,8 +40,9 @@ esvg_use.c \
 esvg_values.c
 
 libesvg_la_LIBADD = \
-edom/libedom.la \
 parser/libesvg_parser.la \
+$(top_builddir)/edom/lib/libedom.la \
+$(top_builddir)/ecss/lib/libecss.la \
 @ESVG_LIBS@ -lm
 
 libesvg_la_LDFLAGS = -no-undefined -version-info @version_info@
