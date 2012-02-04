@@ -5,6 +5,7 @@ AM_CPPFLAGS = \
 -I. \
 -I$(top_builddir)/ \
 -I$(top_srcdir)/esvg/include \
+-I$(top_srcdir)/ecss/include \
 -I$(top_srcdir)/edom/include \
 @ESVG_EMAGE_CFLAGS@
 

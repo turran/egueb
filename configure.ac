@@ -32,7 +32,7 @@ AC_DEFINE_UNQUOTED([VERSION_MICRO], [v_mic], [Micro version])
 
 ### Needed information
 
-EINA_VERSION="1.1.0"
+EINA_VERSION="1.0.99"
 ENESIM_VERSION="0.0.15"
 EMAGE_VERSION="0.0.5"
 ETEX_VERSION="0.0.3"

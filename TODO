@@ -1,0 +1,24 @@
+EDOM
+====
+
+
+ECSS
+====
+
+ESVG
+====
+
++ Add an interface to call whenever the parser can not recognize a property, this way we can easily
+  attach a "mouseover" property callback for example, so the upper toolkit library (the one that controls the input) can do something
++ Finsh implementing the paint servers
++ Add a get() method for every property
++ Add a presentation attribute setup (to setup the default value of each attribute)
++ Later we'll need to handle the changed() logic
++ Use pointers for the current/final states so on the boundings we always use the current but it will be witched if it is called after the setup and before the cleanup
++ We need an uri abstraction, someway to know if the uri is local, relative, etc
++ Add a way to parse external/local urls, not only local elements. We better add that function
+  to the doc context parser
++ On a future we might want to save a svg too, for that case it might be interesting to do
+  some research on way to simplify the properties, like simplifying matrices to just
+  modifying the inner properties
+
