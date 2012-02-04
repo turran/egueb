@@ -1,11 +1,10 @@
-MAINTAINERCLEANFILES = \
-Makefile.in
+MAINTAINERCLEANFILES = Makefile.in
 
 AM_CPPFLAGS = \
 -I. \
+-I$(top_srcdir)/edom/include \
 -I$(top_builddir)/edom/include \
--I$(top_srcdir)/ \
-@EGUEB_BUILD@ \
+@EDOM_BUILD@ \
 @EDOM_CFLAGS@
 
 lib_LTLIBRARIES = libedom.la

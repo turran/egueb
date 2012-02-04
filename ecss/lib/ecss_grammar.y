@@ -8,8 +8,12 @@
 %lex-param { void * scanner }
 
 %{
+
 #include <stdio.h>
 #include <string.h>
+
+#include <Eina.h>
+
 #include "Ecss.h"
 #include "ecss_private.h"
 

@@ -18,14 +18,12 @@
 #ifndef _ECSS_H
 #define _ECSS_H
 
-#include <Eina.h>
-
 #ifdef EAPI
 # undef EAPI
 #endif
 
 #ifdef _WIN32
-# ifdef EGUEB_BUILD
+# ifdef ECSS_BUILD
 #  ifdef DLL_EXPORT
 #   define EAPI __declspec(dllexport)
 #  else

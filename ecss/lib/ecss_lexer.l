@@ -8,6 +8,9 @@
 
 %{
 #include <stdio.h>
+
+#include <Eina.h>
+
 #include "Ecss.h"
 #include "ecss_private.h"
 #include "ecss_grammar.h"

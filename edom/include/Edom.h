@@ -18,12 +18,14 @@
 #ifndef _EDOM_H
 #define _EDOM_H
 
+#include <Eina.h>
+
 #ifdef EAPI
 # undef EAPI
 #endif
 
 #ifdef _WIN32
-# ifdef EGUEB_BUILD
+# ifdef EDOM_BUILD
 #  ifdef DLL_EXPORT
 #   define EAPI __declspec(dllexport)
 #  else

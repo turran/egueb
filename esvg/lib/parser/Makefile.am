@@ -3,10 +3,12 @@ Makefile.in
 
 AM_CPPFLAGS = \
 -I. \
--I$(top_builddir) \
 -I$(top_srcdir)/esvg/include \
 -I$(top_srcdir)/edom/include \
-@EGUEB_BUILD@ \
+-I$(top_builddir)/esvg/include \
+-I$(top_builddir)/edom/include \
+-DENESIM_EXTENSION \
+@ESVG_BUILD@ \
 @ESVG_CFLAGS@
 
 noinst_LTLIBRARIES = libesvg_parser.la

@@ -7,7 +7,7 @@ datadir=@datadir@/@PACKAGE@
 
 Name: ESVG
 Description: ESVG
-@pkgconfig_requires_private@: etex enesim eina
+@pkgconfig_requires_private@: edom ecss @esvg_requirements@
 Version: @VERSION@
 Libs: -L${libdir} -lesvg
 Cflags: -I${includedir}

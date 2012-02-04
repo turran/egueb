@@ -32,51 +32,134 @@ AC_DEFINE_UNQUOTED([VERSION_MICRO], [v_mic], [Micro version])
 
 ### Needed information
 
+EINA_VERSION="1.1.0"
+ENESIM_VERSION="0.0.15"
+EMAGE_VERSION="0.0.5"
+ETEX_VERSION="0.0.3"
+
 AC_CANONICAL_BUILD
 AC_CANONICAL_HOST
 
-EGUEB_BUILD=""
+ECSS_BUILD=""
+EDOM_BUILD=""
+ESVG_BUILD=""
 case "$host_os" in
    mingw*)
-      EGUEB_BUILD="-DEGUEB_BUILD"
+      ECSS_BUILD="-DECSS_BUILD"
+      EDOM_BUILD="-DEDOM_BUILD"
+      ESVG_BUILD="-DESVG_BUILD"
    ;;
 esac
-AC_SUBST([EGUEB_BUILD])
+AC_SUBST([ECSS_BUILD])
+AC_SUBST([EDOM_BUILD])
+AC_SUBST([ESVG_BUILD])
 
+ecss_requirements="eina"
+edom_requirements="eina"
+esvg_requirements="etex >= ${ETEX_VERSION} enesim >= ${ENESIM_VERSION} eina >= ${EINA_VERSION}"
+
+AC_SUBST([esvg_requirements])
 
 ### Additional options to configure
 
+AC_ARG_ENABLE([ecss],
+   [AC_HELP_STRING([--enable-ecss], [enable Ecss compilation.])],
+   [if test "x${enableval}" = "xyes"; then
+       want_ecss="yes"
+    else
+       want_ecss="no"
+    fi
+   ],
+   [want_ecss="yes"])
+
+AM_CONDITIONAL([WANT_ECSS], [test "x${want_ecss}" = "xyes"])
+
+AC_ARG_ENABLE([edom],
+   [AC_HELP_STRING([--enable-edom], [enable Edom compilation.])],
+   [if test "x${enableval}" = "xyes"; then
+       want_edom="yes"
+    else
+       want_edom="no"
+    fi
+   ],
+   [want_edom="yes"])
+
+AM_CONDITIONAL([WANT_EDOM], [test "x${want_edom}" = "xyes"])
+
+AC_ARG_ENABLE([esvg],
+   [AC_HELP_STRING([--enable-esvg], [enable Esvg compilation.])],
+   [if test "x${enableval}" = "xyes"; then
+       want_esvg="yes"
+    else
+       want_esvg="no"
+    fi
+   ],
+   [want_esvg="yes"])
+
+AM_CONDITIONAL([WANT_ESVG], [test "x${want_esvg}" = "xyes"])
+
 
 ### Checks for programs
+
+# compiler
 AC_PROG_CC
+
+# pkg-config
 PKG_PROG_PKG_CONFIG
 
-# flex
-AM_PROG_LEX
-if test "x$ac_cv_prog_LEX" = "x"; then
-  AC_MSG_ERROR(Cannot find flex)
+# Check whether pkg-config supports Requires.private
+if $PKG_CONFIG --atleast-pkgconfig-version 0.22; then
+   pkgconfig_requires_private="Requires.private"
+else
+   pkgconfig_requires_private="Requires"
+fi
+AC_SUBST([pkgconfig_requires_private])
+
+# flex (ecss dep)
+if test "x${want_ecss}" = "xyes" ; then
+   AM_PROG_LEX
+   if test "x$ac_cv_prog_LEX" = "x"; then
+      AC_MSG_WARN([Cannot find flex, Ecss compilation disabled])
+      want_ecss="no"
+   fi
 fi
 
-#yacc
-AC_PROG_YACC
-if test "x$ac_cv_prog_YACC" = "x"; then
-  AC_MSG_ERROR(Cannot find bison)
+# yacc (ecss dep)
+
+if test "x${want_ecss}" = "xyes" ; then
+   AC_PROG_YACC
+   if test "x$ac_cv_prog_YACC" = "x"; then
+      AC_MSG_WARN([Cannot find bison, Ecss compilation disabled])
+      want_ecss="no"
+   fi
 fi
 
 ### Checks for libraries
 
-PKG_CHECK_MODULES([EINA], [eina >= 1.0.99])
-PKG_CHECK_MODULES(ENESIM, [enesim >= 0.0.12])
-PKG_CHECK_MODULES(ETEX, [etex])
-
-AC_MSG_CHECKING([whether emage support is available])
-PKG_CHECK_MODULES([ESVG_EMAGE], [emage >= 0.0.4], [have_emage="yes"], [have_emage="no"])
-AC_MSG_RESULT([${have_emage}])
-
-if test "x${have_emage}" = "xyes" ; then
-   AC_DEFINE(HAVE_EMAGE, [1], [Emage Support])
+if test "x${want_ecss}" = "xyes" ; then
+   PKG_CHECK_MODULES([ECSS], [${ecss_requirements}], [want_ecss="yes"], [want_ecss="no"])
 fi
+
+if test "x${want_edom}" = "xyes" ; then
+   PKG_CHECK_MODULES([EDOM], [${edom_requirements}], [want_edom="yes"], [want_edom="no"])
+fi
+
+if test "x${want_edom}" = "xyes" ; then
+   PKG_CHECK_MODULES([ESVG_EMAGE], [emage >= ${EMAGE_VERSION}], [have_emage="yes"], [have_emage="no"])
+   AC_MSG_CHECKING([whether emage support is available])
+   AC_MSG_RESULT([${have_emage}])
+
+   if test "x${have_emage}" = "xyes" ; then
+      AC_DEFINE(HAVE_EMAGE, [1], [Emage Support])
+      esvg_requirements="emage >= ${EMAGE_VERSION} ${esvg_requirements}"
+   fi
+   PKG_CHECK_MODULES([ESVG], [${esvg_requirements}], [want_esvg="yes"], [want_esvg="no"])
+fi
+
+AM_CONDITIONAL(BUILD_ECSS, [test "x${want_ecss}" = "xyes"])
+AM_CONDITIONAL(BUILD_EDOM, [test "x${want_edom}" = "xyes"])
 AM_CONDITIONAL(BUILD_EMAGE, [test "x${have_emage}" = "xyes"])
+AM_CONDITIONAL(BUILD_ESVG, [test "x${want_esvg}" = "xyes"])
 
 ### Checks for header files
 
@@ -89,9 +172,7 @@ AM_CONDITIONAL(BUILD_EMAGE, [test "x${have_emage}" = "xyes"])
 
 ### Checks for compiler characteristics
 
-AM_PROG_CC_STDC
-AC_HEADER_STDC
-AC_C_CONST
+AM_PROG_CC_C_O
 AC_C_BIGENDIAN
 #EFL_ATTRIBUTE_UNUSED
 #EFL_COMPILER_FLAG([-Wall])
@@ -100,27 +181,6 @@ AC_C_BIGENDIAN
 
 
 ### Checks for library functions
-
-### Substitutions
-EDOM_CFLAGS="$EINA_CFLAGS"
-EDOM_LIBS="$EINA_LIBS"
-AC_SUBST([EDOM_CFLAGS])
-AC_SUBST([EDOM_LIBS])
-
-ECSS_CFLAGS="$EINA_CFLAGS"
-ECSS_LIBS="$EINA_LIBS"
-AC_SUBST([ECSS_CFLAGS])
-AC_SUBST([ECSS_LIBS])
-
-ESVG_CFLAGS="$EINA_CFLAGS $ENESIM_CFLAGS -DENESIM_EXTENSION $ETEX_CFLAGS" 
-ESVG_LIBS="$EINA_LIBS $ENESIM_LIBS $ETEX_LIBS" 
-AC_SUBST([ESVG_CFLAGS])
-AC_SUBST([ESVG_LIBS])
-
-# FIXME make this use_foo conditional on the programs/headers/whatever found
-use_dom="yes"
-use_css="yes"
-use_svg="yes"
 
 ## Make the debug preprocessor configurable
 
@@ -161,9 +221,9 @@ echo
 echo
 echo "Configuration Options Summary:"
 echo
-echo "DOM support.................................: ${use_dom}"
-echo "CSS support.................................: ${use_css}"
-echo "SVG support.................................. ${use_svg}"
+echo "CSS support.................................: ${want_ecss}"
+echo "DOM support.................................: ${want_edom}"
+echo "SVG support.................................. ${want_esvg}"
 echo
 echo "Installation Path...........................: ${prefix}"
 echo

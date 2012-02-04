@@ -21,6 +21,7 @@
 #include <math.h>
 
 #include <Ecss.h>
+#include <Enesim.h>
 #include <Etex.h>
 #include <Emage.h>
 
