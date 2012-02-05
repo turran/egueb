@@ -273,6 +273,7 @@ static Eina_Bool _esvg_transformation_translate_get(Enesim_Matrix *matrix, const
 	char *end;
 	const size_t sz = 9;
 
+	ESVG_SPACE_SKIP(tmp);
 	if (strncmp(tmp, "translate", sz) != 0)
 		return EINA_FALSE;
 	tmp += sz;
@@ -322,6 +323,7 @@ static Eina_Bool _esvg_transformation_scale_get(Enesim_Matrix *matrix, const cha
 	char *end;
 	const size_t sz = 5;
 
+	ESVG_SPACE_SKIP(tmp);
 	if (strncmp(tmp, "scale", sz) != 0)
 		return EINA_FALSE;
 	tmp += sz;
@@ -1049,6 +1051,7 @@ Eina_Bool esvg_transformation_get(Enesim_Matrix *matrix, const char *attr)
 		attr = endptr;
 	}
 	while (endptr && *endptr && ret);
+
 	return ret;
 }
 
