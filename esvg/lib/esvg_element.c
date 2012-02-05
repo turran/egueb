@@ -881,7 +881,7 @@ EAPI Enesim_Renderer * esvg_element_clone(Enesim_Renderer *r)
 		Esvg_Element *other;
 
 		thiz = _esvg_element_get(r);
-		other = _esvg_element_get(r);
+		other = _esvg_element_get(new_r);
 		other->state = thiz->state;
 		other->attr = thiz->attr;
 		if (thiz->clone)
