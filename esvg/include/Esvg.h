@@ -507,4 +507,8 @@ EAPI void esvg_linear_gradient_y2_set(Enesim_Renderer *r, const Esvg_Coord *y2);
 EAPI void esvg_linear_gradient_y2_get(Enesim_Renderer *r, Esvg_Coord *y2);
 EAPI Eina_Bool esvg_linear_gradient_y2_is_set(Enesim_Renderer *r);
 
+/* helper functions */
+EAPI double esvg_length_final_get(const Esvg_Length *l, double parent_length);
+
+
 #endif /*_ESVG_H*/

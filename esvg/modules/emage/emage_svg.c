@@ -21,8 +21,6 @@
 #endif
 
 #include <Esvg.h>
-/* FIXME we should not include this */
-//#include <esvg_private.h>
 #include <Edom.h>
 
 #if HAVE_EMAGE
@@ -113,7 +111,7 @@ close_f:
 static Eina_Bool _emage_svg_tag_attribute_set(Edom_Tag *tag, const char *key, const char *value)
 {
 	Emage_Svg_Svg *thiz;
-	Esvg_Length length_0 = { 0.0, ESVG_UNIT_LENGTH_PX }; 
+	Esvg_Length length_0 = { 0.0, ESVG_UNIT_LENGTH_PX };
 
 	thiz = edom_tag_data_get(tag);
 	if (strcmp(key, "width") == 0)
@@ -142,12 +140,15 @@ static Eina_Bool _emage_svg_context_tag_open(void *data, int tag_type, Eina_Arra
 	Emage_Svg_Svg *thiz = data;
 	Edom_Context *context;
 	Edom_Tag *tag;
+	int count;
 
 	/* the document context only supports SVG tags */
 	if (tag_type != EMAGE_SVG_SVG)
 		return EINA_FALSE;
 
-	context = eina_array_data_get(contexts, eina_array_count_get(contexts) - 1);
+	count = eina_array_count_get(contexts) - 1;
+	printf("count = %d\n", count);
+	context = eina_array_data_get(contexts, count);
 	tag = edom_tag_new(context, &_tag_descriptor, EMAGE_SVG_SVG, NULL, thiz);
 	edom_tag_attributes_from_xml(tag, attributes, length);
 
@@ -242,10 +243,10 @@ static Eina_Error _emage_svg_info_load(const char *file, int *w, int *h, Enesim_
 	long sz;
 	int cw = _default_width;
 	int ch = _default_height;
-	Esvg_Length length_0 = { 0.0, ESVG_UNIT_LENGTH_PX }; 
+	Esvg_Length length_0 = { 0.0, ESVG_UNIT_LENGTH_PX };
 
 	/* FIXME initialize the emage svg structure correctly */
-	thiz.width = thiz.height = length_0; 
+	thiz.width = thiz.height = length_0;
 
 	buf = _file_open(file, &sz);
 	if (!buf)

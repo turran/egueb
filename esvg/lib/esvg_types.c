@@ -28,7 +28,10 @@
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
-double esvg_length_final_get(const Esvg_Length *l, double parent_length)
+/*============================================================================*
+ *                                   API                                      *
+ *============================================================================*/
+EAPI double esvg_length_final_get(const Esvg_Length *l, double parent_length)
 {
 	double ret;
 	/* Here we should transform the length/coord to an absolute
@@ -73,89 +76,3 @@ double esvg_length_final_get(const Esvg_Length *l, double parent_length)
 
 	return ret;
 }
-
-/*============================================================================*
- *                                   API                                      *
- *============================================================================*/
-
-#if 0
-double
-esvg_length_get(const char *attr_val, double default_length)
-{
-	Esvg_Unit unit;
-	double res;
-	char *endptr;
-
-	if (!attr_val || !*attr_val) return default_length;
-
-	res = strtod(attr_val, &endptr);
-	if (errno == ERANGE)
-		return default_length;
-	if ((res == 0) && (attr_val == endptr))
-		return default_length;
-
-	/* else, conversion has been done */
-	if ((endptr == NULL) || (*endptr == '\0'))
-		return res;
-
-	/* strlen(endptr) >= 1 */
-	if (endptr[1] == '\0')
-	{
-		if(endptr[0] == '%')
-		{
-			unit = ESVG_UNIT_LENGTH_PERCENT;
-		}
-		else
-			return default_length;
-	}
-	else if (endptr[2] == '\0')
-	{
-		if (endptr[0] == 'e')
-		{
-			if (endptr[1] == 'm')
-			{
-				unit = ESVG_UNIT_LENGTH_EM;
-			}
-			else if (endptr[1] == 'x')
-			{
-				unit = ESVG_UNIT_LENGTH_EX;
-			}
-			else
-				return default_length;
-		}
-		else if (endptr[0] == 'p')
-		{
-			if (endptr[1] == 'c')
-			{
-				return _esvg_dpi * res / 6.0;
-			}
-			else if (endptr[1] == 't')
-			{
-				return _esvg_dpi * res / 72.0;
-			}
-			else if (endptr[1] == 'x')
-			{
-				return res;
-			}
-			else
-				return default_length;
-		}
-		else if ((endptr[0] == 'c') && (endptr[1] == 'm'))
-		{
-			return _esvg_dpi * res / 2.54;
-		}
-		else if ((endptr[0] == 'm') && (endptr[1] == 'm'))
-		{
-			return _esvg_dpi * res / 25.4;
-		}
-		else if ((endptr[0] == 'i') && (endptr[1] == 'n'))
-		{
-			return _esvg_dpi * res;
-		}
-		else
-			return default_length;
-	}
-	else
-		return default_length;
-}
-#endif
