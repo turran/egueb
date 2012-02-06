@@ -89,7 +89,6 @@ static Eina_Bool _esvg_g_setup(Enesim_Renderer *r, Esvg_Element_State *state,
 		Enesim_Error **error)
 {
 	/* nothing to do here */
-	printf("calling the setup on the g\n");
 	return EINA_TRUE;
 }
 

@@ -242,6 +242,10 @@ static Eina_Error _emage_svg_info_load(const char *file, int *w, int *h, Enesim_
 	long sz;
 	int cw = _default_width;
 	int ch = _default_height;
+	Esvg_Length length_0 = { 0.0, ESVG_UNIT_LENGTH_PX }; 
+
+	/* FIXME initialize the emage svg structure correctly */
+	thiz.width = thiz.height = length_0; 
 
 	buf = _file_open(file, &sz);
 	if (!buf)
@@ -271,7 +275,6 @@ static Eina_Error _emage_svg_info_load(const char *file, int *w, int *h, Enesim_
 	*w = (int)svg_w;
 	*h = (int)svg_h;
 	*sfmt = ENESIM_BUFFER_FORMAT_ARGB8888_PRE;
-end:
 	return 0;
 }
 
@@ -300,8 +303,8 @@ static Eina_Error _emage_svg_load(const char *file, Enesim_Buffer *buffer, void 
 		h = o->height;
 	}
 	/* we should render into the swdata? */
-	esvg_svg_container_width_set(r, w);
-	esvg_svg_container_height_set(r, h);
+	esvg_element_container_width_set(r, w);
+	esvg_element_container_height_set(r, h);
 	esvg_svg_actual_width_get(r, &svg_w);
 	esvg_svg_actual_height_get(r, &svg_h);
 

@@ -309,6 +309,17 @@ void esvg_attribute_presentation_stroke_line_join_unset(Esvg_Attribute_Presentat
 	thiz->stroke_line_join_set = EINA_FALSE;
 }
 
+void esvg_attribute_presentation_visibility_set(Esvg_Attribute_Presentation *thiz, Eina_Bool visibility)
+{
+	thiz->visibility = visibility;
+	thiz->visibility_set = EINA_TRUE;
+}
+
+void esvg_attribute_presentation_visibility_unset(Esvg_Attribute_Presentation *thiz)
+{
+	thiz->visibility_set = EINA_FALSE;
+}
+
 void esvg_attribute_presentation_dump(Esvg_Attribute_Presentation *thiz)
 {
 	printf("fill: %d ", thiz->fill_set);

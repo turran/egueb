@@ -97,7 +97,7 @@ static char * _esvg_file_open(const char *filename, long *sz)
  *                            Edom parser interface                           *
  *----------------------------------------------------------------------------*/
 static Eina_Bool _esvg_parser_tag_get(Edom_Parser *parser, const char *content,
-		 size_t sz, Esvg_Parser_Tag_Type *tag)
+		 size_t sz, int *tag)
 {
 	/* sz ==1 : 2 cases : a and g */
 	if (sz == 1)

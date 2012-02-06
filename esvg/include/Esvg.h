@@ -275,7 +275,6 @@ typedef struct _Esvg_Attribute_Regular {
  * ‘text-decoration’,
  * ‘text-rendering’,
  * ‘unicode-bidi’,
- * ‘visibility’,
  * ‘word-spacing’
  * ‘writing-mode’
  */
@@ -298,6 +297,7 @@ typedef struct _Esvg_Attribute_Presentation {
 	double stroke_opacity;
 	double fill_opacity;
 	Esvg_Fill_Rule fill_rule;
+	Eina_Bool visibility;
 	/* are they set? */
 	Eina_Bool clip_path_set;
 	Eina_Bool color_set;
@@ -310,6 +310,7 @@ typedef struct _Esvg_Attribute_Presentation {
 	Eina_Bool stroke_opacity_set;
 	Eina_Bool fill_opacity_set;
 	Eina_Bool fill_rule_set;
+	Eina_Bool visibility_set;
 } Esvg_Attribute_Presentation;
 
 /**
@@ -355,6 +356,8 @@ EAPI void esvg_element_stroke_line_cap_set(Enesim_Renderer *r, Esvg_Stroke_Line_
 EAPI void esvg_element_stroke_line_cap_unset(Enesim_Renderer *r);
 EAPI void esvg_element_stroke_line_join_set(Enesim_Renderer *r, Esvg_Stroke_Line_Join join);
 EAPI void esvg_element_stroke_line_join_unset(Enesim_Renderer *r);
+EAPI void esvg_element_visibility_set(Enesim_Renderer *r, Eina_Bool visibility);
+EAPI void esvg_element_visibility_unset(Enesim_Renderer *r);
 
 EAPI Eina_Bool esvg_is_container(Enesim_Renderer *r);
 EAPI void esvg_container_element_add(Enesim_Renderer *r, Enesim_Renderer *child);

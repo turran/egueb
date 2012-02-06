@@ -57,6 +57,7 @@
 #define ESVG_RADIAL_GRADIENT_MAGIC 0xe5500010
 
 #define ESVG_CLIP_PATH_MAGIC 0xe5500011
+#define ESVG_IMAGE_MAGIC 0xe5500012
 
 extern int esvg_log_dom_global;
 
@@ -78,7 +79,11 @@ void esvg_attribute_presentation_stroke_opacity_unset(Esvg_Attribute_Presentatio
 void esvg_attribute_presentation_stroke_width_set(Esvg_Attribute_Presentation *thiz, const Esvg_Length *stroke_width);
 void esvg_attribute_presentation_stroke_opacity_set(Esvg_Attribute_Presentation *thiz, double stroke_opacity);
 void esvg_attribute_presentation_stroke_line_cap_set(Esvg_Attribute_Presentation *thiz, Esvg_Stroke_Line_Cap cap);
+void esvg_attribute_presentation_stroke_line_join_set(Esvg_Attribute_Presentation *thiz, Esvg_Stroke_Line_Join join);
+void esvg_attribute_presentation_stroke_line_join_unset(Esvg_Attribute_Presentation *thiz);
 void esvg_attribute_presentation_stroke_line_cap_unset(Esvg_Attribute_Presentation *thiz);
+void esvg_attribute_presentation_visibility_set(Esvg_Attribute_Presentation *thiz, Eina_Bool visibility);
+void esvg_attribute_presentation_visibility_unset(Esvg_Attribute_Presentation *thiz);
 
 void esvg_attribute_presentation_dump(Esvg_Attribute_Presentation *thiz);
 

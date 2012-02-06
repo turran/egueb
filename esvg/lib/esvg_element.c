@@ -228,6 +228,18 @@ static void _esvg_element_state_merge(const Esvg_Attribute_Presentation *state, 
 		d->stroke_opacity_set = EINA_TRUE;
 	}
 
+	/* visibility */
+	if (!state->visibility_set)
+	{
+		d->visibility = parent->visibility;
+		d->visibility_set = parent->visibility_set;
+	}
+	else
+	{
+		d->visibility = state->visibility;
+		d->visibility_set = EINA_TRUE;
+
+	}
 }
 
 static void _esvg_element_state_compose(const Esvg_Element_State *s, const Esvg_Element_State *parent, Esvg_Element_State *d)
@@ -789,6 +801,22 @@ EAPI void esvg_element_stroke_line_join_unset(Enesim_Renderer *r)
 
 	thiz = _esvg_element_get(r);
 	esvg_attribute_presentation_stroke_line_join_unset(&thiz->attr);
+}
+
+EAPI void esvg_element_visibility_set(Enesim_Renderer *r, Eina_Bool visibility)
+{
+	Esvg_Element *thiz;
+
+	thiz = _esvg_element_get(r);
+	esvg_attribute_presentation_visibility_set(&thiz->attr, visibility);
+}
+
+EAPI void esvg_element_visibility_unset(Enesim_Renderer *r)
+{
+	Esvg_Element *thiz;
+
+	thiz = _esvg_element_get(r);
+	esvg_attribute_presentation_visibility_unset(&thiz->attr);
 }
 
 EAPI void esvg_element_container_width_set(Enesim_Renderer *r, double container_width)

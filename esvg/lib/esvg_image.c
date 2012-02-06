@@ -21,8 +21,15 @@
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
+#define ESVG_IMAGE_MAGIC_CHECK(d) \
+	do {\
+		if (!EINA_MAGIC_CHECK(d, ESVG_IMAGE_MAGIC))\
+			EINA_MAGIC_FAIL(d, ESVG_IMAGE_MAGIC);\
+	} while(0)
+
 typedef struct _Esvg_Image
 {
+	EINA_MAGIC
 	/* properties */
 	Esvg_Coord x;
 	Esvg_Coord y;
@@ -39,8 +46,9 @@ typedef struct _Esvg_Image
 static Esvg_Image * _esvg_image_get(Enesim_Renderer *r)
 {
 	Esvg_Image *thiz;
-	/* FIXME add some kind of type checking or make this a macro */
+
 	thiz = esvg_element_data_get(r);
+	ESVG_IMAGE_MAGIC_CHECK(thiz);
 	return thiz;
 }
 
@@ -96,12 +104,10 @@ static Enesim_Renderer * _esvg_image_renderer_get(Enesim_Renderer *r,
 
 static Eina_Bool _esvg_image_setup(Enesim_Renderer *r, Esvg_Element_State *estate,
 		Esvg_Attribute_Presentation *attr,
-		Enesim_Surface *a,
+		Enesim_Surface *s,
 		Enesim_Error **error)
 {
 	Esvg_Image *thiz;
-	Esvg_Shape_Enesim_State dstate;
-	Enesim_Rectangle bbox;
 	double x, y;
 	double width, height;
 
@@ -155,6 +161,7 @@ static Esvg_Element_Descriptor _descriptor = {
 	/* .clone =		*/ _esvg_image_clone,
 	/* .setup =		*/ _esvg_image_setup,
 	/* .cleanup =		*/ _esvg_image_cleanup,
+	/* .is_renderable = 	*/ EINA_TRUE,
 };
 /*============================================================================*
  *                                 Global                                     *
@@ -169,6 +176,7 @@ EAPI Enesim_Renderer * esvg_image_new(void)
 
 	thiz = calloc(1, sizeof(Esvg_Image));
 	if (!thiz) return NULL;
+	EINA_MAGIC_SET(thiz, ESVG_IMAGE_MAGIC);
 
 	r = enesim_renderer_image_new();
 	thiz->image = r;
