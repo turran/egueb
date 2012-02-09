@@ -1,10 +1,64 @@
 using "enesim";
 
 namespace "esvg" {
+	struct "length" {
+		double "value";
+		int "unit";
+	};
+
+	struct "color" {
+
+	};
+
 	abstract "element" : "renderer" {
 	};
 
-	class "svg" : "element" {
+	abstract "container" : "element" {
+
+	};
+
+	class "svg" : "container" {
+
+	};
+
+	class "g" : "container" {
+
+	};
+
+	class "rect" : "element" {
+
+	};
+
+	class "ellipse" : "element" {
+
+	};
+
+	class "circle" : "element" {
+
+	};
+
+	class "path" : "element" {
+
+	};
+
+	class "line" : "element" {
+
+	};
+
+	class "polyline" : "element" {
+
+	};
+
+	class "polygon" : "element" {
+
+	};
+
+	class "use" : "element" {
+
+	};
+
+	class "text" : "element" {
+
 	};
 };
 
