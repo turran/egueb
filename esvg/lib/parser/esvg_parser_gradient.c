@@ -42,6 +42,8 @@ static void _parser_gradient_merge(Esvg_Parser_Gradient *thiz,
 			Enesim_Renderer *r,
 			Enesim_Renderer *rel)
 {
+	Eina_Bool is_rg;
+	Eina_Bool rel_is_rg;
 	const Eina_List *l;
 
 	/* set the stops */
@@ -66,15 +68,14 @@ static void _parser_gradient_merge(Esvg_Parser_Gradient *thiz,
 		esvg_gradient_units_get(rel, &gu);
 		esvg_gradient_units_set(r, gu);
 	}
-#if 0
-	/* TODO we need to check that both gradients are of the same type */
-	rg = esvg_is_radial_gradient(r);
-	relrg = esvg_is_radial_gradient(rel);
-	if (!(rg ^ relrg)
+	is_rg = esvg_is_radial_gradient(r);
+	rel_is_rg = esvg_is_radial_gradient(rel);
+	/* same type */
+	if (!(is_rg ^ rel_is_rg))
 	{
-#endif
-	if (thiz->descriptor->merge)
-		thiz->descriptor->merge(r, rel);
+		if (thiz->descriptor->merge)
+			thiz->descriptor->merge(r, rel);
+	}
 }
 
 static void _post_parse_href_cb(Edom_Parser *parser, void *data)

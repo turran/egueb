@@ -492,6 +492,7 @@ EAPI void esvg_gradient_spread_method_set(Enesim_Renderer *r, Esvg_Spread_Method
 EAPI void esvg_gradient_spread_method_get(Enesim_Renderer *r, Esvg_Spread_Method *spread_method);
 
 EAPI Enesim_Renderer * esvg_radial_gradient_new(void);
+EAPI Eina_Bool esvg_is_radial_gradient(Enesim_Renderer *r);
 EAPI void esvg_radial_gradient_cx_set(Enesim_Renderer *r, const Esvg_Coord *cx);
 EAPI void esvg_radial_gradient_cx_get(Enesim_Renderer *r, Esvg_Coord *cx);
 EAPI Eina_Bool esvg_radial_gradient_cx_is_set(Enesim_Renderer *r);
@@ -509,6 +510,7 @@ EAPI void esvg_radial_gradient_r_get(Enesim_Renderer *r, Esvg_Length *rad);
 EAPI Eina_Bool esvg_radial_gradient_r_is_set(Enesim_Renderer *r);
 
 EAPI Enesim_Renderer * esvg_linear_gradient_new(void);
+EAPI Eina_Bool esvg_is_linear_gradient(Enesim_Renderer *r);
 EAPI void esvg_linear_gradient_x1_set(Enesim_Renderer *r, const Esvg_Coord *x1);
 EAPI void esvg_linear_gradient_x1_get(Enesim_Renderer *r, Esvg_Coord *x1);
 EAPI Eina_Bool esvg_linear_gradient_x1_is_set(Enesim_Renderer *r);

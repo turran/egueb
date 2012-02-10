@@ -117,5 +117,13 @@ void * esvg_paint_server_data_get(Enesim_Renderer *r)
  *============================================================================*/
 EAPI Eina_Bool esvg_is_paint_server(Enesim_Renderer *r)
 {
-	return EINA_TRUE;
+	Esvg_Paint_Server *thiz;
+	Eina_Bool ret;
+
+	if (!esvg_is_element(r))
+		return EINA_FALSE;
+	thiz = esvg_element_data_get(r);
+	ret = EINA_MAGIC_CHECK(thiz, ESVG_PAINT_SERVER_MAGIC);
+
+	return ret;
 }

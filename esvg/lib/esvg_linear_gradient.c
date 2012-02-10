@@ -172,13 +172,24 @@ static Eina_Bool _linear_gradient_setup(Enesim_Renderer *r,
 	}
 	/* TODO set the transformation geometry */
 	{
+		Enesim_Matrix m;
+
+		enesim_matrix_identity(&m);
 		if (gu != ESVG_OBJECT_BOUNDING_BOX)
 		{
 			Enesim_Matrix m;
 
 			enesim_matrix_inverse(&state->transform, &m);
-			enesim_renderer_transformation_set(thiz->r, &m);
 		}
+
+		if (enesim_matrix_type_get(&gstate->transform) != ENESIM_MATRIX_IDENTITY)
+		{
+			Enesim_Matrix gm;
+
+			enesim_matrix_inverse(&gstate->transform, &gm);
+			enesim_matrix_compose(&gm, &m, &m);
+		}
+		enesim_renderer_transformation_set(thiz->r, &m);
 	}
 
 	return EINA_TRUE;
@@ -215,6 +226,19 @@ EAPI Enesim_Renderer * esvg_linear_gradient_new(void)
 	r = esvg_gradient_new(&_descriptor, thiz);
 
 	return r;
+}
+
+EAPI Eina_Bool esvg_is_linear_gradient(Enesim_Renderer *r)
+{
+	Esvg_Linear_Gradient *thiz;
+	Eina_Bool ret;
+
+	if (!esvg_is_gradient(r))
+		return EINA_FALSE;
+	thiz = esvg_gradient_data_get(r);
+	ret = EINA_MAGIC_CHECK(thiz, ESVG_LINEAR_GRADIENT_MAGIC);
+
+	return ret;
 }
 
 EAPI void esvg_linear_gradient_x1_set(Enesim_Renderer *r, const Esvg_Coord *x1)

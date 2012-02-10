@@ -96,6 +96,8 @@ Enesim_Renderer * esvg_gradient_new(Esvg_Gradient_Descriptor *descriptor,
 
 	/* Default values */
 	thiz->state.units = ESVG_OBJECT_BOUNDING_BOX;
+	enesim_matrix_identity(&thiz->state.transform);
+
 	r = esvg_paint_server_new(&pdescriptor, thiz);
 	return r;
 }
@@ -112,7 +114,15 @@ void * esvg_gradient_data_get(Enesim_Renderer *r)
  *============================================================================*/
 EAPI Eina_Bool esvg_is_gradient(Enesim_Renderer *r)
 {
-	return EINA_TRUE;
+	Esvg_Gradient *thiz;
+	Eina_Bool ret;
+
+	if (!esvg_is_paint_server(r))
+		return EINA_FALSE;
+	thiz = esvg_paint_server_data_get(r);
+	ret = EINA_MAGIC_CHECK(thiz, ESVG_GRADIENT_MAGIC);
+
+	return ret;
 }
 
 EAPI void esvg_gradient_stop_add(Enesim_Renderer *r, Esvg_Gradient_Stop *s)
