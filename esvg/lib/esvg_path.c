@@ -70,20 +70,26 @@ static Eina_Bool _esvg_path_setup(Enesim_Renderer *r, const Esvg_Element_State *
 
 	thiz = _esvg_path_get(r);
 
-	enesim_renderer_shape_fill_color_set(thiz->r, dstate->fill_color);
+	/* shape properties */
+	if (!dstate->fill_renderer)
+		enesim_renderer_shape_fill_color_set(thiz->r, dstate->fill_color);
+	else
+		enesim_renderer_shape_fill_renderer_set(thiz->r, dstate->fill_renderer);
+	
+	if (!dstate->stroke_renderer)
+		enesim_renderer_shape_stroke_color_set(thiz->r, dstate->stroke_color);
+	else
+		enesim_renderer_shape_stroke_renderer_set(thiz->r, dstate->stroke_renderer);
+
 	enesim_renderer_shape_fill_rule_set(thiz->r, dstate->fill_rule);
-	enesim_renderer_shape_fill_renderer_set(thiz->r, dstate->fill_renderer);
-	enesim_renderer_shape_stroke_color_set(thiz->r, dstate->stroke_color);
 	enesim_renderer_shape_stroke_weight_set(thiz->r, dstate->stroke_weight);
-	enesim_renderer_shape_draw_mode_set(thiz->r, dstate->draw_mode);
 	enesim_renderer_shape_stroke_location_set(thiz->r, ENESIM_SHAPE_STROKE_CENTER);
 	enesim_renderer_shape_stroke_cap_set(thiz->r, dstate->stroke_cap);
 	enesim_renderer_shape_stroke_join_set(thiz->r, dstate->stroke_join);
+	enesim_renderer_shape_draw_mode_set(thiz->r, dstate->draw_mode);
 	/* base properties */
 	enesim_renderer_geometry_transformation_set(thiz->r, &estate->transform);
 	enesim_renderer_color_set(thiz->r, dstate->color);
-
-	//printf("estate->transform = %" ENESIM_MATRIX_FORMAT "\n", ENESIM_MATRIX_ARGS (&estate->transform));
 
 	EINA_LIST_FOREACH(thiz->commands, l, c)
 	{

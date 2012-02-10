@@ -320,6 +320,39 @@ void esvg_attribute_presentation_visibility_unset(Esvg_Attribute_Presentation *t
 	thiz->visibility_set = EINA_FALSE;
 }
 
+void esvg_attribute_presentation_stop_color_set(Esvg_Attribute_Presentation *thiz, const Esvg_Color *stop_color)
+{
+	if (!stop_color)
+	{
+		esvg_attribute_presentation_stop_color_unset(thiz);
+	}
+	else
+	{
+		thiz->stop_color = *stop_color;
+		thiz->stop_color_set = EINA_TRUE;
+	}
+}
+
+void esvg_attribute_presentation_stop_color_unset(Esvg_Attribute_Presentation *thiz)
+{
+	Esvg_Color black = { 0, 0, 0 };
+
+	thiz->stop_color = black;
+	thiz->stop_color_set = EINA_FALSE;
+}
+
+void esvg_attribute_presentation_stop_opacity_set(Esvg_Attribute_Presentation *thiz, double stop_opacity)
+{
+	thiz->stop_opacity = stop_opacity;
+	thiz->stop_opacity_set = EINA_TRUE;
+}
+
+void esvg_attribute_presentation_stop_opacity_unset(Esvg_Attribute_Presentation *thiz, double stop_opacity)
+{
+	thiz->stop_opacity = 1.0;
+	thiz->stop_opacity_set = EINA_FALSE;
+}
+
 void esvg_attribute_presentation_dump(Esvg_Attribute_Presentation *thiz)
 {
 	printf("fill: %d ", thiz->fill_set);

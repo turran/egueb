@@ -75,13 +75,15 @@ static void _linear_gradient_clone(Enesim_Renderer *r, Enesim_Renderer *rr)
 
 }
 
-static Eina_Bool _linear_gradient_setup(Enesim_Renderer *r, Enesim_Renderer *rel,
-		Eina_List *stops)
+static Eina_Bool _linear_gradient_setup(Enesim_Renderer *r,
+		const Esvg_Element_State *state,
+		Enesim_Renderer *rel,
+		const Esvg_Gradient_State *gstate)
 {
 	Esvg_Linear_Gradient *thiz;
 	Esvg_Gradient_Stop *stop;
 	Esvg_Gradient_Units gu;
-	Enesim_Rectangle bbox;
+	Enesim_Repeat_Mode mode;
 	Eina_List *l;
 	double x1;
 	double y1;
@@ -90,31 +92,66 @@ static Eina_Bool _linear_gradient_setup(Enesim_Renderer *r, Enesim_Renderer *rel
 
 	thiz = _esvg_linear_gradient_get(r);
 
-	esvg_gradient_units_get(r, &gu);
+	gu = gstate->units;
+	switch (gstate->spread_method)
+	{
+		case ESVG_SPREAD_METHOD_PAD:
+		mode = ENESIM_PAD;
+		break;
+
+		case ESVG_SPREAD_METHOD_REPEAT:
+		mode = ENESIM_REPEAT;
+		break;
+
+		case ESVG_SPREAD_METHOD_REFLECT:
+		mode = ENESIM_REFLECT;
+		break;
+	}
+	enesim_renderer_gradient_mode_set(thiz->r, mode);
+
 	if (gu == ESVG_OBJECT_BOUNDING_BOX)
 	{
-		enesim_renderer_boundings(rel, &bbox);
+		Eina_Rectangle bbox;
+
+		/* check that the coordinates shold be set with (0,0) -> (1, 1) */
+		x1 = esvg_length_final_get(&thiz->x1, 1);
+		y1 = esvg_length_final_get(&thiz->y1, 1);
+		x2 = esvg_length_final_get(&thiz->x2, 1);
+		y2 = esvg_length_final_get(&thiz->y2, 1);
+
+		enesim_renderer_destination_boundings(rel, &bbox, 0, 0);
+		x1 = x1 * (bbox.w) - bbox.x;
+		y1 = y1 * (bbox.h) - bbox.y;
+		x2 = x2 * (bbox.w) - bbox.x;
+		y2 = y2 * (bbox.h) - bbox.y;
+
+		/* TODO whenever we support the geometry transformation we should use the matrix directly
+		enesim_matrix_values_set(&m, bbox.w, 0, bbox.x, 0, bbox.h, 0, bbox.y, 0, 0, 1);
+		enesim_renderer_geometry_transformation_set(thiz->r, &im);
+		*/
 	}
 	else
 	{
+		double w;
+		double h;
+
 		/* use the user space coordiantes */
-		printf("TODO\n");
+		w = state->viewbox_w;
+		h = state->viewbox_h;
+		printf("user space on use %g %g\n", w, h);
+		x1 = esvg_length_final_get(&thiz->x1, w);
+		y1 = esvg_length_final_get(&thiz->y1, h);
+		x2 = esvg_length_final_get(&thiz->x2, w);
+		y2 = esvg_length_final_get(&thiz->y2, h);
 	}
-
-	x1 = esvg_length_final_get(&thiz->x1, bbox.w);
-	y1 = esvg_length_final_get(&thiz->y1, bbox.h);
-	x2 = esvg_length_final_get(&thiz->x2, bbox.w);
-	y2 = esvg_length_final_get(&thiz->y2, bbox.h);
-
 	printf("%g %g %g %g\n", x1, y1, x2, y2);
-	/* FIXME for now */
+
 	enesim_renderer_gradient_linear_x0_set(thiz->r, x1);
 	enesim_renderer_gradient_linear_y0_set(thiz->r, y1);
 	enesim_renderer_gradient_linear_x1_set(thiz->r, x2);
 	enesim_renderer_gradient_linear_y1_set(thiz->r, y2);
 
-	/* FIXME for now */
-	EINA_LIST_FOREACH(stops, l, stop)
+	EINA_LIST_FOREACH(gstate->stops, l, stop)
 	{
 		Enesim_Renderer_Gradient_Stop s;
 
@@ -130,8 +167,18 @@ static Eina_Bool _linear_gradient_setup(Enesim_Renderer *r, Enesim_Renderer *rel
 			s.pos = 1;
 		else if (s.pos < 0)
 			s.pos = 0;
-		printf("pos = %g\n", s.pos);
+		printf("color = %08x pos = %g\n", s.argb, s.pos);
 		enesim_renderer_gradient_stop_add(thiz->r, &s);
+	}
+	/* TODO set the transformation geometry */
+	{
+		if (gu != ESVG_OBJECT_BOUNDING_BOX)
+		{
+			Enesim_Matrix m;
+
+			enesim_matrix_inverse(&state->transform, &m);
+			enesim_renderer_transformation_set(thiz->r, &m);
+		}
 	}
 
 	return EINA_TRUE;

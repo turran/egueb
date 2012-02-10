@@ -130,6 +130,13 @@ typedef struct _Esvg_Gradient_Stop
 	double stop_opacity;
 } Esvg_Gradient_Stop;
 
+typedef enum _Esvg_Spread_Method
+{
+	ESVG_SPREAD_METHOD_PAD,
+	ESVG_SPREAD_METHOD_REFLECT,
+	ESVG_SPREAD_METHOD_REPEAT,
+} Esvg_Spread_Method;
+
 typedef enum _Esvg_Paint_Type
 {
 	ESVG_PAINT_NONE,
@@ -266,8 +273,6 @@ typedef struct _Esvg_Attribute_Regular {
  * ‘overflow’,
  * ‘pointer-events’,
  * ‘shape-rendering’,
- * ‘stop-color’,
- * ‘stop-opacity’,
  * ‘stroke-dasharray’,
  * ‘stroke-dashoffset’,
  * ‘stroke-miterlimit’,
@@ -298,6 +303,8 @@ typedef struct _Esvg_Attribute_Presentation {
 	double fill_opacity;
 	Esvg_Fill_Rule fill_rule;
 	Eina_Bool visibility;
+	Esvg_Color stop_color;
+	double stop_opacity;
 	/* are they set? */
 	Eina_Bool clip_path_set;
 	Eina_Bool color_set;
@@ -311,6 +318,8 @@ typedef struct _Esvg_Attribute_Presentation {
 	Eina_Bool fill_opacity_set;
 	Eina_Bool fill_rule_set;
 	Eina_Bool visibility_set;
+	Eina_Bool stop_color_set;
+	Eina_Bool stop_opacity_set;
 } Esvg_Attribute_Presentation;
 
 /**
@@ -475,6 +484,12 @@ EAPI void esvg_gradient_stop_add(Enesim_Renderer *r, Esvg_Gradient_Stop *s);
 EAPI void esvg_gradient_stop_get(Enesim_Renderer *r, const Eina_List **l);
 EAPI void esvg_gradient_units_set(Enesim_Renderer *r, Esvg_Gradient_Units units);
 EAPI void esvg_gradient_units_get(Enesim_Renderer *r, Esvg_Gradient_Units *units);
+EAPI Eina_Bool esvg_gradient_units_is_set(Enesim_Renderer *r);
+EAPI void esvg_gradient_transform_set(Enesim_Renderer *r, const Enesim_Matrix *transform);
+EAPI void esvg_gradient_transform_get(Enesim_Renderer *r, Enesim_Matrix *transform);
+EAPI Eina_Bool esvg_gradient_transform_is_set(Enesim_Renderer *r);
+EAPI void esvg_gradient_spread_method_set(Enesim_Renderer *r, Esvg_Spread_Method spread_method);
+EAPI void esvg_gradient_spread_method_get(Enesim_Renderer *r, Esvg_Spread_Method *spread_method);
 
 EAPI Enesim_Renderer * esvg_radial_gradient_new(void);
 EAPI void esvg_radial_gradient_cx_set(Enesim_Renderer *r, const Esvg_Coord *cx);

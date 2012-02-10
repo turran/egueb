@@ -55,9 +55,24 @@ static void _parser_gradient_merge(Esvg_Parser_Gradient *thiz,
 		esvg_gradient_stop_get(rel, &l2);
 		EINA_LIST_FOREACH(l2, tmp, s)
 		{
+			printf("adding stops from the relative %g\n", s->offset.value);
 			esvg_gradient_stop_add(r, s);
 		}
 	}
+	if (!esvg_gradient_units_is_set(r))
+	{
+		Esvg_Gradient_Units gu;
+
+		esvg_gradient_units_get(rel, &gu);
+		esvg_gradient_units_set(r, gu);
+	}
+#if 0
+	/* TODO we need to check that both gradients are of the same type */
+	rg = esvg_is_radial_gradient(r);
+	relrg = esvg_is_radial_gradient(rel);
+	if (!(rg ^ relrg)
+	{
+#endif
 	if (thiz->descriptor->merge)
 		thiz->descriptor->merge(r, rel);
 }
@@ -107,6 +122,20 @@ static Eina_Bool _parser_gradient_attribute_set(Edom_Tag *tag, const char *key, 
 		 */
 		esvg_parser_post_parse_add(parser, _post_parse_href_cb, thiz);
 	}
+	else if (strcmp(key, "gradientTransform") == 0)
+	{
+		Enesim_Matrix matrix;
+
+		esvg_transformation_get(&matrix, value);
+		esvg_gradient_transform_set(r, &matrix);
+	}
+	else if (strcmp(key, "spreadMethod") == 0)
+	{
+		Esvg_Spread_Method smethod;
+
+		esvg_parser_spread_method_get(&smethod, value);
+		esvg_gradient_spread_method_set(r, smethod);
+	}
 	else
 	{
 		Esvg_Parser_Gradient *thiz;
@@ -116,8 +145,6 @@ static Eina_Bool _parser_gradient_attribute_set(Edom_Tag *tag, const char *key, 
 			ret = thiz->descriptor->attribute_set(tag, key, value);
 	}
 	return ret;
-
-	return EINA_TRUE;
 }
 
 static const char * _parser_gradient_attribute_get(Edom_Tag *tag, const char *attribute)

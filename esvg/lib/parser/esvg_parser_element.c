@@ -227,6 +227,18 @@ static Eina_Bool _parser_element_attribute_set(Edom_Tag *tag, const char *key, c
 		stroke_line_join = esvg_stroke_line_join_get(value);
 		esvg_element_stroke_line_join_set(r, stroke_line_join);
 	}
+	else if (strcmp(key, "stop-color") == 0)
+	{
+		Esvg_Color color;
+
+		esvg_color_get(&color, value);
+		/* TODO */
+	}
+	else if (strcmp(key, "stop-opacity") == 0)
+	{
+		double stop_opacity = esvg_number_get(value, 1.0);
+		/* TODO */
+	}
 	else
 	{
 		if (thiz->descriptor)

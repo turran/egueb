@@ -85,6 +85,12 @@ void esvg_attribute_presentation_stroke_line_cap_unset(Esvg_Attribute_Presentati
 void esvg_attribute_presentation_visibility_set(Esvg_Attribute_Presentation *thiz, Eina_Bool visibility);
 void esvg_attribute_presentation_visibility_unset(Esvg_Attribute_Presentation *thiz);
 
+void esvg_attribute_presentation_stop_color_set(Esvg_Attribute_Presentation *thiz, const Esvg_Color *stop_color);
+void esvg_attribute_presentation_stop_color_unset(Esvg_Attribute_Presentation *thiz);
+
+void esvg_attribute_presentation_stop_opacity_set(Esvg_Attribute_Presentation *thiz, double stop_opacity);
+void esvg_attribute_presentation_stop_opacity_unset(Esvg_Attribute_Presentation *thiz, double stop_opacity);
+
 void esvg_attribute_presentation_dump(Esvg_Attribute_Presentation *thiz);
 
 /* element */
@@ -136,6 +142,7 @@ typedef struct _Esvg_Shape_Enesim_State {
 	Enesim_Shape_Stroke_Cap stroke_cap;
 	Enesim_Shape_Stroke_Join stroke_join;
 	Enesim_Color stroke_color;
+	Enesim_Renderer *stroke_renderer;
 	double stroke_weight;
 	/* fill */
 	Enesim_Renderer *fill_renderer;
@@ -201,7 +208,7 @@ void esvg_clip_path_relative_set(Enesim_Renderer *r, Enesim_Renderer *rel, Enesi
 /* g */
 
 /* paint server */
-typedef Eina_Bool (*Esvg_Paint_Server_Setup)(Enesim_Renderer *r, Enesim_Renderer *rel);
+typedef Eina_Bool (*Esvg_Paint_Server_Setup)(Enesim_Renderer *r, const Esvg_Element_State *state, Enesim_Renderer *rel);
 
 typedef struct _Evg_Paint_Server_Descriptor
 {
@@ -213,13 +220,21 @@ typedef struct _Evg_Paint_Server_Descriptor
 	Esvg_Element_Clone clone;
 } Esvg_Paint_Server_Descriptor;
 
-void esvg_paint_server_renderer_setup(Enesim_Renderer *r, Enesim_Renderer *rel);
+void esvg_paint_server_renderer_setup(Enesim_Renderer *r, const Esvg_Element_State *state, Enesim_Renderer *rel);
 Enesim_Renderer * esvg_paint_server_new(Esvg_Paint_Server_Descriptor *descriptor,
 		void *data);
 void * esvg_paint_server_data_get(Enesim_Renderer *r);
 
 /* gradient */
-typedef Eina_Bool (*Esvg_Gradient_Setup)(Enesim_Renderer *r, Enesim_Renderer *rel, Eina_List *stops);
+typedef struct _Esvg_Gradient_State
+{
+	Esvg_Gradient_Units units;
+	Esvg_Spread_Method spread_method;
+	Enesim_Matrix transform;
+	Eina_List *stops;
+} Esvg_Gradient_State;
+
+typedef Eina_Bool (*Esvg_Gradient_Setup)(Enesim_Renderer *r, const Esvg_Element_State *state, Enesim_Renderer *rel, const Esvg_Gradient_State *gstate);
 
 typedef struct _Evg_Gradient_Descriptor
 {

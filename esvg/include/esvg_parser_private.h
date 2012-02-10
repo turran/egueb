@@ -240,5 +240,6 @@ Eina_Bool esvg_parser_is_uri(const char *attr);
 
 Eina_Bool esvg_parser_gradient_units_get(Esvg_Gradient_Units *gu, const char *value);
 Eina_Bool esvg_parser_fill_rule_get(Esvg_Fill_Rule *rule, const char *attr);
+Eina_Bool esvg_parser_spread_method_get(Esvg_Spread_Method *smethod, const char *attr);
 
 #endif

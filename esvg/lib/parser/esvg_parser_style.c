@@ -289,6 +289,18 @@ static void _attr_callback(Esvg_Parser_Style_Inline *thiz,
 		stroke_line_join = esvg_stroke_line_join_get(value);
 		esvg_attribute_presentation_stroke_line_join_set(thiz->attr, stroke_line_join);
 	}
+	else if (strcmp(key, "stop-color") == 0)
+	{
+		Esvg_Color color;
+
+		esvg_color_get(&color, value);
+		esvg_attribute_presentation_stop_color_set(thiz->attr, &color);
+	}
+	else if (strcmp(key, "stop-opacity") == 0)
+	{
+		double stop_opacity = esvg_number_get(value, 1.0);
+		esvg_attribute_presentation_stop_opacity_set(thiz->attr, stop_opacity);
+	}
 }
 /*----------------------------------------------------------------------------*
  *                          Css context interface                             *
@@ -372,6 +384,7 @@ void esvg_parser_style_inline_set(const char *value, Edom_Tag *tag,
 			*c = '\0';
 			vv = c + 1;
 			ESVG_SPACE_SKIP(vv);
+			/* and call the attr_cb */
 			_attr_callback(&thiz, v, vv);
 		}
 		v = sc + 1;
@@ -386,10 +399,10 @@ void esvg_parser_style_inline_set(const char *value, Edom_Tag *tag,
 		*c = '\0';
 		vv = c + 1;
 		ESVG_SPACE_SKIP(vv);
+		/* and call the attr_cb */
 		_attr_callback(&thiz, v, vv);
 	}
 
-	/* and call the attr_cb */
 	free(orig);
 }
 

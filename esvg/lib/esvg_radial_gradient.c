@@ -78,12 +78,15 @@ static void _radial_gradient_clone(Enesim_Renderer *r, Enesim_Renderer *rr)
 
 }
 
-static Eina_Bool _radial_gradient_setup(Enesim_Renderer *r, Enesim_Renderer *rel, Eina_List *stops)
+static Eina_Bool _radial_gradient_setup(Enesim_Renderer *r,
+		const Esvg_Element_State *state,
+		Enesim_Renderer *rel,
+		const Esvg_Gradient_State *gstate)
 {
 	Esvg_Radial_Gradient *thiz;
 	Esvg_Gradient_Stop *stop;
 	Esvg_Gradient_Units gu;
-	Enesim_Rectangle bbox;
+	Enesim_Repeat_Mode mode;
 	Eina_List *l;
 	double cx;
 	double cy;
@@ -92,39 +95,67 @@ static Eina_Bool _radial_gradient_setup(Enesim_Renderer *r, Enesim_Renderer *rel
 	double rad;
 
 	thiz = _esvg_radial_gradient_get(r);
-	esvg_gradient_units_get(r, &gu);
+
+	gu = gstate->units;
+	switch (gstate->spread_method)
+	{
+		case ESVG_SPREAD_METHOD_PAD:
+		mode = ENESIM_PAD;
+		break;
+
+		case ESVG_SPREAD_METHOD_REPEAT:
+		mode = ENESIM_REPEAT;
+		break;
+
+		case ESVG_SPREAD_METHOD_REFLECT:
+		mode = ENESIM_REFLECT;
+		break;
+	}
+	enesim_renderer_gradient_mode_set(thiz->r, mode);
+
 	if (gu == ESVG_OBJECT_BOUNDING_BOX)
 	{
-		enesim_renderer_boundings(rel, &bbox);
+		Eina_Rectangle bbox;
+
+		/* check that the coordinates shold be set with (0,0) -> (1, 1) */
+		cx = esvg_length_final_get(&thiz->cx, 1);
+		cy = esvg_length_final_get(&thiz->cy, 1);
+		rad = esvg_length_final_get(&thiz->rad, 1);
+
+		enesim_renderer_destination_boundings(rel, &bbox, 0, 0);
+		cx = cx * (bbox.w) - bbox.x;
+		cy = cy * (bbox.h) - bbox.y;
+
+		/* fx and fy should be the 0% stop? */
+		/* cx and cy + r should be the 100% stop */
 	}
 	else
 	{
+		double w;
+		double h;
+
 		/* use the user space coordiantes */
-		printf("TODO\n");
+		w = state->viewbox_w;
+		h = state->viewbox_h;
+
+		cx = esvg_length_final_get(&thiz->cx, w);
+		cy = esvg_length_final_get(&thiz->cy, h);
+		rad = esvg_length_final_get(&thiz->rad, w);
 	}
 
-	/* cx and cy + r should be the 100% stop */
-	/* fx and fy should be the 0% stop? */
-	cx = esvg_length_final_get(&thiz->cx, bbox.w) + bbox.x;
-	cy = esvg_length_final_get(&thiz->cy, bbox.h) + bbox.y;
-	rad = esvg_length_final_get(&thiz->rad, bbox.w);
-	fx = esvg_length_final_get(&thiz->fx, bbox.w) + bbox.x;
-	fy = esvg_length_final_get(&thiz->fy, bbox.h) + bbox.y;
 
-	printf("%g %g %g %g\n", cx, cy, fx, fy);
-	/* FIXME for now */
-	enesim_renderer_gradient_radial_center_x_set(thiz->r, 140);
-	enesim_renderer_gradient_radial_center_y_set(thiz->r, 70);
-	enesim_renderer_gradient_radial_radius_y_set(thiz->r, 120);
-	enesim_renderer_gradient_radial_radius_x_set(thiz->r, 120);
+	/* FIXME for now we dont handle the focis */
+	enesim_renderer_gradient_radial_center_x_set(thiz->r, cx);
+	enesim_renderer_gradient_radial_center_y_set(thiz->r, cy);
+	enesim_renderer_gradient_radial_radius_y_set(thiz->r, rad);
+	enesim_renderer_gradient_radial_radius_x_set(thiz->r, rad);
 
-	EINA_LIST_FOREACH(stops, l, stop)
+	EINA_LIST_FOREACH(gstate->stops, l, stop)
 	{
 		Enesim_Renderer_Gradient_Stop s;
 
 		enesim_argb_components_from(&s.argb, lrint(stop->stop_opacity * 255),
 				stop->stop_color.r, stop->stop_color.g, stop->stop_color.b);
-		printf("%08x\n", s.argb);
 		if (stop->offset.unit == ESVG_UNIT_LENGTH_PERCENT)
 			s.pos = stop->offset.value / 100.0;
 		else
@@ -136,8 +167,17 @@ static Eina_Bool _radial_gradient_setup(Enesim_Renderer *r, Enesim_Renderer *rel
 			else
 				s.pos = stop->offset.value;
 		}
+		printf("color = %08x pos = %g\n", s.argb, s.pos);
 		enesim_renderer_gradient_stop_add(thiz->r, &s);
 	}
+	/* TODO set the transformation geometry */
+	{
+		Enesim_Matrix m;
+
+		enesim_matrix_inverse(&state->transform, &m);
+		enesim_renderer_transformation_set(thiz->r, &m);
+	}
+
 	return EINA_TRUE;
 }
 

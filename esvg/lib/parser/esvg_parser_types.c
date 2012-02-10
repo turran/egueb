@@ -265,6 +265,52 @@ Eina_Bool _esvg_color_keyword_from(Esvg_Color *color, const char *attr_val)
 	return EINA_TRUE;
 }
 
+static Eina_Bool _esvg_transformation_matrix_get(Enesim_Matrix *matrix, const char *attr_val, const char **endptr)
+{
+	double mx[6];
+	int nvalues = 0;
+	const char *tmp = attr_val;
+	char *end;
+	const size_t sz = 6;
+
+	ESVG_SPACE_SKIP(tmp);
+	if (strncmp(tmp, "matrix", sz) != 0)
+		return EINA_FALSE;
+	tmp += sz;
+	ESVG_SPACE_SKIP(tmp);
+	if (tmp[0] != '(')
+		return EINA_FALSE;
+	tmp++;
+	while (*tmp)
+	{
+		double val;
+
+		ESVG_SPACE_SKIP(tmp);
+		val = strtod(tmp, &end);
+		if (errno == ERANGE)
+			val = 0;
+		if (end == tmp)
+			break;
+		tmp = end;
+		mx[nvalues] = val;
+		nvalues++;
+		/* we store only the 2 first numbers */
+		if (nvalues >= 6)
+			break;
+		/* skip the comma and the blanks */
+		ESVG_SPACE_COMMA_SKIP(tmp);
+	}
+
+	if (tmp[0] != ')')
+		return EINA_FALSE;
+	tmp++;
+
+	enesim_matrix_values_set(matrix, mx[0], mx[2], mx[4], mx[1], mx[3], mx[5], 0, 0, 1);
+
+	*endptr = tmp;
+	return EINA_TRUE;
+}
+
 static Eina_Bool _esvg_transformation_translate_get(Enesim_Matrix *matrix, const char *attr_val, const char **endptr)
 {
 	double tx[2];
@@ -405,53 +451,6 @@ static Eina_Bool _esvg_transformation_rotate_get(Enesim_Matrix *matrix, const ch
 	tmp++;
 	/* FIXME handle the origin */
 	enesim_matrix_rotate(matrix, rx[0] * M_PI / 180.0);
-
-	*endptr = tmp;
-
-	return EINA_TRUE;
-}
-
-static Eina_Bool _esvg_transformation_matrix_get(Enesim_Matrix *matrix, const char *attr_val, const char **endptr)
-{
-	double *values = (double *)matrix;
-	int nvalues = 0;
-	const char *tmp = attr_val;
-	char *end;
-	const size_t sz = 6;
-
-	ESVG_SPACE_SKIP(tmp);
-	if (strncmp(tmp, "matrix", sz) != 0)
-		return EINA_FALSE;
-	tmp += sz;
-	ESVG_SPACE_SKIP(tmp);
-	if (tmp[0] != '(')
-		return EINA_FALSE;
-	tmp++;
-	/* six numbers */
-	while (*tmp)
-	{
-		double val;
-
-		ESVG_SPACE_SKIP(tmp);
-		val = strtod(tmp, &end);
-		if (errno == ERANGE)
-			val = 0;
-		if (end == tmp)
-			break;
-		tmp = end;
-		*values = val;
-		values++;
-		nvalues++;
-		/* we store only the 6 first numbers */
-		if (nvalues >= 6)
-			break;
-		/* skip the comma and the blanks */
-		ESVG_SPACE_COMMA_SKIP(tmp);
-	}
-
-	if (tmp[0] != ')')
-		return EINA_FALSE;
-	tmp++;
 
 	*endptr = tmp;
 
@@ -1007,6 +1006,27 @@ Eina_Bool esvg_parser_fill_rule_get(Esvg_Fill_Rule *rule, const char *attr)
 	else if (strncmp(attr, "evenodd", 7) == 0)
 	{
 		*rule = ESVG_EVEN_ODD;
+	}
+	else
+	{
+		return EINA_FALSE;
+	}
+	return EINA_TRUE;
+}
+
+Eina_Bool esvg_parser_spread_method_get(Esvg_Spread_Method *smethod, const char *attr)
+{
+	if (strncmp(attr, "pad", 3) == 0)
+	{
+		*smethod = ESVG_SPREAD_METHOD_PAD;
+	}
+	else if (strncmp(attr, "reflect", 7) == 0)
+	{
+		*smethod = ESVG_SPREAD_METHOD_REFLECT;
+	}
+	else if (strncmp(attr, "repeat", 6) == 0)
+	{
+		*smethod = ESVG_SPREAD_METHOD_REPEAT;
 	}
 	else
 	{

@@ -69,13 +69,15 @@ static void _esvg_paint_server_cleanup(Enesim_Renderer *r)
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
-void esvg_paint_server_renderer_setup(Enesim_Renderer *r, Enesim_Renderer *rel)
+void esvg_paint_server_renderer_setup(Enesim_Renderer *r,
+		const Esvg_Element_State *state,
+		Enesim_Renderer *rel)
 {
 	Esvg_Paint_Server *thiz;
 
 	thiz = _esvg_paint_server_get(r);
 	if (!thiz->setup) return;
-	thiz->setup(r, rel);
+	thiz->setup(r, state, rel);
 }
 
 Enesim_Renderer * esvg_paint_server_new(Esvg_Paint_Server_Descriptor *descriptor,

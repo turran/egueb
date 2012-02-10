@@ -118,6 +118,11 @@ static void _esvg_shape_enesim_state_get(Enesim_Renderer *r,
 			enesim_color_components_from(&dstate->stroke_color,
 					stroke_opacity, c->r, c->g, c->b);
 		}
+		else if (attr->stroke.type == ESVG_PAINT_SERVER)
+		{
+			/* just get the renderer here, dont do the setup */
+			dstate->stroke_renderer = esvg_element_renderer_get(attr->stroke.value.paint_server);
+		}
 		else if (attr->stroke.type == ESVG_PAINT_NONE)
 		{
 			dstate->draw_mode &= ~ENESIM_SHAPE_DRAW_MODE_STROKE;
@@ -187,11 +192,13 @@ static Eina_Bool _esvg_shape_setup(Enesim_Renderer *r, Esvg_Element_State *estat
 		Eina_Bool ret;
 
 		ret = enesim_renderer_setup(attr->clip_path, s, error);
-		printf("clip path setup %d\n", ret);
 	}
 	/* in case we are going to use the fill renderer do its own setup */
 	if (attr->fill_set && attr->fill.type == ESVG_PAINT_SERVER)
-		esvg_paint_server_renderer_setup(attr->fill.value.paint_server, r);
+		esvg_paint_server_renderer_setup(attr->fill.value.paint_server, estate, r);
+	/* in case we are going to use the stroke renderer do its own setup */
+	if (attr->stroke_set && attr->stroke.type == ESVG_PAINT_SERVER)
+		esvg_paint_server_renderer_setup(attr->stroke.value.paint_server, estate, r);
 	return EINA_TRUE;
 }
 /*============================================================================*

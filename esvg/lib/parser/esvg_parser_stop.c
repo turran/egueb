@@ -27,24 +27,44 @@ static Eina_Bool _parser_stop_attribute_set(Edom_Tag *tag, const char *key,
 	Esvg_Gradient_Stop *s;
 
 	s = edom_tag_data_get(tag);
-	if (strcmp(key, "stop-color") == 0)
+	if (strcmp(key, "id") == 0)
 	{
-		Esvg_Color color;
-
-		esvg_color_get(&color, value);
-		s->stop_color = color;
+		/* nothing to do here yet */
 	}
 	else if (strcmp(key, "offset") == 0)
 	{
 		Esvg_Length offset;
 
 		esvg_length_get(&offset, value, ESVG_LENGTH_0);
+		printf("offset %g\n", offset.value);
 		s->offset = offset;
+	}
+	else if (strcmp(key, "stop-color") == 0)
+	{
+		Esvg_Color color;
+
+		esvg_color_get(&color, value);
+		s->stop_color = color;
 	}
 	else if (strcmp(key, "stop-opacity") == 0)
 	{
 		double stop_opacity = esvg_number_get(value, 1.0);
 		s->stop_opacity = stop_opacity;
+	}
+	else if (strcmp(key, "style") == 0)
+	{
+		Esvg_Attribute_Presentation attr;
+
+		memset(&attr, 0, sizeof(Esvg_Attribute_Presentation));
+		esvg_parser_style_inline_set(value, tag, &attr);
+
+		printf("style = %s\n", value);
+
+		if (attr.stop_opacity_set)
+			s->stop_opacity = attr.stop_opacity;
+		
+		if (attr.stop_color_set)
+			s->stop_color = attr.stop_color;
 	}
 	else
 	{
