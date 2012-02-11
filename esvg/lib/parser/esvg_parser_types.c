@@ -265,16 +265,22 @@ Eina_Bool _esvg_color_keyword_from(Esvg_Color *color, const char *attr_val)
 	return EINA_TRUE;
 }
 
-static Eina_Bool _esvg_transformation_matrix_get(Enesim_Matrix *matrix, const char *attr_val, const char **endptr)
+/* parse a string of type funcname(a, b, .... numelements)
+ * in, out numelements
+ * in attr_val
+ * out endptr
+ * out elements
+ */
+static Eina_Bool _esvg_function_get(const char *attr_val, const char **endptr, const char *funcname, int *numelements, double *elements)
 {
-	double mx[6];
 	int nvalues = 0;
 	const char *tmp = attr_val;
 	char *end;
-	const size_t sz = 6;
+	size_t sz;
 
+	sz = strlen(funcname);
 	ESVG_SPACE_SKIP(tmp);
-	if (strncmp(tmp, "matrix", sz) != 0)
+	if (strncmp(tmp, funcname, sz) != 0)
 		return EINA_FALSE;
 	tmp += sz;
 	ESVG_SPACE_SKIP(tmp);
@@ -286,16 +292,18 @@ static Eina_Bool _esvg_transformation_matrix_get(Enesim_Matrix *matrix, const ch
 		double val;
 
 		ESVG_SPACE_SKIP(tmp);
+		if (tmp[0] == ')')
+			goto end;
 		val = strtod(tmp, &end);
 		if (errno == ERANGE)
 			val = 0;
 		if (end == tmp)
 			break;
 		tmp = end;
-		mx[nvalues] = val;
+		elements[nvalues] = val;
 		nvalues++;
-		/* we store only the 2 first numbers */
-		if (nvalues >= 6)
+		/* if we passed the limit, break */
+		if (nvalues >= *numelements)
 			break;
 		/* skip the comma and the blanks */
 		ESVG_SPACE_COMMA_SKIP(tmp);
@@ -303,108 +311,89 @@ static Eina_Bool _esvg_transformation_matrix_get(Enesim_Matrix *matrix, const ch
 
 	if (tmp[0] != ')')
 		return EINA_FALSE;
+end:
 	tmp++;
+	*numelements = nvalues;
+	*endptr = tmp;
 
+	return EINA_TRUE;
+}
+
+
+static Eina_Bool _esvg_transformation_matrix_get(Enesim_Matrix *matrix, const char *attr_val, const char **endptr)
+{
+	int numelements = 6;
+	double mx[6];
+
+	if (!_esvg_function_get(attr_val, endptr, "matrix", &numelements, mx))
+		return EINA_FALSE;
+	if (numelements < 6)
+		return EINA_FALSE;
 	enesim_matrix_values_set(matrix, mx[0], mx[2], mx[4], mx[1], mx[3], mx[5], 0, 0, 1);
 
-	*endptr = tmp;
 	return EINA_TRUE;
 }
 
 static Eina_Bool _esvg_transformation_translate_get(Enesim_Matrix *matrix, const char *attr_val, const char **endptr)
 {
+	int numelements = 2;
 	double tx[2];
-	int nvalues = 0;
-	const char *tmp = attr_val;
-	char *end;
-	const size_t sz = 9;
 
-	ESVG_SPACE_SKIP(tmp);
-	if (strncmp(tmp, "translate", sz) != 0)
+	if (!_esvg_function_get(attr_val, endptr, "translate", &numelements, tx))
 		return EINA_FALSE;
-	tmp += sz;
-	ESVG_SPACE_SKIP(tmp);
-	if (tmp[0] != '(')
+	if (numelements < 1)
 		return EINA_FALSE;
-	tmp++;
-	while (*tmp)
-	{
-		double val;
-
-		ESVG_SPACE_SKIP(tmp);
-		val = strtod(tmp, &end);
-		if (errno == ERANGE)
-			val = 0;
-		if (end == tmp)
-			break;
-		tmp = end;
-		tx[nvalues] = val;
-		nvalues++;
-		/* we store only the 2 first numbers */
-		if (nvalues >= 2)
-			break;
-		/* skip the comma and the blanks */
-		ESVG_SPACE_COMMA_SKIP(tmp);
-	}
-
-	if (tmp[0] != ')')
-		return EINA_FALSE;
-	tmp++;
 	/* on translation the tx is mandatory but not ty */
-	if (nvalues == 1)
+	if (numelements == 1)
 		tx[1] = 0;
 	enesim_matrix_translate(matrix, tx[0], tx[1]);
-
-	*endptr = tmp;
 
 	return EINA_TRUE;
 }
 
-/* FIXME same code as the translate, merge it */
+static Eina_Bool _esvg_transformation_skewx_get(Enesim_Matrix *matrix, const char *attr_val, const char **endptr)
+{
+	Enesim_Matrix m;
+	double angle;
+	int numelements = 1;
+
+	if (!_esvg_function_get(attr_val, endptr, "skewX", &numelements, &angle))
+		return EINA_FALSE;
+	if (numelements < 1)
+		return EINA_FALSE;
+
+	enesim_matrix_values_set(matrix, 1, atan(angle * M_PI / 180.0), 0, 0, 1, 0, 0, 0, 1);
+	return EINA_TRUE;
+}
+
+static Eina_Bool _esvg_transformation_skewy_get(Enesim_Matrix *matrix, const char *attr_val, const char **endptr)
+{
+	Enesim_Matrix m;
+	double angle;
+	int numelements = 1;
+
+	if (!_esvg_function_get(attr_val, endptr, "skewX", &numelements, &angle))
+		return EINA_FALSE;
+	if (numelements < 1)
+		return EINA_FALSE;
+
+	enesim_matrix_values_set(matrix, 1, 0, 0, atan(angle * M_PI / 180.0), 1, 0, 0, 0, 1);
+	return EINA_TRUE;
+}
+
 static Eina_Bool _esvg_transformation_scale_get(Enesim_Matrix *matrix, const char *attr_val, const char **endptr)
 {
-	double tx[2];
-	int nvalues = 0;
-	const char *tmp = attr_val;
-	char *end;
-	const size_t sz = 5;
+	Enesim_Matrix m;
+	double sx[2];
+	int numelements = 2;
 
-	ESVG_SPACE_SKIP(tmp);
-	if (strncmp(tmp, "scale", sz) != 0)
+	if (!_esvg_function_get(attr_val, endptr, "scale", &numelements, sx))
 		return EINA_FALSE;
-	tmp += sz;
-	ESVG_SPACE_SKIP(tmp);
-	if (tmp[0] != '(')
+	if (numelements < 1)
 		return EINA_FALSE;
-	tmp++;
-	while (*tmp)
-	{
-		double val;
-
-		ESVG_SPACE_SKIP(tmp);
-		val = strtod(tmp, &end);
-		if (errno == ERANGE)
-			val = 0;
-		if (end == tmp)
-			break;
-		tmp = end;
-		tx[nvalues] = val;
-		nvalues++;
-		/* we store only the 2 first numbers */
-		if (nvalues >= 2)
-			break;
-		/* skip the comma and the blanks */
-		ESVG_SPACE_COMMA_SKIP(tmp);
-	}
-
-	if (tmp[0] != ')')
-		return EINA_FALSE;
-	tmp++;
-	if (nvalues == 1)
-		tx[1] = tx[0];
-	enesim_matrix_scale(matrix, tx[0], tx[1]);
-
-	*endptr = tmp;
+	if (numelements == 1)
+		sx[1] = sx[0];
+	enesim_matrix_scale(matrix, sx[0], sx[1]);
 
 	return EINA_TRUE;
 }
@@ -412,47 +401,25 @@ static Eina_Bool _esvg_transformation_scale_get(Enesim_Matrix *matrix, const cha
 
 static Eina_Bool _esvg_transformation_rotate_get(Enesim_Matrix *matrix, const char *attr_val, const char **endptr)
 {
+	Enesim_Matrix tx;
 	double rx[3];
-	int nvalues = 0;
-	const char *tmp = attr_val;
-	char *end;
-	const size_t sz = 6;
+	int numelements = 3;
 
-	ESVG_SPACE_SKIP(tmp);
-	if (strncmp(tmp, "rotate", sz) != 0)
+	if (!_esvg_function_get(attr_val, endptr, "rotate", &numelements, rx))
 		return EINA_FALSE;
-	tmp += sz;
-	ESVG_SPACE_SKIP(tmp);
-	if (tmp[0] != '(')
+	if (numelements < 1)
 		return EINA_FALSE;
-	tmp++;
-	while (*tmp)
-	{
-		double val;
-
-		ESVG_SPACE_SKIP(tmp);
-		val = strtod(tmp, &end);
-		if (errno == ERANGE)
-			val = 0;
-		if (end == tmp)
-			break;
-		tmp = end;
-		rx[nvalues] = val;
-		nvalues++;
-		/* we store only the 4 first numbers */
-		if (nvalues >= 3)
-			break;
-		/* skip the comma and the blanks */
-		ESVG_SPACE_COMMA_SKIP(tmp);
-	}
-
-	if (tmp[0] != ')')
-		return EINA_FALSE;
-	tmp++;
-	/* FIXME handle the origin */
 	enesim_matrix_rotate(matrix, rx[0] * M_PI / 180.0);
-
-	*endptr = tmp;
+	/* handle the origin */
+	if (numelements > 1)
+	{
+		if (numelements < 3)
+			return EINA_FALSE;
+		enesim_matrix_translate(&tx, -rx[1], -rx[2]);
+		enesim_matrix_compose(&tx, matrix, matrix);
+		enesim_matrix_translate(&tx, rx[1], rx[2]);
+		enesim_matrix_compose(matrix, &tx, matrix);
+	}
 
 	return EINA_TRUE;
 }
@@ -1039,33 +1006,31 @@ Eina_Bool esvg_transformation_get(Enesim_Matrix *matrix, const char *attr)
 {
 	Eina_Bool ret;
 	const char *endptr = NULL;
+	typedef Eina_Bool (*Matrix_Get)(Enesim_Matrix *matrix, const char *attr_val, const char **endptr);
 
+	Matrix_Get m[6] = {
+		_esvg_transformation_matrix_get,
+		_esvg_transformation_translate_get,
+		_esvg_transformation_rotate_get,
+		_esvg_transformation_scale_get,
+		_esvg_transformation_skewx_get,
+		_esvg_transformation_skewy_get,
+	};
 	enesim_matrix_identity(matrix);
 	do
 	{
 		Enesim_Matrix parsed;
+		int i;
+
 		enesim_matrix_identity(&parsed);
-		ret = _esvg_transformation_matrix_get(&parsed, attr, &endptr);
-		if (!ret)
+		for (i = 0; i < 6; i++)
 		{
-			ret = _esvg_transformation_translate_get(&parsed, attr, &endptr);
-			if (!ret)
-			{
-				ret = _esvg_transformation_rotate_get(&parsed, attr, &endptr);
-				printf("rotate = %d\n", ret);
-				if (!ret)
-				{
-					ret = _esvg_transformation_scale_get(&parsed, attr, &endptr);
-					printf("scale = %d\n", ret);
-				}
-			}
-			else
-			{
-				printf("translate = %d\n", ret);
-			}
+			ret = m[i](&parsed, attr, &endptr);
+			if (ret) break;
 		}
 		if (ret)
 		{
+			printf("found, composing\n");
 			enesim_matrix_compose(matrix, &parsed, matrix);
 		}
 		attr = endptr;
@@ -1081,13 +1046,14 @@ Eina_Bool esvg_transformation_get(Enesim_Matrix *matrix, const char *attr)
  */
 Eina_Bool esvg_parser_path(const char *value, Enesim_Renderer *r)
 {
-	char *iter;
 	Esvg_Path_Command cmd;
 	Esvg_Path_Command_Type type;
+	Esvg_Point p_cur;
 	Eina_Bool is_relative;
 	Eina_Bool is_line_h;
 	Eina_Bool is_line_v;
-	Esvg_Point p_cur;
+	Eina_Bool is_valid;
+	char *iter;
 
 	iter = (char *)value;
 	ESVG_SPACE_SKIP(iter);
@@ -1124,6 +1090,7 @@ Eina_Bool esvg_parser_path(const char *value, Enesim_Renderer *r)
 	while (*iter)
 	{
 		Esvg_Point p;
+		is_valid = EINA_FALSE;
 
 		ESVG_SPACE_SKIP(iter);
 
@@ -1134,6 +1101,7 @@ Eina_Bool esvg_parser_path(const char *value, Enesim_Renderer *r)
 			is_line_h = EINA_FALSE;
 			is_line_v = EINA_FALSE;
 			iter++;
+			is_valid = EINA_TRUE;
 		}
 		else if (*iter == 'm')
 		{
@@ -1142,6 +1110,7 @@ Eina_Bool esvg_parser_path(const char *value, Enesim_Renderer *r)
 			is_line_h = EINA_FALSE;
 			is_line_v = EINA_FALSE;
 			iter++;
+			is_valid = EINA_TRUE;
 		}
 		else if (*iter == 'L')
 		{
@@ -1150,6 +1119,7 @@ Eina_Bool esvg_parser_path(const char *value, Enesim_Renderer *r)
 			is_line_h = EINA_FALSE;
 			is_line_v = EINA_FALSE;
 			iter++;
+			is_valid = EINA_TRUE;
 		}
 		else if (*iter == 'l')
 		{
@@ -1158,6 +1128,7 @@ Eina_Bool esvg_parser_path(const char *value, Enesim_Renderer *r)
 			is_line_h = EINA_FALSE;
 			is_line_v = EINA_FALSE;
 			iter++;
+			is_valid = EINA_TRUE;
 		}
 		else if (*iter == 'H')
 		{
@@ -1166,6 +1137,7 @@ Eina_Bool esvg_parser_path(const char *value, Enesim_Renderer *r)
 			is_line_h = EINA_TRUE;
 			is_line_v = EINA_FALSE;
 			iter++;
+			is_valid = EINA_TRUE;
 		}
 		else if (*iter == 'h')
 		{
@@ -1174,6 +1146,7 @@ Eina_Bool esvg_parser_path(const char *value, Enesim_Renderer *r)
 			is_line_h = EINA_TRUE;
 			is_line_v = EINA_FALSE;
 			iter++;
+			is_valid = EINA_TRUE;
 		}
 		else if (*iter == 'V')
 		{
@@ -1182,6 +1155,7 @@ Eina_Bool esvg_parser_path(const char *value, Enesim_Renderer *r)
 			is_line_h = EINA_FALSE;
 			is_line_v = EINA_TRUE;
 			iter++;
+			is_valid = EINA_TRUE;
 		}
 		else if (*iter == 'v')
 		{
@@ -1190,68 +1164,77 @@ Eina_Bool esvg_parser_path(const char *value, Enesim_Renderer *r)
 			is_line_h = EINA_FALSE;
 			is_line_v = EINA_TRUE;
 			iter++;
+			is_valid = EINA_TRUE;
 		}
 		else if (*iter == 'C')
 		{
 			type = ESVG_PATH_CUBIC_TO;
 			is_relative = EINA_FALSE;
 			iter++;
+			is_valid = EINA_TRUE;
 		}
 		else if (*iter == 'c')
 		{
 			type = ESVG_PATH_CUBIC_TO;
 			is_relative = EINA_TRUE;
 			iter++;
+			is_valid = EINA_TRUE;
 		}
 		else if (*iter == 'S')
 		{
 			type = ESVG_PATH_SCUBIC_TO;
 			is_relative = EINA_FALSE;
 			iter++;
+			is_valid = EINA_TRUE;
 		}
 		else if (*iter == 's')
 		{
 			type = ESVG_PATH_SCUBIC_TO;
 			is_relative = EINA_TRUE;
 			iter++;
+			is_valid = EINA_TRUE;
 		}
 		else if (*iter == 'Q')
 		{
 			type = ESVG_PATH_QUADRATIC_TO;
 			is_relative = EINA_FALSE;
 			iter++;
+			is_valid = EINA_TRUE;
 		}
 		else if (*iter == 'q')
 		{
 			type = ESVG_PATH_QUADRATIC_TO;
 			is_relative = EINA_TRUE;
 			iter++;
+			is_valid = EINA_TRUE;
 		}
 		else if (*iter == 'T')
 		{
 			type = ESVG_PATH_SQUADRATIC_TO;
 			is_relative = EINA_FALSE;
 			iter++;
+			is_valid = EINA_TRUE;
 		}
 		else if (*iter == 't')
 		{
 			type = ESVG_PATH_SQUADRATIC_TO;
 			is_relative = EINA_TRUE;
 			iter++;
+			is_valid = EINA_TRUE;
 		}
 		else if (*iter == 'A')
 		{
 			type = ESVG_PATH_ARC_TO;
 			is_relative = EINA_FALSE;
 			iter++;
-
+			is_valid = EINA_TRUE;
 		}
 		else if (*iter == 'a')
 		{
 			type = ESVG_PATH_ARC_TO;
 			is_relative = EINA_TRUE;
 			iter++;
-
+			is_valid = EINA_TRUE;
 		}
 		else if (*iter == 'z')
 		{
@@ -1259,6 +1242,7 @@ Eina_Bool esvg_parser_path(const char *value, Enesim_Renderer *r)
 			cmd.is_closed = EINA_TRUE;
 			esvg_path_command_add(r, &cmd);
 			iter++;
+			is_valid = EINA_TRUE;
 			continue;
 		}
 		/* in case there are spaces at the end */
@@ -1268,11 +1252,12 @@ Eina_Bool esvg_parser_path(const char *value, Enesim_Renderer *r)
 		}
 		else
 		{
-			/* FIXME we can reach this point in case there is a simplified version
-			 * of the path where there's no command and we should use the previous one
-			 */
-			ERR("unsupported path data instruction (%c) %s", *iter, iter);
-			//return EINA_FALSE;
+			/* no previous valid operator */
+			if (!is_valid)
+			{
+				ERR("unsupported path data instruction (%c) %s", *iter, iter);
+				return EINA_FALSE;
+			}
 		}
 
 		if ((type == ESVG_PATH_MOVE_TO) ||
