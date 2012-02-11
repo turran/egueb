@@ -362,7 +362,7 @@ static Eina_Bool _esvg_transformation_skewx_get(Enesim_Matrix *matrix, const cha
 	if (numelements < 1)
 		return EINA_FALSE;
 
-	enesim_matrix_values_set(matrix, 1, atan(angle * M_PI / 180.0), 0, 0, 1, 0, 0, 0, 1);
+	enesim_matrix_values_set(matrix, 1, tan(angle * M_PI / 180.0), 0, 0, 1, 0, 0, 0, 1);
 	return EINA_TRUE;
 }
 
@@ -372,12 +372,12 @@ static Eina_Bool _esvg_transformation_skewy_get(Enesim_Matrix *matrix, const cha
 	double angle;
 	int numelements = 1;
 
-	if (!_esvg_function_get(attr_val, endptr, "skewX", &numelements, &angle))
+	if (!_esvg_function_get(attr_val, endptr, "skewY", &numelements, &angle))
 		return EINA_FALSE;
 	if (numelements < 1)
 		return EINA_FALSE;
 
-	enesim_matrix_values_set(matrix, 1, 0, 0, atan(angle * M_PI / 180.0), 1, 0, 0, 0, 1);
+	enesim_matrix_values_set(matrix, 1, 0, 0, tan(angle * M_PI / 180.0), 1, 0, 0, 0, 1);
 	return EINA_TRUE;
 }
 
