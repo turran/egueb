@@ -77,7 +77,7 @@ static Eina_Bool _esvg_text_setup(Enesim_Renderer *r, const Esvg_Element_State *
 	etex_base_size_set(thiz->r, (int)font_size);
 
 	enesim_matrix_inverse(&estate->transform, &inv);
-	enesim_renderer_geometry_transformation_set(thiz->r, &inv);
+	enesim_renderer_transformation_set(thiz->r, &inv);
 
 	return EINA_TRUE;
 }
