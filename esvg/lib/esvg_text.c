@@ -72,6 +72,7 @@ static Eina_Bool _esvg_text_setup(Enesim_Renderer *r, const Esvg_Element_State *
 	/* we should use the hypot(viewbox_w, viewbox_h) */
 	font_size = esvg_length_final_get(&thiz->font_size, estate->viewbox_w);
 	enesim_renderer_origin_set(thiz->r, x, y);
+	enesim_renderer_color_set(thiz->r, dstate->fill_color);
 
 	//printf("calling the setup on the text (%g %g %s %g)\n", x, y, str, font_size);
 	etex_base_size_set(thiz->r, (int)font_size);

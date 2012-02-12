@@ -80,28 +80,25 @@ static void _esvg_shape_enesim_state_get(Enesim_Renderer *r,
 	/* set the fill */
 	fill_opacity = attr->fill_opacity * 255;
 	/* FIXME the fill color multiplies the fill renderer */
-	if (attr->fill_set)
+	dstate->draw_mode |= ENESIM_SHAPE_DRAW_MODE_FILL;
+	if (attr->fill.type == ESVG_PAINT_COLOR)
 	{
-		dstate->draw_mode |= ENESIM_SHAPE_DRAW_MODE_FILL;
-		if (attr->fill.type == ESVG_PAINT_COLOR)
-		{
-			const Esvg_Color *c = &attr->fill.value.color;
-			enesim_color_components_from(&dstate->fill_color,
-					fill_opacity, c->r, c->g, c->b);
-		}
-		else if (attr->fill.type == ESVG_PAINT_SERVER)
-		{
-			/* just get the renderer here, dont do the setup */
-			dstate->fill_renderer = esvg_element_renderer_get(attr->fill.value.paint_server);
-		}
-		else if (attr->fill.type == ESVG_PAINT_NONE)
-		{
-			dstate->draw_mode &= ~ENESIM_SHAPE_DRAW_MODE_FILL;
-		}
-		else if (attr->fill.type == ESVG_PAINT_CURRENT_COLOR)
-		{
-			dstate->fill_color = ENESIM_COLOR_FULL;
-		}
+		const Esvg_Color *c = &attr->fill.value.color;
+		enesim_color_components_from(&dstate->fill_color,
+				fill_opacity, c->r, c->g, c->b);
+	}
+	else if (attr->fill.type == ESVG_PAINT_SERVER)
+	{
+		/* just get the renderer here, dont do the setup */
+		dstate->fill_renderer = esvg_element_renderer_get(attr->fill.value.paint_server);
+	}
+	else if (attr->fill.type == ESVG_PAINT_NONE)
+	{
+		dstate->draw_mode &= ~ENESIM_SHAPE_DRAW_MODE_FILL;
+	}
+	else if (attr->fill.type == ESVG_PAINT_CURRENT_COLOR)
+	{
+		dstate->fill_color = ENESIM_COLOR_FULL;
 	}
 	if (attr->fill_rule == ESVG_EVEN_ODD)
 		dstate->fill_rule = ENESIM_SHAPE_FILL_RULE_EVEN_ODD;
@@ -109,28 +106,25 @@ static void _esvg_shape_enesim_state_get(Enesim_Renderer *r,
 		dstate->fill_rule = ENESIM_SHAPE_FILL_RULE_NON_ZERO;
 	/* set the stroke */
 	stroke_opacity = attr->stroke_opacity * 255;
-	if (attr->stroke_set)
+	dstate->draw_mode |= ENESIM_SHAPE_DRAW_MODE_STROKE;
+	if (attr->stroke.type == ESVG_PAINT_COLOR)
 	{
-		dstate->draw_mode |= ENESIM_SHAPE_DRAW_MODE_STROKE;
-		if (attr->stroke.type == ESVG_PAINT_COLOR)
-		{
-			const Esvg_Color *c = &attr->stroke.value.color;
-			enesim_color_components_from(&dstate->stroke_color,
-					stroke_opacity, c->r, c->g, c->b);
-		}
-		else if (attr->stroke.type == ESVG_PAINT_SERVER)
-		{
-			/* just get the renderer here, dont do the setup */
-			dstate->stroke_renderer = esvg_element_renderer_get(attr->stroke.value.paint_server);
-		}
-		else if (attr->stroke.type == ESVG_PAINT_NONE)
-		{
-			dstate->draw_mode &= ~ENESIM_SHAPE_DRAW_MODE_STROKE;
-		}
-		else if (attr->stroke.type == ESVG_PAINT_CURRENT_COLOR)
-		{
-			dstate->stroke_color = ENESIM_COLOR_FULL;
-		}
+		const Esvg_Color *c = &attr->stroke.value.color;
+		enesim_color_components_from(&dstate->stroke_color,
+				stroke_opacity, c->r, c->g, c->b);
+	}
+	else if (attr->stroke.type == ESVG_PAINT_SERVER)
+	{
+		/* just get the renderer here, dont do the setup */
+		dstate->stroke_renderer = esvg_element_renderer_get(attr->stroke.value.paint_server);
+	}
+	else if (attr->stroke.type == ESVG_PAINT_NONE)
+	{
+		dstate->draw_mode &= ~ENESIM_SHAPE_DRAW_MODE_STROKE;
+	}
+	else if (attr->stroke.type == ESVG_PAINT_CURRENT_COLOR)
+	{
+		dstate->stroke_color = ENESIM_COLOR_FULL;
 	}
 	dstate->stroke_cap = attr->stroke_line_cap;
 	dstate->stroke_join = attr->stroke_line_join;

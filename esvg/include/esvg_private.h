@@ -63,6 +63,7 @@ extern int esvg_log_dom_global;
 
 #include "esvg_parser_private.h"
 
+void esvg_attribute_presentation_setup(Esvg_Attribute_Presentation *thiz);
 void esvg_attribute_presentation_clip_path_set(Esvg_Attribute_Presentation *thiz, const Enesim_Renderer *clip_path);
 void esvg_attribute_presentation_clip_path_unset(Esvg_Attribute_Presentation *thiz);
 void esvg_attribute_presentation_color_set(Esvg_Attribute_Presentation *thiz, const Esvg_Color *color);

@@ -428,11 +428,8 @@ Enesim_Renderer * esvg_element_new(Esvg_Element_Descriptor *descriptor, void *da
 	thiz->x_dpi = 96.0;
 	thiz->y_dpi = 96.0;
 
-	thiz->attr.stroke_width = ESVG_LENGTH_1;
-	thiz->attr.stroke_opacity = 1.0;
-	thiz->attr.fill_opacity = 1.0;
-	thiz->attr.opacity = 1.0;
-	esvg_element_color_unset(r);
+	esvg_attribute_presentation_setup(&thiz->attr);
+	esvg_attribute_presentation_setup(&thiz->style);
 	/* default enesim properties */
 	enesim_renderer_rop_set(r, ENESIM_BLEND);
 

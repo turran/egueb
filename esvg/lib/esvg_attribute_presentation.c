@@ -140,7 +140,21 @@ static void _line_join_dump(Esvg_Stroke_Line_Join join)
  *============================================================================*/
 void esvg_attribute_presentation_setup(Esvg_Attribute_Presentation *thiz)
 {
-	/* TODO set default values */
+	Esvg_Color black = { 0, 0, 0 };
+	Esvg_Length one = { ESVG_UNIT_LENGTH_PX, 1 }; 
+
+	thiz->color = black;
+	thiz->stroke_width = ESVG_LENGTH_1;
+	thiz->stroke_opacity = 1.0;
+	thiz->fill_opacity = 1.0;
+	thiz->opacity = 1.0;
+	thiz->fill_rule = ESVG_NON_ZERO;
+	thiz->fill.type = ESVG_PAINT_COLOR;
+	thiz->fill.value.color = black;
+	thiz->stroke.type = ESVG_PAINT_NONE;
+	thiz->stroke_width = one;
+	thiz->stroke_line_cap = ESVG_LINE_CAP_BUTT;
+	thiz->stroke_line_join = ESVG_LINE_JOIN_MITER;
 }
 
 void esvg_attribute_presentation_clip_path_set(Esvg_Attribute_Presentation *thiz, const Enesim_Renderer *clip_path)
