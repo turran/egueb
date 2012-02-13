@@ -27,7 +27,7 @@
 	((c >= 97) && (c <= 102)))
 
 #define ESVG_SPACE_SKIP(t) \
-	while (*t) { if ((*t == ' ') || (*t == '\n') || (*t == '\t')) t++; else break; }
+	while (*t) { if ((*t == ' ') || (*t == '\n') || (*t == '\t') || (*t == '\r')) t++; else break; }
 
 #define ESVG_SPACE_COMMA_SKIP(t) \
 	ESVG_SPACE_SKIP(t); \

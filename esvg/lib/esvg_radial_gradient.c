@@ -87,12 +87,14 @@ static Eina_Bool _radial_gradient_setup(Enesim_Renderer *r,
 	Esvg_Gradient_Stop *stop;
 	Esvg_Gradient_Units gu;
 	Enesim_Repeat_Mode mode;
+	Enesim_Matrix m;
 	Eina_List *l;
 	double cx;
 	double cy;
 	double fx;
 	double fy;
 	double rad;
+
 
 	thiz = _esvg_radial_gradient_get(r);
 
@@ -121,13 +123,11 @@ static Eina_Bool _radial_gradient_setup(Enesim_Renderer *r,
 		cx = esvg_length_final_get(&thiz->cx, 1);
 		cy = esvg_length_final_get(&thiz->cy, 1);
 		rad = esvg_length_final_get(&thiz->rad, 1);
-
-		enesim_renderer_destination_boundings(rel, &bbox, 0, 0);
-		cx = cx * (bbox.w) - bbox.x;
-		cy = cy * (bbox.h) - bbox.y;
-
 		/* fx and fy should be the 0% stop? */
 		/* cx and cy + r should be the 100% stop */
+
+		enesim_renderer_destination_boundings(rel, &bbox, 0, 0);
+		enesim_matrix_values_set(&m, bbox.w, 0, bbox.x, 0, bbox.h, bbox.y, 0, 0, 1);
 	}
 	else
 	{
@@ -141,10 +141,17 @@ static Eina_Bool _radial_gradient_setup(Enesim_Renderer *r,
 		cx = esvg_length_final_get(&thiz->cx, w);
 		cy = esvg_length_final_get(&thiz->cy, h);
 		rad = esvg_length_final_get(&thiz->rad, w);
-	}
 
+		m = state->transform;
+	}
+	if (enesim_matrix_type_get(&gstate->transform) != ENESIM_MATRIX_IDENTITY)
+	{
+		enesim_matrix_compose(&m, &gstate->transform, &m);
+	}
+	enesim_renderer_geometry_transformation_set(thiz->r, &m);
 
 	/* FIXME for now we dont handle the focis */
+	printf("%g %g %g\n", cx, cy, rad);
 	enesim_renderer_gradient_radial_center_x_set(thiz->r, cx);
 	enesim_renderer_gradient_radial_center_y_set(thiz->r, cy);
 	enesim_renderer_gradient_radial_radius_y_set(thiz->r, rad);
@@ -169,27 +176,6 @@ static Eina_Bool _radial_gradient_setup(Enesim_Renderer *r,
 		}
 		printf("color = %08x pos = %g\n", s.argb, s.pos);
 		enesim_renderer_gradient_stop_add(thiz->r, &s);
-	}
-	/* TODO set the transformation geometry */
-	{
-		Enesim_Matrix m;
-
-		enesim_matrix_identity(&m);
-		if (gu != ESVG_OBJECT_BOUNDING_BOX)
-		{
-			Enesim_Matrix m;
-
-			enesim_matrix_inverse(&state->transform, &m);
-		}
-
-		if (enesim_matrix_type_get(&gstate->transform) != ENESIM_MATRIX_IDENTITY)
-		{
-			Enesim_Matrix gm;
-
-			enesim_matrix_inverse(&gstate->transform, &gm);
-			enesim_matrix_compose(&gm, &m, &m);
-		}
-		enesim_renderer_transformation_set(thiz->r, &m);
 	}
 
 	return EINA_TRUE;

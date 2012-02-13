@@ -84,6 +84,7 @@ static Eina_Bool _linear_gradient_setup(Enesim_Renderer *r,
 	Esvg_Gradient_Stop *stop;
 	Esvg_Gradient_Units gu;
 	Enesim_Repeat_Mode mode;
+	Enesim_Matrix m;
 	Eina_List *l;
 	double x1;
 	double y1;
@@ -120,15 +121,7 @@ static Eina_Bool _linear_gradient_setup(Enesim_Renderer *r,
 		y2 = esvg_length_final_get(&thiz->y2, 1);
 
 		enesim_renderer_destination_boundings(rel, &bbox, 0, 0);
-		x1 = x1 * (bbox.w) - bbox.x;
-		y1 = y1 * (bbox.h) - bbox.y;
-		x2 = x2 * (bbox.w) - bbox.x;
-		y2 = y2 * (bbox.h) - bbox.y;
-
-		/* TODO whenever we support the geometry transformation we should use the matrix directly
-		enesim_matrix_values_set(&m, bbox.w, 0, bbox.x, 0, bbox.h, 0, bbox.y, 0, 0, 1);
-		enesim_renderer_geometry_transformation_set(thiz->r, &im);
-		*/
+		enesim_matrix_values_set(&m, bbox.w, 0, bbox.x, 0, bbox.h, bbox.y, 0, 0, 1);
 	}
 	else
 	{
@@ -138,14 +131,20 @@ static Eina_Bool _linear_gradient_setup(Enesim_Renderer *r,
 		/* use the user space coordiantes */
 		w = state->viewbox_w;
 		h = state->viewbox_h;
-		printf("user space on use %g %g\n", w, h);
 		x1 = esvg_length_final_get(&thiz->x1, w);
 		y1 = esvg_length_final_get(&thiz->y1, h);
 		x2 = esvg_length_final_get(&thiz->x2, w);
 		y2 = esvg_length_final_get(&thiz->y2, h);
-	}
-	printf("%g %g %g %g\n", x1, y1, x2, y2);
 
+		m = state->transform;
+	}
+	if (enesim_matrix_type_get(&gstate->transform) != ENESIM_MATRIX_IDENTITY)
+	{
+		enesim_matrix_compose(&m, &gstate->transform, &m);
+	}
+	enesim_renderer_geometry_transformation_set(thiz->r, &m);
+
+	printf("line %g %g %g %g\n", x1, y1, x2, y2);
 	enesim_renderer_gradient_linear_x0_set(thiz->r, x1);
 	enesim_renderer_gradient_linear_y0_set(thiz->r, y1);
 	enesim_renderer_gradient_linear_x1_set(thiz->r, x2);
@@ -169,27 +168,6 @@ static Eina_Bool _linear_gradient_setup(Enesim_Renderer *r,
 			s.pos = 0;
 		printf("color = %08x pos = %g\n", s.argb, s.pos);
 		enesim_renderer_gradient_stop_add(thiz->r, &s);
-	}
-	/* TODO set the transformation geometry */
-	{
-		Enesim_Matrix m;
-
-		enesim_matrix_identity(&m);
-		if (gu != ESVG_OBJECT_BOUNDING_BOX)
-		{
-			Enesim_Matrix m;
-
-			enesim_matrix_inverse(&state->transform, &m);
-		}
-
-		if (enesim_matrix_type_get(&gstate->transform) != ENESIM_MATRIX_IDENTITY)
-		{
-			Enesim_Matrix gm;
-
-			enesim_matrix_inverse(&gstate->transform, &gm);
-			enesim_matrix_compose(&gm, &m, &m);
-		}
-		enesim_renderer_transformation_set(thiz->r, &m);
 	}
 
 	return EINA_TRUE;
