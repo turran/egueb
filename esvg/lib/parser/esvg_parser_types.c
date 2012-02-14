@@ -1040,6 +1040,109 @@ Eina_Bool esvg_transformation_get(Enesim_Matrix *matrix, const char *attr)
 	return ret;
 }
 
+#if 0
+static Eina_Bool esvg_parser_path_line_to(Enesim_Renderer *r,
+		Eina_Bool relative,
+		char **value)
+{
+	char *v = *value;
+
+	while (v)
+	{
+		Esvg_Path_Command cmd;
+		Esvg_Point p;
+
+		ESVG_SPACE_SKIP(v);
+		if (!_esvg_path_point_get(&v, &p))
+		{
+			ERR("Can not get point");
+			break;
+		}
+		cmd.type = ESVG_PATH_LINE_TO;
+		cmd.relative = relative;
+		cmd.data.line_to.x = p.x;
+		cmd.data.line_to.y = p.y;
+		esvg_path_command_add(r, &cmd);
+		/* after a comma or a space, then more line_to comands might come */
+		ESVG_SPACE_COMMA_SKIP(tmp);
+	}
+	*value = v;
+}
+
+static Eina_Bool esvg_parser_path_move_to(Enesim_Renderer *r,
+		Eina_Bool relative,
+		Eina_Bool first,
+		char **value)
+{
+	char *v = *value;
+
+	while (v)
+	{
+		Esvg_Path_Command cmd;
+		Esvg_Point p;
+
+		ESVG_SPACE_SKIP(v);
+		if (!_esvg_path_point_get(&v, &p))
+		{
+			ERR("Can not get point");
+			break;
+		}
+		cmd.type = ESVG_PATH_MOVE_TO;
+		cmd.relative = relative;
+		cmd.data.move_to.x = p.x;
+		cmd.data.move_to.y = p.y;
+		esvg_path_command_add(r, &cmd);
+		/* after a comma or a space, then several line_to comands might come */
+		ESVG_SPACE_COMMA_SKIP(tmp);
+	}
+	*value = v;
+}
+
+Eina_Bool esvg_parser_path2(const char *value, Enesim_Renderer *r)
+{
+	Eina_Bool ret = EINA_TRUE;
+	Eina_Bool first = EINA_TRUE;
+	Eina_Bool last_relative;
+	char last_command;
+	char *iter = (char *)value;
+
+	ESVG_SPACE_SKIP(iter);
+	/* First char must be 'M' or 'm' */
+	if ((*iter != 'M') &&
+	    (*iter != 'm'))
+	{
+		ERR("First char not 'M' or 'm'");
+		return EINA_FALSE;
+	}
+	while (*iter)
+	{
+		switch (*iter)
+		{
+			case 'L':
+			last_relative = EINA_FALSE;
+			break;
+
+			case 'l':
+			last_relative = EINA_TRUE;
+			break;
+
+			case 'M':
+			last_relative = EINA_FALSE;
+			break;
+
+			case 'm':
+			last_relative = EINA_TRUE;
+			break;
+
+			default:
+			ret = EINA_FALSE;
+			break;
+		}
+	}
+	return ret;
+}
+#endif
+
 /*
  * FIXME
  * done: M, m, L, l, H, h, V, v, C, c, S, s, Q, q, T, t, A, a
