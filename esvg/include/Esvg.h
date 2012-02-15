@@ -175,6 +175,9 @@ typedef struct _Esvg_Path_Command
 	Esvg_Path_Command_Type type;
 	union {
 		struct {
+			double c;
+		} hline_to, vline_to;
+		struct {
 			double x;
 			double y;
 		} move_to, line_to, squadratic_to;
@@ -406,6 +409,7 @@ EAPI void esvg_rect_ry_set(Enesim_Renderer *r, const Esvg_Coord *ry);
 EAPI void esvg_rect_ry_get(Enesim_Renderer *r, Esvg_Coord *ry);
 
 EAPI Enesim_Renderer * esvg_ellipse_new(void);
+EAPI Eina_Bool esvg_is_ellipse(Enesim_Renderer *r);
 EAPI void esvg_ellipse_cx_set(Enesim_Renderer *r, const Esvg_Coord *cx);
 EAPI void esvg_ellipse_cx_get(Enesim_Renderer *r, Esvg_Coord *cx);
 EAPI void esvg_ellipse_cy_set(Enesim_Renderer *r, const Esvg_Coord *cy);

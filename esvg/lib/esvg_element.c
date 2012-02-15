@@ -893,6 +893,8 @@ EAPI Enesim_Renderer * esvg_element_clone(Enesim_Renderer *r)
 		new_r = esvg_line_new();
 	else if (esvg_is_circle(r))
 		new_r = esvg_circle_new();
+	else if (esvg_is_ellipse(r))
+		new_r = esvg_ellipse_new();
 	else if (esvg_is_path(r))
 		new_r = esvg_path_new();
 	else if (esvg_is_rect(r))

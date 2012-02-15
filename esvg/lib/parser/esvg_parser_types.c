@@ -440,6 +440,29 @@ static Eina_Bool _esvg_path_number_get(char **attr, double *x)
 	return EINA_TRUE;
 }
 
+static Eina_Bool _esvg_path_flag_get(char **attr, Eina_Bool *b)
+{
+	char *iter;
+
+	iter = *attr;
+	ESVG_SPACE_COMMA_SKIP(iter);
+	if (*iter == '0')
+	{
+		*b = EINA_FALSE;
+	}
+	else if (*iter == '1')
+	{
+		*b = EINA_TRUE;
+	}
+	else
+	{
+		ERR("can not convert flag");
+		return EINA_FALSE;
+	}
+	*attr = iter + 1;
+	return EINA_TRUE;
+}
+
 static Eina_Bool _esvg_path_point_get(char **attr, Esvg_Point *p)
 {
 	if (!_esvg_path_number_get(attr, &p->x))
@@ -456,61 +479,6 @@ static Eina_Bool _esvg_path_point_get(char **attr, Esvg_Point *p)
 
 	return EINA_TRUE;
 }
-
-static Eina_Bool _esvg_path_cubic_curve_get(char **attr, Esvg_Point *p1, Esvg_Point *p2, Esvg_Point *p)
-{
-	if (!_esvg_path_point_get(attr, p1))
-		return EINA_FALSE;
-
-	if (!_esvg_path_point_get(attr, p2))
-		return EINA_FALSE;
-
-	if (!_esvg_path_point_get(attr, p))
-		return EINA_FALSE;
-
-	return EINA_TRUE;
-}
-
-static Eina_Bool _esvg_path_scubic_curve_get(char **attr, Esvg_Point *p1, Esvg_Point *p)
-{
-	if (!_esvg_path_point_get(attr, p1))
-		return EINA_FALSE;
-
-	if (!_esvg_path_point_get(attr, p))
-		return EINA_FALSE;
-
-	return EINA_TRUE;
-}
-
-static Eina_Bool _esvg_path_arc_get(char **attr, Esvg_Point *radii, double *angle, double *large, double *sweep, Esvg_Point *p)
-{
-	if (!_esvg_path_point_get(attr, radii))
-		return EINA_FALSE;
-
-	if (!_esvg_path_number_get(attr, angle))
-	{
-		ERR("can not convert number");
-		return EINA_FALSE;
-	}
-
-	if (!_esvg_path_number_get(attr, large))
-	{
-		ERR("can not convert number");
-		return EINA_FALSE;
-	}
-
-	if (!_esvg_path_number_get(attr, sweep))
-	{
-		ERR("can not convert number");
-		return EINA_FALSE;
-	}
-
-	if (!_esvg_path_point_get(attr, p))
-		return EINA_FALSE;
-
-	return EINA_TRUE;
-}
-
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
@@ -1040,70 +1008,365 @@ Eina_Bool esvg_transformation_get(Enesim_Matrix *matrix, const char *attr)
 	return ret;
 }
 
-#if 0
 static Eina_Bool esvg_parser_path_line_to(Enesim_Renderer *r,
 		Eina_Bool relative,
 		char **value)
 {
-	char *v = *value;
+	Esvg_Path_Command cmd;
+	Esvg_Point p;
 
-	while (v)
+	if (!_esvg_path_point_get(value, &p))
 	{
-		Esvg_Path_Command cmd;
-		Esvg_Point p;
-
-		ESVG_SPACE_SKIP(v);
-		if (!_esvg_path_point_get(&v, &p))
-		{
-			ERR("Can not get point");
-			break;
-		}
-		cmd.type = ESVG_PATH_LINE_TO;
-		cmd.relative = relative;
-		cmd.data.line_to.x = p.x;
-		cmd.data.line_to.y = p.y;
-		esvg_path_command_add(r, &cmd);
-		/* after a comma or a space, then more line_to comands might come */
-		ESVG_SPACE_COMMA_SKIP(tmp);
+		ERR("Can not get point");
+		return EINA_FALSE;
 	}
-	*value = v;
+	
+	cmd.type = ESVG_PATH_LINE_TO;
+	cmd.relative = relative;
+	cmd.data.line_to.x = p.x;
+	cmd.data.line_to.y = p.y;
+	esvg_path_command_add(r, &cmd);
+	return EINA_TRUE;
 }
 
 static Eina_Bool esvg_parser_path_move_to(Enesim_Renderer *r,
 		Eina_Bool relative,
-		Eina_Bool first,
 		char **value)
 {
-	char *v = *value;
+	Esvg_Path_Command cmd;
+	Esvg_Point p;
 
-	while (v)
+	if (!_esvg_path_point_get(value, &p))
 	{
-		Esvg_Path_Command cmd;
-		Esvg_Point p;
-
-		ESVG_SPACE_SKIP(v);
-		if (!_esvg_path_point_get(&v, &p))
-		{
-			ERR("Can not get point");
-			break;
-		}
-		cmd.type = ESVG_PATH_MOVE_TO;
-		cmd.relative = relative;
-		cmd.data.move_to.x = p.x;
-		cmd.data.move_to.y = p.y;
-		esvg_path_command_add(r, &cmd);
-		/* after a comma or a space, then several line_to comands might come */
-		ESVG_SPACE_COMMA_SKIP(tmp);
+		ERR("Can not get point");
+		return EINA_FALSE;
 	}
-	*value = v;
+	cmd.type = ESVG_PATH_MOVE_TO;
+	cmd.relative = relative;
+	cmd.data.move_to.x = p.x;
+	cmd.data.move_to.y = p.y;
+	esvg_path_command_add(r, &cmd);
+	return EINA_TRUE;
 }
 
-Eina_Bool esvg_parser_path2(const char *value, Enesim_Renderer *r)
+static Eina_Bool esvg_parser_path_hline_to(Enesim_Renderer *r,
+		Eina_Bool relative,
+		char **value)
+{
+	Esvg_Path_Command cmd;
+	double c;
+
+	if (!_esvg_path_number_get(value, &c))
+	{
+		ERR("Can not get coord");
+		return EINA_FALSE;
+	}
+	cmd.type = ESVG_PATH_HLINE_TO;
+	cmd.relative = relative;
+	cmd.data.hline_to.c = c;
+	esvg_path_command_add(r, &cmd);
+	return EINA_TRUE;
+}
+
+static Eina_Bool esvg_parser_path_vline_to(Enesim_Renderer *r,
+		Eina_Bool relative,
+		char **value)
+{
+	Esvg_Path_Command cmd;
+	double c;
+
+	if (!_esvg_path_number_get(value, &c))
+	{
+		ERR("Can not get coord");
+		return EINA_FALSE;
+	}
+	cmd.type = ESVG_PATH_VLINE_TO;
+	cmd.relative = relative;
+	cmd.data.hline_to.c = c;
+	esvg_path_command_add(r, &cmd);
+	return EINA_TRUE;
+}
+
+static Eina_Bool esvg_parser_path_cubic_to(Enesim_Renderer *r,
+		Eina_Bool relative,
+		char **value)
+{
+	Esvg_Path_Command cmd;
+	Esvg_Point ctrl0, ctrl1, p;
+
+	if (!_esvg_path_point_get(value, &ctrl0))
+	{
+		ERR("Can not get control point %s", *value);
+		return EINA_FALSE;
+	}
+
+	if (!_esvg_path_point_get(value, &ctrl1))
+	{
+		ERR("Can not get control point");
+		return EINA_FALSE;
+	}
+
+	if (!_esvg_path_point_get(value, &p))
+	{
+		ERR("Can not get point");
+		return EINA_FALSE;
+	}
+
+	cmd.type = ESVG_PATH_CUBIC_TO;
+	cmd.relative = relative;
+	cmd.data.cubic_to.ctrl_x0 = ctrl0.x;
+	cmd.data.cubic_to.ctrl_y0 = ctrl0.y;
+	cmd.data.cubic_to.ctrl_x1 = ctrl1.x;
+	cmd.data.cubic_to.ctrl_y1 = ctrl1.y;
+	cmd.data.cubic_to.x = p.x;
+	cmd.data.cubic_to.y = p.y;
+	esvg_path_command_add(r, &cmd);
+
+	return EINA_TRUE;
+}
+
+static Eina_Bool esvg_parser_path_scubic_to(Enesim_Renderer *r,
+		Eina_Bool relative,
+		char **value)
+{
+	Esvg_Path_Command cmd;
+	Esvg_Point ctrl, p;
+
+	if (!_esvg_path_point_get(value, &ctrl))
+	{
+		ERR("Can not get control point");
+		return EINA_FALSE;
+	}
+
+	if (!_esvg_path_point_get(value, &p))
+	{
+		ERR("Can not get point");
+		return EINA_FALSE;
+	}
+
+	cmd.type = ESVG_PATH_SCUBIC_TO;
+	cmd.relative = relative;
+	cmd.data.scubic_to.ctrl_x = ctrl.x;
+	cmd.data.scubic_to.ctrl_y = ctrl.y;
+	cmd.data.scubic_to.x = p.x;
+	cmd.data.scubic_to.y = p.y;
+	esvg_path_command_add(r, &cmd);
+
+	return EINA_TRUE;
+}
+
+static Eina_Bool esvg_parser_path_quadratic_to(Enesim_Renderer *r,
+		Eina_Bool relative,
+		char **value)
+{
+	Esvg_Path_Command cmd;
+	Esvg_Point ctrl, p;
+
+	if (!_esvg_path_point_get(value, &ctrl))
+	{
+		ERR("Can not get control point");
+		return EINA_FALSE;
+	}
+
+	if (!_esvg_path_point_get(value, &p))
+	{
+		ERR("Can not get point");
+		return EINA_FALSE;
+	}
+
+	cmd.type = ESVG_PATH_QUADRATIC_TO;
+	cmd.relative = relative;
+	cmd.data.quadratic_to.ctrl_x = ctrl.x;
+	cmd.data.quadratic_to.ctrl_y = ctrl.y;
+	cmd.data.quadratic_to.x = p.x;
+	cmd.data.quadratic_to.y = p.y;
+	esvg_path_command_add(r, &cmd);
+
+	return EINA_TRUE;
+
+}
+
+static Eina_Bool esvg_parser_path_squadratic_to(Enesim_Renderer *r,
+		Eina_Bool relative,
+		char **value)
+{
+	Esvg_Path_Command cmd;
+	Esvg_Point p;
+
+	if (!_esvg_path_point_get(value, &p))
+	{
+		ERR("Can not get point");
+		return EINA_FALSE;
+	}
+	cmd.type = ESVG_PATH_SQUADRATIC_TO;
+	cmd.relative = relative;
+	cmd.data.squadratic_to.x = p.x;
+	cmd.data.squadratic_to.y = p.y;
+	esvg_path_command_add(r, &cmd);
+	return EINA_TRUE;
+
+}
+
+static Eina_Bool esvg_parser_path_arc_to(Enesim_Renderer *r,
+		Eina_Bool relative,
+		char **value)
+{
+	Esvg_Path_Command cmd;
+	Esvg_Point p, radii;
+	Eina_Bool large, sweep;
+	double angle;
+
+	if (!_esvg_path_point_get(value, &radii))
+	{
+		ERR("can not get radii");
+		return EINA_FALSE;
+	}
+
+	if (!_esvg_path_number_get(value, &angle))
+	{
+		ERR("can not convert number");
+		return EINA_FALSE;
+	}
+
+	if (!_esvg_path_flag_get(value, &large))
+	{
+		ERR("can not convert the large flag");
+		return EINA_FALSE;
+	}
+
+	if (!_esvg_path_flag_get(value, &sweep))
+	{
+		ERR("can not convert the sweep flag");
+		return EINA_FALSE;
+	}
+
+	if (!_esvg_path_point_get(value, &p))
+	{
+		ERR("Can not get point");
+		return EINA_FALSE;
+	}
+
+	cmd.type = ESVG_PATH_ARC_TO;
+	cmd.relative = relative;
+	cmd.data.arc_to.rx = radii.x;
+	cmd.data.arc_to.ry = radii.y;
+	cmd.data.arc_to.angle = angle;
+	cmd.data.arc_to.large = large;
+	cmd.data.arc_to.sweep = sweep;
+	cmd.data.arc_to.x = p.x;
+	cmd.data.arc_to.y = p.y;
+	esvg_path_command_add(r, &cmd);
+
+	return EINA_TRUE;
+}
+
+static Eina_Bool esvg_parser_path_close(Enesim_Renderer *r,
+		char **value)
+{
+	Esvg_Path_Command cmd;
+
+	cmd.type = ESVG_PATH_CLOSE;
+	cmd.relative = EINA_FALSE;
+	esvg_path_command_add(r, &cmd);
+	return EINA_TRUE;
+}
+
+Eina_Bool esvg_parser_command(Enesim_Renderer *r, char command, char **value)
+{
+	Eina_Bool ret = EINA_TRUE;
+
+	switch (command)
+	{
+		case 'L':
+		ret = esvg_parser_path_line_to(r, EINA_FALSE, value);
+		break;
+
+		case 'l':
+		ret = esvg_parser_path_line_to(r, EINA_TRUE, value);
+		break;
+
+		case 'M':
+		ret = esvg_parser_path_move_to(r, EINA_FALSE, value);
+		break;
+
+		case 'm':
+		ret = esvg_parser_path_move_to(r, EINA_TRUE, value);
+		break;
+
+		case 'H':
+		ret = esvg_parser_path_hline_to(r, EINA_FALSE, value);
+		break;
+
+		case 'h':
+		ret = esvg_parser_path_hline_to(r, EINA_TRUE, value);
+		break;
+
+		case 'V':
+		ret = esvg_parser_path_vline_to(r, EINA_FALSE, value);
+		break;
+
+		case 'v':
+		ret = esvg_parser_path_vline_to(r, EINA_TRUE, value);
+		break;
+
+		case 'C':
+		ret = esvg_parser_path_cubic_to(r, EINA_FALSE, value);
+		break;
+
+		case 'c':
+		ret = esvg_parser_path_cubic_to(r, EINA_TRUE, value);
+		break;
+
+		case 'S':
+		ret = esvg_parser_path_scubic_to(r, EINA_FALSE, value);
+		break;
+
+		case 's':
+		ret = esvg_parser_path_scubic_to(r, EINA_TRUE, value);
+		break;
+
+		case 'Q':
+		ret = esvg_parser_path_quadratic_to(r, EINA_FALSE, value);
+		break;
+
+		case 'q':
+		ret = esvg_parser_path_quadratic_to(r, EINA_TRUE, value);
+		break;
+
+		case 'T':
+		ret = esvg_parser_path_squadratic_to(r, EINA_FALSE, value);
+		break;
+
+		case 't':
+		ret = esvg_parser_path_squadratic_to(r, EINA_TRUE, value);
+		break;
+
+		case 'A':
+		ret = esvg_parser_path_arc_to(r, EINA_FALSE, value);
+		break;
+
+		case 'a':
+		ret = esvg_parser_path_arc_to(r, EINA_TRUE, value);
+		break;
+
+		case 'z':
+		case 'Z':
+		ret = esvg_parser_path_close(r, value);
+		break;
+
+		default:
+		ret = EINA_FALSE;
+		break;
+	}
+	return ret;
+}
+
+Eina_Bool esvg_parser_path(const char *value, Enesim_Renderer *r)
 {
 	Eina_Bool ret = EINA_TRUE;
 	Eina_Bool first = EINA_TRUE;
 	Eina_Bool last_relative;
-	char last_command;
+	char last_command = 0;
 	char *iter = (char *)value;
 
 	ESVG_SPACE_SKIP(iter);
@@ -1116,461 +1379,42 @@ Eina_Bool esvg_parser_path2(const char *value, Enesim_Renderer *r)
 	}
 	while (*iter)
 	{
-		switch (*iter)
-		{
-			case 'L':
-			last_relative = EINA_FALSE;
-			break;
+		char command;
 
-			case 'l':
-			last_relative = EINA_TRUE;
-			break;
-
-			case 'M':
-			last_relative = EINA_FALSE;
-			break;
-
-			case 'm':
-			last_relative = EINA_TRUE;
-			break;
-
-			default:
-			ret = EINA_FALSE;
-			break;
-		}
-	}
-	return ret;
-}
-#endif
-
-/*
- * FIXME
- * done: M, m, L, l, H, h, V, v, C, c, S, s, Q, q, T, t, A, a
- */
-Eina_Bool esvg_parser_path(const char *value, Enesim_Renderer *r)
-{
-	Esvg_Path_Command cmd;
-	Esvg_Path_Command_Type type;
-	Esvg_Point p_cur;
-	Eina_Bool is_relative;
-	Eina_Bool is_line_h;
-	Eina_Bool is_line_v;
-	Eina_Bool is_valid;
-	char *iter;
-
-	iter = (char *)value;
-	ESVG_SPACE_SKIP(iter);
-
-	/* First char must be 'M' or 'm' */
-	if ((*iter != 'M') &&
-	    (*iter != 'm'))
-	{
-		ERR("First char not 'M' or 'm'");
-		return EINA_FALSE;
-	}
-
-	/* 1st point is mandatory */
-	iter++;
-	ESVG_SPACE_SKIP(iter);
-
-	if (!_esvg_path_point_get(&iter, &p_cur))
-	{
-		ERR("Can not get first point");
-		return EINA_FALSE;
-	}
-	else
-	{
-		cmd.type = ESVG_PATH_MOVE_TO;
-		cmd.relative = EINA_FALSE;
-		cmd.data.move_to.x = p_cur.x;
-		cmd.data.move_to.y = p_cur.y;
-		esvg_path_command_add(r, &cmd);
-	}
-
-	is_line_h = EINA_FALSE;
-	is_line_v = EINA_FALSE;
-
-	while (*iter)
-	{
-		Esvg_Point p;
-		is_valid = EINA_FALSE;
-
-		ESVG_SPACE_SKIP(iter);
-
-		if (*iter == 'M')
+ 		command = *iter;
+		iter++;
+		ret = esvg_parser_command(r, command, &iter);
+		if (!ret)
 		{
-			type = ESVG_PATH_MOVE_TO;
-			is_relative = EINA_FALSE;
-			is_line_h = EINA_FALSE;
-			is_line_v = EINA_FALSE;
-			iter++;
-			is_valid = EINA_TRUE;
-		}
-		else if (*iter == 'm')
-		{
-			type = ESVG_PATH_MOVE_TO;
-			is_relative = EINA_TRUE;
-			is_line_h = EINA_FALSE;
-			is_line_v = EINA_FALSE;
-			iter++;
-			is_valid = EINA_TRUE;
-		}
-		else if (*iter == 'L')
-		{
-			type = ESVG_PATH_LINE_TO;
-			is_relative = EINA_FALSE;
-			is_line_h = EINA_FALSE;
-			is_line_v = EINA_FALSE;
-			iter++;
-			is_valid = EINA_TRUE;
-		}
-		else if (*iter == 'l')
-		{
-			type = ESVG_PATH_LINE_TO;
-			is_relative = EINA_TRUE;
-			is_line_h = EINA_FALSE;
-			is_line_v = EINA_FALSE;
-			iter++;
-			is_valid = EINA_TRUE;
-		}
-		else if (*iter == 'H')
-		{
-			type = ESVG_PATH_LINE_TO;
-			is_relative = EINA_FALSE;
-			is_line_h = EINA_TRUE;
-			is_line_v = EINA_FALSE;
-			iter++;
-			is_valid = EINA_TRUE;
-		}
-		else if (*iter == 'h')
-		{
-			type = ESVG_PATH_LINE_TO;
-			is_relative = EINA_TRUE;
-			is_line_h = EINA_TRUE;
-			is_line_v = EINA_FALSE;
-			iter++;
-			is_valid = EINA_TRUE;
-		}
-		else if (*iter == 'V')
-		{
-			type = ESVG_PATH_LINE_TO;
-			is_relative = EINA_FALSE;
-			is_line_h = EINA_FALSE;
-			is_line_v = EINA_TRUE;
-			iter++;
-			is_valid = EINA_TRUE;
-		}
-		else if (*iter == 'v')
-		{
-			type = ESVG_PATH_LINE_TO;
-			is_relative = EINA_TRUE;
-			is_line_h = EINA_FALSE;
-			is_line_v = EINA_TRUE;
-			iter++;
-			is_valid = EINA_TRUE;
-		}
-		else if (*iter == 'C')
-		{
-			type = ESVG_PATH_CUBIC_TO;
-			is_relative = EINA_FALSE;
-			iter++;
-			is_valid = EINA_TRUE;
-		}
-		else if (*iter == 'c')
-		{
-			type = ESVG_PATH_CUBIC_TO;
-			is_relative = EINA_TRUE;
-			iter++;
-			is_valid = EINA_TRUE;
-		}
-		else if (*iter == 'S')
-		{
-			type = ESVG_PATH_SCUBIC_TO;
-			is_relative = EINA_FALSE;
-			iter++;
-			is_valid = EINA_TRUE;
-		}
-		else if (*iter == 's')
-		{
-			type = ESVG_PATH_SCUBIC_TO;
-			is_relative = EINA_TRUE;
-			iter++;
-			is_valid = EINA_TRUE;
-		}
-		else if (*iter == 'Q')
-		{
-			type = ESVG_PATH_QUADRATIC_TO;
-			is_relative = EINA_FALSE;
-			iter++;
-			is_valid = EINA_TRUE;
-		}
-		else if (*iter == 'q')
-		{
-			type = ESVG_PATH_QUADRATIC_TO;
-			is_relative = EINA_TRUE;
-			iter++;
-			is_valid = EINA_TRUE;
-		}
-		else if (*iter == 'T')
-		{
-			type = ESVG_PATH_SQUADRATIC_TO;
-			is_relative = EINA_FALSE;
-			iter++;
-			is_valid = EINA_TRUE;
-		}
-		else if (*iter == 't')
-		{
-			type = ESVG_PATH_SQUADRATIC_TO;
-			is_relative = EINA_TRUE;
-			iter++;
-			is_valid = EINA_TRUE;
-		}
-		else if (*iter == 'A')
-		{
-			type = ESVG_PATH_ARC_TO;
-			is_relative = EINA_FALSE;
-			iter++;
-			is_valid = EINA_TRUE;
-		}
-		else if (*iter == 'a')
-		{
-			type = ESVG_PATH_ARC_TO;
-			is_relative = EINA_TRUE;
-			iter++;
-			is_valid = EINA_TRUE;
-		}
-		else if (*iter == 'z')
-		{
-			cmd.type = ESVG_PATH_CLOSE;
-			cmd.is_closed = EINA_TRUE;
-			esvg_path_command_add(r, &cmd);
-			iter++;
-			is_valid = EINA_TRUE;
-			continue;
-		}
-		/* in case there are spaces at the end */
-		else if (*iter == '\0')
-		{
-			break;
+			/* try with the last command */
+			iter--;
+			ret = esvg_parser_command(r, last_command, &iter);
 		}
 		else
 		{
-			/* no previous valid operator */
-			if (!is_valid)
-			{
-				ERR("unsupported path data instruction (%c) %s", *iter, iter);
-				return EINA_FALSE;
-			}
+			/* everything went ok, update the last command */
+			last_command = command;
 		}
 
-		if ((type == ESVG_PATH_MOVE_TO) ||
-		    (type == ESVG_PATH_LINE_TO))
+		if (!ret)
 		{
-			if (is_line_h || is_line_v)
-			{
-				double v;
-
-				if (!_esvg_path_number_get(&iter, &v))
-				{
-					ERR("Can not get point");
-					break;
-				}
-				if (is_line_h)
-				{
-					p.x = v;
-					p.y = 0;
-				}
-				else /* is_line_v */
-				{
-					p.x = 0;
-					p.y = v;
-				}
-			}
-			else
-			{
-				if (!_esvg_path_point_get(&iter, &p))
-				{
-					ERR("Can not get point");
-					break;
-				}
-			}
-
-			if (is_relative)
-			{
-				p_cur.x += p.x;
-				p_cur.y += p.y;
-				cmd.relative = EINA_TRUE;
-			}
-			else
-			{
-				p_cur = p;
-				cmd.relative = EINA_FALSE;
-			}
-
-			if (type == ESVG_PATH_MOVE_TO)
-			{
-				cmd.data.move_to.x = p_cur.x;
-				cmd.data.move_to.y = p_cur.y;
-			}
-			else /* ESVG_PATH_LINE_TO */
-			{
-				cmd.data.line_to.x = p_cur.x;
-				cmd.data.line_to.y = p_cur.y;
-			}
-
-			cmd.type = type;
-			esvg_path_command_add(r, &cmd);
+			ERR("Unsupported path data instruction (%c) %s", command, iter);
+			break;
 		}
-
-		if (type == ESVG_PATH_CUBIC_TO)
+		/* for the 'move' case the next elements should be lines */
+		if ((command == 'm' || command == 'M') && first)
 		{
-			Esvg_Point p1;
-			Esvg_Point p2;
-
-			if (!_esvg_path_cubic_curve_get(&iter, &p1, &p2, &p))
-				return EINA_FALSE;
-
-			if (is_relative)
-			{
-				p1.x += p_cur.x;
-				p1.y += p_cur.y;
-				p2.x += p_cur.x;
-				p2.y += p_cur.y;
-				p_cur.x += p.x;
-				p_cur.y += p.y;
-				cmd.relative = EINA_TRUE;
-			}
+			/* the next commands should be lines */
+			if (command == 'm')
+				last_command = 'l';
 			else
-			{
-				p_cur = p;
-				cmd.relative = EINA_FALSE;
-			}
-			cmd.type = type;
-			cmd.data.cubic_to.ctrl_x0 = p1.x;
-			cmd.data.cubic_to.ctrl_y0 = p1.y;
-			cmd.data.cubic_to.ctrl_x1 = p2.x;
-			cmd.data.cubic_to.ctrl_y1 = p2.y;
-			cmd.data.cubic_to.x = p_cur.x;
-			cmd.data.cubic_to.y = p_cur.y;
-			esvg_path_command_add(r, &cmd);
+				last_command = 'L';
 		}
-
-		if (type == ESVG_PATH_SCUBIC_TO)
-		{
-			Esvg_Point p1;
-
-			if (!_esvg_path_scubic_curve_get(&iter, &p1, &p))
-				return EINA_FALSE;
-
-			if (is_relative)
-			{
-				p1.x += p_cur.x;
-				p1.y += p_cur.y;
-				p_cur.x += p.x;
-				p_cur.y += p.y;
-				cmd.relative = EINA_TRUE;
-			}
-			else
-			{
-				p_cur = p;
-				cmd.relative = EINA_FALSE;
-			}
-			cmd.type = type;
-			cmd.data.scubic_to.ctrl_x = p1.x;
-			cmd.data.scubic_to.ctrl_y = p1.y;
-			cmd.data.scubic_to.x = p_cur.x;
-			cmd.data.scubic_to.y = p_cur.y;
-			esvg_path_command_add(r, &cmd);
-		}
-
-		if (type == ESVG_PATH_QUADRATIC_TO)
-		{
-			Esvg_Point p1;
-
-			if (!_esvg_path_scubic_curve_get(&iter, &p1, &p))
-				return EINA_FALSE;
-
-			if (is_relative)
-			{
-				p1.x += p_cur.x;
-				p1.y += p_cur.y;
-				p_cur.x += p.x;
-				p_cur.y += p.y;
-				cmd.relative = EINA_TRUE;
-			}
-			else
-			{
-				p_cur = p;
-				cmd.relative = EINA_FALSE;
-			}
-			cmd.type = type;
-			cmd.data.quadratic_to.ctrl_x = p1.x;
-			cmd.data.quadratic_to.ctrl_y = p1.y;
-			cmd.data.quadratic_to.x = p_cur.x;
-			cmd.data.quadratic_to.y = p_cur.y;
-			esvg_path_command_add(r, &cmd);
-		}
-
-		if (type == ESVG_PATH_SQUADRATIC_TO)
-		{
-			if (!_esvg_path_point_get(&iter, &p))
-				return EINA_FALSE;
-
-			if (is_relative)
-			{
-				p_cur.x += p.x;
-				p_cur.y += p.y;
-				cmd.relative = EINA_TRUE;
-			}
-			else
-			{
-				p_cur = p;
-				cmd.relative = EINA_FALSE;
-			}
-			cmd.type = type;
-			cmd.data.squadratic_to.x = p_cur.x;
-			cmd.data.squadratic_to.y = p_cur.y;
-			esvg_path_command_add(r, &cmd);
-		}
-
-		if (type == ESVG_PATH_ARC_TO)
-		{
-			Esvg_Point radii;
-			double angle;
-			double large;
-			double sweep;
-
-			if (!_esvg_path_arc_get(&iter, &radii, &angle, &large, &sweep, &p))
-				return EINA_FALSE;
-
-			if (is_relative)
-			{
-				radii.x += p_cur.x;
-				radii.y += p_cur.y;
-				p_cur.x += p.x;
-				p_cur.y += p.y;
-				cmd.relative = EINA_TRUE;
-			}
-			else
-			{
-				p_cur = p;
-				cmd.relative = EINA_FALSE;
-			}
-			cmd.type = type;
-			cmd.data.arc_to.rx = radii.x;
-			cmd.data.arc_to.ry = radii.y;
-			cmd.data.arc_to.angle = angle;
-			cmd.data.arc_to.large = large;
-			cmd.data.arc_to.sweep = sweep;
-			cmd.data.arc_to.x = p_cur.x;
-			cmd.data.arc_to.y = p_cur.y;
-			esvg_path_command_add(r, &cmd);
-		}
+		first = EINA_FALSE;
+		ESVG_SPACE_COMMA_SKIP(iter);
 	}
-
-	return EINA_TRUE;
+	return ret;
 }
-
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/

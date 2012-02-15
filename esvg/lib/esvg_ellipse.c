@@ -21,8 +21,15 @@
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
+#define ESVG_ELLIPSE_MAGIC_CHECK(d) \
+	do {\
+		if (!EINA_MAGIC_CHECK(d, ESVG_ELLIPSE_MAGIC))\
+			EINA_MAGIC_FAIL(d, ESVG_ELLIPSE_MAGIC);\
+	} while(0)
+
 typedef struct _Esvg_Ellipse
 {
+	EINA_MAGIC
 	/* properties */
 	Esvg_Coord cx;
 	Esvg_Coord cy;
@@ -35,8 +42,10 @@ typedef struct _Esvg_Ellipse
 static Esvg_Ellipse * _esvg_ellipse_get(Enesim_Renderer *r)
 {
 	Esvg_Ellipse *thiz;
-	/* FIXME add some kind of type checking or make this a macro */
+
 	thiz = esvg_shape_data_get(r);
+	ESVG_ELLIPSE_MAGIC_CHECK(thiz);
+
 	return thiz;
 }
 /*----------------------------------------------------------------------------*
@@ -97,7 +106,16 @@ static Eina_Bool _esvg_ellipse_setup(Enesim_Renderer *r, const Esvg_Element_Stat
 
 static void _esvg_ellipse_clone(Enesim_Renderer *r, Enesim_Renderer *dr)
 {
+	Esvg_Ellipse *thiz;
+	Esvg_Ellipse *other;
 
+	thiz = _esvg_ellipse_get(r);
+	other = _esvg_ellipse_get(dr);
+
+	other->cx = thiz->cx;
+	other->cy = thiz->cy;
+	other->rx = thiz->rx;
+	other->ry = thiz->ry;
 }
 
 static void _esvg_ellipse_cleanup(Enesim_Renderer *r)
@@ -125,6 +143,7 @@ EAPI Enesim_Renderer * esvg_ellipse_new(void)
 
 	thiz = calloc(1, sizeof(Esvg_Ellipse));
 	if (!thiz) return NULL;
+	EINA_MAGIC_SET(thiz, ESVG_ELLIPSE_MAGIC);
 
 	r = enesim_renderer_ellipse_new();
 	enesim_renderer_rop_set(r, ENESIM_BLEND);
@@ -138,6 +157,19 @@ EAPI Enesim_Renderer * esvg_ellipse_new(void)
 
 	r = esvg_shape_new(&_descriptor, thiz);
 	return r;
+}
+
+EAPI Eina_Bool esvg_is_ellipse(Enesim_Renderer *r)
+{
+	Esvg_Ellipse *thiz;
+	Eina_Bool ret;
+
+	if (!esvg_is_shape(r))
+		return EINA_FALSE;
+	thiz = esvg_shape_data_get(r);
+	ret = EINA_MAGIC_CHECK(thiz, ESVG_ELLIPSE_MAGIC);
+
+	return ret;
 }
 
 EAPI void esvg_ellipse_cx_set(Enesim_Renderer *r, const Esvg_Coord *cx)
