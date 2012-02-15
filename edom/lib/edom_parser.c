@@ -1,5 +1,5 @@
 /* Edom - DOM
- * Copyright (C) 2011 Jorge Luis Zapata, Vincent Torri
+ * Copyright (C) 2011 Jorge Luis Zapata
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -18,6 +18,7 @@
 #include <ctype.h> /* for isspace() */
 #include <Eina.h>
 #include "Edom.h"
+#include "edom_private.h"
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
@@ -54,6 +55,9 @@ static Eina_Bool _edom_parser_cb(void *data, Eina_Simple_XML_Type type,
 
 	switch (type)
 	{
+		case EINA_SIMPLE_XML_COMMENT:
+			/* FIXME what to do here ... the comments are still being parsed */
+			break;
 		case EINA_SIMPLE_XML_OPEN:
 		case EINA_SIMPLE_XML_OPEN_EMPTY:
 		{

@@ -8,6 +8,7 @@ endif
 
 esvg_test_CPPFLAGS = \
 -I$(top_builddir) \
+-I$(top_srcdir)/edom/include \
 -I$(top_srcdir)/esvg/include \
 @ESVG_CFLAGS@
 esvg_test_SOURCES = esvg_main.c
