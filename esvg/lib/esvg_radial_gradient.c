@@ -122,9 +122,9 @@ static Eina_Bool _radial_gradient_setup(Enesim_Renderer *r,
 		/* check that the coordinates shold be set with (0,0) -> (1, 1) */
 		cx = esvg_length_final_get(&thiz->cx, 1);
 		cy = esvg_length_final_get(&thiz->cy, 1);
+		fx = esvg_length_final_get(&thiz->fx, 1);
+		fy = esvg_length_final_get(&thiz->fy, 1);
 		rad = esvg_length_final_get(&thiz->rad, 1);
-		/* fx and fy should be the 0% stop? */
-		/* cx and cy + r should be the 100% stop */
 
 		enesim_renderer_destination_boundings(rel, &bbox, 0, 0);
 		enesim_matrix_values_set(&m, bbox.w, 0, bbox.x, 0, bbox.h, bbox.y, 0, 0, 1);
@@ -140,6 +140,8 @@ static Eina_Bool _radial_gradient_setup(Enesim_Renderer *r,
 
 		cx = esvg_length_final_get(&thiz->cx, w);
 		cy = esvg_length_final_get(&thiz->cy, h);
+		fx = esvg_length_final_get(&thiz->fx, w);
+		fy = esvg_length_final_get(&thiz->fy, h);
 		rad = esvg_length_final_get(&thiz->rad, w);
 
 		m = state->transform;
@@ -151,11 +153,12 @@ static Eina_Bool _radial_gradient_setup(Enesim_Renderer *r,
 	enesim_renderer_geometry_transformation_set(thiz->r, &m);
 
 	/* FIXME for now we dont handle the focis */
-	printf("%g %g %g\n", cx, cy, rad);
+	printf("cx %g cy %g fx %g fy %g r %g\n", cx, cy, fx, fy, rad);
 	enesim_renderer_gradient_radial_center_x_set(thiz->r, cx);
 	enesim_renderer_gradient_radial_center_y_set(thiz->r, cy);
-	enesim_renderer_gradient_radial_radius_y_set(thiz->r, rad);
-	enesim_renderer_gradient_radial_radius_x_set(thiz->r, rad);
+	enesim_renderer_gradient_radial_focus_x_set(thiz->r, fx);
+	enesim_renderer_gradient_radial_focus_y_set(thiz->r, fy);
+	enesim_renderer_gradient_radial_radius_set(thiz->r, rad);
 
 	EINA_LIST_FOREACH(gstate->stops, l, stop)
 	{
