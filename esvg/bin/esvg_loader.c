@@ -74,7 +74,7 @@ int main(int argc, char *argv[])
 	if (!emage_init())
 		goto shutdown_esvg;
 
-	r = esvg_parser_load(argv[1]);
+	r = esvg_parser_load(argv[1], NULL);
 	if (!r)
 	{
 		printf("Fail to parse %s\n", argv[1]);

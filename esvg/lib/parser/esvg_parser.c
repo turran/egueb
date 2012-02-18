@@ -26,6 +26,7 @@
 #include <Eina.h>
 
 #include "Esvg.h"
+#include "Esvg_Parser.h"
 #include "esvg_private.h"
 /*============================================================================*
  *                                  Local                                     *
@@ -450,7 +451,8 @@ void esvg_parser_post_parse_add(Edom_Parser *p, Esvg_Parser_Post cb, void *data)
 /**
  *
  */
-EAPI Enesim_Renderer * esvg_parser_load(const char *filename)
+EAPI Enesim_Renderer * esvg_parser_load(const char *filename,
+		Esvg_Parser_Descriptor *descriptor)
 {
 	Esvg_Parser *thiz;
 	Esvg_Parser_Post_Data *pdata;

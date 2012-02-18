@@ -65,8 +65,6 @@
 EAPI int esvg_init(void);
 EAPI int esvg_shutdown(void);
 
-EAPI Enesim_Renderer * esvg_parser_load(const char *filename);
-
 /* FIXME implement the unit type as the spec or just
  * ABSOLUTE/RELATIVE?
  */
