@@ -47,13 +47,24 @@
 # endif
 #endif
 
+#include <Edom.h>
+
+typedef Eina_Bool (*Esvg_Parser_Tag_Get)(void *data, int *tag, const char *name, size_t length);
+typedef Edom_Tag * (*Esvg_Parser_Tag_Open)(void *data, int tag, Edom_Context *context, Eina_Array *contexts);
+typedef void (*Esvg_Parser_Tag_Is_Supported)(void *data, int tag, Edom_Context *context, Eina_Array *contexts);
+typedef Eina_Bool (*Esvg_Parser_Tag_Attribute_Set)(void *data, Edom_Tag *tag, const char *attr, const char *value);
+typedef char * (*Esvg_Parser_Tag_Attribute_Get)(void *data, Edom_Tag *tag, const char *attr);
+
 typedef struct _Esvg_Parser_Descriptor
 {
-	/* function whenever a tag is not known */
-	/* function whenever an attribute is not known */
+	Esvg_Parser_Tag_Get tag_get; /* whenever a tag name is found but esvg can not handle it */
+	Esvg_Parser_Tag_Open tag_open; /* called whenever a tag is opened and esvg can not handle it */
+	Esvg_Parser_Tag_Is_Supported tag_is_supported; /* called whenever a tag is found as a child of another but esvg can not recognize it as a valid child */
+	Esvg_Parser_Tag_Attribute_Set tag_attribute_set; /* called whenever an attribute is not recognized by esvg */
+	Esvg_Parser_Tag_Attribute_Get tag_attribute_get; /* called whenever an attribute is not recognized by esvg */
 } Esvg_Parser_Descriptor;
 
-EAPI Enesim_Renderer * esvg_parser_load(const char *filename, Esvg_Parser_Descriptor *descriptor);
+EAPI Enesim_Renderer * esvg_parser_load(const char *filename, Esvg_Parser_Descriptor *descriptor, void *data);
 
 #endif /*_ESVG_PARSER_H*/
 

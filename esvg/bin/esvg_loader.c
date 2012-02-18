@@ -26,6 +26,7 @@
 
 #include <Emage.h>
 #include <Esvg.h>
+#include <Esvg_Parser.h>
 
 /*
  * TODO:
@@ -74,7 +75,7 @@ int main(int argc, char *argv[])
 	if (!emage_init())
 		goto shutdown_esvg;
 
-	r = esvg_parser_load(argv[1], NULL);
+	r = esvg_parser_load(argv[1], NULL, NULL);
 	if (!r)
 	{
 		printf("Fail to parse %s\n", argv[1]);

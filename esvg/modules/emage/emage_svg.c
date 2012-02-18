@@ -291,7 +291,7 @@ static Eina_Error _emage_svg_load(const char *file, Enesim_Buffer *buffer, void 
 	int w = _default_width;
 	int h = _default_height;
 
-	r = esvg_parser_load(file, NULL);
+	r = esvg_parser_load(file, NULL, NULL);
 	if (!r)
 	{
 		return EMAGE_ERROR_LOADING;
