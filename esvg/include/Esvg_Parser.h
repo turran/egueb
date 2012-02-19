@@ -20,6 +20,7 @@
 
 #include <Eina.h>
 #include <Enesim.h>
+#include <Edom.h>
 
 #ifdef EAPI
 # undef EAPI
@@ -46,8 +47,6 @@
 #  define EAPI
 # endif
 #endif
-
-#include <Edom.h>
 
 typedef Eina_Bool (*Esvg_Parser_Tag_Get)(void *data, int *tag, const char *name, size_t length);
 typedef Edom_Tag * (*Esvg_Parser_Tag_Open)(void *data, int tag, Edom_Context *context, Eina_Array *contexts);
