@@ -16,59 +16,46 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 #include "Esvg.h"
-#include "Esvg_Parser.h"
 #include "esvg_parser_private.h"
+#include "esvg_values.h"
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
-/*----------------------------------------------------------------------------*
- *                         The context interface                               *
- *----------------------------------------------------------------------------*/
-static Eina_Bool _defs_tag_is_supported(int tag)
+typedef struct _Esvg_Parser_Multiple
 {
-	switch (tag)
-	{
-		case ESVG_LINEARGRADIENT:
-		case ESVG_RADIALGRADIENT:
-		case ESVG_PATTERN:
-		case ESVG_DEFS:
-		case ESVG_USE:
-		case ESVG_SVG:
-		case ESVG_CIRCLE:
-		case ESVG_ELLIPSE:
-		case ESVG_RECT:
-		case ESVG_LINE:
-		case ESVG_PATH:
-		case ESVG_POLYLINE:
-		case ESVG_POLYGON:
-		case ESVG_TEXT:
-		case ESVG_G:
-		case ESVG_STYLE:
-		case ESVG_IMAGE:
-		case ESVG_CLIPPATH:
-		return EINA_TRUE;
+	Eina_List 
+} Esvg_Parser_Multiple;
 
-		default:
-		return EINA_FALSE;
-	}
-}
+typedef struct _Esvg_Parser_Multiple_Element
+{
+	const Esvg_Parser_Descriptor *descriptor;
+	void *data;
+} Esvg_Parser_Multiple_Element;
+
+static Esvg_Parser_Descriptor _multiple_descriptor = {
+
+};
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
-Edom_Context * esvg_parser_defs_new(Edom_Tag *parent)
-{
-	Edom_Tag *topmost;
-
-	topmost = edom_tag_topmost_get(parent);
-	if (!topmost)
-	{
-		printf("WTF!\n");
-		return NULL;
-	}
-
-	return esvg_parser_context_new(_defs_tag_is_supported,
-		ESVG_DEFS, topmost, parent, NULL);
-}
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/
+EAPI Esvg_Parser_Multiple * esvg_parser_multiple_new(void)
+{
+	Esvg_Parser_Multiple *thiz;
+
+	thiz = calloc(1, sizeof(Esvg_Parser_Multiple));
+	return thiz;
+}
+
+EAPI void esvg_parser_multiple_descriptor_add(Esvg_Parser_Multiple *thiz,
+		Esvg_Parser_Descriptor *descriptor, const void *data)
+{
+
+}
+
+EAPI const Esvg_Parser_Descriptor * esvg_parser_multiple_descriptor_get(void)
+{
+	return &_multiple_descriptor;
+}

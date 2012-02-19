@@ -18,57 +18,91 @@
 #include "Esvg.h"
 #include "Esvg_Parser.h"
 #include "esvg_parser_private.h"
+#include "esvg_values.h"
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
-/*----------------------------------------------------------------------------*
- *                         The context interface                               *
- *----------------------------------------------------------------------------*/
-static Eina_Bool _defs_tag_is_supported(int tag)
+typedef struct _Esvg_Parser_A
 {
-	switch (tag)
-	{
-		case ESVG_LINEARGRADIENT:
-		case ESVG_RADIALGRADIENT:
-		case ESVG_PATTERN:
-		case ESVG_DEFS:
-		case ESVG_USE:
-		case ESVG_SVG:
-		case ESVG_CIRCLE:
-		case ESVG_ELLIPSE:
-		case ESVG_RECT:
-		case ESVG_LINE:
-		case ESVG_PATH:
-		case ESVG_POLYLINE:
-		case ESVG_POLYGON:
-		case ESVG_TEXT:
-		case ESVG_G:
-		case ESVG_STYLE:
-		case ESVG_IMAGE:
-		case ESVG_CLIPPATH:
-		return EINA_TRUE;
+	char *href;
+} Esvg_Parser_A;
 
-		default:
+static Eina_Bool _parser_a_attribute_set(Edom_Tag *tag, const char *key,
+		const char *value)
+{
+	Esvg_Parser_A *thiz;
+
+	thiz = edom_tag_data_get(tag);
+	if (strcmp(key, "id") == 0)
+	{
+		/* nothing to do here yet */
+	}
+	else if (strcmp(key, "xlink:href") == 0)
+	{
+		/* absolute */
+		if (*value == '/')
+		{
+			thiz->href = strdup(value);
+		}
+		/* relative */
+		else
+		{
+			Edom_Parser *parser;
+			char real[PATH_MAX];
+			const char *root;
+
+			parser = edom_tag_parser_get(tag);
+			root = edom_parser_root_get(parser);
+			strcpy(real, root);
+			strcat(real, value);
+			thiz->href = strdup(real);
+		}
+	}
+	else
+	{
 		return EINA_FALSE;
 	}
+
+	return EINA_TRUE;
 }
+
+static const char * _parser_a_attribute_get(Edom_Tag *tag, const char *attribute)
+{
+	return NULL;
+}
+
+static const char * _parser_a_name_get(Edom_Tag *tag)
+{
+	return "stop";
+}
+
+static Edom_Tag_Descriptor _descriptor = {
+	/* .name_get 		= */ _parser_a_name_get,
+	/* .attribute_set 	= */ _parser_a_attribute_set,
+	/* .attribute_get 	= */ _parser_a_attribute_get,
+};
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
-Edom_Context * esvg_parser_defs_new(Edom_Tag *parent)
+Edom_Tag * esvg_parser_a_new(Edom_Context *c, Edom_Tag *topmost)
 {
-	Edom_Tag *topmost;
+	Esvg_Parser_A *thiz;
+	Edom_Tag *tag;
 
-	topmost = edom_tag_topmost_get(parent);
-	if (!topmost)
-	{
-		printf("WTF!\n");
-		return NULL;
-	}
+	thiz = calloc(1, sizeof(Esvg_Parser_A));
+	tag = edom_tag_new(c, &_descriptor, ESVG_A, topmost, thiz);
 
-	return esvg_parser_context_new(_defs_tag_is_supported,
-		ESVG_DEFS, topmost, parent, NULL);
+	return tag;
+}
+
+const char * esvg_parser_a_href_get(Edom_Tag *t)
+{
+	Esvg_Parser_A *thiz;
+
+	thiz = edom_tag_data_get(t);
+	return thiz->href;
 }
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/
+

@@ -16,7 +16,8 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 #include "Esvg.h"
-#include "esvg_private.h"
+#include "Esvg_Parser.h"
+#include "esvg_parser_private.h"
 /*
  * The pattern parser might be kind of complicated given that we can parse
  * the same as the svg i think, but everything must be rendered to an image

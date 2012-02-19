@@ -48,6 +48,91 @@
 # endif
 #endif
 
+typedef enum _Esvg_Parser_Tag_Type {
+	ESVG_A,
+	ESVG_ALTGLYPH,
+	ESVG_ALTGLYPHDEF,
+	ESVG_ALTGLYPHITEM,
+	ESVG_ANIMATE,
+	ESVG_ANIMATECOLOR,
+	ESVG_ANIMATEMOTION,
+	ESVG_ANIMATETRANSFORM,
+	ESVG_CIRCLE,
+	ESVG_CLIPPATH,
+	ESVG_COLOR_PROFILE, /* 10 */
+	ESVG_CURSOR,
+	ESVG_DEFINITION_SRC,
+	ESVG_DEFS,
+	ESVG_DESC,
+	ESVG_ELLIPSE,
+	ESVG_FEBLEND,
+	ESVG_FECOLORMATRIX,
+	ESVG_FECOMPONENTTRANSFER,
+	ESVG_FECOMPOSITE,
+	ESVG_FECONVOLVEMATRIX, /* 20 */
+	ESVG_FEDIFFUSELIGHTING,
+	ESVG_FEDISPLACEMENTMAP,
+	ESVG_FEDISTANTLIGHT,
+	ESVG_FEFLOOD,
+	ESVG_FEFUNCA,
+	ESVG_FEFUNCB,
+	ESVG_FEFUNCG,
+	ESVG_FEFUNCR,
+	ESVG_FEGAUSSIANBLUR,
+	ESVG_FEIMAGE, /* 30 */
+	ESVG_FEMERGE,
+	ESVG_FEMERGENODE,
+	ESVG_FEMORPHOLOGY,
+	ESVG_FEOFFSET,
+	ESVG_FEPOINTLIGHT,
+	ESVG_FESPECULARLIGHTING,
+	ESVG_FESPOTLIGHT,
+	ESVG_FETILE,
+	ESVG_FETURBULENCE,
+	ESVG_FILTER, /* 40 */
+	ESVG_FONT,
+	ESVG_FONT_FACE,
+	ESVG_FONT_FACE_FORMAT,
+	ESVG_FONT_FACE_NAME,
+	ESVG_FONT_FACE_SRC,
+	ESVG_FONT_FACE_URI,
+	ESVG_FOREIGNOBJECT,
+	ESVG_G,
+	ESVG_GLYPH,
+	ESVG_GLYPHREF, /* 50 */
+	ESVG_HKERN,
+	ESVG_IMAGE,
+	ESVG_LINE,
+	ESVG_LINEARGRADIENT,
+	ESVG_MARKER,
+	ESVG_MASK,
+	ESVG_METADATA,
+	ESVG_MISSING_GLYPH,
+	ESVG_MPATH,
+	ESVG_PATH, /* 60 */
+	ESVG_PATTERN,
+	ESVG_POLYGON,
+	ESVG_POLYLINE,
+	ESVG_RADIALGRADIENT,
+	ESVG_RECT,
+	ESVG_SCRIPT,
+	ESVG_SET,
+	ESVG_STOP,
+	ESVG_STYLE,
+	ESVG_SVG,
+	ESVG_SWITCH,
+	ESVG_SYMBOL,
+	ESVG_TEXT,
+	ESVG_TEXTPATH,
+	ESVG_TITLE,
+	ESVG_TREF,
+	ESVG_TSPAN,
+	ESVG_USE,
+	ESVG_VIEW,
+	ESVG_VKERN,
+	ESVG_PARSE_TAGS
+} Esvg_Parser_Tag_Type;
+
 typedef Eina_Bool (*Esvg_Parser_Tag_Get)(void *data, int *tag, const char *name, size_t length);
 typedef Edom_Tag * (*Esvg_Parser_Tag_Open)(void *data, int tag, Edom_Context *context, Eina_Array *contexts);
 typedef void (*Esvg_Parser_Tag_Is_Supported)(void *data, int tag, Edom_Context *context, Eina_Array *contexts);
@@ -64,6 +149,22 @@ typedef struct _Esvg_Parser_Descriptor
 } Esvg_Parser_Descriptor;
 
 EAPI Enesim_Renderer * esvg_parser_load(const char *filename, Esvg_Parser_Descriptor *descriptor, void *data);
+
+
+/* some common parser descriptors */
+/* the linking desriptor parses <a> tags with its childs and calls a user provided function
+ * to set the destination uri whenever some element has been clicked
+ */
+typedef struct _Esvg_Parser_Linking Esvg_Parser_Linking;
+typedef void (*Esvg_Parser_Linking_Href_Set)(void *data, Enesim_Renderer *r, const char *href);
+typedef struct _Esvg_Parser_Linking_Descriptor
+{
+	Esvg_Parser_Linking_Href_Set href_set;
+} Esvg_Parser_Linking_Descriptor;
+
+EAPI Esvg_Parser_Linking * esvg_parser_linking_new(Esvg_Parser_Linking_Descriptor *descriptor,
+		void *data);
+EAPI const Esvg_Parser_Descriptor * esvg_parser_linking_descriptor_get(void);
 
 #endif /*_ESVG_PARSER_H*/
 

@@ -16,7 +16,8 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 #include "Esvg.h"
-#include "esvg_private.h"
+#include "Esvg_Parser.h"
+#include "esvg_parser_private.h"
 /*
  * In order to support styling we need to keep track of every element
  * parsed, that is, generate the DOM tree. This way we can support Ecss

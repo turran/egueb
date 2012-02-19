@@ -152,8 +152,10 @@ static Eina_Bool _radial_gradient_setup(Enesim_Renderer *r,
 	}
 	enesim_renderer_geometry_transformation_set(thiz->r, &m);
 
+	//printf("cx %g cy %g fx %g fy %g r %g\n", cx, cy, fx, fy, rad);
+	//printf("matrix = %" ENESIM_MATRIX_FORMAT "\n", ENESIM_MATRIX_ARGS(&m));
+
 	/* FIXME for now we dont handle the focis */
-	printf("cx %g cy %g fx %g fy %g r %g\n", cx, cy, fx, fy, rad);
 	enesim_renderer_gradient_radial_center_x_set(thiz->r, cx);
 	enesim_renderer_gradient_radial_center_y_set(thiz->r, cy);
 	enesim_renderer_gradient_radial_focus_x_set(thiz->r, fx);

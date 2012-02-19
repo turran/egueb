@@ -16,7 +16,8 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 #include "Esvg.h"
-#include "esvg_private.h"
+#include "Esvg_Parser.h"
+#include "esvg_parser_private.h"
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
