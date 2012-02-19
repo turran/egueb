@@ -15,7 +15,13 @@
  * License along with this library.
  * If not, see <http://www.gnu.org/licenses/>.
  */
+
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #include <Eina.h>
+
 #include "Edom.h"
 /* TODO
  * Instead of using a list for children we should use an INLIST to get
