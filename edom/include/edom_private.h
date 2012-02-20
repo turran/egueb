@@ -19,6 +19,14 @@
 #ifndef _EDOM_PRIVATE_H
 #define _EDOM_PRIVATE_H
 
-void edom_context_inside_comment_set(Edom_Context *thiz, Eina_Bool comment);
+/* parser */
+
+/* context */
+Eina_Bool edom_context_tag_open(Edom_Context *c, int tag, const char *attrs, unsigned int length);
+void edom_context_tag_close(Edom_Context *c, int tag);
+Edom_Parser * edom_context_parser_get(Edom_Context *c);
+void edom_context_cdata(Edom_Context *c, const char *cdata, unsigned int length);
+void edom_context_data(Edom_Context *c, const char *data, unsigned int length);
+
 
 #endif

@@ -53,7 +53,7 @@ Edom_Context * esvg_parser_context_clip_path_new(
 {
 	if (!parent) return NULL;
 
-	return esvg_parser_context_new(_clip_path_tag_is_supported,
+	return esvg_parser_context_simple_new(_clip_path_tag_is_supported,
 		ESVG_CLIPPATH, svg, parent, parent_r);
 }
 /*============================================================================*

@@ -39,12 +39,12 @@ typedef struct _Esvg_Parser_Context_Doc
 /*----------------------------------------------------------------------------*
  *                         The context interface                               *
  *----------------------------------------------------------------------------*/
-static Eina_Bool _doc_tag_open(void *data, int tag_type, Eina_Array *contexts,
+static Eina_Bool _doc_tag_open(void *data, int tag_type, Edom_Context *context,
 		const char *attributes, unsigned int length)
 {
 	Esvg_Parser_Context_Doc *thiz = data;
-	Edom_Context *context;
 	Edom_Context *new_context;
+	Edom_Parser *parser;
 	Edom_Tag *tag;
 	Enesim_Renderer *r;
 
@@ -52,13 +52,13 @@ static Eina_Bool _doc_tag_open(void *data, int tag_type, Eina_Array *contexts,
 	if (tag_type != ESVG_SVG)
 		return EINA_FALSE;
 
-	context = eina_array_data_get(contexts, eina_array_count_get(contexts) - 1);
+	parser = edom_context_parser_get(context);
 	tag = esvg_parser_svg_new(context, NULL);
 	edom_tag_attributes_from_xml(tag, attributes, length);
 	r = esvg_parser_element_renderer_get(tag);
 
 	new_context = esvg_parser_context_svg_new(tag, r);
-	eina_array_push(contexts, new_context);
+	edom_parser_context_push(parser, new_context);
 
 	thiz->tag = tag;
 

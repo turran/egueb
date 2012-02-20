@@ -27,6 +27,7 @@ esvg_parser_context_defs.c \
 esvg_parser_context_doc.c \
 esvg_parser_context_gradient.c \
 esvg_parser_context_style.c \
+esvg_parser_context_simple.c \
 esvg_parser_context_svg.c \
 esvg_parser_context_text.c \
 esvg_parser_element.c \

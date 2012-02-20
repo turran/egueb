@@ -41,6 +41,8 @@ typedef struct _Esvg_Parser_Post_Data
 typedef struct _Esvg_Parser
 {
 	Eina_List *post_parsers;
+	Esvg_Parser_Descriptor descriptor;
+	void *data;
 } Esvg_Parser;
 
 /**
@@ -101,11 +103,15 @@ static char * _esvg_file_open(const char *filename, long *sz)
 static Eina_Bool _esvg_parser_tag_get(Edom_Parser *parser, const char *content,
 		 size_t sz, int *tag)
 {
+	Esvg_Parser *thiz;
+
 	/* sz ==1 : 2 cases : a and g */
 	if (sz == 1)
 	{
 		if (content[0] == 'a')
 		{
+			*tag = ESVG_A;
+			return EINA_TRUE;
 		}
 		else if (content[0] == 'g')
 		{
@@ -323,6 +329,12 @@ static Eina_Bool _esvg_parser_tag_get(Edom_Parser *parser, const char *content,
 		else
 			DBG("tag <%s> not supported by SVG Tiny 1.1 spec", content);
 	}
+
+	/* if we have reached this point we cant recognize the tag */
+	thiz = edom_parser_data_get(parser);
+	if (thiz->descriptor.tag_get)
+		return thiz->descriptor.tag_get(thiz->data, tag, content, sz);
+
 	return EINA_FALSE;
 
 }
@@ -446,6 +458,18 @@ void esvg_parser_post_parse_add(Edom_Parser *p, Esvg_Parser_Post cb, void *data)
 
 	thiz->post_parsers = eina_list_append(thiz->post_parsers, pdata);
 }
+
+Eina_Bool esvg_parser_tag_open(Edom_Parser *p, int tag,
+		Edom_Context *context,
+		const char *attributes, size_t length)
+{
+	Esvg_Parser *thiz;
+
+	thiz = edom_parser_data_get(p);
+	if (thiz->descriptor.tag_open)
+		return thiz->descriptor.tag_open(thiz->data, tag, context, attributes, length);
+	return EINA_FALSE;
+}
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/
@@ -466,6 +490,10 @@ EAPI Enesim_Renderer * esvg_parser_load(const char *filename,
 	long sz;
 
 	thiz = calloc(1, sizeof(Esvg_Parser));
+	thiz->data = data;
+	if (descriptor)
+		thiz->descriptor = *descriptor;
+
 	parser = edom_parser_new(&_descriptor, thiz);
 
 	edom_parser_location_set(parser, filename);
@@ -489,8 +517,6 @@ EAPI Enesim_Renderer * esvg_parser_load(const char *filename,
 	tag = esvg_parser_context_doc_topmost_get(c);
 	if (!tag)
 		goto end;
-
-	//edom_tag_dump(tag);
 
 	esvg_parser_svg_style_apply(tag);
 	/* FIXME all the link property of the <use> tags

@@ -15,60 +15,26 @@
  * License along with this library.
  * If not, see <http://www.gnu.org/licenses/>.
  */
+
+/* This is just a wrapper on top of the edom context to trigger correctly
+ * the parser descriptor functions
+ */
 #include "Esvg.h"
 #include "Esvg_Parser.h"
 #include "esvg_parser_private.h"
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
-/*----------------------------------------------------------------------------*
- *                         The context interface                               *
- *----------------------------------------------------------------------------*/
-static Eina_Bool _defs_tag_is_supported(int tag)
+typedef struct _Esvg_Tag
 {
-	switch (tag)
-	{
-		case ESVG_LINEARGRADIENT:
-		case ESVG_RADIALGRADIENT:
-		case ESVG_PATTERN:
-		case ESVG_DEFS:
-		case ESVG_USE:
-		case ESVG_SVG:
-		case ESVG_CIRCLE:
-		case ESVG_ELLIPSE:
-		case ESVG_RECT:
-		case ESVG_LINE:
-		case ESVG_PATH:
-		case ESVG_POLYLINE:
-		case ESVG_POLYGON:
-		case ESVG_TEXT:
-		case ESVG_G:
-		case ESVG_STYLE:
-		case ESVG_IMAGE:
-		case ESVG_CLIPPATH:
-		return EINA_TRUE;
-
-		default:
-		return EINA_FALSE;
-	}
-}
+	Edom_Tag_Descriptor descriptor;
+	Edom_Parser *parser;
+	void *data;
+} Esvg_Tag;
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
-Edom_Context * esvg_parser_defs_new(Edom_Tag *parent)
-{
-	Edom_Tag *topmost;
-
-	topmost = edom_tag_topmost_get(parent);
-	if (!topmost)
-	{
-		printf("WTF!\n");
-		return NULL;
-	}
-
-	return esvg_parser_context_simple_new(_defs_tag_is_supported,
-		ESVG_DEFS, topmost, parent, NULL);
-}
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/
+

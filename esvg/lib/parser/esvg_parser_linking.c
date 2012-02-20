@@ -19,6 +19,7 @@
 #include "Esvg_Parser.h"
 #include "esvg_parser_private.h"
 #include "esvg_values.h"
+/* TODO here we should have the parser descriptor to handle the <a> tag */
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
@@ -29,73 +30,52 @@ struct _Esvg_Parser_Linking
 };
 
 /*----------------------------------------------------------------------------*
- *                         The context interface                               *
+ *                        The A context interface                             *
  *----------------------------------------------------------------------------*/
-#if 0
-static Eina_Bool _context_tag_open(void *data, int tag,
-		Eina_Array *contexts, const char *attributes,
+static Eina_Bool _a_context_tag_open(void *data, int tag,
+		Edom_Context *context, const char *attributes,
 		unsigned int length)
 {
-	Esvg_Parser_Context *thiz = data;
-	Edom_Context *context;
-	Edom_Tag *new_tag = NULL;
+	Esvg_Parser_Linking *thiz = data;
 	Eina_Bool ret = EINA_TRUE;
-
-	context = eina_array_data_get(contexts, eina_array_count_get(contexts) - 1);
-	/* TODO first check if the tag is supported */
-	if (!thiz->tag_is_supported(tag))
-	{
-		printf("parsing error. tag is not suppoted %d\n", tag);
-		return;
-	}
-	/* if so, create it */
-	new_tag = _context_tag_new(thiz, tag, context, contexts);
-	if (new_tag)
-	{
-		edom_tag_attributes_from_xml(new_tag, attributes, length);
-		edom_tag_child_add(thiz->parent, new_tag);
-		esvg_parser_svg_tag_add(thiz->svg, new_tag);
-	}
-	/* if there's a tag open callback call it with the new tag passed */
 
 	return ret;
 }
 
-static void _context_tag_close(void *data, int tag,
-		Eina_Array *contexts)
+static void _a_context_tag_close(void *data, int tag,
+		Edom_Context *context)
 {
-	Esvg_Parser_Context *thiz = data;
-	Edom_Context *context;
+	Esvg_Parser_Linking *thiz = data;
 
 	/* destroy ourselves */
-	if (thiz->tag == tag)
+#if 0
+	if (thiz->tag == ESVG_A)
 	{
 		context = eina_array_pop(contexts);
 		edom_context_delete(context);
 		return;
 	}
-}
-
-static void _context_free(void *data)
-{
-	Esvg_Parser_Context *thiz = data;
-	free(thiz);
+#endif
 }
 
 static Edom_Context_Descriptor _descriptor = {
-	/* .tag_open = 	*/ _context_tag_open,
-	/* .tag_close =	*/ _context_tag_close,
+	/* .tag_open = 	*/ _a_context_tag_open,
+	/* .tag_close =	*/ _a_context_tag_close,
 	/* .data =	*/ NULL,
 	/* .cdata =	*/ NULL,
-	/* .free = 	*/ _context_free,
+	/* .free = 	*/ NULL,
 };
 
-#endif
-
-static Edom_Tag * _linking_tag_open(void *data, int tag, Edom_Context *context, Eina_Array *contexts)
+/*----------------------------------------------------------------------------*
+ *                     The parser descriptor interface                         *
+ *----------------------------------------------------------------------------*/
+static Eina_Bool _linking_tag_open(void *data, int tag, Edom_Context *context,
+		const char *attributes, size_t len)
 {
 	/* create the a tag */
+	printf("tag open! %d\n", tag);
 	/* create the a context defined here */
+	return EINA_FALSE;
 }
 
 /* FIXME do we really need this? */

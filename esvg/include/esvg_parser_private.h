@@ -21,10 +21,14 @@
 #include <Edom.h>
 #include <Ecss.h>
 
+/* parser */
 typedef void (*Esvg_Parser_Post)(Edom_Parser *p, void *data);
 
 void esvg_parser_post_parse_add(Edom_Parser *thiz, Esvg_Parser_Post cb, void *data);
+Eina_Bool esvg_parser_tag_open(Edom_Parser *p, int tag, Edom_Context *context,
+		const char *attributes, size_t length);
 
+/* style */
 typedef struct _Esvg_Parser_Style Esvg_Parser_Style;
 
 const char * esvg_parser_tag_type_string_to(Esvg_Parser_Tag_Type type);
@@ -35,11 +39,12 @@ void esvg_parser_style_apply(Esvg_Parser_Style *thiz, Edom_Tag *root);
 void esvg_parser_style_inline_set(const char *value, Edom_Tag *tag,
 		Esvg_Attribute_Presentation *attr);
 
+/* doc context */
 Edom_Context * esvg_parser_context_doc_new(Edom_Parser *parser);
 Edom_Tag * esvg_parser_context_doc_topmost_get(Edom_Context *c);
 
-typedef Eina_Bool (*Esvg_Parser_Context_Tag_Is_Supported)(int tag);
-Edom_Context * esvg_parser_context_new(Esvg_Parser_Context_Tag_Is_Supported is_supported,
+typedef Eina_Bool (*Esvg_Parser_Context_Simple_Tag_Is_Supported)(int tag);
+Edom_Context * esvg_parser_context_simple_new(Esvg_Parser_Context_Simple_Tag_Is_Supported is_supported,
 		int tag, Edom_Tag *svg, Edom_Tag *parent,
 		Enesim_Renderer *parent_r);
 

@@ -65,10 +65,12 @@ EAPI const char * edom_parser_location_get(Edom_Parser *thiz);
 EAPI const char * edom_parser_root_get(Edom_Parser *thiz);
 EAPI Eina_Bool edom_parser_parse(Edom_Parser *thiz, Edom_Context *doc, const char *content, size_t len);
 EAPI void * edom_parser_data_get(Edom_Parser *thiz);
+EAPI void edom_parser_context_push(Edom_Parser *thiz, Edom_Context *c);
+EAPI Edom_Context * edom_parser_context_pop(Edom_Parser *thiz);
 
 /* context */
-typedef Eina_Bool (*Edom_Context_Tag_Open)(void *data, int tag, Eina_Array *contexts, const char *attrs, unsigned int attrs_length);
-typedef void (*Edom_Context_Tag_Close)(void *data, int tag, Eina_Array *contexts);
+typedef Eina_Bool (*Edom_Context_Tag_Open)(void *data, int tag, Edom_Context *context, const char *attrs, unsigned int attrs_length);
+typedef void (*Edom_Context_Tag_Close)(void *data, int tag, Edom_Context *context);
 typedef void (*Edom_Context_Data)(void *data, const char *cdata, unsigned int length);
 typedef void (*Edom_Context_Cdata)(void *data, const char *cdata, unsigned int length);
 typedef void (*Edom_Context_Free)(void *data);
@@ -84,13 +86,8 @@ typedef struct _Edom_Context_Descriptor
 
 EAPI Edom_Context * edom_context_new(Edom_Parser *parser, Edom_Context_Descriptor *d, void *data);
 EAPI void edom_context_delete(Edom_Context *c);
-EAPI Eina_Bool edom_context_tag_open(Edom_Context *c, int tag, Eina_Array *contexts, const char *attrs, unsigned int length);
-EAPI void edom_context_tag_close(Edom_Context *c, int tag, Eina_Array *contexts);
 EAPI void * edom_context_data_get(Edom_Context *c);
-EAPI Edom_Parser * edom_context_parser_get(Edom_Context *c);
-EAPI void edom_context_cdata(Edom_Context *c, const char *cdata, unsigned int length);
-EAPI void edom_context_data(Edom_Context *c, const char *data, unsigned int length);
-
+EAPI Edom_Parser * edom_context_parser_get(Edom_Context *context);
 
 /* tag */
 typedef struct _Edom_Tag_Descriptor

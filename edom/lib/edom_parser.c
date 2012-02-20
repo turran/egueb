@@ -89,14 +89,14 @@ static Eina_Bool _edom_parser_cb(void *data, Eina_Simple_XML_Type type,
 				 */
 				break;
 			}
-			edom_context_tag_open(context, tag, contexts, attrs, attr_length);
+			edom_context_tag_open(context, tag, attrs, attr_length);
 			/* kind of ugly but works */
 			if (type == EINA_SIMPLE_XML_OPEN_EMPTY)
 			{
 				Edom_Context *last_context;
 
 				last_context = eina_array_data_get(contexts, eina_array_count_get(contexts) - 1);
-				edom_context_tag_close(last_context, tag, contexts);
+				edom_context_tag_close(last_context, tag);
 			}
 		}
 		break;
@@ -107,7 +107,7 @@ static Eina_Bool _edom_parser_cb(void *data, Eina_Simple_XML_Type type,
 		{
 			break;
 		}
-		edom_context_tag_close(context, tag, contexts);
+		edom_context_tag_close(context, tag);
 		break;
 
 		case EINA_SIMPLE_XML_DATA:
@@ -197,4 +197,19 @@ EAPI Eina_Bool edom_parser_parse(Edom_Parser *thiz, Edom_Context *doc, const cha
 EAPI void * edom_parser_data_get(Edom_Parser *thiz)
 {
 	return thiz->data;
+}
+
+EAPI void edom_parser_context_push(Edom_Parser *thiz, Edom_Context *c)
+{
+	if (!thiz) return;
+	eina_array_push(thiz->contexts, c);
+}
+
+EAPI Edom_Context * edom_parser_context_pop(Edom_Parser *thiz)
+{
+	Edom_Context *c;
+
+	if (!thiz) return NULL;
+	c = eina_array_pop(thiz->contexts);
+	return c;
 }

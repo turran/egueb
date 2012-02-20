@@ -135,11 +135,11 @@ static Edom_Tag_Descriptor _tag_descriptor = {
 /*----------------------------------------------------------------------------*
  *                         The context interface                               *
  *----------------------------------------------------------------------------*/
-static Eina_Bool _emage_svg_context_tag_open(void *data, int tag_type, Eina_Array *contexts,
+static Eina_Bool _emage_svg_context_tag_open(void *data, int tag_type,
+		Edom_Context *context,
 		const char *attributes, unsigned int length)
 {
 	Emage_Svg_Svg *thiz = data;
-	Edom_Context *context;
 	Edom_Tag *tag;
 	int count;
 
@@ -147,9 +147,6 @@ static Eina_Bool _emage_svg_context_tag_open(void *data, int tag_type, Eina_Arra
 	if (tag_type != EMAGE_SVG_SVG)
 		return EINA_FALSE;
 
-	count = eina_array_count_get(contexts) - 1;
-	printf("count = %d\n", count);
-	context = eina_array_data_get(contexts, count);
 	tag = edom_tag_new(context, &_tag_descriptor, EMAGE_SVG_SVG, NULL, thiz);
 	edom_tag_attributes_from_xml(tag, attributes, length);
 

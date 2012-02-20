@@ -18,6 +18,10 @@
 #include "Esvg.h"
 #include "esvg_parser_private.h"
 #include "esvg_values.h"
+/* TODO add fthe following missing properties
+ * in
+ * result
+ */
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/

@@ -48,15 +48,16 @@ static void _style_cdata(void *data, const char *cdata, unsigned int length)
 }
 
 static void _style_tag_close(void *data, int tag,
-		Eina_Array *contexts)
+		Edom_Context *context)
 {
-	Edom_Context *context;
+	Edom_Parser *parser;
 
 	switch (tag)
 	{
 		/* destroy ourselves */
 		case ESVG_STYLE:
-		context = eina_array_pop(contexts);
+		parser = edom_context_parser_get(context);
+		context = edom_parser_context_pop(parser);
 		edom_context_delete(context);
 		break;
 

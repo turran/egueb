@@ -50,15 +50,15 @@ static void _text_data(void *data, const char *ddata, unsigned int length)
 }
 
 static void _text_tag_close(void *data, int tag,
-		Eina_Array *contexts)
+		Edom_Context *context)
 {
-	Edom_Context *context;
-
+	Edom_Parser *parser;
 	switch (tag)
 	{
 		/* destroy ourselves */
 		case ESVG_TEXT:
-		context = eina_array_pop(contexts);
+		parser = edom_context_parser_get(context);
+		context = edom_parser_context_pop(parser);
 		edom_context_delete(context);
 		break;
 

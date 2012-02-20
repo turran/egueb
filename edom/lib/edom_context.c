@@ -37,6 +37,38 @@ struct _Edom_Context
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
+Eina_Bool edom_context_tag_open(Edom_Context *thiz, int tag, const char *attrs, unsigned int length)
+{
+
+	if (!thiz) return EINA_FALSE;
+	if (thiz->descriptor.tag_open)
+		return thiz->descriptor.tag_open(thiz->data, tag, thiz, attrs, length);
+	return EINA_FALSE;
+}
+
+void edom_context_tag_close(Edom_Context *thiz, int tag)
+{
+	if (!thiz) return;
+	if (thiz->descriptor.tag_close)
+	return thiz->descriptor.tag_close(thiz->data, tag, thiz);
+	return;
+}
+
+void edom_context_cdata(Edom_Context *thiz, const char *cdata, unsigned int length)
+{
+	if (!thiz) return;
+	if (thiz->descriptor.cdata)
+		return thiz->descriptor.cdata(thiz->data, cdata, length);
+	return;
+}
+
+void edom_context_data(Edom_Context *thiz, const char *data, unsigned int length)
+{
+	if (!thiz) return;
+	if (thiz->descriptor.data)
+		return thiz->descriptor.data(thiz->data, data, length);
+	return;
+}
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/
@@ -65,38 +97,6 @@ EAPI void edom_context_delete(Edom_Context *thiz)
 	if (thiz->descriptor.free)
 		thiz->descriptor.free(thiz->data);
 	free(thiz);
-}
-
-EAPI Eina_Bool edom_context_tag_open(Edom_Context *thiz, int tag, Eina_Array *contexts, const char *attrs, unsigned int length)
-{
-	if (!thiz) return EINA_FALSE;
-	if (thiz->descriptor.tag_open)
-		return thiz->descriptor.tag_open(thiz->data, tag, contexts, attrs, length);
-	return EINA_FALSE;
-}
-
-EAPI void edom_context_tag_close(Edom_Context *thiz, int tag, Eina_Array *contexts)
-{
-	if (!thiz) return;
-	if (thiz->descriptor.tag_close)
-		return thiz->descriptor.tag_close(thiz->data, tag, contexts);
-	return;
-}
-
-EAPI void edom_context_cdata(Edom_Context *thiz, const char *cdata, unsigned int length)
-{
-	if (!thiz) return;
-	if (thiz->descriptor.cdata)
-		return thiz->descriptor.cdata(thiz->data, cdata, length);
-	return;
-}
-
-EAPI void edom_context_data(Edom_Context *thiz, const char *data, unsigned int length)
-{
-	if (!thiz) return;
-	if (thiz->descriptor.data)
-		return thiz->descriptor.data(thiz->data, data, length);
-	return;
 }
 
 EAPI void * edom_context_data_get(Edom_Context *thiz)

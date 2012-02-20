@@ -36,7 +36,7 @@ typedef struct _Esvg_Parser_Context_Gradient
  *                               Stop parsing                                 *
  *----------------------------------------------------------------------------*/
 static Eina_Bool _esvg_parser_gradient_stop(Edom_Context *context,
-		Esvg_Parser_Context_Gradient *thiz, Eina_Array *contexts,
+		Esvg_Parser_Context_Gradient *thiz, Edom_Parser *parser,
 		const char *attributes, unsigned int length)
 {
 	Esvg_Gradient_Stop *stop;
@@ -55,18 +55,18 @@ static Eina_Bool _esvg_parser_gradient_stop(Edom_Context *context,
  *                         The context interface                               *
  *----------------------------------------------------------------------------*/
 static Eina_Bool _gradient_tag_open(void *data, int tag,
-		Eina_Array *contexts, const char *attributes,
+		Edom_Context *context, const char *attributes,
 		unsigned int length)
 {
 	Esvg_Parser_Context_Gradient *thiz = data;
-	Edom_Context *context;
+	Edom_Parser *parser;
 	Eina_Bool ret;
 
-	context = eina_array_data_get(contexts, eina_array_count_get(contexts) - 1);
 	switch (tag)
 	{
 		case ESVG_STOP:
-		ret = _esvg_parser_gradient_stop(context, thiz, contexts, attributes, length);
+		parser = edom_context_parser_get(context);
+		ret = _esvg_parser_gradient_stop(context, thiz, parser, attributes, length);
 		break;
 
 		default:
@@ -78,16 +78,17 @@ static Eina_Bool _gradient_tag_open(void *data, int tag,
 }
 
 static void _gradient_tag_close(void *data, int tag,
-		Eina_Array *contexts)
+		Edom_Context *context)
 {
-	Edom_Context *context;
+	Edom_Parser *parser;
 
 	switch (tag)
 	{
 		/* destroy ourselves */
 		case ESVG_RADIALGRADIENT:
 		case ESVG_LINEARGRADIENT:
-		context = eina_array_pop(contexts);
+		parser = edom_context_parser_get(context);
+		context = edom_parser_context_pop(parser);
 		edom_context_delete(context);
 		break;
 

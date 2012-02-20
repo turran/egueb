@@ -133,6 +133,7 @@ static Eina_Bool _radial_gradient_setup(Enesim_Renderer *r,
 	{
 		double w;
 		double h;
+		double rad_vp = 0;
 
 		/* use the user space coordiantes */
 		w = state->viewbox_w;
@@ -142,8 +143,11 @@ static Eina_Bool _radial_gradient_setup(Enesim_Renderer *r,
 		cy = esvg_length_final_get(&thiz->cy, h);
 		fx = esvg_length_final_get(&thiz->fx, w);
 		fy = esvg_length_final_get(&thiz->fy, h);
-		rad = esvg_length_final_get(&thiz->rad, w);
-
+		if (thiz->rad.unit == ESVG_UNIT_LENGTH_PERCENT)
+		{
+			rad_vp = hypot(w, h) / M_SQRT2;
+		}
+		rad = esvg_length_final_get(&thiz->rad, rad_vp);
 		m = state->transform;
 	}
 	if (enesim_matrix_type_get(&gstate->transform) != ENESIM_MATRIX_IDENTITY)

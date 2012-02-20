@@ -134,8 +134,8 @@ typedef enum _Esvg_Parser_Tag_Type {
 } Esvg_Parser_Tag_Type;
 
 typedef Eina_Bool (*Esvg_Parser_Tag_Get)(void *data, int *tag, const char *name, size_t length);
-typedef Edom_Tag * (*Esvg_Parser_Tag_Open)(void *data, int tag, Edom_Context *context, Eina_Array *contexts);
-typedef void (*Esvg_Parser_Tag_Is_Supported)(void *data, int tag, Edom_Context *context, Eina_Array *contexts);
+typedef Eina_Bool (*Esvg_Parser_Tag_Open)(void *data, int tag, Edom_Context *context, const char *attributes, size_t length);
+typedef void (*Esvg_Parser_Tag_Is_Supported)(void *data, int tag, Edom_Context *context);
 typedef Eina_Bool (*Esvg_Parser_Tag_Attribute_Set)(void *data, Edom_Tag *tag, const char *attr, const char *value);
 typedef char * (*Esvg_Parser_Tag_Attribute_Get)(void *data, Edom_Tag *tag, const char *attr);
 
@@ -150,6 +150,9 @@ typedef struct _Esvg_Parser_Descriptor
 
 EAPI Enesim_Renderer * esvg_parser_load(const char *filename, Esvg_Parser_Descriptor *descriptor, void *data);
 
+EAPI Edom_Context * esvg_parser_context_new(Edom_Parser *parser,
+		Edom_Context_Descriptor *descriptor,
+		void *data);
 
 /* some common parser descriptors */
 /* the linking desriptor parses <a> tags with its childs and calls a user provided function

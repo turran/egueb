@@ -60,7 +60,7 @@ Edom_Context * esvg_parser_context_g_new(
 {
 	if (!parent) return NULL;
 
-	return esvg_parser_context_new(_g_tag_is_supported,
+	return esvg_parser_context_simple_new(_g_tag_is_supported,
 		ESVG_G, svg, parent, parent_r);
 }
 /*============================================================================*
