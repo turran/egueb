@@ -24,7 +24,7 @@
 /*----------------------------------------------------------------------------*
  *                         The context interface                               *
  *----------------------------------------------------------------------------*/
-static Eina_Bool _defs_tag_is_supported(int tag)
+static Eina_Bool _defs_tag_is_supported(void *data, int tag)
 {
 	switch (tag)
 	{
@@ -52,6 +52,12 @@ static Eina_Bool _defs_tag_is_supported(int tag)
 		return EINA_FALSE;
 	}
 }
+
+static Esvg_Parser_Context_Simple_Descriptor _descriptor = {
+	/* .tag_is_supported 	= */ _defs_tag_is_supported,
+	/* .tag_added 		= */ NULL,
+	/* .free		= */ NULL,
+};
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
@@ -66,8 +72,9 @@ Edom_Context * esvg_parser_defs_new(Edom_Tag *parent)
 		return NULL;
 	}
 
-	return esvg_parser_context_simple_new(_defs_tag_is_supported,
-		ESVG_DEFS, topmost, parent, NULL);
+	return esvg_parser_context_simple_new(ESVG_DEFS,
+			topmost, parent, NULL,
+			&_descriptor, NULL);
 }
 /*============================================================================*
  *                                   API                                      *

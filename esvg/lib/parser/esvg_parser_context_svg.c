@@ -24,10 +24,11 @@
 /*----------------------------------------------------------------------------*
  *                         The context interface                               *
  *----------------------------------------------------------------------------*/
-static Eina_Bool _svg_tag_is_supported(int tag)
+static Eina_Bool _svg_tag_is_supported(void *data, int tag)
 {
 	switch (tag)
 	{
+		case ESVG_A:
 		case ESVG_LINEARGRADIENT:
 		case ESVG_RADIALGRADIENT:
 		case ESVG_PATTERN:
@@ -52,6 +53,12 @@ static Eina_Bool _svg_tag_is_supported(int tag)
 		return EINA_FALSE;
 	}
 }
+
+static Esvg_Parser_Context_Simple_Descriptor _descriptor = {
+	/* .tag_is_supported 	= */ _svg_tag_is_supported,
+	/* .tag_added 		= */ NULL,
+	/* .free		= */ NULL,
+};
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
@@ -62,8 +69,9 @@ Edom_Context * esvg_parser_context_svg_new(
 	if (!parent) return NULL;
 	if (!parent_r) return NULL;
 
-	return esvg_parser_context_simple_new(_svg_tag_is_supported,
-		ESVG_SVG, parent, parent, parent_r);
+	return esvg_parser_context_simple_new(ESVG_SVG,
+			parent, parent, parent_r,
+			&_descriptor, NULL);
 }
 /*============================================================================*
  *                                   API                                      *

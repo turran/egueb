@@ -27,7 +27,8 @@ typedef struct _Esvg_Parser_Context_Simple
 	Edom_Tag *svg;
 	Edom_Tag *parent;
 	Enesim_Renderer *parent_r;
-	Esvg_Parser_Context_Simple_Tag_Is_Supported tag_is_supported;
+	Esvg_Parser_Context_Simple_Descriptor *descriptor;
+	void *data;
 } Esvg_Parser_Context_Simple;
 
 /*----------------------------------------------------------------------------*
@@ -69,6 +70,24 @@ static Edom_Tag * _esvg_parser_context_simple_style(Edom_Context *context,
 	esvg_parser_svg_style_add(thiz->svg, style);
 
 	new_context = esvg_parser_context_style_new(tag);
+	edom_parser_context_push(parser, new_context);
+
+	return tag;
+}
+/*----------------------------------------------------------------------------*
+ *                                A parsing                                   *
+ *----------------------------------------------------------------------------*/
+static Edom_Tag * _esvg_parser_context_simple_a(Edom_Context *context,
+		Esvg_Parser_Context_Simple *thiz,
+		Edom_Parser *parser)
+{
+	Edom_Context *new_context;
+	Edom_Tag *tag;
+	Enesim_Renderer *r;
+
+	tag = esvg_parser_a_new(context, thiz->svg);
+	new_context = esvg_parser_context_a_new(thiz->svg,
+			tag, r);
 	edom_parser_context_push(parser, new_context);
 
 	return tag;
@@ -443,6 +462,10 @@ static Edom_Tag * _context_tag_new(Esvg_Parser_Context_Simple *thiz,
 		new_tag = _esvg_parser_context_simple_g(context, thiz, parser);
 		break;
 
+		case ESVG_A:
+		new_tag = _esvg_parser_context_simple_a(context, thiz, parser);
+		break;
+
 		case ESVG_STYLE:
 		/* FIXME store the style? */
 		new_tag = _esvg_parser_context_simple_style(context, thiz, parser);
@@ -474,7 +497,7 @@ static Eina_Bool _context_tag_open(void *data, int tag,
 	Eina_Bool ret = EINA_TRUE;
 
 	/* first check if the tag is supported */
-	if (!thiz->tag_is_supported(tag))
+	if (!thiz->descriptor->tag_is_supported(thiz->data, tag))
 	{
 		printf("parsing error. tag is not suppoted %d\n", tag);
 		return EINA_FALSE;
@@ -482,11 +505,16 @@ static Eina_Bool _context_tag_open(void *data, int tag,
 	/* if so, create it */
 	parser = edom_context_parser_get(context);
 	new_tag = _context_tag_new(thiz, tag, context, parser);
+	/* FIXME this is wrong. this new tag should be passed to the context tag */
 	if (new_tag)
 	{
 		edom_tag_attributes_from_xml(new_tag, attributes, length);
 		edom_tag_child_add(thiz->parent, new_tag);
 		esvg_parser_svg_tag_add(thiz->svg, new_tag);
+		if (thiz->descriptor->tag_added)
+		{
+			thiz->descriptor->tag_added(thiz->data, new_tag);
+		}
 	}
 
 	return ret;
@@ -525,21 +553,24 @@ static Edom_Context_Descriptor _descriptor = {
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
-Edom_Context * esvg_parser_context_simple_new(Esvg_Parser_Context_Simple_Tag_Is_Supported
-		tag_is_supported, int tag, Edom_Tag *svg, Edom_Tag *parent,
-		Enesim_Renderer *parent_r)
+Edom_Context * esvg_parser_context_simple_new(int tag, Edom_Tag *svg, Edom_Tag *parent,
+		Enesim_Renderer *parent_r,
+		Esvg_Parser_Context_Simple_Descriptor *descriptor,
+		void *data)
 {
 	Esvg_Parser_Context_Simple *thiz;
 	Edom_Parser *parser;
 
 	if (!svg) return NULL;
+	if (!descriptor) return NULL;
 
 	thiz = calloc(1, sizeof(Esvg_Parser_Context_Simple));
-	thiz->tag_is_supported = tag_is_supported;
 	thiz->tag = tag;
 	thiz->svg = svg;
 	thiz->parent = parent;
 	thiz->parent_r = parent_r;
+	thiz->descriptor = descriptor;
+	thiz->data = data;
 
 	parser = edom_tag_parser_get(svg);
 	return esvg_parser_context_new(parser, &_descriptor, thiz);

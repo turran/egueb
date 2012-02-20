@@ -43,10 +43,21 @@ void esvg_parser_style_inline_set(const char *value, Edom_Tag *tag,
 Edom_Context * esvg_parser_context_doc_new(Edom_Parser *parser);
 Edom_Tag * esvg_parser_context_doc_topmost_get(Edom_Context *c);
 
-typedef Eina_Bool (*Esvg_Parser_Context_Simple_Tag_Is_Supported)(int tag);
-Edom_Context * esvg_parser_context_simple_new(Esvg_Parser_Context_Simple_Tag_Is_Supported is_supported,
-		int tag, Edom_Tag *svg, Edom_Tag *parent,
-		Enesim_Renderer *parent_r);
+/* simple context */
+typedef Eina_Bool (*Esvg_Parser_Context_Simple_Tag_Is_Supported)(void *data, int tag);
+typedef void (*Esvg_Parser_Context_Simple_Tag_Added)(void *data, Edom_Tag *tag);
+typedef void (*Esvg_Parser_Context_Simple_Free)(void *data);
+
+typedef struct _Esvg_Parser_Context_Simple_Descriptor {
+	Esvg_Parser_Context_Simple_Tag_Is_Supported tag_is_supported;
+	Esvg_Parser_Context_Simple_Tag_Added tag_added;
+	Esvg_Parser_Context_Simple_Free tag_free;
+} Esvg_Parser_Context_Simple_Descriptor;
+
+Edom_Context * esvg_parser_context_simple_new(int tag, Edom_Tag *svg, Edom_Tag *parent,
+		Enesim_Renderer *parent_r,
+		Esvg_Parser_Context_Simple_Descriptor *descriptor,
+		void *data);
 
 Edom_Context * esvg_parser_context_svg_new(Edom_Tag *topmost, Enesim_Renderer *topmost_r);
 
@@ -84,7 +95,6 @@ void * esvg_parser_paint_server_data_get(Edom_Tag *tag);
 
 /* gradient */
 typedef struct _Esvg_Parser_Gradient_Descriptor {
-	
 	void (*merge)(Enesim_Renderer *r,
 			Enesim_Renderer *rel);
 	const char * (*name_get)(Edom_Tag *t);

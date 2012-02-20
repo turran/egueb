@@ -21,6 +21,7 @@ esvg_parser_a.c \
 esvg_parser_circle.c \
 esvg_parser_clip_path.c \
 esvg_parser_context.c \
+esvg_parser_context_a.c \
 esvg_parser_context_g.c \
 esvg_parser_context_clip_path.c \
 esvg_parser_context_defs.c \
@@ -37,7 +38,6 @@ esvg_parser_gradient.c \
 esvg_parser_image.c \
 esvg_parser_line.c \
 esvg_parser_linear_gradient.c \
-esvg_parser_linking.c \
 esvg_parser_paint_server.c \
 esvg_parser_path.c \
 esvg_parser_pattern.c \

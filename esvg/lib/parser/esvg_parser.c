@@ -330,13 +330,7 @@ static Eina_Bool _esvg_parser_tag_get(Edom_Parser *parser, const char *content,
 			DBG("tag <%s> not supported by SVG Tiny 1.1 spec", content);
 	}
 
-	/* if we have reached this point we cant recognize the tag */
-	thiz = edom_parser_data_get(parser);
-	if (thiz->descriptor.tag_get)
-		return thiz->descriptor.tag_get(thiz->data, tag, content, sz);
-
 	return EINA_FALSE;
-
 }
 
 static Edom_Parser_Descriptor _descriptor = {
@@ -459,16 +453,14 @@ void esvg_parser_post_parse_add(Edom_Parser *p, Esvg_Parser_Post cb, void *data)
 	thiz->post_parsers = eina_list_append(thiz->post_parsers, pdata);
 }
 
-Eina_Bool esvg_parser_tag_open(Edom_Parser *p, int tag,
-		Edom_Context *context,
-		const char *attributes, size_t length)
+/* functions to call the descriptor functions */
+void esvg_parser_href_set(Edom_Parser *p, Enesim_Renderer *r, const char *href)
 {
 	Esvg_Parser *thiz;
 
 	thiz = edom_parser_data_get(p);
-	if (thiz->descriptor.tag_open)
-		return thiz->descriptor.tag_open(thiz->data, tag, context, attributes, length);
-	return EINA_FALSE;
+	if (thiz->descriptor.href_set)
+		return thiz->descriptor.href_set(thiz->data, r, href);
 }
 /*============================================================================*
  *                                   API                                      *

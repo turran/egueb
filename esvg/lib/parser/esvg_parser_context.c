@@ -44,12 +44,6 @@ static Eina_Bool _context_tag_open(void *data, int tag,
 	if (thiz->descriptor.tag_open)
 		ret = thiz->descriptor.tag_open(thiz->data, tag, context, attributes, length);
 
-	if (!ret)
-	{
-		printf("calling the parser implementation\n");
-		ret = esvg_parser_tag_open(thiz->parser, tag, context, attributes, length);
-	}
-
 	return ret;
 }
 
