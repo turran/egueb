@@ -83,11 +83,10 @@ static Edom_Tag * _esvg_parser_context_simple_a(Edom_Context *context,
 {
 	Edom_Context *new_context;
 	Edom_Tag *tag;
-	Enesim_Renderer *r;
 
 	tag = esvg_parser_a_new(context, thiz->svg);
 	new_context = esvg_parser_context_a_new(thiz->svg,
-			tag, r);
+			tag, thiz->parent_r);
 	edom_parser_context_push(parser, new_context);
 
 	return tag;
