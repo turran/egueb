@@ -1,6 +1,7 @@
 EDOM
 ====
-
++ The context concept is working correctly but the logic of what tag to accept or tag
+  added callback should be done on the Edom_Tag associated with the context
 
 ECSS
 ====
