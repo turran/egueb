@@ -30,15 +30,15 @@ typedef struct _Esvg_Parser_A
 static Eina_Bool _parser_a_attribute_set(Edom_Tag *tag, const char *key,
 		const char *value)
 {
-	Esvg_Parser_A *thiz;
-
-	thiz = edom_tag_data_get(tag);
 	if (strcmp(key, "id") == 0)
 	{
 		/* nothing to do here yet */
 	}
 	else if (strcmp(key, "xlink:href") == 0)
 	{
+		Esvg_Parser_A *thiz;
+
+		thiz = edom_tag_data_get(tag);
 		/* absolute */
 		if (*value == '/')
 		{
@@ -73,7 +73,7 @@ static const char * _parser_a_attribute_get(Edom_Tag *tag, const char *attribute
 
 static const char * _parser_a_name_get(Edom_Tag *tag)
 {
-	return "stop";
+	return "a";
 }
 
 static Edom_Tag_Descriptor _descriptor = {

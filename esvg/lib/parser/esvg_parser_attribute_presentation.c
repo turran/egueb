@@ -22,105 +22,18 @@
 #include "esvg_values.h"
 
 /* TODO
- * handle the following attributes and pass them to the parser context
- * onfocusin
- * onfocusout 
- * onactivate 
- * onclick
- * onmousedown
- * onmouseup
- * onmouseover
- * onmousemove
- * onmouseout 
+ * the functions we set here must be transformed to function pointers
+ * given that more than one possible tag can have this attributes
  */
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
-#define ESVG_PARSER_ELEMENT_MAGIC 0xe5501001
-#define ESVG_PARSER_ELEMENT_MAGIC_CHECK(d) \
-	do {\
-		if (!EINA_MAGIC_CHECK(d, ESVG_PARSER_ELEMENT_MAGIC))\
-			EINA_MAGIC_FAIL(d, ESVG_PARSER_ELEMENT_MAGIC);\
-	} while(0)
-
-typedef struct _Esvg_Parser_Element
+/*============================================================================*
+ *                                 Global                                     *
+ *============================================================================*/
+static Eina_Bool esvg_parser_attribute_presentation_attribute_set(Edom_Tag *tag,
+		 const char *key, const char *value)
 {
-	EINA_MAGIC
-	Edom_Tag_Descriptor *descriptor;
-	Enesim_Renderer *r;
-	Edom_Tag *tag;
-	char *fill;
-	char *stroke;
-	char *clip_path;
-	void *data;
-} Esvg_Parser_Element;
-
-static Esvg_Parser_Element * _esvg_parser_element_get(Edom_Tag *tag)
-{
-	Esvg_Parser_Element *thiz;
-
-	thiz = edom_tag_data_get(tag);
-	ESVG_PARSER_ELEMENT_MAGIC_CHECK(thiz);
-
-	return thiz;
-}
-
-static void _post_parse_fill_cb(Edom_Parser *parser, void *data)
-{
-	Esvg_Parser_Element *thiz = data;
-	Esvg_Paint fill;
-	Enesim_Renderer *r;
-
-	r = esvg_parser_element_renderer_get(thiz->tag);
-	esvg_paint_get(&fill, thiz->tag, thiz->fill);
-	esvg_element_fill_set(r, &fill);
-}
-
-static void _post_parse_stroke_cb(Edom_Parser *parser, void *data)
-{
-	Esvg_Parser_Element *thiz = data;
-	Esvg_Paint stroke;
-	Enesim_Renderer *r;
-
-	r = esvg_parser_element_renderer_get(thiz->tag);
-	esvg_paint_get(&stroke, thiz->tag, thiz->stroke);
-	esvg_element_stroke_set(r, &stroke);
-}
-
-static void _post_parse_clip_path_cb(Edom_Parser *parser, void *data)
-{
-	Esvg_Parser_Element *thiz = data;
-	Edom_Tag *rel = NULL;
-	Enesim_Renderer *r;
-	Enesim_Renderer *r_rel;
-	Eina_Bool ret;
-
-	r = esvg_parser_element_renderer_get(thiz->tag);
-	ret = esvg_uri_get(&rel, thiz->tag, thiz->clip_path);
-	if (!rel) return;
-
-	r_rel = esvg_parser_element_renderer_get(rel);
-	esvg_element_clip_path_set(r, r_rel);
-}
-
-static Eina_Bool _parser_element_attribute_set(Edom_Tag *tag, const char *key, const char *value)
-{
-	Esvg_Parser_Element *thiz;
-	Enesim_Renderer *r;
-
-	thiz = _esvg_parser_element_get(tag);
-	r = thiz->r;
-
-	if (strcmp(key, "id") == 0)
-	{
-		esvg_element_id_set(r, value);
-		edom_tag_id_set(tag, value);
-	}
-	/* FIXME the class should not be here, but for now ... */
-	else if (strcmp(key, "class") == 0)
-	{
-		edom_tag_class_set(tag, value);
-	}
 	else if (strcmp(key, "transform") == 0)
 	{
 		Enesim_Matrix matrix;
@@ -261,76 +174,6 @@ static Eina_Bool _parser_element_attribute_set(Edom_Tag *tag, const char *key, c
 				return thiz->descriptor->attribute_set(tag, key, value);
 		}
 	}
-
-	return EINA_TRUE;
-}
-
-static const char * _parser_element_attribute_get(Edom_Tag *tag, const char *attribute)
-{
-	Esvg_Parser_Element *thiz;
-
-	thiz = _esvg_parser_element_get(tag);
-	/* FIXME handle common properties */
-	if (thiz->descriptor)
-	{
-		if (thiz->descriptor->attribute_get)
-			return thiz->descriptor->attribute_get(tag, attribute);
-	}
-	return NULL;
-}
-
-static const char * _parser_element_name_get(Edom_Tag *tag)
-{
-	Esvg_Parser_Element *thiz;
-
-	thiz = _esvg_parser_element_get(tag);
-	return thiz->descriptor->name_get(tag);
-}
-
-static Edom_Tag_Descriptor _descriptor = {
-	/* .name_get 		= */ _parser_element_name_get,
-	/* .attribute_set 	= */ _parser_element_attribute_set,
-	/* .attribute_get 	= */ _parser_element_attribute_get,
-};
-/*============================================================================*
- *                                 Global                                     *
- *============================================================================*/
-Edom_Tag * esvg_parser_element_new(Edom_Context *context,
-		Edom_Tag_Descriptor *descriptor,
-		Esvg_Parser_Tag_Type type,
-		Edom_Tag *topmost,
-		Enesim_Renderer *r,
-		void *data)
-{
-	Esvg_Parser_Element *thiz;
-	Edom_Tag *tag;
-
-	thiz = calloc(1, sizeof(Esvg_Parser_Element));
-	EINA_MAGIC_SET(thiz, ESVG_PARSER_ELEMENT_MAGIC);
-	thiz->r = r;
-	thiz->descriptor = descriptor;
-	thiz->data = data;
-
-	tag = edom_tag_new(context, &_descriptor, type, topmost, thiz);
-	thiz->tag = tag;
-
-	return tag;
-}
-
-void * esvg_parser_element_data_get(Edom_Tag *tag)
-{
-	Esvg_Parser_Element *thiz;
-
-	thiz = _esvg_parser_element_get(tag);
-	return thiz->data;
-}
-
-Enesim_Renderer * esvg_parser_element_renderer_get(Edom_Tag *tag)
-{
-	Esvg_Parser_Element *thiz;
-
-	thiz = _esvg_parser_element_get(tag);
-	return thiz->r;
 }
 /*============================================================================*
  *                                   API                                      *

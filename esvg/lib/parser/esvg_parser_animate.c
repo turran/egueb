@@ -29,6 +29,42 @@
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
+static Eina_Bool _parser_animate_attribute_set(Edom_Tag *tag, const char *key,
+		const char *value)
+{
+	if (strcmp(key, "id") == 0)
+	{
+		/* nothing to do here yet */
+	}
+	else if (strcmp(key, "attributeName") == 0)
+	{
+	}
+	else if (strcmp(key, "attributeType") == 0)
+	{
+	}
+	else
+	{
+		return EINA_FALSE;
+	}
+
+	return EINA_TRUE;
+}
+
+static const char * _parser_animate_attribute_get(Edom_Tag *tag, const char *attribute)
+{
+	return NULL;
+}
+
+static const char * _parser_animate_name_get(Edom_Tag *tag)
+{
+	return "animate";
+}
+
+static Edom_Tag_Descriptor _descriptor = {
+	/* .name_get 		= */ _parser_animate_name_get,
+	/* .attribute_set 	= */ _parser_animate_attribute_set,
+	/* .attribute_get 	= */ _parser_animate_attribute_get,
+};
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/

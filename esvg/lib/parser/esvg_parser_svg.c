@@ -20,6 +20,15 @@
 #include "esvg_private.h"
 #include "esvg_parser_private.h"
 #include "esvg_values.h"
+/* TODO
+ * Handle the following attributes
+ * onunload
+ * onabort 
+ * onerror 
+ * onresize
+ * onscroll
+ * onzoom
+ */
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
