@@ -32,6 +32,7 @@ esvg_image.c \
 esvg_line.c \
 esvg_linear_gradient.c \
 esvg_path.c \
+esvg_pattern.c \
 esvg_polygon.c \
 esvg_polyline.c \
 esvg_radial_gradient.c \

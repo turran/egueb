@@ -39,11 +39,18 @@ struct _Edom_Parser
 };
 
 static Eina_Bool _edom_parser_tag_get(Edom_Parser *thiz, const char *content, size_t sz,
-		int *tag)
+		int *tag_id)
 {
 	if (!thiz->descriptor) return EINA_FALSE;
 	if (!thiz->descriptor->tag_get) return EINA_FALSE;
-	return thiz->descriptor->tag_get(thiz, content, sz, tag);
+	return thiz->descriptor->tag_get(thiz, content, sz, tag_id);
+}
+				
+static Edom_Tag * _edom_parser_tag_new(Edom_Parser *thiz, int tag_id)
+{
+	if (!thiz->descriptor) return NULL;
+	if (!thiz->descriptor->tag_new) return NULL;
+	return thiz->descriptor->tag_new(thiz, tag_id);
 }
 /*----------------------------------------------------------------------------*
  *                      Eina's simple XML interface                           *
@@ -52,13 +59,18 @@ static Eina_Bool _edom_parser_cb(void *data, Eina_Simple_XML_Type type,
 		const char *content, unsigned offset, unsigned length)
 {
 	Edom_Parser *thiz = data;
-	Edom_Context *context;
+	Edom_Tag *parent = NULL;
 	Eina_Array *contexts;
 	Eina_Bool ret;
-	int tag;
+	int count;
+	int tag_id;
 
 	contexts = thiz->contexts;
-	context = eina_array_data_get(contexts, eina_array_count_get(contexts) - 1);
+	count = eina_array_count_get(contexts);
+	if (count)
+	{
+		parent = eina_array_data_get(contexts, count - 1);
+	}
 
 	switch (type)
 	{
@@ -68,6 +80,7 @@ static Eina_Bool _edom_parser_cb(void *data, Eina_Simple_XML_Type type,
 		case EINA_SIMPLE_XML_OPEN:
 		case EINA_SIMPLE_XML_OPEN_EMPTY:
 		{
+			Edom_Tag *new_tag;
 			int sz;
 			const char *attrs;
 			int attr_length;
@@ -81,7 +94,7 @@ static Eina_Bool _edom_parser_cb(void *data, Eina_Simple_XML_Type type,
 				while ((sz > 0) && (isspace(content[sz - 1])))
 					sz--;
 			}
-			ret = _edom_parser_tag_get(thiz, content, sz, &tag);
+			ret = _edom_parser_tag_get(thiz, content, sz, &tag_id);
 			if (!ret)
 			{
 				/* TODO we should add some flag on the parser to either break or return FALSE
@@ -89,33 +102,42 @@ static Eina_Bool _edom_parser_cb(void *data, Eina_Simple_XML_Type type,
 				 */
 				break;
 			}
-			edom_context_tag_open(context, tag, attrs, attr_length);
-			/* kind of ugly but works */
-			if (type == EINA_SIMPLE_XML_OPEN_EMPTY)
+			if (parent)
 			{
-				Edom_Context *last_context;
-
-				last_context = eina_array_data_get(contexts, eina_array_count_get(contexts) - 1);
-				edom_context_tag_close(last_context, tag);
+				/* check the parent supports this tag */
+				new_tag = _edom_parser_tag_new(thiz, tag_id);
+				/* add it to the current tag */
+				edom_tag_child_add(parent, new_tag);
+			}
+			else
+			{
+				new_tag = _edom_parser_tag_new(thiz, tag_id);
+			}
+			/* kind of ugly but works */
+			if (type == EINA_SIMPLE_XML_OPEN)
+			{
+				/* push it the new tag as a new context */
+				eina_array_push(thiz->contexts, new_tag);
 			}
 		}
 		break;
 
 		case EINA_SIMPLE_XML_CLOSE:
-		ret = _edom_parser_tag_get(thiz, content, length, &tag);
+		ret = _edom_parser_tag_get(thiz, content, length, &tag_id);
 		if (!ret)
 		{
 			break;
 		}
-		edom_context_tag_close(context, tag);
+		eina_array_pop(thiz->contexts);
+		//edom_context_tag_close(context, tag_id);
 		break;
 
 		case EINA_SIMPLE_XML_DATA:
-		edom_context_data(context, content, length);
+		//edom_context_data(context, content, length);
 		break;
 
 		case EINA_SIMPLE_XML_CDATA:
-		edom_context_cdata(context, content, length);
+		//edom_context_cdata(context, content, length);
 		break;
 
 		default:

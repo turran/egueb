@@ -36,12 +36,7 @@ typedef struct _Esvg_Gradient
 	Eina_Bool transform_is_set : 1;
 	void *data;
 } Esvg_Gradient;
-/*----------------------------------------------------------------------------*
- *                       The radial gradient paint server                     *
- *----------------------------------------------------------------------------*/
-/*----------------------------------------------------------------------------*
- *                       The linear gradient paint server                     *
- *----------------------------------------------------------------------------*/
+
 static Esvg_Gradient * _esvg_gradient_get(Enesim_Renderer *r)
 {
 	Esvg_Gradient *thiz;

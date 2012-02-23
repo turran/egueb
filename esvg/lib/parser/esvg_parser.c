@@ -42,6 +42,7 @@ typedef struct _Esvg_Parser
 {
 	Eina_List *post_parsers;
 	Esvg_Parser_Descriptor descriptor;
+	Edom_Tag *topmost;
 	void *data;
 } Esvg_Parser;
 
@@ -89,9 +90,9 @@ static char * _esvg_file_open(const char *filename, long *sz)
 	*sz = _sz;
 	return buf;
 
-  free_buf:
+free_buf:
 	free(buf);
-  close_f:
+close_f:
 	fclose(f);
 
 	return NULL;
@@ -103,8 +104,6 @@ static char * _esvg_file_open(const char *filename, long *sz)
 static Eina_Bool _esvg_parser_tag_get(Edom_Parser *parser, const char *content,
 		 size_t sz, int *tag)
 {
-	Esvg_Parser *thiz;
-
 	/* sz ==1 : 2 cases : a and g */
 	if (sz == 1)
 	{
@@ -333,8 +332,90 @@ static Eina_Bool _esvg_parser_tag_get(Edom_Parser *parser, const char *content,
 	return EINA_FALSE;
 }
 
+static Edom_Tag * _esvg_parser_tag_new(Edom_Parser *parser, int tag_id)
+{
+	Esvg_Parser *thiz;
+	Edom_Tag *tag = NULL;
+
+	thiz = edom_parser_data_get(parser);
+	if (!thiz->topmost && tag_id != ESVG_SVG)
+	{
+		printf("you need at least a topmost svg\n");
+	}
+
+	switch (tag_id)
+	{
+		case ESVG_LINEARGRADIENT:
+		//tag = esvg_parser_linear_gradient_new();
+		break;
+
+		case ESVG_RADIALGRADIENT:
+		//tag = esvg_parser_radial_gradient_new();
+		break;
+
+		case ESVG_PATTERN:
+		//tag = esvg_parser_pattern_gradient_new();
+		break;
+
+		case ESVG_DEFS:
+		break;
+
+		case ESVG_USE:
+		break;
+
+		case ESVG_SVG:
+		break;
+
+		case ESVG_CIRCLE:
+		break;
+
+		case ESVG_ELLIPSE:
+		break;
+
+		case ESVG_RECT:
+		break;
+
+		case ESVG_LINE:
+		break;
+
+		case ESVG_PATH:
+		break;
+
+		case ESVG_POLYLINE:
+		break;
+
+		case ESVG_POLYGON:
+		break;
+
+		case ESVG_TEXT:
+		break;
+
+		case ESVG_G:
+		break;
+
+		case ESVG_A:
+		break;
+
+		case ESVG_STYLE:
+		break;
+
+		case ESVG_IMAGE:
+		break;
+
+		case ESVG_CLIPPATH:
+		break;
+
+		default:
+		printf("can't create the tag %d\n", tag_id);
+		break;
+	}
+
+	return tag;
+}
+
 static Edom_Parser_Descriptor _descriptor = {
 	/* .tag_get 	= */ _esvg_parser_tag_get,
+	/* .tag_new 	= */ _esvg_parser_tag_new,
 };
 
 #define TAGNAME(t) 								\

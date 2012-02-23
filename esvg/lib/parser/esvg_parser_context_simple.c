@@ -142,11 +142,12 @@ static Edom_Tag * _esvg_parser_context_simple_line(Edom_Context *context,
 		Edom_Parser *parser)
 {
 	Edom_Tag *tag;
-	Enesim_Renderer *r;
 
 	tag = esvg_parser_line_new(context, thiz->svg);
 	if (thiz->parent_r)
 	{
+		Enesim_Renderer *r;
+
 		r = esvg_parser_element_renderer_get(tag);
 		esvg_container_element_add(thiz->parent_r, r);
 	}
@@ -161,11 +162,12 @@ static Edom_Tag * _esvg_parser_context_simple_ellipse(Edom_Context *context,
 		Edom_Parser *parser)
 {
 	Edom_Tag *tag;
-	Enesim_Renderer *r;
 
 	tag = esvg_parser_ellipse_new(context, thiz->svg);
 	if (thiz->parent_r)
 	{
+		Enesim_Renderer *r;
+
 		r = esvg_parser_element_renderer_get(tag);
 		esvg_container_element_add(thiz->parent_r, r);
 	}
@@ -180,11 +182,12 @@ static Edom_Tag * _esvg_parser_context_simple_circle(Edom_Context *context,
 		Edom_Parser *parser)
 {
 	Edom_Tag *tag;
-	Enesim_Renderer *r;
 
 	tag = esvg_parser_circle_new(context, thiz->svg);
 	if (thiz->parent_r)
 	{
+		Enesim_Renderer *r;
+
 		r = esvg_parser_element_renderer_get(tag);
 		esvg_container_element_add(thiz->parent_r, r);
 	}
@@ -218,11 +221,12 @@ static Edom_Tag * _esvg_parser_context_simple_polygon(Edom_Context *context,
 		Edom_Parser *parser)
 {
 	Edom_Tag *tag;
-	Enesim_Renderer *r;
 
 	tag = esvg_parser_polygon_new(context, thiz->svg);
 	if (thiz->parent_r)
 	{
+		Enesim_Renderer *r;
+
 		r = esvg_parser_element_renderer_get(tag);
 		esvg_container_element_add(thiz->parent_r, r);
 	}
@@ -237,11 +241,12 @@ static Edom_Tag * _esvg_parser_context_simple_polyline(Edom_Context *context,
 		Edom_Parser *parser)
 {
 	Edom_Tag *tag;
-	Enesim_Renderer *r;
 
 	tag = esvg_parser_polyline_new(context, thiz->svg);
 	if (thiz->parent_r)
 	{
+		Enesim_Renderer *r;
+
 		r = esvg_parser_element_renderer_get(tag);
 		esvg_container_element_add(thiz->parent_r, r);
 	}
@@ -257,11 +262,12 @@ static Edom_Tag * _esvg_parser_context_simple_text(Edom_Context *context,
 {
 	Edom_Tag *tag;
 	Edom_Context *new_context;
-	Enesim_Renderer *r;
 
 	tag = esvg_parser_text_new(context, thiz->svg);
 	if (thiz->parent_r)
 	{
+		Enesim_Renderer *r;
+
 		r = esvg_parser_element_renderer_get(tag);
 		esvg_container_element_add(thiz->parent_r, r);
 	}
@@ -300,12 +306,15 @@ static Edom_Tag * _esvg_parser_context_simple_image(Edom_Context *context,
 		Edom_Parser *parser)
 {
 	Edom_Tag *tag;
-	Enesim_Renderer *r;
 
 	tag = esvg_parser_image_new(context, thiz->svg);
-	r = esvg_parser_element_renderer_get(tag);
 	if (thiz->parent_r)
+	{
+		Enesim_Renderer *r;
+
+		r = esvg_parser_element_renderer_get(tag);
 		esvg_container_element_add(thiz->parent_r, r);
+	}
 
 	return tag;
 }
@@ -334,12 +343,15 @@ static Edom_Tag * _esvg_parser_context_simple_use(Edom_Context *context,
 		Edom_Parser *parser)
 {
 	Edom_Tag *tag;
-	Enesim_Renderer *r;
 
 	tag = esvg_parser_use_new(context, thiz->svg);
-	r = esvg_parser_element_renderer_get(tag);
 	if (thiz->parent_r)
+	{
+		Enesim_Renderer *r;
+
+		r = esvg_parser_element_renderer_get(tag);
 		esvg_container_element_add(thiz->parent_r, r);
+	}
 
 	return tag;
 }
@@ -350,9 +362,18 @@ static Edom_Tag * _esvg_parser_container_pattern(Edom_Context *context,
 		Esvg_Parser_Context_Simple *thiz,
 		Edom_Parser *parser)
 {
-	Edom_Tag *tag = NULL;
+	Edom_Tag *tag;
+	Edom_Context *new_context;
 
-	printf("TODO\n");
+	tag = esvg_parser_pattern_new(context, thiz->svg);
+	if (thiz->parent_r)
+	{
+		Enesim_Renderer *r;
+
+		r = esvg_parser_element_renderer_get(tag);
+		esvg_container_element_add(thiz->parent_r, r);
+	}
+
 	return tag;
 }
 /*----------------------------------------------------------------------------*

@@ -105,7 +105,7 @@ typedef enum _Esvg_Gradient_Units
 	ESVG_USER_SPACE_ON_USE,
 	ESVG_OBJECT_BOUNDING_BOX,
 	ESVG_GRADIENT_UNITS,
-} Esvg_Gradient_Units;
+} Esvg_Gradient_Units, Esvg_Pattern_Units;
 
 typedef Esvg_Gradient_Units Esvg_Clip_Path_Units;
 
@@ -527,6 +527,24 @@ EAPI Eina_Bool esvg_linear_gradient_x2_is_set(Enesim_Renderer *r);
 EAPI void esvg_linear_gradient_y2_set(Enesim_Renderer *r, const Esvg_Coord *y2);
 EAPI void esvg_linear_gradient_y2_get(Enesim_Renderer *r, Esvg_Coord *y2);
 EAPI Eina_Bool esvg_linear_gradient_y2_is_set(Enesim_Renderer *r);
+
+EAPI Enesim_Renderer * esvg_pattern_new(void);
+EAPI Eina_Bool esvg_is_pattern(Enesim_Renderer *r);
+EAPI void esvg_pattern_x_set(Enesim_Renderer *r, const Esvg_Coord *x);
+EAPI void esvg_pattern_x_get(Enesim_Renderer *r, Esvg_Coord *x);
+EAPI void esvg_pattern_y_set(Enesim_Renderer *r, const Esvg_Coord *y);
+EAPI void esvg_pattern_y_get(Enesim_Renderer *r, Esvg_Coord *y);
+EAPI void esvg_pattern_width_set(Enesim_Renderer *r, const Esvg_Length *width);
+EAPI void esvg_pattern_width_get(Enesim_Renderer *r, Esvg_Length *width);
+EAPI void esvg_pattern_height_set(Enesim_Renderer *r, const Esvg_Length *height);
+EAPI void esvg_pattern_height_get(Enesim_Renderer *r, Esvg_Length *height);
+EAPI void esvg_pattern_units_set(Enesim_Renderer *r, Esvg_Pattern_Units units);
+EAPI void esvg_pattern_units_get(Enesim_Renderer *r, Esvg_Pattern_Units *units);
+EAPI Eina_Bool esvg_pattern_units_is_set(Enesim_Renderer *r);
+EAPI void esvg_pattern_transform_set(Enesim_Renderer *r, const Enesim_Matrix *transform);
+EAPI void esvg_pattern_transform_get(Enesim_Renderer *r, Enesim_Matrix *transform);
+EAPI Eina_Bool esvg_pattern_transform_is_set(Enesim_Renderer *r);
+EAPI void esvg_pattern_content_set(Enesim_Renderer *r, Enesim_Renderer *content);
 
 /* helper functions */
 EAPI double esvg_length_final_get(const Esvg_Length *l, double parent_length);
