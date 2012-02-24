@@ -243,6 +243,11 @@ EAPI Edom_Tag * edom_tag_topmost_get(Edom_Tag *thiz)
 	return thiz->topmost;
 }
 
+EAPI Edom_Tag * edom_tag_parent_get(Edom_Tag *thiz)
+{
+	return thiz->parent;
+}
+
 EAPI const char * edom_tag_name_get(Edom_Tag *thiz)
 {
 	if (!thiz->descriptor) return NULL;
