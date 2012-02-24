@@ -21,14 +21,15 @@
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
-/*----------------------------------------------------------------------------*
- *                         The context interface                               *
- *----------------------------------------------------------------------------*/
-static Eina_Bool _svg_tag_is_supported(void *data, int tag)
+static const char * _parser_defs_name_get(Edom_Tag *tag)
 {
-	switch (tag)
+	return "defs";
+}
+
+static Eina_Bool _parser_defs_child_supported(Edom_Tag *tag, int tag_id)
+{
+	switch (tag_id)
 	{
-		case ESVG_A:
 		case ESVG_LINEARGRADIENT:
 		case ESVG_RADIALGRADIENT:
 		case ESVG_PATTERN:
@@ -54,26 +55,32 @@ static Eina_Bool _svg_tag_is_supported(void *data, int tag)
 	}
 }
 
-static Esvg_Parser_Context_Simple_Descriptor _descriptor = {
-	/* .tag_is_supported 	= */ _svg_tag_is_supported,
-	/* .tag_added 		= */ NULL,
-	/* .free		= */ NULL,
+static Eina_Bool _parser_defs_child_add(Edom_Tag *tag, Edom_Tag *child)
+{
+	Edom_Tag *topmost;
+
+	/* FIXME we need to add some other way to do this, maybe in the future
+	 * events that bubble?
+	 */
+	topmost = edom_tag_topmost_get(tag);
+	esvg_parser_svg_tag_add(topmost, child);
+}
+
+static Edom_Tag_Descriptor _descriptor = {
+	/* .name_get 		= */ _parser_defs_name_get,
+	/* .attribute_set 	= */ NULL,
+	/* .attribute_get 	= */ NULL,
+	/* .child_supported	= */ _parser_defs_child_supported,
+	/* .child_add		= */ _parser_defs_child_add,
+	/* .child_remove	= */ NULL,
 };
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
-Edom_Context * esvg_parser_context_svg_new(
-		Edom_Tag *parent,
-		Enesim_Renderer *parent_r)
+Edom_Context * esvg_parser_defs_new(Edom_Parser *parser)
 {
-	if (!parent) return NULL;
-	if (!parent_r) return NULL;
-
-	return esvg_parser_context_simple_new(ESVG_SVG,
-			parent, parent, parent_r,
-			&_descriptor, NULL);
+	return edom_tag_new(parser, &_descriptor, ESVG_DEFS, NULL);
 }
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/
-

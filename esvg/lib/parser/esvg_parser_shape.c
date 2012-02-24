@@ -86,9 +86,9 @@ static Edom_Tag_Descriptor _descriptor = {
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
-Edom_Tag * esvg_parser_shape_new(Edom_Context *c,
+Edom_Tag * esvg_parser_shape_new(Edom_Parser *parser,
 		Edom_Tag_Descriptor *descriptor,
-		Esvg_Parser_Tag_Type type, Edom_Tag *topmost,
+		Esvg_Parser_Tag_Type type,
 		Enesim_Renderer *r, void *data)
 {
 	Esvg_Parser_Shape *thiz;
@@ -99,7 +99,7 @@ Edom_Tag * esvg_parser_shape_new(Edom_Context *c,
 	thiz->data = data;
 	thiz->descriptor = descriptor;
 
-	tag = esvg_parser_element_new(c, &_descriptor, type, topmost, r, thiz);
+	tag = esvg_parser_element_new(parser, &_descriptor, type, r, thiz);
 
 	return tag;
 }

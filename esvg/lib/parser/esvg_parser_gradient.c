@@ -26,6 +26,7 @@
 typedef struct _Esvg_Parser_Gradient
 {
 	Esvg_Parser_Gradient_Descriptor *descriptor;
+	Enesim_Renderer *r;
 	Edom_Tag *tag;
 	char *href;
 	void *data;
@@ -162,18 +163,45 @@ static const char * _parser_gradient_name_get(Edom_Tag *tag)
 	return thiz->descriptor->name_get(tag);
 }
 
+static Eina_Bool _parser_gradient_child_supported(Edom_Tag *tag,
+		int tag_id)
+{
+	switch (tag_id)
+	{
+		case ESVG_STOP:
+		return EINA_TRUE;
+		break;
+
+		default:
+		return EINA_FALSE;
+	}
+}
+
+static Eina_Bool _parser_gradient_child_add(Edom_Tag *tag, Edom_Tag *child)
+{
+	Esvg_Parser_Gradient *thiz;
+	Esvg_Gradient_Stop *s;
+	
+	thiz = _esvg_parser_gradient_get(tag);
+	/* we can only have the stop here */
+	s = edom_tag_data_get(child);
+	esvg_gradient_stop_add(thiz->r, s);
+}
+
 static Edom_Tag_Descriptor _descriptor = {
 	/* .name_get 		= */ _parser_gradient_name_get,
 	/* .attribute_set 	= */ _parser_gradient_attribute_set,
 	/* .attribute_get 	= */ _parser_gradient_attribute_get,
+	/* .child_supported	= */ _parser_gradient_child_supported,
+	/* .child_add		= */ _parser_gradient_child_add,
+	/* .child_remove 	= */ NULL,
 };
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
-Edom_Tag * esvg_parser_gradient_new(Edom_Context *c,
+Edom_Tag * esvg_parser_gradient_new(Edom_Parser *parser,
 		Esvg_Parser_Gradient_Descriptor *descriptor,
 		int type,
-		Edom_Tag *topmost,
 		Enesim_Renderer *r,
 		void *data)
 {
@@ -183,9 +211,10 @@ Edom_Tag * esvg_parser_gradient_new(Edom_Context *c,
 	thiz = calloc(1, sizeof(Esvg_Parser_Gradient));
 	thiz->descriptor = descriptor;
 	thiz->data = data;
+	thiz->r = r;
 
-	tag = esvg_parser_paint_server_new(c, &_descriptor, type,
-			topmost, r, thiz);
+	tag = esvg_parser_paint_server_new(parser, &_descriptor, type,
+			r, thiz);
 	thiz->tag = tag;
 
 	return tag;

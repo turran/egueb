@@ -346,63 +346,85 @@ static Edom_Tag * _esvg_parser_tag_new(Edom_Parser *parser, int tag_id)
 	switch (tag_id)
 	{
 		case ESVG_LINEARGRADIENT:
-		//tag = esvg_parser_linear_gradient_new();
+		tag = esvg_parser_linear_gradient_new(parser);
 		break;
 
 		case ESVG_RADIALGRADIENT:
-		//tag = esvg_parser_radial_gradient_new();
+		tag = esvg_parser_radial_gradient_new(parser);
 		break;
 
 		case ESVG_PATTERN:
-		//tag = esvg_parser_pattern_gradient_new();
+		tag = esvg_parser_pattern_new(parser);
 		break;
 
 		case ESVG_DEFS:
+		tag = esvg_parser_defs_new(parser);
 		break;
 
 		case ESVG_USE:
+		tag = esvg_parser_use_new(parser);
 		break;
 
 		case ESVG_SVG:
+		tag = esvg_parser_svg_new(parser);
+		if (!thiz->topmost)
+			thiz->topmost = tag;
 		break;
 
 		case ESVG_CIRCLE:
+		tag = esvg_parser_circle_new(parser);
 		break;
 
 		case ESVG_ELLIPSE:
+		tag = esvg_parser_ellipse_new(parser);
 		break;
 
 		case ESVG_RECT:
+		tag = esvg_parser_rect_new(parser);
 		break;
 
 		case ESVG_LINE:
+		tag = esvg_parser_line_new(parser);
 		break;
 
 		case ESVG_PATH:
+		tag = esvg_parser_path_new(parser);
 		break;
 
 		case ESVG_POLYLINE:
+		tag = esvg_parser_polyline_new(parser);
 		break;
 
 		case ESVG_POLYGON:
+		tag = esvg_parser_polygon_new(parser);
 		break;
 
 		case ESVG_TEXT:
+		tag = esvg_parser_text_new(parser);
 		break;
 
 		case ESVG_G:
+		tag = esvg_parser_g_new(parser);
 		break;
 
 		case ESVG_A:
+		tag = esvg_parser_a_new(parser);
 		break;
 
 		case ESVG_STYLE:
+		//tag = esvg_parser_style_new(parser);
 		break;
 
 		case ESVG_IMAGE:
+		tag = esvg_parser_image_new(parser);
 		break;
 
 		case ESVG_CLIPPATH:
+		tag = esvg_parser_clip_path_new(parser);
+		break;
+
+		case ESVG_STOP:
+		tag = esvg_parser_stop_new(parser);
 		break;
 
 		default:
@@ -413,9 +435,18 @@ static Edom_Tag * _esvg_parser_tag_new(Edom_Parser *parser, int tag_id)
 	return tag;
 }
 
+static Edom_Tag * _esvg_parser_topmost_get(Edom_Parser *parser)
+{
+	Esvg_Parser *thiz;
+
+	thiz = edom_parser_data_get(parser);
+	return thiz->topmost;
+}
+
 static Edom_Parser_Descriptor _descriptor = {
 	/* .tag_get 	= */ _esvg_parser_tag_get,
 	/* .tag_new 	= */ _esvg_parser_tag_new,
+	/* .topmost_get = */ _esvg_parser_topmost_get,
 };
 
 #define TAGNAME(t) 								\
@@ -555,7 +586,6 @@ EAPI Enesim_Renderer * esvg_parser_load(const char *filename,
 	Esvg_Parser *thiz;
 	Esvg_Parser_Post_Data *pdata;
 	Edom_Parser *parser;
-	Edom_Context *c;
 	Edom_Tag *tag;
 	Enesim_Renderer *r = NULL;
 	Eina_List *l;
@@ -570,8 +600,6 @@ EAPI Enesim_Renderer * esvg_parser_load(const char *filename,
 	parser = edom_parser_new(&_descriptor, thiz);
 
 	edom_parser_location_set(parser, filename);
-	/* create the doc context */
-	c = esvg_parser_context_doc_new(parser);
 
 	buf = _esvg_file_open(filename, &sz);
 	if (!buf)
@@ -580,16 +608,17 @@ EAPI Enesim_Renderer * esvg_parser_load(const char *filename,
 		goto open_failed;
 	}
 
-	if (!edom_parser_parse(parser, c, buf, sz))
+	if (!edom_parser_parse(parser, buf, sz))
 	{
 		DBG("Can not parse file %s\n", filename);
 		goto parse_failed;
 	}
 
 	/* check if we have a valid renderer */
-	tag = esvg_parser_context_doc_topmost_get(c);
-	if (!tag)
-		goto end;
+	tag = edom_parser_topmost_get(parser);
+	if (!tag) goto parse_failed;
+
+	edom_tag_dump(tag);
 
 	esvg_parser_svg_style_apply(tag);
 	/* FIXME all the link property of the <use> tags
@@ -604,8 +633,7 @@ EAPI Enesim_Renderer * esvg_parser_load(const char *filename,
 	}
 
 	r = esvg_parser_element_renderer_get(tag);
-end:
-	edom_context_delete(c);
+
 parse_failed:
 	free(buf);
 open_failed:

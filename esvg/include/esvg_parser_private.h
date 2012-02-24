@@ -65,7 +65,7 @@ Edom_Context * esvg_parser_context_g_new(Edom_Tag *topmost, Edom_Tag *root, Enes
 
 Edom_Context * esvg_parser_context_gradient_new(Edom_Tag *tag, Enesim_Renderer *r);
 
-Edom_Context * esvg_parser_defs_new(Edom_Tag *tag);
+Edom_Context * esvg_parser_defs_new(Edom_Parser *parser);
 
 Edom_Context * esvg_parser_context_style_new(Edom_Tag *tag);
 
@@ -75,10 +75,13 @@ Eina_Bool esvg_parser_shape_attributes_cb(void *data, const char *key,
 		const char *value);
 
 /* shape */
-Edom_Tag * esvg_parser_shape_new(Edom_Context *c, Edom_Tag_Descriptor *descriptor, Esvg_Parser_Tag_Type type, Edom_Tag *topmost, Enesim_Renderer *r, void *data);
+Edom_Tag * esvg_parser_shape_new(Edom_Parser *parser,
+		Edom_Tag_Descriptor *descriptor,
+		Esvg_Parser_Tag_Type type,
+		Enesim_Renderer *r, void *data);
 
 /* svg */
-Edom_Tag * esvg_parser_svg_new(Edom_Context *c, Edom_Tag *tag);
+Edom_Tag * esvg_parser_svg_new(Edom_Parser *parser);
 void esvg_parser_svg_tag_add(Edom_Tag *tag, Edom_Tag *child_tag);
 void esvg_parser_svg_style_add(Edom_Tag *thiz, Esvg_Parser_Style *s);
 void esvg_parser_svg_style_apply(Edom_Tag *thiz);
@@ -86,9 +89,8 @@ void esvg_parser_svg_svg_add(Edom_Tag *thiz, Edom_Tag *svg);
 Edom_Tag * esvg_parser_svg_tag_find(Edom_Tag *thiz, const char *id);
 
 /* paint server */
-Edom_Tag * esvg_parser_paint_server_new(Edom_Context *c,
+Edom_Tag * esvg_parser_paint_server_new(Edom_Parser *parser,
 		Edom_Tag_Descriptor *descriptor, int type,
-		Edom_Tag *topmost,
 		Enesim_Renderer *r,
 		void *data);
 void * esvg_parser_paint_server_data_get(Edom_Tag *tag);
@@ -102,57 +104,56 @@ typedef struct _Esvg_Parser_Gradient_Descriptor {
 	const char * (*attribute_get)(Edom_Tag *t, const char *attribute);
 } Esvg_Parser_Gradient_Descriptor;
 
-Edom_Tag * esvg_parser_gradient_new(Edom_Context *c,
+Edom_Tag * esvg_parser_gradient_new(Edom_Parser *parser,
 		Esvg_Parser_Gradient_Descriptor *descriptor,
 		int type,
-		Edom_Tag *topmost,
 		Enesim_Renderer *r,
 		void *data);
 void * esvg_parser_gradient_data_get(Edom_Tag *tag);
 /* linear gradient */
-Edom_Tag * esvg_parser_linear_gradient_new(Edom_Context *c, Edom_Tag *topmost);
+Edom_Tag * esvg_parser_linear_gradient_new(Edom_Parser *parser);
 /* radial gradient */
-Edom_Tag * esvg_parser_radial_gradient_new(Edom_Context *c, Edom_Tag *topmost);
+Edom_Tag * esvg_parser_radial_gradient_new(Edom_Parser *parser);
 
 
 /* circle */
-Edom_Tag * esvg_parser_circle_new(Edom_Context *c, Edom_Tag *topmost);
+Edom_Tag * esvg_parser_circle_new(Edom_Parser *parser);
 
 /* ellipse */
-Edom_Tag * esvg_parser_ellipse_new(Edom_Context *c, Edom_Tag *topmost);
+Edom_Tag * esvg_parser_ellipse_new(Edom_Parser *parser);
 
 /* g */
-Edom_Tag * esvg_parser_g_new(Edom_Context *c, Edom_Tag *topmost);
+Edom_Tag * esvg_parser_g_new(Edom_Parser *parser);
 
 /* line */
-Edom_Tag * esvg_parser_line_new(Edom_Context *c, Edom_Tag *topmost);
+Edom_Tag * esvg_parser_line_new(Edom_Parser *parser);
 
 /* path */
-Edom_Tag * esvg_parser_path_new(Edom_Context *c, Edom_Tag *topmost);
+Edom_Tag * esvg_parser_path_new(Edom_Parser *parser);
 
 /* polygon */
-Edom_Tag * esvg_parser_polygon_new(Edom_Context *c, Edom_Tag *topmost);
+Edom_Tag * esvg_parser_polygon_new(Edom_Parser *parser);
 
 /* polyline */
-Edom_Tag * esvg_parser_polyline_new(Edom_Context *c, Edom_Tag *topmost);
+Edom_Tag * esvg_parser_polyline_new(Edom_Parser *parser);
 
 /* rect */
-Edom_Tag * esvg_parser_rect_new(Edom_Context *c, Edom_Tag *topmost);
+Edom_Tag * esvg_parser_rect_new(Edom_Parser *parser);
 
 /* text */
-Edom_Tag * esvg_parser_text_new(Edom_Context *c, Edom_Tag *topmost);
+Edom_Tag * esvg_parser_text_new(Edom_Parser *parser);
 
 /* use */
-Edom_Tag * esvg_parser_use_new(Edom_Context *c, Edom_Tag *topmost);
+Edom_Tag * esvg_parser_use_new(Edom_Parser *parser);
 
 /* stop */
-Edom_Tag * esvg_parser_stop_new(Edom_Context *c, Edom_Tag *topmost);
+Edom_Tag * esvg_parser_stop_new(Edom_Parser *parser);
 
 /* image */
-Edom_Tag * esvg_parser_image_new(Edom_Context *c, Edom_Tag *topmost);
+Edom_Tag * esvg_parser_image_new(Edom_Parser *parser);
 
 /* element */
-Edom_Tag * esvg_parser_element_new(Edom_Context *context, Edom_Tag_Descriptor *descriptor, Esvg_Parser_Tag_Type type, Edom_Tag *topmost, Enesim_Renderer *r, void *data);
+Edom_Tag * esvg_parser_element_new(Edom_Parser *parser, Edom_Tag_Descriptor *descriptor, Esvg_Parser_Tag_Type type, Enesim_Renderer *r, void *data);
 Enesim_Renderer * esvg_parser_element_renderer_get(Edom_Tag *tag);
 void * esvg_parser_element_data_get(Edom_Tag *tag);
 

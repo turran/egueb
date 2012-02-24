@@ -33,8 +33,8 @@
 struct _Edom_Tag
 {
 	EINA_INLIST;
-	Edom_Context *context;
 	Edom_Tag_Descriptor *descriptor;
+	Edom_Parser *parser;
 	int type;
 	Edom_Tag *parent;
 	Edom_Tag *topmost;
@@ -126,24 +126,44 @@ void edom_tag_dump(Edom_Tag *thiz)
 	if (!thiz) return;
 	_tag_dump(thiz, 0);
 }
+
+Eina_Bool edom_tag_child_add_direct(Edom_Tag *thiz, Edom_Tag *child)
+{
+	Eina_Bool ret = EINA_TRUE;
+
+	if (thiz->descriptor->child_add)
+		ret = thiz->descriptor->child_add(thiz, child);
+	if (ret)
+	{
+		if (!thiz->child)
+			thiz->child = child;
+		else
+			eina_inlist_append(EINA_INLIST_GET(thiz->child), EINA_INLIST_GET(child));
+		child->parent = thiz;
+	}
+	return ret;
+}
+
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/
-EAPI Edom_Tag * edom_tag_new(Edom_Context *context, Edom_Tag_Descriptor *descriptor,
+EAPI Edom_Tag * edom_tag_new(Edom_Parser *parser,
+		Edom_Tag_Descriptor *descriptor,
 		int type,
-		Edom_Tag *topmost,
 		void *data)
 {
 	Edom_Tag *thiz;
+	Edom_Tag *topmost;
 
+	topmost = edom_parser_topmost_get(parser);
 	thiz = calloc(1, sizeof(Edom_Tag));
 	if (!descriptor)
 		descriptor = &_descriptor;
+	thiz->parser = parser;
 	thiz->descriptor = descriptor;
 	thiz->type = type;
 	thiz->data = data;
 	thiz->topmost = topmost;
-	thiz->context = context;
 
 	return thiz;
 }
@@ -190,16 +210,19 @@ EAPI void * edom_tag_data_get(Edom_Tag *thiz)
 	return thiz->data;
 }
 
-EAPI void edom_tag_child_add(Edom_Tag *thiz, Edom_Tag *child)
+EAPI Eina_Bool edom_tag_child_supported(Edom_Tag *thiz, int tag_id)
 {
-	Edom_Tag *first_child;
-	Eina_Inlist *il;
+	if (!thiz->descriptor->child_supported) return EINA_FALSE;
+	return thiz->descriptor->child_supported(thiz, tag_id);
+}
 
-	if (!thiz->child)
-		thiz->child = child;
-	else
-		eina_inlist_append(EINA_INLIST_GET(thiz->child), EINA_INLIST_GET(child));
-	child->parent = thiz;
+EAPI Eina_Bool edom_tag_child_add(Edom_Tag *thiz, Edom_Tag *child)
+{
+	Eina_Bool ret = EINA_TRUE;
+
+	if (!child) return EINA_FALSE;
+	if (!edom_tag_child_supported(thiz, child->type)) return EINA_FALSE;
+	return edom_tag_child_add_direct(thiz, child);
 }
 
 EAPI Edom_Tag * edom_tag_child_get(Edom_Tag *thiz)
@@ -227,14 +250,8 @@ EAPI const char * edom_tag_name_get(Edom_Tag *thiz)
 	return thiz->descriptor->name_get(thiz);
 }
 
-EAPI Edom_Context * edom_tag_context_get(Edom_Tag *thiz)
-{
-	return thiz->context;
-}
-
 EAPI Edom_Parser * edom_tag_parser_get(Edom_Tag *thiz)
 {
 	if (!thiz) return NULL;
-	if (!thiz->context) return NULL;
-	return edom_context_parser_get(thiz->context);
+	return thiz->parser;
 }

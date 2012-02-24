@@ -119,7 +119,7 @@ typedef enum _Esvg_Parser_Tag_Type {
 	ESVG_SET,
 	ESVG_STOP,
 	ESVG_STYLE,
-	ESVG_SVG,
+	ESVG_SVG, /* 70 */
 	ESVG_SWITCH,
 	ESVG_SYMBOL,
 	ESVG_TEXT,
@@ -140,10 +140,6 @@ typedef struct _Esvg_Parser_Descriptor
 } Esvg_Parser_Descriptor;
 
 EAPI Enesim_Renderer * esvg_parser_load(const char *filename, Esvg_Parser_Descriptor *descriptor, void *data);
-
-EAPI Edom_Context * esvg_parser_context_new(Edom_Parser *parser,
-		Edom_Context_Descriptor *descriptor,
-		void *data);
 
 #endif /*_ESVG_PARSER_H*/
 

@@ -11,7 +11,6 @@ lib_LTLIBRARIES = libedom.la
 
 libedom_la_SOURCES = \
 edom_tag.c \
-edom_context.c \
 edom_parser.c
 
 libedom_la_LIBADD = \

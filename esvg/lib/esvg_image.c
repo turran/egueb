@@ -133,8 +133,8 @@ static Eina_Bool _esvg_image_setup(Enesim_Renderer *r, Esvg_Element_State *estat
 		int sw, sh;
 
 		enesim_surface_size_get(thiz->s, &sw, &sh);
-		enesim_renderer_image_w_set(thiz->image, sw);
-		enesim_renderer_image_h_set(thiz->image, sh);
+		enesim_renderer_image_width_set(thiz->image, sw);
+		enesim_renderer_image_height_set(thiz->image, sh);
 		enesim_renderer_clipper_content_set(thiz->r, thiz->image);
 	}
 	/* we set the origin later as it depends on the content flags */

@@ -126,7 +126,7 @@ static Edom_Tag_Descriptor _descriptor = {
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
-Edom_Tag * esvg_parser_use_new(Edom_Context *c, Edom_Tag *topmost)
+Edom_Tag * esvg_parser_use_new(Edom_Parser *parser)
 {
 	Esvg_Parser_Use *thiz;
 	Edom_Tag *tag;
@@ -137,7 +137,7 @@ Edom_Tag * esvg_parser_use_new(Edom_Context *c, Edom_Tag *topmost)
 	r = esvg_use_new();
 	thiz->r = r;
 
-	tag = esvg_parser_element_new(c, &_descriptor, ESVG_USE, topmost, r, thiz);
+	tag = esvg_parser_element_new(parser, &_descriptor, ESVG_USE, r, thiz);
 	thiz->tag = tag;
 
 	return tag;

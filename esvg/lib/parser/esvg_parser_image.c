@@ -99,13 +99,13 @@ static Edom_Tag_Descriptor _descriptor = {
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
-Edom_Tag * esvg_parser_image_new(Edom_Context *c, Edom_Tag *topmost)
+Edom_Tag * esvg_parser_image_new(Edom_Parser *parser)
 {
 	Edom_Tag *tag;
 	Enesim_Renderer *r;
 
 	r = esvg_image_new();
-	tag = esvg_parser_element_new(c, &_descriptor, ESVG_IMAGE, topmost, r, NULL);
+	tag = esvg_parser_element_new(parser, &_descriptor, ESVG_IMAGE, r, NULL);
 
 	return tag;
 }

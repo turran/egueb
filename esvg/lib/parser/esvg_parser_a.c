@@ -84,13 +84,13 @@ static Edom_Tag_Descriptor _descriptor = {
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
-Edom_Tag * esvg_parser_a_new(Edom_Context *c, Edom_Tag *topmost)
+Edom_Tag * esvg_parser_a_new(Edom_Parser *p)
 {
 	Esvg_Parser_A *thiz;
 	Edom_Tag *tag;
 
 	thiz = calloc(1, sizeof(Esvg_Parser_A));
-	tag = edom_tag_new(c, &_descriptor, ESVG_A, topmost, thiz);
+	tag = edom_tag_new(p, &_descriptor, ESVG_A, thiz);
 
 	return tag;
 }

@@ -71,13 +71,13 @@ static Edom_Tag_Descriptor _descriptor = {
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
-Edom_Tag * esvg_parser_circle_new(Edom_Context *c, Edom_Tag *topmost)
+Edom_Tag * esvg_parser_circle_new(Edom_Parser *parser)
 {
 	Edom_Tag *tag;
 	Enesim_Renderer *r;
 
 	r = esvg_circle_new();
-	tag = esvg_parser_shape_new(c, &_descriptor, ESVG_CIRCLE, topmost, r, NULL);
+	tag = esvg_parser_shape_new(parser, &_descriptor, ESVG_CIRCLE, r, NULL);
 
 	return tag;
 }

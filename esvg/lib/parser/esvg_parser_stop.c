@@ -93,7 +93,7 @@ static Edom_Tag_Descriptor _descriptor = {
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
-Edom_Tag * esvg_parser_stop_new(Edom_Context *c, Edom_Tag *topmost)
+Edom_Tag * esvg_parser_stop_new(Edom_Parser *parser)
 {
 	Esvg_Gradient_Stop *s;
 	Edom_Tag *tag;
@@ -101,7 +101,7 @@ Edom_Tag * esvg_parser_stop_new(Edom_Context *c, Edom_Tag *topmost)
 	s = calloc(1, sizeof(Esvg_Gradient_Stop));
 	/* default values */
 	s->stop_opacity = 1.0;
-	tag = edom_tag_new(c, &_descriptor, ESVG_STOP, topmost, s);
+	tag = edom_tag_new(parser, &_descriptor, ESVG_STOP, s);
 
 	return tag;
 }

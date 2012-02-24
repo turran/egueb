@@ -113,6 +113,7 @@ static Eina_Bool _parser_element_attribute_set(Edom_Tag *tag, const char *key, c
 
 	if (strcmp(key, "id") == 0)
 	{
+		printf("id = %s %p\n", value, tag);
 		esvg_element_id_set(r, value);
 		edom_tag_id_set(tag, value);
 	}
@@ -287,18 +288,40 @@ static const char * _parser_element_name_get(Edom_Tag *tag)
 	return thiz->descriptor->name_get(tag);
 }
 
+static Eina_Bool _parser_element_child_supported(Edom_Tag *tag, int tag_id)
+{
+	Esvg_Parser_Element *thiz;
+
+	thiz = _esvg_parser_element_get(tag);
+	if (thiz->descriptor->child_supported)
+		return thiz->descriptor->child_supported(tag, tag_id);
+	return EINA_FALSE;
+}
+
+static Eina_Bool _parser_element_child_add(Edom_Tag *tag, Edom_Tag *child)
+{
+	Esvg_Parser_Element *thiz;
+
+	thiz = _esvg_parser_element_get(tag);
+	if (thiz->descriptor->child_add)
+		return thiz->descriptor->child_add(tag, child);
+	return EINA_TRUE;
+}
+
 static Edom_Tag_Descriptor _descriptor = {
 	/* .name_get 		= */ _parser_element_name_get,
 	/* .attribute_set 	= */ _parser_element_attribute_set,
 	/* .attribute_get 	= */ _parser_element_attribute_get,
+	/* .child_supported	= */ _parser_element_child_supported,
+	/* .child_add		= */ _parser_element_child_add,
+	/* .child_remove	= */ NULL,
 };
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
-Edom_Tag * esvg_parser_element_new(Edom_Context *context,
+Edom_Tag * esvg_parser_element_new(Edom_Parser *parser,
 		Edom_Tag_Descriptor *descriptor,
 		Esvg_Parser_Tag_Type type,
-		Edom_Tag *topmost,
 		Enesim_Renderer *r,
 		void *data)
 {
@@ -311,7 +334,7 @@ Edom_Tag * esvg_parser_element_new(Edom_Context *context,
 	thiz->descriptor = descriptor;
 	thiz->data = data;
 
-	tag = edom_tag_new(context, &_descriptor, type, topmost, thiz);
+	tag = edom_tag_new(parser, &_descriptor, type, thiz);
 	thiz->tag = tag;
 
 	return tag;

@@ -546,6 +546,9 @@ EAPI void esvg_pattern_transform_get(Enesim_Renderer *r, Enesim_Matrix *transfor
 EAPI Eina_Bool esvg_pattern_transform_is_set(Enesim_Renderer *r);
 EAPI void esvg_pattern_content_set(Enesim_Renderer *r, Enesim_Renderer *content);
 
+EAPI Enesim_Renderer * esvg_clip_path_new(void);
+EAPI Eina_Bool esvg_is_clip_path(Enesim_Renderer *r);
+
 /* helper functions */
 EAPI double esvg_length_final_get(const Esvg_Length *l, double parent_length);
 

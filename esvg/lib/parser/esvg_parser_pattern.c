@@ -31,6 +31,7 @@
 typedef struct _Esvg_Parser_Pattern
 {
 	Edom_Tag *tag;
+	Enesim_Renderer *r;
 	char *href;
 } Esvg_Parser_Pattern;
 
@@ -123,17 +124,55 @@ static const char * _parser_pattern_name_get(Edom_Tag *tag)
 	return "pattern";
 }
 
+static Eina_Bool _parser_pattern_child_supported(Edom_Tag *tag, int tag_id)
+{
+	switch (tag_id)
+	{
+		case ESVG_USE:
+		case ESVG_SVG:
+		case ESVG_CIRCLE:
+		case ESVG_ELLIPSE:
+		case ESVG_RECT:
+		case ESVG_LINE:
+		case ESVG_PATH:
+		case ESVG_POLYLINE:
+		case ESVG_POLYGON:
+		case ESVG_TEXT:
+		case ESVG_G:
+		case ESVG_IMAGE:
+		return EINA_TRUE;
+
+		default:
+		return EINA_FALSE;
+	}
+}
+
+static Eina_Bool _parser_pattern_child_add(Edom_Tag *tag, Edom_Tag *child)
+{
+	Esvg_Parser_Pattern *thiz;
+	Enesim_Renderer *r;
+	int tag_id;
+
+	thiz = _esvg_parser_pattern_get(tag);
+	r = esvg_parser_element_renderer_get(child);
+	if (r)
+		esvg_pattern_content_set(thiz->r, r);
+
+	return EINA_TRUE;
+}
 
 static Edom_Tag_Descriptor _descriptor = {
 	/* .name_get 		= */ _parser_pattern_name_get,
 	/* .attribute_set 	= */ _parser_pattern_attribute_set,
 	/* .attribute_get 	= */ _parser_pattern_attribute_get,
+	/* .child_supported	= */ _parser_pattern_child_supported,
+	/* .child_add		= */ _parser_pattern_child_add,
+	/* .child_remove	= */ NULL,
 };
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
-Edom_Tag * esvg_parser_pattern_new(Edom_Context *c,
-		Edom_Tag *topmost)
+Edom_Tag * esvg_parser_pattern_new(Edom_Parser *parser)
 {
 	Esvg_Parser_Pattern *thiz;
 	Enesim_Renderer *r;
@@ -141,8 +180,9 @@ Edom_Tag * esvg_parser_pattern_new(Edom_Context *c,
 
 	thiz = calloc(1, sizeof(Esvg_Parser_Pattern));
 	r = esvg_pattern_new();
-	tag = esvg_parser_paint_server_new(c, &_descriptor, ESVG_PATTERN,
-			topmost, r, thiz);
+	thiz->r = r;
+	tag = esvg_parser_paint_server_new(parser, &_descriptor, ESVG_PATTERN,
+			r, thiz);
 	thiz->tag = tag;
 
 	return tag;

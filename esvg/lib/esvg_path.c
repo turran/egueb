@@ -72,6 +72,7 @@ static Eina_Bool _esvg_path_setup(Enesim_Renderer *r, const Esvg_Element_State *
 
 	thiz = _esvg_path_get(r);
 
+	printf("path setup\n");
 	/* shape properties */
 	if (!dstate->fill_renderer)
 		enesim_renderer_shape_fill_color_set(thiz->r, dstate->fill_color);
