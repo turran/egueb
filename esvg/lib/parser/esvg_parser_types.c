@@ -643,6 +643,16 @@ Eina_Bool esvg_length_get(Esvg_Length *length, const char *attr_val, Esvg_Length
 	return EINA_TRUE;
 }
 
+Eina_Bool esvg_length_is_equal(Esvg_Length *length1, Esvg_Length *length2)
+{
+	if (!length1 || !length2)
+		return EINA_FALSE;
+	if ((length1->value == length2->value) &&(length1->unit == length2->unit))
+		return EINA_TRUE;
+
+	return EINA_FALSE;
+}
+
 /* FIXME: fix parsing with ' ' and ',' (do like rgb(c,c,c)) */
 Esvg_View_Box esvg_view_box_get(const char *attr_val)
 {

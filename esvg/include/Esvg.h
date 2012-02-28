@@ -393,6 +393,7 @@ EAPI Eina_Bool esvg_is_g(Enesim_Renderer *r);
 EAPI Eina_Bool esvg_is_shape(Enesim_Renderer *r);
 
 EAPI Enesim_Renderer *esvg_rect_new(void);
+EAPI Eina_Bool esvg_is_rect(Enesim_Renderer *r);
 EAPI void esvg_rect_x_set(Enesim_Renderer *r, const Esvg_Coord *x);
 EAPI void esvg_rect_x_get(Enesim_Renderer *r, Esvg_Coord *x);
 EAPI void esvg_rect_y_set(Enesim_Renderer *r, const Esvg_Coord *y);
@@ -462,6 +463,7 @@ EAPI void esvg_use_link_set(Enesim_Renderer *r, const Enesim_Renderer *link);
 EAPI void esvg_use_link_get(Enesim_Renderer *r, Enesim_Renderer **link);
 
 EAPI Enesim_Renderer * esvg_text_new(void);
+EAPI Eina_Bool esvg_is_text(Enesim_Renderer *r);
 EAPI void esvg_text_x_set(Enesim_Renderer *r, const Esvg_Coord *x);
 EAPI void esvg_text_x_get(Enesim_Renderer *r, Esvg_Coord *x);
 EAPI void esvg_text_y_set(Enesim_Renderer *r, const Esvg_Coord *y);
@@ -527,6 +529,8 @@ EAPI Eina_Bool esvg_linear_gradient_x2_is_set(Enesim_Renderer *r);
 EAPI void esvg_linear_gradient_y2_set(Enesim_Renderer *r, const Esvg_Coord *y2);
 EAPI void esvg_linear_gradient_y2_get(Enesim_Renderer *r, Esvg_Coord *y2);
 EAPI Eina_Bool esvg_linear_gradient_y2_is_set(Enesim_Renderer *r);
+
+EAPI Eina_Bool esvg_is_paint_server(Enesim_Renderer *r);
 
 EAPI Enesim_Renderer * esvg_pattern_new(void);
 EAPI Eina_Bool esvg_is_pattern(Enesim_Renderer *r);

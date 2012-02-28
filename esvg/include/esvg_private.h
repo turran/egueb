@@ -50,12 +50,13 @@
 #define ESVG_POLYLINE_MAGIC 0xe550000a
 #define ESVG_POLYGON_MAGIC 0xe550000b
 #define ESVG_PATH_MAGIC 0xe550000c
-#define ESVG_USE_MAGIC 0xe550000d
+#define ESVG_TEXT_MAGIC 0xe550000d
+#define ESVG_USE_MAGIC 0xe550000e
 
-#define ESVG_PAINT_SERVER_MAGIC 0xe550000e
-#define ESVG_GRADIENT_MAGIC 0xe550000f
-#define ESVG_LINEAR_GRADIENT_MAGIC 0xe5500010
-#define ESVG_RADIAL_GRADIENT_MAGIC 0xe5500011
+#define ESVG_PAINT_SERVER_MAGIC 0xe550000f
+#define ESVG_GRADIENT_MAGIC 0xe5500010
+#define ESVG_LINEAR_GRADIENT_MAGIC 0xe5500011
+#define ESVG_RADIAL_GRADIENT_MAGIC 0xe5500012
 #define ESVG_PATTERN_MAGIC 0xe5500012
 
 #define ESVG_CLIP_PATH_MAGIC 0xe5500013
@@ -115,6 +116,7 @@ typedef Eina_Bool (*Esvg_Element_Setup)(Enesim_Renderer *r,
 
 typedef void (*Esvg_Element_Cleanup)(Enesim_Renderer *r);
 typedef void (*Esvg_Element_Clone)(Enesim_Renderer *r, Enesim_Renderer *dst);
+typedef Eina_Bool (*Esvg_Element_Has_Changed)(Enesim_Renderer *r);
 
 typedef struct _Esvg_Element_Descriptor {
 	/* the element interface */
@@ -123,6 +125,7 @@ typedef struct _Esvg_Element_Descriptor {
 	Esvg_Element_Clone clone;
 	Esvg_Element_Setup setup;
 	Esvg_Element_Cleanup cleanup;
+	Esvg_Element_Has_Changed has_changed;
 	Eina_Bool is_renderable;
 } Esvg_Element_Descriptor;
 
@@ -169,6 +172,7 @@ typedef struct _Esvg_Shape_Descriptor {
 	Enesim_Renderer_Name name_get;
 	Esvg_Element_Clone clone;
 	Esvg_Element_Cleanup cleanup;
+	Esvg_Element_Has_Changed has_changed;
 } Esvg_Shape_Descriptor;
 
 void * esvg_shape_data_get(Enesim_Renderer *r);
@@ -261,6 +265,7 @@ double esvg_number_get(const char *attr_val, double default_nbr);
 /* length */
 
 Eina_Bool esvg_length_get(Esvg_Length *l, const char *attr_val, Esvg_Length default_length);
+Eina_Bool esvg_length_is_equal(Esvg_Length *length1, Esvg_Length *length2);
 double esvg_length_final_get(const Esvg_Length *l, double parent_length);
 
 Esvg_View_Box esvg_view_box_get(const char *attr_val);

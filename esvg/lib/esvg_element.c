@@ -49,6 +49,7 @@ typedef struct _Esvg_Element
 	Esvg_Element_Clone clone;
 	Esvg_Element_Setup setup;
 	Esvg_Element_Cleanup cleanup;
+	Esvg_Element_Has_Changed has_changed;
 	Eina_Bool is_renderable;
 	/* private */
 	Esvg_Attribute_Presentation *attr_p;
@@ -358,8 +359,7 @@ static Eina_Bool _esvg_element_has_changed(Enesim_Renderer *r)
 	Esvg_Element *thiz;
 
 	thiz = _esvg_element_get(r);
-	/* FIXME */
-	return EINA_FALSE;
+	return thiz->has_changed(r);
 }
 
 static void _esvg_element_damage(Enesim_Renderer *r, Enesim_Renderer_Damage_Cb cb, void *data)
@@ -419,6 +419,7 @@ Enesim_Renderer * esvg_element_new(Esvg_Element_Descriptor *descriptor, void *da
 	thiz->clone = descriptor->clone;
 	thiz->setup = descriptor->setup;
 	thiz->cleanup = descriptor->cleanup;
+	thiz->has_changed = descriptor->has_changed;
 	thiz->is_renderable = descriptor->is_renderable;
 
 	r = enesim_renderer_new(&_descriptor, thiz);

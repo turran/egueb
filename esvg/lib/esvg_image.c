@@ -27,20 +27,27 @@
 			EINA_MAGIC_FAIL(d, ESVG_IMAGE_MAGIC);\
 	} while(0)
 
-typedef struct _Esvg_Image
+typedef struct _Esvg_Image_State
 {
-	EINA_MAGIC
-	/* properties */
 	Esvg_Coord x;
 	Esvg_Coord y;
 	Esvg_Length width;
 	Esvg_Length height;
 	char *href;
+} Esvg_Image_State;
+
+typedef struct _Esvg_Image
+{
+	EINA_MAGIC
+	/* properties */
+	Esvg_Image_State current;
+	Esvg_Image_State past;
 	/* private */
 	Enesim_Renderer *r;
 	Enesim_Renderer *image;
 	Enesim_Renderer *checker;
 	Enesim_Surface *s;
+	Eina_Bool changed : 1;
 } Esvg_Image;
 
 static Esvg_Image * _esvg_image_get(Enesim_Renderer *r)
@@ -74,7 +81,7 @@ static void _esvg_image_load(Esvg_Image *thiz, double width, double height)
 	}
 
 	printf("loading!!\n");
-	ret = emage_load(thiz->href, &s, ENESIM_FORMAT_ARGB8888, NULL, options);
+	ret = emage_load(thiz->current.href, &s, ENESIM_FORMAT_ARGB8888, NULL, options);
 	if (!ret)
 	{
 		printf("some error?\n");
@@ -113,11 +120,11 @@ static Eina_Bool _esvg_image_setup(Enesim_Renderer *r, Esvg_Element_State *estat
 
 	thiz = _esvg_image_get(r);
 	/* set the position */
-	x = esvg_length_final_get(&thiz->x, estate->viewbox_w);
-	y = esvg_length_final_get(&thiz->y, estate->viewbox_h);
+	x = esvg_length_final_get(&thiz->current.x, estate->viewbox_w);
+	y = esvg_length_final_get(&thiz->current.y, estate->viewbox_h);
 	/* set the size */
-	width = esvg_length_final_get(&thiz->width, estate->viewbox_w);
-	height = esvg_length_final_get(&thiz->height, estate->viewbox_h);
+	width = esvg_length_final_get(&thiz->current.width, estate->viewbox_w);
+	height = esvg_length_final_get(&thiz->current.height, estate->viewbox_h);
 
 	/* load the image of that size */
 	_esvg_image_load(thiz, width, height);
@@ -147,12 +154,37 @@ static Eina_Bool _esvg_image_setup(Enesim_Renderer *r, Esvg_Element_State *estat
 
 static void _esvg_image_cleanup(Enesim_Renderer *r)
 {
+	Esvg_Image *thiz;
 
+	thiz = _esvg_image_get(r);
+	thiz->past = thiz->current;
+	thiz->changed = EINA_FALSE;
 }
 
 static void _esvg_image_clone(Enesim_Renderer *r, Enesim_Renderer *dr)
 {
 
+}
+
+static Eina_Bool _esvg_image_has_changed(Enesim_Renderer *r)
+{
+	Esvg_Image *thiz;
+
+	thiz = _esvg_image_get(r);
+	if (!thiz->changed) return EINA_FALSE;
+
+	if (esvg_length_is_equal(&thiz->current.x, &thiz->past.x))
+		return EINA_TRUE;
+	if (esvg_length_is_equal(&thiz->current.y, &thiz->past.y))
+		return EINA_TRUE;
+	if (esvg_length_is_equal(&thiz->current.width, &thiz->past.width))
+		return EINA_TRUE;
+	if (esvg_length_is_equal(&thiz->current.height, &thiz->past.height))
+		return EINA_TRUE;
+	if (strcmp(thiz->current.href, thiz->past.href) == 0)
+		return EINA_TRUE;
+
+	return EINA_FALSE;
 }
 
 static Esvg_Element_Descriptor _descriptor = {
@@ -161,7 +193,8 @@ static Esvg_Element_Descriptor _descriptor = {
 	/* .clone =		*/ _esvg_image_clone,
 	/* .setup =		*/ _esvg_image_setup,
 	/* .cleanup =		*/ _esvg_image_cleanup,
-	/* .is_renderable = 	*/ EINA_TRUE,
+	/* .has_changed	=	*/ _esvg_image_has_changed,
+	/* .is_renderable = 	*/ EINA_TRUE
 };
 /*============================================================================*
  *                                 Global                                     *
@@ -194,10 +227,11 @@ EAPI Enesim_Renderer * esvg_image_new(void)
 	thiz->r = r;
 
 	/* Default values */
-	thiz->x = ESVG_COORD_0;
-	thiz->y = ESVG_COORD_0;
-	thiz->width = ESVG_LENGTH_0;
-	thiz->height = ESVG_LENGTH_0;
+	thiz->current.x = ESVG_COORD_0;
+	thiz->current.y = ESVG_COORD_0;
+	thiz->current.width = ESVG_LENGTH_0;
+	thiz->current.height = ESVG_LENGTH_0;
+	/* FIXME: href default value */
 
 	r = esvg_element_new(&_descriptor, thiz);
 	return r;
@@ -208,7 +242,11 @@ EAPI void esvg_image_x_set(Enesim_Renderer *r, const Esvg_Coord *x)
 	Esvg_Image *thiz;
 
 	thiz = _esvg_image_get(r);
-	if (x) thiz->x = *x;
+	if (x)
+	{
+		thiz->current.x = *x;
+		thiz->changed = EINA_TRUE;
+	}
 }
 
 EAPI void esvg_image_x_get(Enesim_Renderer *r, Esvg_Coord *x)
@@ -216,7 +254,7 @@ EAPI void esvg_image_x_get(Enesim_Renderer *r, Esvg_Coord *x)
 	Esvg_Image *thiz;
 
 	thiz = _esvg_image_get(r);
-	if (x) *x = thiz->x;
+	if (x) *x = thiz->current.x;
 }
 
 EAPI void esvg_image_y_set(Enesim_Renderer *r, const Esvg_Coord *y)
@@ -224,7 +262,11 @@ EAPI void esvg_image_y_set(Enesim_Renderer *r, const Esvg_Coord *y)
 	Esvg_Image *thiz;
 
 	thiz = _esvg_image_get(r);
-	if (y) thiz->y = *y;
+	if (y)
+	{
+		thiz->current.y = *y;
+		thiz->changed = EINA_TRUE;
+	}
 }
 
 EAPI void esvg_image_y_get(Enesim_Renderer *r, Esvg_Coord *y)
@@ -232,7 +274,7 @@ EAPI void esvg_image_y_get(Enesim_Renderer *r, Esvg_Coord *y)
 	Esvg_Image *thiz;
 
 	thiz = _esvg_image_get(r);
-	if (y) *y = thiz->y;
+	if (y) *y = thiz->current.y;
 }
 
 EAPI void esvg_image_width_set(Enesim_Renderer *r, const Esvg_Length *width)
@@ -240,7 +282,11 @@ EAPI void esvg_image_width_set(Enesim_Renderer *r, const Esvg_Length *width)
 	Esvg_Image *thiz;
 
 	thiz = _esvg_image_get(r);
-	if (width) thiz->width = *width;
+	if (width)
+	{
+		thiz->current.width = *width;
+		thiz->changed = EINA_TRUE;
+	}
 }
 
 EAPI void esvg_image_width_get(Enesim_Renderer *r, Esvg_Length *width)
@@ -248,7 +294,7 @@ EAPI void esvg_image_width_get(Enesim_Renderer *r, Esvg_Length *width)
 	Esvg_Image *thiz;
 
 	thiz = _esvg_image_get(r);
-	if (width) *width = thiz->width;
+	if (width) *width = thiz->current.width;
 }
 
 EAPI void esvg_image_height_set(Enesim_Renderer *r, const Esvg_Length *height)
@@ -256,7 +302,11 @@ EAPI void esvg_image_height_set(Enesim_Renderer *r, const Esvg_Length *height)
 	Esvg_Image *thiz;
 
 	thiz = _esvg_image_get(r);
-	if (height) thiz->height = *height;
+	if (height)
+	{
+		thiz->current.height = *height;
+		thiz->changed = EINA_TRUE;
+	}
 }
 
 EAPI void esvg_image_height_get(Enesim_Renderer *r, Esvg_Length *height)
@@ -264,7 +314,7 @@ EAPI void esvg_image_height_get(Enesim_Renderer *r, Esvg_Length *height)
 	Esvg_Image *thiz;
 
 	thiz = _esvg_image_get(r);
-	if (height) *height = thiz->height;
+	if (height) *height = thiz->current.height;
 }
 
 EAPI void esvg_image_href_set(Enesim_Renderer *r, const char *href)
@@ -272,7 +322,16 @@ EAPI void esvg_image_href_set(Enesim_Renderer *r, const char *href)
 	Esvg_Image *thiz;
 
 	thiz = _esvg_image_get(r);
-	if (href) thiz->href = strdup(href);
+	if (href)
+	{
+		char *h;
+		h = strdup(href);
+		if (h)
+		{
+			thiz->current.href = strdup(href);
+			thiz->changed = EINA_TRUE;
+		}
+	}
 }
 
 EAPI void esvg_image_href_get(Enesim_Renderer *r, const char **href)
@@ -280,5 +339,5 @@ EAPI void esvg_image_href_get(Enesim_Renderer *r, const char **href)
 	Esvg_Image *thiz;
 
 	thiz = _esvg_image_get(r);
-	if (href && *href) *href = thiz->href;
+	if (href && *href) *href = thiz->current.href;
 }

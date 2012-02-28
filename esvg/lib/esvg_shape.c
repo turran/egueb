@@ -37,6 +37,7 @@ typedef struct _Esvg_Shape
 	Esvg_Shape_Enesim_State_Calculate calculate;
 	void *calculate_data;
 	Esvg_Element_Clone clone;
+	Esvg_Element_Has_Changed has_changed;
 	/* private */
 	Esvg_Shape_Enesim_State dstate;
 	void *data;
@@ -209,7 +210,7 @@ void * esvg_shape_data_get(Enesim_Renderer *r)
 Enesim_Renderer * esvg_shape_new(Esvg_Shape_Descriptor *descriptor, void *data)
 {
 	Esvg_Shape *thiz;
-	Esvg_Element_Descriptor pdescriptor = {NULL, NULL, NULL, NULL};
+	Esvg_Element_Descriptor pdescriptor = {NULL, NULL, NULL, NULL, NULL, NULL, EINA_TRUE};
 	Enesim_Renderer *r;
 
 	thiz = calloc(1, sizeof(Esvg_Shape));
@@ -220,12 +221,14 @@ Enesim_Renderer * esvg_shape_new(Esvg_Shape_Descriptor *descriptor, void *data)
 	thiz->setup = descriptor->setup;
 	thiz->clone = descriptor->clone;
 	thiz->renderer_get = descriptor->renderer_get;
+	thiz->has_changed = descriptor->has_changed;
 
 	pdescriptor.renderer_get = _esvg_shape_renderer_get;
 	pdescriptor.name_get = descriptor->name_get;
 	pdescriptor.setup = _esvg_shape_setup;
 	pdescriptor.cleanup = descriptor->cleanup;
 	pdescriptor.clone = descriptor->clone;
+	pdescriptor.has_changed = descriptor->has_changed;
 	pdescriptor.is_renderable = EINA_TRUE;
 
 	r = esvg_element_new(&pdescriptor, thiz);

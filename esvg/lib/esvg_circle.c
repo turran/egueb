@@ -27,15 +27,22 @@
 			EINA_MAGIC_FAIL(d, ESVG_CIRCLE_MAGIC);\
 	} while(0)
 
+typedef struct _Esvg_Circle_State
+{
+	Esvg_Coord cx;
+	Esvg_Coord cy;
+	Esvg_Length radius;
+} Esvg_Circle_State;
+
 typedef struct _Esvg_Circle
 {
 	EINA_MAGIC
 	/* properties */
-	Esvg_Coord cx;
-	Esvg_Coord cy;
-	Esvg_Length radius;
+	Esvg_Circle_State current;
+	Esvg_Circle_State past;
 	/* private */
 	Enesim_Renderer *r;
+	Eina_Bool changed : 1;
 } Esvg_Circle;
 
 static Esvg_Circle * _esvg_circle_get(Enesim_Renderer *r)
@@ -75,10 +82,10 @@ static Eina_Bool _esvg_circle_setup(Enesim_Renderer *r, const Esvg_Element_State
 
 	/* FIXME gets the parents size or the topmost? */
 	/* set the origin */
-	cx = esvg_length_final_get(&thiz->cx, estate->viewbox_w);
-	cy = esvg_length_final_get(&thiz->cy, estate->viewbox_h);
+	cx = esvg_length_final_get(&thiz->current.cx, estate->viewbox_w);
+	cy = esvg_length_final_get(&thiz->current.cy, estate->viewbox_h);
 	/* set the size */
-	radius = esvg_length_final_get(&thiz->radius, estate->viewbox_w);
+	radius = esvg_length_final_get(&thiz->current.radius, estate->viewbox_w);
 	printf("calling the setup on the circle (%g %g %g)\n", cx, cy, radius);
 	enesim_renderer_circle_center_set(thiz->r, cx, cy);
 	enesim_renderer_circle_radius_set(thiz->r, radius);
@@ -112,14 +119,35 @@ static void _esvg_circle_clone(Enesim_Renderer *r, Enesim_Renderer *dr)
 	thiz = _esvg_circle_get(r);
 	other = _esvg_circle_get(dr);
 
-	other->cx = thiz->cx;
-	other->cy = thiz->cy;
-	other->radius = thiz->radius;
+	other->current.cx = thiz->current.cx;
+	other->current.cy = thiz->current.cy;
+	other->current.radius = thiz->current.radius;
 }
 
 static void _esvg_circle_cleanup(Enesim_Renderer *r)
 {
+	Esvg_Circle *thiz;
 
+	thiz = _esvg_circle_get(r);
+	thiz->past = thiz->current;
+	thiz->changed = EINA_FALSE;
+}
+
+static Eina_Bool _esvg_circle_has_changed(Enesim_Renderer *r)
+{
+	Esvg_Circle *thiz;
+
+	thiz = _esvg_circle_get(r);
+	if (!thiz->changed) return EINA_FALSE;
+
+	if (esvg_length_is_equal(&thiz->current.cx, &thiz->past.cx))
+		return EINA_TRUE;
+	if (esvg_length_is_equal(&thiz->current.cy, &thiz->past.cy))
+		return EINA_TRUE;
+	if (esvg_length_is_equal(&thiz->current.radius, &thiz->past.radius))
+		return EINA_TRUE;
+
+	return EINA_FALSE;
 }
 
 static Esvg_Shape_Descriptor _descriptor = {
@@ -128,6 +156,7 @@ static Esvg_Shape_Descriptor _descriptor = {
 	/* .name_get =		*/ _esvg_circle_name_get,
 	/* .clone =		*/ _esvg_circle_clone,
 	/* .cleanup =		*/ _esvg_circle_cleanup,
+	/* .has_changed	=	*/ _esvg_circle_has_changed
 };
 /*============================================================================*
  *                                 Global                                     *
@@ -150,9 +179,9 @@ EAPI Enesim_Renderer * esvg_circle_new(void)
 	thiz->r = r;
 
 	/* Default values */
-	thiz->cx = ESVG_COORD_0;
-	thiz->cy = ESVG_COORD_0;
-	thiz->radius = ESVG_LENGTH_0;
+	thiz->current.cx = ESVG_COORD_0;
+	thiz->current.cy = ESVG_COORD_0;
+	thiz->current.radius = ESVG_LENGTH_0;
 
 	r = esvg_shape_new(&_descriptor, thiz);
 	return r;
@@ -176,7 +205,11 @@ EAPI void esvg_circle_cx_set(Enesim_Renderer *r, const Esvg_Coord *cx)
 	Esvg_Circle *thiz;
 
 	thiz = _esvg_circle_get(r);
-	if (cx) thiz->cx = *cx;
+	if (cx)
+	{
+		thiz->current.cx = *cx;
+		thiz->changed = EINA_TRUE;
+	}
 }
 
 EAPI void esvg_circle_cx_get(Enesim_Renderer *r, Esvg_Coord *cx)
@@ -184,7 +217,7 @@ EAPI void esvg_circle_cx_get(Enesim_Renderer *r, Esvg_Coord *cx)
 	Esvg_Circle *thiz;
 
 	thiz = _esvg_circle_get(r);
-	if (cx) *cx = thiz->cx;
+	if (cx) *cx = thiz->current.cx;
 }
 
 EAPI void esvg_circle_cy_set(Enesim_Renderer *r, const Esvg_Coord *cy)
@@ -192,7 +225,11 @@ EAPI void esvg_circle_cy_set(Enesim_Renderer *r, const Esvg_Coord *cy)
 	Esvg_Circle *thiz;
 
 	thiz = _esvg_circle_get(r);
-	if (cy) thiz->cy = *cy;
+	if (cy)
+	{
+		thiz->current.cy = *cy;
+		thiz->changed = EINA_TRUE;
+	}
 }
 
 EAPI void esvg_circle_cy_get(Enesim_Renderer *r, Esvg_Coord *cy)
@@ -200,7 +237,7 @@ EAPI void esvg_circle_cy_get(Enesim_Renderer *r, Esvg_Coord *cy)
 	Esvg_Circle *thiz;
 
 	thiz = _esvg_circle_get(r);
-	if (cy) *cy = thiz->cy;
+	if (cy) *cy = thiz->current.cy;
 }
 
 EAPI void esvg_circle_radius_set(Enesim_Renderer *r, const Esvg_Length *radius)
@@ -208,7 +245,11 @@ EAPI void esvg_circle_radius_set(Enesim_Renderer *r, const Esvg_Length *radius)
 	Esvg_Circle *thiz;
 
 	thiz = _esvg_circle_get(r);
-	if (radius) thiz->radius = *radius;
+	if (radius)
+	{
+		thiz->current.radius = *radius;
+		thiz->changed = EINA_TRUE;
+	}
 }
 
 EAPI void esvg_circle_radius_get(Enesim_Renderer *r, Esvg_Length *radius)
@@ -216,5 +257,5 @@ EAPI void esvg_circle_radius_get(Enesim_Renderer *r, Esvg_Length *radius)
 	Esvg_Circle *thiz;
 
 	thiz = _esvg_circle_get(r);
-	if (radius) *radius = thiz->radius;
+	if (radius) *radius = thiz->current.radius;
 }

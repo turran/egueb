@@ -26,16 +26,23 @@
 			EINA_MAGIC_FAIL(d, ESVG_LINE_MAGIC);\
 	} while(0)
 
-typedef struct _Esvg_Line
+typedef struct _Esvg_Line_State
 {
-	EINA_MAGIC
-	/* properties */
 	Esvg_Coord x1;
 	Esvg_Coord x2;
 	Esvg_Coord y1;
 	Esvg_Coord y2;
+} Esvg_Line_State;
+
+typedef struct _Esvg_Line
+{
+	EINA_MAGIC
+	/* properties */
+	Esvg_Line_State current;
+	Esvg_Line_State past;
 	/* private */
 	Enesim_Renderer *r;
+	Eina_Bool changed : 1;
 } Esvg_Line;
 
 static Esvg_Line * _esvg_line_get(Enesim_Renderer *r)
@@ -73,10 +80,10 @@ static Eina_Bool _esvg_line_setup(Enesim_Renderer *r, const Esvg_Element_State *
 	thiz = _esvg_line_get(r);
 
 	/* FIXME gets the parents size or the topmost? */
-	x1 = esvg_length_final_get(&thiz->x1, estate->viewbox_w);
-	y1 = esvg_length_final_get(&thiz->y1, estate->viewbox_h);
-	x2 = esvg_length_final_get(&thiz->x2, estate->viewbox_w);
-	y2 = esvg_length_final_get(&thiz->y2, estate->viewbox_h);
+	x1 = esvg_length_final_get(&thiz->current.x1, estate->viewbox_w);
+	y1 = esvg_length_final_get(&thiz->current.y1, estate->viewbox_h);
+	x2 = esvg_length_final_get(&thiz->current.x2, estate->viewbox_w);
+	y2 = esvg_length_final_get(&thiz->current.y2, estate->viewbox_h);
 
 	enesim_renderer_line_x0_set(thiz->r, x1);
 	enesim_renderer_line_y0_set(thiz->r, y1);
@@ -102,7 +109,11 @@ static Eina_Bool _esvg_line_setup(Enesim_Renderer *r, const Esvg_Element_State *
 
 static void _esvg_line_cleanup(Enesim_Renderer *r)
 {
+	Esvg_Line *thiz;
 
+	thiz = _esvg_line_get(r);
+	thiz->past = thiz->current;
+	thiz->changed = EINA_FALSE;
 }
 
 static void _esvg_line_clone(Enesim_Renderer *r, Enesim_Renderer *dr)
@@ -113,10 +124,29 @@ static void _esvg_line_clone(Enesim_Renderer *r, Enesim_Renderer *dr)
 	thiz = _esvg_line_get(r);
 	other = _esvg_line_get(dr);
 
-	other->x1 = thiz->x1;
-	other->y1 = thiz->y1;
-	other->x2 = thiz->x2;
-	other->y2 = thiz->y2;
+	other->current.x1 = thiz->current.x1;
+	other->current.y1 = thiz->current.y1;
+	other->current.x2 = thiz->current.x2;
+	other->current.y2 = thiz->current.y2;
+}
+
+static Eina_Bool _esvg_line_has_changed(Enesim_Renderer *r)
+{
+	Esvg_Line *thiz;
+
+	thiz = _esvg_line_get(r);
+	if (!thiz->changed) return EINA_FALSE;
+
+	if (esvg_length_is_equal(&thiz->current.x1, &thiz->past.x1))
+		return EINA_TRUE;
+	if (esvg_length_is_equal(&thiz->current.x2, &thiz->past.x2))
+		return EINA_TRUE;
+	if (esvg_length_is_equal(&thiz->current.y1, &thiz->past.y1))
+		return EINA_TRUE;
+	if (esvg_length_is_equal(&thiz->current.y2, &thiz->past.y2))
+		return EINA_TRUE;
+
+	return EINA_FALSE;
 }
 
 static Esvg_Shape_Descriptor _descriptor = {
@@ -125,6 +155,7 @@ static Esvg_Shape_Descriptor _descriptor = {
 	/* .name_get =		*/ _esvg_line_name_get,
 	/* .clone =		*/ _esvg_line_clone,
 	/* .cleanup =		*/ _esvg_line_cleanup,
+	/* .has_changed =	*/ _esvg_line_has_changed
 };
 /*============================================================================*
  *                                 Global                                     *
@@ -145,6 +176,7 @@ EAPI Enesim_Renderer * esvg_line_new(void)
 	thiz->r = r;
 	enesim_renderer_rop_set(r, ENESIM_BLEND);
 	/* default values */
+	/* FIXME defualt values */
 
 	r = esvg_shape_new(&_descriptor, thiz);
 	return r;
@@ -168,7 +200,11 @@ EAPI void esvg_line_x1_set(Enesim_Renderer *r, const Esvg_Coord *x1)
 	Esvg_Line *thiz;
 
 	thiz = _esvg_line_get(r);
-	if (x1) thiz->x1 = *x1;
+	if (x1)
+	{
+		thiz->current.x1 = *x1;
+		thiz->changed = EINA_TRUE;
+	}
 }
 
 EAPI void esvg_line_x1_get(Enesim_Renderer *r, Esvg_Coord *x1)
@@ -176,7 +212,7 @@ EAPI void esvg_line_x1_get(Enesim_Renderer *r, Esvg_Coord *x1)
 	Esvg_Line *thiz;
 
 	thiz = _esvg_line_get(r);
-	if (x1) *x1 = thiz->x1;
+	if (x1) *x1 = thiz->current.x1;
 }
 
 EAPI void esvg_line_y1_set(Enesim_Renderer *r, const Esvg_Coord *y1)
@@ -184,7 +220,11 @@ EAPI void esvg_line_y1_set(Enesim_Renderer *r, const Esvg_Coord *y1)
 	Esvg_Line *thiz;
 
 	thiz = _esvg_line_get(r);
-	if (y1) thiz->y1 = *y1;
+	if (y1)
+	{
+		thiz->current.y1 = *y1;
+		thiz->changed = EINA_TRUE;
+	}
 }
 
 EAPI void esvg_line_y1_get(Enesim_Renderer *r, Esvg_Coord *y1)
@@ -192,7 +232,7 @@ EAPI void esvg_line_y1_get(Enesim_Renderer *r, Esvg_Coord *y1)
 	Esvg_Line *thiz;
 
 	thiz = _esvg_line_get(r);
-	if (y1) *y1 = thiz->y1;
+	if (y1) *y1 = thiz->current.y1;
 }
 
 EAPI void esvg_line_x2_set(Enesim_Renderer *r, const Esvg_Coord *x2)
@@ -200,7 +240,11 @@ EAPI void esvg_line_x2_set(Enesim_Renderer *r, const Esvg_Coord *x2)
 	Esvg_Line *thiz;
 
 	thiz = _esvg_line_get(r);
-	if (x2) thiz->x2 = *x2;
+	if (x2)
+	{
+		thiz->current.x2 = *x2;
+		thiz->changed = EINA_TRUE;
+	}
 }
 
 EAPI void esvg_line_x2_get(Enesim_Renderer *r, Esvg_Coord *x2)
@@ -208,7 +252,7 @@ EAPI void esvg_line_x2_get(Enesim_Renderer *r, Esvg_Coord *x2)
 	Esvg_Line *thiz;
 
 	thiz = _esvg_line_get(r);
-	if (x2) *x2 = thiz->x2;
+	if (x2) *x2 = thiz->current.x2;
 }
 
 EAPI void esvg_line_y2_set(Enesim_Renderer *r, const Esvg_Coord *y2)
@@ -216,7 +260,11 @@ EAPI void esvg_line_y2_set(Enesim_Renderer *r, const Esvg_Coord *y2)
 	Esvg_Line *thiz;
 
 	thiz = _esvg_line_get(r);
-	if (y2) thiz->y2 = *y2;
+	if (y2)
+	{
+		thiz->current.y2 = *y2;
+		thiz->changed = EINA_TRUE;
+	}
 }
 
 EAPI void esvg_line_y2_get(Enesim_Renderer *r, Esvg_Coord *y2)
@@ -224,5 +272,5 @@ EAPI void esvg_line_y2_get(Enesim_Renderer *r, Esvg_Coord *y2)
 	Esvg_Line *thiz;
 
 	thiz = _esvg_line_get(r);
-	if (y2) *y2 = thiz->y2;
+	if (y2) *y2 = thiz->current.y2;
 }

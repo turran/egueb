@@ -21,21 +21,36 @@
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
-typedef struct _Esvg_Text
+#define ESVG_TEXT_MAGIC_CHECK(d) \
+	do {\
+		if (!EINA_MAGIC_CHECK(d, ESVG_TEXT_MAGIC))\
+			EINA_MAGIC_FAIL(d, ESVG_TEXT_MAGIC);\
+	} while(0)
+
+typedef struct _Esvg_Text_State
 {
-	/* properties */
 	Esvg_Coord x;
 	Esvg_Coord y;
 	Esvg_Length font_size;
+} Esvg_Text_State;
+
+typedef struct _Esvg_Text
+{
+	EINA_MAGIC
+	/* properties */
+	Esvg_Text_State current;
+	Esvg_Text_State past;
 	/* private */
 	Enesim_Renderer *r;
+	Eina_Bool changed : 1;
 } Esvg_Text;
 
 static Esvg_Text * _esvg_text_get(Enesim_Renderer *r)
 {
 	Esvg_Text *thiz;
-	/* FIXME add some kind of type checking or make this a macro */
+
 	thiz = esvg_shape_data_get(r);
+	ESVG_TEXT_MAGIC_CHECK(thiz);
 	return thiz;
 }
 
@@ -62,15 +77,13 @@ static Eina_Bool _esvg_text_setup(Enesim_Renderer *r, const Esvg_Element_State *
 	Enesim_Matrix inv;
 	double x, y;
 	double font_size;
-	int fz;
-	char *str = NULL;
 
 	thiz = _esvg_text_get(r);
 
-	x = esvg_length_final_get(&thiz->x, estate->viewbox_w);
-	y = esvg_length_final_get(&thiz->y, estate->viewbox_h);
+	x = esvg_length_final_get(&thiz->current.x, estate->viewbox_w);
+	y = esvg_length_final_get(&thiz->current.y, estate->viewbox_h);
 	/* we should use the hypot(viewbox_w, viewbox_h) */
-	font_size = esvg_length_final_get(&thiz->font_size, estate->viewbox_w);
+	font_size = esvg_length_final_get(&thiz->current.font_size, estate->viewbox_w);
 	enesim_renderer_origin_set(thiz->r, x, y);
 	enesim_renderer_color_set(thiz->r, dstate->fill_color);
 
@@ -91,7 +104,28 @@ static void _esvg_text_clone(Enesim_Renderer *r, Enesim_Renderer *dr)
 
 static void _esvg_text_cleanup(Enesim_Renderer *r)
 {
+	Esvg_Text *thiz;
 
+	thiz = _esvg_text_get(r);
+	thiz->past = thiz->current;
+	thiz->changed = EINA_FALSE;
+}
+
+static Eina_Bool _esvg_text_has_changed(Enesim_Renderer *r)
+{
+	Esvg_Text *thiz;
+
+	thiz = _esvg_text_get(r);
+	if (!thiz->changed) return EINA_FALSE;
+
+	if (esvg_length_is_equal(&thiz->current.x, &thiz->past.x))
+		return EINA_TRUE;
+	if (esvg_length_is_equal(&thiz->current.y, &thiz->past.y))
+		return EINA_TRUE;
+	if (esvg_length_is_equal(&thiz->current.font_size, &thiz->past.font_size))
+		return EINA_TRUE;
+
+	return EINA_FALSE;
 }
 
 static Esvg_Shape_Descriptor _descriptor = {
@@ -100,6 +134,7 @@ static Esvg_Shape_Descriptor _descriptor = {
 	/* .name_get =		*/ _esvg_text_name_get,
 	/* .clone =		*/ _esvg_text_clone,
 	/* .cleanup =		*/ _esvg_text_cleanup,
+	/* .has_changed	=	*/ _esvg_text_has_changed
 };
 /*============================================================================*
  *                                 Global                                     *
@@ -114,21 +149,37 @@ EAPI Enesim_Renderer * esvg_text_new(void)
 
 	thiz = calloc(1, sizeof(Esvg_Text));
 	if (!thiz) return NULL;
+	EINA_MAGIC_SET(thiz, ESVG_TEXT_MAGIC);
 
 	r = etex_span_new();
+	thiz->r = r;
+
+	/* Default values */
 	enesim_renderer_rop_set(r, ENESIM_BLEND);
 	/* FIXME for now */
-	thiz->font_size = ESVG_LENGTH_0;
+	thiz->current.x = ESVG_COORD_0;
+	thiz->current.y = ESVG_COORD_0;
+	thiz->current.font_size = ESVG_LENGTH_0;
 
 	etex_base_font_name_set(r, "/usr/share/fonts/truetype/freefont/FreeSans.ttf");
 	enesim_renderer_color_set(r, 0xff000000);
 	etex_span_text_set(r, "Hello");
 
-	thiz->r = r;
-
-	/* Default values */
 	r = esvg_shape_new(&_descriptor, thiz);
 	return r;
+}
+
+EAPI Eina_Bool esvg_is_text(Enesim_Renderer *r)
+{
+	Esvg_Text *thiz;
+	Eina_Bool ret;
+
+	if (!esvg_is_shape(r))
+		return EINA_FALSE;
+	thiz = esvg_shape_data_get(r);
+	ret = EINA_MAGIC_CHECK(thiz, ESVG_TEXT_MAGIC);
+
+	return ret;
 }
 
 EAPI void esvg_text_x_set(Enesim_Renderer *r, const Esvg_Coord *x)
@@ -136,7 +187,11 @@ EAPI void esvg_text_x_set(Enesim_Renderer *r, const Esvg_Coord *x)
 	Esvg_Text *thiz;
 
 	thiz = _esvg_text_get(r);
-	if (x) thiz->x = *x;
+	if (x)
+	{
+		thiz->current.x = *x;
+		thiz->changed = EINA_TRUE;
+	}
 }
 
 EAPI void esvg_text_x_get(Enesim_Renderer *r, Esvg_Coord *x)
@@ -144,7 +199,7 @@ EAPI void esvg_text_x_get(Enesim_Renderer *r, Esvg_Coord *x)
 	Esvg_Text *thiz;
 
 	thiz = _esvg_text_get(r);
-	if (x) *x = thiz->x;
+	if (x) *x = thiz->current.x;
 }
 
 EAPI void esvg_text_y_set(Enesim_Renderer *r, const Esvg_Coord *y)
@@ -152,7 +207,11 @@ EAPI void esvg_text_y_set(Enesim_Renderer *r, const Esvg_Coord *y)
 	Esvg_Text *thiz;
 
 	thiz = _esvg_text_get(r);
-	if (y) thiz->y = *y;
+	if (y)
+	{
+		thiz->current.y = *y;
+		thiz->changed = EINA_TRUE;
+	}
 }
 
 EAPI void esvg_text_y_get(Enesim_Renderer *r, Esvg_Coord *y)
@@ -160,7 +219,7 @@ EAPI void esvg_text_y_get(Enesim_Renderer *r, Esvg_Coord *y)
 	Esvg_Text *thiz;
 
 	thiz = _esvg_text_get(r);
-	if (y) *y = thiz->y;
+	if (y) *y = thiz->current.y;
 }
 
 EAPI void esvg_text_font_size_set(Enesim_Renderer *r, const Esvg_Length *size)
@@ -168,7 +227,11 @@ EAPI void esvg_text_font_size_set(Enesim_Renderer *r, const Esvg_Length *size)
 	Esvg_Text *thiz;
 
 	thiz = _esvg_text_get(r);
-	if (size) thiz->font_size = *size;
+	if (size)
+	{
+		thiz->current.font_size = *size;
+		thiz->changed = EINA_TRUE;
+	}
 }
 
 EAPI void esvg_text_font_size_get(Enesim_Renderer *r, Esvg_Length *size)
@@ -176,7 +239,7 @@ EAPI void esvg_text_font_size_get(Enesim_Renderer *r, Esvg_Length *size)
 	Esvg_Text *thiz;
 
 	thiz = _esvg_text_get(r);
-	if (size) *size = thiz->font_size;
+	if (size) *size = thiz->current.font_size;
 }
 
 EAPI void esvg_text_font_family_set(Enesim_Renderer *r, const char *family)
@@ -190,6 +253,7 @@ EAPI void esvg_text_text_set(Enesim_Renderer *r, const char *text)
 
 	thiz = _esvg_text_get(r);
 	etex_span_text_set(thiz->r, text);
+	thiz->changed = EINA_TRUE;
 }
 
 EAPI void esvg_text_text_get(Enesim_Renderer *r, const char **text)

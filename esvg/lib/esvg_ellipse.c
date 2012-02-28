@@ -27,16 +27,23 @@
 			EINA_MAGIC_FAIL(d, ESVG_ELLIPSE_MAGIC);\
 	} while(0)
 
-typedef struct _Esvg_Ellipse
+typedef struct _Esvg_Ellipse_State
 {
-	EINA_MAGIC
-	/* properties */
 	Esvg_Coord cx;
 	Esvg_Coord cy;
 	Esvg_Length rx;
 	Esvg_Length ry;
+} Esvg_Ellipse_State;
+
+typedef struct _Esvg_Ellipse
+{
+	EINA_MAGIC
+	/* properties */
+	Esvg_Ellipse_State current;
+	Esvg_Ellipse_State past;
 	/* private */
 	Enesim_Renderer *r;
+	Eina_Bool changed : 1;
 } Esvg_Ellipse;
 
 static Esvg_Ellipse * _esvg_ellipse_get(Enesim_Renderer *r)
@@ -75,11 +82,11 @@ static Eina_Bool _esvg_ellipse_setup(Enesim_Renderer *r, const Esvg_Element_Stat
 
 	/* FIXME gets the parents size or the topmost? */
 	/* set the origin */
-	cx = esvg_length_final_get(&thiz->cx, estate->viewbox_w);
-	cy = esvg_length_final_get(&thiz->cy, estate->viewbox_h);
+	cx = esvg_length_final_get(&thiz->current.cx, estate->viewbox_w);
+	cy = esvg_length_final_get(&thiz->current.cy, estate->viewbox_h);
 	/* set the size */
-	rx = esvg_length_final_get(&thiz->rx, estate->viewbox_w);
-	ry = esvg_length_final_get(&thiz->ry, estate->viewbox_h);
+	rx = esvg_length_final_get(&thiz->current.rx, estate->viewbox_w);
+	ry = esvg_length_final_get(&thiz->current.ry, estate->viewbox_h);
 	//printf("calling the setup on the ellipse (%g %g %g %g)\n", cx, cy, rx, ry);
 	enesim_renderer_ellipse_center_set(thiz->r, cx, cy);
 	enesim_renderer_ellipse_radii_set(thiz->r, rx, ry);
@@ -112,15 +119,38 @@ static void _esvg_ellipse_clone(Enesim_Renderer *r, Enesim_Renderer *dr)
 	thiz = _esvg_ellipse_get(r);
 	other = _esvg_ellipse_get(dr);
 
-	other->cx = thiz->cx;
-	other->cy = thiz->cy;
-	other->rx = thiz->rx;
-	other->ry = thiz->ry;
+	other->current.cx = thiz->current.cx;
+	other->current.cy = thiz->current.cy;
+	other->current.rx = thiz->current.rx;
+	other->current.ry = thiz->current.ry;
 }
 
 static void _esvg_ellipse_cleanup(Enesim_Renderer *r)
 {
+	Esvg_Ellipse *thiz;
 
+	thiz = _esvg_ellipse_get(r);
+	thiz->past = thiz->current;
+	thiz->changed = EINA_FALSE;
+}
+
+static Eina_Bool _esvg_ellipse_has_changed(Enesim_Renderer *r)
+{
+	Esvg_Ellipse *thiz;
+
+	thiz = _esvg_ellipse_get(r);
+	if (!thiz->changed) return EINA_FALSE;
+
+	if (esvg_length_is_equal(&thiz->current.cx, &thiz->past.cx))
+		return EINA_TRUE;
+	if (esvg_length_is_equal(&thiz->current.cy, &thiz->past.cy))
+		return EINA_TRUE;
+	if (esvg_length_is_equal(&thiz->current.rx, &thiz->past.rx))
+		return EINA_TRUE;
+	if (esvg_length_is_equal(&thiz->current.ry, &thiz->past.ry))
+		return EINA_TRUE;
+
+	return EINA_FALSE;
 }
 
 static Esvg_Shape_Descriptor _descriptor = {
@@ -129,6 +159,7 @@ static Esvg_Shape_Descriptor _descriptor = {
 	/* .name_get =		*/ _esvg_ellipse_name_get,
 	/* .clone =		*/ _esvg_ellipse_clone,
 	/* .cleanup =		*/ _esvg_ellipse_cleanup,
+	/* .has_changed =	*/ _esvg_ellipse_has_changed
 };
 /*============================================================================*
  *                                 Global                                     *
@@ -150,10 +181,10 @@ EAPI Enesim_Renderer * esvg_ellipse_new(void)
 	thiz->r = r;
 
 	/* Default values */
-	thiz->cx = ESVG_COORD_0;
-	thiz->cy = ESVG_COORD_0;
-	thiz->rx = ESVG_LENGTH_0;
-	thiz->ry = ESVG_LENGTH_0;
+	thiz->current.cx = ESVG_COORD_0;
+	thiz->current.cy = ESVG_COORD_0;
+	thiz->current.rx = ESVG_LENGTH_0;
+	thiz->current.ry = ESVG_LENGTH_0;
 
 	r = esvg_shape_new(&_descriptor, thiz);
 	return r;
@@ -177,7 +208,11 @@ EAPI void esvg_ellipse_cx_set(Enesim_Renderer *r, const Esvg_Coord *cx)
 	Esvg_Ellipse *thiz;
 
 	thiz = _esvg_ellipse_get(r);
-	if (cx) thiz->cx = *cx;
+	if (cx)
+	{
+		thiz->current.cx = *cx;
+		thiz->changed = EINA_TRUE;
+	}
 }
 
 EAPI void esvg_ellipse_cx_get(Enesim_Renderer *r, Esvg_Coord *cx)
@@ -185,7 +220,7 @@ EAPI void esvg_ellipse_cx_get(Enesim_Renderer *r, Esvg_Coord *cx)
 	Esvg_Ellipse *thiz;
 
 	thiz = _esvg_ellipse_get(r);
-	if (cx) *cx = thiz->cx;
+	if (cx) *cx = thiz->current.cx;
 }
 
 EAPI void esvg_ellipse_cy_set(Enesim_Renderer *r, const Esvg_Coord *cy)
@@ -193,7 +228,11 @@ EAPI void esvg_ellipse_cy_set(Enesim_Renderer *r, const Esvg_Coord *cy)
 	Esvg_Ellipse *thiz;
 
 	thiz = _esvg_ellipse_get(r);
-	if (cy) thiz->cy = *cy;
+	if (cy)
+	{
+		thiz->current.cy = *cy;
+		thiz->changed = EINA_TRUE;
+	}
 }
 
 EAPI void esvg_ellipse_cy_get(Enesim_Renderer *r, Esvg_Coord *cy)
@@ -201,7 +240,7 @@ EAPI void esvg_ellipse_cy_get(Enesim_Renderer *r, Esvg_Coord *cy)
 	Esvg_Ellipse *thiz;
 
 	thiz = _esvg_ellipse_get(r);
-	if (cy) *cy = thiz->cy;
+	if (cy) *cy = thiz->current.cy;
 }
 
 EAPI void esvg_ellipse_rx_set(Enesim_Renderer *r, const Esvg_Length *rx)
@@ -209,7 +248,11 @@ EAPI void esvg_ellipse_rx_set(Enesim_Renderer *r, const Esvg_Length *rx)
 	Esvg_Ellipse *thiz;
 
 	thiz = _esvg_ellipse_get(r);
-	if (rx) thiz->rx = *rx;
+	if (rx)
+	{
+		thiz->current.rx = *rx;
+		thiz->changed = EINA_TRUE;
+	}
 }
 
 EAPI void esvg_ellipse_rx_get(Enesim_Renderer *r, Esvg_Length *rx)
@@ -217,7 +260,7 @@ EAPI void esvg_ellipse_rx_get(Enesim_Renderer *r, Esvg_Length *rx)
 	Esvg_Ellipse *thiz;
 
 	thiz = _esvg_ellipse_get(r);
-	if (rx) *rx = thiz->rx;
+	if (rx) *rx = thiz->current.rx;
 }
 
 EAPI void esvg_ellipse_ry_set(Enesim_Renderer *r, const Esvg_Length *ry)
@@ -225,7 +268,11 @@ EAPI void esvg_ellipse_ry_set(Enesim_Renderer *r, const Esvg_Length *ry)
 	Esvg_Ellipse *thiz;
 
 	thiz = _esvg_ellipse_get(r);
-	if (ry) thiz->ry = *ry;
+	if (ry)
+	{
+		thiz->current.ry = *ry;
+		thiz->changed = EINA_TRUE;
+	}
 }
 
 EAPI void esvg_ellipse_ry_get(Enesim_Renderer *r, Esvg_Length *ry)
@@ -233,5 +280,5 @@ EAPI void esvg_ellipse_ry_get(Enesim_Renderer *r, Esvg_Length *ry)
 	Esvg_Ellipse *thiz;
 
 	thiz = _esvg_ellipse_get(r);
-	if (ry) *ry = thiz->ry;
+	if (ry) *ry = thiz->current.ry;
 }
