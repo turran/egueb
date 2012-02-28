@@ -60,7 +60,7 @@ static Esvg_Line * _esvg_line_get(Enesim_Renderer *r)
  *----------------------------------------------------------------------------*/
 static const char * _esvg_line_name_get(Enesim_Renderer *r)
 {
-	return "line";
+	return "esvg_line";
 }
 
 static Enesim_Renderer * _esvg_line_renderer_get(Enesim_Renderer *r)

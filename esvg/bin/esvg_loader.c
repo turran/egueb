@@ -45,6 +45,7 @@ int main(int argc, char *argv[])
 	Enesim_Renderer *r;
 	Enesim_Surface *s;
 	Enesim_Error *err = NULL;
+	Eina_Bool ret;
 	int width = 640;
 	int height = 480;
 	double aw;
@@ -106,7 +107,8 @@ int main(int argc, char *argv[])
 	enesim_renderer_compound_layer_add(compound, r);
 
 	s = enesim_surface_new(ENESIM_FORMAT_ARGB8888, width, height);
-	if (!enesim_renderer_draw(compound, s, NULL, 0, 0, &err))
+	ret = enesim_renderer_draw(compound, s, NULL, 0, 0, &err);
+	if (!ret || err)
 	{
 		enesim_error_dump(err);
 	}

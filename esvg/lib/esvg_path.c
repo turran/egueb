@@ -50,7 +50,7 @@ static Esvg_Path * _esvg_path_get(Enesim_Renderer *r)
  *----------------------------------------------------------------------------*/
 static const char * _esvg_path_name_get(Enesim_Renderer *r)
 {
-	return "path";
+	return "esvg_path";
 }
 
 static Enesim_Renderer * _esvg_path_renderer_get(Enesim_Renderer *r)

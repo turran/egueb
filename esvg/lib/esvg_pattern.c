@@ -68,7 +68,6 @@ static Eina_Bool _pattern_setup(Enesim_Renderer *r,
 	double w;
 	double h;
 
-
 	thiz = _esvg_pattern_get(r);
 	pu = thiz->units;
 	if (pu == ESVG_OBJECT_BOUNDING_BOX)
@@ -112,6 +111,8 @@ static Eina_Bool _pattern_setup(Enesim_Renderer *r,
 		enesim_matrix_compose(&m, &thiz->transform, &m);
 	}
 	enesim_renderer_geometry_transformation_set(thiz->r, &m);
+	enesim_renderer_pattern_source_set(thiz->r, thiz->content);
+	printf("ok, the content set %p\n", thiz->content);
 
 	/* TODO we need to set the new viewbox */
 	/* 1. setup the content */
@@ -136,7 +137,7 @@ static Eina_Bool _pattern_setup(Enesim_Renderer *r,
 
 static const char * _pattern_name_get(Enesim_Renderer *r)
 {
-	return "pattern";
+	return "esvg_pattern";
 }
 
 static Enesim_Renderer * _pattern_renderer_get(Enesim_Renderer *r,

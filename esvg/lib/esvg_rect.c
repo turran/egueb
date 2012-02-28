@@ -62,7 +62,7 @@ static Esvg_Rect * _esvg_rect_get(Enesim_Renderer *r)
  *----------------------------------------------------------------------------*/
 static const char * _esvg_rect_name_get(Enesim_Renderer *r)
 {
-	return "rect";
+	return "esvg_rect";
 }
 
 static Enesim_Renderer * _esvg_rect_renderer_get(Enesim_Renderer *r)

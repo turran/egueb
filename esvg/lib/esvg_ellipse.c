@@ -60,7 +60,7 @@ static Esvg_Ellipse * _esvg_ellipse_get(Enesim_Renderer *r)
  *----------------------------------------------------------------------------*/
 static const char * _esvg_ellipse_name_get(Enesim_Renderer *r)
 {
-	return "ellipse";
+	return "esvg_ellipse";
 }
 
 static Enesim_Renderer * _esvg_ellipse_renderer_get(Enesim_Renderer *r)
