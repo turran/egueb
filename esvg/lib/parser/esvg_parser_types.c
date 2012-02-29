@@ -355,7 +355,6 @@ static Eina_Bool _esvg_transformation_translate_get(Enesim_Matrix *matrix, const
 
 static Eina_Bool _esvg_transformation_skewx_get(Enesim_Matrix *matrix, const char *attr_val, const char **endptr)
 {
-	Enesim_Matrix m;
 	double angle;
 	int numelements = 1;
 
@@ -370,7 +369,6 @@ static Eina_Bool _esvg_transformation_skewx_get(Enesim_Matrix *matrix, const cha
 
 static Eina_Bool _esvg_transformation_skewy_get(Enesim_Matrix *matrix, const char *attr_val, const char **endptr)
 {
-	Enesim_Matrix m;
 	double angle;
 	int numelements = 1;
 
@@ -385,7 +383,6 @@ static Eina_Bool _esvg_transformation_skewy_get(Enesim_Matrix *matrix, const cha
 
 static Eina_Bool _esvg_transformation_scale_get(Enesim_Matrix *matrix, const char *attr_val, const char **endptr)
 {
-	Enesim_Matrix m;
 	double sx[2];
 	int numelements = 2;
 
@@ -403,7 +400,6 @@ static Eina_Bool _esvg_transformation_scale_get(Enesim_Matrix *matrix, const cha
 
 static Eina_Bool _esvg_transformation_rotate_get(Enesim_Matrix *matrix, const char *attr_val, const char **endptr)
 {
-	Enesim_Matrix tx;
 	double rx[3];
 	int numelements = 3;
 
@@ -415,6 +411,8 @@ static Eina_Bool _esvg_transformation_rotate_get(Enesim_Matrix *matrix, const ch
 	/* handle the origin */
 	if (numelements > 1)
 	{
+		Enesim_Matrix tx;
+
 		if (numelements < 3)
 			return EINA_FALSE;
 		enesim_matrix_translate(&tx, -rx[1], -rx[2]);
@@ -1377,7 +1375,6 @@ Eina_Bool esvg_parser_path(const char *value, Enesim_Renderer *r)
 {
 	Eina_Bool ret = EINA_TRUE;
 	Eina_Bool first = EINA_TRUE;
-	Eina_Bool last_relative;
 	char last_command = 0;
 	char *iter = (char *)value;
 

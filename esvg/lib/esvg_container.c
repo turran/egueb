@@ -79,6 +79,7 @@ Enesim_Renderer * esvg_container_new(Esvg_Container_Descriptor *descriptor, void
 	pdescriptor.clone = descriptor->clone;
 	pdescriptor.setup = descriptor->setup;
 	pdescriptor.cleanup = descriptor->cleanup;
+	pdescriptor.has_changed = NULL;
 	pdescriptor.is_renderable = descriptor->is_renderable;
 
 	r = esvg_element_new(&pdescriptor, thiz);

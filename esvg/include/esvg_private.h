@@ -255,23 +255,10 @@ Enesim_Renderer * esvg_gradient_new(Esvg_Gradient_Descriptor *descriptor,
 		void *data);
 void * esvg_gradient_data_get(Enesim_Renderer *r);
 
-/* parse */
-/* units */
-
-/* number */
-
-double esvg_number_get(const char *attr_val, double default_nbr);
-
 /* length */
 
-Eina_Bool esvg_length_get(Esvg_Length *l, const char *attr_val, Esvg_Length default_length);
 Eina_Bool esvg_length_is_equal(Esvg_Length *length1, Esvg_Length *length2);
 double esvg_length_final_get(const Esvg_Length *l, double parent_length);
 
-Esvg_View_Box esvg_view_box_get(const char *attr_val);
-
-Eina_Bool esvg_color_get(Esvg_Color *color, const char *attr_val);
-
-Eina_Bool esvg_transformation_get(Enesim_Matrix *matrix, const char *attr);
 
 #endif

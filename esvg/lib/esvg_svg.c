@@ -60,7 +60,7 @@ static Esvg_Svg * _esvg_svg_get(Enesim_Renderer *r)
  *----------------------------------------------------------------------------*/
 static const char * _esvg_svg_name_get(Enesim_Renderer *r)
 {
-	return "svg";
+	return "esvg_svg";
 }
 
 static Eina_Bool _esvg_svg_element_add(Enesim_Renderer *r, Enesim_Renderer *child)

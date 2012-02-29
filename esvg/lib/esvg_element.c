@@ -359,7 +359,9 @@ static Eina_Bool _esvg_element_has_changed(Enesim_Renderer *r)
 	Esvg_Element *thiz;
 
 	thiz = _esvg_element_get(r);
-	return thiz->has_changed(r);
+	if (thiz->has_changed)
+		return thiz->has_changed(r);
+	return EINA_FALSE;
 }
 
 static void _esvg_element_damage(Enesim_Renderer *r, Enesim_Renderer_Damage_Cb cb, void *data)

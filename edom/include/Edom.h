@@ -105,6 +105,7 @@ EAPI Eina_Bool edom_tag_child_supported(Edom_Tag *thiz, int tag_id);
 EAPI Eina_Bool edom_tag_child_add(Edom_Tag *thiz, Edom_Tag *child);
 EAPI Edom_Tag * edom_tag_child_get(Edom_Tag *thiz);
 EAPI Edom_Tag * edom_tag_next_get(Edom_Tag *thiz);
+EAPI Edom_Tag * edom_tag_parent_get(Edom_Tag *thiz);
 EAPI Edom_Tag * edom_tag_topmost_get(Edom_Tag *thiz);
 
 EAPI void edom_tag_dump(Edom_Tag *thiz);

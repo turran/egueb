@@ -618,7 +618,7 @@ EAPI Enesim_Renderer * esvg_parser_load(const char *filename,
 	tag = edom_parser_topmost_get(parser);
 	if (!tag) goto parse_failed;
 
-	edom_tag_dump(tag);
+	//edom_tag_dump(tag);
 
 	esvg_parser_svg_style_apply(tag);
 	/* FIXME all the link property of the <use> tags

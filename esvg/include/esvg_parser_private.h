@@ -25,8 +25,7 @@
 typedef void (*Esvg_Parser_Post)(Edom_Parser *p, void *data);
 
 void esvg_parser_post_parse_add(Edom_Parser *thiz, Esvg_Parser_Post cb, void *data);
-Eina_Bool esvg_parser_tag_open(Edom_Parser *p, int tag, Edom_Context *context,
-		const char *attributes, size_t length);
+void esvg_parser_href_set(Edom_Parser *p, Enesim_Renderer *r, const char *href);
 
 /* style */
 typedef struct _Esvg_Parser_Style Esvg_Parser_Style;
@@ -115,6 +114,9 @@ Edom_Tag * esvg_parser_linear_gradient_new(Edom_Parser *parser);
 /* radial gradient */
 Edom_Tag * esvg_parser_radial_gradient_new(Edom_Parser *parser);
 
+/* a */
+Edom_Tag * esvg_parser_a_new(Edom_Parser *p);
+const char * esvg_parser_a_href_get(Edom_Tag *t);
 
 /* circle */
 Edom_Tag * esvg_parser_circle_new(Edom_Parser *parser);
@@ -152,6 +154,12 @@ Edom_Tag * esvg_parser_stop_new(Edom_Parser *parser);
 /* image */
 Edom_Tag * esvg_parser_image_new(Edom_Parser *parser);
 
+/* pattern */
+Edom_Tag * esvg_parser_pattern_new(Edom_Parser *parser);
+
+/* clip path */
+Edom_Tag * esvg_parser_clip_path_new(Edom_Parser *parser);
+
 /* element */
 Edom_Tag * esvg_parser_element_new(Edom_Parser *parser, Edom_Tag_Descriptor *descriptor, Esvg_Parser_Tag_Type type, Enesim_Renderer *r, void *data);
 Enesim_Renderer * esvg_parser_element_renderer_get(Edom_Tag *tag);
@@ -167,11 +175,23 @@ Eina_Bool esvg_href_get(Edom_Tag **tag, Edom_Tag *rel, const char *href);
 
 Eina_Bool esvg_paint_get(Esvg_Paint *paint, Edom_Tag *tag, const char *attr);
 Esvg_Stroke_Line_Cap esvg_stroke_line_cap_get(const char *value);
+Esvg_Stroke_Line_Join esvg_stroke_line_join_get(const char *value);
 
 Eina_Bool esvg_parser_is_uri(const char *attr);
 
 Eina_Bool esvg_parser_gradient_units_get(Esvg_Gradient_Units *gu, const char *value);
 Eina_Bool esvg_parser_fill_rule_get(Esvg_Fill_Rule *rule, const char *attr);
 Eina_Bool esvg_parser_spread_method_get(Esvg_Spread_Method *smethod, const char *attr);
+
+Eina_Bool esvg_length_get(Esvg_Length *l, const char *attr_val, Esvg_Length default_length);
+
+Esvg_View_Box esvg_view_box_get(const char *attr_val);
+
+Eina_Bool esvg_color_get(Esvg_Color *color, const char *attr_val);
+
+Eina_Bool esvg_transformation_get(Enesim_Matrix *matrix, const char *attr);
+
+double esvg_number_get(const char *attr_val, double default_nbr);
+
 
 #endif
