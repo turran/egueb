@@ -50,7 +50,7 @@ typedef struct _Esvg_Parser
  * @cond LOCAL
  */
 
-static char * _esvg_file_open(const char *filename, long *sz)
+static char * _esvg_parser_file_open(const char *filename, long *sz)
 {
 	FILE *f;
 	char *buf;
@@ -96,6 +96,34 @@ close_f:
 	fclose(f);
 
 	return NULL;
+}
+
+static Edom_Tag * _esvg_parser_file_parse(const char *filename, Edom_Parser *parser)
+{
+	Edom_Tag *tag = NULL;
+	char *buf;
+	long sz;
+
+	edom_parser_location_set(parser, filename);
+	buf = _esvg_parser_file_open(filename, &sz);
+	if (!buf)
+	{
+		DBG("Can not open file %s\n", filename);
+		return NULL;
+	}
+
+	if (!edom_parser_parse(parser, buf, sz))
+	{
+		DBG("Can not parse file %s\n", filename);
+		goto parse_failed;
+	}
+
+	/* check if we have a valid renderer */
+	tag = edom_parser_topmost_get(parser);
+
+parse_failed:
+	free(buf);
+	return tag;
 }
 
 /*----------------------------------------------------------------------------*
@@ -449,101 +477,42 @@ static Edom_Parser_Descriptor _descriptor = {
 	/* .topmost_get = */ _esvg_parser_topmost_get,
 };
 
-#define TAGNAME(t) 								\
-	case t:									\
-	return #t;
-
-/* TODO this has to go away */
-const char * esvg_parser_tag_type_string_to(Esvg_Parser_Tag_Type type)
+/*----------------------------------------------------------------------------*
+ *                            Edom parser interface                           *
+ *----------------------------------------------------------------------------*/
+static Eina_Bool _esvg_parser_info_tag_get(Edom_Parser *parser, const char *content,
+		 size_t sz, int *tag)
 {
-	switch (type)
+	if (strncmp("esvg", content, sz) == 0)
 	{
-		TAGNAME(ESVG_A)
-		TAGNAME(ESVG_ALTGLYPH)
-		TAGNAME(ESVG_ALTGLYPHDEF)
-		TAGNAME(ESVG_ALTGLYPHITEM)
-		TAGNAME(ESVG_ANIMATE)
-		TAGNAME(ESVG_ANIMATECOLOR)
-		TAGNAME(ESVG_ANIMATEMOTION)
-		TAGNAME(ESVG_ANIMATETRANSFORM)
-		TAGNAME(ESVG_CIRCLE)
-		TAGNAME(ESVG_CLIPPATH)
-		TAGNAME(ESVG_COLOR_PROFILE)
-		TAGNAME(ESVG_CURSOR)
-		TAGNAME(ESVG_DEFINITION_SRC)
-		TAGNAME(ESVG_DEFS)
-		TAGNAME(ESVG_DESC)
-		TAGNAME(ESVG_ELLIPSE)
-		TAGNAME(ESVG_FEBLEND)
-		TAGNAME(ESVG_FECOLORMATRIX)
-		TAGNAME(ESVG_FECOMPONENTTRANSFER)
-		TAGNAME(ESVG_FECOMPOSITE)
-		TAGNAME(ESVG_FECONVOLVEMATRIX)
-		TAGNAME(ESVG_FEDIFFUSELIGHTING)
-		TAGNAME(ESVG_FEDISPLACEMENTMAP)
-		TAGNAME(ESVG_FEDISTANTLIGHT)
-		TAGNAME(ESVG_FEFLOOD)
-		TAGNAME(ESVG_FEFUNCA)
-		TAGNAME(ESVG_FEFUNCB)
-		TAGNAME(ESVG_FEFUNCG)
-		TAGNAME(ESVG_FEFUNCR)
-		TAGNAME(ESVG_FEGAUSSIANBLUR)
-		TAGNAME(ESVG_FEIMAGE)
-		TAGNAME(ESVG_FEMERGE)
-		TAGNAME(ESVG_FEMERGENODE)
-		TAGNAME(ESVG_FEMORPHOLOGY)
-		TAGNAME(ESVG_FEOFFSET)
-		TAGNAME(ESVG_FEPOINTLIGHT)
-		TAGNAME(ESVG_FESPECULARLIGHTING)
-		TAGNAME(ESVG_FESPOTLIGHT)
-		TAGNAME(ESVG_FETILE)
-		TAGNAME(ESVG_FETURBULENCE)
-		TAGNAME(ESVG_FILTER)
-		TAGNAME(ESVG_FONT)
-		TAGNAME(ESVG_FONT_FACE)
-		TAGNAME(ESVG_FONT_FACE_FORMAT)
-		TAGNAME(ESVG_FONT_FACE_NAME)
-		TAGNAME(ESVG_FONT_FACE_SRC)
-		TAGNAME(ESVG_FONT_FACE_URI)
-		TAGNAME(ESVG_FOREIGNOBJECT)
-		TAGNAME(ESVG_G)
-		TAGNAME(ESVG_GLYPH)
-		TAGNAME(ESVG_GLYPHREF)
-		TAGNAME(ESVG_HKERN)
-		TAGNAME(ESVG_IMAGE)
-		TAGNAME(ESVG_LINE)
-		TAGNAME(ESVG_LINEARGRADIENT)
-		TAGNAME(ESVG_MARKER)
-		TAGNAME(ESVG_MASK)
-		TAGNAME(ESVG_METADATA)
-		TAGNAME(ESVG_MISSING_GLYPH)
-		TAGNAME(ESVG_MPATH)
-		TAGNAME(ESVG_PATH)
-		TAGNAME(ESVG_PATTERN)
-		TAGNAME(ESVG_POLYGON)
-		TAGNAME(ESVG_POLYLINE)
-		TAGNAME(ESVG_RADIALGRADIENT)
-		TAGNAME(ESVG_RECT)
-		TAGNAME(ESVG_SCRIPT)
-		TAGNAME(ESVG_SET)
-		TAGNAME(ESVG_STOP)
-		TAGNAME(ESVG_STYLE)
-		TAGNAME(ESVG_SVG)
-		TAGNAME(ESVG_SWITCH)
-		TAGNAME(ESVG_SYMBOL)
-		TAGNAME(ESVG_TEXT)
-		TAGNAME(ESVG_TEXTPATH)
-		TAGNAME(ESVG_TITLE)
-		TAGNAME(ESVG_TREF)
-		TAGNAME(ESVG_TSPAN)
-		TAGNAME(ESVG_USE)
-		TAGNAME(ESVG_VIEW)
-		TAGNAME(ESVG_VKERN)
-		default:
-		return "ESVG_UNKNOWN";
+		*tag = ESVG_SVG;
+		return EINA_TRUE;
 	}
+	return EINA_FALSE;
 }
 
+static Edom_Tag * _esvg_parser_info_tag_new(Edom_Parser *parser, int tag_id)
+{
+	Esvg_Parser *thiz;
+	Edom_Tag *tag = NULL;
+
+	thiz = edom_parser_data_get(parser);
+	if (!thiz->topmost && tag_id != ESVG_SVG)
+	{
+		printf("you need at least a topmost svg\n");
+	}
+	tag = esvg_parser_svg_new(parser);
+	if (!thiz->topmost)
+		thiz->topmost = tag;
+
+	return tag;
+}
+
+static Edom_Parser_Descriptor _info_descriptor = {
+	/* .tag_get 	= */ _esvg_parser_info_tag_get,
+	/* .tag_new 	= */ _esvg_parser_info_tag_new,
+	/* .topmost_get = */ _esvg_parser_topmost_get,
+};
 
 /**
  * @endcond
@@ -578,6 +547,36 @@ void esvg_parser_href_set(Edom_Parser *p, Enesim_Renderer *r, const char *href)
  *                                   API                                      *
  *============================================================================*/
 /**
+ * 
+ */
+EAPI Eina_Bool esvg_parser_info_load(const char *filename,
+		double *width, double *height)
+{
+	Esvg_Parser *thiz;
+	Edom_Parser *info_parser;
+	Edom_Tag *tag;
+	Enesim_Renderer *r;
+	Eina_Bool ret = EINA_FALSE;
+
+	thiz = calloc(1, sizeof(Esvg_Parser));
+	info_parser = edom_parser_new(&_info_descriptor, thiz);
+	tag = _esvg_parser_file_parse(filename, info_parser);
+	if (!tag) goto failed;
+
+	r = esvg_parser_element_renderer_get(tag);
+	if (!r) goto failed;
+
+	ret = EINA_TRUE;
+
+no_renderer:
+	enesim_renderer_unref(r);
+failed:
+	edom_parser_delete(info_parser);
+
+	return ret;
+}
+
+/**
  *
  */
 EAPI Enesim_Renderer * esvg_parser_load(const char *filename,
@@ -589,8 +588,6 @@ EAPI Enesim_Renderer * esvg_parser_load(const char *filename,
 	Edom_Tag *tag;
 	Enesim_Renderer *r = NULL;
 	Eina_List *l;
-	char *buf;
-	long sz;
 
 	thiz = calloc(1, sizeof(Esvg_Parser));
 	thiz->data = data;
@@ -598,24 +595,7 @@ EAPI Enesim_Renderer * esvg_parser_load(const char *filename,
 		thiz->descriptor = *descriptor;
 
 	parser = edom_parser_new(&_descriptor, thiz);
-
-	edom_parser_location_set(parser, filename);
-
-	buf = _esvg_file_open(filename, &sz);
-	if (!buf)
-	{
-		DBG("Can not open file %s\n", filename);
-		goto open_failed;
-	}
-
-	if (!edom_parser_parse(parser, buf, sz))
-	{
-		DBG("Can not parse file %s\n", filename);
-		goto parse_failed;
-	}
-
-	/* check if we have a valid renderer */
-	tag = edom_parser_topmost_get(parser);
+	tag = _esvg_parser_file_parse(filename, parser);
 	if (!tag) goto parse_failed;
 
 	//edom_tag_dump(tag);
@@ -633,10 +613,7 @@ EAPI Enesim_Renderer * esvg_parser_load(const char *filename,
 	}
 
 	r = esvg_parser_element_renderer_get(tag);
-
 parse_failed:
-	free(buf);
-open_failed:
 	edom_parser_delete(parser);
 
 	return r;
