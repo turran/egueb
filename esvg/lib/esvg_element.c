@@ -354,7 +354,20 @@ static void _esvg_element_flags(Enesim_Renderer *r, const Enesim_Renderer_State 
 	enesim_renderer_flags(real_r, flags);
 }
 
-static Eina_Bool _esvg_element_has_changed(Enesim_Renderer *r)
+static void _esvg_element_hints(Enesim_Renderer *r, const Enesim_Renderer_State *state,
+		Enesim_Renderer_Hint *hints)
+{
+	Esvg_Element *thiz;
+	Enesim_Renderer *real_r;
+
+	thiz = _esvg_element_get(r);
+	real_r = _esvg_element_renderer_get(thiz, r);
+	enesim_renderer_hints_get(real_r, hints);
+}
+
+
+static Eina_Bool _esvg_element_has_changed(Enesim_Renderer *r,
+		const Enesim_Renderer_State *states[ENESIM_RENDERER_STATES])
 {
 	Esvg_Element *thiz;
 
@@ -384,6 +397,7 @@ static Enesim_Renderer_Descriptor _descriptor = {
 	/* .boundings =             */ _esvg_element_boundings,
 	/* .destination_boundings = */ _esvg_element_destination_boundings,
 	/* .flags =                 */ _esvg_element_flags,
+	/* .hints_get =             */ _esvg_element_hints,
 	/* .is_inside =             */ _esvg_element_is_inside,
 	/* .damage =                */ _esvg_element_damage,
 	/* .has_changed =           */ _esvg_element_has_changed,
