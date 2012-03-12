@@ -45,6 +45,9 @@ static Eina_Bool _parser_g_child_supported(Edom_Tag *tag, int tag_id)
 {
 	switch (tag_id)
 	{
+		case ESVG_LINEARGRADIENT:
+		case ESVG_RADIALGRADIENT:
+		case ESVG_PATTERN:
 		case ESVG_DEFS:
 		case ESVG_USE:
 		case ESVG_SVG:
@@ -67,6 +70,7 @@ static Eina_Bool _parser_g_child_supported(Edom_Tag *tag, int tag_id)
 
 static Eina_Bool _parser_g_child_add(Edom_Tag *tag, Edom_Tag *child)
 {
+	Edom_Tag *topmost;
 	Enesim_Renderer *r;
 	Enesim_Renderer *rr = NULL;
 	int tag_id;
@@ -94,6 +98,8 @@ static Eina_Bool _parser_g_child_add(Edom_Tag *tag, Edom_Tag *child)
 	}
 	if (rr)
 		esvg_container_element_add(r, rr);
+	topmost = edom_tag_topmost_get(tag);
+	esvg_parser_svg_tag_add(topmost, child);
 
 	return EINA_TRUE;
 }

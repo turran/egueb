@@ -850,7 +850,7 @@ Eina_Bool esvg_href_get(Edom_Tag **tag, Edom_Tag *rel, const char *href)
 	ret_tag = esvg_parser_svg_tag_find(topmost, id);
 	if (!ret_tag)
 	{
-		printf("tag not found!!!!!!\n");
+		printf("tag not found %s!!!!!!\n", id);
 		return EINA_FALSE;
 	}
 	*tag = ret_tag;
