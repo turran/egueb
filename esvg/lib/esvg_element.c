@@ -546,6 +546,10 @@ Eina_Bool esvg_element_is_renderable(Enesim_Renderer *r)
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/
+/**
+ * To be documented
+ * FIXME: To be fixed
+ */
 EAPI Eina_Bool esvg_is_element(Enesim_Renderer *r)
 {
 	Esvg_Element *thiz;
@@ -557,6 +561,10 @@ EAPI Eina_Bool esvg_is_element(Enesim_Renderer *r)
 	return ret;
 }
 
+/**
+ * To be documented
+ * FIXME: To be fixed
+ */
 EAPI void esvg_element_id_get(Enesim_Renderer *r, const char **id)
 {
 	Esvg_Element *thiz;
@@ -566,6 +574,10 @@ EAPI void esvg_element_id_get(Enesim_Renderer *r, const char **id)
 	*id = thiz->state.id;
 }
 
+/**
+ * To be documented
+ * FIXME: To be fixed
+ */
 EAPI void esvg_element_id_set(Enesim_Renderer *r, const char *id)
 {
 	Esvg_Element *thiz;
@@ -582,6 +594,10 @@ EAPI void esvg_element_id_set(Enesim_Renderer *r, const char *id)
 	}
 }
 
+/**
+ * To be documented
+ * FIXME: To be fixed
+ */
 EAPI void esvg_element_transform_set(Enesim_Renderer *r, const Enesim_Matrix *transform)
 {
 	Esvg_Element *thiz;
@@ -591,6 +607,10 @@ EAPI void esvg_element_transform_set(Enesim_Renderer *r, const Enesim_Matrix *tr
 	thiz->state.transform = *transform;
 }
 
+/**
+ * To be documented
+ * FIXME: To be fixed
+ */
 EAPI void esvg_element_transform_get(Enesim_Renderer *r, Enesim_Matrix *transform)
 {
 	Esvg_Element *thiz;
@@ -599,6 +619,10 @@ EAPI void esvg_element_transform_get(Enesim_Renderer *r, Enesim_Matrix *transfor
 	if (transform) *transform = thiz->state.transform;
 }
 
+/**
+ * To be documented
+ * FIXME: To be fixed
+ */
 EAPI void esvg_element_style_set(Enesim_Renderer *r, const Esvg_Attribute_Presentation *style)
 {
 	Esvg_Element *thiz;
@@ -625,6 +649,10 @@ EAPI void esvg_element_style_set(Enesim_Renderer *r, const Esvg_Attribute_Presen
 	}
 }
 
+/**
+ * To be documented
+ * FIXME: To be fixed
+ */
 EAPI void esvg_element_style_get(Enesim_Renderer *r, Esvg_Attribute_Presentation *style)
 {
 	Esvg_Element *thiz;
@@ -633,6 +661,10 @@ EAPI void esvg_element_style_get(Enesim_Renderer *r, Esvg_Attribute_Presentation
 	if (style) *style = thiz->style;
 }
 
+/**
+ * To be documented
+ * FIXME: To be fixed
+ */
 EAPI Eina_Bool esvg_element_style_is_set(Enesim_Renderer *r)
 {
 	Esvg_Element *thiz;
@@ -641,6 +673,10 @@ EAPI Eina_Bool esvg_element_style_is_set(Enesim_Renderer *r)
 	return thiz->style_set;
 }
 
+/**
+ * To be documented
+ * FIXME: To be fixed
+ */
 EAPI void esvg_element_clip_path_set(Enesim_Renderer *r, const Enesim_Renderer *clip_path)
 {
 	Esvg_Element *thiz;
@@ -649,6 +685,10 @@ EAPI void esvg_element_clip_path_set(Enesim_Renderer *r, const Enesim_Renderer *
 	if (clip_path) esvg_attribute_presentation_clip_path_set(&thiz->attr, clip_path);
 }
 
+/**
+ * To be documented
+ * FIXME: To be fixed
+ */
 EAPI void esvg_element_clip_path_unset(Enesim_Renderer *r)
 {
 	Esvg_Element *thiz;
@@ -657,6 +697,10 @@ EAPI void esvg_element_clip_path_unset(Enesim_Renderer *r)
 	esvg_attribute_presentation_clip_path_unset(&thiz->attr);
 }
 
+/**
+ * To be documented
+ * FIXME: To be fixed
+ */
 EAPI void esvg_element_opacity_set(Enesim_Renderer *r, double opacity)
 {
 	Esvg_Element *thiz;
@@ -665,6 +709,10 @@ EAPI void esvg_element_opacity_set(Enesim_Renderer *r, double opacity)
 	esvg_attribute_presentation_opacity_set(&thiz->attr, opacity);
 }
 
+/**
+ * To be documented
+ * FIXME: To be fixed
+ */
 EAPI void esvg_element_opacity_unset(Enesim_Renderer *r)
 {
 	Esvg_Element *thiz;
@@ -673,6 +721,10 @@ EAPI void esvg_element_opacity_unset(Enesim_Renderer *r)
 	esvg_attribute_presentation_opacity_unset(&thiz->attr);
 }
 
+/**
+ * To be documented
+ * FIXME: To be fixed
+ */
 EAPI void esvg_element_color_set(Enesim_Renderer *r, const Esvg_Color *color)
 {
 	Esvg_Element *thiz;
@@ -681,6 +733,10 @@ EAPI void esvg_element_color_set(Enesim_Renderer *r, const Esvg_Color *color)
 	esvg_attribute_presentation_color_set(&thiz->attr, color);
 }
 
+/**
+ * To be documented
+ * FIXME: To be fixed
+ */
 EAPI void esvg_element_color_unset(Enesim_Renderer *r)
 {
 	Esvg_Element *thiz;
@@ -689,6 +745,10 @@ EAPI void esvg_element_color_unset(Enesim_Renderer *r)
 	esvg_attribute_presentation_color_unset(&thiz->attr);
 }
 
+/**
+ * To be documented
+ * FIXME: To be fixed
+ */
 EAPI void esvg_element_fill_set(Enesim_Renderer *r, const Esvg_Paint *fill)
 {
 	Esvg_Element *thiz;
@@ -697,6 +757,10 @@ EAPI void esvg_element_fill_set(Enesim_Renderer *r, const Esvg_Paint *fill)
 	esvg_attribute_presentation_fill_set(&thiz->attr, fill);
 }
 
+/**
+ * To be documented
+ * FIXME: To be fixed
+ */
 EAPI void esvg_element_fill_unset(Enesim_Renderer *r)
 {
 	Esvg_Element *thiz;
@@ -705,6 +769,10 @@ EAPI void esvg_element_fill_unset(Enesim_Renderer *r)
 	esvg_attribute_presentation_fill_unset(&thiz->attr);
 }
 
+/**
+ * To be documented
+ * FIXME: To be fixed
+ */
 EAPI void esvg_element_fill_opacity_set(Enesim_Renderer *r, double fill_opacity)
 {
 	Esvg_Element *thiz;
@@ -713,6 +781,10 @@ EAPI void esvg_element_fill_opacity_set(Enesim_Renderer *r, double fill_opacity)
 	esvg_attribute_presentation_fill_opacity_set(&thiz->attr, fill_opacity);
 }
 
+/**
+ * To be documented
+ * FIXME: To be fixed
+ */
 EAPI void esvg_element_fill_opacity_unset(Enesim_Renderer *r)
 {
 	Esvg_Element *thiz;
@@ -721,6 +793,10 @@ EAPI void esvg_element_fill_opacity_unset(Enesim_Renderer *r)
 	esvg_attribute_presentation_fill_opacity_unset(&thiz->attr);
 }
 
+/**
+ * To be documented
+ * FIXME: To be fixed
+ */
 EAPI void esvg_element_fill_rule_set(Enesim_Renderer *r, Esvg_Fill_Rule fill_rule)
 {
 	Esvg_Element *thiz;
@@ -729,6 +805,10 @@ EAPI void esvg_element_fill_rule_set(Enesim_Renderer *r, Esvg_Fill_Rule fill_rul
 	esvg_attribute_presentation_fill_rule_set(&thiz->attr, fill_rule);
 }
 
+/**
+ * To be documented
+ * FIXME: To be fixed
+ */
 EAPI void esvg_element_fill_rule_unset(Enesim_Renderer *r)
 {
 	Esvg_Element *thiz;
@@ -737,6 +817,10 @@ EAPI void esvg_element_fill_rule_unset(Enesim_Renderer *r)
 	esvg_attribute_presentation_fill_rule_unset(&thiz->attr);
 }
 
+/**
+ * To be documented
+ * FIXME: To be fixed
+ */
 EAPI void esvg_element_stroke_set(Enesim_Renderer *r, const Esvg_Paint *stroke)
 {
 	Esvg_Element *thiz;
@@ -745,6 +829,10 @@ EAPI void esvg_element_stroke_set(Enesim_Renderer *r, const Esvg_Paint *stroke)
 	esvg_attribute_presentation_stroke_set(&thiz->attr, stroke);
 }
 
+/**
+ * To be documented
+ * FIXME: To be fixed
+ */
 /* EAPI void esvg_element_stroke_unset(Enesim_Renderer *r) */
 /* { */
 /* 	Esvg_Element *thiz; */
@@ -753,6 +841,10 @@ EAPI void esvg_element_stroke_set(Enesim_Renderer *r, const Esvg_Paint *stroke)
 /* 	esvg_attribute_presentation_stroke_unset(&thiz->attr); */
 /* } */
 
+/**
+ * To be documented
+ * FIXME: To be fixed
+ */
 EAPI void esvg_element_stroke_width_set(Enesim_Renderer *r, const Esvg_Length *stroke_width)
 {
 	Esvg_Element *thiz;
@@ -761,6 +853,10 @@ EAPI void esvg_element_stroke_width_set(Enesim_Renderer *r, const Esvg_Length *s
 	esvg_attribute_presentation_stroke_width_set(&thiz->attr, stroke_width);
 }
 
+/**
+ * To be documented
+ * FIXME: To be fixed
+ */
 /* EAPI void esvg_element_stroke_width_unset(Enesim_Renderer *r) */
 /* { */
 /* 	Esvg_Element *thiz; */
@@ -769,6 +865,10 @@ EAPI void esvg_element_stroke_width_set(Enesim_Renderer *r, const Esvg_Length *s
 /* 	esvg_attribute_presentation_stroke_width_unset(&thiz->attr); */
 /* } */
 
+/**
+ * To be documented
+ * FIXME: To be fixed
+ */
 EAPI void esvg_element_stroke_opacity_set(Enesim_Renderer *r, double stroke_opacity)
 {
 	Esvg_Element *thiz;
@@ -777,6 +877,10 @@ EAPI void esvg_element_stroke_opacity_set(Enesim_Renderer *r, double stroke_opac
 	esvg_attribute_presentation_stroke_opacity_set(&thiz->attr, stroke_opacity);
 }
 
+/**
+ * To be documented
+ * FIXME: To be fixed
+ */
 EAPI void esvg_element_stroke_opacity_unset(Enesim_Renderer *r)
 {
 	Esvg_Element *thiz;
@@ -785,6 +889,10 @@ EAPI void esvg_element_stroke_opacity_unset(Enesim_Renderer *r)
 	esvg_attribute_presentation_stroke_opacity_unset(&thiz->attr);
 }
 
+/**
+ * To be documented
+ * FIXME: To be fixed
+ */
 EAPI void esvg_element_stroke_line_cap_set(Enesim_Renderer *r, Esvg_Stroke_Line_Cap cap)
 {
 	Esvg_Element *thiz;
@@ -793,6 +901,10 @@ EAPI void esvg_element_stroke_line_cap_set(Enesim_Renderer *r, Esvg_Stroke_Line_
 	esvg_attribute_presentation_stroke_line_cap_set(&thiz->attr, cap);
 }
 
+/**
+ * To be documented
+ * FIXME: To be fixed
+ */
 EAPI void esvg_element_stroke_line_cap_unset(Enesim_Renderer *r)
 {
 	Esvg_Element *thiz;
@@ -801,6 +913,10 @@ EAPI void esvg_element_stroke_line_cap_unset(Enesim_Renderer *r)
 	esvg_attribute_presentation_stroke_line_cap_unset(&thiz->attr);
 }
 
+/**
+ * To be documented
+ * FIXME: To be fixed
+ */
 EAPI void esvg_element_stroke_line_join_set(Enesim_Renderer *r, Esvg_Stroke_Line_Join join)
 {
 	Esvg_Element *thiz;
@@ -809,6 +925,10 @@ EAPI void esvg_element_stroke_line_join_set(Enesim_Renderer *r, Esvg_Stroke_Line
 	esvg_attribute_presentation_stroke_line_join_set(&thiz->attr, join);
 }
 
+/**
+ * To be documented
+ * FIXME: To be fixed
+ */
 EAPI void esvg_element_stroke_line_join_unset(Enesim_Renderer *r)
 {
 	Esvg_Element *thiz;
@@ -817,6 +937,10 @@ EAPI void esvg_element_stroke_line_join_unset(Enesim_Renderer *r)
 	esvg_attribute_presentation_stroke_line_join_unset(&thiz->attr);
 }
 
+/**
+ * To be documented
+ * FIXME: To be fixed
+ */
 EAPI void esvg_element_visibility_set(Enesim_Renderer *r, Eina_Bool visibility)
 {
 	Esvg_Element *thiz;
@@ -825,6 +949,10 @@ EAPI void esvg_element_visibility_set(Enesim_Renderer *r, Eina_Bool visibility)
 	esvg_attribute_presentation_visibility_set(&thiz->attr, visibility);
 }
 
+/**
+ * To be documented
+ * FIXME: To be fixed
+ */
 EAPI void esvg_element_visibility_unset(Enesim_Renderer *r)
 {
 	Esvg_Element *thiz;
@@ -833,6 +961,10 @@ EAPI void esvg_element_visibility_unset(Enesim_Renderer *r)
 	esvg_attribute_presentation_visibility_unset(&thiz->attr);
 }
 
+/**
+ * To be documented
+ * FIXME: To be fixed
+ */
 EAPI void esvg_element_container_width_set(Enesim_Renderer *r, double container_width)
 {
 	Esvg_Element *thiz;
@@ -841,6 +973,10 @@ EAPI void esvg_element_container_width_set(Enesim_Renderer *r, double container_
 	thiz->container_width = container_width;
 }
 
+/**
+ * To be documented
+ * FIXME: To be fixed
+ */
 EAPI void esvg_element_container_width_get(Enesim_Renderer *r, double *container_width)
 {
 	Esvg_Element *thiz;
@@ -849,6 +985,10 @@ EAPI void esvg_element_container_width_get(Enesim_Renderer *r, double *container
 	if (container_width) *container_width = thiz->container_width;
 }
 
+/**
+ * To be documented
+ * FIXME: To be fixed
+ */
 EAPI void esvg_element_container_height_set(Enesim_Renderer *r, double container_height)
 {
 	Esvg_Element *thiz;
@@ -857,6 +997,10 @@ EAPI void esvg_element_container_height_set(Enesim_Renderer *r, double container
 	thiz->container_height = container_height;
 }
 
+/**
+ * To be documented
+ * FIXME: To be fixed
+ */
 EAPI void esvg_element_container_height_get(Enesim_Renderer *r, double *container_height)
 {
 	Esvg_Element *thiz;
@@ -865,6 +1009,10 @@ EAPI void esvg_element_container_height_get(Enesim_Renderer *r, double *containe
 	if (container_height) *container_height = thiz->container_height;
 }
 
+/**
+ * To be documented
+ * FIXME: To be fixed
+ */
 EAPI void esvg_element_x_dpi_set(Enesim_Renderer *r, double x_dpi)
 {
 	Esvg_Element *thiz;
@@ -873,6 +1021,10 @@ EAPI void esvg_element_x_dpi_set(Enesim_Renderer *r, double x_dpi)
 	thiz->x_dpi = x_dpi;
 }
 
+/**
+ * To be documented
+ * FIXME: To be fixed
+ */
 EAPI void esvg_element_x_dpi_get(Enesim_Renderer *r, double *x_dpi)
 {
 	Esvg_Element *thiz;
@@ -881,6 +1033,10 @@ EAPI void esvg_element_x_dpi_get(Enesim_Renderer *r, double *x_dpi)
 	if (x_dpi) *x_dpi = thiz->x_dpi;
 }
 
+/**
+ * To be documented
+ * FIXME: To be fixed
+ */
 EAPI void esvg_element_y_dpi_set(Enesim_Renderer *r, double y_dpi)
 {
 	Esvg_Element *thiz;
@@ -889,6 +1045,10 @@ EAPI void esvg_element_y_dpi_set(Enesim_Renderer *r, double y_dpi)
 	thiz->y_dpi = y_dpi;
 }
 
+/**
+ * To be documented
+ * FIXME: To be fixed
+ */
 EAPI void esvg_element_y_dpi_get(Enesim_Renderer *r, double *y_dpi)
 {
 	Esvg_Element *thiz;
