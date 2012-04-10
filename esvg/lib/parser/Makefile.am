@@ -17,28 +17,29 @@ noinst_LTLIBRARIES = libesvg_parser.la
 
 libesvg_parser_la_SOURCES = \
 esvg_parser.c \
-esvg_parser_a.c \
-esvg_parser_circle.c \
-esvg_parser_defs.c \
-esvg_parser_ellipse.c \
-esvg_parser_g.c \
-esvg_parser_gradient.c \
-esvg_parser_image.c \
-esvg_parser_line.c \
-esvg_parser_linear_gradient.c \
-esvg_parser_paint_server.c \
-esvg_parser_path.c \
-esvg_parser_pattern.c \
-esvg_parser_polygon.c \
-esvg_parser_polyline.c \
-esvg_parser_radial_gradient.c \
-esvg_parser_rect.c \
-esvg_parser_shape.c \
-esvg_parser_stop.c \
-esvg_parser_style.c \
-esvg_parser_svg.c \
-esvg_parser_text.c \
-esvg_parser_types.c \
-esvg_parser_use.c
+esvg_parser_types.c
+
+#esvg_parser_a.c \
+#esvg_parser_circle.c \
+#esvg_parser_defs.c \
+#esvg_parser_ellipse.c \
+#esvg_parser_g.c \
+#esvg_parser_gradient.c \
+#esvg_parser_image.c \
+#esvg_parser_line.c \
+#esvg_parser_linear_gradient.c \
+#esvg_parser_paint_server.c \
+#esvg_parser_path.c \
+#esvg_parser_pattern.c \
+#esvg_parser_polygon.c \
+#esvg_parser_polyline.c \
+#esvg_parser_radial_gradient.c \
+#esvg_parser_rect.c \
+#esvg_parser_shape.c \
+#esvg_parser_stop.c \
+#esvg_parser_style.c \
+#esvg_parser_svg.c \
+#esvg_parser_text.c \
+#esvg_parser_use.c
 
 libesvg_parser_la_LIBADD =
