@@ -20,7 +20,6 @@ libesvg_la_SOURCES = \
 esvg_attribute_presentation.c \
 esvg_attribute_regular.c \
 esvg_clip_path.c \
-esvg_container.c \
 esvg_element.c \
 esvg_g.c \
 esvg_main.c \

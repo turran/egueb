@@ -8,6 +8,7 @@ ECSS
 
 ESVG
 ====
++ When changing the inheritance, the container does not make any sense now
 + Remove that every svg element (not the parser code) is a renderer and have a renderer. We need to merge the parsing code and the rendering code into one
 + Add an interface to call whenever the parser can not recognize a property, this way we can easily
   attach a "mouseover" property callback for example, so the upper toolkit library (the one that controls the input) can do something
