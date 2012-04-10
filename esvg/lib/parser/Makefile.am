@@ -20,7 +20,6 @@ esvg_parser.c \
 esvg_parser_a.c \
 esvg_parser_circle.c \
 esvg_parser_defs.c \
-esvg_parser_clip_path.c \
 esvg_parser_element.c \
 esvg_parser_ellipse.c \
 esvg_parser_g.c \

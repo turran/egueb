@@ -34,6 +34,80 @@
 			EINA_MAGIC_FAIL(d, ESVG_CLIP_PATH_MAGIC);\
 	} while(0)
 
+#if 0
+static Eina_Bool _parser_clip_path_attribute_set(Edom_Tag *tag, const char *key, const char *value)
+{
+	Enesim_Renderer *r;
+
+	r = esvg_parser_element_renderer_get(tag);
+	/* parse clip path units */
+	return EINA_TRUE;
+}
+
+static const char * _parser_clip_path_attribute_get(Edom_Tag *tag, const char *attribute)
+{
+	return NULL;
+}
+
+static const char * _parser_clip_path_name_get(Edom_Tag *tag)
+{
+	return "clipPath";
+}
+
+static Eina_Bool _parser_clip_path_child_supported(Edom_Tag *tag, int tag_id)
+{
+	switch (tag_id)
+	{
+		case ESVG_CIRCLE:
+		case ESVG_ELLIPSE:
+		case ESVG_RECT:
+		case ESVG_LINE:
+		case ESVG_PATH:
+		case ESVG_POLYLINE:
+		case ESVG_POLYGON:
+		case ESVG_TEXT:
+		case ESVG_USE:
+		return EINA_TRUE;
+
+		default:
+		return EINA_FALSE;
+	}
+}
+
+static Eina_Bool _parser_clip_path_child_add(Edom_Tag *tag, Edom_Tag *child)
+{
+	Enesim_Renderer *r;
+	Enesim_Renderer *rr = NULL;
+
+	r = esvg_parser_element_data_get(tag);
+	rr = esvg_parser_element_data_get(child);
+	if (r && rr)
+		esvg_container_element_add(r, rr);
+}
+
+static Edom_Tag_Descriptor _descriptor = {
+	/* .name_get 		= */ _parser_clip_path_name_get,
+	/* .attribute_set 	= */ _parser_clip_path_attribute_set,
+	/* .attribute_get 	= */ _parser_clip_path_attribute_get,
+	/* .child_supported	= */ _parser_clip_path_child_supported,
+	/* .child_add		= */ _parser_clip_path_child_add,
+	/* .child_remove	= */ NULL,
+};
+/*============================================================================*
+ *                                 Global                                     *
+ *============================================================================*/
+Edom_Tag * esvg_parser_clip_path_new(Edom_Parser *parser)
+{
+	Edom_Tag *tag;
+	Enesim_Renderer *r;
+
+	r = esvg_clip_path_new();
+	tag = esvg_parser_element_new(parser, &_descriptor, ESVG_CLIPPATH, r, NULL);
+
+	return tag;
+}
+#endif
+
 typedef struct _Esvg_Clip_Path
 {
 	EINA_MAGIC
@@ -46,17 +120,17 @@ typedef struct _Esvg_Clip_Path
 	Eina_List *children; /* TODO remove this */
 } Esvg_Clip_Path;
 
-static Esvg_Clip_Path * _esvg_clip_path_get(Enesim_Renderer *r)
+static Esvg_Clip_Path * _esvg_clip_path_get(Edom_Tag *e)
 {
 	Esvg_Clip_Path *thiz;
 
-	thiz = esvg_container_data_get(r);
+	thiz = esvg_container_data_get(e);
 	ESVG_CLIP_PATH_MAGIC_CHECK(thiz);
 
 	return thiz;
 }
 
-static void _esvg_clip_path_enesim_state_calculate(Enesim_Renderer *r,
+static void _esvg_clip_path_enesim_state_calculate(Edom_Tag *e,
 		Esvg_Element_State *estate,
 		const Esvg_Attribute_Presentation *attr,
 		Esvg_Shape_Enesim_State *dstate,
@@ -74,7 +148,7 @@ static void _esvg_clip_path_enesim_state_calculate(Enesim_Renderer *r,
 	estate->transform = thiz->rel_m;
 }
 
-static Eina_Bool _esvg_clip_path_set_enesim_state_handle(Enesim_Renderer *r,
+static Eina_Bool _esvg_clip_path_set_enesim_state_handle(Edom_Tag *e,
 		Enesim_Renderer *layer, void *data)
 {
 	Enesim_Renderer *shape = layer;
@@ -102,7 +176,7 @@ static Eina_Bool _esvg_clip_path_set_enesim_state_handle(Enesim_Renderer *r,
 	return EINA_TRUE;
 }
 
-static Eina_Bool _esvg_clip_path_unset_enesim_state_handle(Enesim_Renderer *r,
+static Eina_Bool _esvg_clip_path_unset_enesim_state_handle(Edom_Tag *e,
 		Enesim_Renderer *layer, void *data)
 {
 	Enesim_Renderer *shape = layer;
@@ -130,31 +204,31 @@ static Eina_Bool _esvg_clip_path_unset_enesim_state_handle(Enesim_Renderer *r,
 /*----------------------------------------------------------------------------*
  *                         The ESVG element interface                         *
  *----------------------------------------------------------------------------*/
-static const char * _esvg_clip_path_name_get(Enesim_Renderer *r)
+static const char * _esvg_clip_path_name_get(Edom_Tag *e)
 {
 	return "clip_path";
 }
 
-static Eina_Bool _esvg_clip_path_element_add(Enesim_Renderer *r, Enesim_Renderer *child)
+static Eina_Bool _esvg_clip_path_element_add(Edom_Tag *e, Enesim_Renderer *child)
 {
 	Esvg_Clip_Path *thiz;
 
-	thiz = _esvg_clip_path_get(r);
+	thiz = _esvg_clip_path_get(e);
 	thiz->children = eina_list_append(thiz->children, child);
 	enesim_renderer_compound_layer_add(thiz->r, child);
 	return EINA_TRUE;
 }
 
-static void _esvg_clip_path_element_remove(Enesim_Renderer *r, Enesim_Renderer *child)
+static void _esvg_clip_path_element_remove(Edom_Tag *e, Enesim_Renderer *child)
 {
 	Esvg_Clip_Path *thiz;
 
-	thiz = _esvg_clip_path_get(r);
+	thiz = _esvg_clip_path_get(e);
 	thiz->children = eina_list_remove(thiz->children, child);
 	enesim_renderer_compound_layer_remove(thiz->r, child);
 }
 
-static Eina_Bool _esvg_clip_path_setup(Enesim_Renderer *r,
+static Eina_Bool _esvg_clip_path_setup(Edom_Tag *e,
 		Esvg_Element_State *state,
 		Esvg_Attribute_Presentation *attr,
 		Enesim_Surface *s,
@@ -163,7 +237,7 @@ static Eina_Bool _esvg_clip_path_setup(Enesim_Renderer *r,
 	Esvg_Clip_Path *thiz;
 
 
-	thiz = _esvg_clip_path_get(r);
+	thiz = _esvg_clip_path_get(e);
 	/* TODO add a new transformation in case of the units */
 	/* TODO we should use the same transformation as the relative renderer */
 	/* in case this clip path has a clip-path set, call the setup on other */
@@ -179,13 +253,13 @@ static Eina_Bool _esvg_clip_path_setup(Enesim_Renderer *r,
 	return EINA_TRUE;
 }
 
-Enesim_Renderer * _esvg_clip_path_renderer_get(Enesim_Renderer *r,
+Enesim_Renderer * _esvg_clip_path_renderer_get(Edom_Tag *e,
 		const Esvg_Element_State *state,
 		const Esvg_Attribute_Presentation *attr)
 {
 	Esvg_Clip_Path *thiz;
 
-	thiz = _esvg_clip_path_get(r);
+	thiz = _esvg_clip_path_get(e);
 	/* if the clip path is set use that as the renderer element */
 	if (!attr->clip_path_set)
 		return thiz->r;
@@ -193,13 +267,13 @@ Enesim_Renderer * _esvg_clip_path_renderer_get(Enesim_Renderer *r,
 		return esvg_element_renderer_get(attr->clip_path);
 }
 
-static void _esvg_clip_path_clone(Enesim_Renderer *r, Enesim_Renderer *dr)
+static void _esvg_clip_path_clone(Edom_Tag *e, Enesim_Renderer *dr)
 {
 	Esvg_Clip_Path *thiz;
 	Eina_List *l;
 	Enesim_Renderer *child;
 
-	thiz = _esvg_clip_path_get(r);
+	thiz = _esvg_clip_path_get(e);
 	/* TODO we need a code on the compound to get the list of layers */
 	EINA_LIST_FOREACH(thiz->children, l, child)
 	{
@@ -225,12 +299,12 @@ static Esvg_Container_Descriptor _descriptor = {
  *                                 Global                                     *
  *============================================================================*/
 /* set the renderer this clip path should clip, is not that i like this way of setup much */
-void esvg_clip_path_relative_set(Enesim_Renderer *r, Enesim_Renderer *rel,
+void esvg_clip_path_relative_set(Edom_Tag *e, Enesim_Renderer *rel,
 		Enesim_Matrix *rel_m)
 {
 	Esvg_Clip_Path *thiz;
 
-	thiz = _esvg_clip_path_get(r);
+	thiz = _esvg_clip_path_get(e);
 	if (thiz->rel == rel) return;
 	if (thiz->rel)
 	{
@@ -246,9 +320,10 @@ void esvg_clip_path_relative_set(Enesim_Renderer *r, Enesim_Renderer *rel,
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/
-EAPI Enesim_Renderer * esvg_clip_path_new(void)
+EAPI Edom_Tag * esvg_clip_path_new(void)
 {
 	Esvg_Clip_Path *thiz;
+	Edom_Tag *e;
 	Enesim_Renderer *r;
 
 	thiz = calloc(1, sizeof(Esvg_Clip_Path));
@@ -256,23 +331,23 @@ EAPI Enesim_Renderer * esvg_clip_path_new(void)
 	EINA_MAGIC_SET(thiz, ESVG_CLIP_PATH_MAGIC);
 
 	r = enesim_renderer_compound_new();
-	enesim_renderer_compound_pre_setup_set(r, _esvg_clip_path_set_enesim_state_handle, thiz);
-	enesim_renderer_compound_post_setup_set(r, _esvg_clip_path_unset_enesim_state_handle, NULL);
+	enesim_renderer_compound_pre_setup_set(e, _esvg_clip_path_set_enesim_state_handle, thiz);
+	enesim_renderer_compound_post_setup_set(e, _esvg_clip_path_unset_enesim_state_handle, NULL);
 	thiz->r = r;
 
-	r = esvg_container_new(&_descriptor, thiz);
+	e = esvg_container_new(&_descriptor, thiz);
 
-	return r;
+	return e;
 }
 
-EAPI Eina_Bool esvg_is_clip_path(Enesim_Renderer *r)
+EAPI Eina_Bool esvg_is_clip_path(Edom_Tag *e)
 {
 	Esvg_Clip_Path *thiz;
 	Eina_Bool ret;
 
-	if (!esvg_is_container(r))
+	if (!esvg_is_container(e))
 		return EINA_FALSE;
-	thiz = esvg_container_data_get(r);
+	thiz = esvg_container_data_get(e);
 	ret = EINA_MAGIC_CHECK(thiz, ESVG_CLIP_PATH_MAGIC);
 
 	return ret;

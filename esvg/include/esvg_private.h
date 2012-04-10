@@ -200,7 +200,7 @@ void * esvg_container_data_get(Enesim_Renderer *r);
 Enesim_Renderer * esvg_container_new(Esvg_Container_Descriptor *descriptor, void *data);
 
 /* clip path */
-void esvg_clip_path_relative_set(Enesim_Renderer *r, Enesim_Renderer *rel, Enesim_Matrix *rel_m);
+void esvg_clip_path_relative_set(Edom_Tag *e, Enesim_Renderer *rel, Enesim_Matrix *rel_m);
 
 /* svg */
 
