@@ -76,9 +76,8 @@ typedef struct _Edom_Tag_Descriptor
 	const char * (*name_get)(Edom_Tag *t);
 	/* attribute handling */
 	Eina_Bool (*attribute_set)(Edom_Tag *t, const char *attribute, const char *value);
-	const char * (*attribute_get)(Edom_Tag *t, const char *attribute);
+	Eina_Bool (*attribute_get)(Edom_Tag *t, const char *attribute, char **value);
 	/* child handling */
-	Eina_Bool (*child_supported)(Edom_Tag *t, int tag_id);
 	Eina_Bool (*child_add)(Edom_Tag *t, Edom_Tag *child);
 	Eina_Bool (*child_remove)(Edom_Tag *t, Edom_Tag *child);
 	/* cdata */
@@ -88,20 +87,19 @@ typedef struct _Edom_Tag_Descriptor
 	void (*tag_free)(Edom_Tag *t);
 } Edom_Tag_Descriptor;
 
-EAPI Edom_Tag * edom_tag_new(Edom_Parser *parser,
-		Edom_Tag_Descriptor *d, int type,
-		void *data);
+EAPI Edom_Tag * edom_tag_new(Edom_Tag_Descriptor *d, void *data);
 EAPI void * edom_tag_data_get(Edom_Tag *thiz);
-EAPI Edom_Parser * edom_tag_parser_get(Edom_Tag *thiz);
 
-EAPI int edom_tag_type_get(Edom_Tag *thiz);
 EAPI const char * edom_tag_name_get(Edom_Tag *thiz);
-EAPI void edom_tag_id_set(Edom_Tag *thiz, const char *id);
-EAPI const char * edom_tag_id_get(Edom_Tag *thiz);
-EAPI void edom_tag_class_set(Edom_Tag *thiz, const char *class);
-EAPI const char * edom_tag_class_get(Edom_Tag *thiz);
 
-EAPI Eina_Bool edom_tag_child_supported(Edom_Tag *thiz, int tag_id);
+EAPI Eina_Bool edom_tag_attribute_set(Edom_Tag *thiz, const char *name, const char *value);
+EAPI Eina_Bool edom_tag_attribute_get(Edom_Tag *thiz, const char *name, char **value);
+
+EAPI void edom_tag_id_set(Edom_Tag *thiz, const char *id);
+EAPI char * edom_tag_id_get(Edom_Tag *thiz);
+EAPI void edom_tag_class_set(Edom_Tag *thiz, const char *class);
+EAPI char * edom_tag_class_get(Edom_Tag *thiz);
+
 EAPI Eina_Bool edom_tag_child_add(Edom_Tag *thiz, Edom_Tag *child);
 EAPI Edom_Tag * edom_tag_child_get(Edom_Tag *thiz);
 EAPI Edom_Tag * edom_tag_next_get(Edom_Tag *thiz);
@@ -111,6 +109,5 @@ EAPI Edom_Tag * edom_tag_topmost_get(Edom_Tag *thiz);
 EAPI void edom_tag_dump(Edom_Tag *thiz);
 EAPI void edom_tag_attributes_from_xml(Edom_Tag *thiz,
 		const char *attributes, unsigned int length);
-EAPI Eina_Bool edom_tag_attribute_set(Edom_Tag *thiz, const char *key, const char *value);
 
 #endif /*_EDOM_H*/

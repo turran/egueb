@@ -24,8 +24,8 @@
 
 #include "Edom.h"
 /* TODO
- * Instead of using a list for children we should use an INLIST to get
- * the siblings and that's all
+ * + Add a function to iterate over the childs
+ * + Add a descriptor function to iterate over the attributes
  */
 /*============================================================================*
  *                                  Local                                     *
@@ -33,15 +33,10 @@
 struct _Edom_Tag
 {
 	EINA_INLIST;
-	Edom_Tag_Descriptor *descriptor;
-	Edom_Parser *parser;
-	int type;
+	Edom_Tag_Descriptor descriptor;
 	Edom_Tag *parent;
 	Edom_Tag *topmost;
 	Edom_Tag *child;
-	/* FIXME this two properties should be gone */
-	char *id;
-	char *class;
 	void *data;
 };
 
@@ -63,61 +58,24 @@ static void _tag_dump(Edom_Tag *thiz, int level)
 	}
 }
 
-static Eina_Bool _attributes_set_cb(void *data, const char *key,
+static Eina_Bool _attributes_set(void *data, const char *key,
 		const char *value)
 {
 	Edom_Tag *thiz = data;
 
-	if (!thiz->descriptor) return EINA_FALSE;
-	if (thiz->descriptor->attribute_set)
-		return thiz->descriptor->attribute_set(thiz, key, value);
+	if (thiz->descriptor.attribute_set)
+		return thiz->descriptor.attribute_set(thiz, key, value);
 	return EINA_FALSE;
 }
 
-static const char * _attributes_get_cb(void *data, const char *attr)
+static Eina_Bool _attributes_get(void *data, const char *key, char **value)
 {
 	Edom_Tag *thiz = data;
 
-	if (!thiz->descriptor) return NULL;
-	if (thiz->descriptor->attribute_get)
-		return thiz->descriptor->attribute_get(thiz, attr);
-	return NULL;
+	if (thiz->descriptor.attribute_get)
+		return thiz->descriptor.attribute_get(thiz, key, value);
+	return EINA_FALSE;
 }
-
-static Eina_Bool _parser_default_attribute_set(Edom_Tag *tag, const char *key,
-		const char *value)
-{
-	if (strcmp(key, "id") == 0)
-	{
-		edom_tag_id_set(tag, value);
-	}
-	else if (strcmp(key, "class") == 0)
-	{
-		edom_tag_class_set(tag, value);
-	}
-	else
-	{
-		return EINA_FALSE;
-	}
-
-	return EINA_TRUE;
-}
-
-static const char * _parser_default_attribute_get(Edom_Tag *tag, const char *attribute)
-{
-	return NULL;
-}
-
-static const char * _parser_default_name_get(Edom_Tag *tag)
-{
-	return "default";
-}
-
-static Edom_Tag_Descriptor _descriptor = {
-	/* .name_get		= */ _parser_default_name_get,
-	/* .attribute_set	= */ _parser_default_attribute_set,
-	/* .attribute_get	= */ _parser_default_attribute_get,
-};
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
@@ -126,13 +84,123 @@ void edom_tag_dump(Edom_Tag *thiz)
 	if (!thiz) return;
 	_tag_dump(thiz, 0);
 }
+/*============================================================================*
+ *                                   API                                      *
+ *============================================================================*/
+/**
+ * To be documented
+ * FIXME: To be fixed
+ */
+EAPI Edom_Tag * edom_tag_new(Edom_Tag_Descriptor *descriptor,
+		void *data)
+{
+	Edom_Tag *thiz;
+	Edom_Tag *topmost;
 
-Eina_Bool edom_tag_child_add_direct(Edom_Tag *thiz, Edom_Tag *child)
+	if (!descriptor)
+		return NULL;
+
+	thiz = calloc(1, sizeof(Edom_Tag));
+	thiz->descriptor = *descriptor;
+	thiz->descriptor.name_get = NULL;
+	thiz->data = data;
+
+	return thiz;
+}
+
+/**
+ * To be documented
+ * FIXME: To be fixed
+ */
+EAPI void edom_tag_attributes_from_xml(Edom_Tag *thiz,
+		const char *attributes, unsigned int length)
+{
+	eina_simple_xml_attributes_parse(attributes, length, _attributes_set, thiz);
+}
+
+/**
+ * To be documented
+ * FIXME: To be fixed
+ */
+EAPI Eina_Bool edom_tag_attribute_set(Edom_Tag *thiz, const char *name, const char *value)
+{
+	return  _attributes_set(thiz, name, value);
+}
+
+/**
+ * To be documented
+ * FIXME: To be fixed
+ */
+EAPI Eina_Bool edom_tag_attribute_get(Edom_Tag *thiz, const char *name, char **value)
+{
+	return  _attributes_get(thiz, name, value);
+}
+
+/**
+ * To be documented
+ * FIXME: To be fixed
+ */
+EAPI char * edom_tag_id_get(Edom_Tag *thiz)
+{
+	char *id;
+
+	if (!edom_tag_attibute_get(thiz, "id", &id))
+		return NULL;
+	return id;
+}
+
+/**
+ * To be documented
+ * FIXME: To be fixed
+ */
+EAPI void edom_tag_id_set(Edom_Tag *thiz, const char *id)
+{
+	edom_tag_attribute_set(thiz, "id", id);
+}
+
+/**
+ * To be documented
+ * FIXME: To be fixed
+ */
+EAPI char * edom_tag_class_get(Edom_Tag *thiz)
+{
+	char *class;
+
+	if (!edom_tag_attibute_get(thiz, "class", &class))
+		return NULL;
+	return class;
+}
+
+/**
+ * To be documented
+ * FIXME: To be fixed
+ */
+EAPI void edom_tag_class_set(Edom_Tag *thiz, const char *class)
+{
+	edom_tag_attribute_set(thiz, "class", class);
+}
+
+/**
+ * To be documented
+ * FIXME: To be fixed
+ */
+EAPI void * edom_tag_data_get(Edom_Tag *thiz)
+{
+	return thiz->data;
+}
+
+/**
+ * To be documented
+ * FIXME: To be fixed
+ */
+EAPI Eina_Bool edom_tag_child_add(Edom_Tag *thiz, Edom_Tag *child)
 {
 	Eina_Bool ret = EINA_TRUE;
 
-	if (thiz->descriptor->child_add)
-		ret = thiz->descriptor->child_add(thiz, child);
+	if (!child) return EINA_FALSE;
+
+	if (thiz->descriptor.child_add)
+		ret = thiz->descriptor.child_add(thiz, child);
 	if (ret)
 	{
 		if (!thiz->child)
@@ -141,95 +209,23 @@ Eina_Bool edom_tag_child_add_direct(Edom_Tag *thiz, Edom_Tag *child)
 			eina_inlist_append(EINA_INLIST_GET(thiz->child), EINA_INLIST_GET(child));
 		child->parent = thiz;
 	}
+
 	return ret;
 }
 
-/*============================================================================*
- *                                   API                                      *
- *============================================================================*/
-EAPI Edom_Tag * edom_tag_new(Edom_Parser *parser,
-		Edom_Tag_Descriptor *descriptor,
-		int type,
-		void *data)
-{
-	Edom_Tag *thiz;
-	Edom_Tag *topmost;
-
-	topmost = edom_parser_topmost_get(parser);
-	thiz = calloc(1, sizeof(Edom_Tag));
-	if (!descriptor)
-		descriptor = &_descriptor;
-	thiz->parser = parser;
-	thiz->descriptor = descriptor;
-	thiz->type = type;
-	thiz->data = data;
-	thiz->topmost = topmost;
-
-	return thiz;
-}
-
-EAPI void edom_tag_attributes_from_xml(Edom_Tag *thiz,
-		const char *attributes, unsigned int length)
-{
-	eina_simple_xml_attributes_parse(attributes, length, _attributes_set_cb, thiz);
-}
-
-EAPI Eina_Bool edom_tag_attribute_set(Edom_Tag *thiz, const char *key, const char *value)
-{
-	return  _attributes_set_cb(thiz, key, value);
-}
-
-EAPI int edom_tag_type_get(Edom_Tag *thiz)
-{
-	return thiz->type;
-}
-
-/* FIXME the id and class should be treated as attributes using a simple interface */
-EAPI const char * edom_tag_id_get(Edom_Tag *thiz)
-{
-	return thiz->id;
-}
-
-EAPI void edom_tag_id_set(Edom_Tag *thiz, const char *id)
-{
-	thiz->id = strdup(id);
-}
-
-EAPI void edom_tag_class_set(Edom_Tag *thiz, const char *class)
-{
-	thiz->class = strdup(class);
-}
-
-EAPI const char * edom_tag_class_get(Edom_Tag *thiz)
-{
-	return thiz->class;
-}
-
-EAPI void * edom_tag_data_get(Edom_Tag *thiz)
-{
-	return thiz->data;
-}
-
-EAPI Eina_Bool edom_tag_child_supported(Edom_Tag *thiz, int tag_id)
-{
-	if (!thiz->descriptor->child_supported) return EINA_FALSE;
-	return thiz->descriptor->child_supported(thiz, tag_id);
-}
-
-EAPI Eina_Bool edom_tag_child_add(Edom_Tag *thiz, Edom_Tag *child)
-{
-	Eina_Bool ret = EINA_TRUE;
-
-	if (!child) return EINA_FALSE;
-	if (!edom_tag_child_supported(thiz, child->type)) return EINA_FALSE;
-	return edom_tag_child_add_direct(thiz, child);
-}
-
+/**
+ * To be documented
+ * FIXME: To be fixed
+ */
 EAPI Edom_Tag * edom_tag_child_get(Edom_Tag *thiz)
 {
 	return thiz->child;
 }
 
+/**
+ * To be documented
+ * FIXME: To be fixed
+ */
 EAPI Edom_Tag * edom_tag_next_get(Edom_Tag *thiz)
 {
 	Eina_Inlist *il;
@@ -238,25 +234,30 @@ EAPI Edom_Tag * edom_tag_next_get(Edom_Tag *thiz)
 	return EINA_INLIST_CONTAINER_GET(il->next, Edom_Tag);
 }
 
+/**
+ * To be documented
+ * FIXME: To be fixed
+ */
 EAPI Edom_Tag * edom_tag_topmost_get(Edom_Tag *thiz)
 {
 	return thiz->topmost;
 }
 
+/**
+ * To be documented
+ * FIXME: To be fixed
+ */
 EAPI Edom_Tag * edom_tag_parent_get(Edom_Tag *thiz)
 {
 	return thiz->parent;
 }
 
+/**
+ * To be documented
+ * FIXME: To be fixed
+ */
 EAPI const char * edom_tag_name_get(Edom_Tag *thiz)
 {
-	if (!thiz->descriptor) return NULL;
-	if (!thiz->descriptor->name_get) return NULL;
-	return thiz->descriptor->name_get(thiz);
-}
-
-EAPI Edom_Parser * edom_tag_parser_get(Edom_Tag *thiz)
-{
-	if (!thiz) return NULL;
-	return thiz->parser;
+	if (!thiz->descriptor.name_get) return NULL;
+	return thiz->descriptor.name_get(thiz);
 }
