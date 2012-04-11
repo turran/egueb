@@ -42,7 +42,6 @@
 			EINA_MAGIC_FAIL(d, ESVG_ELEMENT_MAGIC);\
 	} while(0)
 
-#if 0
 typedef struct _Esvg_Parser_Element
 {
 	EINA_MAGIC
@@ -312,7 +311,6 @@ static Edom_Tag_Descriptor _descriptor = {
 	/* .name_get 		= */ _parser_element_name_get,
 	/* .attribute_set 	= */ _parser_element_attribute_set,
 	/* .attribute_get 	= */ _parser_element_attribute_get,
-	/* .child_supported	= */ _parser_element_child_supported,
 	/* .child_add		= */ _parser_element_child_add,
 	/* .child_remove	= */ NULL,
 };
@@ -353,7 +351,6 @@ Enesim_Renderer * esvg_parser_element_renderer_get(Edom_Tag *tag)
 	thiz = _esvg_parser_element_get(tag);
 	return thiz->r;
 }
-#endif
 
 typedef struct _Esvg_Element
 {
@@ -367,6 +364,7 @@ typedef struct _Esvg_Element
 	double x_dpi;
 	double y_dpi;
 	/* the descriptor interface */
+	Esvg_Element_Descriptor descriptor;
 	Enesim_Renderer_Name name_get;
 	Esvg_Element_Renderer_Get renderer_get;
 	Esvg_Element_Clone clone;
@@ -579,6 +577,7 @@ static void _esvg_element_state_compose(const Esvg_Element_State *s, const Esvg_
 /*----------------------------------------------------------------------------*
  *                      The Enesim's renderer interface                       *
  *----------------------------------------------------------------------------*/
+#if 0
 static const char * _esvg_element_name(Enesim_Renderer *r)
 {
 	Esvg_Element *thiz;
@@ -730,6 +729,7 @@ static Enesim_Renderer_Descriptor _descriptor = {
 	/* .ocl_kernel_cleanup =    */ NULL,
 	/* .ocl_cleanup =           */ NULL
 };
+#endif
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
@@ -741,10 +741,10 @@ void * esvg_element_data_get(Edom_Tag *e)
 	return thiz->data;
 }
 
-Enesim_Renderer * esvg_element_new(Esvg_Element_Descriptor *descriptor, void *data)
+Edom_Tag * esvg_element_new(Esvg_Element_Descriptor *descriptor, void *data)
 {
 	Esvg_Element *thiz;
-	Enesim_Renderer *r;
+	Edom_Tag *t;
 
 	thiz = calloc(1, sizeof(Esvg_Element));
 	if (!thiz) return NULL;
@@ -761,7 +761,7 @@ Enesim_Renderer * esvg_element_new(Esvg_Element_Descriptor *descriptor, void *da
 	thiz->has_changed = descriptor->has_changed;
 	thiz->is_renderable = descriptor->is_renderable;
 
-	r = enesim_renderer_new(&_descriptor, thiz);
+	t = edom_tag_new(&_descriptor, thiz);
 	/* default values */
 	thiz->container_width = 640;
 	thiz->container_height = 480;
@@ -771,9 +771,8 @@ Enesim_Renderer * esvg_element_new(Esvg_Element_Descriptor *descriptor, void *da
 	esvg_attribute_presentation_setup(&thiz->attr);
 	esvg_attribute_presentation_setup(&thiz->style);
 	/* default enesim properties */
-	enesim_renderer_rop_set(r, ENESIM_BLEND);
 
-	return r;
+	return t;
 }
 
 /* FIXME handle correctly the ref counting */
