@@ -64,6 +64,8 @@
 
 extern int esvg_log_dom_global;
 
+typedef void (*Esvg_Element_Attribute_Set)(Edom_Tag *t, void *);
+
 void esvg_attribute_presentation_setup(Esvg_Attribute_Presentation *thiz);
 void esvg_attribute_presentation_clip_path_set(Esvg_Attribute_Presentation *thiz, const Edom_Tag *clip_path);
 void esvg_attribute_presentation_clip_path_unset(Esvg_Attribute_Presentation *thiz);

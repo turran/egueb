@@ -42,25 +42,14 @@
 			EINA_MAGIC_FAIL(d, ESVG_ELEMENT_MAGIC);\
 	} while(0)
 
-#if 0
-typedef struct _Esvg_Element_Id_Callback
-{
-	Edom_Tag *t;
-	char *fill;
-	char *stroke;
-	char *clip_path;
-	void *data;
-} Esvg_Element_Id_Callback;
-#endif
-
 typedef struct _Esvg_Element_Descriptor_Internal
 {
-	Edom_Tag_Name_Get name_get;
-	Edom_Tag_Attribute_Set attribute_set;
-	Edom_Tag_Attribute_Get attribute_get;
-	Edom_Tag_Free free;
+	Esvg_Element_Renderer_Get renderer_get;
 	Esvg_Element_Clone clone;
 	Esvg_Element_Setup setup;
+	Esvg_Element_Cleanup cleanup;
+	Esvg_Element_Has_Changed has_changed;
+	Eina_Bool is_renderable;
 } Esvg_Element_Descriptor_Internal;
 
 typedef struct _Esvg_Element
@@ -79,12 +68,34 @@ typedef struct _Esvg_Element
 	/* private */
 	Esvg_Attribute_Presentation *attr_p;
 	Esvg_Element_State *state_p;
+	Enesim_Renderer *parent;
+	Enesim_Renderer *real_r;
 	Esvg_Attribute_Presentation attr_final;
 	Esvg_Element_State state_final;
 	Eina_Bool changed : 1;
 	Eina_Bool style_set : 1;
 	void *data;
 } Esvg_Element;
+
+typedef struct _Esvg_Parser_Element
+{
+	Edom_Tag *t;
+	char *fill;
+	char *stroke;
+	char *clip_path;
+	void *data;
+} Esvg_Element_Id_Callback;
+#endif
+
+typedef struct _Esvg_Element_Descriptor_Internal
+{
+	Edom_Tag_Name_Get name_get;
+	Edom_Tag_Attribute_Set attribute_set;
+	Edom_Tag_Attribute_Get attribute_get;
+	Edom_Tag_Free free;
+	Esvg_Element_Clone clone;
+	Esvg_Element_Setup setup;
+} Esvg_Element_Descriptor_Internal;
 
 static Esvg_Element * _esvg_element_get(Edom_Tag *t)
 {

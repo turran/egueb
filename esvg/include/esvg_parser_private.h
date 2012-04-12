@@ -193,5 +193,4 @@ Eina_Bool esvg_transformation_get(Enesim_Matrix *matrix, const char *attr);
 
 double esvg_number_get(const char *attr_val, double default_nbr);
 
-
 #endif

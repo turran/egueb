@@ -57,6 +57,87 @@ static Esvg_Rect * _esvg_rect_get(Enesim_Renderer *r)
 	return thiz;
 }
 
+#if 0
+static Eina_Bool _parser_rect_attribute_set(Edom_Tag *tag, const char *key, const char *value)
+{
+	Enesim_Renderer *r;
+
+	r = esvg_parser_element_renderer_get(tag);
+	if (strcmp(key, "x") == 0)
+	{
+		Esvg_Coord x;
+
+		esvg_length_get(&x, value, ESVG_COORD_0);
+		esvg_rect_x_set(r, &x);
+	}
+	else if (strcmp(key, "y") == 0)
+	{
+		Esvg_Coord y;
+
+		esvg_length_get(&y, value, ESVG_COORD_0);
+		esvg_rect_y_set(r, &y);
+	}
+	else if (strcmp(key, "rx") == 0)
+	{
+		Esvg_Coord rx;
+
+		esvg_length_get(&rx, value, ESVG_COORD_0);
+		esvg_rect_rx_set(r, &rx);
+	}
+	else if (strcmp(key, "ry") == 0)
+	{
+		Esvg_Coord ry;
+
+		esvg_length_get(&ry, value, ESVG_COORD_0);
+		esvg_rect_ry_set(r, &ry);
+	}
+	else if (strcmp(key, "width") == 0)
+	{
+		Esvg_Length width;
+
+		esvg_length_get(&width, value, ESVG_LENGTH_0);
+		esvg_rect_width_set(r, &width);
+	}
+	else if (strcmp(key, "height") == 0)
+	{
+		Esvg_Length height;
+
+		esvg_length_get(&height, value, ESVG_LENGTH_0);
+		esvg_rect_height_set(r, &height);
+	}
+
+	return EINA_TRUE;
+}
+
+static const char * _parser_rect_attribute_get(Edom_Tag *tag, const char *attribute)
+{
+	return NULL;
+}
+
+static const char * _parser_rect_name_get(Edom_Tag *tag)
+{
+	return "rect";
+}
+
+static Edom_Tag_Descriptor _descriptor = {
+	/* .name_get 		= */ _parser_rect_name_get,
+	/* .attribute_set 	= */ _parser_rect_attribute_set,
+	/* .attribute_get 	= */ _parser_rect_attribute_get,
+};
+
+Edom_Tag * esvg_parser_rect_new(Edom_Parser *parser)
+{
+	Edom_Tag *tag;
+	Enesim_Renderer *r;
+
+	r = esvg_rect_new();
+	tag = esvg_parser_shape_new(parser, &_descriptor, ESVG_RECT, r, NULL);
+
+	return tag;
+}
+
+#endif
+
 /*----------------------------------------------------------------------------*
  *                         The ESVG element interface                         *
  *----------------------------------------------------------------------------*/
