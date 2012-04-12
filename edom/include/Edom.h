@@ -71,20 +71,29 @@ EAPI void * edom_parser_data_get(Edom_Parser *thiz);
 EAPI Edom_Tag * edom_parser_topmost_get(Edom_Parser *thiz);
 
 /* tag */
+typedef const char * (*Edom_Tag_Name_Get)(Edom_Tag *t);
+typedef Eina_Bool (*Edom_Tag_Attribute_Set)(Edom_Tag *t, const char *attribute, const char *value);
+typedef Eina_Bool (*Edom_Tag_Attribute_Get)(Edom_Tag *t, const char *attribute, char **value);
+typedef Eina_Bool (*Edom_Tag_Child_Add)(Edom_Tag *t, Edom_Tag *child);
+typedef Eina_Bool (*Edom_Tag_Child_Remove)(Edom_Tag *t, Edom_Tag *child);
+typedef void (*Edom_Tag_Cdata_Set)(Edom_Tag *t, const char *cdata, unsigned int length);
+typedef void (*Edom_Tag_Text_Set)(Edom_Tag *t, const char *text, unsigned int length);
+typedef void (*Edom_Tag_Free)(Edom_Tag *t);
+
 typedef struct _Edom_Tag_Descriptor
 {
-	const char * (*name_get)(Edom_Tag *t);
+	Edom_Tag_Name_Get name_get;
 	/* attribute handling */
-	Eina_Bool (*attribute_set)(Edom_Tag *t, const char *attribute, const char *value);
-	Eina_Bool (*attribute_get)(Edom_Tag *t, const char *attribute, char **value);
+	Edom_Tag_Attribute_Set attribute_set;
+	Edom_Tag_Attribute_Get attribute_get;
 	/* child handling */
-	Eina_Bool (*child_add)(Edom_Tag *t, Edom_Tag *child);
-	Eina_Bool (*child_remove)(Edom_Tag *t, Edom_Tag *child);
+	Edom_Tag_Child_Add child_add;
+	Edom_Tag_Child_Remove child_remove;
 	/* cdata */
-	void (*cdata_set)(Edom_Tag *t, const char *cdata, unsigned int length);
+	Edom_Tag_Cdata_Set cdata_set;
 	/* text */
-	void (*text_set)(Edom_Tag *t, const char *text, unsigned int length);
-	void (*tag_free)(Edom_Tag *t);
+	Edom_Tag_Text_Set text_set;
+	Edom_Tag_Free free;
 } Edom_Tag_Descriptor;
 
 EAPI Edom_Tag * edom_tag_new(Edom_Tag_Descriptor *d, void *data);
