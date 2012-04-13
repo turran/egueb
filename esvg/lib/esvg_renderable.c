@@ -27,26 +27,46 @@
 			EINA_MAGIC_FAIL(d, ESVG_RENDERABLE_MAGIC);\
 	} while(0)
 
+typedef struct _Esvg_Renderable_Descriptor_Internal
+{
+	Edom_Tag_Free free;
+	Esvg_Renderable_Renderer_Get renderer_get;
+} Esvg_Renderable_Descriptor_Internal;
+
 typedef struct _Esvg_Renderable
 {
 	EINA_MAGIC
 	/* properties */
 	/* interface */
-	Esvg_Renderable_Renderer_Get renderer_get;
+	Esvg_Renderable_Descriptor_Internal descriptor;
 	/* private */
 	void *data;
 } Esvg_Renderable;
 
-static Esvg_Renderable * _esvg_renderable_get(Enesim_Renderer *r)
+static Esvg_Renderable * _esvg_renderable_get(Edom_Tag *t)
 {
 	Esvg_Renderable *thiz;
 
-	thiz = esvg_element_data_get(r);
+	thiz = esvg_element_data_get(t);
 	ESVG_RENDERABLE_MAGIC_CHECK(thiz);
 
 	return thiz;
 }
 
+/*----------------------------------------------------------------------------*
+ *                         The Esvg Element interface                         *
+ *----------------------------------------------------------------------------*/
+static void _esvg_renderable_free(Edom_Tag *t)
+{
+	Esvg_Renderable *thiz;
+
+	thiz = _esvg_renderable_get(t);
+	if (thiz->descriptor.free)
+		thiz->descriptor.free(t);
+	free(thiz);
+}
+
+#if 0
 static Enesim_Renderer * _esvg_renderable_renderer_get(Enesim_Renderer *r
 		const Esvg_Element_State *state,
 		const Esvg_Attribute_Presentation *attr)
@@ -54,7 +74,6 @@ static Enesim_Renderer * _esvg_renderable_renderer_get(Enesim_Renderer *r
 
 }
 
-#if 0
 static void _esvg_element_draw(Enesim_Renderer *r,
 		const Enesim_Renderer_State *state,
 		int x, int y, unsigned int len, void *dst)
@@ -223,63 +242,62 @@ static Enesim_Renderer_Descriptor _descriptor = {
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
-void * esvg_renderable_data_get(Enesim_Renderer *r)
+void * esvg_renderable_data_get(Edom_Tag *t)
 {
 	Esvg_Renderable *thiz;
 
-	thiz = _esvg_renderable_get(r);
+	thiz = _esvg_renderable_get(t);
 	return thiz->data;
 }
 
-Enesim_Renderer * esvg_renderable_new(Esvg_Renderable_Descriptor *descriptor, void *data)
+Edom_Tag * esvg_renderable_new(Esvg_Renderable_Descriptor *descriptor, void *data)
 {
 	Esvg_Renderable *thiz;
-	Esvg_Element_Descriptor pdescriptor = {NULL, NULL, NULL, NULL, NULL, NULL, EINA_TRUE};
-	Enesim_Renderer *r;
+	Esvg_Element_Descriptor pdescriptor;
+	Edom_Tag *t;
 
 	thiz = calloc(1, sizeof(Esvg_Renderable));
 	if (!thiz) return NULL;
 
 	EINA_MAGIC_SET(thiz, ESVG_RENDERABLE_MAGIC);
 	thiz->data = data;
-	thiz->setup = descriptor->setup;
-	thiz->clone = descriptor->clone;
-	thiz->renderer_get = descriptor->renderer_get;
-	thiz->has_changed = descriptor->has_changed;
+	thiz->descriptor.renderer_get = descriptor->renderer_get;
 
-	pdescriptor.renderer_get = _esvg_renderable_renderer_get;
 	pdescriptor.name_get = descriptor->name_get;
-	pdescriptor.setup = _esvg_renderable_setup;
-	pdescriptor.cleanup = descriptor->cleanup;
-	pdescriptor.clone = descriptor->clone;
-	pdescriptor.has_changed = descriptor->has_changed;
-	pdescriptor.is_renderable = EINA_TRUE;
+	pdescriptor.child_add = descriptor->child_add;
+	pdescriptor.child_remove = descriptor->child_remove;
+	pdescriptor.attribute_set = descriptor->attribute_set;
+	pdescriptor.attribute_get = descriptor->attribute_get;
+	pdescriptor.cdata_set = descriptor->cdata_set;
+	pdescriptor.text_set = descriptor->text_set;
+	pdescriptor.free = _esvg_renderable_free;
 
-	r = esvg_element_new(&pdescriptor, thiz);
+	t = esvg_element_new(&pdescriptor, thiz);
 
-	return r;
+	return t;
 }
 
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/
-EAPI Eina_Bool esvg_is_renderable(Enesim_Renderer *r)
+EAPI Eina_Bool esvg_is_renderable(Edom_Tag *t)
 {
 	Esvg_Renderable *thiz;
 	Eina_Bool ret;
 
-	if (!esvg_is_element(r))
+	if (!esvg_is_element(t))
 		return EINA_FALSE;
-	thiz = esvg_element_data_get(r);
+	thiz = esvg_element_data_get(t);
 	ret = EINA_MAGIC_CHECK(thiz, ESVG_RENDERABLE_MAGIC);
 
 	return ret;
 }
 
-EAPI Enesim_Renderer * esvg_renderable_renderer_get(Enesim_Renderer *r)
+EAPI Enesim_Renderer * esvg_renderable_renderer_get(Edom_Tag *t)
 {
 	Esvg_Renderable *thiz;
 
-	thiz = _esvg_renderable_get(r);
-	return thiz->renderer_get(r);
+	thiz = _esvg_renderable_get(t);
+	//return thiz->descriptor.renderer_get(t);
+	return NULL;
 }

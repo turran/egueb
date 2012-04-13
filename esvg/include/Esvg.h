@@ -333,6 +333,7 @@ typedef struct _Esvg_Attribute_Presentation {
 EAPI Eina_Bool esvg_is_element(Edom_Tag *e);
 EAPI void esvg_element_id_set(Edom_Tag *e, const char *id);
 EAPI void esvg_element_id_get(Edom_Tag *e, const char **id);
+EAPI void esvg_element_class_set(Edom_Tag *e, const char *id);
 EAPI void esvg_element_transform_set(Edom_Tag *e, const Enesim_Matrix *transform);
 EAPI void esvg_element_transform_get(Edom_Tag *e, Enesim_Matrix *transform);
 EAPI void esvg_element_style_set(Edom_Tag *e, const Esvg_Attribute_Presentation *style);

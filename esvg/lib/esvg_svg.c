@@ -21,6 +21,14 @@
 /*
  * Given that a svg element can clip, we should use a clipper with a compound
  * inside as the renderer
+ * TODO
+ * Handle the following attributes
+ * onunload
+ * onabort 
+ * onerror 
+ * onresize
+ * onscroll
+ * onzoom
  */
 /*============================================================================*
  *                                  Local                                     *
@@ -43,21 +51,116 @@ typedef struct _Esvg_Svg
 	Esvg_Length width;
 	Esvg_Length height;
 	/* private */
-	Enesim_Renderer *r;
+	Eina_List *styles; /* the list of styles found on this svg scope */
+	Eina_List *svgs; /* the list of svg documents found on the svg */
+	Enesim_Renderer *r; /* the renderer associated with this svg */
+	Eina_Hash *ids; /* the ids found */
 } Esvg_Svg;
 
-static Esvg_Svg * _esvg_svg_get(Enesim_Renderer *r)
+static Esvg_Svg * _esvg_svg_get(Edom_Tag *t)
 {
 	Esvg_Svg *thiz;
 
-	thiz = esvg_container_data_get(r);
+	thiz = esvg_renderable_data_get(t);
 	ESVG_SVG_MAGIC_CHECK(thiz);
 
 	return thiz;
 }
+
 /*----------------------------------------------------------------------------*
- *                          The Container interface                           *
+ *                       The Esvg Renderable interface                        *
  *----------------------------------------------------------------------------*/
+static Eina_Bool _parser_svg_attribute_set(Edom_Tag *t, const char *key, const char *value)
+{
+	Esvg_Svg *thiz;
+
+	thiz = _esvg_svg_get(t);
+	if (strcmp(key, "version") == 0)
+	{
+		double version = esvg_number_get(value, 0.0);
+		esvg_svg_version_set(t, version);
+	}
+	else if (strcmp(key, "x") == 0)
+	{
+		Esvg_Coord x;
+
+		esvg_length_get(&x, value, ESVG_COORD_0);
+		esvg_svg_x_set(t, &x);
+	}
+	else if (strcmp(key, "y") == 0)
+	{
+		Esvg_Coord y;
+
+		esvg_length_get(&y, value, ESVG_COORD_0);
+		esvg_svg_y_set(t, &y);
+	}
+	else if (strcmp(key, "width") == 0)
+	{
+		Esvg_Length width;
+
+		esvg_length_get(&width, value, ESVG_LENGTH_0);
+		esvg_svg_width_set(t, &width);
+	}
+	else if (strcmp(key, "height") == 0)
+	{
+		Esvg_Length height;
+
+		esvg_length_get(&height, value, ESVG_LENGTH_0);
+		esvg_svg_height_set(t, &height);
+	}
+	else if (strcmp(key, "viewBox") == 0)
+	{
+		Esvg_View_Box vb = esvg_view_box_get(value);
+		esvg_svg_viewbox_set(t, &vb);
+	}
+
+	return EINA_TRUE;
+}
+
+static const char * _parser_svg_attribute_get(Edom_Tag *tag, const char *attribute)
+{
+	return NULL;
+}
+
+static const char * _parser_svg_name_get(Edom_Tag *tag)
+{
+	return "svg";
+}
+
+static Eina_Bool _parser_svg_child_add(Edom_Tag *tag, Edom_Tag *child)
+{
+	Enesim_Renderer *r = NULL;
+	Esvg_Svg *thiz;
+	int tag_id;
+
+	thiz = _esvg_svg_get(tag);
+	tag_id = edom_tag_type_get(child);
+	switch (tag_id)
+	{
+		case ESVG_USE:
+		case ESVG_SVG:
+		case ESVG_CIRCLE:
+		case ESVG_ELLIPSE:
+		case ESVG_RECT:
+		case ESVG_LINE:
+		case ESVG_PATH:
+		case ESVG_POLYLINE:
+		case ESVG_POLYGON:
+		case ESVG_TEXT:
+		case ESVG_G:
+		case ESVG_IMAGE:
+		r = esvg_parser_element_renderer_get(child);
+
+		default:
+		break;
+	}
+	if (r)
+		esvg_container_element_add(thiz->r, r);
+	esvg_parser_svg_tag_add(tag, child);
+
+	return EINA_TRUE;
+}
+
 static const char * _esvg_svg_name_get(Enesim_Renderer *r)
 {
 	return "esvg_svg";
@@ -153,20 +256,73 @@ static void _esvg_svg_clone(Enesim_Renderer *r, Enesim_Renderer *dr)
 
 }
 
-static Esvg_Container_Descriptor _descriptor = {
-	/* .element_add	= */ _esvg_svg_element_add,
-	/* .element_remove	= */ _esvg_svg_element_remove,
-	/* .element_at		= */ _esvg_svg_element_at,
-	/* .name_get		= */ _esvg_svg_name_get,
-	/* .renderer_get	= */ _esvg_svg_renderer_get,
+static Esvg_Renderable_Descriptor _descriptor = {
+	/* .name_get 		= */ _parser_svg_name_get,
+	/* .child_add		= */ _parser_svg_child_add,
+	/* .child_remove	= */ NULL,
+	/* .attribute_set 	= */ _parser_svg_attribute_set,
+	/* .attribute_get 	= */ _parser_svg_attribute_get,
+	/* .cdata_set 		= */ NULL,
+	/* .text_set 		= */ NULL,
+	/* .free 		= */ _esvg_svg_free,
 	/* .clone		= */ _esvg_svg_clone,
 	/* .setup		= */ _esvg_svg_setup,
-	/* .cleanup		= */ NULL,
-	/* .is_renderable	= */ EINA_TRUE,
+	/* .renderer_get	= */ _esvg_svg_renderer_get,
 };
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
+void esvg_parser_svg_style_add(Edom_Tag *tag, Esvg_Parser_Style *s)
+{
+	Esvg_Svg *thiz;
+
+	thiz = _esvg_svg_get(tag);
+	thiz->styles = eina_list_append(thiz->styles, s);
+}
+
+void esvg_parser_svg_style_apply(Edom_Tag *tag)
+{
+	Esvg_Svg *thiz;
+	Esvg_Parser_Style *s;
+	Eina_List *l;
+
+	/* FIXME  we are iterating over every style and going through the
+	 * tag tree on ecss, we better merge the styles to only parse the tree
+	 * once
+	 */
+	thiz = _esvg_svg_get(tag);
+	EINA_LIST_FOREACH(thiz->styles, l, s)
+	{
+		printf("applying style %p\n", s);
+		esvg_parser_style_apply(s, thiz->tag);
+	}
+}
+
+void esvg_parser_svg_svg_add(Edom_Tag *tag, Edom_Tag *svg)
+{
+
+}
+
+Edom_Tag * esvg_parser_svg_tag_find(Edom_Tag *tag, const char *id)
+{
+	Esvg_Svg *thiz;
+
+	thiz = _esvg_svg_get(tag);
+	return eina_hash_find(thiz->ids, id);
+}
+
+void esvg_parser_svg_tag_add(Edom_Tag *tag, Edom_Tag *child_tag)
+{
+	Esvg_Svg *thiz;
+	const char *id;
+
+	thiz = _esvg_svg_get(tag);
+	id = edom_tag_id_get(child_tag);
+	if (id)
+	{
+		eina_hash_add(thiz->ids, id, child_tag);
+	}
+}
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/
@@ -182,6 +338,7 @@ EAPI Enesim_Renderer * esvg_svg_new(void)
 	r = enesim_renderer_compound_new();
 	enesim_renderer_rop_set(r, ENESIM_BLEND);
 	thiz->r = r;
+	thiz->ids = eina_hash_string_superfast_new(NULL);
 
 	/* Default values */
 	thiz->version = 1.0;
@@ -192,76 +349,76 @@ EAPI Enesim_Renderer * esvg_svg_new(void)
 
 	/* no default value for the view_box */
 
-	r = esvg_container_new(&_descriptor, thiz);
+	r = esvg_renderable_new(&_descriptor, thiz);
 	return r;
 }
 
-EAPI Eina_Bool esvg_is_svg(Enesim_Renderer *r)
+EAPI Eina_Bool esvg_is_svg(Edom_Tag *t)
 {
 	Esvg_Svg *thiz;
 	Eina_Bool ret;
 
-	if (!esvg_is_container(r))
+	if (!esvg_is_container(t))
 		return EINA_FALSE;
-	thiz = esvg_container_data_get(r);
+	thiz = esvg_container_data_get(t);
 	ret = EINA_MAGIC_CHECK(thiz, ESVG_SVG_MAGIC);
 
 	return ret;
 }
 
-EAPI void esvg_svg_version_set(Enesim_Renderer *r, double version)
+EAPI void esvg_svg_version_set(Edom_Tag *t, double version)
 {
 	Esvg_Svg *thiz;
 
-	thiz = _esvg_svg_get(r);
+	thiz = _esvg_svg_get(t);
 	thiz->version = version;
 }
 
-EAPI void esvg_svg_version_get(Enesim_Renderer *r, double *version)
+EAPI void esvg_svg_version_get(Edom_Tag *t, double *version)
 {
 	Esvg_Svg *thiz;
 
-	thiz = _esvg_svg_get(r);
+	thiz = _esvg_svg_get(t);
 	if (version) *version = thiz->version;
 }
 
-EAPI void esvg_svg_x_set(Enesim_Renderer *r, Esvg_Coord *x)
+EAPI void esvg_svg_x_set(Edom_Tag *t, Esvg_Coord *x)
 {
 	Esvg_Svg *thiz;
 
-	thiz = _esvg_svg_get(r);
+	thiz = _esvg_svg_get(t);
 	thiz->x = *x;
 }
 
-EAPI void esvg_svg_y_set(Enesim_Renderer *r, Esvg_Coord *y)
+EAPI void esvg_svg_y_set(Edom_Tag *t, Esvg_Coord *y)
 {
 	Esvg_Svg *thiz;
 
-	thiz = _esvg_svg_get(r);
+	thiz = _esvg_svg_get(t);
 	thiz->y = *y;
 }
 
-EAPI void esvg_svg_width_set(Enesim_Renderer *r, Esvg_Length *width)
+EAPI void esvg_svg_width_set(Edom_Tag *t, Esvg_Length *width)
 {
 	Esvg_Svg *thiz;
 
-	thiz = _esvg_svg_get(r);
+	thiz = _esvg_svg_get(t);
 	thiz->width = *width;
 }
 
-EAPI void esvg_svg_height_set(Enesim_Renderer *r, Esvg_Length *height)
+EAPI void esvg_svg_height_set(Edom_Tag *t, Esvg_Length *height)
 {
 	Esvg_Svg *thiz;
 
-	thiz = _esvg_svg_get(r);
+	thiz = _esvg_svg_get(t);
 	thiz->height = *height;
 }
 
-EAPI void esvg_svg_viewbox_set(Enesim_Renderer *r, Esvg_View_Box *vb)
+EAPI void esvg_svg_viewbox_set(Edom_Tag *t, Esvg_View_Box *vb)
 {
 	Esvg_Svg *thiz;
 
-	thiz = _esvg_svg_get(r);
+	thiz = _esvg_svg_get(t);
 	if (!vb)
 	{
 		thiz->view_box_set = EINA_FALSE;
@@ -279,26 +436,26 @@ EAPI void esvg_svg_viewbox_set(Enesim_Renderer *r, Esvg_View_Box *vb)
  * to know the real size of the svg, this way we'll know on the upper libraries
  * the preferred area
  */
-EAPI void esvg_svg_actual_width_get(Enesim_Renderer *r, double *actual_width)
+EAPI void esvg_svg_actual_width_get(Edom_Tag *t, double *actual_width)
 {
 	Esvg_Svg *thiz;
 	double aw;
 	double cw;
 
-	thiz = _esvg_svg_get(r);
-	esvg_element_container_width_get(r, &cw);
+	thiz = _esvg_svg_get(t);
+	esvg_element_container_width_get(t, &cw);
 	aw = esvg_length_final_get(&thiz->width, cw);
 	*actual_width = aw;
 }
 
-EAPI void esvg_svg_actual_height_get(Enesim_Renderer *r, double *actual_height)
+EAPI void esvg_svg_actual_height_get(Edom_Tag *t, double *actual_height)
 {
 	Esvg_Svg *thiz;
 	double ah;
 	double ch;
 
-	thiz = _esvg_svg_get(r);
-	esvg_element_container_height_get(r, &ch);
+	thiz = _esvg_svg_get(t);
+	esvg_element_container_height_get(t, &ch);
 	ah = esvg_length_final_get(&thiz->height, ch);
 	*actual_height = ah;
 }

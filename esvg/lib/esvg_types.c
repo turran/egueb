@@ -38,6 +38,63 @@
 	ESVG_SPACE_SKIP(t); \
 	if (*t == ',') t++; \
 	ESVG_SPACE_SKIP(t);
+/*----------------------------------------------------------------------------*
+ *                               Generic helpers                              *
+ *----------------------------------------------------------------------------*/
+/* parse a string of type funcname(a, b, .... numelements)
+ * in, out numelements
+ * in attr_val
+ * out endptr
+ * out elements
+ */
+static Eina_Bool _esvg_function_get(const char *attr_val, const char **endptr,
+		const char *funcname, int *numelements, double *elements)
+{
+	int nvalues = 0;
+	const char *tmp = attr_val;
+	char *end;
+	size_t sz;
+
+	sz = strlen(funcname);
+	ESVG_SPACE_SKIP(tmp);
+	if (strncmp(tmp, funcname, sz) != 0)
+		return EINA_FALSE;
+	tmp += sz;
+	ESVG_SPACE_SKIP(tmp);
+	if (tmp[0] != '(')
+		return EINA_FALSE;
+	tmp++;
+	while (*tmp)
+	{
+		double val;
+
+		ESVG_SPACE_SKIP(tmp);
+		if (tmp[0] == ')')
+			goto end;
+		val = strtod(tmp, &end);
+		if (errno == ERANGE)
+			val = 0;
+		if (end == tmp)
+			break;
+		tmp = end;
+		elements[nvalues] = val;
+		nvalues++;
+		/* if we passed the limit, break */
+		if (nvalues >= *numelements)
+			break;
+		/* skip the comma and the blanks */
+		ESVG_SPACE_COMMA_SKIP(tmp);
+	}
+
+	if (tmp[0] != ')')
+		return EINA_FALSE;
+end:
+	tmp++;
+	*numelements = nvalues;
+	*endptr = tmp;
+
+	return EINA_TRUE;
+}
 
 static Eina_Bool _esvg_long_get(const char *iter, const char **tmp, long *l)
 {
@@ -86,6 +143,24 @@ static unsigned char _esvg_cc_to_hh(const char *cc)
 	return h2 | ((h1 << 4) & 240);
 }
 
+static const char * _id_get(const char *uri)
+{
+	const char *tmp;
+	const char *id;
+
+	/* TODO split the uri, for local or relative */
+	/* TODO get the id (#ElementId) */
+	/* only check on the ids */
+	for (tmp = uri; *tmp && *tmp != '#'; tmp++)
+
+	if (*tmp != '#') return NULL;
+	id = tmp + 1;
+
+	return id;
+}
+/*----------------------------------------------------------------------------*
+ *                           Color related functions                          *
+ *----------------------------------------------------------------------------*/
 Eina_Bool _esvg_color_keyword_from(Esvg_Color *color, const char *attr_val)
 {
 	static Eina_Hash *_colors = NULL;
@@ -270,61 +345,9 @@ Eina_Bool _esvg_color_keyword_from(Esvg_Color *color, const char *attr_val)
 	return EINA_TRUE;
 }
 
-/* parse a string of type funcname(a, b, .... numelements)
- * in, out numelements
- * in attr_val
- * out endptr
- * out elements
- */
-static Eina_Bool _esvg_function_get(const char *attr_val, const char **endptr, const char *funcname, int *numelements, double *elements)
-{
-	int nvalues = 0;
-	const char *tmp = attr_val;
-	char *end;
-	size_t sz;
-
-	sz = strlen(funcname);
-	ESVG_SPACE_SKIP(tmp);
-	if (strncmp(tmp, funcname, sz) != 0)
-		return EINA_FALSE;
-	tmp += sz;
-	ESVG_SPACE_SKIP(tmp);
-	if (tmp[0] != '(')
-		return EINA_FALSE;
-	tmp++;
-	while (*tmp)
-	{
-		double val;
-
-		ESVG_SPACE_SKIP(tmp);
-		if (tmp[0] == ')')
-			goto end;
-		val = strtod(tmp, &end);
-		if (errno == ERANGE)
-			val = 0;
-		if (end == tmp)
-			break;
-		tmp = end;
-		elements[nvalues] = val;
-		nvalues++;
-		/* if we passed the limit, break */
-		if (nvalues >= *numelements)
-			break;
-		/* skip the comma and the blanks */
-		ESVG_SPACE_COMMA_SKIP(tmp);
-	}
-
-	if (tmp[0] != ')')
-		return EINA_FALSE;
-end:
-	tmp++;
-	*numelements = nvalues;
-	*endptr = tmp;
-
-	return EINA_TRUE;
-}
-
-
+/*----------------------------------------------------------------------------*
+ *                     Transformation related functions                       *
+ *----------------------------------------------------------------------------*/
 static Eina_Bool _esvg_transformation_matrix_get(Enesim_Matrix *matrix, const char *attr_val, const char **endptr)
 {
 	int numelements = 6;
@@ -427,6 +450,9 @@ static Eina_Bool _esvg_transformation_rotate_get(Enesim_Matrix *matrix, const ch
 	return EINA_TRUE;
 }
 
+/*----------------------------------------------------------------------------*
+ *                           Path related functions                           *
+ *----------------------------------------------------------------------------*/
 static Eina_Bool _esvg_path_number_get(char **attr, double *x)
 {
 	char *iter;
@@ -482,6 +508,337 @@ static Eina_Bool _esvg_path_point_get(char **attr, Esvg_Point *p)
 
 	return EINA_TRUE;
 }
+
+static Eina_Bool esvg_parser_path_line_to(Eina_Bool relative,
+		char **value, Esvg_Path_Command *cmd)
+{
+	Esvg_Point p;
+
+	if (!_esvg_path_point_get(value, &p))
+	{
+		ERR("Can not get point");
+		return EINA_FALSE;
+	}
+	
+	cmd->type = ESVG_PATH_LINE_TO;
+	cmd->relative = relative;
+	cmd->data.line_to.x = p.x;
+	cmd->data.line_to.y = p.y;
+
+	return EINA_TRUE;
+}
+
+static Eina_Bool esvg_parser_path_move_to(Eina_Bool relative,
+		char **value, Esvg_Path_Command *cmd)
+{
+	Esvg_Point p;
+
+	if (!_esvg_path_point_get(value, &p))
+	{
+		ERR("Can not get point");
+		return EINA_FALSE;
+	}
+	cmd->type = ESVG_PATH_MOVE_TO;
+	cmd->relative = relative;
+	cmd->data.move_to.x = p.x;
+	cmd->data.move_to.y = p.y;
+
+	return EINA_TRUE;
+}
+
+static Eina_Bool esvg_parser_path_hline_to(Eina_Bool relative,
+		char **value, Esvg_Path_Command *cmd)
+{
+	double c;
+
+	if (!_esvg_path_number_get(value, &c))
+	{
+		ERR("Can not get coord");
+		return EINA_FALSE;
+	}
+	cmd->type = ESVG_PATH_HLINE_TO;
+	cmd->relative = relative;
+	cmd->data.hline_to.c = c;
+
+	return EINA_TRUE;
+}
+
+static Eina_Bool esvg_parser_path_vline_to(Eina_Bool relative,
+		char **value, Esvg_Path_Command *cmd)
+{
+	double c;
+
+	if (!_esvg_path_number_get(value, &c))
+	{
+		ERR("Can not get coord");
+		return EINA_FALSE;
+	}
+	cmd->type = ESVG_PATH_VLINE_TO;
+	cmd->relative = relative;
+	cmd->data.hline_to.c = c;
+
+	return EINA_TRUE;
+}
+
+static Eina_Bool esvg_parser_path_cubic_to(Eina_Bool relative,
+		char **value, Esvg_Path_Command *cmd)
+{
+	Esvg_Point ctrl0, ctrl1, p;
+
+	if (!_esvg_path_point_get(value, &ctrl0))
+	{
+		ERR("Can not get control point %s", *value);
+		return EINA_FALSE;
+	}
+
+	if (!_esvg_path_point_get(value, &ctrl1))
+	{
+		ERR("Can not get control point");
+		return EINA_FALSE;
+	}
+
+	if (!_esvg_path_point_get(value, &p))
+	{
+		ERR("Can not get point");
+		return EINA_FALSE;
+	}
+
+	cmd->type = ESVG_PATH_CUBIC_TO;
+	cmd->relative = relative;
+	cmd->data.cubic_to.ctrl_x0 = ctrl0.x;
+	cmd->data.cubic_to.ctrl_y0 = ctrl0.y;
+	cmd->data.cubic_to.ctrl_x1 = ctrl1.x;
+	cmd->data.cubic_to.ctrl_y1 = ctrl1.y;
+	cmd->data.cubic_to.x = p.x;
+	cmd->data.cubic_to.y = p.y;
+
+	return EINA_TRUE;
+}
+
+static Eina_Bool esvg_parser_path_scubic_to(Eina_Bool relative,
+		char **value, Esvg_Path_Command *cmd)
+{
+	Esvg_Point ctrl, p;
+
+	if (!_esvg_path_point_get(value, &ctrl))
+	{
+		ERR("Can not get control point");
+		return EINA_FALSE;
+	}
+
+	if (!_esvg_path_point_get(value, &p))
+	{
+		ERR("Can not get point");
+		return EINA_FALSE;
+	}
+
+	cmd->type = ESVG_PATH_SCUBIC_TO;
+	cmd->relative = relative;
+	cmd->data.scubic_to.ctrl_x = ctrl.x;
+	cmd->data.scubic_to.ctrl_y = ctrl.y;
+	cmd->data.scubic_to.x = p.x;
+	cmd->data.scubic_to.y = p.y;
+
+	return EINA_TRUE;
+}
+
+static Eina_Bool esvg_parser_path_quadratic_to(	Eina_Bool relative,
+		char **value, Esvg_Path_Command *cmd)
+{
+	Esvg_Point ctrl, p;
+
+	if (!_esvg_path_point_get(value, &ctrl))
+	{
+		ERR("Can not get control point");
+		return EINA_FALSE;
+	}
+
+	if (!_esvg_path_point_get(value, &p))
+	{
+		ERR("Can not get point");
+		return EINA_FALSE;
+	}
+
+	cmd->type = ESVG_PATH_QUADRATIC_TO;
+	cmd->relative = relative;
+	cmd->data.quadratic_to.ctrl_x = ctrl.x;
+	cmd->data.quadratic_to.ctrl_y = ctrl.y;
+	cmd->data.quadratic_to.x = p.x;
+	cmd->data.quadratic_to.y = p.y;
+
+	return EINA_TRUE;
+
+}
+
+static Eina_Bool esvg_parser_path_squadratic_to(Eina_Bool relative,
+		char **value, Esvg_Path_Command *cmd)
+{
+	Esvg_Point p;
+
+	if (!_esvg_path_point_get(value, &p))
+	{
+		ERR("Can not get point");
+		return EINA_FALSE;
+	}
+	cmd->type = ESVG_PATH_SQUADRATIC_TO;
+	cmd->relative = relative;
+	cmd->data.squadratic_to.x = p.x;
+	cmd->data.squadratic_to.y = p.y;
+
+	return EINA_TRUE;
+}
+
+static Eina_Bool esvg_parser_path_arc_to(Eina_Bool relative,
+		char **value, Esvg_Path_Command *cmd)
+{
+	Esvg_Point p, radii;
+	Eina_Bool large, sweep;
+	double angle;
+
+	if (!_esvg_path_point_get(value, &radii))
+	{
+		ERR("can not get radii");
+		return EINA_FALSE;
+	}
+
+	if (!_esvg_path_number_get(value, &angle))
+	{
+		ERR("can not convert number");
+		return EINA_FALSE;
+	}
+
+	if (!_esvg_path_flag_get(value, &large))
+	{
+		ERR("can not convert the large flag");
+		return EINA_FALSE;
+	}
+
+	if (!_esvg_path_flag_get(value, &sweep))
+	{
+		ERR("can not convert the sweep flag");
+		return EINA_FALSE;
+	}
+
+	if (!_esvg_path_point_get(value, &p))
+	{
+		ERR("Can not get point");
+		return EINA_FALSE;
+	}
+
+	cmd->type = ESVG_PATH_ARC_TO;
+	cmd->relative = relative;
+	cmd->data.arc_to.rx = radii.x;
+	cmd->data.arc_to.ry = radii.y;
+	cmd->data.arc_to.angle = angle;
+	cmd->data.arc_to.large = large;
+	cmd->data.arc_to.sweep = sweep;
+	cmd->data.arc_to.x = p.x;
+	cmd->data.arc_to.y = p.y;
+
+	return EINA_TRUE;
+}
+
+static Eina_Bool esvg_parser_path_close(char **value,
+		Esvg_Path_Command *cmd)
+{
+	cmd->type = ESVG_PATH_CLOSE;
+	cmd->relative = EINA_FALSE;
+
+	return EINA_TRUE;
+}
+
+static Eina_Bool esvg_parser_command(char command, char **value,
+		Esvg_Path_Command *cmd)
+{
+	Eina_Bool ret = EINA_TRUE;
+
+	switch (command)
+	{
+		case 'L':
+		ret = esvg_parser_path_line_to(EINA_FALSE, value, cmd);
+		break;
+
+		case 'l':
+		ret = esvg_parser_path_line_to(EINA_TRUE, value, cmd);
+		break;
+
+		case 'M':
+		ret = esvg_parser_path_move_to(EINA_FALSE, value, cmd);
+		break;
+
+		case 'm':
+		ret = esvg_parser_path_move_to(EINA_TRUE, value, cmd);
+		break;
+
+		case 'H':
+		ret = esvg_parser_path_hline_to(EINA_FALSE, value, cmd);
+		break;
+
+		case 'h':
+		ret = esvg_parser_path_hline_to(EINA_TRUE, value, cmd);
+		break;
+
+		case 'V':
+		ret = esvg_parser_path_vline_to(EINA_FALSE, value, cmd);
+		break;
+
+		case 'v':
+		ret = esvg_parser_path_vline_to(EINA_TRUE, value, cmd);
+		break;
+
+		case 'C':
+		ret = esvg_parser_path_cubic_to(EINA_FALSE, value, cmd);
+		break;
+
+		case 'c':
+		ret = esvg_parser_path_cubic_to(EINA_TRUE, value, cmd);
+		break;
+
+		case 'S':
+		ret = esvg_parser_path_scubic_to(EINA_FALSE, value, cmd);
+		break;
+
+		case 's':
+		ret = esvg_parser_path_scubic_to(EINA_TRUE, value, cmd);
+		break;
+
+		case 'Q':
+		ret = esvg_parser_path_quadratic_to(EINA_FALSE, value, cmd);
+		break;
+
+		case 'q':
+		ret = esvg_parser_path_quadratic_to(EINA_TRUE, value, cmd);
+		break;
+
+		case 'T':
+		ret = esvg_parser_path_squadratic_to(EINA_FALSE, value, cmd);
+		break;
+
+		case 't':
+		ret = esvg_parser_path_squadratic_to(EINA_TRUE, value, cmd);
+		break;
+
+		case 'A':
+		ret = esvg_parser_path_arc_to(EINA_FALSE, value, cmd);
+		break;
+
+		case 'a':
+		ret = esvg_parser_path_arc_to(EINA_TRUE, value, cmd);
+		break;
+
+		case 'z':
+		case 'Z':
+		ret = esvg_parser_path_close(value, cmd);
+		break;
+
+		default:
+		ret = EINA_FALSE;
+		break;
+	}
+	return ret;
+}
+
+
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
@@ -823,22 +1180,6 @@ Eina_Bool esvg_color_get(Esvg_Color *color, const char *attr_val)
 	}
 }
 
-static const char * _id_get(const char *uri)
-{
-	const char *tmp;
-	const char *id;
-
-	/* TODO split the uri, for local or relative */
-	/* TODO get the id (#ElementId) */
-	/* only check on the ids */
-	for (tmp = uri; *tmp && *tmp != '#'; tmp++)
-
-	if (*tmp != '#') return NULL;
-	id = tmp + 1;
-
-	return id;
-}
-
 Eina_Bool esvg_href_get(Edom_Tag **tag, Edom_Tag *rel, const char *href)
 {
 	Edom_Tag *topmost;
@@ -853,6 +1194,8 @@ Eina_Bool esvg_href_get(Edom_Tag **tag, Edom_Tag *rel, const char *href)
 	}
 
 	id = _id_get(href);
+#if 0
+	/* FIXME pass a cb to get the object? */
 	/* get the tag from the specified uri */
 	ret_tag = esvg_parser_svg_tag_find(topmost, id);
 	if (!ret_tag)
@@ -861,6 +1204,7 @@ Eina_Bool esvg_href_get(Edom_Tag **tag, Edom_Tag *rel, const char *href)
 		return EINA_FALSE;
 	}
 	*tag = ret_tag;
+#endif
 
 	return EINA_TRUE;
 }
@@ -915,6 +1259,8 @@ Eina_Bool esvg_paint_get(Esvg_Paint *paint, Edom_Tag *tag, const char *attr)
 	/* uri */
 	else if (esvg_uri_get(&found_tag, tag, attr))
 	{
+		/* FIXME pass a callback to get the id? */
+#if 0
 		Enesim_Renderer *r;
 
 		r = esvg_parser_element_renderer_get(found_tag);
@@ -923,6 +1269,7 @@ Eina_Bool esvg_paint_get(Esvg_Paint *paint, Edom_Tag *tag, const char *attr)
 		/* FIXME in case the paint server has some pointer we should
 		 * be able to re create it from a new one? */
 		paint->value.paint_server = r;
+#endif
 	}
 	else
 	{
@@ -1025,365 +1372,14 @@ Eina_Bool esvg_transformation_get(Enesim_Matrix *matrix, const char *attr)
 	return ret;
 }
 
-static Eina_Bool esvg_parser_path_line_to(Enesim_Renderer *r,
-		Eina_Bool relative,
-		char **value)
-{
-	Esvg_Path_Command cmd;
-	Esvg_Point p;
-
-	if (!_esvg_path_point_get(value, &p))
-	{
-		ERR("Can not get point");
-		return EINA_FALSE;
-	}
-	
-	cmd.type = ESVG_PATH_LINE_TO;
-	cmd.relative = relative;
-	cmd.data.line_to.x = p.x;
-	cmd.data.line_to.y = p.y;
-	esvg_path_command_add(r, &cmd);
-	return EINA_TRUE;
-}
-
-static Eina_Bool esvg_parser_path_move_to(Enesim_Renderer *r,
-		Eina_Bool relative,
-		char **value)
-{
-	Esvg_Path_Command cmd;
-	Esvg_Point p;
-
-	if (!_esvg_path_point_get(value, &p))
-	{
-		ERR("Can not get point");
-		return EINA_FALSE;
-	}
-	cmd.type = ESVG_PATH_MOVE_TO;
-	cmd.relative = relative;
-	cmd.data.move_to.x = p.x;
-	cmd.data.move_to.y = p.y;
-	esvg_path_command_add(r, &cmd);
-	return EINA_TRUE;
-}
-
-static Eina_Bool esvg_parser_path_hline_to(Enesim_Renderer *r,
-		Eina_Bool relative,
-		char **value)
-{
-	Esvg_Path_Command cmd;
-	double c;
-
-	if (!_esvg_path_number_get(value, &c))
-	{
-		ERR("Can not get coord");
-		return EINA_FALSE;
-	}
-	cmd.type = ESVG_PATH_HLINE_TO;
-	cmd.relative = relative;
-	cmd.data.hline_to.c = c;
-	esvg_path_command_add(r, &cmd);
-	return EINA_TRUE;
-}
-
-static Eina_Bool esvg_parser_path_vline_to(Enesim_Renderer *r,
-		Eina_Bool relative,
-		char **value)
-{
-	Esvg_Path_Command cmd;
-	double c;
-
-	if (!_esvg_path_number_get(value, &c))
-	{
-		ERR("Can not get coord");
-		return EINA_FALSE;
-	}
-	cmd.type = ESVG_PATH_VLINE_TO;
-	cmd.relative = relative;
-	cmd.data.hline_to.c = c;
-	esvg_path_command_add(r, &cmd);
-	return EINA_TRUE;
-}
-
-static Eina_Bool esvg_parser_path_cubic_to(Enesim_Renderer *r,
-		Eina_Bool relative,
-		char **value)
-{
-	Esvg_Path_Command cmd;
-	Esvg_Point ctrl0, ctrl1, p;
-
-	if (!_esvg_path_point_get(value, &ctrl0))
-	{
-		ERR("Can not get control point %s", *value);
-		return EINA_FALSE;
-	}
-
-	if (!_esvg_path_point_get(value, &ctrl1))
-	{
-		ERR("Can not get control point");
-		return EINA_FALSE;
-	}
-
-	if (!_esvg_path_point_get(value, &p))
-	{
-		ERR("Can not get point");
-		return EINA_FALSE;
-	}
-
-	cmd.type = ESVG_PATH_CUBIC_TO;
-	cmd.relative = relative;
-	cmd.data.cubic_to.ctrl_x0 = ctrl0.x;
-	cmd.data.cubic_to.ctrl_y0 = ctrl0.y;
-	cmd.data.cubic_to.ctrl_x1 = ctrl1.x;
-	cmd.data.cubic_to.ctrl_y1 = ctrl1.y;
-	cmd.data.cubic_to.x = p.x;
-	cmd.data.cubic_to.y = p.y;
-	esvg_path_command_add(r, &cmd);
-
-	return EINA_TRUE;
-}
-
-static Eina_Bool esvg_parser_path_scubic_to(Enesim_Renderer *r,
-		Eina_Bool relative,
-		char **value)
-{
-	Esvg_Path_Command cmd;
-	Esvg_Point ctrl, p;
-
-	if (!_esvg_path_point_get(value, &ctrl))
-	{
-		ERR("Can not get control point");
-		return EINA_FALSE;
-	}
-
-	if (!_esvg_path_point_get(value, &p))
-	{
-		ERR("Can not get point");
-		return EINA_FALSE;
-	}
-
-	cmd.type = ESVG_PATH_SCUBIC_TO;
-	cmd.relative = relative;
-	cmd.data.scubic_to.ctrl_x = ctrl.x;
-	cmd.data.scubic_to.ctrl_y = ctrl.y;
-	cmd.data.scubic_to.x = p.x;
-	cmd.data.scubic_to.y = p.y;
-	esvg_path_command_add(r, &cmd);
-
-	return EINA_TRUE;
-}
-
-static Eina_Bool esvg_parser_path_quadratic_to(Enesim_Renderer *r,
-		Eina_Bool relative,
-		char **value)
-{
-	Esvg_Path_Command cmd;
-	Esvg_Point ctrl, p;
-
-	if (!_esvg_path_point_get(value, &ctrl))
-	{
-		ERR("Can not get control point");
-		return EINA_FALSE;
-	}
-
-	if (!_esvg_path_point_get(value, &p))
-	{
-		ERR("Can not get point");
-		return EINA_FALSE;
-	}
-
-	cmd.type = ESVG_PATH_QUADRATIC_TO;
-	cmd.relative = relative;
-	cmd.data.quadratic_to.ctrl_x = ctrl.x;
-	cmd.data.quadratic_to.ctrl_y = ctrl.y;
-	cmd.data.quadratic_to.x = p.x;
-	cmd.data.quadratic_to.y = p.y;
-	esvg_path_command_add(r, &cmd);
-
-	return EINA_TRUE;
-
-}
-
-static Eina_Bool esvg_parser_path_squadratic_to(Enesim_Renderer *r,
-		Eina_Bool relative,
-		char **value)
-{
-	Esvg_Path_Command cmd;
-	Esvg_Point p;
-
-	if (!_esvg_path_point_get(value, &p))
-	{
-		ERR("Can not get point");
-		return EINA_FALSE;
-	}
-	cmd.type = ESVG_PATH_SQUADRATIC_TO;
-	cmd.relative = relative;
-	cmd.data.squadratic_to.x = p.x;
-	cmd.data.squadratic_to.y = p.y;
-	esvg_path_command_add(r, &cmd);
-	return EINA_TRUE;
-
-}
-
-static Eina_Bool esvg_parser_path_arc_to(Enesim_Renderer *r,
-		Eina_Bool relative,
-		char **value)
-{
-	Esvg_Path_Command cmd;
-	Esvg_Point p, radii;
-	Eina_Bool large, sweep;
-	double angle;
-
-	if (!_esvg_path_point_get(value, &radii))
-	{
-		ERR("can not get radii");
-		return EINA_FALSE;
-	}
-
-	if (!_esvg_path_number_get(value, &angle))
-	{
-		ERR("can not convert number");
-		return EINA_FALSE;
-	}
-
-	if (!_esvg_path_flag_get(value, &large))
-	{
-		ERR("can not convert the large flag");
-		return EINA_FALSE;
-	}
-
-	if (!_esvg_path_flag_get(value, &sweep))
-	{
-		ERR("can not convert the sweep flag");
-		return EINA_FALSE;
-	}
-
-	if (!_esvg_path_point_get(value, &p))
-	{
-		ERR("Can not get point");
-		return EINA_FALSE;
-	}
-
-	cmd.type = ESVG_PATH_ARC_TO;
-	cmd.relative = relative;
-	cmd.data.arc_to.rx = radii.x;
-	cmd.data.arc_to.ry = radii.y;
-	cmd.data.arc_to.angle = angle;
-	cmd.data.arc_to.large = large;
-	cmd.data.arc_to.sweep = sweep;
-	cmd.data.arc_to.x = p.x;
-	cmd.data.arc_to.y = p.y;
-	esvg_path_command_add(r, &cmd);
-
-	return EINA_TRUE;
-}
-
-static Eina_Bool esvg_parser_path_close(Enesim_Renderer *r,
-		char **value)
-{
-	Esvg_Path_Command cmd;
-
-	cmd.type = ESVG_PATH_CLOSE;
-	cmd.relative = EINA_FALSE;
-	esvg_path_command_add(r, &cmd);
-	return EINA_TRUE;
-}
-
-Eina_Bool esvg_parser_command(Enesim_Renderer *r, char command, char **value)
-{
-	Eina_Bool ret = EINA_TRUE;
-
-	switch (command)
-	{
-		case 'L':
-		ret = esvg_parser_path_line_to(r, EINA_FALSE, value);
-		break;
-
-		case 'l':
-		ret = esvg_parser_path_line_to(r, EINA_TRUE, value);
-		break;
-
-		case 'M':
-		ret = esvg_parser_path_move_to(r, EINA_FALSE, value);
-		break;
-
-		case 'm':
-		ret = esvg_parser_path_move_to(r, EINA_TRUE, value);
-		break;
-
-		case 'H':
-		ret = esvg_parser_path_hline_to(r, EINA_FALSE, value);
-		break;
-
-		case 'h':
-		ret = esvg_parser_path_hline_to(r, EINA_TRUE, value);
-		break;
-
-		case 'V':
-		ret = esvg_parser_path_vline_to(r, EINA_FALSE, value);
-		break;
-
-		case 'v':
-		ret = esvg_parser_path_vline_to(r, EINA_TRUE, value);
-		break;
-
-		case 'C':
-		ret = esvg_parser_path_cubic_to(r, EINA_FALSE, value);
-		break;
-
-		case 'c':
-		ret = esvg_parser_path_cubic_to(r, EINA_TRUE, value);
-		break;
-
-		case 'S':
-		ret = esvg_parser_path_scubic_to(r, EINA_FALSE, value);
-		break;
-
-		case 's':
-		ret = esvg_parser_path_scubic_to(r, EINA_TRUE, value);
-		break;
-
-		case 'Q':
-		ret = esvg_parser_path_quadratic_to(r, EINA_FALSE, value);
-		break;
-
-		case 'q':
-		ret = esvg_parser_path_quadratic_to(r, EINA_TRUE, value);
-		break;
-
-		case 'T':
-		ret = esvg_parser_path_squadratic_to(r, EINA_FALSE, value);
-		break;
-
-		case 't':
-		ret = esvg_parser_path_squadratic_to(r, EINA_TRUE, value);
-		break;
-
-		case 'A':
-		ret = esvg_parser_path_arc_to(r, EINA_FALSE, value);
-		break;
-
-		case 'a':
-		ret = esvg_parser_path_arc_to(r, EINA_TRUE, value);
-		break;
-
-		case 'z':
-		case 'Z':
-		ret = esvg_parser_path_close(r, value);
-		break;
-
-		default:
-		ret = EINA_FALSE;
-		break;
-	}
-	return ret;
-}
-
-Eina_Bool esvg_parser_path(const char *value, Enesim_Renderer *r)
+Eina_Bool esvg_parser_path(const char *value, Esvg_Parser_Command_Cb cb, void *data)
 {
 	Eina_Bool ret = EINA_TRUE;
 	Eina_Bool first = EINA_TRUE;
 	char last_command = 0;
 	char *iter = (char *)value;
+
+	if (!cb) return EINA_FALSE;
 
 	ESVG_SPACE_SKIP(iter);
 	/* First char must be 'M' or 'm' */
@@ -1395,21 +1391,27 @@ Eina_Bool esvg_parser_path(const char *value, Enesim_Renderer *r)
 	}
 	while (*iter)
 	{
+		Esvg_Path_Command cmd;
 		char command;
 
  		command = *iter;
 		iter++;
-		ret = esvg_parser_command(r, command, &iter);
+		ret = esvg_parser_command(command, &iter, &cmd);
 		if (!ret)
 		{
 			/* try with the last command */
 			iter--;
-			ret = esvg_parser_command(r, last_command, &iter);
+			ret = esvg_parser_command(last_command, &iter, &cmd);
+			if (ret)
+			{
+				cb(&cmd, data);
+			}
 		}
 		else
 		{
 			/* everything went ok, update the last command */
 			last_command = command;
+			cb(&cmd, data);
 		}
 
 		if (!ret)

@@ -139,7 +139,7 @@ typedef struct _Esvg_Parser_Descriptor
 	Esvg_Parser_Href_Set href_set;
 } Esvg_Parser_Descriptor;
 
-EAPI Enesim_Renderer * esvg_parser_load(const char *filename, Esvg_Parser_Descriptor *descriptor, void *data);
+EAPI Edom_Tag * esvg_parser_load(const char *filename, Esvg_Parser_Descriptor *descriptor, void *data);
 
 #endif /*_ESVG_PARSER_H*/
 

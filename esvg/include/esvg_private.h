@@ -39,7 +39,7 @@
 
 /* all the possible magic numbers */
 #define ESVG_ELEMENT_MAGIC 0xe5500001
-#define ESVG_CONTAINER_MAGIC 0xe5500002
+#define ESVG_RENDERABLE_MAGIC 0xe5500002
 #define ESVG_SHAPE_MAGIC 0xe5500003
 #define ESVG_SVG_MAGIC 0xe5500004
 #define ESVG_G_MAGIC 0xe5500005
@@ -107,9 +107,9 @@ typedef struct _Esvg_Element_State {
 	Enesim_Matrix transform;
 	char *style;
 	char *id;
+	char *class;
 } Esvg_Element_State;
 
-typedef Enesim_Renderer * (*Esvg_Element_Renderer_Get)(Enesim_Renderer *, const Esvg_Element_State *state, const Esvg_Attribute_Presentation *attr);
 typedef Eina_Bool (*Esvg_Element_Setup)(Edom_Tag *t,
 		Esvg_Element_State *state,
 		Esvg_Attribute_Presentation *attr,
@@ -124,6 +124,7 @@ typedef struct _Esvg_Element_Descriptor {
 	Edom_Tag_Child_Add child_add;
 	Edom_Tag_Child_Remove child_remove;
 	Edom_Tag_Attribute_Set attribute_set;
+	Edom_Tag_Attribute_Get attribute_get;
 	Edom_Tag_Cdata_Set cdata_set;
 	Edom_Tag_Text_Set text_set;
 	Edom_Tag_Free free;
@@ -136,6 +137,31 @@ void * esvg_element_data_get(Edom_Tag *t);
 Edom_Tag * esvg_element_new(Esvg_Element_Descriptor *descriptor, void *data);
 Eina_Bool esvg_element_setup(Edom_Tag *t, const Esvg_Element_State *state, const Esvg_Attribute_Presentation *attr, Enesim_Surface *s, Enesim_Error **error);
 void esvg_element_state_compose(Edom_Tag *t, const Esvg_Element_State *s, Esvg_Element_State *d);
+
+/* renderable */
+typedef Enesim_Renderer * (*Esvg_Renderable_Renderer_Get)(Edom_Tag *t,
+		const Esvg_Element_State *state,
+		const Esvg_Attribute_Presentation *attr);
+
+typedef struct _Esvg_Renderable_Descriptor {
+	/* the tag interface */
+	Edom_Tag_Name_Get name_get;
+	Edom_Tag_Child_Add child_add;
+	Edom_Tag_Child_Remove child_remove;
+	Edom_Tag_Attribute_Set attribute_set;
+	Edom_Tag_Attribute_Get attribute_get;
+	Edom_Tag_Cdata_Set cdata_set;
+	Edom_Tag_Text_Set text_set;
+	Edom_Tag_Free free;
+	/* the element interface */
+	Esvg_Element_Clone clone;
+	Esvg_Element_Setup setup;
+	/* the renderable interface */
+	Esvg_Renderable_Renderer_Get renderer_get;
+} Esvg_Renderable_Descriptor;
+
+void * esvg_renderable_data_get(Edom_Tag *t);
+Edom_Tag * esvg_renderable_new(Esvg_Renderable_Descriptor *descriptor, void *data);
 
 /* shape */
 typedef struct _Esvg_Shape_Enesim_State {
@@ -176,26 +202,6 @@ typedef struct _Esvg_Shape_Descriptor {
 void * esvg_shape_data_get(Enesim_Renderer *r);
 Enesim_Renderer * esvg_shape_new(Esvg_Shape_Descriptor *descriptor, void *data);
 
-/* container */
-typedef Eina_Bool (*Esvg_Container_Element_Add)(Enesim_Renderer *r, Enesim_Renderer *child);
-typedef void (*Esvg_Container_Element_Remove)(Enesim_Renderer *r, Enesim_Renderer *child);
-typedef Enesim_Renderer * (*Esvg_Container_Element_At)(Enesim_Renderer *r, double x, double y);
-typedef struct _Esvg_Container_Descriptor {
-	/* the container interface */
-	Esvg_Container_Element_Add element_add;
-	Esvg_Container_Element_Remove element_remove;
-	Esvg_Container_Element_At element_at;
-	/* the element interface */
-	Enesim_Renderer_Name name_get;
-	Esvg_Element_Renderer_Get renderer_get;
-	Esvg_Element_Clone clone;
-	Esvg_Element_Setup setup;
-	Eina_Bool is_renderable;
-} Esvg_Container_Descriptor;
-
-void * esvg_container_data_get(Enesim_Renderer *r);
-Enesim_Renderer * esvg_container_new(Esvg_Container_Descriptor *descriptor, void *data);
-
 /* clip path */
 void esvg_clip_path_relative_set(Edom_Tag *e, Enesim_Renderer *rel, Enesim_Matrix *rel_m);
 
@@ -218,7 +224,7 @@ typedef struct _Evg_Paint_Server_Descriptor
 	Esvg_Paint_Server_Setup setup;
 	/* the element interface */
 	Enesim_Renderer_Name name_get;
-	Esvg_Element_Renderer_Get renderer_get;
+	Esvg_Renderable_Renderer_Get renderer_get;
 	Esvg_Element_Clone clone;
 } Esvg_Paint_Server_Descriptor;
 
@@ -244,7 +250,7 @@ typedef struct _Evg_Gradient_Descriptor
 	Esvg_Gradient_Setup setup;
 	/* the paint server interface */
 	Enesim_Renderer_Name name_get;
-	Esvg_Element_Renderer_Get renderer_get;
+	Esvg_Renderable_Renderer_Get renderer_get;
 	Esvg_Element_Clone clone;
 } Esvg_Gradient_Descriptor;
 

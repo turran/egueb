@@ -168,9 +168,11 @@ void esvg_attribute_presentation_clip_path_set(Esvg_Attribute_Presentation *thiz
 	}
 	else
 	{
+		/* FIXME fis this */
+#if 0
 		if (!esvg_is_clip_path(clip_path))
 			return;
-
+#endif
 		if (thiz->clip_path)
 			enesim_renderer_unref(thiz->clip_path);
 

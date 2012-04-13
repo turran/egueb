@@ -393,13 +393,13 @@ static Edom_Tag * _esvg_parser_tag_new(Edom_Parser *parser, int tag_id)
 		case ESVG_USE:
 		tag = esvg_parser_use_new(parser);
 		break;
-#endif
+
 		case ESVG_SVG:
 		tag = esvg_parser_svg_new(parser);
 		if (!thiz->topmost)
 			thiz->topmost = tag;
 		break;
-#if 0
+
 		case ESVG_CIRCLE:
 		tag = esvg_parser_circle_new(parser);
 		break;
@@ -502,10 +502,11 @@ static Edom_Tag * _esvg_parser_info_tag_new(Edom_Parser *parser, int tag_id)
 	{
 		printf("you need at least a topmost svg\n");
 	}
+#if 0
 	tag = esvg_parser_svg_new(parser);
 	if (!thiz->topmost)
 		thiz->topmost = tag;
-
+#endif
 	return tag;
 }
 
@@ -562,17 +563,13 @@ EAPI Eina_Bool esvg_parser_info_load(const char *filename,
 	thiz = calloc(1, sizeof(Esvg_Parser));
 	info_parser = edom_parser_new(&_info_descriptor, thiz);
 	tag = _esvg_parser_file_parse(filename, info_parser);
-	if (!tag) goto failed;
-
-	r = esvg_parser_element_renderer_get(tag);
-	if (!r) goto failed;
-
-	ret = EINA_TRUE;
-
-no_renderer:
-	enesim_renderer_unref(r);
-failed:
 	edom_parser_delete(info_parser);
+
+	if (tag)
+	{
+		//edom_tag_unref(tag);
+		ret = EINA_TRUE;
+	}
 
 	return ret;
 }
@@ -580,14 +577,13 @@ failed:
 /**
  *
  */
-EAPI Enesim_Renderer * esvg_parser_load(const char *filename,
+EAPI Edom_Tag * esvg_parser_load(const char *filename,
 		Esvg_Parser_Descriptor *descriptor, void *data)
 {
 	Esvg_Parser *thiz;
 	Esvg_Parser_Post_Data *pdata;
 	Edom_Parser *parser;
 	Edom_Tag *tag;
-	Enesim_Renderer *r = NULL;
 	Eina_List *l;
 
 	thiz = calloc(1, sizeof(Esvg_Parser));
@@ -600,8 +596,15 @@ EAPI Enesim_Renderer * esvg_parser_load(const char *filename,
 	if (!tag) goto parse_failed;
 
 	//edom_tag_dump(tag);
+	/* FIXME we should handle the style thing correctly
+	 * so far we were applying it once the document is loaded
+	 * this is fine, but what will happen whenever some style
+	 * is being modified *after* rendering?
+	 * we need to handle that case now that we start supporting
+	 * the whole tree on the lib
+	 */
 
-	esvg_parser_svg_style_apply(tag);
+	//esvg_parser_svg_style_apply(tag);
 	/* FIXME all the link property of the <use> tags
 	 * are created at parse time, in case we apply a style
 	 * for the linked element, it wont be propagated to
@@ -613,11 +616,10 @@ EAPI Enesim_Renderer * esvg_parser_load(const char *filename,
 		pdata->cb(parser, pdata->data);
 	}
 
-	r = esvg_parser_element_renderer_get(tag);
 parse_failed:
 	edom_parser_delete(parser);
 
-	return r;
+	return tag;
 }
 
 /**

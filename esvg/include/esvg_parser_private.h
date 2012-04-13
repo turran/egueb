@@ -168,7 +168,8 @@ void * esvg_parser_element_data_get(Edom_Tag *tag);
 typedef void (*Esvg_Parser_Points_Cb)(Esvg_Point *p, void *data);
 void esvg_parser_points(const char *value, Esvg_Parser_Points_Cb cb, void *data);
 
-Eina_Bool esvg_parser_path(const char *value, Enesim_Renderer *r);
+typedef void (*Esvg_Parser_Command_Cb)(Esvg_Path_Command *cmd, void *data);
+Eina_Bool esvg_parser_path(const char *value, Esvg_Parser_Command_Cb cb, void *data);
 
 Eina_Bool esvg_uri_get(Edom_Tag **tag, Edom_Tag *rel, const char *attr);
 Eina_Bool esvg_href_get(Edom_Tag **tag, Edom_Tag *rel, const char *href);

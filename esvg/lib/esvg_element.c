@@ -321,11 +321,13 @@ static Eina_Bool _esvg_element_attribute_set(Edom_Tag *t, const char *key, const
 	}
 	else if (strcmp(key, "style") == 0)
 	{
+#if 0
 		Esvg_Attribute_Presentation attr;
 
 		memset(&attr, 0, sizeof(Esvg_Attribute_Presentation));
 		esvg_parser_style_inline_set(value, t, &attr);
 		esvg_element_style_set(t, &attr);
+#endif
 	}
 	/* common presentation attributes */
 	else if (strcmp(key, "clip-path") == 0)
@@ -517,6 +519,8 @@ Edom_Tag * esvg_element_new(Esvg_Element_Descriptor *descriptor, void *data)
 	thiz->descriptor.name_get = descriptor->name_get;
 	thiz->descriptor.clone = descriptor->clone;
 	thiz->descriptor.setup = descriptor->setup;
+	thiz->descriptor.attribute_set = descriptor->attribute_set;
+	thiz->descriptor.attribute_get = descriptor->attribute_get;
 
 	t = edom_tag_new(&pdescriptor, thiz);
 	/* default values */
@@ -636,6 +640,26 @@ EAPI void esvg_element_id_set(Edom_Tag *t, const char *id)
 	if (id)
 	{
 		thiz->state.id = strdup(id);
+	}
+}
+
+/**
+ * To be documented
+ * FIXME: To be fixed
+ */
+EAPI void esvg_element_class_set(Edom_Tag *t, const char *class)
+{
+	Esvg_Element *thiz;
+
+	thiz = _esvg_element_get(t);
+	if (thiz->state.class)
+	{
+		free(thiz->state.class);
+		thiz->state.class = NULL;
+	}
+	if (class)
+	{
+		thiz->state.class = strdup(class);
 	}
 }
 

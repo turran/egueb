@@ -40,6 +40,7 @@ static void help(void)
 
 int main(int argc, char *argv[])
 {
+	Edom_Tag *tag;
 	Enesim_Renderer *compound;
 	Enesim_Renderer *background;
 	Enesim_Renderer *r;
@@ -76,12 +77,17 @@ int main(int argc, char *argv[])
 	if (!emage_init())
 		goto shutdown_esvg;
 
-	r = esvg_parser_load(argv[1], NULL, NULL);
-	if (!r)
+	tag = esvg_parser_load(argv[1], NULL, NULL);
+	if (!tag)
 	{
 		printf("Fail to parse %s\n", argv[1]);
 		goto shutdown_esvg;
 	}
+
+	/* FIXME once the renderable class is implemented
+	 * get the renderer, for now test the parsing
+	 */
+#if 0
 	/* set the final image size as the container size */
 	esvg_element_container_width_set(r, width);
 	esvg_element_container_height_set(r, height);
@@ -117,7 +123,7 @@ int main(int argc, char *argv[])
 	enesim_surface_unref(s);
 	emage_shutdown();
 	esvg_shutdown();
-
+#endif
 	return 0;
 
 shutdown_esvg:
