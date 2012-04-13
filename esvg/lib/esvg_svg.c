@@ -70,7 +70,7 @@ static Esvg_Svg * _esvg_svg_get(Edom_Tag *t)
 /*----------------------------------------------------------------------------*
  *                       The Esvg Renderable interface                        *
  *----------------------------------------------------------------------------*/
-static Eina_Bool _parser_svg_attribute_set(Edom_Tag *t, const char *key, const char *value)
+static Eina_Bool _esvg_svg_attribute_set(Edom_Tag *t, const char *key, const char *value)
 {
 	Esvg_Svg *thiz;
 
@@ -117,17 +117,17 @@ static Eina_Bool _parser_svg_attribute_set(Edom_Tag *t, const char *key, const c
 	return EINA_TRUE;
 }
 
-static const char * _parser_svg_attribute_get(Edom_Tag *tag, const char *attribute)
+static const char * _esvg_svg_attribute_get(Edom_Tag *tag, const char *attribute)
 {
 	return NULL;
 }
 
-static const char * _parser_svg_name_get(Edom_Tag *tag)
+static const char * _esvg_svg_name_get(Edom_Tag *tag)
 {
 	return "svg";
 }
 
-static Eina_Bool _parser_svg_child_add(Edom_Tag *tag, Edom_Tag *child)
+static Eina_Bool _esvg_svg_child_add(Edom_Tag *tag, Edom_Tag *child)
 {
 	Enesim_Renderer *r = NULL;
 	Esvg_Svg *thiz;
@@ -166,37 +166,37 @@ static const char * _esvg_svg_name_get(Enesim_Renderer *r)
 	return "esvg_svg";
 }
 
-static Eina_Bool _esvg_svg_element_add(Enesim_Renderer *r, Enesim_Renderer *child)
+static Eina_Bool _esvg_svg_element_add(Edom_Tag *t, Enesim_Renderer *child)
 {
 	Esvg_Svg *thiz;
-	Enesim_Renderer *real_r;
+	Edom_Tag *teal_r;
 
 	if (!esvg_element_is_renderable(child))
 	{
 		return EINA_FALSE;
 	}
 
-	thiz = _esvg_svg_get(r);
+	thiz = _esvg_svg_get(t);
 	enesim_renderer_compound_layer_add(thiz->r, child);
 
 	return EINA_TRUE;
 }
 
-static void _esvg_svg_element_remove(Enesim_Renderer *r, Enesim_Renderer *child)
+static void _esvg_svg_element_remove(Edom_Tag *t, Enesim_Renderer *child)
 {
 	Esvg_Svg *thiz;
 
-	thiz = _esvg_svg_get(r);
-	enesim_renderer_compound_layer_remove(thiz->r, child);
+	thiz = _esvg_svg_get(t);
+	enesim_renderer_compound_layer_remove(thiz->t, child);
 }
 
-static Enesim_Renderer * _esvg_svg_element_at(Enesim_Renderer *r, double x, double y)
+static Enesim_Renderer * _esvg_svg_element_at(Edom_Tag *t, double x, double y)
 {
 	/* TODO */
 	return NULL;
 }
 
-static Eina_Bool _esvg_svg_setup(Enesim_Renderer *r, Esvg_Element_State *state,
+static Eina_Bool _esvg_svg_setup(Edom_Tag *t, Esvg_Element_State *state,
 		Esvg_Attribute_Presentation *attr,
 		Enesim_Surface *s,
 		Enesim_Error **error)
@@ -207,7 +207,7 @@ static Eina_Bool _esvg_svg_setup(Enesim_Renderer *r, Esvg_Element_State *state,
 	Enesim_Renderer *parent;
 	double width, height;
 
-	thiz = _esvg_svg_get(r);
+	thiz = _esvg_svg_get(t);
 	width = esvg_length_final_get(&thiz->width, state->viewbox_w);
 	height = esvg_length_final_get(&thiz->height, state->viewbox_h);
 	/* the viewbox will set a new user space coordinate */
@@ -241,7 +241,7 @@ static Eina_Bool _esvg_svg_setup(Enesim_Renderer *r, Esvg_Element_State *state,
 	return EINA_TRUE;
 }
 
-static Enesim_Renderer * _esvg_svg_renderer_get(Enesim_Renderer *r,
+static Enesim_Renderer * _esvg_svg_renderer_get(Edom_Tag *t,
 		const Esvg_Element_State *state,
 		const Esvg_Attribute_Presentation *attr)
 {
@@ -251,17 +251,25 @@ static Enesim_Renderer * _esvg_svg_renderer_get(Enesim_Renderer *r,
 	return thiz->r;
 }
 
-static void _esvg_svg_clone(Enesim_Renderer *r, Enesim_Renderer *dr)
+static void _esvg_svg_clone(Edom_Tag *t, Enesim_Renderer *dr)
 {
 
 }
 
+static void _esvg_svg_free(Edom_Tag *t)
+{
+	Esvg_Svg *thiz;
+
+	thiz = _esvg_svg_get(t);
+	free(thiz);
+}
+
 static Esvg_Renderable_Descriptor _descriptor = {
-	/* .name_get 		= */ _parser_svg_name_get,
-	/* .child_add		= */ _parser_svg_child_add,
+	/* .name_get 		= */ _esvg_svg_name_get,
+	/* .child_add		= */ _esvg_svg_child_add,
 	/* .child_remove	= */ NULL,
-	/* .attribute_set 	= */ _parser_svg_attribute_set,
-	/* .attribute_get 	= */ _parser_svg_attribute_get,
+	/* .attribute_set 	= */ _esvg_svg_attribute_set,
+	/* .attribute_get 	= */ _esvg_svg_attribute_get,
 	/* .cdata_set 		= */ NULL,
 	/* .text_set 		= */ NULL,
 	/* .free 		= */ _esvg_svg_free,
@@ -272,7 +280,7 @@ static Esvg_Renderable_Descriptor _descriptor = {
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
-void esvg_parser_svg_style_add(Edom_Tag *tag, Esvg_Parser_Style *s)
+void esvg_svg_style_add(Edom_Tag *tag, Esvg_Parser_Style *s)
 {
 	Esvg_Svg *thiz;
 
@@ -280,7 +288,7 @@ void esvg_parser_svg_style_add(Edom_Tag *tag, Esvg_Parser_Style *s)
 	thiz->styles = eina_list_append(thiz->styles, s);
 }
 
-void esvg_parser_svg_style_apply(Edom_Tag *tag)
+void esvg_svg_style_apply(Edom_Tag *tag)
 {
 	Esvg_Svg *thiz;
 	Esvg_Parser_Style *s;
@@ -294,16 +302,16 @@ void esvg_parser_svg_style_apply(Edom_Tag *tag)
 	EINA_LIST_FOREACH(thiz->styles, l, s)
 	{
 		printf("applying style %p\n", s);
-		esvg_parser_style_apply(s, thiz->tag);
+		esvg_style_apply(s, thiz->tag);
 	}
 }
 
-void esvg_parser_svg_svg_add(Edom_Tag *tag, Edom_Tag *svg)
+void esvg_svg_svg_add(Edom_Tag *tag, Edom_Tag *svg)
 {
 
 }
 
-Edom_Tag * esvg_parser_svg_tag_find(Edom_Tag *tag, const char *id)
+Edom_Tag * esvg_svg_tag_find(Edom_Tag *tag, const char *id)
 {
 	Esvg_Svg *thiz;
 
@@ -311,7 +319,7 @@ Edom_Tag * esvg_parser_svg_tag_find(Edom_Tag *tag, const char *id)
 	return eina_hash_find(thiz->ids, id);
 }
 
-void esvg_parser_svg_tag_add(Edom_Tag *tag, Edom_Tag *child_tag)
+void esvg_svg_tag_add(Edom_Tag *tag, Edom_Tag *child_tag)
 {
 	Esvg_Svg *thiz;
 	const char *id;
@@ -326,17 +334,18 @@ void esvg_parser_svg_tag_add(Edom_Tag *tag, Edom_Tag *child_tag)
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/
-EAPI Enesim_Renderer * esvg_svg_new(void)
+EAPI Edom_Tag * esvg_svg_new(void)
 {
 	Esvg_Svg *thiz;
+	Edom_Tag *t;
 	Enesim_Renderer *r;
 
 	thiz = calloc(1, sizeof(Esvg_Svg));
 	if (!thiz) return NULL;
 	EINA_MAGIC_SET(thiz, ESVG_SVG_MAGIC);
 
-	r = enesim_renderer_compound_new();
-	enesim_renderer_rop_set(r, ENESIM_BLEND);
+	t = enesim_renderer_compound_new();
+	enesim_renderer_rop_set(t, ENESIM_BLEND);
 	thiz->r = r;
 	thiz->ids = eina_hash_string_superfast_new(NULL);
 
@@ -349,8 +358,8 @@ EAPI Enesim_Renderer * esvg_svg_new(void)
 
 	/* no default value for the view_box */
 
-	r = esvg_renderable_new(&_descriptor, thiz);
-	return r;
+	t = esvg_renderable_new(&_descriptor, thiz);
+	return t;
 }
 
 EAPI Eina_Bool esvg_is_svg(Edom_Tag *t)
