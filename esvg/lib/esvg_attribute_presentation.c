@@ -157,7 +157,7 @@ void esvg_attribute_presentation_setup(Esvg_Attribute_Presentation *thiz)
 	thiz->stroke_line_join = ESVG_LINE_JOIN_MITER;
 }
 
-void esvg_attribute_presentation_clip_path_set(Esvg_Attribute_Presentation *thiz, const Enesim_Renderer *clip_path)
+void esvg_attribute_presentation_clip_path_set(Esvg_Attribute_Presentation *thiz, const Edom_Tag *clip_path)
 {
 	if (thiz->clip_path == clip_path)
 		return;

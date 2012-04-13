@@ -373,6 +373,7 @@ static Edom_Tag * _esvg_parser_tag_new(Edom_Parser *parser, int tag_id)
 
 	switch (tag_id)
 	{
+#if 0
 		case ESVG_LINEARGRADIENT:
 		tag = esvg_parser_linear_gradient_new(parser);
 		break;
@@ -392,13 +393,13 @@ static Edom_Tag * _esvg_parser_tag_new(Edom_Parser *parser, int tag_id)
 		case ESVG_USE:
 		tag = esvg_parser_use_new(parser);
 		break;
-
+#endif
 		case ESVG_SVG:
 		tag = esvg_parser_svg_new(parser);
 		if (!thiz->topmost)
 			thiz->topmost = tag;
 		break;
-
+#if 0
 		case ESVG_CIRCLE:
 		tag = esvg_parser_circle_new(parser);
 		break;
@@ -454,7 +455,7 @@ static Edom_Tag * _esvg_parser_tag_new(Edom_Parser *parser, int tag_id)
 		case ESVG_STOP:
 		tag = esvg_parser_stop_new(parser);
 		break;
-
+#endif
 		default:
 		printf("can't create the tag %d\n", tag_id);
 		break;

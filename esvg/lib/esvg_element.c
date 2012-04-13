@@ -1106,6 +1106,13 @@ EAPI Edom_Tag * esvg_element_clone(Edom_Tag *t)
 {
 	Edom_Tag *new_t = NULL;
 
+	/* FIXME we would clone whenever we
+	 * have the different elements.
+	 * this code should be shared with the
+	 * parser and a list of "constructors"
+	 * based on the name
+	 */
+#if 0
 	/* check every final type */
 	if (esvg_is_svg(t))
 		new_t = esvg_svg_new();
@@ -1136,6 +1143,6 @@ EAPI Edom_Tag * esvg_element_clone(Edom_Tag *t)
 		if (thiz->descriptor.clone)
 			thiz->descriptor.clone(t, new_t);
 	}
-
+#endif
 	return new_t;
 }

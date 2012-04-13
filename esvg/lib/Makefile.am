@@ -17,11 +17,12 @@ AM_CPPFLAGS = \
 lib_LTLIBRARIES = libesvg.la
 
 libesvg_la_SOURCES = \
+esvg_attribute_presentation.c \
 esvg_element.c \
+esvg_parser.c \
 esvg_main.c \
-esvg_values.c
+esvg_types.c
 
-#esvg_attribute_presentation.c \
 #esvg_attribute_regular.c \
 #esvg_clip_path.c \
 #esvg_g.c \
@@ -41,7 +42,6 @@ esvg_values.c
 #esvg_shape.c \
 #esvg_svg.c \
 #esvg_text.c \
-#esvg_types.c \
 #esvg_use.c
 
 libesvg_la_LIBADD = \

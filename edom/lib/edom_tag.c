@@ -144,7 +144,7 @@ EAPI char * edom_tag_id_get(Edom_Tag *thiz)
 {
 	char *id;
 
-	if (!edom_tag_attibute_get(thiz, "id", &id))
+	if (!edom_tag_attribute_get(thiz, "id", &id))
 		return NULL;
 	return id;
 }
@@ -166,7 +166,7 @@ EAPI char * edom_tag_class_get(Edom_Tag *thiz)
 {
 	char *class;
 
-	if (!edom_tag_attibute_get(thiz, "class", &class))
+	if (!edom_tag_attribute_get(thiz, "class", &class))
 		return NULL;
 	return class;
 }

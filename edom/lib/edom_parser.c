@@ -46,17 +46,6 @@ static Eina_Bool _edom_parser_tag_get(Edom_Parser *thiz, const char *content, si
 	return thiz->descriptor->tag_get(thiz, content, sz, tag_id);
 }
 				
-static Edom_Tag * _edom_parser_tag_new_simple(Edom_Parser *thiz, int tag_id, const char *attrs, unsigned int attr_length)
-{
-	Edom_Tag *tag;
-
-	if (!thiz->descriptor) return NULL;
-	if (!thiz->descriptor->tag_new) return NULL;
-	tag = thiz->descriptor->tag_new(thiz, tag_id);
-	if (tag) edom_tag_attributes_from_xml(tag, attrs, attr_length);
-	return tag;
-}
-
 static Edom_Tag * _edom_parser_topmost_get(Edom_Parser *thiz)
 {
 	if (!thiz->descriptor) return NULL;
@@ -64,30 +53,20 @@ static Edom_Tag * _edom_parser_topmost_get(Edom_Parser *thiz)
 	return thiz->descriptor->topmost_get(thiz);
 }
 
-static Edom_Tag * _edom_parser_tag_new_from_parent(Edom_Parser *thiz, Edom_Tag *parent, int tag_id, const char *attrs, unsigned int attr_length)
-{
-	Edom_Tag *tag;
-
-	/* check the parent supports this tag */
-	if (!edom_tag_child_supported(parent, tag_id))
-	{
-		return NULL;
-	}
-	tag = _edom_parser_tag_new_simple(thiz, tag_id, attrs, attr_length);
-	if (!tag) return NULL;
-	/* add it to the current tag */
-	edom_tag_child_add(parent, tag);
-
-	return tag;
-}
-
 static Edom_Tag * _edom_parser_tag_new(Edom_Parser *thiz, Edom_Tag *parent, int tag_id, const char *attrs, unsigned int attr_length)
 {
 	Edom_Tag *tag;
+
+	if (!thiz->descriptor) return NULL;
+	if (!thiz->descriptor->tag_new) return NULL;
+	tag = thiz->descriptor->tag_new(thiz, tag_id);
+
+	if (!tag) return NULL;
+
+	edom_tag_attributes_from_xml(tag, attrs, attr_length);
+	/* add it to the current tag */
 	if (parent)
-		tag = _edom_parser_tag_new_from_parent(thiz, parent, tag_id, attrs, attr_length);
-	else
-		tag = _edom_parser_tag_new_simple(thiz, tag_id, attrs, attr_length);
+		edom_tag_child_add(parent, tag);
 
 	return tag;
 }
@@ -158,8 +137,16 @@ static Eina_Bool _edom_parser_cb(void *data, Eina_Simple_XML_Type type,
 		{
 			break;
 		}
+		/* FIXME */
+		/* the approach we were using to pop a tag was to compare the close
+		 * id tag with the current tag on the stack, if this are the same
+		 * pop it. that means that we need to create some kind of wrapper
+		 * of the tag to store that information
+		 */
+#if 0
 		if (parent && (edom_tag_type_get(parent) == tag_id))
 			eina_array_pop(thiz->contexts);
+#endif
 		break;
 
 		case EINA_SIMPLE_XML_DATA:

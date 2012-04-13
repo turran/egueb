@@ -15,9 +15,7 @@ AM_CPPFLAGS = \
 
 noinst_LTLIBRARIES = libesvg_parser.la
 
-libesvg_parser_la_SOURCES = \
-esvg_parser.c \
-esvg_parser_types.c
+libesvg_parser_la_SOURCES =
 
 #esvg_parser_a.c \
 #esvg_parser_circle.c \
