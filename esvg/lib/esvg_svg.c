@@ -251,7 +251,131 @@ static Esvg_Renderable_Descriptor _descriptor = {
  *----------------------------------------------------------------------------*/
 static Edom_Tag * _esvg_svg_new(void)
 {
+	Esvg_Svg *thiz;
+	Edom_Tag *t;
+	Enesim_Renderer *r;
 
+	thiz = calloc(1, sizeof(Esvg_Svg));
+	if (!thiz) return NULL;
+
+	r = enesim_renderer_compound_new();
+	enesim_renderer_rop_set(r, ENESIM_BLEND);
+	thiz->r = r;
+	thiz->ids = eina_hash_string_superfast_new(NULL);
+
+	/* Default values */
+	thiz->version = 1.0;
+	thiz->x = ESVG_COORD_0;
+	thiz->y = ESVG_COORD_0;
+	thiz->width = ESVG_LENGTH_100_PERCENT;
+	thiz->height = ESVG_LENGTH_100_PERCENT;
+
+	/* no default value for the view_box */
+
+	t = esvg_renderable_new(&_descriptor, ESVG_SVG, thiz);
+	return t;
+}
+
+Edom_Tag * _esvg_svg_element_find(Edom_Tag *tag, const char *id)
+{
+	Esvg_Svg *thiz;
+
+	thiz = _esvg_svg_get(tag);
+	return eina_hash_find(thiz->ids, id);
+}
+
+static void _esvg_svg_version_set(Edom_Tag *t, double version)
+{
+	Esvg_Svg *thiz;
+
+	thiz = _esvg_svg_get(t);
+	thiz->version = version;
+}
+
+static void _esvg_svg_version_get(Edom_Tag *t, double *version)
+{
+	Esvg_Svg *thiz;
+
+	thiz = _esvg_svg_get(t);
+	if (version) *version = thiz->version;
+}
+
+static void _esvg_svg_x_set(Edom_Tag *t, Esvg_Coord *x)
+{
+	Esvg_Svg *thiz;
+
+	thiz = _esvg_svg_get(t);
+	thiz->x = *x;
+}
+
+static void _esvg_svg_y_set(Edom_Tag *t, Esvg_Coord *y)
+{
+	Esvg_Svg *thiz;
+
+	thiz = _esvg_svg_get(t);
+	thiz->y = *y;
+}
+
+static void _esvg_svg_width_set(Edom_Tag *t, Esvg_Length *width)
+{
+	Esvg_Svg *thiz;
+
+	thiz = _esvg_svg_get(t);
+	thiz->width = *width;
+}
+
+static void _esvg_svg_height_set(Edom_Tag *t, Esvg_Length *height)
+{
+	Esvg_Svg *thiz;
+
+	thiz = _esvg_svg_get(t);
+	thiz->height = *height;
+}
+
+static void _esvg_svg_viewbox_set(Edom_Tag *t, Esvg_View_Box *vb)
+{
+	Esvg_Svg *thiz;
+
+	thiz = _esvg_svg_get(t);
+	if (!vb)
+	{
+		thiz->view_box_set = EINA_FALSE;
+	}
+	else
+	{
+		thiz->view_box = *vb;
+		thiz->view_box_set = EINA_TRUE;
+	}
+}
+
+/* FIXME the below two functions should return the actual width/height based
+ * on the width and height properties, if it is relative it should use the
+ * the container width/height to compute them, this is are helper functions
+ * to know the real size of the svg, this way we'll know on the upper libraries
+ * the preferred area
+ */
+static void _esvg_svg_actual_width_get(Edom_Tag *t, double *actual_width)
+{
+	Esvg_Svg *thiz;
+	double aw;
+	double cw;
+
+	thiz = _esvg_svg_get(t);
+	esvg_element_container_width_get(t, &cw);
+	aw = esvg_length_final_get(&thiz->width, cw);
+	*actual_width = aw;
+}
+
+static void _esvg_svg_actual_height_get(Edom_Tag *t, double *actual_height)
+{
+	Esvg_Svg *thiz;
+	double ah;
+	double ch;
+
+	thiz = _esvg_svg_get(t);
+	esvg_element_container_height_get(t, &ch);
+	ah = esvg_length_final_get(&thiz->height, ch);
+	*actual_height = ah;
 }
 /*============================================================================*
  *                                 Global                                     *
@@ -290,113 +414,44 @@ void esvg_svg_style_apply(Edom_Tag *tag)
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/
-EAPI Edom_Tag * esvg_svg_new(void)
+EAPI Ender_Element * esvg_svg_new(void)
 {
-	Esvg_Svg *thiz;
-	Edom_Tag *t;
-	Enesim_Renderer *r;
-
-	thiz = calloc(1, sizeof(Esvg_Svg));
-	if (!thiz) return NULL;
-
-	r = enesim_renderer_compound_new();
-	enesim_renderer_rop_set(r, ENESIM_BLEND);
-	thiz->r = r;
-	thiz->ids = eina_hash_string_superfast_new(NULL);
-
-	/* Default values */
-	thiz->version = 1.0;
-	thiz->x = ESVG_COORD_0;
-	thiz->y = ESVG_COORD_0;
-	thiz->width = ESVG_LENGTH_100_PERCENT;
-	thiz->height = ESVG_LENGTH_100_PERCENT;
-
-	/* no default value for the view_box */
-
-	t = esvg_renderable_new(&_descriptor, ESVG_SVG, thiz);
-	return t;
 }
 
-Edom_Tag * esvg_svg_element_find(Edom_Tag *tag, const char *id)
+Edom_Tag * esvg_svg_element_find(Ender_Element *e, const char *id)
 {
-	Esvg_Svg *thiz;
-
-	thiz = _esvg_svg_get(tag);
-	return eina_hash_find(thiz->ids, id);
 }
 
-EAPI Eina_Bool esvg_is_svg(Edom_Tag *t)
+EAPI Eina_Bool esvg_is_svg(Ender_Element *e)
 {
-	Esvg_Svg *thiz;
-	Eina_Bool ret;
-
-	if (esvg_element_type_get(t) != ESVG_SVG)
-		return EINA_FALSE;
-	return EINA_TRUE;
 }
 
-EAPI void esvg_svg_version_set(Edom_Tag *t, double version)
+EAPI void esvg_svg_version_set(Ender_Element *e, double version)
 {
-	Esvg_Svg *thiz;
-
-	thiz = _esvg_svg_get(t);
-	thiz->version = version;
 }
 
-EAPI void esvg_svg_version_get(Edom_Tag *t, double *version)
+EAPI void esvg_svg_version_get(Ender_Element *e, double *version)
 {
-	Esvg_Svg *thiz;
-
-	thiz = _esvg_svg_get(t);
-	if (version) *version = thiz->version;
 }
 
-EAPI void esvg_svg_x_set(Edom_Tag *t, Esvg_Coord *x)
+EAPI void esvg_svg_x_set(Ender_Element *e, Esvg_Coord *x)
 {
-	Esvg_Svg *thiz;
-
-	thiz = _esvg_svg_get(t);
-	thiz->x = *x;
 }
 
-EAPI void esvg_svg_y_set(Edom_Tag *t, Esvg_Coord *y)
+EAPI void esvg_svg_y_set(Ender_Element *e, Esvg_Coord *y)
 {
-	Esvg_Svg *thiz;
-
-	thiz = _esvg_svg_get(t);
-	thiz->y = *y;
 }
 
-EAPI void esvg_svg_width_set(Edom_Tag *t, Esvg_Length *width)
+EAPI void esvg_svg_width_set(Ender_Element *e, Esvg_Length *width)
 {
-	Esvg_Svg *thiz;
-
-	thiz = _esvg_svg_get(t);
-	thiz->width = *width;
 }
 
-EAPI void esvg_svg_height_set(Edom_Tag *t, Esvg_Length *height)
+EAPI void esvg_svg_height_set(Ender_Element *e, Esvg_Length *height)
 {
-	Esvg_Svg *thiz;
-
-	thiz = _esvg_svg_get(t);
-	thiz->height = *height;
 }
 
-EAPI void esvg_svg_viewbox_set(Edom_Tag *t, Esvg_View_Box *vb)
+EAPI void esvg_svg_viewbox_set(Ender_Element *e, Esvg_View_Box *vb)
 {
-	Esvg_Svg *thiz;
-
-	thiz = _esvg_svg_get(t);
-	if (!vb)
-	{
-		thiz->view_box_set = EINA_FALSE;
-	}
-	else
-	{
-		thiz->view_box = *vb;
-		thiz->view_box_set = EINA_TRUE;
-	}
 }
 
 /* FIXME the below two functions should return the actual width/height based
@@ -405,26 +460,10 @@ EAPI void esvg_svg_viewbox_set(Edom_Tag *t, Esvg_View_Box *vb)
  * to know the real size of the svg, this way we'll know on the upper libraries
  * the preferred area
  */
-EAPI void esvg_svg_actual_width_get(Edom_Tag *t, double *actual_width)
+EAPI void esvg_svg_actual_width_get(Ender_Element *e, double *actual_width)
 {
-	Esvg_Svg *thiz;
-	double aw;
-	double cw;
-
-	thiz = _esvg_svg_get(t);
-	esvg_element_container_width_get(t, &cw);
-	aw = esvg_length_final_get(&thiz->width, cw);
-	*actual_width = aw;
 }
 
-EAPI void esvg_svg_actual_height_get(Edom_Tag *t, double *actual_height)
+EAPI void esvg_svg_actual_height_get(Ender_Element *e, double *actual_height)
 {
-	Esvg_Svg *thiz;
-	double ah;
-	double ch;
-
-	thiz = _esvg_svg_get(t);
-	esvg_element_container_height_get(t, &ch);
-	ah = esvg_length_final_get(&thiz->height, ch);
-	*actual_height = ah;
 }

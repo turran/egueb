@@ -21,6 +21,7 @@
 #include <Eina.h>
 #include <Edom.h>
 #include <Enesim.h>
+#include <Ender.h>
 
 #ifdef EAPI
 # undef EAPI
@@ -416,65 +417,60 @@ typedef struct _Esvg_Attribute_Presentation {
  * @}
  */
 
-EAPI Eina_Bool esvg_is_element(Edom_Tag *e);
-EAPI Esvg_Type esvg_element_type_get(Edom_Tag *t);
-EAPI void esvg_element_id_set(Edom_Tag *e, const char *id);
-EAPI void esvg_element_id_get(Edom_Tag *e, const char **id);
-EAPI void esvg_element_class_set(Edom_Tag *e, const char *id);
-EAPI void esvg_element_transform_set(Edom_Tag *e, const Enesim_Matrix *transform);
-EAPI void esvg_element_transform_get(Edom_Tag *e, Enesim_Matrix *transform);
-EAPI void esvg_element_style_set(Edom_Tag *e, const Esvg_Attribute_Presentation *style);
-EAPI void esvg_element_style_get(Edom_Tag *e, Esvg_Attribute_Presentation *style);
-EAPI Eina_Bool esvg_element_style_is_set(Edom_Tag *e);
-EAPI void esvg_element_clip_path_set(Edom_Tag *e, const Edom_Tag *clip_path);
-EAPI void esvg_element_clip_path_unset(Edom_Tag *e);
-EAPI void esvg_element_opacity_set(Edom_Tag *e, double opacity);
-EAPI void esvg_element_opacity_unset(Edom_Tag *e);
-EAPI Edom_Tag * esvg_element_clone(Edom_Tag *e);
-EAPI void esvg_element_x_dpi_set(Edom_Tag *e, double x_dpi);
-EAPI void esvg_element_x_dpi_get(Edom_Tag *e, double *x_dpi);
-EAPI void esvg_element_y_dpi_set(Edom_Tag *e, double y_dpi);
-EAPI void esvg_element_y_dpi_get(Edom_Tag *e, double *y_dpi);
-EAPI void esvg_element_container_width_set(Edom_Tag *e, double container_width);
-EAPI void esvg_element_container_width_get(Edom_Tag *e, double *container_width);
-EAPI void esvg_element_container_height_set(Edom_Tag *e, double container_height);
-EAPI void esvg_element_container_height_get(Edom_Tag *e, double *container_height);
+EAPI Eina_Bool esvg_is_element(Ender_Element *e);
+EAPI Esvg_Type esvg_element_type_get(Ender_Element *e);
+EAPI void esvg_element_id_set(Ender_Element *e, const char *id);
+EAPI void esvg_element_id_get(Ender_Element *e, const char **id);
+EAPI void esvg_element_class_set(Ender_Element *e, const char *id);
+EAPI void esvg_element_transform_set(Ender_Element *e, const Enesim_Matrix *transform);
+EAPI void esvg_element_transform_get(Ender_Element *e, Enesim_Matrix *transform);
+EAPI void esvg_element_style_set(Ender_Element *e, const Esvg_Attribute_Presentation *style);
+EAPI void esvg_element_style_get(Ender_Element *e, Esvg_Attribute_Presentation *style);
+EAPI Eina_Bool esvg_element_style_is_set(Ender_Element *e);
+EAPI void esvg_element_clip_path_set(Ender_Element *e, const char *id);
+EAPI void esvg_element_clip_path_unset(Ender_Element *e);
+EAPI void esvg_element_opacity_set(Ender_Element *e, double opacity);
+EAPI void esvg_element_opacity_unset(Ender_Element *e);
+EAPI void esvg_element_x_dpi_set(Ender_Element *e, double x_dpi);
+EAPI void esvg_element_x_dpi_get(Ender_Element *e, double *x_dpi);
+EAPI void esvg_element_y_dpi_set(Ender_Element *e, double y_dpi);
+EAPI void esvg_element_y_dpi_get(Ender_Element *e, double *y_dpi);
+EAPI void esvg_element_container_width_set(Ender_Element *e, double container_width);
+EAPI void esvg_element_container_width_get(Ender_Element *e, double *container_width);
+EAPI void esvg_element_container_height_set(Ender_Element *e, double container_height);
+EAPI void esvg_element_container_height_get(Ender_Element *e, double *container_height);
 
-EAPI void esvg_element_color_set(Edom_Tag *e, const Esvg_Color *color);
-EAPI void esvg_element_color_unset(Edom_Tag *e);
-EAPI void esvg_element_fill_set(Edom_Tag *e, const Esvg_Paint *fill);
-EAPI void esvg_element_fill_unset(Edom_Tag *e);
-EAPI void esvg_element_fill_opacity_set(Edom_Tag *e, double fill_opacity);
-EAPI void esvg_element_fill_opacity_unset(Edom_Tag *e);
-EAPI void esvg_element_fill_rule_set(Edom_Tag *e, Esvg_Fill_Rule fill_rule);
-EAPI void esvg_element_stroke_set(Edom_Tag *e, const Esvg_Paint *stroke);
-/* EAPI void esvg_element_stroke_unset(Edom_Tag *e); */
-EAPI void esvg_element_stroke_width_set(Edom_Tag *e, const Esvg_Length *stroke_width);
-/* EAPI void esvg_element_stroke_width_unset(Edom_Tag *e); */
-EAPI void esvg_element_stroke_opacity_set(Edom_Tag *e, double stroke_opacity);
-EAPI void esvg_element_stroke_opacity_unset(Edom_Tag *e);
-EAPI void esvg_element_stroke_line_cap_set(Edom_Tag *e, Esvg_Stroke_Line_Cap cap);
-EAPI void esvg_element_stroke_line_cap_unset(Edom_Tag *e);
-EAPI void esvg_element_stroke_line_join_set(Edom_Tag *e, Esvg_Stroke_Line_Join join);
-EAPI void esvg_element_stroke_line_join_unset(Edom_Tag *e);
-EAPI void esvg_element_visibility_set(Edom_Tag *e, Eina_Bool visibility);
-EAPI void esvg_element_visibility_unset(Edom_Tag *e);
+EAPI void esvg_element_color_set(Ender_Element *e, const Esvg_Color *color);
+EAPI void esvg_element_color_unset(Ender_Element *e);
+EAPI void esvg_element_fill_set(Ender_Element *e, const Esvg_Paint *fill);
+EAPI void esvg_element_fill_unset(Ender_Element *e);
+EAPI void esvg_element_fill_opacity_set(Ender_Element *e, double fill_opacity);
+EAPI void esvg_element_fill_opacity_unset(Ender_Element *e);
+EAPI void esvg_element_fill_rule_set(Ender_Element *e, Esvg_Fill_Rule fill_rule);
+EAPI void esvg_element_stroke_set(Ender_Element *e, const Esvg_Paint *stroke);
+EAPI void esvg_element_stroke_unset(Ender_Element *e);
+EAPI void esvg_element_stroke_width_set(Ender_Element *e, const Esvg_Length *stroke_width);
+EAPI void esvg_element_stroke_width_unset(Ender_Element *e);
+EAPI void esvg_element_stroke_opacity_set(Ender_Element *e, double stroke_opacity);
+EAPI void esvg_element_stroke_opacity_unset(Ender_Element *e);
+EAPI void esvg_element_stroke_line_cap_set(Ender_Element *e, Esvg_Stroke_Line_Cap cap);
+EAPI void esvg_element_stroke_line_cap_unset(Ender_Element *e);
+EAPI void esvg_element_stroke_line_join_set(Ender_Element *e, Esvg_Stroke_Line_Join join);
+EAPI void esvg_element_stroke_line_join_unset(Ender_Element *e);
+EAPI void esvg_element_visibility_set(Ender_Element *e, Eina_Bool visibility);
+EAPI void esvg_element_visibility_unset(Ender_Element *e);
 
-EAPI Eina_Bool esvg_is_container(Edom_Tag *e);
-EAPI void esvg_container_element_add(Edom_Tag *e, Edom_Tag *child);
-EAPI void esvg_container_element_remove(Edom_Tag *e, Edom_Tag *child);
-
-EAPI Edom_Tag * esvg_svg_new(void);
-EAPI Eina_Bool esvg_is_svg(Edom_Tag *e);
-EAPI void esvg_svg_version_set(Edom_Tag *e, double version);
-EAPI void esvg_svg_version_get(Edom_Tag *e, double *version);
-EAPI void esvg_svg_x_set(Edom_Tag *e, Esvg_Coord *x);
-EAPI void esvg_svg_y_set(Edom_Tag *e, Esvg_Coord *y);
-EAPI void esvg_svg_width_set(Edom_Tag *e, Esvg_Length *width);
-EAPI void esvg_svg_height_set(Edom_Tag *e, Esvg_Length *height);
-EAPI void esvg_svg_viewbox_set(Edom_Tag *e, Esvg_View_Box *vb);
-EAPI void esvg_svg_actual_width_get(Edom_Tag *e, double *actual_width);
-EAPI void esvg_svg_actual_height_get(Edom_Tag *e, double *actual_height);
+EAPI Ender_Element * esvg_svg_new(void);
+EAPI Eina_Bool esvg_is_svg(Ender_Element *e);
+EAPI void esvg_svg_version_set(Ender_Element *e, double version);
+EAPI void esvg_svg_version_get(Ender_Element *e, double *version);
+EAPI void esvg_svg_x_set(Ender_Element *e, Esvg_Coord *x);
+EAPI void esvg_svg_y_set(Ender_Element *e, Esvg_Coord *y);
+EAPI void esvg_svg_width_set(Ender_Element *e, Esvg_Length *width);
+EAPI void esvg_svg_height_set(Ender_Element *e, Esvg_Length *height);
+EAPI void esvg_svg_viewbox_set(Ender_Element *e, Esvg_View_Box *vb);
+EAPI void esvg_svg_actual_width_get(Ender_Element *e, double *actual_width);
+EAPI void esvg_svg_actual_height_get(Ender_Element *e, double *actual_height);
 
 EAPI Edom_Tag * esvg_g_new(void);
 EAPI Eina_Bool esvg_is_g(Edom_Tag *e);
