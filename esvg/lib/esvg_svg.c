@@ -116,11 +116,6 @@ static Eina_Bool _esvg_svg_attribute_get(Edom_Tag *tag, const char *attribute, c
 	return EINA_FALSE;
 }
 
-static const char * _esvg_svg_name_get(Edom_Tag *tag)
-{
-	return "svg";
-}
-
 static Eina_Bool _esvg_svg_child_add(Edom_Tag *tag, Edom_Tag *child)
 {
 	Enesim_Renderer *r = NULL;
@@ -239,7 +234,6 @@ static void _esvg_svg_free(Edom_Tag *t)
 }
 
 static Esvg_Renderable_Descriptor _descriptor = {
-	/* .name_get 		= */ _esvg_svg_name_get,
 	/* .child_add		= */ _esvg_svg_child_add,
 	/* .child_remove	= */ NULL,
 	/* .attribute_set 	= */ _esvg_svg_attribute_set,
@@ -251,9 +245,20 @@ static Esvg_Renderable_Descriptor _descriptor = {
 	/* .setup		= */ _esvg_svg_setup,
 	/* .renderer_get	= */ _esvg_svg_renderer_get,
 };
+
+/*----------------------------------------------------------------------------*
+ *                           The Ender interface                              *
+ *----------------------------------------------------------------------------*/
+static Edom_Tag * _esvg_svg_new(void)
+{
+
+}
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
+/* The ender wrapper */
+#include "generated/esvg_generated_svg.c"
+
 #if 0
 void esvg_svg_style_add(Edom_Tag *tag, Esvg_Parser_Style *s)
 {

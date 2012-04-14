@@ -24,6 +24,7 @@
 #include <Enesim.h>
 #include <Etex.h>
 #include <Emage.h>
+#include <Ender.h>
 
 #define ESVG_LOG_COLOR_DEFAULT EINA_COLOR_ORANGE
 
@@ -63,6 +64,7 @@
 #define ESVG_IMAGE_MAGIC 0xe5500014
 
 extern int esvg_log_dom_global;
+Ender_Namespace * esvg_namespace_get(void);
 
 typedef void (*Esvg_Element_Attribute_Set)(Edom_Tag *t, void *);
 
@@ -120,7 +122,6 @@ typedef void (*Esvg_Element_Clone)(Edom_Tag *r, Edom_Tag *dst);
 
 typedef struct _Esvg_Element_Descriptor {
 	/* the tag interface */
-	Edom_Tag_Name_Get name_get;
 	Edom_Tag_Child_Add child_add;
 	Edom_Tag_Child_Remove child_remove;
 	Edom_Tag_Attribute_Set attribute_set;
@@ -145,7 +146,6 @@ typedef Enesim_Renderer * (*Esvg_Renderable_Renderer_Get)(Edom_Tag *t,
 
 typedef struct _Esvg_Renderable_Descriptor {
 	/* the tag interface */
-	Edom_Tag_Name_Get name_get;
 	Edom_Tag_Child_Add child_add;
 	Edom_Tag_Child_Remove child_remove;
 	Edom_Tag_Attribute_Set attribute_set;

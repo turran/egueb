@@ -43,6 +43,7 @@ static void _register_enders(void *data)
 	esvg_svg_init();
 }
 
+/* FIXME the constructor should be done per namespace, not generic */
 static void _constructor_callback(Ender_Element *e, void *data)
 {
 	if (!esvg_is_element(e))
@@ -55,7 +56,7 @@ static void _constructor_callback(Ender_Element *e, void *data)
 
 int esvg_log_dom_global = -1;
 
-Ender_Namespace * eon_namespace_get(void)
+Ender_Namespace * esvg_namespace_get(void)
 {
 	static Ender_Namespace *namespace = NULL;
 

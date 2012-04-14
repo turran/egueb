@@ -242,6 +242,9 @@ static Enesim_Renderer_Descriptor _descriptor = {
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
+/* The ender wrapper */
+#include "generated/esvg_generated_renderable.c"
+
 void * esvg_renderable_data_get(Edom_Tag *t)
 {
 	Esvg_Renderable *thiz;
@@ -264,7 +267,6 @@ Edom_Tag * esvg_renderable_new(Esvg_Renderable_Descriptor *descriptor, Esvg_Type
 	thiz->data = data;
 	thiz->descriptor.renderer_get = descriptor->renderer_get;
 
-	pdescriptor.name_get = descriptor->name_get;
 	pdescriptor.child_add = descriptor->child_add;
 	pdescriptor.child_remove = descriptor->child_remove;
 	pdescriptor.attribute_set = descriptor->attribute_set;

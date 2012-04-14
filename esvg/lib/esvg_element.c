@@ -44,7 +44,6 @@
 
 typedef struct _Esvg_Element_Descriptor_Internal
 {
-	Edom_Tag_Name_Get name_get;
 	Edom_Tag_Attribute_Set attribute_set;
 	Edom_Tag_Attribute_Get attribute_get;
 	Edom_Tag_Free free;
@@ -300,6 +299,11 @@ static void _esvg_element_state_compose(const Esvg_Element_State *s, const Esvg_
 /*----------------------------------------------------------------------------*
  *                           The Edom Tag interface                           *
  *----------------------------------------------------------------------------*/
+const char * _esvg_element_name_get(Edom_Tag *t)
+{
+	return NULL;
+}
+
 static Eina_Bool _esvg_element_attribute_set(Edom_Tag *t, const char *key, const char *value)
 {
 	Esvg_Element *thiz;
@@ -482,9 +486,20 @@ static void _esvg_element_free(Edom_Tag *t)
 		return thiz->descriptor.free(t);
 	free(thiz);
 }
+/*----------------------------------------------------------------------------*
+ *                           The Ender interface                              *
+ *----------------------------------------------------------------------------*/
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
+/* The ender wrapper */
+#include "generated/esvg_generated_element.c"
+
+void esvg_element_initialize(Ender_Element *e)
+{
+	/* TODO call the initialize on the element */
+}
+
 void * esvg_element_data_get(Edom_Tag *t)
 {
 	Esvg_Element *thiz;
@@ -509,7 +524,7 @@ Edom_Tag * esvg_element_new(Esvg_Element_Descriptor *descriptor, Esvg_Type type,
 	enesim_matrix_identity(&thiz->state.transform);
 
 	/* the tag interface */
-	pdescriptor.name_get = descriptor->name_get;
+	pdescriptor.name_get = _esvg_element_name_get;
 	pdescriptor.child_add = descriptor->child_add;
 	pdescriptor.child_remove = descriptor->child_remove;
 	pdescriptor.attribute_set = _esvg_element_attribute_set;
@@ -519,7 +534,6 @@ Edom_Tag * esvg_element_new(Esvg_Element_Descriptor *descriptor, Esvg_Type type,
 	pdescriptor.free = _esvg_element_free;
 
 	/* our own interface */
-	thiz->descriptor.name_get = descriptor->name_get;
 	thiz->descriptor.clone = descriptor->clone;
 	thiz->descriptor.setup = descriptor->setup;
 	thiz->descriptor.attribute_set = descriptor->attribute_set;
