@@ -134,7 +134,7 @@ typedef struct _Esvg_Element_Descriptor {
 } Esvg_Element_Descriptor;
 
 void * esvg_element_data_get(Edom_Tag *t);
-Edom_Tag * esvg_element_new(Esvg_Element_Descriptor *descriptor, void *data);
+Edom_Tag * esvg_element_new(Esvg_Element_Descriptor *descriptor, Esvg_Type type, void *data);
 Eina_Bool esvg_element_setup(Edom_Tag *t, const Esvg_Element_State *state, const Esvg_Attribute_Presentation *attr, Enesim_Surface *s, Enesim_Error **error);
 void esvg_element_state_compose(Edom_Tag *t, const Esvg_Element_State *s, Esvg_Element_State *d);
 
@@ -161,7 +161,7 @@ typedef struct _Esvg_Renderable_Descriptor {
 } Esvg_Renderable_Descriptor;
 
 void * esvg_renderable_data_get(Edom_Tag *t);
-Edom_Tag * esvg_renderable_new(Esvg_Renderable_Descriptor *descriptor, void *data);
+Edom_Tag * esvg_renderable_new(Esvg_Renderable_Descriptor *descriptor, Esvg_Type type, void *data);
 
 /* shape */
 typedef struct _Esvg_Shape_Enesim_State {
@@ -263,5 +263,7 @@ void * esvg_gradient_data_get(Enesim_Renderer *r);
 Eina_Bool esvg_length_is_equal(Esvg_Length *length1, Esvg_Length *length2);
 double esvg_length_final_get(const Esvg_Length *l, double parent_length);
 
+/* view box */
+Esvg_View_Box esvg_view_box_get(const char *attr_val);
 
 #endif

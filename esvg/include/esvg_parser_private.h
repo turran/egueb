@@ -30,7 +30,7 @@ void esvg_parser_href_set(Edom_Parser *p, Enesim_Renderer *r, const char *href);
 /* style */
 typedef struct _Esvg_Parser_Style Esvg_Parser_Style;
 
-const char * esvg_parser_tag_type_string_to(Esvg_Parser_Tag_Type type);
+const char * esvg_parser_tag_type_string_to(Esvg_Type type);
 
 Esvg_Parser_Style * esvg_parser_style_new(void);
 void esvg_parser_style_style_set(Esvg_Parser_Style *thiz, Ecss_Style *style);
@@ -76,7 +76,7 @@ Eina_Bool esvg_parser_shape_attributes_cb(void *data, const char *key,
 /* shape */
 Edom_Tag * esvg_parser_shape_new(Edom_Parser *parser,
 		Edom_Tag_Descriptor *descriptor,
-		Esvg_Parser_Tag_Type type,
+		Esvg_Type type,
 		Enesim_Renderer *r, void *data);
 
 /* svg */
@@ -161,7 +161,7 @@ Edom_Tag * esvg_parser_pattern_new(Edom_Parser *parser);
 Edom_Tag * esvg_parser_clip_path_new(Edom_Parser *parser);
 
 /* element */
-Edom_Tag * esvg_parser_element_new(Edom_Parser *parser, Edom_Tag_Descriptor *descriptor, Esvg_Parser_Tag_Type type, Enesim_Renderer *r, void *data);
+Edom_Tag * esvg_parser_element_new(Edom_Parser *parser, Edom_Tag_Descriptor *descriptor, Esvg_Type type, Enesim_Renderer *r, void *data);
 Enesim_Renderer * esvg_parser_element_renderer_get(Edom_Tag *tag);
 void * esvg_parser_element_data_get(Edom_Tag *tag);
 
@@ -185,8 +185,6 @@ Eina_Bool esvg_parser_fill_rule_get(Esvg_Fill_Rule *rule, const char *attr);
 Eina_Bool esvg_parser_spread_method_get(Esvg_Spread_Method *smethod, const char *attr);
 
 Eina_Bool esvg_length_get(Esvg_Length *l, const char *attr_val, Esvg_Length default_length);
-
-Esvg_View_Box esvg_view_box_get(const char *attr_val);
 
 Eina_Bool esvg_color_get(Esvg_Color *color, const char *attr_val);
 

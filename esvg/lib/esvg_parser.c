@@ -393,13 +393,13 @@ static Edom_Tag * _esvg_parser_tag_new(Edom_Parser *parser, int tag_id)
 		case ESVG_USE:
 		tag = esvg_parser_use_new(parser);
 		break;
-
+#endif
 		case ESVG_SVG:
-		tag = esvg_parser_svg_new(parser);
+		tag = esvg_svg_new();
 		if (!thiz->topmost)
 			thiz->topmost = tag;
 		break;
-
+#if 0
 		case ESVG_CIRCLE:
 		tag = esvg_parser_circle_new(parser);
 		break;

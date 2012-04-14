@@ -55,6 +55,7 @@ typedef struct _Esvg_Element_Descriptor_Internal
 typedef struct _Esvg_Element
 {
 	EINA_MAGIC
+	Esvg_Type type;
 	/* properties like the id, whatever */
 	Esvg_Element_State state;
 	Esvg_Attribute_Presentation attr;
@@ -492,7 +493,8 @@ void * esvg_element_data_get(Edom_Tag *t)
 	return thiz->data;
 }
 
-Edom_Tag * esvg_element_new(Esvg_Element_Descriptor *descriptor, void *data)
+Edom_Tag * esvg_element_new(Esvg_Element_Descriptor *descriptor, Esvg_Type type,
+		void *data)
 {
 	Esvg_Element *thiz;
 	Edom_Tag_Descriptor pdescriptor;
@@ -503,6 +505,7 @@ Edom_Tag * esvg_element_new(Esvg_Element_Descriptor *descriptor, void *data)
 
 	EINA_MAGIC_SET(thiz, ESVG_ELEMENT_MAGIC);
 	thiz->data = data;
+	thiz->type = type;
 	enesim_matrix_identity(&thiz->state.transform);
 
 	/* the tag interface */
@@ -608,6 +611,18 @@ EAPI Eina_Bool esvg_is_element(Edom_Tag *t)
 	ret = EINA_MAGIC_CHECK(thiz, ESVG_ELEMENT_MAGIC);
 
 	return ret;
+}
+
+/**
+ * To be documented
+ * FIXME: To be fixed
+ */
+EAPI Esvg_Type esvg_element_type_get(Edom_Tag *t)
+{
+	Esvg_Element *thiz;
+
+	thiz = _esvg_element_get(t);
+	return thiz->type;
 }
 
 /**
