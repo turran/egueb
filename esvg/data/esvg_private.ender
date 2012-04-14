@@ -6,11 +6,7 @@ namespace "esvg" {
 		int "unit";
 	};
 
-	struct "color" {
-
-	};
-
-	abstract "element" : "renderer" {
+	abstract "element" : "tag" {
 	};
 
 	abstract "renderable" : "element" {

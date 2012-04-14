@@ -23,6 +23,7 @@
 #include <math.h> /* for floor() */
 
 #include <Etex.h>
+#include <Ender.h>
 
 #include "Esvg.h"
 #include "esvg_private.h"
@@ -31,18 +32,39 @@
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
-
-/** @cond LOCAL */
 static int _esvg_init_count = 0;
-/** @endcond */
 
+static void _register_enders(void *data)
+{
+	/* register the dependency */
+	ender_loader_load("edom");
+	esvg_element_init();
+	esvg_renderable_init();
+	esvg_svg_init();
+}
+
+static void _constructor_callback(Ender_Element *e, void *data)
+{
+	if (!esvg_is_element(e))
+		return;
+	esvg_element_initialize(e);
+}
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
 
-/** @cond LOCAL */
 int esvg_log_dom_global = -1;
-/** @endcond */
+
+Ender_Namespace * eon_namespace_get(void)
+{
+	static Ender_Namespace *namespace = NULL;
+
+	if (!namespace)
+	{
+		namespace = ender_namespace_new("esvg");
+	}
+	return namespace;
+}
 
 /*============================================================================*
  *                                   API                                      *
@@ -81,6 +103,10 @@ EAPI int esvg_init(void)
 		goto shutdown_enesim;
 	}
 
+	ender_loader_registry_callback_add(_register_enders, NULL);
+	ender_init(NULL, NULL);
+	ender_element_new_listener_add(_constructor_callback, NULL);
+
 	return _esvg_init_count;
 
   shutdown_enesim:
@@ -101,6 +127,8 @@ EAPI int esvg_shutdown(void)
 	if (--_esvg_init_count != 0)
 		return _esvg_init_count;
 
+	ender_element_new_listener_remove(_constructor_callback, NULL);
+	ender_shutdown();
 	etex_shutdown();
 	enesim_shutdown();
 	eina_log_domain_unregister(esvg_log_dom_global);

@@ -36,6 +36,7 @@ EINA_VERSION="1.0.99"
 ENESIM_VERSION="0.0.15"
 EMAGE_VERSION="0.0.5"
 ETEX_VERSION="0.0.3"
+ENDER_VERSION="0.0.1"
 
 AC_CANONICAL_BUILD
 AC_CANONICAL_HOST
@@ -56,7 +57,7 @@ AC_SUBST([ESVG_BUILD])
 
 ecss_requirements="eina"
 edom_requirements="eina"
-esvg_requirements="etex >= ${ETEX_VERSION} enesim >= ${ENESIM_VERSION} eina >= ${EINA_VERSION}"
+esvg_requirements="etex >= ${ETEX_VERSION} enesim >= ${ENESIM_VERSION} eina >= ${EINA_VERSION} ender >= ${ENDER_VERSION}"
 
 AC_SUBST([esvg_requirements])
 
