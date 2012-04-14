@@ -24,8 +24,8 @@
  * TODO
  * Handle the following attributes
  * onunload
- * onabort 
- * onerror 
+ * onabort
+ * onerror
  * onresize
  * onscroll
  * onzoom

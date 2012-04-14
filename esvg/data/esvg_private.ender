@@ -1,4 +1,4 @@
-using "enesim";
+using "edom";
 
 namespace "esvg" {
 	struct "length" {
@@ -13,7 +13,7 @@ namespace "esvg" {
 	abstract "element" : "renderer" {
 	};
 
-	abstract "container" : "element" {
+	abstract "renderable" : "element" {
 
 	};
 

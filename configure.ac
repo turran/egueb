@@ -188,6 +188,7 @@ AC_OUTPUT([
 edom/Makefile
 edom/include/Makefile
 edom/lib/Makefile
+edom/data/Makefile
 ecss/Makefile
 ecss/tests/Makefile
 ecss/include/Makefile
@@ -197,10 +198,10 @@ esvg/bin/Makefile
 esvg/lib/Makefile
 esvg/lib/parser/Makefile
 esvg/include/Makefile
+esvg/include/generated/Makefile
 esvg/modules/Makefile
 esvg/modules/emage/Makefile
 esvg/data/Makefile
-esvg/data/ender/Makefile
 Makefile
 esvg.pc
 ecss.pc
