@@ -42,6 +42,17 @@
 			EINA_MAGIC_FAIL(d, ESVG_ELEMENT_MAGIC);\
 	} while(0)
 
+static Ender_Property *ESVG_ELEMENT_TYPE;
+static Ender_Property *ESVG_ELEMENT_ID;
+static Ender_Property *ESVG_ELEMENT_CLASS;
+static Ender_Property *ESVG_ELEMENT_TRANSFORM;
+static Ender_Property *ESVG_ELEMENT_STYLE;
+static Ender_Property *ESVG_ELEMENT_CLIP_PATH;
+static Ender_Property *ESVG_ELEMENT_OPACITY;
+static Ender_Property *ESVG_ELEMENT_FILL_OPACITY;
+static Ender_Property *ESVG_ELEMENT_STROKE_OPACITY;
+static Ender_Property *ESVG_ELEMENT_VISIBILITY;
+
 typedef struct _Esvg_Element_Descriptor_Internal
 {
 	Edom_Tag_Attribute_Set attribute_set;
@@ -296,6 +307,367 @@ static void _esvg_element_state_compose(const Esvg_Element_State *s, const Esvg_
 	enesim_matrix_compose(&parent->transform, &s->transform, &d->transform);
 }
 
+
+/*----------------------------------------------------------------------------*
+ *                           The Ender interface                              *
+ *----------------------------------------------------------------------------*/
+static Esvg_Type _esvg_element_type_get(Edom_Tag *t)
+{
+	Esvg_Element *thiz;
+
+	thiz = _esvg_element_get(t);
+	return thiz->type;
+}
+
+static void _esvg_element_id_get(Edom_Tag *t, const char **id)
+{
+	Esvg_Element *thiz;
+
+	thiz = _esvg_element_get(t);
+	if (!id) return;
+	*id = thiz->state.id;
+}
+
+static void _esvg_element_id_set(Edom_Tag *t, const char *id)
+{
+	Esvg_Element *thiz;
+
+	thiz = _esvg_element_get(t);
+	if (thiz->state.id)
+	{
+		free(thiz->state.id);
+		thiz->state.id = NULL;
+	}
+	if (id)
+	{
+		thiz->state.id = strdup(id);
+	}
+}
+
+static void _esvg_element_class_set(Edom_Tag *t, const char *class)
+{
+	Esvg_Element *thiz;
+
+	thiz = _esvg_element_get(t);
+	if (thiz->state.class)
+	{
+		free(thiz->state.class);
+		thiz->state.class = NULL;
+	}
+	if (class)
+	{
+		thiz->state.class = strdup(class);
+	}
+}
+
+static void _esvg_element_class_get(Edom_Tag *t, const char **class)
+{
+	Esvg_Element *thiz;
+
+	thiz = _esvg_element_get(t);
+	if (class)
+		*class = thiz->state.class;
+}
+
+static void _esvg_element_transform_set(Edom_Tag *t, const Enesim_Matrix *transform)
+{
+	Esvg_Element *thiz;
+
+	thiz = _esvg_element_get(t);
+	if (!transform) return;
+	thiz->state.transform = *transform;
+}
+
+static void _esvg_element_transform_get(Edom_Tag *t, Enesim_Matrix *transform)
+{
+	Esvg_Element *thiz;
+
+	thiz = _esvg_element_get(t);
+	if (transform) *transform = thiz->state.transform;
+}
+
+static void _esvg_element_style_set(Edom_Tag *t, const Esvg_Attribute_Presentation *style)
+{
+	Esvg_Element *thiz;
+
+	thiz = _esvg_element_get(t);
+	/* FIXME we need to understand how SVG handles inheritance of properties
+	 * and styling, does this properties go to our direct property matching?
+	 * do they go into another set of properties that are set up on the _setup()
+	 * function, what happens whenever the user changes the style string? remove old
+	 * properties? and if the user has also set some property manually?
+	 */
+	/* TODO handle the style
+	 * the idea here is that we should parse the style attribute with ecss
+	 * and apply each property/value
+	 */
+	if (!style)
+	{
+		thiz->style_set = EINA_FALSE;
+	}
+	else
+	{
+		thiz->style = *style;
+		thiz->style_set = EINA_TRUE;
+	}
+}
+
+static void _esvg_element_style_get(Edom_Tag *t, Esvg_Attribute_Presentation *style)
+{
+	Esvg_Element *thiz;
+
+	thiz = _esvg_element_get(t);
+	if (style) *style = thiz->style;
+}
+
+static Eina_Bool _esvg_elementstyle_is_set(Edom_Tag *t)
+{
+	Esvg_Element *thiz;
+
+	thiz = _esvg_element_get(t);
+	return thiz->style_set;
+}
+
+static void _esvg_element_clip_path_set(Edom_Tag *t, const char *clip_path)
+{
+	Esvg_Element *thiz;
+
+	thiz = _esvg_element_get(t);
+}
+
+static void _esvg_element_clip_path_get(Edom_Tag *t, const char **clip_path)
+{
+	Esvg_Element *thiz;
+
+	thiz = _esvg_element_get(t);
+}
+
+static void _esvg_element_clip_path_unset(Edom_Tag *t)
+{
+	Esvg_Element *thiz;
+
+	thiz = _esvg_element_get(t);
+	esvg_attribute_presentation_clip_path_unset(&thiz->attr);
+}
+
+static void _esvg_element_opacity_set(Edom_Tag *t, double opacity)
+{
+	Esvg_Element *thiz;
+	thiz = _esvg_element_get(t);
+
+	esvg_attribute_presentation_opacity_set(&thiz->attr, opacity);
+}
+
+static void _esvg_element_opacity_get(Edom_Tag *t, double *opacity)
+{
+	Esvg_Element *thiz;
+	thiz = _esvg_element_get(t);
+
+}
+
+static void _esvg_element_opacity_unset(Edom_Tag *t)
+{
+	Esvg_Element *thiz;
+
+	thiz = _esvg_element_get(t);
+	esvg_attribute_presentation_opacity_unset(&thiz->attr);
+}
+
+static void _esvg_element_color_set(Edom_Tag *t, const Esvg_Color *color)
+{
+	Esvg_Element *thiz;
+	thiz = _esvg_element_get(t);
+
+	esvg_attribute_presentation_color_set(&thiz->attr, color);
+}
+
+static void _esvg_element_color_unset(Edom_Tag *t)
+{
+	Esvg_Element *thiz;
+
+	thiz = _esvg_element_get(t);
+	esvg_attribute_presentation_color_unset(&thiz->attr);
+}
+
+static void _esvg_element_fill_set(Edom_Tag *t, const Esvg_Paint *fill)
+{
+	Esvg_Element *thiz;
+
+	thiz = _esvg_element_get(t);
+	esvg_attribute_presentation_fill_set(&thiz->attr, fill);
+}
+
+static void _esvg_element_fill_unset(Edom_Tag *t)
+{
+	Esvg_Element *thiz;
+
+	thiz = _esvg_element_get(t);
+	esvg_attribute_presentation_fill_unset(&thiz->attr);
+}
+
+static void _esvg_element_fill_opacity_set(Edom_Tag *t, double fill_opacity)
+{
+	Esvg_Element *thiz;
+
+	thiz = _esvg_element_get(t);
+	esvg_attribute_presentation_fill_opacity_set(&thiz->attr, fill_opacity);
+}
+
+static void _esvg_element_fill_opacity_get(Edom_Tag *t, double *fill_opacity)
+{
+	Esvg_Element *thiz;
+
+	thiz = _esvg_element_get(t);
+	*fill_opacity = thiz->attr.fill_opacity;
+}
+
+static void _esvg_element_fill_opacity_unset(Edom_Tag *t)
+{
+	Esvg_Element *thiz;
+
+	thiz = _esvg_element_get(t);
+	esvg_attribute_presentation_fill_opacity_unset(&thiz->attr);
+}
+
+static void _esvg_element_fill_rule_set(Edom_Tag *t, Esvg_Fill_Rule fill_rule)
+{
+	Esvg_Element *thiz;
+
+	thiz = _esvg_element_get(t);
+	esvg_attribute_presentation_fill_rule_set(&thiz->attr, fill_rule);
+}
+
+static void _esvg_element_stroke_set(Edom_Tag *t, const Esvg_Paint *stroke)
+{
+	Esvg_Element *thiz;
+
+	thiz = _esvg_element_get(t);
+	esvg_attribute_presentation_stroke_set(&thiz->attr, stroke);
+}
+
+static void _esvg_element_stroke_width_set(Edom_Tag *t, const Esvg_Length *stroke_width)
+{
+	Esvg_Element *thiz;
+
+	thiz = _esvg_element_get(t);
+	esvg_attribute_presentation_stroke_width_set(&thiz->attr, stroke_width);
+}
+
+static void _esvg_element_stroke_opacity_set(Edom_Tag *t, double stroke_opacity)
+{
+	Esvg_Element *thiz;
+
+	thiz = _esvg_element_get(t);
+	esvg_attribute_presentation_stroke_opacity_set(&thiz->attr, stroke_opacity);
+}
+
+static void _esvg_element_stroke_opacity_get(Edom_Tag *t, double *stroke_opacity)
+{
+	Esvg_Element *thiz;
+
+	thiz = _esvg_element_get(t);
+	*stroke_opacity = thiz->attr.stroke_opacity;
+}
+
+static void _esvg_element_stroke_line_cap_set(Edom_Tag *t, Esvg_Stroke_Line_Cap cap)
+{
+	Esvg_Element *thiz;
+
+	thiz = _esvg_element_get(t);
+	esvg_attribute_presentation_stroke_line_cap_set(&thiz->attr, cap);
+}
+
+static void _esvg_element_stroke_line_join_set(Edom_Tag *t, Esvg_Stroke_Line_Join join)
+{
+	Esvg_Element *thiz;
+
+	thiz = _esvg_element_get(t);
+	esvg_attribute_presentation_stroke_line_join_set(&thiz->attr, join);
+}
+
+static void _esvg_element_visibility_set(Edom_Tag *t, Eina_Bool visibility)
+{
+	Esvg_Element *thiz;
+
+	thiz = _esvg_element_get(t);
+	esvg_attribute_presentation_visibility_set(&thiz->attr, visibility);
+}
+
+static void _esvg_element_visibility_get(Edom_Tag *t, Eina_Bool *visibility)
+{
+	Esvg_Element *thiz;
+
+	if (!visibility) return;
+
+	thiz = _esvg_element_get(t);
+	*visibility = thiz->attr.visibility;
+}
+
+
+static void _esvg_element_container_width_set(Edom_Tag *t, double container_width)
+{
+	Esvg_Element *thiz;
+
+	thiz = _esvg_element_get(t);
+	thiz->container_width = container_width;
+}
+
+static void _esvg_element_container_width_get(Edom_Tag *t, double *container_width)
+{
+	Esvg_Element *thiz;
+
+	thiz = _esvg_element_get(t);
+	if (container_width) *container_width = thiz->container_width;
+}
+
+static void _esvg_element_container_height_set(Edom_Tag *t, double container_height)
+{
+	Esvg_Element *thiz;
+
+	thiz = _esvg_element_get(t);
+	thiz->container_height = container_height;
+}
+
+static void _esvg_element_container_height_get(Edom_Tag *t, double *container_height)
+{
+	Esvg_Element *thiz;
+
+	thiz = _esvg_element_get(t);
+	if (container_height) *container_height = thiz->container_height;
+}
+
+static void _esvg_element_x_dpi_set(Edom_Tag *t, double x_dpi)
+{
+	Esvg_Element *thiz;
+
+	thiz = _esvg_element_get(t);
+	thiz->x_dpi = x_dpi;
+}
+
+static void _esvg_element_x_dpi_get(Edom_Tag *t, double *x_dpi)
+{
+	Esvg_Element *thiz;
+
+	thiz = _esvg_element_get(t);
+	if (x_dpi) *x_dpi = thiz->x_dpi;
+}
+
+static void _esvg_element_y_dpi_set(Edom_Tag *t, double y_dpi)
+{
+	Esvg_Element *thiz;
+
+	thiz = _esvg_element_get(t);
+	thiz->y_dpi = y_dpi;
+}
+
+static void _esvg_element_y_dpi_get(Edom_Tag *t, double *y_dpi)
+{
+	Esvg_Element *thiz;
+
+	thiz = _esvg_element_get(t);
+	if (y_dpi) *y_dpi = thiz->y_dpi;
+}
+
 /*----------------------------------------------------------------------------*
  *                           The Edom Tag interface                           *
  *----------------------------------------------------------------------------*/
@@ -305,6 +677,10 @@ const char * _esvg_element_name_get(Edom_Tag *t)
 	return NULL;
 }
 
+/* this functions gets called from the tag interface, no need to go through the ender
+ * interface again just to trigger the callback. Ender should have trigger a callback
+ * for the 'attribute' property
+ */
 static Eina_Bool _esvg_element_attribute_set(Edom_Tag *t, const char *key, const char *value)
 {
 	Esvg_Element *thiz;
@@ -315,18 +691,18 @@ static Eina_Bool _esvg_element_attribute_set(Edom_Tag *t, const char *key, const
 	 * call the descriptor function */
 	if (strcmp(key, "id") == 0)
 	{
-		esvg_element_id_set(t, value);
+		_esvg_element_id_set(t, value);
 	}
 	else if (strcmp(key, "class") == 0)
 	{
-		esvg_element_class_set(t, value);
+		_esvg_element_class_set(t, value);
 	}
 	else if (strcmp(key, "transform") == 0)
 	{
 		Enesim_Matrix matrix;
 
 		esvg_transformation_get(&matrix, value);
-		esvg_element_transform_set(t, &matrix);
+		_esvg_element_transform_set(t, &matrix);
 	}
 	else if (strcmp(key, "style") == 0)
 	{
@@ -335,7 +711,7 @@ static Eina_Bool _esvg_element_attribute_set(Edom_Tag *t, const char *key, const
 
 		memset(&attr, 0, sizeof(Esvg_Attribute_Presentation));
 		esvg_parser_style_inline_set(value, t, &attr);
-		esvg_element_style_set(t, &attr);
+		_esvg_element_style_set(t, &attr);
 #endif
 	}
 	/* common presentation attributes */
@@ -352,14 +728,14 @@ static Eina_Bool _esvg_element_attribute_set(Edom_Tag *t, const char *key, const
 	else if (strcmp(key, "opacity") == 0)
 	{
 		double opacity = esvg_number_get(value, 1.0);
-		esvg_element_opacity_set(t, opacity);
+		_esvg_element_opacity_set(t, opacity);
 	}
 	else if (strcmp(key, "color") == 0)
 	{
 		Esvg_Color color;
 
 		esvg_color_get(&color, value);
-		esvg_element_color_set(t, &color);
+		_esvg_element_color_set(t, &color);
 	}
 	else if (strcmp(key, "fill") == 0)
 	{
@@ -382,7 +758,7 @@ static Eina_Bool _esvg_element_attribute_set(Edom_Tag *t, const char *key, const
 		}
 		else
 		{
-			esvg_element_fill_set(t, &fill);
+			_esvg_element_fill_set(t, &fill);
 		}
 #endif
 	}
@@ -391,12 +767,12 @@ static Eina_Bool _esvg_element_attribute_set(Edom_Tag *t, const char *key, const
 		Esvg_Fill_Rule fill_rule;
 
 		esvg_parser_fill_rule_get(&fill_rule, value);
-		esvg_element_fill_rule_set(t, fill_rule);
+		_esvg_element_fill_rule_set(t, fill_rule);
 	}
 	else if (strcmp(key, "fill-opacity") == 0)
 	{
 		double fill_opacity = esvg_number_get(value, 1.0);
-		esvg_element_fill_opacity_set(t, fill_opacity);
+		_esvg_element_fill_opacity_set(t, fill_opacity);
 	}
 	else if (strcmp(key, "stroke") == 0)
 	{
@@ -419,7 +795,7 @@ static Eina_Bool _esvg_element_attribute_set(Edom_Tag *t, const char *key, const
 		}
 		else
 		{
-			esvg_element_stroke_set(t, &stroke);
+			_esvg_element_stroke_set(t, &stroke);
 		}
 #endif
 	}
@@ -428,26 +804,26 @@ static Eina_Bool _esvg_element_attribute_set(Edom_Tag *t, const char *key, const
 		Esvg_Length stroke_width;
 
 		esvg_length_get(&stroke_width, value, ESVG_LENGTH_1);
-		esvg_element_stroke_width_set(t, &stroke_width);
+		_esvg_element_stroke_width_set(t, &stroke_width);
 	}
 	else if (strcmp(key, "stroke-opacity") == 0)
 	{
 		double stroke_opacity = esvg_number_get(value, 1.0);
-		esvg_element_stroke_opacity_set(t, stroke_opacity);
+		_esvg_element_stroke_opacity_set(t, stroke_opacity);
 	}
 	else if (strcmp(key, "stroke-linecap") == 0)
 	{
 		Esvg_Stroke_Line_Cap stroke_line_cap;
 
 		stroke_line_cap = esvg_stroke_line_cap_get(value);
-		esvg_element_stroke_line_cap_set(t, stroke_line_cap);
+		_esvg_element_stroke_line_cap_set(t, stroke_line_cap);
 	}
 	else if (strcmp(key, "stroke-linejoin") == 0)
 	{
 		Esvg_Stroke_Line_Join stroke_line_join;
 
 		stroke_line_join = esvg_stroke_line_join_get(value);
-		esvg_element_stroke_line_join_set(t, stroke_line_join);
+		_esvg_element_stroke_line_join_set(t, stroke_line_join);
 	}
 	else if (strcmp(key, "stop-color") == 0)
 	{
@@ -490,377 +866,12 @@ static void _esvg_element_free(Edom_Tag *t)
 		return thiz->descriptor.free(t);
 	free(thiz);
 }
-/*----------------------------------------------------------------------------*
- *                           The Ender interface                              *
- *----------------------------------------------------------------------------*/
-static Esvg_Type _esvg_elementtype_get(Edom_Tag *t)
-{
-	Esvg_Element *thiz;
-
-	thiz = _esvg_element_get(t);
-	return thiz->type;
-}
-
-static void _esvg_elementid_get(Edom_Tag *t, const char **id)
-{
-	Esvg_Element *thiz;
-
-	thiz = _esvg_element_get(t);
-	if (!id) return;
-	*id = thiz->state.id;
-}
-
-static void _esvg_elementid_set(Edom_Tag *t, const char *id)
-{
-	Esvg_Element *thiz;
-
-	thiz = _esvg_element_get(t);
-	if (thiz->state.id)
-	{
-		free(thiz->state.id);
-		thiz->state.id = NULL;
-	}
-	if (id)
-	{
-		thiz->state.id = strdup(id);
-	}
-}
-
-static void _esvg_elementclass_set(Edom_Tag *t, const char *class)
-{
-	Esvg_Element *thiz;
-
-	thiz = _esvg_element_get(t);
-	if (thiz->state.class)
-	{
-		free(thiz->state.class);
-		thiz->state.class = NULL;
-	}
-	if (class)
-	{
-		thiz->state.class = strdup(class);
-	}
-}
-
-static void _esvg_elementtransform_set(Edom_Tag *t, const Enesim_Matrix *transform)
-{
-	Esvg_Element *thiz;
-
-	thiz = _esvg_element_get(t);
-	if (!transform) return;
-	thiz->state.transform = *transform;
-}
-
-static void _esvg_elementtransform_get(Edom_Tag *t, Enesim_Matrix *transform)
-{
-	Esvg_Element *thiz;
-
-	thiz = _esvg_element_get(t);
-	if (transform) *transform = thiz->state.transform;
-}
-
-static void _esvg_elementstyle_set(Edom_Tag *t, const Esvg_Attribute_Presentation *style)
-{
-	Esvg_Element *thiz;
-
-	thiz = _esvg_element_get(t);
-	/* FIXME we need to understand how SVG handles inheritance of properties
-	 * and styling, does this properties go to our direct property matching?
-	 * do they go into another set of properties that are set up on the _setup()
-	 * function, what happens whenever the user changes the style string? remove old
-	 * properties? and if the user has also set some property manually?
-	 */
-	/* TODO handle the style
-	 * the idea here is that we should parse the style attribute with ecss
-	 * and apply each property/value
-	 */
-	if (!style)
-	{
-		thiz->style_set = EINA_FALSE;
-	}
-	else
-	{
-		thiz->style = *style;
-		thiz->style_set = EINA_TRUE;
-	}
-}
-
-static void _esvg_elementstyle_get(Edom_Tag *t, Esvg_Attribute_Presentation *style)
-{
-	Esvg_Element *thiz;
-
-	thiz = _esvg_element_get(t);
-	if (style) *style = thiz->style;
-}
-
-static Eina_Bool _esvg_elementstyle_is_set(Edom_Tag *t)
-{
-	Esvg_Element *thiz;
-
-	thiz = _esvg_element_get(t);
-	return thiz->style_set;
-}
-
-static void _esvg_elementclip_path_set(Edom_Tag *t, const Edom_Tag *clip_path)
-{
-	Esvg_Element *thiz;
-
-	thiz = _esvg_element_get(t);
-	if (clip_path) esvg_attribute_presentation_clip_path_set(&thiz->attr, clip_path);
-}
-
-static void _esvg_elementclip_path_unset(Edom_Tag *t)
-{
-	Esvg_Element *thiz;
-
-	thiz = _esvg_element_get(t);
-	esvg_attribute_presentation_clip_path_unset(&thiz->attr);
-}
-
-static void _esvg_elementopacity_set(Edom_Tag *t, double opacity)
-{
-	Esvg_Element *thiz;
-	thiz = _esvg_element_get(t);
-
-	esvg_attribute_presentation_opacity_set(&thiz->attr, opacity);
-}
-
-static void _esvg_elementopacity_unset(Edom_Tag *t)
-{
-	Esvg_Element *thiz;
-
-	thiz = _esvg_element_get(t);
-	esvg_attribute_presentation_opacity_unset(&thiz->attr);
-}
-
-static void _esvg_elementcolor_set(Edom_Tag *t, const Esvg_Color *color)
-{
-	Esvg_Element *thiz;
-	thiz = _esvg_element_get(t);
-
-	esvg_attribute_presentation_color_set(&thiz->attr, color);
-}
-
-static void _esvg_elementcolor_unset(Edom_Tag *t)
-{
-	Esvg_Element *thiz;
-
-	thiz = _esvg_element_get(t);
-	esvg_attribute_presentation_color_unset(&thiz->attr);
-}
-
-static void _esvg_elementfill_set(Edom_Tag *t, const Esvg_Paint *fill)
-{
-	Esvg_Element *thiz;
-
-	thiz = _esvg_element_get(t);
-	esvg_attribute_presentation_fill_set(&thiz->attr, fill);
-}
-
-static void _esvg_elementfill_unset(Edom_Tag *t)
-{
-	Esvg_Element *thiz;
-
-	thiz = _esvg_element_get(t);
-	esvg_attribute_presentation_fill_unset(&thiz->attr);
-}
-
-static void _esvg_elementfill_opacity_set(Edom_Tag *t, double fill_opacity)
-{
-	Esvg_Element *thiz;
-
-	thiz = _esvg_element_get(t);
-	esvg_attribute_presentation_fill_opacity_set(&thiz->attr, fill_opacity);
-}
-
-static void _esvg_elementfill_opacity_unset(Edom_Tag *t)
-{
-	Esvg_Element *thiz;
-
-	thiz = _esvg_element_get(t);
-	esvg_attribute_presentation_fill_opacity_unset(&thiz->attr);
-}
-
-static void _esvg_elementfill_rule_set(Edom_Tag *t, Esvg_Fill_Rule fill_rule)
-{
-	Esvg_Element *thiz;
-
-	thiz = _esvg_element_get(t);
-	esvg_attribute_presentation_fill_rule_set(&thiz->attr, fill_rule);
-}
-
-static void _esvg_elementfill_rule_unset(Edom_Tag *t)
-{
-	Esvg_Element *thiz;
-
-	thiz = _esvg_element_get(t);
-	esvg_attribute_presentation_fill_rule_unset(&thiz->attr);
-}
-
-static void _esvg_elementstroke_set(Edom_Tag *t, const Esvg_Paint *stroke)
-{
-	Esvg_Element *thiz;
-
-	thiz = _esvg_element_get(t);
-	esvg_attribute_presentation_stroke_set(&thiz->attr, stroke);
-}
-
-/* static void _esvg_elementstroke_unset(Edom_Tag *t) */
-/* { */
-/* 	Esvg_Element *thiz; */
-
-/* 	thiz = _esvg_element_get(t); */
-/* 	esvg_attribute_presentation_stroke_unset(&thiz->attr); */
-/* } */
-
-static void _esvg_elementstroke_width_set(Edom_Tag *t, const Esvg_Length *stroke_width)
-{
-	Esvg_Element *thiz;
-
-	thiz = _esvg_element_get(t);
-	esvg_attribute_presentation_stroke_width_set(&thiz->attr, stroke_width);
-}
-
-/* static void _esvg_elementstroke_width_unset(Edom_Tag *t) */
-/* { */
-/* 	Esvg_Element *thiz; */
-
-/* 	thiz = _esvg_element_get(t); */
-/* 	esvg_attribute_presentation_stroke_width_unset(&thiz->attr); */
-/* } */
-
-static void _esvg_elementstroke_opacity_set(Edom_Tag *t, double stroke_opacity)
-{
-	Esvg_Element *thiz;
-
-	thiz = _esvg_element_get(t);
-	esvg_attribute_presentation_stroke_opacity_set(&thiz->attr, stroke_opacity);
-}
-
-static void _esvg_elementstroke_opacity_unset(Edom_Tag *t)
-{
-	Esvg_Element *thiz;
-
-	thiz = _esvg_element_get(t);
-	esvg_attribute_presentation_stroke_opacity_unset(&thiz->attr);
-}
-
-static void _esvg_elementstroke_line_cap_set(Edom_Tag *t, Esvg_Stroke_Line_Cap cap)
-{
-	Esvg_Element *thiz;
-
-	thiz = _esvg_element_get(t);
-	esvg_attribute_presentation_stroke_line_cap_set(&thiz->attr, cap);
-}
-
-static void _esvg_elementstroke_line_cap_unset(Edom_Tag *t)
-{
-	Esvg_Element *thiz;
-
-	thiz = _esvg_element_get(t);
-	esvg_attribute_presentation_stroke_line_cap_unset(&thiz->attr);
-}
-
-static void _esvg_elementstroke_line_join_set(Edom_Tag *t, Esvg_Stroke_Line_Join join)
-{
-	Esvg_Element *thiz;
-
-	thiz = _esvg_element_get(t);
-	esvg_attribute_presentation_stroke_line_join_set(&thiz->attr, join);
-}
-
-static void _esvg_elementstroke_line_join_unset(Edom_Tag *t)
-{
-	Esvg_Element *thiz;
-
-	thiz = _esvg_element_get(t);
-	esvg_attribute_presentation_stroke_line_join_unset(&thiz->attr);
-}
-
-static void _esvg_elementvisibility_set(Edom_Tag *t, Eina_Bool visibility)
-{
-	Esvg_Element *thiz;
-
-	thiz = _esvg_element_get(t);
-	esvg_attribute_presentation_visibility_set(&thiz->attr, visibility);
-}
-
-static void _esvg_elementvisibility_unset(Edom_Tag *t)
-{
-	Esvg_Element *thiz;
-
-	thiz = _esvg_element_get(t);
-	esvg_attribute_presentation_visibility_unset(&thiz->attr);
-}
-
-static void _esvg_elementcontainer_width_set(Edom_Tag *t, double container_width)
-{
-	Esvg_Element *thiz;
-
-	thiz = _esvg_element_get(t);
-	thiz->container_width = container_width;
-}
-
-static void _esvg_elementcontainer_width_get(Edom_Tag *t, double *container_width)
-{
-	Esvg_Element *thiz;
-
-	thiz = _esvg_element_get(t);
-	if (container_width) *container_width = thiz->container_width;
-}
-
-static void _esvg_elementcontainer_height_set(Edom_Tag *t, double container_height)
-{
-	Esvg_Element *thiz;
-
-	thiz = _esvg_element_get(t);
-	thiz->container_height = container_height;
-}
-
-static void _esvg_elementcontainer_height_get(Edom_Tag *t, double *container_height)
-{
-	Esvg_Element *thiz;
-
-	thiz = _esvg_element_get(t);
-	if (container_height) *container_height = thiz->container_height;
-}
-
-static void _esvg_elementx_dpi_set(Edom_Tag *t, double x_dpi)
-{
-	Esvg_Element *thiz;
-
-	thiz = _esvg_element_get(t);
-	thiz->x_dpi = x_dpi;
-}
-
-static void _esvg_elementx_dpi_get(Edom_Tag *t, double *x_dpi)
-{
-	Esvg_Element *thiz;
-
-	thiz = _esvg_element_get(t);
-	if (x_dpi) *x_dpi = thiz->x_dpi;
-}
-
-static void _esvg_elementy_dpi_set(Edom_Tag *t, double y_dpi)
-{
-	Esvg_Element *thiz;
-
-	thiz = _esvg_element_get(t);
-	thiz->y_dpi = y_dpi;
-}
-
-static void _esvg_elementy_dpi_get(Edom_Tag *t, double *y_dpi)
-{
-	Esvg_Element *thiz;
-
-	thiz = _esvg_element_get(t);
-	if (y_dpi) *y_dpi = thiz->y_dpi;
-}
-
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
 /* The ender wrapper */
+/* the type is RO */
+#define _esvg_element_type_set NULL
 #include "generated/esvg_generated_element.c"
 
 Esvg_Type esvg_element_type_get_internal(Edom_Tag *t)
@@ -1105,6 +1116,15 @@ EAPI void esvg_element_opacity_set(Ender_Element *e, double opacity)
  * To be documented
  * FIXME: To be fixed
  */
+EAPI void esvg_element_opacity_get(Ender_Element *e, double opacity)
+{
+}
+
+
+/**
+ * To be documented
+ * FIXME: To be fixed
+ */
 EAPI void esvg_element_opacity_unset(Ender_Element *e)
 {
 }
@@ -1153,6 +1173,15 @@ EAPI void esvg_element_fill_opacity_set(Ender_Element *e, double fill_opacity)
  * To be documented
  * FIXME: To be fixed
  */
+EAPI void esvg_element_fill_opacity_get(Ender_Element *e, double *fill_opacity)
+{
+}
+
+
+/**
+ * To be documented
+ * FIXME: To be fixed
+ */
 EAPI void esvg_element_fill_opacity_unset(Ender_Element *e)
 {
 }
@@ -1187,7 +1216,7 @@ EAPI void esvg_element_stroke_set(Ender_Element *e, const Esvg_Paint *stroke)
  */
 EAPI void esvg_element_stroke_unset(Ender_Element *e)
 {
-} 
+}
 
 /**
  * To be documented
@@ -1203,7 +1232,7 @@ EAPI void esvg_element_stroke_width_set(Ender_Element *e, const Esvg_Length *str
  */
 EAPI void esvg_element_stroke_width_unset(Ender_Element *e)
 {
-} 
+}
 
 /**
  * To be documented
@@ -1212,6 +1241,15 @@ EAPI void esvg_element_stroke_width_unset(Ender_Element *e)
 EAPI void esvg_element_stroke_opacity_set(Ender_Element *e, double stroke_opacity)
 {
 }
+
+/**
+ * To be documented
+ * FIXME: To be fixed
+ */
+EAPI void esvg_element_stroke_opacity_get(Ender_Element *e, double *stroke_opacity)
+{
+}
+
 
 /**
  * To be documented

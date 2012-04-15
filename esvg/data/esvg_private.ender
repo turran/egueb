@@ -6,7 +6,24 @@ namespace "esvg" {
 		int "unit";
 	};
 
+
 	abstract "element" : "tag" {
+		/* core */
+		int "type";
+		/* dom /*
+		string "id";
+		string "class";
+		/* presentation attributes */
+		string "style";
+		string "clip_path";
+		double "opacity";
+		/* the color needs a byte definition or int8 in ender */
+		/* once the color is done we can the union paint for filling and stroking */
+		double "fill_opacity";
+		double "stroke_opacity";
+		bool "visibility";
+		/* other attributes */
+		matrix "transform";
 	};
 
 	abstract "renderable" : "element" {
