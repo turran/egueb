@@ -22,6 +22,7 @@
 #include "esvg_private_main.h"
 #include "esvg_private_attribute_presentation.h"
 #include "esvg_private_element.h"
+
 #include "esvg_element.h"
 /*
  * TODO
@@ -60,6 +61,7 @@ static Ender_Property *ESVG_ELEMENT_VISIBILITY;
 
 typedef struct _Esvg_Element_Descriptor_Internal
 {
+	Esvg_Element_Initialize initialize;
 	Edom_Tag_Attribute_Set attribute_set;
 	Edom_Tag_Attribute_Get attribute_get;
 	Edom_Tag_Free free;
@@ -88,6 +90,7 @@ typedef struct _Esvg_Element
 	Esvg_Element_State state_final;
 	Eina_Bool changed : 1;
 	Eina_Bool style_set : 1;
+	Ender_Element *e;
 	void *data;
 } Esvg_Element;
 
@@ -889,7 +892,12 @@ Esvg_Type esvg_element_type_get_internal(Edom_Tag *t)
 
 void esvg_element_initialize(Ender_Element *e)
 {
-	/* TODO call the initialize on the element */
+	Esvg_Element *thiz;
+
+	thiz = _esvg_element_get(ender_element_object_get(e));
+	thiz->e = e;
+	if (thiz->descriptor.initialize)
+		thiz->descriptor.initialize(thiz);
 }
 
 void * esvg_element_data_get(Edom_Tag *t)

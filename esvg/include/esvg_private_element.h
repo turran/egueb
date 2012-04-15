@@ -14,12 +14,14 @@ typedef struct _Esvg_Element_State {
 	char *class;
 } Esvg_Element_State;
 
+/* FIXME change this to be the esvg element? */
+typedef void (*Esvg_Element_Initialize)(Ender_Element *e);
+
 typedef Eina_Bool (*Esvg_Element_Setup)(Edom_Tag *t,
 		Esvg_Element_State *state,
 		Esvg_Attribute_Presentation *attr,
 		Enesim_Surface *s,
 		Enesim_Error **error);
-
 typedef void (*Esvg_Element_Clone)(Edom_Tag *r, Edom_Tag *dst);
 
 typedef struct _Esvg_Element_Descriptor {
