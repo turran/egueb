@@ -70,48 +70,45 @@ static Esvg_Svg * _esvg_svg_get(Edom_Tag *t)
 /*----------------------------------------------------------------------------*
  *                       The Esvg Renderable interface                        *
  *----------------------------------------------------------------------------*/
-static Eina_Bool _esvg_svg_attribute_set(Edom_Tag *t, const char *key, const char *value)
+static Eina_Bool _esvg_svg_attribute_set(Ender_Element *e, const char *key, const char *value)
 {
-	Esvg_Svg *thiz;
-
-	thiz = _esvg_svg_get(t);
 	if (strcmp(key, "version") == 0)
 	{
 		double version = esvg_number_get(value, 0.0);
-		esvg_svg_version_set(t, version);
+		esvg_svg_version_set(e, version);
 	}
 	else if (strcmp(key, "x") == 0)
 	{
 		Esvg_Coord x;
 
 		esvg_length_get(&x, value, ESVG_COORD_0);
-		esvg_svg_x_set(t, &x);
+		esvg_svg_x_set(e, &x);
 	}
 	else if (strcmp(key, "y") == 0)
 	{
 		Esvg_Coord y;
 
 		esvg_length_get(&y, value, ESVG_COORD_0);
-		esvg_svg_y_set(t, &y);
+		esvg_svg_y_set(e, &y);
 	}
 	else if (strcmp(key, "width") == 0)
 	{
 		Esvg_Length width;
 
 		esvg_length_get(&width, value, ESVG_LENGTH_0);
-		esvg_svg_width_set(t, &width);
+		esvg_svg_width_set(e, &width);
 	}
 	else if (strcmp(key, "height") == 0)
 	{
 		Esvg_Length height;
 
 		esvg_length_get(&height, value, ESVG_LENGTH_0);
-		esvg_svg_height_set(t, &height);
+		esvg_svg_height_set(e, &height);
 	}
 	else if (strcmp(key, "viewBox") == 0)
 	{
 		Esvg_View_Box vb = esvg_view_box_get(value);
-		esvg_svg_viewbox_set(t, &vb);
+		esvg_svg_viewbox_set(e, &vb);
 	}
 
 	return EINA_TRUE;
@@ -242,11 +239,11 @@ static void _esvg_svg_free(Edom_Tag *t)
 static Esvg_Renderable_Descriptor _descriptor = {
 	/* .child_add		= */ _esvg_svg_child_add,
 	/* .child_remove	= */ NULL,
-	/* .attribute_set 	= */ _esvg_svg_attribute_set,
 	/* .attribute_get 	= */ _esvg_svg_attribute_get,
 	/* .cdata_set 		= */ NULL,
 	/* .text_set 		= */ NULL,
 	/* .free 		= */ _esvg_svg_free,
+	/* .attribute_set 	= */ _esvg_svg_attribute_set,
 	/* .clone		= */ _esvg_svg_clone,
 	/* .setup		= */ _esvg_svg_setup,
 	/* .renderer_get	= */ _esvg_svg_renderer_get,

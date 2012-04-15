@@ -62,7 +62,7 @@ static Ender_Property *ESVG_ELEMENT_VISIBILITY;
 typedef struct _Esvg_Element_Descriptor_Internal
 {
 	Esvg_Element_Initialize initialize;
-	Edom_Tag_Attribute_Set attribute_set;
+	Esvg_Element_Attribute_Set attribute_set;
 	Edom_Tag_Attribute_Get attribute_get;
 	Edom_Tag_Free free;
 	Esvg_Element_Clone clone;
@@ -685,10 +685,6 @@ const char * _esvg_element_name_get(Edom_Tag *t)
 	return NULL;
 }
 
-/* this functions gets called from the tag interface, no need to go through the ender
- * interface again just to trigger the callback. Ender should have trigger a callback
- * for the 'attribute' property
- */
 static Eina_Bool _esvg_element_attribute_set(Edom_Tag *t, const char *key, const char *value)
 {
 	Esvg_Element *thiz;
@@ -699,18 +695,18 @@ static Eina_Bool _esvg_element_attribute_set(Edom_Tag *t, const char *key, const
 	 * call the descriptor function */
 	if (strcmp(key, "id") == 0)
 	{
-		_esvg_element_id_set(t, value);
+		esvg_element_id_set(thiz->e, value);
 	}
 	else if (strcmp(key, "class") == 0)
 	{
-		_esvg_element_class_set(t, value);
+		esvg_element_class_set(thiz->e, value);
 	}
 	else if (strcmp(key, "transform") == 0)
 	{
 		Enesim_Matrix matrix;
 
 		esvg_transformation_get(&matrix, value);
-		_esvg_element_transform_set(t, &matrix);
+		esvg_element_transform_set(thiz->e, &matrix);
 	}
 	else if (strcmp(key, "style") == 0)
 	{
@@ -718,8 +714,8 @@ static Eina_Bool _esvg_element_attribute_set(Edom_Tag *t, const char *key, const
 		Esvg_Attribute_Presentation attr;
 
 		memset(&attr, 0, sizeof(Esvg_Attribute_Presentation));
-		esvg_parser_style_inline_set(value, t, &attr);
-		_esvg_element_style_set(t, &attr);
+		esvg_parser_style_inline_set(value, thiz->e, &attr);
+		esvg_element_style_set(thiz->e, &attr);
 #endif
 	}
 	/* common presentation attributes */
@@ -728,7 +724,7 @@ static Eina_Bool _esvg_element_attribute_set(Edom_Tag *t, const char *key, const
 #if 0
 		Edom_Parser *parser;
 
-		parser = edom_tag_parser_get(t);
+		parser = edom_tag_parser_get(thiz->e);
 		thiz->clip_path = strdup(value);
 		esvg_parser_post_parse_add(parser, _post_parse_clip_path_cb, thiz);
 #endif
@@ -736,21 +732,21 @@ static Eina_Bool _esvg_element_attribute_set(Edom_Tag *t, const char *key, const
 	else if (strcmp(key, "opacity") == 0)
 	{
 		double opacity = esvg_number_get(value, 1.0);
-		_esvg_element_opacity_set(t, opacity);
+		esvg_element_opacity_set(thiz->e, opacity);
 	}
 	else if (strcmp(key, "color") == 0)
 	{
 		Esvg_Color color;
 
 		esvg_color_get(&color, value);
-		_esvg_element_color_set(t, &color);
+		esvg_element_color_set(thiz->e, &color);
 	}
 	else if (strcmp(key, "fill") == 0)
 	{
 #if 0
 		Esvg_Paint fill;
 
-		if (!esvg_paint_get(&fill, t, value))
+		if (!esvg_paint_get(&fill, thiz->e, value))
 		{
 			/* we delay the parsing of fill for later in case
 			 * the value has an uri
@@ -759,14 +755,14 @@ static Eina_Bool _esvg_element_attribute_set(Edom_Tag *t, const char *key, const
 			{
 				Edom_Parser *parser;
 
-				parser = edom_tag_parser_get(t);
+				parser = edom_tag_parser_get(thiz->e);
 				thiz->fill = strdup(value);
 				esvg_parser_post_parse_add(parser, _post_parse_fill_cb, thiz);
 			}
 		}
 		else
 		{
-			_esvg_element_fill_set(t, &fill);
+			esvg_element_fill_set(thiz->e, &fill);
 		}
 #endif
 	}
@@ -775,19 +771,19 @@ static Eina_Bool _esvg_element_attribute_set(Edom_Tag *t, const char *key, const
 		Esvg_Fill_Rule fill_rule;
 
 		esvg_parser_fill_rule_get(&fill_rule, value);
-		_esvg_element_fill_rule_set(t, fill_rule);
+		esvg_element_fill_rule_set(thiz->e, fill_rule);
 	}
 	else if (strcmp(key, "fill-opacity") == 0)
 	{
 		double fill_opacity = esvg_number_get(value, 1.0);
-		_esvg_element_fill_opacity_set(t, fill_opacity);
+		esvg_element_fill_opacity_set(thiz->e, fill_opacity);
 	}
 	else if (strcmp(key, "stroke") == 0)
 	{
 #if 0
 		Esvg_Paint stroke;
 
-		if (!esvg_paint_get(&stroke, t, value))
+		if (!esvg_paint_get(&stroke, thiz->e, value))
 		{
 			/* we delay the parsing of stroke for later in case
 			 * the value has an uri
@@ -796,14 +792,14 @@ static Eina_Bool _esvg_element_attribute_set(Edom_Tag *t, const char *key, const
 			{
 				Edom_Parser *parser;
 
-				parser = edom_tag_parser_get(t);
+				parser = edom_tag_parser_get(thiz->e);
 				thiz->stroke = strdup(value);
 				esvg_parser_post_parse_add(parser, _post_parse_stroke_cb, thiz);
 			}
 		}
 		else
 		{
-			_esvg_element_stroke_set(t, &stroke);
+			esvg_element_stroke_set(thiz->e, &stroke);
 		}
 #endif
 	}
@@ -812,26 +808,26 @@ static Eina_Bool _esvg_element_attribute_set(Edom_Tag *t, const char *key, const
 		Esvg_Length stroke_width;
 
 		esvg_length_get(&stroke_width, value, ESVG_LENGTH_1);
-		_esvg_element_stroke_width_set(t, &stroke_width);
+		esvg_element_stroke_width_set(thiz->e, &stroke_width);
 	}
 	else if (strcmp(key, "stroke-opacity") == 0)
 	{
 		double stroke_opacity = esvg_number_get(value, 1.0);
-		_esvg_element_stroke_opacity_set(t, stroke_opacity);
+		esvg_element_stroke_opacity_set(thiz->e, stroke_opacity);
 	}
 	else if (strcmp(key, "stroke-linecap") == 0)
 	{
 		Esvg_Stroke_Line_Cap stroke_line_cap;
 
 		stroke_line_cap = esvg_stroke_line_cap_get(value);
-		_esvg_element_stroke_line_cap_set(t, stroke_line_cap);
+		esvg_element_stroke_line_cap_set(thiz->e, stroke_line_cap);
 	}
 	else if (strcmp(key, "stroke-linejoin") == 0)
 	{
 		Esvg_Stroke_Line_Join stroke_line_join;
 
 		stroke_line_join = esvg_stroke_line_join_get(value);
-		_esvg_element_stroke_line_join_set(t, stroke_line_join);
+		esvg_element_stroke_line_join_set(thiz->e, stroke_line_join);
 	}
 	else if (strcmp(key, "stop-color") == 0)
 	{
@@ -848,7 +844,7 @@ static Eina_Bool _esvg_element_attribute_set(Edom_Tag *t, const char *key, const
 	else
 	{
 		if (thiz->descriptor.attribute_set)
-			return thiz->descriptor.attribute_set(t, key, value);
+			return thiz->descriptor.attribute_set(thiz->e, key, value);
 	}
 
 	return EINA_FALSE;
@@ -897,7 +893,7 @@ void esvg_element_initialize(Ender_Element *e)
 	thiz = _esvg_element_get(ender_element_object_get(e));
 	thiz->e = e;
 	if (thiz->descriptor.initialize)
-		thiz->descriptor.initialize(thiz);
+		thiz->descriptor.initialize(e);
 }
 
 void * esvg_element_data_get(Edom_Tag *t)
@@ -934,6 +930,7 @@ Edom_Tag * esvg_element_new(Esvg_Element_Descriptor *descriptor, Esvg_Type type,
 	pdescriptor.free = _esvg_element_free;
 
 	/* our own interface */
+	thiz->descriptor.initialize = descriptor->initialize;
 	thiz->descriptor.clone = descriptor->clone;
 	thiz->descriptor.setup = descriptor->setup;
 	thiz->descriptor.attribute_set = descriptor->attribute_set;
