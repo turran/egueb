@@ -1,0 +1,39 @@
+#ifndef _ESVG_ATTRIBUTE_PRESENTATION_H_
+#define _ESVG_ATTRIBUTE_PRESENTATION_H_
+
+#include <Eina.h>
+#include <Edom.h>
+#include "esvg_types.h"
+
+void esvg_attribute_presentation_setup(Esvg_Attribute_Presentation *thiz);
+void esvg_attribute_presentation_clip_path_set(Esvg_Attribute_Presentation *thiz, const Edom_Tag *clip_path);
+void esvg_attribute_presentation_clip_path_unset(Esvg_Attribute_Presentation *thiz);
+void esvg_attribute_presentation_color_set(Esvg_Attribute_Presentation *thiz, const Esvg_Color *color);
+void esvg_attribute_presentation_color_unset(Esvg_Attribute_Presentation *thiz);
+void esvg_attribute_presentation_opacity_set(Esvg_Attribute_Presentation *thiz, double opacity);
+void esvg_attribute_presentation_fill_set(Esvg_Attribute_Presentation *thiz, const Esvg_Paint *fill);
+void esvg_attribute_presentation_fill_unset(Esvg_Attribute_Presentation *thiz);
+void esvg_attribute_presentation_fill_opacity_set(Esvg_Attribute_Presentation *thiz, double fill_opacity);
+void esvg_attribute_presentation_fill_opacity_unset(Esvg_Attribute_Presentation *thiz);
+void esvg_attribute_presentation_fill_rule_set(Esvg_Attribute_Presentation *thiz, Esvg_Fill_Rule rule);
+void esvg_attribute_presentation_fill_rule_unset(Esvg_Attribute_Presentation *thiz);
+void esvg_attribute_presentation_stroke_set(Esvg_Attribute_Presentation *thiz, const Esvg_Paint *stroke);
+void esvg_attribute_presentation_stroke_opacity_unset(Esvg_Attribute_Presentation *thiz);
+void esvg_attribute_presentation_stroke_width_set(Esvg_Attribute_Presentation *thiz, const Esvg_Length *stroke_width);
+void esvg_attribute_presentation_stroke_opacity_set(Esvg_Attribute_Presentation *thiz, double stroke_opacity);
+void esvg_attribute_presentation_stroke_line_cap_set(Esvg_Attribute_Presentation *thiz, Esvg_Stroke_Line_Cap cap);
+void esvg_attribute_presentation_stroke_line_join_set(Esvg_Attribute_Presentation *thiz, Esvg_Stroke_Line_Join join);
+void esvg_attribute_presentation_stroke_line_join_unset(Esvg_Attribute_Presentation *thiz);
+void esvg_attribute_presentation_stroke_line_cap_unset(Esvg_Attribute_Presentation *thiz);
+void esvg_attribute_presentation_visibility_set(Esvg_Attribute_Presentation *thiz, Eina_Bool visibility);
+void esvg_attribute_presentation_visibility_unset(Esvg_Attribute_Presentation *thiz);
+
+void esvg_attribute_presentation_stop_color_set(Esvg_Attribute_Presentation *thiz, const Esvg_Color *stop_color);
+void esvg_attribute_presentation_stop_color_unset(Esvg_Attribute_Presentation *thiz);
+
+void esvg_attribute_presentation_stop_opacity_set(Esvg_Attribute_Presentation *thiz, double stop_opacity);
+void esvg_attribute_presentation_stop_opacity_unset(Esvg_Attribute_Presentation *thiz, double stop_opacity);
+
+void esvg_attribute_presentation_dump(Esvg_Attribute_Presentation *thiz);
+
+#endif

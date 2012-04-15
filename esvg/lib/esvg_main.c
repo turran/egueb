@@ -20,14 +20,10 @@
 #include <config.h>
 #endif
 
-#include <math.h> /* for floor() */
-
 #include <Etex.h>
 #include <Ender.h>
-
-#include "Esvg.h"
-#include "esvg_private.h"
-
+#include "esvg_main.h"
+#include "esvg_private_main.h"
 
 /*============================================================================*
  *                                  Local                                     *

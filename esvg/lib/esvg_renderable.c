@@ -15,9 +15,14 @@
  * License along with this library.
  * If not, see <http://www.gnu.org/licenses/>.
  */
-#include "Esvg.h"
-#include "esvg_private.h"
-#include "esvg_values.h"
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
+#include "esvg_private_main.h"
+#include "esvg_private_attribute_presentation.h"
+#include "esvg_private_element.h"
+#include "esvg_private_renderable.h"
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
