@@ -15,6 +15,7 @@ typedef struct _Esvg_Renderable_Descriptor {
 	Edom_Tag_Text_Set text_set;
 	Edom_Tag_Free free;
 	/* the element interface */
+	Esvg_Element_Initialize initialize;
 	Esvg_Element_Attribute_Set attribute_set;
 	Esvg_Element_Clone clone;
 	Esvg_Element_Setup setup;

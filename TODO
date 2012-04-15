@@ -8,6 +8,10 @@ ECSS
 
 ESVG
 ====
++ Instead to add function on the renderable interface to get the Enesim Renderer, we could just wrap the esvg renderable
+  to have a _draw function which will do all the internals and finally draw into an enesim surface. We could have
+  a "smart" variant which will instead of drawing to the whole surface will just draw to whatever has changed on the
+  inner renderer
 + There's some complication about attributes and properties and how to export them:
   attributes: object's attributes
   properties: attributes that can be specified with a style and also as object's attributes

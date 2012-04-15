@@ -243,6 +243,7 @@ static Esvg_Renderable_Descriptor _descriptor = {
 	/* .cdata_set 		= */ NULL,
 	/* .text_set 		= */ NULL,
 	/* .free 		= */ _esvg_svg_free,
+	/* .initialize 		= */ NULL,
 	/* .attribute_set 	= */ _esvg_svg_attribute_set,
 	/* .clone		= */ _esvg_svg_clone,
 	/* .setup		= */ _esvg_svg_setup,
