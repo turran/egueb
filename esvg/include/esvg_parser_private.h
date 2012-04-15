@@ -38,38 +38,6 @@ void esvg_parser_style_apply(Esvg_Parser_Style *thiz, Edom_Tag *root);
 void esvg_parser_style_inline_set(const char *value, Edom_Tag *tag,
 		Esvg_Attribute_Presentation *attr);
 
-/* doc context */
-Edom_Context * esvg_parser_context_doc_new(Edom_Parser *parser);
-Edom_Tag * esvg_parser_context_doc_topmost_get(Edom_Context *c);
-
-/* simple context */
-typedef Eina_Bool (*Esvg_Parser_Context_Simple_Tag_Is_Supported)(void *data, int tag);
-typedef void (*Esvg_Parser_Context_Simple_Tag_Added)(void *data, Edom_Tag *tag);
-typedef void (*Esvg_Parser_Context_Simple_Free)(void *data);
-
-typedef struct _Esvg_Parser_Context_Simple_Descriptor {
-	Esvg_Parser_Context_Simple_Tag_Is_Supported tag_is_supported;
-	Esvg_Parser_Context_Simple_Tag_Added tag_added;
-	Esvg_Parser_Context_Simple_Free tag_free;
-} Esvg_Parser_Context_Simple_Descriptor;
-
-Edom_Context * esvg_parser_context_simple_new(int tag, Edom_Tag *svg, Edom_Tag *parent,
-		Enesim_Renderer *parent_r,
-		Esvg_Parser_Context_Simple_Descriptor *descriptor,
-		void *data);
-
-Edom_Context * esvg_parser_context_svg_new(Edom_Tag *topmost, Enesim_Renderer *topmost_r);
-
-Edom_Context * esvg_parser_context_g_new(Edom_Tag *topmost, Edom_Tag *root, Enesim_Renderer *parent_r);
-
-Edom_Context * esvg_parser_context_gradient_new(Edom_Tag *tag, Enesim_Renderer *r);
-
-Edom_Context * esvg_parser_defs_new(Edom_Parser *parser);
-
-Edom_Context * esvg_parser_context_style_new(Edom_Tag *tag);
-
-Edom_Context * esvg_parser_context_text_new(Edom_Tag *tag);
-
 Eina_Bool esvg_parser_shape_attributes_cb(void *data, const char *key,
 		const char *value);
 

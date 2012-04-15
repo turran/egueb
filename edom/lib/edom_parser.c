@@ -38,6 +38,12 @@ struct _Edom_Parser
 	void *data;
 };
 
+typedef struct _Edom_Parser_Attribute_Data
+{
+	Edom_Parser *thiz;
+	void *tag;
+} Edom_Parser_Attribute_Data;
+
 static Eina_Bool _edom_parser_tag_get(Edom_Parser *thiz, const char *content, size_t sz,
 		int *tag_id)
 {
@@ -45,17 +51,39 @@ static Eina_Bool _edom_parser_tag_get(Edom_Parser *thiz, const char *content, si
 	if (!thiz->descriptor->tag_get) return EINA_FALSE;
 	return thiz->descriptor->tag_get(thiz, content, sz, tag_id);
 }
-				
-static Edom_Tag * _edom_parser_topmost_get(Edom_Parser *thiz)
+
+static Eina_Bool _edom_parser_tag_attributes_set_cb(void *data, const char *key,
+		const char *value)
+{
+	Edom_Parser_Attribute_Data *attr_data = data;
+	Edom_Parser *thiz = attr_data->thiz;
+	void *tag = attr_data->tag;
+
+	return thiz->descriptor->tag_attribute_set(thiz, data, key, value);
+}
+
+static void * _edom_parser_topmost_get(Edom_Parser *thiz)
 {
 	if (!thiz->descriptor) return NULL;
 	if (!thiz->descriptor->topmost_get) return NULL;
 	return thiz->descriptor->topmost_get(thiz);
 }
 
-static Edom_Tag * _edom_parser_tag_new(Edom_Parser *thiz, Edom_Tag *parent, int tag_id, const char *attrs, unsigned int attr_length)
+static void _edom_parser_tag_attribute_set(Edom_Parser *thiz, void *t, const char *attributes, unsigned int length)
 {
-	Edom_Tag *tag;
+	Edom_Parser_Attribute_Data data;
+
+	if (!thiz->descriptor) return;
+
+	data.thiz = thiz;
+	data.tag = t;
+
+	eina_simple_xml_attributes_parse(attributes, length, _edom_parser_tag_attributes_set_cb, &data);
+}
+
+static void * _edom_parser_tag_new(Edom_Parser *thiz, void *parent, int tag_id, const char *attrs, unsigned int attr_length)
+{
+	void *tag;
 
 	if (!thiz->descriptor) return NULL;
 	if (!thiz->descriptor->tag_new) return NULL;
@@ -63,12 +91,28 @@ static Edom_Tag * _edom_parser_tag_new(Edom_Parser *thiz, Edom_Tag *parent, int 
 
 	if (!tag) return NULL;
 
-	edom_tag_attributes_from_xml(tag, attrs, attr_length);
-	/* add it to the current tag */
-	if (parent)
-		edom_tag_child_add(parent, tag);
+	/* parse the attributes */
+	if (thiz->descriptor->tag_attribute_set)
+	{
+		_edom_parser_tag_attribute_set(thiz, tag, attrs, attr_length);
+	}
+	/* add the child */
+	if (thiz->descriptor->tag_child_add && parent)
+	{
+		thiz->descriptor->tag_child_add(thiz, parent, tag);
+	}
 
 	return tag;
+}
+
+static void _edom_parser_tag_cdata_set(Edom_Parser *thiz, void *t, const char *cdata, unsigned int length)
+{
+
+}
+
+static void _edom_parser_tag_text_set(Edom_Parser *thiz, void *t, const char *text, unsigned int length)
+{
+
 }
 /*----------------------------------------------------------------------------*
  *                      Eina's simple XML interface                           *
@@ -77,7 +121,7 @@ static Eina_Bool _edom_parser_cb(void *data, Eina_Simple_XML_Type type,
 		const char *content, unsigned offset, unsigned length)
 {
 	Edom_Parser *thiz = data;
-	Edom_Tag *parent = NULL;
+	void *parent = NULL;
 	Eina_Array *contexts;
 	Eina_Bool ret;
 	int count;
@@ -98,7 +142,7 @@ static Eina_Bool _edom_parser_cb(void *data, Eina_Simple_XML_Type type,
 		case EINA_SIMPLE_XML_OPEN:
 		case EINA_SIMPLE_XML_OPEN_EMPTY:
 		{
-			Edom_Tag *new_tag;
+			void *new_tag;
 			int sz;
 			const char *attrs;
 			int attr_length;
@@ -225,7 +269,7 @@ EAPI const char * edom_parser_root_get(Edom_Parser *thiz)
 	return thiz->root;
 }
 
-EAPI Edom_Tag * edom_parser_topmost_get(Edom_Parser *thiz)
+EAPI void * edom_parser_topmost_get(Edom_Parser *thiz)
 {
 	if (!thiz) return NULL;
 	return _edom_parser_topmost_get(thiz);

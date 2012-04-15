@@ -8,6 +8,11 @@ ECSS
 
 ESVG
 ====
++ There's some complication about attributes and properties and how to export them:
+  attributes: object's attributes
+  properties: attributes that can be specified with a style and also as object's attributes
+  http://dev.w3.org/SVG/proposals/css-animation/animation-proposal.html
+  http://blogs.adobe.com/webplatform/2012/03/30/svg-animations-css-animations-css-transitions/
 + When changing the inheritance, the container does not make any sense now
 + Remove that every svg element (not the parser code) is a renderer and have a renderer. We need to merge the parsing code and the rendering code into one
 + Add an interface to call whenever the parser can not recognize a property, this way we can easily

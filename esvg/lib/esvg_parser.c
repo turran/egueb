@@ -42,7 +42,7 @@ typedef struct _Esvg_Parser
 {
 	Eina_List *post_parsers;
 	Esvg_Parser_Descriptor descriptor;
-	Edom_Tag *topmost;
+	Ender_Element *topmost;
 	void *data;
 } Esvg_Parser;
 
@@ -98,9 +98,9 @@ close_f:
 	return NULL;
 }
 
-static Edom_Tag * _esvg_parser_file_parse(const char *filename, Edom_Parser *parser)
+static Ender_Element * _esvg_parser_file_parse(const char *filename, Edom_Parser *parser)
 {
-	Edom_Tag *tag = NULL;
+	Ender_Element *tag = NULL;
 	char *buf;
 	long sz;
 
@@ -360,10 +360,10 @@ static Eina_Bool _esvg_parser_tag_get(Edom_Parser *parser, const char *content,
 	return EINA_FALSE;
 }
 
-static Edom_Tag * _esvg_parser_tag_new(Edom_Parser *parser, int tag_id)
+static void * _esvg_parser_tag_new(Edom_Parser *parser, int tag_id)
 {
 	Esvg_Parser *thiz;
-	Edom_Tag *tag = NULL;
+	Ender_Element *tag = NULL;
 
 	thiz = edom_parser_data_get(parser);
 	if (!thiz->topmost && tag_id != ESVG_SVG)
@@ -464,7 +464,7 @@ static Edom_Tag * _esvg_parser_tag_new(Edom_Parser *parser, int tag_id)
 	return tag;
 }
 
-static Edom_Tag * _esvg_parser_topmost_get(Edom_Parser *parser)
+static void * _esvg_parser_topmost_get(Edom_Parser *parser)
 {
 	Esvg_Parser *thiz;
 
@@ -472,10 +472,35 @@ static Edom_Tag * _esvg_parser_topmost_get(Edom_Parser *parser)
 	return thiz->topmost;
 }
 
+static Eina_Bool _esvg_parser_tag_attribute_set(Edom_Parser *parser, void *t, const char *attribute, const char *value)
+{
+
+}
+
+static Eina_Bool _esvg_parser_tag_child_add(Edom_Parser *parser, void *t, void *child)
+{
+
+}
+
+static void _esvg_parser_tag_cdata_set(Edom_Parser *parser, void *t, const char *cdata, unsigned int length)
+{
+
+}
+
+static void _esvg_parser_tag_text_set(Edom_Parser *parser, void *t, const char *text, unsigned int length)
+{
+
+}
+
 static Edom_Parser_Descriptor _descriptor = {
 	/* .tag_get 	= */ _esvg_parser_tag_get,
 	/* .tag_new 	= */ _esvg_parser_tag_new,
 	/* .topmost_get = */ _esvg_parser_topmost_get,
+	/* .tag_attribute_set = */ _esvg_parser_tag_attribute_set,
+	/* .tag_child_add = */ _esvg_parser_tag_child_add,
+	/* .tag_cdata_set = */ _esvg_parser_tag_cdata_set,
+	/* .tag_text_set = */ _esvg_parser_tag_text_set,
+
 };
 
 /*----------------------------------------------------------------------------*
@@ -492,10 +517,10 @@ static Eina_Bool _esvg_parser_info_tag_get(Edom_Parser *parser, const char *cont
 	return EINA_FALSE;
 }
 
-static Edom_Tag * _esvg_parser_info_tag_new(Edom_Parser *parser, int tag_id)
+static void * _esvg_parser_info_tag_new(Edom_Parser *parser, int tag_id)
 {
 	Esvg_Parser *thiz;
-	Edom_Tag *tag = NULL;
+	Ender_Element *tag = NULL;
 
 	thiz = edom_parser_data_get(parser);
 	if (!thiz->topmost && tag_id != ESVG_SVG)
@@ -514,6 +539,10 @@ static Edom_Parser_Descriptor _info_descriptor = {
 	/* .tag_get 	= */ _esvg_parser_info_tag_get,
 	/* .tag_new 	= */ _esvg_parser_info_tag_new,
 	/* .topmost_get = */ _esvg_parser_topmost_get,
+	/* .tag_attribute_set = */ NULL,
+	/* .tag_child_add = */ NULL,
+	/* .tag_cdata_set = */ NULL,
+	/* .tag_text_set = */ NULL,
 };
 
 /**
@@ -549,14 +578,14 @@ void esvg_parser_href_set(Edom_Parser *p, Enesim_Renderer *r, const char *href)
  *                                   API                                      *
  *============================================================================*/
 /**
- * 
+ *
  */
 EAPI Eina_Bool esvg_parser_info_load(const char *filename,
 		double *width, double *height)
 {
 	Esvg_Parser *thiz;
 	Edom_Parser *info_parser;
-	Edom_Tag *tag;
+	Ender_Element *tag;
 	Enesim_Renderer *r;
 	Eina_Bool ret = EINA_FALSE;
 
@@ -577,13 +606,13 @@ EAPI Eina_Bool esvg_parser_info_load(const char *filename,
 /**
  *
  */
-EAPI Edom_Tag * esvg_parser_load(const char *filename,
+EAPI Ender_Element * esvg_parser_load(const char *filename,
 		Esvg_Parser_Descriptor *descriptor, void *data)
 {
 	Esvg_Parser *thiz;
 	Esvg_Parser_Post_Data *pdata;
 	Edom_Parser *parser;
-	Edom_Tag *tag;
+	Ender_Element *tag;
 	Eina_List *l;
 
 	thiz = calloc(1, sizeof(Esvg_Parser));
