@@ -373,4 +373,6 @@ extern Esvg_Length ESVG_LENGTH_100_PERCENT;
 /* view box */
 Esvg_View_Box esvg_view_box_get(const char *attr_val);
 
+EAPI const char * esvg_type_string_to(Esvg_Type type);
+
 #endif

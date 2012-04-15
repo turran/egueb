@@ -1485,3 +1485,92 @@ EAPI double esvg_length_final_get(const Esvg_Length *l, double parent_length)
 
 	return ret;
 }
+
+EAPI const char * esvg_type_string_to(Esvg_Type type)
+{
+	switch (type)
+	{
+		case ESVG_A: return "a";
+		case ESVG_ALTGLYPH: return "";
+		case ESVG_ALTGLYPHDEF: return "";
+		case ESVG_ALTGLYPHITEM: return "";
+		case ESVG_ANIMATE: return "animate";
+		case ESVG_ANIMATECOLOR: return "animateColor";
+		case ESVG_ANIMATEMOTION: return "animateMotion";
+		case ESVG_ANIMATETRANSFORM: return "animateTransform";
+		case ESVG_CIRCLE: return "circle";
+		case ESVG_CLIPPATH: return "clipPath";
+		case ESVG_COLOR_PROFILE: return "" /* 10 */;
+		case ESVG_CURSOR: return "cursor";
+		case ESVG_DEFINITION_SRC: return "";
+		case ESVG_DEFS: return "defs";
+		case ESVG_DESC: return "desc";
+		case ESVG_ELLIPSE: return "ellipse";
+		case ESVG_FEBLEND: return "feBlend";
+		case ESVG_FECOLORMATRIX: return "";
+		case ESVG_FECOMPONENTTRANSFER: return "";
+		case ESVG_FECOMPOSITE: return "";
+		case ESVG_FECONVOLVEMATRIX: return "" /* 20 */;
+		case ESVG_FEDIFFUSELIGHTING: return "";
+		case ESVG_FEDISPLACEMENTMAP: return "";
+		case ESVG_FEDISTANTLIGHT: return "";
+		case ESVG_FEFLOOD: return "";
+		case ESVG_FEFUNCA: return "";
+		case ESVG_FEFUNCB: return "";
+		case ESVG_FEFUNCG: return "";
+		case ESVG_FEFUNCR: return "";
+		case ESVG_FEGAUSSIANBLUR: return "";
+		case ESVG_FEIMAGE: return "" /* 30 */;
+		case ESVG_FEMERGE: return "";
+		case ESVG_FEMERGENODE: return "";
+		case ESVG_FEMORPHOLOGY: return "";
+		case ESVG_FEOFFSET: return "";
+		case ESVG_FEPOINTLIGHT: return "";
+		case ESVG_FESPECULARLIGHTING: return "";
+		case ESVG_FESPOTLIGHT: return "";
+		case ESVG_FETILE: return "";
+		case ESVG_FETURBULENCE: return "";
+		case ESVG_FILTER: return "" /* 40 */;
+		case ESVG_FONT: return "";
+		case ESVG_FONT_FACE: return "";
+		case ESVG_FONT_FACE_FORMAT: return "";
+		case ESVG_FONT_FACE_NAME: return "";
+		case ESVG_FONT_FACE_SRC: return "";
+		case ESVG_FONT_FACE_URI: return "";
+		case ESVG_FOREIGNOBJECT: return "";
+		case ESVG_G: return "";
+		case ESVG_GLYPH: return "";
+		case ESVG_GLYPHREF: return "" /* 50 */;
+		case ESVG_HKERN: return "";
+		case ESVG_IMAGE: return "";
+		case ESVG_LINE: return "";
+		case ESVG_LINEARGRADIENT: return "";
+		case ESVG_MARKER: return "";
+		case ESVG_MASK: return "";
+		case ESVG_METADATA: return "";
+		case ESVG_MISSING_GLYPH: return "";
+		case ESVG_MPATH: return "";
+		case ESVG_PATH: return "" /* 60 */;
+		case ESVG_PATTERN: return "";
+		case ESVG_POLYGON: return "";
+		case ESVG_POLYLINE: return "";
+		case ESVG_RADIALGRADIENT: return "";
+		case ESVG_RECT: return "";
+		case ESVG_SCRIPT: return "";
+		case ESVG_SET: return "";
+		case ESVG_STOP: return "";
+		case ESVG_STYLE: return "";
+		case ESVG_SVG: return "" /* 70 */;
+		case ESVG_SWITCH: return "";
+		case ESVG_SYMBOL: return "";
+		case ESVG_TEXT: return "";
+		case ESVG_TEXTPATH: return "";
+		case ESVG_TITLE: return "";
+		case ESVG_TREF: return "";
+		case ESVG_TSPAN: return "";
+		case ESVG_USE: return "";
+		case ESVG_VIEW: return "";
+		case ESVG_VKERN: return "";
+		default: return "unknown";
+	}
+}
