@@ -79,6 +79,12 @@ EAPI void * edom_parser_data_get(Edom_Parser *thiz);
 EAPI void * edom_parser_topmost_get(Edom_Parser *thiz);
 
 /* tag */
+typedef struct _Edom_Attribute
+{
+	const char *name;
+	char *value;
+} Edom_Attribute;
+
 typedef const char * (*Edom_Tag_Name_Get)(Edom_Tag *t);
 typedef Eina_Bool (*Edom_Tag_Attribute_Set)(Edom_Tag *t, const char *attribute, const char *value);
 typedef Eina_Bool (*Edom_Tag_Attribute_Get)(Edom_Tag *t, const char *attribute, char **value);
@@ -109,8 +115,8 @@ EAPI void * edom_tag_data_get(Edom_Tag *thiz);
 
 EAPI const char * edom_tag_name_get(Edom_Tag *thiz);
 
-EAPI Eina_Bool edom_tag_attribute_set(Edom_Tag *thiz, const char *name, const char *value);
-EAPI Eina_Bool edom_tag_attribute_get(Edom_Tag *thiz, const char *name, char **value);
+EAPI Eina_Bool edom_tag_attribute_set(Edom_Tag *thiz, const Edom_Attribute *attr);
+EAPI Eina_Bool edom_tag_attribute_get(Edom_Tag *thiz, Edom_Attribute *attr);
 
 EAPI void edom_tag_id_set(Edom_Tag *thiz, const char *id);
 EAPI char * edom_tag_id_get(Edom_Tag *thiz);

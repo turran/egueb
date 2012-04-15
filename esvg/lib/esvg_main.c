@@ -50,10 +50,52 @@ static void _constructor_callback(Ender_Element *e, void *data)
 		return;
 	esvg_element_initialize(e);
 }
+
+static Eina_Bool _esvg_ender_init(void)
+{
+	Ender_Descriptor *tag_descriptor;
+	Ender_Namespace *tag_ns;
+
+	ender_loader_registry_callback_add(_register_enders, NULL);
+	ender_init(NULL, NULL);
+	ender_element_new_listener_add(_constructor_callback, NULL);
+	tag_ns = ender_namespace_find("edom");
+	if (!tag_ns)
+	{
+		ERR("Impossible to find the 'Edom' namespace");
+		goto namespace_err;
+	}
+
+	tag_descriptor = ender_namespace_descriptor_find(tag_ns, "tag");
+	if (!tag_descriptor)
+	{
+		ERR("Impossible to find the 'Edom:Tag' descriptor");
+		goto descriptor_err;
+	}
+	/* get the needed properties to avoid the hash lookup */
+	EDOM_ATTRIBUTE = ender_descriptor_property_get(tag_descriptor, "attribute");
+
+
+	return EINA_TRUE;
+namespace_err:
+	// ender_namespace_unref(ns);
+descriptor_err:
+	ender_shutdown();
+
+	return EINA_FALSE;
+}
+
+static void _esvg_ender_shutdown(void)
+{
+	ender_element_new_listener_remove(_constructor_callback, NULL);
+	ender_shutdown();
+}
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
-
+Ender_Property *EDOM_ATTRIBUTE = NULL;
+Ender_Property *EDOM_CHILD = NULL;
+Ender_Property *EDOM_PARENT = NULL;
 int esvg_log_dom_global = -1;
 
 Ender_Namespace * esvg_namespace_get(void)
@@ -104,18 +146,22 @@ EAPI int esvg_init(void)
 		goto shutdown_enesim;
 	}
 
-	ender_loader_registry_callback_add(_register_enders, NULL);
-	ender_init(NULL, NULL);
-	ender_element_new_listener_add(_constructor_callback, NULL);
+	if (!_esvg_ender_init())
+	{
+		ERR("Ender init failed");
+		goto shutdown_ender;
+	}
 
 	return _esvg_init_count;
 
-  shutdown_enesim:
+shutdown_ender:
+	etex_shutdown();
+shutdown_enesim:
 	enesim_shutdown();
-  unregister_log_domain:
+unregister_log_domain:
 	eina_log_domain_unregister(esvg_log_dom_global);
 	esvg_log_dom_global = -1;
-  shutdown_eina:
+shutdown_eina:
 	eina_shutdown();
 	return --_esvg_init_count;
 }
@@ -128,8 +174,7 @@ EAPI int esvg_shutdown(void)
 	if (--_esvg_init_count != 0)
 		return _esvg_init_count;
 
-	ender_element_new_listener_remove(_constructor_callback, NULL);
-	ender_shutdown();
+	_esvg_ender_shutdown();
 	etex_shutdown();
 	enesim_shutdown();
 	eina_log_domain_unregister(esvg_log_dom_global);

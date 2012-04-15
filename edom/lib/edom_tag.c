@@ -122,18 +122,18 @@ EAPI void edom_tag_attributes_from_xml(Edom_Tag *thiz,
  * To be documented
  * FIXME: To be fixed
  */
-EAPI Eina_Bool edom_tag_attribute_set(Edom_Tag *thiz, const char *name, const char *value)
+EAPI Eina_Bool edom_tag_attribute_set(Edom_Tag *thiz, const Edom_Attribute *attribute)
 {
-	return  _attributes_set(thiz, name, value);
+	return  _attributes_set(thiz, attribute->name, attribute->value);
 }
 
 /**
  * To be documented
  * FIXME: To be fixed
  */
-EAPI Eina_Bool edom_tag_attribute_get(Edom_Tag *thiz, const char *name, char **value)
+EAPI Eina_Bool edom_tag_attribute_get(Edom_Tag *thiz, Edom_Attribute *attribute)
 {
-	return  _attributes_get(thiz, name, value);
+	return  _attributes_get(thiz, attribute->name, &attribute->value);
 }
 
 /**
@@ -142,11 +142,12 @@ EAPI Eina_Bool edom_tag_attribute_get(Edom_Tag *thiz, const char *name, char **v
  */
 EAPI char * edom_tag_id_get(Edom_Tag *thiz)
 {
-	char *id;
+	Edom_Attribute attr;
 
-	if (!edom_tag_attribute_get(thiz, "id", &id))
+	attr.name = "id";
+	if (!edom_tag_attribute_get(thiz, &attr))
 		return NULL;
-	return id;
+	return attr.value;
 }
 
 /**
@@ -155,7 +156,11 @@ EAPI char * edom_tag_id_get(Edom_Tag *thiz)
  */
 EAPI void edom_tag_id_set(Edom_Tag *thiz, const char *id)
 {
-	edom_tag_attribute_set(thiz, "id", id);
+	Edom_Attribute attr;
+
+	attr.name = "id";
+	attr.value = id;
+	edom_tag_attribute_set(thiz, &attr);
 }
 
 /**
@@ -164,11 +169,12 @@ EAPI void edom_tag_id_set(Edom_Tag *thiz, const char *id)
  */
 EAPI char * edom_tag_class_get(Edom_Tag *thiz)
 {
-	char *class;
+	Edom_Attribute attr;
 
-	if (!edom_tag_attribute_get(thiz, "class", &class))
+	attr.name = "class";
+	if (!edom_tag_attribute_get(thiz, &attr))
 		return NULL;
-	return class;
+	return attr.value;
 }
 
 /**
@@ -177,7 +183,11 @@ EAPI char * edom_tag_class_get(Edom_Tag *thiz)
  */
 EAPI void edom_tag_class_set(Edom_Tag *thiz, const char *class)
 {
-	edom_tag_attribute_set(thiz, "class", class);
+	Edom_Attribute attr;
+
+	attr.name = "class";
+	attr.value = class;
+	edom_tag_attribute_set(thiz, &attr);
 }
 
 /**

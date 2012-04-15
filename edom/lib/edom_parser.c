@@ -59,7 +59,7 @@ static Eina_Bool _edom_parser_tag_attributes_set_cb(void *data, const char *key,
 	Edom_Parser *thiz = attr_data->thiz;
 	void *tag = attr_data->tag;
 
-	return thiz->descriptor->tag_attribute_set(thiz, data, key, value);
+	return thiz->descriptor->tag_attribute_set(thiz, tag, key, value);
 }
 
 static void * _edom_parser_topmost_get(Edom_Parser *thiz)

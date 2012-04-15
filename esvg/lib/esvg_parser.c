@@ -472,14 +472,23 @@ static void * _esvg_parser_topmost_get(Edom_Parser *parser)
 	return thiz->topmost;
 }
 
-static Eina_Bool _esvg_parser_tag_attribute_set(Edom_Parser *parser, void *t, const char *attribute, const char *value)
+static Eina_Bool _esvg_parser_tag_attribute_set(Edom_Parser *parser, void *t, const char *name, const char *value)
 {
+	Ender_Element *tag = t;
+	Edom_Attribute attribute;
 
+	attribute.name = name;
+	attribute.value = value;
+	ender_element_property_value_set(tag, EDOM_ATTRIBUTE, &attribute, NULL);
+	return EINA_TRUE;
 }
 
 static Eina_Bool _esvg_parser_tag_child_add(Edom_Parser *parser, void *t, void *child)
 {
+	Ender_Element *tag = t;
 
+	/* add it */
+	/* FIXME on add/remove functions ender should have a return value */
 }
 
 static void _esvg_parser_tag_cdata_set(Edom_Parser *parser, void *t, const char *cdata, unsigned int length)

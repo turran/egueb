@@ -416,6 +416,7 @@ void esvg_svg_style_apply(Edom_Tag *tag)
  *============================================================================*/
 EAPI Ender_Element * esvg_svg_new(void)
 {
+	return ender_element_new_with_namespace("svg", "esvg");
 }
 
 Edom_Tag * esvg_svg_element_find(Ender_Element *e, const char *id)

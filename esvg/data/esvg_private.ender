@@ -13,11 +13,11 @@ namespace "esvg" {
 
 	};
 
-	class "svg" : "container" {
+	class "svg" : "renderable" {
 
 	};
 
-	class "g" : "container" {
+	class "g" : "renderable" {
 
 	};
 

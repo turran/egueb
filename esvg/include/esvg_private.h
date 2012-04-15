@@ -64,6 +64,9 @@
 #define ESVG_IMAGE_MAGIC 0xe5500014
 
 extern int esvg_log_dom_global;
+extern Ender_Property *EDOM_ATTRIBUTE;
+extern Ender_Property *EDOM_CHILD;
+extern Ender_Property *EDOM_PARENT;
 Ender_Namespace * esvg_namespace_get(void);
 
 typedef void (*Esvg_Element_Attribute_Set)(Edom_Tag *t, void *);

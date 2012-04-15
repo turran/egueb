@@ -143,6 +143,12 @@ fi
 
 if test "x${want_edom}" = "xyes" ; then
    PKG_CHECK_MODULES([EDOM], [${edom_requirements}], [want_edom="yes"], [want_edom="no"])
+   # ender is optional only for install time, not compile time
+   PKG_CHECK_EXISTS([ender], [have_ender="yes"], [have_ender="no"])
+   if test "x${have_ender}" = "xyes"; then
+      ENDER_DATADIR=$($PKG_CONFIG --variable=datadir ender)
+      AC_SUBST([ENDER_DATADIR])
+   fi
 fi
 
 if test "x${want_edom}" = "xyes" ; then

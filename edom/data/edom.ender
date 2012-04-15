@@ -1,5 +1,11 @@
 namespace "edom" {
-	abstract "tag" {
+	struct "attribute" {
+		string "name";
+		string "value";
+	};
 
+	abstract "tag" {
+		object "parent";
+		attribute "attribute";
 	};
 };
