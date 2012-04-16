@@ -232,6 +232,32 @@ EAPI Edom_Tag * edom_tag_child_get(Edom_Tag *thiz)
 	return thiz->child;
 }
 
+
+/**
+ * To be documented
+ * FIXME: To be fixed
+ */
+EAPI void edom_tag_child_foreach(Edom_Tag *thiz, Edom_Tag_Foreach foreach, void *data)
+{
+	Edom_Tag *child;
+
+	if (!foreach) return;
+
+	child = thiz->child;
+	while (child)
+	{
+		Eina_Inlist *il;
+
+		if (!foreach(thiz, child, data))
+			break;
+
+		il = EINA_INLIST_GET(thiz);
+		if (!il->next)
+			break;
+		child = EINA_INLIST_CONTAINER_GET(il->next, Edom_Tag);
+	}
+}
+
 /**
  * To be documented
  * FIXME: To be fixed
@@ -271,3 +297,4 @@ EAPI const char * edom_tag_name_get(Edom_Tag *thiz)
 	if (!thiz->descriptor.name_get) return NULL;
 	return thiz->descriptor.name_get(thiz);
 }
+

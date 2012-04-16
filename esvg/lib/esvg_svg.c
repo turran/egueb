@@ -57,7 +57,8 @@ typedef struct _Esvg_Svg
 	/* private */
 	Eina_List *styles; /* the list of styles found on this svg scope */
 	Eina_List *svgs; /* the list of svg documents found on the svg */
-	Enesim_Renderer *r; /* the renderer associated with this svg */
+	Enesim_Renderer *clipper;
+	Enesim_Renderer *compound;
 	Eina_Hash *ids; /* the ids found */
 } Esvg_Svg;
 
@@ -175,7 +176,6 @@ static Enesim_Renderer * _esvg_svg_element_at(Edom_Tag *t, double x, double y)
 
 static Eina_Bool _esvg_svg_setup(Edom_Tag *t, Esvg_Element_State *state,
 		Esvg_Attribute_Presentation *attr,
-		Enesim_Surface *s,
 		Enesim_Error **error)
 {
 	Esvg_Svg *thiz;
@@ -223,7 +223,7 @@ static Enesim_Renderer * _esvg_svg_renderer_get(Edom_Tag *t)
 	Esvg_Svg *thiz;
 
 	thiz = _esvg_svg_get(t);
-	return thiz->r;
+	return thiz->clipper;
 }
 
 static void _esvg_svg_clone(Edom_Tag *t, Edom_Tag *dt)
@@ -267,7 +267,12 @@ static Edom_Tag * _esvg_svg_new(void)
 
 	r = enesim_renderer_compound_new();
 	enesim_renderer_rop_set(r, ENESIM_BLEND);
-	thiz->r = r;
+	thiz->compound = r;
+
+	r = enesim_renderer_clipper_new();
+	enesim_renderer_clipper_content_set(r, thiz->compound);
+	thiz->clipper = r;
+
 	thiz->ids = eina_hash_string_superfast_new(NULL);
 
 	/* Default values */

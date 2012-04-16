@@ -113,6 +113,16 @@ static Esvg_Element * _esvg_element_get(Edom_Tag *t)
 	return thiz;
 }
 
+Eina_Bool _esvg_child_setup_cb(Edom_Tag *t, Edom_Tag *child, void *data)
+{
+	Esvg_Element *thiz;
+
+	thiz = _esvg_element_get(t);
+	if (!esvg_element_setup_internal(child, &thiz->state_final, &thiz->attr_final, data))
+		return EINA_FALSE;
+	return EINA_TRUE;
+}
+
 #if 0
 static void _post_parse_fill_cb(Edom_Parser *parser, void *data)
 {
@@ -962,9 +972,9 @@ Edom_Tag * esvg_element_new(Esvg_Element_Descriptor *descriptor, Esvg_Type type,
 }
 
 /* state and attr are the parents one */
-Eina_Bool esvg_element_setup(Edom_Tag *t, const Esvg_Element_State *state,
+Eina_Bool esvg_element_setup_internal(Edom_Tag *t,
+		const Esvg_Element_State *state,
 		const Esvg_Attribute_Presentation *attr,
-		Enesim_Surface *s,
 		Enesim_Error **error)
 {
 	Esvg_Element *thiz;
@@ -1013,8 +1023,11 @@ Eina_Bool esvg_element_setup(Edom_Tag *t, const Esvg_Element_State *state,
 
 	//esvg_attribute_presentation_dump(new_attr);
 
-	if (!thiz->descriptor.setup(t, &thiz->state_final, &thiz->attr_final, s, error))
+	if (!thiz->descriptor.setup(t, &thiz->state_final, &thiz->attr_final, error))
 		return EINA_FALSE;
+	/* call the child setup */
+	edom_tag_child_foreach(t, _esvg_child_setup_cb, error);
+
 	return EINA_TRUE;
 }
 /*============================================================================*
@@ -1385,6 +1398,18 @@ EAPI void esvg_element_y_dpi_set(Ender_Element *e, double y_dpi)
  */
 EAPI void esvg_element_y_dpi_get(Ender_Element *e, double *y_dpi)
 {
+}
+
+/**
+ * To be documented
+ * FIXME: To be fixed
+ */
+EAPI Eina_Bool esvg_element_setup(Ender_Element *e, Enesim_Error **error)
+{
+	Edom_Tag *t;
+
+	t = ender_element_object_get(e);
+	return esvg_element_setup_internal(t, NULL, NULL, error);
 }
 
 #if 0

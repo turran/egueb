@@ -287,6 +287,7 @@ Edom_Tag * esvg_renderable_new(Esvg_Renderable_Descriptor *descriptor, Esvg_Type
 	pdescriptor.text_set = descriptor->text_set;
 	pdescriptor.free = _esvg_renderable_free;
 	pdescriptor.initialize = descriptor->initialize;
+	pdescriptor.setup = descriptor->setup;
 
 	t = esvg_element_new(&pdescriptor, type, thiz);
 

@@ -40,7 +40,7 @@ static void help(void)
 
 int main(int argc, char *argv[])
 {
-	Edom_Tag *tag;
+	Ender_Element *tag;
 	Enesim_Renderer *compound;
 	Enesim_Renderer *background;
 	Enesim_Renderer *r;
@@ -84,9 +84,22 @@ int main(int argc, char *argv[])
 		goto shutdown_esvg;
 	}
 
+
+
 	/* FIXME once the renderable class is implemented
 	 * get the renderer, for now test the parsing
 	 */
+	if (!esvg_element_setup(tag, &err))
+	{
+		printf("The setup failed\n");
+	}
+
+	if (!esvg_is_renderable(tag))
+	{
+		printf("The parsed element can not be rendered\n");
+	}
+
+	r = esvg_renderable_renderer_get(tag);
 #if 0
 	/* set the final image size as the container size */
 	esvg_element_container_width_set(r, width);

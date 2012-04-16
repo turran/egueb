@@ -85,6 +85,7 @@ typedef struct _Edom_Attribute
 	char *value;
 } Edom_Attribute;
 
+typedef Eina_Bool (*Edom_Tag_Foreach)(Edom_Tag *thiz, Edom_Tag *child, void *data);
 typedef const char * (*Edom_Tag_Name_Get)(Edom_Tag *t);
 typedef Eina_Bool (*Edom_Tag_Attribute_Set)(Edom_Tag *t, const char *attribute, const char *value);
 typedef Eina_Bool (*Edom_Tag_Attribute_Get)(Edom_Tag *t, const char *attribute, char **value);
@@ -125,6 +126,7 @@ EAPI char * edom_tag_class_get(Edom_Tag *thiz);
 
 EAPI Eina_Bool edom_tag_child_add(Edom_Tag *thiz, Edom_Tag *child);
 EAPI Edom_Tag * edom_tag_child_get(Edom_Tag *thiz);
+EAPI void edom_tag_child_foreach(Edom_Tag *thiz, Edom_Tag_Foreach foreach, void *data);
 EAPI Edom_Tag * edom_tag_next_get(Edom_Tag *thiz);
 EAPI Edom_Tag * edom_tag_parent_get(Edom_Tag *thiz);
 EAPI Edom_Tag * edom_tag_topmost_get(Edom_Tag *thiz);

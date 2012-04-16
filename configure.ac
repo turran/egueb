@@ -203,7 +203,6 @@ ecss/lib/Makefile
 esvg/Makefile
 esvg/bin/Makefile
 esvg/lib/Makefile
-esvg/lib/parser/Makefile
 esvg/include/Makefile
 esvg/include/generated/Makefile
 esvg/modules/Makefile

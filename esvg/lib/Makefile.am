@@ -1,7 +1,5 @@
 MAINTAINERCLEANFILES = Makefile.in
 
-SUBDIRS = parser
-
 AM_CPPFLAGS = \
 -I. \
 -I$(top_srcdir)/ecss/include \
@@ -46,7 +44,6 @@ esvg_types.c
 #esvg_use.c
 
 libesvg_la_LIBADD = \
-parser/libesvg_parser.la \
 $(top_builddir)/edom/lib/libedom.la \
 $(top_builddir)/ecss/lib/libecss.la \
 @ESVG_LIBS@ -lm
