@@ -8,6 +8,7 @@ ESVG_APIHEADERS = \
 esvg_main.h \
 esvg_element.h \
 esvg_rect.h \
+esvg_renderable.h \
 esvg_svg.h \
 esvg_types.h
 

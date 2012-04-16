@@ -63,6 +63,7 @@
 #include "esvg_main.h"
 #include "esvg_types.h"
 #include "esvg_element.h"
+#include "esvg_renderable.h"
 #include "esvg_svg.h"
 #include "esvg_rect.h"
 

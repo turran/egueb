@@ -289,12 +289,14 @@ Edom_Tag * esvg_renderable_new(Esvg_Renderable_Descriptor *descriptor, Esvg_Type
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/
-EAPI Eina_Bool esvg_is_renderable(Edom_Tag *t)
+EAPI Eina_Bool esvg_is_renderable(Ender_Element *e)
 {
 	Esvg_Renderable *thiz;
 	Eina_Bool ret;
+	Edom_Tag *t;
 
-	if (!esvg_is_element(t))
+	t = ender_element_object_get(e);
+	if (!esvg_is_element_internal(t))
 		return EINA_FALSE;
 	thiz = esvg_element_data_get(t);
 	ret = EINA_MAGIC_CHECK(thiz, ESVG_RENDERABLE_MAGIC);
@@ -302,10 +304,12 @@ EAPI Eina_Bool esvg_is_renderable(Edom_Tag *t)
 	return ret;
 }
 
-EAPI Enesim_Renderer * esvg_renderable_renderer_get(Edom_Tag *t)
+EAPI Enesim_Renderer * esvg_renderable_renderer_get(Ender_Element *e)
 {
 	Esvg_Renderable *thiz;
+	Edom_Tag *t;
 
+	t = ender_element_object_get(e);
 	thiz = _esvg_renderable_get(t);
 	//return thiz->descriptor.renderer_get(t);
 	return NULL;

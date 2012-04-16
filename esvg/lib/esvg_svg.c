@@ -65,7 +65,7 @@ static Esvg_Svg * _esvg_svg_get(Edom_Tag *t)
 {
 	Esvg_Svg *thiz;
 
-	if (!esvg_is_svg(t))
+	if (esvg_type_get_internal(t) != ESVG_SVG)
 		return NULL;
 	thiz = esvg_renderable_data_get(t);
 
@@ -467,8 +467,9 @@ Edom_Tag * esvg_svg_element_find(Ender_Element *e, const char *id)
 
 EAPI Eina_Bool esvg_is_svg(Ender_Element *e)
 {
-	Eina_Bool ret = EINA_TRUE;
-	return ret;
+	if (esvg_type_get(e) != ESVG_SVG)
+		return EINA_FALSE;
+	return EINA_TRUE;
 }
 
 EAPI void esvg_svg_version_set(Ender_Element *e, double version)

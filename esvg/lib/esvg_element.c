@@ -886,6 +886,17 @@ Esvg_Type esvg_element_type_get_internal(Edom_Tag *t)
 	return thiz->type;
 }
 
+Eina_Bool esvg_is_element_internal(Edom_Tag *t)
+{
+	Esvg_Element *thiz;
+	Eina_Bool ret;
+
+	thiz = edom_tag_data_get(t);
+	ret = EINA_MAGIC_CHECK(thiz, ESVG_ELEMENT_MAGIC);
+
+	return ret;
+}
+
 void esvg_element_initialize(Ender_Element *e)
 {
 	Esvg_Element *thiz;
@@ -1015,15 +1026,10 @@ Eina_Bool esvg_element_setup(Edom_Tag *t, const Esvg_Element_State *state,
  */
 EAPI Eina_Bool esvg_is_element(Ender_Element *e)
 {
-	Esvg_Element *thiz;
 	Edom_Tag *t;
-	Eina_Bool ret;
 
 	t = ender_element_object_get(e);
-	thiz = edom_tag_data_get(t);
-	ret = EINA_MAGIC_CHECK(thiz, ESVG_ELEMENT_MAGIC);
-
-	return ret;
+	return esvg_is_element_internal(t);
 }
 
 /**
