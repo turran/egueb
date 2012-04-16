@@ -65,7 +65,7 @@ static Esvg_Svg * _esvg_svg_get(Edom_Tag *t)
 {
 	Esvg_Svg *thiz;
 
-	if (esvg_type_get_internal(t) != ESVG_SVG)
+	if (esvg_element_type_get_internal(t) != ESVG_SVG)
 		return NULL;
 	thiz = esvg_renderable_data_get(t);
 
@@ -218,9 +218,7 @@ static Eina_Bool _esvg_svg_setup(Edom_Tag *t, Esvg_Element_State *state,
 	return EINA_TRUE;
 }
 
-static Enesim_Renderer * _esvg_svg_renderer_get(Edom_Tag *t,
-		const Esvg_Element_State *state,
-		const Esvg_Attribute_Presentation *attr)
+static Enesim_Renderer * _esvg_svg_renderer_get(Edom_Tag *t)
 {
 	Esvg_Svg *thiz;
 
@@ -467,7 +465,7 @@ Edom_Tag * esvg_svg_element_find(Ender_Element *e, const char *id)
 
 EAPI Eina_Bool esvg_is_svg(Ender_Element *e)
 {
-	if (esvg_type_get(e) != ESVG_SVG)
+	if (esvg_element_type_get(e) != ESVG_SVG)
 		return EINA_FALSE;
 	return EINA_TRUE;
 }

@@ -32,6 +32,8 @@
 			EINA_MAGIC_FAIL(d, ESVG_RENDERABLE_MAGIC);\
 	} while(0)
 
+static Ender_Property *ESVG_RENDERABLE_RENDERER;
+
 typedef struct _Esvg_Renderable_Descriptor_Internal
 {
 	Edom_Tag_Free free;
@@ -72,13 +74,6 @@ static void _esvg_renderable_free(Edom_Tag *t)
 }
 
 #if 0
-static Enesim_Renderer * _esvg_renderable_renderer_get(Enesim_Renderer *r
-		const Esvg_Element_State *state,
-		const Esvg_Attribute_Presentation *attr)
-{
-
-}
-
 static void _esvg_element_draw(Enesim_Renderer *r,
 		const Enesim_Renderer_State *state,
 		int x, int y, unsigned int len, void *dst)
@@ -244,10 +239,22 @@ static Enesim_Renderer_Descriptor _descriptor = {
 };
 #endif
 
+/*----------------------------------------------------------------------------*
+ *                           The Edom Tag interface                           *
+ *----------------------------------------------------------------------------*/
+static void _esvg_renderable_renderer_get(Edom_Tag *t, Enesim_Renderer **r)
+{
+	Esvg_Renderable *thiz;
+
+	if (!r) return;
+	thiz = _esvg_renderable_get(t);
+	*r = thiz->descriptor.renderer_get(t);
+}
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
 /* The ender wrapper */
+#define _esvg_renderable_renderer_set NULL
 #include "generated/esvg_generated_renderable.c"
 
 void * esvg_renderable_data_get(Edom_Tag *t)
@@ -308,9 +315,9 @@ EAPI Enesim_Renderer * esvg_renderable_renderer_get(Ender_Element *e)
 {
 	Esvg_Renderable *thiz;
 	Edom_Tag *t;
+	Enesim_Renderer *r;
 
 	t = ender_element_object_get(e);
-	thiz = _esvg_renderable_get(t);
-	//return thiz->descriptor.renderer_get(t);
-	return NULL;
+	_esvg_renderable_renderer_get(t, &r);
+	return r;
 }

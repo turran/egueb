@@ -27,7 +27,7 @@ namespace "esvg" {
 	};
 
 	abstract "renderable" : "element" {
-
+		object "renderer";
 	};
 
 	class "svg" : "renderable" {

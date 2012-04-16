@@ -2,9 +2,7 @@
 #define _ESVG_PRIVATE_RENDERABLE_H_
 
 /* renderable */
-typedef Enesim_Renderer * (*Esvg_Renderable_Renderer_Get)(Edom_Tag *t,
-		const Esvg_Element_State *state,
-		const Esvg_Attribute_Presentation *attr);
+typedef Enesim_Renderer * (*Esvg_Renderable_Renderer_Get)(Edom_Tag *t);
 
 typedef struct _Esvg_Renderable_Descriptor {
 	/* the tag interface */
