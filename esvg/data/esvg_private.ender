@@ -10,7 +10,7 @@ namespace "esvg" {
 	abstract "element" : "tag" {
 		/* core */
 		int "type";
-		/* dom /*
+		/* dom */
 		string "id";
 		string "class";
 		/* presentation attributes */
@@ -31,15 +31,23 @@ namespace "esvg" {
 	};
 
 	class "svg" : "renderable" {
-
+		length "x";
+		length "y";
+		length "width";
+		length "height";
 	};
 
 	class "g" : "renderable" {
 
 	};
 
-	class "rect" : "element" {
-
+	class "rect" : "renderable" {
+		length "x";
+		length "y";
+		length "width";
+		length "height";
+		length "rx";
+		length "ry";
 	};
 
 	class "ellipse" : "element" {

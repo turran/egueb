@@ -64,26 +64,12 @@
 #include "esvg_types.h"
 #include "esvg_element.h"
 #include "esvg_svg.h"
+#include "esvg_rect.h"
 
 EAPI Edom_Tag * esvg_g_new(void);
 EAPI Eina_Bool esvg_is_g(Edom_Tag *e);
 
 EAPI Eina_Bool esvg_is_shape(Edom_Tag *e);
-
-EAPI Edom_Tag *esvg_rect_new(void);
-EAPI Eina_Bool esvg_is_rect(Edom_Tag *e);
-EAPI void esvg_rect_x_set(Edom_Tag *e, const Esvg_Coord *x);
-EAPI void esvg_rect_x_get(Edom_Tag *e, Esvg_Coord *x);
-EAPI void esvg_rect_y_set(Edom_Tag *e, const Esvg_Coord *y);
-EAPI void esvg_rect_y_get(Edom_Tag *e, Esvg_Coord *y);
-EAPI void esvg_rect_width_set(Edom_Tag *e, const Esvg_Length *width);
-EAPI void esvg_rect_width_get(Edom_Tag *e, Esvg_Length *width);
-EAPI void esvg_rect_height_set(Edom_Tag *e, const Esvg_Length *height);
-EAPI void esvg_rect_height_get(Edom_Tag *e, Esvg_Length *height);
-EAPI void esvg_rect_rx_set(Edom_Tag *e, const Esvg_Coord *rx);
-EAPI void esvg_rect_rx_get(Edom_Tag *e, Esvg_Coord *rx);
-EAPI void esvg_rect_ry_set(Edom_Tag *e, const Esvg_Coord *ry);
-EAPI void esvg_rect_ry_get(Edom_Tag *e, Esvg_Coord *ry);
 
 EAPI Edom_Tag * esvg_ellipse_new(void);
 EAPI Eina_Bool esvg_is_ellipse(Edom_Tag *e);

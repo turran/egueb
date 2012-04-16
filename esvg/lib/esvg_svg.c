@@ -39,6 +39,11 @@
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
+static Ender_Property *ESVG_SVG_X;
+static Ender_Property *ESVG_SVG_Y;
+static Ender_Property *ESVG_SVG_WIDTH;
+static Ender_Property *ESVG_SVG_HEIGHT;
+
 typedef struct _Esvg_Svg
 {
 	/* properties */
@@ -312,12 +317,29 @@ static void _esvg_svg_x_set(Edom_Tag *t, Esvg_Coord *x)
 	thiz->x = *x;
 }
 
+static void _esvg_svg_x_get(Edom_Tag *t, Esvg_Coord *x)
+{
+	Esvg_Svg *thiz;
+
+	thiz = _esvg_svg_get(t);
+	if (x) *x = thiz->x;
+}
+
+
 static void _esvg_svg_y_set(Edom_Tag *t, Esvg_Coord *y)
 {
 	Esvg_Svg *thiz;
 
 	thiz = _esvg_svg_get(t);
 	thiz->y = *y;
+}
+
+static void _esvg_svg_y_get(Edom_Tag *t, Esvg_Coord *y)
+{
+	Esvg_Svg *thiz;
+
+	thiz = _esvg_svg_get(t);
+	if (y) *y = thiz->y;
 }
 
 static void _esvg_svg_width_set(Edom_Tag *t, Esvg_Length *width)
@@ -328,12 +350,28 @@ static void _esvg_svg_width_set(Edom_Tag *t, Esvg_Length *width)
 	thiz->width = *width;
 }
 
+static void _esvg_svg_width_get(Edom_Tag *t, Esvg_Length *width)
+{
+	Esvg_Svg *thiz;
+
+	thiz = _esvg_svg_get(t);
+	if (width) *width = thiz->width;
+}
+
 static void _esvg_svg_height_set(Edom_Tag *t, Esvg_Length *height)
 {
 	Esvg_Svg *thiz;
 
 	thiz = _esvg_svg_get(t);
 	thiz->height = *height;
+}
+
+static void _esvg_svg_height_get(Edom_Tag *t, Esvg_Length *height)
+{
+	Esvg_Svg *thiz;
+
+	thiz = _esvg_svg_get(t);
+	if (height) *height = thiz->height;
 }
 
 static void _esvg_svg_viewbox_set(Edom_Tag *t, Esvg_View_Box *vb)
@@ -429,6 +467,8 @@ Edom_Tag * esvg_svg_element_find(Ender_Element *e, const char *id)
 
 EAPI Eina_Bool esvg_is_svg(Ender_Element *e)
 {
+	Eina_Bool ret = EINA_TRUE;
+	return ret;
 }
 
 EAPI void esvg_svg_version_set(Ender_Element *e, double version)

@@ -7,6 +7,7 @@ include_HEADERS = Esvg.h Esvg_Parser.h
 ESVG_APIHEADERS = \
 esvg_main.h \
 esvg_element.h \
+esvg_rect.h \
 esvg_svg.h \
 esvg_types.h
 

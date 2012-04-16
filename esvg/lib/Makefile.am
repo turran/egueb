@@ -22,6 +22,7 @@ esvg_element.c \
 esvg_parser.c \
 esvg_renderable.c \
 esvg_main.c \
+esvg_rect.c \
 esvg_svg.c \
 esvg_types.c
 
@@ -40,7 +41,6 @@ esvg_types.c
 #esvg_polygon.c \
 #esvg_polyline.c \
 #esvg_radial_gradient.c \
-#esvg_rect.c \
 #esvg_shape.c \
 #esvg_text.c \
 #esvg_use.c

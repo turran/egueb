@@ -76,32 +76,6 @@ extern Ender_Property *EDOM_PARENT;
 Ender_Namespace * esvg_namespace_get(void);
 
 #if 0
-/* shape */
-typedef struct _Esvg_Shape_Enesim_State {
-	/* common */
-	Enesim_Color color;
-	/* stroke */
-	Enesim_Shape_Draw_Mode draw_mode;
-	Enesim_Shape_Stroke_Cap stroke_cap;
-	Enesim_Shape_Stroke_Join stroke_join;
-	Enesim_Color stroke_color;
-	Enesim_Renderer *stroke_renderer;
-	double stroke_weight;
-	/* fill */
-	Enesim_Renderer *fill_renderer;
-	Enesim_Color fill_color;
-	Enesim_Shape_Fill_Rule fill_rule;
-} Esvg_Shape_Enesim_State;
-
-typedef Eina_Bool (*Esvg_Shape_Enesim_State_Calculate)(Enesim_Renderer *r,
-		Esvg_Element_State *estate,
-		const Esvg_Attribute_Presentation *attr,
-		Esvg_Shape_Enesim_State *dstate,
-		void *data);
-
-typedef Enesim_Renderer * (*Esvg_Shape_Renderer_Get)(Enesim_Renderer *);
-typedef Eina_Bool (*Esvg_Shape_Setup)(Enesim_Renderer *r, const Esvg_Element_State *estate,
-		const Esvg_Shape_Enesim_State *dstate);
 
 typedef struct _Esvg_Shape_Descriptor {
 	/* the shape interface */

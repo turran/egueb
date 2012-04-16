@@ -399,9 +399,11 @@ static void * _esvg_parser_tag_new(Edom_Parser *parser, int tag_id)
 		tag = esvg_parser_ellipse_new(parser);
 		break;
 
+#endif
 		case ESVG_RECT:
-		tag = esvg_parser_rect_new(parser);
+		tag = esvg_rect_new();
 		break;
+#if 0
 
 		case ESVG_LINE:
 		tag = esvg_parser_line_new(parser);
@@ -448,7 +450,7 @@ static void * _esvg_parser_tag_new(Edom_Parser *parser, int tag_id)
 		break;
 #endif
 		default:
-		printf("can't create the tag %d\n", tag_id);
+		printf("can't create the tag %s (%d)\n", esvg_type_string_to(tag_id), tag_id);
 		break;
 	}
 

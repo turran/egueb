@@ -15,17 +15,24 @@
  * License along with this library.
  * If not, see <http://www.gnu.org/licenses/>.
  */
-#include "Esvg.h"
-#include "esvg_private.h"
-#include "esvg_values.h"
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
+#include "esvg_private_main.h"
+#include "esvg_private_attribute_presentation.h"
+#include "esvg_private_element.h"
+#include "esvg_private_renderable.h"
+#include "esvg_rect.h"
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
-#define ESVG_RECT_MAGIC_CHECK(d) \
-	do {\
-		if (!EINA_MAGIC_CHECK(d, ESVG_RECT_MAGIC))\
-			EINA_MAGIC_FAIL(d, ESVG_RECT_MAGIC);\
-	} while(0)
+static Ender_Property *ESVG_RECT_X;
+static Ender_Property *ESVG_RECT_Y;
+static Ender_Property *ESVG_RECT_RX;
+static Ender_Property *ESVG_RECT_RY;
+static Ender_Property *ESVG_RECT_WIDTH;
+static Ender_Property *ESVG_RECT_HEIGHT;
 
 typedef struct _Esvg_Rect_State
 {
@@ -39,7 +46,6 @@ typedef struct _Esvg_Rect_State
 
 typedef struct _Esvg_Rect
 {
-	EINA_MAGIC
 	/* properties */
 	Esvg_Rect_State current;
 	Esvg_Rect_State past;
@@ -48,113 +54,83 @@ typedef struct _Esvg_Rect
 	Eina_Bool changed : 1;
 } Esvg_Rect;
 
-static Esvg_Rect * _esvg_rect_get(Enesim_Renderer *r)
+static Esvg_Rect * _esvg_rect_get(Edom_Tag *t)
 {
 	Esvg_Rect *thiz;
 
-	thiz = esvg_shape_data_get(r);
-	ESVG_RECT_MAGIC_CHECK(thiz);
+	if (!esvg_is_svg(t))
+		return NULL;
+	thiz = esvg_renderable_data_get(t);
+
 	return thiz;
 }
 
-#if 0
-static Eina_Bool _parser_rect_attribute_set(Edom_Tag *tag, const char *key, const char *value)
+/*----------------------------------------------------------------------------*
+ *                       The Esvg Renderable interface                        *
+ *----------------------------------------------------------------------------*/
+static Eina_Bool _esvg_rect_attribute_set(Ender_Element *e, const char *key, const char *value)
 {
-	Enesim_Renderer *r;
-
-	r = esvg_parser_element_renderer_get(tag);
 	if (strcmp(key, "x") == 0)
 	{
 		Esvg_Coord x;
 
 		esvg_length_get(&x, value, ESVG_COORD_0);
-		esvg_rect_x_set(r, &x);
+		esvg_rect_x_set(e, &x);
 	}
 	else if (strcmp(key, "y") == 0)
 	{
 		Esvg_Coord y;
 
 		esvg_length_get(&y, value, ESVG_COORD_0);
-		esvg_rect_y_set(r, &y);
+		esvg_rect_y_set(e, &y);
 	}
 	else if (strcmp(key, "rx") == 0)
 	{
 		Esvg_Coord rx;
 
 		esvg_length_get(&rx, value, ESVG_COORD_0);
-		esvg_rect_rx_set(r, &rx);
+		esvg_rect_rx_set(e, &rx);
 	}
 	else if (strcmp(key, "ry") == 0)
 	{
 		Esvg_Coord ry;
 
 		esvg_length_get(&ry, value, ESVG_COORD_0);
-		esvg_rect_ry_set(r, &ry);
+		esvg_rect_ry_set(e, &ry);
 	}
 	else if (strcmp(key, "width") == 0)
 	{
 		Esvg_Length width;
 
 		esvg_length_get(&width, value, ESVG_LENGTH_0);
-		esvg_rect_width_set(r, &width);
+		esvg_rect_width_set(e, &width);
 	}
 	else if (strcmp(key, "height") == 0)
 	{
 		Esvg_Length height;
 
 		esvg_length_get(&height, value, ESVG_LENGTH_0);
-		esvg_rect_height_set(r, &height);
+		esvg_rect_height_set(e, &height);
 	}
 
 	return EINA_TRUE;
 }
 
-static const char * _parser_rect_attribute_get(Edom_Tag *tag, const char *attribute)
+static Eina_Bool _esvg_rect_attribute_get(Edom_Tag *tag, const char *attribute, char **value)
 {
-	return NULL;
+	return EINA_FALSE;
 }
 
-static const char * _parser_rect_name_get(Edom_Tag *tag)
-{
-	return "rect";
-}
 
-static Edom_Tag_Descriptor _descriptor = {
-	/* .name_get 		= */ _parser_rect_name_get,
-	/* .attribute_set 	= */ _parser_rect_attribute_set,
-	/* .attribute_get 	= */ _parser_rect_attribute_get,
-};
-
-Edom_Tag * esvg_parser_rect_new(Edom_Parser *parser)
-{
-	Edom_Tag *tag;
-	Enesim_Renderer *r;
-
-	r = esvg_rect_new();
-	tag = esvg_parser_shape_new(parser, &_descriptor, ESVG_RECT, r, NULL);
-
-	return tag;
-}
-
-#endif
-
-/*----------------------------------------------------------------------------*
- *                         The ESVG element interface                         *
- *----------------------------------------------------------------------------*/
-static const char * _esvg_rect_name_get(Enesim_Renderer *r)
-{
-	return "esvg_rect";
-}
-
-static Enesim_Renderer * _esvg_rect_renderer_get(Enesim_Renderer *r)
+static Enesim_Renderer * _esvg_rect_renderer_get(Edom_Tag *t)
 {
 	Esvg_Rect *thiz;
 
-	thiz = _esvg_rect_get(r);
+	thiz = _esvg_rect_get(t);
 	return thiz->r;
 }
 
-static Eina_Bool _esvg_rect_setup(Enesim_Renderer *r, const Esvg_Element_State *estate,
+static Eina_Bool _esvg_rect_setup(Edom_Tag *t, const Esvg_Element_State *estate,
 		const Esvg_Shape_Enesim_State *dstate)
 {
 	Esvg_Rect *thiz;
@@ -162,7 +138,7 @@ static Eina_Bool _esvg_rect_setup(Enesim_Renderer *r, const Esvg_Element_State *
 	double rx, ry;
 	double width, height;
 
-	thiz = _esvg_rect_get(r);
+	thiz = _esvg_rect_get(t);
 
 	/* set the position */
 	x = esvg_length_final_get(&thiz->current.x, estate->viewbox_w);
@@ -201,13 +177,13 @@ static Eina_Bool _esvg_rect_setup(Enesim_Renderer *r, const Esvg_Element_State *
 	return EINA_TRUE;
 }
 
-static void _esvg_rect_clone(Enesim_Renderer *r, Enesim_Renderer *dr)
+static void _esvg_rect_clone(Edom_Tag *t, Edom_Tag *tr)
 {
 	Esvg_Rect *thiz;
 	Esvg_Rect *other;
 
-	thiz = _esvg_rect_get(r);
-	other = _esvg_rect_get(dr);
+	thiz = _esvg_rect_get(t);
+	other = _esvg_rect_get(tr);
 
 	other->current.x = thiz->current.x;
 	other->current.y = thiz->current.y;
@@ -217,20 +193,20 @@ static void _esvg_rect_clone(Enesim_Renderer *r, Enesim_Renderer *dr)
 	other->current.ry = thiz->current.ry;
 }
 
-static void _esvg_rect_cleanup(Enesim_Renderer *r)
+static void _esvg_rect_cleanup(Edom_Tag *t)
 {
 	Esvg_Rect *thiz;
 
-	thiz = _esvg_rect_get(r);
+	thiz = _esvg_rect_get(t);
 	thiz->past = thiz->current;
 	thiz->changed = EINA_FALSE;
 }
 
-static Eina_Bool _esvg_rect_has_changed(Enesim_Renderer *r)
+static Eina_Bool _esvg_rect_has_changed(Edom_Tag *t)
 {
 	Esvg_Rect *thiz;
 
-	thiz = _esvg_rect_get(r);
+	thiz = _esvg_rect_get(t);
 	if (!thiz->changed) return EINA_FALSE;
 
 	if (esvg_length_is_equal(&thiz->current.x, &thiz->past.x))
@@ -249,28 +225,39 @@ static Eina_Bool _esvg_rect_has_changed(Enesim_Renderer *r)
 	return EINA_FALSE;
 }
 
-static Esvg_Shape_Descriptor _descriptor = {
-	/* .setup =		*/ _esvg_rect_setup,
-	/* .renderer_get =	*/ _esvg_rect_renderer_get,
-	/* .name_get =		*/ _esvg_rect_name_get,
-	/* .clone =		*/ _esvg_rect_clone,
-	/* .cleanup =		*/ _esvg_rect_cleanup,
-	/* .has_changed	=	*/ _esvg_rect_has_changed
-};
-/*============================================================================*
- *                                 Global                                     *
- *============================================================================*/
-/*============================================================================*
- *                                   API                                      *
- *============================================================================*/
-EAPI Enesim_Renderer * esvg_rect_new(void)
+void _esvg_rect_free(Edom_Tag *t)
 {
 	Esvg_Rect *thiz;
+
+	thiz = _esvg_rect_get(t);
+	free(thiz);
+}
+
+static Esvg_Renderable_Descriptor _descriptor = {
+	/* .child_add		= */ NULL,
+	/* .child_remove	= */ NULL,
+	/* .attribute_get 	= */ _esvg_rect_attribute_get,
+	/* .cdata_set 		= */ NULL,
+	/* .text_set 		= */ NULL,
+	/* .free 		= */ _esvg_rect_free,
+	/* .initialize 		= */ NULL,
+	/* .attribute_set 	= */ _esvg_rect_attribute_set,
+	/* .clone		= */ _esvg_rect_clone,
+	/* .setup		= */ _esvg_rect_setup,
+	/* .renderer_get	= */ _esvg_rect_renderer_get,
+};
+
+/*----------------------------------------------------------------------------*
+ *                           The Ender interface                              *
+ *----------------------------------------------------------------------------*/
+static Edom_Tag * _esvg_rect_new(void)
+{
+	Esvg_Rect *thiz;
+	Edom_Tag *t;
 	Enesim_Renderer *r;
 
 	thiz = calloc(1, sizeof(Esvg_Rect));
 	if (!thiz) return NULL;
-	EINA_MAGIC_SET(thiz, ESVG_RECT_MAGIC);
 
 	r = enesim_renderer_rectangle_new();
 	thiz->r = r;
@@ -285,28 +272,15 @@ EAPI Enesim_Renderer * esvg_rect_new(void)
 /* 	thiz->current.rx = ESVG_COORD_0; */
 /* 	thiz->current.ry = ESVG_COORD_0; */
 
-	r = esvg_shape_new(&_descriptor, thiz);
-	return r;
+	t = esvg_renderable_new(&_descriptor, ESVG_RECT, thiz);
+	return t;
 }
 
-EAPI Eina_Bool esvg_is_rect(Enesim_Renderer *r)
-{
-	Esvg_Rect *thiz;
-	Eina_Bool ret;
-
-	if (!esvg_is_shape(r))
-		return EINA_FALSE;
-	thiz = esvg_shape_data_get(r);
-	ret = EINA_MAGIC_CHECK(thiz, ESVG_RECT_MAGIC);
-
-	return ret;
-}
-
-EAPI void esvg_rect_x_set(Enesim_Renderer *r, const Esvg_Coord *x)
+static void _esvg_rect_x_set(Edom_Tag *t, const Esvg_Coord *x)
 {
 	Esvg_Rect *thiz;
 
-	thiz = _esvg_rect_get(r);
+	thiz = _esvg_rect_get(t);
 	if (x)
 	{
 		thiz->current.x = *x;
@@ -314,19 +288,19 @@ EAPI void esvg_rect_x_set(Enesim_Renderer *r, const Esvg_Coord *x)
 	}
 }
 
-EAPI void esvg_rect_x_get(Enesim_Renderer *r, Esvg_Coord *x)
+static void _esvg_rect_x_get(Edom_Tag *t, Esvg_Coord *x)
 {
 	Esvg_Rect *thiz;
 
-	thiz = _esvg_rect_get(r);
+	thiz = _esvg_rect_get(t);
 	if (x) *x = thiz->current.x;
 }
 
-EAPI void esvg_rect_y_set(Enesim_Renderer *r, const Esvg_Coord *y)
+static void _esvg_rect_y_set(Edom_Tag *t, const Esvg_Coord *y)
 {
 	Esvg_Rect *thiz;
 
-	thiz = _esvg_rect_get(r);
+	thiz = _esvg_rect_get(t);
 	if (y)
 	{
 		thiz->current.y = *y;
@@ -334,19 +308,19 @@ EAPI void esvg_rect_y_set(Enesim_Renderer *r, const Esvg_Coord *y)
 	}
 }
 
-EAPI void esvg_rect_y_get(Enesim_Renderer *r, Esvg_Coord *y)
+static void _esvg_rect_y_get(Edom_Tag *t, Esvg_Coord *y)
 {
 	Esvg_Rect *thiz;
 
-	thiz = _esvg_rect_get(r);
+	thiz = _esvg_rect_get(t);
 	if (y) *y = thiz->current.y;
 }
 
-EAPI void esvg_rect_width_set(Enesim_Renderer *r, const Esvg_Length *width)
+static void _esvg_rect_width_set(Edom_Tag *t, const Esvg_Length *width)
 {
 	Esvg_Rect *thiz;
 
-	thiz = _esvg_rect_get(r);
+	thiz = _esvg_rect_get(t);
 	if (width)
 	{
 		thiz->current.width = *width;
@@ -354,19 +328,19 @@ EAPI void esvg_rect_width_set(Enesim_Renderer *r, const Esvg_Length *width)
 	}
 }
 
-EAPI void esvg_rect_width_get(Enesim_Renderer *r, Esvg_Length *width)
+static void _esvg_rect_width_get(Edom_Tag *t, Esvg_Length *width)
 {
 	Esvg_Rect *thiz;
 
-	thiz = _esvg_rect_get(r);
+	thiz = _esvg_rect_get(t);
 	if (width) *width = thiz->current.width;
 }
 
-EAPI void esvg_rect_height_set(Enesim_Renderer *r, const Esvg_Length *height)
+static void _esvg_rect_height_set(Edom_Tag *t, const Esvg_Length *height)
 {
 	Esvg_Rect *thiz;
 
-	thiz = _esvg_rect_get(r);
+	thiz = _esvg_rect_get(t);
 	if (height)
 	{
 		thiz->current.height = *height;
@@ -374,19 +348,19 @@ EAPI void esvg_rect_height_set(Enesim_Renderer *r, const Esvg_Length *height)
 	}
 }
 
-EAPI void esvg_rect_height_get(Enesim_Renderer *r, Esvg_Length *height)
+static void _esvg_rect_height_get(Edom_Tag *t, Esvg_Length *height)
 {
 	Esvg_Rect *thiz;
 
-	thiz = _esvg_rect_get(r);
+	thiz = _esvg_rect_get(t);
 	if (height) *height = thiz->current.height;
 }
 
-EAPI void esvg_rect_rx_set(Enesim_Renderer *r, const Esvg_Coord *rx)
+static void _esvg_rect_rx_set(Edom_Tag *t, const Esvg_Coord *rx)
 {
 	Esvg_Rect *thiz;
 
-	thiz = _esvg_rect_get(r);
+	thiz = _esvg_rect_get(t);
 	if (rx)
 	{
 		thiz->current.rx = *rx;
@@ -394,19 +368,19 @@ EAPI void esvg_rect_rx_set(Enesim_Renderer *r, const Esvg_Coord *rx)
 	}
 }
 
-EAPI void esvg_rect_rx_get(Enesim_Renderer *r, Esvg_Coord *rx)
+static void _esvg_rect_rx_get(Edom_Tag *t, Esvg_Coord *rx)
 {
 	Esvg_Rect *thiz;
 
-	thiz = _esvg_rect_get(r);
+	thiz = _esvg_rect_get(t);
 	if (rx) *rx = thiz->current.rx;
 }
 
-EAPI void esvg_rect_ry_set(Enesim_Renderer *r, const Esvg_Coord *ry)
+static void _esvg_rect_ry_set(Edom_Tag *t, const Esvg_Coord *ry)
 {
 	Esvg_Rect *thiz;
 
-	thiz = _esvg_rect_get(r);
+	thiz = _esvg_rect_get(t);
 	if (ry)
 	{
 		thiz->current.ry = *ry;
@@ -414,10 +388,84 @@ EAPI void esvg_rect_ry_set(Enesim_Renderer *r, const Esvg_Coord *ry)
 	}
 }
 
-EAPI void esvg_rect_ry_get(Enesim_Renderer *r, Esvg_Coord *ry)
+static void _esvg_rect_ry_get(Edom_Tag *t, Esvg_Coord *ry)
 {
 	Esvg_Rect *thiz;
 
-	thiz = _esvg_rect_get(r);
+	thiz = _esvg_rect_get(t);
 	if (ry) *ry = thiz->current.ry;
+}
+/*============================================================================*
+ *                                 Global                                     *
+ *============================================================================*/
+/* The ender wrapper */
+#include "generated/esvg_generated_rect.c"
+
+/*============================================================================*
+ *                                   API                                      *
+ *============================================================================*/
+EAPI Ender_Element * esvg_rect_new(void)
+{
+	return ender_element_new_with_namespace("rect", "esvg");
+}
+
+EAPI Eina_Bool esvg_is_rect(Ender_Element *e)
+{
+	Eina_Bool ret = EINA_TRUE;
+
+	return ret;
+}
+
+EAPI void esvg_rect_x_set(Ender_Element *e, const Esvg_Coord *x)
+{
+	ender_element_property_value_set(e, ESVG_RECT_X, x, NULL);
+}
+
+EAPI void esvg_rect_x_get(Ender_Element *e, Esvg_Coord *x)
+{
+}
+
+EAPI void esvg_rect_y_set(Ender_Element *e, const Esvg_Coord *y)
+{
+	ender_element_property_value_set(e, ESVG_RECT_Y, y, NULL);
+}
+
+EAPI void esvg_rect_y_get(Ender_Element *e, Esvg_Coord *y)
+{
+}
+
+EAPI void esvg_rect_width_set(Ender_Element *e, const Esvg_Length *width)
+{
+	ender_element_property_value_set(e, ESVG_RECT_WIDTH, width, NULL);
+}
+
+EAPI void esvg_rect_width_get(Ender_Element *e, Esvg_Length *width)
+{
+}
+
+EAPI void esvg_rect_height_set(Ender_Element *e, const Esvg_Length *height)
+{
+	ender_element_property_value_set(e, ESVG_RECT_HEIGHT, height, NULL);
+}
+
+EAPI void esvg_rect_height_get(Ender_Element *e, Esvg_Length *height)
+{
+}
+
+EAPI void esvg_rect_rx_set(Ender_Element *e, const Esvg_Coord *rx)
+{
+	ender_element_property_value_set(e, ESVG_RECT_RX, rx, NULL);
+}
+
+EAPI void esvg_rect_rx_get(Ender_Element *e, Esvg_Coord *rx)
+{
+}
+
+EAPI void esvg_rect_ry_set(Ender_Element *e, const Esvg_Coord *ry)
+{
+	ender_element_property_value_set(e, ESVG_RECT_RY, ry, NULL);
+}
+
+EAPI void esvg_rect_ry_get(Ender_Element *e, Esvg_Coord *ry)
+{
 }
