@@ -77,10 +77,6 @@ typedef struct _Esvg_Element
 	Esvg_Element_State state;
 	Esvg_Attribute_Presentation attr;
 	Esvg_Attribute_Presentation style;
-	double container_width;
-	double container_height;
-	double x_dpi;
-	double y_dpi;
 	/* the descriptor interface */
 	Esvg_Element_Descriptor_Internal descriptor;
 	/* private */
@@ -319,12 +315,10 @@ static void _esvg_element_state_compose(const Esvg_Element_State *s, const Esvg_
 	/* only set */
 	d->dpi_x = parent->dpi_x;
 	d->dpi_y = parent->dpi_y;
-	d->viewbox_w = parent->viewbox_w;
-	d->viewbox_h = parent->viewbox_h;
+	d->viewbox = parent->viewbox;
 	/* actually compose */
 	enesim_matrix_compose(&parent->transform, &s->transform, &d->transform);
 }
-
 
 /*----------------------------------------------------------------------------*
  *                           The Ender interface                              *
@@ -620,72 +614,6 @@ static void _esvg_element_visibility_get(Edom_Tag *t, Eina_Bool *visibility)
 	thiz = _esvg_element_get(t);
 	*visibility = thiz->attr.visibility;
 }
-
-
-static void _esvg_element_container_width_set(Edom_Tag *t, double container_width)
-{
-	Esvg_Element *thiz;
-
-	thiz = _esvg_element_get(t);
-	thiz->container_width = container_width;
-}
-
-static void _esvg_element_container_width_get(Edom_Tag *t, double *container_width)
-{
-	Esvg_Element *thiz;
-
-	thiz = _esvg_element_get(t);
-	if (container_width) *container_width = thiz->container_width;
-}
-
-static void _esvg_element_container_height_set(Edom_Tag *t, double container_height)
-{
-	Esvg_Element *thiz;
-
-	thiz = _esvg_element_get(t);
-	thiz->container_height = container_height;
-}
-
-static void _esvg_element_container_height_get(Edom_Tag *t, double *container_height)
-{
-	Esvg_Element *thiz;
-
-	thiz = _esvg_element_get(t);
-	if (container_height) *container_height = thiz->container_height;
-}
-
-static void _esvg_element_x_dpi_set(Edom_Tag *t, double x_dpi)
-{
-	Esvg_Element *thiz;
-
-	thiz = _esvg_element_get(t);
-	thiz->x_dpi = x_dpi;
-}
-
-static void _esvg_element_x_dpi_get(Edom_Tag *t, double *x_dpi)
-{
-	Esvg_Element *thiz;
-
-	thiz = _esvg_element_get(t);
-	if (x_dpi) *x_dpi = thiz->x_dpi;
-}
-
-static void _esvg_element_y_dpi_set(Edom_Tag *t, double y_dpi)
-{
-	Esvg_Element *thiz;
-
-	thiz = _esvg_element_get(t);
-	thiz->y_dpi = y_dpi;
-}
-
-static void _esvg_element_y_dpi_get(Edom_Tag *t, double *y_dpi)
-{
-	Esvg_Element *thiz;
-
-	thiz = _esvg_element_get(t);
-	if (y_dpi) *y_dpi = thiz->y_dpi;
-}
-
 /*----------------------------------------------------------------------------*
  *                           The Edom Tag interface                           *
  *----------------------------------------------------------------------------*/
@@ -958,11 +886,6 @@ Edom_Tag * esvg_element_new(Esvg_Element_Descriptor *descriptor, Esvg_Type type,
 	thiz->descriptor.attribute_get = descriptor->attribute_get;
 
 	t = edom_tag_new(&pdescriptor, thiz);
-	/* default values */
-	thiz->container_width = 640;
-	thiz->container_height = 480;
-	thiz->x_dpi = 96.0;
-	thiz->y_dpi = 96.0;
 
 	esvg_attribute_presentation_setup(&thiz->attr);
 	esvg_attribute_presentation_setup(&thiz->style);
@@ -993,11 +916,6 @@ Eina_Bool esvg_element_setup_internal(Edom_Tag *t,
 	if (state)
 	{
 		_esvg_element_state_compose(&thiz->state, state, &thiz->state_final);
-	}
-	else
-	{
-		thiz->state_final.viewbox_w = thiz->container_width;
-		thiz->state_final.viewbox_h = thiz->container_height;
 	}
 
 	/* in case we have set the style also merge it */
@@ -1051,6 +969,10 @@ EAPI Eina_Bool esvg_is_element(Ender_Element *e)
  */
 EAPI Esvg_Type esvg_element_type_get(Ender_Element *e)
 {
+	Edom_Tag *t;
+
+	t = ender_element_object_get(e);
+	return esvg_element_type_get_internal(t);
 }
 
 /**
@@ -1333,70 +1255,6 @@ EAPI void esvg_element_visibility_set(Ender_Element *e, Eina_Bool visibility)
  * FIXME: To be fixed
  */
 EAPI void esvg_element_visibility_unset(Ender_Element *e)
-{
-}
-
-/**
- * To be documented
- * FIXME: To be fixed
- */
-EAPI void esvg_element_container_width_set(Ender_Element *e, double container_width)
-{
-}
-
-/**
- * To be documented
- * FIXME: To be fixed
- */
-EAPI void esvg_element_container_width_get(Ender_Element *e, double *container_width)
-{
-}
-
-/**
- * To be documented
- * FIXME: To be fixed
- */
-EAPI void esvg_element_container_height_set(Ender_Element *e, double container_height)
-{
-}
-
-/**
- * To be documented
- * FIXME: To be fixed
- */
-EAPI void esvg_element_container_height_get(Ender_Element *e, double *container_height)
-{
-}
-
-/**
- * To be documented
- * FIXME: To be fixed
- */
-EAPI void esvg_element_x_dpi_set(Ender_Element *e, double x_dpi)
-{
-}
-
-/**
- * To be documented
- * FIXME: To be fixed
- */
-EAPI void esvg_element_x_dpi_get(Ender_Element *e, double *x_dpi)
-{
-}
-
-/**
- * To be documented
- * FIXME: To be fixed
- */
-EAPI void esvg_element_y_dpi_set(Ender_Element *e, double y_dpi)
-{
-}
-
-/**
- * To be documented
- * FIXME: To be fixed
- */
-EAPI void esvg_element_y_dpi_get(Ender_Element *e, double *y_dpi)
 {
 }
 

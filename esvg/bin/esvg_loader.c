@@ -84,8 +84,15 @@ int main(int argc, char *argv[])
 		goto shutdown_esvg;
 	}
 
+	if (!esvg_is_svg(tag))
+	{
+		printf("The parsed element is not a topmost SVG element\n");
+		goto shutdown_esvg;
+	}
 
-
+	/* set the final image size as the container size */
+	esvg_renderable_container_width_set(tag, width);
+	esvg_renderable_container_height_set(tag, height);
 	/* FIXME once the renderable class is implemented
 	 * get the renderer, for now test the parsing
 	 */
@@ -94,24 +101,15 @@ int main(int argc, char *argv[])
 		printf("The setup failed\n");
 	}
 
-	if (!esvg_is_renderable(tag))
-	{
-		printf("The parsed element can not be rendered\n");
-	}
-
-	r = esvg_renderable_renderer_get(tag);
-#if 0
-	/* set the final image size as the container size */
-	esvg_element_container_width_set(r, width);
-	esvg_element_container_height_set(r, height);
 	/* get the actual svg size to use */
-	esvg_svg_actual_width_get(r, &aw);
-	esvg_svg_actual_height_get(r, &ah);
+	esvg_svg_actual_width_get(tag, &aw);
+	esvg_svg_actual_height_get(tag, &ah);
 
 	width = ceil(aw);
 	height = ceil(ah);
 
 	printf("actual size %d %d\n", width, height);
+	r = esvg_renderable_renderer_get(tag);
 
 	compound = enesim_renderer_compound_new();
 	enesim_renderer_rop_set(compound, ENESIM_FILL);
@@ -136,7 +134,7 @@ int main(int argc, char *argv[])
 	enesim_surface_unref(s);
 	emage_shutdown();
 	esvg_shutdown();
-#endif
+
 	return 0;
 
 shutdown_esvg:

@@ -43,6 +43,8 @@ static Ender_Property *ESVG_SVG_X;
 static Ender_Property *ESVG_SVG_Y;
 static Ender_Property *ESVG_SVG_WIDTH;
 static Ender_Property *ESVG_SVG_HEIGHT;
+static Ender_Property *ESVG_SVG_ACTUAL_WIDTH;
+static Ender_Property *ESVG_SVG_ACTUAL_HEIGHT;
 
 typedef struct _Esvg_Svg
 {
@@ -185,8 +187,8 @@ static Eina_Bool _esvg_svg_setup(Edom_Tag *t, Esvg_Element_State *state,
 	double width, height;
 
 	thiz = _esvg_svg_get(t);
-	width = esvg_length_final_get(&thiz->width, state->viewbox_w);
-	height = esvg_length_final_get(&thiz->height, state->viewbox_h);
+	width = esvg_length_final_get(&thiz->width, state->viewbox.width);
+	height = esvg_length_final_get(&thiz->height, state->viewbox.height);
 	/* the viewbox will set a new user space coordinate */
 	/* FIXME check zeros */
 	if (thiz->view_box_set)
@@ -212,8 +214,8 @@ static Eina_Bool _esvg_svg_setup(Edom_Tag *t, Esvg_Element_State *state,
 		enesim_matrix_compose(&scale, &state->transform, &state->transform);
 		/* TODO handle current matrix */
 	}
-	state->viewbox_w = width;
-	state->viewbox_h = height;
+	state->viewbox.width = width;
+	state->viewbox.height = height;
 
 	return EINA_TRUE;
 }
@@ -485,18 +487,22 @@ EAPI void esvg_svg_version_get(Ender_Element *e, double *version)
 
 EAPI void esvg_svg_x_set(Ender_Element *e, Esvg_Coord *x)
 {
+	ender_element_property_value_set(e, ESVG_SVG_X, x, NULL);
 }
 
 EAPI void esvg_svg_y_set(Ender_Element *e, Esvg_Coord *y)
 {
+	ender_element_property_value_set(e, ESVG_SVG_Y, y, NULL);
 }
 
 EAPI void esvg_svg_width_set(Ender_Element *e, Esvg_Length *width)
 {
+	ender_element_property_value_set(e, ESVG_SVG_WIDTH, width, NULL);
 }
 
 EAPI void esvg_svg_height_set(Ender_Element *e, Esvg_Length *height)
 {
+	ender_element_property_value_set(e, ESVG_SVG_HEIGHT, height, NULL);
 }
 
 EAPI void esvg_svg_viewbox_set(Ender_Element *e, Esvg_View_Box *vb)

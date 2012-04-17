@@ -5,9 +5,7 @@
 typedef struct _Esvg_Element_State {
 	double dpi_x;
 	double dpi_y;
-	double viewbox_w; /* FIXME remove this */
-	double viewbox_h; /* FIXME remove this */
-	Enesim_Rectangle viewbox;
+	Esvg_View_Box viewbox;
 	Enesim_Matrix transform;
 	char *style;
 	char *id;

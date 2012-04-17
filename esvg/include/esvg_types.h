@@ -260,7 +260,6 @@ typedef struct _Esvg_View_Box
 	double height;
 } Esvg_View_Box;
 
-
 typedef enum _Esvg_Stroke_Line_Cap
 {
 	ESVG_LINE_CAP_BUTT,
@@ -369,6 +368,15 @@ extern Esvg_Length ESVG_LENGTH_0;
 extern Esvg_Length ESVG_LENGTH_1;
 extern Esvg_Length ESVG_LENGTH_100_PERCENT;
 #define ESVG_COORD_0 ESVG_LENGTH_0
+
+static inline Eina_Bool esvg_length_is_relative(Esvg_Length *length)
+{
+	if (length->unit == ESVG_UNIT_LENGTH_PERCENT)
+		return EINA_TRUE;
+	else
+		return EINA_FALSE;
+}
+
 
 /* view box */
 Esvg_View_Box esvg_view_box_get(const char *attr_val);

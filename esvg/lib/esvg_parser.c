@@ -614,7 +614,7 @@ EAPI Ender_Element * esvg_parser_load(const char *filename,
 	Esvg_Parser *thiz;
 	Esvg_Parser_Post_Data *pdata;
 	Edom_Parser *parser;
-	Ender_Element *tag;
+	Ender_Element *tag = NULL;
 	Eina_List *l;
 
 	thiz = calloc(1, sizeof(Esvg_Parser));
@@ -626,6 +626,7 @@ EAPI Ender_Element * esvg_parser_load(const char *filename,
 	tag = _esvg_parser_file_parse(filename, parser);
 	if (!tag) goto parse_failed;
 
+	printf("tag = %p\n", tag);
 	//edom_tag_dump(tag);
 	/* FIXME we should handle the style thing correctly
 	 * so far we were applying it once the document is loaded

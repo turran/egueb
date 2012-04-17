@@ -44,6 +44,10 @@ typedef struct _Esvg_Renderable
 {
 	EINA_MAGIC
 	/* properties */
+	double container_width;
+	double container_height;
+	double x_dpi;
+	double y_dpi;
 	/* interface */
 	Esvg_Renderable_Descriptor_Internal descriptor;
 	/* private */
@@ -59,7 +63,72 @@ static Esvg_Renderable * _esvg_renderable_get(Edom_Tag *t)
 
 	return thiz;
 }
+/*----------------------------------------------------------------------------*
+ *                           The Ender interface                              *
+ *----------------------------------------------------------------------------*/
+static void _esvg_renderable_x_dpi_set(Edom_Tag *t, double x_dpi)
+{
+	Esvg_Renderable *thiz;
 
+	thiz = _esvg_renderable_get(t);
+	thiz->x_dpi = x_dpi;
+}
+
+static void _esvg_renderable_x_dpi_get(Edom_Tag *t, double *x_dpi)
+{
+	Esvg_Renderable *thiz;
+
+	thiz = _esvg_renderable_get(t);
+	if (x_dpi) *x_dpi = thiz->x_dpi;
+}
+
+static void _esvg_renderable_y_dpi_set(Edom_Tag *t, double y_dpi)
+{
+	Esvg_Renderable *thiz;
+
+	thiz = _esvg_renderable_get(t);
+	thiz->y_dpi = y_dpi;
+}
+
+static void _esvg_renderable_y_dpi_get(Edom_Tag *t, double *y_dpi)
+{
+	Esvg_Renderable *thiz;
+
+	thiz = _esvg_renderable_get(t);
+	if (y_dpi) *y_dpi = thiz->y_dpi;
+}
+
+static void _esvg_renderable_container_width_set(Edom_Tag *t, double container_width)
+{
+	Esvg_Renderable *thiz;
+
+	thiz = _esvg_renderable_get(t);
+	thiz->container_width = container_width;
+}
+
+static void _esvg_renderable_container_width_get(Edom_Tag *t, double *container_width)
+{
+	Esvg_Renderable *thiz;
+
+	thiz = _esvg_renderable_get(t);
+	if (container_width) *container_width = thiz->container_width;
+}
+
+static void _esvg_renderable_container_height_set(Edom_Tag *t, double container_height)
+{
+	Esvg_Renderable *thiz;
+
+	thiz = _esvg_renderable_get(t);
+	thiz->container_height = container_height;
+}
+
+static void _esvg_renderable_container_height_get(Edom_Tag *t, double *container_height)
+{
+	Esvg_Renderable *thiz;
+
+	thiz = _esvg_renderable_get(t);
+	if (container_height) *container_height = thiz->container_height;
+}
 /*----------------------------------------------------------------------------*
  *                         The Esvg Element interface                         *
  *----------------------------------------------------------------------------*/
@@ -73,80 +142,36 @@ static void _esvg_renderable_free(Edom_Tag *t)
 	free(thiz);
 }
 
+static void _esvg_renderable_Set(Edom_Tag *t)
+{
 #if 0
-static void _esvg_element_draw(Enesim_Renderer *r,
-		const Enesim_Renderer_State *state,
-		int x, int y, unsigned int len, void *dst)
-{
-	Esvg_Element *thiz;
-	Enesim_Renderer *real_r;
-
-	thiz = _esvg_element_get(r);
-	/* the real renderer should be set at the setup */
-	enesim_renderer_sw_draw(thiz->real_r, x, y, len, dst);
+	{
+		thiz->state_final.viewbox.width = thiz->container_width;
+		thiz->state_final.viewbox.height = thiz->container_height;
+	}
+#endif
 }
 
-static const char * _esvg_element_name(Enesim_Renderer *r)
-{
-	Esvg_Element *thiz;
 
-	thiz = _esvg_element_get(r);
-	if (thiz->name_get) return thiz->name_get(r);
-	return "element";
-}
-
-static void _esvg_element_boundings(Enesim_Renderer *r,
-		const Enesim_Renderer_State *states[ENESIM_RENDERER_STATES],
-		Enesim_Rectangle *rect)
-{
-	Esvg_Element *thiz;
-	Enesim_Renderer *real_r;
-
-	thiz = _esvg_element_get(r);
-	/* TODO in case we have changed call the setup again */
-	real_r = _esvg_element_renderer_get(thiz, r);
-	enesim_renderer_boundings(real_r, rect);
-}
-
-static void _esvg_element_destination_boundings(Enesim_Renderer *r,
-		const Enesim_Renderer_State *states[ENESIM_RENDERER_STATES],
-		Eina_Rectangle *rect)
-{
-	Esvg_Element *thiz;
-	Enesim_Renderer *real_r;
-
-	thiz = _esvg_element_get(r);
-	/* TODO in case we have changed call the setup again */
-	real_r = _esvg_element_renderer_get(thiz, r);
-	enesim_renderer_destination_boundings(real_r, rect, 0, 0);
-}
-
-static void _esvg_element_free(Enesim_Renderer *r)
-{
-	Esvg_Element *thiz;
-
-	thiz = _esvg_element_get(r);
-	/* TODO */
-}
-
+#if 0
 static Eina_Bool _esvg_element_sw_setup(Enesim_Renderer *r,
 		const Enesim_Renderer_State *states[ENESIM_RENDERER_STATES],
 		Enesim_Surface *s,
 		Enesim_Renderer_Sw_Fill *fill, Enesim_Error **error)
 {
-	Esvg_Element *thiz;
+	Esvg_Renderable *thiz;
 	Enesim_Renderer *parent;
 	Esvg_Attribute_Presentation *parent_attr = NULL;
-	Esvg_Element_State *parent_state = NULL;
+	Esvg_Renderable_State *parent_state = NULL;
 	Enesim_Renderer *real_r;
 
-	thiz = _esvg_element_get(r);
+	thiz = _esvg_renderable_get(r);
 	parent = thiz->parent;
 	if (parent)
 	{
-		Esvg_Element *parent_thiz;
+		Esvg_Renderable *parent_thiz;
 
-		parent_thiz = _esvg_element_get(parent);
+		parent_thiz = _esvg_renderable_get(parent);
 		parent_attr = &parent_thiz->attr_final;
 		parent_state = &parent_thiz->state_final;
 	}
@@ -168,18 +193,18 @@ static Eina_Bool _esvg_element_sw_setup(Enesim_Renderer *r,
 
 static void _esvg_element_sw_cleanup(Enesim_Renderer *r, Enesim_Surface *s)
 {
-	Esvg_Element *thiz;
+	Esvg_Renderable *thiz;
 
-	thiz = _esvg_element_get(r);
+	thiz = _esvg_renderable_get(r);
 }
 
 static void _esvg_element_flags(Enesim_Renderer *r, const Enesim_Renderer_State *state,
 		Enesim_Renderer_Flag *flags)
 {
-	Esvg_Element *thiz;
+	Esvg_Renderable *thiz;
 	Enesim_Renderer *real_r;
 
-	thiz = _esvg_element_get(r);
+	thiz = _esvg_renderable_get(r);
 	real_r = _esvg_element_renderer_get(thiz, r);
 	enesim_renderer_flags(real_r, flags);
 }
@@ -187,10 +212,10 @@ static void _esvg_element_flags(Enesim_Renderer *r, const Enesim_Renderer_State 
 static void _esvg_element_hints(Enesim_Renderer *r, const Enesim_Renderer_State *state,
 		Enesim_Renderer_Hint *hints)
 {
-	Esvg_Element *thiz;
+	Esvg_Renderable *thiz;
 	Enesim_Renderer *real_r;
 
-	thiz = _esvg_element_get(r);
+	thiz = _esvg_renderable_get(r);
 	real_r = _esvg_element_renderer_get(thiz, r);
 	enesim_renderer_hints_get(real_r, hints);
 }
@@ -199,9 +224,9 @@ static void _esvg_element_hints(Enesim_Renderer *r, const Enesim_Renderer_State 
 static Eina_Bool _esvg_element_has_changed(Enesim_Renderer *r,
 		const Enesim_Renderer_State *states[ENESIM_RENDERER_STATES])
 {
-	Esvg_Element *thiz;
+	Esvg_Renderable *thiz;
 
-	thiz = _esvg_element_get(r);
+	thiz = _esvg_renderable_get(r);
 	if (thiz->has_changed)
 		return thiz->has_changed(r);
 	return EINA_FALSE;
@@ -209,9 +234,9 @@ static Eina_Bool _esvg_element_has_changed(Enesim_Renderer *r,
 
 static void _esvg_element_damage(Enesim_Renderer *r, Enesim_Renderer_Damage_Cb cb, void *data)
 {
-	Esvg_Element *thiz;
+	Esvg_Renderable *thiz;
 
-	thiz = _esvg_element_get(r);
+	thiz = _esvg_renderable_get(r);
 }
 
 static Eina_Bool _esvg_element_is_inside(Enesim_Renderer *r, double x, double y)
@@ -278,6 +303,11 @@ Edom_Tag * esvg_renderable_new(Esvg_Renderable_Descriptor *descriptor, Esvg_Type
 	EINA_MAGIC_SET(thiz, ESVG_RENDERABLE_MAGIC);
 	thiz->data = data;
 	thiz->descriptor.renderer_get = descriptor->renderer_get;
+	/* default values */
+	thiz->container_width = 640;
+	thiz->container_height = 480;
+	thiz->x_dpi = 96.0;
+	thiz->y_dpi = 96.0;
 
 	pdescriptor.child_add = descriptor->child_add;
 	pdescriptor.child_remove = descriptor->child_remove;
@@ -297,6 +327,10 @@ Edom_Tag * esvg_renderable_new(Esvg_Renderable_Descriptor *descriptor, Esvg_Type
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/
+/**
+ * To be documented
+ * FIXME: To be fixed
+ */
 EAPI Eina_Bool esvg_is_renderable(Ender_Element *e)
 {
 	Esvg_Renderable *thiz;
@@ -312,6 +346,10 @@ EAPI Eina_Bool esvg_is_renderable(Ender_Element *e)
 	return ret;
 }
 
+/**
+ * To be documented
+ * FIXME: To be fixed
+ */
 EAPI Enesim_Renderer * esvg_renderable_renderer_get(Ender_Element *e)
 {
 	Esvg_Renderable *thiz;
@@ -322,3 +360,69 @@ EAPI Enesim_Renderer * esvg_renderable_renderer_get(Ender_Element *e)
 	_esvg_renderable_renderer_get(t, &r);
 	return r;
 }
+
+/**
+ * To be documented
+ * FIXME: To be fixed
+ */
+EAPI void esvg_renderable_container_width_set(Ender_Element *e, double container_width)
+{
+}
+
+/**
+ * To be documented
+ * FIXME: To be fixed
+ */
+EAPI void esvg_renderable_container_width_get(Ender_Element *e, double *container_width)
+{
+}
+
+/**
+ * To be documented
+ * FIXME: To be fixed
+ */
+EAPI void esvg_renderable_container_height_set(Ender_Element *e, double container_height)
+{
+}
+
+/**
+ * To be documented
+ * FIXME: To be fixed
+ */
+EAPI void esvg_renderable_container_height_get(Ender_Element *e, double *container_height)
+{
+}
+
+/**
+ * To be documented
+ * FIXME: To be fixed
+ */
+EAPI void esvg_renderable_x_dpi_set(Ender_Element *e, double x_dpi)
+{
+}
+
+/**
+ * To be documented
+ * FIXME: To be fixed
+ */
+EAPI void esvg_renderable_x_dpi_get(Ender_Element *e, double *x_dpi)
+{
+}
+
+/**
+ * To be documented
+ * FIXME: To be fixed
+ */
+EAPI void esvg_renderable_y_dpi_set(Ender_Element *e, double y_dpi)
+{
+}
+
+/**
+ * To be documented
+ * FIXME: To be fixed
+ */
+EAPI void esvg_renderable_y_dpi_get(Ender_Element *e, double *y_dpi)
+{
+}
+
+

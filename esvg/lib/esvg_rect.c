@@ -58,7 +58,7 @@ static Esvg_Rect * _esvg_rect_get(Edom_Tag *t)
 {
 	Esvg_Rect *thiz;
 
-	if (!esvg_is_svg(t))
+	if (esvg_element_type_get_internal(t) != ESVG_RECT)
 		return NULL;
 	thiz = esvg_renderable_data_get(t);
 
@@ -142,16 +142,16 @@ static Eina_Bool _esvg_rect_setup(Edom_Tag *t,
 	thiz = _esvg_rect_get(t);
 
 	/* set the position */
-	x = esvg_length_final_get(&thiz->current.x, estate->viewbox_w);
-	y = esvg_length_final_get(&thiz->current.y, estate->viewbox_h);
+	x = esvg_length_final_get(&thiz->current.x, estate->viewbox.width);
+	y = esvg_length_final_get(&thiz->current.y, estate->viewbox.height);
 	enesim_renderer_rectangle_position_set(thiz->r, x, y);
 	/* set the size */
-	width = esvg_length_final_get(&thiz->current.width, estate->viewbox_w);
-	height = esvg_length_final_get(&thiz->current.height, estate->viewbox_h);
+	width = esvg_length_final_get(&thiz->current.width, estate->viewbox.width);
+	height = esvg_length_final_get(&thiz->current.height, estate->viewbox.height);
 	enesim_renderer_rectangle_size_set(thiz->r, width, height);
 
 	/* FIXME enesim does not supports rx *and* ry */
-	rx = esvg_length_final_get(&thiz->current.rx, estate->viewbox_w);
+	rx = esvg_length_final_get(&thiz->current.rx, estate->viewbox.width);
 	enesim_renderer_rectangle_corner_radius_set(thiz->r, rx);
 	enesim_renderer_rectangle_corners_set(thiz->r,
 			EINA_TRUE, EINA_TRUE, EINA_TRUE, EINA_TRUE);
