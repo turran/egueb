@@ -179,6 +179,9 @@ static Eina_Bool _esvg_renderable_setup(Edom_Tag *t,
 		context->viewbox.min_y = 0;
 		context->viewbox.width = thiz->container_width;
 		context->viewbox.height = thiz->container_height;
+
+		context->dpi_y = thiz->x_dpi;
+		context->dpi_x = thiz->y_dpi;
 	}
 	if (thiz->descriptor.setup)
 		thiz->descriptor.setup(t, context, attr, error);

@@ -91,6 +91,7 @@ int main(int argc, char *argv[])
 	}
 
 	/* set the final image size as the container size */
+	printf("setting %d %d\n", width, height);
 	esvg_renderable_container_width_set(tag, width);
 	esvg_renderable_container_height_set(tag, height);
 	/* FIXME once the renderable class is implemented
@@ -108,7 +109,7 @@ int main(int argc, char *argv[])
 	width = ceil(aw);
 	height = ceil(ah);
 
-	printf("actual size %d %d\n", width, height);
+	printf("actual size %d %d (%g %g)\n", width, height, aw, ah);
 	r = esvg_renderable_renderer_get(tag);
 
 	compound = enesim_renderer_compound_new();

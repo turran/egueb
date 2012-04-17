@@ -408,7 +408,7 @@ static void _esvg_svg_actual_width_get(Edom_Tag *t, double *actual_width)
 	double cw;
 
 	thiz = _esvg_svg_get(t);
-	esvg_element_container_width_get(t, &cw);
+	//esvg_renderable_container_width_get(t, &cw);
 	aw = esvg_length_final_get(&thiz->width, cw);
 	*actual_width = aw;
 }
@@ -420,7 +420,7 @@ static void _esvg_svg_actual_height_get(Edom_Tag *t, double *actual_height)
 	double ch;
 
 	thiz = _esvg_svg_get(t);
-	esvg_element_container_height_get(t, &ch);
+	//esvg_element_renderable_height_get(t, &ch);
 	ah = esvg_length_final_get(&thiz->height, ch);
 	*actual_height = ah;
 }
@@ -428,6 +428,8 @@ static void _esvg_svg_actual_height_get(Edom_Tag *t, double *actual_height)
  *                                 Global                                     *
  *============================================================================*/
 /* The ender wrapper */
+#define _esvg_svg_actual_width_set NULL
+#define _esvg_svg_actual_height_set NULL
 #include "generated/esvg_generated_svg.c"
 
 #if 0
@@ -517,8 +519,18 @@ EAPI void esvg_svg_viewbox_set(Ender_Element *e, Esvg_View_Box *vb)
  */
 EAPI void esvg_svg_actual_width_get(Ender_Element *e, double *actual_width)
 {
+	Edom_Tag *t;
+	Esvg_Svg *thiz;
+
+	t = ender_element_object_get(e);
+	_esvg_svg_actual_width_get(t, actual_width);
 }
 
 EAPI void esvg_svg_actual_height_get(Ender_Element *e, double *actual_height)
 {
+	Edom_Tag *t;
+	Esvg_Svg *thiz;
+
+	t = ender_element_object_get(e);
+	_esvg_svg_actual_height_get(t, actual_height);
 }

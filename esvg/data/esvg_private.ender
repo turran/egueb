@@ -39,6 +39,8 @@ namespace "esvg" {
 		length "y";
 		length "width";
 		length "height";
+		double "actual_width";
+		double "actual_height";
 	};
 
 	class "g" : "renderable" {
