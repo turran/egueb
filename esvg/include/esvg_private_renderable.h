@@ -3,6 +3,10 @@
 
 /* renderable */
 typedef Enesim_Renderer * (*Esvg_Renderable_Renderer_Get)(Edom_Tag *t);
+typedef Eina_Bool (*Esvg_Renderable_Setup)(Edom_Tag *t,
+		Esvg_Element_Context *ctx,
+		Esvg_Attribute_Presentation *attr,
+		Enesim_Error **error);
 
 typedef struct _Esvg_Renderable_Descriptor {
 	/* the tag interface */
@@ -16,8 +20,8 @@ typedef struct _Esvg_Renderable_Descriptor {
 	Esvg_Element_Initialize initialize;
 	Esvg_Element_Attribute_Set attribute_set;
 	Esvg_Element_Clone clone;
-	Esvg_Element_Setup setup;
 	/* the renderable interface */
+	Esvg_Renderable_Setup setup;
 	Esvg_Renderable_Renderer_Get renderer_get;
 } Esvg_Renderable_Descriptor;
 

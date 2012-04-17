@@ -41,7 +41,7 @@ static Ender_Property *ESVG_RENDERABLE_CONTAINER_HEIGHT;
 typedef struct _Esvg_Renderable_Descriptor_Internal
 {
 	Edom_Tag_Free free;
-	Esvg_Element_Setup setup;
+	Esvg_Renderable_Setup setup;
 	Esvg_Renderable_Renderer_Get renderer_get;
 } Esvg_Renderable_Descriptor_Internal;
 
@@ -165,6 +165,7 @@ static void _esvg_renderable_free(Edom_Tag *t)
 }
 
 static Eina_Bool _esvg_renderable_setup(Edom_Tag *t,
+		const Esvg_Element_Context *parent_context,
 		Esvg_Element_Context *context,
 		Esvg_Attribute_Presentation *attr,
 		Enesim_Error **error)
@@ -172,12 +173,13 @@ static Eina_Bool _esvg_renderable_setup(Edom_Tag *t,
 	Esvg_Renderable *thiz;
 
 	thiz = _esvg_renderable_get(t);
-#if 0
+	if (!parent_context)
 	{
-		thiz->state_final.viewbox.width = thiz->container_width;
-		thiz->state_final.viewbox.height = thiz->container_height;
+		context->viewbox.min_x = 0;
+		context->viewbox.min_y = 0;
+		context->viewbox.width = thiz->container_width;
+		context->viewbox.height = thiz->container_height;
 	}
-#endif
 	if (thiz->descriptor.setup)
 		thiz->descriptor.setup(t, context, attr, error);
 	return EINA_TRUE;

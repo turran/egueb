@@ -102,6 +102,11 @@ typedef struct _Esvg_Parser_Element
 	void *data;
 } Esvg_Element_Id_Callback;
 
+static Eina_Bool _esvg_element_setup(Edom_Tag *t,
+		const Esvg_Element_Context *state,
+		const Esvg_Attribute_Presentation *attr,
+		Enesim_Error **error);
+
 static Esvg_Element * _esvg_element_get(Edom_Tag *t)
 {
 	Esvg_Element *thiz;
@@ -112,12 +117,12 @@ static Esvg_Element * _esvg_element_get(Edom_Tag *t)
 	return thiz;
 }
 
-Eina_Bool _esvg_child_setup_cb(Edom_Tag *t, Edom_Tag *child, void *data)
+static Eina_Bool _esvg_child_setup_cb(Edom_Tag *t, Edom_Tag *child, void *data)
 {
 	Esvg_Element *thiz;
 
 	thiz = _esvg_element_get(t);
-	if (!esvg_element_setup_internal(child, &thiz->state_final, &thiz->attr_final, data))
+	if (!_esvg_element_setup(child, &thiz->state_final, &thiz->attr_final, data))
 		return EINA_FALSE;
 	return EINA_TRUE;
 }
@@ -322,6 +327,62 @@ static void _esvg_element_state_compose(const Esvg_Element_Context *s, const Esv
 	/* actually compose */
 	enesim_matrix_compose(&parent->transform, &s->transform, &d->transform);
 }
+
+/* state and attr are the parents one */
+static Eina_Bool _esvg_element_setup(Edom_Tag *t,
+		const Esvg_Element_Context *state,
+		const Esvg_Attribute_Presentation *attr,
+		Enesim_Error **error)
+{
+	Esvg_Element *thiz;
+
+	thiz = _esvg_element_get(t);
+	/* the idea here is to call the setup interface of the element */
+	/* note that on SVG every element must be part of a topmost SVG
+	 * that way we need to always pass the upper svg/g element of this
+	 * so relative properties can be calcualted correctly */
+	if (!thiz->descriptor.setup)
+		return EINA_FALSE;
+	/* TODO apply the style first */
+	thiz->attr_final = thiz->attr;
+	thiz->state_final = thiz->state;
+	/* FIXME avoid so many copies */
+	if (state)
+	{
+		_esvg_element_state_compose(&thiz->state, state, &thiz->state_final);
+	}
+
+	/* in case we have set the style also merge it */
+	/* FIXME should it have more priority than the properties? */
+	if (thiz->attr_css_set || attr)
+	{
+		if (thiz->attr_css_set)
+		{
+			_esvg_element_state_merge(&thiz->attr_css, &thiz->attr, &thiz->attr_final);
+			if (attr)
+			{
+				_esvg_element_state_merge(&thiz->attr_final, attr, &thiz->attr_final);
+			}
+		}
+		else
+		{
+			if (attr)
+			{
+				_esvg_element_state_merge(&thiz->attr, attr, &thiz->attr_final);
+			}
+		}
+	}
+
+	//esvg_attribute_presentation_dump(new_attr);
+
+	if (!thiz->descriptor.setup(t, state, &thiz->state_final, &thiz->attr_final, error))
+		return EINA_FALSE;
+	/* call the child setup */
+	edom_tag_child_foreach(t, _esvg_child_setup_cb, error);
+
+	return EINA_TRUE;
+}
+
 
 /*----------------------------------------------------------------------------*
  *                           The Ender interface                              *
@@ -897,60 +958,6 @@ Edom_Tag * esvg_element_new(Esvg_Element_Descriptor *descriptor, Esvg_Type type,
 	return t;
 }
 
-/* state and attr are the parents one */
-Eina_Bool esvg_element_setup_internal(Edom_Tag *t,
-		const Esvg_Element_Context *state,
-		const Esvg_Attribute_Presentation *attr,
-		Enesim_Error **error)
-{
-	Esvg_Element *thiz;
-
-	thiz = _esvg_element_get(t);
-	/* the idea here is to call the setup interface of the element */
-	/* note that on SVG every element must be part of a topmost SVG
-	 * that way we need to always pass the upper svg/g element of this
-	 * so relative properties can be calcualted correctly */
-	if (!thiz->descriptor.setup)
-		return EINA_FALSE;
-	/* TODO apply the style first */
-	thiz->attr_final = thiz->attr;
-	thiz->state_final = thiz->state;
-	/* FIXME avoid so many copies */
-	if (state)
-	{
-		_esvg_element_state_compose(&thiz->state, state, &thiz->state_final);
-	}
-
-	/* in case we have set the style also merge it */
-	/* FIXME should it have more priority than the properties? */
-	if (thiz->attr_css_set || attr)
-	{
-		if (thiz->attr_css_set)
-		{
-			_esvg_element_state_merge(&thiz->attr_css, &thiz->attr, &thiz->attr_final);
-			if (attr)
-			{
-				_esvg_element_state_merge(&thiz->attr_final, attr, &thiz->attr_final);
-			}
-		}
-		else
-		{
-			if (attr)
-			{
-				_esvg_element_state_merge(&thiz->attr, attr, &thiz->attr_final);
-			}
-		}
-	}
-
-	//esvg_attribute_presentation_dump(new_attr);
-
-	if (!thiz->descriptor.setup(t, &thiz->state_final, &thiz->attr_final, error))
-		return EINA_FALSE;
-	/* call the child setup */
-	edom_tag_child_foreach(t, _esvg_child_setup_cb, error);
-
-	return EINA_TRUE;
-}
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/
@@ -1270,7 +1277,7 @@ EAPI Eina_Bool esvg_element_setup(Ender_Element *e, Enesim_Error **error)
 	Edom_Tag *t;
 
 	t = ender_element_object_get(e);
-	return esvg_element_setup_internal(t, NULL, NULL, error);
+	return _esvg_element_setup(t, NULL, NULL, error);
 }
 
 #if 0
