@@ -54,7 +54,7 @@ static Esvg_Shape * _esvg_shape_get(Enesim_Renderer *r)
 }
 
 static void _esvg_shape_enesim_state_get(Enesim_Renderer *r,
-		const Esvg_Element_State *estate,
+		const Esvg_Element_Context *estate,
 		const Esvg_Attribute_Presentation *attr,
 		Esvg_Shape_Enesim_State *dstate)
 {
@@ -141,7 +141,7 @@ static void _esvg_shape_enesim_state_get(Enesim_Renderer *r,
 
 
 static Enesim_Renderer * _esvg_shape_renderer_get(Enesim_Renderer *r,
-		const Esvg_Element_State *state,
+		const Esvg_Element_Context *state,
 		const Esvg_Attribute_Presentation *attr)
 {
 	Esvg_Shape *thiz;
@@ -155,7 +155,7 @@ static Enesim_Renderer * _esvg_shape_renderer_get(Enesim_Renderer *r,
 }
 
 /* TODO optimize so many 'ifs' */
-static Eina_Bool _esvg_shape_setup(Enesim_Renderer *r, Esvg_Element_State *estate,
+static Eina_Bool _esvg_shape_setup(Enesim_Renderer *r, Esvg_Element_Context *estate,
 		Esvg_Attribute_Presentation *attr,
 		Enesim_Surface *s,
 		Enesim_Error **error)

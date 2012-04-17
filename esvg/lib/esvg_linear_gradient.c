@@ -61,7 +61,7 @@ static const char * _esvg_linear_gradient_name_get(Enesim_Renderer *r)
 }
 
 static Enesim_Renderer * _linear_gradient_renderer_get(Enesim_Renderer *r,
-		const Esvg_Element_State *state,
+		const Esvg_Element_Context *state,
 		const Esvg_Attribute_Presentation *attr)
 {
 	Esvg_Linear_Gradient *thiz;
@@ -76,7 +76,7 @@ static void _linear_gradient_clone(Enesim_Renderer *r, Enesim_Renderer *rr)
 }
 
 static Eina_Bool _linear_gradient_setup(Enesim_Renderer *r,
-		const Esvg_Element_State *state,
+		const Esvg_Element_Context *state,
 		Enesim_Renderer *rel,
 		const Esvg_Gradient_State *gstate)
 {

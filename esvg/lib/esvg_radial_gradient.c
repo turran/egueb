@@ -64,7 +64,7 @@ static const char * _esvg_radial_gradient_name_get(Enesim_Renderer *r)
 }
 
 static Enesim_Renderer * _radial_gradient_renderer_get(Enesim_Renderer *r,
-		const Esvg_Element_State *state,
+		const Esvg_Element_Context *state,
 		const Esvg_Attribute_Presentation *attr)
 {
 	Esvg_Radial_Gradient *thiz;
@@ -79,7 +79,7 @@ static void _radial_gradient_clone(Enesim_Renderer *r, Enesim_Renderer *rr)
 }
 
 static Eina_Bool _radial_gradient_setup(Enesim_Renderer *r,
-		const Esvg_Element_State *state,
+		const Esvg_Element_Context *state,
 		Enesim_Renderer *rel,
 		const Esvg_Gradient_State *gstate)
 {

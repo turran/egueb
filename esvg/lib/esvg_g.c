@@ -83,7 +83,7 @@ static Enesim_Renderer * _esvg_g_element_at(Enesim_Renderer *r, double x, double
 	return NULL;
 }
 
-static Eina_Bool _esvg_g_setup(Enesim_Renderer *r, Esvg_Element_State *state,
+static Eina_Bool _esvg_g_setup(Enesim_Renderer *r, Esvg_Element_Context *state,
 		Esvg_Attribute_Presentation *attr,
 		Enesim_Surface *s,
 		Enesim_Error **error)
@@ -93,7 +93,7 @@ static Eina_Bool _esvg_g_setup(Enesim_Renderer *r, Esvg_Element_State *state,
 }
 
 Enesim_Renderer * _esvg_g_renderer_get(Enesim_Renderer *r,
-		const Esvg_Element_State *state,
+		const Esvg_Element_Context *state,
 		const Esvg_Attribute_Presentation *attr)
 {
 	Esvg_G *thiz;

@@ -70,7 +70,7 @@ static Enesim_Renderer * _esvg_text_renderer_get(Enesim_Renderer *r)
 	return thiz->r;
 }
 
-static Eina_Bool _esvg_text_setup(Enesim_Renderer *r, const Esvg_Element_State *estate,
+static Eina_Bool _esvg_text_setup(Enesim_Renderer *r, const Esvg_Element_Context *estate,
 		const Esvg_Shape_Enesim_State *dstate)
 {
 	Esvg_Text *thiz;

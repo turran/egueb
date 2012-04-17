@@ -176,7 +176,7 @@ static Enesim_Renderer * _esvg_svg_element_at(Edom_Tag *t, double x, double y)
 	return NULL;
 }
 
-static Eina_Bool _esvg_svg_setup(Edom_Tag *t, Esvg_Element_State *state,
+static Eina_Bool _esvg_svg_setup(Edom_Tag *t, Esvg_Element_Context *state,
 		Esvg_Attribute_Presentation *attr,
 		Enesim_Error **error)
 {

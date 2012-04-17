@@ -42,13 +42,13 @@ typedef struct _Esvg_Shape_Enesim_State {
 } Esvg_Shape_Enesim_State;
 
 typedef Eina_Bool (*Esvg_Shape_Enesim_State_Calculate)(Enesim_Renderer *r,
-		Esvg_Element_State *estate,
+		Esvg_Element_Context *estate,
 		const Esvg_Attribute_Presentation *attr,
 		Esvg_Shape_Enesim_State *dstate,
 		void *data);
 
 typedef Enesim_Renderer * (*Esvg_Shape_Renderer_Get)(Enesim_Renderer *);
-typedef Eina_Bool (*Esvg_Shape_Setup)(Enesim_Renderer *r, const Esvg_Element_State *estate,
+typedef Eina_Bool (*Esvg_Shape_Setup)(Enesim_Renderer *r, const Esvg_Element_Context *estate,
 		const Esvg_Shape_Enesim_State *dstate);
 
 #endif

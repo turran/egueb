@@ -33,10 +33,15 @@
 	} while(0)
 
 static Ender_Property *ESVG_RENDERABLE_RENDERER;
+static Ender_Property *ESVG_RENDERABLE_X_DPI;
+static Ender_Property *ESVG_RENDERABLE_Y_DPI;
+static Ender_Property *ESVG_RENDERABLE_CONTAINER_WIDTH;
+static Ender_Property *ESVG_RENDERABLE_CONTAINER_HEIGHT;
 
 typedef struct _Esvg_Renderable_Descriptor_Internal
 {
 	Edom_Tag_Free free;
+	Esvg_Element_Setup setup;
 	Esvg_Renderable_Renderer_Get renderer_get;
 } Esvg_Renderable_Descriptor_Internal;
 
@@ -66,36 +71,13 @@ static Esvg_Renderable * _esvg_renderable_get(Edom_Tag *t)
 /*----------------------------------------------------------------------------*
  *                           The Ender interface                              *
  *----------------------------------------------------------------------------*/
-static void _esvg_renderable_x_dpi_set(Edom_Tag *t, double x_dpi)
+static void _esvg_renderable_renderer_get(Edom_Tag *t, Enesim_Renderer **r)
 {
 	Esvg_Renderable *thiz;
 
+	if (!r) return;
 	thiz = _esvg_renderable_get(t);
-	thiz->x_dpi = x_dpi;
-}
-
-static void _esvg_renderable_x_dpi_get(Edom_Tag *t, double *x_dpi)
-{
-	Esvg_Renderable *thiz;
-
-	thiz = _esvg_renderable_get(t);
-	if (x_dpi) *x_dpi = thiz->x_dpi;
-}
-
-static void _esvg_renderable_y_dpi_set(Edom_Tag *t, double y_dpi)
-{
-	Esvg_Renderable *thiz;
-
-	thiz = _esvg_renderable_get(t);
-	thiz->y_dpi = y_dpi;
-}
-
-static void _esvg_renderable_y_dpi_get(Edom_Tag *t, double *y_dpi)
-{
-	Esvg_Renderable *thiz;
-
-	thiz = _esvg_renderable_get(t);
-	if (y_dpi) *y_dpi = thiz->y_dpi;
+	*r = thiz->descriptor.renderer_get(t);
 }
 
 static void _esvg_renderable_container_width_set(Edom_Tag *t, double container_width)
@@ -110,8 +92,10 @@ static void _esvg_renderable_container_width_get(Edom_Tag *t, double *container_
 {
 	Esvg_Renderable *thiz;
 
+	if (!container_width)
+		return;
 	thiz = _esvg_renderable_get(t);
-	if (container_width) *container_width = thiz->container_width;
+	*container_width = thiz->container_width;
 }
 
 static void _esvg_renderable_container_height_set(Edom_Tag *t, double container_height)
@@ -126,8 +110,46 @@ static void _esvg_renderable_container_height_get(Edom_Tag *t, double *container
 {
 	Esvg_Renderable *thiz;
 
+	if (!container_height)
+		return;
 	thiz = _esvg_renderable_get(t);
-	if (container_height) *container_height = thiz->container_height;
+	*container_height = thiz->container_height;
+}
+
+static void _esvg_renderable_x_dpi_set(Edom_Tag *t, double x_dpi)
+{
+	Esvg_Renderable *thiz;
+
+	thiz = _esvg_renderable_get(t);
+	thiz->x_dpi = x_dpi;
+}
+
+static void _esvg_renderable_x_dpi_get(Edom_Tag *t, double *x_dpi)
+{
+	Esvg_Renderable *thiz;
+
+	if (!x_dpi)
+		return;
+	thiz = _esvg_renderable_get(t);
+	*x_dpi = thiz->x_dpi;
+}
+
+static void _esvg_renderable_y_dpi_set(Edom_Tag *t, double y_dpi)
+{
+	Esvg_Renderable *thiz;
+
+	thiz = _esvg_renderable_get(t);
+	thiz->y_dpi = y_dpi;
+}
+
+static void _esvg_renderable_y_dpi_get(Edom_Tag *t, double *y_dpi)
+{
+	Esvg_Renderable *thiz;
+
+	if (!y_dpi)
+		return;
+	thiz = _esvg_renderable_get(t);
+	*y_dpi = thiz->y_dpi;
 }
 /*----------------------------------------------------------------------------*
  *                         The Esvg Element interface                         *
@@ -142,138 +164,23 @@ static void _esvg_renderable_free(Edom_Tag *t)
 	free(thiz);
 }
 
-static void _esvg_renderable_Set(Edom_Tag *t)
+static Eina_Bool _esvg_renderable_setup(Edom_Tag *t,
+		Esvg_Element_Context *context,
+		Esvg_Attribute_Presentation *attr,
+		Enesim_Error **error)
 {
+	Esvg_Renderable *thiz;
+
+	thiz = _esvg_renderable_get(t);
 #if 0
 	{
 		thiz->state_final.viewbox.width = thiz->container_width;
 		thiz->state_final.viewbox.height = thiz->container_height;
 	}
 #endif
-}
-
-
-#if 0
-static Eina_Bool _esvg_element_sw_setup(Enesim_Renderer *r,
-		const Enesim_Renderer_State *states[ENESIM_RENDERER_STATES],
-		Enesim_Surface *s,
-		Enesim_Renderer_Sw_Fill *fill, Enesim_Error **error)
-{
-	Esvg_Renderable *thiz;
-	Enesim_Renderer *parent;
-	Esvg_Attribute_Presentation *parent_attr = NULL;
-	Esvg_Renderable_State *parent_state = NULL;
-	Enesim_Renderer *real_r;
-
-	thiz = _esvg_renderable_get(r);
-	parent = thiz->parent;
-	if (parent)
-	{
-		Esvg_Renderable *parent_thiz;
-
-		parent_thiz = _esvg_renderable_get(parent);
-		parent_attr = &parent_thiz->attr_final;
-		parent_state = &parent_thiz->state_final;
-	}
-
-	esvg_element_setup(r, parent_state, parent_attr, s, error);
-
-	real_r = _esvg_element_renderer_get(thiz, r);
-	if (!real_r)
-		return EINA_FALSE;
-
-	if (!enesim_renderer_setup(real_r, s, error))
-		return EINA_FALSE;
-
-	thiz->real_r = real_r;
-	*fill = _esvg_element_draw;
-
+	if (thiz->descriptor.setup)
+		thiz->descriptor.setup(t, context, attr, error);
 	return EINA_TRUE;
-}
-
-static void _esvg_element_sw_cleanup(Enesim_Renderer *r, Enesim_Surface *s)
-{
-	Esvg_Renderable *thiz;
-
-	thiz = _esvg_renderable_get(r);
-}
-
-static void _esvg_element_flags(Enesim_Renderer *r, const Enesim_Renderer_State *state,
-		Enesim_Renderer_Flag *flags)
-{
-	Esvg_Renderable *thiz;
-	Enesim_Renderer *real_r;
-
-	thiz = _esvg_renderable_get(r);
-	real_r = _esvg_element_renderer_get(thiz, r);
-	enesim_renderer_flags(real_r, flags);
-}
-
-static void _esvg_element_hints(Enesim_Renderer *r, const Enesim_Renderer_State *state,
-		Enesim_Renderer_Hint *hints)
-{
-	Esvg_Renderable *thiz;
-	Enesim_Renderer *real_r;
-
-	thiz = _esvg_renderable_get(r);
-	real_r = _esvg_element_renderer_get(thiz, r);
-	enesim_renderer_hints_get(real_r, hints);
-}
-
-
-static Eina_Bool _esvg_element_has_changed(Enesim_Renderer *r,
-		const Enesim_Renderer_State *states[ENESIM_RENDERER_STATES])
-{
-	Esvg_Renderable *thiz;
-
-	thiz = _esvg_renderable_get(r);
-	if (thiz->has_changed)
-		return thiz->has_changed(r);
-	return EINA_FALSE;
-}
-
-static void _esvg_element_damage(Enesim_Renderer *r, Enesim_Renderer_Damage_Cb cb, void *data)
-{
-	Esvg_Renderable *thiz;
-
-	thiz = _esvg_renderable_get(r);
-}
-
-static Eina_Bool _esvg_element_is_inside(Enesim_Renderer *r, double x, double y)
-{
-	/* FIXME */
-	return EINA_TRUE;
-}
-
-static Enesim_Renderer_Descriptor _descriptor = {
-	/* .version =               */ ENESIM_RENDERER_API,
-	/* .name =                  */ _esvg_element_name,
-	/* .free =                  */ _esvg_element_free,
-	/* .boundings =             */ _esvg_element_boundings,
-	/* .destination_boundings = */ _esvg_element_destination_boundings,
-	/* .flags =                 */ _esvg_element_flags,
-	/* .hints_get =             */ _esvg_element_hints,
-	/* .is_inside =             */ _esvg_element_is_inside,
-	/* .damage =                */ _esvg_element_damage,
-	/* .has_changed =           */ _esvg_element_has_changed,
-	/* .sw_setup =              */ _esvg_element_sw_setup,
-	/* .sw_cleanup =            */ _esvg_element_sw_cleanup,
-	/* .ocl_setup =             */ NULL,
-	/* .ocl_kernel_cleanup =    */ NULL,
-	/* .ocl_cleanup =           */ NULL
-};
-#endif
-
-/*----------------------------------------------------------------------------*
- *                           The Edom Tag interface                           *
- *----------------------------------------------------------------------------*/
-static void _esvg_renderable_renderer_get(Edom_Tag *t, Enesim_Renderer **r)
-{
-	Esvg_Renderable *thiz;
-
-	if (!r) return;
-	thiz = _esvg_renderable_get(t);
-	*r = thiz->descriptor.renderer_get(t);
 }
 /*============================================================================*
  *                                 Global                                     *
@@ -302,13 +209,15 @@ Edom_Tag * esvg_renderable_new(Esvg_Renderable_Descriptor *descriptor, Esvg_Type
 
 	EINA_MAGIC_SET(thiz, ESVG_RENDERABLE_MAGIC);
 	thiz->data = data;
+	/* our own descriptor */
+	thiz->descriptor.setup = descriptor->setup;
 	thiz->descriptor.renderer_get = descriptor->renderer_get;
 	/* default values */
 	thiz->container_width = 640;
 	thiz->container_height = 480;
 	thiz->x_dpi = 96.0;
 	thiz->y_dpi = 96.0;
-
+	
 	pdescriptor.child_add = descriptor->child_add;
 	pdescriptor.child_remove = descriptor->child_remove;
 	pdescriptor.attribute_set = descriptor->attribute_set;
@@ -317,7 +226,7 @@ Edom_Tag * esvg_renderable_new(Esvg_Renderable_Descriptor *descriptor, Esvg_Type
 	pdescriptor.text_set = descriptor->text_set;
 	pdescriptor.free = _esvg_renderable_free;
 	pdescriptor.initialize = descriptor->initialize;
-	pdescriptor.setup = descriptor->setup;
+	pdescriptor.setup = _esvg_renderable_setup;
 
 	t = esvg_element_new(&pdescriptor, type, thiz);
 
@@ -367,6 +276,7 @@ EAPI Enesim_Renderer * esvg_renderable_renderer_get(Ender_Element *e)
  */
 EAPI void esvg_renderable_container_width_set(Ender_Element *e, double container_width)
 {
+	ender_element_property_value_set(e, ESVG_RENDERABLE_CONTAINER_WIDTH, container_width, NULL);
 }
 
 /**
@@ -383,6 +293,7 @@ EAPI void esvg_renderable_container_width_get(Ender_Element *e, double *containe
  */
 EAPI void esvg_renderable_container_height_set(Ender_Element *e, double container_height)
 {
+	ender_element_property_value_set(e, ESVG_RENDERABLE_CONTAINER_HEIGHT, container_height, NULL);
 }
 
 /**
@@ -399,6 +310,7 @@ EAPI void esvg_renderable_container_height_get(Ender_Element *e, double *contain
  */
 EAPI void esvg_renderable_x_dpi_set(Ender_Element *e, double x_dpi)
 {
+	ender_element_property_value_set(e, ESVG_RENDERABLE_X_DPI, x_dpi, NULL);
 }
 
 /**
@@ -415,6 +327,7 @@ EAPI void esvg_renderable_x_dpi_get(Ender_Element *e, double *x_dpi)
  */
 EAPI void esvg_renderable_y_dpi_set(Ender_Element *e, double y_dpi)
 {
+	ender_element_property_value_set(e, ESVG_RENDERABLE_Y_DPI, y_dpi, NULL);
 }
 
 /**

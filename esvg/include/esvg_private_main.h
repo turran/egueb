@@ -103,7 +103,7 @@ void esvg_clip_path_relative_set(Edom_Tag *e, Enesim_Renderer *rel, Enesim_Matri
 /* g */
 
 /* paint server */
-typedef Eina_Bool (*Esvg_Paint_Server_Setup)(Enesim_Renderer *r, const Esvg_Element_State *state, Enesim_Renderer *rel);
+typedef Eina_Bool (*Esvg_Paint_Server_Setup)(Enesim_Renderer *r, const Esvg_Element_Context *state, Enesim_Renderer *rel);
 
 typedef struct _Evg_Paint_Server_Descriptor
 {
@@ -115,7 +115,7 @@ typedef struct _Evg_Paint_Server_Descriptor
 	Esvg_Element_Clone clone;
 } Esvg_Paint_Server_Descriptor;
 
-void esvg_paint_server_renderer_setup(Enesim_Renderer *r, const Esvg_Element_State *state, Enesim_Renderer *rel);
+void esvg_paint_server_renderer_setup(Enesim_Renderer *r, const Esvg_Element_Context *state, Enesim_Renderer *rel);
 Enesim_Renderer * esvg_paint_server_new(Esvg_Paint_Server_Descriptor *descriptor,
 		void *data);
 void * esvg_paint_server_data_get(Enesim_Renderer *r);
@@ -129,7 +129,7 @@ typedef struct _Esvg_Gradient_State
 	Eina_List *stops;
 } Esvg_Gradient_State;
 
-typedef Eina_Bool (*Esvg_Gradient_Setup)(Enesim_Renderer *r, const Esvg_Element_State *state, Enesim_Renderer *rel, const Esvg_Gradient_State *gstate);
+typedef Eina_Bool (*Esvg_Gradient_Setup)(Enesim_Renderer *r, const Esvg_Element_Context *state, Enesim_Renderer *rel, const Esvg_Gradient_State *gstate);
 
 typedef struct _Evg_Gradient_Descriptor
 {

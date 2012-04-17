@@ -74,18 +74,21 @@ typedef struct _Esvg_Element
 	EINA_MAGIC
 	Esvg_Type type;
 	/* properties like the id, whatever */
-	Esvg_Element_State state;
+	char *style;
+	char *id;
+	char *class;
+	Esvg_Element_Context state;
 	Esvg_Attribute_Presentation attr;
-	Esvg_Attribute_Presentation style;
+	Esvg_Attribute_Presentation attr_css;
 	/* the descriptor interface */
 	Esvg_Element_Descriptor_Internal descriptor;
 	/* private */
 	Esvg_Attribute_Presentation *attr_p;
-	Esvg_Element_State *state_p;
+	Esvg_Element_Context *state_p;
 	Esvg_Attribute_Presentation attr_final;
-	Esvg_Element_State state_final;
+	Esvg_Element_Context state_final;
 	Eina_Bool changed : 1;
-	Eina_Bool style_set : 1;
+	Eina_Bool attr_css_set : 1;
 	Ender_Element *e;
 	void *data;
 } Esvg_Element;
@@ -310,7 +313,7 @@ static void _esvg_element_state_merge(const Esvg_Attribute_Presentation *state, 
 	}
 }
 
-static void _esvg_element_state_compose(const Esvg_Element_State *s, const Esvg_Element_State *parent, Esvg_Element_State *d)
+static void _esvg_element_state_compose(const Esvg_Element_Context *s, const Esvg_Element_Context *parent, Esvg_Element_Context *d)
 {
 	/* only set */
 	d->dpi_x = parent->dpi_x;
@@ -337,7 +340,7 @@ static void _esvg_element_id_get(Edom_Tag *t, const char **id)
 
 	thiz = _esvg_element_get(t);
 	if (!id) return;
-	*id = thiz->state.id;
+	*id = thiz->id;
 }
 
 static void _esvg_element_id_set(Edom_Tag *t, const char *id)
@@ -345,14 +348,14 @@ static void _esvg_element_id_set(Edom_Tag *t, const char *id)
 	Esvg_Element *thiz;
 
 	thiz = _esvg_element_get(t);
-	if (thiz->state.id)
+	if (thiz->id)
 	{
-		free(thiz->state.id);
-		thiz->state.id = NULL;
+		free(thiz->id);
+		thiz->id = NULL;
 	}
 	if (id)
 	{
-		thiz->state.id = strdup(id);
+		thiz->id = strdup(id);
 	}
 }
 
@@ -361,14 +364,14 @@ static void _esvg_element_class_set(Edom_Tag *t, const char *class)
 	Esvg_Element *thiz;
 
 	thiz = _esvg_element_get(t);
-	if (thiz->state.class)
+	if (thiz->class)
 	{
-		free(thiz->state.class);
-		thiz->state.class = NULL;
+		free(thiz->class);
+		thiz->class = NULL;
 	}
 	if (class)
 	{
-		thiz->state.class = strdup(class);
+		thiz->class = strdup(class);
 	}
 }
 
@@ -378,7 +381,7 @@ static void _esvg_element_class_get(Edom_Tag *t, const char **class)
 
 	thiz = _esvg_element_get(t);
 	if (class)
-		*class = thiz->state.class;
+		*class = thiz->class;
 }
 
 static void _esvg_element_transform_set(Edom_Tag *t, const Enesim_Matrix *transform)
@@ -415,12 +418,12 @@ static void _esvg_element_style_set(Edom_Tag *t, const Esvg_Attribute_Presentati
 	 */
 	if (!style)
 	{
-		thiz->style_set = EINA_FALSE;
+		thiz->attr_css_set = EINA_FALSE;
 	}
 	else
 	{
-		thiz->style = *style;
-		thiz->style_set = EINA_TRUE;
+		thiz->attr_css = *style;
+		thiz->attr_css_set = EINA_TRUE;
 	}
 }
 
@@ -429,7 +432,7 @@ static void _esvg_element_style_get(Edom_Tag *t, Esvg_Attribute_Presentation *st
 	Esvg_Element *thiz;
 
 	thiz = _esvg_element_get(t);
-	if (style) *style = thiz->style;
+	if (style) *style = thiz->attr_css;
 }
 
 static Eina_Bool _esvg_elementstyle_is_set(Edom_Tag *t)
@@ -437,7 +440,7 @@ static Eina_Bool _esvg_elementstyle_is_set(Edom_Tag *t)
 	Esvg_Element *thiz;
 
 	thiz = _esvg_element_get(t);
-	return thiz->style_set;
+	return thiz->attr_css_set;
 }
 
 static void _esvg_element_clip_path_set(Edom_Tag *t, const char *clip_path)
@@ -888,7 +891,7 @@ Edom_Tag * esvg_element_new(Esvg_Element_Descriptor *descriptor, Esvg_Type type,
 	t = edom_tag_new(&pdescriptor, thiz);
 
 	esvg_attribute_presentation_setup(&thiz->attr);
-	esvg_attribute_presentation_setup(&thiz->style);
+	esvg_attribute_presentation_setup(&thiz->attr_css);
 	/* default enesim properties */
 
 	return t;
@@ -896,7 +899,7 @@ Edom_Tag * esvg_element_new(Esvg_Element_Descriptor *descriptor, Esvg_Type type,
 
 /* state and attr are the parents one */
 Eina_Bool esvg_element_setup_internal(Edom_Tag *t,
-		const Esvg_Element_State *state,
+		const Esvg_Element_Context *state,
 		const Esvg_Attribute_Presentation *attr,
 		Enesim_Error **error)
 {
@@ -920,11 +923,11 @@ Eina_Bool esvg_element_setup_internal(Edom_Tag *t,
 
 	/* in case we have set the style also merge it */
 	/* FIXME should it have more priority than the properties? */
-	if (thiz->style_set || attr)
+	if (thiz->attr_css_set || attr)
 	{
-		if (thiz->style_set)
+		if (thiz->attr_css_set)
 		{
-			_esvg_element_state_merge(&thiz->style, &thiz->attr, &thiz->attr_final);
+			_esvg_element_state_merge(&thiz->attr_css, &thiz->attr, &thiz->attr_final);
 			if (attr)
 			{
 				_esvg_element_state_merge(&thiz->attr_final, attr, &thiz->attr_final);

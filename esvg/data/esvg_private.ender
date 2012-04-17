@@ -28,6 +28,10 @@ namespace "esvg" {
 
 	abstract "renderable" : "element" {
 		object "renderer";
+		double "container_width";
+		double "container_height";
+		double "x_dpi";
+		double "y_dpi";
 	};
 
 	class "svg" : "renderable" {

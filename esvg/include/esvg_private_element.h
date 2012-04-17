@@ -2,21 +2,18 @@
 #define _ESVG_PRIVATE_ELEMENT_H_
 
 /* element */
-typedef struct _Esvg_Element_State {
+typedef struct _Esvg_Element_Context {
 	double dpi_x;
 	double dpi_y;
 	Esvg_View_Box viewbox;
 	Enesim_Matrix transform;
-	char *style;
-	char *id;
-	char *class;
-} Esvg_Element_State;
+} Esvg_Element_Context;
 
 typedef void (*Esvg_Element_Initialize)(Ender_Element *e);
 typedef Eina_Bool (*Esvg_Element_Attribute_Set)(Ender_Element *e, const char *key, const char *value);
 
 typedef Eina_Bool (*Esvg_Element_Setup)(Edom_Tag *t,
-		Esvg_Element_State *state,
+		Esvg_Element_Context *state,
 		Esvg_Attribute_Presentation *attr,
 		Enesim_Error **error);
 typedef void (*Esvg_Element_Clone)(Edom_Tag *r, Edom_Tag *dst);
@@ -41,12 +38,12 @@ Edom_Tag * esvg_element_new(Esvg_Element_Descriptor *descriptor, Esvg_Type type,
 
 void esvg_element_initialize(Ender_Element *e);
 Eina_Bool esvg_element_setup_internal(Edom_Tag *t,
-		const Esvg_Element_State *state,
+		const Esvg_Element_Context *state,
 		const Esvg_Attribute_Presentation *attr,
 		Enesim_Error **error);
 Esvg_Type esvg_element_type_get_internal(Edom_Tag *t);
 Eina_Bool esvg_is_element_internal(Edom_Tag *t);
 
-void esvg_element_state_compose(Edom_Tag *t, const Esvg_Element_State *s, Esvg_Element_State *d);
+void esvg_element_state_compose(Edom_Tag *t, const Esvg_Element_Context *s, Esvg_Element_Context *d);
 
 #endif

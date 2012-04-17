@@ -131,7 +131,7 @@ static Esvg_Clip_Path * _esvg_clip_path_get(Edom_Tag *e)
 }
 
 static void _esvg_clip_path_enesim_state_calculate(Edom_Tag *e,
-		Esvg_Element_State *estate,
+		Esvg_Element_Context *estate,
 		const Esvg_Attribute_Presentation *attr,
 		Esvg_Shape_Enesim_State *dstate,
 		void *data)
@@ -229,7 +229,7 @@ static void _esvg_clip_path_element_remove(Edom_Tag *e, Enesim_Renderer *child)
 }
 
 static Eina_Bool _esvg_clip_path_setup(Edom_Tag *e,
-		Esvg_Element_State *state,
+		Esvg_Element_Context *state,
 		Esvg_Attribute_Presentation *attr,
 		Enesim_Surface *s,
 		Enesim_Error **error)
@@ -254,7 +254,7 @@ static Eina_Bool _esvg_clip_path_setup(Edom_Tag *e,
 }
 
 Enesim_Renderer * _esvg_clip_path_renderer_get(Edom_Tag *e,
-		const Esvg_Element_State *state,
+		const Esvg_Element_Context *state,
 		const Esvg_Attribute_Presentation *attr)
 {
 	Esvg_Clip_Path *thiz;

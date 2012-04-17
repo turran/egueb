@@ -47,7 +47,7 @@ static Esvg_Paint_Server * _esvg_paint_server_get(Enesim_Renderer *r)
  *                         Esvg Element interface                             *
  *----------------------------------------------------------------------------*/
 static Eina_Bool _esvg_paint_server_setup(Enesim_Renderer *r,
-		Esvg_Element_State *estate,
+		Esvg_Element_Context *estate,
 		Esvg_Attribute_Presentation *attr,
 		Enesim_Surface *s,
 		Enesim_Error **error)
@@ -70,7 +70,7 @@ static void _esvg_paint_server_cleanup(Enesim_Renderer *r)
  *                                 Global                                     *
  *============================================================================*/
 void esvg_paint_server_renderer_setup(Enesim_Renderer *r,
-		const Esvg_Element_State *state,
+		const Esvg_Element_Context *state,
 		Enesim_Renderer *rel)
 {
 	Esvg_Paint_Server *thiz;

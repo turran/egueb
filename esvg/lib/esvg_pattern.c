@@ -57,7 +57,7 @@ static Esvg_Pattern * _esvg_pattern_get(Enesim_Renderer *r)
  *                       Esvg Paint Server interface                          *
  *----------------------------------------------------------------------------*/
 static Eina_Bool _pattern_setup(Enesim_Renderer *r,
-		const Esvg_Element_State *state,
+		const Esvg_Element_Context *state,
 		Enesim_Renderer *rel)
 {
 	Esvg_Pattern *thiz;
@@ -120,9 +120,9 @@ static Eina_Bool _pattern_setup(Enesim_Renderer *r,
 	/* 3. assign it */
 #if 0
 	{
-		Esvg_Element_State new_state;
+		Esvg_Element_Context new_state;
 
-		memset(&new_state, 0, sizeof(Esvg_Element_State));
+		memset(&new_state, 0, sizeof(Esvg_Element_Context));
 		new_state.viewbox_w = w;
 		new_state.viewbox_h = h;
 		new_state.transform = m;
@@ -141,7 +141,7 @@ static const char * _pattern_name_get(Enesim_Renderer *r)
 }
 
 static Enesim_Renderer * _pattern_renderer_get(Enesim_Renderer *r,
-		const Esvg_Element_State *state,
+		const Esvg_Element_Context *state,
 		const Esvg_Attribute_Presentation *attr)
 {
 	Esvg_Pattern *thiz;

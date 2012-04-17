@@ -67,7 +67,7 @@ static const char * _esvg_use_name_get(Enesim_Renderer *r)
 }
 
 static Enesim_Renderer * _esvg_use_renderer_get(Enesim_Renderer *r,
-		const Esvg_Element_State *state,
+		const Esvg_Element_Context *state,
 		const Esvg_Attribute_Presentation *attr)
 {
 	Esvg_Use *thiz;
@@ -80,7 +80,7 @@ static Enesim_Renderer * _esvg_use_renderer_get(Enesim_Renderer *r,
 }
 
 static Eina_Bool _esvg_use_setup(Enesim_Renderer *r,
-		Esvg_Element_State *estate,
+		Esvg_Element_Context *estate,
 		Esvg_Attribute_Presentation *attr,
 		Enesim_Surface *s,
 		Enesim_Error **error)

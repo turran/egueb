@@ -131,7 +131,7 @@ static Enesim_Renderer * _esvg_rect_renderer_get(Edom_Tag *t)
 }
 
 static Eina_Bool _esvg_rect_setup(Edom_Tag *t,
-		const Esvg_Element_State *estate,
+		const Esvg_Element_Context *estate,
 		const Esvg_Shape_Enesim_State *dstate)
 {
 	Esvg_Rect *thiz;
