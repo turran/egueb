@@ -60,6 +60,7 @@ static Ender_Property *ESVG_ELEMENT_FILL;
 static Ender_Property *ESVG_ELEMENT_FILL_OPACITY;
 static Ender_Property *ESVG_ELEMENT_STROKE;
 static Ender_Property *ESVG_ELEMENT_STROKE_OPACITY;
+static Ender_Property *ESVG_ELEMENT_STROKE_WIDTH;
 static Ender_Property *ESVG_ELEMENT_VISIBILITY;
 
 typedef struct _Esvg_Element_Descriptor_Internal
@@ -652,6 +653,16 @@ static void _esvg_element_stroke_width_set(Edom_Tag *t, const Esvg_Length *strok
 	esvg_attribute_presentation_stroke_width_set(&thiz->attr, stroke_width);
 }
 
+static void _esvg_element_stroke_width_get(Edom_Tag *t, Esvg_Length *stroke_width)
+{
+	Esvg_Element *thiz;
+
+	if (!stroke_width) return;
+
+	thiz = _esvg_element_get(t);
+	*stroke_width = thiz->attr.stroke_width;
+}
+
 static void _esvg_element_stroke_opacity_set(Edom_Tag *t, double stroke_opacity)
 {
 	Esvg_Element *thiz;
@@ -791,7 +802,7 @@ static Eina_Bool _esvg_element_attribute_set(Edom_Tag *t, const char *key, const
 	{
 		Esvg_Paint stroke;
 
-		if (!esvg_paint_string_from(&stroke, value))
+		if (esvg_paint_string_from(&stroke, value))
 			esvg_element_stroke_set(thiz->e, &stroke);
 	}
 	else if (strcmp(key, "stroke-width") == 0)
@@ -1188,6 +1199,7 @@ EAPI void esvg_element_stroke_unset(Ender_Element *e)
  */
 EAPI void esvg_element_stroke_width_set(Ender_Element *e, const Esvg_Length *stroke_width)
 {
+	ender_element_property_value_set(e, ESVG_ELEMENT_STROKE_WIDTH, stroke_width, NULL);
 }
 
 /**

@@ -42,6 +42,7 @@ namespace "esvg" {
 		/* once the color is done we can the union paint for filling and stroking */
 		esvg_paint "fill";
 		esvg_paint "stroke";
+		esvg_length "stroke_width";
 		double "fill_opacity";
 		double "stroke_opacity";
 		bool "visibility";
