@@ -69,7 +69,7 @@ static Enesim_Renderer * _esvg_polyline_renderer_get(Enesim_Renderer *r)
 }
 
 static Eina_Bool _esvg_polyline_setup(Enesim_Renderer *r, const Esvg_Element_Context *estate,
-		const Esvg_Shape_Enesim_State *dstate)
+		const Esvg_Renderable_Context *dstate)
 {
 	Esvg_Polyline *thiz;
 	int nvert;

@@ -66,28 +66,28 @@ static Eina_Bool _parser_linear_gradient_attribute_set(Edom_Tag *tag, const char
 	{
 		Esvg_Coord x;
 
-		esvg_length_get(&x, value, ESVG_COORD_0);
+		esvg_length_string_from(&x, value, ESVG_COORD_0);
 		esvg_linear_gradient_x1_set(r, &x);
 	}
 	else if (strcmp(key, "y1") == 0)
 	{
 		Esvg_Coord y;
 
-		esvg_length_get(&y, value, ESVG_COORD_0);
+		esvg_length_string_from(&y, value, ESVG_COORD_0);
 		esvg_linear_gradient_y1_set(r, &y);
 	}
 	else if (strcmp(key, "x2") == 0)
 	{
 		Esvg_Coord x;
 
-		esvg_length_get(&x, value, ESVG_COORD_0);
+		esvg_length_string_from(&x, value, ESVG_COORD_0);
 		esvg_linear_gradient_x2_set(r, &x);
 	}
 	else if (strcmp(key, "y2") == 0)
 	{
 		Esvg_Coord y;
 
-		esvg_length_get(&y, value, ESVG_COORD_0);
+		esvg_length_string_from(&y, value, ESVG_COORD_0);
 		esvg_linear_gradient_y2_set(r, &y);
 	}
 

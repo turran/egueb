@@ -36,7 +36,7 @@ static Eina_Bool _parser_stop_attribute_set(Edom_Tag *tag, const char *key,
 	{
 		Esvg_Length offset;
 
-		esvg_length_get(&offset, value, ESVG_LENGTH_0);
+		esvg_length_string_from(&offset, value, ESVG_LENGTH_0);
 		printf("offset %g\n", offset.value);
 		s->offset = offset;
 	}
@@ -49,7 +49,7 @@ static Eina_Bool _parser_stop_attribute_set(Edom_Tag *tag, const char *key,
 	}
 	else if (strcmp(key, "stop-opacity") == 0)
 	{
-		double stop_opacity = esvg_number_get(value, 1.0);
+		double stop_opacity = esvg_number_string_from(value, 1.0);
 		s->stop_opacity = stop_opacity;
 	}
 	else if (strcmp(key, "style") == 0)

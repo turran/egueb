@@ -55,28 +55,28 @@ Eina_Bool _parser_pattern_attribute_set(Edom_Tag *tag,
 	{
 		Esvg_Coord x;
 
-		esvg_length_get(&x, value, ESVG_COORD_0);
+		esvg_length_string_from(&x, value, ESVG_COORD_0);
 		esvg_pattern_x_set(r, &x);
 	}
 	else if (strcmp(key, "y") == 0)
 	{
 		Esvg_Coord y;
 
-		esvg_length_get(&y, value, ESVG_COORD_0);
+		esvg_length_string_from(&y, value, ESVG_COORD_0);
 		esvg_pattern_y_set(r, &y);
 	}
 	else if (strcmp(key, "width") == 0)
 	{
 		Esvg_Length width;
 
-		esvg_length_get(&width, value, ESVG_LENGTH_0);
+		esvg_length_string_from(&width, value, ESVG_LENGTH_0);
 		esvg_pattern_width_set(r, &width);
 	}
 	else if (strcmp(key, "height") == 0)
 	{
 		Esvg_Length height;
 
-		esvg_length_get(&height, value, ESVG_LENGTH_0);
+		esvg_length_string_from(&height, value, ESVG_LENGTH_0);
 		esvg_pattern_height_set(r, &height);
 	}
 	else if (strcmp(key, "patternUnits") == 0)

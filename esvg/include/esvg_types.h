@@ -188,7 +188,7 @@ typedef struct _Esvg_Paint
 	Esvg_Paint_Type type;
 	union {
 		Esvg_Color color;
-		Enesim_Renderer *paint_server;
+		char *paint_server;
 	} value;
 } Esvg_Paint;
 
@@ -377,10 +377,14 @@ static inline Eina_Bool esvg_length_is_relative(Esvg_Length *length)
 		return EINA_FALSE;
 }
 
-
-/* view box */
-Esvg_View_Box esvg_view_box_get(const char *attr_val);
-
 EAPI const char * esvg_type_string_to(Esvg_Type type);
+
+EAPI double esvg_number_string_from(const char *attr_val, double default_nbr);
+
+EAPI Eina_Bool esvg_length_string_from(Esvg_Length *length, const char *attr_val, Esvg_Length default_length);
+EAPI Eina_Bool esvg_length_is_equal(Esvg_Length *length1, Esvg_Length *length2);
+EAPI double esvg_length_final_get(const Esvg_Length *l, double parent_length);
+EAPI Eina_Bool esvg_paint_string_from(Esvg_Paint *paint, const char *attr);
+Esvg_View_Box esvg_view_box_get(const char *attr_val);
 
 #endif

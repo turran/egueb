@@ -479,9 +479,13 @@ static Eina_Bool _esvg_parser_tag_attribute_set(Edom_Parser *parser, void *t, co
 static Eina_Bool _esvg_parser_tag_child_add(Edom_Parser *parser, void *t, void *child)
 {
 	Ender_Element *tag = t;
+	Edom_Tag *child_tag;
 
 	/* add it */
 	/* FIXME on add/remove functions ender should have a return value */
+	child_tag = ender_element_object_get(child);
+	ender_element_property_value_add(tag, EDOM_CHILD, child_tag, NULL);
+	return EINA_TRUE;
 }
 
 static void _esvg_parser_tag_cdata_set(Edom_Parser *parser, void *t, const char *cdata, unsigned int length)
@@ -504,7 +508,6 @@ static Edom_Parser_Descriptor _descriptor = {
 	/* .tag_text_set = */ _esvg_parser_tag_text_set,
 
 };
-
 /*----------------------------------------------------------------------------*
  *                            Edom parser interface                           *
  *----------------------------------------------------------------------------*/
@@ -588,7 +591,6 @@ EAPI Eina_Bool esvg_parser_info_load(const char *filename,
 	Esvg_Parser *thiz;
 	Edom_Parser *info_parser;
 	Ender_Element *tag;
-	Enesim_Renderer *r;
 	Eina_Bool ret = EINA_FALSE;
 
 	thiz = calloc(1, sizeof(Esvg_Parser));
@@ -626,8 +628,11 @@ EAPI Ender_Element * esvg_parser_load(const char *filename,
 	tag = _esvg_parser_file_parse(filename, parser);
 	if (!tag) goto parse_failed;
 
-	printf("tag = %p\n", tag);
-	//edom_tag_dump(tag);
+	/* useful for debugging */
+	{
+		Edom_Tag *t = ender_element_object_get(tag);
+		edom_tag_dump(t);
+	}
 	/* FIXME we should handle the style thing correctly
 	 * so far we were applying it once the document is loaded
 	 * this is fine, but what will happen whenever some style

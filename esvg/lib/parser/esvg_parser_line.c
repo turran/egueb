@@ -32,28 +32,28 @@ static Eina_Bool _parser_line_attribute_set(Edom_Tag *tag, const char *key, cons
 	{
 		Esvg_Coord x;
 
-		esvg_length_get(&x, value, ESVG_COORD_0);
+		esvg_length_string_from(&x, value, ESVG_COORD_0);
 		esvg_line_x1_set(r, &x);
 	}
 	else if (strcmp(key, "y1") == 0)
 	{
 		Esvg_Coord y;
 
-		esvg_length_get(&y, value, ESVG_COORD_0);
+		esvg_length_string_from(&y, value, ESVG_COORD_0);
 		esvg_line_y1_set(r, &y);
 	}
 	else if (strcmp(key, "x2") == 0)
 	{
 		Esvg_Coord x;
 
-		esvg_length_get(&x, value, ESVG_COORD_0);
+		esvg_length_string_from(&x, value, ESVG_COORD_0);
 		esvg_line_x2_set(r, &x);
 	}
 	else if (strcmp(key, "y2") == 0)
 	{
 		Esvg_Coord y;
 
-		esvg_length_get(&y, value, ESVG_COORD_0);
+		esvg_length_string_from(&y, value, ESVG_COORD_0);
 		esvg_line_y2_set(r, &y);
 	}
 

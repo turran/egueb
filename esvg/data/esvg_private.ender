@@ -1,11 +1,33 @@
 using "edom";
 
 namespace "esvg" {
-	struct "length" {
+	/* basic types */
+	struct "esvg_length" {
 		double "value";
 		int "unit";
 	};
 
+	struct "esvg_viewbox" {
+		double "min_x";
+		double "min_y";
+		double "width";
+		double "height";
+	};
+
+	/* the color needs a byte definition or int8 in ender */
+	struct "esvg_color" {
+		int "r";
+		int "g";
+		int "b";
+	};
+
+	union "esvg_paint" {
+		/* fix this */
+		bool "none";
+		bool "current_color";
+		esvg_color "color";
+		string "paint_server";
+	};
 
 	abstract "element" : "tag" {
 		/* core */
@@ -17,8 +39,9 @@ namespace "esvg" {
 		string "style";
 		string "clip_path";
 		double "opacity";
-		/* the color needs a byte definition or int8 in ender */
 		/* once the color is done we can the union paint for filling and stroking */
+		esvg_paint "fill";
+		esvg_paint "stroke";
 		double "fill_opacity";
 		double "stroke_opacity";
 		bool "visibility";
@@ -35,12 +58,13 @@ namespace "esvg" {
 	};
 
 	class "svg" : "renderable" {
-		length "x";
-		length "y";
-		length "width";
-		length "height";
+		esvg_length "x";
+		esvg_length "y";
+		esvg_length "width";
+		esvg_length "height";
 		double "actual_width";
 		double "actual_height";
+		esvg_viewbox "viewbox";
 	};
 
 	class "g" : "renderable" {
@@ -48,12 +72,12 @@ namespace "esvg" {
 	};
 
 	class "rect" : "renderable" {
-		length "x";
-		length "y";
-		length "width";
-		length "height";
-		length "rx";
-		length "ry";
+		esvg_length "x";
+		esvg_length "y";
+		esvg_length "width";
+		esvg_length "height";
+		esvg_length "rx";
+		esvg_length "ry";
 	};
 
 	class "ellipse" : "element" {

@@ -62,7 +62,7 @@ static Enesim_Renderer * _esvg_path_renderer_get(Enesim_Renderer *r)
 }
 
 static Eina_Bool _esvg_path_setup(Enesim_Renderer *r, const Esvg_Element_Context *estate,
-		const Esvg_Shape_Enesim_State *dstate)
+		const Esvg_Renderable_Context *dstate)
 {
 	Esvg_Path *thiz;
 	Esvg_Path_Command *c;

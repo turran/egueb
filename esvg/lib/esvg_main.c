@@ -22,8 +22,14 @@
 
 #include <Etex.h>
 #include <Ender.h>
-#include "esvg_main.h"
+
+#include "esvg_types.h"
+
 #include "esvg_private_main.h"
+#include "esvg_private_element.h"
+
+#include "esvg_main.h"
+#include "esvg_element.h"
 
 /*============================================================================*
  *                                  Local                                     *
@@ -71,6 +77,8 @@ static Eina_Bool _esvg_ender_init(void)
 	}
 	/* get the needed properties to avoid the hash lookup */
 	EDOM_ATTRIBUTE = ender_descriptor_property_get(tag_descriptor, "attribute");
+	EDOM_PARENT = ender_descriptor_property_get(tag_descriptor, "parent");
+	EDOM_CHILD = ender_descriptor_property_get(tag_descriptor, "child");
 
 
 	return EINA_TRUE;

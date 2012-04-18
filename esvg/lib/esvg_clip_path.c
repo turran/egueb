@@ -133,7 +133,7 @@ static Esvg_Clip_Path * _esvg_clip_path_get(Edom_Tag *e)
 static void _esvg_clip_path_enesim_state_calculate(Edom_Tag *e,
 		Esvg_Element_Context *estate,
 		const Esvg_Attribute_Presentation *attr,
-		Esvg_Shape_Enesim_State *dstate,
+		Esvg_Renderable_Context *dstate,
 		void *data)
 {
 	Esvg_Clip_Path *thiz = data;

@@ -117,11 +117,11 @@ static Eina_Bool _emage_svg_tag_attribute_set(Edom_Tag *tag, const char *key, co
 	thiz = edom_tag_data_get(tag);
 	if (strcmp(key, "width") == 0)
 	{
-		esvg_length_get(&thiz->width, value, length_0);
+		esvg_length_string_from(&thiz->width, value, length_0);
 	}
 	else if (strcmp(key, "height") == 0)
 	{
-		esvg_length_get(&thiz->height, value, length_0);
+		esvg_length_string_from(&thiz->height, value, length_0);
 	}
 
 	return EINA_TRUE;

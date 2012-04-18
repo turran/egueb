@@ -32,21 +32,21 @@ static Eina_Bool _parser_circle_attribute_set(Edom_Tag *tag, const char *key,
 	{
 		Esvg_Coord cx;
 
-		esvg_length_get(&cx, value, ESVG_COORD_0);
+		esvg_length_string_from(&cx, value, ESVG_COORD_0);
 		esvg_circle_cx_set(r, &cx);
 	}
 	else if (strcmp(key, "cy") == 0)
 	{
 		Esvg_Coord cy;
 
-		esvg_length_get(&cy, value, ESVG_COORD_0);
+		esvg_length_string_from(&cy, value, ESVG_COORD_0);
 		esvg_circle_cy_set(r, &cy);
 	}
 	else if (strcmp(key, "r") == 0)
 	{
 		Esvg_Length radius;
 
-		esvg_length_get(&radius, value, ESVG_LENGTH_0);
+		esvg_length_string_from(&radius, value, ESVG_LENGTH_0);
 		esvg_circle_radius_set(r, &radius);
 	}
 

@@ -72,7 +72,7 @@ static Enesim_Renderer * _esvg_circle_renderer_get(Enesim_Renderer *r)
 }
 
 static Eina_Bool _esvg_circle_setup(Enesim_Renderer *r, const Esvg_Element_Context *estate,
-		const Esvg_Shape_Enesim_State *dstate)
+		const Esvg_Renderable_Context *dstate)
 {
 	Esvg_Circle *thiz;
 	double cx, cy;

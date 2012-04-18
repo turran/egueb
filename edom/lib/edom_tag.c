@@ -102,7 +102,6 @@ EAPI Edom_Tag * edom_tag_new(Edom_Tag_Descriptor *descriptor,
 
 	thiz = calloc(1, sizeof(Edom_Tag));
 	thiz->descriptor = *descriptor;
-	thiz->descriptor.name_get = NULL;
 	thiz->data = data;
 
 	return thiz;
@@ -251,7 +250,7 @@ EAPI void edom_tag_child_foreach(Edom_Tag *thiz, Edom_Tag_Foreach foreach, void 
 		if (!foreach(thiz, child, data))
 			break;
 
-		il = EINA_INLIST_GET(thiz);
+		il = EINA_INLIST_GET(child);
 		if (!il->next)
 			break;
 		child = EINA_INLIST_CONTAINER_GET(il->next, Edom_Tag);

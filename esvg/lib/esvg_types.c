@@ -901,124 +901,6 @@ void esvg_parser_points(const char *value, Esvg_Parser_Points_Cb cb, void *data)
 	}
 }
 
-double esvg_number_get(const char *attr_val, double default_nbr)
-{
-	char *endptr;
-	double val = default_nbr;
-
-	if (!attr_val || !*attr_val)
-		return val;
-
-	val = strtod(attr_val, &endptr);
-	if (errno == ERANGE)
-		return val;
-	if ((val == 0) && (attr_val == endptr))
-		return val;
-
-	/* else, conversion has been done */
-	if ((endptr == NULL) || (*endptr == '\0'))
-	{
-		return val;
-	}
-
-	ERR("Number %s is invalid", attr_val);
-	return default_nbr;
-}
-
-Eina_Bool esvg_length_get(Esvg_Length *length, const char *attr_val, Esvg_Length default_length)
-{
-	char *endptr;
-	double val;
-
-	*length = default_length;
-	if (!attr_val || !*attr_val)
-		return EINA_FALSE;
-
-	val = strtod(attr_val, &endptr);
-	if (errno == ERANGE)
-		return EINA_FALSE;
-	if ((val == 0) && (attr_val == endptr))
-		return EINA_FALSE;
-
-	/* else, conversion has been done */
-	if ((endptr == NULL) || (*endptr == '\0'))
-	{
-		length->value = val;
-		length->unit = ESVG_UNIT_LENGTH_PX;
-		return EINA_TRUE;
-	}
-
-	/* strlen(endptr) >= 1 */
-	if (endptr[1] == '\0')
-	{
-		if (endptr[0] == '%')
-		{
-			length->value = val;
-			length->unit = ESVG_UNIT_LENGTH_PERCENT;
-		}
-	}
-	else if (endptr[2] == '\0')
-	{
-		if (endptr[0] == 'e')
-		{
-			if (endptr[1] == 'm')
-			{
-				length->value = val;
-				length->unit = ESVG_UNIT_LENGTH_EM;
-			}
-			else if (endptr[1] == 'x')
-			{
-				length->value = val;
-				length->unit = ESVG_UNIT_LENGTH_EX;
-			}
-		}
-		else if (endptr[0] == 'p')
-		{
-			if (endptr[1] == 'c')
-			{
-				length->value = val;
-				length->unit = ESVG_UNIT_LENGTH_PC;
-			}
-			else if (endptr[1] == 't')
-			{
-				length->value = val;
-				length->unit = ESVG_UNIT_LENGTH_PT;
-			}
-			else if (endptr[1] == 'x')
-			{
-				length->value = val;
-				length->unit = ESVG_UNIT_LENGTH_PX;
-			}
-		}
-		else if ((endptr[0] == 'c') && (endptr[1] == 'm'))
-		{
-			length->value = val;
-			length->unit = ESVG_UNIT_LENGTH_CM;
-		}
-		else if ((endptr[0] == 'm') && (endptr[1] == 'm'))
-		{
-			length->value = val;
-			length->unit = ESVG_UNIT_LENGTH_MM;
-		}
-		else if ((endptr[0] == 'i') && (endptr[1] == 'n'))
-		{
-			length->value = val;
-			length->unit = ESVG_UNIT_LENGTH_IN;
-		}
-	}
-	return EINA_TRUE;
-}
-
-Eina_Bool esvg_length_is_equal(Esvg_Length *length1, Esvg_Length *length2)
-{
-	if (!length1 || !length2)
-		return EINA_FALSE;
-	if ((length1->value == length2->value) &&(length1->unit == length2->unit))
-		return EINA_TRUE;
-
-	return EINA_FALSE;
-}
-
 /* FIXME: fix parsing with ' ' and ',' (do like rgb(c,c,c)) */
 Esvg_View_Box esvg_view_box_get(const char *attr_val)
 {
@@ -1238,51 +1120,6 @@ Eina_Bool esvg_uri_get(Edom_Tag **tag, Edom_Tag *rel, const char *attr)
 	return esvg_href_get(tag, rel, url);
 }
 
-/*
- * none, currentColor, <color>, <uri>?
- */
-Eina_Bool esvg_paint_get(Esvg_Paint *paint, Edom_Tag *tag, const char *attr)
-{
-	Edom_Tag *found_tag;
-
-	/* none */
-	if (strncmp(attr, "none", 4) == 0)
-	{
-		paint->type = ESVG_PAINT_NONE;
-	}
-	/* currentColor */
-	else if (strncmp(attr, "currentColor", 12) == 0)
-	{
-		paint->type = ESVG_PAINT_CURRENT_COLOR;
-	}
-	/* color name */
-	else if (esvg_color_get(&paint->value.color, attr))
-	{
-		paint->type = ESVG_PAINT_COLOR;
-	}
-	/* uri */
-	else if (esvg_uri_get(&found_tag, tag, attr))
-	{
-		/* FIXME pass a callback to get the id? */
-#if 0
-		Enesim_Renderer *r;
-
-		r = esvg_parser_element_renderer_get(found_tag);
-		paint->type = ESVG_PAINT_SERVER;
-		/* FIXME double check the tag */
-		/* FIXME in case the paint server has some pointer we should
-		 * be able to re create it from a new one? */
-		paint->value.paint_server = r;
-#endif
-	}
-	else
-	{
-		return EINA_FALSE;
-	}
-
-	return EINA_TRUE;
-}
-
 Eina_Bool esvg_parser_gradient_units_get(Esvg_Gradient_Units *gu, const char *attr)
 {
 	if (strncmp(attr, "userSpaceOnUse", 14) == 0)
@@ -1440,6 +1277,124 @@ Eina_Bool esvg_parser_path(const char *value, Esvg_Parser_Command_Cb cb, void *d
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/
+EAPI double esvg_number_string_from(const char *attr_val, double default_nbr)
+{
+	char *endptr;
+	double val = default_nbr;
+
+	if (!attr_val || !*attr_val)
+		return val;
+
+	val = strtod(attr_val, &endptr);
+	if (errno == ERANGE)
+		return val;
+	if ((val == 0) && (attr_val == endptr))
+		return val;
+
+	/* else, conversion has been done */
+	if ((endptr == NULL) || (*endptr == '\0'))
+	{
+		return val;
+	}
+
+	ERR("Number %s is invalid", attr_val);
+	return default_nbr;
+}
+
+EAPI Eina_Bool esvg_length_string_from(Esvg_Length *length, const char *attr_val, Esvg_Length default_length)
+{
+	char *endptr;
+	double val;
+
+	*length = default_length;
+	if (!attr_val || !*attr_val)
+		return EINA_FALSE;
+
+	val = strtod(attr_val, &endptr);
+	if (errno == ERANGE)
+		return EINA_FALSE;
+	if ((val == 0) && (attr_val == endptr))
+		return EINA_FALSE;
+
+	/* else, conversion has been done */
+	if ((endptr == NULL) || (*endptr == '\0'))
+	{
+		length->value = val;
+		length->unit = ESVG_UNIT_LENGTH_PX;
+		return EINA_TRUE;
+	}
+
+	/* strlen(endptr) >= 1 */
+	if (endptr[1] == '\0')
+	{
+		if (endptr[0] == '%')
+		{
+			length->value = val;
+			length->unit = ESVG_UNIT_LENGTH_PERCENT;
+		}
+	}
+	else if (endptr[2] == '\0')
+	{
+		if (endptr[0] == 'e')
+		{
+			if (endptr[1] == 'm')
+			{
+				length->value = val;
+				length->unit = ESVG_UNIT_LENGTH_EM;
+			}
+			else if (endptr[1] == 'x')
+			{
+				length->value = val;
+				length->unit = ESVG_UNIT_LENGTH_EX;
+			}
+		}
+		else if (endptr[0] == 'p')
+		{
+			if (endptr[1] == 'c')
+			{
+				length->value = val;
+				length->unit = ESVG_UNIT_LENGTH_PC;
+			}
+			else if (endptr[1] == 't')
+			{
+				length->value = val;
+				length->unit = ESVG_UNIT_LENGTH_PT;
+			}
+			else if (endptr[1] == 'x')
+			{
+				length->value = val;
+				length->unit = ESVG_UNIT_LENGTH_PX;
+			}
+		}
+		else if ((endptr[0] == 'c') && (endptr[1] == 'm'))
+		{
+			length->value = val;
+			length->unit = ESVG_UNIT_LENGTH_CM;
+		}
+		else if ((endptr[0] == 'm') && (endptr[1] == 'm'))
+		{
+			length->value = val;
+			length->unit = ESVG_UNIT_LENGTH_MM;
+		}
+		else if ((endptr[0] == 'i') && (endptr[1] == 'n'))
+		{
+			length->value = val;
+			length->unit = ESVG_UNIT_LENGTH_IN;
+		}
+	}
+	return EINA_TRUE;
+}
+
+EAPI Eina_Bool esvg_length_is_equal(Esvg_Length *length1, Esvg_Length *length2)
+{
+	if (!length1 || !length2)
+		return EINA_FALSE;
+	if ((length1->value == length2->value) &&(length1->unit == length2->unit))
+		return EINA_TRUE;
+
+	return EINA_FALSE;
+}
+
 EAPI double esvg_length_final_get(const Esvg_Length *l, double parent_length)
 {
 	double ret;
@@ -1485,6 +1440,48 @@ EAPI double esvg_length_final_get(const Esvg_Length *l, double parent_length)
 
 	return ret;
 }
+
+/*
+ * none, currentColor, <color>, <uri>?
+ */
+EAPI Eina_Bool esvg_paint_string_from(Esvg_Paint *paint, const char *attr)
+{
+	Edom_Tag *found_tag;
+
+	/* none */
+	if (strncmp(attr, "none", 4) == 0)
+	{
+		paint->type = ESVG_PAINT_NONE;
+	}
+	/* currentColor */
+	else if (strncmp(attr, "currentColor", 12) == 0)
+	{
+		paint->type = ESVG_PAINT_CURRENT_COLOR;
+	}
+	/* color name */
+	else if (esvg_color_get(&paint->value.color, attr))
+	{
+		paint->type = ESVG_PAINT_COLOR;
+	}
+	/* uri */
+#if 0
+	else if (esvg_uri_get(&found_tag, tag, attr))
+	{
+		/* FIXME double check the tag */
+		/* FIXME in case the paint server has some pointer we should
+		 * be able to re create it from a new one? */
+		paint->value.paint_server = r;
+	}
+#endif
+	else
+	{
+		paint->type = ESVG_PAINT_SERVER;
+		paint->value.paint_server = strdup(attr);
+	}
+
+	return EINA_TRUE;
+}
+
 
 EAPI const char * esvg_type_string_to(Esvg_Type type)
 {
@@ -1555,12 +1552,12 @@ EAPI const char * esvg_type_string_to(Esvg_Type type)
 		case ESVG_POLYGON: return "";
 		case ESVG_POLYLINE: return "";
 		case ESVG_RADIALGRADIENT: return "";
-		case ESVG_RECT: return "";
+		case ESVG_RECT: return "rect";
 		case ESVG_SCRIPT: return "";
 		case ESVG_SET: return "";
 		case ESVG_STOP: return "";
 		case ESVG_STYLE: return "";
-		case ESVG_SVG: return "" /* 70 */;
+		case ESVG_SVG: return "svg" /* 70 */;
 		case ESVG_SWITCH: return "";
 		case ESVG_SYMBOL: return "";
 		case ESVG_TEXT: return "";

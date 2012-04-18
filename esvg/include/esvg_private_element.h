@@ -36,6 +36,7 @@ typedef struct _Esvg_Element_Descriptor {
 
 void * esvg_element_data_get(Edom_Tag *t);
 Edom_Tag * esvg_element_new(Esvg_Element_Descriptor *descriptor, Esvg_Type type, void *data);
+Ender_Element * esvg_element_ender_get(Edom_Tag *t);
 
 void esvg_element_initialize(Ender_Element *e);
 Esvg_Type esvg_element_type_get_internal(Edom_Tag *t);

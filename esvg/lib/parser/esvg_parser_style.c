@@ -190,7 +190,7 @@ static void _post_parse_fill_cb(Edom_Parser *parser, void *data)
 	Esvg_Parser_Style_Inline *thiz = data;
 	Esvg_Paint fill;
 
-	esvg_paint_get(&fill, thiz->tag, thiz->fill);
+	esvg_paint_string_from(&fill, thiz->tag, thiz->fill);
 	esvg_attribute_presentation_fill_set(thiz->attr, &fill);
 }
 
@@ -199,7 +199,7 @@ static void _post_parse_stroke_cb(Edom_Parser *parser, void *data)
 	Esvg_Parser_Style_Inline *thiz = data;
 	Esvg_Paint stroke;
 
-	esvg_paint_get(&stroke, thiz->tag, thiz->stroke);
+	esvg_paint_string_from(&stroke, thiz->tag, thiz->stroke);
 	esvg_attribute_presentation_stroke_set(thiz->attr, &stroke);
 }
 
@@ -218,7 +218,7 @@ static void _attr_callback(Esvg_Parser_Style_Inline *thiz,
 	{
 		Esvg_Paint fill;
 
-		if (!esvg_paint_get(&fill, thiz->tag, value))
+		if (!esvg_paint_string_from(&fill, thiz->tag, value))
 		{
 			/* we delay the parsing of fill for later in case
 			 * the value has an uri
@@ -239,14 +239,14 @@ static void _attr_callback(Esvg_Parser_Style_Inline *thiz,
 	}
 	else if (strcmp(key, "fill-opacity") == 0)
 	{
-		double fill_opacity = esvg_number_get(value, 1.0);
+		double fill_opacity = esvg_number_string_from(value, 1.0);
 		esvg_attribute_presentation_fill_opacity_set(thiz->attr, fill_opacity);
 	}
 	else if (strcmp(key, "stroke") == 0)
 	{
 		Esvg_Paint stroke;
 
-		if (!esvg_paint_get(&stroke, thiz->tag, value))
+		if (!esvg_paint_string_from(&stroke, thiz->tag, value))
 		{
 			/* we delay the parsing of stroke for later in case
 			 * the value has an uri
@@ -269,12 +269,12 @@ static void _attr_callback(Esvg_Parser_Style_Inline *thiz,
 	{
 		Esvg_Length stroke_width;
 
-		esvg_length_get(&stroke_width, value, ESVG_LENGTH_1);
+		esvg_length_string_from(&stroke_width, value, ESVG_LENGTH_1);
 		esvg_attribute_presentation_stroke_width_set(thiz->attr, &stroke_width);
 	}
 	else if (strcmp(key, "stroke-opacity") == 0)
 	{
-		double stroke_opacity = esvg_number_get(value, 1.0);
+		double stroke_opacity = esvg_number_string_from(value, 1.0);
 		esvg_attribute_presentation_stroke_opacity_set(thiz->attr, stroke_opacity);
 	}
 	else if (strcmp(key, "stroke-linecap") == 0)
@@ -300,7 +300,7 @@ static void _attr_callback(Esvg_Parser_Style_Inline *thiz,
 	}
 	else if (strcmp(key, "stop-opacity") == 0)
 	{
-		double stop_opacity = esvg_number_get(value, 1.0);
+		double stop_opacity = esvg_number_string_from(value, 1.0);
 		esvg_attribute_presentation_stop_opacity_set(thiz->attr, stop_opacity);
 	}
 }

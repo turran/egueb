@@ -55,7 +55,10 @@ static Ender_Property *ESVG_ELEMENT_TRANSFORM;
 static Ender_Property *ESVG_ELEMENT_STYLE;
 static Ender_Property *ESVG_ELEMENT_CLIP_PATH;
 static Ender_Property *ESVG_ELEMENT_OPACITY;
+static Ender_Property *ESVG_ELEMENT_COLOR;
+static Ender_Property *ESVG_ELEMENT_FILL;
 static Ender_Property *ESVG_ELEMENT_FILL_OPACITY;
+static Ender_Property *ESVG_ELEMENT_STROKE;
 static Ender_Property *ESVG_ELEMENT_STROKE_OPACITY;
 static Ender_Property *ESVG_ELEMENT_VISIBILITY;
 
@@ -123,7 +126,9 @@ static Eina_Bool _esvg_child_setup_cb(Edom_Tag *t, Edom_Tag *child, void *data)
 
 	thiz = _esvg_element_get(t);
 	if (!_esvg_element_setup(child, &thiz->state_final, &thiz->attr_final, data))
+	{
 		return EINA_FALSE;
+	}
 	return EINA_TRUE;
 }
 
@@ -135,7 +140,7 @@ static void _post_parse_fill_cb(Edom_Parser *parser, void *data)
 	Enesim_Renderer *r;
 
 	r = esvg_parser_element_renderer_get(thiz->t);
-	esvg_paint_get(&fill, thiz->t, thiz->fill);
+	esvg_paint_string_from(&fill, thiz->t, thiz->fill);
 	esvg_element_fill_set(r, &fill);
 }
 
@@ -146,7 +151,7 @@ static void _post_parse_stroke_cb(Edom_Parser *parser, void *data)
 	Enesim_Renderer *r;
 
 	r = esvg_parser_element_renderer_get(thiz->t);
-	esvg_paint_get(&stroke, thiz->t, thiz->stroke);
+	esvg_paint_string_from(&stroke, thiz->t, thiz->stroke);
 	esvg_element_stroke_set(r, &stroke);
 }
 
@@ -573,6 +578,15 @@ static void _esvg_element_fill_set(Edom_Tag *t, const Esvg_Paint *fill)
 	esvg_attribute_presentation_fill_set(&thiz->attr, fill);
 }
 
+static void _esvg_element_fill_get(Edom_Tag *t, Esvg_Paint *fill)
+{
+	Esvg_Element *thiz;
+
+	if (!fill) return;
+	thiz = _esvg_element_get(t);
+	*fill = thiz->attr.fill;
+}
+
 static void _esvg_element_fill_unset(Edom_Tag *t)
 {
 	Esvg_Element *thiz;
@@ -619,6 +633,15 @@ static void _esvg_element_stroke_set(Edom_Tag *t, const Esvg_Paint *stroke)
 
 	thiz = _esvg_element_get(t);
 	esvg_attribute_presentation_stroke_set(&thiz->attr, stroke);
+}
+
+static void _esvg_element_stroke_get(Edom_Tag *t, Esvg_Paint *stroke)
+{
+	Esvg_Element *thiz;
+
+	if (!stroke) return;
+	thiz = _esvg_element_get(t);
+	*stroke = thiz->attr.stroke;
 }
 
 static void _esvg_element_stroke_width_set(Edom_Tag *t, const Esvg_Length *stroke_width)
@@ -683,8 +706,10 @@ static void _esvg_element_visibility_get(Edom_Tag *t, Eina_Bool *visibility)
  *----------------------------------------------------------------------------*/
 const char * _esvg_element_name_get(Edom_Tag *t)
 {
-	/* TODO add a function that converts a type to a string */
-	return NULL;
+	Esvg_Element *thiz;
+
+	thiz = _esvg_element_get(t);
+	return esvg_type_string_to(thiz->type);
 }
 
 static Eina_Bool _esvg_element_attribute_set(Edom_Tag *t, const char *key, const char *value)
@@ -733,7 +758,7 @@ static Eina_Bool _esvg_element_attribute_set(Edom_Tag *t, const char *key, const
 	}
 	else if (strcmp(key, "opacity") == 0)
 	{
-		double opacity = esvg_number_get(value, 1.0);
+		double opacity = esvg_number_string_from(value, 1.0);
 		esvg_element_opacity_set(thiz->e, opacity);
 	}
 	else if (strcmp(key, "color") == 0)
@@ -745,28 +770,10 @@ static Eina_Bool _esvg_element_attribute_set(Edom_Tag *t, const char *key, const
 	}
 	else if (strcmp(key, "fill") == 0)
 	{
-#if 0
 		Esvg_Paint fill;
 
-		if (!esvg_paint_get(&fill, thiz->e, value))
-		{
-			/* we delay the parsing of fill for later in case
-			 * the value has an uri
-			 */
-			if (esvg_parser_is_uri(value))
-			{
-				Edom_Parser *parser;
-
-				parser = edom_tag_parser_get(thiz->e);
-				thiz->fill = strdup(value);
-				esvg_parser_post_parse_add(parser, _post_parse_fill_cb, thiz);
-			}
-		}
-		else
-		{
+		if (esvg_paint_string_from(&fill, value))
 			esvg_element_fill_set(thiz->e, &fill);
-		}
-#endif
 	}
 	else if (strcmp(key, "fill-rule") == 0)
 	{
@@ -777,44 +784,26 @@ static Eina_Bool _esvg_element_attribute_set(Edom_Tag *t, const char *key, const
 	}
 	else if (strcmp(key, "fill-opacity") == 0)
 	{
-		double fill_opacity = esvg_number_get(value, 1.0);
+		double fill_opacity = esvg_number_string_from(value, 1.0);
 		esvg_element_fill_opacity_set(thiz->e, fill_opacity);
 	}
 	else if (strcmp(key, "stroke") == 0)
 	{
-#if 0
 		Esvg_Paint stroke;
 
-		if (!esvg_paint_get(&stroke, thiz->e, value))
-		{
-			/* we delay the parsing of stroke for later in case
-			 * the value has an uri
-			 */
-			if (esvg_parser_is_uri(value))
-			{
-				Edom_Parser *parser;
-
-				parser = edom_tag_parser_get(thiz->e);
-				thiz->stroke = strdup(value);
-				esvg_parser_post_parse_add(parser, _post_parse_stroke_cb, thiz);
-			}
-		}
-		else
-		{
+		if (!esvg_paint_string_from(&stroke, value))
 			esvg_element_stroke_set(thiz->e, &stroke);
-		}
-#endif
 	}
 	else if (strcmp(key, "stroke-width") == 0)
 	{
 		Esvg_Length stroke_width;
 
-		esvg_length_get(&stroke_width, value, ESVG_LENGTH_1);
+		esvg_length_string_from(&stroke_width, value, ESVG_LENGTH_1);
 		esvg_element_stroke_width_set(thiz->e, &stroke_width);
 	}
 	else if (strcmp(key, "stroke-opacity") == 0)
 	{
-		double stroke_opacity = esvg_number_get(value, 1.0);
+		double stroke_opacity = esvg_number_string_from(value, 1.0);
 		esvg_element_stroke_opacity_set(thiz->e, stroke_opacity);
 	}
 	else if (strcmp(key, "stroke-linecap") == 0)
@@ -840,7 +829,7 @@ static Eina_Bool _esvg_element_attribute_set(Edom_Tag *t, const char *key, const
 	}
 	else if (strcmp(key, "stop-opacity") == 0)
 	{
-		double stop_opacity = esvg_number_get(value, 1.0);
+		double stop_opacity = esvg_number_string_from(value, 1.0);
 		/* TODO */
 	}
 	else
@@ -849,7 +838,7 @@ static Eina_Bool _esvg_element_attribute_set(Edom_Tag *t, const char *key, const
 			return thiz->descriptor.attribute_set(thiz->e, key, value);
 	}
 
-	return EINA_FALSE;
+	return EINA_TRUE;
 }
 
 static Eina_Bool _esvg_element_attribute_get(Edom_Tag *t, const char *attribute, char **value)
@@ -915,6 +904,14 @@ void * esvg_element_data_get(Edom_Tag *t)
 
 	thiz = _esvg_element_get(t);
 	return thiz->data;
+}
+
+Ender_Element * esvg_element_ender_get(Edom_Tag *t)
+{
+	Esvg_Element *thiz;
+
+	thiz = _esvg_element_get(t);
+	return thiz->e;
 }
 
 Edom_Tag * esvg_element_new(Esvg_Element_Descriptor *descriptor, Esvg_Type type,
@@ -1015,6 +1012,7 @@ EAPI void esvg_element_class_set(Ender_Element *e, const char *class)
  */
 EAPI void esvg_element_transform_set(Ender_Element *e, const Enesim_Matrix *transform)
 {
+	ender_element_property_value_set(e, ESVG_ELEMENT_TRANSFORM, transform, NULL);
 }
 
 /**
@@ -1071,6 +1069,7 @@ EAPI void esvg_element_clip_path_unset(Ender_Element *e)
  */
 EAPI void esvg_element_opacity_set(Ender_Element *e, double opacity)
 {
+	ender_element_property_value_set(e, ESVG_ELEMENT_OPACITY, opacity, NULL);
 }
 
 /**
@@ -1096,6 +1095,7 @@ EAPI void esvg_element_opacity_unset(Ender_Element *e)
  */
 EAPI void esvg_element_color_set(Ender_Element *e, const Esvg_Color *color)
 {
+	//ender_element_property_value_set(e, ESVG_ELEMENT_COLOR, color, NULL);
 }
 
 /**
@@ -1112,6 +1112,7 @@ EAPI void esvg_element_color_unset(Ender_Element *e)
  */
 EAPI void esvg_element_fill_set(Ender_Element *e, const Esvg_Paint *fill)
 {
+	ender_element_property_value_set(e, ESVG_ELEMENT_FILL, fill, NULL);
 }
 
 /**
@@ -1128,6 +1129,7 @@ EAPI void esvg_element_fill_unset(Ender_Element *e)
  */
 EAPI void esvg_element_fill_opacity_set(Ender_Element *e, double fill_opacity)
 {
+	ender_element_property_value_set(e, ESVG_ELEMENT_FILL_OPACITY, fill_opacity, NULL);
 }
 
 /**
@@ -1169,6 +1171,7 @@ EAPI void esvg_element_fill_rule_unset(Ender_Element *e)
  */
 EAPI void esvg_element_stroke_set(Ender_Element *e, const Esvg_Paint *stroke)
 {
+	ender_element_property_value_set(e, ESVG_ELEMENT_STROKE, stroke, NULL);
 }
 
 /**
@@ -1201,6 +1204,7 @@ EAPI void esvg_element_stroke_width_unset(Ender_Element *e)
  */
 EAPI void esvg_element_stroke_opacity_set(Ender_Element *e, double stroke_opacity)
 {
+	ender_element_property_value_set(e, ESVG_ELEMENT_STROKE_OPACITY, stroke_opacity, NULL);
 }
 
 /**

@@ -142,7 +142,6 @@ Eina_Bool esvg_parser_path(const char *value, Esvg_Parser_Command_Cb cb, void *d
 Eina_Bool esvg_uri_get(Edom_Tag **tag, Edom_Tag *rel, const char *attr);
 Eina_Bool esvg_href_get(Edom_Tag **tag, Edom_Tag *rel, const char *href);
 
-Eina_Bool esvg_paint_get(Esvg_Paint *paint, Edom_Tag *tag, const char *attr);
 Esvg_Stroke_Line_Cap esvg_stroke_line_cap_get(const char *value);
 Esvg_Stroke_Line_Join esvg_stroke_line_join_get(const char *value);
 
@@ -152,12 +151,12 @@ Eina_Bool esvg_parser_gradient_units_get(Esvg_Gradient_Units *gu, const char *va
 Eina_Bool esvg_parser_fill_rule_get(Esvg_Fill_Rule *rule, const char *attr);
 Eina_Bool esvg_parser_spread_method_get(Esvg_Spread_Method *smethod, const char *attr);
 
-Eina_Bool esvg_length_get(Esvg_Length *l, const char *attr_val, Esvg_Length default_length);
+Eina_Bool esvg_length_string_from(Esvg_Length *l, const char *attr_val, Esvg_Length default_length);
 
 Eina_Bool esvg_color_get(Esvg_Color *color, const char *attr_val);
 
 Eina_Bool esvg_transformation_get(Enesim_Matrix *matrix, const char *attr);
 
-double esvg_number_get(const char *attr_val, double default_nbr);
+double esvg_number_string_from(const char *attr_val, double default_nbr);
 
 #endif

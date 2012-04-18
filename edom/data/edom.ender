@@ -6,6 +6,7 @@ namespace "edom" {
 
 	abstract "tag" {
 		object "parent";
+		[object] "child";
 		attribute "attribute";
 	};
 };

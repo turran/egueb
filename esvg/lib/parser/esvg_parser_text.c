@@ -31,21 +31,21 @@ static Eina_Bool _parser_text_attribute_set(Edom_Tag *tag, const char *key, cons
 	{
 		Esvg_Coord x;
 
-		esvg_length_get(&x, value, ESVG_COORD_0);
+		esvg_length_string_from(&x, value, ESVG_COORD_0);
 		esvg_text_x_set(r, &x);
 	}
 	else if (strcmp(key, "y") == 0)
 	{
 		Esvg_Coord y;
 
-		esvg_length_get(&y, value, ESVG_COORD_0);
+		esvg_length_string_from(&y, value, ESVG_COORD_0);
 		esvg_text_y_set(r, &y);
 	}
 	else if (strcmp(key, "font-size") == 0)
 	{
 		Esvg_Length font_size;
 
-		esvg_length_get(&font_size, value, ESVG_COORD_0);
+		esvg_length_string_from(&font_size, value, ESVG_COORD_0);
 		esvg_text_font_size_set(r, &font_size);
 	}
 

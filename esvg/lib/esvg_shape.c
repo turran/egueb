@@ -34,12 +34,12 @@ typedef struct _Esvg_Shape
 	/* interface */
 	Esvg_Shape_Setup setup;
 	Esvg_Shape_Renderer_Get renderer_get;
-	Esvg_Shape_Enesim_State_Calculate calculate;
+	Esvg_Renderable_Context_Calculate calculate;
 	void *calculate_data;
 	Esvg_Element_Clone clone;
 	Esvg_Element_Has_Changed has_changed;
 	/* private */
-	Esvg_Shape_Enesim_State dstate;
+	Esvg_Renderable_Context dstate;
 	void *data;
 } Esvg_Shape;
 
@@ -56,7 +56,7 @@ static Esvg_Shape * _esvg_shape_get(Enesim_Renderer *r)
 static void _esvg_shape_enesim_state_get(Enesim_Renderer *r,
 		const Esvg_Element_Context *estate,
 		const Esvg_Attribute_Presentation *attr,
-		Esvg_Shape_Enesim_State *dstate)
+		Esvg_Renderable_Context *dstate)
 {
 	double stroke_viewport = 0;
 	uint8_t fill_opacity;
@@ -241,7 +241,7 @@ Enesim_Renderer * esvg_shape_new(Esvg_Shape_Descriptor *descriptor, void *data)
  * not set any stroking, should just set the fill renderer) we better make such behaviour
  * a function pointer
  */
-void esvg_shape_enesim_state_calculate_set(Enesim_Renderer *r, Esvg_Shape_Enesim_State_Calculate calculate, void *data)
+void esvg_shape_enesim_state_calculate_set(Enesim_Renderer *r, Esvg_Renderable_Context_Calculate calculate, void *data)
 {
 	Esvg_Shape *thiz;
 

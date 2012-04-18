@@ -58,28 +58,28 @@ static Eina_Bool _parser_ellipse_attribute_set(Edom_Tag *tag, const char *key,
 	{
 		Esvg_Coord cx;
 
-		esvg_length_get(&cx, value, ESVG_COORD_0);
+		esvg_length_string_from(&cx, value, ESVG_COORD_0);
 		esvg_ellipse_cx_set(r, &cx);
 	}
 	else if (strcmp(key, "cy") == 0)
 	{
 		Esvg_Coord cy;
 
-		esvg_length_get(&cy, value, ESVG_COORD_0);
+		esvg_length_string_from(&cy, value, ESVG_COORD_0);
 		esvg_ellipse_cy_set(r, &cy);
 	}
 	else if (strcmp(key, "rx") == 0)
 	{
 		Esvg_Length rx;
 
-		esvg_length_get(&rx, value, ESVG_LENGTH_0);
+		esvg_length_string_from(&rx, value, ESVG_LENGTH_0);
 		esvg_ellipse_rx_set(r, &rx);
 	}
 	else if (strcmp(key, "ry") == 0)
 	{
 		Esvg_Length ry;
 
-		esvg_length_get(&ry, value, ESVG_LENGTH_0);
+		esvg_length_string_from(&ry, value, ESVG_LENGTH_0);
 		esvg_ellipse_ry_set(r, &ry);
 	}
 
@@ -140,7 +140,7 @@ static Enesim_Renderer * _esvg_ellipse_renderer_get(Enesim_Renderer *r)
 }
 
 static Eina_Bool _esvg_ellipse_setup(Enesim_Renderer *r, const Esvg_Element_Context *estate,
-		const Esvg_Shape_Enesim_State *dstate)
+		const Esvg_Renderable_Context *dstate)
 {
 	Esvg_Ellipse *thiz;
 	double cx, cy;

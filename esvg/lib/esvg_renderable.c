@@ -56,6 +56,7 @@ typedef struct _Esvg_Renderable
 	/* interface */
 	Esvg_Renderable_Descriptor_Internal descriptor;
 	/* private */
+	Esvg_Renderable_Context context;
 	void *data;
 } Esvg_Renderable;
 
@@ -68,18 +69,95 @@ static Esvg_Renderable * _esvg_renderable_get(Edom_Tag *t)
 
 	return thiz;
 }
+
+static void _esvg_shape_enesim_state_get(Edom_Tag *t,
+		const Esvg_Element_Context *estate,
+		const Esvg_Attribute_Presentation *attr,
+		Esvg_Renderable_Context *context)
+{
+	double stroke_viewport = 0;
+	uint8_t fill_opacity;
+	uint8_t stroke_opacity;
+	uint8_t opacity;
+
+	context->draw_mode = 0;
+	/* set the opacity */
+	opacity = attr->opacity * 255;
+	if (attr->color_set)
+	{
+		const Esvg_Color *c = &attr->color;
+		enesim_color_components_from(&context->color,
+				opacity, c->r, c->g, c->b);
+	}
+	else
+	{
+		enesim_color_components_from(&context->color,
+				opacity, 0xff, 0xff, 0xff);
+	}
+
+	/* set the fill */
+	fill_opacity = attr->fill_opacity * 255;
+	/* FIXME the fill color multiplies the fill renderer */
+	context->draw_mode |= ENESIM_SHAPE_DRAW_MODE_FILL;
+	if (attr->fill.type == ESVG_PAINT_COLOR)
+	{
+		const Esvg_Color *c = &attr->fill.value.color;
+		enesim_color_components_from(&context->fill_color,
+				fill_opacity, c->r, c->g, c->b);
+	}
+	else if (attr->fill.type == ESVG_PAINT_SERVER)
+	{
+		/* just get the renderer here, dont do the setup */
+		//context->fill_renderer = esvg_element_renderer_get(attr->fill.value.paint_server);
+	}
+	else if (attr->fill.type == ESVG_PAINT_NONE)
+	{
+		context->draw_mode &= ~ENESIM_SHAPE_DRAW_MODE_FILL;
+	}
+	else if (attr->fill.type == ESVG_PAINT_CURRENT_COLOR)
+	{
+		context->fill_color = ENESIM_COLOR_FULL;
+	}
+	if (attr->fill_rule == ESVG_EVEN_ODD)
+		context->fill_rule = ENESIM_SHAPE_FILL_RULE_EVEN_ODD;
+	else
+		context->fill_rule = ENESIM_SHAPE_FILL_RULE_NON_ZERO;
+	/* set the stroke */
+	stroke_opacity = attr->stroke_opacity * 255;
+	context->draw_mode |= ENESIM_SHAPE_DRAW_MODE_STROKE;
+	if (attr->stroke.type == ESVG_PAINT_COLOR)
+	{
+		const Esvg_Color *c = &attr->stroke.value.color;
+		enesim_color_components_from(&context->stroke_color,
+				stroke_opacity, c->r, c->g, c->b);
+	}
+	else if (attr->stroke.type == ESVG_PAINT_SERVER)
+	{
+		/* just get the renderer here, dont do the setup */
+		//context->stroke_renderer = esvg_element_renderer_get(attr->stroke.value.paint_server);
+	}
+	else if (attr->stroke.type == ESVG_PAINT_NONE)
+	{
+		context->draw_mode &= ~ENESIM_SHAPE_DRAW_MODE_STROKE;
+	}
+	else if (attr->stroke.type == ESVG_PAINT_CURRENT_COLOR)
+	{
+		context->stroke_color = ENESIM_COLOR_FULL;
+	}
+	context->stroke_cap = attr->stroke_line_cap;
+	context->stroke_join = attr->stroke_line_join;
+	/* handle the stroke weight */
+	if (attr->stroke_width.unit == ESVG_UNIT_LENGTH_PERCENT)
+	{
+		stroke_viewport = hypot(estate->viewbox.width, estate->viewbox.height) / M_SQRT2;
+	}
+	context->stroke_weight = esvg_length_final_get(
+			&attr->stroke_width,
+			stroke_viewport);
+}
 /*----------------------------------------------------------------------------*
  *                           The Ender interface                              *
  *----------------------------------------------------------------------------*/
-static void _esvg_renderable_renderer_get(Edom_Tag *t, Enesim_Renderer **r)
-{
-	Esvg_Renderable *thiz;
-
-	if (!r) return;
-	thiz = _esvg_renderable_get(t);
-	*r = thiz->descriptor.renderer_get(t);
-}
-
 static void _esvg_renderable_container_width_set(Edom_Tag *t, double container_width)
 {
 	Esvg_Renderable *thiz;
@@ -164,6 +242,7 @@ static void _esvg_renderable_free(Edom_Tag *t)
 	free(thiz);
 }
 
+/* TODO optimize so many 'ifs' */
 static Eina_Bool _esvg_renderable_setup(Edom_Tag *t,
 		const Esvg_Element_Context *parent_context,
 		Esvg_Element_Context *context,
@@ -183,16 +262,71 @@ static Eina_Bool _esvg_renderable_setup(Edom_Tag *t,
 		context->dpi_y = thiz->x_dpi;
 		context->dpi_x = thiz->y_dpi;
 	}
+	/* given that a shape can be setup for many uses (a shape as a clip path,
+	 * a shape for rendering, a shape for masking, etc) the different
+	 * enesim states despend on that behaviour
+	 */
+#if 0
+	if (attr->clip_path_set)
+	{
+		esvg_clip_path_relative_set(attr->clip_path, thiz->renderer_get(r),
+				&context->transform);
+	}
+
+	if (thiz->calculate)
+		thiz->calculate(r, context, attr, &thiz->context, thiz->calculate_data);
+	else
+#endif
+		_esvg_shape_enesim_state_get(t, context, attr, &thiz->context);
+	
+	/* do the setup */
 	if (thiz->descriptor.setup)
-		thiz->descriptor.setup(t, context, attr, error);
+		return thiz->descriptor.setup(t, context, &thiz->context, error);
+#if 0
+	if (attr->clip_path_set)
+	{
+		Eina_Bool ret;
+
+		ret = enesim_renderer_setup(attr->clip_path, s, error);
+	}
+	/* in case we are going to use the fill renderer do its own setup */
+	if (attr->fill_set && attr->fill.type == ESVG_PAINT_SERVER)
+		esvg_paint_server_renderer_setup(attr->fill.value.paint_server, context, r);
+	/* in case we are going to use the stroke renderer do its own setup */
+	if (attr->stroke_set && attr->stroke.type == ESVG_PAINT_SERVER)
+		esvg_paint_server_renderer_setup(attr->stroke.value.paint_server, context, r);
+#endif
 	return EINA_TRUE;
 }
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
+void esvg_renderable_internal_renderer_get(Edom_Tag *t, Enesim_Renderer **r)
+{
+	Esvg_Renderable *thiz;
+
+	if (!r) return;
+	thiz = _esvg_renderable_get(t);
+	*r = thiz->descriptor.renderer_get(t);
+}
+
 /* The ender wrapper */
+#define _esvg_renderable_renderer_get esvg_renderable_internal_renderer_get
 #define _esvg_renderable_renderer_set NULL
 #include "generated/esvg_generated_renderable.c"
+
+Eina_Bool esvg_is_renderable_internal(Edom_Tag *t)
+{
+	Esvg_Renderable *thiz;
+	Eina_Bool ret;
+
+	if (!esvg_is_element_internal(t))
+		return EINA_FALSE;
+	thiz = esvg_element_data_get(t);
+	ret = EINA_MAGIC_CHECK(thiz, ESVG_RENDERABLE_MAGIC);
+
+	return ret;
+}
 
 void * esvg_renderable_data_get(Edom_Tag *t)
 {
@@ -247,17 +381,10 @@ Edom_Tag * esvg_renderable_new(Esvg_Renderable_Descriptor *descriptor, Esvg_Type
  */
 EAPI Eina_Bool esvg_is_renderable(Ender_Element *e)
 {
-	Esvg_Renderable *thiz;
-	Eina_Bool ret;
 	Edom_Tag *t;
 
 	t = ender_element_object_get(e);
-	if (!esvg_is_element_internal(t))
-		return EINA_FALSE;
-	thiz = esvg_element_data_get(t);
-	ret = EINA_MAGIC_CHECK(thiz, ESVG_RENDERABLE_MAGIC);
-
-	return ret;
+	return esvg_is_renderable_internal(t);
 }
 
 /**

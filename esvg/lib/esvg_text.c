@@ -71,7 +71,7 @@ static Enesim_Renderer * _esvg_text_renderer_get(Enesim_Renderer *r)
 }
 
 static Eina_Bool _esvg_text_setup(Enesim_Renderer *r, const Esvg_Element_Context *estate,
-		const Esvg_Shape_Enesim_State *dstate)
+		const Esvg_Renderable_Context *dstate)
 {
 	Esvg_Text *thiz;
 	Enesim_Matrix inv;

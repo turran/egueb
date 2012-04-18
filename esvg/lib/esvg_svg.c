@@ -24,6 +24,9 @@
 #include "esvg_private_element.h"
 #include "esvg_private_renderable.h"
 #include "esvg_svg.h"
+#include "esvg_element.h"
+#include "esvg_renderable.h"
+
 /*
  * Given that a svg element can clip, we should use a clipper with a compound
  * inside as the renderer
@@ -45,6 +48,8 @@ static Ender_Property *ESVG_SVG_WIDTH;
 static Ender_Property *ESVG_SVG_HEIGHT;
 static Ender_Property *ESVG_SVG_ACTUAL_WIDTH;
 static Ender_Property *ESVG_SVG_ACTUAL_HEIGHT;
+static Ender_Property *ESVG_SVG_VIEWBOX;
+
 
 typedef struct _Esvg_Svg
 {
@@ -82,35 +87,35 @@ static Eina_Bool _esvg_svg_attribute_set(Ender_Element *e, const char *key, cons
 {
 	if (strcmp(key, "version") == 0)
 	{
-		double version = esvg_number_get(value, 0.0);
+		double version = esvg_number_string_from(value, 0.0);
 		esvg_svg_version_set(e, version);
 	}
 	else if (strcmp(key, "x") == 0)
 	{
 		Esvg_Coord x;
 
-		esvg_length_get(&x, value, ESVG_COORD_0);
+		esvg_length_string_from(&x, value, ESVG_COORD_0);
 		esvg_svg_x_set(e, &x);
 	}
 	else if (strcmp(key, "y") == 0)
 	{
 		Esvg_Coord y;
 
-		esvg_length_get(&y, value, ESVG_COORD_0);
+		esvg_length_string_from(&y, value, ESVG_COORD_0);
 		esvg_svg_y_set(e, &y);
 	}
 	else if (strcmp(key, "width") == 0)
 	{
 		Esvg_Length width;
 
-		esvg_length_get(&width, value, ESVG_LENGTH_0);
+		esvg_length_string_from(&width, value, ESVG_LENGTH_0);
 		esvg_svg_width_set(e, &width);
 	}
 	else if (strcmp(key, "height") == 0)
 	{
 		Esvg_Length height;
 
-		esvg_length_get(&height, value, ESVG_LENGTH_0);
+		esvg_length_string_from(&height, value, ESVG_LENGTH_0);
 		esvg_svg_height_set(e, &height);
 	}
 	else if (strcmp(key, "viewBox") == 0)
@@ -129,16 +134,27 @@ static Eina_Bool _esvg_svg_attribute_get(Edom_Tag *tag, const char *attribute, c
 
 static Eina_Bool _esvg_svg_child_add(Edom_Tag *tag, Edom_Tag *child)
 {
-	Enesim_Renderer *r = NULL;
 	Esvg_Svg *thiz;
 	const char *id;
 
 	thiz = _esvg_svg_get(tag);
+	/* if renderable, add the renderer into the compound */
+	if (esvg_is_renderable_internal(child))
+	{
+		Enesim_Renderer *r = NULL;
+
+		esvg_renderable_internal_renderer_get(child, &r);
+		enesim_renderer_compound_layer_add(thiz->compound, r);
+		
+	}
 	/* an svg can have any kind of child */
 	id = edom_tag_id_get(child);
 	if (id)
 	{
 		eina_hash_add(thiz->ids, id, child);
+		/* TODO add an event whenever the child
+		 * changes the id
+		 */
 	}
 
 	return EINA_TRUE;
@@ -176,8 +192,9 @@ static Enesim_Renderer * _esvg_svg_element_at(Edom_Tag *t, double x, double y)
 	return NULL;
 }
 
-static Eina_Bool _esvg_svg_setup(Edom_Tag *t, Esvg_Element_Context *state,
-		Esvg_Attribute_Presentation *attr,
+static Eina_Bool _esvg_svg_setup(Edom_Tag *t,
+		Esvg_Element_Context *ctx,
+		Esvg_Renderable_Context *rctx,
 		Enesim_Error **error)
 {
 	Esvg_Svg *thiz;
@@ -187,8 +204,11 @@ static Eina_Bool _esvg_svg_setup(Edom_Tag *t, Esvg_Element_Context *state,
 	double width, height;
 
 	thiz = _esvg_svg_get(t);
-	width = esvg_length_final_get(&thiz->width, state->viewbox.width);
-	height = esvg_length_final_get(&thiz->height, state->viewbox.height);
+	width = esvg_length_final_get(&thiz->width, ctx->viewbox.width);
+	height = esvg_length_final_get(&thiz->height, ctx->viewbox.height);
+	enesim_renderer_clipper_width_set(thiz->clipper, width);
+	enesim_renderer_clipper_height_set(thiz->clipper, height);
+
 	/* the viewbox will set a new user space coordinate */
 	/* FIXME check zeros */
 	if (thiz->view_box_set)
@@ -201,7 +221,7 @@ static Eina_Bool _esvg_svg_setup(Edom_Tag *t, Esvg_Element_Context *state,
 		new_vh = thiz->view_box.height / height;
 
 		printf("setting scale %p to %g %g - %g %g (%g %g)\n",
-				state,
+				ctx,
 				thiz->view_box.width,
 				thiz->view_box.height,
 				width,
@@ -211,11 +231,11 @@ static Eina_Bool _esvg_svg_setup(Edom_Tag *t, Esvg_Element_Context *state,
 		height = thiz->view_box.height;
 
 		enesim_matrix_scale(&scale, 1.0/new_vw, 1.0/new_vh);
-		enesim_matrix_compose(&scale, &state->transform, &state->transform);
+		enesim_matrix_compose(&scale, &ctx->transform, &ctx->transform);
 		/* TODO handle current matrix */
 	}
-	state->viewbox.width = width;
-	state->viewbox.height = height;
+	ctx->viewbox.width = width;
+	ctx->viewbox.height = height;
 
 	return EINA_TRUE;
 }
@@ -430,6 +450,7 @@ static void _esvg_svg_actual_height_get(Edom_Tag *t, double *actual_height)
 /* The ender wrapper */
 #define _esvg_svg_actual_width_set NULL
 #define _esvg_svg_actual_height_set NULL
+#define _esvg_svg_viewbox_get NULL
 #include "generated/esvg_generated_svg.c"
 
 #if 0
@@ -470,6 +491,7 @@ EAPI Ender_Element * esvg_svg_new(void)
 
 Edom_Tag * esvg_svg_element_find(Ender_Element *e, const char *id)
 {
+	return NULL;
 }
 
 EAPI Eina_Bool esvg_is_svg(Ender_Element *e)
@@ -509,6 +531,7 @@ EAPI void esvg_svg_height_set(Ender_Element *e, Esvg_Length *height)
 
 EAPI void esvg_svg_viewbox_set(Ender_Element *e, Esvg_View_Box *vb)
 {
+	ender_element_property_value_set(e, ESVG_SVG_VIEWBOX, vb, NULL);
 }
 
 /* FIXME the below two functions should return the actual width/height based

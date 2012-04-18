@@ -70,10 +70,12 @@
 #define ESVG_IMAGE_MAGIC 0xe5500014
 
 extern int esvg_log_dom_global;
-extern Ender_Property *EDOM_ATTRIBUTE;
-extern Ender_Property *EDOM_CHILD;
-extern Ender_Property *EDOM_PARENT;
 Ender_Namespace * esvg_namespace_get(void);
+
+void esvg_element_init(void);
+void esvg_renderable_init(void);
+void esvg_svg_init(void);
+void esvg_rect_init(void);
 
 #if 0
 

@@ -60,7 +60,7 @@ static Eina_Bool esvg_parser_attribute_presentation_attribute_set(Edom_Tag *tag,
 	}
 	else if (strcmp(key, "opacity") == 0)
 	{
-		double opacity = esvg_number_get(value, 1.0);
+		double opacity = esvg_number_string_from(value, 1.0);
 		esvg_element_opacity_set(r, opacity);
 	}
 	else if (strcmp(key, "color") == 0)
@@ -74,7 +74,7 @@ static Eina_Bool esvg_parser_attribute_presentation_attribute_set(Edom_Tag *tag,
 	{
 		Esvg_Paint fill;
 
-		if (!esvg_paint_get(&fill, tag, value))
+		if (!esvg_paint_string_from(&fill, tag, value))
 		{
 			/* we delay the parsing of fill for later in case
 			 * the value has an uri
@@ -102,14 +102,14 @@ static Eina_Bool esvg_parser_attribute_presentation_attribute_set(Edom_Tag *tag,
 	}
 	else if (strcmp(key, "fill-opacity") == 0)
 	{
-		double fill_opacity = esvg_number_get(value, 1.0);
+		double fill_opacity = esvg_number_string_from(value, 1.0);
 		esvg_element_fill_opacity_set(r, fill_opacity);
 	}
 	else if (strcmp(key, "stroke") == 0)
 	{
 		Esvg_Paint stroke;
 
-		if (!esvg_paint_get(&stroke, tag, value))
+		if (!esvg_paint_string_from(&stroke, tag, value))
 		{
 			/* we delay the parsing of stroke for later in case
 			 * the value has an uri
@@ -132,12 +132,12 @@ static Eina_Bool esvg_parser_attribute_presentation_attribute_set(Edom_Tag *tag,
 	{
 		Esvg_Length stroke_width;
 
-		esvg_length_get(&stroke_width, value, ESVG_LENGTH_1);
+		esvg_length_string_from(&stroke_width, value, ESVG_LENGTH_1);
 		esvg_element_stroke_width_set(r, &stroke_width);
 	}
 	else if (strcmp(key, "stroke-opacity") == 0)
 	{
-		double stroke_opacity = esvg_number_get(value, 1.0);
+		double stroke_opacity = esvg_number_string_from(value, 1.0);
 		esvg_element_stroke_opacity_set(r, stroke_opacity);
 	}
 	else if (strcmp(key, "stroke-linecap") == 0)
@@ -163,7 +163,7 @@ static Eina_Bool esvg_parser_attribute_presentation_attribute_set(Edom_Tag *tag,
 	}
 	else if (strcmp(key, "stop-opacity") == 0)
 	{
-		double stop_opacity = esvg_number_get(value, 1.0);
+		double stop_opacity = esvg_number_string_from(value, 1.0);
 		/* TODO */
 	}
 	else
