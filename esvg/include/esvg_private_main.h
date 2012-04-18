@@ -77,6 +77,13 @@ void esvg_renderable_init(void);
 void esvg_svg_init(void);
 void esvg_rect_init(void);
 
+typedef enum _Esvg_Attribute_Type
+{
+	ESVG_ATTR_CSS,
+	ESVG_ATTR_XML,
+	ESVG_ATTR_TYPES,
+} Esvg_Attribute_Type;
+
 #if 0
 
 typedef struct _Esvg_Shape_Descriptor {

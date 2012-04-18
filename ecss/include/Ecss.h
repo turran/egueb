@@ -101,5 +101,6 @@ EAPI Ecss_Style * ecss_style_load_from_content(const char *content, size_t len);
 EAPI void ecss_style_rule_add(Ecss_Style *thiz, Ecss_Rule *r);
 
 EAPI void ecss_context_style_apply(Ecss_Context *c, Ecss_Style *s, Ecss_Element *e);
+EAPI void ecss_context_inline_style_apply(Ecss_Context *c, const char *style, Ecss_Element *e);
 
 #endif /*_ECSS_H*/

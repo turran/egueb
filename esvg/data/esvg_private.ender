@@ -46,6 +46,8 @@ namespace "esvg" {
 		double "fill_opacity";
 		double "stroke_opacity";
 		bool "visibility";
+		esvg_color "stop_color";
+		double "stop_opacity";
 		/* other attributes */
 		matrix "transform";
 	};

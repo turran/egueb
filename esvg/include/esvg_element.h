@@ -11,8 +11,8 @@ EAPI void esvg_element_id_get(Ender_Element *e, const char **id);
 EAPI void esvg_element_class_set(Ender_Element *e, const char *id);
 EAPI void esvg_element_transform_set(Ender_Element *e, const Enesim_Matrix *transform);
 EAPI void esvg_element_transform_get(Ender_Element *e, Enesim_Matrix *transform);
-EAPI void esvg_element_style_set(Ender_Element *e, const Esvg_Attribute_Presentation *style);
-EAPI void esvg_element_style_get(Ender_Element *e, Esvg_Attribute_Presentation *style);
+EAPI void esvg_element_style_set(Ender_Element *e, const char *style);
+EAPI void esvg_element_style_get(Ender_Element *e, const char **style);
 EAPI Eina_Bool esvg_element_style_is_set(Ender_Element *e);
 EAPI void esvg_element_clip_path_set(Ender_Element *e, const char *id);
 EAPI void esvg_element_clip_path_unset(Ender_Element *e);
@@ -37,5 +37,9 @@ EAPI void esvg_element_stroke_line_join_set(Ender_Element *e, Esvg_Stroke_Line_J
 EAPI void esvg_element_stroke_line_join_unset(Ender_Element *e);
 EAPI void esvg_element_visibility_set(Ender_Element *e, Eina_Bool visibility);
 EAPI void esvg_element_visibility_unset(Ender_Element *e);
+EAPI void esvg_element_stop_opacity_set(Ender_Element *e, double stop_opacity);
+EAPI void esvg_element_stop_opacity_get(Ender_Element *e, double *stop_opacity);
+EAPI void esvg_element_stop_color_set(Ender_Element *e, Esvg_Color *stop_color);
+EAPI void esvg_element_stop_color_get(Ender_Element *e, Esvg_Color *stop_color);
 
 #endif

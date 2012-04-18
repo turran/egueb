@@ -129,11 +129,14 @@ typedef struct _Esvg_Length
 
 typedef Esvg_Length Esvg_Coord;
 
+/* We need to use uint32_t here because we can not pass
+ * data < 32bits through varargs
+ */
 typedef struct _Esvg_Color
 {
-	uint8_t r;
-	uint8_t g;
-	uint8_t b;
+	uint32_t r;
+	uint32_t g;
+	uint32_t b;
 } Esvg_Color;
 
 /* FIXME when doing clipping or masking, we also use this

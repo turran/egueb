@@ -27,6 +27,10 @@
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
+/* FIXME share this */
+#define ESVG_SPACE_SKIP(t) \
+	while (*t) { if ((*t == ' ') || (*t == '\n') || (*t == '\t')) t++; else break; }
+
 /* Keep track of the selector state */
 typedef struct _Ecss_State_Selector
 {
@@ -255,3 +259,49 @@ EAPI void ecss_context_style_apply(Ecss_Context *c, Ecss_Style *s, Ecss_Element 
 	_process_element(c, e, &state);
 	/* TODO destroy the state */
 }
+
+EAPI void ecss_context_inline_style_apply(Ecss_Context *c, const char *style, Ecss_Element *e)
+{
+	char *orig;
+	char *v;
+	char *sc;
+	char *ch;
+
+	orig = v = strdup(style);
+	ESVG_SPACE_SKIP(v);
+	/* split the style by ';' */
+	while ((sc = index(v, ';')))
+	{
+		*sc = '\0';
+		/* split it by ':' */
+		ch = index(v, ':');
+		if (ch)
+		{
+			char *vv;
+
+			*ch = '\0';
+			vv = ch + 1;
+			ESVG_SPACE_SKIP(vv);
+			/* and call the attr_cb */
+			//_attr_callback(&thiz, v, vv);
+		}
+		v = sc + 1;
+		ESVG_SPACE_SKIP(v);
+	}
+	/* do the last one */
+	ch = index(v, ':');
+	if (ch)
+	{
+		char *vv;
+
+		*ch = '\0';
+		vv = ch + 1;
+		ESVG_SPACE_SKIP(vv);
+		/* and call the attr_cb */
+		//_attr_callback(&thiz, v, vv);
+	}
+
+	free(orig);
+}
+
+
