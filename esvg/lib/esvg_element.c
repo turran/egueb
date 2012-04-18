@@ -434,7 +434,6 @@ static void _esvg_element_style_set(Edom_Tag *t, const char *style)
 		free(thiz->style);
 	if (style)
 		thiz->style = strdup(style);
-	printf("style set!!!! %s\n", style);
 }
 
 static void _esvg_element_style_get(Edom_Tag *t, const char **style)
@@ -698,9 +697,6 @@ static Eina_Bool _esvg_element_attribute_set(Edom_Tag *t, const char *key, const
 	Esvg_Element *thiz;
 
 	thiz = _esvg_element_get(t);
-	/* TODO pick the correct attributes to set, the ones on the style
-	 * or the current ones, set the information there and then
-	 * call the descriptor function */
 	if (strcmp(key, "id") == 0)
 	{
 		esvg_element_id_set(thiz->e, value);
@@ -807,6 +803,7 @@ static Eina_Bool _esvg_element_attribute_set(Edom_Tag *t, const char *key, const
 		double stop_opacity = esvg_number_string_from(value, 1.0);
 		esvg_element_stop_opacity_set(thiz->e, stop_opacity);
 	}
+	/* TODO in theory we should not allow css attributes to continue */
 	else
 	{
 		if (thiz->descriptor.attribute_set)
