@@ -267,6 +267,9 @@ EAPI void ecss_context_inline_style_apply(Ecss_Context *c, const char *style, Ec
 	char *sc;
 	char *ch;
 
+	if (!c->property_set)
+		return;
+
 	orig = v = strdup(style);
 	ESVG_SPACE_SKIP(v);
 	/* split the style by ';' */
@@ -283,7 +286,7 @@ EAPI void ecss_context_inline_style_apply(Ecss_Context *c, const char *style, Ec
 			vv = ch + 1;
 			ESVG_SPACE_SKIP(vv);
 			/* and call the attr_cb */
-			//_attr_callback(&thiz, v, vv);
+			c->property_set(e, v, vv);
 		}
 		v = sc + 1;
 		ESVG_SPACE_SKIP(v);
@@ -298,7 +301,7 @@ EAPI void ecss_context_inline_style_apply(Ecss_Context *c, const char *style, Ec
 		vv = ch + 1;
 		ESVG_SPACE_SKIP(vv);
 		/* and call the attr_cb */
-		//_attr_callback(&thiz, v, vv);
+		c->property_set(e, v, vv);
 	}
 
 	free(orig);
