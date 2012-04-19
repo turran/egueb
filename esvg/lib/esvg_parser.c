@@ -15,11 +15,30 @@
  * License along with this library.
  * If not, see <http://www.gnu.org/licenses/>.
  */
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
 
-#include "Esvg.h"
-#include "Esvg_Parser.h"
+#include <Eina.h>
+#include <Ecss.h>
+#include <Ender.h>
+
+#include "esvg_types.h"
 #include "esvg_private_main.h"
-#include "esvg_parser_private.h"
+#include "esvg_private_attribute_presentation.h"
+#include "esvg_private_element.h"
+#include "Esvg_Parser.h" // FIXME remove that header
+#include "esvg_parser_private.h" // FIXME remove that header
+
+#include "esvg_main.h"
+#include "esvg_svg.h"
+#include "esvg_ellipse.h"
+#include "esvg_rect.h"
+#include "esvg_circle.h"
+#include "esvg_path.h"
+#include "esvg_polygon.h"
+#include "esvg_polyline.h"
+#include "esvg_line.h"
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
@@ -390,45 +409,45 @@ static void * _esvg_parser_tag_new(Edom_Parser *parser, int tag_id)
 		if (!thiz->topmost)
 			thiz->topmost = tag;
 		break;
-#if 0
+
 		case ESVG_CIRCLE:
-		tag = esvg_parser_circle_new(parser);
+		tag = esvg_circle_new();
 		break;
 
 		case ESVG_ELLIPSE:
-		tag = esvg_parser_ellipse_new(parser);
+		tag = esvg_ellipse_new();
 		break;
 
-#endif
 		case ESVG_RECT:
 		tag = esvg_rect_new();
 		break;
-#if 0
 
 		case ESVG_LINE:
-		tag = esvg_parser_line_new(parser);
+		tag = esvg_line_new();
 		break;
 
 		case ESVG_PATH:
-		tag = esvg_parser_path_new(parser);
+		tag = esvg_path_new();
 		break;
 
 		case ESVG_POLYLINE:
-		tag = esvg_parser_polyline_new(parser);
+		tag = esvg_polyline_new();
 		break;
 
 		case ESVG_POLYGON:
-		tag = esvg_parser_polygon_new(parser);
+		tag = esvg_polygon_new();
 		break;
-
+#if 0
 		case ESVG_TEXT:
 		tag = esvg_parser_text_new(parser);
 		break;
+#endif
 
 		case ESVG_G:
-		tag = esvg_parser_g_new(parser);
+		tag = esvg_g_new();
 		break;
 
+#if 0
 		case ESVG_A:
 		tag = esvg_parser_a_new(parser);
 		break;

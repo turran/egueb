@@ -90,6 +90,7 @@ typedef struct _Esvg_Element
 	Esvg_Element_Descriptor_Internal descriptor;
 	/* private */
 	Esvg_Attribute_Type current_attr_type;
+	Eina_Bool current_attr_animate;
 	Esvg_Attribute_Presentation *current_attr;
 
 	Esvg_Element_Context *state_p;
@@ -997,6 +998,14 @@ void esvg_element_attribute_type_set(Edom_Tag *t, Esvg_Attribute_Type type)
 		default:
 		return;
 	}
+}
+
+void esvg_element_attribute_animate_set(Edom_Tag *t, Eina_Bool animate)
+{
+	Esvg_Element *thiz;
+
+	thiz = _esvg_element_get(t);
+	thiz->current_attr_animate = animate;
 }
 
 Ender_Element * esvg_element_ender_get(Edom_Tag *t)

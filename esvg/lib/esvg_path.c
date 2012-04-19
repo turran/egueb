@@ -15,16 +15,19 @@
  * License along with this library.
  * If not, see <http://www.gnu.org/licenses/>.
  */
-#include "Esvg.h"
-#include "esvg_private.h"
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
+#include "esvg_private_main.h"
+#include "esvg_private_attribute_presentation.h"
+#include "esvg_private_element.h"
+#include "esvg_private_renderable.h"
+#include "esvg_path.h"
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
-#define ESVG_PATH_MAGIC_CHECK(d) \
-	do {\
-		if (!EINA_MAGIC_CHECK(d, ESVG_PATH_MAGIC))\
-			EINA_MAGIC_FAIL(d, ESVG_PATH_MAGIC);\
-	} while(0)
+static Ender_Property *ESVG_PATH_D;
 
 typedef struct _Esvg_Path
 {
@@ -35,34 +38,55 @@ typedef struct _Esvg_Path
 	Enesim_Renderer *r;
 } Esvg_Path;
 
-static Esvg_Path * _esvg_path_get(Enesim_Renderer *r)
+static Esvg_Path * _esvg_path_get(Edom_Tag *t)
 {
 	Esvg_Path *thiz;
 
-	thiz = esvg_shape_data_get(r);
-	ESVG_PATH_MAGIC_CHECK(thiz);
+	if (esvg_element_type_get_internal(t) != ESVG_PATH)
+		return NULL;
+	thiz = esvg_renderable_data_get(t);
 
 	return thiz;
 }
 
-/*----------------------------------------------------------------------------*
- *                         The ESVG element interface                         *
- *----------------------------------------------------------------------------*/
-static const char * _esvg_path_name_get(Enesim_Renderer *r)
+static void _esvg_path_command_cb(Esvg_Path_Command *cmd, void *data)
 {
-	return "esvg_path";
+	Ender_Element *e = data;
+
+	esvg_path_d_add(e, cmd);
 }
 
-static Enesim_Renderer * _esvg_path_renderer_get(Enesim_Renderer *r)
+/*----------------------------------------------------------------------------*
+ *                       The Esvg Renderable interface                        *
+ *----------------------------------------------------------------------------*/
+static Eina_Bool _esvg_path_attribute_set(Ender_Element *e, const char *key, const char *value)
+{
+	if (strcmp(key, "d") == 0)
+	{
+		if (!esvg_parser_path(value, _esvg_path_command_cb, e))
+			return EINA_FALSE;
+	}
+
+	return EINA_TRUE;
+}
+
+static Eina_Bool _esvg_path_attribute_get(Edom_Tag *tag, const char *attribute, char **value)
+{
+	return EINA_FALSE;
+}
+
+static Enesim_Renderer * _esvg_path_renderer_get(Edom_Tag *t)
 {
 	Esvg_Path *thiz;
 
-	thiz = _esvg_path_get(r);
+	thiz = _esvg_path_get(t);
 	return thiz->r;
 }
 
-static Eina_Bool _esvg_path_setup(Enesim_Renderer *r, const Esvg_Element_Context *estate,
-		const Esvg_Renderable_Context *dstate)
+static Eina_Bool _esvg_path_setup(Edom_Tag *t,
+		Esvg_Element_Context *ctx,
+		Esvg_Renderable_Context *rctx,
+		Enesim_Error **error)
 {
 	Esvg_Path *thiz;
 	Esvg_Path_Command *c;
@@ -70,29 +94,29 @@ static Eina_Bool _esvg_path_setup(Enesim_Renderer *r, const Esvg_Element_Context
 	Esvg_Point cur = { 0, 0 };
 	Eina_Bool first; /* TODO handle correctly the first flag */
 
-	thiz = _esvg_path_get(r);
+	thiz = _esvg_path_get(t);
 
 	//printf("path setup\n");
 	/* shape properties */
-	if (!dstate->fill_renderer)
-		enesim_renderer_shape_fill_color_set(thiz->r, dstate->fill_color);
+	if (!rctx->fill_renderer)
+		enesim_renderer_shape_fill_color_set(thiz->r, rctx->fill_color);
 	else
-		enesim_renderer_shape_fill_renderer_set(thiz->r, dstate->fill_renderer);
+		enesim_renderer_shape_fill_renderer_set(thiz->r, rctx->fill_renderer);
 	
-	if (!dstate->stroke_renderer)
-		enesim_renderer_shape_stroke_color_set(thiz->r, dstate->stroke_color);
+	if (!rctx->stroke_renderer)
+		enesim_renderer_shape_stroke_color_set(thiz->r, rctx->stroke_color);
 	else
-		enesim_renderer_shape_stroke_renderer_set(thiz->r, dstate->stroke_renderer);
+		enesim_renderer_shape_stroke_renderer_set(thiz->r, rctx->stroke_renderer);
 
-	enesim_renderer_shape_fill_rule_set(thiz->r, dstate->fill_rule);
-	enesim_renderer_shape_stroke_weight_set(thiz->r, dstate->stroke_weight);
+	enesim_renderer_shape_fill_rule_set(thiz->r, rctx->fill_rule);
+	enesim_renderer_shape_stroke_weight_set(thiz->r, rctx->stroke_weight);
 	enesim_renderer_shape_stroke_location_set(thiz->r, ENESIM_SHAPE_STROKE_CENTER);
-	enesim_renderer_shape_stroke_cap_set(thiz->r, dstate->stroke_cap);
-	enesim_renderer_shape_stroke_join_set(thiz->r, dstate->stroke_join);
-	enesim_renderer_shape_draw_mode_set(thiz->r, dstate->draw_mode);
+	enesim_renderer_shape_stroke_cap_set(thiz->r, rctx->stroke_cap);
+	enesim_renderer_shape_stroke_join_set(thiz->r, rctx->stroke_join);
+	enesim_renderer_shape_draw_mode_set(thiz->r, rctx->draw_mode);
 	/* base properties */
-	enesim_renderer_geometry_transformation_set(thiz->r, &estate->transform);
-	enesim_renderer_color_set(thiz->r, dstate->color);
+	enesim_renderer_geometry_transformation_set(thiz->r, &ctx->transform);
+	enesim_renderer_color_set(thiz->r, rctx->color);
 
 	EINA_LIST_FOREACH(thiz->commands, l, c)
 	{
@@ -295,8 +319,9 @@ static Eina_Bool _esvg_path_setup(Enesim_Renderer *r, const Esvg_Element_Context
 	return EINA_TRUE;
 }
 
-static void _esvg_path_clone(Enesim_Renderer *r, Enesim_Renderer *dr)
+static void _esvg_path_clone(Edom_Tag *r, Edom_Tag *dr)
 {
+#if 0
 	Esvg_Path *thiz;
 	Esvg_Path_Command *cmd;
 	Eina_List *l;
@@ -308,67 +333,89 @@ static void _esvg_path_clone(Enesim_Renderer *r, Enesim_Renderer *dr)
 		Esvg_Path_Command ocmd;
 
 		ocmd = *cmd;
-		esvg_path_command_add(dr, &ocmd);
+		esvg_path_d_add(dr, &ocmd);
 	}
+#endif
 }
 
-
-static void _esvg_path_cleanup(Enesim_Renderer *r)
-{
-}
-
-static Esvg_Shape_Descriptor _descriptor = {
-	/* .setup =		*/ _esvg_path_setup,
-	/* .renderer_get =	*/ _esvg_path_renderer_get,
-	/* .name_get =		*/ _esvg_path_name_get,
-	/* .clone =		*/ _esvg_path_clone,
-	/* .cleanup =		*/ _esvg_path_cleanup,
-};
-/*============================================================================*
- *                                 Global                                     *
- *============================================================================*/
-/*============================================================================*
- *                                   API                                      *
- *============================================================================*/
-EAPI Enesim_Renderer * esvg_path_new(void)
+void _esvg_path_free(Edom_Tag *t)
 {
 	Esvg_Path *thiz;
+
+	thiz = _esvg_path_get(t);
+	free(thiz);
+}
+
+static Esvg_Renderable_Descriptor _descriptor = {
+	/* .child_add		= */ NULL,
+	/* .child_remove	= */ NULL,
+	/* .attribute_get 	= */ _esvg_path_attribute_get,
+	/* .cdata_set 		= */ NULL,
+	/* .text_set 		= */ NULL,
+	/* .free 		= */ _esvg_path_free,
+	/* .initialize 		= */ NULL,
+	/* .attribute_set 	= */ _esvg_path_attribute_set,
+	/* .clone		= */ _esvg_path_clone,
+	/* .setup		= */ _esvg_path_setup,
+	/* .renderer_get	= */ _esvg_path_renderer_get,
+};
+/*----------------------------------------------------------------------------*
+ *                           The Ender interface                              *
+ *----------------------------------------------------------------------------*/
+static Edom_Tag * _esvg_path_new(void)
+{
+	Esvg_Path *thiz;
+	Edom_Tag *t;
 	Enesim_Renderer *r;
 
 	thiz = calloc(1, sizeof(Esvg_Path));
 	if (!thiz) return NULL;
-	EINA_MAGIC_SET(thiz, ESVG_PATH_MAGIC);
 
 	r = enesim_renderer_path_new();
 	thiz->r = r;
 	enesim_renderer_rop_set(r, ENESIM_BLEND);
 	/* default values */
 
-	r = esvg_shape_new(&_descriptor, thiz);
-	return r;
+	t = esvg_renderable_new(&_descriptor, ESVG_PATH, thiz);
+	return t;
 }
 
-EAPI Eina_Bool esvg_is_path(Enesim_Renderer *r)
-{
-	Esvg_Path *thiz;
-	Eina_Bool ret;
-
-	if (!esvg_is_shape(r))
-		return EINA_FALSE;
-	thiz = esvg_shape_data_get(r);
-	ret = EINA_MAGIC_CHECK(thiz, ESVG_PATH_MAGIC);
-
-	return ret;
-}
-
-EAPI void esvg_path_command_add(Enesim_Renderer *r, const Esvg_Path_Command *cmd)
+static void _esvg_path_d_add(Edom_Tag *t, const Esvg_Path_Command *cmd)
 {
 	Esvg_Path *thiz;
 	Esvg_Path_Command *new_cmd;
 
-	thiz = _esvg_path_get(r);
+	thiz = _esvg_path_get(t);
 
 	new_cmd = calloc(1, sizeof(Esvg_Path_Command));
 	*new_cmd = *cmd;
 	thiz->commands = eina_list_append(thiz->commands, new_cmd);
+}
+/*============================================================================*
+ *                                 Global                                     *
+ *============================================================================*/
+/* The ender wrapper */
+#define _esvg_path_d_set NULL
+#define _esvg_path_d_get NULL
+#define _esvg_path_d_clear NULL
+#define _esvg_path_d_remove NULL
+#include "generated/esvg_generated_path.c"
+/*============================================================================*
+ *                                   API                                      *
+ *============================================================================*/
+EAPI Ender_Element * esvg_path_new(void)
+{
+	return ender_element_new_with_namespace("path", "esvg");
+}
+
+EAPI Eina_Bool esvg_is_path(Ender_Element *e)
+{
+	Eina_Bool ret = EINA_TRUE;
+
+	return ret;
+}
+
+EAPI void esvg_path_d_add(Ender_Element *e, const Esvg_Path_Command *cmd)
+{
+	ender_element_property_value_add(e, ESVG_PATH_D, cmd, NULL);
 }

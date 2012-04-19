@@ -119,9 +119,13 @@ static void _esvg_shape_enesim_state_get(Edom_Tag *t,
 		context->fill_color = ENESIM_COLOR_FULL;
 	}
 	if (attr->fill_rule == ESVG_EVEN_ODD)
+	{
 		context->fill_rule = ENESIM_SHAPE_FILL_RULE_EVEN_ODD;
+	}
 	else
+	{
 		context->fill_rule = ENESIM_SHAPE_FILL_RULE_NON_ZERO;
+	}
 	/* set the stroke */
 	stroke_opacity = attr->stroke_opacity * 255;
 	context->draw_mode |= ENESIM_SHAPE_DRAW_MODE_STROKE;
@@ -166,32 +170,12 @@ static void _esvg_renderable_container_width_set(Edom_Tag *t, double container_w
 	thiz->container_width = container_width;
 }
 
-static void _esvg_renderable_container_width_get(Edom_Tag *t, double *container_width)
-{
-	Esvg_Renderable *thiz;
-
-	if (!container_width)
-		return;
-	thiz = _esvg_renderable_get(t);
-	*container_width = thiz->container_width;
-}
-
 static void _esvg_renderable_container_height_set(Edom_Tag *t, double container_height)
 {
 	Esvg_Renderable *thiz;
 
 	thiz = _esvg_renderable_get(t);
 	thiz->container_height = container_height;
-}
-
-static void _esvg_renderable_container_height_get(Edom_Tag *t, double *container_height)
-{
-	Esvg_Renderable *thiz;
-
-	if (!container_height)
-		return;
-	thiz = _esvg_renderable_get(t);
-	*container_height = thiz->container_height;
 }
 
 static void _esvg_renderable_x_dpi_set(Edom_Tag *t, double x_dpi)
@@ -310,9 +294,31 @@ void esvg_renderable_internal_renderer_get(Edom_Tag *t, Enesim_Renderer **r)
 	*r = thiz->descriptor.renderer_get(t);
 }
 
+void esvg_renderable_internal_container_width_get(Edom_Tag *t, double *container_width)
+{
+	Esvg_Renderable *thiz;
+
+	if (!container_width)
+		return;
+	thiz = _esvg_renderable_get(t);
+	*container_width = thiz->container_width;
+}
+
+void esvg_renderable_internal_container_height_get(Edom_Tag *t, double *container_height)
+{
+	Esvg_Renderable *thiz;
+
+	if (!container_height)
+		return;
+	thiz = _esvg_renderable_get(t);
+	*container_height = thiz->container_height;
+}
+
 /* The ender wrapper */
 #define _esvg_renderable_renderer_get esvg_renderable_internal_renderer_get
 #define _esvg_renderable_renderer_set NULL
+#define _esvg_renderable_container_width_get esvg_renderable_internal_container_width_get
+#define _esvg_renderable_container_height_get esvg_renderable_internal_container_height_get
 #include "generated/esvg_generated_renderable.c"
 
 Eina_Bool esvg_is_renderable_internal(Edom_Tag *t)

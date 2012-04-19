@@ -58,6 +58,85 @@ static Esvg_Use * _esvg_use_get(Enesim_Renderer *r)
 	return thiz;
 }
 
+#if 0
+static void _post_parse_cb(Edom_Parser *parser, void *data)
+{
+	Esvg_Parser_Use *thiz = data;
+	Edom_Tag *ref_t = NULL;
+	Edom_Tag *tag;
+	Enesim_Renderer *r;
+	Eina_Bool ret;
+
+	r = thiz->r;
+	tag = thiz->tag;
+
+	ret = esvg_href_get(&ref_t, tag, thiz->href);
+	if (ret)
+	{
+		Enesim_Renderer *ref_r;
+		Enesim_Renderer *clone;
+
+		printf("tag found %p\n", ref_t);
+		ref_r = esvg_parser_element_renderer_get(ref_t);
+		clone = esvg_element_clone(ref_r);
+		printf("clone = %p\n", clone);
+		esvg_use_link_set(r, clone);
+	}
+	printf("reference!!! %p %s\n", ref_t, thiz->href);
+}
+
+static Eina_Bool _parser_use_attribute_set(Edom_Tag *tag, const char *key, const char *value)
+{
+	Esvg_Parser_Use *thiz;
+	Enesim_Renderer *r;
+
+	thiz = esvg_parser_element_data_get(tag);
+	r = thiz->r;
+	if (strcmp(key, "x") == 0)
+	{
+		Esvg_Coord x;
+
+		esvg_length_string_from(&x, value, ESVG_COORD_0);
+		esvg_use_x_set(r, &x);
+	}
+	else if (strcmp(key, "y") == 0)
+	{
+		Esvg_Coord y;
+
+		esvg_length_string_from(&y, value, ESVG_COORD_0);
+		esvg_use_y_set(r, &y);
+	}
+	else if (strcmp(key, "width") == 0)
+	{
+		Esvg_Length width;
+
+		esvg_length_string_from(&width, value, ESVG_LENGTH_0);
+		esvg_use_width_set(r, &width);
+	}
+	else if (strcmp(key, "height") == 0)
+	{
+		Esvg_Length height;
+
+		esvg_length_string_from(&height, value, ESVG_LENGTH_0);
+		esvg_use_height_set(r, &height);
+	}
+	else if (strcmp(key, "xlink:href") == 0)
+	{
+		Edom_Parser *parser;
+
+		/* register the post parsing callback */
+		parser = edom_tag_parser_get(tag);
+		thiz->href = strdup(value);
+		esvg_parser_post_parse_add(parser, _post_parse_cb, thiz);
+	}
+	else
+	{
+		return EINA_FALSE;
+	}
+
+	return EINA_TRUE;
+}
+#endif
 /*----------------------------------------------------------------------------*
  *                         The ESVG element interface                         *
  *----------------------------------------------------------------------------*/

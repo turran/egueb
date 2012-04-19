@@ -5,6 +5,85 @@
 #include <Edom.h>
 #include "esvg_types.h"
 
+/* ‘alignment-baseline’,
+ * ‘baseline-shift’,
+ * ‘clip-rule’,
+ * ‘clip’,
+ * ‘color-interpolation-filters’,
+ * ‘color-interpolation’,
+ * ‘color-profile’,
+ * ‘color-rendering’,
+ * ‘cursor’,
+ * ‘direction’,
+ * ‘display’,
+ * ‘dominant-baseline’,
+ * ‘enable-background’,
+ * ‘filter’,
+ * ‘flood-color’,
+ * ‘flood-opacity’,
+ * ‘font-family’,
+ * ‘font-size-adjust’,
+ * ‘font-size’,
+ * ‘font-stretch’,
+ * ‘font-style’,
+ * ‘font-variant’,
+ * ‘font-weight’,
+ * ‘glyph-orientation-horizontal’,
+ * ‘glyph-orientation-vertical’,
+ * ‘image-rendering’,
+ * ‘kerning’,
+ * ‘letter-spacing’,
+ * ‘lighting-color’,
+ * ‘marker-end’,
+ * ‘marker-mid’,
+ * ‘marker-start’,
+ * ‘mask’,
+ * ‘overflow’,
+ * ‘pointer-events’,
+ * ‘shape-rendering’,
+ * ‘stroke-dasharray’,
+ * ‘stroke-dashoffset’,
+ * ‘stroke-miterlimit’,
+ * ‘text-anchor’,
+ * ‘text-decoration’,
+ * ‘text-rendering’,
+ * ‘unicode-bidi’,
+ * ‘word-spacing’
+ * ‘writing-mode’
+ */
+
+typedef struct _Esvg_Attribute_Presentation {
+	Enesim_Renderer *clip_path;
+	Esvg_Color color;
+	double opacity;
+	Esvg_Paint fill;
+	Esvg_Paint stroke;
+	Esvg_Length stroke_width;
+	Esvg_Stroke_Line_Cap stroke_line_cap;
+	Esvg_Stroke_Line_Join stroke_line_join;
+	double stroke_opacity;
+	double fill_opacity;
+	Esvg_Fill_Rule fill_rule;
+	Eina_Bool visibility;
+	Esvg_Color stop_color;
+	double stop_opacity;
+	/* are they set? */
+	Eina_Bool clip_path_set;
+	Eina_Bool color_set;
+	Eina_Bool opacity_set;
+	Eina_Bool fill_set;
+	Eina_Bool stroke_set;
+	Eina_Bool stroke_width_set;
+	Eina_Bool stroke_line_cap_set;
+	Eina_Bool stroke_line_join_set;
+	Eina_Bool stroke_opacity_set;
+	Eina_Bool fill_opacity_set;
+	Eina_Bool fill_rule_set;
+	Eina_Bool visibility_set;
+	Eina_Bool stop_color_set;
+	Eina_Bool stop_opacity_set;
+} Esvg_Attribute_Presentation;
+
 void esvg_attribute_presentation_setup(Esvg_Attribute_Presentation *thiz);
 void esvg_attribute_presentation_clip_path_set(Esvg_Attribute_Presentation *thiz, const Edom_Tag *clip_path);
 void esvg_attribute_presentation_clip_path_unset(Esvg_Attribute_Presentation *thiz);

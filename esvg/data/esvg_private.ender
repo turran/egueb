@@ -21,6 +21,11 @@ namespace "esvg" {
 		int "b";
 	};
 
+	struct "esvg_point" {
+		double "x";
+		double "y";
+	};
+
 	union "esvg_paint" {
 		/* fix this */
 		bool "none";
@@ -28,6 +33,17 @@ namespace "esvg" {
 		esvg_color "color";
 		string "paint_server";
 	};
+
+	struct "esvg_path_vline_to" {
+		double "c";
+	};
+
+	union "esvg_path_command" {
+		esvg_path_simple_line "hline";
+		esvg_path_simple_line "vline";
+	};
+
+	/* types */
 
 	abstract "element" : "tag" {
 		/* core */
@@ -60,6 +76,10 @@ namespace "esvg" {
 		double "y_dpi";
 	};
 
+	abstract "animation" : "element" {
+		
+	};
+
 	class "svg" : "renderable" {
 		esvg_length "x";
 		esvg_length "y";
@@ -84,27 +104,35 @@ namespace "esvg" {
 	};
 
 	class "ellipse" : "element" {
-
+		esvg_length "cx";
+		esvg_length "cy";
+		esvg_length "rx";
+		esvg_length "ry";
 	};
 
 	class "circle" : "element" {
-
+		esvg_length "cx";
+		esvg_length "cy";
+		esvg_length "r";
 	};
 
 	class "path" : "element" {
-
+		[esvg_path_command] "d";
 	};
 
 	class "line" : "element" {
-
+		esvg_length "x1";
+		esvg_length "x2";
+		esvg_length "y1";
+		esvg_length "y2";
 	};
 
 	class "polyline" : "element" {
-
+		[esvg_point] "point";
 	};
 
 	class "polygon" : "element" {
-
+		[esvg_point] "point";
 	};
 
 	class "use" : "element" {

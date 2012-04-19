@@ -15,66 +15,85 @@
  * License along with this library.
  * If not, see <http://www.gnu.org/licenses/>.
  */
-#include "Esvg.h"
-#include "esvg_private.h"
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
+#include "esvg_private_main.h"
+#include "esvg_private_attribute_presentation.h"
+#include "esvg_private_element.h"
+#include "esvg_private_renderable.h"
+#include "esvg_polyline.h"
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
-#define ESVG_POLYLINE_MAGIC_CHECK(d) \
-	do {\
-		if (!EINA_MAGIC_CHECK(d, ESVG_POLYLINE_MAGIC))\
-			EINA_MAGIC_FAIL(d, ESVG_POLYLINE_MAGIC);\
-	} while(0)
+static Ender_Property *ESVG_POLYLINE_POINT;
 
 typedef struct _Esvg_Polyline
 {
-	EINA_MAGIC
 	/* properties */
 	Eina_List *points;
 	/* private */
+	Enesim_Renderer *proxy;
 	Enesim_Renderer *line;
 	Enesim_Renderer *figure;
 } Esvg_Polyline;
 
-static Esvg_Polyline * _esvg_polyline_get(Enesim_Renderer *r)
+static Esvg_Polyline * _esvg_polyline_get(Edom_Tag *t)
 {
 	Esvg_Polyline *thiz;
 
-	thiz = esvg_shape_data_get(r);
-	ESVG_POLYLINE_MAGIC_CHECK(thiz);
+	if (esvg_element_type_get_internal(t) != ESVG_POLYLINE)
+		return NULL;
+	thiz = esvg_renderable_data_get(t);
 
 	return thiz;
 }
 
+static void _esvg_polyline_points_cb(Esvg_Point *p, void *data)
+{
+	Ender_Element *e = data;
+
+	esvg_polyline_point_add(e, p);
+}
 /*----------------------------------------------------------------------------*
- *                         The ESVG element interface                         *
+ *                       The Esvg Renderable interface                        *
  *----------------------------------------------------------------------------*/
-static const char * _esvg_polyline_name_get(Enesim_Renderer *r)
+static Eina_Bool _esvg_polyline_attribute_set(Ender_Element *e,
+		const char *key, const char *value)
 {
-	return "polyline";
+	if (strcmp(key, "points") == 0)
+	{
+		esvg_parser_points(value, _esvg_polyline_points_cb, e);
+	}
+
+	return EINA_TRUE;
 }
 
-static Enesim_Renderer * _esvg_polyline_renderer_get(Enesim_Renderer *r)
+static Eina_Bool _esvg_polyline_attribute_get(Edom_Tag *tag, const char *attribute, char **value)
+{
+	return EINA_FALSE;
+}
+
+static Enesim_Renderer * _esvg_polyline_renderer_get(Edom_Tag *t)
 {
 	Esvg_Polyline *thiz;
 	int nvert;
 
-	thiz = _esvg_polyline_get(r);
-	nvert = eina_list_count(thiz->points);
-
-	if (nvert > 2)
-		return thiz->figure;
-	else
-		return thiz->line;
+	thiz = _esvg_polyline_get(t);
+	return thiz->proxy;
 }
 
-static Eina_Bool _esvg_polyline_setup(Enesim_Renderer *r, const Esvg_Element_Context *estate,
-		const Esvg_Renderable_Context *dstate)
+static Eina_Bool _esvg_polyline_setup(Edom_Tag *t,
+		Esvg_Element_Context *ctx,
+		Esvg_Renderable_Context *rctx,
+		Enesim_Error **error)
 {
 	Esvg_Polyline *thiz;
+	Enesim_Renderer *r;
 	int nvert;
 
-	thiz = _esvg_polyline_get(r);
+	thiz = _esvg_polyline_get(t);
 
 	/* FIXME gets the parents size or the topmost? */
 	/* FIXME we should keep the old fill renderer */
@@ -86,19 +105,19 @@ static Eina_Bool _esvg_polyline_setup(Enesim_Renderer *r, const Esvg_Element_Con
 		r = thiz->line;
 
 	/* shape properties */
-	enesim_renderer_shape_fill_color_set(r, dstate->fill_color);
-	enesim_renderer_shape_fill_rule_set(r, dstate->fill_rule);
-	enesim_renderer_shape_fill_renderer_set(r, dstate->fill_renderer);
-	enesim_renderer_shape_stroke_color_set(r, dstate->stroke_color);
-	enesim_renderer_shape_stroke_weight_set(r, dstate->stroke_weight);
-	enesim_renderer_shape_draw_mode_set(r, dstate->draw_mode);
+	enesim_renderer_shape_fill_color_set(r, rctx->fill_color);
+	enesim_renderer_shape_fill_rule_set(r, rctx->fill_rule);
+	enesim_renderer_shape_fill_renderer_set(r, rctx->fill_renderer);
+	enesim_renderer_shape_stroke_color_set(r, rctx->stroke_color);
+	enesim_renderer_shape_stroke_weight_set(r, rctx->stroke_weight);
+	enesim_renderer_shape_draw_mode_set(r, rctx->draw_mode);
 	enesim_renderer_shape_stroke_location_set(r, ENESIM_SHAPE_STROKE_CENTER);
-	enesim_renderer_shape_stroke_cap_set(r, dstate->stroke_cap);
-	enesim_renderer_shape_stroke_join_set(r, dstate->stroke_join);
+	enesim_renderer_shape_stroke_cap_set(r, rctx->stroke_cap);
+	enesim_renderer_shape_stroke_join_set(r, rctx->stroke_join);
 
 	/* base properties */
-	enesim_renderer_geometry_transformation_set(r, &estate->transform);
-	enesim_renderer_color_set(r, dstate->color);
+	enesim_renderer_geometry_transformation_set(r, &ctx->transform);
+	enesim_renderer_color_set(r, rctx->color);
 	printf("calling the setup on the polyline ");
 	/* setup the points */
 	if (nvert > 2)
@@ -133,41 +152,63 @@ static Eina_Bool _esvg_polyline_setup(Enesim_Renderer *r, const Esvg_Element_Con
 		printf("using the line (%f, %f) (%f, %f)", pts[0].x, pts[0].y, pts[1].x, pts[1].y);
 	}
 	printf("\n");
+	enesim_renderer_proxy_proxied_set(thiz->proxy, r);
 
 	return EINA_TRUE;
 }
 
-static void _esvg_polyline_cleanup(Enesim_Renderer *r)
+static void _esvg_polyline_clone(Edom_Tag *t, Edom_Tag *dt)
 {
+#if 0
+	Esvg_Polyline *thiz;
+	Eina_List *l;
+	Esvg_Point *point;
 
+	thiz = _esvg_polyline_get(t);
+	/* FIXME we could remove our own list of polylines and use a _get from the enesim_renderer_figure */
+	EINA_LIST_FOREACH(thiz->points, l, point)
+	{
+		esvg_polyline_point_add(dr, point);
+	}
+#endif
 }
 
-static void _esvg_polyline_clone(Enesim_Renderer *r, Enesim_Renderer *dr)
-{
-
-}
-
-static Esvg_Shape_Descriptor _descriptor = {
-	/* .setup =		*/ _esvg_polyline_setup,
-	/* .renderer_get =	*/ _esvg_polyline_renderer_get,
-	/* .name_get =		*/ _esvg_polyline_name_get,
-	/* .clone =		*/ _esvg_polyline_clone,
-	/* .cleanup =		*/ _esvg_polyline_cleanup,
-};
-/*============================================================================*
- *                                 Global                                     *
- *============================================================================*/
-/*============================================================================*
- *                                   API                                      *
- *============================================================================*/
-EAPI Enesim_Renderer * esvg_polyline_new(void)
+static void _esvg_polyline_free(Edom_Tag *t)
 {
 	Esvg_Polyline *thiz;
+
+	thiz = _esvg_polyline_get(t);
+	free(thiz);
+}
+
+static Esvg_Renderable_Descriptor _descriptor = {
+	/* .child_add		= */ NULL,
+	/* .child_remove	= */ NULL,
+	/* .attribute_get 	= */ _esvg_polyline_attribute_get,
+	/* .cdata_set 		= */ NULL,
+	/* .text_set 		= */ NULL,
+	/* .free 		= */ _esvg_polyline_free,
+	/* .initialize 		= */ NULL,
+	/* .attribute_set 	= */ _esvg_polyline_attribute_set,
+	/* .clone		= */ _esvg_polyline_clone,
+	/* .setup		= */ _esvg_polyline_setup,
+	/* .renderer_get	= */ _esvg_polyline_renderer_get,
+};
+
+/*----------------------------------------------------------------------------*
+ *                           The Ender interface                              *
+ *----------------------------------------------------------------------------*/
+static Edom_Tag * _esvg_polyline_new(void)
+{
+	Esvg_Polyline *thiz;
+	Edom_Tag *t;
 	Enesim_Renderer *r;
 
 	thiz = calloc(1, sizeof(Esvg_Polyline));
 	if (!thiz) return NULL;
-	EINA_MAGIC_SET(thiz, ESVG_POLYLINE_MAGIC);
+
+	r = enesim_renderer_proxy_new();
+	thiz->proxy = r;
 
 	r = enesim_renderer_figure_new();
 	/* FIXME for now */
@@ -181,20 +222,40 @@ EAPI Enesim_Renderer * esvg_polyline_new(void)
 
 
 	/* default values */
-
-	r = esvg_shape_new(&_descriptor, thiz);
-	return r;
+	t = esvg_renderable_new(&_descriptor, ESVG_POLYLINE, thiz);
+	return t;
 }
 
-EAPI void esvg_polyline_point_add(Enesim_Renderer *r, Esvg_Point *p)
+static void _esvg_polyline_point_add(Edom_Tag *t, Esvg_Point *p)
 {
 	Esvg_Polyline *thiz;
 	Esvg_Point *new_point;
 
 	if (!p) return;
 
-	thiz = _esvg_polyline_get(r);
+	thiz = _esvg_polyline_get(t);
 	new_point = calloc(1, sizeof(Esvg_Point));
 	*new_point = *p;
 	thiz->points = eina_list_append(thiz->points, new_point);
+}
+/*============================================================================*
+ *                                 Global                                     *
+ *============================================================================*/
+/* The ender wrapper */
+#define _esvg_polyline_point_set NULL
+#define _esvg_polyline_point_get NULL
+#define _esvg_polyline_point_clear NULL
+#define _esvg_polyline_point_remove NULL
+#include "generated/esvg_generated_polyline.c"
+/*============================================================================*
+ *                                   API                                      *
+ *============================================================================*/
+EAPI Ender_Element * esvg_polyline_new(void)
+{
+	return ender_element_new_with_namespace("polyline", "esvg");
+}
+
+EAPI void esvg_polyline_point_add(Ender_Element *e, Esvg_Point *p)
+{
+	ender_element_property_value_add(e, ESVG_POLYLINE_POINT, p, NULL);
 }

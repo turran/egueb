@@ -147,6 +147,10 @@ static Eina_Bool _esvg_svg_child_add(Edom_Tag *tag, Edom_Tag *child)
 		enesim_renderer_compound_layer_add(thiz->compound, r);
 		
 	}
+
+	/* TODO add an event whenever the childs are added/removed from this element */
+	/* TODO iterate over the childs of this element and also add the ids */
+
 	/* an svg can have any kind of child */
 	id = edom_tag_id_get(child);
 	if (id)
@@ -185,12 +189,6 @@ static void _esvg_svg_element_remove(Edom_Tag *t, Enesim_Renderer *child)
 	enesim_renderer_compound_layer_remove(thiz->t, child);
 }
 #endif
-
-static Enesim_Renderer * _esvg_svg_element_at(Edom_Tag *t, double x, double y)
-{
-	/* TODO */
-	return NULL;
-}
 
 static Eina_Bool _esvg_svg_setup(Edom_Tag *t,
 		Esvg_Element_Context *ctx,
@@ -428,7 +426,7 @@ static void _esvg_svg_actual_width_get(Edom_Tag *t, double *actual_width)
 	double cw;
 
 	thiz = _esvg_svg_get(t);
-	//esvg_renderable_container_width_get(t, &cw);
+	esvg_renderable_internal_container_width_get(t, &cw);
 	aw = esvg_length_final_get(&thiz->width, cw);
 	*actual_width = aw;
 }
@@ -440,7 +438,7 @@ static void _esvg_svg_actual_height_get(Edom_Tag *t, double *actual_height)
 	double ch;
 
 	thiz = _esvg_svg_get(t);
-	//esvg_element_renderable_height_get(t, &ch);
+	esvg_renderable_internal_container_height_get(t, &ch);
 	ah = esvg_length_final_get(&thiz->height, ch);
 	*actual_height = ah;
 }

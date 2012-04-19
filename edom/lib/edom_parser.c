@@ -29,6 +29,15 @@
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
+/* We use this context to be able to know if the closing tag is of a type
+ * we do support
+ */
+typedef struct _Edom_Parser_Context
+{
+	void *tag;
+	int id;
+} Edom_Parser_Context;
+
 struct _Edom_Parser
 {
 	Eina_Array *contexts;
@@ -120,8 +129,8 @@ static void _edom_parser_tag_text_set(Edom_Parser *thiz, void *t, const char *te
 static Eina_Bool _edom_parser_cb(void *data, Eina_Simple_XML_Type type,
 		const char *content, unsigned offset, unsigned length)
 {
+	Edom_Parser_Context *parent = NULL;
 	Edom_Parser *thiz = data;
-	void *parent = NULL;
 	Eina_Array *contexts;
 	Eina_Bool ret;
 	int count;
@@ -142,7 +151,7 @@ static Eina_Bool _edom_parser_cb(void *data, Eina_Simple_XML_Type type,
 		case EINA_SIMPLE_XML_OPEN:
 		case EINA_SIMPLE_XML_OPEN_EMPTY:
 		{
-			void *new_tag;
+			void *tag;
 			int sz;
 			const char *attrs;
 			int attr_length;
@@ -164,13 +173,18 @@ static Eina_Bool _edom_parser_cb(void *data, Eina_Simple_XML_Type type,
 				 */
 				break;
 			}
-			new_tag = _edom_parser_tag_new(thiz, parent, tag_id, attrs, attr_length);
+			tag = _edom_parser_tag_new(thiz, parent ? parent->tag : NULL, tag_id, attrs, attr_length);
 
 			/* kind of ugly but works */
-			if (type == EINA_SIMPLE_XML_OPEN && new_tag)
+			if (type == EINA_SIMPLE_XML_OPEN && tag)
 			{
+				Edom_Parser_Context *current;
+
+				current = calloc(1, sizeof(Edom_Parser_Context));
+				current->tag = tag;
+				current->id = tag_id;
 				/* push it the new tag as a new context */
-				eina_array_push(thiz->contexts, new_tag);
+				eina_array_push(thiz->contexts, current);
 			}
 		}
 		break;
@@ -187,10 +201,11 @@ static Eina_Bool _edom_parser_cb(void *data, Eina_Simple_XML_Type type,
 		 * pop it. that means that we need to create some kind of wrapper
 		 * of the tag to store that information
 		 */
-#if 0
-		if (parent && (edom_tag_type_get(parent) == tag_id))
+		if (parent && (parent->id == tag_id))
+		{
 			eina_array_pop(thiz->contexts);
-#endif
+			free(parent);
+		}
 		break;
 
 		case EINA_SIMPLE_XML_DATA:

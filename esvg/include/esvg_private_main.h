@@ -46,8 +46,10 @@
 
 /* all the possible magic numbers */
 #define ESVG_ELEMENT_MAGIC 0xe5500001
+/* basic abstractions */
 #define ESVG_RENDERABLE_MAGIC 0xe5500002
-#define ESVG_SHAPE_MAGIC 0xe5500003
+#define ESVG_ANIMATION_MAGIC 0xe5500003
+
 #define ESVG_SVG_MAGIC 0xe5500004
 #define ESVG_G_MAGIC 0xe5500005
 #define ESVG_CIRCLE_MAGIC 0xe5500006

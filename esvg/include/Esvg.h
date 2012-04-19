@@ -64,55 +64,17 @@
 #include "esvg_types.h"
 #include "esvg_element.h"
 #include "esvg_renderable.h"
+#include "esvg_ellipse.h"
 #include "esvg_svg.h"
 #include "esvg_rect.h"
-
-EAPI Edom_Tag * esvg_g_new(void);
-EAPI Eina_Bool esvg_is_g(Edom_Tag *e);
+#include "esvg_path.h"
+#include "esvg_polygon.h"
+#include "esvg_polyline.h"
+#include "esvg_line.h"
+#include "esvg_circle.h"
+#include "esvg_g.h"
 
 EAPI Eina_Bool esvg_is_shape(Edom_Tag *e);
-
-EAPI Edom_Tag * esvg_ellipse_new(void);
-EAPI Eina_Bool esvg_is_ellipse(Edom_Tag *e);
-EAPI void esvg_ellipse_cx_set(Edom_Tag *e, const Esvg_Coord *cx);
-EAPI void esvg_ellipse_cx_get(Edom_Tag *e, Esvg_Coord *cx);
-EAPI void esvg_ellipse_cy_set(Edom_Tag *e, const Esvg_Coord *cy);
-EAPI void esvg_ellipse_cy_get(Edom_Tag *e, Esvg_Coord *cy);
-EAPI void esvg_ellipse_rx_set(Edom_Tag *e, const Esvg_Length *rx);
-EAPI void esvg_ellipse_rx_get(Edom_Tag *e, Esvg_Length *rx);
-EAPI void esvg_ellipse_ry_set(Edom_Tag *e, const Esvg_Length *ry);
-EAPI void esvg_ellipse_ry_get(Edom_Tag *e, Esvg_Length *ry);
-
-EAPI Edom_Tag * esvg_circle_new(void);
-EAPI Eina_Bool esvg_is_circle(Edom_Tag *e);
-EAPI void esvg_circle_cx_set(Edom_Tag *e, const Esvg_Coord *cx);
-EAPI void esvg_circle_cx_get(Edom_Tag *e, Esvg_Coord *cx);
-EAPI void esvg_circle_cy_set(Edom_Tag *e, const Esvg_Coord *cy);
-EAPI void esvg_circle_cy_get(Edom_Tag *e, Esvg_Coord *cy);
-EAPI void esvg_circle_radius_set(Edom_Tag *e, const Esvg_Length *radius);
-EAPI void esvg_circle_radius_get(Edom_Tag *e, Esvg_Length *radius);
-
-EAPI Edom_Tag * esvg_path_new(void);
-EAPI Eina_Bool esvg_is_path(Edom_Tag *e);
-EAPI void esvg_path_command_add(Edom_Tag *e, const Esvg_Path_Command *cmd);
-
-EAPI Edom_Tag * esvg_line_new(void);
-EAPI Eina_Bool esvg_is_line(Edom_Tag *e);
-EAPI void esvg_line_x1_set(Edom_Tag *e, const Esvg_Coord *x1);
-EAPI void esvg_line_x1_get(Edom_Tag *e, Esvg_Coord *x1);
-EAPI void esvg_line_y1_set(Edom_Tag *e, const Esvg_Coord *y1);
-EAPI void esvg_line_y1_get(Edom_Tag *e, Esvg_Coord *y1);
-EAPI void esvg_line_x2_set(Edom_Tag *e, const Esvg_Coord *x2);
-EAPI void esvg_line_x2_get(Edom_Tag *e, Esvg_Coord *x2);
-EAPI void esvg_line_y2_set(Edom_Tag *e, const Esvg_Coord *y2);
-EAPI void esvg_line_y2_get(Edom_Tag *e, Esvg_Coord *y2);
-
-EAPI Edom_Tag * esvg_polyline_new(void);
-EAPI void esvg_polyline_point_add(Edom_Tag *e, Esvg_Point *p);
-
-EAPI Edom_Tag * esvg_polygon_new(void);
-EAPI Eina_Bool esvg_is_polygon(Edom_Tag *e);
-EAPI void esvg_polygon_point_add(Edom_Tag *e, Esvg_Point *p);
 
 EAPI Edom_Tag * esvg_use_new(void);
 EAPI Eina_Bool esvg_is_use(Edom_Tag *e);

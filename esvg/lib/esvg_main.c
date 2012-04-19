@@ -26,6 +26,7 @@
 #include "esvg_types.h"
 
 #include "esvg_private_main.h"
+#include "esvg_private_attribute_presentation.h"
 #include "esvg_private_element.h"
 
 #include "esvg_main.h"
@@ -42,6 +43,13 @@ static void _register_enders(void *data)
 	ender_loader_load("edom");
 	esvg_element_init();
 	esvg_renderable_init();
+	esvg_line_init();
+	esvg_circle_init();
+	esvg_ellipse_init();
+	esvg_path_init();
+	esvg_polygon_init();
+	esvg_polyline_init();
+	esvg_g_init();
 	esvg_svg_init();
 	esvg_rect_init();
 }

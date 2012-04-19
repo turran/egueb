@@ -53,7 +53,33 @@ static Esvg_Text * _esvg_text_get(Enesim_Renderer *r)
 	ESVG_TEXT_MAGIC_CHECK(thiz);
 	return thiz;
 }
+#if 0
+static Eina_Bool _esvg_rect_attribute_set(Ender_Element *e,
+		const char *key, const char *value)
+{
+	if (strcmp(key, "x") == 0)
+	{
+		Esvg_Coord x;
 
+		esvg_length_string_from(&x, value, ESVG_COORD_0);
+		esvg_text_x_set(r, &x);
+	}
+	else if (strcmp(key, "y") == 0)
+	{
+		Esvg_Coord y;
+
+		esvg_length_string_from(&y, value, ESVG_COORD_0);
+		esvg_text_y_set(r, &y);
+	}
+	else if (strcmp(key, "font-size") == 0)
+	{
+		Esvg_Length font_size;
+
+		esvg_length_string_from(&font_size, value, ESVG_COORD_0);
+		esvg_text_font_size_set(r, &font_size);
+	}
+}
+#endif
 /*----------------------------------------------------------------------------*
  *                         Esvg Element interface                             *
  *----------------------------------------------------------------------------*/

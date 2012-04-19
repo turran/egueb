@@ -20,129 +20,86 @@
 #endif
 
 #include "esvg_private_main.h"
-#include "esvg_private_attribute_presentation.h"
+#include "esvg_private_attribute_animation.h"
 #include "esvg_private_element.h"
-#include "esvg_private_renderable.h"
-#include "esvg_g.h"
+#include "esvg_private_animate.h"
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
-typedef struct _Esvg_G
+typedef struct _Esvg_Animate
 {
 	/* properties */
+	/* interface */
 	/* private */
-	Enesim_Renderer *r;
-} Esvg_G;
+} Esvg_Animate;
 
-static Esvg_G * _esvg_g_get(Edom_Tag *t)
+static Esvg_Animate * _esvg_animate_get(Edom_Tag *t)
 {
-	Esvg_G *thiz;
+	Esvg_Animate *thiz;
 
-	if (esvg_element_type_get_internal(t) != ESVG_G)
+	if (esvg_element_type_get_internal(t) != ESVG_ANIMATE)
 		return NULL;
-	thiz = esvg_renderable_data_get(t);
+	thiz = esvg_element_data_get(t);
 
 	return thiz;
 }
 /*----------------------------------------------------------------------------*
- *                          The Container interface                           *
+ *                         The Esvg Element interface                         *
  *----------------------------------------------------------------------------*/
-static Eina_Bool _esvg_g_child_add(Edom_Tag *tag, Edom_Tag *child)
+static void _esvg_animate_free(Edom_Tag *t)
 {
-	Esvg_G *thiz;
+	Esvg_Animate *thiz;
 
-	/* if renderable, add the renderer into the compound */
-	thiz = _esvg_g_get(tag);
-	if (esvg_is_renderable_internal(child))
-	{
-		Enesim_Renderer *r = NULL;
-
-		esvg_renderable_internal_renderer_get(child, &r);
-		enesim_renderer_compound_layer_add(thiz->r, r);
-	}
-
-	return EINA_TRUE;
-}
-
-Enesim_Renderer * _esvg_g_renderer_get(Edom_Tag *t)
-{
-	Esvg_G *thiz;
-
-	thiz = _esvg_g_get(t);
-	return thiz->r;
-}
-
-static void _esvg_g_clone(Edom_Tag *t, Edom_Tag *tr)
-{
-#if 0
-	Esvg_G *thiz;
-	Eina_List *l;
-	Enesim_Renderer *child;
-
-	thiz = _esvg_g_get(r);
-	EINA_LIST_FOREACH(thiz->children, l, child)
-	{
-		Enesim_Renderer *new_child;
-
-		new_child = esvg_element_clone(child);
-		esvg_container_element_add(dr, new_child);
-	}
-#endif
-}
-
-static void _esvg_g_free(Edom_Tag *t)
-{
-	Esvg_G *thiz;
-
-	thiz = _esvg_g_get(t);
+	thiz = _esvg_animate_get(t);
 	free(thiz);
 }
 
-static Esvg_Renderable_Descriptor _descriptor = {
-	/* .child_add		= */ _esvg_g_child_add,
+static Eina_Bool _esvg_animate_attribute_set(Ender_Element *e,
+		const char *key, const char *value)
+{
+	return EINA_TRUE;
+}
+
+static Eina_Bool _esvg_animate_attribute_get(Edom_Tag *tag, const char *attribute, char **value)
+{
+	return EINA_FALSE;
+}
+
+/* TODO optimize so many 'ifs' */
+static Eina_Bool _esvg_animate_setup(Edom_Tag *t,
+		const Esvg_Element_Context *parent_context,
+		Esvg_Element_Context *context,
+		Esvg_Attribute_Presentation *attr,
+		Enesim_Error **error)
+{
+	Esvg_Animate *thiz;
+
+	thiz = _esvg_animate_get(t);
+	return EINA_TRUE;
+}
+
+static Esvg_Element_Descriptor _descriptor = {
+	/* .child_add		= */ NULL,
 	/* .child_remove	= */ NULL,
-	/* .attribute_get 	= */ NULL,
+	/* .attribute_get 	= */ _esvg_animate_attribute_get,
 	/* .cdata_set 		= */ NULL,
 	/* .text_set 		= */ NULL,
-	/* .free 		= */ _esvg_g_free,
+	/* .free 		= */ _esvg_animate_free,
 	/* .initialize 		= */ NULL,
-	/* .attribute_set 	= */ NULL,
-	/* .clone		= */ _esvg_g_clone,
-	/* .setup		= */ NULL,
-	/* .renderer_get	= */ _esvg_g_renderer_get,
+	/* .attribute_set 	= */ _esvg_animate_attribute_set,
+	/* .clone		= */ _esvg_animate_clone,
+	/* .setup		= */ _esvg_animate_setup,
+	/* .renderer_get	= */ _esvg_animate_renderer_get,
 };
 /*----------------------------------------------------------------------------*
  *                           The Ender interface                              *
  *----------------------------------------------------------------------------*/
-static Edom_Tag * _esvg_g_new(void)
-{
-	Esvg_G *thiz;
-	Edom_Tag *t;
-	Enesim_Renderer *r;
-
-	thiz = calloc(1, sizeof(Esvg_G));
-	if (!thiz) return NULL;
-
-	r = enesim_renderer_compound_new();
-	thiz->r = r;
-	enesim_renderer_rop_set(r, ENESIM_BLEND);
-
-	t = esvg_renderable_new(&_descriptor, ESVG_G, thiz);
-	return t;
-}
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
 /* The ender wrapper */
-#include "generated/esvg_generated_g.c"
+#include "generated/esvg_generated_animate.c"
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/
-EAPI Ender_Element * esvg_g_new(void)
-{
-	return ender_element_new_with_namespace("g", "esvg");
-}
 
-EAPI Eina_Bool esvg_is_g(Ender_Element *e)
-{
-}

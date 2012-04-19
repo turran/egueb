@@ -68,7 +68,8 @@ static Esvg_Rect * _esvg_rect_get(Edom_Tag *t)
 /*----------------------------------------------------------------------------*
  *                       The Esvg Renderable interface                        *
  *----------------------------------------------------------------------------*/
-static Eina_Bool _esvg_rect_attribute_set(Ender_Element *e, const char *key, const char *value)
+static Eina_Bool _esvg_rect_attribute_set(Ender_Element *e,
+		const char *key, const char *value)
 {
 	if (strcmp(key, "x") == 0)
 	{
@@ -120,7 +121,6 @@ static Eina_Bool _esvg_rect_attribute_get(Edom_Tag *tag, const char *attribute, 
 {
 	return EINA_FALSE;
 }
-
 
 static Enesim_Renderer * _esvg_rect_renderer_get(Edom_Tag *t)
 {
@@ -195,15 +195,7 @@ static void _esvg_rect_clone(Edom_Tag *t, Edom_Tag *tr)
 	other->current.ry = thiz->current.ry;
 }
 
-static void _esvg_rect_cleanup(Edom_Tag *t)
-{
-	Esvg_Rect *thiz;
-
-	thiz = _esvg_rect_get(t);
-	thiz->past = thiz->current;
-	thiz->changed = EINA_FALSE;
-}
-
+#if 0
 static Eina_Bool _esvg_rect_has_changed(Edom_Tag *t)
 {
 	Esvg_Rect *thiz;
@@ -226,8 +218,9 @@ static Eina_Bool _esvg_rect_has_changed(Edom_Tag *t)
 
 	return EINA_FALSE;
 }
+#endif
 
-void _esvg_rect_free(Edom_Tag *t)
+static void _esvg_rect_free(Edom_Tag *t)
 {
 	Esvg_Rect *thiz;
 
@@ -396,7 +389,6 @@ static void _esvg_rect_ry_get(Edom_Tag *t, Esvg_Coord *ry)
  *============================================================================*/
 /* The ender wrapper */
 #include "generated/esvg_generated_rect.c"
-
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/
