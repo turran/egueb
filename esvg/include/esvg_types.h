@@ -287,6 +287,18 @@ typedef enum _Esvg_Fill_Rule
 	ESVG_EVEN_ODD
 } Esvg_Fill_Rule;
 
+typedef void * (*Esvg_Uri_Local_Get)(const char *name, void *data);
+typedef void * (*Esvg_Uri_Absolute_Get)(const char *name, void *data);
+
+typedef struct _Esvg_Uri_Descriptor
+{
+	Esvg_Uri_Local_Get local_get;
+	Esvg_Uri_Absolute_Get absolute_get;
+} Esvg_Uri_Descriptor;
+
+EAPI Eina_Bool esvg_string_is_uri(const char *attr);
+EAPI void * esvg_uri_string_from(const char *attr, Esvg_Uri_Descriptor *descriptor, void *data);
+
 extern Esvg_Length ESVG_LENGTH_0;
 extern Esvg_Length ESVG_LENGTH_1;
 extern Esvg_Length ESVG_LENGTH_100_PERCENT;

@@ -87,6 +87,7 @@ typedef struct _Edom_Attribute
 
 typedef Eina_Bool (*Edom_Tag_Foreach)(Edom_Tag *thiz, Edom_Tag *child, void *data);
 typedef const char * (*Edom_Tag_Name_Get)(Edom_Tag *t);
+typedef Edom_Tag * (*Edom_Tag_Topmost_Get)(Edom_Tag *t);
 typedef Eina_Bool (*Edom_Tag_Attribute_Set)(Edom_Tag *t, const char *attribute, const char *value);
 typedef Eina_Bool (*Edom_Tag_Attribute_Get)(Edom_Tag *t, const char *attribute, char **value);
 typedef Eina_Bool (*Edom_Tag_Child_Add)(Edom_Tag *t, Edom_Tag *child);
@@ -102,6 +103,7 @@ typedef struct _Edom_Tag_Descriptor
 	Edom_Tag_Attribute_Set attribute_set;
 	Edom_Tag_Attribute_Get attribute_get;
 	/* child handling */
+	Edom_Tag_Topmost_Get topmost_get;
 	Edom_Tag_Child_Add child_add;
 	Edom_Tag_Child_Remove child_remove;
 	/* cdata */

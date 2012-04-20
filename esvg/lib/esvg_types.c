@@ -1095,31 +1095,6 @@ Eina_Bool esvg_href_get(Edom_Tag **tag, Edom_Tag *rel, const char *href)
 	return EINA_TRUE;
 }
 
-Eina_Bool esvg_parser_is_uri(const char *attr)
-{
-	if (strncmp(attr, "url(", 4))
-		return EINA_FALSE;
-	return EINA_TRUE;
-}
-
-/*
- * [ <absoluteURI> | <relativeURI> ] [ "#" <elementID> ]
- */
-Eina_Bool esvg_uri_get(Edom_Tag **tag, Edom_Tag *rel, const char *attr)
-{
-	char url[PATH_MAX];
-	size_t len;
-
-	if (!esvg_parser_is_uri(attr))
-		return EINA_FALSE;
-
-	len = strlen(attr) - 5;
-	strncpy(url, attr + 4, len);
-	url[len] = '\0';
-
-	return esvg_href_get(tag, rel, url);
-}
-
 Eina_Bool esvg_parser_gradient_units_get(Esvg_Gradient_Units *gu, const char *attr)
 {
 	if (strncmp(attr, "userSpaceOnUse", 14) == 0)
@@ -1441,6 +1416,36 @@ EAPI double esvg_length_final_get(const Esvg_Length *l, double parent_length)
 	return ret;
 }
 
+EAPI Eina_Bool esvg_string_is_uri(const char *attr)
+{
+	if (strncmp(attr, "url(", 4))
+		return EINA_FALSE;
+	return EINA_TRUE;
+}
+
+/*
+ * [ <absoluteURI> | <relativeURI> ] [ "#" <elementID> ]
+ */
+EAPI void * esvg_uri_string_from(const char *attr, Esvg_Uri_Descriptor *descriptor, void *data)
+{
+	char url[PATH_MAX];
+	size_t len;
+	const char *id;
+
+	if (!esvg_string_is_uri(attr))
+		return NULL;
+
+	len = strlen(attr) - 5;
+	strncpy(url, attr + 4, len);
+	url[len] = '\0';
+
+	id = _id_get(url);
+	if (!id) return NULL;
+
+	return descriptor->local_get(id, data);
+}
+
+
 /*
  * none, currentColor, <color>, <uri>?
  */
@@ -1464,19 +1469,14 @@ EAPI Eina_Bool esvg_paint_string_from(Esvg_Paint *paint, const char *attr)
 		paint->type = ESVG_PAINT_COLOR;
 	}
 	/* uri */
-#if 0
-	else if (esvg_uri_get(&found_tag, tag, attr))
-	{
-		/* FIXME double check the tag */
-		/* FIXME in case the paint server has some pointer we should
-		 * be able to re create it from a new one? */
-		paint->value.paint_server = r;
-	}
-#endif
-	else
+	else if (esvg_string_is_uri(attr))
 	{
 		paint->type = ESVG_PAINT_SERVER;
 		paint->value.paint_server = strdup(attr);
+	}
+	else
+	{
+		return EINA_FALSE;
 	}
 
 	return EINA_TRUE;

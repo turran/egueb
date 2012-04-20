@@ -70,6 +70,23 @@ static Esvg_Renderable * _esvg_renderable_get(Edom_Tag *t)
 	return thiz;
 }
 
+/*----------------------------------------------------------------------------*
+ *                             The URI interface                              *
+ *----------------------------------------------------------------------------*/
+static void * _esvg_renderable_uri_local_get(const char *name, void *data)
+{
+	Ender_Element *topmost = data;
+	Ender_Element *relative;
+
+	relative = esvg_svg_element_find(topmost, name);
+	printf("requesting id!!!! %s %p\n", name, relative);
+}
+
+static Esvg_Uri_Descriptor _uri_descriptor = {
+	/* .local_get 		= */ _esvg_renderable_uri_local_get,
+	/* .absolute_get 	= */ NULL
+};
+
 static void _esvg_shape_enesim_state_get(Edom_Tag *t,
 		const Esvg_Element_Context *ctx,
 		const Esvg_Attribute_Presentation *attr,
@@ -107,8 +124,19 @@ static void _esvg_shape_enesim_state_get(Edom_Tag *t,
 	}
 	else if (attr->fill.type == ESVG_PAINT_SERVER)
 	{
-		/* just get the renderer here, dont do the setup */
-		printf("fill rendererrrrr!!!\n");
+		Ender_Element *topmost;
+		Ender_Element *fill;
+
+		esvg_element_internal_topmost_get(t, &topmost);
+		if (topmost)
+		{
+			Ender_Element *e;
+
+			printf("topmost = %p\n", topmost);
+			/* just get the renderer here, dont do the setup */
+			e = esvg_uri_string_from(attr->fill.value.paint_server, &_uri_descriptor, topmost);
+			printf("fill rendererrrrr!!!\n");
+		}
 		/* TODO here we should fetch the id from the property */
 		/* TODO then, check that the referenced element is of type paint server */
 		/* TODO finally, get the renderer? */

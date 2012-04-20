@@ -42,4 +42,6 @@ EAPI void esvg_element_stop_opacity_get(Ender_Element *e, double *stop_opacity);
 EAPI void esvg_element_stop_color_set(Ender_Element *e, Esvg_Color *stop_color);
 EAPI void esvg_element_stop_color_get(Ender_Element *e, Esvg_Color *stop_color);
 
+EAPI Ender_Element * esvg_element_topmost_get(Ender_Element *e);
+
 #endif

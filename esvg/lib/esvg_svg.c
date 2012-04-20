@@ -76,6 +76,8 @@ typedef struct _Esvg_Svg
 	Eina_Hash *ids; /* the ids found */
 } Esvg_Svg;
 
+static Eina_Bool _esvg_svg_child_initialize(Edom_Tag *t, Edom_Tag *child_t, void *data);
+
 static Esvg_Svg * _esvg_svg_get(Edom_Tag *t)
 {
 	Esvg_Svg *thiz;
@@ -85,6 +87,75 @@ static Esvg_Svg * _esvg_svg_get(Edom_Tag *t)
 	thiz = esvg_instantiable_data_get(t);
 
 	return thiz;
+}
+
+/* FIXME the ender events just trigger once the id has changed so we dont know the old one */
+static void _esvg_svg_child_id_changed(Ender_Element *e, const char *event_name, void *event_data, void *data)
+{
+
+}
+
+
+static void _esvg_svg_child_child_cb(Ender_Element *e, const char *event_name, void *event_data, void *data)
+{
+	Ender_Event_Mutation_Property *ev = event_data;
+	Edom_Tag *tag = data;
+	Edom_Tag *child_child;
+	Esvg_Svg *thiz;
+
+	thiz = _esvg_svg_get(tag);
+	switch (ev->type)
+	{
+		case ENDER_EVENT_MUTATION_ADD:
+		child_child = ender_value_object_get(ev->value);
+		_esvg_svg_child_initialize(tag, child_child, thiz);
+		break;
+
+		/* TODO remove the topmost */
+		case ENDER_EVENT_MUTATION_REMOVE:
+		printf("TODO\n");
+		printf("child removed to one of our childs!\n");
+		break;
+
+		default:
+		printf("TODO\n");
+		break;
+	}
+}
+
+static Eina_Bool _esvg_svg_child_initialize(Edom_Tag *t, Edom_Tag *child_t, void *data)
+{
+	Esvg_Svg *thiz;
+	Esvg_Svg *child;
+	Ender_Element *thiz_e;
+	Ender_Element *child_e;
+	const char *id;
+
+ 	thiz = data;
+
+	/* set the topmost on every element */
+	thiz_e = esvg_element_ender_get(t);
+	esvg_element_topmost_set(child_t, thiz_e);
+
+	/* add events for the child property */
+	child_e = esvg_element_ender_get(child_t);
+	ender_event_listener_add(child_e, "Mutation:child", _esvg_svg_child_child_cb, t);
+
+	/* TODO add an event whenever the child changes the id */
+	esvg_element_id_get(child_e, &id);
+	if (id)
+	{
+		printf("adding id %s\n", id);
+		eina_hash_add(thiz->ids, id, child_e);
+	}
+	/* iterate over the childs of the child and do the same initialization */
+	edom_tag_child_foreach(child_t, _esvg_svg_child_initialize, thiz);
+	return EINA_TRUE;
+}
+
+static void _esvg_svg_child_deinitialize(Edom_Tag *t, Edom_Tag *child, void *data)
+{
+	/* remove from the ids */
 }
 /*----------------------------------------------------------------------------*
  *                       The Esvg Renderable interface                        *
@@ -141,8 +212,6 @@ static Eina_Bool _esvg_svg_attribute_get(Edom_Tag *tag, const char *attribute, c
 static Eina_Bool _esvg_svg_child_add(Edom_Tag *tag, Edom_Tag *child)
 {
 	Esvg_Svg *thiz;
-	Ender_Element *child_e;
-	const char *id;
 
 	thiz = _esvg_svg_get(tag);
 	if (!esvg_is_element_internal(child))
@@ -156,48 +225,26 @@ static Eina_Bool _esvg_svg_child_add(Edom_Tag *tag, Edom_Tag *child)
 		esvg_renderable_internal_renderer_get(child, &r);
 		enesim_renderer_compound_layer_add(thiz->compound, r);
 	}
-	child_e = esvg_element_ender_get(child);
-	//ender_event_listener_add(child_e, "property:child", _element_child_cb, thiz);
-
-	/* TODO add an event whenever the childs are added/removed from this element */
-	/* TODO iterate over the childs of this element and also add the ids */
-	/* TODO add an event whenever the child changes the id */
-
-	/* an svg can have any kind of child */
-	id = edom_tag_id_get(child);
-	if (id)
-	{
-		eina_hash_add(thiz->ids, id, child);
-	}
+	_esvg_svg_child_initialize(tag, child, thiz);
 
 	return EINA_TRUE;
 }
 
-#if 0
-static Eina_Bool _esvg_svg_element_add(Edom_Tag *t, Enesim_Renderer *child)
+static Eina_Bool _esvg_svg_child_remove(Edom_Tag *t, Edom_Tag *child)
 {
 	Esvg_Svg *thiz;
-	Edom_Tag *teal_r;
-
-	if (!esvg_element_is_renderable(child))
-	{
-		return EINA_FALSE;
-	}
 
 	thiz = _esvg_svg_get(t);
-	enesim_renderer_compound_layer_add(thiz->r, child);
 
+	if (esvg_is_instantiable_internal(child))
+	{
+		Enesim_Renderer *r = NULL;
+
+		esvg_renderable_internal_renderer_get(child, &r);
+		enesim_renderer_compound_layer_remove(thiz->compound, r);
+	}
 	return EINA_TRUE;
 }
-
-static void _esvg_svg_element_remove(Edom_Tag *t, Enesim_Renderer *child)
-{
-	Esvg_Svg *thiz;
-
-	thiz = _esvg_svg_get(t);
-	enesim_renderer_compound_layer_remove(thiz->t, child);
-}
-#endif
 
 static Eina_Bool _esvg_svg_setup(Edom_Tag *t,
 		Esvg_Element_Context *ctx,
@@ -270,7 +317,7 @@ static void _esvg_svg_free(Edom_Tag *t)
 
 static Esvg_Instantiable_Descriptor _descriptor = {
 	/* .child_add		= */ _esvg_svg_child_add,
-	/* .child_remove	= */ NULL,
+	/* .child_remove	= */ _esvg_svg_child_remove,
 	/* .attribute_get 	= */ _esvg_svg_attribute_get,
 	/* .cdata_set 		= */ NULL,
 	/* .text_set 		= */ NULL,
@@ -504,9 +551,12 @@ EAPI Ender_Element * esvg_svg_new(void)
 	return ender_element_new_with_namespace("svg", "esvg");
 }
 
-Edom_Tag * esvg_svg_element_find(Ender_Element *e, const char *id)
+Ender_Element * esvg_svg_element_find(Ender_Element *e, const char *id)
 {
-	return NULL;
+	Edom_Tag *t;
+
+	t = ender_element_object_get(e);
+	return esvg_svg_internal_element_find(t, id);
 }
 
 EAPI Eina_Bool esvg_is_svg(Ender_Element *e)
@@ -571,12 +621,4 @@ EAPI void esvg_svg_actual_height_get(Ender_Element *e, double *actual_height)
 
 	t = ender_element_object_get(e);
 	_esvg_svg_actual_height_get(t, actual_height);
-}
-
-Ender_Element * esvg_svg_element_get(Ender_Element *e, const char *id)
-{
-	Edom_Tag *t;
-
-	t = ender_element_object_get(e);
-	return esvg_svg_internal_element_find(t, id);
 }

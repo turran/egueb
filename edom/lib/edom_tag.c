@@ -35,7 +35,6 @@ struct _Edom_Tag
 	EINA_INLIST;
 	Edom_Tag_Descriptor descriptor;
 	Edom_Tag *parent;
-	Edom_Tag *topmost;
 	Edom_Tag *child;
 	void *data;
 };
@@ -274,7 +273,9 @@ EAPI Edom_Tag * edom_tag_next_get(Edom_Tag *thiz)
  */
 EAPI Edom_Tag * edom_tag_topmost_get(Edom_Tag *thiz)
 {
-	return thiz->topmost;
+	if (thiz->descriptor.topmost_get)
+		return thiz->descriptor.topmost_get(thiz);
+	return NULL;
 }
 
 /**

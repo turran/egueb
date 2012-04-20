@@ -66,6 +66,7 @@ namespace "esvg" {
 		double "stop_opacity";
 		/* other attributes */
 		matrix "transform";
+		ender "topmost";
 	};
 
 	abstract "renderable" : "element" {

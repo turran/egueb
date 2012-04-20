@@ -64,6 +64,7 @@ static Ender_Property *ESVG_ELEMENT_STROKE_WIDTH;
 static Ender_Property *ESVG_ELEMENT_VISIBILITY;
 static Ender_Property *ESVG_ELEMENT_STOP_COLOR;
 static Ender_Property *ESVG_ELEMENT_STOP_OPACITY;
+static Ender_Property *ESVG_ELEMENT_TOPMOST;
 
 typedef struct _Esvg_Element_Descriptor_Internal
 {
@@ -83,6 +84,7 @@ typedef struct _Esvg_Element
 	char *style;
 	char *id;
 	char *class;
+	Ender_Element *topmost;
 	Esvg_Element_Context state;
 	Esvg_Attribute_Presentation attr_xml;
 	Esvg_Attribute_Presentation attr_css;
@@ -693,6 +695,16 @@ const char * _esvg_element_name_get(Edom_Tag *t)
 	return esvg_type_string_to(thiz->type);
 }
 
+Edom_Tag * _esvg_element_topmost_get(Edom_Tag *t)
+{
+	Esvg_Element *thiz;
+
+	thiz = _esvg_element_get(t);
+	if (!thiz->topmost) return NULL;
+
+	return ender_element_object_get(thiz->topmost);
+}
+
 static Eina_Bool _esvg_element_attribute_set(Edom_Tag *t, const char *key, const char *value)
 {
 	Esvg_Element *thiz;
@@ -936,11 +948,6 @@ static Eina_Bool _esvg_element_setup(Edom_Tag *t,
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
-/* The ender wrapper */
-/* the type is RO */
-#define _esvg_element_type_set NULL
-#include "generated/esvg_generated_element.c"
-
 Esvg_Type esvg_element_type_get_internal(Edom_Tag *t)
 {
 	Esvg_Element *thiz;
@@ -958,6 +965,23 @@ Eina_Bool esvg_is_element_internal(Edom_Tag *t)
 	ret = EINA_MAGIC_CHECK(thiz, ESVG_ELEMENT_MAGIC);
 
 	return ret;
+}
+
+void esvg_element_topmost_set(Edom_Tag *t, Ender_Element *topmost)
+{
+	Esvg_Element *thiz;
+
+	thiz = _esvg_element_get(t);
+	thiz->topmost = topmost;
+}
+
+void esvg_element_internal_topmost_get(Edom_Tag *t, Ender_Element **e)
+{
+	Esvg_Element *thiz;
+
+	if (!e) return;
+	thiz = _esvg_element_get(t);
+	*e = thiz->topmost;
 }
 
 void esvg_element_initialize(Ender_Element *e)
@@ -1033,6 +1057,7 @@ Edom_Tag * esvg_element_new(Esvg_Element_Descriptor *descriptor, Esvg_Type type,
 
 	/* the tag interface */
 	pdescriptor.name_get = _esvg_element_name_get;
+	pdescriptor.topmost_get = _esvg_element_topmost_get;
 	pdescriptor.child_add = descriptor->child_add;
 	pdescriptor.child_remove = descriptor->child_remove;
 	pdescriptor.attribute_set = _esvg_element_attribute_set;
@@ -1057,6 +1082,13 @@ Edom_Tag * esvg_element_new(Esvg_Element_Descriptor *descriptor, Esvg_Type type,
 
 	return t;
 }
+
+/* The ender wrapper */
+/* the type is RO */
+#define _esvg_element_type_set NULL
+#define _esvg_element_topmost_set NULL
+#define _esvg_element_topmost_get esvg_element_internal_topmost_get
+#include "generated/esvg_generated_element.c"
 
 /*============================================================================*
  *                                   API                                      *
@@ -1091,6 +1123,10 @@ EAPI Esvg_Type esvg_element_type_get(Ender_Element *e)
  */
 EAPI void esvg_element_id_get(Ender_Element *e, const char **id)
 {
+	Edom_Tag *t;
+
+	t = ender_element_object_get(e);
+	_esvg_element_id_get(t, id);
 }
 
 /**
@@ -1099,6 +1135,7 @@ EAPI void esvg_element_id_get(Ender_Element *e, const char **id)
  */
 EAPI void esvg_element_id_set(Ender_Element *e, const char *id)
 {
+	ender_element_property_value_set(e, ESVG_ELEMENT_ID, id, NULL);
 }
 
 /**
@@ -1422,6 +1459,16 @@ EAPI Eina_Bool esvg_element_setup(Ender_Element *e, Enesim_Error **error)
 
 	t = ender_element_object_get(e);
 	return _esvg_element_setup(t, NULL, NULL, error);
+}
+
+EAPI Ender_Element * esvg_element_topmost_get(Ender_Element *e)
+{
+	Edom_Tag *t;
+	Ender_Element *topmost;
+
+	t = ender_element_object_get(e);
+	esvg_element_internal_topmost_get(t, &topmost);
+	return topmost;
 }
 
 #if 0
