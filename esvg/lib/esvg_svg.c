@@ -551,7 +551,7 @@ EAPI Ender_Element * esvg_svg_new(void)
 	return ender_element_new_with_namespace("svg", "esvg");
 }
 
-Ender_Element * esvg_svg_element_find(Ender_Element *e, const char *id)
+EAPI Ender_Element * esvg_svg_element_find(Ender_Element *e, const char *id)
 {
 	Edom_Tag *t;
 

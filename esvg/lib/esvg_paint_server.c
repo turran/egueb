@@ -73,21 +73,6 @@ static void _esvg_paint_server_free(Edom_Tag *t)
 		thiz->descriptor.free(t);
 	free(thiz);
 }
-
-static Eina_Bool _esvg_paint_server_setup(Edom_Tag *t,
-		const Esvg_Element_Context *parent_context,
-		Esvg_Element_Context *context,
-		Esvg_Attribute_Presentation *attr,
-		Enesim_Error **error)
-{
-	Esvg_Paint_Server *thiz;
-
-	thiz = _esvg_paint_server_get(t);
-	printf("paint server setup!!!!!!!!!!!\n");
-	/* FIXME we should not go through here */
-	return EINA_TRUE;
-}
-
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
