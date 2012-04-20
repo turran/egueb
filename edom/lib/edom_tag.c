@@ -95,7 +95,6 @@ EAPI Edom_Tag * edom_tag_new(Edom_Tag_Descriptor *descriptor,
 		void *data)
 {
 	Edom_Tag *thiz;
-	Edom_Tag *topmost;
 
 	if (!descriptor)
 		return NULL;

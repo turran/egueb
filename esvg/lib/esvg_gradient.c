@@ -15,9 +15,16 @@
  * License along with this library.
  * If not, see <http://www.gnu.org/licenses/>.
  */
-#include "Esvg.h"
-#include "esvg_private.h"
-#include "esvg_values.h"
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
+#include "esvg_private_main.h"
+#include "esvg_private_attribute_presentation.h"
+#include "esvg_private_element.h"
+#include "esvg_private_renderable.h"
+#include "esvg_private_paint_server.h"
+#include "esvg_private_gradient.h"
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
@@ -27,185 +34,245 @@
 			EINA_MAGIC_FAIL(d, ESVG_GRADIENT_MAGIC);\
 	} while(0)
 
+static Ender_Property *ESVG_GRADIENT_STOP;
+
+typedef struct _Esvg_Gradient_Descriptor_Internal
+{
+	Edom_Tag_Free free;
+	Esvg_Gradient_Setup setup;
+	Esvg_Renderable_Renderer_Get renderer_get;
+} Esvg_Gradient_Descriptor_Internal;
+
 typedef struct _Esvg_Gradient
 {
 	EINA_MAGIC
-	Esvg_Gradient_State state;
-	Esvg_Gradient_Setup setup;
+	/* properties */
+	Esvg_Gradient_Context state;
+	/* private */
+	Esvg_Gradient_Descriptor_Internal descriptor;
 	Eina_Bool units_set : 1;
 	Eina_Bool transform_is_set : 1;
 	void *data;
 } Esvg_Gradient;
 
-static Esvg_Gradient * _esvg_gradient_get(Enesim_Renderer *r)
+static Esvg_Gradient * _esvg_gradient_get(Edom_Tag *t)
 {
 	Esvg_Gradient *thiz;
 
-	thiz = esvg_paint_server_data_get(r);
+	thiz = esvg_paint_server_data_get(t);
 	ESVG_GRADIENT_MAGIC_CHECK(thiz);
 
 	return thiz;
 }
 /*----------------------------------------------------------------------------*
- *                         Esvg Element interface                             *
+ *                       Esvg Paint Server interface                          *
  *----------------------------------------------------------------------------*/
-static Eina_Bool _esvg_gradient_setup(Enesim_Renderer *r,
-		const Enesim_Renderer_State *state,
-		Enesim_Renderer *rel)
+static Eina_Bool _esvg_gradient_setup(Edom_Tag *t,
+		Esvg_Element_Context *ctx,
+		Esvg_Renderable_Context *rctx,
+		Enesim_Error **error)
 {
 	Esvg_Gradient *thiz;
 
-	thiz = _esvg_gradient_get(r);
-	thiz->setup(r, state, rel, &thiz->state);
+	thiz = _esvg_gradient_get(t);
+	if (thiz->descriptor.setup)
+		thiz->descriptor.setup(t, ctx, rctx, &thiz->state, error);
 	return EINA_TRUE;
 }
 
-static void _esvg_gradient_cleanup(Enesim_Renderer *r)
+static void _esvg_gradient_free(Edom_Tag *t)
 {
 	Esvg_Gradient *thiz;
 
-	thiz = _esvg_gradient_get(r);
-	/* FIXME for later */
+	thiz = _esvg_gradient_get(t);
+	if (thiz->descriptor.free)
+		thiz->descriptor.free(t);
+	free(thiz);
 }
-/*============================================================================*
- *                                 Global                                     *
- *============================================================================*/
-Enesim_Renderer * esvg_gradient_new(Esvg_Gradient_Descriptor *descriptor,
-		void *data)
-{
-	Esvg_Gradient *thiz;
-	Esvg_Paint_Server_Descriptor pdescriptor;
-	Enesim_Renderer *r;
-
-	thiz = calloc(1, sizeof(Esvg_Gradient));
-	if (!thiz) return NULL;
-
-	EINA_MAGIC_SET(thiz, ESVG_GRADIENT_MAGIC);
-	thiz->setup = descriptor->setup;
-	thiz->data = data;
-
-	pdescriptor.name_get = descriptor->name_get;
-	pdescriptor.renderer_get = descriptor->renderer_get;
-	pdescriptor.setup = _esvg_gradient_setup;
-	pdescriptor.clone = descriptor->clone;
-
-	/* Default values */
-	thiz->state.units = ESVG_OBJECT_BOUNDING_BOX;
-	enesim_matrix_identity(&thiz->state.transform);
-
-	r = esvg_paint_server_new(&pdescriptor, thiz);
-	return r;
-}
-
-void * esvg_gradient_data_get(Enesim_Renderer *r)
-{
-	Esvg_Gradient *thiz;
-
-	thiz = _esvg_gradient_get(r);
-	return thiz->data;
-}
-/*============================================================================*
- *                                   API                                      *
- *============================================================================*/
-EAPI Eina_Bool esvg_is_gradient(Enesim_Renderer *r)
-{
-	Esvg_Gradient *thiz;
-	Eina_Bool ret;
-
-	if (!esvg_is_paint_server(r))
-		return EINA_FALSE;
-	thiz = esvg_paint_server_data_get(r);
-	ret = EINA_MAGIC_CHECK(thiz, ESVG_GRADIENT_MAGIC);
-
-	return ret;
-}
-
-EAPI void esvg_gradient_stop_add(Enesim_Renderer *r, Esvg_Gradient_Stop *s)
+/*----------------------------------------------------------------------------*
+ *                           The Ender interface                              *
+ *----------------------------------------------------------------------------*/
+static void _esvg_gradient_stop_add(Edom_Tag *t, Esvg_Gradient_Stop *s)
 {
 	Esvg_Gradient *thiz;
 	Esvg_Gradient_Stop *stop;
 
 	if (!s) return;
 
-	thiz = _esvg_gradient_get(r);
+	thiz = _esvg_gradient_get(t);
 
 	stop = malloc(sizeof(Esvg_Gradient_Stop));
 	*stop = *s;
 	thiz->state.stops = eina_list_append(thiz->state.stops, stop);
 }
 
-EAPI void esvg_gradient_stop_get(Enesim_Renderer *r, const Eina_List **l)
+static void _esvg_gradient_stop_get(Edom_Tag *t, const Eina_List **l)
 {
 	Esvg_Gradient *thiz;
 
 	if (!l) return;
 
-	thiz = _esvg_gradient_get(r);
+	thiz = _esvg_gradient_get(t);
 	*l = thiz->state.stops;
 }
 
-EAPI void esvg_gradient_units_set(Enesim_Renderer *r, Esvg_Gradient_Units units)
+static void _esvg_gradient_units_set(Edom_Tag *t, Esvg_Gradient_Units units)
 {
 	Esvg_Gradient *thiz;
 
-	thiz = _esvg_gradient_get(r);
+	thiz = _esvg_gradient_get(t);
 	thiz->state.units = units;
 	thiz->units_set = EINA_TRUE;
 }
 
-EAPI void esvg_gradient_units_get(Enesim_Renderer *r, Esvg_Gradient_Units *units)
+static void _esvg_gradient_units_get(Edom_Tag *t, Esvg_Gradient_Units *units)
 {
 	Esvg_Gradient *thiz;
 
-	thiz = _esvg_gradient_get(r);
+	thiz = _esvg_gradient_get(t);
 	if (units) *units = thiz->state.units;
 }
 
-EAPI Eina_Bool esvg_gradient_units_is_set(Enesim_Renderer *r)
+static Eina_Bool _esvg_gradient_units_is_set(Edom_Tag *t)
 {
 	Esvg_Gradient *thiz;
 
-	thiz = _esvg_gradient_get(r);
+	thiz = _esvg_gradient_get(t);
 	return thiz->units_set;
 }
 
-EAPI void esvg_gradient_transform_set(Enesim_Renderer *r, const Enesim_Matrix *transform)
+static void _esvg_gradient_transform_set(Edom_Tag *t, const Enesim_Matrix *transform)
 {
 	Esvg_Gradient *thiz;
 
-	thiz = _esvg_gradient_get(r);
+	thiz = _esvg_gradient_get(t);
 	if (transform) thiz->state.transform = *transform;
 }
 
-EAPI void esvg_gradient_transform_get(Enesim_Renderer *r, Enesim_Matrix *transform)
+static void _esvg_gradient_transform_get(Edom_Tag *t, Enesim_Matrix *transform)
 {
 	Esvg_Gradient *thiz;
 
-	thiz = _esvg_gradient_get(r);
+	thiz = _esvg_gradient_get(t);
 	if (transform) *transform = thiz->state.transform;
 }
 
-EAPI Eina_Bool esvg_gradient_transform_is_set(Enesim_Renderer *r)
+static Eina_Bool _esvg_gradient_transform_is_set(Edom_Tag *t)
 {
 	Esvg_Gradient *thiz;
 
-	thiz = _esvg_gradient_get(r);
+	thiz = _esvg_gradient_get(t);
 	return thiz->transform_is_set;
 }
 
-EAPI void esvg_gradient_spread_method_set(Enesim_Renderer *r, Esvg_Spread_Method spread_method)
+static void _esvg_gradient_spread_method_set(Edom_Tag *t, Esvg_Spread_Method spread_method)
 {
 	Esvg_Gradient *thiz;
 
-	thiz = _esvg_gradient_get(r);
+	thiz = _esvg_gradient_get(t);
 	thiz->state.spread_method = spread_method;
 }
 
-EAPI void esvg_gradient_spread_method_get(Enesim_Renderer *r, Esvg_Spread_Method *spread_method)
+static void _esvg_gradient_spread_method_get(Edom_Tag *t, Esvg_Spread_Method *spread_method)
 {
 	Esvg_Gradient *thiz;
 
-	thiz = _esvg_gradient_get(r);
+	thiz = _esvg_gradient_get(t);
 	if (spread_method) *spread_method = thiz->state.spread_method;
+}
+
+/*============================================================================*
+ *                                 Global                                     *
+ *============================================================================*/
+/* The ender wrapper */
+#include "generated/esvg_generated_gradient.c"
+
+Edom_Tag * esvg_gradient_new(Esvg_Gradient_Descriptor *descriptor,
+		Esvg_Type type,
+		void *data)
+{
+	Esvg_Gradient *thiz;
+	Esvg_Paint_Server_Descriptor pdescriptor;
+	Edom_Tag *t;
+	Enesim_Renderer *r;
+
+	thiz = calloc(1, sizeof(Esvg_Gradient));
+	if (!thiz) return NULL;
+
+	EINA_MAGIC_SET(thiz, ESVG_GRADIENT_MAGIC);
+	thiz->descriptor.setup = descriptor->setup;
+	thiz->data = data;
+
+	pdescriptor.child_add = descriptor->child_add;
+	pdescriptor.child_remove = descriptor->child_remove;
+	pdescriptor.attribute_set = descriptor->attribute_set;
+	pdescriptor.attribute_get = descriptor->attribute_get;
+	pdescriptor.cdata_set = descriptor->cdata_set;
+	pdescriptor.text_set = descriptor->text_set;
+	pdescriptor.free = _esvg_gradient_free;
+	pdescriptor.initialize = descriptor->initialize;
+	pdescriptor.setup = _esvg_gradient_setup;
+	pdescriptor.renderer_get = descriptor->renderer_get;
+
+	/* Default values */
+	thiz->state.units = ESVG_OBJECT_BOUNDING_BOX;
+	enesim_matrix_identity(&thiz->state.transform);
+
+	t = esvg_paint_server_new(&pdescriptor, type, thiz);
+	return t;
+}
+
+void * esvg_gradient_data_get(Edom_Tag *t)
+{
+	Esvg_Gradient *thiz;
+
+	thiz = _esvg_gradient_get(t);
+	return thiz->data;
+}
+/*============================================================================*
+ *                                   API                                      *
+ *============================================================================*/
+EAPI Eina_Bool esvg_is_gradient(Ender_Element *e)
+{
+}
+
+EAPI void esvg_gradient_stop_add(Ender_Element *e, Esvg_Gradient_Stop *s)
+{
+}
+
+EAPI void esvg_gradient_stop_get(Ender_Element *e, const Eina_List **l)
+{
+}
+
+EAPI void esvg_gradient_units_set(Ender_Element *e, Esvg_Gradient_Units units)
+{
+}
+
+EAPI void esvg_gradient_units_get(Ender_Element *e, Esvg_Gradient_Units *units)
+{
+}
+
+EAPI Eina_Bool esvg_gradient_units_is_set(Ender_Element *e)
+{
+}
+
+EAPI void esvg_gradient_transform_set(Ender_Element *e, const Enesim_Matrix *transform)
+{
+}
+
+EAPI void esvg_gradient_transform_get(Ender_Element *e, Enesim_Matrix *transform)
+{
+}
+
+EAPI Eina_Bool esvg_gradient_transform_is_set(Ender_Element *e)
+{
+}
+
+EAPI void esvg_gradient_spread_method_set(Ender_Element *e, Esvg_Spread_Method spread_method)
+{
+}
+
+EAPI void esvg_gradient_spread_method_get(Ender_Element *e, Esvg_Spread_Method *spread_method)
+{
 }
 

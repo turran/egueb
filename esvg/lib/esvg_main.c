@@ -41,9 +41,15 @@ static void _register_enders(void *data)
 {
 	/* register the dependency */
 	ender_loader_load("edom");
+	/* the abstracts first */
 	esvg_element_init();
 	esvg_renderable_init();
+	esvg_instantiable_init();
+	esvg_paint_server_init();
+	esvg_gradient_init();
+	/* now the classes */
 	esvg_line_init();
+	esvg_linear_gradient_init();
 	esvg_circle_init();
 	esvg_ellipse_init();
 	esvg_path_init();
@@ -87,6 +93,7 @@ static Eina_Bool _esvg_ender_init(void)
 	EDOM_ATTRIBUTE = ender_descriptor_property_get(tag_descriptor, "attribute");
 	EDOM_PARENT = ender_descriptor_property_get(tag_descriptor, "parent");
 	EDOM_CHILD = ender_descriptor_property_get(tag_descriptor, "child");
+	EDOM_TOPMOST = ender_descriptor_property_get(tag_descriptor, "topmost");
 
 
 	return EINA_TRUE;
@@ -107,6 +114,7 @@ static void _esvg_ender_shutdown(void)
  *                                 Global                                     *
  *============================================================================*/
 Ender_Property *EDOM_ATTRIBUTE = NULL;
+Ender_Property *EDOM_TOPMOST = NULL;
 Ender_Property *EDOM_CHILD = NULL;
 Ender_Property *EDOM_PARENT = NULL;
 int esvg_log_dom_global = -1;

@@ -23,6 +23,7 @@
 #include "esvg_private_attribute_presentation.h"
 #include "esvg_private_element.h"
 #include "esvg_private_renderable.h"
+#include "esvg_private_instantiable.h"
 #include "esvg_circle.h"
 /*============================================================================*
  *                                  Local                                     *
@@ -55,7 +56,7 @@ static Esvg_Circle * _esvg_circle_get(Edom_Tag *t)
 
 	if (esvg_element_type_get_internal(t) != ESVG_CIRCLE)
 		return NULL;
-	thiz = esvg_renderable_data_get(t);
+	thiz = esvg_instantiable_data_get(t);
 
 	return thiz;
 }
@@ -186,7 +187,7 @@ static Eina_Bool _esvg_circle_has_changed(Enesim_Renderer *r)
 }
 #endif
 
-static Esvg_Renderable_Descriptor _descriptor = {
+static Esvg_Instantiable_Descriptor _descriptor = {
 	/* .child_add		= */ NULL,
 	/* .child_remove	= */ NULL,
 	/* .attribute_get 	= */ _esvg_circle_attribute_get,
@@ -222,7 +223,7 @@ EAPI Edom_Tag * _esvg_circle_new(void)
 	thiz->current.cy = ESVG_COORD_0;
 	thiz->current.radius = ESVG_LENGTH_0;
 
-	t = esvg_renderable_new(&_descriptor, ESVG_CIRCLE, thiz);
+	t = esvg_instantiable_new(&_descriptor, ESVG_CIRCLE, thiz);
 	return t;
 }
 

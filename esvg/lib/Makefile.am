@@ -22,8 +22,12 @@ esvg_circle.c \
 esvg_element.c \
 esvg_ellipse.c \
 esvg_g.c \
+esvg_gradient.c \
+esvg_instantiable.c \
 esvg_line.c \
+esvg_linear_gradient.c \
 esvg_main.c \
+esvg_paint_server.c \
 esvg_parser.c \
 esvg_path.c \
 esvg_polygon.c \
@@ -35,7 +39,6 @@ esvg_types.c
 
 #esvg_attribute_regular.c \
 #esvg_clip_path.c \
-#esvg_paint_server.c \
 #esvg_gradient.c \
 #esvg_image.c \
 #esvg_linear_gradient.c \

@@ -23,110 +23,106 @@
 #include "esvg_private_attribute_presentation.h"
 #include "esvg_private_element.h"
 #include "esvg_private_renderable.h"
-#include "esvg_private_paint_server.h"
+#include "esvg_private_instantiable.h"
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
-#define ESVG_PAINT_SERVER_MAGIC_CHECK(d) \
+#define ESVG_INSTANTIABLE_MAGIC_CHECK(d) \
 	do {\
-		if (!EINA_MAGIC_CHECK(d, ESVG_PAINT_SERVER_MAGIC))\
-			EINA_MAGIC_FAIL(d, ESVG_PAINT_SERVER_MAGIC);\
+		if (!EINA_MAGIC_CHECK(d, ESVG_INSTANTIABLE_MAGIC))\
+			EINA_MAGIC_FAIL(d, ESVG_INSTANTIABLE_MAGIC);\
 	} while(0)
 
-static Ender_Property *ESVG_PAINT_SERVER_RENDERER;
-
-typedef struct _Esvg_Paint_Server_Descriptor_Internal
+typedef struct _Esvg_Instantiable_Descriptor_Internal
 {
 	Edom_Tag_Free free;
-	Esvg_Renderable_Setup setup;
-	Esvg_Renderable_Renderer_Get renderer_get;
-} Esvg_Paint_Server_Descriptor_Internal;
+} Esvg_Instantiable_Descriptor_Internal;
 
-typedef struct _Esvg_Paint_Server
+typedef struct _Esvg_Instantiable
 {
 	EINA_MAGIC
 	/* properties */
 	/* interface */
-	Esvg_Paint_Server_Descriptor_Internal descriptor;
+	Esvg_Instantiable_Descriptor_Internal descriptor;
 	/* private */
 	void *data;
-} Esvg_Paint_Server;
+} Esvg_Instantiable;
 
-static Esvg_Paint_Server * _esvg_paint_server_get(Edom_Tag *t)
+static Esvg_Instantiable * _esvg_instantiable_get(Edom_Tag *t)
 {
-	Esvg_Paint_Server *thiz;
+	Esvg_Instantiable *thiz;
 
 	thiz = esvg_renderable_data_get(t);
-	ESVG_PAINT_SERVER_MAGIC_CHECK(thiz);
+	ESVG_INSTANTIABLE_MAGIC_CHECK(thiz);
 
 	return thiz;
 }
 /*----------------------------------------------------------------------------*
- *                         Esvg Element interface                             *
+ *                           The Ender interface                              *
  *----------------------------------------------------------------------------*/
-static void _esvg_paint_server_free(Edom_Tag *t)
+/*----------------------------------------------------------------------------*
+ *                         The Esvg Element interface                         *
+ *----------------------------------------------------------------------------*/
+static void _esvg_instantiable_free(Edom_Tag *t)
 {
-	Esvg_Paint_Server *thiz;
+	Esvg_Instantiable *thiz;
 
-	thiz = _esvg_paint_server_get(t);
+	thiz = _esvg_instantiable_get(t);
 	if (thiz->descriptor.free)
 		thiz->descriptor.free(t);
 	free(thiz);
 }
-
-static Eina_Bool _esvg_paint_server_setup(Edom_Tag *t,
-		const Esvg_Element_Context *parent_context,
-		Esvg_Element_Context *context,
-		Esvg_Attribute_Presentation *attr,
-		Enesim_Error **error)
-{
-	Esvg_Paint_Server *thiz;
-
-	thiz = _esvg_paint_server_get(t);
-	printf("paint server setup!!!!!!!!!!!\n");
-	/* FIXME we should not go through here */
-	return EINA_TRUE;
-}
-
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
-#include "generated/esvg_generated_paint_server.c"
+/* The ender wrapper */
+#include "generated/esvg_generated_instantiable.c"
 
-Eina_Bool esvg_is_paint_server_internal(Edom_Tag *t)
+Eina_Bool esvg_is_instantiable_internal(Edom_Tag *t)
 {
-	Esvg_Paint_Server *thiz;
+	Esvg_Instantiable *thiz;
 	Eina_Bool ret;
 
-	if (!esvg_is_element_internal(t))
+	if (!esvg_is_renderable_internal(t))
 		return EINA_FALSE;
-	thiz = esvg_element_data_get(t);
-	ret = EINA_MAGIC_CHECK(thiz, ESVG_PAINT_SERVER_MAGIC);
+	thiz = esvg_renderable_data_get(t);
+	ret = EINA_MAGIC_CHECK(thiz, ESVG_INSTANTIABLE_MAGIC);
 
 	return ret;
 }
 
-Edom_Tag * esvg_paint_server_new(Esvg_Paint_Server_Descriptor *descriptor,
+void * esvg_instantiable_data_get(Edom_Tag *t)
+{
+	Esvg_Instantiable *thiz;
+
+	thiz = _esvg_instantiable_get(t);
+	return thiz->data;
+}
+
+Edom_Tag * esvg_instantiable_new(Esvg_Instantiable_Descriptor *descriptor,
 		Esvg_Type type,
 		void *data)
 {
-	Esvg_Paint_Server *thiz;
+	Esvg_Instantiable *thiz;
 	Esvg_Renderable_Descriptor pdescriptor;
 	Edom_Tag *t;
 
-	thiz = calloc(1, sizeof(Esvg_Paint_Server));
+	thiz = calloc(1, sizeof(Esvg_Instantiable));
 	if (!thiz) return NULL;
 
-	EINA_MAGIC_SET(thiz, ESVG_PAINT_SERVER_MAGIC);
+	EINA_MAGIC_SET(thiz, ESVG_INSTANTIABLE_MAGIC);
 	thiz->data = data;
-
+	/* our own descriptor */
+	thiz->descriptor.free = descriptor->free;
+	/* default values */
+	
 	pdescriptor.child_add = descriptor->child_add;
 	pdescriptor.child_remove = descriptor->child_remove;
 	pdescriptor.attribute_set = descriptor->attribute_set;
 	pdescriptor.attribute_get = descriptor->attribute_get;
 	pdescriptor.cdata_set = descriptor->cdata_set;
 	pdescriptor.text_set = descriptor->text_set;
-	pdescriptor.free = _esvg_paint_server_free;
+	pdescriptor.free = _esvg_instantiable_free;
 	pdescriptor.initialize = descriptor->initialize;
 	pdescriptor.setup = descriptor->setup;
 	pdescriptor.renderer_get = descriptor->renderer_get;
@@ -136,13 +132,6 @@ Edom_Tag * esvg_paint_server_new(Esvg_Paint_Server_Descriptor *descriptor,
 	return t;
 }
 
-void * esvg_paint_server_data_get(Edom_Tag *t)
-{
-	Esvg_Paint_Server *thiz;
-
-	thiz = _esvg_paint_server_get(t);
-	return thiz->data;
-}
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/
@@ -150,10 +139,10 @@ void * esvg_paint_server_data_get(Edom_Tag *t)
  * To be documented
  * FIXME: To be fixed
  */
-EAPI Eina_Bool esvg_is_paint_server(Ender_Element *e)
+EAPI Eina_Bool esvg_is_instantiable(Ender_Element *e)
 {
 	Edom_Tag *t;
 
 	t = ender_element_object_get(e);
-	return esvg_is_paint_server_internal(t);
+	return esvg_is_instantiable_internal(t);
 }

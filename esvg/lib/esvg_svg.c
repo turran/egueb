@@ -23,6 +23,8 @@
 #include "esvg_private_attribute_presentation.h"
 #include "esvg_private_element.h"
 #include "esvg_private_renderable.h"
+#include "esvg_private_instantiable.h"
+
 #include "esvg_svg.h"
 #include "esvg_element.h"
 #include "esvg_renderable.h"
@@ -38,6 +40,12 @@
  * onresize
  * onscroll
  * onzoom
+ *
+ * void pauseAnimations();
+ * void unpauseAnimations();
+ * boolean animationsPaused();
+ * float getCurrentTime();
+ * void setCurrentTime(in float seconds);
  */
 /*============================================================================*
  *                                  Local                                     *
@@ -49,7 +57,6 @@ static Ender_Property *ESVG_SVG_HEIGHT;
 static Ender_Property *ESVG_SVG_ACTUAL_WIDTH;
 static Ender_Property *ESVG_SVG_ACTUAL_HEIGHT;
 static Ender_Property *ESVG_SVG_VIEWBOX;
-
 
 typedef struct _Esvg_Svg
 {
@@ -75,11 +82,10 @@ static Esvg_Svg * _esvg_svg_get(Edom_Tag *t)
 
 	if (esvg_element_type_get_internal(t) != ESVG_SVG)
 		return NULL;
-	thiz = esvg_renderable_data_get(t);
+	thiz = esvg_instantiable_data_get(t);
 
 	return thiz;
 }
-
 /*----------------------------------------------------------------------------*
  *                       The Esvg Renderable interface                        *
  *----------------------------------------------------------------------------*/
@@ -135,30 +141,33 @@ static Eina_Bool _esvg_svg_attribute_get(Edom_Tag *tag, const char *attribute, c
 static Eina_Bool _esvg_svg_child_add(Edom_Tag *tag, Edom_Tag *child)
 {
 	Esvg_Svg *thiz;
+	Ender_Element *child_e;
 	const char *id;
 
 	thiz = _esvg_svg_get(tag);
+	if (!esvg_is_element_internal(child))
+		return;
+
 	/* if renderable, add the renderer into the compound */
-	if (esvg_is_renderable_internal(child))
+	if (esvg_is_instantiable_internal(child))
 	{
 		Enesim_Renderer *r = NULL;
 
 		esvg_renderable_internal_renderer_get(child, &r);
 		enesim_renderer_compound_layer_add(thiz->compound, r);
-		
 	}
+	child_e = esvg_element_ender_get(child);
+	//ender_event_listener_add(child_e, "property:child", _element_child_cb, thiz);
 
 	/* TODO add an event whenever the childs are added/removed from this element */
 	/* TODO iterate over the childs of this element and also add the ids */
+	/* TODO add an event whenever the child changes the id */
 
 	/* an svg can have any kind of child */
 	id = edom_tag_id_get(child);
 	if (id)
 	{
 		eina_hash_add(thiz->ids, id, child);
-		/* TODO add an event whenever the child
-		 * changes the id
-		 */
 	}
 
 	return EINA_TRUE;
@@ -259,7 +268,7 @@ static void _esvg_svg_free(Edom_Tag *t)
 	free(thiz);
 }
 
-static Esvg_Renderable_Descriptor _descriptor = {
+static Esvg_Instantiable_Descriptor _descriptor = {
 	/* .child_add		= */ _esvg_svg_child_add,
 	/* .child_remove	= */ NULL,
 	/* .attribute_get 	= */ _esvg_svg_attribute_get,
@@ -304,7 +313,7 @@ static Edom_Tag * _esvg_svg_new(void)
 
 	/* no default value for the view_box */
 
-	t = esvg_renderable_new(&_descriptor, ESVG_SVG, thiz);
+	t = esvg_instantiable_new(&_descriptor, ESVG_SVG, thiz);
 	return t;
 }
 
@@ -445,6 +454,14 @@ static void _esvg_svg_actual_height_get(Edom_Tag *t, double *actual_height)
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
+Ender_Element * esvg_svg_internal_element_find(Edom_Tag *t, const char *id)
+{
+	Esvg_Svg *thiz;
+
+	thiz = _esvg_svg_get(t);
+	return eina_hash_find(thiz->ids, id);
+}
+
 /* The ender wrapper */
 #define _esvg_svg_actual_width_set NULL
 #define _esvg_svg_actual_height_set NULL
@@ -554,4 +571,12 @@ EAPI void esvg_svg_actual_height_get(Ender_Element *e, double *actual_height)
 
 	t = ender_element_object_get(e);
 	_esvg_svg_actual_height_get(t, actual_height);
+}
+
+Ender_Element * esvg_svg_element_get(Ender_Element *e, const char *id)
+{
+	Edom_Tag *t;
+
+	t = ender_element_object_get(e);
+	return esvg_svg_internal_element_find(t, id);
 }

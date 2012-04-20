@@ -383,11 +383,11 @@ static void * _esvg_parser_tag_new(Edom_Parser *parser, int tag_id)
 
 	switch (tag_id)
 	{
-#if 0
 		case ESVG_LINEARGRADIENT:
-		tag = esvg_parser_linear_gradient_new(parser);
+		tag = esvg_linear_gradient_new();
 		break;
 
+#if 0
 		case ESVG_RADIALGRADIENT:
 		tag = esvg_parser_radial_gradient_new(parser);
 		break;
@@ -652,6 +652,10 @@ EAPI Ender_Element * esvg_parser_load(const char *filename,
 		Edom_Tag *t = ender_element_object_get(tag);
 		edom_tag_dump(t);
 	}
+	/* TODO whenever the file has been parsed trigger the onload
+	 * event?
+	 */
+
 	/* FIXME we should handle the style thing correctly
 	 * so far we were applying it once the document is loaded
 	 * this is fine, but what will happen whenever some style

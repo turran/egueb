@@ -23,6 +23,7 @@
 #include "esvg_private_attribute_presentation.h"
 #include "esvg_private_element.h"
 #include "esvg_private_renderable.h"
+#include "esvg_private_instantiable.h"
 #include "esvg_path.h"
 /*============================================================================*
  *                                  Local                                     *
@@ -44,7 +45,7 @@ static Esvg_Path * _esvg_path_get(Edom_Tag *t)
 
 	if (esvg_element_type_get_internal(t) != ESVG_PATH)
 		return NULL;
-	thiz = esvg_renderable_data_get(t);
+	thiz = esvg_instantiable_data_get(t);
 
 	return thiz;
 }
@@ -346,7 +347,7 @@ void _esvg_path_free(Edom_Tag *t)
 	free(thiz);
 }
 
-static Esvg_Renderable_Descriptor _descriptor = {
+static Esvg_Instantiable_Descriptor _descriptor = {
 	/* .child_add		= */ NULL,
 	/* .child_remove	= */ NULL,
 	/* .attribute_get 	= */ _esvg_path_attribute_get,
@@ -376,7 +377,7 @@ static Edom_Tag * _esvg_path_new(void)
 	enesim_renderer_rop_set(r, ENESIM_BLEND);
 	/* default values */
 
-	t = esvg_renderable_new(&_descriptor, ESVG_PATH, thiz);
+	t = esvg_instantiable_new(&_descriptor, ESVG_PATH, thiz);
 	return t;
 }
 

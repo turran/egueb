@@ -1541,7 +1541,7 @@ EAPI const char * esvg_type_string_to(Esvg_Type type)
 		case ESVG_HKERN: return "";
 		case ESVG_IMAGE: return "image";
 		case ESVG_LINE: return "line";
-		case ESVG_LINEARGRADIENT: return "";
+		case ESVG_LINEARGRADIENT: return "linearGradient";
 		case ESVG_MARKER: return "marker";
 		case ESVG_MASK: return "mask";
 		case ESVG_METADATA: return "";
@@ -1551,11 +1551,11 @@ EAPI const char * esvg_type_string_to(Esvg_Type type)
 		case ESVG_PATTERN: return "pattern";
 		case ESVG_POLYGON: return "polygon";
 		case ESVG_POLYLINE: return "polyline";
-		case ESVG_RADIALGRADIENT: return "";
+		case ESVG_RADIALGRADIENT: return "radialGradient";
 		case ESVG_RECT: return "rect";
 		case ESVG_SCRIPT: return "";
 		case ESVG_SET: return "";
-		case ESVG_STOP: return "";
+		case ESVG_STOP: return "stop";
 		case ESVG_STYLE: return "";
 		case ESVG_SVG: return "svg" /* 70 */;
 		case ESVG_SWITCH: return "";

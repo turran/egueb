@@ -65,6 +65,7 @@
 #include "esvg_element.h"
 #include "esvg_renderable.h"
 #include "esvg_ellipse.h"
+#include "esvg_linear_gradient.h"
 #include "esvg_svg.h"
 #include "esvg_rect.h"
 #include "esvg_path.h"
@@ -73,6 +74,7 @@
 #include "esvg_line.h"
 #include "esvg_circle.h"
 #include "esvg_g.h"
+#include "esvg_gradient.h"
 
 EAPI Eina_Bool esvg_is_shape(Edom_Tag *e);
 
@@ -112,18 +114,6 @@ EAPI void esvg_image_height_get(Edom_Tag *e, Esvg_Length *height);
 EAPI void esvg_image_href_set(Edom_Tag *e, const char *href);
 EAPI void esvg_image_href_get(Edom_Tag *e, const char **href);
 
-EAPI Eina_Bool esvg_is_gradient(Edom_Tag *e);
-EAPI void esvg_gradient_stop_add(Edom_Tag *e, Esvg_Gradient_Stop *s);
-EAPI void esvg_gradient_stop_get(Edom_Tag *e, const Eina_List **l);
-EAPI void esvg_gradient_units_set(Edom_Tag *e, Esvg_Gradient_Units units);
-EAPI void esvg_gradient_units_get(Edom_Tag *e, Esvg_Gradient_Units *units);
-EAPI Eina_Bool esvg_gradient_units_is_set(Edom_Tag *e);
-EAPI void esvg_gradient_transform_set(Edom_Tag *e, const Enesim_Matrix *transform);
-EAPI void esvg_gradient_transform_get(Edom_Tag *e, Enesim_Matrix *transform);
-EAPI Eina_Bool esvg_gradient_transform_is_set(Edom_Tag *e);
-EAPI void esvg_gradient_spread_method_set(Edom_Tag *e, Esvg_Spread_Method spread_method);
-EAPI void esvg_gradient_spread_method_get(Edom_Tag *e, Esvg_Spread_Method *spread_method);
-
 EAPI Edom_Tag * esvg_radial_gradient_new(void);
 EAPI Eina_Bool esvg_is_radial_gradient(Edom_Tag *e);
 EAPI void esvg_radial_gradient_cx_set(Edom_Tag *e, const Esvg_Coord *cx);
@@ -141,23 +131,6 @@ EAPI Eina_Bool esvg_radial_gradient_fy_is_set(Edom_Tag *e);
 EAPI void esvg_radial_gradient_r_set(Edom_Tag *e, const Esvg_Length *rad);
 EAPI void esvg_radial_gradient_r_get(Edom_Tag *e, Esvg_Length *rad);
 EAPI Eina_Bool esvg_radial_gradient_r_is_set(Edom_Tag *e);
-
-EAPI Edom_Tag * esvg_linear_gradient_new(void);
-EAPI Eina_Bool esvg_is_linear_gradient(Edom_Tag *e);
-EAPI void esvg_linear_gradient_x1_set(Edom_Tag *e, const Esvg_Coord *x1);
-EAPI void esvg_linear_gradient_x1_get(Edom_Tag *e, Esvg_Coord *x1);
-EAPI Eina_Bool esvg_linear_gradient_x1_is_set(Edom_Tag *e);
-EAPI void esvg_linear_gradient_y1_set(Edom_Tag *e, const Esvg_Coord *y1);
-EAPI void esvg_linear_gradient_y1_get(Edom_Tag *e, Esvg_Coord *y1);
-EAPI Eina_Bool esvg_linear_gradient_y1_is_set(Edom_Tag *e);
-EAPI void esvg_linear_gradient_x2_set(Edom_Tag *e, const Esvg_Coord *x2);
-EAPI void esvg_linear_gradient_x2_get(Edom_Tag *e, Esvg_Coord *x2);
-EAPI Eina_Bool esvg_linear_gradient_x2_is_set(Edom_Tag *e);
-EAPI void esvg_linear_gradient_y2_set(Edom_Tag *e, const Esvg_Coord *y2);
-EAPI void esvg_linear_gradient_y2_get(Edom_Tag *e, Esvg_Coord *y2);
-EAPI Eina_Bool esvg_linear_gradient_y2_is_set(Edom_Tag *e);
-
-EAPI Eina_Bool esvg_is_paint_server(Edom_Tag *e);
 
 EAPI Edom_Tag * esvg_pattern_new(void);
 EAPI Eina_Bool esvg_is_pattern(Edom_Tag *e);

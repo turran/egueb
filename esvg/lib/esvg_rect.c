@@ -23,6 +23,7 @@
 #include "esvg_private_attribute_presentation.h"
 #include "esvg_private_element.h"
 #include "esvg_private_renderable.h"
+#include "esvg_private_instantiable.h"
 #include "esvg_rect.h"
 /*============================================================================*
  *                                  Local                                     *
@@ -60,7 +61,7 @@ static Esvg_Rect * _esvg_rect_get(Edom_Tag *t)
 
 	if (esvg_element_type_get_internal(t) != ESVG_RECT)
 		return NULL;
-	thiz = esvg_renderable_data_get(t);
+	thiz = esvg_instantiable_data_get(t);
 
 	return thiz;
 }
@@ -228,7 +229,7 @@ static void _esvg_rect_free(Edom_Tag *t)
 	free(thiz);
 }
 
-static Esvg_Renderable_Descriptor _descriptor = {
+static Esvg_Instantiable_Descriptor _descriptor = {
 	/* .child_add		= */ NULL,
 	/* .child_remove	= */ NULL,
 	/* .attribute_get 	= */ _esvg_rect_attribute_get,
@@ -241,7 +242,6 @@ static Esvg_Renderable_Descriptor _descriptor = {
 	/* .setup		= */ _esvg_rect_setup,
 	/* .renderer_get	= */ _esvg_rect_renderer_get,
 };
-
 /*----------------------------------------------------------------------------*
  *                           The Ender interface                              *
  *----------------------------------------------------------------------------*/
@@ -267,7 +267,7 @@ static Edom_Tag * _esvg_rect_new(void)
 /* 	thiz->current.rx = ESVG_COORD_0; */
 /* 	thiz->current.ry = ESVG_COORD_0; */
 
-	t = esvg_renderable_new(&_descriptor, ESVG_RECT, thiz);
+	t = esvg_instantiable_new(&_descriptor, ESVG_RECT, thiz);
 	return t;
 }
 

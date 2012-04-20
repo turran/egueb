@@ -76,11 +76,29 @@ namespace "esvg" {
 		double "y_dpi";
 	};
 
+	abstract "instantiable" : "renderable" {
+	};
+
+	abstract "paint_server" : "renderable" {
+
+	};
+
+	abstract "gradient" : "paint_server" {
+
+	};
+
 	abstract "animation" : "element" {
 		
 	};
 
-	class "svg" : "renderable" {
+	class "linear_gradient" : "gradient" {
+		esvg_length "x1";
+		esvg_length "y1";
+		esvg_length "x2";
+		esvg_length "y2";
+	};
+
+	class "svg" : "instantiable" {
 		esvg_length "x";
 		esvg_length "y";
 		esvg_length "width";
@@ -90,11 +108,11 @@ namespace "esvg" {
 		esvg_viewbox "viewbox";
 	};
 
-	class "g" : "renderable" {
+	class "g" : "instantiable" {
 
 	};
 
-	class "rect" : "renderable" {
+	class "rect" : "instantiable" {
 		esvg_length "x";
 		esvg_length "y";
 		esvg_length "width";
@@ -103,43 +121,43 @@ namespace "esvg" {
 		esvg_length "ry";
 	};
 
-	class "ellipse" : "element" {
+	class "ellipse" : "instantiable" {
 		esvg_length "cx";
 		esvg_length "cy";
 		esvg_length "rx";
 		esvg_length "ry";
 	};
 
-	class "circle" : "element" {
+	class "circle" : "instantiable" {
 		esvg_length "cx";
 		esvg_length "cy";
 		esvg_length "r";
 	};
 
-	class "path" : "element" {
+	class "path" : "instantiable" {
 		[esvg_path_command] "d";
 	};
 
-	class "line" : "element" {
+	class "line" : "instantiable" {
 		esvg_length "x1";
 		esvg_length "x2";
 		esvg_length "y1";
 		esvg_length "y2";
 	};
 
-	class "polyline" : "element" {
+	class "polyline" : "instantiable" {
 		[esvg_point] "point";
 	};
 
-	class "polygon" : "element" {
+	class "polygon" : "instantiable" {
 		[esvg_point] "point";
 	};
 
-	class "use" : "element" {
+	class "use" : "instantiable" {
 
 	};
 
-	class "text" : "element" {
+	class "text" : "instantiable" {
 
 	};
 };

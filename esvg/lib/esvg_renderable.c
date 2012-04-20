@@ -71,91 +71,95 @@ static Esvg_Renderable * _esvg_renderable_get(Edom_Tag *t)
 }
 
 static void _esvg_shape_enesim_state_get(Edom_Tag *t,
-		const Esvg_Element_Context *estate,
+		const Esvg_Element_Context *ctx,
 		const Esvg_Attribute_Presentation *attr,
-		Esvg_Renderable_Context *context)
+		Esvg_Renderable_Context *rctx)
 {
 	double stroke_viewport = 0;
 	uint8_t fill_opacity;
 	uint8_t stroke_opacity;
 	uint8_t opacity;
 
-	context->draw_mode = 0;
+	rctx->draw_mode = 0;
 	/* set the opacity */
 	opacity = attr->opacity * 255;
 	if (attr->color_set)
 	{
 		const Esvg_Color *c = &attr->color;
-		enesim_color_components_from(&context->color,
+		enesim_color_components_from(&rctx->color,
 				opacity, c->r, c->g, c->b);
 	}
 	else
 	{
-		enesim_color_components_from(&context->color,
+		enesim_color_components_from(&rctx->color,
 				opacity, 0xff, 0xff, 0xff);
 	}
 
 	/* set the fill */
 	fill_opacity = attr->fill_opacity * 255;
 	/* FIXME the fill color multiplies the fill renderer */
-	context->draw_mode |= ENESIM_SHAPE_DRAW_MODE_FILL;
+	rctx->draw_mode |= ENESIM_SHAPE_DRAW_MODE_FILL;
 	if (attr->fill.type == ESVG_PAINT_COLOR)
 	{
 		const Esvg_Color *c = &attr->fill.value.color;
-		enesim_color_components_from(&context->fill_color,
+		enesim_color_components_from(&rctx->fill_color,
 				fill_opacity, c->r, c->g, c->b);
 	}
 	else if (attr->fill.type == ESVG_PAINT_SERVER)
 	{
 		/* just get the renderer here, dont do the setup */
-		//context->fill_renderer = esvg_element_renderer_get(attr->fill.value.paint_server);
+		printf("fill rendererrrrr!!!\n");
+		/* TODO here we should fetch the id from the property */
+		/* TODO then, check that the referenced element is of type paint server */
+		/* TODO finally, get the renderer? */
+		//rctx->fill_renderer = esvg_element_renderer_get(attr->fill.value.paint_server);
 	}
 	else if (attr->fill.type == ESVG_PAINT_NONE)
 	{
-		context->draw_mode &= ~ENESIM_SHAPE_DRAW_MODE_FILL;
+		rctx->draw_mode &= ~ENESIM_SHAPE_DRAW_MODE_FILL;
 	}
 	else if (attr->fill.type == ESVG_PAINT_CURRENT_COLOR)
 	{
-		context->fill_color = ENESIM_COLOR_FULL;
+		rctx->fill_color = ENESIM_COLOR_FULL;
 	}
 	if (attr->fill_rule == ESVG_EVEN_ODD)
 	{
-		context->fill_rule = ENESIM_SHAPE_FILL_RULE_EVEN_ODD;
+		rctx->fill_rule = ENESIM_SHAPE_FILL_RULE_EVEN_ODD;
 	}
 	else
 	{
-		context->fill_rule = ENESIM_SHAPE_FILL_RULE_NON_ZERO;
+		rctx->fill_rule = ENESIM_SHAPE_FILL_RULE_NON_ZERO;
 	}
 	/* set the stroke */
 	stroke_opacity = attr->stroke_opacity * 255;
-	context->draw_mode |= ENESIM_SHAPE_DRAW_MODE_STROKE;
+	rctx->draw_mode |= ENESIM_SHAPE_DRAW_MODE_STROKE;
 	if (attr->stroke.type == ESVG_PAINT_COLOR)
 	{
 		const Esvg_Color *c = &attr->stroke.value.color;
-		enesim_color_components_from(&context->stroke_color,
+		enesim_color_components_from(&rctx->stroke_color,
 				stroke_opacity, c->r, c->g, c->b);
 	}
 	else if (attr->stroke.type == ESVG_PAINT_SERVER)
 	{
 		/* just get the renderer here, dont do the setup */
-		//context->stroke_renderer = esvg_element_renderer_get(attr->stroke.value.paint_server);
+		//rctx->stroke_renderer = esvg_element_renderer_get(attr->stroke.value.paint_server);
 	}
 	else if (attr->stroke.type == ESVG_PAINT_NONE)
 	{
-		context->draw_mode &= ~ENESIM_SHAPE_DRAW_MODE_STROKE;
+		rctx->draw_mode &= ~ENESIM_SHAPE_DRAW_MODE_STROKE;
 	}
 	else if (attr->stroke.type == ESVG_PAINT_CURRENT_COLOR)
 	{
-		context->stroke_color = ENESIM_COLOR_FULL;
+		rctx->stroke_color = ENESIM_COLOR_FULL;
 	}
-	context->stroke_cap = attr->stroke_line_cap;
-	context->stroke_join = attr->stroke_line_join;
+	rctx->stroke_cap = attr->stroke_line_cap;
+	rctx->stroke_join = attr->stroke_line_join;
 	/* handle the stroke weight */
 	if (attr->stroke_width.unit == ESVG_UNIT_LENGTH_PERCENT)
 	{
-		stroke_viewport = hypot(estate->viewbox.width, estate->viewbox.height) / M_SQRT2;
+		stroke_viewport = hypot(ctx->viewbox.width, ctx->viewbox.height) / M_SQRT2;
 	}
-	context->stroke_weight = esvg_length_final_get(
+	rctx->stroke_weight = esvg_length_final_get(
 			&attr->stroke_width,
 			stroke_viewport);
 }

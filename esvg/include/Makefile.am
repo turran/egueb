@@ -10,6 +10,7 @@ esvg_element.h \
 esvg_ellipse.h \
 esvg_g.h \
 esvg_line.h \
+esvg_linear_gradient.h \
 esvg_main.h \
 esvg_path.h \
 esvg_polygon.h \

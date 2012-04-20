@@ -9,6 +9,7 @@ EAPI int esvg_init(void);
 EAPI int esvg_shutdown(void);
 
 extern Ender_Property *EDOM_ATTRIBUTE;
+extern Ender_Property *EDOM_TOPMOST;
 extern Ender_Property *EDOM_CHILD;
 extern Ender_Property *EDOM_PARENT;
 

@@ -23,6 +23,7 @@
 #include "esvg_private_attribute_presentation.h"
 #include "esvg_private_element.h"
 #include "esvg_private_renderable.h"
+#include "esvg_private_instantiable.h"
 #include "esvg_polygon.h"
 /*============================================================================*
  *                                  Local                                     *
@@ -44,7 +45,7 @@ static Esvg_Polygon * _esvg_polygon_get(Edom_Tag *t)
 
 	if (esvg_element_type_get_internal(t) != ESVG_POLYGON)
 		return NULL;
-	thiz = esvg_renderable_data_get(t);
+	thiz = esvg_instantiable_data_get(t);
 
 	return thiz;
 }
@@ -142,7 +143,7 @@ static void _esvg_polygon_free(Edom_Tag *t)
 	free(thiz);
 }
 
-static Esvg_Renderable_Descriptor _descriptor = {
+static Esvg_Instantiable_Descriptor _descriptor = {
 	/* .child_add		= */ NULL,
 	/* .child_remove	= */ NULL,
 	/* .attribute_get 	= */ _esvg_polygon_attribute_get,
@@ -175,7 +176,7 @@ static Edom_Tag * _esvg_polygon_new(void)
 	thiz->r = r;
 	/* default values */
 
-	t = esvg_renderable_new(&_descriptor, ESVG_POLYGON, thiz);
+	t = esvg_instantiable_new(&_descriptor, ESVG_POLYGON, thiz);
 	return t;
 }
 

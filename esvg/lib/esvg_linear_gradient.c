@@ -15,21 +15,27 @@
  * License along with this library.
  * If not, see <http://www.gnu.org/licenses/>.
  */
-#include "Esvg.h"
-#include "esvg_private.h"
-#include "esvg_values.h"
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
+#include "esvg_private_main.h"
+#include "esvg_private_attribute_presentation.h"
+#include "esvg_private_element.h"
+#include "esvg_private_renderable.h"
+#include "esvg_private_paint_server.h"
+#include "esvg_private_gradient.h"
+#include "esvg_linear_gradient.h"
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
-#define ESVG_LINEAR_GRADIENT_MAGIC_CHECK(d) \
-	do {\
-		if (!EINA_MAGIC_CHECK(d, ESVG_LINEAR_GRADIENT_MAGIC))\
-			EINA_MAGIC_FAIL(d, ESVG_LINEAR_GRADIENT_MAGIC);\
-	} while(0)
+static Ender_Property *ESVG_LINEAR_GRADIENT_X1;
+static Ender_Property *ESVG_LINEAR_GRADIENT_Y1;
+static Ender_Property *ESVG_LINEAR_GRADIENT_X2;
+static Ender_Property *ESVG_LINEAR_GRADIENT_Y2;
 
 typedef struct _Esvg_Linear_Gradient
 {
-	EINA_MAGIC
 	/* properties */
 	Esvg_Coord x1;
 	Esvg_Coord y1;
@@ -43,42 +49,72 @@ typedef struct _Esvg_Linear_Gradient
 	Eina_Bool y2_set : 1;
 } Esvg_Linear_Gradient;
 
-static Esvg_Linear_Gradient * _esvg_linear_gradient_get(Enesim_Renderer *r)
+static Esvg_Linear_Gradient * _esvg_linear_gradient_get(Edom_Tag *t)
 {
 	Esvg_Linear_Gradient *thiz;
 
-	thiz = esvg_gradient_data_get(r);
-	ESVG_LINEAR_GRADIENT_MAGIC_CHECK(thiz);
+	if (esvg_element_type_get_internal(t) != ESVG_LINEARGRADIENT)
+		return NULL;
+	thiz = esvg_gradient_data_get(t);
 
 	return thiz;
 }
 /*----------------------------------------------------------------------------*
  *                       Esvg Paint Server interface                          *
  *----------------------------------------------------------------------------*/
-static const char * _esvg_linear_gradient_name_get(Enesim_Renderer *r)
+static Eina_Bool _esvg_linear_gradient_attribute_set(Ender_Element *e,
+		const char *key, const char *value)
 {
-	return "linear_gradient";
+	if (strcmp(key, "x1") == 0)
+	{
+		Esvg_Coord x;
+
+		esvg_length_string_from(&x, value, ESVG_COORD_0);
+		esvg_linear_gradient_x1_set(e, &x);
+	}
+	else if (strcmp(key, "y1") == 0)
+	{
+		Esvg_Coord y;
+
+		esvg_length_string_from(&y, value, ESVG_COORD_0);
+		esvg_linear_gradient_y1_set(e, &y);
+	}
+	else if (strcmp(key, "x2") == 0)
+	{
+		Esvg_Coord x;
+
+		esvg_length_string_from(&x, value, ESVG_COORD_0);
+		esvg_linear_gradient_x2_set(e, &x);
+	}
+	else if (strcmp(key, "y2") == 0)
+	{
+		Esvg_Coord y;
+
+		esvg_length_string_from(&y, value, ESVG_COORD_0);
+		esvg_linear_gradient_y2_set(e, &y);
+	}
+
+	return EINA_TRUE;
 }
 
-static Enesim_Renderer * _linear_gradient_renderer_get(Enesim_Renderer *r,
-		const Esvg_Element_Context *state,
-		const Esvg_Attribute_Presentation *attr)
+static Eina_Bool _esvg_linear_gradient_attribute_get(Edom_Tag *tag, const char *attribute, char **value)
+{
+	return EINA_FALSE;
+}
+
+static Enesim_Renderer * _esvg_linear_gradient_renderer_get(Edom_Tag *t)
 {
 	Esvg_Linear_Gradient *thiz;
 
-	thiz = _esvg_linear_gradient_get(r);
+	thiz = _esvg_linear_gradient_get(t);
 	return thiz->r;
 }
 
-static void _linear_gradient_clone(Enesim_Renderer *r, Enesim_Renderer *rr)
-{
-
-}
-
-static Eina_Bool _linear_gradient_setup(Enesim_Renderer *r,
-		const Esvg_Element_Context *state,
-		Enesim_Renderer *rel,
-		const Esvg_Gradient_State *gstate)
+static Eina_Bool _esvg_linear_gradient_setup(Edom_Tag *t,
+		Esvg_Element_Context *ctx,
+		Esvg_Renderable_Context *rctx,
+		Esvg_Gradient_Context *gctx,
+		Enesim_Error **error)
 {
 	Esvg_Linear_Gradient *thiz;
 	Esvg_Gradient_Stop *stop;
@@ -91,10 +127,10 @@ static Eina_Bool _linear_gradient_setup(Enesim_Renderer *r,
 	double x2;
 	double y2;
 
-	thiz = _esvg_linear_gradient_get(r);
+	thiz = _esvg_linear_gradient_get(t);
 
-	gu = gstate->units;
-	switch (gstate->spread_method)
+	gu = gctx->units;
+	switch (gctx->spread_method)
 	{
 		case ESVG_SPREAD_METHOD_PAD:
 		mode = ENESIM_PAD;
@@ -120,7 +156,7 @@ static Eina_Bool _linear_gradient_setup(Enesim_Renderer *r,
 		x2 = esvg_length_final_get(&thiz->x2, 1);
 		y2 = esvg_length_final_get(&thiz->y2, 1);
 
-		enesim_renderer_destination_boundings(rel, &bbox, 0, 0);
+		//enesim_renderer_destination_boundings(rel, &bbox, 0, 0);
 		enesim_matrix_values_set(&m, bbox.w, 0, bbox.x, 0, bbox.h, bbox.y, 0, 0, 1);
 	}
 	else
@@ -129,18 +165,18 @@ static Eina_Bool _linear_gradient_setup(Enesim_Renderer *r,
 		double h;
 
 		/* use the user space coordiantes */
-		w = state->viewbox_w;
-		h = state->viewbox_h;
+		w = ctx->viewbox.width;
+		h = ctx->viewbox.height;
 		x1 = esvg_length_final_get(&thiz->x1, w);
 		y1 = esvg_length_final_get(&thiz->y1, h);
 		x2 = esvg_length_final_get(&thiz->x2, w);
 		y2 = esvg_length_final_get(&thiz->y2, h);
 
-		m = state->transform;
+		m = ctx->transform;
 	}
-	if (enesim_matrix_type_get(&gstate->transform) != ENESIM_MATRIX_IDENTITY)
+	if (enesim_matrix_type_get(&gctx->transform) != ENESIM_MATRIX_IDENTITY)
 	{
-		enesim_matrix_compose(&m, &gstate->transform, &m);
+		enesim_matrix_compose(&m, &gctx->transform, &m);
 	}
 	enesim_renderer_geometry_transformation_set(thiz->r, &m);
 
@@ -150,7 +186,7 @@ static Eina_Bool _linear_gradient_setup(Enesim_Renderer *r,
 	enesim_renderer_gradient_linear_x1_set(thiz->r, x2);
 	enesim_renderer_gradient_linear_y1_set(thiz->r, y2);
 
-	EINA_LIST_FOREACH(gstate->stops, l, stop)
+	EINA_LIST_FOREACH(gctx->stops, l, stop)
 	{
 		Enesim_Renderer_Gradient_Stop s;
 
@@ -173,23 +209,37 @@ static Eina_Bool _linear_gradient_setup(Enesim_Renderer *r,
 	return EINA_TRUE;
 }
 
-static Esvg_Gradient_Descriptor _descriptor = {
-	/* .setup =		*/ _linear_gradient_setup,
-	/* .name_get =		*/ _esvg_linear_gradient_name_get,
-	/* .renderer_get =	*/ _linear_gradient_renderer_get,
-	/* .clone =		*/ _linear_gradient_clone,
-};
-/*============================================================================*
- *                                   API                                      *
- *============================================================================*/
-EAPI Enesim_Renderer * esvg_linear_gradient_new(void)
+static void _esvg_linear_gradient_free(Edom_Tag *t)
 {
 	Esvg_Linear_Gradient *thiz;
+
+	thiz = _esvg_linear_gradient_get(t);
+	free(thiz);
+}
+
+static Esvg_Gradient_Descriptor _descriptor = {
+	/* .child_add		= */ NULL,
+	/* .child_remove	= */ NULL,
+	/* .attribute_get 	= */ _esvg_linear_gradient_attribute_get,
+	/* .cdata_set 		= */ NULL,
+	/* .text_set 		= */ NULL,
+	/* .free 		= */ _esvg_linear_gradient_free,
+	/* .initialize 		= */ NULL,
+	/* .attribute_set 	= */ _esvg_linear_gradient_attribute_set,
+	/* .clone		= */ NULL,
+	/* .setup		= */ _esvg_linear_gradient_setup,
+	/* .renderer_get	= */ _esvg_linear_gradient_renderer_get,
+};
+/*----------------------------------------------------------------------------*
+ *                           The Ender interface                              *
+ *----------------------------------------------------------------------------*/
+static Edom_Tag * _esvg_linear_gradient_new(void)
+{
+	Esvg_Linear_Gradient *thiz;
+	Edom_Tag *t;
 	Enesim_Renderer *r;
 
 	thiz = calloc(1, sizeof(Esvg_Linear_Gradient));
-
-	EINA_MAGIC_SET(thiz, ESVG_LINEAR_GRADIENT_MAGIC);
 
 	r = enesim_renderer_gradient_linear_new();
 	enesim_renderer_gradient_mode_set(r, ENESIM_PAD);
@@ -200,30 +250,15 @@ EAPI Enesim_Renderer * esvg_linear_gradient_new(void)
 	thiz->x2 = ESVG_LENGTH_100_PERCENT;
 	thiz->y2 = ESVG_LENGTH_0;
 
-
-	r = esvg_gradient_new(&_descriptor, thiz);
-
-	return r;
+	t = esvg_gradient_new(&_descriptor, ESVG_LINEARGRADIENT, thiz);
+	return t;
 }
 
-EAPI Eina_Bool esvg_is_linear_gradient(Enesim_Renderer *r)
-{
-	Esvg_Linear_Gradient *thiz;
-	Eina_Bool ret;
-
-	if (!esvg_is_gradient(r))
-		return EINA_FALSE;
-	thiz = esvg_gradient_data_get(r);
-	ret = EINA_MAGIC_CHECK(thiz, ESVG_LINEAR_GRADIENT_MAGIC);
-
-	return ret;
-}
-
-EAPI void esvg_linear_gradient_x1_set(Enesim_Renderer *r, const Esvg_Coord *x1)
+static void _esvg_linear_gradient_x1_set(Edom_Tag *t, const Esvg_Coord *x1)
 {
 	Esvg_Linear_Gradient *thiz;
 
-	thiz = _esvg_linear_gradient_get(r);
+	thiz = _esvg_linear_gradient_get(t);
 	if (!x1)
 	{
 		thiz->x1_set = EINA_FALSE;
@@ -235,28 +270,28 @@ EAPI void esvg_linear_gradient_x1_set(Enesim_Renderer *r, const Esvg_Coord *x1)
 	}
 }
 
-EAPI void esvg_linear_gradient_x1_get(Enesim_Renderer *r, Esvg_Coord *x1)
+static void _esvg_linear_gradient_x1_get(Edom_Tag *t, Esvg_Coord *x1)
 {
 	Esvg_Linear_Gradient *thiz;
 
 	if (!x1) return;
-	thiz = _esvg_linear_gradient_get(r);
+	thiz = _esvg_linear_gradient_get(t);
 	*x1 = thiz->x1;
 }
 
-EAPI Eina_Bool esvg_linear_gradient_x1_is_set(Enesim_Renderer *r)
+static Eina_Bool _esvg_linear_gradient_x1_is_set(Edom_Tag *t)
 {
 	Esvg_Linear_Gradient *thiz;
 
-	thiz = _esvg_linear_gradient_get(r);
+	thiz = _esvg_linear_gradient_get(t);
 	return thiz->x1_set;
 }
 
-EAPI void esvg_linear_gradient_y1_set(Enesim_Renderer *r, const Esvg_Coord *y1)
+static void _esvg_linear_gradient_y1_set(Edom_Tag *t, const Esvg_Coord *y1)
 {
 	Esvg_Linear_Gradient *thiz;
 
-	thiz = _esvg_linear_gradient_get(r);
+	thiz = _esvg_linear_gradient_get(t);
 	if (!y1)
 	{
 		thiz->y1_set = EINA_FALSE;
@@ -268,28 +303,28 @@ EAPI void esvg_linear_gradient_y1_set(Enesim_Renderer *r, const Esvg_Coord *y1)
 	}
 }
 
-EAPI void esvg_linear_gradient_y1_get(Enesim_Renderer *r, Esvg_Coord *y1)
+static void _esvg_linear_gradient_y1_get(Edom_Tag *t, Esvg_Coord *y1)
 {
 	Esvg_Linear_Gradient *thiz;
 
 	if (!y1) return;
-	thiz = _esvg_linear_gradient_get(r);
+	thiz = _esvg_linear_gradient_get(t);
 	*y1 = thiz->y1;
 }
 
-EAPI Eina_Bool esvg_linear_gradient_y1_is_set(Enesim_Renderer *r)
+static Eina_Bool _esvg_linear_gradient_y1_is_set(Edom_Tag *t)
 {
 	Esvg_Linear_Gradient *thiz;
 
-	thiz = _esvg_linear_gradient_get(r);
+	thiz = _esvg_linear_gradient_get(t);
 	return thiz->y1_set;
 }
 
-EAPI void esvg_linear_gradient_x2_set(Enesim_Renderer *r, const Esvg_Coord *x2)
+static void _esvg_linear_gradient_x2_set(Edom_Tag *t, const Esvg_Coord *x2)
 {
 	Esvg_Linear_Gradient *thiz;
 
-	thiz = _esvg_linear_gradient_get(r);
+	thiz = _esvg_linear_gradient_get(t);
 	if (!x2)
 	{
 		thiz->x2_set = EINA_FALSE;
@@ -301,28 +336,28 @@ EAPI void esvg_linear_gradient_x2_set(Enesim_Renderer *r, const Esvg_Coord *x2)
 	}
 }
 
-EAPI void esvg_linear_gradient_x2_get(Enesim_Renderer *r, Esvg_Coord *x2)
+static void _esvg_linear_gradient_x2_get(Edom_Tag *t, Esvg_Coord *x2)
 {
 	Esvg_Linear_Gradient *thiz;
 
 	if (!x2) return;
-	thiz = _esvg_linear_gradient_get(r);
+	thiz = _esvg_linear_gradient_get(t);
 	*x2 = thiz->x2;
 }
 
-EAPI Eina_Bool esvg_linear_gradient_x2_is_set(Enesim_Renderer *r)
+static Eina_Bool _esvg_linear_gradient_x2_is_set(Edom_Tag *t)
 {
 	Esvg_Linear_Gradient *thiz;
 
-	thiz = _esvg_linear_gradient_get(r);
+	thiz = _esvg_linear_gradient_get(t);
 	return thiz->x2_set;
 }
 
-EAPI void esvg_linear_gradient_y2_set(Enesim_Renderer *r, const Esvg_Coord *y2)
+static void _esvg_linear_gradient_y2_set(Edom_Tag *t, const Esvg_Coord *y2)
 {
 	Esvg_Linear_Gradient *thiz;
 
-	thiz = _esvg_linear_gradient_get(r);
+	thiz = _esvg_linear_gradient_get(t);
 	if (!y2)
 	{
 		thiz->y2_set = EINA_FALSE;
@@ -334,19 +369,83 @@ EAPI void esvg_linear_gradient_y2_set(Enesim_Renderer *r, const Esvg_Coord *y2)
 	}
 }
 
-EAPI void esvg_linear_gradient_y2_get(Enesim_Renderer *r, Esvg_Coord *y2)
+static void _esvg_linear_gradient_y2_get(Edom_Tag *t, Esvg_Coord *y2)
 {
 	Esvg_Linear_Gradient *thiz;
 
 	if (!y2) return;
-	thiz = _esvg_linear_gradient_get(r);
+	thiz = _esvg_linear_gradient_get(t);
 	*y2 = thiz->y2;
 }
 
-EAPI Eina_Bool esvg_linear_gradient_y2_is_set(Enesim_Renderer *r)
+static Eina_Bool _esvg_linear_gradient_y2_is_set(Edom_Tag *t)
 {
 	Esvg_Linear_Gradient *thiz;
 
-	thiz = _esvg_linear_gradient_get(r);
+	thiz = _esvg_linear_gradient_get(t);
 	return thiz->y2_set;
+}
+/*============================================================================*
+ *                                 Global                                     *
+ *============================================================================*/
+/* The ender wrapper */
+#include "generated/esvg_generated_linear_gradient.c"
+/*============================================================================*
+ *                                   API                                      *
+ *============================================================================*/
+EAPI Ender_Element * esvg_linear_gradient_new(void)
+{
+	return ender_element_new_with_namespace("linear_gradient", "esvg");
+}
+
+EAPI Eina_Bool esvg_is_linear_gradient(Ender_Element *e)
+{
+}
+
+EAPI void esvg_linear_gradient_x1_set(Ender_Element *e, const Esvg_Coord *x1)
+{
+}
+
+EAPI void esvg_linear_gradient_x1_get(Ender_Element *e, Esvg_Coord *x1)
+{
+}
+
+EAPI Eina_Bool esvg_linear_gradient_x1_is_set(Ender_Element *e)
+{
+}
+
+EAPI void esvg_linear_gradient_y1_set(Ender_Element *e, const Esvg_Coord *y1)
+{
+}
+
+EAPI void esvg_linear_gradient_y1_get(Ender_Element *e, Esvg_Coord *y1)
+{
+}
+
+EAPI Eina_Bool esvg_linear_gradient_y1_is_set(Ender_Element *e)
+{
+}
+
+EAPI void esvg_linear_gradient_x2_set(Ender_Element *e, const Esvg_Coord *x2)
+{
+}
+
+EAPI void esvg_linear_gradient_x2_get(Ender_Element *e, Esvg_Coord *x2)
+{
+}
+
+EAPI Eina_Bool esvg_linear_gradient_x2_is_set(Ender_Element *e)
+{
+}
+
+EAPI void esvg_linear_gradient_y2_set(Ender_Element *e, const Esvg_Coord *y2)
+{
+}
+
+EAPI void esvg_linear_gradient_y2_get(Ender_Element *e, Esvg_Coord *y2)
+{
+}
+
+EAPI Eina_Bool esvg_linear_gradient_y2_is_set(Ender_Element *e)
+{
 }

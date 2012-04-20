@@ -23,6 +23,7 @@
 #include "esvg_private_attribute_presentation.h"
 #include "esvg_private_element.h"
 #include "esvg_private_renderable.h"
+#include "esvg_private_instantiable.h"
 #include "esvg_g.h"
 /*============================================================================*
  *                                  Local                                     *
@@ -40,7 +41,7 @@ static Esvg_G * _esvg_g_get(Edom_Tag *t)
 
 	if (esvg_element_type_get_internal(t) != ESVG_G)
 		return NULL;
-	thiz = esvg_renderable_data_get(t);
+	thiz = esvg_instantiable_data_get(t);
 
 	return thiz;
 }
@@ -53,7 +54,7 @@ static Eina_Bool _esvg_g_child_add(Edom_Tag *tag, Edom_Tag *child)
 
 	/* if renderable, add the renderer into the compound */
 	thiz = _esvg_g_get(tag);
-	if (esvg_is_renderable_internal(child))
+	if (esvg_is_instantiable_internal(child))
 	{
 		Enesim_Renderer *r = NULL;
 
@@ -98,7 +99,7 @@ static void _esvg_g_free(Edom_Tag *t)
 	free(thiz);
 }
 
-static Esvg_Renderable_Descriptor _descriptor = {
+static Esvg_Instantiable_Descriptor _descriptor = {
 	/* .child_add		= */ _esvg_g_child_add,
 	/* .child_remove	= */ NULL,
 	/* .attribute_get 	= */ NULL,
@@ -127,7 +128,7 @@ static Edom_Tag * _esvg_g_new(void)
 	thiz->r = r;
 	enesim_renderer_rop_set(r, ENESIM_BLEND);
 
-	t = esvg_renderable_new(&_descriptor, ESVG_G, thiz);
+	t = esvg_instantiable_new(&_descriptor, ESVG_G, thiz);
 	return t;
 }
 /*============================================================================*

@@ -23,6 +23,7 @@
 #include "esvg_private_attribute_presentation.h"
 #include "esvg_private_element.h"
 #include "esvg_private_renderable.h"
+#include "esvg_private_instantiable.h"
 #include "esvg_line.h"
 /*============================================================================*
  *                                  Local                                     *
@@ -56,7 +57,7 @@ static Esvg_Line * _esvg_line_get(Edom_Tag *t)
 
 	if (esvg_element_type_get_internal(t) != ESVG_LINE)
 		return NULL;
-	thiz = esvg_renderable_data_get(t);
+	thiz = esvg_instantiable_data_get(t);
 
 	return thiz;
 }
@@ -192,7 +193,7 @@ static void _esvg_line_free(Edom_Tag *t)
 	free(thiz);
 }
 
-static Esvg_Renderable_Descriptor _descriptor = {
+static Esvg_Instantiable_Descriptor _descriptor = {
 	/* .child_add		= */ NULL,
 	/* .child_remove	= */ NULL,
 	/* .attribute_get 	= */ _esvg_line_attribute_get,
@@ -223,7 +224,7 @@ static Edom_Tag * _esvg_line_new(void)
 	/* default values */
 	/* FIXME defualt values */
 
-	t = esvg_renderable_new(&_descriptor, ESVG_LINE, thiz);
+	t = esvg_instantiable_new(&_descriptor, ESVG_LINE, thiz);
 	return t;
 }
 
@@ -325,6 +326,7 @@ EAPI Eina_Bool esvg_is_line(Ender_Element *e)
 
 EAPI void esvg_line_x1_set(Ender_Element *e, const Esvg_Coord *x1)
 {
+	ender_element_property_value_set(e, ESVG_LINE_X1, x1, NULL);
 }
 
 EAPI void esvg_line_x1_get(Ender_Element *e, Esvg_Coord *x1)
@@ -333,6 +335,7 @@ EAPI void esvg_line_x1_get(Ender_Element *e, Esvg_Coord *x1)
 
 EAPI void esvg_line_y1_set(Ender_Element *e, const Esvg_Coord *y1)
 {
+	ender_element_property_value_set(e, ESVG_LINE_Y1, y1, NULL);
 }
 
 EAPI void esvg_line_y1_get(Ender_Element *e, Esvg_Coord *y1)
@@ -341,6 +344,7 @@ EAPI void esvg_line_y1_get(Ender_Element *e, Esvg_Coord *y1)
 
 EAPI void esvg_line_x2_set(Ender_Element *e, const Esvg_Coord *x2)
 {
+	ender_element_property_value_set(e, ESVG_LINE_X2, x2, NULL);
 }
 
 EAPI void esvg_line_x2_get(Ender_Element *e, Esvg_Coord *x2)
@@ -349,6 +353,7 @@ EAPI void esvg_line_x2_get(Ender_Element *e, Esvg_Coord *x2)
 
 EAPI void esvg_line_y2_set(Ender_Element *e, const Esvg_Coord *y2)
 {
+	ender_element_property_value_set(e, ESVG_LINE_Y2, y2, NULL);
 }
 
 EAPI void esvg_line_y2_get(Ender_Element *e, Esvg_Coord *y2)

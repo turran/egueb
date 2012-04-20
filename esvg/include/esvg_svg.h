@@ -13,4 +13,6 @@ EAPI void esvg_svg_viewbox_set(Ender_Element *e, Esvg_View_Box *vb);
 EAPI void esvg_svg_actual_width_get(Ender_Element *e, double *actual_width);
 EAPI void esvg_svg_actual_height_get(Ender_Element *e, double *actual_height);
 
+Ender_Element * esvg_svg_element_get(Ender_Element *e, const char *id);
+
 #endif
