@@ -19,6 +19,7 @@ typedef struct _Esvg_Instantiable_Descriptor {
 } Esvg_Instantiable_Descriptor;
 
 void * esvg_instantiable_data_get(Edom_Tag *t);
+Eina_Bool esvg_is_instantiable_internal(Edom_Tag *t);
 Edom_Tag * esvg_instantiable_new(Esvg_Instantiable_Descriptor *descriptor, Esvg_Type type, void *data);
 
 #endif

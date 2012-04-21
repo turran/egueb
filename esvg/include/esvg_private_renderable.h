@@ -21,6 +21,7 @@ typedef struct _Esvg_Renderable_Context {
 typedef Enesim_Renderer * (*Esvg_Renderable_Renderer_Get)(Edom_Tag *t);
 typedef Eina_Bool (*Esvg_Renderable_Setup)(Edom_Tag *t,
 		Esvg_Element_Context *ctx,
+		Esvg_Attribute_Presentation *attr,
 		Esvg_Renderable_Context *rctx,
 		Enesim_Error **error);
 

@@ -24,6 +24,7 @@
 #include "esvg_private_element.h"
 #include "esvg_private_renderable.h"
 #include "esvg_svg.h"
+#include "esvg_renderable.h"
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
@@ -57,6 +58,12 @@ typedef struct _Esvg_Renderable
 	/* interface */
 	Esvg_Renderable_Descriptor_Internal descriptor;
 	/* private */
+	Esvg_Paint fill_paint_last;
+	Esvg_Paint stroke_paint_last;
+	Ender_Element *fill_ender;
+	Edom_Tag *fill_tag;
+	Ender_Element *stroke_ender;
+	Edom_Tag *stroke_tag;
 	Esvg_Renderable_Context context;
 	void *data;
 } Esvg_Renderable;
@@ -80,7 +87,7 @@ static void * _esvg_renderable_uri_local_get(const char *name, void *data)
 	Ender_Element *relative;
 
 	relative = esvg_svg_element_find(topmost, name);
-	printf("requesting id!!!! %s %p\n", name, relative);
+	return relative;
 }
 
 static Esvg_Uri_Descriptor _uri_descriptor = {
@@ -93,10 +100,13 @@ static void _esvg_shape_enesim_state_get(Edom_Tag *t,
 		const Esvg_Attribute_Presentation *attr,
 		Esvg_Renderable_Context *rctx)
 {
+	Esvg_Renderable *thiz;
 	double stroke_viewport = 0;
 	uint8_t fill_opacity;
 	uint8_t stroke_opacity;
 	uint8_t opacity;
+
+	thiz = _esvg_renderable_get(t);
 
 	rctx->draw_mode = 0;
 	/* set the opacity */
@@ -126,7 +136,6 @@ static void _esvg_shape_enesim_state_get(Edom_Tag *t,
 	else if (attr->fill.type == ESVG_PAINT_SERVER)
 	{
 		Ender_Element *topmost;
-		Ender_Element *fill;
 
 		esvg_element_internal_topmost_get(t, &topmost);
 		if (topmost)
@@ -136,6 +145,15 @@ static void _esvg_shape_enesim_state_get(Edom_Tag *t,
 			printf("topmost = %p\n", topmost);
 			/* just get the renderer here, dont do the setup */
 			e = esvg_uri_string_from(attr->fill.value.paint_server, &_uri_descriptor, topmost);
+			if (e)
+			{
+				Enesim_Renderer *fill_r;
+
+				thiz->fill_ender = e;
+				thiz->fill_tag = ender_element_object_get(e);
+				fill_r = esvg_renderable_renderer_get(e);
+				rctx->fill_renderer = fill_r;
+			}
 			printf("fill rendererrrrr!!!\n");
 		}
 		/* TODO here we should fetch the id from the property */
@@ -295,10 +313,13 @@ static Eina_Bool _esvg_renderable_setup(Edom_Tag *t,
 	else
 #endif
 		_esvg_shape_enesim_state_get(t, context, attr, &thiz->context);
-	
+
 	/* do the setup */
 	if (thiz->descriptor.setup)
-		return thiz->descriptor.setup(t, context, &thiz->context, error);
+	{
+		if (!thiz->descriptor.setup(t, context, attr, &thiz->context, error))
+			return EINA_FALSE;
+	}
 #if 0
 	if (attr->clip_path_set)
 	{
@@ -306,9 +327,14 @@ static Eina_Bool _esvg_renderable_setup(Edom_Tag *t,
 
 		ret = enesim_renderer_setup(attr->clip_path, s, error);
 	}
+#endif
 	/* in case we are going to use the fill renderer do its own setup */
-	if (attr->fill_set && attr->fill.type == ESVG_PAINT_SERVER)
-		esvg_paint_server_renderer_setup(attr->fill.value.paint_server, context, r);
+	if (attr->fill_set && attr->fill.type == ESVG_PAINT_SERVER && thiz->fill_ender)
+	{
+		printf("doing the paint server setup\n");
+		esvg_element_internal_setup(thiz->fill_tag, context, attr, error);
+	}
+#if 0
 	/* in case we are going to use the stroke renderer do its own setup */
 	if (attr->stroke_set && attr->stroke.type == ESVG_PAINT_SERVER)
 		esvg_paint_server_renderer_setup(attr->stroke.value.paint_server, context, r);

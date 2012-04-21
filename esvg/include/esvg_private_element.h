@@ -46,6 +46,10 @@ Eina_Bool esvg_is_element_internal(Edom_Tag *t);
 
 void esvg_element_topmost_set(Edom_Tag *t, Ender_Element *topmost);
 void esvg_element_internal_topmost_get(Edom_Tag *t, Ender_Element **e);
+Eina_Bool esvg_element_internal_setup(Edom_Tag *t,
+		const Esvg_Element_Context *state,
+		const Esvg_Attribute_Presentation *attr,
+		Enesim_Error **error);
 
 void esvg_element_state_compose(Edom_Tag *t, const Esvg_Element_Context *s, Esvg_Element_Context *d);
 

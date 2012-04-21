@@ -107,6 +107,7 @@ static Enesim_Renderer * _esvg_linear_gradient_renderer_get(Edom_Tag *t)
 	Esvg_Linear_Gradient *thiz;
 
 	thiz = _esvg_linear_gradient_get(t);
+	printf("linear renderer get\n");
 	return thiz->r;
 }
 
@@ -128,7 +129,7 @@ static Eina_Bool _esvg_linear_gradient_setup(Edom_Tag *t,
 	double y2;
 
 	thiz = _esvg_linear_gradient_get(t);
-
+	printf("linear setup\n");
 	gu = gctx->units;
 	switch (gctx->spread_method)
 	{

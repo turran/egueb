@@ -58,6 +58,13 @@ static Ender_Property *ESVG_SVG_ACTUAL_WIDTH;
 static Ender_Property *ESVG_SVG_ACTUAL_HEIGHT;
 static Ender_Property *ESVG_SVG_VIEWBOX;
 
+typedef struct _Esvg_Svg_Setup_Data
+{
+	Esvg_Element_Context *ctx;
+	Esvg_Attribute_Presentation *attr;
+	Enesim_Error **error;
+} Esvg_Svg_Setup_Data;
+
 typedef struct _Esvg_Svg
 {
 	/* properties */
@@ -89,12 +96,25 @@ static Esvg_Svg * _esvg_svg_get(Edom_Tag *t)
 	return thiz;
 }
 
+static Eina_Bool _esvg_svg_child_setup_cb(Edom_Tag *t, Edom_Tag *child, void *data)
+{
+	Esvg_Svg_Setup_Data *svg_data = data;
+
+	if (!esvg_is_instantiable_internal(child))
+		return EINA_TRUE;
+
+	if (!esvg_element_internal_setup(child, svg_data->ctx, svg_data->attr, svg_data->error))
+	{
+		return EINA_FALSE;
+	}
+	return EINA_TRUE;
+}
+
 /* FIXME the ender events just trigger once the id has changed so we dont know the old one */
 static void _esvg_svg_child_id_changed(Ender_Element *e, const char *event_name, void *event_data, void *data)
 {
 
 }
-
 
 static void _esvg_svg_child_child_cb(Ender_Element *e, const char *event_name, void *event_data, void *data)
 {
@@ -248,10 +268,12 @@ static Eina_Bool _esvg_svg_child_remove(Edom_Tag *t, Edom_Tag *child)
 
 static Eina_Bool _esvg_svg_setup(Edom_Tag *t,
 		Esvg_Element_Context *ctx,
+		Esvg_Attribute_Presentation *attr,
 		Esvg_Renderable_Context *rctx,
 		Enesim_Error **error)
 {
 	Esvg_Svg *thiz;
+	Esvg_Svg_Setup_Data data;
 	Eina_List *l;
 	Enesim_Renderer *child;
 	Enesim_Renderer *parent;
@@ -290,6 +312,13 @@ static Eina_Bool _esvg_svg_setup(Edom_Tag *t,
 	}
 	ctx->viewbox.width = width;
 	ctx->viewbox.height = height;
+
+	/* call the setup on the instantiables */
+	data.ctx = ctx;
+	data.attr = attr;
+	data.error = error;
+	/* call the child setup */
+	edom_tag_child_foreach(t, _esvg_svg_child_setup_cb, &data);
 
 	return EINA_TRUE;
 }

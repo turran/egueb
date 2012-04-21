@@ -85,6 +85,7 @@ static Enesim_Renderer * _esvg_polygon_renderer_get(Edom_Tag *t)
 
 static Eina_Bool _esvg_polygon_setup(Edom_Tag *t,
 		Esvg_Element_Context *ctx,
+		Esvg_Attribute_Presentation *attr,
 		Esvg_Renderable_Context *rctx,
 		Enesim_Error **error)
 {

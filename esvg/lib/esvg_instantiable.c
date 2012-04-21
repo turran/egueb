@@ -115,7 +115,7 @@ Edom_Tag * esvg_instantiable_new(Esvg_Instantiable_Descriptor *descriptor,
 	/* our own descriptor */
 	thiz->descriptor.free = descriptor->free;
 	/* default values */
-	
+
 	pdescriptor.child_add = descriptor->child_add;
 	pdescriptor.child_remove = descriptor->child_remove;
 	pdescriptor.attribute_set = descriptor->attribute_set;

@@ -112,11 +112,6 @@ typedef struct _Esvg_Parser_Element
 	void *data;
 } Esvg_Element_Id_Callback;
 
-static Eina_Bool _esvg_element_setup(Edom_Tag *t,
-		const Esvg_Element_Context *state,
-		const Esvg_Attribute_Presentation *attr,
-		Enesim_Error **error);
-
 static Esvg_Element * _esvg_element_get(Edom_Tag *t)
 {
 	Esvg_Element *thiz;
@@ -125,18 +120,6 @@ static Esvg_Element * _esvg_element_get(Edom_Tag *t)
 	ESVG_ELEMENT_MAGIC_CHECK(thiz);
 
 	return thiz;
-}
-
-static Eina_Bool _esvg_child_setup_cb(Edom_Tag *t, Edom_Tag *child, void *data)
-{
-	Esvg_Element *thiz;
-
-	thiz = _esvg_element_get(t);
-	if (!_esvg_element_setup(child, &thiz->state_final, &thiz->attr_final, data))
-	{
-		return EINA_FALSE;
-	}
-	return EINA_TRUE;
 }
 
 #if 0
@@ -887,8 +870,39 @@ static Ecss_Context _esvg_element_css_context = {
 	/* .get_next_sibling 	= */ _esvg_element_css_get_next_sibling,
 };
 
+/*============================================================================*
+ *                                 Global                                     *
+ *============================================================================*/
+Esvg_Type esvg_element_type_get_internal(Edom_Tag *t)
+{
+	Esvg_Element *thiz;
+
+	thiz = _esvg_element_get(t);
+	return thiz->type;
+}
+
+Eina_Bool esvg_is_element_internal(Edom_Tag *t)
+{
+	Esvg_Element *thiz;
+	Eina_Bool ret;
+
+	thiz = edom_tag_data_get(t);
+	ret = EINA_MAGIC_CHECK(thiz, ESVG_ELEMENT_MAGIC);
+
+	return ret;
+}
+
+void esvg_element_internal_topmost_get(Edom_Tag *t, Ender_Element **e)
+{
+	Esvg_Element *thiz;
+
+	if (!e) return;
+	thiz = _esvg_element_get(t);
+	*e = thiz->topmost;
+}
+
 /* state and attr are the parents one */
-static Eina_Bool _esvg_element_setup(Edom_Tag *t,
+Eina_Bool esvg_element_internal_setup(Edom_Tag *t,
 		const Esvg_Element_Context *state,
 		const Esvg_Attribute_Presentation *attr,
 		Enesim_Error **error)
@@ -940,48 +954,7 @@ static Eina_Bool _esvg_element_setup(Edom_Tag *t,
 
 	if (!thiz->descriptor.setup(t, state, &thiz->state_final, &thiz->attr_final, error))
 		return EINA_FALSE;
-	/* call the child setup */
-	edom_tag_child_foreach(t, _esvg_child_setup_cb, error);
-
 	return EINA_TRUE;
-}
-/*============================================================================*
- *                                 Global                                     *
- *============================================================================*/
-Esvg_Type esvg_element_type_get_internal(Edom_Tag *t)
-{
-	Esvg_Element *thiz;
-
-	thiz = _esvg_element_get(t);
-	return thiz->type;
-}
-
-Eina_Bool esvg_is_element_internal(Edom_Tag *t)
-{
-	Esvg_Element *thiz;
-	Eina_Bool ret;
-
-	thiz = edom_tag_data_get(t);
-	ret = EINA_MAGIC_CHECK(thiz, ESVG_ELEMENT_MAGIC);
-
-	return ret;
-}
-
-void esvg_element_topmost_set(Edom_Tag *t, Ender_Element *topmost)
-{
-	Esvg_Element *thiz;
-
-	thiz = _esvg_element_get(t);
-	thiz->topmost = topmost;
-}
-
-void esvg_element_internal_topmost_get(Edom_Tag *t, Ender_Element **e)
-{
-	Esvg_Element *thiz;
-
-	if (!e) return;
-	thiz = _esvg_element_get(t);
-	*e = thiz->topmost;
 }
 
 void esvg_element_initialize(Ender_Element *e)
@@ -992,6 +965,14 @@ void esvg_element_initialize(Ender_Element *e)
 	thiz->e = e;
 	if (thiz->descriptor.initialize)
 		thiz->descriptor.initialize(e);
+}
+
+void esvg_element_topmost_set(Edom_Tag *t, Ender_Element *topmost)
+{
+	Esvg_Element *thiz;
+
+	thiz = _esvg_element_get(t);
+	thiz->topmost = topmost;
 }
 
 void * esvg_element_data_get(Edom_Tag *t)
@@ -1458,7 +1439,7 @@ EAPI Eina_Bool esvg_element_setup(Ender_Element *e, Enesim_Error **error)
 	Edom_Tag *t;
 
 	t = ender_element_object_get(e);
-	return _esvg_element_setup(t, NULL, NULL, error);
+	return esvg_element_internal_setup(t, NULL, NULL, error);
 }
 
 EAPI Ender_Element * esvg_element_topmost_get(Ender_Element *e)
