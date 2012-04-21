@@ -82,6 +82,7 @@ typedef struct _Esvg_Element_Setup_Data
 	Esvg_Attribute_Presentation *attr;
 	Enesim_Error **error;
 	Esvg_Element_Setup_Filter filter;
+	Eina_Bool ret;
 } Esvg_Element_Setup_Data;
 
 typedef struct _Esvg_Element
@@ -177,11 +178,12 @@ static Eina_Bool _esvg_element_child_setup_cb(Edom_Tag *t, Edom_Tag *child, void
 	if (setup_data->filter)
 	{
 		if (!setup_data->filter(t, child))
-			return EINA_FALSE;
+			return EINA_TRUE;
 	}
 
 	if (!esvg_element_internal_setup(child, setup_data->ctx, setup_data->attr, setup_data->error))
 	{
+		setup_data->ret = EINA_FALSE;
 		return EINA_FALSE;
 	}
 	return EINA_TRUE;
@@ -939,8 +941,10 @@ Eina_Bool esvg_element_internal_child_setup(Edom_Tag *t,
 	data.attr = attr;
 	data.error = error;
 	data.filter = filter;
+	data.ret = EINA_TRUE;
 
 	edom_tag_child_foreach(t, _esvg_element_child_setup_cb, &data);
+	return data.ret;
 }
 
 Eina_Bool esvg_element_internal_setup(Edom_Tag *t,

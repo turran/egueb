@@ -5,7 +5,6 @@ typedef struct _Esvg_Gradient_Context {
 	Esvg_Gradient_Units units;
 	Esvg_Spread_Method spread_method;
 	Enesim_Matrix transform;
-	Eina_List *stops;
 } Esvg_Gradient_Context;
 
 typedef Eina_Bool (*Esvg_Gradient_Setup)(Edom_Tag *t,

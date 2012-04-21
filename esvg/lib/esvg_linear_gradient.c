@@ -59,6 +59,36 @@ static Esvg_Linear_Gradient * _esvg_linear_gradient_get(Edom_Tag *t)
 
 	return thiz;
 }
+
+static Eina_Bool _esvg_linear_gradient_stop_add(Edom_Tag *t, Edom_Tag *child_t, void *data)
+{
+	Esvg_Linear_Gradient *thiz = data;
+	Esvg_Length offset;
+	double stop_opacity;
+	Esvg_Color stop_color;
+
+	printf("iterating over the stops!!!!\n");
+#if 0
+	esvg_stop_internal_opacity_get(child, &stop_opacity);
+	esvg_stop_internal_stop_color_
+
+	enesim_argb_components_from(&s.argb, lrint(stop->stop_opacity * 255),
+			stop->stop_color.r, stop->stop_color.g, stop->stop_color.b);
+
+	if (stop->offset.unit == ESVG_UNIT_LENGTH_PERCENT)
+		s.pos = stop->offset.value / 100.0;
+	else
+		s.pos = stop->offset.value;
+
+	if (s.pos > 1)
+		s.pos = 1;
+	else if (s.pos < 0)
+		s.pos = 0;
+	printf("color = %08x pos = %g\n", s.argb, s.pos);
+	enesim_renderer_gradient_stop_add(thiz->r, &s);
+#endif
+}
+
 /*----------------------------------------------------------------------------*
  *                       Esvg Paint Server interface                          *
  *----------------------------------------------------------------------------*/
@@ -187,27 +217,7 @@ static Eina_Bool _esvg_linear_gradient_setup(Edom_Tag *t,
 	enesim_renderer_gradient_linear_x1_set(thiz->r, x2);
 	enesim_renderer_gradient_linear_y1_set(thiz->r, y2);
 
-#if 0
-	EINA_LIST_FOREACH(gctx->stops, l, stop)
-	{
-		Enesim_Renderer_Gradient_Stop s;
-
-		enesim_argb_components_from(&s.argb, lrint(stop->stop_opacity * 255),
-				stop->stop_color.r, stop->stop_color.g, stop->stop_color.b);
-
-		if (stop->offset.unit == ESVG_UNIT_LENGTH_PERCENT)
-			s.pos = stop->offset.value / 100.0;
-		else
-			s.pos = stop->offset.value;
-
-		if (s.pos > 1)
-			s.pos = 1;
-		else if (s.pos < 0)
-			s.pos = 0;
-		printf("color = %08x pos = %g\n", s.argb, s.pos);
-		enesim_renderer_gradient_stop_add(thiz->r, &s);
-	}
-#endif
+	edom_tag_child_foreach(t, _esvg_linear_gradient_stop_add, thiz);
 
 	return EINA_TRUE;
 }
@@ -407,6 +417,7 @@ EAPI Eina_Bool esvg_is_linear_gradient(Ender_Element *e)
 
 EAPI void esvg_linear_gradient_x1_set(Ender_Element *e, const Esvg_Coord *x1)
 {
+	ender_element_property_value_set(e, ESVG_LINEAR_GRADIENT_X1, x1, NULL);
 }
 
 EAPI void esvg_linear_gradient_x1_get(Ender_Element *e, Esvg_Coord *x1)
@@ -419,6 +430,7 @@ EAPI Eina_Bool esvg_linear_gradient_x1_is_set(Ender_Element *e)
 
 EAPI void esvg_linear_gradient_y1_set(Ender_Element *e, const Esvg_Coord *y1)
 {
+	ender_element_property_value_set(e, ESVG_LINEAR_GRADIENT_Y1, y1, NULL);
 }
 
 EAPI void esvg_linear_gradient_y1_get(Ender_Element *e, Esvg_Coord *y1)
@@ -431,6 +443,7 @@ EAPI Eina_Bool esvg_linear_gradient_y1_is_set(Ender_Element *e)
 
 EAPI void esvg_linear_gradient_x2_set(Ender_Element *e, const Esvg_Coord *x2)
 {
+	ender_element_property_value_set(e, ESVG_LINEAR_GRADIENT_X2, x2, NULL);
 }
 
 EAPI void esvg_linear_gradient_x2_get(Ender_Element *e, Esvg_Coord *x2)
@@ -443,6 +456,7 @@ EAPI Eina_Bool esvg_linear_gradient_x2_is_set(Ender_Element *e)
 
 EAPI void esvg_linear_gradient_y2_set(Ender_Element *e, const Esvg_Coord *y2)
 {
+	ender_element_property_value_set(e, ESVG_LINEAR_GRADIENT_Y2, y2, NULL);
 }
 
 EAPI void esvg_linear_gradient_y2_get(Ender_Element *e, Esvg_Coord *y2)

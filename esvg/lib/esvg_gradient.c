@@ -261,6 +261,7 @@ EAPI Eina_Bool esvg_is_gradient(Ender_Element *e)
 
 EAPI void esvg_gradient_stop_add(Ender_Element *e, Ender_Element *s)
 {
+	ender_element_property_value_add(e, ESVG_GRADIENT_STOP, s, NULL);
 }
 
 EAPI void esvg_gradient_stop_get(Ender_Element *e, const Eina_List **l)
