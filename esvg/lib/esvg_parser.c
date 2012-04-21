@@ -39,6 +39,8 @@
 #include "esvg_polygon.h"
 #include "esvg_polyline.h"
 #include "esvg_line.h"
+#include "esvg_linear_gradient.h"
+#include "esvg_g.h"
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
@@ -384,7 +386,7 @@ static void * _esvg_parser_tag_new(Edom_Parser *parser, int tag_id)
 	switch (tag_id)
 	{
 		case ESVG_LINEARGRADIENT:
-		tag = esvg_linear_gradient_new();
+                  tag = esvg_linear_gradient_new();
 		break;
 
 #if 0
@@ -490,7 +492,7 @@ static Eina_Bool _esvg_parser_tag_attribute_set(Edom_Parser *parser, void *t, co
 	Edom_Attribute attribute;
 
 	attribute.name = name;
-	attribute.value = value;
+	attribute.value = (char *)value;
 	ender_element_property_value_set(tag, EDOM_ATTRIBUTE, &attribute, NULL);
 	return EINA_TRUE;
 }

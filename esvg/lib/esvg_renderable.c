@@ -23,6 +23,7 @@
 #include "esvg_private_attribute_presentation.h"
 #include "esvg_private_element.h"
 #include "esvg_private_renderable.h"
+#include "esvg_svg.h"
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
