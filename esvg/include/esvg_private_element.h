@@ -9,6 +9,8 @@ typedef struct _Esvg_Element_Context {
 	Enesim_Matrix transform;
 } Esvg_Element_Context;
 
+typedef Eina_Bool (*Esvg_Element_Setup_Filter)(Edom_Tag *parent, Edom_Tag *child);
+
 typedef void (*Esvg_Element_Initialize)(Ender_Element *e);
 typedef Eina_Bool (*Esvg_Element_Attribute_Set)(Ender_Element *e, const char *key, const char *value);
 
@@ -46,6 +48,11 @@ Eina_Bool esvg_is_element_internal(Edom_Tag *t);
 
 void esvg_element_topmost_set(Edom_Tag *t, Ender_Element *topmost);
 void esvg_element_internal_topmost_get(Edom_Tag *t, Ender_Element **e);
+Eina_Bool esvg_element_internal_child_setup(Edom_Tag *t,
+		Esvg_Element_Context *context,
+		Esvg_Attribute_Presentation *attr,
+		Esvg_Element_Setup_Filter filter,
+		Enesim_Error **error);
 Eina_Bool esvg_element_internal_setup(Edom_Tag *t,
 		const Esvg_Element_Context *state,
 		const Esvg_Attribute_Presentation *attr,

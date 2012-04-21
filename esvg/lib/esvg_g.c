@@ -28,13 +28,6 @@
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
-typedef struct _Esvg_G_Setup_Data
-{
-	Esvg_Element_Context *ctx;
-	Esvg_Attribute_Presentation *attr;
-	Enesim_Error **error;
-} Esvg_G_Setup_Data;
-
 typedef struct _Esvg_G
 {
 	/* properties */
@@ -53,17 +46,10 @@ static Esvg_G * _esvg_g_get(Edom_Tag *t)
 	return thiz;
 }
 
-static Eina_Bool _esvg_g_child_setup_cb(Edom_Tag *t, Edom_Tag *child, void *data)
+static Eina_Bool _esvg_g_child_setup_filter(Edom_Tag *t, Edom_Tag *child)
 {
-	Esvg_G_Setup_Data *g_data = data;
-
 	if (!esvg_is_instantiable_internal(child))
-		return EINA_TRUE;
-
-	if (!esvg_element_internal_setup(child, g_data->ctx, g_data->attr, g_data->error))
-	{
 		return EINA_FALSE;
-	}
 	return EINA_TRUE;
 }
 /*----------------------------------------------------------------------------*
@@ -118,15 +104,13 @@ static Eina_Bool _esvg_g_setup(Edom_Tag *t,
 		Esvg_Renderable_Context *rctx,
 		Enesim_Error **error)
 {
-	Esvg_G_Setup_Data data;
+	Eina_Bool ret;
 
-	data.ctx = ctx;
-	data.attr = attr;
-	data.error = error;
-	/* call the child setup */
-	edom_tag_child_foreach(t, _esvg_g_child_setup_cb, &data);
-
-	return EINA_TRUE;
+	ret = esvg_element_internal_child_setup(t, ctx,
+		attr,
+		_esvg_g_child_setup_filter,
+		error);
+	return ret;
 }
 
 static void _esvg_g_free(Edom_Tag *t)

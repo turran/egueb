@@ -76,6 +76,14 @@ typedef struct _Esvg_Element_Descriptor_Internal
 	Esvg_Element_Setup setup;
 } Esvg_Element_Descriptor_Internal;
 
+typedef struct _Esvg_Element_Setup_Data
+{
+	Esvg_Element_Context *ctx;
+	Esvg_Attribute_Presentation *attr;
+	Enesim_Error **error;
+	Esvg_Element_Setup_Filter filter;
+} Esvg_Element_Setup_Data;
+
 typedef struct _Esvg_Element
 {
 	EINA_MAGIC
@@ -161,6 +169,23 @@ static void _post_parse_clip_path_cb(Edom_Parser *parser, void *data)
 	esvg_element_clip_path_set(r, r_rel);
 }
 #endif
+
+static Eina_Bool _esvg_element_child_setup_cb(Edom_Tag *t, Edom_Tag *child, void *data)
+{
+	Esvg_Element_Setup_Data *setup_data = data;
+
+	if (setup_data->filter)
+	{
+		if (!setup_data->filter(t, child))
+			return EINA_FALSE;
+	}
+
+	if (!esvg_element_internal_setup(child, setup_data->ctx, setup_data->attr, setup_data->error))
+	{
+		return EINA_FALSE;
+	}
+	return EINA_TRUE;
+}
 
 static void _esvg_element_state_merge(const Esvg_Attribute_Presentation *state, const Esvg_Attribute_Presentation *parent, Esvg_Attribute_Presentation *d)
 {
@@ -902,6 +927,22 @@ void esvg_element_internal_topmost_get(Edom_Tag *t, Ender_Element **e)
 }
 
 /* state and attr are the parents one */
+Eina_Bool esvg_element_internal_child_setup(Edom_Tag *t,
+		Esvg_Element_Context *ctx,
+		Esvg_Attribute_Presentation *attr,
+		Esvg_Element_Setup_Filter filter,
+		Enesim_Error **error)
+{
+	Esvg_Element_Setup_Data data;
+
+	data.ctx = ctx;
+	data.attr = attr;
+	data.error = error;
+	data.filter = filter;
+
+	edom_tag_child_foreach(t, _esvg_element_child_setup_cb, &data);
+}
+
 Eina_Bool esvg_element_internal_setup(Edom_Tag *t,
 		const Esvg_Element_Context *state,
 		const Esvg_Attribute_Presentation *attr,

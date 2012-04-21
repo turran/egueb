@@ -58,13 +58,6 @@ static Ender_Property *ESVG_SVG_ACTUAL_WIDTH;
 static Ender_Property *ESVG_SVG_ACTUAL_HEIGHT;
 static Ender_Property *ESVG_SVG_VIEWBOX;
 
-typedef struct _Esvg_Svg_Setup_Data
-{
-	Esvg_Element_Context *ctx;
-	Esvg_Attribute_Presentation *attr;
-	Enesim_Error **error;
-} Esvg_Svg_Setup_Data;
-
 typedef struct _Esvg_Svg
 {
 	/* properties */
@@ -96,17 +89,10 @@ static Esvg_Svg * _esvg_svg_get(Edom_Tag *t)
 	return thiz;
 }
 
-static Eina_Bool _esvg_svg_child_setup_cb(Edom_Tag *t, Edom_Tag *child, void *data)
+static Eina_Bool _esvg_svg_child_setup_filter(Edom_Tag *t, Edom_Tag *child)
 {
-	Esvg_Svg_Setup_Data *svg_data = data;
-
 	if (!esvg_is_instantiable_internal(child))
-		return EINA_TRUE;
-
-	if (!esvg_element_internal_setup(child, svg_data->ctx, svg_data->attr, svg_data->error))
-	{
 		return EINA_FALSE;
-	}
 	return EINA_TRUE;
 }
 
@@ -273,10 +259,10 @@ static Eina_Bool _esvg_svg_setup(Edom_Tag *t,
 		Enesim_Error **error)
 {
 	Esvg_Svg *thiz;
-	Esvg_Svg_Setup_Data data;
 	Eina_List *l;
 	Enesim_Renderer *child;
 	Enesim_Renderer *parent;
+	Eina_Bool ret;
 	double width, height;
 
 	thiz = _esvg_svg_get(t);
@@ -314,13 +300,11 @@ static Eina_Bool _esvg_svg_setup(Edom_Tag *t,
 	ctx->viewbox.height = height;
 
 	/* call the setup on the instantiables */
-	data.ctx = ctx;
-	data.attr = attr;
-	data.error = error;
-	/* call the child setup */
-	edom_tag_child_foreach(t, _esvg_svg_child_setup_cb, &data);
-
-	return EINA_TRUE;
+	ret = esvg_element_internal_child_setup(t, ctx,
+		attr,
+		_esvg_svg_child_setup_filter,
+		error);
+	return ret;
 }
 
 static Enesim_Renderer * _esvg_svg_renderer_get(Edom_Tag *t)
