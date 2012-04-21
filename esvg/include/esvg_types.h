@@ -159,17 +159,6 @@ typedef enum _Esvg_Paint_Server_Type
 	ESVG_PAINT_SERVER_TYPES
 } Esvg_Paint_Server_Type;
 
-/* FIXME the offset should not be a length
- * as it only accepts a number or percentage
- * no other units
- */
-typedef struct _Esvg_Gradient_Stop
-{
-	Esvg_Length offset;
-	Esvg_Color stop_color;
-	double stop_opacity;
-} Esvg_Gradient_Stop;
-
 typedef enum _Esvg_Spread_Method
 {
 	ESVG_SPREAD_METHOD_PAD,

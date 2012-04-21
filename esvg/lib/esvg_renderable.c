@@ -47,6 +47,13 @@ typedef struct _Esvg_Renderable_Descriptor_Internal
 	Esvg_Renderable_Renderer_Get renderer_get;
 } Esvg_Renderable_Descriptor_Internal;
 
+typedef struct _Esvg_Renderable_Paint_Server_State
+{
+	Esvg_Paint paint_last;
+	Ender_Element *ender;
+	Edom_Tag *tag;
+} Esvg_Renderable_Paint_Server_State;
+
 typedef struct _Esvg_Renderable
 {
 	EINA_MAGIC

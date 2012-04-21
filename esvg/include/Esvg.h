@@ -75,6 +75,7 @@
 #include "esvg_circle.h"
 #include "esvg_g.h"
 #include "esvg_gradient.h"
+#include "esvg_stop.h"
 
 EAPI Eina_Bool esvg_is_shape(Edom_Tag *e);
 

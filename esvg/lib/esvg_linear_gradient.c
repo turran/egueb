@@ -118,7 +118,7 @@ static Eina_Bool _esvg_linear_gradient_setup(Edom_Tag *t,
 		Enesim_Error **error)
 {
 	Esvg_Linear_Gradient *thiz;
-	Esvg_Gradient_Stop *stop;
+	//Esvg_Gradient_Stop *stop;
 	Esvg_Gradient_Units gu;
 	Enesim_Repeat_Mode mode;
 	Enesim_Matrix m;
@@ -187,6 +187,7 @@ static Eina_Bool _esvg_linear_gradient_setup(Edom_Tag *t,
 	enesim_renderer_gradient_linear_x1_set(thiz->r, x2);
 	enesim_renderer_gradient_linear_y1_set(thiz->r, y2);
 
+#if 0
 	EINA_LIST_FOREACH(gctx->stops, l, stop)
 	{
 		Enesim_Renderer_Gradient_Stop s;
@@ -206,6 +207,7 @@ static Eina_Bool _esvg_linear_gradient_setup(Edom_Tag *t,
 		printf("color = %08x pos = %g\n", s.argb, s.pos);
 		enesim_renderer_gradient_stop_add(thiz->r, &s);
 	}
+#endif
 
 	return EINA_TRUE;
 }

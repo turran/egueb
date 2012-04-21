@@ -41,6 +41,7 @@
 #include "esvg_line.h"
 #include "esvg_linear_gradient.h"
 #include "esvg_g.h"
+#include "esvg_stop.h"
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
@@ -465,11 +466,11 @@ static void * _esvg_parser_tag_new(Edom_Parser *parser, int tag_id)
 		case ESVG_CLIPPATH:
 		tag = esvg_parser_clip_path_new(parser);
 		break;
-
-		case ESVG_STOP:
-		tag = esvg_parser_stop_new(parser);
-		break;
 #endif
+		case ESVG_STOP:
+		tag = esvg_stop_new();
+		break;
+
 		default:
 		printf("can't create the tag %s (%d)\n", esvg_type_string_to(tag_id), tag_id);
 		break;

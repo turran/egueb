@@ -18,6 +18,7 @@ esvg_polygon.h \
 esvg_polyline.h \
 esvg_rect.h \
 esvg_renderable.h \
+esvg_stop.h \
 esvg_svg.h \
 esvg_types.h
 

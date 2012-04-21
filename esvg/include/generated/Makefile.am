@@ -16,6 +16,7 @@ esvg_generated_linear_gradient.c \
 esvg_generated_path.c \
 esvg_generated_renderable.c \
 esvg_generated_rect.c \
+esvg_generated_stop.c \
 esvg_generated_svg.c
 
 CLEANFILES = $(GENERATED_FILES)

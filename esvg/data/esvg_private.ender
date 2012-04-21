@@ -89,7 +89,7 @@ namespace "esvg" {
 	};
 
 	abstract "animation" : "element" {
-		
+
 	};
 
 	class "linear_gradient" : "gradient" {
@@ -160,6 +160,10 @@ namespace "esvg" {
 
 	class "text" : "instantiable" {
 
+	};
+
+	class "stop" : "element" {
+		esvg_length "offset";
 	};
 };
 

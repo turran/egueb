@@ -25,6 +25,7 @@
 #include "esvg_private_renderable.h"
 #include "esvg_private_paint_server.h"
 #include "esvg_private_gradient.h"
+#include "esvg_gradient.h"
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
@@ -39,6 +40,7 @@ static Ender_Property *ESVG_GRADIENT_STOP;
 typedef struct _Esvg_Gradient_Descriptor_Internal
 {
 	Edom_Tag_Free free;
+	Edom_Tag_Child_Add child_add;
 	Esvg_Gradient_Setup setup;
 	Esvg_Renderable_Renderer_Get renderer_get;
 } Esvg_Gradient_Descriptor_Internal;
@@ -67,8 +69,26 @@ static Esvg_Gradient * _esvg_gradient_get(Edom_Tag *t)
 /*----------------------------------------------------------------------------*
  *                       Esvg Paint Server interface                          *
  *----------------------------------------------------------------------------*/
+static Eina_Bool _esvg_gradient_child_add(Edom_Tag *t, Edom_Tag *child_t)
+{
+	Esvg_Gradient *thiz;
+
+	thiz = _esvg_gradient_get(t);
+	/* only support stops */
+	printf("adding child\n");
+	if (1)
+	{
+		return EINA_TRUE;
+	}
+	else if (thiz->descriptor.child_add)
+		return thiz->descriptor.child_add(t, child_t);
+	else
+		return EINA_FALSE;
+}
+
 static Eina_Bool _esvg_gradient_setup(Edom_Tag *t,
 		Esvg_Element_Context *ctx,
+		Esvg_Attribute_Presentation *attr,
 		Esvg_Renderable_Context *rctx,
 		Enesim_Error **error)
 {
@@ -92,6 +112,7 @@ static void _esvg_gradient_free(Edom_Tag *t)
 /*----------------------------------------------------------------------------*
  *                           The Ender interface                              *
  *----------------------------------------------------------------------------*/
+#if 0
 static void _esvg_gradient_stop_add(Edom_Tag *t, Esvg_Gradient_Stop *s)
 {
 	Esvg_Gradient *thiz;
@@ -115,6 +136,7 @@ static void _esvg_gradient_stop_get(Edom_Tag *t, const Eina_List **l)
 	thiz = _esvg_gradient_get(t);
 	*l = thiz->state.stops;
 }
+#endif
 
 static void _esvg_gradient_units_set(Edom_Tag *t, Esvg_Gradient_Units units)
 {
@@ -201,9 +223,10 @@ Edom_Tag * esvg_gradient_new(Esvg_Gradient_Descriptor *descriptor,
 
 	EINA_MAGIC_SET(thiz, ESVG_GRADIENT_MAGIC);
 	thiz->descriptor.setup = descriptor->setup;
+	thiz->descriptor.child_add = descriptor->child_add;
 	thiz->data = data;
 
-	pdescriptor.child_add = descriptor->child_add;
+	pdescriptor.child_add = _esvg_gradient_child_add;
 	pdescriptor.child_remove = descriptor->child_remove;
 	pdescriptor.attribute_set = descriptor->attribute_set;
 	pdescriptor.attribute_get = descriptor->attribute_get;
@@ -236,7 +259,7 @@ EAPI Eina_Bool esvg_is_gradient(Ender_Element *e)
 {
 }
 
-EAPI void esvg_gradient_stop_add(Ender_Element *e, Esvg_Gradient_Stop *s)
+EAPI void esvg_gradient_stop_add(Ender_Element *e, Ender_Element *s)
 {
 }
 

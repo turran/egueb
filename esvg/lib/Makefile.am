@@ -34,6 +34,7 @@ esvg_polygon.c \
 esvg_polyline.c \
 esvg_renderable.c \
 esvg_rect.c \
+esvg_stop.c \
 esvg_svg.c \
 esvg_types.c
 
