@@ -149,7 +149,6 @@ static void _esvg_shape_enesim_state_get(Edom_Tag *t,
 		{
 			Ender_Element *e;
 
-			printf("topmost = %p\n", topmost);
 			/* just get the renderer here, dont do the setup */
 			e = esvg_uri_string_from(attr->fill.value.paint_server, &_uri_descriptor, topmost);
 			if (e)
@@ -160,8 +159,8 @@ static void _esvg_shape_enesim_state_get(Edom_Tag *t,
 				thiz->fill_tag = ender_element_object_get(e);
 				fill_r = esvg_renderable_renderer_get(e);
 				rctx->fill_renderer = fill_r;
+				printf("fill rendererrrrr!!! %p %s\n", fill_r, esvg_type_string_to(esvg_element_type_get_internal(t)));
 			}
-			printf("fill rendererrrrr!!!\n");
 		}
 		/* TODO here we should fetch the id from the property */
 		/* TODO then, check that the referenced element is of type paint server */
@@ -338,8 +337,10 @@ static Eina_Bool _esvg_renderable_setup(Edom_Tag *t,
 	/* in case we are going to use the fill renderer do its own setup */
 	if (attr->fill_set && attr->fill.type == ESVG_PAINT_SERVER && thiz->fill_ender)
 	{
-		printf("doing the paint server setup\n");
-		esvg_element_internal_setup(thiz->fill_tag, context, attr, error);
+		/* we dont pass the attributes or the paint server
+		 * will merge what it has with this
+		 */
+		esvg_element_internal_setup(thiz->fill_tag, context, NULL, error);
 	}
 #if 0
 	/* in case we are going to use the stroke renderer do its own setup */

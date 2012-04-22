@@ -370,6 +370,7 @@ static void _esvg_element_state_compose(const Esvg_Element_Context *s, const Esv
 	d->dpi_x = parent->dpi_x;
 	d->dpi_y = parent->dpi_y;
 	d->viewbox = parent->viewbox;
+	d->bounds = parent->bounds;
 	/* actually compose */
 	enesim_matrix_compose(&parent->transform, &s->transform, &d->transform);
 }

@@ -67,7 +67,6 @@ static Eina_Bool _esvg_stop_attribute_set(Ender_Element *e,
 		Esvg_Length offset;
 
 		esvg_length_string_from(&offset, value, ESVG_LENGTH_0);
-		printf("offset %g\n", offset.value);
 		esvg_stop_offset_set(e, &offset);
 	}
 	/*
@@ -105,6 +104,7 @@ static Eina_Bool _esvg_stop_setup(Edom_Tag *t,
 		thiz->s.pos = 1;
 	else if (thiz->s.pos < 0)
 		thiz->s.pos = 0;
+	printf("opacity %g\n", attr->stop_opacity);
 	printf("color = %08x pos = %g\n", thiz->s.argb, thiz->s.pos);
 
 	return EINA_TRUE;

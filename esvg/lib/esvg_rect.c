@@ -153,6 +153,10 @@ static Eina_Bool _esvg_rect_setup(Edom_Tag *t,
 	height = esvg_length_final_get(&thiz->current.height, ctx->viewbox.height);
 	enesim_renderer_rectangle_size_set(thiz->r, width, height);
 
+	/* set the bounds */
+	printf("setting bounds %p %g %g %g %g\n", ctx, x, y, width, height);
+	enesim_rectangle_coords_from(&ctx->bounds, x, y, width, height);
+
 	/* FIXME enesim does not supports rx *and* ry */
 	rx = esvg_length_final_get(&thiz->current.rx, ctx->viewbox.width);
 	enesim_renderer_rectangle_corner_radius_set(thiz->r, rx);

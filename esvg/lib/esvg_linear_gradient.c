@@ -26,6 +26,7 @@
 #include "esvg_private_paint_server.h"
 #include "esvg_private_gradient.h"
 #include "esvg_private_stop.h"
+
 #include "esvg_linear_gradient.h"
 /*============================================================================*
  *                                  Local                                     *
@@ -124,7 +125,6 @@ static Enesim_Renderer * _esvg_linear_gradient_renderer_get(Edom_Tag *t)
 	Esvg_Linear_Gradient *thiz;
 
 	thiz = _esvg_linear_gradient_get(t);
-	printf("linear renderer get\n");
 	return thiz->r;
 }
 
@@ -136,11 +136,9 @@ static Eina_Bool _esvg_linear_gradient_setup(Edom_Tag *t,
 		Enesim_Error **error)
 {
 	Esvg_Linear_Gradient *thiz;
-	//Esvg_Gradient_Stop *stop;
 	Esvg_Gradient_Units gu;
 	Enesim_Repeat_Mode mode;
 	Enesim_Matrix m;
-	Eina_List *l;
 	Eina_Bool ret;
 	double x1;
 	double y1;
@@ -148,7 +146,7 @@ static Eina_Bool _esvg_linear_gradient_setup(Edom_Tag *t,
 	double y2;
 
 	thiz = _esvg_linear_gradient_get(t);
-	printf("linear setup\n");
+
 	gu = gctx->units;
 	switch (gctx->spread_method)
 	{
@@ -168,16 +166,12 @@ static Eina_Bool _esvg_linear_gradient_setup(Edom_Tag *t,
 
 	if (gu == ESVG_OBJECT_BOUNDING_BOX)
 	{
-		Eina_Rectangle bbox;
-
 		/* check that the coordinates shold be set with (0,0) -> (1, 1) */
 		x1 = esvg_length_final_get(&thiz->x1, 1);
 		y1 = esvg_length_final_get(&thiz->y1, 1);
 		x2 = esvg_length_final_get(&thiz->x2, 1);
 		y2 = esvg_length_final_get(&thiz->y2, 1);
-
-		//enesim_renderer_destination_boundings(rel, &bbox, 0, 0);
-		enesim_matrix_values_set(&m, bbox.w, 0, bbox.x, 0, bbox.h, bbox.y, 0, 0, 1);
+		enesim_matrix_values_set(&m, ctx->bounds.w, 0, ctx->bounds.x, 0, ctx->bounds.h, ctx->bounds.y, 0, 0, 1);
 	}
 	else
 	{

@@ -5,8 +5,9 @@
 typedef struct _Esvg_Element_Context {
 	double dpi_x;
 	double dpi_y;
-	Esvg_View_Box viewbox;
-	Enesim_Matrix transform;
+	Esvg_View_Box viewbox; /* the current viewbox */
+	Enesim_Rectangle bounds; /* the bounds of the object */
+	Enesim_Matrix transform; /* the current transformation */
 } Esvg_Element_Context;
 
 typedef Eina_Bool (*Esvg_Element_Setup_Filter)(Edom_Tag *parent, Edom_Tag *child);
