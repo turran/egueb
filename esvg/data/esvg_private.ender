@@ -99,6 +99,14 @@ namespace "esvg" {
 		esvg_length "y2";
 	};
 
+	class "radial_gradient" : "gradient" {
+		esvg_length "cx";
+		esvg_length "cy";
+		esvg_length "fx";
+		esvg_length "fy";
+		esvg_length "r";
+	};
+
 	class "svg" : "instantiable" {
 		esvg_length "x";
 		esvg_length "y";

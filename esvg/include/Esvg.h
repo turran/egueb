@@ -75,6 +75,7 @@
 #include "esvg_circle.h"
 #include "esvg_g.h"
 #include "esvg_gradient.h"
+#include "esvg_radial_gradient.h"
 #include "esvg_stop.h"
 
 EAPI Eina_Bool esvg_is_shape(Edom_Tag *e);
@@ -114,24 +115,6 @@ EAPI void esvg_image_height_set(Edom_Tag *e,  const Esvg_Length *height);
 EAPI void esvg_image_height_get(Edom_Tag *e, Esvg_Length *height);
 EAPI void esvg_image_href_set(Edom_Tag *e, const char *href);
 EAPI void esvg_image_href_get(Edom_Tag *e, const char **href);
-
-EAPI Edom_Tag * esvg_radial_gradient_new(void);
-EAPI Eina_Bool esvg_is_radial_gradient(Edom_Tag *e);
-EAPI void esvg_radial_gradient_cx_set(Edom_Tag *e, const Esvg_Coord *cx);
-EAPI void esvg_radial_gradient_cx_get(Edom_Tag *e, Esvg_Coord *cx);
-EAPI Eina_Bool esvg_radial_gradient_cx_is_set(Edom_Tag *e);
-EAPI void esvg_radial_gradient_cy_set(Edom_Tag *e, const Esvg_Coord *cy);
-EAPI void esvg_radial_gradient_cy_get(Edom_Tag *e, Esvg_Coord *cy);
-EAPI Eina_Bool esvg_radial_gradient_cy_is_set(Edom_Tag *e);
-EAPI void esvg_radial_gradient_fx_set(Edom_Tag *e, const Esvg_Coord *fx);
-EAPI void esvg_radial_gradient_fx_get(Edom_Tag *e, Esvg_Coord *fx);
-EAPI Eina_Bool esvg_radial_gradient_fx_is_set(Edom_Tag *e);
-EAPI void esvg_radial_gradient_fy_set(Edom_Tag *e, const Esvg_Coord *fy);
-EAPI void esvg_radial_gradient_fy_get(Edom_Tag *e, Esvg_Coord *fy);
-EAPI Eina_Bool esvg_radial_gradient_fy_is_set(Edom_Tag *e);
-EAPI void esvg_radial_gradient_r_set(Edom_Tag *e, const Esvg_Length *rad);
-EAPI void esvg_radial_gradient_r_get(Edom_Tag *e, Esvg_Length *rad);
-EAPI Eina_Bool esvg_radial_gradient_r_is_set(Edom_Tag *e);
 
 EAPI Edom_Tag * esvg_pattern_new(void);
 EAPI Eina_Bool esvg_is_pattern(Edom_Tag *e);

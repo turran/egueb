@@ -14,6 +14,7 @@ esvg_generated_polyline.c \
 esvg_generated_line.c \
 esvg_generated_linear_gradient.c \
 esvg_generated_path.c \
+esvg_generated_radial_gradient.c \
 esvg_generated_renderable.c \
 esvg_generated_rect.c \
 esvg_generated_stop.c \

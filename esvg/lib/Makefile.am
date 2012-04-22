@@ -32,6 +32,7 @@ esvg_parser.c \
 esvg_path.c \
 esvg_polygon.c \
 esvg_polyline.c \
+esvg_radial_gradient.c \
 esvg_renderable.c \
 esvg_rect.c \
 esvg_stop.c \

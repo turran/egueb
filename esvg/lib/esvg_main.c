@@ -50,6 +50,7 @@ static void _register_enders(void *data)
 	/* now the classes */
 	esvg_line_init();
 	esvg_linear_gradient_init();
+	esvg_radial_gradient_init();
 	esvg_circle_init();
 	esvg_ellipse_init();
 	esvg_path_init();

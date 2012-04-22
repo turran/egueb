@@ -76,7 +76,6 @@ static Eina_Bool _esvg_linear_gradient_stop_post(Edom_Tag *t, Edom_Tag *child_t,
 	enesim_renderer_gradient_stop_add(thiz->r, stop);
 	return EINA_TRUE;
 }
-
 /*----------------------------------------------------------------------------*
  *                       Esvg Paint Server interface                          *
  *----------------------------------------------------------------------------*/
@@ -209,7 +208,7 @@ static Eina_Bool _esvg_linear_gradient_setup(Edom_Tag *t,
 		_esvg_linear_gradient_stop_post,
 		thiz);
 
-	return EINA_TRUE;
+	return ret;
 }
 
 static void _esvg_linear_gradient_free(Edom_Tag *t)
