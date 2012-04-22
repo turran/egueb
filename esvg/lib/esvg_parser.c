@@ -390,11 +390,11 @@ static void * _esvg_parser_tag_new(Edom_Parser *parser, int tag_id)
                   tag = esvg_linear_gradient_new();
 		break;
 
-#if 0
 		case ESVG_RADIALGRADIENT:
-		tag = esvg_parser_radial_gradient_new(parser);
+		tag = esvg_radial_gradient_new();
 		break;
 
+#if 0
 		case ESVG_PATTERN:
 		tag = esvg_parser_pattern_new(parser);
 		break;
