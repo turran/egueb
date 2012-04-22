@@ -5,6 +5,7 @@
 EAPI Eina_Bool esvg_is_element(Ender_Element *e);
 EAPI Esvg_Type esvg_element_type_get(Ender_Element *e);
 EAPI Eina_Bool esvg_element_setup(Ender_Element *e, Enesim_Error **error);
+EAPI Ender_Element * esvg_element_clone(Ender_Element *e);
 /* attributes */
 EAPI void esvg_element_id_set(Ender_Element *e, const char *id);
 EAPI void esvg_element_id_get(Ender_Element *e, const char **id);

@@ -134,45 +134,10 @@ static Esvg_Element * _esvg_element_get(Edom_Tag *t)
 	return thiz;
 }
 
-#if 0
-static void _post_parse_fill_cb(Edom_Parser *parser, void *data)
-{
-	Esvg_Element *thiz = data;
-	Esvg_Paint fill;
-	Enesim_Renderer *r;
+/*----------------------------------------------------------------------------*
+ *                               Clone helpers                                *
+ *----------------------------------------------------------------------------*/
 
-	r = esvg_parser_element_renderer_get(thiz->t);
-	esvg_paint_string_from(&fill, thiz->t, thiz->fill);
-	esvg_element_fill_set(r, &fill);
-}
-
-static void _post_parse_stroke_cb(Edom_Parser *parser, void *data)
-{
-	Esvg_Element *thiz = data;
-	Esvg_Paint stroke;
-	Enesim_Renderer *r;
-
-	r = esvg_parser_element_renderer_get(thiz->t);
-	esvg_paint_string_from(&stroke, thiz->t, thiz->stroke);
-	esvg_element_stroke_set(r, &stroke);
-}
-
-static void _post_parse_clip_path_cb(Edom_Parser *parser, void *data)
-{
-	Esvg_Element *thiz = data;
-	Edom_Tag *rel = NULL;
-	Enesim_Renderer *r;
-	Enesim_Renderer *r_rel;
-	Eina_Bool ret;
-
-	r = esvg_parser_element_renderer_get(thiz->t);
-	ret = esvg_uri_get(&rel, thiz->t, thiz->clip_path);
-	if (!rel) return;
-
-	r_rel = esvg_parser_element_renderer_get(rel);
-	esvg_element_clip_path_set(r, r_rel);
-}
-#endif
 
 static Eina_Bool _esvg_element_child_setup_cb(Edom_Tag *t, Edom_Tag *child, void *data)
 {
@@ -1526,6 +1491,13 @@ EAPI Ender_Element * esvg_element_topmost_get(Ender_Element *e)
 	t = ender_element_object_get(e);
 	esvg_element_internal_topmost_get(t, &topmost);
 	return topmost;
+}
+
+EAPI Ender_Element * esvg_element_clone(Ender_Element *e)
+{
+	/* create a new element of the same type */
+	/* iterate over the properties and set them on the new element */
+	return NULL;
 }
 
 #if 0

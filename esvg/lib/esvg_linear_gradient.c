@@ -76,6 +76,41 @@ static Eina_Bool _esvg_linear_gradient_stop_post(Edom_Tag *t, Edom_Tag *child_t,
 	enesim_renderer_gradient_stop_add(thiz->r, stop);
 	return EINA_TRUE;
 }
+
+#if 0
+static void _parser_linear_gradient_merge(Enesim_Renderer *r,
+			Enesim_Renderer *rel)
+{
+	if (!esvg_linear_gradient_x1_is_set(r))
+	{
+		Esvg_Coord c;
+
+		esvg_linear_gradient_x1_get(rel, &c);
+		esvg_linear_gradient_x1_set(r, &c);
+	}
+	if (!esvg_linear_gradient_y1_is_set(r))
+	{
+		Esvg_Coord c;
+
+		esvg_linear_gradient_y1_get(rel, &c);
+		esvg_linear_gradient_y1_set(r, &c);
+	}
+	if (!esvg_linear_gradient_x2_is_set(r))
+	{
+		Esvg_Coord c;
+
+		esvg_linear_gradient_x2_get(rel, &c);
+		esvg_linear_gradient_x2_set(r, &c);
+	}
+	if (!esvg_linear_gradient_y2_is_set(r))
+	{
+		Esvg_Coord c;
+
+		esvg_linear_gradient_y2_get(rel, &c);
+		esvg_linear_gradient_y2_set(r, &c);
+	}
+}
+#endif
 /*----------------------------------------------------------------------------*
  *                       Esvg Paint Server interface                          *
  *----------------------------------------------------------------------------*/
