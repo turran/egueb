@@ -25,6 +25,7 @@
 #include "esvg_private_renderable.h"
 #include "esvg_private_paint_server.h"
 #include "esvg_private_gradient.h"
+#include "esvg_private_stop.h"
 #include "esvg_linear_gradient.h"
 /*============================================================================*
  *                                  Local                                     *
@@ -60,33 +61,19 @@ static Esvg_Linear_Gradient * _esvg_linear_gradient_get(Edom_Tag *t)
 	return thiz;
 }
 
-static Eina_Bool _esvg_linear_gradient_stop_add(Edom_Tag *t, Edom_Tag *child_t, void *data)
+static Eina_Bool _esvg_linear_gradient_stop_post(Edom_Tag *t, Edom_Tag *child_t,
+		Esvg_Element_Context *ctx,
+		Esvg_Attribute_Presentation *attr,
+		Enesim_Error **error,
+		void *data)
 {
 	Esvg_Linear_Gradient *thiz = data;
-	Esvg_Length offset;
-	double stop_opacity;
-	Esvg_Color stop_color;
+	Enesim_Renderer_Gradient_Stop *stop;
 
-	printf("iterating over the stops!!!!\n");
-#if 0
-	esvg_stop_internal_opacity_get(child, &stop_opacity);
-	esvg_stop_internal_stop_color_
-
-	enesim_argb_components_from(&s.argb, lrint(stop->stop_opacity * 255),
-			stop->stop_color.r, stop->stop_color.g, stop->stop_color.b);
-
-	if (stop->offset.unit == ESVG_UNIT_LENGTH_PERCENT)
-		s.pos = stop->offset.value / 100.0;
-	else
-		s.pos = stop->offset.value;
-
-	if (s.pos > 1)
-		s.pos = 1;
-	else if (s.pos < 0)
-		s.pos = 0;
-	printf("color = %08x pos = %g\n", s.argb, s.pos);
-	enesim_renderer_gradient_stop_add(thiz->r, &s);
-#endif
+	stop = esvg_stop_gradient_stop_get(child_t);
+	printf("iterating over the stops %g %08x!!!!\n", stop->pos, stop->argb);
+	enesim_renderer_gradient_stop_add(thiz->r, stop);
+	return EINA_TRUE;
 }
 
 /*----------------------------------------------------------------------------*
@@ -143,6 +130,7 @@ static Enesim_Renderer * _esvg_linear_gradient_renderer_get(Edom_Tag *t)
 
 static Eina_Bool _esvg_linear_gradient_setup(Edom_Tag *t,
 		Esvg_Element_Context *ctx,
+		Esvg_Attribute_Presentation *attr,
 		Esvg_Renderable_Context *rctx,
 		Esvg_Gradient_Context *gctx,
 		Enesim_Error **error)
@@ -153,6 +141,7 @@ static Eina_Bool _esvg_linear_gradient_setup(Edom_Tag *t,
 	Enesim_Repeat_Mode mode;
 	Enesim_Matrix m;
 	Eina_List *l;
+	Eina_Bool ret;
 	double x1;
 	double y1;
 	double x2;
@@ -217,7 +206,14 @@ static Eina_Bool _esvg_linear_gradient_setup(Edom_Tag *t,
 	enesim_renderer_gradient_linear_x1_set(thiz->r, x2);
 	enesim_renderer_gradient_linear_y1_set(thiz->r, y2);
 
-	edom_tag_child_foreach(t, _esvg_linear_gradient_stop_add, thiz);
+	/* call the setup on the childs */
+	ret = esvg_element_internal_child_setup(t, ctx,
+		attr,
+		error,
+		NULL,
+		NULL,
+		_esvg_linear_gradient_stop_post,
+		thiz);
 
 	return EINA_TRUE;
 }

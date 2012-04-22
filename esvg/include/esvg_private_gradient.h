@@ -9,6 +9,7 @@ typedef struct _Esvg_Gradient_Context {
 
 typedef Eina_Bool (*Esvg_Gradient_Setup)(Edom_Tag *t,
 		Esvg_Element_Context *ctx,
+		Esvg_Attribute_Presentation *attr,
 		Esvg_Renderable_Context *rctx,
 		Esvg_Gradient_Context *gctx,
 		Enesim_Error **error);

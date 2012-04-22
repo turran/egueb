@@ -108,8 +108,11 @@ static Eina_Bool _esvg_g_setup(Edom_Tag *t,
 
 	ret = esvg_element_internal_child_setup(t, ctx,
 		attr,
+		error,
 		_esvg_g_child_setup_filter,
-		error);
+		NULL,
+		NULL,
+		NULL);
 	return ret;
 }
 

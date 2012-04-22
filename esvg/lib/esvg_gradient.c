@@ -96,7 +96,7 @@ static Eina_Bool _esvg_gradient_setup(Edom_Tag *t,
 
 	thiz = _esvg_gradient_get(t);
 	if (thiz->descriptor.setup)
-		thiz->descriptor.setup(t, ctx, rctx, &thiz->state, error);
+		thiz->descriptor.setup(t, ctx, attr, rctx, &thiz->state, error);
 	return EINA_TRUE;
 }
 

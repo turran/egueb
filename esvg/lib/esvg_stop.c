@@ -35,6 +35,7 @@ typedef struct _Esvg_Stop
 	Esvg_Length offset;
 	/* interface */
 	/* private */
+	Enesim_Renderer_Gradient_Stop s;
 } Esvg_Stop;
 
 static Esvg_Stop * _esvg_stop_get(Edom_Tag *t)
@@ -91,7 +92,21 @@ static Eina_Bool _esvg_stop_setup(Edom_Tag *t,
 	Esvg_Stop *thiz;
 
 	thiz = _esvg_stop_get(t);
-	printf("setting up the stop\n");
+
+	enesim_argb_components_from(&thiz->s.argb, lrint(attr->stop_opacity * 255),
+			attr->stop_color.r, attr->stop_color.g, attr->stop_color.b);
+
+	if (thiz->offset.unit == ESVG_UNIT_LENGTH_PERCENT)
+		thiz->s.pos = thiz->offset.value / 100.0;
+	else
+		thiz->s.pos = thiz->offset.value;
+
+	if (thiz->s.pos > 1)
+		thiz->s.pos = 1;
+	else if (thiz->s.pos < 0)
+		thiz->s.pos = 0;
+	printf("color = %08x pos = %g\n", thiz->s.argb, thiz->s.pos);
+
 	return EINA_TRUE;
 }
 
@@ -148,6 +163,14 @@ static void _esvg_stop_offset_get(Edom_Tag *t, Esvg_Length *offset)
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
+Enesim_Renderer_Gradient_Stop * esvg_stop_gradient_stop_get(Edom_Tag *t)
+{
+	Esvg_Stop *thiz;
+
+	thiz = _esvg_stop_get(t);
+	return &thiz->s;
+}
+
 /* The ender wrapper */
 #include "generated/esvg_generated_stop.c"
 /*============================================================================*
@@ -160,6 +183,6 @@ EAPI Ender_Element * esvg_stop_new(void)
 
 EAPI void esvg_stop_offset_set(Ender_Element *e, const Esvg_Length *offset)
 {
-
+	ender_element_property_value_set(e, ESVG_STOP_OFFSET, offset, NULL);
 }
 

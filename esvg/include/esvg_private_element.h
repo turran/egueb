@@ -19,6 +19,12 @@ typedef Eina_Bool (*Esvg_Element_Setup)(Edom_Tag *t,
 		Esvg_Element_Context *ctx,
 		Esvg_Attribute_Presentation *attr,
 		Enesim_Error **error);
+typedef Eina_Bool (*Esvg_Element_Setup_Interceptor)(Edom_Tag *t,
+		Edom_Tag *child, 
+		Esvg_Element_Context *ctx,
+		Esvg_Attribute_Presentation *attr,
+		Enesim_Error **error,
+		void *data);
 typedef void (*Esvg_Element_Clone)(Edom_Tag *r, Edom_Tag *dst);
 
 typedef struct _Esvg_Element_Descriptor {
@@ -51,8 +57,11 @@ void esvg_element_internal_topmost_get(Edom_Tag *t, Ender_Element **e);
 Eina_Bool esvg_element_internal_child_setup(Edom_Tag *t,
 		Esvg_Element_Context *context,
 		Esvg_Attribute_Presentation *attr,
+		Enesim_Error **error,
 		Esvg_Element_Setup_Filter filter,
-		Enesim_Error **error);
+		Esvg_Element_Setup_Interceptor pre,
+		Esvg_Element_Setup_Interceptor post,
+		void *data);
 Eina_Bool esvg_element_internal_setup(Edom_Tag *t,
 		const Esvg_Element_Context *state,
 		const Esvg_Attribute_Presentation *attr,

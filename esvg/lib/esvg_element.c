@@ -82,7 +82,10 @@ typedef struct _Esvg_Element_Setup_Data
 	Esvg_Attribute_Presentation *attr;
 	Enesim_Error **error;
 	Esvg_Element_Setup_Filter filter;
+	Esvg_Element_Setup_Interceptor pre;
+	Esvg_Element_Setup_Interceptor post;
 	Eina_Bool ret;
+	void *data;
 } Esvg_Element_Setup_Data;
 
 typedef struct _Esvg_Element
@@ -175,18 +178,39 @@ static Eina_Bool _esvg_element_child_setup_cb(Edom_Tag *t, Edom_Tag *child, void
 {
 	Esvg_Element_Setup_Data *setup_data = data;
 
+	/* check if we can do the setup on this child */
 	if (setup_data->filter)
 	{
 		if (!setup_data->filter(t, child))
 			return EINA_TRUE;
 	}
-
-	if (!esvg_element_internal_setup(child, setup_data->ctx, setup_data->attr, setup_data->error))
+	/* call the pre setup */
+	if (setup_data->pre)
 	{
-		setup_data->ret = EINA_FALSE;
-		return EINA_FALSE;
+		if (!setup_data->pre(t, child, setup_data->ctx,
+				setup_data->attr,
+				setup_data->error,
+				setup_data->data))
+			goto err;
+	}
+	/* the real setup */
+	if (!esvg_element_internal_setup(child, setup_data->ctx, setup_data->attr, setup_data->error))
+		goto err;
+
+	/* call the post setup */
+	if (setup_data->post)
+	{
+		if (!setup_data->post(t, child, setup_data->ctx,
+				setup_data->attr,
+				setup_data->error,
+				setup_data->data))
+			goto err;
 	}
 	return EINA_TRUE;
+
+err:
+	setup_data->ret = EINA_FALSE;
+	return EINA_FALSE;
 }
 
 static void _esvg_element_state_merge(const Esvg_Attribute_Presentation *state, const Esvg_Attribute_Presentation *parent, Esvg_Attribute_Presentation *d)
@@ -932,19 +956,25 @@ void esvg_element_internal_topmost_get(Edom_Tag *t, Ender_Element **e)
 Eina_Bool esvg_element_internal_child_setup(Edom_Tag *t,
 		Esvg_Element_Context *ctx,
 		Esvg_Attribute_Presentation *attr,
+		Enesim_Error **error,
 		Esvg_Element_Setup_Filter filter,
-		Enesim_Error **error)
+		Esvg_Element_Setup_Interceptor pre,
+		Esvg_Element_Setup_Interceptor post,
+		void *data)
 {
-	Esvg_Element_Setup_Data data;
+	Esvg_Element_Setup_Data setup_data;
 
-	data.ctx = ctx;
-	data.attr = attr;
-	data.error = error;
-	data.filter = filter;
-	data.ret = EINA_TRUE;
+	setup_data.ctx = ctx;
+	setup_data.attr = attr;
+	setup_data.error = error;
+	setup_data.filter = filter;
+	setup_data.ret = EINA_TRUE;
+	setup_data.data = data;
+	setup_data.pre = pre;
+	setup_data.post = post;
 
-	edom_tag_child_foreach(t, _esvg_element_child_setup_cb, &data);
-	return data.ret;
+	edom_tag_child_foreach(t, _esvg_element_child_setup_cb, &setup_data);
+	return setup_data.ret;
 }
 
 Eina_Bool esvg_element_internal_setup(Edom_Tag *t,
