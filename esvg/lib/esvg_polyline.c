@@ -44,7 +44,7 @@ static Esvg_Polyline * _esvg_polyline_get(Edom_Tag *t)
 {
 	Esvg_Polyline *thiz;
 
-	if (esvg_element_type_get_internal(t) != ESVG_POLYLINE)
+	if (esvg_element_internal_type_get(t) != ESVG_POLYLINE)
 		return NULL;
 	thiz = esvg_instantiable_data_get(t);
 

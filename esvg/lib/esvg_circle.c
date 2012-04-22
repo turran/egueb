@@ -54,7 +54,7 @@ static Esvg_Circle * _esvg_circle_get(Edom_Tag *t)
 {
 	Esvg_Circle *thiz;
 
-	if (esvg_element_type_get_internal(t) != ESVG_CIRCLE)
+	if (esvg_element_internal_type_get(t) != ESVG_CIRCLE)
 		return NULL;
 	thiz = esvg_instantiable_data_get(t);
 

@@ -42,7 +42,7 @@ static Esvg_Stop * _esvg_stop_get(Edom_Tag *t)
 {
 	Esvg_Stop *thiz;
 
-	if (esvg_element_type_get_internal(t) != ESVG_STOP)
+	if (esvg_element_internal_type_get(t) != ESVG_STOP)
 		return NULL;
 	thiz = esvg_element_data_get(t);
 

@@ -59,7 +59,7 @@ static Esvg_Rect * _esvg_rect_get(Edom_Tag *t)
 {
 	Esvg_Rect *thiz;
 
-	if (esvg_element_type_get_internal(t) != ESVG_RECT)
+	if (esvg_element_internal_type_get(t) != ESVG_RECT)
 		return NULL;
 	thiz = esvg_instantiable_data_get(t);
 

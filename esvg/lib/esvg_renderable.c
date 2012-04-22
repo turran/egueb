@@ -159,7 +159,7 @@ static void _esvg_shape_enesim_state_get(Edom_Tag *t,
 				thiz->fill_tag = ender_element_object_get(e);
 				fill_r = esvg_renderable_renderer_get(e);
 				rctx->fill_renderer = fill_r;
-				printf("fill rendererrrrr!!! %p %s\n", fill_r, esvg_type_string_to(esvg_element_type_get_internal(t)));
+				printf("fill rendererrrrr!!! %p %s\n", fill_r, esvg_type_string_to(esvg_element_internal_type_get(t)));
 			}
 		}
 		/* TODO here we should fetch the id from the property */

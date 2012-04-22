@@ -50,7 +50,7 @@ void esvg_element_attribute_type_set(Edom_Tag *t, Esvg_Attribute_Type type);
 void esvg_element_attribute_animate_set(Edom_Tag *t, Eina_Bool animate);
 
 void esvg_element_initialize(Ender_Element *e);
-Esvg_Type esvg_element_type_get_internal(Edom_Tag *t);
+Esvg_Type esvg_element_internal_type_get(Edom_Tag *t);
 Eina_Bool esvg_is_element_internal(Edom_Tag *t);
 
 void esvg_element_topmost_set(Edom_Tag *t, Ender_Element *topmost);

@@ -43,7 +43,7 @@ static Esvg_Path * _esvg_path_get(Edom_Tag *t)
 {
 	Esvg_Path *thiz;
 
-	if (esvg_element_type_get_internal(t) != ESVG_PATH)
+	if (esvg_element_internal_type_get(t) != ESVG_PATH)
 		return NULL;
 	thiz = esvg_instantiable_data_get(t);
 

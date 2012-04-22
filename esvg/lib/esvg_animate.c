@@ -37,7 +37,7 @@ static Esvg_Animate * _esvg_animate_get(Edom_Tag *t)
 {
 	Esvg_Animate *thiz;
 
-	if (esvg_element_type_get_internal(t) != ESVG_ANIMATE)
+	if (esvg_element_internal_type_get(t) != ESVG_ANIMATE)
 		return NULL;
 	thiz = esvg_element_data_get(t);
 

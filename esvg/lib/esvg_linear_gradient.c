@@ -55,7 +55,7 @@ static Esvg_Linear_Gradient * _esvg_linear_gradient_get(Edom_Tag *t)
 {
 	Esvg_Linear_Gradient *thiz;
 
-	if (esvg_element_type_get_internal(t) != ESVG_LINEARGRADIENT)
+	if (esvg_element_internal_type_get(t) != ESVG_LINEARGRADIENT)
 		return NULL;
 	thiz = esvg_gradient_data_get(t);
 

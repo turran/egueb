@@ -39,7 +39,7 @@ static Esvg_G * _esvg_g_get(Edom_Tag *t)
 {
 	Esvg_G *thiz;
 
-	if (esvg_element_type_get_internal(t) != ESVG_G)
+	if (esvg_element_internal_type_get(t) != ESVG_G)
 		return NULL;
 	thiz = esvg_instantiable_data_get(t);
 

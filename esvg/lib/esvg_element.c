@@ -925,7 +925,7 @@ static Ecss_Context _esvg_element_css_context = {
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
-Esvg_Type esvg_element_type_get_internal(Edom_Tag *t)
+Esvg_Type esvg_element_internal_type_get(Edom_Tag *t)
 {
 	Esvg_Element *thiz;
 
@@ -1171,7 +1171,7 @@ EAPI Esvg_Type esvg_element_type_get(Ender_Element *e)
 	Edom_Tag *t;
 
 	t = ender_element_object_get(e);
-	return esvg_element_type_get_internal(t);
+	return esvg_element_internal_type_get(t);
 }
 
 /**

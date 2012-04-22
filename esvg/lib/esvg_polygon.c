@@ -43,7 +43,7 @@ static Esvg_Polygon * _esvg_polygon_get(Edom_Tag *t)
 {
 	Esvg_Polygon *thiz;
 
-	if (esvg_element_type_get_internal(t) != ESVG_POLYGON)
+	if (esvg_element_internal_type_get(t) != ESVG_POLYGON)
 		return NULL;
 	thiz = esvg_instantiable_data_get(t);
 

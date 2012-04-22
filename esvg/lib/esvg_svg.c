@@ -82,7 +82,7 @@ static Esvg_Svg * _esvg_svg_get(Edom_Tag *t)
 {
 	Esvg_Svg *thiz;
 
-	if (esvg_element_type_get_internal(t) != ESVG_SVG)
+	if (esvg_element_internal_type_get(t) != ESVG_SVG)
 		return NULL;
 	thiz = esvg_instantiable_data_get(t);
 

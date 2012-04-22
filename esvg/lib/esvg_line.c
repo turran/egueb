@@ -55,7 +55,7 @@ static Esvg_Line * _esvg_line_get(Edom_Tag *t)
 {
 	Esvg_Line *thiz;
 
-	if (esvg_element_type_get_internal(t) != ESVG_LINE)
+	if (esvg_element_internal_type_get(t) != ESVG_LINE)
 		return NULL;
 	thiz = esvg_instantiable_data_get(t);
 
