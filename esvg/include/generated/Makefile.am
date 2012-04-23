@@ -1,8 +1,10 @@
 MAINTAINERCLEANFILES = Makefile.in config.h.in~ config.h.in
 
 GENERATED_FILES = \
+esvg_generated_a.c \
 esvg_generated_animation.c \
 esvg_generated_circle.c \
+esvg_generated_defs.c \
 esvg_generated_element.c \
 esvg_generated_ellipse.c \
 esvg_generated_g.c \
@@ -18,7 +20,8 @@ esvg_generated_radial_gradient.c \
 esvg_generated_renderable.c \
 esvg_generated_rect.c \
 esvg_generated_stop.c \
-esvg_generated_svg.c
+esvg_generated_svg.c \
+esvg_generated_use.c
 
 CLEANFILES = $(GENERATED_FILES)
 

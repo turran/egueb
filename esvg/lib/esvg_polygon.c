@@ -199,6 +199,7 @@ static void _esvg_polygon_point_add(Edom_Tag *t, Esvg_Point *p)
  *                                 Global                                     *
  *============================================================================*/
 /* The ender wrapper */
+#define _esvg_polygon_point_is_set NULL
 #define _esvg_polygon_point_set NULL
 #define _esvg_polygon_point_get NULL
 #define _esvg_polygon_point_clear NULL

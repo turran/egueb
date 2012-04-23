@@ -28,6 +28,7 @@
 #include "esvg_private_main.h"
 #include "esvg_private_attribute_presentation.h"
 #include "esvg_private_element.h"
+#include "esvg_private_a.h"
 
 #include "esvg_main.h"
 #include "esvg_element.h"
@@ -60,6 +61,9 @@ static void _register_enders(void *data)
 	esvg_svg_init();
 	esvg_rect_init();
 	esvg_stop_init();
+	esvg_use_init();
+	esvg_defs_init();
+	esvg_a_init();
 }
 
 /* FIXME the constructor should be done per namespace, not generic */

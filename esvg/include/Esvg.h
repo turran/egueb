@@ -64,6 +64,7 @@
 #include "esvg_types.h"
 #include "esvg_element.h"
 #include "esvg_renderable.h"
+#include "esvg_a.h"
 #include "esvg_ellipse.h"
 #include "esvg_linear_gradient.h"
 #include "esvg_svg.h"
@@ -77,21 +78,9 @@
 #include "esvg_gradient.h"
 #include "esvg_radial_gradient.h"
 #include "esvg_stop.h"
+#include "esvg_use.h"
 
 EAPI Eina_Bool esvg_is_shape(Edom_Tag *e);
-
-EAPI Edom_Tag * esvg_use_new(void);
-EAPI Eina_Bool esvg_is_use(Edom_Tag *e);
-EAPI void esvg_use_x_set(Edom_Tag *e, const Esvg_Coord *x);
-EAPI void esvg_use_x_get(Edom_Tag *e, Esvg_Coord *x);
-EAPI void esvg_use_y_set(Edom_Tag *e, const Esvg_Coord *y);
-EAPI void esvg_use_y_get(Edom_Tag *e, Esvg_Coord *y);
-EAPI void esvg_use_width_set(Edom_Tag *e, const Esvg_Length *width);
-EAPI void esvg_use_width_get(Edom_Tag *e, Esvg_Length *width);
-EAPI void esvg_use_height_set(Edom_Tag *e, const Esvg_Length *height);
-EAPI void esvg_use_height_get(Edom_Tag *e, Esvg_Length *height);
-EAPI void esvg_use_link_set(Edom_Tag *e, const Edom_Tag *link);
-EAPI void esvg_use_link_get(Edom_Tag *e, Edom_Tag **link);
 
 EAPI Edom_Tag * esvg_text_new(void);
 EAPI Eina_Bool esvg_is_text(Edom_Tag *e);
@@ -136,9 +125,5 @@ EAPI void esvg_pattern_content_set(Edom_Tag *e, Edom_Tag *content);
 
 EAPI Edom_Tag * esvg_clip_path_new(void);
 EAPI Eina_Bool esvg_is_clip_path(Edom_Tag *thiz);
-
-/* helper functions */
-EAPI double esvg_length_final_get(const Esvg_Length *l, double parent_length);
-
 
 #endif /*_ESVG_H*/

@@ -22,27 +22,33 @@
 #include "esvg_private_main.h"
 #include "esvg_private_attribute_presentation.h"
 #include "esvg_private_element.h"
-#include "esvg_private_stop.h"
-#include "esvg_stop.h"
+#include "esvg_a.h"
+
+/* TODO
+ * whenever a child is added, if it is of type instantiable, then
+ * register the click event, whenever the click event occurs, trigger
+ * a function on the svg that will inform that the document should
+ * go to another location
+ * the 'a' can have any child that its parent may container except an 'a'
+ */
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
-static Ender_Property *ESVG_STOP_OFFSET;
+static Ender_Property *ESVG_A_HREF;
 
-typedef struct _Esvg_Stop
+typedef struct _Esvg_A
 {
 	/* properties */
-	Esvg_Length offset;
+	char *href;
 	/* interface */
 	/* private */
-	Enesim_Renderer_Gradient_Stop s;
-} Esvg_Stop;
+} Esvg_A;
 
-static Esvg_Stop * _esvg_stop_get(Edom_Tag *t)
+static Esvg_A * _esvg_a_get(Edom_Tag *t)
 {
-	Esvg_Stop *thiz;
+	Esvg_A *thiz;
 
-	if (esvg_element_internal_type_get(t) != ESVG_STOP)
+	if (esvg_element_internal_type_get(t) != ESVG_A)
 		return NULL;
 	thiz = esvg_element_data_get(t);
 
@@ -51,139 +57,152 @@ static Esvg_Stop * _esvg_stop_get(Edom_Tag *t)
 /*----------------------------------------------------------------------------*
  *                         The Esvg Element interface                         *
  *----------------------------------------------------------------------------*/
-static void _esvg_stop_free(Edom_Tag *t)
+static void _esvg_a_free(Edom_Tag *t)
 {
-	Esvg_Stop *thiz;
+	Esvg_A *thiz;
 
-	thiz = _esvg_stop_get(t);
+	thiz = _esvg_a_get(t);
 	free(thiz);
 }
 
-static Eina_Bool _esvg_stop_attribute_set(Ender_Element *e,
+static Eina_Bool _esvg_a_attribute_set(Ender_Element *e,
 		const char *key, const char *value)
 {
-	if (strcmp(key, "offset") == 0)
+	if (strcmp(key, "xlink:href") == 0)
 	{
-		Esvg_Length offset;
+		esvg_a_href_set(e, value);
+#if 0
+		Esvg_A *thiz;
 
-		esvg_length_string_from(&offset, value, ESVG_LENGTH_0);
-		esvg_stop_offset_set(e, &offset);
+		thiz = edom_tag_data_get(tag);
+		/* absolute */
+		if (*value == '/')
+		{
+			thiz->href = strdup(value);
+		}
+		/* relative */
+		else
+		{
+			Edom_Parser *parser;
+			char real[PATH_MAX];
+			const char *root;
+
+			parser = edom_tag_parser_get(tag);
+			root = edom_parser_root_get(parser);
+			strcpy(real, root);
+			strcat(real, value);
+			thiz->href = strdup(real);
+		}
+#endif
 	}
 	/*
-	 * stop color and stop opacity are part of the presentation attributes
+	 * a color and a opacity are part of the presentation attributes
 	 * and already parsed on the element
 	 */
 	return EINA_TRUE;
 }
 
-static Eina_Bool _esvg_stop_attribute_get(Edom_Tag *tag, const char *attribute, char **value)
+static Eina_Bool _esvg_a_attribute_get(Edom_Tag *tag, const char *attribute, char **value)
 {
 	return EINA_FALSE;
 }
 
 /* TODO optimize so many 'ifs' */
-static Eina_Bool _esvg_stop_setup(Edom_Tag *t,
+static Eina_Bool _esvg_a_setup(Edom_Tag *t,
 		const Esvg_Element_Context *parent_context,
 		Esvg_Element_Context *context,
 		Esvg_Attribute_Presentation *attr,
 		Enesim_Error **error)
 {
-	Esvg_Stop *thiz;
+	Esvg_A *thiz;
 
-	thiz = _esvg_stop_get(t);
-
-	enesim_argb_components_from(&thiz->s.argb, lrint(attr->stop_opacity * 255),
-			attr->stop_color.r, attr->stop_color.g, attr->stop_color.b);
-
-	if (thiz->offset.unit == ESVG_UNIT_LENGTH_PERCENT)
-		thiz->s.pos = thiz->offset.value / 100.0;
-	else
-		thiz->s.pos = thiz->offset.value;
-
-	if (thiz->s.pos > 1)
-		thiz->s.pos = 1;
-	else if (thiz->s.pos < 0)
-		thiz->s.pos = 0;
-	printf("opacity %g\n", attr->stop_opacity);
-	printf("color = %08x pos = %g\n", thiz->s.argb, thiz->s.pos);
-
+	thiz = _esvg_a_get(t);
 	return EINA_TRUE;
 }
 
 static Esvg_Element_Descriptor _descriptor = {
 	/* .child_add		= */ NULL,
 	/* .child_remove	= */ NULL,
-	/* .attribute_get 	= */ _esvg_stop_attribute_get,
+	/* .attribute_get 	= */ _esvg_a_attribute_get,
 	/* .cdata_set 		= */ NULL,
 	/* .text_set 		= */ NULL,
-	/* .free 		= */ _esvg_stop_free,
-	/* .attribute_set 	= */ _esvg_stop_attribute_set,
+	/* .free 		= */ _esvg_a_free,
+	/* .attribute_set 	= */ _esvg_a_attribute_set,
 	/* .initialize 		= */ NULL,
 	/* .clone		= */ NULL,
-	/* .setup		= */ _esvg_stop_setup,
+	/* .setup		= */ _esvg_a_setup,
 };
 /*----------------------------------------------------------------------------*
  *                           The Ender interface                              *
  *----------------------------------------------------------------------------*/
-static Edom_Tag * _esvg_stop_new(void)
+static Edom_Tag * _esvg_a_new(void)
 {
-	Esvg_Stop *thiz;
+	Esvg_A *thiz;
 	Edom_Tag *t;
 
-	thiz = calloc(1, sizeof(Esvg_Stop));
+	thiz = calloc(1, sizeof(Esvg_A));
 	if (!thiz) return NULL;
 
 	/* default values */
-	thiz->offset = ESVG_LENGTH_0;
 
-	t = esvg_element_new(&_descriptor, ESVG_STOP, thiz);
+	t = esvg_element_new(&_descriptor, ESVG_A, thiz);
 	return t;
 }
 
-static void _esvg_stop_offset_set(Edom_Tag *t, Esvg_Length *offset)
+static void _esvg_a_href_set(Edom_Tag *t, const char *href)
 {
-	Esvg_Stop *thiz;
+	Esvg_A *thiz;
 
-	thiz = _esvg_stop_get(t);
-	if (!offset)
-		return;
-	thiz->offset = *offset;
+	thiz = _esvg_a_get(t);
+	if (thiz->href)
+	{
+		free(thiz->href);
+		thiz->href = NULL;
+	}
+	if (href)
+		thiz->href = strdup(href);
 }
 
-static void _esvg_stop_offset_get(Edom_Tag *t, Esvg_Length *offset)
+static void _esvg_a_href_get(Edom_Tag *t, const char **href)
 {
-	Esvg_Stop *thiz;
+	Esvg_A *thiz;
 
-	thiz = _esvg_stop_get(t);
-	if (!offset)
+	thiz = _esvg_a_get(t);
+	if (!href)
 		return;
-	*offset = thiz->offset;
+	*href = thiz->href;
 }
 
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
-Enesim_Renderer_Gradient_Stop * esvg_stop_gradient_stop_get(Edom_Tag *t)
+/* The ender wrapper */
+Eina_Bool esvg_is_a_internal(Edom_Tag *t)
 {
-	Esvg_Stop *thiz;
-
-	thiz = _esvg_stop_get(t);
-	return &thiz->s;
+	if (esvg_element_internal_type_get(t) != ESVG_A)
+		return EINA_FALSE;
+	return EINA_TRUE;
 }
 
-/* The ender wrapper  */
-#define _esvg_stop_offset_is_set NULL
-#include "generated/esvg_generated_stop.c"
+#define _esvg_a_href_is_set NULL
+#include "generated/esvg_generated_a.c"
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/
-EAPI Ender_Element * esvg_stop_new(void)
+EAPI Ender_Element * esvg_a_new(void)
 {
-	return ender_element_new_with_namespace("stop", "esvg");
+	return ender_element_new_with_namespace("a", "esvg");
 }
 
-EAPI void esvg_stop_offset_set(Ender_Element *e, const Esvg_Length *offset)
+EAPI Eina_Bool esvg_is_a(Ender_Element *e)
 {
-	ender_element_property_value_set(e, ESVG_STOP_OFFSET, offset, NULL);
+	Edom_Tag *t;
+
+	t = ender_element_object_get(e);
+	return esvg_is_a_internal(t);
 }
 
+EAPI void esvg_a_href_set(Ender_Element *e, const char *href)
+{
+	ender_element_property_value_set(e, ESVG_A_HREF, href, NULL);
+}

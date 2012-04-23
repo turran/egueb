@@ -41,7 +41,6 @@ typedef struct _Esvg_Circle_State
 
 typedef struct _Esvg_Circle
 {
-	EINA_MAGIC
 	/* properties */
 	Esvg_Circle_State current;
 	Esvg_Circle_State past;
@@ -212,7 +211,6 @@ EAPI Edom_Tag * _esvg_circle_new(void)
 
 	thiz = calloc(1, sizeof(Esvg_Circle));
 	if (!thiz) return NULL;
-	EINA_MAGIC_SET(thiz, ESVG_CIRCLE_MAGIC);
 
 	r = enesim_renderer_circle_new();
 	/* FIXME for now */
@@ -291,6 +289,9 @@ static void _esvg_circle_r_get(Edom_Tag *t, Esvg_Length *radius)
  *                                 Global                                     *
  *============================================================================*/
 /* The ender wrapper */
+#define _esvg_circle_cx_is_set NULL
+#define _esvg_circle_cy_is_set NULL
+#define _esvg_circle_r_is_set NULL
 #include "generated/esvg_generated_circle.c"
 /*============================================================================*
  *                                   API                                      *

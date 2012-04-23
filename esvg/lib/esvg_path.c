@@ -401,6 +401,7 @@ static void _esvg_path_d_add(Edom_Tag *t, const Esvg_Path_Command *cmd)
 #define _esvg_path_d_get NULL
 #define _esvg_path_d_clear NULL
 #define _esvg_path_d_remove NULL
+#define _esvg_path_d_is_set NULL
 #include "generated/esvg_generated_path.c"
 /*============================================================================*
  *                                   API                                      *

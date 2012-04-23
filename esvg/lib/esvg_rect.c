@@ -393,6 +393,12 @@ static void _esvg_rect_ry_get(Edom_Tag *t, Esvg_Coord *ry)
  *                                 Global                                     *
  *============================================================================*/
 /* The ender wrapper */
+#define _esvg_rect_x_is_set NULL
+#define _esvg_rect_y_is_set NULL
+#define _esvg_rect_rx_is_set NULL
+#define _esvg_rect_ry_is_set NULL
+#define _esvg_rect_width_is_set NULL
+#define _esvg_rect_height_is_set NULL
 #include "generated/esvg_generated_rect.c"
 /*============================================================================*
  *                                   API                                      *

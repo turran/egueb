@@ -24,6 +24,8 @@
 #include "esvg_private_element.h"
 #include "esvg_private_renderable.h"
 #include "esvg_private_instantiable.h"
+#include "esvg_private_svg.h"
+#include "esvg_private_a.h"
 
 #include "esvg_svg.h"
 #include "esvg_element.h"
@@ -88,6 +90,23 @@ static Esvg_Svg * _esvg_svg_get(Edom_Tag *t)
 
 	return thiz;
 }
+/*----------------------------------------------------------------------------*
+ *                             The URI interface                              *
+ *----------------------------------------------------------------------------*/
+static void * _esvg_svg_uri_local_get(const char *name, void *data)
+{
+	Ender_Element *topmost = data;
+	Ender_Element *relative;
+
+	relative = esvg_svg_element_find(topmost, name);
+	return relative;
+}
+
+static Esvg_Uri_Descriptor _uri_descriptor = {
+	/* .local_get 		= */ _esvg_svg_uri_local_get,
+	/* .absolute_get 	= */ NULL
+};
+
 
 static Eina_Bool _esvg_svg_child_setup_filter(Edom_Tag *t, Edom_Tag *child)
 {
@@ -517,6 +536,15 @@ static void _esvg_svg_actual_height_get(Edom_Tag *t, double *actual_height)
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
+Ender_Element * esvg_svg_uri_get(Ender_Element *e, const char *uri)
+{
+	Ender_Element *found;
+
+	/* just get the renderer here, dont do the setup */
+	found = esvg_uri_string_from(uri, &_uri_descriptor, e);
+	return found;
+}
+
 Ender_Element * esvg_svg_internal_element_find(Edom_Tag *t, const char *id)
 {
 	Esvg_Svg *thiz;
@@ -526,9 +554,16 @@ Ender_Element * esvg_svg_internal_element_find(Edom_Tag *t, const char *id)
 }
 
 /* The ender wrapper */
+#define _esvg_svg_x_is_set NULL
+#define _esvg_svg_y_is_set NULL
+#define _esvg_svg_width_is_set NULL
+#define _esvg_svg_height_is_set NULL
 #define _esvg_svg_actual_width_set NULL
+#define _esvg_svg_actual_width_is_set NULL
 #define _esvg_svg_actual_height_set NULL
+#define _esvg_svg_actual_height_is_set NULL
 #define _esvg_svg_viewbox_get NULL
+#define _esvg_svg_viewbox_is_set NULL
 #include "generated/esvg_generated_svg.c"
 
 #if 0

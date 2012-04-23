@@ -133,13 +133,28 @@ static Esvg_Element * _esvg_element_get(Edom_Tag *t)
 
 	return thiz;
 }
-
+/*----------------------------------------------------------------------------*
+ *                              Context helpers                               *
+ *----------------------------------------------------------------------------*/
+static void _esvg_element_state_compose(const Esvg_Element_Context *s,
+		const Esvg_Element_Context *parent, Esvg_Element_Context *d)
+{
+	/* only set */
+	d->dpi_x = parent->dpi_x;
+	d->dpi_y = parent->dpi_y;
+	d->viewbox = parent->viewbox;
+	d->bounds = parent->bounds;
+	/* actually compose */
+	enesim_matrix_compose(&parent->transform, &s->transform, &d->transform);
+}
 /*----------------------------------------------------------------------------*
  *                               Clone helpers                                *
  *----------------------------------------------------------------------------*/
-
-
-static Eina_Bool _esvg_element_child_setup_cb(Edom_Tag *t, Edom_Tag *child, void *data)
+/*----------------------------------------------------------------------------*
+ *                               Setup helpers                                *
+ *----------------------------------------------------------------------------*/
+static Eina_Bool _esvg_element_child_setup_cb(Edom_Tag *t, Edom_Tag *child,
+		void *data)
 {
 	Esvg_Element_Setup_Data *setup_data = data;
 
@@ -159,7 +174,8 @@ static Eina_Bool _esvg_element_child_setup_cb(Edom_Tag *t, Edom_Tag *child, void
 			goto err;
 	}
 	/* the real setup */
-	if (!esvg_element_internal_setup(child, setup_data->ctx, setup_data->attr, setup_data->error))
+	if (!esvg_element_internal_setup(child, setup_data->ctx,
+			setup_data->attr, setup_data->error))
 		goto err;
 
 	/* call the post setup */
@@ -176,168 +192,6 @@ static Eina_Bool _esvg_element_child_setup_cb(Edom_Tag *t, Edom_Tag *child, void
 err:
 	setup_data->ret = EINA_FALSE;
 	return EINA_FALSE;
-}
-
-static void _esvg_element_state_merge(const Esvg_Attribute_Presentation *state, const Esvg_Attribute_Presentation *parent, Esvg_Attribute_Presentation *d)
-{
-	/* clip_path */
-	if (!state->clip_path_set)
-	{
-		d->clip_path = parent->clip_path;
-		d->clip_path_set = parent->clip_path_set;
-	}
-	else
-	{
-		d->clip_path = state->clip_path;
-		d->clip_path_set = EINA_TRUE;
-	}
-
-	/* color */
-	if (!state->color_set)
-	{
-		d->color = parent->color;
-		d->color_set = parent->color_set;
-	}
-	else
-	{
-		d->color = state->color;
-		d->color_set = EINA_TRUE;
-	}
-
-	/* opacity */
-	if (!state->opacity_set)
-	{
-		d->opacity = parent->opacity;
-		d->opacity_set = parent->opacity_set;
-	}
-	else
-	{
-		d->opacity = state->opacity;
-		d->opacity_set = EINA_TRUE;
-	}
-
-	/* FIXME do the real merge (multiply, etc, etc) */
-	/* fill */
-	if (!state->fill_set)
-	{
-		d->fill = parent->fill;
-		d->fill_set = parent->fill_set;
-	}
-	else
-	{
-		d->fill = state->fill;
-		d->fill_set = EINA_TRUE;
-	}
-
-	/* fill opacity */
-	if (!state->fill_opacity_set)
-	{
-		d->fill_opacity = parent->fill_opacity;
-		d->fill_opacity_set = parent->fill_opacity_set;
-	}
-	else
-	{
-		d->fill_opacity = state->fill_opacity;
-		d->fill_opacity_set = EINA_TRUE;
-	}
-
-	/* fill rule */
-	if (!state->fill_rule_set)
-	{
-		d->fill_rule = parent->fill_rule;
-		d->fill_rule_set = parent->fill_rule_set;
-	}
-	else
-	{
-		d->fill_rule = state->fill_rule;
-		d->fill_rule_set = EINA_TRUE;
-	}
-
-	/* stroke */
-	if (!state->stroke_set)
-	{
-		d->stroke = parent->stroke;
-		d->stroke_set = parent->stroke_set;
-	}
-	else
-	{
-		d->stroke = state->stroke;
-		d->stroke_set = EINA_TRUE;
-	}
-
-	/* stroke width */
-	if (!state->stroke_width_set)
-	{
-		d->stroke_width = parent->stroke_width;
-		d->stroke_width_set = parent->stroke_width_set;
-	}
-	else
-	{
-		d->stroke_width = state->stroke_width;
-		d->stroke_width_set = EINA_TRUE;
-	}
-
-	/* stroke line cap */
-	if (!state->stroke_line_cap_set)
-	{
-		d->stroke_line_cap = parent->stroke_line_cap;
-		d->stroke_line_cap_set = parent->stroke_line_cap_set;
-	}
-	else
-	{
-		d->stroke_line_cap = state->stroke_line_cap;
-		d->stroke_line_cap_set = EINA_TRUE;
-
-	}
-
-	/* stroke line join */
-	if (!state->stroke_line_join_set)
-	{
-		d->stroke_line_join = parent->stroke_line_join;
-		d->stroke_line_join_set = parent->stroke_line_join_set;
-	}
-	else
-	{
-		d->stroke_line_join = state->stroke_line_join;
-		d->stroke_line_join_set = EINA_TRUE;
-
-	}
-
-	/* stroke opacity */
-	if (!state->stroke_opacity_set)
-	{
-		d->stroke_opacity = parent->stroke_opacity;
-		d->stroke_opacity_set = parent->stroke_opacity_set;
-	}
-	else
-	{
-		d->stroke_opacity = state->stroke_opacity;
-		d->stroke_opacity_set = EINA_TRUE;
-	}
-
-	/* visibility */
-	if (!state->visibility_set)
-	{
-		d->visibility = parent->visibility;
-		d->visibility_set = parent->visibility_set;
-	}
-	else
-	{
-		d->visibility = state->visibility;
-		d->visibility_set = EINA_TRUE;
-
-	}
-}
-
-static void _esvg_element_state_compose(const Esvg_Element_Context *s, const Esvg_Element_Context *parent, Esvg_Element_Context *d)
-{
-	/* only set */
-	d->dpi_x = parent->dpi_x;
-	d->dpi_y = parent->dpi_y;
-	d->viewbox = parent->viewbox;
-	d->bounds = parent->bounds;
-	/* actually compose */
-	enesim_matrix_compose(&parent->transform, &s->transform, &d->transform);
 }
 
 /*----------------------------------------------------------------------------*
@@ -976,17 +830,17 @@ Eina_Bool esvg_element_internal_setup(Edom_Tag *t,
 			esvg_element_attribute_type_set(t, ESVG_ATTR_CSS);
 			ecss_context_inline_style_apply(&_esvg_element_css_context, thiz->style, t);
 			esvg_element_attribute_type_set(t, ESVG_ATTR_XML);
-			_esvg_element_state_merge(&thiz->attr_css, &thiz->attr_xml, &thiz->attr_final);
+			esvg_attribute_presentation_merge(&thiz->attr_css, &thiz->attr_xml, &thiz->attr_final);
 			if (attr)
 			{
-				_esvg_element_state_merge(&thiz->attr_final, attr, &thiz->attr_final);
+				esvg_attribute_presentation_merge(&thiz->attr_final, attr, &thiz->attr_final);
 			}
 		}
 		else
 		{
 			if (attr)
 			{
-				_esvg_element_state_merge(&thiz->attr_xml, attr, &thiz->attr_final);
+				esvg_attribute_presentation_merge(&thiz->attr_xml, attr, &thiz->attr_final);
 			}
 		}
 	}
@@ -1106,10 +960,26 @@ Edom_Tag * esvg_element_new(Esvg_Element_Descriptor *descriptor, Esvg_Type type,
 }
 
 /* The ender wrapper */
-/* the type is RO */
 #define _esvg_element_type_set NULL
+#define _esvg_element_type_is_set NULL
 #define _esvg_element_topmost_set NULL
+#define _esvg_element_topmost_is_set NULL
 #define _esvg_element_topmost_get esvg_element_internal_topmost_get
+#define _esvg_element_id_is_set NULL
+#define _esvg_element_class_is_set NULL
+#define _esvg_element_style_is_set NULL
+#define _esvg_element_clip_path_is_set NULL
+#define _esvg_element_fill_is_set NULL
+#define _esvg_element_stroke_is_set NULL
+#define _esvg_element_stroke_width_is_set NULL
+#define _esvg_element_stroke_opacity_is_set NULL
+#define _esvg_element_fill_is_set NULL
+#define _esvg_element_fill_opacity_is_set NULL
+#define _esvg_element_opacity_is_set NULL
+#define _esvg_element_visibility_is_set NULL
+#define _esvg_element_stop_color_is_set NULL
+#define _esvg_element_stop_opacity_is_set NULL
+#define _esvg_element_transform_is_set NULL
 #include "generated/esvg_generated_element.c"
 
 /*============================================================================*

@@ -85,6 +85,10 @@ typedef struct _Esvg_Attribute_Presentation {
 } Esvg_Attribute_Presentation;
 
 void esvg_attribute_presentation_setup(Esvg_Attribute_Presentation *thiz);
+void esvg_attribute_presentation_merge(const Esvg_Attribute_Presentation *state,
+		const Esvg_Attribute_Presentation *parent,
+		Esvg_Attribute_Presentation *d);
+
 void esvg_attribute_presentation_clip_path_set(Esvg_Attribute_Presentation *thiz, const Edom_Tag *clip_path);
 void esvg_attribute_presentation_clip_path_unset(Esvg_Attribute_Presentation *thiz);
 void esvg_attribute_presentation_color_set(Esvg_Attribute_Presentation *thiz, const Esvg_Color *color);

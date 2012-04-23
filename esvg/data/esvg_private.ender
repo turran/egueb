@@ -121,6 +121,14 @@ namespace "esvg" {
 
 	};
 
+	class "use" : "instantiable" {
+		esvg_length "x";
+		esvg_length "y";
+		esvg_length "width";
+		esvg_length "height";
+		string "link";
+	};
+
 	class "rect" : "instantiable" {
 		esvg_length "x";
 		esvg_length "y";
@@ -162,16 +170,20 @@ namespace "esvg" {
 		[esvg_point] "point";
 	};
 
-	class "use" : "instantiable" {
-
-	};
-
 	class "text" : "instantiable" {
 
 	};
 
 	class "stop" : "element" {
 		esvg_length "offset";
+	};
+
+	class "defs" : "element" {
+
+	};
+
+	class "a" : "element" {
+		string "href";
 	};
 };
 

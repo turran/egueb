@@ -157,6 +157,160 @@ void esvg_attribute_presentation_setup(Esvg_Attribute_Presentation *thiz)
 	thiz->stop_opacity = 1.0;
 }
 
+void esvg_attribute_presentation_merge(const Esvg_Attribute_Presentation *state,
+		const Esvg_Attribute_Presentation *parent,
+		Esvg_Attribute_Presentation *d)
+{
+	/* clip_path */
+	if (!state->clip_path_set)
+	{
+		d->clip_path = parent->clip_path;
+		d->clip_path_set = parent->clip_path_set;
+	}
+	else
+	{
+		d->clip_path = state->clip_path;
+		d->clip_path_set = EINA_TRUE;
+	}
+
+	/* color */
+	if (!state->color_set)
+	{
+		d->color = parent->color;
+		d->color_set = parent->color_set;
+	}
+	else
+	{
+		d->color = state->color;
+		d->color_set = EINA_TRUE;
+	}
+
+	/* opacity */
+	if (!state->opacity_set)
+	{
+		d->opacity = parent->opacity;
+		d->opacity_set = parent->opacity_set;
+	}
+	else
+	{
+		d->opacity = state->opacity;
+		d->opacity_set = EINA_TRUE;
+	}
+
+	/* FIXME do the real merge (multiply, etc, etc) */
+	/* fill */
+	if (!state->fill_set)
+	{
+		d->fill = parent->fill;
+		d->fill_set = parent->fill_set;
+	}
+	else
+	{
+		d->fill = state->fill;
+		d->fill_set = EINA_TRUE;
+	}
+
+	/* fill opacity */
+	if (!state->fill_opacity_set)
+	{
+		d->fill_opacity = parent->fill_opacity;
+		d->fill_opacity_set = parent->fill_opacity_set;
+	}
+	else
+	{
+		d->fill_opacity = state->fill_opacity;
+		d->fill_opacity_set = EINA_TRUE;
+	}
+
+	/* fill rule */
+	if (!state->fill_rule_set)
+	{
+		d->fill_rule = parent->fill_rule;
+		d->fill_rule_set = parent->fill_rule_set;
+	}
+	else
+	{
+		d->fill_rule = state->fill_rule;
+		d->fill_rule_set = EINA_TRUE;
+	}
+
+	/* stroke */
+	if (!state->stroke_set)
+	{
+		d->stroke = parent->stroke;
+		d->stroke_set = parent->stroke_set;
+	}
+	else
+	{
+		d->stroke = state->stroke;
+		d->stroke_set = EINA_TRUE;
+	}
+
+	/* stroke width */
+	if (!state->stroke_width_set)
+	{
+		d->stroke_width = parent->stroke_width;
+		d->stroke_width_set = parent->stroke_width_set;
+	}
+	else
+	{
+		d->stroke_width = state->stroke_width;
+		d->stroke_width_set = EINA_TRUE;
+	}
+
+	/* stroke line cap */
+	if (!state->stroke_line_cap_set)
+	{
+		d->stroke_line_cap = parent->stroke_line_cap;
+		d->stroke_line_cap_set = parent->stroke_line_cap_set;
+	}
+	else
+	{
+		d->stroke_line_cap = state->stroke_line_cap;
+		d->stroke_line_cap_set = EINA_TRUE;
+
+	}
+
+	/* stroke line join */
+	if (!state->stroke_line_join_set)
+	{
+		d->stroke_line_join = parent->stroke_line_join;
+		d->stroke_line_join_set = parent->stroke_line_join_set;
+	}
+	else
+	{
+		d->stroke_line_join = state->stroke_line_join;
+		d->stroke_line_join_set = EINA_TRUE;
+
+	}
+
+	/* stroke opacity */
+	if (!state->stroke_opacity_set)
+	{
+		d->stroke_opacity = parent->stroke_opacity;
+		d->stroke_opacity_set = parent->stroke_opacity_set;
+	}
+	else
+	{
+		d->stroke_opacity = state->stroke_opacity;
+		d->stroke_opacity_set = EINA_TRUE;
+	}
+
+	/* visibility */
+	if (!state->visibility_set)
+	{
+		d->visibility = parent->visibility;
+		d->visibility_set = parent->visibility_set;
+	}
+	else
+	{
+		d->visibility = state->visibility;
+		d->visibility_set = EINA_TRUE;
+
+	}
+}
+
+
 void esvg_attribute_presentation_clip_path_set(Esvg_Attribute_Presentation *thiz, const Edom_Tag *clip_path)
 {
 	if (thiz->clip_path == clip_path)

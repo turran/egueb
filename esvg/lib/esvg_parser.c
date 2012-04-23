@@ -398,15 +398,16 @@ static void * _esvg_parser_tag_new(Edom_Parser *parser, int tag_id)
 		case ESVG_PATTERN:
 		tag = esvg_parser_pattern_new(parser);
 		break;
+#endif
 
 		case ESVG_DEFS:
-		tag = esvg_parser_defs_new(parser);
+		tag = esvg_defs_new();
 		break;
 
 		case ESVG_USE:
-		tag = esvg_parser_use_new(parser);
+		tag = esvg_use_new();
 		break;
-#endif
+
 		case ESVG_SVG:
 		tag = esvg_svg_new();
 		if (!thiz->topmost)
@@ -450,11 +451,11 @@ static void * _esvg_parser_tag_new(Edom_Parser *parser, int tag_id)
 		tag = esvg_g_new();
 		break;
 
-#if 0
 		case ESVG_A:
-		tag = esvg_parser_a_new(parser);
+		tag = esvg_a_new();
 		break;
 
+#if 0
 		case ESVG_STYLE:
 		//tag = esvg_parser_style_new(parser);
 		break;

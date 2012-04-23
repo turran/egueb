@@ -23,7 +23,9 @@
 #include "esvg_private_attribute_presentation.h"
 #include "esvg_private_element.h"
 #include "esvg_private_renderable.h"
-#include "esvg_svg.h"
+#include "esvg_private_svg.h"
+#include "esvg_private_reference.h"
+
 #include "esvg_renderable.h"
 /*============================================================================*
  *                                  Local                                     *
@@ -85,23 +87,6 @@ static Esvg_Renderable * _esvg_renderable_get(Edom_Tag *t)
 	return thiz;
 }
 
-/*----------------------------------------------------------------------------*
- *                             The URI interface                              *
- *----------------------------------------------------------------------------*/
-static void * _esvg_renderable_uri_local_get(const char *name, void *data)
-{
-	Ender_Element *topmost = data;
-	Ender_Element *relative;
-
-	relative = esvg_svg_element_find(topmost, name);
-	return relative;
-}
-
-static Esvg_Uri_Descriptor _uri_descriptor = {
-	/* .local_get 		= */ _esvg_renderable_uri_local_get,
-	/* .absolute_get 	= */ NULL
-};
-
 static void _esvg_shape_enesim_state_get(Edom_Tag *t,
 		const Esvg_Element_Context *ctx,
 		const Esvg_Attribute_Presentation *attr,
@@ -149,8 +134,7 @@ static void _esvg_shape_enesim_state_get(Edom_Tag *t,
 		{
 			Ender_Element *e;
 
-			/* just get the renderer here, dont do the setup */
-			e = esvg_uri_string_from(attr->fill.value.paint_server, &_uri_descriptor, topmost);
+			e = esvg_svg_uri_get(topmost, attr->fill.value.paint_server);
 			if (e)
 			{
 				Enesim_Renderer *fill_r;
@@ -160,6 +144,10 @@ static void _esvg_shape_enesim_state_get(Edom_Tag *t,
 				fill_r = esvg_renderable_renderer_get(e);
 				rctx->fill_renderer = fill_r;
 				printf("fill rendererrrrr!!! %p %s\n", fill_r, esvg_type_string_to(esvg_element_internal_type_get(t)));
+				{
+					Esvg_Reference *ref;
+					ref = esvg_reference_new(e);
+				}
 			}
 		}
 		/* TODO here we should fetch the id from the property */
@@ -318,6 +306,9 @@ static Eina_Bool _esvg_renderable_setup(Edom_Tag *t,
 		thiz->calculate(r, context, attr, &thiz->context, thiz->calculate_data);
 	else
 #endif
+	/* FIXME there are cases where this is not needed, liek the 'use' given that
+	 * the 'g' will do it
+	 */
 		_esvg_shape_enesim_state_get(t, context, attr, &thiz->context);
 
 	/* do the setup */
@@ -384,8 +375,13 @@ void esvg_renderable_internal_container_height_get(Edom_Tag *t, double *containe
 /* The ender wrapper */
 #define _esvg_renderable_renderer_get esvg_renderable_internal_renderer_get
 #define _esvg_renderable_renderer_set NULL
+#define _esvg_renderable_renderer_is_set NULL
 #define _esvg_renderable_container_width_get esvg_renderable_internal_container_width_get
+#define _esvg_renderable_container_width_is_set NULL
 #define _esvg_renderable_container_height_get esvg_renderable_internal_container_height_get
+#define _esvg_renderable_container_height_is_set NULL
+#define _esvg_renderable_x_dpi_is_set NULL
+#define _esvg_renderable_y_dpi_is_set NULL
 #include "generated/esvg_generated_renderable.c"
 
 Eina_Bool esvg_is_renderable_internal(Edom_Tag *t)
@@ -542,5 +538,3 @@ EAPI void esvg_renderable_y_dpi_set(Ender_Element *e, double y_dpi)
 EAPI void esvg_renderable_y_dpi_get(Ender_Element *e, double *y_dpi)
 {
 }
-
-

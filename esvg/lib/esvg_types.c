@@ -1565,7 +1565,7 @@ EAPI const char * esvg_type_string_to(Esvg_Type type)
 		case ESVG_TITLE: return "";
 		case ESVG_TREF: return "";
 		case ESVG_TSPAN: return "";
-		case ESVG_USE: return "";
+		case ESVG_USE: return "use";
 		case ESVG_VIEW: return "";
 		case ESVG_VKERN: return "";
 		default: return "unknown";
