@@ -36,6 +36,7 @@ esvg_polygon.c \
 esvg_polyline.c \
 esvg_radial_gradient.c \
 esvg_reference.c \
+esvg_referenceable.c \
 esvg_renderable.c \
 esvg_rect.c \
 esvg_stop.c \

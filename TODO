@@ -8,6 +8,9 @@ ECSS
 
 ESVG
 ====
++ We need to change the paint server to not inherit from a renderable, instead (as with the clippath) make
+  referencable interace, which will have an interface to return a new renderer and set the current renderer
+  so the element will now what renderer to use
 + There's some complication about attributes and properties and how to export them:
   attributes: object's attributes
   properties: attributes that can be specified with a style and also as object's attributes

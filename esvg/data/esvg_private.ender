@@ -69,6 +69,10 @@ namespace "esvg" {
 		ender "topmost";
 	};
 
+	abstract "referenceable" : "element" {
+
+	};
+
 	abstract "renderable" : "element" {
 		object "renderer";
 		double "container_width";
