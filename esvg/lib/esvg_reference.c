@@ -26,6 +26,14 @@
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
+typedef struct _Esvg_Reference_Duplicate_Data
+{
+	Ender_Element *our;
+	Ender_Element *ref;
+} Esvg_Reference_Duplicate_Data;
+
+static Ender_Element * _esvg_reference_duplicate(Ender_Element *e);
+
 /* skip the edom properties */
 static Eina_Bool _property_is_valid(Ender_Property *prop)
 {
@@ -33,11 +41,15 @@ static Eina_Bool _property_is_valid(Ender_Property *prop)
 		return EINA_FALSE;
 	else if (prop == EDOM_ATTRIBUTE)
 		return EINA_FALSE;
+	/* we handle the child case using the foreach */
+	else if (prop == EDOM_CHILD)
+		return EINA_FALSE;
 	return EINA_TRUE;
 }
+
 static void _descriptor_property(Ender_Property *prop, void *data)
 {
-	Esvg_Reference *thiz = data;
+	Esvg_Reference_Duplicate_Data *ddata = data;
 	Ender_Value *v = NULL;
 	const char *name;
 
@@ -45,13 +57,64 @@ static void _descriptor_property(Ender_Property *prop, void *data)
 		return;
 
 	/* FIXME we need to implement this functionality */
-	if (!ender_element_property_value_is_set(thiz->our, prop))
+	if (!ender_element_property_value_is_set(ddata->our, prop))
 		return;
 	name = ender_property_name_get(prop);
-	printf("new property %s\n", name);
-	ender_element_property_value_get_simple(thiz->ref, prop, &v);
-	ender_element_property_value_set_simple(thiz->our, prop, v);
+	//printf("new property %s\n", name);
+	ender_element_property_value_get_simple(ddata->ref, prop, &v);
+	ender_element_property_value_set_simple(ddata->our, prop, v);
 	ender_value_unref(v);
+}
+
+static Eina_Bool _esvg_reference_child_cb(Edom_Tag *t, Edom_Tag *child,
+		void *data)
+{
+	Ender_Element *our = data;
+	Ender_Element *child_e;
+	Ender_Element *child_our;
+	Edom_Tag *child_our_t;
+
+	printf("new child %s\n", edom_tag_name_get(child));
+	if (!esvg_is_element_internal(child))
+		return EINA_TRUE;
+
+	child_e = esvg_element_ender_get(child);
+	child_our = _esvg_reference_duplicate(child_e);
+	child_our_t = ender_element_object_get(child_our);
+
+	ender_element_property_value_add(our, EDOM_CHILD, child_our_t, NULL);
+	printf("cloned!\n");
+
+	return EINA_TRUE;
+}
+
+static Ender_Element * _esvg_reference_duplicate(Ender_Element *e)
+{
+	Esvg_Reference_Duplicate_Data data;
+	Ender_Descriptor *desc;
+	Ender_Element *our;
+	Ender_Namespace *ns;
+	Edom_Tag *t;
+	const char *name;
+	const char *ns_name;
+
+	/* create a new element of the same type */
+	desc = ender_element_descriptor_get(e);
+	name = ender_descriptor_name_get(desc);
+	ns = ender_descriptor_namespace_get(desc);
+	ns_name = ender_namespace_name_get(ns);
+	our = ender_element_new_with_namespace(name, ns_name);
+
+	data.ref = e;
+	data.our = our;
+
+	/* iterate over the properties and set them on the new element */
+	ender_descriptor_property_list_recursive(desc, _descriptor_property, &data);
+	/* iterate over the childs and clone them too */
+	t = ender_element_object_get(e);
+	edom_tag_child_foreach(t, _esvg_reference_child_cb, our);
+
+	return our;
 }
 /*============================================================================*
  *                                 Global                                     *
@@ -59,26 +122,16 @@ static void _descriptor_property(Ender_Property *prop, void *data)
 Esvg_Reference * esvg_reference_new(Ender_Element *e)
 {
 	Esvg_Reference *thiz;
-	Ender_Descriptor *desc;
-	Ender_Element *our;
-	Ender_Namespace *ns;
-	const char *name;
-	const char *ns_name;
-
-	desc = ender_element_descriptor_get(e);
-
-	/* create a new element of the same type */
-	name = ender_descriptor_name_get(desc);
-	ns = ender_descriptor_namespace_get(desc);
-	ns_name = ender_namespace_name_get(ns);
-	our = ender_element_new_with_namespace(name, ns_name);
 
 	thiz = calloc(1, sizeof(Esvg_Reference));
-	thiz->our = our;
 	thiz->ref = e;
+	thiz->our = _esvg_reference_duplicate(thiz->ref);
 
-	/* iterate over the properties and set them on the new element */
-	ender_descriptor_property_list_recursive(desc, _descriptor_property, thiz);
+	/* useful for debugging */
+	{
+		Edom_Tag *t = ender_element_object_get(thiz->our);
+		edom_tag_dump(t);
+	}
 
 	return thiz;
 }

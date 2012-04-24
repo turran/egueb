@@ -5,6 +5,7 @@ SUBDIRS = generated
 include_HEADERS = Esvg.h Esvg_Parser.h
 
 ESVG_APIHEADERS = \
+esvg_a.h \
 esvg_circle.h \
 esvg_element.h \
 esvg_ellipse.h \
@@ -16,6 +17,7 @@ esvg_main.h \
 esvg_path.h \
 esvg_polygon.h \
 esvg_polyline.h \
+esvg_radial_gradient.h \
 esvg_rect.h \
 esvg_renderable.h \
 esvg_stop.h \
