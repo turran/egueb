@@ -22,8 +22,7 @@
 #include "esvg_private_main.h"
 #include "esvg_private_attribute_presentation.h"
 #include "esvg_private_element.h"
-#include "esvg_private_renderable.h"
-#include "esvg_private_instantiable.h"
+#include "esvg_private_referenceable.h"
 #include "esvg_clip_path.h"
 
 /*
@@ -36,6 +35,8 @@
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
+static Ender_Property *ESVG_CLIP_PATH_UNITS;
+
 typedef struct _Esvg_Clip_Path
 {
 	/* properties */
@@ -50,9 +51,9 @@ static Esvg_Clip_Path * _esvg_clip_path_get(Edom_Tag *t)
 {
 	Esvg_Clip_Path *thiz;
 
-	if (esvg_element_internal_type_get(t) != ESVG_CLIP_PATH)
+	if (esvg_element_internal_type_get(t) != ESVG_CLIPPATH)
 		return NULL;
-	thiz = esvg_renderable_data_get(t);
+	thiz = esvg_referenceable_data_get(t);
 
 	return thiz;
 }
@@ -67,7 +68,14 @@ static Eina_Bool _esvg_clip_path_attribute_set(Ender_Element *e,
 	return EINA_TRUE;
 }
 
-static Eina_Bool _esvg_clip_path_child_add(Edom_Tag *tag, Edom_Tag *child)
+static Eina_Bool _esvg_clip_path_attribute_get(Edom_Tag *tag,
+		const char *attribute, char **value)
+{
+	return EINA_FALSE;
+}
+
+
+static Eina_Bool _esvg_clip_path_child_add(Edom_Tag *tag, Edom_Tag *child_t)
 {
 	Esvg_Type type;
 
@@ -92,9 +100,6 @@ static Eina_Bool _esvg_clip_path_child_add(Edom_Tag *tag, Edom_Tag *child)
 #endif
 }
 #if 0
-/*============================================================================*
- *                                 Global                                     *
- *============================================================================*/
 Edom_Tag * esvg_parser_clip_path_new(Edom_Parser *parser)
 {
 	Edom_Tag *tag;
@@ -107,6 +112,7 @@ Edom_Tag * esvg_parser_clip_path_new(Edom_Parser *parser)
 }
 #endif
 
+#if 0
 static void _esvg_clip_path_enesim_state_calculate(Edom_Tag *e,
 		Esvg_Element_Context *estate,
 		const Esvg_Attribute_Presentation *attr,
@@ -178,38 +184,19 @@ static Eina_Bool _esvg_clip_path_unset_enesim_state_handle(Edom_Tag *e,
 		enesim_renderer_unref(shape);
 	return EINA_TRUE;
 }
-/*----------------------------------------------------------------------------*
- *                         The ESVG element interface                         *
- *----------------------------------------------------------------------------*/
-static Eina_Bool _esvg_clip_path_element_add(Edom_Tag *e, Enesim_Renderer *child)
-{
-	Esvg_Clip_Path *thiz;
-
-	thiz = _esvg_clip_path_get(e);
-	thiz->children = eina_list_append(thiz->children, child);
-	enesim_renderer_compound_layer_add(thiz->r, child);
-	return EINA_TRUE;
-}
-
-static void _esvg_clip_path_element_remove(Edom_Tag *e, Enesim_Renderer *child)
-{
-	Esvg_Clip_Path *thiz;
-
-	thiz = _esvg_clip_path_get(e);
-	thiz->children = eina_list_remove(thiz->children, child);
-	enesim_renderer_compound_layer_remove(thiz->r, child);
-}
+#endif
 
 static Eina_Bool _esvg_clip_path_setup(Edom_Tag *e,
 		Esvg_Element_Context *state,
 		Esvg_Attribute_Presentation *attr,
-		Enesim_Surface *s,
+		Enesim_Renderer *r,
 		Enesim_Error **error)
 {
 	Esvg_Clip_Path *thiz;
 
 
 	thiz = _esvg_clip_path_get(e);
+#if 0
 	/* TODO add a new transformation in case of the units */
 	/* TODO we should use the same transformation as the relative renderer */
 	/* in case this clip path has a clip-path set, call the setup on other */
@@ -222,13 +209,23 @@ static Eina_Bool _esvg_clip_path_setup(Edom_Tag *e,
 		ret = enesim_renderer_setup(attr->clip_path, s, error);
 		printf("clip path setup %d\n", ret);
 	}
+#endif
 	return EINA_TRUE;
 }
 
-Enesim_Renderer * _esvg_clip_path_renderer_get(Edom_Tag *e,
-		const Esvg_Element_Context *state,
-		const Esvg_Attribute_Presentation *attr)
+static void _esvg_clip_path_free(Edom_Tag *t)
 {
+	Esvg_Clip_Path *thiz;
+
+	thiz = _esvg_clip_path_get(t);
+	free(thiz);
+}
+
+
+Enesim_Renderer * _esvg_clip_path_renderer_new(Edom_Tag *e)
+{
+	Enesim_Renderer *r;
+#if 0
 	Esvg_Clip_Path *thiz;
 
 	thiz = _esvg_clip_path_get(e);
@@ -237,35 +234,23 @@ Enesim_Renderer * _esvg_clip_path_renderer_get(Edom_Tag *e,
 		return thiz->r;
 	else
 		return esvg_element_renderer_get(attr->clip_path);
+#endif
+	r = enesim_renderer_compound_new();
+	return r;
 }
 
-static void _esvg_clip_path_clone(Edom_Tag *e, Enesim_Renderer *dr)
-{
-	Esvg_Clip_Path *thiz;
-	Eina_List *l;
-	Enesim_Renderer *child;
-
-	thiz = _esvg_clip_path_get(e);
-	/* TODO we need a code on the compound to get the list of layers */
-	EINA_LIST_FOREACH(thiz->children, l, child)
-	{
-		Enesim_Renderer *new_child;
-
-		new_child = esvg_element_clone(child);
-		esvg_container_element_add(dr, new_child);
-	}
-}
-
-static Esvg_Container_Descriptor _descriptor = {
-	/* .element_add	= */ _esvg_clip_path_element_add,
-	/* .element_remove	= */ _esvg_clip_path_element_remove,
-	/* .element_at		= */ NULL,
-	/* .name_get		= */ _esvg_clip_path_name_get,
-	/* .renderer_get	= */ _esvg_clip_path_renderer_get,
-	/* .clone		= */ _esvg_clip_path_clone,
+static Esvg_Referenceable_Descriptor _descriptor = {
+	/* .child_add		= */ NULL,
+	/* .child_remove	= */ NULL,
+	/* .attribute_get 	= */ _esvg_clip_path_attribute_get,
+	/* .cdata_set 		= */ NULL,
+	/* .text_set 		= */ NULL,
+	/* .free 		= */ _esvg_clip_path_free,
+	/* .initialize 		= */ NULL,
+	/* .attribute_set 	= */ _esvg_clip_path_attribute_set,
+	/* .clone		= */ NULL,
 	/* .setup		= */ _esvg_clip_path_setup,
-	/* .cleanup		= */ NULL,
-	/* .is_renderable	= */ EINA_FALSE,
+	/* .renderer_new	= */ _esvg_clip_path_renderer_new,
 };
 /*----------------------------------------------------------------------------*
  *                           The Ender interface                              *
@@ -278,20 +263,17 @@ EAPI Edom_Tag * _esvg_clip_path_new(void)
 
 	thiz = calloc(1, sizeof(Esvg_Clip_Path));
 	if (!thiz) return NULL;
-	EINA_MAGIC_SET(thiz, ESVG_CLIP_PATH_MAGIC);
 
-	r = enesim_renderer_compound_new();
-	enesim_renderer_compound_pre_setup_set(e, _esvg_clip_path_set_enesim_state_handle, thiz);
-	enesim_renderer_compound_post_setup_set(e, _esvg_clip_path_unset_enesim_state_handle, NULL);
-	thiz->r = r;
-
-	t = esvg_container_new(&_descriptor, thiz);
+	t = esvg_referenceable_new(&_descriptor, ESVG_CLIPPATH, thiz);
 
 	return t;
 }
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
+/* The ender wrapper */
+#include "generated/esvg_generated_clip_path.c"
+
 /* set the renderer this clip path should clip, is not that i like this way of setup much */
 void esvg_clip_path_relative_set(Edom_Tag *e, Enesim_Renderer *rel,
 		Enesim_Matrix *rel_m)
@@ -319,7 +301,6 @@ EAPI Ender_Element * esvg_clip_path_new(void)
 	return ender_element_new_with_namespace("clip_path", "esvg");
 }
 
-EAPI Eina_Bool esvg_is_clip_path(Edom_Tag *e)
+EAPI Eina_Bool esvg_is_clip_path(Ender_Element *e)
 {
 }
-

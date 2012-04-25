@@ -20,6 +20,7 @@ esvg_attribute_presentation.c \
 esvg_attribute_animation.c \
 esvg_animation.c \
 esvg_circle.c \
+esvg_clip_path.c \
 esvg_defs.c \
 esvg_element.c \
 esvg_ellipse.c \
@@ -45,7 +46,6 @@ esvg_types.c \
 esvg_use.c
 
 #esvg_attribute_regular.c \
-#esvg_clip_path.c \
 #esvg_gradient.c \
 #esvg_image.c \
 #esvg_pattern.c \

@@ -22,7 +22,7 @@
 #include "esvg_private_main.h"
 #include "esvg_private_attribute_presentation.h"
 #include "esvg_private_element.h"
-#include "esvg_private_renderable.h"
+#include "esvg_private_referenceable.h"
 #include "esvg_private_paint_server.h"
 #include "esvg_private_gradient.h"
 #include "esvg_private_stop.h"
@@ -44,7 +44,6 @@ typedef struct _Esvg_Linear_Gradient
 	Esvg_Coord x2;
 	Esvg_Coord y2;
 	/* private */
-	Enesim_Renderer *r;
 	Eina_Bool x1_set : 1;
 	Eina_Bool y1_set : 1;
 	Eina_Bool x2_set : 1;
@@ -60,21 +59,6 @@ static Esvg_Linear_Gradient * _esvg_linear_gradient_get(Edom_Tag *t)
 	thiz = esvg_gradient_data_get(t);
 
 	return thiz;
-}
-
-static Eina_Bool _esvg_linear_gradient_stop_post(Edom_Tag *t, Edom_Tag *child_t,
-		Esvg_Element_Context *ctx,
-		Esvg_Attribute_Presentation *attr,
-		Enesim_Error **error,
-		void *data)
-{
-	Esvg_Linear_Gradient *thiz = data;
-	Enesim_Renderer_Gradient_Stop *stop;
-
-	stop = esvg_stop_gradient_stop_get(child_t);
-	printf("iterating over the stops %g %08x!!!!\n", stop->pos, stop->argb);
-	enesim_renderer_gradient_stop_add(thiz->r, stop);
-	return EINA_TRUE;
 }
 
 #if 0
@@ -154,18 +138,19 @@ static Eina_Bool _esvg_linear_gradient_attribute_get(Edom_Tag *tag, const char *
 	return EINA_FALSE;
 }
 
-static Enesim_Renderer * _esvg_linear_gradient_renderer_get(Edom_Tag *t)
+static Enesim_Renderer * _esvg_linear_gradient_renderer_new(Edom_Tag *t)
 {
-	Esvg_Linear_Gradient *thiz;
+	Enesim_Renderer *r;
 
-	thiz = _esvg_linear_gradient_get(t);
-	return thiz->r;
+	r = enesim_renderer_gradient_linear_new();
+	enesim_renderer_gradient_mode_set(r, ENESIM_PAD);
+	return r;
 }
 
 static Eina_Bool _esvg_linear_gradient_setup(Edom_Tag *t,
 		Esvg_Element_Context *ctx,
 		Esvg_Attribute_Presentation *attr,
-		Esvg_Renderable_Context *rctx,
+		Enesim_Renderer *r,
 		Esvg_Gradient_Context *gctx,
 		Enesim_Error **error)
 {
@@ -173,7 +158,6 @@ static Eina_Bool _esvg_linear_gradient_setup(Edom_Tag *t,
 	Esvg_Gradient_Units gu;
 	Enesim_Repeat_Mode mode;
 	Enesim_Matrix m;
-	Eina_Bool ret;
 	double x1;
 	double y1;
 	double x2;
@@ -196,7 +180,7 @@ static Eina_Bool _esvg_linear_gradient_setup(Edom_Tag *t,
 		mode = ENESIM_REFLECT;
 		break;
 	}
-	enesim_renderer_gradient_mode_set(thiz->r, mode);
+	enesim_renderer_gradient_mode_set(r, mode);
 
 	if (gu == ESVG_OBJECT_BOUNDING_BOX)
 	{
@@ -226,24 +210,15 @@ static Eina_Bool _esvg_linear_gradient_setup(Edom_Tag *t,
 	{
 		enesim_matrix_compose(&m, &gctx->transform, &m);
 	}
-	enesim_renderer_geometry_transformation_set(thiz->r, &m);
+	enesim_renderer_geometry_transformation_set(r, &m);
 
 	printf("line %g %g %g %g\n", x1, y1, x2, y2);
-	enesim_renderer_gradient_linear_x0_set(thiz->r, x1);
-	enesim_renderer_gradient_linear_y0_set(thiz->r, y1);
-	enesim_renderer_gradient_linear_x1_set(thiz->r, x2);
-	enesim_renderer_gradient_linear_y1_set(thiz->r, y2);
+	enesim_renderer_gradient_linear_x0_set(r, x1);
+	enesim_renderer_gradient_linear_y0_set(r, y1);
+	enesim_renderer_gradient_linear_x1_set(r, x2);
+	enesim_renderer_gradient_linear_y1_set(r, y2);
 
-	/* call the setup on the childs */
-	ret = esvg_element_internal_child_setup(t, ctx,
-		attr,
-		error,
-		NULL,
-		NULL,
-		_esvg_linear_gradient_stop_post,
-		thiz);
-
-	return ret;
+	return EINA_TRUE;
 }
 
 static void _esvg_linear_gradient_free(Edom_Tag *t)
@@ -265,7 +240,7 @@ static Esvg_Gradient_Descriptor _descriptor = {
 	/* .attribute_set 	= */ _esvg_linear_gradient_attribute_set,
 	/* .clone		= */ NULL,
 	/* .setup		= */ _esvg_linear_gradient_setup,
-	/* .renderer_get	= */ _esvg_linear_gradient_renderer_get,
+	/* .renderer_new	= */ _esvg_linear_gradient_renderer_new,
 };
 /*----------------------------------------------------------------------------*
  *                           The Ender interface                              *
@@ -274,13 +249,9 @@ static Edom_Tag * _esvg_linear_gradient_new(void)
 {
 	Esvg_Linear_Gradient *thiz;
 	Edom_Tag *t;
-	Enesim_Renderer *r;
 
 	thiz = calloc(1, sizeof(Esvg_Linear_Gradient));
 
-	r = enesim_renderer_gradient_linear_new();
-	enesim_renderer_gradient_mode_set(r, ENESIM_PAD);
-	thiz->r = r;
 	/* default values */
 	thiz->x1 = ESVG_LENGTH_0;
 	thiz->y1 = ESVG_LENGTH_0;

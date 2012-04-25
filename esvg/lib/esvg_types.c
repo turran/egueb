@@ -1571,3 +1571,17 @@ EAPI const char * esvg_type_string_to(Esvg_Type type)
 		default: return "unknown";
 	}
 }
+
+EAPI Eina_Bool esvg_type_is_paint_server(Esvg_Type type)
+{
+	switch (type)
+	{
+		case ESVG_LINEARGRADIENT:
+		case ESVG_RADIALGRADIENT:
+		case ESVG_PATTERN:
+		return EINA_TRUE;
+
+		default:
+		return EINA_FALSE;
+	}
+}

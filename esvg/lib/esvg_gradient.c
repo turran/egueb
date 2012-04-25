@@ -22,7 +22,7 @@
 #include "esvg_private_main.h"
 #include "esvg_private_attribute_presentation.h"
 #include "esvg_private_element.h"
-#include "esvg_private_renderable.h"
+#include "esvg_private_referenceable.h"
 #include "esvg_private_paint_server.h"
 #include "esvg_private_gradient.h"
 #include "esvg_gradient.h"
@@ -42,7 +42,6 @@ typedef struct _Esvg_Gradient_Descriptor_Internal
 	Edom_Tag_Free free;
 	Edom_Tag_Child_Add child_add;
 	Esvg_Gradient_Setup setup;
-	Esvg_Renderable_Renderer_Get renderer_get;
 } Esvg_Gradient_Descriptor_Internal;
 
 typedef struct _Esvg_Gradient
@@ -66,6 +65,23 @@ static Esvg_Gradient * _esvg_gradient_get(Edom_Tag *t)
 
 	return thiz;
 }
+
+static Eina_Bool _esvg_gradient_stop_post(Edom_Tag *t, Edom_Tag *child_t,
+		Esvg_Element_Context *ctx,
+		Esvg_Attribute_Presentation *attr,
+		Enesim_Error **error,
+		void *data)
+{
+	Enesim_Renderer *r = data;
+	Enesim_Renderer_Gradient_Stop *stop;
+
+	stop = esvg_stop_gradient_stop_get(child_t);
+	printf("iterating over the stops %g %08x!!!!\n", stop->pos, stop->argb);
+	enesim_renderer_gradient_stop_add(r, stop);
+
+	return EINA_TRUE;
+}
+
 /*----------------------------------------------------------------------------*
  *                       Esvg Paint Server interface                          *
  *----------------------------------------------------------------------------*/
@@ -89,15 +105,28 @@ static Eina_Bool _esvg_gradient_child_add(Edom_Tag *t, Edom_Tag *child_t)
 static Eina_Bool _esvg_gradient_setup(Edom_Tag *t,
 		Esvg_Element_Context *ctx,
 		Esvg_Attribute_Presentation *attr,
-		Esvg_Renderable_Context *rctx,
+		Enesim_Renderer *current,
 		Enesim_Error **error)
 {
 	Esvg_Gradient *thiz;
+	Eina_Bool ret = EINA_TRUE;
 
 	thiz = _esvg_gradient_get(t);
 	if (thiz->descriptor.setup)
-		thiz->descriptor.setup(t, ctx, attr, rctx, &thiz->state, error);
-	return EINA_TRUE;
+	{
+		ret = thiz->descriptor.setup(t, ctx, attr, current, &thiz->state, error);
+		if (!ret) return ret;
+	}
+	/* call the setup on the childs */
+	ret = esvg_element_internal_child_setup(t, ctx,
+		attr,
+		error,
+		NULL,
+		NULL,
+		_esvg_gradient_stop_post,
+		current);
+
+	return ret;
 }
 
 static void _esvg_gradient_free(Edom_Tag *t)
@@ -235,7 +264,7 @@ Edom_Tag * esvg_gradient_new(Esvg_Gradient_Descriptor *descriptor,
 	pdescriptor.free = _esvg_gradient_free;
 	pdescriptor.initialize = descriptor->initialize;
 	pdescriptor.setup = _esvg_gradient_setup;
-	pdescriptor.renderer_get = descriptor->renderer_get;
+	pdescriptor.renderer_new = descriptor->renderer_new;
 
 	/* Default values */
 	thiz->state.units = ESVG_OBJECT_BOUNDING_BOX;

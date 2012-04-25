@@ -44,6 +44,7 @@ static void _register_enders(void *data)
 	ender_loader_load("edom");
 	/* the abstracts first */
 	esvg_element_init();
+	esvg_referenceable_init();
 	esvg_renderable_init();
 	esvg_instantiable_init();
 	esvg_paint_server_init();
@@ -64,6 +65,7 @@ static void _register_enders(void *data)
 	esvg_use_init();
 	esvg_defs_init();
 	esvg_a_init();
+	esvg_clip_path_init();
 }
 
 /* FIXME the constructor should be done per namespace, not generic */

@@ -10,7 +10,7 @@ typedef struct _Esvg_Gradient_Context {
 typedef Eina_Bool (*Esvg_Gradient_Setup)(Edom_Tag *t,
 		Esvg_Element_Context *ctx,
 		Esvg_Attribute_Presentation *attr,
-		Esvg_Renderable_Context *rctx,
+		Enesim_Renderer *current,
 		Esvg_Gradient_Context *gctx,
 		Enesim_Error **error);
 
@@ -28,7 +28,7 @@ typedef struct _Esvg_Gradient_Descriptor {
 	Esvg_Element_Clone clone;
 	/* the renderable interface */
 	Esvg_Gradient_Setup setup;
-	Esvg_Renderable_Renderer_Get renderer_get;
+	Esvg_Referenceable_Renderer_New renderer_new;
 } Esvg_Gradient_Descriptor;
 
 void * esvg_gradient_data_get(Edom_Tag *t);

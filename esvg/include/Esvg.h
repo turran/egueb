@@ -123,7 +123,4 @@ EAPI void esvg_pattern_transform_get(Edom_Tag *e, Enesim_Matrix *transform);
 EAPI Eina_Bool esvg_pattern_transform_is_set(Edom_Tag *e);
 EAPI void esvg_pattern_content_set(Edom_Tag *e, Edom_Tag *content);
 
-EAPI Edom_Tag * esvg_clip_path_new(void);
-EAPI Eina_Bool esvg_is_clip_path(Edom_Tag *thiz);
-
 #endif /*_ESVG_H*/

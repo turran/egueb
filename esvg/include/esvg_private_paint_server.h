@@ -14,8 +14,8 @@ typedef struct _Esvg_Paint_Server_Descriptor {
 	Esvg_Element_Attribute_Set attribute_set;
 	Esvg_Element_Clone clone;
 	/* the renderable interface */
-	Esvg_Renderable_Setup setup;
-	Esvg_Renderable_Renderer_Get renderer_get;
+	Esvg_Referenceable_Setup setup;
+	Esvg_Referenceable_Renderer_New renderer_new;
 } Esvg_Paint_Server_Descriptor;
 
 void * esvg_paint_server_data_get(Edom_Tag *t);

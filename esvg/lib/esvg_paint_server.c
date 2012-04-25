@@ -22,7 +22,7 @@
 #include "esvg_private_main.h"
 #include "esvg_private_attribute_presentation.h"
 #include "esvg_private_element.h"
-#include "esvg_private_renderable.h"
+#include "esvg_private_referenceable.h"
 #include "esvg_private_paint_server.h"
 /*============================================================================*
  *                                  Local                                     *
@@ -38,8 +38,6 @@ static Ender_Property *ESVG_PAINT_SERVER_RENDERER;
 typedef struct _Esvg_Paint_Server_Descriptor_Internal
 {
 	Edom_Tag_Free free;
-	Esvg_Renderable_Setup setup;
-	Esvg_Renderable_Renderer_Get renderer_get;
 } Esvg_Paint_Server_Descriptor_Internal;
 
 typedef struct _Esvg_Paint_Server
@@ -56,7 +54,7 @@ static Esvg_Paint_Server * _esvg_paint_server_get(Edom_Tag *t)
 {
 	Esvg_Paint_Server *thiz;
 
-	thiz = esvg_renderable_data_get(t);
+	thiz = esvg_referenceable_data_get(t);
 	ESVG_PAINT_SERVER_MAGIC_CHECK(thiz);
 
 	return thiz;
@@ -96,7 +94,7 @@ Edom_Tag * esvg_paint_server_new(Esvg_Paint_Server_Descriptor *descriptor,
 		void *data)
 {
 	Esvg_Paint_Server *thiz;
-	Esvg_Renderable_Descriptor pdescriptor;
+	Esvg_Referenceable_Descriptor pdescriptor;
 	Edom_Tag *t;
 
 	thiz = calloc(1, sizeof(Esvg_Paint_Server));
@@ -114,9 +112,9 @@ Edom_Tag * esvg_paint_server_new(Esvg_Paint_Server_Descriptor *descriptor,
 	pdescriptor.free = _esvg_paint_server_free;
 	pdescriptor.initialize = descriptor->initialize;
 	pdescriptor.setup = descriptor->setup;
-	pdescriptor.renderer_get = descriptor->renderer_get;
+	pdescriptor.renderer_new = descriptor->renderer_new;
 
-	t = esvg_renderable_new(&pdescriptor, type, thiz);
+	t = esvg_referenceable_new(&pdescriptor, type, thiz);
 
 	return t;
 }

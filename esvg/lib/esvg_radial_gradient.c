@@ -22,7 +22,7 @@
 #include "esvg_private_main.h"
 #include "esvg_private_attribute_presentation.h"
 #include "esvg_private_element.h"
-#include "esvg_private_renderable.h"
+#include "esvg_private_referenceable.h"
 #include "esvg_private_paint_server.h"
 #include "esvg_private_gradient.h"
 #include "esvg_private_stop.h"
@@ -48,7 +48,6 @@ typedef struct _Esvg_Radial_Gradient
 	Esvg_Coord fy;
 	Esvg_Length rad;
 	/* private */
-	Enesim_Renderer *r;
 	Eina_Bool cx_is_set : 1;
 	Eina_Bool cy_is_set : 1;
 	Eina_Bool fx_is_set : 1;
@@ -65,21 +64,6 @@ static Esvg_Radial_Gradient * _esvg_radial_gradient_get(Edom_Tag *t)
 	thiz = esvg_gradient_data_get(t);
 
 	return thiz;
-}
-
-static Eina_Bool _esvg_radial_gradient_stop_post(Edom_Tag *t, Edom_Tag *child_t,
-		Esvg_Element_Context *ctx,
-		Esvg_Attribute_Presentation *attr,
-		Enesim_Error **error,
-		void *data)
-{
-	Esvg_Radial_Gradient *thiz = data;
-	Enesim_Renderer_Gradient_Stop *stop;
-
-	stop = esvg_stop_gradient_stop_get(child_t);
-	printf("iterating over the stops %g %08x!!!!\n", stop->pos, stop->argb);
-	enesim_renderer_gradient_stop_add(thiz->r, stop);
-	return EINA_TRUE;
 }
 /*----------------------------------------------------------------------------*
  *                       Esvg Paint Server interface                          *
@@ -130,18 +114,19 @@ static Eina_Bool _esvg_radial_gradient_attribute_get(Edom_Tag *tag, const char *
 	return EINA_FALSE;
 }
 
-static Enesim_Renderer * _esvg_radial_gradient_renderer_get(Edom_Tag *t)
+static Enesim_Renderer * _esvg_radial_gradient_renderer_new(Edom_Tag *t)
 {
-	Esvg_Radial_Gradient *thiz;
+	Enesim_Renderer *r;
 
-	thiz = _esvg_radial_gradient_get(t);
-	return thiz->r;
+	r = enesim_renderer_gradient_radial_new();
+	enesim_renderer_gradient_mode_set(r, ENESIM_PAD);
+	return r;
 }
 
 static Eina_Bool _esvg_radial_gradient_setup(Edom_Tag *t,
 		Esvg_Element_Context *ctx,
 		Esvg_Attribute_Presentation *attr,
-		Esvg_Renderable_Context *rctx,
+		Enesim_Renderer *r,
 		Esvg_Gradient_Context *gctx,
 		Enesim_Error **error)
 {
@@ -149,7 +134,6 @@ static Eina_Bool _esvg_radial_gradient_setup(Edom_Tag *t,
 	Esvg_Gradient_Units gu;
 	Enesim_Repeat_Mode mode;
 	Enesim_Matrix m;
-	Eina_Bool ret;
 	double cx;
 	double cy;
 	double fx;
@@ -174,7 +158,7 @@ static Eina_Bool _esvg_radial_gradient_setup(Edom_Tag *t,
 		mode = ENESIM_REFLECT;
 		break;
 	}
-	enesim_renderer_gradient_mode_set(thiz->r, mode);
+	enesim_renderer_gradient_mode_set(r, mode);
 
 	if (gu == ESVG_OBJECT_BOUNDING_BOX)
 	{
@@ -211,28 +195,19 @@ static Eina_Bool _esvg_radial_gradient_setup(Edom_Tag *t,
 	{
 		enesim_matrix_compose(&m, &gctx->transform, &m);
 	}
-	enesim_renderer_geometry_transformation_set(thiz->r, &m);
+	enesim_renderer_geometry_transformation_set(r, &m);
 
 	printf("cx %g cy %g fx %g fy %g r %g\n", cx, cy, fx, fy, rad);
 	//printf("matrix = %" ENESIM_MATRIX_FORMAT "\n", ENESIM_MATRIX_ARGS(&m));
 
 	/* FIXME for now we dont handle the focis */
-	enesim_renderer_gradient_radial_center_x_set(thiz->r, cx);
-	enesim_renderer_gradient_radial_center_y_set(thiz->r, cy);
-	enesim_renderer_gradient_radial_focus_x_set(thiz->r, fx);
-	enesim_renderer_gradient_radial_focus_y_set(thiz->r, fy);
-	enesim_renderer_gradient_radial_radius_set(thiz->r, rad);
+	enesim_renderer_gradient_radial_center_x_set(r, cx);
+	enesim_renderer_gradient_radial_center_y_set(r, cy);
+	enesim_renderer_gradient_radial_focus_x_set(r, fx);
+	enesim_renderer_gradient_radial_focus_y_set(r, fy);
+	enesim_renderer_gradient_radial_radius_set(r, rad);
 
-	/* call the setup on the childs */
-	ret = esvg_element_internal_child_setup(t, ctx,
-		attr,
-		error,
-		NULL,
-		NULL,
-		_esvg_radial_gradient_stop_post,
-		thiz);
-
-	return ret;
+	return EINA_TRUE;
 }
 
 static void _esvg_radial_gradient_free(Edom_Tag *t)
@@ -254,7 +229,7 @@ static Esvg_Gradient_Descriptor _descriptor = {
 	/* .attribute_set 	= */ _esvg_radial_gradient_attribute_set,
 	/* .clone		= */ NULL,
 	/* .setup		= */ _esvg_radial_gradient_setup,
-	/* .renderer_get	= */ _esvg_radial_gradient_renderer_get,
+	/* .renderer_new	= */ _esvg_radial_gradient_renderer_new,
 };
 /*----------------------------------------------------------------------------*
  *                           The Ender interface                              *
@@ -263,13 +238,9 @@ static Edom_Tag * _esvg_radial_gradient_new(void)
 {
 	Esvg_Radial_Gradient *thiz;
 	Edom_Tag *t;
-	Enesim_Renderer *r;
 
 	thiz = calloc(1, sizeof(Esvg_Radial_Gradient));
 
-	r = enesim_renderer_gradient_radial_new();
-	enesim_renderer_gradient_mode_set(r, ENESIM_PAD);
-	thiz->r = r;
 	/* default values */
 
 	t = esvg_gradient_new(&_descriptor, ESVG_RADIALGRADIENT, thiz);

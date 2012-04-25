@@ -23,6 +23,7 @@
 #include "esvg_private_attribute_presentation.h"
 #include "esvg_private_element.h"
 #include "esvg_private_renderable.h"
+#include "esvg_private_referenceable.h"
 #include "esvg_private_svg.h"
 #include "esvg_private_reference.h"
 
@@ -141,13 +142,9 @@ static void _esvg_shape_enesim_state_get(Edom_Tag *t,
 
 				thiz->fill_ender = e;
 				thiz->fill_tag = ender_element_object_get(e);
-				fill_r = esvg_renderable_renderer_get(e);
+				fill_r = esvg_referenceable_renderer_new(thiz->fill_tag);
+				printf("fill renderer %p\n", fill_r);
 				rctx->fill_renderer = fill_r;
-				printf("fill rendererrrrr!!! %p %s\n", fill_r, esvg_type_string_to(esvg_element_internal_type_get(t)));
-				{
-					Esvg_Reference *ref;
-					ref = esvg_reference_new(e);
-				}
 			}
 		}
 		/* TODO here we should fetch the id from the property */
@@ -331,6 +328,7 @@ static Eina_Bool _esvg_renderable_setup(Edom_Tag *t,
 		/* we dont pass the attributes or the paint server
 		 * will merge what it has with this
 		 */
+		esvg_referenceable_renderer_set(thiz->fill_tag, thiz->context.fill_renderer); 
 		esvg_element_internal_setup(thiz->fill_tag, context, NULL, error);
 	}
 #if 0

@@ -36,9 +36,8 @@
 typedef struct _Esvg_Referenceable_Descriptor_Internal
 {
 	Edom_Tag_Free free;
-	Esvg_Element_Setup setup;
+	Esvg_Referenceable_Setup setup;
 	Esvg_Referenceable_Renderer_New renderer_new;
-	Esvg_Referenceable_Renderer_Set renderer_set;
 } Esvg_Referenceable_Descriptor_Internal;
 
 typedef struct _Esvg_Referenceable
@@ -90,19 +89,40 @@ static Eina_Bool _esvg_referenceable_setup(Edom_Tag *t,
 	/* a referenceable should always get its attributes from its
 	 * parent tree
 	 */
+	if (!thiz->current)
+		return EINA_TRUE;
+
+	if (thiz->descriptor.setup)
+		thiz->descriptor.setup(t, context, attr, thiz->current, error);
 	return EINA_TRUE;
 }
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
+Eina_Bool esvg_is_referenceable_internal(Edom_Tag *t)
+{
+	Esvg_Referenceable *thiz;
+	Eina_Bool ret;
+
+	if (!esvg_is_element_internal(t))
+		return EINA_FALSE;
+	thiz = esvg_element_data_get(t);
+	ret = EINA_MAGIC_CHECK(thiz, ESVG_REFERENCEABLE_MAGIC);
+
+	return ret;
+}
+
 Enesim_Renderer * esvg_referenceable_renderer_new(Edom_Tag *t)
 {
 	Esvg_Referenceable *thiz;
 	Enesim_Renderer *r;
 
-	if (!r) return;
+	printf("entering\n");
 	thiz = _esvg_referenceable_get(t);
+	printf("entering\n");
 	r = thiz->descriptor.renderer_new(t);
+	printf("renderer new!!!! %p\n", r);
+
 	return r;
 }
 
@@ -118,19 +138,6 @@ void esvg_referenceable_renderer_set(Edom_Tag *t, Enesim_Renderer *r)
 
 /* The ender wrapper */
 #include "generated/esvg_generated_referenceable.c"
-
-Eina_Bool esvg_is_referenceable_internal(Edom_Tag *t)
-{
-	Esvg_Referenceable *thiz;
-	Eina_Bool ret;
-
-	if (!esvg_is_element_internal(t))
-		return EINA_FALSE;
-	thiz = esvg_element_data_get(t);
-	ret = EINA_MAGIC_CHECK(thiz, ESVG_REFERENCEABLE_MAGIC);
-
-	return ret;
-}
 
 void * esvg_referenceable_data_get(Edom_Tag *t)
 {
@@ -155,7 +162,6 @@ Edom_Tag * esvg_referenceable_new(Esvg_Referenceable_Descriptor *descriptor, Esv
 	/* our own descriptor */
 	thiz->descriptor.setup = descriptor->setup;
 	thiz->descriptor.renderer_new = descriptor->renderer_new;
-	thiz->descriptor.renderer_set = descriptor->renderer_set;
 	/* default values */
 
 	pdescriptor.child_add = descriptor->child_add;

@@ -84,8 +84,11 @@ namespace "esvg" {
 	abstract "instantiable" : "renderable" {
 	};
 
-	abstract "paint_server" : "renderable" {
+	abstract "paint_server" : "referenceable" {
 
+	};
+
+	class "clip_path" : "referenceable" {
 	};
 
 	abstract "gradient" : "paint_server" {
