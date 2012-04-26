@@ -99,6 +99,10 @@ namespace "esvg" {
 
 	};
 
+	class "style" : "element" {
+
+	};
+
 	class "linear_gradient" : "gradient" {
 		esvg_length "x1";
 		esvg_length "y1";

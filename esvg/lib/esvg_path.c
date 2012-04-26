@@ -123,12 +123,9 @@ static Eina_Bool _esvg_path_setup(Edom_Tag *t,
 	EINA_LIST_FOREACH(thiz->commands, l, c)
 	{
 		Enesim_Renderer_Path_Command cmd;
-		const char *name;
 		/* FIXME or we either use the generic command API
 		 * of enesim or use the direct function call
 		 */
-		enesim_renderer_name_get(thiz->r, &name);
-		//printf("calling the setup on the path %s ", name);
 		switch (c->type)
 		{
 			case ESVG_PATH_MOVE_TO:

@@ -1556,7 +1556,7 @@ EAPI const char * esvg_type_string_to(Esvg_Type type)
 		case ESVG_SCRIPT: return "";
 		case ESVG_SET: return "";
 		case ESVG_STOP: return "stop";
-		case ESVG_STYLE: return "";
+		case ESVG_STYLE: return "style";
 		case ESVG_SVG: return "svg" /* 70 */;
 		case ESVG_SWITCH: return "";
 		case ESVG_SYMBOL: return "";

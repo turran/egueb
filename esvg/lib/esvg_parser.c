@@ -455,11 +455,11 @@ static void * _esvg_parser_tag_new(Edom_Parser *parser, int tag_id)
 		tag = esvg_a_new();
 		break;
 
-#if 0
 		case ESVG_STYLE:
-		//tag = esvg_parser_style_new(parser);
+		tag = esvg_style_new();
 		break;
 
+#if 0
 		case ESVG_IMAGE:
 		tag = esvg_parser_image_new(parser);
 		break;
@@ -513,7 +513,7 @@ static Eina_Bool _esvg_parser_tag_child_add(Edom_Parser *parser, void *t, void *
 
 static void _esvg_parser_tag_cdata_set(Edom_Parser *parser, void *t, const char *cdata, unsigned int length)
 {
-
+	printf("setting cdata\n");
 }
 
 static void _esvg_parser_tag_text_set(Edom_Parser *parser, void *t, const char *text, unsigned int length)

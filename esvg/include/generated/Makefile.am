@@ -22,6 +22,7 @@ esvg_generated_referenceable.c \
 esvg_generated_renderable.c \
 esvg_generated_rect.c \
 esvg_generated_stop.c \
+esvg_generated_style.c \
 esvg_generated_svg.c \
 esvg_generated_use.c
 

@@ -41,6 +41,7 @@ esvg_referenceable.c \
 esvg_renderable.c \
 esvg_rect.c \
 esvg_stop.c \
+esvg_style.c \
 esvg_svg.c \
 esvg_types.c \
 esvg_use.c

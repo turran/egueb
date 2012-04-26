@@ -176,7 +176,6 @@ static void _esvg_a_href_get(Edom_Tag *t, const char **href)
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
-/* The ender wrapper */
 Eina_Bool esvg_is_a_internal(Edom_Tag *t)
 {
 	if (esvg_element_internal_type_get(t) != ESVG_A)
@@ -184,6 +183,7 @@ Eina_Bool esvg_is_a_internal(Edom_Tag *t)
 	return EINA_TRUE;
 }
 
+/* The ender wrapper */
 #define _esvg_a_href_is_set NULL
 #include "generated/esvg_generated_a.c"
 /*============================================================================*

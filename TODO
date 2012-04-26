@@ -5,7 +5,7 @@ EDOM
 
 ECSS
 ====
-
++ Add a way to unset every property, useful whenever we change styles and we need to rollback to its initial state
 ESVG
 ====
 + We need to change the paint server to not inherit from a renderable, instead (as with the clippath) make

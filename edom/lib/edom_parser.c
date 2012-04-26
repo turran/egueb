@@ -116,7 +116,9 @@ static void * _edom_parser_tag_new(Edom_Parser *thiz, void *parent, int tag_id, 
 
 static void _edom_parser_tag_cdata_set(Edom_Parser *thiz, void *t, const char *cdata, unsigned int length)
 {
-
+	if (!thiz->descriptor) return;
+	if (!thiz->descriptor->tag_cdata_set) return;
+	thiz->descriptor->tag_cdata_set(thiz, t, cdata, length);
 }
 
 static void _edom_parser_tag_text_set(Edom_Parser *thiz, void *t, const char *text, unsigned int length)
@@ -209,7 +211,7 @@ static Eina_Bool _edom_parser_cb(void *data, Eina_Simple_XML_Type type,
 		break;
 
 		case EINA_SIMPLE_XML_DATA:
-		//edom_context_data(context, content, length);
+		_edom_parser_tag_cdata_set(thiz, parent, content, length);
 		break;
 
 		case EINA_SIMPLE_XML_CDATA:

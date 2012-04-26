@@ -66,6 +66,7 @@ static void _register_enders(void *data)
 	esvg_defs_init();
 	esvg_a_init();
 	esvg_clip_path_init();
+	esvg_style_init();
 }
 
 /* FIXME the constructor should be done per namespace, not generic */
