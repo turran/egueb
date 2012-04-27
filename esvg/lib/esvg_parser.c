@@ -513,7 +513,12 @@ static Eina_Bool _esvg_parser_tag_child_add(Edom_Parser *parser, void *t, void *
 
 static void _esvg_parser_tag_cdata_set(Edom_Parser *parser, void *t, const char *cdata, unsigned int length)
 {
-	printf("setting cdata\n");
+	Ender_Element *tag = t;
+	Edom_String s;
+
+	s.s = cdata;
+	s.length = length;
+	ender_element_property_value_set(tag, EDOM_CDATA, &s, NULL);
 }
 
 static void _esvg_parser_tag_text_set(Edom_Parser *parser, void *t, const char *text, unsigned int length)

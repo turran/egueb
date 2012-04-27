@@ -85,6 +85,12 @@ typedef struct _Edom_Attribute
 	char *value;
 } Edom_Attribute;
 
+typedef struct _Edom_String
+{
+	const char *s;
+	int length;
+} Edom_String;
+
 typedef Eina_Bool (*Edom_Tag_Foreach)(Edom_Tag *thiz, Edom_Tag *child, void *data);
 typedef const char * (*Edom_Tag_Name_Get)(Edom_Tag *t);
 typedef Edom_Tag * (*Edom_Tag_Topmost_Get)(Edom_Tag *t);
@@ -120,6 +126,7 @@ EAPI const char * edom_tag_name_get(Edom_Tag *thiz);
 
 EAPI Eina_Bool edom_tag_attribute_set(Edom_Tag *thiz, const Edom_Attribute *attr);
 EAPI Eina_Bool edom_tag_attribute_get(Edom_Tag *thiz, Edom_Attribute *attr);
+EAPI void edom_tag_cdata_set(Edom_Tag *thiz, Edom_String *string);
 
 EAPI void edom_tag_id_set(Edom_Tag *thiz, const char *id);
 EAPI char * edom_tag_id_get(Edom_Tag *thiz);

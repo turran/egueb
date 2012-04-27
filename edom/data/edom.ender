@@ -4,10 +4,20 @@ namespace "edom" {
 		string "value";
 	};
 
+	/* given that on some callbacks eina simple xml
+	 * passes the length of string for faster process
+	 * we need that option too
+	 */
+	struct "edom_string" {
+		string "string";
+		int "length";
+	};
+
 	abstract "tag" {
 		object "parent";
 		object "topmost";
 		[object] "child";
 		attribute "attribute";
+		edom_string "cdata";
 	};
 };

@@ -297,3 +297,16 @@ EAPI const char * edom_tag_name_get(Edom_Tag *thiz)
 	return thiz->descriptor.name_get(thiz);
 }
 
+EAPI void edom_tag_cdata_set(Edom_Tag *thiz, Edom_String *string)
+{
+	int length;
+
+	if (!thiz->descriptor.cdata_set) return;
+	length = string->length;
+	if (length)
+	{
+		if (string->s)
+			length = strlen(string->s);
+	}
+	thiz->descriptor.cdata_set(thiz, string->s, length);
+}

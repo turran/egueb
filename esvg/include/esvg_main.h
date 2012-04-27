@@ -12,6 +12,7 @@ extern Ender_Property *EDOM_ATTRIBUTE;
 extern Ender_Property *EDOM_TOPMOST;
 extern Ender_Property *EDOM_CHILD;
 extern Ender_Property *EDOM_PARENT;
+extern Ender_Property *EDOM_CDATA;
 
 /**
  * @}
