@@ -937,6 +937,13 @@ Eina_Bool esvg_element_internal_setup(Edom_Tag *t,
 		_esvg_element_state_compose(&thiz->state, state, &thiz->state_final);
 	}
 
+
+	/* TODO In theory it should be */
+	/* first merge the css attr with the xml attr */
+	/* then apply the style if present */
+	/* add an ATTR_FINAL or something like that, so the inline style is applied there */
+	/* is the inline style inherited on child elements ? */
+
 	/* FIXME check that the style has changed, if so revert it and start applying */
 	/* FIXME should it have more priority than the properties? */
 	if (thiz->style || attr)
