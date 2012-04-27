@@ -112,7 +112,6 @@ static void _esvg_style_cdata(Edom_Tag *t, const char *cdata, unsigned int lengt
 
 	thiz = _esvg_style_get(t);
 
-	printf("SETTING CDATA!!!\n");
 	s = ecss_style_load_from_content(cdata, length);
 	if (!s) return;
 
@@ -162,6 +161,14 @@ static Edom_Tag * _esvg_style_new(void)
 /* The ender wrapper */
 #include "generated/esvg_generated_style.c"
 
+Eina_Bool esvg_is_style_internal(Edom_Tag *t)
+{
+	if (esvg_element_internal_type_get(t) == ESVG_STYLE)
+		return EINA_TRUE;
+	return EINA_FALSE;
+}
+
+#if 0
 void esvg_parser_style_style_set(Esvg_Style *thiz, Ecss_Style *style)
 {
 	thiz->s = style;
@@ -171,6 +178,7 @@ void esvg_parser_style_apply(Esvg_Style *thiz, Edom_Tag *root)
 {
 	ecss_context_style_apply(&_context, thiz->s, root);
 }
+#endif
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/

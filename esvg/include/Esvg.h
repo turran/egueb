@@ -69,6 +69,7 @@
 #include "esvg_linear_gradient.h"
 #include "esvg_svg.h"
 #include "esvg_rect.h"
+#include "esvg_parser.h"
 #include "esvg_path.h"
 #include "esvg_polygon.h"
 #include "esvg_polyline.h"

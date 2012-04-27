@@ -26,7 +26,6 @@
 
 #include <Emage.h>
 #include <Esvg.h>
-#include <Esvg_Parser.h>
 
 /*
  * TODO:

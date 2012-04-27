@@ -19,5 +19,6 @@ namespace "edom" {
 		[object] "child";
 		attribute "attribute";
 		edom_string "cdata";
+		edom_string "text";
 	};
 };

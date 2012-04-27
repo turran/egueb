@@ -2,7 +2,7 @@ MAINTAINERCLEANFILES = Makefile.in
 
 SUBDIRS = generated
 
-include_HEADERS = Esvg.h Esvg_Parser.h
+include_HEADERS = Esvg.h
 
 ESVG_APIHEADERS = \
 esvg_a.h \
@@ -15,6 +15,7 @@ esvg_gradient.h \
 esvg_line.h \
 esvg_linear_gradient.h \
 esvg_main.h \
+esvg_parser.h \
 esvg_path.h \
 esvg_polygon.h \
 esvg_polyline.h \

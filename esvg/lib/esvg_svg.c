@@ -115,10 +115,9 @@ static Eina_Bool _esvg_svg_child_setup_filter(Edom_Tag *t, Edom_Tag *child)
 	return EINA_TRUE;
 }
 
-/* FIXME the ender events just trigger once the id has changed so we dont know the old one */
-static void _esvg_svg_child_id_changed(Ender_Element *e, const char *event_name, void *event_data, void *data)
+static void _esvg_svg_child_id_cb(Ender_Element *e, const char *event_name, void *event_data, void *data)
 {
-
+	/* FIXME the ender events just trigger once the id has changed so we dont know the old one */
 }
 
 static void _esvg_svg_child_child_cb(Ender_Element *e, const char *event_name, void *event_data, void *data)
@@ -166,13 +165,21 @@ static Eina_Bool _esvg_svg_child_initialize(Edom_Tag *t, Edom_Tag *child_t, void
 	child_e = esvg_element_ender_get(child_t);
 	ender_event_listener_add(child_e, "Mutation:child", _esvg_svg_child_child_cb, t);
 
-	/* TODO add an event whenever the child changes the id */
+	/* add an event whenever the child changes the id */
+	ender_event_listener_add(child_e, "Mutation:id", _esvg_svg_child_id_cb, t);
 	esvg_element_id_get(child_e, &id);
 	if (id)
 	{
 		printf("adding id %s\n", id);
 		eina_hash_add(thiz->ids, id, child_e);
 	}
+
+	/* add the style to the list of styles */
+	if (esvg_is_style_internal(child_t))
+	{
+		printf("style found!\n");
+	}
+
 	/* iterate over the childs of the child and do the same initialization */
 	edom_tag_child_foreach(child_t, _esvg_svg_child_initialize, thiz);
 	return EINA_TRUE;

@@ -127,6 +127,7 @@ EAPI const char * edom_tag_name_get(Edom_Tag *thiz);
 EAPI Eina_Bool edom_tag_attribute_set(Edom_Tag *thiz, const Edom_Attribute *attr);
 EAPI Eina_Bool edom_tag_attribute_get(Edom_Tag *thiz, Edom_Attribute *attr);
 EAPI void edom_tag_cdata_set(Edom_Tag *thiz, Edom_String *string);
+EAPI void edom_tag_text_set(Edom_Tag *thiz, Edom_String *string);
 
 EAPI void edom_tag_id_set(Edom_Tag *thiz, const char *id);
 EAPI char * edom_tag_id_get(Edom_Tag *thiz);

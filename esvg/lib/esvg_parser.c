@@ -27,8 +27,6 @@
 #include "esvg_private_main.h"
 #include "esvg_private_attribute_presentation.h"
 #include "esvg_private_element.h"
-#include "Esvg_Parser.h" // FIXME remove that header
-#include "esvg_parser_private.h" // FIXME remove that header
 
 #include "esvg_main.h"
 #include "esvg_svg.h"
@@ -42,18 +40,13 @@
 #include "esvg_linear_gradient.h"
 #include "esvg_g.h"
 #include "esvg_stop.h"
+
+#include "esvg_parser.h"
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
-typedef struct _Esvg_Parser_Post_Data
-{
-	Esvg_Parser_Post cb;
-	void *data;
-} Esvg_Parser_Post_Data;
-
 typedef struct _Esvg_Parser
 {
-	Eina_List *post_parsers;
 	Esvg_Parser_Descriptor descriptor;
 	Ender_Element *topmost;
 	void *data;
@@ -516,6 +509,7 @@ static void _esvg_parser_tag_cdata_set(Edom_Parser *parser, void *t, const char 
 	Ender_Element *tag = t;
 	Edom_String s;
 
+	printf("parser cdata %d\n", length);
 	s.s = cdata;
 	s.length = length;
 	ender_element_property_value_set(tag, EDOM_CDATA, &s, NULL);
@@ -523,7 +517,12 @@ static void _esvg_parser_tag_cdata_set(Edom_Parser *parser, void *t, const char 
 
 static void _esvg_parser_tag_text_set(Edom_Parser *parser, void *t, const char *text, unsigned int length)
 {
+	Ender_Element *tag = t;
+	Edom_String s;
 
+	s.s = text;
+	s.length = length;
+	ender_element_property_value_set(tag, EDOM_TEXT, &s, NULL);
 }
 
 static Edom_Parser_Descriptor _descriptor = {
@@ -585,19 +584,6 @@ static Edom_Parser_Descriptor _info_descriptor = {
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
-void esvg_parser_post_parse_add(Edom_Parser *p, Esvg_Parser_Post cb, void *data)
-{
-	Esvg_Parser *thiz;
-	Esvg_Parser_Post_Data *pdata;
-
-	thiz = edom_parser_data_get(p);
-	pdata = malloc(sizeof(Esvg_Parser_Post_Data));
-	pdata->cb = cb;
-	pdata->data = data;
-
-	thiz->post_parsers = eina_list_append(thiz->post_parsers, pdata);
-}
-
 /* functions to call the descriptor functions */
 void esvg_parser_href_set(Edom_Parser *p, Enesim_Renderer *r, const char *href)
 {
@@ -642,7 +628,6 @@ EAPI Ender_Element * esvg_parser_load(const char *filename,
 		Esvg_Parser_Descriptor *descriptor, void *data)
 {
 	Esvg_Parser *thiz;
-	Esvg_Parser_Post_Data *pdata;
 	Edom_Parser *parser;
 	Ender_Element *tag = NULL;
 	Eina_List *l;
@@ -680,11 +665,6 @@ EAPI Ender_Element * esvg_parser_load(const char *filename,
 	 * the clone
 	 */
 	/* call all the post parse functions */
-	EINA_LIST_FOREACH(thiz->post_parsers, l, pdata)
-	{
-		pdata->cb(parser, pdata->data);
-	}
-
 parse_failed:
 	edom_parser_delete(parser);
 

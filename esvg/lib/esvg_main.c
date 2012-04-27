@@ -104,6 +104,7 @@ static Eina_Bool _esvg_ender_init(void)
 	EDOM_CHILD = ender_descriptor_property_get(tag_descriptor, "child");
 	EDOM_TOPMOST = ender_descriptor_property_get(tag_descriptor, "topmost");
 	EDOM_CDATA = ender_descriptor_property_get(tag_descriptor, "cdata");
+	EDOM_TEXT = ender_descriptor_property_get(tag_descriptor, "text");
 
 
 	return EINA_TRUE;
@@ -128,6 +129,7 @@ Ender_Property *EDOM_CDATA = NULL;
 Ender_Property *EDOM_TOPMOST = NULL;
 Ender_Property *EDOM_CHILD = NULL;
 Ender_Property *EDOM_PARENT = NULL;
+Ender_Property *EDOM_TEXT = NULL;
 int esvg_log_dom_global = -1;
 
 Ender_Namespace * esvg_namespace_get(void)
