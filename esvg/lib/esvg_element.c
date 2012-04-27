@@ -688,11 +688,11 @@ static Eina_Bool _esvg_element_attribute_get(Edom_Tag *t, const char *key, char 
 	/* FIXME handle common properties */
 	if (strcmp(key, "id") == 0)
 	{
-		esvg_element_id_get(thiz->e, value);
+		_esvg_element_id_get(t, value);
 	}
 	else if (strcmp(key, "class") == 0)
 	{
-		//esvg_element_class_get(thiz->e, value);
+		_esvg_element_class_get(t, value);
 	}
 	else
 	{
@@ -718,12 +718,20 @@ static void _esvg_element_free(Edom_Tag *t)
 static const char * _esvg_element_css_property_get(void *e, const char *property)
 {
 	Edom_Tag *tag = e;
+	char *value;
+
+	printf("getting css property! %s\n", property);
+	_esvg_element_attribute_get(tag, property, &value);
+	printf("returning %s\n", value);
+
+	return value;
 }
 
 /* FIXME we could call directly the function _attribute_set */
 static void _esvg_element_css_property_set(void *e, const char *property, const char *value)
 {
 	Edom_Tag *tag = e;
+	printf("setting %s %s\n", property, value);
 	_esvg_element_attribute_set(tag, property, value);
 }
 
@@ -875,6 +883,13 @@ void esvg_element_initialize(Ender_Element *e)
 	thiz->e = e;
 	if (thiz->descriptor.initialize)
 		thiz->descriptor.initialize(e);
+}
+
+void esvg_element_style_apply(Edom_Tag *t, Ecss_Style *s)
+{
+	esvg_element_attribute_type_set(t, ESVG_ATTR_CSS);
+	ecss_context_style_apply(&_esvg_element_css_context, s, t);
+	esvg_element_attribute_type_set(t, ESVG_ATTR_XML);
 }
 
 void esvg_element_topmost_set(Edom_Tag *t, Ender_Element *topmost)
@@ -1051,6 +1066,7 @@ EAPI void esvg_element_id_set(Ender_Element *e, const char *id)
  */
 EAPI void esvg_element_class_set(Ender_Element *e, const char *class)
 {
+	ender_element_property_value_set(e, ESVG_ELEMENT_CLASS, class, NULL);
 }
 
 /**

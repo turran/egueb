@@ -47,72 +47,6 @@ static Esvg_Style * _esvg_style_get(Edom_Tag *t)
 	return thiz;
 }
 /*----------------------------------------------------------------------------*
- *                          Css context interface                             *
- *----------------------------------------------------------------------------*/
-/* FIXME share this with the one on esvg element */
-static const char * _get_name(void *e)
-{
-	Edom_Tag *t = e;
-	Esvg_Type type;
-
-	
-	type = esvg_element_internal_type_get(t);
-	return esvg_type_string_to(type);
-}
-
-static const char * _property_get(void *e, const char *property)
-{
-	Edom_Tag *tag = e;
-	const char *ret = NULL;
-
-	printf("style property get! %s\n", property);
-	if (!strcmp(property, "class"))
-	{
-		ret = edom_tag_class_get(e);
-	}
-	else if (!strcmp(property, "id"))
-	{
-		ret = edom_tag_id_get(e);
-	}
-	else
-	{
-		return NULL;
-	}
-	printf("returning %s\n", ret);
-	return ret;
-}
-
-static void _property_set(void *e, const char *property, const char *value)
-{
-	Edom_Tag *tag = e;
-
-	printf("setting %s %s\n", property, value);
-#if 0
-	edom_tag_attribute_set(tag, property, value);
-#endif
-}
-
-static void * _get_child(void *e)
-{
-	Edom_Tag *tag = e;
-	return edom_tag_child_get(tag);
-}
-
-static void * _get_next_sibling(void *e)
-{
-	Edom_Tag *tag = e;
-	return edom_tag_next_get(tag);
-}
-
-static Ecss_Context _context = {
-	/* .property_set 	= */ _property_set,
-	/* .property_get 	= */ _property_get,
-	/* .get_name 		= */ _get_name,
-	/* .get_child 		= */ _get_child,
-	/* .get_next_sibling 	= */ _get_next_sibling,
-};
-
-/*----------------------------------------------------------------------------*
  *                         The Esvg Element interface                         *
  *----------------------------------------------------------------------------*/
 static void _esvg_style_cdata(Edom_Tag *t, const char *cdata, unsigned int length)
@@ -183,7 +117,7 @@ void esvg_style_apply(Edom_Tag *t, Edom_Tag *root)
 	Esvg_Style *thiz;
 
 	thiz = _esvg_style_get(t);
-	ecss_context_style_apply(&_context, thiz->s, root);
+	esvg_element_style_apply(root, thiz->s);
 }
 
 #if 0
