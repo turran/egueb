@@ -177,7 +177,7 @@ static Eina_Bool _esvg_svg_child_initialize(Edom_Tag *t, Edom_Tag *child_t, void
 	/* add the style to the list of styles */
 	if (esvg_is_style_internal(child_t))
 	{
-		printf("style found!\n");
+		thiz->styles = eina_list_append(thiz->styles, child_t);
 	}
 
 	/* iterate over the childs of the child and do the same initialization */
@@ -285,10 +285,11 @@ static Eina_Bool _esvg_svg_setup(Edom_Tag *t,
 		Enesim_Error **error)
 {
 	Esvg_Svg *thiz;
-	Eina_List *l;
+	Edom_Tag *style;
 	Enesim_Renderer *child;
 	Enesim_Renderer *parent;
 	Eina_Bool ret;
+	Eina_List *l;
 	double width, height;
 
 	thiz = _esvg_svg_get(t);
@@ -324,6 +325,13 @@ static Eina_Bool _esvg_svg_setup(Edom_Tag *t,
 	}
 	ctx->viewbox.width = width;
 	ctx->viewbox.height = height;
+
+	/* for every style apply it */
+	/* TODO what if we have a sub svg with its own styles? */
+	EINA_LIST_FOREACH(thiz->styles, l, style)
+	{
+		esvg_style_apply(style, t);
+	}
 
 	/* call the setup on the instantiables */
 	ret = esvg_element_internal_child_setup(t, ctx,

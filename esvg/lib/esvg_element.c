@@ -680,15 +680,26 @@ static Eina_Bool _esvg_element_attribute_set(Edom_Tag *t, const char *key, const
 	return EINA_TRUE;
 }
 
-static Eina_Bool _esvg_element_attribute_get(Edom_Tag *t, const char *attribute, char **value)
+static Eina_Bool _esvg_element_attribute_get(Edom_Tag *t, const char *key, char **value)
 {
 	Esvg_Element *thiz;
 
 	thiz = _esvg_element_get(t);
 	/* FIXME handle common properties */
-	if (thiz->descriptor.attribute_get)
-		return thiz->descriptor.attribute_get(t, attribute, value);
-	return EINA_FALSE;
+	if (strcmp(key, "id") == 0)
+	{
+		esvg_element_id_get(thiz->e, value);
+	}
+	else if (strcmp(key, "class") == 0)
+	{
+		//esvg_element_class_get(thiz->e, value);
+	}
+	else
+	{
+		if (thiz->descriptor.attribute_get)
+			return thiz->descriptor.attribute_get(t, key, value);
+	}
+	return EINA_TRUE;
 }
 
 static void _esvg_element_free(Edom_Tag *t)
@@ -730,7 +741,11 @@ static void * _esvg_element_css_get_next_sibling(void *e)
 
 static const char * _esvg_element_css_get_name(void *e)
 {
-	return NULL;
+	Edom_Tag *t = e;
+	Esvg_Element *thiz;
+
+	thiz = _esvg_element_get(t);
+	return esvg_type_string_to(thiz->type);
 }
 
 static Ecss_Context _esvg_element_css_context = {

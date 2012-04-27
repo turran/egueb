@@ -49,27 +49,37 @@ static Esvg_Style * _esvg_style_get(Edom_Tag *t)
 /*----------------------------------------------------------------------------*
  *                          Css context interface                             *
  *----------------------------------------------------------------------------*/
+/* FIXME share this with the one on esvg element */
 static const char * _get_name(void *e)
 {
+	Edom_Tag *t = e;
+	Esvg_Type type;
 
+	
+	type = esvg_element_internal_type_get(t);
+	return esvg_type_string_to(type);
 }
 
 static const char * _property_get(void *e, const char *property)
 {
 	Edom_Tag *tag = e;
+	const char *ret = NULL;
 
+	printf("style property get! %s\n", property);
 	if (!strcmp(property, "class"))
 	{
-		return edom_tag_class_get(e);
+		ret = edom_tag_class_get(e);
 	}
 	else if (!strcmp(property, "id"))
 	{
-		return edom_tag_id_get(e);
+		ret = edom_tag_id_get(e);
 	}
 	else
 	{
 		return NULL;
 	}
+	printf("returning %s\n", ret);
+	return ret;
 }
 
 static void _property_set(void *e, const char *property, const char *value)
@@ -168,16 +178,20 @@ Eina_Bool esvg_is_style_internal(Edom_Tag *t)
 	return EINA_FALSE;
 }
 
+void esvg_style_apply(Edom_Tag *t, Edom_Tag *root)
+{
+	Esvg_Style *thiz;
+
+	thiz = _esvg_style_get(t);
+	ecss_context_style_apply(&_context, thiz->s, root);
+}
+
 #if 0
 void esvg_parser_style_style_set(Esvg_Style *thiz, Ecss_Style *style)
 {
 	thiz->s = style;
 }
 
-void esvg_parser_style_apply(Esvg_Style *thiz, Edom_Tag *root)
-{
-	ecss_context_style_apply(&_context, thiz->s, root);
-}
 #endif
 /*============================================================================*
  *                                   API                                      *
