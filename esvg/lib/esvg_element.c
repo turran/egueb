@@ -586,13 +586,7 @@ static Eina_Bool _esvg_element_attribute_set(Edom_Tag *t, const char *key, const
 	/* common presentation attributes */
 	else if (strcmp(key, "clip-path") == 0)
 	{
-#if 0
-		Edom_Parser *parser;
-
-		parser = edom_tag_parser_get(thiz->e);
-		thiz->clip_path = strdup(value);
-		esvg_parser_post_parse_add(parser, _post_parse_clip_path_cb, thiz);
-#endif
+		esvg_element_clip_path_set(thiz->e, value);
 	}
 	else if (strcmp(key, "opacity") == 0)
 	{

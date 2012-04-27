@@ -53,7 +53,7 @@
  */
 
 typedef struct _Esvg_Attribute_Presentation {
-	Enesim_Renderer *clip_path;
+	char *clip_path;
 	Esvg_Color color;
 	double opacity;
 	Esvg_Paint fill;
@@ -82,6 +82,8 @@ typedef struct _Esvg_Attribute_Presentation {
 	Eina_Bool visibility_set;
 	Eina_Bool stop_color_set;
 	Eina_Bool stop_opacity_set;
+	/* how may are set ? */
+	int sets;
 } Esvg_Attribute_Presentation;
 
 void esvg_attribute_presentation_setup(Esvg_Attribute_Presentation *thiz);
@@ -89,7 +91,7 @@ void esvg_attribute_presentation_merge(const Esvg_Attribute_Presentation *state,
 		const Esvg_Attribute_Presentation *parent,
 		Esvg_Attribute_Presentation *d);
 
-void esvg_attribute_presentation_clip_path_set(Esvg_Attribute_Presentation *thiz, const Edom_Tag *clip_path);
+void esvg_attribute_presentation_clip_path_set(Esvg_Attribute_Presentation *thiz, const char *clip_path);
 void esvg_attribute_presentation_clip_path_unset(Esvg_Attribute_Presentation *thiz);
 void esvg_attribute_presentation_color_set(Esvg_Attribute_Presentation *thiz, const Esvg_Color *color);
 void esvg_attribute_presentation_color_unset(Esvg_Attribute_Presentation *thiz);

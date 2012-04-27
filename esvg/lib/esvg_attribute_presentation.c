@@ -140,7 +140,7 @@ static void _line_join_dump(Esvg_Stroke_Line_Join join)
 void esvg_attribute_presentation_setup(Esvg_Attribute_Presentation *thiz)
 {
 	Esvg_Color black = { 0, 0, 0 };
-	Esvg_Length one = { ESVG_UNIT_LENGTH_PX, 1 }; 
+	Esvg_Length one = { ESVG_UNIT_LENGTH_PX, 1 };
 
 	thiz->color = black;
 	thiz->stroke_width = ESVG_LENGTH_1;
@@ -161,6 +161,7 @@ void esvg_attribute_presentation_merge(const Esvg_Attribute_Presentation *state,
 		const Esvg_Attribute_Presentation *parent,
 		Esvg_Attribute_Presentation *d)
 {
+	/* FIXME check if actually something has changed */
 	/* clip_path */
 	if (!state->clip_path_set)
 	{
@@ -311,7 +312,7 @@ void esvg_attribute_presentation_merge(const Esvg_Attribute_Presentation *state,
 }
 
 
-void esvg_attribute_presentation_clip_path_set(Esvg_Attribute_Presentation *thiz, const Edom_Tag *clip_path)
+void esvg_attribute_presentation_clip_path_set(Esvg_Attribute_Presentation *thiz, const char *clip_path)
 {
 	if (thiz->clip_path == clip_path)
 		return;
@@ -322,25 +323,24 @@ void esvg_attribute_presentation_clip_path_set(Esvg_Attribute_Presentation *thiz
 	}
 	else
 	{
-		/* FIXME fis this */
-#if 0
-		if (!esvg_is_clip_path(clip_path))
-			return;
-#endif
 		if (thiz->clip_path)
-			enesim_renderer_unref(thiz->clip_path);
+			free (thiz->clip_path);
 
-		thiz->clip_path = enesim_renderer_ref(clip_path);
+		thiz->clip_path = strdup(clip_path);
 		thiz->clip_path_set = EINA_TRUE;
+		thiz->sets++;
 	}
 }
 
 void esvg_attribute_presentation_clip_path_unset(Esvg_Attribute_Presentation *thiz)
 {
 	if (thiz->clip_path)
-		enesim_renderer_unref(thiz->clip_path);
-	thiz->clip_path = NULL;
-	thiz->clip_path_set = EINA_FALSE;
+	{
+		free(thiz->clip_path);
+		thiz->clip_path = NULL;
+		thiz->sets++;
+		thiz->clip_path_set = EINA_FALSE;
+	}
 }
 
 void esvg_attribute_presentation_color_set(Esvg_Attribute_Presentation *thiz, const Esvg_Color *color)
