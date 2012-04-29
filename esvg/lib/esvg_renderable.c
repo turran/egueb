@@ -76,6 +76,10 @@ typedef struct _Esvg_Renderable
 	Edom_Tag *stroke_tag;
 	Esvg_Renderable_Context context;
 	void *data;
+	/* damages */
+	Eina_Tiler *tiler;
+	int tw;
+	int th;
 } Esvg_Renderable;
 
 static Esvg_Renderable * _esvg_renderable_get(Edom_Tag *t)
@@ -86,6 +90,15 @@ static Esvg_Renderable * _esvg_renderable_get(Edom_Tag *t)
 	ESVG_RENDERABLE_MAGIC_CHECK(thiz);
 
 	return thiz;
+}
+
+static Eina_Bool _esvg_renderable_damage_cb(Enesim_Renderer *r,
+		Eina_Rectangle *area, Eina_Bool past,
+		void *data)
+{
+	Eina_Tiler *tiler = data;
+	eina_tiler_rect_add(tiler, area);
+	return EINA_TRUE;
 }
 
 static void _esvg_shape_enesim_state_get(Edom_Tag *t,
@@ -328,7 +341,7 @@ static Eina_Bool _esvg_renderable_setup(Edom_Tag *t,
 		/* we dont pass the attributes or the paint server
 		 * will merge what it has with this
 		 */
-		esvg_referenceable_renderer_set(thiz->fill_tag, thiz->context.fill_renderer); 
+		esvg_referenceable_renderer_set(thiz->fill_tag, thiz->context.fill_renderer);
 		esvg_element_internal_setup(thiz->fill_tag, context, NULL, error);
 	}
 #if 0
@@ -423,7 +436,7 @@ Edom_Tag * esvg_renderable_new(Esvg_Renderable_Descriptor *descriptor, Esvg_Type
 	thiz->container_height = 480;
 	thiz->x_dpi = 96.0;
 	thiz->y_dpi = 96.0;
-	
+
 	pdescriptor.child_add = descriptor->child_add;
 	pdescriptor.child_remove = descriptor->child_remove;
 	pdescriptor.attribute_set = descriptor->attribute_set;
@@ -535,4 +548,73 @@ EAPI void esvg_renderable_y_dpi_set(Ender_Element *e, double y_dpi)
  */
 EAPI void esvg_renderable_y_dpi_get(Ender_Element *e, double *y_dpi)
 {
+}
+
+/**
+ * To be documented
+ * FIXME: To be fixed
+ */
+EAPI void esvg_renderable_draw(Ender_Element *e, Enesim_Surface *s,
+		Eina_Rectangle *clip, int x, int y, Enesim_Error **error)
+{
+	Edom_Tag *t;
+	Enesim_Renderer *r;
+
+	t = ender_element_object_get(e);
+	esvg_renderable_internal_renderer_get(t, &r);
+	enesim_renderer_draw(r, s, clip, x, y, error);
+}
+
+/**
+ * To be documented
+ * FIXME: To be fixed
+ */
+EAPI Eina_Bool esvg_renderable_draw_list(Ender_Element *e, Enesim_Surface *s,
+		Eina_List *clips, int x, int y, Enesim_Error **error)
+{
+	Edom_Tag *t;
+	Enesim_Renderer *r;
+
+	t = ender_element_object_get(e);
+	esvg_renderable_internal_renderer_get(t, &r);
+	enesim_renderer_draw_list(r, s, clips, x, y, error);
+}
+
+/**
+ * To be documented
+ * FIXME: To be fixed
+ */
+EAPI void esvg_renderable_damages_get(Ender_Element *e, Esvg_Renderable_Damage_Cb cb, void *data)
+{
+	Edom_Tag *t;
+	Esvg_Renderable *thiz;
+	Enesim_Renderer *r;
+	Eina_Iterator *iter;
+	Eina_Rectangle *rect;
+	int cw;
+	int ch;
+
+	t = ender_element_object_get(e);
+	thiz = _esvg_renderable_get(t);
+
+	cw = ceil(thiz->container_width);
+	ch = ceil(thiz->container_height);
+
+	if (!thiz->tiler || thiz->tw != cw || thiz->th != ch)
+	{
+		if (thiz->tiler)
+			eina_tiler_free(thiz->tiler);
+		thiz->tiler = eina_tiler_new(cw, ch);
+	}
+
+	esvg_renderable_internal_renderer_get(t, &r);
+	enesim_renderer_damages_get(r, _esvg_renderable_damage_cb, thiz->tiler);
+
+	iter = eina_tiler_iterator_new(thiz->tiler);
+	EINA_ITERATOR_FOREACH(iter, rect)
+	{
+		cb(e, rect, data);
+	}
+	eina_iterator_free(iter);
+	eina_tiler_clear(thiz->tiler);
 }

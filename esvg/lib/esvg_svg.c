@@ -42,11 +42,6 @@
  * onresize
  * onscroll
  * onzoom
- *
- * - Add an eina tiler here
- * - Wrap the enesim renderer draw functions, so basically we wont need
- *   to "get" the renderer, just draw it
- * - Wrap the damages to get the ones from the tiler
  */
 /*============================================================================*
  *                                  Local                                     *
@@ -92,6 +87,7 @@ static Esvg_Svg * _esvg_svg_get(Edom_Tag *t)
 
 	return thiz;
 }
+
 /*----------------------------------------------------------------------------*
  *                             The URI interface                              *
  *----------------------------------------------------------------------------*/
