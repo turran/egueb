@@ -107,7 +107,7 @@ static Eina_Bool _parser_gradient_attribute_set(Edom_Tag *tag, const char *key, 
 	if (strcmp(key, "gradientUnits") == 0)
 	{
 		Esvg_Gradient_Units units;
-		esvg_parser_gradient_units_get(&units, value);
+		esvg_parser_gradient_units_string_from(&units, value);
 		esvg_gradient_units_set(r, units);
 	}
 	/* TODO how to handle mutiple hrefs?  and animating them?*/
@@ -129,7 +129,7 @@ static Eina_Bool _parser_gradient_attribute_set(Edom_Tag *tag, const char *key, 
 	{
 		Enesim_Matrix matrix;
 
-		esvg_transformation_get(&matrix, value);
+		esvg_transformation_string_from(&matrix, value);
 		esvg_gradient_transform_set(r, &matrix);
 	}
 	else if (strcmp(key, "spreadMethod") == 0)

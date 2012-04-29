@@ -83,14 +83,14 @@ Eina_Bool _parser_pattern_attribute_set(Edom_Tag *tag,
 	{
 		Esvg_Gradient_Units units;
 
-		esvg_parser_gradient_units_get(&units, value);
+		esvg_parser_gradient_units_string_from(&units, value);
 		esvg_pattern_units_set(r, units);
 	}
 	else if (strcmp(key, "patternTransform") == 0)
 	{
 		Enesim_Matrix matrix;
 
-		esvg_transformation_get(&matrix, value);
+		esvg_transformation_string_from(&matrix, value);
 		esvg_pattern_transform_set(r, &matrix);
 	}
 	else if (strcmp(key, "xlink:href") == 0)

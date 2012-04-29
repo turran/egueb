@@ -104,6 +104,14 @@ typedef enum _Esvg_Type {
 } Esvg_Type;
 
 
+typedef double Esvg_Number;
+
+typedef struct _Esvg_Animated_Number
+{
+	Esvg_Number base;
+	Esvg_Number anim;
+} Esvg_Animated_Number;
+
 /* FIXME implement the unit type as the spec or just
  * ABSOLUTE/RELATIVE?
  */
@@ -129,6 +137,12 @@ typedef struct _Esvg_Length
 
 typedef Esvg_Length Esvg_Coord;
 
+typedef struct _Esvg_Animated_Length
+{
+	Esvg_Length base;
+	Esvg_Length anim;
+} Esvg_Animated_Length;
+
 /* We need to use uint32_t here because we can not pass
  * data < 32bits through varargs
  */
@@ -138,6 +152,12 @@ typedef struct _Esvg_Color
 	uint32_t g;
 	uint32_t b;
 } Esvg_Color;
+
+typedef struct _Esvg_Animated_Color
+{
+	Esvg_Color base;
+	Esvg_Color anim;
+} Esvg_Animated_Color;
 
 /* FIXME when doing clipping or masking, we also use this
  * so better change the name
@@ -304,11 +324,21 @@ static inline Eina_Bool esvg_length_is_relative(Esvg_Length *length)
 EAPI const char * esvg_type_string_to(Esvg_Type type);
 
 EAPI double esvg_number_string_from(const char *attr_val, double default_nbr);
+EAPI Eina_Bool esvg_parser_gradient_units_string_from(Esvg_Gradient_Units *gu, const char *value);
+EAPI Eina_Bool esvg_parser_fill_rule_get(Esvg_Fill_Rule *rule, const char *attr);
+EAPI Eina_Bool esvg_parser_spread_method_get(Esvg_Spread_Method *smethod, const char *attr);
+EAPI Eina_Bool esvg_color_string_from(Esvg_Color *color, const char *attr_val);
+
+EAPI Eina_Bool esvg_transformation_string_from(Enesim_Matrix *matrix, const char *attr);
 
 EAPI Eina_Bool esvg_length_string_from(Esvg_Length *length, const char *attr_val, Esvg_Length default_length);
 EAPI Eina_Bool esvg_length_is_equal(Esvg_Length *length1, Esvg_Length *length2);
 EAPI double esvg_length_final_get(const Esvg_Length *l, double parent_length);
 EAPI Eina_Bool esvg_paint_string_from(Esvg_Paint *paint, const char *attr);
 Esvg_View_Box esvg_view_box_get(const char *attr_val);
+
+EAPI Esvg_Stroke_Line_Cap esvg_stroke_line_cap_string_from(const char *value);
+EAPI Esvg_Stroke_Line_Join esvg_stroke_line_join_string_from(const char *value);
+
 
 #endif

@@ -522,7 +522,7 @@ static Eina_Bool esvg_parser_path_line_to(Eina_Bool relative,
 		ERR("Can not get point");
 		return EINA_FALSE;
 	}
-	
+
 	cmd->type = ESVG_PATH_LINE_TO;
 	cmd->relative = relative;
 	cmd->data.line_to.x = p.x;
@@ -849,34 +849,6 @@ Esvg_Length ESVG_LENGTH_0 = { 0.0, ESVG_UNIT_LENGTH_PX };
 Esvg_Length ESVG_LENGTH_1 = { 1.0, ESVG_UNIT_LENGTH_PX };
 Esvg_Length ESVG_LENGTH_100_PERCENT = { 100.0, ESVG_UNIT_LENGTH_PERCENT };
 
-Esvg_Stroke_Line_Cap esvg_stroke_line_cap_get(const char *value)
-{
-	Esvg_Stroke_Line_Cap stroke_line_cap = ESVG_LINE_CAP_BUTT;
-
-	if (!strcmp(value, "butt"))
-		stroke_line_cap = ESVG_LINE_CAP_BUTT;
-	else if (!strcmp(value, "round"))
-		stroke_line_cap = ESVG_LINE_CAP_ROUND;
-	else if (!strcmp(value, "square"))
-		stroke_line_cap = ESVG_LINE_CAP_SQUARE;
-
-	return stroke_line_cap;
-}
-
-Esvg_Stroke_Line_Join esvg_stroke_line_join_get(const char *value)
-{
-	Esvg_Stroke_Line_Join stroke_line_join = ESVG_LINE_JOIN_MITER;
-
-	if (!strcmp(value, "miter"))
-		stroke_line_join = ESVG_LINE_JOIN_MITER;
-	else if (!strcmp(value, "round"))
-		stroke_line_join = ESVG_LINE_JOIN_ROUND;
-	else if (!strcmp(value, "bevel"))
-		stroke_line_join = ESVG_LINE_JOIN_BEVEL;
-
-	return stroke_line_join;
-}
-
 /* x1,y1 x2,y2 ... */
 void esvg_parser_points(const char *value, Esvg_Parser_Points_Cb cb, void *data)
 {
@@ -944,127 +916,6 @@ Esvg_View_Box esvg_view_box_get(const char *attr_val)
 	return vb;
 }
 
-/*
- * #rgb
- * #rrggbb
- * rgb(c, c, c)
- */
-Eina_Bool esvg_color_get(Esvg_Color *color, const char *attr_val)
-{
-	size_t sz;
-
-	sz = strlen(attr_val);
-
-	/*
-	 * check if it starts with the #:
-	 * #rgb
-	 * #rrggbb
-	 */
-	if (attr_val[0] == '#')
-	{
-		if (sz == 4)
-		{
-			if (ESVG_IS_HEXA(attr_val[1]) &&
-			    ESVG_IS_HEXA(attr_val[2]) &&
-			    ESVG_IS_HEXA(attr_val[3]))
-			{
-				color->r = _esvg_c_to_hh(attr_val[1]);
-				color->g = _esvg_c_to_hh(attr_val[2]);
-				color->b = _esvg_c_to_hh(attr_val[3]);
-				return EINA_TRUE;
-			}
-		}
-		else if (sz == 7)
-		{
-			if (ESVG_IS_HEXA(attr_val[1]) &&
-			    ESVG_IS_HEXA(attr_val[2]) &&
-			    ESVG_IS_HEXA(attr_val[3]) &&
-			    ESVG_IS_HEXA(attr_val[4]) &&
-			    ESVG_IS_HEXA(attr_val[5]) &&
-			    ESVG_IS_HEXA(attr_val[6]))
-			{
-				color->r = _esvg_cc_to_hh(attr_val + 1);
-				color->g = _esvg_cc_to_hh(attr_val + 3);
-				color->b = _esvg_cc_to_hh(attr_val + 5);
-				return EINA_TRUE;
-			}
-		}
-		return EINA_FALSE;
-	}
-	/*
-	 * check if it starts with the rbg(:
-	 * rgb(c,c,c) (size at least 10)
-	 */
-	else if (sz >= 10)
-	{
-		/* starts with rgb( and finish with ) ? */
-		if ((attr_val[0] == 'r') &&
-		    (attr_val[1] == 'g') &&
-		    (attr_val[2] == 'b') &&
-		    (attr_val[3] == '(') &&
-		    (attr_val[sz - 1] == ')'))
-		{
-			unsigned char cl[3];
-			const char *iter;
-			const char *tmp;
-			long val;
-			int nbr = 0;
-
-			/* n, n, n */
-			/* n%, n%, n% */
-			iter = tmp = attr_val + 4;
-			while (*tmp)
-			{
-				ESVG_SPACE_SKIP(tmp);
-				if (*tmp == ',')
-				{
-                                        tmp++;
-					iter = tmp;
-				}
-				if (_esvg_long_get(iter, &tmp, &val))
-				{
-					if ((*tmp != ' ') && (*tmp != ',') && (*tmp != '%') && (*tmp != ')'))
-						break;
-					if ((val >= 0) && (val <= 255))
-					{
-						if (*tmp == '%')
-						{
-							tmp++;
-							cl[nbr] = (unsigned char)((255L * val) / 100L);
-						}
-						else
-						{
-							cl[nbr] = (unsigned char)val;
-						}
-						nbr++;
-                                        }
-                                        if (nbr == 3)
-                                        {
-						/* check the last parameter */
-						ESVG_SPACE_SKIP(tmp);
-						if ((*tmp == ')') && (*(tmp + 1) == '\0'))
-						{
-							/* parsing is correct, we set the color and return */
-							color->r = cl[0];
-							color->g = cl[1];
-							color->b = cl[2];
-							return EINA_TRUE;
-						}
-                                        }
-				}
-                                else
-					break;
-			}
-		}
-		return EINA_FALSE;
-	}
-	/* is a keyword */
-	else
-	{
-		return _esvg_color_keyword_from(color, attr_val);
-	}
-}
-
 Eina_Bool esvg_href_get(Edom_Tag **tag, Edom_Tag *rel, const char *href)
 {
 	Edom_Tag *topmost;
@@ -1092,99 +943,6 @@ Eina_Bool esvg_href_get(Edom_Tag **tag, Edom_Tag *rel, const char *href)
 #endif
 
 	return EINA_TRUE;
-}
-
-Eina_Bool esvg_parser_gradient_units_get(Esvg_Gradient_Units *gu, const char *attr)
-{
-	if (strncmp(attr, "userSpaceOnUse", 14) == 0)
-	{
-		*gu = ESVG_USER_SPACE_ON_USE;
-	}
-	else if (strncmp(attr, "objectBoundingBox", 17) == 0)
-	{
-		*gu = ESVG_OBJECT_BOUNDING_BOX;
-	}
-	else
-	{
-		return EINA_FALSE;
-	}
-	return EINA_TRUE;
-}
-
-Eina_Bool esvg_parser_fill_rule_get(Esvg_Fill_Rule *rule, const char *attr)
-{
-	if (strncmp(attr, "nonzero", 7) == 0)
-	{
-		*rule = ESVG_NON_ZERO;
-	}
-	else if (strncmp(attr, "evenodd", 7) == 0)
-	{
-		*rule = ESVG_EVEN_ODD;
-	}
-	else
-	{
-		return EINA_FALSE;
-	}
-	return EINA_TRUE;
-}
-
-Eina_Bool esvg_parser_spread_method_get(Esvg_Spread_Method *smethod, const char *attr)
-{
-	if (strncmp(attr, "pad", 3) == 0)
-	{
-		*smethod = ESVG_SPREAD_METHOD_PAD;
-	}
-	else if (strncmp(attr, "reflect", 7) == 0)
-	{
-		*smethod = ESVG_SPREAD_METHOD_REFLECT;
-	}
-	else if (strncmp(attr, "repeat", 6) == 0)
-	{
-		*smethod = ESVG_SPREAD_METHOD_REPEAT;
-	}
-	else
-	{
-		return EINA_FALSE;
-	}
-	return EINA_TRUE;
-}
-
-Eina_Bool esvg_transformation_get(Enesim_Matrix *matrix, const char *attr)
-{
-	Eina_Bool ret;
-	const char *endptr = NULL;
-	typedef Eina_Bool (*Matrix_Get)(Enesim_Matrix *matrix, const char *attr_val, const char **endptr);
-
-	Matrix_Get m[6] = {
-		_esvg_transformation_matrix_get,
-		_esvg_transformation_translate_get,
-		_esvg_transformation_rotate_get,
-		_esvg_transformation_scale_get,
-		_esvg_transformation_skewx_get,
-		_esvg_transformation_skewy_get,
-	};
-	enesim_matrix_identity(matrix);
-	do
-	{
-		Enesim_Matrix parsed;
-		int i;
-
-		enesim_matrix_identity(&parsed);
-		for (i = 0; i < 6; i++)
-		{
-			ret = m[i](&parsed, attr, &endptr);
-			if (ret) break;
-		}
-		if (ret)
-		{
-			printf("found, composing\n");
-			enesim_matrix_compose(matrix, &parsed, matrix);
-		}
-		attr = endptr;
-	}
-	while (endptr && *endptr && ret);
-
-	return ret;
 }
 
 Eina_Bool esvg_parser_path(const char *value, Esvg_Parser_Command_Cb cb, void *data)
@@ -1463,7 +1221,7 @@ EAPI Eina_Bool esvg_paint_string_from(Esvg_Paint *paint, const char *attr)
 		paint->type = ESVG_PAINT_CURRENT_COLOR;
 	}
 	/* color name */
-	else if (esvg_color_get(&paint->value.color, attr))
+	else if (esvg_color_string_from(&paint->value.color, attr))
 	{
 		paint->type = ESVG_PAINT_COLOR;
 	}
@@ -1584,3 +1342,248 @@ EAPI Eina_Bool esvg_type_is_paint_server(Esvg_Type type)
 		return EINA_FALSE;
 	}
 }
+
+EAPI Eina_Bool esvg_parser_gradient_units_string_from(Esvg_Gradient_Units *gu, const char *attr)
+{
+	if (strncmp(attr, "userSpaceOnUse", 14) == 0)
+	{
+		*gu = ESVG_USER_SPACE_ON_USE;
+	}
+	else if (strncmp(attr, "objectBoundingBox", 17) == 0)
+	{
+		*gu = ESVG_OBJECT_BOUNDING_BOX;
+	}
+	else
+	{
+		return EINA_FALSE;
+	}
+	return EINA_TRUE;
+}
+
+EAPI Eina_Bool esvg_parser_fill_rule_get(Esvg_Fill_Rule *rule, const char *attr)
+{
+	if (strncmp(attr, "nonzero", 7) == 0)
+	{
+		*rule = ESVG_NON_ZERO;
+	}
+	else if (strncmp(attr, "evenodd", 7) == 0)
+	{
+		*rule = ESVG_EVEN_ODD;
+	}
+	else
+	{
+		return EINA_FALSE;
+	}
+	return EINA_TRUE;
+}
+
+EAPI Eina_Bool esvg_parser_spread_method_get(Esvg_Spread_Method *smethod, const char *attr)
+{
+	if (strncmp(attr, "pad", 3) == 0)
+	{
+		*smethod = ESVG_SPREAD_METHOD_PAD;
+	}
+	else if (strncmp(attr, "reflect", 7) == 0)
+	{
+		*smethod = ESVG_SPREAD_METHOD_REFLECT;
+	}
+	else if (strncmp(attr, "repeat", 6) == 0)
+	{
+		*smethod = ESVG_SPREAD_METHOD_REPEAT;
+	}
+	else
+	{
+		return EINA_FALSE;
+	}
+	return EINA_TRUE;
+}
+
+EAPI Eina_Bool esvg_transformation_string_from(Enesim_Matrix *matrix, const char *attr)
+{
+	Eina_Bool ret;
+	const char *endptr = NULL;
+	typedef Eina_Bool (*Matrix_Get)(Enesim_Matrix *matrix, const char *attr_val, const char **endptr);
+
+	Matrix_Get m[6] = {
+		_esvg_transformation_matrix_get,
+		_esvg_transformation_translate_get,
+		_esvg_transformation_rotate_get,
+		_esvg_transformation_scale_get,
+		_esvg_transformation_skewx_get,
+		_esvg_transformation_skewy_get,
+	};
+	enesim_matrix_identity(matrix);
+	do
+	{
+		Enesim_Matrix parsed;
+		int i;
+
+		enesim_matrix_identity(&parsed);
+		for (i = 0; i < 6; i++)
+		{
+			ret = m[i](&parsed, attr, &endptr);
+			if (ret) break;
+		}
+		if (ret)
+		{
+			printf("found, composing\n");
+			enesim_matrix_compose(matrix, &parsed, matrix);
+		}
+		attr = endptr;
+	}
+	while (endptr && *endptr && ret);
+
+	return ret;
+}
+
+/*
+ * #rgb
+ * #rrggbb
+ * rgb(c, c, c)
+ */
+EAPI Eina_Bool esvg_color_string_from(Esvg_Color *color, const char *attr_val)
+{
+	size_t sz;
+
+	sz = strlen(attr_val);
+
+	/*
+	 * check if it starts with the #:
+	 * #rgb
+	 * #rrggbb
+	 */
+	if (attr_val[0] == '#')
+	{
+		if (sz == 4)
+		{
+			if (ESVG_IS_HEXA(attr_val[1]) &&
+			    ESVG_IS_HEXA(attr_val[2]) &&
+			    ESVG_IS_HEXA(attr_val[3]))
+			{
+				color->r = _esvg_c_to_hh(attr_val[1]);
+				color->g = _esvg_c_to_hh(attr_val[2]);
+				color->b = _esvg_c_to_hh(attr_val[3]);
+				return EINA_TRUE;
+			}
+		}
+		else if (sz == 7)
+		{
+			if (ESVG_IS_HEXA(attr_val[1]) &&
+			    ESVG_IS_HEXA(attr_val[2]) &&
+			    ESVG_IS_HEXA(attr_val[3]) &&
+			    ESVG_IS_HEXA(attr_val[4]) &&
+			    ESVG_IS_HEXA(attr_val[5]) &&
+			    ESVG_IS_HEXA(attr_val[6]))
+			{
+				color->r = _esvg_cc_to_hh(attr_val + 1);
+				color->g = _esvg_cc_to_hh(attr_val + 3);
+				color->b = _esvg_cc_to_hh(attr_val + 5);
+				return EINA_TRUE;
+			}
+		}
+		return EINA_FALSE;
+	}
+	/*
+	 * check if it starts with the rbg(:
+	 * rgb(c,c,c) (size at least 10)
+	 */
+	else if (sz >= 10)
+	{
+		/* starts with rgb( and finish with ) ? */
+		if ((attr_val[0] == 'r') &&
+		    (attr_val[1] == 'g') &&
+		    (attr_val[2] == 'b') &&
+		    (attr_val[3] == '(') &&
+		    (attr_val[sz - 1] == ')'))
+		{
+			unsigned char cl[3];
+			const char *iter;
+			const char *tmp;
+			long val;
+			int nbr = 0;
+
+			/* n, n, n */
+			/* n%, n%, n% */
+			iter = tmp = attr_val + 4;
+			while (*tmp)
+			{
+				ESVG_SPACE_SKIP(tmp);
+				if (*tmp == ',')
+				{
+                                        tmp++;
+					iter = tmp;
+				}
+				if (_esvg_long_get(iter, &tmp, &val))
+				{
+					if ((*tmp != ' ') && (*tmp != ',') && (*tmp != '%') && (*tmp != ')'))
+						break;
+					if ((val >= 0) && (val <= 255))
+					{
+						if (*tmp == '%')
+						{
+							tmp++;
+							cl[nbr] = (unsigned char)((255L * val) / 100L);
+						}
+						else
+						{
+							cl[nbr] = (unsigned char)val;
+						}
+						nbr++;
+                                        }
+                                        if (nbr == 3)
+                                        {
+						/* check the last parameter */
+						ESVG_SPACE_SKIP(tmp);
+						if ((*tmp == ')') && (*(tmp + 1) == '\0'))
+						{
+							/* parsing is correct, we set the color and return */
+							color->r = cl[0];
+							color->g = cl[1];
+							color->b = cl[2];
+							return EINA_TRUE;
+						}
+                                        }
+				}
+                                else
+					break;
+			}
+		}
+		return EINA_FALSE;
+	}
+	/* is a keyword */
+	else
+	{
+		return _esvg_color_keyword_from(color, attr_val);
+	}
+}
+
+
+EAPI Esvg_Stroke_Line_Cap esvg_stroke_line_cap_string_from(const char *value)
+{
+	Esvg_Stroke_Line_Cap stroke_line_cap = ESVG_LINE_CAP_BUTT;
+
+	if (!strcmp(value, "butt"))
+		stroke_line_cap = ESVG_LINE_CAP_BUTT;
+	else if (!strcmp(value, "round"))
+		stroke_line_cap = ESVG_LINE_CAP_ROUND;
+	else if (!strcmp(value, "square"))
+		stroke_line_cap = ESVG_LINE_CAP_SQUARE;
+
+	return stroke_line_cap;
+}
+
+EAPI Esvg_Stroke_Line_Join esvg_stroke_line_join_string_from(const char *value)
+{
+	Esvg_Stroke_Line_Join stroke_line_join = ESVG_LINE_JOIN_MITER;
+
+	if (!strcmp(value, "miter"))
+		stroke_line_join = ESVG_LINE_JOIN_MITER;
+	else if (!strcmp(value, "round"))
+		stroke_line_join = ESVG_LINE_JOIN_ROUND;
+	else if (!strcmp(value, "bevel"))
+		stroke_line_join = ESVG_LINE_JOIN_BEVEL;
+
+	return stroke_line_join;
+}
+
+

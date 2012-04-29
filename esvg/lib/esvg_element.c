@@ -576,7 +576,7 @@ static Eina_Bool _esvg_element_attribute_set(Edom_Tag *t, const char *key, const
 	{
 		Enesim_Matrix matrix;
 
-		esvg_transformation_get(&matrix, value);
+		esvg_transformation_string_from(&matrix, value);
 		esvg_element_transform_set(thiz->e, &matrix);
 	}
 	else if (strcmp(key, "style") == 0)
@@ -597,7 +597,7 @@ static Eina_Bool _esvg_element_attribute_set(Edom_Tag *t, const char *key, const
 	{
 		Esvg_Color color;
 
-		esvg_color_get(&color, value);
+		esvg_color_string_from(&color, value);
 		esvg_element_color_set(thiz->e, &color);
 	}
 	else if (strcmp(key, "fill") == 0)
@@ -642,21 +642,21 @@ static Eina_Bool _esvg_element_attribute_set(Edom_Tag *t, const char *key, const
 	{
 		Esvg_Stroke_Line_Cap stroke_line_cap;
 
-		stroke_line_cap = esvg_stroke_line_cap_get(value);
+		stroke_line_cap = esvg_stroke_line_cap_string_from(value);
 		esvg_element_stroke_line_cap_set(thiz->e, stroke_line_cap);
 	}
 	else if (strcmp(key, "stroke-linejoin") == 0)
 	{
 		Esvg_Stroke_Line_Join stroke_line_join;
 
-		stroke_line_join = esvg_stroke_line_join_get(value);
+		stroke_line_join = esvg_stroke_line_join_string_from(value);
 		esvg_element_stroke_line_join_set(thiz->e, stroke_line_join);
 	}
 	else if (strcmp(key, "stop-color") == 0)
 	{
 		Esvg_Color color;
 
-		esvg_color_get(&color, value);
+		esvg_color_string_from(&color, value);
 		esvg_element_stop_color_set(thiz->e, &color);
 	}
 	else if (strcmp(key, "stop-opacity") == 0)
@@ -698,7 +698,7 @@ static Eina_Bool _esvg_element_attribute_get(Edom_Tag *t, const char *key, char 
 		Enesim_Matrix matrix;
 
 		_esvg_element_transform_get(thiz->e, &matrix);
-		esvg_transformation_get(&matrix, value);
+		esvg_transformation_string_from(&matrix, value);
 	}
 	else if (strcmp(key, "style") == 0)
 	{
@@ -720,7 +720,7 @@ static Eina_Bool _esvg_element_attribute_get(Edom_Tag *t, const char *key, char 
 	{
 		Esvg_Color color;
 
-		esvg_color_get(&color, value);
+		esvg_color_string_from(&color, value);
 		_esvg_element_color_get(thiz->e, &color);
 	}
 	else if (strcmp(key, "fill") == 0)
@@ -765,21 +765,21 @@ static Eina_Bool _esvg_element_attribute_get(Edom_Tag *t, const char *key, char 
 	{
 		Esvg_Stroke_Line_Cap stroke_line_cap;
 
-		stroke_line_cap = esvg_stroke_line_cap_get(value);
+		stroke_line_cap = esvg_stroke_line_cap_string_from(value);
 		_esvg_element_stroke_line_cap_get(thiz->e, stroke_line_cap);
 	}
 	else if (strcmp(key, "stroke-linejoin") == 0)
 	{
 		Esvg_Stroke_Line_Join stroke_line_join;
 
-		stroke_line_join = esvg_stroke_line_join_get(value);
+		stroke_line_join = esvg_stroke_line_join_string_from(value);
 		_esvg_element_stroke_line_join_get(thiz->e, stroke_line_join);
 	}
 	else if (strcmp(key, "stop-color") == 0)
 	{
 		Esvg_Color color;
 
-		esvg_color_get(&color, value);
+		esvg_color_string_from(&color, value);
 		_esvg_element_stop_color_get(thiz->e, &color);
 	}
 	else if (strcmp(key, "stop-opacity") == 0)
