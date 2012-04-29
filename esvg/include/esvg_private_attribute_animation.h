@@ -7,9 +7,8 @@
 
 typedef struct _Esvg_Attribute_Animation_Target
 {
-	/* attributeNAme = name
-	 * attributeType = "CSS | XML | auto"
-	 */
+	Esvg_Attribute_Type attribute_type;
+	char *attribute_name;
 } Esvg_Attribute_Animation_Target;
 
 typedef struct _Esvg_Attribute_Animation_Timing

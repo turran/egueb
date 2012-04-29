@@ -43,11 +43,10 @@
  * onscroll
  * onzoom
  *
- * void pauseAnimations();
- * void unpauseAnimations();
- * boolean animationsPaused();
- * float getCurrentTime();
- * void setCurrentTime(in float seconds);
+ * - Add an eina tiler here
+ * - Wrap the enesim renderer draw functions, so basically we wont need
+ *   to "get" the renderer, just draw it
+ * - Wrap the damages to get the ones from the tiler
  */
 /*============================================================================*
  *                                  Local                                     *

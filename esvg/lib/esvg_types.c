@@ -1586,4 +1586,18 @@ EAPI Esvg_Stroke_Line_Join esvg_stroke_line_join_string_from(const char *value)
 	return stroke_line_join;
 }
 
+EAPI Eina_Bool esvg_attribute_type_string_from(Esvg_Attribute_Type *type, const char *value)
+{
+	Eina_Bool ret = EINA_TRUE;
+
+	if (!strcmp(value, "CSS"))
+		*type = ESVG_ATTR_CSS;
+	else if (!strcmp(value, "XML"))
+		*type = ESVG_ATTR_XML;
+	else if (!strcmp(value, "auto"))
+		*type = ESVG_ATTR_AUTO;
+	else
+		ret = EINA_FALSE;
+	return ret;
+}
 

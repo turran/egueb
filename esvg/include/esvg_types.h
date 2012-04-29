@@ -103,6 +103,13 @@ typedef enum _Esvg_Type {
 	ESVG_PARSE_TAGS
 } Esvg_Type;
 
+typedef enum _Esvg_Attribute_Type
+{
+	ESVG_ATTR_CSS,
+	ESVG_ATTR_XML,
+	ESVG_ATTR_AUTO,
+	ESVG_ATTR_TYPES,
+} Esvg_Attribute_Type;
 
 typedef double Esvg_Number;
 
@@ -339,6 +346,8 @@ Esvg_View_Box esvg_view_box_get(const char *attr_val);
 
 EAPI Esvg_Stroke_Line_Cap esvg_stroke_line_cap_string_from(const char *value);
 EAPI Esvg_Stroke_Line_Join esvg_stroke_line_join_string_from(const char *value);
+
+EAPI Eina_Bool esvg_attribute_type_string_from(Esvg_Attribute_Type *type, const char *value);
 
 
 #endif

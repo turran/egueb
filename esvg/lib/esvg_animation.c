@@ -32,6 +32,9 @@
 			EINA_MAGIC_FAIL(d, ESVG_ANIMATION_MAGIC);\
 	} while(0)
 
+static Ender_Property *ESVG_ANIMATION_ATTRIBUTE_NAME;
+static Ender_Property *ESVG_ANIMATION_ATTRIBUTE_TYPE;
+
 typedef struct _Esvg_Animation_Descriptor_Internal
 {
 	Edom_Tag_Free free;
@@ -71,9 +74,14 @@ static Eina_Bool _esvg_animation_attribute_set(Ender_Element *e,
 {
 	if (strcmp(key, "attributeName") == 0)
 	{
+		esvg_animation_attribute_name_set(e, value);
 	}
 	else if (strcmp(key, "attributeType") == 0)
 	{
+		Esvg_Attribute_Type type;
+
+		if (esvg_attribute_type_string_from(&type, value))
+			esvg_animation_attribute_name_set(e, value);
 	}
 	else
 	{
@@ -155,7 +163,7 @@ Edom_Tag * esvg_animation_new(Esvg_Animation_Descriptor *descriptor, Esvg_Type t
 	thiz->descriptor.attribute_set = descriptor->attribute_set;
 	thiz->descriptor.attribute_get = descriptor->attribute_get;
 	/* default values */
-	
+
 	pdescriptor.child_add = descriptor->child_add;
 	pdescriptor.child_remove = descriptor->child_remove;
 	pdescriptor.attribute_set = _esvg_animation_attribute_set;
@@ -184,3 +192,23 @@ EAPI Eina_Bool esvg_is_animation(Ender_Element *e)
 	t = ender_element_object_get(e);
 	return esvg_is_animation_internal(t);
 }
+
+EAPI void esvg_animation_attribute_name_set(Ender_Element *e, const char *name)
+{
+	ender_element_property_value_set(e, ESVG_ANIMATION_ATTRIBUTE_NAME, name, NULL);
+}
+
+EAPI void esvg_animation_attribute_name_get(Ender_Element *e, const char **name)
+{
+}
+
+EAPI void esvg_animation_attribute_type_set(Ender_Element *e, Esvg_Attribute_Type type)
+{
+	ender_element_property_value_set(e, ESVG_ANIMATION_ATTRIBUTE_TYPE, type, NULL);
+}
+
+EAPI void esvg_animation_attribute_type_get(Ender_Element *e, Esvg_Attribute_Type *type)
+{
+}
+
+

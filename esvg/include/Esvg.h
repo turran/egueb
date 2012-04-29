@@ -80,6 +80,7 @@
 #include "esvg_radial_gradient.h"
 #include "esvg_stop.h"
 #include "esvg_use.h"
+#include "esvg_animation.h"
 
 EAPI Eina_Bool esvg_is_shape(Edom_Tag *e);
 
