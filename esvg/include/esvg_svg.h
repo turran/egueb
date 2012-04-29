@@ -15,4 +15,10 @@ EAPI void esvg_svg_actual_height_get(Ender_Element *e, double *actual_height);
 
 EAPI Ender_Element * esvg_svg_element_find(Ender_Element *e, const char *id);
 
+EAPI void esvg_svg_animations_pause(Ender_Element *e);
+EAPI void esvg_svg_animations_unpause(Ender_Element *e);
+EAPI Eina_Bool esvg_svg_animations_paused(Ender_Element *e);
+EAPI double esvg_svg_time_get(Ender_Element *e);
+EAPI void esvg_svg_time_set(Ender_Element *e, double secs);
+
 #endif

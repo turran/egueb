@@ -31,6 +31,7 @@
 #include <Emage.h>
 #include <Ender.h>
 #include <Edom.h>
+#include <Etch.h>
 
 #define ESVG_LOG_COLOR_DEFAULT EINA_COLOR_ORANGE
 

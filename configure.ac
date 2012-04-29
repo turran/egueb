@@ -3,7 +3,7 @@ rm -f config.cache
 
 m4_define([v_maj], [0])
 m4_define([v_min], [0])
-m4_define([v_mic], [15])
+m4_define([v_mic], [16])
 m4_define([v_ver], [v_maj.v_min.v_mic])
 
 m4_define([lt_cur], m4_eval(v_maj + v_min))
@@ -36,6 +36,7 @@ EINA_VERSION="1.0.99"
 ENESIM_VERSION="0.0.15"
 EMAGE_VERSION="0.0.5"
 ETEX_VERSION="0.0.3"
+ETCH_VERSION="0.0.3"
 ENDER_VERSION="0.0.1"
 
 AC_CANONICAL_BUILD
@@ -57,7 +58,7 @@ AC_SUBST([ESVG_BUILD])
 
 ecss_requirements="eina"
 edom_requirements="eina"
-esvg_requirements="etex >= ${ETEX_VERSION} enesim >= ${ENESIM_VERSION} eina >= ${EINA_VERSION} ender >= ${ENDER_VERSION}"
+esvg_requirements="etex >= ${ETEX_VERSION} enesim >= ${ENESIM_VERSION} eina >= ${EINA_VERSION} ender >= ${ENDER_VERSION} etch >= ${ETCH_VERSION}"
 
 AC_SUBST([esvg_requirements])
 
