@@ -8,6 +8,19 @@ ECSS
 + Add a way to unset every property, useful whenever we change styles and we need to rollback to its initial state
 ESVG
 ====
++ Now that we have two trees, the dom one, and the renderers one, we need to design the "engine" that will
+  update the renderer tree based on the dom tree.
+  We have several constraints:
+  1. The paint servers / clipping paths / etc (i.e anything that can be referenced) might not be
+  setup *before* the renderable references it, and thus boom!
+  2. The styles have to be found first on the dom tree, given that those are set on the whole tree
+  A solution could be to create a "setup context" which will be passed along the other parameters on the
+  setup process. This context will have some kind of "id" or something like that, that on every
+  call to the setup() it will be set with a different value. So, whenever a renerable for example requires
+  a cliping path or a paint server, it should check that the store "id" of the last time those referenceable
+  objects get called, if it is different then schedule such setup for later, basically whenever the referenced
+  object is done with the setup. If it has more than one referenceable, then replace the previous schedule set
+  with the new one.
 + We need to change the paint server to not inherit from a renderable, instead (as with the clippath) make
   referencable interace, which will have an interface to return a new renderer and set the current renderer
   so the element will now what renderer to use
