@@ -12,7 +12,8 @@ ESVG
   update the renderer tree based on the dom tree.
   We have several constraints:
   1. The paint servers / clipping paths / etc (i.e anything that can be referenced) might not be
-  setup *before* the renderable references it, and thus boom!
+  setup *before* the renderable references it, and thus boom! (because a paint server might be after the element
+  referencing it on the tree)
   2. The styles have to be found first on the dom tree, given that those are set on the whole tree
   A solution could be to create a "setup context" which will be passed along the other parameters on the
   setup process. This context will have some kind of "id" or something like that, that on every
