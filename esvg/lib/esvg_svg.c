@@ -78,6 +78,7 @@ typedef struct _Esvg_Svg
 	Eina_Hash *ids; /* the ids found */
 	/* animation */
 	Etch *etch;
+	Eina_Bool paused;
 } Esvg_Svg;
 
 static Eina_Bool _esvg_svg_child_initialize(Edom_Tag *t, Edom_Tag *child_t, void *data);
@@ -411,6 +412,8 @@ static Edom_Tag * _esvg_svg_new(void)
 	thiz->height = ESVG_LENGTH_100_PERCENT;
 
 	/* no default value for the view_box */
+	/* the animation system */
+	thiz->etch = etch_new();
 
 	t = esvg_instantiable_new(&_descriptor, ESVG_SVG, thiz);
 	return t;
@@ -676,7 +679,6 @@ EAPI void esvg_svg_viewbox_set(Ender_Element *e, Esvg_View_Box *vb)
 EAPI void esvg_svg_actual_width_get(Ender_Element *e, double *actual_width)
 {
 	Edom_Tag *t;
-	Esvg_Svg *thiz;
 
 	t = ender_element_object_get(e);
 	_esvg_svg_actual_width_get(t, actual_width);
@@ -685,7 +687,6 @@ EAPI void esvg_svg_actual_width_get(Ender_Element *e, double *actual_width)
 EAPI void esvg_svg_actual_height_get(Ender_Element *e, double *actual_height)
 {
 	Edom_Tag *t;
-	Esvg_Svg *thiz;
 
 	t = ender_element_object_get(e);
 	_esvg_svg_actual_height_get(t, actual_height);
@@ -693,25 +694,67 @@ EAPI void esvg_svg_actual_height_get(Ender_Element *e, double *actual_height)
 
 EAPI void esvg_svg_animations_pause(Ender_Element *e)
 {
+	Edom_Tag *t;
+	Esvg_Svg *thiz;
 
+	t = ender_element_object_get(e);
+	thiz = _esvg_svg_get(t);
+	thiz->paused = EINA_TRUE;
 }
 
 EAPI void esvg_svg_animations_unpause(Ender_Element *e)
 {
+	Edom_Tag *t;
+	Esvg_Svg *thiz;
 
+	t = ender_element_object_get(e);
+	thiz = _esvg_svg_get(t);
+	thiz->paused = EINA_FALSE;
 }
 
 EAPI Eina_Bool esvg_svg_animations_paused(Ender_Element *e)
 {
+	Edom_Tag *t;
+	Esvg_Svg *thiz;
 
+	t = ender_element_object_get(e);
+	thiz = _esvg_svg_get(t);
+	return thiz->paused;
+}
+
+EAPI void esvg_svg_time_tick(Ender_Element *e)
+{
+	Edom_Tag *t;
+	Esvg_Svg *thiz;
+
+	t = ender_element_object_get(e);
+	thiz = _esvg_svg_get(t);
+	etch_timer_tick(thiz->etch);
 }
 
 EAPI double esvg_svg_time_get(Ender_Element *e)
 {
+	Edom_Tag *t;
+	Esvg_Svg *thiz;
+	double time;
+	unsigned long secs;
+	unsigned long usecs;
 
+	t = ender_element_object_get(e);
+	thiz = _esvg_svg_get(t);
+	etch_timer_get(thiz->etch, &secs, &usecs);
+
+	time = secs + (double)(usecs / 10000000);
+
+	return time;
 }
 
 EAPI void esvg_svg_time_set(Ender_Element *e, double secs)
 {
+	Edom_Tag *t;
+	Esvg_Svg *thiz;
 
+	t = ender_element_object_get(e);
+	thiz = _esvg_svg_get(t);
+	//etch_timer_goto(Etch *e, unsigned long frame);
 }
