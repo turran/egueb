@@ -21,6 +21,7 @@
 
 #include "esvg_private_main.h"
 #include "esvg_private_attribute_presentation.h"
+#include "esvg_private_context.h"
 #include "esvg_private_element.h"
 #include "esvg_private_referenceable.h"
 #include "esvg_private_paint_server.h"
@@ -102,23 +103,25 @@ static Eina_Bool _esvg_gradient_child_add(Edom_Tag *t, Edom_Tag *child_t)
 		return EINA_FALSE;
 }
 
-static Eina_Bool _esvg_gradient_setup(Edom_Tag *t,
+static Esvg_Element_Setup_Return _esvg_gradient_setup(Edom_Tag *t,
+		Esvg_Context *c,
 		Esvg_Element_Context *ctx,
 		Esvg_Attribute_Presentation *attr,
 		Enesim_Renderer *current,
 		Enesim_Error **error)
 {
 	Esvg_Gradient *thiz;
-	Eina_Bool ret = EINA_TRUE;
+	Esvg_Element_Setup_Return ret = EINA_TRUE;
 
 	thiz = _esvg_gradient_get(t);
 	if (thiz->descriptor.setup)
 	{
-		ret = thiz->descriptor.setup(t, ctx, attr, current, &thiz->state, error);
+		ret = thiz->descriptor.setup(t, c, ctx, attr, current, &thiz->state, error);
 		if (!ret) return ret;
 	}
 	/* call the setup on the childs */
-	ret = esvg_element_internal_child_setup(t, ctx,
+	ret = esvg_element_internal_child_setup(t, c,
+		ctx,
 		attr,
 		error,
 		NULL,

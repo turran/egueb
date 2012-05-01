@@ -21,6 +21,7 @@
 
 #include "esvg_private_main.h"
 #include "esvg_private_attribute_presentation.h"
+#include "esvg_private_context.h"
 #include "esvg_private_element.h"
 #include "esvg_private_renderable.h"
 #include "esvg_private_instantiable.h"
@@ -112,7 +113,8 @@ static Enesim_Renderer * _esvg_line_renderer_get(Edom_Tag *t)
 	return thiz->r;
 }
 
-static Eina_Bool _esvg_line_setup(Edom_Tag *t,
+static Esvg_Element_Setup_Return _esvg_line_setup(Edom_Tag *t,
+		Esvg_Context *c,
 		Esvg_Element_Context *ctx,
 		Esvg_Attribute_Presentation *attr,
 		Esvg_Renderable_Context *rctx,
@@ -148,7 +150,7 @@ static Eina_Bool _esvg_line_setup(Edom_Tag *t,
 	enesim_renderer_color_set(thiz->r, rctx->color);
 
 	//printf("calling the setup on the line (%g %g %g %g | %g %d)\n", x1, y1, x2, y2, dstate.stroke_weight, dstate.stroke_cap);
-	return EINA_TRUE;
+	return ESVG_SETUP_OK;
 }
 
 static void _esvg_line_clone(Edom_Tag *t, Edom_Tag *dt)

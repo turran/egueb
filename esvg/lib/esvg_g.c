@@ -21,6 +21,7 @@
 
 #include "esvg_private_main.h"
 #include "esvg_private_attribute_presentation.h"
+#include "esvg_private_context.h"
 #include "esvg_private_element.h"
 #include "esvg_private_renderable.h"
 #include "esvg_private_instantiable.h"
@@ -98,15 +99,17 @@ static void _esvg_g_clone(Edom_Tag *t, Edom_Tag *tr)
 #endif
 }
 
-static Eina_Bool _esvg_g_setup(Edom_Tag *t,
+static Esvg_Element_Setup_Return _esvg_g_setup(Edom_Tag *t,
+		Esvg_Context *c,
 		Esvg_Element_Context *ctx,
 		Esvg_Attribute_Presentation *attr,
 		Esvg_Renderable_Context *rctx,
 		Enesim_Error **error)
 {
-	Eina_Bool ret;
+	Esvg_Element_Setup_Return ret;
 
-	ret = esvg_element_internal_child_setup(t, ctx,
+	ret = esvg_element_internal_child_setup(t, c,
+		ctx,
 		attr,
 		error,
 		_esvg_g_child_setup_filter,

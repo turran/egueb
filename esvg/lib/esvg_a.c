@@ -21,6 +21,7 @@
 
 #include "esvg_private_main.h"
 #include "esvg_private_attribute_presentation.h"
+#include "esvg_private_context.h"
 #include "esvg_private_element.h"
 #include "esvg_a.h"
 
@@ -108,7 +109,8 @@ static Eina_Bool _esvg_a_attribute_get(Edom_Tag *tag, const char *attribute, cha
 }
 
 /* TODO optimize so many 'ifs' */
-static Eina_Bool _esvg_a_setup(Edom_Tag *t,
+static Esvg_Element_Setup_Return _esvg_a_setup(Edom_Tag *t,
+		Esvg_Context *c,
 		const Esvg_Element_Context *parent_context,
 		Esvg_Element_Context *context,
 		Esvg_Attribute_Presentation *attr,

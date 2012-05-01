@@ -21,6 +21,7 @@
 
 #include "esvg_private_main.h"
 #include "esvg_private_attribute_presentation.h"
+#include "esvg_private_context.h"
 #include "esvg_private_element.h"
 #include "esvg_private_renderable.h"
 #include "esvg_private_instantiable.h"
@@ -104,7 +105,8 @@ static Eina_Bool _esvg_ellipse_attribute_get(Edom_Tag *tag, const char *attribut
 	return EINA_FALSE;
 }
 
-static Eina_Bool _esvg_ellipse_setup(Edom_Tag *t,
+static Esvg_Element_Setup_Return _esvg_ellipse_setup(Edom_Tag *t,
+		Esvg_Context *c,
 		Esvg_Element_Context *ctx,
 		Esvg_Attribute_Presentation *attr,
 		Esvg_Renderable_Context *rctx,
@@ -144,7 +146,7 @@ static Eina_Bool _esvg_ellipse_setup(Edom_Tag *t,
 	enesim_renderer_geometry_transformation_set(thiz->r, &ctx->transform);
 	enesim_renderer_color_set(thiz->r, rctx->color);
 
-	return EINA_TRUE;
+	return ESVG_SETUP_OK;
 }
 
 static Enesim_Renderer * _esvg_ellipse_renderer_get(Edom_Tag *t)

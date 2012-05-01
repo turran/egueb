@@ -21,6 +21,7 @@
 
 #include "esvg_private_main.h"
 #include "esvg_private_attribute_presentation.h"
+#include "esvg_private_context.h"
 #include "esvg_private_element.h"
 #include "esvg_private_renderable.h"
 #include "esvg_private_instantiable.h"
@@ -104,7 +105,8 @@ static Enesim_Renderer * _esvg_circle_renderer_get(Edom_Tag *t)
 	return thiz->r;
 }
 
-static Eina_Bool _esvg_circle_setup(Edom_Tag *t,
+static Esvg_Element_Setup_Return _esvg_circle_setup(Edom_Tag *t,
+		Esvg_Context *c,
 		Esvg_Element_Context *ctx,
 		Esvg_Attribute_Presentation *attr,
 		Esvg_Renderable_Context *rctx,

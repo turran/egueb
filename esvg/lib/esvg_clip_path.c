@@ -21,6 +21,7 @@
 
 #include "esvg_private_main.h"
 #include "esvg_private_attribute_presentation.h"
+#include "esvg_private_context.h"
 #include "esvg_private_element.h"
 #include "esvg_private_referenceable.h"
 #include "esvg_clip_path.h"
@@ -186,7 +187,8 @@ static Eina_Bool _esvg_clip_path_unset_enesim_state_handle(Edom_Tag *e,
 }
 #endif
 
-static Eina_Bool _esvg_clip_path_setup(Edom_Tag *e,
+static Esvg_Element_Setup_Return _esvg_clip_path_setup(Edom_Tag *e,
+		Esvg_Context *c,
 		Esvg_Element_Context *state,
 		Esvg_Attribute_Presentation *attr,
 		Enesim_Renderer *r,
@@ -210,7 +212,7 @@ static Eina_Bool _esvg_clip_path_setup(Edom_Tag *e,
 		printf("clip path setup %d\n", ret);
 	}
 #endif
-	return EINA_TRUE;
+	return ESVG_SETUP_OK;
 }
 
 static void _esvg_clip_path_free(Edom_Tag *t)

@@ -21,6 +21,7 @@
 
 #include "esvg_private_main.h"
 #include "esvg_private_attribute_presentation.h"
+#include "esvg_private_context.h"
 #include "esvg_private_element.h"
 #include "esvg_private_stop.h"
 #include "esvg_stop.h"
@@ -82,7 +83,8 @@ static Eina_Bool _esvg_stop_attribute_get(Edom_Tag *tag, const char *attribute, 
 }
 
 /* TODO optimize so many 'ifs' */
-static Eina_Bool _esvg_stop_setup(Edom_Tag *t,
+static Esvg_Element_Setup_Return _esvg_stop_setup(Edom_Tag *t,
+		Esvg_Context *c,
 		const Esvg_Element_Context *parent_context,
 		Esvg_Element_Context *context,
 		Esvg_Attribute_Presentation *attr,
@@ -107,7 +109,7 @@ static Eina_Bool _esvg_stop_setup(Edom_Tag *t,
 	printf("opacity %g\n", attr->stop_opacity);
 	printf("color = %08x pos = %g\n", thiz->s.argb, thiz->s.pos);
 
-	return EINA_TRUE;
+	return ESVG_SETUP_OK;
 }
 
 static Esvg_Element_Descriptor _descriptor = {

@@ -21,6 +21,7 @@
 
 #include "esvg_private_main.h"
 #include "esvg_private_attribute_presentation.h"
+#include "esvg_private_context.h"
 #include "esvg_private_element.h"
 #include "esvg_private_renderable.h"
 #include "esvg_private_instantiable.h"
@@ -84,14 +85,15 @@ static Enesim_Renderer * _esvg_path_renderer_get(Edom_Tag *t)
 	return thiz->r;
 }
 
-static Eina_Bool _esvg_path_setup(Edom_Tag *t,
+static Esvg_Element_Setup_Return _esvg_path_setup(Edom_Tag *t,
+		Esvg_Context *c,
 		Esvg_Element_Context *ctx,
 		Esvg_Attribute_Presentation *attr,
 		Esvg_Renderable_Context *rctx,
 		Enesim_Error **error)
 {
 	Esvg_Path *thiz;
-	Esvg_Path_Command *c;
+	Esvg_Path_Command *pcmd;
 	Eina_List *l;
 	Esvg_Point cur = { 0, 0 };
 	Eina_Bool first; /* TODO handle correctly the first flag */
@@ -120,42 +122,42 @@ static Eina_Bool _esvg_path_setup(Edom_Tag *t,
 	enesim_renderer_geometry_transformation_set(thiz->r, &ctx->transform);
 	enesim_renderer_color_set(thiz->r, rctx->color);
 
-	EINA_LIST_FOREACH(thiz->commands, l, c)
+	EINA_LIST_FOREACH(thiz->commands, l, pcmd)
 	{
 		Enesim_Renderer_Path_Command cmd;
 		/* FIXME or we either use the generic command API
 		 * of enesim or use the direct function call
 		 */
-		switch (c->type)
+		switch (pcmd->type)
 		{
 			case ESVG_PATH_MOVE_TO:
 			cmd.type = ENESIM_COMMAND_MOVE_TO;
-			if (!first && c->relative)
+			if (!first && pcmd->relative)
 			{
-				cmd.definition.move_to.x = cur.x + c->data.move_to.x;
-				cmd.definition.move_to.y = cur.y + c->data.move_to.y;
+				cmd.definition.move_to.x = cur.x + pcmd->data.move_to.x;
+				cmd.definition.move_to.y = cur.y + pcmd->data.move_to.y;
 			}
 			else
 			{
-				cmd.definition.move_to.x = c->data.move_to.x;
-				cmd.definition.move_to.y = c->data.move_to.y;
+				cmd.definition.move_to.x = pcmd->data.move_to.x;
+				cmd.definition.move_to.y = pcmd->data.move_to.y;
 			}
 			cur.x = cmd.definition.move_to.x;
 			cur.y = cmd.definition.move_to.y;
 			break;
 
 			case ESVG_PATH_LINE_TO:
-			//printf(" line_to (%f, %f)\n", c->data.line_to.x,  c->data.line_to.y);
+			//printf(" line_to (%f, %f)\n", pcmd->data.line_to.x,  pcmd->data.line_to.y);
 			cmd.type = ENESIM_COMMAND_LINE_TO;
-			if (c->relative)
+			if (pcmd->relative)
 			{
-				cmd.definition.line_to.x = cur.x + c->data.line_to.x;
-				cmd.definition.line_to.y = cur.y + c->data.line_to.y;
+				cmd.definition.line_to.x = cur.x + pcmd->data.line_to.x;
+				cmd.definition.line_to.y = cur.y + pcmd->data.line_to.y;
 			}
 			else
 			{
-				cmd.definition.line_to.x = c->data.line_to.x;
-				cmd.definition.line_to.y = c->data.line_to.y;
+				cmd.definition.line_to.x = pcmd->data.line_to.x;
+				cmd.definition.line_to.y = pcmd->data.line_to.y;
 			}
 			cur.x = cmd.definition.line_to.x;
 			cur.y = cmd.definition.line_to.y;
@@ -163,14 +165,14 @@ static Eina_Bool _esvg_path_setup(Edom_Tag *t,
 
 			case ESVG_PATH_HLINE_TO:
 			cmd.type = ENESIM_COMMAND_LINE_TO;
-			if (c->relative)
+			if (pcmd->relative)
 			{
-				cmd.definition.line_to.x = cur.x + c->data.hline_to.c;
+				cmd.definition.line_to.x = cur.x + pcmd->data.hline_to.c;
 				cmd.definition.line_to.y = cur.y;
 			}
 			else
 			{
-				cmd.definition.line_to.x = c->data.hline_to.c;
+				cmd.definition.line_to.x = pcmd->data.hline_to.c;
 				cmd.definition.line_to.y = cur.y;
 			}
 			cur.x = cmd.definition.line_to.x;
@@ -179,124 +181,124 @@ static Eina_Bool _esvg_path_setup(Edom_Tag *t,
 
 			case ESVG_PATH_VLINE_TO:
 			cmd.type = ENESIM_COMMAND_LINE_TO;
-			if (c->relative)
+			if (pcmd->relative)
 			{
 				cmd.definition.line_to.x = cur.x;
-				cmd.definition.line_to.y = cur.y + c->data.vline_to.c;
+				cmd.definition.line_to.y = cur.y + pcmd->data.vline_to.c;
 			}
 			else
 			{
 				cmd.definition.line_to.x = cur.x;
-				cmd.definition.line_to.y = c->data.vline_to.c;
+				cmd.definition.line_to.y = pcmd->data.vline_to.c;
 			}
 			cur.x = cmd.definition.line_to.x;
 			cur.y = cmd.definition.line_to.y;
 			break;
 
 			case ESVG_PATH_CUBIC_TO:
-			//printf(" cubic_to ((%f, %f) (%f, %f) (%f, %f))\n", c->data.cubic_to.ctrl_x0,  c->data.cubic_to.ctrl_y0, c->data.cubic_to.ctrl_x1,  c->data.cubic_to.ctrl_y1, c->data.cubic_to.x,  c->data.cubic_to.y);
+			//printf(" cubic_to ((%f, %f) (%f, %f) (%f, %f))\n", pcmd->data.cubic_to.ctrl_x0,  pcmd->data.cubic_to.ctrl_y0, pcmd->data.cubic_to.ctrl_x1,  pcmd->data.cubic_to.ctrl_y1, pcmd->data.cubic_to.x,  pcmd->data.cubic_to.y);
 			cmd.type = ENESIM_COMMAND_CUBIC_TO;
-			if (c->relative)
+			if (pcmd->relative)
 			{
-				cmd.definition.cubic_to.x = cur.x + c->data.cubic_to.x;
-				cmd.definition.cubic_to.y = cur.y + c->data.cubic_to.y;
-				cmd.definition.cubic_to.ctrl_x0 = cur.x + c->data.cubic_to.ctrl_x0;
-				cmd.definition.cubic_to.ctrl_y0 = cur.y + c->data.cubic_to.ctrl_y0;
-				cmd.definition.cubic_to.ctrl_x1 = cur.x + c->data.cubic_to.ctrl_x1;
-				cmd.definition.cubic_to.ctrl_y1 = cur.y + c->data.cubic_to.ctrl_y1;
+				cmd.definition.cubic_to.x = cur.x + pcmd->data.cubic_to.x;
+				cmd.definition.cubic_to.y = cur.y + pcmd->data.cubic_to.y;
+				cmd.definition.cubic_to.ctrl_x0 = cur.x + pcmd->data.cubic_to.ctrl_x0;
+				cmd.definition.cubic_to.ctrl_y0 = cur.y + pcmd->data.cubic_to.ctrl_y0;
+				cmd.definition.cubic_to.ctrl_x1 = cur.x + pcmd->data.cubic_to.ctrl_x1;
+				cmd.definition.cubic_to.ctrl_y1 = cur.y + pcmd->data.cubic_to.ctrl_y1;
 
 			}
 			else
 			{
-				cmd.definition.cubic_to.x = c->data.cubic_to.x;
-				cmd.definition.cubic_to.y = c->data.cubic_to.y;
-				cmd.definition.cubic_to.ctrl_x0 = c->data.cubic_to.ctrl_x0;
-				cmd.definition.cubic_to.ctrl_y0 = c->data.cubic_to.ctrl_y0;
-				cmd.definition.cubic_to.ctrl_x1 = c->data.cubic_to.ctrl_x1;
-				cmd.definition.cubic_to.ctrl_y1 = c->data.cubic_to.ctrl_y1;
+				cmd.definition.cubic_to.x = pcmd->data.cubic_to.x;
+				cmd.definition.cubic_to.y = pcmd->data.cubic_to.y;
+				cmd.definition.cubic_to.ctrl_x0 = pcmd->data.cubic_to.ctrl_x0;
+				cmd.definition.cubic_to.ctrl_y0 = pcmd->data.cubic_to.ctrl_y0;
+				cmd.definition.cubic_to.ctrl_x1 = pcmd->data.cubic_to.ctrl_x1;
+				cmd.definition.cubic_to.ctrl_y1 = pcmd->data.cubic_to.ctrl_y1;
 			}
 			cur.x = cmd.definition.cubic_to.x;
 			cur.y = cmd.definition.cubic_to.y;
 			break;
 
 			case ESVG_PATH_SCUBIC_TO:
-			//printf(" scubic_to ((%f, %f) (%f, %f))\n", c->data.scubic_to.ctrl_x,  c->data.scubic_to.ctrl_y, c->data.scubic_to.x,  c->data.scubic_to.y);
+			//printf(" scubic_to ((%f, %f) (%f, %f))\n", pcmd->data.scubic_to.ctrl_x,  pcmd->data.scubic_to.ctrl_y, pcmd->data.scubic_to.x,  pcmd->data.scubic_to.y);
 			cmd.type = ENESIM_COMMAND_SCUBIC_TO;
-			if (c->relative)
+			if (pcmd->relative)
 			{
-				cmd.definition.scubic_to.x = cur.x + c->data.scubic_to.x;
-				cmd.definition.scubic_to.y = cur.y + c->data.scubic_to.y;
-				cmd.definition.scubic_to.ctrl_x = cur.x + c->data.scubic_to.ctrl_x;
-				cmd.definition.scubic_to.ctrl_y = cur.y + c->data.scubic_to.ctrl_y;
+				cmd.definition.scubic_to.x = cur.x + pcmd->data.scubic_to.x;
+				cmd.definition.scubic_to.y = cur.y + pcmd->data.scubic_to.y;
+				cmd.definition.scubic_to.ctrl_x = cur.x + pcmd->data.scubic_to.ctrl_x;
+				cmd.definition.scubic_to.ctrl_y = cur.y + pcmd->data.scubic_to.ctrl_y;
 			}
 			else
 			{
-				cmd.definition.scubic_to.x = c->data.scubic_to.x;
-				cmd.definition.scubic_to.y = c->data.scubic_to.y;
-				cmd.definition.scubic_to.ctrl_x = c->data.scubic_to.ctrl_x;
-				cmd.definition.scubic_to.ctrl_y = c->data.scubic_to.ctrl_y;
+				cmd.definition.scubic_to.x = pcmd->data.scubic_to.x;
+				cmd.definition.scubic_to.y = pcmd->data.scubic_to.y;
+				cmd.definition.scubic_to.ctrl_x = pcmd->data.scubic_to.ctrl_x;
+				cmd.definition.scubic_to.ctrl_y = pcmd->data.scubic_to.ctrl_y;
 			}
 			cur.x = cmd.definition.scubic_to.x;
 			cur.y = cmd.definition.scubic_to.y;
 			break;
 
 			case ESVG_PATH_QUADRATIC_TO:
-			//printf(" quadratic_to ((%f, %f) (%f, %f))\n", c->data.quadratic_to.ctrl_x,  c->data.quadratic_to.ctrl_y, c->data.quadratic_to.x,  c->data.quadratic_to.y);
+			//printf(" quadratic_to ((%f, %f) (%f, %f))\n", pcmd->data.quadratic_to.ctrl_x,  pcmd->data.quadratic_to.ctrl_y, pcmd->data.quadratic_to.x,  pcmd->data.quadratic_to.y);
 			cmd.type = ENESIM_COMMAND_QUADRATIC_TO;
-			if (c->relative)
+			if (pcmd->relative)
 			{
-				cmd.definition.quadratic_to.x = cur.x + c->data.quadratic_to.x;
-				cmd.definition.quadratic_to.y = cur.y + c->data.quadratic_to.y;
-				cmd.definition.quadratic_to.ctrl_x = cur.x + c->data.quadratic_to.ctrl_x;
-				cmd.definition.quadratic_to.ctrl_y = cur.y + c->data.quadratic_to.ctrl_y;
+				cmd.definition.quadratic_to.x = cur.x + pcmd->data.quadratic_to.x;
+				cmd.definition.quadratic_to.y = cur.y + pcmd->data.quadratic_to.y;
+				cmd.definition.quadratic_to.ctrl_x = cur.x + pcmd->data.quadratic_to.ctrl_x;
+				cmd.definition.quadratic_to.ctrl_y = cur.y + pcmd->data.quadratic_to.ctrl_y;
 
 			}
 			else
 			{
-				cmd.definition.quadratic_to.x = c->data.quadratic_to.x;
-				cmd.definition.quadratic_to.y = c->data.quadratic_to.y;
-				cmd.definition.quadratic_to.ctrl_x = c->data.quadratic_to.ctrl_x;
-				cmd.definition.quadratic_to.ctrl_y = c->data.quadratic_to.ctrl_y;
+				cmd.definition.quadratic_to.x = pcmd->data.quadratic_to.x;
+				cmd.definition.quadratic_to.y = pcmd->data.quadratic_to.y;
+				cmd.definition.quadratic_to.ctrl_x = pcmd->data.quadratic_to.ctrl_x;
+				cmd.definition.quadratic_to.ctrl_y = pcmd->data.quadratic_to.ctrl_y;
 			}
 			cur.x = cmd.definition.quadratic_to.x;
 			cur.y = cmd.definition.quadratic_to.y;
 			break;
 
 			case ESVG_PATH_SQUADRATIC_TO:
-			//printf(" squadratic_to (%f, %f)\n", c->data.squadratic_to.x,  c->data.squadratic_to.y);
+			//printf(" squadratic_to (%f, %f)\n", pcmd->data.squadratic_to.x,  pcmd->data.squadratic_to.y);
 			cmd.type = ENESIM_COMMAND_SQUADRATIC_TO;
-			if (c->relative)
+			if (pcmd->relative)
 			{
-				cmd.definition.squadratic_to.x = cur.x + c->data.squadratic_to.x;
-				cmd.definition.squadratic_to.y = cur.y + c->data.squadratic_to.y;
+				cmd.definition.squadratic_to.x = cur.x + pcmd->data.squadratic_to.x;
+				cmd.definition.squadratic_to.y = cur.y + pcmd->data.squadratic_to.y;
 			}
 			else
 			{
-				cmd.definition.squadratic_to.x = c->data.squadratic_to.x;
-				cmd.definition.squadratic_to.y = c->data.squadratic_to.y;
+				cmd.definition.squadratic_to.x = pcmd->data.squadratic_to.x;
+				cmd.definition.squadratic_to.y = pcmd->data.squadratic_to.y;
 			}
 			cur.x = cmd.definition.squadratic_to.x;
 			cur.y = cmd.definition.squadratic_to.y;
 			break;
 
 			case ESVG_PATH_ARC_TO:
-			//printf(" arc_to ((%f, %f) %f %f %f (%f, %f))\n", c->data.arc_to.rx,  c->data.arc_to.ry, c->data.arc_to.angle,  c->data.arc_to.large,  c->data.arc_to.sweep,  c->data.arc_to.x,  c->data.arc_to.y);
+			//printf(" arc_to ((%f, %f) %f %f %f (%f, %f))\n", pcmd->data.arc_to.rx,  pcmd->data.arc_to.ry, pcmd->data.arc_to.angle,  pcmd->data.arc_to.large,  pcmd->data.arc_to.sweep,  pcmd->data.arc_to.x,  pcmd->data.arc_to.y);
 			cmd.type = ENESIM_COMMAND_ARC_TO;
-			if (c->relative)
+			if (pcmd->relative)
 			{
-				cmd.definition.arc_to.x = cur.x + c->data.arc_to.x;
-				cmd.definition.arc_to.y = cur.y + c->data.arc_to.y;
+				cmd.definition.arc_to.x = cur.x + pcmd->data.arc_to.x;
+				cmd.definition.arc_to.y = cur.y + pcmd->data.arc_to.y;
 			}
 			else
 			{
-				cmd.definition.arc_to.x = c->data.arc_to.x;
-				cmd.definition.arc_to.y = c->data.arc_to.y;
+				cmd.definition.arc_to.x = pcmd->data.arc_to.x;
+				cmd.definition.arc_to.y = pcmd->data.arc_to.y;
 			}
-			cmd.definition.arc_to.rx = c->data.arc_to.rx;
-			cmd.definition.arc_to.ry = c->data.arc_to.ry;
-			cmd.definition.arc_to.angle = c->data.arc_to.angle;
-			cmd.definition.arc_to.large = c->data.arc_to.large;
-			cmd.definition.arc_to.sweep = c->data.arc_to.sweep;
+			cmd.definition.arc_to.rx = pcmd->data.arc_to.rx;
+			cmd.definition.arc_to.ry = pcmd->data.arc_to.ry;
+			cmd.definition.arc_to.angle = pcmd->data.arc_to.angle;
+			cmd.definition.arc_to.large = pcmd->data.arc_to.large;
+			cmd.definition.arc_to.sweep = pcmd->data.arc_to.sweep;
 			cur.x = cmd.definition.arc_to.x;
 			cur.y = cmd.definition.arc_to.y;
 			break;
@@ -315,7 +317,7 @@ static Eina_Bool _esvg_path_setup(Edom_Tag *t,
 		enesim_renderer_path_command_add(thiz->r, &cmd);
 	}
 
-	return EINA_TRUE;
+	return ESVG_SETUP_OK;
 }
 
 static void _esvg_path_clone(Edom_Tag *r, Edom_Tag *dr)

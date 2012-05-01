@@ -21,6 +21,7 @@
 
 #include "esvg_private_main.h"
 #include "esvg_private_attribute_presentation.h"
+#include "esvg_private_context.h"
 #include "esvg_private_element.h"
 #include "esvg_private_renderable.h"
 #include "esvg_private_instantiable.h"
@@ -164,7 +165,8 @@ static Enesim_Renderer * _esvg_use_renderer_get(Edom_Tag *t)
 	return thiz->g_r;
 }
 
-static Eina_Bool _esvg_use_setup(Edom_Tag *t,
+static Esvg_Element_Setup_Return _esvg_use_setup(Edom_Tag *t,
+		Esvg_Context *c,
 		Esvg_Element_Context *ctx,
 		Esvg_Attribute_Presentation *attr,
 		Esvg_Renderable_Context *rctx,
@@ -187,7 +189,7 @@ static Eina_Bool _esvg_use_setup(Edom_Tag *t,
 	/* setup the g */
 	printf("calling the setup on the use\n");
 
-	return esvg_element_internal_setup(thiz->g_t, ctx, attr, error);
+	return esvg_element_internal_setup(thiz->g_t, c, ctx, attr, error);
 }
 
 static void _esvg_use_clone(Edom_Tag *t, Edom_Tag *dt)

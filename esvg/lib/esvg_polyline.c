@@ -21,6 +21,7 @@
 
 #include "esvg_private_main.h"
 #include "esvg_private_attribute_presentation.h"
+#include "esvg_private_context.h"
 #include "esvg_private_element.h"
 #include "esvg_private_renderable.h"
 #include "esvg_private_instantiable.h"
@@ -85,7 +86,8 @@ static Enesim_Renderer * _esvg_polyline_renderer_get(Edom_Tag *t)
 	return thiz->proxy;
 }
 
-static Eina_Bool _esvg_polyline_setup(Edom_Tag *t,
+static Esvg_Element_Setup_Return _esvg_polyline_setup(Edom_Tag *t,
+		Esvg_Context *c,
 		Esvg_Element_Context *ctx,
 		Esvg_Attribute_Presentation *attr,
 		Esvg_Renderable_Context *rctx,
@@ -156,7 +158,7 @@ static Eina_Bool _esvg_polyline_setup(Edom_Tag *t,
 	printf("\n");
 	enesim_renderer_proxy_proxied_set(thiz->proxy, r);
 
-	return EINA_TRUE;
+	return ESVG_SETUP_OK;
 }
 
 static void _esvg_polyline_clone(Edom_Tag *t, Edom_Tag *dt)

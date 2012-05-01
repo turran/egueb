@@ -2,6 +2,14 @@
 #define _ESVG_PRIVATE_ELEMENT_H_
 
 /* element */
+typedef enum _Esvg_Element_Setup_Return
+{
+	ESVG_SETUP_OK,
+	ESVG_SETUP_FAILED,
+	ESVG_SETUP_ENQUEUE,
+	ESVG_SETUP_RETURNS
+} Esvg_Element_Setup_Return;
+
 typedef struct _Esvg_Element_Context {
 	double dpi_x;
 	double dpi_y;
@@ -15,7 +23,8 @@ typedef Eina_Bool (*Esvg_Element_Setup_Filter)(Edom_Tag *parent, Edom_Tag *child
 typedef void (*Esvg_Element_Initialize)(Ender_Element *e);
 typedef Eina_Bool (*Esvg_Element_Attribute_Set)(Ender_Element *e, const char *key, const char *value);
 
-typedef Eina_Bool (*Esvg_Element_Setup)(Edom_Tag *t,
+typedef Esvg_Element_Setup_Return (*Esvg_Element_Setup)(Edom_Tag *t,
+		Esvg_Context *c,
 		const Esvg_Element_Context *parent_ctx,
 		Esvg_Element_Context *ctx,
 		Esvg_Attribute_Presentation *attr,
@@ -56,6 +65,7 @@ Eina_Bool esvg_is_element_internal(Edom_Tag *t);
 void esvg_element_topmost_set(Edom_Tag *t, Ender_Element *topmost);
 void esvg_element_internal_topmost_get(Edom_Tag *t, Ender_Element **e);
 Eina_Bool esvg_element_internal_child_setup(Edom_Tag *t,
+		Esvg_Context *c,
 		Esvg_Element_Context *context,
 		Esvg_Attribute_Presentation *attr,
 		Enesim_Error **error,
@@ -64,6 +74,7 @@ Eina_Bool esvg_element_internal_child_setup(Edom_Tag *t,
 		Esvg_Element_Setup_Interceptor post,
 		void *data);
 Eina_Bool esvg_element_internal_setup(Edom_Tag *t,
+		Esvg_Context *c,
 		const Esvg_Element_Context *state,
 		const Esvg_Attribute_Presentation *attr,
 		Enesim_Error **error);

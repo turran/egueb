@@ -7,7 +7,8 @@ typedef struct _Esvg_Gradient_Context {
 	Enesim_Matrix transform;
 } Esvg_Gradient_Context;
 
-typedef Eina_Bool (*Esvg_Gradient_Setup)(Edom_Tag *t,
+typedef Esvg_Element_Setup_Return (*Esvg_Gradient_Setup)(Edom_Tag *t,
+		Esvg_Context *c,
 		Esvg_Element_Context *ctx,
 		Esvg_Attribute_Presentation *attr,
 		Enesim_Renderer *current,

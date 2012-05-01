@@ -21,6 +21,7 @@
 
 #include "esvg_private_main.h"
 #include "esvg_private_attribute_presentation.h"
+#include "esvg_private_context.h"
 #include "esvg_private_element.h"
 #include "esvg_private_animation.h"
 /*============================================================================*
@@ -105,7 +106,7 @@ static void _esvg_animation_free(Edom_Tag *t)
 }
 
 /* TODO optimize so many 'ifs' */
-static Eina_Bool _esvg_animation_setup(Edom_Tag *t,
+static Esvg_Element_Setup_Return _esvg_animation_setup(Edom_Tag *t,
 		const Esvg_Element_Context *parent_context,
 		Esvg_Element_Context *context,
 		Esvg_Attribute_Presentation *attr,

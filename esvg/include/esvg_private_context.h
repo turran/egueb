@@ -10,7 +10,7 @@ struct _Esvg_Context
 };
 
 void esvg_context_init(Esvg_Context *thiz);
-void esvg_context_setup_enqueue(Esvg_Context *thiz);
+void esvg_context_setup_enqueue(Esvg_Context *thiz, Edom_Tag *t);
 void esvg_context_setup_dequeue(Esvg_Context *thiz);
 
 #endif

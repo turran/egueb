@@ -20,6 +20,7 @@ esvg_attribute_presentation.c \
 esvg_attribute_animation.c \
 esvg_animation.c \
 esvg_circle.c \
+esvg_context.c \
 esvg_clip_path.c \
 esvg_defs.c \
 esvg_element.c \

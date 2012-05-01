@@ -21,6 +21,7 @@
 
 #include "esvg_private_main.h"
 #include "esvg_private_attribute_presentation.h"
+#include "esvg_private_context.h"
 #include "esvg_private_element.h"
 
 #include "esvg_element.h"
@@ -78,6 +79,7 @@ typedef struct _Esvg_Element_Descriptor_Internal
 
 typedef struct _Esvg_Element_Setup_Data
 {
+	Esvg_Context *c;
 	Esvg_Element_Context *ctx;
 	Esvg_Attribute_Presentation *attr;
 	Enesim_Error **error;
@@ -157,6 +159,7 @@ static Eina_Bool _esvg_element_child_setup_cb(Edom_Tag *t, Edom_Tag *child,
 		void *data)
 {
 	Esvg_Element_Setup_Data *setup_data = data;
+	Esvg_Element_Setup_Return ret;
 
 	/* check if we can do the setup on this child */
 	if (setup_data->filter)
@@ -174,8 +177,9 @@ static Eina_Bool _esvg_element_child_setup_cb(Edom_Tag *t, Edom_Tag *child,
 			goto err;
 	}
 	/* the real setup */
-	if (!esvg_element_internal_setup(child, setup_data->ctx,
-			setup_data->attr, setup_data->error))
+	ret = esvg_element_internal_setup(child, setup_data->c, setup_data->ctx,
+			setup_data->attr, setup_data->error);
+	if (ret == ESVG_SETUP_FAILED)
 		goto err;
 
 	/* call the post setup */
@@ -891,6 +895,7 @@ void esvg_element_internal_topmost_get(Edom_Tag *t, Ender_Element **e)
 
 /* state and attr are the parents one */
 Eina_Bool esvg_element_internal_child_setup(Edom_Tag *t,
+		Esvg_Context *c,
 		Esvg_Element_Context *ctx,
 		Esvg_Attribute_Presentation *attr,
 		Enesim_Error **error,
@@ -901,6 +906,7 @@ Eina_Bool esvg_element_internal_child_setup(Edom_Tag *t,
 {
 	Esvg_Element_Setup_Data setup_data;
 
+	setup_data.c = c;
 	setup_data.ctx = ctx;
 	setup_data.attr = attr;
 	setup_data.error = error;
@@ -915,6 +921,7 @@ Eina_Bool esvg_element_internal_child_setup(Edom_Tag *t,
 }
 
 Eina_Bool esvg_element_internal_setup(Edom_Tag *t,
+		Esvg_Context *c,
 		const Esvg_Element_Context *state,
 		const Esvg_Attribute_Presentation *attr,
 		Enesim_Error **error)
@@ -971,7 +978,7 @@ Eina_Bool esvg_element_internal_setup(Edom_Tag *t,
 
 	//esvg_attribute_presentation_dump(new_attr);
 
-	if (!thiz->descriptor.setup(t, state, &thiz->state_final, &thiz->attr_final, error))
+	if (!thiz->descriptor.setup(t, c, state, &thiz->state_final, &thiz->attr_final, error))
 		return EINA_FALSE;
 	return EINA_TRUE;
 }
@@ -1479,10 +1486,15 @@ EAPI void esvg_element_stop_color_get(Ender_Element *e, Esvg_Color *stop_color)
  */
 EAPI Eina_Bool esvg_element_setup(Ender_Element *e, Enesim_Error **error)
 {
+	Esvg_Context context;
 	Edom_Tag *t;
+	Eina_Bool ret;
 
 	t = ender_element_object_get(e);
-	return esvg_element_internal_setup(t, NULL, NULL, error);
+	esvg_context_init(&context);
+
+	ret = esvg_element_internal_setup(t, &context, NULL, NULL, error);
+	//esvg_context_setup_dequeue
 }
 
 EAPI Ender_Element * esvg_element_topmost_get(Ender_Element *e)

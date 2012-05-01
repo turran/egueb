@@ -21,6 +21,7 @@
 
 #include "esvg_private_main.h"
 #include "esvg_private_attribute_presentation.h"
+#include "esvg_private_context.h"
 #include "esvg_private_element.h"
 #include "esvg_private_referenceable.h"
 
@@ -77,7 +78,8 @@ static void _esvg_referenceable_free(Edom_Tag *t)
 	free(thiz);
 }
 
-static Eina_Bool _esvg_referenceable_setup(Edom_Tag *t,
+static Esvg_Element_Setup_Return _esvg_referenceable_setup(Edom_Tag *t,
+		Esvg_Context *c,
 		const Esvg_Element_Context *parent_context,
 		Esvg_Element_Context *context,
 		Esvg_Attribute_Presentation *attr,
@@ -90,11 +92,11 @@ static Eina_Bool _esvg_referenceable_setup(Edom_Tag *t,
 	 * parent tree
 	 */
 	if (!thiz->current)
-		return EINA_TRUE;
+		return ESVG_SETUP_FAILED;
 
 	if (thiz->descriptor.setup)
-		thiz->descriptor.setup(t, context, attr, thiz->current, error);
-	return EINA_TRUE;
+		return thiz->descriptor.setup(t, c, context, attr, thiz->current, error);
+	return ESVG_SETUP_OK;
 }
 /*============================================================================*
  *                                 Global                                     *

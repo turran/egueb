@@ -21,6 +21,7 @@
 
 #include "esvg_private_main.h"
 #include "esvg_private_attribute_presentation.h"
+#include "esvg_private_context.h"
 #include "esvg_private_element.h"
 #include "esvg_private_renderable.h"
 #include "esvg_private_referenceable.h"
@@ -282,7 +283,8 @@ static void _esvg_renderable_free(Edom_Tag *t)
 }
 
 /* TODO optimize so many 'ifs' */
-static Eina_Bool _esvg_renderable_setup(Edom_Tag *t,
+static Esvg_Element_Setup_Return _esvg_renderable_setup(Edom_Tag *t,
+		Esvg_Context *c,
 		const Esvg_Element_Context *parent_context,
 		Esvg_Element_Context *context,
 		Esvg_Attribute_Presentation *attr,
@@ -324,7 +326,7 @@ static Eina_Bool _esvg_renderable_setup(Edom_Tag *t,
 	/* do the setup */
 	if (thiz->descriptor.setup)
 	{
-		if (!thiz->descriptor.setup(t, context, attr, &thiz->context, error))
+		if (!thiz->descriptor.setup(t, c, context, attr, &thiz->context, error))
 			return EINA_FALSE;
 	}
 #if 0
@@ -342,14 +344,14 @@ static Eina_Bool _esvg_renderable_setup(Edom_Tag *t,
 		 * will merge what it has with this
 		 */
 		esvg_referenceable_renderer_set(thiz->fill_tag, thiz->context.fill_renderer);
-		esvg_element_internal_setup(thiz->fill_tag, context, NULL, error);
+		esvg_element_internal_setup(thiz->fill_tag, c, context, NULL, error);
 	}
 #if 0
 	/* in case we are going to use the stroke renderer do its own setup */
 	if (attr->stroke_set && attr->stroke.type == ESVG_PAINT_SERVER)
 		esvg_paint_server_renderer_setup(attr->stroke.value.paint_server, context, r);
 #endif
-	return EINA_TRUE;
+	return ESVG_SETUP_OK;
 }
 /*============================================================================*
  *                                 Global                                     *

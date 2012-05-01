@@ -21,6 +21,7 @@
 
 #include "esvg_private_main.h"
 #include "esvg_private_attribute_presentation.h"
+#include "esvg_private_context.h"
 #include "esvg_private_element.h"
 #include "esvg_private_renderable.h"
 #include "esvg_private_instantiable.h"
@@ -276,7 +277,8 @@ static Eina_Bool _esvg_svg_child_remove(Edom_Tag *t, Edom_Tag *child)
 	return EINA_TRUE;
 }
 
-static Eina_Bool _esvg_svg_setup(Edom_Tag *t,
+static Esvg_Element_Setup_Return _esvg_svg_setup(Edom_Tag *t,
+		Esvg_Context *c,
 		Esvg_Element_Context *ctx,
 		Esvg_Attribute_Presentation *attr,
 		Esvg_Renderable_Context *rctx,
@@ -286,7 +288,7 @@ static Eina_Bool _esvg_svg_setup(Edom_Tag *t,
 	Edom_Tag *style;
 	Enesim_Renderer *child;
 	Enesim_Renderer *parent;
-	Eina_Bool ret;
+	Esvg_Element_Setup_Return ret;
 	Eina_List *l;
 	double width, height;
 
@@ -332,7 +334,7 @@ static Eina_Bool _esvg_svg_setup(Edom_Tag *t,
 	}
 
 	/* call the setup on the instantiables */
-	ret = esvg_element_internal_child_setup(t, ctx,
+	ret = esvg_element_internal_child_setup(t, c, ctx,
 		attr,
 		error,
 		_esvg_svg_child_setup_filter,

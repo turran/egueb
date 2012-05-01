@@ -20,7 +20,9 @@
 #endif
 
 #include "esvg_private_main.h"
+#include "esvg_private_attribute_presentation.h"
 #include "esvg_private_context.h"
+#include "esvg_private_element.h"
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
@@ -28,8 +30,7 @@ static int _run = 0;
 
 typedef struct _Esvg_Context_Setup
 {
-
-
+	Edom_Tag *t;
 } Esvg_Context_Setup;
 /*============================================================================*
  *                                 Global                                     *
@@ -40,14 +41,14 @@ void esvg_context_init(Esvg_Context *thiz)
 	thiz->queue = NULL;
 }
 
-void esvg_context_setup_enqueue(Esvg_Context *thiz)
+void esvg_context_setup_enqueue(Esvg_Context *thiz, Edom_Tag *t)
 {
 
 }
 
 void esvg_context_setup_dequeue(Esvg_Context *thiz)
 {
-
+	/* for every context setup dequeue it */
 }
 /*============================================================================*
  *                                   API                                      *

@@ -21,6 +21,7 @@
 
 #include "esvg_private_main.h"
 #include "esvg_private_attribute_presentation.h"
+#include "esvg_private_context.h"
 #include "esvg_private_element.h"
 #include "esvg_private_referenceable.h"
 #include "esvg_private_paint_server.h"
@@ -147,7 +148,8 @@ static Enesim_Renderer * _esvg_linear_gradient_renderer_new(Edom_Tag *t)
 	return r;
 }
 
-static Eina_Bool _esvg_linear_gradient_setup(Edom_Tag *t,
+static Esvg_Element_Setup_Return _esvg_linear_gradient_setup(Edom_Tag *t,
+		Esvg_Context *c,
 		Esvg_Element_Context *ctx,
 		Esvg_Attribute_Presentation *attr,
 		Enesim_Renderer *r,
@@ -218,7 +220,7 @@ static Eina_Bool _esvg_linear_gradient_setup(Edom_Tag *t,
 	enesim_renderer_gradient_linear_x1_set(r, x2);
 	enesim_renderer_gradient_linear_y1_set(r, y2);
 
-	return EINA_TRUE;
+	return ESVG_SETUP_OK;
 }
 
 static void _esvg_linear_gradient_free(Edom_Tag *t)
