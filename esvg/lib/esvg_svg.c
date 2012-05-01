@@ -570,6 +570,16 @@ Ender_Element * esvg_svg_internal_element_find(Edom_Tag *t, const char *id)
 	return eina_hash_find(thiz->ids, id);
 }
 
+Etch * esvg_svg_etch_get(Ender_Element *e)
+{
+	Esvg_Svg *thiz;
+	Edom_Tag *t;
+
+	t = ender_element_object_get(e);
+	thiz = _esvg_svg_get(t);
+	return thiz->etch;
+}
+
 /* The ender wrapper */
 #define _esvg_svg_x_is_set NULL
 #define _esvg_svg_y_is_set NULL

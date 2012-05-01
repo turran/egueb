@@ -24,6 +24,9 @@
 #include "esvg_private_context.h"
 #include "esvg_private_element.h"
 #include "esvg_private_animation.h"
+#include "esvg_private_svg.h"
+
+#include "esvg_animation.h"
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
@@ -44,13 +47,23 @@ typedef struct _Esvg_Animation_Descriptor_Internal
 	Esvg_Animation_Setup setup;
 } Esvg_Animation_Descriptor_Internal;
 
+typedef struct _Esvg_Animation_State
+{
+	char *attribute_name;
+} Esvg_Animation_State;
+
 typedef struct _Esvg_Animation
 {
 	EINA_MAGIC
 	/* properties */
+	Esvg_Animation_State current;
+	Esvg_Animation_State past;
+	Esvg_Attribute_Type attribute_type;
 	/* interface */
 	Esvg_Animation_Descriptor_Internal descriptor;
 	/* private */
+	Eina_Bool changed;
+	Etch_Animation *anim;
 	Esvg_Animation_Context context;
 	void *data;
 } Esvg_Animation;
@@ -64,9 +77,54 @@ static Esvg_Animation * _esvg_animation_get(Edom_Tag *t)
 
 	return thiz;
 }
+
+static Etch_Animation * _esvg_etch_animation_new(Esvg_Animation *thiz, Etch *e, Ender_Element *rel)
+{
+		//thiz->anim = etch_animation_add(etch, dtype, cb, start, stop, data);
+}
 /*----------------------------------------------------------------------------*
  *                           The Ender interface                              *
  *----------------------------------------------------------------------------*/
+static void _esvg_animation_attribute_name_set(Edom_Tag *t, const char *attribute_name)
+{
+	Esvg_Animation *thiz;
+
+	thiz = _esvg_animation_get(t);
+	if (thiz->current.attribute_name)
+	{
+		free(thiz->current.attribute_name);
+		thiz->current.attribute_name = NULL;
+	}
+	if (attribute_name)
+		thiz->current.attribute_name = strdup(attribute_name);
+	thiz->changed = EINA_TRUE;
+}
+
+static void _esvg_animation_attribute_name_get(Edom_Tag *t, const char **attribute_name)
+{
+	Esvg_Animation *thiz;
+
+	if (!attribute_name) return;
+	thiz = _esvg_animation_get(t);
+	*attribute_name = thiz->current.attribute_name;
+}
+
+static void _esvg_animation_attribute_type_set(Edom_Tag *t, Esvg_Attribute_Type attribute_type)
+{
+	Esvg_Animation *thiz;
+
+	thiz = _esvg_animation_get(t);
+	thiz->attribute_type = attribute_type;
+}
+
+static void _esvg_animation_attribute_type_get(Edom_Tag *t, Esvg_Attribute_Type *attribute_type)
+{
+	Esvg_Animation *thiz;
+
+	if (!attribute_type) return;
+	thiz = _esvg_animation_get(t);
+	*attribute_type = thiz->attribute_type;
+}
 /*----------------------------------------------------------------------------*
  *                         The Esvg Element interface                         *
  *----------------------------------------------------------------------------*/
@@ -82,7 +140,7 @@ static Eina_Bool _esvg_animation_attribute_set(Ender_Element *e,
 		Esvg_Attribute_Type type;
 
 		if (esvg_attribute_type_string_from(&type, value))
-			esvg_animation_attribute_name_set(e, value);
+			esvg_animation_attribute_type_set(e, type);
 	}
 	else
 	{
@@ -107,6 +165,7 @@ static void _esvg_animation_free(Edom_Tag *t)
 
 /* TODO optimize so many 'ifs' */
 static Esvg_Element_Setup_Return _esvg_animation_setup(Edom_Tag *t,
+		Esvg_Context *c,
 		const Esvg_Element_Context *parent_context,
 		Esvg_Element_Context *context,
 		Esvg_Attribute_Presentation *attr,
@@ -115,6 +174,35 @@ static Esvg_Element_Setup_Return _esvg_animation_setup(Edom_Tag *t,
 	Esvg_Animation *thiz;
 
 	thiz = _esvg_animation_get(t);
+
+	if (thiz->changed)
+	{
+		Ender_Element *svg_e;
+		Ender_Element *parent_e;
+		Edom_Tag *parent_t;
+		Etch *etch;
+
+		/* same */
+		if (thiz->current.attribute_name && thiz->past.attribute_name)
+			if (strcmp(thiz->current.attribute_name, thiz->past.attribute_name))
+				goto done;
+
+		esvg_element_internal_topmost_get(t, &svg_e);
+		if (!svg_e) goto done;
+		etch = esvg_svg_etch_get(svg_e);
+		if (thiz->anim)
+		{
+			etch_animation_delete(thiz->anim);
+		}
+		//thiz->anim = etch_animation_add(etch, dtype, cb, start, stop, data);
+done:
+		if (thiz->past.attribute_name)
+			free(thiz->past.attribute_name);
+		thiz->past.attribute_name = strdup(thiz->current.attribute_name);
+		thiz->changed = EINA_FALSE;
+	}
+		
+
 	/* do the setup */
 	if (thiz->descriptor.setup)
 		return thiz->descriptor.setup(t, context, &thiz->context, error);
@@ -124,6 +212,8 @@ static Esvg_Element_Setup_Return _esvg_animation_setup(Edom_Tag *t,
  *                                 Global                                     *
  *============================================================================*/
 /* The ender wrapper */
+#define _esvg_animation_attribute_name_is_set NULL
+#define _esvg_animation_attribute_type_is_set NULL
 #include "generated/esvg_generated_animation.c"
 
 Eina_Bool esvg_is_animation_internal(Edom_Tag *t)

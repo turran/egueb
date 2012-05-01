@@ -3,5 +3,6 @@
 
 Ender_Element * esvg_svg_uri_get(Ender_Element *e, const char *uri);
 Ender_Element * esvg_svg_internal_element_find(Edom_Tag *t, const char *id);
+Etch * esvg_svg_etch_get(Ender_Element *e);
 
 #endif
