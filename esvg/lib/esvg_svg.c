@@ -67,7 +67,9 @@ typedef struct _Esvg_Svg
 	Esvg_Length height;
 	/* private */
 	Eina_List *styles; /* the list of styles found on this svg scope */
+	Eina_Bool styles_changed : 1;
 	Eina_List *svgs; /* the list of svg documents found on the svg */
+	Eina_List *elements_changed;
 	Enesim_Renderer *clipper;
 	Enesim_Renderer *compound;
 	Eina_Hash *ids; /* the ids found */
@@ -77,6 +79,7 @@ typedef struct _Esvg_Svg
 } Esvg_Svg;
 
 static Eina_Bool _esvg_svg_child_initialize(Edom_Tag *t, Edom_Tag *child_t, void *data);
+static void _esvg_svg_child_deinitialize(Edom_Tag *t, Edom_Tag *child_t, void *data);
 
 static Esvg_Svg * _esvg_svg_get(Edom_Tag *t)
 {
@@ -89,6 +92,23 @@ static Esvg_Svg * _esvg_svg_get(Edom_Tag *t)
 	return thiz;
 }
 
+/* call the setup on every element of the list of changed elements */
+/* FIXME fix the return value */
+static void _esvg_svg_element_changed_setup(Esvg_Svg *thiz, Esvg_Context *c,
+		Enesim_Error **error)
+{
+	Ender_Element *e;
+
+	EINA_LIST_FREE(thiz->elements_changed, e)
+	{
+		if (esvg_element_has_setup(e, c))
+		{
+			printf("element already did the setup, no need for it\n");
+			continue;
+		}
+		esvg_element_setup(e, error);
+	}
+}
 /*----------------------------------------------------------------------------*
  *                             The URI interface                              *
  *----------------------------------------------------------------------------*/
@@ -114,9 +134,16 @@ static Eina_Bool _esvg_svg_child_setup_filter(Edom_Tag *t, Edom_Tag *child)
 	return EINA_TRUE;
 }
 
+/* FIXME the ender events just trigger once the id has changed so we dont know the old one */
 static void _esvg_svg_child_id_cb(Ender_Element *e, const char *event_name, void *event_data, void *data)
 {
-	/* FIXME the ender events just trigger once the id has changed so we dont know the old one */
+	Esvg_Svg *thiz = data;
+	Ender_Event_Mutation_Property *ev = event_data;
+	const char *id;
+
+	id = ender_value_string_get(ev->value);
+	eina_hash_del_by_data(thiz->ids, e);
+	if (id) eina_hash_add(thiz->ids, id, e);
 }
 
 static void _esvg_svg_child_child_cb(Ender_Element *e, const char *event_name, void *event_data, void *data)
@@ -136,6 +163,8 @@ static void _esvg_svg_child_child_cb(Ender_Element *e, const char *event_name, v
 
 		/* TODO remove the topmost */
 		case ENDER_EVENT_MUTATION_REMOVE:
+		child_child = ender_value_object_get(ev->value);
+		_esvg_svg_child_deinitialize(tag, child_child, thiz);
 		printf("TODO\n");
 		printf("child removed to one of our childs!\n");
 		break;
@@ -144,6 +173,14 @@ static void _esvg_svg_child_child_cb(Ender_Element *e, const char *event_name, v
 		printf("TODO\n");
 		break;
 	}
+}
+
+static void _esvg_svg_child_mutation_cb(Ender_Element *e, const char *event_name, void *event_data, void *data)
+{
+	Esvg_Svg *thiz = data;
+
+	/* add the element to the list of changed elements */
+	thiz->elements_changed = eina_list_append(thiz->elements_changed, e);
 }
 
 static Eina_Bool _esvg_svg_child_initialize(Edom_Tag *t, Edom_Tag *child_t, void *data)
@@ -160,27 +197,28 @@ static Eina_Bool _esvg_svg_child_initialize(Edom_Tag *t, Edom_Tag *child_t, void
 	thiz_e = esvg_element_ender_get(t);
 	esvg_element_topmost_set(child_t, thiz_e);
 
-	/* add events for the child property */
+	/* add a callback whenever the child property has changed
+	 * to initialize that child too */
 	child_e = esvg_element_ender_get(child_t);
 	ender_event_listener_add(child_e, "Mutation:child", _esvg_svg_child_child_cb, t);
-
+	/* add a callback whenever any property has changed to add it the list
+	 * of changed elements */
+	ender_event_listener_add(child_e, "Mutation", _esvg_svg_child_mutation_cb, thiz);
 	/* add an event whenever the child changes the id */
-	ender_event_listener_add(child_e, "Mutation:id", _esvg_svg_child_id_cb, t);
+	ender_event_listener_add(child_e, "Mutation:id", _esvg_svg_child_id_cb, thiz);
+	/* add the id to the hash of ids */
 	esvg_element_id_get(child_e, &id);
-	if (id)
-	{
-		printf("adding id %s\n", id);
-		eina_hash_add(thiz->ids, id, child_e);
-	}
+	if (id) eina_hash_add(thiz->ids, id, child_e);
 
 	/* add the style to the list of styles */
 	if (esvg_is_style_internal(child_t))
 	{
 		thiz->styles = eina_list_append(thiz->styles, child_t);
+		thiz->styles_changed = EINA_TRUE;
 	}
-
 	/* iterate over the childs of the child and do the same initialization */
 	edom_tag_child_foreach(child_t, _esvg_svg_child_initialize, thiz);
+
 	return EINA_TRUE;
 }
 
@@ -289,7 +327,6 @@ static Esvg_Element_Setup_Return _esvg_svg_setup(Edom_Tag *t,
 	Enesim_Renderer *child;
 	Enesim_Renderer *parent;
 	Esvg_Element_Setup_Return ret;
-	Eina_List *l;
 	double width, height;
 
 	thiz = _esvg_svg_get(t);
@@ -326,12 +363,22 @@ static Esvg_Element_Setup_Return _esvg_svg_setup(Edom_Tag *t,
 	ctx->viewbox.width = width;
 	ctx->viewbox.height = height;
 
-	/* for every style apply it */
-	/* TODO what if we have a sub svg with its own styles? */
-	EINA_LIST_FOREACH(thiz->styles, l, style)
+	/* if the styles have changed apply them */
+	if (thiz->styles_changed)
 	{
-		esvg_style_apply(style, t);
+		/* for every style apply it */
+		/* TODO what if we have a sub svg with its own styles? */
+		EINA_LIST_FREE(thiz->styles, style)
+		{
+			esvg_style_apply(style, t);
+		}
+		thiz->styles_changed = EINA_FALSE;
 	}
+
+	/* FIXME the new setup must do */
+	/* 1. first the styles */
+	/* 2. in case that we have changed just iterate over all childs and remove the list of changed */
+	/* 3. if not, iterate over the list of changed and double check that it is not being already setup */
 
 	/* call the setup on the instantiables */
 	ret = esvg_element_internal_child_setup(t, c, ctx,

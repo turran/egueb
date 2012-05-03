@@ -112,8 +112,13 @@ typedef struct _Esvg_Element
 	Esvg_Element_Context *state_p;
 	Esvg_Attribute_Presentation attr_final;
 	Esvg_Element_Context state_final;
+	/* identifier of the last time an element has done the setup */
+	int last_run;
+	/* flag set whenever some property has changed */
 	Eina_Bool changed : 1;
+	/* the ender element associated with this element */
 	Ender_Element *e;
+	/* private data used for the element implementations */
 	void *data;
 } Esvg_Element;
 
@@ -135,6 +140,16 @@ static Esvg_Element * _esvg_element_get(Edom_Tag *t)
 
 	return thiz;
 }
+
+static void _esvg_element_mutation_cb(Ender_Element *e, const char *event_name,
+		void *event_data, void *data)
+{
+	Esvg_Element *thiz = data;
+	Ender_Event_Mutation *ev = event_data;
+
+	/* FIXME we could check if the mutation is a remove, add, etc */
+	thiz->changed = EINA_TRUE;
+}
 /*----------------------------------------------------------------------------*
  *                              Context helpers                               *
  *----------------------------------------------------------------------------*/
@@ -149,9 +164,6 @@ static void _esvg_element_state_compose(const Esvg_Element_Context *s,
 	/* actually compose */
 	enesim_matrix_compose(&parent->transform, &s->transform, &d->transform);
 }
-/*----------------------------------------------------------------------------*
- *                               Clone helpers                                *
- *----------------------------------------------------------------------------*/
 /*----------------------------------------------------------------------------*
  *                               Setup helpers                                *
  *----------------------------------------------------------------------------*/
@@ -927,8 +939,19 @@ Eina_Bool esvg_element_internal_setup(Edom_Tag *t,
 		Enesim_Error **error)
 {
 	Esvg_Element *thiz;
+	Esvg_Element *parent_thiz;
+	Edom_Tag *parent_t;
 
 	thiz = _esvg_element_get(t);
+	/* FIXME given that we have to only setup a subtree, we should
+	 * not get the parents attributes from the arguments */
+#if 0
+	parent_t = edom_tag_parent_get(t);
+	parent_thiz = _esvg_element_get(t);
+	state = &thiz->state_final;
+	attr = &thiz->attr_final;
+#endif
+
 	/* the idea here is to call the setup interface of the element */
 	/* note that on SVG every element must be part of a topmost SVG
 	 * that way we need to always pass the upper svg/g element of this
@@ -989,6 +1012,10 @@ void esvg_element_initialize(Ender_Element *e)
 
 	thiz = _esvg_element_get(ender_element_object_get(e));
 	thiz->e = e;
+
+	/* register the mutation events */
+	ender_event_listener_add(e, "Mutation", _esvg_element_mutation_cb, thiz);
+
 	if (thiz->descriptor.initialize)
 		thiz->descriptor.initialize(e);
 }
@@ -1052,6 +1079,24 @@ Ender_Element * esvg_element_ender_get(Edom_Tag *t)
 
 	thiz = _esvg_element_get(t);
 	return thiz->e;
+}
+
+Eina_Bool esvg_element_changed(Edom_Tag *t)
+{
+	Esvg_Element *thiz;
+
+	thiz = _esvg_element_get(t);
+	return thiz->changed;
+}
+
+Eina_Bool esvg_element_has_setup(Edom_Tag *t, Esvg_Context *c)
+{
+	Esvg_Element *thiz;
+
+	thiz = _esvg_element_get(t);
+	if (thiz->last_run == c->run)
+		return EINA_TRUE;
+	return EINA_FALSE;
 }
 
 Edom_Tag * esvg_element_new(Esvg_Element_Descriptor *descriptor, Esvg_Type type,

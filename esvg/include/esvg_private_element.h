@@ -81,4 +81,7 @@ Eina_Bool esvg_element_internal_setup(Edom_Tag *t,
 
 void esvg_element_state_compose(Edom_Tag *t, const Esvg_Element_Context *s, Esvg_Element_Context *d);
 
+Eina_Bool esvg_element_changed(Edom_Tag *t);
+Eina_Bool esvg_element_has_setup(Edom_Tag *t, Esvg_Context *c);
+
 #endif
