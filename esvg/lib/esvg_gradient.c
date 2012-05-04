@@ -67,6 +67,7 @@ static Esvg_Gradient * _esvg_gradient_get(Edom_Tag *t)
 	return thiz;
 }
 
+#if 0
 static Eina_Bool _esvg_gradient_stop_post(Edom_Tag *t, Edom_Tag *child_t,
 		Esvg_Element_Context *ctx,
 		Esvg_Attribute_Presentation *attr,
@@ -82,6 +83,7 @@ static Eina_Bool _esvg_gradient_stop_post(Edom_Tag *t, Edom_Tag *child_t,
 
 	return EINA_TRUE;
 }
+#endif
 
 /*----------------------------------------------------------------------------*
  *                       Esvg Paint Server interface                          *
@@ -111,24 +113,11 @@ static Esvg_Element_Setup_Return _esvg_gradient_setup(Edom_Tag *t,
 		Enesim_Error **error)
 {
 	Esvg_Gradient *thiz;
-	Esvg_Element_Setup_Return ret = EINA_TRUE;
+	Esvg_Element_Setup_Return ret = ESVG_SETUP_CHILDS;
 
 	thiz = _esvg_gradient_get(t);
 	if (thiz->descriptor.setup)
-	{
 		ret = thiz->descriptor.setup(t, c, ctx, attr, current, &thiz->state, error);
-		if (!ret) return ret;
-	}
-	/* call the setup on the childs */
-	ret = esvg_element_internal_child_setup(t, c,
-		ctx,
-		attr,
-		error,
-		NULL,
-		NULL,
-		_esvg_gradient_stop_post,
-		current);
-
 	return ret;
 }
 

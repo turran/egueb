@@ -90,11 +90,18 @@ typedef struct _Esvg_Element_Setup_Data
 	void *data;
 } Esvg_Element_Setup_Data;
 
+typedef struct _Esvg_Element_State
+{
+	char *style;
+} Esvg_Element_State;
+
 typedef struct _Esvg_Element
 {
 	EINA_MAGIC
 	Esvg_Type type;
 	/* properties like the id, whatever */
+	Esvg_Element_State current;
+	Esvg_Element_State old;
 	char *style;
 	char *id;
 	char *class;
@@ -108,8 +115,6 @@ typedef struct _Esvg_Element
 	Esvg_Attribute_Type current_attr_type;
 	Eina_Bool current_attr_animate;
 	Esvg_Attribute_Presentation *current_attr;
-
-	Esvg_Element_Context *state_p;
 	Esvg_Attribute_Presentation attr_final;
 	Esvg_Element_Context state_final;
 	/* identifier of the last time an element has done the setup */
@@ -121,15 +126,6 @@ typedef struct _Esvg_Element
 	/* private data used for the element implementations */
 	void *data;
 } Esvg_Element;
-
-typedef struct _Esvg_Parser_Element
-{
-	Edom_Tag *t;
-	char *fill;
-	char *stroke;
-	char *clip_path;
-	void *data;
-} Esvg_Element_Id_Callback;
 
 static Esvg_Element * _esvg_element_get(Edom_Tag *t)
 {
@@ -173,43 +169,14 @@ static Eina_Bool _esvg_element_child_setup_cb(Edom_Tag *t, Edom_Tag *child,
 	Esvg_Element_Setup_Data *setup_data = data;
 	Esvg_Element_Setup_Return ret;
 
-	/* check if we can do the setup on this child */
-	if (setup_data->filter)
-	{
-		if (!setup_data->filter(t, child))
-			return EINA_TRUE;
-	}
-	/* call the pre setup */
-	if (setup_data->pre)
-	{
-		if (!setup_data->pre(t, child, setup_data->ctx,
-				setup_data->attr,
-				setup_data->error,
-				setup_data->data))
-			goto err;
-	}
 	/* the real setup */
-	ret = esvg_element_internal_setup(child, setup_data->c, setup_data->ctx,
-			setup_data->attr, setup_data->error);
-	if (ret == ESVG_SETUP_FAILED)
-		goto err;
-
-	/* call the post setup */
-	if (setup_data->post)
+	if (!esvg_element_internal_setup(child, setup_data->c, setup_data->error))
 	{
-		if (!setup_data->post(t, child, setup_data->ctx,
-				setup_data->attr,
-				setup_data->error,
-				setup_data->data))
-			goto err;
+		setup_data->ret = EINA_FALSE;
+		return EINA_FALSE;
 	}
 	return EINA_TRUE;
-
-err:
-	setup_data->ret = EINA_FALSE;
-	return EINA_FALSE;
 }
-
 /*----------------------------------------------------------------------------*
  *                           The Ender interface                              *
  *----------------------------------------------------------------------------*/
@@ -830,9 +797,7 @@ static const char * _esvg_element_css_property_get(void *e, const char *property
 	Edom_Tag *tag = e;
 	char *value;
 
-	printf("getting css property! %s\n", property);
 	_esvg_element_attribute_get(tag, property, &value);
-	printf("returning %s\n", value);
 
 	return value;
 }
@@ -841,7 +806,6 @@ static const char * _esvg_element_css_property_get(void *e, const char *property
 static void _esvg_element_css_property_set(void *e, const char *property, const char *value)
 {
 	Edom_Tag *tag = e;
-	printf("setting %s %s\n", property, value);
 	_esvg_element_attribute_set(tag, property, value);
 }
 
@@ -905,78 +869,57 @@ void esvg_element_internal_topmost_get(Edom_Tag *t, Ender_Element **e)
 	*e = thiz->topmost;
 }
 
-/* state and attr are the parents one */
-Eina_Bool esvg_element_internal_child_setup(Edom_Tag *t,
-		Esvg_Context *c,
-		Esvg_Element_Context *ctx,
-		Esvg_Attribute_Presentation *attr,
-		Enesim_Error **error,
-		Esvg_Element_Setup_Filter filter,
-		Esvg_Element_Setup_Interceptor pre,
-		Esvg_Element_Setup_Interceptor post,
-		void *data)
-{
-	Esvg_Element_Setup_Data setup_data;
-
-	setup_data.c = c;
-	setup_data.ctx = ctx;
-	setup_data.attr = attr;
-	setup_data.error = error;
-	setup_data.filter = filter;
-	setup_data.ret = EINA_TRUE;
-	setup_data.data = data;
-	setup_data.pre = pre;
-	setup_data.post = post;
-
-	edom_tag_child_foreach(t, _esvg_element_child_setup_cb, &setup_data);
-	return setup_data.ret;
-}
-
 Eina_Bool esvg_element_internal_setup(Edom_Tag *t,
 		Esvg_Context *c,
-		const Esvg_Element_Context *state,
-		const Esvg_Attribute_Presentation *attr,
 		Enesim_Error **error)
 {
 	Esvg_Element *thiz;
-	Esvg_Element *parent_thiz;
+	Esvg_Element_Setup_Return ret;
 	Edom_Tag *parent_t;
+	Esvg_Element_Context *parent_state = NULL;
+	Esvg_Attribute_Presentation *parent_attr = NULL;
 
 	thiz = _esvg_element_get(t);
+
+	if (!thiz->descriptor.setup)
+		return EINA_TRUE;
+
 	/* FIXME given that we have to only setup a subtree, we should
 	 * not get the parents attributes from the arguments */
-#if 0
+	thiz->last_run = c->run;
 	parent_t = edom_tag_parent_get(t);
-	parent_thiz = _esvg_element_get(t);
-	state = &thiz->state_final;
-	attr = &thiz->attr_final;
-#endif
+	if (parent_t)
+	{
+		Esvg_Element *parent_thiz;
+
+		parent_thiz = _esvg_element_get(parent_t);
+		parent_state = &parent_thiz->state_final;
+		parent_attr = &parent_thiz->attr_final;
+	}
 
 	/* the idea here is to call the setup interface of the element */
 	/* note that on SVG every element must be part of a topmost SVG
 	 * that way we need to always pass the upper svg/g element of this
 	 * so relative properties can be calcualted correctly */
-	if (!thiz->descriptor.setup)
-		return EINA_FALSE;
 	/* TODO apply the style first */
 	thiz->attr_final = thiz->attr_xml;
 	thiz->state_final = thiz->state;
 	/* FIXME avoid so many copies */
-	if (state)
+	if (parent_state)
 	{
-		_esvg_element_state_compose(&thiz->state, state, &thiz->state_final);
+		_esvg_element_state_compose(&thiz->state, parent_state, &thiz->state_final);
 	}
 
 
 	/* TODO In theory it should be */
-	/* first merge the css attr with the xml attr */
+	/* first merge the css parent_attr with the xml parent_attr */
 	/* then apply the style if present */
 	/* add an ATTR_FINAL or something like that, so the inline style is applied there */
-	/* is the inline style inherited on child elements ? */
+	/* is the inline style inherited on child elements ? yes! */
 
 	/* FIXME check that the style has changed, if so revert it and start applying */
 	/* FIXME should it have more priority than the properties? */
-	if (thiz->style || attr)
+	if (thiz->style || parent_attr)
 	{
 		if (thiz->style)
 		{
@@ -985,25 +928,35 @@ Eina_Bool esvg_element_internal_setup(Edom_Tag *t,
 			ecss_context_inline_style_apply(&_esvg_element_css_context, thiz->style, t);
 			esvg_element_attribute_type_set(t, ESVG_ATTR_XML);
 			esvg_attribute_presentation_merge(&thiz->attr_css, &thiz->attr_xml, &thiz->attr_final);
-			if (attr)
+			if (parent_attr)
 			{
-				esvg_attribute_presentation_merge(&thiz->attr_final, attr, &thiz->attr_final);
+				esvg_attribute_presentation_merge(&thiz->attr_final, parent_attr, &thiz->attr_final);
 			}
 		}
 		else
 		{
-			if (attr)
+			if (parent_attr)
 			{
-				esvg_attribute_presentation_merge(&thiz->attr_xml, attr, &thiz->attr_final);
+				esvg_attribute_presentation_merge(&thiz->attr_xml, parent_attr, &thiz->attr_final);
 			}
 		}
 	}
 
 	//esvg_attribute_presentation_dump(new_attr);
+	ret = thiz->descriptor.setup(t, c, parent_state, &thiz->state_final, &thiz->attr_final, error);
+	if (ret == ESVG_SETUP_CHILDS)
+	{
+		Esvg_Element_Setup_Data setup_data;
 
-	if (!thiz->descriptor.setup(t, c, state, &thiz->state_final, &thiz->attr_final, error))
-		return EINA_FALSE;
-	return EINA_TRUE;
+		setup_data.c = c;
+		setup_data.error = error;
+		setup_data.ret = EINA_TRUE;
+
+		edom_tag_child_foreach(t, _esvg_element_child_setup_cb, &setup_data);
+		return setup_data.ret;
+	}
+
+	return ret;
 }
 
 void esvg_element_initialize(Ender_Element *e)
@@ -1097,6 +1050,13 @@ Eina_Bool esvg_element_has_setup(Edom_Tag *t, Esvg_Context *c)
 	if (thiz->last_run == c->run)
 		return EINA_TRUE;
 	return EINA_FALSE;
+}
+
+void esvg_element_context_dump(const Esvg_Element_Context *c)
+{
+	printf("dpi %g %g\n", c->dpi_x, c->dpi_y);
+	printf("viewbox %g %g %g %g\n", c->viewbox.min_x, c->viewbox.min_y, c->viewbox.width, c->viewbox.height);
+	printf("transformation %" ENESIM_MATRIX_FORMAT "\n", ENESIM_MATRIX_ARGS (&c->transform));
 }
 
 Edom_Tag * esvg_element_new(Esvg_Element_Descriptor *descriptor, Esvg_Type type,
@@ -1538,7 +1498,7 @@ EAPI Eina_Bool esvg_element_setup(Ender_Element *e, Enesim_Error **error)
 	t = ender_element_object_get(e);
 	esvg_context_init(&context);
 
-	ret = esvg_element_internal_setup(t, &context, NULL, NULL, error);
+	ret = esvg_element_internal_setup(t, &context, error);
 	//esvg_context_setup_dequeue
 }
 

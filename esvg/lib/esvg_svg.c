@@ -101,7 +101,10 @@ static void _esvg_svg_element_changed_setup(Esvg_Svg *thiz, Esvg_Context *c,
 
 	EINA_LIST_FREE(thiz->elements_changed, e)
 	{
-		if (esvg_element_has_setup(e, c))
+		Edom_Tag *t;
+
+		t = ender_element_object_get(e);
+		if (esvg_element_has_setup(t, c))
 		{
 			printf("element already did the setup, no need for it\n");
 			continue;
@@ -126,13 +129,6 @@ static Esvg_Uri_Descriptor _uri_descriptor = {
 	/* .absolute_get 	= */ NULL
 };
 
-
-static Eina_Bool _esvg_svg_child_setup_filter(Edom_Tag *t, Edom_Tag *child)
-{
-	if (!esvg_is_instantiable_internal(child))
-		return EINA_FALSE;
-	return EINA_TRUE;
-}
 
 /* FIXME the ender events just trigger once the id has changed so we dont know the old one */
 static void _esvg_svg_child_id_cb(Ender_Element *e, const char *event_name, void *event_data, void *data)
@@ -366,6 +362,7 @@ static Esvg_Element_Setup_Return _esvg_svg_setup(Edom_Tag *t,
 	/* if the styles have changed apply them */
 	if (thiz->styles_changed)
 	{
+		printf("styles changed!!!\n");
 		/* for every style apply it */
 		/* TODO what if we have a sub svg with its own styles? */
 		EINA_LIST_FREE(thiz->styles, style)
@@ -381,14 +378,7 @@ static Esvg_Element_Setup_Return _esvg_svg_setup(Edom_Tag *t,
 	/* 3. if not, iterate over the list of changed and double check that it is not being already setup */
 
 	/* call the setup on the instantiables */
-	ret = esvg_element_internal_child_setup(t, c, ctx,
-		attr,
-		error,
-		_esvg_svg_child_setup_filter,
-		NULL,
-		NULL,
-		NULL);
-	return ret;
+	return ESVG_SETUP_CHILDS;
 }
 
 static Enesim_Renderer * _esvg_svg_renderer_get(Edom_Tag *t)

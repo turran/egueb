@@ -291,6 +291,7 @@ static Esvg_Element_Setup_Return _esvg_renderable_setup(Edom_Tag *t,
 		Enesim_Error **error)
 {
 	Esvg_Renderable *thiz;
+	Esvg_Element_Setup_Return ret = ESVG_SETUP_OK;
 
 	thiz = _esvg_renderable_get(t);
 	if (!parent_context)
@@ -326,8 +327,9 @@ static Esvg_Element_Setup_Return _esvg_renderable_setup(Edom_Tag *t,
 	/* do the setup */
 	if (thiz->descriptor.setup)
 	{
-		if (!thiz->descriptor.setup(t, c, context, attr, &thiz->context, error))
-			return EINA_FALSE;
+		ret = thiz->descriptor.setup(t, c, context, attr, &thiz->context, error);
+		if (ret == ESVG_SETUP_FAILED)
+			return ret;
 	}
 #if 0
 	if (attr->clip_path_set)
@@ -343,15 +345,16 @@ static Esvg_Element_Setup_Return _esvg_renderable_setup(Edom_Tag *t,
 		/* we dont pass the attributes or the paint server
 		 * will merge what it has with this
 		 */
+		/* FIXME check that the referenceable has done the setup, if not queue ourselves */
 		esvg_referenceable_renderer_set(thiz->fill_tag, thiz->context.fill_renderer);
-		esvg_element_internal_setup(thiz->fill_tag, c, context, NULL, error);
+		esvg_element_internal_setup(thiz->fill_tag, c, error);
 	}
 #if 0
 	/* in case we are going to use the stroke renderer do its own setup */
 	if (attr->stroke_set && attr->stroke.type == ESVG_PAINT_SERVER)
 		esvg_paint_server_renderer_setup(attr->stroke.value.paint_server, context, r);
 #endif
-	return ESVG_SETUP_OK;
+	return ret;
 }
 /*============================================================================*
  *                                 Global                                     *

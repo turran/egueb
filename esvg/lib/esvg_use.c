@@ -189,7 +189,7 @@ static Esvg_Element_Setup_Return _esvg_use_setup(Edom_Tag *t,
 	/* setup the g */
 	printf("calling the setup on the use\n");
 
-	return esvg_element_internal_setup(thiz->g_t, c, ctx, attr, error);
+	return esvg_element_internal_setup(thiz->g_t, c, error);
 }
 
 static void _esvg_use_clone(Edom_Tag *t, Edom_Tag *dt)

@@ -156,7 +156,6 @@ static Esvg_Element_Setup_Return _esvg_rect_setup(Edom_Tag *t,
 	enesim_renderer_rectangle_size_set(thiz->r, width, height);
 
 	/* set the bounds */
-	printf("setting bounds %p %g %g %g %g\n", ctx, x, y, width, height);
 	enesim_rectangle_coords_from(&ctx->bounds, x, y, width, height);
 
 	/* FIXME enesim does not supports rx *and* ry */

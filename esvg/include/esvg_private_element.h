@@ -4,9 +4,9 @@
 /* element */
 typedef enum _Esvg_Element_Setup_Return
 {
-	ESVG_SETUP_OK,
 	ESVG_SETUP_FAILED,
-	ESVG_SETUP_ENQUEUE,
+	ESVG_SETUP_OK,
+	ESVG_SETUP_CHILDS,
 	ESVG_SETUP_RETURNS
 } Esvg_Element_Setup_Return;
 
@@ -30,7 +30,7 @@ typedef Esvg_Element_Setup_Return (*Esvg_Element_Setup)(Edom_Tag *t,
 		Esvg_Attribute_Presentation *attr,
 		Enesim_Error **error);
 typedef Eina_Bool (*Esvg_Element_Setup_Interceptor)(Edom_Tag *t,
-		Edom_Tag *child, 
+		Edom_Tag *child,
 		Esvg_Element_Context *ctx,
 		Esvg_Attribute_Presentation *attr,
 		Enesim_Error **error,
@@ -64,24 +64,14 @@ Eina_Bool esvg_is_element_internal(Edom_Tag *t);
 
 void esvg_element_topmost_set(Edom_Tag *t, Ender_Element *topmost);
 void esvg_element_internal_topmost_get(Edom_Tag *t, Ender_Element **e);
-Eina_Bool esvg_element_internal_child_setup(Edom_Tag *t,
-		Esvg_Context *c,
-		Esvg_Element_Context *context,
-		Esvg_Attribute_Presentation *attr,
-		Enesim_Error **error,
-		Esvg_Element_Setup_Filter filter,
-		Esvg_Element_Setup_Interceptor pre,
-		Esvg_Element_Setup_Interceptor post,
-		void *data);
 Eina_Bool esvg_element_internal_setup(Edom_Tag *t,
 		Esvg_Context *c,
-		const Esvg_Element_Context *state,
-		const Esvg_Attribute_Presentation *attr,
 		Enesim_Error **error);
 
 void esvg_element_state_compose(Edom_Tag *t, const Esvg_Element_Context *s, Esvg_Element_Context *d);
 
 Eina_Bool esvg_element_changed(Edom_Tag *t);
 Eina_Bool esvg_element_has_setup(Edom_Tag *t, Esvg_Context *c);
+void esvg_element_context_dump(const Esvg_Element_Context *c);
 
 #endif

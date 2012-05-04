@@ -46,13 +46,6 @@ static Esvg_G * _esvg_g_get(Edom_Tag *t)
 
 	return thiz;
 }
-
-static Eina_Bool _esvg_g_child_setup_filter(Edom_Tag *t, Edom_Tag *child)
-{
-	if (!esvg_is_instantiable_internal(child))
-		return EINA_FALSE;
-	return EINA_TRUE;
-}
 /*----------------------------------------------------------------------------*
  *                          The Container interface                           *
  *----------------------------------------------------------------------------*/
@@ -106,17 +99,7 @@ static Esvg_Element_Setup_Return _esvg_g_setup(Edom_Tag *t,
 		Esvg_Renderable_Context *rctx,
 		Enesim_Error **error)
 {
-	Esvg_Element_Setup_Return ret;
-
-	ret = esvg_element_internal_child_setup(t, c,
-		ctx,
-		attr,
-		error,
-		_esvg_g_child_setup_filter,
-		NULL,
-		NULL,
-		NULL);
-	return ret;
+	return ESVG_SETUP_CHILDS;
 }
 
 static void _esvg_g_free(Edom_Tag *t)
