@@ -18,8 +18,6 @@ typedef struct _Esvg_Element_Context {
 	Enesim_Matrix transform; /* the current transformation */
 } Esvg_Element_Context;
 
-typedef Eina_Bool (*Esvg_Element_Setup_Filter)(Edom_Tag *parent, Edom_Tag *child);
-
 typedef void (*Esvg_Element_Initialize)(Ender_Element *e);
 typedef Eina_Bool (*Esvg_Element_Attribute_Set)(Ender_Element *e, const char *key, const char *value);
 
@@ -31,8 +29,7 @@ typedef Esvg_Element_Setup_Return (*Esvg_Element_Setup)(Edom_Tag *t,
 		Enesim_Error **error);
 typedef Eina_Bool (*Esvg_Element_Setup_Interceptor)(Edom_Tag *t,
 		Edom_Tag *child,
-		Esvg_Element_Context *ctx,
-		Esvg_Attribute_Presentation *attr,
+		Esvg_Context *c,
 		Enesim_Error **error,
 		void *data);
 typedef void (*Esvg_Element_Clone)(Edom_Tag *r, Edom_Tag *dst);
@@ -67,7 +64,11 @@ void esvg_element_internal_topmost_get(Edom_Tag *t, Ender_Element **e);
 Eina_Bool esvg_element_internal_setup(Edom_Tag *t,
 		Esvg_Context *c,
 		Enesim_Error **error);
-
+Eina_Bool esvg_element_internal_child_setup(Edom_Tag *t,
+		Esvg_Context *c,
+		Enesim_Error **error,
+		Esvg_Element_Setup_Interceptor post,
+		void *data);
 void esvg_element_state_compose(Edom_Tag *t, const Esvg_Element_Context *s, Esvg_Element_Context *d);
 
 Eina_Bool esvg_element_changed(Edom_Tag *t);

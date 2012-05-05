@@ -66,6 +66,8 @@ typedef struct _Esvg_Svg
 	Esvg_Length width;
 	Esvg_Length height;
 	/* private */
+	/* keep track if the renderable tree has changed, includeing the <a> tag */
+	Eina_Bool renderable_tree_changed : 1;
 	Eina_List *styles; /* the list of styles found on this svg scope */
 	Eina_Bool styles_changed : 1;
 	Eina_List *svgs; /* the list of svg documents found on the svg */
@@ -79,7 +81,7 @@ typedef struct _Esvg_Svg
 } Esvg_Svg;
 
 static Eina_Bool _esvg_svg_child_initialize(Edom_Tag *t, Edom_Tag *child_t, void *data);
-static void _esvg_svg_child_deinitialize(Edom_Tag *t, Edom_Tag *child_t, void *data);
+static Eina_Bool _esvg_svg_child_deinitialize(Edom_Tag *t, Edom_Tag *child_t, void *data);
 
 static Esvg_Svg * _esvg_svg_get(Edom_Tag *t)
 {
@@ -90,6 +92,30 @@ static Esvg_Svg * _esvg_svg_get(Edom_Tag *t)
 	thiz = esvg_instantiable_data_get(t);
 
 	return thiz;
+}
+
+static Eina_Bool _esvg_svg_setup_interceptor(Edom_Tag *t,
+		Edom_Tag *child,
+		Esvg_Context *c,
+		Enesim_Error **error,
+		void *data)
+{
+	Esvg_Type type;
+	Esvg_Svg *thiz = data;
+
+	type = esvg_element_internal_type_get(child);
+	if (esvg_type_is_renderable(type) && thiz->renderable_tree_changed)
+	{
+		/* if renderable, add the renderer into the compound */
+		Enesim_Renderer *r = NULL;
+
+		esvg_renderable_internal_renderer_get(child, &r);
+		enesim_renderer_compound_layer_add(thiz->compound, r);
+	}
+ 	else if (type == ESVG_A)
+	{
+		return esvg_element_internal_child_setup(child, c, error, _esvg_svg_setup_interceptor, thiz);
+	}
 }
 
 /* call the setup on every element of the list of changed elements */
@@ -142,7 +168,7 @@ static void _esvg_svg_child_id_cb(Ender_Element *e, const char *event_name, void
 	if (id) eina_hash_add(thiz->ids, id, e);
 }
 
-static void _esvg_svg_child_child_cb(Ender_Element *e, const char *event_name, void *event_data, void *data)
+static void _esvg_svg_child_mutation_child_cb(Ender_Element *e, const char *event_name, void *event_data, void *data)
 {
 	Ender_Event_Mutation_Property *ev = event_data;
 	Edom_Tag *tag = data;
@@ -157,12 +183,9 @@ static void _esvg_svg_child_child_cb(Ender_Element *e, const char *event_name, v
 		_esvg_svg_child_initialize(tag, child_child, thiz);
 		break;
 
-		/* TODO remove the topmost */
 		case ENDER_EVENT_MUTATION_REMOVE:
 		child_child = ender_value_object_get(ev->value);
 		_esvg_svg_child_deinitialize(tag, child_child, thiz);
-		printf("TODO\n");
-		printf("child removed to one of our childs!\n");
 		break;
 
 		default:
@@ -176,13 +199,13 @@ static void _esvg_svg_child_mutation_cb(Ender_Element *e, const char *event_name
 	Esvg_Svg *thiz = data;
 
 	/* add the element to the list of changed elements */
+	/* TODO if the property is the child, dont do nothing */
 	thiz->elements_changed = eina_list_append(thiz->elements_changed, e);
 }
 
 static Eina_Bool _esvg_svg_child_initialize(Edom_Tag *t, Edom_Tag *child_t, void *data)
 {
 	Esvg_Svg *thiz;
-	Esvg_Svg *child;
 	Ender_Element *thiz_e;
 	Ender_Element *child_e;
 	const char *id;
@@ -196,7 +219,7 @@ static Eina_Bool _esvg_svg_child_initialize(Edom_Tag *t, Edom_Tag *child_t, void
 	/* add a callback whenever the child property has changed
 	 * to initialize that child too */
 	child_e = esvg_element_ender_get(child_t);
-	ender_event_listener_add(child_e, "Mutation:child", _esvg_svg_child_child_cb, t);
+	ender_event_listener_add(child_e, "Mutation:child", _esvg_svg_child_mutation_child_cb, t);
 	/* add a callback whenever any property has changed to add it the list
 	 * of changed elements */
 	ender_event_listener_add(child_e, "Mutation", _esvg_svg_child_mutation_cb, thiz);
@@ -218,9 +241,42 @@ static Eina_Bool _esvg_svg_child_initialize(Edom_Tag *t, Edom_Tag *child_t, void
 	return EINA_TRUE;
 }
 
-static void _esvg_svg_child_deinitialize(Edom_Tag *t, Edom_Tag *child, void *data)
+static Eina_Bool _esvg_svg_child_deinitialize(Edom_Tag *t, Edom_Tag *child_t, void *data)
 {
-	/* remove from the ids */
+	Esvg_Svg *thiz;
+	Ender_Element *thiz_e;
+	Ender_Element *child_e;
+	const char *id;
+
+ 	thiz = data;
+
+	/* set the topmost on every element */
+	thiz_e = esvg_element_ender_get(t);
+	esvg_element_topmost_set(child_t, NULL);
+
+	/* add a callback whenever the child property has changed
+	 * to initialize that child too */
+	child_e = esvg_element_ender_get(child_t);
+	ender_event_listener_remove(child_e, "Mutation:child", _esvg_svg_child_mutation_child_cb);
+	/* add a callback whenever any property has changed to add it the list
+	 * of changed elements */
+	ender_event_listener_remove(child_e, "Mutation", _esvg_svg_child_mutation_cb);
+	/* add an event whenever the child changes the id */
+	ender_event_listener_remove(child_e, "Mutation:id", _esvg_svg_child_id_cb);
+	/* add the id to the hash of ids */
+	esvg_element_id_get(child_e, &id);
+	if (id) eina_hash_del(thiz->ids, id, child_e);
+
+	/* add the style to the list of styles */
+	if (esvg_is_style_internal(child_t))
+	{
+		thiz->styles = eina_list_remove(thiz->styles, child_t);
+		thiz->styles_changed = EINA_TRUE;
+	}
+	/* iterate over the childs of the child and do the same initialization */
+	edom_tag_child_foreach(child_t, _esvg_svg_child_deinitialize, thiz);
+
+	return EINA_TRUE;
 }
 /*----------------------------------------------------------------------------*
  *                       The Esvg Renderable interface                        *
@@ -274,23 +330,22 @@ static Eina_Bool _esvg_svg_attribute_get(Edom_Tag *tag, const char *attribute, c
 	return EINA_FALSE;
 }
 
-static Eina_Bool _esvg_svg_child_add(Edom_Tag *tag, Edom_Tag *child)
+static Eina_Bool _esvg_svg_child_add(Edom_Tag *t, Edom_Tag *child)
 {
 	Esvg_Svg *thiz;
+	Esvg_Type type;
 
-	thiz = _esvg_svg_get(tag);
+	thiz = _esvg_svg_get(t);
 	if (!esvg_is_element_internal(child))
-		return;
+		return EINA_FALSE;
 
-	/* if renderable, add the renderer into the compound */
-	if (esvg_is_instantiable_internal(child))
+	type = esvg_element_internal_type_get(child);
+	if (esvg_type_is_renderable(type) || type == ESVG_A)
 	{
-		Enesim_Renderer *r = NULL;
-
-		esvg_renderable_internal_renderer_get(child, &r);
-		enesim_renderer_compound_layer_add(thiz->compound, r);
+		thiz->renderable_tree_changed = EINA_TRUE;
+		enesim_renderer_compound_layer_clear(thiz->compound);
 	}
-	_esvg_svg_child_initialize(tag, child, thiz);
+	_esvg_svg_child_initialize(t, child, thiz);
 
 	return EINA_TRUE;
 }
@@ -298,16 +353,20 @@ static Eina_Bool _esvg_svg_child_add(Edom_Tag *tag, Edom_Tag *child)
 static Eina_Bool _esvg_svg_child_remove(Edom_Tag *t, Edom_Tag *child)
 {
 	Esvg_Svg *thiz;
+	Esvg_Type type;
 
 	thiz = _esvg_svg_get(t);
+	if (!esvg_is_element_internal(child))
+		return EINA_FALSE;
 
-	if (esvg_is_instantiable_internal(child))
+	type = esvg_element_internal_type_get(child);
+	if (esvg_type_is_renderable(type) || type == ESVG_A)
 	{
-		Enesim_Renderer *r = NULL;
-
-		esvg_renderable_internal_renderer_get(child, &r);
-		enesim_renderer_compound_layer_remove(thiz->compound, r);
+		thiz->renderable_tree_changed = EINA_TRUE;
+		enesim_renderer_compound_layer_clear(thiz->compound);
 	}
+	_esvg_svg_child_deinitialize(t, child, thiz);
+
 	return EINA_TRUE;
 }
 
@@ -326,6 +385,13 @@ static Esvg_Element_Setup_Return _esvg_svg_setup(Edom_Tag *t,
 	double width, height;
 
 	thiz = _esvg_svg_get(t);
+
+	/* check if we have changed */
+	/* check if there are some element that changed */
+	if (!esvg_element_changed(t) && thiz->elements_changed)
+		return EINA_TRUE;
+
+
 	width = esvg_length_final_get(&thiz->width, ctx->viewbox.width);
 	height = esvg_length_final_get(&thiz->height, ctx->viewbox.height);
 	enesim_renderer_clipper_width_set(thiz->clipper, width);
@@ -369,15 +435,37 @@ static Esvg_Element_Setup_Return _esvg_svg_setup(Edom_Tag *t,
 		{
 			esvg_style_apply(style, t);
 		}
+		printf("thiz->styles = %p\n", thiz->styles);
 		thiz->styles_changed = EINA_FALSE;
 	}
 
+	ret = esvg_element_internal_child_setup(t, c, error, _esvg_svg_setup_interceptor, thiz);
+	thiz->renderable_tree_changed = EINA_FALSE;
+	return ret;
+#if 0
 	/* FIXME the new setup must do */
 	/* 1. first the styles */
 	/* 2. in case that we have changed just iterate over all childs and remove the list of changed */
+	printf("1 thiz->elements_changed = %p\n", thiz->elements_changed);
+	if (thiz->elements_changed)
+	{
+		Ender_Element *e;
+
+		EINA_LIST_FREE(thiz->elements_changed, e)
+		{
+			Edom_Tag *changed_t;
+
+			changed_t = ender_element_object_get(e);
+			printf("element changed %p\n", e);
+			esvg_element_internal_setup(changed_t, c, error);
+		}
+		printf("2 thiz->elements_changed = %p\n", thiz->elements_changed);
+		return ESVG_SETUP_OK;
+	}
 	/* 3. if not, iterate over the list of changed and double check that it is not being already setup */
 
 	/* call the setup on the instantiables */
+#endif
 	return ESVG_SETUP_CHILDS;
 }
 

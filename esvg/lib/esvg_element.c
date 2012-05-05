@@ -80,10 +80,7 @@ typedef struct _Esvg_Element_Descriptor_Internal
 typedef struct _Esvg_Element_Setup_Data
 {
 	Esvg_Context *c;
-	Esvg_Element_Context *ctx;
-	Esvg_Attribute_Presentation *attr;
 	Enesim_Error **error;
-	Esvg_Element_Setup_Filter filter;
 	Esvg_Element_Setup_Interceptor pre;
 	Esvg_Element_Setup_Interceptor post;
 	Eina_Bool ret;
@@ -120,7 +117,7 @@ typedef struct _Esvg_Element
 	/* identifier of the last time an element has done the setup */
 	int last_run;
 	/* flag set whenever some property has changed */
-	Eina_Bool changed : 1;
+	int changed;
 	/* the ender element associated with this element */
 	Ender_Element *e;
 	/* private data used for the element implementations */
@@ -144,7 +141,7 @@ static void _esvg_element_mutation_cb(Ender_Element *e, const char *event_name,
 	Ender_Event_Mutation *ev = event_data;
 
 	/* FIXME we could check if the mutation is a remove, add, etc */
-	thiz->changed = EINA_TRUE;
+	thiz->changed++;
 }
 /*----------------------------------------------------------------------------*
  *                              Context helpers                               *
@@ -174,6 +171,15 @@ static Eina_Bool _esvg_element_child_setup_cb(Edom_Tag *t, Edom_Tag *child,
 	{
 		setup_data->ret = EINA_FALSE;
 		return EINA_FALSE;
+	}
+	if (setup_data->post)
+	{
+		if (!setup_data->post(t, child, setup_data->c, setup_data->error,
+				setup_data->data))
+		{
+			setup_data->ret = EINA_FALSE;
+			return EINA_FALSE;
+		}
 	}
 	return EINA_TRUE;
 }
@@ -869,6 +875,24 @@ void esvg_element_internal_topmost_get(Edom_Tag *t, Ender_Element **e)
 	*e = thiz->topmost;
 }
 
+Eina_Bool esvg_element_internal_child_setup(Edom_Tag *t,
+		Esvg_Context *c,
+		Enesim_Error **error,
+		Esvg_Element_Setup_Interceptor post,
+		void *data)
+{
+	Esvg_Element_Setup_Data setup_data;
+
+	setup_data.c = c;
+	setup_data.post = post;
+	setup_data.error = error;
+	setup_data.ret = EINA_TRUE;
+	setup_data.data = data;
+
+	edom_tag_child_foreach(t, _esvg_element_child_setup_cb, &setup_data);
+	return setup_data.ret;
+}
+
 Eina_Bool esvg_element_internal_setup(Edom_Tag *t,
 		Esvg_Context *c,
 		Enesim_Error **error)
@@ -944,19 +968,9 @@ Eina_Bool esvg_element_internal_setup(Edom_Tag *t,
 
 	//esvg_attribute_presentation_dump(new_attr);
 	ret = thiz->descriptor.setup(t, c, parent_state, &thiz->state_final, &thiz->attr_final, error);
-	if (ret == ESVG_SETUP_CHILDS)
-	{
-		Esvg_Element_Setup_Data setup_data;
+	thiz->changed = 0;
 
-		setup_data.c = c;
-		setup_data.error = error;
-		setup_data.ret = EINA_TRUE;
-
-		edom_tag_child_foreach(t, _esvg_element_child_setup_cb, &setup_data);
-		return setup_data.ret;
-	}
-
-	return ret;
+	return !!ret;
 }
 
 void esvg_element_initialize(Ender_Element *e)

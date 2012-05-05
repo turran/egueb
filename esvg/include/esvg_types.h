@@ -350,4 +350,8 @@ EAPI Esvg_Stroke_Line_Join esvg_stroke_line_join_string_from(const char *value);
 EAPI Eina_Bool esvg_attribute_type_string_from(Esvg_Attribute_Type *type, const char *value);
 
 
+EAPI Eina_Bool esvg_type_is_paint_server(Esvg_Type type);
+EAPI Eina_Bool esvg_type_is_shape(Esvg_Type type);
+EAPI Eina_Bool esvg_type_is_renderable(Esvg_Type type);
+
 #endif

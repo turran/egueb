@@ -1343,6 +1343,40 @@ EAPI Eina_Bool esvg_type_is_paint_server(Esvg_Type type)
 	}
 }
 
+EAPI Eina_Bool esvg_type_is_shape(Esvg_Type type)
+{
+	switch (type)
+	{
+		case ESVG_LINE:
+		case ESVG_RECT:
+		case ESVG_POLYLINE:
+		case ESVG_POLYGON:
+		case ESVG_ELLIPSE:
+		case ESVG_CIRCLE:
+		case ESVG_PATH:
+		return EINA_TRUE;
+
+		default:
+		return EINA_FALSE;
+	}
+}
+
+EAPI Eina_Bool esvg_type_is_renderable(Esvg_Type type)
+{
+	if (esvg_type_is_shape(type))
+		return EINA_TRUE;
+	switch (type)
+	{
+		case ESVG_SVG:
+		case ESVG_G:
+		return EINA_TRUE;
+
+		default:
+		return EINA_FALSE;
+	}
+}
+
+
 EAPI Eina_Bool esvg_parser_gradient_units_string_from(Esvg_Gradient_Units *gu, const char *attr)
 {
 	if (strncmp(attr, "userSpaceOnUse", 14) == 0)

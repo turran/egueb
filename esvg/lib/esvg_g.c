@@ -33,6 +33,9 @@ typedef struct _Esvg_G
 {
 	/* properties */
 	/* private */
+	/* keep track if the renderable tree has changed, includeing the <a> tag */
+	Eina_Bool renderable_tree_changed : 1;
+	/* our renderer */
 	Enesim_Renderer *r;
 } Esvg_G;
 
@@ -46,21 +49,66 @@ static Esvg_G * _esvg_g_get(Edom_Tag *t)
 
 	return thiz;
 }
-/*----------------------------------------------------------------------------*
- *                          The Container interface                           *
- *----------------------------------------------------------------------------*/
-static Eina_Bool _esvg_g_child_add(Edom_Tag *tag, Edom_Tag *child)
-{
-	Esvg_G *thiz;
 
-	/* if renderable, add the renderer into the compound */
-	thiz = _esvg_g_get(tag);
-	if (esvg_is_instantiable_internal(child))
+static Eina_Bool _esvg_g_setup_interceptor(Edom_Tag *t,
+		Edom_Tag *child,
+		Esvg_Context *c,
+		Enesim_Error **error,
+		void *data)
+{
+	Esvg_Type type;
+	Esvg_G *thiz = data;
+
+	type = esvg_element_internal_type_get(child);
+	if (esvg_type_is_renderable(type) && thiz->renderable_tree_changed)
 	{
+		/* if renderable, add the renderer into the compound */
 		Enesim_Renderer *r = NULL;
 
 		esvg_renderable_internal_renderer_get(child, &r);
 		enesim_renderer_compound_layer_add(thiz->r, r);
+	}
+ 	else if (type == ESVG_A)
+	{
+		return esvg_element_internal_child_setup(child, c, error, _esvg_g_setup_interceptor, thiz);
+	}
+}
+/*----------------------------------------------------------------------------*
+ *                          The Container interface                           *
+ *----------------------------------------------------------------------------*/
+static Eina_Bool _esvg_g_child_add(Edom_Tag *t, Edom_Tag *child)
+{
+	Esvg_G *thiz;
+	Esvg_Type type;
+
+	thiz = _esvg_g_get(t);
+	if (!esvg_is_element_internal(child))
+		return EINA_FALSE;
+
+	type = esvg_element_internal_type_get(child);
+	if (esvg_type_is_renderable(type) || type == ESVG_A)
+	{
+		thiz->renderable_tree_changed = EINA_TRUE;
+		enesim_renderer_compound_layer_clear(thiz->r);
+	}
+
+	return EINA_TRUE;
+}
+
+static Eina_Bool _esvg_g_child_remove(Edom_Tag *t, Edom_Tag *child)
+{
+	Esvg_G *thiz;
+	Esvg_Type type;
+
+	thiz = _esvg_g_get(t);
+	if (!esvg_is_element_internal(child))
+		return EINA_FALSE;
+
+	type = esvg_element_internal_type_get(child);
+	if (esvg_type_is_renderable(type) || type == ESVG_A)
+	{
+		thiz->renderable_tree_changed = EINA_TRUE;
+		enesim_renderer_compound_layer_clear(thiz->r);
 	}
 
 	return EINA_TRUE;
@@ -99,7 +147,13 @@ static Esvg_Element_Setup_Return _esvg_g_setup(Edom_Tag *t,
 		Esvg_Renderable_Context *rctx,
 		Enesim_Error **error)
 {
-	return ESVG_SETUP_CHILDS;
+	Esvg_G *thiz;
+	Esvg_Element_Setup_Return ret;
+
+	thiz = _esvg_g_get(t);
+	ret = esvg_element_internal_child_setup(t, c, error, _esvg_g_setup_interceptor, thiz);
+	thiz->renderable_tree_changed = EINA_FALSE;
+	return ret;
 }
 
 static void _esvg_g_free(Edom_Tag *t)
@@ -112,7 +166,7 @@ static void _esvg_g_free(Edom_Tag *t)
 
 static Esvg_Instantiable_Descriptor _descriptor = {
 	/* .child_add		= */ _esvg_g_child_add,
-	/* .child_remove	= */ NULL,
+	/* .child_remove	= */ _esvg_g_child_remove,
 	/* .attribute_get 	= */ NULL,
 	/* .cdata_set 		= */ NULL,
 	/* .text_set 		= */ NULL,
