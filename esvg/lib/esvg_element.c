@@ -905,21 +905,36 @@ Eina_Bool esvg_element_internal_setup(Edom_Tag *t,
 
 	thiz = _esvg_element_get(t);
 
-	if (!thiz->descriptor.setup)
-		return EINA_TRUE;
-
 	/* FIXME given that we have to only setup a subtree, we should
 	 * not get the parents attributes from the arguments */
-	thiz->last_run = c->run;
 	parent_t = edom_tag_parent_get(t);
 	if (parent_t)
 	{
+
 		Esvg_Element *parent_thiz;
 
+#if 0
+		/* if the parent has changed, go up ... */
+		if (esvg_element_changed(parent_t))
+		{
+			esvg_element_internal_setup(parent_t, c, error);
+			return EINA_TRUE;
+		}
+#endif
 		parent_thiz = _esvg_element_get(parent_t);
 		parent_state = &parent_thiz->state_final;
 		parent_attr = &parent_thiz->attr_final;
 	}
+	if (thiz->last_run == c->run)
+	{
+		printf("already run\n");
+		return EINA_TRUE;
+	}
+
+	thiz->last_run = c->run;
+
+	if (!thiz->descriptor.setup)
+		return EINA_TRUE;
 
 	/* the idea here is to call the setup interface of the element */
 	/* note that on SVG every element must be part of a topmost SVG

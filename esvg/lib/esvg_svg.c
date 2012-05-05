@@ -430,7 +430,7 @@ static Esvg_Element_Setup_Return _esvg_svg_setup(Edom_Tag *t,
 	Enesim_Renderer *child;
 	Enesim_Renderer *parent;
 	Esvg_Element_Setup_Return ret;
-	Eina_Bool changed;
+	int changed;
 	Eina_Bool full_process = EINA_FALSE;
 	double width, height;
 
