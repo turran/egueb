@@ -118,24 +118,68 @@ static Eina_Bool _esvg_svg_setup_interceptor(Edom_Tag *t,
 	}
 }
 
+static inline void _esvg_svg_size_apply(Esvg_Svg *thiz, Esvg_Element_Context *ctx)
+{
+	double width;
+	double height;
+
+	width = esvg_length_final_get(&thiz->width, ctx->viewbox.width);
+	height = esvg_length_final_get(&thiz->height, ctx->viewbox.height);
+	enesim_renderer_clipper_width_set(thiz->clipper, width);
+	enesim_renderer_clipper_height_set(thiz->clipper, height);
+	ctx->viewbox.width = width;
+	ctx->viewbox.height = height;
+}
+
+static inline void _esvg_svg_viewbox_apply(Esvg_Svg *thiz, Esvg_Element_Context *ctx)
+{
+	Enesim_Matrix scale;
+	double width;
+	double height;
+	double new_vw;
+	double new_vh;
+
+	/* the viewbox will set a new user space coordinate */
+	/* FIXME check zeros */
+	if (!thiz->view_box_set)
+		return;
+
+	new_vw = thiz->view_box.width / ctx->viewbox.width;
+	new_vh = thiz->view_box.height / ctx->viewbox.height;
+
+	printf("setting scale %p to %g %g - %g %g (%g %g)\n",
+			ctx,
+			thiz->view_box.width,
+			thiz->view_box.height,
+			width,
+			height,
+			new_vw, new_vh);
+	width = thiz->view_box.width;
+	height = thiz->view_box.height;
+
+	enesim_matrix_scale(&scale, 1.0/new_vw, 1.0/new_vh);
+	enesim_matrix_compose(&scale, &ctx->transform, &ctx->transform);
+	ctx->viewbox.width = width;
+	ctx->viewbox.height = height;
+}
+
 /* call the setup on every element of the list of changed elements */
 /* FIXME fix the return value */
-static void _esvg_svg_element_changed_setup(Esvg_Svg *thiz, Esvg_Context *c,
+static void _esvg_svg_element_changed_setup(Esvg_Svg *thiz,
+		Esvg_Context *c,
 		Enesim_Error **error)
 {
 	Ender_Element *e;
+	Eina_List *l, *l_next;
 
-	EINA_LIST_FREE(thiz->elements_changed, e)
+	EINA_LIST_FOREACH_SAFE(thiz->elements_changed, l, l_next, e)
 	{
-		Edom_Tag *t;
+		Edom_Tag *changed_t;
 
-		t = ender_element_object_get(e);
-		if (esvg_element_has_setup(t, c))
-		{
-			printf("element already did the setup, no need for it\n");
-			continue;
-		}
-		esvg_element_setup(e, error);
+		changed_t = ender_element_object_get(e);
+		if (!esvg_element_has_setup(changed_t, c))
+			esvg_element_internal_setup(changed_t, c, error);
+		thiz->elements_changed = eina_list_remove_list(thiz->elements_changed, l);
 	}
 }
 /*----------------------------------------------------------------------------*
@@ -178,14 +222,19 @@ static void _esvg_svg_child_mutation_child_cb(Ender_Element *e, const char *even
 	thiz = _esvg_svg_get(tag);
 	switch (ev->type)
 	{
+		/* some child has been added to the whole svg tree */
 		case ENDER_EVENT_MUTATION_ADD:
 		child_child = ender_value_object_get(ev->value);
 		_esvg_svg_child_initialize(tag, child_child, thiz);
+		thiz->elements_changed = eina_list_append(thiz->elements_changed, e);
 		break;
 
+		/* some child has been removed from the whole svg tree */
 		case ENDER_EVENT_MUTATION_REMOVE:
 		child_child = ender_value_object_get(ev->value);
 		_esvg_svg_child_deinitialize(tag, child_child, thiz);
+		/* in case it is found, it will get removed */
+		thiz->elements_changed = eina_list_remove(thiz->elements_changed, e);
 		break;
 
 		default:
@@ -382,99 +431,83 @@ static Esvg_Element_Setup_Return _esvg_svg_setup(Edom_Tag *t,
 	Enesim_Renderer *parent;
 	Esvg_Element_Setup_Return ret;
 	Eina_Bool changed;
+	Eina_Bool full_process = EINA_FALSE;
 	double width, height;
 
 	thiz = _esvg_svg_get(t);
 
-	/* check if we have changed */
+	/* check if we have changed or some element has changed */
 	changed = esvg_element_changed(t);
-	/* check if there are some element that changed */
 	if (!changed && !thiz->elements_changed)
 		return EINA_TRUE;
 
-	if (changed)
+	/* 1. if the attr or the context have changed, then we need to propagate on the whole tree again
+	 * that means that if for some reason some renderable direct child or the a tag has been added/removed
+	 * (renderable_tree_changed flag) on the setup process we also need to add the renderers
+	 * to our compound
+	 */
+	//if (changed)
 	{
-		printf("thiz changed\n");
-
-	}
-
-	if (thiz->elements_changed)
-	{
-		printf("elements changed\n");
-	}
-
-	width = esvg_length_final_get(&thiz->width, ctx->viewbox.width);
-	height = esvg_length_final_get(&thiz->height, ctx->viewbox.height);
-	/* the viewbox will set a new user space coordinate */
-	/* FIXME check zeros */
-	if (thiz->view_box_set)
-	{
-		Enesim_Matrix scale;
-		double new_vw;
-		double new_vh;
-
-		new_vw = thiz->view_box.width / width;
-		new_vh = thiz->view_box.height / height;
-
-		printf("setting scale %p to %g %g - %g %g (%g %g)\n",
-				ctx,
-				thiz->view_box.width,
-				thiz->view_box.height,
-				width,
-				height,
-				new_vw, new_vh);
-		width = thiz->view_box.width;
-		height = thiz->view_box.height;
-
-		enesim_matrix_scale(&scale, 1.0/new_vw, 1.0/new_vh);
-		enesim_matrix_compose(&scale, &ctx->transform, &ctx->transform);
-		/* TODO handle current matrix */
-	}
-	ctx->viewbox.width = width;
-	ctx->viewbox.height = height;
-
-	/* if the styles have changed apply them */
-	if (thiz->styles_changed)
-	{
-		printf("styles changed!!!\n");
-		/* for every style apply it */
-		/* TODO what if we have a sub svg with its own styles? */
-		EINA_LIST_FREE(thiz->styles, style)
+		width = esvg_length_final_get(&thiz->width, ctx->viewbox.width);
+		height = esvg_length_final_get(&thiz->height, ctx->viewbox.height);
+		enesim_renderer_clipper_width_set(thiz->clipper, width);
+		enesim_renderer_clipper_height_set(thiz->clipper, height);
+		/* the viewbox will set a new user space coordinate */
+		/* FIXME check zeros */
+		if (thiz->view_box_set)
 		{
-			esvg_style_apply(style, t);
-		}
-		printf("thiz->styles = %p\n", thiz->styles);
-		thiz->styles_changed = EINA_FALSE;
-	}
+			Enesim_Matrix scale;
+			double new_vw;
+			double new_vh;
 
+			new_vw = thiz->view_box.width / width;
+			new_vh = thiz->view_box.height / height;
+
+			printf("setting scale %p to %g %g - %g %g (%g %g)\n",
+					ctx,
+					thiz->view_box.width,
+					thiz->view_box.height,
+					width,
+					height,
+					new_vw, new_vh);
+			width = thiz->view_box.width;
+			height = thiz->view_box.height;
+
+			enesim_matrix_scale(&scale, 1.0/new_vw, 1.0/new_vh);
+			enesim_matrix_compose(&scale, &ctx->transform, &ctx->transform);
+			/* TODO handle current matrix */
+		}
+		ctx->viewbox.width = width;
+		ctx->viewbox.height = height;
+
+		/* if the styles have changed apply them */
+		if (thiz->styles_changed)
+		{
+			printf("styles changed!!!\n");
+			/* for every style apply it */
+			/* TODO what if we have a sub svg with its own styles? */
+			EINA_LIST_FREE(thiz->styles, style)
+			{
+				esvg_style_apply(style, t);
+			}
+			printf("thiz->styles = %p\n", thiz->styles);
+			thiz->styles_changed = EINA_FALSE;
+		}
+	}
+	/* 2. if no attr or context changed, but some property that changes the context have
+	 * changed (viewbox) then do a full tree process
+	 */
+
+	/* 3. ok no need to process the whole tree. check if we do need to add the renderables back */
 	ret = esvg_element_internal_child_setup(t, c, error, _esvg_svg_setup_interceptor, thiz);
 	thiz->renderable_tree_changed = EINA_FALSE;
+
+	/* 4. now process the list of changed elements, it will automatically do the setup on its
+	 * parent
+	 */
+	_esvg_svg_element_changed_setup(thiz, c, error);
+
 	return ret;
-#if 0
-	/* FIXME the new setup must do */
-	/* 1. first the styles */
-	/* 2. in case that we have changed just iterate over all childs and remove the list of changed */
-	printf("1 thiz->elements_changed = %p\n", thiz->elements_changed);
-	if (thiz->elements_changed)
-	{
-		Ender_Element *e;
-
-		EINA_LIST_FREE(thiz->elements_changed, e)
-		{
-			Edom_Tag *changed_t;
-
-			changed_t = ender_element_object_get(e);
-			printf("element changed %p\n", e);
-			esvg_element_internal_setup(changed_t, c, error);
-		}
-		printf("2 thiz->elements_changed = %p\n", thiz->elements_changed);
-		return ESVG_SETUP_OK;
-	}
-	/* 3. if not, iterate over the list of changed and double check that it is not being already setup */
-
-	/* call the setup on the instantiables */
-#endif
-	return ESVG_SETUP_CHILDS;
 }
 
 static Enesim_Renderer * _esvg_svg_renderer_get(Edom_Tag *t)
@@ -483,25 +516,6 @@ static Enesim_Renderer * _esvg_svg_renderer_get(Edom_Tag *t)
 
 	thiz = _esvg_svg_get(t);
 	return thiz->clipper;
-}
-
-static Eina_Bool _esvg_svg_renderer_propagate(Edom_Tag *t,
-		Esvg_Context *c,
-		const Esvg_Element_Context *ctx,
-		const Esvg_Attribute_Presentation *attr,
-		Esvg_Renderable_Context *rctx,
-		Enesim_Error **error)
-{
-	Esvg_Svg *thiz;
-	double width, height;
-
-	thiz = _esvg_svg_get(t);
-	width = esvg_length_final_get(&thiz->width, ctx->viewbox.width);
-	height = esvg_length_final_get(&thiz->height, ctx->viewbox.height);
-	enesim_renderer_clipper_width_set(thiz->clipper, width);
-	enesim_renderer_clipper_height_set(thiz->clipper, height);
-
-	return EINA_TRUE;
 }
 
 static void _esvg_svg_clone(Edom_Tag *t, Edom_Tag *dt)
@@ -529,7 +543,7 @@ static Esvg_Instantiable_Descriptor _descriptor = {
 	/* .clone		= */ _esvg_svg_clone,
 	/* .setup		= */ _esvg_svg_setup,
 	/* .renderer_get	= */ _esvg_svg_renderer_get,
-	/* .renderer_propagate	= */ _esvg_svg_renderer_propagate,
+	/* .renderer_propagate	= */ NULL,
 };
 
 /*----------------------------------------------------------------------------*

@@ -84,6 +84,8 @@ typedef struct _Esvg_Attribute_Presentation {
 	Eina_Bool stop_opacity_set;
 	/* how may are set ? */
 	int sets;
+	/* has something changed ? */
+	Eina_Bool changed;
 } Esvg_Attribute_Presentation;
 
 void esvg_attribute_presentation_setup(Esvg_Attribute_Presentation *thiz);
