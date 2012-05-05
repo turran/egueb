@@ -88,6 +88,15 @@ static Esvg_Element_Setup_Return _esvg_polygon_setup(Edom_Tag *t,
 		Esvg_Context *c,
 		Esvg_Element_Context *ctx,
 		Esvg_Attribute_Presentation *attr,
+		Enesim_Error **error)
+{
+	return ESVG_SETUP_OK;
+}
+
+static Eina_Bool _esvg_polygon_renderer_propagate(Edom_Tag *t,
+		Esvg_Context *c,
+		const Esvg_Element_Context *ctx,
+		const Esvg_Attribute_Presentation *attr,
 		Esvg_Renderable_Context *rctx,
 		Enesim_Error **error)
 {
@@ -119,7 +128,7 @@ static Esvg_Element_Setup_Return _esvg_polygon_setup(Edom_Tag *t,
 	enesim_renderer_geometry_transformation_set(thiz->r, &ctx->transform);
 	enesim_renderer_color_set(thiz->r, rctx->color);
 
-	return ESVG_SETUP_OK;
+	return EINA_TRUE;
 }
 
 static void _esvg_polygon_clone(Edom_Tag *t, Edom_Tag *dt)
@@ -158,6 +167,7 @@ static Esvg_Instantiable_Descriptor _descriptor = {
 	/* .clone		= */ _esvg_polygon_clone,
 	/* .setup		= */ _esvg_polygon_setup,
 	/* .renderer_get	= */ _esvg_polygon_renderer_get,
+	/* .renderer_propagate	= */ _esvg_polygon_renderer_propagate,
 };
 /*----------------------------------------------------------------------------*
  *                           The Ender interface                              *

@@ -49,6 +49,7 @@ typedef struct _Esvg_Renderable_Descriptor_Internal
 	Edom_Tag_Free free;
 	Esvg_Renderable_Setup setup;
 	Esvg_Renderable_Renderer_Get renderer_get;
+	Esvg_Renderable_Renderer_Propagate renderer_propagate;
 } Esvg_Renderable_Descriptor_Internal;
 
 typedef struct _Esvg_Renderable_Paint_Server_State
@@ -215,6 +216,66 @@ static void _esvg_shape_enesim_state_get(Edom_Tag *t,
 			&attr->stroke_width,
 			stroke_viewport);
 }
+
+static Eina_Bool _esvg_renderable_propagate(Esvg_Renderable *thiz, Edom_Tag *t,
+		Esvg_Context *c,
+		const Esvg_Element_Context *parent_context,
+		Esvg_Element_Context *context,
+		Esvg_Attribute_Presentation *attr,
+		Enesim_Error **error)
+{
+	if (!thiz->descriptor.renderer_propagate)
+		return EINA_TRUE;
+
+	/* given that a shape can be setup for many uses (a shape as a clip path,
+	 * a shape for rendering, a shape for masking, etc) the different
+	 * enesim states despend on that behaviour
+	 */
+#if 0
+	if (attr->clip_path_set)
+	{
+		esvg_clip_path_relative_set(attr->clip_path, thiz->renderer_get(r),
+				&context->transform);
+	}
+
+	if (thiz->calculate)
+		thiz->calculate(r, context, attr, &thiz->context, thiz->calculate_data);
+	else
+#endif
+	/* FIXME there are cases where this is not needed, liek the 'use' given that
+	 * the 'g' will do it
+	 */
+	_esvg_shape_enesim_state_get(t, context, attr, &thiz->context);
+	/* do the renderer propagate */
+	if (!thiz->descriptor.renderer_propagate(t, c, parent_context ? parent_context : context, attr, &thiz->context, error))
+		return EINA_FALSE;
+#if 0
+	if (attr->clip_path_set)
+	{
+		Eina_Bool ret;
+
+		ret = enesim_renderer_setup(attr->clip_path, s, error);
+	}
+#endif
+	/* in case we are going to use the fill renderer do its own setup */
+	if (attr->fill_set && attr->fill.type == ESVG_PAINT_SERVER && thiz->fill_ender)
+	{
+		/* we dont pass the attributes or the paint server
+		 * will merge what it has with this
+		 */
+		/* FIXME check that the referenceable has done the setup, if not queue ourselves */
+		esvg_referenceable_renderer_set(thiz->fill_tag, thiz->context.fill_renderer);
+		esvg_element_internal_setup(thiz->fill_tag, c, error);
+	}
+#if 0
+	/* in case we are going to use the stroke renderer do its own setup */
+	if (attr->stroke_set && attr->stroke.type == ESVG_PAINT_SERVER)
+		esvg_paint_server_renderer_setup(attr->stroke.value.paint_server, context, r);
+#endif
+	return EINA_TRUE;
+}
+
+
 /*----------------------------------------------------------------------------*
  *                           The Ender interface                              *
  *----------------------------------------------------------------------------*/
@@ -282,7 +343,6 @@ static void _esvg_renderable_free(Edom_Tag *t)
 	free(thiz);
 }
 
-/* TODO optimize so many 'ifs' */
 static Esvg_Element_Setup_Return _esvg_renderable_setup(Edom_Tag *t,
 		Esvg_Context *c,
 		const Esvg_Element_Context *parent_context,
@@ -304,57 +364,14 @@ static Esvg_Element_Setup_Return _esvg_renderable_setup(Edom_Tag *t,
 		context->dpi_y = thiz->x_dpi;
 		context->dpi_x = thiz->y_dpi;
 	}
-	/* given that a shape can be setup for many uses (a shape as a clip path,
-	 * a shape for rendering, a shape for masking, etc) the different
-	 * enesim states despend on that behaviour
-	 */
-#if 0
-	if (attr->clip_path_set)
-	{
-		esvg_clip_path_relative_set(attr->clip_path, thiz->renderer_get(r),
-				&context->transform);
-	}
+	if (!_esvg_renderable_propagate(thiz, t, c, parent_context, context, attr, error))
+		return ESVG_SETUP_FAILED;
 
-	if (thiz->calculate)
-		thiz->calculate(r, context, attr, &thiz->context, thiz->calculate_data);
-	else
-#endif
-	/* FIXME there are cases where this is not needed, liek the 'use' given that
-	 * the 'g' will do it
-	 */
-		_esvg_shape_enesim_state_get(t, context, attr, &thiz->context);
-
-	/* do the setup */
 	if (thiz->descriptor.setup)
 	{
-		ret = thiz->descriptor.setup(t, c, context, attr, &thiz->context, error);
-		if (ret == ESVG_SETUP_FAILED)
-			return ret;
+		return thiz->descriptor.setup(t, c, context, attr, error);
 	}
-#if 0
-	if (attr->clip_path_set)
-	{
-		Eina_Bool ret;
-
-		ret = enesim_renderer_setup(attr->clip_path, s, error);
-	}
-#endif
-	/* in case we are going to use the fill renderer do its own setup */
-	if (attr->fill_set && attr->fill.type == ESVG_PAINT_SERVER && thiz->fill_ender)
-	{
-		/* we dont pass the attributes or the paint server
-		 * will merge what it has with this
-		 */
-		/* FIXME check that the referenceable has done the setup, if not queue ourselves */
-		esvg_referenceable_renderer_set(thiz->fill_tag, thiz->context.fill_renderer);
-		esvg_element_internal_setup(thiz->fill_tag, c, error);
-	}
-#if 0
-	/* in case we are going to use the stroke renderer do its own setup */
-	if (attr->stroke_set && attr->stroke.type == ESVG_PAINT_SERVER)
-		esvg_paint_server_renderer_setup(attr->stroke.value.paint_server, context, r);
-#endif
-	return ret;
+	return ESVG_SETUP_OK;
 }
 /*============================================================================*
  *                                 Global                                     *
@@ -421,6 +438,20 @@ void * esvg_renderable_data_get(Edom_Tag *t)
 	return thiz->data;
 }
 
+/* TODO optimize so many 'ifs' */
+Eina_Bool esvg_renderable_propagate(Edom_Tag *t,
+		Esvg_Context *c,
+		const Esvg_Element_Context *parent_context,
+		Enesim_Error **error)
+{
+	Esvg_Renderable *thiz;
+	Esvg_Attribute_Presentation *attr;
+	Eina_Bool ret;
+
+	thiz = _esvg_renderable_get(t);
+	return ret;
+}
+
 Edom_Tag * esvg_renderable_new(Esvg_Renderable_Descriptor *descriptor, Esvg_Type type,
 		void *data)
 {
@@ -436,6 +467,7 @@ Edom_Tag * esvg_renderable_new(Esvg_Renderable_Descriptor *descriptor, Esvg_Type
 	/* our own descriptor */
 	thiz->descriptor.setup = descriptor->setup;
 	thiz->descriptor.renderer_get = descriptor->renderer_get;
+	thiz->descriptor.renderer_propagate = descriptor->renderer_propagate;
 	/* default values */
 	thiz->container_width = 640;
 	thiz->container_height = 480;

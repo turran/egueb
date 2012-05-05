@@ -127,6 +127,7 @@ Edom_Tag * esvg_instantiable_new(Esvg_Instantiable_Descriptor *descriptor,
 	pdescriptor.initialize = descriptor->initialize;
 	pdescriptor.setup = descriptor->setup;
 	pdescriptor.renderer_get = descriptor->renderer_get;
+	pdescriptor.renderer_propagate = descriptor->renderer_propagate;
 
 	t = esvg_renderable_new(&pdescriptor, type, thiz);
 

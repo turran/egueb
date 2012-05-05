@@ -109,6 +109,15 @@ static Esvg_Element_Setup_Return _esvg_circle_setup(Edom_Tag *t,
 		Esvg_Context *c,
 		Esvg_Element_Context *ctx,
 		Esvg_Attribute_Presentation *attr,
+		Enesim_Error **error)
+{
+	return ESVG_SETUP_OK;
+}
+
+static Eina_Bool _esvg_circle_renderer_propagate(Edom_Tag *t,
+		Esvg_Context *c,
+		const Esvg_Element_Context *ctx,
+		const Esvg_Attribute_Presentation *attr,
 		Esvg_Renderable_Context *rctx,
 		Enesim_Error **error)
 {
@@ -201,6 +210,7 @@ static Esvg_Instantiable_Descriptor _descriptor = {
 	/* .clone		= */ _esvg_circle_clone,
 	/* .setup		= */ _esvg_circle_setup,
 	/* .renderer_get	= */ _esvg_circle_renderer_get,
+	/* .renderer_propagate	= */ _esvg_circle_renderer_propagate,
 };
 /*----------------------------------------------------------------------------*
  *                           The Ender interface                              *

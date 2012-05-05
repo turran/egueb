@@ -16,6 +16,7 @@ typedef struct _Esvg_Instantiable_Descriptor {
 	/* the renderable interface */
 	Esvg_Renderable_Setup setup;
 	Esvg_Renderable_Renderer_Get renderer_get;
+	Esvg_Renderable_Renderer_Propagate renderer_propagate;
 } Esvg_Instantiable_Descriptor;
 
 void * esvg_instantiable_data_get(Edom_Tag *t);

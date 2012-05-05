@@ -89,6 +89,15 @@ static Esvg_Element_Setup_Return _esvg_path_setup(Edom_Tag *t,
 		Esvg_Context *c,
 		Esvg_Element_Context *ctx,
 		Esvg_Attribute_Presentation *attr,
+		Enesim_Error **error)
+{
+	return ESVG_SETUP_OK;
+}
+
+static Eina_Bool _esvg_path_renderer_propagate(Edom_Tag *t,
+		Esvg_Context *c,
+		const Esvg_Element_Context *ctx,
+		const Esvg_Attribute_Presentation *attr,
 		Esvg_Renderable_Context *rctx,
 		Enesim_Error **error)
 {
@@ -317,7 +326,7 @@ static Esvg_Element_Setup_Return _esvg_path_setup(Edom_Tag *t,
 		enesim_renderer_path_command_add(thiz->r, &cmd);
 	}
 
-	return ESVG_SETUP_OK;
+	return EINA_TRUE;
 }
 
 static void _esvg_path_clone(Edom_Tag *r, Edom_Tag *dr)
@@ -359,6 +368,7 @@ static Esvg_Instantiable_Descriptor _descriptor = {
 	/* .clone		= */ _esvg_path_clone,
 	/* .setup		= */ _esvg_path_setup,
 	/* .renderer_get	= */ _esvg_path_renderer_get,
+	/* .renderer_propagate	= */ _esvg_path_renderer_propagate,
 };
 /*----------------------------------------------------------------------------*
  *                           The Ender interface                              *

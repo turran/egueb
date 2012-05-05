@@ -90,6 +90,15 @@ static Esvg_Element_Setup_Return _esvg_polyline_setup(Edom_Tag *t,
 		Esvg_Context *c,
 		Esvg_Element_Context *ctx,
 		Esvg_Attribute_Presentation *attr,
+		Enesim_Error **error)
+{
+	return ESVG_SETUP_OK;
+}
+
+static Eina_Bool _esvg_polyline_renderer_propagate(Edom_Tag *t,
+		Esvg_Context *c,
+		const Esvg_Element_Context *ctx,
+		const Esvg_Attribute_Presentation *attr,
 		Esvg_Renderable_Context *rctx,
 		Enesim_Error **error)
 {
@@ -158,7 +167,7 @@ static Esvg_Element_Setup_Return _esvg_polyline_setup(Edom_Tag *t,
 	printf("\n");
 	enesim_renderer_proxy_proxied_set(thiz->proxy, r);
 
-	return ESVG_SETUP_OK;
+	return EINA_TRUE;
 }
 
 static void _esvg_polyline_clone(Edom_Tag *t, Edom_Tag *dt)
@@ -197,6 +206,7 @@ static Esvg_Instantiable_Descriptor _descriptor = {
 	/* .clone		= */ _esvg_polyline_clone,
 	/* .setup		= */ _esvg_polyline_setup,
 	/* .renderer_get	= */ _esvg_polyline_renderer_get,
+	/* .renderer_propagate	= */ _esvg_polyline_renderer_propagate,
 };
 /*----------------------------------------------------------------------------*
  *                           The Ender interface                              *

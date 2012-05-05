@@ -23,9 +23,13 @@ typedef Esvg_Element_Setup_Return (*Esvg_Renderable_Setup)(Edom_Tag *t,
 		Esvg_Context *c,
 		Esvg_Element_Context *ctx,
 		Esvg_Attribute_Presentation *attr,
+		Enesim_Error **error);
+typedef Eina_Bool (*Esvg_Renderable_Renderer_Propagate)(Edom_Tag *t,
+		Esvg_Context *c,
+		const Esvg_Element_Context *parent_ctx,
+		const Esvg_Attribute_Presentation *attr,
 		Esvg_Renderable_Context *rctx,
 		Enesim_Error **error);
-
 typedef struct _Esvg_Renderable_Descriptor {
 	/* the tag interface */
 	Edom_Tag_Child_Add child_add;
@@ -41,11 +45,13 @@ typedef struct _Esvg_Renderable_Descriptor {
 	/* the renderable interface */
 	Esvg_Renderable_Setup setup;
 	Esvg_Renderable_Renderer_Get renderer_get;
+	Esvg_Renderable_Renderer_Propagate renderer_propagate;
 } Esvg_Renderable_Descriptor;
 
 void * esvg_renderable_data_get(Edom_Tag *t);
 Edom_Tag * esvg_renderable_new(Esvg_Renderable_Descriptor *descriptor, Esvg_Type type, void *data);
 /* internal functions */
+/* TODO this property should not be exposed */
 void esvg_renderable_internal_renderer_get(Edom_Tag *t, Enesim_Renderer **r);
 Eina_Bool esvg_is_renderable_internal(Edom_Tag *t);
 

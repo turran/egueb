@@ -374,7 +374,6 @@ static Esvg_Element_Setup_Return _esvg_svg_setup(Edom_Tag *t,
 		Esvg_Context *c,
 		Esvg_Element_Context *ctx,
 		Esvg_Attribute_Presentation *attr,
-		Esvg_Renderable_Context *rctx,
 		Enesim_Error **error)
 {
 	Esvg_Svg *thiz;
@@ -382,21 +381,30 @@ static Esvg_Element_Setup_Return _esvg_svg_setup(Edom_Tag *t,
 	Enesim_Renderer *child;
 	Enesim_Renderer *parent;
 	Esvg_Element_Setup_Return ret;
+	Eina_Bool changed;
 	double width, height;
 
 	thiz = _esvg_svg_get(t);
 
 	/* check if we have changed */
+	changed = esvg_element_changed(t);
 	/* check if there are some element that changed */
-	if (!esvg_element_changed(t) && thiz->elements_changed)
+	if (!changed && !thiz->elements_changed)
 		return EINA_TRUE;
 
+	if (changed)
+	{
+		printf("thiz changed\n");
+
+	}
+
+	if (thiz->elements_changed)
+	{
+		printf("elements changed\n");
+	}
 
 	width = esvg_length_final_get(&thiz->width, ctx->viewbox.width);
 	height = esvg_length_final_get(&thiz->height, ctx->viewbox.height);
-	enesim_renderer_clipper_width_set(thiz->clipper, width);
-	enesim_renderer_clipper_height_set(thiz->clipper, height);
-
 	/* the viewbox will set a new user space coordinate */
 	/* FIXME check zeros */
 	if (thiz->view_box_set)
@@ -477,6 +485,25 @@ static Enesim_Renderer * _esvg_svg_renderer_get(Edom_Tag *t)
 	return thiz->clipper;
 }
 
+static Eina_Bool _esvg_svg_renderer_propagate(Edom_Tag *t,
+		Esvg_Context *c,
+		const Esvg_Element_Context *ctx,
+		const Esvg_Attribute_Presentation *attr,
+		Esvg_Renderable_Context *rctx,
+		Enesim_Error **error)
+{
+	Esvg_Svg *thiz;
+	double width, height;
+
+	thiz = _esvg_svg_get(t);
+	width = esvg_length_final_get(&thiz->width, ctx->viewbox.width);
+	height = esvg_length_final_get(&thiz->height, ctx->viewbox.height);
+	enesim_renderer_clipper_width_set(thiz->clipper, width);
+	enesim_renderer_clipper_height_set(thiz->clipper, height);
+
+	return EINA_TRUE;
+}
+
 static void _esvg_svg_clone(Edom_Tag *t, Edom_Tag *dt)
 {
 
@@ -502,6 +529,7 @@ static Esvg_Instantiable_Descriptor _descriptor = {
 	/* .clone		= */ _esvg_svg_clone,
 	/* .setup		= */ _esvg_svg_setup,
 	/* .renderer_get	= */ _esvg_svg_renderer_get,
+	/* .renderer_propagate	= */ _esvg_svg_renderer_propagate,
 };
 
 /*----------------------------------------------------------------------------*

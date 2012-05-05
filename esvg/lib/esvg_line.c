@@ -117,6 +117,15 @@ static Esvg_Element_Setup_Return _esvg_line_setup(Edom_Tag *t,
 		Esvg_Context *c,
 		Esvg_Element_Context *ctx,
 		Esvg_Attribute_Presentation *attr,
+		Enesim_Error **error)
+{
+	return ESVG_SETUP_OK;
+}
+
+static Eina_Bool _esvg_line_renderer_propagate(Edom_Tag *t,
+		Esvg_Context *c,
+		const Esvg_Element_Context *ctx,
+		const Esvg_Attribute_Presentation *attr,
 		Esvg_Renderable_Context *rctx,
 		Enesim_Error **error)
 {
@@ -150,7 +159,7 @@ static Esvg_Element_Setup_Return _esvg_line_setup(Edom_Tag *t,
 	enesim_renderer_color_set(thiz->r, rctx->color);
 
 	//printf("calling the setup on the line (%g %g %g %g | %g %d)\n", x1, y1, x2, y2, dstate.stroke_weight, dstate.stroke_cap);
-	return ESVG_SETUP_OK;
+	return EINA_TRUE;
 }
 
 static void _esvg_line_clone(Edom_Tag *t, Edom_Tag *dt)
@@ -208,6 +217,7 @@ static Esvg_Instantiable_Descriptor _descriptor = {
 	/* .clone		= */ _esvg_line_clone,
 	/* .setup		= */ _esvg_line_setup,
 	/* .renderer_get	= */ _esvg_line_renderer_get,
+	/* .renderer_propagate	= */ _esvg_line_renderer_propagate,
 };
 /*----------------------------------------------------------------------------*
  *                           The Ender interface                              *
