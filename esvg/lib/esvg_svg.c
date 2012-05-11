@@ -178,9 +178,28 @@ static void _esvg_svg_element_changed_setup(Esvg_Svg *thiz,
 
 		changed_t = ender_element_object_get(e);
 		if (!esvg_element_has_setup(changed_t, c))
+		{
 			esvg_element_internal_setup(changed_t, c, error);
+		}
 		thiz->elements_changed = eina_list_remove_list(thiz->elements_changed, l);
 	}
+}
+
+static void _esvg_svg_element_changed_add(Esvg_Svg *thiz, Ender_Element *e)
+{
+#if 0
+	Edom_Tag *t;
+
+	t = ender_element_object_get(e);
+	printf("adding element %s to the list of changes\n", esvg_type_string_to(esvg_element_internal_type_get(t)));
+#endif
+
+	thiz->elements_changed = eina_list_append(thiz->elements_changed, e);
+}
+
+static void _esvg_svg_element_changed_remove(Esvg_Svg *thiz, Ender_Element *e)
+{
+
 }
 /*----------------------------------------------------------------------------*
  *                             The URI interface                              *
@@ -215,26 +234,27 @@ static void _esvg_svg_child_id_cb(Ender_Element *e, const char *event_name, void
 static void _esvg_svg_child_mutation_child_cb(Ender_Element *e, const char *event_name, void *event_data, void *data)
 {
 	Ender_Event_Mutation_Property *ev = event_data;
+	Ender_Element *child_child_e;
 	Edom_Tag *tag = data;
 	Edom_Tag *child_child;
 	Esvg_Svg *thiz;
 
 	thiz = _esvg_svg_get(tag);
+	child_child = ender_value_object_get(ev->value);
+	child_child_e = esvg_element_ender_get(child_child);
 	switch (ev->type)
 	{
 		/* some child has been added to the whole svg tree */
 		case ENDER_EVENT_MUTATION_ADD:
-		child_child = ender_value_object_get(ev->value);
 		_esvg_svg_child_initialize(tag, child_child, thiz);
-		thiz->elements_changed = eina_list_append(thiz->elements_changed, e);
+		_esvg_svg_element_changed_add(thiz, child_child_e);
 		break;
 
 		/* some child has been removed from the whole svg tree */
 		case ENDER_EVENT_MUTATION_REMOVE:
-		child_child = ender_value_object_get(ev->value);
 		_esvg_svg_child_deinitialize(tag, child_child, thiz);
-		/* in case it is found, it will get removed */
-		thiz->elements_changed = eina_list_remove(thiz->elements_changed, e);
+		_esvg_svg_element_changed_remove(thiz, child_child_e);
+		/* TODO in case the child removed is found, it will get removed */
 		break;
 
 		default:
@@ -249,7 +269,7 @@ static void _esvg_svg_child_mutation_cb(Ender_Element *e, const char *event_name
 
 	/* add the element to the list of changed elements */
 	/* TODO if the property is the child, dont do nothing */
-	thiz->elements_changed = eina_list_append(thiz->elements_changed, e);
+	_esvg_svg_element_changed_add(thiz, e);
 }
 
 static Eina_Bool _esvg_svg_child_initialize(Edom_Tag *t, Edom_Tag *child_t, void *data)
@@ -265,6 +285,7 @@ static Eina_Bool _esvg_svg_child_initialize(Edom_Tag *t, Edom_Tag *child_t, void
 	thiz_e = esvg_element_ender_get(t);
 	esvg_element_topmost_set(child_t, thiz_e);
 
+	//printf("initializing %s\n", esvg_type_string_to(esvg_element_internal_type_get(child_t)));
 	/* add a callback whenever the child property has changed
 	 * to initialize that child too */
 	child_e = esvg_element_ender_get(child_t);

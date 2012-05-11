@@ -7,6 +7,11 @@ namespace "esvg" {
 		int "unit";
 	};
 
+	struct "esvg_animated_length" {
+		esvg_length "base";
+		esvg_length "anim";
+	};
+
 	struct "esvg_viewbox" {
 		double "min_x";
 		double "min_y";
@@ -98,6 +103,14 @@ namespace "esvg" {
 	abstract "animation" : "element" {
 		string "attribute_name";
 		int "attribute_type";
+	};
+
+	abstract "animate_base" : "animation" {
+
+	};
+
+	class "animate" : "animate_base" {
+
 	};
 
 	class "style" : "element" {

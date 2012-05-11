@@ -43,7 +43,9 @@ static void _register_enders(void *data)
 {
 	/* register the dependency */
 	ender_loader_load("edom");
-	/* the abstracts first */
+	/* the types first */
+	esvg_types_init();
+	/* now the abstracts */
 	esvg_element_init();
 	esvg_referenceable_init();
 	esvg_renderable_init();
@@ -68,6 +70,10 @@ static void _register_enders(void *data)
 	esvg_a_init();
 	esvg_clip_path_init();
 	esvg_style_init();
+
+	esvg_animation_init();
+	esvg_animate_base_init();
+	esvg_animate_init();
 }
 
 /* FIXME the constructor should be done per namespace, not generic */
@@ -133,6 +139,7 @@ Ender_Property *EDOM_PARENT = NULL;
 Ender_Property *EDOM_TEXT = NULL;
 int esvg_log_dom_global = -1;
 
+/* The ender wrapper */
 Ender_Namespace * esvg_namespace_get(void)
 {
 	static Ender_Namespace *namespace = NULL;
@@ -143,7 +150,7 @@ Ender_Namespace * esvg_namespace_get(void)
 	}
 	return namespace;
 }
-
+#include "generated/esvg_generated_types.c"
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/

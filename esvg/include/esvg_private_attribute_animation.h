@@ -44,4 +44,12 @@ typedef struct _Esvg_Attribute_Animation_Addition
 	 */
 } Esvg_Attribute_Animation_Addition;
 
+typedef struct _Esvg_Attribute_Animation_Event
+{
+	/* onbegin */
+	/* onend */
+	/* onload */
+	/* onrepeat */
+} Esvg_Attribute_Animation_Event;
+
 #endif

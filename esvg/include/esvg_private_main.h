@@ -62,6 +62,8 @@
 #define ESVG_CLIP_PATH_MAGIC 0xe5500013
 #define ESVG_IMAGE_MAGIC 0xe5500014
 
+#define ESVG_ANIMATE_BASE_MAGIC 0xe5500015
+
 extern int esvg_log_dom_global;
 Ender_Namespace * esvg_namespace_get(void);
 

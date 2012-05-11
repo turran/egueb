@@ -193,6 +193,11 @@ static Eina_Bool _esvg_parser_tag_get(Edom_Parser *parser, const char *content,
 	{
 		if (content[0] == 'a')
 		{
+			if (strncmp("animate", content, sz) == 0)
+			{
+				*tag = ESVG_ANIMATE;
+				return EINA_TRUE;
+			}
 		}
 		else if (content[0] == 'c')
 		{
@@ -464,6 +469,10 @@ static void * _esvg_parser_tag_new(Edom_Parser *parser, int tag_id)
 #endif
 		case ESVG_STOP:
 		tag = esvg_stop_new();
+		break;
+
+		case ESVG_ANIMATE:
+		tag = esvg_animate_new();
 		break;
 
 		default:

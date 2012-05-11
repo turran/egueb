@@ -414,11 +414,19 @@ static void _esvg_rect_ry_get(Edom_Tag *t, Esvg_Coord *ry)
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/
+/**
+ * To be documented
+ * FIXME: To be fixed
+ */
 EAPI Ender_Element * esvg_rect_new(void)
 {
 	return ender_element_new_with_namespace("rect", "esvg");
 }
 
+/**
+ * To be documented
+ * FIXME: To be fixed
+ */
 EAPI Eina_Bool esvg_is_rect(Ender_Element *e)
 {
 	Eina_Bool ret = EINA_TRUE;
@@ -426,56 +434,104 @@ EAPI Eina_Bool esvg_is_rect(Ender_Element *e)
 	return ret;
 }
 
+/**
+ * To be documented
+ * FIXME: To be fixed
+ */
 EAPI void esvg_rect_x_set(Ender_Element *e, const Esvg_Coord *x)
 {
 	ender_element_property_value_set(e, ESVG_RECT_X, x, NULL);
 }
 
+/**
+ * To be documented
+ * FIXME: To be fixed
+ */
 EAPI void esvg_rect_x_get(Ender_Element *e, Esvg_Coord *x)
 {
 }
 
+/**
+ * To be documented
+ * FIXME: To be fixed
+ */
 EAPI void esvg_rect_y_set(Ender_Element *e, const Esvg_Coord *y)
 {
 	ender_element_property_value_set(e, ESVG_RECT_Y, y, NULL);
 }
 
+/**
+ * To be documented
+ * FIXME: To be fixed
+ */
 EAPI void esvg_rect_y_get(Ender_Element *e, Esvg_Coord *y)
 {
 }
 
+/**
+ * To be documented
+ * FIXME: To be fixed
+ */
 EAPI void esvg_rect_width_set(Ender_Element *e, const Esvg_Length *width)
 {
 	ender_element_property_value_set(e, ESVG_RECT_WIDTH, width, NULL);
 }
 
+/**
+ * To be documented
+ * FIXME: To be fixed
+ */
 EAPI void esvg_rect_width_get(Ender_Element *e, Esvg_Length *width)
 {
 }
 
+/**
+ * To be documented
+ * FIXME: To be fixed
+ */
 EAPI void esvg_rect_height_set(Ender_Element *e, const Esvg_Length *height)
 {
 	ender_element_property_value_set(e, ESVG_RECT_HEIGHT, height, NULL);
 }
 
+/**
+ * To be documented
+ * FIXME: To be fixed
+ */
 EAPI void esvg_rect_height_get(Ender_Element *e, Esvg_Length *height)
 {
 }
 
+/**
+ * To be documented
+ * FIXME: To be fixed
+ */
 EAPI void esvg_rect_rx_set(Ender_Element *e, const Esvg_Coord *rx)
 {
 	ender_element_property_value_set(e, ESVG_RECT_RX, rx, NULL);
 }
 
+/**
+ * To be documented
+ * FIXME: To be fixed
+ */
 EAPI void esvg_rect_rx_get(Ender_Element *e, Esvg_Coord *rx)
 {
 }
 
+/**
+ * To be documented
+ * FIXME: To be fixed
+ */
 EAPI void esvg_rect_ry_set(Ender_Element *e, const Esvg_Coord *ry)
 {
 	ender_element_property_value_set(e, ESVG_RECT_RY, ry, NULL);
 }
 
+/**
+ * To be documented
+ * FIXME: To be fixed
+ */
 EAPI void esvg_rect_ry_get(Ender_Element *e, Esvg_Coord *ry)
 {
 }
