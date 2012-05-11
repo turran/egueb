@@ -155,12 +155,12 @@ namespace "esvg" {
 	};
 
 	class "rect" : "instantiable" {
-		esvg_length "x";
-		esvg_length "y";
-		esvg_length "width";
-		esvg_length "height";
-		esvg_length "rx";
-		esvg_length "ry";
+		esvg_animated_length "x";
+		esvg_animated_length "y";
+		esvg_animated_length "width";
+		esvg_animated_length "height";
+		esvg_animated_length "rx";
+		esvg_animated_length "ry";
 	};
 
 	class "ellipse" : "instantiable" {

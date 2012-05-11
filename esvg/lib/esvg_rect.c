@@ -38,12 +38,12 @@ static Ender_Property *ESVG_RECT_HEIGHT;
 
 typedef struct _Esvg_Rect_State
 {
-	Esvg_Coord x;
-	Esvg_Coord y;
-	Esvg_Length width;
-	Esvg_Length height;
-	Esvg_Length rx;
-	Esvg_Length ry;
+	Esvg_Animated_Coord x;
+	Esvg_Animated_Coord y;
+	Esvg_Animated_Length width;
+	Esvg_Animated_Length height;
+	Esvg_Animated_Length rx;
+	Esvg_Animated_Length ry;
 } Esvg_Rect_State;
 
 typedef struct _Esvg_Rect
@@ -156,19 +156,20 @@ static Eina_Bool _esvg_rect_renderer_propagate(Edom_Tag *t,
 	thiz = _esvg_rect_get(t);
 
 	/* set the position */
-	x = esvg_length_final_get(&thiz->current.x, ctx->viewbox.width);
-	y = esvg_length_final_get(&thiz->current.y, ctx->viewbox.height);
+	/* TODO check if we are animating */
+	x = esvg_length_final_get(&thiz->current.x.base, ctx->viewbox.width);
+	y = esvg_length_final_get(&thiz->current.y.base, ctx->viewbox.height);
 	enesim_renderer_rectangle_position_set(thiz->r, x, y);
 	/* set the size */
-	width = esvg_length_final_get(&thiz->current.width, ctx->viewbox.width);
-	height = esvg_length_final_get(&thiz->current.height, ctx->viewbox.height);
+	width = esvg_length_final_get(&thiz->current.width.base, ctx->viewbox.width);
+	height = esvg_length_final_get(&thiz->current.height.base, ctx->viewbox.height);
 	enesim_renderer_rectangle_size_set(thiz->r, width, height);
 
 	/* set the bounds */
 	enesim_rectangle_coords_from(&ctx->bounds, x, y, width, height);
 
 	/* FIXME enesim does not supports rx *and* ry */
-	rx = esvg_length_final_get(&thiz->current.rx, ctx->viewbox.width);
+	rx = esvg_length_final_get(&thiz->current.rx.base, ctx->viewbox.width);
 	enesim_renderer_rectangle_corner_radius_set(thiz->r, rx);
 	enesim_renderer_rectangle_corners_set(thiz->r,
 			EINA_TRUE, EINA_TRUE, EINA_TRUE, EINA_TRUE);
@@ -275,10 +276,10 @@ static Edom_Tag * _esvg_rect_new(void)
 
 	/* Default values */
 	enesim_renderer_rop_set(thiz->r, ENESIM_BLEND);
-	thiz->current.x = ESVG_COORD_0;
-	thiz->current.y = ESVG_COORD_0;
-	thiz->current.width = ESVG_LENGTH_0;
-	thiz->current.height = ESVG_LENGTH_0;
+	thiz->current.x.base = ESVG_COORD_0;
+	thiz->current.y.base = ESVG_COORD_0;
+	thiz->current.width.base = ESVG_LENGTH_0;
+	thiz->current.height.base = ESVG_LENGTH_0;
         /* FIXME: set rx and ry ? */
 /* 	thiz->current.rx = ESVG_COORD_0; */
 /* 	thiz->current.ry = ESVG_COORD_0; */
@@ -287,17 +288,20 @@ static Edom_Tag * _esvg_rect_new(void)
 	return t;
 }
 
-static void _esvg_rect_x_set(Edom_Tag *t, const Esvg_Coord *x)
+static void _esvg_rect_x_set(Edom_Tag *t, const Esvg_Animated_Coord *x)
 {
 	Esvg_Rect *thiz;
 
 	if (!x) return;
 	thiz = _esvg_rect_get(t);
-	thiz->current.x = *x;
+	if (esvg_element_attribute_animate_get(t))
+		thiz->current.x.anim = x->base;
+	else
+		thiz->current.x.base = x->base;
 	thiz->changed = EINA_TRUE;
 }
 
-static void _esvg_rect_x_get(Edom_Tag *t, Esvg_Coord *x)
+static void _esvg_rect_x_get(Edom_Tag *t, Esvg_Animated_Coord *x)
 {
 	Esvg_Rect *thiz;
 
@@ -306,17 +310,20 @@ static void _esvg_rect_x_get(Edom_Tag *t, Esvg_Coord *x)
 	*x = thiz->current.x;
 }
 
-static void _esvg_rect_y_set(Edom_Tag *t, const Esvg_Coord *y)
+static void _esvg_rect_y_set(Edom_Tag *t, const Esvg_Animated_Coord *y)
 {
 	Esvg_Rect *thiz;
 
 	if (!y) return;
 	thiz = _esvg_rect_get(t);
-	thiz->current.y = *y;
+	if (esvg_element_attribute_animate_get(t))
+		thiz->current.y.anim = y->base;
+	else
+		thiz->current.y.base = y->base;
 	thiz->changed = EINA_TRUE;
 }
 
-static void _esvg_rect_y_get(Edom_Tag *t, Esvg_Coord *y)
+static void _esvg_rect_y_get(Edom_Tag *t, Esvg_Animated_Coord *y)
 {
 	Esvg_Rect *thiz;
 
@@ -325,17 +332,20 @@ static void _esvg_rect_y_get(Edom_Tag *t, Esvg_Coord *y)
 	*y = thiz->current.y;
 }
 
-static void _esvg_rect_width_set(Edom_Tag *t, const Esvg_Length *width)
+static void _esvg_rect_width_set(Edom_Tag *t, const Esvg_Animated_Length *width)
 {
 	Esvg_Rect *thiz;
 
 	if (!width) return;
 	thiz = _esvg_rect_get(t);
-	thiz->current.width = *width;
+	if (esvg_element_attribute_animate_get(t))
+		thiz->current.width.anim = width->base;
+	else
+		thiz->current.width.base = width->base;
 	thiz->changed = EINA_TRUE;
 }
 
-static void _esvg_rect_width_get(Edom_Tag *t, Esvg_Length *width)
+static void _esvg_rect_width_get(Edom_Tag *t, Esvg_Animated_Length *width)
 {
 	Esvg_Rect *thiz;
 
@@ -344,17 +354,20 @@ static void _esvg_rect_width_get(Edom_Tag *t, Esvg_Length *width)
 	*width = thiz->current.width;
 }
 
-static void _esvg_rect_height_set(Edom_Tag *t, const Esvg_Length *height)
+static void _esvg_rect_height_set(Edom_Tag *t, const Esvg_Animated_Length *height)
 {
 	Esvg_Rect *thiz;
 
 	if (!height) return;
 	thiz = _esvg_rect_get(t);
-	thiz->current.height = *height;
+	if (esvg_element_attribute_animate_get(t))
+		thiz->current.height.anim = height->base;
+	else
+		thiz->current.height.base = height->base;
 	thiz->changed = EINA_TRUE;
 }
 
-static void _esvg_rect_height_get(Edom_Tag *t, Esvg_Length *height)
+static void _esvg_rect_height_get(Edom_Tag *t, Esvg_Animated_Length *height)
 {
 	Esvg_Rect *thiz;
 
@@ -363,17 +376,20 @@ static void _esvg_rect_height_get(Edom_Tag *t, Esvg_Length *height)
 	*height = thiz->current.height;
 }
 
-static void _esvg_rect_rx_set(Edom_Tag *t, const Esvg_Coord *rx)
+static void _esvg_rect_rx_set(Edom_Tag *t, const Esvg_Animated_Coord *rx)
 {
 	Esvg_Rect *thiz;
 
 	if (!rx) return;
 	thiz = _esvg_rect_get(t);
-	thiz->current.rx = *rx;
+	if (esvg_element_attribute_animate_get(t))
+		thiz->current.rx.anim = rx->base;
+	else
+		thiz->current.rx.base = rx->base;
 	thiz->changed = EINA_TRUE;
 }
 
-static void _esvg_rect_rx_get(Edom_Tag *t, Esvg_Coord *rx)
+static void _esvg_rect_rx_get(Edom_Tag *t, Esvg_Animated_Coord *rx)
 {
 	Esvg_Rect *thiz;
 
@@ -382,17 +398,20 @@ static void _esvg_rect_rx_get(Edom_Tag *t, Esvg_Coord *rx)
 	*rx = thiz->current.rx;
 }
 
-static void _esvg_rect_ry_set(Edom_Tag *t, const Esvg_Coord *ry)
+static void _esvg_rect_ry_set(Edom_Tag *t, const Esvg_Animated_Coord *ry)
 {
 	Esvg_Rect *thiz;
 
 	if (!ry) return;
 	thiz = _esvg_rect_get(t);
-	thiz->current.ry = *ry;
+	if (esvg_element_attribute_animate_get(t))
+		thiz->current.ry.anim = ry->base;
+	else
+		thiz->current.ry.base = ry->base;
 	thiz->changed = EINA_TRUE;
 }
 
-static void _esvg_rect_ry_get(Edom_Tag *t, Esvg_Coord *ry)
+static void _esvg_rect_ry_get(Edom_Tag *t, Esvg_Animated_Coord *ry)
 {
 	Esvg_Rect *thiz;
 
@@ -440,7 +459,16 @@ EAPI Eina_Bool esvg_is_rect(Ender_Element *e)
  */
 EAPI void esvg_rect_x_set(Ender_Element *e, const Esvg_Coord *x)
 {
-	ender_element_property_value_set(e, ESVG_RECT_X, x, NULL);
+	Esvg_Animated_Coord ax;
+
+	if (!x)
+	{
+		ender_element_property_value_set(e, ESVG_RECT_X, NULL, NULL);
+		return;
+	}
+
+	ax.base = *x;
+	ender_element_property_value_set(e, ESVG_RECT_X, &ax, NULL);
 }
 
 /**
@@ -457,7 +485,16 @@ EAPI void esvg_rect_x_get(Ender_Element *e, Esvg_Coord *x)
  */
 EAPI void esvg_rect_y_set(Ender_Element *e, const Esvg_Coord *y)
 {
-	ender_element_property_value_set(e, ESVG_RECT_Y, y, NULL);
+	Esvg_Animated_Coord ay;
+
+	if (!y)
+	{
+		ender_element_property_value_set(e, ESVG_RECT_Y, NULL, NULL);
+		return;
+	}
+
+	ay.base = *y;
+	ender_element_property_value_set(e, ESVG_RECT_Y, &ay, NULL);
 }
 
 /**
@@ -474,7 +511,15 @@ EAPI void esvg_rect_y_get(Ender_Element *e, Esvg_Coord *y)
  */
 EAPI void esvg_rect_width_set(Ender_Element *e, const Esvg_Length *width)
 {
-	ender_element_property_value_set(e, ESVG_RECT_WIDTH, width, NULL);
+	Esvg_Animated_Length aw;
+
+	if (!width)
+	{
+		ender_element_property_value_set(e, ESVG_RECT_WIDTH, NULL, NULL);
+		return;
+	}
+	aw.base = *width;
+	ender_element_property_value_set(e, ESVG_RECT_WIDTH, &aw, NULL);
 }
 
 /**
@@ -491,7 +536,15 @@ EAPI void esvg_rect_width_get(Ender_Element *e, Esvg_Length *width)
  */
 EAPI void esvg_rect_height_set(Ender_Element *e, const Esvg_Length *height)
 {
-	ender_element_property_value_set(e, ESVG_RECT_HEIGHT, height, NULL);
+	Esvg_Animated_Length ah;
+
+	if (!height)
+	{
+		ender_element_property_value_set(e, ESVG_RECT_HEIGHT, NULL, NULL);
+		return;
+	}
+	ah.base = *height;
+	ender_element_property_value_set(e, ESVG_RECT_HEIGHT, &ah, NULL);
 }
 
 /**
@@ -508,7 +561,15 @@ EAPI void esvg_rect_height_get(Ender_Element *e, Esvg_Length *height)
  */
 EAPI void esvg_rect_rx_set(Ender_Element *e, const Esvg_Coord *rx)
 {
-	ender_element_property_value_set(e, ESVG_RECT_RX, rx, NULL);
+	Esvg_Animated_Coord arx;
+
+	if (!rx)
+	{
+		ender_element_property_value_set(e, ESVG_RECT_RX, NULL, NULL);
+		return;
+	}
+	arx.base = *rx;
+	ender_element_property_value_set(e, ESVG_RECT_RX, &arx, NULL);
 }
 
 /**
@@ -525,7 +586,16 @@ EAPI void esvg_rect_rx_get(Ender_Element *e, Esvg_Coord *rx)
  */
 EAPI void esvg_rect_ry_set(Ender_Element *e, const Esvg_Coord *ry)
 {
-	ender_element_property_value_set(e, ESVG_RECT_RY, ry, NULL);
+	Esvg_Animated_Coord ary;
+
+	if (!ry)
+	{
+		ender_element_property_value_set(e, ESVG_RECT_RY, ry, NULL);
+		return;
+	
+	}
+	ary.base = *ry;
+	ender_element_property_value_set(e, ESVG_RECT_RY, &ary, NULL);
 }
 
 /**

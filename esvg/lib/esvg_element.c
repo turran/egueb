@@ -1058,6 +1058,14 @@ void esvg_element_attribute_animate_set(Edom_Tag *t, Eina_Bool animate)
 	thiz->current_attr_animate = animate;
 }
 
+Eina_Bool esvg_element_attribute_animate_get(Edom_Tag *t)
+{
+	Esvg_Element *thiz;
+
+	thiz = _esvg_element_get(t);
+	return thiz->current_attr_animate;
+}
+
 Ender_Element * esvg_element_ender_get(Edom_Tag *t)
 {
 	Esvg_Element *thiz;

@@ -150,6 +150,8 @@ typedef struct _Esvg_Animated_Length
 	Esvg_Length anim;
 } Esvg_Animated_Length;
 
+typedef Esvg_Animated_Length Esvg_Animated_Coord;
+
 /* We need to use uint32_t here because we can not pass
  * data < 32bits through varargs
  */
