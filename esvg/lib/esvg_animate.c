@@ -37,6 +37,8 @@ typedef struct _Esvg_Animate
 	/* interface */
 	/* private */
 	Etch_Animation *anim;
+	Ender_Property *prop;
+	Ender_Element *parent;
 } Esvg_Animate;
 
 static Esvg_Animate * _esvg_animate_get(Edom_Tag *t)
@@ -48,6 +50,64 @@ static Esvg_Animate * _esvg_animate_get(Edom_Tag *t)
 	thiz = esvg_animate_base_data_get(t);
 
 	return thiz;
+}
+
+/*----------------------------------------------------------------------------*
+ *                         The Etch animator callbacks                        *
+ *----------------------------------------------------------------------------*/
+static void _esvg_animate_length_cb(const Etch_Data *curr,
+		const Etch_Data *prev, void *data)
+{
+	Esvg_Animate *thiz = data;
+	Esvg_Length length;
+
+	/* FIXME for now */
+	printf("called!!!\n");
+	length.value = curr->data.d;
+	ender_element_property_value_set(thiz->parent, thiz->prop, &length, NULL); 
+}
+
+static Etch_Animation * _esvg_animate_container_etch_to(Esvg_Animate *thiz, Etch *etch,
+		Ender_Property *p)
+{
+	Ender_Container *ec;
+	Etch_Animation *a;
+	Etch_Data_Type dt;
+	Etch_Data data;
+	Etch_Animation_Callback cb;
+	Etch_Animation_Keyframe *kf;
+	const char *name;
+
+	ec = ender_property_container_get(p);
+	name = ender_container_registered_name_get(ec);
+	if (!strcmp(name, "esvg_animated_length"))
+	{
+		dt = ETCH_DOUBLE;
+		cb = _esvg_animate_length_cb;
+	}
+	else
+	{
+		return NULL;
+	}
+
+	a = etch_animation_add(etch, dt, cb, NULL, NULL, thiz);
+	/* FIXME for now we add two keyframes */
+	/* second keyframe */
+	kf = etch_animation_keyframe_add(a);
+	etch_animation_keyframe_type_set(kf, ETCH_ANIMATION_LINEAR);
+	data.data.d = 40;
+	etch_animation_keyframe_value_set(kf, &data);
+	etch_animation_keyframe_time_set(kf, 3, 1237);
+	/* third keyframe */
+	kf = etch_animation_keyframe_add(a);
+	etch_animation_keyframe_type_set(kf, ETCH_ANIMATION_LINEAR);
+	data.data.d = 30;
+	etch_animation_keyframe_value_set(kf, &data);
+	etch_animation_keyframe_time_set(kf, 5, 2530);
+	etch_animation_enable(a);
+
+	printf("everything went ok!\n");
+	return a;
 }
 /*----------------------------------------------------------------------------*
  *                         The Esvg Element interface                         *
@@ -82,7 +142,6 @@ static Eina_Bool _esvg_animate_setup(Edom_Tag *t,
 	Ender_Element *parent_e;
 	Edom_Tag *parent_t;
 	Ender_Property *p;
-	Ender_Container *ec;
 	Etch *etch;
 
 	thiz = _esvg_animate_get(t);
@@ -106,14 +165,18 @@ static Eina_Bool _esvg_animate_setup(Edom_Tag *t,
 
 	printf("property found!!!\n");
 	/* we should only process lengths, colors, integers, booleans, etc */
-	ec = ender_property_container_get(p);
-	printf("container %s\n", ender_container_registered_name_get(ec));
+	thiz->anim = _esvg_animate_container_etch_to(thiz, etch, p);
+	if (!thiz->anim)
+		goto done;
+
+	thiz->prop = p;
+	thiz->parent = parent_e;
+
 	/* check the type and create an animator of that container type */
 	/* on every animation callback set the animation mode on the element */
 	/* then call the property set */
 	/* restore the mode */
 
-	//thiz->anim = etch_animation_add(etch, dtype, cb, start, stop, data);
 done:
 
 	return EINA_TRUE;

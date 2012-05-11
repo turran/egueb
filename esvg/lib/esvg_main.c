@@ -37,6 +37,7 @@
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
+void esvg_types_init(void);
 static int _esvg_init_count = 0;
 
 static void _register_enders(void *data)
@@ -188,6 +189,8 @@ EAPI int esvg_init(void)
 		goto shutdown_enesim;
 	}
 
+	etch_init();
+
 	if (!_esvg_ender_init())
 	{
 		ERR("Ender init failed");
@@ -197,6 +200,7 @@ EAPI int esvg_init(void)
 	return _esvg_init_count;
 
 shutdown_ender:
+	etch_shutdown();
 	etex_shutdown();
 shutdown_enesim:
 	enesim_shutdown();

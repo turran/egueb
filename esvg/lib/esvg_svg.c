@@ -599,6 +599,7 @@ static Edom_Tag * _esvg_svg_new(void)
 	/* no default value for the view_box */
 	/* the animation system */
 	thiz->etch = etch_new();
+	etch_timer_fps_set(thiz->etch, 30);
 
 	t = esvg_instantiable_new(&_descriptor, ESVG_SVG, thiz);
 	return t;

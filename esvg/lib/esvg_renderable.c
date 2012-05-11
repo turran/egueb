@@ -599,7 +599,7 @@ EAPI void esvg_renderable_draw(Ender_Element *e, Enesim_Surface *s,
 
 	t = ender_element_object_get(e);
 	esvg_renderable_internal_renderer_get(t, &r);
-	enesim_renderer_draw(r, s, clip, x, y, error);
+	return enesim_renderer_draw(r, s, clip, x, y, error);
 }
 
 /**
@@ -614,7 +614,7 @@ EAPI Eina_Bool esvg_renderable_draw_list(Ender_Element *e, Enesim_Surface *s,
 
 	t = ender_element_object_get(e);
 	esvg_renderable_internal_renderer_get(t, &r);
-	enesim_renderer_draw_list(r, s, clips, x, y, error);
+	return enesim_renderer_draw_list(r, s, clips, x, y, error);
 }
 
 /**
