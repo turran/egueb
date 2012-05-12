@@ -591,7 +591,7 @@ EAPI void esvg_renderable_y_dpi_get(Ender_Element *e, double *y_dpi)
  * To be documented
  * FIXME: To be fixed
  */
-EAPI void esvg_renderable_draw(Ender_Element *e, Enesim_Surface *s,
+EAPI Eina_Bool esvg_renderable_draw(Ender_Element *e, Enesim_Surface *s,
 		Eina_Rectangle *clip, int x, int y, Enesim_Error **error)
 {
 	Edom_Tag *t;

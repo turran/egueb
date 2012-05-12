@@ -41,6 +41,9 @@
 			EINA_MAGIC_FAIL(d, ESVG_ANIMATE_BASE_MAGIC);\
 	} while(0)
 
+static Ender_Property *ESVG_ANIMATE_BASE_TO;
+static Ender_Property *ESVG_ANIMATE_BASE_FROM;
+
 typedef struct _Esvg_Animate_Base_Descriptor_Internal
 {
 	Edom_Tag_Free free;
@@ -72,6 +75,53 @@ static Esvg_Animate_Base * _esvg_animate_base_get(Edom_Tag *t)
 /*----------------------------------------------------------------------------*
  *                           The Ender interface                              *
  *----------------------------------------------------------------------------*/
+static void _esvg_animate_base_to_set(Edom_Tag *t, const char *to)
+{
+	Esvg_Animate_Base *thiz;
+
+	thiz = _esvg_animate_base_get(t);
+	if (thiz->current.value.to)
+	{
+		free(thiz->current.value.to);
+		thiz->current.value.to = NULL;
+	}
+	if (to)
+		thiz->current.value.to = strdup(to);
+	thiz->current.changed = EINA_TRUE;
+}
+
+static void _esvg_animate_base_to_get(Edom_Tag *t, const char **to)
+{
+	Esvg_Animate_Base *thiz;
+
+	if (!to) return;
+	thiz = _esvg_animate_base_get(t);
+	*to = thiz->current.value.to;
+}
+
+static void _esvg_animate_base_from_set(Edom_Tag *t, const char *from)
+{
+	Esvg_Animate_Base *thiz;
+
+	thiz = _esvg_animate_base_get(t);
+	if (thiz->current.value.from)
+	{
+		free(thiz->current.value.from);
+		thiz->current.value.from = NULL;
+	}
+	if (from)
+		thiz->current.value.from = strdup(from);
+	thiz->current.changed = EINA_TRUE;
+}
+
+static void _esvg_animate_base_from_get(Edom_Tag *t, const char **from)
+{
+	Esvg_Animate_Base *thiz;
+
+	if (!from) return;
+	thiz = _esvg_animate_base_get(t);
+	*from = thiz->current.value.from;
+}
 /*----------------------------------------------------------------------------*
  *                         The Esvg Element interface                         *
  *----------------------------------------------------------------------------*/
@@ -79,6 +129,9 @@ static Eina_Bool _esvg_animate_base_attribute_set(Ender_Element *e,
 		const char *key, const char *value)
 {
 	/* value attributes */
+	/* for from and to, we should not fetch the property an generate
+	 * the final data type, we better pass it still as strings
+	 */
 	if (strcmp(key, "calcMode") == 0)
 	{
 	}
@@ -93,9 +146,11 @@ static Eina_Bool _esvg_animate_base_attribute_set(Ender_Element *e,
 	}
 	else if (strcmp(key, "from") == 0)
 	{
+		esvg_animate_base_from_set(e, value);
 	}
 	else if (strcmp(key, "to") == 0)
 	{
+		esvg_animate_base_to_set(e, value);
 	}
 	else if (strcmp(key, "by") == 0)
 	{
@@ -139,8 +194,8 @@ static Eina_Bool _esvg_animate_base_setup(Edom_Tag *t,
  *                                 Global                                     *
  *============================================================================*/
 /* The ender wrapper */
-#define _esvg_animate_base_attribute_name_is_set NULL
-#define _esvg_animate_base_attribute_type_is_set NULL
+#define _esvg_animate_base_to_is_set NULL
+#define _esvg_animate_base_from_is_set NULL
 #include "generated/esvg_generated_animate_base.c"
 
 Eina_Bool esvg_is_animate_base_internal(Edom_Tag *t)
@@ -205,3 +260,40 @@ EAPI Eina_Bool esvg_is_animate_base(Ender_Element *e)
 	t = ender_element_object_get(e);
 	return esvg_is_animate_base_internal(t);
 }
+
+/**
+ * To be documented
+ * FIXME: To be fixed
+ */
+EAPI void esvg_animate_base_to_set(Ender_Element *e, const char *v)
+{
+	ender_element_property_value_set(e, ESVG_ANIMATE_BASE_TO, v, NULL);
+}
+
+/**
+ * To be documented
+ * FIXME: To be fixed
+ */
+EAPI void esvg_animate_base_to_get(Ender_Element *e, const char **v)
+{
+}
+
+/**
+ * To be documented
+ * FIXME: To be fixed
+ */
+EAPI void esvg_animate_base_from_set(Ender_Element *e, const char *v)
+{
+	ender_element_property_value_set(e, ESVG_ANIMATE_BASE_FROM, v, NULL);
+}
+
+/**
+ * To be documented
+ * FIXME: To be fixed
+ */
+EAPI void esvg_animate_base_from_get(Ender_Element *e, const char **v)
+{
+}
+
+
+

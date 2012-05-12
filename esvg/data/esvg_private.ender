@@ -106,7 +106,8 @@ namespace "esvg" {
 	};
 
 	abstract "animate_base" : "animation" {
-
+		string "from";
+		string "to";
 	};
 
 	class "animate" : "animate_base" {

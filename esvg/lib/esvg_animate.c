@@ -29,6 +29,13 @@
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
+
+typedef union _Esvg_Animate_Value
+{
+	Esvg_Length length;
+	Esvg_Color color;
+} Esvg_Animate_Value;
+
 typedef struct _Esvg_Animate
 {
 	/* properties */
@@ -39,6 +46,8 @@ typedef struct _Esvg_Animate
 	Etch_Animation *anim;
 	Ender_Property *prop;
 	Ender_Element *parent;
+	Esvg_Animate_Value from;
+	Esvg_Animate_Value to;
 } Esvg_Animate;
 
 static Esvg_Animate * _esvg_animate_get(Edom_Tag *t)
@@ -61,19 +70,19 @@ static void _esvg_animate_length_cb(const Etch_Data *curr,
 	Esvg_Animate *thiz = data;
 	Esvg_Length length;
 
-	/* FIXME for now */
-	printf("called!!!\n");
 	length.value = curr->data.d;
-	ender_element_property_value_set(thiz->parent, thiz->prop, &length, NULL); 
+	length.unit = thiz->to.length.unit;
+	ender_element_property_value_set(thiz->parent, thiz->prop, &length, NULL);
 }
 
-static Etch_Animation * _esvg_animate_container_etch_to(Esvg_Animate *thiz, Etch *etch,
-		Ender_Property *p)
+static Eina_Bool _esvg_animate_container_etch_to(Esvg_Animate *thiz, Etch *etch,
+		Ender_Property *p, Esvg_Animate_Base_Context *c)
 {
 	Ender_Container *ec;
 	Etch_Animation *a;
 	Etch_Data_Type dt;
-	Etch_Data data;
+	Etch_Data from;
+	Etch_Data to;
 	Etch_Animation_Callback cb;
 	Etch_Animation_Keyframe *kf;
 	const char *name;
@@ -84,10 +93,15 @@ static Etch_Animation * _esvg_animate_container_etch_to(Esvg_Animate *thiz, Etch
 	{
 		dt = ETCH_DOUBLE;
 		cb = _esvg_animate_length_cb;
+
+		esvg_length_string_from(&thiz->from.length, c->value.from, ESVG_COORD_0);
+		esvg_length_string_from(&thiz->to.length, c->value.to, ESVG_COORD_0);
+		from.data.d = thiz->from.length.value;
+		to.data.d = thiz->to.length.value;
 	}
 	else
 	{
-		return NULL;
+		return EINA_FALSE;
 	}
 
 	a = etch_animation_add(etch, dt, cb, NULL, NULL, thiz);
@@ -95,19 +109,21 @@ static Etch_Animation * _esvg_animate_container_etch_to(Esvg_Animate *thiz, Etch
 	/* second keyframe */
 	kf = etch_animation_keyframe_add(a);
 	etch_animation_keyframe_type_set(kf, ETCH_ANIMATION_LINEAR);
-	data.data.d = 40;
-	etch_animation_keyframe_value_set(kf, &data);
+	etch_animation_keyframe_value_set(kf, &from);
 	etch_animation_keyframe_time_set(kf, 3, 1237);
 	/* third keyframe */
 	kf = etch_animation_keyframe_add(a);
 	etch_animation_keyframe_type_set(kf, ETCH_ANIMATION_LINEAR);
-	data.data.d = 30;
-	etch_animation_keyframe_value_set(kf, &data);
+	etch_animation_keyframe_value_set(kf, &to);
 	etch_animation_keyframe_time_set(kf, 5, 2530);
 	etch_animation_enable(a);
 
 	printf("everything went ok!\n");
-	return a;
+
+	thiz->anim = a;
+	thiz->prop = p;
+
+	return EINA_TRUE;
 }
 /*----------------------------------------------------------------------------*
  *                         The Esvg Element interface                         *
@@ -164,13 +180,10 @@ static Eina_Bool _esvg_animate_setup(Edom_Tag *t,
 	if (!p) goto done;
 
 	printf("property found!!!\n");
-	/* we should only process lengths, colors, integers, booleans, etc */
-	thiz->anim = _esvg_animate_container_etch_to(thiz, etch, p);
-	if (!thiz->anim)
-		goto done;
-
-	thiz->prop = p;
 	thiz->parent = parent_e;
+	/* we should only process lengths, colors, integers, booleans, etc */
+	if (!_esvg_animate_container_etch_to(thiz, etch, p, abctx))
+		goto done;
 
 	/* check the type and create an animator of that container type */
 	/* on every animation callback set the animation mode on the element */

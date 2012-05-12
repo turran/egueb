@@ -27,6 +27,8 @@ typedef struct _Esvg_Attribute_Animation_Timing
 
 typedef struct _Esvg_Attribute_Animation_Value
 {
+	char *from;
+	char *to;
 	/* calcMode = "discrete | linear | paced | spline"
 	 * values = <list>
 	 * keyTimes = <list>

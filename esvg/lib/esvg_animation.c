@@ -139,6 +139,13 @@ static Eina_Bool _esvg_animation_attribute_set(Ender_Element *e,
 	/* timing attributes */
 	else
 	{
+		Esvg_Animation *thiz;
+		Edom_Tag *t;
+
+		t = ender_element_object_get(e);
+		thiz = _esvg_animation_get(t);
+		if (thiz->descriptor.attribute_set)
+			return thiz->descriptor.attribute_set(e, key, value);
 		return EINA_FALSE;
 	}
 }

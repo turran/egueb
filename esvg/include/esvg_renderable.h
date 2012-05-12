@@ -16,7 +16,7 @@ EAPI void esvg_renderable_container_height_get(Ender_Element *e, double *contain
 typedef Eina_Bool (*Esvg_Renderable_Damage_Cb)(Ender_Element *e, Eina_Rectangle *damage,
 		void *data);
 EAPI void esvg_renderable_damages_get(Ender_Element *e, Esvg_Renderable_Damage_Cb cb, void *data);
-EAPI void esvg_renderable_draw(Ender_Element *e, Enesim_Surface *s,
+EAPI Eina_Bool esvg_renderable_draw(Ender_Element *e, Enesim_Surface *s,
 		Eina_Rectangle *clip, int x, int y, Enesim_Error **error);
 EAPI Eina_Bool esvg_renderable_draw_list(Ender_Element *e, Enesim_Surface *s,
 		Eina_List *clips, int x, int y, Enesim_Error **error);
