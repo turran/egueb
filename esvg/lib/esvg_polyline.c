@@ -129,7 +129,7 @@ static Eina_Bool _esvg_polyline_renderer_propagate(Edom_Tag *t,
 	enesim_renderer_shape_stroke_join_set(r, rctx->stroke_join);
 
 	/* base properties */
-	enesim_renderer_geometry_transformation_set(r, &ctx->transform);
+	enesim_renderer_geometry_transformation_set(r, &ctx->transform.base);
 	enesim_renderer_color_set(r, rctx->color);
 	printf("calling the setup on the polyline ");
 	/* setup the points */

@@ -1644,3 +1644,22 @@ EAPI void esvg_timing_string_from(const char *attr, Esvg_Timing_Cb cb, void *dat
 
 }
 
+EAPI Eina_Bool esvg_animate_transform_type_string_from(Esvg_Animate_Transform_Type *type, const char *s)
+{
+	Eina_Bool ret = EINA_TRUE;
+
+	if (!strcmp(s, "translate"))
+		*type = ESVG_ANIMATE_TRANSFORM_TYPE_TRANSLATE;
+	else if (!strcmp(s, "scale"))
+		*type = ESVG_ANIMATE_TRANSFORM_TYPE_SCALE;
+	else if (!strcmp(s, "rotate"))
+		*type = ESVG_ANIMATE_TRANSFORM_TYPE_ROTATE;
+	else if (!strcmp(s, "skewX"))
+		*type = ESVG_ANIMATE_TRANSFORM_TYPE_SKEWX;
+	else if (!strcmp(s, "skewY"))
+		*type = ESVG_ANIMATE_TRANSFORM_TYPE_SKEWY;
+	else
+		ret = EINA_FALSE;
+
+	return ret;
+}

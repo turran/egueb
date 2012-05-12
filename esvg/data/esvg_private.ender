@@ -24,6 +24,11 @@ namespace "esvg" {
 		double "anim";
 	};
 
+	struct "esvg_animated_transform" {
+		matrix "base";
+		matrix "anim";
+	};
+
 	/* the color needs a byte definition or int8 in ender */
 	struct "esvg_color" {
 		int "r";
@@ -75,7 +80,7 @@ namespace "esvg" {
 		esvg_color "stop_color";
 		double "stop_opacity";
 		/* other attributes */
-		matrix "transform";
+		esvg_animated_transform "transform";
 		ender "topmost";
 	};
 
@@ -120,7 +125,7 @@ namespace "esvg" {
 	};
 
 	class "animate_transform" : "animate_base" {
-
+		int "type";
 	};
 
 	class "style" : "element" {

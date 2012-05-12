@@ -206,7 +206,7 @@ static Esvg_Element_Setup_Return _esvg_linear_gradient_setup(Edom_Tag *t,
 		x2 = esvg_length_final_get(&thiz->x2, w);
 		y2 = esvg_length_final_get(&thiz->y2, h);
 
-		m = ctx->transform;
+		m = ctx->transform.base;
 	}
 	if (enesim_matrix_type_get(&gctx->transform) != ENESIM_MATRIX_IDENTITY)
 	{

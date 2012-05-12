@@ -191,7 +191,7 @@ static Esvg_Element_Setup_Return _esvg_radial_gradient_setup(Edom_Tag *t,
 			rad_vp = hypot(w, h) / M_SQRT2;
 		}
 		rad = esvg_length_final_get(&thiz->rad, rad_vp);
-		m = ctx->transform;
+		m = ctx->transform.base;
 	}
 	if (enesim_matrix_type_get(&gctx->transform) != ENESIM_MATRIX_IDENTITY)
 	{

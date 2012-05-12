@@ -111,6 +111,12 @@ typedef enum _Esvg_Attribute_Type
 	ESVG_ATTR_TYPES,
 } Esvg_Attribute_Type;
 
+typedef struct _Esvg_Animated_Transform
+{
+	Enesim_Matrix base;
+	Enesim_Matrix anim;
+} Esvg_Animated_Transform;
+
 typedef double Esvg_Number;
 
 typedef struct _Esvg_Animated_Number
@@ -345,6 +351,16 @@ typedef struct _Esvg_Timing
 	} data;
 } Esvg_Timing;
 
+typedef enum _Esvg_Animate_Transform_Type
+{
+	ESVG_ANIMATE_TRANSFORM_TYPE_TRANSLATE,
+	ESVG_ANIMATE_TRANSFORM_TYPE_SCALE,
+	ESVG_ANIMATE_TRANSFORM_TYPE_ROTATE,
+	ESVG_ANIMATE_TRANSFORM_TYPE_SKEWX,
+	ESVG_ANIMATE_TRANSFORM_TYPE_SKEWY
+} Esvg_Animate_Transform_Type;
+
+
 typedef void * (*Esvg_Uri_Local_Get)(const char *name, void *data);
 typedef void * (*Esvg_Uri_Absolute_Get)(const char *name, void *data);
 
@@ -399,6 +415,7 @@ EAPI Esvg_Stroke_Line_Join esvg_stroke_line_join_string_from(const char *value);
 EAPI Eina_Bool esvg_attribute_type_string_from(Esvg_Attribute_Type *type, const char *value);
 EAPI void esvg_timing_string_from(const char *attr, Esvg_Timing_Cb cb, void *data);
 EAPI void esvg_points_string_from(const char *value, Esvg_Points_Cb cb, void *data);
+EAPI Eina_Bool esvg_animate_transform_type_string_from(Esvg_Animate_Transform_Type *type, const char *s);
 
 EAPI Eina_Bool esvg_type_is_paint_server(Esvg_Type type);
 EAPI Eina_Bool esvg_type_is_shape(Esvg_Type type);

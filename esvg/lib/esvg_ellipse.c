@@ -152,7 +152,7 @@ static Eina_Bool _esvg_ellipse_renderer_propagate(Edom_Tag *t,
 	enesim_renderer_shape_stroke_location_set(thiz->r, ENESIM_SHAPE_STROKE_CENTER);
 	enesim_renderer_shape_draw_mode_set(thiz->r, rctx->draw_mode);
 	/* base properties */
-	enesim_renderer_geometry_transformation_set(thiz->r, &ctx->transform);
+	enesim_renderer_geometry_transformation_set(thiz->r, &ctx->transform.base);
 	enesim_renderer_color_set(thiz->r, rctx->color);
 
 	return EINA_TRUE;

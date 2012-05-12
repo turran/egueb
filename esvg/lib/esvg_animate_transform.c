@@ -26,6 +26,13 @@
 #include "esvg_private_attribute_animation.h"
 #include "esvg_private_animation.h"
 #include "esvg_private_animate_base.h"
+/* This file handles the 'animateTransform' tag. The idea
+ * is that you can animate transformations by animating
+ * the numbers that define a transformation and its type
+ * For example you can animate a rotate from "0 60 60" to "360 60 60"
+ * the syntax of the value is relative to the transform type
+ * and uses the same format as the transform attribute
+ */
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
@@ -34,6 +41,7 @@ static Ender_Property *ESVG_ANIMATE_TRANSFORM_TYPE;
 typedef struct _Esvg_Animate_Transform
 {
 	/* properties */
+	Esvg_Animate_Transform_Type type;
 	/* interface */
 	/* private */
 	Etch_Animation *anim;
@@ -43,7 +51,6 @@ typedef struct _Esvg_Animate_Transform
 	double from;
 	double to;
 	double by;
-	Esvg_Attribute_Type attribute_type;
 } Esvg_Animate_Transform;
 
 static Esvg_Animate_Transform * _esvg_animate_transform_get(Edom_Tag *t)
@@ -63,6 +70,14 @@ static Esvg_Animate_Transform * _esvg_animate_transform_get(Edom_Tag *t)
 static void _esvg_animate_transform_cb(const Etch_Data *curr,
 		const Etch_Data *prev, void *data)
 {
+	Esvg_Animate_Transform *thiz = data;
+	Esvg_Animated_Transform v;
+	Enesim_Matrix m;
+
+	enesim_matrix_rotate(&m, curr->data.d);
+	v.base = m;
+
+	ender_element_property_value_set(thiz->parent_e, thiz->prop, &v, NULL);
 }
 
 static Eina_Bool _esvg_animate_transform_container_etch_to(Esvg_Animate_Transform *thiz, Etch *etch,
@@ -79,15 +94,23 @@ static Eina_Bool _esvg_animate_transform_container_etch_to(Esvg_Animate_Transfor
 
 	ec = ender_property_container_get(p);
 	name = ender_container_registered_name_get(ec);
-	if (!strcmp(name, "esvg_animated_transformed"))
+
+	if (!strcmp(name, "esvg_animated_transform"))
 	{
 		dt = ETCH_DOUBLE;
 		cb = _esvg_animate_transform_cb;
 
-		thiz->from = esvg_number_string_from(c->value.from, 1.0);
-		thiz->to = esvg_number_string_from(c->value.to, 1.0);
-		from.data.d = thiz->from;
-		to.data.d = thiz->to;
+		//thiz->from = esvg_number_string_from(c->value.from, 1.0);
+		//thiz->to = esvg_number_string_from(c->value.to, 1.0);
+		//from.data.d = thiz->from;
+		//to.data.d = thiz->to;
+		from.data.d = 0;
+		from.data.d = 360;
+
+		/* TODO handle the type case */
+		/* TODO for multiple values, check that the values are different to create animations */
+		/* TODO replace the anim with a list of animations */
+		/* TODO make global the possibility to parse comma or space separated values optionally */
 	}
 	else
 	{
@@ -129,6 +152,13 @@ static void _esvg_animate_transform_free(Edom_Tag *t)
 static Eina_Bool _esvg_animate_transform_attribute_set(Ender_Element *e,
 		const char *key, const char *value)
 {
+	if (!strcmp(key, "type"))
+	{
+		Esvg_Animate_Transform_Type type;
+
+		esvg_animate_transform_type_string_from(&type, value);
+		esvg_animate_transform_type_set(e, type);
+	}
 	return EINA_TRUE;
 }
 
@@ -172,7 +202,6 @@ static Eina_Bool _esvg_animate_transform_setup(Edom_Tag *t,
 	printf("property found!!!\n");
 	thiz->parent_e = parent_e;
 	thiz->parent_t = parent_t;
-	thiz->attribute_type = actx->target.attribute_type;
 
 	/* we should only process lengths, colors, integers, booleans, etc */
 	if (!_esvg_animate_transform_container_etch_to(thiz, etch, p, abctx))
@@ -198,6 +227,23 @@ static Esvg_Animate_Base_Descriptor _descriptor = {
 /*----------------------------------------------------------------------------*
  *                           The Ender interface                              *
  *----------------------------------------------------------------------------*/
+static void _esvg_animate_transform_type_set(Edom_Tag *t, Esvg_Animate_Transform_Type type)
+{
+	Esvg_Animate_Transform *thiz;
+
+	thiz = _esvg_animate_transform_get(t);
+	thiz->type = type;
+}
+
+static void _esvg_animate_transform_type_get(Edom_Tag *t, Esvg_Animate_Transform_Type *type)
+{
+	Esvg_Animate_Transform *thiz;
+
+	if (!type) return;
+	thiz = _esvg_animate_transform_get(t);
+	*type = thiz->type;
+}
+
 static Edom_Tag * _esvg_animate_transform_new(void)
 {
 	Esvg_Animate_Transform *thiz;
@@ -212,6 +258,7 @@ static Edom_Tag * _esvg_animate_transform_new(void)
  *                                 Global                                     *
  *============================================================================*/
 /* The ender wrapper */
+#define _esvg_animate_transform_type_is_set NULL
 #include "generated/esvg_generated_animate_transform.c"
 /*============================================================================*
  *                                   API                                      *
@@ -223,6 +270,23 @@ static Edom_Tag * _esvg_animate_transform_new(void)
 EAPI Ender_Element * esvg_animate_transform_new(void)
 {
 	return ender_element_new_with_namespace("animate_transform", "esvg");
+}
+
+/**
+ * To be documented
+ * FIXME: To be fixed
+ */
+EAPI void esvg_animate_transform_type_set(Ender_Element *e, Esvg_Animate_Transform_Type type)
+{
+	ender_element_property_value_set(e, ESVG_ANIMATE_TRANSFORM_TYPE, type, NULL);
+}
+
+/**
+ * To be documented
+ * FIXME: To be fixed
+ */
+EAPI void esvg_animate_transform_type_get(Ender_Element *e, Esvg_Animate_Transform_Type *type)
+{
 }
 
 

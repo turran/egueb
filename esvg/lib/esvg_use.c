@@ -181,7 +181,7 @@ static Esvg_Element_Setup_Return _esvg_use_setup(Edom_Tag *t,
 	tx = esvg_length_final_get(&thiz->x, ctx->viewbox.width);
 	ty = esvg_length_final_get(&thiz->y, ctx->viewbox.height);
 	enesim_matrix_translate(&translate, tx, ty);
-	enesim_matrix_compose(&ctx->transform, &translate, &ctx->transform);
+	enesim_matrix_compose(&ctx->transform.base, &translate, &ctx->transform.base);
 
 	/* we take the shortcut here because there's no need to go through
 	 * the normal enesim API

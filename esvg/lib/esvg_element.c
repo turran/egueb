@@ -155,7 +155,7 @@ static void _esvg_element_state_compose(const Esvg_Element_Context *s,
 	d->viewbox = parent->viewbox;
 	d->bounds = parent->bounds;
 	/* actually compose */
-	enesim_matrix_compose(&parent->transform, &s->transform, &d->transform);
+	enesim_matrix_compose(&parent->transform.base, &s->transform.base, &d->transform.base);
 }
 /*----------------------------------------------------------------------------*
  *                               Setup helpers                                *
@@ -244,16 +244,17 @@ static void _esvg_element_class_get(Edom_Tag *t, const char **class)
 		*class = thiz->class;
 }
 
-static void _esvg_element_transform_set(Edom_Tag *t, const Enesim_Matrix *transform)
+static void _esvg_element_transform_set(Edom_Tag *t, const Esvg_Animated_Transform *transform)
 {
 	Esvg_Element *thiz;
 
 	thiz = _esvg_element_get(t);
 	if (!transform) return;
+
 	thiz->state.transform = *transform;
 }
 
-static void _esvg_element_transform_get(Edom_Tag *t, Enesim_Matrix *transform)
+static void _esvg_element_transform_get(Edom_Tag *t, Esvg_Animated_Transform *transform)
 {
 	Esvg_Element *thiz;
 
@@ -1107,7 +1108,7 @@ void esvg_element_context_dump(const Esvg_Element_Context *c)
 {
 	printf("dpi %g %g\n", c->dpi_x, c->dpi_y);
 	printf("viewbox %g %g %g %g\n", c->viewbox.min_x, c->viewbox.min_y, c->viewbox.width, c->viewbox.height);
-	printf("transformation %" ENESIM_MATRIX_FORMAT "\n", ENESIM_MATRIX_ARGS (&c->transform));
+	printf("transformation %" ENESIM_MATRIX_FORMAT "\n", ENESIM_MATRIX_ARGS (&c->transform.base));
 }
 
 Edom_Tag * esvg_element_new(Esvg_Element_Descriptor *descriptor, Esvg_Type type,
@@ -1123,7 +1124,7 @@ Edom_Tag * esvg_element_new(Esvg_Element_Descriptor *descriptor, Esvg_Type type,
 	EINA_MAGIC_SET(thiz, ESVG_ELEMENT_MAGIC);
 	thiz->data = data;
 	thiz->type = type;
-	enesim_matrix_identity(&thiz->state.transform);
+	enesim_matrix_identity(&thiz->state.transform.base);
 
 	/* the tag interface */
 	pdescriptor.name_get = _esvg_element_name_get;
@@ -1239,7 +1240,15 @@ EAPI void esvg_element_class_set(Ender_Element *e, const char *class)
  */
 EAPI void esvg_element_transform_set(Ender_Element *e, const Enesim_Matrix *transform)
 {
-	ender_element_property_value_set(e, ESVG_ELEMENT_TRANSFORM, transform, NULL);
+	Esvg_Animated_Transform at;
+
+	if (!transform)
+	{
+		ender_element_property_value_set(e, ESVG_ELEMENT_TRANSFORM, NULL, NULL);
+		return;
+	}
+	at.base = *transform;
+	ender_element_property_value_set(e, ESVG_ELEMENT_TRANSFORM, &at, NULL);
 }
 
 /**

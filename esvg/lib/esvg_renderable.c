@@ -247,7 +247,7 @@ static Eina_Bool _esvg_renderable_propagate(Esvg_Renderable *thiz, Edom_Tag *t,
 	 */
 	_esvg_shape_enesim_state_get(t, context, attr, &thiz->context);
 	/* do the renderer propagate */
-	if (!thiz->descriptor.renderer_propagate(t, c, parent_context ? parent_context : context, attr, &thiz->context, error))
+	if (!thiz->descriptor.renderer_propagate(t, c, context, attr, &thiz->context, error))
 		return EINA_FALSE;
 #if 0
 	if (attr->clip_path_set)

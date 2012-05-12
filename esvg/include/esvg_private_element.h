@@ -15,7 +15,7 @@ typedef struct _Esvg_Element_Context {
 	double dpi_y;
 	Esvg_View_Box viewbox; /* the current viewbox */
 	Enesim_Rectangle bounds; /* the bounds of the object */
-	Enesim_Matrix transform; /* the current transformation */
+	Esvg_Animated_Transform transform; /* the current transformation */
 } Esvg_Element_Context;
 
 typedef void (*Esvg_Element_Initialize)(Ender_Element *e);
