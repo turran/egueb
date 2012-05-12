@@ -19,6 +19,11 @@ namespace "esvg" {
 		double "height";
 	};
 
+	struct "esvg_animated_number" {
+		double "base";
+		double "anim";
+	};
+
 	/* the color needs a byte definition or int8 in ender */
 	struct "esvg_color" {
 		int "r";
@@ -59,7 +64,7 @@ namespace "esvg" {
 		/* presentation attributes */
 		string "style";
 		string "clip_path";
-		double "opacity";
+		esvg_animated_number "opacity";
 		/* once the color is done we can the union paint for filling and stroking */
 		esvg_paint "fill";
 		esvg_paint "stroke";

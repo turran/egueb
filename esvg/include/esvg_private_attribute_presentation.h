@@ -55,7 +55,7 @@
 typedef struct _Esvg_Attribute_Presentation {
 	char *clip_path;
 	Esvg_Color color;
-	double opacity;
+	Esvg_Animated_Number opacity;
 	Esvg_Paint fill;
 	Esvg_Paint stroke;
 	Esvg_Length stroke_width;
@@ -99,7 +99,8 @@ void esvg_attribute_presentation_clip_path_set(Esvg_Attribute_Presentation *thiz
 void esvg_attribute_presentation_clip_path_unset(Esvg_Attribute_Presentation *thiz);
 void esvg_attribute_presentation_color_set(Esvg_Attribute_Presentation *thiz, const Esvg_Color *color);
 void esvg_attribute_presentation_color_unset(Esvg_Attribute_Presentation *thiz);
-void esvg_attribute_presentation_opacity_set(Esvg_Attribute_Presentation *thiz, double opacity);
+void esvg_attribute_presentation_opacity_set(Esvg_Attribute_Presentation *thiz, Esvg_Animated_Number *opacity);
+void esvg_attribute_presentation_opacity_unset(Esvg_Attribute_Presentation *thiz);
 void esvg_attribute_presentation_fill_set(Esvg_Attribute_Presentation *thiz, const Esvg_Paint *fill);
 void esvg_attribute_presentation_fill_unset(Esvg_Attribute_Presentation *thiz);
 void esvg_attribute_presentation_fill_opacity_set(Esvg_Attribute_Presentation *thiz, double fill_opacity);

@@ -313,7 +313,7 @@ static void _esvg_element_clip_path_unset(Edom_Tag *t)
 	esvg_attribute_presentation_clip_path_unset(thiz->current_attr);
 }
 
-static void _esvg_element_opacity_set(Edom_Tag *t, double opacity)
+static void _esvg_element_opacity_set(Edom_Tag *t, Esvg_Animated_Number *opacity)
 {
 	Esvg_Element *thiz;
 	thiz = _esvg_element_get(t);
@@ -1033,6 +1033,9 @@ void esvg_element_attribute_type_set(Edom_Tag *t, Esvg_Attribute_Type type)
 	Esvg_Element *thiz;
 
 	thiz = _esvg_element_get(t);
+	if (type == thiz->current_attr_type)
+		return;
+
 	switch (type)
 	{
 		case ESVG_ATTR_CSS:
@@ -1048,6 +1051,14 @@ void esvg_element_attribute_type_set(Edom_Tag *t, Esvg_Attribute_Type type)
 		default:
 		return;
 	}
+}
+
+Esvg_Attribute_Type esvg_element_attribute_type_get(Edom_Tag *t)
+{
+	Esvg_Element *thiz;
+
+	thiz = _esvg_element_get(t);
+	return thiz->current_attr_type;
 }
 
 void esvg_element_attribute_animate_set(Edom_Tag *t, Eina_Bool animate)
@@ -1286,7 +1297,10 @@ EAPI void esvg_element_clip_path_unset(Ender_Element *e)
  */
 EAPI void esvg_element_opacity_set(Ender_Element *e, double opacity)
 {
-	ender_element_property_value_set(e, ESVG_ELEMENT_OPACITY, opacity, NULL);
+	Esvg_Animated_Number ao;
+
+	ao.base = opacity;
+	ender_element_property_value_set(e, ESVG_ELEMENT_OPACITY, &ao, NULL);
 }
 
 /**

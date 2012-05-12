@@ -39,15 +39,15 @@ typedef union _Esvg_Animate_Value
 typedef struct _Esvg_Animate
 {
 	/* properties */
-	char *attribute_name;
-	Esvg_Attribute_Type attribute_type;
 	/* interface */
 	/* private */
 	Etch_Animation *anim;
 	Ender_Property *prop;
-	Ender_Element *parent;
+	Ender_Element *parent_e;
+	Edom_Tag *parent_t;
 	Esvg_Animate_Value from;
 	Esvg_Animate_Value to;
+	Esvg_Attribute_Type attribute_type;
 } Esvg_Animate;
 
 static Esvg_Animate * _esvg_animate_get(Edom_Tag *t)
@@ -68,11 +68,31 @@ static void _esvg_animate_length_cb(const Etch_Data *curr,
 		const Etch_Data *prev, void *data)
 {
 	Esvg_Animate *thiz = data;
-	Esvg_Length length;
+	Esvg_Animated_Length v;
+	Esvg_Attribute_Type old_type;
 
-	length.value = curr->data.d;
-	length.unit = thiz->to.length.unit;
-	ender_element_property_value_set(thiz->parent, thiz->prop, &length, NULL);
+	v.base.value = curr->data.d;
+	v.base.unit = thiz->to.length.unit;
+
+	old_type = esvg_element_attribute_type_get(thiz->parent_t);
+	esvg_element_attribute_type_set(thiz->parent_t, thiz->attribute_type);
+	ender_element_property_value_set(thiz->parent_e, thiz->prop, &v, NULL);
+	esvg_element_attribute_type_set(thiz->parent_t, old_type);
+}
+
+static void _esvg_animate_double_cb(const Etch_Data *curr,
+		const Etch_Data *prev, void *data)
+{
+	Esvg_Animate *thiz = data;
+	Esvg_Animated_Number v;
+	Esvg_Attribute_Type old_type;
+
+	v.base = curr->data.d;
+
+	old_type = esvg_element_attribute_type_get(thiz->parent_t);
+	esvg_element_attribute_type_set(thiz->parent_t, thiz->attribute_type);
+	ender_element_property_value_set(thiz->parent_e, thiz->prop, &v, NULL);
+	esvg_element_attribute_type_set(thiz->parent_t, old_type);
 }
 
 static Eina_Bool _esvg_animate_container_etch_to(Esvg_Animate *thiz, Etch *etch,
@@ -98,6 +118,14 @@ static Eina_Bool _esvg_animate_container_etch_to(Esvg_Animate *thiz, Etch *etch,
 		esvg_length_string_from(&thiz->to.length, c->value.to);
 		from.data.d = thiz->from.length.value;
 		to.data.d = thiz->to.length.value;
+	}
+	else if (!strcmp(name, "esvg_animated_number"))
+	{
+		dt = ETCH_DOUBLE;
+		cb = _esvg_animate_double_cb;
+
+		from.data.d = esvg_number_string_from(c->value.from, 1.0);
+		to.data.d = esvg_number_string_from(c->value.to, 1.0);
 	}
 	else
 	{
@@ -180,7 +208,10 @@ static Eina_Bool _esvg_animate_setup(Edom_Tag *t,
 	if (!p) goto done;
 
 	printf("property found!!!\n");
-	thiz->parent = parent_e;
+	thiz->parent_e = parent_e;
+	thiz->parent_t = parent_t;
+	thiz->attribute_type = actx->target.attribute_type;
+
 	/* we should only process lengths, colors, integers, booleans, etc */
 	if (!_esvg_animate_container_etch_to(thiz, etch, p, abctx))
 		goto done;

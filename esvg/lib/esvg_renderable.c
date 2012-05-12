@@ -118,7 +118,7 @@ static void _esvg_shape_enesim_state_get(Edom_Tag *t,
 
 	rctx->draw_mode = 0;
 	/* set the opacity */
-	opacity = attr->opacity * 255;
+	opacity = attr->opacity.base * 255;
 	if (attr->color_set)
 	{
 		const Esvg_Color *c = &attr->color;

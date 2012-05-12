@@ -146,7 +146,8 @@ void esvg_attribute_presentation_setup(Esvg_Attribute_Presentation *thiz)
 	thiz->stroke_width = ESVG_LENGTH_1;
 	thiz->stroke_opacity = 1.0;
 	thiz->fill_opacity = 1.0;
-	thiz->opacity = 1.0;
+	thiz->opacity.base = 1.0;
+	thiz->opacity.anim = 1.0;
 	thiz->fill_rule = ESVG_NON_ZERO;
 	thiz->fill.type = ESVG_PAINT_COLOR;
 	thiz->fill.value.color = black;
@@ -370,15 +371,16 @@ void esvg_attribute_presentation_color_unset(Esvg_Attribute_Presentation *thiz)
 	thiz->color_set = EINA_FALSE;
 }
 
-void esvg_attribute_presentation_opacity_set(Esvg_Attribute_Presentation *thiz, double opacity)
+void esvg_attribute_presentation_opacity_set(Esvg_Attribute_Presentation *thiz, Esvg_Animated_Number *opacity)
 {
-	thiz->opacity = opacity;
+	thiz->opacity = *opacity;
 	thiz->opacity_set = EINA_TRUE;
 }
 
-void esvg_attribute_presentation_opacity_unset(Esvg_Attribute_Presentation *thiz, double opacity)
+void esvg_attribute_presentation_opacity_unset(Esvg_Attribute_Presentation *thiz)
 {
-	thiz->opacity = 1.0;
+	thiz->opacity.base = 1.0;
+	thiz->opacity.anim = 1.0;
 	thiz->opacity_set = EINA_FALSE;
 }
 
