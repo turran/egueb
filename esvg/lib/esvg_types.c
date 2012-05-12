@@ -853,7 +853,7 @@ Esvg_Length ESVG_LENGTH_1 = { 1.0, ESVG_UNIT_LENGTH_PX };
 Esvg_Length ESVG_LENGTH_100_PERCENT = { 100.0, ESVG_UNIT_LENGTH_PERCENT };
 
 /* x1,y1 x2,y2 ... */
-void esvg_parser_points(const char *value, Esvg_Parser_Points_Cb cb, void *data)
+void esvg_points_string_from(const char *value, Esvg_Points_Cb cb, void *data)
 {
 	const char *tmp;
 	char *endptr;
@@ -948,67 +948,6 @@ Eina_Bool esvg_href_get(Edom_Tag **tag, Edom_Tag *rel, const char *href)
 	return EINA_TRUE;
 }
 
-Eina_Bool esvg_parser_path(const char *value, Esvg_Parser_Command_Cb cb, void *data)
-{
-	Eina_Bool ret = EINA_TRUE;
-	Eina_Bool first = EINA_TRUE;
-	char last_command = 0;
-	char *iter = (char *)value;
-
-	if (!cb) return EINA_FALSE;
-
-	ESVG_SPACE_SKIP(iter);
-	/* First char must be 'M' or 'm' */
-	if ((*iter != 'M') &&
-	    (*iter != 'm'))
-	{
-		ERR("First char not 'M' or 'm'");
-		return EINA_FALSE;
-	}
-	while (*iter)
-	{
-		Esvg_Path_Command cmd;
-		char command;
-
- 		command = *iter;
-		iter++;
-		ret = esvg_parser_command(command, &iter, &cmd);
-		if (!ret)
-		{
-			/* try with the last command */
-			iter--;
-			ret = esvg_parser_command(last_command, &iter, &cmd);
-			if (ret)
-			{
-				cb(&cmd, data);
-			}
-		}
-		else
-		{
-			/* everything went ok, update the last command */
-			last_command = command;
-			cb(&cmd, data);
-		}
-
-		if (!ret)
-		{
-			ERR("Unsupported path data instruction (%c) %s", command, iter);
-			break;
-		}
-		/* for the 'move' case the next elements should be lines */
-		if ((command == 'm' || command == 'M') && first)
-		{
-			/* the next commands should be lines */
-			if (command == 'm')
-				last_command = 'l';
-			else
-				last_command = 'L';
-		}
-		first = EINA_FALSE;
-		ESVG_SPACE_COMMA_SKIP(iter);
-	}
-	return ret;
-}
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/
@@ -1635,6 +1574,68 @@ EAPI Eina_Bool esvg_attribute_type_string_from(Esvg_Attribute_Type *type, const 
 		*type = ESVG_ATTR_AUTO;
 	else
 		ret = EINA_FALSE;
+	return ret;
+}
+
+EAPI Eina_Bool esvg_path_string_from(const char *value, Esvg_Command_Cb cb, void *data)
+{
+	Eina_Bool ret = EINA_TRUE;
+	Eina_Bool first = EINA_TRUE;
+	char last_command = 0;
+	char *iter = (char *)value;
+
+	if (!cb) return EINA_FALSE;
+
+	ESVG_SPACE_SKIP(iter);
+	/* First char must be 'M' or 'm' */
+	if ((*iter != 'M') &&
+	    (*iter != 'm'))
+	{
+		ERR("First char not 'M' or 'm'");
+		return EINA_FALSE;
+	}
+	while (*iter)
+	{
+		Esvg_Path_Command cmd;
+		char command;
+
+ 		command = *iter;
+		iter++;
+		ret = esvg_parser_command(command, &iter, &cmd);
+		if (!ret)
+		{
+			/* try with the last command */
+			iter--;
+			ret = esvg_parser_command(last_command, &iter, &cmd);
+			if (ret)
+			{
+				cb(&cmd, data);
+			}
+		}
+		else
+		{
+			/* everything went ok, update the last command */
+			last_command = command;
+			cb(&cmd, data);
+		}
+
+		if (!ret)
+		{
+			ERR("Unsupported path data instruction (%c) %s", command, iter);
+			break;
+		}
+		/* for the 'move' case the next elements should be lines */
+		if ((command == 'm' || command == 'M') && first)
+		{
+			/* the next commands should be lines */
+			if (command == 'm')
+				last_command = 'l';
+			else
+				last_command = 'L';
+		}
+		first = EINA_FALSE;
+		ESVG_SPACE_COMMA_SKIP(iter);
+	}
 	return ret;
 }
 

@@ -66,7 +66,7 @@ static Eina_Bool _esvg_polyline_attribute_set(Ender_Element *e,
 {
 	if (strcmp(key, "points") == 0)
 	{
-		esvg_parser_points(value, _esvg_polyline_points_cb, e);
+		esvg_points_string_from(value, _esvg_polyline_points_cb, e);
 	}
 
 	return EINA_TRUE;

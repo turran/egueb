@@ -98,9 +98,6 @@ Edom_Tag * esvg_parser_g_new(Edom_Parser *parser);
 /* line */
 Edom_Tag * esvg_parser_line_new(Edom_Parser *parser);
 
-/* path */
-Edom_Tag * esvg_parser_path_new(Edom_Parser *parser);
-
 /* polygon */
 Edom_Tag * esvg_parser_polygon_new(Edom_Parser *parser);
 
@@ -132,12 +129,6 @@ Edom_Tag * esvg_parser_clip_path_new(Edom_Parser *parser);
 Edom_Tag * esvg_parser_element_new(Edom_Parser *parser, Edom_Tag_Descriptor *descriptor, Esvg_Type type, Enesim_Renderer *r, void *data);
 Enesim_Renderer * esvg_parser_element_renderer_get(Edom_Tag *tag);
 void * esvg_parser_element_data_get(Edom_Tag *tag);
-
-typedef void (*Esvg_Parser_Points_Cb)(Esvg_Point *p, void *data);
-void esvg_parser_points(const char *value, Esvg_Parser_Points_Cb cb, void *data);
-
-typedef void (*Esvg_Parser_Command_Cb)(Esvg_Path_Command *cmd, void *data);
-Eina_Bool esvg_parser_path(const char *value, Esvg_Parser_Command_Cb cb, void *data);
 
 Eina_Bool esvg_uri_get(Edom_Tag **tag, Edom_Tag *rel, const char *attr);
 Eina_Bool esvg_href_get(Edom_Tag **tag, Edom_Tag *rel, const char *href);

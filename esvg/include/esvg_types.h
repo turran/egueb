@@ -370,6 +370,10 @@ static inline Eina_Bool esvg_length_is_relative(Esvg_Length *length)
 		return EINA_FALSE;
 }
 
+typedef void (*Esvg_Command_Cb)(Esvg_Path_Command *cmd, void *data);
+typedef void (*Esvg_Timing_Cb)(Esvg_Timing *t, void *data);
+typedef void (*Esvg_Points_Cb)(Esvg_Point *p, void *data);
+
 EAPI const char * esvg_type_string_to(Esvg_Type type);
 
 EAPI double esvg_number_string_from(const char *attr_val, double default_nbr);
@@ -377,22 +381,18 @@ EAPI Eina_Bool esvg_parser_gradient_units_string_from(Esvg_Gradient_Units *gu, c
 EAPI Eina_Bool esvg_parser_fill_rule_get(Esvg_Fill_Rule *rule, const char *attr);
 EAPI Eina_Bool esvg_parser_spread_method_get(Esvg_Spread_Method *smethod, const char *attr);
 EAPI Eina_Bool esvg_color_string_from(Esvg_Color *color, const char *attr_val);
-
+Eina_Bool esvg_path_string_from(const char *value, Esvg_Command_Cb cb, void *data);
 EAPI Eina_Bool esvg_transformation_string_from(Enesim_Matrix *matrix, const char *attr);
-
 EAPI Eina_Bool esvg_length_string_from(Esvg_Length *length, const char *attr_val, Esvg_Length default_length);
 EAPI Eina_Bool esvg_length_is_equal(Esvg_Length *length1, Esvg_Length *length2);
 EAPI double esvg_length_final_get(const Esvg_Length *l, double parent_length);
 EAPI Eina_Bool esvg_paint_string_from(Esvg_Paint *paint, const char *attr);
 Esvg_View_Box esvg_view_box_get(const char *attr_val);
-
 EAPI Esvg_Stroke_Line_Cap esvg_stroke_line_cap_string_from(const char *value);
 EAPI Esvg_Stroke_Line_Join esvg_stroke_line_join_string_from(const char *value);
-
 EAPI Eina_Bool esvg_attribute_type_string_from(Esvg_Attribute_Type *type, const char *value);
-
-typedef void (*Esvg_Timing_Cb)(Esvg_Timing *t, void *data);
 EAPI void esvg_timing_string_from(const char *attr, Esvg_Timing_Cb cb, void *data);
+void esvg_points_string_from(const char *value, Esvg_Points_Cb cb, void *data);
 
 EAPI Eina_Bool esvg_type_is_paint_server(Esvg_Type type);
 EAPI Eina_Bool esvg_type_is_shape(Esvg_Type type);

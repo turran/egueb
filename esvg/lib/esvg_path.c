@@ -65,7 +65,7 @@ static Eina_Bool _esvg_path_attribute_set(Ender_Element *e, const char *key, con
 {
 	if (strcmp(key, "d") == 0)
 	{
-		if (!esvg_parser_path(value, _esvg_path_command_cb, e))
+		if (!esvg_path_string_from(value, _esvg_path_command_cb, e))
 			return EINA_FALSE;
 	}
 
