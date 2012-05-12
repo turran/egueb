@@ -75,6 +75,7 @@ static void _register_enders(void *data)
 	esvg_animation_init();
 	esvg_animate_base_init();
 	esvg_animate_init();
+	esvg_animate_transform_init();
 }
 
 /* FIXME the constructor should be done per namespace, not generic */

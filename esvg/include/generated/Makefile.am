@@ -4,6 +4,7 @@ GENERATED_FILES = \
 esvg_generated_a.c \
 esvg_generated_animate.c \
 esvg_generated_animate_base.c \
+esvg_generated_animate_transform.c \
 esvg_generated_animation.c \
 esvg_generated_circle.c \
 esvg_generated_clip_path.c \

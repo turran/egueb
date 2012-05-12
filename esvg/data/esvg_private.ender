@@ -119,6 +119,10 @@ namespace "esvg" {
 
 	};
 
+	class "animate_transform" : "animate_base" {
+
+	};
+
 	class "style" : "element" {
 
 	};
