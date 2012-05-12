@@ -840,6 +840,9 @@ static Eina_Bool esvg_parser_command(char command, char **value,
 	}
 	return ret;
 }
+/*----------------------------------------------------------------------------*
+ *                         Timing related functions                           *
+ *----------------------------------------------------------------------------*/
 
 
 /*============================================================================*
@@ -1633,5 +1636,10 @@ EAPI Eina_Bool esvg_attribute_type_string_from(Esvg_Attribute_Type *type, const 
 	else
 		ret = EINA_FALSE;
 	return ret;
+}
+
+EAPI void esvg_timing_string_from(const char *attr, Esvg_Timing_Cb cb, void *data)
+{
+
 }
 

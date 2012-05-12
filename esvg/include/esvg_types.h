@@ -305,6 +305,46 @@ typedef enum _Esvg_Fill_Rule
 	ESVG_EVEN_ODD
 } Esvg_Fill_Rule;
 
+typedef struct _Esvg_Timing_Offset
+{
+	double offset;
+} Esvg_Timing_Offset;
+
+typedef struct _Esvg_Timing_Event
+{
+	char *id;
+	char *event;
+	double offset;
+} Esvg_Timing_Event;
+
+typedef struct _Esvg_Timing_Repeat
+{
+	char *id;
+	double offset;
+} Esvg_Timing_Repeat;
+
+typedef enum _Esvg_Timing_Type
+{
+	ESVG_TIMING_OFFSET,
+	ESVG_TIMING_EVENT,
+	ESVG_TIMING_REPEAT,
+	ESVG_TIMING_TYPES,
+} Esvg_Timing_Type;
+
+typedef struct _Esvg_Timing
+{
+	Esvg_Timing_Type type;
+	union {
+		Esvg_Timing_Offset offset;
+		Esvg_Timing_Event event;
+		Esvg_Timing_Repeat repeat;
+		/*
+		Esvg_Timing_Access_Key access_key;
+		Esvg_Timing_Wall_Clock wall_clock;
+		*/
+	} data;
+} Esvg_Timing;
+
 typedef void * (*Esvg_Uri_Local_Get)(const char *name, void *data);
 typedef void * (*Esvg_Uri_Absolute_Get)(const char *name, void *data);
 
@@ -351,6 +391,8 @@ EAPI Esvg_Stroke_Line_Join esvg_stroke_line_join_string_from(const char *value);
 
 EAPI Eina_Bool esvg_attribute_type_string_from(Esvg_Attribute_Type *type, const char *value);
 
+typedef void (*Esvg_Timing_Cb)(Esvg_Timing *t, void *data);
+EAPI void esvg_timing_string_from(const char *attr, Esvg_Timing_Cb cb, void *data);
 
 EAPI Eina_Bool esvg_type_is_paint_server(Esvg_Type type);
 EAPI Eina_Bool esvg_type_is_shape(Esvg_Type type);

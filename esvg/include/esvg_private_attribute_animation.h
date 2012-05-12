@@ -11,8 +11,15 @@ typedef struct _Esvg_Attribute_Animation_Target
 	char *attribute_name;
 } Esvg_Attribute_Animation_Target;
 
+typedef struct _Esvg_Animation_Timing
+{
+	Eina_List *timings;
+} Esvg_Animation_Timing;
+
 typedef struct _Esvg_Attribute_Animation_Timing
 {
+	Eina_List *begin;
+	Eina_List *end;
 	/* begin <begin_value_list>
 	 * dur <clock> | "media" | "indefinite"
 	 * end <end_value_list>
@@ -33,8 +40,6 @@ typedef struct _Esvg_Attribute_Animation_Value
 	 * values = <list>
 	 * keyTimes = <list>
 	 * keySplines = <list>
-	 * from = value
-	 * to = value
 	 * by = value
 	 */
 } Esvg_Attribute_Animation_Value;
