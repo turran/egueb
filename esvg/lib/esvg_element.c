@@ -619,7 +619,7 @@ static Eina_Bool _esvg_element_attribute_set(Edom_Tag *t, const char *key, const
 	{
 		Esvg_Length stroke_width;
 
-		esvg_length_string_from(&stroke_width, value, ESVG_LENGTH_1);
+		esvg_length_string_from(&stroke_width, value);
 		esvg_element_stroke_width_set(thiz->e, &stroke_width);
 	}
 	else if (strcmp(key, "stroke-opacity") == 0)

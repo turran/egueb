@@ -109,28 +109,28 @@ static Eina_Bool _esvg_use_attribute_set(Ender_Element *e,
 	{
 		Esvg_Coord x;
 
-		esvg_length_string_from(&x, value, ESVG_COORD_0);
+		esvg_length_string_from(&x, value);
 		esvg_use_x_set(e, &x);
 	}
 	else if (strcmp(key, "y") == 0)
 	{
 		Esvg_Coord y;
 
-		esvg_length_string_from(&y, value, ESVG_COORD_0);
+		esvg_length_string_from(&y, value);
 		esvg_use_y_set(e, &y);
 	}
 	else if (strcmp(key, "width") == 0)
 	{
 		Esvg_Length width;
 
-		esvg_length_string_from(&width, value, ESVG_LENGTH_0);
+		esvg_length_string_from(&width, value);
 		esvg_use_width_set(e, &width);
 	}
 	else if (strcmp(key, "height") == 0)
 	{
 		Esvg_Length height;
 
-		esvg_length_string_from(&height, value, ESVG_LENGTH_0);
+		esvg_length_string_from(&height, value);
 		esvg_use_height_set(e, &height);
 	}
 	else if (strcmp(key, "xlink:href") == 0)

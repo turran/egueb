@@ -94,8 +94,8 @@ static Eina_Bool _esvg_animate_container_etch_to(Esvg_Animate *thiz, Etch *etch,
 		dt = ETCH_DOUBLE;
 		cb = _esvg_animate_length_cb;
 
-		esvg_length_string_from(&thiz->from.length, c->value.from, ESVG_COORD_0);
-		esvg_length_string_from(&thiz->to.length, c->value.to, ESVG_COORD_0);
+		esvg_length_string_from(&thiz->from.length, c->value.from);
+		esvg_length_string_from(&thiz->to.length, c->value.to);
 		from.data.d = thiz->from.length.value;
 		to.data.d = thiz->to.length.value;
 	}

@@ -76,35 +76,35 @@ static Eina_Bool _esvg_radial_gradient_attribute_set(Ender_Element *e,
 	{
 		Esvg_Coord cx;
 
-		esvg_length_string_from(&cx, value, ESVG_COORD_0);
+		esvg_length_string_from(&cx, value);
 		esvg_radial_gradient_cx_set(e, &cx);
 	}
 	else if (strcmp(key, "cy") == 0)
 	{
 		Esvg_Coord cy;
 
-		esvg_length_string_from(&cy, value, ESVG_COORD_0);
+		esvg_length_string_from(&cy, value);
 		esvg_radial_gradient_cy_set(e, &cy);
 	}
 	else if (strcmp(key, "r") == 0)
 	{
 		Esvg_Length rad;
 
-		esvg_length_string_from(&rad, value, ESVG_LENGTH_0);
+		esvg_length_string_from(&rad, value);
 		esvg_radial_gradient_r_set(e, &rad);
 	}
 	else if (strcmp(key, "fx") == 0)
 	{
 		Esvg_Length fx;
 
-		esvg_length_string_from(&fx, value, ESVG_LENGTH_0);
+		esvg_length_string_from(&fx, value);
 		esvg_radial_gradient_fx_set(e, &fx);
 	}
 	else if (strcmp(key, "fy") == 0)
 	{
 		Esvg_Length fy;
 
-		esvg_length_string_from(&fy, value, ESVG_LENGTH_0);
+		esvg_length_string_from(&fy, value);
 		esvg_radial_gradient_fy_set(e, &fy);
 	}
 	return EINA_TRUE;

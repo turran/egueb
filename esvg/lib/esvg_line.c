@@ -72,28 +72,28 @@ static Eina_Bool _esvg_line_attribute_set(Ender_Element *e,
 	{
 		Esvg_Coord x;
 
-		esvg_length_string_from(&x, value, ESVG_COORD_0);
+		esvg_length_string_from(&x, value);
 		esvg_line_x1_set(e, &x);
 	}
 	else if (strcmp(key, "y1") == 0)
 	{
 		Esvg_Coord y;
 
-		esvg_length_string_from(&y, value, ESVG_COORD_0);
+		esvg_length_string_from(&y, value);
 		esvg_line_y1_set(e, &y);
 	}
 	else if (strcmp(key, "x2") == 0)
 	{
 		Esvg_Coord x;
 
-		esvg_length_string_from(&x, value, ESVG_COORD_0);
+		esvg_length_string_from(&x, value);
 		esvg_line_x2_set(e, &x);
 	}
 	else if (strcmp(key, "y2") == 0)
 	{
 		Esvg_Coord y;
 
-		esvg_length_string_from(&y, value, ESVG_COORD_0);
+		esvg_length_string_from(&y, value);
 		esvg_line_y2_set(e, &y);
 	}
 

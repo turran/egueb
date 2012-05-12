@@ -77,42 +77,42 @@ static Eina_Bool _esvg_rect_attribute_set(Ender_Element *e,
 	{
 		Esvg_Coord x;
 
-		esvg_length_string_from(&x, value, ESVG_COORD_0);
+		esvg_length_string_from(&x, value);
 		esvg_rect_x_set(e, &x);
 	}
 	else if (strcmp(key, "y") == 0)
 	{
 		Esvg_Coord y;
 
-		esvg_length_string_from(&y, value, ESVG_COORD_0);
+		esvg_length_string_from(&y, value);
 		esvg_rect_y_set(e, &y);
 	}
 	else if (strcmp(key, "rx") == 0)
 	{
 		Esvg_Coord rx;
 
-		esvg_length_string_from(&rx, value, ESVG_COORD_0);
+		esvg_length_string_from(&rx, value);
 		esvg_rect_rx_set(e, &rx);
 	}
 	else if (strcmp(key, "ry") == 0)
 	{
 		Esvg_Coord ry;
 
-		esvg_length_string_from(&ry, value, ESVG_COORD_0);
+		esvg_length_string_from(&ry, value);
 		esvg_rect_ry_set(e, &ry);
 	}
 	else if (strcmp(key, "width") == 0)
 	{
 		Esvg_Length width;
 
-		esvg_length_string_from(&width, value, ESVG_LENGTH_0);
+		esvg_length_string_from(&width, value);
 		esvg_rect_width_set(e, &width);
 	}
 	else if (strcmp(key, "height") == 0)
 	{
 		Esvg_Length height;
 
-		esvg_length_string_from(&height, value, ESVG_LENGTH_0);
+		esvg_length_string_from(&height, value);
 		esvg_rect_height_set(e, &height);
 	}
 

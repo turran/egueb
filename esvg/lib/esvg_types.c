@@ -852,29 +852,6 @@ Esvg_Length ESVG_LENGTH_0 = { 0.0, ESVG_UNIT_LENGTH_PX };
 Esvg_Length ESVG_LENGTH_1 = { 1.0, ESVG_UNIT_LENGTH_PX };
 Esvg_Length ESVG_LENGTH_100_PERCENT = { 100.0, ESVG_UNIT_LENGTH_PERCENT };
 
-/* x1,y1 x2,y2 ... */
-void esvg_points_string_from(const char *value, Esvg_Points_Cb cb, void *data)
-{
-	const char *tmp;
-	char *endptr;
-
-	ESVG_SPACE_SKIP(value);
-	tmp = value;
-	while (*tmp)
-	{
-		Esvg_Point p;
-
-		p.x = strtod(tmp, &endptr);
-		tmp = endptr;
-		ESVG_SPACE_COMMA_SKIP(tmp);
-		p.y = strtod(tmp, &endptr);
-		tmp = endptr;
-		ESVG_SPACE_COMMA_SKIP(tmp);
-
-		cb(&p, data);
-	}
-}
-
 /* FIXME: fix parsing with ' ' and ',' (do like rgb(c,c,c)) */
 Esvg_View_Box esvg_view_box_get(const char *attr_val)
 {
@@ -975,12 +952,11 @@ EAPI double esvg_number_string_from(const char *attr_val, double default_nbr)
 	return default_nbr;
 }
 
-EAPI Eina_Bool esvg_length_string_from(Esvg_Length *length, const char *attr_val, Esvg_Length default_length)
+EAPI Eina_Bool esvg_length_string_from(Esvg_Length *length, const char *attr_val)
 {
 	char *endptr;
 	double val;
 
-	*length = default_length;
 	if (!attr_val || !*attr_val)
 		return EINA_FALSE;
 
@@ -1638,6 +1614,30 @@ EAPI Eina_Bool esvg_path_string_from(const char *value, Esvg_Command_Cb cb, void
 	}
 	return ret;
 }
+
+/* x1,y1 x2,y2 ... */
+EAPI void esvg_points_string_from(const char *value, Esvg_Points_Cb cb, void *data)
+{
+	const char *tmp;
+	char *endptr;
+
+	ESVG_SPACE_SKIP(value);
+	tmp = value;
+	while (*tmp)
+	{
+		Esvg_Point p;
+
+		p.x = strtod(tmp, &endptr);
+		tmp = endptr;
+		ESVG_SPACE_COMMA_SKIP(tmp);
+		p.y = strtod(tmp, &endptr);
+		tmp = endptr;
+		ESVG_SPACE_COMMA_SKIP(tmp);
+
+		cb(&p, data);
+	}
+}
+
 
 EAPI void esvg_timing_string_from(const char *attr, Esvg_Timing_Cb cb, void *data)
 {

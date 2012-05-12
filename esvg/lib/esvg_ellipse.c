@@ -72,28 +72,28 @@ static Eina_Bool _esvg_ellipse_attribute_set(Ender_Element *e,
 	{
 		Esvg_Coord cx;
 
-		esvg_length_string_from(&cx, value, ESVG_COORD_0);
+		esvg_length_string_from(&cx, value);
 		esvg_ellipse_cx_set(e, &cx);
 	}
 	else if (strcmp(key, "cy") == 0)
 	{
 		Esvg_Coord cy;
 
-		esvg_length_string_from(&cy, value, ESVG_COORD_0);
+		esvg_length_string_from(&cy, value);
 		esvg_ellipse_cy_set(e, &cy);
 	}
 	else if (strcmp(key, "rx") == 0)
 	{
 		Esvg_Length rx;
 
-		esvg_length_string_from(&rx, value, ESVG_LENGTH_0);
+		esvg_length_string_from(&rx, value);
 		esvg_ellipse_rx_set(e, &rx);
 	}
 	else if (strcmp(key, "ry") == 0)
 	{
 		Esvg_Length ry;
 
-		esvg_length_string_from(&ry, value, ESVG_LENGTH_0);
+		esvg_length_string_from(&ry, value);
 		esvg_ellipse_ry_set(e, &ry);
 	}
 

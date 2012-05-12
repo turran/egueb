@@ -67,7 +67,7 @@ static Eina_Bool _esvg_stop_attribute_set(Ender_Element *e,
 	{
 		Esvg_Length offset;
 
-		esvg_length_string_from(&offset, value, ESVG_LENGTH_0);
+		esvg_length_string_from(&offset, value);
 		esvg_stop_offset_set(e, &offset);
 	}
 	/*
