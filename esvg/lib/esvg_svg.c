@@ -74,6 +74,8 @@ typedef struct _Esvg_Svg
 	Eina_List *elements_changed;
 	Enesim_Renderer *clipper;
 	Enesim_Renderer *compound;
+	/* FIXME we use a background because of the blend/fill thing on the redraws */
+	Enesim_Renderer *background;
 	Eina_Hash *ids; /* the ids found */
 	/* animation */
 	Etch *etch;
@@ -414,6 +416,7 @@ static Eina_Bool _esvg_svg_child_add(Edom_Tag *t, Edom_Tag *child)
 	{
 		thiz->renderable_tree_changed = EINA_TRUE;
 		enesim_renderer_compound_layer_clear(thiz->compound);
+		enesim_renderer_compound_layer_add(thiz->compound, thiz->background);
 	}
 	_esvg_svg_child_initialize(t, child, thiz);
 
@@ -434,6 +437,7 @@ static Eina_Bool _esvg_svg_child_remove(Edom_Tag *t, Edom_Tag *child)
 	{
 		thiz->renderable_tree_changed = EINA_TRUE;
 		enesim_renderer_compound_layer_clear(thiz->compound);
+		enesim_renderer_compound_layer_add(thiz->compound, thiz->background);
 	}
 	_esvg_svg_child_deinitialize(t, child, thiz);
 
@@ -580,8 +584,14 @@ static Edom_Tag * _esvg_svg_new(void)
 	if (!thiz) return NULL;
 
 	r = enesim_renderer_compound_new();
-	enesim_renderer_rop_set(r, ENESIM_BLEND);
+	enesim_renderer_rop_set(r, ENESIM_FILL);
 	thiz->compound = r;
+
+	r = enesim_renderer_background_new();
+	enesim_renderer_rop_set(r, ENESIM_FILL);
+	enesim_renderer_background_color_set(r, 0x00000000);
+	enesim_renderer_compound_layer_add(thiz->compound, r);
+	thiz->background = r;
 
 	r = enesim_renderer_clipper_new();
 	enesim_renderer_clipper_content_set(r, thiz->compound);
