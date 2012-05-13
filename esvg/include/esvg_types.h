@@ -351,6 +351,21 @@ typedef struct _Esvg_Timing
 	} data;
 } Esvg_Timing;
 
+typedef enum _Esvg_Duration_Type
+{
+	ESVG_DURATION_TYPE_CLOCK,
+	ESVG_DURATION_TYPE_MEDIA,
+	ESVG_DURATION_TYPE_INDEFINITE,
+} Esvg_Duration_Type;
+
+typedef union _Esvg_Duration
+{
+	Esvg_Duration_Type type;
+	struct {
+		int64_t clock;
+	} data;
+} Esvg_Duration;
+
 typedef enum _Esvg_Animate_Transform_Type
 {
 	ESVG_ANIMATE_TRANSFORM_TYPE_TRANSLATE,
@@ -359,7 +374,6 @@ typedef enum _Esvg_Animate_Transform_Type
 	ESVG_ANIMATE_TRANSFORM_TYPE_SKEWX,
 	ESVG_ANIMATE_TRANSFORM_TYPE_SKEWY
 } Esvg_Animate_Transform_Type;
-
 
 typedef void * (*Esvg_Uri_Local_Get)(const char *name, void *data);
 typedef void * (*Esvg_Uri_Absolute_Get)(const char *name, void *data);
