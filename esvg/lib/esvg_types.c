@@ -1679,3 +1679,23 @@ EAPI Eina_Bool esvg_list_string_from(const char *attr, char sep, Esvg_List_Cb cb
 	}
 	return EINA_TRUE;
 }
+
+/* The clock is defined in miliseconds? nanoseconds? */
+EAPI Eina_Bool esvg_clock_string_from(int64_t *clock, const char *attr)
+{
+/*
+Clock-val         ::= Full-clock-val | Partial-clock-val 
+                      | Timecount-val
+Full-clock-val    ::= Hours ":" Minutes ":" Seconds ("." Fraction)?
+Partial-clock-val ::= Minutes ":" Seconds ("." Fraction)?
+Timecount-val     ::= Timecount ("." Fraction)? (Metric)?
+Metric            ::= "h" | "min" | "s" | "ms"
+Hours             ::= DIGIT+; any positive number
+Minutes           ::= 2DIGIT; range from 00 to 59
+Seconds           ::= 2DIGIT; range from 00 to 59
+Fraction          ::= DIGIT+
+Timecount         ::= DIGIT+
+2DIGIT            ::= DIGIT DIGIT
+DIGIT             ::= [0-9]*/
+	return EINA_TRUE;
+}

@@ -418,6 +418,7 @@ EAPI void esvg_timing_string_from(const char *attr, Esvg_Timing_Cb cb, void *dat
 EAPI void esvg_points_string_from(const char *value, Esvg_Points_Cb cb, void *data);
 EAPI Eina_Bool esvg_animate_transform_type_string_from(Esvg_Animate_Transform_Type *type, const char *s);
 EAPI Eina_Bool esvg_list_string_from(const char *attr, char sep, Esvg_List_Cb cb, void *data);
+EAPI Eina_Bool esvg_clock_string_from(int64_t *clock, const char *attr);
 
 EAPI Eina_Bool esvg_type_is_paint_server(Esvg_Type type);
 EAPI Eina_Bool esvg_type_is_shape(Esvg_Type type);
