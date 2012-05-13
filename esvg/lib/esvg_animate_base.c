@@ -339,5 +339,3 @@ EAPI void esvg_animate_base_values_set(Ender_Element *e, const char *v)
 EAPI void esvg_animate_base_values_get(Ender_Element *e, const char **v)
 {
 }
-
-

@@ -45,6 +45,7 @@
 
 static Ender_Property *ESVG_ANIMATION_ATTRIBUTE_NAME;
 static Ender_Property *ESVG_ANIMATION_ATTRIBUTE_TYPE;
+static Ender_Property *ESVG_ANIMATION_DUR;
 
 typedef struct _Esvg_Animation_Descriptor_Internal
 {
@@ -118,6 +119,31 @@ static void _esvg_animation_attribute_type_get(Edom_Tag *t, Esvg_Attribute_Type 
 	thiz = _esvg_animation_get(t);
 	*attribute_type = thiz->current.target.attribute_type;
 }
+
+static void _esvg_animation_dur_set(Edom_Tag *t, const char *dur)
+{
+	Esvg_Animation *thiz;
+
+	thiz = _esvg_animation_get(t);
+	if (thiz->current.timing.dur)
+	{
+		free(thiz->current.timing.dur);
+		thiz->current.timing.dur = NULL;
+	}
+	if (dur)
+		thiz->current.timing.dur = strdup(dur);
+	thiz->current.changed = EINA_TRUE;
+}
+
+static void _esvg_animation_dur_get(Edom_Tag *t, const char **dur)
+{
+	Esvg_Animation *thiz;
+
+	if (!dur) return;
+	thiz = _esvg_animation_get(t);
+	*dur = thiz->current.timing.dur;
+}
+
 /*----------------------------------------------------------------------------*
  *                         The Esvg Element interface                         *
  *----------------------------------------------------------------------------*/
@@ -137,6 +163,10 @@ static Eina_Bool _esvg_animation_attribute_set(Ender_Element *e,
 			esvg_animation_attribute_type_set(e, type);
 	}
 	/* timing attributes */
+	else if (!strcmp(key, "dur"))
+	{
+		esvg_animation_dur_set(e, value);
+	}
 	else
 	{
 		Esvg_Animation *thiz;
@@ -189,6 +219,7 @@ static Esvg_Element_Setup_Return _esvg_animation_setup(Edom_Tag *t,
 /* The ender wrapper */
 #define _esvg_animation_attribute_name_is_set NULL
 #define _esvg_animation_attribute_type_is_set NULL
+#define _esvg_animation_dur_is_set NULL
 #include "generated/esvg_generated_animation.c"
 
 Eina_Bool esvg_is_animation_internal(Edom_Tag *t)
@@ -286,6 +317,23 @@ EAPI void esvg_animation_attribute_type_set(Ender_Element *e, Esvg_Attribute_Typ
  * FIXME: To be fixed
  */
 EAPI void esvg_animation_attribute_type_get(Ender_Element *e, Esvg_Attribute_Type *type)
+{
+}
+
+/**
+ * To be documented
+ * FIXME: To be fixed
+ */
+EAPI void esvg_animation_dur_set(Ender_Element *e, const char *v)
+{
+	ender_element_property_value_set(e, ESVG_ANIMATION_DUR, v, NULL);
+}
+
+/**
+ * To be documented
+ * FIXME: To be fixed
+ */
+EAPI void esvg_animation_dur_get(Ender_Element *e, const char **v)
 {
 }
 

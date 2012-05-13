@@ -20,6 +20,7 @@ typedef struct _Esvg_Attribute_Animation_Timing
 {
 	Eina_List *begin;
 	Eina_List *end;
+	char *dur;
 	/* begin <begin_value_list>
 	 * dur <clock> | "media" | "indefinite"
 	 * end <end_value_list>
