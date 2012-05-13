@@ -38,8 +38,8 @@ typedef struct _Esvg_Attribute_Animation_Value
 	char *from;
 	char *to;
 	char *values;
-	/* calcMode = "discrete | linear | paced | spline"
-	 * keyTimes = <list>
+	Esvg_Calc_Mode calc_mode;
+	/* keyTimes = <list>
 	 * keySplines = <list>
 	 * by = value
 	 */

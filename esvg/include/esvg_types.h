@@ -351,6 +351,15 @@ typedef struct _Esvg_Timing
 	} data;
 } Esvg_Timing;
 
+typedef enum _Esvg_Calc_Mode
+{
+	ESVG_CALC_MODE_DISCRETE,
+	ESVG_CALC_MODE_LINEAR,
+	ESVG_CALC_MODE_PACED,
+	ESVG_CALC_MODE_SPLINE,
+	ESVG_CALC_MODES,
+} Esvg_Calc_Mode;
+
 typedef enum _Esvg_Duration_Type
 {
 	ESVG_DURATION_TYPE_CLOCK,
@@ -437,5 +446,6 @@ EAPI Eina_Bool esvg_clock_string_from(int64_t *clock, const char *attr);
 EAPI Eina_Bool esvg_type_is_paint_server(Esvg_Type type);
 EAPI Eina_Bool esvg_type_is_shape(Esvg_Type type);
 EAPI Eina_Bool esvg_type_is_renderable(Esvg_Type type);
+EAPI Eina_Bool esvg_calc_mode_string_from(Esvg_Calc_Mode *c, const char *attr);
 
 #endif

@@ -45,6 +45,7 @@
 static Ender_Property *ESVG_ANIMATE_BASE_TO;
 static Ender_Property *ESVG_ANIMATE_BASE_FROM;
 static Ender_Property *ESVG_ANIMATE_BASE_VALUES;
+static Ender_Property *ESVG_ANIMATE_BASE_CALC_MODE;
 
 typedef struct _Esvg_Animate_Base_Descriptor_Internal
 {
@@ -148,6 +149,24 @@ static void _esvg_animate_base_values_get(Edom_Tag *t, const char **values)
 	thiz = _esvg_animate_base_get(t);
 	*values = thiz->current.value.values;
 }
+
+static void _esvg_animate_base_calc_mode_set(Edom_Tag *t, Esvg_Calc_Mode calc_mode)
+{
+	Esvg_Animate_Base *thiz;
+
+	thiz = _esvg_animate_base_get(t);
+	thiz->current.value.calc_mode = calc_mode;
+	thiz->current.changed = EINA_TRUE;
+}
+
+static void _esvg_animate_base_calc_mode_get(Edom_Tag *t, Esvg_Calc_Mode *calc_mode)
+{
+	Esvg_Animate_Base *thiz;
+
+	if (!calc_mode) return;
+	thiz = _esvg_animate_base_get(t);
+	*calc_mode = thiz->current.value.calc_mode;
+}
 /*----------------------------------------------------------------------------*
  *                         The Esvg Element interface                         *
  *----------------------------------------------------------------------------*/
@@ -160,6 +179,10 @@ static Eina_Bool _esvg_animate_base_attribute_set(Ender_Element *e,
 	 */
 	if (strcmp(key, "calcMode") == 0)
 	{
+		Esvg_Calc_Mode cm;
+
+		esvg_calc_mode_string_from(&cm, value);
+		esvg_animate_base_calc_mode_set(e, cm);
 	}
 	else if (strcmp(key, "values") == 0)
 	{
@@ -224,6 +247,7 @@ static Eina_Bool _esvg_animate_base_setup(Edom_Tag *t,
 #define _esvg_animate_base_to_is_set NULL
 #define _esvg_animate_base_from_is_set NULL
 #define _esvg_animate_base_values_is_set NULL
+#define _esvg_animate_base_calc_mode_is_set NULL
 #include "generated/esvg_generated_animate_base.c"
 
 Eina_Bool esvg_is_animate_base_internal(Edom_Tag *t)
@@ -337,5 +361,22 @@ EAPI void esvg_animate_base_values_set(Ender_Element *e, const char *v)
  * FIXME: To be fixed
  */
 EAPI void esvg_animate_base_values_get(Ender_Element *e, const char **v)
+{
+}
+
+/**
+ * To be documented
+ * FIXME: To be fixed
+ */
+EAPI void esvg_animate_base_calc_mode_set(Ender_Element *e, Esvg_Calc_Mode calc_mode)
+{
+	ender_element_property_value_set(e, ESVG_ANIMATE_BASE_CALC_MODE, calc_mode, NULL);
+}
+
+/**
+ * To be documented
+ * FIXME: To be fixed
+ */
+EAPI void esvg_animate_base_calc_mode_get(Ender_Element *e, Esvg_Calc_Mode *calc_mode)
 {
 }

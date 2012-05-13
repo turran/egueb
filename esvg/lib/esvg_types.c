@@ -1699,3 +1699,20 @@ Timecount         ::= DIGIT+
 DIGIT             ::= [0-9]*/
 	return EINA_TRUE;
 }
+
+EAPI Eina_Bool esvg_calc_mode_string_from(Esvg_Calc_Mode *c, const char *attr)
+{
+	Eina_Bool ret = EINA_TRUE;
+
+	if (!strcmp(attr, "discrete"))
+		*c = ESVG_CALC_MODE_DISCRETE;
+	else if (!strcmp(attr, "linear"))
+		*c = ESVG_CALC_MODE_LINEAR;
+	else if (!strcmp(attr, "paced"))
+		*c = ESVG_CALC_MODE_PACED;
+	else if (!strcmp(attr, "spline"))
+		*c = ESVG_CALC_MODE_SPLINE;
+	else
+		ret = EINA_FALSE;
+	return ret;
+}

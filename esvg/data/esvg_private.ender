@@ -121,6 +121,7 @@ namespace "esvg" {
 		string "from";
 		string "to";
 		string "values";
+		int "calc_mode";
 	};
 
 	class "animate" : "animate_base" {
