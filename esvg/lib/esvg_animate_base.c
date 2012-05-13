@@ -27,6 +27,7 @@
 #include "esvg_private_animation.h"
 #include "esvg_private_animate_base.h"
 
+#include "esvg_animate_base.h"
 /*
  * This file handles the common attribute handling for the
  * 'animate_base value attributes'. The elements that inherit
@@ -43,6 +44,7 @@
 
 static Ender_Property *ESVG_ANIMATE_BASE_TO;
 static Ender_Property *ESVG_ANIMATE_BASE_FROM;
+static Ender_Property *ESVG_ANIMATE_BASE_VALUES;
 
 typedef struct _Esvg_Animate_Base_Descriptor_Internal
 {
@@ -122,6 +124,30 @@ static void _esvg_animate_base_from_get(Edom_Tag *t, const char **from)
 	thiz = _esvg_animate_base_get(t);
 	*from = thiz->current.value.from;
 }
+
+static void _esvg_animate_base_values_set(Edom_Tag *t, const char *values)
+{
+	Esvg_Animate_Base *thiz;
+
+	thiz = _esvg_animate_base_get(t);
+	if (thiz->current.value.values)
+	{
+		free(thiz->current.value.values);
+		thiz->current.value.values = NULL;
+	}
+	if (values)
+		thiz->current.value.values = strdup(values);
+	thiz->current.changed = EINA_TRUE;
+}
+
+static void _esvg_animate_base_values_get(Edom_Tag *t, const char **values)
+{
+	Esvg_Animate_Base *thiz;
+
+	if (!values) return;
+	thiz = _esvg_animate_base_get(t);
+	*values = thiz->current.value.values;
+}
 /*----------------------------------------------------------------------------*
  *                         The Esvg Element interface                         *
  *----------------------------------------------------------------------------*/
@@ -137,6 +163,7 @@ static Eina_Bool _esvg_animate_base_attribute_set(Ender_Element *e,
 	}
 	else if (strcmp(key, "values") == 0)
 	{
+		esvg_animate_base_values_set(e, value);
 	}
 	else if (strcmp(key, "keyTimes") == 0)
 	{
@@ -196,6 +223,7 @@ static Eina_Bool _esvg_animate_base_setup(Edom_Tag *t,
 /* The ender wrapper */
 #define _esvg_animate_base_to_is_set NULL
 #define _esvg_animate_base_from_is_set NULL
+#define _esvg_animate_base_values_is_set NULL
 #include "generated/esvg_generated_animate_base.c"
 
 Eina_Bool esvg_is_animate_base_internal(Edom_Tag *t)
@@ -295,5 +323,21 @@ EAPI void esvg_animate_base_from_get(Ender_Element *e, const char **v)
 {
 }
 
+/**
+ * To be documented
+ * FIXME: To be fixed
+ */
+EAPI void esvg_animate_base_values_set(Ender_Element *e, const char *v)
+{
+	ender_element_property_value_set(e, ESVG_ANIMATE_BASE_VALUES, v, NULL);
+}
+
+/**
+ * To be documented
+ * FIXME: To be fixed
+ */
+EAPI void esvg_animate_base_values_get(Ender_Element *e, const char **v)
+{
+}
 
 

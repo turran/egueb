@@ -118,6 +118,7 @@ namespace "esvg" {
 	abstract "animate_base" : "animation" {
 		string "from";
 		string "to";
+		string "values";
 	};
 
 	class "animate" : "animate_base" {

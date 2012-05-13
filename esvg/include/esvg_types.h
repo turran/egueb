@@ -395,6 +395,7 @@ static void esvg_length_set(Esvg_Length *length, double value, Esvg_Unit_Length 
 typedef void (*Esvg_Command_Cb)(Esvg_Path_Command *cmd, void *data);
 typedef void (*Esvg_Timing_Cb)(Esvg_Timing *t, void *data);
 typedef void (*Esvg_Points_Cb)(Esvg_Point *p, void *data);
+typedef void (*Esvg_List_Cb)(const char *item, void *data);
 
 EAPI const char * esvg_type_string_to(Esvg_Type type);
 
@@ -416,6 +417,7 @@ EAPI Eina_Bool esvg_attribute_type_string_from(Esvg_Attribute_Type *type, const 
 EAPI void esvg_timing_string_from(const char *attr, Esvg_Timing_Cb cb, void *data);
 EAPI void esvg_points_string_from(const char *value, Esvg_Points_Cb cb, void *data);
 EAPI Eina_Bool esvg_animate_transform_type_string_from(Esvg_Animate_Transform_Type *type, const char *s);
+EAPI Eina_Bool esvg_list_string_from(const char *attr, char sep, Esvg_List_Cb cb, void *data);
 
 EAPI Eina_Bool esvg_type_is_paint_server(Esvg_Type type);
 EAPI Eina_Bool esvg_type_is_shape(Esvg_Type type);

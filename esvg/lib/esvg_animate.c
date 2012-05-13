@@ -64,6 +64,11 @@ static Esvg_Animate * _esvg_animate_get(Edom_Tag *t)
 /*----------------------------------------------------------------------------*
  *                         The Etch animator callbacks                        *
  *----------------------------------------------------------------------------*/
+static void _esvg_animate_length_values_cb(const char *v, void *data)
+{
+	printf("found %s\n", v);
+}
+
 static void _esvg_animate_length_cb(const Etch_Data *curr,
 		const Etch_Data *prev, void *data)
 {
@@ -118,6 +123,12 @@ static Eina_Bool _esvg_animate_container_etch_to(Esvg_Animate *thiz, Etch *etch,
 		esvg_length_string_from(&thiz->to.length, c->value.to);
 		from.data.d = thiz->from.length.value;
 		to.data.d = thiz->to.length.value;
+
+		if (c->value.values)
+		{
+			esvg_list_string_from(c->value.values, ';', _esvg_animate_length_values_cb, NULL);
+		}
+
 	}
 	else if (!strcmp(name, "esvg_animated_number"))
 	{
@@ -133,6 +144,14 @@ static Eina_Bool _esvg_animate_container_etch_to(Esvg_Animate *thiz, Etch *etch,
 	}
 
 	a = etch_animation_add(etch, dt, cb, NULL, NULL, thiz);
+	/* TODO when having a from/to, just add two keyframes */
+	/* TODO when having a values, add as many keyframes as values are */
+	/* TODO first parse the values */
+	/* TODO now assign the value to each keyframe */
+	/* TODO now assign the keytimes to each keyframe which goes from 0 to 1 (relative) so we need the duration attribute to be present */
+	/* TODO now assign the keysplines in case they are defined */
+
+
 	/* FIXME for now we add two keyframes */
 	/* second keyframe */
 	kf = etch_animation_keyframe_add(a);

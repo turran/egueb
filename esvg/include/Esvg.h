@@ -81,6 +81,7 @@
 #include "esvg_stop.h"
 #include "esvg_use.h"
 #include "esvg_animation.h"
+#include "esvg_animate_base.h"
 
 EAPI Eina_Bool esvg_is_shape(Edom_Tag *e);
 

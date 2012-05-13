@@ -1663,3 +1663,19 @@ EAPI Eina_Bool esvg_animate_transform_type_string_from(Esvg_Animate_Transform_Ty
 
 	return ret;
 }
+
+EAPI Eina_Bool esvg_list_string_from(const char *attr, char sep, Esvg_List_Cb cb, void *data)
+{
+	char *found;
+
+	if (!cb) return EINA_FALSE;
+
+	while ((found = strchr(attr, sep)))
+	{
+		*found = '\0';
+		cb(attr, data);
+		*found = sep;
+		attr = found + 1;
+	}
+	return EINA_TRUE;
+}
