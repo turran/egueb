@@ -118,6 +118,7 @@ static Eina_Bool _esvg_svg_setup_interceptor(Edom_Tag *t,
 	{
 		return esvg_element_internal_child_setup(child, c, error, _esvg_svg_setup_interceptor, thiz);
 	}
+	return EINA_TRUE;
 }
 
 static inline void _esvg_svg_size_apply(Esvg_Svg *thiz, Esvg_Element_Context *ctx)
@@ -515,7 +516,6 @@ static Esvg_Element_Setup_Return _esvg_svg_setup(Edom_Tag *t,
 			{
 				esvg_style_apply(style, t);
 			}
-			printf("thiz->styles = %p\n", thiz->styles);
 			thiz->styles_changed = EINA_FALSE;
 		}
 	}

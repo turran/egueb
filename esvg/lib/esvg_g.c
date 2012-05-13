@@ -72,6 +72,7 @@ static Eina_Bool _esvg_g_setup_interceptor(Edom_Tag *t,
 	{
 		return esvg_element_internal_child_setup(child, c, error, _esvg_g_setup_interceptor, thiz);
 	}
+	return EINA_TRUE;
 }
 /*----------------------------------------------------------------------------*
  *                          The Container interface                           *
