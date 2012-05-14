@@ -823,11 +823,19 @@ void esvg_svg_style_apply(Edom_Tag *tag)
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/
+/**
+ * To be documented
+ * FIXME: To be fixed
+ */
 EAPI Ender_Element * esvg_svg_new(void)
 {
 	return ender_element_new_with_namespace("svg", "esvg");
 }
 
+/**
+ * To be documented
+ * FIXME: To be fixed
+ */
 EAPI Ender_Element * esvg_svg_element_find(Ender_Element *e, const char *id)
 {
 	Edom_Tag *t;
@@ -836,6 +844,10 @@ EAPI Ender_Element * esvg_svg_element_find(Ender_Element *e, const char *id)
 	return esvg_svg_internal_element_find(t, id);
 }
 
+/**
+ * To be documented
+ * FIXME: To be fixed
+ */
 EAPI Eina_Bool esvg_is_svg(Ender_Element *e)
 {
 	if (esvg_element_type_get(e) != ESVG_SVG)
@@ -843,34 +855,62 @@ EAPI Eina_Bool esvg_is_svg(Ender_Element *e)
 	return EINA_TRUE;
 }
 
+/**
+ * To be documented
+ * FIXME: To be fixed
+ */
 EAPI void esvg_svg_version_set(Ender_Element *e, double version)
 {
 }
 
+/**
+ * To be documented
+ * FIXME: To be fixed
+ */
 EAPI void esvg_svg_version_get(Ender_Element *e, double *version)
 {
 }
 
+/**
+ * To be documented
+ * FIXME: To be fixed
+ */
 EAPI void esvg_svg_x_set(Ender_Element *e, Esvg_Coord *x)
 {
 	ender_element_property_value_set(e, ESVG_SVG_X, x, NULL);
 }
 
+/**
+ * To be documented
+ * FIXME: To be fixed
+ */
 EAPI void esvg_svg_y_set(Ender_Element *e, Esvg_Coord *y)
 {
 	ender_element_property_value_set(e, ESVG_SVG_Y, y, NULL);
 }
 
+/**
+ * To be documented
+ * FIXME: To be fixed
+ */
 EAPI void esvg_svg_width_set(Ender_Element *e, Esvg_Length *width)
 {
 	ender_element_property_value_set(e, ESVG_SVG_WIDTH, width, NULL);
 }
 
+/**
+ * To be documented
+ * FIXME: To be fixed
+ */
 EAPI void esvg_svg_height_set(Ender_Element *e, Esvg_Length *height)
 {
 	ender_element_property_value_set(e, ESVG_SVG_HEIGHT, height, NULL);
 }
 
+/**
+ * To be documented
+ * FIXME: To be fixed
+ */
 EAPI void esvg_svg_viewbox_set(Ender_Element *e, Esvg_View_Box *vb)
 {
 	ender_element_property_value_set(e, ESVG_SVG_VIEWBOX, vb, NULL);
@@ -890,6 +930,10 @@ EAPI void esvg_svg_actual_width_get(Ender_Element *e, double *actual_width)
 	_esvg_svg_actual_width_get(t, actual_width);
 }
 
+/**
+ * To be documented
+ * FIXME: To be fixed
+ */
 EAPI void esvg_svg_actual_height_get(Ender_Element *e, double *actual_height)
 {
 	Edom_Tag *t;
@@ -898,6 +942,10 @@ EAPI void esvg_svg_actual_height_get(Ender_Element *e, double *actual_height)
 	_esvg_svg_actual_height_get(t, actual_height);
 }
 
+/**
+ * To be documented
+ * FIXME: To be fixed
+ */
 EAPI void esvg_svg_animations_pause(Ender_Element *e)
 {
 	Edom_Tag *t;
@@ -908,6 +956,10 @@ EAPI void esvg_svg_animations_pause(Ender_Element *e)
 	thiz->paused = EINA_TRUE;
 }
 
+/**
+ * To be documented
+ * FIXME: To be fixed
+ */
 EAPI void esvg_svg_animations_unpause(Ender_Element *e)
 {
 	Edom_Tag *t;
@@ -918,6 +970,10 @@ EAPI void esvg_svg_animations_unpause(Ender_Element *e)
 	thiz->paused = EINA_FALSE;
 }
 
+/**
+ * To be documented
+ * FIXME: To be fixed
+ */
 EAPI Eina_Bool esvg_svg_animations_paused(Ender_Element *e)
 {
 	Edom_Tag *t;
@@ -928,6 +984,10 @@ EAPI Eina_Bool esvg_svg_animations_paused(Ender_Element *e)
 	return thiz->paused;
 }
 
+/**
+ * To be documented
+ * FIXME: To be fixed
+ */
 EAPI void esvg_svg_time_tick(Ender_Element *e)
 {
 	Edom_Tag *t;
@@ -938,6 +998,10 @@ EAPI void esvg_svg_time_tick(Ender_Element *e)
 	etch_timer_tick(thiz->etch);
 }
 
+/**
+ * To be documented
+ * FIXME: To be fixed
+ */
 EAPI double esvg_svg_time_get(Ender_Element *e)
 {
 	Edom_Tag *t;
@@ -955,6 +1019,10 @@ EAPI double esvg_svg_time_get(Ender_Element *e)
 	return time;
 }
 
+/**
+ * To be documented
+ * FIXME: To be fixed
+ */
 EAPI void esvg_svg_time_set(Ender_Element *e, double secs)
 {
 	Edom_Tag *t;
@@ -963,4 +1031,31 @@ EAPI void esvg_svg_time_set(Ender_Element *e, double secs)
 	t = ender_element_object_get(e);
 	thiz = _esvg_svg_get(t);
 	//etch_timer_goto(Etch *e, unsigned long frame);
+}
+
+/**
+ * To be documented
+ * FIXME: To be fixed
+ */
+EAPI void esvg_svg_feed_mouse_move(Ender_Element *e, int x, int y)
+{
+
+}
+
+/**
+ * To be documented
+ * FIXME: To be fixed
+ */
+EAPI void esvg_svg_feed_mouse_down(Ender_Element *e)
+{
+
+}
+
+/**
+ * To be documented
+ * FIXME: To be fixed
+ */
+EAPI void esvg_svg_feed_mouse_up(Ender_Element *e)
+{
+
 }

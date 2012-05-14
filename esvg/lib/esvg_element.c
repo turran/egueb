@@ -1565,6 +1565,10 @@ EAPI Eina_Bool esvg_element_setup(Ender_Element *e, Enesim_Error **error)
 	//esvg_context_setup_dequeue
 }
 
+/**
+ * To be documented
+ * FIXME: To be fixed
+ */
 EAPI Ender_Element * esvg_element_topmost_get(Ender_Element *e)
 {
 	Edom_Tag *t;
