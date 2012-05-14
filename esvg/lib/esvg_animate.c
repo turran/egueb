@@ -214,8 +214,6 @@ static Eina_Bool _esvg_animate_container_etch_to(Esvg_Animate *thiz, Etch *etch,
 	}
 	etch_animation_enable(a);
 
-	printf("everything went ok!\n");
-
 	return EINA_TRUE;
 }
 /*----------------------------------------------------------------------------*

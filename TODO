@@ -9,6 +9,7 @@ ECSS
 ESVG
 ====
 + Handle correctly the animated properties. We need a way to know whenever a property has an animation assigned to be able to use the base or the anim. Whenever we propagate there's no real need to pass both, just the current one in use
++ Add an input system
 + Now that we have two trees, the dom one, and the renderers one, we need to design the "engine" that will
   update the renderer tree based on the dom tree.
   We have several constraints:
