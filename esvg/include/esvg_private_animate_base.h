@@ -27,5 +27,7 @@ typedef struct _Esvg_Animate_Base_Descriptor {
 void * esvg_animate_base_data_get(Edom_Tag *t);
 Edom_Tag * esvg_animate_base_new(Esvg_Animate_Base_Descriptor *descriptor, Esvg_Type type, void *data);
 
+Etch_Animation_Type esvg_animate_base_calc_mode_etch_to(Esvg_Calc_Mode c);
+
 #endif
 

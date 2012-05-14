@@ -271,6 +271,26 @@ void * esvg_animate_base_data_get(Edom_Tag *t)
 	return thiz->data;
 }
 
+Etch_Animation_Type esvg_animate_base_calc_mode_etch_to(Esvg_Calc_Mode c)
+{
+	switch (c)
+	{
+		case ESVG_CALC_MODE_DISCRETE:
+		return ETCH_ANIMATION_DISCRETE;
+
+		case ESVG_CALC_MODE_LINEAR:
+		return ETCH_ANIMATION_LINEAR;
+	
+		case ESVG_CALC_MODE_SPLINE:
+		return ETCH_ANIMATION_CUBIC;
+
+		/* FIXME TODO */
+		case ESVG_CALC_MODE_PACED:
+		default:
+		return ETCH_ANIMATION_LINEAR;
+	}
+}
+
 Edom_Tag * esvg_animate_base_new(Esvg_Animate_Base_Descriptor *descriptor, Esvg_Type type,
 		void *data)
 {
@@ -283,11 +303,13 @@ Edom_Tag * esvg_animate_base_new(Esvg_Animate_Base_Descriptor *descriptor, Esvg_
 
 	EINA_MAGIC_SET(thiz, ESVG_ANIMATE_BASE_MAGIC);
 	thiz->data = data;
+	/* default values */
+	thiz->current.value.calc_mode = ESVG_CALC_MODE_LINEAR;
 	/* our own descriptor */
 	thiz->descriptor.setup = descriptor->setup;
 	thiz->descriptor.attribute_set = descriptor->attribute_set;
 	thiz->descriptor.attribute_get = descriptor->attribute_get;
-	/* default values */
+	/* parent descriptor */
 	pdescriptor.attribute_set = _esvg_animate_base_attribute_set;
 	pdescriptor.attribute_get = _esvg_animate_base_attribute_get;
 	pdescriptor.free = _esvg_animate_base_free;

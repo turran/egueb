@@ -49,6 +49,7 @@ typedef struct _Esvg_Animate
 typedef struct _Esvg_Animate_Keyframe_Value_Cb_Data
 {
 	Esvg_Animate *thiz;
+	Etch_Animation_Type type;
 	Esvg_Animate_Keyframe_Value_Cb cb;
 	const char *attr;
 } Esvg_Animate_Keyframe_Value_Cb_Data;
@@ -132,6 +133,7 @@ static void _esvg_animate_values_cb(const char *v, void *user_data)
 	Etch_Data edata;
 
 	kf = etch_animation_keyframe_add(data->thiz->anim);
+	etch_animation_keyframe_type_set(kf, data->type);
 	data->cb(v, kf, &edata);
 	data->thiz->keyframes = eina_list_append(data->thiz->keyframes, kf);
 }
@@ -144,6 +146,7 @@ static Eina_Bool _esvg_animate_container_etch_to(Esvg_Animate *thiz, Etch *etch,
 	Etch_Animation *a;
 	Etch_Data_Type dt;
 	Etch_Animation_Callback cb;
+	Etch_Animation_Type type;
 	const char *name;
 
 	ec = ender_property_container_get(p);
@@ -166,6 +169,8 @@ static Eina_Bool _esvg_animate_container_etch_to(Esvg_Animate *thiz, Etch *etch,
 		return EINA_FALSE;
 	}
 
+	type = esvg_animate_base_calc_mode_etch_to(c->value.calc_mode);
+
 	a = etch_animation_add(etch, dt, cb, NULL, NULL, thiz);
 	thiz->anim = a;
 	thiz->prop = p;
@@ -181,13 +186,13 @@ static Eina_Bool _esvg_animate_container_etch_to(Esvg_Animate *thiz, Etch *etch,
 		/* second keyframe */
 		kf = etch_animation_keyframe_add(a);
 		vcb(c->value.from, kf, &from);
-		etch_animation_keyframe_type_set(kf, ETCH_ANIMATION_LINEAR);
+		etch_animation_keyframe_type_set(kf, type);
 		etch_animation_keyframe_value_set(kf, &from);
 		etch_animation_keyframe_time_set(kf, 3, 1237);
 		/* third keyframe */
 		kf = etch_animation_keyframe_add(a);
 		vcb(c->value.to, kf, &to);
-		etch_animation_keyframe_type_set(kf, ETCH_ANIMATION_LINEAR);
+		etch_animation_keyframe_type_set(kf, type);
 		etch_animation_keyframe_value_set(kf, &to);
 		etch_animation_keyframe_time_set(kf, 5, 2530);
 	}
@@ -199,7 +204,9 @@ static Eina_Bool _esvg_animate_container_etch_to(Esvg_Animate *thiz, Etch *etch,
 
 		data.thiz = thiz;
 		data.cb = vcb;
+		data.type = type;
 
+		printf("values!\n");
 		/* first parse the values, create the keyframes and assign the values */
 		esvg_list_string_from(c->value.values, ';', _esvg_animate_values_cb, &data);
 		/* TODO now assign the keytimes to each keyframe which goes from 0 to 1 (relative) so we need the duration attribute to be present */
