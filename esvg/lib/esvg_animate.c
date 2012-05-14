@@ -29,13 +29,8 @@
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
-typedef void (*Esvg_Animate_Keyframe_Value_Cb)(const char *v, Etch_Data *data);
-
-typedef union _Esvg_Animate_Value
-{
-	Esvg_Length length;
-	Esvg_Color color;
-} Esvg_Animate_Value;
+typedef void (*Esvg_Animate_Keyframe_Value_Cb)(const char *v,
+		Etch_Animation_Keyframe *k, Etch_Data *data);
 
 typedef struct _Esvg_Animate
 {
@@ -48,8 +43,6 @@ typedef struct _Esvg_Animate
 	Ender_Property *prop;
 	Ender_Element *parent_e;
 	Edom_Tag *parent_t;
-	Esvg_Animate_Value from;
-	Esvg_Animate_Value to;
 	Esvg_Attribute_Type attribute_type;
 } Esvg_Animate;
 
@@ -73,23 +66,31 @@ static Esvg_Animate * _esvg_animate_get(Edom_Tag *t)
 /*----------------------------------------------------------------------------*
  *                          The Esvg_Length callbacks                         *
  *----------------------------------------------------------------------------*/
-static void _esvg_animate_length_values_cb(const char *v, Etch_Data *data)
+static void _esvg_animate_length_values_cb(const char *v,
+		Etch_Animation_Keyframe *k, Etch_Data *data)
 {
-	Esvg_Length length;
+	Esvg_Length *length;
 
-	esvg_length_string_from(&length, v);
-	data->data.d = length.value;
+	length = calloc(1, sizeof(Esvg_Length));
+	esvg_length_string_from(length, v);
+	data->data.d = length->value;
+	etch_animation_keyframe_data_set(k, length, free);
 }
 
-static void _esvg_animate_length_cb(const Etch_Data *curr,
-		const Etch_Data *prev, void *data)
+static void _esvg_animate_length_cb(Etch_Animation_Keyframe *k,
+		const Etch_Data *curr,
+		const Etch_Data *prev,
+		void *data)
 {
 	Esvg_Animate *thiz = data;
 	Esvg_Animated_Length v;
 	Esvg_Attribute_Type old_type;
+	Esvg_Length *length;
+
+	length = etch_animation_keyframe_data_get(k);
 
 	v.base.value = curr->data.d;
-	v.base.unit = thiz->to.length.unit;
+	v.base.unit = length->unit;
 
 	old_type = esvg_element_attribute_type_get(thiz->parent_t);
 	esvg_element_attribute_type_set(thiz->parent_t, thiz->attribute_type);
@@ -99,13 +100,16 @@ static void _esvg_animate_length_cb(const Etch_Data *curr,
 /*----------------------------------------------------------------------------*
  *                            The double callbacks                            *
  *----------------------------------------------------------------------------*/
-static void _esvg_animate_double_values_cb(const char *v, Etch_Data *data)
+static void _esvg_animate_double_values_cb(const char *v,
+		Etch_Animation_Keyframe *k, Etch_Data *data)
 {
 	data->data.d = esvg_number_string_from(v, 1.0);
 }
 
-static void _esvg_animate_double_cb(const Etch_Data *curr,
-		const Etch_Data *prev, void *data)
+static void _esvg_animate_double_cb(Etch_Animation_Keyframe *k,
+		const Etch_Data *curr,
+		const Etch_Data *prev,
+		void *data)
 {
 	Esvg_Animate *thiz = data;
 	Esvg_Animated_Number v;
@@ -128,7 +132,7 @@ static void _esvg_animate_values_cb(const char *v, void *user_data)
 	Etch_Data edata;
 
 	kf = etch_animation_keyframe_add(data->thiz->anim);
-	data->cb(v, &edata);
+	data->cb(v, kf, &edata);
 	data->thiz->keyframes = eina_list_append(data->thiz->keyframes, kf);
 }
 
@@ -176,13 +180,13 @@ static Eina_Bool _esvg_animate_container_etch_to(Esvg_Animate *thiz, Etch *etch,
 		/* FIXME for now we add two keyframes */
 		/* second keyframe */
 		kf = etch_animation_keyframe_add(a);
-		vcb(c->value.from, &from);
+		vcb(c->value.from, kf, &from);
 		etch_animation_keyframe_type_set(kf, ETCH_ANIMATION_LINEAR);
 		etch_animation_keyframe_value_set(kf, &from);
 		etch_animation_keyframe_time_set(kf, 3, 1237);
 		/* third keyframe */
 		kf = etch_animation_keyframe_add(a);
-		vcb(c->value.to, &to);
+		vcb(c->value.to, kf, &to);
 		etch_animation_keyframe_type_set(kf, ETCH_ANIMATION_LINEAR);
 		etch_animation_keyframe_value_set(kf, &to);
 		etch_animation_keyframe_time_set(kf, 5, 2530);

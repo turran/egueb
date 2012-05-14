@@ -25,5 +25,7 @@ EAPI void esvg_animate_base_from_set(Ender_Element *e, const char *v);
 EAPI void esvg_animate_base_from_get(Ender_Element *e, const char **v);
 EAPI void esvg_animate_base_values_set(Ender_Element *e, const char *v);
 EAPI void esvg_animate_base_values_get(Ender_Element *e, const char **v);
+EAPI void esvg_animate_base_calc_mode_set(Ender_Element *e, Esvg_Calc_Mode calc_mode);
+EAPI void esvg_animate_base_calc_mode_get(Ender_Element *e, Esvg_Calc_Mode *calc_mode);
 
 #endif

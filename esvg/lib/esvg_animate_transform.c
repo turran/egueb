@@ -67,8 +67,10 @@ static Esvg_Animate_Transform * _esvg_animate_transform_get(Edom_Tag *t)
 /*----------------------------------------------------------------------------*
  *                         The Etch animator callbacks                        *
  *----------------------------------------------------------------------------*/
-static void _esvg_animate_transform_cb(const Etch_Data *curr,
-		const Etch_Data *prev, void *data)
+static void _esvg_animate_transform_cb(Etch_Animation_Keyframe *k,
+		const Etch_Data *curr,
+		const Etch_Data *prev,
+		void *data)
 {
 	Esvg_Animate_Transform *thiz = data;
 	Esvg_Animated_Transform v;
