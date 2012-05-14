@@ -1680,24 +1680,80 @@ EAPI Eina_Bool esvg_list_string_from(const char *attr, char sep, Esvg_List_Cb cb
 	return EINA_TRUE;
 }
 
+#define ESVG_CLOCK_SECONDS (1000000LL)
+#define ESVG_CLOCK_MSECONDS (1000LL)
+
 /* The clock is defined in miliseconds? nanoseconds? */
+/* Clock-val         ::= Full-clock-val | Partial-clock-val | Timecount-val */
 EAPI Eina_Bool esvg_clock_string_from(int64_t *clock, const char *attr)
 {
-/*
-Clock-val         ::= Full-clock-val | Partial-clock-val 
-                      | Timecount-val
-Full-clock-val    ::= Hours ":" Minutes ":" Seconds ("." Fraction)?
-Partial-clock-val ::= Minutes ":" Seconds ("." Fraction)?
-Timecount-val     ::= Timecount ("." Fraction)? (Metric)?
-Metric            ::= "h" | "min" | "s" | "ms"
-Hours             ::= DIGIT+; any positive number
-Minutes           ::= 2DIGIT; range from 00 to 59
-Seconds           ::= 2DIGIT; range from 00 to 59
-Fraction          ::= DIGIT+
-Timecount         ::= DIGIT+
-2DIGIT            ::= DIGIT DIGIT
-DIGIT             ::= [0-9]*/
-	return EINA_TRUE;
+	Eina_Bool ret = EINA_FALSE;
+	long v;
+	const char *tmp;
+
+	printf("parsing the duration %s\n", attr);
+	if (!_esvg_long_get(attr, &tmp, &v))
+		return EINA_FALSE;
+
+	if (*tmp == ':')
+	{
+		long v2;
+
+		tmp++;
+		if (!_esvg_long_get(tmp, &tmp, &v2))
+			return EINA_FALSE;
+
+		/* Full-clock-val::= Hours ":" Minutes ":" Seconds ("." Fraction)? */
+		if (*tmp == ':')
+		{
+
+		}
+		/* Partial-clock-val::= Minutes ":" Seconds ("." Fraction)? */
+		else
+		{
+			long m = v;
+			long s = v2;
+
+			*clock = (m * 60) + (s);
+			/* Fraction::= DIGIT+ */
+			if (*tmp == '.')
+			{
+				long f;
+
+				tmp++;
+				if (!_esvg_long_get(tmp, &tmp, &f))
+					return EINA_FALSE;
+			}
+			ret = EINA_TRUE;
+
+		}
+	}
+	/* Timecount-val::= Timecount ("." Fraction)? (Metric)? */
+	else
+	{
+		long f = 0;
+
+		/* Fraction::= DIGIT+ */
+		if (*tmp == '.')
+		{
+			tmp++;
+		}
+
+		/* Metric::= "h" | "min" | "s" | "ms" */
+		if (!strncmp(tmp, "ms", 2))
+			*clock = v * ESVG_CLOCK_MSECONDS;
+		else if (*tmp == 's')
+			*clock = v * ESVG_CLOCK_SECONDS;
+		else if (*tmp == 'm')
+			*clock = v * ESVG_CLOCK_SECONDS * 60;
+		else if (*tmp == 'h')
+			*clock = v * ESVG_CLOCK_SECONDS * 60 * 60;
+
+		ret = EINA_TRUE;
+	}
+	printf("clock is %lld\n", *clock);
+
+	return ret;
 }
 
 EAPI Eina_Bool esvg_calc_mode_string_from(Esvg_Calc_Mode *c, const char *attr)
@@ -1714,5 +1770,21 @@ EAPI Eina_Bool esvg_calc_mode_string_from(Esvg_Calc_Mode *c, const char *attr)
 		*c = ESVG_CALC_MODE_SPLINE;
 	else
 		ret = EINA_FALSE;
+	return ret;
+}
+
+EAPI Eina_Bool esvg_duration_string_from(Esvg_Duration *d, const char *attr)
+{
+	Eina_Bool ret = EINA_TRUE;
+
+	if (!strcmp(attr, "indefinite"))
+		d->type = ESVG_DURATION_TYPE_INDEFINITE;
+	else if (!strcmp(attr, "media"))
+		d->type = ESVG_DURATION_TYPE_MEDIA;
+	else
+	{
+		ret = esvg_clock_string_from(&d->data.clock, attr);
+		d->type = ESVG_DURATION_TYPE_CLOCK;
+	}
 	return ret;
 }

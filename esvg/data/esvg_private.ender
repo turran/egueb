@@ -49,6 +49,14 @@ namespace "esvg" {
 		string "paint_server";
 	};
 
+	union "esvg_duration" {
+		/* fix this */
+		bool "none1";
+		bool "none2";
+		/* fix we should include the long variants on ender */
+		int "clock";
+	};
+
 	struct "esvg_path_vline_to" {
 		double "c";
 	};
@@ -114,7 +122,7 @@ namespace "esvg" {
 		string "attribute_name";
 		int "attribute_type";
 		/* FIXME later we should use a time object? */
-		string "dur";
+		esvg_duration "dur";
 	};
 
 	abstract "animate_base" : "animation" {

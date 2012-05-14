@@ -38,7 +38,6 @@ typedef struct _Esvg_Animate
 	/* interface */
 	/* private */
 	Etch_Animation *anim;
-	Eina_List *keyframes;
 	Eina_List *values;
 	Ender_Property *prop;
 	Ender_Element *parent_e;
@@ -53,6 +52,16 @@ typedef struct _Esvg_Animate_Keyframe_Value_Cb_Data
 	Esvg_Animate_Keyframe_Value_Cb cb;
 	const char *attr;
 } Esvg_Animate_Keyframe_Value_Cb_Data;
+
+typedef struct _Esvg_Animate_Keyframe_Time_Cb_Data
+{
+	Esvg_Animate *thiz;
+	int idx;
+	unsigned long secs;
+	unsigned long usecs;
+	unsigned long inc_secs;
+	unsigned long inc_usecs;
+} Esvg_Animate_Keyframe_Time_Cb_Data;
 
 static Esvg_Animate * _esvg_animate_get(Edom_Tag *t)
 {
@@ -135,11 +144,23 @@ static void _esvg_animate_values_cb(const char *v, void *user_data)
 	kf = etch_animation_keyframe_add(data->thiz->anim);
 	etch_animation_keyframe_type_set(kf, data->type);
 	data->cb(v, kf, &edata);
-	data->thiz->keyframes = eina_list_append(data->thiz->keyframes, kf);
+}
+
+static void _esvg_animate_time_cb(const char *v, void *user_data)
+{
+	Esvg_Animate_Keyframe_Time_Cb_Data *data = user_data;
+	Etch_Animation_Keyframe *kf;
+
+	printf("setting frame animation time! %d %ld\n", data->idx, data->usecs);
+	kf = etch_animation_keyframe_get(data->thiz->anim, data->idx++);
+	etch_animation_keyframe_time_set(kf, data->secs, data->usecs);
+	data->usecs += data->inc_usecs;
 }
 
 static Eina_Bool _esvg_animate_container_etch_to(Esvg_Animate *thiz, Etch *etch,
-		Ender_Property *p, Esvg_Animate_Base_Context *c)
+		Ender_Property *p,
+		Esvg_Animation_Context *ac,
+		Esvg_Animate_Base_Context *c)
 {
 	Ender_Container *ec;
 	Esvg_Animate_Keyframe_Value_Cb vcb;
@@ -197,21 +218,31 @@ static Eina_Bool _esvg_animate_container_etch_to(Esvg_Animate *thiz, Etch *etch,
 		etch_animation_keyframe_time_set(kf, 5, 2530);
 	}
 	/* when having a values, add as many keyframes as values are */
-	/* c->timing.dur.type == ESVG_DURATION_TYPE_CLOCK */
-	else if (c->value.values)
+	else if (c->value.values && ac->timing.dur.type == ESVG_DURATION_TYPE_CLOCK)
 	{
-		Esvg_Animate_Keyframe_Value_Cb_Data data;
+		Esvg_Animate_Keyframe_Value_Cb_Data vdata;
+		Esvg_Animate_Keyframe_Time_Cb_Data tdata;
 
-		data.thiz = thiz;
-		data.cb = vcb;
-		data.type = type;
-
-		printf("values!\n");
 		/* first parse the values, create the keyframes and assign the values */
-		esvg_list_string_from(c->value.values, ';', _esvg_animate_values_cb, &data);
+		vdata.thiz = thiz;
+		vdata.cb = vcb;
+		vdata.type = type;
+		esvg_list_string_from(c->value.values, ';', _esvg_animate_values_cb, &vdata);
+		/* now the times */
+		tdata.thiz = thiz;
+		tdata.idx = 0;
+		tdata.secs = 0;
+		tdata.usecs = 0;
+		tdata.inc_usecs = 9000000 / etch_animation_keyframe_count(thiz->anim);
+		esvg_list_string_from(c->value.values, ';', _esvg_animate_time_cb, &tdata);
 		/* TODO now assign the keytimes to each keyframe which goes from 0 to 1 (relative) so we need the duration attribute to be present */
 		/* TODO now assign the keysplines in case they are defined */
 	}
+	else
+	{
+		printf("wrong!\n");
+	}
+
 	etch_animation_enable(a);
 
 	return EINA_TRUE;
@@ -276,7 +307,7 @@ static Eina_Bool _esvg_animate_setup(Edom_Tag *t,
 	thiz->attribute_type = actx->target.attribute_type;
 
 	/* we should only process lengths, colors, integers, booleans, etc */
-	if (!_esvg_animate_container_etch_to(thiz, etch, p, abctx))
+	if (!_esvg_animate_container_etch_to(thiz, etch, p, actx, abctx))
 		goto done;
 
 	/* check the type and create an animator of that container type */

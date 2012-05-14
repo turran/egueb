@@ -120,22 +120,18 @@ static void _esvg_animation_attribute_type_get(Edom_Tag *t, Esvg_Attribute_Type 
 	*attribute_type = thiz->current.target.attribute_type;
 }
 
-static void _esvg_animation_dur_set(Edom_Tag *t, const char *dur)
+static void _esvg_animation_dur_set(Edom_Tag *t, Esvg_Duration *dur)
 {
 	Esvg_Animation *thiz;
 
+	if (!dur) return;
 	thiz = _esvg_animation_get(t);
-	if (thiz->current.timing.dur)
-	{
-		free(thiz->current.timing.dur);
-		thiz->current.timing.dur = NULL;
-	}
-	if (dur)
-		thiz->current.timing.dur = strdup(dur);
+	printf("duration set %lld\n", dur->data.clock);
+	thiz->current.timing.dur = *dur;
 	thiz->current.changed = EINA_TRUE;
 }
 
-static void _esvg_animation_dur_get(Edom_Tag *t, const char **dur)
+static void _esvg_animation_dur_get(Edom_Tag *t, Esvg_Duration *dur)
 {
 	Esvg_Animation *thiz;
 
@@ -165,7 +161,10 @@ static Eina_Bool _esvg_animation_attribute_set(Ender_Element *e,
 	/* timing attributes */
 	else if (!strcmp(key, "dur"))
 	{
-		esvg_animation_dur_set(e, value);
+		Esvg_Duration dur;
+
+		esvg_duration_string_from(&dur, value);
+		esvg_animation_dur_set(e, &dur);
 	}
 	else
 	{
@@ -324,16 +323,17 @@ EAPI void esvg_animation_attribute_type_get(Ender_Element *e, Esvg_Attribute_Typ
  * To be documented
  * FIXME: To be fixed
  */
-EAPI void esvg_animation_dur_set(Ender_Element *e, const char *v)
+EAPI void esvg_animation_dur_set(Ender_Element *e, Esvg_Duration *dur)
 {
-	ender_element_property_value_set(e, ESVG_ANIMATION_DUR, v, NULL);
+	printf("duration set %lld\n", dur->data.clock);
+	ender_element_property_value_set(e, ESVG_ANIMATION_DUR, dur, NULL);
 }
 
 /**
  * To be documented
  * FIXME: To be fixed
  */
-EAPI void esvg_animation_dur_get(Ender_Element *e, const char **v)
+EAPI void esvg_animation_dur_get(Ender_Element *e, Esvg_Duration *dur)
 {
 }
 
