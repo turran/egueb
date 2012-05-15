@@ -362,9 +362,9 @@ typedef enum _Esvg_Calc_Mode
 
 typedef enum _Esvg_Duration_Type
 {
-	ESVG_DURATION_TYPE_CLOCK,
 	ESVG_DURATION_TYPE_MEDIA,
 	ESVG_DURATION_TYPE_INDEFINITE,
+	ESVG_DURATION_TYPE_CLOCK,
 } Esvg_Duration_Type;
 
 typedef union _Esvg_Duration

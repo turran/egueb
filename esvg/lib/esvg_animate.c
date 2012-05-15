@@ -194,6 +194,7 @@ static Eina_Bool _esvg_animate_container_etch_to(Esvg_Animate *thiz, Etch *etch,
 	thiz->anim = a;
 	thiz->prop = p;
 
+	printf("duration is %lld %d\n", ac->timing.dur.data.clock, ac->timing.dur.type);
 	/* when having a from/to, just add two keyframes */
 	if (c->value.to && c->value.from)
 	{
@@ -230,7 +231,7 @@ static Eina_Bool _esvg_animate_container_etch_to(Esvg_Animate *thiz, Etch *etch,
 		tdata.thiz = thiz;
 		tdata.idx = 0;
 		tdata.time = 0;
-		tdata.inc = 9000000 / etch_animation_keyframe_count(thiz->anim);
+		tdata.inc = ac->timing.dur.data.clock / etch_animation_keyframe_count(thiz->anim);
 		esvg_list_string_from(c->value.values, ';', _esvg_animate_time_cb, &tdata);
 		/* TODO now assign the keytimes to each keyframe which goes from 0 to 1 (relative) so we need the duration attribute to be present */
 		/* TODO now assign the keysplines in case they are defined */

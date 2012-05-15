@@ -50,11 +50,8 @@ namespace "esvg" {
 	};
 
 	union "esvg_duration" {
-		/* fix this */
-		bool "none1";
-		bool "none2";
 		/* fix we should include the long variants on ender */
-		int "clock";
+		long "clock";
 	};
 
 	struct "esvg_path_vline_to" {

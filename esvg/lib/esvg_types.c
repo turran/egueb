@@ -1680,8 +1680,8 @@ EAPI Eina_Bool esvg_list_string_from(const char *attr, char sep, Esvg_List_Cb cb
 	return EINA_TRUE;
 }
 
-#define ESVG_CLOCK_SECONDS (1000000LL)
-#define ESVG_CLOCK_MSECONDS (1000LL)
+#define ESVG_CLOCK_SECONDS (1000000000LL)
+#define ESVG_CLOCK_MSECONDS (1000000LL)
 
 /* The clock is defined in miliseconds? nanoseconds? */
 /* Clock-val         ::= Full-clock-val | Partial-clock-val | Timecount-val */
@@ -1749,9 +1749,9 @@ EAPI Eina_Bool esvg_clock_string_from(int64_t *clock, const char *attr)
 		else if (*tmp == 'h')
 			*clock = v * ESVG_CLOCK_SECONDS * 60 * 60;
 
+		printf("clock is %lld\n", *clock);
 		ret = EINA_TRUE;
 	}
-	printf("clock is %lld\n", *clock);
 
 	return ret;
 }
@@ -1784,8 +1784,8 @@ EAPI Eina_Bool esvg_duration_string_from(Esvg_Duration *d, const char *attr)
 	else
 	{
 		ret = esvg_clock_string_from(&d->data.clock, attr);
-		printf("duration = %lld\n", d->data.clock);
 		d->type = ESVG_DURATION_TYPE_CLOCK;
+		printf("duration is %lld\n", d->data.clock);
 	}
 	return ret;
 }

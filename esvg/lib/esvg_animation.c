@@ -126,7 +126,6 @@ static void _esvg_animation_dur_set(Edom_Tag *t, Esvg_Duration *dur)
 
 	if (!dur) return;
 	thiz = _esvg_animation_get(t);
-	printf("duration set %lld\n", dur->data.clock);
 	thiz->current.timing.dur = *dur;
 	thiz->current.changed = EINA_TRUE;
 }
