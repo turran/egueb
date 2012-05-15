@@ -145,6 +145,7 @@ static void _esvg_animate_values_cb(const char *v, void *user_data)
 	etch_animation_keyframe_value_set(kf, &edata);
 }
 
+/* increment each keyframe */
 static void _esvg_animate_time_cb(const char *v, void *user_data)
 {
 	Esvg_Animate_Keyframe_Time_Cb_Data *data = user_data;
@@ -153,6 +154,19 @@ static void _esvg_animate_time_cb(const char *v, void *user_data)
 	kf = etch_animation_keyframe_get(data->thiz->anim, data->idx);
 	etch_animation_keyframe_time_set(kf, data->time);
 	data->time += data->inc;
+	data->idx++;
+}
+
+/* multiply the value by the duration */
+static void _esvg_animate_key_times_cb(const char *v, void *user_data)
+{
+	Esvg_Animate_Keyframe_Time_Cb_Data *data = user_data;
+	Etch_Animation_Keyframe *kf;
+	double percent;
+
+	percent = esvg_number_string_from(v, 1.0);
+	kf = etch_animation_keyframe_get(data->thiz->anim, data->idx);
+	etch_animation_keyframe_time_set(kf, data->time * percent);
 	data->idx++;
 }
 
@@ -222,20 +236,37 @@ static Eina_Bool _esvg_animate_container_etch_to(Esvg_Animate *thiz, Etch *etch,
 	{
 		Esvg_Animate_Keyframe_Value_Cb_Data vdata;
 		Esvg_Animate_Keyframe_Time_Cb_Data tdata;
+		int64_t duration;
 
+		duration = ac->timing.dur.data.clock;
 		/* first parse the values, create the keyframes and assign the values */
 		vdata.thiz = thiz;
 		vdata.cb = vcb;
 		vdata.type = type;
 		esvg_list_string_from(c->value.values, ';', _esvg_animate_values_cb, &vdata);
-		/* now the times */
-		tdata.thiz = thiz;
-		tdata.idx = 0;
-		tdata.time = 0;
-		tdata.inc = ac->timing.dur.data.clock / etch_animation_keyframe_count(thiz->anim);
-		esvg_list_string_from(c->value.values, ';', _esvg_animate_time_cb, &tdata);
-		/* TODO now assign the keytimes to each keyframe which goes from 0 to 1 (relative) so we need the duration attribute to be present */
-		/* TODO now assign the keysplines in case they are defined */
+		/* in case of keytimes */
+		if (c->value.key_times)
+		{
+			tdata.thiz = thiz;
+			tdata.idx = 0;
+			tdata.time = duration;
+			esvg_list_string_from(c->value.key_times, ';', _esvg_animate_key_times_cb, &tdata);
+		}
+		else
+		{
+			/* now the times */
+			tdata.thiz = thiz;
+			tdata.idx = 0;
+			tdata.time = 0;
+			tdata.inc = duration / etch_animation_keyframe_count(thiz->anim);
+			esvg_list_string_from(c->value.values, ';', _esvg_animate_time_cb, &tdata);
+		}
+
+		/* add the keysplines */
+		if (c->value.calc_mode == ESVG_CALC_MODE_SPLINE && c->value.key_splines)
+		{
+
+		}
 	}
 	else
 	{

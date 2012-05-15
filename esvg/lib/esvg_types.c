@@ -1670,12 +1670,15 @@ EAPI Eina_Bool esvg_list_string_from(const char *attr, char sep, Esvg_List_Cb cb
 
 	if (!cb) return EINA_FALSE;
 
+	ESVG_SPACE_SKIP(attr);
 	while ((found = strchr(attr, sep)))
 	{
 		*found = '\0';
+		ESVG_SPACE_SKIP(attr);
 		cb(attr, data);
 		*found = sep;
 		attr = found + 1;
+		ESVG_SPACE_SKIP(attr);
 	}
 	if (attr)
 		cb(attr, data);

@@ -39,9 +39,9 @@ typedef struct _Esvg_Attribute_Animation_Value
 	char *to;
 	char *values;
 	Esvg_Calc_Mode calc_mode;
-	/* keyTimes = <list>
-	 * keySplines = <list>
-	 * by = value
+	char *key_times;
+	char *key_splines;
+	 /* by = value
 	 */
 } Esvg_Attribute_Animation_Value;
 

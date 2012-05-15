@@ -45,6 +45,7 @@
 static Ender_Property *ESVG_ANIMATE_BASE_TO;
 static Ender_Property *ESVG_ANIMATE_BASE_FROM;
 static Ender_Property *ESVG_ANIMATE_BASE_VALUES;
+static Ender_Property *ESVG_ANIMATE_BASE_KEY_TIMES;
 static Ender_Property *ESVG_ANIMATE_BASE_CALC_MODE;
 
 typedef struct _Esvg_Animate_Base_Descriptor_Internal
@@ -167,6 +168,31 @@ static void _esvg_animate_base_calc_mode_get(Edom_Tag *t, Esvg_Calc_Mode *calc_m
 	thiz = _esvg_animate_base_get(t);
 	*calc_mode = thiz->current.value.calc_mode;
 }
+
+static void _esvg_animate_base_key_times_set(Edom_Tag *t, const char *key_times)
+{
+	Esvg_Animate_Base *thiz;
+
+	thiz = _esvg_animate_base_get(t);
+	if (thiz->current.value.key_times)
+	{
+		free(thiz->current.value.key_times);
+		thiz->current.value.key_times = NULL;
+	}
+	if (key_times)
+		thiz->current.value.key_times = strdup(key_times);
+	thiz->current.changed = EINA_TRUE;
+}
+
+static void _esvg_animate_base_key_times_get(Edom_Tag *t, const char **key_times)
+{
+	Esvg_Animate_Base *thiz;
+
+	if (!key_times) return;
+	thiz = _esvg_animate_base_get(t);
+	*key_times = thiz->current.value.key_times;
+}
+
 /*----------------------------------------------------------------------------*
  *                         The Esvg Element interface                         *
  *----------------------------------------------------------------------------*/
@@ -190,6 +216,7 @@ static Eina_Bool _esvg_animate_base_attribute_set(Ender_Element *e,
 	}
 	else if (strcmp(key, "keyTimes") == 0)
 	{
+		esvg_animate_base_key_times_set(e, value);
 	}
 	else if (strcmp(key, "keySplines") == 0)
 	{
@@ -248,6 +275,7 @@ static Eina_Bool _esvg_animate_base_setup(Edom_Tag *t,
 #define _esvg_animate_base_from_is_set NULL
 #define _esvg_animate_base_values_is_set NULL
 #define _esvg_animate_base_calc_mode_is_set NULL
+#define _esvg_animate_base_key_times_is_set NULL
 #include "generated/esvg_generated_animate_base.c"
 
 Eina_Bool esvg_is_animate_base_internal(Edom_Tag *t)
@@ -402,3 +430,22 @@ EAPI void esvg_animate_base_calc_mode_set(Ender_Element *e, Esvg_Calc_Mode calc_
 EAPI void esvg_animate_base_calc_mode_get(Ender_Element *e, Esvg_Calc_Mode *calc_mode)
 {
 }
+
+/**
+ * To be documented
+ * FIXME: To be fixed
+ */
+EAPI void esvg_animate_base_key_times_set(Ender_Element *e, const char *v)
+{
+	ender_element_property_value_set(e, ESVG_ANIMATE_BASE_KEY_TIMES, v, NULL);
+}
+
+/**
+ * To be documented
+ * FIXME: To be fixed
+ */
+EAPI void esvg_animate_base_key_times_get(Ender_Element *e, const char **v)
+{
+}
+
+
