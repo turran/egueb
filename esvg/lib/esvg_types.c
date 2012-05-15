@@ -1677,6 +1677,9 @@ EAPI Eina_Bool esvg_list_string_from(const char *attr, char sep, Esvg_List_Cb cb
 		*found = sep;
 		attr = found + 1;
 	}
+	if (attr)
+		cb(attr, data);
+
 	return EINA_TRUE;
 }
 

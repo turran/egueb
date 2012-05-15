@@ -82,6 +82,7 @@ static void _esvg_animate_length_values_cb(const char *v,
 	length = calloc(1, sizeof(Esvg_Length));
 	esvg_length_string_from(length, v);
 	data->data.d = length->value;
+	printf("DDING VALUE %g\n", data->data.d);
 	etch_animation_keyframe_data_set(k, length, free);
 }
 
@@ -100,6 +101,7 @@ static void _esvg_animate_length_cb(Etch_Animation_Keyframe *k,
 	v.base.value = curr->data.d;
 	v.base.unit = length->unit;
 
+	printf("SETTING VALUE %g\n", curr->data.d);
 	old_type = esvg_element_attribute_type_get(thiz->parent_t);
 	esvg_element_attribute_type_set(thiz->parent_t, thiz->attribute_type);
 	ender_element_property_value_set(thiz->parent_e, thiz->prop, &v, NULL);
@@ -142,6 +144,7 @@ static void _esvg_animate_values_cb(const char *v, void *user_data)
 	kf = etch_animation_keyframe_add(data->thiz->anim);
 	etch_animation_keyframe_type_set(kf, data->type);
 	data->cb(v, kf, &edata);
+	etch_animation_keyframe_value_set(kf, &edata);
 }
 
 static void _esvg_animate_time_cb(const char *v, void *user_data)
@@ -149,10 +152,10 @@ static void _esvg_animate_time_cb(const char *v, void *user_data)
 	Esvg_Animate_Keyframe_Time_Cb_Data *data = user_data;
 	Etch_Animation_Keyframe *kf;
 
-	printf("setting frame animation time! %d %lld\n", data->idx, data->time);
-	kf = etch_animation_keyframe_get(data->thiz->anim, data->idx++);
+	kf = etch_animation_keyframe_get(data->thiz->anim, data->idx);
 	etch_animation_keyframe_time_set(kf, data->time);
 	data->time += data->inc;
+	data->idx++;
 }
 
 static Eina_Bool _esvg_animate_container_etch_to(Esvg_Animate *thiz, Etch *etch,
@@ -233,7 +236,6 @@ static Eina_Bool _esvg_animate_container_etch_to(Esvg_Animate *thiz, Etch *etch,
 		tdata.time = 0;
 		tdata.inc = ac->timing.dur.data.clock / etch_animation_keyframe_count(thiz->anim);
 		esvg_list_string_from(c->value.values, ';', _esvg_animate_time_cb, &tdata);
-		/* TODO we need to add the final keyframe, the one that will set the duration of the last one */
 		/* TODO now assign the keytimes to each keyframe which goes from 0 to 1 (relative) so we need the duration attribute to be present */
 		/* TODO now assign the keysplines in case they are defined */
 	}
