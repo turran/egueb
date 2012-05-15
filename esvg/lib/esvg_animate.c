@@ -82,7 +82,6 @@ static void _esvg_animate_length_values_cb(const char *v,
 	length = calloc(1, sizeof(Esvg_Length));
 	esvg_length_string_from(length, v);
 	data->data.d = length->value;
-	printf("DDING VALUE %g\n", data->data.d);
 	etch_animation_keyframe_data_set(k, length, free);
 }
 
@@ -101,7 +100,6 @@ static void _esvg_animate_length_cb(Etch_Animation_Keyframe *k,
 	v.base.value = curr->data.d;
 	v.base.unit = length->unit;
 
-	printf("SETTING VALUE %g\n", curr->data.d);
 	old_type = esvg_element_attribute_type_get(thiz->parent_t);
 	esvg_element_attribute_type_set(thiz->parent_t, thiz->attribute_type);
 	ender_element_property_value_set(thiz->parent_e, thiz->prop, &v, NULL);
