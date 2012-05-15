@@ -1784,6 +1784,7 @@ EAPI Eina_Bool esvg_duration_string_from(Esvg_Duration *d, const char *attr)
 	else
 	{
 		ret = esvg_clock_string_from(&d->data.clock, attr);
+		printf("duration = %lld\n", d->data.clock);
 		d->type = ESVG_DURATION_TYPE_CLOCK;
 	}
 	return ret;

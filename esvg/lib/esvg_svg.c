@@ -1006,15 +1006,15 @@ EAPI double esvg_svg_time_get(Ender_Element *e)
 {
 	Edom_Tag *t;
 	Esvg_Svg *thiz;
+	Etch_Time et;
 	double time;
-	unsigned long secs;
-	unsigned long usecs;
 
 	t = ender_element_object_get(e);
 	thiz = _esvg_svg_get(t);
-	etch_timer_get(thiz->etch, &secs, &usecs);
+	etch_timer_get(thiz->etch, &et);
 
-	time = secs + (double)(usecs / 10000000);
+	/* FIXME fix this */
+	time = et / 10000000;
 
 	return time;
 }

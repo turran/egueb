@@ -125,12 +125,12 @@ static Eina_Bool _esvg_animate_transform_container_etch_to(Esvg_Animate_Transfor
 	kf = etch_animation_keyframe_add(a);
 	etch_animation_keyframe_type_set(kf, ETCH_ANIMATION_LINEAR);
 	etch_animation_keyframe_value_set(kf, &from);
-	etch_animation_keyframe_time_set(kf, 3, 1237);
+	etch_animation_keyframe_time_set(kf, 3 * ETCH_SECOND);
 	/* third keyframe */
 	kf = etch_animation_keyframe_add(a);
 	etch_animation_keyframe_type_set(kf, ETCH_ANIMATION_LINEAR);
 	etch_animation_keyframe_value_set(kf, &to);
-	etch_animation_keyframe_time_set(kf, 5, 2530);
+	etch_animation_keyframe_time_set(kf, 5 * ETCH_SECOND);
 	etch_animation_enable(a);
 
 	printf("everything went ok!\n");

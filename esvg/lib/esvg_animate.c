@@ -57,10 +57,8 @@ typedef struct _Esvg_Animate_Keyframe_Time_Cb_Data
 {
 	Esvg_Animate *thiz;
 	int idx;
-	unsigned long secs;
-	unsigned long usecs;
-	unsigned long inc_secs;
-	unsigned long inc_usecs;
+	Etch_Time time;
+	Etch_Time inc;
 } Esvg_Animate_Keyframe_Time_Cb_Data;
 
 static Esvg_Animate * _esvg_animate_get(Edom_Tag *t)
@@ -151,10 +149,10 @@ static void _esvg_animate_time_cb(const char *v, void *user_data)
 	Esvg_Animate_Keyframe_Time_Cb_Data *data = user_data;
 	Etch_Animation_Keyframe *kf;
 
-	printf("setting frame animation time! %d %ld\n", data->idx, data->usecs);
+	printf("setting frame animation time! %d %lld\n", data->idx, data->time);
 	kf = etch_animation_keyframe_get(data->thiz->anim, data->idx++);
-	etch_animation_keyframe_time_set(kf, data->secs, data->usecs);
-	data->usecs += data->inc_usecs;
+	etch_animation_keyframe_time_set(kf, data->time);
+	data->time += data->inc;
 }
 
 static Eina_Bool _esvg_animate_container_etch_to(Esvg_Animate *thiz, Etch *etch,
@@ -209,13 +207,13 @@ static Eina_Bool _esvg_animate_container_etch_to(Esvg_Animate *thiz, Etch *etch,
 		vcb(c->value.from, kf, &from);
 		etch_animation_keyframe_type_set(kf, type);
 		etch_animation_keyframe_value_set(kf, &from);
-		etch_animation_keyframe_time_set(kf, 3, 1237);
+		etch_animation_keyframe_time_set(kf, 3 * ETCH_SECOND);
 		/* third keyframe */
 		kf = etch_animation_keyframe_add(a);
 		vcb(c->value.to, kf, &to);
 		etch_animation_keyframe_type_set(kf, type);
 		etch_animation_keyframe_value_set(kf, &to);
-		etch_animation_keyframe_time_set(kf, 5, 2530);
+		etch_animation_keyframe_time_set(kf, 5 * ETCH_SECOND);
 	}
 	/* when having a values, add as many keyframes as values are */
 	else if (c->value.values && ac->timing.dur.type == ESVG_DURATION_TYPE_CLOCK)
@@ -231,9 +229,8 @@ static Eina_Bool _esvg_animate_container_etch_to(Esvg_Animate *thiz, Etch *etch,
 		/* now the times */
 		tdata.thiz = thiz;
 		tdata.idx = 0;
-		tdata.secs = 0;
-		tdata.usecs = 0;
-		tdata.inc_usecs = 9000000 / etch_animation_keyframe_count(thiz->anim);
+		tdata.time = 0;
+		tdata.inc = 9000000 / etch_animation_keyframe_count(thiz->anim);
 		esvg_list_string_from(c->value.values, ';', _esvg_animate_time_cb, &tdata);
 		/* TODO now assign the keytimes to each keyframe which goes from 0 to 1 (relative) so we need the duration attribute to be present */
 		/* TODO now assign the keysplines in case they are defined */
