@@ -235,5 +235,14 @@ namespace "esvg" {
 	class "a" : "element" {
 		string "href";
 	};
+
+	class "image" : "instantiable" {
+		esvg_animated_length "x";
+		esvg_animated_length "y";
+		esvg_animated_length "width";
+		esvg_animated_length "height";
+		string "href";
+	};
+
 };
 

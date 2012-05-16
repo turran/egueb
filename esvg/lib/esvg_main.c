@@ -71,6 +71,7 @@ static void _register_enders(void *data)
 	esvg_a_init();
 	esvg_clip_path_init();
 	esvg_style_init();
+	esvg_image_init();
 
 	esvg_animation_init();
 	esvg_animate_base_init();

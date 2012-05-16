@@ -464,11 +464,11 @@ static void * _esvg_parser_tag_new(Edom_Parser *parser, int tag_id)
 		tag = esvg_style_new();
 		break;
 
-#if 0
 		case ESVG_IMAGE:
-		tag = esvg_parser_image_new(parser);
+		tag = esvg_image_new();
 		break;
 
+#if 0
 		case ESVG_CLIPPATH:
 		tag = esvg_parser_clip_path_new(parser);
 		break;

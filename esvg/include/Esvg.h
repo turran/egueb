@@ -66,6 +66,7 @@
 #include "esvg_renderable.h"
 #include "esvg_a.h"
 #include "esvg_ellipse.h"
+#include "esvg_image.h"
 #include "esvg_linear_gradient.h"
 #include "esvg_svg.h"
 #include "esvg_rect.h"
@@ -95,18 +96,6 @@ EAPI void esvg_text_font_size_set(Edom_Tag *e, const Esvg_Length *size);
 EAPI void esvg_text_font_family_set(Edom_Tag *e, const char *family);
 EAPI void esvg_text_text_set(Edom_Tag *e, const char *text);
 EAPI void esvg_text_text_get(Edom_Tag *e, const char **text);
-
-EAPI Edom_Tag * esvg_image_new(void);
-EAPI void esvg_image_x_set(Edom_Tag *e,  const Esvg_Coord *x);
-EAPI void esvg_image_x_get(Edom_Tag *e, Esvg_Coord *x);
-EAPI void esvg_image_y_set(Edom_Tag *e,  const Esvg_Coord *y);
-EAPI void esvg_image_y_get(Edom_Tag *e, Esvg_Coord *y);
-EAPI void esvg_image_width_set(Edom_Tag *e,  const Esvg_Length *width);
-EAPI void esvg_image_width_get(Edom_Tag *e, Esvg_Length *width);
-EAPI void esvg_image_height_set(Edom_Tag *e,  const Esvg_Length *height);
-EAPI void esvg_image_height_get(Edom_Tag *e, Esvg_Length *height);
-EAPI void esvg_image_href_set(Edom_Tag *e, const char *href);
-EAPI void esvg_image_href_get(Edom_Tag *e, const char **href);
 
 EAPI Edom_Tag * esvg_pattern_new(void);
 EAPI Eina_Bool esvg_is_pattern(Edom_Tag *e);

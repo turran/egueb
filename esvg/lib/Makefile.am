@@ -30,6 +30,7 @@ esvg_element.c \
 esvg_ellipse.c \
 esvg_g.c \
 esvg_gradient.c \
+esvg_image.c \
 esvg_input.c \
 esvg_instantiable.c \
 esvg_line.c \
@@ -53,7 +54,6 @@ esvg_use.c
 
 #esvg_attribute_regular.c \
 #esvg_gradient.c \
-#esvg_image.c \
 #esvg_pattern.c \
 #esvg_shape.c \
 #esvg_text.c \
