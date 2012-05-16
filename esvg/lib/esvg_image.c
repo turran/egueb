@@ -97,7 +97,6 @@ static void _esvg_image_load(Esvg_Image *thiz, double width, double height)
 	{
 		printf("some error?\n");
 	}
-
 	thiz->s = s;
 	enesim_renderer_image_src_set(thiz->image, s);
 }
@@ -140,6 +139,29 @@ static Eina_Bool _esvg_image_attribute_set(Ender_Element *e,
 	{
 		esvg_image_href_set(e, value);
 	}
+#if 0
+	else if (strcmp(key, "xlink:href") == 0)
+	{
+		/* absolute */
+		if (*value == '/')
+		{
+			esvg_image_href_set(r, value);
+		}
+		/* relative */
+		else
+		{
+			Edom_Parser *parser;
+			char real[PATH_MAX];
+			const char *root;
+
+			parser = edom_tag_parser_get(tag);
+			root = edom_parser_root_get(parser);
+			strcpy(real, root);
+			strcat(real, value);
+			esvg_image_href_set(r, real);
+		}
+	}
+#endif
 
 	return EINA_TRUE;
 }
