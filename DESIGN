@@ -1,0 +1,13 @@
+This document tries to explain the design and architecture of every library found on the egueb project
+
+Edom
+====
+Edom is an implementation of the DOM specification (http://www.w3.org/DOM/).
+
+
+Ecss
+====
+
+Esvg
+====
+Esvg is an implementation of the SVG specification (http://www.w3.org/TR/SVG/).

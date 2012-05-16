@@ -30,6 +30,7 @@ esvg_element.c \
 esvg_ellipse.c \
 esvg_g.c \
 esvg_gradient.c \
+esvg_input.c \
 esvg_instantiable.c \
 esvg_line.c \
 esvg_linear_gradient.c \

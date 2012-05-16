@@ -27,6 +27,7 @@
 #include "esvg_private_instantiable.h"
 #include "esvg_private_svg.h"
 #include "esvg_private_a.h"
+#include "esvg_private_input.h"
 
 #include "esvg_svg.h"
 #include "esvg_element.h"
@@ -1039,7 +1040,14 @@ EAPI void esvg_svg_time_set(Ender_Element *e, double secs)
  */
 EAPI void esvg_svg_feed_mouse_move(Ender_Element *e, int x, int y)
 {
+	double dx;
+	double dy;
 
+	/* always double coordinates */
+	dx = x;
+	dy = y;
+	/* send the mouse move to the input system */
+	esvg_input_feed_mouse_move(e, dx, dy);
 }
 
 /**
@@ -1056,6 +1064,15 @@ EAPI void esvg_svg_feed_mouse_down(Ender_Element *e)
  * FIXME: To be fixed
  */
 EAPI void esvg_svg_feed_mouse_up(Ender_Element *e)
+{
+
+}
+
+/**
+ * To be documented
+ * FIXME: To be fixed
+ */
+EAPI Eina_List * esvg_svg_intersection_list_get(Ender_Element *e, Enesim_Rectangle *rect)
 {
 
 }
