@@ -65,6 +65,18 @@ typedef struct _Esvg_Svg_User_Descriptor_Uri
 
 typedef struct _Esvg_Svg_User_Descriptor
 {
+	/* TODO what we really need here is not a way to retrive generic
+	 * data relative or abolsute, but a way to get needed information
+	 * for *known* data. For example, we need a way to load an image
+	 * from http or load a fragment from other svg, so better
+	 * "name" what we need to fetch externally
+	 *
+	 * helpful methods would be:
+	 * _base_uri/dir_get() get the base uri/dir of the svg being loaded
+	 * to handle relative files
+	 * _image_load() to override the emage default loader (like the async one)
+	 * _element_get() to get a fragment from another svg
+	 */
 	Esvg_Svg_User_Descriptor_Uri absolute;
 	Esvg_Svg_User_Descriptor_Uri relative;
 } Esvg_Svg_User_Descriptor;
