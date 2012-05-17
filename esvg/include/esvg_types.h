@@ -384,16 +384,16 @@ typedef enum _Esvg_Animate_Transform_Type
 	ESVG_ANIMATE_TRANSFORM_TYPE_SKEWY
 } Esvg_Animate_Transform_Type;
 
-typedef void * (*Esvg_Uri_Local_Get)(const char *name, void *data);
-typedef void * (*Esvg_Uri_Absolute_Get)(const char *name, void *data);
+typedef void * (*Esvg_Uri_Get)(const char *uri, const char *fragment, void *data);
 
 typedef struct _Esvg_Uri_Descriptor
 {
-	Esvg_Uri_Local_Get local_get;
-	Esvg_Uri_Absolute_Get absolute_get;
+	Esvg_Uri_Get local_get;
+	Esvg_Uri_Get absolute_get;
+	Esvg_Uri_Get relative_get;
 } Esvg_Uri_Descriptor;
 
-EAPI Eina_Bool esvg_string_is_uri(const char *attr);
+EAPI void * esvg_iri_string_from(const char *attr, Esvg_Uri_Descriptor *descriptor, void *data);
 EAPI void * esvg_uri_string_from(const char *attr, Esvg_Uri_Descriptor *descriptor, void *data);
 
 extern Esvg_Length ESVG_LENGTH_0;
@@ -415,6 +415,7 @@ static void esvg_length_set(Esvg_Length *length, double value, Esvg_Unit_Length 
 	length->unit = unit;
 }
 
+typedef void (*Esvg_Free_Cb)(void *data);
 typedef void (*Esvg_Command_Cb)(Esvg_Path_Command *cmd, void *data);
 typedef void (*Esvg_Timing_Cb)(Esvg_Timing *t, void *data);
 typedef void (*Esvg_Points_Cb)(Esvg_Point *p, void *data);

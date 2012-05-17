@@ -146,7 +146,7 @@ static unsigned char _esvg_cc_to_hh(const char *cc)
 	return h2 | ((h1 << 4) & 240);
 }
 
-static const char * _id_get(const char *uri)
+static const char * _fragment_get(const char *uri)
 {
 	const char *tmp;
 	const char *id;
@@ -896,6 +896,7 @@ Esvg_View_Box esvg_view_box_get(const char *attr_val)
 	return vb;
 }
 
+/* TODO remove this! and use the iri_string_from */
 Eina_Bool esvg_href_get(Edom_Tag **tag, Edom_Tag *rel, const char *href)
 {
 	Edom_Tag *topmost;
@@ -909,7 +910,7 @@ Eina_Bool esvg_href_get(Edom_Tag **tag, Edom_Tag *rel, const char *href)
 		return EINA_FALSE;
 	}
 
-	id = _id_get(href);
+	id = _fragment_get(href);
 #if 0
 	/* FIXME pass a cb to get the object? */
 	/* get the tag from the specified uri */
@@ -1091,35 +1092,55 @@ EAPI double esvg_length_final_get(const Esvg_Length *l, double parent_length)
 	return ret;
 }
 
-EAPI Eina_Bool esvg_string_is_uri(const char *attr)
-{
-	if (strncmp(attr, "url(", 4))
-		return EINA_FALSE;
-	return EINA_TRUE;
-}
-
 /*
  * [ <absoluteURI> | <relativeURI> ] [ "#" <elementID> ]
  */
 EAPI void * esvg_uri_string_from(const char *attr, Esvg_Uri_Descriptor *descriptor, void *data)
 {
-	char url[PATH_MAX];
-	size_t len;
-	const char *id;
+	const char *fragment;
 
-	if (!esvg_string_is_uri(attr))
-		return NULL;
+	ESVG_SPACE_SKIP(attr);
+	fragment = _fragment_get(attr);
+	/* TODO check for the local/non-local case */
+	if (*attr == '#')
+	{
+		const char *id;
 
-	len = strlen(attr) - 5;
-	strncpy(url, attr + 4, len);
-	url[len] = '\0';
-
-	id = _id_get(url);
-	if (!id) return NULL;
-
-	return descriptor->local_get(id, data);
+		if (!fragment) return NULL;
+		descriptor->local_get(NULL, id, data);
+	}
+	else
+	{
+		/* TODO check for the relative/absolute case */
+		return descriptor->relative_get(attr, fragment, data);
+		//return descriptor->absolute_get(attr, fragment, data);
+	}
 }
 
+EAPI void * esvg_iri_string_from(const char *attr, Esvg_Uri_Descriptor *descriptor, void *data)
+{
+	/* funciri ? */
+	ESVG_SPACE_SKIP(attr);
+	if (!strncmp(attr, "url(", 4))
+	{
+		char url[PATH_MAX];
+		size_t len;
+		int i = 0;
+
+		attr += 4;
+		/* also remove the last spaces */
+		while (*attr != ')' && *attr != '\0')
+			url[i++] = *attr++;
+		url[i] = '\0';
+		return esvg_uri_string_from(url, descriptor, data);
+
+	}
+	/* iri */
+	else
+	{
+		return esvg_uri_string_from(attr, descriptor, data);
+	}
+}
 
 /*
  * none, currentColor, <color>, <uri>?
@@ -1144,14 +1165,10 @@ EAPI Eina_Bool esvg_paint_string_from(Esvg_Paint *paint, const char *attr)
 		paint->type = ESVG_PAINT_COLOR;
 	}
 	/* uri */
-	else if (esvg_string_is_uri(attr))
+	else
 	{
 		paint->type = ESVG_PAINT_SERVER;
 		paint->value.paint_server = strdup(attr);
-	}
-	else
-	{
-		return EINA_FALSE;
 	}
 
 	return EINA_TRUE;

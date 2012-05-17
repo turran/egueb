@@ -27,4 +27,7 @@ EAPI void esvg_svg_feed_mouse_up(Ender_Element *e);
 
 EAPI Eina_List * esvg_svg_intersection_list_get(Ender_Element *e, Enesim_Rectangle *rect);
 
+EAPI void esvg_svg_absolute_uri_get_set(Ender_Element *e, Esvg_Uri_Get get, void *data, Esvg_Free_Cb cb);
+EAPI void esvg_svg_relative_uri_get_set(Ender_Element *e, Esvg_Uri_Get get, void *data, Esvg_Free_Cb cb);
+
 #endif

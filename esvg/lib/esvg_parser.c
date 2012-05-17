@@ -53,10 +53,6 @@ typedef struct _Esvg_Parser
 	void *data;
 } Esvg_Parser;
 
-/**
- * @cond LOCAL
- */
-
 static char * _esvg_parser_file_open(const char *filename, long *sz)
 {
 	FILE *f;
@@ -597,10 +593,10 @@ static Edom_Parser_Descriptor _info_descriptor = {
 	/* .tag_text_set = */ NULL,
 };
 
-/**
- * @endcond
- */
-
+static void * _esvg_parser_relative_uri_get(const char *uri, const char *fragment, void *data)
+{
+	printf("called with attr %s %s\n", uri, fragment);
+}
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
@@ -684,7 +680,15 @@ EAPI Ender_Element * esvg_parser_load(const char *filename,
 	 * for the linked element, it wont be propagated to
 	 * the clone
 	 */
-	/* call all the post parse functions */
+
+	/* set the default functions */
+	if (esvg_is_svg(tag))
+	{
+		/* uri functionality, only local */
+		esvg_svg_relative_uri_get_set(tag, _esvg_parser_relative_uri_get, NULL, NULL);
+
+	}
+
 parse_failed:
 	edom_parser_delete(parser);
 

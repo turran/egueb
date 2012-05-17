@@ -56,6 +56,19 @@ static Ender_Property *ESVG_SVG_ACTUAL_WIDTH;
 static Ender_Property *ESVG_SVG_ACTUAL_HEIGHT;
 static Ender_Property *ESVG_SVG_VIEWBOX;
 
+typedef struct _Esvg_Svg_User_Descriptor_Uri
+{
+	Esvg_Uri_Get get;
+	void *data;
+	Esvg_Free_Cb free;
+} Esvg_Svg_User_Descriptor_Uri;
+
+typedef struct _Esvg_Svg_User_Descriptor
+{
+	Esvg_Svg_User_Descriptor_Uri absolute;
+	Esvg_Svg_User_Descriptor_Uri relative;
+} Esvg_Svg_User_Descriptor;
+
 typedef struct _Esvg_Svg
 {
 	/* properties */
@@ -78,6 +91,8 @@ typedef struct _Esvg_Svg
 	/* FIXME we use a background because of the blend/fill thing on the redraws */
 	Enesim_Renderer *background;
 	Eina_Hash *ids; /* the ids found */
+	/* user provided callbacks */
+	Esvg_Svg_User_Descriptor user_descriptor;
 	/* animation */
 	Etch *etch;
 	Eina_Bool paused;
@@ -208,18 +223,40 @@ static void _esvg_svg_element_changed_remove(Esvg_Svg *thiz, Ender_Element *e)
 /*----------------------------------------------------------------------------*
  *                             The URI interface                              *
  *----------------------------------------------------------------------------*/
-static void * _esvg_svg_uri_local_get(const char *name, void *data)
+static void * _esvg_svg_uri_local_get(const char *name, const char *fragment, void *data)
 {
-	Ender_Element *topmost = data;
-	Ender_Element *relative;
+	Esvg_Svg *thiz = data;
 
-	relative = esvg_svg_element_find(topmost, name);
-	return relative;
+	printf("looking for %s\n", fragment);
+	return eina_hash_find(thiz->ids, fragment);
+}
+
+static void * _esvg_svg_uri_absolute_get(const char *name, const char *fragment, void *data)
+{
+	Esvg_Svg *thiz = data;
+	Esvg_Svg_User_Descriptor_Uri *u;
+	
+	u = &thiz->user_descriptor.absolute;
+	if (u->get)
+		return u->get(name, fragment, u->data);
+	return NULL;
+}
+
+static void * _esvg_svg_uri_relative_get(const char *name, const char *fragment, void *data)
+{
+	Esvg_Svg *thiz = data;
+	Esvg_Svg_User_Descriptor_Uri *u;
+	
+	u = &thiz->user_descriptor.relative;
+	if (u->get)
+		return u->get(name, fragment, u->data);
+	return NULL;
 }
 
 static Esvg_Uri_Descriptor _uri_descriptor = {
 	/* .local_get 		= */ _esvg_svg_uri_local_get,
-	/* .absolute_get 	= */ NULL
+	/* .absolute_get 	= */ _esvg_svg_uri_absolute_get,
+	/* .relative_get 	= */ _esvg_svg_uri_relative_get,
 };
 
 
@@ -762,6 +799,11 @@ Ender_Element * esvg_svg_uri_get(Ender_Element *e, const char *uri)
 	return found;
 }
 
+const char * esvg_svg_uri_resolve(Ender_Element *e, const char *uri)
+{
+	/* TODO get the base url from the user descriptor */
+}
+
 Ender_Element * esvg_svg_internal_element_find(Edom_Tag *t, const char *id)
 {
 	Esvg_Svg *thiz;
@@ -1076,3 +1118,54 @@ EAPI Eina_List * esvg_svg_intersection_list_get(Ender_Element *e, Enesim_Rectang
 {
 
 }
+
+/**
+ * To be documented
+ * FIXME: To be fixed
+ */
+EAPI void esvg_svg_absolute_uri_get_set(Ender_Element *e, Esvg_Uri_Get get, void *data, Esvg_Free_Cb cb)
+{
+	Edom_Tag *t;
+	Esvg_Svg *thiz;
+	Esvg_Svg_User_Descriptor_Uri *u;
+
+	t = ender_element_object_get(e);
+	thiz = _esvg_svg_get(t);
+
+	u = &thiz->user_descriptor.absolute;
+	if (u->data)
+	{
+		if (u->free)
+			u->free(u->data);
+		u->data = NULL;	
+	}
+	u->get = get;
+	u->data = data;
+	u->free = cb;
+}
+
+/**
+ * To be documented
+ * FIXME: To be fixed
+ */
+EAPI void esvg_svg_relative_uri_get_set(Ender_Element *e, Esvg_Uri_Get get, void *data, Esvg_Free_Cb cb)
+{
+	Edom_Tag *t;
+	Esvg_Svg *thiz;
+	Esvg_Svg_User_Descriptor_Uri *u;
+
+	t = ender_element_object_get(e);
+	thiz = _esvg_svg_get(t);
+
+	u = &thiz->user_descriptor.relative;
+	if (u->data)
+	{
+		if (u->free)
+			u->free(u->data);
+		u->data = NULL;	
+	}
+	u->get = get;
+	u->data = data;
+	u->free = cb;
+}
+
