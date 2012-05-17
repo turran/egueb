@@ -210,7 +210,7 @@ static Eina_Bool _esvg_image_renderer_propagate(Edom_Tag *t,
 	/* load the image of that size */
 	_esvg_image_load(thiz, width, height);
 
-	printf("calling the setup on the image (%g %g %g %g)\n", x, y, width, height);
+	printf("calling the setup on the image (%g %g %g %g %p)\n", x, y, width, height, thiz->s);
 	/* set the image */
 	if (!thiz->s)
 	{
