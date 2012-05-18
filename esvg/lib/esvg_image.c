@@ -221,7 +221,20 @@ static Eina_Bool _esvg_image_renderer_propagate(Edom_Tag *t,
 	width = esvg_length_final_get(&thiz->current.width, ctx->viewbox.width);
 	height = esvg_length_final_get(&thiz->current.height, ctx->viewbox.height);
 
+#if 0
+	double iw;
+	double ih;
+	const Esvg_Element_Context *parent_ctx;
+	Edom_Tag *parent_t;
+
+	/* get the final transformation of the parent and apply it to the width/height to get the image size */
+	parent_t = edom_tag_parent_get(t);
+	parent_ctx = esvg_element_context_get(parent_t);
 	/* load the image of that size */
+	iw = width * parent_ctx->transform.base.xx;
+	ih = height * parent_ctx->transform.base.yy;
+	printf("iw = %g ih = %g\n", iw, ih);
+#endif
 	_esvg_image_load(t, thiz, width, height);
 
 	printf("calling the setup on the image (%g %g %g %g %p)\n", x, y, width, height, thiz->s);

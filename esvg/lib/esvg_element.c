@@ -1104,6 +1104,14 @@ Eina_Bool esvg_element_has_setup(Edom_Tag *t, Esvg_Context *c)
 	return EINA_FALSE;
 }
 
+const Esvg_Element_Context * esvg_element_context_get(Edom_Tag *t)
+{
+	Esvg_Element *thiz;
+
+	thiz = _esvg_element_get(t);
+	return &thiz->state_final;
+}
+
 void esvg_element_context_dump(const Esvg_Element_Context *c)
 {
 	printf("dpi %g %g\n", c->dpi_x, c->dpi_y);

@@ -87,7 +87,6 @@ static void * _emage_svg_options_parse(const char *options_str)
 	options->container_width = _default_width;
 	options->container_height = _default_height;
 	emage_options_parse(options_str, _options_parse_cb, options);
-	printf("inside options! %d %d\n", options->container_width, options->container_height);
 	/* the options we support are:
 	 * container_size=wxh
 	 */
@@ -137,6 +136,7 @@ static Eina_Error _emage_svg_info_load(const char *file, int *w, int *h, Enesim_
 	*w = (int)ceil(svg_w);
 	*h = (int)ceil(svg_h);
 	*sfmt = ENESIM_BUFFER_FORMAT_ARGB8888_PRE;
+
 	return 0;
 }
 
@@ -179,7 +179,6 @@ static Eina_Error _emage_svg_load(const char *file, Enesim_Buffer *buffer, void 
 		printf("no such surface\n");
 		return 0;
 	}
-	printf("surface created of size %d %d\n", w, h);
 	ret = esvg_element_setup(e, &err);
 	if (!ret)
 	{
@@ -190,7 +189,6 @@ static Eina_Error _emage_svg_load(const char *file, Enesim_Buffer *buffer, void 
 	{
 		enesim_error_dump(err);
 	}
-	printf("ret = %d %p %p\n", ret, e, s);
 	enesim_surface_unref(s);
 	// ender_element_unref(e);
 
