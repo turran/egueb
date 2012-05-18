@@ -118,7 +118,10 @@ static Eina_Error _emage_svg_info_load(const char *file, int *w, int *h, Enesim_
 	Esvg_Length width;
 	Esvg_Length height;
 
-	esvg_parser_info_load(file, &width, &height);
+	if (!esvg_parser_info_load(file, &width, &height))
+	{
+		return EMAGE_ERROR_LOADING;
+	}
 	/* get the final size */
 	if (options)
 	{
@@ -127,7 +130,6 @@ static Eina_Error _emage_svg_info_load(const char *file, int *w, int *h, Enesim_
 		cw = o->container_width;
 		ch = o->container_height;
 	}
-
 	/* FIXME this is not EAPI */
 	svg_w = esvg_length_final_get(&width, cw);
 	svg_h = esvg_length_final_get(&height, ch);
@@ -178,7 +180,12 @@ static Eina_Error _emage_svg_load(const char *file, Enesim_Buffer *buffer, void 
 		return 0;
 	}
 	printf("surface created of size %d %d\n", w, h);
-	ret = esvg_renderable_draw(e, s, NULL, 0, 0, &err);
+	ret = esvg_element_setup(e, &err);
+	if (!ret)
+	{
+		enesim_error_dump(err);
+	}
+	ret = esvg_renderable_draw(e, s, NULL, 0, 0, NULL);
 	if (!ret)
 	{
 		enesim_error_dump(err);

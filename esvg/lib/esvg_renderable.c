@@ -595,10 +595,12 @@ EAPI Eina_Bool esvg_renderable_draw(Ender_Element *e, Enesim_Surface *s,
 		Eina_Rectangle *clip, int x, int y, Enesim_Error **error)
 {
 	Edom_Tag *t;
-	Enesim_Renderer *r;
+	Enesim_Renderer *r = NULL;
 
 	t = ender_element_object_get(e);
 	esvg_renderable_internal_renderer_get(t, &r);
+	if (!r) return EINA_FALSE;
+
 	return enesim_renderer_draw(r, s, clip, x, y, error);
 }
 
@@ -610,10 +612,12 @@ EAPI Eina_Bool esvg_renderable_draw_list(Ender_Element *e, Enesim_Surface *s,
 		Eina_List *clips, int x, int y, Enesim_Error **error)
 {
 	Edom_Tag *t;
-	Enesim_Renderer *r;
+	Enesim_Renderer *r = NULL;
 
 	t = ender_element_object_get(e);
 	esvg_renderable_internal_renderer_get(t, &r);
+	if (!r) return EINA_FALSE;
+
 	return enesim_renderer_draw_list(r, s, clips, x, y, error);
 }
 

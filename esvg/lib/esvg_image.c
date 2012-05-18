@@ -97,6 +97,9 @@ static void _esvg_image_load(Edom_Tag *t, Esvg_Image *thiz, double width, double
 
 	options[0] = '\0';
 	/* set up the options */
+	/* FIXME this width is without the viewbox transformation, we should transform
+	 * and the assign the lengths
+	 */
 	if (width != 0 && height != 0)
 	{
 		sprintf(options, "width=%d;height=%d", (int)width, (int)height);

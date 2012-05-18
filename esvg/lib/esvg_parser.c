@@ -557,7 +557,7 @@ static Edom_Parser_Descriptor _descriptor = {
 static Eina_Bool _esvg_parser_info_tag_get(Edom_Parser *parser, const char *content,
 		 size_t sz, int *tag)
 {
-	if (strncmp("esvg", content, sz) == 0)
+	if (strncmp("svg", content, sz) == 0)
 	{
 		*tag = ESVG_SVG;
 		return EINA_TRUE;
@@ -621,7 +621,7 @@ EAPI Eina_Bool esvg_parser_info_load(const char *filename,
 
 	//ender_element_unref(e);
 	esvg_svg_width_get(e, width);
-	esvg_svg_height_get(e, width);
+	esvg_svg_height_get(e, height);
 	return EINA_TRUE;
 }
 
