@@ -213,11 +213,13 @@ static Eina_Bool _edom_parser_cb(void *data, Eina_Simple_XML_Type type,
 		break;
 
 		case EINA_SIMPLE_XML_DATA:
-		_edom_parser_tag_text_set(thiz, parent->tag, content, length);
+		if (parent)
+			_edom_parser_tag_text_set(thiz, parent->tag, content, length);
 		break;
 
 		case EINA_SIMPLE_XML_CDATA:
-		_edom_parser_tag_cdata_set(thiz, parent->tag, content, length);
+		if (parent)
+			_edom_parser_tag_cdata_set(thiz, parent->tag, content, length);
 		break;
 
 		default:

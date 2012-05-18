@@ -542,13 +542,13 @@ static void _esvg_parser_tag_text_set(Edom_Parser *parser, void *t, const char *
 }
 
 static Edom_Parser_Descriptor _descriptor = {
-	/* .tag_get 	= */ _esvg_parser_tag_get,
-	/* .tag_new 	= */ _esvg_parser_tag_new,
-	/* .topmost_get = */ _esvg_parser_topmost_get,
-	/* .tag_attribute_set = */ _esvg_parser_tag_attribute_set,
-	/* .tag_child_add = */ _esvg_parser_tag_child_add,
-	/* .tag_cdata_set = */ _esvg_parser_tag_cdata_set,
-	/* .tag_text_set = */ _esvg_parser_tag_text_set,
+	/* .tag_get 		= */ _esvg_parser_tag_get,
+	/* .tag_new 		= */ _esvg_parser_tag_new,
+	/* .topmost_get 	= */ _esvg_parser_topmost_get,
+	/* .tag_attribute_set 	= */ _esvg_parser_tag_attribute_set,
+	/* .tag_child_add 	= */ _esvg_parser_tag_child_add,
+	/* .tag_cdata_set 	= */ _esvg_parser_tag_cdata_set,
+	/* .tag_text_set 	= */ _esvg_parser_tag_text_set,
 
 };
 /*----------------------------------------------------------------------------*
@@ -571,32 +571,22 @@ static void * _esvg_parser_info_tag_new(Edom_Parser *parser, int tag_id)
 	Ender_Element *tag = NULL;
 
 	thiz = edom_parser_data_get(parser);
-	if (!thiz->topmost && tag_id != ESVG_SVG)
-	{
-		printf("you need at least a topmost svg\n");
-	}
-#if 0
-	tag = esvg_parser_svg_new(parser);
+	tag = esvg_svg_new();
 	if (!thiz->topmost)
 		thiz->topmost = tag;
-#endif
 	return tag;
 }
 
 static Edom_Parser_Descriptor _info_descriptor = {
-	/* .tag_get 	= */ _esvg_parser_info_tag_get,
-	/* .tag_new 	= */ _esvg_parser_info_tag_new,
-	/* .topmost_get = */ _esvg_parser_topmost_get,
-	/* .tag_attribute_set = */ NULL,
-	/* .tag_child_add = */ NULL,
-	/* .tag_cdata_set = */ NULL,
-	/* .tag_text_set = */ NULL,
+	/* .tag_get 		= */ _esvg_parser_info_tag_get,
+	/* .tag_new 		= */ _esvg_parser_info_tag_new,
+	/* .topmost_get 	= */ _esvg_parser_topmost_get,
+	/* .tag_attribute_set 	= */ _esvg_parser_tag_attribute_set,
+	/* .tag_child_add 	= */ NULL,
+	/* .tag_cdata_set 	= */ NULL,
+	/* .tag_text_set 	= */ NULL,
 };
 
-static void * _esvg_parser_relative_uri_get(const char *uri, const char *fragment, void *data)
-{
-	printf("called with attr %s %s\n", uri, fragment);
-}
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
@@ -613,28 +603,26 @@ void esvg_parser_href_set(Edom_Parser *p, Enesim_Renderer *r, const char *href)
  *                                   API                                      *
  *============================================================================*/
 /**
- *
+ * @param width The parsed svg's width attribute
+ * @param height The parsed svg's height attribute
  */
 EAPI Eina_Bool esvg_parser_info_load(const char *filename,
-		double *width, double *height)
+		Esvg_Length *width, Esvg_Length *height)
 {
 	Esvg_Parser *thiz;
 	Edom_Parser *info_parser;
-	Ender_Element *tag;
-	Eina_Bool ret = EINA_FALSE;
+	Ender_Element *e;
 
 	thiz = calloc(1, sizeof(Esvg_Parser));
 	info_parser = edom_parser_new(&_info_descriptor, thiz);
-	tag = _esvg_parser_file_parse(filename, info_parser);
+	e = _esvg_parser_file_parse(filename, info_parser);
 	edom_parser_delete(info_parser);
+	if (!e) return EINA_FALSE;
 
-	if (tag)
-	{
-		//edom_tag_unref(tag);
-		ret = EINA_TRUE;
-	}
-
-	return ret;
+	//ender_element_unref(e);
+	esvg_svg_width_get(e, width);
+	esvg_svg_height_get(e, width);
+	return EINA_TRUE;
 }
 
 /**
@@ -645,7 +633,7 @@ EAPI Ender_Element * esvg_parser_load(const char *filename,
 {
 	Esvg_Parser *thiz;
 	Edom_Parser *parser;
-	Ender_Element *tag = NULL;
+	Ender_Element *e = NULL;
 	Eina_List *l;
 
 	thiz = calloc(1, sizeof(Esvg_Parser));
@@ -654,12 +642,12 @@ EAPI Ender_Element * esvg_parser_load(const char *filename,
 		thiz->descriptor = *descriptor;
 
 	parser = edom_parser_new(&_descriptor, thiz);
-	tag = _esvg_parser_file_parse(filename, parser);
-	if (!tag) goto parse_failed;
+	e = _esvg_parser_file_parse(filename, parser);
+	if (!e) goto parse_failed;
 
 	/* useful for debugging */
 	{
-		Edom_Tag *t = ender_element_object_get(tag);
+		Edom_Tag *t = ender_element_object_get(e);
 		edom_tag_dump(t);
 	}
 	/* TODO whenever the file has been parsed trigger the onload
@@ -674,7 +662,7 @@ EAPI Ender_Element * esvg_parser_load(const char *filename,
 	 * the whole tree on the lib
 	 */
 
-	//esvg_parser_svg_style_apply(tag);
+	//esvg_parser_svg_style_apply(e);
 	/* FIXME all the link property of the <use> tags
 	 * are created at parse time, in case we apply a style
 	 * for the linked element, it wont be propagated to
@@ -682,17 +670,30 @@ EAPI Ender_Element * esvg_parser_load(const char *filename,
 	 */
 
 	/* set the default functions */
-	if (esvg_is_svg(tag))
+	if (esvg_is_svg(e))
 	{
-		/* uri functionality, only local */
-		esvg_svg_relative_uri_get_set(tag, _esvg_parser_relative_uri_get, NULL, NULL);
+		char *found;
+		char last;
 
+		/* FIXME this is not cross platform we should add an eina helper for this */
+		/* get the base dir */
+		found = strrchr(filename, '/');
+		if (found)
+		{
+			found++;
+			last = *found;
+			*found = '\0';
+			/* uri functionality, only local */
+			esvg_svg_base_dir_set(e, filename);
+			*found = last;
+		}
+		/* else, relative file, we need to get the current execution path? */
 	}
 
 parse_failed:
 	edom_parser_delete(parser);
 
-	return tag;
+	return e;
 }
 
 /**

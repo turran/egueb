@@ -148,9 +148,9 @@ static void _esvg_shape_enesim_state_get(Edom_Tag *t,
 		esvg_element_internal_topmost_get(t, &topmost);
 		if (topmost)
 		{
-			Ender_Element *e;
+			Ender_Element *e = NULL;
 
-			e = esvg_svg_uri_get(topmost, attr->fill.value.paint_server);
+			esvg_svg_element_get(topmost, attr->fill.value.paint_server, &e);
 			if (e)
 			{
 				Enesim_Renderer *fill_r;
@@ -639,9 +639,17 @@ EAPI void esvg_renderable_damages_get(Ender_Element *e, Esvg_Renderable_Damage_C
 
 	if (!thiz->tiler || thiz->tw != cw || thiz->th != ch)
 	{
+		Eina_Rectangle full;
+
 		if (thiz->tiler)
 			eina_tiler_free(thiz->tiler);
 		thiz->tiler = eina_tiler_new(cw, ch);
+		thiz->tw = cw;
+		thiz->th = ch;
+
+		eina_rectangle_coords_from(&full, 0, 0, cw, ch);
+		cb(e, &full, data);
+		return;
 	}
 
 	esvg_renderable_internal_renderer_get(t, &r);

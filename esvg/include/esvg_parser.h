@@ -9,5 +9,6 @@ typedef struct _Esvg_Parser_Descriptor
 
 
 EAPI Ender_Element * esvg_parser_load(const char *filename, Esvg_Parser_Descriptor *descriptor, void *data);
+EAPI Eina_Bool esvg_parser_info_load(const char *filename, Esvg_Length *width, Esvg_Length *height);
 
 #endif

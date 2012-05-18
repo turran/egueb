@@ -25,6 +25,7 @@
 #include "esvg_private_element.h"
 #include "esvg_private_renderable.h"
 #include "esvg_private_instantiable.h"
+#include "esvg_private_svg.h"
 #include "esvg_image.h"
 /*============================================================================*
  *                                  Local                                     *
@@ -43,7 +44,6 @@ typedef struct _Esvg_Image_State
 	Esvg_Coord y;
 	Esvg_Length width;
 	Esvg_Length height;
-	char *href;
 } Esvg_Image_State;
 
 typedef struct _Esvg_Image
@@ -52,8 +52,11 @@ typedef struct _Esvg_Image
 	/* properties */
 	Esvg_Image_State current;
 	Esvg_Image_State past;
+	char *href;
+	char *real_href;
 	/* private */
-	Enesim_Renderer *r;
+	Enesim_Renderer *proxy;
+	Enesim_Renderer *rectangle;
 	Enesim_Renderer *image;
 	Enesim_Renderer *checker;
 	Enesim_Surface *s;
@@ -70,11 +73,27 @@ static Esvg_Image * _esvg_image_get(Edom_Tag *t)
 	return thiz;
 }
 
-static void _esvg_image_load(Esvg_Image *thiz, double width, double height)
+#if 0
+static Eina_Bool _esvg_image_svg_load(Edom_Tag *t, Esvg_Image *thiz, double width, double height)
+{
+	Ender_Element *e;
+
+	e = esvg_parser_load(thiz->real_href);
+	if (!e) return EINA_FALSE;
+
+	/* FIXME if it is not a svg, then just abort it? */
+	/* we need the main svg element also process and add the etch to the list of etches, etc */
+	/* when to render? whenever the renderable is being rendered? how to link both rendering process? */
+	/* does the image element should inform the main svg that we need to render again? */
+}
+#endif
+
+static void _esvg_image_load(Edom_Tag *t, Esvg_Image *thiz, double width, double height)
 {
 	Enesim_Surface *s = NULL;
-	Eina_Bool ret;
+	Ender_Element *topmost;
 	char options[PATH_MAX];
+	char *real;
 
 	options[0] = '\0';
 	/* set up the options */
@@ -82,23 +101,38 @@ static void _esvg_image_load(Esvg_Image *thiz, double width, double height)
 	{
 		sprintf(options, "width=%d;height=%d", (int)width, (int)height);
 	}
+	if (!thiz->href) goto cleanup;
+
+	esvg_element_internal_topmost_get(t, &topmost);
+	real = esvg_svg_uri_resolve (topmost, thiz->href);
+	if (!real) goto cleanup;
+
+	/* check that the href has actually changed */
+	if (thiz->real_href)
+	{
+		if (!strcmp(thiz->real_href, real))
+			return;
+		free(thiz->real_href);
+	}
+	thiz->real_href = real;
+
+	/* FIXME for svg files we should call the parser to create
+	 * a new svg root, and our own root should process that one too
+	 */
+	
 	/* FIXME handle async loading, for that we need someone to
 	 * tick the emage thread
 	 */
+
+	esvg_svg_image_load(topmost, thiz->real_href, &s, options);
+cleanup:
 	if (thiz->s)
 	{
 		enesim_surface_unref(thiz->s);
 		thiz->s = NULL;
 	}
-
-	printf("loading!!\n");
-	ret = emage_load(thiz->current.href, &s, ENESIM_FORMAT_ARGB8888, NULL, options);
-	if (!ret)
-	{
-		printf("some error?\n");
-	}
-	thiz->s = s;
 	enesim_renderer_image_src_set(thiz->image, s);
+	thiz->s = s;
 }
 
 /*----------------------------------------------------------------------------*
@@ -135,33 +169,10 @@ static Eina_Bool _esvg_image_attribute_set(Ender_Element *e,
 		esvg_length_string_from(&height, value);
 		esvg_image_height_set(e, &height);
 	}
-	else if (strcmp(key, "href") == 0)
+	else if (strcmp(key, "xlink:href") == 0)
 	{
 		esvg_image_href_set(e, value);
 	}
-#if 0
-	else if (strcmp(key, "xlink:href") == 0)
-	{
-		/* absolute */
-		if (*value == '/')
-		{
-			esvg_image_href_set(r, value);
-		}
-		/* relative */
-		else
-		{
-			Edom_Parser *parser;
-			char real[PATH_MAX];
-			const char *root;
-
-			parser = edom_tag_parser_get(tag);
-			root = edom_parser_root_get(parser);
-			strcpy(real, root);
-			strcat(real, value);
-			esvg_image_href_set(r, real);
-		}
-	}
-#endif
 
 	return EINA_TRUE;
 }
@@ -176,7 +187,7 @@ static Enesim_Renderer * _esvg_image_renderer_get(Edom_Tag *t)
 	Esvg_Image *thiz;
 
 	thiz = _esvg_image_get(t);
-	return thiz->r;
+	return thiz->proxy;
 }
 
 static Esvg_Element_Setup_Return _esvg_image_setup(Edom_Tag *t,
@@ -208,34 +219,30 @@ static Eina_Bool _esvg_image_renderer_propagate(Edom_Tag *t,
 	height = esvg_length_final_get(&thiz->current.height, ctx->viewbox.height);
 
 	/* load the image of that size */
-	_esvg_image_load(thiz, width, height);
+	_esvg_image_load(t, thiz, width, height);
 
 	printf("calling the setup on the image (%g %g %g %g %p)\n", x, y, width, height, thiz->s);
 	/* set the image */
 	if (!thiz->s)
 	{
-		enesim_renderer_clipper_content_set(thiz->r, thiz->checker);
+		enesim_renderer_rectangle_x_set(thiz->rectangle, x);
+		enesim_renderer_rectangle_y_set(thiz->rectangle, y);
+		enesim_renderer_rectangle_width_set(thiz->rectangle, width);
+		enesim_renderer_rectangle_height_set(thiz->rectangle, height);
+		enesim_renderer_geometry_transformation_set(thiz->rectangle, &ctx->transform.base);
+		enesim_renderer_proxy_proxied_set(thiz->proxy, thiz->rectangle);
 	}
 	else
 	{
-		int sw, sh;
-
-		enesim_surface_size_get(thiz->s, &sw, &sh);
-		enesim_renderer_image_width_set(thiz->image, sw);
-		enesim_renderer_image_height_set(thiz->image, sh);
-		enesim_renderer_clipper_content_set(thiz->r, thiz->image);
+		enesim_renderer_image_x_set(thiz->image, x);
+		enesim_renderer_image_y_set(thiz->image, y);
+		enesim_renderer_image_width_set(thiz->image, width);
+		enesim_renderer_image_height_set(thiz->image, height);
+		enesim_renderer_geometry_transformation_set(thiz->image, &ctx->transform.base);
+		enesim_renderer_proxy_proxied_set(thiz->proxy, thiz->image);
 	}
-	/* we set the origin later as it depends on the content flags */
-	enesim_renderer_origin_set(thiz->r, x, y);
-	enesim_renderer_clipper_width_set(thiz->r, width);
-	enesim_renderer_clipper_height_set(thiz->r, height);
 
 	return EINA_TRUE;
-}
-
-static void _esvg_image_clone(Enesim_Renderer *r, Enesim_Renderer *dr)
-{
-
 }
 
 static Eina_Bool _esvg_image_has_changed(Edom_Tag *t)
@@ -252,8 +259,6 @@ static Eina_Bool _esvg_image_has_changed(Edom_Tag *t)
 	if (esvg_length_is_equal(&thiz->current.width, &thiz->past.width))
 		return EINA_TRUE;
 	if (esvg_length_is_equal(&thiz->current.height, &thiz->past.height))
-		return EINA_TRUE;
-	if (strcmp(thiz->current.href, thiz->past.href) == 0)
 		return EINA_TRUE;
 
 	return EINA_FALSE;
@@ -277,7 +282,7 @@ static Esvg_Instantiable_Descriptor _descriptor = {
 	/* .free 		= */ _esvg_image_free,
 	/* .initialize 		= */ NULL,
 	/* .attribute_set 	= */ _esvg_image_attribute_set,
-	/* .clone		= */ _esvg_image_clone,
+	/* .clone		= */ NULL,
 	/* .setup		= */ _esvg_image_setup,
 	/* .renderer_get	= */ _esvg_image_renderer_get,
 	/* .renderer_propagate	= */ _esvg_image_renderer_propagate,
@@ -297,6 +302,7 @@ static Edom_Tag * _esvg_image_new(void)
 	EINA_MAGIC_SET(thiz, ESVG_IMAGE_MAGIC);
 
 	r = enesim_renderer_image_new();
+	enesim_renderer_rop_set(r, ENESIM_BLEND);
 	thiz->image = r;
 
 	r = enesim_renderer_checker_new();
@@ -306,10 +312,13 @@ static Edom_Tag * _esvg_image_new(void)
 	enesim_renderer_checker_odd_color_set(r, 0xff00ff00);
 	thiz->checker = r;
 
-	r = enesim_renderer_clipper_new();
-	/* FIXME for now */
+	r = enesim_renderer_rectangle_new();
+	enesim_renderer_shape_fill_renderer_set(r, thiz->checker);
 	enesim_renderer_rop_set(r, ENESIM_BLEND);
-	thiz->r = r;
+	thiz->rectangle = r;	
+
+	r = enesim_renderer_proxy_new();
+	thiz->proxy = r;
 
 	/* Default values */
 	thiz->current.x = ESVG_COORD_0;
@@ -413,7 +422,7 @@ static void _esvg_image_href_set(Edom_Tag *t, const char *href)
 		h = strdup(href);
 		if (h)
 		{
-			thiz->current.href = strdup(href);
+			thiz->href = strdup(href);
 			thiz->changed = EINA_TRUE;
 		}
 	}
@@ -424,7 +433,7 @@ static void _esvg_image_href_get(Edom_Tag *t, const char **href)
 	Esvg_Image *thiz;
 
 	thiz = _esvg_image_get(t);
-	if (href && *href) *href = thiz->current.href;
+	if (href && *href) *href = thiz->href;
 }
 /*============================================================================*
  *                                 Global                                     *

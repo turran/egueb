@@ -896,36 +896,6 @@ Esvg_View_Box esvg_view_box_get(const char *attr_val)
 	return vb;
 }
 
-/* TODO remove this! and use the iri_string_from */
-Eina_Bool esvg_href_get(Edom_Tag **tag, Edom_Tag *rel, const char *href)
-{
-	Edom_Tag *topmost;
-	Edom_Tag *ret_tag;
-	const char *id;
-
-	topmost = edom_tag_topmost_get(rel);
-	if (!topmost)
-	{
-		printf("WTF?\n");
-		return EINA_FALSE;
-	}
-
-	id = _fragment_get(href);
-#if 0
-	/* FIXME pass a cb to get the object? */
-	/* get the tag from the specified uri */
-	ret_tag = esvg_parser_svg_tag_find(topmost, id);
-	if (!ret_tag)
-	{
-		printf("tag not found %s!!!!!!\n", id);
-		return EINA_FALSE;
-	}
-	*tag = ret_tag;
-#endif
-
-	return EINA_TRUE;
-}
-
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/
@@ -1095,7 +1065,7 @@ EAPI double esvg_length_final_get(const Esvg_Length *l, double parent_length)
 /*
  * [ <absoluteURI> | <relativeURI> ] [ "#" <elementID> ]
  */
-EAPI void * esvg_uri_string_from(const char *attr, Esvg_Uri_Descriptor *descriptor, void *data)
+EAPI Eina_Bool esvg_uri_string_from(const char *attr, Esvg_Uri_Descriptor *descriptor, void *data)
 {
 	const char *fragment;
 
@@ -1104,20 +1074,24 @@ EAPI void * esvg_uri_string_from(const char *attr, Esvg_Uri_Descriptor *descript
 	/* TODO check for the local/non-local case */
 	if (*attr == '#')
 	{
-		const char *id;
-
-		if (!fragment) return NULL;
-		descriptor->local_get(NULL, id, data);
+		if (!fragment) return EINA_FALSE;
+		printf("getting %s\n", fragment);
+		descriptor->local_get(NULL, fragment, data);
 	}
 	else
 	{
-		/* TODO check for the relative/absolute case */
-		return descriptor->relative_get(attr, fragment, data);
-		//return descriptor->absolute_get(attr, fragment, data);
+		printf("getting %s %s\n", attr, fragment);
+		/* TODO very naive way of handling relative/absolute, we need the scheme too, etc */
+		/* check for the relative/absolute case */
+		if (*attr == '/')
+			descriptor->absolute_get(attr, fragment, data);
+		else
+			descriptor->relative_get(attr, fragment, data);
 	}
+	return EINA_TRUE;
 }
 
-EAPI void * esvg_iri_string_from(const char *attr, Esvg_Uri_Descriptor *descriptor, void *data)
+EAPI Eina_Bool esvg_iri_string_from(const char *attr, Esvg_Uri_Descriptor *descriptor, void *data)
 {
 	/* funciri ? */
 	ESVG_SPACE_SKIP(attr);

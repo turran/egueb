@@ -56,13 +56,6 @@ static Ender_Property *ESVG_SVG_ACTUAL_WIDTH;
 static Ender_Property *ESVG_SVG_ACTUAL_HEIGHT;
 static Ender_Property *ESVG_SVG_VIEWBOX;
 
-typedef struct _Esvg_Svg_User_Descriptor_Uri
-{
-	Esvg_Uri_Get get;
-	void *data;
-	Esvg_Free_Cb free;
-} Esvg_Svg_User_Descriptor_Uri;
-
 typedef struct _Esvg_Svg_User_Descriptor
 {
 	/* TODO what we really need here is not a way to retrive generic
@@ -77,8 +70,7 @@ typedef struct _Esvg_Svg_User_Descriptor
 	 * _image_load() to override the emage default loader (like the async one)
 	 * _element_get() to get a fragment from another svg
 	 */
-	Esvg_Svg_User_Descriptor_Uri absolute;
-	Esvg_Svg_User_Descriptor_Uri relative;
+	char *base_dir;
 } Esvg_Svg_User_Descriptor;
 
 typedef struct _Esvg_Svg
@@ -109,6 +101,13 @@ typedef struct _Esvg_Svg
 	Etch *etch;
 	Eina_Bool paused;
 } Esvg_Svg;
+
+typedef struct _Esvg_Svg_Uri_Data
+{
+	Esvg_Svg *thiz;
+	void *ret;
+	void *data;
+} Esvg_Svg_Uri_Data;
 
 static Eina_Bool _esvg_svg_child_initialize(Edom_Tag *t, Edom_Tag *child_t, void *data);
 static Eina_Bool _esvg_svg_child_deinitialize(Edom_Tag *t, Edom_Tag *child_t, void *data);
@@ -233,42 +232,141 @@ static void _esvg_svg_element_changed_remove(Esvg_Svg *thiz, Ender_Element *e)
 
 }
 /*----------------------------------------------------------------------------*
- *                             The URI interface                              *
+ *                       The URI interface for uris                           *
  *----------------------------------------------------------------------------*/
-static void * _esvg_svg_uri_local_get(const char *name, const char *fragment, void *data)
+static void _esvg_svg_resolve_uri_local_get(const char *name,
+		const char *fragment, void *user_data)
 {
-	Esvg_Svg *thiz = data;
+	Esvg_Svg_Uri_Data *data = user_data;
+	Esvg_Svg *thiz = data->thiz;
+	char **real = data->ret;
+
+	printf("TODO looking for %s\n", fragment);
+	/* TODO we should concat the svg file + the fragment */
+}
+
+static void _esvg_svg_resolve_uri_absolute_get(const char *name,
+		const char *fragment, void *user_data)
+{
+	Esvg_Svg_Uri_Data *data = user_data;
+	Esvg_Svg *thiz = data->thiz;
+	char **real = data->ret;
+	size_t len;
+
+	*real = strdup(name);
+	/* FIXME what about the fragment? */
+}
+
+static void _esvg_svg_resolve_uri_relative_get(const char *name,
+		const char *fragment, void *user_data)
+{
+	Esvg_Svg_Uri_Data *data = user_data;
+	Esvg_Svg *thiz = data->thiz;
+	char **real = data->ret;
+	char absolute[PATH_MAX];
+
+	if (!thiz->user_descriptor.base_dir)
+	{
+		printf("No base dir set\n");
+		return;
+	}
+
+	/* get the base dir and concat with the relative path */
+	strcpy(absolute, thiz->user_descriptor.base_dir);
+	printf("abs %s name %s\n", name, absolute);
+	strcat(absolute, name);
+	/* FIXME what about the fragment? */
+	*real = strdup(absolute);
+}
+
+static Esvg_Uri_Descriptor _uri_resolve_descriptor = {
+	/* .local_get 		= */ _esvg_svg_resolve_uri_local_get,
+	/* .absolute_get 	= */ _esvg_svg_resolve_uri_absolute_get,
+	/* .relative_get 	= */ _esvg_svg_resolve_uri_relative_get,
+};
+/*----------------------------------------------------------------------------*
+ *                     The URI interface for elements                         *
+ *----------------------------------------------------------------------------*/
+static void _esvg_svg_element_uri_local_get(const char *name,
+		const char *fragment, void *user_data)
+{
+	Esvg_Svg_Uri_Data *data = user_data;
+	Esvg_Svg *thiz = data->thiz;
+	Ender_Element **e = data->ret;
 
 	printf("looking for %s\n", fragment);
-	return eina_hash_find(thiz->ids, fragment);
+	*e = eina_hash_find(thiz->ids, fragment);
 }
 
-static void * _esvg_svg_uri_absolute_get(const char *name, const char *fragment, void *data)
+static void _esvg_svg_element_uri_absolute_get(const char *name,
+		const char *fragment, void *user_data)
 {
-	Esvg_Svg *thiz = data;
-	Esvg_Svg_User_Descriptor_Uri *u;
-	
-	u = &thiz->user_descriptor.absolute;
-	if (u->get)
-		return u->get(name, fragment, u->data);
-	return NULL;
+	printf("TODO fetching an absolute uri element\n");
 }
 
-static void * _esvg_svg_uri_relative_get(const char *name, const char *fragment, void *data)
+static void _esvg_svg_element_uri_relative_get(const char *name,
+		const char *fragment, void *user_data)
 {
-	Esvg_Svg *thiz = data;
-	Esvg_Svg_User_Descriptor_Uri *u;
-	
-	u = &thiz->user_descriptor.relative;
-	if (u->get)
-		return u->get(name, fragment, u->data);
-	return NULL;
+	printf("TODO fetching an relative uri element\n");
 }
 
-static Esvg_Uri_Descriptor _uri_descriptor = {
-	/* .local_get 		= */ _esvg_svg_uri_local_get,
-	/* .absolute_get 	= */ _esvg_svg_uri_absolute_get,
-	/* .relative_get 	= */ _esvg_svg_uri_relative_get,
+static Esvg_Uri_Descriptor _uri_element_descriptor = {
+	/* .local_get 		= */ _esvg_svg_element_uri_local_get,
+	/* .absolute_get 	= */ _esvg_svg_element_uri_absolute_get,
+	/* .relative_get 	= */ _esvg_svg_element_uri_relative_get,
+};
+/*----------------------------------------------------------------------------*
+ *                      The URI interface for images                          *
+ *----------------------------------------------------------------------------*/
+static void _esvg_svg_image_uri_local_get(const char *name,
+		const char *fragment, void *user_data)
+{
+	printf("TODO fetching a local image?\n");
+}
+
+static void _esvg_svg_image_uri_absolute_get(const char *name,
+		const char *fragment, void *user_data)
+{
+	Esvg_Svg_Uri_Data *data = user_data;
+	Esvg_Svg *thiz = data->thiz;
+	Enesim_Surface **s = data->ret;
+	const char *options = data->data;
+	Eina_Bool ret;
+
+	printf("loading image, surface is %s\n", name);
+	ret = emage_load(name, s, ENESIM_FORMAT_ARGB8888, NULL, options);
+	if (!ret)
+	{
+		printf("some error?\n");
+		return;
+	}
+	printf("everything went ok!\n");
+}
+
+static void _esvg_svg_image_uri_relative_get(const char *name,
+		const char *fragment, void *user_data)
+{
+	Esvg_Svg_Uri_Data *data = user_data;
+	Esvg_Svg *thiz = data->thiz;
+	char absolute[PATH_MAX];
+
+	if (!thiz->user_descriptor.base_dir)
+	{
+		printf("No base dir set\n");
+		return;
+	}
+
+	/* get the base dir and concat with the relative path */
+	strcpy(absolute, thiz->user_descriptor.base_dir);
+	strcat(absolute, name);
+	/* call the absolute one */
+	_esvg_svg_image_uri_absolute_get(absolute, fragment, user_data);
+}
+
+static Esvg_Uri_Descriptor _uri_image_descriptor = {
+	/* .local_get 		= */ _esvg_svg_image_uri_local_get,
+	/* .absolute_get 	= */ _esvg_svg_image_uri_absolute_get,
+	/* .relative_get 	= */ _esvg_svg_image_uri_relative_get,
 };
 
 
@@ -802,18 +900,59 @@ static void _esvg_svg_actual_height_get(Edom_Tag *t, double *actual_height)
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
-Ender_Element * esvg_svg_uri_get(Ender_Element *e, const char *uri)
+void esvg_svg_element_get(Ender_Element *e, const char *uri, Ender_Element **el)
 {
-	Ender_Element *found;
+	Esvg_Svg_Uri_Data data;
+	Edom_Tag *t;
+	Esvg_Svg *thiz;
 
-	/* just get the renderer here, dont do the setup */
-	found = esvg_uri_string_from(uri, &_uri_descriptor, e);
-	return found;
+	if (!el) return;
+
+	t = ender_element_object_get(e);
+	thiz = _esvg_svg_get(t);
+
+	data.thiz = thiz;
+	data.ret = el;
+	/* resolve the uri for relative/absolute */
+	esvg_iri_string_from(uri, &_uri_element_descriptor, &data);
 }
 
-const char * esvg_svg_uri_resolve(Ender_Element *e, const char *uri)
+void esvg_svg_image_load(Ender_Element *e, const char *uri, Enesim_Surface **s, const char *options)
 {
-	/* TODO get the base url from the user descriptor */
+	Esvg_Svg_Uri_Data data;
+	Edom_Tag *t;
+	Esvg_Svg *thiz;
+
+	if (!s) return;
+
+	t = ender_element_object_get(e);
+	thiz = _esvg_svg_get(t);
+
+	data.thiz = thiz;
+	data.ret = s;
+	data.data = options;
+	/* resolve the uri for relative/absolute */
+	esvg_iri_string_from(uri, &_uri_image_descriptor, &data);
+}
+
+char * esvg_svg_uri_resolve(Ender_Element *e, const char *uri)
+{
+	Esvg_Svg_Uri_Data data;
+	Edom_Tag *t;
+	Esvg_Svg *thiz;
+	char *ret = NULL;
+
+	if (!uri) return NULL;
+
+	t = ender_element_object_get(e);
+	thiz = _esvg_svg_get(t);
+
+	data.thiz = thiz;
+	data.ret = &ret;
+	/* resolve the uri for relative/absolute */
+	esvg_iri_string_from(uri, &_uri_resolve_descriptor, &data);
+
+	return ret;
 }
 
 Ender_Element * esvg_svg_internal_element_find(Edom_Tag *t, const char *id)
@@ -957,9 +1096,33 @@ EAPI void esvg_svg_width_set(Ender_Element *e, Esvg_Length *width)
  * To be documented
  * FIXME: To be fixed
  */
+EAPI void esvg_svg_width_get(Ender_Element *e, Esvg_Length *width)
+{
+	Edom_Tag *t;
+
+	t = ender_element_object_get(e);
+	_esvg_svg_width_get(t, width);
+}
+
+/**
+ * To be documented
+ * FIXME: To be fixed
+ */
 EAPI void esvg_svg_height_set(Ender_Element *e, Esvg_Length *height)
 {
 	ender_element_property_value_set(e, ESVG_SVG_HEIGHT, height, NULL);
+}
+
+/**
+ * To be documented
+ * FIXME: To be fixed
+ */
+EAPI void esvg_svg_height_get(Ender_Element *e, Esvg_Length *height)
+{
+	Edom_Tag *t;
+
+	t = ender_element_object_get(e);
+	_esvg_svg_height_get(t, height);
 }
 
 /**
@@ -1135,49 +1298,34 @@ EAPI Eina_List * esvg_svg_intersection_list_get(Ender_Element *e, Enesim_Rectang
  * To be documented
  * FIXME: To be fixed
  */
-EAPI void esvg_svg_absolute_uri_get_set(Ender_Element *e, Esvg_Uri_Get get, void *data, Esvg_Free_Cb cb)
+EAPI const char * esvg_svg_base_dir_get(Ender_Element *e)
 {
 	Edom_Tag *t;
 	Esvg_Svg *thiz;
-	Esvg_Svg_User_Descriptor_Uri *u;
 
 	t = ender_element_object_get(e);
 	thiz = _esvg_svg_get(t);
-
-	u = &thiz->user_descriptor.absolute;
-	if (u->data)
-	{
-		if (u->free)
-			u->free(u->data);
-		u->data = NULL;	
-	}
-	u->get = get;
-	u->data = data;
-	u->free = cb;
+	return thiz->user_descriptor.base_dir;
 }
 
 /**
  * To be documented
  * FIXME: To be fixed
  */
-EAPI void esvg_svg_relative_uri_get_set(Ender_Element *e, Esvg_Uri_Get get, void *data, Esvg_Free_Cb cb)
+EAPI void esvg_svg_base_dir_set(Ender_Element *e, const char *base_dir)
 {
 	Edom_Tag *t;
 	Esvg_Svg *thiz;
-	Esvg_Svg_User_Descriptor_Uri *u;
 
 	t = ender_element_object_get(e);
 	thiz = _esvg_svg_get(t);
 
-	u = &thiz->user_descriptor.relative;
-	if (u->data)
+	if (thiz->user_descriptor.base_dir)
 	{
-		if (u->free)
-			u->free(u->data);
-		u->data = NULL;	
+		free(thiz->user_descriptor.base_dir);
+		thiz->user_descriptor.base_dir = NULL;
 	}
-	u->get = get;
-	u->data = data;
-	u->free = cb;
-}
 
+	if (base_dir)
+		thiz->user_descriptor.base_dir = strdup(base_dir);
+}

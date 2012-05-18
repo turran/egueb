@@ -8,7 +8,9 @@ EAPI void esvg_svg_version_get(Ender_Element *e, double *version);
 EAPI void esvg_svg_x_set(Ender_Element *e, Esvg_Coord *x);
 EAPI void esvg_svg_y_set(Ender_Element *e, Esvg_Coord *y);
 EAPI void esvg_svg_width_set(Ender_Element *e, Esvg_Length *width);
+EAPI void esvg_svg_width_get(Ender_Element *e, Esvg_Length *width);
 EAPI void esvg_svg_height_set(Ender_Element *e, Esvg_Length *height);
+EAPI void esvg_svg_height_get(Ender_Element *e, Esvg_Length *height);
 EAPI void esvg_svg_viewbox_set(Ender_Element *e, Esvg_View_Box *vb);
 EAPI void esvg_svg_actual_width_get(Ender_Element *e, double *actual_width);
 EAPI void esvg_svg_actual_height_get(Ender_Element *e, double *actual_height);
@@ -27,7 +29,7 @@ EAPI void esvg_svg_feed_mouse_up(Ender_Element *e);
 
 EAPI Eina_List * esvg_svg_intersection_list_get(Ender_Element *e, Enesim_Rectangle *rect);
 
-EAPI void esvg_svg_absolute_uri_get_set(Ender_Element *e, Esvg_Uri_Get get, void *data, Esvg_Free_Cb cb);
-EAPI void esvg_svg_relative_uri_get_set(Ender_Element *e, Esvg_Uri_Get get, void *data, Esvg_Free_Cb cb);
+EAPI const char * esvg_svg_base_dir_get(Ender_Element *e);
+EAPI void esvg_svg_base_dir_set(Ender_Element *e, const char *base_dir);
 
 #endif

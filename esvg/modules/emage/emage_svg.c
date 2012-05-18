@@ -21,8 +21,7 @@
 #endif
 
 #include <Esvg.h>
-#include <Esvg_Parser.h>
-#include <Edom.h>
+#include <math.h>
 
 #if HAVE_EMAGE
 #include <Emage.h>
@@ -58,133 +57,13 @@ static Eina_Bool _check_extension(const char *file)
 		return EINA_TRUE;
 	return EINA_FALSE;
 }
-
-/* FIXME this code is shared with the parser, we better do something */
-static char * _file_open(const char *filename, long *sz)
-{
-	FILE *f;
-	char *buf;
-	size_t res;
-	long _sz;
-
-	if (!filename || !(*filename))
-		return NULL;
-
-	f = fopen(filename, "rb");
-	if (!f)
-	{
-		return NULL;
-	}
-
-	if (fseek(f, 0, SEEK_END) != 0)
-		goto close_f;
-
-	_sz = ftell(f);
-	if (_sz < 0)
-		goto close_f;
-
-	if (fseek(f, 0, SEEK_SET) < 0)
-		goto close_f;
-
-	buf = (char *)malloc(_sz);
-	if (!buf)
-		goto close_f;
-
-	res = fread(buf, 1, _sz, f);
-	if (res != (size_t)_sz)
-		goto free_buf;
-
-	fclose(f);
-
-	*sz = _sz;
-	return buf;
-
-free_buf:
-	free(buf);
-close_f:
-	fclose(f);
-
-	return NULL;
-}
-/*----------------------------------------------------------------------------*
- *                           The tag interface                                *
- *----------------------------------------------------------------------------*/
-static Eina_Bool _emage_svg_tag_attribute_set(Edom_Tag *tag, const char *key, const char *value)
-{
-	Emage_Svg_Svg *thiz;
-	Esvg_Length length_0 = { 0.0, ESVG_UNIT_LENGTH_PX };
-
-	thiz = edom_tag_data_get(tag);
-	if (strcmp(key, "width") == 0)
-	{
-		esvg_length_string_from(&thiz->width, value, length_0);
-	}
-	else if (strcmp(key, "height") == 0)
-	{
-		esvg_length_string_from(&thiz->height, value, length_0);
-	}
-
-	return EINA_TRUE;
-}
-
-static Edom_Tag_Descriptor _tag_descriptor = {
-	/* .name_get 		= */ NULL,
-	/* .attribute_set 	= */ _emage_svg_tag_attribute_set,
-	/* .attribute_get 	= */ NULL,
-};
-/*----------------------------------------------------------------------------*
- *                         The context interface                               *
- *----------------------------------------------------------------------------*/
-static Eina_Bool _emage_svg_context_tag_open(void *data, int tag_type,
-		Edom_Context *context,
-		const char *attributes, unsigned int length)
-{
-	Emage_Svg_Svg *thiz = data;
-	Edom_Tag *tag;
-	int count;
-
-	/* the document context only supports SVG tags */
-	if (tag_type != EMAGE_SVG_SVG)
-		return EINA_FALSE;
-
-	tag = edom_tag_new(context, &_tag_descriptor, EMAGE_SVG_SVG, NULL, thiz);
-	edom_tag_attributes_from_xml(tag, attributes, length);
-
-	return EINA_TRUE;
-}
-
-static Edom_Context_Descriptor _context_descriptor = {
-	/* .tag_open = 	*/ _emage_svg_context_tag_open,
-	/* .tag_close = */ NULL,
-	/* .data =	*/ NULL,
-	/* .cdata =	*/ NULL,
-	/* .free = 	*/ NULL,
-};
-/*----------------------------------------------------------------------------*
- *                         The parser interface                               *
- *----------------------------------------------------------------------------*/
-static Eina_Bool _emage_svg_parser_tag_get(Edom_Parser *parser, const char *content,
-		 size_t sz, int *tag)
-{
-	if (sz != 3) return EINA_FALSE;
-	if (!strncmp(content, "svg", 3))
-	{
-		*tag = EMAGE_SVG_SVG;
-		return EINA_TRUE;
-	}
-	return EINA_FALSE;
-}
-
-static Edom_Parser_Descriptor _parser_descriptor = {
-	/* .tag_get 	= */ _emage_svg_parser_tag_get,
-};
 /*----------------------------------------------------------------------------*
  *                          Emage Provider API                                *
  *----------------------------------------------------------------------------*/
 typedef struct _Emage_Svg_Options
 {
-	int width;
-	int height;
+	int container_width;
+	int container_height;
 } Emage_Svg_Options;
 
 static const int _default_width = 640;
@@ -195,9 +74,9 @@ static void _options_parse_cb(void *data, const char *key, const char *value)
 	Emage_Svg_Options *thiz = data;
 
 	if (!strcmp(key, "width"))
-		thiz->width = atoi(value);
+		thiz->container_width = atoi(value);
 	else if (!strcmp(key, "height"))
-		thiz->height = atoi(value);
+		thiz->container_height = atoi(value);
 }
 
 static void * _emage_svg_options_parse(const char *options_str)
@@ -205,10 +84,10 @@ static void * _emage_svg_options_parse(const char *options_str)
 	Emage_Svg_Options *options;
 
 	options = calloc(1, sizeof(Emage_Svg_Options));
-	options->width = _default_width;
-	options->height = _default_height;
+	options->container_width = _default_width;
+	options->container_height = _default_height;
 	emage_options_parse(options_str, _options_parse_cb, options);
-	printf("inside options! %d %d\n", options->width, options->height);
+	printf("inside options! %d %d\n", options->container_width, options->container_height);
 	/* the options we support are:
 	 * container_size=wxh
 	 */
@@ -232,54 +111,36 @@ static Eina_Bool _emage_svg_loadable(const char *file)
  */
 static Eina_Error _emage_svg_info_load(const char *file, int *w, int *h, Enesim_Buffer_Format *sfmt, void *options)
 {
-	Emage_Svg_Svg thiz;
-	Edom_Parser *parser;
-	Edom_Context *c;
 	double svg_w;
 	double svg_h;
-	char *buf;
-	long sz;
 	int cw = _default_width;
 	int ch = _default_height;
-	Esvg_Length length_0 = { 0.0, ESVG_UNIT_LENGTH_PX };
+	Esvg_Length width;
+	Esvg_Length height;
 
-	/* FIXME initialize the emage svg structure correctly */
-	thiz.width = thiz.height = length_0;
-
-	buf = _file_open(file, &sz);
-	if (!buf)
-	{
-		printf("error\n");
-		return EMAGE_ERROR_EXIST;
-	}
-	parser = edom_parser_new(&_parser_descriptor, &thiz);
-	c = edom_context_new(parser, &_context_descriptor, &thiz);
-	edom_parser_parse(parser, c, buf, sz);
-	edom_context_delete(c);
-	edom_parser_delete(parser);
-
+	esvg_parser_info_load(file, &width, &height);
 	/* get the final size */
 	if (options)
 	{
 		Emage_Svg_Options *o = options;
 
-		cw = o->width;
-		ch = o->height;
+		cw = o->container_width;
+		ch = o->container_height;
 	}
 
 	/* FIXME this is not EAPI */
-	svg_w = esvg_length_final_get(&thiz.width, cw);
-	svg_h = esvg_length_final_get(&thiz.height, ch);
+	svg_w = esvg_length_final_get(&width, cw);
+	svg_h = esvg_length_final_get(&height, ch);
 
-	*w = (int)svg_w;
-	*h = (int)svg_h;
+	*w = (int)ceil(svg_w);
+	*h = (int)ceil(svg_h);
 	*sfmt = ENESIM_BUFFER_FORMAT_ARGB8888_PRE;
 	return 0;
 }
 
 static Eina_Error _emage_svg_load(const char *file, Enesim_Buffer *buffer, void *options)
 {
-	Enesim_Renderer *r;
+	Ender_Element *e;
 	Enesim_Surface *s;
 	Enesim_Error *err = NULL;
 	Eina_Bool ret;
@@ -288,8 +149,8 @@ static Eina_Error _emage_svg_load(const char *file, Enesim_Buffer *buffer, void 
 	int w = _default_width;
 	int h = _default_height;
 
-	r = esvg_parser_load(file, NULL, NULL);
-	if (!r)
+	e = esvg_parser_load(file, NULL, NULL);
+	if (!e)
 	{
 		return EMAGE_ERROR_LOADING;
 	}
@@ -298,17 +159,17 @@ static Eina_Error _emage_svg_load(const char *file, Enesim_Buffer *buffer, void 
 	{
 		Emage_Svg_Options *o = options;
 
-		w = o->width;
-		h = o->height;
+		w = o->container_width;
+		h = o->container_height;
 	}
 	/* we should render into the swdata? */
-	esvg_element_container_width_set(r, w);
-	esvg_element_container_height_set(r, h);
-	esvg_svg_actual_width_get(r, &svg_w);
-	esvg_svg_actual_height_get(r, &svg_h);
+	esvg_renderable_container_width_set(e, w);
+	esvg_renderable_container_height_set(e, h);
+	esvg_svg_actual_width_get(e, &svg_w);
+	esvg_svg_actual_height_get(e, &svg_h);
 
-	w = (int)svg_w;
-	h = (int)svg_h;
+	w = (int)ceil(svg_w);
+	h = (int)ceil(svg_h);
 
 	s = enesim_surface_new_buffer_from(buffer);
 	if (!s)
@@ -317,13 +178,14 @@ static Eina_Error _emage_svg_load(const char *file, Enesim_Buffer *buffer, void 
 		return 0;
 	}
 	printf("surface created of size %d %d\n", w, h);
-	ret = enesim_renderer_draw(r, s, NULL, 0, 0, &err);
+	ret = esvg_renderable_draw(e, s, NULL, 0, 0, &err);
 	if (!ret)
 	{
 		enesim_error_dump(err);
 	}
-	printf("ret = %d %p %p\n", ret, r, s);
+	printf("ret = %d %p %p\n", ret, e, s);
 	enesim_surface_unref(s);
+	// ender_element_unref(e);
 
 	return 0;
 }
@@ -345,7 +207,7 @@ static Emage_Provider _provider = {
 Eina_Bool svg_provider_init(void)
 {
 	/* @todo
-	 * - Register svg spepcific errors
+	 * - Register svg specific errors
 	 */
 	return emage_provider_register(&_provider);
 }
