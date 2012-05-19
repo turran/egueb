@@ -46,6 +46,7 @@ static Ender_Property *ESVG_ANIMATE_BASE_TO;
 static Ender_Property *ESVG_ANIMATE_BASE_FROM;
 static Ender_Property *ESVG_ANIMATE_BASE_VALUES;
 static Ender_Property *ESVG_ANIMATE_BASE_KEY_TIMES;
+static Ender_Property *ESVG_ANIMATE_BASE_KEY_SPLINES;
 static Ender_Property *ESVG_ANIMATE_BASE_CALC_MODE;
 
 typedef struct _Esvg_Animate_Base_Descriptor_Internal
@@ -193,6 +194,29 @@ static void _esvg_animate_base_key_times_get(Edom_Tag *t, const char **key_times
 	*key_times = thiz->current.value.key_times;
 }
 
+static void _esvg_animate_base_key_splines_set(Edom_Tag *t, const char *key_splines)
+{
+	Esvg_Animate_Base *thiz;
+
+	thiz = _esvg_animate_base_get(t);
+	if (thiz->current.value.key_splines)
+	{
+		free(thiz->current.value.key_splines);
+		thiz->current.value.key_splines = NULL;
+	}
+	if (key_splines)
+		thiz->current.value.key_splines = strdup(key_splines);
+	thiz->current.changed = EINA_TRUE;
+}
+
+static void _esvg_animate_base_key_splines_get(Edom_Tag *t, const char **key_splines)
+{
+	Esvg_Animate_Base *thiz;
+
+	if (!key_splines) return;
+	thiz = _esvg_animate_base_get(t);
+	*key_splines = thiz->current.value.key_splines;
+}
 /*----------------------------------------------------------------------------*
  *                         The Esvg Element interface                         *
  *----------------------------------------------------------------------------*/
@@ -220,6 +244,7 @@ static Eina_Bool _esvg_animate_base_attribute_set(Ender_Element *e,
 	}
 	else if (strcmp(key, "keySplines") == 0)
 	{
+		esvg_animate_base_key_splines_set(e, value);
 	}
 	else if (strcmp(key, "from") == 0)
 	{
@@ -276,6 +301,7 @@ static Eina_Bool _esvg_animate_base_setup(Edom_Tag *t,
 #define _esvg_animate_base_values_is_set NULL
 #define _esvg_animate_base_calc_mode_is_set NULL
 #define _esvg_animate_base_key_times_is_set NULL
+#define _esvg_animate_base_key_splines_is_set NULL
 #include "generated/esvg_generated_animate_base.c"
 
 Eina_Bool esvg_is_animate_base_internal(Edom_Tag *t)
@@ -448,4 +474,20 @@ EAPI void esvg_animate_base_key_times_get(Ender_Element *e, const char **v)
 {
 }
 
+/**
+ * To be documented
+ * FIXME: To be fixed
+ */
+EAPI void esvg_animate_base_key_splines_set(Ender_Element *e, const char *v)
+{
+	ender_element_property_value_set(e, ESVG_ANIMATE_BASE_KEY_SPLINES, v, NULL);
+}
+
+/**
+ * To be documented
+ * FIXME: To be fixed
+ */
+EAPI void esvg_animate_base_key_splines_get(Ender_Element *e, const char **v)
+{
+}
 

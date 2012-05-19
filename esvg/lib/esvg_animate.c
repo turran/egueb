@@ -157,7 +157,6 @@ static void _esvg_animate_time_cb(const char *v, void *user_data)
 	data->idx++;
 }
 
-/* multiply the value by the duration */
 static void _esvg_animate_key_times_cb(const char *v, void *user_data)
 {
 	Esvg_Animate_Keyframe_Time_Cb_Data *data = user_data;
@@ -168,6 +167,14 @@ static void _esvg_animate_key_times_cb(const char *v, void *user_data)
 	kf = etch_animation_keyframe_get(data->thiz->anim, data->idx);
 	etch_animation_keyframe_time_set(kf, data->time * percent);
 	data->idx++;
+}
+
+static void _esvg_animate_key_splines_cb(const char *v, void *user_data)
+{
+	/* iterate over the attribute by either space or commas */
+	/* get the current keyframe and the next */
+	/* the range is from 0 to 1, so we need to multiply the value with that
+	 * factor and set the value on the cubic argument */
 }
 
 static Eina_Bool _esvg_animate_container_etch_to(Esvg_Animate *thiz, Etch *etch,
@@ -265,7 +272,7 @@ static Eina_Bool _esvg_animate_container_etch_to(Esvg_Animate *thiz, Etch *etch,
 		/* add the keysplines */
 		if (c->value.calc_mode == ESVG_CALC_MODE_SPLINE && c->value.key_splines)
 		{
-
+			esvg_list_string_from(c->value.key_splines, ';', _esvg_animate_key_splines_cb, NULL);
 		}
 	}
 	else
