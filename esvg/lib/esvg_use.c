@@ -177,6 +177,7 @@ static Esvg_Element_Setup_Return _esvg_use_setup(Edom_Tag *t,
 	double tx, ty;
 
 	thiz = _esvg_use_get(t);
+#if 0
 	/* we should append a new transformation */
 	tx = esvg_length_final_get(&thiz->x, ctx->viewbox.width, ctx->font_size);
 	ty = esvg_length_final_get(&thiz->y, ctx->viewbox.height, ctx->font_size);
@@ -190,6 +191,7 @@ static Esvg_Element_Setup_Return _esvg_use_setup(Edom_Tag *t,
 	printf("calling the setup on the use\n");
 
 	return esvg_element_internal_setup(thiz->g_t, c, error);
+#endif
 }
 
 static void _esvg_use_clone(Edom_Tag *t, Edom_Tag *dt)

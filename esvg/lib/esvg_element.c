@@ -1113,6 +1113,23 @@ const Esvg_Element_Context * esvg_element_context_get(Edom_Tag *t)
 	return &thiz->state_final;
 }
 
+#if 0
+double esvg_element_x_length_calculate(Edom_Tag *t, Esvg_Length *l)
+{
+
+}
+
+double esvg_element_y_length_calculate(Edom_Tag *t, Esvg_Length *l)
+{
+
+}
+
+double esvg_element_other_length_calculate(Edom_Tag *t, Esvg_Length *l)
+{
+
+}
+#endif
+
 void esvg_element_context_dump(const Esvg_Element_Context *c)
 {
 	printf("dpi %g %g\n", c->dpi_x, c->dpi_y);

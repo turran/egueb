@@ -222,7 +222,8 @@ namespace "esvg" {
 	};
 
 	class "text" : "instantiable" {
-
+		esvg_length "x";
+		esvg_length "y";
 	};
 
 	class "stop" : "element" {

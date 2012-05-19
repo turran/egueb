@@ -442,11 +442,10 @@ static void * _esvg_parser_tag_new(Edom_Parser *parser, int tag_id)
 		case ESVG_POLYGON:
 		tag = esvg_polygon_new();
 		break;
-#if 0
+
 		case ESVG_TEXT:
-		tag = esvg_parser_text_new(parser);
+		tag = esvg_text_new();
 		break;
-#endif
 
 		case ESVG_G:
 		tag = esvg_g_new();

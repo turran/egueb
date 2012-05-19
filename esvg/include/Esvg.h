@@ -60,42 +60,46 @@
  * @todo
  */
 
+/* basic data types */
 #include "esvg_main.h"
 #include "esvg_types.h"
+
+/* main abstractions */
 #include "esvg_element.h"
 #include "esvg_renderable.h"
-#include "esvg_a.h"
-#include "esvg_ellipse.h"
-#include "esvg_image.h"
-#include "esvg_linear_gradient.h"
-#include "esvg_svg.h"
-#include "esvg_rect.h"
-#include "esvg_parser.h"
+
+/* shapes */
 #include "esvg_path.h"
 #include "esvg_polygon.h"
 #include "esvg_polyline.h"
 #include "esvg_line.h"
 #include "esvg_circle.h"
-#include "esvg_g.h"
-#include "esvg_gradient.h"
-#include "esvg_radial_gradient.h"
-#include "esvg_stop.h"
+#include "esvg_ellipse.h"
+#include "esvg_rect.h"
+#include "esvg_image.h"
+#include "esvg_text.h"
 #include "esvg_use.h"
+/* containers */
+#include "esvg_svg.h"
+#include "esvg_g.h"
+
+/* other */
+#include "esvg_a.h"
+
+/* paint servers */
+#include "esvg_gradient.h"
+#include "esvg_stop.h"
+#include "esvg_linear_gradient.h"
+#include "esvg_radial_gradient.h"
+
+/* animation */
 #include "esvg_animation.h"
 #include "esvg_animate_base.h"
 
-EAPI Eina_Bool esvg_is_shape(Edom_Tag *e);
+/* parsing */
+#include "esvg_parser.h"
 
-EAPI Edom_Tag * esvg_text_new(void);
-EAPI Eina_Bool esvg_is_text(Edom_Tag *e);
-EAPI void esvg_text_x_set(Edom_Tag *e, const Esvg_Coord *x);
-EAPI void esvg_text_x_get(Edom_Tag *e, Esvg_Coord *x);
-EAPI void esvg_text_y_set(Edom_Tag *e, const Esvg_Coord *y);
-EAPI void esvg_text_y_get(Edom_Tag *e, Esvg_Coord *y);
-EAPI void esvg_text_font_size_set(Edom_Tag *e, const Esvg_Length *size);
-EAPI void esvg_text_font_family_set(Edom_Tag *e, const char *family);
-EAPI void esvg_text_text_set(Edom_Tag *e, const char *text);
-EAPI void esvg_text_text_get(Edom_Tag *e, const char **text);
+EAPI Eina_Bool esvg_is_shape(Edom_Tag *e);
 
 EAPI Edom_Tag * esvg_pattern_new(void);
 EAPI Eina_Bool esvg_is_pattern(Edom_Tag *e);

@@ -1285,6 +1285,7 @@ EAPI Eina_Bool esvg_type_is_renderable(Esvg_Type type)
 		case ESVG_SVG:
 		case ESVG_G:
 		case ESVG_IMAGE:
+		case ESVG_TEXT:
 		return EINA_TRUE;
 
 		default:

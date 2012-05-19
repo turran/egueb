@@ -49,6 +49,7 @@ esvg_rect.c \
 esvg_stop.c \
 esvg_style.c \
 esvg_svg.c \
+esvg_text.c \
 esvg_types.c \
 esvg_use.c
 
@@ -56,7 +57,6 @@ esvg_use.c
 #esvg_gradient.c \
 #esvg_pattern.c \
 #esvg_shape.c \
-#esvg_text.c \
 #esvg_use.c
 
 libesvg_la_LIBADD = \
