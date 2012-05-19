@@ -135,6 +135,4 @@ Eina_Bool esvg_href_get(Edom_Tag **tag, Edom_Tag *rel, const char *href);
 
 Eina_Bool esvg_parser_is_uri(const char *attr);
 
-Eina_Bool esvg_color_string_from(Esvg_Color *color, const char *attr_val);
-
 #endif

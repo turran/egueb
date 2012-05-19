@@ -135,13 +135,23 @@ static void _esvg_ender_shutdown(void)
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
+/* Shortcuts for edom node properties */
 Ender_Property *EDOM_ATTRIBUTE = NULL;
 Ender_Property *EDOM_CDATA = NULL;
 Ender_Property *EDOM_TOPMOST = NULL;
 Ender_Property *EDOM_CHILD = NULL;
 Ender_Property *EDOM_PARENT = NULL;
 Ender_Property *EDOM_TEXT = NULL;
+/* The log domaings */
 int esvg_log_dom_global = -1;
+int esvg_log_rect = -1;
+int esvg_log_circle = -1;
+int esvg_log_ellipse = -1;
+int esvg_log_path = -1;
+int esvg_log_polygon = -1;
+int esvg_log_polyline = -1;
+int esvg_log_element = -1;
+int esvg_log_renderable = -1;
 
 /* The ender wrapper */
 Ender_Namespace * esvg_namespace_get(void)
@@ -164,6 +174,10 @@ Ender_Namespace * esvg_namespace_get(void)
  */
 EAPI int esvg_init(void)
 {
+	/* FIXME if we are going to register every domain here we better
+	 * split this code into _esvg_dependencies_init, _esvg_log_init, etc
+	 * or we make every element foo register each own log on foo_new
+	 */
 	if (++_esvg_init_count != 1)
 		return _esvg_init_count;
 
@@ -173,10 +187,18 @@ EAPI int esvg_init(void)
 		return --_esvg_init_count;
 	}
 
+	/* TODO register every domain here */
 	esvg_log_dom_global = eina_log_domain_register("esvg", ESVG_LOG_COLOR_DEFAULT);
 	if (esvg_log_dom_global < 0)
 	{
 		EINA_LOG_ERR("Esvg: Can not create a general log domain.");
+		goto shutdown_eina;
+	}
+
+	esvg_log_element = eina_log_domain_register("esvg_element", ESVG_LOG_COLOR_DEFAULT);
+	if (esvg_log_element < 0)
+	{
+		EINA_LOG_ERR("Esvg: Can not create an element log domain.");
 		goto shutdown_eina;
 	}
 
