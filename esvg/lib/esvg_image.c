@@ -215,11 +215,11 @@ static Eina_Bool _esvg_image_renderer_propagate(Edom_Tag *t,
 
 	thiz = _esvg_image_get(t);
 	/* set the position */
-	x = esvg_length_final_get(&thiz->current.x, ctx->viewbox.width);
-	y = esvg_length_final_get(&thiz->current.y, ctx->viewbox.height);
+	x = esvg_length_final_get(&thiz->current.x, ctx->viewbox.width, ctx->font_size);
+	y = esvg_length_final_get(&thiz->current.y, ctx->viewbox.height, ctx->font_size);
 	/* set the size */
-	width = esvg_length_final_get(&thiz->current.width, ctx->viewbox.width);
-	height = esvg_length_final_get(&thiz->current.height, ctx->viewbox.height);
+	width = esvg_length_final_get(&thiz->current.width, ctx->viewbox.width, ctx->font_size);
+	height = esvg_length_final_get(&thiz->current.height, ctx->viewbox.height, ctx->font_size);
 
 #if 0
 	double iw;

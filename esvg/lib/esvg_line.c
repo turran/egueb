@@ -135,10 +135,10 @@ static Eina_Bool _esvg_line_renderer_propagate(Edom_Tag *t,
 	thiz = _esvg_line_get(t);
 
 	/* FIXME gets the parents size or the topmost? */
-	x1 = esvg_length_final_get(&thiz->current.x1, ctx->viewbox.width);
-	y1 = esvg_length_final_get(&thiz->current.y1, ctx->viewbox.height);
-	x2 = esvg_length_final_get(&thiz->current.x2, ctx->viewbox.width);
-	y2 = esvg_length_final_get(&thiz->current.y2, ctx->viewbox.height);
+	x1 = esvg_length_final_get(&thiz->current.x1, ctx->viewbox.width, ctx->font_size);
+	y1 = esvg_length_final_get(&thiz->current.y1, ctx->viewbox.height, ctx->font_size);
+	x2 = esvg_length_final_get(&thiz->current.x2, ctx->viewbox.width, ctx->font_size);
+	y2 = esvg_length_final_get(&thiz->current.y2, ctx->viewbox.height, ctx->font_size);
 
 	enesim_renderer_line_x0_set(thiz->r, x1);
 	enesim_renderer_line_y0_set(thiz->r, y1);

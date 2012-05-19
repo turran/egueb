@@ -165,11 +165,11 @@ static Esvg_Element_Setup_Return _esvg_radial_gradient_setup(Edom_Tag *t,
 	if (gu == ESVG_OBJECT_BOUNDING_BOX)
 	{
 		/* check that the coordinates shold be set with (0,0) -> (1, 1) */
-		cx = esvg_length_final_get(&thiz->cx, 1);
-		cy = esvg_length_final_get(&thiz->cy, 1);
-		fx = esvg_length_final_get(&thiz->fx, 1);
-		fy = esvg_length_final_get(&thiz->fy, 1);
-		rad = esvg_length_final_get(&thiz->rad, 1);
+		cx = esvg_length_final_get(&thiz->cx, 1, 1);
+		cy = esvg_length_final_get(&thiz->cy, 1, 1);
+		fx = esvg_length_final_get(&thiz->fx, 1, 1);
+		fy = esvg_length_final_get(&thiz->fy, 1, 1);
+		rad = esvg_length_final_get(&thiz->rad, 1, 1);
 		enesim_matrix_values_set(&m, ctx->bounds.w, 0, ctx->bounds.x, 0, ctx->bounds.h, ctx->bounds.y, 0, 0, 1);
 	}
 	else
@@ -182,15 +182,15 @@ static Esvg_Element_Setup_Return _esvg_radial_gradient_setup(Edom_Tag *t,
 		w = ctx->viewbox.width;
 		h = ctx->viewbox.height;
 
-		cx = esvg_length_final_get(&thiz->cx, w);
-		cy = esvg_length_final_get(&thiz->cy, h);
-		fx = esvg_length_final_get(&thiz->fx, w);
-		fy = esvg_length_final_get(&thiz->fy, h);
+		cx = esvg_length_final_get(&thiz->cx, w, ctx->font_size);
+		cy = esvg_length_final_get(&thiz->cy, h, ctx->font_size);
+		fx = esvg_length_final_get(&thiz->fx, w, ctx->font_size);
+		fy = esvg_length_final_get(&thiz->fy, h, ctx->font_size);
 		if (thiz->rad.unit == ESVG_UNIT_LENGTH_PERCENT)
 		{
 			rad_vp = hypot(w, h) / M_SQRT2;
 		}
-		rad = esvg_length_final_get(&thiz->rad, rad_vp);
+		rad = esvg_length_final_get(&thiz->rad, rad_vp, ctx->font_size);
 		m = ctx->transform.base;
 	}
 	if (enesim_matrix_type_get(&gctx->transform) != ENESIM_MATRIX_IDENTITY)

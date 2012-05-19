@@ -157,19 +157,19 @@ static Eina_Bool _esvg_rect_renderer_propagate(Edom_Tag *t,
 
 	/* set the position */
 	/* TODO check if we are animating */
-	x = esvg_length_final_get(&thiz->current.x.base, ctx->viewbox.width);
-	y = esvg_length_final_get(&thiz->current.y.base, ctx->viewbox.height);
+	x = esvg_length_final_get(&thiz->current.x.base, ctx->viewbox.width, ctx->font_size);
+	y = esvg_length_final_get(&thiz->current.y.base, ctx->viewbox.height, ctx->font_size);
 	enesim_renderer_rectangle_position_set(thiz->r, x, y);
 	/* set the size */
-	width = esvg_length_final_get(&thiz->current.width.base, ctx->viewbox.width);
-	height = esvg_length_final_get(&thiz->current.height.base, ctx->viewbox.height);
+	width = esvg_length_final_get(&thiz->current.width.base, ctx->viewbox.width, ctx->font_size);
+	height = esvg_length_final_get(&thiz->current.height.base, ctx->viewbox.height, ctx->font_size);
 	enesim_renderer_rectangle_size_set(thiz->r, width, height);
 
 	/* set the bounds */
 	enesim_rectangle_coords_from(&ctx->bounds, x, y, width, height);
 
 	/* FIXME enesim does not supports rx *and* ry */
-	rx = esvg_length_final_get(&thiz->current.rx.base, ctx->viewbox.width);
+	rx = esvg_length_final_get(&thiz->current.rx.base, ctx->viewbox.width, ctx->font_size);
 	enesim_renderer_rectangle_corner_radius_set(thiz->r, rx);
 	enesim_renderer_rectangle_corners_set(thiz->r,
 			EINA_TRUE, EINA_TRUE, EINA_TRUE, EINA_TRUE);

@@ -1016,7 +1016,7 @@ EAPI Eina_Bool esvg_length_is_equal(Esvg_Length *length1, Esvg_Length *length2)
 	return EINA_FALSE;
 }
 
-EAPI double esvg_length_final_get(const Esvg_Length *l, double parent_length)
+EAPI double esvg_length_final_get(const Esvg_Length *l, double parent_length, double font_size)
 {
 	double ret;
 	/* Here we should transform the length/coord to an absolute
@@ -1051,8 +1051,14 @@ EAPI double esvg_length_final_get(const Esvg_Length *l, double parent_length)
 		break;
 
 		case ESVG_UNIT_LENGTH_PX:
-		/* FIXME this one depends on the font size */
+		ret = l->value;
+		break;
+
 		case ESVG_UNIT_LENGTH_EM:
+		ret = font_size * l->value;
+		break;
+
+		/* FIXME this one depends on the x-height */
 		case ESVG_UNIT_LENGTH_EX:
 		default:
 		ret = l->value;

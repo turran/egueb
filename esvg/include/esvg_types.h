@@ -432,7 +432,7 @@ EAPI Eina_Bool esvg_path_string_from(const char *value, Esvg_Command_Cb cb, void
 EAPI Eina_Bool esvg_transformation_string_from(Enesim_Matrix *matrix, const char *attr);
 EAPI Eina_Bool esvg_length_string_from(Esvg_Length *length, const char *attr_val);
 EAPI Eina_Bool esvg_length_is_equal(Esvg_Length *length1, Esvg_Length *length2);
-EAPI double esvg_length_final_get(const Esvg_Length *l, double parent_length);
+EAPI double esvg_length_final_get(const Esvg_Length *l, double parent_length, double font_size);
 EAPI Eina_Bool esvg_paint_string_from(Esvg_Paint *paint, const char *attr);
 Esvg_View_Box esvg_view_box_get(const char *attr_val);
 EAPI Esvg_Stroke_Line_Cap esvg_stroke_line_cap_string_from(const char *value);

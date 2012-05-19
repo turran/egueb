@@ -83,6 +83,8 @@ typedef struct _Esvg_Svg
 	Esvg_Coord y;
 	Esvg_Length width;
 	Esvg_Length height;
+	/* user provded properties */
+	double base_font_size;
 	/* private */
 	/* keep track if the renderable tree has changed, includeing the <a> tag */
 	Eina_Bool renderable_tree_changed : 1;
@@ -153,8 +155,8 @@ static inline void _esvg_svg_size_apply(Esvg_Svg *thiz, Esvg_Element_Context *ct
 	double width;
 	double height;
 
-	width = esvg_length_final_get(&thiz->width, ctx->viewbox.width);
-	height = esvg_length_final_get(&thiz->height, ctx->viewbox.height);
+	width = esvg_length_final_get(&thiz->width, ctx->viewbox.width, ctx->font_size);
+	height = esvg_length_final_get(&thiz->height, ctx->viewbox.height, ctx->font_size);
 	enesim_renderer_clipper_width_set(thiz->clipper, width);
 	enesim_renderer_clipper_height_set(thiz->clipper, height);
 	ctx->viewbox.width = width;
@@ -622,8 +624,8 @@ static Esvg_Element_Setup_Return _esvg_svg_setup(Edom_Tag *t,
 	 */
 	//if (changed)
 	{
-		width = esvg_length_final_get(&thiz->width, ctx->viewbox.width);
-		height = esvg_length_final_get(&thiz->height, ctx->viewbox.height);
+		width = esvg_length_final_get(&thiz->width, ctx->viewbox.width, ctx->font_size);
+		height = esvg_length_final_get(&thiz->height, ctx->viewbox.height, ctx->font_size);
 		enesim_renderer_clipper_width_set(thiz->clipper, width);
 		enesim_renderer_clipper_height_set(thiz->clipper, height);
 		/* the viewbox will set a new user space coordinate */
@@ -653,6 +655,8 @@ static Esvg_Element_Setup_Return _esvg_svg_setup(Edom_Tag *t,
 		}
 		ctx->viewbox.width = width;
 		ctx->viewbox.height = height;
+		/* FIXME for now 16px, it should really be base_font_size * attr.font-size */
+		ctx->font_size = 16;
 
 		/* if the styles have changed apply them */
 		if (thiz->styles_changed)
@@ -882,7 +886,7 @@ static void _esvg_svg_actual_width_get(Edom_Tag *t, double *actual_width)
 
 	thiz = _esvg_svg_get(t);
 	esvg_renderable_internal_container_width_get(t, &cw);
-	aw = esvg_length_final_get(&thiz->width, cw);
+	aw = esvg_length_final_get(&thiz->width, cw, thiz->base_font_size);
 	*actual_width = aw;
 }
 
@@ -894,7 +898,7 @@ static void _esvg_svg_actual_height_get(Edom_Tag *t, double *actual_height)
 
 	thiz = _esvg_svg_get(t);
 	esvg_renderable_internal_container_height_get(t, &ch);
-	ah = esvg_length_final_get(&thiz->height, ch);
+	ah = esvg_length_final_get(&thiz->height, ch, thiz->base_font_size);
 	*actual_height = ah;
 }
 /*============================================================================*
@@ -1329,3 +1333,34 @@ EAPI void esvg_svg_base_dir_set(Ender_Element *e, const char *base_dir)
 	if (base_dir)
 		thiz->user_descriptor.base_dir = strdup(base_dir);
 }
+
+/**
+ * To be documented
+ * FIXME: To be fixed
+ */
+EAPI double esvg_svg_base_font_size_get(Ender_Element *e)
+{
+	Edom_Tag *t;
+	Esvg_Svg *thiz;
+
+	t = ender_element_object_get(e);
+	thiz = _esvg_svg_get(t);
+	return thiz->base_font_size;
+}
+
+/**
+ * To be documented
+ * FIXME: To be fixed
+ */
+EAPI void esvg_svg_base_font_size_set(Ender_Element *e, double base_font_size)
+{
+	Edom_Tag *t;
+	Esvg_Svg *thiz;
+
+	t = ender_element_object_get(e);
+	thiz = _esvg_svg_get(t);
+
+	thiz->base_font_size = base_font_size;
+}
+
+

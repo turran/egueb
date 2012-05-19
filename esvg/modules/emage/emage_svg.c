@@ -130,8 +130,9 @@ static Eina_Error _emage_svg_info_load(const char *file, int *w, int *h, Enesim_
 		ch = o->container_height;
 	}
 	/* FIXME this is not EAPI */
-	svg_w = esvg_length_final_get(&width, cw);
-	svg_h = esvg_length_final_get(&height, ch);
+	/* FIXME the 16 should be part of the options, same as container width */
+	svg_w = esvg_length_final_get(&width, cw, 16);
+	svg_h = esvg_length_final_get(&height, ch, 16);
 
 	*w = (int)ceil(svg_w);
 	*h = (int)ceil(svg_h);

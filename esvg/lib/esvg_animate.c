@@ -171,6 +171,11 @@ static void _esvg_animate_key_times_cb(const char *v, void *user_data)
 
 static void _esvg_animate_key_splines_cb(const char *v, void *user_data)
 {
+	Etch_Data ndata;
+	Etch_Data cdata;
+	Etch_Data cp0;
+	Etch_Data cp1;
+
 	/* iterate over the attribute by either space or commas */
 	/* get the current keyframe and the next */
 	/* the range is from 0 to 1, so we need to multiply the value with that

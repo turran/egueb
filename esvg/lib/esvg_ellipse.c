@@ -129,11 +129,11 @@ static Eina_Bool _esvg_ellipse_renderer_propagate(Edom_Tag *t,
 
 	/* FIXME gets the parents size or the topmost? */
 	/* set the origin */
-	cx = esvg_length_final_get(&thiz->current.cx, ctx->viewbox.width);
-	cy = esvg_length_final_get(&thiz->current.cy, ctx->viewbox.height);
+	cx = esvg_length_final_get(&thiz->current.cx, ctx->viewbox.width, ctx->font_size);
+	cy = esvg_length_final_get(&thiz->current.cy, ctx->viewbox.height, ctx->font_size);
 	/* set the size */
-	rx = esvg_length_final_get(&thiz->current.rx, ctx->viewbox.width);
-	ry = esvg_length_final_get(&thiz->current.ry, ctx->viewbox.height);
+	rx = esvg_length_final_get(&thiz->current.rx, ctx->viewbox.width, ctx->font_size);
+	ry = esvg_length_final_get(&thiz->current.ry, ctx->viewbox.height, ctx->font_size);
 	//printf("calling the setup on the ellipse (%g %g %g %g)\n", cx, cy, rx, ry);
 	enesim_renderer_ellipse_center_set(thiz->r, cx, cy);
 	enesim_renderer_ellipse_radii_set(thiz->r, rx, ry);

@@ -32,4 +32,7 @@ EAPI Eina_List * esvg_svg_intersection_list_get(Ender_Element *e, Enesim_Rectang
 EAPI const char * esvg_svg_base_dir_get(Ender_Element *e);
 EAPI void esvg_svg_base_dir_set(Ender_Element *e, const char *base_dir);
 
+EAPI double esvg_svg_base_font_size_get(Ender_Element *e);
+EAPI void esvg_svg_base_font_size_set(Ender_Element *e, double base_font_size);
+
 #endif

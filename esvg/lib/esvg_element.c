@@ -154,6 +154,7 @@ static void _esvg_element_state_compose(const Esvg_Element_Context *s,
 	d->dpi_y = parent->dpi_y;
 	d->viewbox = parent->viewbox;
 	d->bounds = parent->bounds;
+	d->font_size = parent->font_size;
 	/* actually compose */
 	enesim_matrix_compose(&parent->transform.base, &s->transform.base, &d->transform.base);
 }

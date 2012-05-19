@@ -178,8 +178,8 @@ static Esvg_Element_Setup_Return _esvg_use_setup(Edom_Tag *t,
 
 	thiz = _esvg_use_get(t);
 	/* we should append a new transformation */
-	tx = esvg_length_final_get(&thiz->x, ctx->viewbox.width);
-	ty = esvg_length_final_get(&thiz->y, ctx->viewbox.height);
+	tx = esvg_length_final_get(&thiz->x, ctx->viewbox.width, ctx->font_size);
+	ty = esvg_length_final_get(&thiz->y, ctx->viewbox.height, ctx->font_size);
 	enesim_matrix_translate(&translate, tx, ty);
 	enesim_matrix_compose(&ctx->transform.base, &translate, &ctx->transform.base);
 

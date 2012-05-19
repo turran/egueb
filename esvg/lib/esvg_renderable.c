@@ -212,9 +212,10 @@ static void _esvg_shape_enesim_state_get(Edom_Tag *t,
 	{
 		stroke_viewport = hypot(ctx->viewbox.width, ctx->viewbox.height) / M_SQRT2;
 	}
+	/* FIXME */
 	rctx->stroke_weight = esvg_length_final_get(
 			&attr->stroke_width,
-			stroke_viewport);
+			stroke_viewport, ctx->font_size);
 }
 
 static Eina_Bool _esvg_renderable_propagate(Esvg_Renderable *thiz, Edom_Tag *t,
