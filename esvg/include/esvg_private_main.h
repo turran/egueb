@@ -40,6 +40,7 @@
 /* The log domaings */
 extern int esvg_log_type;
 extern int esvg_log_rect;
+extern int esvg_log_text;
 extern int esvg_log_circle;
 extern int esvg_log_ellipse;
 extern int esvg_log_path;

@@ -45,6 +45,7 @@ struct log
 } logs[] = {
 	{ &esvg_log_type, "esvg_type" },
 	{ &esvg_log_rect, "esvg_rect" },
+	{ &esvg_log_text, "esvg_text" },
 	{ &esvg_log_circle, "esvg_circle" },
 	{ &esvg_log_ellipse, "esvg_ellipse" },
 	{ &esvg_log_path, "esvg_path" },
@@ -210,6 +211,7 @@ Ender_Property *EDOM_TEXT = NULL;
 /* The log domaings */
 int esvg_log_type = -1;
 int esvg_log_rect = -1;
+int esvg_log_text = -1;
 int esvg_log_circle = -1;
 int esvg_log_ellipse = -1;
 int esvg_log_path = -1;

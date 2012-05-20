@@ -29,6 +29,8 @@
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
+ESVG_LOG_DEFAULT(text);
+
 static Ender_Property *ESVG_TEXT_X;
 static Ender_Property *ESVG_TEXT_Y;
 
@@ -108,7 +110,7 @@ static void _esvg_text_text_set(Edom_Tag *t, const char *text, unsigned int leng
 	modified = (char *)text;
 	modified[length] = '\0';
 	
-	printf("setting text %s\n", modified);
+	DBG("setting text %s", modified);
 	etex_span_text_set(thiz->r, modified);
 	modified[length] = past;
 	thiz->changed = EINA_TRUE;
@@ -165,9 +167,9 @@ static Eina_Bool _esvg_text_renderer_propagate(Edom_Tag *t,
 	//printf("calling the setup on the text (%g %g %s %g)\n", x, y, str, font_size);
 	etex_base_size_set(thiz->r, (int)ctx->font_size);
 
-	printf("calling the setup on the text\n");
+	DBG("calling the setup on the text");
 	
-	printf("matrix %" ENESIM_MATRIX_FORMAT "\n", ENESIM_MATRIX_ARGS (&ctx->transform.base));
+	DBG("matrix %" ENESIM_MATRIX_FORMAT, ENESIM_MATRIX_ARGS (&ctx->transform.base));
 	enesim_matrix_inverse(&ctx->transform.base, &inv);
 	enesim_renderer_transformation_set(thiz->r, &inv);
 
