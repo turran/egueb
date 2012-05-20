@@ -624,8 +624,8 @@ static Esvg_Element_Setup_Return _esvg_svg_setup(Edom_Tag *t,
 	 */
 	//if (changed)
 	{
-		width = esvg_length_final_get(&thiz->width, ctx->viewbox.width, ctx->font_size);
-		height = esvg_length_final_get(&thiz->height, ctx->viewbox.height, ctx->font_size);
+		width = esvg_length_final_get(&thiz->width, ctx->viewbox.width, thiz->base_font_size);
+		height = esvg_length_final_get(&thiz->height, ctx->viewbox.height, thiz->base_font_size);
 		enesim_renderer_clipper_width_set(thiz->clipper, width);
 		enesim_renderer_clipper_height_set(thiz->clipper, height);
 		/* the viewbox will set a new user space coordinate */
@@ -655,8 +655,8 @@ static Esvg_Element_Setup_Return _esvg_svg_setup(Edom_Tag *t,
 		}
 		ctx->viewbox.width = width;
 		ctx->viewbox.height = height;
-		/* FIXME for now 16px, it should really be base_font_size * attr.font-size */
-		ctx->font_size = 16;
+		/* FIXME for now, it should really be base_font_size * attr.font-size */
+		ctx->font_size = thiz->base_font_size;
 
 		/* if the styles have changed apply them */
 		if (thiz->styles_changed)
@@ -757,6 +757,8 @@ static Edom_Tag * _esvg_svg_new(void)
 	thiz->y = ESVG_COORD_0;
 	thiz->width = ESVG_LENGTH_100_PERCENT;
 	thiz->height = ESVG_LENGTH_100_PERCENT;
+	/* FIXME we are using 16px here, this 16px refer to the 'normal' font-size */
+	thiz->base_font_size = 16;
 
 	/* no default value for the view_box */
 	/* the animation system */

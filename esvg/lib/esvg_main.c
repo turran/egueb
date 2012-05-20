@@ -37,8 +37,28 @@
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
-void esvg_types_init(void);
+/* simple struct to initialize all the domains easily */
+struct log
+{
+	int *d;
+	const char *name;
+} logs[] = {
+	{ &esvg_log_type, "esvg_type" },
+	{ &esvg_log_rect, "esvg_rect" },
+	{ &esvg_log_circle, "esvg_circle" },
+	{ &esvg_log_ellipse, "esvg_ellipse" },
+	{ &esvg_log_path, "esvg_path" },
+	{ &esvg_log_polygon, "esvg_polygon" },
+	{ &esvg_log_polyline, "esvg_polyline" },
+	{ &esvg_log_element, "esvg_element" },
+	{ &esvg_log_renderable, "esvg_renderable" },
+	{ &esvg_log_parser, "esvg_parser" },
+};
+
+/* keep track of the initialization */
 static int _esvg_init_count = 0;
+
+void esvg_types_init(void);
 
 static void _register_enders(void *data)
 {
@@ -99,14 +119,14 @@ static Eina_Bool _esvg_ender_init(void)
 	tag_ns = ender_namespace_find("edom");
 	if (!tag_ns)
 	{
-		ERR("Impossible to find the 'Edom' namespace");
+		EINA_LOG_ERR("Impossible to find the 'Edom' namespace");
 		goto namespace_err;
 	}
 
 	tag_descriptor = ender_namespace_descriptor_find(tag_ns, "tag");
 	if (!tag_descriptor)
 	{
-		ERR("Impossible to find the 'Edom:Tag' descriptor");
+		EINA_LOG_ERR("Impossible to find the 'Edom:Tag' descriptor");
 		goto descriptor_err;
 	}
 	/* get the needed properties to avoid the hash lookup */
@@ -132,6 +152,51 @@ static void _esvg_ender_shutdown(void)
 	ender_element_new_listener_remove(_constructor_callback, NULL);
 	ender_shutdown();
 }
+
+static Eina_Bool _esvg_dependencies_init(void)
+{
+	if (!eina_init())
+	{
+		fprintf(stderr, "Esvg: Eina init failed");
+		return EINA_FALSE;
+	}
+
+	if (!enesim_init())
+	{
+		fprintf(stderr, "Esvg: Enesim init failed");
+		goto shutdown_eina;
+	}
+
+	if (!etex_init())
+	{
+		fprintf(stderr, "Esvg: Etex init failed");
+		goto shutdown_enesim;
+	}
+
+	etch_init();
+
+	if (!_esvg_ender_init())
+	{
+		fprintf(stderr, "Esvg: Ender init failed");
+		goto shutdown_ender;
+	}
+	return EINA_TRUE;
+
+shutdown_ender:
+	etch_shutdown();
+	etex_shutdown();
+shutdown_enesim:
+	enesim_shutdown();
+shutdown_eina:
+	eina_shutdown();
+	return EINA_FALSE;
+}
+
+static void _esvg_dependencies_shutdown(void)
+{
+
+}
+
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
@@ -143,7 +208,7 @@ Ender_Property *EDOM_CHILD = NULL;
 Ender_Property *EDOM_PARENT = NULL;
 Ender_Property *EDOM_TEXT = NULL;
 /* The log domaings */
-int esvg_log_dom_global = -1;
+int esvg_log_type = -1;
 int esvg_log_rect = -1;
 int esvg_log_circle = -1;
 int esvg_log_ellipse = -1;
@@ -152,6 +217,7 @@ int esvg_log_polygon = -1;
 int esvg_log_polyline = -1;
 int esvg_log_element = -1;
 int esvg_log_renderable = -1;
+int esvg_log_parser = -1;
 
 /* The ender wrapper */
 Ender_Namespace * esvg_namespace_get(void)
@@ -174,66 +240,36 @@ Ender_Namespace * esvg_namespace_get(void)
  */
 EAPI int esvg_init(void)
 {
-	/* FIXME if we are going to register every domain here we better
-	 * split this code into _esvg_dependencies_init, _esvg_log_init, etc
-	 * or we make every element foo register each own log on foo_new
-	 */
+	int i;
+	int count;
+
 	if (++_esvg_init_count != 1)
 		return _esvg_init_count;
 
-	if (!eina_init())
-	{
-		fprintf(stderr, "Esvg: Eina init failed");
+	if (!_esvg_dependencies_init())
 		return --_esvg_init_count;
-	}
 
-	/* TODO register every domain here */
-	esvg_log_dom_global = eina_log_domain_register("esvg", ESVG_LOG_COLOR_DEFAULT);
-	if (esvg_log_dom_global < 0)
+	/* register every domain here */
+	count = sizeof(logs)/sizeof(struct log);
+	for (i = 0; i < count; i++)
 	{
-		EINA_LOG_ERR("Esvg: Can not create a general log domain.");
-		goto shutdown_eina;
-	}
-
-	esvg_log_element = eina_log_domain_register("esvg_element", ESVG_LOG_COLOR_DEFAULT);
-	if (esvg_log_element < 0)
-	{
-		EINA_LOG_ERR("Esvg: Can not create an element log domain.");
-		goto shutdown_eina;
-	}
-
-	if (!enesim_init())
-	{
-		ERR("Enesim init failed");
-		goto unregister_log_domain;
-	}
-
-	if (!etex_init())
-	{
-		ERR("Etex init failed");
-		goto shutdown_enesim;
-	}
-
-	etch_init();
-
-	if (!_esvg_ender_init())
-	{
-		ERR("Ender init failed");
-		goto shutdown_ender;
+		struct log *l = &logs[i];
+		*l->d = eina_log_domain_register(l->name, ESVG_LOG_COLOR_DEFAULT);
+		if (*l->d < 0)
+		{
+			fprintf(stderr, "Esvg: Can not create domaing log '%s'", l->name);
+			goto log_error;
+		}
 	}
 
 	return _esvg_init_count;
+log_error:
+	for (; i >= 0; i--)
+	{
+		struct log *l = &logs[i];
+		eina_log_domain_unregister(*l->d);
+	}
 
-shutdown_ender:
-	etch_shutdown();
-	etex_shutdown();
-shutdown_enesim:
-	enesim_shutdown();
-unregister_log_domain:
-	eina_log_domain_unregister(esvg_log_dom_global);
-	esvg_log_dom_global = -1;
-shutdown_eina:
-	eina_shutdown();
 	return --_esvg_init_count;
 }
 
@@ -242,14 +278,23 @@ shutdown_eina:
  */
 EAPI int esvg_shutdown(void)
 {
+	int i;
+	int count;
+
 	if (--_esvg_init_count != 0)
 		return _esvg_init_count;
 
+	/* remove every log */
+	count = sizeof(logs)/sizeof(struct log);
+	for (i = 0; i < count; i++)
+	{
+		struct log *l = &logs[i];
+		eina_log_domain_unregister(*l->d);
+	}
+	/* TODO shutdown dependencies */
 	_esvg_ender_shutdown();
 	etex_shutdown();
 	enesim_shutdown();
-	eina_log_domain_unregister(esvg_log_dom_global);
-	esvg_log_dom_global = -1;
 	eina_shutdown();
 
 	return _esvg_init_count;

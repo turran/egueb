@@ -99,7 +99,11 @@ static Eina_Bool _esvg_renderable_damage_cb(Enesim_Renderer *r,
 		void *data)
 {
 	Eina_Tiler *tiler = data;
+	const char *name;
+
 	eina_tiler_rect_add(tiler, area);
+	enesim_renderer_name_get(r, &name);
+	printf("renderer %s has changed\n", name);
 	return EINA_TRUE;
 }
 
