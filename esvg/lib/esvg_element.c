@@ -39,6 +39,18 @@
  * onmouseover
  * onmousemove
  * onmouseout
+ * We need to keep track whenever an attribute is being animated or not,
+ * to know what value (the base or the anim) we shold choose for merging
+ * one possible way could be:
+ *  Add callbacks whenever some element has been added/removed
+ *  Add handlers whenever an animation/set has changed the attribute name
+ *  if the attribute name is one of our own (color, stroke color, etc),
+ *  then we should increment the animated value, so on the state merge
+ *  take into account the animated or the base value.
+ *  Add getters in their 'full' variant (base and anim value)
+ *  When the above is done, then we can modify the animators to change
+ *  the element "animation" state  (esvg_element_attribute_animate_set)
+ *  so the anim value is the one that gets updated
  */
 /*============================================================================*
  *                                  Local                                     *
