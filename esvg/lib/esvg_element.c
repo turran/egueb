@@ -1126,17 +1126,17 @@ const Esvg_Element_Context * esvg_element_context_get(Edom_Tag *t)
 }
 
 #if 0
-double esvg_element_x_length_calculate(Edom_Tag *t, Esvg_Length *l)
+double esvg_element_context_x_length_calculate(Esvg_Element_Context *t, Esvg_Length *l)
 {
 
 }
 
-double esvg_element_y_length_calculate(Edom_Tag *t, Esvg_Length *l)
+double esvg_element_context_y_length_calculate(Esvg_Element_Context *t, Esvg_Length *l)
 {
 
 }
 
-double esvg_element_other_length_calculate(Edom_Tag *t, Esvg_Length *l)
+double esvg_element_context_other_length_calculate(Esvg_Element_Context *t, Esvg_Length *l)
 {
 
 }
