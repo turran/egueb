@@ -29,7 +29,7 @@
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
-ESVG_LOG_DEFAULT(rect);
+#define ESVG_LOG_DEFAULT esvg_log_rect
 
 static Ender_Property *ESVG_RECT_X;
 static Ender_Property *ESVG_RECT_Y;

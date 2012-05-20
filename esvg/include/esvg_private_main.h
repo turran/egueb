@@ -35,7 +35,6 @@
 
 #define ESVG_LOG_COLOR_DEFAULT EINA_COLOR_ORANGE
 /* Whenever a file needs to generate a log, it must declare this first */
-#define ESVG_LOG_DEFAULT(d) static int *_esvg_log = &esvg_log_##d
 
 /* The log domaings */
 extern int esvg_log_type;
@@ -53,12 +52,12 @@ extern int esvg_log_parser;
 #ifdef ERR
 # undef ERR
 #endif
-#define ERR(...) EINA_LOG_DOM_ERR(*_esvg_log, __VA_ARGS__)
+#define ERR(...) EINA_LOG_DOM_ERR(ESVG_LOG_DEFAULT, __VA_ARGS__)
 
 #ifdef DBG
 # undef DBG
 #endif
-#define DBG(...) EINA_LOG_DOM_DBG(*_esvg_log, __VA_ARGS__)
+#define DBG(...) EINA_LOG_DOM_DBG(ESVG_LOG_DEFAULT, __VA_ARGS__)
 
 /* all the possible magic numbers */
 #define ESVG_ELEMENT_MAGIC 0xe5500001

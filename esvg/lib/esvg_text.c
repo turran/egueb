@@ -29,7 +29,7 @@
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
-ESVG_LOG_DEFAULT(text);
+#define ESVG_LOG_DEFAULT esvg_log_text
 
 static Ender_Property *ESVG_TEXT_X;
 static Ender_Property *ESVG_TEXT_Y;
