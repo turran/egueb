@@ -29,6 +29,8 @@
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
+#define ESVG_LOG_DEFAULT esvg_log_path
+
 static Ender_Property *ESVG_PATH_D;
 
 typedef struct _Esvg_Path
@@ -140,6 +142,8 @@ static Eina_Bool _esvg_path_renderer_propagate(Edom_Tag *t,
 		switch (pcmd->type)
 		{
 			case ESVG_PATH_MOVE_TO:
+			DBG("move_to %c (%g, %g)", pcmd->relative ? 'R' : 'A',
+					pcmd->data.move_to.x,  pcmd->data.move_to.y);
 			cmd.type = ENESIM_COMMAND_MOVE_TO;
 			if (!first && pcmd->relative)
 			{
@@ -156,7 +160,8 @@ static Eina_Bool _esvg_path_renderer_propagate(Edom_Tag *t,
 			break;
 
 			case ESVG_PATH_LINE_TO:
-			//printf(" line_to (%f, %f)\n", pcmd->data.line_to.x,  pcmd->data.line_to.y);
+			DBG("line_to %c (%g, %g)", pcmd->relative ? 'R' : 'A',
+					pcmd->data.line_to.x,  pcmd->data.line_to.y);
 			cmd.type = ENESIM_COMMAND_LINE_TO;
 			if (pcmd->relative)
 			{
@@ -173,6 +178,8 @@ static Eina_Bool _esvg_path_renderer_propagate(Edom_Tag *t,
 			break;
 
 			case ESVG_PATH_HLINE_TO:
+			DBG("hline_to %c (%g)", pcmd->relative ? 'R' : 'A',
+					pcmd->data.hline_to.c);
 			cmd.type = ENESIM_COMMAND_LINE_TO;
 			if (pcmd->relative)
 			{
@@ -189,6 +196,8 @@ static Eina_Bool _esvg_path_renderer_propagate(Edom_Tag *t,
 			break;
 
 			case ESVG_PATH_VLINE_TO:
+			DBG("vline_to %c (%g)", pcmd->relative ? 'R' : 'A',
+					pcmd->data.vline_to.c);
 			cmd.type = ENESIM_COMMAND_LINE_TO;
 			if (pcmd->relative)
 			{
@@ -205,7 +214,14 @@ static Eina_Bool _esvg_path_renderer_propagate(Edom_Tag *t,
 			break;
 
 			case ESVG_PATH_CUBIC_TO:
-			//printf(" cubic_to ((%f, %f) (%f, %f) (%f, %f))\n", pcmd->data.cubic_to.ctrl_x0,  pcmd->data.cubic_to.ctrl_y0, pcmd->data.cubic_to.ctrl_x1,  pcmd->data.cubic_to.ctrl_y1, pcmd->data.cubic_to.x,  pcmd->data.cubic_to.y);
+			DBG("cubic_to %c ((%g, %g) (%g, %g) (%g, %g))",
+					pcmd->relative ? 'R' : 'A',
+					pcmd->data.cubic_to.ctrl_x0,
+					pcmd->data.cubic_to.ctrl_y0,
+					pcmd->data.cubic_to.ctrl_x1,
+					pcmd->data.cubic_to.ctrl_y1,
+					pcmd->data.cubic_to.x,
+					pcmd->data.cubic_to.y);
 			cmd.type = ENESIM_COMMAND_CUBIC_TO;
 			if (pcmd->relative)
 			{
@@ -231,7 +247,12 @@ static Eina_Bool _esvg_path_renderer_propagate(Edom_Tag *t,
 			break;
 
 			case ESVG_PATH_SCUBIC_TO:
-			//printf(" scubic_to ((%f, %f) (%f, %f))\n", pcmd->data.scubic_to.ctrl_x,  pcmd->data.scubic_to.ctrl_y, pcmd->data.scubic_to.x,  pcmd->data.scubic_to.y);
+			DBG("scubic_to %c ((%g, %g) (%g, %g))",
+					pcmd->relative ? 'R' : 'A',
+					pcmd->data.scubic_to.ctrl_x,
+					pcmd->data.scubic_to.ctrl_y,
+					pcmd->data.scubic_to.x,
+					pcmd->data.scubic_to.y);
 			cmd.type = ENESIM_COMMAND_SCUBIC_TO;
 			if (pcmd->relative)
 			{
@@ -252,7 +273,12 @@ static Eina_Bool _esvg_path_renderer_propagate(Edom_Tag *t,
 			break;
 
 			case ESVG_PATH_QUADRATIC_TO:
-			//printf(" quadratic_to ((%f, %f) (%f, %f))\n", pcmd->data.quadratic_to.ctrl_x,  pcmd->data.quadratic_to.ctrl_y, pcmd->data.quadratic_to.x,  pcmd->data.quadratic_to.y);
+			DBG("quadratic_to %c ((%g, %g) (%g, %g))",
+					pcmd->relative ? 'R' : 'A',
+					pcmd->data.quadratic_to.ctrl_x,
+					pcmd->data.quadratic_to.ctrl_y,
+					pcmd->data.quadratic_to.x,
+					pcmd->data.quadratic_to.y);
 			cmd.type = ENESIM_COMMAND_QUADRATIC_TO;
 			if (pcmd->relative)
 			{
@@ -274,7 +300,10 @@ static Eina_Bool _esvg_path_renderer_propagate(Edom_Tag *t,
 			break;
 
 			case ESVG_PATH_SQUADRATIC_TO:
-			//printf(" squadratic_to (%f, %f)\n", pcmd->data.squadratic_to.x,  pcmd->data.squadratic_to.y);
+			DBG("squadratic_to %c (%g, %g)",
+					pcmd->relative ? 'R' : 'A',
+					pcmd->data.squadratic_to.x,
+					pcmd->data.squadratic_to.y);
 			cmd.type = ENESIM_COMMAND_SQUADRATIC_TO;
 			if (pcmd->relative)
 			{
@@ -291,7 +320,15 @@ static Eina_Bool _esvg_path_renderer_propagate(Edom_Tag *t,
 			break;
 
 			case ESVG_PATH_ARC_TO:
-			//printf(" arc_to ((%f, %f) %f %f %f (%f, %f))\n", pcmd->data.arc_to.rx,  pcmd->data.arc_to.ry, pcmd->data.arc_to.angle,  pcmd->data.arc_to.large,  pcmd->data.arc_to.sweep,  pcmd->data.arc_to.x,  pcmd->data.arc_to.y);
+			DBG("arc_to %c ((%g, %g) %g %g %g (%g, %g))",
+					pcmd->relative ? 'R' : 'A',
+					pcmd->data.arc_to.rx,
+					pcmd->data.arc_to.ry,
+					pcmd->data.arc_to.angle,
+					pcmd->data.arc_to.large,
+					pcmd->data.arc_to.sweep,
+					pcmd->data.arc_to.x,
+					pcmd->data.arc_to.y);
 			cmd.type = ENESIM_COMMAND_ARC_TO;
 			if (pcmd->relative)
 			{
@@ -313,7 +350,7 @@ static Eina_Bool _esvg_path_renderer_propagate(Edom_Tag *t,
 			break;
 
 			case ESVG_PATH_CLOSE:
-			//printf(" close\n");
+			DBG("close");
 			cmd.type = ENESIM_COMMAND_CLOSE;
 			cmd.definition.close.close = EINA_TRUE;
 			break;
