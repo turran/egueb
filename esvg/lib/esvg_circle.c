@@ -29,6 +29,8 @@
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
+#define ESVG_LOG_DEFAULT esvg_log_circle
+
 static Ender_Property *ESVG_CIRCLE_CX;
 static Ender_Property *ESVG_CIRCLE_CY;
 static Ender_Property *ESVG_CIRCLE_R;
@@ -133,7 +135,7 @@ static Eina_Bool _esvg_circle_renderer_propagate(Edom_Tag *t,
 	cy = esvg_length_final_get(&thiz->current.cy, ctx->viewbox.height, ctx->font_size);
 	/* set the size */
 	radius = esvg_length_final_get(&thiz->current.radius, ctx->viewbox.width, ctx->font_size);
-	printf("calling the setup on the circle (%g %g %g)\n", cx, cy, radius);
+	DBG("calling the setup on the circle (%g %g %g)", cx, cy, radius);
 	enesim_renderer_circle_center_set(thiz->r, cx, cy);
 	enesim_renderer_circle_radius_set(thiz->r, radius);
 

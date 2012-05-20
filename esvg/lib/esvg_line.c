@@ -29,6 +29,8 @@
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
+#define ESVG_LOG_DEFAULT esvg_log_line
+
 static Ender_Property *ESVG_LINE_X1;
 static Ender_Property *ESVG_LINE_Y1;
 static Ender_Property *ESVG_LINE_X2;
@@ -158,7 +160,7 @@ static Eina_Bool _esvg_line_renderer_propagate(Edom_Tag *t,
 	enesim_renderer_geometry_transformation_set(thiz->r, &ctx->transform.base);
 	enesim_renderer_color_set(thiz->r, rctx->color);
 
-	//printf("calling the setup on the line (%g %g %g %g | %g %d)\n", x1, y1, x2, y2, dstate.stroke_weight, dstate.stroke_cap);
+	DBG("calling the setup on the line (%g %g %g %g)", x1, y1, x2, y2);
 	return EINA_TRUE;
 }
 

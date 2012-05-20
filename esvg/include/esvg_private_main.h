@@ -43,6 +43,7 @@ extern int esvg_log_text;
 extern int esvg_log_circle;
 extern int esvg_log_ellipse;
 extern int esvg_log_path;
+extern int esvg_log_line;
 extern int esvg_log_polygon;
 extern int esvg_log_polyline;
 extern int esvg_log_element;

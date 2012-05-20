@@ -29,6 +29,8 @@
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
+#define ESVG_LOG_DEFAULT esvg_log_polyline
+
 static Ender_Property *ESVG_POLYLINE_POINT;
 
 typedef struct _Esvg_Polyline
@@ -131,7 +133,7 @@ static Eina_Bool _esvg_polyline_renderer_propagate(Edom_Tag *t,
 	/* base properties */
 	enesim_renderer_geometry_transformation_set(r, &ctx->transform.base);
 	enesim_renderer_color_set(r, rctx->color);
-	printf("calling the setup on the polyline ");
+	DBG("calling the setup on the polyline");
 	/* setup the points */
 	if (nvert > 2)
 	{
@@ -142,7 +144,7 @@ static Eina_Bool _esvg_polyline_renderer_propagate(Edom_Tag *t,
 		enesim_renderer_figure_polygon_add(r);
 		EINA_LIST_FOREACH(thiz->points, l, p)
 		{
-			printf("(%f, %f) ", p->x, p->y);
+			DBG("(%f, %f) ", p->x, p->y);
 			enesim_renderer_figure_polygon_vertex_add(r, p->x, p->y);
 		}
 	}
@@ -162,9 +164,8 @@ static Eina_Bool _esvg_polyline_renderer_propagate(Edom_Tag *t,
 		enesim_renderer_line_y0_set(r, pts[0].y);
 		enesim_renderer_line_x1_set(r, pts[1].x);
 		enesim_renderer_line_y1_set(r, pts[1].y);
-		printf("using the line (%f, %f) (%f, %f)", pts[0].x, pts[0].y, pts[1].x, pts[1].y);
+		DBG("using the line (%f, %f) (%f, %f)", pts[0].x, pts[0].y, pts[1].x, pts[1].y);
 	}
-	printf("\n");
 	enesim_renderer_proxy_proxied_set(thiz->proxy, r);
 
 	return EINA_TRUE;

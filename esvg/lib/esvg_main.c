@@ -49,6 +49,7 @@ struct log
 	{ &esvg_log_circle, "esvg_circle" },
 	{ &esvg_log_ellipse, "esvg_ellipse" },
 	{ &esvg_log_path, "esvg_path" },
+	{ &esvg_log_line, "esvg_line" },
 	{ &esvg_log_polygon, "esvg_polygon" },
 	{ &esvg_log_polyline, "esvg_polyline" },
 	{ &esvg_log_element, "esvg_element" },
@@ -215,6 +216,7 @@ int esvg_log_text = -1;
 int esvg_log_circle = -1;
 int esvg_log_ellipse = -1;
 int esvg_log_path = -1;
+int esvg_log_line = -1;
 int esvg_log_polygon = -1;
 int esvg_log_polyline = -1;
 int esvg_log_element = -1;
