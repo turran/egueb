@@ -48,9 +48,23 @@ typedef struct _Esvg_Referenceable
 	/* interface */
 	Esvg_Referenceable_Descriptor_Internal descriptor;
 	/* private */
+	/* TODO remove this */
 	Enesim_Renderer *current;
+	/* TODO use this */
+	Eina_List *references;
 	void *data;
 } Esvg_Referenceable;
+
+typedef struct _Esvg_Referenceable_Reference
+{
+	Edom_Tag *t;
+	Ender_Element *referencer;
+	/* instead of the renderer this could be just a void *
+	 * where the child classes should fill this with its
+	 * own data
+	 */
+	void *data;
+} Esvg_Referenceable_Reference;
 
 static Esvg_Referenceable * _esvg_referenceable_get(Edom_Tag *t)
 {
@@ -114,6 +128,7 @@ Eina_Bool esvg_is_referenceable_internal(Edom_Tag *t)
 	return ret;
 }
 
+/* remove this */
 Enesim_Renderer * esvg_referenceable_renderer_new(Edom_Tag *t)
 {
 	Esvg_Referenceable *thiz;
@@ -128,6 +143,30 @@ Enesim_Renderer * esvg_referenceable_renderer_new(Edom_Tag *t)
 	return r;
 }
 
+void esvg_referenceable_propagate(Edom_Tag *t, Ender_Element *e)
+{
+	/* get the final state */
+	/* call the propagate interface */
+}
+
+void esvg_referenceable_reference_add(Edom_Tag *t, Ender_Element *e)
+{
+	/* get the renderer */
+	/* create the reference struct */
+	/* trigger the add interface */
+	/* return the renderer ? */
+}
+
+void esvg_referenceable_reference_remove(Edom_Tag *t, Ender_Element *e)
+{
+	/* trigger the remove interface */
+}
+
+void esvg_referenceable_reference_foreach(Edom_Tag *t)
+{
+	/* iterate over the list of references */
+	/* and call the function */
+}
 
 void esvg_referenceable_renderer_set(Edom_Tag *t, Enesim_Renderer *r)
 {

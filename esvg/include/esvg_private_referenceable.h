@@ -10,6 +10,16 @@ typedef Esvg_Element_Setup_Return (*Esvg_Referenceable_Setup)(Edom_Tag *t,
 		Enesim_Renderer *current,
 		Enesim_Error **error);
 
+typedef Eina_Bool (*Esvg_Referenceable_Propagate)(Edom_Tag *t,
+		Esvg_Context *c,
+		const Esvg_Element_Context *parent_ctx,
+		const Esvg_Attribute_Presentation *attr,
+		Enesim_Renderer *r,
+		Enesim_Error **error);
+
+typedef Eina_Bool (*Esvg_Referenceable_Reference_Add)(Edom_Tag *t, Ender_Element *e);
+typedef Eina_Bool (*Esvg_Referenceable_Reference_Remove)(Edom_Tag *t, Ender_Element *e);
+
 typedef struct _Esvg_Referenceable_Descriptor {
 	/* the tag interface */
 	Edom_Tag_Child_Add child_add;
@@ -25,6 +35,9 @@ typedef struct _Esvg_Referenceable_Descriptor {
 	/* the referenceable interface */
 	Esvg_Referenceable_Setup setup;
 	Esvg_Referenceable_Renderer_New renderer_new;
+	Esvg_Referenceable_Propagate propagate;
+	Esvg_Referenceable_Reference_Add reference_add;
+	Esvg_Referenceable_Reference_Remove reference_remove;
 } Esvg_Referenceable_Descriptor;
 
 void * esvg_referenceable_data_get(Edom_Tag *t);

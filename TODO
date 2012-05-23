@@ -8,6 +8,11 @@ ECSS
 + Add a way to unset every property, useful whenever we change styles and we need to rollback to its initial state
 ESVG
 ====
++ We need to change how renderable elements work. Given that renderables can be part of a <def>, can be part of a <clipPath>, can be also part of <pattern> at the
+  end the concept of a renderable where it only has *one* renderer associated with it, makes no sense. We should make the renderable inherit
+  from a referenceable. In this case would be aiser to create a "renderable" tree with different instances of renderers which several of them
+  can be a reference to a single dom node. There are other use cases for this, like the gradients, when a gradient can "inherit" properties
+  and stops from other gradients, and for that we also need to use this "reference" concept.
 + Handle correctly the animated properties. We need a way to know whenever a property has an animation assigned to be able to use the base or the anim. Whenever we propagate there's no real need to pass both, just the current one in use
 + Add an input system
 + Now that we have two trees, the dom one, and the renderers one, we need to design the "engine" that will
