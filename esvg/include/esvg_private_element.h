@@ -65,6 +65,9 @@ Eina_Bool esvg_element_changed(Edom_Tag *t);
 Eina_Bool esvg_element_has_setup(Edom_Tag *t, Esvg_Context *c);
 void esvg_element_context_dump(const Esvg_Element_Context *c);
 
+const Esvg_Element_Context * esvg_element_context_get(Edom_Tag *t);
+const Esvg_Attribute_Presentation * esvg_element_attribute_presentation_get(Edom_Tag *t);
+
 /* internal functions */
 Esvg_Type esvg_element_internal_type_get(Edom_Tag *t);
 Eina_Bool esvg_is_element_internal(Edom_Tag *t);

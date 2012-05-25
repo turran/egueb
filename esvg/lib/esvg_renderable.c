@@ -26,7 +26,6 @@
 #include "esvg_private_renderable.h"
 #include "esvg_private_referenceable.h"
 #include "esvg_private_svg.h"
-#include "esvg_private_reference.h"
 
 #include "esvg_renderable.h"
 /*============================================================================*
@@ -72,10 +71,8 @@ typedef struct _Esvg_Renderable
 	/* private */
 	Esvg_Paint fill_paint_last;
 	Esvg_Paint stroke_paint_last;
-	Ender_Element *fill_ender;
-	Edom_Tag *fill_tag;
-	Ender_Element *stroke_ender;
-	Edom_Tag *stroke_tag;
+	Esvg_Referenceable_Reference *fill_reference;
+	Esvg_Referenceable_Reference *stroke_reference;
 	Esvg_Renderable_Context context;
 	void *data;
 	/* damages */
@@ -154,22 +151,19 @@ static void _esvg_shape_enesim_state_get(Edom_Tag *t,
 		{
 			Ender_Element *e = NULL;
 
+			/* TODO here we should fetch the id from the property */
 			esvg_svg_element_get(topmost, attr->fill.value.paint_server, &e);
 			if (e)
 			{
-				Enesim_Renderer *fill_r;
+				Edom_Tag *fill_t;
 
-				thiz->fill_ender = e;
-				thiz->fill_tag = ender_element_object_get(e);
-				fill_r = esvg_referenceable_renderer_new(thiz->fill_tag);
-				printf("fill renderer %p\n", fill_r);
-				rctx->fill_renderer = fill_r;
+				/* TODO then, check that the referenced element is of type paint server */
+				fill_t = ender_element_object_get(e);
+				thiz->fill_reference = esvg_referenceable_reference_add(fill_t, t);
+				/* TODO finally, get the renderer? */
+				rctx->fill_renderer = thiz->fill_reference->data;
 			}
 		}
-		/* TODO here we should fetch the id from the property */
-		/* TODO then, check that the referenced element is of type paint server */
-		/* TODO finally, get the renderer? */
-		//rctx->fill_renderer = esvg_element_renderer_get(attr->fill.value.paint_server);
 	}
 	else if (attr->fill.type == ESVG_PAINT_NONE)
 	{
@@ -263,14 +257,14 @@ static Eina_Bool _esvg_renderable_propagate(Esvg_Renderable *thiz, Edom_Tag *t,
 	}
 #endif
 	/* in case we are going to use the fill renderer do its own setup */
-	if (attr->fill_set && attr->fill.type == ESVG_PAINT_SERVER && thiz->fill_ender)
+	if (attr->fill_set && attr->fill.type == ESVG_PAINT_SERVER && thiz->fill_reference)
 	{
 		/* we dont pass the attributes or the paint server
 		 * will merge what it has with this
 		 */
 		/* FIXME check that the referenceable has done the setup, if not queue ourselves */
-		esvg_referenceable_renderer_set(thiz->fill_tag, thiz->context.fill_renderer);
-		esvg_element_internal_setup(thiz->fill_tag, c, error);
+		//esvg_referenceable_renderer_set(thiz->fill_tag, thiz->context.fill_renderer);
+		//esvg_element_internal_setup(thiz->fill_tag, c, error);
 	}
 #if 0
 	/* in case we are going to use the stroke renderer do its own setup */

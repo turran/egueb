@@ -27,22 +27,30 @@
 #include "esvg_private_paint_server.h"
 #include "esvg_private_gradient.h"
 #include "esvg_gradient.h"
+
+/*
+ * TODO
+ * the stops_changed flag has to be cleared somewhere but where? add a cleanup
+ * function?
+ */
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
+#define ESVG_LOG_DEFAULT esvg_log_gradient
+
 #define ESVG_GRADIENT_MAGIC_CHECK(d) \
 	do {\
 		if (!EINA_MAGIC_CHECK(d, ESVG_GRADIENT_MAGIC))\
 			EINA_MAGIC_FAIL(d, ESVG_GRADIENT_MAGIC);\
 	} while(0)
 
-static Ender_Property *ESVG_GRADIENT_STOP;
-
 typedef struct _Esvg_Gradient_Descriptor_Internal
 {
 	Edom_Tag_Free free;
 	Edom_Tag_Child_Add child_add;
-	Esvg_Gradient_Setup setup;
+	Edom_Tag_Child_Remove child_remove;
+	Esvg_Referenceable_Setup setup;
+	Esvg_Gradient_Propagate propagate;
 } Esvg_Gradient_Descriptor_Internal;
 
 typedef struct _Esvg_Gradient
@@ -54,6 +62,7 @@ typedef struct _Esvg_Gradient
 	Esvg_Gradient_Descriptor_Internal descriptor;
 	Eina_Bool units_set : 1;
 	Eina_Bool transform_is_set : 1;
+	Eina_Bool stops_changed : 1;
 	void *data;
 } Esvg_Gradient;
 
@@ -67,58 +76,116 @@ static Esvg_Gradient * _esvg_gradient_get(Edom_Tag *t)
 	return thiz;
 }
 
-#if 0
-static Eina_Bool _esvg_gradient_stop_post(Edom_Tag *t, Edom_Tag *child_t,
-		Esvg_Element_Context *ctx,
-		Esvg_Attribute_Presentation *attr,
-		Enesim_Error **error,
-		void *data)
+static void _esvg_gradient_stop_mutation_cb(Ender_Element *e,
+		const char *event_name,
+		void *event_data, void *data)
 {
-	Enesim_Renderer *r = data;
-	Enesim_Renderer_Gradient_Stop *stop;
+	Esvg_Gradient *thiz = data;
 
-	stop = esvg_stop_gradient_stop_get(child_t);
-	printf("iterating over the stops %g %08x!!!!\n", stop->pos, stop->argb);
-	enesim_renderer_gradient_stop_add(r, stop);
-
-	return EINA_TRUE;
+	thiz->stops_changed = EINA_TRUE;
 }
-#endif
 
+static Eina_Bool _esvg_gradient_stop_propagate(Edom_Tag *t, Edom_Tag *child,
+		void *user_data)
+{
+	Enesim_Renderer_Gradient_Stop *stop;
+	Enesim_Renderer *r = user_data;
+
+	stop = esvg_stop_gradient_stop_get(child);
+	DBG("Adding a gradient stop at position %g with color %08x", stop->pos, stop->argb);
+	enesim_renderer_gradient_stop_add(r, stop);
+}
 /*----------------------------------------------------------------------------*
  *                       Esvg Paint Server interface                          *
  *----------------------------------------------------------------------------*/
-static Eina_Bool _esvg_gradient_child_add(Edom_Tag *t, Edom_Tag *child_t)
+static Eina_Bool _esvg_gradient_child_add(Edom_Tag *t, Edom_Tag *child)
+{
+	Esvg_Gradient *thiz;
+	Esvg_Type type;
+	Ender_Element *child_e;
+
+	if (!esvg_is_element_internal(child))
+		return EINA_FALSE;
+
+	thiz = _esvg_gradient_get(t);
+	type = esvg_element_internal_type_get(child);
+	/* only support stops */
+	if (type != ESVG_STOP)
+		return EINA_FALSE;
+
+	child_e = esvg_element_ender_get(child);
+	ender_event_listener_add(child_e, "Mutation", _esvg_gradient_stop_mutation_cb, thiz);
+	thiz->stops_changed = EINA_TRUE;
+
+	return EINA_TRUE;
+}
+
+static Eina_Bool _esvg_gradient_child_remove(Edom_Tag *t, Edom_Tag *child)
 {
 	Esvg_Gradient *thiz;
 
 	thiz = _esvg_gradient_get(t);
-	/* only support stops */
-	printf("adding child\n");
-	if (1)
-	{
-		return EINA_TRUE;
-	}
-	else if (thiz->descriptor.child_add)
-		return thiz->descriptor.child_add(t, child_t);
-	else
-		return EINA_FALSE;
+	thiz->stops_changed = EINA_TRUE;
+	// remove the event handler
+	//ender_event_listener_remove(child_e, "Mutation", _esvg_gradient_stop_mutation_cb, thiz);
+	return EINA_TRUE;
 }
 
-static Esvg_Element_Setup_Return _esvg_gradient_setup(Edom_Tag *t,
+static Eina_Bool _esvg_gradient_setup(Edom_Tag *t,
 		Esvg_Context *c,
 		Esvg_Element_Context *ctx,
 		Esvg_Attribute_Presentation *attr,
-		Enesim_Renderer *current,
 		Enesim_Error **error)
 {
 	Esvg_Gradient *thiz;
-	Esvg_Element_Setup_Return ret = ESVG_SETUP_CHILDS;
 
 	thiz = _esvg_gradient_get(t);
-	if (thiz->descriptor.setup)
-		ret = thiz->descriptor.setup(t, c, ctx, attr, current, &thiz->state, error);
+	if (!thiz->stops_changed)
+		return EINA_TRUE;
+
+	/* call the setup on the stops */
+	return esvg_element_internal_child_setup(t, c, error, NULL, thiz);
+}
+
+static Eina_Bool _esvg_gradient_propagate(Edom_Tag *t,
+		Esvg_Context *c,
+		const Esvg_Element_Context *ctx,
+		const Esvg_Attribute_Presentation *attr,
+		Enesim_Renderer *r,
+		Enesim_Error **error)
+{
+	Esvg_Gradient *thiz;
+	Eina_Bool ret = EINA_TRUE;
+
+	thiz = _esvg_gradient_get(t);
+	if (thiz->stops_changed)
+	{
+		enesim_renderer_gradient_stop_clear(r);
+		edom_tag_child_foreach(t, _esvg_gradient_stop_propagate, r);
+	}
+	if (thiz->descriptor.propagate)
+		ret = thiz->descriptor.propagate(t, c, ctx, attr, &thiz->state, r, error);
 	return ret;
+}
+
+static Eina_Bool _esvg_gradient_reference_add(Edom_Tag *t, Esvg_Referenceable_Reference *rr)
+{
+	Esvg_Gradient *thiz;
+	Enesim_Renderer *r;
+
+	thiz = _esvg_gradient_get(t);
+	/* in case some stop has changed:
+	 *  the setup will be called
+	 *  the stops will be generated
+	 *  the stops will be propagated to each reference
+	 * so no need to do twice
+	 */
+	if (thiz->stops_changed)
+		return EINA_TRUE;
+	/* add every stop to our newly created reference */
+	r = rr->data;
+	enesim_renderer_gradient_stop_clear(r);
+	edom_tag_child_foreach(t, _esvg_gradient_stop_propagate, r);
 }
 
 static void _esvg_gradient_free(Edom_Tag *t)
@@ -133,32 +200,6 @@ static void _esvg_gradient_free(Edom_Tag *t)
 /*----------------------------------------------------------------------------*
  *                           The Ender interface                              *
  *----------------------------------------------------------------------------*/
-#if 0
-static void _esvg_gradient_stop_add(Edom_Tag *t, Esvg_Gradient_Stop *s)
-{
-	Esvg_Gradient *thiz;
-	Esvg_Gradient_Stop *stop;
-
-	if (!s) return;
-
-	thiz = _esvg_gradient_get(t);
-
-	stop = malloc(sizeof(Esvg_Gradient_Stop));
-	*stop = *s;
-	thiz->state.stops = eina_list_append(thiz->state.stops, stop);
-}
-
-static void _esvg_gradient_stop_get(Edom_Tag *t, const Eina_List **l)
-{
-	Esvg_Gradient *thiz;
-
-	if (!l) return;
-
-	thiz = _esvg_gradient_get(t);
-	*l = thiz->state.stops;
-}
-#endif
-
 static void _esvg_gradient_units_set(Edom_Tag *t, Esvg_Gradient_Units units)
 {
 	Esvg_Gradient *thiz;
@@ -243,12 +284,14 @@ Edom_Tag * esvg_gradient_new(Esvg_Gradient_Descriptor *descriptor,
 	if (!thiz) return NULL;
 
 	EINA_MAGIC_SET(thiz, ESVG_GRADIENT_MAGIC);
-	thiz->descriptor.setup = descriptor->setup;
+	thiz->descriptor.propagate = descriptor->propagate;
 	thiz->descriptor.child_add = descriptor->child_add;
+	thiz->descriptor.child_remove = descriptor->child_remove;
+	thiz->descriptor.setup = descriptor->setup;
 	thiz->data = data;
 
 	pdescriptor.child_add = _esvg_gradient_child_add;
-	pdescriptor.child_remove = descriptor->child_remove;
+	pdescriptor.child_remove = _esvg_gradient_child_remove;
 	pdescriptor.attribute_set = descriptor->attribute_set;
 	pdescriptor.attribute_get = descriptor->attribute_get;
 	pdescriptor.cdata_set = descriptor->cdata_set;
@@ -257,6 +300,8 @@ Edom_Tag * esvg_gradient_new(Esvg_Gradient_Descriptor *descriptor,
 	pdescriptor.initialize = descriptor->initialize;
 	pdescriptor.setup = _esvg_gradient_setup;
 	pdescriptor.renderer_new = descriptor->renderer_new;
+	pdescriptor.propagate = _esvg_gradient_propagate;
+	pdescriptor.reference_add = _esvg_gradient_reference_add;
 
 	/* Default values */
 	thiz->state.units = ESVG_OBJECT_BOUNDING_BOX;
@@ -277,15 +322,6 @@ void * esvg_gradient_data_get(Edom_Tag *t)
  *                                   API                                      *
  *============================================================================*/
 EAPI Eina_Bool esvg_is_gradient(Ender_Element *e)
-{
-}
-
-EAPI void esvg_gradient_stop_add(Ender_Element *e, Ender_Element *s)
-{
-	ender_element_property_value_add(e, ESVG_GRADIENT_STOP, s, NULL);
-}
-
-EAPI void esvg_gradient_stop_get(Ender_Element *e, const Eina_List **l)
 {
 }
 

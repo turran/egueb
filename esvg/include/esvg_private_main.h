@@ -48,6 +48,7 @@ extern int esvg_log_polygon;
 extern int esvg_log_polyline;
 extern int esvg_log_element;
 extern int esvg_log_renderable;
+extern int esvg_log_gradient;
 extern int esvg_log_parser;
 
 #ifdef ERR

@@ -82,7 +82,6 @@ static Eina_Bool _esvg_stop_attribute_get(Edom_Tag *tag, const char *attribute, 
 	return EINA_FALSE;
 }
 
-/* TODO optimize so many 'ifs' */
 static Esvg_Element_Setup_Return _esvg_stop_setup(Edom_Tag *t,
 		Esvg_Context *c,
 		const Esvg_Element_Context *parent_context,

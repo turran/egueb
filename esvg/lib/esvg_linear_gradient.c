@@ -147,13 +147,12 @@ static Enesim_Renderer * _esvg_linear_gradient_renderer_new(Edom_Tag *t)
 	enesim_renderer_gradient_mode_set(r, ENESIM_PAD);
 	return r;
 }
-
-static Esvg_Element_Setup_Return _esvg_linear_gradient_setup(Edom_Tag *t,
+static Eina_Bool _esvg_linear_gradient_propagate(Edom_Tag *t,
 		Esvg_Context *c,
-		Esvg_Element_Context *ctx,
-		Esvg_Attribute_Presentation *attr,
-		Enesim_Renderer *r,
+		const Esvg_Element_Context *ctx,
+		const Esvg_Attribute_Presentation *attr,
 		Esvg_Gradient_Context *gctx,
+		Enesim_Renderer *r,
 		Enesim_Error **error)
 {
 	Esvg_Linear_Gradient *thiz;
@@ -220,7 +219,8 @@ static Esvg_Element_Setup_Return _esvg_linear_gradient_setup(Edom_Tag *t,
 	enesim_renderer_gradient_linear_x1_set(r, x2);
 	enesim_renderer_gradient_linear_y1_set(r, y2);
 
-	return ESVG_SETUP_OK;
+	return EINA_TRUE;
+
 }
 
 static void _esvg_linear_gradient_free(Edom_Tag *t)
@@ -241,8 +241,9 @@ static Esvg_Gradient_Descriptor _descriptor = {
 	/* .initialize 		= */ NULL,
 	/* .attribute_set 	= */ _esvg_linear_gradient_attribute_set,
 	/* .clone		= */ NULL,
-	/* .setup		= */ _esvg_linear_gradient_setup,
+	/* .setup		= */ NULL,
 	/* .renderer_new	= */ _esvg_linear_gradient_renderer_new,
+	/* .propagate		= */ _esvg_linear_gradient_propagate,
 };
 /*----------------------------------------------------------------------------*
  *                           The Ender interface                              *

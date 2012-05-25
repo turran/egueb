@@ -16,6 +16,9 @@ typedef struct _Esvg_Paint_Server_Descriptor {
 	/* the renderable interface */
 	Esvg_Referenceable_Setup setup;
 	Esvg_Referenceable_Renderer_New renderer_new;
+	Esvg_Referenceable_Propagate propagate;
+	Esvg_Referenceable_Reference_Add reference_add;
+	Esvg_Referenceable_Reference_Remove reference_remove;
 } Esvg_Paint_Server_Descriptor;
 
 void * esvg_paint_server_data_get(Edom_Tag *t);

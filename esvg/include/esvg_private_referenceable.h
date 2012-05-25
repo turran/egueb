@@ -1,13 +1,22 @@
-#ifndef _ESVG_PRIVATE_RENDERABLE_H_
-#define _ESVG_PRIVATE_RENDERABLE_H_
+#ifndef _ESVG_PRIVATE_REFERENCEABLE_H_
+#define _ESVG_PRIVATE_REFERENCEABLE_H_
 
-/* referenceable */
+typedef struct _Esvg_Referenceable_Reference
+{
+	Edom_Tag *t;
+	Edom_Tag *referencer;
+	/* instead of the renderer this could be just a void *
+	 * where the child classes should fill this with its
+	 * own data
+	 */
+	void *data;
+} Esvg_Referenceable_Reference;
+
 typedef Enesim_Renderer * (*Esvg_Referenceable_Renderer_New)(Edom_Tag *t);
 typedef Esvg_Element_Setup_Return (*Esvg_Referenceable_Setup)(Edom_Tag *t,
 		Esvg_Context *c,
 		Esvg_Element_Context *ctx,
 		Esvg_Attribute_Presentation *attr,
-		Enesim_Renderer *current,
 		Enesim_Error **error);
 
 typedef Eina_Bool (*Esvg_Referenceable_Propagate)(Edom_Tag *t,
@@ -17,8 +26,8 @@ typedef Eina_Bool (*Esvg_Referenceable_Propagate)(Edom_Tag *t,
 		Enesim_Renderer *r,
 		Enesim_Error **error);
 
-typedef Eina_Bool (*Esvg_Referenceable_Reference_Add)(Edom_Tag *t, Ender_Element *e);
-typedef Eina_Bool (*Esvg_Referenceable_Reference_Remove)(Edom_Tag *t, Ender_Element *e);
+typedef Eina_Bool (*Esvg_Referenceable_Reference_Add)(Edom_Tag *t, Esvg_Referenceable_Reference *rr);
+typedef void (*Esvg_Referenceable_Reference_Remove)(Edom_Tag *t, Esvg_Referenceable_Reference *rr);
 
 typedef struct _Esvg_Referenceable_Descriptor {
 	/* the tag interface */
@@ -40,10 +49,17 @@ typedef struct _Esvg_Referenceable_Descriptor {
 	Esvg_Referenceable_Reference_Remove reference_remove;
 } Esvg_Referenceable_Descriptor;
 
+typedef Eina_Bool (*Esvg_Referenceable_Cb)(Edom_Tag *t, Esvg_Referenceable_Reference *rr, void *data);
+
 void * esvg_referenceable_data_get(Edom_Tag *t);
 Edom_Tag * esvg_referenceable_new(Esvg_Referenceable_Descriptor *descriptor, Esvg_Type type, void *data);
-Enesim_Renderer * esvg_referenceable_renderer_new(Edom_Tag *t);
-void esvg_referenceable_renderer_set(Edom_Tag *t, Enesim_Renderer *r);
+Esvg_Referenceable_Reference * esvg_referenceable_reference_add(Edom_Tag *t,
+		Edom_Tag *referencer);
+void esvg_referenceable_reference_remove(Edom_Tag *t, Esvg_Referenceable_Reference *rr);
+void esvg_referenceable_reference_foreach(Edom_Tag *t, Esvg_Referenceable_Cb cb, void *data);
+void esvg_referenceable_reference_propagate(Esvg_Referenceable_Reference *rr,
+		Esvg_Context *c,
+		Enesim_Error **error);
 /* internal functions */
 Eina_Bool esvg_is_referenceable_internal(Edom_Tag *t);
 

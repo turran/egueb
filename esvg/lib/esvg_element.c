@@ -1125,6 +1125,14 @@ const Esvg_Element_Context * esvg_element_context_get(Edom_Tag *t)
 	return &thiz->state_final;
 }
 
+const Esvg_Attribute_Presentation * esvg_element_attribute_presentation_get(Edom_Tag *t)
+{
+	Esvg_Element *thiz;
+
+	thiz = _esvg_element_get(t);
+	return &thiz->attr_final;
+}
+
 #if 0
 double esvg_element_context_x_length_calculate(Esvg_Element_Context *t, Esvg_Length *l)
 {

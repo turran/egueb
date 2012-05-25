@@ -38,7 +38,10 @@ typedef struct _Esvg_Referenceable_Descriptor_Internal
 {
 	Edom_Tag_Free free;
 	Esvg_Referenceable_Setup setup;
+	Esvg_Referenceable_Propagate propagate;
 	Esvg_Referenceable_Renderer_New renderer_new;
+	Esvg_Referenceable_Reference_Add reference_add;
+	Esvg_Referenceable_Reference_Remove reference_remove;
 } Esvg_Referenceable_Descriptor_Internal;
 
 typedef struct _Esvg_Referenceable
@@ -48,23 +51,9 @@ typedef struct _Esvg_Referenceable
 	/* interface */
 	Esvg_Referenceable_Descriptor_Internal descriptor;
 	/* private */
-	/* TODO remove this */
-	Enesim_Renderer *current;
-	/* TODO use this */
 	Eina_List *references;
 	void *data;
 } Esvg_Referenceable;
-
-typedef struct _Esvg_Referenceable_Reference
-{
-	Edom_Tag *t;
-	Ender_Element *referencer;
-	/* instead of the renderer this could be just a void *
-	 * where the child classes should fill this with its
-	 * own data
-	 */
-	void *data;
-} Esvg_Referenceable_Reference;
 
 static Esvg_Referenceable * _esvg_referenceable_get(Edom_Tag *t)
 {
@@ -76,6 +65,18 @@ static Esvg_Referenceable * _esvg_referenceable_get(Edom_Tag *t)
 	return thiz;
 }
 
+static Enesim_Renderer * _esvg_referenceable_renderer_new(Edom_Tag *t)
+{
+	Esvg_Referenceable *thiz;
+	Enesim_Renderer *r = NULL;
+
+	thiz = _esvg_referenceable_get(t);
+	if (thiz->descriptor.renderer_new)
+		r = thiz->descriptor.renderer_new(t);
+	printf("renderer new!!!! %p\n", r);
+
+	return r;
+}
 /*----------------------------------------------------------------------------*
  *                           The Ender interface                              *
  *----------------------------------------------------------------------------*/
@@ -100,16 +101,22 @@ static Esvg_Element_Setup_Return _esvg_referenceable_setup(Edom_Tag *t,
 		Enesim_Error **error)
 {
 	Esvg_Referenceable *thiz;
+	Esvg_Referenceable_Reference *rr;
+	Eina_List *l;
 
 	thiz = _esvg_referenceable_get(t);
 	/* a referenceable should always get its attributes from its
 	 * parent tree
 	 */
-	if (!thiz->current)
-		return ESVG_SETUP_FAILED;
-
 	if (thiz->descriptor.setup)
-		return thiz->descriptor.setup(t, c, context, attr, thiz->current, error);
+		thiz->descriptor.setup(t, c, context, attr, error);
+
+	/* for each reference, propagate it */
+	EINA_LIST_FOREACH(thiz->references, l, rr)
+	{
+		esvg_referenceable_reference_propagate(rr, c, error);
+	}
+
 	return ESVG_SETUP_OK;
 }
 /*============================================================================*
@@ -128,53 +135,96 @@ Eina_Bool esvg_is_referenceable_internal(Edom_Tag *t)
 	return ret;
 }
 
-/* remove this */
-Enesim_Renderer * esvg_referenceable_renderer_new(Edom_Tag *t)
+void esvg_referenceable_reference_propagate(Esvg_Referenceable_Reference *rr,
+		Esvg_Context *c,
+		Enesim_Error **error)
 {
+	Esvg_Referenceable *thiz;
+	const Esvg_Element_Context *ctx;
+	const Esvg_Attribute_Presentation *attr;
+
+	thiz = _esvg_referenceable_get(rr->t);
+	/* TODO check that the element hasnt changed
+	 * if it has changed, check that the context is the same
+	 * if not, dont call anything
+	 */
+
+	if (!thiz->descriptor.propagate) return;
+
+	/* get the context and attributes from the referencer */
+	ctx = esvg_element_context_get(rr->referencer);
+	attr = esvg_element_attribute_presentation_get(rr->referencer);
+
+	/* call the propagate interface */
+	thiz->descriptor.propagate(rr->t, c, ctx, attr, rr->data, error);
+}
+
+Esvg_Referenceable_Reference * esvg_referenceable_reference_add(Edom_Tag *t,
+		Edom_Tag *referencer)
+{
+	Esvg_Referenceable_Reference *rr;
 	Esvg_Referenceable *thiz;
 	Enesim_Renderer *r;
+	Eina_Bool ret = EINA_TRUE;
 
-	printf("entering\n");
 	thiz = _esvg_referenceable_get(t);
-	printf("entering\n");
-	r = thiz->descriptor.renderer_new(t);
-	printf("renderer new!!!! %p\n", r);
-
-	return r;
-}
-
-void esvg_referenceable_propagate(Edom_Tag *t, Ender_Element *e)
-{
-	/* get the final state */
-	/* call the propagate interface */
-}
-
-void esvg_referenceable_reference_add(Edom_Tag *t, Ender_Element *e)
-{
 	/* get the renderer */
+	r = _esvg_referenceable_renderer_new(t);
+	if (!r) return NULL;
+
 	/* create the reference struct */
-	/* trigger the add interface */
-	/* return the renderer ? */
+	rr = calloc(1, sizeof(Esvg_Referenceable_Reference));
+	rr->referencer = referencer;
+	rr->t = t;
+	rr->data = r;
+
+	/* trigger the add interface in case it has it */
+	if (thiz->descriptor.reference_add)
+	{
+		Eina_Bool ret;
+		ret = thiz->descriptor.reference_add(t, rr);
+		if (!ret)
+		{
+			enesim_renderer_unref(r);
+			free(rr);
+			return NULL;
+		}
+	}
+
+	/* add to the list of references */
+	thiz->references = eina_list_append(thiz->references, rr);
+
+	return rr;
 }
 
-void esvg_referenceable_reference_remove(Edom_Tag *t, Ender_Element *e)
-{
-	/* trigger the remove interface */
-}
-
-void esvg_referenceable_reference_foreach(Edom_Tag *t)
-{
-	/* iterate over the list of references */
-	/* and call the function */
-}
-
-void esvg_referenceable_renderer_set(Edom_Tag *t, Enesim_Renderer *r)
+void esvg_referenceable_reference_remove(Edom_Tag *t, Esvg_Referenceable_Reference *rr)
 {
 	Esvg_Referenceable *thiz;
 
-	if (!r) return;
 	thiz = _esvg_referenceable_get(t);
-	thiz->current = r;
+	/* trigger the remove interface */
+	if (thiz->descriptor.reference_remove)
+		thiz->descriptor.reference_remove(t, rr);
+	
+	thiz->references = eina_list_remove(thiz->references, rr);
+	/* TODO unref the renderer, pass the renderer to the remove? */
+	free(rr);
+}
+
+void esvg_referenceable_reference_foreach(Edom_Tag *t, Esvg_Referenceable_Cb cb, void *data)
+{
+	Esvg_Referenceable *thiz;
+	Esvg_Referenceable_Reference *rr;
+	Eina_List *l;
+
+	thiz = _esvg_referenceable_get(t);
+	/* iterate over the list of references */
+	EINA_LIST_FOREACH(thiz->references, l, rr)
+	{
+		/* and call the function */
+		if (!cb(t, rr, data))
+			break;
+	}
 }
 
 /* The ender wrapper */
@@ -203,6 +253,7 @@ Edom_Tag * esvg_referenceable_new(Esvg_Referenceable_Descriptor *descriptor, Esv
 	/* our own descriptor */
 	thiz->descriptor.setup = descriptor->setup;
 	thiz->descriptor.renderer_new = descriptor->renderer_new;
+	thiz->descriptor.propagate = descriptor->propagate;
 	/* default values */
 
 	pdescriptor.child_add = descriptor->child_add;

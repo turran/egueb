@@ -124,12 +124,12 @@ static Enesim_Renderer * _esvg_radial_gradient_renderer_new(Edom_Tag *t)
 	return r;
 }
 
-static Esvg_Element_Setup_Return _esvg_radial_gradient_setup(Edom_Tag *t,
+static Eina_Bool _esvg_radial_gradient_propagate(Edom_Tag *t,
 		Esvg_Context *c,
-		Esvg_Element_Context *ctx,
-		Esvg_Attribute_Presentation *attr,
-		Enesim_Renderer *r,
+		const Esvg_Element_Context *ctx,
+		const Esvg_Attribute_Presentation *attr,
 		Esvg_Gradient_Context *gctx,
+		Enesim_Renderer *r,
 		Enesim_Error **error)
 {
 	Esvg_Radial_Gradient *thiz;
@@ -230,8 +230,9 @@ static Esvg_Gradient_Descriptor _descriptor = {
 	/* .initialize 		= */ NULL,
 	/* .attribute_set 	= */ _esvg_radial_gradient_attribute_set,
 	/* .clone		= */ NULL,
-	/* .setup		= */ _esvg_radial_gradient_setup,
+	/* .setup		= */ NULL,
 	/* .renderer_new	= */ _esvg_radial_gradient_renderer_new,
+	/* .propagate		= */ _esvg_radial_gradient_propagate,
 };
 /*----------------------------------------------------------------------------*
  *                           The Ender interface                              *

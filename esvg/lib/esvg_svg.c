@@ -558,10 +558,10 @@ static Eina_Bool _esvg_svg_child_add(Edom_Tag *t, Edom_Tag *child)
 	Esvg_Svg *thiz;
 	Esvg_Type type;
 
-	thiz = _esvg_svg_get(t);
 	if (!esvg_is_element_internal(child))
 		return EINA_FALSE;
 
+	thiz = _esvg_svg_get(t);
 	type = esvg_element_internal_type_get(child);
 	if (esvg_type_is_renderable(type) || type == ESVG_A)
 	{
@@ -579,10 +579,10 @@ static Eina_Bool _esvg_svg_child_remove(Edom_Tag *t, Edom_Tag *child)
 	Esvg_Svg *thiz;
 	Esvg_Type type;
 
-	thiz = _esvg_svg_get(t);
 	if (!esvg_is_element_internal(child))
 		return EINA_FALSE;
 
+	thiz = _esvg_svg_get(t);
 	type = esvg_element_internal_type_get(child);
 	if (esvg_type_is_renderable(type) || type == ESVG_A)
 	{
@@ -1365,4 +1365,14 @@ EAPI void esvg_svg_base_font_size_set(Ender_Element *e, double base_font_size)
 	thiz->base_font_size = base_font_size;
 }
 
+/* FIXME this should be the correct entry point to process
+ * the whole svg tree, instead of the setup we have on
+ * esvg_element.c this one should call the global symbol
+ * to do the process which will do the setup/clanup
+ * in case of a referenceable for example, it will do
+ * also the propagate
+ */
+EAPI void esvg_svg_process(Ender_Element *e, Enesim_Error **error)
+{
 
+}

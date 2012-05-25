@@ -113,7 +113,9 @@ Edom_Tag * esvg_paint_server_new(Esvg_Paint_Server_Descriptor *descriptor,
 	pdescriptor.free = _esvg_paint_server_free;
 	pdescriptor.initialize = descriptor->initialize;
 	pdescriptor.setup = descriptor->setup;
+	pdescriptor.propagate = descriptor->propagate;
 	pdescriptor.renderer_new = descriptor->renderer_new;
+	pdescriptor.reference_add = descriptor->reference_add;
 
 	t = esvg_referenceable_new(&pdescriptor, type, thiz);
 
