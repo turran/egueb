@@ -15,6 +15,7 @@ typedef struct _Esvg_Paint_Server_Descriptor {
 	Esvg_Element_Clone clone;
 	/* the renderable interface */
 	Esvg_Referenceable_Setup setup;
+	Esvg_Referenceable_Cleanup cleanup;
 	Esvg_Referenceable_Renderer_New renderer_new;
 	Esvg_Referenceable_Propagate propagate;
 	Esvg_Referenceable_Reference_Add reference_add;

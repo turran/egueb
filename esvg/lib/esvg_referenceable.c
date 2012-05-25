@@ -38,6 +38,7 @@ typedef struct _Esvg_Referenceable_Descriptor_Internal
 {
 	Edom_Tag_Free free;
 	Esvg_Referenceable_Setup setup;
+	Esvg_Referenceable_Cleanup cleanup;
 	Esvg_Referenceable_Propagate propagate;
 	Esvg_Referenceable_Renderer_New renderer_new;
 	Esvg_Referenceable_Reference_Add reference_add;
@@ -116,6 +117,8 @@ static Esvg_Element_Setup_Return _esvg_referenceable_setup(Edom_Tag *t,
 	{
 		esvg_referenceable_reference_propagate(rr, c, error);
 	}
+	if (thiz->descriptor.cleanup)
+		thiz->descriptor.cleanup(t);
 
 	return ESVG_SETUP_OK;
 }
@@ -252,6 +255,7 @@ Edom_Tag * esvg_referenceable_new(Esvg_Referenceable_Descriptor *descriptor, Esv
 	thiz->data = data;
 	/* our own descriptor */
 	thiz->descriptor.setup = descriptor->setup;
+	thiz->descriptor.cleanup = descriptor->cleanup;
 	thiz->descriptor.renderer_new = descriptor->renderer_new;
 	thiz->descriptor.propagate = descriptor->propagate;
 	/* default values */

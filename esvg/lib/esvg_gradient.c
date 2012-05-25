@@ -147,6 +147,14 @@ static Eina_Bool _esvg_gradient_setup(Edom_Tag *t,
 	return esvg_element_internal_child_setup(t, c, error, NULL, thiz);
 }
 
+static void _esvg_gradient_cleanup(Edom_Tag *t)
+{
+	Esvg_Gradient *thiz;
+
+	thiz = _esvg_gradient_get(t);
+	thiz->stops_changed = EINA_FALSE;
+}
+
 static Eina_Bool _esvg_gradient_propagate(Edom_Tag *t,
 		Esvg_Context *c,
 		const Esvg_Element_Context *ctx,
@@ -299,6 +307,7 @@ Edom_Tag * esvg_gradient_new(Esvg_Gradient_Descriptor *descriptor,
 	pdescriptor.free = _esvg_gradient_free;
 	pdescriptor.initialize = descriptor->initialize;
 	pdescriptor.setup = _esvg_gradient_setup;
+	pdescriptor.cleanup = _esvg_gradient_cleanup;
 	pdescriptor.renderer_new = descriptor->renderer_new;
 	pdescriptor.propagate = _esvg_gradient_propagate;
 	pdescriptor.reference_add = _esvg_gradient_reference_add;

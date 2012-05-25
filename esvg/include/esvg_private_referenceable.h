@@ -26,6 +26,8 @@ typedef Eina_Bool (*Esvg_Referenceable_Propagate)(Edom_Tag *t,
 		Enesim_Renderer *r,
 		Enesim_Error **error);
 
+typedef void (*Esvg_Referenceable_Cleanup)(Edom_Tag *t);
+
 typedef Eina_Bool (*Esvg_Referenceable_Reference_Add)(Edom_Tag *t, Esvg_Referenceable_Reference *rr);
 typedef void (*Esvg_Referenceable_Reference_Remove)(Edom_Tag *t, Esvg_Referenceable_Reference *rr);
 
@@ -43,6 +45,7 @@ typedef struct _Esvg_Referenceable_Descriptor {
 	Esvg_Element_Clone clone;
 	/* the referenceable interface */
 	Esvg_Referenceable_Setup setup;
+	Esvg_Referenceable_Cleanup cleanup;
 	Esvg_Referenceable_Renderer_New renderer_new;
 	Esvg_Referenceable_Propagate propagate;
 	Esvg_Referenceable_Reference_Add reference_add;
