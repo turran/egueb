@@ -125,6 +125,22 @@ static Esvg_Svg * _esvg_svg_get(Edom_Tag *t)
 	return thiz;
 }
 
+static Eina_Bool _esvg_svg_relative_to_absolute(Esvg_Svg *thiz, const char *relative, char *absolute, size_t len)
+{
+	if (!thiz->user_descriptor.base_dir)
+	{
+		printf("No base dir set\n");
+		return EINA_FALSE;
+	}
+
+	/* get the base dir and concat with the relative path */
+	strncpy(absolute, thiz->user_descriptor.base_dir, len);
+	len -= strlen(thiz->user_descriptor.base_dir);
+	if (len <= 0) return EINA_FALSE;
+	strncat(absolute, relative, len);
+	return EINA_TRUE;
+}
+
 static Eina_Bool _esvg_svg_setup_interceptor(Edom_Tag *t,
 		Edom_Tag *child,
 		Esvg_Context *c,
@@ -267,16 +283,9 @@ static void _esvg_svg_resolve_uri_relative_get(const char *name,
 	char **real = data->ret;
 	char absolute[PATH_MAX];
 
-	if (!thiz->user_descriptor.base_dir)
-	{
-		printf("No base dir set\n");
+	if (!_esvg_svg_relative_to_absolute(thiz, name, absolute, PATH_MAX))
 		return;
-	}
-
-	/* get the base dir and concat with the relative path */
-	strcpy(absolute, thiz->user_descriptor.base_dir);
-	printf("abs %s name %s\n", name, absolute);
-	strcat(absolute, name);
+	*real = strdup(absolute);
 	/* FIXME what about the fragment? */
 	*real = strdup(absolute);
 }
@@ -351,16 +360,10 @@ static void _esvg_svg_image_uri_relative_get(const char *name,
 	Esvg_Svg_Uri_Data *data = user_data;
 	Esvg_Svg *thiz = data->thiz;
 	char absolute[PATH_MAX];
+	size_t len;
 
-	if (!thiz->user_descriptor.base_dir)
-	{
-		printf("No base dir set\n");
+	if (!_esvg_svg_relative_to_absolute(thiz, name, absolute, PATH_MAX))
 		return;
-	}
-
-	/* get the base dir and concat with the relative path */
-	strcpy(absolute, thiz->user_descriptor.base_dir);
-	strcat(absolute, name);
 	/* call the absolute one */
 	_esvg_svg_image_uri_absolute_get(absolute, fragment, user_data);
 }
