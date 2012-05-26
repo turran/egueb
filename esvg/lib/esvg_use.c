@@ -25,10 +25,12 @@
 #include "esvg_private_element.h"
 #include "esvg_private_renderable.h"
 #include "esvg_private_instantiable.h"
+#include "esvg_private_clone.h"
 
 #include "esvg_renderable.h"
 #include "esvg_g.h"
 #include "esvg_use.h"
+#include "esvg_main.h"
 /*
  * The 'use' element should be able to create a new instance from another
  * svg tree. Basically we set the 'link' property of the 'use' to the svg
@@ -55,6 +57,8 @@ typedef struct _Esvg_Use
 	Esvg_Length height;
 	char *link;
 	/* private */
+	Esvg_Clone *clone;
+	/* the always present g tag */
 	Edom_Tag *g_t;
 	Ender_Element *g_e;
 	Enesim_Renderer *g_r;
@@ -71,37 +75,32 @@ static Esvg_Use * _esvg_use_get(Edom_Tag *t)
 	return thiz;
 }
 
-#if 0
-static void _post_parse_cb(Edom_Parser *parser, void *data)
+static void _esvg_use_topmost_changed_cb(Ender_Element *e, const char *event_name,
+		void *event_data, void *data)
 {
-	Esvg_Parser_Use *thiz = data;
-	Edom_Tag *ref_t = NULL;
-	Edom_Tag *tag;
-	Enesim_Renderer *r;
-	Eina_Bool ret;
+	Esvg_Use *thiz = data;
+	Esvg_Element_Event_Topmost_Changed *ev = event_data;
 
-	r = thiz->r;
-	tag = thiz->tag;
-
-	ret = esvg_href_get(&ref_t, tag, thiz->href);
-	if (ret)
-	{
-		Enesim_Renderer *ref_r;
-		Enesim_Renderer *clone;
-
-		printf("tag found %p\n", ref_t);
-		ref_r = esvg_parser_element_renderer_get(ref_t);
-		clone = esvg_element_clone(ref_r);
-		printf("clone = %p\n", clone);
-		esvg_use_link_set(r, clone);
-	}
-	printf("reference!!! %p %s\n", ref_t, thiz->href);
+	printf("topmost set on the use %p\n", ev->current);
+	esvg_element_topmost_set(thiz->g_t, ev->current);
 }
-#endif
-
 /*----------------------------------------------------------------------------*
  *                       The Esvg Renderable interface                        *
  *----------------------------------------------------------------------------*/
+static void _esvg_use_initialize(Ender_Element *e)
+{
+	Esvg_Use *thiz;
+	Edom_Tag *t;
+
+	t = ender_element_object_get(e);
+	thiz = _esvg_use_get(t);
+	/* whenever the topmost is set on the use
+	 * we should also set the topmost on the g
+	 */
+	printf("initializing!!!\n");
+	ender_event_listener_add(e, "topmost_changed", _esvg_use_topmost_changed_cb, thiz);
+}
+
 static Eina_Bool _esvg_use_attribute_set(Ender_Element *e,
 		const char *key, const char *value)
 {
@@ -135,14 +134,7 @@ static Eina_Bool _esvg_use_attribute_set(Ender_Element *e,
 	}
 	else if (strcmp(key, "xlink:href") == 0)
 	{
-#if 0
-		Edom_Parser *parser;
-
-		/* register the post parsing callback */
-		parser = edom_tag_parser_get(tag);
-		thiz->href = strdup(value);
-		esvg_parser_post_parse_add(parser, _post_parse_cb, thiz);
-#endif
+		esvg_use_link_set(e, value);
 	}
 	else
 	{
@@ -173,6 +165,9 @@ static Esvg_Element_Setup_Return _esvg_use_setup(Edom_Tag *t,
 		Enesim_Error **error)
 {
 	Esvg_Use *thiz;
+	Ender_Element *topmost;
+	Ender_Element *link;
+	Edom_Tag *clone_t;
 	Enesim_Matrix translate;
 	double tx, ty;
 
@@ -187,11 +182,36 @@ static Esvg_Element_Setup_Return _esvg_use_setup(Edom_Tag *t,
 	/* we take the shortcut here because there's no need to go through
 	 * the normal enesim API
 	 */
-	/* setup the g */
-	printf("calling the setup on the use\n");
-
-	return esvg_element_internal_setup(thiz->g_t, c, error);
 #endif
+	printf("calling the setup on the use\n");
+	if (!thiz->link)
+	{
+		printf("nothing to use\n");
+		return EINA_TRUE;
+	}
+
+	esvg_element_internal_topmost_get(t, &topmost);
+	if (!topmost)
+	{
+		printf("no topmost available\n");
+		return EINA_TRUE;
+	}
+
+	esvg_svg_element_get(topmost, thiz->link, &link);
+	thiz->clone = esvg_clone_new(link);
+
+	if (!thiz->clone)
+	{
+		printf("impossible to clone\n");
+		return EINA_TRUE;
+	}
+
+	/* TODO add the clone to the generated g */
+	clone_t = ender_element_object_get(thiz->clone->our);
+	ender_element_property_value_add(thiz->g_e, EDOM_CHILD, clone_t, NULL);
+	/* setup the g */
+	printf("dong the setup on the inner g!\n");
+	return esvg_element_internal_setup(thiz->g_t, c, error);
 }
 
 static void _esvg_use_clone(Edom_Tag *t, Edom_Tag *dt)
@@ -214,7 +234,7 @@ static Esvg_Instantiable_Descriptor _descriptor = {
 	/* .cdata_set 		= */ NULL,
 	/* .text_set 		= */ NULL,
 	/* .free 		= */ _esvg_use_free,
-	/* .initialize 		= */ NULL,
+	/* .initialize 		= */ _esvg_use_initialize,
 	/* .attribute_set 	= */ _esvg_use_attribute_set,
 	/* .clone		= */ _esvg_use_clone,
 	/* .setup		= */ _esvg_use_setup,
@@ -314,21 +334,14 @@ static void _esvg_use_link_set(Edom_Tag *t, const char *link)
 	Esvg_Use *thiz;
 
 	thiz = _esvg_use_get(t);
-	if (thiz->link == link) return;
 	if (thiz->link)
 	{
-#if 0
-		esvg_container_element_remove(thiz->g, thiz->link);
-		enesim_renderer_unref(thiz->link);
+		free(thiz->link);
 		thiz->link = NULL;
-#endif
 	}
 	if (link)
 	{
-#if 0
-		esvg_container_element_add(thiz->g, link);
-		thiz->link = enesim_renderer_ref(link);
-#endif
+		thiz->link = strdup(link);
 	}
 }
 
@@ -401,10 +414,11 @@ EAPI void esvg_use_height_get(Ender_Element *e, Esvg_Length *height)
 {
 }
 
-EAPI void esvg_use_link_set(Ender_Element *e, const Ender_Element *link)
+EAPI void esvg_use_link_set(Ender_Element *e, const char *v)
 {
+	ender_element_property_value_set(e, ESVG_USE_LINK, v, NULL);
 }
 
-EAPI void esvg_use_link_get(Ender_Element *e, Ender_Element **link)
+EAPI void esvg_use_link_get(Ender_Element *e, const char **v)
 {
 }

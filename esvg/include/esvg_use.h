@@ -11,7 +11,7 @@ EAPI void esvg_use_width_set(Ender_Element *e, const Esvg_Length *width);
 EAPI void esvg_use_width_get(Ender_Element *e, Esvg_Length *width);
 EAPI void esvg_use_height_set(Ender_Element *e, const Esvg_Length *height);
 EAPI void esvg_use_height_get(Ender_Element *e, Esvg_Length *height);
-EAPI void esvg_use_link_set(Ender_Element *e, const Ender_Element *link);
-EAPI void esvg_use_link_get(Ender_Element *e, Ender_Element **link);
+EAPI void esvg_use_link_set(Ender_Element *e, const char *link);
+EAPI void esvg_use_link_get(Ender_Element *e, const char **link);
 
 #endif

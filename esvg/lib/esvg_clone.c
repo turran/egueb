@@ -20,19 +20,19 @@
 #endif
 
 #include "esvg_private_main.h"
-#include "esvg_private_reference.h"
+#include "esvg_private_clone.h"
 
 #include "esvg_main.h"
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
-typedef struct _Esvg_Reference_Duplicate_Data
+typedef struct _Esvg_Clone_Duplicate_Data
 {
 	Ender_Element *our;
 	Ender_Element *ref;
-} Esvg_Reference_Duplicate_Data;
+} Esvg_Clone_Duplicate_Data;
 
-static Ender_Element * _esvg_reference_duplicate(Ender_Element *e);
+static Ender_Element * _esvg_clone_duplicate(Ender_Element *e);
 
 /* skip the edom properties */
 static Eina_Bool _property_is_valid(Ender_Property *prop)
@@ -49,7 +49,7 @@ static Eina_Bool _property_is_valid(Ender_Property *prop)
 
 static void _descriptor_property(Ender_Property *prop, void *data)
 {
-	Esvg_Reference_Duplicate_Data *ddata = data;
+	Esvg_Clone_Duplicate_Data *ddata = data;
 	Ender_Value *v = NULL;
 	const char *name;
 
@@ -66,7 +66,7 @@ static void _descriptor_property(Ender_Property *prop, void *data)
 	ender_value_unref(v);
 }
 
-static Eina_Bool _esvg_reference_child_cb(Edom_Tag *t, Edom_Tag *child,
+static Eina_Bool _esvg_clone_child_cb(Edom_Tag *t, Edom_Tag *child,
 		void *data)
 {
 	Ender_Element *our = data;
@@ -79,7 +79,7 @@ static Eina_Bool _esvg_reference_child_cb(Edom_Tag *t, Edom_Tag *child,
 		return EINA_TRUE;
 
 	child_e = esvg_element_ender_get(child);
-	child_our = _esvg_reference_duplicate(child_e);
+	child_our = _esvg_clone_duplicate(child_e);
 	child_our_t = ender_element_object_get(child_our);
 
 	ender_element_property_value_add(our, EDOM_CHILD, child_our_t, NULL);
@@ -88,9 +88,9 @@ static Eina_Bool _esvg_reference_child_cb(Edom_Tag *t, Edom_Tag *child,
 	return EINA_TRUE;
 }
 
-static Ender_Element * _esvg_reference_duplicate(Ender_Element *e)
+static Ender_Element * _esvg_clone_duplicate(Ender_Element *e)
 {
-	Esvg_Reference_Duplicate_Data data;
+	Esvg_Clone_Duplicate_Data data;
 	Ender_Descriptor *desc;
 	Ender_Element *our;
 	Ender_Namespace *ns;
@@ -100,6 +100,12 @@ static Ender_Element * _esvg_reference_duplicate(Ender_Element *e)
 
 	/* create a new element of the same type */
 	desc = ender_element_descriptor_get(e);
+	if (!desc)
+	{
+		printf("referring to a non ender element?\n");
+		return NULL;
+	}
+
 	name = ender_descriptor_name_get(desc);
 	ns = ender_descriptor_namespace_get(desc);
 	ns_name = ender_namespace_name_get(ns);
@@ -112,20 +118,22 @@ static Ender_Element * _esvg_reference_duplicate(Ender_Element *e)
 	ender_descriptor_property_list_recursive(desc, _descriptor_property, &data);
 	/* iterate over the childs and clone them too */
 	t = ender_element_object_get(e);
-	edom_tag_child_foreach(t, _esvg_reference_child_cb, our);
+	edom_tag_child_foreach(t, _esvg_clone_child_cb, our);
 
 	return our;
 }
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
-Esvg_Reference * esvg_reference_new(Ender_Element *e)
+Esvg_Clone * esvg_clone_new(Ender_Element *e)
 {
-	Esvg_Reference *thiz;
+	Esvg_Clone *thiz;
 
-	thiz = calloc(1, sizeof(Esvg_Reference));
+	if (!e) return NULL;
+
+	thiz = calloc(1, sizeof(Esvg_Clone));
 	thiz->ref = e;
-	thiz->our = _esvg_reference_duplicate(thiz->ref);
+	thiz->our = _esvg_clone_duplicate(thiz->ref);
 
 	/* useful for debugging */
 	{
@@ -136,7 +144,7 @@ Esvg_Reference * esvg_reference_new(Ender_Element *e)
 	return thiz;
 }
 
-void esvg_reference_free(Esvg_Reference *thiz)
+void esvg_clone_free(Esvg_Clone *thiz)
 {
 	/* TODO remove the refs */
 	free(thiz);

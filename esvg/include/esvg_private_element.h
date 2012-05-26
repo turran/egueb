@@ -19,6 +19,11 @@ typedef struct _Esvg_Element_Context {
 	Esvg_Animated_Transform transform; /* the current transformation */
 } Esvg_Element_Context;
 
+typedef struct _Esvg_Element_Event_Topmost_Changed {
+	Ender_Element *previous;
+	Ender_Element *current;
+} Esvg_Element_Event_Topmost_Changed;
+
 typedef void (*Esvg_Element_Initialize)(Ender_Element *e);
 typedef Eina_Bool (*Esvg_Element_Attribute_Set)(Ender_Element *e, const char *key, const char *value);
 

@@ -419,6 +419,18 @@ static void _esvg_svg_child_mutation_child_cb(Ender_Element *e, const char *even
 	}
 }
 
+static void _esvg_svg_child_topmost_changed_cb(Ender_Element *e, const char *event_name,
+		void *event_data, void *data)
+{
+	Esvg_Element_Event_Topmost_Changed *ev = event_data;
+	Edom_Tag *topmost_p;
+	Edom_Tag *topmost_c;
+
+	/* remove previous callbacks */
+	printf("topmost changed!\n");
+	/* setup all the needed callbacks for such element */
+}
+
 static void _esvg_svg_child_mutation_cb(Ender_Element *e, const char *event_name, void *event_data, void *data)
 {
 	Esvg_Svg *thiz = data;
@@ -451,6 +463,8 @@ static Eina_Bool _esvg_svg_child_initialize(Edom_Tag *t, Edom_Tag *child_t, void
 	ender_event_listener_add(child_e, "Mutation", _esvg_svg_child_mutation_cb, thiz);
 	/* add an event whenever the child changes the id */
 	ender_event_listener_add(child_e, "Mutation:id", _esvg_svg_child_id_cb, thiz);
+	/* called whenever the topmost changes */
+	ender_event_listener_add(child_e, "topmost_changed", _esvg_svg_child_topmost_changed_cb, thiz);
 	/* add the id to the hash of ids */
 	esvg_element_id_get(child_e, &id);
 	if (id) eina_hash_add(thiz->ids, id, child_e);

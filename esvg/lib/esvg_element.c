@@ -1029,8 +1029,17 @@ void esvg_element_style_apply(Edom_Tag *t, Ecss_Style *s)
 void esvg_element_topmost_set(Edom_Tag *t, Ender_Element *topmost)
 {
 	Esvg_Element *thiz;
+	Esvg_Element_Event_Topmost_Changed event_data;
 
 	thiz = _esvg_element_get(t);
+	/* if the topmost to set is the same, do nothing */
+	if (thiz->topmost == topmost)
+		return;
+
+	event_data.previous = thiz->topmost;
+	event_data.current = topmost;
+	ender_event_dispatch(thiz->e, "topmost_changed", &event_data);
+	/* TODO iterate over the list of childs and set the topmost too */
 	thiz->topmost = topmost;
 }
 

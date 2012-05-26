@@ -23,8 +23,9 @@ esvg_animate_base.c \
 esvg_animate_transform.c \
 esvg_animation.c \
 esvg_circle.c \
-esvg_context.c \
 esvg_clip_path.c \
+esvg_clone.c \
+esvg_context.c \
 esvg_defs.c \
 esvg_element.c \
 esvg_ellipse.c \
@@ -42,7 +43,6 @@ esvg_path.c \
 esvg_polygon.c \
 esvg_polyline.c \
 esvg_radial_gradient.c \
-esvg_reference.c \
 esvg_referenceable.c \
 esvg_renderable.c \
 esvg_rect.c \
