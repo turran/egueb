@@ -88,6 +88,8 @@ struct _Ecss_Selector
 	Eina_List *filters;
 };
 
+Ecss_Selector * ecss_selector_next_get(Ecss_Selector *thiz);
+
 typedef struct _Ecss_Declaration
 {
 	char *property;
