@@ -103,4 +103,7 @@ EAPI void ecss_style_rule_add(Ecss_Style *thiz, Ecss_Rule *r);
 EAPI void ecss_context_style_apply(Ecss_Context *c, Ecss_Style *s, Ecss_Element *e);
 EAPI void ecss_context_inline_style_apply(Ecss_Context *c, const char *style, Ecss_Element *e);
 
+EAPI Ecss_Filter * ecss_filter_class_new(const char *name);
+EAPI Ecss_Filter * ecss_filter_id_new(const char *name);
+
 #endif /*_ECSS_H*/

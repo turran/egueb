@@ -100,6 +100,8 @@ struct _Ecss_Rule
 	Eina_List *declarations;
 };
 
+void ecss_rule_declaration_insert(Ecss_Rule *thiz, Ecss_Declaration *d);
+
 struct _Ecss_Style
 {
 	Eina_List *rules;
