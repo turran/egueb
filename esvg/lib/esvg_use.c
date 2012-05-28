@@ -210,7 +210,9 @@ static Esvg_Element_Setup_Return _esvg_use_setup(Edom_Tag *t,
 	clone_t = ender_element_object_get(thiz->clone->our);
 	ender_element_property_value_add(thiz->g_e, EDOM_CHILD, clone_t, NULL);
 	/* setup the g */
-	printf("dong the setup on the inner g!\n");
+	printf("doing the setup on the inner g!\n");
+	/* set the parent */
+	esvg_element_topmost_set(thiz->g_t, topmost);
 	return esvg_element_internal_setup(thiz->g_t, c, error);
 }
 

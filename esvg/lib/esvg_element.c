@@ -1038,8 +1038,11 @@ void esvg_element_topmost_set(Edom_Tag *t, Ender_Element *topmost)
 
 	event_data.previous = thiz->topmost;
 	event_data.current = topmost;
-	ender_event_dispatch(thiz->e, "topmost_changed", &event_data);
-	/* TODO iterate over the list of childs and set the topmost too */
+	event_data.child = t;
+	if (topmost)
+		ender_event_dispatch(topmost, "topmost_changed", &event_data);
+	if (thiz->topmost)
+		ender_event_dispatch(thiz->topmost, "topmost_changed", &event_data);
 	thiz->topmost = topmost;
 }
 

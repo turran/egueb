@@ -22,6 +22,7 @@ typedef struct _Esvg_Element_Context {
 typedef struct _Esvg_Element_Event_Topmost_Changed {
 	Ender_Element *previous;
 	Ender_Element *current;
+	Edom_Tag *child;
 } Esvg_Element_Event_Topmost_Changed;
 
 typedef void (*Esvg_Element_Initialize)(Ender_Element *e);

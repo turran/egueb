@@ -374,6 +374,15 @@ static Esvg_Uri_Descriptor _uri_image_descriptor = {
 	/* .relative_get 	= */ _esvg_svg_image_uri_relative_get,
 };
 
+static Eina_Bool _esvg_svg_child_topmost_set(Edom_Tag *t, Edom_Tag *child,
+		void *data)
+{
+	Ender_Element *topmost = data;
+
+	printf("Setting the topmost on the childs\n");
+	esvg_element_topmost_set(child, topmost);
+	return EINA_TRUE;
+}
 
 /* FIXME the ender events just trigger once the id has changed so we dont know the old one */
 static void _esvg_svg_child_id_cb(Ender_Element *e, const char *event_name, void *event_data, void *data)
@@ -390,27 +399,21 @@ static void _esvg_svg_child_id_cb(Ender_Element *e, const char *event_name, void
 static void _esvg_svg_child_mutation_child_cb(Ender_Element *e, const char *event_name, void *event_data, void *data)
 {
 	Ender_Event_Mutation_Property *ev = event_data;
-	Ender_Element *child_child_e;
-	Edom_Tag *tag = data;
+	Ender_Element *thiz_e = data;
 	Edom_Tag *child_child;
-	Esvg_Svg *thiz;
 
-	thiz = _esvg_svg_get(tag);
 	child_child = ender_value_object_get(ev->value);
-	child_child_e = esvg_element_ender_get(child_child);
 	switch (ev->type)
 	{
 		/* some child has been added to the whole svg tree */
 		case ENDER_EVENT_MUTATION_ADD:
-		_esvg_svg_child_initialize(tag, child_child, thiz);
-		_esvg_svg_element_changed_add(thiz, child_child_e);
+		/* set the topmost */
+		esvg_element_topmost_set(child_child, thiz_e);
 		break;
 
 		/* some child has been removed from the whole svg tree */
 		case ENDER_EVENT_MUTATION_REMOVE:
-		_esvg_svg_child_deinitialize(tag, child_child, thiz);
-		_esvg_svg_element_changed_remove(thiz, child_child_e);
-		/* TODO in case the child removed is found, it will get removed */
+		esvg_element_topmost_set(child_child, NULL);
 		break;
 
 		default:
@@ -419,16 +422,39 @@ static void _esvg_svg_child_mutation_child_cb(Ender_Element *e, const char *even
 	}
 }
 
-static void _esvg_svg_child_topmost_changed_cb(Ender_Element *e, const char *event_name,
+/* called whenever the svg has been set as a parent of another
+ * element
+ */
+static void _esvg_svg_topmost_changed_cb(Ender_Element *e, const char *event_name,
 		void *event_data, void *data)
 {
 	Esvg_Element_Event_Topmost_Changed *ev = event_data;
-	Edom_Tag *topmost_p;
-	Edom_Tag *topmost_c;
+	Edom_Tag *child_t;
+	Ender_Element *child_e;
 
-	/* remove previous callbacks */
-	printf("topmost changed!\n");
-	/* setup all the needed callbacks for such element */
+	child_t = ev->child;
+	child_e = esvg_element_ender_get(child_t);
+	if (ev->previous == e)
+	{
+		Esvg_Svg *thiz;
+		Edom_Tag *topmost_p;
+
+		topmost_p = ender_element_object_get(ev->previous);
+		thiz = _esvg_svg_get(topmost_p);
+		/* remove previous callbacks on the element */
+		_esvg_svg_child_deinitialize(topmost_p, child_t, thiz);
+	}
+	if (ev->current == e)
+	{
+		Esvg_Svg *thiz;
+		Edom_Tag *topmost_c;
+
+		printf("setting topmost on %s\n", esvg_type_string_to(esvg_element_internal_type_get(child_t)));
+		topmost_c = ender_element_object_get(ev->current);
+		thiz = _esvg_svg_get(topmost_c);
+		/* setup all the needed callbacks on the element */
+		_esvg_svg_child_initialize(topmost_c, child_t, thiz);
+	}
 }
 
 static void _esvg_svg_child_mutation_cb(Ender_Element *e, const char *event_name, void *event_data, void *data)
@@ -449,22 +475,17 @@ static Eina_Bool _esvg_svg_child_initialize(Edom_Tag *t, Edom_Tag *child_t, void
 
  	thiz = data;
 
-	/* set the topmost on every element */
 	thiz_e = esvg_element_ender_get(t);
-	esvg_element_topmost_set(child_t, thiz_e);
-
 	//printf("initializing %s\n", esvg_type_string_to(esvg_element_internal_type_get(child_t)));
 	/* add a callback whenever the child property has changed
 	 * to initialize that child too */
 	child_e = esvg_element_ender_get(child_t);
-	ender_event_listener_add(child_e, "Mutation:child", _esvg_svg_child_mutation_child_cb, t);
+	ender_event_listener_add(child_e, "Mutation:child", _esvg_svg_child_mutation_child_cb, thiz_e);
 	/* add a callback whenever any property has changed to add it the list
 	 * of changed elements */
 	ender_event_listener_add(child_e, "Mutation", _esvg_svg_child_mutation_cb, thiz);
 	/* add an event whenever the child changes the id */
 	ender_event_listener_add(child_e, "Mutation:id", _esvg_svg_child_id_cb, thiz);
-	/* called whenever the topmost changes */
-	ender_event_listener_add(child_e, "topmost_changed", _esvg_svg_child_topmost_changed_cb, thiz);
 	/* add the id to the hash of ids */
 	esvg_element_id_get(child_e, &id);
 	if (id) eina_hash_add(thiz->ids, id, child_e);
@@ -475,8 +496,10 @@ static Eina_Bool _esvg_svg_child_initialize(Edom_Tag *t, Edom_Tag *child_t, void
 		thiz->styles = eina_list_append(thiz->styles, child_t);
 		thiz->styles_changed = EINA_TRUE;
 	}
-	/* iterate over the childs of the child and do the same initialization */
-	edom_tag_child_foreach(child_t, _esvg_svg_child_initialize, thiz);
+	/* mark it for processing */
+	_esvg_svg_element_changed_add(thiz, child_e);
+	/* set the topmost on every element */
+	edom_tag_child_foreach(child_t, _esvg_svg_child_topmost_set, thiz_e);
 
 	return EINA_TRUE;
 }
@@ -489,10 +512,6 @@ static Eina_Bool _esvg_svg_child_deinitialize(Edom_Tag *t, Edom_Tag *child_t, vo
 	const char *id;
 
  	thiz = data;
-
-	/* set the topmost on every element */
-	thiz_e = esvg_element_ender_get(t);
-	esvg_element_topmost_set(child_t, NULL);
 
 	/* add a callback whenever the child property has changed
 	 * to initialize that child too */
@@ -513,14 +532,22 @@ static Eina_Bool _esvg_svg_child_deinitialize(Edom_Tag *t, Edom_Tag *child_t, vo
 		thiz->styles = eina_list_remove(thiz->styles, child_t);
 		thiz->styles_changed = EINA_TRUE;
 	}
-	/* iterate over the childs of the child and do the same initialization */
-	edom_tag_child_foreach(child_t, _esvg_svg_child_deinitialize, thiz);
+	/* mark it for processing */
+	_esvg_svg_element_changed_remove(thiz, child_e);
+	/* set the topmost on every element */
+	edom_tag_child_foreach(child_t, _esvg_svg_child_topmost_set, NULL);
 
 	return EINA_TRUE;
 }
 /*----------------------------------------------------------------------------*
  *                       The Esvg Renderable interface                        *
  *----------------------------------------------------------------------------*/
+static void _esvg_svg_initialize(Ender_Element *e)
+{
+	/* called whenever the topmost changes */
+	ender_event_listener_add(e, "topmost_changed", _esvg_svg_topmost_changed_cb, NULL);
+}
+
 static Eina_Bool _esvg_svg_attribute_set(Ender_Element *e, const char *key, const char *value)
 {
 	if (strcmp(key, "version") == 0)
@@ -574,6 +601,7 @@ static Eina_Bool _esvg_svg_child_add(Edom_Tag *t, Edom_Tag *child)
 {
 	Esvg_Svg *thiz;
 	Esvg_Type type;
+	Ender_Element *e;
 
 	if (!esvg_is_element_internal(child))
 		return EINA_FALSE;
@@ -586,7 +614,9 @@ static Eina_Bool _esvg_svg_child_add(Edom_Tag *t, Edom_Tag *child)
 		enesim_renderer_compound_layer_clear(thiz->compound);
 		enesim_renderer_compound_layer_add(thiz->compound, thiz->background);
 	}
-	_esvg_svg_child_initialize(t, child, thiz);
+
+	e = esvg_element_ender_get(t);
+	esvg_element_topmost_set(child, e);
 
 	return EINA_TRUE;
 }
@@ -607,7 +637,7 @@ static Eina_Bool _esvg_svg_child_remove(Edom_Tag *t, Edom_Tag *child)
 		enesim_renderer_compound_layer_clear(thiz->compound);
 		enesim_renderer_compound_layer_add(thiz->compound, thiz->background);
 	}
-	_esvg_svg_child_deinitialize(t, child, thiz);
+	esvg_element_topmost_set(child, NULL);
 
 	return EINA_TRUE;
 }
@@ -732,7 +762,7 @@ static Esvg_Instantiable_Descriptor _descriptor = {
 	/* .cdata_set 		= */ NULL,
 	/* .text_set 		= */ NULL,
 	/* .free 		= */ _esvg_svg_free,
-	/* .initialize 		= */ NULL,
+	/* .initialize 		= */ _esvg_svg_initialize,
 	/* .attribute_set 	= */ _esvg_svg_attribute_set,
 	/* .clone		= */ _esvg_svg_clone,
 	/* .setup		= */ _esvg_svg_setup,
