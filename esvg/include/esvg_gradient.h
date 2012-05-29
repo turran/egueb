@@ -10,5 +10,7 @@ EAPI void esvg_gradient_transform_get(Ender_Element *e, Enesim_Matrix *transform
 EAPI Eina_Bool esvg_gradient_transform_is_set(Ender_Element *e);
 EAPI void esvg_gradient_spread_method_set(Ender_Element *e, Esvg_Spread_Method spread_method);
 EAPI void esvg_gradient_spread_method_get(Ender_Element *e, Esvg_Spread_Method *spread_method);
+EAPI void esvg_gradient_href_set(Ender_Element *e, const char *href);
+EAPI void esvg_gradient_href_get(Ender_Element *e, const char **href);
 
 #endif

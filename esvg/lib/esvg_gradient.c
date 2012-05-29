@@ -73,6 +73,7 @@ typedef struct _Esvg_Gradient
 	Eina_Bool units_set : 1;
 	Eina_Bool transform_is_set : 1;
 	Eina_Bool stops_changed : 1;
+	Eina_Bool state_changed : 1;
 	void *data;
 } Esvg_Gradient;
 
@@ -104,6 +105,13 @@ static Eina_Bool _esvg_gradient_stop_propagate(Edom_Tag *t, Edom_Tag *child,
 	stop = esvg_stop_gradient_stop_get(child);
 	DBG("Adding a gradient stop at position %g with color %08x", stop->pos, stop->argb);
 	enesim_renderer_gradient_stop_add(r, stop);
+}
+
+static void _esvg_gradient_stop_generate(Edom_Tag *t, Enesim_Renderer *r)
+{
+	enesim_renderer_gradient_stop_clear(r);
+	/* TODO check if we need to generate our own childs or the other gradient childs */
+	edom_tag_child_foreach(t, _esvg_gradient_stop_propagate, r);
 }
 /*----------------------------------------------------------------------------*
  *                       Esvg Paint Server interface                          *
@@ -182,7 +190,22 @@ static void _esvg_gradient_cleanup(Edom_Tag *t)
 	Esvg_Gradient *thiz;
 
 	thiz = _esvg_gradient_get(t);
+	/* remove the flags */
 	thiz->stops_changed = EINA_FALSE;
+	/* swap the states */
+	if (thiz->state_changed)
+	{
+		if (thiz->past.href)
+		{
+			free(thiz->past.href);
+			thiz->past.href = NULL;
+		}
+		if (thiz->current.href)
+		{
+			thiz->past.href = strdup(thiz->current.href);
+		}
+		thiz->state_changed = EINA_TRUE;
+	}
 }
 
 static Eina_Bool _esvg_gradient_propagate(Edom_Tag *t,
@@ -196,10 +219,49 @@ static Eina_Bool _esvg_gradient_propagate(Edom_Tag *t,
 	Eina_Bool ret = EINA_TRUE;
 
 	thiz = _esvg_gradient_get(t);
+	/* in case the href attribute has changed we need to
+	 * pick a new reference and use those stops in case
+	 * we dont have any
+	 */
+	if (thiz->state_changed)
+	{
+#if 0
+		Ender_Element *topmost;
+		Ender_Element *href_e;
+		Edom_Tag *href_t;
+
+		/* TODO propagate our own properties in case those are not set
+		 * or we better use some "deep" functions that should get the
+		 * attribute from its href in case it has one
+		 * we need to start adding real properties, not only the values
+		 * but the is_set, all wrapped into a single struct
+		 */
+		if (thiz->context.href_e)
+		{
+			/* TODO remove the event handlers from the old href */
+			ender_element_unref(thiz->context.href_e);
+			thiz->context.href_e = NULL;
+			thiz->context.href_t = NULL;
+		}
+		esvg_element_internal_topmost_get(t, &topmost);
+		if (!topmost)
+			goto stops;
+
+		/* TODO add the event handlers on the new generate */
+		esvg_svg_element_get(topmost, thiz->current.href, &href_e);
+		if (!href_e)
+			goto stops;
+		/* TODO check that the referring gradient is of the same type? */
+		/* TODO check if this gradient has childs, if not also generate them */
+		//thiz->stops_changed = TRUE;
+		thiz->context.href_e = href_e;
+		thiz->context.href_t = ender_element_object_get(href_e);
+#endif
+	}
+
 	if (thiz->stops_changed)
 	{
-		enesim_renderer_gradient_stop_clear(r);
-		edom_tag_child_foreach(t, _esvg_gradient_stop_propagate, r);
+		_esvg_gradient_stop_generate(t, r);
 	}
 	if (thiz->descriptor.propagate)
 		ret = thiz->descriptor.propagate(t, c, ctx, attr, &thiz->context, r, error);
@@ -220,10 +282,11 @@ static Eina_Bool _esvg_gradient_reference_add(Edom_Tag *t, Esvg_Referenceable_Re
 	 */
 	if (thiz->stops_changed)
 		return EINA_TRUE;
+	if (thiz->state_changed)
+		return EINA_TRUE;
 	/* add every stop to our newly created reference */
 	r = rr->data;
-	enesim_renderer_gradient_stop_clear(r);
-	edom_tag_child_foreach(t, _esvg_gradient_stop_propagate, r);
+	_esvg_gradient_stop_generate(t, r);
 }
 
 static void _esvg_gradient_free(Edom_Tag *t)

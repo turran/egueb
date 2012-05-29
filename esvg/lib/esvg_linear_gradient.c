@@ -148,6 +148,10 @@ static Eina_Bool _esvg_linear_gradient_propagate(Edom_Tag *t,
 		break;
 	}
 	enesim_renderer_gradient_mode_set(r, mode);
+	/* the coordinates can come from the href
+	 * we need to found which one isnt set and use that
+	 * for the calculus
+	 */
 
 	if (gu == ESVG_OBJECT_BOUNDING_BOX)
 	{
