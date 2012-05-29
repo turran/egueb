@@ -112,7 +112,7 @@ namespace "esvg" {
 	};
 
 	abstract "gradient" : "paint_server" {
-
+		string "href";
 	};
 
 	abstract "animation" : "element" {

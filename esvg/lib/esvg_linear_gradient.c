@@ -62,40 +62,6 @@ static Esvg_Linear_Gradient * _esvg_linear_gradient_get(Edom_Tag *t)
 	return thiz;
 }
 
-#if 0
-static void _parser_linear_gradient_merge(Enesim_Renderer *r,
-			Enesim_Renderer *rel)
-{
-	if (!esvg_linear_gradient_x1_is_set(r))
-	{
-		Esvg_Coord c;
-
-		esvg_linear_gradient_x1_get(rel, &c);
-		esvg_linear_gradient_x1_set(r, &c);
-	}
-	if (!esvg_linear_gradient_y1_is_set(r))
-	{
-		Esvg_Coord c;
-
-		esvg_linear_gradient_y1_get(rel, &c);
-		esvg_linear_gradient_y1_set(r, &c);
-	}
-	if (!esvg_linear_gradient_x2_is_set(r))
-	{
-		Esvg_Coord c;
-
-		esvg_linear_gradient_x2_get(rel, &c);
-		esvg_linear_gradient_x2_set(r, &c);
-	}
-	if (!esvg_linear_gradient_y2_is_set(r))
-	{
-		Esvg_Coord c;
-
-		esvg_linear_gradient_y2_get(rel, &c);
-		esvg_linear_gradient_y2_set(r, &c);
-	}
-}
-#endif
 /*----------------------------------------------------------------------------*
  *                       Esvg Paint Server interface                          *
  *----------------------------------------------------------------------------*/
@@ -223,6 +189,41 @@ static Eina_Bool _esvg_linear_gradient_propagate(Edom_Tag *t,
 
 }
 
+static void _esvg_linear_gradient_merge(Edom_Tag *t,
+			Edom_Tag *href)
+{
+#if 0
+	if (!esvg_linear_gradient_x1_is_set(r))
+	{
+		Esvg_Coord c;
+
+		esvg_linear_gradient_x1_get(rel, &c);
+		esvg_linear_gradient_x1_set(r, &c);
+	}
+	if (!esvg_linear_gradient_y1_is_set(r))
+	{
+		Esvg_Coord c;
+
+		esvg_linear_gradient_y1_get(rel, &c);
+		esvg_linear_gradient_y1_set(r, &c);
+	}
+	if (!esvg_linear_gradient_x2_is_set(r))
+	{
+		Esvg_Coord c;
+
+		esvg_linear_gradient_x2_get(rel, &c);
+		esvg_linear_gradient_x2_set(r, &c);
+	}
+	if (!esvg_linear_gradient_y2_is_set(r))
+	{
+		Esvg_Coord c;
+
+		esvg_linear_gradient_y2_get(rel, &c);
+		esvg_linear_gradient_y2_set(r, &c);
+	}
+#endif
+}
+
 static void _esvg_linear_gradient_free(Edom_Tag *t)
 {
 	Esvg_Linear_Gradient *thiz;
@@ -244,6 +245,7 @@ static Esvg_Gradient_Descriptor _descriptor = {
 	/* .setup		= */ NULL,
 	/* .renderer_new	= */ _esvg_linear_gradient_renderer_new,
 	/* .propagate		= */ _esvg_linear_gradient_propagate,
+	/* .merge		= */ _esvg_linear_gradient_merge,
 };
 /*----------------------------------------------------------------------------*
  *                           The Ender interface                              *

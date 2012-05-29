@@ -44,20 +44,30 @@
 			EINA_MAGIC_FAIL(d, ESVG_GRADIENT_MAGIC);\
 	} while(0)
 
+static Ender_Property *ESVG_GRADIENT_HREF;
+
 typedef struct _Esvg_Gradient_Descriptor_Internal
 {
 	Edom_Tag_Free free;
 	Edom_Tag_Child_Add child_add;
 	Edom_Tag_Child_Remove child_remove;
+	Esvg_Element_Attribute_Set attribute_set;
 	Esvg_Referenceable_Setup setup;
 	Esvg_Gradient_Propagate propagate;
 } Esvg_Gradient_Descriptor_Internal;
+
+typedef struct _Esvg_Gradient_State
+{	
+	char *href;
+} Esvg_Gradient_State;
 
 typedef struct _Esvg_Gradient
 {
 	EINA_MAGIC
 	/* properties */
-	Esvg_Gradient_Context state;
+	Esvg_Gradient_Context context;
+	Esvg_Gradient_State current;
+	Esvg_Gradient_State past;
 	/* private */
 	Esvg_Gradient_Descriptor_Internal descriptor;
 	Eina_Bool units_set : 1;
@@ -98,6 +108,26 @@ static Eina_Bool _esvg_gradient_stop_propagate(Edom_Tag *t, Edom_Tag *child,
 /*----------------------------------------------------------------------------*
  *                       Esvg Paint Server interface                          *
  *----------------------------------------------------------------------------*/
+static Eina_Bool _esvg_gradient_attribute_set(Ender_Element *e,
+		const char *key, const char *value)
+{
+	if (strcmp(key, "xlink:href") == 0)
+	{
+		esvg_gradient_href_set(e, value);
+	}
+	else
+	{
+		Esvg_Gradient *thiz;
+		Edom_Tag *t;
+
+		t = ender_element_object_get(e);
+		thiz = _esvg_gradient_get(t);
+		if (thiz->descriptor.attribute_set)
+			return thiz->descriptor.attribute_set(e, key, value);
+	}
+	return EINA_TRUE;
+}
+
 static Eina_Bool _esvg_gradient_child_add(Edom_Tag *t, Edom_Tag *child)
 {
 	Esvg_Gradient *thiz;
@@ -172,7 +202,7 @@ static Eina_Bool _esvg_gradient_propagate(Edom_Tag *t,
 		edom_tag_child_foreach(t, _esvg_gradient_stop_propagate, r);
 	}
 	if (thiz->descriptor.propagate)
-		ret = thiz->descriptor.propagate(t, c, ctx, attr, &thiz->state, r, error);
+		ret = thiz->descriptor.propagate(t, c, ctx, attr, &thiz->context, r, error);
 	return ret;
 }
 
@@ -208,12 +238,39 @@ static void _esvg_gradient_free(Edom_Tag *t)
 /*----------------------------------------------------------------------------*
  *                           The Ender interface                              *
  *----------------------------------------------------------------------------*/
+static void _esvg_gradient_href_set(Edom_Tag *t, const char *href)
+{
+	Esvg_Gradient *thiz;
+
+	thiz = _esvg_gradient_get(t);
+	if (thiz->current.href)
+	{
+		free(thiz->current.href);
+		thiz->current.href = NULL;
+	}
+
+	if (href)
+	{
+		thiz->current.href = strdup(href);
+	}
+}
+
+static void _esvg_gradient_href_get(Edom_Tag *t, const char **href)
+{
+	Esvg_Gradient *thiz;
+
+	if (!href) return;
+
+	thiz = _esvg_gradient_get(t);
+	*href = thiz->current.href;
+}
+
 static void _esvg_gradient_units_set(Edom_Tag *t, Esvg_Gradient_Units units)
 {
 	Esvg_Gradient *thiz;
 
 	thiz = _esvg_gradient_get(t);
-	thiz->state.units = units;
+	thiz->context.units = units;
 	thiz->units_set = EINA_TRUE;
 }
 
@@ -222,7 +279,7 @@ static void _esvg_gradient_units_get(Edom_Tag *t, Esvg_Gradient_Units *units)
 	Esvg_Gradient *thiz;
 
 	thiz = _esvg_gradient_get(t);
-	if (units) *units = thiz->state.units;
+	if (units) *units = thiz->context.units;
 }
 
 static Eina_Bool _esvg_gradient_units_is_set(Edom_Tag *t)
@@ -238,7 +295,7 @@ static void _esvg_gradient_transform_set(Edom_Tag *t, const Enesim_Matrix *trans
 	Esvg_Gradient *thiz;
 
 	thiz = _esvg_gradient_get(t);
-	if (transform) thiz->state.transform = *transform;
+	if (transform) thiz->context.transform = *transform;
 }
 
 static void _esvg_gradient_transform_get(Edom_Tag *t, Enesim_Matrix *transform)
@@ -246,7 +303,7 @@ static void _esvg_gradient_transform_get(Edom_Tag *t, Enesim_Matrix *transform)
 	Esvg_Gradient *thiz;
 
 	thiz = _esvg_gradient_get(t);
-	if (transform) *transform = thiz->state.transform;
+	if (transform) *transform = thiz->context.transform;
 }
 
 static Eina_Bool _esvg_gradient_transform_is_set(Edom_Tag *t)
@@ -262,7 +319,7 @@ static void _esvg_gradient_spread_method_set(Edom_Tag *t, Esvg_Spread_Method spr
 	Esvg_Gradient *thiz;
 
 	thiz = _esvg_gradient_get(t);
-	thiz->state.spread_method = spread_method;
+	thiz->context.spread_method = spread_method;
 }
 
 static void _esvg_gradient_spread_method_get(Edom_Tag *t, Esvg_Spread_Method *spread_method)
@@ -270,13 +327,14 @@ static void _esvg_gradient_spread_method_get(Edom_Tag *t, Esvg_Spread_Method *sp
 	Esvg_Gradient *thiz;
 
 	thiz = _esvg_gradient_get(t);
-	if (spread_method) *spread_method = thiz->state.spread_method;
+	if (spread_method) *spread_method = thiz->context.spread_method;
 }
 
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
 /* The ender wrapper */
+#define _esvg_gradient_href_is_set NULL
 #include "generated/esvg_generated_gradient.c"
 
 Edom_Tag * esvg_gradient_new(Esvg_Gradient_Descriptor *descriptor,
@@ -296,11 +354,12 @@ Edom_Tag * esvg_gradient_new(Esvg_Gradient_Descriptor *descriptor,
 	thiz->descriptor.child_add = descriptor->child_add;
 	thiz->descriptor.child_remove = descriptor->child_remove;
 	thiz->descriptor.setup = descriptor->setup;
+	thiz->descriptor.attribute_set = descriptor->attribute_set;
 	thiz->data = data;
 
 	pdescriptor.child_add = _esvg_gradient_child_add;
 	pdescriptor.child_remove = _esvg_gradient_child_remove;
-	pdescriptor.attribute_set = descriptor->attribute_set;
+	pdescriptor.attribute_set = _esvg_gradient_attribute_set;
 	pdescriptor.attribute_get = descriptor->attribute_get;
 	pdescriptor.cdata_set = descriptor->cdata_set;
 	pdescriptor.text_set = descriptor->text_set;
@@ -313,8 +372,8 @@ Edom_Tag * esvg_gradient_new(Esvg_Gradient_Descriptor *descriptor,
 	pdescriptor.reference_add = _esvg_gradient_reference_add;
 
 	/* Default values */
-	thiz->state.units = ESVG_OBJECT_BOUNDING_BOX;
-	enesim_matrix_identity(&thiz->state.transform);
+	thiz->context.units = ESVG_OBJECT_BOUNDING_BOX;
+	enesim_matrix_identity(&thiz->context.transform);
 
 	t = esvg_paint_server_new(&pdescriptor, type, thiz);
 	return t;
@@ -331,6 +390,15 @@ void * esvg_gradient_data_get(Edom_Tag *t)
  *                                   API                                      *
  *============================================================================*/
 EAPI Eina_Bool esvg_is_gradient(Ender_Element *e)
+{
+}
+
+EAPI void esvg_gradient_href_set(Ender_Element *e, const char *href)
+{
+	ender_element_property_value_set(e, ESVG_GRADIENT_HREF, href, NULL);
+}
+
+EAPI void esvg_gradient_href_get(Ender_Element *e, const char **href)
 {
 }
 
