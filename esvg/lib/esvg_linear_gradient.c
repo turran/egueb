@@ -37,18 +37,28 @@ static Ender_Property *ESVG_LINEAR_GRADIENT_Y1;
 static Ender_Property *ESVG_LINEAR_GRADIENT_X2;
 static Ender_Property *ESVG_LINEAR_GRADIENT_Y2;
 
+/* FIXME share this */
+typedef struct _Esvg_Property_Length
+{
+	Esvg_Length v;
+	Eina_Bool is_set;
+} Esvg_Property_Length;
+
+/* FIXME share this */
+typedef struct _Esvg_Property_Coord
+{
+	Esvg_Coord v;
+	Eina_Bool is_set;
+} Esvg_Property_Coord;
+
 typedef struct _Esvg_Linear_Gradient
 {
 	/* properties */
-	Esvg_Coord x1;
-	Esvg_Coord y1;
-	Esvg_Coord x2;
-	Esvg_Coord y2;
+	Esvg_Property_Coord x1;
+	Esvg_Property_Coord y1;
+	Esvg_Property_Coord x2;
+	Esvg_Property_Coord y2;
 	/* private */
-	Eina_Bool x1_set : 1;
-	Eina_Bool y1_set : 1;
-	Eina_Bool x2_set : 1;
-	Eina_Bool y2_set : 1;
 } Esvg_Linear_Gradient;
 
 static Esvg_Linear_Gradient * _esvg_linear_gradient_get(Edom_Tag *t)
@@ -62,6 +72,88 @@ static Esvg_Linear_Gradient * _esvg_linear_gradient_get(Edom_Tag *t)
 	return thiz;
 }
 
+static void _esvg_linear_gradient_deep_x1_get(Esvg_Linear_Gradient *thiz,
+		Edom_Tag *t,
+		Esvg_Coord *x1)
+{
+	Edom_Tag *href;
+
+	href = esvg_gradient_href_tag_get(t);
+	if (!thiz->x1.is_set && href)
+	{
+		Esvg_Linear_Gradient *other;
+
+		other = _esvg_linear_gradient_get(href);
+		_esvg_linear_gradient_deep_x1_get(other, href, x1);
+	}
+	else
+		*x1 = thiz->x1.v;
+}
+
+static void _esvg_linear_gradient_deep_y1_get(Esvg_Linear_Gradient *thiz,
+		Edom_Tag *t,
+		Esvg_Coord *y1)
+{
+	Edom_Tag *href;
+
+	href = esvg_gradient_href_tag_get(t);
+	if (!thiz->y1.is_set && href)
+	{
+		Esvg_Linear_Gradient *other;
+
+		other = _esvg_linear_gradient_get(href);
+		_esvg_linear_gradient_deep_y1_get(other, href, y1);
+	}
+	else
+		*y1 = thiz->y1.v;
+}
+
+static void _esvg_linear_gradient_deep_x2_get(Esvg_Linear_Gradient *thiz,
+		Edom_Tag *t,
+		Esvg_Coord *x2)
+{
+	Edom_Tag *href;
+
+	href = esvg_gradient_href_tag_get(t);
+	if (!thiz->x2.is_set && href)
+	{
+		Esvg_Linear_Gradient *other;
+
+		other = _esvg_linear_gradient_get(href);
+		_esvg_linear_gradient_deep_x2_get(other, href, x2);
+	}
+	else
+		*x2 = thiz->x2.v;
+}
+
+static void _esvg_linear_gradient_deep_y2_get(Esvg_Linear_Gradient *thiz,
+		Edom_Tag *t,
+		Esvg_Coord *y2)
+{
+	Edom_Tag *href;
+
+	href = esvg_gradient_href_tag_get(t);
+	if (!thiz->y2.is_set && href)
+	{
+		Esvg_Linear_Gradient *other;
+
+		other = _esvg_linear_gradient_get(href);
+		_esvg_linear_gradient_deep_y2_get(other, href, y2);
+	}
+	else
+		*y2 = thiz->y2.v;
+}
+
+static void _esvg_linear_gradient_merge(Esvg_Linear_Gradient *thiz,
+		Edom_Tag *t,
+		Esvg_Coord *x1, Esvg_Coord *y1,
+		Esvg_Coord *x2, Esvg_Coord *y2)
+{
+	_esvg_linear_gradient_deep_x1_get(thiz, t, x1);
+	_esvg_linear_gradient_deep_y1_get(thiz, t, y1);
+	_esvg_linear_gradient_deep_x2_get(thiz, t, x2);
+	_esvg_linear_gradient_deep_y2_get(thiz, t, y2);
+}
 /*----------------------------------------------------------------------------*
  *                       Esvg Paint Server interface                          *
  *----------------------------------------------------------------------------*/
@@ -125,6 +217,10 @@ static Eina_Bool _esvg_linear_gradient_propagate(Edom_Tag *t,
 	Esvg_Gradient_Units gu;
 	Enesim_Repeat_Mode mode;
 	Enesim_Matrix m;
+	Esvg_Coord lx1;
+	Esvg_Coord ly1;
+	Esvg_Coord lx2;
+	Esvg_Coord ly2;
 	double x1;
 	double y1;
 	double x2;
@@ -153,13 +249,15 @@ static Eina_Bool _esvg_linear_gradient_propagate(Edom_Tag *t,
 	 * for the calculus
 	 */
 
+	_esvg_linear_gradient_merge(thiz, t, &lx1, &ly1, &lx2, &ly2);
+
 	if (gu == ESVG_OBJECT_BOUNDING_BOX)
 	{
 		/* check that the coordinates shold be set with (0,0) -> (1, 1) */
-		x1 = esvg_length_final_get(&thiz->x1, 1, 1);
-		y1 = esvg_length_final_get(&thiz->y1, 1, 1);
-		x2 = esvg_length_final_get(&thiz->x2, 1, 1);
-		y2 = esvg_length_final_get(&thiz->y2, 1, 1);
+		x1 = esvg_length_final_get(&lx1, 1, 1);
+		y1 = esvg_length_final_get(&ly1, 1, 1);
+		x2 = esvg_length_final_get(&lx2, 1, 1);
+		y2 = esvg_length_final_get(&ly2, 1, 1);
 		enesim_matrix_values_set(&m, ctx->bounds.w, 0, ctx->bounds.x, 0, ctx->bounds.h, ctx->bounds.y, 0, 0, 1);
 	}
 	else
@@ -170,10 +268,10 @@ static Eina_Bool _esvg_linear_gradient_propagate(Edom_Tag *t,
 		/* use the user space coordiantes */
 		w = ctx->viewbox.width;
 		h = ctx->viewbox.height;
-		x1 = esvg_length_final_get(&thiz->x1, w, ctx->font_size);
-		y1 = esvg_length_final_get(&thiz->y1, h, ctx->font_size);
-		x2 = esvg_length_final_get(&thiz->x2, w, ctx->font_size);
-		y2 = esvg_length_final_get(&thiz->y2, h, ctx->font_size);
+		x1 = esvg_length_final_get(&lx1, w, ctx->font_size);
+		y1 = esvg_length_final_get(&ly1, h, ctx->font_size);
+		x2 = esvg_length_final_get(&lx2, w, ctx->font_size);
+		y2 = esvg_length_final_get(&ly2, h, ctx->font_size);
 
 		m = ctx->transform.base;
 	}
@@ -183,7 +281,11 @@ static Eina_Bool _esvg_linear_gradient_propagate(Edom_Tag *t,
 	}
 	enesim_renderer_geometry_transformation_set(r, &m);
 
-	printf("line %g %g %g %g\n", x1, y1, x2, y2);
+	{
+		const char *name;
+		enesim_renderer_name_get(r, &name);
+		printf("line %s %g %g %g %g\n", name, x1, y1, x2, y2);
+	}
 	enesim_renderer_gradient_linear_x0_set(r, x1);
 	enesim_renderer_gradient_linear_y0_set(r, y1);
 	enesim_renderer_gradient_linear_x1_set(r, x2);
@@ -191,41 +293,6 @@ static Eina_Bool _esvg_linear_gradient_propagate(Edom_Tag *t,
 
 	return EINA_TRUE;
 
-}
-
-static void _esvg_linear_gradient_merge(Edom_Tag *t,
-			Edom_Tag *href)
-{
-#if 0
-	if (!esvg_linear_gradient_x1_is_set(r))
-	{
-		Esvg_Coord c;
-
-		esvg_linear_gradient_x1_get(rel, &c);
-		esvg_linear_gradient_x1_set(r, &c);
-	}
-	if (!esvg_linear_gradient_y1_is_set(r))
-	{
-		Esvg_Coord c;
-
-		esvg_linear_gradient_y1_get(rel, &c);
-		esvg_linear_gradient_y1_set(r, &c);
-	}
-	if (!esvg_linear_gradient_x2_is_set(r))
-	{
-		Esvg_Coord c;
-
-		esvg_linear_gradient_x2_get(rel, &c);
-		esvg_linear_gradient_x2_set(r, &c);
-	}
-	if (!esvg_linear_gradient_y2_is_set(r))
-	{
-		Esvg_Coord c;
-
-		esvg_linear_gradient_y2_get(rel, &c);
-		esvg_linear_gradient_y2_set(r, &c);
-	}
-#endif
 }
 
 static void _esvg_linear_gradient_free(Edom_Tag *t)
@@ -249,7 +316,6 @@ static Esvg_Gradient_Descriptor _descriptor = {
 	/* .setup		= */ NULL,
 	/* .renderer_new	= */ _esvg_linear_gradient_renderer_new,
 	/* .propagate		= */ _esvg_linear_gradient_propagate,
-	/* .merge		= */ _esvg_linear_gradient_merge,
 };
 /*----------------------------------------------------------------------------*
  *                           The Ender interface                              *
@@ -262,10 +328,10 @@ static Edom_Tag * _esvg_linear_gradient_new(void)
 	thiz = calloc(1, sizeof(Esvg_Linear_Gradient));
 
 	/* default values */
-	thiz->x1 = ESVG_LENGTH_0;
-	thiz->y1 = ESVG_LENGTH_0;
-	thiz->x2 = ESVG_LENGTH_100_PERCENT;
-	thiz->y2 = ESVG_LENGTH_0;
+	thiz->x1.v = ESVG_LENGTH_0;
+	thiz->y1.v = ESVG_LENGTH_0;
+	thiz->x2.v = ESVG_LENGTH_100_PERCENT;
+	thiz->y2.v = ESVG_LENGTH_0;
 
 	t = esvg_gradient_new(&_descriptor, ESVG_LINEARGRADIENT, thiz);
 	return t;
@@ -278,12 +344,13 @@ static void _esvg_linear_gradient_x1_set(Edom_Tag *t, const Esvg_Coord *x1)
 	thiz = _esvg_linear_gradient_get(t);
 	if (!x1)
 	{
-		thiz->x1_set = EINA_FALSE;
+		thiz->x1.is_set = EINA_FALSE;
+		thiz->x1.v = ESVG_LENGTH_0;
 	}
 	else
 	{
-		thiz->x1 = *x1;
-		thiz->x1_set = EINA_TRUE;
+		thiz->x1.v = *x1;
+		thiz->x1.is_set = EINA_TRUE;
 	}
 }
 
@@ -293,7 +360,7 @@ static void _esvg_linear_gradient_x1_get(Edom_Tag *t, Esvg_Coord *x1)
 
 	if (!x1) return;
 	thiz = _esvg_linear_gradient_get(t);
-	*x1 = thiz->x1;
+	*x1 = thiz->x1.v;
 }
 
 static Eina_Bool _esvg_linear_gradient_x1_is_set(Edom_Tag *t)
@@ -301,7 +368,7 @@ static Eina_Bool _esvg_linear_gradient_x1_is_set(Edom_Tag *t)
 	Esvg_Linear_Gradient *thiz;
 
 	thiz = _esvg_linear_gradient_get(t);
-	return thiz->x1_set;
+	return thiz->x1.is_set;
 }
 
 static void _esvg_linear_gradient_y1_set(Edom_Tag *t, const Esvg_Coord *y1)
@@ -311,12 +378,13 @@ static void _esvg_linear_gradient_y1_set(Edom_Tag *t, const Esvg_Coord *y1)
 	thiz = _esvg_linear_gradient_get(t);
 	if (!y1)
 	{
-		thiz->y1_set = EINA_FALSE;
+		thiz->y1.is_set = EINA_FALSE;
+		thiz->y1.v = ESVG_LENGTH_0;
 	}
 	else
 	{
-		thiz->y1 = *y1;
-		thiz->y1_set = EINA_TRUE;
+		thiz->y1.v = *y1;
+		thiz->y1.is_set = EINA_TRUE;
 	}
 }
 
@@ -326,7 +394,7 @@ static void _esvg_linear_gradient_y1_get(Edom_Tag *t, Esvg_Coord *y1)
 
 	if (!y1) return;
 	thiz = _esvg_linear_gradient_get(t);
-	*y1 = thiz->y1;
+	*y1 = thiz->y1.v;
 }
 
 static Eina_Bool _esvg_linear_gradient_y1_is_set(Edom_Tag *t)
@@ -334,7 +402,7 @@ static Eina_Bool _esvg_linear_gradient_y1_is_set(Edom_Tag *t)
 	Esvg_Linear_Gradient *thiz;
 
 	thiz = _esvg_linear_gradient_get(t);
-	return thiz->y1_set;
+	return thiz->y1.is_set;
 }
 
 static void _esvg_linear_gradient_x2_set(Edom_Tag *t, const Esvg_Coord *x2)
@@ -344,12 +412,13 @@ static void _esvg_linear_gradient_x2_set(Edom_Tag *t, const Esvg_Coord *x2)
 	thiz = _esvg_linear_gradient_get(t);
 	if (!x2)
 	{
-		thiz->x2_set = EINA_FALSE;
+		thiz->x2.is_set = EINA_FALSE;
+		thiz->x2.v = ESVG_LENGTH_100_PERCENT;
 	}
 	else
 	{
-		thiz->x2 = *x2;
-		thiz->x2_set = EINA_TRUE;
+		thiz->x2.v = *x2;
+		thiz->x2.is_set = EINA_TRUE;
 	}
 }
 
@@ -359,7 +428,7 @@ static void _esvg_linear_gradient_x2_get(Edom_Tag *t, Esvg_Coord *x2)
 
 	if (!x2) return;
 	thiz = _esvg_linear_gradient_get(t);
-	*x2 = thiz->x2;
+	*x2 = thiz->x2.v;
 }
 
 static Eina_Bool _esvg_linear_gradient_x2_is_set(Edom_Tag *t)
@@ -367,7 +436,7 @@ static Eina_Bool _esvg_linear_gradient_x2_is_set(Edom_Tag *t)
 	Esvg_Linear_Gradient *thiz;
 
 	thiz = _esvg_linear_gradient_get(t);
-	return thiz->x2_set;
+	return thiz->x2.is_set;
 }
 
 static void _esvg_linear_gradient_y2_set(Edom_Tag *t, const Esvg_Coord *y2)
@@ -377,12 +446,13 @@ static void _esvg_linear_gradient_y2_set(Edom_Tag *t, const Esvg_Coord *y2)
 	thiz = _esvg_linear_gradient_get(t);
 	if (!y2)
 	{
-		thiz->y2_set = EINA_FALSE;
+		thiz->y2.v = ESVG_LENGTH_0;
+		thiz->y2.is_set = EINA_FALSE;
 	}
 	else
 	{
-		thiz->y2 = *y2;
-		thiz->y2_set = EINA_TRUE;
+		thiz->y2.v = *y2;
+		thiz->y2.is_set = EINA_TRUE;
 	}
 }
 
@@ -392,7 +462,7 @@ static void _esvg_linear_gradient_y2_get(Edom_Tag *t, Esvg_Coord *y2)
 
 	if (!y2) return;
 	thiz = _esvg_linear_gradient_get(t);
-	*y2 = thiz->y2;
+	*y2 = thiz->y2.v;
 }
 
 static Eina_Bool _esvg_linear_gradient_y2_is_set(Edom_Tag *t)
@@ -400,7 +470,7 @@ static Eina_Bool _esvg_linear_gradient_y2_is_set(Edom_Tag *t)
 	Esvg_Linear_Gradient *thiz;
 
 	thiz = _esvg_linear_gradient_get(t);
-	return thiz->y2_set;
+	return thiz->y2.is_set;
 }
 /*============================================================================*
  *                                 Global                                     *

@@ -113,6 +113,9 @@ namespace "esvg" {
 
 	abstract "gradient" : "paint_server" {
 		string "href";
+		int "spread_method";
+		int "gradient_units";
+		matrix "gradient_transform";
 	};
 
 	abstract "animation" : "element" {

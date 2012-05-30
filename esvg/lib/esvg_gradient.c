@@ -45,6 +45,9 @@
 	} while(0)
 
 static Ender_Property *ESVG_GRADIENT_HREF;
+static Ender_Property *ESVG_GRADIENT_GRADIENT_UNITS;
+static Ender_Property *ESVG_GRADIENT_GRADIENT_TRANSFORM;
+static Ender_Property *ESVG_GRADIENT_SPREAD_METHOD;
 
 typedef struct _Esvg_Gradient_Descriptor_Internal
 {
@@ -61,19 +64,42 @@ typedef struct _Esvg_Gradient_State
 	char *href;
 } Esvg_Gradient_State;
 
+typedef struct _Esvg_Property_Gradient_Units
+{
+	Esvg_Gradient_Units v;
+	Eina_Bool is_set;
+} Esvg_Property_Gradient_Units;
+
+/* FIXME share this */
+typedef struct _Esvg_Property_Spread_Method
+{
+	Esvg_Spread_Method v;
+	Eina_Bool is_set;
+} Esvg_Property_Spread_Method;
+
+/* FIXME share this */
+typedef struct _Esvg_Property_Transform
+{
+	Enesim_Matrix v;
+	Eina_Bool is_set;
+} Esvg_Property_Transform;
+
 typedef struct _Esvg_Gradient
 {
 	EINA_MAGIC
 	/* properties */
-	Esvg_Gradient_Context context;
+	Esvg_Property_Gradient_Units units;
+	Esvg_Property_Spread_Method spread_method;
+	Esvg_Property_Transform transform;
 	Esvg_Gradient_State current;
 	Esvg_Gradient_State past;
 	/* private */
 	Esvg_Gradient_Descriptor_Internal descriptor;
-	Eina_Bool units_set : 1;
-	Eina_Bool transform_is_set : 1;
 	Eina_Bool stops_changed : 1;
 	Eina_Bool state_changed : 1;
+	/* whenever the href is set, this points to the real objects */
+	Edom_Tag *href_t;
+	Ender_Element *href_e;
 	void *data;
 } Esvg_Gradient;
 
@@ -96,6 +122,56 @@ static void _esvg_gradient_stop_mutation_cb(Ender_Element *e,
 	thiz->stops_changed = EINA_TRUE;
 }
 
+static void _esvg_gradient_deep_units_get(Esvg_Gradient *thiz,
+		Esvg_Gradient_Units *units)
+{
+	if (!thiz->units.is_set && thiz->href_e)
+	{
+		Esvg_Gradient *other;
+
+		other = _esvg_gradient_get(thiz->href_t);
+		_esvg_gradient_deep_units_get(other, units);
+	}
+	else
+		*units = thiz->units.v;
+}
+
+static void _esvg_gradient_deep_transform_get(Esvg_Gradient *thiz,
+		Enesim_Matrix *transform)
+{
+	if (!thiz->transform.is_set && thiz->href_e)
+	{
+		Esvg_Gradient *other;
+
+		other = _esvg_gradient_get(thiz->href_t);
+		_esvg_gradient_deep_transform_get(other, transform);
+	}
+	else
+		*transform = thiz->transform.v;
+}
+
+static void _esvg_gradient_deep_spread_method_get(Esvg_Gradient *thiz, 
+		Esvg_Spread_Method *spread_method)
+{
+	if (!thiz->spread_method.is_set && thiz->href_e)
+	{
+		Esvg_Gradient *other;
+
+		other = _esvg_gradient_get(thiz->href_t);
+		_esvg_gradient_deep_spread_method_get(other, spread_method);
+	}
+	else
+		*spread_method = thiz->spread_method.v;
+}
+
+static void _esvg_gradient_context_generate(Esvg_Gradient *thiz, Esvg_Gradient_Context *ctx)
+{
+	/* if no href set just use our own properties */
+	_esvg_gradient_deep_units_get(thiz, &ctx->units);
+	_esvg_gradient_deep_spread_method_get(thiz, &ctx->spread_method);
+	_esvg_gradient_deep_transform_get(thiz, &ctx->transform);
+}
+
 static Eina_Bool _esvg_gradient_stop_propagate(Edom_Tag *t, Edom_Tag *child,
 		void *user_data)
 {
@@ -105,13 +181,33 @@ static Eina_Bool _esvg_gradient_stop_propagate(Edom_Tag *t, Edom_Tag *child,
 	stop = esvg_stop_gradient_stop_get(child);
 	DBG("Adding a gradient stop at position %g with color %08x", stop->pos, stop->argb);
 	enesim_renderer_gradient_stop_add(r, stop);
+	return EINA_TRUE;
 }
 
 static void _esvg_gradient_stop_generate(Edom_Tag *t, Enesim_Renderer *r)
 {
+	Esvg_Gradient *thiz;
+	Edom_Tag *child;
+
+	thiz = _esvg_gradient_get(t);
+	/* clear all the stops */
 	enesim_renderer_gradient_stop_clear(r);
-	/* TODO check if we need to generate our own childs or the other gradient childs */
-	edom_tag_child_foreach(t, _esvg_gradient_stop_propagate, r);
+	/* check if we need to generate our own childs or the other gradient childs */
+	child = edom_tag_child_get(t);
+	if (!child && thiz->href_t)
+	{
+		DBG("Generating relative '%s' stops", thiz->current.href);
+		_esvg_gradient_stop_generate(thiz->href_t, r);
+	}
+	else
+	{
+		DBG("Generating local stops");
+		/* TODO we need to do the setup the stops as those
+		 * might not have done the setup yet
+		 */
+		//esvg_element_internal_child_setup(t, c, error, _esvg_svg_setup_interceptor, thiz);
+		edom_tag_child_foreach(t, _esvg_gradient_stop_propagate, r);
+	}
 }
 /*----------------------------------------------------------------------------*
  *                       Esvg Paint Server interface                          *
@@ -122,6 +218,26 @@ static Eina_Bool _esvg_gradient_attribute_set(Ender_Element *e,
 	if (strcmp(key, "xlink:href") == 0)
 	{
 		esvg_gradient_href_set(e, value);
+	}
+	else if (!strcmp(key, "gradientUnits"))
+	{
+		Esvg_Gradient_Units units;
+		esvg_parser_gradient_units_string_from(&units, value);
+		esvg_gradient_units_set(e, units);
+	}
+	else if (strcmp(key, "gradientTransform") == 0)
+	{
+		Enesim_Matrix matrix;
+
+		esvg_transformation_string_from(&matrix, value);
+		esvg_gradient_transform_set(e, &matrix);
+	}
+	else if (strcmp(key, "spreadMethod") == 0)
+	{
+		Esvg_Spread_Method smethod;
+
+		esvg_parser_spread_method_get(&smethod, value);
+		esvg_gradient_spread_method_set(e, smethod);
 	}
 	else
 	{
@@ -216,6 +332,7 @@ static Eina_Bool _esvg_gradient_propagate(Edom_Tag *t,
 		Enesim_Error **error)
 {
 	Esvg_Gradient *thiz;
+	Esvg_Gradient_Context gctx;
 	Eina_Bool ret = EINA_TRUE;
 
 	thiz = _esvg_gradient_get(t);
@@ -225,7 +342,6 @@ static Eina_Bool _esvg_gradient_propagate(Edom_Tag *t,
 	 */
 	if (thiz->state_changed)
 	{
-#if 0
 		Ender_Element *topmost;
 		Ender_Element *href_e;
 		Edom_Tag *href_t;
@@ -236,12 +352,12 @@ static Eina_Bool _esvg_gradient_propagate(Edom_Tag *t,
 		 * we need to start adding real properties, not only the values
 		 * but the is_set, all wrapped into a single struct
 		 */
-		if (thiz->context.href_e)
+		if (thiz->href_e)
 		{
 			/* TODO remove the event handlers from the old href */
-			ender_element_unref(thiz->context.href_e);
-			thiz->context.href_e = NULL;
-			thiz->context.href_t = NULL;
+			//ender_element_unref(thiz->href_e);
+			thiz->href_e = NULL;
+			thiz->href_t = NULL;
 		}
 		esvg_element_internal_topmost_get(t, &topmost);
 		if (!topmost)
@@ -253,18 +369,20 @@ static Eina_Bool _esvg_gradient_propagate(Edom_Tag *t,
 			goto stops;
 		/* TODO check that the referring gradient is of the same type? */
 		/* TODO check if this gradient has childs, if not also generate them */
-		//thiz->stops_changed = TRUE;
-		thiz->context.href_e = href_e;
-		thiz->context.href_t = ender_element_object_get(href_e);
-#endif
+		thiz->stops_changed = EINA_TRUE;
+		thiz->href_e = href_e;
+		thiz->href_t = ender_element_object_get(href_e);
 	}
-
+stops:
 	if (thiz->stops_changed)
 	{
 		_esvg_gradient_stop_generate(t, r);
 	}
+	/* generate the context */
+	_esvg_gradient_context_generate(thiz, &gctx);
+
 	if (thiz->descriptor.propagate)
-		ret = thiz->descriptor.propagate(t, c, ctx, attr, &thiz->context, r, error);
+		ret = thiz->descriptor.propagate(t, c, ctx, attr, &gctx, r, error);
 	return ret;
 }
 
@@ -315,6 +433,7 @@ static void _esvg_gradient_href_set(Edom_Tag *t, const char *href)
 	if (href)
 	{
 		thiz->current.href = strdup(href);
+		thiz->state_changed = EINA_TRUE;
 	}
 }
 
@@ -328,53 +447,53 @@ static void _esvg_gradient_href_get(Edom_Tag *t, const char **href)
 	*href = thiz->current.href;
 }
 
-static void _esvg_gradient_units_set(Edom_Tag *t, Esvg_Gradient_Units units)
+static void _esvg_gradient_gradient_units_set(Edom_Tag *t, Esvg_Gradient_Units units)
 {
 	Esvg_Gradient *thiz;
 
 	thiz = _esvg_gradient_get(t);
-	thiz->context.units = units;
-	thiz->units_set = EINA_TRUE;
+	thiz->units.v = units;
+	thiz->units.is_set = EINA_TRUE;
 }
 
-static void _esvg_gradient_units_get(Edom_Tag *t, Esvg_Gradient_Units *units)
+static void _esvg_gradient_gradient_units_get(Edom_Tag *t, Esvg_Gradient_Units *units)
 {
 	Esvg_Gradient *thiz;
 
 	thiz = _esvg_gradient_get(t);
-	if (units) *units = thiz->context.units;
+	if (units) *units = thiz->units.v;
 }
 
-static Eina_Bool _esvg_gradient_units_is_set(Edom_Tag *t)
+static Eina_Bool _esvg_gradient_gradient_units_is_set(Edom_Tag *t)
 {
 	Esvg_Gradient *thiz;
 
 	thiz = _esvg_gradient_get(t);
-	return thiz->units_set;
+	return thiz->units.is_set;
 }
 
-static void _esvg_gradient_transform_set(Edom_Tag *t, const Enesim_Matrix *transform)
+static void _esvg_gradient_gradient_transform_set(Edom_Tag *t, const Enesim_Matrix *transform)
 {
 	Esvg_Gradient *thiz;
 
 	thiz = _esvg_gradient_get(t);
-	if (transform) thiz->context.transform = *transform;
+	if (transform) thiz->transform.v = *transform;
 }
 
-static void _esvg_gradient_transform_get(Edom_Tag *t, Enesim_Matrix *transform)
+static void _esvg_gradient_gradient_transform_get(Edom_Tag *t, Enesim_Matrix *transform)
 {
 	Esvg_Gradient *thiz;
 
 	thiz = _esvg_gradient_get(t);
-	if (transform) *transform = thiz->context.transform;
+	if (transform) *transform = thiz->transform.v;
 }
 
-static Eina_Bool _esvg_gradient_transform_is_set(Edom_Tag *t)
+static Eina_Bool _esvg_gradient_gradient_transform_is_set(Edom_Tag *t)
 {
 	Esvg_Gradient *thiz;
 
 	thiz = _esvg_gradient_get(t);
-	return thiz->transform_is_set;
+	return thiz->transform.is_set;
 }
 
 static void _esvg_gradient_spread_method_set(Edom_Tag *t, Esvg_Spread_Method spread_method)
@@ -382,7 +501,7 @@ static void _esvg_gradient_spread_method_set(Edom_Tag *t, Esvg_Spread_Method spr
 	Esvg_Gradient *thiz;
 
 	thiz = _esvg_gradient_get(t);
-	thiz->context.spread_method = spread_method;
+	thiz->spread_method.v = spread_method;
 }
 
 static void _esvg_gradient_spread_method_get(Edom_Tag *t, Esvg_Spread_Method *spread_method)
@@ -390,7 +509,7 @@ static void _esvg_gradient_spread_method_get(Edom_Tag *t, Esvg_Spread_Method *sp
 	Esvg_Gradient *thiz;
 
 	thiz = _esvg_gradient_get(t);
-	if (spread_method) *spread_method = thiz->context.spread_method;
+	if (spread_method) *spread_method = thiz->spread_method.v;
 }
 
 /*============================================================================*
@@ -398,6 +517,7 @@ static void _esvg_gradient_spread_method_get(Edom_Tag *t, Esvg_Spread_Method *sp
  *============================================================================*/
 /* The ender wrapper */
 #define _esvg_gradient_href_is_set NULL
+#define _esvg_gradient_spread_method_is_set NULL
 #include "generated/esvg_generated_gradient.c"
 
 Edom_Tag * esvg_gradient_new(Esvg_Gradient_Descriptor *descriptor,
@@ -435,8 +555,8 @@ Edom_Tag * esvg_gradient_new(Esvg_Gradient_Descriptor *descriptor,
 	pdescriptor.reference_add = _esvg_gradient_reference_add;
 
 	/* Default values */
-	thiz->context.units = ESVG_OBJECT_BOUNDING_BOX;
-	enesim_matrix_identity(&thiz->context.transform);
+	thiz->units.v = ESVG_OBJECT_BOUNDING_BOX;
+	enesim_matrix_identity(&thiz->transform.v);
 
 	t = esvg_paint_server_new(&pdescriptor, type, thiz);
 	return t;
@@ -448,6 +568,14 @@ void * esvg_gradient_data_get(Edom_Tag *t)
 
 	thiz = _esvg_gradient_get(t);
 	return thiz->data;
+}
+
+Edom_Tag * esvg_gradient_href_tag_get(Edom_Tag *t)
+{
+	Esvg_Gradient *thiz;
+
+	thiz = _esvg_gradient_get(t);
+	return thiz->href_t;
 }
 /*============================================================================*
  *                                   API                                      *
@@ -467,6 +595,7 @@ EAPI void esvg_gradient_href_get(Ender_Element *e, const char **href)
 
 EAPI void esvg_gradient_units_set(Ender_Element *e, Esvg_Gradient_Units units)
 {
+	ender_element_property_value_set(e, ESVG_GRADIENT_GRADIENT_UNITS, units, NULL);
 }
 
 EAPI void esvg_gradient_units_get(Ender_Element *e, Esvg_Gradient_Units *units)
@@ -479,6 +608,7 @@ EAPI Eina_Bool esvg_gradient_units_is_set(Ender_Element *e)
 
 EAPI void esvg_gradient_transform_set(Ender_Element *e, const Enesim_Matrix *transform)
 {
+	ender_element_property_value_set(e, ESVG_GRADIENT_GRADIENT_TRANSFORM, transform, NULL);
 }
 
 EAPI void esvg_gradient_transform_get(Ender_Element *e, Enesim_Matrix *transform)
@@ -491,6 +621,7 @@ EAPI Eina_Bool esvg_gradient_transform_is_set(Ender_Element *e)
 
 EAPI void esvg_gradient_spread_method_set(Ender_Element *e, Esvg_Spread_Method spread_method)
 {
+	ender_element_property_value_set(e, ESVG_GRADIENT_SPREAD_METHOD, spread_method, NULL);
 }
 
 EAPI void esvg_gradient_spread_method_get(Ender_Element *e, Esvg_Spread_Method *spread_method)

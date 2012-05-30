@@ -14,7 +14,6 @@ typedef Eina_Bool (*Esvg_Gradient_Propagate)(Edom_Tag *t,
 		Esvg_Gradient_Context *gctx,
 		Enesim_Renderer *r,
 		Enesim_Error **error);
-typedef void (*Esvg_Gradient_Merge)(Edom_Tag *t, Edom_Tag *href);
 
 typedef struct _Esvg_Gradient_Descriptor {
 	/* the tag interface */
@@ -33,10 +32,10 @@ typedef struct _Esvg_Gradient_Descriptor {
 	Esvg_Referenceable_Renderer_New renderer_new;
 	/* our own interface */
 	Esvg_Gradient_Propagate propagate;
-	Esvg_Gradient_Merge merge;
 } Esvg_Gradient_Descriptor;
 
-void * esvg_gradient_data_get(Edom_Tag *t);
 Edom_Tag * esvg_gradient_new(Esvg_Gradient_Descriptor *descriptor, Esvg_Type type, void *data);
+void * esvg_gradient_data_get(Edom_Tag *t);
+Edom_Tag * esvg_gradient_href_tag_get(Edom_Tag *t);
 
 #endif
