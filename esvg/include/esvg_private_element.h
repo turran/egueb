@@ -60,6 +60,7 @@ void * esvg_element_data_get(Edom_Tag *t);
 Edom_Tag * esvg_element_new(Esvg_Element_Descriptor *descriptor, Esvg_Type type, void *data);
 Ender_Element * esvg_element_ender_get(Edom_Tag *t);
 void esvg_element_attribute_type_set(Edom_Tag *t, Esvg_Attribute_Type type);
+Esvg_Attribute_Type esvg_element_attribute_type_get(Edom_Tag *t);
 void esvg_element_attribute_animate_set(Edom_Tag *t, Eina_Bool animate);
 Eina_Bool esvg_element_attribute_animate_get(Edom_Tag *t);
 

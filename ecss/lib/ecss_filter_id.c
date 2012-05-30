@@ -58,10 +58,13 @@ static Ecss_Filter_Descriptor _descriptor = {
  *============================================================================*/
 EAPI Ecss_Filter * ecss_filter_id_new(const char *name)
 {
-	Ecss_Filter *f;
+	char *n;
 
 	if (!name) return NULL;
 
-	ecss_filter_new(&_descriptor, strdup(name));
+	n = strdup(name);
+	if (!n) return NULL;
+
+	return ecss_filter_new(&_descriptor, n);
 }
 
