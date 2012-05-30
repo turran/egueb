@@ -26,6 +26,7 @@
 #include "esvg_private_renderable.h"
 #include "esvg_private_instantiable.h"
 #include "esvg_private_clone.h"
+#include "esvg_private_svg.h"
 
 #include "esvg_renderable.h"
 #include "esvg_g.h"
@@ -161,7 +162,6 @@ static Esvg_Element_Setup_Return _esvg_use_setup(Edom_Tag *t,
 		Esvg_Context *c,
 		Esvg_Element_Context *ctx,
 		Esvg_Attribute_Presentation *attr,
-		Esvg_Renderable_Context *rctx,
 		Enesim_Error **error)
 {
 	Esvg_Use *thiz;
@@ -241,6 +241,7 @@ static Esvg_Instantiable_Descriptor _descriptor = {
 	/* .clone		= */ _esvg_use_clone,
 	/* .setup		= */ _esvg_use_setup,
 	/* .renderer_get	= */ _esvg_use_renderer_get,
+	/* .renderer_propagate	= */ NULL,
 };
 /*----------------------------------------------------------------------------*
  *                           The Ender interface                              *
@@ -249,7 +250,6 @@ static Edom_Tag * _esvg_use_new(void)
 {
 	Esvg_Use *thiz;
 	Edom_Tag *t;
-	Enesim_Renderer *r;
 
 	thiz = calloc(1, sizeof(Esvg_Use));
 	if (!thiz) return NULL;
@@ -375,9 +375,12 @@ EAPI Ender_Element * esvg_use_new(void)
 
 EAPI Eina_Bool esvg_is_use(Ender_Element *e)
 {
-	Eina_Bool ret = EINA_TRUE;
+	Edom_Tag *t;
+	Esvg_Type type;
 
-	return ret;
+	t = (Edom_Tag *)ender_element_object_get(e);
+	type = esvg_element_internal_type_get(t);
+	return (type == ESVG_USE) ? EINA_TRUE : EINA_FALSE;
 }
 
 EAPI void esvg_use_x_set(Ender_Element *e, const Esvg_Coord *x)
@@ -387,6 +390,10 @@ EAPI void esvg_use_x_set(Ender_Element *e, const Esvg_Coord *x)
 
 EAPI void esvg_use_x_get(Ender_Element *e, Esvg_Coord *x)
 {
+	Edom_Tag *t;
+
+	t = (Edom_Tag *)ender_element_object_get(e);
+	_esvg_use_x_get(t, x);
 }
 
 EAPI void esvg_use_y_set(Ender_Element *e, const Esvg_Coord *y)
@@ -396,6 +403,10 @@ EAPI void esvg_use_y_set(Ender_Element *e, const Esvg_Coord *y)
 
 EAPI void esvg_use_y_get(Ender_Element *e, Esvg_Coord *y)
 {
+	Edom_Tag *t;
+
+	t = (Edom_Tag *)ender_element_object_get(e);
+	_esvg_use_y_get(t, y);
 }
 
 EAPI void esvg_use_width_set(Ender_Element *e, const Esvg_Length *width)
@@ -405,6 +416,10 @@ EAPI void esvg_use_width_set(Ender_Element *e, const Esvg_Length *width)
 
 EAPI void esvg_use_width_get(Ender_Element *e, Esvg_Length *width)
 {
+	Edom_Tag *t;
+
+	t = (Edom_Tag *)ender_element_object_get(e);
+	_esvg_use_width_get(t, width);
 }
 
 EAPI void esvg_use_height_set(Ender_Element *e, const Esvg_Length *height)
@@ -414,6 +429,10 @@ EAPI void esvg_use_height_set(Ender_Element *e, const Esvg_Length *height)
 
 EAPI void esvg_use_height_get(Ender_Element *e, Esvg_Length *height)
 {
+	Edom_Tag *t;
+
+	t = (Edom_Tag *)ender_element_object_get(e);
+	_esvg_use_height_get(t, height);
 }
 
 EAPI void esvg_use_link_set(Ender_Element *e, const char *v)
@@ -421,6 +440,10 @@ EAPI void esvg_use_link_set(Ender_Element *e, const char *v)
 	ender_element_property_value_set(e, ESVG_USE_LINK, v, NULL);
 }
 
-EAPI void esvg_use_link_get(Ender_Element *e, const char **v)
+EAPI void esvg_use_link_get(Ender_Element *e, const char **link)
 {
+	Edom_Tag *t;
+
+	t = (Edom_Tag *)ender_element_object_get(e);
+	_esvg_use_link_get(t, link);
 }
