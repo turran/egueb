@@ -433,8 +433,8 @@ static void _esvg_gradient_href_set(Edom_Tag *t, const char *href)
 	if (href)
 	{
 		thiz->current.href = strdup(href);
-		thiz->state_changed = EINA_TRUE;
 	}
+	thiz->state_changed = EINA_TRUE;
 }
 
 static void _esvg_gradient_href_get(Edom_Tag *t, const char **href)

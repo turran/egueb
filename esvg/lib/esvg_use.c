@@ -49,15 +49,22 @@ static Ender_Property *ESVG_USE_WIDTH;
 static Ender_Property *ESVG_USE_HEIGHT;
 static Ender_Property *ESVG_USE_LINK;
 
+typedef struct _Esvg_Use_State
+{
+	char *link;
+} Esvg_Use_State;
+
 typedef struct _Esvg_Use
 {
 	/* properties */
+	Esvg_Use_State current;
+	Esvg_Use_State past;
 	Esvg_Coord x;
 	Esvg_Coord y;
 	Esvg_Length width;
 	Esvg_Length height;
-	char *link;
 	/* private */
+	Eina_Bool state_changed : 1;
 	Esvg_Clone *clone;
 	/* the always present g tag */
 	Edom_Tag *g_t;
@@ -184,12 +191,7 @@ static Esvg_Element_Setup_Return _esvg_use_setup(Edom_Tag *t,
 	 */
 #endif
 	printf("calling the setup on the use\n");
-	if (!thiz->link)
-	{
-		printf("nothing to use\n");
-		return EINA_TRUE;
-	}
-
+	/* FIXME this should be go away */
 	esvg_element_internal_topmost_get(t, &topmost);
 	if (!topmost)
 	{
@@ -197,21 +199,41 @@ static Esvg_Element_Setup_Return _esvg_use_setup(Edom_Tag *t,
 		return EINA_TRUE;
 	}
 
-	esvg_svg_element_get(topmost, thiz->link, &link);
-	thiz->clone = esvg_clone_new(link);
-
-	if (!thiz->clone)
+	if (thiz->state_changed)
 	{
-		printf("impossible to clone\n");
-		return EINA_TRUE;
+		if (thiz->clone)
+		{
+			/* TODO remove the tree from the g_e */
+			/* TODO remove previous clone */
+			thiz->clone = NULL;
+		}
+		if (thiz->current.link)
+		{
+			esvg_svg_element_get(topmost, thiz->current.link, &link);
+			thiz->clone = esvg_clone_new(link);
+
+			if (!thiz->clone)
+			{
+				printf("impossible to clone\n");
+				return EINA_TRUE;
+			}
+
+			/* TODO add the clone to the generated g */
+			clone_t = ender_element_object_get(thiz->clone->our);
+			ender_element_property_value_add(thiz->g_e, EDOM_CHILD, clone_t, NULL);
+
+		}
+		/* FIXME this should go to the cleanup */
+		thiz->state_changed = EINA_FALSE;
+		if (thiz->past.link)
+			free(thiz->past.link);
+		thiz->past.link = strdup(thiz->current.link);
 	}
 
-	/* TODO add the clone to the generated g */
-	clone_t = ender_element_object_get(thiz->clone->our);
-	ender_element_property_value_add(thiz->g_e, EDOM_CHILD, clone_t, NULL);
 	/* setup the g */
 	printf("doing the setup on the inner g!\n");
 	/* set the parent */
+	/* FIXME for now */
 	esvg_element_topmost_set(thiz->g_t, topmost);
 	return esvg_element_internal_setup(thiz->g_t, c, error);
 }
@@ -336,15 +358,16 @@ static void _esvg_use_link_set(Edom_Tag *t, const char *link)
 	Esvg_Use *thiz;
 
 	thiz = _esvg_use_get(t);
-	if (thiz->link)
+	if (thiz->current.link)
 	{
-		free(thiz->link);
-		thiz->link = NULL;
+		free(thiz->current.link);
+		thiz->current.link = NULL;
 	}
 	if (link)
 	{
-		thiz->link = strdup(link);
+		thiz->current.link = strdup(link);
 	}
+	thiz->state_changed = EINA_TRUE;
 }
 
 static void _esvg_use_link_get(Edom_Tag *t, const char **link)
@@ -353,7 +376,7 @@ static void _esvg_use_link_get(Edom_Tag *t, const char **link)
 
 	if (!link) return;
 	thiz = _esvg_use_get(t);
-	*link = thiz->link;
+	*link = thiz->current.link;
 }
 /*============================================================================*
  *                                 Global                                     *
