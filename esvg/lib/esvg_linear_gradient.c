@@ -27,6 +27,7 @@
 #include "esvg_private_paint_server.h"
 #include "esvg_private_gradient.h"
 #include "esvg_private_stop.h"
+#include "esvg_private_types.h"
 
 #include "esvg_linear_gradient.h"
 /*============================================================================*
@@ -37,27 +38,13 @@ static Ender_Property *ESVG_LINEAR_GRADIENT_Y1;
 static Ender_Property *ESVG_LINEAR_GRADIENT_X2;
 static Ender_Property *ESVG_LINEAR_GRADIENT_Y2;
 
-/* FIXME share this */
-typedef struct _Esvg_Property_Length
-{
-	Esvg_Length v;
-	Eina_Bool is_set;
-} Esvg_Property_Length;
-
-/* FIXME share this */
-typedef struct _Esvg_Property_Coord
-{
-	Esvg_Coord v;
-	Eina_Bool is_set;
-} Esvg_Property_Coord;
-
 typedef struct _Esvg_Linear_Gradient
 {
 	/* properties */
-	Esvg_Property_Coord x1;
-	Esvg_Property_Coord y1;
-	Esvg_Property_Coord x2;
-	Esvg_Property_Coord y2;
+	Esvg_Attribute_Coord x1;
+	Esvg_Attribute_Coord y1;
+	Esvg_Attribute_Coord x2;
+	Esvg_Attribute_Coord y2;
 	/* private */
 } Esvg_Linear_Gradient;
 
@@ -244,11 +231,11 @@ static Eina_Bool _esvg_linear_gradient_propagate(Edom_Tag *t,
 		break;
 	}
 	enesim_renderer_gradient_mode_set(r, mode);
+
 	/* the coordinates can come from the href
 	 * we need to found which one isnt set and use that
 	 * for the calculus
 	 */
-
 	_esvg_linear_gradient_merge(thiz, t, &lx1, &ly1, &lx2, &ly2);
 
 	if (gu == ESVG_OBJECT_BOUNDING_BOX)

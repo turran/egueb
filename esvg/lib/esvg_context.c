@@ -43,7 +43,7 @@ void esvg_context_init(Esvg_Context *thiz)
 
 void esvg_context_setup_enqueue(Esvg_Context *thiz, Edom_Tag *t)
 {
-
+	thiz->queue = eina_list_append(thiz->queue, t);
 }
 
 void esvg_context_setup_dequeue(Esvg_Context *thiz)

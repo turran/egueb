@@ -27,6 +27,7 @@
 #include "esvg_private_paint_server.h"
 #include "esvg_private_gradient.h"
 #include "esvg_private_stop.h"
+#include "esvg_private_types.h"
 
 #include "esvg_radial_gradient.h"
 /*============================================================================*
@@ -43,17 +44,12 @@ typedef struct _Esvg_Radial_Gradient
 	EINA_MAGIC
 	/* properties */
 	Esvg_Gradient_Units units;
-	Esvg_Coord cx;
-	Esvg_Coord cy;
-	Esvg_Coord fx;
-	Esvg_Coord fy;
-	Esvg_Length rad;
+	Esvg_Attribute_Coord cx;
+	Esvg_Attribute_Coord cy;
+	Esvg_Attribute_Coord fx;
+	Esvg_Attribute_Coord fy;
+	Esvg_Attribute_Length rad;
 	/* private */
-	Eina_Bool cx_is_set : 1;
-	Eina_Bool cy_is_set : 1;
-	Eina_Bool fx_is_set : 1;
-	Eina_Bool fy_is_set : 1;
-	Eina_Bool rad_is_set : 1;
 } Esvg_Radial_Gradient;
 
 static Esvg_Radial_Gradient * _esvg_radial_gradient_get(Edom_Tag *t)
@@ -65,6 +61,110 @@ static Esvg_Radial_Gradient * _esvg_radial_gradient_get(Edom_Tag *t)
 	thiz = esvg_gradient_data_get(t);
 
 	return thiz;
+}
+
+static void _esvg_radial_gradient_deep_fy_get(Esvg_Radial_Gradient *thiz,
+		Edom_Tag *t,
+		Esvg_Coord *fy)
+{
+	Edom_Tag *href;
+
+	href = esvg_gradient_href_tag_get(t);
+	if (!thiz->fy.is_set && href)
+	{
+		Esvg_Radial_Gradient *other;
+
+		other = _esvg_radial_gradient_get(href);
+		_esvg_radial_gradient_deep_fy_get(other, href, fy);
+	}
+	else
+		*fy = thiz->fy.v;
+}
+
+static void _esvg_radial_gradient_deep_fx_get(Esvg_Radial_Gradient *thiz,
+		Edom_Tag *t,
+		Esvg_Coord *fx)
+{
+	Edom_Tag *href;
+
+	href = esvg_gradient_href_tag_get(t);
+	if (!thiz->fx.is_set && href)
+	{
+		Esvg_Radial_Gradient *other;
+
+		other = _esvg_radial_gradient_get(href);
+		_esvg_radial_gradient_deep_fx_get(other, href, fx);
+	}
+	else
+		*fx = thiz->fx.v;
+}
+
+static void _esvg_radial_gradient_deep_cx_get(Esvg_Radial_Gradient *thiz,
+		Edom_Tag *t,
+		Esvg_Coord *cx)
+{
+	Edom_Tag *href;
+
+	href = esvg_gradient_href_tag_get(t);
+	if (!thiz->cx.is_set && href)
+	{
+		Esvg_Radial_Gradient *other;
+
+		other = _esvg_radial_gradient_get(href);
+		_esvg_radial_gradient_deep_cx_get(other, href, cx);
+	}
+	else
+		*cx = thiz->cx.v;
+}
+
+static void _esvg_radial_gradient_deep_cy_get(Esvg_Radial_Gradient *thiz,
+		Edom_Tag *t,
+		Esvg_Coord *cy)
+{
+	Edom_Tag *href;
+
+	href = esvg_gradient_href_tag_get(t);
+	if (!thiz->cy.is_set && href)
+	{
+		Esvg_Radial_Gradient *other;
+
+		other = _esvg_radial_gradient_get(href);
+		_esvg_radial_gradient_deep_cy_get(other, href, cy);
+	}
+	else
+		*cy = thiz->cy.v;
+}
+
+static void _esvg_radial_gradient_deep_rad_get(Esvg_Radial_Gradient *thiz,
+		Edom_Tag *t,
+		Esvg_Length *rad)
+{
+	Edom_Tag *href;
+
+	href = esvg_gradient_href_tag_get(t);
+	if (!thiz->rad.is_set && href)
+	{
+		Esvg_Radial_Gradient *other;
+
+		other = _esvg_radial_gradient_get(href);
+		_esvg_radial_gradient_deep_rad_get(other, href, rad);
+	}
+	else
+		*rad = thiz->rad.v;
+}
+
+
+static void _esvg_radial_gradient_merge(Esvg_Radial_Gradient *thiz,
+		Edom_Tag *t,
+		Esvg_Coord *cx, Esvg_Coord *cy,
+		Esvg_Coord *fx, Esvg_Coord *fy,
+		Esvg_Length *rad)
+{
+	_esvg_radial_gradient_deep_cx_get(thiz, t, cx);
+	_esvg_radial_gradient_deep_cy_get(thiz, t, cy);
+	_esvg_radial_gradient_deep_fx_get(thiz, t, fx);
+	_esvg_radial_gradient_deep_fy_get(thiz, t, fy);
+	_esvg_radial_gradient_deep_rad_get(thiz, t, rad);
 }
 /*----------------------------------------------------------------------------*
  *                       Esvg Paint Server interface                          *
@@ -136,6 +236,11 @@ static Eina_Bool _esvg_radial_gradient_propagate(Edom_Tag *t,
 	Esvg_Gradient_Units gu;
 	Enesim_Repeat_Mode mode;
 	Enesim_Matrix m;
+	Esvg_Coord lcx;
+	Esvg_Coord lcy;
+	Esvg_Coord lfx;
+	Esvg_Coord lfy;
+	Esvg_Coord lrad;
 	double cx;
 	double cy;
 	double fx;
@@ -162,14 +267,20 @@ static Eina_Bool _esvg_radial_gradient_propagate(Edom_Tag *t,
 	}
 	enesim_renderer_gradient_mode_set(r, mode);
 
+	/* the coordinates can come from the href
+	 * we need to found which one isnt set and use that
+	 * for the calculus
+	 */
+	_esvg_radial_gradient_merge(thiz, t, &lcx, &lcy, &lfx, &lfy, &lrad);
+
 	if (gu == ESVG_OBJECT_BOUNDING_BOX)
 	{
 		/* check that the coordinates shold be set with (0,0) -> (1, 1) */
-		cx = esvg_length_final_get(&thiz->cx, 1, 1);
-		cy = esvg_length_final_get(&thiz->cy, 1, 1);
-		fx = esvg_length_final_get(&thiz->fx, 1, 1);
-		fy = esvg_length_final_get(&thiz->fy, 1, 1);
-		rad = esvg_length_final_get(&thiz->rad, 1, 1);
+		cx = esvg_length_final_get(&lcx, 1, 1);
+		cy = esvg_length_final_get(&lcy, 1, 1);
+		fx = esvg_length_final_get(&lfx, 1, 1);
+		fy = esvg_length_final_get(&lfy, 1, 1);
+		rad = esvg_length_final_get(&lrad, 1, 1);
 		enesim_matrix_values_set(&m, ctx->bounds.w, 0, ctx->bounds.x, 0, ctx->bounds.h, ctx->bounds.y, 0, 0, 1);
 	}
 	else
@@ -182,15 +293,15 @@ static Eina_Bool _esvg_radial_gradient_propagate(Edom_Tag *t,
 		w = ctx->viewbox.width;
 		h = ctx->viewbox.height;
 
-		cx = esvg_length_final_get(&thiz->cx, w, ctx->font_size);
-		cy = esvg_length_final_get(&thiz->cy, h, ctx->font_size);
-		fx = esvg_length_final_get(&thiz->fx, w, ctx->font_size);
-		fy = esvg_length_final_get(&thiz->fy, h, ctx->font_size);
-		if (thiz->rad.unit == ESVG_UNIT_LENGTH_PERCENT)
+		cx = esvg_length_final_get(&lcx, w, ctx->font_size);
+		cy = esvg_length_final_get(&lcy, h, ctx->font_size);
+		fx = esvg_length_final_get(&lfx, w, ctx->font_size);
+		fy = esvg_length_final_get(&lfy, h, ctx->font_size);
+		if (thiz->rad.v.unit == ESVG_UNIT_LENGTH_PERCENT)
 		{
 			rad_vp = hypot(w, h) / M_SQRT2;
 		}
-		rad = esvg_length_final_get(&thiz->rad, rad_vp, ctx->font_size);
+		rad = esvg_length_final_get(&lrad, rad_vp, ctx->font_size);
 		m = ctx->transform.base;
 	}
 	if (enesim_matrix_type_get(&gctx->transform) != ENESIM_MATRIX_IDENTITY)
@@ -257,12 +368,12 @@ static void _esvg_radial_gradient_cx_set(Edom_Tag *t, const Esvg_Coord *cx)
 	thiz = _esvg_radial_gradient_get(t);
 	if (!cx)
 	{
-		thiz->cx_is_set = EINA_FALSE;
+		thiz->cx.is_set = EINA_FALSE;
 	}
 	else
 	{
-		thiz->cx = *cx;
-		thiz->cx_is_set = EINA_TRUE;
+		thiz->cx.v = *cx;
+		thiz->cx.is_set = EINA_TRUE;
 	}
 }
 
@@ -272,7 +383,7 @@ static void _esvg_radial_gradient_cx_get(Edom_Tag *t, Esvg_Coord *cx)
 
 	if (!cx) return;
 	thiz = _esvg_radial_gradient_get(t);
-	*cx = thiz->cx;
+	*cx = thiz->cx.v;
 }
 
 static Eina_Bool _esvg_radial_gradient_cx_is_set(Edom_Tag *t)
@@ -280,7 +391,7 @@ static Eina_Bool _esvg_radial_gradient_cx_is_set(Edom_Tag *t)
 	Esvg_Radial_Gradient *thiz;
 
 	thiz = _esvg_radial_gradient_get(t);
-	return thiz->cx_is_set;
+	return thiz->cx.is_set;
 }
 
 static void _esvg_radial_gradient_cy_set(Edom_Tag *t, const Esvg_Coord *cy)
@@ -290,12 +401,12 @@ static void _esvg_radial_gradient_cy_set(Edom_Tag *t, const Esvg_Coord *cy)
 	thiz = _esvg_radial_gradient_get(t);
 	if (!cy)
 	{
-		thiz->cy_is_set = EINA_FALSE;
+		thiz->cy.is_set = EINA_FALSE;
 	}
 	else
 	{
-		thiz->cy = *cy;
-		thiz->cy_is_set = EINA_TRUE;
+		thiz->cy.v = *cy;
+		thiz->cy.is_set = EINA_TRUE;
 	}
 }
 
@@ -305,7 +416,7 @@ static void _esvg_radial_gradient_cy_get(Edom_Tag *t, Esvg_Coord *cy)
 
 	if (!cy) return;
 	thiz = _esvg_radial_gradient_get(t);
-	*cy = thiz->cy;
+	*cy = thiz->cy.v;
 }
 
 static Eina_Bool _esvg_radial_gradient_cy_is_set(Edom_Tag *t)
@@ -313,7 +424,7 @@ static Eina_Bool _esvg_radial_gradient_cy_is_set(Edom_Tag *t)
 	Esvg_Radial_Gradient *thiz;
 
 	thiz = _esvg_radial_gradient_get(t);
-	return thiz->cy_is_set;
+	return thiz->cy.is_set;
 }
 
 static void _esvg_radial_gradient_fx_set(Edom_Tag *t, const Esvg_Coord *fx)
@@ -323,12 +434,12 @@ static void _esvg_radial_gradient_fx_set(Edom_Tag *t, const Esvg_Coord *fx)
 	thiz = _esvg_radial_gradient_get(t);
 	if (!fx)
 	{
-		thiz->fx_is_set = EINA_FALSE;
+		thiz->fx.is_set = EINA_FALSE;
 	}
 	else
 	{
-		thiz->fx = *fx;
-		thiz->fx_is_set = EINA_TRUE;
+		thiz->fx.v = *fx;
+		thiz->fx.is_set = EINA_TRUE;
 	}
 }
 
@@ -338,7 +449,7 @@ static void _esvg_radial_gradient_fx_get(Edom_Tag *t, Esvg_Coord *fx)
 
 	if (!fx) return;
 	thiz = _esvg_radial_gradient_get(t);
-	*fx = thiz->fx;
+	*fx = thiz->fx.v;
 }
 
 static Eina_Bool _esvg_radial_gradient_fx_is_set(Edom_Tag *t)
@@ -346,7 +457,7 @@ static Eina_Bool _esvg_radial_gradient_fx_is_set(Edom_Tag *t)
 	Esvg_Radial_Gradient *thiz;
 
 	thiz = _esvg_radial_gradient_get(t);
-	return thiz->fx_is_set;
+	return thiz->fx.is_set;
 }
 
 static void _esvg_radial_gradient_fy_set(Edom_Tag *t, const Esvg_Coord *fy)
@@ -356,12 +467,12 @@ static void _esvg_radial_gradient_fy_set(Edom_Tag *t, const Esvg_Coord *fy)
 	thiz = _esvg_radial_gradient_get(t);
 	if (!fy)
 	{
-		thiz->fy_is_set = EINA_FALSE;
+		thiz->fy.is_set = EINA_FALSE;
 	}
 	else
 	{
-		thiz->fy = *fy;
-		thiz->fy_is_set = EINA_TRUE;
+		thiz->fy.v = *fy;
+		thiz->fy.is_set = EINA_TRUE;
 	}
 }
 
@@ -371,7 +482,7 @@ static void _esvg_radial_gradient_fy_get(Edom_Tag *t, Esvg_Coord *fy)
 
 	if (!fy) return;
 	thiz = _esvg_radial_gradient_get(t);
-	*fy = thiz->fy;
+	*fy = thiz->fy.v;
 }
 
 static Eina_Bool _esvg_radial_gradient_fy_is_set(Edom_Tag *t)
@@ -379,7 +490,7 @@ static Eina_Bool _esvg_radial_gradient_fy_is_set(Edom_Tag *t)
 	Esvg_Radial_Gradient *thiz;
 
 	thiz = _esvg_radial_gradient_get(t);
-	return thiz->fy_is_set;
+	return thiz->fy.is_set;
 }
 
 static void _esvg_radial_gradient_r_set(Edom_Tag *t, const Esvg_Length *rad)
@@ -389,12 +500,12 @@ static void _esvg_radial_gradient_r_set(Edom_Tag *t, const Esvg_Length *rad)
 	thiz = _esvg_radial_gradient_get(t);
 	if (!rad)
 	{
-		thiz->rad_is_set = EINA_FALSE;
+		thiz->rad.is_set = EINA_FALSE;
 	}
 	else
 	{
-		thiz->rad = *rad;
-		thiz->rad_is_set = EINA_TRUE;
+		thiz->rad.v = *rad;
+		thiz->rad.is_set = EINA_TRUE;
 	}
 }
 
@@ -404,7 +515,7 @@ static void _esvg_radial_gradient_r_get(Edom_Tag *t, Esvg_Length *rad)
 
 	if (!rad) return;
 	thiz = _esvg_radial_gradient_get(t);
-	*rad = thiz->rad;
+	*rad = thiz->rad.v;
 }
 
 static Eina_Bool _esvg_radial_gradient_r_is_set(Edom_Tag *t)
@@ -412,7 +523,7 @@ static Eina_Bool _esvg_radial_gradient_r_is_set(Edom_Tag *t)
 	Esvg_Radial_Gradient *thiz;
 
 	thiz = _esvg_radial_gradient_get(t);
-	return thiz->rad_is_set;
+	return thiz->rad.is_set;
 }
 /*============================================================================*
  *                                 Global                                     *
