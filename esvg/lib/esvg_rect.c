@@ -251,12 +251,12 @@ static void _esvg_rect_free(Edom_Tag *t)
 static Esvg_Instantiable_Descriptor _descriptor = {
 	/* .child_add		= */ NULL,
 	/* .child_remove	= */ NULL,
-	/* .attribute_get 	= */ _esvg_rect_attribute_get,
-	/* .cdata_set 		= */ NULL,
-	/* .text_set 		= */ NULL,
-	/* .free 		= */ _esvg_rect_free,
-	/* .initialize 		= */ NULL,
-	/* .attribute_set 	= */ _esvg_rect_attribute_set,
+	/* .attribute_get	= */ _esvg_rect_attribute_get,
+	/* .cdata_set		= */ NULL,
+	/* .text_set		= */ NULL,
+	/* .free		= */ _esvg_rect_free,
+	/* .initialize		= */ NULL,
+	/* .attribute_set	= */ _esvg_rect_attribute_set,
 	/* .clone		= */ _esvg_rect_clone,
 	/* .setup		= */ _esvg_rect_setup,
 	/* .renderer_get	= */ _esvg_rect_renderer_get,
@@ -284,8 +284,8 @@ static Edom_Tag * _esvg_rect_new(void)
 	thiz->current.width.base = ESVG_LENGTH_0;
 	thiz->current.height.base = ESVG_LENGTH_0;
         /* FIXME: set rx and ry ? */
-/* 	thiz->current.rx = ESVG_COORD_0; */
-/* 	thiz->current.ry = ESVG_COORD_0; */
+/*	thiz->current.rx = ESVG_COORD_0; */
+/*	thiz->current.ry = ESVG_COORD_0; */
 
 	t = esvg_instantiable_new(&_descriptor, ESVG_RECT, thiz);
 	return t;
@@ -436,30 +436,21 @@ static void _esvg_rect_ry_get(Edom_Tag *t, Esvg_Animated_Coord *ry)
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/
-/**
- * To be documented
- * FIXME: To be fixed
- */
 EAPI Ender_Element * esvg_rect_new(void)
 {
 	return ender_element_new_with_namespace("rect", "esvg");
 }
 
-/**
- * To be documented
- * FIXME: To be fixed
- */
 EAPI Eina_Bool esvg_is_rect(Ender_Element *e)
 {
-	Eina_Bool ret = EINA_TRUE;
+	Edom_Tag *t;
+	Esvg_Type type;
 
-	return ret;
+	t = (Edom_Tag *)ender_element_object_get(e);
+	type = esvg_element_internal_type_get(t);
+	return (type == ESVG_RECT) ? EINA_TRUE : EINA_FALSE;
 }
 
-/**
- * To be documented
- * FIXME: To be fixed
- */
 EAPI void esvg_rect_x_set(Ender_Element *e, const Esvg_Coord *x)
 {
 	Esvg_Animated_Coord ax;
@@ -474,18 +465,10 @@ EAPI void esvg_rect_x_set(Ender_Element *e, const Esvg_Coord *x)
 	ender_element_property_value_set(e, ESVG_RECT_X, &ax, NULL);
 }
 
-/**
- * To be documented
- * FIXME: To be fixed
- */
 EAPI void esvg_rect_x_get(Ender_Element *e, Esvg_Coord *x)
 {
 }
 
-/**
- * To be documented
- * FIXME: To be fixed
- */
 EAPI void esvg_rect_y_set(Ender_Element *e, const Esvg_Coord *y)
 {
 	Esvg_Animated_Coord ay;
@@ -500,18 +483,10 @@ EAPI void esvg_rect_y_set(Ender_Element *e, const Esvg_Coord *y)
 	ender_element_property_value_set(e, ESVG_RECT_Y, &ay, NULL);
 }
 
-/**
- * To be documented
- * FIXME: To be fixed
- */
 EAPI void esvg_rect_y_get(Ender_Element *e, Esvg_Coord *y)
 {
 }
 
-/**
- * To be documented
- * FIXME: To be fixed
- */
 EAPI void esvg_rect_width_set(Ender_Element *e, const Esvg_Length *width)
 {
 	Esvg_Animated_Length aw;
@@ -525,18 +500,10 @@ EAPI void esvg_rect_width_set(Ender_Element *e, const Esvg_Length *width)
 	ender_element_property_value_set(e, ESVG_RECT_WIDTH, &aw, NULL);
 }
 
-/**
- * To be documented
- * FIXME: To be fixed
- */
 EAPI void esvg_rect_width_get(Ender_Element *e, Esvg_Length *width)
 {
 }
 
-/**
- * To be documented
- * FIXME: To be fixed
- */
 EAPI void esvg_rect_height_set(Ender_Element *e, const Esvg_Length *height)
 {
 	Esvg_Animated_Length ah;
@@ -550,18 +517,10 @@ EAPI void esvg_rect_height_set(Ender_Element *e, const Esvg_Length *height)
 	ender_element_property_value_set(e, ESVG_RECT_HEIGHT, &ah, NULL);
 }
 
-/**
- * To be documented
- * FIXME: To be fixed
- */
 EAPI void esvg_rect_height_get(Ender_Element *e, Esvg_Length *height)
 {
 }
 
-/**
- * To be documented
- * FIXME: To be fixed
- */
 EAPI void esvg_rect_rx_set(Ender_Element *e, const Esvg_Coord *rx)
 {
 	Esvg_Animated_Coord arx;
@@ -575,18 +534,10 @@ EAPI void esvg_rect_rx_set(Ender_Element *e, const Esvg_Coord *rx)
 	ender_element_property_value_set(e, ESVG_RECT_RX, &arx, NULL);
 }
 
-/**
- * To be documented
- * FIXME: To be fixed
- */
 EAPI void esvg_rect_rx_get(Ender_Element *e, Esvg_Coord *rx)
 {
 }
 
-/**
- * To be documented
- * FIXME: To be fixed
- */
 EAPI void esvg_rect_ry_set(Ender_Element *e, const Esvg_Coord *ry)
 {
 	Esvg_Animated_Coord ary;
@@ -595,16 +546,12 @@ EAPI void esvg_rect_ry_set(Ender_Element *e, const Esvg_Coord *ry)
 	{
 		ender_element_property_value_set(e, ESVG_RECT_RY, ry, NULL);
 		return;
-	
 	}
+
 	ary.base = *ry;
 	ender_element_property_value_set(e, ESVG_RECT_RY, &ary, NULL);
 }
 
-/**
- * To be documented
- * FIXME: To be fixed
- */
 EAPI void esvg_rect_ry_get(Ender_Element *e, Esvg_Coord *ry)
 {
 }

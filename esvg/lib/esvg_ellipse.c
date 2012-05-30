@@ -347,6 +347,12 @@ EAPI Ender_Element * esvg_ellipse_new(void)
 
 EAPI Eina_Bool esvg_is_ellipse(Ender_Element *e)
 {
+	Edom_Tag *t;
+	Esvg_Type type;
+
+	t = (Edom_Tag *)ender_element_object_get(e);
+	type = esvg_element_internal_type_get(t);
+	return (type == ESVG_ELLIPSE) ? EINA_TRUE : EINA_FALSE;
 }
 
 EAPI void esvg_ellipse_cx_set(Ender_Element *e, const Esvg_Coord *cx)
@@ -356,6 +362,10 @@ EAPI void esvg_ellipse_cx_set(Ender_Element *e, const Esvg_Coord *cx)
 
 EAPI void esvg_ellipse_cx_get(Ender_Element *e, Esvg_Coord *cx)
 {
+	Edom_Tag *t;
+
+	t = (Edom_Tag *)ender_element_object_get(e);
+	_esvg_ellipse_cx_get(t, cx);
 }
 
 EAPI void esvg_ellipse_cy_set(Ender_Element *e, const Esvg_Coord *cy)
@@ -365,6 +375,10 @@ EAPI void esvg_ellipse_cy_set(Ender_Element *e, const Esvg_Coord *cy)
 
 EAPI void esvg_ellipse_cy_get(Ender_Element *e, Esvg_Coord *cy)
 {
+	Edom_Tag *t;
+
+	t = (Edom_Tag *)ender_element_object_get(e);
+	_esvg_ellipse_cy_get(t, cy);
 }
 
 EAPI void esvg_ellipse_rx_set(Ender_Element *e, const Esvg_Length *rx)
@@ -374,6 +388,10 @@ EAPI void esvg_ellipse_rx_set(Ender_Element *e, const Esvg_Length *rx)
 
 EAPI void esvg_ellipse_rx_get(Ender_Element *e, Esvg_Length *rx)
 {
+	Edom_Tag *t;
+
+	t = (Edom_Tag *)ender_element_object_get(e);
+	_esvg_ellipse_rx_get(t, rx);
 }
 
 EAPI void esvg_ellipse_ry_set(Ender_Element *e, const Esvg_Length *ry)
@@ -383,4 +401,8 @@ EAPI void esvg_ellipse_ry_set(Ender_Element *e, const Esvg_Length *ry)
 
 EAPI void esvg_ellipse_ry_get(Ender_Element *e, Esvg_Length *ry)
 {
+	Edom_Tag *t;
+
+	t = (Edom_Tag *)ender_element_object_get(e);
+	_esvg_ellipse_ry_get(t, ry);
 }

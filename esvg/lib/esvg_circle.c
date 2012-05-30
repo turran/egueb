@@ -317,6 +317,12 @@ EAPI Ender_Element * esvg_circle_new(void)
 
 EAPI Eina_Bool esvg_is_circle(Ender_Element *e)
 {
+	Edom_Tag *t;
+	Esvg_Type type;
+
+	t = (Edom_Tag *)ender_element_object_get(e);
+	type = esvg_element_internal_type_get(t);
+	return (type == ESVG_CIRCLE) ? EINA_TRUE : EINA_FALSE;
 }
 
 EAPI void esvg_circle_cx_set(Ender_Element *e, const Esvg_Coord *cx)
@@ -326,6 +332,10 @@ EAPI void esvg_circle_cx_set(Ender_Element *e, const Esvg_Coord *cx)
 
 EAPI void esvg_circle_cx_get(Ender_Element *e, Esvg_Coord *cx)
 {
+	Edom_Tag *t;
+
+	t = (Edom_Tag *)ender_element_object_get(e);
+	_esvg_circle_cx_get(t, cx);
 }
 
 EAPI void esvg_circle_cy_set(Ender_Element *e, const Esvg_Coord *cy)
@@ -335,6 +345,10 @@ EAPI void esvg_circle_cy_set(Ender_Element *e, const Esvg_Coord *cy)
 
 EAPI void esvg_circle_cy_get(Ender_Element *e, Esvg_Coord *cy)
 {
+	Edom_Tag *t;
+
+	t = (Edom_Tag *)ender_element_object_get(e);
+	_esvg_circle_cy_get(t, cy);
 }
 
 EAPI void esvg_circle_r_set(Ender_Element *e, const Esvg_Length *r)
@@ -344,4 +358,8 @@ EAPI void esvg_circle_r_set(Ender_Element *e, const Esvg_Length *r)
 
 EAPI void esvg_circle_r_get(Ender_Element *e, Esvg_Length *r)
 {
+	Edom_Tag *t;
+
+	t = (Edom_Tag *)ender_element_object_get(e);
+	_esvg_circle_r_get(t, r);
 }
