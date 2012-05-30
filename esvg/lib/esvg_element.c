@@ -129,6 +129,7 @@ typedef struct _Esvg_Element
 	/* identifier of the last time an element has done the setup */
 	int last_run;
 	/* flag set whenever some property has changed */
+	/* FIXME remove this */
 	int changed;
 	/* the ender element associated with this element */
 	Ender_Element *e;
@@ -1040,9 +1041,9 @@ void esvg_element_topmost_set(Edom_Tag *t, Ender_Element *topmost)
 	event_data.current = topmost;
 	event_data.child = t;
 	if (topmost)
-		ender_event_dispatch(topmost, "topmost_changed", &event_data);
+		ender_event_dispatch(topmost, "TopmostChanged", &event_data);
 	if (thiz->topmost)
-		ender_event_dispatch(thiz->topmost, "topmost_changed", &event_data);
+		ender_event_dispatch(thiz->topmost, "TopmostChanged", &event_data);
 	thiz->topmost = topmost;
 }
 
@@ -1146,6 +1147,18 @@ const Esvg_Attribute_Presentation * esvg_element_attribute_presentation_get(Edom
 }
 
 #if 0
+/* FIXME this functions should be implemented */
+void esvg_element_request_setup(Edom_Tag *t)
+{
+	Esvg_Element *thiz;
+
+	thiz = _esvg_element_get(t);
+	if (thiz->setup_requested) return;
+	thiz->setup_requested = EINA_TRUE;
+	/* trigger the event so the svg element can capture it */
+	ender_event_dispatch(thiz->e, "SetupRequested", NULL);
+}
+
 double esvg_element_context_x_length_calculate(Esvg_Element_Context *t, Esvg_Length *l)
 {
 

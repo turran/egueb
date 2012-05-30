@@ -99,7 +99,7 @@ static void _esvg_use_initialize(Ender_Element *e)
 	 * we should also set the topmost on the g
 	 */
 	printf("initializing!!!\n");
-	ender_event_listener_add(e, "topmost_changed", _esvg_use_topmost_changed_cb, thiz);
+	ender_event_listener_add(e, "TopmostChanged", _esvg_use_topmost_changed_cb, thiz);
 }
 
 static Eina_Bool _esvg_use_attribute_set(Ender_Element *e,

@@ -27,11 +27,6 @@
  *                                  Local                                     *
  *============================================================================*/
 static int _run = 1;
-
-typedef struct _Esvg_Context_Setup
-{
-	Edom_Tag *t;
-} Esvg_Context_Setup;
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
@@ -48,7 +43,14 @@ void esvg_context_setup_enqueue(Esvg_Context *thiz, Edom_Tag *t)
 
 void esvg_context_setup_dequeue(Esvg_Context *thiz)
 {
-	/* for every context setup dequeue it */
+	Eina_List *l;
+	Edom_Tag *t;
+
+	EINA_LIST_FOREACH(thiz->queue, l, t)
+	{
+		/* FIXME for every tag, call the setup */
+		/* FIXME it might be possible that the element enqueue again? */
+	}
 }
 /*============================================================================*
  *                                   API                                      *

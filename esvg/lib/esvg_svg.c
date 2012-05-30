@@ -545,7 +545,7 @@ static Eina_Bool _esvg_svg_child_deinitialize(Edom_Tag *t, Edom_Tag *child_t, vo
 static void _esvg_svg_initialize(Ender_Element *e)
 {
 	/* called whenever the topmost changes */
-	ender_event_listener_add(e, "topmost_changed", _esvg_svg_topmost_changed_cb, NULL);
+	ender_event_listener_add(e, "TopmostChanged", _esvg_svg_topmost_changed_cb, NULL);
 }
 
 static Eina_Bool _esvg_svg_attribute_set(Ender_Element *e, const char *key, const char *value)
@@ -1421,5 +1421,6 @@ EAPI void esvg_svg_base_font_size_set(Ender_Element *e, double base_font_size)
  */
 EAPI void esvg_svg_process(Ender_Element *e, Enesim_Error **error)
 {
-
+	/* in case we are the topmost use NULL as the parent's state */
+	esvg_element_setup(e, error);
 }
