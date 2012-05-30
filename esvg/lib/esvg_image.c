@@ -32,8 +32,6 @@
  *============================================================================*/
 static Ender_Property *ESVG_IMAGE_X;
 static Ender_Property *ESVG_IMAGE_Y;
-static Ender_Property *ESVG_IMAGE_RX;
-static Ender_Property *ESVG_IMAGE_RY;
 static Ender_Property *ESVG_IMAGE_WIDTH;
 static Ender_Property *ESVG_IMAGE_HEIGHT;
 static Ender_Property *ESVG_IMAGE_HREF;
@@ -261,6 +259,7 @@ static Eina_Bool _esvg_image_renderer_propagate(Edom_Tag *t,
 	return EINA_TRUE;
 }
 
+#if 0
 static Eina_Bool _esvg_image_has_changed(Edom_Tag *t)
 {
 	Esvg_Image *thiz;
@@ -279,6 +278,7 @@ static Eina_Bool _esvg_image_has_changed(Edom_Tag *t)
 
 	return EINA_FALSE;
 }
+#endif
 
 static void _esvg_image_free(Edom_Tag *t)
 {
@@ -464,99 +464,82 @@ static void _esvg_image_href_get(Edom_Tag *t, const char **href)
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/
-/**
- * To be documented
- * FIXME: To be fixed
- */
 EAPI Ender_Element * esvg_image_new(void)
 {
 	return ender_element_new_with_namespace("image", "esvg");
 }
 
-/**
- * To be documented
- * FIXME: To be fixed
- */
+EAPI Eina_Bool esvg_is_image(Ender_Element *e)
+{
+	Edom_Tag *t;
+	Esvg_Type type;
+
+	t = (Edom_Tag *)ender_element_object_get(e);
+	type = esvg_element_internal_type_get(t);
+	return (type == ESVG_IMAGE) ? EINA_TRUE : EINA_FALSE;
+}
+
 EAPI void esvg_image_x_set(Ender_Element *e, const Esvg_Coord *x)
 {
 	ender_element_property_value_set(e, ESVG_IMAGE_X, x, NULL);
 }
 
-/**
- * To be documented
- * FIXME: To be fixed
- */
 EAPI void esvg_image_x_get(Ender_Element *e, Esvg_Coord *x)
 {
+	Edom_Tag *t;
 
+	t = (Edom_Tag *)ender_element_object_get(e);
+	_esvg_image_x_get(t, x);
 }
 
-/**
- * To be documented
- * FIXME: To be fixed
- */
 EAPI void esvg_image_y_set(Ender_Element *e, const Esvg_Coord *y)
 {
 	ender_element_property_value_set(e, ESVG_IMAGE_Y, y, NULL);
 }
 
-/**
- * To be documented
- * FIXME: To be fixed
- */
 EAPI void esvg_image_y_get(Ender_Element *e, Esvg_Coord *y)
 {
+	Edom_Tag *t;
 
+	t = (Edom_Tag *)ender_element_object_get(e);
+	_esvg_image_y_get(t, y);
 }
 
-/**
- * To be documented
- * FIXME: To be fixed
- */
 EAPI void esvg_image_width_set(Ender_Element *e, const Esvg_Length *width)
 {
 	ender_element_property_value_set(e, ESVG_IMAGE_WIDTH, width, NULL);
 }
 
-/**
- * To be documented
- * FIXME: To be fixed
- */
 EAPI void esvg_image_width_get(Ender_Element *e, Esvg_Length *width)
 {
+	Edom_Tag *t;
 
+	t = (Edom_Tag *)ender_element_object_get(e);
+	_esvg_image_width_get(t, width);
 }
 
-/**
- * To be documented
- * FIXME: To be fixed
- */
 EAPI void esvg_image_height_set(Ender_Element *e, const Esvg_Length *height)
 {
 	ender_element_property_value_set(e, ESVG_IMAGE_HEIGHT, height, NULL);
 }
 
-/**
- * To be documented
- * FIXME: To be fixed
- */
 EAPI void esvg_image_height_get(Ender_Element *e, Esvg_Length *height)
 {
+	Edom_Tag *t;
+
+	t = (Edom_Tag *)ender_element_object_get(e);
+	_esvg_image_height_get(t, height);
 }
 
-/**
- * To be documented
- * FIXME: To be fixed
- */
 EAPI void esvg_image_href_set(Ender_Element *e, const char *href)
 {
 	ender_element_property_value_set(e, ESVG_IMAGE_HREF, href, NULL);
 }
 
-/**
- * To be documented
- * FIXME: To be fixed
- */
 EAPI void esvg_image_href_get(Ender_Element *e, const char **href)
 {
+	Edom_Tag *t;
+
+	t = (Edom_Tag *)ender_element_object_get(e);
+	_esvg_image_href_get(t, href);
 }

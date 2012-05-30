@@ -2,6 +2,7 @@
 #define _ESVG_IMAGE_H_
 
 EAPI Ender_Element * esvg_image_new(void);
+EAPI Eina_Bool esvg_is_image(Ender_Element *e);
 EAPI void esvg_image_x_set(Ender_Element *e,  const Esvg_Coord *x);
 EAPI void esvg_image_x_get(Ender_Element *e, Esvg_Coord *x);
 EAPI void esvg_image_y_set(Ender_Element *e,  const Esvg_Coord *y);
