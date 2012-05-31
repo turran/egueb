@@ -207,6 +207,11 @@ static Esvg_Element_Setup_Return _esvg_use_setup(Edom_Tag *t,
 			/* TODO remove previous clone */
 			thiz->clone = NULL;
 		}
+		if (thiz->past.link)
+		{
+			free(thiz->past.link);
+			thiz->past.link = NULL;
+		}
 		if (thiz->current.link)
 		{
 			esvg_svg_element_get(topmost, thiz->current.link, &link);
@@ -221,13 +226,10 @@ static Esvg_Element_Setup_Return _esvg_use_setup(Edom_Tag *t,
 			/* TODO add the clone to the generated g */
 			clone_t = ender_element_object_get(thiz->clone->our);
 			ender_element_property_value_add(thiz->g_e, EDOM_CHILD, clone_t, NULL);
-
+			thiz->past.link = strdup(thiz->current.link);
 		}
 		/* FIXME this should go to the cleanup */
 		thiz->state_changed = EINA_FALSE;
-		if (thiz->past.link)
-			free(thiz->past.link);
-		thiz->past.link = strdup(thiz->current.link);
 	}
 
 	/* setup the g */
