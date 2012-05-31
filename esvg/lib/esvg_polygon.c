@@ -227,6 +227,12 @@ EAPI Ender_Element * esvg_polygon_new(void)
 
 EAPI Eina_Bool esvg_is_polygon(Ender_Element *e)
 {
+	Edom_Tag *t;
+	Esvg_Type type;
+
+	t = (Edom_Tag *)ender_element_object_get(e);
+	type = esvg_element_internal_type_get(t);
+	return (type == ESVG_POLYGON) ? EINA_TRUE : EINA_FALSE;
 }
 
 EAPI void esvg_polygon_point_add(Ender_Element *e, Esvg_Point *p)
