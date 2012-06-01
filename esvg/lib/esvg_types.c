@@ -1601,7 +1601,7 @@ EAPI Eina_Bool esvg_path_string_from(const char *value, Esvg_Command_Cb cb, void
 			break;
 		}
 		/* for the 'move' case the next elements should be lines */
-		if ((command == 'm' || command == 'M') && first)
+		if ((command == 'm' || command == 'M'))
 		{
 			/* the next commands should be lines */
 			if (command == 'm')
