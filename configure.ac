@@ -65,7 +65,7 @@ AC_SUBST([esvg_requirements])
 ### Additional options to configure
 
 AC_ARG_ENABLE([ecss],
-   [AC_HELP_STRING([--enable-ecss], [enable Ecss compilation.])],
+   [AS_HELP_STRING([--enable-ecss], [enable Ecss compilation.])],
    [if test "x${enableval}" = "xyes"; then
        want_ecss="yes"
     else
@@ -77,7 +77,7 @@ AC_ARG_ENABLE([ecss],
 AM_CONDITIONAL([WANT_ECSS], [test "x${want_ecss}" = "xyes"])
 
 AC_ARG_ENABLE([edom],
-   [AC_HELP_STRING([--enable-edom], [enable Edom compilation.])],
+   [AS_HELP_STRING([--enable-edom], [enable Edom compilation.])],
    [if test "x${enableval}" = "xyes"; then
        want_edom="yes"
     else
@@ -89,7 +89,7 @@ AC_ARG_ENABLE([edom],
 AM_CONDITIONAL([WANT_EDOM], [test "x${want_edom}" = "xyes"])
 
 AC_ARG_ENABLE([esvg],
-   [AC_HELP_STRING([--enable-esvg], [enable Esvg compilation.])],
+   [AS_HELP_STRING([--enable-esvg], [enable Esvg compilation.])],
    [if test "x${enableval}" = "xyes"; then
        want_esvg="yes"
     else
@@ -192,7 +192,7 @@ AC_C_BIGENDIAN
 
 ## Make the debug preprocessor configurable
 
-AC_OUTPUT([
+AC_CONFIG_FILES([
 edom/Makefile
 edom/include/Makefile
 edom/lib/Makefile
@@ -215,6 +215,8 @@ ecss.pc
 edom.pc
 ],[
 ])
+
+AC_OUTPUT
 
 #####################################################################
 ## Info
