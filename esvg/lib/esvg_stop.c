@@ -28,6 +28,8 @@
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
+#define ESVG_LOG_DEFAULT esvg_log_stop
+
 static Ender_Property *ESVG_STOP_OFFSET;
 
 typedef struct _Esvg_Stop

@@ -36,8 +36,21 @@ void esvg_context_init(Esvg_Context *thiz)
 	thiz->queue = NULL;
 }
 
+void esvg_context_shutdown(Esvg_Context *thiz)
+{
+	eina_list_free(thiz->queue);
+}
+
 void esvg_context_setup_enqueue(Esvg_Context *thiz, Edom_Tag *t)
 {
+	printf("enqueuing tag %p\n", t);
+	/* FIXME it might be possible that an element is enqueued
+	 * when we are dequeing the context, we need to handle
+	 * that, but for now */
+	if (thiz->dequeuing)
+	{
+		printf("enqueuing while dequeuing\n");
+	}
 	thiz->queue = eina_list_append(thiz->queue, t);
 }
 
@@ -46,10 +59,11 @@ void esvg_context_setup_dequeue(Esvg_Context *thiz)
 	Eina_List *l;
 	Edom_Tag *t;
 
+	/* FIXME it might be possible that the element enqueue again? */
 	EINA_LIST_FOREACH(thiz->queue, l, t)
 	{
+		printf("dequeing tag %p\n", t);
 		/* FIXME for every tag, call the setup */
-		/* FIXME it might be possible that the element enqueue again? */
 	}
 }
 /*============================================================================*

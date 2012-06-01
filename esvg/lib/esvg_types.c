@@ -1563,11 +1563,13 @@ EAPI Eina_Bool esvg_path_string_from(const char *value, Esvg_Command_Cb cb, void
 	if (!cb) return EINA_FALSE;
 
 	ESVG_SPACE_SKIP(iter);
+	/* empty path data */
+	if (!*iter) return EINA_FALSE;
 	/* First char must be 'M' or 'm' */
 	if ((*iter != 'M') &&
 	    (*iter != 'm'))
 	{
-		ERR("First char not 'M' or 'm'");
+		ERR("First char not 'M' or 'm' but '%c'", *iter);
 		return EINA_FALSE;
 	}
 	while (*iter)

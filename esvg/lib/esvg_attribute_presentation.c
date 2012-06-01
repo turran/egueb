@@ -316,8 +316,32 @@ void esvg_attribute_presentation_merge(const Esvg_Attribute_Presentation *state,
 		d->visibility_set = EINA_TRUE;
 
 	}
-}
 
+	/* stop opacity */
+	if (!state->stop_opacity_set)
+	{
+		d->stop_opacity = parent->stop_opacity;
+		d->stop_opacity_set = parent->stop_opacity_set;
+	}
+	else
+	{
+		d->stop_opacity = state->stop_opacity;
+		d->stop_opacity_set = EINA_TRUE;
+
+	}
+	/* stop color */
+	if (!state->stop_color_set)
+	{
+		d->stop_color = parent->stop_color;
+		d->stop_color_set = parent->stop_color_set;
+	}
+	else
+	{
+		d->stop_color = state->stop_color;
+		d->stop_color_set = EINA_TRUE;
+
+	}
+}
 
 void esvg_attribute_presentation_clip_path_set(Esvg_Attribute_Presentation *thiz, const char *clip_path)
 {

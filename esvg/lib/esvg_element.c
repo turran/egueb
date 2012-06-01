@@ -181,20 +181,29 @@ static Eina_Bool _esvg_element_child_setup_cb(Edom_Tag *t, Edom_Tag *child,
 	Esvg_Element_Setup_Return ret;
 
 	/* the real setup */
-	if (!esvg_element_internal_setup(child, setup_data->c, setup_data->error))
+	ret = esvg_element_internal_setup(child, setup_data->c, setup_data->error);
+	switch (ret)
 	{
+		case ESVG_SETUP_FAILED:
 		setup_data->ret = EINA_FALSE;
 		return EINA_FALSE;
-	}
-	if (setup_data->post)
-	{
-		if (!setup_data->post(t, child, setup_data->c, setup_data->error,
-				setup_data->data))
+
+		case ESVG_SETUP_OK:
+		if (setup_data->post)
 		{
-			setup_data->ret = EINA_FALSE;
-			return EINA_FALSE;
+			if (!setup_data->post(t, child, setup_data->c, setup_data->error,
+					setup_data->data))
+			{
+				setup_data->ret = EINA_FALSE;
+				return EINA_FALSE;
+			}
 		}
+		break;
+
+		default:
+		break;		
 	}
+
 	return EINA_TRUE;
 }
 /*----------------------------------------------------------------------------*
@@ -890,6 +899,7 @@ void esvg_element_internal_topmost_get(Edom_Tag *t, Ender_Element **e)
 	*e = thiz->topmost;
 }
 
+/* FIXME what do we do here? return bool or the setup return? */
 Eina_Bool esvg_element_internal_child_setup(Edom_Tag *t,
 		Esvg_Context *c,
 		Enesim_Error **error,
@@ -908,7 +918,7 @@ Eina_Bool esvg_element_internal_child_setup(Edom_Tag *t,
 	return setup_data.ret;
 }
 
-Eina_Bool esvg_element_internal_setup(Edom_Tag *t,
+Esvg_Element_Setup_Return esvg_element_internal_setup(Edom_Tag *t,
 		Esvg_Context *c,
 		Enesim_Error **error)
 {
@@ -929,14 +939,6 @@ Eina_Bool esvg_element_internal_setup(Edom_Tag *t,
 
 		Esvg_Element *parent_thiz;
 
-#if 0
-		/* if the parent has changed, go up ... */
-		if (esvg_element_changed(parent_t))
-		{
-			esvg_element_internal_setup(parent_t, c, error);
-			return EINA_TRUE;
-		}
-#endif
 		parent_thiz = _esvg_element_get(parent_t);
 		parent_state = &parent_thiz->state_final;
 		parent_attr = &parent_thiz->attr_final;
@@ -950,9 +952,6 @@ Eina_Bool esvg_element_internal_setup(Edom_Tag *t,
 #endif
 
 	thiz->last_run = c->run;
-
-	if (!thiz->descriptor.setup)
-		return EINA_TRUE;
 
 	/* the idea here is to call the setup interface of the element */
 	/* note that on SVG every element must be part of a topmost SVG
@@ -998,12 +997,20 @@ Eina_Bool esvg_element_internal_setup(Edom_Tag *t,
 			}
 		}
 	}
+	if (!thiz->descriptor.setup)
+		return ESVG_SETUP_OK;
 
 	//esvg_attribute_presentation_dump(new_attr);
 	ret = thiz->descriptor.setup(t, c, parent_state, &thiz->state_final, &thiz->attr_final, error);
-	thiz->changed = 0;
-
-	return !!ret;
+	if (ret == ESVG_SETUP_ENQUEUE)
+	{
+		esvg_context_setup_enqueue(c, t);
+	}
+	else
+	{
+		thiz->changed = 0;
+	}
+	return ret;
 }
 
 void esvg_element_initialize(Ender_Element *e)
@@ -1632,8 +1639,14 @@ EAPI Eina_Bool esvg_element_setup(Ender_Element *e, Enesim_Error **error)
 	t = ender_element_object_get(e);
 	esvg_context_init(&context);
 
-	ret = esvg_element_internal_setup(t, &context, error);
-	//esvg_context_setup_dequeue
+	if (esvg_element_internal_setup(t, &context, error) == ESVG_SETUP_FAILED)
+	{
+		/* clean the context */
+		esvg_context_shutdown(&context);
+		return EINA_FALSE;
+	}
+	esvg_context_setup_dequeue(&context);
+	return EINA_TRUE;
 }
 
 /**

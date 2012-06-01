@@ -51,13 +51,6 @@ typedef struct _Esvg_Renderable_Descriptor_Internal
 	Esvg_Renderable_Renderer_Propagate renderer_propagate;
 } Esvg_Renderable_Descriptor_Internal;
 
-typedef struct _Esvg_Renderable_Paint_Server_State
-{
-	Esvg_Paint paint_last;
-	Ender_Element *ender;
-	Edom_Tag *tag;
-} Esvg_Renderable_Paint_Server_State;
-
 typedef struct _Esvg_Renderable
 {
 	EINA_MAGIC
@@ -146,6 +139,7 @@ static void _esvg_shape_enesim_state_get(Edom_Tag *t,
 	{
 		Ender_Element *topmost;
 
+		/* FIXME only do this once */
 		esvg_element_internal_topmost_get(t, &topmost);
 		if (topmost)
 		{
@@ -216,15 +210,17 @@ static void _esvg_shape_enesim_state_get(Edom_Tag *t,
 			stroke_viewport, ctx->font_size);
 }
 
-static Eina_Bool _esvg_renderable_propagate(Esvg_Renderable *thiz, Edom_Tag *t,
+static Esvg_Element_Setup_Return _esvg_renderable_propagate(Esvg_Renderable *thiz, Edom_Tag *t,
 		Esvg_Context *c,
 		const Esvg_Element_Context *parent_context,
 		Esvg_Element_Context *context,
 		Esvg_Attribute_Presentation *attr,
 		Enesim_Error **error)
 {
+	Esvg_Element_Setup_Return ret;
+
 	if (!thiz->descriptor.renderer_propagate)
-		return EINA_TRUE;
+		return ESVG_SETUP_OK;
 
 	/* given that a shape can be setup for many uses (a shape as a clip path,
 	 * a shape for rendering, a shape for masking, etc) the different
@@ -247,7 +243,7 @@ static Eina_Bool _esvg_renderable_propagate(Esvg_Renderable *thiz, Edom_Tag *t,
 	_esvg_shape_enesim_state_get(t, context, attr, &thiz->context);
 	/* do the renderer propagate */
 	if (!thiz->descriptor.renderer_propagate(t, c, context, attr, &thiz->context, error))
-		return EINA_FALSE;
+		return ESVG_SETUP_FAILED;
 #if 0
 	if (attr->clip_path_set)
 	{
@@ -259,12 +255,9 @@ static Eina_Bool _esvg_renderable_propagate(Esvg_Renderable *thiz, Edom_Tag *t,
 	/* in case we are going to use the fill renderer do its own setup */
 	if (attr->fill_set && attr->fill.type == ESVG_PAINT_SERVER && thiz->fill_reference)
 	{
-		/* we dont pass the attributes or the paint server
-		 * will merge what it has with this
-		 */
-		/* FIXME check that the referenceable has done the setup, if not queue ourselves */
-		//esvg_referenceable_renderer_set(thiz->fill_tag, thiz->context.fill_renderer);
-		//esvg_element_internal_setup(thiz->fill_tag, c, error);
+		ret = esvg_element_internal_setup(thiz->fill_reference->t, c, error);
+		if (ret != ESVG_SETUP_OK)
+			return ret;
 	}
 #if 0
 	/* in case we are going to use the stroke renderer do its own setup */
@@ -350,7 +343,7 @@ static Esvg_Element_Setup_Return _esvg_renderable_setup(Edom_Tag *t,
 		Enesim_Error **error)
 {
 	Esvg_Renderable *thiz;
-	Esvg_Element_Setup_Return ret = ESVG_SETUP_OK;
+	Esvg_Element_Setup_Return ret;
 
 	thiz = _esvg_renderable_get(t);
 	if (!parent_context)
@@ -363,8 +356,9 @@ static Esvg_Element_Setup_Return _esvg_renderable_setup(Edom_Tag *t,
 		context->dpi_y = thiz->x_dpi;
 		context->dpi_x = thiz->y_dpi;
 	}
-	if (!_esvg_renderable_propagate(thiz, t, c, parent_context, context, attr, error))
-		return ESVG_SETUP_FAILED;
+	ret = _esvg_renderable_propagate(thiz, t, c, parent_context, context, attr, error);
+	if (ret != ESVG_SETUP_OK)
+		return ret;
 
 	if (thiz->descriptor.setup)
 	{
@@ -375,6 +369,18 @@ static Esvg_Element_Setup_Return _esvg_renderable_setup(Edom_Tag *t,
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
+Esvg_Element_Renderable_Behaviour * esvg_renderable_default_behaviour_get(void)
+{
+	/* FIXME we should return the default behaviour which is the one
+	 * that setups clippaths, fills, propagates into the renderer everything
+	 * etc
+	 * For defs, it must do nothing
+	 * For clippaths, it should only generate the geometry (no paint, storke, etc)
+	 * For patterns, like the default
+	 */
+	return NULL;
+}
+
 void esvg_renderable_internal_renderer_get(Edom_Tag *t, Enesim_Renderer **r)
 {
 	Esvg_Renderable *thiz;

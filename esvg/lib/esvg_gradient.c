@@ -285,20 +285,72 @@ static Eina_Bool _esvg_gradient_child_remove(Edom_Tag *t, Edom_Tag *child)
 	return EINA_TRUE;
 }
 
-static Eina_Bool _esvg_gradient_setup(Edom_Tag *t,
+static Esvg_Element_Setup_Return _esvg_gradient_setup(Edom_Tag *t,
 		Esvg_Context *c,
 		Esvg_Element_Context *ctx,
 		Esvg_Attribute_Presentation *attr,
 		Enesim_Error **error)
 {
 	Esvg_Gradient *thiz;
+	Eina_Bool child_ret;
 
 	thiz = _esvg_gradient_get(t);
+	/* in case the href attribute has changed we need to
+	 * pick a new reference and use those stops in case
+	 * we dont have any
+	 */
+	if (thiz->state_changed)
+	{
+		Esvg_Element_Setup_Return ret;
+		Ender_Element *topmost;
+		Ender_Element *href_e;
+		Edom_Tag *href_t;
+
+		/* TODO propagate our own properties in case those are not set
+		 * or we better use some "deep" functions that should get the
+		 * attribute from its href in case it has one
+		 * we need to start adding real properties, not only the values
+		 * but the is_set, all wrapped into a single struct
+		 */
+		if (thiz->href_e)
+		{
+			/* TODO remove the event handlers from the old href */
+			//ender_element_unref(thiz->href_e);
+			thiz->href_e = NULL;
+			thiz->href_t = NULL;
+		}
+		esvg_element_internal_topmost_get(t, &topmost);
+		if (!topmost)
+			goto state_changed_done;
+
+		/* TODO add the event handlers on the new generate */
+		esvg_svg_element_get(topmost, thiz->current.href, &href_e);
+		if (!href_e)
+			goto state_changed_done;
+		/* TODO check that the referring gradient is of the same type? */
+		/* TODO check if this gradient has childs, if not also generate them */
+		thiz->stops_changed = EINA_TRUE;
+		thiz->href_e = href_e;
+		thiz->href_t = ender_element_object_get(href_e);
+
+		/* do the setup on the href */
+		DBG("Doing the setup on the href tag");
+		ret = esvg_element_internal_setup(thiz->href_t, c, error);
+		/* if the other needs to queue, also queue ourselves
+		 * if the other failed we also failed
+		 */
+		if (ret != ESVG_SETUP_OK)
+			return ret;
+	}
+state_changed_done:
 	if (!thiz->stops_changed)
-		return EINA_TRUE;
+		return ESVG_SETUP_OK;
 
 	/* call the setup on the stops */
-	return esvg_element_internal_child_setup(t, c, error, NULL, thiz);
+	DBG("Doing the setup on the stops");
+	child_ret = esvg_element_internal_child_setup(t, c, error, NULL, thiz);
+	if (!child_ret) return ESVG_SETUP_FAILED;
+	return ESVG_SETUP_OK;
 }
 
 static void _esvg_gradient_cleanup(Edom_Tag *t)
@@ -336,44 +388,6 @@ static Eina_Bool _esvg_gradient_propagate(Edom_Tag *t,
 	Eina_Bool ret = EINA_TRUE;
 
 	thiz = _esvg_gradient_get(t);
-	/* in case the href attribute has changed we need to
-	 * pick a new reference and use those stops in case
-	 * we dont have any
-	 */
-	if (thiz->state_changed)
-	{
-		Ender_Element *topmost;
-		Ender_Element *href_e;
-		Edom_Tag *href_t;
-
-		/* TODO propagate our own properties in case those are not set
-		 * or we better use some "deep" functions that should get the
-		 * attribute from its href in case it has one
-		 * we need to start adding real properties, not only the values
-		 * but the is_set, all wrapped into a single struct
-		 */
-		if (thiz->href_e)
-		{
-			/* TODO remove the event handlers from the old href */
-			//ender_element_unref(thiz->href_e);
-			thiz->href_e = NULL;
-			thiz->href_t = NULL;
-		}
-		esvg_element_internal_topmost_get(t, &topmost);
-		if (!topmost)
-			goto stops;
-
-		/* TODO add the event handlers on the new generate */
-		esvg_svg_element_get(topmost, thiz->current.href, &href_e);
-		if (!href_e)
-			goto stops;
-		/* TODO check that the referring gradient is of the same type? */
-		/* TODO check if this gradient has childs, if not also generate them */
-		thiz->stops_changed = EINA_TRUE;
-		thiz->href_e = href_e;
-		thiz->href_t = ender_element_object_get(href_e);
-	}
-stops:
 	if (thiz->stops_changed)
 	{
 		_esvg_gradient_stop_generate(t, r);
@@ -556,6 +570,7 @@ Edom_Tag * esvg_gradient_new(Esvg_Gradient_Descriptor *descriptor,
 
 	/* Default values */
 	thiz->units.v = ESVG_OBJECT_BOUNDING_BOX;
+	thiz->spread_method.v = ESVG_SPREAD_METHOD_PAD;
 	enesim_matrix_identity(&thiz->transform.v);
 
 	t = esvg_paint_server_new(&pdescriptor, type, thiz);

@@ -101,6 +101,7 @@ static Esvg_Element_Setup_Return _esvg_referenceable_setup(Edom_Tag *t,
 		Esvg_Attribute_Presentation *attr,
 		Enesim_Error **error)
 {
+	Esvg_Element_Setup_Return ret = ESVG_SETUP_OK;
 	Esvg_Referenceable *thiz;
 	Esvg_Referenceable_Reference *rr;
 	Eina_List *l;
@@ -110,7 +111,12 @@ static Esvg_Element_Setup_Return _esvg_referenceable_setup(Edom_Tag *t,
 	 * parent tree
 	 */
 	if (thiz->descriptor.setup)
-		thiz->descriptor.setup(t, c, context, attr, error);
+		ret = thiz->descriptor.setup(t, c, context, attr, error);
+	if (ret != ESVG_SETUP_OK)
+	{
+		printf(">>>>> setup enqueue!\n");
+		return ret;
+	}
 
 	/* for each reference, propagate it */
 	EINA_LIST_FOREACH(thiz->references, l, rr)

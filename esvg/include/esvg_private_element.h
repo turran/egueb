@@ -6,9 +6,19 @@ typedef enum _Esvg_Element_Setup_Return
 {
 	ESVG_SETUP_FAILED,
 	ESVG_SETUP_OK,
-	ESVG_SETUP_CHILDS,
+	ESVG_SETUP_ENQUEUE,
 	ESVG_SETUP_RETURNS
 } Esvg_Element_Setup_Return;
+
+/* TODO given that the renderables can be childs of several type of parents
+ * it is desired to define the behaviour of such renderables, for example
+ * shapes being child of a clippath must not process the fill/stroke
+ * attributes. A shape being child of a def should not create a renderer
+ * or process anything, etc
+ */
+typedef struct _Esvg_Element_Renderable_Behaviour {
+
+} Esvg_Element_Renderable_Behaviour;
 
 typedef struct _Esvg_Element_Context {
 	double dpi_x;
@@ -17,6 +27,7 @@ typedef struct _Esvg_Element_Context {
 	double font_size; /* the propagated value of the current font size? FIXME here or in the attributes? */
 	Enesim_Rectangle bounds; /* the bounds of the object */
 	Esvg_Animated_Transform transform; /* the current transformation */
+	Esvg_Element_Renderable_Behaviour *renderable_behaviour;
 } Esvg_Element_Context;
 
 typedef struct _Esvg_Element_Event_Topmost_Changed {
@@ -79,7 +90,7 @@ const Esvg_Attribute_Presentation * esvg_element_attribute_presentation_get(Edom
 Esvg_Type esvg_element_internal_type_get(Edom_Tag *t);
 Eina_Bool esvg_is_element_internal(Edom_Tag *t);
 void esvg_element_internal_topmost_get(Edom_Tag *t, Ender_Element **e);
-Eina_Bool esvg_element_internal_setup(Edom_Tag *t,
+Esvg_Element_Setup_Return esvg_element_internal_setup(Edom_Tag *t,
 		Esvg_Context *c,
 		Enesim_Error **error);
 Eina_Bool esvg_element_internal_child_setup(Edom_Tag *t,
