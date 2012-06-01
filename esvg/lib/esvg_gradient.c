@@ -372,7 +372,7 @@ static void _esvg_gradient_cleanup(Edom_Tag *t)
 		{
 			thiz->past.href = strdup(thiz->current.href);
 		}
-		thiz->state_changed = EINA_TRUE;
+		thiz->state_changed = EINA_FALSE;
 	}
 }
 

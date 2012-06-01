@@ -264,6 +264,7 @@ Edom_Tag * esvg_referenceable_new(Esvg_Referenceable_Descriptor *descriptor, Esv
 	thiz->descriptor.cleanup = descriptor->cleanup;
 	thiz->descriptor.renderer_new = descriptor->renderer_new;
 	thiz->descriptor.propagate = descriptor->propagate;
+	thiz->descriptor.reference_add = descriptor->reference_add;
 	/* default values */
 
 	pdescriptor.child_add = descriptor->child_add;
