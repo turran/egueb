@@ -39,7 +39,6 @@ typedef struct _Esvg_Attribute_Coord
 	Eina_Bool is_set;
 } Esvg_Attribute_Coord;
 
-void esvg_paint_init(Esvg_Paint *p);
 void esvg_paint_copy(Esvg_Paint *dst, Esvg_Paint *src);
 
 #endif

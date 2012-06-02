@@ -152,8 +152,9 @@ void esvg_attribute_presentation_setup(Esvg_Attribute_Presentation *thiz)
 	thiz->opacity.base = 1.0;
 	thiz->opacity.anim = 1.0;
 	thiz->fill_rule = ESVG_NON_ZERO;
-	esvg_paint_init(&thiz->fill);
-	esvg_paint_init(&thiz->stroke);
+	thiz->fill.type = ESVG_PAINT_COLOR;
+	thiz->fill.value.color = black;
+	thiz->stroke.type = ESVG_PAINT_NONE;
 	thiz->stroke_width = one;
 	thiz->stroke_line_cap = ESVG_LINE_CAP_BUTT;
 	thiz->stroke_line_join = ESVG_LINE_JOIN_MITER;

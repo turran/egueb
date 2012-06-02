@@ -499,6 +499,8 @@ Edom_Tag * esvg_renderable_new(Esvg_Renderable_Descriptor *descriptor, Esvg_Type
 	 */
 	thiz->fill_paint_last.type = ESVG_PAINT_NONE;
 	thiz->stroke_paint_last.type = ESVG_PAINT_NONE;
+	/* the initial context */
+	thiz->context.draw_mode = ENESIM_SHAPE_DRAW_MODE_FILL;
 
 	pdescriptor.child_add = descriptor->child_add;
 	pdescriptor.child_remove = descriptor->child_remove;

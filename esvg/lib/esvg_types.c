@@ -897,14 +897,6 @@ Esvg_View_Box esvg_view_box_get(const char *attr_val)
 	return vb;
 }
 
-void esvg_paint_init(Esvg_Paint *p)
-{
-	Esvg_Color black = { 0, 0, 0 };
-
-	p->type = ESVG_PAINT_COLOR;
-	p->value.color = black;
-}
-
 void esvg_paint_copy(Esvg_Paint *dst, Esvg_Paint *src)
 {
 	if (dst->type == ESVG_PAINT_SERVER)
