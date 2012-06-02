@@ -11,6 +11,7 @@ esvg_animate_base.h \
 esvg_animate_transform.h \
 esvg_circle.h \
 esvg_clip_path.h \
+esvg_defs.h \
 esvg_element.h \
 esvg_ellipse.h \
 esvg_g.h \
@@ -27,6 +28,7 @@ esvg_radial_gradient.h \
 esvg_rect.h \
 esvg_renderable.h \
 esvg_stop.h \
+esvg_style.h \
 esvg_svg.h \
 esvg_text.h \
 esvg_types.h \

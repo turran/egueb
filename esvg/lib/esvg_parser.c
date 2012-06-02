@@ -31,6 +31,8 @@
 
 #include "esvg_main.h"
 #include "esvg_a.h"
+#include "esvg_clip_path.h"
+#include "esvg_defs.h"
 #include "esvg_animate_transform.h"
 #include "esvg_svg.h"
 #include "esvg_ellipse.h"
@@ -45,6 +47,7 @@
 #include "esvg_radial_gradient.h"
 #include "esvg_g.h"
 #include "esvg_stop.h"
+#include "esvg_style.h"
 #include "esvg_text.h"
 #include "esvg_use.h"
 
@@ -471,11 +474,10 @@ static void * _esvg_parser_tag_new(Edom_Parser *parser, int tag_id)
 		tag = esvg_image_new();
 		break;
 
-#if 0
 		case ESVG_CLIPPATH:
-		tag = esvg_parser_clip_path_new(parser);
+		tag = esvg_clip_path_new();
 		break;
-#endif
+
 		case ESVG_STOP:
 		tag = esvg_stop_new();
 		break;

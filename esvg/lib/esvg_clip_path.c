@@ -214,6 +214,14 @@ static Esvg_Element_Setup_Return _esvg_clip_path_setup(Edom_Tag *e,
 	return ESVG_SETUP_OK;
 }
 
+static Eina_Bool _esvg_clip_path_reference_add(Edom_Tag *t, Esvg_Referenceable_Reference *rr)
+{
+	/* two different objects can reference us, or either a renderable (shapes)
+	 * or a referenceable (another clip path)
+	 */
+	/* if it is a renderable then store the renderer it has */
+}
+
 static void _esvg_clip_path_free(Edom_Tag *t)
 {
 	Esvg_Clip_Path *thiz;
