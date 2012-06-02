@@ -66,6 +66,7 @@ typedef struct _Esvg_Gradient_State
 	char *href;
 } Esvg_Gradient_State;
 
+/* FIXME share this */
 typedef struct _Esvg_Property_Gradient_Units
 {
 	Esvg_Gradient_Units v;

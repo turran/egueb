@@ -109,6 +109,7 @@ namespace "esvg" {
 	};
 
 	class "clip_path" : "referenceable" {
+		int "clip_path_units";
 	};
 
 	abstract "gradient" : "paint_server" {

@@ -243,13 +243,10 @@ static Esvg_Element_Setup_Return _esvg_renderable_propagate(Esvg_Renderable *thi
 	 * a shape for rendering, a shape for masking, etc) the different
 	 * enesim states despend on that behaviour
 	 */
-#if 0
-	if (attr->clip_path_set)
+	if (attr->clip_path)
 	{
-		esvg_clip_path_relative_set(attr->clip_path, thiz->renderer_get(r),
-				&context->transform);
+		printf(">>> clip path is set! <<<<\n");
 	}
-#endif
 	/* FIXME there are cases where this is not needed, liek the 'use' given that
 	 * the 'g' will do it
 	 */

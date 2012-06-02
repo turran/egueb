@@ -320,6 +320,7 @@ static void _esvg_element_clip_path_set(Edom_Tag *t, const char *clip_path)
 	Esvg_Element *thiz;
 
 	thiz = _esvg_element_get(t);
+	esvg_attribute_presentation_clip_path_set(thiz->current_attr, clip_path);
 }
 
 static void _esvg_element_clip_path_get(Edom_Tag *t, const char **clip_path)
@@ -1371,6 +1372,7 @@ EAPI Eina_Bool esvg_element_style_is_set(Ender_Element *e)
  */
 EAPI void esvg_element_clip_path_set(Ender_Element *e, const char *id)
 {
+	ender_element_property_value_set(e, ESVG_ELEMENT_CLIP_PATH, id, NULL);
 }
 
 /**

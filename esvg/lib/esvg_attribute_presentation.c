@@ -366,15 +366,12 @@ void esvg_attribute_presentation_clip_path_set(Esvg_Attribute_Presentation *thiz
 	if (thiz->clip_path == clip_path)
 		return;
 
-	if (!clip_path)
+	if (thiz->clip_path)
 	{
 		esvg_attribute_presentation_clip_path_unset(thiz);
 	}
-	else
+	if (clip_path)
 	{
-		if (thiz->clip_path)
-			free (thiz->clip_path);
-
 		thiz->clip_path = strdup(clip_path);
 		thiz->clip_path_set = EINA_TRUE;
 		thiz->sets++;
@@ -387,7 +384,7 @@ void esvg_attribute_presentation_clip_path_unset(Esvg_Attribute_Presentation *th
 	{
 		free(thiz->clip_path);
 		thiz->clip_path = NULL;
-		thiz->sets++;
+		thiz->sets--;
 		thiz->clip_path_set = EINA_FALSE;
 	}
 }

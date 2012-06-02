@@ -24,9 +24,17 @@
 #include "esvg_private_context.h"
 #include "esvg_private_element.h"
 #include "esvg_private_referenceable.h"
+
 #include "esvg_clip_path.h"
 
 /*
+ * Basically a clipPath has childs of any shape type and when the element
+ * is referenced, the object that refers to the clipPath should use a new
+ * reference. For now, a reference always stores a renderer, but that
+ * needs to change, given that what we need to do is to create a new dom
+ * tree (a clone) that will be used to setup the renderers on the correct
+ * units space.
+ * 
  * if a clipping path has more than one child then the clip area is the union
  * of every child. that it, we need to use a compound and render every child
  * with the same fill renderer
@@ -36,12 +44,19 @@
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
-static Ender_Property *ESVG_CLIP_PATH_UNITS;
+static Ender_Property *ESVG_CLIP_PATH_CLIP_PATH_UNITS;
+
+/* FIXME share this */
+typedef struct _Esvg_Attribute_Units
+{
+	Esvg_Gradient_Units v;
+	Eina_Bool is_set;
+} Esvg_Attribute_Units;
 
 typedef struct _Esvg_Clip_Path
 {
 	/* properties */
-	Esvg_Clip_Path_Units units;
+	Esvg_Attribute_Units units;
 	/* private */
 	Enesim_Renderer *rel;
 	Enesim_Matrix rel_m;
@@ -66,6 +81,12 @@ static Eina_Bool _esvg_clip_path_attribute_set(Ender_Element *e,
 		const char *key, const char *value)
 {
 	/* parse clip path units */
+	if (!strcmp(key, "clipPathUnits"))
+	{
+		Esvg_Clip_Path_Units units;
+		esvg_parser_gradient_units_string_from(&units, value);
+		esvg_clip_path_units_set(e, units);
+	}
 	return EINA_TRUE;
 }
 
@@ -197,7 +218,16 @@ static Esvg_Element_Setup_Return _esvg_clip_path_setup(Edom_Tag *e,
 
 
 	thiz = _esvg_clip_path_get(e);
+	printf("clip path setup!!!!!!\n");
 #if 0
+	Esvg_Clip_Path *thiz;
+
+	thiz = _esvg_clip_path_get(t);
+	/* if the clip path is set use that as the renderer element */
+	if (!attr->clip_path_set)
+		return thiz->r;
+	else
+		return esvg_element_renderer_get(attr->clip_path);
 	/* TODO add a new transformation in case of the units */
 	/* TODO we should use the same transformation as the relative renderer */
 	/* in case this clip path has a clip-path set, call the setup on other */
@@ -230,20 +260,10 @@ static void _esvg_clip_path_free(Edom_Tag *t)
 	free(thiz);
 }
 
-
 static Enesim_Renderer * _esvg_clip_path_renderer_new(Edom_Tag *t)
 {
 	Enesim_Renderer *r;
-#if 0
-	Esvg_Clip_Path *thiz;
 
-	thiz = _esvg_clip_path_get(t);
-	/* if the clip path is set use that as the renderer element */
-	if (!attr->clip_path_set)
-		return thiz->r;
-	else
-		return esvg_element_renderer_get(attr->clip_path);
-#endif
 	r = enesim_renderer_compound_new();
 	return r;
 }
@@ -262,6 +282,8 @@ static Esvg_Referenceable_Descriptor _descriptor = {
 	/* .cleanup		= */ NULL,
 	/* .renderer_new	= */ _esvg_clip_path_renderer_new,
 	/* .renderer_propagate	= */ NULL,
+	/* .reference_add	= */ _esvg_clip_path_reference_add,
+	/* .reference_remove	= */ NULL,
 };
 /*----------------------------------------------------------------------------*
  *                           The Ender interface                              *
@@ -278,6 +300,32 @@ EAPI Edom_Tag * _esvg_clip_path_new(void)
 
 	return t;
 }
+
+static void _esvg_clip_path_clip_path_units_set(Edom_Tag *t, Esvg_Clip_Path_Units units)
+{
+	Esvg_Clip_Path *thiz;
+
+	thiz = _esvg_clip_path_get(t);
+	thiz->units.v = units;
+	thiz->units.is_set = EINA_TRUE;
+}
+
+static void _esvg_clip_path_clip_path_units_get(Edom_Tag *t, Esvg_Clip_Path_Units *units)
+{
+	Esvg_Clip_Path *thiz;
+
+	thiz = _esvg_clip_path_get(t);
+	if (units) *units = thiz->units.v;
+}
+
+static Eina_Bool _esvg_clip_path_clip_path_units_is_set(Edom_Tag *t)
+{
+	Esvg_Clip_Path *thiz;
+
+	thiz = _esvg_clip_path_get(t);
+	return thiz->units.is_set;
+}
+
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
@@ -314,3 +362,13 @@ EAPI Ender_Element * esvg_clip_path_new(void)
 EAPI Eina_Bool esvg_is_clip_path(Ender_Element *e)
 {
 }
+
+EAPI void esvg_clip_path_units_set(Ender_Element *e, Esvg_Clip_Path_Units units)
+{
+	ender_element_property_value_set(e, ESVG_CLIP_PATH_CLIP_PATH_UNITS, units, NULL);
+}
+
+EAPI void esvg_clip_path_units_get(Ender_Element *e, Esvg_Clip_Path_Units *units)
+{
+}
+
