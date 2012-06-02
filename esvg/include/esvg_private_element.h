@@ -1,9 +1,14 @@
 #ifndef _ESVG_PRIVATE_ELEMENT_H_
 #define _ESVG_PRIVATE_ELEMENT_H_
 
+/* FIXME given that we include every header
+ * needed on every source, we better dont
+ * do this
+ */
 #include "esvg_types.h"
 #include "esvg_private_attribute_presentation.h"
 #include "esvg_private_context.h"
+#include "esvg_private_renderable_behaviour.h"
 
 /* element */
 typedef enum _Esvg_Element_Setup_Return
@@ -14,15 +19,11 @@ typedef enum _Esvg_Element_Setup_Return
 	ESVG_SETUP_RETURNS
 } Esvg_Element_Setup_Return;
 
-/* TODO given that the renderables can be childs of several type of parents
- * it is desired to define the behaviour of such renderables, for example
- * shapes being child of a clippath must not process the fill/stroke
- * attributes. A shape being child of a def should not create a renderer
- * or process anything, etc
- */
-typedef struct _Esvg_Element_Renderable_Behaviour {
-
-} Esvg_Element_Renderable_Behaviour;
+typedef struct _Esvg_Element_Event_Topmost_Changed {
+	Ender_Element *previous;
+	Ender_Element *current;
+	Edom_Tag *child;
+} Esvg_Element_Event_Topmost_Changed;
 
 typedef struct _Esvg_Element_Context {
 	double dpi_x;
@@ -31,14 +32,8 @@ typedef struct _Esvg_Element_Context {
 	double font_size; /* the propagated value of the current font size? FIXME here or in the attributes? */
 	Enesim_Rectangle bounds; /* the bounds of the object */
 	Esvg_Animated_Transform transform; /* the current transformation */
-	Esvg_Element_Renderable_Behaviour *renderable_behaviour;
+	Esvg_Renderable_Behaviour *renderable_behaviour;
 } Esvg_Element_Context;
-
-typedef struct _Esvg_Element_Event_Topmost_Changed {
-	Ender_Element *previous;
-	Ender_Element *current;
-	Edom_Tag *child;
-} Esvg_Element_Event_Topmost_Changed;
 
 typedef void (*Esvg_Element_Initialize)(Ender_Element *e);
 typedef Eina_Bool (*Esvg_Element_Attribute_Set)(Ender_Element *e, const char *key, const char *value);

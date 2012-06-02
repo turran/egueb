@@ -897,6 +897,29 @@ Esvg_View_Box esvg_view_box_get(const char *attr_val)
 	return vb;
 }
 
+void esvg_paint_init(Esvg_Paint *p)
+{
+	Esvg_Color black = { 0, 0, 0 };
+
+	p->type = ESVG_PAINT_COLOR;
+	p->value.color = black;
+}
+
+void esvg_paint_copy(Esvg_Paint *dst, Esvg_Paint *src)
+{
+	if (dst->type == ESVG_PAINT_SERVER)
+	{
+		if (dst->value.paint_server)
+			free(dst->value.paint_server);
+	}
+	*dst = *src;
+	if (src->type == ESVG_PAINT_SERVER)
+	{
+		if (src->value.paint_server)
+			dst->value.paint_server = strdup(src->value.paint_server);
+	}
+}
+
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/
@@ -1119,6 +1142,34 @@ EAPI Eina_Bool esvg_iri_string_from(const char *attr, Esvg_Uri_Descriptor *descr
 	else
 	{
 		return esvg_uri_string_from(attr, descriptor, data);
+	}
+}
+
+EAPI Eina_Bool esvg_paint_is_equal(const Esvg_Paint *p1,
+		const Esvg_Paint *p2)
+{
+	/* sanity checks */
+	if (p1 == p2) return EINA_TRUE;
+	if (!p1) return EINA_FALSE;
+	if (!p2) return EINA_FALSE;
+
+	if (p1->type != p2->type) return EINA_FALSE;
+	/* ok, we have values and same types, now compare each type */
+	switch (p1->type)
+	{
+		case ESVG_PAINT_NONE:
+		case ESVG_PAINT_CURRENT_COLOR:
+		return EINA_TRUE;
+
+		case ESVG_PAINT_COLOR:
+		return esvg_color_is_equal(&p1->value.color, &p2->value.color);
+
+		case ESVG_PAINT_SERVER:
+		return esvg_string_is_equal(p1->value.paint_server, p2->value.paint_server);
+
+		/* FIXME what to do in this cases? add an assert? */
+		default:
+		return EINA_FALSE;
 	}
 }
 
@@ -1383,6 +1434,30 @@ EAPI Eina_Bool esvg_transformation_string_from(Enesim_Matrix *matrix, const char
 	while (endptr && *endptr && ret);
 
 	return ret;
+}
+
+EAPI Eina_Bool esvg_string_is_equal(const char *s1, const char *s2)
+{
+	/* sanity checks */
+	if (s1 == s2) return EINA_TRUE;
+	if (!s1) return EINA_FALSE;
+	if (!s2) return EINA_FALSE;
+
+	if (strcmp(s1, s2)) return EINA_FALSE;
+	return EINA_TRUE;
+}
+
+
+EAPI Eina_Bool esvg_color_is_equal(const Esvg_Color *c1, const Esvg_Color *c2)
+{
+	/* sanity checks */
+	if (c1 == c2) return EINA_TRUE;
+	if (!c1) return EINA_FALSE;
+	if (!c2) return EINA_FALSE;
+
+	if ((c1->r == c2->r) && (c1->g == c2->g) && (c1->b == c2->b))
+		return EINA_TRUE;
+	return EINA_FALSE;
 }
 
 /*

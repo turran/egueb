@@ -420,17 +420,26 @@ typedef void (*Esvg_List_Cb)(const char *item, void *data);
 
 EAPI const char * esvg_type_string_to(Esvg_Type type);
 
+EAPI Eina_Bool esvg_string_is_equal(const char *s1, const char *s2);
+
 EAPI double esvg_number_string_from(const char *attr_val, double default_nbr);
+/* FIXME rename this: remove the _parser_ */
 EAPI Eina_Bool esvg_parser_gradient_units_string_from(Esvg_Gradient_Units *gu, const char *value);
 EAPI Eina_Bool esvg_parser_fill_rule_get(Esvg_Fill_Rule *rule, const char *attr);
 EAPI Eina_Bool esvg_parser_spread_method_get(Esvg_Spread_Method *smethod, const char *attr);
+
 EAPI Eina_Bool esvg_color_string_from(Esvg_Color *color, const char *attr_val);
+EAPI Eina_Bool esvg_color_is_equal(const Esvg_Color *c1, const Esvg_Color *c2);
+
 EAPI Eina_Bool esvg_path_string_from(const char *value, Esvg_Command_Cb cb, void *data);
 EAPI Eina_Bool esvg_transformation_string_from(Enesim_Matrix *matrix, const char *attr);
 EAPI Eina_Bool esvg_length_string_from(Esvg_Length *length, const char *attr_val);
 EAPI Eina_Bool esvg_length_is_equal(Esvg_Length *length1, Esvg_Length *length2);
 EAPI double esvg_length_final_get(const Esvg_Length *l, double parent_length, double font_size);
 EAPI Eina_Bool esvg_paint_string_from(Esvg_Paint *paint, const char *attr);
+EAPI Eina_Bool esvg_paint_is_equal(const Esvg_Paint *p1,
+		const Esvg_Paint *p2);
+/* FIXME rename this from _get to _string_from */
 Esvg_View_Box esvg_view_box_get(const char *attr_val);
 EAPI Esvg_Stroke_Line_Cap esvg_stroke_line_cap_string_from(const char *value);
 EAPI Esvg_Stroke_Line_Join esvg_stroke_line_join_string_from(const char *value);

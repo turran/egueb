@@ -2,22 +2,6 @@
 #define _ESVG_PRIVATE_RENDERABLE_H_
 
 /* renderable */
-typedef struct _Esvg_Renderable_Context {
-	/* common */
-	Enesim_Color color;
-	/* stroke */
-	Enesim_Shape_Draw_Mode draw_mode;
-	Enesim_Shape_Stroke_Cap stroke_cap;
-	Enesim_Shape_Stroke_Join stroke_join;
-	Enesim_Color stroke_color;
-	Enesim_Renderer *stroke_renderer;
-	double stroke_weight;
-	/* fill */
-	Enesim_Renderer *fill_renderer;
-	Enesim_Color fill_color;
-	Enesim_Shape_Fill_Rule fill_rule;
-} Esvg_Renderable_Context;
-
 typedef Enesim_Renderer * (*Esvg_Renderable_Renderer_Get)(Edom_Tag *t);
 typedef Esvg_Element_Setup_Return (*Esvg_Renderable_Setup)(Edom_Tag *t,
 		Esvg_Context *c,

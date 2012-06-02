@@ -1,6 +1,10 @@
 #ifndef _ESVG_PRIVATE_TYPES_H_
 #define _ESVG_PRIVATE_TYPES_H_
 
+/* FIXME this should go into its own
+ * header esvg_private_attribute.h
+ */
+
 /* define the attributes */
 typedef struct _Esvg_Attribute_Animated_Transform
 {
@@ -35,6 +39,8 @@ typedef struct _Esvg_Attribute_Coord
 	Eina_Bool is_set;
 } Esvg_Attribute_Coord;
 
+void esvg_paint_init(Esvg_Paint *p);
+void esvg_paint_copy(Esvg_Paint *dst, Esvg_Paint *src);
 
 #endif
 

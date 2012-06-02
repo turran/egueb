@@ -97,6 +97,70 @@ static Eina_Bool _esvg_renderable_damage_cb(Enesim_Renderer *r,
 	return EINA_TRUE;
 }
 
+static void _esvg_renderable_paint_set(Edom_Tag *t,
+		Enesim_Shape_Draw_Mode *rdraw_mode,
+		Enesim_Color *rcolor,
+		Enesim_Renderer **renderer,
+		Enesim_Shape_Draw_Mode mode,
+		double opacity,
+		Esvg_Referenceable_Reference **reference,
+		const Esvg_Paint *current,
+		Esvg_Paint *old)
+		
+{
+	if (esvg_paint_is_equal(current, old))
+		return;
+
+	/* FIXME the fill color multiplies the fill renderer */
+	if (current->type == ESVG_PAINT_COLOR)
+	{
+		const Esvg_Color *c = &current->value.color;
+		enesim_color_components_from(rcolor,
+				opacity, c->r, c->g, c->b);
+		*rdraw_mode |= mode;
+	}
+	else if (current->type == ESVG_PAINT_SERVER)
+	{
+		Ender_Element *topmost;
+
+		/* FIXME remove the old reference in case we already had one */
+		esvg_element_internal_topmost_get(t, &topmost);
+		if (topmost)
+		{
+			Ender_Element *e = NULL;
+
+			/* TODO here we should fetch the id from the property */
+			esvg_svg_element_get(topmost, current->value.paint_server, &e);
+			if (e)
+			{
+				Edom_Tag *fill_t;
+				Esvg_Referenceable_Reference *rr;
+
+				/* TODO then, check that the referenced element is of type paint server */
+				fill_t = ender_element_object_get(e);
+				rr = esvg_referenceable_reference_add(fill_t, t);
+				if (!rr) goto done;
+				/* TODO finally, get the renderer? */
+				*renderer = rr->data;
+				*reference = rr;
+				*rdraw_mode |= mode;
+			}
+		}
+	}
+	else if (current->type == ESVG_PAINT_NONE)
+	{
+		*rdraw_mode &= ~mode;
+	}
+	else if (current->type == ESVG_PAINT_CURRENT_COLOR)
+	{
+		*rdraw_mode |= mode;
+		*rcolor = ENESIM_COLOR_FULL;
+	}
+done:
+	/* update the old paint */
+	esvg_paint_copy(old, current);
+}
+
 static void _esvg_shape_enesim_state_get(Edom_Tag *t,
 		const Esvg_Element_Context *ctx,
 		const Esvg_Attribute_Presentation *attr,
@@ -110,7 +174,6 @@ static void _esvg_shape_enesim_state_get(Edom_Tag *t,
 
 	thiz = _esvg_renderable_get(t);
 
-	rctx->draw_mode = 0;
 	/* set the opacity */
 	opacity = attr->opacity.base * 255;
 	if (attr->color_set)
@@ -127,46 +190,13 @@ static void _esvg_shape_enesim_state_get(Edom_Tag *t,
 
 	/* set the fill */
 	fill_opacity = attr->fill_opacity * 255;
-	/* FIXME the fill color multiplies the fill renderer */
-	rctx->draw_mode |= ENESIM_SHAPE_DRAW_MODE_FILL;
-	if (attr->fill.type == ESVG_PAINT_COLOR)
-	{
-		const Esvg_Color *c = &attr->fill.value.color;
-		enesim_color_components_from(&rctx->fill_color,
-				fill_opacity, c->r, c->g, c->b);
-	}
-	else if (attr->fill.type == ESVG_PAINT_SERVER)
-	{
-		Ender_Element *topmost;
-
-		/* FIXME only do this once */
-		esvg_element_internal_topmost_get(t, &topmost);
-		if (topmost)
-		{
-			Ender_Element *e = NULL;
-
-			/* TODO here we should fetch the id from the property */
-			esvg_svg_element_get(topmost, attr->fill.value.paint_server, &e);
-			if (e)
-			{
-				Edom_Tag *fill_t;
-
-				/* TODO then, check that the referenced element is of type paint server */
-				fill_t = ender_element_object_get(e);
-				thiz->fill_reference = esvg_referenceable_reference_add(fill_t, t);
-				/* TODO finally, get the renderer? */
-				rctx->fill_renderer = thiz->fill_reference->data;
-			}
-		}
-	}
-	else if (attr->fill.type == ESVG_PAINT_NONE)
-	{
-		rctx->draw_mode &= ~ENESIM_SHAPE_DRAW_MODE_FILL;
-	}
-	else if (attr->fill.type == ESVG_PAINT_CURRENT_COLOR)
-	{
-		rctx->fill_color = ENESIM_COLOR_FULL;
-	}
+	_esvg_renderable_paint_set(t, &rctx->draw_mode, &rctx->fill_color,
+			&rctx->fill_renderer,
+			ENESIM_SHAPE_DRAW_MODE_FILL,
+			fill_opacity,
+			&thiz->fill_reference,
+			&attr->fill,
+			&thiz->fill_paint_last);
 	if (attr->fill_rule == ESVG_EVEN_ODD)
 	{
 		rctx->fill_rule = ENESIM_SHAPE_FILL_RULE_EVEN_ODD;
@@ -177,26 +207,13 @@ static void _esvg_shape_enesim_state_get(Edom_Tag *t,
 	}
 	/* set the stroke */
 	stroke_opacity = attr->stroke_opacity * 255;
-	rctx->draw_mode |= ENESIM_SHAPE_DRAW_MODE_STROKE;
-	if (attr->stroke.type == ESVG_PAINT_COLOR)
-	{
-		const Esvg_Color *c = &attr->stroke.value.color;
-		enesim_color_components_from(&rctx->stroke_color,
-				stroke_opacity, c->r, c->g, c->b);
-	}
-	else if (attr->stroke.type == ESVG_PAINT_SERVER)
-	{
-		/* just get the renderer here, dont do the setup */
-		//rctx->stroke_renderer = esvg_element_renderer_get(attr->stroke.value.paint_server);
-	}
-	else if (attr->stroke.type == ESVG_PAINT_NONE)
-	{
-		rctx->draw_mode &= ~ENESIM_SHAPE_DRAW_MODE_STROKE;
-	}
-	else if (attr->stroke.type == ESVG_PAINT_CURRENT_COLOR)
-	{
-		rctx->stroke_color = ENESIM_COLOR_FULL;
-	}
+	_esvg_renderable_paint_set(t, &rctx->draw_mode, &rctx->stroke_color,
+			&rctx->stroke_renderer,
+			ENESIM_SHAPE_DRAW_MODE_STROKE,
+			stroke_opacity,
+			&thiz->stroke_reference,
+			&attr->stroke,
+			&thiz->stroke_paint_last);
 	rctx->stroke_cap = attr->stroke_line_cap;
 	rctx->stroke_join = attr->stroke_line_join;
 	/* handle the stroke weight */
@@ -232,10 +249,6 @@ static Esvg_Element_Setup_Return _esvg_renderable_propagate(Esvg_Renderable *thi
 		esvg_clip_path_relative_set(attr->clip_path, thiz->renderer_get(r),
 				&context->transform);
 	}
-
-	if (thiz->calculate)
-		thiz->calculate(r, context, attr, &thiz->context, thiz->calculate_data);
-	else
 #endif
 	/* FIXME there are cases where this is not needed, liek the 'use' given that
 	 * the 'g' will do it
@@ -259,12 +272,15 @@ static Esvg_Element_Setup_Return _esvg_renderable_propagate(Esvg_Renderable *thi
 		if (ret != ESVG_SETUP_OK)
 			return ret;
 	}
-#if 0
 	/* in case we are going to use the stroke renderer do its own setup */
-	if (attr->stroke_set && attr->stroke.type == ESVG_PAINT_SERVER)
-		esvg_paint_server_renderer_setup(attr->stroke.value.paint_server, context, r);
-#endif
-	return EINA_TRUE;
+	if (attr->stroke_set && attr->stroke.type == ESVG_PAINT_SERVER && thiz->stroke_reference)
+	{
+		ret = esvg_element_internal_setup(thiz->stroke_reference->t, c, error);
+		if (ret != ESVG_SETUP_OK)
+			return ret;
+
+	}
+	return ESVG_SETUP_OK;
 }
 
 
@@ -369,7 +385,7 @@ static Esvg_Element_Setup_Return _esvg_renderable_setup(Edom_Tag *t,
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
-Esvg_Element_Renderable_Behaviour * esvg_renderable_default_behaviour_get(void)
+Esvg_Renderable_Behaviour * esvg_renderable_default_behaviour_get(void)
 {
 	/* FIXME we should return the default behaviour which is the one
 	 * that setups clippaths, fills, propagates into the renderer everything
@@ -478,6 +494,11 @@ Edom_Tag * esvg_renderable_new(Esvg_Renderable_Descriptor *descriptor, Esvg_Type
 	thiz->container_height = 480;
 	thiz->x_dpi = 96.0;
 	thiz->y_dpi = 96.0;
+	/* initially we set the old paints to none, so the default value will trigger
+	 * a change
+	 */
+	thiz->fill_paint_last.type = ESVG_PAINT_NONE;
+	thiz->stroke_paint_last.type = ESVG_PAINT_NONE;
 
 	pdescriptor.child_add = descriptor->child_add;
 	pdescriptor.child_remove = descriptor->child_remove;

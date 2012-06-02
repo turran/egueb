@@ -89,6 +89,7 @@ typedef struct _Esvg_Attribute_Presentation {
 } Esvg_Attribute_Presentation;
 
 void esvg_attribute_presentation_setup(Esvg_Attribute_Presentation *thiz);
+void esvg_attribute_presentation_cleanup(Esvg_Attribute_Presentation *thiz);
 void esvg_attribute_presentation_copy(const Esvg_Attribute_Presentation *dst,
 		const Esvg_Attribute_Presentation *src);
 void esvg_attribute_presentation_merge(const Esvg_Attribute_Presentation *state,

@@ -142,6 +142,9 @@ void esvg_attribute_presentation_setup(Esvg_Attribute_Presentation *thiz)
 	Esvg_Color black = { 0, 0, 0 };
 	Esvg_Length one = { ESVG_UNIT_LENGTH_PX, 1 };
 
+	/* first do the cleanup */
+	esvg_attribute_presentation_cleanup(thiz);
+	/* now the default values */
 	thiz->color = black;
 	thiz->stroke_width = ESVG_LENGTH_1;
 	thiz->stroke_opacity = 1.0;
@@ -149,13 +152,27 @@ void esvg_attribute_presentation_setup(Esvg_Attribute_Presentation *thiz)
 	thiz->opacity.base = 1.0;
 	thiz->opacity.anim = 1.0;
 	thiz->fill_rule = ESVG_NON_ZERO;
-	thiz->fill.type = ESVG_PAINT_COLOR;
-	thiz->fill.value.color = black;
-	thiz->stroke.type = ESVG_PAINT_NONE;
+	esvg_paint_init(&thiz->fill);
+	esvg_paint_init(&thiz->stroke);
 	thiz->stroke_width = one;
 	thiz->stroke_line_cap = ESVG_LINE_CAP_BUTT;
 	thiz->stroke_line_join = ESVG_LINE_JOIN_MITER;
 	thiz->stop_opacity = 1.0;
+}
+
+void esvg_attribute_presentation_cleanup(Esvg_Attribute_Presentation *thiz)
+{
+	/* TODO free every attribute that can be allocated, i.e strings */
+	if (thiz->fill.type == ESVG_PAINT_SERVER)
+	{
+		if (thiz->fill.value.paint_server)
+			free(thiz->fill.value.paint_server);
+	}
+	if (thiz->stroke.type == ESVG_PAINT_SERVER)
+	{
+		if (thiz->stroke.value.paint_server)
+			free(thiz->stroke.value.paint_server);
+	}
 }
 
 void esvg_attribute_presentation_copy(const Esvg_Attribute_Presentation *dst,

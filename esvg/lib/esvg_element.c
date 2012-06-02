@@ -816,6 +816,9 @@ static void _esvg_element_free(Edom_Tag *t)
 	thiz = _esvg_element_get(t);
 	if (thiz->descriptor.free)
 		return thiz->descriptor.free(t);
+	esvg_attribute_presentation_cleanup(&thiz->attr_xml);
+	esvg_attribute_presentation_cleanup(&thiz->attr_css);
+	esvg_attribute_presentation_cleanup(&thiz->attr_final);
 	free(thiz);
 }
 
