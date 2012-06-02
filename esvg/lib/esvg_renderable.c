@@ -245,6 +245,10 @@ static Esvg_Element_Setup_Return _esvg_renderable_propagate(Esvg_Renderable *thi
 	 */
 	if (attr->clip_path)
 	{
+		/* whenever a clip path is set, we should reference it, etc, etc
+		 * similar to the gradient and also make the renderable renderer
+		 * use the clip path renderer to render
+		 */
 		printf(">>> clip path is set! <<<<\n");
 	}
 	/* FIXME there are cases where this is not needed, liek the 'use' given that
@@ -482,6 +486,9 @@ Edom_Tag * esvg_renderable_new(Esvg_Renderable_Descriptor *descriptor, Esvg_Type
 
 	EINA_MAGIC_SET(thiz, ESVG_RENDERABLE_MAGIC);
 	thiz->data = data;
+	/* TODO create the proxy renderer */
+	/* call the renderer_get and store it */
+	/* set the proxied renderer */
 	/* our own descriptor */
 	thiz->descriptor.setup = descriptor->setup;
 	thiz->descriptor.renderer_get = descriptor->renderer_get;
@@ -540,6 +547,7 @@ EAPI Enesim_Renderer * esvg_renderable_renderer_get(Ender_Element *e)
 	Enesim_Renderer *r;
 
 	t = ender_element_object_get(e);
+	/* TODO always return the proxy */
 	_esvg_renderable_renderer_get(t, &r);
 	return r;
 }
@@ -623,6 +631,7 @@ EAPI Eina_Bool esvg_renderable_draw(Ender_Element *e, Enesim_Surface *s,
 	Enesim_Renderer *r = NULL;
 
 	t = ender_element_object_get(e);
+	/* always use the proxy */
 	esvg_renderable_internal_renderer_get(t, &r);
 	if (!r) return EINA_FALSE;
 
