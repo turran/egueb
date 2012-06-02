@@ -1105,7 +1105,6 @@ EAPI Eina_Bool esvg_iri_string_from(const char *attr, Esvg_Uri_Descriptor *descr
 	if (!strncmp(attr, "url(", 4))
 	{
 		char url[PATH_MAX];
-		size_t len;
 		int i = 0;
 
 		attr += 4;
@@ -1128,8 +1127,6 @@ EAPI Eina_Bool esvg_iri_string_from(const char *attr, Esvg_Uri_Descriptor *descr
  */
 EAPI Eina_Bool esvg_paint_string_from(Esvg_Paint *paint, const char *attr)
 {
-	Edom_Tag *found_tag;
-
 	/* none */
 	if (strncmp(attr, "none", 4) == 0)
 	{
@@ -1739,8 +1736,6 @@ EAPI Eina_Bool esvg_clock_string_from(int64_t *clock, const char *attr)
 	/* Timecount-val::= Timecount ("." Fraction)? (Metric)? */
 	else
 	{
-		long f = 0;
-
 		/* Fraction::= DIGIT+ */
 		if (*tmp == '.')
 		{

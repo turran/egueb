@@ -8,6 +8,7 @@ ESVG_APIHEADERS = \
 esvg_a.h \
 esvg_animation.h \
 esvg_animate_base.h \
+esvg_animate_transform.h \
 esvg_circle.h \
 esvg_clip_path.h \
 esvg_element.h \
@@ -33,7 +34,8 @@ esvg_use.h
 
 EXTRA_DIST = \
 esvg_private_main.h \
-esvg_private_element.h
+esvg_private_element.h \
+esvg_private_style.h
 
 installed_apiheadersdir = $(prefix)/include/esvg
 installed_apiheaders_DATA = $(ESVG_APIHEADERS)

@@ -1,6 +1,10 @@
 #ifndef _ESVG_PRIVATE_ELEMENT_H_
 #define _ESVG_PRIVATE_ELEMENT_H_
 
+#include "esvg_types.h"
+#include "esvg_private_attribute_presentation.h"
+#include "esvg_private_context.h"
+
 /* element */
 typedef enum _Esvg_Element_Setup_Return
 {
@@ -76,6 +80,8 @@ void esvg_element_attribute_animate_set(Edom_Tag *t, Eina_Bool animate);
 Eina_Bool esvg_element_attribute_animate_get(Edom_Tag *t);
 
 void esvg_element_initialize(Ender_Element *e);
+
+void esvg_element_style_apply(Edom_Tag *t, Ecss_Style *s);
 
 void esvg_element_topmost_set(Edom_Tag *t, Ender_Element *topmost);
 void esvg_element_state_compose(Edom_Tag *t, const Esvg_Element_Context *s, Esvg_Element_Context *d);

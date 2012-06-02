@@ -43,7 +43,6 @@ static Eina_Bool _esvg_input_find_intersection(Enesim_Renderer *r,
 	enesim_renderer_boundings(layer, &bounds);
 	printf("bounds %" ENESIM_RECTANGLE_FORMAT " and pointer at %g %g\n",
 			ENESIM_RECTANGLE_ARGS (&bounds), c->x, c->y);
-	
 }
 /*============================================================================*
  *                                 Global                                     *

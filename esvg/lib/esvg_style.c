@@ -106,7 +106,7 @@ static Edom_Tag * _esvg_style_new(void)
 /* The ender wrapper */
 #include "generated/esvg_generated_style.c"
 
-Eina_Bool esvg_is_style_internal(Edom_Tag *t)
+Eina_Bool esvg_style_is_internal(Edom_Tag *t)
 {
 	if (esvg_element_internal_type_get(t) == ESVG_STYLE)
 		return EINA_TRUE;

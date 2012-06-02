@@ -201,7 +201,7 @@ static Eina_Bool _esvg_element_child_setup_cb(Edom_Tag *t, Edom_Tag *child,
 		break;
 
 		default:
-		break;		
+		break;
 	}
 
 	return EINA_TRUE;
@@ -695,11 +695,11 @@ static Eina_Bool _esvg_element_attribute_get(Edom_Tag *t, const char *key, char 
 	/* FIXME handle common properties */
 	if (strcmp(key, "id") == 0)
 	{
-		_esvg_element_id_get(t, value);
+          _esvg_element_id_get(t, (const char **)value);
 	}
 	else if (strcmp(key, "class") == 0)
 	{
-		_esvg_element_class_get(t, value);
+		_esvg_element_class_get(t, (const char **)value);
 	}
 #if 0
 	/* TODO all the below cases should get the attribute
@@ -1634,7 +1634,6 @@ EAPI Eina_Bool esvg_element_setup(Ender_Element *e, Enesim_Error **error)
 {
 	Esvg_Context context;
 	Edom_Tag *t;
-	Eina_Bool ret;
 
 	t = ender_element_object_get(e);
 	esvg_context_init(&context);

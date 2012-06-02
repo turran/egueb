@@ -1,6 +1,8 @@
 #ifndef _ESVG_PRIVATE_ANIMATION_H_
 #define _ESVG_PRIVATE_ANIMATION_H_
 
+#include "esvg_private_attribute_animation.h"
+
 /* animation */
 typedef struct _Esvg_Animation_Context {
 	Esvg_Attribute_Animation_Target target;
@@ -26,5 +28,7 @@ typedef struct _Esvg_Animation_Descriptor {
 
 void * esvg_animation_data_get(Edom_Tag *t);
 Edom_Tag * esvg_animation_new(Esvg_Animation_Descriptor *descriptor, Esvg_Type type, void *data);
+/* generated function */
+void esvg_animation_init(void);
 
 #endif

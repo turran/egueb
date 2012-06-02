@@ -1,6 +1,8 @@
 #ifndef _ESVG_PRIVATE_INSTANTIABLE_H_
 #define _ESVG_PRIVATE_INSTANTIABLE_H_
 
+#include "esvg_private_renderable.h"
+
 typedef struct _Esvg_Instantiable_Descriptor {
 	/* the tag interface */
 	Edom_Tag_Child_Add child_add;
@@ -22,5 +24,7 @@ typedef struct _Esvg_Instantiable_Descriptor {
 void * esvg_instantiable_data_get(Edom_Tag *t);
 Eina_Bool esvg_is_instantiable_internal(Edom_Tag *t);
 Edom_Tag * esvg_instantiable_new(Esvg_Instantiable_Descriptor *descriptor, Esvg_Type type, void *data);
+/* generated function */
+void esvg_instantiable_init(void);
 
 #endif

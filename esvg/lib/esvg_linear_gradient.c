@@ -474,6 +474,12 @@ EAPI Ender_Element * esvg_linear_gradient_new(void)
 
 EAPI Eina_Bool esvg_is_linear_gradient(Ender_Element *e)
 {
+	Edom_Tag *t;
+	Esvg_Type type;
+
+	t = (Edom_Tag *)ender_element_object_get(e);
+	type = esvg_element_internal_type_get(t);
+	return (type == ESVG_LINEARGRADIENT) ? EINA_TRUE : EINA_FALSE;
 }
 
 EAPI void esvg_linear_gradient_x1_set(Ender_Element *e, const Esvg_Coord *x1)
@@ -483,10 +489,18 @@ EAPI void esvg_linear_gradient_x1_set(Ender_Element *e, const Esvg_Coord *x1)
 
 EAPI void esvg_linear_gradient_x1_get(Ender_Element *e, Esvg_Coord *x1)
 {
+	Edom_Tag *t;
+
+	t = (Edom_Tag *)ender_element_object_get(e);
+	_esvg_linear_gradient_x1_get(t, x1);
 }
 
 EAPI Eina_Bool esvg_linear_gradient_x1_is_set(Ender_Element *e)
 {
+	Edom_Tag *t;
+
+	t = (Edom_Tag *)ender_element_object_get(e);
+	return _esvg_linear_gradient_x1_is_set(t);
 }
 
 EAPI void esvg_linear_gradient_y1_set(Ender_Element *e, const Esvg_Coord *y1)
@@ -496,10 +510,18 @@ EAPI void esvg_linear_gradient_y1_set(Ender_Element *e, const Esvg_Coord *y1)
 
 EAPI void esvg_linear_gradient_y1_get(Ender_Element *e, Esvg_Coord *y1)
 {
+	Edom_Tag *t;
+
+	t = (Edom_Tag *)ender_element_object_get(e);
+	_esvg_linear_gradient_y1_get(t, y1);
 }
 
 EAPI Eina_Bool esvg_linear_gradient_y1_is_set(Ender_Element *e)
 {
+	Edom_Tag *t;
+
+	t = (Edom_Tag *)ender_element_object_get(e);
+	return _esvg_linear_gradient_y1_is_set(t);
 }
 
 EAPI void esvg_linear_gradient_x2_set(Ender_Element *e, const Esvg_Coord *x2)
@@ -509,10 +531,18 @@ EAPI void esvg_linear_gradient_x2_set(Ender_Element *e, const Esvg_Coord *x2)
 
 EAPI void esvg_linear_gradient_x2_get(Ender_Element *e, Esvg_Coord *x2)
 {
+	Edom_Tag *t;
+
+	t = (Edom_Tag *)ender_element_object_get(e);
+	_esvg_linear_gradient_x2_get(t, x2);
 }
 
 EAPI Eina_Bool esvg_linear_gradient_x2_is_set(Ender_Element *e)
 {
+	Edom_Tag *t;
+
+	t = (Edom_Tag *)ender_element_object_get(e);
+	return _esvg_linear_gradient_x2_is_set(t);
 }
 
 EAPI void esvg_linear_gradient_y2_set(Ender_Element *e, const Esvg_Coord *y2)
@@ -522,8 +552,16 @@ EAPI void esvg_linear_gradient_y2_set(Ender_Element *e, const Esvg_Coord *y2)
 
 EAPI void esvg_linear_gradient_y2_get(Ender_Element *e, Esvg_Coord *y2)
 {
+	Edom_Tag *t;
+
+	t = (Edom_Tag *)ender_element_object_get(e);
+	_esvg_linear_gradient_y2_get(t, y2);
 }
 
 EAPI Eina_Bool esvg_linear_gradient_y2_is_set(Ender_Element *e)
 {
+	Edom_Tag *t;
+
+	t = (Edom_Tag *)ender_element_object_get(e);
+	return _esvg_linear_gradient_y2_is_set(t);
 }

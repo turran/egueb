@@ -145,7 +145,6 @@ static Esvg_Element_Setup_Return _esvg_g_setup(Edom_Tag *t,
 		Esvg_Context *c,
 		Esvg_Element_Context *ctx,
 		Esvg_Attribute_Presentation *attr,
-		Esvg_Renderable_Context *rctx,
 		Enesim_Error **error)
 {
 	Esvg_G *thiz;
@@ -212,4 +211,10 @@ EAPI Ender_Element * esvg_g_new(void)
 
 EAPI Eina_Bool esvg_is_g(Ender_Element *e)
 {
+	Edom_Tag *t;
+	Esvg_Type type;
+
+	t = (Edom_Tag *)ender_element_object_get(e);
+	type = esvg_element_internal_type_get(t);
+	return (type == ESVG_G) ? EINA_TRUE : EINA_FALSE;
 }

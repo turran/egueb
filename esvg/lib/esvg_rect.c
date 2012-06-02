@@ -168,7 +168,7 @@ static Eina_Bool _esvg_rect_renderer_propagate(Edom_Tag *t,
 	enesim_renderer_rectangle_size_set(thiz->r, width, height);
 
 	/* set the bounds */
-	enesim_rectangle_coords_from(&ctx->bounds, x, y, width, height);
+	enesim_rectangle_coords_from((Enesim_Rectangle *)&ctx->bounds, x, y, width, height);
 
 	/* FIXME enesim does not supports rx *and* ry */
 	rx = esvg_length_final_get(&thiz->current.rx.base, ctx->viewbox.width, ctx->font_size);

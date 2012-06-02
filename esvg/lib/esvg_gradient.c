@@ -23,9 +23,11 @@
 #include "esvg_private_attribute_presentation.h"
 #include "esvg_private_context.h"
 #include "esvg_private_element.h"
+#include "esvg_private_svg.h"
 #include "esvg_private_referenceable.h"
 #include "esvg_private_paint_server.h"
 #include "esvg_private_gradient.h"
+#include "esvg_private_stop.h"
 #include "esvg_gradient.h"
 
 /*
@@ -60,7 +62,7 @@ typedef struct _Esvg_Gradient_Descriptor_Internal
 } Esvg_Gradient_Descriptor_Internal;
 
 typedef struct _Esvg_Gradient_State
-{	
+{
 	char *href;
 } Esvg_Gradient_State;
 
@@ -541,7 +543,6 @@ Edom_Tag * esvg_gradient_new(Esvg_Gradient_Descriptor *descriptor,
 	Esvg_Gradient *thiz;
 	Esvg_Paint_Server_Descriptor pdescriptor;
 	Edom_Tag *t;
-	Enesim_Renderer *r;
 
 	thiz = calloc(1, sizeof(Esvg_Gradient));
 	if (!thiz) return NULL;
@@ -606,6 +607,10 @@ EAPI void esvg_gradient_href_set(Ender_Element *e, const char *href)
 
 EAPI void esvg_gradient_href_get(Ender_Element *e, const char **href)
 {
+	Edom_Tag *t;
+
+	t = (Edom_Tag *)ender_element_object_get(e);
+	_esvg_gradient_href_get(t, href);
 }
 
 EAPI void esvg_gradient_units_set(Ender_Element *e, Esvg_Gradient_Units units)
@@ -641,5 +646,9 @@ EAPI void esvg_gradient_spread_method_set(Ender_Element *e, Esvg_Spread_Method s
 
 EAPI void esvg_gradient_spread_method_get(Ender_Element *e, Esvg_Spread_Method *spread_method)
 {
+	Edom_Tag *t;
+
+	t = (Edom_Tag *)ender_element_object_get(e);
+	_esvg_gradient_spread_method_get(t, spread_method);
 }
 

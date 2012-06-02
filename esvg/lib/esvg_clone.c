@@ -20,6 +20,7 @@
 #endif
 
 #include "esvg_private_main.h"
+#include "esvg_private_element.h"
 #include "esvg_private_clone.h"
 
 #include "esvg_main.h"

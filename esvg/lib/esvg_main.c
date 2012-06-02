@@ -30,6 +30,12 @@
 #include "esvg_private_context.h"
 #include "esvg_private_element.h"
 #include "esvg_private_a.h"
+#include "esvg_private_referenceable.h"
+#include "esvg_private_instantiable.h"
+#include "esvg_private_paint_server.h"
+#include "esvg_private_gradient.h"
+#include "esvg_private_animation.h"
+#include "esvg_private_animate_base.h"
 
 #include "esvg_main.h"
 #include "esvg_element.h"

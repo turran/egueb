@@ -65,5 +65,7 @@ void esvg_referenceable_reference_propagate(Esvg_Referenceable_Reference *rr,
 		Enesim_Error **error);
 /* internal functions */
 Eina_Bool esvg_is_referenceable_internal(Edom_Tag *t);
+/* generated function */
+void esvg_referenceable_init(void);
 
 #endif

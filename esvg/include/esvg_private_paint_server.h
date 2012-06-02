@@ -24,6 +24,8 @@ typedef struct _Esvg_Paint_Server_Descriptor {
 
 void * esvg_paint_server_data_get(Edom_Tag *t);
 Edom_Tag * esvg_paint_server_new(Esvg_Paint_Server_Descriptor *descriptor, Esvg_Type type, void *data);
+/* generated function */
+void esvg_paint_server_init(void);
 
 
 #endif

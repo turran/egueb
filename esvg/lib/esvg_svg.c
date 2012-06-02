@@ -28,6 +28,7 @@
 #include "esvg_private_svg.h"
 #include "esvg_private_a.h"
 #include "esvg_private_input.h"
+#include "esvg_private_style.h"
 
 #include "esvg_svg.h"
 #include "esvg_element.h"
@@ -491,7 +492,7 @@ static Eina_Bool _esvg_svg_child_initialize(Edom_Tag *t, Edom_Tag *child_t, void
 	if (id) eina_hash_add(thiz->ids, id, child_e);
 
 	/* add the style to the list of styles */
-	if (esvg_is_style_internal(child_t))
+	if (esvg_style_is_internal(child_t))
 	{
 		thiz->styles = eina_list_append(thiz->styles, child_t);
 		thiz->styles_changed = EINA_TRUE;
@@ -527,7 +528,7 @@ static Eina_Bool _esvg_svg_child_deinitialize(Edom_Tag *t, Edom_Tag *child_t, vo
 	if (id) eina_hash_del(thiz->ids, id, child_e);
 
 	/* add the style to the list of styles */
-	if (esvg_is_style_internal(child_t))
+	if (esvg_style_is_internal(child_t))
 	{
 		thiz->styles = eina_list_remove(thiz->styles, child_t);
 		thiz->styles_changed = EINA_TRUE;
@@ -982,8 +983,8 @@ void esvg_svg_image_load(Ender_Element *e, const char *uri, Enesim_Surface **s, 
 	thiz = _esvg_svg_get(t);
 
 	data.thiz = thiz;
-	data.ret = s;
-	data.data = options;
+	data.ret = (void *)s;
+	data.data = (void *)options;
 	/* resolve the uri for relative/absolute */
 	esvg_iri_string_from(uri, &_uri_image_descriptor, &data);
 }

@@ -191,7 +191,6 @@ static Esvg_Element_Setup_Return _esvg_clip_path_setup(Edom_Tag *e,
 		Esvg_Context *c,
 		Esvg_Element_Context *state,
 		Esvg_Attribute_Presentation *attr,
-		Enesim_Renderer *r,
 		Enesim_Error **error)
 {
 	Esvg_Clip_Path *thiz;
@@ -224,13 +223,13 @@ static void _esvg_clip_path_free(Edom_Tag *t)
 }
 
 
-Enesim_Renderer * _esvg_clip_path_renderer_new(Edom_Tag *e)
+static Enesim_Renderer * _esvg_clip_path_renderer_new(Edom_Tag *t)
 {
 	Enesim_Renderer *r;
 #if 0
 	Esvg_Clip_Path *thiz;
 
-	thiz = _esvg_clip_path_get(e);
+	thiz = _esvg_clip_path_get(t);
 	/* if the clip path is set use that as the renderer element */
 	if (!attr->clip_path_set)
 		return thiz->r;
@@ -252,7 +251,9 @@ static Esvg_Referenceable_Descriptor _descriptor = {
 	/* .attribute_set 	= */ _esvg_clip_path_attribute_set,
 	/* .clone		= */ NULL,
 	/* .setup		= */ _esvg_clip_path_setup,
+	/* .cleanup		= */ NULL,
 	/* .renderer_new	= */ _esvg_clip_path_renderer_new,
+	/* .renderer_propagate	= */ NULL,
 };
 /*----------------------------------------------------------------------------*
  *                           The Ender interface                              *
@@ -261,7 +262,6 @@ EAPI Edom_Tag * _esvg_clip_path_new(void)
 {
 	Esvg_Clip_Path *thiz;
 	Edom_Tag *t;
-	Enesim_Renderer *r;
 
 	thiz = calloc(1, sizeof(Esvg_Clip_Path));
 	if (!thiz) return NULL;

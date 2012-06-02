@@ -37,5 +37,7 @@ typedef struct _Esvg_Gradient_Descriptor {
 Edom_Tag * esvg_gradient_new(Esvg_Gradient_Descriptor *descriptor, Esvg_Type type, void *data);
 void * esvg_gradient_data_get(Edom_Tag *t);
 Edom_Tag * esvg_gradient_href_tag_get(Edom_Tag *t);
+/* generated function */
+void esvg_gradient_init(void);
 
 #endif

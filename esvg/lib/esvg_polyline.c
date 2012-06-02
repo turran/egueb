@@ -82,7 +82,6 @@ static Eina_Bool _esvg_polyline_attribute_get(Edom_Tag *tag, const char *attribu
 static Enesim_Renderer * _esvg_polyline_renderer_get(Edom_Tag *t)
 {
 	Esvg_Polyline *thiz;
-	int nvert;
 
 	thiz = _esvg_polyline_get(t);
 	return thiz->proxy;

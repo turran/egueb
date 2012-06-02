@@ -109,7 +109,7 @@ static void _esvg_text_text_set(Edom_Tag *t, const char *text, unsigned int leng
 	past = text[length];
 	modified = (char *)text;
 	modified[length] = '\0';
-	
+
 	DBG("setting text %s", modified);
 	etex_span_text_set(thiz->r, modified);
 	modified[length] = past;
@@ -304,6 +304,12 @@ EAPI Ender_Element * esvg_text_new(void)
 
 EAPI Eina_Bool esvg_is_text(Ender_Element *e)
 {
+	Edom_Tag *t;
+	Esvg_Type type;
+
+	t = (Edom_Tag *)ender_element_object_get(e);
+	type = esvg_element_internal_type_get(t);
+	return (type == ESVG_TEXT) ? EINA_TRUE : EINA_FALSE;
 }
 
 EAPI void esvg_text_x_set(Ender_Element *e, const Esvg_Coord *x)
@@ -313,6 +319,10 @@ EAPI void esvg_text_x_set(Ender_Element *e, const Esvg_Coord *x)
 
 EAPI void esvg_text_x_get(Ender_Element *e, Esvg_Coord *x)
 {
+	Edom_Tag *t;
+
+	t = (Edom_Tag *)ender_element_object_get(e);
+	_esvg_text_x_get(t, x);
 }
 
 EAPI void esvg_text_y_set(Ender_Element *e, const Esvg_Coord *y)
@@ -322,6 +332,10 @@ EAPI void esvg_text_y_set(Ender_Element *e, const Esvg_Coord *y)
 
 EAPI void esvg_text_y_get(Ender_Element *e, Esvg_Coord *y)
 {
+	Edom_Tag *t;
+
+	t = (Edom_Tag *)ender_element_object_get(e);
+	_esvg_text_y_get(t, y);
 }
 
 EAPI void esvg_text_text_set(Ender_Element *e, const char *text)

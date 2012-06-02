@@ -26,6 +26,9 @@
 #include "esvg_private_attribute_animation.h"
 #include "esvg_private_animation.h"
 #include "esvg_private_animate_base.h"
+#include "esvg_private_svg.h"
+
+#include "esvg_animate_transform.h"
 /* This file handles the 'animateTransform' tag. The idea
  * is that you can animate transformations by animating
  * the numbers that define a transformation and its type

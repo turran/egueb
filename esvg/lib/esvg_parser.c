@@ -30,17 +30,23 @@
 #include "esvg_private_element.h"
 
 #include "esvg_main.h"
+#include "esvg_a.h"
+#include "esvg_animate_transform.h"
 #include "esvg_svg.h"
 #include "esvg_ellipse.h"
 #include "esvg_rect.h"
 #include "esvg_circle.h"
+#include "esvg_image.h"
 #include "esvg_path.h"
 #include "esvg_polygon.h"
 #include "esvg_polyline.h"
 #include "esvg_line.h"
 #include "esvg_linear_gradient.h"
+#include "esvg_radial_gradient.h"
 #include "esvg_g.h"
 #include "esvg_stop.h"
+#include "esvg_text.h"
+#include "esvg_use.h"
 
 #include "esvg_parser.h"
 /*============================================================================*
