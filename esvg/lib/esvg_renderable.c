@@ -47,7 +47,6 @@ typedef struct _Esvg_Renderable_Descriptor_Internal
 {
 	Edom_Tag_Free free;
 	Esvg_Renderable_Setup setup;
-	Esvg_Renderable_Renderer_Get renderer_get;
 	Esvg_Renderable_Renderer_Propagate renderer_propagate;
 } Esvg_Renderable_Descriptor_Internal;
 
@@ -72,6 +71,8 @@ typedef struct _Esvg_Renderable
 
 	Esvg_Renderable_Context context;
 	void *data;
+	Enesim_Renderer *r;
+	Enesim_Renderer *renderable_r;
 	/* damages */
 	Eina_Tiler *tiler;
 	int tw;
@@ -271,6 +272,7 @@ static Esvg_Element_Setup_Return _esvg_renderable_propagate(Esvg_Renderable *thi
 			rr = _esvg_renderable_get_reference(t, attr->clip_path);
 
 			thiz->clip_path_reference = rr;
+			/* get the clip path renderer and use that as our new proxied renderer */
 			printf(">>> clip path is set! <<<<\n");
 		}
 	}
@@ -427,7 +429,7 @@ void esvg_renderable_internal_renderer_get(Edom_Tag *t, Enesim_Renderer **r)
 
 	if (!r) return;
 	thiz = _esvg_renderable_get(t);
-	*r = thiz->descriptor.renderer_get(t);
+	*r = thiz->r;
 }
 
 void esvg_renderable_internal_container_width_get(Edom_Tag *t, double *container_width)
@@ -503,18 +505,23 @@ Edom_Tag * esvg_renderable_new(Esvg_Renderable_Descriptor *descriptor, Esvg_Type
 	Esvg_Renderable *thiz;
 	Esvg_Element_Descriptor pdescriptor;
 	Edom_Tag *t;
+	Enesim_Renderer *r;
+
+	/* initial checks */
+	if (!descriptor->renderer_get)
+		return NULL;
 
 	thiz = calloc(1, sizeof(Esvg_Renderable));
 	if (!thiz) return NULL;
 
 	EINA_MAGIC_SET(thiz, ESVG_RENDERABLE_MAGIC);
 	thiz->data = data;
-	/* TODO create the proxy renderer */
-	/* call the renderer_get and store it */
-	/* set the proxied renderer */
+	/* create the proxy renderer */
+	r = enesim_renderer_proxy_new();
+	thiz->r = r;
+
 	/* our own descriptor */
 	thiz->descriptor.setup = descriptor->setup;
-	thiz->descriptor.renderer_get = descriptor->renderer_get;
 	thiz->descriptor.renderer_propagate = descriptor->renderer_propagate;
 	/* default values */
 	thiz->container_width = 640;
@@ -540,6 +547,18 @@ Edom_Tag * esvg_renderable_new(Esvg_Renderable_Descriptor *descriptor, Esvg_Type
 	pdescriptor.setup = _esvg_renderable_setup;
 
 	t = esvg_element_new(&pdescriptor, type, thiz);
+
+	/* call the renderer_get and store it */
+	r = descriptor->renderer_get(t);
+	if (!r)
+	{
+		/* TODO destroy the tag */
+		return NULL;
+	}
+
+	thiz->renderable_r = r;
+	/* set the proxied renderer */
+	enesim_renderer_proxy_proxied_set(thiz->r, r);
 
 	return t;
 }
@@ -570,7 +589,6 @@ EAPI Enesim_Renderer * esvg_renderable_renderer_get(Ender_Element *e)
 	Enesim_Renderer *r;
 
 	t = ender_element_object_get(e);
-	/* TODO always return the proxy */
 	_esvg_renderable_renderer_get(t, &r);
 	return r;
 }
@@ -654,7 +672,6 @@ EAPI Eina_Bool esvg_renderable_draw(Ender_Element *e, Enesim_Surface *s,
 	Enesim_Renderer *r = NULL;
 
 	t = ender_element_object_get(e);
-	/* always use the proxy */
 	esvg_renderable_internal_renderer_get(t, &r);
 	if (!r) return EINA_FALSE;
 

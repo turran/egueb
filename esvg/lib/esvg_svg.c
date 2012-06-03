@@ -45,6 +45,8 @@
  * onresize
  * onscroll
  * onzoom
+ * Don't use a clipper, but a rectangle or we wont be able to also transform
+ * a svg when it is included inside another
  */
 /*============================================================================*
  *                                  Local                                     *
