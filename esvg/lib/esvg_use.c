@@ -37,8 +37,8 @@
  * svg tree. Basically we set the 'link' property of the 'use' to the svg
  * tree. Once it is attached on the setup we should clone it if it is not
  * already cloned and render it that new tree as a 'g' element.
- * We need to add a clone function on the element descriptor to be able
- * to clone renderers easily.
+ * Given that generated g does not have a parent (but it does have a topmost)
+ * we need to propagate every attribute on the use to the g
  */
 /*============================================================================*
  *                                  Local                                     *

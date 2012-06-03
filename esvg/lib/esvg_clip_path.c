@@ -24,7 +24,9 @@
 #include "esvg_private_context.h"
 #include "esvg_private_element.h"
 #include "esvg_private_referenceable.h"
+#include "esvg_private_clone.h"
 
+#include "esvg_main.h"
 #include "esvg_clip_path.h"
 
 /*
@@ -58,9 +60,7 @@ typedef struct _Esvg_Clip_Path
 	/* properties */
 	Esvg_Attribute_Units units;
 	/* private */
-	Enesim_Renderer *rel;
-	Enesim_Matrix rel_m;
-	Enesim_Renderer *r;
+	Eina_Bool tree_changed : 1;
 } Esvg_Clip_Path;
 
 static Esvg_Clip_Path * _esvg_clip_path_get(Edom_Tag *t)
@@ -74,6 +74,21 @@ static Esvg_Clip_Path * _esvg_clip_path_get(Edom_Tag *t)
 	return thiz;
 }
 
+static Eina_Bool _esvg_clip_path_clone(Edom_Tag *t, Edom_Tag *child,
+		void *data)
+{
+	Esvg_Clone *clone;
+	Edom_Tag *cloned_t;
+	Ender_Element *child_e;
+	Ender_Element *g = data;
+
+	child_e = esvg_element_ender_get(child);
+	clone = esvg_clone_new(child_e);
+	cloned_t = ender_element_object_get(clone->our);
+	ender_element_property_value_add(g, EDOM_CHILD, cloned_t, NULL);
+
+	return EINA_TRUE;
+}
 /*----------------------------------------------------------------------------*
  *                       The Esvg Renderable interface                        *
  *----------------------------------------------------------------------------*/
@@ -97,42 +112,24 @@ static Eina_Bool _esvg_clip_path_attribute_get(Edom_Tag *tag,
 }
 
 
-static Eina_Bool _esvg_clip_path_child_add(Edom_Tag *tag, Edom_Tag *child_t)
+static Eina_Bool _esvg_clip_path_child_add(Edom_Tag *tag, Edom_Tag *child)
 {
 	Esvg_Type type;
 
-	type = esvg_element_internal_type_get(child_t);
-#if 0
-	switch (type)
-	{
-		case ESVG_CIRCLE:
-		case ESVG_ELLIPSE:
-		case ESVG_RECT:
-		case ESVG_LINE:
-		case ESVG_PATH:
-		case ESVG_POLYLINE:
-		case ESVG_POLYGON:
-		case ESVG_TEXT:
-		case ESVG_USE:
-		break;
-
-		default:
+	if (!esvg_is_element_internal(child))
 		return EINA_FALSE;
+
+	type = esvg_element_internal_type_get(child);
+	if (esvg_type_is_renderable(type))
+	{
+		Esvg_Clip_Path *thiz;
+
+		thiz = _esvg_clip_path_get(tag);
+		thiz->tree_changed = EINA_TRUE;
+		return EINA_TRUE;
 	}
-#endif
+	return EINA_FALSE;	
 }
-#if 0
-Edom_Tag * esvg_parser_clip_path_new(Edom_Parser *parser)
-{
-	Edom_Tag *tag;
-	Enesim_Renderer *r;
-
-	r = esvg_clip_path_new();
-	tag = esvg_parser_element_new(parser, &_descriptor, ESVG_CLIPPATH, r, NULL);
-
-	return tag;
-}
-#endif
 
 #if 0
 static void _esvg_clip_path_enesim_state_calculate(Edom_Tag *e,
@@ -246,10 +243,31 @@ static Esvg_Element_Setup_Return _esvg_clip_path_setup(Edom_Tag *e,
 
 static Eina_Bool _esvg_clip_path_reference_add(Edom_Tag *t, Esvg_Referenceable_Reference *rr)
 {
+	Ender_Element *g;
+	Esvg_Clone *clone;
+
+	g = esvg_g_new();
+	/* clone each child and reparent it */
+	/* TODO handle the tree changed */
+	edom_tag_child_foreach(t, _esvg_clip_path_clone, g);
+	
 	/* two different objects can reference us, or either a renderable (shapes)
 	 * or a referenceable (another clip path)
 	 */
 	/* if it is a renderable then store the renderer it has */
+	/* clone the renderable objects */
+	return EINA_TRUE;
+}
+
+static Eina_Bool _esvg_clip_path_propagate(Edom_Tag *t,
+		Esvg_Context *c,
+		const Esvg_Element_Context *ctx,
+		const Esvg_Attribute_Presentation *attr,
+		Enesim_Renderer *r,
+		Enesim_Error **error)
+{
+	/* if the tree has changed then re-create the clone */
+	return EINA_TRUE;
 }
 
 static void _esvg_clip_path_free(Edom_Tag *t)
@@ -264,7 +282,7 @@ static Enesim_Renderer * _esvg_clip_path_renderer_new(Edom_Tag *t)
 {
 	Enesim_Renderer *r;
 
-	r = enesim_renderer_compound_new();
+	r = enesim_renderer_proxy_new();
 	return r;
 }
 
@@ -281,7 +299,7 @@ static Esvg_Referenceable_Descriptor _descriptor = {
 	/* .setup		= */ _esvg_clip_path_setup,
 	/* .cleanup		= */ NULL,
 	/* .renderer_new	= */ _esvg_clip_path_renderer_new,
-	/* .renderer_propagate	= */ NULL,
+	/* .renderer_propagate	= */ _esvg_clip_path_propagate,
 	/* .reference_add	= */ _esvg_clip_path_reference_add,
 	/* .reference_remove	= */ NULL,
 };
@@ -332,25 +350,6 @@ static Eina_Bool _esvg_clip_path_clip_path_units_is_set(Edom_Tag *t)
 /* The ender wrapper */
 #include "generated/esvg_generated_clip_path.c"
 
-/* set the renderer this clip path should clip, is not that i like this way of setup much */
-void esvg_clip_path_relative_set(Edom_Tag *e, Enesim_Renderer *rel,
-		Enesim_Matrix *rel_m)
-{
-	Esvg_Clip_Path *thiz;
-
-	thiz = _esvg_clip_path_get(e);
-	if (thiz->rel == rel) return;
-	if (thiz->rel)
-	{
-		enesim_renderer_unref(thiz->rel);
-	}
-	thiz->rel = rel;
-	thiz->rel_m = *rel_m;
-	if (thiz->rel)
-	{
-		enesim_renderer_ref(thiz->rel);
-	}
-}
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/

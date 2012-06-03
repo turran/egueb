@@ -139,6 +139,7 @@ Esvg_Clone * esvg_clone_new(Ender_Element *e)
 	/* useful for debugging */
 	{
 		Edom_Tag *t = ender_element_object_get(thiz->our);
+		printf("cloned element\n");
 		edom_tag_dump(t);
 	}
 

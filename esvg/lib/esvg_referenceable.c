@@ -153,6 +153,10 @@ void esvg_referenceable_reference_propagate(Esvg_Referenceable_Reference *rr,
 	const Esvg_Attribute_Presentation *attr;
 
 	thiz = _esvg_referenceable_get(rr->t);
+	/* TODO this should be the entry point of elements that have
+	 * references, here we should check if the element needs setup
+	 * if so, call it instead of this
+	 */
 	/* TODO check that the element hasnt changed
 	 * if it has changed, check that the context is the same
 	 * if not, dont call anything

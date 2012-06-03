@@ -66,6 +66,10 @@ typedef struct _Esvg_Renderable
 	Esvg_Paint stroke_paint_last;
 	Esvg_Referenceable_Reference *fill_reference;
 	Esvg_Referenceable_Reference *stroke_reference;
+
+	char *clip_path_last;
+	Esvg_Referenceable_Reference *clip_path_reference;
+
 	Esvg_Renderable_Context context;
 	void *data;
 	/* damages */
@@ -82,6 +86,26 @@ static Esvg_Renderable * _esvg_renderable_get(Edom_Tag *t)
 	ESVG_RENDERABLE_MAGIC_CHECK(thiz);
 
 	return thiz;
+}
+
+static Esvg_Referenceable_Reference * _esvg_renderable_get_reference(Edom_Tag *t, const char *uri)
+{
+	Ender_Element *topmost;
+	Ender_Element *e = NULL;
+	Edom_Tag *fill_t;
+	Esvg_Referenceable_Reference *rr;
+
+	/* FIXME remove the old reference in case we already had one */
+	esvg_element_internal_topmost_get(t, &topmost);
+	if (!topmost) return NULL;
+
+	esvg_svg_element_get(topmost, uri, &e);
+	if (!e) return NULL;
+
+	/* TODO then, check that the referenced element is of type paint server */
+	fill_t = ender_element_object_get(e);
+	rr = esvg_referenceable_reference_add(fill_t, t);
+	return rr;
 }
 
 static Eina_Bool _esvg_renderable_damage_cb(Enesim_Renderer *r,
@@ -121,31 +145,14 @@ static void _esvg_renderable_paint_set(Edom_Tag *t,
 	}
 	else if (current->type == ESVG_PAINT_SERVER)
 	{
-		Ender_Element *topmost;
+		Esvg_Referenceable_Reference *rr;
 
-		/* FIXME remove the old reference in case we already had one */
-		esvg_element_internal_topmost_get(t, &topmost);
-		if (topmost)
-		{
-			Ender_Element *e = NULL;
-
-			/* TODO here we should fetch the id from the property */
-			esvg_svg_element_get(topmost, current->value.paint_server, &e);
-			if (e)
-			{
-				Edom_Tag *fill_t;
-				Esvg_Referenceable_Reference *rr;
-
-				/* TODO then, check that the referenced element is of type paint server */
-				fill_t = ender_element_object_get(e);
-				rr = esvg_referenceable_reference_add(fill_t, t);
-				if (!rr) goto done;
-				/* TODO finally, get the renderer? */
-				*renderer = rr->data;
-				*reference = rr;
-				*rdraw_mode |= mode;
-			}
-		}
+		rr = _esvg_renderable_get_reference(t, current->value.paint_server);
+		if (!rr) goto done;
+		/* TODO finally, get the renderer? */
+		*renderer = rr->data;
+		*reference = rr;
+		*rdraw_mode |= mode;
 	}
 	else if (current->type == ESVG_PAINT_NONE)
 	{
@@ -243,13 +250,29 @@ static Esvg_Element_Setup_Return _esvg_renderable_propagate(Esvg_Renderable *thi
 	 * a shape for rendering, a shape for masking, etc) the different
 	 * enesim states despend on that behaviour
 	 */
-	if (attr->clip_path)
+	if (!esvg_string_is_equal(attr->clip_path, thiz->clip_path_last))
 	{
 		/* whenever a clip path is set, we should reference it, etc, etc
 		 * similar to the gradient and also make the renderable renderer
 		 * use the clip path renderer to render
 		 */
-		printf(">>> clip path is set! <<<<\n");
+		if (thiz->clip_path_last)
+		{
+			free(thiz->clip_path_last);
+			/* TODO destroy the reference */
+			thiz->clip_path_last = NULL;
+		}
+
+		if (attr->clip_path)
+		{
+			Esvg_Referenceable_Reference *rr;
+
+			thiz->clip_path_last = strdup(attr->clip_path);
+			rr = _esvg_renderable_get_reference(t, attr->clip_path);
+
+			thiz->clip_path_reference = rr;
+			printf(">>> clip path is set! <<<<\n");
+		}
 	}
 	/* FIXME there are cases where this is not needed, liek the 'use' given that
 	 * the 'g' will do it
