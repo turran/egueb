@@ -179,7 +179,6 @@ static Esvg_Element_Setup_Return _esvg_use_setup(Edom_Tag *t,
 	double tx, ty;
 
 	thiz = _esvg_use_get(t);
-#if 0
 	/* we should append a new transformation */
 	tx = esvg_length_final_get(&thiz->x, ctx->viewbox.width, ctx->font_size);
 	ty = esvg_length_final_get(&thiz->y, ctx->viewbox.height, ctx->font_size);
@@ -189,7 +188,6 @@ static Esvg_Element_Setup_Return _esvg_use_setup(Edom_Tag *t,
 	/* we take the shortcut here because there's no need to go through
 	 * the normal enesim API
 	 */
-#endif
 	printf("calling the setup on the use\n");
 	/* FIXME this should be go away */
 	esvg_element_internal_topmost_get(t, &topmost);
@@ -236,8 +234,8 @@ static Esvg_Element_Setup_Return _esvg_use_setup(Edom_Tag *t,
 	printf("doing the setup on the inner g!\n");
 	/* FIXME for now */
 	esvg_element_topmost_set(thiz->g_t, topmost);
-	/* we should set the attributes, state? */
-	return esvg_element_internal_setup(thiz->g_t, c, error);
+	/* Use our own context and attributes as the parent ones */
+	return esvg_element_setup_rel(thiz->g_t, c, ctx, attr, error);
 }
 
 static void _esvg_use_free(Edom_Tag *t)
