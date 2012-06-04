@@ -1,6 +1,8 @@
 #ifndef _ESVG_PRIVATE_PAINT_SERVER_H_
 #define _ESVG_PRIVATE_PAINT_SERVER_H_
 
+typedef Enesim_Renderer * (*Esvg_Paint_Server_Renderer_New)(Edom_Tag *t);
+
 typedef struct _Esvg_Paint_Server_Descriptor {
 	/* the tag interface */
 	Edom_Tag_Child_Add child_add;
@@ -15,7 +17,7 @@ typedef struct _Esvg_Paint_Server_Descriptor {
 	/* the renderable interface */
 	Esvg_Referenceable_Setup setup;
 	Esvg_Referenceable_Cleanup cleanup;
-	Esvg_Referenceable_Renderer_New renderer_new;
+	Esvg_Paint_Server_Renderer_New renderer_new;
 	Esvg_Referenceable_Propagate propagate;
 	Esvg_Referenceable_Reference_Add reference_add;
 	Esvg_Referenceable_Reference_Remove reference_remove;

@@ -282,8 +282,10 @@ static Esvg_Element_Setup_Return _esvg_renderable_propagate(Esvg_Renderable *thi
 	/* FIXME there are cases where this is not needed, liek the 'use' given that
 	 * the 'g' will do it
 	 */
-	if (context->renderable_behaviour)
-		context->renderable_behaviour(t, attr, &thiz->context);
+	if (!context->renderable_behaviour)
+		_esvg_renderable_context_set(t, attr, &thiz->context);
+	else
+		context->renderable_behaviour->context_set(t, attr, &thiz->context, context->renderable_behaviour->data);
 	/* do the renderer propagate */
 	if (!thiz->descriptor.renderer_propagate(t, c, context, attr, &thiz->context, error))
 		return ESVG_SETUP_FAILED;
@@ -413,15 +415,6 @@ static Esvg_Element_Setup_Return _esvg_renderable_setup(Edom_Tag *t,
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
-Esvg_Renderable_Behaviour esvg_renderable_default_behaviour_get(void)
-{
-	/* For defs, it must do nothing
-	 * For clippaths, it should only generate the geometry (no paint, storke, etc)
-	 * For patterns, like the default
-	 */
-	return _esvg_renderable_context_set;
-}
-
 void esvg_renderable_implementation_renderer_get(Edom_Tag *t, Enesim_Renderer **r)
 {
 	Esvg_Renderable *thiz;

@@ -28,7 +28,8 @@ typedef struct _Esvg_Gradient_Descriptor {
 	Esvg_Element_Attribute_Set attribute_set;
 	/* the referenceable interface */
 	Esvg_Referenceable_Setup setup;
-	Esvg_Referenceable_Renderer_New renderer_new;
+	/* the paint server interface */
+	Esvg_Paint_Server_Renderer_New renderer_new;
 	/* our own interface */
 	Esvg_Gradient_Propagate propagate;
 } Esvg_Gradient_Descriptor;

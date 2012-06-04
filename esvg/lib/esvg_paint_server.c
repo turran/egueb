@@ -39,6 +39,8 @@ static Ender_Property *ESVG_PAINT_SERVER_RENDERER;
 typedef struct _Esvg_Paint_Server_Descriptor_Internal
 {
 	Edom_Tag_Free free;
+	Esvg_Paint_Server_Renderer_New renderer_new;
+	Esvg_Referenceable_Reference_Add reference_add;
 } Esvg_Paint_Server_Descriptor_Internal;
 
 typedef struct _Esvg_Paint_Server
@@ -60,9 +62,39 @@ static Esvg_Paint_Server * _esvg_paint_server_get(Edom_Tag *t)
 
 	return thiz;
 }
+
+static Enesim_Renderer * _esvg_paint_server_renderer_new(Edom_Tag *t)
+{
+	Esvg_Paint_Server *thiz;
+	Enesim_Renderer *r = NULL;
+
+	thiz = _esvg_paint_server_get(t);
+	if (thiz->descriptor.renderer_new)
+		r = thiz->descriptor.renderer_new(t);
+	printf("renderer new!!!! %p\n", r);
+
+	return r;
+}
 /*----------------------------------------------------------------------------*
  *                         Esvg Element interface                             *
  *----------------------------------------------------------------------------*/
+static Eina_Bool _esvg_paint_server_reference_add(Edom_Tag *t, Esvg_Referenceable_Reference *rr)
+{
+	Esvg_Paint_Server *thiz;
+	Enesim_Renderer *r;
+
+	thiz = _esvg_paint_server_get(t);
+	/* get the renderer */
+	r = _esvg_paint_server_renderer_new(t);
+	if (!r) return EINA_FALSE;
+
+	rr->data = r;
+	if (thiz->descriptor.reference_add)
+		return thiz->descriptor.reference_add(t, rr);
+
+	return EINA_TRUE;
+}
+
 static void _esvg_paint_server_free(Edom_Tag *t)
 {
 	Esvg_Paint_Server *thiz;
@@ -104,6 +136,10 @@ Edom_Tag * esvg_paint_server_new(Esvg_Paint_Server_Descriptor *descriptor,
 	EINA_MAGIC_SET(thiz, ESVG_PAINT_SERVER_MAGIC);
 	thiz->data = data;
 
+	thiz->descriptor.renderer_new = descriptor->renderer_new;
+	thiz->descriptor.free = descriptor->free;
+	thiz->descriptor.reference_add = descriptor->reference_add;
+
 	pdescriptor.child_add = descriptor->child_add;
 	pdescriptor.child_remove = descriptor->child_remove;
 	pdescriptor.attribute_set = descriptor->attribute_set;
@@ -115,8 +151,7 @@ Edom_Tag * esvg_paint_server_new(Esvg_Paint_Server_Descriptor *descriptor,
 	pdescriptor.setup = descriptor->setup;
 	pdescriptor.cleanup = descriptor->cleanup;
 	pdescriptor.propagate = descriptor->propagate;
-	pdescriptor.renderer_new = descriptor->renderer_new;
-	pdescriptor.reference_add = descriptor->reference_add;
+	pdescriptor.reference_add = _esvg_paint_server_reference_add;
 
 	t = esvg_referenceable_new(&pdescriptor, type, thiz);
 

@@ -1251,8 +1251,6 @@ Edom_Tag * esvg_element_new(Esvg_Element_Descriptor *descriptor, Esvg_Type type,
 	esvg_attribute_presentation_setup(&thiz->attr_xml);
 	esvg_attribute_presentation_setup(&thiz->attr_css);
 	esvg_element_attribute_type_set(t, ESVG_ATTR_XML);
-	/* use the renderable default behaviour */
-	thiz->state.renderable_behaviour = esvg_renderable_default_behaviour_get();
 
 	return t;
 }

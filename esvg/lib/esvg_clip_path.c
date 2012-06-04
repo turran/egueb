@@ -52,6 +52,7 @@ typedef struct _Esvg_Clip_Path_Clone_Data
 {
 	Ender_Element *g;
 	Enesim_Renderer *referrer;
+	Enesim_Renderer *proxy;
 } Esvg_Clip_Path_Clone_Data;
 
 /* FIXME share this */
@@ -144,9 +145,10 @@ static Eina_Bool _esvg_clip_path_child_add(Edom_Tag *tag, Edom_Tag *child)
 
 static void _esvg_clip_path_context_set(Edom_Tag *t,
 		const Esvg_Attribute_Presentation *attr,
-		Esvg_Renderable_Context *rctx)
+		Esvg_Renderable_Context *rctx,
+		void *user_data)
 {
-	//Esvg_Clip_Path *thiz = data;
+	Esvg_Clip_Path_Clone_Data *data = user_data;
 	/* FIXME how to get the clip path, the referencer, etc? */
 
 	rctx->color = ENESIM_COLOR_FULL;
@@ -224,7 +226,6 @@ static Esvg_Element_Setup_Return _esvg_clip_path_setup(Edom_Tag *e,
 {
 	Esvg_Clip_Path *thiz;
 
-
 	thiz = _esvg_clip_path_get(e);
 	printf("clip path setup!!!!!!\n");
 #if 0
@@ -254,10 +255,11 @@ static Esvg_Element_Setup_Return _esvg_clip_path_setup(Edom_Tag *e,
 
 static Eina_Bool _esvg_clip_path_reference_add(Edom_Tag *t, Esvg_Referenceable_Reference *rr)
 {
-	Esvg_Clip_Path_Clone_Data data;
+	Esvg_Clip_Path_Clone_Data *data;
 	Ender_Element *g;
 	Edom_Tag *referer_t;
 	Enesim_Renderer *r;
+	Enesim_Renderer *proxy;
 
 	g = esvg_g_new();
 	/* TODO handle the tree changed */
@@ -265,14 +267,20 @@ static Eina_Bool _esvg_clip_path_reference_add(Edom_Tag *t, Esvg_Referenceable_R
 	/* TODO two different objects can reference us, or either a renderable (shapes)
 	 * or a referenceable (another clip path)
 	 */
+	proxy = enesim_renderer_proxy_new();
+
 	referer_t = rr->referencer;
 	esvg_renderable_implementation_renderer_get(referer_t, &r);
 
-	data.referrer = r;
-	data.g = g;
+	data = calloc(1, sizeof(Esvg_Clip_Path_Clone_Data));
+	data->referrer = r;
+	data->g = g;
+	data->proxy = proxy;
 
 	/* clone each child and reparent it */
-	edom_tag_child_foreach(t, _esvg_clip_path_clone, &data);
+	edom_tag_child_foreach(t, _esvg_clip_path_clone, data);
+	rr->data = data;
+
 	/* if it is a renderable then store the renderer it has */
 	return EINA_TRUE;
 }
@@ -281,10 +289,17 @@ static Eina_Bool _esvg_clip_path_propagate(Edom_Tag *t,
 		Esvg_Context *c,
 		const Esvg_Element_Context *ctx,
 		const Esvg_Attribute_Presentation *attr,
-		Enesim_Renderer *r,
+		void *user_data,
 		Enesim_Error **error)
 {
+	Esvg_Element_Context clone_ctx;
+	Esvg_Clip_Path_Clone_Data *data = user_data;
+
 	/* if the tree has changed then re-create the clone */
+	clone_ctx = *ctx;
+	//clone_ctx.renderable_behaviour->context_set = _esvg_clip_path_context_set;
+	//clone_ctx.renderable_behaviour->data = data;
+
 	return EINA_TRUE;
 }
 
@@ -294,14 +309,6 @@ static void _esvg_clip_path_free(Edom_Tag *t)
 
 	thiz = _esvg_clip_path_get(t);
 	free(thiz);
-}
-
-static Enesim_Renderer * _esvg_clip_path_renderer_new(Edom_Tag *t)
-{
-	Enesim_Renderer *r;
-
-	r = enesim_renderer_proxy_new();
-	return r;
 }
 
 static Esvg_Referenceable_Descriptor _descriptor = {
@@ -315,7 +322,6 @@ static Esvg_Referenceable_Descriptor _descriptor = {
 	/* .attribute_set 	= */ _esvg_clip_path_attribute_set,
 	/* .setup		= */ _esvg_clip_path_setup,
 	/* .cleanup		= */ NULL,
-	/* .renderer_new	= */ _esvg_clip_path_renderer_new,
 	/* .renderer_propagate	= */ _esvg_clip_path_propagate,
 	/* .reference_add	= */ _esvg_clip_path_reference_add,
 	/* .reference_remove	= */ NULL,

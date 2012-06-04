@@ -40,7 +40,6 @@ typedef struct _Esvg_Referenceable_Descriptor_Internal
 	Esvg_Referenceable_Setup setup;
 	Esvg_Referenceable_Cleanup cleanup;
 	Esvg_Referenceable_Propagate propagate;
-	Esvg_Referenceable_Renderer_New renderer_new;
 	Esvg_Referenceable_Reference_Add reference_add;
 	Esvg_Referenceable_Reference_Remove reference_remove;
 } Esvg_Referenceable_Descriptor_Internal;
@@ -66,18 +65,6 @@ static Esvg_Referenceable * _esvg_referenceable_get(Edom_Tag *t)
 	return thiz;
 }
 
-static Enesim_Renderer * _esvg_referenceable_renderer_new(Edom_Tag *t)
-{
-	Esvg_Referenceable *thiz;
-	Enesim_Renderer *r = NULL;
-
-	thiz = _esvg_referenceable_get(t);
-	if (thiz->descriptor.renderer_new)
-		r = thiz->descriptor.renderer_new(t);
-	printf("renderer new!!!! %p\n", r);
-
-	return r;
-}
 /*----------------------------------------------------------------------------*
  *                           The Ender interface                              *
  *----------------------------------------------------------------------------*/
@@ -177,19 +164,14 @@ Esvg_Referenceable_Reference * esvg_referenceable_reference_add(Edom_Tag *t,
 {
 	Esvg_Referenceable_Reference *rr;
 	Esvg_Referenceable *thiz;
-	Enesim_Renderer *r;
 	Eina_Bool ret = EINA_TRUE;
 
 	thiz = _esvg_referenceable_get(t);
-	/* get the renderer */
-	r = _esvg_referenceable_renderer_new(t);
-	if (!r) return NULL;
 
 	/* create the reference struct */
 	rr = calloc(1, sizeof(Esvg_Referenceable_Reference));
 	rr->referencer = referencer;
 	rr->t = t;
-	rr->data = r;
 
 	/* trigger the add interface in case it has it */
 	if (thiz->descriptor.reference_add)
@@ -198,7 +180,6 @@ Esvg_Referenceable_Reference * esvg_referenceable_reference_add(Edom_Tag *t,
 		ret = thiz->descriptor.reference_add(t, rr);
 		if (!ret)
 		{
-			enesim_renderer_unref(r);
 			free(rr);
 			return NULL;
 		}
@@ -266,7 +247,6 @@ Edom_Tag * esvg_referenceable_new(Esvg_Referenceable_Descriptor *descriptor, Esv
 	/* our own descriptor */
 	thiz->descriptor.setup = descriptor->setup;
 	thiz->descriptor.cleanup = descriptor->cleanup;
-	thiz->descriptor.renderer_new = descriptor->renderer_new;
 	thiz->descriptor.propagate = descriptor->propagate;
 	thiz->descriptor.reference_add = descriptor->reference_add;
 	/* default values */

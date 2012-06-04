@@ -26,8 +26,15 @@ typedef struct _Esvg_Renderable_Context {
  */
 /* FIXME we dont add the Element Context, some issues with the
  * recursive includes */
-typedef void (*Esvg_Renderable_Behaviour)(Edom_Tag *t,
+typedef void (*Esvg_Renderable_Behaviour_Context_Set)(Edom_Tag *t,
 		const Esvg_Attribute_Presentation *attr,
-		Esvg_Renderable_Context *rctx);
+		Esvg_Renderable_Context *rctx,
+		void *data);
+
+typedef struct _Esvg_Renderable_Behaviour
+{
+	Esvg_Renderable_Behaviour_Context_Set context_set;
+	void *data;
+} Esvg_Renderable_Behaviour;
 
 #endif
