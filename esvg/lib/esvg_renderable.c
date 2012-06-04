@@ -72,7 +72,7 @@ typedef struct _Esvg_Renderable
 	Esvg_Renderable_Context context;
 	void *data;
 	Enesim_Renderer *r;
-	Enesim_Renderer *renderable_r;
+	Enesim_Renderer *implementation_r;
 	/* damages */
 	Eina_Tiler *tiler;
 	int tw;
@@ -93,7 +93,7 @@ static Esvg_Referenceable_Reference * _esvg_renderable_get_reference(Edom_Tag *t
 {
 	Ender_Element *topmost;
 	Ender_Element *e = NULL;
-	Edom_Tag *fill_t;
+	Edom_Tag *ref_t;
 	Esvg_Referenceable_Reference *rr;
 
 	/* FIXME remove the old reference in case we already had one */
@@ -104,8 +104,8 @@ static Esvg_Referenceable_Reference * _esvg_renderable_get_reference(Edom_Tag *t
 	if (!e) return NULL;
 
 	/* TODO then, check that the referenced element is of type paint server */
-	fill_t = ender_element_object_get(e);
-	rr = esvg_referenceable_reference_add(fill_t, t);
+	ref_t = ender_element_object_get(e);
+	rr = esvg_referenceable_reference_add(ref_t, t);
 	return rr;
 }
 
@@ -262,6 +262,7 @@ static Esvg_Element_Setup_Return _esvg_renderable_propagate(Esvg_Renderable *thi
 			free(thiz->clip_path_last);
 			/* TODO destroy the reference */
 			thiz->clip_path_last = NULL;
+			enesim_renderer_proxy_proxied_set(thiz->r, thiz->implementation_r);
 		}
 
 		if (attr->clip_path)
@@ -273,7 +274,7 @@ static Esvg_Element_Setup_Return _esvg_renderable_propagate(Esvg_Renderable *thi
 
 			thiz->clip_path_reference = rr;
 			/* get the clip path renderer and use that as our new proxied renderer */
-			printf(">>> clip path is set! <<<<\n");
+			//enesim_renderer_proxy_proxied_set(thiz->r, thiz->implementation_r);
 		}
 	}
 	/* FIXME there are cases where this is not needed, liek the 'use' given that
@@ -423,6 +424,16 @@ Esvg_Renderable_Behaviour * esvg_renderable_default_behaviour_get(void)
 	return NULL;
 }
 
+
+void esvg_renderable_implementation_renderer_get(Edom_Tag *t, Enesim_Renderer **r)
+{
+	Esvg_Renderable *thiz;
+
+	if (!r) return;
+	thiz = _esvg_renderable_get(t);
+	*r = thiz->implementation_r;
+}
+
 void esvg_renderable_internal_renderer_get(Edom_Tag *t, Enesim_Renderer **r)
 {
 	Esvg_Renderable *thiz;
@@ -556,7 +567,7 @@ Edom_Tag * esvg_renderable_new(Esvg_Renderable_Descriptor *descriptor, Esvg_Type
 		return NULL;
 	}
 
-	thiz->renderable_r = r;
+	thiz->implementation_r = r;
 	/* set the proxied renderer */
 	enesim_renderer_proxy_proxied_set(thiz->r, r);
 

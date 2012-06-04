@@ -48,6 +48,12 @@
  *============================================================================*/
 static Ender_Property *ESVG_CLIP_PATH_CLIP_PATH_UNITS;
 
+typedef struct _Esvg_Clip_Path_Clone_Data
+{
+	Ender_Element *g;
+	Enesim_Renderer *referrer;
+} Esvg_Clip_Path_Clone_Data;
+
 /* FIXME share this */
 typedef struct _Esvg_Attribute_Units
 {
@@ -75,17 +81,18 @@ static Esvg_Clip_Path * _esvg_clip_path_get(Edom_Tag *t)
 }
 
 static Eina_Bool _esvg_clip_path_clone(Edom_Tag *t, Edom_Tag *child,
-		void *data)
+		void *user_data)
 {
+	Esvg_Clip_Path_Clone_Data *data = user_data;
 	Esvg_Clone *clone;
 	Edom_Tag *cloned_t;
 	Ender_Element *child_e;
-	Ender_Element *g = data;
 
+	/* TODO skip the test */
 	child_e = esvg_element_ender_get(child);
 	clone = esvg_clone_new(child_e);
 	cloned_t = ender_element_object_get(clone->our);
-	ender_element_property_value_add(g, EDOM_CHILD, cloned_t, NULL);
+	ender_element_property_value_add(data->g, EDOM_CHILD, cloned_t, NULL);
 
 	return EINA_TRUE;
 }
@@ -243,19 +250,27 @@ static Esvg_Element_Setup_Return _esvg_clip_path_setup(Edom_Tag *e,
 
 static Eina_Bool _esvg_clip_path_reference_add(Edom_Tag *t, Esvg_Referenceable_Reference *rr)
 {
-	Ender_Element *g;
+	Esvg_Clip_Path_Clone_Data data;
 	Esvg_Clone *clone;
+	Ender_Element *g;
+	Edom_Tag *referer_t;
+	Enesim_Renderer *r;
 
 	g = esvg_g_new();
-	/* clone each child and reparent it */
 	/* TODO handle the tree changed */
-	edom_tag_child_foreach(t, _esvg_clip_path_clone, g);
-	
-	/* two different objects can reference us, or either a renderable (shapes)
+	/* now get the renderer from the element that references us */
+	/* TODO two different objects can reference us, or either a renderable (shapes)
 	 * or a referenceable (another clip path)
 	 */
+	referer_t = rr->referencer;
+	esvg_renderable_implementation_renderer_get(referer_t, &r);
+
+	data.referrer = r;
+	data.g = g;
+
+	/* clone each child and reparent it */
+	edom_tag_child_foreach(t, _esvg_clip_path_clone, &data);
 	/* if it is a renderable then store the renderer it has */
-	/* clone the renderable objects */
 	return EINA_TRUE;
 }
 
