@@ -282,10 +282,10 @@ static Esvg_Element_Setup_Return _esvg_renderable_propagate(Esvg_Renderable *thi
 	/* FIXME there are cases where this is not needed, liek the 'use' given that
 	 * the 'g' will do it
 	 */
-	if (!context->renderable_behaviour)
+	if (!context->renderable_behaviour.context_set)
 		_esvg_renderable_context_set(t, attr, &thiz->context);
 	else
-		context->renderable_behaviour->context_set(t, attr, &thiz->context, context->renderable_behaviour->data);
+		context->renderable_behaviour.context_set(t, attr, &thiz->context, context->renderable_behaviour.data);
 	/* do the renderer propagate */
 	if (!thiz->descriptor.renderer_propagate(t, c, context, attr, &thiz->context, error))
 		return ESVG_SETUP_FAILED;

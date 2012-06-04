@@ -151,11 +151,12 @@ static void _esvg_clip_path_context_set(Edom_Tag *t,
 	Esvg_Clip_Path_Clone_Data *data = user_data;
 	/* FIXME how to get the clip path, the referencer, etc? */
 
+	printf("here we go!\n");
 	rctx->color = ENESIM_COLOR_FULL;
 	rctx->fill_color = ENESIM_COLOR_FULL;
 	rctx->draw_mode = ENESIM_SHAPE_DRAW_MODE_FILL;
 	/* set the fill renderer */
-	//rctx->fill_renderer = thiz->rel;
+	rctx->fill_renderer = data->referrer;
 	/* set the transformation */
 	/* for now the current user space, later the object boundings box */
 	//estate->transform = thiz->rel_m;
@@ -296,9 +297,13 @@ static Eina_Bool _esvg_clip_path_propagate(Edom_Tag *t,
 	Esvg_Clip_Path_Clone_Data *data = user_data;
 
 	/* if the tree has changed then re-create the clone */
+
+	/* copy the context but use our own behaviour data */
 	clone_ctx = *ctx;
-	//clone_ctx.renderable_behaviour->context_set = _esvg_clip_path_context_set;
-	//clone_ctx.renderable_behaviour->data = data;
+	clone_ctx.renderable_behaviour.context_set = _esvg_clip_path_context_set;
+	clone_ctx.renderable_behaviour.data = data;
+
+	/* TODO do the setup on the new tree but using this new context */
 
 	return EINA_TRUE;
 }
