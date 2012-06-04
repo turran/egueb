@@ -88,7 +88,11 @@ static Eina_Bool _esvg_clip_path_clone(Edom_Tag *t, Edom_Tag *child,
 	Edom_Tag *cloned_t;
 	Ender_Element *child_e;
 
-	/* TODO skip the test */
+	/* TODO skip the text */
+	/* TODO check that the renderable implementation renderer is a
+	 * shape, if so, set the fill renderer of the cloned renderer
+	 * as the referer renderer
+	 */
 	child_e = esvg_element_ender_get(child);
 	clone = esvg_clone_new(child_e);
 	cloned_t = ender_element_object_get(clone->our);
