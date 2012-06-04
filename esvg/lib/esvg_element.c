@@ -932,42 +932,20 @@ Eina_Bool esvg_element_internal_child_setup(Edom_Tag *t,
 	return setup_data.ret;
 }
 
-#if 0
-Esvg_Element_Setup_Return esvg_element_internal_setup_rel(Edom_Tag *t,
+Esvg_Element_Setup_Return esvg_element_setup_rel(Edom_Tag *t,
 		Esvg_Context *c,
 		const Esvg_Element_Context *rel_state,
 		const Esvg_Attribute_Presentation *rel_attr,
 		Enesim_Error **error)
 {
-
-}
-#endif
-
-Esvg_Element_Setup_Return esvg_element_internal_setup(Edom_Tag *t,
-		Esvg_Context *c,
-		Enesim_Error **error)
-{
 	Esvg_Element *thiz;
 	Esvg_Element_Setup_Return ret;
-	Edom_Tag *parent_t;
-	Esvg_Element_Context *parent_state = NULL;
-	Esvg_Attribute_Presentation *parent_attr = NULL;
 
 	thiz = _esvg_element_get(t);
 
 	/* FIXME given that we have to only setup a subtree, we should
 	 * not get the parents attributes from the arguments */
 	thiz->last_run = c->run;
-	parent_t = edom_tag_parent_get(t);
-	if (parent_t)
-	{
-
-		Esvg_Element *parent_thiz;
-
-		parent_thiz = _esvg_element_get(parent_t);
-		parent_state = &parent_thiz->state_final;
-		parent_attr = &parent_thiz->attr_final;
-	}
 #if 0
 	if (thiz->last_run == c->run)
 	{
@@ -986,21 +964,21 @@ Esvg_Element_Setup_Return esvg_element_internal_setup(Edom_Tag *t,
 	thiz->attr_final = thiz->attr_xml;
 	thiz->state_final = thiz->state;
 	/* FIXME avoid so many copies */
-	if (parent_state)
+	if (rel_state)
 	{
-		_esvg_element_state_compose(&thiz->state, parent_state, &thiz->state_final);
+		_esvg_element_state_compose(&thiz->state, rel_state, &thiz->state_final);
 	}
 
 
 	/* TODO In theory it should be */
-	/* first merge the css parent_attr with the xml parent_attr */
+	/* first merge the css rel_attr with the xml rel_attr */
 	/* then apply the style if present */
 	/* add an ATTR_FINAL or something like that, so the inline style is applied there */
 	/* is the inline style inherited on child elements ? yes! */
 
 	/* FIXME check that the style has changed, if so revert it and start applying */
 	/* FIXME should it have more priority than the properties? */
-	if (thiz->style || parent_attr)
+	if (thiz->style || rel_attr)
 	{
 		if (thiz->style)
 		{
@@ -1009,16 +987,16 @@ Esvg_Element_Setup_Return esvg_element_internal_setup(Edom_Tag *t,
 			ecss_context_inline_style_apply(&_esvg_element_css_context, thiz->style, t);
 			esvg_element_attribute_type_set(t, ESVG_ATTR_XML);
 			esvg_attribute_presentation_merge(&thiz->attr_css, &thiz->attr_xml, &thiz->attr_final);
-			if (parent_attr)
+			if (rel_attr)
 			{
-				esvg_attribute_presentation_merge(&thiz->attr_final, parent_attr, &thiz->attr_final);
+				esvg_attribute_presentation_merge(&thiz->attr_final, rel_attr, &thiz->attr_final);
 			}
 		}
 		else
 		{
-			if (parent_attr)
+			if (rel_attr)
 			{
-				esvg_attribute_presentation_merge(&thiz->attr_xml, parent_attr, &thiz->attr_final);
+				esvg_attribute_presentation_merge(&thiz->attr_xml, rel_attr, &thiz->attr_final);
 			}
 		}
 	}
@@ -1026,7 +1004,7 @@ Esvg_Element_Setup_Return esvg_element_internal_setup(Edom_Tag *t,
 		return ESVG_SETUP_OK;
 
 	//esvg_attribute_presentation_dump(new_attr);
-	ret = thiz->descriptor.setup(t, c, parent_state, &thiz->state_final, &thiz->attr_final, error);
+	ret = thiz->descriptor.setup(t, c, rel_state, &thiz->state_final, &thiz->attr_final, error);
 	if (ret == ESVG_SETUP_ENQUEUE)
 	{
 		esvg_context_setup_enqueue(c, t);
@@ -1036,6 +1014,28 @@ Esvg_Element_Setup_Return esvg_element_internal_setup(Edom_Tag *t,
 		thiz->changed = 0;
 	}
 	return ret;
+}
+
+Esvg_Element_Setup_Return esvg_element_internal_setup(Edom_Tag *t,
+		Esvg_Context *c,
+		Enesim_Error **error)
+{
+	Edom_Tag *parent_t;
+	Esvg_Element_Context *parent_state = NULL;
+	Esvg_Attribute_Presentation *parent_attr = NULL;
+
+	parent_t = edom_tag_parent_get(t);
+	if (parent_t)
+	{
+
+		Esvg_Element *parent_thiz;
+
+		parent_thiz = _esvg_element_get(parent_t);
+		parent_state = &parent_thiz->state_final;
+		parent_attr = &parent_thiz->attr_final;
+	}
+	return esvg_element_setup_rel(t, c,
+			parent_state, parent_attr, error);
 }
 
 void esvg_element_initialize(Ender_Element *e)

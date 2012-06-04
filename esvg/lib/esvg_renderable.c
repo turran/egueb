@@ -25,6 +25,7 @@
 #include "esvg_private_element.h"
 #include "esvg_private_renderable.h"
 #include "esvg_private_referenceable.h"
+#include "esvg_private_clip_path.h"
 #include "esvg_private_svg.h"
 
 #include "esvg_renderable.h"
@@ -270,13 +271,15 @@ static Esvg_Element_Setup_Return _esvg_renderable_propagate(Esvg_Renderable *thi
 		if (attr->clip_path)
 		{
 			Esvg_Referenceable_Reference *rr;
+			Esvg_Clip_Path_Referenceable_Data *rdata;
 
 			thiz->clip_path_last = strdup(attr->clip_path);
 			rr = _esvg_renderable_get_reference(t, attr->clip_path);
 
 			thiz->clip_path_reference = rr;
+			rdata = rr->data;
 			/* get the clip path renderer and use that as our new proxied renderer */
-			//enesim_renderer_proxy_proxied_set(thiz->r, thiz->implementation_r);
+			enesim_renderer_proxy_proxied_set(thiz->r, rdata->proxy);
 		}
 	}
 	/* FIXME there are cases where this is not needed, liek the 'use' given that
@@ -289,14 +292,16 @@ static Esvg_Element_Setup_Return _esvg_renderable_propagate(Esvg_Renderable *thi
 	/* do the renderer propagate */
 	if (!thiz->descriptor.renderer_propagate(t, c, context, attr, &thiz->context, error))
 		return ESVG_SETUP_FAILED;
-#if 0
-	if (attr->clip_path_set)
+	/* given that the propagate above actually sets the bounding box, etc, we need to call the setup
+	 * of the referenceables *after*
+	 * we should really call the "propagate" version and the function should do the setup if needed 
+	 */
+	if (thiz->clip_path_reference)
 	{
-		Eina_Bool ret;
-
-		ret = enesim_renderer_setup(attr->clip_path, s, error);
+		ret = esvg_element_internal_setup(thiz->clip_path_reference->t, c, error);
+		if (ret != ESVG_SETUP_OK)
+			return ret;
 	}
-#endif
 	/* in case we are going to use the fill renderer do its own setup */
 	if (attr->fill_set && attr->fill.type == ESVG_PAINT_SERVER && thiz->fill_reference)
 	{
@@ -558,7 +563,7 @@ Edom_Tag * esvg_renderable_new(Esvg_Renderable_Descriptor *descriptor, Esvg_Type
 	}
 
 	thiz->implementation_r = r;
-	/* set the proxied renderer */
+	/* set the proxied renderer by default */
 	enesim_renderer_proxy_proxied_set(thiz->r, r);
 
 	return t;

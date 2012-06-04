@@ -25,6 +25,7 @@
 #include "esvg_private_element.h"
 #include "esvg_private_referenceable.h"
 #include "esvg_private_clone.h"
+#include "esvg_private_clip_path.h"
 
 #include "esvg_main.h"
 #include "esvg_clip_path.h"
@@ -47,13 +48,6 @@
  *                                  Local                                     *
  *============================================================================*/
 static Ender_Property *ESVG_CLIP_PATH_CLIP_PATH_UNITS;
-
-typedef struct _Esvg_Clip_Path_Clone_Data
-{
-	Ender_Element *g;
-	Enesim_Renderer *referrer;
-	Enesim_Renderer *proxy;
-} Esvg_Clip_Path_Clone_Data;
 
 /* FIXME share this */
 typedef struct _Esvg_Attribute_Units
@@ -84,7 +78,7 @@ static Esvg_Clip_Path * _esvg_clip_path_get(Edom_Tag *t)
 static Eina_Bool _esvg_clip_path_clone(Edom_Tag *t, Edom_Tag *child,
 		void *user_data)
 {
-	Esvg_Clip_Path_Clone_Data *data = user_data;
+	Esvg_Clip_Path_Referenceable_Data *data = user_data;
 	Ender_Element *cloned;
 	Edom_Tag *cloned_t;
 	Ender_Element *child_e;
@@ -101,6 +95,7 @@ static Eina_Bool _esvg_clip_path_clone(Edom_Tag *t, Edom_Tag *child,
 
 	return EINA_TRUE;
 }
+
 /*----------------------------------------------------------------------------*
  *                       The Esvg Renderable interface                        *
  *----------------------------------------------------------------------------*/
@@ -148,7 +143,7 @@ static void _esvg_clip_path_context_set(Edom_Tag *t,
 		Esvg_Renderable_Context *rctx,
 		void *user_data)
 {
-	Esvg_Clip_Path_Clone_Data *data = user_data;
+	Esvg_Clip_Path_Referenceable_Data *data = user_data;
 	/* FIXME how to get the clip path, the referencer, etc? */
 
 	printf("here we go!\n");
@@ -163,7 +158,6 @@ static void _esvg_clip_path_context_set(Edom_Tag *t,
 }
 
 #if 0
-
 static Eina_Bool _esvg_clip_path_set_enesim_state_handle(Edom_Tag *e,
 		Enesim_Renderer *layer, void *data)
 {
@@ -256,24 +250,25 @@ static Esvg_Element_Setup_Return _esvg_clip_path_setup(Edom_Tag *e,
 
 static Eina_Bool _esvg_clip_path_reference_add(Edom_Tag *t, Esvg_Referenceable_Reference *rr)
 {
-	Esvg_Clip_Path_Clone_Data *data;
+	Esvg_Clip_Path_Referenceable_Data *data;
 	Ender_Element *g;
+	Edom_Tag *g_t;
 	Edom_Tag *referer_t;
 	Enesim_Renderer *r;
 	Enesim_Renderer *proxy;
 
 	g = esvg_g_new();
+	g_t = ender_element_object_get(g);
+	esvg_renderable_internal_renderer_get(g_t, &proxy);
 	/* TODO handle the tree changed */
-	/* now get the renderer from the element that references us */
 	/* TODO two different objects can reference us, or either a renderable (shapes)
 	 * or a referenceable (another clip path)
 	 */
-	proxy = enesim_renderer_proxy_new();
-
+	/* now get the renderer from the element that references us */
 	referer_t = rr->referencer;
 	esvg_renderable_implementation_renderer_get(referer_t, &r);
 
-	data = calloc(1, sizeof(Esvg_Clip_Path_Clone_Data));
+	data = calloc(1, sizeof(Esvg_Clip_Path_Referenceable_Data));
 	data->referrer = r;
 	data->g = g;
 	data->proxy = proxy;
@@ -294,18 +289,31 @@ static Eina_Bool _esvg_clip_path_propagate(Edom_Tag *t,
 		Enesim_Error **error)
 {
 	Esvg_Element_Context clone_ctx;
-	Esvg_Clip_Path_Clone_Data *data = user_data;
+	Esvg_Clip_Path_Referenceable_Data *data = user_data;
+	Edom_Tag *g_t;
 
+	printf("propagating!\n");
 	/* if the tree has changed then re-create the clone */
 
 	/* copy the context but use our own behaviour data */
+	/* FIXME not the that ctx here is from the referrer, that is,
+	 * the one with the clip-path set, we need to handle
+	 * that by removing the clip path check from the common renderable
+	 * setup
+	 */
 	clone_ctx = *ctx;
 	clone_ctx.renderable_behaviour.context_set = _esvg_clip_path_context_set;
 	clone_ctx.renderable_behaviour.data = data;
 
-	/* TODO do the setup on the new tree but using this new context */
+	/* set the correct proxied renderer */
+	/* FIXME for now we dont support clip path referencing another
+	 * on that case our own proxy should be the referenced one
+	 */
+	/* do the setup on the new tree but using this new context */
+	g_t = ender_element_object_get(data->g);
+	esvg_element_setup_rel(g_t, c, &clone_ctx, NULL, error);
 
-	return EINA_TRUE;
+	return ESVG_SETUP_OK;
 }
 
 static void _esvg_clip_path_free(Edom_Tag *t)

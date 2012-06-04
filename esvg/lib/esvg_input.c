@@ -50,6 +50,7 @@ static Eina_Bool _esvg_input_find_intersection(Enesim_Renderer *r,
 /* the tag can only be a <g> or a <svg> */
 void esvg_input_feed_mouse_move(Ender_Element *e, double x, double y)
 {
+#if 0
 	Esvg_Input_Coord c;
 	Edom_Tag *t;
 	Enesim_Renderer *r;
@@ -69,6 +70,7 @@ void esvg_input_feed_mouse_move(Ender_Element *e, double x, double y)
 	enesim_renderer_compound_layer_reverse_foreach(r,
 			_esvg_input_find_intersection,
 			&c);
+#endif
 }
 /*============================================================================*
  *                                   API                                      *

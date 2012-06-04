@@ -83,7 +83,11 @@ void esvg_element_context_dump(const Esvg_Element_Context *c);
 
 const Esvg_Element_Context * esvg_element_context_get(Edom_Tag *t);
 const Esvg_Attribute_Presentation * esvg_element_attribute_presentation_get(Edom_Tag *t);
-
+Esvg_Element_Setup_Return esvg_element_setup_rel(Edom_Tag *t,
+		Esvg_Context *c,
+		const Esvg_Element_Context *rel_state,
+		const Esvg_Attribute_Presentation *rel_attr,
+		Enesim_Error **error);
 /* internal functions */
 Esvg_Type esvg_element_internal_type_get(Edom_Tag *t);
 Eina_Bool esvg_is_element_internal(Edom_Tag *t);
