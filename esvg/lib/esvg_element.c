@@ -1418,7 +1418,7 @@ EAPI void esvg_element_opacity_unset(Ender_Element *e)
  */
 EAPI void esvg_element_color_set(Ender_Element *e, const Esvg_Color *color)
 {
-	//ender_element_property_value_set(e, ESVG_ELEMENT_COLOR, color, NULL);
+	ender_element_property_value_set(e, ESVG_ELEMENT_COLOR, color, NULL);
 }
 
 /**
