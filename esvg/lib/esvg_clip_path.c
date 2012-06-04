@@ -84,7 +84,7 @@ static Eina_Bool _esvg_clip_path_clone(Edom_Tag *t, Edom_Tag *child,
 		void *user_data)
 {
 	Esvg_Clip_Path_Clone_Data *data = user_data;
-	Esvg_Clone *clone;
+	Ender_Element *cloned;
 	Edom_Tag *cloned_t;
 	Ender_Element *child_e;
 
@@ -94,8 +94,8 @@ static Eina_Bool _esvg_clip_path_clone(Edom_Tag *t, Edom_Tag *child,
 	 * as the referer renderer
 	 */
 	child_e = esvg_element_ender_get(child);
-	clone = esvg_clone_new(child_e);
-	cloned_t = ender_element_object_get(clone->our);
+	cloned = esvg_clone_new(child_e);
+	cloned_t = ender_element_object_get(cloned);
 	ender_element_property_value_add(data->g, EDOM_CHILD, cloned_t, NULL);
 
 	return EINA_TRUE;
@@ -142,24 +142,24 @@ static Eina_Bool _esvg_clip_path_child_add(Edom_Tag *tag, Edom_Tag *child)
 	return EINA_FALSE;	
 }
 
-#if 0
-static void _esvg_clip_path_enesim_state_calculate(Edom_Tag *e,
-		Esvg_Element_Context *estate,
+static void _esvg_clip_path_context_set(Edom_Tag *t,
 		const Esvg_Attribute_Presentation *attr,
-		Esvg_Renderable_Context *dstate,
-		void *data)
+		Esvg_Renderable_Context *rctx)
 {
-	Esvg_Clip_Path *thiz = data;
+	//Esvg_Clip_Path *thiz = data;
+	/* FIXME how to get the clip path, the referencer, etc? */
 
-	dstate->color = ENESIM_COLOR_FULL;
-	dstate->fill_color = ENESIM_COLOR_FULL;
-	dstate->draw_mode = ENESIM_SHAPE_DRAW_MODE_FILL;
+	rctx->color = ENESIM_COLOR_FULL;
+	rctx->fill_color = ENESIM_COLOR_FULL;
+	rctx->draw_mode = ENESIM_SHAPE_DRAW_MODE_FILL;
 	/* set the fill renderer */
-	dstate->fill_renderer = thiz->rel;
+	//rctx->fill_renderer = thiz->rel;
 	/* set the transformation */
 	/* for now the current user space, later the object boundings box */
-	estate->transform = thiz->rel_m;
+	//estate->transform = thiz->rel_m;
 }
+
+#if 0
 
 static Eina_Bool _esvg_clip_path_set_enesim_state_handle(Edom_Tag *e,
 		Enesim_Renderer *layer, void *data)
@@ -255,7 +255,6 @@ static Esvg_Element_Setup_Return _esvg_clip_path_setup(Edom_Tag *e,
 static Eina_Bool _esvg_clip_path_reference_add(Edom_Tag *t, Esvg_Referenceable_Reference *rr)
 {
 	Esvg_Clip_Path_Clone_Data data;
-	Esvg_Clone *clone;
 	Ender_Element *g;
 	Edom_Tag *referer_t;
 	Enesim_Renderer *r;
@@ -314,7 +313,6 @@ static Esvg_Referenceable_Descriptor _descriptor = {
 	/* .free 		= */ _esvg_clip_path_free,
 	/* .initialize 		= */ NULL,
 	/* .attribute_set 	= */ _esvg_clip_path_attribute_set,
-	/* .clone		= */ NULL,
 	/* .setup		= */ _esvg_clip_path_setup,
 	/* .cleanup		= */ NULL,
 	/* .renderer_new	= */ _esvg_clip_path_renderer_new,

@@ -366,25 +366,6 @@ static Eina_Bool _esvg_path_renderer_propagate(Edom_Tag *t,
 	return EINA_TRUE;
 }
 
-static void _esvg_path_clone(Edom_Tag *r, Edom_Tag *dr)
-{
-#if 0
-	Esvg_Path *thiz;
-	Esvg_Path_Command *cmd;
-	Eina_List *l;
-
-	thiz = _esvg_path_get(r);
-
-	EINA_LIST_FOREACH(thiz->commands, l, cmd)
-	{
-		Esvg_Path_Command ocmd;
-
-		ocmd = *cmd;
-		esvg_path_d_add(dr, &ocmd);
-	}
-#endif
-}
-
 void _esvg_path_free(Edom_Tag *t)
 {
 	Esvg_Path *thiz;
@@ -402,7 +383,6 @@ static Esvg_Instantiable_Descriptor _descriptor = {
 	/* .free 		= */ _esvg_path_free,
 	/* .initialize 		= */ NULL,
 	/* .attribute_set 	= */ _esvg_path_attribute_set,
-	/* .clone		= */ _esvg_path_clone,
 	/* .setup		= */ _esvg_path_setup,
 	/* .renderer_get	= */ _esvg_path_renderer_get,
 	/* .renderer_propagate	= */ _esvg_path_renderer_propagate,

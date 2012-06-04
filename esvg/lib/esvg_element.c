@@ -85,7 +85,6 @@ typedef struct _Esvg_Element_Descriptor_Internal
 	Esvg_Element_Attribute_Set attribute_set;
 	Edom_Tag_Attribute_Get attribute_get;
 	Edom_Tag_Free free;
-	Esvg_Element_Clone clone;
 	Esvg_Element_Setup setup;
 } Esvg_Element_Descriptor_Internal;
 
@@ -168,6 +167,7 @@ static void _esvg_element_state_compose(const Esvg_Element_Context *s,
 	d->viewbox = parent->viewbox;
 	d->bounds = parent->bounds;
 	d->font_size = parent->font_size;
+	d->renderable_behaviour = parent->renderable_behaviour;
 	/* actually compose */
 	enesim_matrix_compose(&parent->transform.base, &s->transform.base, &d->transform.base);
 }
@@ -343,14 +343,15 @@ static void _esvg_element_opacity_set(Edom_Tag *t, Esvg_Animated_Number *opacity
 	Esvg_Element *thiz;
 	thiz = _esvg_element_get(t);
 
+	/* FIXME only set the correct attr, or anim or base */
 	esvg_attribute_presentation_opacity_set(thiz->current_attr, opacity);
 }
 
-static void _esvg_element_opacity_get(Edom_Tag *t, double *opacity)
+static void _esvg_element_opacity_get(Edom_Tag *t, Esvg_Animated_Number *opacity)
 {
 	Esvg_Element *thiz;
 	thiz = _esvg_element_get(t);
-
+	*opacity = thiz->current_attr->opacity;
 }
 
 static void _esvg_element_opacity_unset(Edom_Tag *t)
@@ -375,6 +376,15 @@ static void _esvg_element_color_unset(Edom_Tag *t)
 
 	thiz = _esvg_element_get(t);
 	esvg_attribute_presentation_color_unset(thiz->current_attr);
+}
+
+static void _esvg_element_color_get(Edom_Tag *t, Esvg_Color *color)
+{
+	Esvg_Element *thiz;
+	thiz = _esvg_element_get(t);
+
+	*color = thiz->current_attr->color;
+	printf("getting color! %d %d %d\n", color->r, color->g, color->b);
 }
 
 static void _esvg_element_fill_set(Edom_Tag *t, const Esvg_Paint *fill)
@@ -922,6 +932,17 @@ Eina_Bool esvg_element_internal_child_setup(Edom_Tag *t,
 	return setup_data.ret;
 }
 
+#if 0
+Esvg_Element_Setup_Return esvg_element_internal_setup_rel(Edom_Tag *t,
+		Esvg_Context *c,
+		const Esvg_Element_Context *rel_state,
+		const Esvg_Attribute_Presentation *rel_attr,
+		Enesim_Error **error)
+{
+
+}
+#endif
+
 Esvg_Element_Setup_Return esvg_element_internal_setup(Edom_Tag *t,
 		Esvg_Context *c,
 		Enesim_Error **error)
@@ -1221,7 +1242,6 @@ Edom_Tag * esvg_element_new(Esvg_Element_Descriptor *descriptor, Esvg_Type type,
 
 	/* our own interface */
 	thiz->descriptor.initialize = descriptor->initialize;
-	thiz->descriptor.clone = descriptor->clone;
 	thiz->descriptor.setup = descriptor->setup;
 	thiz->descriptor.attribute_set = descriptor->attribute_set;
 	thiz->descriptor.attribute_get = descriptor->attribute_get;
@@ -1231,7 +1251,8 @@ Edom_Tag * esvg_element_new(Esvg_Element_Descriptor *descriptor, Esvg_Type type,
 	esvg_attribute_presentation_setup(&thiz->attr_xml);
 	esvg_attribute_presentation_setup(&thiz->attr_css);
 	esvg_element_attribute_type_set(t, ESVG_ATTR_XML);
-	/* default enesim properties */
+	/* use the renderable default behaviour */
+	thiz->state.renderable_behaviour = esvg_renderable_default_behaviour_get();
 
 	return t;
 }
@@ -1246,6 +1267,7 @@ Edom_Tag * esvg_element_new(Esvg_Element_Descriptor *descriptor, Esvg_Type type,
 #define _esvg_element_class_is_set NULL
 #define _esvg_element_style_is_set NULL
 #define _esvg_element_clip_path_is_set NULL
+#define _esvg_element_color_is_set NULL
 #define _esvg_element_fill_is_set NULL
 #define _esvg_element_stroke_is_set NULL
 #define _esvg_element_stroke_width_is_set NULL
@@ -1419,6 +1441,18 @@ EAPI void esvg_element_opacity_unset(Ender_Element *e)
 EAPI void esvg_element_color_set(Ender_Element *e, const Esvg_Color *color)
 {
 	ender_element_property_value_set(e, ESVG_ELEMENT_COLOR, color, NULL);
+}
+
+/**
+ * To be documented
+ * FIXME: To be fixed
+ */
+EAPI void esvg_element_color_get(Ender_Element *e, Esvg_Color *color)
+{
+	Edom_Tag *t;
+
+	t = (Edom_Tag *)ender_element_object_get(e);
+	_esvg_element_color_get(t, color);
 }
 
 /**
@@ -1666,57 +1700,3 @@ EAPI Ender_Element * esvg_element_topmost_get(Ender_Element *e)
 	esvg_element_internal_topmost_get(t, &topmost);
 	return topmost;
 }
-
-EAPI Ender_Element * esvg_element_clone(Ender_Element *e)
-{
-	/* create a new element of the same type */
-	/* iterate over the properties and set them on the new element */
-	return NULL;
-}
-
-#if 0
-EAPI Edom_Tag * esvg_element_clone(Edom_Tag *t)
-{
-	Edom_Tag *new_t = NULL;
-
-	/* FIXME we would clone whenever we
-	 * have the different elements.
-	 * this code should be shared with the
-	 * parser and a list of "constructors"
-	 * based on the name
-	 */
-#if 0
-	/* check every final type */
-	if (esvg_is_svg(t))
-		new_t = esvg_svg_new();
-	else if (esvg_is_g(t))
-		new_t = esvg_g_new();
-	else if (esvg_is_line(t))
-		new_t = esvg_line_new();
-	else if (esvg_is_circle(t))
-		new_t = esvg_circle_new();
-	else if (esvg_is_ellipse(t))
-		new_t = esvg_ellipse_new();
-	else if (esvg_is_path(t))
-		new_t = esvg_path_new();
-	else if (esvg_is_rect(t))
-		new_t = esvg_rect_new();
-	else if (esvg_is_polygon(t))
-		new_t = esvg_polygon_new();
-
-	if (new_t)
-	{
-		Esvg_Element *thiz;
-		Esvg_Element *other;
-
-		thiz = _esvg_element_get(t);
-		other = _esvg_element_get(new_t);
-		other->state = thiz->state;
-		other->attr = thiz->attr_xml;
-		if (thiz->descriptor.clone)
-			thiz->descriptor.clone(t, new_t);
-	}
-#endif
-	return new_t;
-}
-#endif

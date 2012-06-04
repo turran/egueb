@@ -123,24 +123,6 @@ Enesim_Renderer * _esvg_g_renderer_get(Edom_Tag *t)
 	return thiz->r;
 }
 
-static void _esvg_g_clone(Edom_Tag *t, Edom_Tag *tr)
-{
-#if 0
-	Esvg_G *thiz;
-	Eina_List *l;
-	Enesim_Renderer *child;
-
-	thiz = _esvg_g_get(r);
-	EINA_LIST_FOREACH(thiz->children, l, child)
-	{
-		Enesim_Renderer *new_child;
-
-		new_child = esvg_element_clone(child);
-		esvg_container_element_add(dr, new_child);
-	}
-#endif
-}
-
 static Esvg_Element_Setup_Return _esvg_g_setup(Edom_Tag *t,
 		Esvg_Context *c,
 		Esvg_Element_Context *ctx,
@@ -173,7 +155,6 @@ static Esvg_Instantiable_Descriptor _descriptor = {
 	/* .free 		= */ _esvg_g_free,
 	/* .initialize 		= */ NULL,
 	/* .attribute_set 	= */ NULL,
-	/* .clone		= */ _esvg_g_clone,
 	/* .setup		= */ _esvg_g_setup,
 	/* .renderer_get	= */ _esvg_g_renderer_get,
 };

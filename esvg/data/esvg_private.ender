@@ -76,6 +76,7 @@ namespace "esvg" {
 		string "clip_path";
 		esvg_animated_number "opacity";
 		/* once the color is done we can the union paint for filling and stroking */
+		esvg_color "color";
 		esvg_paint "fill";
 		esvg_paint "stroke";
 		esvg_length "stroke_width";

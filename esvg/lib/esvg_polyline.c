@@ -170,22 +170,6 @@ static Eina_Bool _esvg_polyline_renderer_propagate(Edom_Tag *t,
 	return EINA_TRUE;
 }
 
-static void _esvg_polyline_clone(Edom_Tag *t, Edom_Tag *dt)
-{
-#if 0
-	Esvg_Polyline *thiz;
-	Eina_List *l;
-	Esvg_Point *point;
-
-	thiz = _esvg_polyline_get(t);
-	/* FIXME we could remove our own list of polylines and use a _get from the enesim_renderer_figure */
-	EINA_LIST_FOREACH(thiz->points, l, point)
-	{
-		esvg_polyline_point_add(dr, point);
-	}
-#endif
-}
-
 static void _esvg_polyline_free(Edom_Tag *t)
 {
 	Esvg_Polyline *thiz;
@@ -203,7 +187,6 @@ static Esvg_Instantiable_Descriptor _descriptor = {
 	/* .free 		= */ _esvg_polyline_free,
 	/* .initialize 		= */ NULL,
 	/* .attribute_set 	= */ _esvg_polyline_attribute_set,
-	/* .clone		= */ _esvg_polyline_clone,
 	/* .setup		= */ _esvg_polyline_setup,
 	/* .renderer_get	= */ _esvg_polyline_renderer_get,
 	/* .renderer_propagate	= */ _esvg_polyline_renderer_propagate,

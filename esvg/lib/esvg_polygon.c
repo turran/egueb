@@ -131,22 +131,6 @@ static Eina_Bool _esvg_polygon_renderer_propagate(Edom_Tag *t,
 	return EINA_TRUE;
 }
 
-static void _esvg_polygon_clone(Edom_Tag *t, Edom_Tag *dt)
-{
-#if 0
-	Esvg_Polygon *thiz;
-	Eina_List *l;
-	Esvg_Point *point;
-
-	thiz = _esvg_polygon_get(t);
-	/* FIXME we could remove our own list of polygons and use a _get from the enesim_renderer_figure */
-	EINA_LIST_FOREACH(thiz->points, l, point)
-	{
-		esvg_polygon_point_add(dr, point);
-	}
-#endif
-}
-
 static void _esvg_polygon_free(Edom_Tag *t)
 {
 	Esvg_Polygon *thiz;
@@ -164,7 +148,6 @@ static Esvg_Instantiable_Descriptor _descriptor = {
 	/* .free 		= */ _esvg_polygon_free,
 	/* .initialize 		= */ NULL,
 	/* .attribute_set 	= */ _esvg_polygon_attribute_set,
-	/* .clone		= */ _esvg_polygon_clone,
 	/* .setup		= */ _esvg_polygon_setup,
 	/* .renderer_get	= */ _esvg_polygon_renderer_get,
 	/* .renderer_propagate	= */ _esvg_polygon_renderer_propagate,

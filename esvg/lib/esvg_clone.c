@@ -27,11 +27,11 @@
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
-typedef struct _Esvg_Clone_Duplicate_Data
+typedef struct _Esvg_Clone
 {
-	Ender_Element *our;
 	Ender_Element *ref;
-} Esvg_Clone_Duplicate_Data;
+	Ender_Element *our;
+} Esvg_Clone;
 
 static Ender_Element * _esvg_clone_duplicate(Ender_Element *e);
 
@@ -50,7 +50,7 @@ static Eina_Bool _property_is_valid(Ender_Property *prop)
 
 static void _descriptor_property(Ender_Property *prop, void *data)
 {
-	Esvg_Clone_Duplicate_Data *ddata = data;
+	Esvg_Clone *ddata = data;
 	Ender_Value *v = NULL;
 	const char *name;
 
@@ -91,7 +91,7 @@ static Eina_Bool _esvg_clone_child_cb(Edom_Tag *t, Edom_Tag *child,
 
 static Ender_Element * _esvg_clone_duplicate(Ender_Element *e)
 {
-	Esvg_Clone_Duplicate_Data data;
+	Esvg_Clone data;
 	Ender_Descriptor *desc;
 	Ender_Element *our;
 	Ender_Namespace *ns;
@@ -126,30 +126,22 @@ static Ender_Element * _esvg_clone_duplicate(Ender_Element *e)
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
-Esvg_Clone * esvg_clone_new(Ender_Element *e)
+Ender_Element * esvg_clone_new(Ender_Element *e)
 {
-	Esvg_Clone *thiz;
+	Ender_Element *clone;
 
 	if (!e) return NULL;
 
-	thiz = calloc(1, sizeof(Esvg_Clone));
-	thiz->ref = e;
-	thiz->our = _esvg_clone_duplicate(thiz->ref);
-
+	clone = _esvg_clone_duplicate(e);
+	if (clone)
 	/* useful for debugging */
 	{
-		Edom_Tag *t = ender_element_object_get(thiz->our);
+		Edom_Tag *t = ender_element_object_get(clone);
 		printf("cloned element\n");
 		edom_tag_dump(t);
 	}
 
-	return thiz;
-}
-
-void esvg_clone_free(Esvg_Clone *thiz)
-{
-	/* TODO remove the refs */
-	free(thiz);
+	return clone;
 }
 /*============================================================================*
  *                                   API                                      *

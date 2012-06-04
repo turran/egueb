@@ -160,19 +160,6 @@ static Eina_Bool _esvg_circle_renderer_propagate(Edom_Tag *t,
 	return EINA_TRUE;
 }
 
-static void _esvg_circle_clone(Edom_Tag *t, Edom_Tag *dt)
-{
-	Esvg_Circle *thiz;
-	Esvg_Circle *other;
-
-	thiz = _esvg_circle_get(t);
-	other = _esvg_circle_get(dt);
-
-	other->current.cx = thiz->current.cx;
-	other->current.cy = thiz->current.cy;
-	other->current.radius = thiz->current.radius;
-}
-
 static void _esvg_circle_free(Edom_Tag *t)
 {
 	Esvg_Circle *thiz;
@@ -209,7 +196,6 @@ static Esvg_Instantiable_Descriptor _descriptor = {
 	/* .free 		= */ _esvg_circle_free,
 	/* .initialize 		= */ NULL,
 	/* .attribute_set 	= */ _esvg_circle_attribute_set,
-	/* .clone		= */ _esvg_circle_clone,
 	/* .setup		= */ _esvg_circle_setup,
 	/* .renderer_get	= */ _esvg_circle_renderer_get,
 	/* .renderer_propagate	= */ _esvg_circle_renderer_propagate,

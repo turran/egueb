@@ -298,7 +298,6 @@ static Esvg_Instantiable_Descriptor _descriptor = {
 	/* .free 		= */ _esvg_image_free,
 	/* .initialize 		= */ NULL,
 	/* .attribute_set 	= */ _esvg_image_attribute_set,
-	/* .clone		= */ NULL,
 	/* .setup		= */ _esvg_image_setup,
 	/* .renderer_get	= */ _esvg_image_renderer_get,
 	/* .renderer_propagate	= */ _esvg_image_renderer_propagate,

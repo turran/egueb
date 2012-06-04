@@ -65,7 +65,7 @@ typedef struct _Esvg_Use
 	Esvg_Length height;
 	/* private */
 	Eina_Bool state_changed : 1;
-	Esvg_Clone *clone;
+	Ender_Element *cloned;
 	/* the always present g tag */
 	Edom_Tag *g_t;
 	Ender_Element *g_e;
@@ -174,7 +174,7 @@ static Esvg_Element_Setup_Return _esvg_use_setup(Edom_Tag *t,
 	Esvg_Use *thiz;
 	Ender_Element *topmost;
 	Ender_Element *link;
-	Edom_Tag *clone_t;
+	Edom_Tag *cloned_t;
 	Enesim_Matrix translate;
 	double tx, ty;
 
@@ -201,11 +201,11 @@ static Esvg_Element_Setup_Return _esvg_use_setup(Edom_Tag *t,
 
 	if (thiz->state_changed)
 	{
-		if (thiz->clone)
+		if (thiz->cloned)
 		{
 			/* TODO remove the tree from the g_e */
 			/* TODO remove previous clone */
-			thiz->clone = NULL;
+			thiz->cloned = NULL;
 		}
 		if (thiz->past.link)
 		{
@@ -215,17 +215,17 @@ static Esvg_Element_Setup_Return _esvg_use_setup(Edom_Tag *t,
 		if (thiz->current.link)
 		{
 			esvg_svg_element_get(topmost, thiz->current.link, &link);
-			thiz->clone = esvg_clone_new(link);
+			thiz->cloned = esvg_clone_new(link);
 
-			if (!thiz->clone)
+			if (!thiz->cloned)
 			{
 				printf("impossible to clone\n");
 				return EINA_TRUE;
 			}
 
 			/* TODO add the clone to the generated g */
-			clone_t = ender_element_object_get(thiz->clone->our);
-			ender_element_property_value_add(thiz->g_e, EDOM_CHILD, clone_t, NULL);
+			cloned_t = ender_element_object_get(thiz->cloned);
+			ender_element_property_value_add(thiz->g_e, EDOM_CHILD, cloned_t, NULL);
 			thiz->past.link = strdup(thiz->current.link);
 		}
 		/* FIXME this should go to the cleanup */
@@ -234,15 +234,10 @@ static Esvg_Element_Setup_Return _esvg_use_setup(Edom_Tag *t,
 
 	/* setup the g */
 	printf("doing the setup on the inner g!\n");
-	/* set the parent */
 	/* FIXME for now */
 	esvg_element_topmost_set(thiz->g_t, topmost);
+	/* we should set the attributes, state? */
 	return esvg_element_internal_setup(thiz->g_t, c, error);
-}
-
-static void _esvg_use_clone(Edom_Tag *t, Edom_Tag *dt)
-{
-	/* inst this too much? */
 }
 
 static void _esvg_use_free(Edom_Tag *t)
@@ -262,7 +257,6 @@ static Esvg_Instantiable_Descriptor _descriptor = {
 	/* .free 		= */ _esvg_use_free,
 	/* .initialize 		= */ _esvg_use_initialize,
 	/* .attribute_set 	= */ _esvg_use_attribute_set,
-	/* .clone		= */ _esvg_use_clone,
 	/* .setup		= */ _esvg_use_setup,
 	/* .renderer_get	= */ _esvg_use_renderer_get,
 	/* .renderer_propagate	= */ NULL,

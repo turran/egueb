@@ -199,22 +199,6 @@ static Eina_Bool _esvg_rect_renderer_propagate(Edom_Tag *t,
 	return EINA_TRUE;
 }
 
-static void _esvg_rect_clone(Edom_Tag *t, Edom_Tag *tr)
-{
-	Esvg_Rect *thiz;
-	Esvg_Rect *other;
-
-	thiz = _esvg_rect_get(t);
-	other = _esvg_rect_get(tr);
-
-	other->current.x = thiz->current.x;
-	other->current.y = thiz->current.y;
-	other->current.width = thiz->current.width;
-	other->current.height = thiz->current.height;
-	other->current.rx = thiz->current.rx;
-	other->current.ry = thiz->current.ry;
-}
-
 #if 0
 static Eina_Bool _esvg_rect_has_changed(Edom_Tag *t)
 {
@@ -257,7 +241,6 @@ static Esvg_Instantiable_Descriptor _descriptor = {
 	/* .free		= */ _esvg_rect_free,
 	/* .initialize		= */ NULL,
 	/* .attribute_set	= */ _esvg_rect_attribute_set,
-	/* .clone		= */ _esvg_rect_clone,
 	/* .setup		= */ _esvg_rect_setup,
 	/* .renderer_get	= */ _esvg_rect_renderer_get,
 	/* .renderer_propagate	= */ _esvg_rect_renderer_propagate,

@@ -169,18 +169,19 @@ done:
 	esvg_paint_copy(old, current);
 }
 
-static void _esvg_shape_enesim_state_get(Edom_Tag *t,
-		const Esvg_Element_Context *ctx,
+static void _esvg_renderable_context_set(Edom_Tag *t,
 		const Esvg_Attribute_Presentation *attr,
 		Esvg_Renderable_Context *rctx)
 {
 	Esvg_Renderable *thiz;
+	const Esvg_Element_Context *ctx;
 	double stroke_viewport = 0;
 	uint8_t fill_opacity;
 	uint8_t stroke_opacity;
 	uint8_t opacity;
 
 	thiz = _esvg_renderable_get(t);
+	ctx = esvg_element_context_get(t);
 
 	/* set the opacity */
 	opacity = attr->opacity.base * 255;
@@ -251,6 +252,7 @@ static Esvg_Element_Setup_Return _esvg_renderable_propagate(Esvg_Renderable *thi
 	 * a shape for rendering, a shape for masking, etc) the different
 	 * enesim states despend on that behaviour
 	 */
+	/* FIXME this should be part of the renderable behaviour too */
 	if (!esvg_string_is_equal(attr->clip_path, thiz->clip_path_last))
 	{
 		/* whenever a clip path is set, we should reference it, etc, etc
@@ -280,7 +282,8 @@ static Esvg_Element_Setup_Return _esvg_renderable_propagate(Esvg_Renderable *thi
 	/* FIXME there are cases where this is not needed, liek the 'use' given that
 	 * the 'g' will do it
 	 */
-	_esvg_shape_enesim_state_get(t, context, attr, &thiz->context);
+	if (context->renderable_behaviour)
+		context->renderable_behaviour(t, attr, &thiz->context);
 	/* do the renderer propagate */
 	if (!thiz->descriptor.renderer_propagate(t, c, context, attr, &thiz->context, error))
 		return ESVG_SETUP_FAILED;
@@ -309,8 +312,6 @@ static Esvg_Element_Setup_Return _esvg_renderable_propagate(Esvg_Renderable *thi
 	}
 	return ESVG_SETUP_OK;
 }
-
-
 /*----------------------------------------------------------------------------*
  *                           The Ender interface                              *
  *----------------------------------------------------------------------------*/
@@ -412,18 +413,14 @@ static Esvg_Element_Setup_Return _esvg_renderable_setup(Edom_Tag *t,
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
-Esvg_Renderable_Behaviour * esvg_renderable_default_behaviour_get(void)
+Esvg_Renderable_Behaviour esvg_renderable_default_behaviour_get(void)
 {
-	/* FIXME we should return the default behaviour which is the one
-	 * that setups clippaths, fills, propagates into the renderer everything
-	 * etc
-	 * For defs, it must do nothing
+	/* For defs, it must do nothing
 	 * For clippaths, it should only generate the geometry (no paint, storke, etc)
 	 * For patterns, like the default
 	 */
-	return NULL;
+	return _esvg_renderable_context_set;
 }
-
 
 void esvg_renderable_implementation_renderer_get(Edom_Tag *t, Enesim_Renderer **r)
 {

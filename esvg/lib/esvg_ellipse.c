@@ -166,20 +166,6 @@ static Enesim_Renderer * _esvg_ellipse_renderer_get(Edom_Tag *t)
 	return thiz->r;
 }
 
-static void _esvg_ellipse_clone(Edom_Tag *t, Edom_Tag *dt)
-{
-	Esvg_Ellipse *thiz;
-	Esvg_Ellipse *other;
-
-	thiz = _esvg_ellipse_get(t);
-	other = _esvg_ellipse_get(dt);
-
-	other->current.cx = thiz->current.cx;
-	other->current.cy = thiz->current.cy;
-	other->current.rx = thiz->current.rx;
-	other->current.ry = thiz->current.ry;
-}
-
 #if 0
 static Eina_Bool _esvg_ellipse_has_changed(Enesim_Renderer *r)
 {
@@ -218,7 +204,6 @@ static Esvg_Instantiable_Descriptor _descriptor = {
 	/* .free 		= */ _esvg_ellipse_free,
 	/* .initialize 		= */ NULL,
 	/* .attribute_set 	= */ _esvg_ellipse_attribute_set,
-	/* .clone		= */ _esvg_ellipse_clone,
 	/* .setup		= */ _esvg_ellipse_setup,
 	/* .renderer_get	= */ _esvg_ellipse_renderer_get,
 	/* .renderer_propagate	= */ _esvg_ellipse_renderer_propagate,

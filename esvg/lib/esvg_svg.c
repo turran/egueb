@@ -745,11 +745,6 @@ static Enesim_Renderer * _esvg_svg_renderer_get(Edom_Tag *t)
 	return thiz->clipper;
 }
 
-static void _esvg_svg_clone(Edom_Tag *t, Edom_Tag *dt)
-{
-
-}
-
 static void _esvg_svg_free(Edom_Tag *t)
 {
 	Esvg_Svg *thiz;
@@ -767,7 +762,6 @@ static Esvg_Instantiable_Descriptor _descriptor = {
 	/* .free 		= */ _esvg_svg_free,
 	/* .initialize 		= */ _esvg_svg_initialize,
 	/* .attribute_set 	= */ _esvg_svg_attribute_set,
-	/* .clone		= */ _esvg_svg_clone,
 	/* .setup		= */ _esvg_svg_setup,
 	/* .renderer_get	= */ _esvg_svg_renderer_get,
 	/* .renderer_propagate	= */ NULL,

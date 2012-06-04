@@ -32,7 +32,7 @@ typedef struct _Esvg_Element_Context {
 	double font_size; /* the propagated value of the current font size? FIXME here or in the attributes? */
 	Enesim_Rectangle bounds; /* the bounds of the object */
 	Esvg_Animated_Transform transform; /* the current transformation */
-	Esvg_Renderable_Behaviour *renderable_behaviour;
+	Esvg_Renderable_Behaviour renderable_behaviour;
 } Esvg_Element_Context;
 
 typedef void (*Esvg_Element_Initialize)(Ender_Element *e);
@@ -49,8 +49,6 @@ typedef Eina_Bool (*Esvg_Element_Setup_Interceptor)(Edom_Tag *t,
 		Esvg_Context *c,
 		Enesim_Error **error,
 		void *data);
-typedef void (*Esvg_Element_Clone)(Edom_Tag *r, Edom_Tag *dst);
-
 typedef struct _Esvg_Element_Descriptor {
 	/* the tag interface */
 	Edom_Tag_Child_Add child_add;
@@ -62,7 +60,6 @@ typedef struct _Esvg_Element_Descriptor {
 	/* the element interface */
 	Esvg_Element_Attribute_Set attribute_set;
 	Esvg_Element_Initialize initialize;
-	Esvg_Element_Clone clone;
 	Esvg_Element_Setup setup;
 } Esvg_Element_Descriptor;
 

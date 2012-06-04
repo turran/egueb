@@ -162,7 +162,6 @@ static Esvg_Paint_Server_Descriptor _descriptor = {
 	/* .setup =		*/ _pattern_setup,
 	/* .name_get =		*/ _pattern_name_get,
 	/* .renderer_get =	*/ _pattern_renderer_get,
-	/* .clone =		*/ NULL,
 };
 /*============================================================================*
  *                                 Global                                     *

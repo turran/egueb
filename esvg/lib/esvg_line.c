@@ -164,20 +164,6 @@ static Eina_Bool _esvg_line_renderer_propagate(Edom_Tag *t,
 	return EINA_TRUE;
 }
 
-static void _esvg_line_clone(Edom_Tag *t, Edom_Tag *dt)
-{
-	Esvg_Line *thiz;
-	Esvg_Line *other;
-
-	thiz = _esvg_line_get(t);
-	other = _esvg_line_get(dt);
-
-	other->current.x1 = thiz->current.x1;
-	other->current.y1 = thiz->current.y1;
-	other->current.x2 = thiz->current.x2;
-	other->current.y2 = thiz->current.y2;
-}
-
 #if 0
 static Eina_Bool _esvg_line_has_changed(Enesim_Renderer *r)
 {
@@ -216,7 +202,6 @@ static Esvg_Instantiable_Descriptor _descriptor = {
 	/* .free 		= */ _esvg_line_free,
 	/* .initialize 		= */ NULL,
 	/* .attribute_set 	= */ _esvg_line_attribute_set,
-	/* .clone		= */ _esvg_line_clone,
 	/* .setup		= */ _esvg_line_setup,
 	/* .renderer_get	= */ _esvg_line_renderer_get,
 	/* .renderer_propagate	= */ _esvg_line_renderer_propagate,

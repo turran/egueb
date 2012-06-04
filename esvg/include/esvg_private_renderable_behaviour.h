@@ -18,14 +18,16 @@ typedef struct _Esvg_Renderable_Context {
 	Enesim_Shape_Fill_Rule fill_rule;
 } Esvg_Renderable_Context;
 
-/* TODO given that the renderables can be childs of several type of parents
+/* given that the renderables can be childs of several type of parents
  * it is desired to define the behaviour of such renderables, for example
  * shapes being child of a clippath must not process the fill/stroke
  * attributes. A shape being child of a def should not create a renderer
  * or process anything, etc
  */
-typedef struct _Esvg_Renderable_Behaviour {
-
-} Esvg_Renderable_Behaviour;
+/* FIXME we dont add the Element Context, some issues with the
+ * recursive includes */
+typedef void (*Esvg_Renderable_Behaviour)(Edom_Tag *t,
+		const Esvg_Attribute_Presentation *attr,
+		Esvg_Renderable_Context *rctx);
 
 #endif

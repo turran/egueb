@@ -299,7 +299,6 @@ static Esvg_Gradient_Descriptor _descriptor = {
 	/* .free 		= */ _esvg_linear_gradient_free,
 	/* .initialize 		= */ NULL,
 	/* .attribute_set 	= */ _esvg_linear_gradient_attribute_set,
-	/* .clone		= */ NULL,
 	/* .setup		= */ NULL,
 	/* .renderer_new	= */ _esvg_linear_gradient_renderer_new,
 	/* .propagate		= */ _esvg_linear_gradient_propagate,

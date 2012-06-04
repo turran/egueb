@@ -27,7 +27,6 @@ typedef struct _Esvg_Renderable_Descriptor {
 	/* the element interface */
 	Esvg_Element_Initialize initialize;
 	Esvg_Element_Attribute_Set attribute_set;
-	Esvg_Element_Clone clone;
 	/* the renderable interface */
 	Esvg_Renderable_Setup setup;
 	Esvg_Renderable_Renderer_Get renderer_get;
@@ -37,6 +36,7 @@ typedef struct _Esvg_Renderable_Descriptor {
 void * esvg_renderable_data_get(Edom_Tag *t);
 Edom_Tag * esvg_renderable_new(Esvg_Renderable_Descriptor *descriptor, Esvg_Type type, void *data);
 void esvg_renderable_implementation_renderer_get(Edom_Tag *t, Enesim_Renderer **r);
+Esvg_Renderable_Behaviour esvg_renderable_default_behaviour_get(void);
 /* internal functions */
 /* TODO this property should not be exposed */
 void esvg_renderable_internal_renderer_get(Edom_Tag *t, Enesim_Renderer **r);
