@@ -233,14 +233,112 @@ static Eina_Bool _esvg_element_child_setup_cb(Edom_Tag *t, Edom_Tag *child,
 }
 static Eina_Bool _esvg_element_attribute_animation_add(Esvg_Element *thiz, const char *attr)
 {
+	int *animated = NULL;
+
 	/* get our own attributes */
-	return EINA_FALSE;
+	if (strcmp(attr, "transform") == 0)
+	{
+	}
+	/* common presentation attributes */
+	else if (strcmp(attr, "clip-path") == 0)
+	{
+	}
+	else if (strcmp(attr, "opacity") == 0)
+	{
+	}
+	else if (strcmp(attr, "color") == 0)
+	{
+	}
+	else if (strcmp(attr, "fill") == 0)
+	{
+	}
+	else if (strcmp(attr, "fill-rule") == 0)
+	{
+	}
+	else if (strcmp(attr, "fill-opacity") == 0)
+	{
+	}
+	else if (strcmp(attr, "stroke") == 0)
+	{
+	}
+	else if (strcmp(attr, "stroke-width") == 0)
+	{
+	}
+	else if (strcmp(attr, "stroke-opacity") == 0)
+	{
+	}
+	else if (strcmp(attr, "stroke-linecap") == 0)
+	{
+	}
+	else if (strcmp(attr, "stroke-linejoin") == 0)
+	{
+	}
+	else if (strcmp(attr, "stop-color") == 0)
+	{
+	}
+	else if (strcmp(attr, "stop-opacity") == 0)
+	{
+	}
+	else
+		return EINA_FALSE;
+	if (animated)
+		*animated++;
+	return EINA_TRUE;
 }
 
 static Eina_Bool _esvg_element_attribute_animation_remove(Esvg_Element *thiz, const char *attr)
 {
+	int *animated = NULL;
+
 	/* get our own attributes */
-	return EINA_FALSE;
+	if (strcmp(attr, "transform") == 0)
+	{
+	}
+	/* common presentation attributes */
+	else if (strcmp(attr, "clip-path") == 0)
+	{
+	}
+	else if (strcmp(attr, "opacity") == 0)
+	{
+	}
+	else if (strcmp(attr, "color") == 0)
+	{
+	}
+	else if (strcmp(attr, "fill") == 0)
+	{
+	}
+	else if (strcmp(attr, "fill-rule") == 0)
+	{
+	}
+	else if (strcmp(attr, "fill-opacity") == 0)
+	{
+	}
+	else if (strcmp(attr, "stroke") == 0)
+	{
+	}
+	else if (strcmp(attr, "stroke-width") == 0)
+	{
+	}
+	else if (strcmp(attr, "stroke-opacity") == 0)
+	{
+	}
+	else if (strcmp(attr, "stroke-linecap") == 0)
+	{
+	}
+	else if (strcmp(attr, "stroke-linejoin") == 0)
+	{
+	}
+	else if (strcmp(attr, "stop-color") == 0)
+	{
+	}
+	else if (strcmp(attr, "stop-opacity") == 0)
+	{
+	}
+	else
+		return EINA_FALSE;
+	if (animated)
+		*animated--;
+	return EINA_TRUE;
 }
 /*----------------------------------------------------------------------------*
  *                           The Ender interface                              *
