@@ -129,11 +129,14 @@ static void _esvg_renderable_paint_set(Edom_Tag *t,
 		Enesim_Renderer **renderer,
 		Enesim_Shape_Draw_Mode mode,
 		double opacity,
+		const Esvg_Color *current_color,
 		Esvg_Referenceable_Reference **reference,
 		const Esvg_Paint *current,
 		Esvg_Paint *old)
 		
 {
+	uint8_t op = opacity * 255;
+
 	if (esvg_paint_is_equal(current, old))
 		return;
 
@@ -141,8 +144,9 @@ static void _esvg_renderable_paint_set(Edom_Tag *t,
 	if (current->type == ESVG_PAINT_COLOR)
 	{
 		const Esvg_Color *c = &current->value.color;
+
 		enesim_color_components_from(rcolor,
-				opacity, c->r, c->g, c->b);
+				op, c->r, c->g, c->b);
 		*rdraw_mode |= mode;
 	}
 	else if (current->type == ESVG_PAINT_SERVER)
@@ -154,6 +158,9 @@ static void _esvg_renderable_paint_set(Edom_Tag *t,
 		/* TODO finally, get the renderer? */
 		*renderer = rr->data;
 		*reference = rr;
+
+		enesim_color_components_from(rcolor,
+				op, 0xff, 0xff, 0xff);
 		*rdraw_mode |= mode;
 	}
 	else if (current->type == ESVG_PAINT_NONE)
@@ -162,8 +169,9 @@ static void _esvg_renderable_paint_set(Edom_Tag *t,
 	}
 	else if (current->type == ESVG_PAINT_CURRENT_COLOR)
 	{
+		enesim_color_components_from(rcolor,
+				op, current_color->r, current_color->g, current_color->b);
 		*rdraw_mode |= mode;
-		*rcolor = ENESIM_COLOR_FULL;
 	}
 done:
 	/* update the old paint */
@@ -177,33 +185,21 @@ static void _esvg_renderable_context_set(Edom_Tag *t,
 	Esvg_Renderable *thiz;
 	const Esvg_Element_Context *ctx;
 	double stroke_viewport = 0;
-	uint8_t fill_opacity;
-	uint8_t stroke_opacity;
 	uint8_t opacity;
 
 	thiz = _esvg_renderable_get(t);
 	ctx = esvg_element_context_get(t);
 
-	/* set the opacity */
 	opacity = attr->opacity.base * 255;
-	if (attr->color_set)
-	{
-		const Esvg_Color *c = &attr->color;
-		enesim_color_components_from(&rctx->color,
-				opacity, c->r, c->g, c->b);
-	}
-	else
-	{
-		enesim_color_components_from(&rctx->color,
-				opacity, 0xff, 0xff, 0xff);
-	}
+	enesim_color_components_from(&rctx->color,
+			opacity, 0xff, 0xff, 0xff);
 
 	/* set the fill */
-	fill_opacity = attr->fill_opacity * 255;
 	_esvg_renderable_paint_set(t, &rctx->draw_mode, &rctx->fill_color,
 			&rctx->fill_renderer,
 			ENESIM_SHAPE_DRAW_MODE_FILL,
-			fill_opacity,
+			attr->fill_opacity,
+			&attr->color,
 			&thiz->fill_reference,
 			&attr->fill,
 			&thiz->fill_paint_last);
@@ -216,11 +212,11 @@ static void _esvg_renderable_context_set(Edom_Tag *t,
 		rctx->fill_rule = ENESIM_SHAPE_FILL_RULE_NON_ZERO;
 	}
 	/* set the stroke */
-	stroke_opacity = attr->stroke_opacity * 255;
 	_esvg_renderable_paint_set(t, &rctx->draw_mode, &rctx->stroke_color,
 			&rctx->stroke_renderer,
 			ENESIM_SHAPE_DRAW_MODE_STROKE,
-			stroke_opacity,
+			attr->stroke_opacity,
+			&attr->color,
 			&thiz->stroke_reference,
 			&attr->stroke,
 			&thiz->stroke_paint_last);
