@@ -197,6 +197,20 @@ static void _esvg_element_state_compose(const Esvg_Element_Context *s,
 	enesim_matrix_compose(&parent->transform.base, &s->transform.base, &d->transform.base);
 }
 /*----------------------------------------------------------------------------*
+ *                            Attribute helpers                               *
+ *----------------------------------------------------------------------------*/
+/* TODO Given that we need to change the attributes to be animatable, then we
+ * need to change the element attributes to be of type animatable (what ender
+ * expects), then the attributes that are set as *final* is only the version
+ * where the animated/non-animated are resolved and put into the final
+ * attributes
+ */
+static void _esvg_element_context_setup(const Esvg_Presentation_Attributes *p,
+	const Esvg_Element_Attributes *c, Esvg_Presentation_Attributes *d)
+{
+
+}
+/*----------------------------------------------------------------------------*
  *                               Setup helpers                                *
  *----------------------------------------------------------------------------*/
 static Eina_Bool _esvg_element_child_setup_cb(Edom_Tag *t, Edom_Tag *child,
