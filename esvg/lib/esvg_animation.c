@@ -33,6 +33,8 @@
  * This file handles the common attribute handling of every
  * element on the animation system. That is:
  * 'set', 'animate', 'animateTransform'
+ * TODO whenever the this element is reparented, remove/add the attribute
+ * of the list of animated attributes
  */
 /*============================================================================*
  *                                  Local                                     *
@@ -59,10 +61,11 @@ typedef struct _Esvg_Animation
 {
 	EINA_MAGIC
 	/* properties */
-	Esvg_Animation_Context current;
+	Esvg_Animation_Context ctx;
 	/* interface */
 	Esvg_Animation_Descriptor_Internal descriptor;
 	/* private */
+	Eina_Bool context_changed : 1;
 	void *data;
 } Esvg_Animation;
 
@@ -75,31 +78,81 @@ static Esvg_Animation * _esvg_animation_get(Edom_Tag *t)
 
 	return thiz;
 }
+
+static Eina_Bool _esvg_animation_context_setup(Esvg_Animation *thiz)
+{
+	Esvg_Attribute_Animation_Attribute_Name *attr_name;
+	Esvg_Animation_Context *ctx;
+	Eina_Bool ret = EINA_TRUE;
+
+	ctx = &thiz->ctx;
+	attr_name = &ctx->target.attribute_name;
+	/* check the attribute name if it has changed then keep
+	 * track of the attribute being animated
+	 */
+	if (!esvg_string_is_equal(attr_name->curr, attr_name->prev))
+	{
+		if (attr_name->prev)
+		{
+			esvg_element_attribute_animation_remove(ctx->parent_t, attr_name->prev);
+			free(attr_name->prev);
+			attr_name->prev = NULL;
+			ctx->p = NULL;
+		}
+		if (attr_name->curr)
+		{
+			Ender_Property *p;
+
+			esvg_element_attribute_animation_add(ctx->parent_t, attr_name->curr);
+			attr_name->prev = attr_name->curr;
+			/* get the property name */
+			p = ender_element_property_get(ctx->parent_e, ctx->target.attribute_name.curr);
+			if (!p)
+			{
+				ret = EINA_TRUE;
+				goto done;
+			}
+			ctx->p = p;
+		}
+		attr_name->changed = EINA_TRUE;
+	}
+	else
+	{
+		attr_name->changed = EINA_FALSE;
+	}
+done:
+	thiz->context_changed = EINA_FALSE;
+	return ret;
+}
 /*----------------------------------------------------------------------------*
  *                           The Ender interface                              *
  *----------------------------------------------------------------------------*/
 static void _esvg_animation_attribute_name_set(Edom_Tag *t, const char *attribute_name)
 {
 	Esvg_Animation *thiz;
+	Esvg_Attribute_Animation_Attribute_Name *attr_name;
 
 	thiz = _esvg_animation_get(t);
-	if (thiz->current.target.attribute_name)
+	attr_name = &thiz->ctx.target.attribute_name;
+	if (attr_name->curr)
 	{
-		free(thiz->current.target.attribute_name);
-		thiz->current.target.attribute_name = NULL;
+		free(attr_name->curr);
+		attr_name->curr = NULL;
 	}
 	if (attribute_name)
-		thiz->current.target.attribute_name = strdup(attribute_name);
-	thiz->current.changed = EINA_TRUE;
+		attr_name->curr = strdup(attribute_name);
+	thiz->context_changed = EINA_TRUE;
 }
 
 static void _esvg_animation_attribute_name_get(Edom_Tag *t, const char **attribute_name)
 {
 	Esvg_Animation *thiz;
+	Esvg_Attribute_Animation_Attribute_Name *attr_name;
 
 	if (!attribute_name) return;
 	thiz = _esvg_animation_get(t);
-	*attribute_name = thiz->current.target.attribute_name;
+	attr_name = &thiz->ctx.target.attribute_name;
+	*attribute_name = attr_name->curr;
 }
 
 static void _esvg_animation_attribute_type_set(Edom_Tag *t, Esvg_Attribute_Type attribute_type)
@@ -107,8 +160,7 @@ static void _esvg_animation_attribute_type_set(Edom_Tag *t, Esvg_Attribute_Type 
 	Esvg_Animation *thiz;
 
 	thiz = _esvg_animation_get(t);
-	thiz->current.target.attribute_type = attribute_type;
-	thiz->current.changed = EINA_TRUE;
+	thiz->ctx.target.attribute_type = attribute_type;
 }
 
 static void _esvg_animation_attribute_type_get(Edom_Tag *t, Esvg_Attribute_Type *attribute_type)
@@ -117,7 +169,7 @@ static void _esvg_animation_attribute_type_get(Edom_Tag *t, Esvg_Attribute_Type 
 
 	if (!attribute_type) return;
 	thiz = _esvg_animation_get(t);
-	*attribute_type = thiz->current.target.attribute_type;
+	*attribute_type = thiz->ctx.target.attribute_type;
 }
 
 static void _esvg_animation_dur_set(Edom_Tag *t, Esvg_Duration *dur)
@@ -126,8 +178,7 @@ static void _esvg_animation_dur_set(Edom_Tag *t, Esvg_Duration *dur)
 
 	if (!dur) return;
 	thiz = _esvg_animation_get(t);
-	thiz->current.timing.dur = *dur;
-	thiz->current.changed = EINA_TRUE;
+	thiz->ctx.timing.dur = *dur;
 }
 
 static void _esvg_animation_dur_get(Edom_Tag *t, Esvg_Duration *dur)
@@ -136,7 +187,7 @@ static void _esvg_animation_dur_get(Edom_Tag *t, Esvg_Duration *dur)
 
 	if (!dur) return;
 	thiz = _esvg_animation_get(t);
-	*dur = thiz->current.timing.dur;
+	*dur = thiz->ctx.timing.dur;
 }
 
 /*----------------------------------------------------------------------------*
@@ -204,14 +255,29 @@ static Esvg_Element_Setup_Return _esvg_animation_setup(Edom_Tag *t,
 		Enesim_Error **error)
 {
 	Esvg_Animation *thiz;
+	Esvg_Animation_Context *ctx;
+	Edom_Tag *parent_t;
+	Ender_Element *parent_e;
 
 	thiz = _esvg_animation_get(t);
+	ctx = &thiz->ctx;
 
-	printf("animation setup %s\n", thiz->current.target.attribute_name);
+	/* get the parent */
+	ctx->parent_t = edom_tag_parent_get(t);
+	if (!ctx->parent_t)
+		return ESVG_SETUP_OK;
+	ctx->parent_e = esvg_element_ender_get(ctx->parent_t);
+	/* check if the context has changed */
+	if (thiz->context_changed)
+	{
+		if (!_esvg_animation_context_setup(thiz))
+			return ESVG_SETUP_OK;
+	}
+	
 	/* do the setup */
 	if (thiz->descriptor.setup)
-		return thiz->descriptor.setup(t, c, &thiz->current, error);
-	return EINA_TRUE;
+		return thiz->descriptor.setup(t, c, &thiz->ctx, error);
+	return ESVG_SETUP_OK;
 }
 /*============================================================================*
  *                                 Global                                     *

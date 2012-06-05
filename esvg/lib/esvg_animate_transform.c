@@ -198,15 +198,10 @@ static Eina_Bool _esvg_animate_transform_setup(Edom_Tag *t,
 	if (thiz->anim)
 		etch_animation_delete(thiz->anim);
 
-	parent_t = edom_tag_parent_get(t);
-	parent_e = esvg_element_ender_get(parent_t);
-	/* get the property name */
-	p = ender_element_property_get(parent_e, actx->target.attribute_name);
-	if (!p) goto done;
-
-	printf("property found!!!\n");
-	thiz->parent_e = parent_e;
-	thiz->parent_t = parent_t;
+	/* FIXME should we get a reference here ? */
+	p = actx->p;
+	thiz->parent_t = actx->parent_t;
+	thiz->parent_e = actx->parent_e;
 
 	/* we should only process lengths, colors, integers, booleans, etc */
 	if (!_esvg_animate_transform_container_etch_to(thiz, etch, p, abctx))

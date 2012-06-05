@@ -7,7 +7,11 @@
 typedef struct _Esvg_Animation_Context {
 	Esvg_Attribute_Animation_Target target;
 	Esvg_Attribute_Animation_Timing timing;
-	Eina_Bool changed : 1;
+	/* the parent element */
+	Ender_Element *parent_e;
+	Edom_Tag *parent_t;
+	/* the parent property */
+	Ender_Property *p;
 } Esvg_Animation_Context;
 
 typedef Eina_Bool (*Esvg_Animation_Setup)(Edom_Tag *t,

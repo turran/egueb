@@ -38,6 +38,8 @@ typedef struct _Esvg_Element_Context {
 
 typedef void (*Esvg_Element_Initialize)(Ender_Element *e);
 typedef Eina_Bool (*Esvg_Element_Attribute_Set)(Ender_Element *e, const char *key, const char *value);
+typedef Eina_Bool (*Esvg_Element_Attribute_Animation_Add)(Edom_Tag *t, const char *name);
+typedef void (*Esvg_Element_Attribute_Animation_Remove)(Edom_Tag *t, const char *name);
 
 typedef Esvg_Element_Setup_Return (*Esvg_Element_Setup)(Edom_Tag *t,
 		Esvg_Context *c,
@@ -89,6 +91,8 @@ Esvg_Element_Setup_Return esvg_element_setup_rel(Edom_Tag *t,
 		const Esvg_Element_Context *rel_state,
 		const Esvg_Attribute_Presentation *rel_attr,
 		Enesim_Error **error);
+Eina_Bool esvg_element_attribute_animation_add(Edom_Tag *t, const char *attr);
+void esvg_element_attribute_animation_remove(Edom_Tag *t, const char *attr);
 /* internal functions */
 Esvg_Type esvg_element_internal_type_get(Edom_Tag *t);
 Eina_Bool esvg_is_element_internal(Edom_Tag *t);

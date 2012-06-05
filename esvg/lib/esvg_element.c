@@ -83,6 +83,8 @@ typedef struct _Esvg_Element_Descriptor_Internal
 {
 	Esvg_Element_Initialize initialize;
 	Esvg_Element_Attribute_Set attribute_set;
+	Esvg_Element_Attribute_Animation_Add attribute_animation_add;
+	Esvg_Element_Attribute_Animation_Remove attribute_animation_remove;
 	Edom_Tag_Attribute_Get attribute_get;
 	Edom_Tag_Free free;
 	Esvg_Element_Setup setup;
@@ -228,6 +230,17 @@ static Eina_Bool _esvg_element_child_setup_cb(Edom_Tag *t, Edom_Tag *child,
 	}
 
 	return EINA_TRUE;
+}
+static Eina_Bool _esvg_element_attribute_animation_add(Esvg_Element *thiz, const char *attr)
+{
+	/* get our own attributes */
+	return EINA_FALSE;
+}
+
+static Eina_Bool _esvg_element_attribute_animation_remove(Esvg_Element *thiz, const char *attr)
+{
+	/* get our own attributes */
+	return EINA_FALSE;
 }
 /*----------------------------------------------------------------------------*
  *                           The Ender interface                              *
@@ -908,6 +921,35 @@ static Ecss_Context _esvg_element_css_context = {
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
+Eina_Bool esvg_element_attribute_animation_add(Edom_Tag *t, const char *attr)
+{
+	Esvg_Element *thiz;
+
+	thiz = _esvg_element_get(t);
+	/* get our own attributes */
+	printf("adding animation on %s\n", attr);
+	if (_esvg_element_attribute_animation_add(thiz, attr))
+		return EINA_TRUE;
+	/* call the descriptor implementation */
+	if (thiz->descriptor.attribute_animation_add)
+		return thiz->descriptor.attribute_animation_add(t, attr);
+	return EINA_FALSE;
+}
+
+void esvg_element_attribute_animation_remove(Edom_Tag *t, const char *attr)
+{
+	Esvg_Element *thiz;
+
+	thiz = _esvg_element_get(t);
+	/* get our own attributes */
+	printf("removing animation on %s\n", attr);
+	if (_esvg_element_attribute_animation_remove(thiz, attr))
+		return;
+	/* call the descriptor implementation */
+	if (thiz->descriptor.attribute_animation_remove)
+		thiz->descriptor.attribute_animation_remove(t, attr);
+}
+
 Esvg_Type esvg_element_internal_type_get(Edom_Tag *t)
 {
 	Esvg_Element *thiz;

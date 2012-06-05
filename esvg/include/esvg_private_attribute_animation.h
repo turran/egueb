@@ -5,10 +5,17 @@
 #include <Edom.h>
 #include "esvg_types.h"
 
+typedef struct _Esvg_Attribute_Animation_Attribute_Name
+{
+	char *curr;
+	char *prev;
+	Eina_Bool changed : 1;
+} Esvg_Attribute_Animation_Attribute_Name;
+
 typedef struct _Esvg_Attribute_Animation_Target
 {
 	Esvg_Attribute_Type attribute_type;
-	char *attribute_name;
+	Esvg_Attribute_Animation_Attribute_Name attribute_name;
 } Esvg_Attribute_Animation_Target;
 
 typedef struct _Esvg_Animation_Timing
