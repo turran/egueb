@@ -158,6 +158,12 @@ typedef struct _Esvg_Animated_Length
 
 typedef Esvg_Animated_Length Esvg_Animated_Coord;
 
+typedef struct _Esvg_Animated_String
+{
+	char *base;
+	char *anim;
+} Esvg_Animated_String;
+
 /* We need to use uint32_t here because we can not pass
  * data < 32bits through varargs
  */
@@ -218,6 +224,18 @@ typedef struct _Esvg_Paint
 		char *paint_server;
 	} value;
 } Esvg_Paint;
+
+typedef struct _Esvg_Animated_Paint
+{
+	Esvg_Paint base;
+	Esvg_Paint anim;
+} Esvg_Animated_Paint;
+
+typedef struct _Esvg_Animated_Bool
+{
+	Eina_Bool base;
+	Eina_Bool anim;
+} Esvg_Animated_Bool;
 
 typedef enum _Esvg_Path_Command_Type
 {

@@ -103,6 +103,29 @@ typedef struct _Esvg_Element_State
 	char *style;
 } Esvg_Element_State;
 
+typedef struct _Esvg_Element_Attributes
+{
+	Esvg_Attribute_Animated_String clip_path;
+	Esvg_Attribute_Animated_Color color;
+	Esvg_Attribute_Animated_Number opacity;
+	Esvg_Attribute_Animated_Paint fill;
+	Esvg_Attribute_Animated_Paint stroke;
+	Esvg_Attribute_Animated_Length stroke_width;
+	Esvg_Attribute_Animated_Number stroke_opacity;
+	Esvg_Attribute_Animated_Number fill_opacity;
+	Esvg_Attribute_Animated_Number stop_opacity;
+	Esvg_Attribute_Animated_Color stop_color;
+#if 0
+	Esvg_Stroke_Line_Cap stroke_line_cap;
+	Esvg_Stroke_Line_Join stroke_line_join;
+	Esvg_Fill_Rule fill_rule;
+#endif
+	int sets;
+	/* has something changed ? */
+	Eina_Bool changed;
+
+} Esvg_Element_Attributes;
+
 typedef struct _Esvg_Element
 {
 	EINA_MAGIC
