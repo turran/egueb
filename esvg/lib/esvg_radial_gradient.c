@@ -63,40 +63,55 @@ static Esvg_Radial_Gradient * _esvg_radial_gradient_get(Edom_Tag *t)
 	return thiz;
 }
 
-static void _esvg_radial_gradient_deep_fy_get(Esvg_Radial_Gradient *thiz,
+static Eina_Bool _esvg_radial_gradient_deep_fy_get(Esvg_Radial_Gradient *thiz,
 		Edom_Tag *t,
 		Esvg_Coord *fy)
 {
 	Edom_Tag *href;
 
 	href = esvg_gradient_href_tag_get(t);
-	if (!thiz->fy.is_set && href)
+	if (!thiz->fy.is_set)
 	{
-		Esvg_Radial_Gradient *other;
 
-		other = _esvg_radial_gradient_get(href);
-		_esvg_radial_gradient_deep_fy_get(other, href, fy);
+ 		if (href)
+		{
+			Esvg_Radial_Gradient *other;
+
+			other = _esvg_radial_gradient_get(href);
+			return _esvg_radial_gradient_deep_fy_get(other, href, fy);
+		}
+		return EINA_FALSE;
 	}
 	else
+	{
 		*fy = thiz->fy.v;
+		return EINA_TRUE;
+	}
 }
 
-static void _esvg_radial_gradient_deep_fx_get(Esvg_Radial_Gradient *thiz,
+static Eina_Bool _esvg_radial_gradient_deep_fx_get(Esvg_Radial_Gradient *thiz,
 		Edom_Tag *t,
 		Esvg_Coord *fx)
 {
 	Edom_Tag *href;
 
 	href = esvg_gradient_href_tag_get(t);
-	if (!thiz->fx.is_set && href)
+	if (!thiz->fx.is_set)
 	{
-		Esvg_Radial_Gradient *other;
+		if (href)
+		{
+			Esvg_Radial_Gradient *other;
 
-		other = _esvg_radial_gradient_get(href);
-		_esvg_radial_gradient_deep_fx_get(other, href, fx);
+			other = _esvg_radial_gradient_get(href);
+			return _esvg_radial_gradient_deep_fx_get(other, href, fx);
+		}
+		return EINA_FALSE;
 	}
 	else
+	{
 		*fx = thiz->fx.v;
+		return EINA_TRUE;
+	}
 }
 
 static void _esvg_radial_gradient_deep_cx_get(Esvg_Radial_Gradient *thiz,
@@ -162,8 +177,13 @@ static void _esvg_radial_gradient_merge(Esvg_Radial_Gradient *thiz,
 {
 	_esvg_radial_gradient_deep_cx_get(thiz, t, cx);
 	_esvg_radial_gradient_deep_cy_get(thiz, t, cy);
-	_esvg_radial_gradient_deep_fx_get(thiz, t, fx);
-	_esvg_radial_gradient_deep_fy_get(thiz, t, fy);
+	/* for fx and fy, if those are not set or inherited, then use
+	 * cx or cy accordingly
+	 */
+	if (!_esvg_radial_gradient_deep_fx_get(thiz, t, fx))
+		*fx = *cx;
+	if (!_esvg_radial_gradient_deep_fy_get(thiz, t, fy))
+		*fy = *cy;
 	_esvg_radial_gradient_deep_rad_get(thiz, t, rad);
 }
 /*----------------------------------------------------------------------------*
