@@ -164,6 +164,12 @@ typedef struct _Esvg_Animated_String
 	char *anim;
 } Esvg_Animated_String;
 
+typedef struct _Esvg_Animated_Enum
+{
+	int base;
+	int anim;
+} Esvg_Animated_Enum;
+
 /* We need to use uint32_t here because we can not pass
  * data < 32bits through varargs
  */
