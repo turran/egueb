@@ -107,8 +107,8 @@ static Esvg_Element_Setup_Return _esvg_stop_setup(Edom_Tag *t,
 		thiz->s.pos = 1;
 	else if (thiz->s.pos < 0)
 		thiz->s.pos = 0;
-	printf("opacity %g\n", attr->stop_opacity);
-	printf("color = %08x pos = %g\n", thiz->s.argb, thiz->s.pos);
+	DBG("opacity %g", attr->stop_opacity);
+	DBG("color = %08x pos = %g", thiz->s.argb, thiz->s.pos);
 
 	return ESVG_SETUP_OK;
 }

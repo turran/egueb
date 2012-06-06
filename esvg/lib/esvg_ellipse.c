@@ -135,7 +135,7 @@ static Eina_Bool _esvg_ellipse_renderer_propagate(Edom_Tag *t,
 	/* set the size */
 	rx = esvg_length_final_get(&thiz->current.rx, ctx->viewbox.width, ctx->font_size);
 	ry = esvg_length_final_get(&thiz->current.ry, ctx->viewbox.height, ctx->font_size);
-	//printf("calling the setup on the ellipse (%g %g %g %g)\n", cx, cy, rx, ry);
+	//DBG("calling the setup on the ellipse (%g %g %g %g)", cx, cy, rx, ry);
 	enesim_renderer_ellipse_center_set(thiz->r, cx, cy);
 	enesim_renderer_ellipse_radii_set(thiz->r, rx, ry);
 

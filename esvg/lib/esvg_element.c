@@ -534,7 +534,7 @@ static void _esvg_element_color_get(Edom_Tag *t, Esvg_Color *color)
 	thiz = _esvg_element_get(t);
 
 	*color = thiz->current_attr->color;
-	printf("getting color! %d %d %d\n", color->r, color->g, color->b);
+	DBG("getting color! %d %d %d", color->r, color->g, color->b);
 }
 
 static void _esvg_element_fill_set(Edom_Tag *t, const Esvg_Paint *fill)
@@ -1041,7 +1041,7 @@ Eina_Bool esvg_element_attribute_animation_add(Edom_Tag *t, const char *attr)
 
 	thiz = _esvg_element_get(t);
 	/* get our own attributes */
-	printf("adding animation on %s\n", attr);
+	DBG("adding animation on %s", attr);
 	if (_esvg_element_attribute_animation_add(thiz, attr))
 		return EINA_TRUE;
 	/* call the descriptor implementation */
@@ -1056,7 +1056,7 @@ void esvg_element_attribute_animation_remove(Edom_Tag *t, const char *attr)
 
 	thiz = _esvg_element_get(t);
 	/* get our own attributes */
-	printf("removing animation on %s\n", attr);
+	DBG("removing animation on %s", attr);
 	if (_esvg_element_attribute_animation_remove(thiz, attr))
 		return;
 	/* call the descriptor implementation */
@@ -1128,7 +1128,7 @@ Esvg_Element_Setup_Return esvg_element_setup_rel(Edom_Tag *t,
 #if 0
 	if (thiz->last_run == c->run)
 	{
-		printf("already run\n");
+		DBG("already run");
 		return EINA_TRUE;
 	}
 #endif
@@ -1388,9 +1388,9 @@ double esvg_element_context_other_length_calculate(Esvg_Element_Context *t, Esvg
 
 void esvg_element_context_dump(const Esvg_Element_Context *c)
 {
-	printf("dpi %g %g\n", c->dpi_x, c->dpi_y);
-	printf("viewbox %g %g %g %g\n", c->viewbox.min_x, c->viewbox.min_y, c->viewbox.width, c->viewbox.height);
-	printf("transformation %" ENESIM_MATRIX_FORMAT "\n", ENESIM_MATRIX_ARGS (&c->transform.base));
+	DBG("dpi %g %g", c->dpi_x, c->dpi_y);
+	DBG("viewbox %g %g %g %g", c->viewbox.min_x, c->viewbox.min_y, c->viewbox.width, c->viewbox.height);
+	DBG("transformation %" ENESIM_MATRIX_FORMAT, ENESIM_MATRIX_ARGS (&c->transform.base));
 }
 
 Edom_Tag * esvg_element_new(Esvg_Element_Descriptor *descriptor, Esvg_Type type,

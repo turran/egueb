@@ -111,13 +111,13 @@ static Eina_Bool _esvg_path_renderer_propagate(Edom_Tag *t,
 
 	thiz = _esvg_path_get(t);
 
-	//printf("path setup\n");
+	//DBG("path setup");
 	/* shape properties */
 	if (!rctx->fill_renderer)
 		enesim_renderer_shape_fill_color_set(thiz->r, rctx->fill_color);
 	else
 		enesim_renderer_shape_fill_renderer_set(thiz->r, rctx->fill_renderer);
-	
+
 	if (!rctx->stroke_renderer)
 		enesim_renderer_shape_stroke_color_set(thiz->r, rctx->stroke_color);
 	else

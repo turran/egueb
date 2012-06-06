@@ -393,7 +393,7 @@ static void * _esvg_parser_tag_new(Edom_Parser *parser, int tag_id)
 	thiz = edom_parser_data_get(parser);
 	if (!thiz->topmost && tag_id != ESVG_SVG)
 	{
-		printf("you need at least a topmost svg\n");
+		DBG("you need at least a topmost svg");
 	}
 
 	switch (tag_id)
@@ -491,7 +491,7 @@ static void * _esvg_parser_tag_new(Edom_Parser *parser, int tag_id)
 		break;
 
 		default:
-		printf("can't create the tag %s (%d)\n", esvg_type_string_to(tag_id), tag_id);
+		DBG("can't create the tag %s (%d)", esvg_type_string_to(tag_id), tag_id);
 		break;
 	}
 
@@ -534,7 +534,7 @@ static void _esvg_parser_tag_cdata_set(Edom_Parser *parser, void *t, const char 
 	Ender_Element *tag = t;
 	Edom_String s;
 
-	printf("parser cdata %d\n", length);
+	DBG("parser cdata %d", length);
 	s.s = cdata;
 	s.length = length;
 	ender_element_property_value_set(tag, EDOM_CDATA, &s, NULL);

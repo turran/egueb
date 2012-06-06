@@ -164,11 +164,11 @@ static Eina_Bool _esvg_text_renderer_propagate(Edom_Tag *t,
 	enesim_renderer_origin_set(thiz->r, x, y);
 	enesim_renderer_color_set(thiz->r, rctx->fill_color);
 
-	//printf("calling the setup on the text (%g %g %s %g)\n", x, y, str, font_size);
+	//DBG("calling the setup on the text (%g %g %s %g)", x, y, str, font_size);
 	etex_base_size_set(thiz->r, (int)ctx->font_size);
 
 	DBG("calling the setup on the text");
-	
+
 	DBG("matrix %" ENESIM_MATRIX_FORMAT, ENESIM_MATRIX_ARGS (&ctx->transform.base));
 	enesim_matrix_inverse(&ctx->transform.base, &inv);
 	enesim_renderer_transformation_set(thiz->r, &inv);
@@ -206,12 +206,12 @@ static void _esvg_text_free(Edom_Tag *t)
 static Esvg_Instantiable_Descriptor _descriptor = {
 	/* .child_add		= */ NULL,
 	/* .child_remove	= */ NULL,
-	/* .attribute_get 	= */ _esvg_text_attribute_get,
-	/* .cdata_set 		= */ NULL,
-	/* .text_set 		= */ _esvg_text_text_set,
-	/* .free 		= */ _esvg_text_free,
-	/* .initialize 		= */ NULL,
-	/* .attribute_set 	= */ _esvg_text_attribute_set,
+	/* .attribute_get	= */ _esvg_text_attribute_get,
+	/* .cdata_set		= */ NULL,
+	/* .text_set		= */ _esvg_text_text_set,
+	/* .free		= */ _esvg_text_free,
+	/* .initialize		= */ NULL,
+	/* .attribute_set	= */ _esvg_text_attribute_set,
 	/* .setup		= */ _esvg_text_setup,
 	/* .renderer_get	= */ _esvg_text_renderer_get,
 	/* .renderer_propagate	= */ _esvg_text_renderer_propagate,

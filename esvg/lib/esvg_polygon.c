@@ -105,7 +105,7 @@ static Eina_Bool _esvg_polygon_renderer_propagate(Edom_Tag *t,
 
 	thiz = _esvg_polygon_get(t);
 
-	printf("polygon setup\n");
+	DBG("polygon setup");
 	/* the shape must always be closed */
 	if (thiz->changed)
 		enesim_renderer_figure_polygon_close(thiz->r, EINA_TRUE);

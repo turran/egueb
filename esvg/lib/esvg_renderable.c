@@ -121,7 +121,7 @@ static Eina_Bool _esvg_renderable_damage_cb(Enesim_Renderer *r,
 
 	eina_tiler_rect_add(tiler, area);
 	enesim_renderer_name_get(r, &name);
-	printf("renderer %s has changed\n", name);
+	DBG("renderer %s has changed", name);
 	return EINA_TRUE;
 }
 
@@ -135,7 +135,6 @@ static void _esvg_renderable_paint_set(Edom_Tag *t,
 		Esvg_Referenceable_Reference **reference,
 		const Esvg_Paint *current,
 		Esvg_Paint *old)
-		
 {
 	uint8_t op = opacity * 255;
 
@@ -292,7 +291,7 @@ static Esvg_Element_Setup_Return _esvg_renderable_propagate(Esvg_Renderable *thi
 		return ESVG_SETUP_FAILED;
 	/* given that the propagate above actually sets the bounding box, etc, we need to call the setup
 	 * of the referenceables *after*
-	 * we should really call the "propagate" version and the function should do the setup if needed 
+	 * we should really call the "propagate" version and the function should do the setup if needed
 	 */
 	if (thiz->clip_path_reference)
 	{

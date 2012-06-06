@@ -1097,12 +1097,12 @@ EAPI Eina_Bool esvg_uri_string_from(const char *attr, Esvg_Uri_Descriptor *descr
 	if (*attr == '#')
 	{
 		if (!fragment) return EINA_FALSE;
-		printf("getting %s\n", fragment);
+		DBG("getting %s", fragment);
 		descriptor->local_get(NULL, fragment, data);
 	}
 	else
 	{
-		printf("getting %s %s\n", attr, fragment);
+		DBG("getting %s %s", attr, fragment);
 		/* TODO very naive way of handling relative/absolute, we need the scheme too, etc */
 		/* check for the relative/absolute case */
 		if (*attr == '/')
@@ -1419,7 +1419,7 @@ EAPI Eina_Bool esvg_transformation_string_from(Enesim_Matrix *matrix, const char
 		}
 		if (ret)
 		{
-			printf("found, composing\n");
+			DBG("found, composing");
 			enesim_matrix_compose(matrix, &parsed, matrix);
 		}
 		attr = endptr;
@@ -1764,7 +1764,7 @@ EAPI Eina_Bool esvg_clock_string_from(int64_t *clock, const char *attr)
 	long v;
 	const char *tmp;
 
-	printf("parsing the duration %s\n", attr);
+	DBG("parsing the duration %s", attr);
 	if (!_esvg_long_get(attr, &tmp, &v))
 		return EINA_FALSE;
 
@@ -1820,7 +1820,7 @@ EAPI Eina_Bool esvg_clock_string_from(int64_t *clock, const char *attr)
 		else if (*tmp == 'h')
 			*clock = v * ESVG_CLOCK_SECONDS * 60 * 60;
 
-		printf("clock is %lld\n", *clock);
+		DBG("clock is %lld", *clock);
 		ret = EINA_TRUE;
 	}
 
@@ -1856,7 +1856,7 @@ EAPI Eina_Bool esvg_duration_string_from(Esvg_Duration *d, const char *attr)
 	{
 		ret = esvg_clock_string_from(&d->data.clock, attr);
 		d->type = ESVG_DURATION_TYPE_CLOCK;
-		printf("duration is %lld\n", d->data.clock);
+		DBG("duration is %lld", d->data.clock);
 	}
 	return ret;
 }
