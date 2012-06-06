@@ -114,29 +114,67 @@ typedef struct _Esvg_Attribute_Animated_Enum
 	int animated;
 } Esvg_Attribute_Animated_Enum;
 
-void esvg_attribute_animated_color_merge(const Esvg_Attribute_Animated_Color *rel,
-		const Esvg_Attribute_Animated_Color *v, Esvg_Attribute_Color *d);
-void esvg_attribute_color_merge(const Esvg_Attribute_Color *rel,
+void esvg_attribute_animated_color_merge_rel(const Esvg_Attribute_Animated_Color *rel,
+		const Esvg_Attribute_Animated_Color *v,
+		Esvg_Attribute_Color *d);
+void esvg_attribute_animated_color_merge(const Esvg_Attribute_Animated_Color *v,
+		Esvg_Attribute_Color *d);
+void esvg_attribute_color_merge_rel(const Esvg_Attribute_Color *rel,
 		const Esvg_Attribute_Color *v,
 		Esvg_Attribute_Color *d);
-
-void esvg_attribute_paint_merge(const Esvg_Attribute_Paint *rel,
-		const Esvg_Attribute_Paint *v,
-		Esvg_Attribute_Paint *d);
-void esvg_attribute_length_merge(const Esvg_Attribute_Length *rel,
+void esvg_attribute_animated_string_merge_rel(const Esvg_Attribute_Animated_String *rel,
+		const Esvg_Attribute_Animated_String *v,
+		Esvg_Attribute_String *d);
+void esvg_attribute_animated_string_merge(const Esvg_Attribute_Animated_String *v,
+		Esvg_Attribute_String *d);
+void esvg_attribute_string_merge_rel(const Esvg_Attribute_String *rel,
+		const Esvg_Attribute_String *v,
+		Esvg_Attribute_String *d);
+void esvg_attribute_animated_length_merge_rel(const Esvg_Attribute_Animated_Length *rel,
+		const Esvg_Attribute_Animated_Length *v,
+		Esvg_Attribute_Length *d);
+void esvg_attribute_animated_length_merge(const Esvg_Attribute_Animated_Length *v,
+		Esvg_Attribute_Length *d);
+void esvg_attribute_length_merge_rel(const Esvg_Attribute_Length *rel,
 		const Esvg_Attribute_Length *v,
 		Esvg_Attribute_Length *d);
-void esvg_attribute_bool_merge(const Esvg_Attribute_Bool *rel,
+void esvg_attribute_animated_bool_merge_rel(const Esvg_Attribute_Animated_Bool *rel,
+		const Esvg_Attribute_Animated_Bool *v,
+		Esvg_Attribute_Bool *d);
+void esvg_attribute_animated_bool_merge(const Esvg_Attribute_Animated_Bool *v,
+		Esvg_Attribute_Bool *d);
+void esvg_attribute_bool_merge_rel(const Esvg_Attribute_Bool *rel,
 		const Esvg_Attribute_Bool *v,
 		Esvg_Attribute_Bool *d);
-void esvg_attribute_enum_merge(const Esvg_Attribute_Enum *rel,
+void esvg_attribute_animated_number_merge_rel(const Esvg_Attribute_Animated_Number *rel,
+		const Esvg_Attribute_Animated_Number *v,
+		Esvg_Attribute_Number *d);
+void esvg_attribute_animated_number_merge(const Esvg_Attribute_Animated_Number *v,
+		Esvg_Attribute_Number *d);
+void esvg_attribute_number_merge_rel(const Esvg_Attribute_Number *rel,
+		const Esvg_Attribute_Number *v,
+		Esvg_Attribute_Number *d);
+void esvg_attribute_animated_paint_merge_rel(const Esvg_Attribute_Animated_Paint *rel,
+		const Esvg_Attribute_Animated_Paint *v,
+		Esvg_Attribute_Paint *d);
+void esvg_attribute_animated_paint_merge(const Esvg_Attribute_Animated_Paint *v,
+		Esvg_Attribute_Paint *d);
+void esvg_attribute_paint_merge_rel(const Esvg_Attribute_Paint *rel,
+		const Esvg_Attribute_Paint *v,
+		Esvg_Attribute_Paint *d);
+void esvg_attribute_animated_enum_merge_rel(const Esvg_Attribute_Animated_Enum *rel,
+		const Esvg_Attribute_Animated_Enum *v,
+		Esvg_Attribute_Enum *d);
+void esvg_attribute_animated_enum_merge(const Esvg_Attribute_Animated_Enum *v,
+		Esvg_Attribute_Enum *d);
+void esvg_attribute_enum_merge_rel(const Esvg_Attribute_Enum *rel,
 		const Esvg_Attribute_Enum *v,
 		Esvg_Attribute_Enum *d);
-
 void esvg_attribute_string_unset(Esvg_Attribute_String *a);
 void esvg_attribute_string_set(Esvg_Attribute_String *a, const char *v);
 void esvg_attribute_color_unset(Esvg_Attribute_Color *a, const Esvg_Color *def);
-void esvg_attribute_color_set(Esvg_Attribute_Color *a, const Esvg_Color *v, const Esvg_Color *def);
+void esvg_attribute_color_set(Esvg_Attribute_Color *a, const Esvg_Color *v,
+		const Esvg_Color *def);
 void esvg_attribute_paint_unset(Esvg_Attribute_Paint *a, const Esvg_Paint *def);
 void esvg_attribute_paint_set(Esvg_Attribute_Paint *a, const Esvg_Paint *v,
 		const Esvg_Paint *def);

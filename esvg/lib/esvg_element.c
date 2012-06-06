@@ -225,7 +225,36 @@ static void _esvg_element_attribute_presentation_merge(
 	const Esvg_Element_Attributes *s,
 	Esvg_Attribute_Presentation *d)
 {
-
+	/* clip path */
+	esvg_attribute_animated_string_merge(&s->clip_path, &d->clip_path);
+	/* color */
+	esvg_attribute_animated_color_merge(&s->color, &d->color);
+	/* opacity */
+	esvg_attribute_animated_number_merge(&s->opacity, &d->opacity);
+	/* FIXME do the real merge (multiply, etc, etc) */
+	/* fill */
+	esvg_attribute_animated_paint_merge(&s->fill, &d->fill);
+	/* fill opacity */
+	esvg_attribute_animated_number_merge(&s->fill_opacity, &d->fill_opacity);
+	/* fill rule */
+	esvg_attribute_animated_enum_merge(&s->fill_rule, &d->fill_rule);
+	/* stroke */
+	esvg_attribute_animated_paint_merge(&s->stroke, &d->stroke);
+	/* stroke width */
+	esvg_attribute_animated_length_merge(&s->stroke_width, &d->stroke_width);
+	/* stroke line cap */
+	esvg_attribute_animated_enum_merge(&s->stroke_line_cap, &d->stroke_line_cap);
+	/* stroke line join */
+	esvg_attribute_animated_enum_merge(&s->stroke_line_join, &d->stroke_line_join);
+	/* stroke opacity */
+	esvg_attribute_animated_number_merge(&s->stroke_opacity, &d->stroke_opacity);
+	/* visibility */
+	//esvg_attribute_animated_bool_merge(&s->visibility, &d->visibility);
+	/* stop opacity */
+	esvg_attribute_animated_number_merge(&s->stop_opacity, &d->stop_opacity);
+	/* stop color */
+	esvg_attribute_animated_color_merge(&s->stop_color, &d->stop_color);
+	
 }
 
 static void _esvg_element_attribute_presentation_merge_rel(
@@ -233,36 +262,35 @@ static void _esvg_element_attribute_presentation_merge_rel(
 	const Esvg_Element_Attributes *s,
 	Esvg_Attribute_Presentation *d)
 {
-#if 0
-	esvg_attribute_string_merge(&rel->clip_path, &s->clip_path, &d->clip_path);
+	/* clip path */
+	esvg_attribute_animated_string_merge_rel(&rel->clip_path, &s->clip_path, &d->clip_path);
 	/* color */
-	esvg_attribute_color_merge(&rel->color, &s->color, &d->color);
+	esvg_attribute_animated_color_merge_rel(&rel->color, &s->color, &d->color);
 	/* opacity */
-	esvg_attribute_number_merge(&rel->opacity, &s->opacity, &d->opacity);
-	/* FIXME do the real merge (multiply, etc, etc) */
+	esvg_attribute_animated_number_merge_rel(&rel->opacity, &s->opacity, &d->opacity);
+	/* FIXME do the real merge_rel (multiply, etc, etc) */
 	/* fill */
-	esvg_attribute_paint_merge(&rel->fill, &s->fill, &d->fill);
+	esvg_attribute_animated_paint_merge_rel(&rel->fill, &s->fill, &d->fill);
 	/* fill opacity */
-	esvg_attribute_number_merge(&rel->fill_opacity, &s->fill_opacity, &d->fill_opacity);
+	esvg_attribute_animated_number_merge_rel(&rel->fill_opacity, &s->fill_opacity, &d->fill_opacity);
 	/* fill rule */
-	esvg_attribute_enum_merge(&rel->fill_rule, &s->fill_rule, &d->fill_rule);
+	esvg_attribute_animated_enum_merge_rel(&rel->fill_rule, &s->fill_rule, &d->fill_rule);
 	/* stroke */
-	esvg_attribute_paint_merge(&rel->stroke, &s->stroke, &d->stroke);
+	esvg_attribute_animated_paint_merge_rel(&rel->stroke, &s->stroke, &d->stroke);
 	/* stroke width */
-	esvg_attribute_length_merge(&rel->stroke_width, &s->stroke_width, &d->stroke_width);
+	esvg_attribute_animated_length_merge_rel(&rel->stroke_width, &s->stroke_width, &d->stroke_width);
 	/* stroke line cap */
-	esvg_attribute_enum_merge(&rel->line_cap, &s->line_cap, &d->line_cap);
+	esvg_attribute_animated_enum_merge_rel(&rel->stroke_line_cap, &s->stroke_line_cap, &d->stroke_line_cap);
 	/* stroke line join */
-	esvg_attribute_enum_merge(&rel->line_join, &s->line_join, &d->line_join);
+	esvg_attribute_animated_enum_merge_rel(&rel->stroke_line_join, &s->stroke_line_join, &d->stroke_line_join);
 	/* stroke opacity */
-	esvg_attribute_number_merge(&rel->stroke_opacity, &s->stroke_opacity, &d->stroke_opacity);
+	esvg_attribute_animated_number_merge_rel(&rel->stroke_opacity, &s->stroke_opacity, &d->stroke_opacity);
 	/* visibility */
-	esvg_attribute_bool_merge(&rel->visibility, &s->visibility, &d->visibility);
+	//esvg_attribute_animated_bool_merge_rel(&rel->visibility, &s->visibility, &d->visibility);
 	/* stop opacity */
-	esvg_attribute_number_merge(&rel->stop_opacity, &s->stop_opacity, &d->stop_opacity);
+	esvg_attribute_animated_number_merge_rel(&rel->stop_opacity, &s->stop_opacity, &d->stop_opacity);
 	/* stop color */
-	esvg_attribute_color_merge(&rel->stop_color, &s->stop_color, &d->stop_color);
-#endif
+	esvg_attribute_animated_color_merge_rel(&rel->stop_color, &s->stop_color, &d->stop_color);
 }
 /*----------------------------------------------------------------------------*
  *                               Setup helpers                                *

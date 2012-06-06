@@ -29,13 +29,45 @@
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
-void esvg_attribute_animated_color_merge(const Esvg_Attribute_Animated_Color *rel,
-		const Esvg_Attribute_Animated_Color *v, Esvg_Attribute_Color *d)
+/*----------------------------------------------------------------------------*
+ *                                  Color                                     *
+ *----------------------------------------------------------------------------*/
+void esvg_attribute_animated_color_merge_rel(const Esvg_Attribute_Animated_Color *rel,
+		const Esvg_Attribute_Animated_Color *v,
+		Esvg_Attribute_Color *d)
 {
+	const Esvg_Attribute_Color *rr = NULL;
+	const Esvg_Attribute_Color *vv = NULL;
 
+	if (v->animated && v->anim.is_set)
+		vv = &v->anim;
+	if (!vv)
+		vv = &v->base;
+
+	if (rel->animated && rel->anim.is_set)
+		rr = &rel->anim;
+	if (!rr)
+		rr = &rel->base;
+
+	esvg_attribute_color_merge_rel(rr, vv, d);
 }
 
-void esvg_attribute_color_merge(const Esvg_Attribute_Color *rel,
+void esvg_attribute_animated_color_merge(const Esvg_Attribute_Animated_Color *v,
+		Esvg_Attribute_Color *d)
+{
+	if (v->animated && v->anim.is_set)
+	{
+		d->v = v->anim.v;
+		d->is_set = v->anim.is_set;
+	}
+	else
+	{
+		d->v = v->base.v;
+		d->is_set = v->base.is_set;
+	}
+}
+
+void esvg_attribute_color_merge_rel(const Esvg_Attribute_Color *rel,
 		const Esvg_Attribute_Color *v,
 		Esvg_Attribute_Color *d)
 {
@@ -50,8 +82,45 @@ void esvg_attribute_color_merge(const Esvg_Attribute_Color *rel,
 		d->is_set = EINA_TRUE;
 	}
 }
+/*----------------------------------------------------------------------------*
+ *                                 String                                     *
+ *----------------------------------------------------------------------------*/
+void esvg_attribute_animated_string_merge_rel(const Esvg_Attribute_Animated_String *rel,
+		const Esvg_Attribute_Animated_String *v,
+		Esvg_Attribute_String *d)
+{
+	const Esvg_Attribute_String *rr = NULL;
+	const Esvg_Attribute_String *vv = NULL;
 
-void esvg_attribute_string_merge(const Esvg_Attribute_String *rel,
+	if (v->animated && v->anim.is_set)
+		vv = &v->anim;
+	if (!vv)
+		vv = &v->base;
+
+	if (rel->animated && rel->anim.is_set)
+		rr = &rel->anim;
+	if (!rr)
+		rr = &rel->base;
+
+	esvg_attribute_string_merge_rel(rr, vv, d);
+}
+
+void esvg_attribute_animated_string_merge(const Esvg_Attribute_Animated_String *v,
+		Esvg_Attribute_String *d)
+{
+	if (v->animated && v->anim.is_set)
+	{
+		d->v = v->anim.v;
+		d->is_set = v->anim.is_set;
+	}
+	else
+	{
+		d->v = v->base.v;
+		d->is_set = v->base.is_set;
+	}
+}
+
+void esvg_attribute_string_merge_rel(const Esvg_Attribute_String *rel,
 		const Esvg_Attribute_String *v,
 		Esvg_Attribute_String *d)
 {
@@ -66,8 +135,45 @@ void esvg_attribute_string_merge(const Esvg_Attribute_String *rel,
 		d->is_set = EINA_TRUE;
 	}
 }
+/*----------------------------------------------------------------------------*
+ *                                 Length                                     *
+ *----------------------------------------------------------------------------*/
+void esvg_attribute_animated_length_merge_rel(const Esvg_Attribute_Animated_Length *rel,
+		const Esvg_Attribute_Animated_Length *v,
+		Esvg_Attribute_Length *d)
+{
+	const Esvg_Attribute_Length *rr = NULL;
+	const Esvg_Attribute_Length *vv = NULL;
 
-void esvg_attribute_length_merge(const Esvg_Attribute_Length *rel,
+	if (v->animated && v->anim.is_set)
+		vv = &v->anim;
+	if (!vv)
+		vv = &v->base;
+
+	if (rel->animated && rel->anim.is_set)
+		rr = &rel->anim;
+	if (!rr)
+		rr = &rel->base;
+
+	esvg_attribute_length_merge_rel(rr, vv, d);
+}
+
+void esvg_attribute_animated_length_merge(const Esvg_Attribute_Animated_Length *v,
+		Esvg_Attribute_Length *d)
+{
+	if (v->animated && v->anim.is_set)
+	{
+		d->v = v->anim.v;
+		d->is_set = v->anim.is_set;
+	}
+	else
+	{
+		d->v = v->base.v;
+		d->is_set = v->base.is_set;
+	}
+}
+
+void esvg_attribute_length_merge_rel(const Esvg_Attribute_Length *rel,
 		const Esvg_Attribute_Length *v,
 		Esvg_Attribute_Length *d)
 {
@@ -82,24 +188,45 @@ void esvg_attribute_length_merge(const Esvg_Attribute_Length *rel,
 		d->is_set = EINA_TRUE;
 	}
 }
-
-void esvg_attribute_number_merge(const Esvg_Attribute_Number *rel,
-		const Esvg_Attribute_Number *v,
-		Esvg_Attribute_Number *d)
+/*----------------------------------------------------------------------------*
+ *                                  Bool                                      *
+ *----------------------------------------------------------------------------*/
+void esvg_attribute_animated_bool_merge_rel(const Esvg_Attribute_Animated_Bool *rel,
+		const Esvg_Attribute_Animated_Bool *v,
+		Esvg_Attribute_Bool *d)
 {
-	if (!v->is_set)
+	const Esvg_Attribute_Bool *rr = NULL;
+	const Esvg_Attribute_Bool *vv = NULL;
+
+	if (v->animated && v->anim.is_set)
+		vv = &v->anim;
+	if (!vv)
+		vv = &v->base;
+
+	if (rel->animated && rel->anim.is_set)
+		rr = &rel->anim;
+	if (!rr)
+		rr = &rel->base;
+
+	esvg_attribute_bool_merge_rel(rr, vv, d);
+}
+
+void esvg_attribute_animated_bool_merge(const Esvg_Attribute_Animated_Bool *v,
+		Esvg_Attribute_Bool *d)
+{
+	if (v->animated && v->anim.is_set)
 	{
-		d->v = rel->v;
-		d->is_set = rel->is_set;
+		d->v = v->anim.v;
+		d->is_set = v->anim.is_set;
 	}
 	else
 	{
-		d->v = v->v;
-		d->is_set = EINA_TRUE;
+		d->v = v->base.v;
+		d->is_set = v->base.is_set;
 	}
 }
 
-void esvg_attribute_bool_merge(const Esvg_Attribute_Bool *rel,
+void esvg_attribute_bool_merge_rel(const Esvg_Attribute_Bool *rel,
 		const Esvg_Attribute_Bool *v,
 		Esvg_Attribute_Bool *d)
 {
@@ -114,8 +241,98 @@ void esvg_attribute_bool_merge(const Esvg_Attribute_Bool *rel,
 		d->is_set = EINA_TRUE;
 	}
 }
+/*----------------------------------------------------------------------------*
+ *                                 Number                                     *
+ *----------------------------------------------------------------------------*/
+void esvg_attribute_animated_number_merge_rel(const Esvg_Attribute_Animated_Number *rel,
+		const Esvg_Attribute_Animated_Number *v,
+		Esvg_Attribute_Number *d)
+{
+	const Esvg_Attribute_Number *rr = NULL;
+	const Esvg_Attribute_Number *vv = NULL;
 
-void esvg_attribute_paint_merge(const Esvg_Attribute_Paint *rel,
+	if (v->animated && v->anim.is_set)
+		vv = &v->anim;
+	if (!vv)
+		vv = &v->base;
+
+	if (rel->animated && rel->anim.is_set)
+		rr = &rel->anim;
+	if (!rr)
+		rr = &rel->base;
+
+	esvg_attribute_number_merge_rel(rr, vv, d);
+}
+
+void esvg_attribute_animated_number_merge(const Esvg_Attribute_Animated_Number *v,
+		Esvg_Attribute_Number *d)
+{
+	if (v->animated && v->anim.is_set)
+	{
+		d->v = v->anim.v;
+		d->is_set = v->anim.is_set;
+	}
+	else
+	{
+		d->v = v->base.v;
+		d->is_set = v->base.is_set;
+	}
+}
+
+void esvg_attribute_number_merge_rel(const Esvg_Attribute_Number *rel,
+		const Esvg_Attribute_Number *v,
+		Esvg_Attribute_Number *d)
+{
+	if (!v->is_set)
+	{
+		d->v = rel->v;
+		d->is_set = rel->is_set;
+	}
+	else
+	{
+		d->v = v->v;
+		d->is_set = EINA_TRUE;
+	}
+}
+/*----------------------------------------------------------------------------*
+ *                                  Paint                                     *
+ *----------------------------------------------------------------------------*/
+void esvg_attribute_animated_paint_merge_rel(const Esvg_Attribute_Animated_Paint *rel,
+		const Esvg_Attribute_Animated_Paint *v,
+		Esvg_Attribute_Paint *d)
+{
+	const Esvg_Attribute_Paint *rr = NULL;
+	const Esvg_Attribute_Paint *vv = NULL;
+
+	if (v->animated && v->anim.is_set)
+		vv = &v->anim;
+	if (!vv)
+		vv = &v->base;
+
+	if (rel->animated && rel->anim.is_set)
+		rr = &rel->anim;
+	if (!rr)
+		rr = &rel->base;
+
+	esvg_attribute_paint_merge_rel(rr, vv, d);
+}
+
+void esvg_attribute_animated_paint_merge(const Esvg_Attribute_Animated_Paint *v,
+		Esvg_Attribute_Paint *d)
+{
+	if (v->animated && v->anim.is_set)
+	{
+		d->v = v->anim.v;
+		d->is_set = v->anim.is_set;
+	}
+	else
+	{
+		d->v = v->base.v;
+		d->is_set = v->base.is_set;
+	}
+}
+
+void esvg_attribute_paint_merge_rel(const Esvg_Attribute_Paint *rel,
 		const Esvg_Attribute_Paint *v,
 		Esvg_Attribute_Paint *d)
 {
@@ -130,8 +347,45 @@ void esvg_attribute_paint_merge(const Esvg_Attribute_Paint *rel,
 		d->is_set = EINA_TRUE;
 	}
 }
+/*----------------------------------------------------------------------------*
+ *                                  Enum                                      *
+ *----------------------------------------------------------------------------*/
+void esvg_attribute_animated_enum_merge_rel(const Esvg_Attribute_Animated_Enum *rel,
+		const Esvg_Attribute_Animated_Enum *v,
+		Esvg_Attribute_Enum *d)
+{
+	const Esvg_Attribute_Enum *rr = NULL;
+	const Esvg_Attribute_Enum *vv = NULL;
 
-void esvg_attribute_enum_merge(const Esvg_Attribute_Enum *rel,
+	if (v->animated && v->anim.is_set)
+		vv = &v->anim;
+	if (!vv)
+		vv = &v->base;
+
+	if (rel->animated && rel->anim.is_set)
+		rr = &rel->anim;
+	if (!rr)
+		rr = &rel->base;
+
+	esvg_attribute_enum_merge_rel(rr, vv, d);
+}
+
+void esvg_attribute_animated_enum_merge(const Esvg_Attribute_Animated_Enum *v,
+		Esvg_Attribute_Enum *d)
+{
+	if (v->animated && v->anim.is_set)
+	{
+		d->v = v->anim.v;
+		d->is_set = v->anim.is_set;
+	}
+	else
+	{
+		d->v = v->base.v;
+		d->is_set = v->base.is_set;
+	}
+}
+
+void esvg_attribute_enum_merge_rel(const Esvg_Attribute_Enum *rel,
 		const Esvg_Attribute_Enum *v,
 		Esvg_Attribute_Enum *d)
 {
@@ -147,6 +401,9 @@ void esvg_attribute_enum_merge(const Esvg_Attribute_Enum *rel,
 	}
 }
 
+/*----------------------------------------------------------------------------*
+ *                              Normal attributes                             *
+ *----------------------------------------------------------------------------*/
 void esvg_attribute_string_unset(Esvg_Attribute_String *a)
 {
 	if (a->v)
