@@ -95,8 +95,8 @@ static Esvg_Element_Setup_Return _esvg_stop_setup(Edom_Tag *t,
 
 	thiz = _esvg_stop_get(t);
 
-	enesim_argb_components_from(&thiz->s.argb, lrint(attr->stop_opacity * 255),
-			attr->stop_color.r, attr->stop_color.g, attr->stop_color.b);
+	enesim_argb_components_from(&thiz->s.argb, lrint(attr->stop_opacity.v * 255),
+			attr->stop_color.v.r, attr->stop_color.v.g, attr->stop_color.v.b);
 
 	if (thiz->offset.unit == ESVG_UNIT_LENGTH_PERCENT)
 		thiz->s.pos = thiz->offset.value / 100.0;
@@ -107,7 +107,7 @@ static Esvg_Element_Setup_Return _esvg_stop_setup(Edom_Tag *t,
 		thiz->s.pos = 1;
 	else if (thiz->s.pos < 0)
 		thiz->s.pos = 0;
-	DBG("opacity %g", attr->stop_opacity);
+	DBG("opacity %g", attr->stop_opacity.v);
 	DBG("color = %08x pos = %g", thiz->s.argb, thiz->s.pos);
 
 	return ESVG_SETUP_OK;

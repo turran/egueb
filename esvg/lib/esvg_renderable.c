@@ -191,7 +191,7 @@ static void _esvg_renderable_context_set(Edom_Tag *t,
 	thiz = _esvg_renderable_get(t);
 	ctx = esvg_element_context_get(t);
 
-	opacity = attr->opacity.base * 255;
+	opacity = attr->opacity.v * 255;
 	enesim_color_components_from(&rctx->color,
 			opacity, 0xff, 0xff, 0xff);
 
@@ -199,12 +199,12 @@ static void _esvg_renderable_context_set(Edom_Tag *t,
 	_esvg_renderable_paint_set(t, &rctx->draw_mode, &rctx->fill_color,
 			&rctx->fill_renderer,
 			ENESIM_SHAPE_DRAW_MODE_FILL,
-			attr->fill_opacity,
-			&attr->color,
+			attr->fill_opacity.v,
+			&attr->color.v,
 			&thiz->fill_reference,
-			&attr->fill,
+			&attr->fill.v,
 			&thiz->fill_paint_last);
-	if (attr->fill_rule == ESVG_EVEN_ODD)
+	if (attr->fill_rule.v == ESVG_EVEN_ODD)
 	{
 		rctx->fill_rule = ENESIM_SHAPE_FILL_RULE_EVEN_ODD;
 	}
@@ -216,21 +216,21 @@ static void _esvg_renderable_context_set(Edom_Tag *t,
 	_esvg_renderable_paint_set(t, &rctx->draw_mode, &rctx->stroke_color,
 			&rctx->stroke_renderer,
 			ENESIM_SHAPE_DRAW_MODE_STROKE,
-			attr->stroke_opacity,
-			&attr->color,
+			attr->stroke_opacity.v,
+			&attr->color.v,
 			&thiz->stroke_reference,
-			&attr->stroke,
+			&attr->stroke.v,
 			&thiz->stroke_paint_last);
-	rctx->stroke_cap = attr->stroke_line_cap;
-	rctx->stroke_join = attr->stroke_line_join;
+	rctx->stroke_cap = attr->stroke_line_cap.v;
+	rctx->stroke_join = attr->stroke_line_join.v;
 	/* handle the stroke weight */
-	if (attr->stroke_width.unit == ESVG_UNIT_LENGTH_PERCENT)
+	if (attr->stroke_width.v.unit == ESVG_UNIT_LENGTH_PERCENT)
 	{
 		stroke_viewport = hypot(ctx->viewbox.width, ctx->viewbox.height) / M_SQRT2;
 	}
 	/* FIXME */
 	rctx->stroke_weight = esvg_length_final_get(
-			&attr->stroke_width,
+			&attr->stroke_width.v,
 			stroke_viewport, ctx->font_size);
 }
 
@@ -251,7 +251,7 @@ static Esvg_Element_Setup_Return _esvg_renderable_propagate(Esvg_Renderable *thi
 	 * enesim states despend on that behaviour
 	 */
 	/* FIXME this should be part of the renderable behaviour too */
-	if (!esvg_string_is_equal(attr->clip_path, thiz->clip_path_last))
+	if (!esvg_string_is_equal(attr->clip_path.v, thiz->clip_path_last))
 	{
 		/* whenever a clip path is set, we should reference it, etc, etc
 		 * similar to the gradient and also make the renderable renderer
@@ -265,13 +265,13 @@ static Esvg_Element_Setup_Return _esvg_renderable_propagate(Esvg_Renderable *thi
 			enesim_renderer_proxy_proxied_set(thiz->r, thiz->implementation_r);
 		}
 
-		if (attr->clip_path)
+		if (attr->clip_path.v)
 		{
 			Esvg_Referenceable_Reference *rr;
 			Esvg_Clip_Path_Referenceable_Data *rdata;
 
-			thiz->clip_path_last = strdup(attr->clip_path);
-			rr = _esvg_renderable_get_reference(t, attr->clip_path);
+			thiz->clip_path_last = strdup(attr->clip_path.v);
+			rr = _esvg_renderable_get_reference(t, thiz->clip_path_last);
 
 			thiz->clip_path_reference = rr;
 			rdata = rr->data;
@@ -300,14 +300,14 @@ static Esvg_Element_Setup_Return _esvg_renderable_propagate(Esvg_Renderable *thi
 			return ret;
 	}
 	/* in case we are going to use the fill renderer do its own setup */
-	if (attr->fill_set && attr->fill.type == ESVG_PAINT_SERVER && thiz->fill_reference)
+	if (attr->fill.is_set && attr->fill.v.type == ESVG_PAINT_SERVER && thiz->fill_reference)
 	{
 		ret = esvg_element_internal_setup(thiz->fill_reference->t, c, error);
 		if (ret != ESVG_SETUP_OK)
 			return ret;
 	}
 	/* in case we are going to use the stroke renderer do its own setup */
-	if (attr->stroke_set && attr->stroke.type == ESVG_PAINT_SERVER && thiz->stroke_reference)
+	if (attr->stroke.is_set && attr->stroke.v.type == ESVG_PAINT_SERVER && thiz->stroke_reference)
 	{
 		ret = esvg_element_internal_setup(thiz->stroke_reference->t, c, error);
 		if (ret != ESVG_SETUP_OK)

@@ -145,433 +145,77 @@ void esvg_attribute_presentation_setup(Esvg_Attribute_Presentation *thiz)
 	/* first do the cleanup */
 	esvg_attribute_presentation_cleanup(thiz);
 	/* now the default values */
-	thiz->color = black;
-	thiz->stroke_width = ESVG_LENGTH_1;
-	thiz->stroke_opacity = 1.0;
-	thiz->fill_opacity = 1.0;
-	thiz->opacity.base = 1.0;
-	thiz->opacity.anim = 1.0;
-	thiz->fill_rule = ESVG_NON_ZERO;
-	thiz->fill.type = ESVG_PAINT_COLOR;
-	thiz->fill.value.color = black;
-	thiz->stroke.type = ESVG_PAINT_NONE;
-	thiz->stroke_width = one;
-	thiz->stroke_line_cap = ESVG_LINE_CAP_BUTT;
-	thiz->stroke_line_join = ESVG_LINE_JOIN_MITER;
-	thiz->stop_opacity = 1.0;
+	thiz->color.v = black;
+	thiz->stroke_width.v = ESVG_LENGTH_1;
+	thiz->stroke_opacity.v = 1.0;
+	thiz->fill_opacity.v = 1.0;
+	thiz->opacity.v = 1.0;
+	thiz->fill_rule.v = ESVG_NON_ZERO;
+	thiz->fill.v.type = ESVG_PAINT_COLOR;
+	thiz->fill.v.value.color = black;
+	thiz->stroke.v.type = ESVG_PAINT_NONE;
+	thiz->stroke_width.v = one;
+	thiz->stroke_line_cap.v = ESVG_LINE_CAP_BUTT;
+	thiz->stroke_line_join.v = ESVG_LINE_JOIN_MITER;
+	thiz->stop_opacity.v = 1.0;
 }
 
 void esvg_attribute_presentation_cleanup(Esvg_Attribute_Presentation *thiz)
 {
 	/* TODO free every attribute that can be allocated, i.e strings */
-	if (thiz->fill.type == ESVG_PAINT_SERVER)
+	if (thiz->fill.v.type == ESVG_PAINT_SERVER)
 	{
-		if (thiz->fill.value.paint_server)
-			free(thiz->fill.value.paint_server);
+		if (thiz->fill.v.value.paint_server)
+			free(thiz->fill.v.value.paint_server);
 	}
-	if (thiz->stroke.type == ESVG_PAINT_SERVER)
+	if (thiz->stroke.v.type == ESVG_PAINT_SERVER)
 	{
-		if (thiz->stroke.value.paint_server)
-			free(thiz->stroke.value.paint_server);
+		if (thiz->stroke.v.value.paint_server)
+			free(thiz->stroke.v.value.paint_server);
 	}
 }
 
-void esvg_attribute_presentation_copy(const Esvg_Attribute_Presentation *dst,
-		const Esvg_Attribute_Presentation *src)
-{
-
-}
-
-void esvg_attribute_presentation_merge(const Esvg_Attribute_Presentation *state,
-		const Esvg_Attribute_Presentation *parent,
+void esvg_attribute_presentation_merge(const Esvg_Attribute_Presentation *s,
+		const Esvg_Attribute_Presentation *rel,
 		Esvg_Attribute_Presentation *d)
 {
 	/* FIXME check if actually something has changed */
 	/* clip_path */
-	if (!state->clip_path_set)
-	{
-		d->clip_path = parent->clip_path;
-		d->clip_path_set = parent->clip_path_set;
-	}
-	else
-	{
-		d->clip_path = state->clip_path;
-		d->clip_path_set = EINA_TRUE;
-	}
-
+	esvg_attribute_string_merge(&rel->clip_path, &s->clip_path, &d->clip_path);
 	/* color */
-	if (!state->color_set)
-	{
-		d->color = parent->color;
-		d->color_set = parent->color_set;
-	}
-	else
-	{
-		d->color = state->color;
-		d->color_set = EINA_TRUE;
-	}
-
+	esvg_attribute_color_merge(&rel->color, &s->color, &d->color);
 	/* opacity */
-	if (!state->opacity_set)
-	{
-		d->opacity = parent->opacity;
-		d->opacity_set = parent->opacity_set;
-	}
-	else
-	{
-		d->opacity = state->opacity;
-		d->opacity_set = EINA_TRUE;
-	}
-
+	esvg_attribute_number_merge(&rel->opacity, &s->opacity, &d->opacity);
 	/* FIXME do the real merge (multiply, etc, etc) */
 	/* fill */
-	if (!state->fill_set)
-	{
-		d->fill = parent->fill;
-		d->fill_set = parent->fill_set;
-	}
-	else
-	{
-		d->fill = state->fill;
-		d->fill_set = EINA_TRUE;
-	}
-
+	esvg_attribute_paint_merge(&rel->fill, &s->fill, &d->fill);
 	/* fill opacity */
-	if (!state->fill_opacity_set)
-	{
-		d->fill_opacity = parent->fill_opacity;
-		d->fill_opacity_set = parent->fill_opacity_set;
-	}
-	else
-	{
-		d->fill_opacity = state->fill_opacity;
-		d->fill_opacity_set = EINA_TRUE;
-	}
-
+	esvg_attribute_number_merge(&rel->fill_opacity, &s->fill_opacity, &d->fill_opacity);
 	/* fill rule */
-	if (!state->fill_rule_set)
-	{
-		d->fill_rule = parent->fill_rule;
-		d->fill_rule_set = parent->fill_rule_set;
-	}
-	else
-	{
-		d->fill_rule = state->fill_rule;
-		d->fill_rule_set = EINA_TRUE;
-	}
-
+	esvg_attribute_enum_merge(&rel->fill_rule, &s->fill_rule, &d->fill_rule);
 	/* stroke */
-	if (!state->stroke_set)
-	{
-		d->stroke = parent->stroke;
-		d->stroke_set = parent->stroke_set;
-	}
-	else
-	{
-		d->stroke = state->stroke;
-		d->stroke_set = EINA_TRUE;
-	}
-
+	esvg_attribute_paint_merge(&rel->stroke, &s->stroke, &d->stroke);
 	/* stroke width */
-	if (!state->stroke_width_set)
-	{
-		d->stroke_width = parent->stroke_width;
-		d->stroke_width_set = parent->stroke_width_set;
-	}
-	else
-	{
-		d->stroke_width = state->stroke_width;
-		d->stroke_width_set = EINA_TRUE;
-	}
-
+	esvg_attribute_length_merge(&rel->stroke_width, &s->stroke_width, &d->stroke_width);
 	/* stroke line cap */
-	if (!state->stroke_line_cap_set)
-	{
-		d->stroke_line_cap = parent->stroke_line_cap;
-		d->stroke_line_cap_set = parent->stroke_line_cap_set;
-	}
-	else
-	{
-		d->stroke_line_cap = state->stroke_line_cap;
-		d->stroke_line_cap_set = EINA_TRUE;
-
-	}
-
+	esvg_attribute_enum_merge(&rel->stroke_line_cap, &s->stroke_line_cap, &d->stroke_line_cap);
 	/* stroke line join */
-	if (!state->stroke_line_join_set)
-	{
-		d->stroke_line_join = parent->stroke_line_join;
-		d->stroke_line_join_set = parent->stroke_line_join_set;
-	}
-	else
-	{
-		d->stroke_line_join = state->stroke_line_join;
-		d->stroke_line_join_set = EINA_TRUE;
-
-	}
-
+	esvg_attribute_enum_merge(&rel->stroke_line_join, &s->stroke_line_join, &d->stroke_line_join);
 	/* stroke opacity */
-	if (!state->stroke_opacity_set)
-	{
-		d->stroke_opacity = parent->stroke_opacity;
-		d->stroke_opacity_set = parent->stroke_opacity_set;
-	}
-	else
-	{
-		d->stroke_opacity = state->stroke_opacity;
-		d->stroke_opacity_set = EINA_TRUE;
-	}
-
+	esvg_attribute_number_merge(&rel->stroke_opacity, &s->stroke_opacity, &d->stroke_opacity);
 	/* visibility */
-	if (!state->visibility_set)
-	{
-		d->visibility = parent->visibility;
-		d->visibility_set = parent->visibility_set;
-	}
-	else
-	{
-		d->visibility = state->visibility;
-		d->visibility_set = EINA_TRUE;
-
-	}
-
+	esvg_attribute_bool_merge(&rel->visibility, &s->visibility, &d->visibility);
 	/* stop opacity */
-	if (!state->stop_opacity_set)
-	{
-		d->stop_opacity = parent->stop_opacity;
-		d->stop_opacity_set = parent->stop_opacity_set;
-	}
-	else
-	{
-		d->stop_opacity = state->stop_opacity;
-		d->stop_opacity_set = EINA_TRUE;
-
-	}
+	esvg_attribute_number_merge(&rel->stop_opacity, &s->stop_opacity, &d->stop_opacity);
 	/* stop color */
-	if (!state->stop_color_set)
-	{
-		d->stop_color = parent->stop_color;
-		d->stop_color_set = parent->stop_color_set;
-	}
-	else
-	{
-		d->stop_color = state->stop_color;
-		d->stop_color_set = EINA_TRUE;
-
-	}
-}
-
-void esvg_attribute_presentation_clip_path_set(Esvg_Attribute_Presentation *thiz, const char *clip_path)
-{
-	if (thiz->clip_path == clip_path)
-		return;
-
-	if (thiz->clip_path)
-	{
-		esvg_attribute_presentation_clip_path_unset(thiz);
-	}
-	if (clip_path)
-	{
-		thiz->clip_path = strdup(clip_path);
-		thiz->clip_path_set = EINA_TRUE;
-		thiz->sets++;
-	}
-}
-
-void esvg_attribute_presentation_clip_path_unset(Esvg_Attribute_Presentation *thiz)
-{
-	if (thiz->clip_path)
-	{
-		free(thiz->clip_path);
-		thiz->clip_path = NULL;
-		thiz->sets--;
-		thiz->clip_path_set = EINA_FALSE;
-	}
-}
-
-void esvg_attribute_presentation_color_set(Esvg_Attribute_Presentation *thiz, const Esvg_Color *color)
-{
-	if (!color)
-	{
-		esvg_attribute_presentation_color_unset(thiz);
-	}
-	else
-	{
-		thiz->color = *color;
-		thiz->color_set = EINA_TRUE;
-	}
-}
-
-void esvg_attribute_presentation_color_unset(Esvg_Attribute_Presentation *thiz)
-{
-	Esvg_Color black = { 0, 0, 0 };
-
-	thiz->color = black;
-	thiz->color_set = EINA_FALSE;
-}
-
-void esvg_attribute_presentation_opacity_set(Esvg_Attribute_Presentation *thiz, Esvg_Animated_Number *opacity)
-{
-	thiz->opacity = *opacity;
-	thiz->opacity_set = EINA_TRUE;
-}
-
-void esvg_attribute_presentation_opacity_unset(Esvg_Attribute_Presentation *thiz)
-{
-	thiz->opacity.base = 1.0;
-	thiz->opacity.anim = 1.0;
-	thiz->opacity_set = EINA_FALSE;
-}
-
-void esvg_attribute_presentation_fill_set(Esvg_Attribute_Presentation *thiz, const Esvg_Paint *fill)
-{
-	if (!fill)
-	{
-		esvg_attribute_presentation_fill_unset(thiz);
-	}
-	else
-	{
-		thiz->fill = *fill;
-		thiz->fill_set = EINA_TRUE;
-	}
-}
-
-void esvg_attribute_presentation_fill_unset(Esvg_Attribute_Presentation *thiz)
-{
-	thiz->fill_set = EINA_FALSE;
-}
-
-void esvg_attribute_presentation_fill_opacity_set(Esvg_Attribute_Presentation *thiz, double fill_opacity)
-{
-	if (fill_opacity > 1)
-		fill_opacity = 1;
-	else if (fill_opacity < 0)
-		fill_opacity = 0;
-
-	thiz->fill_opacity = fill_opacity;
-	thiz->fill_opacity_set = EINA_TRUE;
-}
-
-void esvg_attribute_presentation_fill_opacity_unset(Esvg_Attribute_Presentation *thiz)
-{
-	thiz->fill_opacity_set = EINA_FALSE;
-}
-
-void esvg_attribute_presentation_fill_rule_set(Esvg_Attribute_Presentation *thiz, Esvg_Fill_Rule rule)
-{
-	thiz->fill_rule = rule;
-	thiz->fill_rule_set = EINA_TRUE;
-}
-
-void esvg_attribute_presentation_fill_rule_unset(Esvg_Attribute_Presentation *thiz)
-{
-	thiz->fill_rule_set = EINA_FALSE;
-}
-
-void esvg_attribute_presentation_stroke_set(Esvg_Attribute_Presentation *thiz, const Esvg_Paint *stroke)
-{
-	if (!stroke)
-	{
-		thiz->stroke_set = EINA_FALSE;
-	}
-	else
-	{
-		thiz->stroke = *stroke;
-		thiz->stroke_set = EINA_TRUE;
-	}
-}
-
-void esvg_attribute_presentation_stroke_width_set(Esvg_Attribute_Presentation *thiz, const Esvg_Length *stroke_width)
-{
-	if (!stroke_width) return;
-	thiz->stroke_width = *stroke_width;
-	thiz->stroke_width_set = EINA_TRUE;
-}
-
-void esvg_attribute_presentation_stroke_opacity_set(Esvg_Attribute_Presentation *thiz, double stroke_opacity)
-{
-	if (stroke_opacity > 1)
-		stroke_opacity = 1;
-	else if (stroke_opacity < 0)
-		stroke_opacity = 0;
-
-	thiz->stroke_opacity = stroke_opacity;
-	thiz->stroke_opacity_set = EINA_TRUE;
-}
-
-void esvg_attribute_presentation_stroke_opacity_unset(Esvg_Attribute_Presentation *thiz)
-{
-	thiz->stroke_opacity_set = EINA_FALSE;
-}
-
-void esvg_attribute_presentation_stroke_line_cap_set(Esvg_Attribute_Presentation *thiz, Esvg_Stroke_Line_Cap cap)
-{
-	thiz->stroke_line_cap = cap;
-	thiz->stroke_line_cap_set = EINA_TRUE;
-}
-
-void esvg_attribute_presentation_stroke_line_cap_unset(Esvg_Attribute_Presentation *thiz)
-{
-	thiz->stroke_line_cap_set = EINA_FALSE;
-}
-
-void esvg_attribute_presentation_stroke_line_join_set(Esvg_Attribute_Presentation *thiz, Esvg_Stroke_Line_Join join)
-{
-	thiz->stroke_line_join = join;
-	thiz->stroke_line_join_set = EINA_TRUE;
-}
-
-void esvg_attribute_presentation_stroke_line_join_unset(Esvg_Attribute_Presentation *thiz)
-{
-	thiz->stroke_line_join_set = EINA_FALSE;
-}
-
-void esvg_attribute_presentation_visibility_set(Esvg_Attribute_Presentation *thiz, Eina_Bool visibility)
-{
-	thiz->visibility = visibility;
-	thiz->visibility_set = EINA_TRUE;
-}
-
-void esvg_attribute_presentation_visibility_unset(Esvg_Attribute_Presentation *thiz)
-{
-	thiz->visibility_set = EINA_FALSE;
-}
-
-void esvg_attribute_presentation_stop_color_set(Esvg_Attribute_Presentation *thiz, const Esvg_Color *stop_color)
-{
-	if (!stop_color)
-	{
-		esvg_attribute_presentation_stop_color_unset(thiz);
-	}
-	else
-	{
-		thiz->stop_color = *stop_color;
-		thiz->stop_color_set = EINA_TRUE;
-	}
-}
-
-void esvg_attribute_presentation_stop_color_unset(Esvg_Attribute_Presentation *thiz)
-{
-	Esvg_Color black = { 0, 0, 0 };
-
-	thiz->stop_color = black;
-	thiz->stop_color_set = EINA_FALSE;
-}
-
-void esvg_attribute_presentation_stop_opacity_set(Esvg_Attribute_Presentation *thiz, double stop_opacity)
-{
-	thiz->stop_opacity = stop_opacity;
-	thiz->stop_opacity_set = EINA_TRUE;
-}
-
-void esvg_attribute_presentation_stop_opacity_unset(Esvg_Attribute_Presentation *thiz, double stop_opacity)
-{
-	thiz->stop_opacity = 1.0;
-	thiz->stop_opacity_set = EINA_FALSE;
+	esvg_attribute_color_merge(&rel->stop_color, &s->stop_color, &d->stop_color);
 }
 
 void esvg_attribute_presentation_dump(Esvg_Attribute_Presentation *thiz)
 {
+#if 0
+	/* disabled for now */
+
 	printf("fill: %d ", thiz->fill_set);
 	_paint_dump(&thiz->fill);
 	printf("\n");
@@ -595,6 +239,7 @@ void esvg_attribute_presentation_dump(Esvg_Attribute_Presentation *thiz)
 	printf("stroke line join: %d ", thiz->stroke_line_join_set);
 	_line_join_dump(thiz->stroke_line_join);
 	printf("\n");
+#endif
 }
 /*============================================================================*
  *                                   API                                      *

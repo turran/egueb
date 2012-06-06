@@ -16,6 +16,7 @@ lib_LTLIBRARIES = libesvg.la
 
 libesvg_la_SOURCES = \
 esvg_a.c \
+esvg_attribute.c \
 esvg_attribute_presentation.c \
 esvg_attribute_animation.c \
 esvg_animate.c \
