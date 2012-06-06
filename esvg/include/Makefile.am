@@ -4,7 +4,8 @@ SUBDIRS = generated
 
 include_HEADERS = Esvg.h
 
-ESVG_APIHEADERS = \
+installed_apiheadersdir = $(includedir)/esvg
+dist_installed_apiheaders_DATA = \
 esvg_a.h \
 esvg_animation.h \
 esvg_animate_base.h \
@@ -35,10 +36,22 @@ esvg_types.h \
 esvg_use.h
 
 EXTRA_DIST = \
-esvg_private_main.h \
+esvg_private_a.h \
+esvg_private_animate_base.h \
+esvg_private_animation.h \
+esvg_private_attribute_animation.h \
+esvg_private_attribute_presentation.h \
+esvg_private_clone.h \
+esvg_private_context.h \
 esvg_private_element.h \
-esvg_private_style.h
-
-installed_apiheadersdir = $(prefix)/include/esvg
-installed_apiheaders_DATA = $(ESVG_APIHEADERS)
-
+esvg_private_gradient.h \
+esvg_private_input.h \
+esvg_private_instantiable.h \
+esvg_private_main.h \
+esvg_private_paint_server.h \
+esvg_private_referenceable.h \
+esvg_private_renderable.h \
+esvg_private_stop.h \
+esvg_private_style.h \
+esvg_private_svg.h \
+esvg_private_types.h
