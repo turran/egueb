@@ -198,7 +198,6 @@ static void _esvg_element_state_compose(const Esvg_Element_Context *s,
 	/* actually compose */
 	enesim_matrix_compose(&parent->transform.base, &s->transform.base, &d->transform.base);
 }
-#if 0
 /*----------------------------------------------------------------------------*
  *                            Attribute helpers                               *
  *----------------------------------------------------------------------------*/
@@ -208,12 +207,11 @@ static void _esvg_element_state_compose(const Esvg_Element_Context *s,
  * where the animated/non-animated are resolved and put into the final
  * attributes
  */
-static void _esvg_element_context_setup(const Esvg_Presentation_Attributes *p,
-	const Esvg_Element_Attributes *c, Esvg_Presentation_Attributes *d)
+static void _esvg_element_context_setup(const Esvg_Attribute_Presentation *p,
+	const Esvg_Element_Attributes *c, Esvg_Attribute_Presentation *d)
 {
 
 }
-#endif
 /*----------------------------------------------------------------------------*
  *                               Setup helpers                                *
  *----------------------------------------------------------------------------*/
