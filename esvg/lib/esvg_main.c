@@ -50,20 +50,20 @@ struct log
 	int *d;
 	const char *name;
 } logs[] = {
-	{ &esvg_log_type, "esvg_type" },
-	{ &esvg_log_rect, "esvg_rect" },
-	{ &esvg_log_text, "esvg_text" },
-	{ &esvg_log_circle, "esvg_circle" },
-	{ &esvg_log_ellipse, "esvg_ellipse" },
-	{ &esvg_log_path, "esvg_path" },
-	{ &esvg_log_line, "esvg_line" },
-	{ &esvg_log_polygon, "esvg_polygon" },
-	{ &esvg_log_polyline, "esvg_polyline" },
-	{ &esvg_log_element, "esvg_element" },
+	{ &esvg_log_circle,     "esvg_circle" },
+	{ &esvg_log_element,    "esvg_element" },
+	{ &esvg_log_ellipse,    "esvg_ellipse" },
+	{ &esvg_log_gradient,   "esvg_gradient" },
+	{ &esvg_log_line,       "esvg_line" },
+	{ &esvg_log_parser,     "esvg_parser" },
+	{ &esvg_log_path,       "esvg_path" },
+	{ &esvg_log_polygon,    "esvg_polygon" },
+	{ &esvg_log_polyline,   "esvg_polyline" },
+	{ &esvg_log_rect,       "esvg_rect" },
 	{ &esvg_log_renderable, "esvg_renderable" },
-	{ &esvg_log_gradient, "esvg_gradient" },
-	{ &esvg_log_parser, "esvg_parser" },
-	{ &esvg_log_stop, "esvg_stop" },
+	{ &esvg_log_stop,       "esvg_stop" },
+	{ &esvg_log_text,       "esvg_text" },
+	{ &esvg_log_type,       "esvg_type" },
 };
 
 /* keep track of the initialization */
@@ -219,20 +219,20 @@ Ender_Property *EDOM_CHILD = NULL;
 Ender_Property *EDOM_PARENT = NULL;
 Ender_Property *EDOM_TEXT = NULL;
 /* The log domaings */
-int esvg_log_type = -1;
-int esvg_log_rect = -1;
-int esvg_log_text = -1;
-int esvg_log_circle = -1;
-int esvg_log_ellipse = -1;
-int esvg_log_path = -1;
-int esvg_log_line = -1;
-int esvg_log_polygon = -1;
-int esvg_log_polyline = -1;
-int esvg_log_element = -1;
+int esvg_log_circle     = -1;
+int esvg_log_element    = -1;
+int esvg_log_ellipse    = -1;
+int esvg_log_gradient   = -1;
+int esvg_log_line       = -1;
+int esvg_log_parser     = -1;
+int esvg_log_path       = -1;
+int esvg_log_polygon    = -1;
+int esvg_log_polyline   = -1;
+int esvg_log_rect       = -1;
 int esvg_log_renderable = -1;
-int esvg_log_gradient = -1;
-int esvg_log_parser = -1;
-int esvg_log_stop = -1;
+int esvg_log_stop       = -1;
+int esvg_log_text       = -1;
+int esvg_log_type       = -1;
 
 /* The ender wrapper */
 Ender_Namespace * esvg_namespace_get(void)

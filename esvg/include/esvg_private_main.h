@@ -37,21 +37,20 @@
 /* Whenever a file needs to generate a log, it must declare this first */
 
 /* The log domaings */
-extern int esvg_log_type;
-extern int esvg_log_rect;
-extern int esvg_log_text;
 extern int esvg_log_circle;
+extern int esvg_log_element;
 extern int esvg_log_ellipse;
-extern int esvg_log_path;
+extern int esvg_log_gradient;
 extern int esvg_log_line;
+extern int esvg_log_parser;
+extern int esvg_log_path;
 extern int esvg_log_polygon;
 extern int esvg_log_polyline;
-extern int esvg_log_element;
+extern int esvg_log_rect;
 extern int esvg_log_renderable;
-extern int esvg_log_gradient;
-extern int esvg_log_parser;
 extern int esvg_log_stop;
-extern int esvg_log_ellipse;
+extern int esvg_log_text;
+extern int esvg_log_type;
 
 #ifdef ERR
 # undef ERR
