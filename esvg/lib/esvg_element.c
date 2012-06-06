@@ -198,6 +198,7 @@ static void _esvg_element_state_compose(const Esvg_Element_Context *s,
 	/* actually compose */
 	enesim_matrix_compose(&parent->transform.base, &s->transform.base, &d->transform.base);
 }
+#if 0
 /*----------------------------------------------------------------------------*
  *                            Attribute helpers                               *
  *----------------------------------------------------------------------------*/
@@ -212,6 +213,7 @@ static void _esvg_element_context_setup(const Esvg_Presentation_Attributes *p,
 {
 
 }
+#endif
 /*----------------------------------------------------------------------------*
  *                               Setup helpers                                *
  *----------------------------------------------------------------------------*/
