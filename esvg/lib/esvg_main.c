@@ -63,6 +63,7 @@ struct log
 	{ &esvg_log_renderable, "esvg_renderable" },
 	{ &esvg_log_gradient, "esvg_gradient" },
 	{ &esvg_log_parser, "esvg_parser" },
+	{ &esvg_log_stop, "esvg_stop" },
 };
 
 /* keep track of the initialization */
@@ -231,6 +232,7 @@ int esvg_log_element = -1;
 int esvg_log_renderable = -1;
 int esvg_log_gradient = -1;
 int esvg_log_parser = -1;
+int esvg_log_stop = -1;
 
 /* The ender wrapper */
 Ender_Namespace * esvg_namespace_get(void)

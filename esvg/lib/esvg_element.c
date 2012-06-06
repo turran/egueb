@@ -55,6 +55,8 @@
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
+#define ESVG_LOG_DEFAULT esvg_log_element
+
 #define ESVG_ELEMENT_MAGIC_CHECK(d) \
 	do {\
 		if (!EINA_MAGIC_CHECK(d, ESVG_ELEMENT_MAGIC))\

@@ -50,6 +50,8 @@ extern int esvg_log_element;
 extern int esvg_log_renderable;
 extern int esvg_log_gradient;
 extern int esvg_log_parser;
+extern int esvg_log_stop;
+extern int esvg_log_ellipse;
 
 #ifdef ERR
 # undef ERR

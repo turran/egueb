@@ -32,6 +32,8 @@
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
+#define ESVG_LOG_DEFAULT esvg_log_renderable
+
 #define ESVG_RENDERABLE_MAGIC_CHECK(d) \
 	do {\
 		if (!EINA_MAGIC_CHECK(d, ESVG_RENDERABLE_MAGIC))\

@@ -29,6 +29,7 @@
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
+#define ESVG_LOG_DEFAULT esvg_log_polygon
 static Ender_Property *ESVG_POLYGON_POINT;
 
 typedef struct _Esvg_Polygon

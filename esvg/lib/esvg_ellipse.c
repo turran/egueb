@@ -29,6 +29,7 @@
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
+#define ESVG_LOG_DEFAULT esvg_log_ellipse
 static Ender_Property *ESVG_ELLIPSE_CX;
 static Ender_Property *ESVG_ELLIPSE_CY;
 static Ender_Property *ESVG_ELLIPSE_RX;
