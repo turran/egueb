@@ -126,7 +126,6 @@ typedef struct _Esvg_Element_Attributes
 	int sets;
 	/* has something changed ? */
 	Eina_Bool changed;
-
 } Esvg_Element_Attributes;
 
 typedef struct _Esvg_Element
@@ -200,21 +199,38 @@ static void _esvg_element_state_compose(const Esvg_Element_Context *s,
 /*----------------------------------------------------------------------------*
  *                            Attribute helpers                               *
  *----------------------------------------------------------------------------*/
-/* TODO Given that we need to change the attributes to be animatable, then we
- * need to change the element attributes to be of type animatable (what ender
- * expects), then the attributes that are set as *final* is only the version
- * where the animated/non-animated are resolved and put into the final
- * attributes
- */
+/* initialize the presentation attributes with default values */
+static void _esvg_element_attribute_presentation_setup(Esvg_Element_Attributes *a)
+{
+	Esvg_Color black = { 0, 0, 0 };
+	Esvg_Length one = { ESVG_UNIT_LENGTH_PX, 1 };
+	Esvg_Paint color = { ESVG_PAINT_COLOR, black };
+	Esvg_Paint none = { ESVG_PAINT_NONE };
+
+	/* now the default values */
+	esvg_attribute_color_unset(&a->color.base, &black);
+	esvg_attribute_length_unset(&a->stroke_width.base, &one);
+	esvg_attribute_number_unset(&a->stroke_opacity.base, 1.0);
+	esvg_attribute_number_unset(&a->fill_opacity.base, 1.0);
+	esvg_attribute_number_unset(&a->opacity.base, 1.0);
+	esvg_attribute_enum_unset(&a->fill_rule.base, ESVG_NON_ZERO);
+	esvg_attribute_paint_unset(&a->fill.base, &color);
+	esvg_attribute_paint_unset(&a->stroke.base, &none);
+	esvg_attribute_enum_unset(&a->stroke_line_cap.base, ESVG_LINE_CAP_BUTT);
+	esvg_attribute_enum_unset(&a->stroke_line_join.base, ESVG_LINE_JOIN_MITER);
+	esvg_attribute_number_unset(&a->stop_opacity.base, 1.0);
+}
+
 static void _esvg_element_attribute_presentation_merge(
-	const Esvg_Attribute_Presentation *s,
+	const Esvg_Element_Attributes *s,
 	Esvg_Attribute_Presentation *d)
 {
+
 }
 
 static void _esvg_element_attribute_presentation_merge_rel(
-	const Esvg_Attribute_Presentation *s,
-	const Esvg_Attribute_Presentation *rel,
+	const Esvg_Element_Attributes *rel,
+	const Esvg_Element_Attributes *s,
 	Esvg_Attribute_Presentation *d)
 {
 #if 0
@@ -526,8 +542,16 @@ static void _esvg_element_clip_path_set(Edom_Tag *t, Esvg_Animated_String *clip_
 static void _esvg_element_clip_path_get(Edom_Tag *t, const char **clip_path)
 {
 	Esvg_Element *thiz;
+	Esvg_Attribute_String *a;
 
+	if (!clip_path) return;
 	thiz = _esvg_element_get(t);
+	/* get the attribute to get from */
+	if (thiz->current_attr_animate)
+		a = &thiz->current_attr->clip_path.anim;
+	else
+		a = &thiz->current_attr->clip_path.base;
+	*clip_path = a->v;
 }
 
 static void _esvg_element_clip_path_unset(Edom_Tag *t)
@@ -535,7 +559,6 @@ static void _esvg_element_clip_path_unset(Edom_Tag *t)
 	Esvg_Element *thiz;
 
 	thiz = _esvg_element_get(t);
-	esvg_attribute_presentation_clip_path_unset(thiz->current_attr);
 }
 
 static void _esvg_element_opacity_set(Edom_Tag *t, Esvg_Animated_Number *opacity)
@@ -1195,46 +1218,32 @@ Esvg_Element_Setup_Return esvg_element_setup_rel(Edom_Tag *t,
 		_esvg_element_state_compose(&thiz->state, rel_state, &thiz->state_final);
 	}
 
-
-	/* TODO In theory it should be */
-	/* first merge the css rel_attr with the xml rel_attr */
-	/* then apply the style if present */
-	/* add an ATTR_FINAL or something like that, so the inline style is applied there */
-	/* is the inline style inherited on child elements ? yes! */
-
 	/* FIXME check that the style has changed, if so revert it and start applying */
 	/* FIXME should it have more priority than the properties? */
-	if (thiz->style || rel_attr)
+	/* style? style + xml => 1 (epa + epa => pa)
+	 *        xml => 1 (epa => pa) element_presentation_attributes_to_attribute_presentation
+ 	 * parent? 1 + parent => final (pa + pa => pa) presentation_attributes_merge_rel
+	 *         1 => final (pa => pa)
+	 */
+	/* swap where the css atrtibutes will be written before applying the style */
+	if (thiz->style)
 	{
-		if (thiz->style)
-		{
-			/* swap where the css atrtibutes will be written before applying the style */
-			esvg_element_attribute_type_set(t, ESVG_ATTR_CSS);
-			ecss_context_inline_style_apply(&_esvg_element_css_context, thiz->style, t);
-			esvg_element_attribute_type_set(t, ESVG_ATTR_XML);
-			/* merge the css and the xml into the final */
-			_esvg_element_attribute_presentation_merge_rel(&thiz->attr_css, &thiz->attr_xml, &thiz->attr_final);
-			/* in case of a relative attributes, merge the result into the final attributes */
-			if (rel_attr)
-			{
-				esvg_attribute_presentation_merge(&thiz->attr_final, rel_attr, &thiz->attr_final);
-			}
-		}
-		else
-		{
-			/* in case of relative attributes merge them */
-			//_esvg_element_attribute_presentation_merge(&thiz->attr_xml, &thiz->attr_final);
-			if (rel_attr)
-			{
-				esvg_attribute_presentation_merge(&thiz->attr_xml, rel_attr, &thiz->attr_final);
-			}
-		}
+		esvg_element_attribute_type_set(t, ESVG_ATTR_CSS);
+		ecss_context_inline_style_apply(&_esvg_element_css_context, thiz->style, t);
+		esvg_element_attribute_type_set(t, ESVG_ATTR_XML);
+		/* merge the css and the xml into the final */
+		_esvg_element_attribute_presentation_merge_rel(&thiz->attr_css, &thiz->attr_xml, &thiz->attr_final);
 	}
 	else
 	{
-		/* generate the final from the xml attributes */
-		//thiz->attr_final = thiz->attr_xml;
+		_esvg_element_attribute_presentation_merge(&thiz->attr_xml, &thiz->attr_final);
 	}
+
+	if (rel_attr)
+	{
+		esvg_attribute_presentation_merge_rel(rel_attr, &thiz->attr_final, &thiz->attr_final);
+	}
+
 
 	if (!thiz->descriptor.setup)
 		return ESVG_SETUP_OK;
@@ -1484,8 +1493,8 @@ Edom_Tag * esvg_element_new(Esvg_Element_Descriptor *descriptor, Esvg_Type type,
 
 	t = edom_tag_new(&pdescriptor, thiz);
 
-	esvg_attribute_presentation_setup(&thiz->attr_xml);
-	esvg_attribute_presentation_setup(&thiz->attr_css);
+	_esvg_element_attribute_presentation_setup(&thiz->attr_xml);
+	_esvg_element_attribute_presentation_setup(&thiz->attr_css);
 	esvg_element_attribute_type_set(t, ESVG_ATTR_XML);
 
 	return t;
@@ -1578,15 +1587,15 @@ EAPI void esvg_element_class_set(Ender_Element *e, const char *class)
  */
 EAPI void esvg_element_transform_set(Ender_Element *e, const Enesim_Matrix *transform)
 {
-	Esvg_Animated_Transform at;
+	Esvg_Animated_Transform a;
 
 	if (!transform)
 	{
 		ender_element_property_value_set(e, ESVG_ELEMENT_TRANSFORM, NULL, NULL);
 		return;
 	}
-	at.base = *transform;
-	ender_element_property_value_set(e, ESVG_ELEMENT_TRANSFORM, &at, NULL);
+	a.base = *transform;
+	ender_element_property_value_set(e, ESVG_ELEMENT_TRANSFORM, &a, NULL);
 }
 
 /**
@@ -1595,6 +1604,13 @@ EAPI void esvg_element_transform_set(Ender_Element *e, const Enesim_Matrix *tran
  */
 EAPI void esvg_element_transform_get(Ender_Element *e, Enesim_Matrix *transform)
 {
+	Esvg_Animated_Transform a;
+	Edom_Tag *t;
+
+	if (!transform) return;
+	t = ender_element_object_get(e);
+	_esvg_element_transform_get(t, &a);
+	*transform = a.base;
 }
 
 /**

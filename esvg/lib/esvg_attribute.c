@@ -255,13 +255,13 @@ void esvg_attribute_bool_set(Esvg_Attribute_Bool *a, Eina_Bool v)
 	a->is_set = EINA_TRUE;
 }
 
-void esvg_attribute_enum_unset(Esvg_Attribute_Bool *a, int def)
+void esvg_attribute_enum_unset(Esvg_Attribute_Enum *a, int def)
 {
 	a->v = def;
 	a->is_set = EINA_FALSE;
 }
 
-void esvg_attribute_enum_set(Esvg_Attribute_Bool *a, int v)
+void esvg_attribute_enum_set(Esvg_Attribute_Enum *a, int v)
 {
 	a->v = v;
 	a->is_set = EINA_TRUE;

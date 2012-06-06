@@ -175,7 +175,7 @@ void esvg_attribute_presentation_cleanup(Esvg_Attribute_Presentation *thiz)
 	}
 }
 
-void esvg_attribute_presentation_merge(const Esvg_Attribute_Presentation *s,
+void esvg_attribute_presentation_merge_rel(const Esvg_Attribute_Presentation *s,
 		const Esvg_Attribute_Presentation *rel,
 		Esvg_Attribute_Presentation *d)
 {

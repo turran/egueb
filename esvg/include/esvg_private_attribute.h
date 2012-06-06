@@ -147,7 +147,7 @@ void esvg_attribute_length_set(Esvg_Attribute_Length *a, const Esvg_Length *v,
 		const Esvg_Length *def);
 void esvg_attribute_bool_unset(Esvg_Attribute_Bool *a, Eina_Bool def);
 void esvg_attribute_bool_set(Esvg_Attribute_Bool *a, Eina_Bool v);
-void esvg_attribute_enum_unset(Esvg_Attribute_Bool *a, int def);
-void esvg_attribute_enum_set(Esvg_Attribute_Bool *a, int v);
+void esvg_attribute_enum_unset(Esvg_Attribute_Enum *a, int def);
+void esvg_attribute_enum_set(Esvg_Attribute_Enum *a, int v);
 
 #endif
