@@ -653,14 +653,28 @@ static void _esvg_element_color_get(Edom_Tag *t, Esvg_Color *color)
 	thiz = _esvg_element_get(t);
 }
 
-static void _esvg_element_fill_set(Edom_Tag *t, const Esvg_Paint *fill)
+static void _esvg_element_fill_set(Edom_Tag *t, const Esvg_Animated_Paint *fill)
 {
 	Esvg_Element *thiz;
+	Esvg_Attribute_Paint *a;
+	Esvg_Color black = { 0, 0, 0 };
+	Esvg_Paint def = { ESVG_PAINT_COLOR, black };
 
 	thiz = _esvg_element_get(t);
+	/* get the attribute to change */
+	thiz = _esvg_element_get(t);
+	if (thiz->current_attr_animate)
+		a = &thiz->current_attr->fill.anim;
+	else
+		a = &thiz->current_attr->fill.base;
+	/* get the value to set */
+	if (fill)
+		esvg_attribute_paint_set(a, &fill->base, &def);
+	else
+		esvg_attribute_paint_unset(a, &def);
 }
 
-static void _esvg_element_fill_get(Edom_Tag *t, Esvg_Paint *fill)
+static void _esvg_element_fill_get(Edom_Tag *t, Esvg_Animated_Paint *fill)
 {
 	Esvg_Element *thiz;
 
@@ -706,8 +720,22 @@ static void _esvg_element_fill_rule_set(Edom_Tag *t, Esvg_Animated_Enum *fill_ru
 static void _esvg_element_stroke_set(Edom_Tag *t, const Esvg_Animated_Paint *stroke)
 {
 	Esvg_Element *thiz;
+	Esvg_Attribute_Paint *a;
+	Esvg_Color black = { 0, 0, 0 };
+	Esvg_Paint def = { ESVG_PAINT_COLOR, black };
 
 	thiz = _esvg_element_get(t);
+	/* get the attribute to change */
+	thiz = _esvg_element_get(t);
+	if (thiz->current_attr_animate)
+		a = &thiz->current_attr->stroke.anim;
+	else
+		a = &thiz->current_attr->stroke.base;
+	/* get the value to set */
+	if (stroke)
+		esvg_attribute_paint_set(a, &stroke->base, &def);
+	else
+		esvg_attribute_paint_unset(a, &def);
 }
 
 static void _esvg_element_stroke_get(Edom_Tag *t, Esvg_Animated_Paint *stroke)
