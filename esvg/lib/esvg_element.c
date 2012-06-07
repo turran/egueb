@@ -139,6 +139,12 @@ typedef struct _Esvg_Element
 	char *id;
 	char *class;
 	Ender_Element *topmost;
+	/* FIXME this should not be part of the common element interface
+	 * but only on the specific elements that support a transformation
+	 * even so, there seems to be some initiatives to make the
+	 * transform a presentation attribute
+	 */
+	Esvg_Attribute_Animated_Transform transform;
 	Esvg_Element_Context state;
 	Esvg_Element_Attributes attr_xml;
 	Esvg_Element_Attributes attr_css;
@@ -253,6 +259,24 @@ static void _esvg_element_attribute_length_set(Esvg_Attribute_Animated_Length *a
 		esvg_attribute_length_set(a, &v->base, def);
 	else
 		esvg_attribute_length_unset(a, def);
+}
+
+static void _esvg_element_attribute_transform_set(Esvg_Attribute_Animated_Transform *aa,
+	const Esvg_Animated_Transform *v,
+	const Enesim_Matrix *def,
+	Eina_Bool animate)
+{
+	Esvg_Attribute_Transform *a;
+	/* get the attribute to change */
+	if (animate)
+		a = &aa->anim;
+	else
+		a = &aa->base;
+	/* get the value to set */
+	if (v)
+		esvg_attribute_transform_set(a, &v->base, def);
+	else
+		esvg_attribute_transform_unset(a, def);
 }
 
 /* TODO pass the possible range values */
@@ -431,42 +455,55 @@ static Eina_Bool _esvg_element_attribute_animation_add(Esvg_Element *thiz, const
 	/* common presentation attributes */
 	else if (strcmp(attr, "clip-path") == 0)
 	{
+		animated = &thiz->current_attr->clip_path.animated;
 	}
 	else if (strcmp(attr, "opacity") == 0)
 	{
+		animated = &thiz->current_attr->opacity.animated;
 	}
 	else if (strcmp(attr, "color") == 0)
 	{
+		animated = &thiz->current_attr->color.animated;
 	}
 	else if (strcmp(attr, "fill") == 0)
 	{
+		animated = &thiz->current_attr->fill.animated;
 	}
 	else if (strcmp(attr, "fill-rule") == 0)
 	{
+		animated = &thiz->current_attr->fill_rule.animated;
 	}
 	else if (strcmp(attr, "fill-opacity") == 0)
 	{
+		animated = &thiz->current_attr->fill_opacity.animated;
 	}
 	else if (strcmp(attr, "stroke") == 0)
 	{
+		animated = &thiz->current_attr->stroke.animated;
 	}
 	else if (strcmp(attr, "stroke-width") == 0)
 	{
+		animated = &thiz->current_attr->stroke_width.animated;
 	}
 	else if (strcmp(attr, "stroke-opacity") == 0)
 	{
+		animated = &thiz->current_attr->stroke_opacity.animated;
 	}
 	else if (strcmp(attr, "stroke-linecap") == 0)
 	{
+		animated = &thiz->current_attr->stroke_line_cap.animated;
 	}
 	else if (strcmp(attr, "stroke-linejoin") == 0)
 	{
+		animated = &thiz->current_attr->stroke_line_join.animated;
 	}
 	else if (strcmp(attr, "stop-color") == 0)
 	{
+		animated = &thiz->current_attr->stop_color.animated;
 	}
 	else if (strcmp(attr, "stop-opacity") == 0)
 	{
+		animated = &thiz->current_attr->stop_opacity.animated;
 	}
 	else
 		return EINA_FALSE;
@@ -486,42 +523,55 @@ static Eina_Bool _esvg_element_attribute_animation_remove(Esvg_Element *thiz, co
 	/* common presentation attributes */
 	else if (strcmp(attr, "clip-path") == 0)
 	{
+		animated = &thiz->current_attr->clip_path.animated;
 	}
 	else if (strcmp(attr, "opacity") == 0)
 	{
+		animated = &thiz->current_attr->opacity.animated;
 	}
 	else if (strcmp(attr, "color") == 0)
 	{
+		animated = &thiz->current_attr->color.animated;
 	}
 	else if (strcmp(attr, "fill") == 0)
 	{
+		animated = &thiz->current_attr->fill.animated;
 	}
 	else if (strcmp(attr, "fill-rule") == 0)
 	{
+		animated = &thiz->current_attr->fill_rule.animated;
 	}
 	else if (strcmp(attr, "fill-opacity") == 0)
 	{
+		animated = &thiz->current_attr->fill_opacity.animated;
 	}
 	else if (strcmp(attr, "stroke") == 0)
 	{
+		animated = &thiz->current_attr->stroke.animated;
 	}
 	else if (strcmp(attr, "stroke-width") == 0)
 	{
+		animated = &thiz->current_attr->stroke_width.animated;
 	}
 	else if (strcmp(attr, "stroke-opacity") == 0)
 	{
+		animated = &thiz->current_attr->stroke_opacity.animated;
 	}
 	else if (strcmp(attr, "stroke-linecap") == 0)
 	{
+		animated = &thiz->current_attr->stroke_line_cap.animated;
 	}
 	else if (strcmp(attr, "stroke-linejoin") == 0)
 	{
+		animated = &thiz->current_attr->stroke_line_join.animated;
 	}
 	else if (strcmp(attr, "stop-color") == 0)
 	{
+		animated = &thiz->current_attr->stop_color.animated;
 	}
 	else if (strcmp(attr, "stop-opacity") == 0)
 	{
+		animated = &thiz->current_attr->stop_opacity.animated;
 	}
 	else
 		return EINA_FALSE;
@@ -729,7 +779,7 @@ static void _esvg_element_fill_set(Edom_Tag *t, const Esvg_Animated_Paint *fill)
 {
 	Esvg_Element *thiz;
 	Esvg_Color black = { 0, 0, 0 };
-	Esvg_Paint def = { ESVG_PAINT_COLOR, black };
+	Esvg_Paint def = { ESVG_PAINT_COLOR, { black } };
 
 	thiz = _esvg_element_get(t);
 	_esvg_element_attribute_paint_set(&thiz->current_attr->fill,
@@ -1337,12 +1387,6 @@ Esvg_Element_Setup_Return esvg_element_setup_rel(Edom_Tag *t,
 
 	/* FIXME check that the style has changed, if so revert it and start applying */
 	/* FIXME should it have more priority than the properties? */
-	/* style? style + xml => 1 (epa + epa => pa)
-	 *        xml => 1 (epa => pa) element_presentation_attributes_to_attribute_presentation
- 	 * parent? 1 + parent => final (pa + pa => pa) presentation_attributes_merge_rel
-	 *         1 => final (pa => pa)
-	 */
-	/* swap where the css atrtibutes will be written before applying the style */
 	if (thiz->style)
 	{
 		esvg_element_attribute_type_set(t, ESVG_ATTR_CSS);
@@ -1753,6 +1797,7 @@ EAPI void esvg_element_style_get(Ender_Element *e, const char **style)
  */
 EAPI Eina_Bool esvg_element_style_is_set(Ender_Element *e)
 {
+	return EINA_FALSE;
 }
 
 /**

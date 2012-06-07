@@ -419,12 +419,32 @@ static void _esvg_path_d_add(Edom_Tag *t, const Esvg_Path_Command *cmd)
 	*new_cmd = *cmd;
 	thiz->commands = eina_list_append(thiz->commands, new_cmd);
 }
+
+static void _esvg_path_d_set(Edom_Tag *t, const Eina_List *cmds)
+{
+	Esvg_Path *thiz;
+	Esvg_Path_Command *cmd;
+	const Eina_List *l;
+
+	thiz = _esvg_path_get(t);
+	/* FIXME remove what we had */
+	EINA_LIST_FOREACH (cmds, l, cmd)
+	{
+		_esvg_path_d_add(t, cmd);
+	}
+}
+
+static void _esvg_path_d_get(Edom_Tag *t, const Eina_List **cmds)
+{
+	Esvg_Path *thiz;
+
+	thiz = _esvg_path_get(t);
+	*cmds = thiz->commands;
+}
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
 /* The ender wrapper */
-#define _esvg_path_d_set NULL
-#define _esvg_path_d_get NULL
 #define _esvg_path_d_clear NULL
 #define _esvg_path_d_remove NULL
 #define _esvg_path_d_is_set NULL
@@ -442,6 +462,19 @@ EAPI Eina_Bool esvg_is_path(Ender_Element *e)
 	Eina_Bool ret = EINA_TRUE;
 
 	return ret;
+}
+
+EAPI void esvg_path_d_set(Ender_Element *e, const Eina_List *cmds)
+{
+	ender_element_property_value_set(e, ESVG_PATH_D, cmds, NULL);
+}
+
+EAPI void esvg_path_d_get(Ender_Element *e, const Eina_List **cmds)
+{
+	Edom_Tag *t;
+
+	t = ender_element_object_get(e);
+	_esvg_path_d_get(t, cmds);
 }
 
 EAPI void esvg_path_d_add(Ender_Element *e, const Esvg_Path_Command *cmd)

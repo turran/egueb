@@ -30,6 +30,30 @@
  *                                 Global                                     *
  *============================================================================*/
 /*----------------------------------------------------------------------------*
+ *                                Transform                                    *
+ *----------------------------------------------------------------------------*/
+void esvg_attribute_transform_set(Esvg_Attribute_Transform *a,
+		const Enesim_Matrix *v, const Enesim_Matrix *def)
+{
+	if (!v)
+	{
+		esvg_attribute_transform_unset(a, def);
+	}
+	else
+	{
+		a->v = *v;
+		a->is_set = EINA_TRUE;
+	}
+}
+
+void esvg_attribute_transform_unset(Esvg_Attribute_Transform *a,
+		const Enesim_Matrix *def)
+{
+	a->is_set = EINA_FALSE;
+	a->v = *def;
+
+}
+/*----------------------------------------------------------------------------*
  *                                  Color                                     *
  *----------------------------------------------------------------------------*/
 void esvg_attribute_animated_color_merge_rel(const Esvg_Attribute_Animated_Color *rel,

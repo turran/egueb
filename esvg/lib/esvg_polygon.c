@@ -191,13 +191,33 @@ static void _esvg_polygon_point_add(Edom_Tag *t, Esvg_Point *p)
 	enesim_renderer_figure_polygon_vertex_add(thiz->r, new_point->x, new_point->y);
 	thiz->changed = EINA_TRUE;
 }
+
+static void _esvg_polygon_point_set(Edom_Tag *t, const Eina_List *pts)
+{
+	Esvg_Polygon *thiz;
+	Esvg_Point *pt;
+	const Eina_List *l;
+
+	thiz = _esvg_polygon_get(t);
+	/* FIXME remove what we had */
+	EINA_LIST_FOREACH (pts, l, pt)
+	{
+		_esvg_polygon_point_add(t, pt);
+	}
+}
+
+static void _esvg_polygon_point_get(Edom_Tag *t, const Eina_List **pts)
+{
+	Esvg_Polygon *thiz;
+
+	thiz = _esvg_polygon_get(t);
+	*pts = thiz->points;
+}
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
 /* The ender wrapper */
 #define _esvg_polygon_point_is_set NULL
-#define _esvg_polygon_point_set NULL
-#define _esvg_polygon_point_get NULL
 #define _esvg_polygon_point_clear NULL
 #define _esvg_polygon_point_remove NULL
 #include "generated/esvg_generated_polygon.c"

@@ -58,13 +58,6 @@ typedef struct _Esvg_Attribute_Enum
 } Esvg_Attribute_Enum;
 
 /* animated */
-typedef struct _Esvg_Attribute_Animated_Transform
-{
-	Esvg_Attribute_Transform base;
-	Esvg_Attribute_Transform anim;
-	int animated;
-} Esvg_Attribute_Animated_Transform;
-
 typedef struct _Esvg_Attribute_Animated_Length
 {
 	Esvg_Attribute_Length base;
@@ -113,6 +106,13 @@ typedef struct _Esvg_Attribute_Animated_Enum
 	Esvg_Attribute_Enum anim;
 	int animated;
 } Esvg_Attribute_Animated_Enum;
+
+typedef struct _Esvg_Attribute_Animated_Transform
+{
+	Esvg_Attribute_Transform base;
+	Esvg_Attribute_Transform anim;
+	int animated;
+} Esvg_Attribute_Animated_Transform;
 
 void esvg_attribute_animated_color_merge_rel(const Esvg_Attribute_Animated_Color *rel,
 		const Esvg_Attribute_Animated_Color *v,
@@ -170,6 +170,10 @@ void esvg_attribute_animated_enum_merge(const Esvg_Attribute_Animated_Enum *v,
 void esvg_attribute_enum_merge_rel(const Esvg_Attribute_Enum *rel,
 		const Esvg_Attribute_Enum *v,
 		Esvg_Attribute_Enum *d);
+
+void esvg_attribute_transform_set(Esvg_Attribute_Transform *a, const Enesim_Matrix *v, const Enesim_Matrix *def);
+void esvg_attribute_transform_unset(Esvg_Attribute_Transform *a, const Enesim_Matrix *def);
+
 void esvg_attribute_string_unset(Esvg_Attribute_String *a);
 void esvg_attribute_string_set(Esvg_Attribute_String *a, const char *v);
 void esvg_attribute_color_unset(Esvg_Attribute_Color *a, const Esvg_Color *def);
