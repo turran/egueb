@@ -667,7 +667,7 @@ static void _esvg_element_fill_set(Edom_Tag *t, const Esvg_Animated_Paint *fill)
 		a = &thiz->current_attr->fill.anim;
 	else
 		a = &thiz->current_attr->fill.base;
-	/* get the value to set */
+	/* set or unset */
 	if (fill)
 		esvg_attribute_paint_set(a, &fill->base, &def);
 	else
@@ -721,8 +721,7 @@ static void _esvg_element_stroke_set(Edom_Tag *t, const Esvg_Animated_Paint *str
 {
 	Esvg_Element *thiz;
 	Esvg_Attribute_Paint *a;
-	Esvg_Color black = { 0, 0, 0 };
-	Esvg_Paint def = { ESVG_PAINT_COLOR, black };
+	Esvg_Paint def = { ESVG_PAINT_NONE };
 
 	thiz = _esvg_element_get(t);
 	/* get the attribute to change */
@@ -731,7 +730,7 @@ static void _esvg_element_stroke_set(Edom_Tag *t, const Esvg_Animated_Paint *str
 		a = &thiz->current_attr->stroke.anim;
 	else
 		a = &thiz->current_attr->stroke.base;
-	/* get the value to set */
+	/* set or unset */
 	if (stroke)
 		esvg_attribute_paint_set(a, &stroke->base, &def);
 	else
@@ -749,8 +748,21 @@ static void _esvg_element_stroke_get(Edom_Tag *t, Esvg_Animated_Paint *stroke)
 static void _esvg_element_stroke_width_set(Edom_Tag *t, const Esvg_Animated_Length *stroke_width)
 {
 	Esvg_Element *thiz;
+	Esvg_Attribute_Length *a;
+	Esvg_Length def = { ESVG_UNIT_LENGTH_PX, 1 };
 
 	thiz = _esvg_element_get(t);
+	/* get the attribute to change */
+	thiz = _esvg_element_get(t);
+	if (thiz->current_attr_animate)
+		a = &thiz->current_attr->stroke_width.anim;
+	else
+		a = &thiz->current_attr->stroke_width.base;
+	/* set or unset */
+	if (stroke_width)
+		esvg_attribute_length_set(a, &stroke_width->base, &def);
+	else
+		esvg_attribute_length_unset(a, &def);
 }
 
 static void _esvg_element_stroke_width_get(Edom_Tag *t, Esvg_Animated_Length *stroke_width)
@@ -1874,7 +1886,14 @@ EAPI void esvg_element_stroke_unset(Ender_Element *e)
  */
 EAPI void esvg_element_stroke_width_set(Ender_Element *e, const Esvg_Length *stroke_width)
 {
-	ender_element_property_value_set(e, ESVG_ELEMENT_STROKE_WIDTH, stroke_width, NULL);
+	Esvg_Animated_Length a;
+
+	if (!stroke_width)
+	{
+		ender_element_property_value_set(e, ESVG_ELEMENT_STROKE_WIDTH, NULL, NULL);
+	}
+	a.base = *stroke_width;
+	ender_element_property_value_set(e, ESVG_ELEMENT_STROKE_WIDTH, &a, NULL);
 }
 
 /**
