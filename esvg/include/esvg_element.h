@@ -17,6 +17,7 @@ EAPI Eina_Bool esvg_element_style_is_set(Ender_Element *e);
 EAPI void esvg_element_clip_path_set(Ender_Element *e, const char *id);
 EAPI void esvg_element_clip_path_unset(Ender_Element *e);
 EAPI void esvg_element_opacity_set(Ender_Element *e, double opacity);
+EAPI void esvg_element_opacity_get(Ender_Element *e, double *opacity);
 EAPI void esvg_element_opacity_unset(Ender_Element *e);
 EAPI void esvg_element_color_set(Ender_Element *e, const Esvg_Color *color);
 EAPI void esvg_element_color_get(Ender_Element *e, Esvg_Color *color);

@@ -496,7 +496,7 @@ Eina_Bool esvg_renderable_propagate(Edom_Tag *t,
 {
 	Esvg_Renderable *thiz;
 	Esvg_Attribute_Presentation *attr;
-	Eina_Bool ret;
+	Eina_Bool ret = EINA_TRUE;
 
 	thiz = _esvg_renderable_get(t);
 	return ret;

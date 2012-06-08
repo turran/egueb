@@ -14,6 +14,27 @@ namespace "esvg" {
 		double "height";
 	};
 
+	/* the color needs a byte definition or int8 in ender */
+	struct "esvg_color" {
+		int "r";
+		int "g";
+		int "b";
+	};
+
+	struct "esvg_point" {
+		double "x";
+		double "y";
+	};
+
+	union "esvg_paint" {
+		/* fix this */
+		bool "none";
+		bool "current_color";
+		esvg_color "color";
+		string "paint_server";
+	};
+
+	/* animated types */
 	struct "esvg_animated_number" {
 		double "base";
 		double "anim";
@@ -42,26 +63,6 @@ namespace "esvg" {
 	struct "esvg_animated_color" {
 		esvg_color "base";
 		esvg_color "anim";
-	};
-
-	/* the color needs a byte definition or int8 in ender */
-	struct "esvg_color" {
-		int "r";
-		int "g";
-		int "b";
-	};
-
-	struct "esvg_point" {
-		double "x";
-		double "y";
-	};
-
-	union "esvg_paint" {
-		/* fix this */
-		bool "none";
-		bool "current_color";
-		esvg_color "color";
-		string "paint_server";
 	};
 
 	struct "esvg_animated_paint" {
