@@ -146,6 +146,20 @@ static void _esvg_g_free(Edom_Tag *t)
 	free(thiz);
 }
 
+static Eina_Bool _esvg_g_renderer_propagate(Edom_Tag *t,
+		Esvg_Context *c,
+		const Esvg_Element_Context *ctx,
+		const Esvg_Attribute_Presentation *attr,
+		Esvg_Renderable_Context *rctx,
+		Enesim_Error **error)
+{
+	Esvg_G *thiz;
+
+	thiz = _esvg_g_get(t);
+	enesim_renderer_color_set(thiz->r, rctx->color);
+	return EINA_TRUE;
+}
+
 static Esvg_Instantiable_Descriptor _descriptor = {
 	/* .child_add		= */ _esvg_g_child_add,
 	/* .child_remove	= */ _esvg_g_child_remove,
@@ -157,6 +171,7 @@ static Esvg_Instantiable_Descriptor _descriptor = {
 	/* .attribute_set 	= */ NULL,
 	/* .setup		= */ _esvg_g_setup,
 	/* .renderer_get	= */ _esvg_g_renderer_get,
+	/* .renderer_propagate	= */ _esvg_g_renderer_propagate,
 };
 /*----------------------------------------------------------------------------*
  *                           The Ender interface                              *
