@@ -205,178 +205,6 @@ static void _esvg_element_state_compose(const Esvg_Element_Context *s,
 /*----------------------------------------------------------------------------*
  *                            Attribute helpers                               *
  *----------------------------------------------------------------------------*/
-static void _esvg_element_attribute_color_set(Esvg_Attribute_Animated_Color *aa,
-	const Esvg_Animated_Color *v,
-	const Esvg_Color *def,
-	Eina_Bool animate)
-{
-	Esvg_Attribute_Color *a;
-
-	/* get the attribute to change */
-	if (animate)
-		a = &aa->anim;
-	else
-		a = &aa->base;
-	/* get the value to set */
-	if (v)
-		esvg_attribute_color_set(a, &v->base, def);
-	else
-		esvg_attribute_color_unset(a, def);
-}
-
-static void _esvg_element_attribute_color_get(Esvg_Attribute_Animated_Color *aa,
-	Esvg_Animated_Color *v)
-{
-	if (!v) return;
-
-	v->base = aa->base.v;
-	if (aa->animated && aa->anim.is_set)
-		v->anim = aa->anim.v;
-	else
-		v->anim = v->base;
-}
-
-static void _esvg_element_attribute_paint_set(Esvg_Attribute_Animated_Paint *aa,
-	const Esvg_Animated_Paint *v,
-	const Esvg_Paint *def,
-	Eina_Bool animate)
-{
-	Esvg_Attribute_Paint *a;
-
-	/* get the attribute to change */
-	if (animate)
-		a = &aa->anim;
-	else
-		a = &aa->base;
-	/* get the value to set */
-	if (v)
-		esvg_attribute_paint_set(a, &v->base, def);
-	else
-		esvg_attribute_paint_unset(a, def);
-}
-
-static void _esvg_element_attribute_paint_get(Esvg_Attribute_Animated_Paint *aa,
-	Esvg_Animated_Paint *v)
-{
-	if (!v) return;
-
-	v->base = aa->base.v;
-	if (aa->animated && aa->anim.is_set)
-		v->anim = aa->anim.v;
-	else
-		v->anim = v->base;
-}
-
-static void _esvg_element_attribute_length_set(Esvg_Attribute_Animated_Length *aa,
-	const Esvg_Animated_Length *v,
-	const Esvg_Length *def,
-	Eina_Bool animate)
-{
-	Esvg_Attribute_Length *a;
-	/* get the attribute to change */
-	if (animate)
-		a = &aa->anim;
-	else
-		a = &aa->base;
-	/* get the value to set */
-	if (v)
-		esvg_attribute_length_set(a, &v->base, def);
-	else
-		esvg_attribute_length_unset(a, def);
-}
-
-static void _esvg_element_attribute_length_get(Esvg_Attribute_Animated_Length *aa,
-	Esvg_Animated_Length *v)
-{
-	if (!v) return;
-
-	v->base = aa->base.v;
-	if (aa->animated && aa->anim.is_set)
-		v->anim = aa->anim.v;
-	else
-		v->anim = v->base;
-}
-
-static void _esvg_element_attribute_transform_set(Esvg_Attribute_Animated_Transform *aa,
-	const Esvg_Animated_Transform *v,
-	const Enesim_Matrix *def,
-	Eina_Bool animate)
-{
-	Esvg_Attribute_Transform *a;
-	/* get the attribute to change */
-	if (animate)
-		a = &aa->anim;
-	else
-		a = &aa->base;
-	/* get the value to set */
-	if (v)
-		esvg_attribute_transform_set(a, &v->base, def);
-	else
-		esvg_attribute_transform_unset(a, def);
-}
-
-/* TODO pass the possible range values */
-static void _esvg_element_attribute_number_set(Esvg_Attribute_Animated_Number *aa,
-	const Esvg_Animated_Number *v,
-	double def,
-	Eina_Bool animate)
-{
-	Esvg_Attribute_Number *a;
-	/* get the attribute to change */
-	if (animate)
-		a = &aa->anim;
-	else
-		a = &aa->base;
-	/* get the value to set */
-	if (v)
-		esvg_attribute_number_set(a, v->base);
-	else
-		esvg_attribute_number_unset(a, def);
-}
-
-static void _esvg_element_attribute_number_get(Esvg_Attribute_Animated_Number *aa,
-	Esvg_Animated_Number *v)
-{
-	if (!v) return;
-
-	v->base = aa->base.v;
-	if (aa->animated && aa->anim.is_set)
-		v->anim = aa->anim.v;
-	else
-		v->anim = v->base;
-}
-
-static void _esvg_element_attribute_bool_set(Esvg_Attribute_Animated_Bool *aa,
-	const Esvg_Animated_Bool *v,
-	Eina_Bool def,
-	Eina_Bool animate)
-{
-	Esvg_Attribute_Bool *a;
-	/* get the attribute to change */
-	if (animate)
-		a = &aa->anim;
-	else
-		a = &aa->base;
-	/* get the value to set */
-	if (v)
-		esvg_attribute_bool_set(a, v->base);
-	else
-		esvg_attribute_bool_unset(a, def);
-}
-
-static void _esvg_element_attribute_bool_get(Esvg_Attribute_Animated_Bool *aa,
-	Esvg_Animated_Bool *v)
-{
-	if (!v) return;
-
-	v->base = aa->base.v;
-	if (aa->animated && aa->anim.is_set)
-		v->anim = aa->anim.v;
-	else
-		v->anim = v->base;
-}
-
-
 /* initialize the presentation attributes with default values */
 static void _esvg_element_attribute_presentation_setup(Esvg_Element_Attributes *a)
 {
@@ -793,7 +621,7 @@ static void _esvg_element_opacity_set(Edom_Tag *t, Esvg_Animated_Number *opacity
 	Esvg_Element *thiz;
 
 	thiz = _esvg_element_get(t);
-	_esvg_element_attribute_number_set(&thiz->current_attr->opacity,
+	esvg_attribute_animated_number_set(&thiz->current_attr->opacity,
 		opacity, 1.0, thiz->current_attr_animate);
 }
 
@@ -803,7 +631,7 @@ static void _esvg_element_opacity_get(Edom_Tag *t, Esvg_Animated_Number *opacity
 	Esvg_Attribute_Animated_Number *a;
 
 	thiz = _esvg_element_get(t);
-	_esvg_element_attribute_number_get(&thiz->current_attr->opacity,
+	esvg_attribute_animated_number_get(&thiz->current_attr->opacity,
 		opacity);
 }
 
@@ -820,7 +648,7 @@ static void _esvg_element_color_set(Edom_Tag *t, const Esvg_Animated_Color *colo
 	const Esvg_Color def = { 0, 0, 0};
 
 	thiz = _esvg_element_get(t);
-	_esvg_element_attribute_color_set(&thiz->current_attr->color,
+	esvg_attribute_animated_color_set(&thiz->current_attr->color,
 		color, &def, thiz->current_attr_animate);
 }
 
@@ -836,7 +664,7 @@ static void _esvg_element_color_get(Edom_Tag *t, Esvg_Animated_Color *color)
 	Esvg_Element *thiz;
 
 	thiz = _esvg_element_get(t);
-	_esvg_element_attribute_color_get(&thiz->current_attr->color,
+	esvg_attribute_animated_color_get(&thiz->current_attr->color,
 		color);
 }
 
@@ -847,7 +675,7 @@ static void _esvg_element_fill_set(Edom_Tag *t, const Esvg_Animated_Paint *fill)
 	Esvg_Paint def = { ESVG_PAINT_COLOR, { black } };
 
 	thiz = _esvg_element_get(t);
-	_esvg_element_attribute_paint_set(&thiz->current_attr->fill,
+	esvg_attribute_animated_paint_set(&thiz->current_attr->fill,
 		fill, &def, thiz->current_attr_animate);
 }
 
@@ -856,7 +684,7 @@ static void _esvg_element_fill_get(Edom_Tag *t, Esvg_Animated_Paint *fill)
 	Esvg_Element *thiz;
 
 	thiz = _esvg_element_get(t);
-	_esvg_element_attribute_paint_get(&thiz->current_attr->fill,
+	esvg_attribute_animated_paint_get(&thiz->current_attr->fill,
 		fill);
 }
 
@@ -872,7 +700,7 @@ static void _esvg_element_fill_opacity_set(Edom_Tag *t, Esvg_Animated_Number *fi
 	Esvg_Element *thiz;
 
 	thiz = _esvg_element_get(t);
-	_esvg_element_attribute_number_set(&thiz->current_attr->fill_opacity,
+	esvg_attribute_animated_number_set(&thiz->current_attr->fill_opacity,
 		fill_opacity, 1.0, thiz->current_attr_animate);
 }
 
@@ -881,7 +709,7 @@ static void _esvg_element_fill_opacity_get(Edom_Tag *t, Esvg_Animated_Number *fi
 	Esvg_Element *thiz;
 
 	thiz = _esvg_element_get(t);
-	_esvg_element_attribute_number_get(&thiz->current_attr->fill_opacity,
+	esvg_attribute_animated_number_get(&thiz->current_attr->fill_opacity,
 		fill_opacity);
 }
 
@@ -905,7 +733,7 @@ static void _esvg_element_stroke_set(Edom_Tag *t, const Esvg_Animated_Paint *str
 	Esvg_Paint def = { ESVG_PAINT_NONE };
 
 	thiz = _esvg_element_get(t);
-	_esvg_element_attribute_paint_set(&thiz->current_attr->stroke,
+	esvg_attribute_animated_paint_set(&thiz->current_attr->stroke,
 		stroke, &def, thiz->current_attr_animate);
 }
 
@@ -914,7 +742,7 @@ static void _esvg_element_stroke_get(Edom_Tag *t, Esvg_Animated_Paint *stroke)
 	Esvg_Element *thiz;
 
 	thiz = _esvg_element_get(t);
-	_esvg_element_attribute_paint_get(&thiz->current_attr->stroke,
+	esvg_attribute_animated_paint_get(&thiz->current_attr->stroke,
 		stroke);
 }
 
@@ -924,7 +752,7 @@ static void _esvg_element_stroke_width_set(Edom_Tag *t, const Esvg_Animated_Leng
 	Esvg_Length def = { ESVG_UNIT_LENGTH_PX, 1 };
 
 	thiz = _esvg_element_get(t);
-	_esvg_element_attribute_length_set(&thiz->current_attr->stroke_width,
+	esvg_attribute_animated_length_set(&thiz->current_attr->stroke_width,
 		stroke_width, &def, thiz->current_attr_animate);
 }
 
@@ -933,7 +761,7 @@ static void _esvg_element_stroke_width_get(Edom_Tag *t, Esvg_Animated_Length *st
 	Esvg_Element *thiz;
 
 	thiz = _esvg_element_get(t);
-	_esvg_element_attribute_length_get(&thiz->current_attr->stroke_width,
+	esvg_attribute_animated_length_get(&thiz->current_attr->stroke_width,
 		stroke_width);
 }
 
@@ -942,7 +770,7 @@ static void _esvg_element_stroke_opacity_set(Edom_Tag *t, Esvg_Animated_Number *
 	Esvg_Element *thiz;
 
 	thiz = _esvg_element_get(t);
-	_esvg_element_attribute_number_set(&thiz->current_attr->stroke_opacity,
+	esvg_attribute_animated_number_set(&thiz->current_attr->stroke_opacity,
 		stroke_opacity, 1.0, thiz->current_attr_animate);
 }
 
@@ -951,7 +779,7 @@ static void _esvg_element_stroke_opacity_get(Edom_Tag *t, Esvg_Animated_Number *
 	Esvg_Element *thiz;
 
 	thiz = _esvg_element_get(t);
-	_esvg_element_attribute_number_get(&thiz->current_attr->stroke_opacity,
+	esvg_attribute_animated_number_get(&thiz->current_attr->stroke_opacity,
 		stroke_opacity);
 }
 
@@ -975,7 +803,7 @@ static void _esvg_element_stop_color_set(Edom_Tag *t, Esvg_Animated_Color *stop_
 	const Esvg_Color def = { 0, 0, 0};
 
 	thiz = _esvg_element_get(t);
-	_esvg_element_attribute_color_set(&thiz->current_attr->stop_color,
+	esvg_attribute_animated_color_set(&thiz->current_attr->stop_color,
 		stop_color, &def, thiz->current_attr_animate);
 }
 
@@ -985,7 +813,7 @@ static void _esvg_element_stop_color_get(Edom_Tag *t, Esvg_Animated_Color *stop_
 
 	if (!stop_color) return;
 	thiz = _esvg_element_get(t);
-	_esvg_element_attribute_color_get(&thiz->current_attr->stop_color,
+	esvg_attribute_animated_color_get(&thiz->current_attr->stop_color,
 		stop_color);
 }
 
@@ -994,7 +822,7 @@ static void _esvg_element_stop_opacity_set(Edom_Tag *t, Esvg_Animated_Number *st
 	Esvg_Element *thiz;
 
 	thiz = _esvg_element_get(t);
-	_esvg_element_attribute_number_set(&thiz->current_attr->stop_opacity,
+	esvg_attribute_animated_number_set(&thiz->current_attr->stop_opacity,
 		stop_opacity, 1.0, thiz->current_attr_animate);
 }
 
@@ -1003,7 +831,7 @@ static void _esvg_element_stop_opacity_get(Edom_Tag *t, Esvg_Animated_Number *st
 	Esvg_Element *thiz;
 
 	thiz = _esvg_element_get(t);
-	_esvg_element_attribute_number_get(&thiz->current_attr->stop_opacity,
+	esvg_attribute_animated_number_get(&thiz->current_attr->stop_opacity,
 		stop_opacity);
 }
 
@@ -1012,7 +840,7 @@ static void _esvg_element_visibility_set(Edom_Tag *t, Esvg_Animated_Bool *visibi
 	Esvg_Element *thiz;
 
 	thiz = _esvg_element_get(t);
-	//_esvg_element_attribute_bool_set(&thiz->current_attr->visibility,
+	//esvg_attribute_animated_bool_set(&thiz->current_attr->visibility,
 	//	visibility, EINA_TRUE, thiz->current_attr_animate);
 }
 

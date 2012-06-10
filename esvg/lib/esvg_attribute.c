@@ -53,6 +53,25 @@ void esvg_attribute_transform_unset(Esvg_Attribute_Transform *a,
 	a->v = *def;
 
 }
+
+void esvg_attribute_animated_transform_set(Esvg_Attribute_Animated_Transform *aa,
+	const Esvg_Animated_Transform *v,
+	const Enesim_Matrix *def,
+	Eina_Bool animate)
+{
+	Esvg_Attribute_Transform *a;
+	/* get the attribute to change */
+	if (animate)
+		a = &aa->anim;
+	else
+		a = &aa->base;
+	/* get the value to set */
+	if (v)
+		esvg_attribute_transform_set(a, &v->base, def);
+	else
+		esvg_attribute_transform_unset(a, def);
+}
+
 /*----------------------------------------------------------------------------*
  *                                  Color                                     *
  *----------------------------------------------------------------------------*/
@@ -104,6 +123,57 @@ void esvg_attribute_color_merge_rel(const Esvg_Attribute_Color *rel,
 	{
 		d->v = v->v;
 		d->is_set = EINA_TRUE;
+	}
+}
+
+void esvg_attribute_animated_color_set(Esvg_Attribute_Animated_Color *aa,
+	const Esvg_Animated_Color *v,
+	const Esvg_Color *def,
+	Eina_Bool animate)
+{
+	Esvg_Attribute_Color *a;
+
+	/* get the attribute to change */
+	if (animate)
+		a = &aa->anim;
+	else
+		a = &aa->base;
+	/* get the value to set */
+	if (v)
+		esvg_attribute_color_set(a, &v->base, def);
+	else
+		esvg_attribute_color_unset(a, def);
+}
+
+void esvg_attribute_animated_color_get(Esvg_Attribute_Animated_Color *aa,
+	Esvg_Animated_Color *v)
+{
+	if (!v) return;
+
+	v->base = aa->base.v;
+	if (aa->animated && aa->anim.is_set)
+		v->anim = aa->anim.v;
+	else
+		v->anim = v->base;
+}
+
+void esvg_attribute_color_unset(Esvg_Attribute_Color *a, const Esvg_Color *def)
+{
+	a->v = *def;
+	a->is_set = EINA_FALSE;
+}
+
+void esvg_attribute_color_set(Esvg_Attribute_Color *a, const Esvg_Color *v,
+		const Esvg_Color *def)
+{
+	if (!v)
+	{
+		esvg_attribute_color_unset(a, def);
+	}
+	else
+	{
+		a->v = *v;
+		a->is_set = EINA_TRUE;
 	}
 }
 /*----------------------------------------------------------------------------*
@@ -159,6 +229,52 @@ void esvg_attribute_string_merge_rel(const Esvg_Attribute_String *rel,
 		d->is_set = EINA_TRUE;
 	}
 }
+
+void esvg_attribute_length_unset(Esvg_Attribute_Length *a, const Esvg_Length *def)
+{
+	a->v = *def;
+	a->is_set = EINA_FALSE;
+}
+
+void esvg_attribute_length_set(Esvg_Attribute_Length *a, const Esvg_Length *v,
+		const Esvg_Length *def)
+{
+	if (!v)
+	{
+		esvg_attribute_length_unset(a, def);
+	}
+	else
+	{
+		a->v = *v;
+		a->is_set = EINA_TRUE;
+	}
+}
+
+void esvg_attribute_string_unset(Esvg_Attribute_String *a)
+{
+	if (a->v)
+	{
+		free(a->v);
+		a->v = NULL;
+		a->is_set = EINA_FALSE;
+	}
+}
+
+
+void esvg_attribute_string_set(Esvg_Attribute_String *a, const char *v)
+{
+	if (a->v == v)
+		return;
+
+	esvg_attribute_string_unset(a);
+	if (v)
+	{
+		a->v = strdup(v);
+		a->is_set = EINA_TRUE;
+	}
+}
+
+
 /*----------------------------------------------------------------------------*
  *                                 Length                                     *
  *----------------------------------------------------------------------------*/
@@ -211,6 +327,36 @@ void esvg_attribute_length_merge_rel(const Esvg_Attribute_Length *rel,
 		d->v = v->v;
 		d->is_set = EINA_TRUE;
 	}
+}
+
+void esvg_attribute_animated_length_set(Esvg_Attribute_Animated_Length *aa,
+	const Esvg_Animated_Length *v,
+	const Esvg_Length *def,
+	Eina_Bool animate)
+{
+	Esvg_Attribute_Length *a;
+	/* get the attribute to change */
+	if (animate)
+		a = &aa->anim;
+	else
+		a = &aa->base;
+	/* get the value to set */
+	if (v)
+		esvg_attribute_length_set(a, &v->base, def);
+	else
+		esvg_attribute_length_unset(a, def);
+}
+
+void esvg_attribute_animated_length_get(Esvg_Attribute_Animated_Length *aa,
+	Esvg_Animated_Length *v)
+{
+	if (!v) return;
+
+	v->base = aa->base.v;
+	if (aa->animated && aa->anim.is_set)
+		v->anim = aa->anim.v;
+	else
+		v->anim = v->base;
 }
 /*----------------------------------------------------------------------------*
  *                                  Bool                                      *
@@ -265,6 +411,51 @@ void esvg_attribute_bool_merge_rel(const Esvg_Attribute_Bool *rel,
 		d->is_set = EINA_TRUE;
 	}
 }
+
+void esvg_attribute_animated_bool_set(Esvg_Attribute_Animated_Bool *aa,
+	const Esvg_Animated_Bool *v,
+	Eina_Bool def,
+	Eina_Bool animate)
+{
+	Esvg_Attribute_Bool *a;
+	/* get the attribute to change */
+	if (animate)
+		a = &aa->anim;
+	else
+		a = &aa->base;
+	/* get the value to set */
+	if (v)
+		esvg_attribute_bool_set(a, v->base);
+	else
+		esvg_attribute_bool_unset(a, def);
+}
+
+void esvg_attribute_amimated_bool_get(Esvg_Attribute_Animated_Bool *aa,
+	Esvg_Animated_Bool *v)
+{
+	if (!v) return;
+
+	v->base = aa->base.v;
+	if (aa->animated && aa->anim.is_set)
+		v->anim = aa->anim.v;
+	else
+		v->anim = v->base;
+}
+
+
+
+void esvg_attribute_bool_unset(Esvg_Attribute_Bool *a, Eina_Bool def)
+{
+	a->v = def;
+	a->is_set = EINA_FALSE;
+}
+
+void esvg_attribute_bool_set(Esvg_Attribute_Bool *a, Eina_Bool v)
+{
+	a->v = v;
+	a->is_set = EINA_TRUE;
+}
+
 /*----------------------------------------------------------------------------*
  *                                 Number                                     *
  *----------------------------------------------------------------------------*/
@@ -318,6 +509,51 @@ void esvg_attribute_number_merge_rel(const Esvg_Attribute_Number *rel,
 		d->is_set = EINA_TRUE;
 	}
 }
+
+/* TODO pass the possible range values */
+void esvg_attribute_animated_number_set(Esvg_Attribute_Animated_Number *aa,
+	const Esvg_Animated_Number *v,
+	double def,
+	Eina_Bool animate)
+{
+	Esvg_Attribute_Number *a;
+	/* get the attribute to change */
+	if (animate)
+		a = &aa->anim;
+	else
+		a = &aa->base;
+	/* get the value to set */
+	if (v)
+		esvg_attribute_number_set(a, v->base);
+	else
+		esvg_attribute_number_unset(a, def);
+}
+
+void esvg_attribute_animated_number_get(Esvg_Attribute_Animated_Number *aa,
+	Esvg_Animated_Number *v)
+{
+	if (!v) return;
+
+	v->base = aa->base.v;
+	if (aa->animated && aa->anim.is_set)
+		v->anim = aa->anim.v;
+	else
+		v->anim = v->base;
+}
+
+void esvg_attribute_number_unset(Esvg_Attribute_Number *a, double def)
+{
+	a->v = def;
+	a->is_set = EINA_FALSE;
+}
+
+void esvg_attribute_number_set(Esvg_Attribute_Number *a, double v)
+{
+	a->v = v;
+	a->is_set = EINA_TRUE;
+}
+
+
 /*----------------------------------------------------------------------------*
  *                                  Paint                                     *
  *----------------------------------------------------------------------------*/
@@ -371,6 +607,58 @@ void esvg_attribute_paint_merge_rel(const Esvg_Attribute_Paint *rel,
 		d->is_set = EINA_TRUE;
 	}
 }
+
+void esvg_attribute_animated_paint_set(Esvg_Attribute_Animated_Paint *aa,
+	const Esvg_Animated_Paint *v,
+	const Esvg_Paint *def,
+	Eina_Bool animate)
+{
+	Esvg_Attribute_Paint *a;
+
+	/* get the attribute to change */
+	if (animate)
+		a = &aa->anim;
+	else
+		a = &aa->base;
+	/* get the value to set */
+	if (v)
+		esvg_attribute_paint_set(a, &v->base, def);
+	else
+		esvg_attribute_paint_unset(a, def);
+}
+
+void esvg_attribute_animated_paint_get(Esvg_Attribute_Animated_Paint *aa,
+	Esvg_Animated_Paint *v)
+{
+	if (!v) return;
+
+	v->base = aa->base.v;
+	if (aa->animated && aa->anim.is_set)
+		v->anim = aa->anim.v;
+	else
+		v->anim = v->base;
+}
+
+void esvg_attribute_paint_unset(Esvg_Attribute_Paint *a, const Esvg_Paint *def)
+{
+	a->v = *def;
+	a->is_set = EINA_FALSE;
+}
+
+void esvg_attribute_paint_set(Esvg_Attribute_Paint *a, const Esvg_Paint *v,
+		const Esvg_Paint *def)
+{
+	if (!v)
+	{
+		esvg_attribute_paint_unset(a, def);
+	}
+	else
+	{
+		a->v = *v;
+		a->is_set = EINA_TRUE;
+	}
+}
+
 /*----------------------------------------------------------------------------*
  *                                  Enum                                      *
  *----------------------------------------------------------------------------*/
@@ -425,117 +713,6 @@ void esvg_attribute_enum_merge_rel(const Esvg_Attribute_Enum *rel,
 	}
 }
 
-/*----------------------------------------------------------------------------*
- *                              Normal attributes                             *
- *----------------------------------------------------------------------------*/
-void esvg_attribute_string_unset(Esvg_Attribute_String *a)
-{
-	if (a->v)
-	{
-		free(a->v);
-		a->v = NULL;
-		a->is_set = EINA_FALSE;
-	}
-}
-
-
-void esvg_attribute_string_set(Esvg_Attribute_String *a, const char *v)
-{
-	if (a->v == v)
-		return;
-
-	esvg_attribute_string_unset(a);
-	if (v)
-	{
-		a->v = strdup(v);
-		a->is_set = EINA_TRUE;
-	}
-}
-
-void esvg_attribute_color_unset(Esvg_Attribute_Color *a, const Esvg_Color *def)
-{
-	a->v = *def;
-	a->is_set = EINA_FALSE;
-}
-
-void esvg_attribute_color_set(Esvg_Attribute_Color *a, const Esvg_Color *v,
-		const Esvg_Color *def)
-{
-	if (!v)
-	{
-		esvg_attribute_color_unset(a, def);
-	}
-	else
-	{
-		a->v = *v;
-		a->is_set = EINA_TRUE;
-	}
-}
-
-void esvg_attribute_paint_unset(Esvg_Attribute_Paint *a, const Esvg_Paint *def)
-{
-	a->v = *def;
-	a->is_set = EINA_FALSE;
-}
-
-void esvg_attribute_paint_set(Esvg_Attribute_Paint *a, const Esvg_Paint *v,
-		const Esvg_Paint *def)
-{
-	if (!v)
-	{
-		esvg_attribute_paint_unset(a, def);
-	}
-	else
-	{
-		a->v = *v;
-		a->is_set = EINA_TRUE;
-	}
-}
-
-void esvg_attribute_number_unset(Esvg_Attribute_Number *a, double def)
-{
-	a->v = def;
-	a->is_set = EINA_FALSE;
-}
-
-void esvg_attribute_number_set(Esvg_Attribute_Number *a, double v)
-{
-	a->v = v;
-	a->is_set = EINA_TRUE;
-}
-
-void esvg_attribute_length_unset(Esvg_Attribute_Length *a, const Esvg_Length *def)
-{
-	a->v = *def;
-	a->is_set = EINA_FALSE;
-}
-
-void esvg_attribute_length_set(Esvg_Attribute_Length *a, const Esvg_Length *v,
-		const Esvg_Length *def)
-{
-	if (!v)
-	{
-		esvg_attribute_length_unset(a, def);
-	}
-	else
-	{
-		a->v = *v;
-		a->is_set = EINA_TRUE;
-	}
-}
-
-void esvg_attribute_bool_unset(Esvg_Attribute_Bool *a, Eina_Bool def)
-{
-	a->v = def;
-	a->is_set = EINA_FALSE;
-}
-
-void esvg_attribute_bool_set(Esvg_Attribute_Bool *a, Eina_Bool v)
-{
-	a->v = v;
-	a->is_set = EINA_TRUE;
-}
-
 void esvg_attribute_enum_unset(Esvg_Attribute_Enum *a, int def)
 {
 	a->v = def;
@@ -547,7 +724,9 @@ void esvg_attribute_enum_set(Esvg_Attribute_Enum *a, int v)
 	a->v = v;
 	a->is_set = EINA_TRUE;
 }
-
+/*----------------------------------------------------------------------------*
+ *                              Normal attributes                             *
+ *----------------------------------------------------------------------------*/
 #if 0
 /* color default = black
  * opacity default = 1.0
