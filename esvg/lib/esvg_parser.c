@@ -55,7 +55,7 @@
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
-#define ESVG_LOG_DEFAULT esvg_log_text
+#define ESVG_LOG_DEFAULT esvg_log_parser
 
 typedef struct _Esvg_Parser
 {
@@ -63,6 +63,31 @@ typedef struct _Esvg_Parser
 	Ender_Element *topmost;
 	void *data;
 } Esvg_Parser;
+
+static void _esvg_parser_tree_dump(Edom_Tag *t, int level);
+
+static Eina_Bool _esvg_parser_tree_dump_cb(Edom_Tag *t, Edom_Tag *child, void *data)
+{
+	int level = (int)data;
+
+	_esvg_parser_tree_dump(child, level);
+	return EINA_TRUE;
+}
+
+static void _esvg_parser_tree_dump(Edom_Tag *t, int level)
+{
+	char out[PATH_MAX];
+	const char *name;
+	int i;
+
+	for (i = 0; i < level; i++)
+		out[i] = ' ';
+	out[i] = '\0';
+	name = edom_tag_name_get(t);
+	strncat(out, name ? name : "(UNKNOWN)", PATH_MAX - i);
+	INFO("%s", out);
+	edom_tag_child_foreach(t, _esvg_parser_tree_dump_cb, (void *)level + 1);
+}
 
 static char * _esvg_parser_file_open(const char *filename, long *sz)
 {
@@ -643,7 +668,7 @@ EAPI Ender_Element * esvg_parser_load(const char *filename,
 	Esvg_Parser *thiz;
 	Edom_Parser *parser;
 	Ender_Element *e = NULL;
-	Eina_List *l;
+	Edom_Tag *t;
 
 	thiz = calloc(1, sizeof(Esvg_Parser));
 	thiz->data = data;
@@ -655,10 +680,8 @@ EAPI Ender_Element * esvg_parser_load(const char *filename,
 	if (!e) goto parse_failed;
 
 	/* useful for debugging */
-	{
-		Edom_Tag *t = ender_element_object_get(e);
-		edom_tag_dump(t);
-	}
+	t = ender_element_object_get(e);
+	_esvg_parser_tree_dump(t, 0);
 	/* TODO whenever the file has been parsed trigger the onload
 	 * event?
 	 */

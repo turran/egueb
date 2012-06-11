@@ -57,6 +57,11 @@ extern int esvg_log_type;
 #endif
 #define ERR(...) EINA_LOG_DOM_ERR(ESVG_LOG_DEFAULT, __VA_ARGS__)
 
+#ifdef INFO
+# undef INFO
+#endif
+#define INFO(...) EINA_LOG_DOM_INFO(ESVG_LOG_DEFAULT, __VA_ARGS__)
+
 #ifdef DBG
 # undef DBG
 #endif
