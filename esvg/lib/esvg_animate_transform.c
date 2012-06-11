@@ -41,19 +41,40 @@
  *============================================================================*/
 static Ender_Property *ESVG_ANIMATE_TRANSFORM_TYPE;
 
+typedef union _Esvg_Animate_Transform_Data
+{
+	struct {
+		double angle;
+		double cx;
+		double cy;	
+	} rotate;
+
+	struct {
+		double sx;
+		double sy;
+	} scale;
+
+	struct {
+		double tx;
+		double ty;
+	} translate;
+
+	struct {
+		double angle;
+	} skew;
+} Esvg_Animate_Transform_Data;
+
 typedef struct _Esvg_Animate_Transform
 {
 	/* properties */
 	Esvg_Animate_Transform_Type type;
 	/* interface */
 	/* private */
+	Esvg_Animate_Transform_Data data;
 	Etch_Animation *anim;
 	Ender_Property *prop;
 	Ender_Element *parent_e;
 	Edom_Tag *parent_t;
-	double from;
-	double to;
-	double by;
 } Esvg_Animate_Transform;
 
 static Esvg_Animate_Transform * _esvg_animate_transform_get(Edom_Tag *t)
@@ -70,7 +91,67 @@ static Esvg_Animate_Transform * _esvg_animate_transform_get(Edom_Tag *t)
 /*----------------------------------------------------------------------------*
  *                         The Etch animator callbacks                        *
  *----------------------------------------------------------------------------*/
-static void _esvg_animate_transform_cb(Etch_Animation_Keyframe *k,
+static void _esvg_animate_transform_rotate_cb(Etch_Animation_Keyframe *k,
+		const Etch_Data *curr,
+		const Etch_Data *prev,
+		void *data)
+{
+	Esvg_Animate_Transform *thiz = data;
+	Esvg_Animated_Transform v;
+	Enesim_Matrix m;
+
+	enesim_matrix_rotate(&m, curr->data.d);
+	v.base = m;
+
+	ender_element_property_value_set(thiz->parent_e, thiz->prop, &v, NULL);
+}
+
+static void _esvg_animate_transform_translate_cb(Etch_Animation_Keyframe *k,
+		const Etch_Data *curr,
+		const Etch_Data *prev,
+		void *data)
+{
+	Esvg_Animate_Transform *thiz = data;
+	Esvg_Animated_Transform v;
+	Enesim_Matrix m;
+
+	enesim_matrix_rotate(&m, curr->data.d);
+	v.base = m;
+
+	ender_element_property_value_set(thiz->parent_e, thiz->prop, &v, NULL);
+}
+
+static void _esvg_animate_transform_scale_cb(Etch_Animation_Keyframe *k,
+		const Etch_Data *curr,
+		const Etch_Data *prev,
+		void *data)
+{
+	Esvg_Animate_Transform *thiz = data;
+	Esvg_Animated_Transform v;
+	Enesim_Matrix m;
+
+	enesim_matrix_rotate(&m, curr->data.d);
+	v.base = m;
+
+	ender_element_property_value_set(thiz->parent_e, thiz->prop, &v, NULL);
+}
+
+static void _esvg_animate_transform_skewx_cb(Etch_Animation_Keyframe *k,
+		const Etch_Data *curr,
+		const Etch_Data *prev,
+		void *data)
+{
+	Esvg_Animate_Transform *thiz = data;
+	Esvg_Animated_Transform v;
+	Enesim_Matrix m;
+
+	enesim_matrix_rotate(&m, curr->data.d);
+	v.base = m;
+
+	ender_element_property_value_set(thiz->parent_e, thiz->prop, &v, NULL);
+}
+
+static void _esvg_animate_transform_skewy_cb(Etch_Animation_Keyframe *k,
 		const Etch_Data *curr,
 		const Etch_Data *prev,
 		void *data)
@@ -90,21 +171,48 @@ static Eina_Bool _esvg_animate_transform_container_etch_to(Esvg_Animate_Transfor
 {
 	Ender_Container *ec;
 	Etch_Animation *a;
-	Etch_Data_Type dt;
 	Etch_Data from;
 	Etch_Data to;
-	Etch_Animation_Callback cb;
+	Etch_Animation_Callback cb = NULL;
 	Etch_Animation_Keyframe *kf;
 	const char *name;
 
 	ec = ender_property_container_get(p);
 	name = ender_container_registered_name_get(ec);
 
-	if (!strcmp(name, "esvg_animated_transform"))
+	if (strcmp(name, "esvg_animated_transform"))
+		return EINA_FALSE;
+	/* get the type that we will animate: rotate, scale, etc */
+	switch (thiz->type)
 	{
-		dt = ETCH_DOUBLE;
-		cb = _esvg_animate_transform_cb;
+		case ESVG_ANIMATE_TRANSFORM_TYPE_TRANSLATE:
+		cb = _esvg_animate_transform_translate_cb;
+		break;
 
+		case ESVG_ANIMATE_TRANSFORM_TYPE_ROTATE:
+		cb = _esvg_animate_transform_rotate_cb;
+		break;
+
+		case ESVG_ANIMATE_TRANSFORM_TYPE_SCALE:
+		cb = _esvg_animate_transform_scale_cb;
+		break;
+
+		case ESVG_ANIMATE_TRANSFORM_TYPE_SKEWX:
+		cb = _esvg_animate_transform_skewx_cb;
+		break;
+
+		case ESVG_ANIMATE_TRANSFORM_TYPE_SKEWY:
+		cb = _esvg_animate_transform_skewy_cb;
+		break;
+	}
+
+	if (!cb) return EINA_FALSE;
+
+	/* we should add one one animation for each data found */
+	/* the animation always animates doubles */
+	a = etch_animation_add(etch, ETCH_DOUBLE, cb, NULL, NULL, thiz);
+	/* add the keyframes */
+	{
 		//thiz->from = esvg_number_string_from(c->value.from, 1.0);
 		//thiz->to = esvg_number_string_from(c->value.to, 1.0);
 		//from.data.d = thiz->from;
@@ -117,12 +225,7 @@ static Eina_Bool _esvg_animate_transform_container_etch_to(Esvg_Animate_Transfor
 		/* TODO replace the anim with a list of animations */
 		/* TODO make global the possibility to parse comma or space separated values optionally */
 	}
-	else
-	{
-		return EINA_FALSE;
-	}
 
-	a = etch_animation_add(etch, dt, cb, NULL, NULL, thiz);
 	/* FIXME for now we add two keyframes */
 	/* second keyframe */
 	kf = etch_animation_keyframe_add(a);

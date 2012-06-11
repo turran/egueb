@@ -123,9 +123,6 @@ namespace "esvg" {
 		double "y_dpi";
 	};
 
-	abstract "instantiable" : "renderable" {
-	};
-
 	abstract "paint_server" : "referenceable" {
 
 	};
@@ -184,7 +181,7 @@ namespace "esvg" {
 		esvg_length "r";
 	};
 
-	class "svg" : "instantiable" {
+	class "svg" : "renderable" {
 		esvg_length "x";
 		esvg_length "y";
 		esvg_length "width";
@@ -194,11 +191,11 @@ namespace "esvg" {
 		esvg_viewbox "viewbox";
 	};
 
-	class "g" : "instantiable" {
+	class "g" : "renderable" {
 
 	};
 
-	class "use" : "instantiable" {
+	class "use" : "renderable" {
 		esvg_length "x";
 		esvg_length "y";
 		esvg_length "width";
@@ -206,7 +203,7 @@ namespace "esvg" {
 		string "link";
 	};
 
-	class "rect" : "instantiable" {
+	class "rect" : "renderable" {
 		esvg_animated_length "x";
 		esvg_animated_length "y";
 		esvg_animated_length "width";
@@ -215,39 +212,39 @@ namespace "esvg" {
 		esvg_animated_length "ry";
 	};
 
-	class "ellipse" : "instantiable" {
+	class "ellipse" : "renderable" {
 		esvg_length "cx";
 		esvg_length "cy";
 		esvg_length "rx";
 		esvg_length "ry";
 	};
 
-	class "circle" : "instantiable" {
+	class "circle" : "renderable" {
 		esvg_length "cx";
 		esvg_length "cy";
 		esvg_length "r";
 	};
 
-	class "path" : "instantiable" {
+	class "path" : "renderable" {
 		[esvg_path_command] "d";
 	};
 
-	class "line" : "instantiable" {
+	class "line" : "renderable" {
 		esvg_length "x1";
 		esvg_length "x2";
 		esvg_length "y1";
 		esvg_length "y2";
 	};
 
-	class "polyline" : "instantiable" {
+	class "polyline" : "renderable" {
 		[esvg_point] "point";
 	};
 
-	class "polygon" : "instantiable" {
+	class "polygon" : "renderable" {
 		[esvg_point] "point";
 	};
 
-	class "text" : "instantiable" {
+	class "text" : "renderable" {
 		esvg_length "x";
 		esvg_length "y";
 	};
@@ -264,7 +261,7 @@ namespace "esvg" {
 		string "href";
 	};
 
-	class "image" : "instantiable" {
+	class "image" : "renderable" {
 		esvg_animated_length "x";
 		esvg_animated_length "y";
 		esvg_animated_length "width";

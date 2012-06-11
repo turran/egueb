@@ -66,34 +66,13 @@ typedef struct _Esvg_Gradient_State
 	char *href;
 } Esvg_Gradient_State;
 
-/* FIXME share this */
-typedef struct _Esvg_Property_Gradient_Units
-{
-	Esvg_Gradient_Units v;
-	Eina_Bool is_set;
-} Esvg_Property_Gradient_Units;
-
-/* FIXME share this */
-typedef struct _Esvg_Property_Spread_Method
-{
-	Esvg_Spread_Method v;
-	Eina_Bool is_set;
-} Esvg_Property_Spread_Method;
-
-/* FIXME share this */
-typedef struct _Esvg_Property_Transform
-{
-	Enesim_Matrix v;
-	Eina_Bool is_set;
-} Esvg_Property_Transform;
-
 typedef struct _Esvg_Gradient
 {
 	EINA_MAGIC
 	/* properties */
-	Esvg_Property_Gradient_Units units;
-	Esvg_Property_Spread_Method spread_method;
-	Esvg_Property_Transform transform;
+	Esvg_Attribute_Enum units;
+	Esvg_Attribute_Enum spread_method;
+	Esvg_Attribute_Transform transform;
 	Esvg_Gradient_State current;
 	Esvg_Gradient_State past;
 	/* private */
@@ -383,12 +362,13 @@ static Eina_Bool _esvg_gradient_propagate(Edom_Tag *t,
 		Esvg_Context *c,
 		const Esvg_Element_Context *ctx,
 		const Esvg_Attribute_Presentation *attr,
-		Enesim_Renderer *r,
+		void *data,
 		Enesim_Error **error)
 {
 	Esvg_Gradient *thiz;
 	Esvg_Gradient_Context gctx;
 	Eina_Bool ret = EINA_TRUE;
+	Enesim_Renderer *r = data;
 
 	thiz = _esvg_gradient_get(t);
 	if (thiz->stops_changed)

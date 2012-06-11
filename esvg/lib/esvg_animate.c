@@ -267,7 +267,7 @@ static Eina_Bool _esvg_animate_container_etch_to(Esvg_Animate *thiz, Etch *etch,
 		}
 		else
 		{
-			/* now the times */
+			/* every keyframe has the same time */
 			tdata.thiz = thiz;
 			tdata.idx = 0;
 			tdata.time = 0;

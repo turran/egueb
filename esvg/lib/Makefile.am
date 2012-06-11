@@ -34,7 +34,6 @@ esvg_g.c \
 esvg_gradient.c \
 esvg_image.c \
 esvg_input.c \
-esvg_instantiable.c \
 esvg_line.c \
 esvg_linear_gradient.c \
 esvg_main.c \

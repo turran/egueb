@@ -14,7 +14,6 @@ esvg_generated_ellipse.c \
 esvg_generated_g.c \
 esvg_generated_gradient.c \
 esvg_generated_image.c \
-esvg_generated_instantiable.c \
 esvg_generated_paint_server.c \
 esvg_generated_polygon.c \
 esvg_generated_polyline.c \

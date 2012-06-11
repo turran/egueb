@@ -24,7 +24,6 @@
 #include "esvg_private_context.h"
 #include "esvg_private_element.h"
 #include "esvg_private_renderable.h"
-#include "esvg_private_instantiable.h"
 #include "esvg_g.h"
 /*============================================================================*
  *                                  Local                                     *
@@ -45,7 +44,7 @@ static Esvg_G * _esvg_g_get(Edom_Tag *t)
 
 	if (esvg_element_internal_type_get(t) != ESVG_G)
 		return NULL;
-	thiz = esvg_instantiable_data_get(t);
+	thiz = esvg_renderable_data_get(t);
 
 	return thiz;
 }
@@ -160,7 +159,7 @@ static Eina_Bool _esvg_g_renderer_propagate(Edom_Tag *t,
 	return EINA_TRUE;
 }
 
-static Esvg_Instantiable_Descriptor _descriptor = {
+static Esvg_Renderable_Descriptor _descriptor = {
 	/* .child_add		= */ _esvg_g_child_add,
 	/* .child_remove	= */ _esvg_g_child_remove,
 	/* .attribute_get 	= */ NULL,
@@ -189,7 +188,7 @@ static Edom_Tag * _esvg_g_new(void)
 	thiz->r = r;
 	enesim_renderer_rop_set(r, ENESIM_BLEND);
 
-	t = esvg_instantiable_new(&_descriptor, ESVG_G, thiz);
+	t = esvg_renderable_new(&_descriptor, ESVG_G, thiz);
 	return t;
 }
 /*============================================================================*

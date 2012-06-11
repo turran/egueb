@@ -24,7 +24,6 @@
 #include "esvg_private_context.h"
 #include "esvg_private_element.h"
 #include "esvg_private_renderable.h"
-#include "esvg_private_instantiable.h"
 #include "esvg_private_svg.h"
 #include "esvg_private_a.h"
 #include "esvg_private_input.h"
@@ -123,7 +122,7 @@ static Esvg_Svg * _esvg_svg_get(Edom_Tag *t)
 
 	if (esvg_element_internal_type_get(t) != ESVG_SVG)
 		return NULL;
-	thiz = esvg_instantiable_data_get(t);
+	thiz = esvg_renderable_data_get(t);
 
 	return thiz;
 }
@@ -753,7 +752,7 @@ static void _esvg_svg_free(Edom_Tag *t)
 	free(thiz);
 }
 
-static Esvg_Instantiable_Descriptor _descriptor = {
+static Esvg_Renderable_Descriptor _descriptor = {
 	/* .child_add		= */ _esvg_svg_child_add,
 	/* .child_remove	= */ _esvg_svg_child_remove,
 	/* .attribute_get 	= */ _esvg_svg_attribute_get,
@@ -809,7 +808,7 @@ static Edom_Tag * _esvg_svg_new(void)
 	thiz->etch = etch_new();
 	etch_timer_fps_set(thiz->etch, 30);
 
-	t = esvg_instantiable_new(&_descriptor, ESVG_SVG, thiz);
+	t = esvg_renderable_new(&_descriptor, ESVG_SVG, thiz);
 	return t;
 }
 

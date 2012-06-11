@@ -1735,6 +1735,7 @@ EAPI Eina_Bool esvg_list_string_from(const char *attr, char sep, Esvg_List_Cb cb
 {
 	char *found;
 
+	if (!attr) return EINA_FALSE;
 	if (!cb) return EINA_FALSE;
 
 	ESVG_SPACE_SKIP(attr);
@@ -1750,6 +1751,37 @@ EAPI Eina_Bool esvg_list_string_from(const char *attr, char sep, Esvg_List_Cb cb
 	if (attr)
 		cb(attr, data);
 
+	return EINA_TRUE;
+}
+
+EAPI Eina_Bool esvg_number_list_string_from(const char *attr, Esvg_Number_List_Cb cb, void *data)
+{
+	const char *tmp = attr;
+	char *end;
+
+	if (!attr) return EINA_FALSE;
+	if (!cb) return EINA_FALSE;
+
+	ESVG_SPACE_SKIP(tmp);
+	while (tmp)
+	{
+		double val;
+
+		ESVG_SPACE_SKIP(tmp);
+		if (!*tmp)
+			break;
+
+		val = strtod(tmp, &end);
+		if (errno == ERANGE)
+			val = 0;
+		if (end == tmp)
+			break;
+		tmp = end;
+		if (!cb(val, data))
+			break;
+		/* skip the comma and the blanks */
+		ESVG_SPACE_COMMA_SKIP(tmp);
+	}
 	return EINA_TRUE;
 }
 

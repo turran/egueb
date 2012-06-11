@@ -46,7 +46,6 @@ esvg_private_context.h \
 esvg_private_element.h \
 esvg_private_gradient.h \
 esvg_private_input.h \
-esvg_private_instantiable.h \
 esvg_private_main.h \
 esvg_private_paint_server.h \
 esvg_private_referenceable.h \

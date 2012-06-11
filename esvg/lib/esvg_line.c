@@ -24,7 +24,6 @@
 #include "esvg_private_context.h"
 #include "esvg_private_element.h"
 #include "esvg_private_renderable.h"
-#include "esvg_private_instantiable.h"
 #include "esvg_line.h"
 /*============================================================================*
  *                                  Local                                     *
@@ -60,7 +59,7 @@ static Esvg_Line * _esvg_line_get(Edom_Tag *t)
 
 	if (esvg_element_internal_type_get(t) != ESVG_LINE)
 		return NULL;
-	thiz = esvg_instantiable_data_get(t);
+	thiz = esvg_renderable_data_get(t);
 
 	return thiz;
 }
@@ -193,7 +192,7 @@ static void _esvg_line_free(Edom_Tag *t)
 	free(thiz);
 }
 
-static Esvg_Instantiable_Descriptor _descriptor = {
+static Esvg_Renderable_Descriptor _descriptor = {
 	/* .child_add		= */ NULL,
 	/* .child_remove	= */ NULL,
 	/* .attribute_get 	= */ _esvg_line_attribute_get,
@@ -224,7 +223,7 @@ static Edom_Tag * _esvg_line_new(void)
 	/* default values */
 	/* FIXME defualt values */
 
-	t = esvg_instantiable_new(&_descriptor, ESVG_LINE, thiz);
+	t = esvg_renderable_new(&_descriptor, ESVG_LINE, thiz);
 	return t;
 }
 

@@ -31,7 +31,7 @@
 #include "esvg_private_element.h"
 #include "esvg_private_a.h"
 #include "esvg_private_referenceable.h"
-#include "esvg_private_instantiable.h"
+#include "esvg_private_renderable.h"
 #include "esvg_private_paint_server.h"
 #include "esvg_private_gradient.h"
 #include "esvg_private_animation.h"
@@ -81,7 +81,6 @@ static void _register_enders(void *data)
 	esvg_element_init();
 	esvg_referenceable_init();
 	esvg_renderable_init();
-	esvg_instantiable_init();
 	esvg_paint_server_init();
 	esvg_gradient_init();
 	/* now the classes */

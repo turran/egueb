@@ -26,7 +26,7 @@
 #include "esvg_a.h"
 
 /* TODO
- * whenever a child is added, if it is of type instantiable, then
+ * whenever a child is added, if it is of type renderable, then
  * register the click event, whenever the click event occurs, trigger
  * a function on the svg that will inform that the document should
  * go to another location

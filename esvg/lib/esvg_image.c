@@ -24,7 +24,6 @@
 #include "esvg_private_context.h"
 #include "esvg_private_element.h"
 #include "esvg_private_renderable.h"
-#include "esvg_private_instantiable.h"
 #include "esvg_private_svg.h"
 #include "esvg_image.h"
 /*============================================================================*
@@ -67,7 +66,7 @@ static Esvg_Image * _esvg_image_get(Edom_Tag *t)
 
 	if (esvg_element_internal_type_get(t) != ESVG_IMAGE)
 		return NULL;
-	thiz = esvg_instantiable_data_get(t);
+	thiz = esvg_renderable_data_get(t);
 	return thiz;
 }
 
@@ -289,7 +288,7 @@ static void _esvg_image_free(Edom_Tag *t)
 }
 
 
-static Esvg_Instantiable_Descriptor _descriptor = {
+static Esvg_Renderable_Descriptor _descriptor = {
 	/* .child_add		= */ NULL,
 	/* .child_remove	= */ NULL,
 	/* .attribute_get 	= */ _esvg_image_attribute_get,
@@ -342,7 +341,7 @@ static Edom_Tag * _esvg_image_new(void)
 	thiz->current.height = ESVG_LENGTH_0;
 	/* FIXME: href default value */
 
-	t = esvg_instantiable_new(&_descriptor, ESVG_IMAGE, thiz);
+	t = esvg_renderable_new(&_descriptor, ESVG_IMAGE, thiz);
 	return t;
 }
 

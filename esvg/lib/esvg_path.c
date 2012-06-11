@@ -24,7 +24,6 @@
 #include "esvg_private_context.h"
 #include "esvg_private_element.h"
 #include "esvg_private_renderable.h"
-#include "esvg_private_instantiable.h"
 #include "esvg_path.h"
 /*============================================================================*
  *                                  Local                                     *
@@ -39,6 +38,7 @@ typedef struct _Esvg_Path
 	/* properties */
 	Eina_List *commands;
 	/* private */
+	Eina_Bool d_changed : 1;
 	Enesim_Renderer *r;
 } Esvg_Path;
 
@@ -48,7 +48,7 @@ static Esvg_Path * _esvg_path_get(Edom_Tag *t)
 
 	if (esvg_element_internal_type_get(t) != ESVG_PATH)
 		return NULL;
-	thiz = esvg_instantiable_data_get(t);
+	thiz = esvg_renderable_data_get(t);
 
 	return thiz;
 }
@@ -59,7 +59,6 @@ static void _esvg_path_command_cb(Esvg_Path_Command *cmd, void *data)
 
 	esvg_path_d_add(e, cmd);
 }
-
 /*----------------------------------------------------------------------------*
  *                       The Esvg Renderable interface                        *
  *----------------------------------------------------------------------------*/
@@ -133,6 +132,11 @@ static Eina_Bool _esvg_path_renderer_propagate(Edom_Tag *t,
 	enesim_renderer_geometry_transformation_set(thiz->r, &ctx->transform.base);
 	enesim_renderer_color_set(thiz->r, rctx->color);
 
+	if (!thiz->d_changed)
+		return EINA_TRUE;
+
+	/* we need to generate again the commands */
+	enesim_renderer_path_command_clear(thiz->r);
 	EINA_LIST_FOREACH(thiz->commands, l, pcmd)
 	{
 		Enesim_Renderer_Path_Command cmd;
@@ -362,6 +366,7 @@ static Eina_Bool _esvg_path_renderer_propagate(Edom_Tag *t,
 		first = EINA_FALSE;
 		enesim_renderer_path_command_add(thiz->r, &cmd);
 	}
+	thiz->d_changed = EINA_FALSE;
 
 	return EINA_TRUE;
 }
@@ -374,7 +379,7 @@ void _esvg_path_free(Edom_Tag *t)
 	free(thiz);
 }
 
-static Esvg_Instantiable_Descriptor _descriptor = {
+static Esvg_Renderable_Descriptor _descriptor = {
 	/* .child_add		= */ NULL,
 	/* .child_remove	= */ NULL,
 	/* .attribute_get 	= */ _esvg_path_attribute_get,
@@ -404,7 +409,7 @@ static Edom_Tag * _esvg_path_new(void)
 	enesim_renderer_rop_set(r, ENESIM_BLEND);
 	/* default values */
 
-	t = esvg_instantiable_new(&_descriptor, ESVG_PATH, thiz);
+	t = esvg_renderable_new(&_descriptor, ESVG_PATH, thiz);
 	return t;
 }
 
@@ -418,6 +423,7 @@ static void _esvg_path_d_add(Edom_Tag *t, const Esvg_Path_Command *cmd)
 	new_cmd = calloc(1, sizeof(Esvg_Path_Command));
 	*new_cmd = *cmd;
 	thiz->commands = eina_list_append(thiz->commands, new_cmd);
+	thiz->d_changed = EINA_TRUE;
 }
 
 static void _esvg_path_d_set(Edom_Tag *t, const Eina_List *cmds)
