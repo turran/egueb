@@ -475,27 +475,7 @@ static Eina_Bool _esvg_animate_transform_container_etch_to(Esvg_Animate_Transfor
 #endif
 	}
 	setup(thiz, etch, values, times);
-#if 0
-	/* we should add one one animation for each data found */
-	/* the animation always animates doubles */
-	a = etch_animation_add(etch, ETCH_DOUBLE, cb, NULL, NULL, thiz);
-
-	/* FIXME for now we add two keyframes */
-	/* second keyframe */
-	kf = etch_animation_keyframe_add(a);
-	etch_animation_keyframe_type_set(kf, ETCH_ANIMATION_LINEAR);
-	etch_animation_keyframe_value_set(kf, &from);
-	etch_animation_keyframe_time_set(kf, 3 * ETCH_SECOND);
-	/* third keyframe */
-	kf = etch_animation_keyframe_add(a);
-	etch_animation_keyframe_type_set(kf, ETCH_ANIMATION_LINEAR);
-	etch_animation_keyframe_value_set(kf, &to);
-	etch_animation_keyframe_time_set(kf, 5 * ETCH_SECOND);
-	etch_animation_enable(a);
-#endif
 	printf("everything went ok!\n");
-
-	thiz->prop = p;
 
 	if (values)
 	{
@@ -579,6 +559,7 @@ static Eina_Bool _esvg_animate_transform_setup(Edom_Tag *t,
 	/* we should only process lengths, colors, integers, booleans, etc */
 	if (!_esvg_animate_transform_container_etch_to(thiz, etch, p, actx, abctx))
 		goto done;
+	thiz->prop = p;
 
 	/* check the type and create an animator of that container type */
 	/* on every animation callback set the animation mode on the element */
