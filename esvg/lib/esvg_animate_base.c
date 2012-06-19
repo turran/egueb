@@ -259,6 +259,14 @@ static Eina_Bool _esvg_animate_base_attribute_set(Ender_Element *e,
 	}
 	else
 	{
+		Esvg_Animate_Base *thiz;
+		Edom_Tag *t;
+
+		t = ender_element_object_get(e);
+		thiz = _esvg_animate_base_get(t);
+
+		if (thiz->descriptor.attribute_set)
+			return thiz->descriptor.attribute_set(e, key, value);
 		return EINA_FALSE;
 	}
 }

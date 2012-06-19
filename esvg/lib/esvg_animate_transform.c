@@ -35,6 +35,41 @@
  * For example you can animate a rotate from "0 60 60" to "360 60 60"
  * the syntax of the value is relative to the transform type
  * and uses the same format as the transform attribute
+ *
+ * From the svg spec:
+ * from-to animation
+ * Specifying a from value and a to value defines a simple
+ * animation, equivalent to a values list with 2 values.
+ * The animation function is defined to start with the from value,
+ * and to finish with the to value.
+ *
+ * from-by animation
+ * Specifying a from value and a by value defines a simple animation
+ * in which the animation function is defined to start with the from value,
+ * and to change this over the course of the simple duration by a delta
+ * specified with the by attribute. This may only be used with attributes
+ * that support addition (e.g. most numeric attributes).
+ *
+ * by animation
+ * Specifying only a by value defines a simple animation in which the 
+ * animation function is defined to offset the underlying value for the 
+ * attribute, using a delta that varies over the course of the simple 
+ * duration, starting from a delta of 0 and ending with the delta specified
+ * with the by attribute. This may only be used with attributes that support addition.
+ *
+ * to animation
+ * This describes an animation in which the animation function is defined
+ * to start with the underlying value for the attribute, and finish with 
+ * the value specified with the to attribute. Using this form, an author
+ * can describe an animation that will start with any current value for the
+ * attribute, and will end up at the desired to value.
+ *
+ *
+ * So at the end, in case we dont have a 'from', the animation should
+ * fetch the 'from' from the current attribute but only whenever the animation
+ * starts, by default we put an "empty" from that on the animation start
+ * it must be changed to the current value
+ * If we have a 'values' attribute set, everything else must be ignored
  */
 /*============================================================================*
  *                                  Local                                     *
@@ -46,17 +81,23 @@ typedef union _Esvg_Animate_Transform_Data
 	struct {
 		double angle;
 		double cx;
-		double cy;	
+		double cy;
+		int count;
+		int current;
 	} rotate;
 
 	struct {
 		double sx;
 		double sy;
+		int count;
+		int current;
 	} scale;
 
 	struct {
 		double tx;
 		double ty;
+		int count;
+		int current;
 	} translate;
 
 	struct {
@@ -75,7 +116,14 @@ typedef struct _Esvg_Animate_Transform
 	Ender_Property *prop;
 	Ender_Element *parent_e;
 	Edom_Tag *parent_t;
+	/* needed when generating the values */
+	Eina_List *values;
+	Eina_List *times;
+	Eina_Bool has_from : 1;
 } Esvg_Animate_Transform;
+
+typedef Eina_Bool (*Esvg_Animate_Transform_Etch_Setup)(
+		Esvg_Animate_Transform *thiz);
 
 static Esvg_Animate_Transform * _esvg_animate_transform_get(Edom_Tag *t)
 {
@@ -86,6 +134,42 @@ static Esvg_Animate_Transform * _esvg_animate_transform_get(Edom_Tag *t)
 	thiz = esvg_animate_base_data_get(t);
 
 	return thiz;
+}
+
+/* whenever the list values function is called, store the value
+ * in our own list of values
+ */
+static Eina_Bool _esvg_animate_transform_values_cb(double v, void *data)
+{
+	Eina_List **l = data;
+	double *d;
+
+	d = malloc(sizeof(double));
+	*d = v;
+
+	*l = eina_list_append(*l, d);
+	return EINA_TRUE;
+}
+
+/* this is useful for the 'values' attribute, basically we generate
+ * a list of lists of values
+ */
+static void _esvg_animate_transform_list_cb(const char *v, void *data)
+{
+	Eina_List **l = data;
+	Eina_List *rv = NULL;
+
+	esvg_number_list_string_from(v, _esvg_animate_transform_values_cb, &rv);
+	*l = eina_list_append(*l, rv);
+}
+
+static void _esvg_animate_transform_time_cb(const char *v, void *data)
+{
+	Eina_List **l = data;
+	double percent;
+
+	percent = esvg_number_string_from(v, 1.0);
+	printf("percent! %g\n", percent);
 }
 
 /*----------------------------------------------------------------------------*
@@ -165,10 +249,89 @@ static void _esvg_animate_transform_skewy_cb(Etch_Animation_Keyframe *k,
 
 	ender_element_property_value_set(thiz->parent_e, thiz->prop, &v, NULL);
 }
-
-static Eina_Bool _esvg_animate_transform_container_etch_to(Esvg_Animate_Transform *thiz, Etch *etch,
-		Ender_Property *p, Esvg_Animate_Base_Context *c)
+/*----------------------------------------------------------------------------*
+ *                             The setup variants                             *
+ *----------------------------------------------------------------------------*/
+/* on the rotate case we need to add the variant of one or three arguments
+ * if only one, then there's no need to move the origin
+ * if three, then we need to use the origin and count the times that the
+ * animation callback is being called, on the third one, set the value
+ */
+static Eina_Bool _esvg_animate_transform_rotate(Esvg_Animate_Transform *thiz)
 {
+	Eina_Bool simple = EINA_TRUE;
+	Eina_List *l;
+	Eina_List *v;
+
+	/* check if we should use the simple version */
+	EINA_LIST_FOREACH (thiz->values, l, v)
+	{
+		if (eina_list_count (v) > 1)
+		{
+			simple = EINA_FALSE;
+			break;
+		}
+	}
+	/* create the needed animations */
+	if (simple)
+	{
+		printf("simple case!\n");
+	}
+	else
+	{
+		/* generate three animations per each value
+		 * one for the angle, and two for the origin
+		 */
+		EINA_LIST_FOREACH (thiz->values, l, v)
+		{
+#if 0
+			Etch_Animation *a;
+
+			a = etch_animation_add(etch, ETCH_DOUBLE, cb, NULL, NULL, thiz);
+			kf = etch_animation_keyframe_add(a);
+			etch_animation_keyframe_type_set(kf, ETCH_ANIMATION_LINEAR);
+			etch_animation_keyframe_value_set(kf, &from);
+			etch_animation_keyframe_time_set(kf, 3 * ETCH_SECOND);
+#endif
+		}
+	}
+	return EINA_TRUE;
+}
+
+static Eina_Bool _esvg_animate_transform_translate(Esvg_Animate_Transform *thiz)
+{
+
+}
+
+static Eina_Bool _esvg_animate_transform_scale(Esvg_Animate_Transform *thiz)
+{
+
+}
+
+static Eina_Bool _esvg_animate_transform_skewx(Esvg_Animate_Transform *thiz)
+{
+
+}
+
+static Eina_Bool _esvg_animate_transform_skewy(Esvg_Animate_Transform *thiz)
+{
+
+}
+
+static Eina_Bool _esvg_animate_transform_container_etch_to(Esvg_Animate_Transform *thiz,
+		Etch *etch,
+		Ender_Property *p,
+		Esvg_Animation_Context *ac,
+		Esvg_Animate_Base_Context *c)
+{
+	Esvg_Animate_Transform_Etch_Setup setups[ESVG_ANIMATE_TRANSFORM_TYPES]  = {
+		_esvg_animate_transform_translate,
+		_esvg_animate_transform_scale,
+		_esvg_animate_transform_rotate,
+		_esvg_animate_transform_skewx,
+		_esvg_animate_transform_skewy
+	};
+	Esvg_Animate_Transform_Etch_Setup setup;
 	Ender_Container *ec;
 	Etch_Animation *a;
 	Etch_Data from;
@@ -183,30 +346,97 @@ static Eina_Bool _esvg_animate_transform_container_etch_to(Esvg_Animate_Transfor
 	if (strcmp(name, "esvg_animated_transform"))
 		return EINA_FALSE;
 	/* get the type that we will animate: rotate, scale, etc */
-	switch (thiz->type)
+	setup = setups[thiz->type];
+
+	if (thiz->values)
 	{
-		case ESVG_ANIMATE_TRANSFORM_TYPE_TRANSLATE:
-		cb = _esvg_animate_transform_translate_cb;
-		break;
+		Eina_List *v;
 
-		case ESVG_ANIMATE_TRANSFORM_TYPE_ROTATE:
-		cb = _esvg_animate_transform_rotate_cb;
-		break;
-
-		case ESVG_ANIMATE_TRANSFORM_TYPE_SCALE:
-		cb = _esvg_animate_transform_scale_cb;
-		break;
-
-		case ESVG_ANIMATE_TRANSFORM_TYPE_SKEWX:
-		cb = _esvg_animate_transform_skewx_cb;
-		break;
-
-		case ESVG_ANIMATE_TRANSFORM_TYPE_SKEWY:
-		cb = _esvg_animate_transform_skewy_cb;
-		break;
+		EINA_LIST_FREE (thiz->values, v)
+		{
+			double *d;
+			EINA_LIST_FREE (v, d);
+				free(d);
+		}
 	}
 
-	if (!cb) return EINA_FALSE;
+	if (thiz->times)
+	{
+	}
+
+	if (c->value.values)
+	{
+		esvg_list_string_from(c->value.values, ';',
+			_esvg_animate_transform_list_cb, &thiz->values);
+	}
+	else
+	{
+		/* get the duration */
+		if (c->value.from)
+		{
+			esvg_number_list_string_from(c->value.from,
+					_esvg_animate_transform_values_cb,
+					&thiz->values);
+		}
+		else
+		{
+			/* mark the missing from */
+		}
+
+		if (c->value.to)
+		{
+			esvg_number_list_string_from(c->value.to,
+					_esvg_animate_transform_values_cb,
+					&thiz->values);
+		}
+#if 0
+		else if (c->value.by)
+		{
+			/* if no from, then everything is dynamic until the animation starts */
+			/* TODO append the from to the values */
+		}
+#endif
+	}
+
+	/* generate the times list */
+	/* get the duration */
+	if (ac->timing.dur.type == ESVG_DURATION_TYPE_CLOCK)
+	{
+		int i;
+		int length;
+		int64_t duration;
+		int64_t inc;
+
+ 		length = eina_list_count(thiz->values);
+		if (!length)
+		{
+			printf("no values?\n");
+			return EINA_FALSE;
+		}
+		duration = ac->timing.dur.data.clock;
+		inc = duration / length;
+		for (i = 0; i < length; i++)
+		{
+			double *d;
+
+			d = malloc(sizeof(double));
+			*d = inc; 
+			thiz->times = eina_list_append(thiz->times, d);
+		}
+
+	}
+	else if (c->value.key_times && c->value.values)
+	{
+		/* if we have the keytimes use it? */
+#if 0
+		esvg_list_string_from(c->value.key_times, ';',
+				_esvg_animate_transform_time_cb, &vdata);
+#endif
+	}
+
+
+	printf("doing the setup %d\n", thiz->type);
+	setup(thiz);
 
 	/* we should add one one animation for each data found */
 	/* the animation always animates doubles */
@@ -266,8 +496,9 @@ static Eina_Bool _esvg_animate_transform_attribute_set(Ender_Element *e,
 
 		esvg_animate_transform_type_string_from(&type, value);
 		esvg_animate_transform_type_set(e, type);
+		return EINA_TRUE;
 	}
-	return EINA_TRUE;
+	return EINA_FALSE;
 }
 
 static Eina_Bool _esvg_animate_transform_attribute_get(Edom_Tag *tag, const char *attribute, char **value)
@@ -307,7 +538,7 @@ static Eina_Bool _esvg_animate_transform_setup(Edom_Tag *t,
 	thiz->parent_e = actx->parent_e;
 
 	/* we should only process lengths, colors, integers, booleans, etc */
-	if (!_esvg_animate_transform_container_etch_to(thiz, etch, p, abctx))
+	if (!_esvg_animate_transform_container_etch_to(thiz, etch, p, actx, abctx))
 		goto done;
 
 	/* check the type and create an animator of that container type */

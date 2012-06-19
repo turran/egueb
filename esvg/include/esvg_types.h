@@ -405,7 +405,8 @@ typedef enum _Esvg_Animate_Transform_Type
 	ESVG_ANIMATE_TRANSFORM_TYPE_SCALE,
 	ESVG_ANIMATE_TRANSFORM_TYPE_ROTATE,
 	ESVG_ANIMATE_TRANSFORM_TYPE_SKEWX,
-	ESVG_ANIMATE_TRANSFORM_TYPE_SKEWY
+	ESVG_ANIMATE_TRANSFORM_TYPE_SKEWY,
+	ESVG_ANIMATE_TRANSFORM_TYPES
 } Esvg_Animate_Transform_Type;
 
 typedef void (*Esvg_Uri_Get)(const char *uri, const char *fragment, void *data);

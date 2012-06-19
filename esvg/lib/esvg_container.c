@@ -15,34 +15,54 @@
  * License along with this library.
  * If not, see <http://www.gnu.org/licenses/>.
  */
-#include "Esvg.h"
-#include "esvg_private.h"
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
+#include "esvg_private_main.h"
+#include "esvg_private_attribute_presentation.h"
+#include "esvg_private_context.h"
+#include "esvg_private_element.h"
+#include "esvg_private_renderable.h"
+
+#include "esvg_element.h"
+#include "esvg_renderable.h"
+
+/* This abstraction should add every shape into its own list of renderables
+ * Basically <g> and <svg> should inherit from here
+ */
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
+//#define ESVG_LOG_DEFAULT esvg_log_container
+
 #define ESVG_CONTAINER_MAGIC_CHECK(d) \
 	do {\
 		if (!EINA_MAGIC_CHECK(d, ESVG_CONTAINER_MAGIC))\
 			EINA_MAGIC_FAIL(d, ESVG_CONTAINER_MAGIC);\
 	} while(0)
 
+typedef struct _Esvg_Container_Descriptor_Internal
+{
+	Edom_Tag_Free free;
+	Edom_Tag_Child_Add child_add;
+	Edom_Tag_Child_Remove child_remove;
+} Esvg_Container_Descriptor_Internal;
+
 typedef struct _Esvg_Container
 {
 	EINA_MAGIC
 	/* properties */
 	/* private */
-	Esvg_Container_Element_Add element_add;
-	Esvg_Container_Element_Remove element_remove;
-	Esvg_Container_Element_At element_at;
-	Esvg_Element_Clone clone;
+	Esvg_Container_Descriptor_Internal descriptor;
 	void *data;
 } Esvg_Container;
 
-static Esvg_Container * _esvg_container_get(Enesim_Renderer *r)
+static Esvg_Container * _esvg_container_get(Edom_Tag *t)
 {
 	Esvg_Container *thiz;
 
-	thiz = esvg_element_data_get(r);
+	thiz = esvg_renderable_data_get(t);
 	ESVG_CONTAINER_MAGIC_CHECK(thiz);
 
 	return thiz;
