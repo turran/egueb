@@ -112,18 +112,18 @@ typedef struct _Esvg_Animate_Transform
 	/* interface */
 	/* private */
 	Esvg_Animate_Transform_Data data;
-	Etch_Animation *anim;
 	Ender_Property *prop;
 	Ender_Element *parent_e;
 	Edom_Tag *parent_t;
 	/* needed when generating the values */
-	Eina_List *values;
-	Eina_List *times;
-	Eina_Bool has_from : 1;
+	Eina_List *animations;
 } Esvg_Animate_Transform;
 
 typedef Eina_Bool (*Esvg_Animate_Transform_Etch_Setup)(
-		Esvg_Animate_Transform *thiz);
+		Esvg_Animate_Transform *thiz,
+		Etch *e,
+		Eina_List *values,
+		Eina_List *times);
 
 static Esvg_Animate_Transform * _esvg_animate_transform_get(Edom_Tag *t)
 {
@@ -171,15 +171,16 @@ static void _esvg_animate_transform_time_cb(const char *v, void *data)
 	percent = esvg_number_string_from(v, 1.0);
 	printf("percent! %g\n", percent);
 }
-
 /*----------------------------------------------------------------------------*
  *                         The Etch animator callbacks                        *
  *----------------------------------------------------------------------------*/
-static void _esvg_animate_transform_rotate_cb(Etch_Animation_Keyframe *k,
+static void _esvg_animate_transform_rotate_angle_cb(Etch_Animation_Keyframe *k,
 		const Etch_Data *curr,
 		const Etch_Data *prev,
 		void *data)
 {
+	printf("angle!\n");
+#if 0
 	Esvg_Animate_Transform *thiz = data;
 	Esvg_Animated_Transform v;
 	Enesim_Matrix m;
@@ -188,6 +189,23 @@ static void _esvg_animate_transform_rotate_cb(Etch_Animation_Keyframe *k,
 	v.base = m;
 
 	ender_element_property_value_set(thiz->parent_e, thiz->prop, &v, NULL);
+#endif
+}
+
+static void _esvg_animate_transform_rotate_cx_cb(Etch_Animation_Keyframe *k,
+		const Etch_Data *curr,
+		const Etch_Data *prev,
+		void *data)
+{
+	printf("cx!\n");
+}
+
+static void _esvg_animate_transform_rotate_cy_cb(Etch_Animation_Keyframe *k,
+		const Etch_Data *curr,
+		const Etch_Data *prev,
+		void *data)
+{
+	printf("cy!\n");
 }
 
 static void _esvg_animate_transform_translate_cb(Etch_Animation_Keyframe *k,
@@ -257,14 +275,15 @@ static void _esvg_animate_transform_skewy_cb(Etch_Animation_Keyframe *k,
  * if three, then we need to use the origin and count the times that the
  * animation callback is being called, on the third one, set the value
  */
-static Eina_Bool _esvg_animate_transform_rotate(Esvg_Animate_Transform *thiz)
+static Eina_Bool _esvg_animate_transform_rotate(Esvg_Animate_Transform *thiz, Etch *e,
+		Eina_List *values, Eina_List *times)
 {
 	Eina_Bool simple = EINA_TRUE;
 	Eina_List *l;
 	Eina_List *v;
 
 	/* check if we should use the simple version */
-	EINA_LIST_FOREACH (thiz->values, l, v)
+	EINA_LIST_FOREACH (values, l, v)
 	{
 		if (eina_list_count (v) > 1)
 		{
@@ -279,41 +298,73 @@ static Eina_Bool _esvg_animate_transform_rotate(Esvg_Animate_Transform *thiz)
 	}
 	else
 	{
+		Eina_List *tt;		
+		Etch_Animation *angle;
+		Etch_Animation *cx;
+		Etch_Animation *cy;
+
 		/* generate three animations per each value
 		 * one for the angle, and two for the origin
 		 */
-		EINA_LIST_FOREACH (thiz->values, l, v)
+		angle = etch_animation_add(e, ETCH_DOUBLE, _esvg_animate_transform_rotate_angle_cb,
+					NULL, NULL, NULL);
+		cx = etch_animation_add(e, ETCH_DOUBLE, _esvg_animate_transform_rotate_cx_cb,
+					NULL, NULL, NULL);
+		cy = etch_animation_add(e, ETCH_DOUBLE, _esvg_animate_transform_rotate_cy_cb,
+					NULL, NULL, NULL);
+		tt = times;
+		EINA_LIST_FOREACH (values, l, v)
 		{
-#if 0
-			Etch_Animation *a;
+			Eina_List *ll;
+			Etch_Animation *a[3] = { angle, cx, cy };
+			int64_t *time;
+			double *vv;
+			int i = 0;
 
-			a = etch_animation_add(etch, ETCH_DOUBLE, cb, NULL, NULL, thiz);
-			kf = etch_animation_keyframe_add(a);
-			etch_animation_keyframe_type_set(kf, ETCH_ANIMATION_LINEAR);
-			etch_animation_keyframe_value_set(kf, &from);
-			etch_animation_keyframe_time_set(kf, 3 * ETCH_SECOND);
-#endif
+			time = eina_list_data_get(tt);
+			tt = eina_list_next(tt);
+			EINA_LIST_FOREACH(v, ll, vv)
+			{
+				Etch_Animation_Keyframe *k;
+				Etch_Data edata;
+
+				k = etch_animation_keyframe_add(a[i]);
+				edata.data.d = *vv;
+				etch_animation_keyframe_type_set(k, ETCH_ANIMATION_LINEAR);
+				etch_animation_keyframe_value_set(k, &edata);
+				etch_animation_keyframe_time_set(k, *time);
+
+				printf("adding keyframe at time %lld with value %g on %d\n", *time, *vv, i);
+				i++;
+			}
 		}
+		etch_animation_enable(angle);
+		etch_animation_enable(cx);
+		etch_animation_enable(cy);
 	}
 	return EINA_TRUE;
 }
 
-static Eina_Bool _esvg_animate_transform_translate(Esvg_Animate_Transform *thiz)
+static Eina_Bool _esvg_animate_transform_translate(Esvg_Animate_Transform *thiz, Etch *e,
+		Eina_List *values, Eina_List *times)
 {
 
 }
 
-static Eina_Bool _esvg_animate_transform_scale(Esvg_Animate_Transform *thiz)
+static Eina_Bool _esvg_animate_transform_scale(Esvg_Animate_Transform *thiz, Etch *e,
+		Eina_List *values, Eina_List *times)
 {
 
 }
 
-static Eina_Bool _esvg_animate_transform_skewx(Esvg_Animate_Transform *thiz)
+static Eina_Bool _esvg_animate_transform_skewx(Esvg_Animate_Transform *thiz, Etch *e,
+		Eina_List *values, Eina_List *times)
 {
 
 }
 
-static Eina_Bool _esvg_animate_transform_skewy(Esvg_Animate_Transform *thiz)
+static Eina_Bool _esvg_animate_transform_skewy(Esvg_Animate_Transform *thiz, Etch *e,
+		Eina_List *values, Eina_List *times)
 {
 
 }
@@ -338,6 +389,9 @@ static Eina_Bool _esvg_animate_transform_container_etch_to(Esvg_Animate_Transfor
 	Etch_Data to;
 	Etch_Animation_Callback cb = NULL;
 	Etch_Animation_Keyframe *kf;
+	Eina_List *values = NULL;
+	Eina_List *times = NULL;
+	Eina_Bool has_from;
 	const char *name;
 
 	ec = ender_property_container_get(p);
@@ -348,26 +402,10 @@ static Eina_Bool _esvg_animate_transform_container_etch_to(Esvg_Animate_Transfor
 	/* get the type that we will animate: rotate, scale, etc */
 	setup = setups[thiz->type];
 
-	if (thiz->values)
-	{
-		Eina_List *v;
-
-		EINA_LIST_FREE (thiz->values, v)
-		{
-			double *d;
-			EINA_LIST_FREE (v, d);
-				free(d);
-		}
-	}
-
-	if (thiz->times)
-	{
-	}
-
 	if (c->value.values)
 	{
 		esvg_list_string_from(c->value.values, ';',
-			_esvg_animate_transform_list_cb, &thiz->values);
+			_esvg_animate_transform_list_cb, &values);
 	}
 	else
 	{
@@ -376,7 +414,7 @@ static Eina_Bool _esvg_animate_transform_container_etch_to(Esvg_Animate_Transfor
 		{
 			esvg_number_list_string_from(c->value.from,
 					_esvg_animate_transform_values_cb,
-					&thiz->values);
+					&values);
 		}
 		else
 		{
@@ -387,7 +425,7 @@ static Eina_Bool _esvg_animate_transform_container_etch_to(Esvg_Animate_Transfor
 		{
 			esvg_number_list_string_from(c->value.to,
 					_esvg_animate_transform_values_cb,
-					&thiz->values);
+					&values);
 		}
 #if 0
 		else if (c->value.by)
@@ -407,7 +445,7 @@ static Eina_Bool _esvg_animate_transform_container_etch_to(Esvg_Animate_Transfor
 		int64_t duration;
 		int64_t inc;
 
- 		length = eina_list_count(thiz->values);
+ 		length = eina_list_count(values);
 		if (!length)
 		{
 			printf("no values?\n");
@@ -417,11 +455,12 @@ static Eina_Bool _esvg_animate_transform_container_etch_to(Esvg_Animate_Transfor
 		inc = duration / length;
 		for (i = 0; i < length; i++)
 		{
-			double *d;
+			int64_t *d;
 
-			d = malloc(sizeof(double));
-			*d = inc; 
-			thiz->times = eina_list_append(thiz->times, d);
+			d = malloc(sizeof(int64_t));
+			*d = inc;
+			printf("adding time at %lld (%lld %d)\n", inc, duration, length);
+			times = eina_list_append(times, d);
 		}
 
 	}
@@ -433,28 +472,11 @@ static Eina_Bool _esvg_animate_transform_container_etch_to(Esvg_Animate_Transfor
 				_esvg_animate_transform_time_cb, &vdata);
 #endif
 	}
-
-
-	printf("doing the setup %d\n", thiz->type);
-	setup(thiz);
-
+	setup(thiz, etch, values, times);
+#if 0
 	/* we should add one one animation for each data found */
 	/* the animation always animates doubles */
 	a = etch_animation_add(etch, ETCH_DOUBLE, cb, NULL, NULL, thiz);
-	/* add the keyframes */
-	{
-		//thiz->from = esvg_number_string_from(c->value.from, 1.0);
-		//thiz->to = esvg_number_string_from(c->value.to, 1.0);
-		//from.data.d = thiz->from;
-		//to.data.d = thiz->to;
-		from.data.d = 0;
-		from.data.d = 360;
-
-		/* TODO handle the type case */
-		/* TODO for multiple values, check that the values are different to create animations */
-		/* TODO replace the anim with a list of animations */
-		/* TODO make global the possibility to parse comma or space separated values optionally */
-	}
 
 	/* FIXME for now we add two keyframes */
 	/* second keyframe */
@@ -468,11 +490,29 @@ static Eina_Bool _esvg_animate_transform_container_etch_to(Esvg_Animate_Transfor
 	etch_animation_keyframe_value_set(kf, &to);
 	etch_animation_keyframe_time_set(kf, 5 * ETCH_SECOND);
 	etch_animation_enable(a);
-
+#endif
 	printf("everything went ok!\n");
 
-	thiz->anim = a;
 	thiz->prop = p;
+
+	if (values)
+	{
+		Eina_List *v;
+
+		EINA_LIST_FREE (values, v)
+		{
+			double *d;
+			EINA_LIST_FREE (v, d);
+				free(d);
+		}
+	}
+
+	if (times)
+	{
+		int64_t *v;
+		EINA_LIST_FREE (times, v)
+			free(v);
+	}
 
 	return EINA_TRUE;
 }
@@ -528,9 +568,6 @@ static Eina_Bool _esvg_animate_transform_setup(Edom_Tag *t,
 
 	etch = esvg_svg_etch_get(svg_e);
 	if (!etch) goto done;
-
-	if (thiz->anim)
-		etch_animation_delete(thiz->anim);
 
 	/* FIXME should we get a reference here ? */
 	p = actx->p;
