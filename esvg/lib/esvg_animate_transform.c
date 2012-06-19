@@ -76,6 +76,12 @@
  *============================================================================*/
 static Ender_Property *ESVG_ANIMATE_TRANSFORM_TYPE;
 
+typedef struct _Esvg_Animate_Transform_Times_Data
+{
+	Eina_List *times;
+	int64_t duration;
+} Esvg_Animate_Transform_Times_Data;
+
 typedef union _Esvg_Animate_Transform_Data
 {
 	struct {
@@ -163,13 +169,21 @@ static void _esvg_animate_transform_list_cb(const char *v, void *data)
 	*l = eina_list_append(*l, rv);
 }
 
-static void _esvg_animate_transform_time_cb(const char *v, void *data)
+static void _esvg_animate_transform_time_cb(const char *v, void *user_data)
 {
-	Eina_List **l = data;
+	Esvg_Animate_Transform_Times_Data *data = user_data;
 	double percent;
+	int64_t *t;
 
 	percent = esvg_number_string_from(v, 1.0);
-	printf("percent! %g\n", percent);
+	if (percent < 0.0)
+		percent = 0;
+	else if (percent > 1.0)
+		percent = 1.0;
+
+	t = malloc(sizeof(int64_t));
+	*t = data->duration * percent;
+	data->times = eina_list_append(data->times, t);
 }
 /*----------------------------------------------------------------------------*
  *                         The Etch animator callbacks                        *
@@ -447,32 +461,37 @@ static Eina_Bool _esvg_animate_transform_container_etch_to(Esvg_Animate_Transfor
 		int64_t duration;
 		int64_t inc;
 
- 		length = eina_list_count(values);
-		if (!length)
-		{
-			printf("no values?\n");
-			return EINA_FALSE;
-		}
-		duration = ac->timing.dur.data.clock;
-		inc = duration / length;
-		for (i = 0; i < length; i++)
-		{
-			int64_t *d;
 
-			d = malloc(sizeof(int64_t));
-			*d = inc;
-			printf("adding time at %lld (%lld %d)\n", inc, duration, length);
-			times = eina_list_append(times, d);
+		if (c->value.key_times)
+		{
+			Esvg_Animate_Transform_Times_Data data;
+
+			data.times = times;
+			data.duration = ac->timing.dur.data.clock;
+			esvg_list_string_from(c->value.key_times, ';',
+					_esvg_animate_transform_time_cb, &data);
+		}
+		else
+		{
+			length = eina_list_count(values);
+			if (!length)
+			{
+				printf("no values?\n");
+				return EINA_FALSE;
+			}
+			duration = ac->timing.dur.data.clock;
+			inc = duration / length;
+			for (i = 0; i < length; i++)
+			{
+				int64_t *d;
+
+				d = malloc(sizeof(int64_t));
+				*d = inc;
+				printf("adding time at %lld (%lld %d)\n", inc, duration, length);
+				times = eina_list_append(times, d);
+			}
 		}
 
-	}
-	else if (c->value.key_times && c->value.values)
-	{
-		/* if we have the keytimes use it? */
-#if 0
-		esvg_list_string_from(c->value.key_times, ';',
-				_esvg_animate_transform_time_cb, &vdata);
-#endif
 	}
 	setup(thiz, etch, values, times);
 	printf("everything went ok!\n");
