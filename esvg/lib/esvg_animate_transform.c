@@ -323,6 +323,7 @@ static Eina_Bool _esvg_animate_transform_rotate(Esvg_Animate_Transform *thiz, Et
 
 			time = eina_list_data_get(tt);
 			tt = eina_list_next(tt);
+			/* TODO take care of the case where the values are not three, but only one */
 			EINA_LIST_FOREACH(v, ll, vv)
 			{
 				Etch_Animation_Keyframe *k;
@@ -330,6 +331,7 @@ static Eina_Bool _esvg_animate_transform_rotate(Esvg_Animate_Transform *thiz, Et
 
 				k = etch_animation_keyframe_add(a[i]);
 				edata.data.d = *vv;
+				edata.type = ETCH_DOUBLE;
 				etch_animation_keyframe_type_set(k, ETCH_ANIMATION_LINEAR);
 				etch_animation_keyframe_value_set(k, &edata);
 				etch_animation_keyframe_time_set(k, *time);
