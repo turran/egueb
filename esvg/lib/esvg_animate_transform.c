@@ -199,10 +199,9 @@ static void _esvg_animate_transform_rotate_angle_cb(Etch_Animation_Keyframe *k,
 	Enesim_Matrix m2;
 
 	thiz->data.rotate.angle = curr->data.d;
-	printf("angle! %g\n", curr->data.d);
 
 	enesim_matrix_translate(&m2, thiz->data.rotate.cx, thiz->data.rotate.cy);
-	enesim_matrix_rotate(&m1, thiz->data.rotate.angle);
+	enesim_matrix_rotate(&m1, thiz->data.rotate.angle * M_PI / 180.0);
 	enesim_matrix_compose(&m2, &m1, &m1);
 
 	enesim_matrix_translate(&m2, -thiz->data.rotate.cx, -thiz->data.rotate.cy);
@@ -220,7 +219,6 @@ static void _esvg_animate_transform_rotate_cx_cb(Etch_Animation_Keyframe *k,
 	Esvg_Animate_Transform *thiz = data;
 
 	thiz->data.rotate.cx = curr->data.d;
-	printf("cx! %g\n", curr->data.d);
 }
 
 static void _esvg_animate_transform_rotate_cy_cb(Etch_Animation_Keyframe *k,
@@ -231,7 +229,6 @@ static void _esvg_animate_transform_rotate_cy_cb(Etch_Animation_Keyframe *k,
 	Esvg_Animate_Transform *thiz = data;
 
 	thiz->data.rotate.cy = curr->data.d;
-	printf("cy! %g\n", curr->data.d);
 }
 
 static void _esvg_animate_transform_translate_cb(Etch_Animation_Keyframe *k,
@@ -311,7 +308,8 @@ static Eina_Bool _esvg_animate_transform_rotate(Esvg_Animate_Transform *thiz, Et
 	/* check if we should use the simple version */
 	EINA_LIST_FOREACH (values, l, v)
 	{
-		if (eina_list_count (v) > 1)
+		printf("v == %p\n", v);
+		if (eina_list_count(v) > 1)
 		{
 			simple = EINA_FALSE;
 			break;
@@ -440,9 +438,11 @@ static Eina_Bool _esvg_animate_transform_container_etch_to(Esvg_Animate_Transfor
 	{
 		if (c->value.from)
 		{
+			Eina_List *from = NULL;
 			esvg_number_list_string_from(c->value.from,
 					_esvg_animate_transform_values_cb,
-					&values);
+					&from);
+			values = eina_list_append(values, from);
 		}
 		else
 		{
@@ -451,9 +451,11 @@ static Eina_Bool _esvg_animate_transform_container_etch_to(Esvg_Animate_Transfor
 
 		if (c->value.to)
 		{
+			Eina_List *to = NULL;
 			esvg_number_list_string_from(c->value.to,
 					_esvg_animate_transform_values_cb,
-					&values);
+					&to);
+			values = eina_list_append(values, to);
 		}
 #if 0
 		else if (c->value.by)
@@ -505,8 +507,11 @@ static Eina_Bool _esvg_animate_transform_container_etch_to(Esvg_Animate_Transfor
 			}
 		}
 	}
-	setup(thiz, etch, values, times);
-	printf("everything went ok!\n");
+	if (values && times)
+	{
+		setup(thiz, etch, values, times);
+		printf("everything went ok!\n");
+	}
 
 	if (values)
 	{

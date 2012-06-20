@@ -113,7 +113,7 @@ static Esvg_Referenceable_Reference * _esvg_renderable_get_reference(Edom_Tag *t
 }
 
 static Eina_Bool _esvg_renderable_damage_cb(Enesim_Renderer *r,
-		Eina_Rectangle *area, Eina_Bool past,
+		const Eina_Rectangle *area, Eina_Bool past,
 		void *data)
 {
 	Eina_Tiler *tiler = data;

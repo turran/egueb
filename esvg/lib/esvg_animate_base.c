@@ -353,6 +353,135 @@ Etch_Animation_Type esvg_animate_base_calc_mode_etch_to(Esvg_Calc_Mode c)
 	}
 }
 
+#if 0
+Eina_Bool esvg_animate_base_setup(Esvg_Animate_Transform *thiz,
+		Etch *etch,
+		Ender_Property *p,
+		Esvg_Animation_Context *ac,
+		Esvg_Animate_Base_Context *c)
+{
+	Ender_Container *ec;
+	Etch_Animation *a;
+	Etch_Data from;
+	Etch_Data to;
+	Etch_Animation_Callback cb = NULL;
+	Etch_Animation_Keyframe *kf;
+	Eina_List *values = NULL;
+	Eina_List *times = NULL;
+	Eina_Bool has_from;
+	const char *name;
+
+	ec = ender_property_container_get(p);
+	name = ender_container_registered_name_get(ec);
+
+	if (strcmp(name, "esvg_animated_transform"))
+		return EINA_FALSE;
+	/* get the type that we will animate: rotate, scale, etc */
+	setup = setups[thiz->type];
+
+	if (c->value.values)
+	{
+		esvg_list_string_from(c->value.values, ';',
+			_esvg_animate_transform_list_cb, &values);
+	}
+	else
+	{
+		if (c->value.from)
+		{
+			esvg_number_list_string_from(c->value.from,
+					_esvg_animate_transform_values_cb,
+					&values);
+		}
+		else
+		{
+			/* mark the missing from */
+		}
+
+		if (c->value.to)
+		{
+			esvg_number_list_string_from(c->value.to,
+					_esvg_animate_transform_values_cb,
+					&values);
+		}
+#if 0
+		else if (c->value.by)
+		{
+			/* if no from, then everything is dynamic until the animation starts */
+			/* TODO append the from to the values */
+		}
+#endif
+	}
+
+	/* generate the times list */
+	/* get the duration */
+	if (ac->timing.dur.type == ESVG_DURATION_TYPE_CLOCK)
+	{
+		if (c->value.key_times)
+		{
+			Esvg_Animate_Transform_Times_Data data;
+
+			data.times = times;
+			data.duration = ac->timing.dur.data.clock;
+			esvg_list_string_from(c->value.key_times, ';',
+					_esvg_animate_transform_time_cb, &data);
+		}
+		else
+		{
+			int64_t t = 0;
+			int i;
+			int length;
+			int64_t duration;
+			int64_t inc;
+
+			length = eina_list_count(values);
+			if (!length)
+			{
+				printf("no values?\n");
+				return EINA_FALSE;
+			}
+			duration = ac->timing.dur.data.clock;
+			inc = duration / (length - 1);
+			for (i = 0; i < length; i++)
+			{
+				int64_t *d;
+
+				d = malloc(sizeof(int64_t));
+				*d = t;
+				printf("adding time at %lld %lld (%lld %d)\n", t, inc, duration, length);
+				times = eina_list_append(times, d);
+				t += inc;
+			}
+		}
+	}
+	if (values && times)
+	{
+		setup(thiz, etch, values, times);
+		printf("everything went ok!\n");
+	}
+
+	if (values)
+	{
+		Eina_List *v;
+
+		EINA_LIST_FREE (values, v)
+		{
+			double *d;
+			EINA_LIST_FREE (v, d);
+				free(d);
+		}
+	}
+
+	if (times)
+	{
+		int64_t *v;
+		EINA_LIST_FREE (times, v)
+			free(v);
+	}
+
+	return EINA_TRUE;
+}
+#endif
+
 Edom_Tag * esvg_animate_base_new(Esvg_Animate_Base_Descriptor *descriptor, Esvg_Type type,
 		void *data)
 {
