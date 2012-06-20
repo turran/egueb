@@ -391,10 +391,10 @@ typedef enum _Esvg_Duration_Type
 	ESVG_DURATION_TYPE_INDEFINITE,
 } Esvg_Duration_Type;
 
-typedef union _Esvg_Duration
+typedef struct _Esvg_Duration
 {
 	Esvg_Duration_Type type;
-	struct {
+	union {
 		int64_t clock;
 	} data;
 } Esvg_Duration;

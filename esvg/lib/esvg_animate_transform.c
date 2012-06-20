@@ -504,7 +504,6 @@ static Eina_Bool _esvg_animate_transform_container_etch_to(Esvg_Animate_Transfor
 				t += inc;
 			}
 		}
-
 	}
 	setup(thiz, etch, values, times);
 	printf("everything went ok!\n");
