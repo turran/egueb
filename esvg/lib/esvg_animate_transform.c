@@ -193,17 +193,23 @@ static void _esvg_animate_transform_rotate_angle_cb(Etch_Animation_Keyframe *k,
 		const Etch_Data *prev,
 		void *data)
 {
-	printf("angle!\n");
-#if 0
 	Esvg_Animate_Transform *thiz = data;
 	Esvg_Animated_Transform v;
-	Enesim_Matrix m;
+	Enesim_Matrix m1;
+	Enesim_Matrix m2;
 
-	enesim_matrix_rotate(&m, curr->data.d);
-	v.base = m;
+	thiz->data.rotate.angle = curr->data.d;
+	printf("angle! %g\n", curr->data.d);
+
+	enesim_matrix_translate(&m2, thiz->data.rotate.cx, thiz->data.rotate.cy);
+	enesim_matrix_rotate(&m1, thiz->data.rotate.angle);
+	enesim_matrix_compose(&m2, &m1, &m1);
+
+	enesim_matrix_translate(&m2, -thiz->data.rotate.cx, -thiz->data.rotate.cy);
+	enesim_matrix_compose(&m1, &m2, &m1);
+	v.base = m1;
 
 	ender_element_property_value_set(thiz->parent_e, thiz->prop, &v, NULL);
-#endif
 }
 
 static void _esvg_animate_transform_rotate_cx_cb(Etch_Animation_Keyframe *k,
@@ -211,7 +217,10 @@ static void _esvg_animate_transform_rotate_cx_cb(Etch_Animation_Keyframe *k,
 		const Etch_Data *prev,
 		void *data)
 {
-	printf("cx!\n");
+	Esvg_Animate_Transform *thiz = data;
+
+	thiz->data.rotate.cx = curr->data.d;
+	printf("cx! %g\n", curr->data.d);
 }
 
 static void _esvg_animate_transform_rotate_cy_cb(Etch_Animation_Keyframe *k,
@@ -219,7 +228,10 @@ static void _esvg_animate_transform_rotate_cy_cb(Etch_Animation_Keyframe *k,
 		const Etch_Data *prev,
 		void *data)
 {
-	printf("cy!\n");
+	Esvg_Animate_Transform *thiz = data;
+
+	thiz->data.rotate.cy = curr->data.d;
+	printf("cy! %g\n", curr->data.d);
 }
 
 static void _esvg_animate_transform_translate_cb(Etch_Animation_Keyframe *k,
@@ -320,12 +332,13 @@ static Eina_Bool _esvg_animate_transform_rotate(Esvg_Animate_Transform *thiz, Et
 		/* generate three animations per each value
 		 * one for the angle, and two for the origin
 		 */
-		angle = etch_animation_add(e, ETCH_DOUBLE, _esvg_animate_transform_rotate_angle_cb,
-					NULL, NULL, NULL);
 		cx = etch_animation_add(e, ETCH_DOUBLE, _esvg_animate_transform_rotate_cx_cb,
-					NULL, NULL, NULL);
+					NULL, NULL, thiz);
 		cy = etch_animation_add(e, ETCH_DOUBLE, _esvg_animate_transform_rotate_cy_cb,
-					NULL, NULL, NULL);
+					NULL, NULL, thiz);
+		/* add the angle at the end, given tha the animations are being execute in order */
+		angle = etch_animation_add(e, ETCH_DOUBLE, _esvg_animate_transform_rotate_angle_cb,
+					NULL, NULL, thiz);
 		tt = times;
 		EINA_LIST_FOREACH (values, l, v)
 		{
@@ -425,7 +438,6 @@ static Eina_Bool _esvg_animate_transform_container_etch_to(Esvg_Animate_Transfor
 	}
 	else
 	{
-		/* get the duration */
 		if (c->value.from)
 		{
 			esvg_number_list_string_from(c->value.from,
@@ -456,12 +468,6 @@ static Eina_Bool _esvg_animate_transform_container_etch_to(Esvg_Animate_Transfor
 	/* get the duration */
 	if (ac->timing.dur.type == ESVG_DURATION_TYPE_CLOCK)
 	{
-		int i;
-		int length;
-		int64_t duration;
-		int64_t inc;
-
-
 		if (c->value.key_times)
 		{
 			Esvg_Animate_Transform_Times_Data data;
@@ -473,6 +479,12 @@ static Eina_Bool _esvg_animate_transform_container_etch_to(Esvg_Animate_Transfor
 		}
 		else
 		{
+			int64_t t = 0;
+			int i;
+			int length;
+			int64_t duration;
+			int64_t inc;
+
 			length = eina_list_count(values);
 			if (!length)
 			{
@@ -480,15 +492,16 @@ static Eina_Bool _esvg_animate_transform_container_etch_to(Esvg_Animate_Transfor
 				return EINA_FALSE;
 			}
 			duration = ac->timing.dur.data.clock;
-			inc = duration / length;
+			inc = duration / (length - 1);
 			for (i = 0; i < length; i++)
 			{
 				int64_t *d;
 
 				d = malloc(sizeof(int64_t));
-				*d = inc;
-				printf("adding time at %lld (%lld %d)\n", inc, duration, length);
+				*d = t;
+				printf("adding time at %lld %lld (%lld %d)\n", t, inc, duration, length);
 				times = eina_list_append(times, d);
+				t += inc;
 			}
 		}
 
