@@ -37,6 +37,9 @@
 /* Whenever a file needs to generate a log, it must declare this first */
 
 /* The log domaings */
+extern int esvg_log_animate;
+extern int esvg_log_animate_base;
+extern int esvg_log_animate_transform;
 extern int esvg_log_circle;
 extern int esvg_log_element;
 extern int esvg_log_ellipse;

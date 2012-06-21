@@ -49,6 +49,21 @@ static Ender_Property *ESVG_ANIMATE_BASE_KEY_TIMES;
 static Ender_Property *ESVG_ANIMATE_BASE_KEY_SPLINES;
 static Ender_Property *ESVG_ANIMATE_BASE_CALC_MODE;
 
+typedef void * (*Esvg_Animate_Base_Value_Get)(const char *attr);
+typedef void (*Esvg_Animate_Base_Value_Free)(void *value);
+
+typedef struct _Esvg_Animate_Base_Values_Data
+{
+	Eina_List *values;
+	Esvg_Animate_Base_Value_Get get;
+} Esvg_Animate_Base_Values_Data;
+
+typedef struct _Esvg_Animate_Base_Times_Data
+{
+	Eina_List *times;
+	int64_t duration;
+} Esvg_Animate_Base_Times_Data;
+
 typedef struct _Esvg_Animate_Base_Descriptor_Internal
 {
 	Edom_Tag_Free free;
@@ -76,6 +91,33 @@ static Esvg_Animate_Base * _esvg_animate_base_get(Edom_Tag *t)
 	ESVG_ANIMATE_BASE_MAGIC_CHECK(thiz);
 
 	return thiz;
+}
+
+static void _esvg_animate_base_values_cb(const char *v, void *user_data)
+{
+	Esvg_Animate_Base_Values_Data *data = user_data;
+	void *get_data;
+
+	get_data = data->get(v);
+	if (get_data)
+		data->values = eina_list_append(data->values, get_data);
+}
+
+static void _esvg_animate_base_time_cb(const char *v, void *user_data)
+{
+	Esvg_Animate_Base_Times_Data *data = user_data;
+	double percent;
+	int64_t *t;
+
+	percent = esvg_number_string_from(v, 1.0);
+	if (percent < 0.0)
+		percent = 0;
+	else if (percent > 1.0)
+		percent = 1.0;
+
+	t = malloc(sizeof(int64_t));
+	*t = data->duration * percent;
+	data->times = eina_list_append(data->times, t);
 }
 /*----------------------------------------------------------------------------*
  *                           The Ender interface                              *
@@ -353,44 +395,32 @@ Etch_Animation_Type esvg_animate_base_calc_mode_etch_to(Esvg_Calc_Mode c)
 	}
 }
 
-#if 0
-Eina_Bool esvg_animate_base_setup(Esvg_Animate_Transform *thiz,
-		Etch *etch,
-		Ender_Property *p,
-		Esvg_Animation_Context *ac,
-		Esvg_Animate_Base_Context *c)
+Eina_Bool esvg_animate_base_setup(Esvg_Animation_Context *ac,
+		Esvg_Animate_Base_Context *c,
+		Esvg_Animate_Base_Value_Get get_cb,
+		Esvg_Animate_Base_Value_Free free_cb)
 {
-	Ender_Container *ec;
-	Etch_Animation *a;
-	Etch_Data from;
-	Etch_Data to;
-	Etch_Animation_Callback cb = NULL;
-	Etch_Animation_Keyframe *kf;
 	Eina_List *values = NULL;
 	Eina_List *times = NULL;
 	Eina_Bool has_from;
-	const char *name;
-
-	ec = ender_property_container_get(p);
-	name = ender_container_registered_name_get(ec);
-
-	if (strcmp(name, "esvg_animated_transform"))
-		return EINA_FALSE;
-	/* get the type that we will animate: rotate, scale, etc */
-	setup = setups[thiz->type];
 
 	if (c->value.values)
 	{
+		Esvg_Animate_Base_Values_Data data;
+
+		data.values = values;
+		data.get = get_cb;
 		esvg_list_string_from(c->value.values, ';',
-			_esvg_animate_transform_list_cb, &values);
+			_esvg_animate_base_values_cb, &data);
 	}
 	else
 	{
 		if (c->value.from)
 		{
-			esvg_number_list_string_from(c->value.from,
-					_esvg_animate_transform_values_cb,
-					&values);
+			void *data;
+			data = get_cb(c->value.from);
+			if (data)
+				values = eina_list_append(values, data);
 		}
 		else
 		{
@@ -399,9 +429,10 @@ Eina_Bool esvg_animate_base_setup(Esvg_Animate_Transform *thiz,
 
 		if (c->value.to)
 		{
-			esvg_number_list_string_from(c->value.to,
-					_esvg_animate_transform_values_cb,
-					&values);
+			void *data;
+			data = get_cb(c->value.to);
+			if (data)
+				values = eina_list_append(values, data);
 		}
 #if 0
 		else if (c->value.by)
@@ -418,12 +449,13 @@ Eina_Bool esvg_animate_base_setup(Esvg_Animate_Transform *thiz,
 	{
 		if (c->value.key_times)
 		{
-			Esvg_Animate_Transform_Times_Data data;
+			Esvg_Animate_Base_Times_Data data;
 
 			data.times = times;
 			data.duration = ac->timing.dur.data.clock;
+
 			esvg_list_string_from(c->value.key_times, ';',
-					_esvg_animate_transform_time_cb, &data);
+					_esvg_animate_base_time_cb, &data);
 		}
 		else
 		{
@@ -455,7 +487,7 @@ Eina_Bool esvg_animate_base_setup(Esvg_Animate_Transform *thiz,
 	}
 	if (values && times)
 	{
-		setup(thiz, etch, values, times);
+		//setup(thiz, etch, values, times);
 		printf("everything went ok!\n");
 	}
 
@@ -465,9 +497,9 @@ Eina_Bool esvg_animate_base_setup(Esvg_Animate_Transform *thiz,
 
 		EINA_LIST_FREE (values, v)
 		{
-			double *d;
-			EINA_LIST_FREE (v, d);
-				free(d);
+			void *data;
+			EINA_LIST_FREE (v, data);
+				free_cb(data);
 		}
 	}
 
@@ -480,7 +512,6 @@ Eina_Bool esvg_animate_base_setup(Esvg_Animate_Transform *thiz,
 
 	return EINA_TRUE;
 }
-#endif
 
 Edom_Tag * esvg_animate_base_new(Esvg_Animate_Base_Descriptor *descriptor, Esvg_Type type,
 		void *data)
