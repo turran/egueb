@@ -223,6 +223,7 @@ static Eina_Bool _esvg_animate_container_etch_to(Esvg_Animate *thiz, Etch *etch,
 	thiz->prop = p;
 
 	printf("duration is %lld %d\n", ac->timing.dur.data.clock, ac->timing.dur.type);
+#if 1
 	/* when having a from/to, just add two keyframes */
 	if (c->value.to && c->value.from)
 	{
@@ -285,6 +286,29 @@ static Eina_Bool _esvg_animate_container_etch_to(Esvg_Animate *thiz, Etch *etch,
 	{
 		printf("wrong!\n");
 	}
+#else
+	esvg_animate_base_values_generate(c, _esvg_animate_transform_value_get,
+			&values, &has_from);
+	esvg_animate_base_times_generate(ac, c, values, &times);
+
+	/* generate the times list */
+	if (values && times)
+	{
+		Eina_List *tt;
+
+		tt = times;
+		EINA_LIST_FOREACH(values, l, v)
+		{
+			// based on the type to animate, fetch the data
+			// convert it to the destination etch type
+			// add a keyframe
+			// set the time
+			// set the value
+		}
+	}
+	esvg_animate_base_values_free(values, _esvg_animate_transform_value_free);
+	esvg_animate_base_times_free(times);
+#endif
 
 	etch_animation_enable(a);
 

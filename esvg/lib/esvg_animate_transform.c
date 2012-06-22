@@ -157,33 +157,20 @@ static Eina_Bool _esvg_animate_transform_values_cb(double v, void *data)
 	return EINA_TRUE;
 }
 
-/* this is useful for the 'values' attribute, basically we generate
- * a list of lists of values
- */
-static void _esvg_animate_transform_list_cb(const char *v, void *data)
-{
-	Eina_List **l = data;
-	Eina_List *rv = NULL;
-
-	esvg_number_list_string_from(v, _esvg_animate_transform_values_cb, &rv);
-	*l = eina_list_append(*l, rv);
+static void * _esvg_animate_transform_value_get(const char *attr)
+{	
+	Eina_List *v = NULL;
+	esvg_number_list_string_from(attr, _esvg_animate_transform_values_cb,
+					&v);
+	return v;
 }
 
-static void _esvg_animate_transform_time_cb(const char *v, void *user_data)
+static void _esvg_animate_transform_value_free(void *v)
 {
-	Esvg_Animate_Transform_Times_Data *data = user_data;
-	double percent;
-	int64_t *t;
+	double *d;
 
-	percent = esvg_number_string_from(v, 1.0);
-	if (percent < 0.0)
-		percent = 0;
-	else if (percent > 1.0)
-		percent = 1.0;
-
-	t = malloc(sizeof(int64_t));
-	*t = data->duration * percent;
-	data->times = eina_list_append(data->times, t);
+	EINA_LIST_FREE(v, d)
+		free(d);
 }
 /*----------------------------------------------------------------------------*
  *                         The Etch animator callbacks                        *
@@ -631,108 +618,18 @@ static Eina_Bool _esvg_animate_transform_container_etch_to(Esvg_Animate_Transfor
 	/* get the type that we will animate: rotate, scale, etc */
 	setup = setups[thiz->type];
 
-	if (c->value.values)
-	{
-		esvg_list_string_from(c->value.values, ';',
-			_esvg_animate_transform_list_cb, &values);
-	}
-	else
-	{
-		if (c->value.from)
-		{
-			Eina_List *from = NULL;
-			esvg_number_list_string_from(c->value.from,
-					_esvg_animate_transform_values_cb,
-					&from);
-			values = eina_list_append(values, from);
-		}
-		else
-		{
-			/* mark the missing from */
-		}
+	esvg_animate_base_values_generate(c, _esvg_animate_transform_value_get,
+			&values, &has_from);
+	esvg_animate_base_times_generate(ac, c, values, &times);
 
-		if (c->value.to)
-		{
-			Eina_List *to = NULL;
-			esvg_number_list_string_from(c->value.to,
-					_esvg_animate_transform_values_cb,
-					&to);
-			values = eina_list_append(values, to);
-		}
-#if 0
-		else if (c->value.by)
-		{
-			/* if no from, then everything is dynamic until the animation starts */
-			/* TODO append the from to the values */
-		}
-#endif
-	}
-
-	/* generate the times list */
-	/* get the duration */
-	if (ac->timing.dur.type == ESVG_DURATION_TYPE_CLOCK)
-	{
-		if (c->value.key_times)
-		{
-			Esvg_Animate_Transform_Times_Data data;
-
-			data.times = times;
-			data.duration = ac->timing.dur.data.clock;
-			esvg_list_string_from(c->value.key_times, ';',
-					_esvg_animate_transform_time_cb, &data);
-		}
-		else
-		{
-			int64_t t = 0;
-			int i;
-			int length;
-			int64_t duration;
-			int64_t inc;
-
-			length = eina_list_count(values);
-			if (!length)
-			{
-				printf("no values?\n");
-				return EINA_FALSE;
-			}
-			duration = ac->timing.dur.data.clock;
-			inc = duration / (length - 1);
-			for (i = 0; i < length; i++)
-			{
-				int64_t *d;
-
-				d = malloc(sizeof(int64_t));
-				*d = t;
-				printf("adding time at %lld %lld (%lld %d)\n", t, inc, duration, length);
-				times = eina_list_append(times, d);
-				t += inc;
-			}
-		}
-	}
 	if (values && times)
 	{
 		setup(thiz, etch, values, times);
 		printf("everything went ok!\n");
 	}
 
-	if (values)
-	{
-		Eina_List *v;
-
-		EINA_LIST_FREE (values, v)
-		{
-			double *d;
-			EINA_LIST_FREE (v, d);
-				free(d);
-		}
-	}
-
-	if (times)
-	{
-		int64_t *v;
-		EINA_LIST_FREE (times, v)
-			free(v);
-	}
+	esvg_animate_base_values_free(values, _esvg_animate_transform_value_free);
+	esvg_animate_base_times_free(times);
 
 	return EINA_TRUE;
 }

@@ -49,9 +49,6 @@ static Ender_Property *ESVG_ANIMATE_BASE_KEY_TIMES;
 static Ender_Property *ESVG_ANIMATE_BASE_KEY_SPLINES;
 static Ender_Property *ESVG_ANIMATE_BASE_CALC_MODE;
 
-typedef void * (*Esvg_Animate_Base_Value_Get)(const char *attr);
-typedef void (*Esvg_Animate_Base_Value_Free)(void *value);
-
 typedef struct _Esvg_Animate_Base_Values_Data
 {
 	Eina_List *values;
@@ -395,54 +392,11 @@ Etch_Animation_Type esvg_animate_base_calc_mode_etch_to(Esvg_Calc_Mode c)
 	}
 }
 
-Eina_Bool esvg_animate_base_setup(Esvg_Animation_Context *ac,
+Eina_Bool esvg_animate_base_times_generate(Esvg_Animation_Context *ac,
 		Esvg_Animate_Base_Context *c,
-		Esvg_Animate_Base_Value_Get get_cb,
-		Esvg_Animate_Base_Value_Free free_cb)
+		Eina_List *values,
+		Eina_List **times)
 {
-	Eina_List *values = NULL;
-	Eina_List *times = NULL;
-	Eina_Bool has_from;
-
-	if (c->value.values)
-	{
-		Esvg_Animate_Base_Values_Data data;
-
-		data.values = values;
-		data.get = get_cb;
-		esvg_list_string_from(c->value.values, ';',
-			_esvg_animate_base_values_cb, &data);
-	}
-	else
-	{
-		if (c->value.from)
-		{
-			void *data;
-			data = get_cb(c->value.from);
-			if (data)
-				values = eina_list_append(values, data);
-		}
-		else
-		{
-			/* mark the missing from */
-		}
-
-		if (c->value.to)
-		{
-			void *data;
-			data = get_cb(c->value.to);
-			if (data)
-				values = eina_list_append(values, data);
-		}
-#if 0
-		else if (c->value.by)
-		{
-			/* if no from, then everything is dynamic until the animation starts */
-			/* TODO append the from to the values */
-		}
-#endif
-	}
-
 	/* generate the times list */
 	/* get the duration */
 	if (ac->timing.dur.type == ESVG_DURATION_TYPE_CLOCK)
@@ -451,11 +405,12 @@ Eina_Bool esvg_animate_base_setup(Esvg_Animation_Context *ac,
 		{
 			Esvg_Animate_Base_Times_Data data;
 
-			data.times = times;
+			data.times = *times;
 			data.duration = ac->timing.dur.data.clock;
 
 			esvg_list_string_from(c->value.key_times, ';',
 					_esvg_animate_base_time_cb, &data);
+			*times = data.times;
 		}
 		else
 		{
@@ -480,38 +435,88 @@ Eina_Bool esvg_animate_base_setup(Esvg_Animation_Context *ac,
 				d = malloc(sizeof(int64_t));
 				*d = t;
 				printf("adding time at %lld %lld (%lld %d)\n", t, inc, duration, length);
-				times = eina_list_append(times, d);
+				*times = eina_list_append(*times, d);
 				t += inc;
 			}
 		}
 	}
-	if (values && times)
+	return EINA_TRUE;
+}
+
+void esvg_animate_base_times_free(Eina_List *times)
+{
+	int64_t *v;
+
+	if (!times) return;
+	EINA_LIST_FREE (times, v)
+		free(v);
+}
+
+Eina_Bool esvg_animate_base_values_generate(Esvg_Animate_Base_Context *c,
+		Esvg_Animate_Base_Value_Get get_cb,
+		Eina_List **values,
+		Eina_Bool *has_from)
+{
+	*has_from = EINA_TRUE;
+
+	if (c->value.values)
 	{
-		//setup(thiz, etch, values, times);
-		printf("everything went ok!\n");
+		Esvg_Animate_Base_Values_Data data;
+
+		data.values = *values;
+		data.get = get_cb;
+		esvg_list_string_from(c->value.values, ';',
+			_esvg_animate_base_values_cb, &data);
+		*values = data.values;
 	}
-
-	if (values)
+	else
 	{
-		Eina_List *v;
-
-		EINA_LIST_FREE (values, v)
+		if (c->value.from)
 		{
 			void *data;
-			EINA_LIST_FREE (v, data);
-				free_cb(data);
+			data = get_cb(c->value.from);
+			if (data)
+				*values = eina_list_append(*values, data);
 		}
-	}
+		else
+		{
+			/* mark the missing from */
+			*has_from = EINA_FALSE;
+		}
 
-	if (times)
-	{
-		int64_t *v;
-		EINA_LIST_FREE (times, v)
-			free(v);
+		if (c->value.to)
+		{
+			void *data;
+			data = get_cb(c->value.to);
+			if (data)
+				*values = eina_list_append(*values, data);
+		}
+#if 0
+		else if (c->value.by)
+		{
+			/* if no from, then everything is dynamic until the animation starts */
+			/* TODO append the from to the values */
+		}
+#endif
 	}
 
 	return EINA_TRUE;
 }
+
+void esvg_animate_base_values_free(Eina_List *values, Esvg_Animate_Base_Value_Free free_cb)
+{
+	Eina_List *v;
+
+	if (!values) return;
+
+	EINA_LIST_FREE (values, v)
+	{
+		void *data;
+		EINA_LIST_FREE (v, data);
+			free_cb(data);
+	}
+}
+
 
 Edom_Tag * esvg_animate_base_new(Esvg_Animate_Base_Descriptor *descriptor, Esvg_Type type,
 		void *data)
