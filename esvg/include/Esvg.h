@@ -96,6 +96,7 @@
 
 /* animation */
 #include "esvg_animation.h"
+#include "esvg_animate.h"
 #include "esvg_animate_base.h"
 
 /* parsing */

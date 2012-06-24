@@ -308,6 +308,7 @@ static Eina_Bool _esvg_animate_base_attribute_set(Ender_Element *e,
 			return thiz->descriptor.attribute_set(e, key, value);
 		return EINA_FALSE;
 	}
+	return EINA_TRUE;
 }
 
 static Eina_Bool _esvg_animate_base_attribute_get(Edom_Tag *tag, const char *attribute, char **value)

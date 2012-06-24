@@ -25,9 +25,11 @@
 #include "esvg_private_element.h"
 #include "esvg_private_referenceable.h"
 #include "esvg_private_clone.h"
+#include "esvg_private_renderable.h"
 #include "esvg_private_clip_path.h"
 
 #include "esvg_main.h"
+#include "esvg_g.h"
 #include "esvg_clip_path.h"
 
 /*
@@ -37,7 +39,7 @@
  * needs to change, given that what we need to do is to create a new dom
  * tree (a clone) that will be used to setup the renderers on the correct
  * units space.
- * 
+ *
  * if a clipping path has more than one child then the clip area is the union
  * of every child. that it, we need to use a compound and render every child
  * with the same fill renderer
@@ -135,7 +137,7 @@ static Eina_Bool _esvg_clip_path_child_add(Edom_Tag *tag, Edom_Tag *child)
 		thiz->tree_changed = EINA_TRUE;
 		return EINA_TRUE;
 	}
-	return EINA_FALSE;	
+	return EINA_FALSE;
 }
 
 static void _esvg_clip_path_context_set(Edom_Tag *t,
@@ -327,12 +329,12 @@ static void _esvg_clip_path_free(Edom_Tag *t)
 static Esvg_Referenceable_Descriptor _descriptor = {
 	/* .child_add		= */ NULL,
 	/* .child_remove	= */ NULL,
-	/* .attribute_get 	= */ _esvg_clip_path_attribute_get,
-	/* .cdata_set 		= */ NULL,
-	/* .text_set 		= */ NULL,
-	/* .free 		= */ _esvg_clip_path_free,
-	/* .initialize 		= */ NULL,
-	/* .attribute_set 	= */ _esvg_clip_path_attribute_set,
+	/* .attribute_get	= */ _esvg_clip_path_attribute_get,
+	/* .cdata_set		= */ NULL,
+	/* .text_set		= */ NULL,
+	/* .free		= */ _esvg_clip_path_free,
+	/* .initialize		= */ NULL,
+	/* .attribute_set	= */ _esvg_clip_path_attribute_set,
 	/* .setup		= */ _esvg_clip_path_setup,
 	/* .cleanup		= */ NULL,
 	/* .renderer_propagate	= */ _esvg_clip_path_propagate,
@@ -396,6 +398,7 @@ EAPI Ender_Element * esvg_clip_path_new(void)
 
 EAPI Eina_Bool esvg_is_clip_path(Ender_Element *e)
 {
+	return EINA_FALSE;
 }
 
 EAPI void esvg_clip_path_units_set(Ender_Element *e, Esvg_Clip_Path_Units units)
@@ -406,4 +409,3 @@ EAPI void esvg_clip_path_units_set(Ender_Element *e, Esvg_Clip_Path_Units units)
 EAPI void esvg_clip_path_units_get(Ender_Element *e, Esvg_Clip_Path_Units *units)
 {
 }
-

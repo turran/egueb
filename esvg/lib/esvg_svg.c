@@ -1340,7 +1340,7 @@ EAPI void esvg_svg_feed_mouse_up(Ender_Element *e)
  */
 EAPI Eina_List * esvg_svg_intersection_list_get(Ender_Element *e, Enesim_Rectangle *rect)
 {
-
+	return NULL;
 }
 
 /**

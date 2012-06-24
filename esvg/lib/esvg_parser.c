@@ -33,6 +33,7 @@
 #include "esvg_a.h"
 #include "esvg_clip_path.h"
 #include "esvg_defs.h"
+#include "esvg_animate.h"
 #include "esvg_animate_transform.h"
 #include "esvg_svg.h"
 #include "esvg_ellipse.h"

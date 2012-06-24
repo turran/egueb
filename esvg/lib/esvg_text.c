@@ -89,6 +89,10 @@ static Eina_Bool _esvg_text_attribute_set(Ender_Element *e,
 		esvg_text_font_size_set(r, &font_size);
 	}
 #endif
+	else
+		return EINA_FALSE;
+
+	return EINA_TRUE;
 }
 
 static Eina_Bool _esvg_text_attribute_get(Edom_Tag *tag,

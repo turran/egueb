@@ -7,6 +7,7 @@ include_HEADERS = Esvg.h
 installed_apiheadersdir = $(includedir)/esvg
 dist_installed_apiheaders_DATA = \
 esvg_a.h \
+esvg_animate.h \
 esvg_animate_base.h \
 esvg_animate_transform.h \
 esvg_animation.h \
