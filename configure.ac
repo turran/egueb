@@ -34,8 +34,6 @@ AC_DEFINE_UNQUOTED([VERSION_MICRO], [v_mic], [Micro version])
 
 EINA_VERSION="1.0.99"
 ENESIM_VERSION="0.0.15"
-EMAGE_VERSION="0.0.5"
-ETEX_VERSION="0.0.3"
 ETCH_VERSION="0.0.3"
 ENDER_VERSION="0.0.5"
 
@@ -58,7 +56,7 @@ AC_SUBST([ESVG_BUILD])
 
 ecss_requirements="eina"
 edom_requirements="eina"
-esvg_requirements="etex >= ${ETEX_VERSION} enesim >= ${ENESIM_VERSION} eina >= ${EINA_VERSION} ender >= ${ENDER_VERSION} etch >= ${ETCH_VERSION}"
+esvg_requirements="etex >= ${ENESIM_VERSION} enesim >= ${ENESIM_VERSION} eina >= ${EINA_VERSION} ender >= ${ENDER_VERSION} etch >= ${ETCH_VERSION}"
 
 AC_SUBST([esvg_requirements])
 
@@ -152,14 +150,14 @@ if test "x${want_edom}" = "xyes" ; then
    fi
 fi
 
-if test "x${want_edom}" = "xyes" ; then
-   PKG_CHECK_MODULES([ESVG_EMAGE], [emage >= ${EMAGE_VERSION}], [have_emage="yes"], [have_emage="no"])
+if test "x${want_ecss}" = "xyes" && test "x${want_edom}" = "xyes" ; then
+   PKG_CHECK_MODULES([ESVG_EMAGE], [emage >= ${ENESIM_VERSION}], [have_emage="yes"], [have_emage="no"])
    AC_MSG_CHECKING([whether emage support is available])
    AC_MSG_RESULT([${have_emage}])
 
    if test "x${have_emage}" = "xyes" ; then
       AC_DEFINE(HAVE_EMAGE, [1], [Emage Support])
-      esvg_requirements="emage >= ${EMAGE_VERSION} ${esvg_requirements}"
+      esvg_requirements="emage >= ${ENESIM_VERSION} ${esvg_requirements}"
    fi
    PKG_CHECK_MODULES([ESVG], [${esvg_requirements}], [want_esvg="yes"], [want_esvg="no"])
 fi
