@@ -39,7 +39,7 @@ static Eina_Bool _esvg_input_find_intersection(Enesim_Renderer *r,
 	Esvg_Input_Coord *c = data;
 	Enesim_Rectangle bounds;
 
-	 /* intersect the bounds with x, y (maybe call is_inside? */
+	 /* intersect the bounds with x, y (maybe call is_inside?) */
 	enesim_renderer_boundings(layer, &bounds);
 	printf("bounds %" ENESIM_RECTANGLE_FORMAT " and pointer at %g %g\n",
 			ENESIM_RECTANGLE_ARGS (&bounds), c->x, c->y);

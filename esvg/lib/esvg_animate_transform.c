@@ -581,13 +581,13 @@ static Eina_Bool _esvg_animate_transform_scale(Esvg_Animate_Transform *thiz, Etc
 static Eina_Bool _esvg_animate_transform_skewx(Esvg_Animate_Transform *thiz, Etch *e,
 		Eina_List *values, Eina_List *times)
 {
-
+	return EINA_FALSE;
 }
 
 static Eina_Bool _esvg_animate_transform_skewy(Esvg_Animate_Transform *thiz, Etch *e,
 		Eina_List *values, Eina_List *times)
 {
-
+	return EINA_FALSE;
 }
 
 static Eina_Bool _esvg_animate_transform_container_etch_to(Esvg_Animate_Transform *thiz,
