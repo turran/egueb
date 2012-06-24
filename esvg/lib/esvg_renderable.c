@@ -531,13 +531,15 @@ Edom_Tag * esvg_renderable_new(Esvg_Renderable_Descriptor *descriptor, Esvg_Type
 	thiz->container_height = 480;
 	thiz->x_dpi = 96.0;
 	thiz->y_dpi = 96.0;
-	/* initially we set the old paints to none, so the default value will trigger
-	 * a change
-	 */
-	thiz->fill_paint_last.type = ESVG_PAINT_NONE;
+	/* set the previous values with the same value as the default */
+	thiz->fill_paint_last.type = ESVG_PAINT_COLOR;
+	thiz->fill_paint_last.value.color.r = 0;
+	thiz->fill_paint_last.value.color.g = 0;
+	thiz->fill_paint_last.value.color.b = 0;
 	thiz->stroke_paint_last.type = ESVG_PAINT_NONE;
 	/* the initial context */
 	thiz->context.draw_mode = ENESIM_SHAPE_DRAW_MODE_FILL;
+	thiz->context.fill_color = 0xff000000;
 
 	pdescriptor.child_add = descriptor->child_add;
 	pdescriptor.child_remove = descriptor->child_remove;
