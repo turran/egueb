@@ -18,6 +18,8 @@
 #ifndef _ECSS_H
 #define _ECSS_H
 
+#include <stddef.h>
+
 #ifdef EAPI
 # undef EAPI
 #endif
