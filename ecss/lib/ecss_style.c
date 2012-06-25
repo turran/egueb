@@ -24,6 +24,10 @@
 
 #include "Ecss.h"
 #include "ecss_private.h"
+	
+void * ecss__scan_string(const char *yy_str, void *scanner);
+void ecss__delete_buffer(void *state, void *scanner);
+void ecss__switch_to_buffer(void *state, void *scanner);
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/

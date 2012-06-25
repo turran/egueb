@@ -294,8 +294,10 @@ static void _esvg_animate_transform_skewx_cb(Etch_Animation_Keyframe *k,
 	Esvg_Animate_Transform *thiz = data;
 	Esvg_Animated_Transform v;
 	Enesim_Matrix m;
+	double angle;
 
-	enesim_matrix_rotate(&m, curr->data.d);
+	angle = curr->data.d;
+	enesim_matrix_values_set(&m, 1, tan(angle * M_PI / 180.0), 0, 0, 1, 0, 0, 0, 1);
 	v.base = m;
 
 	ender_element_property_value_set(thiz->parent_e, thiz->prop, &v, NULL);
@@ -309,8 +311,10 @@ static void _esvg_animate_transform_skewy_cb(Etch_Animation_Keyframe *k,
 	Esvg_Animate_Transform *thiz = data;
 	Esvg_Animated_Transform v;
 	Enesim_Matrix m;
+	double angle;
 
-	enesim_matrix_rotate(&m, curr->data.d);
+	angle = curr->data.d;
+	enesim_matrix_values_set(&m, 1, 0, 0, tan(angle * M_PI / 180.0), 1, 0, 0, 0, 1);
 	v.base = m;
 
 	ender_element_property_value_set(thiz->parent_e, thiz->prop, &v, NULL);
@@ -581,12 +585,84 @@ static Eina_Bool _esvg_animate_transform_scale(Esvg_Animate_Transform *thiz, Etc
 static Eina_Bool _esvg_animate_transform_skewx(Esvg_Animate_Transform *thiz, Etch *e,
 		Eina_List *values, Eina_List *times)
 {
-	return EINA_FALSE;
+	Eina_List *l;
+	Eina_List *v;
+	Eina_List *tt;
+	Etch_Animation *skewx;
+
+	skewx = etch_animation_add(e, ETCH_DOUBLE, _esvg_animate_transform_skewx_cb,
+				NULL, NULL, thiz);
+	tt = times;
+	EINA_LIST_FOREACH (values, l, v)
+	{
+		Eina_List *ll;
+		int64_t *time;
+		double *vv;
+		int i = 0;
+
+		time = eina_list_data_get(tt);
+		tt = eina_list_next(tt);
+
+		EINA_LIST_FOREACH(v, ll, vv)
+		{
+			Etch_Animation_Keyframe *k;
+			Etch_Data edata;
+
+			k = etch_animation_keyframe_add(skewx);
+			edata.data.d = *vv;
+			edata.type = ETCH_DOUBLE;
+			etch_animation_keyframe_type_set(k, ETCH_ANIMATION_LINEAR);
+			etch_animation_keyframe_value_set(k, &edata);
+			etch_animation_keyframe_time_set(k, *time);
+
+			printf("adding keyframe at time %lld with value %g on %d\n", *time, *vv, i);
+			i++;
+		}
+	}
+	etch_animation_enable(skewx);
+
+	return EINA_TRUE;
 }
 
 static Eina_Bool _esvg_animate_transform_skewy(Esvg_Animate_Transform *thiz, Etch *e,
 		Eina_List *values, Eina_List *times)
 {
+	Eina_List *l;
+	Eina_List *v;
+	Eina_List *tt;
+	Etch_Animation *skewy;
+
+	skewy = etch_animation_add(e, ETCH_DOUBLE, _esvg_animate_transform_skewy_cb,
+				NULL, NULL, thiz);
+	tt = times;
+	EINA_LIST_FOREACH (values, l, v)
+	{
+		Eina_List *ll;
+		int64_t *time;
+		double *vv;
+		int i = 0;
+
+		time = eina_list_data_get(tt);
+		tt = eina_list_next(tt);
+
+		EINA_LIST_FOREACH(v, ll, vv)
+		{
+			Etch_Animation_Keyframe *k;
+			Etch_Data edata;
+
+			k = etch_animation_keyframe_add(skewy);
+			edata.data.d = *vv;
+			edata.type = ETCH_DOUBLE;
+			etch_animation_keyframe_type_set(k, ETCH_ANIMATION_LINEAR);
+			etch_animation_keyframe_value_set(k, &edata);
+			etch_animation_keyframe_time_set(k, *time);
+
+			printf("adding keyframe at time %lld with value %g on %d\n", *time, *vv, i);
+			i++;
+		}
+	}
+	etch_animation_enable(skewy);
+
 	return EINA_FALSE;
 }
 
