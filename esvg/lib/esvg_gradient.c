@@ -402,6 +402,7 @@ static Eina_Bool _esvg_gradient_reference_add(Edom_Tag *t, Esvg_Referenceable_Re
 	/* add every stop to our newly created reference */
 	r = rr->data;
 	_esvg_gradient_stop_generate(t, r);
+	return EINA_TRUE;
 }
 
 static void _esvg_gradient_free(Edom_Tag *t)
@@ -579,6 +580,8 @@ Edom_Tag * esvg_gradient_href_tag_get(Edom_Tag *t)
  *============================================================================*/
 EAPI Eina_Bool esvg_is_gradient(Ender_Element *e)
 {
+	/* for now return false */
+	return EINA_FALSE;
 }
 
 EAPI void esvg_gradient_href_set(Ender_Element *e, const char *href)
@@ -605,6 +608,8 @@ EAPI void esvg_gradient_units_get(Ender_Element *e, Esvg_Gradient_Units *units)
 
 EAPI Eina_Bool esvg_gradient_units_is_set(Ender_Element *e)
 {
+	/* for now return false */
+	return EINA_FALSE;
 }
 
 EAPI void esvg_gradient_transform_set(Ender_Element *e, const Enesim_Matrix *transform)
@@ -618,6 +623,8 @@ EAPI void esvg_gradient_transform_get(Ender_Element *e, Enesim_Matrix *transform
 
 EAPI Eina_Bool esvg_gradient_transform_is_set(Ender_Element *e)
 {
+	/* for now return false */
+	return EINA_FALSE;
 }
 
 EAPI void esvg_gradient_spread_method_set(Ender_Element *e, Esvg_Spread_Method spread_method)

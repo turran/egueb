@@ -117,6 +117,22 @@ static Eina_Bool _esvg_long_get(const char *iter, const char **tmp, long *l)
 	return EINA_FALSE;
 }
 
+static Eina_Bool _esvg_double_get(const char *iter, const char **tmp, double *v)
+{
+	char *endptr;
+	double val;
+
+	val = strtod(iter, &endptr);
+	if ((errno != ERANGE) &&
+	    !((val == 0) && (iter == endptr)))
+	{
+		*tmp = endptr;
+		*v = val;
+		return EINA_TRUE;
+	}
+	return EINA_FALSE;
+}
+
 static unsigned char _esvg_c_to_h(char c)
 {
 	unsigned char h;
@@ -1789,6 +1805,7 @@ EAPI Eina_Bool esvg_number_list_string_from(const char *attr, Esvg_Number_List_C
 #define ESVG_CLOCK_MSECONDS (1000000LL)
 
 /* The clock is defined in miliseconds? nanoseconds? */
+/* TODO maybe we should use doubles directly? */
 /* Clock-val         ::= Full-clock-val | Partial-clock-val | Timecount-val */
 EAPI Eina_Bool esvg_clock_string_from(int64_t *clock, const char *attr)
 {
@@ -1836,23 +1853,35 @@ EAPI Eina_Bool esvg_clock_string_from(int64_t *clock, const char *attr)
 	/* Timecount-val::= Timecount ("." Fraction)? (Metric)? */
 	else
 	{
+		int64_t scale;
+		long f = 0;
+
 		/* Fraction::= DIGIT+ */
 		if (*tmp == '.')
 		{
 			tmp++;
+			if (!_esvg_long_get(tmp, &tmp, &f))
+				return EINA_FALSE;
 		}
 
 		/* Metric::= "h" | "min" | "s" | "ms" */
 		if (!strncmp(tmp, "ms", 2))
-			*clock = v * ESVG_CLOCK_MSECONDS;
+			scale = ESVG_CLOCK_MSECONDS;
 		else if (*tmp == 's')
-			*clock = v * ESVG_CLOCK_SECONDS;
+			scale = ESVG_CLOCK_SECONDS;
 		else if (*tmp == 'm')
-			*clock = v * ESVG_CLOCK_SECONDS * 60;
+			scale = ESVG_CLOCK_SECONDS * 60;
 		else if (*tmp == 'h')
-			*clock = v * ESVG_CLOCK_SECONDS * 60 * 60;
+			scale = ESVG_CLOCK_SECONDS * 60 * 60;
+		else
+			return EINA_FALSE;
+
+		*clock = v * scale;
+		if (f)
+			*clock += (double)(f / 10.0) * scale;
 
 		DBG("clock is %lld", *clock);
+		printf("clock is %lld %s %ld\n", *clock, attr, v);
 		ret = EINA_TRUE;
 	}
 
