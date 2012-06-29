@@ -1921,3 +1921,30 @@ EAPI Eina_Bool esvg_duration_string_from(Esvg_Duration *d, const char *attr)
 	}
 	return ret;
 }
+
+EAPI Eina_Bool esvg_additive_string_from(Esvg_Additive *add, const char *attr)
+{
+	Eina_Bool ret = EINA_TRUE;
+
+	if (!strcmp(attr, "sum"))
+		*add = ESVG_ADDITIVE_SUM;
+	else if (!strcmp(attr, "replace"))
+		*add = ESVG_ADDITIVE_REPLACE;
+	else
+		ret = EINA_FALSE;
+	return ret;
+}
+
+EAPI Eina_Bool esvg_accumulate_string_from(Esvg_Accumulate *acc, const char *attr)
+{
+	Eina_Bool ret = EINA_TRUE;
+
+	if (!strcmp(attr, "sum"))
+		*acc = ESVG_ACCUMULATE_SUM;
+	else if (!strcmp(attr, "none"))
+		*acc = ESVG_ACCUMULATE_NONE;
+	else
+		ret = EINA_FALSE;
+	return ret;
+}
+

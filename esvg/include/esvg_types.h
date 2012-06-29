@@ -399,6 +399,18 @@ typedef struct _Esvg_Duration
 	} data;
 } Esvg_Duration;
 
+typedef enum _Esvg_Additive
+{
+	ESVG_ADDITIVE_SUM,
+	ESVG_ADDITIVE_REPLACE,
+} Esvg_Additive;
+
+typedef enum _Esvg_Accumulate
+{
+	ESVG_ACCUMULATE_SUM,
+	ESVG_ACCUMULATE_NONE,
+} Esvg_Accumulate;
+
 typedef enum _Esvg_Animate_Transform_Type
 {
 	ESVG_ANIMATE_TRANSFORM_TYPE_TRANSLATE,
@@ -478,6 +490,8 @@ EAPI Eina_Bool esvg_number_list_string_from(const char *attr, Esvg_Number_List_C
 EAPI Eina_Bool esvg_clock_string_from(int64_t *clock, const char *attr);
 EAPI Eina_Bool esvg_calc_mode_string_from(Esvg_Calc_Mode *c, const char *attr);
 EAPI Eina_Bool esvg_duration_string_from(Esvg_Duration *d, const char *attr);
+EAPI Eina_Bool esvg_additive_string_from(Esvg_Additive *add, const char *attr);
+EAPI Eina_Bool esvg_accumulate_string_from(Esvg_Accumulate *acc, const char *attr);
 
 EAPI Eina_Bool esvg_type_is_paint_server(Esvg_Type type);
 EAPI Eina_Bool esvg_type_is_shape(Esvg_Type type);

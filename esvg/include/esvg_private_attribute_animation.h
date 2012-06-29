@@ -54,9 +54,8 @@ typedef struct _Esvg_Attribute_Animation_Value
 
 typedef struct _Esvg_Attribute_Animation_Addition
 {
-	/* additive = "replace | sum "
-	 * accumulate = "none | sum "
-	 */
+	Esvg_Accumulate accumulate;
+	Esvg_Additive additive;
 } Esvg_Attribute_Animation_Addition;
 
 typedef struct _Esvg_Attribute_Animation_Event

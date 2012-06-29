@@ -70,6 +70,10 @@
  * starts, by default we put an "empty" from that on the animation start
  * it must be changed to the current value
  * If we have a 'values' attribute set, everything else must be ignored
+ *
+ * TODO handle:
+ * accumulate=none|sum (sum based on the previous iteration)
+ * additive=none|sum (add to the underlying value of the attribute)
  */
 /*============================================================================*
  *                                  Local                                     *

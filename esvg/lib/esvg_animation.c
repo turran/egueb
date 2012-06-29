@@ -47,6 +47,8 @@
 
 static Ender_Property *ESVG_ANIMATION_ATTRIBUTE_NAME;
 static Ender_Property *ESVG_ANIMATION_ATTRIBUTE_TYPE;
+static Ender_Property *ESVG_ANIMATION_ADDITIVE;
+static Ender_Property *ESVG_ANIMATION_ACCUMULATE;
 static Ender_Property *ESVG_ANIMATION_DUR;
 
 typedef struct _Esvg_Animation_Descriptor_Internal
@@ -216,6 +218,21 @@ static Eina_Bool _esvg_animation_attribute_set(Ender_Element *e,
 		esvg_duration_string_from(&dur, value);
 		esvg_animation_dur_set(e, &dur);
 	}
+	/* addition attributes */
+	else if (!strcmp(key, "additive"))
+	{
+		Esvg_Additive add;
+
+		esvg_additive_string_from(&add, value);
+		esvg_animation_additive_set(e, &add);
+	}
+	else if (!strcmp(key, "accumulate"))
+	{
+		Esvg_Accumulate acc;
+
+		esvg_accumulate_string_from(&acc, value);
+		esvg_animation_accumulate_set(e, &acc);
+	}
 	else
 	{
 		Esvg_Animation *thiz;
@@ -227,6 +244,7 @@ static Eina_Bool _esvg_animation_attribute_set(Ender_Element *e,
 			return thiz->descriptor.attribute_set(e, key, value);
 		return EINA_FALSE;
 	}
+	
 
 	return EINA_TRUE;
 }
@@ -392,7 +410,6 @@ EAPI void esvg_animation_attribute_type_get(Ender_Element *e, Esvg_Attribute_Typ
  */
 EAPI void esvg_animation_dur_set(Ender_Element *e, Esvg_Duration *dur)
 {
-	printf("duration set %lld\n", dur->data.clock);
 	ender_element_property_value_set(e, ESVG_ANIMATION_DUR, dur, NULL);
 }
 
@@ -401,6 +418,40 @@ EAPI void esvg_animation_dur_set(Ender_Element *e, Esvg_Duration *dur)
  * FIXME: To be fixed
  */
 EAPI void esvg_animation_dur_get(Ender_Element *e, Esvg_Duration *dur)
+{
+}
+
+/**
+ * To be documented
+ * FIXME: To be fixed
+ */
+EAPI void esvg_animation_additive_set(Ender_Element *e, Esvg_Additive *additive)
+{
+	ender_element_property_value_set(e, ESVG_ANIMATION_ADDITIVE, additive, NULL);
+}
+
+/**
+ * To be documented
+ * FIXME: To be fixed
+ */
+EAPI void esvg_animation_additive_get(Ender_Element *e, Esvg_Additive *additive)
+{
+}
+
+/**
+ * To be documented
+ * FIXME: To be fixed
+ */
+EAPI void esvg_animation_accumulate_set(Ender_Element *e, Esvg_Accumulate *accumulate)
+{
+	ender_element_property_value_set(e, ESVG_ANIMATION_ACCUMULATE, accumulate, NULL);
+}
+
+/**
+ * To be documented
+ * FIXME: To be fixed
+ */
+EAPI void esvg_animation_accumulate_get(Ender_Element *e, Esvg_Accumulate *accumulate)
 {
 }
 
