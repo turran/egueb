@@ -7,6 +7,7 @@
 typedef struct _Esvg_Animation_Context {
 	Esvg_Attribute_Animation_Target target;
 	Esvg_Attribute_Animation_Timing timing;
+	Esvg_Attribute_Animation_Addition addition;
 	/* the parent element */
 	Ender_Element *parent_e;
 	Edom_Tag *parent_t;

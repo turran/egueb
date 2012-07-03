@@ -267,12 +267,6 @@ static Eina_Bool _esvg_linear_gradient_propagate(Edom_Tag *t,
 		enesim_matrix_compose(&m, &gctx->transform, &m);
 	}
 	enesim_renderer_geometry_transformation_set(r, &m);
-
-	{
-		const char *name;
-		enesim_renderer_name_get(r, &name);
-		printf("line %s %g %g %g %g\n", name, x1, y1, x2, y2);
-	}
 	enesim_renderer_gradient_linear_x0_set(r, x1);
 	enesim_renderer_gradient_linear_y0_set(r, y1);
 	enesim_renderer_gradient_linear_x1_set(r, x2);

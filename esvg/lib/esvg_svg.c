@@ -50,6 +50,8 @@
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
+#define ESVG_LOG_DEFAULT esvg_log_svg
+
 static Ender_Property *ESVG_SVG_X;
 static Ender_Property *ESVG_SVG_Y;
 static Ender_Property *ESVG_SVG_WIDTH;
@@ -197,13 +199,6 @@ static inline void _esvg_svg_viewbox_apply(Esvg_Svg *thiz, Esvg_Element_Context 
 	new_vw = thiz->view_box.width / ctx->viewbox.width;
 	new_vh = thiz->view_box.height / ctx->viewbox.height;
 
-	printf("setting scale %p to %g %g - %g %g (%g %g)\n",
-			ctx,
-			thiz->view_box.width,
-			thiz->view_box.height,
-			width,
-			height,
-			new_vw, new_vh);
 	width = thiz->view_box.width;
 	height = thiz->view_box.height;
 
@@ -307,7 +302,6 @@ static void _esvg_svg_element_uri_local_get(const char *name,
 	Esvg_Svg *thiz = data->thiz;
 	Ender_Element **e = data->ret;
 
-	printf("looking for %s\n", fragment);
 	*e = eina_hash_find(thiz->ids, fragment);
 }
 
@@ -381,7 +375,6 @@ static Eina_Bool _esvg_svg_child_topmost_set(Edom_Tag *t, Edom_Tag *child,
 {
 	Ender_Element *topmost = data;
 
-	printf("Setting the topmost on the childs\n");
 	esvg_element_topmost_set(child, topmost);
 	return EINA_TRUE;
 }
@@ -451,7 +444,7 @@ static void _esvg_svg_topmost_changed_cb(Ender_Element *e, const char *event_nam
 		Esvg_Svg *thiz;
 		Edom_Tag *topmost_c;
 
-		printf("setting topmost on %s\n", esvg_type_string_to(esvg_element_internal_type_get(child_t)));
+		DBG("Setting topmost on %s", esvg_type_string_to(esvg_element_internal_type_get(child_t)));
 		topmost_c = ender_element_object_get(ev->current);
 		thiz = _esvg_svg_get(topmost_c);
 		/* setup all the needed callbacks on the element */
@@ -688,13 +681,6 @@ static Esvg_Element_Setup_Return _esvg_svg_setup(Edom_Tag *t,
 			new_vw = thiz->view_box.width / width;
 			new_vh = thiz->view_box.height / height;
 
-			printf("setting scale %p to %g %g - %g %g (%g %g)\n",
-					ctx,
-					thiz->view_box.width,
-					thiz->view_box.height,
-					width,
-					height,
-					new_vw, new_vh);
 			width = thiz->view_box.width;
 			height = thiz->view_box.height;
 
@@ -956,6 +942,7 @@ void esvg_svg_element_get(Ender_Element *e, const char *uri, Ender_Element **el)
 	Esvg_Svg *thiz;
 
 	if (!el) return;
+	if (!uri) return;
 
 	t = ender_element_object_get(e);
 	thiz = _esvg_svg_get(t);
@@ -963,6 +950,7 @@ void esvg_svg_element_get(Ender_Element *e, const char *uri, Ender_Element **el)
 	data.thiz = thiz;
 	data.ret = el;
 	/* resolve the uri for relative/absolute */
+	DBG("Looking for %s", uri);
 	esvg_iri_string_from(uri, &_uri_element_descriptor, &data);
 }
 

@@ -71,7 +71,6 @@ static Enesim_Renderer * _esvg_paint_server_renderer_new(Edom_Tag *t)
 	thiz = _esvg_paint_server_get(t);
 	if (thiz->descriptor.renderer_new)
 		r = thiz->descriptor.renderer_new(t);
-	printf("renderer new!!!! %p\n", r);
 
 	return r;
 }

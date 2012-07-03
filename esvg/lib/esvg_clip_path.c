@@ -148,7 +148,6 @@ static void _esvg_clip_path_context_set(Edom_Tag *t,
 	Esvg_Clip_Path_Referenceable_Data *data = user_data;
 	/* FIXME how to get the clip path, the referencer, etc? */
 
-	printf("here we go!\n");
 	rctx->color = ENESIM_COLOR_FULL;
 	rctx->fill_color = ENESIM_COLOR_FULL;
 	rctx->draw_mode = ENESIM_SHAPE_DRAW_MODE_FILL;

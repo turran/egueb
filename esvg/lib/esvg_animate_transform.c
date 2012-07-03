@@ -73,7 +73,8 @@
  *
  * TODO handle:
  * accumulate=none|sum (sum based on the previous iteration)
- * additive=none|sum (add to the underlying value of the attribute)
+ * additive=none|sum (add to the underlying value of the attribute and other
+ * lower priority animations)
  */
 /*============================================================================*
  *                                  Local                                     *

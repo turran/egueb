@@ -192,6 +192,39 @@ static void _esvg_animation_dur_get(Edom_Tag *t, Esvg_Duration *dur)
 	*dur = thiz->ctx.timing.dur;
 }
 
+static void _esvg_animation_additive_set(Edom_Tag *t, Esvg_Additive additive)
+{
+	Esvg_Animation *thiz;
+
+	thiz = _esvg_animation_get(t);
+	thiz->ctx.addition.additive = additive;
+}
+
+static void _esvg_animation_additive_get(Edom_Tag *t, Esvg_Additive *additive)
+{
+	Esvg_Animation *thiz;
+
+	if (!additive) return;
+	thiz = _esvg_animation_get(t);
+	*additive = thiz->ctx.addition.additive;
+}
+
+static void _esvg_animation_accumulate_set(Edom_Tag *t, Esvg_Accumulate accumulate)
+{
+	Esvg_Animation *thiz;
+
+	thiz = _esvg_animation_get(t);
+	thiz->ctx.addition.accumulate = accumulate;
+}
+
+static void _esvg_animation_accumulate_get(Edom_Tag *t, Esvg_Accumulate *accumulate)
+{
+	Esvg_Animation *thiz;
+
+	if (!accumulate) return;
+	thiz = _esvg_animation_get(t);
+	*accumulate = thiz->ctx.addition.accumulate;
+}
 /*----------------------------------------------------------------------------*
  *                         The Esvg Element interface                         *
  *----------------------------------------------------------------------------*/
@@ -303,6 +336,8 @@ static Esvg_Element_Setup_Return _esvg_animation_setup(Edom_Tag *t,
 /* The ender wrapper */
 #define _esvg_animation_attribute_name_is_set NULL
 #define _esvg_animation_attribute_type_is_set NULL
+#define _esvg_animation_additive_is_set NULL
+#define _esvg_animation_accumulate_is_set NULL
 #define _esvg_animation_dur_is_set NULL
 #include "generated/esvg_generated_animation.c"
 

@@ -65,6 +65,7 @@ struct log
 	{ &esvg_log_rect,		"esvg_rect" },
 	{ &esvg_log_renderable,		"esvg_renderable" },
 	{ &esvg_log_stop,		"esvg_stop" },
+	{ &esvg_log_svg,		"esvg_svg" },
 	{ &esvg_log_text,		"esvg_text" },
 	{ &esvg_log_type,		"esvg_type" },
 };
@@ -221,23 +222,24 @@ Ender_Property *EDOM_CHILD = NULL;
 Ender_Property *EDOM_PARENT = NULL;
 Ender_Property *EDOM_TEXT = NULL;
 /* The log domaings */
-int esvg_log_animate		 = -1;
-int esvg_log_animate_base	 = -1;
-int esvg_log_animate_transform	 = -1;
-int esvg_log_circle     = -1;
-int esvg_log_element    = -1;
-int esvg_log_ellipse    = -1;
-int esvg_log_gradient   = -1;
-int esvg_log_line       = -1;
-int esvg_log_parser     = -1;
-int esvg_log_path       = -1;
-int esvg_log_polygon    = -1;
-int esvg_log_polyline   = -1;
-int esvg_log_rect       = -1;
-int esvg_log_renderable = -1;
-int esvg_log_stop       = -1;
-int esvg_log_text       = -1;
-int esvg_log_type       = -1;
+int esvg_log_animate 		= -1;
+int esvg_log_animate_base 	= -1;
+int esvg_log_animate_transform 	= -1;
+int esvg_log_circle 		= -1;
+int esvg_log_element 		= -1;
+int esvg_log_ellipse 		= -1;
+int esvg_log_gradient 		= -1;
+int esvg_log_line 		= -1;
+int esvg_log_parser 		= -1;
+int esvg_log_path 		= -1;
+int esvg_log_polygon 		= -1;
+int esvg_log_polyline 		= -1;
+int esvg_log_rect 		= -1;
+int esvg_log_renderable		= -1;
+int esvg_log_stop 		= -1;
+int esvg_log_svg		= -1;
+int esvg_log_text       	= -1;
+int esvg_log_type       	= -1;
 
 /* The ender wrapper */
 Ender_Namespace * esvg_namespace_get(void)

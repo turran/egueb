@@ -141,6 +141,8 @@ namespace "esvg" {
 	abstract "animation" : "element" {
 		string "attribute_name";
 		int "attribute_type";
+		int "additive";
+		int "accumulate";
 		/* FIXME later we should use a time object? */
 		esvg_duration "dur";
 	};

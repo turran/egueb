@@ -52,6 +52,7 @@ extern int esvg_log_polyline;
 extern int esvg_log_rect;
 extern int esvg_log_renderable;
 extern int esvg_log_stop;
+extern int esvg_log_svg;
 extern int esvg_log_text;
 extern int esvg_log_type;
 
