@@ -419,7 +419,6 @@ static Eina_Bool _esvg_animate_transform_rotate(Esvg_Animate_Transform *thiz, Et
 	}
 	else
 	{
-		Eina_List *tt;
 		Etch_Animation *angle;
 		Etch_Animation *cx;
 		Etch_Animation *cy;
@@ -438,35 +437,7 @@ static Eina_Bool _esvg_animate_transform_rotate(Esvg_Animate_Transform *thiz, Et
 					NULL, NULL, thiz);
 		thiz->animations = eina_list_append(thiz->animations, angle);
 
-		tt = times;
-		EINA_LIST_FOREACH (values, l, v)
-		{
-			Eina_List *ll;
-			Etch_Animation *a[3] = { angle, cx, cy };
-			int64_t *time;
-			double *vv;
-			int i = 0;
-
-			time = eina_list_data_get(tt);
-			tt = eina_list_next(tt);
-			/* TODO take care of the case where the values are not three, but only one */
-			EINA_LIST_FOREACH(v, ll, vv)
-			{
-				Etch_Animation_Keyframe *k;
-				Etch_Data edata;
-
-				k = etch_animation_keyframe_add(a[i]);
-				edata.data.d = *vv;
-				edata.type = ETCH_DOUBLE;
-				etch_animation_keyframe_type_set(k, ETCH_ANIMATION_LINEAR);
-				etch_animation_keyframe_value_set(k, &edata);
-				etch_animation_keyframe_time_set(k, *time);
-				i++;
-			}
-		}
-		etch_animation_enable(angle);
-		etch_animation_enable(cx);
-		etch_animation_enable(cy);
+		_esvg_animate_transform_set_time_and_value(thiz, times, values);
 	}
 	return EINA_TRUE;
 }
@@ -495,7 +466,6 @@ static Eina_Bool _esvg_animate_transform_translate(Esvg_Animate_Transform *thiz,
 	}
 	else
 	{
-		Eina_List *tt;
 		Etch_Animation *tx;
 		Etch_Animation *ty;
 
@@ -509,35 +479,7 @@ static Eina_Bool _esvg_animate_transform_translate(Esvg_Animate_Transform *thiz,
 		tx = etch_animation_add(e, ETCH_DOUBLE, _esvg_animate_transform_translate_tx_cb,
 					NULL, NULL, thiz);
 		thiz->animations = eina_list_append(thiz->animations, tx);
-
-		tt = times;
-		EINA_LIST_FOREACH (values, l, v)
-		{
-			Eina_List *ll;
-			Etch_Animation *a[2] = { tx, ty };
-			int64_t *time;
-			double *vv;
-			int i = 0;
-
-			time = eina_list_data_get(tt);
-			tt = eina_list_next(tt);
-			/* TODO take care of the case where the values are not three, but only one */
-			EINA_LIST_FOREACH(v, ll, vv)
-			{
-				Etch_Animation_Keyframe *k;
-				Etch_Data edata;
-
-				k = etch_animation_keyframe_add(a[i]);
-				edata.data.d = *vv;
-				edata.type = ETCH_DOUBLE;
-				etch_animation_keyframe_type_set(k, ETCH_ANIMATION_LINEAR);
-				etch_animation_keyframe_value_set(k, &edata);
-				etch_animation_keyframe_time_set(k, *time);
-				i++;
-			}
-		}
-		etch_animation_enable(tx);
-		etch_animation_enable(ty);
+		_esvg_animate_transform_set_time_and_value(thiz, times, values);
 	}
 	return EINA_TRUE;
 
@@ -567,7 +509,6 @@ static Eina_Bool _esvg_animate_transform_scale(Esvg_Animate_Transform *thiz, Etc
 	}
 	else
 	{
-		Eina_List *tt;
 		Etch_Animation *sx;
 		Etch_Animation *sy;
 
@@ -581,35 +522,7 @@ static Eina_Bool _esvg_animate_transform_scale(Esvg_Animate_Transform *thiz, Etc
 		sx = etch_animation_add(e, ETCH_DOUBLE, _esvg_animate_transform_scale_full_sx_cb,
 					NULL, NULL, thiz);
 		thiz->animations = eina_list_append(thiz->animations, sx);
-
-		tt = times;
-		EINA_LIST_FOREACH (values, l, v)
-		{
-			Eina_List *ll;
-			Etch_Animation *a[2] = { sx, sy };
-			int64_t *time;
-			double *vv;
-			int i = 0;
-
-			time = eina_list_data_get(tt);
-			tt = eina_list_next(tt);
-			/* TODO take care of the case where the values are not three, but only one */
-			EINA_LIST_FOREACH(v, ll, vv)
-			{
-				Etch_Animation_Keyframe *k;
-				Etch_Data edata;
-
-				k = etch_animation_keyframe_add(a[i]);
-				edata.data.d = *vv;
-				edata.type = ETCH_DOUBLE;
-				etch_animation_keyframe_type_set(k, ETCH_ANIMATION_LINEAR);
-				etch_animation_keyframe_value_set(k, &edata);
-				etch_animation_keyframe_time_set(k, *time);
-				i++;
-			}
-		}
-		etch_animation_enable(sx);
-		etch_animation_enable(sy);
+		_esvg_animate_transform_set_time_and_value(thiz, times, values);
 	}
 	return EINA_TRUE;
 }
@@ -617,41 +530,12 @@ static Eina_Bool _esvg_animate_transform_scale(Esvg_Animate_Transform *thiz, Etc
 static Eina_Bool _esvg_animate_transform_skewx(Esvg_Animate_Transform *thiz, Etch *e,
 		Eina_List *values, Eina_List *times)
 {
-	Eina_List *l;
-	Eina_List *v;
-	Eina_List *tt;
 	Etch_Animation *skewx;
 
 	skewx = etch_animation_add(e, ETCH_DOUBLE, _esvg_animate_transform_skewx_cb,
 				NULL, NULL, thiz);
 	thiz->animations = eina_list_append(thiz->animations, skewx);
-
-	tt = times;
-	EINA_LIST_FOREACH (values, l, v)
-	{
-		Eina_List *ll;
-		int64_t *time;
-		double *vv;
-		int i = 0;
-
-		time = eina_list_data_get(tt);
-		tt = eina_list_next(tt);
-
-		EINA_LIST_FOREACH(v, ll, vv)
-		{
-			Etch_Animation_Keyframe *k;
-			Etch_Data edata;
-
-			k = etch_animation_keyframe_add(skewx);
-			edata.data.d = *vv;
-			edata.type = ETCH_DOUBLE;
-			etch_animation_keyframe_type_set(k, ETCH_ANIMATION_LINEAR);
-			etch_animation_keyframe_value_set(k, &edata);
-			etch_animation_keyframe_time_set(k, *time);
-			i++;
-		}
-	}
-	etch_animation_enable(skewx);
+	_esvg_animate_transform_set_time_and_value(thiz, times, values);
 
 	return EINA_TRUE;
 }
@@ -659,41 +543,12 @@ static Eina_Bool _esvg_animate_transform_skewx(Esvg_Animate_Transform *thiz, Etc
 static Eina_Bool _esvg_animate_transform_skewy(Esvg_Animate_Transform *thiz, Etch *e,
 		Eina_List *values, Eina_List *times)
 {
-	Eina_List *l;
-	Eina_List *v;
-	Eina_List *tt;
 	Etch_Animation *skewy;
 
 	skewy = etch_animation_add(e, ETCH_DOUBLE, _esvg_animate_transform_skewy_cb,
 				NULL, NULL, thiz);
 	thiz->animations = eina_list_append(thiz->animations, skewy);
-
-	tt = times;
-	EINA_LIST_FOREACH (values, l, v)
-	{
-		Eina_List *ll;
-		int64_t *time;
-		double *vv;
-		int i = 0;
-
-		time = eina_list_data_get(tt);
-		tt = eina_list_next(tt);
-
-		EINA_LIST_FOREACH(v, ll, vv)
-		{
-			Etch_Animation_Keyframe *k;
-			Etch_Data edata;
-
-			k = etch_animation_keyframe_add(skewy);
-			edata.data.d = *vv;
-			edata.type = ETCH_DOUBLE;
-			etch_animation_keyframe_type_set(k, ETCH_ANIMATION_LINEAR);
-			etch_animation_keyframe_value_set(k, &edata);
-			etch_animation_keyframe_time_set(k, *time);
-			i++;
-		}
-	}
-	etch_animation_enable(skewy);
+	_esvg_animate_transform_set_time_and_value(thiz, times, values);
 
 	return EINA_FALSE;
 }
