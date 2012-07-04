@@ -53,6 +53,7 @@ struct log
 	{ &esvg_log_animate,		"esvg_animate" },
 	{ &esvg_log_animate_base,	"esvg_animate_base" },
 	{ &esvg_log_animate_transform,	"esvg_animate_transform" },
+	{ &esvg_log_clone,		"esvg_clone" },
 	{ &esvg_log_circle,		"esvg_circle" },
 	{ &esvg_log_element,		"esvg_element" },
 	{ &esvg_log_ellipse,		"esvg_ellipse" },
@@ -225,6 +226,7 @@ Ender_Property *EDOM_TEXT = NULL;
 int esvg_log_animate 		= -1;
 int esvg_log_animate_base 	= -1;
 int esvg_log_animate_transform 	= -1;
+int esvg_log_clone 		= -1;
 int esvg_log_circle 		= -1;
 int esvg_log_element 		= -1;
 int esvg_log_ellipse 		= -1;

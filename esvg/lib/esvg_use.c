@@ -42,6 +42,8 @@
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
+#define ESVG_LOG_DEFAULT esvg_log_use
+
 static Ender_Property *ESVG_USE_X;
 static Ender_Property *ESVG_USE_Y;
 static Ender_Property *ESVG_USE_WIDTH;
@@ -104,7 +106,6 @@ static void _esvg_use_initialize(Ender_Element *e)
 	/* whenever the topmost is set on the use
 	 * we should also set the topmost on the g
 	 */
-	printf("initializing!!!\n");
 	ender_event_listener_add(e, "TopmostChanged", _esvg_use_topmost_changed_cb, thiz);
 }
 
@@ -187,12 +188,11 @@ static Esvg_Element_Setup_Return _esvg_use_setup(Edom_Tag *t,
 	/* we take the shortcut here because there's no need to go through
 	 * the normal enesim API
 	 */
-	printf("calling the setup on the use\n");
 	/* FIXME this should be go away */
 	esvg_element_internal_topmost_get(t, &topmost);
 	if (!topmost)
 	{
-		printf("no topmost available\n");
+		WRN("No topmost available");
 		return EINA_TRUE;
 	}
 
@@ -216,8 +216,8 @@ static Esvg_Element_Setup_Return _esvg_use_setup(Edom_Tag *t,
 
 			if (!thiz->cloned)
 			{
-				printf("impossible to clone\n");
-				return EINA_TRUE;
+				WRN("Impossible to clone");
+				return EINA_FALSE;
 			}
 
 			/* TODO add the clone to the generated g */
@@ -230,7 +230,6 @@ static Esvg_Element_Setup_Return _esvg_use_setup(Edom_Tag *t,
 	}
 
 	/* setup the g */
-	printf("doing the setup on the inner g!\n");
 	/* FIXME for now */
 	esvg_element_topmost_set(thiz->g_t, topmost);
 	/* Use our own context and attributes as the parent ones */

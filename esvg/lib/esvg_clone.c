@@ -27,6 +27,8 @@
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
+#define ESVG_LOG_DEFAULT esvg_log_clone
+
 typedef struct _Esvg_Clone
 {
 	Ender_Element *ref;
@@ -75,7 +77,7 @@ static Eina_Bool _esvg_clone_child_cb(Edom_Tag *t, Edom_Tag *child,
 	Ender_Element *child_our;
 	Edom_Tag *child_our_t;
 
-	printf("new child %s\n", edom_tag_name_get(child));
+	DBG("New child %s", edom_tag_name_get(child));
 	if (!esvg_is_element_internal(child))
 		return EINA_TRUE;
 
@@ -84,7 +86,6 @@ static Eina_Bool _esvg_clone_child_cb(Edom_Tag *t, Edom_Tag *child,
 	child_our_t = ender_element_object_get(child_our);
 
 	ender_element_property_value_add(our, EDOM_CHILD, child_our_t, NULL);
-	printf("cloned!\n");
 
 	return EINA_TRUE;
 }
@@ -103,7 +104,7 @@ static Ender_Element * _esvg_clone_duplicate(Ender_Element *e)
 	desc = ender_element_descriptor_get(e);
 	if (!desc)
 	{
-		printf("referring to a non ender element?\n");
+		ERR("Referring to a non ender element?");
 		return NULL;
 	}
 
@@ -134,11 +135,16 @@ Ender_Element * esvg_clone_new(Ender_Element *e)
 
 	clone = _esvg_clone_duplicate(e);
 	if (clone)
-	/* useful for debugging */
 	{
-		Edom_Tag *t = ender_element_object_get(clone);
-		printf("cloned element\n");
-		edom_tag_dump(t);
+		Edom_Tag *t;
+
+		t = ender_element_object_get(clone);
+		DBG("Cloned element '%s'", edom_tag_name_get(t));
+	}
+	else
+	{
+		WRN("Impossible to clone '%s'",
+				edom_tag_name_get(ender_element_object_get(e)));
 	}
 
 	return clone;

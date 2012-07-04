@@ -669,12 +669,6 @@ static Eina_Bool _esvg_animate_transform_setup(Edom_Tag *t,
 	if (!_esvg_animate_transform_container_etch_to(thiz, etch, p, actx, abctx))
 		goto done;
 	thiz->prop = p;
-
-	/* check the type and create an animator of that container type */
-	/* on every animation callback set the animation mode on the element */
-	/* then call the property set */
-	/* restore the mode */
-
 done:
 
 	return EINA_TRUE;
