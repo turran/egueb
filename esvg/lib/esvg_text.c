@@ -172,8 +172,8 @@ static Eina_Bool _esvg_text_renderer_propagate(Edom_Tag *t,
 
 	DBG("calling the setup on the text");
 
-	DBG("matrix %" ENESIM_MATRIX_FORMAT, ENESIM_MATRIX_ARGS (&ctx->transform.base));
-	enesim_matrix_inverse(&ctx->transform.base, &inv);
+	DBG("matrix %" ENESIM_MATRIX_FORMAT, ENESIM_MATRIX_ARGS (&ctx->transform));
+	enesim_matrix_inverse(&ctx->transform, &inv);
 	enesim_renderer_transformation_set(thiz->r, &inv);
 
 	return EINA_TRUE;

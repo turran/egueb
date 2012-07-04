@@ -51,7 +51,6 @@ void esvg_attribute_transform_unset(Esvg_Attribute_Transform *a,
 {
 	a->is_set = EINA_FALSE;
 	a->v = *def;
-
 }
 
 void esvg_attribute_animated_transform_set(Esvg_Attribute_Animated_Transform *aa,
@@ -72,6 +71,17 @@ void esvg_attribute_animated_transform_set(Esvg_Attribute_Animated_Transform *aa
 		esvg_attribute_transform_unset(a, def);
 }
 
+void esvg_attribute_animated_transform_get(Esvg_Attribute_Animated_Transform *aa,
+	Esvg_Animated_Transform *v)
+{
+	if (!v) return;
+
+	v->base = aa->base.v;
+	if (aa->animated && aa->anim.is_set)
+		v->anim = aa->anim.v;
+	else
+		v->anim = v->base;
+}
 /*----------------------------------------------------------------------------*
  *                                  Color                                     *
  *----------------------------------------------------------------------------*/

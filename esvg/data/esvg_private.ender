@@ -143,6 +143,7 @@ namespace "esvg" {
 		int "attribute_type";
 		int "additive";
 		int "accumulate";
+		int "repeat_count";
 		/* FIXME later we should use a time object? */
 		esvg_duration "dur";
 	};

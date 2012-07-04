@@ -203,7 +203,7 @@ static inline void _esvg_svg_viewbox_apply(Esvg_Svg *thiz, Esvg_Element_Context 
 	height = thiz->view_box.height;
 
 	enesim_matrix_scale(&scale, 1.0/new_vw, 1.0/new_vh);
-	enesim_matrix_compose(&scale, &ctx->transform.base, &ctx->transform.base);
+	enesim_matrix_compose(&scale, &ctx->transform, &ctx->transform);
 	ctx->viewbox.width = width;
 	ctx->viewbox.height = height;
 }
@@ -685,7 +685,7 @@ static Esvg_Element_Setup_Return _esvg_svg_setup(Edom_Tag *t,
 			height = thiz->view_box.height;
 
 			enesim_matrix_scale(&scale, 1.0/new_vw, 1.0/new_vh);
-			enesim_matrix_compose(&scale, &ctx->transform.base, &ctx->transform.base);
+			enesim_matrix_compose(&scale, &ctx->transform, &ctx->transform);
 			/* TODO handle current matrix */
 		}
 		ctx->viewbox.width = width;

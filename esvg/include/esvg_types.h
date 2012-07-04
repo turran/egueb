@@ -492,6 +492,7 @@ EAPI Eina_Bool esvg_calc_mode_string_from(Esvg_Calc_Mode *c, const char *attr);
 EAPI Eina_Bool esvg_duration_string_from(Esvg_Duration *d, const char *attr);
 EAPI Eina_Bool esvg_additive_string_from(Esvg_Additive *add, const char *attr);
 EAPI Eina_Bool esvg_accumulate_string_from(Esvg_Accumulate *acc, const char *attr);
+EAPI Eina_Bool esvg_repeat_count_string_from(int *rc, const char *attr);
 
 EAPI Eina_Bool esvg_type_is_paint_server(Esvg_Type type);
 EAPI Eina_Bool esvg_type_is_shape(Esvg_Type type);

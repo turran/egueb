@@ -49,6 +49,7 @@ static Ender_Property *ESVG_ANIMATION_ATTRIBUTE_NAME;
 static Ender_Property *ESVG_ANIMATION_ATTRIBUTE_TYPE;
 static Ender_Property *ESVG_ANIMATION_ADDITIVE;
 static Ender_Property *ESVG_ANIMATION_ACCUMULATE;
+static Ender_Property *ESVG_ANIMATION_REPEAT_COUNT;
 static Ender_Property *ESVG_ANIMATION_DUR;
 
 typedef struct _Esvg_Animation_Descriptor_Internal
@@ -225,6 +226,24 @@ static void _esvg_animation_accumulate_get(Edom_Tag *t, Esvg_Accumulate *accumul
 	thiz = _esvg_animation_get(t);
 	*accumulate = thiz->ctx.addition.accumulate;
 }
+
+static void _esvg_animation_repeat_count_set(Edom_Tag *t, int repeat_count)
+{
+	Esvg_Animation *thiz;
+
+	thiz = _esvg_animation_get(t);
+	thiz->ctx.timing.repeat_count = repeat_count;
+}
+
+static void _esvg_animation_repeat_count_get(Edom_Tag *t, int *repeat_count)
+{
+	Esvg_Animation *thiz;
+
+	if (!repeat_count) return;
+	thiz = _esvg_animation_get(t);
+	*repeat_count = thiz->ctx.timing.repeat_count;
+}
+
 /*----------------------------------------------------------------------------*
  *                         The Esvg Element interface                         *
  *----------------------------------------------------------------------------*/
@@ -265,6 +284,13 @@ static Eina_Bool _esvg_animation_attribute_set(Ender_Element *e,
 
 		esvg_accumulate_string_from(&acc, value);
 		esvg_animation_accumulate_set(e, &acc);
+	}
+	else if (!strcmp(key, "repeatCount"))
+	{
+		int rc;
+
+		esvg_repeat_count_string_from(&rc, value);
+		esvg_animation_repeat_count_set(e, rc);
 	}
 	else
 	{
@@ -338,6 +364,7 @@ static Esvg_Element_Setup_Return _esvg_animation_setup(Edom_Tag *t,
 #define _esvg_animation_attribute_type_is_set NULL
 #define _esvg_animation_additive_is_set NULL
 #define _esvg_animation_accumulate_is_set NULL
+#define _esvg_animation_repeat_count_is_set NULL
 #define _esvg_animation_dur_is_set NULL
 #include "generated/esvg_generated_animation.c"
 
@@ -379,6 +406,7 @@ Edom_Tag * esvg_animation_new(Esvg_Animation_Descriptor *descriptor, Esvg_Type t
 	thiz->descriptor.attribute_set = descriptor->attribute_set;
 	thiz->descriptor.attribute_get = descriptor->attribute_get;
 	/* default values */
+	thiz->ctx.timing.repeat_count = 1;
 
 	pdescriptor.attribute_set = _esvg_animation_attribute_set;
 	pdescriptor.attribute_get = _esvg_animation_attribute_get;
@@ -490,4 +518,20 @@ EAPI void esvg_animation_accumulate_get(Ender_Element *e, Esvg_Accumulate *accum
 {
 }
 
+/**
+ * To be documented
+ * FIXME: To be fixed
+ */
+EAPI void esvg_animation_repeat_count_set(Ender_Element *e, int repeat_count)
+{
+	ender_element_property_value_set(e, ESVG_ANIMATION_REPEAT_COUNT, repeat_count, NULL);
+}
+
+/**
+ * To be documented
+ * FIXME: To be fixed
+ */
+EAPI void esvg_animation_repeat_count_get(Ender_Element *e, int *repeat_count)
+{
+}
 

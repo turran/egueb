@@ -192,7 +192,7 @@ static Eina_Bool _esvg_rect_renderer_propagate(Edom_Tag *t,
 	DBG("calling the setup on the rect (%g %g %g %g) %g", x, y, width, height, rctx->stroke_weight);
 	DBG("fc %08x sc %08x c %08x", rctx->fill_color, rctx->stroke_color, rctx->color);
 	/* base properties */
-	enesim_renderer_geometry_transformation_set(thiz->r, &ctx->transform.base);
+	enesim_renderer_geometry_transformation_set(thiz->r, &ctx->transform);
 	enesim_renderer_color_set(thiz->r, rctx->color);
 
 	return EINA_TRUE;

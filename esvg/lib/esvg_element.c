@@ -145,7 +145,6 @@ typedef struct _Esvg_Element
 	 * transform a presentation attribute
 	 */
 	Esvg_Attribute_Animated_Transform transform;
-	Esvg_Element_Context state;
 	Esvg_Element_Attributes attr_xml;
 	Esvg_Element_Attributes attr_css;
 	/* the descriptor interface */
@@ -189,19 +188,33 @@ static void _esvg_element_mutation_cb(Ender_Element *e, const char *event_name,
 /*----------------------------------------------------------------------------*
  *                              Context helpers                               *
  *----------------------------------------------------------------------------*/
-static void _esvg_element_state_compose(const Esvg_Element_Context *s,
+static void _esvg_element_state_compose(Esvg_Element *thiz,
 		const Esvg_Element_Context *parent, Esvg_Element_Context *d)
 {
-	/* only set */
-	d->dpi_x = parent->dpi_x;
-	d->dpi_y = parent->dpi_y;
-	d->viewbox = parent->viewbox;
-	d->bounds = parent->bounds;
-	d->font_size = parent->font_size;
-	d->renderable_behaviour = parent->renderable_behaviour;
-	/* actually compose */
-	enesim_matrix_compose(&parent->transform.base, &s->transform.base, &d->transform.base);
-}
+	Enesim_Matrix *m;
+
+	if (thiz->transform.animated)
+		m = &thiz->transform.anim.v;
+	else
+		m = &thiz->transform.base.v;
+
+	if (parent)
+	{
+		/* only set */
+		d->dpi_x = parent->dpi_x;
+		d->dpi_y = parent->dpi_y;
+		d->viewbox = parent->viewbox;
+		d->bounds = parent->bounds;
+		d->font_size = parent->font_size;
+		d->renderable_behaviour = parent->renderable_behaviour;
+		/* actually compose */
+		enesim_matrix_compose(&parent->transform, m, &d->transform);
+	}
+	else
+	{
+		d->transform = *m;
+	}
+}	
 /*----------------------------------------------------------------------------*
  *                            Attribute helpers                               *
  *----------------------------------------------------------------------------*/
@@ -532,11 +545,12 @@ static void _esvg_element_class_get(Edom_Tag *t, const char **class)
 static void _esvg_element_transform_set(Edom_Tag *t, const Esvg_Animated_Transform *transform)
 {
 	Esvg_Element *thiz;
+	Enesim_Matrix m;
 
 	thiz = _esvg_element_get(t);
-	if (!transform) return;
-
-	thiz->state.transform = *transform;
+	enesim_matrix_identity(&m);
+	esvg_attribute_animated_transform_set(&thiz->transform,
+		transform, &m, thiz->current_attr_animate);
 }
 
 static void _esvg_element_transform_get(Edom_Tag *t, Esvg_Animated_Transform *transform)
@@ -544,7 +558,7 @@ static void _esvg_element_transform_get(Edom_Tag *t, Esvg_Animated_Transform *tr
 	Esvg_Element *thiz;
 
 	thiz = _esvg_element_get(t);
-	if (transform) *transform = thiz->state.transform;
+	esvg_attribute_animated_transform_get(&thiz->transform, transform);
 }
 
 static void _esvg_element_style_set(Edom_Tag *t, const char *style)
@@ -1279,14 +1293,11 @@ Esvg_Element_Setup_Return esvg_element_setup_rel(Edom_Tag *t,
 	/* note that on SVG every element must be part of a topmost SVG
 	 * that way we need to always pass the upper svg/g element of this
 	 * so relative properties can be calcualted correctly */
-	/* TODO apply the style first */
-	thiz->state_final = thiz->state;
-	/* FIXME avoid so many copies */
-	if (rel_state)
-	{
-		_esvg_element_state_compose(&thiz->state, rel_state, &thiz->state_final);
-	}
 
+	/* FIXME avoid so many copies */
+	_esvg_element_state_compose(thiz, rel_state, &thiz->state_final);
+
+	/* TODO apply the style first */
 	/* FIXME check that the style has changed, if so revert it and start applying */
 	/* FIXME should it have more priority than the properties? */
 	if (thiz->style)
@@ -1519,7 +1530,7 @@ void esvg_element_context_dump(const Esvg_Element_Context *c)
 {
 	DBG("dpi %g %g", c->dpi_x, c->dpi_y);
 	DBG("viewbox %g %g %g %g", c->viewbox.min_x, c->viewbox.min_y, c->viewbox.width, c->viewbox.height);
-	DBG("transformation %" ENESIM_MATRIX_FORMAT, ENESIM_MATRIX_ARGS (&c->transform.base));
+	DBG("transformation %" ENESIM_MATRIX_FORMAT, ENESIM_MATRIX_ARGS (&c->transform));
 }
 
 Edom_Tag * esvg_element_new(Esvg_Element_Descriptor *descriptor, Esvg_Type type,
@@ -1535,7 +1546,8 @@ Edom_Tag * esvg_element_new(Esvg_Element_Descriptor *descriptor, Esvg_Type type,
 	EINA_MAGIC_SET(thiz, ESVG_ELEMENT_MAGIC);
 	thiz->data = data;
 	thiz->type = type;
-	enesim_matrix_identity(&thiz->state.transform.base);
+	enesim_matrix_identity(&thiz->transform.base.v);
+	enesim_matrix_identity(&thiz->transform.anim.v);
 
 	/* the tag interface */
 	pdescriptor.name_get = _esvg_element_name_get;

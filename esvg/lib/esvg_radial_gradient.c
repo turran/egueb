@@ -322,7 +322,7 @@ static Eina_Bool _esvg_radial_gradient_propagate(Edom_Tag *t,
 			rad_vp = hypot(w, h) / M_SQRT2;
 		}
 		rad = esvg_length_final_get(&lrad, rad_vp, ctx->font_size);
-		m = ctx->transform.base;
+		m = ctx->transform;
 	}
 	if (enesim_matrix_type_get(&gctx->transform) != ENESIM_MATRIX_IDENTITY)
 	{

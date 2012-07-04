@@ -208,6 +208,8 @@ void esvg_attribute_animated_transform_set(Esvg_Attribute_Animated_Transform *aa
 	const Esvg_Animated_Transform *v,
 	const Enesim_Matrix *def,
 	Eina_Bool animate);
+void esvg_attribute_animated_transform_get(Esvg_Attribute_Animated_Transform *aa,
+	Esvg_Animated_Transform *v);
 
 
 void esvg_attribute_string_unset(Esvg_Attribute_String *a);

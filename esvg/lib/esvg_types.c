@@ -1948,3 +1948,10 @@ EAPI Eina_Bool esvg_accumulate_string_from(Esvg_Accumulate *acc, const char *att
 	return ret;
 }
 
+EAPI Eina_Bool esvg_repeat_count_string_from(int *rc, const char *attr)
+{
+	if (!strcmp(attr, "indefinite"))
+		*rc = -1;
+	*rc = atoi(attr);
+	return EINA_TRUE;
+}

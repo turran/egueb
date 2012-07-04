@@ -32,7 +32,7 @@ typedef struct _Esvg_Element_Context {
 	Esvg_View_Box viewbox; /* the current viewbox */
 	double font_size; /* the propagated value of the current font size? FIXME here or in the attributes? */
 	Enesim_Rectangle bounds; /* the bounds of the object */
-	Esvg_Animated_Transform transform; /* the current transformation */
+	Enesim_Matrix transform; /* the current transformation */
 	Esvg_Renderable_Behaviour renderable_behaviour;
 } Esvg_Element_Context;
 

@@ -260,7 +260,7 @@ static Eina_Bool _esvg_linear_gradient_propagate(Edom_Tag *t,
 		x2 = esvg_length_final_get(&lx2, w, ctx->font_size);
 		y2 = esvg_length_final_get(&ly2, h, ctx->font_size);
 
-		m = ctx->transform.base;
+		m = ctx->transform;
 	}
 	if (enesim_matrix_type_get(&gctx->transform) != ENESIM_MATRIX_IDENTITY)
 	{

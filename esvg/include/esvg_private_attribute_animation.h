@@ -28,13 +28,13 @@ typedef struct _Esvg_Attribute_Animation_Timing
 	Eina_List *begin;
 	Eina_List *end;
 	Esvg_Duration dur;
+	int repeat_count;
 	/* begin <begin_value_list>
 	 * dur <clock> | "media" | "indefinite"
 	 * end <end_value_list>
 	 * min <clock> | "media"
 	 * max <clock> | "media"
 	 * restart "always | "whenNotActive " | "never"
-	 * repeatCount = numeric | "indefinite"
 	 * repeatDur = <clock> | "indefinite"
 	 * fill = "freeze | remove "
 	 */
