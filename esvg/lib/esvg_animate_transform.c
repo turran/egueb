@@ -423,6 +423,9 @@ static Eina_Bool _esvg_animate_transform_rotate(Esvg_Animate_Transform *thiz, Et
 		Etch_Animation *cx;
 		Etch_Animation *cy;
 
+		angle = etch_animation_add(e, ETCH_DOUBLE, _esvg_animate_transform_rotate_angle_cb,
+					NULL, NULL, thiz);
+		thiz->animations = eina_list_append(thiz->animations, angle);
 		/* generate three animations per each value
 		 * one for the angle, and two for the origin
 		 */
@@ -432,10 +435,6 @@ static Eina_Bool _esvg_animate_transform_rotate(Esvg_Animate_Transform *thiz, Et
 		cy = etch_animation_add(e, ETCH_DOUBLE, _esvg_animate_transform_rotate_cy_cb,
 					NULL, NULL, thiz);
 		thiz->animations = eina_list_append(thiz->animations, cy);
-		/* add the angle at the end, given that the animations are being execute in order */
-		angle = etch_animation_add(e, ETCH_DOUBLE, _esvg_animate_transform_rotate_angle_cb,
-					NULL, NULL, thiz);
-		thiz->animations = eina_list_append(thiz->animations, angle);
 
 		_esvg_animate_transform_set_time_and_value(thiz, times, values);
 	}
@@ -472,13 +471,12 @@ static Eina_Bool _esvg_animate_transform_translate(Esvg_Animate_Transform *thiz,
 		/* generate three animations per each value
 		 * one for the tx, and two for the origin
 		 */
-		ty = etch_animation_add(e, ETCH_DOUBLE, _esvg_animate_transform_translate_ty_cb,
-					NULL, NULL, thiz);
-		thiz->animations = eina_list_append(thiz->animations, ty);
-		/* add the tx at the end, given that the animations are being execute in order */
 		tx = etch_animation_add(e, ETCH_DOUBLE, _esvg_animate_transform_translate_tx_cb,
 					NULL, NULL, thiz);
 		thiz->animations = eina_list_append(thiz->animations, tx);
+		ty = etch_animation_add(e, ETCH_DOUBLE, _esvg_animate_transform_translate_ty_cb,
+					NULL, NULL, thiz);
+		thiz->animations = eina_list_append(thiz->animations, ty);
 		_esvg_animate_transform_set_time_and_value(thiz, times, values);
 	}
 	return EINA_TRUE;
@@ -515,13 +513,12 @@ static Eina_Bool _esvg_animate_transform_scale(Esvg_Animate_Transform *thiz, Etc
 		/* generate three animations per each value
 		 * one for the sx, and two for the origin
 		 */
-		sy = etch_animation_add(e, ETCH_DOUBLE, _esvg_animate_transform_scale_full_sy_cb,
-					NULL, NULL, thiz);
-		thiz->animations = eina_list_append(thiz->animations, sy);
-		/* add the sx at the end, given that the animations are being execute in order */
 		sx = etch_animation_add(e, ETCH_DOUBLE, _esvg_animate_transform_scale_full_sx_cb,
 					NULL, NULL, thiz);
 		thiz->animations = eina_list_append(thiz->animations, sx);
+		sy = etch_animation_add(e, ETCH_DOUBLE, _esvg_animate_transform_scale_full_sy_cb,
+					NULL, NULL, thiz);
+		thiz->animations = eina_list_append(thiz->animations, sy);
 		_esvg_animate_transform_set_time_and_value(thiz, times, values);
 	}
 	return EINA_TRUE;
