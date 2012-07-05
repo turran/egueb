@@ -56,11 +56,17 @@ extern int esvg_log_stop;
 extern int esvg_log_svg;
 extern int esvg_log_text;
 extern int esvg_log_type;
+extern int esvg_log_use;
 
 #ifdef ERR
 # undef ERR
 #endif
 #define ERR(...) EINA_LOG_DOM_ERR(ESVG_LOG_DEFAULT, __VA_ARGS__)
+
+#ifdef WARN
+# undef WARN
+#endif
+#define WARN(...) EINA_LOG_DOM_WARN(ESVG_LOG_DEFAULT, __VA_ARGS__)
 
 #ifdef INFO
 # undef INFO

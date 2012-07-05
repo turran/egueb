@@ -192,7 +192,7 @@ static Esvg_Element_Setup_Return _esvg_use_setup(Edom_Tag *t,
 	esvg_element_internal_topmost_get(t, &topmost);
 	if (!topmost)
 	{
-		WRN("No topmost available");
+		WARN("No topmost available");
 		return EINA_TRUE;
 	}
 
@@ -216,7 +216,7 @@ static Esvg_Element_Setup_Return _esvg_use_setup(Edom_Tag *t,
 
 			if (!thiz->cloned)
 			{
-				WRN("Impossible to clone");
+				WARN("Impossible to clone");
 				return EINA_FALSE;
 			}
 

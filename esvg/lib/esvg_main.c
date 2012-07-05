@@ -69,6 +69,7 @@ struct log
 	{ &esvg_log_svg,		"esvg_svg" },
 	{ &esvg_log_text,		"esvg_text" },
 	{ &esvg_log_type,		"esvg_type" },
+	{ &esvg_log_use,		"esvg_use" },
 };
 
 /* keep track of the initialization */
@@ -242,6 +243,7 @@ int esvg_log_stop 		= -1;
 int esvg_log_svg		= -1;
 int esvg_log_text       	= -1;
 int esvg_log_type       	= -1;
+int esvg_log_use       		= -1;
 
 /* The ender wrapper */
 Ender_Namespace * esvg_namespace_get(void)

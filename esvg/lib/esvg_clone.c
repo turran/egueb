@@ -143,7 +143,7 @@ Ender_Element * esvg_clone_new(Ender_Element *e)
 	}
 	else
 	{
-		WRN("Impossible to clone '%s'",
+		WARN("Impossible to clone '%s'",
 				edom_tag_name_get(ender_element_object_get(e)));
 	}
 
