@@ -273,11 +273,11 @@ EAPI void ecss_context_inline_style_apply(Ecss_Context *c, const char *style, Ec
 	orig = v = strdup(style);
 	ESVG_SPACE_SKIP(v);
 	/* split the style by ';' */
-	while ((sc = index(v, ';')))
+	while ((sc = strchr(v, ';')))
 	{
 		*sc = '\0';
 		/* split it by ':' */
-		ch = index(v, ':');
+		ch = strchr(v, ':');
 		if (ch)
 		{
 			char *vv;
@@ -292,7 +292,7 @@ EAPI void ecss_context_inline_style_apply(Ecss_Context *c, const char *style, Ec
 		ESVG_SPACE_SKIP(v);
 	}
 	/* do the last one */
-	ch = index(v, ':');
+	ch = strchr(v, ':');
 	if (ch)
 	{
 		char *vv;

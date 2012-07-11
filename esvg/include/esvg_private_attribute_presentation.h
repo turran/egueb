@@ -1,8 +1,6 @@
 #ifndef _ESVG_ATTRIBUTE_PRESENTATION_H_
 #define _ESVG_ATTRIBUTE_PRESENTATION_H_
 
-#include <Eina.h>
-#include <Edom.h>
 
 #include "esvg_types.h"
 #include "esvg_private_attribute.h"

@@ -229,6 +229,9 @@ static Eina_Bool _esvg_linear_gradient_propagate(Edom_Tag *t,
 		case ESVG_SPREAD_METHOD_REFLECT:
 		mode = ENESIM_REFLECT;
 		break;
+
+		default:
+		return EINA_FALSE;
 	}
 	enesim_renderer_gradient_mode_set(r, mode);
 

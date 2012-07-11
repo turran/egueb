@@ -26,6 +26,7 @@
 #include "esvg_private_renderable.h"
 #include "esvg_private_referenceable.h"
 #include "esvg_private_clip_path.h"
+#include "esvg_private_types.h"
 #include "esvg_private_svg.h"
 
 #include "esvg_renderable.h"

@@ -1727,7 +1727,7 @@ EAPI void esvg_element_clip_path_set(Ender_Element *e, const char *id)
 		ender_element_property_value_set(e, ESVG_ELEMENT_CLIP_PATH, NULL, NULL);
 		return;
 	}
-	a.base = id;
+	a.base = (char *)id;
 	ender_element_property_value_set(e, ESVG_ELEMENT_CLIP_PATH, &a, NULL);
 }
 

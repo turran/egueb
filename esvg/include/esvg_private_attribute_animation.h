@@ -1,8 +1,6 @@
 #ifndef _ESVG_ATTRIBUTE_ANIMATION_H_
 #define _ESVG_ATTRIBUTE_ANIMATION_H_
 
-#include <Eina.h>
-#include <Edom.h>
 #include "esvg_types.h"
 
 typedef struct _Esvg_Attribute_Animation_Attribute_Name

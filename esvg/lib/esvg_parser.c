@@ -23,12 +23,12 @@
 #include <Ecss.h>
 #include <Ender.h>
 
-#include "esvg_types.h"
 #include "esvg_private_main.h"
 #include "esvg_private_attribute_presentation.h"
 #include "esvg_private_context.h"
 #include "esvg_private_element.h"
 
+#include "esvg_types.h"
 #include "esvg_main.h"
 #include "esvg_a.h"
 #include "esvg_clip_path.h"
