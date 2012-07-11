@@ -7,6 +7,7 @@ AM_CPPFLAGS = \
 -I$(top_srcdir)/esvg/include \
 -I$(top_srcdir)/ecss/include \
 -I$(top_srcdir)/edom/include \
+@ESVG_BUILD@ \
 @ESVG_EMAGE_CFLAGS@
 
 # PNG
@@ -19,4 +20,5 @@ emage_svg.c
 
 emage_svg_la_LIBADD = $(top_builddir)/esvg/lib/libesvg.la @ESVG_EMAGE_LIBS@
 emage_svg_la_LDFLAGS = -no-undefined -module -avoid-version
+emage_svg_la_LIBTOOLFLAGS = --tag=disable-static
 endif

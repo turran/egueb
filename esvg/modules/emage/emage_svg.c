@@ -20,11 +20,15 @@
 #include "config.h"
 #endif
 
-#include <Esvg.h>
 #include <math.h>
 
 #if HAVE_EMAGE
-#include <Emage.h>
+# include <Emage.h>
+#endif
+
+#include <Esvg.h>
+
+#if HAVE_EMAGE
 
 /*
  * To implement the load_info interface we need to parse the svg tree, but
