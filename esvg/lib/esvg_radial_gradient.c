@@ -78,6 +78,8 @@ static Eina_Bool _esvg_radial_gradient_deep_fy_get(Esvg_Radial_Gradient *thiz,
 			Esvg_Radial_Gradient *other;
 
 			other = _esvg_radial_gradient_get(href);
+			if (!other) return EINA_FALSE;
+
 			return _esvg_radial_gradient_deep_fy_get(other, href, fy);
 		}
 		return EINA_FALSE;
@@ -103,6 +105,8 @@ static Eina_Bool _esvg_radial_gradient_deep_fx_get(Esvg_Radial_Gradient *thiz,
 			Esvg_Radial_Gradient *other;
 
 			other = _esvg_radial_gradient_get(href);
+			if (!other) return EINA_FALSE;
+
 			return _esvg_radial_gradient_deep_fx_get(other, href, fx);
 		}
 		return EINA_FALSE;
