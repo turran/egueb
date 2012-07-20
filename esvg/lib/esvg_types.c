@@ -28,6 +28,119 @@
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
+
+#if 1
+# define eina_strtod strtod
+#else
+static double
+eina_strtod(const char *nptr, char **endptr)
+{
+  char *str;
+  int mantisse = 0;
+  int dec = 1;
+  int has_sign = 0;
+  int has_exp_sign = 0;
+  int dotted = 0;
+  int has_exponent = 0;
+  double res;
+  int val = 1;
+
+  str = (char *)nptr;
+
+  if (!str || !*str)
+    {
+      if (endptr) *endptr = str;
+      return 0.0;
+    }
+
+  if (*str == '-')
+    {
+      has_sign = 1;
+      str++;
+    }
+  else if (*str == '+')
+    str++;
+
+  while (*str)
+    {
+      if ((*str >= '0') && (*str <= '9'))
+	{
+	  mantisse *= 10;
+	  mantisse += (*str - '0');
+	  if (dotted) dec *= 10;
+	}
+      else if (*str == '.')
+	{
+	  if (dotted)
+	    {
+	      if (endptr) *endptr = str;
+	      return 0.0;
+	    }
+	  dotted = 1;
+	}
+      else if ((*str == 'e') || (*str == 'E'))
+	{
+	  str++;
+	  has_exponent = 1;
+	  break;
+	}
+      else
+	break;
+
+      str++;
+    }
+
+  if (*str && has_exponent)
+    {
+      int exponent = 0;
+      int i;
+
+      has_exponent = 0;
+      if (*str == '+') str++;
+      else if (*str == '-')
+	{
+	  has_exp_sign = 1;
+	  str++;
+	}
+      while (*str)
+	{
+	  if ((*str >= '0') && (*str <= '9'))
+	    {
+	      has_exponent = 1;
+	      exponent *= 10;
+	      exponent += (*str - '0');
+	    }
+	  else
+	    break;
+	  str++;
+	}
+
+      if (has_exponent)
+	{
+	  for (i = 0; i < exponent; i++)
+	    val *= 10;
+	}
+    }
+
+  if (endptr) *endptr = str;
+
+  if (has_sign)
+    res = -(double)mantisse / (double)dec;
+  else
+    res = (double)mantisse / (double)dec;
+
+  if (val != 1)
+    {
+      if (has_exp_sign)
+	res /= val;
+      else
+	res *= val;
+    }
+
+  return res;
+}
+#endif
+
 #define ESVG_LOG_DEFAULT esvg_log_type
 
 #define ESVG_IS_HEXA(c) \
@@ -75,7 +188,7 @@ static Eina_Bool _esvg_function_get(const char *attr_val, const char **endptr,
 		ESVG_SPACE_SKIP(tmp);
 		if (tmp[0] == ')')
 			goto end;
-		val = strtod(tmp, &end);
+		val = eina_strtod(tmp, &end);
 		if (errno == ERANGE)
 			val = 0;
 		if (end == tmp)
@@ -122,7 +235,7 @@ static Eina_Bool _esvg_double_get(const char *iter, const char **tmp, double *v)
 	char *endptr;
 	double val;
 
-	val = strtod(iter, &endptr);
+	val = eina_strtod(iter, &endptr);
 	if ((errno != ERANGE) &&
 	    !((val == 0) && (iter == endptr)))
 	{
@@ -480,7 +593,7 @@ static Eina_Bool _esvg_path_number_get(char **attr, double *x)
 
 	iter = *attr;
 	ESVG_SPACE_COMMA_SKIP(iter);
-	*x = strtod(iter, &endptr);
+	*x = eina_strtod(iter, &endptr);
 	if (iter == endptr)
 		return EINA_FALSE;
 
@@ -894,7 +1007,7 @@ Esvg_View_Box esvg_view_box_get(const char *attr_val)
 				break;
 			}
 		}
-		val = strtod(iter, &endptr);
+		val = eina_strtod(iter, &endptr);
 		if ((errno != ERANGE) &&
 		    !((val == 0) && (attr_val == endptr)))
 		{
@@ -939,7 +1052,7 @@ EAPI double esvg_number_string_from(const char *attr_val, double default_nbr)
 	if (!attr_val || !*attr_val)
 		return val;
 
-	val = strtod(attr_val, &endptr);
+	val = eina_strtod(attr_val, &endptr);
 	if (errno == ERANGE)
 		return val;
 	if ((val == 0) && (attr_val == endptr))
@@ -963,7 +1076,7 @@ EAPI Eina_Bool esvg_length_string_from(Esvg_Length *length, const char *attr_val
 	if (!attr_val || !*attr_val)
 		return EINA_FALSE;
 
-	val = strtod(attr_val, &endptr);
+	val = eina_strtod(attr_val, &endptr);
 	if (errno == ERANGE)
 		return EINA_FALSE;
 	if ((val == 0) && (attr_val == endptr))
@@ -1710,10 +1823,10 @@ EAPI void esvg_points_string_from(const char *value, Esvg_Points_Cb cb, void *da
 	{
 		Esvg_Point p;
 
-		p.x = strtod(tmp, &endptr);
+		p.x = eina_strtod(tmp, &endptr);
 		tmp = endptr;
 		ESVG_SPACE_COMMA_SKIP(tmp);
-		p.y = strtod(tmp, &endptr);
+		p.y = eina_strtod(tmp, &endptr);
 		tmp = endptr;
 		ESVG_SPACE_COMMA_SKIP(tmp);
 
@@ -1787,7 +1900,7 @@ EAPI Eina_Bool esvg_number_list_string_from(const char *attr, Esvg_Number_List_C
 		if (!*tmp)
 			break;
 
-		val = strtod(tmp, &end);
+		val = eina_strtod(tmp, &end);
 		if (errno == ERANGE)
 			val = 0;
 		if (end == tmp)
