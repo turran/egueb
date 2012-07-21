@@ -172,8 +172,16 @@ static Eina_Bool _esvg_polyline_renderer_propagate(Edom_Tag *t,
 static void _esvg_polyline_free(Edom_Tag *t)
 {
 	Esvg_Polyline *thiz;
+	Esvg_Point *p;
 
 	thiz = _esvg_polyline_get(t);
+	EINA_LIST_FREE(thiz->points, p)
+	{
+		free(p);
+	}
+	enesim_renderer_unref(thiz->proxy);
+	enesim_renderer_unref(thiz->line);
+	enesim_renderer_unref(thiz->figure);
 	free(thiz);
 }
 

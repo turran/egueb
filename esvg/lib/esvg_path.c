@@ -374,8 +374,14 @@ static Eina_Bool _esvg_path_renderer_propagate(Edom_Tag *t,
 void _esvg_path_free(Edom_Tag *t)
 {
 	Esvg_Path *thiz;
+	Esvg_Path_Command *cmd;
 
 	thiz = _esvg_path_get(t);
+	EINA_LIST_FREE(thiz->commands, cmd)
+	{
+		free(cmd);
+	}
+	enesim_renderer_unref(thiz->r);
 	free(thiz);
 }
 

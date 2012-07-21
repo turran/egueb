@@ -381,6 +381,7 @@ static void _esvg_renderable_free(Edom_Tag *t)
 	thiz = _esvg_renderable_get(t);
 	if (thiz->descriptor.free)
 		thiz->descriptor.free(t);
+	enesim_renderer_unref(thiz->r);
 	free(thiz);
 }
 

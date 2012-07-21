@@ -189,6 +189,7 @@ static void _esvg_line_free(Edom_Tag *t)
 	Esvg_Line *thiz;
 
 	thiz = _esvg_line_get(t);
+	enesim_renderer_unref(thiz->r);
 	free(thiz);
 }
 

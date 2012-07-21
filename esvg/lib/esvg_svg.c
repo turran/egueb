@@ -735,6 +735,9 @@ static void _esvg_svg_free(Edom_Tag *t)
 	Esvg_Svg *thiz;
 
 	thiz = _esvg_svg_get(t);
+	enesim_renderer_unref(thiz->clipper);
+	enesim_renderer_unref(thiz->background);
+	enesim_renderer_unref(thiz->compound);
 	free(thiz);
 }
 

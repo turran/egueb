@@ -134,8 +134,14 @@ static Eina_Bool _esvg_polygon_renderer_propagate(Edom_Tag *t,
 static void _esvg_polygon_free(Edom_Tag *t)
 {
 	Esvg_Polygon *thiz;
+	Esvg_Point *p;
 
 	thiz = _esvg_polygon_get(t);
+	EINA_LIST_FREE(thiz->points, p)
+	{
+		free(p);
+	}
+	enesim_renderer_unref(thiz->r);
 	free(thiz);
 }
 

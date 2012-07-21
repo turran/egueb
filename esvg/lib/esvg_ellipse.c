@@ -192,6 +192,7 @@ static void _esvg_ellipse_free(Edom_Tag *t)
 	Esvg_Ellipse *thiz;
 
 	thiz = _esvg_ellipse_get(t);
+	enesim_renderer_unref(thiz->r);
 	free(thiz);
 }
 

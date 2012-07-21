@@ -177,14 +177,18 @@ static Esvg_Element * _esvg_element_get(Edom_Tag *t)
 	return thiz;
 }
 
+/* called on every child of an element, whenever the element is being freed */
 static Eina_Bool _esvg_element_child_free_cb(Edom_Tag *t, Edom_Tag *child,
 		void *data)
 {
 	Ender_Element *t_e;
+	Ender_Element *child_e;
 
 	t_e = esvg_element_ender_get(t);
-
+	child_e = esvg_element_ender_get(child);
 	ender_element_property_value_remove(t_e, EDOM_CHILD, child, NULL);
+	ender_element_unref(child_e);
+
 	return EINA_TRUE;
 }
 
@@ -1148,6 +1152,12 @@ static void _esvg_element_free(Edom_Tag *t)
 	esvg_attribute_presentation_cleanup(&thiz->attr_final);
 	if (thiz->descriptor.free)
 		thiz->descriptor.free(t);
+	if (thiz->id)
+		free(thiz->id);
+	if (thiz->class)
+		free(thiz->class);
+	if (thiz->style)
+		free(thiz->style);
 
 	free(thiz);
 }
