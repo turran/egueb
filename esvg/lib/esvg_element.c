@@ -24,6 +24,7 @@
 #include "esvg_private_context.h"
 #include "esvg_private_element.h"
 
+#include "esvg_main.h"
 #include "esvg_element.h"
 /*
  * TODO
@@ -174,6 +175,17 @@ static Esvg_Element * _esvg_element_get(Edom_Tag *t)
 	ESVG_ELEMENT_MAGIC_CHECK(thiz);
 
 	return thiz;
+}
+
+static Eina_Bool _esvg_element_child_free_cb(Edom_Tag *t, Edom_Tag *child,
+		void *data)
+{
+	Ender_Element *t_e;
+
+	t_e = esvg_element_ender_get(t);
+
+	ender_element_property_value_remove(t_e, EDOM_CHILD, child, NULL);
+	return EINA_TRUE;
 }
 
 static void _esvg_element_mutation_cb(Ender_Element *e, const char *event_name,
@@ -1129,11 +1141,14 @@ static void _esvg_element_free(Edom_Tag *t)
 	Esvg_Element *thiz;
 
 	thiz = _esvg_element_get(t);
-	if (thiz->descriptor.free)
-		return thiz->descriptor.free(t);
+	/* remove every child object */
+	edom_tag_child_foreach(t, _esvg_element_child_free_cb, NULL);
 	//esvg_attribute_presentation_cleanup(&thiz->attr_xml);
 	//esvg_attribute_presentation_cleanup(&thiz->attr_css);
 	esvg_attribute_presentation_cleanup(&thiz->attr_final);
+	if (thiz->descriptor.free)
+		thiz->descriptor.free(t);
+
 	free(thiz);
 }
 

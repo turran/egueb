@@ -136,6 +136,7 @@ EAPI void edom_tag_class_set(Edom_Tag *thiz, const char *class);
 EAPI char * edom_tag_class_get(Edom_Tag *thiz);
 
 EAPI Eina_Bool edom_tag_child_add(Edom_Tag *thiz, Edom_Tag *child);
+EAPI Eina_Bool edom_tag_child_remove(Edom_Tag *thiz, Edom_Tag *child);
 EAPI Edom_Tag * edom_tag_child_get(Edom_Tag *thiz);
 EAPI void edom_tag_child_foreach(Edom_Tag *thiz, Edom_Tag_Foreach foreach, void *data);
 EAPI Edom_Tag * edom_tag_next_get(Edom_Tag *thiz);

@@ -35,7 +35,7 @@ struct _Edom_Tag
 	EINA_INLIST;
 	Edom_Tag_Descriptor descriptor;
 	Edom_Tag *parent;
-	Edom_Tag *child;
+	Eina_Inlist *children;
 	void *data;
 };
 
@@ -49,11 +49,9 @@ static void _tag_dump(Edom_Tag *thiz, int level)
 		printf(" ");
 	name = edom_tag_name_get(thiz);
 	printf("%s\n", name ? name : "(UNKNOWN)");
-	child = thiz->child;
-	while (child)
+	EINA_INLIST_FOREACH(thiz->children, child)
 	{
 		_tag_dump(child, level + 1);
-		child = (Edom_Tag *)EINA_INLIST_GET(child)->next;
 	}
 }
 
@@ -221,10 +219,7 @@ EAPI Eina_Bool edom_tag_child_add(Edom_Tag *thiz, Edom_Tag *child)
 		ret = thiz->descriptor.child_add(thiz, child);
 	if (ret)
 	{
-		if (!thiz->child)
-			thiz->child = child;
-		else
-			eina_inlist_append(EINA_INLIST_GET(thiz->child), EINA_INLIST_GET(child));
+		thiz->children = eina_inlist_append(thiz->children, EINA_INLIST_GET(child));
 		child->parent = thiz;
 	}
 
@@ -235,9 +230,30 @@ EAPI Eina_Bool edom_tag_child_add(Edom_Tag *thiz, Edom_Tag *child)
  * To be documented
  * FIXME: To be fixed
  */
+EAPI Eina_Bool edom_tag_child_remove(Edom_Tag *thiz, Edom_Tag *child)
+{
+	Eina_Bool ret = EINA_TRUE;
+
+	if (!child) return;
+	if (child->parent != thiz) return;
+
+	if (thiz->descriptor.child_remove)
+		ret = thiz->descriptor.child_remove(thiz, child);
+	if (ret)
+	{
+		thiz->children = eina_inlist_remove(thiz->children, EINA_INLIST_GET(child));
+		child->parent = NULL;
+	}
+	return ret;
+}
+
+/**
+ * To be documented
+ * FIXME: To be fixed
+ */
 EAPI Edom_Tag * edom_tag_child_get(Edom_Tag *thiz)
 {
-	return thiz->child;
+	return EINA_INLIST_CONTAINER_GET(thiz->children, Edom_Tag);
 }
 
 
@@ -248,21 +264,14 @@ EAPI Edom_Tag * edom_tag_child_get(Edom_Tag *thiz)
 EAPI void edom_tag_child_foreach(Edom_Tag *thiz, Edom_Tag_Foreach foreach, void *data)
 {
 	Edom_Tag *child;
+	Eina_Inlist *tmp;
 
 	if (!foreach) return;
 
-	child = thiz->child;
-	while (child)
+	EINA_INLIST_FOREACH_SAFE(thiz->children, tmp, child)
 	{
-		Eina_Inlist *il;
-
 		if (!foreach(thiz, child, data))
 			break;
-
-		il = EINA_INLIST_GET(child);
-		if (!il->next)
-			break;
-		child = EINA_INLIST_CONTAINER_GET(il->next, Edom_Tag);
 	}
 }
 
