@@ -186,6 +186,7 @@ Eina_Bool esvg_is_a_internal(Edom_Tag *t)
 
 /* The ender wrapper */
 #define _esvg_a_href_is_set NULL
+#define _esvg_a_delete NULL
 #include "generated/esvg_generated_a.c"
 /*============================================================================*
  *                                   API                                      *

@@ -109,6 +109,17 @@ EAPI Edom_Tag * edom_tag_new(Edom_Tag_Descriptor *descriptor,
  * To be documented
  * FIXME: To be fixed
  */
+EAPI void edom_tag_delete(Edom_Tag *thiz)
+{
+	if (thiz->descriptor.free)
+		thiz->descriptor.free(thiz);
+	free(thiz);
+}
+
+/**
+ * To be documented
+ * FIXME: To be fixed
+ */
 EAPI void edom_tag_attributes_from_xml(Edom_Tag *thiz,
 		const char *attributes, unsigned int length)
 {

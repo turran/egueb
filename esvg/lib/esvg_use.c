@@ -374,6 +374,7 @@ static void _esvg_use_link_get(Edom_Tag *t, const char **link)
  *                                 Global                                     *
  *============================================================================*/
 /* The ender wrapper */
+#define _esvg_use_delete NULL
 #define _esvg_use_x_is_set NULL
 #define _esvg_use_y_is_set NULL
 #define _esvg_use_width_is_set NULL

@@ -174,6 +174,7 @@ Enesim_Renderer_Gradient_Stop * esvg_stop_gradient_stop_get(Edom_Tag *t)
 }
 
 /* The ender wrapper  */
+#define _esvg_stop_delete NULL
 #define _esvg_stop_offset_is_set NULL
 #include "generated/esvg_generated_stop.c"
 /*============================================================================*

@@ -344,6 +344,7 @@ static Eina_Bool _esvg_animate_base_setup(Edom_Tag *t,
  *                                 Global                                     *
  *============================================================================*/
 /* The ender wrapper */
+#define _esvg_animate_base_delete NULL
 #define _esvg_animate_base_to_is_set NULL
 #define _esvg_animate_base_from_is_set NULL
 #define _esvg_animate_base_values_is_set NULL

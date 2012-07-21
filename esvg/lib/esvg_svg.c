@@ -1011,6 +1011,7 @@ Etch * esvg_svg_etch_get(Ender_Element *e)
 }
 
 /* The ender wrapper */
+#define _esvg_svg_delete NULL
 #define _esvg_svg_x_is_set NULL
 #define _esvg_svg_y_is_set NULL
 #define _esvg_svg_width_is_set NULL

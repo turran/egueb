@@ -712,6 +712,7 @@ static Edom_Tag * _esvg_animate_transform_new(void)
  *                                 Global                                     *
  *============================================================================*/
 /* The ender wrapper */
+#define _esvg_animate_transform_delete NULL
 #define _esvg_animate_transform_type_is_set NULL
 #include "generated/esvg_generated_animate_transform.c"
 /*============================================================================*

@@ -550,6 +550,7 @@ static Eina_Bool _esvg_radial_gradient_r_is_set(Edom_Tag *t)
  *                                 Global                                     *
  *============================================================================*/
 /* The ender wrapper */
+#define _esvg_radial_gradient_delete NULL
 #include "generated/esvg_generated_radial_gradient.c"
 /*============================================================================*
  *                                   API                                      *

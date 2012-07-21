@@ -1576,6 +1576,7 @@ Edom_Tag * esvg_element_new(Esvg_Element_Descriptor *descriptor, Esvg_Type type,
 }
 
 /* The ender wrapper */
+#define _esvg_element_delete NULL
 #define _esvg_element_type_set NULL
 #define _esvg_element_type_is_set NULL
 #define _esvg_element_topmost_set NULL

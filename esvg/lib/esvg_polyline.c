@@ -237,6 +237,7 @@ static void _esvg_polyline_point_add(Edom_Tag *t, Esvg_Point *p)
  *                                 Global                                     *
  *============================================================================*/
 /* The ender wrapper */
+#define _esvg_polyline_delete NULL
 #define _esvg_polyline_point_is_set NULL
 #define _esvg_polyline_point_set NULL
 #define _esvg_polyline_point_get NULL

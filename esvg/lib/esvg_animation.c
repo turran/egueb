@@ -360,6 +360,7 @@ static Esvg_Element_Setup_Return _esvg_animation_setup(Edom_Tag *t,
  *                                 Global                                     *
  *============================================================================*/
 /* The ender wrapper */
+#define _esvg_animation_delete NULL
 #define _esvg_animation_attribute_name_is_set NULL
 #define _esvg_animation_attribute_type_is_set NULL
 #define _esvg_animation_additive_is_set NULL

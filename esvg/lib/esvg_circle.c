@@ -288,6 +288,7 @@ static void _esvg_circle_r_get(Edom_Tag *t, Esvg_Length *radius)
  *                                 Global                                     *
  *============================================================================*/
 /* The ender wrapper */
+#define _esvg_circle_delete NULL
 #define _esvg_circle_cx_is_set NULL
 #define _esvg_circle_cy_is_set NULL
 #define _esvg_circle_r_is_set NULL

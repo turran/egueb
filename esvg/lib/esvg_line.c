@@ -310,6 +310,7 @@ static void _esvg_line_y2_get(Edom_Tag *t, Esvg_Coord *y2)
  *                                 Global                                     *
  *============================================================================*/
 /* The ender wrapper */
+#define _esvg_line_delete NULL
 #define _esvg_line_x1_is_set NULL
 #define _esvg_line_x2_is_set NULL
 #define _esvg_line_y1_is_set NULL

@@ -222,6 +222,7 @@ void esvg_referenceable_reference_foreach(Edom_Tag *t, Esvg_Referenceable_Cb cb,
 }
 
 /* The ender wrapper */
+#define _esvg_referenceable_delete NULL
 #include "generated/esvg_generated_referenceable.c"
 
 void * esvg_referenceable_data_get(Edom_Tag *t)

@@ -453,6 +453,7 @@ static void _esvg_image_href_get(Edom_Tag *t, const char **href)
  *                                 Global                                     *
  *============================================================================*/
 /* The ender wrapper */
+#define _esvg_image_delete NULL
 #define _esvg_image_x_is_set NULL
 #define _esvg_image_y_is_set NULL
 #define _esvg_image_width_is_set NULL

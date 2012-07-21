@@ -404,6 +404,7 @@ static Edom_Tag * _esvg_animate_new(void)
  *                                 Global                                     *
  *============================================================================*/
 /* The ender wrapper */
+#define _esvg_animate_delete NULL
 #include "generated/esvg_generated_animate.c"
 /*============================================================================*
  *                                   API                                      *

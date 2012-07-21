@@ -451,6 +451,7 @@ static void _esvg_path_d_get(Edom_Tag *t, const Eina_List **cmds)
  *                                 Global                                     *
  *============================================================================*/
 /* The ender wrapper */
+#define _esvg_path_delete NULL
 #define _esvg_path_d_clear NULL
 #define _esvg_path_d_remove NULL
 #define _esvg_path_d_is_set NULL

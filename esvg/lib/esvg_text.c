@@ -293,6 +293,7 @@ static void _esvg_text_y_get(Edom_Tag *t, Esvg_Coord *y)
  *                                 Global                                     *
  *============================================================================*/
 /* The ender wrapper */
+#define _esvg_text_delete NULL
 #define _esvg_text_x_is_set NULL
 #define _esvg_text_y_is_set NULL
 #include "generated/esvg_generated_text.c"

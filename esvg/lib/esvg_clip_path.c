@@ -385,6 +385,7 @@ static Eina_Bool _esvg_clip_path_clip_path_units_is_set(Edom_Tag *t)
  *                                 Global                                     *
  *============================================================================*/
 /* The ender wrapper */
+#define _esvg_clip_path_delete NULL
 #include "generated/esvg_generated_clip_path.c"
 
 /*============================================================================*

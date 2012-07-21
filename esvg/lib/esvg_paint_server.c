@@ -106,6 +106,7 @@ static void _esvg_paint_server_free(Edom_Tag *t)
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
+#define _esvg_paint_server_delete NULL
 #include "generated/esvg_generated_paint_server.c"
 
 Eina_Bool esvg_is_paint_server_internal(Edom_Tag *t)

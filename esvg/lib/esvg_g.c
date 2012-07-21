@@ -195,6 +195,7 @@ static Edom_Tag * _esvg_g_new(void)
  *                                 Global                                     *
  *============================================================================*/
 /* The ender wrapper */
+#define _esvg_g_delete NULL
 #include "generated/esvg_generated_g.c"
 /*============================================================================*
  *                                   API                                      *

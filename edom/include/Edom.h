@@ -120,6 +120,7 @@ typedef struct _Edom_Tag_Descriptor
 } Edom_Tag_Descriptor;
 
 EAPI Edom_Tag * edom_tag_new(Edom_Tag_Descriptor *d, void *data);
+EAPI void edom_tag_delete(Edom_Tag *thiz);
 EAPI void * edom_tag_data_get(Edom_Tag *thiz);
 
 EAPI const char * edom_tag_name_get(Edom_Tag *thiz);

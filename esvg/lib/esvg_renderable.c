@@ -457,6 +457,7 @@ void esvg_renderable_internal_container_height_get(Edom_Tag *t, double *containe
 }
 
 /* The ender wrapper */
+#define _esvg_renderable_delete NULL
 #define _esvg_renderable_renderer_get esvg_renderable_internal_renderer_get
 #define _esvg_renderable_renderer_set NULL
 #define _esvg_renderable_renderer_is_set NULL

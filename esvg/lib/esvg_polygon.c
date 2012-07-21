@@ -216,6 +216,7 @@ static void _esvg_polygon_point_get(Edom_Tag *t, const Eina_List **pts)
  *                                 Global                                     *
  *============================================================================*/
 /* The ender wrapper */
+#define _esvg_polygon_delete NULL
 #define _esvg_polygon_point_is_set NULL
 #define _esvg_polygon_point_clear NULL
 #define _esvg_polygon_point_remove NULL

@@ -408,6 +408,7 @@ static void _esvg_rect_ry_get(Edom_Tag *t, Esvg_Animated_Coord *ry)
  *                                 Global                                     *
  *============================================================================*/
 /* The ender wrapper */
+#define _esvg_rect_delete NULL
 #define _esvg_rect_x_is_set NULL
 #define _esvg_rect_y_is_set NULL
 #define _esvg_rect_rx_is_set NULL
