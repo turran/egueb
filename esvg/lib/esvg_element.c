@@ -1565,6 +1565,7 @@ Edom_Tag * esvg_element_new(Esvg_Element_Descriptor *descriptor, Esvg_Type type,
 	thiz->descriptor.setup = descriptor->setup;
 	thiz->descriptor.attribute_set = descriptor->attribute_set;
 	thiz->descriptor.attribute_get = descriptor->attribute_get;
+	thiz->descriptor.free = descriptor->free;
 
 	t = edom_tag_new(&pdescriptor, thiz);
 

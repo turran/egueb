@@ -528,6 +528,7 @@ Edom_Tag * esvg_renderable_new(Esvg_Renderable_Descriptor *descriptor, Esvg_Type
 	/* our own descriptor */
 	thiz->descriptor.setup = descriptor->setup;
 	thiz->descriptor.renderer_propagate = descriptor->renderer_propagate;
+	thiz->descriptor.free = descriptor->free;
 	/* default values */
 	thiz->container_width = 640;
 	thiz->container_height = 480;
