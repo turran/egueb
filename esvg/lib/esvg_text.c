@@ -203,6 +203,7 @@ static void _esvg_text_free(Edom_Tag *t)
 	Esvg_Text *thiz;
 
 	thiz = _esvg_text_get(t);
+	enesim_renderer_unref(thiz->r);
 	free(thiz);
 }
 
