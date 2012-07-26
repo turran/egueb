@@ -257,7 +257,7 @@ static void _esvg_polyline_point_add(Edom_Tag *t, Esvg_Point *p)
  *============================================================================*/
 EAPI Ender_Element * esvg_polyline_new(void)
 {
-	return ender_element_new_with_namespace("polyline", "esvg");
+	return ESVG_ELEMENT_NEW("polyline");
 }
 
 EAPI void esvg_polyline_point_add(Ender_Element *e, Esvg_Point *p)

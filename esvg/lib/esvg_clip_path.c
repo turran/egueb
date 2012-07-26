@@ -393,7 +393,7 @@ static Eina_Bool _esvg_clip_path_clip_path_units_is_set(Edom_Tag *t)
  *============================================================================*/
 EAPI Ender_Element * esvg_clip_path_new(void)
 {
-	return ender_element_new_with_namespace("clip_path", "esvg");
+	return ESVG_ELEMENT_NEW("clip_path");
 }
 
 EAPI Eina_Bool esvg_is_clip_path(Ender_Element *e)

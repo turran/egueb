@@ -467,7 +467,7 @@ static void _esvg_path_d_get(Edom_Tag *t, const Eina_List **cmds)
  *============================================================================*/
 EAPI Ender_Element * esvg_path_new(void)
 {
-	return ender_element_new_with_namespace("path", "esvg");
+	return ESVG_ELEMENT_NEW("path");
 }
 
 EAPI Eina_Bool esvg_is_path(Ender_Element *e)

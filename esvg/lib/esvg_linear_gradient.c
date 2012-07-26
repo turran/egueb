@@ -466,7 +466,7 @@ static Eina_Bool _esvg_linear_gradient_y2_is_set(Edom_Tag *t)
  *============================================================================*/
 EAPI Ender_Element * esvg_linear_gradient_new(void)
 {
-	return ender_element_new_with_namespace("linear_gradient", "esvg");
+	return ESVG_ELEMENT_NEW("linear_gradient");
 }
 
 EAPI Eina_Bool esvg_is_linear_gradient(Ender_Element *e)

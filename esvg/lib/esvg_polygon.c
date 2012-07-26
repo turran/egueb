@@ -232,7 +232,7 @@ static void _esvg_polygon_point_get(Edom_Tag *t, const Eina_List **pts)
  *============================================================================*/
 EAPI Ender_Element * esvg_polygon_new(void)
 {
-	return ender_element_new_with_namespace("polygon", "esvg");
+	return ESVG_ELEMENT_NEW("polygon");
 }
 
 EAPI Eina_Bool esvg_is_polygon(Ender_Element *e)

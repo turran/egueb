@@ -1064,7 +1064,7 @@ void esvg_svg_style_apply(Edom_Tag *tag)
  */
 EAPI Ender_Element * esvg_svg_new(void)
 {
-	return ender_element_new_with_namespace("svg", "esvg");
+	return ESVG_ELEMENT_NEW("svg");
 }
 
 /**

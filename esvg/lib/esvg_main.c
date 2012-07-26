@@ -127,19 +127,19 @@ static void _constructor_callback(Ender_Element *e, void *data)
 static Eina_Bool _esvg_ender_init(void)
 {
 	Ender_Descriptor *tag_descriptor;
-	Ender_Namespace *tag_ns;
+	Ender_Namespace *edom;
 
 	ender_loader_registry_callback_add(_register_enders, NULL);
 	ender_init(NULL, NULL);
 	ender_element_new_listener_add(_constructor_callback, NULL);
-	tag_ns = ender_namespace_find("edom");
-	if (!tag_ns)
+	edom = ender_namespace_find("edom", 0);
+	if (!edom)
 	{
 		EINA_LOG_ERR("Impossible to find the 'Edom' namespace");
 		goto namespace_err;
 	}
 
-	tag_descriptor = ender_namespace_descriptor_find(tag_ns, "tag");
+	tag_descriptor = ender_namespace_descriptor_find(edom, "tag");
 	if (!tag_descriptor)
 	{
 		EINA_LOG_ERR("Impossible to find the 'Edom:Tag' descriptor");
@@ -252,7 +252,7 @@ Ender_Namespace * esvg_namespace_get(void)
 
 	if (!namespace)
 	{
-		namespace = ender_namespace_new("esvg");
+		namespace = ender_namespace_new("esvg", 0);
 	}
 	return namespace;
 }

@@ -91,5 +91,5 @@ static Edom_Tag * _esvg_defs_new(void)
  *============================================================================*/
 EAPI Ender_Element * esvg_defs_new(void)
 {
-	return ender_element_new_with_namespace("defs", "esvg");
+	return ESVG_ELEMENT_NEW("defs");
 }

@@ -1,6 +1,6 @@
-using "edom";
+using "edom" : 0;
 
-namespace "esvg" {
+namespace "esvg" : 0 {
 	/* basic types */
 	struct "esvg_length" {
 		double "value";

@@ -121,6 +121,8 @@ extern int esvg_log_use;
 
 #define ESVG_ANIMATE_BASE_MAGIC 0xe5500015
 
+#define ESVG_ELEMENT_NEW(name) ender_element_new_namespace_from(name, esvg_namespace_get());
+
 extern int esvg_log_dom_global;
 Ender_Namespace * esvg_namespace_get(void);
 

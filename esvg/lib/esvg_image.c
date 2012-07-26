@@ -465,7 +465,7 @@ static void _esvg_image_href_get(Edom_Tag *t, const char **href)
  *============================================================================*/
 EAPI Ender_Element * esvg_image_new(void)
 {
-	return ender_element_new_with_namespace("image", "esvg");
+	return ESVG_ELEMENT_NEW("image");
 }
 
 EAPI Eina_Bool esvg_is_image(Ender_Element *e)

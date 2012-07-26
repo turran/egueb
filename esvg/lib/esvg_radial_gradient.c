@@ -557,7 +557,7 @@ static Eina_Bool _esvg_radial_gradient_r_is_set(Edom_Tag *t)
  *============================================================================*/
 EAPI Ender_Element * esvg_radial_gradient_new(void)
 {
-	return ender_element_new_with_namespace("radial_gradient", "esvg");
+	return ESVG_ELEMENT_NEW("radial_gradient");
 }
 
 EAPI Eina_Bool esvg_is_radial_gradient(Ender_Element *e)

@@ -1,4 +1,4 @@
-namespace "edom" {
+namespace "edom" : 0 {
 	struct "attribute" {
 		string "name";
 		string "value";

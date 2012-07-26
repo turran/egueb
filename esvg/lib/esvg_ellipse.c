@@ -329,7 +329,7 @@ static void _esvg_ellipse_ry_get(Edom_Tag *t, Esvg_Length *ry)
  *============================================================================*/
 EAPI Ender_Element * esvg_ellipse_new(void)
 {
-	return ender_element_new_with_namespace("ellipse", "esvg");
+	return ESVG_ELEMENT_NEW("ellipse");
 }
 
 EAPI Eina_Bool esvg_is_ellipse(Ender_Element *e)

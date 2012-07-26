@@ -323,7 +323,7 @@ static void _esvg_line_y2_get(Edom_Tag *t, Esvg_Coord *y2)
  *============================================================================*/
 EAPI Ender_Element * esvg_line_new(void)
 {
-	return ender_element_new_with_namespace("line", "esvg");
+	return ESVG_ELEMENT_NEW("line");
 }
 
 EAPI Eina_Bool esvg_is_line(Ender_Element *e)

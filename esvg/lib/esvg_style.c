@@ -133,5 +133,5 @@ void esvg_parser_style_style_set(Esvg_Style *thiz, Ecss_Style *style)
  *============================================================================*/
 EAPI Ender_Element * esvg_style_new(void)
 {
-	return ender_element_new_with_namespace("style", "esvg");
+	return ESVG_ELEMENT_NEW("style");
 }

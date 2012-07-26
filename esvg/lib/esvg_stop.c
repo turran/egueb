@@ -182,7 +182,7 @@ Enesim_Renderer_Gradient_Stop * esvg_stop_gradient_stop_get(Edom_Tag *t)
  *============================================================================*/
 EAPI Ender_Element * esvg_stop_new(void)
 {
-	return ender_element_new_with_namespace("stop", "esvg");
+	return ESVG_ELEMENT_NEW("stop");
 }
 
 EAPI void esvg_stop_offset_set(Ender_Element *e, const Esvg_Length *offset)

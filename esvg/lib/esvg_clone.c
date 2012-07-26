@@ -98,7 +98,6 @@ static Ender_Element * _esvg_clone_duplicate(Ender_Element *e)
 	Ender_Namespace *ns;
 	Edom_Tag *t;
 	const char *name;
-	const char *ns_name;
 
 	/* create a new element of the same type */
 	desc = ender_element_descriptor_get(e);
@@ -110,8 +109,9 @@ static Ender_Element * _esvg_clone_duplicate(Ender_Element *e)
 
 	name = ender_descriptor_name_get(desc);
 	ns = ender_descriptor_namespace_get(desc);
-	ns_name = ender_namespace_name_get(ns);
-	our = ender_element_new_with_namespace(name, ns_name);
+	our = ender_element_new_with_namespace(name,
+			ender_namespace_name_get(ns),
+			ender_namespace_version_get(ns));
 
 	data.ref = e;
 	data.our = our;

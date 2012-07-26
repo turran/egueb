@@ -386,7 +386,7 @@ static void _esvg_use_link_get(Edom_Tag *t, const char **link)
  *============================================================================*/
 EAPI Ender_Element * esvg_use_new(void)
 {
-	return ender_element_new_with_namespace("use", "esvg");
+	return ESVG_ELEMENT_NEW("use");
 }
 
 EAPI Eina_Bool esvg_is_use(Ender_Element *e)

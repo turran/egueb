@@ -422,7 +422,7 @@ static void _esvg_rect_ry_get(Edom_Tag *t, Esvg_Animated_Coord *ry)
  *============================================================================*/
 EAPI Ender_Element * esvg_rect_new(void)
 {
-	return ender_element_new_with_namespace("rect", "esvg");
+	return ESVG_ELEMENT_NEW("rect");
 }
 
 EAPI Eina_Bool esvg_is_rect(Ender_Element *e)

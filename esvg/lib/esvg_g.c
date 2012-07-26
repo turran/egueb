@@ -203,7 +203,7 @@ static Edom_Tag * _esvg_g_new(void)
  *============================================================================*/
 EAPI Ender_Element * esvg_g_new(void)
 {
-	return ender_element_new_with_namespace("g", "esvg");
+	return ESVG_ELEMENT_NEW("g");
 }
 
 EAPI Eina_Bool esvg_is_g(Ender_Element *e)

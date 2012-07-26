@@ -303,7 +303,7 @@ static void _esvg_text_y_get(Edom_Tag *t, Esvg_Coord *y)
  *============================================================================*/
 EAPI Ender_Element * esvg_text_new(void)
 {
-	return ender_element_new_with_namespace("text", "esvg");
+	return ESVG_ELEMENT_NEW("text");
 }
 
 EAPI Eina_Bool esvg_is_text(Ender_Element *e)

@@ -299,7 +299,7 @@ static void _esvg_circle_r_get(Edom_Tag *t, Esvg_Length *radius)
  *============================================================================*/
 EAPI Ender_Element * esvg_circle_new(void)
 {
-	return ender_element_new_with_namespace("circle", "esvg");
+	return ESVG_ELEMENT_NEW("circle");
 }
 
 EAPI Eina_Bool esvg_is_circle(Ender_Element *e)

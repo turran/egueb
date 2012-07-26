@@ -193,7 +193,7 @@ Eina_Bool esvg_is_a_internal(Edom_Tag *t)
  *============================================================================*/
 EAPI Ender_Element * esvg_a_new(void)
 {
-	return ender_element_new_with_namespace("a", "esvg");
+	return ESVG_ELEMENT_NEW("a");
 }
 
 EAPI Eina_Bool esvg_is_a(Ender_Element *e)

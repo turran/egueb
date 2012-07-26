@@ -724,7 +724,7 @@ static Edom_Tag * _esvg_animate_transform_new(void)
  */
 EAPI Ender_Element * esvg_animate_transform_new(void)
 {
-	return ender_element_new_with_namespace("animate_transform", "esvg");
+	return ESVG_ELEMENT_NEW("animate_transform");
 }
 
 /**
