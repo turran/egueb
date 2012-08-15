@@ -77,9 +77,10 @@ static int _esvg_init_count = 0;
 
 void esvg_types_init(void);
 
-static void _register_enders(void *data)
+static void _register_enders(void)
 {
 	/* register the dependency */
+	/* FIXME do we actually need this ? */
 	ender_loader_load("edom");
 	/* the types first */
 	esvg_types_init();
@@ -129,7 +130,6 @@ static Eina_Bool _esvg_ender_init(void)
 	Ender_Descriptor *tag_descriptor;
 	Ender_Namespace *edom;
 
-	ender_loader_registry_callback_add(_register_enders, NULL);
 	ender_init(NULL, NULL);
 	ender_element_new_listener_add(_constructor_callback, NULL);
 	edom = ender_namespace_find("edom", 0);
@@ -138,6 +138,7 @@ static Eina_Bool _esvg_ender_init(void)
 		EINA_LOG_ERR("Impossible to find the 'Edom' namespace");
 		goto namespace_err;
 	}
+	_register_enders();
 
 	tag_descriptor = ender_namespace_descriptor_find(edom, "tag");
 	if (!tag_descriptor)
