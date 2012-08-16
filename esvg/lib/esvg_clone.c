@@ -109,9 +109,7 @@ static Ender_Element * _esvg_clone_duplicate(Ender_Element *e)
 
 	name = ender_descriptor_name_get(desc);
 	ns = ender_descriptor_namespace_get(desc);
-	our = ender_element_new_with_namespace(name,
-			ender_namespace_name_get(ns),
-			ender_namespace_version_get(ns));
+	our = ender_element_new_namespace_from(name, ns);
 
 	data.ref = e;
 	data.our = our;
