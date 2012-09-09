@@ -234,8 +234,8 @@ EAPI Eina_Bool edom_tag_child_remove(Edom_Tag *thiz, Edom_Tag *child)
 {
 	Eina_Bool ret = EINA_TRUE;
 
-	if (!child) return;
-	if (child->parent != thiz) return;
+	if (!child) return EINA_FALSE;
+	if (child->parent != thiz) return EINA_FALSE;
 
 	if (thiz->descriptor.child_remove)
 		ret = thiz->descriptor.child_remove(thiz, child);
