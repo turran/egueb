@@ -49,6 +49,8 @@
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
+#define ESVG_LOG_DEFAULT esvg_log_clip_path
+
 static Ender_Property *ESVG_CLIP_PATH_CLIP_PATH_UNITS;
 
 /* FIXME share this */
@@ -223,7 +225,7 @@ static Esvg_Element_Setup_Return _esvg_clip_path_setup(Edom_Tag *e,
 	Esvg_Clip_Path *thiz;
 
 	thiz = _esvg_clip_path_get(e);
-	printf("clip path setup!!!!!!\n");
+	DBG("Clip path '%s' setup", esvg_element_internal_id_get(e));
 #if 0
 	Esvg_Clip_Path *thiz;
 
@@ -293,7 +295,6 @@ static Eina_Bool _esvg_clip_path_propagate(Edom_Tag *t,
 	Esvg_Clip_Path_Referenceable_Data *data = user_data;
 	Edom_Tag *g_t;
 
-	printf("propagating!\n");
 	/* if the tree has changed then re-create the clone */
 
 	/* copy the context but use our own behaviour data */

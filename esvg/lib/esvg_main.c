@@ -55,6 +55,7 @@ struct log
 	{ &esvg_log_animate_transform,	"esvg_animate_transform" },
 	{ &esvg_log_clone,		"esvg_clone" },
 	{ &esvg_log_circle,		"esvg_circle" },
+	{ &esvg_log_clip_path,		"esvg_clip_path" },
 	{ &esvg_log_element,		"esvg_element" },
 	{ &esvg_log_ellipse,		"esvg_ellipse" },
 	{ &esvg_log_gradient,		"esvg_gradient" },
@@ -230,6 +231,7 @@ int esvg_log_animate_base 	= -1;
 int esvg_log_animate_transform 	= -1;
 int esvg_log_clone 		= -1;
 int esvg_log_circle 		= -1;
+int esvg_log_clip_path 		= -1;
 int esvg_log_element 		= -1;
 int esvg_log_ellipse 		= -1;
 int esvg_log_gradient 		= -1;
