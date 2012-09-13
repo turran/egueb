@@ -129,7 +129,9 @@ static void _esvg_gradient_deep_transform_get(Esvg_Gradient *thiz,
 		_esvg_gradient_deep_transform_get(other, transform);
 	}
 	else
+	{
 		*transform = thiz->transform.v;
+	}
 }
 
 static void _esvg_gradient_deep_spread_method_get(Esvg_Gradient *thiz, 
@@ -178,7 +180,9 @@ static void _esvg_gradient_stop_generate(Edom_Tag *t, Enesim_Renderer *r)
 	child = edom_tag_child_get(t);
 	if (!child && thiz->href_t)
 	{
-		DBG("Generating relative '%s' stops", thiz->current.href);
+		DBG("Generating relative stops in '%s' from '%s'",
+				esvg_element_internal_id_get(t),
+				thiz->current.href);
 		_esvg_gradient_stop_generate(thiz->href_t, r);
 	}
 	else
@@ -475,7 +479,15 @@ static void _esvg_gradient_gradient_transform_set(Edom_Tag *t, const Enesim_Matr
 	Esvg_Gradient *thiz;
 
 	thiz = _esvg_gradient_get(t);
-	if (transform) thiz->transform.v = *transform;
+	if (transform)
+	{
+		thiz->transform.v = *transform;
+		thiz->transform.is_set = EINA_TRUE;
+	}
+	else
+	{
+		thiz->transform.is_set = EINA_FALSE;
+	}
 }
 
 static void _esvg_gradient_gradient_transform_get(Edom_Tag *t, Enesim_Matrix *transform)

@@ -95,6 +95,7 @@ Eina_Bool esvg_element_attribute_animation_add(Edom_Tag *t, const char *attr);
 void esvg_element_attribute_animation_remove(Edom_Tag *t, const char *attr);
 /* internal functions */
 Esvg_Type esvg_element_internal_type_get(Edom_Tag *t);
+const char * esvg_element_internal_id_get(Edom_Tag *t);
 Eina_Bool esvg_is_element_internal(Edom_Tag *t);
 void esvg_element_internal_topmost_get(Edom_Tag *t, Ender_Element **e);
 Esvg_Element_Setup_Return esvg_element_internal_setup(Edom_Tag *t,

@@ -1251,6 +1251,14 @@ Esvg_Type esvg_element_internal_type_get(Edom_Tag *t)
 	return thiz->type;
 }
 
+const char * esvg_element_internal_id_get(Edom_Tag *t)
+{
+	const char *id;
+
+	_esvg_element_id_get(t, &id);
+	return id;
+}
+
 Eina_Bool esvg_is_element_internal(Edom_Tag *t)
 {
 	Esvg_Element *thiz;
@@ -1662,6 +1670,7 @@ EAPI void esvg_element_id_get(Ender_Element *e, const char **id)
 	Edom_Tag *t;
 
 	t = ender_element_object_get(e);
+	/* FIXME use the internal variant and return the char not use an in/out param */
 	_esvg_element_id_get(t, id);
 }
 
