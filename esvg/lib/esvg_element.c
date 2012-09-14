@@ -123,6 +123,7 @@ typedef struct _Esvg_Element_Attributes
 	Esvg_Attribute_Animated_Enum stroke_line_cap;
 	Esvg_Attribute_Animated_Enum stroke_line_join;
 	Esvg_Attribute_Animated_Enum fill_rule;
+	Esvg_Attribute_Animated_Bool visibility;
 	/* FIXME do we really need this? */
 	int sets;
 	/* has something changed ? */
@@ -207,13 +208,9 @@ static void _esvg_element_mutation_cb(Ender_Element *e, const char *event_name,
 static void _esvg_element_state_compose(Esvg_Element *thiz,
 		const Esvg_Element_Context *parent, Esvg_Element_Context *d)
 {
-	Enesim_Matrix *m;
+	Enesim_Matrix m;
 
-	if (thiz->transform.animated)
-		m = &thiz->transform.anim.v;
-	else
-		m = &thiz->transform.base.v;
-
+	esvg_attribute_animated_transform_final_get(&thiz->transform, &m);
 	if (parent)
 	{
 		/* only set */
@@ -224,11 +221,11 @@ static void _esvg_element_state_compose(Esvg_Element *thiz,
 		d->font_size = parent->font_size;
 		d->renderable_behaviour = parent->renderable_behaviour;
 		/* actually compose */
-		enesim_matrix_compose(&parent->transform, m, &d->transform);
+		enesim_matrix_compose(&parent->transform, &m, &d->transform);
 	}
 	else
 	{
-		d->transform = *m;
+		d->transform = m;
 	}
 }	
 /*----------------------------------------------------------------------------*
@@ -369,6 +366,7 @@ static Eina_Bool _esvg_element_attribute_animation_add(Esvg_Element *thiz, const
 	/* get our own attributes */
 	if (strcmp(attr, "transform") == 0)
 	{
+		animated = &thiz->transform.animated;
 	}
 	/* common presentation attributes */
 	else if (strcmp(attr, "clip-path") == 0)
@@ -437,6 +435,7 @@ static Eina_Bool _esvg_element_attribute_animation_remove(Esvg_Element *thiz, co
 	/* get our own attributes */
 	if (strcmp(attr, "transform") == 0)
 	{
+		animated = &thiz->transform.animated;
 	}
 	/* common presentation attributes */
 	else if (strcmp(attr, "clip-path") == 0)
@@ -575,6 +574,14 @@ static void _esvg_element_transform_get(Edom_Tag *t, Esvg_Animated_Transform *tr
 
 	thiz = _esvg_element_get(t);
 	esvg_attribute_animated_transform_get(&thiz->transform, transform);
+}
+
+static Eina_Bool _esvg_element_transform_is_set(Edom_Tag *t)
+{
+	Esvg_Element *thiz;
+
+	thiz = _esvg_element_get(t);
+	return esvg_attribute_animated_transform_is_set(&thiz->transform);
 }
 
 static void _esvg_element_style_set(Edom_Tag *t, const char *style)
@@ -870,17 +877,17 @@ static void _esvg_element_visibility_set(Edom_Tag *t, Esvg_Animated_Bool *visibi
 	Esvg_Element *thiz;
 
 	thiz = _esvg_element_get(t);
-	//esvg_attribute_animated_bool_set(&thiz->current_attr->visibility,
-	//	visibility, EINA_TRUE, thiz->current_attr_animate);
+	esvg_attribute_animated_bool_set(&thiz->current_attr->visibility,
+		visibility, EINA_TRUE, thiz->current_attr_animate);
 }
 
 static void _esvg_element_visibility_get(Edom_Tag *t, Esvg_Animated_Bool *visibility)
 {
 	Esvg_Element *thiz;
 
-	if (!visibility) return;
-
 	thiz = _esvg_element_get(t);
+	esvg_attribute_animated_bool_get(&thiz->current_attr->visibility,
+		visibility);
 }
 /*----------------------------------------------------------------------------*
  *                           The Edom Tag interface                           *
@@ -1631,7 +1638,6 @@ Edom_Tag * esvg_element_new(Esvg_Element_Descriptor *descriptor, Esvg_Type type,
 #define _esvg_element_visibility_is_set NULL
 #define _esvg_element_stop_color_is_set NULL
 #define _esvg_element_stop_opacity_is_set NULL
-#define _esvg_element_transform_is_set NULL
 #include "generated/esvg_generated_element.c"
 
 /*============================================================================*

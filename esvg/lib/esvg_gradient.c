@@ -72,7 +72,7 @@ typedef struct _Esvg_Gradient
 	/* properties */
 	Esvg_Attribute_Enum units;
 	Esvg_Attribute_Enum spread_method;
-	Esvg_Attribute_Transform transform;
+	Esvg_Attribute_Animated_Transform transform;
 	Esvg_Gradient_State current;
 	Esvg_Gradient_State past;
 	/* private */
@@ -121,7 +121,7 @@ static void _esvg_gradient_deep_units_get(Esvg_Gradient *thiz,
 static void _esvg_gradient_deep_transform_get(Esvg_Gradient *thiz,
 		Enesim_Matrix *transform)
 {
-	if (!thiz->transform.is_set && thiz->href_e)
+	if (!esvg_attribute_animated_transform_is_set(&thiz->transform) && thiz->href_e)
 	{
 		Esvg_Gradient *other;
 
@@ -130,7 +130,7 @@ static void _esvg_gradient_deep_transform_get(Esvg_Gradient *thiz,
 	}
 	else
 	{
-		*transform = thiz->transform.v;
+		esvg_attribute_animated_transform_final_get(&thiz->transform, transform);
 	}
 }
 
@@ -474,28 +474,25 @@ static Eina_Bool _esvg_gradient_gradient_units_is_set(Edom_Tag *t)
 	return thiz->units.is_set;
 }
 
-static void _esvg_gradient_gradient_transform_set(Edom_Tag *t, const Enesim_Matrix *transform)
+static void _esvg_gradient_gradient_transform_set(Edom_Tag *t, const Esvg_Animated_Transform *transform)
 {
 	Esvg_Gradient *thiz;
+	Enesim_Matrix m;
+	Eina_Bool animating;
 
 	thiz = _esvg_gradient_get(t);
-	if (transform)
-	{
-		thiz->transform.v = *transform;
-		thiz->transform.is_set = EINA_TRUE;
-	}
-	else
-	{
-		thiz->transform.is_set = EINA_FALSE;
-	}
+	enesim_matrix_identity(&m);
+	animating = esvg_element_attribute_animate_get(t);
+	esvg_attribute_animated_transform_set(&thiz->transform,
+		transform, &m, animating);
 }
 
-static void _esvg_gradient_gradient_transform_get(Edom_Tag *t, Enesim_Matrix *transform)
+static void _esvg_gradient_gradient_transform_get(Edom_Tag *t, Esvg_Animated_Transform *transform)
 {
 	Esvg_Gradient *thiz;
 
 	thiz = _esvg_gradient_get(t);
-	if (transform) *transform = thiz->transform.v;
+	esvg_attribute_animated_transform_get(&thiz->transform, transform);
 }
 
 static Eina_Bool _esvg_gradient_gradient_transform_is_set(Edom_Tag *t)
@@ -503,7 +500,7 @@ static Eina_Bool _esvg_gradient_gradient_transform_is_set(Edom_Tag *t)
 	Esvg_Gradient *thiz;
 
 	thiz = _esvg_gradient_get(t);
-	return thiz->transform.is_set;
+	return esvg_attribute_animated_transform_is_set(&thiz->transform);
 }
 
 static void _esvg_gradient_spread_method_set(Edom_Tag *t, Esvg_Spread_Method spread_method)
@@ -567,7 +564,8 @@ Edom_Tag * esvg_gradient_new(Esvg_Gradient_Descriptor *descriptor,
 	/* Default values */
 	thiz->units.v = ESVG_OBJECT_BOUNDING_BOX;
 	thiz->spread_method.v = ESVG_SPREAD_METHOD_PAD;
-	enesim_matrix_identity(&thiz->transform.v);
+	enesim_matrix_identity(&thiz->transform.base.v);
+	enesim_matrix_identity(&thiz->transform.anim.v);
 
 	t = esvg_paint_server_new(&pdescriptor, type, thiz);
 	return t;
@@ -627,7 +625,15 @@ EAPI Eina_Bool esvg_gradient_units_is_set(Ender_Element *e)
 
 EAPI void esvg_gradient_transform_set(Ender_Element *e, const Enesim_Matrix *transform)
 {
-	ender_element_property_value_set(e, ESVG_GRADIENT_GRADIENT_TRANSFORM, transform, NULL);
+	Esvg_Animated_Transform a;
+
+	if (!transform)
+	{
+		ender_element_property_value_set(e, ESVG_GRADIENT_GRADIENT_TRANSFORM, NULL, NULL);
+		return;
+	}
+	a.base = *transform;
+	ender_element_property_value_set(e, ESVG_GRADIENT_GRADIENT_TRANSFORM, &a, NULL);
 }
 
 EAPI void esvg_gradient_transform_get(Ender_Element *e, Enesim_Matrix *transform)

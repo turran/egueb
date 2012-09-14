@@ -82,6 +82,19 @@ void esvg_attribute_animated_transform_get(Esvg_Attribute_Animated_Transform *aa
 	else
 		v->anim = v->base;
 }
+
+void esvg_attribute_animated_transform_final_get(Esvg_Attribute_Animated_Transform *aa, Enesim_Matrix *m)
+{
+	if (aa->animated)
+		*m = aa->anim.v;
+	else
+		*m = aa->base.v;
+}
+
+Eina_Bool esvg_attribute_animated_transform_is_set(Esvg_Attribute_Animated_Transform *aa)
+{
+	return aa->animated ? EINA_TRUE : aa->base.is_set;
+}
 /*----------------------------------------------------------------------------*
  *                                  Color                                     *
  *----------------------------------------------------------------------------*/
@@ -440,7 +453,7 @@ void esvg_attribute_animated_bool_set(Esvg_Attribute_Animated_Bool *aa,
 		esvg_attribute_bool_unset(a, def);
 }
 
-void esvg_attribute_amimated_bool_get(Esvg_Attribute_Animated_Bool *aa,
+void esvg_attribute_animated_bool_get(Esvg_Attribute_Animated_Bool *aa,
 	Esvg_Animated_Bool *v)
 {
 	if (!v) return;
@@ -451,8 +464,6 @@ void esvg_attribute_amimated_bool_get(Esvg_Attribute_Animated_Bool *aa,
 	else
 		v->anim = v->base;
 }
-
-
 
 void esvg_attribute_bool_unset(Esvg_Attribute_Bool *a, Eina_Bool def)
 {

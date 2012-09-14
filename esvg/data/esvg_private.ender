@@ -135,7 +135,7 @@ namespace "esvg" : 0 {
 		string "href";
 		int "spread_method";
 		int "gradient_units";
-		matrix "gradient_transform";
+		esvg_animated_transform "gradient_transform";
 	};
 
 	abstract "animation" : "element" {
