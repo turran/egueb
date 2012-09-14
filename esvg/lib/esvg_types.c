@@ -574,9 +574,9 @@ static Eina_Bool _esvg_transformation_rotate_get(Enesim_Matrix *matrix, const ch
 
 		if (numelements < 3)
 			return EINA_FALSE;
-		enesim_matrix_translate(&tx, -rx[1], -rx[2]);
-		enesim_matrix_compose(&tx, matrix, matrix);
 		enesim_matrix_translate(&tx, rx[1], rx[2]);
+		enesim_matrix_compose(&tx, matrix, matrix);
+		enesim_matrix_translate(&tx, -rx[1], -rx[2]);
 		enesim_matrix_compose(matrix, &tx, matrix);
 	}
 

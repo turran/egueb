@@ -491,20 +491,6 @@ void * esvg_renderable_data_get(Edom_Tag *t)
 	return thiz->data;
 }
 
-/* TODO optimize so many 'ifs' */
-Eina_Bool esvg_renderable_propagate(Edom_Tag *t,
-		Esvg_Context *c,
-		const Esvg_Element_Context *parent_context,
-		Enesim_Error **error)
-{
-	Esvg_Renderable *thiz;
-	Esvg_Attribute_Presentation *attr;
-	Eina_Bool ret = EINA_TRUE;
-
-	thiz = _esvg_renderable_get(t);
-	return ret;
-}
-
 Edom_Tag * esvg_renderable_new(Esvg_Renderable_Descriptor *descriptor, Esvg_Type type,
 		void *data)
 {
