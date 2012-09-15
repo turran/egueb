@@ -360,6 +360,8 @@ static Eina_Bool _esvg_animate_setup(Edom_Tag *t,
 	if (thiz->anim)
 		etch_animation_delete(thiz->anim);
 
+	if (!actx->p)
+		return EINA_FALSE;
 	/* FIXME should we get a reference here ? */
 	p = actx->p;
 	thiz->parent_e = actx->parent_e;
