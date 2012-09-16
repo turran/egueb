@@ -112,7 +112,7 @@ static Eina_Bool _esvg_animation_context_setup(Esvg_Animation *thiz)
 			p = ender_element_property_get(ctx->parent_e, ctx->target.attribute_name.curr);
 			if (!p)
 			{
-				ret = EINA_TRUE;
+				ret = EINA_FALSE;
 				goto done;
 			}
 			ctx->p = p;

@@ -94,18 +94,18 @@ namespace "esvg" : 0 {
 		string "class";
 		string "style";
 		/* presentation attributes */
-		esvg_animated_string "clip_path";
+		esvg_animated_string "clip-path";
 		esvg_animated_number "opacity";
 		/* once the color is done we can the union paint for filling and stroking */
 		esvg_animated_color "color";
 		esvg_animated_paint "fill";
 		esvg_animated_paint "stroke";
-		esvg_animated_length "stroke_width";
-		esvg_animated_number "fill_opacity";
-		esvg_animated_number "stroke_opacity";
+		esvg_animated_length "stroke-width";
+		esvg_animated_number "fill-opacity";
+		esvg_animated_number "stroke-opacity";
 		esvg_animated_bool "visibility";
-		esvg_animated_color "stop_color";
-		esvg_animated_number "stop_opacity";
+		esvg_animated_color "stop-color";
+		esvg_animated_number "stop-opacity";
 		/* other attributes */
 		esvg_animated_transform "transform";
 		ender "topmost";
