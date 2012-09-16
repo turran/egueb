@@ -183,7 +183,7 @@ static void _esvg_animate_key_splines_cb(const char *v, void *user_data)
 	 * factor and set the value on the cubic argument */
 }
 
-static Eina_Bool _esvg_animate_container_etch_to(Esvg_Animate *thiz, Etch *etch,
+static Eina_Bool _esvg_animate_container_etch_to_old(Esvg_Animate *thiz, Etch *etch,
 		Ender_Property *p,
 		Esvg_Animation_Context *ac,
 		Esvg_Animate_Base_Context *c)
@@ -223,7 +223,6 @@ static Eina_Bool _esvg_animate_container_etch_to(Esvg_Animate *thiz, Etch *etch,
 	thiz->prop = p;
 
 	printf("duration is %lld %d\n", ac->timing.dur.data.clock, ac->timing.dur.type);
-#if 1
 	/* when having a from/to, just add two keyframes */
 	if (c->value.to && c->value.from)
 	{
@@ -286,8 +285,61 @@ static Eina_Bool _esvg_animate_container_etch_to(Esvg_Animate *thiz, Etch *etch,
 	{
 		printf("wrong!\n");
 	}
-#else
-	esvg_animate_base_values_generate(c, _esvg_animate_transform_value_get,
+	etch_animation_enable(a);
+	return EINA_TRUE;
+}
+
+static void * _esvg_animate_value_get(const char *attr)
+{
+	printf("attr = %s\n", attr);
+}
+
+static void * _esvg_animate_length_get(const char *attr)
+{
+	Esvg_Length *v;
+
+	v = calloc(1, sizeof(Esvg_Length));
+	esvg_length_string_from(v, attr);
+	return v;
+}
+
+static void * _esvg_animate_number_get(const char *attr)
+{
+	double *v;
+
+	v = calloc(1, sizeof(double));
+	*v = strtod(attr, NULL);
+	return v;
+}
+
+static Eina_Bool _esvg_animate_container_etch_to(Esvg_Animate *thiz, Etch *etch,
+		Ender_Property *p,
+		Esvg_Animation_Context *ac,
+		Esvg_Animate_Base_Context *c)
+{
+	Esvg_Animate_Base_Value_Get value_get = NULL;
+	Ender_Container *ec;
+	Eina_List *times = NULL;
+	Eina_List *values = NULL;
+	Eina_Bool has_from;
+	const char *name;
+
+	ec = ender_property_container_get(p);
+	name = ender_container_registered_name_get(ec);
+	if (!strcmp(name, "esvg_animated_length"))
+	{
+		value_get = _esvg_animate_length_get;
+	
+	}
+	else if (!strcmp(name, "esvg_animated_number"))
+	{
+		value_get = _esvg_animate_number_get;
+	}
+	else
+	{
+		return EINA_FALSE;
+	}
+	esvg_animate_base_values_generate(c, value_get,
 			&values, &has_from);
 	esvg_animate_base_times_generate(ac, c, values, &times);
 
@@ -295,6 +347,8 @@ static Eina_Bool _esvg_animate_container_etch_to(Esvg_Animate *thiz, Etch *etch,
 	if (values && times)
 	{
 		Eina_List *tt;
+		Eina_List *l;
+		void *v;
 
 		tt = times;
 		EINA_LIST_FOREACH(values, l, v)
@@ -306,11 +360,8 @@ static Eina_Bool _esvg_animate_container_etch_to(Esvg_Animate *thiz, Etch *etch,
 			// set the value
 		}
 	}
-	esvg_animate_base_values_free(values, _esvg_animate_transform_value_free);
+	esvg_animate_base_values_free(values, free);
 	esvg_animate_base_times_free(times);
-#endif
-
-	etch_animation_enable(a);
 
 	return EINA_TRUE;
 }
@@ -367,9 +418,13 @@ static Eina_Bool _esvg_animate_setup(Edom_Tag *t,
 	thiz->attribute_type = actx->target.attribute_type;
 
 	/* we should only process lengths, colors, integers, booleans, etc */
+#if 0
 	if (!_esvg_animate_container_etch_to(thiz, etch, p, actx, abctx))
 		goto done;
-
+#else
+	if (!_esvg_animate_container_etch_to_old(thiz, etch, p, actx, abctx))
+		goto done;
+#endif
 	/* check the type and create an animator of that container type */
 	/* on every animation callback set the animation mode on the element */
 	/* then call the property set */
