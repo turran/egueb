@@ -139,14 +139,10 @@ static Eina_Bool _esvg_ellipse_renderer_propagate(Edom_Tag *t,
 	enesim_renderer_ellipse_radii_set(thiz->r, rx, ry);
 
 	/* shape properties */
-	if (!rctx->fill_renderer)
-		enesim_renderer_shape_fill_color_set(thiz->r, rctx->fill_color);
-	else
-		enesim_renderer_shape_fill_renderer_set(thiz->r, rctx->fill_renderer);
-	if (!rctx->stroke_renderer)
-		enesim_renderer_shape_stroke_color_set(thiz->r, rctx->stroke_color);
-	else
-		enesim_renderer_shape_stroke_renderer_set(thiz->r, rctx->stroke_renderer);
+	enesim_renderer_shape_fill_color_set(thiz->r, rctx->fill_color);
+	enesim_renderer_shape_fill_renderer_set(thiz->r, rctx->fill_renderer);
+	enesim_renderer_shape_stroke_color_set(thiz->r, rctx->stroke_color);
+	enesim_renderer_shape_stroke_renderer_set(thiz->r, rctx->stroke_renderer);
 
 	enesim_renderer_shape_stroke_weight_set(thiz->r, rctx->stroke_weight);
 	enesim_renderer_shape_stroke_location_set(thiz->r, ENESIM_SHAPE_STROKE_CENTER);

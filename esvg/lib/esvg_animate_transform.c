@@ -238,7 +238,9 @@ static void _esvg_animate_transform_translate_tx_cb(Etch_Animation_Keyframe *k,
 	enesim_matrix_translate(&m, thiz->data.translate.tx, thiz->data.translate.ty);
 	v.base = m;
 
+	esvg_element_attribute_animate_set(thiz->parent_t, EINA_TRUE);
 	ender_element_property_value_set(thiz->parent_e, thiz->prop, &v, NULL);
+	esvg_element_attribute_animate_set(thiz->parent_t, EINA_FALSE);
 }
 
 static void _esvg_animate_transform_translate_ty_cb(Etch_Animation_Keyframe *k,

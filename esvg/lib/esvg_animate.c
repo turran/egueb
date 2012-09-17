@@ -32,6 +32,8 @@
  *============================================================================*/
 typedef void (*Esvg_Animate_Keyframe_Value_Cb)(const char *v,
 		Etch_Animation_Keyframe *k, Etch_Data *data);
+typedef void (*Esvg_Animate_Value_Etch_Data_To)(void *d,
+		Etch_Data *data);
 
 typedef struct _Esvg_Animate
 {
@@ -44,6 +46,8 @@ typedef struct _Esvg_Animate
 	Ender_Element *parent_e;
 	Edom_Tag *parent_t;
 	Esvg_Attribute_Type attribute_type;
+	/* new */
+	Eina_List *animations;
 } Esvg_Animate;
 
 typedef struct _Esvg_Animate_Keyframe_Value_Cb_Data
@@ -124,11 +128,14 @@ static void _esvg_animate_double_cb(Etch_Animation_Keyframe *k,
 	Esvg_Animated_Number v;
 	Esvg_Attribute_Type old_type;
 
+
 	v.base = curr->data.d;
 
 	old_type = esvg_element_attribute_type_get(thiz->parent_t);
 	esvg_element_attribute_type_set(thiz->parent_t, thiz->attribute_type);
+	esvg_element_attribute_animate_set(thiz->parent_t, EINA_TRUE);
 	ender_element_property_value_set(thiz->parent_e, thiz->prop, &v, NULL);
+	esvg_element_attribute_animate_set(thiz->parent_t, EINA_FALSE);
 	esvg_element_attribute_type_set(thiz->parent_t, old_type);
 }
 /*----------------------------------------------------------------------------*
@@ -303,6 +310,15 @@ static void * _esvg_animate_length_get(const char *attr)
 	return v;
 }
 
+static void _esvg_animate_length_etch_data_to(void *d,
+		Etch_Data *data)
+{
+	Esvg_Length *v = d;
+
+	data->type = ETCH_DOUBLE;
+	data->data.d = v->value;
+}
+
 static void * _esvg_animate_number_get(const char *attr)
 {
 	double *v;
@@ -312,12 +328,22 @@ static void * _esvg_animate_number_get(const char *attr)
 	return v;
 }
 
+static void _esvg_animate_number_etch_data_to(void *d,
+		Etch_Data *data)
+{
+	double *v = d;
+
+	data->type = ETCH_DOUBLE;
+	data->data.d = *v;
+}
+
 static Eina_Bool _esvg_animate_container_etch_to(Esvg_Animate *thiz, Etch *etch,
 		Ender_Property *p,
 		Esvg_Animation_Context *ac,
 		Esvg_Animate_Base_Context *c)
 {
 	Esvg_Animate_Base_Value_Get value_get = NULL;
+	Esvg_Animate_Value_Etch_Data_To data_to = NULL;
 	Ender_Container *ec;
 	Etch_Data_Type dt;
 	Etch_Animation_Callback cb;
@@ -333,17 +359,20 @@ static Eina_Bool _esvg_animate_container_etch_to(Esvg_Animate *thiz, Etch *etch,
 		dt = ETCH_DOUBLE;
 		cb = _esvg_animate_length_cb;
 		value_get = _esvg_animate_length_get;
+		data_to = _esvg_animate_length_etch_data_to;
 	}
 	else if (!strcmp(name, "esvg_animated_number"))
 	{
 		dt = ETCH_DOUBLE;
 		cb = _esvg_animate_double_cb;
 		value_get = _esvg_animate_number_get;
+		data_to = _esvg_animate_number_etch_data_to;
 	}
 	else
 	{
 		return EINA_FALSE;
 	}
+	thiz->prop = p;
 	esvg_animate_base_values_generate(c, value_get,
 			&values, &has_from);
 	esvg_animate_base_times_generate(ac, c, values, &times);
@@ -354,22 +383,36 @@ static Eina_Bool _esvg_animate_container_etch_to(Esvg_Animate *thiz, Etch *etch,
 		Eina_List *tt;
 		Eina_List *l;
 		void *v;
+		int64_t *time;
 
 		a = etch_animation_add(etch, dt, cb,
 					NULL, NULL, thiz);
-
 		tt = times;
 		EINA_LIST_FOREACH(values, l, v)
 		{
-			// based on the type to animate, fetch the data
-			// convert it to the destination etch type
-			// add a keyframe
+			Etch_Animation_Keyframe *k;
+			Etch_Data edata;
+
+			time = eina_list_data_get(tt);
+
+			/* add a keyframe */
+			k = etch_animation_keyframe_add(a);
+			etch_animation_keyframe_type_set(k, ETCH_ANIMATION_LINEAR);
+			/* convert it to the destination etch type */
+			data_to(v, &edata);
+			/* set the value */
+			etch_animation_keyframe_data_set(k, v, NULL);
+			etch_animation_keyframe_value_set(k, &edata);
 			// set the time
-			// set the value
+			etch_animation_keyframe_time_set(k, *time);
+
+			tt = eina_list_next(tt);
 		}
+		etch_animation_enable(a);
 	}
-	esvg_animate_base_values_free(values, free);
-	esvg_animate_base_times_free(times);
+	thiz->values = values;
+	//esvg_animate_base_values_free(values, free);
+	//esvg_animate_base_times_free(times);
 
 	return EINA_TRUE;
 }
@@ -426,7 +469,7 @@ static Eina_Bool _esvg_animate_setup(Edom_Tag *t,
 	thiz->attribute_type = actx->target.attribute_type;
 
 	/* we should only process lengths, colors, integers, booleans, etc */
-#if 0
+#if 1
 	if (!_esvg_animate_container_etch_to(thiz, etch, p, actx, abctx))
 		goto done;
 #else

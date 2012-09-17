@@ -139,9 +139,6 @@ static void _esvg_renderable_paint_set(Edom_Tag *t,
 {
 	uint8_t op = opacity * 255;
 
-	if (esvg_paint_is_equal(current, old))
-		return;
-
 	/* FIXME the fill color multiplies the fill renderer */
 	if (current->type == ESVG_PAINT_COLOR)
 	{
@@ -155,11 +152,14 @@ static void _esvg_renderable_paint_set(Edom_Tag *t,
 	{
 		Esvg_Referenceable_Reference *rr;
 
-		rr = _esvg_renderable_get_reference(t, current->value.paint_server);
-		if (!rr) goto done;
-		/* TODO finally, get the renderer? */
-		*renderer = rr->data;
-		*reference = rr;
+		if (!esvg_paint_is_equal(current, old))
+		{
+			rr = _esvg_renderable_get_reference(t, current->value.paint_server);
+			if (!rr) goto done;
+			/* TODO finally, get the renderer? */
+			*renderer = rr->data;
+			*reference = rr;
+		}
 
 		enesim_color_components_from(rcolor,
 				op, 0xff, 0xff, 0xff);

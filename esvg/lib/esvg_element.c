@@ -424,7 +424,9 @@ static Eina_Bool _esvg_element_attribute_animation_add(Esvg_Element *thiz, const
 	else
 		return EINA_FALSE;
 	if (animated)
-		*animated++;
+	{
+		(*animated)++;
+	}
 	return EINA_TRUE;
 }
 
@@ -493,7 +495,7 @@ static Eina_Bool _esvg_element_attribute_animation_remove(Esvg_Element *thiz, co
 	else
 		return EINA_FALSE;
 	if (animated)
-		*animated--;
+		(*animated)--;
 	return EINA_TRUE;
 }
 /*----------------------------------------------------------------------------*

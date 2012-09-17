@@ -105,9 +105,16 @@ static Eina_Bool _esvg_animation_context_setup(Esvg_Animation *thiz)
 		if (attr_name->curr)
 		{
 			Ender_Property *p;
+			Esvg_Attribute_Type old_type;
 
+			/* set the attribute to animate */
+			old_type = esvg_element_attribute_type_get(ctx->parent_t);
+			esvg_element_attribute_type_set(ctx->parent_t, thiz->ctx.target.attribute_type);
 			esvg_element_attribute_animation_add(ctx->parent_t, attr_name->curr);
+			/* restore the attribute  */
+			esvg_element_attribute_type_set(ctx->parent_t, old_type);
 			attr_name->prev = attr_name->curr;
+
 			/* get the property name */
 			p = ender_element_property_get(ctx->parent_e, ctx->target.attribute_name.curr);
 			if (!p)
