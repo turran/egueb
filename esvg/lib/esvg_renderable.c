@@ -122,7 +122,7 @@ static Eina_Bool _esvg_renderable_damage_cb(Enesim_Renderer *r,
 
 	eina_tiler_rect_add(tiler, area);
 	enesim_renderer_name_get(r, &name);
-	DBG("renderer %s has changed", name);
+	DBG("renderer %s has changed at area %d %d %d %d", name, area->x, area->y, area->w, area->h);
 	return EINA_TRUE;
 }
 
