@@ -202,7 +202,9 @@ static void _esvg_animate_transform_rotate_angle_cb(Etch_Animation_Keyframe *k,
 	enesim_matrix_compose(&m1, &m2, &m1);
 	v.base = m1;
 
+	esvg_element_attribute_animate_set(thiz->parent_t, EINA_TRUE);
 	ender_element_property_value_set(thiz->parent_e, thiz->prop, &v, NULL);
+	esvg_element_attribute_animate_set(thiz->parent_t, EINA_FALSE);
 }
 
 static void _esvg_animate_transform_rotate_cx_cb(Etch_Animation_Keyframe *k,
@@ -266,7 +268,9 @@ static void _esvg_animate_transform_scale_simple_cb(Etch_Animation_Keyframe *k,
 	enesim_matrix_scale(&m, thiz->data.scale.sx, thiz->data.scale.sx);
 	v.base = m;
 
+	esvg_element_attribute_animate_set(thiz->parent_t, EINA_TRUE);
 	ender_element_property_value_set(thiz->parent_e, thiz->prop, &v, NULL);
+	esvg_element_attribute_animate_set(thiz->parent_t, EINA_FALSE);
 }
 
 static void _esvg_animate_transform_scale_full_sx_cb(Etch_Animation_Keyframe *k,
@@ -282,7 +286,9 @@ static void _esvg_animate_transform_scale_full_sx_cb(Etch_Animation_Keyframe *k,
 	enesim_matrix_scale(&m, thiz->data.scale.sx, thiz->data.scale.sy);
 	v.base = m;
 
+	esvg_element_attribute_animate_set(thiz->parent_t, EINA_TRUE);
 	ender_element_property_value_set(thiz->parent_e, thiz->prop, &v, NULL);
+	esvg_element_attribute_animate_set(thiz->parent_t, EINA_FALSE);
 }
 
 static void _esvg_animate_transform_scale_full_sy_cb(Etch_Animation_Keyframe *k,
@@ -309,7 +315,9 @@ static void _esvg_animate_transform_skewx_cb(Etch_Animation_Keyframe *k,
 	enesim_matrix_values_set(&m, 1, tan(angle * M_PI / 180.0), 0, 0, 1, 0, 0, 0, 1);
 	v.base = m;
 
+	esvg_element_attribute_animate_set(thiz->parent_t, EINA_TRUE);
 	ender_element_property_value_set(thiz->parent_e, thiz->prop, &v, NULL);
+	esvg_element_attribute_animate_set(thiz->parent_t, EINA_FALSE);
 }
 
 static void _esvg_animate_transform_skewy_cb(Etch_Animation_Keyframe *k,
@@ -326,7 +334,9 @@ static void _esvg_animate_transform_skewy_cb(Etch_Animation_Keyframe *k,
 	enesim_matrix_values_set(&m, 1, 0, 0, tan(angle * M_PI / 180.0), 1, 0, 0, 0, 1);
 	v.base = m;
 
+	esvg_element_attribute_animate_set(thiz->parent_t, EINA_TRUE);
 	ender_element_property_value_set(thiz->parent_e, thiz->prop, &v, NULL);
+	esvg_element_attribute_animate_set(thiz->parent_t, EINA_FALSE);
 }
 /*----------------------------------------------------------------------------*
  *                             The setup variants                             *
