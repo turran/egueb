@@ -308,7 +308,7 @@ static void * _esvg_animate_number_get(const char *attr)
 	double *v;
 
 	v = calloc(1, sizeof(double));
-	*v = strtod(attr, NULL);
+	*v = esvg_number_string_from(attr, 1.0);
 	return v;
 }
 
@@ -319,6 +319,8 @@ static Eina_Bool _esvg_animate_container_etch_to(Esvg_Animate *thiz, Etch *etch,
 {
 	Esvg_Animate_Base_Value_Get value_get = NULL;
 	Ender_Container *ec;
+	Etch_Data_Type dt;
+	Etch_Animation_Callback cb;
 	Eina_List *times = NULL;
 	Eina_List *values = NULL;
 	Eina_Bool has_from;
@@ -328,11 +330,14 @@ static Eina_Bool _esvg_animate_container_etch_to(Esvg_Animate *thiz, Etch *etch,
 	name = ender_container_registered_name_get(ec);
 	if (!strcmp(name, "esvg_animated_length"))
 	{
+		dt = ETCH_DOUBLE;
+		cb = _esvg_animate_length_cb;
 		value_get = _esvg_animate_length_get;
-	
 	}
 	else if (!strcmp(name, "esvg_animated_number"))
 	{
+		dt = ETCH_DOUBLE;
+		cb = _esvg_animate_double_cb;
 		value_get = _esvg_animate_number_get;
 	}
 	else
@@ -343,12 +348,15 @@ static Eina_Bool _esvg_animate_container_etch_to(Esvg_Animate *thiz, Etch *etch,
 			&values, &has_from);
 	esvg_animate_base_times_generate(ac, c, values, &times);
 
-	/* generate the times list */
 	if (values && times)
 	{
+		Etch_Animation *a;
 		Eina_List *tt;
 		Eina_List *l;
 		void *v;
+
+		a = etch_animation_add(etch, dt, cb,
+					NULL, NULL, thiz);
 
 		tt = times;
 		EINA_LIST_FOREACH(values, l, v)

@@ -507,16 +507,12 @@ Eina_Bool esvg_animate_base_values_generate(Esvg_Animate_Base_Context *c,
 
 void esvg_animate_base_values_free(Eina_List *values, Esvg_Animate_Base_Value_Free free_cb)
 {
-	Eina_List *v;
+	void *data;
 
 	if (!values) return;
 
-	EINA_LIST_FREE (values, v)
-	{
-		void *data;
-		EINA_LIST_FREE (v, data);
-			free_cb(data);
-	}
+	EINA_LIST_FREE (values, data);
+		free_cb(data);
 }
 
 
