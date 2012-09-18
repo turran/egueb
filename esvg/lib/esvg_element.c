@@ -86,8 +86,8 @@ typedef struct _Esvg_Element_Descriptor_Internal
 {
 	Esvg_Element_Initialize initialize;
 	Esvg_Element_Attribute_Set attribute_set;
-	Esvg_Element_Attribute_Animation_Add attribute_animation_add;
-	Esvg_Element_Attribute_Animation_Remove attribute_animation_remove;
+	Esvg_Element_Attribute_Animation_Add animation_add;
+	Esvg_Element_Attribute_Animation_Remove animation_remove;
 	Edom_Tag_Attribute_Get attribute_get;
 	Edom_Tag_Free free;
 	Esvg_Element_Setup setup;
@@ -1219,8 +1219,8 @@ Eina_Bool esvg_element_attribute_animation_add(Edom_Tag *t, const char *attr)
 	if (_esvg_element_attribute_animation_add(thiz, attr))
 		return EINA_TRUE;
 	/* call the descriptor implementation */
-	if (thiz->descriptor.attribute_animation_add)
-		return thiz->descriptor.attribute_animation_add(t, attr);
+	if (thiz->descriptor.animation_add)
+		return thiz->descriptor.animation_add(t, attr);
 	return EINA_FALSE;
 }
 
@@ -1234,8 +1234,8 @@ void esvg_element_attribute_animation_remove(Edom_Tag *t, const char *attr)
 	if (_esvg_element_attribute_animation_remove(thiz, attr))
 		return;
 	/* call the descriptor implementation */
-	if (thiz->descriptor.attribute_animation_remove)
-		thiz->descriptor.attribute_animation_remove(t, attr);
+	if (thiz->descriptor.animation_remove)
+		thiz->descriptor.animation_remove(t, attr);
 }
 
 Esvg_Type esvg_element_internal_type_get(Edom_Tag *t)
@@ -1594,6 +1594,8 @@ Edom_Tag * esvg_element_new(Esvg_Element_Descriptor *descriptor, Esvg_Type type,
 	thiz->descriptor.attribute_set = descriptor->attribute_set;
 	thiz->descriptor.attribute_get = descriptor->attribute_get;
 	thiz->descriptor.free = descriptor->free;
+	thiz->descriptor.animation_add = descriptor->animation_add;
+	thiz->descriptor.animation_remove = descriptor->animation_remove;
 
 	t = edom_tag_new(&pdescriptor, thiz);
 

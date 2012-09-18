@@ -98,6 +98,7 @@ static void _esvg_image_load(Edom_Tag *t, Esvg_Image *thiz, double width, double
 	}
 
 	esvg_attribute_animated_string_final_get(&thiz->href, &href);
+	printf("href = %s\n", href);
 	if (!href) goto cleanup;
 
 	esvg_element_internal_topmost_get(t, &topmost);
@@ -276,6 +277,23 @@ static Eina_Bool _esvg_image_has_changed(Edom_Tag *t)
 }
 #endif
 
+static Eina_Bool _esvg_image_animation_add(Edom_Tag *t, const char *attr)
+{
+	if (!strcmp(attr, "xlink:href"))
+		return EINA_TRUE;
+	else
+		return EINA_FALSE;
+}
+
+static void _esvg_image_animation_remove(Edom_Tag *t, const char *attr)
+{
+	if (!strcmp(attr, "xlink:href"))
+		return;
+	else
+		return;
+}
+
+
 static void _esvg_image_free(Edom_Tag *t)
 {
 	Esvg_Image *thiz;
@@ -294,6 +312,8 @@ static Esvg_Renderable_Descriptor _descriptor = {
 	/* .free 		= */ _esvg_image_free,
 	/* .initialize 		= */ NULL,
 	/* .attribute_set 	= */ _esvg_image_attribute_set,
+	/* .animation_add 	= */ _esvg_image_animation_add,
+	/* .animation_remove 	= */ _esvg_image_animation_remove,
 	/* .setup		= */ _esvg_image_setup,
 	/* .renderer_get	= */ _esvg_image_renderer_get,
 	/* .renderer_propagate	= */ _esvg_image_renderer_propagate,

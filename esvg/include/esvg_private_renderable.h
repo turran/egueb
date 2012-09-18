@@ -27,6 +27,8 @@ typedef struct _Esvg_Renderable_Descriptor {
 	/* the element interface */
 	Esvg_Element_Initialize initialize;
 	Esvg_Element_Attribute_Set attribute_set;
+	Esvg_Element_Attribute_Animation_Add animation_add;
+	Esvg_Element_Attribute_Animation_Remove animation_remove;
 	/* the renderable interface */
 	Esvg_Renderable_Setup setup;
 	Esvg_Renderable_Renderer_Get renderer_get;

@@ -177,7 +177,7 @@ static void _esvg_animate_string_cb(Etch_Animation_Keyframe *k,
 
 
 	v.base = curr->data.string;
-
+	printf("setting string! %s\n", v.base);
 	old_type = esvg_element_attribute_type_get(thiz->parent_t);
 	esvg_element_attribute_type_set(thiz->parent_t, thiz->attribute_type);
 	esvg_element_attribute_animate_set(thiz->parent_t, EINA_TRUE);
@@ -285,7 +285,7 @@ static Eina_Bool _esvg_animate_container_etch_to(Esvg_Animate *thiz, Etch *etch,
 		value_get = _esvg_animate_number_get;
 		data_to = _esvg_animate_number_etch_data_to;
 	}
-	if (!strcmp(name, "esvg_animated_string"))
+	else if (!strcmp(name, "esvg_animated_string"))
 	{
 		dt = ETCH_STRING;
 		cb = _esvg_animate_string_cb;
@@ -321,7 +321,9 @@ static Eina_Bool _esvg_animate_container_etch_to(Esvg_Animate *thiz, Etch *etch,
 
 			/* add a keyframe */
 			k = etch_animation_keyframe_add(a);
-			etch_animation_keyframe_type_set(k, ETCH_ANIMATION_LINEAR);
+			//etch_animation_keyframe_type_set(k, c->value.calc_mode);
+			//etch_animation_keyframe_type_set(k, ETCH_ANIMATION_LINEAR);
+			etch_animation_keyframe_type_set(k, ETCH_ANIMATION_DISCRETE);
 			/* convert it to the destination etch type */
 			data_to(v, &edata);
 			/* set the value */
@@ -374,7 +376,6 @@ static Eina_Bool _esvg_animate_setup(Edom_Tag *t,
 	Etch *etch;
 
 	thiz = _esvg_animate_get(t);
-	printf("animate setup!\n");
 
 	/* same */
 	esvg_element_internal_topmost_get(t, &svg_e);

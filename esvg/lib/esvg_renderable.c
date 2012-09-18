@@ -535,6 +535,8 @@ Edom_Tag * esvg_renderable_new(Esvg_Renderable_Descriptor *descriptor, Esvg_Type
 	pdescriptor.child_remove = descriptor->child_remove;
 	pdescriptor.attribute_set = descriptor->attribute_set;
 	pdescriptor.attribute_get = descriptor->attribute_get;
+	pdescriptor.animation_add = descriptor->animation_add;
+	pdescriptor.animation_remove = descriptor->animation_remove;
 	pdescriptor.cdata_set = descriptor->cdata_set;
 	pdescriptor.text_set = descriptor->text_set;
 	pdescriptor.free = _esvg_renderable_free;

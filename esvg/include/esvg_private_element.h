@@ -38,6 +38,8 @@ typedef struct _Esvg_Element_Context {
 
 typedef void (*Esvg_Element_Initialize)(Ender_Element *e);
 typedef Eina_Bool (*Esvg_Element_Attribute_Set)(Ender_Element *e, const char *key, const char *value);
+/* FIXME use this instead of the add/remove */
+typedef int * (*Esvg_Element_Attribute_Animated_Get)(Edom_Tag *t, const char *name);
 typedef Eina_Bool (*Esvg_Element_Attribute_Animation_Add)(Edom_Tag *t, const char *name);
 typedef void (*Esvg_Element_Attribute_Animation_Remove)(Edom_Tag *t, const char *name);
 
@@ -62,6 +64,8 @@ typedef struct _Esvg_Element_Descriptor {
 	Edom_Tag_Free free;
 	/* the element interface */
 	Esvg_Element_Attribute_Set attribute_set;
+	Esvg_Element_Attribute_Animation_Add animation_add;
+	Esvg_Element_Attribute_Animation_Remove animation_remove;
 	Esvg_Element_Initialize initialize;
 	Esvg_Element_Setup setup;
 } Esvg_Element_Descriptor;
