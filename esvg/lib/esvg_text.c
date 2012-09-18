@@ -218,6 +218,7 @@ static Esvg_Renderable_Descriptor _descriptor = {
 	/* .free		= */ _esvg_text_free,
 	/* .initialize		= */ NULL,
 	/* .attribute_set	= */ _esvg_text_attribute_set,
+	/* .attribute_animated_fetch = */ NULL,
 	/* .setup		= */ _esvg_text_setup,
 	/* .renderer_get	= */ _esvg_text_renderer_get,
 	/* .renderer_propagate	= */ _esvg_text_renderer_propagate,

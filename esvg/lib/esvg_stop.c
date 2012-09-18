@@ -121,6 +121,7 @@ static Esvg_Element_Descriptor _descriptor = {
 	/* .text_set 		= */ NULL,
 	/* .free 		= */ _esvg_stop_free,
 	/* .attribute_set 	= */ _esvg_stop_attribute_set,
+	/* .attribute_animated_fetch = */ NULL,
 	/* .initialize 		= */ NULL,
 	/* .setup		= */ _esvg_stop_setup,
 };

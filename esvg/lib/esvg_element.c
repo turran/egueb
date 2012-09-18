@@ -86,8 +86,7 @@ typedef struct _Esvg_Element_Descriptor_Internal
 {
 	Esvg_Element_Initialize initialize;
 	Esvg_Element_Attribute_Set attribute_set;
-	Esvg_Element_Attribute_Animation_Add animation_add;
-	Esvg_Element_Attribute_Animation_Remove animation_remove;
+	Esvg_Element_Attribute_Animated_Fetch attribute_animated_fetch;
 	Edom_Tag_Attribute_Get attribute_get;
 	Edom_Tag_Free free;
 	Esvg_Element_Setup setup;
@@ -202,6 +201,89 @@ static void _esvg_element_mutation_cb(Ender_Element *e, const char *event_name,
 	/* FIXME we could check if the mutation is a remove, add, etc */
 	thiz->changed++;
 }
+
+static int * _esvg_element_attribute_animated_fetch(Esvg_Element *thiz, const char *attr)
+{
+	int *animated = NULL;
+
+	/* get our own attributes */
+	if (strcmp(attr, "transform") == 0)
+	{
+		animated = &thiz->transform.animated;
+	}
+	/* common presentation attributes */
+	else if (strcmp(attr, "clip-path") == 0)
+	{
+		animated = &thiz->current_attr->clip_path.animated;
+	}
+	else if (strcmp(attr, "opacity") == 0)
+	{
+		animated = &thiz->current_attr->opacity.animated;
+	}
+	else if (strcmp(attr, "color") == 0)
+	{
+		animated = &thiz->current_attr->color.animated;
+	}
+	else if (strcmp(attr, "fill") == 0)
+	{
+		animated = &thiz->current_attr->fill.animated;
+	}
+	else if (strcmp(attr, "fill-rule") == 0)
+	{
+		animated = &thiz->current_attr->fill_rule.animated;
+	}
+	else if (strcmp(attr, "fill-opacity") == 0)
+	{
+		animated = &thiz->current_attr->fill_opacity.animated;
+	}
+	else if (strcmp(attr, "stroke") == 0)
+	{
+		animated = &thiz->current_attr->stroke.animated;
+	}
+	else if (strcmp(attr, "stroke-width") == 0)
+	{
+		animated = &thiz->current_attr->stroke_width.animated;
+	}
+	else if (strcmp(attr, "stroke-opacity") == 0)
+	{
+		animated = &thiz->current_attr->stroke_opacity.animated;
+	}
+	else if (strcmp(attr, "stroke-linecap") == 0)
+	{
+		animated = &thiz->current_attr->stroke_line_cap.animated;
+	}
+	else if (strcmp(attr, "stroke-linejoin") == 0)
+	{
+		animated = &thiz->current_attr->stroke_line_join.animated;
+	}
+	else if (strcmp(attr, "stop-color") == 0)
+	{
+		animated = &thiz->current_attr->stop_color.animated;
+	}
+	else if (strcmp(attr, "stop-opacity") == 0)
+	{
+		animated = &thiz->current_attr->stop_opacity.animated;
+	}
+	return animated;
+}
+
+static int * _esvg_element_attribute_animated_get(Edom_Tag *t, const char *attr)
+{
+	Esvg_Element *thiz;
+	int *animated;
+
+	thiz = _esvg_element_get(t);
+	/* get our own attributes */
+	animated = _esvg_element_attribute_animated_fetch(thiz, attr);
+	if (!animated)
+	{
+		/* call the descriptor implementation */
+		if (thiz->descriptor.attribute_animated_fetch)
+			animated = thiz->descriptor.attribute_animated_fetch(t, attr);
+	}
+	return animated;
+}
+
 /*----------------------------------------------------------------------------*
  *                              Context helpers                               *
  *----------------------------------------------------------------------------*/
@@ -359,145 +441,7 @@ static Eina_Bool _esvg_element_child_setup_cb(Edom_Tag *t, Edom_Tag *child,
 
 	return EINA_TRUE;
 }
-static Eina_Bool _esvg_element_attribute_animation_add(Esvg_Element *thiz, const char *attr)
-{
-	int *animated = NULL;
 
-	/* get our own attributes */
-	if (strcmp(attr, "transform") == 0)
-	{
-		animated = &thiz->transform.animated;
-	}
-	/* common presentation attributes */
-	else if (strcmp(attr, "clip-path") == 0)
-	{
-		animated = &thiz->current_attr->clip_path.animated;
-	}
-	else if (strcmp(attr, "opacity") == 0)
-	{
-		animated = &thiz->current_attr->opacity.animated;
-	}
-	else if (strcmp(attr, "color") == 0)
-	{
-		animated = &thiz->current_attr->color.animated;
-	}
-	else if (strcmp(attr, "fill") == 0)
-	{
-		animated = &thiz->current_attr->fill.animated;
-	}
-	else if (strcmp(attr, "fill-rule") == 0)
-	{
-		animated = &thiz->current_attr->fill_rule.animated;
-	}
-	else if (strcmp(attr, "fill-opacity") == 0)
-	{
-		animated = &thiz->current_attr->fill_opacity.animated;
-	}
-	else if (strcmp(attr, "stroke") == 0)
-	{
-		animated = &thiz->current_attr->stroke.animated;
-	}
-	else if (strcmp(attr, "stroke-width") == 0)
-	{
-		animated = &thiz->current_attr->stroke_width.animated;
-	}
-	else if (strcmp(attr, "stroke-opacity") == 0)
-	{
-		animated = &thiz->current_attr->stroke_opacity.animated;
-	}
-	else if (strcmp(attr, "stroke-linecap") == 0)
-	{
-		animated = &thiz->current_attr->stroke_line_cap.animated;
-	}
-	else if (strcmp(attr, "stroke-linejoin") == 0)
-	{
-		animated = &thiz->current_attr->stroke_line_join.animated;
-	}
-	else if (strcmp(attr, "stop-color") == 0)
-	{
-		animated = &thiz->current_attr->stop_color.animated;
-	}
-	else if (strcmp(attr, "stop-opacity") == 0)
-	{
-		animated = &thiz->current_attr->stop_opacity.animated;
-	}
-	else
-		return EINA_FALSE;
-	if (animated)
-	{
-		(*animated)++;
-	}
-	return EINA_TRUE;
-}
-
-static Eina_Bool _esvg_element_attribute_animation_remove(Esvg_Element *thiz, const char *attr)
-{
-	int *animated = NULL;
-
-	/* get our own attributes */
-	if (strcmp(attr, "transform") == 0)
-	{
-		animated = &thiz->transform.animated;
-	}
-	/* common presentation attributes */
-	else if (strcmp(attr, "clip-path") == 0)
-	{
-		animated = &thiz->current_attr->clip_path.animated;
-	}
-	else if (strcmp(attr, "opacity") == 0)
-	{
-		animated = &thiz->current_attr->opacity.animated;
-	}
-	else if (strcmp(attr, "color") == 0)
-	{
-		animated = &thiz->current_attr->color.animated;
-	}
-	else if (strcmp(attr, "fill") == 0)
-	{
-		animated = &thiz->current_attr->fill.animated;
-	}
-	else if (strcmp(attr, "fill-rule") == 0)
-	{
-		animated = &thiz->current_attr->fill_rule.animated;
-	}
-	else if (strcmp(attr, "fill-opacity") == 0)
-	{
-		animated = &thiz->current_attr->fill_opacity.animated;
-	}
-	else if (strcmp(attr, "stroke") == 0)
-	{
-		animated = &thiz->current_attr->stroke.animated;
-	}
-	else if (strcmp(attr, "stroke-width") == 0)
-	{
-		animated = &thiz->current_attr->stroke_width.animated;
-	}
-	else if (strcmp(attr, "stroke-opacity") == 0)
-	{
-		animated = &thiz->current_attr->stroke_opacity.animated;
-	}
-	else if (strcmp(attr, "stroke-linecap") == 0)
-	{
-		animated = &thiz->current_attr->stroke_line_cap.animated;
-	}
-	else if (strcmp(attr, "stroke-linejoin") == 0)
-	{
-		animated = &thiz->current_attr->stroke_line_join.animated;
-	}
-	else if (strcmp(attr, "stop-color") == 0)
-	{
-		animated = &thiz->current_attr->stop_color.animated;
-	}
-	else if (strcmp(attr, "stop-opacity") == 0)
-	{
-		animated = &thiz->current_attr->stop_opacity.animated;
-	}
-	else
-		return EINA_FALSE;
-	if (animated)
-		(*animated)--;
-	return EINA_TRUE;
-}
 /*----------------------------------------------------------------------------*
  *                           The Ender interface                              *
  *----------------------------------------------------------------------------*/
@@ -1211,31 +1155,29 @@ static Ecss_Context _esvg_element_css_context = {
  *============================================================================*/
 Eina_Bool esvg_element_attribute_animation_add(Edom_Tag *t, const char *attr)
 {
-	Esvg_Element *thiz;
+	int *animated;
 
-	thiz = _esvg_element_get(t);
-	/* get our own attributes */
 	DBG("adding animation on %s", attr);
-	if (_esvg_element_attribute_animation_add(thiz, attr))
+	animated = _esvg_element_attribute_animated_get(t, attr);
+	if (animated)
+	{
+		(*animated)++;
 		return EINA_TRUE;
-	/* call the descriptor implementation */
-	if (thiz->descriptor.animation_add)
-		return thiz->descriptor.animation_add(t, attr);
-	return EINA_FALSE;
+	}
+	else
+	{
+		return EINA_FALSE;
+	}
 }
 
 void esvg_element_attribute_animation_remove(Edom_Tag *t, const char *attr)
 {
-	Esvg_Element *thiz;
+	int *animated;
 
-	thiz = _esvg_element_get(t);
-	/* get our own attributes */
 	DBG("removing animation on %s", attr);
-	if (_esvg_element_attribute_animation_remove(thiz, attr))
-		return;
-	/* call the descriptor implementation */
-	if (thiz->descriptor.animation_remove)
-		thiz->descriptor.animation_remove(t, attr);
+	animated = _esvg_element_attribute_animated_get(t, attr);
+	if (animated)
+		(*animated)--;
 }
 
 Esvg_Type esvg_element_internal_type_get(Edom_Tag *t)
@@ -1594,8 +1536,7 @@ Edom_Tag * esvg_element_new(Esvg_Element_Descriptor *descriptor, Esvg_Type type,
 	thiz->descriptor.attribute_set = descriptor->attribute_set;
 	thiz->descriptor.attribute_get = descriptor->attribute_get;
 	thiz->descriptor.free = descriptor->free;
-	thiz->descriptor.animation_add = descriptor->animation_add;
-	thiz->descriptor.animation_remove = descriptor->animation_remove;
+	thiz->descriptor.attribute_animated_fetch = descriptor->attribute_animated_fetch;
 
 	t = edom_tag_new(&pdescriptor, thiz);
 
