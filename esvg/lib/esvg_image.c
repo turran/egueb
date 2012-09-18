@@ -98,7 +98,6 @@ static void _esvg_image_load(Edom_Tag *t, Esvg_Image *thiz, double width, double
 	}
 
 	esvg_attribute_animated_string_final_get(&thiz->href, &href);
-	printf("href = %s\n", href);
 	if (!href) goto cleanup;
 
 	esvg_element_internal_topmost_get(t, &topmost);
@@ -129,6 +128,7 @@ cleanup:
 		enesim_surface_unref(thiz->s);
 		thiz->s = NULL;
 	}
+	printf(">>> setting new surface\n");
 	enesim_renderer_image_src_set(thiz->image, s);
 	thiz->s = s;
 }
@@ -232,7 +232,6 @@ static Eina_Bool _esvg_image_renderer_propagate(Edom_Tag *t,
 #endif
 	_esvg_image_load(t, thiz, width, height);
 
-	printf("calling the setup on the image (%g %g %g %g %p)\n", x, y, width, height, thiz->s);
 	/* set the image */
 	if (!thiz->s)
 	{

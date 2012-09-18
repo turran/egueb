@@ -177,7 +177,6 @@ static void _esvg_animate_string_cb(Etch_Animation_Keyframe *k,
 
 
 	v.base = curr->data.string;
-	printf("setting string! %s\n", v.base);
 	old_type = esvg_element_attribute_type_get(thiz->parent_t);
 	esvg_element_attribute_type_set(thiz->parent_t, thiz->attribute_type);
 	esvg_element_attribute_animate_set(thiz->parent_t, EINA_TRUE);
