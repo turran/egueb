@@ -253,24 +253,35 @@ void esvg_attribute_string_merge_rel(const Esvg_Attribute_String *rel,
 	}
 }
 
-void esvg_attribute_length_unset(Esvg_Attribute_Length *a, const Esvg_Length *def)
+void esvg_attribute_animated_string_set(Esvg_Attribute_Animated_String *aa,
+	const Esvg_Animated_String *v,
+	Eina_Bool animate)
 {
-	a->v = *def;
-	a->is_set = EINA_FALSE;
+	Esvg_Attribute_String *a;
+	const char *s;
+
+	/* get the attribute to change */
+	if (animate)
+		a = &aa->anim;
+	else
+		a = &aa->base;
+	/* get the value to set */
+	if (v)
+		esvg_attribute_string_set(a, v->base);
+	else
+		esvg_attribute_string_unset(a);
 }
 
-void esvg_attribute_length_set(Esvg_Attribute_Length *a, const Esvg_Length *v,
-		const Esvg_Length *def)
+void esvg_attribute_animated_string_get(Esvg_Attribute_Animated_String *aa,
+	Esvg_Animated_String *v)
 {
-	if (!v)
-	{
-		esvg_attribute_length_unset(a, def);
-	}
+	if (!v) return;
+
+	v->base = aa->base.v;
+	if (aa->animated && aa->anim.is_set)
+		v->anim = aa->anim.v;
 	else
-	{
-		a->v = *v;
-		a->is_set = EINA_TRUE;
-	}
+		v->anim = v->base;
 }
 
 void esvg_attribute_string_unset(Esvg_Attribute_String *a)
@@ -297,7 +308,13 @@ void esvg_attribute_string_set(Esvg_Attribute_String *a, const char *v)
 	}
 }
 
-
+void esvg_attribute_animated_string_final_get(Esvg_Attribute_Animated_String *aa, char **v)
+{
+	if (aa->animated)
+		*v = aa->anim.v;
+	else
+		*v = aa->base.v;
+}
 /*----------------------------------------------------------------------------*
  *                                 Length                                     *
  *----------------------------------------------------------------------------*/
@@ -381,6 +398,27 @@ void esvg_attribute_animated_length_get(Esvg_Attribute_Animated_Length *aa,
 	else
 		v->anim = v->base;
 }
+
+void esvg_attribute_length_unset(Esvg_Attribute_Length *a, const Esvg_Length *def)
+{
+	a->v = *def;
+	a->is_set = EINA_FALSE;
+}
+
+void esvg_attribute_length_set(Esvg_Attribute_Length *a, const Esvg_Length *v,
+		const Esvg_Length *def)
+{
+	if (!v)
+	{
+		esvg_attribute_length_unset(a, def);
+	}
+	else
+	{
+		a->v = *v;
+		a->is_set = EINA_TRUE;
+	}
+}
+
 /*----------------------------------------------------------------------------*
  *                                  Bool                                      *
  *----------------------------------------------------------------------------*/

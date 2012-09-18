@@ -138,7 +138,14 @@ void esvg_attribute_animated_string_merge(const Esvg_Attribute_Animated_String *
 void esvg_attribute_string_merge_rel(const Esvg_Attribute_String *rel,
 		const Esvg_Attribute_String *v,
 		Esvg_Attribute_String *d);
-
+void esvg_attribute_animated_string_set(Esvg_Attribute_Animated_String *aa,
+	const Esvg_Animated_String *v,
+	Eina_Bool animate);
+void esvg_attribute_animated_string_get(Esvg_Attribute_Animated_String *aa,
+	Esvg_Animated_String *v);
+void esvg_attribute_string_unset(Esvg_Attribute_String *a);
+void esvg_attribute_string_set(Esvg_Attribute_String *a, const char *v);
+void esvg_attribute_animated_string_final_get(Esvg_Attribute_Animated_String *aa, char **v);
 
 void esvg_attribute_animated_length_merge_rel(const Esvg_Attribute_Animated_Length *rel,
 		const Esvg_Attribute_Animated_Length *v,
@@ -214,8 +221,6 @@ void esvg_attribute_animated_final_transform_get(Esvg_Attribute_Animated_Transfo
 Eina_Bool esvg_attribute_animated_transform_is_set(Esvg_Attribute_Animated_Transform *aa);
 
 
-void esvg_attribute_string_unset(Esvg_Attribute_String *a);
-void esvg_attribute_string_set(Esvg_Attribute_String *a, const char *v);
 void esvg_attribute_color_unset(Esvg_Attribute_Color *a, const Esvg_Color *def);
 void esvg_attribute_color_set(Esvg_Attribute_Color *a, const Esvg_Color *v,
 		const Esvg_Color *def);

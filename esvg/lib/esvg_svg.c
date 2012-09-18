@@ -340,11 +340,14 @@ static void _esvg_svg_image_uri_absolute_get(const char *name,
 	const char *options = data->data;
 	Eina_Bool ret;
 
-	printf("loading image, surface is %s\n", name);
+	printf("loading image into surface %p\n", *s);
 	ret = emage_load(name, s, ENESIM_FORMAT_ARGB8888, NULL, options);
 	if (!ret)
 	{
-		printf("some error?\n");
+		Eina_Error err;
+
+		err = eina_error_get();
+		printf("Image %s loaded sync with error: %s\n", name, eina_error_msg_get(err));
 		return;
 	}
 	printf("everything went ok!\n");

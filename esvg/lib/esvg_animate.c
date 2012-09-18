@@ -76,20 +76,14 @@ static Esvg_Animate * _esvg_animate_get(Edom_Tag *t)
 
 	return thiz;
 }
+
+static void * _esvg_animate_value_get(const char *attr)
+{
+	printf("attr = %s\n", attr);
+}
 /*----------------------------------------------------------------------------*
  *                          The Esvg_Length callbacks                         *
  *----------------------------------------------------------------------------*/
-static void _esvg_animate_length_values_cb(const char *v,
-		Etch_Animation_Keyframe *k, Etch_Data *data)
-{
-	Esvg_Length *length;
-
-	length = calloc(1, sizeof(Esvg_Length));
-	esvg_length_string_from(length, v);
-	data->data.d = length->value;
-	etch_animation_keyframe_data_set(k, length, free);
-}
-
 static void _esvg_animate_length_cb(Etch_Animation_Keyframe *k,
 		const Etch_Data *curr,
 		const Etch_Data *prev,
@@ -110,15 +104,27 @@ static void _esvg_animate_length_cb(Etch_Animation_Keyframe *k,
 	ender_element_property_value_set(thiz->parent_e, thiz->prop, &v, NULL);
 	esvg_element_attribute_type_set(thiz->parent_t, old_type);
 }
+
+static void * _esvg_animate_length_get(const char *attr)
+{
+	Esvg_Length *v;
+
+	v = calloc(1, sizeof(Esvg_Length));
+	esvg_length_string_from(v, attr);
+	return v;
+}
+
+static void _esvg_animate_length_etch_data_to(void *d,
+		Etch_Data *data)
+{
+	Esvg_Length *v = d;
+
+	data->type = ETCH_DOUBLE;
+	data->data.d = v->value;
+}
 /*----------------------------------------------------------------------------*
  *                            The double callbacks                            *
  *----------------------------------------------------------------------------*/
-static void _esvg_animate_double_values_cb(const char *v,
-		Etch_Animation_Keyframe *k, Etch_Data *data)
-{
-	data->data.d = esvg_number_string_from(v, 1.0);
-}
-
 static void _esvg_animate_double_cb(Etch_Animation_Keyframe *k,
 		const Etch_Data *curr,
 		const Etch_Data *prev,
@@ -137,6 +143,64 @@ static void _esvg_animate_double_cb(Etch_Animation_Keyframe *k,
 	ender_element_property_value_set(thiz->parent_e, thiz->prop, &v, NULL);
 	esvg_element_attribute_animate_set(thiz->parent_t, EINA_FALSE);
 	esvg_element_attribute_type_set(thiz->parent_t, old_type);
+}
+
+static void * _esvg_animate_number_get(const char *attr)
+{
+	double *v;
+
+	v = calloc(1, sizeof(double));
+	*v = esvg_number_string_from(attr, 1.0);
+	return v;
+}
+
+static void _esvg_animate_number_etch_data_to(void *d,
+		Etch_Data *data)
+{
+	double *v = d;
+
+	data->type = ETCH_DOUBLE;
+	data->data.d = *v;
+}
+
+/*----------------------------------------------------------------------------*
+ *                            The string callbacks                            *
+ *----------------------------------------------------------------------------*/
+static void _esvg_animate_string_cb(Etch_Animation_Keyframe *k,
+		const Etch_Data *curr,
+		const Etch_Data *prev,
+		void *data)
+{
+	Esvg_Animate *thiz = data;
+	Esvg_Animated_String v;
+	Esvg_Attribute_Type old_type;
+
+
+	v.base = curr->data.string;
+
+	old_type = esvg_element_attribute_type_get(thiz->parent_t);
+	esvg_element_attribute_type_set(thiz->parent_t, thiz->attribute_type);
+	esvg_element_attribute_animate_set(thiz->parent_t, EINA_TRUE);
+	ender_element_property_value_set(thiz->parent_e, thiz->prop, &v, NULL);
+	esvg_element_attribute_animate_set(thiz->parent_t, EINA_FALSE);
+	esvg_element_attribute_type_set(thiz->parent_t, old_type);
+}
+
+static void * _esvg_animate_string_get(const char *attr)
+{
+	char *v;
+
+	v = strdup(attr);
+	return v;
+}
+
+static void _esvg_animate_string_etch_data_to(void *d,
+		Etch_Data *data)
+{
+	char *v = d;
+
+	data->type = ETCH_STRING;
+	data->data.string = v;
 }
 /*----------------------------------------------------------------------------*
  *                              The Etch helpers                              *
@@ -190,153 +254,6 @@ static void _esvg_animate_key_splines_cb(const char *v, void *user_data)
 	 * factor and set the value on the cubic argument */
 }
 
-static Eina_Bool _esvg_animate_container_etch_to_old(Esvg_Animate *thiz, Etch *etch,
-		Ender_Property *p,
-		Esvg_Animation_Context *ac,
-		Esvg_Animate_Base_Context *c)
-{
-	Ender_Container *ec;
-	Esvg_Animate_Keyframe_Value_Cb vcb;
-	Etch_Animation *a;
-	Etch_Data_Type dt;
-	Etch_Animation_Callback cb;
-	Etch_Animation_Type type;
-	const char *name;
-
-	ec = ender_property_container_get(p);
-	name = ender_container_registered_name_get(ec);
-	if (!strcmp(name, "esvg_animated_length"))
-	{
-		dt = ETCH_DOUBLE;
-		cb = _esvg_animate_length_cb;
-		vcb = _esvg_animate_length_values_cb;
-
-	}
-	else if (!strcmp(name, "esvg_animated_number"))
-	{
-		dt = ETCH_DOUBLE;
-		cb = _esvg_animate_double_cb;
-		vcb = _esvg_animate_double_values_cb;
-	}
-	else
-	{
-		return EINA_FALSE;
-	}
-
-	type = esvg_animate_base_calc_mode_etch_to(c->value.calc_mode);
-
-	a = etch_animation_add(etch, dt, cb, NULL, NULL, thiz);
-	thiz->anim = a;
-	thiz->prop = p;
-
-	printf("duration is %lld %d\n", ac->timing.dur.data.clock, ac->timing.dur.type);
-	/* when having a from/to, just add two keyframes */
-	if (c->value.to && c->value.from)
-	{
-		Etch_Animation_Keyframe *kf;
-		Etch_Data from;
-		Etch_Data to;
-
-		/* FIXME for now we add two keyframes */
-		/* second keyframe */
-		kf = etch_animation_keyframe_add(a);
-		vcb(c->value.from, kf, &from);
-		etch_animation_keyframe_type_set(kf, type);
-		etch_animation_keyframe_value_set(kf, &from);
-		etch_animation_keyframe_time_set(kf, 3 * ETCH_SECOND);
-		/* third keyframe */
-		kf = etch_animation_keyframe_add(a);
-		vcb(c->value.to, kf, &to);
-		etch_animation_keyframe_type_set(kf, type);
-		etch_animation_keyframe_value_set(kf, &to);
-		etch_animation_keyframe_time_set(kf, 5 * ETCH_SECOND);
-	}
-	/* when having a values, add as many keyframes as values are */
-	else if (c->value.values && ac->timing.dur.type == ESVG_DURATION_TYPE_CLOCK)
-	{
-		Esvg_Animate_Keyframe_Value_Cb_Data vdata;
-		Esvg_Animate_Keyframe_Time_Cb_Data tdata;
-		int64_t duration;
-
-		duration = ac->timing.dur.data.clock;
-		/* first parse the values, create the keyframes and assign the values */
-		vdata.thiz = thiz;
-		vdata.cb = vcb;
-		vdata.type = type;
-		esvg_list_string_from(c->value.values, ';', _esvg_animate_values_cb, &vdata);
-		/* in case of keytimes */
-		if (c->value.key_times)
-		{
-			tdata.thiz = thiz;
-			tdata.idx = 0;
-			tdata.time = duration;
-			esvg_list_string_from(c->value.key_times, ';', _esvg_animate_key_times_cb, &tdata);
-		}
-		else
-		{
-			/* every keyframe has the same time */
-			tdata.thiz = thiz;
-			tdata.idx = 0;
-			tdata.time = 0;
-			tdata.inc = duration / etch_animation_keyframe_count(thiz->anim);
-			esvg_list_string_from(c->value.values, ';', _esvg_animate_time_cb, &tdata);
-		}
-
-		/* add the keysplines */
-		if (c->value.calc_mode == ESVG_CALC_MODE_SPLINE && c->value.key_splines)
-		{
-			esvg_list_string_from(c->value.key_splines, ';', _esvg_animate_key_splines_cb, NULL);
-		}
-	}
-	else
-	{
-		printf("wrong!\n");
-	}
-	etch_animation_enable(a);
-	return EINA_TRUE;
-}
-
-static void * _esvg_animate_value_get(const char *attr)
-{
-	printf("attr = %s\n", attr);
-}
-
-static void * _esvg_animate_length_get(const char *attr)
-{
-	Esvg_Length *v;
-
-	v = calloc(1, sizeof(Esvg_Length));
-	esvg_length_string_from(v, attr);
-	return v;
-}
-
-static void _esvg_animate_length_etch_data_to(void *d,
-		Etch_Data *data)
-{
-	Esvg_Length *v = d;
-
-	data->type = ETCH_DOUBLE;
-	data->data.d = v->value;
-}
-
-static void * _esvg_animate_number_get(const char *attr)
-{
-	double *v;
-
-	v = calloc(1, sizeof(double));
-	*v = esvg_number_string_from(attr, 1.0);
-	return v;
-}
-
-static void _esvg_animate_number_etch_data_to(void *d,
-		Etch_Data *data)
-{
-	double *v = d;
-
-	data->type = ETCH_DOUBLE;
-	data->data.d = *v;
-}
-
 static Eina_Bool _esvg_animate_container_etch_to(Esvg_Animate *thiz, Etch *etch,
 		Ender_Property *p,
 		Esvg_Animation_Context *ac,
@@ -367,6 +284,13 @@ static Eina_Bool _esvg_animate_container_etch_to(Esvg_Animate *thiz, Etch *etch,
 		cb = _esvg_animate_double_cb;
 		value_get = _esvg_animate_number_get;
 		data_to = _esvg_animate_number_etch_data_to;
+	}
+	if (!strcmp(name, "esvg_animated_string"))
+	{
+		dt = ETCH_STRING;
+		cb = _esvg_animate_string_cb;
+		value_get = _esvg_animate_string_get;
+		data_to = _esvg_animate_string_etch_data_to;
 	}
 	else
 	{
@@ -469,13 +393,8 @@ static Eina_Bool _esvg_animate_setup(Edom_Tag *t,
 	thiz->attribute_type = actx->target.attribute_type;
 
 	/* we should only process lengths, colors, integers, booleans, etc */
-#if 1
 	if (!_esvg_animate_container_etch_to(thiz, etch, p, actx, abctx))
 		goto done;
-#else
-	if (!_esvg_animate_container_etch_to_old(thiz, etch, p, actx, abctx))
-		goto done;
-#endif
 	/* check the type and create an animator of that container type */
 	/* on every animation callback set the animation mode on the element */
 	/* then call the property set */

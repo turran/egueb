@@ -620,32 +620,19 @@ static void _esvg_element_style_get(Edom_Tag *t, const char **style)
 static void _esvg_element_clip_path_set(Edom_Tag *t, Esvg_Animated_String *clip_path)
 {
 	Esvg_Element *thiz;
-	Esvg_Attribute_String *a;
-	const char *v;
 
 	thiz = _esvg_element_get(t);
-	/* get the attribute to change */
-	if (thiz->current_attr_animate)
-		a = &thiz->current_attr->clip_path.anim;
-	else
-		a = &thiz->current_attr->clip_path.base;
-	/* get the value to set */
-	if (clip_path)
-		v = clip_path->base;
-	else
-		v = NULL;
-
-	esvg_attribute_string_set(a, v);
+	esvg_attribute_animated_string_set(&thiz->current_attr->clip_path,
+		clip_path, thiz->current_attr_animate);
 }
 
 static void _esvg_element_clip_path_get(Edom_Tag *t, Esvg_Animated_String *clip_path)
 {
 	Esvg_Element *thiz;
 
-	if (!clip_path) return;
 	thiz = _esvg_element_get(t);
-	clip_path->base = thiz->current_attr->clip_path.base.v;
-	clip_path->anim = thiz->current_attr->clip_path.anim.v;
+	esvg_attribute_animated_string_get(&thiz->current_attr->clip_path,
+		clip_path);
 }
 
 static void _esvg_element_clip_path_unset(Edom_Tag *t)
@@ -667,7 +654,6 @@ static void _esvg_element_opacity_set(Edom_Tag *t, Esvg_Animated_Number *opacity
 static void _esvg_element_opacity_get(Edom_Tag *t, Esvg_Animated_Number *opacity)
 {
 	Esvg_Element *thiz;
-	Esvg_Attribute_Animated_Number *a;
 
 	thiz = _esvg_element_get(t);
 	esvg_attribute_animated_number_get(&thiz->current_attr->opacity,

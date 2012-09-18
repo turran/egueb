@@ -191,17 +191,25 @@ static Eina_Bool _esvg_dependencies_init(void)
 		goto shutdown_enesim;
 	}
 
+	if (!emage_init())
+	{
+		fprintf(stderr, "Esvg: Emage init failed");
+		goto shutdown_etex;
+	}
+
 	etch_init();
 
 	if (!_esvg_ender_init())
 	{
 		fprintf(stderr, "Esvg: Ender init failed");
-		goto shutdown_ender;
+		goto shutdown_emage;
 	}
 	return EINA_TRUE;
 
-shutdown_ender:
+shutdown_emage:
 	etch_shutdown();
+	emage_shutdown();
+shutdown_etex:
 	etex_shutdown();
 shutdown_enesim:
 	enesim_shutdown();

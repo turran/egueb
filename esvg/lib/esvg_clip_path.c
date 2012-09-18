@@ -284,7 +284,7 @@ static Eina_Bool _esvg_clip_path_reference_add(Edom_Tag *t, Esvg_Referenceable_R
 	return EINA_TRUE;
 }
 
-static Eina_Bool _esvg_clip_path_propagate(Edom_Tag *t,
+static Eina_Bool _esvg_clip_path_reference_propagate(Edom_Tag *t,
 		Esvg_Context *c,
 		const Esvg_Element_Context *ctx,
 		const Esvg_Attribute_Presentation *attr,
@@ -337,7 +337,7 @@ static Esvg_Referenceable_Descriptor _descriptor = {
 	/* .attribute_set	= */ _esvg_clip_path_attribute_set,
 	/* .setup		= */ _esvg_clip_path_setup,
 	/* .cleanup		= */ NULL,
-	/* .renderer_propagate	= */ _esvg_clip_path_propagate,
+	/* .reference_propagate	= */ _esvg_clip_path_reference_propagate,
 	/* .reference_add	= */ _esvg_clip_path_reference_add,
 	/* .reference_remove	= */ NULL,
 };

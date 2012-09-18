@@ -11,8 +11,8 @@ EAPI void esvg_image_width_set(Ender_Element *e,  const Esvg_Length *width);
 EAPI void esvg_image_width_get(Ender_Element *e, Esvg_Length *width);
 EAPI void esvg_image_height_set(Ender_Element *e,  const Esvg_Length *height);
 EAPI void esvg_image_height_get(Ender_Element *e, Esvg_Length *height);
-EAPI void esvg_image_href_set(Ender_Element *e, const char *href);
-EAPI void esvg_image_href_get(Ender_Element *e, const char **href);
+EAPI void esvg_image_xlink_href_set(Ender_Element *e, const char *href);
+EAPI void esvg_image_xlink_href_get(Ender_Element *e, const char **href);
 
 #endif
 

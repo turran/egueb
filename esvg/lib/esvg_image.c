@@ -33,23 +33,17 @@ static Ender_Property *ESVG_IMAGE_X;
 static Ender_Property *ESVG_IMAGE_Y;
 static Ender_Property *ESVG_IMAGE_WIDTH;
 static Ender_Property *ESVG_IMAGE_HEIGHT;
-static Ender_Property *ESVG_IMAGE_HREF;
-
-typedef struct _Esvg_Image_State
-{
-	Esvg_Coord x;
-	Esvg_Coord y;
-	Esvg_Length width;
-	Esvg_Length height;
-} Esvg_Image_State;
+static Ender_Property *ESVG_IMAGE_XLINK_HREF;
 
 typedef struct _Esvg_Image
 {
 	EINA_MAGIC
 	/* properties */
-	Esvg_Image_State current;
-	Esvg_Image_State past;
-	char *href;
+	Esvg_Coord x;
+	Esvg_Coord y;
+	Esvg_Length width;
+	Esvg_Length height;
+	Esvg_Attribute_Animated_String href;
 	char *real_href;
 	/* private */
 	Enesim_Renderer *proxy;
@@ -90,6 +84,7 @@ static void _esvg_image_load(Edom_Tag *t, Esvg_Image *thiz, double width, double
 	Enesim_Surface *s = NULL;
 	Ender_Element *topmost;
 	char options[PATH_MAX];
+	char *href;
 	char *real;
 
 	options[0] = '\0';
@@ -101,10 +96,12 @@ static void _esvg_image_load(Edom_Tag *t, Esvg_Image *thiz, double width, double
 	{
 		sprintf(options, "width=%d;height=%d", (int)width, (int)height);
 	}
-	if (!thiz->href) goto cleanup;
+
+	esvg_attribute_animated_string_final_get(&thiz->href, &href);
+	if (!href) goto cleanup;
 
 	esvg_element_internal_topmost_get(t, &topmost);
-	real = esvg_svg_uri_resolve (topmost, thiz->href);
+	real = esvg_svg_uri_resolve (topmost, href);
 	if (!real) goto cleanup;
 
 	/* check that the href has actually changed */
@@ -171,7 +168,7 @@ static Eina_Bool _esvg_image_attribute_set(Ender_Element *e,
 	}
 	else if (strcmp(key, "xlink:href") == 0)
 	{
-		esvg_image_href_set(e, value);
+		esvg_image_xlink_href_set(e, value);
 	}
 
 	return EINA_TRUE;
@@ -212,11 +209,11 @@ static Eina_Bool _esvg_image_renderer_propagate(Edom_Tag *t,
 
 	thiz = _esvg_image_get(t);
 	/* set the position */
-	x = esvg_length_final_get(&thiz->current.x, ctx->viewbox.width, ctx->font_size);
-	y = esvg_length_final_get(&thiz->current.y, ctx->viewbox.height, ctx->font_size);
+	x = esvg_length_final_get(&thiz->x, ctx->viewbox.width, ctx->font_size);
+	y = esvg_length_final_get(&thiz->y, ctx->viewbox.height, ctx->font_size);
 	/* set the size */
-	width = esvg_length_final_get(&thiz->current.width, ctx->viewbox.width, ctx->font_size);
-	height = esvg_length_final_get(&thiz->current.height, ctx->viewbox.height, ctx->font_size);
+	width = esvg_length_final_get(&thiz->width, ctx->viewbox.width, ctx->font_size);
+	height = esvg_length_final_get(&thiz->height, ctx->viewbox.height, ctx->font_size);
 
 #if 0
 	double iw;
@@ -266,13 +263,13 @@ static Eina_Bool _esvg_image_has_changed(Edom_Tag *t)
 	thiz = _esvg_image_get(t);
 	if (!thiz->changed) return EINA_FALSE;
 
-	if (esvg_length_is_equal(&thiz->current.x, &thiz->past.x))
+	if (esvg_length_is_equal(&thiz->x, &thiz->past.x))
 		return EINA_TRUE;
-	if (esvg_length_is_equal(&thiz->current.y, &thiz->past.y))
+	if (esvg_length_is_equal(&thiz->y, &thiz->past.y))
 		return EINA_TRUE;
-	if (esvg_length_is_equal(&thiz->current.width, &thiz->past.width))
+	if (esvg_length_is_equal(&thiz->width, &thiz->past.width))
 		return EINA_TRUE;
-	if (esvg_length_is_equal(&thiz->current.height, &thiz->past.height))
+	if (esvg_length_is_equal(&thiz->height, &thiz->past.height))
 		return EINA_TRUE;
 
 	return EINA_FALSE;
@@ -335,10 +332,10 @@ static Edom_Tag * _esvg_image_new(void)
 	thiz->proxy = r;
 
 	/* Default values */
-	thiz->current.x = ESVG_COORD_0;
-	thiz->current.y = ESVG_COORD_0;
-	thiz->current.width = ESVG_LENGTH_0;
-	thiz->current.height = ESVG_LENGTH_0;
+	thiz->x = ESVG_COORD_0;
+	thiz->y = ESVG_COORD_0;
+	thiz->width = ESVG_LENGTH_0;
+	thiz->height = ESVG_LENGTH_0;
 	/* FIXME: href default value */
 
 	t = esvg_renderable_new(&_descriptor, ESVG_IMAGE, thiz);
@@ -352,7 +349,7 @@ static void _esvg_image_x_set(Edom_Tag *t, const Esvg_Coord *x)
 	thiz = _esvg_image_get(t);
 	if (x)
 	{
-		thiz->current.x = *x;
+		thiz->x = *x;
 		thiz->changed = EINA_TRUE;
 	}
 }
@@ -362,7 +359,7 @@ static void _esvg_image_x_get(Edom_Tag *t, Esvg_Coord *x)
 	Esvg_Image *thiz;
 
 	thiz = _esvg_image_get(t);
-	if (x) *x = thiz->current.x;
+	if (x) *x = thiz->x;
 }
 
 static void _esvg_image_y_set(Edom_Tag *t, const Esvg_Coord *y)
@@ -372,7 +369,7 @@ static void _esvg_image_y_set(Edom_Tag *t, const Esvg_Coord *y)
 	thiz = _esvg_image_get(t);
 	if (y)
 	{
-		thiz->current.y = *y;
+		thiz->y = *y;
 		thiz->changed = EINA_TRUE;
 	}
 }
@@ -382,7 +379,7 @@ static void _esvg_image_y_get(Edom_Tag *t, Esvg_Coord *y)
 	Esvg_Image *thiz;
 
 	thiz = _esvg_image_get(t);
-	if (y) *y = thiz->current.y;
+	if (y) *y = thiz->y;
 }
 
 static void _esvg_image_width_set(Edom_Tag *t, const Esvg_Length *width)
@@ -392,7 +389,7 @@ static void _esvg_image_width_set(Edom_Tag *t, const Esvg_Length *width)
 	thiz = _esvg_image_get(t);
 	if (width)
 	{
-		thiz->current.width = *width;
+		thiz->width = *width;
 		thiz->changed = EINA_TRUE;
 	}
 }
@@ -402,7 +399,7 @@ static void _esvg_image_width_get(Edom_Tag *t, Esvg_Length *width)
 	Esvg_Image *thiz;
 
 	thiz = _esvg_image_get(t);
-	if (width) *width = thiz->current.width;
+	if (width) *width = thiz->width;
 }
 
 static void _esvg_image_height_set(Edom_Tag *t, const Esvg_Length *height)
@@ -412,7 +409,7 @@ static void _esvg_image_height_set(Edom_Tag *t, const Esvg_Length *height)
 	thiz = _esvg_image_get(t);
 	if (height)
 	{
-		thiz->current.height = *height;
+		thiz->height = *height;
 		thiz->changed = EINA_TRUE;
 	}
 }
@@ -422,32 +419,27 @@ static void _esvg_image_height_get(Edom_Tag *t, Esvg_Length *height)
 	Esvg_Image *thiz;
 
 	thiz = _esvg_image_get(t);
-	if (height) *height = thiz->current.height;
+	if (height) *height = thiz->height;
 }
 
-static void _esvg_image_href_set(Edom_Tag *t, const char *href)
+static void _esvg_image_xlink_href_set(Edom_Tag *t, Esvg_Animated_String *href)
+{
+	Esvg_Image *thiz;
+	Eina_Bool animating;
+
+	thiz = _esvg_image_get(t);
+	animating = esvg_element_attribute_animate_get(t);
+	esvg_attribute_animated_string_set(&thiz->href,
+		href, animating);
+}
+
+static void _esvg_image_xlink_href_get(Edom_Tag *t, Esvg_Animated_String *href)
 {
 	Esvg_Image *thiz;
 
 	thiz = _esvg_image_get(t);
-	if (href)
-	{
-		char *h;
-		h = strdup(href);
-		if (h)
-		{
-			thiz->href = strdup(href);
-			thiz->changed = EINA_TRUE;
-		}
-	}
-}
-
-static void _esvg_image_href_get(Edom_Tag *t, const char **href)
-{
-	Esvg_Image *thiz;
-
-	thiz = _esvg_image_get(t);
-	if (href && *href) *href = thiz->href;
+	esvg_attribute_animated_string_get(&thiz->href,
+		href);
 }
 /*============================================================================*
  *                                 Global                                     *
@@ -458,7 +450,7 @@ static void _esvg_image_href_get(Edom_Tag *t, const char **href)
 #define _esvg_image_y_is_set NULL
 #define _esvg_image_width_is_set NULL
 #define _esvg_image_height_is_set NULL
-#define _esvg_image_href_is_set NULL
+#define _esvg_image_xlink_href_is_set NULL
 #include "generated/esvg_generated_image.c"
 /*============================================================================*
  *                                   API                                      *
@@ -530,15 +522,19 @@ EAPI void esvg_image_height_get(Ender_Element *e, Esvg_Length *height)
 	_esvg_image_height_get(t, height);
 }
 
-EAPI void esvg_image_href_set(Ender_Element *e, const char *href)
+EAPI void esvg_image_xlink_href_set(Ender_Element *e, const char *href)
 {
-	ender_element_property_value_set(e, ESVG_IMAGE_HREF, href, NULL);
+	Esvg_Animated_String a;
+
+	if (!href)
+	{
+		ender_element_property_value_set(e, ESVG_IMAGE_XLINK_HREF, NULL, NULL);
+		return;
+	}
+	a.base = (char *)href;
+	ender_element_property_value_set(e, ESVG_IMAGE_XLINK_HREF, &a, NULL);
 }
 
-EAPI void esvg_image_href_get(Ender_Element *e, const char **href)
+EAPI void esvg_image_xlink_href_get(Ender_Element *e, const char **href)
 {
-	Edom_Tag *t;
-
-	t = (Edom_Tag *)ender_element_object_get(e);
-	_esvg_image_href_get(t, href);
 }

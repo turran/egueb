@@ -109,6 +109,8 @@ static void _esvg_text_text_set(Edom_Tag *t, const char *text, unsigned int leng
 	char past;
 
 	thiz = _esvg_text_get(t);
+	if (!text) return;
+
 	past = text[length];
 	modified = (char *)text;
 	modified[length] = '\0';

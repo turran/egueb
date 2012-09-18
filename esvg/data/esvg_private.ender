@@ -269,7 +269,7 @@ namespace "esvg" : 0 {
 		esvg_animated_length "y";
 		esvg_animated_length "width";
 		esvg_animated_length "height";
-		string "href";
+		esvg_animated_string "xlink:href";
 	};
 
 };
