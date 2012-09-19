@@ -60,6 +60,11 @@ namespace "esvg" : 0 {
 		esvg_length "anim";
 	};
 
+	struct "esvg_animated_coord" {
+		esvg_length "base";
+		esvg_length "anim";
+	};
+
 	struct "esvg_animated_color" {
 		esvg_color "base";
 		esvg_color "anim";
@@ -212,8 +217,8 @@ namespace "esvg" : 0 {
 	};
 
 	class "rect" : "renderable" {
-		esvg_animated_length "x";
-		esvg_animated_length "y";
+		esvg_animated_coord "x";
+		esvg_animated_coord "y";
 		esvg_animated_length "width";
 		esvg_animated_length "height";
 		esvg_animated_length "rx";
