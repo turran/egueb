@@ -343,6 +343,12 @@ static Esvg_Element_Setup_Return _esvg_animation_setup(Edom_Tag *t,
 	Edom_Tag *parent_t;
 	Ender_Element *parent_e;
 
+	/* every animation needs to do its own setup only once
+	 * unless some animation specifc attributes have changed
+	 */
+	if (!esvg_element_changed(t))
+		return ESVG_SETUP_OK;
+
 	thiz = _esvg_animation_get(t);
 	ctx = &thiz->ctx;
 

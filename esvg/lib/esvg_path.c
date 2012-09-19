@@ -36,7 +36,7 @@ typedef struct _Esvg_Path
 {
 	EINA_MAGIC
 	/* properties */
-	Eina_List *commands;
+	Esvg_Attribute_Animated_List commands;
 	/* private */
 	Eina_Bool d_changed : 1;
 	Enesim_Renderer *r;
@@ -105,6 +105,7 @@ static Eina_Bool _esvg_path_renderer_propagate(Edom_Tag *t,
 	Esvg_Path *thiz;
 	Esvg_Path_Command *pcmd;
 	Eina_List *l;
+	Eina_List *commands;
 	Esvg_Point cur = { 0, 0 };
 	Eina_Bool first; /* TODO handle correctly the first flag */
 
@@ -130,9 +131,10 @@ static Eina_Bool _esvg_path_renderer_propagate(Edom_Tag *t,
 	if (!thiz->d_changed)
 		return EINA_TRUE;
 
+	esvg_attribute_animated_list_final_get(&thiz->commands, &commands);
 	/* we need to generate again the commands */
 	enesim_renderer_path_command_clear(thiz->r);
-	EINA_LIST_FOREACH(thiz->commands, l, pcmd)
+	EINA_LIST_FOREACH(commands, l, pcmd)
 	{
 		Enesim_Renderer_Path_Command cmd;
 		/* FIXME or we either use the generic command API
@@ -372,10 +374,15 @@ void _esvg_path_free(Edom_Tag *t)
 	Esvg_Path_Command *cmd;
 
 	thiz = _esvg_path_get(t);
-	EINA_LIST_FREE(thiz->commands, cmd)
+	EINA_LIST_FREE(thiz->commands.base.v, cmd)
 	{
 		free(cmd);
 	}
+	EINA_LIST_FREE(thiz->commands.anim.v, cmd)
+	{
+		free(cmd);
+	}
+
 	enesim_renderer_unref(thiz->r);
 	free(thiz);
 }
@@ -419,43 +426,45 @@ static void _esvg_path_d_add(Edom_Tag *t, const Esvg_Path_Command *cmd)
 {
 	Esvg_Path *thiz;
 	Esvg_Path_Command *new_cmd;
+	Eina_Bool animating;
 
-	thiz = _esvg_path_get(t);
+	if (!cmd) return;
 
 	new_cmd = calloc(1, sizeof(Esvg_Path_Command));
 	*new_cmd = *cmd;
-	thiz->commands = eina_list_append(thiz->commands, new_cmd);
+
+	thiz = _esvg_path_get(t);
+	animating = esvg_element_attribute_animate_get(t);
+	esvg_attribute_animated_list_add(&thiz->commands,
+		new_cmd, animating);
+
 	thiz->d_changed = EINA_TRUE;
 }
 
-static void _esvg_path_d_set(Edom_Tag *t, const Eina_List *cmds)
+static void _esvg_path_d_set(Edom_Tag *t, Esvg_Animated_List *cmds)
 {
-	Esvg_Path *thiz;
-	Esvg_Path_Command *cmd;
-	const Eina_List *l;
+	const Esvg_Path_Command *cmd;
+	Eina_List *l;
 
-	thiz = _esvg_path_get(t);
 	/* FIXME remove what we had */
-	EINA_LIST_FOREACH (cmds, l, cmd)
+	EINA_LIST_FOREACH (cmds->base, l, cmd)
 	{
 		_esvg_path_d_add(t, cmd);
 	}
 }
 
-static void _esvg_path_d_get(Edom_Tag *t, const Eina_List **cmds)
+static void _esvg_path_d_get(Edom_Tag *t, Esvg_Animated_List *cmds)
 {
 	Esvg_Path *thiz;
 
 	thiz = _esvg_path_get(t);
-	*cmds = thiz->commands;
+	esvg_attribute_animated_list_get(&thiz->commands, cmds);
 }
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
 /* The ender wrapper */
 #define _esvg_path_delete NULL
-#define _esvg_path_d_clear NULL
-#define _esvg_path_d_remove NULL
 #define _esvg_path_d_is_set NULL
 #include "generated/esvg_generated_path.c"
 /*============================================================================*
@@ -475,18 +484,33 @@ EAPI Eina_Bool esvg_is_path(Ender_Element *e)
 
 EAPI void esvg_path_d_set(Ender_Element *e, const Eina_List *cmds)
 {
-	ender_element_property_value_set(e, ESVG_PATH_D, cmds, NULL);
+	Esvg_Animated_List a;
+
+	if (!cmds)
+	{
+		ender_element_property_value_set(e, ESVG_PATH_D, &a, NULL);
+		return;
+	}
+	a.base = (Eina_List *)cmds;
+	ender_element_property_value_set(e, ESVG_PATH_D, &a, NULL);
 }
 
 EAPI void esvg_path_d_get(Ender_Element *e, const Eina_List **cmds)
 {
+	Esvg_Animated_List a;
 	Edom_Tag *t;
 
+	if (!cmds) return;
+
 	t = ender_element_object_get(e);
-	_esvg_path_d_get(t, cmds);
+	_esvg_path_d_get(t, &a);
+	*cmds = a.base;
 }
 
 EAPI void esvg_path_d_add(Ender_Element *e, const Esvg_Path_Command *cmd)
 {
-	ender_element_property_value_add(e, ESVG_PATH_D, cmd, NULL);
+	Edom_Tag *t;
+
+	t = ender_element_object_get(e);
+	_esvg_path_d_add(t, cmd);
 }

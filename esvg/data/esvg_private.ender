@@ -84,7 +84,12 @@ namespace "esvg" : 0 {
 		esvg_path_simple_line "vline";
 	};
 
-	/* types */
+	struct "esvg_animated_path_command" {
+		[esvg_path_command] "base";
+		[esvg_path_command] "anim";
+	};
+
+	/* objects */
 
 	abstract "element" : "tag" {
 		/* core */
@@ -229,7 +234,7 @@ namespace "esvg" : 0 {
 	};
 
 	class "path" : "renderable" {
-		[esvg_path_command] "d";
+		esvg_animated_path_command "d";
 	};
 
 	class "line" : "renderable" {

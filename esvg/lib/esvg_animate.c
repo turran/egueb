@@ -30,10 +30,15 @@
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
-typedef void (*Esvg_Animate_Keyframe_Value_Cb)(const char *v,
-		Etch_Animation_Keyframe *k, Etch_Data *data);
 typedef void (*Esvg_Animate_Value_Etch_Data_To)(void *d,
 		Etch_Data *data);
+
+typedef struct _Esvg_Animate_Type
+{
+	Esvg_Animate_Value_Etch_Data_To etch_data_to;
+	Esvg_Animate_Base_Value_Get value_get;
+	Esvg_Animate_Base_Value_Free value_free;
+} Esvg_Animate_Type;
 
 typedef struct _Esvg_Animate
 {
@@ -49,22 +54,6 @@ typedef struct _Esvg_Animate
 	/* new */
 	Eina_List *animations;
 } Esvg_Animate;
-
-typedef struct _Esvg_Animate_Keyframe_Value_Cb_Data
-{
-	Esvg_Animate *thiz;
-	Etch_Animation_Type type;
-	Esvg_Animate_Keyframe_Value_Cb cb;
-	const char *attr;
-} Esvg_Animate_Keyframe_Value_Cb_Data;
-
-typedef struct _Esvg_Animate_Keyframe_Time_Cb_Data
-{
-	Esvg_Animate *thiz;
-	int idx;
-	Etch_Time time;
-	Etch_Time inc;
-} Esvg_Animate_Keyframe_Time_Cb_Data;
 
 static Esvg_Animate * _esvg_animate_get(Edom_Tag *t)
 {
@@ -201,45 +190,48 @@ static void _esvg_animate_string_etch_data_to(void *d,
 	data->type = ETCH_STRING;
 	data->data.string = v;
 }
+
+/*----------------------------------------------------------------------------*
+ *                      The path command callbacks                            *
+ *----------------------------------------------------------------------------*/
+static void _esvg_animate_path_command_cb(Etch_Animation_Keyframe *k,
+		const Etch_Data *curr,
+		const Etch_Data *prev,
+		void *data)
+{
+	Esvg_Animate *thiz = data;
+	Esvg_Animated_String v;
+	Esvg_Attribute_Type old_type;
+
+	v.base = curr->data.string;
+	old_type = esvg_element_attribute_type_get(thiz->parent_t);
+	esvg_element_attribute_type_set(thiz->parent_t, thiz->attribute_type);
+	esvg_element_attribute_animate_set(thiz->parent_t, EINA_TRUE);
+	ender_element_property_value_set(thiz->parent_e, thiz->prop, &v, NULL);
+	esvg_element_attribute_animate_set(thiz->parent_t, EINA_FALSE);
+	esvg_element_attribute_type_set(thiz->parent_t, old_type);
+}
+
+static void * _esvg_animate_path_command_get(const char *attr)
+{
+	char *v;
+
+	v = strdup(attr);
+	//esvg_path_string_from();
+	return v;
+}
+
+static void _esvg_animate_path_command_etch_data_to(void *d,
+		Etch_Data *data)
+{
+	char *v = d;
+
+	data->type = ETCH_STRING;
+	data->data.string = v;
+}
 /*----------------------------------------------------------------------------*
  *                              The Etch helpers                              *
  *----------------------------------------------------------------------------*/
-static void _esvg_animate_values_cb(const char *v, void *user_data)
-{
-	Esvg_Animate_Keyframe_Value_Cb_Data *data = user_data;
-	Etch_Animation_Keyframe *kf;
-	Etch_Data edata;
-
-	kf = etch_animation_keyframe_add(data->thiz->anim);
-	etch_animation_keyframe_type_set(kf, data->type);
-	data->cb(v, kf, &edata);
-	etch_animation_keyframe_value_set(kf, &edata);
-}
-
-/* increment each keyframe */
-static void _esvg_animate_time_cb(const char *v, void *user_data)
-{
-	Esvg_Animate_Keyframe_Time_Cb_Data *data = user_data;
-	Etch_Animation_Keyframe *kf;
-
-	kf = etch_animation_keyframe_get(data->thiz->anim, data->idx);
-	etch_animation_keyframe_time_set(kf, data->time);
-	data->time += data->inc;
-	data->idx++;
-}
-
-static void _esvg_animate_key_times_cb(const char *v, void *user_data)
-{
-	Esvg_Animate_Keyframe_Time_Cb_Data *data = user_data;
-	Etch_Animation_Keyframe *kf;
-	double percent;
-
-	percent = esvg_number_string_from(v, 1.0);
-	kf = etch_animation_keyframe_get(data->thiz->anim, data->idx);
-	etch_animation_keyframe_time_set(kf, data->time * percent);
-	data->idx++;
-}
-
 static void _esvg_animate_key_splines_cb(const char *v, void *user_data)
 {
 	Etch_Data ndata;
@@ -292,6 +284,12 @@ static Eina_Bool _esvg_animate_container_etch_to(Esvg_Animate *thiz, Etch *etch,
 		cb = _esvg_animate_string_cb;
 		value_get = _esvg_animate_string_get;
 		data_to = _esvg_animate_string_etch_data_to;
+	}
+	else if (!strcmp(name, "esvg_animated_path_command"))
+	{
+		printf("path commands!\n");
+		value_get = _esvg_animate_path_command_get;
+		return EINA_FALSE;
 	}
 	else
 	{

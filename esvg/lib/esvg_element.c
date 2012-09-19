@@ -1270,6 +1270,10 @@ Esvg_Element_Setup_Return esvg_element_setup_rel(Edom_Tag *t,
 	/* TODO apply the style first */
 	/* FIXME check that the style has changed, if so revert it and start applying */
 	/* FIXME should it have more priority than the properties? */
+	/* FIXME dont check for the style only, check also if some style property has been
+	 * set. If we animate a style based property but the style is not set, we never
+	 * get in here
+	 */
 	if (thiz->style)
 	{
 		esvg_element_attribute_type_set(t, ESVG_ATTR_CSS);

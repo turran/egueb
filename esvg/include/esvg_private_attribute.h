@@ -57,6 +57,12 @@ typedef struct _Esvg_Attribute_Enum
 	Eina_Bool is_set;
 } Esvg_Attribute_Enum;
 
+typedef struct _Esvg_Attribute_List
+{
+	Eina_List *v;
+	Eina_Bool is_set;
+} Esvg_Attribute_List;
+
 /* animated */
 typedef struct _Esvg_Attribute_Animated_Length
 {
@@ -107,12 +113,26 @@ typedef struct _Esvg_Attribute_Animated_Enum
 	int animated;
 } Esvg_Attribute_Animated_Enum;
 
+typedef struct _Esvg_Attribute_Animated_List
+{
+	Esvg_Attribute_List base;
+	Esvg_Attribute_List anim;
+	int animated;
+} Esvg_Attribute_Animated_List;
+
 typedef struct _Esvg_Attribute_Animated_Transform
 {
 	Esvg_Attribute_Transform base;
 	Esvg_Attribute_Transform anim;
 	int animated;
 } Esvg_Attribute_Animated_Transform;
+
+void esvg_attribute_animated_list_add(Esvg_Attribute_Animated_List *aa,
+	void *data,
+	Eina_Bool animate);
+void esvg_attribute_animated_list_final_get(Esvg_Attribute_Animated_List *aa, Eina_List **v);
+void esvg_attribute_animated_list_get(Esvg_Attribute_Animated_List *aa,
+	Esvg_Animated_List *v);
 
 void esvg_attribute_animated_color_merge_rel(const Esvg_Attribute_Animated_Color *rel,
 		const Esvg_Attribute_Animated_Color *v,

@@ -116,6 +116,17 @@ static void _esvg_animate_base_time_cb(const char *v, void *user_data)
 	*t = data->duration * percent;
 	data->times = eina_list_append(data->times, t);
 }
+
+static void _esvg_animate_base_key_splines_cb(const char *v, void *user_data)
+{
+	Eina_List **ret = user_data;
+	Esvg_Animate_Key_Spline *spline;
+
+	/* fetch the four values */
+	spline = calloc(1, sizeof(Esvg_Animate_Key_Spline));
+	esvg_animate_key_spline_string_from(spline, v);
+	*ret = eina_list_append(*ret, spline);
+}
 /*----------------------------------------------------------------------------*
  *                           The Ender interface                              *
  *----------------------------------------------------------------------------*/
@@ -393,6 +404,20 @@ Etch_Animation_Type esvg_animate_base_calc_mode_etch_to(Esvg_Calc_Mode c)
 		return ETCH_ANIMATION_LINEAR;
 	}
 }
+
+Eina_Bool esvg_animate_base_key_splines_generate(Esvg_Animate_Base_Context *c,
+		Eina_List **ksplines)
+{
+	Eina_List *l = NULL;
+
+	if (!c->value.key_splines)
+		return EINA_TRUE;
+
+	esvg_list_string_from(c->value.key_splines, ';',
+		_esvg_animate_base_key_splines_cb, &l);
+	*ksplines = l;
+}
+
 
 Eina_Bool esvg_animate_base_times_generate(Esvg_Animation_Context *ac,
 		Esvg_Animate_Base_Context *c,

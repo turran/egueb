@@ -2068,3 +2068,9 @@ EAPI Eina_Bool esvg_repeat_count_string_from(int *rc, const char *attr)
 	*rc = atoi(attr);
 	return EINA_TRUE;
 }
+
+EAPI Eina_Bool esvg_animate_key_spline_string_from(Esvg_Animate_Key_Spline *spline, const char *s)
+{
+	return EINA_TRUE;
+}
+

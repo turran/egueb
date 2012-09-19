@@ -30,6 +30,41 @@
  *                                 Global                                     *
  *============================================================================*/
 /*----------------------------------------------------------------------------*
+ *                                  List                                      *
+ *----------------------------------------------------------------------------*/
+void esvg_attribute_animated_list_add(Esvg_Attribute_Animated_List *aa,
+	void *data,
+	Eina_Bool animate)
+{
+	Esvg_Attribute_List *a;
+	/* get the attribute to change */
+	if (animate)
+		a = &aa->anim;
+	else
+		a = &aa->base;
+	a->v = eina_list_append(a->v, data);
+}
+
+void esvg_attribute_animated_list_get(Esvg_Attribute_Animated_List *aa,
+	Esvg_Animated_List *v)
+{
+	if (!v) return;
+
+	v->base = aa->base.v;
+	if (aa->animated && aa->anim.is_set)
+		v->anim = aa->anim.v;
+	else
+		v->anim = v->base;
+}
+
+void esvg_attribute_animated_list_final_get(Esvg_Attribute_Animated_List *aa, Eina_List **v)
+{
+	if (aa->animated && aa->anim.is_set)
+		*v = aa->anim.v;
+	else
+		*v = aa->base.v;
+}
+/*----------------------------------------------------------------------------*
  *                                Transform                                    *
  *----------------------------------------------------------------------------*/
 void esvg_attribute_transform_set(Esvg_Attribute_Transform *a,
@@ -85,7 +120,7 @@ void esvg_attribute_animated_transform_get(Esvg_Attribute_Animated_Transform *aa
 
 void esvg_attribute_animated_transform_final_get(Esvg_Attribute_Animated_Transform *aa, Enesim_Matrix *m)
 {
-	if (aa->animated)
+	if (aa->animated && aa->anim.is_set)
 		*m = aa->anim.v;
 	else
 		*m = aa->base.v;
@@ -310,7 +345,7 @@ void esvg_attribute_string_set(Esvg_Attribute_String *a, const char *v)
 
 void esvg_attribute_animated_string_final_get(Esvg_Attribute_Animated_String *aa, char **v)
 {
-	if (aa->animated)
+	if (aa->animated && aa->anim.is_set)
 		*v = aa->anim.v;
 	else
 		*v = aa->base.v;

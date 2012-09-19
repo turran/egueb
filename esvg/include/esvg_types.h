@@ -186,6 +186,12 @@ typedef struct _Esvg_Animated_Color
 	Esvg_Color anim;
 } Esvg_Animated_Color;
 
+typedef struct _Esvg_Animated_List
+{
+	Eina_List *base;
+	Eina_List *anim;
+} Esvg_Animated_List;
+
 /* FIXME when doing clipping or masking, we also use this
  * so better change the name
  */
@@ -421,6 +427,14 @@ typedef enum _Esvg_Animate_Transform_Type
 	ESVG_ANIMATE_TRANSFORM_TYPES
 } Esvg_Animate_Transform_Type;
 
+typedef struct _Esvg_Animate_Key_Spline
+{
+	double x0;
+	double y0;
+	double x1;
+	double y1;
+} Esvg_Animate_Key_Spline;
+
 typedef void (*Esvg_Uri_Get)(const char *uri, const char *fragment, void *data);
 
 typedef struct _Esvg_Uri_Descriptor
@@ -485,6 +499,7 @@ EAPI Eina_Bool esvg_attribute_type_string_from(Esvg_Attribute_Type *type, const 
 EAPI void esvg_timing_string_from(const char *attr, Esvg_Timing_Cb cb, void *data);
 EAPI void esvg_points_string_from(const char *value, Esvg_Points_Cb cb, void *data);
 EAPI Eina_Bool esvg_animate_transform_type_string_from(Esvg_Animate_Transform_Type *type, const char *s);
+EAPI Eina_Bool esvg_animate_key_spline_string_from(Esvg_Animate_Key_Spline *spline, const char *s);
 EAPI Eina_Bool esvg_list_string_from(const char *attr, char sep, Esvg_List_Cb cb, void *data);
 EAPI Eina_Bool esvg_number_list_string_from(const char *attr, Esvg_Number_List_Cb cb, void *data);
 EAPI Eina_Bool esvg_clock_string_from(int64_t *clock, const char *attr);
