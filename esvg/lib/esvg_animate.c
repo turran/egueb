@@ -262,12 +262,14 @@ static Eina_Bool _esvg_animate_container_etch_to(Esvg_Animate *thiz, Etch *etch,
 	Esvg_Animate_Value_Etch_Data_To data_to = NULL;
 	Ender_Container *ec;
 	Etch_Data_Type dt;
+	Etch_Animation_Type atype;
 	Etch_Animation_Callback cb;
 	Eina_List *times = NULL;
 	Eina_List *values = NULL;
 	Eina_Bool has_from;
 	const char *name;
 
+	atype = esvg_animate_base_calc_mode_etch_to(c->value.calc_mode);
 	ec = ender_property_container_get(p);
 	name = ender_container_registered_name_get(ec);
 	if (!strcmp(name, "esvg_animated_length"))
@@ -320,9 +322,7 @@ static Eina_Bool _esvg_animate_container_etch_to(Esvg_Animate *thiz, Etch *etch,
 
 			/* add a keyframe */
 			k = etch_animation_keyframe_add(a);
-			//etch_animation_keyframe_type_set(k, c->value.calc_mode);
-			//etch_animation_keyframe_type_set(k, ETCH_ANIMATION_LINEAR);
-			etch_animation_keyframe_type_set(k, ETCH_ANIMATION_DISCRETE);
+			etch_animation_keyframe_type_set(k, atype);
 			/* convert it to the destination etch type */
 			data_to(v, &edata);
 			/* set the value */
