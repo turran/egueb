@@ -256,6 +256,7 @@ Edom_Tag * esvg_referenceable_new(Esvg_Referenceable_Descriptor *descriptor, Esv
 	pdescriptor.child_remove = descriptor->child_remove;
 	pdescriptor.attribute_set = descriptor->attribute_set;
 	pdescriptor.attribute_get = descriptor->attribute_get;
+	pdescriptor.attribute_animated_fetch = descriptor->attribute_animated_fetch;
 	pdescriptor.cdata_set = descriptor->cdata_set;
 	pdescriptor.text_set = descriptor->text_set;
 	pdescriptor.free = _esvg_referenceable_free;

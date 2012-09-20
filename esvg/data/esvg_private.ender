@@ -187,11 +187,11 @@ namespace "esvg" : 0 {
 	};
 
 	class "radial_gradient" : "gradient" {
-		esvg_length "cx";
-		esvg_length "cy";
-		esvg_length "fx";
-		esvg_length "fy";
-		esvg_length "r";
+		esvg_animated_coord "cx";
+		esvg_animated_coord "cy";
+		esvg_animated_coord "fx";
+		esvg_animated_coord "fy";
+		esvg_animated_length "r";
 	};
 
 	class "svg" : "renderable" {
@@ -233,9 +233,9 @@ namespace "esvg" : 0 {
 	};
 
 	class "circle" : "renderable" {
-		esvg_length "cx";
-		esvg_length "cy";
-		esvg_length "r";
+		esvg_animated_coord "cx";
+		esvg_animated_coord "cy";
+		esvg_animated_length "r";
 	};
 
 	class "path" : "renderable" {

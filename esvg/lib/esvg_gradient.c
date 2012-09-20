@@ -57,6 +57,7 @@ typedef struct _Esvg_Gradient_Descriptor_Internal
 	Edom_Tag_Child_Add child_add;
 	Edom_Tag_Child_Remove child_remove;
 	Esvg_Element_Attribute_Set attribute_set;
+	Esvg_Element_Attribute_Animated_Fetch attribute_animated_fetch;
 	Esvg_Referenceable_Setup setup;
 	Esvg_Gradient_Propagate propagate;
 } Esvg_Gradient_Descriptor_Internal;
@@ -159,8 +160,13 @@ static void _esvg_gradient_context_generate(Esvg_Gradient *thiz, Esvg_Gradient_C
 static Eina_Bool _esvg_gradient_stop_propagate(Edom_Tag *t, Edom_Tag *child,
 		void *user_data)
 {
+	Esvg_Type type;
 	Enesim_Renderer_Gradient_Stop *stop;
 	Enesim_Renderer *r = user_data;
+
+	/* only propagate stops */
+	type = esvg_element_internal_type_get(child);
+	if (type != ESVG_STOP) return EINA_TRUE;
 
 	stop = esvg_stop_gradient_stop_get(child);
 	DBG("Adding a gradient stop at position %g with color %08x", stop->pos, stop->argb);
@@ -238,6 +244,18 @@ static Eina_Bool _esvg_gradient_attribute_set(Ender_Element *e,
 	return EINA_TRUE;
 }
 
+static int * _esvg_gradient_attribute_animated_fetch(Edom_Tag *t, const char *name)
+{
+	Esvg_Gradient *thiz;
+
+	thiz = _esvg_gradient_get(t);
+	/* FIXME provide our own */
+	printf("gradient attr fetch %s\n", name);
+	if (thiz->descriptor.attribute_animated_fetch)
+		return thiz->descriptor.attribute_animated_fetch(t, name);
+	return NULL;
+}
+
 static Eina_Bool _esvg_gradient_child_add(Edom_Tag *t, Edom_Tag *child)
 {
 	Esvg_Gradient *thiz;
@@ -249,9 +267,17 @@ static Eina_Bool _esvg_gradient_child_add(Edom_Tag *t, Edom_Tag *child)
 
 	thiz = _esvg_gradient_get(t);
 	type = esvg_element_internal_type_get(child);
-	/* only support stops */
-	if (type != ESVG_STOP)
+	/* only support stops and animate variants */
+	switch (type)
+	{
+		case ESVG_STOP:
+		case ESVG_ANIMATE:
+		break;
+
+		default:
+		ERR("Child %d not supported", type);
 		return EINA_FALSE;
+	}
 
 	child_e = esvg_element_ender_get(child);
 	ender_event_listener_add(child_e, "Mutation", _esvg_gradient_stop_mutation_cb, thiz);
@@ -333,7 +359,7 @@ state_changed_done:
 		return ESVG_SETUP_OK;
 
 	/* call the setup on the stops */
-	DBG("Doing the setup on the stops");
+	DBG("Doing the setup on the gradient children");
 	child_ret = esvg_element_internal_child_setup(t, c, error, NULL, thiz);
 	if (!child_ret) return ESVG_SETUP_FAILED;
 	return ESVG_SETUP_OK;
@@ -545,11 +571,13 @@ Edom_Tag * esvg_gradient_new(Esvg_Gradient_Descriptor *descriptor,
 	thiz->descriptor.child_remove = descriptor->child_remove;
 	thiz->descriptor.setup = descriptor->setup;
 	thiz->descriptor.attribute_set = descriptor->attribute_set;
+	thiz->descriptor.attribute_animated_fetch = descriptor->attribute_animated_fetch;
 	thiz->data = data;
 
 	pdescriptor.child_add = _esvg_gradient_child_add;
 	pdescriptor.child_remove = _esvg_gradient_child_remove;
 	pdescriptor.attribute_set = _esvg_gradient_attribute_set;
+	pdescriptor.attribute_animated_fetch = _esvg_gradient_attribute_animated_fetch;
 	pdescriptor.attribute_get = descriptor->attribute_get;
 	pdescriptor.cdata_set = descriptor->cdata_set;
 	pdescriptor.text_set = descriptor->text_set;

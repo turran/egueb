@@ -373,6 +373,7 @@ void esvg_attribute_animated_length_merge_rel(const Esvg_Attribute_Animated_Leng
 	esvg_attribute_length_merge_rel(rr, vv, d);
 }
 
+/* FIXME rename the merge variants */
 void esvg_attribute_animated_length_merge(const Esvg_Attribute_Animated_Length *v,
 		Esvg_Attribute_Length *d)
 {
@@ -432,6 +433,23 @@ void esvg_attribute_animated_length_get(Esvg_Attribute_Animated_Length *aa,
 		v->anim = aa->anim.v;
 	else
 		v->anim = v->base;
+}
+
+Eina_Bool esvg_attribute_animated_length_is_set(Esvg_Attribute_Animated_Length *aa)
+{
+	if ((aa->animated && aa->anim.is_set) || (aa->base.is_set))
+		return EINA_TRUE;
+	else
+		return EINA_FALSE;
+}
+
+void esvg_attribute_animated_length_final_get(Esvg_Attribute_Animated_Length *aa,
+	Esvg_Length *v)
+{
+	if (aa->animated && aa->anim.is_set)
+		*v = aa->anim.v;
+	else
+		*v = aa->base.v;
 }
 
 void esvg_attribute_length_unset(Esvg_Attribute_Length *a, const Esvg_Length *def)

@@ -108,4 +108,10 @@ Eina_Bool esvg_element_internal_child_setup(Edom_Tag *t,
 		Esvg_Element_Setup_Interceptor post,
 		void *data);
 
+void esvg_element_property_string_set(Ender_Element *e, Ender_Property *p, const char *v);
+void esvg_element_property_length_set(Ender_Element *e, Ender_Property *p, const Esvg_Length *v);
+void esvg_element_property_paint_set(Ender_Element *e, Ender_Property *p, const Esvg_Paint *v);
+void esvg_element_property_number_set(Ender_Element *e, Ender_Property *p, double v);
+
+
 #endif

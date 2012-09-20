@@ -1471,6 +1471,63 @@ const Esvg_Attribute_Presentation * esvg_element_attribute_presentation_get(Edom
 	return &thiz->attr_final;
 }
 
+/*----------------------------------------------------------------------------*
+ *                           Property API helpers                             *
+ *----------------------------------------------------------------------------*/
+void esvg_element_property_string_set(Ender_Element *e, Ender_Property *p, const char *v)
+{
+	if (!v)
+	{
+		ender_element_property_value_set(e, p, NULL, NULL);
+		return;
+	}
+	else
+	{
+		Esvg_Animated_String a;
+
+		a.base = (char *)v;
+		ender_element_property_value_set(e, p, &v, NULL);
+	}
+}
+
+void esvg_element_property_length_set(Ender_Element *e, Ender_Property *p, const Esvg_Length *v)
+{
+	if (!v)
+	{
+		ender_element_property_value_set(e, p, NULL, NULL);
+	}
+	else
+	{
+		Esvg_Animated_Length a;
+
+		a.base = *v;
+		ender_element_property_value_set(e, p, &a, NULL);
+	}
+}
+
+void esvg_element_property_paint_set(Ender_Element *e, Ender_Property *p, const Esvg_Paint *v)
+{
+	if (!v)
+	{
+		ender_element_property_value_set(e, p, NULL, NULL);
+	}
+	else
+	{
+		Esvg_Animated_Paint a;
+
+		a.base = *v;
+		ender_element_property_value_set(e, p, &a, NULL);
+	}
+}
+
+void esvg_element_property_number_set(Ender_Element *e, Ender_Property *p, double v)
+{
+	Esvg_Animated_Number a;
+
+	a.base = v;
+	ender_element_property_value_set(e, p, &a, NULL);
+}
+
 #if 0
 /* FIXME this functions should be implemented */
 void esvg_element_request_setup(Edom_Tag *t)
@@ -1791,15 +1848,7 @@ EAPI void esvg_element_color_unset(Ender_Element *e)
  */
 EAPI void esvg_element_fill_set(Ender_Element *e, const Esvg_Paint *fill)
 {
-	Esvg_Animated_Paint a;
-
-	if (!fill)
-	{
-		ender_element_property_value_set(e, ESVG_ELEMENT_FILL, NULL, NULL);
-		return;
-	}
-	a.base = *fill;
-	ender_element_property_value_set(e, ESVG_ELEMENT_FILL, &a, NULL);
+	esvg_element_property_paint_set(e, ESVG_ELEMENT_FILL, fill);
 }
 
 /**
@@ -1816,10 +1865,7 @@ EAPI void esvg_element_fill_unset(Ender_Element *e)
  */
 EAPI void esvg_element_fill_opacity_set(Ender_Element *e, double fill_opacity)
 {
-	Esvg_Animated_Number a;
-
-	a.base = fill_opacity;
-	ender_element_property_value_set(e, ESVG_ELEMENT_FILL_OPACITY, &a, NULL);
+	esvg_element_property_number_set(e, ESVG_ELEMENT_FILL_OPACITY, fill_opacity);
 }
 
 /**
@@ -1861,15 +1907,7 @@ EAPI void esvg_element_fill_rule_unset(Ender_Element *e)
  */
 EAPI void esvg_element_stroke_set(Ender_Element *e, const Esvg_Paint *stroke)
 {
-	Esvg_Animated_Paint a;
-
-	if (!stroke)
-	{
-		ender_element_property_value_set(e, ESVG_ELEMENT_STROKE, NULL, NULL);
-		return;
-	}
-	a.base = *stroke;
-	ender_element_property_value_set(e, ESVG_ELEMENT_STROKE, &a, NULL);
+	esvg_element_property_paint_set(e, ESVG_ELEMENT_STROKE, stroke);
 }
 
 /**
@@ -1886,14 +1924,7 @@ EAPI void esvg_element_stroke_unset(Ender_Element *e)
  */
 EAPI void esvg_element_stroke_width_set(Ender_Element *e, const Esvg_Length *stroke_width)
 {
-	Esvg_Animated_Length a;
-
-	if (!stroke_width)
-	{
-		ender_element_property_value_set(e, ESVG_ELEMENT_STROKE_WIDTH, NULL, NULL);
-	}
-	a.base = *stroke_width;
-	ender_element_property_value_set(e, ESVG_ELEMENT_STROKE_WIDTH, &a, NULL);
+	esvg_element_property_length_set(e, ESVG_ELEMENT_STROKE_WIDTH, stroke_width);
 }
 
 /**
@@ -1910,10 +1941,7 @@ EAPI void esvg_element_stroke_width_unset(Ender_Element *e)
  */
 EAPI void esvg_element_stroke_opacity_set(Ender_Element *e, double stroke_opacity)
 {
-	Esvg_Animated_Number a;
-
-	a.base = stroke_opacity;
-	ender_element_property_value_set(e, ESVG_ELEMENT_STROKE_OPACITY, &a, NULL);
+	esvg_element_property_number_set(e, ESVG_ELEMENT_STROKE_OPACITY, stroke_opacity);
 }
 
 /**

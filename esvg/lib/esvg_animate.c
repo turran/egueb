@@ -264,7 +264,7 @@ static Eina_Bool _esvg_animate_container_etch_to(Esvg_Animate *thiz, Etch *etch,
 	atype = esvg_animate_base_calc_mode_etch_to(c->value.calc_mode);
 	ec = ender_property_container_get(p);
 	name = ender_container_registered_name_get(ec);
-	if (!strcmp(name, "esvg_animated_length"))
+	if (!strcmp(name, "esvg_animated_length") || !strcmp(name, "esvg_animated_coord"))
 	{
 		dt = ETCH_DOUBLE;
 		cb = _esvg_animate_length_cb;
@@ -375,6 +375,7 @@ static Eina_Bool _esvg_animate_setup(Edom_Tag *t,
 	thiz = _esvg_animate_get(t);
 
 	/* same */
+	printf("animate setup\n");
 	esvg_element_internal_topmost_get(t, &svg_e);
 	if (!svg_e) goto done;
 

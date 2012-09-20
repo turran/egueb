@@ -34,18 +34,12 @@ static Ender_Property *ESVG_CIRCLE_CX;
 static Ender_Property *ESVG_CIRCLE_CY;
 static Ender_Property *ESVG_CIRCLE_R;
 
-typedef struct _Esvg_Circle_State
-{
-	Esvg_Coord cx;
-	Esvg_Coord cy;
-	Esvg_Length radius;
-} Esvg_Circle_State;
-
 typedef struct _Esvg_Circle
 {
 	/* properties */
-	Esvg_Circle_State current;
-	Esvg_Circle_State past;
+	Esvg_Attribute_Animated_Length radius;
+	Esvg_Attribute_Animated_Length cx;
+	Esvg_Attribute_Animated_Length cy;
 	/* private */
 	Enesim_Renderer *r;
 	Eina_Bool changed : 1;
@@ -98,6 +92,27 @@ static Eina_Bool _esvg_circle_attribute_get(Edom_Tag *tag, const char *attribute
 	return EINA_FALSE;
 }
 
+static int * _esvg_circle_attribute_animated_fetch(Edom_Tag *t, const char *attr)
+{
+	Esvg_Circle *thiz;
+	int *animated = NULL;
+
+	thiz = _esvg_circle_get(t);
+	if (!strcmp(attr, "cx"))
+	{
+		animated = &thiz->cx.animated;	
+	}
+	else if (!strcmp(attr, "cy"))
+	{
+		animated = &thiz->cy.animated;	
+	}
+	else if (!strcmp(attr, "r"))
+	{
+		animated = &thiz->radius.animated;	
+	}
+	return animated;
+}
+
 static Enesim_Renderer * _esvg_circle_renderer_get(Edom_Tag *t)
 {
 	Esvg_Circle *thiz;
@@ -123,6 +138,8 @@ static Eina_Bool _esvg_circle_renderer_propagate(Edom_Tag *t,
 		Enesim_Error **error)
 {
 	Esvg_Circle *thiz;
+	Esvg_Length lcx, lcy;
+	Esvg_Length lradius;
 	double cx, cy;
 	double radius;
 
@@ -130,10 +147,13 @@ static Eina_Bool _esvg_circle_renderer_propagate(Edom_Tag *t,
 
 	/* FIXME gets the parents size or the topmost? */
 	/* set the origin */
-	cx = esvg_length_final_get(&thiz->current.cx, ctx->viewbox.width, ctx->font_size);
-	cy = esvg_length_final_get(&thiz->current.cy, ctx->viewbox.height, ctx->font_size);
+	esvg_attribute_animated_length_final_get(&thiz->cx, &lcx);
+	esvg_attribute_animated_length_final_get(&thiz->cy, &lcy);
+	esvg_attribute_animated_length_final_get(&thiz->radius, &lradius);
+	cx = esvg_length_final_get(&lcx, ctx->viewbox.width, ctx->font_size);
+	cy = esvg_length_final_get(&lcy, ctx->viewbox.height, ctx->font_size);
 	/* set the size */
-	radius = esvg_length_final_get(&thiz->current.radius, ctx->viewbox.width, ctx->font_size);
+	radius = esvg_length_final_get(&lradius, ctx->viewbox.width, ctx->font_size);
 	DBG("calling the setup on the circle (%g %g %g)", cx, cy, radius);
 	enesim_renderer_circle_center_set(thiz->r, cx, cy);
 	enesim_renderer_circle_radius_set(thiz->r, radius);
@@ -184,18 +204,18 @@ static Eina_Bool _esvg_circle_has_changed(Enesim_Renderer *r)
 #endif
 
 static Esvg_Renderable_Descriptor _descriptor = {
-	/* .child_add		= */ NULL,
-	/* .child_remove	= */ NULL,
-	/* .attribute_get 	= */ _esvg_circle_attribute_get,
-	/* .cdata_set 		= */ NULL,
-	/* .text_set 		= */ NULL,
-	/* .free 		= */ _esvg_circle_free,
-	/* .initialize 		= */ NULL,
-	/* .attribute_set 	= */ _esvg_circle_attribute_set,
-	/* .attribute_animated_fetch = */ NULL,
-	/* .setup		= */ _esvg_circle_setup,
-	/* .renderer_get	= */ _esvg_circle_renderer_get,
-	/* .renderer_propagate	= */ _esvg_circle_renderer_propagate,
+	/* .child_add			= */ NULL,
+	/* .child_remove		= */ NULL,
+	/* .attribute_get 		= */ _esvg_circle_attribute_get,
+	/* .cdata_set 			= */ NULL,
+	/* .text_set 			= */ NULL,
+	/* .free 			= */ _esvg_circle_free,
+	/* .initialize 			= */ NULL,
+	/* .attribute_set 		= */ _esvg_circle_attribute_set,
+	/* .attribute_animated_fetch 	= */ _esvg_circle_attribute_animated_fetch,
+	/* .setup			= */ _esvg_circle_setup,
+	/* .renderer_get		= */ _esvg_circle_renderer_get,
+	/* .renderer_propagate		= */ _esvg_circle_renderer_propagate,
 };
 /*----------------------------------------------------------------------------*
  *                           The Ender interface                              *
@@ -215,72 +235,78 @@ EAPI Edom_Tag * _esvg_circle_new(void)
 	thiz->r = r;
 
 	/* Default values */
-	thiz->current.cx = ESVG_COORD_0;
-	thiz->current.cy = ESVG_COORD_0;
-	thiz->current.radius = ESVG_LENGTH_0;
+	thiz->cx.base.v = thiz->cx.anim.v = ESVG_COORD_0;
+	thiz->cy.base.v = thiz->cx.anim.v = ESVG_COORD_0;
+	thiz->radius.base.v = thiz->radius.anim.v = ESVG_LENGTH_0;
 
 	t = esvg_renderable_new(&_descriptor, ESVG_CIRCLE, thiz);
 	return t;
 }
 
-static void _esvg_circle_cx_set(Edom_Tag *t, const Esvg_Coord *cx)
+static void _esvg_circle_cx_set(Edom_Tag *t, const Esvg_Animated_Length *cx)
 {
 	Esvg_Circle *thiz;
+	Esvg_Length def = { ESVG_UNIT_LENGTH_PX, 0 };
+	Eina_Bool animating;
 
 	thiz = _esvg_circle_get(t);
-	if (cx)
-	{
-		thiz->current.cx = *cx;
-		thiz->changed = EINA_TRUE;
-	}
+	animating = esvg_element_attribute_animate_get(t);
+	esvg_attribute_animated_length_set(&thiz->cx,
+		cx, &def, animating);
+	thiz->changed = EINA_TRUE;
 }
 
-static void _esvg_circle_cx_get(Edom_Tag *t, Esvg_Coord *cx)
+static void _esvg_circle_cx_get(Edom_Tag *t, Esvg_Animated_Length *cx)
 {
 	Esvg_Circle *thiz;
 
 	thiz = _esvg_circle_get(t);
-	if (cx) *cx = thiz->current.cx;
+	esvg_attribute_animated_length_get(&thiz->cx,
+		cx);
 }
 
-static void _esvg_circle_cy_set(Edom_Tag *t, const Esvg_Coord *cy)
+static void _esvg_circle_cy_set(Edom_Tag *t, const Esvg_Animated_Length *cy)
 {
 	Esvg_Circle *thiz;
+	Esvg_Length def = { ESVG_UNIT_LENGTH_PX, 0 };
+	Eina_Bool animating;
 
 	thiz = _esvg_circle_get(t);
-	if (cy)
-	{
-		thiz->current.cy = *cy;
-		thiz->changed = EINA_TRUE;
-	}
+	animating = esvg_element_attribute_animate_get(t);
+	esvg_attribute_animated_length_set(&thiz->cy,
+		cy, &def, animating);
+	thiz->changed = EINA_TRUE;
 }
 
-static void _esvg_circle_cy_get(Edom_Tag *t, Esvg_Coord *cy)
+static void _esvg_circle_cy_get(Edom_Tag *t, Esvg_Animated_Length *cy)
 {
 	Esvg_Circle *thiz;
 
 	thiz = _esvg_circle_get(t);
-	if (cy) *cy = thiz->current.cy;
+	esvg_attribute_animated_length_get(&thiz->cy,
+		cy);
 }
 
-static void _esvg_circle_r_set(Edom_Tag *t, const Esvg_Length *radius)
+static void _esvg_circle_r_set(Edom_Tag *t, const Esvg_Animated_Length *radius)
 {
 	Esvg_Circle *thiz;
+	Esvg_Length def = { ESVG_UNIT_LENGTH_PX, 0 };
+	Eina_Bool animating;
 
 	thiz = _esvg_circle_get(t);
-	if (radius)
-	{
-		thiz->current.radius = *radius;
-		thiz->changed = EINA_TRUE;
-	}
+	animating = esvg_element_attribute_animate_get(t);
+	esvg_attribute_animated_length_set(&thiz->radius,
+		radius, &def, animating);
+	thiz->changed = EINA_TRUE;
 }
 
-static void _esvg_circle_r_get(Edom_Tag *t, Esvg_Length *radius)
+static void _esvg_circle_r_get(Edom_Tag *t, Esvg_Animated_Length *radius)
 {
 	Esvg_Circle *thiz;
 
 	thiz = _esvg_circle_get(t);
-	if (radius) *radius = thiz->current.radius;
+	esvg_attribute_animated_length_get(&thiz->radius,
+		radius);
 }
 /*============================================================================*
  *                                 Global                                     *
@@ -311,39 +337,27 @@ EAPI Eina_Bool esvg_is_circle(Ender_Element *e)
 
 EAPI void esvg_circle_cx_set(Ender_Element *e, const Esvg_Coord *cx)
 {
-	ender_element_property_value_set(e, ESVG_CIRCLE_CX, cx, NULL);
+	esvg_element_property_length_set(e, ESVG_CIRCLE_CX, cx);
 }
 
 EAPI void esvg_circle_cx_get(Ender_Element *e, Esvg_Coord *cx)
 {
-	Edom_Tag *t;
-
-	t = (Edom_Tag *)ender_element_object_get(e);
-	_esvg_circle_cx_get(t, cx);
 }
 
 EAPI void esvg_circle_cy_set(Ender_Element *e, const Esvg_Coord *cy)
 {
-	ender_element_property_value_set(e, ESVG_CIRCLE_CY, cy, NULL);
+	esvg_element_property_length_set(e, ESVG_CIRCLE_CY, cy);
 }
 
 EAPI void esvg_circle_cy_get(Ender_Element *e, Esvg_Coord *cy)
 {
-	Edom_Tag *t;
-
-	t = (Edom_Tag *)ender_element_object_get(e);
-	_esvg_circle_cy_get(t, cy);
 }
 
 EAPI void esvg_circle_r_set(Ender_Element *e, const Esvg_Length *r)
 {
-	ender_element_property_value_set(e, ESVG_CIRCLE_R, r, NULL);
+	esvg_element_property_length_set(e, ESVG_CIRCLE_R, r);
 }
 
 EAPI void esvg_circle_r_get(Ender_Element *e, Esvg_Length *r)
 {
-	Edom_Tag *t;
-
-	t = (Edom_Tag *)ender_element_object_get(e);
-	_esvg_circle_r_get(t, r);
 }
