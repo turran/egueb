@@ -310,6 +310,7 @@ static Eina_Bool _esvg_animate_container_etch_to(Esvg_Animate *thiz, Etch *etch,
 
 		a = etch_animation_add(etch, dt, cb,
 					NULL, NULL, thiz);
+		etch_animation_repeat_set(a, ac->timing.repeat_count);
 		tt = times;
 		EINA_LIST_FOREACH(values, l, v)
 		{

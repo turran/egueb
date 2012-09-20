@@ -105,7 +105,7 @@ static void _esvg_image_load(Edom_Tag *t, Esvg_Image *thiz, double width, double
 	if (!real) goto cleanup;
 
 	/* check that the href has actually changed */
-	printf("real href = %s %s\n", real, thiz->real_href);
+	//printf("real href = %s %s\n", real, thiz->real_href);
 	if (thiz->real_href)
 	{
 		if (!strcmp(thiz->real_href, real))
