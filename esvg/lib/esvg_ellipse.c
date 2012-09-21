@@ -34,19 +34,13 @@ static Ender_Property *ESVG_ELLIPSE_CY;
 static Ender_Property *ESVG_ELLIPSE_RX;
 static Ender_Property *ESVG_ELLIPSE_RY;
 
-typedef struct _Esvg_Ellipse_State
-{
-	Esvg_Coord cx;
-	Esvg_Coord cy;
-	Esvg_Length rx;
-	Esvg_Length ry;
-} Esvg_Ellipse_State;
-
 typedef struct _Esvg_Ellipse
 {
 	/* properties */
-	Esvg_Ellipse_State current;
-	Esvg_Ellipse_State past;
+	Esvg_Attribute_Animated_Coord cx;
+	Esvg_Attribute_Animated_Coord cy;
+	Esvg_Attribute_Animated_Length rx;
+	Esvg_Attribute_Animated_Length ry;
 	/* private */
 	Enesim_Renderer *r;
 	Eina_Bool changed : 1;
@@ -105,6 +99,39 @@ static Eina_Bool _esvg_ellipse_attribute_get(Edom_Tag *tag, const char *attribut
 	return EINA_FALSE;
 }
 
+static int * _esvg_ellipse_attribute_animated_fetch(Edom_Tag *t, const char *attr)
+{
+	Esvg_Ellipse *thiz;
+	int *animated = NULL;
+
+	thiz = _esvg_ellipse_get(t);
+	if (!strcmp(attr, "cx"))
+	{
+		animated = &thiz->cx.animated;
+	}
+	else if (!strcmp(attr, "cy"))
+	{
+		animated = &thiz->cy.animated;
+	}
+	else if (!strcmp(attr, "rx"))
+	{
+		animated = &thiz->rx.animated;
+	}
+	else if (!strcmp(attr, "ry"))
+	{
+		animated = &thiz->ry.animated;
+	}
+	return animated;
+}
+
+static Enesim_Renderer * _esvg_ellipse_renderer_get(Edom_Tag *t)
+{
+	Esvg_Ellipse *thiz;
+
+	thiz = _esvg_ellipse_get(t);
+	return thiz->r;
+}
+
 static Esvg_Element_Setup_Return _esvg_ellipse_setup(Edom_Tag *t,
 		Esvg_Context *c,
 		Esvg_Element_Context *ctx,
@@ -122,6 +149,8 @@ static Eina_Bool _esvg_ellipse_renderer_propagate(Edom_Tag *t,
 		Enesim_Error **error)
 {
 	Esvg_Ellipse *thiz;
+	Esvg_Length lcx, lcy;
+	Esvg_Length lrx, lry;
 	double cx, cy;
 	double rx, ry;
 
@@ -129,12 +158,16 @@ static Eina_Bool _esvg_ellipse_renderer_propagate(Edom_Tag *t,
 
 	/* FIXME gets the parents size or the topmost? */
 	/* set the origin */
-	cx = esvg_length_final_get(&thiz->current.cx, ctx->viewbox.width, ctx->font_size);
-	cy = esvg_length_final_get(&thiz->current.cy, ctx->viewbox.height, ctx->font_size);
+	esvg_attribute_animated_length_final_get(&thiz->cx, &lcx);
+	esvg_attribute_animated_length_final_get(&thiz->cy, &lcy);
+	esvg_attribute_animated_length_final_get(&thiz->rx, &lrx);
+	esvg_attribute_animated_length_final_get(&thiz->ry, &lry);
+	cx = esvg_length_final_get(&lcx, ctx->viewbox.width, ctx->font_size);
+	cy = esvg_length_final_get(&lcy, ctx->viewbox.height, ctx->font_size);
 	/* set the size */
-	rx = esvg_length_final_get(&thiz->current.rx, ctx->viewbox.width, ctx->font_size);
-	ry = esvg_length_final_get(&thiz->current.ry, ctx->viewbox.height, ctx->font_size);
-	//DBG("calling the setup on the ellipse (%g %g %g %g)", cx, cy, rx, ry);
+	rx = esvg_length_final_get(&lrx, ctx->viewbox.width, ctx->font_size);
+	ry = esvg_length_final_get(&lry, ctx->viewbox.height, ctx->font_size);
+	DBG("calling the setup on the ellipse (%g %g %g %g)", cx, cy, rx, ry);
 	enesim_renderer_ellipse_center_set(thiz->r, cx, cy);
 	enesim_renderer_ellipse_radii_set(thiz->r, rx, ry);
 
@@ -154,12 +187,13 @@ static Eina_Bool _esvg_ellipse_renderer_propagate(Edom_Tag *t,
 	return EINA_TRUE;
 }
 
-static Enesim_Renderer * _esvg_ellipse_renderer_get(Edom_Tag *t)
+static void _esvg_ellipse_free(Edom_Tag *t)
 {
 	Esvg_Ellipse *thiz;
 
 	thiz = _esvg_ellipse_get(t);
-	return thiz->r;
+	enesim_renderer_unref(thiz->r);
+	free(thiz);
 }
 
 #if 0
@@ -183,28 +217,19 @@ static Eina_Bool _esvg_ellipse_has_changed(Enesim_Renderer *r)
 }
 #endif
 
-static void _esvg_ellipse_free(Edom_Tag *t)
-{
-	Esvg_Ellipse *thiz;
-
-	thiz = _esvg_ellipse_get(t);
-	enesim_renderer_unref(thiz->r);
-	free(thiz);
-}
-
 static Esvg_Renderable_Descriptor _descriptor = {
-	/* .child_add		= */ NULL,
-	/* .child_remove	= */ NULL,
-	/* .attribute_get 	= */ _esvg_ellipse_attribute_get,
-	/* .cdata_set 		= */ NULL,
-	/* .text_set 		= */ NULL,
-	/* .free 		= */ _esvg_ellipse_free,
-	/* .initialize 		= */ NULL,
-	/* .attribute_set 	= */ _esvg_ellipse_attribute_set,
-	/* .attribute_animated_fetch = */ NULL,
-	/* .setup		= */ _esvg_ellipse_setup,
-	/* .renderer_get	= */ _esvg_ellipse_renderer_get,
-	/* .renderer_propagate	= */ _esvg_ellipse_renderer_propagate,
+	/* .child_add		     = */ NULL,
+	/* .child_remove	     = */ NULL,
+	/* .attribute_get 	     = */ _esvg_ellipse_attribute_get,
+	/* .cdata_set 		     = */ NULL,
+	/* .text_set 		     = */ NULL,
+	/* .free 		     = */ _esvg_ellipse_free,
+	/* .initialize 		     = */ NULL,
+	/* .attribute_set 	     = */ _esvg_ellipse_attribute_set,
+	/* .attribute_animated_fetch = */ _esvg_ellipse_attribute_animated_fetch,
+	/* .setup		     = */ _esvg_ellipse_setup,
+	/* .renderer_get	     = */ _esvg_ellipse_renderer_get,
+	/* .renderer_propagate	     = */ _esvg_ellipse_renderer_propagate,
 };
 /*----------------------------------------------------------------------------*
  *                           The Ender interface                              *
@@ -223,93 +248,93 @@ static Edom_Tag * _esvg_ellipse_new(void)
 	thiz->r = r;
 
 	/* Default values */
-	thiz->current.cx = ESVG_COORD_0;
-	thiz->current.cy = ESVG_COORD_0;
-	thiz->current.rx = ESVG_LENGTH_0;
-	thiz->current.ry = ESVG_LENGTH_0;
+	thiz->cx.base.v = thiz->cx.anim.v = ESVG_COORD_0;
+	thiz->cy.base.v = thiz->cy.anim.v = ESVG_COORD_0;
+	thiz->rx.base.v = thiz->rx.anim.v = ESVG_LENGTH_0;
+	thiz->ry.base.v = thiz->ry.anim.v = ESVG_LENGTH_0;
 
 	t = esvg_renderable_new(&_descriptor, ESVG_ELLIPSE, thiz);
 	return t;
 }
 
-static void _esvg_ellipse_cx_set(Edom_Tag *t, const Esvg_Coord *cx)
+static void _esvg_ellipse_cx_set(Edom_Tag *t, const Esvg_Animated_Coord *cx)
 {
 	Esvg_Ellipse *thiz;
+	Esvg_Length def = { ESVG_UNIT_LENGTH_PX, 0 };
+	Eina_Bool animating;
 
 	thiz = _esvg_ellipse_get(t);
-	if (cx)
-	{
-		thiz->current.cx = *cx;
-		thiz->changed = EINA_TRUE;
-	}
+	animating = esvg_element_attribute_animate_get(t);
+	esvg_attribute_animated_length_set(&thiz->cx, cx, &def, animating);
+	thiz->changed = EINA_TRUE;
 }
 
-static void _esvg_ellipse_cx_get(Edom_Tag *t, Esvg_Coord *cx)
+static void _esvg_ellipse_cx_get(Edom_Tag *t, Esvg_Animated_Coord *cx)
 {
 	Esvg_Ellipse *thiz;
 
 	thiz = _esvg_ellipse_get(t);
-	if (cx) *cx = thiz->current.cx;
+	esvg_attribute_animated_length_get(&thiz->cx, cx);
 }
 
-static void _esvg_ellipse_cy_set(Edom_Tag *t, const Esvg_Coord *cy)
+static void _esvg_ellipse_cy_set(Edom_Tag *t, const Esvg_Animated_Coord *cy)
 {
 	Esvg_Ellipse *thiz;
+	Esvg_Length def = { ESVG_UNIT_LENGTH_PX, 0 };
+	Eina_Bool animating;
 
 	thiz = _esvg_ellipse_get(t);
-	if (cy)
-	{
-		thiz->current.cy = *cy;
-		thiz->changed = EINA_TRUE;
-	}
+	animating = esvg_element_attribute_animate_get(t);
+	esvg_attribute_animated_length_set(&thiz->cy, cy, &def, animating);
+	thiz->changed = EINA_TRUE;
 }
 
-static void _esvg_ellipse_cy_get(Edom_Tag *t, Esvg_Coord *cy)
+static void _esvg_ellipse_cy_get(Edom_Tag *t, Esvg_Animated_Coord *cy)
 {
 	Esvg_Ellipse *thiz;
 
 	thiz = _esvg_ellipse_get(t);
-	if (cy) *cy = thiz->current.cy;
+	esvg_attribute_animated_length_get(&thiz->cy, cy);
 }
 
-static void _esvg_ellipse_rx_set(Edom_Tag *t, const Esvg_Length *rx)
+static void _esvg_ellipse_rx_set(Edom_Tag *t, const Esvg_Animated_Length *rx)
 {
 	Esvg_Ellipse *thiz;
+	Esvg_Length def = { ESVG_UNIT_LENGTH_PX, 0 };
+	Eina_Bool animating;
 
 	thiz = _esvg_ellipse_get(t);
-	if (rx)
-	{
-		thiz->current.rx = *rx;
-		thiz->changed = EINA_TRUE;
-	}
+	animating = esvg_element_attribute_animate_get(t);
+	esvg_attribute_animated_length_set(&thiz->rx, rx, &def, animating);
+	thiz->changed = EINA_TRUE;
 }
 
-static void _esvg_ellipse_rx_get(Edom_Tag *t, Esvg_Length *rx)
+static void _esvg_ellipse_rx_get(Edom_Tag *t, Esvg_Animated_Length *rx)
 {
 	Esvg_Ellipse *thiz;
 
 	thiz = _esvg_ellipse_get(t);
-	if (rx) *rx = thiz->current.rx;
+	esvg_attribute_animated_length_get(&thiz->rx, rx);
 }
 
-static void _esvg_ellipse_ry_set(Edom_Tag *t, const Esvg_Length *ry)
+static void _esvg_ellipse_ry_set(Edom_Tag *t, const Esvg_Animated_Length *ry)
 {
 	Esvg_Ellipse *thiz;
+	Esvg_Length def = { ESVG_UNIT_LENGTH_PX, 0 };
+	Eina_Bool animating;
 
 	thiz = _esvg_ellipse_get(t);
-	if (ry)
-	{
-		thiz->current.ry = *ry;
-		thiz->changed = EINA_TRUE;
-	}
+	animating = esvg_element_attribute_animate_get(t);
+	esvg_attribute_animated_length_set(&thiz->ry, ry, &def, animating);
+	thiz->changed = EINA_TRUE;
 }
 
-static void _esvg_ellipse_ry_get(Edom_Tag *t, Esvg_Length *ry)
+static void _esvg_ellipse_ry_get(Edom_Tag *t, Esvg_Animated_Length *ry)
 {
 	Esvg_Ellipse *thiz;
 
 	thiz = _esvg_ellipse_get(t);
-	if (ry) *ry = thiz->current.ry;
+	esvg_attribute_animated_length_get(&thiz->ry, ry);
 }
 /*============================================================================*
  *                                 Global                                     *
@@ -341,52 +366,36 @@ EAPI Eina_Bool esvg_is_ellipse(Ender_Element *e)
 
 EAPI void esvg_ellipse_cx_set(Ender_Element *e, const Esvg_Coord *cx)
 {
-	ender_element_property_value_set(e, ESVG_ELLIPSE_CX, cx, NULL);
+	esvg_element_property_length_set(e, ESVG_ELLIPSE_CX, cx);
 }
 
 EAPI void esvg_ellipse_cx_get(Ender_Element *e, Esvg_Coord *cx)
 {
-	Edom_Tag *t;
-
-	t = (Edom_Tag *)ender_element_object_get(e);
-	_esvg_ellipse_cx_get(t, cx);
 }
 
 EAPI void esvg_ellipse_cy_set(Ender_Element *e, const Esvg_Coord *cy)
 {
-	ender_element_property_value_set(e, ESVG_ELLIPSE_CY, cy, NULL);
+	esvg_element_property_length_set(e, ESVG_ELLIPSE_CY, cy);
 }
 
 EAPI void esvg_ellipse_cy_get(Ender_Element *e, Esvg_Coord *cy)
 {
-	Edom_Tag *t;
-
-	t = (Edom_Tag *)ender_element_object_get(e);
-	_esvg_ellipse_cy_get(t, cy);
 }
 
 EAPI void esvg_ellipse_rx_set(Ender_Element *e, const Esvg_Length *rx)
 {
-	ender_element_property_value_set(e, ESVG_ELLIPSE_RX, rx, NULL);
+	esvg_element_property_length_set(e, ESVG_ELLIPSE_RX, rx);
 }
 
 EAPI void esvg_ellipse_rx_get(Ender_Element *e, Esvg_Length *rx)
 {
-	Edom_Tag *t;
-
-	t = (Edom_Tag *)ender_element_object_get(e);
-	_esvg_ellipse_rx_get(t, rx);
 }
 
 EAPI void esvg_ellipse_ry_set(Ender_Element *e, const Esvg_Length *ry)
 {
-	ender_element_property_value_set(e, ESVG_ELLIPSE_RY, ry, NULL);
+	esvg_element_property_length_set(e, ESVG_ELLIPSE_RY, ry);
 }
 
 EAPI void esvg_ellipse_ry_get(Ender_Element *e, Esvg_Length *ry)
 {
-	Edom_Tag *t;
-
-	t = (Edom_Tag *)ender_element_object_get(e);
-	_esvg_ellipse_ry_get(t, ry);
 }
