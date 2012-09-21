@@ -37,29 +37,34 @@ struct _Esvg_Input
 	double last_y;
 };
 
+typedef struct _Esvg_Input_Find_Data
+{
+	Esvg_Input *thiz;
+	Eina_Bool found;
+} Esvg_Input_Find_Data;
+
 typedef struct _Esvg_Input_Coord
 {
 	double x;
 	double y;
 } Esvg_Input_Coord;
 
-static Eina_Bool _esvg_input_find_intersection(Enesim_Renderer *r,
-		Enesim_Renderer *layer, void *data)
-{
-	Esvg_Input_Coord *c = data;
-	Enesim_Rectangle bounds;
 
-	 /* intersect the bounds with x, y (maybe call is_inside?) */
-	enesim_renderer_boundings(layer, &bounds);
-	printf("bounds %" ENESIM_RECTANGLE_FORMAT " and pointer at %g %g\n",
-			ENESIM_RECTANGLE_ARGS (&bounds), c->x, c->y);
-	return EINA_TRUE;
+static void _esvg_input_element_found(Esvg_Input *thiz, Ender_Element *e)
+{
+	/* FIXME check if the element exists, if so, send a mouse_move */
+	/* if not, send a mousein */
+	ender_event_dispatch(e, "mousein", NULL);
+	/* in order to send a mouse out, also iterate from the last one added
+	 * and check if it is still valid
+	 */
 }
 
 static Eina_Bool _esvg_input_find(Edom_Tag *t, Edom_Tag *child,
-		void *data)
+		void *user_data)
 {
-	Esvg_Input *thiz = data;
+	Esvg_Input_Find_Data *data = user_data;
+	Esvg_Input *thiz = data->thiz;
 	Esvg_Type type;
 
 	type = esvg_element_internal_type_get(child);
@@ -68,6 +73,7 @@ static Eina_Bool _esvg_input_find(Edom_Tag *t, Edom_Tag *child,
 
 	if (esvg_type_is_renderable(type))
 	{
+		Ender_Element *e;
 		Enesim_Renderer *r;
 		Eina_Rectangle in;
 		Eina_Rectangle bounds;
@@ -78,18 +84,19 @@ static Eina_Bool _esvg_input_find(Edom_Tag *t, Edom_Tag *child,
 		if (!eina_rectangles_intersect(&bounds, &in))
 			return EINA_TRUE;
 
-		printf("over renderable found! %s\n", esvg_type_string_to(type));
+		e = esvg_element_ender_get(child);
+		_esvg_input_element_found(thiz, e);
 		if (type == ESVG_G || type == ESVG_SVG)
 		{
 			edom_tag_child_reverse_foreach(child, _esvg_input_find, thiz);
 		}
-		else
-		{
-			printf("done iterating over renderables! %s\n", esvg_type_string_to(type));
-			return EINA_FALSE;
-		}
+		return EINA_TRUE;
 	}
-	return EINA_TRUE;
+	else
+	{
+		edom_tag_child_reverse_foreach(child, _esvg_input_find, data);
+		return data->found;
+	}
 }
 
 /*============================================================================*
@@ -106,9 +113,14 @@ Esvg_Input * esvg_input_new(Edom_Tag *t)
 
 void esvg_input_feed_mouse_move(Esvg_Input *thiz, double x, double y)
 {
+	Esvg_Input_Find_Data data;
 	thiz->last_x = x;
 	thiz->last_y = y;
-	edom_tag_child_reverse_foreach(thiz->owner, _esvg_input_find, thiz);
+
+	data.thiz = thiz;
+	data.found = EINA_FALSE;
+
+	edom_tag_child_reverse_foreach(thiz->owner, _esvg_input_find, &data);
 }
 /*============================================================================*
  *                                   API                                      *
