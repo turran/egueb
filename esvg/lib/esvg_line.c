@@ -35,19 +35,13 @@ static Ender_Property *ESVG_LINE_Y1;
 static Ender_Property *ESVG_LINE_X2;
 static Ender_Property *ESVG_LINE_Y2;
 
-typedef struct _Esvg_Line_State
-{
-	Esvg_Coord x1;
-	Esvg_Coord x2;
-	Esvg_Coord y1;
-	Esvg_Coord y2;
-} Esvg_Line_State;
-
 typedef struct _Esvg_Line
 {
 	/* properties */
-	Esvg_Line_State current;
-	Esvg_Line_State past;
+	Esvg_Attribute_Animated_Coord x1;
+	Esvg_Attribute_Animated_Coord x2;
+	Esvg_Attribute_Animated_Coord y1;
+	Esvg_Attribute_Animated_Coord y2;
 	/* private */
 	Enesim_Renderer *r;
 	Eina_Bool changed : 1;
@@ -106,6 +100,31 @@ static Eina_Bool _esvg_line_attribute_get(Edom_Tag *tag, const char *attribute, 
 	return EINA_FALSE;
 }
 
+static int * _esvg_line_attribute_animated_fetch(Edom_Tag *t, const char *attr)
+{
+	Esvg_Line *thiz;
+	int *animated = NULL;
+
+	thiz = _esvg_line_get(t);
+	if (!strcmp(attr, "x1"))
+	{
+		animated = &thiz->x1.animated;
+	}
+	else if (!strcmp(attr, "y1"))
+	{
+		animated = &thiz->y1.animated;
+	}
+	else if (!strcmp(attr, "x2"))
+	{
+		animated = &thiz->x2.animated;
+	}
+	else if (!strcmp(attr, "y2"))
+	{
+		animated = &thiz->y2.animated;
+	}
+	return animated;
+}
+
 static Enesim_Renderer * _esvg_line_renderer_get(Edom_Tag *t)
 {
 	Esvg_Line *thiz;
@@ -131,15 +150,20 @@ static Eina_Bool _esvg_line_renderer_propagate(Edom_Tag *t,
 		Enesim_Error **error)
 {
 	Esvg_Line *thiz;
+	Esvg_Length lx1, ly1, lx2, ly2;
 	double x1, y1, x2, y2;
 
 	thiz = _esvg_line_get(t);
 
 	/* FIXME gets the parents size or the topmost? */
-	x1 = esvg_length_final_get(&thiz->current.x1, ctx->viewbox.width, ctx->font_size);
-	y1 = esvg_length_final_get(&thiz->current.y1, ctx->viewbox.height, ctx->font_size);
-	x2 = esvg_length_final_get(&thiz->current.x2, ctx->viewbox.width, ctx->font_size);
-	y2 = esvg_length_final_get(&thiz->current.y2, ctx->viewbox.height, ctx->font_size);
+	esvg_attribute_animated_length_final_get(&thiz->x1, &lx1);
+	esvg_attribute_animated_length_final_get(&thiz->y1, &ly1);
+	esvg_attribute_animated_length_final_get(&thiz->x2, &lx2);
+	esvg_attribute_animated_length_final_get(&thiz->y2, &ly2);
+	x1 = esvg_length_final_get(&lx1, ctx->viewbox.width, ctx->font_size);
+	y1 = esvg_length_final_get(&ly1, ctx->viewbox.height, ctx->font_size);
+	x2 = esvg_length_final_get(&lx2, ctx->viewbox.width, ctx->font_size);
+	y2 = esvg_length_final_get(&ly2, ctx->viewbox.height, ctx->font_size);
 
 	enesim_renderer_line_x0_set(thiz->r, x1);
 	enesim_renderer_line_y0_set(thiz->r, y1);
@@ -163,6 +187,15 @@ static Eina_Bool _esvg_line_renderer_propagate(Edom_Tag *t,
 	return EINA_TRUE;
 }
 
+static void _esvg_line_free(Edom_Tag *t)
+{
+	Esvg_Line *thiz;
+
+	thiz = _esvg_line_get(t);
+	enesim_renderer_unref(thiz->r);
+	free(thiz);
+}
+
 #if 0
 static Eina_Bool _esvg_line_has_changed(Enesim_Renderer *r)
 {
@@ -184,28 +217,19 @@ static Eina_Bool _esvg_line_has_changed(Enesim_Renderer *r)
 }
 #endif
 
-static void _esvg_line_free(Edom_Tag *t)
-{
-	Esvg_Line *thiz;
-
-	thiz = _esvg_line_get(t);
-	enesim_renderer_unref(thiz->r);
-	free(thiz);
-}
-
 static Esvg_Renderable_Descriptor _descriptor = {
-	/* .child_add		= */ NULL,
-	/* .child_remove	= */ NULL,
-	/* .attribute_get 	= */ _esvg_line_attribute_get,
-	/* .cdata_set 		= */ NULL,
-	/* .text_set 		= */ NULL,
-	/* .free 		= */ _esvg_line_free,
-	/* .initialize 		= */ NULL,
-	/* .attribute_set 	= */ _esvg_line_attribute_set,
-	/* .attribute_animated_fetch = */ NULL,
-	/* .setup		= */ _esvg_line_setup,
-	/* .renderer_get	= */ _esvg_line_renderer_get,
-	/* .renderer_propagate	= */ _esvg_line_renderer_propagate,
+	/* .child_add		     = */ NULL,
+	/* .child_remove	     = */ NULL,
+	/* .attribute_get 	     = */ _esvg_line_attribute_get,
+	/* .cdata_set 		     = */ NULL,
+	/* .text_set 		     = */ NULL,
+	/* .free 		     = */ _esvg_line_free,
+	/* .initialize 		     = */ NULL,
+	/* .attribute_set 	     = */ _esvg_line_attribute_set,
+	/* .attribute_animated_fetch = */ _esvg_line_attribute_animated_fetch,
+	/* .setup		     = */ _esvg_line_setup,
+	/* .renderer_get	     = */ _esvg_line_renderer_get,
+	/* .renderer_propagate	     = */ _esvg_line_renderer_propagate,
 };
 /*----------------------------------------------------------------------------*
  *                           The Ender interface                              *
@@ -223,90 +247,93 @@ static Edom_Tag * _esvg_line_new(void)
 	thiz->r = r;
 	enesim_renderer_rop_set(r, ENESIM_BLEND);
 	/* default values */
-	/* FIXME defualt values */
+	thiz->x1.base.v = thiz->x1.anim.v = ESVG_COORD_0;
+	thiz->y1.base.v = thiz->y1.anim.v = ESVG_COORD_0;
+	thiz->x2.base.v = thiz->x2.anim.v = ESVG_COORD_0;
+	thiz->y2.base.v = thiz->y2.anim.v = ESVG_COORD_0;
 
 	t = esvg_renderable_new(&_descriptor, ESVG_LINE, thiz);
 	return t;
 }
 
-static void _esvg_line_x1_set(Edom_Tag *t, const Esvg_Coord *x1)
+static void _esvg_line_x1_set(Edom_Tag *t, const Esvg_Animated_Coord *x1)
 {
 	Esvg_Line *thiz;
+	Esvg_Length def = { ESVG_UNIT_LENGTH_PX, 0 };
+	Eina_Bool animating;
 
 	thiz = _esvg_line_get(t);
-	if (x1)
-	{
-		thiz->current.x1 = *x1;
-		thiz->changed = EINA_TRUE;
-	}
+	animating = esvg_element_attribute_animate_get(t);
+	esvg_attribute_animated_length_set(&thiz->x1, x1, &def, animating);
+	thiz->changed = EINA_TRUE;
 }
 
-static void _esvg_line_x1_get(Edom_Tag *t, Esvg_Coord *x1)
+static void _esvg_line_x1_get(Edom_Tag *t, Esvg_Animated_Coord *x1)
 {
 	Esvg_Line *thiz;
 
 	thiz = _esvg_line_get(t);
-	if (x1) *x1 = thiz->current.x1;
+	esvg_attribute_animated_length_get(&thiz->x1, x1);
 }
 
-static void _esvg_line_y1_set(Edom_Tag *t, const Esvg_Coord *y1)
+static void _esvg_line_y1_set(Edom_Tag *t, const Esvg_Animated_Coord *y1)
 {
 	Esvg_Line *thiz;
+	Esvg_Length def = { ESVG_UNIT_LENGTH_PX, 0 };
+	Eina_Bool animating;
 
 	thiz = _esvg_line_get(t);
-	if (y1)
-	{
-		thiz->current.y1 = *y1;
-		thiz->changed = EINA_TRUE;
-	}
+	animating = esvg_element_attribute_animate_get(t);
+	esvg_attribute_animated_length_set(&thiz->y1, y1, &def, animating);
+	thiz->changed = EINA_TRUE;
 }
 
-static void _esvg_line_y1_get(Edom_Tag *t, Esvg_Coord *y1)
+static void _esvg_line_y1_get(Edom_Tag *t, Esvg_Animated_Coord *y1)
 {
 	Esvg_Line *thiz;
 
 	thiz = _esvg_line_get(t);
-	if (y1) *y1 = thiz->current.y1;
+	esvg_attribute_animated_length_get(&thiz->y1, y1);
 }
 
-static void _esvg_line_x2_set(Edom_Tag *t, const Esvg_Coord *x2)
+static void _esvg_line_x2_set(Edom_Tag *t, const Esvg_Animated_Coord *x2)
 {
 	Esvg_Line *thiz;
+	Esvg_Length def = { ESVG_UNIT_LENGTH_PX, 0 };
+	Eina_Bool animating;
 
 	thiz = _esvg_line_get(t);
-	if (x2)
-	{
-		thiz->current.x2 = *x2;
-		thiz->changed = EINA_TRUE;
-	}
+	animating = esvg_element_attribute_animate_get(t);
+	esvg_attribute_animated_length_set(&thiz->x2, x2, &def, animating);
+	thiz->changed = EINA_TRUE;
 }
 
-static void _esvg_line_x2_get(Edom_Tag *t, Esvg_Coord *x2)
+static void _esvg_line_x2_get(Edom_Tag *t, Esvg_Animated_Coord *x2)
 {
 	Esvg_Line *thiz;
 
 	thiz = _esvg_line_get(t);
-	if (x2) *x2 = thiz->current.x2;
+	esvg_attribute_animated_length_get(&thiz->x2, x2);
 }
 
-static void _esvg_line_y2_set(Edom_Tag *t, const Esvg_Coord *y2)
+static void _esvg_line_y2_set(Edom_Tag *t, const Esvg_Animated_Coord *y2)
 {
 	Esvg_Line *thiz;
+	Esvg_Length def = { ESVG_UNIT_LENGTH_PX, 0 };
+	Eina_Bool animating;
 
 	thiz = _esvg_line_get(t);
-	if (y2)
-	{
-		thiz->current.y2 = *y2;
-		thiz->changed = EINA_TRUE;
-	}
+	animating = esvg_element_attribute_animate_get(t);
+	esvg_attribute_animated_length_set(&thiz->y2, y2, &def, animating);
+	thiz->changed = EINA_TRUE;
 }
 
-static void _esvg_line_y2_get(Edom_Tag *t, Esvg_Coord *y2)
+static void _esvg_line_y2_get(Edom_Tag *t, Esvg_Animated_Coord *y2)
 {
 	Esvg_Line *thiz;
 
 	thiz = _esvg_line_get(t);
-	if (y2) *y2 = thiz->current.y2;
+	esvg_attribute_animated_length_get(&thiz->y2, y2);
 }
 /*============================================================================*
  *                                 Global                                     *
@@ -339,52 +366,36 @@ EAPI Eina_Bool esvg_is_line(Ender_Element *e)
 
 EAPI void esvg_line_x1_set(Ender_Element *e, const Esvg_Coord *x1)
 {
-	ender_element_property_value_set(e, ESVG_LINE_X1, x1, NULL);
+	esvg_element_property_length_set(e, ESVG_LINE_X1, x1);
 }
 
 EAPI void esvg_line_x1_get(Ender_Element *e, Esvg_Coord *x1)
 {
-	Edom_Tag *t;
-
-	t = (Edom_Tag *)ender_element_object_get(e);
-	_esvg_line_x1_get(t, x1);
 }
 
 EAPI void esvg_line_y1_set(Ender_Element *e, const Esvg_Coord *y1)
 {
-	ender_element_property_value_set(e, ESVG_LINE_Y1, y1, NULL);
+	esvg_element_property_length_set(e, ESVG_LINE_Y1, y1);
 }
 
 EAPI void esvg_line_y1_get(Ender_Element *e, Esvg_Coord *y1)
 {
-	Edom_Tag *t;
-
-	t = (Edom_Tag *)ender_element_object_get(e);
-	_esvg_line_y1_get(t, y1);
 }
 
 EAPI void esvg_line_x2_set(Ender_Element *e, const Esvg_Coord *x2)
 {
-	ender_element_property_value_set(e, ESVG_LINE_X2, x2, NULL);
+	esvg_element_property_length_set(e, ESVG_LINE_X2, x2);
 }
 
 EAPI void esvg_line_x2_get(Ender_Element *e, Esvg_Coord *x2)
 {
-	Edom_Tag *t;
-
-	t = (Edom_Tag *)ender_element_object_get(e);
-	_esvg_line_x2_get(t, x2);
 }
 
 EAPI void esvg_line_y2_set(Ender_Element *e, const Esvg_Coord *y2)
 {
-	ender_element_property_value_set(e, ESVG_LINE_Y2, y2, NULL);
+	esvg_element_property_length_set(e, ESVG_LINE_Y2, y2);
 }
 
 EAPI void esvg_line_y2_get(Ender_Element *e, Esvg_Coord *y2)
 {
-	Edom_Tag *t;
-
-	t = (Edom_Tag *)ender_element_object_get(e);
-	_esvg_line_y2_get(t, y2);
 }
