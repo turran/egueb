@@ -102,7 +102,6 @@ Esvg_Input * esvg_input_new(Edom_Tag *t)
 	return thiz;
 }
 
-/* the tag can only be a <g> or a <svg> */
 void esvg_input_feed_mouse_move(Esvg_Input *thiz, double x, double y)
 {
 	thiz->last_x = x;

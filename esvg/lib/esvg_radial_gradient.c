@@ -99,7 +99,7 @@ static Eina_Bool _esvg_radial_gradient_deep_fx_get(Esvg_Radial_Gradient *thiz,
 {
 	Esvg_Attribute_Length l;
 
-	esvg_attribute_animated_length_merge(&thiz->fy, &l);
+	esvg_attribute_animated_length_merge(&thiz->fx, &l);
 	if (!l.is_set)
 	{
 		Edom_Tag *href;
@@ -171,7 +171,7 @@ static void _esvg_radial_gradient_deep_rad_get(Esvg_Radial_Gradient *thiz,
 	Edom_Tag *href;
 
 	href = esvg_gradient_href_tag_get(t);
-	esvg_attribute_animated_length_merge(&thiz->cy, &l);
+	esvg_attribute_animated_length_merge(&thiz->rad, &l);
 	if (!l.is_set && href)
 	{
 		Esvg_Radial_Gradient *other;
@@ -354,7 +354,6 @@ static Eina_Bool _esvg_radial_gradient_propagate(Edom_Tag *t,
 	{
 		double w;
 		double h;
-		double rad_vp = 0;
 
 		/* use the user space coordiantes */
 		w = ctx->viewbox.width;
