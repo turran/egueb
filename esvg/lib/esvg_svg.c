@@ -1446,7 +1446,7 @@ EAPI void esvg_svg_base_font_size_set(Ender_Element *e, double base_font_size)
  * in case of a referenceable for example, it will do
  * also the propagate
  */
-EAPI void esvg_svg_setup(Ender_Element *e, Enesim_Error **error)
+EAPI Eina_Bool esvg_svg_setup(Ender_Element *e, Enesim_Error **error)
 {
 	Esvg_Context context;
 	Edom_Tag *t;
@@ -1458,6 +1458,8 @@ EAPI void esvg_svg_setup(Ender_Element *e, Enesim_Error **error)
 	{
 		/* clean the context */
 		esvg_context_shutdown(&context);
+		return EINA_FALSE;
 	}
 	esvg_context_setup_dequeue(&context);
+	return EINA_TRUE;
 }
