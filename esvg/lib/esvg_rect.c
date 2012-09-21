@@ -294,10 +294,10 @@ static Edom_Tag * _esvg_rect_new(void)
 
 	/* Default values */
 	enesim_renderer_rop_set(thiz->r, ENESIM_BLEND);
-	thiz->x.base.v = ESVG_COORD_0;
-	thiz->y.base.v = ESVG_COORD_0;
-	thiz->width.base.v = ESVG_LENGTH_0;
-	thiz->height.base.v = ESVG_LENGTH_0;
+	thiz->x.base.v = thiz->x.anim.v = ESVG_COORD_0;
+	thiz->y.base.v = thiz->y.anim.v = ESVG_COORD_0;
+	thiz->width.base.v = thiz->width.anim.v = ESVG_LENGTH_0;
+	thiz->height.base.v = thiz->height.anim.v = ESVG_LENGTH_0;
         /* FIXME: set rx and ry ? */
 /*	thiz->current.rx = ESVG_COORD_0; */
 /*	thiz->current.ry = ESVG_COORD_0; */

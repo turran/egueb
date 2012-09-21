@@ -300,8 +300,7 @@ static void _esvg_circle_r_get(Edom_Tag *t, Esvg_Animated_Length *radius)
 	Esvg_Circle *thiz;
 
 	thiz = _esvg_circle_get(t);
-	esvg_attribute_animated_length_get(&thiz->radius,
-		radius);
+	esvg_attribute_animated_length_get(&thiz->radius, radius);
 }
 /*============================================================================*
  *                                 Global                                     *
