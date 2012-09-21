@@ -37,9 +37,9 @@ static Ender_Property *ESVG_CIRCLE_R;
 typedef struct _Esvg_Circle
 {
 	/* properties */
+	Esvg_Attribute_Animated_Coord cx;
+	Esvg_Attribute_Animated_Coord cy;
 	Esvg_Attribute_Animated_Length radius;
-	Esvg_Attribute_Animated_Length cx;
-	Esvg_Attribute_Animated_Length cy;
 	/* private */
 	Enesim_Renderer *r;
 	Eina_Bool changed : 1;
@@ -100,15 +100,15 @@ static int * _esvg_circle_attribute_animated_fetch(Edom_Tag *t, const char *attr
 	thiz = _esvg_circle_get(t);
 	if (!strcmp(attr, "cx"))
 	{
-		animated = &thiz->cx.animated;	
+		animated = &thiz->cx.animated;
 	}
 	else if (!strcmp(attr, "cy"))
 	{
-		animated = &thiz->cy.animated;	
+		animated = &thiz->cy.animated;
 	}
 	else if (!strcmp(attr, "r"))
 	{
-		animated = &thiz->radius.animated;	
+		animated = &thiz->radius.animated;
 	}
 	return animated;
 }
@@ -242,7 +242,7 @@ EAPI Edom_Tag * _esvg_circle_new(void)
 	return t;
 }
 
-static void _esvg_circle_cx_set(Edom_Tag *t, const Esvg_Animated_Length *cx)
+static void _esvg_circle_cx_set(Edom_Tag *t, const Esvg_Animated_Coord *cx)
 {
 	Esvg_Circle *thiz;
 	Esvg_Length def = { ESVG_UNIT_LENGTH_PX, 0 };
@@ -250,21 +250,19 @@ static void _esvg_circle_cx_set(Edom_Tag *t, const Esvg_Animated_Length *cx)
 
 	thiz = _esvg_circle_get(t);
 	animating = esvg_element_attribute_animate_get(t);
-	esvg_attribute_animated_length_set(&thiz->cx,
-		cx, &def, animating);
+	esvg_attribute_animated_length_set(&thiz->cx, cx, &def, animating);
 	thiz->changed = EINA_TRUE;
 }
 
-static void _esvg_circle_cx_get(Edom_Tag *t, Esvg_Animated_Length *cx)
+static void _esvg_circle_cx_get(Edom_Tag *t, Esvg_Animated_Coord *cx)
 {
 	Esvg_Circle *thiz;
 
 	thiz = _esvg_circle_get(t);
-	esvg_attribute_animated_length_get(&thiz->cx,
-		cx);
+	esvg_attribute_animated_length_get(&thiz->cx, cx);
 }
 
-static void _esvg_circle_cy_set(Edom_Tag *t, const Esvg_Animated_Length *cy)
+static void _esvg_circle_cy_set(Edom_Tag *t, const Esvg_Animated_Coord *cy)
 {
 	Esvg_Circle *thiz;
 	Esvg_Length def = { ESVG_UNIT_LENGTH_PX, 0 };
@@ -272,18 +270,16 @@ static void _esvg_circle_cy_set(Edom_Tag *t, const Esvg_Animated_Length *cy)
 
 	thiz = _esvg_circle_get(t);
 	animating = esvg_element_attribute_animate_get(t);
-	esvg_attribute_animated_length_set(&thiz->cy,
-		cy, &def, animating);
+	esvg_attribute_animated_length_set(&thiz->cy, cy, &def, animating);
 	thiz->changed = EINA_TRUE;
 }
 
-static void _esvg_circle_cy_get(Edom_Tag *t, Esvg_Animated_Length *cy)
+static void _esvg_circle_cy_get(Edom_Tag *t, Esvg_Animated_Coord *cy)
 {
 	Esvg_Circle *thiz;
 
 	thiz = _esvg_circle_get(t);
-	esvg_attribute_animated_length_get(&thiz->cy,
-		cy);
+	esvg_attribute_animated_length_get(&thiz->cy, cy);
 }
 
 static void _esvg_circle_r_set(Edom_Tag *t, const Esvg_Animated_Length *radius)

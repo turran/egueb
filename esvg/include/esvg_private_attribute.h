@@ -71,6 +71,8 @@ typedef struct _Esvg_Attribute_Animated_Length
 	int animated;
 } Esvg_Attribute_Animated_Length;
 
+#define Esvg_Attribute_Animated_Coord Esvg_Attribute_Animated_Length
+
 typedef struct _Esvg_Attribute_Animated_Number
 {
 	Esvg_Attribute_Number base;
