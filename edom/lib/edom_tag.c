@@ -30,6 +30,14 @@
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
+/* TODO this should go to eina */
+#define EINA_INLIST_REVERSE_FOREACH_SAFE(list, list2, l) \
+   for (l = (list ? _EINA_INLIST_CONTAINER(l, list->last) : NULL), list2 = l ? ((EINA_INLIST_GET(l) ? EINA_INLIST_GET(l)->prev : NULL)) : NULL; \
+        l; \
+        l = _EINA_INLIST_CONTAINER(l, list2), list2 = list2 ? list2->prev : NULL)
+
+
+
 struct _Edom_Tag
 {
 	EINA_INLIST;
@@ -274,6 +282,25 @@ EAPI void edom_tag_child_foreach(Edom_Tag *thiz, Edom_Tag_Foreach foreach, void 
 			break;
 	}
 }
+
+/**
+ * To be documented
+ * FIXME: To be fixed
+ */
+EAPI void edom_tag_child_reverse_foreach(Edom_Tag *thiz, Edom_Tag_Foreach foreach, void *data)
+{
+	Edom_Tag *child;
+	Eina_Inlist *tmp;
+
+	if (!foreach) return;
+
+	EINA_INLIST_REVERSE_FOREACH_SAFE(thiz->children, tmp, child)
+	{
+		if (!foreach(thiz, child, data))
+			break;
+	}
+}
+
 
 /**
  * To be documented

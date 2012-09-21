@@ -78,16 +78,18 @@ static Eina_Bool _esvg_input_find(Edom_Tag *t, Edom_Tag *child,
 		if (!eina_rectangles_intersect(&bounds, &in))
 			return EINA_TRUE;
 
+		printf("over renderable found! %s\n", esvg_type_string_to(type));
 		if (type == ESVG_G || type == ESVG_SVG)
 		{
-
+			edom_tag_child_reverse_foreach(child, _esvg_input_find, thiz);
 		}
 		else
 		{
-
+			printf("done iterating over renderables! %s\n", esvg_type_string_to(type));
+			return EINA_FALSE;
 		}
-		printf("renderable found! %p\n", r);
 	}
+	return EINA_TRUE;
 }
 
 /*============================================================================*
@@ -106,7 +108,7 @@ void esvg_input_feed_mouse_move(Esvg_Input *thiz, double x, double y)
 {
 	thiz->last_x = x;
 	thiz->last_y = y;
-	edom_tag_child_foreach(thiz->owner, _esvg_input_find, thiz);
+	edom_tag_child_reverse_foreach(thiz->owner, _esvg_input_find, thiz);
 }
 /*============================================================================*
  *                                   API                                      *

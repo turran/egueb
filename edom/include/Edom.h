@@ -139,6 +139,7 @@ EAPI Eina_Bool edom_tag_child_add(Edom_Tag *thiz, Edom_Tag *child);
 EAPI Eina_Bool edom_tag_child_remove(Edom_Tag *thiz, Edom_Tag *child);
 EAPI Edom_Tag * edom_tag_child_get(Edom_Tag *thiz);
 EAPI void edom_tag_child_foreach(Edom_Tag *thiz, Edom_Tag_Foreach foreach, void *data);
+EAPI void edom_tag_child_reverse_foreach(Edom_Tag *thiz, Edom_Tag_Foreach foreach, void *data);
 EAPI Edom_Tag * edom_tag_next_get(Edom_Tag *thiz);
 EAPI Edom_Tag * edom_tag_parent_get(Edom_Tag *thiz);
 EAPI Edom_Tag * edom_tag_topmost_get(Edom_Tag *thiz);
