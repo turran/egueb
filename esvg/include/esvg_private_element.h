@@ -105,6 +105,7 @@ Esvg_Element_Setup_Return esvg_element_internal_setup(Edom_Tag *t,
 Eina_Bool esvg_element_internal_child_setup(Edom_Tag *t,
 		Esvg_Context *c,
 		Enesim_Error **error,
+		Esvg_Element_Setup_Interceptor pre,
 		Esvg_Element_Setup_Interceptor post,
 		void *data);
 

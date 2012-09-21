@@ -49,7 +49,7 @@ static Esvg_G * _esvg_g_get(Edom_Tag *t)
 	return thiz;
 }
 
-static Eina_Bool _esvg_g_setup_interceptor(Edom_Tag *t,
+static Eina_Bool _esvg_g_setup_post(Edom_Tag *t,
 		Edom_Tag *child,
 		Esvg_Context *c,
 		Enesim_Error **error,
@@ -69,7 +69,8 @@ static Eina_Bool _esvg_g_setup_interceptor(Edom_Tag *t,
 	}
  	else if (type == ESVG_A)
 	{
-		return esvg_element_internal_child_setup(child, c, error, _esvg_g_setup_interceptor, thiz);
+		return esvg_element_internal_child_setup(child, c, error,
+				NULL, _esvg_g_setup_post, thiz);
 	}
 	return EINA_TRUE;
 }
@@ -132,7 +133,7 @@ static Esvg_Element_Setup_Return _esvg_g_setup(Edom_Tag *t,
 	Esvg_Element_Setup_Return ret;
 
 	thiz = _esvg_g_get(t);
-	ret = esvg_element_internal_child_setup(t, c, error, _esvg_g_setup_interceptor, thiz);
+	ret = esvg_element_internal_child_setup(t, c, error, NULL, _esvg_g_setup_post, thiz);
 	thiz->renderable_tree_changed = EINA_FALSE;
 	return ret;
 }

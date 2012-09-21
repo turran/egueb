@@ -96,7 +96,7 @@ int main(int argc, char *argv[])
 	/* FIXME once the renderable class is implemented
 	 * get the renderer, for now test the parsing
 	 */
-	if (!esvg_element_setup(tag, &err))
+	if (!esvg_svg_setup(tag, &err))
 	{
 		printf("The setup failed\n");
 	}

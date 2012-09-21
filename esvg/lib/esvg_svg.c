@@ -106,6 +106,8 @@ typedef struct _Esvg_Svg
 	/* animation */
 	Etch *etch;
 	Eina_Bool paused;
+	/* input */
+	Esvg_Input *input;
 } Esvg_Svg;
 
 typedef struct _Esvg_Svg_Uri_Data
@@ -145,7 +147,32 @@ static Eina_Bool _esvg_svg_relative_to_absolute(Esvg_Svg *thiz, const char *rela
 	return EINA_TRUE;
 }
 
-static Eina_Bool _esvg_svg_setup_interceptor(Edom_Tag *t,
+static Eina_Bool _esvg_svg_setup_pre(Edom_Tag *t,
+		Edom_Tag *child,
+		Esvg_Context *c,
+		Enesim_Error **error,
+		void *data)
+{
+	Esvg_Type type;
+	Esvg_Svg *thiz = data;
+
+	type = esvg_element_internal_type_get(child);
+	if (esvg_type_is_renderable(type) && thiz->renderable_tree_changed)
+	{
+		return EINA_TRUE;
+	}
+ 	else if (type == ESVG_A)
+	{
+		return EINA_TRUE;
+	}
+	else
+	{
+		return EINA_FALSE;
+	}
+
+}
+
+static Eina_Bool _esvg_svg_setup_post(Edom_Tag *t,
 		Edom_Tag *child,
 		Esvg_Context *c,
 		Enesim_Error **error,
@@ -165,7 +192,8 @@ static Eina_Bool _esvg_svg_setup_interceptor(Edom_Tag *t,
 	}
  	else if (type == ESVG_A)
 	{
-		return esvg_element_internal_child_setup(child, c, error, _esvg_svg_setup_interceptor, thiz);
+		return esvg_element_internal_child_setup(child, c, error,
+				_esvg_svg_setup_pre, _esvg_svg_setup_post, thiz);
 	}
 	return EINA_TRUE;
 }
@@ -714,7 +742,8 @@ static Esvg_Element_Setup_Return _esvg_svg_setup(Edom_Tag *t,
 	 */
 
 	/* 3. ok no need to process the whole tree. check if we do need to add the renderables back */
-	ret = esvg_element_internal_child_setup(t, c, error, _esvg_svg_setup_interceptor, thiz);
+	ret = esvg_element_internal_child_setup(t, c, error,
+		_esvg_svg_setup_pre, _esvg_svg_setup_post, thiz);
 	thiz->renderable_tree_changed = EINA_FALSE;
 
 	/* 4. now process the list of changed elements, it will automatically do the setup on its
@@ -802,6 +831,8 @@ static Edom_Tag * _esvg_svg_new(void)
 	etch_timer_fps_set(thiz->etch, 30);
 
 	t = esvg_renderable_new(&_descriptor, ESVG_SVG, thiz);
+	thiz->input = esvg_input_new(t);
+
 	return t;
 }
 
@@ -1302,14 +1333,18 @@ EAPI void esvg_svg_time_set(Ender_Element *e, double secs)
  */
 EAPI void esvg_svg_feed_mouse_move(Ender_Element *e, int x, int y)
 {
+	Esvg_Svg *thiz;
+	Edom_Tag *t;
 	double dx;
 	double dy;
 
+	t = ender_element_object_get(e);
+	thiz = _esvg_svg_get(t);
 	/* always double coordinates */
 	dx = x;
 	dy = y;
 	/* send the mouse move to the input system */
-	esvg_input_feed_mouse_move(e, dx, dy);
+	esvg_input_feed_mouse_move(thiz->input, dx, dy);
 }
 
 /**
@@ -1411,8 +1446,18 @@ EAPI void esvg_svg_base_font_size_set(Ender_Element *e, double base_font_size)
  * in case of a referenceable for example, it will do
  * also the propagate
  */
-EAPI void esvg_svg_process(Ender_Element *e, Enesim_Error **error)
+EAPI void esvg_svg_setup(Ender_Element *e, Enesim_Error **error)
 {
-	/* in case we are the topmost use NULL as the parent's state */
-	esvg_element_setup(e, error);
+	Esvg_Context context;
+	Edom_Tag *t;
+
+	t = ender_element_object_get(e);
+	esvg_context_init(&context);
+
+	if (esvg_element_internal_setup(t, &context, error) == ESVG_SETUP_FAILED)
+	{
+		/* clean the context */
+		esvg_context_shutdown(&context);
+	}
+	esvg_context_setup_dequeue(&context);
 }

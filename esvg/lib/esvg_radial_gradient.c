@@ -250,7 +250,6 @@ static int * _esvg_radial_gradient_attribute_animated_fetch(Edom_Tag *t, const c
 	int *animated = NULL;
 
 	thiz = _esvg_radial_gradient_get(t);
-	printf("getting radial gradient attr %s\n", attr);
 	if (!strcmp(attr, "cx"))
 	{
 		animated = &thiz->cx.animated;	
@@ -348,7 +347,7 @@ static Eina_Bool _esvg_radial_gradient_propagate(Edom_Tag *t,
 		cy = esvg_length_final_get(&lcy, 1, 1);
 		fx = esvg_length_final_get(&lfx, 1, 1);
 		fy = esvg_length_final_get(&lfy, 1, 1);
-		rad = esvg_length_final_get(&lrad, 1, 1);
+		rad = esvg_length_full_final_get(&lrad, 1, 1, 1);
 		enesim_matrix_values_set(&m, ctx->bounds.w, 0, ctx->bounds.x, 0, ctx->bounds.h, ctx->bounds.y, 0, 0, 1);
 	}
 	else
@@ -365,11 +364,7 @@ static Eina_Bool _esvg_radial_gradient_propagate(Edom_Tag *t,
 		cy = esvg_length_final_get(&lcy, h, ctx->font_size);
 		fx = esvg_length_final_get(&lfx, w, ctx->font_size);
 		fy = esvg_length_final_get(&lfy, h, ctx->font_size);
-		if (lrad.unit == ESVG_UNIT_LENGTH_PERCENT)
-		{
-			rad_vp = hypot(w, h) / M_SQRT2;
-		}
-		rad = esvg_length_final_get(&lrad, rad_vp, ctx->font_size);
+		rad = esvg_length_full_final_get(&lrad, w, h, ctx->font_size);
 		m = ctx->transform;
 	}
 	if (enesim_matrix_type_get(&gctx->transform) != ENESIM_MATRIX_IDENTITY)

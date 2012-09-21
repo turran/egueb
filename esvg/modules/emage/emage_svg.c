@@ -184,7 +184,7 @@ static Eina_Error _emage_svg_load(const char *file, Enesim_Buffer *buffer, void 
 		printf("no such surface\n");
 		return 0;
 	}
-	ret = esvg_element_setup(e, &err);
+	ret = esvg_svg_setup(e, &err);
 	if (!ret)
 	{
 		enesim_error_dump(err);

@@ -414,6 +414,17 @@ static Eina_Bool _esvg_element_child_setup_cb(Edom_Tag *t, Edom_Tag *child,
 {
 	Esvg_Element_Setup_Data *setup_data = data;
 	Esvg_Element_Setup_Return ret;
+	Eina_Bool r = EINA_TRUE;
+
+	/* first filter it */
+	if (setup_data->pre)
+		r = setup_data->pre(t, child, setup_data->c, setup_data->error,
+				setup_data->data);
+
+	if (!r)
+	{
+		return EINA_TRUE;
+	}
 
 	/* the real setup */
 	ret = esvg_element_internal_setup(child, setup_data->c, setup_data->error);
@@ -1220,12 +1231,14 @@ void esvg_element_internal_topmost_get(Edom_Tag *t, Ender_Element **e)
 Eina_Bool esvg_element_internal_child_setup(Edom_Tag *t,
 		Esvg_Context *c,
 		Enesim_Error **error,
+		Esvg_Element_Setup_Interceptor pre,
 		Esvg_Element_Setup_Interceptor post,
 		void *data)
 {
 	Esvg_Element_Setup_Data setup_data;
 
 	setup_data.c = c;
+	setup_data.pre = pre;
 	setup_data.post = post;
 	setup_data.error = error;
 	setup_data.ret = EINA_TRUE;
@@ -2054,28 +2067,6 @@ EAPI void esvg_element_stop_color_get(Ender_Element *e, Esvg_Color *stop_color)
 {
 }
 
-
-/**
- * To be documented
- * FIXME: To be fixed
- */
-EAPI Eina_Bool esvg_element_setup(Ender_Element *e, Enesim_Error **error)
-{
-	Esvg_Context context;
-	Edom_Tag *t;
-
-	t = ender_element_object_get(e);
-	esvg_context_init(&context);
-
-	if (esvg_element_internal_setup(t, &context, error) == ESVG_SETUP_FAILED)
-	{
-		/* clean the context */
-		esvg_context_shutdown(&context);
-		return EINA_FALSE;
-	}
-	esvg_context_setup_dequeue(&context);
-	return EINA_TRUE;
-}
 
 /**
  * To be documented

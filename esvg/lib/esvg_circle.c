@@ -144,7 +144,6 @@ static Eina_Bool _esvg_circle_renderer_propagate(Edom_Tag *t,
 	double radius;
 
 	thiz = _esvg_circle_get(t);
-
 	/* FIXME gets the parents size or the topmost? */
 	/* set the origin */
 	esvg_attribute_animated_length_final_get(&thiz->cx, &lcx);
@@ -153,7 +152,7 @@ static Eina_Bool _esvg_circle_renderer_propagate(Edom_Tag *t,
 	cx = esvg_length_final_get(&lcx, ctx->viewbox.width, ctx->font_size);
 	cy = esvg_length_final_get(&lcy, ctx->viewbox.height, ctx->font_size);
 	/* set the size */
-	radius = esvg_length_final_get(&lradius, ctx->viewbox.width, ctx->font_size);
+	radius = esvg_length_full_final_get(&lradius, ctx->viewbox.width, ctx->viewbox.height, ctx->font_size);
 	DBG("calling the setup on the circle (%g %g %g)", cx, cy, radius);
 	enesim_renderer_circle_center_set(thiz->r, cx, cy);
 	enesim_renderer_circle_radius_set(thiz->r, radius);

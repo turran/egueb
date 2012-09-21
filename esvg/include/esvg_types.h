@@ -488,6 +488,8 @@ EAPI Eina_Bool esvg_transformation_string_from(Enesim_Matrix *matrix, const char
 EAPI Eina_Bool esvg_length_string_from(Esvg_Length *length, const char *attr_val);
 EAPI Eina_Bool esvg_length_is_equal(Esvg_Length *length1, Esvg_Length *length2);
 EAPI double esvg_length_final_get(const Esvg_Length *l, double parent_length, double font_size);
+EAPI double esvg_length_full_final_get(const Esvg_Length *l, double width, double height, double font_size);
+
 EAPI Eina_Bool esvg_paint_string_from(Esvg_Paint *paint, const char *attr);
 EAPI Eina_Bool esvg_paint_is_equal(const Esvg_Paint *p1,
 		const Esvg_Paint *p2);

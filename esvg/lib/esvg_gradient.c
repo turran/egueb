@@ -250,7 +250,6 @@ static int * _esvg_gradient_attribute_animated_fetch(Edom_Tag *t, const char *na
 
 	thiz = _esvg_gradient_get(t);
 	/* FIXME provide our own */
-	printf("gradient attr fetch %s\n", name);
 	if (thiz->descriptor.attribute_animated_fetch)
 		return thiz->descriptor.attribute_animated_fetch(t, name);
 	return NULL;
@@ -360,7 +359,7 @@ state_changed_done:
 
 	/* call the setup on the stops */
 	DBG("Doing the setup on the gradient children");
-	child_ret = esvg_element_internal_child_setup(t, c, error, NULL, thiz);
+	child_ret = esvg_element_internal_child_setup(t, c, error, NULL, NULL, thiz);
 	if (!child_ret) return ESVG_SETUP_FAILED;
 	return ESVG_SETUP_OK;
 }

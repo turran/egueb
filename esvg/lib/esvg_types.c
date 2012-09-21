@@ -1161,6 +1161,7 @@ EAPI Eina_Bool esvg_length_is_equal(Esvg_Length *length1, Esvg_Length *length2)
 	return EINA_FALSE;
 }
 
+/* FIXME rename this to esvg_coord_ */
 EAPI double esvg_length_final_get(const Esvg_Length *l, double parent_length, double font_size)
 {
 	double ret;
@@ -1211,6 +1212,17 @@ EAPI double esvg_length_final_get(const Esvg_Length *l, double parent_length, do
 	}
 
 	return ret;
+}
+
+/* FIXME rename this to esvg_length_ */
+EAPI double esvg_length_full_final_get(const Esvg_Length *l, double width, double height, double font_size)
+{
+	double length = 0;
+	if (l->unit == ESVG_UNIT_LENGTH_PERCENT)
+	{
+		length = hypot(width, height) * M_SQRT1_2;
+	}
+	return esvg_length_final_get(l, length, font_size);
 }
 
 /*
