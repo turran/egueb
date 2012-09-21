@@ -293,7 +293,6 @@ void esvg_attribute_animated_string_set(Esvg_Attribute_Animated_String *aa,
 	Eina_Bool animate)
 {
 	Esvg_Attribute_String *a;
-	const char *s;
 
 	/* get the attribute to change */
 	if (animate)

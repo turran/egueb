@@ -394,7 +394,7 @@ Etch_Animation_Type esvg_animate_base_calc_mode_etch_to(Esvg_Calc_Mode c)
 
 		case ESVG_CALC_MODE_LINEAR:
 		return ETCH_ANIMATION_LINEAR;
-	
+
 		case ESVG_CALC_MODE_SPLINE:
 		return ETCH_ANIMATION_CUBIC;
 

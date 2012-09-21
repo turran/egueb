@@ -177,7 +177,7 @@ static void _esvg_renderable_paint_set(Edom_Tag *t,
 	}
 done:
 	/* update the old paint */
-	esvg_paint_copy(old, current);
+	esvg_paint_copy(old, (Esvg_Paint *)current);
 }
 
 static void _esvg_renderable_context_set(Edom_Tag *t,
@@ -580,7 +580,6 @@ EAPI Eina_Bool esvg_is_renderable(Ender_Element *e)
  */
 EAPI Enesim_Renderer * esvg_renderable_renderer_get(Ender_Element *e)
 {
-	Esvg_Renderable *thiz;
 	Edom_Tag *t;
 	Enesim_Renderer *r;
 

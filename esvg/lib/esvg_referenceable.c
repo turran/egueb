@@ -164,7 +164,6 @@ Esvg_Referenceable_Reference * esvg_referenceable_reference_add(Edom_Tag *t,
 {
 	Esvg_Referenceable_Reference *rr;
 	Esvg_Referenceable *thiz;
-	Eina_Bool ret = EINA_TRUE;
 
 	thiz = _esvg_referenceable_get(t);
 
@@ -199,7 +198,7 @@ void esvg_referenceable_reference_remove(Edom_Tag *t, Esvg_Referenceable_Referen
 	/* trigger the remove interface */
 	if (thiz->descriptor.reference_remove)
 		thiz->descriptor.reference_remove(t, rr);
-	
+
 	thiz->references = eina_list_remove(thiz->references, rr);
 	/* TODO unref the renderer, pass the renderer to the remove? */
 	free(rr);
