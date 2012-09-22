@@ -42,9 +42,6 @@ void esvg_renderable_implementation_renderer_get(Edom_Tag *t, Enesim_Renderer **
 void esvg_renderable_internal_renderer_get(Edom_Tag *t, Enesim_Renderer **r);
 Eina_Bool esvg_is_renderable_internal(Edom_Tag *t);
 
-void esvg_renderable_internal_container_width_get(Edom_Tag *t, double *container_width);
-void esvg_renderable_internal_container_height_get(Edom_Tag *t, double *container_height);
-
 /* old ones */
 typedef Eina_Bool (*Esvg_Renderable_Context_Calculate)(Enesim_Renderer *r,
 		Esvg_Element_Context *estate,

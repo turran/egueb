@@ -59,6 +59,10 @@ static Ender_Property *ESVG_SVG_HEIGHT;
 static Ender_Property *ESVG_SVG_ACTUAL_WIDTH;
 static Ender_Property *ESVG_SVG_ACTUAL_HEIGHT;
 static Ender_Property *ESVG_SVG_VIEWBOX;
+static Ender_Property *ESVG_SVG_X_DPI;
+static Ender_Property *ESVG_SVG_Y_DPI;
+static Ender_Property *ESVG_SVG_CONTAINER_WIDTH;
+static Ender_Property *ESVG_SVG_CONTAINER_HEIGHT;
 
 typedef struct _Esvg_Svg_User_Descriptor
 {
@@ -87,6 +91,10 @@ typedef struct _Esvg_Svg
 	Esvg_Coord y;
 	Esvg_Length width;
 	Esvg_Length height;
+	double container_width;
+	double container_height;
+	double x_dpi;
+	double y_dpi;
 	/* user provded properties */
 	double base_font_size;
 	/* private */
@@ -108,6 +116,10 @@ typedef struct _Esvg_Svg
 	Eina_Bool paused;
 	/* input */
 	Esvg_Input *input;
+	/* damages */
+	Eina_Tiler *tiler;
+	int tw;
+	int th;
 } Esvg_Svg;
 
 typedef struct _Esvg_Svg_Uri_Data
@@ -129,6 +141,19 @@ static Esvg_Svg * _esvg_svg_get(Edom_Tag *t)
 	thiz = esvg_renderable_data_get(t);
 
 	return thiz;
+}
+
+static Eina_Bool _esvg_svg_damage_cb(Enesim_Renderer *r,
+		const Eina_Rectangle *area, Eina_Bool past,
+		void *data)
+{
+	Eina_Tiler *tiler = data;
+	const char *name;
+
+	eina_tiler_rect_add(tiler, area);
+	enesim_renderer_name_get(r, &name);
+	DBG("renderer %s has changed at area %d %d %d %d", name, area->x, area->y, area->w, area->h);
+	return EINA_TRUE;
 }
 
 static Eina_Bool _esvg_svg_relative_to_absolute(Esvg_Svg *thiz, const char *relative, char *absolute, size_t len)
@@ -668,6 +693,29 @@ static Eina_Bool _esvg_svg_child_remove(Edom_Tag *t, Edom_Tag *child)
 	return EINA_TRUE;
 }
 
+#if 0
+static Esvg_Element_Setup_Return _esvg_svg_propagate(Edom_Tag *t,
+		Esvg_Context *c,
+		Esvg_Element_Context *ctx,
+		Esvg_Attribute_Presentation *attr,
+		Enesim_Error **error)
+{
+	Esvg_Svg *thiz;
+
+	thiz = _esvg_svg_get(t);
+	if (!parent_context)
+	{
+		context->viewbox.min_x = 0;
+		context->viewbox.min_y = 0;
+		context->viewbox.width = thiz->container_width;
+		context->viewbox.height = thiz->container_height;
+
+		context->dpi_y = thiz->x_dpi;
+		context->dpi_x = thiz->y_dpi;
+	}
+}
+#endif
+
 static Esvg_Element_Setup_Return _esvg_svg_setup(Edom_Tag *t,
 		Esvg_Context *c,
 		Esvg_Element_Context *ctx,
@@ -829,6 +877,11 @@ static Edom_Tag * _esvg_svg_new(void)
 	/* FIXME we are using 16px here, this 16px refer to the 'normal' font-size */
 	thiz->base_font_size = 16;
 
+	thiz->container_width = 640;
+	thiz->container_height = 480;
+	thiz->x_dpi = 96.0;
+	thiz->y_dpi = 96.0;
+
 	/* no default value for the view_box */
 	/* the animation system */
 	thiz->etch = etch_new();
@@ -958,7 +1011,7 @@ static void _esvg_svg_actual_width_get(Edom_Tag *t, double *actual_width)
 	double cw;
 
 	thiz = _esvg_svg_get(t);
-	esvg_renderable_internal_container_width_get(t, &cw);
+	esvg_svg_internal_container_width_get(t, &cw);
 	aw = esvg_length_final_get(&thiz->width, cw, thiz->base_font_size);
 	*actual_width = aw;
 }
@@ -970,9 +1023,61 @@ static void _esvg_svg_actual_height_get(Edom_Tag *t, double *actual_height)
 	double ch;
 
 	thiz = _esvg_svg_get(t);
-	esvg_renderable_internal_container_height_get(t, &ch);
+	esvg_svg_internal_container_height_get(t, &ch);
 	ah = esvg_length_final_get(&thiz->height, ch, thiz->base_font_size);
 	*actual_height = ah;
+}
+
+static void _esvg_svg_container_width_set(Edom_Tag *t, double container_width)
+{
+	Esvg_Svg *thiz;
+
+	thiz = _esvg_svg_get(t);
+	thiz->container_width = container_width;
+}
+
+static void _esvg_svg_container_height_set(Edom_Tag *t, double container_height)
+{
+	Esvg_Svg *thiz;
+
+	thiz = _esvg_svg_get(t);
+	thiz->container_height = container_height;
+}
+
+static void _esvg_svg_x_dpi_set(Edom_Tag *t, double x_dpi)
+{
+	Esvg_Svg *thiz;
+
+	thiz = _esvg_svg_get(t);
+	thiz->x_dpi = x_dpi;
+}
+
+static void _esvg_svg_x_dpi_get(Edom_Tag *t, double *x_dpi)
+{
+	Esvg_Svg *thiz;
+
+	if (!x_dpi)
+		return;
+	thiz = _esvg_svg_get(t);
+	*x_dpi = thiz->x_dpi;
+}
+
+static void _esvg_svg_y_dpi_set(Edom_Tag *t, double y_dpi)
+{
+	Esvg_Svg *thiz;
+
+	thiz = _esvg_svg_get(t);
+	thiz->y_dpi = y_dpi;
+}
+
+static void _esvg_svg_y_dpi_get(Edom_Tag *t, double *y_dpi)
+{
+	Esvg_Svg *thiz;
+
+	if (!y_dpi)
+		return;
+	thiz = _esvg_svg_get(t);
+	*y_dpi = thiz->y_dpi;
 }
 /*============================================================================*
  *                                 Global                                     *
@@ -1042,6 +1147,27 @@ Ender_Element * esvg_svg_internal_element_find(Edom_Tag *t, const char *id)
 	return eina_hash_find(thiz->ids, id);
 }
 
+void esvg_svg_internal_container_width_get(Edom_Tag *t, double *container_width)
+{
+	Esvg_Svg *thiz;
+
+	if (!container_width)
+		return;
+	thiz = _esvg_svg_get(t);
+	*container_width = thiz->container_width;
+}
+
+void esvg_svg_internal_container_height_get(Edom_Tag *t, double *container_height)
+{
+	Esvg_Svg *thiz;
+
+	if (!container_height)
+		return;
+	thiz = _esvg_svg_get(t);
+	*container_height = thiz->container_height;
+}
+
+
 Etch * esvg_svg_etch_get(Ender_Element *e)
 {
 	Esvg_Svg *thiz;
@@ -1064,6 +1190,12 @@ Etch * esvg_svg_etch_get(Ender_Element *e)
 #define _esvg_svg_actual_height_is_set NULL
 #define _esvg_svg_viewbox_get NULL
 #define _esvg_svg_viewbox_is_set NULL
+#define _esvg_svg_container_width_get esvg_svg_internal_container_width_get
+#define _esvg_svg_container_width_is_set NULL
+#define _esvg_svg_container_height_get esvg_svg_internal_container_height_get
+#define _esvg_svg_container_height_is_set NULL
+#define _esvg_svg_x_dpi_is_set NULL
+#define _esvg_svg_y_dpi_is_set NULL
 #include "generated/esvg_generated_svg.c"
 
 #if 0
@@ -1466,4 +1598,153 @@ EAPI Eina_Bool esvg_svg_setup(Ender_Element *e, Enesim_Error **error)
 	}
 	esvg_context_setup_dequeue(&context);
 	return EINA_TRUE;
+}
+
+/**
+ * To be documented
+ * FIXME: To be fixed
+ */
+EAPI void esvg_svg_container_width_set(Ender_Element *e, double container_width)
+{
+	ender_element_property_value_set(e, ESVG_SVG_CONTAINER_WIDTH, container_width, NULL);
+}
+
+/**
+ * To be documented
+ * FIXME: To be fixed
+ */
+EAPI void esvg_svg_container_width_get(Ender_Element *e, double *container_width)
+{
+}
+
+/**
+ * To be documented
+ * FIXME: To be fixed
+ */
+EAPI void esvg_svg_container_height_set(Ender_Element *e, double container_height)
+{
+	ender_element_property_value_set(e, ESVG_SVG_CONTAINER_HEIGHT, container_height, NULL);
+}
+
+/**
+ * To be documented
+ * FIXME: To be fixed
+ */
+EAPI void esvg_svg_container_height_get(Ender_Element *e, double *container_height)
+{
+}
+
+/**
+ * To be documented
+ * FIXME: To be fixed
+ */
+EAPI void esvg_svg_x_dpi_set(Ender_Element *e, double x_dpi)
+{
+	ender_element_property_value_set(e, ESVG_SVG_X_DPI, x_dpi, NULL);
+}
+
+/**
+ * To be documented
+ * FIXME: To be fixed
+ */
+EAPI void esvg_svg_x_dpi_get(Ender_Element *e, double *x_dpi)
+{
+}
+
+/**
+ * To be documented
+ * FIXME: To be fixed
+ */
+EAPI void esvg_svg_y_dpi_set(Ender_Element *e, double y_dpi)
+{
+	ender_element_property_value_set(e, ESVG_SVG_Y_DPI, y_dpi, NULL);
+}
+
+/**
+ * To be documented
+ * FIXME: To be fixed
+ */
+EAPI void esvg_svg_y_dpi_get(Ender_Element *e, double *y_dpi)
+{
+}
+
+/**
+ * To be documented
+ * FIXME: To be fixed
+ */
+EAPI Eina_Bool esvg_svg_draw(Ender_Element *e, Enesim_Surface *s,
+		Eina_Rectangle *clip, int x, int y, Enesim_Error **error)
+{
+	Edom_Tag *t;
+	Enesim_Renderer *r = NULL;
+
+	t = ender_element_object_get(e);
+	esvg_renderable_internal_renderer_get(t, &r);
+	if (!r) return EINA_FALSE;
+
+	return enesim_renderer_draw(r, s, clip, x, y, error);
+}
+
+/**
+ * To be documented
+ * FIXME: To be fixed
+ */
+EAPI Eina_Bool esvg_svg_draw_list(Ender_Element *e, Enesim_Surface *s,
+		Eina_List *clips, int x, int y, Enesim_Error **error)
+{
+	Edom_Tag *t;
+	Enesim_Renderer *r = NULL;
+
+	t = ender_element_object_get(e);
+	esvg_renderable_internal_renderer_get(t, &r);
+	if (!r) return EINA_FALSE;
+
+	return enesim_renderer_draw_list(r, s, clips, x, y, error);
+}
+
+/**
+ * To be documented
+ * FIXME: To be fixed
+ */
+EAPI void esvg_svg_damages_get(Ender_Element *e, Esvg_Svg_Damage_Cb cb, void *data)
+{
+	Edom_Tag *t;
+	Esvg_Svg *thiz;
+	Enesim_Renderer *r;
+	Eina_Iterator *iter;
+	Eina_Rectangle *rect;
+	int cw;
+	int ch;
+
+	t = ender_element_object_get(e);
+	thiz = _esvg_svg_get(t);
+
+	cw = ceil(thiz->container_width);
+	ch = ceil(thiz->container_height);
+
+	if (!thiz->tiler || thiz->tw != cw || thiz->th != ch)
+	{
+		Eina_Rectangle full;
+
+		if (thiz->tiler)
+			eina_tiler_free(thiz->tiler);
+		thiz->tiler = eina_tiler_new(cw, ch);
+		thiz->tw = cw;
+		thiz->th = ch;
+
+		eina_rectangle_coords_from(&full, 0, 0, cw, ch);
+		cb(e, &full, data);
+		return;
+	}
+
+	esvg_renderable_internal_renderer_get(t, &r);
+	enesim_renderer_damages_get(r, _esvg_svg_damage_cb, thiz->tiler);
+
+	iter = eina_tiler_iterator_new(thiz->tiler);
+	EINA_ITERATOR_FOREACH(iter, rect)
+	{
+		cb(e, rect, data);
+	}
+	eina_iterator_free(iter);
+	eina_tiler_clear(thiz->tiler);
 }

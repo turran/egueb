@@ -170,8 +170,8 @@ static Eina_Error _emage_svg_load(const char *file, Enesim_Buffer *buffer, void 
 		h = o->container_height;
 	}
 	/* we should render into the swdata? */
-	esvg_renderable_container_width_set(e, w);
-	esvg_renderable_container_height_set(e, h);
+	esvg_svg_container_width_set(e, w);
+	esvg_svg_container_height_set(e, h);
 	esvg_svg_actual_width_get(e, &svg_w);
 	esvg_svg_actual_height_get(e, &svg_h);
 
@@ -189,7 +189,7 @@ static Eina_Error _emage_svg_load(const char *file, Enesim_Buffer *buffer, void 
 	{
 		enesim_error_dump(err);
 	}
-	ret = esvg_renderable_draw(e, s, NULL, 0, 0, NULL);
+	ret = esvg_svg_draw(e, s, NULL, 0, 0, NULL);
 	if (!ret)
 	{
 		enesim_error_dump(err);

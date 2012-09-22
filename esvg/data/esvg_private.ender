@@ -127,10 +127,6 @@ namespace "esvg" : 0 {
 
 	abstract "renderable" : "element" {
 		object "renderer";
-		double "container_width";
-		double "container_height";
-		double "x_dpi";
-		double "y_dpi";
 	};
 
 	abstract "paint_server" : "referenceable" {
@@ -202,6 +198,10 @@ namespace "esvg" : 0 {
 		double "actual_width";
 		double "actual_height";
 		esvg_viewbox "viewbox";
+		double "container_width";
+		double "container_height";
+		double "x_dpi";
+		double "y_dpi";
 	};
 
 	class "g" : "renderable" {

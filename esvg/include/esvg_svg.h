@@ -12,8 +12,17 @@ EAPI void esvg_svg_width_get(Ender_Element *e, Esvg_Length *width);
 EAPI void esvg_svg_height_set(Ender_Element *e, Esvg_Length *height);
 EAPI void esvg_svg_height_get(Ender_Element *e, Esvg_Length *height);
 EAPI void esvg_svg_viewbox_set(Ender_Element *e, Esvg_View_Box *vb);
+EAPI void esvg_svg_container_width_set(Ender_Element *e, double container_width);
+EAPI void esvg_svg_container_width_get(Ender_Element *e, double *container_width);
+EAPI void esvg_svg_container_height_set(Ender_Element *e, double container_height);
+EAPI void esvg_svg_container_height_get(Ender_Element *e, double *container_height);
+
 EAPI void esvg_svg_actual_width_get(Ender_Element *e, double *actual_width);
 EAPI void esvg_svg_actual_height_get(Ender_Element *e, double *actual_height);
+EAPI void esvg_svg_x_dpi_set(Ender_Element *e, double x_dpi);
+EAPI void esvg_svg_x_dpi_get(Ender_Element *e, double *x_dpi);
+EAPI void esvg_svg_y_dpi_set(Ender_Element *e, double y_dpi);
+EAPI void esvg_svg_y_dpi_get(Ender_Element *e, double *y_dpi);
 
 EAPI Ender_Element * esvg_svg_element_find(Ender_Element *e, const char *id);
 
@@ -36,5 +45,14 @@ EAPI double esvg_svg_base_font_size_get(Ender_Element *e);
 EAPI void esvg_svg_base_font_size_set(Ender_Element *e, double base_font_size);
 
 EAPI Eina_Bool esvg_svg_setup(Ender_Element *e, Enesim_Error **error);
+
+typedef Eina_Bool (*Esvg_Svg_Damage_Cb)(Ender_Element *e, Eina_Rectangle *damage,
+		void *data);
+EAPI void esvg_svg_damages_get(Ender_Element *e, Esvg_Svg_Damage_Cb cb, void *data);
+EAPI Eina_Bool esvg_svg_draw(Ender_Element *e, Enesim_Surface *s,
+		Eina_Rectangle *clip, int x, int y, Enesim_Error **error);
+EAPI Eina_Bool esvg_svg_draw_list(Ender_Element *e, Enesim_Surface *s,
+		Eina_List *clips, int x, int y, Enesim_Error **error);
+
 
 #endif

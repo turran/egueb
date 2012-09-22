@@ -91,8 +91,8 @@ int main(int argc, char *argv[])
 
 	/* set the final image size as the container size */
 	printf("setting %d %d\n", width, height);
-	esvg_renderable_container_width_set(tag, width);
-	esvg_renderable_container_height_set(tag, height);
+	esvg_svg_container_width_set(tag, width);
+	esvg_svg_container_height_set(tag, height);
 	/* FIXME once the renderable class is implemented
 	 * get the renderer, for now test the parsing
 	 */
