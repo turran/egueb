@@ -427,6 +427,8 @@ Edom_Tag * esvg_animation_new(Esvg_Animation_Descriptor *descriptor, Esvg_Type t
 	pdescriptor.free = _esvg_animation_free;
 	pdescriptor.initialize = descriptor->initialize;
 	pdescriptor.setup = _esvg_animation_setup;
+	pdescriptor.cdata_set = NULL;
+	pdescriptor.text_set = NULL;
 
 	t = esvg_element_new(&pdescriptor, type, thiz);
 
