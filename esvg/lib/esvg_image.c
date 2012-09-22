@@ -242,7 +242,7 @@ static Eina_Bool _esvg_image_renderer_propagate(Edom_Tag *t,
 	/* set the position */
 	esvg_attribute_animated_length_final_get(&thiz->x, &lx);
 	esvg_attribute_animated_length_final_get(&thiz->y, &ly);
-	x = esvg_length_final_get(&ly, ctx->viewbox.width, ctx->font_size);
+	x = esvg_length_final_get(&lx, ctx->viewbox.width, ctx->font_size);
 	y = esvg_length_final_get(&ly, ctx->viewbox.height, ctx->font_size);
 	/* set the size */
 	esvg_attribute_animated_length_final_get(&thiz->width, &lwidth);
