@@ -226,10 +226,10 @@ namespace "esvg" : 0 {
 	};
 
 	class "ellipse" : "renderable" {
-		esvg_length "cx";
-		esvg_length "cy";
-		esvg_length "rx";
-		esvg_length "ry";
+		esvg_animated_coord "cx";
+		esvg_animated_coord "cy";
+		esvg_animated_length "rx";
+		esvg_animated_length "ry";
 	};
 
 	class "circle" : "renderable" {
@@ -243,10 +243,10 @@ namespace "esvg" : 0 {
 	};
 
 	class "line" : "renderable" {
-		esvg_length "x1";
-		esvg_length "x2";
-		esvg_length "y1";
-		esvg_length "y2";
+		esvg_animated_coord "x1";
+		esvg_animated_coord "x2";
+		esvg_animated_coord "y1";
+		esvg_animated_coord "y2";
 	};
 
 	class "polyline" : "renderable" {
@@ -275,8 +275,8 @@ namespace "esvg" : 0 {
 	};
 
 	class "image" : "renderable" {
-		esvg_animated_length "x";
-		esvg_animated_length "y";
+		esvg_animated_coord "x";
+		esvg_animated_coord "y";
 		esvg_animated_length "width";
 		esvg_animated_length "height";
 		esvg_animated_string "xlink:href";
