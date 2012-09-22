@@ -173,7 +173,7 @@ EAPI void edom_tag_id_set(Edom_Tag *thiz, const char *id)
 	Edom_Attribute attr;
 
 	attr.name = "id";
-	attr.value = id;
+	attr.value = (char *)id;
 	edom_tag_attribute_set(thiz, &attr);
 }
 
@@ -200,7 +200,7 @@ EAPI void edom_tag_class_set(Edom_Tag *thiz, const char *class)
 	Edom_Attribute attr;
 
 	attr.name = "class";
-	attr.value = class;
+	attr.value = (char *)class;
 	edom_tag_attribute_set(thiz, &attr);
 }
 

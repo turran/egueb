@@ -157,8 +157,8 @@ static Eina_Bool _edom_parser_cb(void *data, Eina_Simple_XML_Type type,
 		{
 			void *tag;
 			int sz;
-			const char *attrs;
-			int attr_length;
+			const char *attrs = NULL;
+			int attr_length = 0;
 
 			attrs = eina_simple_xml_tag_attributes_find(content, length);
 			sz = length;
