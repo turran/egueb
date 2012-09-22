@@ -464,6 +464,10 @@ EAPI void esvg_animation_attribute_name_set(Ender_Element *e, const char *name)
  */
 EAPI void esvg_animation_attribute_name_get(Ender_Element *e, const char **name)
 {
+	Edom_Tag *t;
+
+	t = ender_element_object_get(e);
+	_esvg_animation_attribute_name_get(t, name);
 }
 
 /**
@@ -481,6 +485,10 @@ EAPI void esvg_animation_attribute_type_set(Ender_Element *e, Esvg_Attribute_Typ
  */
 EAPI void esvg_animation_attribute_type_get(Ender_Element *e, Esvg_Attribute_Type *type)
 {
+	Edom_Tag *t;
+
+	t = ender_element_object_get(e);
+	_esvg_animation_attribute_type_get(t, type);
 }
 
 /**
@@ -498,6 +506,10 @@ EAPI void esvg_animation_dur_set(Ender_Element *e, Esvg_Duration *dur)
  */
 EAPI void esvg_animation_dur_get(Ender_Element *e, Esvg_Duration *dur)
 {
+	Edom_Tag *t;
+
+	t = ender_element_object_get(e);
+	_esvg_animation_dur_get(t, dur);
 }
 
 /**
@@ -515,6 +527,10 @@ EAPI void esvg_animation_additive_set(Ender_Element *e, Esvg_Additive *additive)
  */
 EAPI void esvg_animation_additive_get(Ender_Element *e, Esvg_Additive *additive)
 {
+	Edom_Tag *t;
+
+	t = ender_element_object_get(e);
+	_esvg_animation_additive_get(t, additive);
 }
 
 /**
@@ -532,6 +548,10 @@ EAPI void esvg_animation_accumulate_set(Ender_Element *e, Esvg_Accumulate *accum
  */
 EAPI void esvg_animation_accumulate_get(Ender_Element *e, Esvg_Accumulate *accumulate)
 {
+	Edom_Tag *t;
+
+	t = ender_element_object_get(e);
+	_esvg_animation_accumulate_get(t, accumulate);
 }
 
 /**
@@ -549,5 +569,9 @@ EAPI void esvg_animation_repeat_count_set(Ender_Element *e, int repeat_count)
  */
 EAPI void esvg_animation_repeat_count_get(Ender_Element *e, int *repeat_count)
 {
+	Edom_Tag *t;
+
+	t = ender_element_object_get(e);
+	_esvg_animation_repeat_count_get(t, repeat_count);
 }
 

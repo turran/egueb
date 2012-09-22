@@ -32,6 +32,9 @@
  * This file handles the common attribute handling for the
  * 'animate_base value attributes'. The elements that inherit
  * from this are the 'animate' and 'animateTransform'
+ * TODO
+ * several properties must not be a string, but a list of values
+ * like for example the values, times, keys, etc
  */
 /*============================================================================*
  *                                  Local                                     *
@@ -600,6 +603,10 @@ EAPI void esvg_animate_base_to_set(Ender_Element *e, const char *v)
  */
 EAPI void esvg_animate_base_to_get(Ender_Element *e, const char **v)
 {
+	Edom_Tag *t;
+
+	t = ender_element_object_get(e);
+	_esvg_animate_base_to_get(t, v);
 }
 
 /**
@@ -617,6 +624,10 @@ EAPI void esvg_animate_base_from_set(Ender_Element *e, const char *v)
  */
 EAPI void esvg_animate_base_from_get(Ender_Element *e, const char **v)
 {
+	Edom_Tag *t;
+
+	t = ender_element_object_get(e);
+	_esvg_animate_base_from_get(t, v);
 }
 
 /**
@@ -634,6 +645,10 @@ EAPI void esvg_animate_base_values_set(Ender_Element *e, const char *v)
  */
 EAPI void esvg_animate_base_values_get(Ender_Element *e, const char **v)
 {
+	Edom_Tag *t;
+
+	t = ender_element_object_get(e);
+	_esvg_animate_base_values_get(t, v);
 }
 
 /**
@@ -651,6 +666,10 @@ EAPI void esvg_animate_base_calc_mode_set(Ender_Element *e, Esvg_Calc_Mode calc_
  */
 EAPI void esvg_animate_base_calc_mode_get(Ender_Element *e, Esvg_Calc_Mode *calc_mode)
 {
+	Edom_Tag *t;
+
+	t = ender_element_object_get(e);
+	_esvg_animate_base_calc_mode_get(t, calc_mode);
 }
 
 /**
@@ -668,6 +687,10 @@ EAPI void esvg_animate_base_key_times_set(Ender_Element *e, const char *v)
  */
 EAPI void esvg_animate_base_key_times_get(Ender_Element *e, const char **v)
 {
+	Edom_Tag *t;
+
+	t = ender_element_object_get(e);
+	_esvg_animate_base_key_times_get(t, v);
 }
 
 /**
@@ -685,5 +708,9 @@ EAPI void esvg_animate_base_key_splines_set(Ender_Element *e, const char *v)
  */
 EAPI void esvg_animate_base_key_splines_get(Ender_Element *e, const char **v)
 {
+	Edom_Tag *t;
+
+	t = ender_element_object_get(e);
+	_esvg_animate_base_key_splines_get(t, v);
 }
 

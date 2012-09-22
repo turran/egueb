@@ -749,6 +749,10 @@ static Esvg_Element_Setup_Return _esvg_svg_setup(Edom_Tag *t,
 	/* 4. now process the list of changed elements, it will automatically do the setup on its
 	 * parent
 	 */
+	/* FIXME here we are also doing the setup on every referenceable child,
+	 * for example a clipPath with a rect children, the rect and its childs will
+	 * also do the setup, which is something not desirable
+	 */
 	_esvg_svg_element_changed_setup(thiz, c, error);
 
 	return ret;
