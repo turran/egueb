@@ -69,7 +69,7 @@ typedef struct _Esvg_Animate_Base_Descriptor_Internal
 	Edom_Tag_Free free;
 	Esvg_Element_Attribute_Set attribute_set;
 	Edom_Tag_Attribute_Get attribute_get;
-	Esvg_Animate_Base_Setup setup;
+	Esvg_Animate_Base_Type_Descriptor_Get type_descriptor_get;
 } Esvg_Animate_Base_Descriptor_Internal;
 
 typedef struct _Esvg_Animate_Base
@@ -80,8 +80,27 @@ typedef struct _Esvg_Animate_Base
 	/* interface */
 	Esvg_Animate_Base_Descriptor_Internal descriptor;
 	/* private */
+	Etch *etch;
+	Esvg_Attribute_Type attribute_type;
+	Ender_Element *parent_e;
+	Ender_Property *p;
+	Edom_Tag *parent_t;
+	Esvg_Animate_Base_Type_Descriptor *d;
+	Eina_List *values;
+	Eina_List *times;
+	Eina_List *animations;
 	void *data;
 } Esvg_Animate_Base;
+
+typedef struct _Esvg_Animate_Base_Animation
+{
+	Esvg_Animate_Base *thiz;
+	Esvg_Animate_Base_Animation_Callback cb;
+	Edom_Tag *t;
+	Ender_Element *parent;
+	Etch_Animation *a;
+	void *data;
+} Esvg_Animate_Base_Animation;
 
 static Esvg_Animate_Base * _esvg_animate_base_get(Edom_Tag *t)
 {
@@ -93,13 +112,93 @@ static Esvg_Animate_Base * _esvg_animate_base_get(Edom_Tag *t)
 	return thiz;
 }
 
+static void _esvg_animate_base_animation_simple_cb(Etch_Animation_Keyframe *k,
+		const Etch_Data *curr,
+		const Etch_Data *prev,
+		void *user_data)
+{
+	Esvg_Animate_Base_Animation *data = user_data;
+	Esvg_Animate_Base *thiz;
+	Esvg_Attribute_Type old_type;
+	void *kdata;
+
+	thiz = data->thiz;
+	kdata = etch_animation_keyframe_data_get(k);
+
+	old_type = esvg_element_attribute_type_get(thiz->parent_t);
+	esvg_element_attribute_type_set(thiz->parent_t, thiz->attribute_type);
+	esvg_element_attribute_animate_set(thiz->parent_t, EINA_TRUE);
+	/* call the implementation */
+	data->cb(data->t, thiz->parent_e, thiz->p, curr, prev, kdata, data->data);
+	/* restore the states */
+	esvg_element_attribute_animate_set(thiz->parent_t, EINA_FALSE);
+	esvg_element_attribute_type_set(thiz->parent_t, old_type);
+}
+
+static void _esvg_animate_base_animation_full_cb(Etch_Animation_Keyframe *k,
+		const Etch_Data *curr,
+		const Etch_Data *prev,
+		void *user_data)
+{
+	Esvg_Animate_Base_Animation *data = user_data;
+	Esvg_Animate_Base *thiz;
+	void *kdata;
+
+	thiz = data->thiz;
+	kdata = etch_animation_keyframe_data_get(k);
+
+	data->cb(data->t, thiz->parent_e, thiz->p, curr, prev, kdata, data->data);
+}
+
+static Esvg_Animate_Base_Animation * _esvg_animate_base_animation_new(Esvg_Animate_Base *thiz,
+		Etch *e,
+		Etch_Data_Type etch_type,
+		Etch_Animation_Callback etch_cb,
+		Esvg_Animation_Context *actx,
+		Esvg_Animate_Base_Context *abctx,
+		Esvg_Animate_Base_Animation_Callback cb,
+		void *data)
+{
+	Esvg_Animate_Base_Animation *a;
+	Etch_Animation *etch_a;
+
+	a = calloc(1, sizeof(Esvg_Animate_Base_Animation));
+	a->thiz = thiz;
+	a->cb = cb;
+	a->data = data;
+
+	etch_a = etch_animation_add(e, etch_type, etch_cb,
+				NULL, NULL, a);
+	/* the repeat count */
+	etch_animation_repeat_set(etch_a, actx->timing.repeat_count);
+	/* TODO chek the condition to trigger the animation on/off */
+	etch_animation_enable(etch_a);
+	a->a = etch_a;
+
+	return a;
+}
+
+#if 0
+static void _esvg_animate_key_splines_cb(const char *v, void *user_data)
+{
+	Etch_Data ndata;
+	Etch_Data cdata;
+	Etch_Data cp0;
+	Etch_Data cp1;
+
+	/* iterate over the attribute by either space or commas */
+	/* get the current keyframe and the next */
+	/* the range is from 0 to 1, so we need to multiply the value with that
+	 * factor and set the value on the cubic argument */
+}
+#endif
+
 static void _esvg_animate_base_values_cb(const char *v, void *user_data)
 {
 	Esvg_Animate_Base_Values_Data *data = user_data;
 	void *get_data;
 
-	get_data = data->get(v);
-	if (get_data)
+	if (data->get(v, &get_data))
 		data->values = eina_list_append(data->values, get_data);
 }
 
@@ -129,6 +228,139 @@ static void _esvg_animate_base_key_splines_cb(const char *v, void *user_data)
 	spline = calloc(1, sizeof(Esvg_Animate_Key_Spline));
 	esvg_animate_key_spline_string_from(spline, v);
 	*ret = eina_list_append(*ret, spline);
+}
+
+static Eina_Bool _esvg_animate_base_values_generate(Esvg_Animate_Base_Context *c,
+		Esvg_Animate_Base_Value_Get get_cb,
+		Eina_List **values,
+		Eina_Bool *has_from)
+{
+	*has_from = EINA_TRUE;
+
+	if (c->value.values)
+	{
+		Esvg_Animate_Base_Values_Data data;
+
+		data.values = *values;
+		data.get = get_cb;
+		esvg_list_string_from(c->value.values, ';',
+			_esvg_animate_base_values_cb, &data);
+		*values = data.values;
+	}
+	else
+	{
+		if (c->value.from)
+		{
+			void *data;
+			if (get_cb(c->value.from, &data))
+				*values = eina_list_append(*values, data);
+		}
+		else
+		{
+			/* mark the missing from */
+			*has_from = EINA_FALSE;
+		}
+
+		if (c->value.to)
+		{
+			void *data;
+			if (get_cb(c->value.to, &data))
+				*values = eina_list_append(*values, data);
+		}
+#if 0
+		else if (c->value.by)
+		{
+			/* if no from, then everything is dynamic until the animation starts */
+			/* TODO append the from to the values */
+		}
+#endif
+	}
+
+	return EINA_TRUE;
+}
+
+static void _esvg_animate_base_values_free(Eina_List *values, Esvg_Animate_Base_Value_Free free_cb)
+{
+	void *data;
+
+	if (!values) return;
+
+	EINA_LIST_FREE (values, data);
+		free_cb(data);
+}
+
+static Eina_Bool _esvg_animate_base_key_splines_generate(Esvg_Animate_Base_Context *c,
+		Eina_List **ksplines)
+{
+	Eina_List *l = NULL;
+
+	if (!c->value.key_splines)
+		return EINA_TRUE;
+
+	esvg_list_string_from(c->value.key_splines, ';',
+		_esvg_animate_base_key_splines_cb, &l);
+	*ksplines = l;
+}
+
+
+static Eina_Bool _esvg_animate_base_times_generate(Esvg_Animation_Context *ac,
+		Esvg_Animate_Base_Context *c,
+		Eina_List *values,
+		Eina_List **times)
+{
+	/* generate the times list */
+	/* get the duration */
+	if (ac->timing.dur.type == ESVG_DURATION_TYPE_CLOCK)
+	{
+		if (c->value.key_times)
+		{
+			Esvg_Animate_Base_Times_Data data;
+
+			data.times = *times;
+			data.duration = ac->timing.dur.data.clock;
+
+			esvg_list_string_from(c->value.key_times, ';',
+					_esvg_animate_base_time_cb, &data);
+			*times = data.times;
+		}
+		else
+		{
+			int64_t t = 0;
+			int i;
+			int length;
+			int64_t duration;
+			int64_t inc;
+
+			length = eina_list_count(values);
+			if (!length)
+			{
+				printf("no values?\n");
+				return EINA_FALSE;
+			}
+			duration = ac->timing.dur.data.clock;
+			inc = duration / (length - 1);
+			for (i = 0; i < length; i++)
+			{
+				int64_t *d;
+
+				d = malloc(sizeof(int64_t));
+				*d = t;
+				printf("adding time at %lld %lld (%lld %d)\n", t, inc, duration, length);
+				*times = eina_list_append(*times, d);
+				t += inc;
+			}
+		}
+	}
+	return EINA_TRUE;
+}
+
+static void _esvg_animate_base_times_free(Eina_List *times)
+{
+	int64_t *v;
+
+	if (!times) return;
+	EINA_LIST_FREE (times, v)
+		free(v);
 }
 /*----------------------------------------------------------------------------*
  *                           The Ender interface                              *
@@ -346,12 +578,65 @@ static Eina_Bool _esvg_animate_base_setup(Edom_Tag *t,
 		Enesim_Error **error)
 {
 	Esvg_Animate_Base *thiz;
+	Esvg_Animate_Base_Type_Descriptor *d;
+	Ender_Element *svg_e;
+	Ender_Container *ec;
+	Eina_Bool has_from;
+	Etch *etch;
+	const char *name;
 
 	thiz = _esvg_animate_base_get(t);
+	/* in case of animations free them */
+	if (thiz->animations)
+	{
 
-	/* do the setup */
-	if (thiz->descriptor.setup)
-		return thiz->descriptor.setup(t, c, actx, &thiz->current, error);
+	}
+	if (thiz->values)
+	{
+		_esvg_animate_base_values_free(thiz->values, d->value_free);
+		thiz->values = NULL;
+	}
+	if (thiz->times)
+	{
+		_esvg_animate_base_times_free(thiz->times);
+		thiz->times = NULL;
+	}
+
+	/* get the etch associated with the topmost svg */
+	esvg_element_internal_topmost_get(t, &svg_e);
+	if (!svg_e)
+		return EINA_FALSE;
+
+	etch = esvg_svg_etch_get(svg_e);
+	if (!etch)
+		return EINA_FALSE;
+
+	/* get the descriptor */
+	if (!thiz->descriptor.type_descriptor_get)
+		return EINA_FALSE;
+
+	ec = ender_property_container_get(actx->p);
+	name = ender_container_registered_name_get(ec);
+
+	if (!thiz->descriptor.type_descriptor_get(t, name, &d))
+		return EINA_FALSE;
+	if (!d->animation_generate)
+		return EINA_FALSE;
+
+	/* store our own needed context data */
+	thiz->etch = etch;
+	thiz->parent_e = actx->parent_e;
+	thiz->parent_t = actx->parent_t;
+	thiz->attribute_type = actx->target.attribute_type;
+	thiz->p = actx->p;
+	thiz->d = d;
+	/* generate the values and times */
+	_esvg_animate_base_values_generate(&thiz->current, d->value_get,
+			&thiz->values, &has_from);
+	_esvg_animate_base_times_generate(actx, &thiz->current, thiz->values, &thiz->times);
+	/* call the animation generate to create the animations */
+	d->animation_generate(t, thiz->values, thiz->times, actx, &thiz->current);
+
 	return EINA_TRUE;
 }
 /*============================================================================*
@@ -408,141 +693,79 @@ Etch_Animation_Type esvg_animate_base_calc_mode_etch_to(Esvg_Calc_Mode c)
 	}
 }
 
-Eina_Bool esvg_animate_base_key_splines_generate(Esvg_Animate_Base_Context *c,
-		Eina_List **ksplines)
+Etch_Animation * esvg_animate_base_animation_simple_add(Edom_Tag *t, Etch_Data_Type dt,
+		Esvg_Animation_Context *actx,
+		Esvg_Animate_Base_Context *abctx,
+		Esvg_Animate_Base_Animation_Callback cb, void *data)
 {
-	Eina_List *l = NULL;
+	Esvg_Animate_Base *thiz;
+	Esvg_Animate_Base_Animation *animation;
 
-	if (!c->value.key_splines)
-		return EINA_TRUE;
+	thiz = _esvg_animate_base_get(t);
+	animation = _esvg_animate_base_animation_new(thiz,
+			thiz->etch, dt, _esvg_animate_base_animation_simple_cb,
+			actx, abctx, cb, data);
+	thiz->animations = eina_list_append(thiz->animations, animation);
 
-	esvg_list_string_from(c->value.key_splines, ';',
-		_esvg_animate_base_key_splines_cb, &l);
-	*ksplines = l;
+	return animation->a;
 }
 
+/* the simple version of an animation add should set the animation type
+ * the attribute animatable and then just call the value set function
+ * pointer with the etch value as parameter
+ */
 
-Eina_Bool esvg_animate_base_times_generate(Esvg_Animation_Context *ac,
-		Esvg_Animate_Base_Context *c,
+void esvg_animate_base_animation_add_keyframe(Etch_Animation *a,
+	Esvg_Animate_Base_Context *c,
+	Etch_Data *etch_data,
+	int64_t time, void *data)
+{
+	Etch_Animation_Keyframe *k;
+	Etch_Animation_Type atype;
+
+	atype = esvg_animate_base_calc_mode_etch_to(c->value.calc_mode);
+	k = etch_animation_keyframe_add(a);
+	etch_animation_keyframe_type_set(k, atype);
+	etch_animation_keyframe_data_set(k, data, NULL);
+	etch_animation_keyframe_value_set(k, etch_data);
+	// set the time
+	etch_animation_keyframe_time_set(k, time);
+}
+
+/* for simple animation generation, just pass the cb, the data type, the data to, etc, etc */
+void esvg_animate_base_animation_generate(Edom_Tag *t,
 		Eina_List *values,
-		Eina_List **times)
+		Eina_List *times,
+		Esvg_Animation_Context *actx,
+		Esvg_Animate_Base_Context *abctx,
+		Etch_Data_Type dt,
+		Esvg_Animate_Base_Value_Etch_Data_To data_to,
+		Esvg_Animate_Base_Animation_Callback cb,
+		void *data)
 {
-	/* generate the times list */
-	/* get the duration */
-	if (ac->timing.dur.type == ESVG_DURATION_TYPE_CLOCK)
+	Etch_Animation *a;
+	Eina_List *tt;
+	Eina_List *l;
+	void *v;
+	int64_t *time;
+
+	if (!values || !times)
+		return;
+
+	a = esvg_animate_base_animation_simple_add(t, dt, actx, abctx, cb, data);
+	tt = times;
+	EINA_LIST_FOREACH(values, l, v)
 	{
-		if (c->value.key_times)
-		{
-			Esvg_Animate_Base_Times_Data data;
+		Etch_Data edata;
 
-			data.times = *times;
-			data.duration = ac->timing.dur.data.clock;
-
-			esvg_list_string_from(c->value.key_times, ';',
-					_esvg_animate_base_time_cb, &data);
-			*times = data.times;
-		}
-		else
-		{
-			int64_t t = 0;
-			int i;
-			int length;
-			int64_t duration;
-			int64_t inc;
-
-			length = eina_list_count(values);
-			if (!length)
-			{
-				printf("no values?\n");
-				return EINA_FALSE;
-			}
-			duration = ac->timing.dur.data.clock;
-			inc = duration / (length - 1);
-			for (i = 0; i < length; i++)
-			{
-				int64_t *d;
-
-				d = malloc(sizeof(int64_t));
-				*d = t;
-				printf("adding time at %lld %lld (%lld %d)\n", t, inc, duration, length);
-				*times = eina_list_append(*times, d);
-				t += inc;
-			}
-		}
+		time = eina_list_data_get(tt);
+		/* convert it to the destination etch type */
+		data_to(v, &edata);
+		/* add a keyframe */
+		esvg_animate_base_animation_add_keyframe(a, abctx, &edata, *time, v);
+		tt = eina_list_next(tt);
 	}
-	return EINA_TRUE;
 }
-
-void esvg_animate_base_times_free(Eina_List *times)
-{
-	int64_t *v;
-
-	if (!times) return;
-	EINA_LIST_FREE (times, v)
-		free(v);
-}
-
-Eina_Bool esvg_animate_base_values_generate(Esvg_Animate_Base_Context *c,
-		Esvg_Animate_Base_Value_Get get_cb,
-		Eina_List **values,
-		Eina_Bool *has_from)
-{
-	*has_from = EINA_TRUE;
-
-	if (c->value.values)
-	{
-		Esvg_Animate_Base_Values_Data data;
-
-		data.values = *values;
-		data.get = get_cb;
-		esvg_list_string_from(c->value.values, ';',
-			_esvg_animate_base_values_cb, &data);
-		*values = data.values;
-	}
-	else
-	{
-		if (c->value.from)
-		{
-			void *data;
-			data = get_cb(c->value.from);
-			if (data)
-				*values = eina_list_append(*values, data);
-		}
-		else
-		{
-			/* mark the missing from */
-			*has_from = EINA_FALSE;
-		}
-
-		if (c->value.to)
-		{
-			void *data;
-			data = get_cb(c->value.to);
-			if (data)
-				*values = eina_list_append(*values, data);
-		}
-#if 0
-		else if (c->value.by)
-		{
-			/* if no from, then everything is dynamic until the animation starts */
-			/* TODO append the from to the values */
-		}
-#endif
-	}
-
-	return EINA_TRUE;
-}
-
-void esvg_animate_base_values_free(Eina_List *values, Esvg_Animate_Base_Value_Free free_cb)
-{
-	void *data;
-
-	if (!values) return;
-
-	EINA_LIST_FREE (values, data);
-		free_cb(data);
-}
-
 
 Edom_Tag * esvg_animate_base_new(Esvg_Animate_Base_Descriptor *descriptor, Esvg_Type type,
 		void *data)
@@ -559,7 +782,7 @@ Edom_Tag * esvg_animate_base_new(Esvg_Animate_Base_Descriptor *descriptor, Esvg_
 	/* default values */
 	thiz->current.value.calc_mode = ESVG_CALC_MODE_LINEAR;
 	/* our own descriptor */
-	thiz->descriptor.setup = descriptor->setup;
+	thiz->descriptor.type_descriptor_get = descriptor->type_descriptor_get;
 	thiz->descriptor.attribute_set = descriptor->attribute_set;
 	thiz->descriptor.attribute_get = descriptor->attribute_get;
 	/* parent descriptor */

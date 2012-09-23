@@ -102,7 +102,6 @@ typedef struct _Esvg_Svg
 	Eina_Bool renderable_tree_changed : 1;
 	Eina_List *styles; /* the list of styles found on this svg scope */
 	Eina_Bool styles_changed : 1;
-	Eina_List *svgs; /* the list of svg documents found on the svg */
 	Eina_List *elements_changed;
 	Enesim_Renderer *clipper;
 	Enesim_Renderer *compound;
@@ -120,6 +119,8 @@ typedef struct _Esvg_Svg
 	Eina_Tiler *tiler;
 	int tw;
 	int th;
+	/* svg inclusion */
+	Eina_List *svgs; /* the list of svg documents found on the svg */
 } Esvg_Svg;
 
 typedef struct _Esvg_Svg_Uri_Data

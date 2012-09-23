@@ -3,19 +3,42 @@
 
 #include "esvg_private_attribute_animation.h"
 
-typedef void * (*Esvg_Animate_Base_Value_Get)(const char *attr);
-typedef void (*Esvg_Animate_Base_Value_Free)(void *value);
+/* this is the callback the animation will call */
+typedef void  (*Esvg_Animate_Base_Animation_Callback)(Edom_Tag *t,
+		Ender_Element *e,
+		Ender_Property *p,
+		const Etch_Data *curr,
+		const Etch_Data *prev,
+		void *kdata,
+		void *data);
+typedef void (*Esvg_Animate_Base_Value_Etch_Data_To)(void *d,
+		Etch_Data *data);
 
 typedef struct _Esvg_Animate_Base_Context {
 	Esvg_Attribute_Animation_Value value;
 	Eina_Bool changed : 1;
 } Esvg_Animate_Base_Context;
 
-typedef Eina_Bool (*Esvg_Animate_Base_Setup)(Edom_Tag *t,
-		Esvg_Context *c,
+typedef Eina_Bool (*Esvg_Animate_Base_Value_Get)(const char *attr, void **value);
+typedef void (*Esvg_Animate_Base_Value_Free)(void *value);
+typedef Eina_Bool (*Esvg_Animate_Base_Animation_Generate)(Edom_Tag *t,
+		Eina_List *values,
+		Eina_List *times,
 		Esvg_Animation_Context *actx,
-		Esvg_Animate_Base_Context *abctx,
-		Enesim_Error **error);
+		Esvg_Animate_Base_Context *abctx);
+
+typedef struct _Esvg_Animate_Base_Type_Descriptor
+{
+	/* to generate the values */
+	Esvg_Animate_Base_Value_Get value_get;
+	Esvg_Animate_Base_Value_Free value_free;
+	/* to generate the animations */
+	Esvg_Animate_Base_Animation_Generate animation_generate;
+} Esvg_Animate_Base_Type_Descriptor;
+
+typedef Eina_Bool (*Esvg_Animate_Base_Type_Descriptor_Get)(Edom_Tag *t,
+		const char *name,
+		Esvg_Animate_Base_Type_Descriptor **d);
 
 typedef struct _Esvg_Animate_Base_Descriptor {
 	/* the tag interface */
@@ -25,24 +48,31 @@ typedef struct _Esvg_Animate_Base_Descriptor {
 	Esvg_Element_Initialize initialize;
 	Esvg_Element_Attribute_Set attribute_set;
 	/* the animate_base interface */
-	Esvg_Animate_Base_Setup setup;
+	Esvg_Animate_Base_Type_Descriptor_Get type_descriptor_get;
 } Esvg_Animate_Base_Descriptor;
 
 void * esvg_animate_base_data_get(Edom_Tag *t);
 Edom_Tag * esvg_animate_base_new(Esvg_Animate_Base_Descriptor *descriptor, Esvg_Type type, void *data);
 
 Etch_Animation_Type esvg_animate_base_calc_mode_etch_to(Esvg_Calc_Mode c);
-Eina_Bool esvg_animate_base_times_generate(Esvg_Animation_Context *ac,
-		Esvg_Animate_Base_Context *c,
-		Eina_List *values,
-		Eina_List **times);
-void esvg_animate_base_times_free(Eina_List *times);
-Eina_Bool esvg_animate_base_values_generate(Esvg_Animate_Base_Context *c,
-		Esvg_Animate_Base_Value_Get get_cb,
-		Eina_List **values,
-		Eina_Bool *has_from);
-void esvg_animate_base_values_free(Eina_List *values, Esvg_Animate_Base_Value_Free free_cb);
 
+Etch_Animation * esvg_animate_base_animation_simple_add(Edom_Tag *t, Etch_Data_Type dt,
+		Esvg_Animation_Context *actx,
+		Esvg_Animate_Base_Context *abctx,
+		Esvg_Animate_Base_Animation_Callback cb, void *data);
+void esvg_animate_base_animation_add_keyframe(Etch_Animation *a,
+	Esvg_Animate_Base_Context *c,
+	Etch_Data *etch_data,
+	int64_t time, void *data);
+void esvg_animate_base_animation_generate(Edom_Tag *t,
+		Eina_List *values,
+		Eina_List *times,
+		Esvg_Animation_Context *actx,
+		Esvg_Animate_Base_Context *abctx,
+		Etch_Data_Type dt,
+		Esvg_Animate_Base_Value_Etch_Data_To data_to,
+		Esvg_Animate_Base_Animation_Callback cb,
+		void *data);
 /* generated function */
 void esvg_animate_base_init(void);
 
