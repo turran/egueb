@@ -25,30 +25,27 @@
 #include "esvg_private_element.h"
 #include "esvg_private_renderable.h"
 #include "esvg_private_input.h"
+
+#include "esvg_event.h"
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
 struct _Esvg_Input
 {
-	Edom_Tag *owner;
-	Eina_List *over;
-	Eina_List *clicked;
-	double last_x;
-	double last_y;
+	Esvg_Input_Descriptor *descriptor;
+	int x;
+	int y;
+	void *data;
+	Ender_Element *over;
+	Ender_Element *grabbed;
 };
 
+#if 0
 typedef struct _Esvg_Input_Find_Data
 {
 	Esvg_Input *thiz;
 	Eina_Bool found;
 } Esvg_Input_Find_Data;
-
-typedef struct _Esvg_Input_Coord
-{
-	double x;
-	double y;
-} Esvg_Input_Coord;
-
 
 static void _esvg_input_element_found(Esvg_Input *thiz, Ender_Element *e)
 {
@@ -98,29 +95,102 @@ static Eina_Bool _esvg_input_find(Edom_Tag *t, Edom_Tag *child,
 		return data->found;
 	}
 }
-
+#endif
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
-Esvg_Input * esvg_input_new(Edom_Tag *t)
+Esvg_Input * esvg_input_new(Esvg_Input_Descriptor *descriptor, void *data)
 {
 	Esvg_Input *thiz;
 
 	thiz = calloc(1, sizeof(Esvg_Input));
-	thiz->owner = t;
+	thiz->descriptor = descriptor;
+	thiz->data = data;
 	return thiz;
 }
 
-void esvg_input_feed_mouse_move(Esvg_Input *thiz, double x, double y)
+void esvg_input_free(Esvg_Input *thiz)
 {
-	Esvg_Input_Find_Data data;
-	thiz->last_x = x;
-	thiz->last_y = y;
+	free(thiz);
+}
 
-	data.thiz = thiz;
-	data.found = EINA_FALSE;
+void esvg_input_feed_mouse_move(Esvg_Input *thiz, int x, int y)
+{
+	Esvg_Event_Mouse ev;
+	Ender_Element *e;
 
-	edom_tag_child_reverse_foreach(thiz->owner, _esvg_input_find, &data);
+	thiz->x = x;
+	thiz->y = y;
+
+#if 0
+	/* in case of dragging */
+	if (thiz->grabbed)
+	{
+		Eon_Event_Mouse_Move ev;
+		double rel_x, rel_y;
+
+
+		rel_x = thiz->pointer.rel_x + (px - thiz->pointer.x);
+		rel_y = thiz->pointer.rel_y + (py - thiz->pointer.y);
+		/* we first send the drag start */
+		if (!thiz->pointer.dragging)
+		{
+			Eon_Event_Mouse_Drag_Start ev_ds;
+
+			ev_ds.input = thiz->input;
+			ev_ds.x = x;
+			ev_ds.y = y;
+			ev_ds.rel_x = rel_x;
+			ev_ds.rel_y = rel_y;
+			ender_event_dispatch(thiz->grabbed,
+					eon_input_event_names[EON_INPUT_EVENT_MOUSE_DRAG_START], &ev_ds);
+			thiz->pointer.dragging = EINA_TRUE;
+		}
+
+		ev.input = thiz->input;
+		ev.x = x;
+		ev.y = y;
+		ev.rel_x = rel_x;
+		ev.rel_y = rel_y;
+		ev.offset_x = offset_x;
+		ev.offset_y = offset_y;
+		ender_event_dispatch(thiz->grabbed,
+					eon_input_event_names[EON_INPUT_EVENT_MOUSE_MOVE], &ev);
+
+		return;
+	}
+#endif
+	/* get the element at x,y */
+	e = thiz->descriptor->element_at(thiz->data, x, y);
+	ev.screen_x = x;
+	ev.screen_y = y;
+
+	if (e == thiz->over)
+	{
+		/* send move */
+		if (e)
+		{
+			ender_event_dispatch(e, "mousemove", &ev);
+			printf("mouse move!\n");
+		}
+	}
+	else
+	{
+		/* send out event on i->r */
+		if (thiz->over)
+		{
+			ender_event_dispatch(thiz->over, "mouseout", &ev);
+			printf("mouse out!\n");
+		}
+		/* send in event on r */
+		if (e)
+		{
+			ender_event_dispatch(e, "mouseover", &ev);
+			printf("mouse in!\n");
+		}
+	}
+	/* update the current over */
+	thiz->over = e;
 }
 /*============================================================================*
  *                                   API                                      *

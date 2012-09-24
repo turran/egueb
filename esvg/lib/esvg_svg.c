@@ -24,6 +24,7 @@
 #include "esvg_private_context.h"
 #include "esvg_private_element.h"
 #include "esvg_private_renderable.h"
+#include "esvg_private_renderable_container.h"
 #include "esvg_private_svg.h"
 #include "esvg_private_a.h"
 #include "esvg_private_input.h"
@@ -32,6 +33,7 @@
 #include "esvg_svg.h"
 #include "esvg_element.h"
 #include "esvg_renderable.h"
+#include "esvg_event.h"
 
 /*
  * Given that a svg element can clip, we should use a clipper with a compound
@@ -114,7 +116,7 @@ typedef struct _Esvg_Svg
 	Etch *etch;
 	Eina_Bool paused;
 	/* input */
-	Esvg_Input *input;
+	Esvg_Renderable_Container *container;
 	/* damages */
 	Eina_Tiler *tiler;
 	int tw;
@@ -208,13 +210,16 @@ static Eina_Bool _esvg_svg_setup_post(Edom_Tag *t,
 	Esvg_Svg *thiz = data;
 
 	type = esvg_element_internal_type_get(child);
+	/* check if it is a renderable */
 	if (esvg_type_is_renderable(type) && thiz->renderable_tree_changed)
 	{
-		/* if renderable, add the renderer into the compound */
 		Enesim_Renderer *r = NULL;
 
+		/* add to the compound */
 		esvg_renderable_internal_renderer_get(child, &r);
 		enesim_renderer_compound_layer_add(thiz->compound, r);
+		/* add it to the container */
+		esvg_renderable_container_renderable_add(thiz->container, child);
 	}
  	else if (type == ESVG_A)
 	{
@@ -596,6 +601,13 @@ static Eina_Bool _esvg_svg_child_deinitialize(Edom_Tag *t, Edom_Tag *child_t, vo
  *----------------------------------------------------------------------------*/
 static void _esvg_svg_initialize(Ender_Element *e)
 {
+	Esvg_Svg *thiz;
+	Edom_Tag *t;
+
+	t = ender_element_object_get(e);
+	thiz = _esvg_svg_get(t);
+
+	thiz->container = esvg_renderable_container_new(e);
 	/* called whenever the topmost changes */
 	ender_event_listener_add(e, "TopmostChanged", _esvg_svg_topmost_changed_cb, NULL);
 }
@@ -721,6 +733,7 @@ static Esvg_Element_Setup_Return _esvg_svg_setup(Edom_Tag *t,
 	ctx->dpi_x = thiz->y_dpi;
 	if (thiz->renderable_tree_changed)
 	{
+		esvg_renderable_container_clear(thiz->container);
 		enesim_renderer_compound_layer_clear(thiz->compound);
 		enesim_renderer_compound_layer_add(thiz->compound, thiz->background);
 	}
@@ -874,7 +887,6 @@ static Edom_Tag * _esvg_svg_new(void)
 	etch_timer_fps_set(thiz->etch, 30);
 
 	t = esvg_renderable_new(&_descriptor, ESVG_SVG, thiz);
-	thiz->input = esvg_input_new(t);
 
 	return t;
 }
@@ -1455,18 +1467,12 @@ EAPI void esvg_svg_time_set(Ender_Element *e, double secs)
  */
 EAPI void esvg_svg_feed_mouse_move(Ender_Element *e, int x, int y)
 {
-	Esvg_Svg *thiz;
-	Edom_Tag *t;
-	double dx;
-	double dy;
+	Esvg_Event_Mouse ev;
 
-	t = ender_element_object_get(e);
-	thiz = _esvg_svg_get(t);
-	/* always double coordinates */
-	dx = x;
-	dy = y;
-	/* send the mouse move to the input system */
-	esvg_input_feed_mouse_move(thiz->input, dx, dy);
+	/* FIXME we should check that the mouse is inside the SVG */
+	ev.screen_x = x;
+	ev.screen_y = y;
+	ender_event_dispatch(e, "mousemove", &ev);
 }
 
 /**

@@ -24,6 +24,7 @@
 #include "esvg_private_context.h"
 #include "esvg_private_element.h"
 #include "esvg_private_renderable.h"
+#include "esvg_private_renderable_container.h"
 #include "esvg_g.h"
 /*============================================================================*
  *                                  Local                                     *
@@ -32,6 +33,7 @@ typedef struct _Esvg_G
 {
 	/* properties */
 	/* private */
+	Esvg_Renderable_Container *container;
 	/* keep track if the renderable tree has changed, includeing the <a> tag */
 	Eina_Bool renderable_tree_changed : 1;
 	/* our renderer */
@@ -59,13 +61,16 @@ static Eina_Bool _esvg_g_setup_post(Edom_Tag *t,
 	Esvg_G *thiz = data;
 
 	type = esvg_element_internal_type_get(child);
+	/* check if it is a renderable */
 	if (esvg_type_is_renderable(type) && thiz->renderable_tree_changed)
 	{
-		/* if renderable, add the renderer into the compound */
 		Enesim_Renderer *r = NULL;
 
+		/* add to the compound */
 		esvg_renderable_internal_renderer_get(child, &r);
 		enesim_renderer_compound_layer_add(thiz->r, r);
+		/* add it to the container */
+		esvg_renderable_container_renderable_add(thiz->container, child);
 	}
  	else if (type == ESVG_A)
 	{
@@ -77,6 +82,17 @@ static Eina_Bool _esvg_g_setup_post(Edom_Tag *t,
 /*----------------------------------------------------------------------------*
  *                          The Container interface                           *
  *----------------------------------------------------------------------------*/
+static void _esvg_g_initialize(Ender_Element *e)
+{
+	Esvg_G *thiz;
+	Edom_Tag *t;
+
+	t = ender_element_object_get(e);
+	thiz = _esvg_g_get(t);
+
+	thiz->container = esvg_renderable_container_new(e);
+}
+
 static Eina_Bool _esvg_g_child_add(Edom_Tag *t, Edom_Tag *child)
 {
 	Esvg_G *thiz;
@@ -133,6 +149,7 @@ static Esvg_Element_Setup_Return _esvg_g_setup(Edom_Tag *t,
 	thiz = _esvg_g_get(t);
 	if (thiz->renderable_tree_changed)
 	{
+		esvg_renderable_container_clear(thiz->container);
 		enesim_renderer_compound_layer_clear(thiz->r);
 	}
 	ret = esvg_element_internal_child_setup(t, c, error, NULL, _esvg_g_setup_post, thiz);
@@ -170,7 +187,7 @@ static Esvg_Renderable_Descriptor _descriptor = {
 	/* .cdata_set 		= */ NULL,
 	/* .text_set 		= */ NULL,
 	/* .free 		= */ _esvg_g_free,
-	/* .initialize 		= */ NULL,
+	/* .initialize 		= */ _esvg_g_initialize,
 	/* .attribute_set 	= */ NULL,
 	/* .attribute_animated_fetch = */ NULL,
 	/* .setup		= */ _esvg_g_setup,
