@@ -39,63 +39,6 @@ struct _Esvg_Input
 	Ender_Element *over;
 	Ender_Element *grabbed;
 };
-
-#if 0
-typedef struct _Esvg_Input_Find_Data
-{
-	Esvg_Input *thiz;
-	Eina_Bool found;
-} Esvg_Input_Find_Data;
-
-static void _esvg_input_element_found(Esvg_Input *thiz, Ender_Element *e)
-{
-	/* FIXME check if the element exists, if so, send a mouse_move */
-	/* if not, send a mousein */
-	ender_event_dispatch(e, "mousein", NULL);
-	/* in order to send a mouse out, also iterate from the last one added
-	 * and check if it is still valid
-	 */
-}
-
-static Eina_Bool _esvg_input_find(Edom_Tag *t, Edom_Tag *child,
-		void *user_data)
-{
-	Esvg_Input_Find_Data *data = user_data;
-	Esvg_Input *thiz = data->thiz;
-	Esvg_Type type;
-
-	type = esvg_element_internal_type_get(child);
-	if (!esvg_type_is_renderable(type) && type != ESVG_A)
-		return EINA_TRUE;
-
-	if (esvg_type_is_renderable(type))
-	{
-		Ender_Element *e;
-		Enesim_Renderer *r;
-		Eina_Rectangle in;
-		Eina_Rectangle bounds;
-
-		esvg_renderable_internal_renderer_get(child, &r);
-		eina_rectangle_coords_from(&in, (int)thiz->last_x, (int)thiz->last_y, 1, 1);
-		enesim_renderer_destination_boundings(r, &bounds, 0, 0);
-		if (!eina_rectangles_intersect(&bounds, &in))
-			return EINA_TRUE;
-
-		e = esvg_element_ender_get(child);
-		_esvg_input_element_found(thiz, e);
-		if (type == ESVG_G || type == ESVG_SVG)
-		{
-			edom_tag_child_reverse_foreach(child, _esvg_input_find, data);
-		}
-		return EINA_TRUE;
-	}
-	else
-	{
-		edom_tag_child_reverse_foreach(child, _esvg_input_find, data);
-		return data->found;
-	}
-}
-#endif
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
