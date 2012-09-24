@@ -88,7 +88,7 @@ static Eina_Bool _esvg_input_find(Edom_Tag *t, Edom_Tag *child,
 		_esvg_input_element_found(thiz, e);
 		if (type == ESVG_G || type == ESVG_SVG)
 		{
-			edom_tag_child_reverse_foreach(child, _esvg_input_find, thiz);
+			edom_tag_child_reverse_foreach(child, _esvg_input_find, data);
 		}
 		return EINA_TRUE;
 	}
