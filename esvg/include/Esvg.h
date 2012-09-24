@@ -85,6 +85,7 @@
 
 /* other */
 #include "esvg_a.h"
+#include "esvg_event.h"
 #include "esvg_defs.h"
 #include "esvg_style.h"
 

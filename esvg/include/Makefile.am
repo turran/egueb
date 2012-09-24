@@ -16,6 +16,7 @@ esvg_clip_path.h \
 esvg_defs.h \
 esvg_element.h \
 esvg_ellipse.h \
+esvg_event.h \
 esvg_g.h \
 esvg_gradient.h \
 esvg_image.h \

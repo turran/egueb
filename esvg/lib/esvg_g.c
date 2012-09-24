@@ -90,7 +90,6 @@ static Eina_Bool _esvg_g_child_add(Edom_Tag *t, Edom_Tag *child)
 	if (esvg_type_is_renderable(type) || type == ESVG_A)
 	{
 		thiz->renderable_tree_changed = EINA_TRUE;
-		enesim_renderer_compound_layer_clear(thiz->r);
 	}
 
 	return EINA_TRUE;
@@ -109,7 +108,6 @@ static Eina_Bool _esvg_g_child_remove(Edom_Tag *t, Edom_Tag *child)
 	if (esvg_type_is_renderable(type) || type == ESVG_A)
 	{
 		thiz->renderable_tree_changed = EINA_TRUE;
-		enesim_renderer_compound_layer_clear(thiz->r);
 	}
 
 	return EINA_TRUE;
@@ -133,6 +131,10 @@ static Esvg_Element_Setup_Return _esvg_g_setup(Edom_Tag *t,
 	Esvg_Element_Setup_Return ret;
 
 	thiz = _esvg_g_get(t);
+	if (thiz->renderable_tree_changed)
+	{
+		enesim_renderer_compound_layer_clear(thiz->r);
+	}
 	ret = esvg_element_internal_child_setup(t, c, error, NULL, _esvg_g_setup_post, thiz);
 	thiz->renderable_tree_changed = EINA_FALSE;
 	return ret;

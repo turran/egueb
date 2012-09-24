@@ -663,8 +663,6 @@ static Eina_Bool _esvg_svg_child_add(Edom_Tag *t, Edom_Tag *child)
 	if (esvg_type_is_renderable(type) || type == ESVG_A)
 	{
 		thiz->renderable_tree_changed = EINA_TRUE;
-		enesim_renderer_compound_layer_clear(thiz->compound);
-		enesim_renderer_compound_layer_add(thiz->compound, thiz->background);
 	}
 
 	e = esvg_element_ender_get(t);
@@ -686,8 +684,6 @@ static Eina_Bool _esvg_svg_child_remove(Edom_Tag *t, Edom_Tag *child)
 	if (esvg_type_is_renderable(type) || type == ESVG_A)
 	{
 		thiz->renderable_tree_changed = EINA_TRUE;
-		enesim_renderer_compound_layer_clear(thiz->compound);
-		enesim_renderer_compound_layer_add(thiz->compound, thiz->background);
 	}
 	esvg_element_topmost_set(child, NULL);
 
@@ -713,7 +709,7 @@ static Esvg_Element_Setup_Return _esvg_svg_setup(Edom_Tag *t,
 
 	/* check if we have changed or some element has changed */
 	changed = esvg_element_changed(t);
-	if (!changed && !thiz->elements_changed)
+	if (!changed && !thiz->elements_changed && !thiz->renderable_tree_changed)
 		return EINA_TRUE;
 
 	ctx->viewbox.min_x = 0;
@@ -723,6 +719,11 @@ static Esvg_Element_Setup_Return _esvg_svg_setup(Edom_Tag *t,
 
 	ctx->dpi_y = thiz->x_dpi;
 	ctx->dpi_x = thiz->y_dpi;
+	if (thiz->renderable_tree_changed)
+	{
+		enesim_renderer_compound_layer_clear(thiz->compound);
+		enesim_renderer_compound_layer_add(thiz->compound, thiz->background);
+	}
 	/* 1. if the attr or the context have changed, then we need to propagate on the whole tree again
 	 * that means that if for some reason some renderable direct child or the a tag has been added/removed
 	 * (renderable_tree_changed flag) on the setup process we also need to add the renderers
