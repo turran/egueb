@@ -125,11 +125,6 @@ typedef struct _Esvg_Animate_Transform
 	/* interface */
 	/* private */
 	Esvg_Animate_Transform_Data data;
-	Ender_Property *prop;
-	Ender_Element *parent_e;
-	Edom_Tag *parent_t;
-	/* needed when generating the values */
-	Eina_List *animations;
 } Esvg_Animate_Transform;
 
 typedef Eina_Bool (*Esvg_Animate_Transform_Etch_Setup)(
@@ -149,6 +144,17 @@ static Esvg_Animate_Transform * _esvg_animate_transform_get(Edom_Tag *t)
 	return thiz;
 }
 
+static void _esvg_animate_transform_value_simple_etch_data_to(void *d,
+		Etch_Data *data)
+{
+	Eina_List *l = d;
+	double *v;
+
+	v = eina_list_data_get(l);
+	data->type = ETCH_DOUBLE;
+	data->data.d = *v;
+}
+
 /* whenever the list values function is called, store the value
  * in our own list of values
  */
@@ -164,12 +170,13 @@ static Eina_Bool _esvg_animate_transform_values_cb(double v, void *data)
 	return EINA_TRUE;
 }
 
-static void * _esvg_animate_transform_value_get(const char *attr)
+static Eina_Bool _esvg_animate_transform_value_get(const char *attr, void **v)
 {	
-	Eina_List *v = NULL;
+	Eina_List *l = NULL;
 	esvg_number_list_string_from(attr, _esvg_animate_transform_values_cb,
-					&v);
-	return v;
+					&l);
+	*v = l;
+	return EINA_TRUE;
 }
 
 static void _esvg_animate_transform_value_free(void *v)
@@ -179,12 +186,146 @@ static void _esvg_animate_transform_value_free(void *v)
 	EINA_LIST_FREE(v, d)
 		free(d);
 }
+
+static void _esvg_animate_transform_generate(Edom_Tag *t,
+		Etch_Animation **animations,
+		Eina_List *values,
+		Eina_List *times,
+		Esvg_Animation_Context *actx,
+		Esvg_Animate_Base_Context *abctx)
+{
+	Eina_List *tt;
+	Eina_List *l;
+	Eina_List *v;
+
+	tt = times;
+
+	/* add the values to each animation */
+	EINA_LIST_FOREACH (values, l, v)
+	{
+		Eina_List *ll;
+		int64_t *time;
+		double *vv;
+		int acount = 0;
+
+		time = eina_list_data_get(tt);
+		tt = eina_list_next(tt);
+
+		EINA_LIST_FOREACH(v, ll, vv)
+		{
+			Etch_Animation *a;
+			Etch_Animation_Keyframe *k;
+			Etch_Data edata;
+
+			a = animations[acount];
+
+			edata.data.d = *vv;
+			edata.type = ETCH_DOUBLE;
+			esvg_animate_base_animation_add_keyframe(a, abctx, &edata, *time, NULL);
+			acount++;
+		}
+	}
+}
 /*----------------------------------------------------------------------------*
- *                         The Etch animator callbacks                        *
+ *                        The translate type descriptor                       *
  *----------------------------------------------------------------------------*/
-static void _esvg_animate_transform_rotate_angle_cb(Etch_Animation_Keyframe *k,
+static void _esvg_animate_transform_translate_tx_cb(Edom_Tag *t,
+		Ender_Element *e,
+		Ender_Property *p,
 		const Etch_Data *curr,
 		const Etch_Data *prev,
+		void *kdata,
+		void *data)
+{
+	Esvg_Animate_Transform *thiz = data;
+	Esvg_Animated_Transform v;
+	Enesim_Matrix m;
+
+	thiz->data.translate.tx = curr->data.d;
+	enesim_matrix_translate(&m, thiz->data.translate.tx, thiz->data.translate.ty);
+	v.base = m;
+
+	ender_element_property_value_set(e, p, &v, NULL);
+}
+
+static void _esvg_animate_transform_translate_ty_cb(Edom_Tag *t,
+		Ender_Element *e,
+		Ender_Property *p,
+		const Etch_Data *curr,
+		const Etch_Data *prev,
+		void *kdata,
+		void *data)
+{
+	Esvg_Animate_Transform *thiz = data;
+
+	thiz->data.translate.ty = curr->data.d;
+}
+
+static Eina_Bool _esvg_animate_transform_translate_generate(Edom_Tag *t,
+		Eina_List *values,
+		Eina_List *times,
+		Esvg_Animation_Context *actx,
+		Esvg_Animate_Base_Context *abctx)
+{
+	Esvg_Animate_Transform *thiz;
+	Eina_Bool simple = EINA_TRUE;
+	Eina_List *l;
+	Eina_List *v;
+
+	thiz = _esvg_animate_transform_get(t);
+	/* check if we should use the simple version */
+	EINA_LIST_FOREACH (values, l, v)
+	{
+		if (eina_list_count(v) > 1)
+		{
+			simple = EINA_FALSE;
+			break;
+		}
+	}
+	/* create the needed animations */
+	if (simple)
+	{
+		esvg_animate_base_animation_generate(t, values, times, actx, abctx, ETCH_DOUBLE,
+				_esvg_animate_transform_value_simple_etch_data_to,
+				_esvg_animate_transform_translate_tx_cb, thiz);
+	}
+	else
+	{
+		Etch_Animation *animations[2];
+		Etch_Animation *tx;
+		Etch_Animation *ty;
+
+		ty = esvg_animate_base_animation_empty_add(t, ETCH_DOUBLE, actx, abctx,
+				_esvg_animate_transform_translate_ty_cb, thiz);
+		tx = esvg_animate_base_animation_simple_add(t, ETCH_DOUBLE, actx, abctx,
+				_esvg_animate_transform_translate_tx_cb, thiz);
+		animations[0] = tx;
+		animations[1] = ty;
+		_esvg_animate_transform_generate(t, animations, values, times, actx, abctx);
+	}
+	return EINA_TRUE;
+}
+
+static Esvg_Animate_Base_Type_Descriptor _translate_descriptor = {
+	/* .value_get 		= */ _esvg_animate_transform_value_get,
+	/* .value_free 		= */ _esvg_animate_transform_value_free,
+	/* .animation_generate 	= */ _esvg_animate_transform_translate_generate,
+};
+
+/*----------------------------------------------------------------------------*
+ *                          The rotate type descriptor                        *
+ *----------------------------------------------------------------------------*/
+/* on the rotate case we need to add the variant of one or three arguments
+ * if only one, then there's no need to move the origin
+ * if three, then we need to use the origin and count the times that the
+ * animation callback is being called, on the third one, set the value
+ */
+static void _esvg_animate_transform_rotate_angle_cb(Edom_Tag *t,
+		Ender_Element *e,
+		Ender_Property *p,
+		const Etch_Data *curr,
+		const Etch_Data *prev,
+		void *kdata,
 		void *data)
 {
 	Esvg_Animate_Transform *thiz = data;
@@ -202,14 +343,15 @@ static void _esvg_animate_transform_rotate_angle_cb(Etch_Animation_Keyframe *k,
 	enesim_matrix_compose(&m1, &m2, &m1);
 	v.base = m1;
 
-	esvg_element_attribute_animate_set(thiz->parent_t, EINA_TRUE);
-	ender_element_property_value_set(thiz->parent_e, thiz->prop, &v, NULL);
-	esvg_element_attribute_animate_set(thiz->parent_t, EINA_FALSE);
+	ender_element_property_value_set(e, p, &v, NULL);
 }
 
-static void _esvg_animate_transform_rotate_cx_cb(Etch_Animation_Keyframe *k,
+static void _esvg_animate_transform_rotate_cx_cb(Edom_Tag *t,
+		Ender_Element *e,
+		Ender_Property *p,
 		const Etch_Data *curr,
 		const Etch_Data *prev,
+		void *kdata,
 		void *data)
 {
 	Esvg_Animate_Transform *thiz = data;
@@ -217,9 +359,12 @@ static void _esvg_animate_transform_rotate_cx_cb(Etch_Animation_Keyframe *k,
 	thiz->data.rotate.cx = curr->data.d;
 }
 
-static void _esvg_animate_transform_rotate_cy_cb(Etch_Animation_Keyframe *k,
+static void _esvg_animate_transform_rotate_cy_cb(Edom_Tag *t,
+		Ender_Element *e,
+		Ender_Property *p,
 		const Etch_Data *curr,
 		const Etch_Data *prev,
+		void *kdata,
 		void *data)
 {
 	Esvg_Animate_Transform *thiz = data;
@@ -227,37 +372,71 @@ static void _esvg_animate_transform_rotate_cy_cb(Etch_Animation_Keyframe *k,
 	thiz->data.rotate.cy = curr->data.d;
 }
 
-static void _esvg_animate_transform_translate_tx_cb(Etch_Animation_Keyframe *k,
-		const Etch_Data *curr,
-		const Etch_Data *prev,
-		void *data)
+static Eina_Bool _esvg_animate_transform_rotate_generate(Edom_Tag *t,
+		Eina_List *values,
+		Eina_List *times,
+		Esvg_Animation_Context *actx,
+		Esvg_Animate_Base_Context *abctx)
 {
-	Esvg_Animate_Transform *thiz = data;
-	Esvg_Animated_Transform v;
-	Enesim_Matrix m;
+	Esvg_Animate_Transform *thiz;
+	Eina_Bool simple = EINA_TRUE;
+	Eina_List *l;
+	Eina_List *v;
 
-	thiz->data.translate.tx = curr->data.d;
-	enesim_matrix_translate(&m, thiz->data.translate.tx, thiz->data.translate.ty);
-	v.base = m;
+	thiz = _esvg_animate_transform_get(t);
+	/* check if we should use the simple version */
+	EINA_LIST_FOREACH (values, l, v)
+	{
+		if (eina_list_count(v) > 1)
+		{
+			simple = EINA_FALSE;
+			break;
+		}
+	}
+	/* create the needed animations */
+	if (simple)
+	{
+		esvg_animate_base_animation_generate(t, values, times, actx, abctx, ETCH_DOUBLE,
+				_esvg_animate_transform_value_simple_etch_data_to,
+				_esvg_animate_transform_rotate_angle_cb, thiz);
+	}
+	else
+	{
+		Etch_Animation *animations[3];
+		Etch_Animation *angle;
+		Etch_Animation *cx;
+		Etch_Animation *cy;
 
-	esvg_element_attribute_animate_set(thiz->parent_t, EINA_TRUE);
-	ender_element_property_value_set(thiz->parent_e, thiz->prop, &v, NULL);
-	esvg_element_attribute_animate_set(thiz->parent_t, EINA_FALSE);
+		cx = esvg_animate_base_animation_empty_add(t, ETCH_DOUBLE, actx, abctx,
+				_esvg_animate_transform_rotate_cx_cb, thiz);
+		cy = esvg_animate_base_animation_empty_add(t, ETCH_DOUBLE, actx, abctx,
+				_esvg_animate_transform_rotate_cy_cb, thiz);
+		angle = esvg_animate_base_animation_simple_add(t, ETCH_DOUBLE, actx, abctx,
+				_esvg_animate_transform_rotate_angle_cb, thiz);
+		animations[0] = cx;
+		animations[1] = cy;
+		animations[2] = angle;
+		_esvg_animate_transform_generate(t, animations, values, times, actx, abctx);
+	}
+	return EINA_TRUE;
+
 }
 
-static void _esvg_animate_transform_translate_ty_cb(Etch_Animation_Keyframe *k,
+static Esvg_Animate_Base_Type_Descriptor _rotate_descriptor = {
+	/* .value_get 		= */ _esvg_animate_transform_value_get,
+	/* .value_free 		= */ _esvg_animate_transform_value_free,
+	/* .animation_generate 	= */ _esvg_animate_transform_rotate_generate,
+};
+
+/*----------------------------------------------------------------------------*
+ *                          The scale type descriptor                         *
+ *----------------------------------------------------------------------------*/
+static void _esvg_animate_transform_scale_simple_cb(Edom_Tag *t,
+		Ender_Element *e,
+		Ender_Property *p,
 		const Etch_Data *curr,
 		const Etch_Data *prev,
-		void *data)
-{
-	Esvg_Animate_Transform *thiz = data;
-
-	thiz->data.translate.ty = curr->data.d;
-}
-
-static void _esvg_animate_transform_scale_simple_cb(Etch_Animation_Keyframe *k,
-		const Etch_Data *curr,
-		const Etch_Data *prev,
+		void *kdata,
 		void *data)
 {
 	Esvg_Animate_Transform *thiz = data;
@@ -268,14 +447,15 @@ static void _esvg_animate_transform_scale_simple_cb(Etch_Animation_Keyframe *k,
 	enesim_matrix_scale(&m, thiz->data.scale.sx, thiz->data.scale.sx);
 	v.base = m;
 
-	esvg_element_attribute_animate_set(thiz->parent_t, EINA_TRUE);
-	ender_element_property_value_set(thiz->parent_e, thiz->prop, &v, NULL);
-	esvg_element_attribute_animate_set(thiz->parent_t, EINA_FALSE);
+	ender_element_property_value_set(e, p, &v, NULL);
 }
 
-static void _esvg_animate_transform_scale_full_sx_cb(Etch_Animation_Keyframe *k,
+static void _esvg_animate_transform_scale_full_sx_cb(Edom_Tag *t,
+		Ender_Element *e,
+		Ender_Property *p,
 		const Etch_Data *curr,
 		const Etch_Data *prev,
+		void *kdata,
 		void *data)
 {
 	Esvg_Animate_Transform *thiz = data;
@@ -286,14 +466,15 @@ static void _esvg_animate_transform_scale_full_sx_cb(Etch_Animation_Keyframe *k,
 	enesim_matrix_scale(&m, thiz->data.scale.sx, thiz->data.scale.sy);
 	v.base = m;
 
-	esvg_element_attribute_animate_set(thiz->parent_t, EINA_TRUE);
-	ender_element_property_value_set(thiz->parent_e, thiz->prop, &v, NULL);
-	esvg_element_attribute_animate_set(thiz->parent_t, EINA_FALSE);
+	ender_element_property_value_set(e, p, &v, NULL);
 }
 
-static void _esvg_animate_transform_scale_full_sy_cb(Etch_Animation_Keyframe *k,
+static void _esvg_animate_transform_scale_full_sy_cb(Edom_Tag *t,
+		Ender_Element *e,
+		Ender_Property *p,
 		const Etch_Data *curr,
 		const Etch_Data *prev,
+		void *kdata,
 		void *data)
 {
 	Esvg_Animate_Transform *thiz = data;
@@ -301,9 +482,67 @@ static void _esvg_animate_transform_scale_full_sy_cb(Etch_Animation_Keyframe *k,
 	thiz->data.scale.sy = curr->data.d;
 }
 
-static void _esvg_animate_transform_skewx_cb(Etch_Animation_Keyframe *k,
+static Eina_Bool _esvg_animate_transform_scale_generate(Edom_Tag *t,
+		Eina_List *values,
+		Eina_List *times,
+		Esvg_Animation_Context *actx,
+		Esvg_Animate_Base_Context *abctx)
+{
+	Esvg_Animate_Transform *thiz;
+	Eina_Bool simple = EINA_TRUE;
+	Eina_List *l;
+	Eina_List *v;
+
+	thiz = _esvg_animate_transform_get(t);
+	/* check if we should use the simple version */
+	EINA_LIST_FOREACH (values, l, v)
+	{
+		if (eina_list_count(v) > 1)
+		{
+			simple = EINA_FALSE;
+			break;
+		}
+	}
+	/* create the needed animations */
+	if (simple)
+	{
+		esvg_animate_base_animation_generate(t, values, times, actx, abctx, ETCH_DOUBLE,
+				_esvg_animate_transform_value_simple_etch_data_to,
+				_esvg_animate_transform_scale_simple_cb, thiz);
+	}
+	else
+	{
+		Etch_Animation *animations[2];
+		Etch_Animation *sx;
+		Etch_Animation *sy;
+
+		sy = esvg_animate_base_animation_empty_add(t, ETCH_DOUBLE, actx, abctx,
+				_esvg_animate_transform_scale_full_sy_cb, thiz);
+		sx = esvg_animate_base_animation_simple_add(t, ETCH_DOUBLE, actx, abctx,
+				_esvg_animate_transform_scale_full_sx_cb, thiz);
+		animations[0] = sx;
+		animations[1] = sy;
+		_esvg_animate_transform_generate(t, animations, values, times, actx, abctx);
+	}
+	return EINA_TRUE;
+
+}
+
+static Esvg_Animate_Base_Type_Descriptor _scale_descriptor = {
+	/* .value_get 		= */ _esvg_animate_transform_value_get,
+	/* .value_free 		= */ _esvg_animate_transform_value_free,
+	/* .animation_generate 	= */ _esvg_animate_transform_scale_generate,
+};
+
+/*----------------------------------------------------------------------------*
+ *                          The skewx type descriptor                         *
+ *----------------------------------------------------------------------------*/
+static void _esvg_animate_transform_skewx_cb(Edom_Tag *t,
+		Ender_Element *e,
+		Ender_Property *p,
 		const Etch_Data *curr,
 		const Etch_Data *prev,
+		void *kdata,
 		void *data)
 {
 	Esvg_Animate_Transform *thiz = data;
@@ -315,14 +554,38 @@ static void _esvg_animate_transform_skewx_cb(Etch_Animation_Keyframe *k,
 	enesim_matrix_values_set(&m, 1, tan(angle * M_PI / 180.0), 0, 0, 1, 0, 0, 0, 1);
 	v.base = m;
 
-	esvg_element_attribute_animate_set(thiz->parent_t, EINA_TRUE);
-	ender_element_property_value_set(thiz->parent_e, thiz->prop, &v, NULL);
-	esvg_element_attribute_animate_set(thiz->parent_t, EINA_FALSE);
+	ender_element_property_value_set(e, p, &v, NULL);
 }
 
-static void _esvg_animate_transform_skewy_cb(Etch_Animation_Keyframe *k,
+static Eina_Bool _esvg_animate_transform_skewx_generate(Edom_Tag *t,
+		Eina_List *values,
+		Eina_List *times,
+		Esvg_Animation_Context *actx,
+		Esvg_Animate_Base_Context *abctx)
+{
+	Esvg_Animate_Transform *thiz;
+
+	thiz = _esvg_animate_transform_get(t);
+	esvg_animate_base_animation_generate(t, values, times, actx, abctx, ETCH_DOUBLE,
+			_esvg_animate_transform_value_simple_etch_data_to,
+			_esvg_animate_transform_skewx_cb, thiz);
+}
+
+static Esvg_Animate_Base_Type_Descriptor _skewx_descriptor = {
+	/* .value_get 		= */ _esvg_animate_transform_value_get,
+	/* .value_free 		= */ _esvg_animate_transform_value_free,
+	/* .animation_generate 	= */ _esvg_animate_transform_skewx_generate,
+};
+
+/*----------------------------------------------------------------------------*
+ *                          The skewy type descriptor                         *
+ *----------------------------------------------------------------------------*/
+static void _esvg_animate_transform_skewy_cb(Edom_Tag *t,
+		Ender_Element *e,
+		Ender_Property *p,
 		const Etch_Data *curr,
 		const Etch_Data *prev,
+		void *kdata,
 		void *data)
 {
 	Esvg_Animate_Transform *thiz = data;
@@ -334,285 +597,28 @@ static void _esvg_animate_transform_skewy_cb(Etch_Animation_Keyframe *k,
 	enesim_matrix_values_set(&m, 1, 0, 0, tan(angle * M_PI / 180.0), 1, 0, 0, 0, 1);
 	v.base = m;
 
-	esvg_element_attribute_animate_set(thiz->parent_t, EINA_TRUE);
-	ender_element_property_value_set(thiz->parent_e, thiz->prop, &v, NULL);
-	esvg_element_attribute_animate_set(thiz->parent_t, EINA_FALSE);
-}
-/*----------------------------------------------------------------------------*
- *                             The setup variants                             *
- *----------------------------------------------------------------------------*/
-static void _esvg_animate_transform_set_time_and_value(
-		Esvg_Animate_Transform *thiz,
-		Eina_List *times,
-		Eina_List *values)
-{
-	Eina_List *tt;
-	Eina_List *aa;
-	Etch_Animation *a;
-	Eina_List *l;
-	Eina_List *v;
-
-	tt = times;
-
-	/* add the values to each animation */
-	EINA_LIST_FOREACH (values, l, v)
-	{
-		Eina_List *ll;
-		int64_t *time;
-		double *vv;
-
-		time = eina_list_data_get(tt);
-		tt = eina_list_next(tt);
-
-		aa = thiz->animations;
-		EINA_LIST_FOREACH(v, ll, vv)
-		{
-			Etch_Animation_Keyframe *k;
-			Etch_Data edata;
-
-			a = eina_list_data_get(aa);
-			aa = eina_list_next(aa);
-
-			k = etch_animation_keyframe_add(a);
-			edata.data.d = *vv;
-			edata.type = ETCH_DOUBLE;
-			etch_animation_keyframe_type_set(k, ETCH_ANIMATION_LINEAR);
-			etch_animation_keyframe_value_set(k, &edata);
-			etch_animation_keyframe_time_set(k, *time);
-		}
-	}
-	/* enable each animation */
-	EINA_LIST_FOREACH (thiz->animations, l, a)
-	{
-		etch_animation_enable(a);
-	}
+	ender_element_property_value_set(e, p, &v, NULL);
 }
 
-static void _esvg_animate_transform_simple(Esvg_Animate_Transform *thiz,
-		Etch *e,
-		Eina_List *times,
+static Eina_Bool _esvg_animate_transform_skewy_generate(Edom_Tag *t,
 		Eina_List *values,
-		Etch_Animation_Callback cb)
+		Eina_List *times,
+		Esvg_Animation_Context *actx,
+		Esvg_Animate_Base_Context *abctx)
 {
-	Etch_Animation *a;
+	Esvg_Animate_Transform *thiz;
 
-	a = etch_animation_add(e, ETCH_DOUBLE, cb,
-				NULL, NULL, thiz);
-	thiz->animations = eina_list_append(thiz->animations, a);
-	_esvg_animate_transform_set_time_and_value(thiz, times, values);
+	thiz = _esvg_animate_transform_get(t);
+	esvg_animate_base_animation_generate(t, values, times, actx, abctx, ETCH_DOUBLE,
+			_esvg_animate_transform_value_simple_etch_data_to,
+			_esvg_animate_transform_skewy_cb, thiz);
 }
 
-/* on the rotate case we need to add the variant of one or three arguments
- * if only one, then there's no need to move the origin
- * if three, then we need to use the origin and count the times that the
- * animation callback is being called, on the third one, set the value
- */
-static Eina_Bool _esvg_animate_transform_rotate(Esvg_Animate_Transform *thiz, Etch *e,
-		Eina_List *values, Eina_List *times)
-{
-	Eina_Bool simple = EINA_TRUE;
-	Eina_List *l;
-	Eina_List *v;
-
-	/* check if we should use the simple version */
-	EINA_LIST_FOREACH (values, l, v)
-	{
-		if (eina_list_count(v) > 1)
-		{
-			simple = EINA_FALSE;
-			break;
-		}
-	}
-	/* create the needed animations */
-	if (simple)
-	{
-		_esvg_animate_transform_simple(thiz, e, times, values,
-				_esvg_animate_transform_rotate_angle_cb);
-	}
-	else
-	{
-		Etch_Animation *angle;
-		Etch_Animation *cx;
-		Etch_Animation *cy;
-
-		angle = etch_animation_add(e, ETCH_DOUBLE, _esvg_animate_transform_rotate_angle_cb,
-					NULL, NULL, thiz);
-		thiz->animations = eina_list_append(thiz->animations, angle);
-		/* generate three animations per each value
-		 * one for the angle, and two for the origin
-		 */
-		cx = etch_animation_add(e, ETCH_DOUBLE, _esvg_animate_transform_rotate_cx_cb,
-					NULL, NULL, thiz);
-		thiz->animations = eina_list_append(thiz->animations, cx);
-		cy = etch_animation_add(e, ETCH_DOUBLE, _esvg_animate_transform_rotate_cy_cb,
-					NULL, NULL, thiz);
-		thiz->animations = eina_list_append(thiz->animations, cy);
-
-		_esvg_animate_transform_set_time_and_value(thiz, times, values);
-	}
-	return EINA_TRUE;
-}
-
-static Eina_Bool _esvg_animate_transform_translate(Esvg_Animate_Transform *thiz, Etch *e,
-		Eina_List *values, Eina_List *times)
-{
-	Eina_Bool simple = EINA_TRUE;
-	Eina_List *l;
-	Eina_List *v;
-
-	/* check if we should use the simple version */
-	EINA_LIST_FOREACH (values, l, v)
-	{
-		if (eina_list_count(v) > 1)
-		{
-			simple = EINA_FALSE;
-			break;
-		}
-	}
-	/* create the needed animations */
-	if (simple)
-	{
-		_esvg_animate_transform_simple(thiz, e, times, values,
-				_esvg_animate_transform_translate_tx_cb);
-	}
-	else
-	{
-		Etch_Animation *tx;
-		Etch_Animation *ty;
-
-		/* generate three animations per each value
-		 * one for the tx, and two for the origin
-		 */
-		tx = etch_animation_add(e, ETCH_DOUBLE, _esvg_animate_transform_translate_tx_cb,
-					NULL, NULL, thiz);
-		thiz->animations = eina_list_append(thiz->animations, tx);
-		ty = etch_animation_add(e, ETCH_DOUBLE, _esvg_animate_transform_translate_ty_cb,
-					NULL, NULL, thiz);
-		thiz->animations = eina_list_append(thiz->animations, ty);
-		_esvg_animate_transform_set_time_and_value(thiz, times, values);
-	}
-	return EINA_TRUE;
-
-}
-
-static Eina_Bool _esvg_animate_transform_scale(Esvg_Animate_Transform *thiz, Etch *e,
-		Eina_List *values, Eina_List *times)
-{
-	Eina_Bool simple = EINA_TRUE;
-	Eina_List *l;
-	Eina_List *v;
-
-	/* check if we should use the simple version */
-	EINA_LIST_FOREACH (values, l, v)
-	{
-		if (eina_list_count(v) > 1)
-		{
-			simple = EINA_FALSE;
-			break;
-		}
-	}
-	/* create the needed animations */
-	if (simple)
-	{
-		_esvg_animate_transform_simple(thiz, e, times, values,
-				_esvg_animate_transform_scale_simple_cb);
-	}
-	else
-	{
-		Etch_Animation *sx;
-		Etch_Animation *sy;
-
-		/* generate three animations per each value
-		 * one for the sx, and two for the origin
-		 */
-		sx = etch_animation_add(e, ETCH_DOUBLE, _esvg_animate_transform_scale_full_sx_cb,
-					NULL, NULL, thiz);
-		thiz->animations = eina_list_append(thiz->animations, sx);
-		sy = etch_animation_add(e, ETCH_DOUBLE, _esvg_animate_transform_scale_full_sy_cb,
-					NULL, NULL, thiz);
-		thiz->animations = eina_list_append(thiz->animations, sy);
-		_esvg_animate_transform_set_time_and_value(thiz, times, values);
-	}
-	return EINA_TRUE;
-}
-
-static Eina_Bool _esvg_animate_transform_skewx(Esvg_Animate_Transform *thiz, Etch *e,
-		Eina_List *values, Eina_List *times)
-{
-	Etch_Animation *skewx;
-
-	skewx = etch_animation_add(e, ETCH_DOUBLE, _esvg_animate_transform_skewx_cb,
-				NULL, NULL, thiz);
-	thiz->animations = eina_list_append(thiz->animations, skewx);
-	_esvg_animate_transform_set_time_and_value(thiz, times, values);
-
-	return EINA_TRUE;
-}
-
-static Eina_Bool _esvg_animate_transform_skewy(Esvg_Animate_Transform *thiz, Etch *e,
-		Eina_List *values, Eina_List *times)
-{
-	Etch_Animation *skewy;
-
-	skewy = etch_animation_add(e, ETCH_DOUBLE, _esvg_animate_transform_skewy_cb,
-				NULL, NULL, thiz);
-	thiz->animations = eina_list_append(thiz->animations, skewy);
-	_esvg_animate_transform_set_time_and_value(thiz, times, values);
-
-	return EINA_FALSE;
-}
-
-#if 0
-static Eina_Bool _esvg_animate_transform_container_etch_to(Esvg_Animate_Transform *thiz,
-		Etch *etch,
-		Ender_Property *p,
-		Esvg_Animation_Context *ac,
-		Esvg_Animate_Base_Context *c)
-{
-	Esvg_Animate_Transform_Etch_Setup setups[ESVG_ANIMATE_TRANSFORM_TYPES]  = {
-		_esvg_animate_transform_translate,
-		_esvg_animate_transform_scale,
-		_esvg_animate_transform_rotate,
-		_esvg_animate_transform_skewx,
-		_esvg_animate_transform_skewy
-	};
-	Esvg_Animate_Transform_Etch_Setup setup;
-	Ender_Container *ec;
-	Etch_Animation *anim;
-	Eina_List *values = NULL;
-	Eina_List *times = NULL;
-	Eina_List *l;
-	Eina_Bool has_from;
-	const char *name;
-
-	ec = ender_property_container_get(p);
-	name = ender_container_registered_name_get(ec);
-
-	if (strcmp(name, "esvg_animated_transform"))
-		return EINA_FALSE;
-	/* get the type that we will animate: rotate, scale, etc */
-	setup = setups[thiz->type];
-
-	esvg_animate_base_values_generate(c, _esvg_animate_transform_value_get,
-			&values, &has_from);
-	esvg_animate_base_times_generate(ac, c, values, &times);
-
-	if (values && times)
-	{
-		setup(thiz, etch, values, times);
-	}
-	/* for each animation, set the repeat times */
-	EINA_LIST_FOREACH (thiz->animations, l, anim)
-	{
-		etch_animation_repeat_set(anim, ac->timing.repeat_count);
-	}
-
-	esvg_animate_base_values_free(values, _esvg_animate_transform_value_free);
-	esvg_animate_base_times_free(times);
-
-	return EINA_TRUE;
-}
-#endif
+static Esvg_Animate_Base_Type_Descriptor _skewy_descriptor = {
+	/* .value_get 		= */ _esvg_animate_transform_value_get,
+	/* .value_free 		= */ _esvg_animate_transform_value_free,
+	/* .animation_generate 	= */ _esvg_animate_transform_skewy_generate,
+};
 /*----------------------------------------------------------------------------*
  *                         The Esvg Element interface                         *
  *----------------------------------------------------------------------------*/
@@ -690,10 +696,38 @@ done:
 static Eina_Bool _esvg_animate_transform_type_descriptor_get(Edom_Tag *t,
 		const char *name, Esvg_Animate_Base_Type_Descriptor **d)
 {
+	Esvg_Animate_Transform *thiz;
+
 	/* based on the property name get the correct descriptor */
 	if (strcmp(name, "esvg_animated_transform"))
 		return EINA_FALSE;
-	/* TODO check the type and use the correct generator */
+	/* check the type and use the correct generator */
+	thiz = _esvg_animate_transform_get(t);
+	switch (thiz->type)
+	{
+		case ESVG_ANIMATE_TRANSFORM_TYPE_TRANSLATE:
+		*d = &_translate_descriptor;
+		break;
+
+		case ESVG_ANIMATE_TRANSFORM_TYPE_SCALE:
+		*d = &_scale_descriptor;
+		break;
+
+		case ESVG_ANIMATE_TRANSFORM_TYPE_ROTATE:
+		*d = &_rotate_descriptor;
+		break;
+
+		case ESVG_ANIMATE_TRANSFORM_TYPE_SKEWX:
+		*d = &_skewx_descriptor;
+		break;
+
+		case ESVG_ANIMATE_TRANSFORM_TYPE_SKEWY:
+		*d = &_skewy_descriptor;
+		break;
+
+		default:
+		return EINA_FALSE;
+	}
 	return EINA_TRUE;
 }
 

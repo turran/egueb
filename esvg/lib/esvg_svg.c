@@ -694,29 +694,6 @@ static Eina_Bool _esvg_svg_child_remove(Edom_Tag *t, Edom_Tag *child)
 	return EINA_TRUE;
 }
 
-#if 0
-static Esvg_Element_Setup_Return _esvg_svg_propagate(Edom_Tag *t,
-		Esvg_Context *c,
-		Esvg_Element_Context *ctx,
-		Esvg_Attribute_Presentation *attr,
-		Enesim_Error **error)
-{
-	Esvg_Svg *thiz;
-
-	thiz = _esvg_svg_get(t);
-	if (!parent_context)
-	{
-		context->viewbox.min_x = 0;
-		context->viewbox.min_y = 0;
-		context->viewbox.width = thiz->container_width;
-		context->viewbox.height = thiz->container_height;
-
-		context->dpi_y = thiz->x_dpi;
-		context->dpi_x = thiz->y_dpi;
-	}
-}
-#endif
-
 static Esvg_Element_Setup_Return _esvg_svg_setup(Edom_Tag *t,
 		Esvg_Context *c,
 		Esvg_Element_Context *ctx,
@@ -739,6 +716,13 @@ static Esvg_Element_Setup_Return _esvg_svg_setup(Edom_Tag *t,
 	if (!changed && !thiz->elements_changed)
 		return EINA_TRUE;
 
+	ctx->viewbox.min_x = 0;
+	ctx->viewbox.min_y = 0;
+	ctx->viewbox.width = thiz->container_width;
+	ctx->viewbox.height = thiz->container_height;
+
+	ctx->dpi_y = thiz->x_dpi;
+	ctx->dpi_x = thiz->y_dpi;
 	/* 1. if the attr or the context have changed, then we need to propagate on the whole tree again
 	 * that means that if for some reason some renderable direct child or the a tag has been added/removed
 	 * (renderable_tree_changed flag) on the setup process we also need to add the renderers

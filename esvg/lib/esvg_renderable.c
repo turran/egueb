@@ -320,14 +320,15 @@ static Esvg_Element_Setup_Return _esvg_renderable_setup(Edom_Tag *t,
 	Esvg_Element_Setup_Return ret;
 
 	thiz = _esvg_renderable_get(t);
+	if (thiz->descriptor.setup)
+	{
+		if (!thiz->descriptor.setup(t, c, context, attr, error))
+			return ESVG_SETUP_FAILED;
+	}
 	ret = _esvg_renderable_propagate(thiz, t, c, parent_context, context, attr, error);
 	if (ret != ESVG_SETUP_OK)
 		return ret;
 
-	if (thiz->descriptor.setup)
-	{
-		return thiz->descriptor.setup(t, c, context, attr, error);
-	}
 	return ESVG_SETUP_OK;
 }
 /*============================================================================*

@@ -60,6 +60,10 @@ Etch_Animation * esvg_animate_base_animation_simple_add(Edom_Tag *t, Etch_Data_T
 		Esvg_Animation_Context *actx,
 		Esvg_Animate_Base_Context *abctx,
 		Esvg_Animate_Base_Animation_Callback cb, void *data);
+Etch_Animation * esvg_animate_base_animation_empty_add(Edom_Tag *t, Etch_Data_Type dt,
+		Esvg_Animation_Context *actx,
+		Esvg_Animate_Base_Context *abctx,
+		Esvg_Animate_Base_Animation_Callback cb, void *data);
 void esvg_animate_base_animation_add_keyframe(Etch_Animation *a,
 	Esvg_Animate_Base_Context *c,
 	Etch_Data *etch_data,

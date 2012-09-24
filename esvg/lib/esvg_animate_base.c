@@ -135,7 +135,7 @@ static void _esvg_animate_base_animation_simple_cb(Etch_Animation_Keyframe *k,
 	esvg_element_attribute_type_set(thiz->parent_t, old_type);
 }
 
-static void _esvg_animate_base_animation_full_cb(Etch_Animation_Keyframe *k,
+static void _esvg_animate_base_animation_empty_cb(Etch_Animation_Keyframe *k,
 		const Etch_Data *curr,
 		const Etch_Data *prev,
 		void *user_data)
@@ -693,6 +693,11 @@ Etch_Animation_Type esvg_animate_base_calc_mode_etch_to(Esvg_Calc_Mode c)
 	}
 }
 
+/* the simple version of an animation add should set the animation type
+ * the attribute animatable and then just call the value set function
+ * pointer with the etch value as parameter
+ */
+
 Etch_Animation * esvg_animate_base_animation_simple_add(Edom_Tag *t, Etch_Data_Type dt,
 		Esvg_Animation_Context *actx,
 		Esvg_Animate_Base_Context *abctx,
@@ -710,10 +715,22 @@ Etch_Animation * esvg_animate_base_animation_simple_add(Edom_Tag *t, Etch_Data_T
 	return animation->a;
 }
 
-/* the simple version of an animation add should set the animation type
- * the attribute animatable and then just call the value set function
- * pointer with the etch value as parameter
- */
+Etch_Animation * esvg_animate_base_animation_empty_add(Edom_Tag *t, Etch_Data_Type dt,
+		Esvg_Animation_Context *actx,
+		Esvg_Animate_Base_Context *abctx,
+		Esvg_Animate_Base_Animation_Callback cb, void *data)
+{
+	Esvg_Animate_Base *thiz;
+	Esvg_Animate_Base_Animation *animation;
+
+	thiz = _esvg_animate_base_get(t);
+	animation = _esvg_animate_base_animation_new(thiz,
+			thiz->etch, dt, _esvg_animate_base_animation_empty_cb,
+			actx, abctx, cb, data);
+	thiz->animations = eina_list_append(thiz->animations, animation);
+
+	return animation->a;
+}
 
 void esvg_animate_base_animation_add_keyframe(Etch_Animation *a,
 	Esvg_Animate_Base_Context *c,

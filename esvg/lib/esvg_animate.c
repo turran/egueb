@@ -65,7 +65,7 @@ static void * _esvg_animate_value_get(const char *attr)
  *                        The different type descriptors                      *
  *----------------------------------------------------------------------------*/
 /*----------------------------------------------------------------------------*
- *                          The Esvg_Length callbacks                         *
+ *                       The Esvg_Length type descriptor                      *
  *----------------------------------------------------------------------------*/
 static void _esvg_animate_length_cb(Edom_Tag *t,
 		Ender_Element *e,
@@ -120,7 +120,7 @@ static Esvg_Animate_Base_Type_Descriptor _length_descriptor = {
 	/* .animation_generate 	= */ _esvg_animate_length_animation_generate,
 };
 /*----------------------------------------------------------------------------*
- *                            The double callbacks                            *
+ *                        The double type descriptor                          *
  *----------------------------------------------------------------------------*/
 static void _esvg_animate_number_cb(Edom_Tag *t,
 		Ender_Element *e,
@@ -172,7 +172,7 @@ static Esvg_Animate_Base_Type_Descriptor _number_descriptor = {
 	/* .animation_generate 	= */ _esvg_animate_number_animation_generate,
 };
 /*----------------------------------------------------------------------------*
- *                            The string callbacks                            *
+ *                      The string type descriptor                            *
  *----------------------------------------------------------------------------*/
 static void _esvg_animate_string_cb(Edom_Tag *t,
 		Ender_Element *e,
@@ -223,7 +223,7 @@ static Esvg_Animate_Base_Type_Descriptor _string_descriptor = {
 	/* .animation_generate 	= */ _esvg_animate_string_animation_generate,
 };
 /*----------------------------------------------------------------------------*
- *                      The path command callbacks                            *
+ *                   The path command type descriptor                         *
  *----------------------------------------------------------------------------*/
 static Eina_Bool _esvg_animate_path_command_get(const char *attr, void **value)
 {
