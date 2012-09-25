@@ -2086,3 +2086,35 @@ EAPI Eina_Bool esvg_animate_key_spline_string_from(Esvg_Animate_Key_Spline *spli
 	return EINA_TRUE;
 }
 
+EAPI Eina_Bool esvg_animation_event_string_from(Esvg_Animation_Event *e, const char *s)
+{
+	/* simplest cases */
+	if (!strcmp("s", "indefinite"))
+	{
+
+	}
+	else if (!strncmp(s, "accessKey", 9))
+	{
+
+	}
+	else if (!strncmp(s, "wallclock", 9))
+	{
+
+	}
+	else
+	{
+		/* check for the sign */
+		/*
+		 * TODO parse the other cases
+		offset-value ::= ( S? "+" | "-" S? )? ( Clock-value )
+		syncbase-value ::= ( Id-value "." ( "begin" | "end" ) ) ( S? ("+"|"-") S? Clock-value )?
+		event-value ::= ( Id-value "." )? ( event-ref ) ( S? ("+"|"-") S? Clock-value )?
+		repeat-value ::= ( Id-value "." )? "repeat(" integer ")" ( S? ("+"|"-") S? Clock-value )?
+		*/
+	}
+}
+
+EAPI void esvg_animation_event_offset_set(Esvg_Animation_Event *a, int64_t offset)
+{
+
+}

@@ -438,6 +438,28 @@ typedef struct _Esvg_Animate_Key_Spline
 	double y1;
 } Esvg_Animate_Key_Spline;
 
+typedef enum _Esvg_Animation_Event_Type
+{
+	ESVG_ANIMATION_EVENT_OFFSET,
+	ESVG_ANIMATION_EVENT_SYNCBASE,
+	ESVG_ANIMATION_EVENT_EVENT,
+	ESVG_ANIMATION_EVENT_REPEAT,
+	ESVG_ANIMATION_EVENT_ACCESS_KEY,
+	ESVG_ANIMATION_EVENT_WALLCLOCK,
+	ESVG_ANIMATION_EVENT_INDEFINITE,
+	ESVG_ANIMATION_EVENT_TYPES,
+} Esvg_Animation_Event_Type;
+
+typedef struct _Esvg_Animation_Event
+{
+	Esvg_Animation_Event_Type type;
+	char *id;
+	char *event;
+	int repeat;
+	int key;
+	int64_t offset;
+} Esvg_Animation_Event;
+
 typedef void (*Esvg_Uri_Get)(const char *uri, const char *fragment, void *data);
 
 typedef struct _Esvg_Uri_Descriptor
