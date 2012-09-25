@@ -34,6 +34,8 @@
 struct _Esvg_Input
 {
 	Esvg_Input_Descriptor *descriptor;
+	int downx;
+	int downy;
 	int x;
 	int y;
 	void *data;
@@ -60,11 +62,41 @@ void esvg_input_free(Esvg_Input *thiz)
 
 void esvg_input_feed_mouse_down(Esvg_Input *thiz, int button)
 {
+	Esvg_Event_Mouse ev;
+	double rel_x, rel_y;
 
+	if (!thiz->over)
+		return;
+	/* store the coordinates where the mouse buton down was done to
+	 * trigger the click later
+	 */
+	thiz->grabbed = thiz->over;
+	thiz->downx = thiz->x;
+	thiz->downy = thiz->y;
+	
+	printf("mouse down! on %s\n", esvg_element_name_get(thiz->over));
+	ender_event_dispatch(thiz->over, "mousedown", &ev);
 }
 
 void esvg_input_feed_mouse_up(Esvg_Input *thiz, int button)
 {
+	Esvg_Event_Mouse ev;
+
+	/* send the event to the grabbed object */
+	if (!thiz->grabbed)
+		return;
+
+	printf("mouse up! on %s\n", esvg_element_name_get(thiz->grabbed));
+	ender_event_dispatch(thiz->grabbed, "mouseup", &ev);
+	/* in case the down coordinates are the same as the current coordinates
+	 * send a click event
+	 */
+	if ((fabs(thiz->downx - thiz->x) < 2) &&
+			(fabs(thiz->downy - thiz->y) < 2))
+	{
+		ender_event_dispatch(thiz->grabbed, "mouseclick", &ev);
+	}
+	thiz->grabbed = NULL;
 
 }
 

@@ -54,6 +54,24 @@ static void _esvg_renderable_container_mouse_move(Ender_Element *e,
 	esvg_input_feed_mouse_move(thiz->input, ev->screen_x, ev->screen_y);
 }
 
+static void _esvg_renderable_container_mouse_down(Ender_Element *e,
+		const char *event_name, void *event_data, void *data)
+{
+	Esvg_Renderable_Container *thiz = data;
+	Esvg_Event_Mouse *ev = event_data;
+
+	esvg_input_feed_mouse_down(thiz->input, 0);
+}
+
+static void _esvg_renderable_container_mouse_up(Ender_Element *e,
+		const char *event_name, void *event_data, void *data)
+{
+	Esvg_Renderable_Container *thiz = data;
+	Esvg_Event_Mouse *ev = event_data;
+
+	esvg_input_feed_mouse_up(thiz->input, 0);
+}
+
 static Ender_Element * _esvg_renderable_container_element_at(void *data, int x, int y)
 {
 	Esvg_Renderable_Container *thiz = data;
@@ -70,7 +88,7 @@ static Ender_Element * _esvg_renderable_container_element_at(void *data, int x, 
 
 		esvg_renderable_internal_renderer_get(t, &r);
 		enesim_renderer_destination_boundings(r, &bounds, 0, 0);
-		printf("%s: %d %d - %d %d %d %d\n", edom_tag_name_get(t), x, y, bounds.x, bounds.y, bounds.w, bounds.h);
+		//printf("%s: %d %d - %d %d %d %d\n", edom_tag_name_get(t), x, y, bounds.x, bounds.y, bounds.w, bounds.h);
 		if (!eina_rectangles_intersect(&bounds, &in))
 			continue;
 
@@ -92,6 +110,8 @@ Esvg_Renderable_Container * esvg_renderable_container_new(Ender_Element *e)
 
 	thiz = calloc(1, sizeof(Esvg_Renderable_Container));
 	ender_event_listener_add(e, "mousemove", _esvg_renderable_container_mouse_move, thiz);
+	ender_event_listener_add(e, "mousedown", _esvg_renderable_container_mouse_down, thiz);
+	ender_event_listener_add(e, "mouseup", _esvg_renderable_container_mouse_up, thiz);
 	/* TODO handle mouse down and mouse up */
 	thiz->e = e;
 	thiz->input = esvg_input_new(&_renderable_container_input_descriptor, thiz);

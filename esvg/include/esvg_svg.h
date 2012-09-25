@@ -33,8 +33,8 @@ EAPI double esvg_svg_time_get(Ender_Element *e);
 EAPI void esvg_svg_time_set(Ender_Element *e, double secs);
 
 EAPI void esvg_svg_feed_mouse_move(Ender_Element *e, int x, int y);
-EAPI void esvg_svg_feed_mouse_down(Ender_Element *e);
-EAPI void esvg_svg_feed_mouse_up(Ender_Element *e);
+EAPI void esvg_svg_feed_mouse_down(Ender_Element *e, int button);
+EAPI void esvg_svg_feed_mouse_up(Ender_Element *e, int button);
 
 EAPI Eina_List * esvg_svg_intersection_list_get(Ender_Element *e, Enesim_Rectangle *rect);
 

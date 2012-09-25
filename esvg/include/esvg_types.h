@@ -146,7 +146,7 @@ typedef struct _Esvg_Length
 {
 	double value;
 	Esvg_Unit_Length unit;
-} Esvg_Length;
+} __attribute__((packed)) Esvg_Length;
 
 typedef Esvg_Length Esvg_Coord;
 
@@ -228,13 +228,16 @@ typedef enum _Esvg_Paint_Type
 	ESVG_PAINT_TYPES,
 } Esvg_Paint_Type;
 
+typedef union _Esvg_Paint_Value
+{
+	Esvg_Color color;
+	char *paint_server;
+} __attribute__((packed)) Esvg_Paint_Value;
+
 typedef struct _Esvg_Paint
 {
 	Esvg_Paint_Type type;
-	union {
-		Esvg_Color color;
-		char *paint_server;
-	} value;
+	Esvg_Paint_Value value;
 } Esvg_Paint;
 
 typedef struct _Esvg_Animated_Paint

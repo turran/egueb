@@ -117,6 +117,7 @@ typedef struct _Esvg_Svg
 	Eina_Bool paused;
 	/* input */
 	Esvg_Renderable_Container *container;
+	Esvg_Input *input;
 	/* damages */
 	Eina_Tiler *tiler;
 	int tw;
@@ -597,6 +598,31 @@ static Eina_Bool _esvg_svg_child_deinitialize(Edom_Tag *t, Edom_Tag *child_t, vo
 	return EINA_TRUE;
 }
 /*----------------------------------------------------------------------------*
+ *                           The Esvg Input interface                         *
+ *----------------------------------------------------------------------------*/
+static Ender_Element * _esvg_svg_element_at(void *data, int x, int y)
+{
+	Edom_Tag *t = data;
+	Esvg_Svg *thiz;
+	Eina_Rectangle in;
+	Eina_Rectangle bounds;
+	Ender_Element *e;
+
+	thiz = _esvg_svg_get(t);
+	eina_rectangle_coords_from(&in, x, y, 1, 1);
+	enesim_renderer_destination_boundings(thiz->clipper, &bounds, 0, 0);
+	//printf("%s: %d %d - %d %d %d %d\n", edom_tag_name_get(t), x, y, bounds.x, bounds.y, bounds.w, bounds.h);
+	if (!eina_rectangles_intersect(&bounds, &in))
+		return NULL;
+
+	e = esvg_element_ender_get(t);
+	return e;
+}
+
+static Esvg_Input_Descriptor _esvg_svg_input_descriptor = {
+	/* .element_at 	= */ _esvg_svg_element_at,
+};
+/*----------------------------------------------------------------------------*
  *                       The Esvg Renderable interface                        *
  *----------------------------------------------------------------------------*/
 static void _esvg_svg_initialize(Ender_Element *e)
@@ -610,6 +636,8 @@ static void _esvg_svg_initialize(Ender_Element *e)
 	thiz->container = esvg_renderable_container_new(e);
 	/* called whenever the topmost changes */
 	ender_event_listener_add(e, "TopmostChanged", _esvg_svg_topmost_changed_cb, NULL);
+	/* own input system */
+	thiz->input = esvg_input_new(&_esvg_svg_input_descriptor, t);
 }
 
 static Eina_Bool _esvg_svg_attribute_set(Ender_Element *e, const char *key, const char *value)
@@ -885,7 +913,6 @@ static Edom_Tag * _esvg_svg_new(void)
 	/* the animation system */
 	thiz->etch = etch_new();
 	etch_timer_fps_set(thiz->etch, 30);
-
 	t = esvg_renderable_new(&_descriptor, ESVG_SVG, thiz);
 
 	return t;
@@ -1467,30 +1494,40 @@ EAPI void esvg_svg_time_set(Ender_Element *e, double secs)
  */
 EAPI void esvg_svg_feed_mouse_move(Ender_Element *e, int x, int y)
 {
-	Esvg_Event_Mouse ev;
+	Edom_Tag *t;
+	Esvg_Svg *thiz;
 
-	/* FIXME we should check that the mouse is inside the SVG */
-	ev.screen_x = x;
-	ev.screen_y = y;
-	ender_event_dispatch(e, "mousemove", &ev);
+	t = ender_element_object_get(e);
+	thiz = _esvg_svg_get(t);
+	esvg_input_feed_mouse_move(thiz->input, x, y);
 }
 
 /**
  * To be documented
  * FIXME: To be fixed
  */
-EAPI void esvg_svg_feed_mouse_down(Ender_Element *e)
+EAPI void esvg_svg_feed_mouse_down(Ender_Element *e, int button)
 {
+	Edom_Tag *t;
+	Esvg_Svg *thiz;
 
+	t = ender_element_object_get(e);
+	thiz = _esvg_svg_get(t);
+	esvg_input_feed_mouse_down(thiz->input, button);
 }
 
 /**
  * To be documented
  * FIXME: To be fixed
  */
-EAPI void esvg_svg_feed_mouse_up(Ender_Element *e)
+EAPI void esvg_svg_feed_mouse_up(Ender_Element *e, int button)
 {
+	Edom_Tag *t;
+	Esvg_Svg *thiz;
 
+	t = ender_element_object_get(e);
+	thiz = _esvg_svg_get(t);
+	esvg_input_feed_mouse_up(thiz->input, button);
 }
 
 /**
