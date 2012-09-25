@@ -26,6 +26,7 @@
 #include "esvg_private_renderable.h"
 #include "esvg_private_input.h"
 
+#include "esvg_element.h"
 #include "esvg_event.h"
 /*============================================================================*
  *                                  Local                                     *
@@ -55,6 +56,16 @@ Esvg_Input * esvg_input_new(Esvg_Input_Descriptor *descriptor, void *data)
 void esvg_input_free(Esvg_Input *thiz)
 {
 	free(thiz);
+}
+
+void esvg_input_feed_mouse_down(Esvg_Input *thiz, int button)
+{
+
+}
+
+void esvg_input_feed_mouse_up(Esvg_Input *thiz, int button)
+{
+
 }
 
 void esvg_input_feed_mouse_move(Esvg_Input *thiz, int x, int y)
@@ -114,7 +125,7 @@ void esvg_input_feed_mouse_move(Esvg_Input *thiz, int x, int y)
 		if (e)
 		{
 			ender_event_dispatch(e, "mousemove", &ev);
-			printf("mouse move!\n");
+			printf("mouse move! on %s\n", esvg_element_name_get(e));
 		}
 	}
 	else
@@ -123,13 +134,13 @@ void esvg_input_feed_mouse_move(Esvg_Input *thiz, int x, int y)
 		if (thiz->over)
 		{
 			ender_event_dispatch(thiz->over, "mouseout", &ev);
-			printf("mouse out!\n");
+			printf("mouse out! on %s\n", esvg_element_name_get(thiz->over));
 		}
 		/* send in event on r */
 		if (e)
 		{
 			ender_event_dispatch(e, "mouseover", &ev);
-			printf("mouse in!\n");
+			printf("mouse in! %s\n", esvg_element_name_get(e));
 		}
 	}
 	/* update the current over */

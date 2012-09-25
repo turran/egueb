@@ -80,6 +80,7 @@ typedef struct _Esvg_Animate_Base
 	/* interface */
 	Esvg_Animate_Base_Descriptor_Internal descriptor;
 	/* private */
+	Ender_Element *e;
 	Etch *etch;
 	Esvg_Attribute_Type attribute_type;
 	Ender_Element *parent_e;
@@ -97,6 +98,7 @@ typedef struct _Esvg_Animate_Base_Animation
 	Esvg_Animate_Base *thiz;
 	Esvg_Animate_Base_Animation_Callback cb;
 	Edom_Tag *t;
+	Ender_Element *e;
 	Ender_Element *parent;
 	Etch_Animation *a;
 	void *data;
@@ -150,8 +152,22 @@ static void _esvg_animate_base_animation_empty_cb(Etch_Animation_Keyframe *k,
 	data->cb(data->t, thiz->parent_e, thiz->p, curr, prev, kdata, data->data);
 }
 
-static Esvg_Animate_Base_Animation * _esvg_animate_base_animation_new(Esvg_Animate_Base *thiz,
-		Etch *e,
+/* FIXME we miss load and repeat events.
+ * those have to be added on etch
+ */
+static void _esvg_animate_base_animation_start_cb(Etch_Animation *a, void *data)
+{
+	Esvg_Animate_Base_Animation *aa = data;
+	ender_event_dispatch(aa->e, "begin", NULL);
+}
+
+static void _esvg_animate_base_animation_stop_cb(Etch_Animation *a, void *data)
+{
+	Esvg_Animate_Base_Animation *aa = data;
+	ender_event_dispatch(aa->e, "end", NULL);
+}
+
+static Esvg_Animate_Base_Animation * _esvg_animate_base_animation_new(Edom_Tag *t,
 		Etch_Data_Type etch_type,
 		Etch_Animation_Callback etch_cb,
 		Esvg_Animation_Context *actx,
@@ -159,21 +175,28 @@ static Esvg_Animate_Base_Animation * _esvg_animate_base_animation_new(Esvg_Anima
 		Esvg_Animate_Base_Animation_Callback cb,
 		void *data)
 {
+	Esvg_Animate_Base *thiz;
 	Esvg_Animate_Base_Animation *a;
 	Etch_Animation *etch_a;
+
+	thiz = _esvg_animate_base_get(t);
 
 	a = calloc(1, sizeof(Esvg_Animate_Base_Animation));
 	a->thiz = thiz;
 	a->cb = cb;
 	a->data = data;
+	a->e = esvg_element_ender_get(t);
 
-	etch_a = etch_animation_add(e, etch_type, etch_cb,
-				NULL, NULL, a);
+	etch_a = etch_animation_add(thiz->etch, etch_type, etch_cb,
+				_esvg_animate_base_animation_start_cb,
+				_esvg_animate_base_animation_stop_cb,
+				a);
 	/* the repeat count */
 	etch_animation_repeat_set(etch_a, actx->timing.repeat_count);
 	/* TODO chek the condition to trigger the animation on/off */
 	etch_animation_enable(etch_a);
 	a->a = etch_a;
+	thiz->animations = eina_list_append(thiz->animations, a);
 
 	return a;
 }
@@ -703,15 +726,11 @@ Etch_Animation * esvg_animate_base_animation_simple_add(Edom_Tag *t, Etch_Data_T
 		Esvg_Animate_Base_Context *abctx,
 		Esvg_Animate_Base_Animation_Callback cb, void *data)
 {
-	Esvg_Animate_Base *thiz;
 	Esvg_Animate_Base_Animation *animation;
 
-	thiz = _esvg_animate_base_get(t);
-	animation = _esvg_animate_base_animation_new(thiz,
-			thiz->etch, dt, _esvg_animate_base_animation_simple_cb,
+	animation = _esvg_animate_base_animation_new(t,
+			dt, _esvg_animate_base_animation_simple_cb,
 			actx, abctx, cb, data);
-	thiz->animations = eina_list_append(thiz->animations, animation);
-
 	return animation->a;
 }
 
@@ -720,14 +739,11 @@ Etch_Animation * esvg_animate_base_animation_empty_add(Edom_Tag *t, Etch_Data_Ty
 		Esvg_Animate_Base_Context *abctx,
 		Esvg_Animate_Base_Animation_Callback cb, void *data)
 {
-	Esvg_Animate_Base *thiz;
 	Esvg_Animate_Base_Animation *animation;
 
-	thiz = _esvg_animate_base_get(t);
-	animation = _esvg_animate_base_animation_new(thiz,
-			thiz->etch, dt, _esvg_animate_base_animation_empty_cb,
+	animation = _esvg_animate_base_animation_new(t,
+			dt, _esvg_animate_base_animation_empty_cb,
 			actx, abctx, cb, data);
-	thiz->animations = eina_list_append(thiz->animations, animation);
 
 	return animation->a;
 }

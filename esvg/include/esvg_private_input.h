@@ -12,6 +12,8 @@ typedef struct _Esvg_Input_Descriptor
 Esvg_Input * esvg_input_new(Esvg_Input_Descriptor *descriptor, void *data);
 void esvg_input_free(Esvg_Input *thiz);
 void esvg_input_feed_mouse_move(Esvg_Input *thiz, int x, int y);
+void esvg_input_feed_mouse_down(Esvg_Input *thiz, int button);
+void esvg_input_feed_mouse_up(Esvg_Input *thiz, int button);
 
 #endif
 

@@ -1676,6 +1676,18 @@ EAPI Esvg_Type esvg_element_type_get(Ender_Element *e)
  * To be documented
  * FIXME: To be fixed
  */
+EAPI const char * esvg_element_name_get(Ender_Element *e)
+{
+	Edom_Tag *t;
+
+	t = ender_element_object_get(e);
+	return edom_tag_name_get(t);
+}
+
+/**
+ * To be documented
+ * FIXME: To be fixed
+ */
 EAPI void esvg_element_id_get(Ender_Element *e, const char **id)
 {
 	Edom_Tag *t;

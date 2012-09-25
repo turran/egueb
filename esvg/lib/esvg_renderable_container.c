@@ -100,6 +100,7 @@ Esvg_Renderable_Container * esvg_renderable_container_new(Ender_Element *e)
 
 void esvg_renderable_container_free(Esvg_Renderable_Container *thiz)
 {
+	esvg_renderable_container_clear(thiz);
 	ender_event_listener_remove(thiz->e, "mousemove", _esvg_renderable_container_mouse_move);
 }
 
@@ -112,6 +113,7 @@ void esvg_renderable_container_clear(Esvg_Renderable_Container *thiz)
 void esvg_renderable_container_renderable_add(Esvg_Renderable_Container *thiz,
 		Edom_Tag *t)
 {
+	printf("adding element %s\n", edom_tag_name_get(t));
 	thiz->renderables = eina_list_append(thiz->renderables, t);
 }
 

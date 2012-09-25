@@ -4,6 +4,7 @@
 /* core */
 EAPI Eina_Bool esvg_is_element(Ender_Element *e);
 EAPI Esvg_Type esvg_element_type_get(Ender_Element *e);
+EAPI const char * esvg_element_name_get(Ender_Element *e);
 /* attributes */
 EAPI void esvg_element_id_set(Ender_Element *e, const char *id);
 EAPI void esvg_element_id_get(Ender_Element *e, const char **id);
