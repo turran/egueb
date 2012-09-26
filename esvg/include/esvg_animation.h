@@ -14,5 +14,8 @@ EAPI void esvg_animation_accumulate_get(Ender_Element *e, Esvg_Accumulate *accum
 EAPI void esvg_animation_repeat_count_set(Ender_Element *e, int repeat_count);
 EAPI void esvg_animation_repeat_count_get(Ender_Element *e, int *repeat_count);
 
+EAPI void esvg_animation_begin_set(Ender_Element *e, Eina_List *begin);
+EAPI void esvg_animation_end_set(Ender_Element *e, Eina_List *end);
+
 #endif
 

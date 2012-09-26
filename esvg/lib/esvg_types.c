@@ -334,14 +334,53 @@ static Eina_Bool _is_name_first(char v)
 	return EINA_FALSE;
 }
 
-static Eina_Bool _parse_name(const char *v, const char **start, const char **end)
+static Eina_Bool _is_name(char v)
 {
+	if (_is_name_first(v) || v == '-' || v == '.' || _is_0_9(v))
+		return EINA_TRUE;
+	return EINA_FALSE;
+}
+
+static Eina_Bool _animation_name_parse(const char *v, const char **start, int *len)
+{
+	int l = 0;
+	const char *s;
+
 	/* check the first letter */
 	ESVG_SPACE_SKIP(v);
+
+	s = v;
 	if (!_is_name_first(*v))
-		return NULL;
+		return EINA_FALSE;
 	v++;
+	
 	/* then for each, iterate until we find the last valid char */
+	while (_is_name(*v) && *v != '-' && *v != '.')
+	{
+		v++;
+	}
+	*start = s;
+	*len = v - *start;
+	return EINA_TRUE;
+		
+}
+
+static Eina_Bool _animation_clock_parse(const char *v, int64_t *clock)
+{
+	Eina_Bool n = EINA_FALSE;
+	if (*v == '+')
+		v++;
+	else if (*v == '-')
+	{
+		v++;
+		n = EINA_TRUE;
+	}
+	if (!esvg_clock_string_from(clock, v))
+		return EINA_FALSE;
+
+	if (n)
+		*clock = -(*clock);
+	return EINA_TRUE;
 }
 /*----------------------------------------------------------------------------*
  *                           Color related functions                          *
@@ -1025,8 +1064,22 @@ static Eina_Bool esvg_parser_command(char command, char **value,
 /*----------------------------------------------------------------------------*
  *                         Timing related functions                           *
  *----------------------------------------------------------------------------*/
+static void _esvg_animation_event_list_cb(const char *attr, void *data)
+{
+	Esvg_Animation_Event *ev;
+	Eina_List **l = data;
 
+	printf("trying to parse event %s\n", attr);
+	ev = calloc(1, sizeof(Esvg_Animation_Event));
+	if (!esvg_animation_event_string_from(ev, attr))
+	{
+		free(ev);
+		return;
+	}
+	*l = eina_list_append(*l, ev);
 
+	return;
+}
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
@@ -2135,32 +2188,85 @@ EAPI Eina_Bool esvg_animate_key_spline_string_from(Esvg_Animate_Key_Spline *spli
 	return EINA_TRUE;
 }
 
+EAPI Eina_Bool esvg_animation_event_list_string_from(Eina_List **l, const char *s)
+{
+	return esvg_list_string_from(s, ';', _esvg_animation_event_list_cb, l);
+}
+
 EAPI Eina_Bool esvg_animation_event_string_from(Esvg_Animation_Event *e, const char *s)
 {
-	/* simplest cases */
-	if (!strcmp("s", "indefinite"))
-	{
+	Eina_Bool ret;
+	const char *start;
+	const char *end;
+	int len;
 
-	}
-	else if (!strncmp(s, "accessKey", 9))
-	{
+	/* just in case */
+	e->id = NULL;
+	e->event = NULL;
 
-	}
-	else if (!strncmp(s, "wallclock", 9))
+	ret = _animation_name_parse(s, &start, &len);
+	end = start + len;
+	/* no name, just numbers ... clock */
+	if (!ret)
 	{
-
+		/* clock */
+		if (!_animation_clock_parse(s, &e->offset))
+			return EINA_FALSE;
 	}
 	else
 	{
-		/* check for the sign */
-		/*
-		 * TODO parse the other cases
-		offset-value ::= ( S? "+" | "-" S? )? ( Clock-value )
-		syncbase-value ::= ( Id-value "." ( "begin" | "end" ) ) ( S? ("+"|"-") S? Clock-value )?
-		event-value ::= ( Id-value "." )? ( event-ref ) ( S? ("+"|"-") S? Clock-value )?
-		repeat-value ::= ( Id-value "." )? "repeat(" integer ")" ( S? ("+"|"-") S? Clock-value )?
-		*/
+		/* simplest cases */
+		if (!strcmp(s, "indefinite"))
+		{
+			/* TODO */
+		}
+		else if (!strncmp(s, "accessKey", 9))
+		{
+			/* TODO */
+		}
+		else if (!strncmp(s, "wallclock", 9))
+		{
+			/* TODO */
+		}
+		else
+		{
+			/* id */
+			if (*end == '.')
+			{
+				e->id = strndup(start, len);
+				/* advance after the point */
+				ret = _animation_name_parse(end + 1, &start, &len);
+				end = start + len;
+				if (!ret) goto err;
+			}
+			/* repeat */
+			if (!strncmp(s, "repeat", len))
+			{
+				long r;
+				if (*end == '(')
+					start++;
+				if (!_esvg_long_get(start, &end, &r))
+					goto err;
+				if (*end != ')')
+					goto err;
+				e->repeat = r;
+			}
+			/* event name */
+			else
+			{
+				e->event = strndup(start, len);
+			}
+			/* offset */
+			_animation_clock_parse(end + 1, &e->offset);
+		}
 	}
+	return EINA_TRUE;
+err:
+	if (e->id)
+		free(e->id);
+	if (e->event)
+		free(e->event);
+	return EINA_FALSE;
 }
 
 EAPI void esvg_animation_event_offset_set(Esvg_Animation_Event *a, int64_t offset)

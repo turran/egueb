@@ -20,6 +20,7 @@ typedef Eina_Bool (*Esvg_Animation_Setup)(Edom_Tag *t,
 		Esvg_Animation_Context *rctx,
 		Enesim_Error **error);
 
+/* TODO add virtual functions to enable/disable the animation */
 typedef struct _Esvg_Animation_Descriptor {
 	/* the tag interface */
 	Edom_Tag_Attribute_Get attribute_get;

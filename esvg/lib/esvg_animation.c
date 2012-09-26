@@ -51,6 +51,8 @@ static Ender_Property *ESVG_ANIMATION_ADDITIVE;
 static Ender_Property *ESVG_ANIMATION_ACCUMULATE;
 static Ender_Property *ESVG_ANIMATION_REPEAT_COUNT;
 static Ender_Property *ESVG_ANIMATION_DUR;
+static Ender_Property *ESVG_ANIMATION_BEGIN;
+static Ender_Property *ESVG_ANIMATION_END;
 
 typedef struct _Esvg_Animation_Descriptor_Internal
 {
@@ -95,12 +97,16 @@ static Eina_Bool _esvg_animation_context_setup(Esvg_Animation *thiz)
 	 */
 	if (!esvg_string_is_equal(attr_name->curr, attr_name->prev))
 	{
+		Esvg_Animation_Event *ae;
+		Eina_List *l;
+	
 		if (attr_name->prev)
 		{
 			esvg_element_attribute_animation_remove(ctx->parent_t, attr_name->prev);
 			free(attr_name->prev);
 			attr_name->prev = NULL;
 			ctx->p = NULL;
+			/* TODO remove every event set */
 		}
 		if (attr_name->curr)
 		{
@@ -123,6 +129,27 @@ static Eina_Bool _esvg_animation_context_setup(Esvg_Animation *thiz)
 				goto done;
 			}
 			ctx->p = p;
+			/* check the begin conditions and register the needed events */
+			EINA_LIST_FOREACH (thiz->ctx.timing.begin, l, ae)
+			{
+				if (ae->event)
+				{
+					Ender_Element *ref;
+
+					printf("registering event %s\n", ae->event);
+					if (ae->id)
+					{
+						printf("on id %s\n", ae->id);
+					}
+					else
+					{
+						printf("on ourselves\n");
+					}
+					printf("and repeat %d\n", ae->repeat);
+				}
+				printf("with offset %lld\n", ae->offset);
+			}
+			/* TODO check the stop conditions and register the needed events */
 		}
 		attr_name->changed = EINA_TRUE;
 	}
@@ -251,6 +278,21 @@ static void _esvg_animation_repeat_count_get(Edom_Tag *t, int *repeat_count)
 	*repeat_count = thiz->ctx.timing.repeat_count;
 }
 
+static void _esvg_animation_begin_set(Edom_Tag *t, Eina_List *begin)
+{
+	Esvg_Animation *thiz;
+
+	thiz = _esvg_animation_get(t);
+	thiz->ctx.timing.begin = begin;
+}
+
+static void _esvg_animation_end_set(Edom_Tag *t, Eina_List *end)
+{
+	Esvg_Animation *thiz;
+
+	thiz = _esvg_animation_get(t);
+	thiz->ctx.timing.end = end;
+}
 /*----------------------------------------------------------------------------*
  *                         The Esvg Element interface                         *
  *----------------------------------------------------------------------------*/
@@ -276,6 +318,20 @@ static Eina_Bool _esvg_animation_attribute_set(Ender_Element *e,
 
 		esvg_duration_string_from(&dur, value);
 		esvg_animation_dur_set(e, &dur);
+	}
+	else if (!strcmp(key, "begin"))
+	{
+		Eina_List *begin = NULL;
+
+		esvg_animation_event_list_string_from(&begin, value);
+		esvg_animation_begin_set(e, begin);
+	}
+	else if (!strcmp(key, "end"))
+	{
+		Eina_List *end = NULL;
+
+		esvg_animation_event_list_string_from(&end, value);
+		esvg_animation_end_set(e, end);
 	}
 	/* addition attributes */
 	else if (!strcmp(key, "additive"))
@@ -363,7 +419,7 @@ static Esvg_Element_Setup_Return _esvg_animation_setup(Edom_Tag *t,
 		if (!_esvg_animation_context_setup(thiz))
 			return ESVG_SETUP_OK;
 	}
-	
+
 	/* do the setup */
 	if (thiz->descriptor.setup)
 		return thiz->descriptor.setup(t, c, &thiz->ctx, error);
@@ -380,6 +436,16 @@ static Esvg_Element_Setup_Return _esvg_animation_setup(Edom_Tag *t,
 #define _esvg_animation_accumulate_is_set NULL
 #define _esvg_animation_repeat_count_is_set NULL
 #define _esvg_animation_dur_is_set NULL
+#define _esvg_animation_begin_get NULL
+#define _esvg_animation_begin_is_set NULL
+#define _esvg_animation_begin_clear NULL
+#define _esvg_animation_begin_remove NULL
+#define _esvg_animation_begin_add NULL
+#define _esvg_animation_end_get NULL
+#define _esvg_animation_end_is_set NULL
+#define _esvg_animation_end_clear NULL
+#define _esvg_animation_end_remove NULL
+#define _esvg_animation_end_add NULL
 #include "generated/esvg_generated_animation.c"
 
 Eina_Bool esvg_is_animation_internal(Edom_Tag *t)
@@ -573,5 +639,23 @@ EAPI void esvg_animation_repeat_count_get(Ender_Element *e, int *repeat_count)
 
 	t = ender_element_object_get(e);
 	_esvg_animation_repeat_count_get(t, repeat_count);
+}
+
+/**
+ * To be documented
+ * FIXME: To be fixed
+ */
+EAPI void esvg_animation_begin_set(Ender_Element *e, Eina_List *begin)
+{
+	ender_element_property_value_set(e, ESVG_ANIMATION_BEGIN, begin, NULL);
+}
+
+/**
+ * To be documented
+ * FIXME: To be fixed
+ */
+EAPI void esvg_animation_end_set(Ender_Element *e, Eina_List *end)
+{
+	ender_element_property_value_set(e, ESVG_ANIMATION_END, end, NULL);
 }
 

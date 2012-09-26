@@ -540,4 +540,9 @@ EAPI Eina_Bool esvg_type_is_paint_server(Esvg_Type type);
 EAPI Eina_Bool esvg_type_is_shape(Esvg_Type type);
 EAPI Eina_Bool esvg_type_is_renderable(Esvg_Type type);
 
+/* animation parsing */
+EAPI Eina_Bool esvg_animation_event_list_string_from(Eina_List **l, const char *s);
+EAPI Eina_Bool esvg_animation_event_string_from(Esvg_Animation_Event *e, const char *s);
+
+
 #endif

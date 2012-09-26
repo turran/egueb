@@ -152,6 +152,9 @@ namespace "esvg" : 0 {
 		int "repeat_count";
 		/* FIXME later we should use a time object? */
 		esvg_duration "dur";
+		/* FIXME we use objects for now, we should use the real struct once it is defined */
+		[object] "begin";
+		[object] "end";
 	};
 
 	abstract "animate_base" : "animation" {
