@@ -1499,7 +1499,7 @@ void esvg_element_property_string_set(Ender_Element *e, Ender_Property *p, const
 		Esvg_Animated_String a;
 
 		a.base = (char *)v;
-		ender_element_property_value_set(e, p, &v, NULL);
+		ender_element_property_value_set(e, p, &a, NULL);
 	}
 }
 
