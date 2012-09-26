@@ -155,6 +155,10 @@ eina_strtod(const char *nptr, char **endptr)
 	ESVG_SPACE_SKIP(t); \
 	if (*t == ',') t++; \
 	ESVG_SPACE_SKIP(t);
+
+#define ESVG_CLOCK_SECONDS (1000000000LL)
+#define ESVG_CLOCK_MSECONDS (1000000LL)
+
 /*----------------------------------------------------------------------------*
  *                               Generic helpers                              *
  *----------------------------------------------------------------------------*/
@@ -290,6 +294,54 @@ static const char * _fragment_get(const char *uri)
 	id = tmp + 1;
 
 	return id;
+}
+
+static inline Eina_Bool _is_a_z(char v)
+{
+	if (v >= 'a' && v <= 'z')
+		return EINA_TRUE;
+	return EINA_FALSE;
+}
+
+static inline Eina_Bool _is_A_Z(char v)
+{
+	if (v >= 'A' && v <= 'Z')
+		return EINA_TRUE;
+	return EINA_FALSE;
+}
+
+static inline Eina_Bool _is_Aa_Zz(char v)
+{
+	if (_is_A_Z(v) || _is_a_z(v))
+		return EINA_TRUE;
+	return EINA_FALSE;
+}
+
+static inline Eina_Bool _is_0_9(char v)
+{
+	if (v >= '0' && v <= '9')
+		return EINA_TRUE;
+	return EINA_FALSE;
+}
+
+static Eina_Bool _is_name_first(char v)
+{
+	/* FIXME here we should use the correct one from the xml doc:
+	 * http://www.w3.org/TR/REC-xml/#NT-NameStartChar
+	 */
+	if (_is_Aa_Zz(v) || v == ':' || v == '_')
+		return EINA_TRUE;
+	return EINA_FALSE;
+}
+
+static Eina_Bool _parse_name(const char *v, const char **start, const char **end)
+{
+	/* check the first letter */
+	ESVG_SPACE_SKIP(v);
+	if (!_is_name_first(*v))
+		return NULL;
+	v++;
+	/* then for each, iterate until we find the last valid char */
 }
 /*----------------------------------------------------------------------------*
  *                           Color related functions                          *
@@ -1925,9 +1977,6 @@ EAPI Eina_Bool esvg_number_list_string_from(const char *attr, Esvg_Number_List_C
 	}
 	return EINA_TRUE;
 }
-
-#define ESVG_CLOCK_SECONDS (1000000000LL)
-#define ESVG_CLOCK_MSECONDS (1000000LL)
 
 /* The clock is defined in miliseconds? nanoseconds? */
 /* TODO maybe we should use doubles directly? */
