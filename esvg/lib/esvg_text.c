@@ -321,7 +321,7 @@ EAPI Eina_Bool esvg_is_text(Ender_Element *e)
 
 EAPI void esvg_text_x_set(Ender_Element *e, const Esvg_Coord *x)
 {
-	ender_element_property_value_set(e, ESVG_TEXT_X, &x, NULL);
+	ender_element_property_value_set(e, ESVG_TEXT_X, x, NULL);
 }
 
 EAPI void esvg_text_x_get(Ender_Element *e, Esvg_Coord *x)
@@ -334,7 +334,7 @@ EAPI void esvg_text_x_get(Ender_Element *e, Esvg_Coord *x)
 
 EAPI void esvg_text_y_set(Ender_Element *e, const Esvg_Coord *y)
 {
-	ender_element_property_value_set(e, ESVG_TEXT_Y, &y, NULL);
+	ender_element_property_value_set(e, ESVG_TEXT_Y, y, NULL);
 }
 
 EAPI void esvg_text_y_get(Ender_Element *e, Esvg_Coord *y)
