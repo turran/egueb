@@ -228,16 +228,6 @@ static Esvg_Animate_Base_Type_Descriptor _string_descriptor = {
 /*----------------------------------------------------------------------------*
  *                   The path command type descriptor                         *
  *----------------------------------------------------------------------------*/
-static Eina_Bool _esvg_animate_path_command_get(const char *attr, void **value)
-{
-	char *v;
-
-	v = strdup(attr);
-	//esvg_path_string_from();
-	*value = v;
-	return EINA_TRUE;
-}
-
 static void _esvg_animate_path_command_etch_data_to(void *d,
 		Etch_Data *data)
 {
@@ -247,15 +237,50 @@ static void _esvg_animate_path_command_etch_data_to(void *d,
 	data->data.string = v;
 }
 
-static void _esvg_animate_path_command_generate(void)
+static void  _esvg_animate_path_command_get_cb(Esvg_Path_Command *cmd, void *data)
 {
+	Esvg_Path_Command *pcmd;
+	Eina_List **dst = data;
 
+	pcmd = calloc(1, sizeof(Esvg_Path_Command));
+	*pcmd = *cmd;
+	*dst = eina_list_append(*dst, pcmd);
+}
+
+static Eina_Bool _esvg_animate_path_command_get(const char *attr, void **value)
+{
+	Eina_List *l = NULL;
+	esvg_path_string_from(attr, _esvg_animate_path_command_get_cb, &l);
+
+	*value = l;
+	return EINA_TRUE;
+}
+
+static void _esvg_animate_path_command_free(void *d)
+{
+	Esvg_Path_Command *pcmd;
+	Eina_List *l = d;
+
+	EINA_LIST_FREE(l, pcmd)
+		free(pcmd);
+}
+
+static Eina_Bool _esvg_animate_path_command_animation_generate(Edom_Tag *t,
+		Eina_List *values,
+		Eina_List *times,
+		Esvg_Animation_Context *actx,
+		Esvg_Animate_Base_Context *abctx)
+{
+	printf("generate animations!\n");
+	/* iterate over the values, each value is a list of commands
+	 * so we need to create an animation for every command attributes
+	 */
 }
 
 static Esvg_Animate_Base_Type_Descriptor _path_command_descriptor = {
 	/* .value_get 		= */ _esvg_animate_path_command_get,
-	/* .value_free 		= */ free,
-	/* .animation_generate 	= */ NULL,
+	/* .value_free 		= */ _esvg_animate_path_command_free,
+	/* .animation_generate 	= */ _esvg_animate_path_command_animation_generate,
 };
 /*----------------------------------------------------------------------------*
  *                         The Esvg Element interface                         *
