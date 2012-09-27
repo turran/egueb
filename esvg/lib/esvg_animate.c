@@ -271,7 +271,21 @@ static Eina_Bool _esvg_animate_path_command_animation_generate(Edom_Tag *t,
 		Esvg_Animation_Context *actx,
 		Esvg_Animate_Base_Context *abctx)
 {
+	Esvg_Path_Command *cmd;
+	Eina_List *cmds;
+	Eina_List *l;
+
 	printf("generate animations!\n");
+	cmds = eina_list_data_get(values);
+	/* first create the animations for every command value */
+	EINA_LIST_FOREACH (cmds, l, cmd)
+	{
+
+	}
+	/* once the animations are created we need to iterate over the next
+	 * list of commands, iterate over the values and fetch the needed
+	 * animation from the animate_base abstract */
+
 	/* iterate over the values, each value is a list of commands
 	 * so we need to create an animation for every command attributes
 	 */
