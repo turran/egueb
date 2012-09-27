@@ -15,6 +15,9 @@ typedef struct _Esvg_Animation_Context {
 	Ender_Property *p;
 } Esvg_Animation_Context;
 
+typedef void (*Esvg_Animation_Enable)(Edom_Tag *t, int64_t offset);
+typedef void (*Esvg_Animation_Disable)(Edom_Tag *t);
+/* FIXME later rename this to generate */
 typedef Eina_Bool (*Esvg_Animation_Setup)(Edom_Tag *t,
 		Esvg_Context *c,
 		Esvg_Animation_Context *rctx,
@@ -30,6 +33,8 @@ typedef struct _Esvg_Animation_Descriptor {
 	Esvg_Element_Attribute_Set attribute_set;
 	/* the animation interface */
 	Esvg_Animation_Setup setup;
+	Esvg_Animation_Enable enable;
+	Esvg_Animation_Disable disable;
 } Esvg_Animation_Descriptor;
 
 void * esvg_animation_data_get(Edom_Tag *t);

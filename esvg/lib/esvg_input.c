@@ -94,7 +94,8 @@ void esvg_input_feed_mouse_up(Esvg_Input *thiz, int button)
 	if ((fabs(thiz->downx - thiz->x) < 2) &&
 			(fabs(thiz->downy - thiz->y) < 2))
 	{
-		ender_event_dispatch(thiz->grabbed, "mouseclick", &ev);
+		printf("mouse click! on %s\n", esvg_element_name_get(thiz->grabbed));
+		ender_event_dispatch(thiz->grabbed, "click", &ev);
 	}
 	thiz->grabbed = NULL;
 

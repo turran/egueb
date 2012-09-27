@@ -122,7 +122,9 @@ Esvg_Renderable_Container * esvg_renderable_container_new(Ender_Element *e)
 void esvg_renderable_container_free(Esvg_Renderable_Container *thiz)
 {
 	esvg_renderable_container_clear(thiz);
-	ender_event_listener_remove(thiz->e, "mousemove", _esvg_renderable_container_mouse_move);
+	ender_event_listener_remove_full(thiz->e, "mousemove", _esvg_renderable_container_mouse_move, thiz);
+	ender_event_listener_remove_full(thiz->e, "mousedown", _esvg_renderable_container_mouse_down, thiz);
+	ender_event_listener_remove_full(thiz->e, "mouseup", _esvg_renderable_container_mouse_up, thiz);
 }
 
 void esvg_renderable_container_clear(Esvg_Renderable_Container *thiz)

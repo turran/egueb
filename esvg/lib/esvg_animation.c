@@ -57,9 +57,12 @@ static Ender_Property *ESVG_ANIMATION_END;
 typedef struct _Esvg_Animation_Descriptor_Internal
 {
 	Edom_Tag_Free free;
+	Esvg_Element_Initialize initialize;
 	Esvg_Element_Attribute_Set attribute_set;
 	Edom_Tag_Attribute_Get attribute_get;
 	Esvg_Animation_Setup setup;
+	Esvg_Animation_Enable enable;
+	Esvg_Animation_Disable disable;
 } Esvg_Animation_Descriptor_Internal;
 
 typedef struct _Esvg_Animation
@@ -70,9 +73,20 @@ typedef struct _Esvg_Animation
 	/* interface */
 	Esvg_Animation_Descriptor_Internal descriptor;
 	/* private */
-	Eina_Bool context_changed : 1;
+	Edom_Tag *thiz_t;
+	Ender_Element *thiz_e;
+	Eina_Bool attribute_name_changed : 1;
+	Eina_List *begin_events;
+	Eina_List *end_events;
+	Eina_Bool started;
 	void *data;
 } Esvg_Animation;
+
+typedef struct _Esvg_Animation_Handler
+{
+	Ender_Listener *l;
+	Esvg_Animation_Event *ev;
+} Esvg_Animation_Handler;
 
 static Esvg_Animation * _esvg_animation_get(Edom_Tag *t)
 {
@@ -84,7 +98,132 @@ static Esvg_Animation * _esvg_animation_get(Edom_Tag *t)
 	return thiz;
 }
 
-static Eina_Bool _esvg_animation_context_setup(Esvg_Animation *thiz)
+static void _esvg_animation_begin(Esvg_Animation *thiz, int64_t offset)
+{
+	if (thiz->started)
+		return;
+	thiz->started = EINA_TRUE;
+	/* FIXME pass the correct offset! */
+	printf(">>>> begin cb %p\n", thiz->descriptor.enable);
+	if (thiz->descriptor.enable)
+		thiz->descriptor.enable(thiz->thiz_t, offset);
+}
+
+static void _esvg_animation_begin_cb(Ender_Element *e,
+		const char *event_name, void *event_data, void *data)
+{
+	Esvg_Animation *thiz = data;
+
+	/* call the begin interface */
+	_esvg_animation_begin(thiz, 0);
+}
+
+static void _esvg_animation_end_cb(Ender_Element *e,
+		const char *event_name, void *event_data, void *data)
+{
+	Esvg_Animation *thiz = data;
+
+	/* call the end interface */
+	if (!thiz->started)
+		return;
+	printf(">>>> end cb %p\n", thiz->descriptor.disable);
+	if (thiz->descriptor.disable)
+		thiz->descriptor.disable(thiz->thiz_t);
+}
+
+static Eina_Bool _esvg_animation_event_setup(Esvg_Animation *thiz, Eina_List *events,
+		Eina_List **handlers, Ender_Event_Callback cb)
+{
+	Esvg_Animation_Event *ae;
+	Eina_List *h = NULL;
+	Eina_List *l;
+
+	/* check the begin conditions and register the needed events */
+	EINA_LIST_FOREACH (events, l, ae)
+	{
+		if (ae->event)
+		{
+			Ender_Element *ref;
+
+			printf("registering event %s\n", ae->event);
+			if (ae->id)
+			{
+				printf("on id %s\n", ae->id);
+			}
+			else
+			{
+				if (ae->repeat)
+					ref = thiz->thiz_e;
+				else
+					ref = thiz->ctx.parent_e;
+			}
+
+			if (ref)
+			{
+				Ender_Listener *el;
+
+				el = ender_event_listener_add(ref, ae->event, cb, thiz);
+				h = eina_list_append(h, el);
+			}
+
+		}
+		else
+		{
+
+		}
+		printf("with offset %lld\n", ae->offset);
+	}
+	*handlers = h;
+
+	return EINA_TRUE;
+}
+
+static void _esvg_animation_event_release(Eina_List *events)
+{
+	Ender_Listener *e;
+	Eina_List *l;
+
+	EINA_LIST_FOREACH(events, l, e)
+	{
+		ender_event_listener_remove(e);
+	}
+}
+
+static Eina_Bool _esvg_animation_begin_setup(Esvg_Animation *thiz)
+{
+	if (!_esvg_animation_event_setup(thiz, thiz->ctx.timing.begin,
+			&thiz->begin_events, _esvg_animation_begin_cb))
+		return EINA_FALSE;
+	/* in case there is no event to trigger, just start now */
+	if (!thiz->begin_events)
+	{
+		/* call the begin interface */
+		/* FIXME fix the offset */
+		if (thiz->descriptor.enable)
+			thiz->descriptor.enable(thiz->thiz_t, 0);
+	}
+	return EINA_TRUE;
+}
+
+static void _esvg_animation_begin_release(Esvg_Animation *thiz)
+{
+	_esvg_animation_event_release(thiz->begin_events);
+}
+
+static Eina_Bool _esvg_animation_end_setup(Esvg_Animation *thiz)
+{
+	if (!_esvg_animation_event_setup(thiz, thiz->ctx.timing.end,
+			&thiz->end_events, _esvg_animation_end_cb))
+		return EINA_FALSE;
+	return EINA_TRUE;
+}
+
+static void _esvg_animation_end_release(Esvg_Animation *thiz)
+{
+	_esvg_animation_event_release(thiz->end_events);
+}
+
+static Eina_Bool _esvg_animation_attribute_name_setup(Esvg_Animation *thiz)
 {
 	Esvg_Attribute_Animation_Attribute_Name *attr_name;
 	Esvg_Animation_Context *ctx;
@@ -97,9 +236,6 @@ static Eina_Bool _esvg_animation_context_setup(Esvg_Animation *thiz)
 	 */
 	if (!esvg_string_is_equal(attr_name->curr, attr_name->prev))
 	{
-		Esvg_Animation_Event *ae;
-		Eina_List *l;
-	
 		if (attr_name->prev)
 		{
 			esvg_element_attribute_animation_remove(ctx->parent_t, attr_name->prev);
@@ -129,36 +265,10 @@ static Eina_Bool _esvg_animation_context_setup(Esvg_Animation *thiz)
 				goto done;
 			}
 			ctx->p = p;
-			/* check the begin conditions and register the needed events */
-			EINA_LIST_FOREACH (thiz->ctx.timing.begin, l, ae)
-			{
-				if (ae->event)
-				{
-					Ender_Element *ref;
-
-					printf("registering event %s\n", ae->event);
-					if (ae->id)
-					{
-						printf("on id %s\n", ae->id);
-					}
-					else
-					{
-						printf("on ourselves\n");
-					}
-					printf("and repeat %d\n", ae->repeat);
-				}
-				printf("with offset %lld\n", ae->offset);
-			}
-			/* TODO check the stop conditions and register the needed events */
 		}
-		attr_name->changed = EINA_TRUE;
-	}
-	else
-	{
-		attr_name->changed = EINA_FALSE;
 	}
 done:
-	thiz->context_changed = EINA_FALSE;
+	thiz->attribute_name_changed = EINA_FALSE;
 	return ret;
 }
 /*----------------------------------------------------------------------------*
@@ -178,7 +288,7 @@ static void _esvg_animation_attribute_name_set(Edom_Tag *t, const char *attribut
 	}
 	if (attribute_name)
 		attr_name->curr = strdup(attribute_name);
-	thiz->context_changed = EINA_TRUE;
+	thiz->attribute_name_changed = EINA_TRUE;
 }
 
 static void _esvg_animation_attribute_name_get(Edom_Tag *t, const char **attribute_name)
@@ -296,6 +406,20 @@ static void _esvg_animation_end_set(Edom_Tag *t, Eina_List *end)
 /*----------------------------------------------------------------------------*
  *                         The Esvg Element interface                         *
  *----------------------------------------------------------------------------*/
+static void _esvg_animation_initialize(Ender_Element *e)
+{
+	Esvg_Animation *thiz;
+	Edom_Tag *t;
+
+	t = ender_element_object_get(e);
+	thiz = _esvg_animation_get(t);
+	thiz->thiz_e = e;
+
+	/* call the interface */
+	if (thiz->descriptor.initialize)
+		thiz->descriptor.initialize(e);
+}
+
 static Eina_Bool _esvg_animation_attribute_set(Ender_Element *e,
 		const char *key, const char *value)
 {
@@ -413,16 +537,27 @@ static Esvg_Element_Setup_Return _esvg_animation_setup(Edom_Tag *t,
 	if (!ctx->parent_t)
 		return ESVG_SETUP_OK;
 	ctx->parent_e = esvg_element_ender_get(ctx->parent_t);
-	/* check if the context has changed */
-	if (thiz->context_changed)
+	/* check if the name has changed */
+	if (thiz->attribute_name_changed)
 	{
-		if (!_esvg_animation_context_setup(thiz))
+		if (!_esvg_animation_attribute_name_setup(thiz))
 			return ESVG_SETUP_OK;
 	}
 
-	/* do the setup */
+	_esvg_animation_begin_release(thiz);
+	_esvg_animation_end_release(thiz);
+
+	/* generate every animation */
 	if (thiz->descriptor.setup)
-		return thiz->descriptor.setup(t, c, &thiz->ctx, error);
+	{
+		if (!thiz->descriptor.setup(t, c, &thiz->ctx, error))
+			return ESVG_SETUP_OK;
+	}
+
+	/* do the begin and end conditions */
+	_esvg_animation_begin_setup(thiz);
+	_esvg_animation_end_setup(thiz);
+
 	return ESVG_SETUP_OK;
 }
 /*============================================================================*
@@ -485,18 +620,23 @@ Edom_Tag * esvg_animation_new(Esvg_Animation_Descriptor *descriptor, Esvg_Type t
 	thiz->descriptor.setup = descriptor->setup;
 	thiz->descriptor.attribute_set = descriptor->attribute_set;
 	thiz->descriptor.attribute_get = descriptor->attribute_get;
+	thiz->descriptor.initialize = descriptor->initialize;
+	thiz->descriptor.enable = descriptor->enable;
+	thiz->descriptor.disable = descriptor->disable;
 	/* default values */
 	thiz->ctx.timing.repeat_count = 1;
 
 	pdescriptor.attribute_set = _esvg_animation_attribute_set;
 	pdescriptor.attribute_get = _esvg_animation_attribute_get;
 	pdescriptor.free = _esvg_animation_free;
-	pdescriptor.initialize = descriptor->initialize;
+	pdescriptor.initialize = _esvg_animation_initialize;
 	pdescriptor.setup = _esvg_animation_setup;
 	pdescriptor.cdata_set = NULL;
 	pdescriptor.text_set = NULL;
 
 	t = esvg_element_new(&pdescriptor, type, thiz);
+	/* store the tag */
+	thiz->thiz_t = t;
 
 	return t;
 }

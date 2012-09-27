@@ -7,7 +7,6 @@ typedef struct _Esvg_Attribute_Animation_Attribute_Name
 {
 	char *curr;
 	char *prev;
-	Eina_Bool changed : 1;
 } Esvg_Attribute_Animation_Attribute_Name;
 
 typedef struct _Esvg_Attribute_Animation_Target

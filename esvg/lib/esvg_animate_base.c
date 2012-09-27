@@ -194,8 +194,6 @@ static Esvg_Animate_Base_Animation * _esvg_animate_base_animation_new(Edom_Tag *
 				a);
 	/* the repeat count */
 	etch_animation_repeat_set(etch_a, actx->timing.repeat_count);
-	/* TODO chek the condition to trigger the animation on/off */
-	etch_animation_enable(etch_a);
 	a->a = etch_a;
 	thiz->animations = eina_list_append(thiz->animations, a);
 
@@ -527,8 +525,34 @@ static void _esvg_animate_base_key_splines_get(Edom_Tag *t, const char **key_spl
 	*key_splines = thiz->current.value.key_splines;
 }
 /*----------------------------------------------------------------------------*
- *                         The Esvg Element interface                         *
+ *                        The Esvg Animation interface                        *
  *----------------------------------------------------------------------------*/
+static void _esvg_animate_base_enable(Edom_Tag *t, int64_t offset)
+{
+	Esvg_Animate_Base *thiz;
+	Esvg_Animate_Base_Animation *a;
+	Eina_List *l;
+
+	thiz = _esvg_animate_base_get(t);
+	EINA_LIST_FOREACH(thiz->animations, l, a)
+	{
+		etch_animation_enable(a->a);
+	}
+}
+
+static void _esvg_animate_base_disable(Edom_Tag *t)
+{
+	Esvg_Animate_Base *thiz;
+	Esvg_Animate_Base_Animation *a;
+	Eina_List *l;
+
+	thiz = _esvg_animate_base_get(t);
+	EINA_LIST_FOREACH(thiz->animations, l, a)
+	{
+		etch_animation_disable(a->a);
+	}
+}
+
 static Eina_Bool _esvg_animate_base_attribute_set(Ender_Element *e,
 		const char *key, const char *value)
 {
@@ -825,6 +849,8 @@ Edom_Tag * esvg_animate_base_new(Esvg_Animate_Base_Descriptor *descriptor, Esvg_
 	pdescriptor.free = _esvg_animate_base_free;
 	pdescriptor.initialize = descriptor->initialize;
 	pdescriptor.setup = _esvg_animate_base_setup;
+	pdescriptor.enable = _esvg_animate_base_enable;
+	pdescriptor.disable = _esvg_animate_base_disable;
 
 	t = esvg_animation_new(&pdescriptor, type, thiz);
 

@@ -532,8 +532,8 @@ static Eina_Bool _esvg_svg_child_initialize(Edom_Tag *t, Edom_Tag *child_t, void
 	const char *id;
 
  	thiz = data;
-
 	thiz_e = esvg_element_ender_get(t);
+
 	//printf("initializing %s\n", esvg_type_string_to(esvg_element_internal_type_get(child_t)));
 	/* add a callback whenever the child property has changed
 	 * to initialize that child too */
@@ -570,16 +570,17 @@ static Eina_Bool _esvg_svg_child_deinitialize(Edom_Tag *t, Edom_Tag *child_t, vo
 	const char *id;
 
  	thiz = data;
+	thiz_e = esvg_element_ender_get(t);
 
 	/* add a callback whenever the child property has changed
 	 * to initialize that child too */
 	child_e = esvg_element_ender_get(child_t);
-	ender_event_listener_remove(child_e, "Mutation:child", _esvg_svg_child_mutation_child_cb);
+	ender_event_listener_remove_full(child_e, "Mutation:child", _esvg_svg_child_mutation_child_cb, thiz_e);
 	/* add a callback whenever any property has changed to add it the list
 	 * of changed elements */
-	ender_event_listener_remove(child_e, "Mutation", _esvg_svg_child_mutation_cb);
+	ender_event_listener_remove_full(child_e, "Mutation", _esvg_svg_child_mutation_cb, thiz);
 	/* add an event whenever the child changes the id */
-	ender_event_listener_remove(child_e, "Mutation:id", _esvg_svg_child_id_cb);
+	ender_event_listener_remove_full(child_e, "Mutation:id", _esvg_svg_child_id_cb, thiz);
 	/* add the id to the hash of ids */
 	esvg_element_id_get(child_e, &id);
 	if (id) eina_hash_del(thiz->ids, id, child_e);
