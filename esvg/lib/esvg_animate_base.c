@@ -536,6 +536,7 @@ static void _esvg_animate_base_enable(Edom_Tag *t, int64_t offset)
 	thiz = _esvg_animate_base_get(t);
 	EINA_LIST_FOREACH(thiz->animations, l, a)
 	{
+		etch_animation_offset_add(a->a, offset);
 		etch_animation_enable(a->a);
 	}
 }

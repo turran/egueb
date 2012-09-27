@@ -75,17 +75,18 @@ typedef struct _Esvg_Animation
 	/* private */
 	Edom_Tag *thiz_t;
 	Ender_Element *thiz_e;
-	Eina_Bool attribute_name_changed : 1;
 	Eina_List *begin_events;
 	Eina_List *end_events;
 	Eina_Bool started;
+	Eina_Bool attribute_name_changed : 1;
 	void *data;
 } Esvg_Animation;
 
 typedef struct _Esvg_Animation_Handler
 {
-	Ender_Listener *l;
+	Esvg_Animation *thiz;
 	Esvg_Animation_Event *ev;
+	Ender_Listener *l;
 } Esvg_Animation_Handler;
 
 static Esvg_Animation * _esvg_animation_get(Edom_Tag *t)
@@ -112,16 +113,18 @@ static void _esvg_animation_begin(Esvg_Animation *thiz, int64_t offset)
 static void _esvg_animation_begin_cb(Ender_Element *e,
 		const char *event_name, void *event_data, void *data)
 {
-	Esvg_Animation *thiz = data;
+	Esvg_Animation_Handler *h = data;
+	Esvg_Animation *thiz = h->thiz;
 
 	/* call the begin interface */
-	_esvg_animation_begin(thiz, 0);
+	_esvg_animation_begin(thiz, h->ev->offset);
 }
 
 static void _esvg_animation_end_cb(Ender_Element *e,
 		const char *event_name, void *event_data, void *data)
 {
-	Esvg_Animation *thiz = data;
+	Esvg_Animation_Handler *h = data;
+	Esvg_Animation *thiz = h->thiz;
 
 	/* call the end interface */
 	if (!thiz->started)
@@ -132,10 +135,10 @@ static void _esvg_animation_end_cb(Ender_Element *e,
 }
 
 static Eina_Bool _esvg_animation_event_setup(Esvg_Animation *thiz, Eina_List *events,
-		Eina_List **handlers, Ender_Event_Callback cb)
+		Eina_List **phandlers, Ender_Event_Callback cb)
 {
 	Esvg_Animation_Event *ae;
-	Eina_List *h = NULL;
+	Eina_List *handlers = NULL;
 	Eina_List *l;
 
 	/* check the begin conditions and register the needed events */
@@ -160,10 +163,13 @@ static Eina_Bool _esvg_animation_event_setup(Esvg_Animation *thiz, Eina_List *ev
 
 			if (ref)
 			{
-				Ender_Listener *el;
+				Esvg_Animation_Handler *h;
 
-				el = ender_event_listener_add(ref, ae->event, cb, thiz);
-				h = eina_list_append(h, el);
+				h = calloc(1, sizeof(Esvg_Animation_Handler));
+				h->l = ender_event_listener_add(ref, ae->event, cb, h);
+				h->thiz = thiz;
+				h->ev = ae;
+				handlers = eina_list_append(handlers, h);
 			}
 
 		}
@@ -173,19 +179,19 @@ static Eina_Bool _esvg_animation_event_setup(Esvg_Animation *thiz, Eina_List *ev
 		}
 		printf("with offset %lld\n", ae->offset);
 	}
-	*handlers = h;
+	*phandlers = handlers;
 
 	return EINA_TRUE;
 }
 
 static void _esvg_animation_event_release(Eina_List *events)
 {
-	Ender_Listener *e;
-	Eina_List *l;
+	Esvg_Animation_Handler *h;
 
-	EINA_LIST_FOREACH(events, l, e)
+	EINA_LIST_FREE(events, h)
 	{
-		ender_event_listener_remove(e);
+		ender_event_listener_remove(h->l);
+		free(h);
 	}
 }
 
