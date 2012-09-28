@@ -674,6 +674,7 @@ static Eina_Bool _esvg_animate_path_command_animation_generate(Edom_Tag *t,
 {
 	Esvg_Animate *thiz;
 	Esvg_Path_Command *cmd;
+	Esvg_Path_Command *last;
 	Eina_List *cmds;
 	Eina_List *l;
 	int64_t *time;
@@ -686,6 +687,15 @@ static Eina_Bool _esvg_animate_path_command_animation_generate(Edom_Tag *t,
 
 	cmds = eina_list_data_get(values);
 	values = eina_list_next(values);
+
+	EINA_LIST_REVERSE_FOREACH (cmds, l, cmd)
+	{
+		if (cmd->type == ESVG_PATH_CLOSE)
+			continue;
+		last = cmd;
+		break;
+	}
+
 	EINA_LIST_FOREACH (cmds, l, cmd)
 	{
 		Esvg_Path_Command *ncmd;
@@ -699,11 +709,8 @@ static Eina_Bool _esvg_animate_path_command_animation_generate(Edom_Tag *t,
 		thiz->cmds = eina_list_append(thiz->cmds, ncmd);
 
 		/* the final cmd should set the property */
-		if (!l->next)
-		{
+		if (last == cmd)
 			final = EINA_TRUE;
-			printf("final %d\n", cmd->type);
-		}
 
 		/* no need for animations on the close command */
 		if (cmd->type == ESVG_PATH_CLOSE)
