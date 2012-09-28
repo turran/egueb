@@ -57,13 +57,37 @@ static Esvg_Animate * _esvg_animate_get(Edom_Tag *t)
 	return thiz;
 }
 
+/*----------------------------------------------------------------------------*
+ *                               generic helpers                              *
+ *----------------------------------------------------------------------------*/
+static void _esvg_animate_double_cb(Edom_Tag *t,
+		Ender_Element *e,
+		Ender_Property *p,
+		const Etch_Data *curr,
+		const Etch_Data *prev,
+		void *kdata,
+		void *data)
+{
+	double *d = kdata;
+	*d = curr->data.d;
+}
+
+static void _esvg_animate_bool_cb(Edom_Tag *t,
+		Ender_Element *e,
+		Ender_Property *p,
+		const Etch_Data *curr,
+		const Etch_Data *prev,
+		void *kdata,
+		void *data)
+{
+	Eina_Bool *d = kdata;
+	*d = curr->data.u32;
+}
+
 static void * _esvg_animate_value_get(const char *attr)
 {
 	printf("attr = %s\n", attr);
 }
-/*----------------------------------------------------------------------------*
- *                        The different type descriptors                      *
- *----------------------------------------------------------------------------*/
 /*----------------------------------------------------------------------------*
  *                        The Esvg_Paint type descriptor                      *
  *----------------------------------------------------------------------------*/
@@ -265,6 +289,27 @@ static void _esvg_animate_path_command_free(void *d)
 		free(pcmd);
 }
 
+static void _esvg_animate_path_command_move_to_keyframes_add(Esvg_Path_Command *src,
+		Esvg_Path_Command *dst,
+		Esvg_Animate_Base_Context *abctx,
+		Eina_List *anims, int64_t t)
+{
+	Etch_Data data;
+	Etch_Animation *a;
+
+	data.type = ETCH_DOUBLE;
+	data.data.d = src->data.move_to.x;
+	esvg_animate_base_animation_add_keyframe(a, abctx, &data, t, &dst->data.move_to.x);
+	data.data.d = src->data.move_to.y;
+	esvg_animate_base_animation_add_keyframe(a, abctx, &data, t, &dst->data.move_to.y);
+}
+
+static void _esvg_animate_path_command_keyframes_add(Esvg_Path_Command *cmd,
+		Esvg_Animate_Base_Context *abctx,
+		Eina_List *anims, int64_t t)
+{
+}
+
 static Eina_Bool _esvg_animate_path_command_animation_generate(Edom_Tag *t,
 		Eina_List *values,
 		Eina_List *times,
@@ -272,19 +317,56 @@ static Eina_Bool _esvg_animate_path_command_animation_generate(Edom_Tag *t,
 		Esvg_Animate_Base_Context *abctx)
 {
 	Esvg_Path_Command *cmd;
+	/* this is the list that we should pass as the property */
+	Eina_List *ncmds = NULL;
 	Eina_List *cmds;
 	Eina_List *l;
 
 	printf("generate animations!\n");
 	cmds = eina_list_data_get(values);
+	values = eina_list_next(values);
 	/* first create the animations for every command value */
 	EINA_LIST_FOREACH (cmds, l, cmd)
 	{
+		Esvg_Path_Command *ncmd;
+		Etch_Animation *a;
+		Etch_Data data;
 
+		ncmd = calloc(1, sizeof(Esvg_Path_Command));
+		*ncmd = *cmd;
+		ncmds = eina_list_append(ncmds, ncmd);
+		switch (cmd->type)
+		{
+			case ESVG_PATH_MOVE_TO:
+			a = esvg_animate_base_animation_empty_add(t, ETCH_DOUBLE, actx, abctx,
+					_esvg_animate_double_cb, ncmds);
+			esvg_animate_base_animation_empty_add(t, ETCH_DOUBLE, actx, abctx,
+					_esvg_animate_double_cb, ncmds);
+
+			break;
+
+			case ESVG_PATH_LINE_TO:
+			case ESVG_PATH_HLINE_TO:
+			case ESVG_PATH_VLINE_TO:
+			case ESVG_PATH_CUBIC_TO:
+			case ESVG_PATH_SCUBIC_TO:
+			case ESVG_PATH_QUADRATIC_TO:
+			case ESVG_PATH_SQUADRATIC_TO:
+			case ESVG_PATH_ARC_TO:
+			case ESVG_PATH_CLOSE:
+			break;
+		}
 	}
+	/* TODO add the property setter on the last command animation */
+
 	/* once the animations are created we need to iterate over the next
 	 * list of commands, iterate over the values and fetch the needed
 	 * animation from the animate_base abstract */
+	EINA_LIST_FOREACH (values, l, cmds)
+	{
+		/* just add the needed keyframes for every command, using the current time
+		 * on each value, pick up the next time */
+	}
 
 	/* iterate over the values, each value is a list of commands
 	 * so we need to create an animation for every command attributes
@@ -337,6 +419,7 @@ static Eina_Bool _esvg_animate_type_descriptor_get(Edom_Tag *t,
 	else if (!strcmp(name, "esvg_animated_path_command"))
 	{
 		*d = &_path_command_descriptor;
+		return EINA_FALSE;
 	}
 	else
 	{
