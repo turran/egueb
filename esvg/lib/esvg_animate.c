@@ -35,15 +35,12 @@ typedef struct _Esvg_Animate
 	/* properties */
 	/* interface */
 	/* private */
-#if 0
-	Eina_List *values;
-	Ender_Property *prop;
-	Ender_Element *parent_e;
-	Edom_Tag *parent_t;
-	Esvg_Attribute_Type attribute_type;
-	/* new */
+	/* only used for the path commands */
+	/* here we store the value that is going to be set */
+	Eina_List *cmds;
+	/* here the animate_path_command to keep track of the animations
+	 * on every command found and the destination command */
 	Eina_List *animations;
-#endif
 } Esvg_Animate;
 
 static Esvg_Animate * _esvg_animate_get(Edom_Tag *t)
@@ -147,7 +144,7 @@ static Esvg_Animate_Base_Type_Descriptor _length_descriptor = {
 	/* .animation_generate 	= */ _esvg_animate_length_animation_generate,
 };
 /*----------------------------------------------------------------------------*
- *                        The double type descriptor                          *
+ *                        The number type descriptor                          *
  *----------------------------------------------------------------------------*/
 static void _esvg_animate_number_cb(Edom_Tag *t,
 		Ender_Element *e,
@@ -252,15 +249,6 @@ static Esvg_Animate_Base_Type_Descriptor _string_descriptor = {
 /*----------------------------------------------------------------------------*
  *                   The path command type descriptor                         *
  *----------------------------------------------------------------------------*/
-static void _esvg_animate_path_command_etch_data_to(void *d,
-		Etch_Data *data)
-{
-	char *v = d;
-
-	data->type = ETCH_STRING;
-	data->data.string = v;
-}
-
 static void  _esvg_animate_path_command_get_cb(Esvg_Path_Command *cmd, void *data)
 {
 	Esvg_Path_Command *pcmd;
@@ -289,25 +277,393 @@ static void _esvg_animate_path_command_free(void *d)
 		free(pcmd);
 }
 
-static void _esvg_animate_path_command_move_to_keyframes_add(Esvg_Path_Command *src,
+static void _esvg_animate_path_command_double_final_cb(Edom_Tag *t,
+		Ender_Element *e,
+		Ender_Property *p,
+		const Etch_Data *curr,
+		const Etch_Data *prev,
+		void *kdata,
+		void *data)
+{
+	Esvg_Animated_List a;
+	Edom_Tag *parent_t;
+	double *d = kdata;
+
+	parent_t = ender_element_object_get(e);
+	*d = curr->data.d;
+	a.base = data;
+	a.anim = NULL;
+
+	esvg_element_attribute_animate_set(parent_t, EINA_TRUE);
+	ender_element_property_value_set(e, p, &a, NULL);
+	esvg_element_attribute_animate_set(parent_t, EINA_FALSE);
+}
+
+static void _esvg_animate_path_command_move_to_keyframes_add(Esvg_Animate_Base_Context *abctx,
+		Esvg_Path_Command *src,
 		Esvg_Path_Command *dst,
-		Esvg_Animate_Base_Context *abctx,
-		Eina_List *anims, int64_t t)
+		Etch_Animation **a,
+		int64_t t)
 {
 	Etch_Data data;
-	Etch_Animation *a;
 
 	data.type = ETCH_DOUBLE;
 	data.data.d = src->data.move_to.x;
-	esvg_animate_base_animation_add_keyframe(a, abctx, &data, t, &dst->data.move_to.x);
+	esvg_animate_base_animation_add_keyframe(a[0], abctx, &data, t, &dst->data.move_to.x);
 	data.data.d = src->data.move_to.y;
-	esvg_animate_base_animation_add_keyframe(a, abctx, &data, t, &dst->data.move_to.y);
+	esvg_animate_base_animation_add_keyframe(a[1], abctx, &data, t, &dst->data.move_to.y);
 }
 
-static void _esvg_animate_path_command_keyframes_add(Esvg_Path_Command *cmd,
-		Esvg_Animate_Base_Context *abctx,
-		Eina_List *anims, int64_t t)
+static void _esvg_animate_path_command_hline_to_keyframes_add(Esvg_Animate_Base_Context *abctx,
+		Esvg_Path_Command *src,
+		Esvg_Path_Command *dst,
+		Etch_Animation **a,
+		int64_t t)
 {
+	Etch_Data data;
+
+	data.type = ETCH_DOUBLE;
+	data.data.d = src->data.hline_to.c;
+	esvg_animate_base_animation_add_keyframe(a[0], abctx, &data, t, &dst->data.hline_to.c);
+}
+
+static void _esvg_animate_path_command_vline_to_keyframes_add(Esvg_Animate_Base_Context *abctx,
+		Esvg_Path_Command *src,
+		Esvg_Path_Command *dst,
+		Etch_Animation **a,
+		int64_t t)
+{
+	Etch_Data data;
+
+	data.type = ETCH_DOUBLE;
+	data.data.d = src->data.vline_to.c;
+	esvg_animate_base_animation_add_keyframe(a[0], abctx, &data, t, &dst->data.vline_to.c);
+}
+
+static void _esvg_animate_path_command_line_to_keyframes_add(Esvg_Animate_Base_Context *abctx,
+		Esvg_Path_Command *src,
+		Esvg_Path_Command *dst,
+		Etch_Animation **a,
+		int64_t t)
+{
+	Etch_Data data;
+
+	data.type = ETCH_DOUBLE;
+	data.data.d = src->data.line_to.x;
+	esvg_animate_base_animation_add_keyframe(a[0], abctx, &data, t, &dst->data.line_to.x);
+	data.data.d = src->data.line_to.y;
+	esvg_animate_base_animation_add_keyframe(a[1], abctx, &data, t, &dst->data.line_to.y);
+}
+
+static void _esvg_animate_path_command_squadratic_to_keyframes_add(Esvg_Animate_Base_Context *abctx,
+		Esvg_Path_Command *src,
+		Esvg_Path_Command *dst,
+		Etch_Animation **a,
+		int64_t t)
+{
+	Etch_Data data;
+
+	data.type = ETCH_DOUBLE;
+	data.data.d = src->data.squadratic_to.x;
+	esvg_animate_base_animation_add_keyframe(a[0], abctx, &data, t, &dst->data.squadratic_to.x);
+	data.data.d = src->data.squadratic_to.y;
+	esvg_animate_base_animation_add_keyframe(a[1], abctx, &data, t, &dst->data.squadratic_to.y);
+}
+
+static void _esvg_animate_path_command_quadratic_to_keyframes_add(Esvg_Animate_Base_Context *abctx,
+		Esvg_Path_Command *src,
+		Esvg_Path_Command *dst,
+		Etch_Animation **a,
+		int64_t t)
+{
+	Etch_Data data;
+
+	data.type = ETCH_DOUBLE;
+	data.data.d = src->data.quadratic_to.x;
+	esvg_animate_base_animation_add_keyframe(a[0], abctx, &data, t, &dst->data.quadratic_to.x);
+	data.data.d = src->data.quadratic_to.y;
+	esvg_animate_base_animation_add_keyframe(a[1], abctx, &data, t, &dst->data.quadratic_to.y);
+	data.data.d = src->data.quadratic_to.ctrl_x;
+	esvg_animate_base_animation_add_keyframe(a[2], abctx, &data, t, &dst->data.quadratic_to.ctrl_x);
+	data.data.d = src->data.quadratic_to.ctrl_y;
+	esvg_animate_base_animation_add_keyframe(a[3], abctx, &data, t, &dst->data.quadratic_to.ctrl_y);
+}
+
+static void _esvg_animate_path_command_cubic_to_keyframes_add(Esvg_Animate_Base_Context *abctx,
+		Esvg_Path_Command *src,
+		Esvg_Path_Command *dst,
+		Etch_Animation **a,
+		int64_t t)
+{
+	Etch_Data data;
+
+	data.type = ETCH_DOUBLE;
+	data.data.d = src->data.cubic_to.x;
+	esvg_animate_base_animation_add_keyframe(a[0], abctx, &data, t, &dst->data.cubic_to.x);
+	data.data.d = src->data.cubic_to.y;
+	esvg_animate_base_animation_add_keyframe(a[1], abctx, &data, t, &dst->data.cubic_to.y);
+	data.data.d = src->data.cubic_to.ctrl_x0;
+	esvg_animate_base_animation_add_keyframe(a[2], abctx, &data, t, &dst->data.cubic_to.ctrl_x0);
+	data.data.d = src->data.cubic_to.ctrl_y0;
+	esvg_animate_base_animation_add_keyframe(a[3], abctx, &data, t, &dst->data.cubic_to.ctrl_y0);
+	data.data.d = src->data.cubic_to.ctrl_x1;
+	esvg_animate_base_animation_add_keyframe(a[4], abctx, &data, t, &dst->data.cubic_to.ctrl_x1);
+	data.data.d = src->data.cubic_to.ctrl_y1;
+	esvg_animate_base_animation_add_keyframe(a[5], abctx, &data, t, &dst->data.cubic_to.ctrl_y1);
+}
+
+static void _esvg_animate_path_command_scubic_to_keyframes_add(Esvg_Animate_Base_Context *abctx,
+		Esvg_Path_Command *src,
+		Esvg_Path_Command *dst,
+		Etch_Animation **a,
+		int64_t t)
+{
+	Etch_Data data;
+
+	data.type = ETCH_DOUBLE;
+	data.data.d = src->data.scubic_to.x;
+	esvg_animate_base_animation_add_keyframe(a[0], abctx, &data, t, &dst->data.scubic_to.x);
+	data.data.d = src->data.scubic_to.y;
+	esvg_animate_base_animation_add_keyframe(a[1], abctx, &data, t, &dst->data.scubic_to.y);
+	data.data.d = src->data.scubic_to.ctrl_x;
+	esvg_animate_base_animation_add_keyframe(a[2], abctx, &data, t, &dst->data.scubic_to.ctrl_x);
+	data.data.d = src->data.scubic_to.ctrl_y;
+	esvg_animate_base_animation_add_keyframe(a[3], abctx, &data, t, &dst->data.scubic_to.ctrl_y);
+}
+
+static void _esvg_animate_path_command_1doubles_animation_create(Edom_Tag *t,
+		Esvg_Animation_Context *actx,
+		Esvg_Animate_Base_Context *abctx,
+		Esvg_Path_Command *src,
+		Esvg_Path_Command *dst,
+		Etch_Animation **a,
+		Eina_List *cmds,
+		int64_t time,
+		Eina_Bool final)
+{
+	if (final)
+	{
+		a[0] = esvg_animate_base_animation_empty_add(t, ETCH_DOUBLE, actx, abctx,
+				_esvg_animate_path_command_double_final_cb, cmds);
+	}
+	else
+	{
+		a[0] = esvg_animate_base_animation_empty_add(t, ETCH_DOUBLE, actx, abctx,
+				_esvg_animate_double_cb, cmds);
+	}
+}
+
+static void _esvg_animate_path_command_2doubles_animation_create(Edom_Tag *t,
+		Esvg_Animation_Context *actx,
+		Esvg_Animate_Base_Context *abctx,
+		Esvg_Path_Command *src,
+		Esvg_Path_Command *dst,
+		Etch_Animation **a,
+		Eina_List *cmds,
+		int64_t time,
+		Eina_Bool final)
+{
+	a[0] = esvg_animate_base_animation_empty_add(t, ETCH_DOUBLE, actx, abctx,
+			_esvg_animate_double_cb, cmds);
+	if (final)
+	{
+		a[1] = esvg_animate_base_animation_empty_add(t, ETCH_DOUBLE, actx, abctx,
+				_esvg_animate_path_command_double_final_cb, cmds);
+	}
+	else
+	{
+		a[1] = esvg_animate_base_animation_empty_add(t, ETCH_DOUBLE, actx, abctx,
+				_esvg_animate_double_cb, cmds);
+	}
+}
+
+static void _esvg_animate_path_command_4doubles_animation_create(Edom_Tag *t,
+		Esvg_Animation_Context *actx,
+		Esvg_Animate_Base_Context *abctx,
+		Esvg_Path_Command *src,
+		Esvg_Path_Command *dst,
+		Etch_Animation **a,
+		Eina_List *cmds,
+		int64_t time,
+		Eina_Bool final)
+{
+	a[0] = esvg_animate_base_animation_empty_add(t, ETCH_DOUBLE, actx, abctx,
+			_esvg_animate_double_cb, cmds);
+	a[1] = esvg_animate_base_animation_empty_add(t, ETCH_DOUBLE, actx, abctx,
+			_esvg_animate_double_cb, cmds);
+	a[2] = esvg_animate_base_animation_empty_add(t, ETCH_DOUBLE, actx, abctx,
+			_esvg_animate_double_cb, cmds);
+	if (final)
+	{
+		a[3] = esvg_animate_base_animation_empty_add(t, ETCH_DOUBLE, actx, abctx,
+				_esvg_animate_path_command_double_final_cb, cmds);
+	}
+	else
+	{
+		a[3] = esvg_animate_base_animation_empty_add(t, ETCH_DOUBLE, actx, abctx,
+				_esvg_animate_double_cb, cmds);
+	}
+}
+
+static void _esvg_animate_path_command_6doubles_animation_create(Edom_Tag *t,
+		Esvg_Animation_Context *actx,
+		Esvg_Animate_Base_Context *abctx,
+		Esvg_Path_Command *src,
+		Esvg_Path_Command *dst,
+		Etch_Animation **a,
+		Eina_List *cmds,
+		int64_t time,
+		Eina_Bool final)
+{
+	a[0] = esvg_animate_base_animation_empty_add(t, ETCH_DOUBLE, actx, abctx,
+			_esvg_animate_double_cb, cmds);
+	a[1] = esvg_animate_base_animation_empty_add(t, ETCH_DOUBLE, actx, abctx,
+			_esvg_animate_double_cb, cmds);
+	a[2] = esvg_animate_base_animation_empty_add(t, ETCH_DOUBLE, actx, abctx,
+			_esvg_animate_double_cb, cmds);
+	a[3] = esvg_animate_base_animation_empty_add(t, ETCH_DOUBLE, actx, abctx,
+			_esvg_animate_double_cb, cmds);
+	a[4] = esvg_animate_base_animation_empty_add(t, ETCH_DOUBLE, actx, abctx,
+			_esvg_animate_double_cb, cmds);
+	if (final)
+	{
+		a[5] = esvg_animate_base_animation_empty_add(t, ETCH_DOUBLE, actx, abctx,
+				_esvg_animate_path_command_double_final_cb, cmds);
+	}
+	else
+	{
+		a[5] = esvg_animate_base_animation_empty_add(t, ETCH_DOUBLE, actx, abctx,
+				_esvg_animate_double_cb, cmds);
+	}
+}
+
+static void _esvg_animate_path_command_move_to_animation_create(Edom_Tag *t,
+		Esvg_Animation_Context *actx,
+		Esvg_Animate_Base_Context *abctx,
+		Esvg_Path_Command *src,
+		Esvg_Path_Command *dst,
+		Etch_Animation **a,
+		Eina_List *cmds,
+		int64_t time,
+		Eina_Bool final)
+{
+	_esvg_animate_path_command_2doubles_animation_create(t, actx, abctx, src, dst, a, cmds, time, final);
+	_esvg_animate_path_command_move_to_keyframes_add(abctx, src, dst, a, time);
+}
+
+static void _esvg_animate_path_command_line_to_animation_create(Edom_Tag *t,
+		Esvg_Animation_Context *actx,
+		Esvg_Animate_Base_Context *abctx,
+		Esvg_Path_Command *src,
+		Esvg_Path_Command *dst,
+		Etch_Animation **a,
+		Eina_List *cmds,
+		int64_t time,
+		Eina_Bool final)
+{
+	_esvg_animate_path_command_2doubles_animation_create(t, actx, abctx, src, dst, a, cmds, time, final);
+	_esvg_animate_path_command_line_to_keyframes_add(abctx, src, dst, a, time);
+}
+
+static void _esvg_animate_path_command_squadratic_to_animation_create(Edom_Tag *t,
+		Esvg_Animation_Context *actx,
+		Esvg_Animate_Base_Context *abctx,
+		Esvg_Path_Command *src,
+		Esvg_Path_Command *dst,
+		Etch_Animation **a,
+		Eina_List *cmds,
+		int64_t time,
+		Eina_Bool final)
+{
+	_esvg_animate_path_command_2doubles_animation_create(t, actx, abctx, src, dst, a, cmds, time, final);
+	_esvg_animate_path_command_squadratic_to_keyframes_add(abctx, src, dst, a, time);
+}
+
+static void _esvg_animate_path_command_quadratic_to_animation_create(Edom_Tag *t,
+		Esvg_Animation_Context *actx,
+		Esvg_Animate_Base_Context *abctx,
+		Esvg_Path_Command *src,
+		Esvg_Path_Command *dst,
+		Etch_Animation **a,
+		Eina_List *cmds,
+		int64_t time,
+		Eina_Bool final)
+{
+	_esvg_animate_path_command_4doubles_animation_create(t, actx, abctx, src, dst, a, cmds, time, final);
+	_esvg_animate_path_command_quadratic_to_keyframes_add(abctx, src, dst, a, time);
+}
+
+static void _esvg_animate_path_command_scubic_to_animation_create(Edom_Tag *t,
+		Esvg_Animation_Context *actx,
+		Esvg_Animate_Base_Context *abctx,
+		Esvg_Path_Command *src,
+		Esvg_Path_Command *dst,
+		Etch_Animation **a,
+		Eina_List *cmds,
+		int64_t time,
+		Eina_Bool final)
+{
+	_esvg_animate_path_command_4doubles_animation_create(t, actx, abctx, src, dst, a, cmds, time, final);
+	_esvg_animate_path_command_scubic_to_keyframes_add(abctx, src, dst, a, time);
+}
+
+static void _esvg_animate_path_command_hline_to_animation_create(Edom_Tag *t,
+		Esvg_Animation_Context *actx,
+		Esvg_Animate_Base_Context *abctx,
+		Esvg_Path_Command *src,
+		Esvg_Path_Command *dst,
+		Etch_Animation **a,
+		Eina_List *cmds,
+		int64_t time,
+		Eina_Bool final)
+{
+	_esvg_animate_path_command_1doubles_animation_create(t, actx, abctx, src, dst, a, cmds, time, final);
+	_esvg_animate_path_command_hline_to_keyframes_add(abctx, src, dst, a, time);
+}
+
+static void _esvg_animate_path_command_vline_to_animation_create(Edom_Tag *t,
+		Esvg_Animation_Context *actx,
+		Esvg_Animate_Base_Context *abctx,
+		Esvg_Path_Command *src,
+		Esvg_Path_Command *dst,
+		Etch_Animation **a,
+		Eina_List *cmds,
+		int64_t time,
+		Eina_Bool final)
+{
+	_esvg_animate_path_command_1doubles_animation_create(t, actx, abctx, src, dst, a, cmds, time, final);
+	_esvg_animate_path_command_vline_to_keyframes_add(abctx, src, dst, a, time);
+}
+
+static void _esvg_animate_path_command_cubic_to_animation_create(Edom_Tag *t,
+		Esvg_Animation_Context *actx,
+		Esvg_Animate_Base_Context *abctx,
+		Esvg_Path_Command *src,
+		Esvg_Path_Command *dst,
+		Etch_Animation **a,
+		Eina_List *cmds,
+		int64_t time,
+		Eina_Bool final)
+{
+	_esvg_animate_path_command_6doubles_animation_create(t, actx, abctx, src, dst, a, cmds, time, final);
+	_esvg_animate_path_command_cubic_to_keyframes_add(abctx, src, dst, a, time);
+}
+
+static Etch_Animation ** _esvg_animate_path_command_animation_alloc(Esvg_Path_Command_Type type)
+{
+	int count[ESVG_PATH_COMMAND_TYPES] = {
+		2, /* ESVG_PATH_MOVE_TO */
+		2, /* ESVG_PATH_LINE_TO */
+		1, /* ESVG_PATH_HLINE_TO */
+		1, /* ESVG_PATH_VLINE_TO */
+		6, /* ESVG_PATH_CUBIC_TO */
+		4, /* ESVG_PATH_SCUBIC_TO */
+		4, /* ESVG_PATH_QUADRATIC_TO */
+		2, /* ESVG_PATH_SQUADRATIC_TO */
+		7, /* ESVG_PATH_ARC_TO */
+		0, /* ESVG_PATH_CLOSE */
+	};
+	return calloc(count[type], sizeof(Etch_Animation *));
 }
 
 static Eina_Bool _esvg_animate_path_command_animation_generate(Edom_Tag *t,
@@ -316,61 +672,175 @@ static Eina_Bool _esvg_animate_path_command_animation_generate(Edom_Tag *t,
 		Esvg_Animation_Context *actx,
 		Esvg_Animate_Base_Context *abctx)
 {
+	Esvg_Animate *thiz;
 	Esvg_Path_Command *cmd;
-	/* this is the list that we should pass as the property */
-	Eina_List *ncmds = NULL;
 	Eina_List *cmds;
 	Eina_List *l;
+	int64_t *time;
 
-	printf("generate animations!\n");
+	thiz = _esvg_animate_get(t);
+
+	/* first create the animations for every command value */
+	time = eina_list_data_get(times);
+	times = eina_list_next(times);
+
 	cmds = eina_list_data_get(values);
 	values = eina_list_next(values);
-	/* first create the animations for every command value */
 	EINA_LIST_FOREACH (cmds, l, cmd)
 	{
 		Esvg_Path_Command *ncmd;
-		Etch_Animation *a;
+		Etch_Animation **a;
 		Etch_Data data;
+		Eina_Bool final = EINA_FALSE;
 
+		/* add a new destination command */
 		ncmd = calloc(1, sizeof(Esvg_Path_Command));
 		*ncmd = *cmd;
-		ncmds = eina_list_append(ncmds, ncmd);
+		thiz->cmds = eina_list_append(thiz->cmds, ncmd);
+
+		/* the final cmd should set the property */
+		if (!l->next)
+		{
+			final = EINA_TRUE;
+			printf("final %d\n", cmd->type);
+		}
+
+		/* no need for animations on the close command */
+		if (cmd->type == ESVG_PATH_CLOSE)
+			continue;
+
+		/* create the animations holder */
+		a = _esvg_animate_path_command_animation_alloc(cmd->type);
+		thiz->animations = eina_list_append(thiz->animations, a);
+
 		switch (cmd->type)
 		{
 			case ESVG_PATH_MOVE_TO:
-			a = esvg_animate_base_animation_empty_add(t, ETCH_DOUBLE, actx, abctx,
-					_esvg_animate_double_cb, ncmds);
-			esvg_animate_base_animation_empty_add(t, ETCH_DOUBLE, actx, abctx,
-					_esvg_animate_double_cb, ncmds);
-
+			_esvg_animate_path_command_move_to_animation_create(t,
+				actx, abctx, cmd, ncmd, a, thiz->cmds, *time, final);
+	
 			break;
 
 			case ESVG_PATH_LINE_TO:
+			_esvg_animate_path_command_line_to_animation_create(t,
+				actx, abctx, cmd, ncmd, a, thiz->cmds, *time, final);
+			break;
+
 			case ESVG_PATH_HLINE_TO:
+			_esvg_animate_path_command_hline_to_animation_create(t,
+				actx, abctx, cmd, ncmd, a, thiz->cmds, *time, final);
+			break;
+
 			case ESVG_PATH_VLINE_TO:
+			_esvg_animate_path_command_vline_to_animation_create(t,
+				actx, abctx, cmd, ncmd, a, thiz->cmds, *time, final);
+			break;
+
 			case ESVG_PATH_CUBIC_TO:
+			_esvg_animate_path_command_cubic_to_animation_create(t,
+				actx, abctx, cmd, ncmd, a, thiz->cmds, *time, final);
+			break;
+
 			case ESVG_PATH_SCUBIC_TO:
+			_esvg_animate_path_command_scubic_to_animation_create(t,
+				actx, abctx, cmd, ncmd, a, thiz->cmds, *time, final);
+			break;
+
 			case ESVG_PATH_QUADRATIC_TO:
+			_esvg_animate_path_command_quadratic_to_animation_create(t,
+				actx, abctx, cmd, ncmd, a, thiz->cmds, *time, final);
+			break;
+
 			case ESVG_PATH_SQUADRATIC_TO:
+			_esvg_animate_path_command_squadratic_to_animation_create(t,
+				actx, abctx, cmd, ncmd, a, thiz->cmds, *time, final);
+			break;
+
 			case ESVG_PATH_ARC_TO:
-			case ESVG_PATH_CLOSE:
+			printf("TODO\n");
+			default:
 			break;
 		}
 	}
-	/* TODO add the property setter on the last command animation */
 
 	/* once the animations are created we need to iterate over the next
 	 * list of commands, iterate over the values and fetch the needed
 	 * animation from the animate_base abstract */
 	EINA_LIST_FOREACH (values, l, cmds)
 	{
+		Eina_List *l2;
+		Eina_List *l3;
+		Eina_List *l4;
+
+		l2 = thiz->cmds;
+		l3 = thiz->animations;
+		time = eina_list_data_get(times);
+		printf("time = %lld\n", *time);
+		EINA_LIST_FOREACH (cmds, l4, cmd)
+		{
+			Esvg_Path_Command *ncmd;
+			Etch_Animation **a;
+
+			ncmd = eina_list_data_get(l2);
+			a = eina_list_data_get(l3);
+			/* the value command is not the same as the first value command */
+			if (ncmd->type != cmd->type)
+			{
+				printf("wrong!\n");
+			}
+			if (ncmd->type == ESVG_PATH_CLOSE)
+				goto done;
+
+			switch (cmd->type)
+			{
+				case ESVG_PATH_MOVE_TO:
+				_esvg_animate_path_command_move_to_keyframes_add(abctx, cmd, ncmd, a, *time);
+				break;
+
+				case ESVG_PATH_LINE_TO:
+				_esvg_animate_path_command_line_to_keyframes_add(abctx, cmd, ncmd, a, *time);
+				break;
+
+				case ESVG_PATH_HLINE_TO:
+				_esvg_animate_path_command_hline_to_keyframes_add(abctx, cmd, ncmd, a, *time);
+				break;
+
+				case ESVG_PATH_VLINE_TO:
+				_esvg_animate_path_command_vline_to_keyframes_add(abctx, cmd, ncmd, a, *time);
+				break;
+
+				case ESVG_PATH_QUADRATIC_TO:
+				_esvg_animate_path_command_quadratic_to_keyframes_add(abctx, cmd, ncmd, a, *time);
+				break;
+
+				case ESVG_PATH_SQUADRATIC_TO:
+				_esvg_animate_path_command_squadratic_to_keyframes_add(abctx, cmd, ncmd, a, *time);
+				break;
+
+				case ESVG_PATH_SCUBIC_TO:
+				_esvg_animate_path_command_scubic_to_keyframes_add(abctx, cmd, ncmd, a, *time);
+				break;
+
+				case ESVG_PATH_CUBIC_TO:
+				_esvg_animate_path_command_cubic_to_keyframes_add(abctx, cmd, ncmd, a, *time);
+				break;
+
+				case ESVG_PATH_ARC_TO:
+				default:
+				printf("TODO\n");
+				break;
+			}
+done:
+			l2 = eina_list_next(l2);
+			l3 = eina_list_next(l3);
+		}
 		/* just add the needed keyframes for every command, using the current time
 		 * on each value, pick up the next time */
+		times = eina_list_next(times);
 	}
+	printf("animation generated!!!\n");
 
-	/* iterate over the values, each value is a list of commands
-	 * so we need to create an animation for every command attributes
-	 */
+	return EINA_TRUE;
 }
 
 static Esvg_Animate_Base_Type_Descriptor _path_command_descriptor = {
@@ -419,7 +889,6 @@ static Eina_Bool _esvg_animate_type_descriptor_get(Edom_Tag *t,
 	else if (!strcmp(name, "esvg_animated_path_command"))
 	{
 		*d = &_path_command_descriptor;
-		return EINA_FALSE;
 	}
 	else
 	{

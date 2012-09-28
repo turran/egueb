@@ -43,6 +43,7 @@ void esvg_attribute_animated_list_add(Esvg_Attribute_Animated_List *aa,
 	else
 		a = &aa->base;
 	a->v = eina_list_append(a->v, data);
+	a->is_set = EINA_TRUE;
 }
 
 void esvg_attribute_animated_list_get(Esvg_Attribute_Animated_List *aa,
