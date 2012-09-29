@@ -282,8 +282,10 @@ static void _esvg_svg_element_changed_setup(Esvg_Svg *thiz,
 		Edom_Tag *changed_t;
 
 		changed_t = ender_element_object_get(e);
+		DBG("Tag '%s' found on the changed list", edom_tag_name_get(changed_t));
 		if (!esvg_element_has_setup(changed_t, c))
 		{
+			DBG("Tag '%s' marked as changed is going to be setup", edom_tag_name_get(changed_t));
 			esvg_element_internal_setup(changed_t, c, error);
 		}
 		thiz->elements_changed = eina_list_remove_list(thiz->elements_changed, l);
@@ -292,18 +294,13 @@ static void _esvg_svg_element_changed_setup(Esvg_Svg *thiz,
 
 static void _esvg_svg_element_changed_add(Esvg_Svg *thiz, Ender_Element *e)
 {
-#if 0
-	Edom_Tag *t;
-
-	t = ender_element_object_get(e);
-	printf("adding element %s to the list of changes\n", esvg_type_string_to(esvg_element_internal_type_get(t)));
-#endif
-
+	DBG("Tag '%s' has been added to the list of changes", esvg_element_name_get(e));
 	thiz->elements_changed = eina_list_append(thiz->elements_changed, e);
 }
 
 static void _esvg_svg_element_changed_remove(Esvg_Svg *thiz, Ender_Element *e)
 {
+	DBG("Tag '%s' has been removed from the list of changes", esvg_element_name_get(e));
 
 }
 /*----------------------------------------------------------------------------*

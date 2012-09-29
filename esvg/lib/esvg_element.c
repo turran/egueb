@@ -1258,7 +1258,7 @@ Esvg_Element_Setup_Return esvg_element_setup_rel(Edom_Tag *t,
 	Esvg_Element_Setup_Return ret;
 
 	thiz = _esvg_element_get(t);
-
+	DBG("Doing the setup on the tag '%s'", edom_tag_name_get(t));
 	/* FIXME given that we have to only setup a subtree, we should
 	 * not get the parents attributes from the arguments */
 	thiz->last_run = c->run;

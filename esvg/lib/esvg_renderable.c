@@ -275,6 +275,10 @@ static Esvg_Element_Setup_Return _esvg_renderable_propagate(Esvg_Renderable *thi
 		if (ret != ESVG_SETUP_OK)
 			return ret;
 	}
+#if 0
+	/* if something has changed or is going to change on the paint servers the setup
+	 * of the paint servers will make every reference to be updated
+	 */
 	/* in case we are going to use the fill renderer do its own setup */
 	if (attr->fill.is_set && attr->fill.v.type == ESVG_PAINT_SERVER && thiz->fill_reference)
 	{
@@ -290,6 +294,7 @@ static Esvg_Element_Setup_Return _esvg_renderable_propagate(Esvg_Renderable *thi
 			return ret;
 
 	}
+#endif
 	return ESVG_SETUP_OK;
 }
 /*----------------------------------------------------------------------------*
