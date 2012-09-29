@@ -1441,6 +1441,20 @@ EAPI Eina_Bool esvg_svg_animations_paused(Ender_Element *e)
  * To be documented
  * FIXME: To be fixed
  */
+EAPI void esvg_svg_animations_fps_set(Ender_Element *e, int fps)
+{
+	Edom_Tag *t;
+	Esvg_Svg *thiz;
+
+	t = ender_element_object_get(e);
+	thiz = _esvg_svg_get(t);
+	etch_timer_fps_set(thiz->etch, fps);
+}
+
+/**
+ * To be documented
+ * FIXME: To be fixed
+ */
 EAPI void esvg_svg_time_tick(Ender_Element *e)
 {
 	Edom_Tag *t;

@@ -29,8 +29,10 @@ EAPI Ender_Element * esvg_svg_element_find(Ender_Element *e, const char *id);
 EAPI void esvg_svg_animations_pause(Ender_Element *e);
 EAPI void esvg_svg_animations_unpause(Ender_Element *e);
 EAPI Eina_Bool esvg_svg_animations_paused(Ender_Element *e);
+EAPI void esvg_svg_animations_fps_set(Ender_Element *e, int fps);
 EAPI double esvg_svg_time_get(Ender_Element *e);
 EAPI void esvg_svg_time_set(Ender_Element *e, double secs);
+EAPI void esvg_svg_time_tick(Ender_Element *e);
 
 EAPI void esvg_svg_feed_mouse_move(Ender_Element *e, int x, int y);
 EAPI void esvg_svg_feed_mouse_down(Ender_Element *e, int button);
