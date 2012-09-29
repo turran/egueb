@@ -28,6 +28,7 @@
 #include "esvg_private_svg.h"
 
 #include "esvg_animation.h"
+#include "esvg_svg.h"
 
 /*
  * This file handles the common attribute handling of every
@@ -101,11 +102,16 @@ static Esvg_Animation * _esvg_animation_get(Edom_Tag *t)
 
 static void _esvg_animation_begin(Esvg_Animation *thiz, int64_t offset)
 {
+	Ender_Element *svg;
+	double seconds;
+
 	if (thiz->started)
 		return;
 	thiz->started = EINA_TRUE;
-	/* FIXME pass the correct offset! */
-	printf(">>>> begin cb %p\n", thiz->descriptor.enable);
+	esvg_element_internal_topmost_get(thiz->thiz_t, &svg);
+	seconds = esvg_svg_time_get(svg);
+	/* TODO maybe add 1 frame? */
+	offset = (ESVG_CLOCK_SECONDS * seconds) + offset;
 	if (thiz->descriptor.enable)
 		thiz->descriptor.enable(thiz->thiz_t, offset);
 }

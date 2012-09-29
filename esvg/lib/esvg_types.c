@@ -155,10 +155,6 @@ eina_strtod(const char *nptr, char **endptr)
 	ESVG_SPACE_SKIP(t); \
 	if (*t == ',') t++; \
 	ESVG_SPACE_SKIP(t);
-
-#define ESVG_CLOCK_SECONDS (1000000000LL)
-#define ESVG_CLOCK_MSECONDS (1000000LL)
-
 /*----------------------------------------------------------------------------*
  *                               Generic helpers                              *
  *----------------------------------------------------------------------------*/

@@ -18,6 +18,10 @@
 #ifndef _ESVG_TYPES_H
 #define _ESVG_TYPES_H
 
+#define ESVG_CLOCK_SECONDS (1000000000LL)
+#define ESVG_CLOCK_MSECONDS (1000000LL)
+#define ESVG_CLOCK_AS_SECONDS(t) ((t) / ESVG_CLOCK_SECONDS)
+
 typedef enum _Esvg_Type {
 	ESVG_A,
 	ESVG_ALTGLYPH,

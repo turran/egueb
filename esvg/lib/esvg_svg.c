@@ -1480,9 +1480,7 @@ EAPI double esvg_svg_time_get(Ender_Element *e)
 	thiz = _esvg_svg_get(t);
 	etch_timer_get(thiz->etch, &et);
 
-	/* FIXME fix this */
-	time = et / 10000000;
-
+	time = ESVG_CLOCK_AS_SECONDS(et);
 	return time;
 }
 
