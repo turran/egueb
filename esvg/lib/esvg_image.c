@@ -83,19 +83,13 @@ static void _esvg_image_load(Edom_Tag *t, Esvg_Image *thiz, double width, double
 {
 	Enesim_Surface *s = NULL;
 	Ender_Element *topmost;
-	char options[PATH_MAX];
 	char *href;
 	char *real;
 
-	options[0] = '\0';
 	/* set up the options */
 	/* FIXME this width is without the viewbox transformation, we should transform
 	 * and the assign the lengths
 	 */
-	if (width != 0 && height != 0)
-	{
-		sprintf(options, "width=%d;height=%d", (int)width, (int)height);
-	}
 
 	esvg_attribute_animated_string_final_get(&thiz->href, &href);
 	if (!href) goto cleanup;
@@ -113,7 +107,7 @@ static void _esvg_image_load(Edom_Tag *t, Esvg_Image *thiz, double width, double
 		free(thiz->real_href);
 	}
 	thiz->real_href = real;
-	esvg_svg_image_load(topmost, thiz->real_href, &s, options);
+	esvg_svg_image_load(topmost, thiz->real_href, &s, width, height);
 cleanup:
 	if (thiz->s)
 	{

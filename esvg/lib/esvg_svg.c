@@ -134,6 +134,14 @@ typedef struct _Esvg_Svg_Uri_Data
 	void *data;
 } Esvg_Svg_Uri_Data;
 
+typedef struct _Esvg_Svg_Image_Data
+{
+	Esvg_Svg *thiz;
+	Enesim_Surface **s;
+	double width;
+	double height;
+} Esvg_Svg_Image_Data;
+
 static Eina_Bool _esvg_svg_child_initialize(Edom_Tag *t, Edom_Tag *child_t, void *data);
 static Eina_Bool _esvg_svg_child_deinitialize(Edom_Tag *t, Edom_Tag *child_t, void *data);
 
@@ -404,12 +412,13 @@ static void _esvg_svg_image_uri_local_get(const char *name,
 static void _esvg_svg_image_uri_absolute_get(const char *name,
 		const char *fragment, void *user_data)
 {
-	Esvg_Svg_Uri_Data *data = user_data;
+	Esvg_Svg_Image_Data *data = user_data;
 	Esvg_Svg *thiz = data->thiz;
-	Enesim_Surface **s = data->ret;
-	const char *options = data->data;
+	Enesim_Surface **s = data->s;
+	double width = data->width;
+	double height = data->height;
 	Eina_Bool ret;
-
+	
 	printf("loading image into surface %p\n", *s);
 	if (_esvg_svg_image_is_svg(name))
 	{
@@ -417,13 +426,30 @@ static void _esvg_svg_image_uri_absolute_get(const char *name,
 		 * a new svg root, and our own root should process that one too
 		 */
 		Ender_Element *e;
+		double aw, ah;
+		int w, h;
 
 		printf("referring a svg image %s\n", name);
 		e = esvg_parser_load(name, NULL, NULL);
 		if (!e) return;
+
+		/* set the container size */
+		esvg_svg_container_width_set(e, width);
+		esvg_svg_container_height_set(e, height);
+		/* create a surface of the desired size */
+		w = ceil(width);
+		h = ceil(height);
+		*s = enesim_surface_new(ENESIM_FORMAT_ARGB8888, w, h);
+		/* add the svg to the list of svgs */
 	}
 	else
 	{
+		char options[PATH_MAX];
+
+		options[0] = '\0';
+		if (width != 0 && height != 0)
+			sprintf(options, "width=%d;height=%d", (int)width, (int)height);
+
 		ret = emage_load(name, s, ENESIM_FORMAT_ARGB8888, NULL, options);
 		if (!ret)
 		{
@@ -440,7 +466,7 @@ static void _esvg_svg_image_uri_absolute_get(const char *name,
 static void _esvg_svg_image_uri_relative_get(const char *name,
 		const char *fragment, void *user_data)
 {
-	Esvg_Svg_Uri_Data *data = user_data;
+	Esvg_Svg_Image_Data *data = user_data;
 	Esvg_Svg *thiz = data->thiz;
 	char absolute[PATH_MAX];
 	size_t len;
@@ -1151,9 +1177,9 @@ void esvg_svg_element_get(Ender_Element *e, const char *uri, Ender_Element **el)
 	esvg_iri_string_from(uri, &_uri_element_descriptor, &data);
 }
 
-void esvg_svg_image_load(Ender_Element *e, const char *uri, Enesim_Surface **s, const char *options)
+void esvg_svg_image_load(Ender_Element *e, const char *uri, Enesim_Surface **s, double width, double height)
 {
-	Esvg_Svg_Uri_Data data;
+	Esvg_Svg_Image_Data data;
 	Edom_Tag *t;
 	Esvg_Svg *thiz;
 
@@ -1163,8 +1189,9 @@ void esvg_svg_image_load(Ender_Element *e, const char *uri, Enesim_Surface **s, 
 	thiz = _esvg_svg_get(t);
 
 	data.thiz = thiz;
-	data.ret = (void *)s;
-	data.data = (void *)options;
+	data.s = s;
+	data.width = width;
+	data.height = height;
 	/* resolve the uri for relative/absolute */
 	esvg_iri_string_from(uri, &_uri_image_descriptor, &data);
 }
