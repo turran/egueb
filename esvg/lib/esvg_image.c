@@ -26,6 +26,20 @@
 #include "esvg_private_renderable.h"
 #include "esvg_private_svg.h"
 #include "esvg_image.h"
+/* TODO
+ * to handle svg images we need to:
+ * 1. make svg be able to load svgs. we need this to use the descriptor
+ * functions set on the svg to actually load a local/remote file
+ * 2. add on the svg functions to add external image svgs that will be
+ * processed on the damages and on the draw
+ * 3. the svg_image_add needs to also pass a callback to be called
+ * whenever such svg is going to be processed for damages and for drawing
+ * 4. whenever something changes on the image (file, size, etc) destroy
+ * such external svg
+ * 5. the damages are always relative to the svg, so we need to transform
+ * them to the destination svg (apply the transformation matrix the object
+ * currently has)
+ */
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
@@ -65,6 +79,52 @@ static Esvg_Image * _esvg_image_get(Edom_Tag *t)
 	thiz = esvg_renderable_data_get(t);
 	return thiz;
 }
+
+static Eina_Bool _esvg_image_is_svg(const char *uri)
+{
+	char *last;
+
+	last = strrchr(uri, '.');
+	if (!last) return EINA_FALSE;
+	if (!strcmp(last + 1, "svg"))
+		return EINA_TRUE;
+	return EINA_FALSE;
+}
+
+#if 0
+static void _esvg_image_svg_load(void)
+{
+	if (_esvg_svg_image_is_svg(name))
+	{
+		Esvg_Svg_Image *image;
+		Ender_Element *e;
+		double aw, ah;
+		int w, h;
+
+		e = esvg_parser_load(name, NULL, NULL);
+		if (!e) return;
+
+		/* set the container size */
+		esvg_svg_container_width_set(e, width);
+		esvg_svg_container_height_set(e, height);
+		/* create a surface of the desired size */
+		w = ceil(width);
+		h = ceil(height);
+		*s = enesim_surface_new(ENESIM_FORMAT_ARGB8888, w, h);
+
+		/* FIXME when to destroy it? the image might change
+		 * the uri and surface unreffed but not the ender element
+		 */
+		image = calloc(1, sizeof(Esvg_Svg_Image));
+		image->svg = e;
+		image->s = s;
+
+		/* add the svg to the list of svgs */
+		thiz->image_svgs = eina_list_append(thiz->image_svgs, image);
+	}
+	else
+}
+#endif
 
 static void _esvg_image_load(Edom_Tag *t, Esvg_Image *thiz, double width, double height)
 {

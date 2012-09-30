@@ -165,17 +165,6 @@ static Esvg_Svg * _esvg_svg_get(Edom_Tag *t)
 	return thiz;
 }
 
-static Eina_Bool _esvg_svg_image_is_svg(const char *uri)
-{
-	char *last;
-
-	last = strrchr(uri, '.');
-	if (!last) return EINA_FALSE;
-	if (!strcmp(last + 1, "svg"))
-		return EINA_TRUE;
-	return EINA_FALSE;
-}
-
 static Eina_Bool _esvg_svg_damage_cb(Enesim_Renderer *r,
 		const Eina_Rectangle *area, Eina_Bool past,
 		void *data)
@@ -370,7 +359,6 @@ static void _esvg_svg_resolve_uri_relative_get(const char *name,
 		return;
 	*real = strdup(absolute);
 	/* FIXME what about the fragment? */
-	*real = strdup(absolute);
 }
 
 static Esvg_Uri_Descriptor _uri_resolve_descriptor = {
@@ -427,37 +415,6 @@ static void _esvg_svg_image_uri_absolute_get(const char *name,
 	double height = data->height;
 	Eina_Bool ret;
 
-#if 0
-	if (_esvg_svg_image_is_svg(name))
-	{
-		Esvg_Svg_Image *image;
-		Ender_Element *e;
-		double aw, ah;
-		int w, h;
-
-		e = esvg_parser_load(name, NULL, NULL);
-		if (!e) return;
-
-		/* set the container size */
-		esvg_svg_container_width_set(e, width);
-		esvg_svg_container_height_set(e, height);
-		/* create a surface of the desired size */
-		w = ceil(width);
-		h = ceil(height);
-		*s = enesim_surface_new(ENESIM_FORMAT_ARGB8888, w, h);
-
-		/* FIXME when to destroy it? the image might change
-		 * the uri and surface unreffed but not the ender element
-		 */
-		image = calloc(1, sizeof(Esvg_Svg_Image));
-		image->svg = e;
-		image->s = s;
-
-		/* add the svg to the list of svgs */
-		thiz->image_svgs = eina_list_append(thiz->image_svgs, image);
-	}
-	else
-#endif
 	{
 		char options[PATH_MAX];
 
@@ -1174,9 +1131,9 @@ static void _esvg_svg_y_dpi_get(Edom_Tag *t, double *y_dpi)
  *============================================================================*/
 void esvg_svg_element_get(Ender_Element *e, const char *uri, Ender_Element **el)
 {
+	Esvg_Svg *thiz;
 	Esvg_Svg_Uri_Data data;
 	Edom_Tag *t;
-	Esvg_Svg *thiz;
 
 	if (!el) return;
 	if (!uri) return;
@@ -1193,9 +1150,9 @@ void esvg_svg_element_get(Ender_Element *e, const char *uri, Ender_Element **el)
 
 void esvg_svg_image_load(Ender_Element *e, const char *uri, Enesim_Surface **s, double width, double height)
 {
+	Esvg_Svg *thiz;
 	Esvg_Svg_Uri_Image_Data data;
 	Edom_Tag *t;
-	Esvg_Svg *thiz;
 
 	if (!s) return;
 
@@ -1209,6 +1166,43 @@ void esvg_svg_image_load(Ender_Element *e, const char *uri, Enesim_Surface **s, 
 	/* resolve the uri for relative/absolute */
 	esvg_iri_string_from(uri, &_uri_image_descriptor, &data);
 }
+
+Enesim_Surface * esvg_svg_surface_new(Ender_Element *e, int w, int h)
+{
+	Enesim_Surface *s;
+
+	/* TODO here use the desired pool */
+	s = enesim_surface_new(ENESIM_FORMAT_ARGB8888, w, h);
+	return s;
+}
+
+/* we need to add some kind of callback to be called for every external svg image
+ * and alloc the resulting struct so the image tag can free it whenever it wants
+ */
+void * esvg_svg_image_svg_add(Ender_Element *e, Edom_Tag *t, void *cb, void *data)
+{
+	return NULL;
+}
+
+void esvg_svg_image_svg_remove(void *image)
+{
+
+}
+
+Ender_Element * esvg_svg_svg_load(Ender_Element *e, const char *uri)
+{
+	Ender_Element *svg;
+	char *final;
+
+	final = esvg_svg_uri_resolve(e, uri);
+	if (!final) return NULL;
+	/* TODO use the correct descriptor */
+	svg = esvg_parser_load(final, NULL, NULL);
+	free(final);
+
+	return svg;
+}
+
 
 char * esvg_svg_uri_resolve(Ender_Element *e, const char *uri)
 {
