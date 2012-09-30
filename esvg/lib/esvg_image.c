@@ -101,7 +101,7 @@ static void _esvg_image_load(Edom_Tag *t, Esvg_Image *thiz, double width, double
 	if (!href) goto cleanup;
 
 	esvg_element_internal_topmost_get(t, &topmost);
-	real = esvg_svg_uri_resolve (topmost, href);
+	real = esvg_svg_uri_resolve(topmost, href);
 	if (!real) goto cleanup;
 
 	/* check that the href has actually changed */
@@ -113,15 +113,6 @@ static void _esvg_image_load(Edom_Tag *t, Esvg_Image *thiz, double width, double
 		free(thiz->real_href);
 	}
 	thiz->real_href = real;
-
-	/* FIXME for svg files we should call the parser to create
-	 * a new svg root, and our own root should process that one too
-	 */
-
-	/* FIXME handle async loading, for that we need someone to
-	 * tick the emage thread
-	 */
-
 	esvg_svg_image_load(topmost, thiz->real_href, &s, options);
 cleanup:
 	if (thiz->s)

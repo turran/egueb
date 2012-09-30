@@ -34,6 +34,7 @@
 #include "esvg_element.h"
 #include "esvg_renderable.h"
 #include "esvg_event.h"
+#include "esvg_parser.h"
 
 /*
  * Given that a svg element can clip, we should use a clipper with a compound
@@ -145,6 +146,18 @@ static Esvg_Svg * _esvg_svg_get(Edom_Tag *t)
 	thiz = esvg_renderable_data_get(t);
 
 	return thiz;
+}
+
+static Eina_Bool _esvg_svg_image_is_svg(const char *uri)
+{
+	char *last;
+
+	last = strrchr(uri, '.');
+	printf("last = %s\n", last + 1);
+	if (!last) return EINA_FALSE;
+	if (!strcmp(last + 1, "svg"))
+		return EINA_TRUE;
+	return EINA_FALSE;
 }
 
 static Eina_Bool _esvg_svg_damage_cb(Enesim_Renderer *r,
@@ -398,14 +411,28 @@ static void _esvg_svg_image_uri_absolute_get(const char *name,
 	Eina_Bool ret;
 
 	printf("loading image into surface %p\n", *s);
-	ret = emage_load(name, s, ENESIM_FORMAT_ARGB8888, NULL, options);
-	if (!ret)
+	if (_esvg_svg_image_is_svg(name))
 	{
-		Eina_Error err;
+		/* FIXME for svg files we should call the parser to create
+		 * a new svg root, and our own root should process that one too
+		 */
+		Ender_Element *e;
 
-		err = eina_error_get();
-		printf("Image %s loaded sync with error: %s\n", name, eina_error_msg_get(err));
-		return;
+		printf("referring a svg image %s\n", name);
+		e = esvg_parser_load(name, NULL, NULL);
+		if (!e) return;
+	}
+	else
+	{
+		ret = emage_load(name, s, ENESIM_FORMAT_ARGB8888, NULL, options);
+		if (!ret)
+		{
+			Eina_Error err;
+
+			err = eina_error_get();
+			printf("Image %s loaded sync with error: %s\n", name, eina_error_msg_get(err));
+			return;
+		}
 	}
 	printf("everything went ok!\n");
 }
