@@ -1176,18 +1176,36 @@ Enesim_Surface * esvg_svg_surface_new(Ender_Element *e, int w, int h)
 	return s;
 }
 
-/* we need to add some kind of callback to be called for every external svg image
- * and alloc the resulting struct so the image tag can free it whenever it wants
- */
-void * esvg_svg_image_svg_add(Ender_Element *e, Edom_Tag *t, void *cb, void *data)
+#if 0
+Esvg_Svg_External * esvg_svg_external_new(Ender_Element *svg, Edom_Tag *t, Enesim_Surface *s)
 {
-	return NULL;
+	Esvg_Svg_External *external;
+
+	external = calloc(1, sizeof(Esvg_Svg_External));
+	external->svg = svg;
+	external->owner = t;
+	external->s = s;
 }
 
-void esvg_svg_image_svg_remove(void *image)
+void esvg_svg_external_add(Ender_Element *e, Esvg_Svg_External *external)
 {
+	Edom_Tag *t;
 
+	t = ender_element_object_get(e);
+	thiz = _esvg_svg_get(t);
+	thiz->externals = eina_list_append(thiz->externals, external);
 }
+
+void esvg_svg_external_remove(Ender_Element *e, Esvg_Svg_External *external)
+{
+	thiz->externals = eina_list_remove(thiz->externals, external);
+}
+
+void esvg_svg_external_free(Esvg_Svg_External *external)
+{
+	free(external);
+}
+#endif
 
 Ender_Element * esvg_svg_svg_load(Ender_Element *e, const char *uri)
 {
@@ -1202,7 +1220,6 @@ Ender_Element * esvg_svg_svg_load(Ender_Element *e, const char *uri)
 
 	return svg;
 }
-
 
 char * esvg_svg_uri_resolve(Ender_Element *e, const char *uri)
 {
