@@ -125,6 +125,7 @@ typedef struct _Esvg_Svg
 	int th;
 	/* svg inclusion */
 	Eina_List *svgs; /* the list of svg documents found on the svg */
+	Eina_List *image_svgs; /* the list of svg images on the svg */
 } Esvg_Svg;
 
 typedef struct _Esvg_Svg_Uri_Data
@@ -134,13 +135,21 @@ typedef struct _Esvg_Svg_Uri_Data
 	void *data;
 } Esvg_Svg_Uri_Data;
 
-typedef struct _Esvg_Svg_Image_Data
+typedef struct _Esvg_Svg_Uri_Image_Data
 {
 	Esvg_Svg *thiz;
 	Enesim_Surface **s;
 	double width;
 	double height;
-} Esvg_Svg_Image_Data;
+} Esvg_Svg_Uri_Image_Data;
+
+typedef struct _Esvg_Svg_Image
+{
+	Ender_Element *svg;
+	/* TODO the image tag that has a svg file set */
+	Edom_Tag *referal;
+	Enesim_Surface *s;
+} Esvg_Svg_Image;
 
 static Eina_Bool _esvg_svg_child_initialize(Edom_Tag *t, Edom_Tag *child_t, void *data);
 static Eina_Bool _esvg_svg_child_deinitialize(Edom_Tag *t, Edom_Tag *child_t, void *data);
@@ -161,7 +170,6 @@ static Eina_Bool _esvg_svg_image_is_svg(const char *uri)
 	char *last;
 
 	last = strrchr(uri, '.');
-	printf("last = %s\n", last + 1);
 	if (!last) return EINA_FALSE;
 	if (!strcmp(last + 1, "svg"))
 		return EINA_TRUE;
@@ -412,24 +420,21 @@ static void _esvg_svg_image_uri_local_get(const char *name,
 static void _esvg_svg_image_uri_absolute_get(const char *name,
 		const char *fragment, void *user_data)
 {
-	Esvg_Svg_Image_Data *data = user_data;
+	Esvg_Svg_Uri_Image_Data *data = user_data;
 	Esvg_Svg *thiz = data->thiz;
 	Enesim_Surface **s = data->s;
 	double width = data->width;
 	double height = data->height;
 	Eina_Bool ret;
-	
-	printf("loading image into surface %p\n", *s);
+
+#if 0
 	if (_esvg_svg_image_is_svg(name))
 	{
-		/* FIXME for svg files we should call the parser to create
-		 * a new svg root, and our own root should process that one too
-		 */
+		Esvg_Svg_Image *image;
 		Ender_Element *e;
 		double aw, ah;
 		int w, h;
 
-		printf("referring a svg image %s\n", name);
 		e = esvg_parser_load(name, NULL, NULL);
 		if (!e) return;
 
@@ -440,9 +445,19 @@ static void _esvg_svg_image_uri_absolute_get(const char *name,
 		w = ceil(width);
 		h = ceil(height);
 		*s = enesim_surface_new(ENESIM_FORMAT_ARGB8888, w, h);
+
+		/* FIXME when to destroy it? the image might change
+		 * the uri and surface unreffed but not the ender element
+		 */
+		image = calloc(1, sizeof(Esvg_Svg_Image));
+		image->svg = e;
+		image->s = s;
+
 		/* add the svg to the list of svgs */
+		thiz->image_svgs = eina_list_append(thiz->image_svgs, image);
 	}
 	else
+#endif
 	{
 		char options[PATH_MAX];
 
@@ -456,17 +471,16 @@ static void _esvg_svg_image_uri_absolute_get(const char *name,
 			Eina_Error err;
 
 			err = eina_error_get();
-			printf("Image %s loaded sync with error: %s\n", name, eina_error_msg_get(err));
+			ERR("Image '%s' failed to load with error: %s", name, eina_error_msg_get(err));
 			return;
 		}
 	}
-	printf("everything went ok!\n");
 }
 
 static void _esvg_svg_image_uri_relative_get(const char *name,
 		const char *fragment, void *user_data)
 {
-	Esvg_Svg_Image_Data *data = user_data;
+	Esvg_Svg_Uri_Image_Data *data = user_data;
 	Esvg_Svg *thiz = data->thiz;
 	char absolute[PATH_MAX];
 	size_t len;
@@ -1179,7 +1193,7 @@ void esvg_svg_element_get(Ender_Element *e, const char *uri, Ender_Element **el)
 
 void esvg_svg_image_load(Ender_Element *e, const char *uri, Enesim_Surface **s, double width, double height)
 {
-	Esvg_Svg_Image_Data data;
+	Esvg_Svg_Uri_Image_Data data;
 	Edom_Tag *t;
 	Esvg_Svg *thiz;
 
@@ -1772,6 +1786,7 @@ EAPI Eina_Bool esvg_svg_draw(Ender_Element *e, Enesim_Surface *s,
 	Enesim_Renderer *r = NULL;
 
 	t = ender_element_object_get(e);
+	/* TODO first render every svg image into its own surface */
 	esvg_renderable_internal_renderer_get(t, &r);
 	if (!r) return EINA_FALSE;
 
@@ -1789,6 +1804,9 @@ EAPI Eina_Bool esvg_svg_draw_list(Ender_Element *e, Enesim_Surface *s,
 	Enesim_Renderer *r = NULL;
 
 	t = ender_element_object_get(e);
+	/* TODO first render every svg image we have but first interesecting
+	 * the damage with the surface area (transformed)
+	 */
 	esvg_renderable_internal_renderer_get(t, &r);
 	if (!r) return EINA_FALSE;
 
@@ -1831,6 +1849,7 @@ EAPI void esvg_svg_damages_get(Ender_Element *e, Esvg_Svg_Damage_Cb cb, void *da
 	}
 
 	esvg_renderable_internal_renderer_get(t, &r);
+	/* TODO first generate the damages on every svg image we have */
 	enesim_renderer_damages_get(r, _esvg_svg_damage_cb, thiz->tiler);
 
 	iter = eina_tiler_iterator_new(thiz->tiler);

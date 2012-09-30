@@ -29,6 +29,8 @@
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
+#define ESVG_LOG_DEFAULT esvg_log_image
+
 static Ender_Property *ESVG_IMAGE_X;
 static Ender_Property *ESVG_IMAGE_Y;
 static Ender_Property *ESVG_IMAGE_WIDTH;
@@ -64,21 +66,6 @@ static Esvg_Image * _esvg_image_get(Edom_Tag *t)
 	return thiz;
 }
 
-#if 0
-static Eina_Bool _esvg_image_svg_load(Edom_Tag *t, Esvg_Image *thiz, double width, double height)
-{
-	Ender_Element *e;
-
-	e = esvg_parser_load(thiz->real_href);
-	if (!e) return EINA_FALSE;
-
-	/* FIXME if it is not a svg, then just abort it? */
-	/* we need the main svg element also process and add the etch to the list of etches, etc */
-	/* when to render? whenever the renderable is being rendered? how to link both rendering process? */
-	/* does the image element should inform the main svg that we need to render again? */
-}
-#endif
-
 static void _esvg_image_load(Edom_Tag *t, Esvg_Image *thiz, double width, double height)
 {
 	Enesim_Surface *s = NULL;
@@ -99,7 +86,7 @@ static void _esvg_image_load(Edom_Tag *t, Esvg_Image *thiz, double width, double
 	if (!real) goto cleanup;
 
 	/* check that the href has actually changed */
-	printf("real href = %s %s\n", real, thiz->real_href);
+	DBG("Using real uri %s for %s", href, real);
 	if (thiz->real_href)
 	{
 		if (!strcmp(thiz->real_href, real))
@@ -114,7 +101,7 @@ cleanup:
 		enesim_surface_unref(thiz->s);
 		thiz->s = NULL;
 	}
-	printf(">>> setting new surface\n");
+	DBG("Using the surface %p", s);
 	enesim_renderer_image_src_set(thiz->image, s);
 	thiz->s = s;
 }
@@ -471,6 +458,16 @@ static void _esvg_image_xlink_href_get(Edom_Tag *t, Esvg_Animated_String *href)
 #define _esvg_image_height_is_set NULL
 #define _esvg_image_xlink_href_is_set NULL
 #include "generated/esvg_generated_image.c"
+
+#if 0
+void esvg_image_damage_add(Edom_Tag *t, Eina_Rectangle *area)
+{
+	Esvg_Image *thiz;
+
+	thiz = _esvg_image_get(t);
+	enesim_renderer_image_damage_add(thiz->image, area);
+}
+#endif
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/

@@ -59,6 +59,7 @@ struct log
 	{ &esvg_log_element,		"esvg_element" },
 	{ &esvg_log_ellipse,		"esvg_ellipse" },
 	{ &esvg_log_gradient,		"esvg_gradient" },
+	{ &esvg_log_image,		"esvg_image" },
 	{ &esvg_log_line,		"esvg_line" },
 	{ &esvg_log_parser, 		"esvg_parser" },
 	{ &esvg_log_path,		"esvg_path" },
@@ -243,6 +244,7 @@ int esvg_log_clip_path 		= -1;
 int esvg_log_element 		= -1;
 int esvg_log_ellipse 		= -1;
 int esvg_log_gradient 		= -1;
+int esvg_log_image 		= -1;
 int esvg_log_line 		= -1;
 int esvg_log_parser 		= -1;
 int esvg_log_path 		= -1;

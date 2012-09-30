@@ -72,6 +72,7 @@ extern int esvg_log_clip_path;
 extern int esvg_log_element;
 extern int esvg_log_ellipse;
 extern int esvg_log_gradient;
+extern int esvg_log_image;
 extern int esvg_log_line;
 extern int esvg_log_parser;
 extern int esvg_log_path;
