@@ -349,6 +349,8 @@ static Eina_Bool _esvg_radial_gradient_propagate(Edom_Tag *t,
 		fy = esvg_length_final_get(&lfy, 1, 1);
 		rad = esvg_length_full_final_get(&lrad, 1, 1, 1);
 		enesim_matrix_values_set(&m, ctx->bounds.w, 0, ctx->bounds.x, 0, ctx->bounds.h, ctx->bounds.y, 0, 0, 1);
+		/* transform the bounds using the context matrix */
+		enesim_matrix_compose(&ctx->transform, &m, &m);
 	}
 	else
 	{
