@@ -47,6 +47,13 @@ typedef struct _Esvg_Rect
 	Esvg_Attribute_Animated_Length rx;
 	Esvg_Attribute_Animated_Length ry;
 	/* private */
+	/* generated at setup */
+	double gx;
+	double gy;
+	double gwidth;
+	double gheight;
+	double grx;
+	double gry;
 	Enesim_Renderer *r;
 	Eina_Bool changed : 1;
 } Esvg_Rect;
@@ -166,6 +173,32 @@ static Esvg_Element_Setup_Return _esvg_rect_setup(Edom_Tag *t,
 		Esvg_Attribute_Presentation *attr,
 		Enesim_Error **error)
 {
+	Esvg_Rect *thiz;
+	Esvg_Length lx, ly;
+	Esvg_Length lw, lh;
+	Esvg_Length lrx, lry;
+
+	thiz = _esvg_rect_get(t);
+
+	/* position */
+	esvg_attribute_animated_length_final_get(&thiz->x, &lx);
+	esvg_attribute_animated_length_final_get(&thiz->y, &ly);
+	thiz->gx = esvg_length_final_get(&lx, ctx->viewbox.width, ctx->font_size);
+	thiz->gy = esvg_length_final_get(&ly, ctx->viewbox.height, ctx->font_size);
+	/* size */
+	esvg_attribute_animated_length_final_get(&thiz->width, &lw);
+	esvg_attribute_animated_length_final_get(&thiz->height, &lh);
+	thiz->gwidth = esvg_length_final_get(&lw, ctx->viewbox.width, ctx->font_size);
+	thiz->gheight = esvg_length_final_get(&lh, ctx->viewbox.height, ctx->font_size);
+	/* rx and ry */
+	esvg_attribute_animated_length_final_get(&thiz->rx, &lrx);
+	esvg_attribute_animated_length_final_get(&thiz->ry, &lry);
+	thiz->grx = esvg_length_final_get(&lrx, ctx->viewbox.width, ctx->font_size);
+	/* set the bounds */
+	enesim_rectangle_coords_from(&ctx->bounds,
+			thiz->gx, thiz->gy, thiz->gwidth, thiz->gheight);
+
+	DBG("calling the setup on the rect (%g %g %g %g)", thiz->gx, thiz->gy, thiz->gwidth, thiz->gheight);
 	return ESVG_SETUP_OK;
 }
 
@@ -177,36 +210,16 @@ static Eina_Bool _esvg_rect_renderer_propagate(Edom_Tag *t,
 		Enesim_Error **error)
 {
 	Esvg_Rect *thiz;
-	Esvg_Length lx, ly;
-	Esvg_Length lw, lh;
-	Esvg_Length lrx, lry;
-	double x, y;
-	double rx, ry;
-	double width, height;
 
 	thiz = _esvg_rect_get(t);
 
 	/* set the position */
-	esvg_attribute_animated_length_final_get(&thiz->x, &lx);
-	esvg_attribute_animated_length_final_get(&thiz->y, &ly);
-	esvg_attribute_animated_length_final_get(&thiz->width, &lw);
-	esvg_attribute_animated_length_final_get(&thiz->height, &lh);
-	esvg_attribute_animated_length_final_get(&thiz->rx, &lrx);
-	esvg_attribute_animated_length_final_get(&thiz->ry, &lry);
-	x = esvg_length_final_get(&lx, ctx->viewbox.width, ctx->font_size);
-	y = esvg_length_final_get(&ly, ctx->viewbox.height, ctx->font_size);
-	enesim_renderer_rectangle_position_set(thiz->r, x, y);
+	enesim_renderer_rectangle_position_set(thiz->r, thiz->gx, thiz->gy);
 	/* set the size */
-	width = esvg_length_final_get(&lw, ctx->viewbox.width, ctx->font_size);
-	height = esvg_length_final_get(&lh, ctx->viewbox.height, ctx->font_size);
-	enesim_renderer_rectangle_size_set(thiz->r, width, height);
-
-	/* set the bounds */
-	enesim_rectangle_coords_from((Enesim_Rectangle *)&ctx->bounds, x, y, width, height);
+	enesim_renderer_rectangle_size_set(thiz->r, thiz->gwidth, thiz->gheight);
 
 	/* FIXME enesim does not supports rx *and* ry */
-	rx = esvg_length_final_get(&lrx, ctx->viewbox.width, ctx->font_size);
-	enesim_renderer_rectangle_corner_radius_set(thiz->r, rx);
+	enesim_renderer_rectangle_corner_radius_set(thiz->r, thiz->grx);
 	enesim_renderer_rectangle_corners_set(thiz->r,
 			EINA_TRUE, EINA_TRUE, EINA_TRUE, EINA_TRUE);
 
@@ -220,8 +233,7 @@ static Eina_Bool _esvg_rect_renderer_propagate(Edom_Tag *t,
 	enesim_renderer_shape_stroke_location_set(thiz->r, ENESIM_SHAPE_STROKE_CENTER);
 	enesim_renderer_shape_draw_mode_set(thiz->r, rctx->draw_mode);
 
-	DBG("calling the setup on the rect (%g %g %g %g) %g", x, y, width, height, rctx->stroke_weight);
-	DBG("fc %08x sc %08x c %08x", rctx->fill_color, rctx->stroke_color, rctx->color);
+	DBG("fc %08x sc %08x c %08x %g", rctx->fill_color, rctx->stroke_color, rctx->color, rctx->stroke_weight);
 	/* base properties */
 	enesim_renderer_geometry_transformation_set(thiz->r, &ctx->transform);
 	enesim_renderer_color_set(thiz->r, rctx->color);

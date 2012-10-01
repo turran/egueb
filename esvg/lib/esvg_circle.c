@@ -41,6 +41,10 @@ typedef struct _Esvg_Circle
 	Esvg_Attribute_Animated_Coord cy;
 	Esvg_Attribute_Animated_Length radius;
 	/* private */
+	/* generated at setup */
+	double gcx;
+	double gcy;
+	double gradius;
 	Enesim_Renderer *r;
 	Eina_Bool changed : 1;
 } Esvg_Circle;
@@ -127,6 +131,27 @@ static Esvg_Element_Setup_Return _esvg_circle_setup(Edom_Tag *t,
 		Esvg_Attribute_Presentation *attr,
 		Enesim_Error **error)
 {
+	Esvg_Circle *thiz;
+	Esvg_Length lcx, lcy;
+	Esvg_Length lradius;
+
+	thiz = _esvg_circle_get(t);
+	/* position */
+	esvg_attribute_animated_length_final_get(&thiz->cx, &lcx);
+	esvg_attribute_animated_length_final_get(&thiz->cy, &lcy);
+	thiz->gcx = esvg_length_final_get(&lcx, ctx->viewbox.width, ctx->font_size);
+	thiz->gcy = esvg_length_final_get(&lcy, ctx->viewbox.height, ctx->font_size);
+	/* radius */
+	esvg_attribute_animated_length_final_get(&thiz->radius, &lradius);
+	/* set the size */
+	thiz->gradius = esvg_length_full_final_get(&lradius, ctx->viewbox.width, ctx->viewbox.height, ctx->font_size);
+	/* set the bounds */
+	enesim_rectangle_coords_from(&ctx->bounds,
+			thiz->gcx - thiz->gradius,
+			thiz->gcy - thiz->gradius,
+			thiz->gradius * 2, thiz->gradius * 2);
+
+	DBG("calling the setup on the circle (%g %g %g)", thiz->gcx, thiz->gcy, thiz->gradius);
 	return ESVG_SETUP_OK;
 }
 
@@ -138,24 +163,12 @@ static Eina_Bool _esvg_circle_renderer_propagate(Edom_Tag *t,
 		Enesim_Error **error)
 {
 	Esvg_Circle *thiz;
-	Esvg_Length lcx, lcy;
-	Esvg_Length lradius;
-	double cx, cy;
-	double radius;
 
 	thiz = _esvg_circle_get(t);
-	/* FIXME gets the parents size or the topmost? */
-	/* set the origin */
-	esvg_attribute_animated_length_final_get(&thiz->cx, &lcx);
-	esvg_attribute_animated_length_final_get(&thiz->cy, &lcy);
-	esvg_attribute_animated_length_final_get(&thiz->radius, &lradius);
-	cx = esvg_length_final_get(&lcx, ctx->viewbox.width, ctx->font_size);
-	cy = esvg_length_final_get(&lcy, ctx->viewbox.height, ctx->font_size);
-	/* set the size */
-	radius = esvg_length_full_final_get(&lradius, ctx->viewbox.width, ctx->viewbox.height, ctx->font_size);
-	DBG("calling the setup on the circle (%g %g %g)", cx, cy, radius);
-	enesim_renderer_circle_center_set(thiz->r, cx, cy);
-	enesim_renderer_circle_radius_set(thiz->r, radius);
+	/* set the position */
+	enesim_renderer_circle_center_set(thiz->r, thiz->gcx, thiz->gcy);
+	/* set the radius */
+	enesim_renderer_circle_radius_set(thiz->r, thiz->gradius);
 
 	/* shape properties */
 	enesim_renderer_shape_fill_color_set(thiz->r, rctx->fill_color);

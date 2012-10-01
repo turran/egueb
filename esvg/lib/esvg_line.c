@@ -43,6 +43,11 @@ typedef struct _Esvg_Line
 	Esvg_Attribute_Animated_Coord y1;
 	Esvg_Attribute_Animated_Coord y2;
 	/* private */
+	/* generated at setup */
+	double gx1;
+	double gy1;
+	double gx2;
+	double gy2;
 	Enesim_Renderer *r;
 	Eina_Bool changed : 1;
 } Esvg_Line;
@@ -139,6 +144,28 @@ static Esvg_Element_Setup_Return _esvg_line_setup(Edom_Tag *t,
 		Esvg_Attribute_Presentation *attr,
 		Enesim_Error **error)
 {
+	Esvg_Line *thiz;
+	Esvg_Length lx1, ly1, lx2, ly2;
+
+	thiz = _esvg_line_get(t);
+	/* the position */
+	esvg_attribute_animated_length_final_get(&thiz->x1, &lx1);
+	esvg_attribute_animated_length_final_get(&thiz->y1, &ly1);
+	esvg_attribute_animated_length_final_get(&thiz->x2, &lx2);
+	esvg_attribute_animated_length_final_get(&thiz->y2, &ly2);
+	thiz->gx1 = esvg_length_final_get(&lx1, ctx->viewbox.width, ctx->font_size);
+	thiz->gy1 = esvg_length_final_get(&ly1, ctx->viewbox.height, ctx->font_size);
+	thiz->gx2 = esvg_length_final_get(&lx2, ctx->viewbox.width, ctx->font_size);
+	thiz->gy2 = esvg_length_final_get(&ly2, ctx->viewbox.height, ctx->font_size);
+	/* the bounds */
+	enesim_rectangle_coords_from(&ctx->bounds,
+			thiz->gx1 < thiz->gx2 ? thiz->gx1 : thiz->gx2,
+			thiz->gy1 < thiz->gy2 ? thiz->gy1 : thiz->gy2,
+			fabs(thiz->gx1 - thiz->gx2),
+			fabs(thiz->gy1 - thiz->gy2));
+
+	DBG("calling the setup on the line (%g %g %g %g)", thiz->gx1, thiz->gy1, thiz->gx2, thiz->gy2);
+
 	return ESVG_SETUP_OK;
 }
 
@@ -150,25 +177,13 @@ static Eina_Bool _esvg_line_renderer_propagate(Edom_Tag *t,
 		Enesim_Error **error)
 {
 	Esvg_Line *thiz;
-	Esvg_Length lx1, ly1, lx2, ly2;
-	double x1, y1, x2, y2;
 
 	thiz = _esvg_line_get(t);
 
-	/* FIXME gets the parents size or the topmost? */
-	esvg_attribute_animated_length_final_get(&thiz->x1, &lx1);
-	esvg_attribute_animated_length_final_get(&thiz->y1, &ly1);
-	esvg_attribute_animated_length_final_get(&thiz->x2, &lx2);
-	esvg_attribute_animated_length_final_get(&thiz->y2, &ly2);
-	x1 = esvg_length_final_get(&lx1, ctx->viewbox.width, ctx->font_size);
-	y1 = esvg_length_final_get(&ly1, ctx->viewbox.height, ctx->font_size);
-	x2 = esvg_length_final_get(&lx2, ctx->viewbox.width, ctx->font_size);
-	y2 = esvg_length_final_get(&ly2, ctx->viewbox.height, ctx->font_size);
-
-	enesim_renderer_line_x0_set(thiz->r, x1);
-	enesim_renderer_line_y0_set(thiz->r, y1);
-	enesim_renderer_line_x1_set(thiz->r, x2);
-	enesim_renderer_line_y1_set(thiz->r, y2);
+	enesim_renderer_line_x0_set(thiz->r, thiz->gx1);
+	enesim_renderer_line_y0_set(thiz->r, thiz->gy1);
+	enesim_renderer_line_x1_set(thiz->r, thiz->gx2);
+	enesim_renderer_line_y1_set(thiz->r, thiz->gy2);
 
 	/* shape properties */
 	enesim_renderer_shape_fill_color_set(thiz->r, rctx->fill_color);
@@ -183,7 +198,6 @@ static Eina_Bool _esvg_line_renderer_propagate(Edom_Tag *t,
 	enesim_renderer_geometry_transformation_set(thiz->r, &ctx->transform);
 	enesim_renderer_color_set(thiz->r, rctx->color);
 
-	DBG("calling the setup on the line (%g %g %g %g)", x1, y1, x2, y2);
 	return EINA_TRUE;
 }
 

@@ -242,6 +242,7 @@ static int * _esvg_element_attribute_animated_fetch(Esvg_Element *thiz, const ch
 	}
 	else if (strcmp(attr, "stroke-width") == 0)
 	{
+		printf("getting stroke width!\n");
 		animated = &thiz->current_attr->stroke_width.animated;
 	}
 	else if (strcmp(attr, "stroke-opacity") == 0)
@@ -730,6 +731,7 @@ static void _esvg_element_stroke_width_set(Edom_Tag *t, const Esvg_Animated_Leng
 {
 	Esvg_Element *thiz;
 	Esvg_Length def = { ESVG_UNIT_LENGTH_PX, 1 };
+	Eina_Bool is_set;
 
 	thiz = _esvg_element_get(t);
 	esvg_attribute_animated_length_set(&thiz->current_attr->stroke_width,

@@ -42,6 +42,11 @@ typedef struct _Esvg_Ellipse
 	Esvg_Attribute_Animated_Length rx;
 	Esvg_Attribute_Animated_Length ry;
 	/* private */
+	/* generated at setup */
+	double gcx;
+	double gcy;
+	double grx;
+	double gry;
 	Enesim_Renderer *r;
 	Eina_Bool changed : 1;
 } Esvg_Ellipse;
@@ -138,6 +143,28 @@ static Esvg_Element_Setup_Return _esvg_ellipse_setup(Edom_Tag *t,
 		Esvg_Attribute_Presentation *attr,
 		Enesim_Error **error)
 {
+	Esvg_Ellipse *thiz;
+	Esvg_Length lcx, lcy;
+	Esvg_Length lrx, lry;
+
+	thiz = _esvg_ellipse_get(t);
+	/* position */
+	esvg_attribute_animated_length_final_get(&thiz->cx, &lcx);
+	esvg_attribute_animated_length_final_get(&thiz->cy, &lcy);
+	thiz->gcx = esvg_length_final_get(&lcx, ctx->viewbox.width, ctx->font_size);
+	thiz->gcy = esvg_length_final_get(&lcy, ctx->viewbox.height, ctx->font_size);
+	/* radius */
+	esvg_attribute_animated_length_final_get(&thiz->rx, &lrx);
+	esvg_attribute_animated_length_final_get(&thiz->ry, &lry);
+	thiz->grx = esvg_length_final_get(&lrx, ctx->viewbox.width, ctx->font_size);
+	thiz->gry = esvg_length_final_get(&lry, ctx->viewbox.height, ctx->font_size);
+	/* set the bounds */
+	enesim_rectangle_coords_from(&ctx->bounds,
+			thiz->gcx - thiz->grx,
+			thiz->gcy - thiz->gry,
+			thiz->grx * 2, thiz->gry * 2);
+	DBG("calling the setup on the ellipse (%g %g %g %g)", thiz->gcx, thiz->gcy, thiz->grx, thiz->gry);
+
 	return ESVG_SETUP_OK;
 }
 
@@ -156,20 +183,10 @@ static Eina_Bool _esvg_ellipse_renderer_propagate(Edom_Tag *t,
 
 	thiz = _esvg_ellipse_get(t);
 
-	/* FIXME gets the parents size or the topmost? */
-	/* set the origin */
-	esvg_attribute_animated_length_final_get(&thiz->cx, &lcx);
-	esvg_attribute_animated_length_final_get(&thiz->cy, &lcy);
-	esvg_attribute_animated_length_final_get(&thiz->rx, &lrx);
-	esvg_attribute_animated_length_final_get(&thiz->ry, &lry);
-	cx = esvg_length_final_get(&lcx, ctx->viewbox.width, ctx->font_size);
-	cy = esvg_length_final_get(&lcy, ctx->viewbox.height, ctx->font_size);
+	/* set the position */
+	enesim_renderer_ellipse_center_set(thiz->r, thiz->gcx, thiz->gcy);
 	/* set the size */
-	rx = esvg_length_final_get(&lrx, ctx->viewbox.width, ctx->font_size);
-	ry = esvg_length_final_get(&lry, ctx->viewbox.height, ctx->font_size);
-	DBG("calling the setup on the ellipse (%g %g %g %g)", cx, cy, rx, ry);
-	enesim_renderer_ellipse_center_set(thiz->r, cx, cy);
-	enesim_renderer_ellipse_radii_set(thiz->r, rx, ry);
+	enesim_renderer_ellipse_radii_set(thiz->r, thiz->grx, thiz->gry);
 
 	/* shape properties */
 	enesim_renderer_shape_fill_color_set(thiz->r, rctx->fill_color);
