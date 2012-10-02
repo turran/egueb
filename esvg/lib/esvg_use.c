@@ -24,6 +24,7 @@
 #include "esvg_private_context.h"
 #include "esvg_private_element.h"
 #include "esvg_private_renderable.h"
+#include "esvg_private_renderable_container.h"
 #include "esvg_private_clone.h"
 #include "esvg_private_svg.h"
 
@@ -65,6 +66,7 @@ typedef struct _Esvg_Use
 	Esvg_Length width;
 	Esvg_Length height;
 	/* private */
+	Esvg_Renderable_Container *container;
 	Eina_Bool state_changed : 1;
 	Ender_Element *cloned;
 	/* the always present g tag */
@@ -107,6 +109,8 @@ static void _esvg_use_initialize(Ender_Element *e)
 	 * we should also set the topmost on the g
 	 */
 	ender_event_listener_add(e, "TopmostChanged", _esvg_use_topmost_changed_cb, thiz);
+	thiz->container = esvg_renderable_container_new(e);
+	esvg_renderable_container_renderable_add(thiz->container, thiz->g_t);
 }
 
 static Eina_Bool _esvg_use_attribute_set(Ender_Element *e,
@@ -241,6 +245,7 @@ static void _esvg_use_free(Edom_Tag *t)
 	Esvg_Use *thiz;
 
 	thiz = _esvg_use_get(t);
+	esvg_renderable_container_free(thiz->container);
 	free(thiz);
 }
 
