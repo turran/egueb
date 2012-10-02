@@ -23,7 +23,9 @@
 #include "esvg_private_attribute_presentation.h"
 #include "esvg_private_context.h"
 #include "esvg_private_element.h"
+#include "esvg_private_svg.h"
 #include "esvg_a.h"
+#include "esvg_event.h"
 
 /* TODO
  * whenever a child is added, if it is of type renderable, then
@@ -43,6 +45,7 @@ typedef struct _Esvg_A
 	char *href;
 	/* interface */
 	/* private */
+	char *real_href;
 } Esvg_A;
 
 static Esvg_A * _esvg_a_get(Edom_Tag *t)
@@ -55,9 +58,52 @@ static Esvg_A * _esvg_a_get(Edom_Tag *t)
 
 	return thiz;
 }
+
+static void _esvg_a_renderable_click(Ender_Element *e,
+		const char *event_name, void *event_data, void *data)
+{
+	Esvg_A *thiz = data;
+	Esvg_Event_Mouse *ev = event_data;
+
+	printf("<<<<< mouse click on A %s>>>>>>\n", thiz->real_href);
+}
 /*----------------------------------------------------------------------------*
  *                         The Esvg Element interface                         *
  *----------------------------------------------------------------------------*/
+static Eina_Bool _esvg_a_child_add(Edom_Tag *t, Edom_Tag *child)
+{
+	Esvg_A *thiz;
+	Esvg_Type type;
+	Ender_Element *e;
+
+	thiz = _esvg_a_get(t);
+	type = esvg_element_internal_type_get(child);
+	if (!esvg_type_is_renderable(type))
+		return EINA_TRUE;
+
+	e = esvg_element_ender_get(child);
+	/* add the mouse click event */
+	ender_event_listener_add(e, "click", _esvg_a_renderable_click, thiz);
+	return EINA_TRUE;
+}
+
+static Eina_Bool _esvg_a_child_remove(Edom_Tag *t, Edom_Tag *child)
+{
+	Esvg_A *thiz;
+	Esvg_Type type;
+	Ender_Element *e;
+
+	thiz = _esvg_a_get(t);
+	type = esvg_element_internal_type_get(child);
+	if (!esvg_type_is_renderable(type))
+		return EINA_TRUE;
+
+	e = esvg_element_ender_get(child);
+	/* remove the mouse click event */
+	ender_event_listener_remove_full(e, "click", _esvg_a_renderable_click, thiz);
+	return EINA_TRUE;
+}
+
 static void _esvg_a_free(Edom_Tag *t)
 {
 	Esvg_A *thiz;
@@ -72,29 +118,10 @@ static Eina_Bool _esvg_a_attribute_set(Ender_Element *e,
 	if (strcmp(key, "xlink:href") == 0)
 	{
 		esvg_a_href_set(e, value);
-#if 0
-		Esvg_A *thiz;
-
-		thiz = edom_tag_data_get(tag);
-		/* absolute */
-		if (*value == '/')
-		{
-			thiz->href = strdup(value);
-		}
-		/* relative */
-		else
-		{
-			Edom_Parser *parser;
-			char real[PATH_MAX];
-			const char *root;
-
-			parser = edom_tag_parser_get(tag);
-			root = edom_parser_root_get(parser);
-			strcpy(real, root);
-			strcat(real, value);
-			thiz->href = strdup(real);
-		}
-#endif
+	}
+	else
+	{
+		return EINA_FALSE;
 	}
 	/*
 	 * a color and a opacity are part of the presentation attributes
@@ -108,7 +135,6 @@ static Eina_Bool _esvg_a_attribute_get(Edom_Tag *tag, const char *attribute, cha
 	return EINA_FALSE;
 }
 
-/* TODO optimize so many 'ifs' */
 static Esvg_Element_Setup_Return _esvg_a_setup(Edom_Tag *t,
 		Esvg_Context *c,
 		const Esvg_Element_Context *parent_context,
@@ -117,14 +143,25 @@ static Esvg_Element_Setup_Return _esvg_a_setup(Edom_Tag *t,
 		Enesim_Error **error)
 {
 	Esvg_A *thiz;
+	Ender_Element *topmost;
+	char *real;
 
 	thiz = _esvg_a_get(t);
+	esvg_element_internal_topmost_get(t, &topmost);
+
+	/* set the resolved uri */
+	if (thiz->real_href)
+	{
+		free(thiz->href);
+		thiz->href = NULL;
+	}
+	thiz->real_href = esvg_svg_uri_resolve(topmost, thiz->href);
 	return EINA_TRUE;
 }
 
 static Esvg_Element_Descriptor _descriptor = {
-	/* .child_add		= */ NULL,
-	/* .child_remove	= */ NULL,
+	/* .child_add		= */ _esvg_a_child_add,
+	/* .child_remove	= */ _esvg_a_child_remove,
 	/* .attribute_get 	= */ _esvg_a_attribute_get,
 	/* .cdata_set 		= */ NULL,
 	/* .text_set 		= */ NULL,

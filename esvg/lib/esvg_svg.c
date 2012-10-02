@@ -717,6 +717,7 @@ static Eina_Bool _esvg_svg_child_add(Edom_Tag *t, Edom_Tag *child)
 	Esvg_Type type;
 	Ender_Element *e;
 
+	/* FIXME avoid this case, put it on the common element functions */
 	if (!esvg_is_element_internal(child))
 		return EINA_FALSE;
 
@@ -738,6 +739,7 @@ static Eina_Bool _esvg_svg_child_remove(Edom_Tag *t, Edom_Tag *child)
 	Esvg_Svg *thiz;
 	Esvg_Type type;
 
+	/* FIXME avoid this case, put it on the common element functions */
 	if (!esvg_is_element_internal(child))
 		return EINA_FALSE;
 
