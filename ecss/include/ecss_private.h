@@ -89,6 +89,8 @@ struct _Ecss_Selector
 };
 
 Ecss_Selector * ecss_selector_next_get(Ecss_Selector *thiz);
+Ecss_Selector * ecss_selector_prev_get(Ecss_Selector *thiz);
+void ecss_selector_dump(Ecss_Selector *thiz);
 
 typedef struct _Ecss_Declaration
 {
