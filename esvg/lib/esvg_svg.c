@@ -942,7 +942,7 @@ static Edom_Tag * _esvg_svg_new(void)
 	return t;
 }
 
-Edom_Tag * _esvg_svg_element_find(Edom_Tag *tag, const char *id)
+static Edom_Tag * _esvg_svg_element_find(Edom_Tag *tag, const char *id)
 {
 	Esvg_Svg *thiz;
 

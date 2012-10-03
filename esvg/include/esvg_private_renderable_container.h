@@ -8,7 +8,7 @@ void esvg_renderable_container_free(Esvg_Renderable_Container *thiz);
 void esvg_renderable_container_clear(Esvg_Renderable_Container *thiz);
 void esvg_renderable_container_renderable_add(Esvg_Renderable_Container *thiz,
 		Edom_Tag *t);
-void esvg_renderable_container_renderable_remnove(Esvg_Renderable_Container *thiz,
+void esvg_renderable_container_renderable_remove(Esvg_Renderable_Container *thiz,
 		Edom_Tag *t);
 
 #endif

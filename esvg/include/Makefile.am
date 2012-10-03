@@ -30,6 +30,7 @@ esvg_polygon.h \
 esvg_polyline.h \
 esvg_radial_gradient.h \
 esvg_rect.h \
+esvg_referenceable.h \
 esvg_renderable.h \
 esvg_stop.h \
 esvg_style.h \
@@ -53,6 +54,7 @@ esvg_private_gradient.h \
 esvg_private_input.h \
 esvg_private_main.h \
 esvg_private_paint_server.h \
+esvg_private_parser.h \
 esvg_private_referenceable.h \
 esvg_private_renderable.h \
 esvg_private_renderable_behaviour.h \

@@ -129,7 +129,7 @@ static Eina_Bool _esvg_g_child_remove(Edom_Tag *t, Edom_Tag *child)
 	return EINA_TRUE;
 }
 
-Enesim_Renderer * _esvg_g_renderer_get(Edom_Tag *t)
+static Enesim_Renderer * _esvg_g_renderer_get(Edom_Tag *t)
 {
 	Esvg_G *thiz;
 

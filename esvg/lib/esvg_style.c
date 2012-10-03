@@ -23,6 +23,9 @@
 #include "esvg_private_attribute_presentation.h"
 #include "esvg_private_context.h"
 #include "esvg_private_element.h"
+#include "esvg_private_style.h"
+
+#include "esvg_style.h"
 /*
  * In order to support styling we need to keep track of every element
  * parsed, that is, generate the DOM tree. This way we can support Ecss

@@ -152,7 +152,7 @@ static Eina_Bool _esvg_animation_event_setup(Esvg_Animation *thiz, Eina_List *ev
 	{
 		if (ae->event)
 		{
-			Ender_Element *ref;
+			Ender_Element *ref = NULL;
 
 			printf("registering event %s\n", ae->event);
 			if (ae->id)

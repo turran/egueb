@@ -548,5 +548,6 @@ EAPI Eina_Bool esvg_type_is_renderable(Esvg_Type type);
 EAPI Eina_Bool esvg_animation_event_list_string_from(Eina_List **l, const char *s);
 EAPI Eina_Bool esvg_animation_event_string_from(Esvg_Animation_Event *e, const char *s);
 
+EAPI void esvg_animation_event_offset_set(Esvg_Animation_Event *a, int64_t offset);
 
 #endif

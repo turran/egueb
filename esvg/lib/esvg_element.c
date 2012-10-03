@@ -310,7 +310,7 @@ static void _esvg_element_state_compose(Esvg_Element *thiz,
 	{
 		d->transform = m;
 	}
-}	
+}
 /*----------------------------------------------------------------------------*
  *                            Attribute helpers                               *
  *----------------------------------------------------------------------------*/
@@ -837,7 +837,7 @@ static void _esvg_element_visibility_get(Edom_Tag *t, Esvg_Animated_Bool *visibi
 /*----------------------------------------------------------------------------*
  *                           The Edom Tag interface                           *
  *----------------------------------------------------------------------------*/
-const char * _esvg_element_name_get(Edom_Tag *t)
+static const char * _esvg_element_name_get(Edom_Tag *t)
 {
 	Esvg_Element *thiz;
 
@@ -845,7 +845,7 @@ const char * _esvg_element_name_get(Edom_Tag *t)
 	return esvg_type_string_to(thiz->type);
 }
 
-Edom_Tag * _esvg_element_topmost_get(Edom_Tag *t)
+static Edom_Tag * _esvg_element_topmost_get(Edom_Tag *t)
 {
 	Esvg_Element *thiz;
 

@@ -24,6 +24,7 @@ typedef struct _Esvg_Paint_Server_Descriptor {
 	Esvg_Referenceable_Reference_Remove reference_remove;
 } Esvg_Paint_Server_Descriptor;
 
+Eina_Bool esvg_is_paint_server_internal(Edom_Tag *t);
 void * esvg_paint_server_data_get(Edom_Tag *t);
 Edom_Tag * esvg_paint_server_new(Esvg_Paint_Server_Descriptor *descriptor, Esvg_Type type, void *data);
 /* generated function */

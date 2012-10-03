@@ -25,6 +25,8 @@
 #include "esvg_private_element.h"
 #include "esvg_private_referenceable.h"
 
+#include "esvg_referenceable.h"
+
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/

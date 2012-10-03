@@ -1,6 +1,7 @@
 #ifndef _ESVG_ANIMATION_H_
 #define _ESVG_ANIMATION_H_
 
+EAPI Eina_Bool esvg_is_animation(Ender_Element *e);
 EAPI void esvg_animation_attribute_name_set(Ender_Element *e, const char *name);
 EAPI void esvg_animation_attribute_name_get(Ender_Element *e, const char **name);
 EAPI void esvg_animation_attribute_type_set(Ender_Element *e, Esvg_Attribute_Type type);

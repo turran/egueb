@@ -51,6 +51,7 @@ typedef struct _Esvg_Animate_Base_Descriptor {
 	Esvg_Animate_Base_Type_Descriptor_Get type_descriptor_get;
 } Esvg_Animate_Base_Descriptor;
 
+Eina_Bool esvg_is_animate_base_internal(Edom_Tag *t);
 void * esvg_animate_base_data_get(Edom_Tag *t);
 Edom_Tag * esvg_animate_base_new(Esvg_Animate_Base_Descriptor *descriptor, Esvg_Type type, void *data);
 

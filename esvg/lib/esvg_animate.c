@@ -27,6 +27,8 @@
 #include "esvg_private_animation.h"
 #include "esvg_private_animate_base.h"
 #include "esvg_private_svg.h"
+
+#include "esvg_animate.h"
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/

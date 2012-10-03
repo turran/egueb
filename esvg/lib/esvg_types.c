@@ -24,6 +24,8 @@
 
 #include "esvg_private_main.h"
 #include "esvg_private_attribute_presentation.h"
+#include "esvg_private_types.h"
+
 #include "esvg_types.h"
 /*============================================================================*
  *                                  Local                                     *
@@ -358,7 +360,6 @@ static Eina_Bool _animation_name_parse(const char *v, const char **start, int *l
 	*start = s;
 	*len = v - *start;
 	return EINA_TRUE;
-		
 }
 
 static Eina_Bool _animation_clock_parse(const char *v, int64_t *clock)
@@ -381,7 +382,7 @@ static Eina_Bool _animation_clock_parse(const char *v, int64_t *clock)
 /*----------------------------------------------------------------------------*
  *                           Color related functions                          *
  *----------------------------------------------------------------------------*/
-Eina_Bool _esvg_color_keyword_from(Esvg_Color *color, const char *attr_val)
+static Eina_Bool _esvg_color_keyword_from(Esvg_Color *color, const char *attr_val)
 {
 	static Eina_Hash *_colors = NULL;
 	Enesim_Argb *argb;

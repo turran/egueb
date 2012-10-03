@@ -232,7 +232,7 @@ static Esvg_Renderable_Descriptor _descriptor = {
 /*----------------------------------------------------------------------------*
  *                           The Ender interface                              *
  *----------------------------------------------------------------------------*/
-EAPI Edom_Tag * _esvg_circle_new(void)
+static Edom_Tag * _esvg_circle_new(void)
 {
 	Esvg_Circle *thiz;
 	Edom_Tag *t;

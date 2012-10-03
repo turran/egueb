@@ -345,7 +345,7 @@ static Esvg_Referenceable_Descriptor _descriptor = {
 /*----------------------------------------------------------------------------*
  *                           The Ender interface                              *
  *----------------------------------------------------------------------------*/
-EAPI Edom_Tag * _esvg_clip_path_new(void)
+static Edom_Tag * _esvg_clip_path_new(void)
 {
 	Esvg_Clip_Path *thiz;
 	Edom_Tag *t;
