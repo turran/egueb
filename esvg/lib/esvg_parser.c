@@ -61,9 +61,7 @@
 
 typedef struct _Esvg_Parser
 {
-	Esvg_Parser_Descriptor descriptor;
 	Ender_Element *topmost;
-	void *data;
 } Esvg_Parser;
 
 static void _esvg_parser_tree_dump(Edom_Tag *t, int level);
@@ -626,15 +624,6 @@ static Edom_Parser_Descriptor _info_descriptor = {
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
-/* functions to call the descriptor functions */
-void esvg_parser_href_set(Edom_Parser *p, Enesim_Renderer *r, const char *href)
-{
-	Esvg_Parser *thiz;
-
-	thiz = edom_parser_data_get(p);
-	if (thiz->descriptor.href_set)
-		return thiz->descriptor.href_set(thiz->data, r, href);
-}
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/
@@ -664,8 +653,7 @@ EAPI Eina_Bool esvg_parser_info_load(const char *filename,
 /**
  *
  */
-EAPI Ender_Element * esvg_parser_load(const char *filename,
-		Esvg_Parser_Descriptor *descriptor, void *data)
+EAPI Ender_Element * esvg_parser_load(const char *filename)
 {
 	Esvg_Parser *thiz;
 	Edom_Parser *parser;
@@ -673,9 +661,6 @@ EAPI Ender_Element * esvg_parser_load(const char *filename,
 	Edom_Tag *t;
 
 	thiz = calloc(1, sizeof(Esvg_Parser));
-	thiz->data = data;
-	if (descriptor)
-		thiz->descriptor = *descriptor;
 
 	parser = edom_parser_new(&_descriptor, thiz);
 	e = _esvg_parser_file_parse(filename, parser);
@@ -703,6 +688,7 @@ EAPI Ender_Element * esvg_parser_load(const char *filename,
 	 * the clone
 	 */
 
+#if 0
 	/* set the default functions */
 	if (esvg_is_svg(e))
 	{
@@ -723,6 +709,7 @@ EAPI Ender_Element * esvg_parser_load(const char *filename,
 		}
 		/* else, relative file, we need to get the current execution path? */
 	}
+#endif
 
 parse_failed:
 	edom_parser_delete(parser);

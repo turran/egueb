@@ -63,6 +63,7 @@ static Esvg_Element_Descriptor _descriptor = {
 	/* .attribute_get 	= */ NULL,
 	/* .cdata_set 		= */ NULL,
 	/* .text_set 		= */ NULL,
+	/* .text_get 		= */ NULL,
 	/* .free 		= */ _esvg_defs_free,
 	/* .attribute_set 	= */ NULL,
 	/* .initialize 		= */ NULL,

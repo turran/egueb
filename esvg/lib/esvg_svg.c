@@ -67,23 +67,6 @@ static Ender_Property *ESVG_SVG_Y_DPI;
 static Ender_Property *ESVG_SVG_CONTAINER_WIDTH;
 static Ender_Property *ESVG_SVG_CONTAINER_HEIGHT;
 
-typedef struct _Esvg_Svg_User_Descriptor
-{
-	/* TODO what we really need here is not a way to retrive generic
-	 * data relative or abolsute, but a way to get needed information
-	 * for *known* data. For example, we need a way to load an image
-	 * from http or load a fragment from other svg, so better
-	 * "name" what we need to fetch externally
-	 *
-	 * helpful methods would be:
-	 * _base_uri/dir_get() get the base uri/dir of the svg being loaded
-	 * to handle relative files
-	 * _image_load() to override the emage default loader (like the async one)
-	 * _element_get() to get a fragment from another svg
-	 */
-	char *base_dir;
-} Esvg_Svg_User_Descriptor;
-
 typedef struct _Esvg_Svg
 {
 	/* properties */
@@ -101,6 +84,7 @@ typedef struct _Esvg_Svg
 	/* user provded properties */
 	double base_font_size;
 	/* private */
+	Ender_Element *thiz_e;
 	/* keep track if the renderable tree has changed, includeing the <a> tag */
 	Eina_Bool renderable_tree_changed : 1;
 	Eina_List *styles; /* the list of styles found on this svg scope */
@@ -112,7 +96,8 @@ typedef struct _Esvg_Svg
 	Enesim_Renderer *background;
 	Eina_Hash *ids; /* the ids found */
 	/* user provided callbacks */
-	Esvg_Svg_User_Descriptor user_descriptor;
+	const Esvg_Svg_Application_Descriptor *application_descriptor;
+	const void *application_data;
 	/* animation */
 	Etch *etch;
 	Eina_Bool paused;
@@ -165,6 +150,15 @@ static Esvg_Svg * _esvg_svg_get(Edom_Tag *t)
 	return thiz;
 }
 
+static const char * _esvg_svg_base_dir_get(Esvg_Svg *thiz)
+{
+	if (!thiz->application_descriptor)
+		return NULL;
+	if (thiz->application_descriptor->base_dir_get)
+		return thiz->application_descriptor->base_dir_get(thiz->thiz_e, thiz->application_data);
+	return NULL;
+}
+
 static Eina_Bool _esvg_svg_damage_cb(Enesim_Renderer *r,
 		const Eina_Rectangle *area, Eina_Bool past,
 		void *data)
@@ -180,15 +174,19 @@ static Eina_Bool _esvg_svg_damage_cb(Enesim_Renderer *r,
 
 static Eina_Bool _esvg_svg_relative_to_absolute(Esvg_Svg *thiz, const char *relative, char *absolute, size_t len)
 {
-	if (!thiz->user_descriptor.base_dir)
+	const char *base_dir;
+
+	base_dir = _esvg_svg_base_dir_get(thiz);
+	if (!base_dir)
 	{
 		printf("No base dir set\n");
 		return EINA_FALSE;
 	}
 
 	/* get the base dir and concat with the relative path */
-	strncpy(absolute, thiz->user_descriptor.base_dir, len);
-	len -= strlen(thiz->user_descriptor.base_dir);
+	strncpy(absolute, base_dir, len);
+	len -= strlen(base_dir);
+
 	if (len <= 0) return EINA_FALSE;
 	strncat(absolute, relative, len);
 	return EINA_TRUE;
@@ -548,18 +546,16 @@ static void _esvg_svg_child_mutation_cb(Ender_Element *e, const char *event_name
 static Eina_Bool _esvg_svg_child_initialize(Edom_Tag *t, Edom_Tag *child_t, void *data)
 {
 	Esvg_Svg *thiz;
-	Ender_Element *thiz_e;
 	Ender_Element *child_e;
 	const char *id;
 
  	thiz = data;
-	thiz_e = esvg_element_ender_get(t);
 
 	//printf("initializing %s\n", esvg_type_string_to(esvg_element_internal_type_get(child_t)));
 	/* add a callback whenever the child property has changed
 	 * to initialize that child too */
 	child_e = esvg_element_ender_get(child_t);
-	ender_event_listener_add(child_e, "Mutation:child", _esvg_svg_child_mutation_child_cb, thiz_e);
+	ender_event_listener_add(child_e, "Mutation:child", _esvg_svg_child_mutation_child_cb, thiz->thiz_e);
 	/* add a callback whenever any property has changed to add it the list
 	 * of changed elements */
 	ender_event_listener_add(child_e, "Mutation", _esvg_svg_child_mutation_cb, thiz);
@@ -578,7 +574,7 @@ static Eina_Bool _esvg_svg_child_initialize(Edom_Tag *t, Edom_Tag *child_t, void
 	/* mark it for processing */
 	_esvg_svg_element_changed_add(thiz, child_e);
 	/* set the topmost on every element */
-	edom_tag_child_foreach(child_t, _esvg_svg_child_topmost_set, thiz_e);
+	edom_tag_child_foreach(child_t, _esvg_svg_child_topmost_set, thiz->thiz_e);
 
 	return EINA_TRUE;
 }
@@ -586,17 +582,15 @@ static Eina_Bool _esvg_svg_child_initialize(Edom_Tag *t, Edom_Tag *child_t, void
 static Eina_Bool _esvg_svg_child_deinitialize(Edom_Tag *t, Edom_Tag *child_t, void *data)
 {
 	Esvg_Svg *thiz;
-	Ender_Element *thiz_e;
 	Ender_Element *child_e;
 	const char *id;
 
  	thiz = data;
-	thiz_e = esvg_element_ender_get(t);
 
 	/* add a callback whenever the child property has changed
 	 * to initialize that child too */
 	child_e = esvg_element_ender_get(child_t);
-	ender_event_listener_remove_full(child_e, "Mutation:child", _esvg_svg_child_mutation_child_cb, thiz_e);
+	ender_event_listener_remove_full(child_e, "Mutation:child", _esvg_svg_child_mutation_child_cb, thiz->thiz_e);
 	/* add a callback whenever any property has changed to add it the list
 	 * of changed elements */
 	ender_event_listener_remove_full(child_e, "Mutation", _esvg_svg_child_mutation_cb, thiz);
@@ -655,6 +649,7 @@ static void _esvg_svg_initialize(Ender_Element *e)
 	t = ender_element_object_get(e);
 	thiz = _esvg_svg_get(t);
 
+	thiz->thiz_e = e;
 	thiz->container = esvg_renderable_container_new(e);
 	/* called whenever the topmost changes */
 	ender_event_listener_add(e, "TopmostChanged", _esvg_svg_topmost_changed_cb, NULL);
@@ -882,6 +877,7 @@ static Esvg_Renderable_Descriptor _descriptor = {
 	/* .attribute_get 	= */ _esvg_svg_attribute_get,
 	/* .cdata_set 		= */ NULL,
 	/* .text_set 		= */ NULL,
+	/* .text_get 		= */ NULL,
 	/* .free 		= */ _esvg_svg_free,
 	/* .initialize 		= */ _esvg_svg_initialize,
 	/* .attribute_set 	= */ _esvg_svg_attribute_set,
@@ -1179,6 +1175,19 @@ Enesim_Surface * esvg_svg_surface_new(Ender_Element *e, int w, int h)
 }
 
 #if 0
+EAPI void esvg_svg_go_to(Edom_Tag *t, const char *uri)
+{
+	Esvg_Svg *thiz;
+
+	thiz = _esvg_svg_get(t);
+	if (!thiz->application_descriptor)
+		return;
+	if (thiz->application_descriptor->go_to)
+		thiz->application_descriptor->go_to(thiz->e, uri);
+}
+#endif
+
+#if 0
 Esvg_Svg_External * esvg_svg_external_new(Ender_Element *svg, Edom_Tag *t, Enesim_Surface *s)
 {
 	Esvg_Svg_External *external;
@@ -1217,7 +1226,7 @@ Ender_Element * esvg_svg_svg_load(Ender_Element *e, const char *uri)
 	final = esvg_svg_uri_resolve(e, uri);
 	if (!final) return NULL;
 	/* TODO use the correct descriptor */
-	svg = esvg_parser_load(final, NULL, NULL);
+	svg = esvg_parser_load(final);
 	free(final);
 
 	return svg;
@@ -1634,42 +1643,6 @@ EAPI Eina_List * esvg_svg_intersection_list_get(Ender_Element *e, Enesim_Rectang
  * To be documented
  * FIXME: To be fixed
  */
-EAPI const char * esvg_svg_base_dir_get(Ender_Element *e)
-{
-	Edom_Tag *t;
-	Esvg_Svg *thiz;
-
-	t = ender_element_object_get(e);
-	thiz = _esvg_svg_get(t);
-	return thiz->user_descriptor.base_dir;
-}
-
-/**
- * To be documented
- * FIXME: To be fixed
- */
-EAPI void esvg_svg_base_dir_set(Ender_Element *e, const char *base_dir)
-{
-	Edom_Tag *t;
-	Esvg_Svg *thiz;
-
-	t = ender_element_object_get(e);
-	thiz = _esvg_svg_get(t);
-
-	if (thiz->user_descriptor.base_dir)
-	{
-		free(thiz->user_descriptor.base_dir);
-		thiz->user_descriptor.base_dir = NULL;
-	}
-
-	if (base_dir)
-		thiz->user_descriptor.base_dir = strdup(base_dir);
-}
-
-/**
- * To be documented
- * FIXME: To be fixed
- */
 EAPI double esvg_svg_base_font_size_get(Ender_Element *e)
 {
 	Edom_Tag *t;
@@ -1873,3 +1846,34 @@ EAPI void esvg_svg_damages_get(Ender_Element *e, Esvg_Svg_Damage_Cb cb, void *da
 	eina_iterator_free(iter);
 	eina_tiler_clear(thiz->tiler);
 }
+
+/**
+ * To be documented
+ * FIXME: To be fixed
+ */
+EAPI void esvg_svg_application_descriptor_set(Ender_Element *e, const Esvg_Svg_Application_Descriptor *descriptor, const void *data)
+{
+	Esvg_Svg *thiz;
+	Edom_Tag *t;
+
+	t = ender_element_object_get(e);
+	thiz = _esvg_svg_get(t);
+	thiz->application_descriptor = descriptor;
+	thiz->application_data = data;
+}
+
+/**
+ * To be documented
+ * FIXME: To be fixed
+ */
+EAPI const char * esvg_svg_base_dir_get(Ender_Element *e)
+{
+	Edom_Tag *t;
+	Esvg_Svg *thiz;
+
+	t = ender_element_object_get(e);
+	thiz = _esvg_svg_get(t);
+	return _esvg_svg_base_dir_get(thiz);
+}
+
+

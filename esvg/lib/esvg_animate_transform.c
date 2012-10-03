@@ -569,6 +569,7 @@ static Eina_Bool _esvg_animate_transform_skewx_generate(Edom_Tag *t,
 	esvg_animate_base_animation_generate(t, values, times, actx, abctx, ETCH_DOUBLE,
 			_esvg_animate_transform_value_simple_etch_data_to,
 			_esvg_animate_transform_skewx_cb, thiz);
+	return EINA_TRUE;
 }
 
 static Esvg_Animate_Base_Type_Descriptor _skewx_descriptor = {
@@ -612,6 +613,7 @@ static Eina_Bool _esvg_animate_transform_skewy_generate(Edom_Tag *t,
 	esvg_animate_base_animation_generate(t, values, times, actx, abctx, ETCH_DOUBLE,
 			_esvg_animate_transform_value_simple_etch_data_to,
 			_esvg_animate_transform_skewy_cb, thiz);
+	return EINA_TRUE;
 }
 
 static Esvg_Animate_Base_Type_Descriptor _skewy_descriptor = {

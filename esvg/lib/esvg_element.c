@@ -1604,6 +1604,7 @@ Edom_Tag * esvg_element_new(Esvg_Element_Descriptor *descriptor, Esvg_Type type,
 	pdescriptor.attribute_get = _esvg_element_attribute_get;
 	pdescriptor.cdata_set = descriptor->cdata_set;
 	pdescriptor.text_set = descriptor->text_set;
+	pdescriptor.text_get = descriptor->text_get;
 	pdescriptor.free = _esvg_element_free;
 
 	/* our own interface */

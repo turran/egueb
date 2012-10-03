@@ -151,6 +151,7 @@ static Esvg_Renderable_Descriptor _descriptor = {
 	/* .attribute_get 	= */ _esvg_polygon_attribute_get,
 	/* .cdata_set 		= */ NULL,
 	/* .text_set 		= */ NULL,
+	/* .text_get		     = */ NULL,
 	/* .free 		= */ _esvg_polygon_free,
 	/* .initialize 		= */ NULL,
 	/* .attribute_set 	= */ _esvg_polygon_attribute_set,

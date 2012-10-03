@@ -261,8 +261,8 @@ namespace "esvg" : 0 {
 	};
 
 	class "text" : "renderable" {
-		esvg_length "x";
-		esvg_length "y";
+		esvg_animated_coord "x";
+		esvg_animated_coord "y";
 	};
 
 	class "stop" : "element" {

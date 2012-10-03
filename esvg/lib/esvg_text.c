@@ -33,19 +33,14 @@
 static Ender_Property *ESVG_TEXT_X;
 static Ender_Property *ESVG_TEXT_Y;
 
-typedef struct _Esvg_Text_State
-{
-	Esvg_Coord x;
-	Esvg_Coord y;
-	Esvg_Length font_size;
-} Esvg_Text_State;
-
 typedef struct _Esvg_Text
 {
 	/* properties */
-	Esvg_Text_State current;
-	Esvg_Text_State past;
+	Esvg_Attribute_Animated_Coord x;
+	Esvg_Attribute_Animated_Coord y;
 	/* private */
+	double gx;
+	double gy;
 	Enesim_Renderer *r;
 	Eina_Bool changed : 1;
 } Esvg_Text;
@@ -121,15 +116,16 @@ static void _esvg_text_text_set(Edom_Tag *t, const char *text, unsigned int leng
 	thiz->changed = EINA_TRUE;
 }
 
-#if 0
-static void _esvg_text_text_get(Edom_Tag *t, const char **text)
+static void _esvg_text_text_get(Edom_Tag *t, const char **text, unsigned int *length)
 {
 	Esvg_Text *thiz;
 
 	thiz = _esvg_text_get(t);
-	etex_span_text_get(thiz->t, text);
+
+	DBG("getting text");
+	etex_span_text_get(thiz->r, text);
+	*length = 0;
 }
-#endif
 
 static Enesim_Renderer * _esvg_text_renderer_get(Edom_Tag *t)
 {
@@ -145,6 +141,19 @@ static Esvg_Element_Setup_Return _esvg_text_setup(Edom_Tag *t,
 		Esvg_Attribute_Presentation *attr,
 		Enesim_Error **error)
 {
+	Esvg_Text *thiz;
+	Esvg_Length lx, ly;
+
+	thiz = _esvg_text_get(t);
+
+	/* position */
+	esvg_attribute_animated_length_final_get(&thiz->x, &lx);
+	esvg_attribute_animated_length_final_get(&thiz->y, &ly);
+	thiz->gx = esvg_length_final_get(&lx, ctx->viewbox.width, ctx->font_size);
+	thiz->gy = esvg_length_final_get(&ly, ctx->viewbox.height, ctx->font_size);
+
+	DBG("calling the setup on the text (%g %g)", thiz->gx, thiz->gy);
+
 	return ESVG_SETUP_OK;
 }
 
@@ -157,22 +166,15 @@ static Eina_Bool _esvg_text_renderer_propagate(Edom_Tag *t,
 {
 	Esvg_Text *thiz;
 	Enesim_Matrix inv;
-	double x, y;
-	double font_size;
+	int max;
 
 	thiz = _esvg_text_get(t);
 
-	x = esvg_length_final_get(&thiz->current.x, ctx->viewbox.width, ctx->font_size);
-	y = esvg_length_final_get(&thiz->current.y, ctx->viewbox.height, ctx->font_size);
-	/* we should use the hypot(viewbox_w, viewbox_h) */
-	font_size = esvg_length_final_get(&thiz->current.font_size, ctx->viewbox.width, ctx->font_size);
-	enesim_renderer_origin_set(thiz->r, x, y);
-	enesim_renderer_color_set(thiz->r, rctx->fill_color);
-
-	//DBG("calling the setup on the text (%g %g %s %g)", x, y, str, font_size);
 	etex_base_size_set(thiz->r, (int)ctx->font_size);
+	etex_base_max_ascent_get(thiz->r, &max);
 
-	DBG("calling the setup on the text");
+	enesim_renderer_origin_set(thiz->r, thiz->gx, thiz->gy - max);
+	enesim_renderer_color_set(thiz->r, rctx->fill_color);
 
 	DBG("matrix %" ENESIM_MATRIX_FORMAT, ENESIM_MATRIX_ARGS (&ctx->transform));
 	enesim_matrix_inverse(&ctx->transform, &inv);
@@ -215,6 +217,7 @@ static Esvg_Renderable_Descriptor _descriptor = {
 	/* .attribute_get	= */ _esvg_text_attribute_get,
 	/* .cdata_set		= */ NULL,
 	/* .text_set		= */ _esvg_text_text_set,
+	/* .text_get		     = */ _esvg_text_text_get,
 	/* .free		= */ _esvg_text_free,
 	/* .initialize		= */ NULL,
 	/* .attribute_set	= */ _esvg_text_attribute_set,
@@ -244,54 +247,52 @@ static Edom_Tag * _esvg_text_new(void)
 	/* Default values */
 	enesim_renderer_rop_set(r, ENESIM_BLEND);
 	/* FIXME for now */
-	thiz->current.x = ESVG_COORD_0;
-	thiz->current.y = ESVG_COORD_0;
-	thiz->current.font_size = ESVG_LENGTH_0;
+	thiz->x.base.v = thiz->x.anim.v = ESVG_COORD_0;
+	thiz->y.base.v = thiz->y.anim.v = ESVG_COORD_0;
 
 	t = esvg_renderable_new(&_descriptor, ESVG_TEXT, thiz);
 	return t;
 }
 
-static void _esvg_text_x_set(Edom_Tag *t, const Esvg_Coord *x)
+static void _esvg_text_x_set(Edom_Tag *t, const Esvg_Animated_Coord *x)
+{
+	Esvg_Text *thiz;
+	Esvg_Coord def = { ESVG_UNIT_LENGTH_PX, 0 };
+	Eina_Bool animating;
+
+	thiz = _esvg_text_get(t);
+	animating = esvg_element_attribute_animate_get(t);
+	esvg_attribute_animated_length_set(&thiz->x, x, &def, animating);
+	thiz->changed = EINA_TRUE;
+}
+
+static void _esvg_text_x_get(Edom_Tag *t, Esvg_Animated_Coord *x)
 {
 	Esvg_Text *thiz;
 
 	thiz = _esvg_text_get(t);
-	if (x)
-	{
-		thiz->current.x = *x;
-		thiz->changed = EINA_TRUE;
-	}
+	esvg_attribute_animated_length_get(&thiz->x, x);
 }
 
-static void _esvg_text_x_get(Edom_Tag *t, Esvg_Coord *x)
+static void _esvg_text_y_set(Edom_Tag *t, const Esvg_Animated_Coord *y)
+{
+	Esvg_Text *thiz;
+	Esvg_Coord def = { ESVG_UNIT_LENGTH_PX, 0 };
+	Eina_Bool animating;
+
+	thiz = _esvg_text_get(t);
+	animating = esvg_element_attribute_animate_get(t);
+	esvg_attribute_animated_length_set(&thiz->y, y, &def, animating);
+	thiz->changed = EINA_TRUE;
+}
+
+static void _esvg_text_y_get(Edom_Tag *t, Esvg_Animated_Coord *y)
 {
 	Esvg_Text *thiz;
 
 	thiz = _esvg_text_get(t);
-	if (x) *x = thiz->current.x;
+	esvg_attribute_animated_length_get(&thiz->y, y);
 }
-
-static void _esvg_text_y_set(Edom_Tag *t, const Esvg_Coord *y)
-{
-	Esvg_Text *thiz;
-
-	thiz = _esvg_text_get(t);
-	if (y)
-	{
-		thiz->current.y = *y;
-		thiz->changed = EINA_TRUE;
-	}
-}
-
-static void _esvg_text_y_get(Edom_Tag *t, Esvg_Coord *y)
-{
-	Esvg_Text *thiz;
-
-	thiz = _esvg_text_get(t);
-	if (y) *y = thiz->current.y;
-}
-
 
 /*============================================================================*
  *                                 Global                                     *
@@ -321,28 +322,20 @@ EAPI Eina_Bool esvg_is_text(Ender_Element *e)
 
 EAPI void esvg_text_x_set(Ender_Element *e, const Esvg_Coord *x)
 {
-	ender_element_property_value_set(e, ESVG_TEXT_X, x, NULL);
+	esvg_element_property_length_set(e, ESVG_TEXT_X, x);
 }
 
 EAPI void esvg_text_x_get(Ender_Element *e, Esvg_Coord *x)
 {
-	Edom_Tag *t;
-
-	t = (Edom_Tag *)ender_element_object_get(e);
-	_esvg_text_x_get(t, x);
 }
 
 EAPI void esvg_text_y_set(Ender_Element *e, const Esvg_Coord *y)
 {
-	ender_element_property_value_set(e, ESVG_TEXT_Y, y, NULL);
+	esvg_element_property_length_set(e, ESVG_TEXT_Y, y);
 }
 
 EAPI void esvg_text_y_get(Ender_Element *e, Esvg_Coord *y)
 {
-	Edom_Tag *t;
-
-	t = (Edom_Tag *)ender_element_object_get(e);
-	_esvg_text_y_get(t, y);
 }
 
 EAPI void esvg_text_text_set(Ender_Element *e, const char *text)

@@ -332,6 +332,7 @@ static Esvg_Referenceable_Descriptor _descriptor = {
 	/* .attribute_get	= */ _esvg_clip_path_attribute_get,
 	/* .cdata_set		= */ NULL,
 	/* .text_set		= */ NULL,
+	/* .text_get		= */ NULL,
 	/* .free		= */ _esvg_clip_path_free,
 	/* .initialize		= */ NULL,
 	/* .attribute_set	= */ _esvg_clip_path_attribute_set,

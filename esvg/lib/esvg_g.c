@@ -186,6 +186,7 @@ static Esvg_Renderable_Descriptor _descriptor = {
 	/* .attribute_get 	= */ NULL,
 	/* .cdata_set 		= */ NULL,
 	/* .text_set 		= */ NULL,
+	/* .text_get 		= */ NULL,
 	/* .free 		= */ _esvg_g_free,
 	/* .initialize 		= */ _esvg_g_initialize,
 	/* .attribute_set 	= */ NULL,

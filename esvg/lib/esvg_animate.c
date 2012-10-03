@@ -86,6 +86,7 @@ static void _esvg_animate_bool_cb(Edom_Tag *t,
 static void * _esvg_animate_value_get(const char *attr)
 {
 	printf("attr = %s\n", attr);
+	return NULL;
 }
 /*----------------------------------------------------------------------------*
  *                        The Esvg_Paint type descriptor                      *

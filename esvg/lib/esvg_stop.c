@@ -119,6 +119,7 @@ static Esvg_Element_Descriptor _descriptor = {
 	/* .attribute_get 	= */ _esvg_stop_attribute_get,
 	/* .cdata_set 		= */ NULL,
 	/* .text_set 		= */ NULL,
+	/* .text_get 		= */ NULL,
 	/* .free 		= */ _esvg_stop_free,
 	/* .attribute_set 	= */ _esvg_stop_attribute_set,
 	/* .attribute_animated_fetch = */ NULL,

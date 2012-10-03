@@ -395,7 +395,6 @@ static Esvg_Gradient_Descriptor _descriptor = {
 	/* .child_remove	= */ NULL,
 	/* .attribute_get 	= */ _esvg_radial_gradient_attribute_get,
 	/* .cdata_set 		= */ NULL,
-	/* .text_set 		= */ NULL,
 	/* .free 		= */ _esvg_radial_gradient_free,
 	/* .initialize 		= */ NULL,
 	/* .attribute_set 	= */ _esvg_radial_gradient_attribute_set,

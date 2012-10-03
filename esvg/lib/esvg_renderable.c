@@ -275,26 +275,18 @@ static Esvg_Element_Setup_Return _esvg_renderable_propagate(Esvg_Renderable *thi
 		if (ret != ESVG_SETUP_OK)
 			return ret;
 	}
-#if 0
-	/* if something has changed or is going to change on the paint servers the setup
-	 * of the paint servers will make every reference to be updated
+	/* we need to propagate the referenceables paint servers so they can catch up
+	 * our new context (bounds, transformation, whatever)
 	 */
-	/* in case we are going to use the fill renderer do its own setup */
 	if (attr->fill.is_set && attr->fill.v.type == ESVG_PAINT_SERVER && thiz->fill_reference)
 	{
-		ret = esvg_element_internal_setup(thiz->fill_reference->t, c, error);
-		if (ret != ESVG_SETUP_OK)
-			return ret;
+		esvg_referenceable_reference_propagate(thiz->fill_reference, c, error);
 	}
 	/* in case we are going to use the stroke renderer do its own setup */
 	if (attr->stroke.is_set && attr->stroke.v.type == ESVG_PAINT_SERVER && thiz->stroke_reference)
 	{
-		ret = esvg_element_internal_setup(thiz->stroke_reference->t, c, error);
-		if (ret != ESVG_SETUP_OK)
-			return ret;
-
+		esvg_referenceable_reference_propagate(thiz->stroke_reference, c, error);
 	}
-#endif
 	return ESVG_SETUP_OK;
 }
 /*----------------------------------------------------------------------------*
@@ -428,6 +420,7 @@ Edom_Tag * esvg_renderable_new(Esvg_Renderable_Descriptor *descriptor, Esvg_Type
 	pdescriptor.attribute_animated_fetch = descriptor->attribute_animated_fetch;
 	pdescriptor.cdata_set = descriptor->cdata_set;
 	pdescriptor.text_set = descriptor->text_set;
+	pdescriptor.text_get = descriptor->text_get;
 	pdescriptor.free = _esvg_renderable_free;
 	pdescriptor.initialize = descriptor->initialize;
 	pdescriptor.setup = _esvg_renderable_setup;

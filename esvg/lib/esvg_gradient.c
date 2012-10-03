@@ -579,7 +579,8 @@ Edom_Tag * esvg_gradient_new(Esvg_Gradient_Descriptor *descriptor,
 	pdescriptor.attribute_animated_fetch = _esvg_gradient_attribute_animated_fetch;
 	pdescriptor.attribute_get = descriptor->attribute_get;
 	pdescriptor.cdata_set = descriptor->cdata_set;
-	pdescriptor.text_set = descriptor->text_set;
+	pdescriptor.text_set = NULL;
+	pdescriptor.text_get = NULL;
 	pdescriptor.free = _esvg_gradient_free;
 	pdescriptor.initialize = descriptor->initialize;
 	pdescriptor.setup = _esvg_gradient_setup;

@@ -136,7 +136,7 @@ void esvg_renderable_container_clear(Esvg_Renderable_Container *thiz)
 void esvg_renderable_container_renderable_add(Esvg_Renderable_Container *thiz,
 		Edom_Tag *t)
 {
-	printf("adding element %s\n", edom_tag_name_get(t));
+	//printf("adding element %s\n", edom_tag_name_get(t));
 	thiz->renderables = eina_list_append(thiz->renderables, t);
 }
 

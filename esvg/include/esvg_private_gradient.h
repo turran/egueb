@@ -21,7 +21,6 @@ typedef struct _Esvg_Gradient_Descriptor {
 	Edom_Tag_Child_Remove child_remove;
 	Edom_Tag_Attribute_Get attribute_get;
 	Edom_Tag_Cdata_Set cdata_set;
-	Edom_Tag_Text_Set text_set;
 	Edom_Tag_Free free;
 	/* the element interface */
 	Esvg_Element_Initialize initialize;

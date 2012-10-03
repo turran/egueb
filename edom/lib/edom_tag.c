@@ -379,3 +379,13 @@ EAPI void edom_tag_text_set(Edom_Tag *thiz, Edom_String *string)
 	}
 	thiz->descriptor.text_set(thiz, string->s, length);
 }
+
+/**
+ * To be documented
+ * FIXME: To be fixed
+ */
+EAPI void edom_tag_text_get(Edom_Tag *thiz, Edom_String *string)
+{
+	if (!thiz->descriptor.text_get) return;
+	thiz->descriptor.text_get(thiz, &string->s, &string->length);
+}
