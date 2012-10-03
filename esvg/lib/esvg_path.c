@@ -381,7 +381,7 @@ static Eina_Bool _esvg_path_renderer_propagate(Edom_Tag *t,
 	return EINA_TRUE;
 }
 
-void _esvg_path_free(Edom_Tag *t)
+static void _esvg_path_free(Edom_Tag *t)
 {
 	Esvg_Path *thiz;
 	Esvg_Path_Command *cmd;
