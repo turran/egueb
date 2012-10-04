@@ -175,19 +175,29 @@ static Eina_Bool _esvg_svg_damage_cb(Enesim_Renderer *r,
 static Eina_Bool _esvg_svg_relative_to_absolute(Esvg_Svg *thiz, const char *relative, char *absolute, size_t len)
 {
 	const char *base_dir;
+	size_t base_dir_len;
 
 	base_dir = _esvg_svg_base_dir_get(thiz);
 	if (!base_dir)
 	{
-		printf("No base dir set\n");
+		WARN("No base dir available");
 		return EINA_FALSE;
 	}
 
 	/* get the base dir and concat with the relative path */
 	strncpy(absolute, base_dir, len);
-	len -= strlen(base_dir);
-
+	base_dir_len = strlen(base_dir);
+	len -= base_dir_len;
 	if (len <= 0) return EINA_FALSE;
+
+	/* add the separator */
+	if (absolute[base_dir_len - 1] != '/')
+	{
+		strncat(absolute, "/", len);
+		len--;
+		if (len <= 0) return EINA_FALSE;
+	}
+
 	strncat(absolute, relative, len);
 	return EINA_TRUE;
 }
