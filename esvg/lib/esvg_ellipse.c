@@ -176,10 +176,6 @@ static Eina_Bool _esvg_ellipse_renderer_propagate(Edom_Tag *t,
 		Enesim_Error **error)
 {
 	Esvg_Ellipse *thiz;
-	Esvg_Length lcx, lcy;
-	Esvg_Length lrx, lry;
-	double cx, cy;
-	double rx, ry;
 
 	thiz = _esvg_ellipse_get(t);
 
