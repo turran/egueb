@@ -50,6 +50,7 @@ struct log
 	int *d;
 	const char *name;
 } logs[] = {
+	{ &esvg_log_a,			"esvg_a" },
 	{ &esvg_log_animate,		"esvg_animate" },
 	{ &esvg_log_animate_base,	"esvg_animate_base" },
 	{ &esvg_log_animate_transform,	"esvg_animate_transform" },
@@ -235,6 +236,7 @@ Ender_Property *EDOM_CHILD = NULL;
 Ender_Property *EDOM_PARENT = NULL;
 Ender_Property *EDOM_TEXT = NULL;
 /* The log domaings */
+int esvg_log_a	 		= -1;
 int esvg_log_animate 		= -1;
 int esvg_log_animate_base 	= -1;
 int esvg_log_animate_transform 	= -1;

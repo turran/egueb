@@ -41,6 +41,7 @@ void esvg_svg_image_load(Ender_Element *e, const char *uri, Enesim_Surface **s, 
 Ender_Element * esvg_svg_svg_load(Ender_Element *e, const char *uri);
 char * esvg_svg_uri_resolve(Ender_Element *e, const char *uri);
 Enesim_Surface * esvg_svg_surface_new(Ender_Element *e, int w, int h);
+void esvg_svg_go_to(Ender_Element *e, const char *uri);
 
 void esvg_svg_internal_container_width_get(Edom_Tag *t, double *container_width);
 void esvg_svg_internal_container_height_get(Edom_Tag *t, double *container_height);

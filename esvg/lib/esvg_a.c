@@ -37,6 +37,8 @@
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
+#define ESVG_LOG_DEFAULT esvg_log_a
+
 static Ender_Property *ESVG_A_HREF;
 
 typedef struct _Esvg_A
@@ -64,8 +66,11 @@ static void _esvg_a_renderable_click(Ender_Element *e,
 {
 	Esvg_A *thiz = data;
 	Esvg_Event_Mouse *ev = event_data;
+	Ender_Element *svg;
 
-	printf("<<<<< mouse click on A %s>>>>>>\n", thiz->real_href);
+	DBG("Clicking on '%s'", thiz->real_href);
+	svg = esvg_element_topmost_get(e);
+	esvg_svg_go_to(svg, thiz->real_href);
 }
 /*----------------------------------------------------------------------------*
  *                         The Esvg Element interface                         *

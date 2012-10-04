@@ -21,6 +21,7 @@
 #endif
 
 #include <math.h>
+#include <libgen.h>
 
 #if HAVE_EMAGE
 # include <Emage.h>
@@ -61,6 +62,20 @@ static Eina_Bool _check_extension(const char *file)
 		return EINA_TRUE;
 	return EINA_FALSE;
 }
+
+/*----------------------------------------------------------------------------*
+ *                        Esvg Application Descriptor                         *
+ *----------------------------------------------------------------------------*/
+/* given that we only support this callback, we pass the dir name as the data */
+static const char * _emage_svg_base_dir_get(Ender_Element *e, void *data)
+{
+	return data;
+}
+
+static Esvg_Svg_Application_Descriptor _emage_svg_descriptor = {
+	/* .base_dir_get 	= */ _emage_svg_base_dir_get,
+	/* .go_to 		= */ NULL,
+};
 /*----------------------------------------------------------------------------*
  *                          Emage Provider API                                *
  *----------------------------------------------------------------------------*/
@@ -155,6 +170,8 @@ static Eina_Error _emage_svg_load(const char *file, Enesim_Buffer *buffer, void 
 	double svg_h;
 	int w = _default_width;
 	int h = _default_height;
+	char tmp[PATH_MAX];
+	char *base_dir;
 
 	e = esvg_parser_load(file);
 	if (!e)
@@ -169,6 +186,10 @@ static Eina_Error _emage_svg_load(const char *file, Enesim_Buffer *buffer, void 
 		w = o->container_width;
 		h = o->container_height;
 	}
+	/* set the application descriptor in case the svg needs it */
+	strncpy(tmp, file, PATH_MAX);
+	base_dir = dirname(base_dir);
+	esvg_svg_application_descriptor_set(e, &_emage_svg_descriptor, base_dir);
 	/* we should render into the swdata? */
 	esvg_svg_container_width_set(e, w);
 	esvg_svg_container_height_set(e, h);

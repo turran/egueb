@@ -20,6 +20,7 @@
 #include <config.h>
 #endif
 
+#include <libgen.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <math.h>
@@ -31,6 +32,20 @@
  * TODO:
  * add the dpi argument
  */
+/*----------------------------------------------------------------------------*
+ *                        Esvg Application Descriptor                         *
+ *----------------------------------------------------------------------------*/
+/* given that we only support this callback, we pass the dir name as the data */
+static const char * _base_dir_get(Ender_Element *e, void *data)
+{
+	return data;
+}
+
+static Esvg_Svg_Application_Descriptor _descriptor = {
+	/* .base_dir_get 	= */ _base_dir_get,
+	/* .go_to 		= */ NULL,
+};
+
 static void help(void)
 {
 	printf("Usage: esvg_loader FILE.svg FILE.png [width height]\n");
@@ -46,6 +61,8 @@ int main(int argc, char *argv[])
 	Enesim_Surface *s;
 	Enesim_Error *err = NULL;
 	Eina_Bool ret;
+	char tmp[PATH_MAX];
+	char *base_dir;
 	int width = 640;
 	int height = 480;
 	double aw;
@@ -68,8 +85,6 @@ int main(int argc, char *argv[])
 		height = atoi(argv[4]);
 	}
 
-
-
 	if (!esvg_init())
 		return -1;
 
@@ -88,6 +103,10 @@ int main(int argc, char *argv[])
 		printf("The parsed element is not a topmost SVG element\n");
 		goto shutdown_esvg;
 	}
+	/* set the application descriptor in case the svg needs it */
+	strncpy(tmp, argv[1], PATH_MAX);
+	base_dir = dirname(base_dir);
+	esvg_svg_application_descriptor_set(tag, &_descriptor, base_dir);
 
 	/* set the final image size as the container size */
 	printf("setting %d %d\n", width, height);

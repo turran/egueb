@@ -97,7 +97,7 @@ typedef struct _Esvg_Svg
 	Eina_Hash *ids; /* the ids found */
 	/* user provided callbacks */
 	const Esvg_Svg_Application_Descriptor *application_descriptor;
-	const void *application_data;
+	void *application_data;
 	/* animation */
 	Etch *etch;
 	Eina_Bool paused;
@@ -1184,18 +1184,18 @@ Enesim_Surface * esvg_svg_surface_new(Ender_Element *e, int w, int h)
 	return s;
 }
 
-#if 0
-EAPI void esvg_svg_go_to(Edom_Tag *t, const char *uri)
+void esvg_svg_go_to(Ender_Element *e, const char *uri)
 {
+	Edom_Tag *t;
 	Esvg_Svg *thiz;
 
+	t = ender_element_object_get(e);
 	thiz = _esvg_svg_get(t);
 	if (!thiz->application_descriptor)
 		return;
 	if (thiz->application_descriptor->go_to)
-		thiz->application_descriptor->go_to(thiz->e, uri);
+		thiz->application_descriptor->go_to(thiz->thiz_e, thiz->application_data, uri);
 }
-#endif
 
 #if 0
 Esvg_Svg_External * esvg_svg_external_new(Ender_Element *svg, Edom_Tag *t, Enesim_Surface *s)
@@ -1861,7 +1861,7 @@ EAPI void esvg_svg_damages_get(Ender_Element *e, Esvg_Svg_Damage_Cb cb, void *da
  * To be documented
  * FIXME: To be fixed
  */
-EAPI void esvg_svg_application_descriptor_set(Ender_Element *e, const Esvg_Svg_Application_Descriptor *descriptor, const void *data)
+EAPI void esvg_svg_application_descriptor_set(Ender_Element *e, const Esvg_Svg_Application_Descriptor *descriptor, void *data)
 {
 	Esvg_Svg *thiz;
 	Edom_Tag *t;

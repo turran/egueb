@@ -1,12 +1,14 @@
 #ifndef _ESVG_SVG_H_
 #define _ESVG_SVG_H_
 
-typedef const char * (*Esvg_Svg_Base_Dir_Get)(Ender_Element *e, const void *data);
+typedef const char * (*Esvg_Svg_Base_Dir_Get)(Ender_Element *e, void *data);
+typedef void (*Esvg_Svg_Go_To)(Ender_Element *e, void *data, const char *uri);
 typedef struct _Esvg_Svg_Application_Descriptor
 {
 	Esvg_Svg_Base_Dir_Get base_dir_get;
-	/* function to create a surface */
 	/* function to go to another url */
+	Esvg_Svg_Go_To go_to;
+	/* function to create a surface */
 	/* function to get data from an external url */
 } Esvg_Svg_Application_Descriptor;
 
@@ -49,7 +51,7 @@ EAPI void esvg_svg_feed_mouse_up(Ender_Element *e, int button);
 
 EAPI Eina_List * esvg_svg_intersection_list_get(Ender_Element *e, Enesim_Rectangle *rect);
 
-EAPI void esvg_svg_application_descriptor_set(Ender_Element *e, const Esvg_Svg_Application_Descriptor *descriptor, const void *data);
+EAPI void esvg_svg_application_descriptor_set(Ender_Element *e, const Esvg_Svg_Application_Descriptor *descriptor, void *data);
 EAPI const char * esvg_svg_base_dir_get(Ender_Element *e);
 
 EAPI double esvg_svg_base_font_size_get(Ender_Element *e);

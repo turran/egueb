@@ -74,7 +74,7 @@ void esvg_input_feed_mouse_down(Esvg_Input *thiz, int button)
 	thiz->downx = thiz->x;
 	thiz->downy = thiz->y;
 	
-	printf("mouse down! on %s\n", esvg_element_name_get(thiz->over));
+	//printf("mouse down! on %s\n", esvg_element_name_get(thiz->over));
 	ender_event_dispatch(thiz->over, "mousedown", &ev);
 }
 
@@ -86,15 +86,16 @@ void esvg_input_feed_mouse_up(Esvg_Input *thiz, int button)
 	if (!thiz->grabbed)
 		return;
 
-	printf("mouse up! on %s\n", esvg_element_name_get(thiz->grabbed));
+	//printf("mouse up! on %s\n", esvg_element_name_get(thiz->grabbed));
 	ender_event_dispatch(thiz->grabbed, "mouseup", &ev);
 	/* in case the down coordinates are the same as the current coordinates
 	 * send a click event
 	 */
+	/* TODO define this threshold somewhere */
 	if ((fabs(thiz->downx - thiz->x) < 2) &&
 			(fabs(thiz->downy - thiz->y) < 2))
 	{
-		printf("mouse click! on %s\n", esvg_element_name_get(thiz->grabbed));
+		//printf("mouse click! on %s\n", esvg_element_name_get(thiz->grabbed));
 		ender_event_dispatch(thiz->grabbed, "click", &ev);
 	}
 	thiz->grabbed = NULL;
@@ -158,7 +159,7 @@ void esvg_input_feed_mouse_move(Esvg_Input *thiz, int x, int y)
 		if (e)
 		{
 			ender_event_dispatch(e, "mousemove", &ev);
-			printf("mouse move! on %s\n", esvg_element_name_get(e));
+			//printf("mouse move! on %s\n", esvg_element_name_get(e));
 		}
 	}
 	else
@@ -166,14 +167,16 @@ void esvg_input_feed_mouse_move(Esvg_Input *thiz, int x, int y)
 		/* send out event on i->r */
 		if (thiz->over)
 		{
+			ender_event_dispatch(thiz->over, "mousemove", &ev);
 			ender_event_dispatch(thiz->over, "mouseout", &ev);
-			printf("mouse out! on %s\n", esvg_element_name_get(thiz->over));
+			//printf("mouse out! on %s\n", esvg_element_name_get(thiz->over));
 		}
 		/* send in event on r */
 		if (e)
 		{
 			ender_event_dispatch(e, "mouseover", &ev);
-			printf("mouse in! %s\n", esvg_element_name_get(e));
+			ender_event_dispatch(e, "mousemove", &ev);
+			//printf("mouse in! %s\n", esvg_element_name_get(e));
 		}
 	}
 	/* update the current over */
