@@ -55,7 +55,7 @@ Eina_Bool esvg_is_animate_base_internal(Edom_Tag *t);
 void * esvg_animate_base_data_get(Edom_Tag *t);
 Edom_Tag * esvg_animate_base_new(Esvg_Animate_Base_Descriptor *descriptor, Esvg_Type type, void *data);
 
-Etch_Animation_Type esvg_animate_base_calc_mode_etch_to(Esvg_Calc_Mode c);
+Etch_Interpolator_Type esvg_animate_base_calc_mode_etch_to(Esvg_Calc_Mode c);
 
 Etch_Animation * esvg_animate_base_animation_simple_add(Edom_Tag *t, Etch_Data_Type dt,
 		Esvg_Animation_Context *actx,

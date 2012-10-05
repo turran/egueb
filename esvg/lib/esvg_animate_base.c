@@ -722,23 +722,23 @@ void * esvg_animate_base_data_get(Edom_Tag *t)
 	return thiz->data;
 }
 
-Etch_Animation_Type esvg_animate_base_calc_mode_etch_to(Esvg_Calc_Mode c)
+Etch_Interpolator_Type esvg_animate_base_calc_mode_etch_to(Esvg_Calc_Mode c)
 {
 	switch (c)
 	{
 		case ESVG_CALC_MODE_DISCRETE:
-		return ETCH_ANIMATION_DISCRETE;
+		return ETCH_INTERPOLATOR_DISCRETE;
 
 		case ESVG_CALC_MODE_LINEAR:
-		return ETCH_ANIMATION_LINEAR;
+		return ETCH_INTERPOLATOR_LINEAR;
 
 		case ESVG_CALC_MODE_SPLINE:
-		return ETCH_ANIMATION_CUBIC;
+		return ETCH_INTERPOLATOR_CUBIC;
 
 		/* FIXME TODO */
 		case ESVG_CALC_MODE_PACED:
 		default:
-		return ETCH_ANIMATION_LINEAR;
+		return ETCH_INTERPOLATOR_LINEAR;
 	}
 }
 
@@ -780,7 +780,7 @@ void esvg_animate_base_animation_add_keyframe(Etch_Animation *a,
 	int64_t time, void *data)
 {
 	Etch_Animation_Keyframe *k;
-	Etch_Animation_Type atype;
+	Etch_Interpolator_Type atype;
 
 	atype = esvg_animate_base_calc_mode_etch_to(c->value.calc_mode);
 	k = etch_animation_keyframe_add(a);

@@ -413,9 +413,9 @@ static Eina_Bool _esvg_animate_transform_rotate_generate(Edom_Tag *t,
 				_esvg_animate_transform_rotate_cy_cb, thiz);
 		angle = esvg_animate_base_animation_simple_add(t, ETCH_DOUBLE, actx, abctx,
 				_esvg_animate_transform_rotate_angle_cb, thiz);
-		animations[0] = cx;
-		animations[1] = cy;
-		animations[2] = angle;
+		animations[0] = angle;
+		animations[1] = cx;
+		animations[2] = cy;
 		_esvg_animate_transform_generate(t, animations, values, times, actx, abctx);
 	}
 	return EINA_TRUE;
@@ -650,50 +650,6 @@ static Eina_Bool _esvg_animate_transform_attribute_get(Edom_Tag *tag, const char
 {
 	return EINA_FALSE;
 }
-
-#if 0
-static Eina_Bool _esvg_animate_transform_setup(Edom_Tag *t,
-		Esvg_Context *c,
-		Esvg_Animation_Context *actx,
-		Esvg_Animate_Base_Context *abctx,
-		Enesim_Error **error)
-{
-	Esvg_Animate_Transform *thiz;
-	Ender_Element *svg_e;
-	Ender_Element *parent_e;
-	Edom_Tag *parent_t;
-	Ender_Property *p;
-	Etch *etch;
-	Etch_Animation *anim;
-
-	thiz = _esvg_animate_transform_get(t);
-
-	/* same */
-	esvg_element_internal_topmost_get(t, &svg_e);
-	if (!svg_e) goto done;
-
-	etch = esvg_svg_etch_get(svg_e);
-	if (!etch) goto done;
-
-	/* FIXME should we get a reference here ? */
-	p = actx->p;
-	thiz->parent_t = actx->parent_t;
-	thiz->parent_e = actx->parent_e;
-
-	EINA_LIST_FREE (thiz->animations, anim)
-	{
-		etch_animation_remove(etch, anim);
-	}
-
-	/* we should only process lengths, colors, integers, booleans, etc */
-	if (!_esvg_animate_transform_container_etch_to(thiz, etch, p, actx, abctx))
-		goto done;
-	thiz->prop = p;
-done:
-
-	return EINA_TRUE;
-}
-#endif
 
 static Eina_Bool _esvg_animate_transform_type_descriptor_get(Edom_Tag *t,
 		const char *name, Esvg_Animate_Base_Type_Descriptor **d)
