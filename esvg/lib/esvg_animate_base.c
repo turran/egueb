@@ -384,6 +384,16 @@ static void _esvg_animate_base_times_free(Eina_List *times)
 	EINA_LIST_FREE (times, v)
 		free(v);
 }
+
+/* TODO the new generate function should be:
+ * get the interpolator, get the data associated with an animation
+ * (Esvg_Animated_Foo), and just register an external
+ * etch animation with those data. later we can wrap the etch
+ * animation to also get the "sandwich" value and pass it for
+ * accumulation, etc, etc.
+ * the etch callback should be a generic one to just set the
+ * value
+ */
 /*----------------------------------------------------------------------------*
  *                           The Ender interface                              *
  *----------------------------------------------------------------------------*/
@@ -722,6 +732,7 @@ void * esvg_animate_base_data_get(Edom_Tag *t)
 	return thiz->data;
 }
 
+/* TODO make this static */
 Etch_Interpolator_Type esvg_animate_base_calc_mode_etch_to(Esvg_Calc_Mode c)
 {
 	switch (c)
