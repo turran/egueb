@@ -3,6 +3,11 @@
 
 #include "esvg_private_attribute_animation.h"
 
+/* TODO we should start this new system */
+/* later add the accumulator, additive, etc */
+typedef void (*Esvg_Animate_Base_Interpolator)(void *a,
+		void *b, double m, void *res);
+
 /* this is the callback the animation will call */
 typedef void  (*Esvg_Animate_Base_Animation_Callback)(Edom_Tag *t,
 		Ender_Element *e,
@@ -32,6 +37,7 @@ typedef struct _Esvg_Animate_Base_Type_Descriptor
 	/* to generate the values */
 	Esvg_Animate_Base_Value_Get value_get;
 	Esvg_Animate_Base_Value_Free value_free;
+	/* TODO remove this generate */
 	/* to generate the animations */
 	Esvg_Animate_Base_Animation_Generate animation_generate;
 } Esvg_Animate_Base_Type_Descriptor;
