@@ -652,9 +652,10 @@ static Eina_Bool _esvg_animate_transform_attribute_get(Edom_Tag *tag, const char
 }
 
 static Eina_Bool _esvg_animate_transform_type_descriptor_get(Edom_Tag *t,
-		const char *name, Esvg_Animate_Base_Type_Descriptor **d)
+		const char *name, Esvg_Animate_Base_Type_Descriptor **d, void **dst)
 {
 	Esvg_Animate_Transform *thiz;
+	Esvg_Animated_Transform *v;
 
 	/* based on the property name get the correct descriptor */
 	if (strcmp(name, "esvg_animated_transform"))
@@ -686,6 +687,9 @@ static Eina_Bool _esvg_animate_transform_type_descriptor_get(Edom_Tag *t,
 		default:
 		return EINA_FALSE;
 	}
+	v = calloc(1, sizeof(Esvg_Animated_Transform));
+	*dst = v;
+
 	return EINA_TRUE;
 }
 

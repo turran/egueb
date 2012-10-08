@@ -3,12 +3,8 @@
 
 #include "esvg_private_attribute_animation.h"
 
-/* TODO we should start this new system */
-/* later add the accumulator, additive, etc */
-typedef void (*Esvg_Animate_Base_Interpolator)(void *a,
-		void *b, double m, void *res);
-
 /* this is the callback the animation will call */
+#if 0
 typedef void  (*Esvg_Animate_Base_Animation_Callback)(Edom_Tag *t,
 		Ender_Element *e,
 		Ender_Property *p,
@@ -18,6 +14,7 @@ typedef void  (*Esvg_Animate_Base_Animation_Callback)(Edom_Tag *t,
 		void *data);
 typedef void (*Esvg_Animate_Base_Value_Etch_Data_To)(void *d,
 		Etch_Data *data);
+#endif
 
 typedef struct _Esvg_Animate_Base_Context {
 	Esvg_Attribute_Animation_Value value;
@@ -26,20 +23,30 @@ typedef struct _Esvg_Animate_Base_Context {
 
 typedef Eina_Bool (*Esvg_Animate_Base_Value_Get)(const char *attr, void **value);
 typedef void (*Esvg_Animate_Base_Value_Free)(void *value);
+/* later add the accumulator, additive, etc */
+typedef void (*Esvg_Animate_Base_Interpolator)(void *a,
+		void *b, double m, void *res);
+
+typedef void * (*Esvg_Animate_Base_Destination_Get)(Eina_List *values);
+typedef void (*Esvg_Animate_Base_Destination_Free)(void *destination);
+
+#if 0
 typedef Eina_Bool (*Esvg_Animate_Base_Animation_Generate)(Edom_Tag *t,
 		Eina_List *values,
 		Eina_List *times,
 		Esvg_Animation_Context *actx,
 		Esvg_Animate_Base_Context *abctx);
-
+#endif
 typedef struct _Esvg_Animate_Base_Type_Descriptor
 {
 	/* to generate the values */
 	Esvg_Animate_Base_Value_Get value_get;
 	Esvg_Animate_Base_Value_Free value_free;
-	/* TODO remove this generate */
-	/* to generate the animations */
-	Esvg_Animate_Base_Animation_Generate animation_generate;
+	/* to generate the destination value */
+	Esvg_Animate_Base_Destination_Get destination_get;
+	Esvg_Animate_Base_Destination_Free destination_free;
+	/* the interpolator */
+	Esvg_Animate_Base_Interpolator interpolator;
 } Esvg_Animate_Base_Type_Descriptor;
 
 typedef Eina_Bool (*Esvg_Animate_Base_Type_Descriptor_Get)(Edom_Tag *t,
@@ -62,7 +69,7 @@ void * esvg_animate_base_data_get(Edom_Tag *t);
 Edom_Tag * esvg_animate_base_new(Esvg_Animate_Base_Descriptor *descriptor, Esvg_Type type, void *data);
 
 Etch_Interpolator_Type esvg_animate_base_calc_mode_etch_to(Esvg_Calc_Mode c);
-
+#if 0
 Etch_Animation * esvg_animate_base_animation_simple_add(Edom_Tag *t, Etch_Data_Type dt,
 		Esvg_Animation_Context *actx,
 		Esvg_Animate_Base_Context *abctx,
@@ -84,6 +91,7 @@ void esvg_animate_base_animation_generate(Edom_Tag *t,
 		Esvg_Animate_Base_Value_Etch_Data_To data_to,
 		Esvg_Animate_Base_Animation_Callback cb,
 		void *data);
+#endif
 /* generated function */
 void esvg_animate_base_init(void);
 

@@ -82,7 +82,6 @@ typedef struct _Esvg_Animate_Base
 	Esvg_Animate_Base_Descriptor_Internal descriptor;
 	/* private */
 	Ender_Element *e;
-	Etch *etch;
 	Esvg_Attribute_Type attribute_type;
 	Ender_Element *parent_e;
 	Ender_Property *p;
@@ -90,10 +89,17 @@ typedef struct _Esvg_Animate_Base
 	Esvg_Animate_Base_Type_Descriptor *d;
 	Eina_List *values;
 	Eina_List *times;
+	void *destination_data;
+	/* etch related data */
+	Etch *etch;
+	Etch_Animation *etch_a;
+#if 0
 	Eina_List *animations;
+#endif
 	void *data;
 } Esvg_Animate_Base;
 
+#if 0
 typedef struct _Esvg_Animate_Base_Animation
 {
 	Esvg_Animate_Base *thiz;
@@ -104,6 +110,7 @@ typedef struct _Esvg_Animate_Base_Animation
 	Etch_Animation *a;
 	void *data;
 } Esvg_Animate_Base_Animation;
+#endif
 
 static Esvg_Animate_Base * _esvg_animate_base_get(Edom_Tag *t)
 {
@@ -115,6 +122,7 @@ static Esvg_Animate_Base * _esvg_animate_base_get(Edom_Tag *t)
 	return thiz;
 }
 
+#if 0
 static void _esvg_animate_base_animation_simple_cb(Etch_Animation_Keyframe *k,
 		const Etch_Data *curr,
 		const Etch_Data *prev,
@@ -152,22 +160,42 @@ static void _esvg_animate_base_animation_empty_cb(Etch_Animation_Keyframe *k,
 
 	data->cb(data->t, thiz->parent_e, thiz->p, curr, prev, kdata, data->data);
 }
+#endif
 
 /* FIXME we miss load and repeat events.
  * those have to be added on etch
  */
+static void _esvg_animate_base_animation_cb(Etch_Animation_Keyframe *k,
+		const Etch_Data *curr,
+		const Etch_Data *prev,
+		void *user_data)
+{
+	Esvg_Animate_Base *thiz = user_data;
+	Esvg_Attribute_Type old_type;
+
+	old_type = esvg_element_attribute_type_get(thiz->parent_t);
+	esvg_element_attribute_type_set(thiz->parent_t, thiz->attribute_type);
+	esvg_element_attribute_animate_set(thiz->parent_t, EINA_TRUE);
+	ender_element_property_value_set(thiz->parent_e, thiz->p, thiz->destination_data, NULL);
+	/* restore the states */
+	esvg_element_attribute_animate_set(thiz->parent_t, EINA_FALSE);
+	esvg_element_attribute_type_set(thiz->parent_t, old_type);
+}
+
 static void _esvg_animate_base_animation_start_cb(Etch_Animation *a, void *data)
 {
-	Esvg_Animate_Base_Animation *aa = data;
-	ender_event_dispatch(aa->e, "begin", NULL);
+	Esvg_Animate_Base *thiz = data;
+	ender_event_dispatch(thiz->e, "begin", NULL);
 }
 
 static void _esvg_animate_base_animation_stop_cb(Etch_Animation *a, void *data)
 {
-	Esvg_Animate_Base_Animation *aa = data;
-	ender_event_dispatch(aa->e, "end", NULL);
+	Esvg_Animate_Base *thiz = data;
+	ender_event_dispatch(thiz->e, "end", NULL);
 }
 
+#if 0
+/* FIXME remove this */
 static Esvg_Animate_Base_Animation * _esvg_animate_base_animation_new(Edom_Tag *t,
 		Etch_Data_Type etch_type,
 		Etch_Animation_Callback etch_cb,
@@ -199,6 +227,7 @@ static Esvg_Animate_Base_Animation * _esvg_animate_base_animation_new(Edom_Tag *
 
 	return a;
 }
+#endif
 
 #if 0
 static void _esvg_animate_key_splines_cb(const char *v, void *user_data)
@@ -385,6 +414,7 @@ static void _esvg_animate_base_times_free(Eina_List *times)
 		free(v);
 }
 
+#if 0
 /* TODO the new generate function should be:
  * get the interpolator, get the data associated with an animation
  * (Esvg_Animated_Foo), and just register an external
@@ -394,6 +424,14 @@ static void _esvg_animate_base_times_free(Eina_List *times)
  * the etch callback should be a generic one to just set the
  * value
  */
+static void _esvg_animate_base_animation_generate(Edom_Tag *t)
+{
+	Esvg_Animate_Base *thiz;
+	Etch_Animation *a;
+
+	thiz = _esvg_animation_base_get(t);
+}
+#endif
 /*----------------------------------------------------------------------------*
  *                           The Ender interface                              *
  *----------------------------------------------------------------------------*/
@@ -540,28 +578,18 @@ static void _esvg_animate_base_key_splines_get(Edom_Tag *t, const char **key_spl
 static void _esvg_animate_base_enable(Edom_Tag *t, int64_t offset)
 {
 	Esvg_Animate_Base *thiz;
-	Esvg_Animate_Base_Animation *a;
-	Eina_List *l;
 
 	thiz = _esvg_animate_base_get(t);
-	EINA_LIST_FOREACH(thiz->animations, l, a)
-	{
-		etch_animation_offset_add(a->a, offset);
-		etch_animation_enable(a->a);
-	}
+	etch_animation_offset_add(thiz->etch_a, offset);
+	etch_animation_enable(thiz->etch_a);
 }
 
 static void _esvg_animate_base_disable(Edom_Tag *t)
 {
 	Esvg_Animate_Base *thiz;
-	Esvg_Animate_Base_Animation *a;
-	Eina_List *l;
 
 	thiz = _esvg_animate_base_get(t);
-	EINA_LIST_FOREACH(thiz->animations, l, a)
-	{
-		etch_animation_disable(a->a);
-	}
+	etch_animation_disable(thiz->etch_a);
 }
 
 static Eina_Bool _esvg_animate_base_attribute_set(Ender_Element *e,
@@ -642,14 +670,20 @@ static Eina_Bool _esvg_animate_base_setup(Edom_Tag *t,
 	Ender_Container *ec;
 	Eina_Bool has_from;
 	Etch *etch;
+	Etch_Animation *etch_a;
 	const char *name;
 
 	thiz = _esvg_animate_base_get(t);
 	/* in case of animations free them */
-	if (thiz->animations)
+	if (thiz->etch_a)
 	{
 
 	}
+	if (thiz->destination_data)
+	{
+
+	}
+
 	if (thiz->values)
 	{
 		_esvg_animate_base_values_free(thiz->values, d->value_free);
@@ -679,8 +713,10 @@ static Eina_Bool _esvg_animate_base_setup(Edom_Tag *t,
 
 	if (!thiz->descriptor.type_descriptor_get(t, name, &d))
 		return EINA_FALSE;
+#if 0
 	if (!d->animation_generate)
 		return EINA_FALSE;
+#endif
 
 	/* store our own needed context data */
 	thiz->etch = etch;
@@ -693,8 +729,23 @@ static Eina_Bool _esvg_animate_base_setup(Edom_Tag *t,
 	_esvg_animate_base_values_generate(&thiz->current, d->value_get,
 			&thiz->values, &has_from);
 	_esvg_animate_base_times_generate(actx, &thiz->current, thiz->values, &thiz->times);
+	thiz->destination_data = d->destination_get(thiz->values);
+
+	etch_a = etch_animation_external_add(thiz->etch, d->interpolator,
+			_esvg_animate_base_animation_cb,
+			_esvg_animate_base_animation_start_cb,
+			_esvg_animate_base_animation_stop_cb,
+			NULL,
+			thiz->destination_data,
+			thiz);
+	/* the repeat count */
+	etch_animation_repeat_set(etch_a, actx->timing.repeat_count);
+	thiz->etch_a = etch_a;
+	
+#if 0
 	/* call the animation generate to create the animations */
 	d->animation_generate(t, thiz->values, thiz->times, actx, &thiz->current);
+#endif
 
 	return EINA_TRUE;
 }
@@ -753,6 +804,7 @@ Etch_Interpolator_Type esvg_animate_base_calc_mode_etch_to(Esvg_Calc_Mode c)
 	}
 }
 
+#if 0
 /* the simple version of an animation add should set the animation type
  * the attribute animatable and then just call the value set function
  * pointer with the etch value as parameter
@@ -771,6 +823,7 @@ Etch_Animation * esvg_animate_base_animation_simple_add(Edom_Tag *t, Etch_Data_T
 	return animation->a;
 }
 
+/* FIXME remove this */
 Etch_Animation * esvg_animate_base_animation_empty_add(Edom_Tag *t, Etch_Data_Type dt,
 		Esvg_Animation_Context *actx,
 		Esvg_Animate_Base_Context *abctx,
@@ -785,6 +838,7 @@ Etch_Animation * esvg_animate_base_animation_empty_add(Edom_Tag *t, Etch_Data_Ty
 	return animation->a;
 }
 
+/* FIXME remove this */
 void esvg_animate_base_animation_add_keyframe(Etch_Animation *a,
 	Esvg_Animate_Base_Context *c,
 	Etch_Data *etch_data,
@@ -803,6 +857,7 @@ void esvg_animate_base_animation_add_keyframe(Etch_Animation *a,
 }
 
 /* for simple animation generation, just pass the cb, the data type, the data to, etc, etc */
+/* make this static */
 void esvg_animate_base_animation_generate(Edom_Tag *t,
 		Eina_List *values,
 		Eina_List *times,
@@ -836,6 +891,7 @@ void esvg_animate_base_animation_generate(Edom_Tag *t,
 		tt = eina_list_next(tt);
 	}
 }
+#endif
 
 Edom_Tag * esvg_animate_base_new(Esvg_Animate_Base_Descriptor *descriptor, Esvg_Type type,
 		void *data)

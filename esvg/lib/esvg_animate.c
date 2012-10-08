@@ -59,6 +59,7 @@ static Esvg_Animate * _esvg_animate_get(Edom_Tag *t)
 /*----------------------------------------------------------------------------*
  *                               generic helpers                              *
  *----------------------------------------------------------------------------*/
+#if 0
 static void _esvg_animate_double_cb(Edom_Tag *t,
 		Ender_Element *e,
 		Ender_Property *p,
@@ -88,42 +89,13 @@ static void * _esvg_animate_value_get(const char *attr)
 	printf("attr = %s\n", attr);
 	return NULL;
 }
+#endif
 /*----------------------------------------------------------------------------*
  *                        The Esvg_Paint type descriptor                      *
  *----------------------------------------------------------------------------*/
 /*----------------------------------------------------------------------------*
  *                       The Esvg_Length type descriptor                      *
  *----------------------------------------------------------------------------*/
-#if 0
-static void _esvg_animate_length_interpolate(void *a,
-		void *b, double m, void *res)
-{
-	Esvg_Length *va = a;
-	Esvg_Length *vb = b;
-	Esvg_Animated_Length *r = res;
-
-	r->base.unit = va->unit;
-	etch_interpolate_double(va->value, vb->value, m, &r->base.value);
-}
-#endif
-
-static void _esvg_animate_length_cb(Edom_Tag *t,
-		Ender_Element *e,
-		Ender_Property *p,
-		const Etch_Data *curr,
-		const Etch_Data *prev,
-		void *kdata,
-		void *data)
-{
-	Esvg_Length *length = kdata;
-	Esvg_Animated_Length v;
-
-	v.base.value = curr->data.d;
-	v.base.unit = length->unit;
-
-	ender_element_property_value_set(e, p, &v, NULL);
-}
-
 static Eina_Bool _esvg_animate_length_get(const char *attr, void **value)
 {
 	Esvg_Length *v;
@@ -134,69 +106,34 @@ static Eina_Bool _esvg_animate_length_get(const char *attr, void **value)
 	return EINA_TRUE;
 }
 
-static void _esvg_animate_length_etch_data_to(void *d,
-		Etch_Data *data)
+static void * _esvg_animate_length_destination_get(Eina_List *values)
 {
-	Esvg_Length *v = d;
-
-	data->type = ETCH_DOUBLE;
-	data->data.d = v->value;
+	Esvg_Animated_Length *v;
+	v = calloc(1, sizeof(Esvg_Animated_Length));
+	return v;
 }
 
-static Eina_Bool _esvg_animate_length_animation_generate(Edom_Tag *t,
-		Eina_List *values,
-		Eina_List *times,
-		Esvg_Animation_Context *actx,
-		Esvg_Animate_Base_Context *abctx)
+static void _esvg_animate_length_interpolate(void *a,
+		void *b, double m, void *res)
 {
-	esvg_animate_base_animation_generate(t, values, times, actx, abctx, ETCH_DOUBLE,
-			_esvg_animate_length_etch_data_to, _esvg_animate_length_cb, NULL);
-	return EINA_TRUE;
+	Esvg_Length *va = a;
+	Esvg_Length *vb = b;
+	Esvg_Animated_Length *r = res;
+
+	r->base.unit = va->unit;
+	etch_interpolate_double(va->value, vb->value, m, &r->base.value);
 }
 
 static Esvg_Animate_Base_Type_Descriptor _length_descriptor = {
 	/* .value_get 		= */ _esvg_animate_length_get,
 	/* .value_free 		= */ free,
-	/* .animation_generate 	= */ _esvg_animate_length_animation_generate,
+	/* .destination_get 	= */ _esvg_animate_length_destination_get,
+	/* .destination_free 	= */ free,
+	/* .interpolate 	= */ _esvg_animate_length_interpolate,
 };
 /*----------------------------------------------------------------------------*
  *                        The number type descriptor                          *
  *----------------------------------------------------------------------------*/
-#if 0
-static void _esvg_animate_number_interpolate(void *a,
-		void *b, double m, void *res)
-{
-	Esvg_Number *va = a;
-	Esvg_Number *vb = b;
-	Esvg_Animated_Number *r = res;
-
-	etch_interpolate_double(va->value, vb->value, m, &r->base);
-}
-#endif
-
-static void _esvg_animate_number_cb(Edom_Tag *t,
-		Ender_Element *e,
-		Ender_Property *p,
-		const Etch_Data *curr,
-		const Etch_Data *prev,
-		void *kdata,
-		void *data)
-{
-	Esvg_Animated_Number v;
-
-	v.base = curr->data.d;
-	ender_element_property_value_set(e, p, &v, NULL);
-}
-
-static void _esvg_animate_number_etch_data_to(void *d,
-		Etch_Data *data)
-{
-	double *v = d;
-
-	data->type = ETCH_DOUBLE;
-	data->data.d = *v;
-}
-
 static Eina_Bool _esvg_animate_number_get(const char *attr, void **value)
 {
 	double *v;
@@ -207,49 +144,48 @@ static Eina_Bool _esvg_animate_number_get(const char *attr, void **value)
 	return EINA_TRUE;
 }
 
-static Eina_Bool _esvg_animate_number_animation_generate(Edom_Tag *t,
-		Eina_List *values,
-		Eina_List *times,
-		Esvg_Animation_Context *actx,
-		Esvg_Animate_Base_Context *abctx)
+static void * _esvg_animate_number_destination_get(Eina_List *values)
 {
-	esvg_animate_base_animation_generate(t, values, times, actx, abctx, ETCH_DOUBLE,
-			_esvg_animate_number_etch_data_to, _esvg_animate_number_cb, NULL);
-	return EINA_TRUE;
+	Esvg_Animated_Number *v;
+	v = calloc(1, sizeof(Esvg_Animated_Number));
+	return v;
+}
+
+static void _esvg_animate_number_interpolate(void *a,
+		void *b, double m, void *res)
+{
+	Esvg_Number *va = a;
+	Esvg_Number *vb = b;
+	Esvg_Animated_Number *r = res;
+
+	etch_interpolate_double(*va, *vb, m, &r->base);
 }
 
 static Esvg_Animate_Base_Type_Descriptor _number_descriptor = {
 	/* .value_get 		= */ _esvg_animate_number_get,
 	/* .value_free 		= */ free,
-	/* .animation_generate 	= */ _esvg_animate_number_animation_generate,
+	/* .destination_get 	= */ _esvg_animate_number_destination_get,
+	/* .destination_free 	= */ free,
+	/* .interpolate 	= */ _esvg_animate_number_interpolate,
 };
 /*----------------------------------------------------------------------------*
  *                      The string type descriptor                            *
  *----------------------------------------------------------------------------*/
-#if 0
+static void * _esvg_animate_string_destination_get(Eina_List *values)
+{
+	Esvg_Animated_String *v;
+	v = calloc(1, sizeof(Esvg_Animated_String));
+	return v;
+}
+
 static void _esvg_animate_string_interpolate(void *a,
 		void *b, double m, void *res)
 {
-	Esvg_String *va = a;
-	Esvg_String *vb = b;
+	char *va = a;
+	char *vb = b;
 	Esvg_Animated_String *r = res;
 
-	etch_interpolate_string(va->value, vb->value, m, &r->base);
-}
-#endif
-
-static void _esvg_animate_string_cb(Edom_Tag *t,
-		Ender_Element *e,
-		Ender_Property *p,
-		const Etch_Data *curr,
-		const Etch_Data *prev,
-		void *kdata,
-		void *data)
-{
-	Esvg_Animated_String v;
-
-	v.base = curr->data.string;
-	ender_element_property_value_set(e, p, &v, NULL);
+	etch_interpolate_string(va, vb, m, &r->base);
 }
 
 static Eina_Bool _esvg_animate_string_get(const char *attr, void **value)
@@ -261,104 +197,16 @@ static Eina_Bool _esvg_animate_string_get(const char *attr, void **value)
 	return EINA_TRUE;
 }
 
-static void _esvg_animate_string_etch_data_to(void *d,
-		Etch_Data *data)
-{
-	char *v = d;
-
-	data->type = ETCH_STRING;
-	data->data.string = v;
-}
-
-static Eina_Bool _esvg_animate_string_animation_generate(Edom_Tag *t,
-		Eina_List *values,
-		Eina_List *times,
-		Esvg_Animation_Context *actx,
-		Esvg_Animate_Base_Context *abctx)
-{
-	esvg_animate_base_animation_generate(t, values, times, actx, abctx, ETCH_STRING,
-			_esvg_animate_string_etch_data_to, _esvg_animate_string_cb, NULL);
-	return EINA_TRUE;
-}
-
 static Esvg_Animate_Base_Type_Descriptor _string_descriptor = {
 	/* .value_get 		= */ _esvg_animate_string_get,
 	/* .value_free 		= */ free,
-	/* .animation_generate 	= */ _esvg_animate_string_animation_generate,
+	/* .destination_get 	= */ _esvg_animate_string_destination_get,
+	/* .destination_free 	= */ free,
+	/* .interpolate 	= */ _esvg_animate_string_interpolate,
 };
 /*----------------------------------------------------------------------------*
  *                   The path command type descriptor                         *
  *----------------------------------------------------------------------------*/
-#if 0
-static void _esvg_animate_path_command_interpolate(void *a,
-		void *b, double m, void *res)
-{
-	Esvg_Animated_List *r = res;
-	Esvg_Path_Command *ca;
-	Eina_List *va = a;
-	Eina_List *vb = b;
-	Eina_List *l1, *l2, *l3;
-	
-	l2 = vb;
-	l3 = r->base;
-	EINA_LIST_FOREACH (va, l1, ca)
-	{
-		Esvg_Path_Command *cb = l2->data;
-		Esvg_Path_Command *cr = l3->data;
-
-		switch (ca->type)
-		{
-			case ESVG_PATH_MOVE_TO:
-			etch_interpolate_double(ca->data.move_to.x, cb->data.move_to.x, &cr->data.move_to.x);
-			etch_interpolate_double(ca->data.move_to.y, cb->data.move_to.y, &cr->data.move_to.y);
-			break;
-			case ESVG_PATH_LINE_TO:
-			etch_interpolate_double(ca->data.line_to.x, cb->data.line_to.x, &cr->data.line_to.x);
-			etch_interpolate_double(ca->data.line_to.y, cb->data.line_to.y, &cr->data.line_to.y);
-			break;
-			case ESVG_PATH_HLINE_TO:
-			etch_interpolate_double(ca->data.hline_to.c, cb->data.move_to.c, &cr->data.move_to.c);
-			break;
-			case ESVG_PATH_VLINE_TO:
-			etch_interpolate_double(ca->data.vline_to.c, cb->data.move_to.c, &cr->data.move_to.c);
-			break;
-			case ESVG_PATH_CUBIC_TO:
-			etch_interpolate_double(ca->data.cubic_to.ctrl_x1, cb->data.cubic_to.ctrl_x1, &cr->data.cubic_to.ctrl_x1);
-			etch_interpolate_double(ca->data.cubic_to.ctrl_y1, cb->data.cubic_to.ctrl_y1, &cr->data.cubic_to.ctrl_y1);
-			etch_interpolate_double(ca->data.cubic_to.ctrl_x0, cb->data.cubic_to.ctrl_x0, &cr->data.cubic_to.ctrl_x0);
-			etch_interpolate_double(ca->data.cubic_to.ctrl_y0, cb->data.cubic_to.ctrl_y0, &cr->data.cubic_to.ctrl_y0);
-			etch_interpolate_double(ca->data.cubic_to.x, cb->data.cubic_to.x, &cr->data.cubic_to.x);
-			etch_interpolate_double(ca->data.cubic_to.y, cb->data.cubic_to.y, &cr->data.cubic_to.y);
-			break;
-			case ESVG_PATH_SCUBIC_TO:
-			etch_interpolate_double(ca->data.scubic_to.ctrl_x, cb->data.scubic_to.ctrl_x, &cr->data.scubic_to.ctrl_x);
-			etch_interpolate_double(ca->data.scubic_to.ctrl_y, cb->data.scubic_to.ctrl_y, &cr->data.scubic_to.ctrl_y);
-			etch_interpolate_double(ca->data.scubic_to.x, cb->data.scubic_to.x, &cr->data.scubic_to.x);
-			etch_interpolate_double(ca->data.scubic_to.y, cb->data.scubic_to.y, &cr->data.scubic_to.y);
-			break;
-			case ESVG_PATH_QUADRATIC_TO:
-			etch_interpolate_double(ca->data.quadratic_to.ctrl_x, cb->data.quadratic_to.ctrl_x, &cr->data.quadratic_to.ctrl_x);
-			etch_interpolate_double(ca->data.quadratic_to.ctrl_y, cb->data.quadratic_to.ctrl_y, &cr->data.quadratic_to.ctrl_y);
-			etch_interpolate_double(ca->data.quadratic_to.x, cb->data.quadratic_to.x, &cr->data.quadratic_to.x);
-			etch_interpolate_double(ca->data.quadratic_to.y, cb->data.quadratic_to.y, &cr->data.quadratic_to.y);
-			break;
-			case ESVG_PATH_SQUADRATIC_TO:
-			etch_interpolate_double(ca->data.squadratic_to.x, cb->data.squadratic_to.x, &cr->data.squadratic_to.x);
-			etch_interpolate_double(ca->data.squadratic_to.y, cb->data.squadratic_to.y, &cr->data.squadratic_to.y);
-			break;
-			case ESVG_PATH_ARC_TO:
-			etch_interpolate_double(ca->data.arc_to.x, cb->data.arc_to.x, &cr->data.arc_to.x);
-			etch_interpolate_double(ca->data.arc_to.y, cb->data.arc_to.y, &cr->data.arc_to.y);
-			break;
-			case ESVG_PATH_CLOSE:
-			break;
-		}
-		l2 = l2->next;
-		l3 = l3->next;
-	}
-}
-#endif
-
 static void  _esvg_animate_path_command_get_cb(Esvg_Path_Command *cmd, void *data)
 {
 	Esvg_Path_Command *pcmd;
@@ -387,6 +235,102 @@ static void _esvg_animate_path_command_free(void *d)
 		free(pcmd);
 }
 
+static void * _esvg_animate_path_command_destination_get(Eina_List *values)
+{
+	Esvg_Animated_List *v;
+	Esvg_Path_Command *cmd;
+	Eina_List *l;
+
+	v = calloc(1, sizeof(Esvg_Animated_List));
+	EINA_LIST_FOREACH (values, l, cmd)
+	{
+		Esvg_Path_Command *ncmd;
+		ncmd = calloc(1, sizeof(Esvg_Path_Command));
+		*ncmd = *cmd;
+		v->base = eina_list_append(v->base, ncmd);
+	}
+	return v;
+}
+
+static void _esvg_animate_path_command_destination_free(void *data)
+{
+	Esvg_Animated_List *v = data;
+	Esvg_Path_Command *cmd;
+
+	EINA_LIST_FREE (v->base, cmd)
+		free(cmd);
+	free(v);
+}
+
+static void _esvg_animate_path_command_interpolate(void *a,
+		void *b, double m, void *res)
+{
+	Esvg_Animated_List *r = res;
+	Esvg_Path_Command *ca;
+	Eina_List *va = a;
+	Eina_List *vb = b;
+	Eina_List *l1, *l2, *l3;
+	
+	l2 = vb;
+	l3 = r->base;
+	EINA_LIST_FOREACH (va, l1, ca)
+	{
+		Esvg_Path_Command *cb = l2->data;
+		Esvg_Path_Command *cr = l3->data;
+
+		switch (ca->type)
+		{
+			case ESVG_PATH_MOVE_TO:
+			etch_interpolate_double(ca->data.move_to.x, cb->data.move_to.x, m, &cr->data.move_to.x);
+			etch_interpolate_double(ca->data.move_to.y, cb->data.move_to.y, m, &cr->data.move_to.y);
+			break;
+			case ESVG_PATH_LINE_TO:
+			etch_interpolate_double(ca->data.line_to.x, cb->data.line_to.x, m, &cr->data.line_to.x);
+			etch_interpolate_double(ca->data.line_to.y, cb->data.line_to.y, m, &cr->data.line_to.y);
+			break;
+			case ESVG_PATH_HLINE_TO:
+			etch_interpolate_double(ca->data.hline_to.c, cb->data.hline_to.c, m, &cr->data.hline_to.c);
+			break;
+			case ESVG_PATH_VLINE_TO:
+			etch_interpolate_double(ca->data.vline_to.c, cb->data.vline_to.c, m, &cr->data.vline_to.c);
+			break;
+			case ESVG_PATH_CUBIC_TO:
+			etch_interpolate_double(ca->data.cubic_to.ctrl_x1, cb->data.cubic_to.ctrl_x1, m, &cr->data.cubic_to.ctrl_x1);
+			etch_interpolate_double(ca->data.cubic_to.ctrl_y1, cb->data.cubic_to.ctrl_y1, m, &cr->data.cubic_to.ctrl_y1);
+			etch_interpolate_double(ca->data.cubic_to.ctrl_x0, cb->data.cubic_to.ctrl_x0, m, &cr->data.cubic_to.ctrl_x0);
+			etch_interpolate_double(ca->data.cubic_to.ctrl_y0, cb->data.cubic_to.ctrl_y0, m, &cr->data.cubic_to.ctrl_y0);
+			etch_interpolate_double(ca->data.cubic_to.x, cb->data.cubic_to.x, m, &cr->data.cubic_to.x);
+			etch_interpolate_double(ca->data.cubic_to.y, cb->data.cubic_to.y, m, &cr->data.cubic_to.y);
+			break;
+			case ESVG_PATH_SCUBIC_TO:
+			etch_interpolate_double(ca->data.scubic_to.ctrl_x, cb->data.scubic_to.ctrl_x, m, &cr->data.scubic_to.ctrl_x);
+			etch_interpolate_double(ca->data.scubic_to.ctrl_y, cb->data.scubic_to.ctrl_y, m, &cr->data.scubic_to.ctrl_y);
+			etch_interpolate_double(ca->data.scubic_to.x, cb->data.scubic_to.x, m, &cr->data.scubic_to.x);
+			etch_interpolate_double(ca->data.scubic_to.y, cb->data.scubic_to.y, m, &cr->data.scubic_to.y);
+			break;
+			case ESVG_PATH_QUADRATIC_TO:
+			etch_interpolate_double(ca->data.quadratic_to.ctrl_x, cb->data.quadratic_to.ctrl_x, m, &cr->data.quadratic_to.ctrl_x);
+			etch_interpolate_double(ca->data.quadratic_to.ctrl_y, cb->data.quadratic_to.ctrl_y, m, &cr->data.quadratic_to.ctrl_y);
+			etch_interpolate_double(ca->data.quadratic_to.x, cb->data.quadratic_to.x, m, &cr->data.quadratic_to.x);
+			etch_interpolate_double(ca->data.quadratic_to.y, cb->data.quadratic_to.y, m, &cr->data.quadratic_to.y);
+			break;
+			case ESVG_PATH_SQUADRATIC_TO:
+			etch_interpolate_double(ca->data.squadratic_to.x, cb->data.squadratic_to.x, m, &cr->data.squadratic_to.x);
+			etch_interpolate_double(ca->data.squadratic_to.y, cb->data.squadratic_to.y, m, &cr->data.squadratic_to.y);
+			break;
+			case ESVG_PATH_ARC_TO:
+			etch_interpolate_double(ca->data.arc_to.x, cb->data.arc_to.x, m, &cr->data.arc_to.x);
+			etch_interpolate_double(ca->data.arc_to.y, cb->data.arc_to.y, m, &cr->data.arc_to.y);
+			break;
+			case ESVG_PATH_CLOSE:
+			break;
+		}
+		l2 = l2->next;
+		l3 = l3->next;
+	}
+}
+
+#if 0
 static void _esvg_animate_path_command_double_final_cb(Edom_Tag *t,
 		Ender_Element *e,
 		Ender_Property *p,
@@ -959,11 +903,14 @@ done:
 
 	return EINA_TRUE;
 }
+#endif
 
 static Esvg_Animate_Base_Type_Descriptor _path_command_descriptor = {
 	/* .value_get 		= */ _esvg_animate_path_command_get,
 	/* .value_free 		= */ _esvg_animate_path_command_free,
-	/* .animation_generate 	= */ _esvg_animate_path_command_animation_generate,
+	/* .destination_get 	= */ _esvg_animate_path_command_destination_get,
+	/* .destination_free 	= */ _esvg_animate_path_command_destination_free,
+	/* .interpolate 	= */ _esvg_animate_path_command_interpolate,
 };
 /*----------------------------------------------------------------------------*
  *                         The Esvg Element interface                         *
