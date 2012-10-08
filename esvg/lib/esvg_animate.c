@@ -185,7 +185,9 @@ static void _esvg_animate_string_interpolate(void *a,
 	char *vb = b;
 	Esvg_Animated_String *r = res;
 
+	/* TODO
 	etch_interpolate_string(va, vb, m, &r->base);
+	*/
 }
 
 static Eina_Bool _esvg_animate_string_get(const char *attr, void **value)

@@ -144,6 +144,7 @@ static Esvg_Animate_Transform * _esvg_animate_transform_get(Edom_Tag *t)
 	return thiz;
 }
 
+#if 0
 static void _esvg_animate_transform_value_simple_etch_data_to(void *d,
 		Etch_Data *data)
 {
@@ -621,6 +622,7 @@ static Esvg_Animate_Base_Type_Descriptor _skewy_descriptor = {
 	/* .value_free 		= */ _esvg_animate_transform_value_free,
 	/* .animation_generate 	= */ _esvg_animate_transform_skewy_generate,
 };
+#endif
 /*----------------------------------------------------------------------------*
  *                         The Esvg Element interface                         *
  *----------------------------------------------------------------------------*/
@@ -652,7 +654,7 @@ static Eina_Bool _esvg_animate_transform_attribute_get(Edom_Tag *tag, const char
 }
 
 static Eina_Bool _esvg_animate_transform_type_descriptor_get(Edom_Tag *t,
-		const char *name, Esvg_Animate_Base_Type_Descriptor **d, void **dst)
+		const char *name, Esvg_Animate_Base_Type_Descriptor **d)
 {
 	Esvg_Animate_Transform *thiz;
 	Esvg_Animated_Transform *v;
@@ -660,6 +662,8 @@ static Eina_Bool _esvg_animate_transform_type_descriptor_get(Edom_Tag *t,
 	/* based on the property name get the correct descriptor */
 	if (strcmp(name, "esvg_animated_transform"))
 		return EINA_FALSE;
+	return EINA_FALSE;
+#if 0
 	/* check the type and use the correct generator */
 	thiz = _esvg_animate_transform_get(t);
 	switch (thiz->type)
@@ -691,6 +695,7 @@ static Eina_Bool _esvg_animate_transform_type_descriptor_get(Edom_Tag *t,
 	*dst = v;
 
 	return EINA_TRUE;
+#endif
 }
 
 static Esvg_Animate_Base_Descriptor _descriptor = {
