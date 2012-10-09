@@ -201,6 +201,29 @@ static void _esvg_animate_base_animation_stop_cb(Etch_Animation *a, void *data)
 	ender_event_dispatch(thiz->thiz_e, "end", NULL);
 }
 
+static void _esvg_animate_base_animation_repeat_cb(Etch_Animation *a, void *data)
+{
+	Esvg_Animate_Base *thiz = data;
+	Esvg_Accumulate accum;
+
+	/* when adding pick up the last value set */
+	esvg_animation_accumulate_get(thiz->thiz_e, &accum);
+	if (accum == ESVG_ACCUMULATE_SUM)
+	{
+		if (!thiz->destination_add)
+		{
+			void *destination_add;
+
+			destination_add = thiz->d->destination_new();
+			thiz->destination_add = destination_add;
+		}
+		/* FIXME for transformations this is not correct, given that we should not multiply
+		 * the new matrix but add the values of the last animation keyframe */
+		ender_element_property_value_get(thiz->parent_e, thiz->p, thiz->destination_add, NULL);
+	}
+	ender_event_dispatch(thiz->thiz_e, "repeat", NULL);
+}
+
 #if 0
 static void _esvg_animate_key_splines_cb(const char *v, void *user_data)
 {
@@ -724,6 +747,7 @@ static Eina_Bool _esvg_animate_base_setup(Edom_Tag *t,
 			_esvg_animate_base_animation_cb,
 			_esvg_animate_base_animation_start_cb,
 			_esvg_animate_base_animation_stop_cb,
+			_esvg_animate_base_animation_repeat_cb,
 			NULL,
 			thiz->destination_data,
 			thiz);

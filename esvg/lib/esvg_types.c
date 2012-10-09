@@ -2176,7 +2176,8 @@ EAPI Eina_Bool esvg_repeat_count_string_from(int *rc, const char *attr)
 {
 	if (!strcmp(attr, "indefinite"))
 		*rc = -1;
-	*rc = atoi(attr);
+	else
+		*rc = atoi(attr);
 	return EINA_TRUE;
 }
 
