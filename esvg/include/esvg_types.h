@@ -119,7 +119,7 @@ typedef struct _Esvg_Animated_Transform
 {
 	Enesim_Matrix base;
 	Enesim_Matrix anim;
-} Esvg_Animated_Transform;
+} __attribute__((packed)) Esvg_Animated_Transform;
 
 typedef double Esvg_Number;
 

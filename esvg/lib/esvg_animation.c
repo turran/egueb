@@ -475,14 +475,14 @@ static Eina_Bool _esvg_animation_attribute_set(Ender_Element *e,
 		Esvg_Additive add;
 
 		esvg_additive_string_from(&add, value);
-		esvg_animation_additive_set(e, &add);
+		esvg_animation_additive_set(e, add);
 	}
 	else if (!strcmp(key, "accumulate"))
 	{
 		Esvg_Accumulate acc;
 
 		esvg_accumulate_string_from(&acc, value);
-		esvg_animation_accumulate_set(e, &acc);
+		esvg_animation_accumulate_set(e, acc);
 	}
 	else if (!strcmp(key, "repeatCount"))
 	{
@@ -735,7 +735,7 @@ EAPI void esvg_animation_dur_get(Ender_Element *e, Esvg_Duration *dur)
  * To be documented
  * FIXME: To be fixed
  */
-EAPI void esvg_animation_additive_set(Ender_Element *e, Esvg_Additive *additive)
+EAPI void esvg_animation_additive_set(Ender_Element *e, Esvg_Additive additive)
 {
 	ender_element_property_value_set(e, ESVG_ANIMATION_ADDITIVE, additive, NULL);
 }
@@ -756,7 +756,7 @@ EAPI void esvg_animation_additive_get(Ender_Element *e, Esvg_Additive *additive)
  * To be documented
  * FIXME: To be fixed
  */
-EAPI void esvg_animation_accumulate_set(Ender_Element *e, Esvg_Accumulate *accumulate)
+EAPI void esvg_animation_accumulate_set(Ender_Element *e, Esvg_Accumulate accumulate)
 {
 	ender_element_property_value_set(e, ESVG_ANIMATION_ACCUMULATE, accumulate, NULL);
 }

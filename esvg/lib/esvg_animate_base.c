@@ -29,6 +29,7 @@
 #include "esvg_private_svg.h"
 
 #include "esvg_animate_base.h"
+#include "esvg_animation.h"
 /*
  * This file handles the common attribute handling for the
  * 'animate_base value attributes'. The elements that inherit
@@ -40,6 +41,8 @@
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
+#define ESVG_LOG_DEFAULT esvg_log_animate_base
+
 #define ESVG_ANIMATE_BASE_MAGIC_CHECK(d) \
 	do {\
 		if (!EINA_MAGIC_CHECK(d, ESVG_ANIMATE_BASE_MAGIC))\
@@ -68,6 +71,7 @@ typedef struct _Esvg_Animate_Base_Times_Data
 typedef struct _Esvg_Animate_Base_Descriptor_Internal
 {
 	Edom_Tag_Free free;
+	Esvg_Element_Initialize initialize;
 	Esvg_Element_Attribute_Set attribute_set;
 	Edom_Tag_Attribute_Get attribute_get;
 	Esvg_Animate_Base_Type_Descriptor_Get type_descriptor_get;
@@ -81,36 +85,23 @@ typedef struct _Esvg_Animate_Base
 	/* interface */
 	Esvg_Animate_Base_Descriptor_Internal descriptor;
 	/* private */
-	Ender_Element *e;
+	Ender_Element *thiz_e;
 	Esvg_Attribute_Type attribute_type;
-	Ender_Element *parent_e;
-	Ender_Property *p;
-	Edom_Tag *parent_t;
 	Esvg_Animate_Base_Type_Descriptor *d;
 	Eina_List *values;
 	Eina_List *times;
 	void *destination_data;
+	void *destination_add;
+	/* parent relation */
+	Ender_Element *parent_e;
+	Edom_Tag *parent_t;
+	Ender_Property *p;
 	/* etch related data */
 	Etch *etch;
 	Etch_Animation *etch_a;
-#if 0
-	Eina_List *animations;
-#endif
+	/* for the inheritance */
 	void *data;
 } Esvg_Animate_Base;
-
-#if 0
-typedef struct _Esvg_Animate_Base_Animation
-{
-	Esvg_Animate_Base *thiz;
-	Esvg_Animate_Base_Animation_Callback cb;
-	Edom_Tag *t;
-	Ender_Element *e;
-	Ender_Element *parent;
-	Etch_Animation *a;
-	void *data;
-} Esvg_Animate_Base_Animation;
-#endif
 
 static Esvg_Animate_Base * _esvg_animate_base_get(Edom_Tag *t)
 {
@@ -122,69 +113,48 @@ static Esvg_Animate_Base * _esvg_animate_base_get(Edom_Tag *t)
 	return thiz;
 }
 
+static Etch_Interpolator_Type _esvg_animate_base_calc_mode_etch_to(Esvg_Calc_Mode c)
+{
+	switch (c)
+	{
+		case ESVG_CALC_MODE_DISCRETE:
+		return ETCH_INTERPOLATOR_DISCRETE;
+
+		case ESVG_CALC_MODE_LINEAR:
+		return ETCH_INTERPOLATOR_LINEAR;
+
+		case ESVG_CALC_MODE_SPLINE:
+		return ETCH_INTERPOLATOR_CUBIC;
+
+		/* FIXME TODO */
+		case ESVG_CALC_MODE_PACED:
+		default:
+		return ETCH_INTERPOLATOR_LINEAR;
+	}
+}
+
 static void _esvg_animate_base_animation_add_keyframe(Etch_Animation *a,
 	Esvg_Animate_Base_Context *c,
 	Etch_Data *etch_data,
-	int64_t time, void *data)
+	int64_t time)
 {
 	Etch_Animation_Keyframe *k;
 	Etch_Interpolator_Type atype;
 
-	atype = esvg_animate_base_calc_mode_etch_to(c->value.calc_mode);
+	DBG("Adding keyframe at time %" ETCH_TIME_FORMAT, ETCH_TIME_ARGS(time));
+	atype =_esvg_animate_base_calc_mode_etch_to(c->value.calc_mode);
 	k = etch_animation_keyframe_add(a);
 	etch_animation_keyframe_type_set(k, atype);
-	etch_animation_keyframe_data_set(k, data, NULL);
 	etch_animation_keyframe_value_set(k, etch_data);
-	// set the time
+	/* set the time */
 	etch_animation_keyframe_time_set(k, time);
 }
-
-
-#if 0
-static void _esvg_animate_base_animation_simple_cb(Etch_Animation_Keyframe *k,
-		const Etch_Data *curr,
-		const Etch_Data *prev,
-		void *user_data)
-{
-	Esvg_Animate_Base_Animation *data = user_data;
-	Esvg_Animate_Base *thiz;
-	Esvg_Attribute_Type old_type;
-	void *kdata;
-
-	thiz = data->thiz;
-	kdata = etch_animation_keyframe_data_get(k);
-
-	old_type = esvg_element_attribute_type_get(thiz->parent_t);
-	esvg_element_attribute_type_set(thiz->parent_t, thiz->attribute_type);
-	esvg_element_attribute_animate_set(thiz->parent_t, EINA_TRUE);
-	/* call the implementation */
-	data->cb(data->t, thiz->parent_e, thiz->p, curr, prev, kdata, data->data);
-	/* restore the states */
-	esvg_element_attribute_animate_set(thiz->parent_t, EINA_FALSE);
-	esvg_element_attribute_type_set(thiz->parent_t, old_type);
-}
-
-static void _esvg_animate_base_animation_empty_cb(Etch_Animation_Keyframe *k,
-		const Etch_Data *curr,
-		const Etch_Data *prev,
-		void *user_data)
-{
-	Esvg_Animate_Base_Animation *data = user_data;
-	Esvg_Animate_Base *thiz;
-	void *kdata;
-
-	thiz = data->thiz;
-	kdata = etch_animation_keyframe_data_get(k);
-
-	data->cb(data->t, thiz->parent_e, thiz->p, curr, prev, kdata, data->data);
-}
-#endif
 
 static void _esvg_animate_base_interpolator(Etch_Data *a, Etch_Data *b, double m, Etch_Data *res, void *data)
 {
 	Esvg_Animate_Base *thiz = data;
 
-	thiz->d->interpolator(a->data.external, b->data.external, m, res->data.external);
+	thiz->d->interpolator(a->data.external, b->data.external, m, thiz->destination_add, res->data.external);
 }
 
 /* FIXME we miss load and repeat events.
@@ -210,49 +180,26 @@ static void _esvg_animate_base_animation_cb(Etch_Animation_Keyframe *k,
 static void _esvg_animate_base_animation_start_cb(Etch_Animation *a, void *data)
 {
 	Esvg_Animate_Base *thiz = data;
-	//ender_event_dispatch(thiz->e, "begin", NULL);
+	Esvg_Additive additive;
+
+	/* when adding pick up the last value set */
+	esvg_animation_additive_get(thiz->thiz_e, &additive);
+	if (additive == ESVG_ADDITIVE_SUM)
+	{
+		void *destination_add;
+
+		destination_add = thiz->d->destination_new();
+		ender_element_property_value_get(thiz->parent_e, thiz->p, destination_add, NULL);
+		thiz->destination_add = destination_add;
+	}
+	ender_event_dispatch(thiz->thiz_e, "begin", NULL);
 }
 
 static void _esvg_animate_base_animation_stop_cb(Etch_Animation *a, void *data)
 {
 	Esvg_Animate_Base *thiz = data;
-	//ender_event_dispatch(thiz->e, "end", NULL);
+	ender_event_dispatch(thiz->thiz_e, "end", NULL);
 }
-
-#if 0
-/* FIXME remove this */
-static Esvg_Animate_Base_Animation * _esvg_animate_base_animation_new(Edom_Tag *t,
-		Etch_Data_Type etch_type,
-		Etch_Animation_Callback etch_cb,
-		Esvg_Animation_Context *actx,
-		Esvg_Animate_Base_Context *abctx,
-		Esvg_Animate_Base_Animation_Callback cb,
-		void *data)
-{
-	Esvg_Animate_Base *thiz;
-	Esvg_Animate_Base_Animation *a;
-	Etch_Animation *etch_a;
-
-	thiz = _esvg_animate_base_get(t);
-
-	a = calloc(1, sizeof(Esvg_Animate_Base_Animation));
-	a->thiz = thiz;
-	a->cb = cb;
-	a->data = data;
-	a->e = esvg_element_ender_get(t);
-
-	etch_a = etch_animation_add(thiz->etch, etch_type, etch_cb,
-				_esvg_animate_base_animation_start_cb,
-				_esvg_animate_base_animation_stop_cb,
-				a);
-	/* the repeat count */
-	etch_animation_repeat_set(etch_a, actx->timing.repeat_count);
-	a->a = etch_a;
-	thiz->animations = eina_list_append(thiz->animations, a);
-
-	return a;
-}
-#endif
 
 #if 0
 static void _esvg_animate_key_splines_cb(const char *v, void *user_data)
@@ -421,7 +368,7 @@ static Eina_Bool _esvg_animate_base_times_generate(Esvg_Animation_Context *ac,
 
 				d = malloc(sizeof(int64_t));
 				*d = t;
-				printf("adding time at %lld %lld (%lld %d)\n", t, inc, duration, length);
+				DBG("Adding time %" ETCH_TIME_FORMAT, ETCH_TIME_ARGS(t));
 				*times = eina_list_append(*times, d);
 				t += inc;
 			}
@@ -617,6 +564,20 @@ static void _esvg_animate_base_disable(Edom_Tag *t)
 	etch_animation_disable(thiz->etch_a);
 }
 
+static void _esvg_animate_base_initialize(Ender_Element *e)
+{
+	Esvg_Animate_Base *thiz;
+	Edom_Tag *t;
+
+	t = ender_element_object_get(e);
+	thiz = _esvg_animate_base_get(t);
+	thiz->thiz_e = e;
+
+	/* call the interface */
+	if (thiz->descriptor.initialize)
+		thiz->descriptor.initialize(e);
+}
+
 static Eina_Bool _esvg_animate_base_attribute_set(Ender_Element *e,
 		const char *key, const char *value)
 {
@@ -742,10 +703,6 @@ static Eina_Bool _esvg_animate_base_setup(Edom_Tag *t,
 
 	if (!thiz->descriptor.type_descriptor_get(t, name, &d))
 		return EINA_FALSE;
-#if 0
-	if (!d->animation_generate)
-		return EINA_FALSE;
-#endif
 
 	/* store our own needed context data */
 	thiz->etch = etch;
@@ -758,7 +715,9 @@ static Eina_Bool _esvg_animate_base_setup(Edom_Tag *t,
 	_esvg_animate_base_values_generate(&thiz->current, d->value_get,
 			&thiz->values, &has_from);
 	_esvg_animate_base_times_generate(actx, &thiz->current, thiz->values, &thiz->times);
-	thiz->destination_data = d->destination_get(thiz->values);
+	thiz->destination_data = d->destination_new();
+	if (d->destination_get)
+		d->destination_get(thiz->destination_data, thiz->values);
 
 	etch_a = etch_animation_external_add(thiz->etch,
 			_esvg_animate_base_interpolator,
@@ -781,14 +740,9 @@ static Eina_Bool _esvg_animate_base_setup(Edom_Tag *t,
 		edata.type = ETCH_EXTERNAL;
 		edata.data.external = v;
 		/* add a keyframe */
-		_esvg_animate_base_animation_add_keyframe(thiz->etch_a, &thiz->current, &edata, *time, v);
+		_esvg_animate_base_animation_add_keyframe(thiz->etch_a, &thiz->current, &edata, *time);
 		tt = eina_list_next(tt);
 	}
-	
-#if 0
-	/* call the animation generate to create the animations */
-	d->animation_generate(t, thiz->values, thiz->times, actx, &thiz->current);
-#endif
 
 	return EINA_TRUE;
 }
@@ -826,99 +780,6 @@ void * esvg_animate_base_data_get(Edom_Tag *t)
 	return thiz->data;
 }
 
-/* TODO make this static */
-Etch_Interpolator_Type esvg_animate_base_calc_mode_etch_to(Esvg_Calc_Mode c)
-{
-	switch (c)
-	{
-		case ESVG_CALC_MODE_DISCRETE:
-		return ETCH_INTERPOLATOR_DISCRETE;
-
-		case ESVG_CALC_MODE_LINEAR:
-		return ETCH_INTERPOLATOR_LINEAR;
-
-		case ESVG_CALC_MODE_SPLINE:
-		return ETCH_INTERPOLATOR_CUBIC;
-
-		/* FIXME TODO */
-		case ESVG_CALC_MODE_PACED:
-		default:
-		return ETCH_INTERPOLATOR_LINEAR;
-	}
-}
-
-#if 0
-/* the simple version of an animation add should set the animation type
- * the attribute animatable and then just call the value set function
- * pointer with the etch value as parameter
- */
-
-Etch_Animation * esvg_animate_base_animation_simple_add(Edom_Tag *t, Etch_Data_Type dt,
-		Esvg_Animation_Context *actx,
-		Esvg_Animate_Base_Context *abctx,
-		Esvg_Animate_Base_Animation_Callback cb, void *data)
-{
-	Esvg_Animate_Base_Animation *animation;
-
-	animation = _esvg_animate_base_animation_new(t,
-			dt, _esvg_animate_base_animation_simple_cb,
-			actx, abctx, cb, data);
-	return animation->a;
-}
-
-/* FIXME remove this */
-Etch_Animation * esvg_animate_base_animation_empty_add(Edom_Tag *t, Etch_Data_Type dt,
-		Esvg_Animation_Context *actx,
-		Esvg_Animate_Base_Context *abctx,
-		Esvg_Animate_Base_Animation_Callback cb, void *data)
-{
-	Esvg_Animate_Base_Animation *animation;
-
-	animation = _esvg_animate_base_animation_new(t,
-			dt, _esvg_animate_base_animation_empty_cb,
-			actx, abctx, cb, data);
-
-	return animation->a;
-}
-
-/* FIXME remove this */
-/* for simple animation generation, just pass the cb, the data type, the data to, etc, etc */
-/* make this static */
-void esvg_animate_base_animation_generate(Edom_Tag *t,
-		Eina_List *values,
-		Eina_List *times,
-		Esvg_Animation_Context *actx,
-		Esvg_Animate_Base_Context *abctx,
-		Etch_Data_Type dt,
-		Esvg_Animate_Base_Value_Etch_Data_To data_to,
-		Esvg_Animate_Base_Animation_Callback cb,
-		void *data)
-{
-	Etch_Animation *a;
-	Eina_List *tt;
-	Eina_List *l;
-	void *v;
-	int64_t *time;
-
-	if (!values || !times)
-		return;
-
-	a = esvg_animate_base_animation_simple_add(t, dt, actx, abctx, cb, data);
-	tt = times;
-	EINA_LIST_FOREACH(values, l, v)
-	{
-		Etch_Data edata;
-
-		time = eina_list_data_get(tt);
-		/* convert it to the destination etch type */
-		data_to(v, &edata);
-		/* add a keyframe */
-		esvg_animate_base_animation_add_keyframe(a, abctx, &edata, *time, v);
-		tt = eina_list_next(tt);
-	}
-}
-#endif
-
 Edom_Tag * esvg_animate_base_new(Esvg_Animate_Base_Descriptor *descriptor, Esvg_Type type,
 		void *data)
 {
@@ -937,11 +798,12 @@ Edom_Tag * esvg_animate_base_new(Esvg_Animate_Base_Descriptor *descriptor, Esvg_
 	thiz->descriptor.type_descriptor_get = descriptor->type_descriptor_get;
 	thiz->descriptor.attribute_set = descriptor->attribute_set;
 	thiz->descriptor.attribute_get = descriptor->attribute_get;
+	thiz->descriptor.initialize = descriptor->initialize;
 	/* parent descriptor */
 	pdescriptor.attribute_set = _esvg_animate_base_attribute_set;
 	pdescriptor.attribute_get = _esvg_animate_base_attribute_get;
 	pdescriptor.free = _esvg_animate_base_free;
-	pdescriptor.initialize = descriptor->initialize;
+	pdescriptor.initialize = _esvg_animate_base_initialize;
 	pdescriptor.setup = _esvg_animate_base_setup;
 	pdescriptor.enable = _esvg_animate_base_enable;
 	pdescriptor.disable = _esvg_animate_base_disable;

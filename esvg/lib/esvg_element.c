@@ -531,6 +531,7 @@ static void _esvg_element_transform_get(Edom_Tag *t, Esvg_Animated_Transform *tr
 	Esvg_Element *thiz;
 
 	thiz = _esvg_element_get(t);
+	printf("transform get %p\n", transform);
 	esvg_attribute_animated_transform_get(&thiz->transform, transform);
 }
 
