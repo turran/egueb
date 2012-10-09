@@ -180,6 +180,13 @@ static void _esvg_animate_base_animation_empty_cb(Etch_Animation_Keyframe *k,
 }
 #endif
 
+static void _esvg_animate_base_interpolator(Etch_Data *a, Etch_Data *b, double m, Etch_Data *res, void *data)
+{
+	Esvg_Animate_Base *thiz = data;
+
+	thiz->d->interpolator(a->data.external, b->data.external, m, res->data.external);
+}
+
 /* FIXME we miss load and repeat events.
  * those have to be added on etch
  */
@@ -753,7 +760,8 @@ static Eina_Bool _esvg_animate_base_setup(Edom_Tag *t,
 	_esvg_animate_base_times_generate(actx, &thiz->current, thiz->values, &thiz->times);
 	thiz->destination_data = d->destination_get(thiz->values);
 
-	etch_a = etch_animation_external_add(thiz->etch, d->interpolator,
+	etch_a = etch_animation_external_add(thiz->etch,
+			_esvg_animate_base_interpolator,
 			_esvg_animate_base_animation_cb,
 			_esvg_animate_base_animation_start_cb,
 			_esvg_animate_base_animation_stop_cb,
