@@ -427,20 +427,24 @@ static void _esvg_animate_base_animation_create(Esvg_Animate_Base *thiz,
 	void *v;
 	int64_t *time;
 
+	/* default variants */
+	interpolator_cb = _esvg_animate_base_interpolator;
 	/* generate the values and times */
 	_esvg_animate_base_values_generate(&thiz->current, thiz->d->value_get,
 			&thiz->values, &has_from);
+	if (!has_from)
+	{
+		/* in case of no from, add another keyframe at time 0
+		 * the value for such keyframe should be taken
+		 * at the begin animation
+		 */
+		ERR("NO FROM!");
+	}
 	_esvg_animate_base_times_generate(actx, &thiz->current, thiz->values, &thiz->times);
 	thiz->destination_data = thiz->d->destination_new();
 	if (thiz->d->destination_get)
 		thiz->d->destination_get(thiz->destination_data, thiz->values);
 
-	/* default variants */
-	interpolator_cb = _esvg_animate_base_interpolator;
-	if (!has_from)
-	{
-		ERR("NO FROM!");
-	}
 	/* check if we are the first animation */
 	if (actx->addition.additive == ESVG_ADDITIVE_SUM)
 	{

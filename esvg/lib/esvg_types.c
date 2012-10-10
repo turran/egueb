@@ -1066,7 +1066,6 @@ static void _esvg_animation_event_list_cb(const char *attr, void *data)
 	Esvg_Animation_Event *ev;
 	Eina_List **l = data;
 
-	printf("trying to parse event %s\n", attr);
 	ev = calloc(1, sizeof(Esvg_Animation_Event));
 	if (!esvg_animation_event_string_from(ev, attr))
 	{
@@ -2104,8 +2103,7 @@ EAPI Eina_Bool esvg_clock_string_from(int64_t *clock, const char *attr)
 		if (f)
 			*clock += (double)(f / 10.0) * scale;
 
-		DBG("clock is %lld", *clock);
-		printf("clock is %lld %s %ld\n", *clock, attr, v);
+		DBG("clock %" ETCH_TIME_FORMAT " parsed from attr '%s'", ETCH_TIME_ARGS(*clock), attr);
 		ret = EINA_TRUE;
 	}
 
