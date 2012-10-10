@@ -24,6 +24,8 @@
 #include "esvg_private_context.h"
 #include "esvg_private_element.h"
 #include "esvg_private_svg.h"
+
+#include "esvg_element.h"
 #include "esvg_a.h"
 #include "esvg_event.h"
 

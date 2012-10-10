@@ -40,6 +40,8 @@
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
+#define ESVG_LOG_DEFAULT esvg_log_animation
+
 #define ESVG_ANIMATION_MAGIC_CHECK(d) \
 	do {\
 		if (!EINA_MAGIC_CHECK(d, ESVG_ANIMATION_MAGIC))\
@@ -135,7 +137,6 @@ static void _esvg_animation_end_cb(Ender_Element *e,
 	/* call the end interface */
 	if (!thiz->started)
 		return;
-	printf(">>>> end cb %p\n", thiz->descriptor.disable);
 	if (thiz->descriptor.disable)
 		thiz->descriptor.disable(thiz->thiz_t);
 }
@@ -264,7 +265,7 @@ static Eina_Bool _esvg_animation_attribute_name_setup(Esvg_Animation *thiz)
 			/* set the attribute to animate */
 			old_type = esvg_element_attribute_type_get(ctx->parent_t);
 			esvg_element_attribute_type_set(ctx->parent_t, thiz->ctx.target.attribute_type);
-			esvg_element_attribute_animation_add(ctx->parent_t, attr_name->curr);
+			esvg_element_attribute_animation_add(ctx->parent_t, attr_name->curr, &ctx->index);
 			/* restore the attribute  */
 			esvg_element_attribute_type_set(ctx->parent_t, old_type);
 			attr_name->prev = attr_name->curr;
@@ -637,6 +638,8 @@ Edom_Tag * esvg_animation_new(Esvg_Animation_Descriptor *descriptor, Esvg_Type t
 	thiz->descriptor.disable = descriptor->disable;
 	/* default values */
 	thiz->ctx.timing.repeat_count = 1;
+	thiz->ctx.addition.additive = ESVG_ADDITIVE_REPLACE;
+	thiz->ctx.addition.accumulate = ESVG_ACCUMULATE_NONE;
 
 	pdescriptor.attribute_set = _esvg_animation_attribute_set;
 	pdescriptor.attribute_get = _esvg_animation_attribute_get;

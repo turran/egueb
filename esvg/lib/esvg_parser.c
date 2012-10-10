@@ -68,9 +68,9 @@ static void _esvg_parser_tree_dump(Edom_Tag *t, int level);
 
 static Eina_Bool _esvg_parser_tree_dump_cb(Edom_Tag *t, Edom_Tag *child, void *data)
 {
-	int level = (int)data;
+	int *level = data;
 
-	_esvg_parser_tree_dump(child, level);
+	_esvg_parser_tree_dump(child, *level);
 	return EINA_TRUE;
 }
 
@@ -86,7 +86,8 @@ static void _esvg_parser_tree_dump(Edom_Tag *t, int level)
 	name = edom_tag_name_get(t);
 	strncat(out, name ? name : "(UNKNOWN)", PATH_MAX - i);
 	INFO("%s", out);
-	edom_tag_child_foreach(t, _esvg_parser_tree_dump_cb, (void *)level + 1);
+	level += 1;
+	edom_tag_child_foreach(t, _esvg_parser_tree_dump_cb, &level);
 }
 
 static char * _esvg_parser_file_open(const char *filename, long *sz)

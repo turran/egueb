@@ -147,24 +147,31 @@ static void * _esvg_animate_transform_destination_new(void)
 /*----------------------------------------------------------------------------*
  *                        The translate type descriptor                       *
  *----------------------------------------------------------------------------*/
-static void _esvg_animate_transform_translate_interpolate(void *a,
-		void *b, double m, void *add, void *res)
+static void _esvg_animate_transform_translate_interpolate(void *a, void *b,
+		double m, void *add, void *acc, int mul, void *res)
 {
 	Esvg_Animate_Transform_Data *va = a;
 	Esvg_Animate_Transform_Data *vb = b;
+	Esvg_Animate_Transform_Data *vacc = acc;
 	Esvg_Animated_Transform *vadd = add;
 	Esvg_Animated_Transform *r = res;
 	double tx;
 	double ty = 0;
 
 	etch_interpolate_double(va->values[0], vb->values[0], m, &tx);
+	if (vacc)
+	{
+		tx += vacc->values[0] * mul;
+	}
 	if (va->count > 1)
 	{
 		etch_interpolate_double(va->values[1], vb->values[1], m, &ty);
+		if (vacc)
+			ty += vacc->values[1] * mul;
 	}
 	enesim_matrix_translate(&r->base, tx, ty);
 	if (vadd)
-		enesim_matrix_compose(&r->base, &vadd->anim, &r->base);
+		enesim_matrix_compose(&vadd->anim, &r->base, &r->base);
 }
 
 static Esvg_Animate_Base_Type_Descriptor _translate_descriptor = {
@@ -178,33 +185,44 @@ static Esvg_Animate_Base_Type_Descriptor _translate_descriptor = {
 /*----------------------------------------------------------------------------*
  *                          The rotate type descriptor                        *
  *----------------------------------------------------------------------------*/
-static void _esvg_animate_transform_rotate_interpolate(void *a,
-		void *b, double m, void *add, void *res)
+static void _esvg_animate_transform_rotate_interpolate(void *a, void *b,
+		double m, void *add, void *acc, int mul, void *res)
 {
 	Esvg_Animate_Transform_Data *va = a;
 	Esvg_Animate_Transform_Data *vb = b;
 	Esvg_Animated_Transform *vadd = add;
+	Esvg_Animate_Transform_Data *vacc = acc;
 	Esvg_Animated_Transform *r = res;
-	Enesim_Matrix m1, m2;
+	Enesim_Matrix m1;
 	double angle;
-	double cx = 0;
-	double cy = 0;
 
 	etch_interpolate_double(va->values[0], vb->values[0], m, &angle);
+	if (vacc)
+	{
+		angle += vacc->values[0] * mul;
+	}
+	enesim_matrix_rotate(&m1, angle * M_PI / 180.0);
 	if (va->count > 1)
 	{
+		Enesim_Matrix m2;
+		double cx;
+		double cy;
+
+		if (vacc)
+		{
+			cx += vacc->values[1] * mul;
+			cy += vacc->values[1] * mul;
+		}
 		etch_interpolate_double(va->values[1], vb->values[1], m, &cx);
 		etch_interpolate_double(va->values[2], vb->values[2], m, &cy);
+		enesim_matrix_translate(&m2, cx, cy);
+		enesim_matrix_compose(&m2, &m1, &m1);
+		enesim_matrix_translate(&m2, -cx, -cy);
+		enesim_matrix_compose(&m1, &m2, &m1);
 	}
-	enesim_matrix_translate(&m2, cx, cy);
-	enesim_matrix_rotate(&m1, angle * M_PI / 180.0);
-	enesim_matrix_compose(&m2, &m1, &m1);
-
-	enesim_matrix_translate(&m2, -cx, -cy);
-	enesim_matrix_compose(&m1, &m2, &m1);
 	r->base = m1;
 	if (vadd)
-		enesim_matrix_compose(&r->base, &vadd->anim, &r->base);
+		enesim_matrix_compose(&vadd->anim, &r->base, &r->base);
 }
 
 static Esvg_Animate_Base_Type_Descriptor _rotate_descriptor = {
@@ -218,13 +236,13 @@ static Esvg_Animate_Base_Type_Descriptor _rotate_descriptor = {
 /*----------------------------------------------------------------------------*
  *                          The scale type descriptor                         *
  *----------------------------------------------------------------------------*/
-
-static void _esvg_animate_transform_scale_interpolate(void *a,
-		void *b, double m, void *add, void *res)
+static void _esvg_animate_transform_scale_interpolate(void *a, void *b,
+		double m, void *add, void *acc, int mul, void *res)
 {
 	Esvg_Animate_Transform_Data *va = a;
 	Esvg_Animate_Transform_Data *vb = b;
 	Esvg_Animated_Transform *vadd = add;
+	Esvg_Animate_Transform_Data *vacc = acc;
 	Esvg_Animated_Transform *r = res;
 	double sx = 0;
 	double sy = 1;
@@ -234,9 +252,16 @@ static void _esvg_animate_transform_scale_interpolate(void *a,
 	{
 		etch_interpolate_double(va->values[1], vb->values[1], m, &sy);
 	}
+	if (vacc)
+	{
+		sx += vacc->values[0] * mul;
+		if (va->count > 1)
+			sy += vacc->values[1] * mul;
+	}
+
 	enesim_matrix_scale(&r->base, sx, sy);
 	if (vadd)
-		enesim_matrix_compose(&r->base, &vadd->anim, &r->base);
+		enesim_matrix_compose(&vadd->anim, &r->base, &r->base);
 }
 
 static Esvg_Animate_Base_Type_Descriptor _scale_descriptor = {
@@ -250,19 +275,22 @@ static Esvg_Animate_Base_Type_Descriptor _scale_descriptor = {
 /*----------------------------------------------------------------------------*
  *                          The skewx type descriptor                         *
  *----------------------------------------------------------------------------*/
-static void _esvg_animate_transform_skewx_interpolate(void *a,
-		void *b, double m, void *add, void *res)
+static void _esvg_animate_transform_skewx_interpolate(void *a, void *b,
+		double m, void *add, void *acc, int mul, void *res)
 {
 	Esvg_Animate_Transform_Data *va = a;
 	Esvg_Animate_Transform_Data *vb = b;
 	Esvg_Animated_Transform *vadd = add;
+	Esvg_Animate_Transform_Data *vacc = acc;
 	Esvg_Animated_Transform *r = res;
 	double angle;
 
 	etch_interpolate_double(va->values[0], vb->values[0], m, &angle);
+	if (vacc)
+		angle += vacc->values[0] * mul;
 	enesim_matrix_values_set(&r->base, 1, tan(angle * M_PI / 180.0), 0, 0, 1, 0, 0, 0, 1);
 	if (vadd)
-		enesim_matrix_compose(&r->base, &vadd->anim, &r->base);
+		enesim_matrix_compose(&vadd->anim, &r->base, &r->base);
 }
 
 static Esvg_Animate_Base_Type_Descriptor _skewx_descriptor = {
@@ -277,19 +305,22 @@ static Esvg_Animate_Base_Type_Descriptor _skewx_descriptor = {
 /*----------------------------------------------------------------------------*
  *                          The skewy type descriptor                         *
  *----------------------------------------------------------------------------*/
-static void _esvg_animate_transform_skewy_interpolate(void *a,
-		void *b, double m, void *add, void *res)
+static void _esvg_animate_transform_skewy_interpolate(void *a, void *b,
+		double m, void *add, void *acc, int mul, void *res)
 {
 	Esvg_Animate_Transform_Data *va = a;
 	Esvg_Animate_Transform_Data *vb = b;
+	Esvg_Animate_Transform_Data *vacc = acc;
 	Esvg_Animated_Transform *vadd = add;
 	Esvg_Animated_Transform *r = res;
 	double angle;
 
 	etch_interpolate_double(va->values[0], vb->values[0], m, &angle);
+	if (vacc)
+		angle += vacc->values[0] * mul;
 	enesim_matrix_values_set(&r->base, 1, 0, 0, tan(angle * M_PI / 180.0), 1, 0, 0, 0, 1);
 	if (vadd)
-		enesim_matrix_compose(&r->base, &vadd->anim, &r->base);
+		enesim_matrix_compose(&vadd->anim, &r->base, &r->base);
 }
 
 static Esvg_Animate_Base_Type_Descriptor _skewy_descriptor = {

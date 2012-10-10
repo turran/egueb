@@ -37,12 +37,6 @@ typedef struct _Esvg_Animate
 	/* properties */
 	/* interface */
 	/* private */
-	/* only used for the path commands */
-	/* here we store the value that is going to be set */
-	Eina_List *cmds;
-	/* here the animate_path_command to keep track of the animations
-	 * on every command found and the destination command */
-	Eina_List *animations;
 } Esvg_Animate;
 
 static Esvg_Animate * _esvg_animate_get(Edom_Tag *t)
@@ -82,16 +76,19 @@ static void * _esvg_animate_length_destination_new(void)
 	return v;
 }
 
-static void _esvg_animate_length_interpolate(void *a,
-		void *b, double m, void *add, void *res)
+static void _esvg_animate_length_interpolate(void *a, void *b, double m,
+		void *add, void *acc, int mul, void *res)
 {
 	Esvg_Length *va = a;
 	Esvg_Length *vb = b;
+	Esvg_Length *vacc = acc;
 	Esvg_Animated_Length *vadd = add;
 	Esvg_Animated_Length *r = res;
 
 	r->base.unit = va->unit;
 	etch_interpolate_double(va->value, vb->value, m, &r->base.value);
+	if (vacc)
+		r->base.value += vacc->value * mul;
 	if (vadd)
 		r->base.value += vadd->anim.value;
 }
@@ -124,8 +121,8 @@ static void * _esvg_animate_number_destination_new(void)
 	return v;
 }
 
-static void _esvg_animate_number_interpolate(void *a,
-		void *b, double m, void *add, void *res)
+static void _esvg_animate_number_interpolate(void *a, void *b, double m,
+		void *add, void *acc, int mul, void *res)
 {
 	Esvg_Number *va = a;
 	Esvg_Number *vb = b;
@@ -155,8 +152,8 @@ static void * _esvg_animate_string_destination_new(void)
 	return v;
 }
 
-static void _esvg_animate_string_interpolate(void *a,
-		void *b, double m, void *add, void *res)
+static void _esvg_animate_string_interpolate(void *a, void *b, double m,
+		void *add, void *acc, int mul, void *res)
 {
 	char *va = a;
 	char *vb = b;
@@ -251,8 +248,8 @@ static void _esvg_animate_path_command_destination_free(void *data)
 	free(v);
 }
 
-static void _esvg_animate_path_command_interpolate(void *a,
-		void *b, double m, void *add, void *res)
+static void _esvg_animate_path_command_interpolate(void *a, void *b, double m,
+		void *add, void *acc, int mul, void *res)
 {
 	Esvg_Animated_List *r = res;
 	Esvg_Path_Command *ca;

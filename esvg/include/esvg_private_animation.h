@@ -13,6 +13,8 @@ typedef struct _Esvg_Animation_Context {
 	Edom_Tag *parent_t;
 	/* the parent property */
 	Ender_Property *p;
+	/* the animation index */
+	int index;
 } Esvg_Animation_Context;
 
 typedef void (*Esvg_Animation_Enable)(Edom_Tag *t, int64_t offset);

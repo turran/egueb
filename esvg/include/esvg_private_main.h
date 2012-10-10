@@ -67,6 +67,7 @@ extern int esvg_log_a;
 extern int esvg_log_animate;
 extern int esvg_log_animate_base;
 extern int esvg_log_animate_transform;
+extern int esvg_log_animation;
 extern int esvg_log_clone;
 extern int esvg_log_circle;
 extern int esvg_log_clip_path;

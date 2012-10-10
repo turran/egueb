@@ -37,6 +37,10 @@
  * TODO
  * several properties must not be a string, but a list of values
  * like for example the values, times, keys, etc
+ *
+ * When doing a sum animation, in case there are other animations
+ * use the base value for the first animation and the animation value for the
+ * others
  */
 /*============================================================================*
  *                                  Local                                     *
@@ -92,6 +96,8 @@ typedef struct _Esvg_Animate_Base
 	Eina_List *times;
 	void *destination_data;
 	void *destination_add;
+	void *destination_acc;
+	int repeat_count;
 	/* parent relation */
 	Ender_Element *parent_e;
 	Edom_Tag *parent_t;
@@ -154,7 +160,15 @@ static void _esvg_animate_base_interpolator(Etch_Data *a, Etch_Data *b, double m
 {
 	Esvg_Animate_Base *thiz = data;
 
-	thiz->d->interpolator(a->data.external, b->data.external, m, thiz->destination_add, res->data.external);
+	thiz->d->interpolator(a->data.external, b->data.external, m, thiz->destination_add, thiz->destination_acc, thiz->repeat_count, res->data.external);
+}
+
+static void _esvg_animate_base_interpolator_add(Etch_Data *a, Etch_Data *b, double m, Etch_Data *res, void *data)
+{
+	Esvg_Animate_Base *thiz = data;
+
+	ender_element_property_value_get(thiz->parent_e, thiz->p, thiz->destination_add, NULL);
+	_esvg_animate_base_interpolator(a, b, m, res, data);
 }
 
 /* FIXME we miss load and repeat events.
@@ -180,24 +194,14 @@ static void _esvg_animate_base_animation_cb(Etch_Animation_Keyframe *k,
 static void _esvg_animate_base_animation_start_cb(Etch_Animation *a, void *data)
 {
 	Esvg_Animate_Base *thiz = data;
-	Esvg_Additive additive;
-
-	/* when adding pick up the last value set */
-	esvg_animation_additive_get(thiz->thiz_e, &additive);
-	if (additive == ESVG_ADDITIVE_SUM)
-	{
-		void *destination_add;
-
-		destination_add = thiz->d->destination_new();
-		ender_element_property_value_get(thiz->parent_e, thiz->p, destination_add, NULL);
-		thiz->destination_add = destination_add;
-	}
 	ender_event_dispatch(thiz->thiz_e, "begin", NULL);
 }
 
 static void _esvg_animate_base_animation_stop_cb(Etch_Animation *a, void *data)
 {
 	Esvg_Animate_Base *thiz = data;
+
+	thiz->repeat_count = 0;
 	ender_event_dispatch(thiz->thiz_e, "end", NULL);
 }
 
@@ -208,6 +212,7 @@ static void _esvg_animate_base_animation_repeat_cb(Etch_Animation *a, void *data
 
 	/* when adding pick up the last value set */
 	esvg_animation_accumulate_get(thiz->thiz_e, &accum);
+#if 0
 	if (accum == ESVG_ACCUMULATE_SUM)
 	{
 		if (!thiz->destination_add)
@@ -221,6 +226,8 @@ static void _esvg_animate_base_animation_repeat_cb(Etch_Animation *a, void *data
 		 * the new matrix but add the values of the last animation keyframe */
 		ender_element_property_value_get(thiz->parent_e, thiz->p, thiz->destination_add, NULL);
 	}
+#endif
+	thiz->repeat_count++;
 	ender_event_dispatch(thiz->thiz_e, "repeat", NULL);
 }
 
@@ -409,24 +416,79 @@ static void _esvg_animate_base_times_free(Eina_List *times)
 		free(v);
 }
 
-#if 0
-/* TODO the new generate function should be:
- * get the interpolator, get the data associated with an animation
- * (Esvg_Animated_Foo), and just register an external
- * etch animation with those data. later we can wrap the etch
- * animation to also get the "sandwich" value and pass it for
- * accumulation, etc, etc.
- * the etch callback should be a generic one to just set the
- * value
- */
-static void _esvg_animate_base_animation_generate(Edom_Tag *t)
+static void _esvg_animate_base_animation_create(Esvg_Animate_Base *thiz,
+		Esvg_Animation_Context *actx)
 {
-	Esvg_Animate_Base *thiz;
-	Etch_Animation *a;
+	Etch_Animation_State_Callback start_cb;
+	Etch_Interpolator interpolator_cb;
+	Etch_Animation *etch_a;
+	Eina_List *l, *tt;
+	Eina_Bool has_from;
+	void *v;
+	int64_t *time;
 
-	thiz = _esvg_animation_base_get(t);
+	/* generate the values and times */
+	_esvg_animate_base_values_generate(&thiz->current, thiz->d->value_get,
+			&thiz->values, &has_from);
+	_esvg_animate_base_times_generate(actx, &thiz->current, thiz->values, &thiz->times);
+	thiz->destination_data = thiz->d->destination_new();
+	if (thiz->d->destination_get)
+		thiz->d->destination_get(thiz->destination_data, thiz->values);
+
+	/* default variants */
+	interpolator_cb = _esvg_animate_base_interpolator;
+	if (!has_from)
+	{
+		ERR("NO FROM!");
+	}
+	/* check if we are the first animation */
+	if (actx->addition.additive == ESVG_ADDITIVE_SUM)
+	{
+		void *destination_add;
+
+		destination_add = thiz->d->destination_new();
+		ender_element_property_value_get(thiz->parent_e, thiz->p, destination_add, NULL);
+		thiz->destination_add = destination_add;
+		if (actx->index > 1)
+		{
+			interpolator_cb = _esvg_animate_base_interpolator_add;
+		}
+	}
+	if (actx->addition.accumulate == ESVG_ACCUMULATE_SUM)
+	{
+		Eina_List *l2;
+
+		/* get the latest value and keep it */
+		l2 = eina_list_last(thiz->values);
+		thiz->destination_acc = eina_list_data_get(l2);
+	}
+	/* create the animation */
+	etch_a = etch_animation_external_add(thiz->etch,
+			interpolator_cb,
+			_esvg_animate_base_animation_cb,
+			_esvg_animate_base_animation_start_cb,
+			_esvg_animate_base_animation_stop_cb,
+			_esvg_animate_base_animation_repeat_cb,
+			NULL,
+			thiz->destination_data,
+			thiz);
+	/* the repeat count */
+	etch_animation_repeat_set(etch_a, actx->timing.repeat_count);
+	thiz->etch_a = etch_a;
+	/* add the keyframes */
+	tt = thiz->times;
+	EINA_LIST_FOREACH(thiz->values, l, v)
+	{
+		Etch_Data edata;
+
+		time = eina_list_data_get(tt);
+		edata.type = ETCH_EXTERNAL;
+		edata.data.external = v;
+		/* add a keyframe */
+		_esvg_animate_base_animation_add_keyframe(thiz->etch_a, &thiz->current, &edata, *time);
+		tt = eina_list_next(tt);
+	}
 }
-#endif
 /*----------------------------------------------------------------------------*
  *                           The Ender interface                              *
  *----------------------------------------------------------------------------*/
@@ -677,13 +739,8 @@ static Eina_Bool _esvg_animate_base_setup(Edom_Tag *t,
 	Esvg_Animate_Base_Type_Descriptor *d;
 	Ender_Element *svg_e;
 	Ender_Container *ec;
-	Eina_Bool has_from;
-	Eina_List *l, *tt;
 	Etch *etch;
-	Etch_Animation *etch_a;
 	const char *name;
-	void *v;
-	int64_t *time;
 
 
 	thiz = _esvg_animate_base_get(t);
@@ -734,39 +791,7 @@ static Eina_Bool _esvg_animate_base_setup(Edom_Tag *t,
 	thiz->attribute_type = actx->target.attribute_type;
 	thiz->p = actx->p;
 	thiz->d = d;
-	/* generate the values and times */
-	_esvg_animate_base_values_generate(&thiz->current, d->value_get,
-			&thiz->values, &has_from);
-	_esvg_animate_base_times_generate(actx, &thiz->current, thiz->values, &thiz->times);
-	thiz->destination_data = d->destination_new();
-	if (d->destination_get)
-		d->destination_get(thiz->destination_data, thiz->values);
-
-	etch_a = etch_animation_external_add(thiz->etch,
-			_esvg_animate_base_interpolator,
-			_esvg_animate_base_animation_cb,
-			_esvg_animate_base_animation_start_cb,
-			_esvg_animate_base_animation_stop_cb,
-			_esvg_animate_base_animation_repeat_cb,
-			NULL,
-			thiz->destination_data,
-			thiz);
-	/* the repeat count */
-	etch_animation_repeat_set(etch_a, actx->timing.repeat_count);
-	thiz->etch_a = etch_a;
-	/* add the keyframes */
-	tt = thiz->times;
-	EINA_LIST_FOREACH(thiz->values, l, v)
-	{
-		Etch_Data edata;
-
-		time = eina_list_data_get(tt);
-		edata.type = ETCH_EXTERNAL;
-		edata.data.external = v;
-		/* add a keyframe */
-		_esvg_animate_base_animation_add_keyframe(thiz->etch_a, &thiz->current, &edata, *time);
-		tt = eina_list_next(tt);
-	}
+	_esvg_animate_base_animation_create(thiz, actx);
 
 	return EINA_TRUE;
 }

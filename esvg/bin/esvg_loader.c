@@ -105,7 +105,7 @@ int main(int argc, char *argv[])
 	}
 	/* set the application descriptor in case the svg needs it */
 	strncpy(tmp, argv[1], PATH_MAX);
-	base_dir = dirname(base_dir);
+	base_dir = dirname(tmp);
 	esvg_svg_application_descriptor_set(tag, &_descriptor, base_dir);
 
 	/* set the final image size as the container size */

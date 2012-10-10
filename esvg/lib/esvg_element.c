@@ -1167,7 +1167,8 @@ static Ecss_Context _esvg_element_css_context = {
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
-Eina_Bool esvg_element_attribute_animation_add(Edom_Tag *t, const char *attr)
+Eina_Bool esvg_element_attribute_animation_add(Edom_Tag *t, const char *attr,
+		int *index)
 {
 	int *animated;
 
@@ -1176,6 +1177,7 @@ Eina_Bool esvg_element_attribute_animation_add(Edom_Tag *t, const char *attr)
 	if (animated)
 	{
 		(*animated)++;
+		*index = *animated;
 		return EINA_TRUE;
 	}
 	else

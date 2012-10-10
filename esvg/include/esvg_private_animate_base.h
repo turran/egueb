@@ -14,8 +14,8 @@ typedef void * (*Esvg_Animate_Base_Destination_New)(void);
 typedef void (*Esvg_Animate_Base_Destination_Get)(void *destination, Eina_List *values);
 typedef void (*Esvg_Animate_Base_Destination_Free)(void *destination);
 /* later add the accumulator, additive, etc */
-typedef void (*Esvg_Animate_Base_Interpolator)(void *a,
-		void *b, double m, void *add, void *res);
+typedef void (*Esvg_Animate_Base_Interpolator)(void *a, void *b, double m,
+		void *add, void *acc, int mul, void *res);
 
 typedef struct _Esvg_Animate_Base_Type_Descriptor
 {

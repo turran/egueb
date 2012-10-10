@@ -54,6 +54,7 @@ struct log
 	{ &esvg_log_animate,		"esvg_animate" },
 	{ &esvg_log_animate_base,	"esvg_animate_base" },
 	{ &esvg_log_animate_transform,	"esvg_animate_transform" },
+	{ &esvg_log_animation,		"esvg_animation" },
 	{ &esvg_log_clone,		"esvg_clone" },
 	{ &esvg_log_circle,		"esvg_circle" },
 	{ &esvg_log_clip_path,		"esvg_clip_path" },
@@ -240,6 +241,7 @@ int esvg_log_a	 		= -1;
 int esvg_log_animate 		= -1;
 int esvg_log_animate_base 	= -1;
 int esvg_log_animate_transform 	= -1;
+int esvg_log_animation	 	= -1;
 int esvg_log_clone 		= -1;
 int esvg_log_circle 		= -1;
 int esvg_log_clip_path 		= -1;
