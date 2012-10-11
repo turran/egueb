@@ -265,6 +265,7 @@ static Eina_Bool _esvg_animation_attribute_name_setup(Esvg_Animation *thiz)
 			/* set the attribute to animate */
 			old_type = esvg_element_attribute_type_get(ctx->parent_t);
 			esvg_element_attribute_type_set(ctx->parent_t, thiz->ctx.target.attribute_type);
+			/* FIXME this index might change whenever another animation is removed */
 			esvg_element_attribute_animation_add(ctx->parent_t, attr_name->curr, &ctx->index);
 			/* restore the attribute  */
 			esvg_element_attribute_type_set(ctx->parent_t, old_type);

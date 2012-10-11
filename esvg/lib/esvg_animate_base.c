@@ -63,7 +63,7 @@ static Ender_Property *ESVG_ANIMATE_BASE_CALC_MODE;
 typedef struct _Esvg_Animate_Base_Values_Data
 {
 	Eina_List *values;
-	Esvg_Animate_Base_Value_Get get;
+	Esvg_Animate_Base_Type_Descriptor *d;
 } Esvg_Animate_Base_Values_Data;
 
 typedef struct _Esvg_Animate_Base_Times_Data
@@ -251,8 +251,11 @@ static void _esvg_animate_base_values_cb(const char *v, void *user_data)
 	Esvg_Animate_Base_Values_Data *data = user_data;
 	void *get_data;
 
-	if (data->get(v, &get_data))
+	get_data = data->d->value_new();
+	if (data->d->value_get(v, get_data))
 		data->values = eina_list_append(data->values, get_data);
+	else
+		data->d->value_free(get_data);
 }
 
 static void _esvg_animate_base_time_cb(const char *v, void *user_data)
@@ -284,7 +287,7 @@ static void _esvg_animate_base_key_splines_cb(const char *v, void *user_data)
 }
 
 static Eina_Bool _esvg_animate_base_values_generate(Esvg_Animate_Base_Context *c,
-		Esvg_Animate_Base_Value_Get get_cb,
+		Esvg_Animate_Base_Type_Descriptor *d,
 		Eina_List **values,
 		Eina_Bool *has_from)
 {
@@ -295,7 +298,7 @@ static Eina_Bool _esvg_animate_base_values_generate(Esvg_Animate_Base_Context *c
 		Esvg_Animate_Base_Values_Data data;
 
 		data.values = *values;
-		data.get = get_cb;
+		data.d = d;
 		esvg_list_string_from(c->value.values, ';',
 			_esvg_animate_base_values_cb, &data);
 		*values = data.values;
@@ -305,8 +308,12 @@ static Eina_Bool _esvg_animate_base_values_generate(Esvg_Animate_Base_Context *c
 		if (c->value.from)
 		{
 			void *data;
-			if (get_cb(c->value.from, &data))
+
+			data = d->value_new();
+			if (d->value_get(c->value.from, data))
 				*values = eina_list_append(*values, data);
+			else
+				d->value_free(data);
 		}
 		else
 		{
@@ -317,8 +324,10 @@ static Eina_Bool _esvg_animate_base_values_generate(Esvg_Animate_Base_Context *c
 		if (c->value.to)
 		{
 			void *data;
-			if (get_cb(c->value.to, &data))
+			if (d->value_get(c->value.to, data))
 				*values = eina_list_append(*values, data);
+			else
+				d->value_free(data);
 		}
 #if 0
 		else if (c->value.by)
@@ -430,14 +439,18 @@ static void _esvg_animate_base_animation_create(Esvg_Animate_Base *thiz,
 	/* default variants */
 	interpolator_cb = _esvg_animate_base_interpolator;
 	/* generate the values and times */
-	_esvg_animate_base_values_generate(&thiz->current, thiz->d->value_get,
+	_esvg_animate_base_values_generate(&thiz->current, thiz->d,
 			&thiz->values, &has_from);
 	if (!has_from)
 	{
+		void *from;
+
 		/* in case of no from, add another keyframe at time 0
 		 * the value for such keyframe should be taken
 		 * at the begin animation
 		 */
+		from = thiz->d->value_new();
+		thiz->values = eina_list_prepend(thiz->values, from);
 		ERR("NO FROM!");
 	}
 	_esvg_animate_base_times_generate(actx, &thiz->current, thiz->values, &thiz->times);

@@ -59,13 +59,19 @@ static Esvg_Animate * _esvg_animate_get(Edom_Tag *t)
 /*----------------------------------------------------------------------------*
  *                       The Esvg_Length type descriptor                      *
  *----------------------------------------------------------------------------*/
-static Eina_Bool _esvg_animate_length_get(const char *attr, void **value)
+static void * _esvg_animate_length_new(void)
 {
 	Esvg_Length *v;
 
 	v = calloc(1, sizeof(Esvg_Length));
+	return v;
+}
+
+static Eina_Bool _esvg_animate_length_get(const char *attr, void *value)
+{
+	Esvg_Length *v = value;
+
 	esvg_length_string_from(v, attr);
-	*value = v;
 	return EINA_TRUE;
 }
 
@@ -94,6 +100,7 @@ static void _esvg_animate_length_interpolate(void *a, void *b, double m,
 }
 
 static Esvg_Animate_Base_Type_Descriptor _length_descriptor = {
+	/* .value_new 		= */ _esvg_animate_length_new,
 	/* .value_get 		= */ _esvg_animate_length_get,
 	/* .value_free 		= */ free,
 	/* .destination_new 	= */ _esvg_animate_length_destination_new,
@@ -104,13 +111,19 @@ static Esvg_Animate_Base_Type_Descriptor _length_descriptor = {
 /*----------------------------------------------------------------------------*
  *                        The number type descriptor                          *
  *----------------------------------------------------------------------------*/
-static Eina_Bool _esvg_animate_number_get(const char *attr, void **value)
+static void * _esvg_animate_number_new(void)
 {
 	double *v;
 
 	v = calloc(1, sizeof(double));
+	return v;
+}
+
+static Eina_Bool _esvg_animate_number_get(const char *attr, void *value)
+{
+	double *v = value;
+
 	*v = esvg_number_string_from(attr, 1.0);
-	*value = v;
 	return EINA_TRUE;
 }
 
@@ -135,6 +148,7 @@ static void _esvg_animate_number_interpolate(void *a, void *b, double m,
 }
 
 static Esvg_Animate_Base_Type_Descriptor _number_descriptor = {
+	/* .value_new 		= */ _esvg_animate_number_new,
 	/* .value_get 		= */ _esvg_animate_number_get,
 	/* .value_free 		= */ free,
 	/* .destination_new 	= */ _esvg_animate_number_destination_new,
@@ -164,18 +178,34 @@ static void _esvg_animate_string_interpolate(void *a, void *b, double m,
 	*/
 }
 
-static Eina_Bool _esvg_animate_string_get(const char *attr, void **value)
+static void * _esvg_animate_string_new(void)
 {
-	char *v;
+	char **v;
 
-	v = strdup(attr);
-	*value = v;
+	v = calloc(1, sizeof(char *));
+	return v;
+}
+
+static Eina_Bool _esvg_animate_string_get(const char *attr, void *value)
+{
+	char **v = value;
+
+	*v = strdup(attr);
 	return EINA_TRUE;
 }
 
+static void _esvg_animate_string_free(void *value)
+{
+	char **v = value;
+
+	free(*v);
+	free(v);
+}
+
 static Esvg_Animate_Base_Type_Descriptor _string_descriptor = {
+	/* .value_new 		= */ _esvg_animate_string_new,
 	/* .value_get 		= */ _esvg_animate_string_get,
-	/* .value_free 		= */ free,
+	/* .value_free 		= */ _esvg_animate_string_free,
 	/* .destination_new 	= */ _esvg_animate_string_destination_new,
 	/* .destination_get 	= */ NULL,
 	/* .destination_free 	= */ free,
@@ -184,7 +214,7 @@ static Esvg_Animate_Base_Type_Descriptor _string_descriptor = {
 /*----------------------------------------------------------------------------*
  *                   The path command type descriptor                         *
  *----------------------------------------------------------------------------*/
-static void  _esvg_animate_path_command_get_cb(Esvg_Path_Command *cmd, void *data)
+static void _esvg_animate_path_command_get_cb(Esvg_Path_Command *cmd, void *data)
 {
 	Esvg_Path_Command *pcmd;
 	Eina_List **dst = data;
@@ -194,12 +224,22 @@ static void  _esvg_animate_path_command_get_cb(Esvg_Path_Command *cmd, void *dat
 	*dst = eina_list_append(*dst, pcmd);
 }
 
-static Eina_Bool _esvg_animate_path_command_get(const char *attr, void **value)
+static void * _esvg_animate_path_command_new(void)
 {
-	Eina_List *l = NULL;
-	esvg_path_string_from(attr, _esvg_animate_path_command_get_cb, &l);
+	Eina_List **l;
 
-	*value = l;
+	l = calloc(1, sizeof(Eina_List *));
+	*l = NULL;
+
+	return l;
+}
+
+
+static Eina_Bool _esvg_animate_path_command_get(const char *attr, void *value)
+{
+	Eina_List **l = value;
+
+	esvg_path_string_from(attr, _esvg_animate_path_command_get_cb, l);
 	return EINA_TRUE;
 }
 
@@ -317,6 +357,7 @@ static void _esvg_animate_path_command_interpolate(void *a, void *b, double m,
 }
 
 static Esvg_Animate_Base_Type_Descriptor _path_command_descriptor = {
+	/* .value_new 		= */ _esvg_animate_path_command_new,
 	/* .value_get 		= */ _esvg_animate_path_command_get,
 	/* .value_free 		= */ _esvg_animate_path_command_free,
 	/* .destination_new 	= */ _esvg_animate_path_command_destination_new,

@@ -8,11 +8,13 @@ typedef struct _Esvg_Animate_Base_Context {
 	Eina_Bool changed : 1;
 } Esvg_Animate_Base_Context;
 
-typedef Eina_Bool (*Esvg_Animate_Base_Value_Get)(const char *attr, void **value);
+typedef void * (*Esvg_Animate_Base_Value_New)(void);
+typedef Eina_Bool (*Esvg_Animate_Base_Value_Get)(const char *attr, void *value);
 typedef void (*Esvg_Animate_Base_Value_Free)(void *value);
 typedef void * (*Esvg_Animate_Base_Destination_New)(void);
 typedef void (*Esvg_Animate_Base_Destination_Get)(void *destination, Eina_List *values);
 typedef void (*Esvg_Animate_Base_Destination_Free)(void *destination);
+typedef void (*Esvg_Animate_Base_Destination_Value_To)(void *destination, void *value);
 /* later add the accumulator, additive, etc */
 typedef void (*Esvg_Animate_Base_Interpolator)(void *a, void *b, double m,
 		void *add, void *acc, int mul, void *res);
@@ -20,12 +22,14 @@ typedef void (*Esvg_Animate_Base_Interpolator)(void *a, void *b, double m,
 typedef struct _Esvg_Animate_Base_Type_Descriptor
 {
 	/* to generate the values */
+	Esvg_Animate_Base_Value_New value_new;
 	Esvg_Animate_Base_Value_Get value_get;
 	Esvg_Animate_Base_Value_Free value_free;
 	/* to generate the destination value */
 	Esvg_Animate_Base_Destination_New destination_new;
 	Esvg_Animate_Base_Destination_Get destination_get;
 	Esvg_Animate_Base_Destination_Free destination_free;
+	Esvg_Animate_Base_Destination_Value_To destination_value_to;
 	/* the interpolator */
 	Esvg_Animate_Base_Interpolator interpolator;
 } Esvg_Animate_Base_Type_Descriptor;
