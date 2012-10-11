@@ -48,6 +48,7 @@
 #include "esvg_linear_gradient.h"
 #include "esvg_radial_gradient.h"
 #include "esvg_g.h"
+#include "esvg_set.h"
 #include "esvg_stop.h"
 #include "esvg_style.h"
 #include "esvg_text.h"
@@ -200,6 +201,8 @@ static Eina_Bool _esvg_parser_tag_get(Edom_Parser *parser, const char *content,
 		{
 			if ((content[1] == 'e') && (content[2] == 't'))
 			{
+				*tag = ESVG_SET;
+				return EINA_TRUE;
 			}
 			else if ((content[1] == 'v') && (content[2] == 'g'))
 			{
@@ -502,6 +505,10 @@ static void * _esvg_parser_tag_new(Edom_Parser *parser, int tag_id)
 
 		case ESVG_CLIPPATH:
 		tag = esvg_clip_path_new();
+		break;
+
+		case ESVG_SET:
+		tag = esvg_set_new();
 		break;
 
 		case ESVG_STOP:

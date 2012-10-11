@@ -150,6 +150,7 @@ namespace "esvg" : 0 {
 		int "additive";
 		int "accumulate";
 		int "repeat_count";
+		int "fill";
 		/* FIXME later we should use a time object? */
 		esvg_duration "dur";
 		/* FIXME we use objects for now, we should use the real struct once it is defined */
@@ -164,6 +165,10 @@ namespace "esvg" : 0 {
 		int "calc_mode";
 		string "key_times";
 		string "key_splines";
+	};
+
+	class "set" : "animation" {
+		string "to";
 	};
 
 	class "animate" : "animate_base" {
@@ -274,7 +279,7 @@ namespace "esvg" : 0 {
 	};
 
 	class "a" : "element" {
-		string "href";
+		esvg_animated_string "xlink:href";
 	};
 
 	class "image" : "renderable" {

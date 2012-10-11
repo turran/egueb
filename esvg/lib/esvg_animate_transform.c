@@ -132,12 +132,12 @@ static void * _esvg_animate_transform_value_new(void)
 	return data;
 }
 
-static Eina_Bool _esvg_animate_transform_value_get(const char *attr, void *v)
+static Eina_Bool _esvg_animate_transform_value_get(const char *attr, void **value)
 {	
-	Esvg_Animate_Transform_Data *data = v;
+	Esvg_Animate_Transform_Data *v = *value;
 
 	esvg_number_list_string_from(attr, _esvg_animate_transform_values_cb,
-				data);
+				v);
 	return EINA_TRUE;
 }
 
@@ -180,13 +180,14 @@ static void _esvg_animate_transform_translate_interpolate(void *a, void *b,
 		enesim_matrix_compose(&vadd->anim, &r->base, &r->base);
 }
 
-static Esvg_Animate_Base_Type_Descriptor _translate_descriptor = {
+static Esvg_Attribute_Animated_Descriptor _translate_descriptor = {
 	/* .value_new 		= */ _esvg_animate_transform_value_new,
 	/* .value_get 		= */ _esvg_animate_transform_value_get,
 	/* .value_free 		= */ free,
 	/* .destination_new 	= */ _esvg_animate_transform_destination_new,
 	/* .destination_get 	= */ NULL,
 	/* .destination_free 	= */ free,
+	/* .destination_value_to 	= */ NULL,
 	/* .interpolate 	= */ _esvg_animate_transform_translate_interpolate,
 };
 /*----------------------------------------------------------------------------*
@@ -232,13 +233,14 @@ static void _esvg_animate_transform_rotate_interpolate(void *a, void *b,
 		enesim_matrix_compose(&vadd->anim, &r->base, &r->base);
 }
 
-static Esvg_Animate_Base_Type_Descriptor _rotate_descriptor = {
+static Esvg_Attribute_Animated_Descriptor _rotate_descriptor = {
 	/* .value_new 		= */ _esvg_animate_transform_value_new,
 	/* .value_get 		= */ _esvg_animate_transform_value_get,
 	/* .value_free 		= */ free,
 	/* .destination_new 	= */ _esvg_animate_transform_destination_new,
 	/* .destination_get 	= */ NULL,
 	/* .destination_free 	= */ free,
+	/* .destination_value_to 	= */ NULL,
 	/* .interpolate 	= */ _esvg_animate_transform_rotate_interpolate,
 };
 /*----------------------------------------------------------------------------*
@@ -272,13 +274,14 @@ static void _esvg_animate_transform_scale_interpolate(void *a, void *b,
 		enesim_matrix_compose(&vadd->anim, &r->base, &r->base);
 }
 
-static Esvg_Animate_Base_Type_Descriptor _scale_descriptor = {
+static Esvg_Attribute_Animated_Descriptor _scale_descriptor = {
 	/* .value_new 		= */ _esvg_animate_transform_value_new,
 	/* .value_get 		= */ _esvg_animate_transform_value_get,
 	/* .value_free 		= */ free,
 	/* .destination_new 	= */ _esvg_animate_transform_destination_new,
 	/* .destination_get 	= */ NULL,
 	/* .destination_free 	= */ free,
+	/* .destination_value_to 	= */ NULL,
 	/* .interpolate 	= */ _esvg_animate_transform_scale_interpolate,
 };
 /*----------------------------------------------------------------------------*
@@ -302,13 +305,14 @@ static void _esvg_animate_transform_skewx_interpolate(void *a, void *b,
 		enesim_matrix_compose(&vadd->anim, &r->base, &r->base);
 }
 
-static Esvg_Animate_Base_Type_Descriptor _skewx_descriptor = {
+static Esvg_Attribute_Animated_Descriptor _skewx_descriptor = {
 	/* .value_new 		= */ _esvg_animate_transform_value_new,
 	/* .value_get 		= */ _esvg_animate_transform_value_get,
 	/* .value_free 		= */ free,
 	/* .destination_new 	= */ _esvg_animate_transform_destination_new,
 	/* .destination_get 	= */ NULL,
 	/* .destination_free 	= */ free,
+	/* .destination_value_to 	= */ NULL,
 	/* .interpolate 	= */ _esvg_animate_transform_skewx_interpolate,
 };
 
@@ -333,13 +337,14 @@ static void _esvg_animate_transform_skewy_interpolate(void *a, void *b,
 		enesim_matrix_compose(&vadd->anim, &r->base, &r->base);
 }
 
-static Esvg_Animate_Base_Type_Descriptor _skewy_descriptor = {
+static Esvg_Attribute_Animated_Descriptor _skewy_descriptor = {
 	/* .value_new 		= */ _esvg_animate_transform_value_new,
 	/* .value_get 		= */ _esvg_animate_transform_value_get,
 	/* .value_free 		= */ free,
 	/* .destination_new 	= */ _esvg_animate_transform_destination_new,
 	/* .destination_get 	= */ NULL,
 	/* .destination_free 	= */ free,
+	/* .destination_value_to 	= */ NULL,
 	/* .interpolate 	= */ _esvg_animate_transform_skewy_interpolate,
 };
 /*----------------------------------------------------------------------------*
@@ -373,7 +378,7 @@ static Eina_Bool _esvg_animate_transform_attribute_get(Edom_Tag *tag, const char
 }
 
 static Eina_Bool _esvg_animate_transform_type_descriptor_get(Edom_Tag *t,
-		const char *name, Esvg_Animate_Base_Type_Descriptor **d)
+		const char *name, Esvg_Attribute_Animated_Descriptor **d)
 {
 	Esvg_Animate_Transform *thiz;
 

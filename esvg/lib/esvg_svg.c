@@ -722,10 +722,6 @@ static Eina_Bool _esvg_svg_child_add(Edom_Tag *t, Edom_Tag *child)
 	Esvg_Type type;
 	Ender_Element *e;
 
-	/* FIXME avoid this case, put it on the common element functions */
-	if (!esvg_is_element_internal(child))
-		return EINA_FALSE;
-
 	thiz = _esvg_svg_get(t);
 	type = esvg_element_internal_type_get(child);
 	if (esvg_type_is_renderable(type) || type == ESVG_A)
@@ -743,10 +739,6 @@ static Eina_Bool _esvg_svg_child_remove(Edom_Tag *t, Edom_Tag *child)
 {
 	Esvg_Svg *thiz;
 	Esvg_Type type;
-
-	/* FIXME avoid this case, put it on the common element functions */
-	if (!esvg_is_element_internal(child))
-		return EINA_FALSE;
 
 	thiz = _esvg_svg_get(t);
 	type = esvg_element_internal_type_get(child);

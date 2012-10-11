@@ -424,6 +424,12 @@ typedef enum _Esvg_Accumulate
 	ESVG_ACCUMULATE_NONE,
 } Esvg_Accumulate;
 
+typedef enum _Esvg_Fill
+{
+	ESVG_FILL_FREEZE,
+	ESVG_FILL_REMOVE,
+} Esvg_Fill;
+
 typedef enum _Esvg_Animate_Transform_Type
 {
 	ESVG_ANIMATE_TRANSFORM_TYPE_TRANSLATE,
@@ -540,6 +546,7 @@ EAPI Eina_Bool esvg_additive_string_from(Esvg_Additive *add, const char *attr);
 EAPI Eina_Bool esvg_accumulate_string_from(Esvg_Accumulate *acc, const char *attr);
 EAPI Eina_Bool esvg_repeat_count_string_from(int *rc, const char *attr);
 
+EAPI Eina_Bool esvg_type_is_animation(Esvg_Type type);
 EAPI Eina_Bool esvg_type_is_paint_server(Esvg_Type type);
 EAPI Eina_Bool esvg_type_is_shape(Esvg_Type type);
 EAPI Eina_Bool esvg_type_is_renderable(Esvg_Type type);
@@ -549,5 +556,5 @@ EAPI Eina_Bool esvg_animation_event_list_string_from(Eina_List **l, const char *
 EAPI Eina_Bool esvg_animation_event_string_from(Esvg_Animation_Event *e, const char *s);
 
 EAPI void esvg_animation_event_offset_set(Esvg_Animation_Event *a, int64_t offset);
-
+EAPI Eina_Bool esvg_fill_string_from(Esvg_Fill *fill, const char *s);
 #endif

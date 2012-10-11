@@ -585,15 +585,7 @@ EAPI void esvg_image_height_get(Ender_Element *e, Esvg_Length *height)
 
 EAPI void esvg_image_xlink_href_set(Ender_Element *e, const char *href)
 {
-	Esvg_Animated_String a;
-
-	if (!href)
-	{
-		ender_element_property_value_set(e, ESVG_IMAGE_XLINK_HREF, NULL, NULL);
-		return;
-	}
-	a.base = (char *)href;
-	ender_element_property_value_set(e, ESVG_IMAGE_XLINK_HREF, &a, NULL);
+	esvg_element_property_string_set(e, ESVG_IMAGE_XLINK_HREF, href);
 }
 
 EAPI void esvg_image_xlink_href_get(Ender_Element *e, const char **href)

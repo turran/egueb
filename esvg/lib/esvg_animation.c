@@ -56,6 +56,7 @@ static Ender_Property *ESVG_ANIMATION_REPEAT_COUNT;
 static Ender_Property *ESVG_ANIMATION_DUR;
 static Ender_Property *ESVG_ANIMATION_BEGIN;
 static Ender_Property *ESVG_ANIMATION_END;
+static Ender_Property *ESVG_ANIMATION_FILL;
 
 typedef struct _Esvg_Animation_Descriptor_Internal
 {
@@ -114,6 +115,7 @@ static void _esvg_animation_begin(Esvg_Animation *thiz, int64_t offset)
 	seconds = esvg_svg_time_get(svg);
 	/* TODO maybe add 1 frame? */
 	offset = (ESVG_CLOCK_SECONDS * seconds) + offset;
+	DBG("Enabling animation with offset %" ETCH_TIME_FORMAT, ETCH_TIME_ARGS(offset));
 	if (thiz->descriptor.enable)
 		thiz->descriptor.enable(thiz->thiz_t, offset);
 }
@@ -137,6 +139,7 @@ static void _esvg_animation_end_cb(Ender_Element *e,
 	/* call the end interface */
 	if (!thiz->started)
 		return;
+	DBG("Disabling animation");
 	if (thiz->descriptor.disable)
 		thiz->descriptor.disable(thiz->thiz_t);
 }
@@ -155,12 +158,8 @@ static Eina_Bool _esvg_animation_event_setup(Esvg_Animation *thiz, Eina_List *ev
 		{
 			Ender_Element *ref = NULL;
 
-			printf("registering event %s\n", ae->event);
-			if (ae->id)
-			{
-				printf("on id %s\n", ae->id);
-			}
-			else
+			DBG("Registering event '%s' on element '%s'", ae->event, ae->id ? ae->id : "NULL");
+			if (!ae->id)
 			{
 				if (ae->repeat)
 					ref = thiz->thiz_e;
@@ -184,7 +183,7 @@ static Eina_Bool _esvg_animation_event_setup(Esvg_Animation *thiz, Eina_List *ev
 		{
 
 		}
-		printf("with offset %lld\n", ae->offset);
+		DBG("With offset %" ETCH_TIME_FORMAT, ETCH_TIME_ARGS(ae->offset));
 	}
 	*phandlers = handlers;
 
@@ -417,6 +416,24 @@ static void _esvg_animation_end_set(Edom_Tag *t, Eina_List *end)
 	thiz = _esvg_animation_get(t);
 	thiz->ctx.timing.end = end;
 }
+
+static void _esvg_animation_fill_set(Edom_Tag *t, Esvg_Fill fill)
+{
+	Esvg_Animation *thiz;
+
+	thiz = _esvg_animation_get(t);
+	thiz->ctx.timing.fill = fill;
+}
+
+static void _esvg_animation_fill_get(Edom_Tag *t, Esvg_Fill *fill)
+{
+	Esvg_Animation *thiz;
+
+	if (!fill) return;
+	thiz = _esvg_animation_get(t);
+	*fill = thiz->ctx.timing.fill;
+}
+
 /*----------------------------------------------------------------------------*
  *                         The Esvg Element interface                         *
  *----------------------------------------------------------------------------*/
@@ -492,6 +509,13 @@ static Eina_Bool _esvg_animation_attribute_set(Ender_Element *e,
 
 		esvg_repeat_count_string_from(&rc, value);
 		esvg_animation_repeat_count_set(e, rc);
+	}
+	else if (!strcmp(key, "fill"))
+	{
+		Esvg_Fill fill;
+
+		esvg_fill_string_from(&fill, value);
+		esvg_animation_fill_set(e, fill);
 	}
 	else
 	{
@@ -595,6 +619,7 @@ static Esvg_Element_Setup_Return _esvg_animation_setup(Edom_Tag *t,
 #define _esvg_animation_end_clear NULL
 #define _esvg_animation_end_remove NULL
 #define _esvg_animation_end_add NULL
+#define _esvg_animation_fill_is_set NULL
 #include "generated/esvg_generated_animation.c"
 
 Eina_Bool esvg_is_animation_internal(Edom_Tag *t)
@@ -639,6 +664,7 @@ Edom_Tag * esvg_animation_new(Esvg_Animation_Descriptor *descriptor, Esvg_Type t
 	thiz->descriptor.disable = descriptor->disable;
 	/* default values */
 	thiz->ctx.timing.repeat_count = 1;
+	thiz->ctx.timing.fill = ESVG_FILL_REMOVE;
 	thiz->ctx.addition.additive = ESVG_ADDITIVE_REPLACE;
 	thiz->ctx.addition.accumulate = ESVG_ACCUMULATE_NONE;
 
@@ -815,4 +841,26 @@ EAPI void esvg_animation_end_set(Ender_Element *e, Eina_List *end)
 {
 	ender_element_property_value_set(e, ESVG_ANIMATION_END, end, NULL);
 }
+
+/**
+ * To be documented
+ * FIXME: To be fixed
+ */
+EAPI void esvg_animation_fill_set(Ender_Element *e, Esvg_Fill fill)
+{
+	ender_element_property_value_set(e, ESVG_ANIMATION_FILL, fill, NULL);
+}
+
+/**
+ * To be documented
+ * FIXME: To be fixed
+ */
+EAPI void esvg_animation_fill_get(Ender_Element *e, Esvg_Fill *fill)
+{
+	Edom_Tag *t;
+
+	t = ender_element_object_get(e);
+	_esvg_animation_fill_get(t, fill);
+}
+
 

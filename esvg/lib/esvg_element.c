@@ -89,6 +89,8 @@ typedef struct _Esvg_Element_Descriptor_Internal
 	Esvg_Element_Attribute_Animated_Fetch attribute_animated_fetch;
 	Edom_Tag_Attribute_Get attribute_get;
 	Edom_Tag_Free free;
+	Edom_Tag_Child_Add child_add;
+	Edom_Tag_Child_Remove child_remove;
 	Esvg_Element_Setup setup;
 } Esvg_Element_Descriptor_Internal;
 
@@ -242,7 +244,6 @@ static int * _esvg_element_attribute_animated_fetch(Esvg_Element *thiz, const ch
 	}
 	else if (strcmp(attr, "stroke-width") == 0)
 	{
-		printf("getting stroke width!\n");
 		animated = &thiz->current_attr->stroke_width.animated;
 	}
 	else if (strcmp(attr, "stroke-opacity") == 0)
@@ -531,7 +532,6 @@ static void _esvg_element_transform_get(Edom_Tag *t, Esvg_Animated_Transform *tr
 	Esvg_Element *thiz;
 
 	thiz = _esvg_element_get(t);
-	printf("transform get %p\n", transform);
 	esvg_attribute_animated_transform_get(&thiz->transform, transform);
 }
 
@@ -854,6 +854,62 @@ static Edom_Tag * _esvg_element_topmost_get(Edom_Tag *t)
 	if (!thiz->topmost) return NULL;
 
 	return ender_element_object_get(thiz->topmost);
+}
+
+static Eina_Bool _esvg_element_child_add(Edom_Tag *t, Edom_Tag *child)
+{
+	Esvg_Element *thiz;
+	Eina_Bool ret = EINA_FALSE;
+
+	thiz = _esvg_element_get(t);
+	if (!esvg_is_element_internal(child))
+	{
+		ERR("Element '%s' can not add a non-esvg child %p",
+				esvg_type_string_to(esvg_element_internal_type_get(t)),
+				child);
+		return EINA_FALSE;
+	}
+
+	if (thiz->descriptor.child_add)
+		ret = thiz->descriptor.child_add(t, child);
+
+	if (!ret)
+	{
+		ERR("Element '%s' can not add child '%s'",
+				esvg_type_string_to(esvg_element_internal_type_get(t)),
+				esvg_type_string_to(esvg_element_internal_type_get(child)));
+	}
+	return EINA_TRUE;
+	/* FIXME once every element supports correctly the possible childs to add */
+	//return ret;
+}
+
+static Eina_Bool _esvg_element_child_remove(Edom_Tag *t, Edom_Tag *child)
+{
+	Esvg_Element *thiz;
+	Eina_Bool ret = EINA_FALSE;
+
+	thiz = _esvg_element_get(t);
+	/* FIXME avoid this case, put it on the common element functions */
+	if (!esvg_is_element_internal(child))
+	{
+		ERR("Element '%s' has a non-esvg child %p?",
+				esvg_type_string_to(esvg_element_internal_type_get(t)),
+				child);
+		return EINA_FALSE;
+	}
+
+	if (thiz->descriptor.child_remove)
+		ret = thiz->descriptor.child_remove(t, child);
+
+	if (!ret)
+	{
+		ERR("Element '%s' can not remove child '%s'",
+				esvg_type_string_to(esvg_element_internal_type_get(t)),
+				esvg_type_string_to(esvg_element_internal_type_get(child)));
+	}
+
+	return ret;
 }
 
 static Eina_Bool _esvg_element_attribute_set(Edom_Tag *t, const char *key, const char *value)
@@ -1601,8 +1657,8 @@ Edom_Tag * esvg_element_new(Esvg_Element_Descriptor *descriptor, Esvg_Type type,
 	/* the tag interface */
 	pdescriptor.name_get = _esvg_element_name_get;
 	pdescriptor.topmost_get = _esvg_element_topmost_get;
-	pdescriptor.child_add = descriptor->child_add;
-	pdescriptor.child_remove = descriptor->child_remove;
+	pdescriptor.child_add = _esvg_element_child_add;
+	pdescriptor.child_remove = _esvg_element_child_remove;
 	pdescriptor.attribute_set = _esvg_element_attribute_set;
 	pdescriptor.attribute_get = _esvg_element_attribute_get;
 	pdescriptor.cdata_set = descriptor->cdata_set;
@@ -1617,6 +1673,8 @@ Edom_Tag * esvg_element_new(Esvg_Element_Descriptor *descriptor, Esvg_Type type,
 	thiz->descriptor.attribute_get = descriptor->attribute_get;
 	thiz->descriptor.free = descriptor->free;
 	thiz->descriptor.attribute_animated_fetch = descriptor->attribute_animated_fetch;
+	thiz->descriptor.child_add = descriptor->child_add;
+	thiz->descriptor.child_remove = descriptor->child_remove;
 
 	t = edom_tag_new(&pdescriptor, thiz);
 

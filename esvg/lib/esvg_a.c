@@ -41,12 +41,12 @@
  *============================================================================*/
 #define ESVG_LOG_DEFAULT esvg_log_a
 
-static Ender_Property *ESVG_A_HREF;
+static Ender_Property *ESVG_A_XLINK_HREF;
 
 typedef struct _Esvg_A
 {
 	/* properties */
-	char *href;
+	Esvg_Attribute_Animated_String href;
 	/* interface */
 	/* private */
 	char *real_href;
@@ -85,8 +85,11 @@ static Eina_Bool _esvg_a_child_add(Edom_Tag *t, Edom_Tag *child)
 
 	thiz = _esvg_a_get(t);
 	type = esvg_element_internal_type_get(child);
-	if (!esvg_type_is_renderable(type))
+	if (esvg_type_is_animation(type))
 		return EINA_TRUE;
+
+	if (!esvg_type_is_renderable(type))
+		return EINA_FALSE;
 
 	e = esvg_element_ender_get(child);
 	/* add the mouse click event */
@@ -124,7 +127,7 @@ static Eina_Bool _esvg_a_attribute_set(Ender_Element *e,
 {
 	if (strcmp(key, "xlink:href") == 0)
 	{
-		esvg_a_href_set(e, value);
+		esvg_a_xlink_href_set(e, value);
 	}
 	else
 	{
@@ -142,6 +145,17 @@ static Eina_Bool _esvg_a_attribute_get(Edom_Tag *tag, const char *attribute, cha
 	return EINA_FALSE;
 }
 
+static int * _esvg_a_attribute_animated_fetch(Edom_Tag *t, const char *attr)
+{
+	Esvg_A *thiz;
+	int *animated = NULL;
+
+	thiz = _esvg_a_get(t);
+	if (!strcmp(attr, "xlink:href"))
+		animated = &thiz->href.animated;
+	return animated;
+}
+
 static Esvg_Element_Setup_Return _esvg_a_setup(Edom_Tag *t,
 		Esvg_Context *c,
 		const Esvg_Element_Context *parent_context,
@@ -151,18 +165,27 @@ static Esvg_Element_Setup_Return _esvg_a_setup(Edom_Tag *t,
 {
 	Esvg_A *thiz;
 	Ender_Element *topmost;
+	char *href;
 	char *real;
 
 	thiz = _esvg_a_get(t);
+
+	esvg_attribute_animated_string_final_get(&thiz->href, &href);
+	if (!href) goto done;
+
 	esvg_element_internal_topmost_get(t, &topmost);
+	real = esvg_svg_uri_resolve(topmost, href);
+	if (!real) goto done;
 
 	/* set the resolved uri */
 	if (thiz->real_href)
 	{
-		free(thiz->href);
-		thiz->href = NULL;
+		free(thiz->real_href);
+		thiz->real_href = NULL;
 	}
-	thiz->real_href = esvg_svg_uri_resolve(topmost, thiz->href);
+	thiz->real_href = real;
+done:
+	/* call the setup on the children */
 	return EINA_TRUE;
 }
 
@@ -175,7 +198,7 @@ static Esvg_Element_Descriptor _descriptor = {
 	/* .text_get 		= */ NULL,
 	/* .free 		= */ _esvg_a_free,
 	/* .attribute_set 	= */ _esvg_a_attribute_set,
-	/* .attribute_animated_fetch = */ NULL,
+	/* .attribute_animated_fetch = */ _esvg_a_attribute_animated_fetch,
 	/* .initialize 		= */ NULL,
 	/* .setup		= */ _esvg_a_setup,
 };
@@ -196,30 +219,25 @@ static Edom_Tag * _esvg_a_new(void)
 	return t;
 }
 
-static void _esvg_a_href_set(Edom_Tag *t, const char *href)
+static void _esvg_a_xlink_href_set(Edom_Tag *t, Esvg_Animated_String *href)
+{
+	Esvg_A *thiz;
+	Eina_Bool animating;
+
+	thiz = _esvg_a_get(t);
+	animating = esvg_element_attribute_animate_get(t);
+	esvg_attribute_animated_string_set(&thiz->href,
+		href, animating);
+}
+
+static void _esvg_a_xlink_href_get(Edom_Tag *t, Esvg_Animated_String *href)
 {
 	Esvg_A *thiz;
 
 	thiz = _esvg_a_get(t);
-	if (thiz->href)
-	{
-		free(thiz->href);
-		thiz->href = NULL;
-	}
-	if (href)
-		thiz->href = strdup(href);
+	esvg_attribute_animated_string_get(&thiz->href,
+		href);
 }
-
-static void _esvg_a_href_get(Edom_Tag *t, const char **href)
-{
-	Esvg_A *thiz;
-
-	thiz = _esvg_a_get(t);
-	if (!href)
-		return;
-	*href = thiz->href;
-}
-
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
@@ -231,7 +249,7 @@ Eina_Bool esvg_is_a_internal(Edom_Tag *t)
 }
 
 /* The ender wrapper */
-#define _esvg_a_href_is_set NULL
+#define _esvg_a_xlink_href_is_set NULL
 #define _esvg_a_delete NULL
 #include "generated/esvg_generated_a.c"
 /*============================================================================*
@@ -250,7 +268,7 @@ EAPI Eina_Bool esvg_is_a(Ender_Element *e)
 	return esvg_is_a_internal(t);
 }
 
-EAPI void esvg_a_href_set(Ender_Element *e, const char *href)
+EAPI void esvg_a_xlink_href_set(Ender_Element *e, const char *href)
 {
-	ender_element_property_value_set(e, ESVG_A_HREF, href, NULL);
+	esvg_element_property_string_set(e, ESVG_A_XLINK_HREF, href);
 }

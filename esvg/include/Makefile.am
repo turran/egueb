@@ -32,6 +32,7 @@ esvg_radial_gradient.h \
 esvg_rect.h \
 esvg_referenceable.h \
 esvg_renderable.h \
+esvg_set.h \
 esvg_stop.h \
 esvg_style.h \
 esvg_svg.h \

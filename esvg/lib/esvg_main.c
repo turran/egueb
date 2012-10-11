@@ -69,6 +69,7 @@ struct log
 	{ &esvg_log_polyline,		"esvg_polyline" },
 	{ &esvg_log_rect,		"esvg_rect" },
 	{ &esvg_log_renderable,		"esvg_renderable" },
+	{ &esvg_log_set,		"esvg_set" },
 	{ &esvg_log_stop,		"esvg_stop" },
 	{ &esvg_log_svg,		"esvg_svg" },
 	{ &esvg_log_text,		"esvg_text" },
@@ -119,6 +120,7 @@ static void _register_enders(void)
 	esvg_animate_base_init();
 	esvg_animate_init();
 	esvg_animate_transform_init();
+	esvg_set_init();
 }
 
 /* FIXME the constructor should be done per namespace, not generic */
@@ -256,6 +258,7 @@ int esvg_log_polygon 		= -1;
 int esvg_log_polyline 		= -1;
 int esvg_log_rect 		= -1;
 int esvg_log_renderable		= -1;
+int esvg_log_set 		= -1;
 int esvg_log_stop 		= -1;
 int esvg_log_svg		= -1;
 int esvg_log_text       	= -1;

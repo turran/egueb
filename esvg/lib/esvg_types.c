@@ -1509,7 +1509,7 @@ EAPI const char * esvg_type_string_to(Esvg_Type type)
 		case ESVG_RADIALGRADIENT: return "radialGradient";
 		case ESVG_RECT: return "rect";
 		case ESVG_SCRIPT: return "";
-		case ESVG_SET: return "";
+		case ESVG_SET: return "set";
 		case ESVG_STOP: return "stop";
 		case ESVG_STYLE: return "style";
 		case ESVG_SVG: return "svg" /* 70 */;
@@ -1524,6 +1524,21 @@ EAPI const char * esvg_type_string_to(Esvg_Type type)
 		case ESVG_VIEW: return "";
 		case ESVG_VKERN: return "";
 		default: return "unknown";
+	}
+}
+
+EAPI Eina_Bool esvg_type_is_animation(Esvg_Type type)
+{
+	switch (type)
+	{
+		case ESVG_ANIMATE:
+		case ESVG_ANIMATECOLOR:
+		case ESVG_ANIMATETRANSFORM:
+		case ESVG_SET:
+		return EINA_TRUE;
+
+		default:
+		return EINA_FALSE;
 	}
 }
 
@@ -2139,7 +2154,7 @@ EAPI Eina_Bool esvg_duration_string_from(Esvg_Duration *d, const char *attr)
 	{
 		ret = esvg_clock_string_from(&d->data.clock, attr);
 		d->type = ESVG_DURATION_TYPE_CLOCK;
-		DBG("duration is %lld", d->data.clock);
+		DBG("duration is %" ETCH_TIME_FORMAT, ETCH_TIME_ARGS(d->data.clock));
 	}
 	return ret;
 }
@@ -2169,6 +2184,20 @@ EAPI Eina_Bool esvg_accumulate_string_from(Esvg_Accumulate *acc, const char *att
 		ret = EINA_FALSE;
 	return ret;
 }
+
+EAPI Eina_Bool esvg_fill_string_from(Esvg_Fill *fill, const char *attr)
+{
+	Eina_Bool ret = EINA_TRUE;
+
+	if (!strcmp(attr, "fill"))
+		*fill = ESVG_FILL_FREEZE;
+	else if (!strcmp(attr, "remove"))
+		*fill = ESVG_FILL_REMOVE;
+	else
+		ret = EINA_FALSE;
+	return ret;
+}
+
 
 EAPI Eina_Bool esvg_repeat_count_string_from(int *rc, const char *attr)
 {

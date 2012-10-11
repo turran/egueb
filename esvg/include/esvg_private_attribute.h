@@ -64,6 +64,38 @@ typedef struct _Esvg_Attribute_List
 } Esvg_Attribute_List;
 
 /* animated */
+typedef void * (*Esvg_Attribute_Animated_Value_New)(void);
+typedef Eina_Bool (*Esvg_Attribute_Animated_Value_Get)(const char *attr, void **value);
+typedef void (*Esvg_Attribute_Animated_Value_Free)(void *value);
+typedef void * (*Esvg_Attribute_Animated_Destination_New)(void);
+typedef void (*Esvg_Attribute_Animated_Destination_Get)(void *destination, Eina_List *values);
+typedef void (*Esvg_Attribute_Animated_Destination_Free)(void *destination);
+typedef void (*Esvg_Attribute_Animated_Destination_Value_To)(void *destination, void **value);
+/* later add the accumulator, additive, etc */
+typedef void (*Esvg_Animate_Base_Interpolator)(void *a, void *b, double m,
+		void *add, void *acc, int mul, void *res);
+
+typedef struct _Esvg_Attribute_Animated_Descriptor
+{
+	/* to generate the values */
+	Esvg_Attribute_Animated_Value_New value_new;
+	Esvg_Attribute_Animated_Value_Get value_get;
+	Esvg_Attribute_Animated_Value_Free value_free;
+	/* to generate the destination value */
+	Esvg_Attribute_Animated_Destination_New destination_new;
+	Esvg_Attribute_Animated_Destination_Get destination_get;
+	Esvg_Attribute_Animated_Destination_Free destination_free;
+	Esvg_Attribute_Animated_Destination_Value_To destination_value_to;
+	/* the interpolator */
+	Esvg_Animate_Base_Interpolator interpolator;
+} Esvg_Attribute_Animated_Descriptor;
+
+extern Esvg_Attribute_Animated_Descriptor esvg_attribute_animated_string_descriptor; 
+extern Esvg_Attribute_Animated_Descriptor esvg_attribute_animated_path_command_descriptor; 
+extern Esvg_Attribute_Animated_Descriptor esvg_attribute_animated_length_descriptor; 
+extern Esvg_Attribute_Animated_Descriptor esvg_attribute_animated_number_descriptor; 
+Esvg_Attribute_Animated_Descriptor * esvg_attribute_animated_descriptor_get(const char *name);
+
 typedef struct _Esvg_Attribute_Animated_Length
 {
 	Esvg_Attribute_Length base;

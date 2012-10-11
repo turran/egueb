@@ -15,10 +15,6 @@
  * License along with this library.
  * If not, see <http://www.gnu.org/licenses/>.
  */
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
-
 #include "esvg_private_main.h"
 #include "esvg_private_attribute_presentation.h"
 #include "esvg_private_attribute_animation.h"
@@ -63,7 +59,7 @@ static Ender_Property *ESVG_ANIMATE_BASE_CALC_MODE;
 typedef struct _Esvg_Animate_Base_Values_Data
 {
 	Eina_List *values;
-	Esvg_Animate_Base_Type_Descriptor *d;
+	Esvg_Attribute_Animated_Descriptor *d;
 } Esvg_Animate_Base_Values_Data;
 
 typedef struct _Esvg_Animate_Base_Times_Data
@@ -78,7 +74,7 @@ typedef struct _Esvg_Animate_Base_Descriptor_Internal
 	Esvg_Element_Initialize initialize;
 	Esvg_Element_Attribute_Set attribute_set;
 	Edom_Tag_Attribute_Get attribute_get;
-	Esvg_Animate_Base_Type_Descriptor_Get type_descriptor_get;
+	Esvg_Animate_Base_Attribute_Descriptor_Get type_descriptor_get;
 } Esvg_Animate_Base_Descriptor_Internal;
 
 typedef struct _Esvg_Animate_Base
@@ -91,7 +87,7 @@ typedef struct _Esvg_Animate_Base
 	/* private */
 	Ender_Element *thiz_e;
 	Esvg_Attribute_Type attribute_type;
-	Esvg_Animate_Base_Type_Descriptor *d;
+	Esvg_Attribute_Animated_Descriptor *d;
 	Eina_List *values;
 	Eina_List *times;
 	void *destination_data;
@@ -197,6 +193,32 @@ static void _esvg_animate_base_animation_start_cb(Etch_Animation *a, void *data)
 	ender_event_dispatch(thiz->thiz_e, "begin", NULL);
 }
 
+static void _esvg_animate_base_animation_start_and_fetch_cb(Etch_Animation *a, void *data)
+{
+	Esvg_Animate_Base *thiz = data;
+	Etch_Animation_Keyframe *k;
+	Etch_Data kd;
+	void *current;
+	void *first;
+
+	/* get the current attribute */
+	current = thiz->d->destination_new();
+	ender_element_property_value_get(thiz->parent_e, thiz->p, current, NULL);
+	/* convert it to a value */
+	first = eina_list_data_get(thiz->values);
+	thiz->d->destination_value_to(current, &first);
+	/* set it as the first keyframe data */
+	eina_list_data_set(thiz->values, first);
+	/* replace the values pointer */
+	k = etch_animation_keyframe_get(thiz->etch_a, 0);
+	kd.type = ETCH_EXTERNAL;
+	kd.data.external = first;
+	etch_animation_keyframe_value_set(k, &kd);
+
+	/* finally cal the animation */
+	_esvg_animate_base_animation_start_cb(a, data);
+}
+
 static void _esvg_animate_base_animation_stop_cb(Etch_Animation *a, void *data)
 {
 	Esvg_Animate_Base *thiz = data;
@@ -208,25 +230,7 @@ static void _esvg_animate_base_animation_stop_cb(Etch_Animation *a, void *data)
 static void _esvg_animate_base_animation_repeat_cb(Etch_Animation *a, void *data)
 {
 	Esvg_Animate_Base *thiz = data;
-	Esvg_Accumulate accum;
 
-	/* when adding pick up the last value set */
-	esvg_animation_accumulate_get(thiz->thiz_e, &accum);
-#if 0
-	if (accum == ESVG_ACCUMULATE_SUM)
-	{
-		if (!thiz->destination_add)
-		{
-			void *destination_add;
-
-			destination_add = thiz->d->destination_new();
-			thiz->destination_add = destination_add;
-		}
-		/* FIXME for transformations this is not correct, given that we should not multiply
-		 * the new matrix but add the values of the last animation keyframe */
-		ender_element_property_value_get(thiz->parent_e, thiz->p, thiz->destination_add, NULL);
-	}
-#endif
 	thiz->repeat_count++;
 	ender_event_dispatch(thiz->thiz_e, "repeat", NULL);
 }
@@ -252,7 +256,7 @@ static void _esvg_animate_base_values_cb(const char *v, void *user_data)
 	void *get_data;
 
 	get_data = data->d->value_new();
-	if (data->d->value_get(v, get_data))
+	if (data->d->value_get(v, &get_data))
 		data->values = eina_list_append(data->values, get_data);
 	else
 		data->d->value_free(get_data);
@@ -287,7 +291,7 @@ static void _esvg_animate_base_key_splines_cb(const char *v, void *user_data)
 }
 
 static Eina_Bool _esvg_animate_base_values_generate(Esvg_Animate_Base_Context *c,
-		Esvg_Animate_Base_Type_Descriptor *d,
+		Esvg_Attribute_Animated_Descriptor *d,
 		Eina_List **values,
 		Eina_Bool *has_from)
 {
@@ -310,7 +314,7 @@ static Eina_Bool _esvg_animate_base_values_generate(Esvg_Animate_Base_Context *c
 			void *data;
 
 			data = d->value_new();
-			if (d->value_get(c->value.from, data))
+			if (d->value_get(c->value.from, &data))
 				*values = eina_list_append(*values, data);
 			else
 				d->value_free(data);
@@ -324,7 +328,9 @@ static Eina_Bool _esvg_animate_base_values_generate(Esvg_Animate_Base_Context *c
 		if (c->value.to)
 		{
 			void *data;
-			if (d->value_get(c->value.to, data))
+
+			data = d->value_new();
+			if (d->value_get(c->value.to, &data))
 				*values = eina_list_append(*values, data);
 			else
 				d->value_free(data);
@@ -341,7 +347,7 @@ static Eina_Bool _esvg_animate_base_values_generate(Esvg_Animate_Base_Context *c
 	return EINA_TRUE;
 }
 
-static void _esvg_animate_base_values_free(Eina_List *values, Esvg_Animate_Base_Value_Free free_cb)
+static void _esvg_animate_base_values_free(Eina_List *values, Esvg_Attribute_Animated_Value_Free free_cb)
 {
 	void *data;
 
@@ -365,21 +371,21 @@ static Eina_Bool _esvg_animate_base_key_splines_generate(Esvg_Animate_Base_Conte
 }
 
 
-static Eina_Bool _esvg_animate_base_times_generate(Esvg_Animation_Context *ac,
+static Eina_Bool _esvg_animate_base_times_generate(Esvg_Duration *dur,
 		Esvg_Animate_Base_Context *c,
 		Eina_List *values,
 		Eina_List **times)
 {
 	/* generate the times list */
 	/* get the duration */
-	if (ac->timing.dur.type == ESVG_DURATION_TYPE_CLOCK)
+	if (dur->type == ESVG_DURATION_TYPE_CLOCK)
 	{
 		if (c->value.key_times)
 		{
 			Esvg_Animate_Base_Times_Data data;
 
 			data.times = *times;
-			data.duration = ac->timing.dur.data.clock;
+			data.duration = dur->data.clock;
 
 			esvg_list_string_from(c->value.key_times, ';',
 					_esvg_animate_base_time_cb, &data);
@@ -399,7 +405,7 @@ static Eina_Bool _esvg_animate_base_times_generate(Esvg_Animation_Context *ac,
 				printf("no values?\n");
 				return EINA_FALSE;
 			}
-			duration = ac->timing.dur.data.clock;
+			duration = dur->data.clock;
 			inc = duration / (length - 1);
 			for (i = 0; i < length; i++)
 			{
@@ -438,25 +444,33 @@ static void _esvg_animate_base_animation_create(Esvg_Animate_Base *thiz,
 
 	/* default variants */
 	interpolator_cb = _esvg_animate_base_interpolator;
+	start_cb = _esvg_animate_base_animation_start_cb;
 	/* generate the values and times */
 	_esvg_animate_base_values_generate(&thiz->current, thiz->d,
 			&thiz->values, &has_from);
+	/* before adding a new empty value, create the destination holder */
+	thiz->destination_data = thiz->d->destination_new();
+	if (thiz->d->destination_get)
+		thiz->d->destination_get(thiz->destination_data, thiz->values);
+	/* in case it has not a 'from' attribute, prepend a new empty value */
 	if (!has_from)
 	{
 		void *from;
 
+		if (!thiz->d->destination_value_to)
+		{
+			ERR("Can not convert an attribute to an animation data");
+		}
 		/* in case of no from, add another keyframe at time 0
 		 * the value for such keyframe should be taken
 		 * at the begin animation
 		 */
 		from = thiz->d->value_new();
 		thiz->values = eina_list_prepend(thiz->values, from);
+		start_cb = _esvg_animate_base_animation_start_and_fetch_cb;
 		ERR("NO FROM!");
 	}
-	_esvg_animate_base_times_generate(actx, &thiz->current, thiz->values, &thiz->times);
-	thiz->destination_data = thiz->d->destination_new();
-	if (thiz->d->destination_get)
-		thiz->d->destination_get(thiz->destination_data, thiz->values);
+	_esvg_animate_base_times_generate(&actx->timing.dur, &thiz->current, thiz->values, &thiz->times);
 
 	/* check if we are the first animation */
 	if (actx->addition.additive == ESVG_ADDITIVE_SUM)
@@ -483,7 +497,7 @@ static void _esvg_animate_base_animation_create(Esvg_Animate_Base *thiz,
 	etch_a = etch_animation_external_add(thiz->etch,
 			interpolator_cb,
 			_esvg_animate_base_animation_cb,
-			_esvg_animate_base_animation_start_cb,
+			start_cb,
 			_esvg_animate_base_animation_stop_cb,
 			_esvg_animate_base_animation_repeat_cb,
 			NULL,
@@ -504,6 +518,30 @@ static void _esvg_animate_base_animation_create(Esvg_Animate_Base *thiz,
 		/* add a keyframe */
 		_esvg_animate_base_animation_add_keyframe(thiz->etch_a, &thiz->current, &edata, *time);
 		tt = eina_list_next(tt);
+	}
+}
+
+static void _esvg_animate_base_cleanup(Esvg_Animate_Base *thiz)
+{
+	/* in case of animations free them */
+	if (thiz->etch_a)
+	{
+
+	}
+	if (thiz->destination_data)
+	{
+
+	}
+
+	if (thiz->values)
+	{
+		_esvg_animate_base_values_free(thiz->values, thiz->d->value_free);
+		thiz->values = NULL;
+	}
+	if (thiz->times)
+	{
+		_esvg_animate_base_times_free(thiz->times);
+		thiz->times = NULL;
 	}
 }
 /*----------------------------------------------------------------------------*
@@ -654,6 +692,8 @@ static void _esvg_animate_base_enable(Edom_Tag *t, int64_t offset)
 	Esvg_Animate_Base *thiz;
 
 	thiz = _esvg_animate_base_get(t);
+	if (!thiz->etch_a) return;
+
 	etch_animation_offset_add(thiz->etch_a, offset);
 	etch_animation_enable(thiz->etch_a);
 }
@@ -663,6 +703,8 @@ static void _esvg_animate_base_disable(Edom_Tag *t)
 	Esvg_Animate_Base *thiz;
 
 	thiz = _esvg_animate_base_get(t);
+	if (!thiz->etch_a) return;
+
 	etch_animation_disable(thiz->etch_a);
 }
 
@@ -742,6 +784,7 @@ static void _esvg_animate_base_free(Edom_Tag *t)
 	Esvg_Animate_Base *thiz;
 
 	thiz = _esvg_animate_base_get(t);
+	_esvg_animate_base_cleanup(thiz);
 	if (thiz->descriptor.free)
 		thiz->descriptor.free(t);
 	free(thiz);
@@ -753,34 +796,17 @@ static Eina_Bool _esvg_animate_base_setup(Edom_Tag *t,
 		Enesim_Error **error)
 {
 	Esvg_Animate_Base *thiz;
-	Esvg_Animate_Base_Type_Descriptor *d;
+	Esvg_Attribute_Animated_Descriptor *d;
 	Ender_Element *svg_e;
 	Ender_Container *ec;
 	Etch *etch;
 	const char *name;
 
-
 	thiz = _esvg_animate_base_get(t);
-	/* in case of animations free them */
-	if (thiz->etch_a)
-	{
+	_esvg_animate_base_cleanup(thiz);
 
-	}
-	if (thiz->destination_data)
-	{
-
-	}
-
-	if (thiz->values)
-	{
-		_esvg_animate_base_values_free(thiz->values, d->value_free);
-		thiz->values = NULL;
-	}
-	if (thiz->times)
-	{
-		_esvg_animate_base_times_free(thiz->times);
-		thiz->times = NULL;
-	}
+	/* TODO pass the etch from the animation class */
+	/* TODO simplify the animation context */
 
 	/* get the etch associated with the topmost svg */
 	esvg_element_internal_topmost_get(t, &svg_e);
@@ -794,10 +820,8 @@ static Eina_Bool _esvg_animate_base_setup(Edom_Tag *t,
 	/* get the descriptor */
 	if (!thiz->descriptor.type_descriptor_get)
 		return EINA_FALSE;
-
 	ec = ender_property_container_get(actx->p);
 	name = ender_container_registered_name_get(ec);
-
 	if (!thiz->descriptor.type_descriptor_get(t, name, &d))
 		return EINA_FALSE;
 
