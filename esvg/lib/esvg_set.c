@@ -106,6 +106,7 @@ static void _esvg_set_animation_start_cb(Etch_Animation *a, void *data)
 	{
 		thiz->destination_prev = thiz->d->destination_new();
 		printf("old destination %p\n", thiz->destination_prev);
+		//ender_element_property_value_get(thiz->parent_e, thiz->p, thiz->destination_data, NULL);
 	}
 	/* in case of "remove" pick the last value it had */
 	ender_event_dispatch(thiz->thiz_e, "begin", NULL);

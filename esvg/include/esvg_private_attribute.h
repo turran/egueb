@@ -68,7 +68,9 @@ typedef void * (*Esvg_Attribute_Animated_Value_New)(void);
 typedef Eina_Bool (*Esvg_Attribute_Animated_Value_Get)(const char *attr, void **value);
 typedef void (*Esvg_Attribute_Animated_Value_Free)(void *value);
 typedef void * (*Esvg_Attribute_Animated_Destination_New)(void);
+/* FIXME rename this to Value_From */
 typedef void (*Esvg_Attribute_Animated_Destination_Get)(void *destination, Eina_List *values);
+typedef void (*Esvg_Attribute_Animated_Destination_Keep)(void *destination);
 typedef void (*Esvg_Attribute_Animated_Destination_Free)(void *destination);
 typedef void (*Esvg_Attribute_Animated_Destination_Value_To)(void *destination, void **value);
 /* later add the accumulator, additive, etc */
