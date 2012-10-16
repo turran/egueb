@@ -68,10 +68,11 @@ typedef void * (*Esvg_Attribute_Animated_Value_New)(void);
 typedef Eina_Bool (*Esvg_Attribute_Animated_Value_Get)(const char *attr, void **value);
 typedef void (*Esvg_Attribute_Animated_Value_Free)(void *value);
 typedef void * (*Esvg_Attribute_Animated_Destination_New)(void);
-/* FIXME rename this to Value_From */
-typedef void (*Esvg_Attribute_Animated_Destination_Get)(void *destination, Eina_List *values);
+/* create the destination attribute struct holder */
 typedef void (*Esvg_Attribute_Animated_Destination_Keep)(void *destination);
-typedef void (*Esvg_Attribute_Animated_Destination_Free)(void *destination);
+/* free the destination attribute struct holder, in case deep is set, also free the internal base/anim values */
+typedef void (*Esvg_Attribute_Animated_Destination_Free)(void *destination, Eina_Bool deep);
+typedef void (*Esvg_Attribute_Animated_Destination_Value_From)(void *destination, void *value);
 typedef void (*Esvg_Attribute_Animated_Destination_Value_To)(void *destination, void **value);
 /* later add the accumulator, additive, etc */
 typedef void (*Esvg_Animate_Base_Interpolator)(void *a, void *b, double m,
@@ -85,8 +86,9 @@ typedef struct _Esvg_Attribute_Animated_Descriptor
 	Esvg_Attribute_Animated_Value_Free value_free;
 	/* to generate the destination value */
 	Esvg_Attribute_Animated_Destination_New destination_new;
-	Esvg_Attribute_Animated_Destination_Get destination_get;
 	Esvg_Attribute_Animated_Destination_Free destination_free;
+	Esvg_Attribute_Animated_Destination_Keep destination_keep;
+	Esvg_Attribute_Animated_Destination_Value_From destination_value_from;
 	Esvg_Attribute_Animated_Destination_Value_To destination_value_to;
 	/* the interpolator */
 	Esvg_Animate_Base_Interpolator interpolator;
@@ -182,6 +184,11 @@ void esvg_attribute_animated_color_set(Esvg_Attribute_Animated_Color *aa,
 	const Esvg_Animated_Color *v,
 	const Esvg_Color *def,
 	Eina_Bool animate);
+void esvg_attribute_animated_color_extended_set(Esvg_Attribute_Animated_Color *aa,
+	const Esvg_Animated_Color *v,
+	const Esvg_Color *def,
+	Eina_Bool animate,
+	int *set);
 void esvg_attribute_animated_color_get(Esvg_Attribute_Animated_Color *aa,
 	Esvg_Animated_Color *v);
 
@@ -197,6 +204,10 @@ void esvg_attribute_string_merge_rel(const Esvg_Attribute_String *rel,
 void esvg_attribute_animated_string_set(Esvg_Attribute_Animated_String *aa,
 	const Esvg_Animated_String *v,
 	Eina_Bool animate);
+void esvg_attribute_animated_string_extended_set(Esvg_Attribute_Animated_String *aa,
+	const Esvg_Animated_String *v,
+	Eina_Bool animate,
+	int *set);
 void esvg_attribute_animated_string_get(Esvg_Attribute_Animated_String *aa,
 	Esvg_Animated_String *v);
 void esvg_attribute_string_unset(Esvg_Attribute_String *a);
@@ -217,6 +228,11 @@ void esvg_attribute_animated_length_set(Esvg_Attribute_Animated_Length *aa,
 	const Esvg_Animated_Length *v,
 	const Esvg_Length *def,
 	Eina_Bool animate);
+void esvg_attribute_animated_length_extended_set(Esvg_Attribute_Animated_Length *aa,
+	const Esvg_Animated_Length *v,
+	const Esvg_Length *def,
+	Eina_Bool animate,
+	int *set);
 void esvg_attribute_animated_length_get(Esvg_Attribute_Animated_Length *aa,
 	Esvg_Animated_Length *v);
 Eina_Bool esvg_attribute_animated_length_is_set(Esvg_Attribute_Animated_Length *aa);
@@ -237,6 +253,11 @@ void esvg_attribute_animated_bool_set(Esvg_Attribute_Animated_Bool *aa,
 	const Esvg_Animated_Bool *v,
 	Eina_Bool def,
 	Eina_Bool animate);
+void esvg_attribute_animated_bool_extended_set(Esvg_Attribute_Animated_Bool *aa,
+	const Esvg_Animated_Bool *v,
+	Eina_Bool def,
+	Eina_Bool animate,
+	int *set);
 void esvg_attribute_animated_bool_get(Esvg_Attribute_Animated_Bool *aa,
 	Esvg_Animated_Bool *v);
 void esvg_attribute_bool_unset(Esvg_Attribute_Bool *a, Eina_Bool def);
@@ -274,6 +295,11 @@ void esvg_attribute_animated_transform_set(Esvg_Attribute_Animated_Transform *aa
 	const Esvg_Animated_Transform *v,
 	const Enesim_Matrix *def,
 	Eina_Bool animate);
+void esvg_attribute_animated_transform_extended_set(Esvg_Attribute_Animated_Transform *aa,
+	const Esvg_Animated_Transform *v,
+	const Enesim_Matrix *def,
+	Eina_Bool animate,
+	int *set);
 void esvg_attribute_animated_transform_get(Esvg_Attribute_Animated_Transform *aa,
 	Esvg_Animated_Transform *v);
 void esvg_attribute_animated_transform_final_get(Esvg_Attribute_Animated_Transform *aa, Enesim_Matrix *m);
@@ -292,6 +318,11 @@ void esvg_attribute_animated_paint_set(Esvg_Attribute_Animated_Paint *aa,
 	const Esvg_Animated_Paint *v,
 	const Esvg_Paint *def,
 	Eina_Bool animate);
+void esvg_attribute_animated_paint_extended_set(Esvg_Attribute_Animated_Paint *aa,
+	const Esvg_Animated_Paint *v,
+	const Esvg_Paint *def,
+	Eina_Bool animate,
+	int *set);
 void esvg_attribute_animated_paint_get(Esvg_Attribute_Animated_Paint *aa,
 	Esvg_Animated_Paint *v);
 
@@ -302,6 +333,11 @@ void esvg_attribute_animated_number_set(Esvg_Attribute_Animated_Number *aa,
 	const Esvg_Animated_Number *v,
 	double def,
 	Eina_Bool animate);
+void esvg_attribute_animated_number_extended_set(Esvg_Attribute_Animated_Number *aa,
+	const Esvg_Animated_Number *v,
+	double def,
+	Eina_Bool animate,
+	int *set);
 void esvg_attribute_animated_number_get(Esvg_Attribute_Animated_Number *aa,
 	Esvg_Animated_Number *v);
 

@@ -145,7 +145,7 @@ static void _esvg_animation_end_cb(Ender_Element *e,
 }
 
 static Eina_Bool _esvg_animation_event_setup(Esvg_Animation *thiz, Eina_List *events,
-		Eina_List **phandlers, Ender_Event_Callback cb)
+		Eina_List **phandlers, Ender_Event_Callback cb, int64_t *offset)
 {
 	Esvg_Animation_Event *ae;
 	Eina_List *handlers = NULL;
@@ -158,7 +158,8 @@ static Eina_Bool _esvg_animation_event_setup(Esvg_Animation *thiz, Eina_List *ev
 		{
 			Ender_Element *ref = NULL;
 
-			DBG("Registering event '%s' on element '%s'", ae->event, ae->id ? ae->id : "NULL");
+			DBG("Registering event '%s' on element '%s' with offset %" ETCH_TIME_FORMAT,
+					ae->event, ae->id ? ae->id : "NULL", ETCH_TIME_ARGS(ae->offset));
 			if (!ae->id)
 			{
 				if (ae->repeat)
@@ -181,9 +182,15 @@ static Eina_Bool _esvg_animation_event_setup(Esvg_Animation *thiz, Eina_List *ev
 		}
 		else
 		{
-
+			DBG("Offset only at %" ETCH_TIME_FORMAT, ETCH_TIME_ARGS(ae->offset));
+			if (ae->offset < *offset)
+				*offset = ae->offset;
 		}
-		DBG("With offset %" ETCH_TIME_FORMAT, ETCH_TIME_ARGS(ae->offset));
+	}
+	/* in case there's nothing on the list of events, set the offset to zero */
+	if (!events)
+	{
+		*offset = 0;
 	}
 	*phandlers = handlers;
 
@@ -203,16 +210,15 @@ static void _esvg_animation_event_release(Eina_List *events)
 
 static Eina_Bool _esvg_animation_begin_setup(Esvg_Animation *thiz)
 {
+	int64_t offset = INT64_MAX;
+
 	if (!_esvg_animation_event_setup(thiz, thiz->ctx.timing.begin,
-			&thiz->begin_events, _esvg_animation_begin_cb))
+			&thiz->begin_events, _esvg_animation_begin_cb, &offset))
 		return EINA_FALSE;
 	/* in case there is no event to trigger, just start now */
 	if (!thiz->begin_events)
 	{
-		/* call the begin interface */
-		/* FIXME fix the offset */
-		if (thiz->descriptor.enable)
-			thiz->descriptor.enable(thiz->thiz_t, 0);
+		_esvg_animation_begin(thiz, offset);
 	}
 	return EINA_TRUE;
 }
@@ -224,8 +230,10 @@ static void _esvg_animation_begin_release(Esvg_Animation *thiz)
 
 static Eina_Bool _esvg_animation_end_setup(Esvg_Animation *thiz)
 {
+	int64_t offset = INT64_MAX;
+
 	if (!_esvg_animation_event_setup(thiz, thiz->ctx.timing.end,
-			&thiz->end_events, _esvg_animation_end_cb))
+			&thiz->end_events, _esvg_animation_end_cb, &offset))
 		return EINA_FALSE;
 	return EINA_TRUE;
 }

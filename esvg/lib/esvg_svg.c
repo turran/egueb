@@ -85,6 +85,7 @@ typedef struct _Esvg_Svg
 	double base_font_size;
 	/* private */
 	Ender_Element *thiz_e;
+	Eina_Bool relative_size : 1; /* to know if the width/height are relative */
 	/* keep track if the renderable tree has changed, includeing the <a> tag */
 	Eina_Bool renderable_tree_changed : 1;
 	Eina_List *styles; /* the list of styles found on this svg scope */
@@ -212,7 +213,7 @@ static Eina_Bool _esvg_svg_setup_pre(Edom_Tag *t,
 	Esvg_Svg *thiz = data;
 
 	type = esvg_element_internal_type_get(child);
-	if (esvg_type_is_renderable(type) && thiz->renderable_tree_changed)
+	if (esvg_type_is_renderable(type) && (thiz->renderable_tree_changed || thiz->relative_size))
 	{
 		return EINA_TRUE;
 	}
@@ -222,7 +223,7 @@ static Eina_Bool _esvg_svg_setup_pre(Edom_Tag *t,
 	}
 	else
 	{
-		return EINA_FALSE;
+		return EINA_TRUE;
 	}
 
 }
@@ -1003,6 +1004,10 @@ static void _esvg_svg_width_set(Edom_Tag *t, Esvg_Length *width)
 
 	thiz = _esvg_svg_get(t);
 	thiz->width = *width;
+	if (esvg_length_is_relative(width))
+		thiz->relative_size = EINA_TRUE;
+	else
+		thiz->relative_size = EINA_FALSE;
 }
 
 static void _esvg_svg_width_get(Edom_Tag *t, Esvg_Length *width)
@@ -1019,6 +1024,10 @@ static void _esvg_svg_height_set(Edom_Tag *t, Esvg_Length *height)
 
 	thiz = _esvg_svg_get(t);
 	thiz->height = *height;
+	if (esvg_length_is_relative(height))
+		thiz->relative_size = EINA_TRUE;
+	else
+		thiz->relative_size = EINA_FALSE;
 }
 
 static void _esvg_svg_height_get(Edom_Tag *t, Esvg_Length *height)

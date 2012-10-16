@@ -135,6 +135,45 @@ static Etch_Interpolator_Type _esvg_animate_base_calc_mode_etch_to(Esvg_Calc_Mod
 	}
 }
 
+static void * _esvg_animate_base_property_destination_new(Esvg_Animate_Base *thiz)
+{
+	void *ret;
+	void *value;
+
+	ret = thiz->d->destination_new();
+	value = eina_list_data_get(thiz->values);
+	if (thiz->d->destination_value_from)
+	{
+		thiz->d->destination_value_from(ret, value);
+	}
+	return ret;
+}
+
+static void * _esvg_animate_base_property_destination_get(Esvg_Animate_Base *thiz)
+{
+	void *ret;
+
+	ret = thiz->d->destination_new();
+	ender_element_property_value_get(thiz->parent_e, thiz->p, ret, NULL);
+	if (thiz->d->destination_keep)
+	{
+		thiz->d->destination_keep(ret);
+	}
+	return ret;
+}
+
+static void * _esvg_animate_base_property_value_get(Esvg_Animate_Base *thiz, void *value)
+{
+	void *destination;
+
+	destination = thiz->d->destination_new();
+	ender_element_property_value_get(thiz->parent_e, thiz->p, destination, NULL);
+	/* convert it to a value */
+	thiz->d->destination_value_to(destination, &value);
+	thiz->d->destination_free(destination, EINA_FALSE);
+	return value;
+}
+
 static void _esvg_animate_base_animation_add_keyframe(Etch_Animation *a,
 	Esvg_Animate_Base_Context *c,
 	Etch_Data *etch_data,
@@ -198,15 +237,11 @@ static void _esvg_animate_base_animation_start_and_fetch_cb(Etch_Animation *a, v
 	Esvg_Animate_Base *thiz = data;
 	Etch_Animation_Keyframe *k;
 	Etch_Data kd;
-	void *current;
 	void *first;
 
-	/* get the current attribute */
-	current = thiz->d->destination_new();
-	ender_element_property_value_get(thiz->parent_e, thiz->p, current, NULL);
-	/* convert it to a value */
+	/* get the first value and store the current value there */
 	first = eina_list_data_get(thiz->values);
-	thiz->d->destination_value_to(current, &first);
+	first = _esvg_animate_base_property_value_get(thiz, first);
 	/* set it as the first keyframe data */
 	eina_list_data_set(thiz->values, first);
 	/* replace the values pointer */
@@ -449,9 +484,7 @@ static void _esvg_animate_base_animation_create(Esvg_Animate_Base *thiz,
 	_esvg_animate_base_values_generate(&thiz->current, thiz->d,
 			&thiz->values, &has_from);
 	/* before adding a new empty value, create the destination holder */
-	thiz->destination_data = thiz->d->destination_new();
-	if (thiz->d->destination_get)
-		thiz->d->destination_get(thiz->destination_data, thiz->values);
+	thiz->destination_data = _esvg_animate_base_property_destination_new(thiz);
 	/* in case it has not a 'from' attribute, prepend a new empty value */
 	if (!has_from)
 	{
@@ -475,11 +508,7 @@ static void _esvg_animate_base_animation_create(Esvg_Animate_Base *thiz,
 	/* check if we are the first animation */
 	if (actx->addition.additive == ESVG_ADDITIVE_SUM)
 	{
-		void *destination_add;
-
-		destination_add = thiz->d->destination_new();
-		ender_element_property_value_get(thiz->parent_e, thiz->p, destination_add, NULL);
-		thiz->destination_add = destination_add;
+		thiz->destination_add = _esvg_animate_base_property_destination_get(thiz);
 		if (actx->index > 1)
 		{
 			interpolator_cb = _esvg_animate_base_interpolator_add;

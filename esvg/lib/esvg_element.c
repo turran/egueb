@@ -104,11 +104,6 @@ typedef struct _Esvg_Element_Setup_Data
 	void *data;
 } Esvg_Element_Setup_Data;
 
-typedef struct _Esvg_Element_State
-{
-	char *style;
-} Esvg_Element_State;
-
 typedef struct _Esvg_Element_Attributes
 {
 	Esvg_Attribute_Animated_String clip_path;
@@ -135,10 +130,9 @@ typedef struct _Esvg_Element
 {
 	EINA_MAGIC
 	Esvg_Type type;
-	/* properties like the id, whatever */
-	Esvg_Element_State current;
-	Esvg_Element_State old;
+	/* properties */
 	char *style;
+	Eina_Bool style_changed;
 	char *id;
 	char *class;
 	Ender_Element *topmost;
@@ -523,8 +517,8 @@ static void _esvg_element_transform_set(Edom_Tag *t, const Esvg_Animated_Transfo
 
 	thiz = _esvg_element_get(t);
 	enesim_matrix_identity(&m);
-	esvg_attribute_animated_transform_set(&thiz->transform,
-		transform, &m, thiz->current_attr_animate);
+	esvg_attribute_animated_transform_extended_set(&thiz->transform,
+		transform, &m, thiz->current_attr_animate, &thiz->current_attr->sets);
 }
 
 static void _esvg_element_transform_get(Edom_Tag *t, Esvg_Animated_Transform *transform)
@@ -554,14 +548,11 @@ static void _esvg_element_style_set(Edom_Tag *t, const char *style)
 	 * function, what happens whenever the user changes the style string? remove old
 	 * properties? and if the user has also set some property manually?
 	 */
-	/* TODO handle the style
-	 * the idea here is that we should parse the style attribute with ecss
-	 * and apply each property/value
-	 */
 	if (thiz->style)
 		free(thiz->style);
 	if (style)
 		thiz->style = strdup(style);
+	thiz->style_changed = EINA_TRUE;
 }
 
 static void _esvg_element_style_get(Edom_Tag *t, const char **style)
@@ -579,8 +570,8 @@ static void _esvg_element_clip_path_set(Edom_Tag *t, Esvg_Animated_String *clip_
 	Esvg_Element *thiz;
 
 	thiz = _esvg_element_get(t);
-	esvg_attribute_animated_string_set(&thiz->current_attr->clip_path,
-		clip_path, thiz->current_attr_animate);
+	esvg_attribute_animated_string_extended_set(&thiz->current_attr->clip_path,
+		clip_path, thiz->current_attr_animate, &thiz->current_attr->sets);
 }
 
 static void _esvg_element_clip_path_get(Edom_Tag *t, Esvg_Animated_String *clip_path)
@@ -604,8 +595,8 @@ static void _esvg_element_opacity_set(Edom_Tag *t, Esvg_Animated_Number *opacity
 	Esvg_Element *thiz;
 
 	thiz = _esvg_element_get(t);
-	esvg_attribute_animated_number_set(&thiz->current_attr->opacity,
-		opacity, 1.0, thiz->current_attr_animate);
+	esvg_attribute_animated_number_extended_set(&thiz->current_attr->opacity,
+		opacity, 1.0, thiz->current_attr_animate, &thiz->current_attr->sets);
 }
 
 static void _esvg_element_opacity_get(Edom_Tag *t, Esvg_Animated_Number *opacity)
@@ -657,8 +648,8 @@ static void _esvg_element_fill_set(Edom_Tag *t, const Esvg_Animated_Paint *fill)
 	Esvg_Paint def = { ESVG_PAINT_COLOR, { black } };
 
 	thiz = _esvg_element_get(t);
-	esvg_attribute_animated_paint_set(&thiz->current_attr->fill,
-		fill, &def, thiz->current_attr_animate);
+	esvg_attribute_animated_paint_extended_set(&thiz->current_attr->fill,
+		fill, &def, thiz->current_attr_animate, &thiz->current_attr->sets);
 }
 
 static void _esvg_element_fill_get(Edom_Tag *t, Esvg_Animated_Paint *fill)
@@ -682,8 +673,8 @@ static void _esvg_element_fill_opacity_set(Edom_Tag *t, Esvg_Animated_Number *fi
 	Esvg_Element *thiz;
 
 	thiz = _esvg_element_get(t);
-	esvg_attribute_animated_number_set(&thiz->current_attr->fill_opacity,
-		fill_opacity, 1.0, thiz->current_attr_animate);
+	esvg_attribute_animated_number_extended_set(&thiz->current_attr->fill_opacity,
+		fill_opacity, 1.0, thiz->current_attr_animate, &thiz->current_attr->sets);
 }
 
 static void _esvg_element_fill_opacity_get(Edom_Tag *t, Esvg_Animated_Number *fill_opacity)
@@ -715,8 +706,8 @@ static void _esvg_element_stroke_set(Edom_Tag *t, const Esvg_Animated_Paint *str
 	Esvg_Paint def = { ESVG_PAINT_NONE };
 
 	thiz = _esvg_element_get(t);
-	esvg_attribute_animated_paint_set(&thiz->current_attr->stroke,
-		stroke, &def, thiz->current_attr_animate);
+	esvg_attribute_animated_paint_extended_set(&thiz->current_attr->stroke,
+		stroke, &def, thiz->current_attr_animate, &thiz->current_attr->sets);
 }
 
 static void _esvg_element_stroke_get(Edom_Tag *t, Esvg_Animated_Paint *stroke)
@@ -735,8 +726,8 @@ static void _esvg_element_stroke_width_set(Edom_Tag *t, const Esvg_Animated_Leng
 	Eina_Bool is_set;
 
 	thiz = _esvg_element_get(t);
-	esvg_attribute_animated_length_set(&thiz->current_attr->stroke_width,
-		stroke_width, &def, thiz->current_attr_animate);
+	esvg_attribute_animated_length_extended_set(&thiz->current_attr->stroke_width,
+		stroke_width, &def, thiz->current_attr_animate, &thiz->current_attr->sets);
 }
 
 static void _esvg_element_stroke_width_get(Edom_Tag *t, Esvg_Animated_Length *stroke_width)
@@ -753,8 +744,8 @@ static void _esvg_element_stroke_opacity_set(Edom_Tag *t, Esvg_Animated_Number *
 	Esvg_Element *thiz;
 
 	thiz = _esvg_element_get(t);
-	esvg_attribute_animated_number_set(&thiz->current_attr->stroke_opacity,
-		stroke_opacity, 1.0, thiz->current_attr_animate);
+	esvg_attribute_animated_number_extended_set(&thiz->current_attr->stroke_opacity,
+		stroke_opacity, 1.0, thiz->current_attr_animate, &thiz->current_attr->sets);
 }
 
 static void _esvg_element_stroke_opacity_get(Edom_Tag *t, Esvg_Animated_Number *stroke_opacity)
@@ -805,8 +796,8 @@ static void _esvg_element_stop_opacity_set(Edom_Tag *t, Esvg_Animated_Number *st
 	Esvg_Element *thiz;
 
 	thiz = _esvg_element_get(t);
-	esvg_attribute_animated_number_set(&thiz->current_attr->stop_opacity,
-		stop_opacity, 1.0, thiz->current_attr_animate);
+	esvg_attribute_animated_number_extended_set(&thiz->current_attr->stop_opacity,
+		stop_opacity, 1.0, thiz->current_attr_animate, &thiz->current_attr->sets);
 }
 
 static void _esvg_element_stop_opacity_get(Edom_Tag *t, Esvg_Animated_Number *stop_opacity)
@@ -823,8 +814,8 @@ static void _esvg_element_visibility_set(Edom_Tag *t, Esvg_Animated_Bool *visibi
 	Esvg_Element *thiz;
 
 	thiz = _esvg_element_get(t);
-	esvg_attribute_animated_bool_set(&thiz->current_attr->visibility,
-		visibility, EINA_TRUE, thiz->current_attr_animate);
+	esvg_attribute_animated_bool_extended_set(&thiz->current_attr->visibility,
+		visibility, EINA_TRUE, thiz->current_attr_animate, &thiz->current_attr->sets);
 }
 
 static void _esvg_element_visibility_get(Edom_Tag *t, Esvg_Animated_Bool *visibility)
@@ -1341,20 +1332,31 @@ Esvg_Element_Setup_Return esvg_element_setup_rel(Edom_Tag *t,
 	/* FIXME avoid so many copies */
 	_esvg_element_state_compose(thiz, rel_state, &thiz->state_final);
 
-	/* TODO apply the style first */
-	/* FIXME check that the style has changed, if so revert it and start applying */
 	/* FIXME should it have more priority than the properties? */
 	/* FIXME dont check for the style only, check also if some style property has been
 	 * set. If we animate a style based property but the style is not set, we never
 	 * get in here
 	 */
-	if (thiz->style)
+
+	/* apply the style first */
+	/* FIXME check that the style has changed, if so revert it and start applying */
+	if (thiz->style_changed)
 	{
-		esvg_element_attribute_type_set(t, ESVG_ATTR_CSS);
-		ecss_context_inline_style_apply(&_esvg_element_css_context, thiz->style, t);
-		esvg_element_attribute_type_set(t, ESVG_ATTR_XML);
+		/* reset the current style ? */
+		/* apply it */
+		if (thiz->style)
+		{
+			esvg_element_attribute_type_set(t, ESVG_ATTR_CSS);
+			ecss_context_inline_style_apply(&_esvg_element_css_context, thiz->style, t);
+			esvg_element_attribute_type_set(t, ESVG_ATTR_XML);
+		}
+		thiz->style_changed = EINA_FALSE;
+	}
+
+	if (thiz->attr_css.sets)
+	{
 		/* merge the css and the xml into the final */
-		_esvg_element_attribute_presentation_merge_rel(&thiz->attr_css, &thiz->attr_xml, &thiz->attr_final);
+		_esvg_element_attribute_presentation_merge_rel(&thiz->attr_xml, &thiz->attr_css, &thiz->attr_final);
 	}
 	else
 	{

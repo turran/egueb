@@ -150,6 +150,12 @@ static void * _esvg_animate_transform_destination_new(void)
 	enesim_matrix_identity(&v->anim);
 	return v;
 }
+
+static void _esvg_animate_transform_destination_free(void *destination, Eina_Bool deep)
+{
+	Esvg_Animated_Transform *d = destination;
+	free(d);
+}
 /*----------------------------------------------------------------------------*
  *                        The translate type descriptor                       *
  *----------------------------------------------------------------------------*/
@@ -181,14 +187,15 @@ static void _esvg_animate_transform_translate_interpolate(void *a, void *b,
 }
 
 static Esvg_Attribute_Animated_Descriptor _translate_descriptor = {
-	/* .value_new 		= */ _esvg_animate_transform_value_new,
-	/* .value_get 		= */ _esvg_animate_transform_value_get,
-	/* .value_free 		= */ free,
-	/* .destination_new 	= */ _esvg_animate_transform_destination_new,
-	/* .destination_get 	= */ NULL,
-	/* .destination_free 	= */ free,
+	/* .value_new 			= */ _esvg_animate_transform_value_new,
+	/* .value_get 			= */ _esvg_animate_transform_value_get,
+	/* .value_free 			= */ free,
+	/* .destination_new 		= */ _esvg_animate_transform_destination_new,
+	/* .destination_free 		= */ _esvg_animate_transform_destination_free,
+	/* .destination_keep		= */ NULL,
+	/* .destination_value_from 	= */ NULL,
 	/* .destination_value_to 	= */ NULL,
-	/* .interpolate 	= */ _esvg_animate_transform_translate_interpolate,
+	/* .interpolate 		= */ _esvg_animate_transform_translate_interpolate,
 };
 /*----------------------------------------------------------------------------*
  *                          The rotate type descriptor                        *
@@ -234,14 +241,15 @@ static void _esvg_animate_transform_rotate_interpolate(void *a, void *b,
 }
 
 static Esvg_Attribute_Animated_Descriptor _rotate_descriptor = {
-	/* .value_new 		= */ _esvg_animate_transform_value_new,
-	/* .value_get 		= */ _esvg_animate_transform_value_get,
-	/* .value_free 		= */ free,
-	/* .destination_new 	= */ _esvg_animate_transform_destination_new,
-	/* .destination_get 	= */ NULL,
-	/* .destination_free 	= */ free,
+	/* .value_new 			= */ _esvg_animate_transform_value_new,
+	/* .value_get 			= */ _esvg_animate_transform_value_get,
+	/* .value_free 			= */ free,
+	/* .destination_new 		= */ _esvg_animate_transform_destination_new,
+	/* .destination_free 		= */ _esvg_animate_transform_destination_free,
+	/* .destination_keep 		= */ NULL,
+	/* .destination_value_from	= */ NULL,
 	/* .destination_value_to 	= */ NULL,
-	/* .interpolate 	= */ _esvg_animate_transform_rotate_interpolate,
+	/* .interpolate 		= */ _esvg_animate_transform_rotate_interpolate,
 };
 /*----------------------------------------------------------------------------*
  *                          The scale type descriptor                         *
@@ -275,14 +283,15 @@ static void _esvg_animate_transform_scale_interpolate(void *a, void *b,
 }
 
 static Esvg_Attribute_Animated_Descriptor _scale_descriptor = {
-	/* .value_new 		= */ _esvg_animate_transform_value_new,
-	/* .value_get 		= */ _esvg_animate_transform_value_get,
-	/* .value_free 		= */ free,
-	/* .destination_new 	= */ _esvg_animate_transform_destination_new,
-	/* .destination_get 	= */ NULL,
-	/* .destination_free 	= */ free,
+	/* .value_new 			= */ _esvg_animate_transform_value_new,
+	/* .value_get 			= */ _esvg_animate_transform_value_get,
+	/* .value_free 			= */ free,
+	/* .destination_new 		= */ _esvg_animate_transform_destination_new,
+	/* .destination_free 		= */ _esvg_animate_transform_destination_free,
+	/* .destination_keep 		= */ NULL,
+	/* .destination_value_from 	= */ NULL,
 	/* .destination_value_to 	= */ NULL,
-	/* .interpolate 	= */ _esvg_animate_transform_scale_interpolate,
+	/* .interpolate 		= */ _esvg_animate_transform_scale_interpolate,
 };
 /*----------------------------------------------------------------------------*
  *                          The skewx type descriptor                         *
@@ -306,14 +315,15 @@ static void _esvg_animate_transform_skewx_interpolate(void *a, void *b,
 }
 
 static Esvg_Attribute_Animated_Descriptor _skewx_descriptor = {
-	/* .value_new 		= */ _esvg_animate_transform_value_new,
-	/* .value_get 		= */ _esvg_animate_transform_value_get,
-	/* .value_free 		= */ free,
-	/* .destination_new 	= */ _esvg_animate_transform_destination_new,
-	/* .destination_get 	= */ NULL,
-	/* .destination_free 	= */ free,
+	/* .value_new 			= */ _esvg_animate_transform_value_new,
+	/* .value_get 			= */ _esvg_animate_transform_value_get,
+	/* .value_free 			= */ free,
+	/* .destination_new 		= */ _esvg_animate_transform_destination_new,
+	/* .destination_free 		= */ _esvg_animate_transform_destination_free,
+	/* .destination_keep 		= */ NULL,
+	/* .destination_value_from 	= */ NULL,
 	/* .destination_value_to 	= */ NULL,
-	/* .interpolate 	= */ _esvg_animate_transform_skewx_interpolate,
+	/* .interpolate 		= */ _esvg_animate_transform_skewx_interpolate,
 };
 
 /*----------------------------------------------------------------------------*
@@ -338,14 +348,15 @@ static void _esvg_animate_transform_skewy_interpolate(void *a, void *b,
 }
 
 static Esvg_Attribute_Animated_Descriptor _skewy_descriptor = {
-	/* .value_new 		= */ _esvg_animate_transform_value_new,
-	/* .value_get 		= */ _esvg_animate_transform_value_get,
-	/* .value_free 		= */ free,
-	/* .destination_new 	= */ _esvg_animate_transform_destination_new,
-	/* .destination_get 	= */ NULL,
-	/* .destination_free 	= */ free,
+	/* .value_new 			= */ _esvg_animate_transform_value_new,
+	/* .value_get 			= */ _esvg_animate_transform_value_get,
+	/* .value_free 			= */ free,
+	/* .destination_new 		= */ _esvg_animate_transform_destination_new,
+	/* .destination_free 		= */ _esvg_animate_transform_destination_free,
+	/* .destination_keep 		= */ NULL,
+	/* .destination_value_from 	= */ NULL,
 	/* .destination_value_to 	= */ NULL,
-	/* .interpolate 	= */ _esvg_animate_transform_skewy_interpolate,
+	/* .interpolate 		= */ _esvg_animate_transform_skewy_interpolate,
 };
 /*----------------------------------------------------------------------------*
  *                         The Esvg Element interface                         *

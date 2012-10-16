@@ -79,21 +79,26 @@ static void _esvg_set_interpolator_cb(Etch_Data *a, Etch_Data *b, double m, Etch
 	thiz->d->interpolator(a->data.external, b->data.external, m, NULL, NULL, 0, res->data.external);
 }
 
+static void _esvg_set_property_set(Esvg_Set *thiz, void *data)
+{
+	Esvg_Attribute_Type old_type;
+
+	old_type = esvg_element_attribute_type_get(thiz->parent_t);
+	esvg_element_attribute_type_set(thiz->parent_t, thiz->attribute_type);
+	esvg_element_attribute_animate_set(thiz->parent_t, EINA_TRUE);
+	ender_element_property_value_set(thiz->parent_e, thiz->p, data, NULL);
+	/* restore the states */
+	esvg_element_attribute_animate_set(thiz->parent_t, EINA_FALSE);
+	esvg_element_attribute_type_set(thiz->parent_t, old_type);
+}
+
 static void _esvg_set_animation_cb(Etch_Animation_Keyframe *k,
 		const Etch_Data *curr,
 		const Etch_Data *prev,
 		void *user_data)
 {
 	Esvg_Set *thiz = user_data;
-	Esvg_Attribute_Type old_type;
-
-	old_type = esvg_element_attribute_type_get(thiz->parent_t);
-	esvg_element_attribute_type_set(thiz->parent_t, thiz->attribute_type);
-	esvg_element_attribute_animate_set(thiz->parent_t, EINA_TRUE);
-	ender_element_property_value_set(thiz->parent_e, thiz->p, thiz->destination_data, NULL);
-	/* restore the states */
-	esvg_element_attribute_animate_set(thiz->parent_t, EINA_FALSE);
-	esvg_element_attribute_type_set(thiz->parent_t, old_type);
+	_esvg_set_property_set(thiz, thiz->destination_data);
 }
 
 static void _esvg_set_animation_start_cb(Etch_Animation *a, void *data)
@@ -102,20 +107,33 @@ static void _esvg_set_animation_start_cb(Etch_Animation *a, void *data)
 	Esvg_Fill fill;
 
 	esvg_animation_fill_get(thiz->thiz_e, &fill);
+	/* in case of "remove" pick the last value it had */
 	if (fill == ESVG_FILL_REMOVE)
 	{
-		thiz->destination_prev = thiz->d->destination_new();
-		printf("old destination %p\n", thiz->destination_prev);
-		//ender_element_property_value_get(thiz->parent_e, thiz->p, thiz->destination_data, NULL);
+		void *dp;
+
+		dp = thiz->d->destination_new();
+		ender_element_property_value_get(thiz->parent_e, thiz->p, dp, NULL);
+		if (thiz->d->destination_keep)
+		{
+			thiz->d->destination_keep(dp);
+		}
+		thiz->destination_prev = dp;
 	}
-	/* in case of "remove" pick the last value it had */
 	ender_event_dispatch(thiz->thiz_e, "begin", NULL);
 }
 
 static void _esvg_set_animation_stop_cb(Etch_Animation *a, void *data)
 {
 	Esvg_Set *thiz = data;
-	/* if we dont freeze we should go back to the original value */
+	Esvg_Fill fill;
+
+	esvg_animation_fill_get(thiz->thiz_e, &fill);
+	/* in case of "remove" set the value it had when the animation started */
+	if (fill == ESVG_FILL_REMOVE)
+	{
+		_esvg_set_property_set(thiz, thiz->destination_prev);
+	}
 	ender_event_dispatch(thiz->thiz_e, "end", NULL);
 }
 /*----------------------------------------------------------------------------*
@@ -230,8 +248,11 @@ static Eina_Bool _esvg_set_setup(Edom_Tag *t,
 	thiz->values = eina_list_append(thiz->values, to_data); 
 	/* create the destination holder */
 	thiz->destination_data = thiz->d->destination_new();
-	if (thiz->d->destination_get)
-		thiz->d->destination_get(thiz->destination_data, thiz->values);
+	if (thiz->d->destination_value_from)
+	{
+		void *value = eina_list_data_get(thiz->values);
+		thiz->d->destination_value_from(thiz->destination_data, value);
+	}
 	/* create the values from the 'to' attribute */
 	etch_data.type = ETCH_EXTERNAL;
 	etch_data.data.external = to_data;

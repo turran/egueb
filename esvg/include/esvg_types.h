@@ -489,7 +489,9 @@ extern Esvg_Length ESVG_LENGTH_100_PERCENT;
 
 static inline Eina_Bool esvg_length_is_relative(Esvg_Length *length)
 {
-	return (length->unit == ESVG_UNIT_LENGTH_PERCENT) ? EINA_TRUE : EINA_FALSE;
+	if (length->unit == ESVG_UNIT_LENGTH_PERCENT || length->unit == ESVG_UNIT_LENGTH_EM)
+		return EINA_TRUE;
+	return EINA_FALSE;
 }
 
 static inline void esvg_length_set(Esvg_Length *length, double value, Esvg_Unit_Length unit)
