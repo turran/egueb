@@ -54,13 +54,19 @@ typedef struct _Esvg_Video
 	Esvg_Attribute_Animated_Length height;
 	Esvg_Attribute_Animated_String href;
 	char *real_href;
+	/* generated at setup */
+	double gx;
+	double gy;
+	double gwidth;
+	double gheight;
+	char *ghref;
 	/* private */
 #ifdef BUILD_ESVG_VIDEO
 	GstElement *enesim_sink;
 	GstElement *playbin2;
 #endif
 	Enesim_Renderer *image;
-	Enesim_Surface *b;
+	Enesim_Buffer *b;
 	Enesim_Surface *s;
 } Esvg_Video;
 
@@ -93,6 +99,23 @@ static void _esvg_video_buffer_display(GstElement *enesim_sink, Enesim_Buffer *b
 		thiz->s = s;
 	}
 	enesim_renderer_image_src_set(thiz->image, thiz->s);
+}
+
+static void _esvg_video_pipeline_setup(Esvg_Video *thiz)
+{
+	guint width;
+	guint height;
+
+	width = floor(thiz->gwidth);
+	height = floor(thiz->gheight);
+
+	/* FIXME later the pool */
+	/* set the element properties */
+	g_object_set(thiz->enesim_sink, "width", width,
+			"height", height,
+			"format", ENESIM_BUFFER_FORMAT_ARGB8888_PRE,
+			NULL);
+	/* set the state to READY in case the pipeline is already playing */
 }
 #endif
 /*----------------------------------------------------------------------------*
@@ -183,6 +206,24 @@ static Esvg_Element_Setup_Return _esvg_video_setup(Edom_Tag *t,
 		Esvg_Attribute_Presentation *attr,
 		Enesim_Error **error)
 {
+	Esvg_Video *thiz;
+	Esvg_Length lx, ly;
+	Esvg_Length lwidth, lheight;
+
+	thiz = _esvg_video_get(t);
+	/* set the position */
+	esvg_attribute_animated_length_final_get(&thiz->x, &lx);
+	esvg_attribute_animated_length_final_get(&thiz->y, &ly);
+	thiz->gx = esvg_length_final_get(&lx, ctx->viewbox.width, ctx->font_size);
+	thiz->gy = esvg_length_final_get(&ly, ctx->viewbox.height, ctx->font_size);
+	/* set the size */
+	esvg_attribute_animated_length_final_get(&thiz->width, &lwidth);
+	esvg_attribute_animated_length_final_get(&thiz->height, &lheight);
+	thiz->gwidth = esvg_length_final_get(&lwidth, ctx->viewbox.width, ctx->font_size);
+	thiz->gheight = esvg_length_final_get(&lheight, ctx->viewbox.height, ctx->font_size);
+	/* set the href */
+	esvg_attribute_animated_string_final_get(&thiz->href, &thiz->ghref);
+
 	return ESVG_SETUP_OK;
 }
 
@@ -195,58 +236,35 @@ static Eina_Bool _esvg_video_renderer_propagate(Edom_Tag *t,
 {
 	Ender_Element *topmost;
 	Esvg_Video *thiz;
-	Esvg_Length lx, ly;
-	Esvg_Length lwidth, lheight;
-	double x, y;
-	double width, height;
-	char *href;
 	char *real;
 
-
 	thiz = _esvg_video_get(t);
-	/* set the position */
-	esvg_attribute_animated_length_final_get(&thiz->x, &lx);
-	esvg_attribute_animated_length_final_get(&thiz->y, &ly);
-	x = esvg_length_final_get(&lx, ctx->viewbox.width, ctx->font_size);
-	y = esvg_length_final_get(&ly, ctx->viewbox.height, ctx->font_size);
-	/* set the size */
-	esvg_attribute_animated_length_final_get(&thiz->width, &lwidth);
-	esvg_attribute_animated_length_final_get(&thiz->height, &lheight);
-	width = esvg_length_final_get(&lwidth, ctx->viewbox.width, ctx->font_size);
-	height = esvg_length_final_get(&lheight, ctx->viewbox.height, ctx->font_size);
-	/* the href */
-	esvg_attribute_animated_string_final_get(&thiz->href, &href);
-	if (!href) goto done;
+
+	/* set the image */
+	enesim_renderer_image_x_set(thiz->image, thiz->gx);
+	enesim_renderer_image_y_set(thiz->image, thiz->gy);
+	enesim_renderer_image_width_set(thiz->image, thiz->gwidth);
+	enesim_renderer_image_height_set(thiz->image, thiz->gheight);
+	enesim_renderer_geometry_transformation_set(thiz->image, &ctx->transform);
+
+	/* set the pipeline attributes */
+	if (!thiz->ghref) goto done;
 	esvg_element_internal_topmost_get(t, &topmost);
-	real = esvg_svg_uri_resolve(topmost, href);
-	if (!real) goto image;
+	real = esvg_svg_uri_resolve(topmost, thiz->ghref);
+	if (!real) goto done;
+
 	/* check that the href has actually changed */
-	DBG("Using real uri %s for %s", href, real);
 	if (thiz->real_href)
 	{
 		if (!strcmp(thiz->real_href, real))
-			goto image;
-		free(thiz->real_href);
+			goto done;
 	}
+	DBG("Using real uri %s for %s", real, thiz->ghref);
 	thiz->real_href = real;
 
 #ifdef BUILD_ESVG_VIDEO
-	/* set the element properties */
-	/* FIXME later the pool */
-	g_object_set(thiz->enesim_sink, "width", width,
-			"height", height,
-			"format", ENESIM_BUFFER_FORMAT_ARGB8888_PRE,
-			NULL);
-	
-	/* set the state to READY in case the pipeline is already playing */
+	_esvg_video_pipeline_setup(thiz);
 #endif
-image:
-	/* set the image */
-	enesim_renderer_image_x_set(thiz->image, x);
-	enesim_renderer_image_y_set(thiz->image, y);
-	enesim_renderer_image_width_set(thiz->image, width);
-	enesim_renderer_image_height_set(thiz->image, height);
-	enesim_renderer_geometry_transformation_set(thiz->image, &ctx->transform);
 done:
 	return EINA_TRUE;
 }
@@ -312,13 +330,14 @@ static Edom_Tag * _esvg_video_new(void)
 	}
 	g_signal_connect (enesim_sink, "buffer-display",
           G_CALLBACK (_esvg_video_buffer_display), thiz);
-	thiz->enesim_sink = enesim_sink;
+	thiz->enesim_sink = gst_object_ref(enesim_sink);
 
 	thiz->playbin2 = gst_element_factory_make("playbin2", "svg_video");
 	g_object_set(thiz->playbin2, "video-sink", thiz->enesim_sink, NULL);
 #endif
 
 	t = esvg_renderable_new(&_descriptor, ESVG_VIDEO, thiz);
+
 	return t;
 }
 
