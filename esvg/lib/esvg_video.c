@@ -81,33 +81,63 @@ static Esvg_Video * _esvg_video_get(Edom_Tag *t)
 }
 
 #ifdef BUILD_ESVG_VIDEO
+static char * _esvg_video_path_urify(const char *s)
+{
+	/* FIXME we need a way to check if the path stats with an uri */
+	if (*s == '/')
+	{
+		char *uri;
+		uri = malloc(strlen(s) + 7 + 1); /* 7 = file:// */
+		strcpy(uri, "file://");
+		strcat(uri, s);
+		return uri;
+	}
+	else
+	{
+		return strdup(s);
+	}
+}
+
 static void _esvg_video_buffer_display(GstElement *enesim_sink, Enesim_Buffer *b, gpointer user_data)
 {
 	Esvg_Video *thiz = user_data;
 
-	printf("buffer received!!! %p\n", b);
 	if (thiz->b == b)
 	{
+		Eina_Rectangle area;
 		/* damage the whole buffer */
 		//enesim_renderer_image_damage_add
+		eina_rectangle_coords_from(&area, 0, 0, ceil(thiz->gwidth), ceil(thiz->gheight));
+		enesim_renderer_image_damage_add(thiz->image, &area); 
 	}
 	else
 	{
+		/* TODO handle correctly the refcounting */
 		Enesim_Surface *s;
-		enesim_surface_unref(thiz->s);
+
+		if (thiz->s)
+			enesim_surface_unref(thiz->s);
+		if (thiz->b)
+			enesim_buffer_unref(thiz->b);
+
 		s = enesim_surface_new_buffer_from(b);
-		thiz->s = s;
+		thiz->s = enesim_surface_ref(s);
+		thiz->b = enesim_buffer_ref(b);
+		enesim_renderer_image_src_set(thiz->image, thiz->s);
 	}
-	enesim_renderer_image_src_set(thiz->image, thiz->s);
 }
 
 static void _esvg_video_pipeline_setup(Esvg_Video *thiz)
 {
+	GstState current;
+	GstState pending;
+	GstStateChangeReturn ret;
 	guint width;
 	guint height;
+	gchar *uri;
 
-	width = floor(thiz->gwidth);
-	height = floor(thiz->gheight);
+	width = ceil(thiz->gwidth);
+	height = ceil(thiz->gheight);
 
 	/* FIXME later the pool */
 	/* set the element properties */
@@ -116,6 +146,16 @@ static void _esvg_video_pipeline_setup(Esvg_Video *thiz)
 			"format", ENESIM_BUFFER_FORMAT_ARGB8888_PRE,
 			NULL);
 	/* set the state to READY in case the pipeline is already playing */
+	ret = gst_element_get_state(thiz->playbin2, &current, &pending, GST_CLOCK_TIME_NONE);
+	if (current != GST_STATE_READY)
+		gst_element_set_state(thiz->playbin2, GST_STATE_READY);
+
+	/* we need to transform the real href into a playbin2 uri */
+	uri = _esvg_video_path_urify(thiz->real_href);
+	g_object_set(thiz->playbin2, "uri", uri, NULL);
+	free(uri);
+
+	gst_element_set_state(thiz->playbin2, GST_STATE_PLAYING);
 }
 #endif
 /*----------------------------------------------------------------------------*
@@ -321,6 +361,10 @@ static Edom_Tag * _esvg_video_new(void)
 
 #ifdef BUILD_ESVG_VIDEO
 	enesim_sink = gst_element_factory_make("enesim_sink", NULL);
+	/* TODO fallback to appsink in case enesim sink is not found */
+	/* TODO playbin2 will overwrite our sink, we need
+	 * to increase the priority
+	 */
 	if (!enesim_sink)
 	{
 		ERR("No enesim sink element found");

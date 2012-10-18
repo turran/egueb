@@ -1521,6 +1521,7 @@ EAPI const char * esvg_type_string_to(Esvg_Type type)
 		case ESVG_TREF: return "";
 		case ESVG_TSPAN: return "";
 		case ESVG_USE: return "use";
+		case ESVG_VIDEO: return "video";
 		case ESVG_VIEW: return "";
 		case ESVG_VKERN: return "";
 		default: return "unknown";
@@ -1585,6 +1586,7 @@ EAPI Eina_Bool esvg_type_is_renderable(Esvg_Type type)
 		case ESVG_IMAGE:
 		case ESVG_TEXT:
 		case ESVG_USE:
+		case ESVG_VIDEO:
 		return EINA_TRUE;
 
 		default:
