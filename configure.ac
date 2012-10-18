@@ -57,6 +57,7 @@ AC_SUBST([ESVG_BUILD])
 ecss_requirements="eina"
 edom_requirements="eina"
 esvg_requirements="etex >= ${ENESIM_VERSION} enesim >= ${ENESIM_VERSION} eina >= ${EINA_VERSION} ender >= ${ENDER_VERSION} etch >= ${ETCH_VERSION}"
+esvg_video_requirements="gstreamer-0.10"
 
 AC_SUBST([esvg_requirements])
 
@@ -160,12 +161,18 @@ if test "x${want_ecss}" = "xyes" && test "x${want_edom}" = "xyes" ; then
       esvg_requirements="emage >= ${ENESIM_VERSION} ${esvg_requirements}"
    fi
    PKG_CHECK_MODULES([ESVG], [${esvg_requirements}], [want_esvg="yes"], [want_esvg="no"])
+   # Optional external tags
+   PKG_CHECK_MODULES([ESVG_VIDEO], [${esvg_video_requirements}], [have_esvg_video="yes"], [have_esvg_video="no"])
+   if test "x${have_esvg_video}" = "xyes" ; then
+      AC_DEFINE(BUILD_ESVG_VIDEO, [1], [Esvg Video Support])
+   fi
 fi
 
 AM_CONDITIONAL(BUILD_ECSS, [test "x${want_ecss}" = "xyes"])
 AM_CONDITIONAL(BUILD_EDOM, [test "x${want_edom}" = "xyes"])
 AM_CONDITIONAL(BUILD_EMAGE, [test "x${have_emage}" = "xyes"])
 AM_CONDITIONAL(BUILD_ESVG, [test "x${want_esvg}" = "xyes"])
+AM_CONDITIONAL(BUILD_ESVG_VIDEO, [test "x${have_esvg_video}" = "xyes"])
 
 ### Checks for header files
 
@@ -231,7 +238,9 @@ echo "Configuration Options Summary:"
 echo
 echo "CSS support.................................: ${want_ecss}"
 echo "DOM support.................................: ${want_edom}"
-echo "SVG support.................................. ${want_esvg}"
+echo "SVG support.................................: ${want_esvg}"
+echo "  External tags:"
+echo "  video support (GStreamer).................: ${have_esvg_video}"
 echo
 echo "Installation Path...........................: ${prefix}"
 echo

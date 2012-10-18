@@ -10,7 +10,8 @@ AM_CPPFLAGS = \
 -I$(top_builddir)/esvg/include \
 -DENESIM_EXTENSION \
 @ESVG_BUILD@ \
-@ESVG_CFLAGS@
+@ESVG_CFLAGS@ \
+@ESVG_VIDEO_CFLAGS@
 
 lib_LTLIBRARIES = libesvg.la
 
@@ -53,7 +54,8 @@ esvg_style.c \
 esvg_svg.c \
 esvg_text.c \
 esvg_types.c \
-esvg_use.c
+esvg_use.c \
+esvg_video.c
 
 #esvg_attribute_regular.c \
 #esvg_gradient.c \
@@ -64,6 +66,6 @@ esvg_use.c
 libesvg_la_LIBADD = \
 $(top_builddir)/edom/lib/libedom.la \
 $(top_builddir)/ecss/lib/libecss.la \
-@ESVG_LIBS@ -lm
+@ESVG_LIBS@ @ESVG_VIDEO_LIBS@ -lm
 
 libesvg_la_LDFLAGS = -no-undefined -version-info @version_info@

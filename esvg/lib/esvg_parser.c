@@ -53,6 +53,7 @@
 #include "esvg_style.h"
 #include "esvg_text.h"
 #include "esvg_use.h"
+#include "esvg_video.h"
 
 #include "esvg_parser.h"
 /*============================================================================*
@@ -404,6 +405,11 @@ static Eina_Bool _esvg_parser_tag_get(Edom_Parser *parser, const char *content,
 			else if (strncmp("vkern", content, sz) == 0)
 			{
 			}
+			else if (strncmp("video", content, sz) == 0)
+			{
+				*tag = ESVG_VIDEO;
+				return EINA_TRUE;
+			}
 			else
 				DBG("tag <%s> not supported by SVG Tiny 1.1 spec", content);
 		}
@@ -521,6 +527,10 @@ static void * _esvg_parser_tag_new(Edom_Parser *parser, int tag_id)
 
 		case ESVG_ANIMATETRANSFORM:
 		tag = esvg_animate_transform_new();
+		break;
+
+		case ESVG_VIDEO:
+		tag = esvg_video_new();
 		break;
 
 		default:

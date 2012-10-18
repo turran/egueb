@@ -30,7 +30,8 @@ esvg_generated_style.c \
 esvg_generated_svg.c \
 esvg_generated_text.c \
 esvg_generated_types.c \
-esvg_generated_use.c
+esvg_generated_use.c \
+esvg_generated_video.c
 
 CLEANFILES = $(GENERATED_FILES)
 

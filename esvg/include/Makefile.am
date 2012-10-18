@@ -38,7 +38,8 @@ esvg_style.h \
 esvg_svg.h \
 esvg_text.h \
 esvg_types.h \
-esvg_use.h
+esvg_use.h \
+esvg_video.h
 
 EXTRA_DIST = \
 esvg_private_a.h \

@@ -23,6 +23,11 @@
 #include <Etex.h>
 #include <Ender.h>
 
+
+#if BUILD_ESVG_VIDEO
+#include <gst/gst.h>
+#endif
+
 #include "esvg_types.h"
 
 #include "esvg_private_main.h"
@@ -75,6 +80,7 @@ struct log
 	{ &esvg_log_text,		"esvg_text" },
 	{ &esvg_log_type,		"esvg_type" },
 	{ &esvg_log_use,		"esvg_use" },
+	{ &esvg_log_video,		"esvg_video" },
 };
 
 /* keep track of the initialization */
@@ -115,6 +121,7 @@ static void _register_enders(void)
 	esvg_style_init();
 	esvg_image_init();
 	esvg_text_init();
+	esvg_video_init();
 
 	esvg_animation_init();
 	esvg_animate_base_init();
@@ -209,6 +216,9 @@ static Eina_Bool _esvg_dependencies_init(void)
 		fprintf(stderr, "Esvg: Ender init failed");
 		goto shutdown_emage;
 	}
+#if BUILD_ESVG_VIDEO
+	gst_init(NULL, NULL);
+#endif
 	return EINA_TRUE;
 
 shutdown_emage:
@@ -225,7 +235,9 @@ shutdown_eina:
 
 static void _esvg_dependencies_shutdown(void)
 {
-
+#if BUILD_ESVG_VIDEO
+	gst_deinit();
+#endif
 }
 
 /*============================================================================*
@@ -264,6 +276,7 @@ int esvg_log_svg		= -1;
 int esvg_log_text       	= -1;
 int esvg_log_type       	= -1;
 int esvg_log_use       		= -1;
+int esvg_log_video      	= -1;
 
 /* The ender wrapper */
 Ender_Namespace * esvg_namespace_get(void)

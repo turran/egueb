@@ -88,6 +88,7 @@ extern int esvg_log_svg;
 extern int esvg_log_text;
 extern int esvg_log_type;
 extern int esvg_log_use;
+extern int esvg_log_video;
 
 #ifdef ERR
 # undef ERR

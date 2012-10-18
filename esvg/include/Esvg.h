@@ -79,6 +79,7 @@
 #include "esvg_image.h"
 #include "esvg_text.h"
 #include "esvg_use.h"
+#include "esvg_video.h"
 /* containers */
 #include "esvg_svg.h"
 #include "esvg_g.h"

@@ -290,5 +290,12 @@ namespace "esvg" : 0 {
 		esvg_animated_string "xlink:href";
 	};
 
+	class "video" : "renderable" {
+		esvg_animated_coord "x";
+		esvg_animated_coord "y";
+		esvg_animated_length "width";
+		esvg_animated_length "height";
+		esvg_animated_string "xlink:href";
+	};
 };
 
