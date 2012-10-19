@@ -123,7 +123,9 @@ static void _esvg_video_buffer_display(GstElement *enesim_sink, Enesim_Buffer *b
 		s = enesim_surface_new_buffer_from(b);
 		thiz->s = enesim_surface_ref(s);
 		thiz->b = enesim_buffer_ref(b);
+		enesim_renderer_lock(thiz->image);
 		enesim_renderer_image_src_set(thiz->image, thiz->s);
+		enesim_renderer_unlock(thiz->image);
 	}
 }
 
@@ -276,6 +278,7 @@ static Eina_Bool _esvg_video_renderer_propagate(Edom_Tag *t,
 {
 	Ender_Element *topmost;
 	Esvg_Video *thiz;
+	Enesim_Matrix inv;
 	char *real;
 
 	thiz = _esvg_video_get(t);
@@ -285,7 +288,8 @@ static Eina_Bool _esvg_video_renderer_propagate(Edom_Tag *t,
 	enesim_renderer_image_y_set(thiz->image, thiz->gy);
 	enesim_renderer_image_width_set(thiz->image, thiz->gwidth);
 	enesim_renderer_image_height_set(thiz->image, thiz->gheight);
-	enesim_renderer_geometry_transformation_set(thiz->image, &ctx->transform);
+	enesim_matrix_inverse(&ctx->transform, &inv);
+	enesim_renderer_transformation_set(thiz->image, &inv);
 
 	/* set the pipeline attributes */
 	if (!thiz->ghref) goto done;
