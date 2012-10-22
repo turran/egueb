@@ -210,10 +210,13 @@ static Eina_Error _emage_svg_load(Emage_Data *data, Enesim_Buffer *buffer, void 
 	if (location)
 	{
 		char *base_dir;
+		char *tmp;
 
-		base_dir = dirname(location);
+		tmp = dirname(location);
+		base_dir = strdup(tmp);
 		esvg_svg_application_descriptor_set(e, &_emage_svg_descriptor, base_dir);
 		free(location);
+		location = base_dir;
 	}
 	/* we should render into the swdata? */
 	esvg_svg_container_width_set(e, w);
@@ -249,6 +252,8 @@ err_surface:
 err_parse:
 	if (mmaped)
 		free(mmap);
+	if (location)
+		free(location);
 	return ret;
 }
 
