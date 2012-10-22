@@ -92,12 +92,12 @@ static void _esvg_parser_tree_dump(Edom_Tag *t, int level)
 	edom_tag_child_foreach(t, _esvg_parser_tree_dump_cb, &level);
 }
 
-static char * _esvg_parser_file_open(const char *filename, long *sz)
+static char * _esvg_parser_file_open(const char *filename, size_t *sz)
 {
 	FILE *f;
 	char *buf;
 	size_t res;
-	long _sz;
+	size_t _sz;
 
 	if (!filename || !(*filename))
 		return NULL;
@@ -124,7 +124,7 @@ static char * _esvg_parser_file_open(const char *filename, long *sz)
 		goto close_f;
 
 	res = fread(buf, 1, _sz, f);
-	if (res != (size_t)_sz)
+	if (res != _sz)
 		goto free_buf;
 
 	fclose(f);
@@ -140,34 +140,26 @@ close_f:
 	return NULL;
 }
 
-static Ender_Element * _esvg_parser_file_parse(const char *filename, Edom_Parser *parser)
+static Ender_Element * _esvg_parser_parse(Edom_Parser *parser, const char *buffer, size_t size)
 {
-	Ender_Element *tag = NULL;
-	char *buf;
-	long sz;
+	Ender_Element *e = NULL;
+	Edom_Tag *t;
 
-	edom_parser_location_set(parser, filename);
-	buf = _esvg_parser_file_open(filename, &sz);
-	if (!buf)
+	if (!edom_parser_parse(parser, buffer, size))
 	{
-		DBG("Can not open file %s\n", filename);
-		return NULL;
-	}
-
-	if (!edom_parser_parse(parser, buf, sz))
-	{
-		DBG("Can not parse file %s\n", filename);
-		goto parse_failed;
+		DBG("Can not parse buffer");
+		goto done;
 	}
 
 	/* check if we have a valid renderer */
-	tag = edom_parser_topmost_get(parser);
-
-parse_failed:
-	free(buf);
-	return tag;
+	e = edom_parser_topmost_get(parser);
+	/* useful for debugging */
+	t = ender_element_object_get(e);
+	_esvg_parser_tree_dump(t, 0);
+done:
+	edom_parser_delete(parser);
+	return e;
 }
-
 /*----------------------------------------------------------------------------*
  *                            Edom parser interface                           *
  *----------------------------------------------------------------------------*/
@@ -652,19 +644,35 @@ static Edom_Parser_Descriptor _info_descriptor = {
 EAPI Eina_Bool esvg_parser_info_load(const char *filename,
 		Esvg_Length *width, Esvg_Length *height)
 {
+	Ender_Element *e;
+	Eina_Bool ret;
+	char *buffer;
+	size_t size;
+
+	buffer = _esvg_parser_file_open(filename, &size);
+	if (!buffer) return EINA_FALSE;
+
+	ret = esvg_parser_info_load_from_buffer(buffer, size, width, height);
+	free(buffer);
+	return ret;
+}
+
+EAPI Eina_Bool esvg_parser_info_load_from_buffer(const char *buffer,
+		size_t size, Esvg_Length *width, Esvg_Length *height)
+{
 	Esvg_Parser *thiz;
 	Edom_Parser *info_parser;
 	Ender_Element *e;
 
 	thiz = calloc(1, sizeof(Esvg_Parser));
 	info_parser = edom_parser_new(&_info_descriptor, thiz);
-	e = _esvg_parser_file_parse(filename, info_parser);
-	edom_parser_delete(info_parser);
+	e = _esvg_parser_parse(info_parser, buffer, size);
 	if (!e) return EINA_FALSE;
 
-	//ender_element_unref(e);
 	esvg_svg_width_get(e, width);
 	esvg_svg_height_get(e, height);
+	//ender_element_unref(e);
+
 	return EINA_TRUE;
 }
 
@@ -673,66 +681,28 @@ EAPI Eina_Bool esvg_parser_info_load(const char *filename,
  */
 EAPI Ender_Element * esvg_parser_load(const char *filename)
 {
-	Esvg_Parser *thiz;
-	Edom_Parser *parser;
-	Ender_Element *e = NULL;
-	Edom_Tag *t;
+	Ender_Element *e;
+	char *buffer;
+	size_t size;
 
-	thiz = calloc(1, sizeof(Esvg_Parser));
+	buffer = _esvg_parser_file_open(filename, &size);
+	if (!buffer) return NULL;
 
-	parser = edom_parser_new(&_descriptor, thiz);
-	e = _esvg_parser_file_parse(filename, parser);
-	if (!e) goto parse_failed;
-
-	/* useful for debugging */
-	t = ender_element_object_get(e);
-	_esvg_parser_tree_dump(t, 0);
-	/* TODO whenever the file has been parsed trigger the onload
-	 * event?
-	 */
-
-	/* FIXME we should handle the style thing correctly
-	 * so far we were applying it once the document is loaded
-	 * this is fine, but what will happen whenever some style
-	 * is being modified *after* rendering?
-	 * we need to handle that case now that we start supporting
-	 * the whole tree on the lib
-	 */
-
-	//esvg_parser_svg_style_apply(e);
-	/* FIXME all the link property of the <use> tags
-	 * are created at parse time, in case we apply a style
-	 * for the linked element, it wont be propagated to
-	 * the clone
-	 */
-
-#if 0
-	/* set the default functions */
-	if (esvg_is_svg(e))
-	{
-		char *found;
-		char last;
-
-		/* FIXME this is not cross platform we should add an eina helper for this */
-		/* get the base dir */
-		found = strrchr(filename, '/');
-		if (found)
-		{
-			found++;
-			last = *found;
-			*found = '\0';
-			/* uri functionality, only local */
-			esvg_svg_base_dir_set(e, filename);
-			*found = last;
-		}
-		/* else, relative file, we need to get the current execution path? */
-	}
-#endif
-
-parse_failed:
-	edom_parser_delete(parser);
+	e = esvg_parser_load_from_buffer(buffer, size);
+	free(buffer);
 
 	return e;
+}
+
+EAPI Ender_Element * esvg_parser_load_from_buffer(const char *buffer, size_t size)
+{
+	Esvg_Parser *thiz;
+	Edom_Parser *parser;
+	Ender_Element *e;
+
+	thiz = calloc(1, sizeof(Esvg_Parser));
+	parser = edom_parser_new(&_descriptor, thiz);
+	return _esvg_parser_parse(parser, buffer, size);
 }
 
 /**

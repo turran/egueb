@@ -109,16 +109,23 @@ static void _emage_svg_options_free(void *data)
 /* Here we should parse the first svg element only and return its
  * size, for now, we dont support this feature
  */
-static Eina_Error _emage_svg_info_load(const char *file, int *w, int *h, Enesim_Buffer_Format *sfmt, void *options)
+static Eina_Error _emage_svg_info_load(Emage_Data *data, int *w, int *h, Enesim_Buffer_Format *sfmt, void *options)
 {
 	double svg_w;
 	double svg_h;
 	int cw = _default_width;
 	int ch = _default_height;
+	char *mmap;
+	size_t size;
 	Esvg_Length width;
 	Esvg_Length height;
 
-	if (!esvg_parser_info_load(file, &width, &height))
+	/* first try to map the data */
+	mmap = emage_data_mmap(data, &size);
+	/* TODO in case it fails, we should try to read the whole svg */
+	if (!mmap) return EMAGE_ERROR_LOADING;
+
+	if (!esvg_parser_info_load_from_buffer(mmap, size, &width, &height))
 	{
 		return EMAGE_ERROR_LOADING;
 	}
@@ -142,7 +149,7 @@ static Eina_Error _emage_svg_info_load(const char *file, int *w, int *h, Enesim_
 	return 0;
 }
 
-static Eina_Error _emage_svg_load(const char *file, Enesim_Buffer *buffer, void *options)
+static Eina_Error _emage_svg_load(Emage_Data *data, Enesim_Buffer *buffer, void *options)
 {
 	Ender_Element *e;
 	Enesim_Surface *s;
@@ -152,10 +159,16 @@ static Eina_Error _emage_svg_load(const char *file, Enesim_Buffer *buffer, void 
 	double svg_h;
 	int w = _default_width;
 	int h = _default_height;
-	char tmp[PATH_MAX];
-	char *base_dir;
+	char *location;
+	char *mmap;
+	size_t size;
 
-	e = esvg_parser_load(file);
+	/* first try to map the data */
+	mmap = emage_data_mmap(data, &size);
+	/* TODO in case it fails, we should try to read the whole svg */
+	if (!mmap) return EMAGE_ERROR_LOADING;
+
+	e = esvg_parser_load_from_buffer(mmap, size);
 	if (!e)
 	{
 		return EMAGE_ERROR_LOADING;
@@ -169,9 +182,15 @@ static Eina_Error _emage_svg_load(const char *file, Enesim_Buffer *buffer, void 
 		h = o->container_height;
 	}
 	/* set the application descriptor in case the svg needs it */
-	strncpy(tmp, file, PATH_MAX);
-	base_dir = dirname(base_dir);
-	esvg_svg_application_descriptor_set(e, &_emage_svg_descriptor, base_dir);
+	location = emage_data_location(data);
+	if (location)
+	{
+		char *base_dir;
+
+		base_dir = dirname(location);
+		esvg_svg_application_descriptor_set(e, &_emage_svg_descriptor, base_dir);
+		free(location);
+	}
 	/* we should render into the swdata? */
 	esvg_svg_container_width_set(e, w);
 	esvg_svg_container_height_set(e, h);
