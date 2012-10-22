@@ -148,7 +148,7 @@ int main(int argc, char *argv[])
 	{
 		enesim_error_dump(err);
 	}
-	emage_save(argv[2], s, NULL);
+	emage_file_save(argv[2], s, NULL);
 
 	enesim_surface_unref(s);
 	emage_shutdown();

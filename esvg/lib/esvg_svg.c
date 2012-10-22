@@ -431,7 +431,7 @@ static void _esvg_svg_image_uri_absolute_get(const char *name,
 		if (width != 0 && height != 0)
 			sprintf(options, "width=%d;height=%d", (int)width, (int)height);
 
-		ret = emage_load(name, s, ENESIM_FORMAT_ARGB8888, NULL, options);
+		ret = emage_file_load(name, s, ENESIM_FORMAT_ARGB8888, NULL, options);
 		if (!ret)
 		{
 			Eina_Error err;
