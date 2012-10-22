@@ -111,23 +111,33 @@ static void _emage_svg_options_free(void *data)
  */
 static Eina_Error _emage_svg_info_load(Emage_Data *data, int *w, int *h, Enesim_Buffer_Format *sfmt, void *options)
 {
+	Esvg_Length width;
+	Esvg_Length height;
+	Eina_Bool mmaped = EINA_FALSE;
+	Eina_Error ret = 0;
 	double svg_w;
 	double svg_h;
 	int cw = _default_width;
 	int ch = _default_height;
 	char *mmap;
 	size_t size;
-	Esvg_Length width;
-	Esvg_Length height;
 
 	/* first try to map the data */
 	mmap = emage_data_mmap(data, &size);
-	/* TODO in case it fails, we should try to read the whole svg */
-	if (!mmap) return EMAGE_ERROR_LOADING;
+	/* in case it fails, we should try to read the whole svg */
+	if (!mmap)
+	{
+		size = emage_data_length(data);
+		if (!size) return EMAGE_ERROR_LOADING;
 
+		mmap = malloc(size);
+		emage_data_read(data, mmap, size);
+		mmaped = EINA_FALSE;
+	}
 	if (!esvg_parser_info_load_from_buffer(mmap, size, &width, &height))
 	{
-		return EMAGE_ERROR_LOADING;
+		ret = EMAGE_ERROR_LOADING;
+		goto err_load;
 	}
 	/* get the final size */
 	if (options)
@@ -146,7 +156,10 @@ static Eina_Error _emage_svg_info_load(Emage_Data *data, int *w, int *h, Enesim_
 	*h = (int)ceil(svg_h);
 	*sfmt = ENESIM_BUFFER_FORMAT_ARGB8888_PRE;
 
-	return 0;
+err_load:
+	if (mmaped)
+		free(mmap);
+	return ret;
 }
 
 static Eina_Error _emage_svg_load(Emage_Data *data, Enesim_Buffer *buffer, void *options)
@@ -154,7 +167,9 @@ static Eina_Error _emage_svg_load(Emage_Data *data, Enesim_Buffer *buffer, void 
 	Ender_Element *e;
 	Enesim_Surface *s;
 	Enesim_Error *err = NULL;
-	Eina_Bool ret;
+	Eina_Bool r;
+	Eina_Bool mmaped = EINA_TRUE;
+	Eina_Error ret = 0;
 	double svg_w;
 	double svg_h;
 	int w = _default_width;
@@ -165,13 +180,22 @@ static Eina_Error _emage_svg_load(Emage_Data *data, Enesim_Buffer *buffer, void 
 
 	/* first try to map the data */
 	mmap = emage_data_mmap(data, &size);
-	/* TODO in case it fails, we should try to read the whole svg */
-	if (!mmap) return EMAGE_ERROR_LOADING;
+	/* in case it fails, we should try to read the whole svg */
+	if (!mmap)
+	{
+		size = emage_data_length(data);
+		if (!size) return EMAGE_ERROR_LOADING;
+
+		mmap = malloc(size);
+		emage_data_read(data, mmap, size);
+		mmaped = EINA_FALSE;
+	}
 
 	e = esvg_parser_load_from_buffer(mmap, size);
 	if (!e)
 	{
-		return EMAGE_ERROR_LOADING;
+		ret = EMAGE_ERROR_LOADING;
+		goto err_parse;
 	}
 
 	if (options)
@@ -203,23 +227,29 @@ static Eina_Error _emage_svg_load(Emage_Data *data, Enesim_Buffer *buffer, void 
 	s = enesim_surface_new_buffer_from(buffer);
 	if (!s)
 	{
-		printf("no such surface\n");
-		return 0;
+		ret = EMAGE_ERROR_LOADING;
+		goto err_surface;
 	}
-	ret = esvg_svg_setup(e, &err);
-	if (!ret)
+	if (!esvg_svg_setup(e, &err))
 	{
 		enesim_error_dump(err);
+		ret = EMAGE_ERROR_LOADING;
+		goto err_setup;
 	}
-	ret = esvg_svg_draw(e, s, NULL, 0, 0, NULL);
-	if (!ret)
+	if (!esvg_svg_draw(e, s, NULL, 0, 0, NULL))
 	{
+		ret = EMAGE_ERROR_LOADING;
 		enesim_error_dump(err);
 	}
-	enesim_surface_unref(s);
-	// ender_element_unref(e);
 
-	return 0;
+err_setup:
+	enesim_surface_unref(s);
+err_surface:
+	//ender_element_unref(e);
+err_parse:
+	if (mmaped)
+		free(mmap);
+	return ret;
 }
 
 static Emage_Provider _provider = {
