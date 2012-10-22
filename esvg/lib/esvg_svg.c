@@ -1172,8 +1172,34 @@ void esvg_svg_image_load(Ender_Element *e, const char *uri, Enesim_Surface **s, 
 	data.s = s;
 	data.width = width;
 	data.height = height;
-	/* resolve the uri for relative/absolute */
-	esvg_iri_string_from(uri, &_uri_image_descriptor, &data);
+
+	/* check if the uri starts with image:data (embedded image) first */
+	if (!strncmp(uri, "data:image", 10))
+	{
+#if 0
+		Emage_Data *edata;
+		char *mime;
+
+		/* TODO get the mime and the buffer */
+		edata = emage_data_buffer_new(buffer, len);
+		ret = emage_load(edata, mime, s, ENESIM_FORMAT_ARGB8888, NULL, options);
+		if (!ret)
+		{
+			Eina_Error err;
+
+			err = eina_error_get();
+			ERR("Image '%s' failed to load with error: %s", name, eina_error_msg_get(err));
+			return;
+		}
+		emage_data_free(edata);
+		free(mime);
+#endif
+	}
+	else
+	{
+		/* resolve the uri for relative/absolute */
+		esvg_iri_string_from(uri, &_uri_image_descriptor, &data);
+	}
 }
 
 Enesim_Surface * esvg_svg_surface_new(Ender_Element *e, int w, int h)

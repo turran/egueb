@@ -142,9 +142,15 @@ static void _esvg_image_load(Edom_Tag *t, Esvg_Image *thiz, double width, double
 	if (!href) goto cleanup;
 
 	esvg_element_internal_topmost_get(t, &topmost);
-	real = esvg_svg_uri_resolve(topmost, href);
-	if (!real) goto cleanup;
-
+	if (!strncmp(href, "data:image", 10))
+	{
+		real = href;
+	}
+	else
+	{
+		real = esvg_svg_uri_resolve(topmost, href);
+		if (!real) goto cleanup;
+	}
 	/* check that the href has actually changed */
 	DBG("Using real uri %s for %s", href, real);
 	if (thiz->real_href)

@@ -50,19 +50,6 @@ typedef struct _Emage_Svg_Svg
 	Esvg_Length height;
 } Emage_Svg_Svg;
 
-static Eina_Bool _check_extension(const char *file)
-{
-	char *d;
-
-	d = strrchr(file, '.');
-	if (!d) return EINA_FALSE;
-
-	d++;
-	if (!strcasecmp(d, "svg"))
-		return EINA_TRUE;
-	return EINA_FALSE;
-}
-
 /*----------------------------------------------------------------------------*
  *                        Esvg Application Descriptor                         *
  *----------------------------------------------------------------------------*/
@@ -117,11 +104,6 @@ static void _emage_svg_options_free(void *data)
 {
 	Emage_Svg_Options *options = data;
 	free(options);
-}
-
-static Eina_Bool _emage_svg_loadable(const char *file)
-{
-	return _check_extension(file);
 }
 
 /* Here we should parse the first svg element only and return its
@@ -226,11 +208,35 @@ static Emage_Provider _provider = {
 	/* .type = 		*/ EMAGE_PROVIDER_SW,
 	/* .options_parse = 	*/ _emage_svg_options_parse,
 	/* .options_free = 	*/ _emage_svg_options_free,
-	/* .loadable = 		*/ _emage_svg_loadable,
+	/* .loadable = 		*/ NULL,
 	/* .saveable = 		*/ NULL,
 	/* .info_get = 		*/ _emage_svg_info_load,
 	/* .load = 		*/ _emage_svg_load,
 	/* .save = 		*/ NULL,
+};
+
+/*----------------------------------------------------------------------------*
+ *                           Emage Finder API                                 *
+ *----------------------------------------------------------------------------*/
+static const char * _emage_svg_find(Emage_Data *data)
+{
+	char buf[4];
+	char *ret = NULL;
+
+	while (emage_data_read(data, buf, 4))
+	{
+		/* check for the <svg tag */
+		if (strncmp(buf, "<svg", 4))
+		{
+			ret = "image/svg+xml";
+			break;
+		}
+	}
+	return ret;
+}
+
+static Emage_Finder _finder = {
+	/* .find = 		*/ _emage_svg_find,
 };
 /*----------------------------------------------------------------------------*
  *                             Module API                                     *
@@ -240,12 +246,20 @@ Eina_Bool svg_provider_init(void)
 	/* @todo
 	 * - Register svg specific errors
 	 */
-	return emage_provider_register(&_provider);
+	if (!emage_provider_register(&_provider, "image/svg+xml"))
+		return EINA_FALSE;
+	if (!emage_finder_register(&_finder))
+	{
+		emage_provider_unregister(&_provider, "image/svg+xml");
+		return EINA_FALSE;
+	}
+	return EINA_TRUE;
 }
 
 void svg_provider_shutdown(void)
 {
-	emage_provider_unregister(&_provider);
+	emage_finder_unregister(&_finder);
+	emage_provider_unregister(&_provider, "image/svg+xml");
 }
 
 EINA_MODULE_INIT(svg_provider_init);
