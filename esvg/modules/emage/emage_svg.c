@@ -242,14 +242,16 @@ static const char * _emage_svg_find(Emage_Data *data)
 	char buf[4];
 	char *ret = NULL;
 
-	while (emage_data_read(data, buf, 4))
+	/* FIXME for now try to find the <svg tag on the first
+	 * 4 chars, the best way would be to skip the xml definition
+	 * and just start on the first tag found
+	 */
+	/* only try to find the <svg tag in the first 128 bytes */
+	emage_data_read(data, buf, 4);
+	/* check for the <svg tag */
+	if (!strncmp(buf, "<svg", 4))
 	{
-		/* check for the <svg tag */
-		if (strncmp(buf, "<svg", 4))
-		{
-			ret = "image/svg+xml";
-			break;
-		}
+		ret = "image/svg+xml";
 	}
 	return ret;
 }
