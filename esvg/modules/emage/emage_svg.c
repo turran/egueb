@@ -272,7 +272,7 @@ static Emage_Provider _provider = {
 /*----------------------------------------------------------------------------*
  *                           Emage Finder API                                 *
  *----------------------------------------------------------------------------*/
-static const char * _emage_svg_find(Emage_Data *data)
+static const char * _emage_svg_data_from(Emage_Data *data)
 {
 	char buf[4];
 	char *ret = NULL;
@@ -291,8 +291,16 @@ static const char * _emage_svg_find(Emage_Data *data)
 	return ret;
 }
 
+static const char * _emage_svg_extension_from(const char *ext)
+{
+	if (!strcmp(ext, "svg"))
+		return "image/svg+xml";
+	return NULL;
+}
+
 static Emage_Finder _finder = {
-	/* .find = 		*/ _emage_svg_find,
+	/* .data_from 		= */ _emage_svg_data_from,
+	/* .extension_from 	= */ _emage_svg_extension_from,
 };
 /*----------------------------------------------------------------------------*
  *                             Module API                                     *
