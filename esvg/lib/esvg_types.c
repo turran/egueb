@@ -2155,6 +2155,11 @@ EAPI Eina_Bool esvg_duration_string_from(Esvg_Duration *d, const char *attr)
 	else
 	{
 		ret = esvg_clock_string_from(&d->data.clock, attr);
+		if (!ret)
+		{
+			ERR("Impossible to parse the duration '%s'", attr);
+			return ret;
+		}
 		d->type = ESVG_DURATION_TYPE_CLOCK;
 		DBG("duration is %" ETCH_TIME_FORMAT, ETCH_TIME_ARGS(d->data.clock));
 	}

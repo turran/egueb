@@ -479,8 +479,8 @@ static Eina_Bool _esvg_animation_attribute_set(Ender_Element *e,
 	{
 		Esvg_Duration dur;
 
-		esvg_duration_string_from(&dur, value);
-		esvg_animation_dur_set(e, &dur);
+		if (esvg_duration_string_from(&dur, value))
+			esvg_animation_dur_set(e, &dur);
 	}
 	else if (!strcmp(key, "begin"))
 	{
@@ -675,6 +675,7 @@ Edom_Tag * esvg_animation_new(Esvg_Animation_Descriptor *descriptor, Esvg_Type t
 	thiz->ctx.timing.fill = ESVG_FILL_REMOVE;
 	thiz->ctx.addition.additive = ESVG_ADDITIVE_REPLACE;
 	thiz->ctx.addition.accumulate = ESVG_ACCUMULATE_NONE;
+	thiz->ctx.timing.dur.type = ESVG_DURATION_TYPE_INDEFINITE;
 
 	pdescriptor.attribute_set = _esvg_animation_attribute_set;
 	pdescriptor.attribute_get = _esvg_animation_attribute_get;

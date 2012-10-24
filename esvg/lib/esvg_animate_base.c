@@ -501,9 +501,13 @@ static void _esvg_animate_base_animation_create(Esvg_Animate_Base *thiz,
 		from = thiz->d->value_new();
 		thiz->values = eina_list_prepend(thiz->values, from);
 		start_cb = _esvg_animate_base_animation_start_and_fetch_cb;
-		ERR("NO FROM!");
 	}
 	_esvg_animate_base_times_generate(&actx->timing.dur, &thiz->current, thiz->values, &thiz->times);
+	if (!thiz->times)
+	{
+		ERR("No time defined");
+		return;
+	}
 
 	/* check if we are the first animation */
 	if (actx->addition.additive == ESVG_ADDITIVE_SUM)
