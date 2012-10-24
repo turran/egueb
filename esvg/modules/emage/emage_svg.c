@@ -213,6 +213,8 @@ static Eina_Error _emage_svg_load(Emage_Data *data, Enesim_Buffer *buffer, void 
 		char *tmp;
 
 		tmp = dirname(location);
+		if (!strcmp(tmp, "."))
+			tmp = "./";
 		base_dir = strdup(tmp);
 		esvg_svg_application_descriptor_set(e, &_emage_svg_descriptor, base_dir);
 		free(location);
