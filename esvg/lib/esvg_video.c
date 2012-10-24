@@ -159,6 +159,14 @@ static void _esvg_video_pipeline_setup(Esvg_Video *thiz)
 
 	gst_element_set_state(thiz->playbin2, GST_STATE_PLAYING);
 }
+
+static void _esvg_video_pipeline_cleanup(Esvg_Video *thiz)
+{
+	gst_element_set_state(thiz->playbin2, GST_STATE_NULL);
+	gst_object_unref(thiz->playbin2);
+	gst_object_unref(thiz->enesim_sink);
+}
+
 #endif
 /*----------------------------------------------------------------------------*
  *                       The Esvg Renderable interface                        *
@@ -318,6 +326,9 @@ static void _esvg_video_free(Edom_Tag *t)
 	Esvg_Video *thiz;
 
 	thiz = _esvg_video_get(t);
+#ifdef BUILD_ESVG_VIDEO
+	_esvg_video_pipeline_cleanup(thiz);
+#endif
 	free(thiz);
 }
 
