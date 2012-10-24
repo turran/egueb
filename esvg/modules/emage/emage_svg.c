@@ -274,19 +274,24 @@ static Emage_Provider _provider = {
  *----------------------------------------------------------------------------*/
 static const char * _emage_svg_data_from(Emage_Data *data)
 {
-	char buf[4];
+	char buf[256];
 	char *ret = NULL;
+	int count;
+	int i;
 
-	/* FIXME for now try to find the <svg tag on the first
-	 * 4 chars, the best way would be to skip the xml definition
-	 * and just start on the first tag found
-	 */
-	/* only try to find the <svg tag in the first 128 bytes */
-	emage_data_read(data, buf, 4);
-	/* check for the <svg tag */
-	if (!strncmp(buf, "<svg", 4))
+	/* only try to find the <svg tag in the first 256 bytes */
+	count = emage_data_read(data, buf, 256);
+	for (i = 0; i < count; i++)
 	{
-		ret = "image/svg+xml";
+		if (buf[i] == '<' && i + 4 < count)
+		{
+			/* check for the <svg tag */
+			if (!strncmp(&buf[i], "<svg", 4))
+			{
+				ret = "image/svg+xml";
+				break;
+			}
+		}
 	}
 	return ret;
 }
