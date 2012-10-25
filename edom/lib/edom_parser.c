@@ -22,8 +22,6 @@
 
 #include <ctype.h> /* for isspace() */
 
-#include <Eina.h>
-
 #include "Edom.h"
 #include "edom_private.h"
 /*============================================================================*
@@ -42,6 +40,9 @@ struct _Edom_Parser
 {
 	Eina_Array *contexts;
 	Edom_Parser_Descriptor *descriptor;
+	/* add a table for the different entities available on the
+	 * document
+	 */
 	char *root;
 	char *location;
 	void *data;
@@ -223,6 +224,7 @@ static Eina_Bool _edom_parser_cb(void *data, Eina_Simple_XML_Type type,
 		break;
 
 		default:
+		ERR("Unsupported case %d", type);
 		break;
 	}
 

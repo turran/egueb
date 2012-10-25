@@ -10,6 +10,7 @@ AM_CPPFLAGS = \
 lib_LTLIBRARIES = libedom.la
 
 libedom_la_SOURCES = \
+edom_main.c \
 edom_tag.c \
 edom_parser.c
 
