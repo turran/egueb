@@ -100,6 +100,7 @@ static Eina_Bool _edom_parser_tag_attributes_set_cb(void *data, const char *key,
 				s++;
 				continue;
 			}
+			DBG("Entity '%s' found", entity);
 			s = e;
 			if (!transformed)
 			{
