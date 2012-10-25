@@ -39,10 +39,9 @@ typedef struct _Edom_Parser_Context
 struct _Edom_Parser
 {
 	Eina_Array *contexts;
+	Eina_Hash *entities;
 	Edom_Parser_Descriptor *descriptor;
-	/* add a table for the different entities available on the
-	 * document
-	 */
+	Eina_Strbuf *string;
 	char *root;
 	char *location;
 	void *data;
@@ -53,6 +52,24 @@ typedef struct _Edom_Parser_Attribute_Data
 	Edom_Parser *thiz;
 	void *tag;
 } Edom_Parser_Attribute_Data;
+
+static const char * _edom_parser_get_entity(Edom_Parser *thiz, const char *s, const char **e)
+{
+	const char *tmp;
+	char entity[128];
+	const char *rep;
+	int len;
+
+	tmp = s;
+	while (*tmp != ';')
+		tmp++;
+	len = tmp - s - 1;
+	strncpy(entity, s + 1, len);
+	entity[len] = '\0';
+	*e = tmp;
+
+	return eina_hash_find(thiz->entities, entity);
+}
 
 static Eina_Bool _edom_parser_tag_get(Edom_Parser *thiz, const char *content, size_t sz,
 		int *tag_id)
@@ -68,8 +85,38 @@ static Eina_Bool _edom_parser_tag_attributes_set_cb(void *data, const char *key,
 	Edom_Parser_Attribute_Data *attr_data = data;
 	Edom_Parser *thiz = attr_data->thiz;
 	void *tag = attr_data->tag;
+	const char *s = value;
+	Eina_Bool transformed = EINA_FALSE;
 
-	return thiz->descriptor->tag_attribute_set(thiz, tag, key, value);
+	while (*s)
+	{
+		if (*s == '&')
+		{
+			const char *entity;
+			const char *e;
+			entity = _edom_parser_get_entity(thiz, s, &e);
+			if (!entity)
+			{
+				s++;
+				continue;
+			}
+			s = e;
+			if (!transformed)
+			{
+				eina_strbuf_reset(thiz->string);
+				eina_strbuf_append_length(thiz->string, s, s - e);
+				transformed = EINA_TRUE;
+			}
+			eina_strbuf_append(thiz->string, entity);
+		}
+		else if (transformed)
+		{
+			eina_strbuf_append_char(thiz->string, *s);
+		}
+		s++;
+	}
+
+	return thiz->descriptor->tag_attribute_set(thiz, tag, key, transformed ? eina_strbuf_string_get(thiz->string) : value);
 }
 
 static void * _edom_parser_topmost_get(Edom_Parser *thiz)
@@ -128,6 +175,39 @@ static void _edom_parser_tag_text_set(Edom_Parser *thiz, void *t, const char *te
 	if (!thiz->descriptor->tag_text_set) return;
 	thiz->descriptor->tag_text_set(thiz, t, text, length);
 }
+		
+static void _edom_parser_doctype_child(Edom_Parser *thiz, const char *text, unsigned int length)
+{
+	while (isspace(*text))
+		text++;
+	/* entity NAME "ATTR" */
+	if (!strncmp(text, "ENTITY", 6))
+	{
+		const char *tmp;
+		char *name;
+		char *attr;
+
+		text += 6;
+		/* skip the spaces until the name */
+		while (isspace(*text))
+			text++;
+		tmp = text;
+		while (!isspace(*text))
+			text++;
+		name = strndup(tmp, text - tmp);
+		/* get the attribute value */
+		/* skip the spaces until the "" */
+		while (*text != '"')
+			text++;
+		text++;
+		tmp = text;
+		while (*text != '"')
+			text++;
+		/* get the string inside the " " */
+		attr = strndup(tmp, text - tmp);
+		eina_hash_add(thiz->entities, name, attr);
+	}
+}
 /*----------------------------------------------------------------------------*
  *                      Eina's simple XML interface                           *
  *----------------------------------------------------------------------------*/
@@ -150,9 +230,6 @@ static Eina_Bool _edom_parser_cb(void *data, Eina_Simple_XML_Type type,
 
 	switch (type)
 	{
-		case EINA_SIMPLE_XML_COMMENT:
-			/* FIXME what to do here ... the comments are still being parsed */
-			break;
 		case EINA_SIMPLE_XML_OPEN:
 		case EINA_SIMPLE_XML_OPEN_EMPTY:
 		{
@@ -223,6 +300,15 @@ static Eina_Bool _edom_parser_cb(void *data, Eina_Simple_XML_Type type,
 			_edom_parser_tag_cdata_set(thiz, parent->tag, content, length);
 		break;
 
+		case EINA_SIMPLE_XML_DOCTYPE_CHILD:
+		_edom_parser_doctype_child(thiz, content, length);
+		break;
+
+		case EINA_SIMPLE_XML_IGNORED:
+		case EINA_SIMPLE_XML_COMMENT:
+		case EINA_SIMPLE_XML_DOCTYPE:
+		break;
+
 		default:
 		ERR("Unsupported case %d", type);
 		break;
@@ -244,6 +330,8 @@ EAPI Edom_Parser * edom_parser_new(Edom_Parser_Descriptor *descriptor, void *dat
 	thiz->contexts = eina_array_new(1);
 	thiz->descriptor = descriptor;
 	thiz->data = data;
+	thiz->entities = eina_hash_string_superfast_new(NULL);
+	thiz->string = eina_strbuf_new();
 
 	return thiz;
 }
