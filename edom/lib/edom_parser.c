@@ -78,7 +78,7 @@ static Eina_Bool _edom_parser_transform_text(Edom_Parser *thiz, const char *text
 	const char *s = text;
 
 	/* until eos */
-	if (!len) len = -1;
+	if (!len) len = strlen(text);
 	while (s < text + len && *s)
 	{
 		if (*s == '&')
@@ -197,7 +197,6 @@ static void _edom_parser_tag_text_set(Edom_Parser *thiz, void *t, const char *te
 	{
 		text = eina_strbuf_string_get(thiz->string);
 		length = eina_strbuf_length_get(thiz->string);
-		printf("text = %s\n", text);
 	}
 	thiz->descriptor->tag_text_set(thiz, t, text, length);
 }
@@ -231,6 +230,7 @@ static void _edom_parser_doctype_child(Edom_Parser *thiz, const char *text, unsi
 			text++;
 		/* get the string inside the " " */
 		attr = strndup(tmp, text - tmp);
+		DBG("Adding entity '%s' for '%s'", attr, name);
 		eina_hash_add(thiz->entities, name, attr);
 	}
 }
