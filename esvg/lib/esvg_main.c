@@ -209,18 +209,26 @@ static Eina_Bool _esvg_dependencies_init(void)
 		goto shutdown_etex;
 	}
 
+	if (!edom_init())
+	{
+		fprintf(stderr, "Esvg: Emage init failed");
+		goto shutdown_emage;
+	}
+
 	etch_init();
 
 	if (!_esvg_ender_init())
 	{
 		fprintf(stderr, "Esvg: Ender init failed");
-		goto shutdown_emage;
+		goto shutdown_edom;
 	}
 #if BUILD_ESVG_VIDEO
 	gst_init(NULL, NULL);
 #endif
 	return EINA_TRUE;
 
+shutdown_edom:
+	edom_shutdown();
 shutdown_emage:
 	etch_shutdown();
 	emage_shutdown();
@@ -352,6 +360,7 @@ EAPI int esvg_shutdown(void)
 	}
 	/* TODO shutdown dependencies */
 	_esvg_ender_shutdown();
+	edom_shutdown();
 	etex_shutdown();
 	enesim_shutdown();
 	eina_shutdown();

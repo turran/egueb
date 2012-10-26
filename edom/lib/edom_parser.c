@@ -71,6 +71,49 @@ static const char * _edom_parser_get_entity(Edom_Parser *thiz, const char *s, co
 	return eina_hash_find(thiz->entities, entity);
 }
 
+static Eina_Bool _edom_parser_transform_text(Edom_Parser *thiz, const char *text, unsigned int len)
+{
+	Eina_Bool transformed = EINA_FALSE;
+	const char *last = NULL;
+	const char *s = text;
+
+	/* until eos */
+	if (!len) len = -1;
+	while (s < text + len && *s)
+	{
+		if (*s == '&')
+		{
+			const char *entity;
+			const char *e;
+			entity = _edom_parser_get_entity(thiz, s, &e);
+			if (!entity)
+			{
+				s++;
+				continue;
+			}
+			DBG("Entity '%s' found", entity);
+			if (!transformed)
+			{
+				eina_strbuf_reset(thiz->string);
+				eina_strbuf_append_length(thiz->string, text, s - text);
+				transformed = EINA_TRUE;
+			}
+			if (last)
+				eina_strbuf_append_length(thiz->string, last, s - last);
+			eina_strbuf_append(thiz->string, entity);
+			last = e + 1;
+			s = e;
+		}
+		s++;
+	}
+	if (last)
+	{
+		eina_strbuf_append_length(thiz->string, last, s - last);
+	}
+
+	return transformed;
+}
+
 static Eina_Bool _edom_parser_tag_get(Edom_Parser *thiz, const char *content, size_t sz,
 		int *tag_id)
 {
@@ -85,39 +128,12 @@ static Eina_Bool _edom_parser_tag_attributes_set_cb(void *data, const char *key,
 	Edom_Parser_Attribute_Data *attr_data = data;
 	Edom_Parser *thiz = attr_data->thiz;
 	void *tag = attr_data->tag;
-	const char *s = value;
 	Eina_Bool transformed = EINA_FALSE;
 
-	while (*s)
-	{
-		if (*s == '&')
-		{
-			const char *entity;
-			const char *e;
-			entity = _edom_parser_get_entity(thiz, s, &e);
-			if (!entity)
-			{
-				s++;
-				continue;
-			}
-			DBG("Entity '%s' found", entity);
-			s = e;
-			if (!transformed)
-			{
-				eina_strbuf_reset(thiz->string);
-				eina_strbuf_append_length(thiz->string, s, s - e);
-				transformed = EINA_TRUE;
-			}
-			eina_strbuf_append(thiz->string, entity);
-		}
-		else if (transformed)
-		{
-			eina_strbuf_append_char(thiz->string, *s);
-		}
-		s++;
-	}
-
-	return thiz->descriptor->tag_attribute_set(thiz, tag, key, transformed ? eina_strbuf_string_get(thiz->string) : value);
+	transformed = _edom_parser_transform_text(thiz, value, 0);
+	if (transformed)
+		value = eina_strbuf_string_get(thiz->string);
+	return thiz->descriptor->tag_attribute_set(thiz, tag, key, value);
 }
 
 static void * _edom_parser_topmost_get(Edom_Parser *thiz)
@@ -172,8 +188,17 @@ static void _edom_parser_tag_cdata_set(Edom_Parser *thiz, void *t, const char *c
 
 static void _edom_parser_tag_text_set(Edom_Parser *thiz, void *t, const char *text, unsigned int length)
 {
+	Eina_Bool transformed;
 	if (!thiz->descriptor) return;
 	if (!thiz->descriptor->tag_text_set) return;
+
+	transformed = _edom_parser_transform_text(thiz, text, length);
+	if (transformed)
+	{
+		text = eina_strbuf_string_get(thiz->string);
+		length = eina_strbuf_length_get(thiz->string);
+		printf("text = %s\n", text);
+	}
 	thiz->descriptor->tag_text_set(thiz, t, text, length);
 }
 		
@@ -332,6 +357,12 @@ EAPI Edom_Parser * edom_parser_new(Edom_Parser_Descriptor *descriptor, void *dat
 	thiz->descriptor = descriptor;
 	thiz->data = data;
 	thiz->entities = eina_hash_string_superfast_new(NULL);
+	/* add common entities */
+	eina_hash_add(thiz->entities, "quot", strdup("\""));
+	eina_hash_add(thiz->entities, "amp", strdup("&"));
+	eina_hash_add(thiz->entities, "apos", strdup("'"));
+	eina_hash_add(thiz->entities, "lt", strdup("<"));
+	eina_hash_add(thiz->entities, "gt", strdup(">"));
 	thiz->string = eina_strbuf_new();
 
 	return thiz;
@@ -340,6 +371,8 @@ EAPI Edom_Parser * edom_parser_new(Edom_Parser_Descriptor *descriptor, void *dat
 EAPI void edom_parser_delete(Edom_Parser *thiz)
 {
 	eina_array_free(thiz->contexts);
+	eina_hash_free(thiz->entities);
+	eina_strbuf_free(thiz->string);
 	free(thiz);
 }
 
