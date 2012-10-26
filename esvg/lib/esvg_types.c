@@ -2322,3 +2322,44 @@ EAPI Eina_Bool esvg_visibility_string_from(Esvg_Visibility *v, const char *attr)
 	return EINA_TRUE;
 }
 
+EAPI Eina_Bool esvg_display_string_from(Esvg_Display *d, const char *attr)
+{
+	if (!strcmp(attr, "inline"))
+		*d = ESVG_DISPLAY_INLINE;
+	else if (!strcmp(attr, "block"))
+		*d = ESVG_DISPLAY_BLOCK;
+	else if (!strcmp(attr, "list-item"))
+		*d = ESVG_DISPLAY_LIST_ITEM;
+	else if (!strcmp(attr, "run-in"))
+		*d = ESVG_DISPLAY_RUN_IN;
+	else if (!strcmp(attr, "compact"))
+		*d = ESVG_DISPLAY_COMPACT;
+	else if (!strcmp(attr, "marker"))
+		*d = ESVG_DISPLAY_MARKER;
+	else if (!strcmp(attr, "table"))
+		*d = ESVG_DISPLAY_TABLE;
+	else if (!strcmp(attr, "inline-table"))
+		*d = ESVG_DISPLAY_INLINE_TABLE;
+	else if (!strcmp(attr, "table-row-group"))
+		*d = ESVG_DISPLAY_TABLE_ROW_GROUP;
+	else if (!strcmp(attr, "table-header-group"))
+		*d = ESVG_DISPLAY_TABLE_HEADER_GROUP;
+	else if (!strcmp(attr, "table-footer-group"))
+		*d = ESVG_DISPLAY_TABLE_FOOTER_GROUP;
+	else if (!strcmp(attr, "table-row"))
+		*d = ESVG_DISPLAY_TABLE_ROW;
+	else if (!strcmp(attr, "table-column-group"))
+		*d = ESVG_DISPLAY_TABLE_COLUMN_GROUP;
+	else if (!strcmp(attr, "table-column"))
+		*d = ESVG_DISPLAY_TABLE_COLUMN;
+	else if (!strcmp(attr, "table-cell"))
+		*d = ESVG_DISPLAY_TABLE_CELL;
+	else if (!strcmp(attr, "table-caption"))
+		*d = ESVG_DISPLAY_TABLE_CAPTION;
+	else if (!strcmp(attr, "none"))
+		*d = ESVG_DISPLAY_NONE;
+	else
+		return EINA_FALSE;
+	return EINA_TRUE;
+}
+

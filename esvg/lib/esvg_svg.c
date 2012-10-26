@@ -391,13 +391,17 @@ static void _esvg_svg_element_uri_local_get(const char *name,
 static void _esvg_svg_element_uri_absolute_get(const char *name,
 		const char *fragment, void *user_data)
 {
-	printf("TODO fetching an absolute uri element\n");
+	printf("TODO fetching an absolute uri element '%s'\n", name);
 }
 
 static void _esvg_svg_element_uri_relative_get(const char *name,
 		const char *fragment, void *user_data)
 {
-	printf("TODO fetching an relative uri element\n");
+	Esvg_Svg_Uri_Data *data = user_data;
+	Esvg_Svg *thiz = data->thiz;
+	Ender_Element **e = data->ret;
+
+	*e = eina_hash_find(thiz->ids, name);
 }
 
 static Esvg_Uri_Descriptor _uri_element_descriptor = {

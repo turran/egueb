@@ -15,7 +15,6 @@
  * ‘color-rendering’,
  * ‘cursor’,
  * ‘direction’,
- * ‘display’,
  * ‘dominant-baseline’,
  * ‘enable-background’,
  * ‘filter’,
@@ -67,6 +66,7 @@ typedef struct _Esvg_Attribute_Presentation {
 	Esvg_Attribute_Enum visibility;
 	Esvg_Attribute_Color stop_color;
 	Esvg_Attribute_Number stop_opacity;
+	Esvg_Attribute_Enum display;
 	/* are they set? */
 	/* how may are set ? */
 	int sets;

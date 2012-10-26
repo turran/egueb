@@ -119,6 +119,7 @@ namespace "esvg" : 0 {
 		esvg_animated_number "fill-opacity";
 		esvg_animated_number "stroke-opacity";
 		esvg_animated_enum "visibility";
+		esvg_animated_enum "display";
 		esvg_animated_color "stop-color";
 		esvg_animated_number "stop-opacity";
 		/* other attributes */

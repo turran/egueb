@@ -478,6 +478,27 @@ typedef enum _Esvg_Visibility
 	ESVG_VISIBILITY_COLLAPSE
 } Esvg_Visibility;
 
+typedef enum _Esvg_Display
+{
+	ESVG_DISPLAY_INLINE,
+	ESVG_DISPLAY_BLOCK,
+	ESVG_DISPLAY_LIST_ITEM,
+	ESVG_DISPLAY_RUN_IN,
+	ESVG_DISPLAY_COMPACT,
+	ESVG_DISPLAY_MARKER,
+	ESVG_DISPLAY_TABLE,
+	ESVG_DISPLAY_INLINE_TABLE,
+	ESVG_DISPLAY_TABLE_ROW_GROUP,
+	ESVG_DISPLAY_TABLE_HEADER_GROUP,
+	ESVG_DISPLAY_TABLE_FOOTER_GROUP,
+	ESVG_DISPLAY_TABLE_ROW,
+	ESVG_DISPLAY_TABLE_COLUMN_GROUP,
+	ESVG_DISPLAY_TABLE_COLUMN,
+	ESVG_DISPLAY_TABLE_CELL,
+	ESVG_DISPLAY_TABLE_CAPTION,
+	ESVG_DISPLAY_NONE,
+} Esvg_Display;
+
 typedef void (*Esvg_Uri_Get)(const char *uri, const char *fragment, void *data);
 
 typedef struct _Esvg_Uri_Descriptor
@@ -556,7 +577,7 @@ EAPI Eina_Bool esvg_additive_string_from(Esvg_Additive *add, const char *attr);
 EAPI Eina_Bool esvg_accumulate_string_from(Esvg_Accumulate *acc, const char *attr);
 EAPI Eina_Bool esvg_repeat_count_string_from(int *rc, const char *attr);
 EAPI Eina_Bool esvg_visibility_string_from(Esvg_Visibility *v, const char *attr);
-
+EAPI Eina_Bool esvg_display_string_from(Esvg_Display *d, const char *attr);
 
 EAPI Eina_Bool esvg_type_is_animation(Esvg_Type type);
 EAPI Eina_Bool esvg_type_is_paint_server(Esvg_Type type);

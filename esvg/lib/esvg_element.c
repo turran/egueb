@@ -80,6 +80,7 @@ static Ender_Property *ESVG_ELEMENT_STROKE_WIDTH;
 static Ender_Property *ESVG_ELEMENT_VISIBILITY;
 static Ender_Property *ESVG_ELEMENT_STOP_COLOR;
 static Ender_Property *ESVG_ELEMENT_STOP_OPACITY;
+static Ender_Property *ESVG_ELEMENT_DISPLAY;
 static Ender_Property *ESVG_ELEMENT_TOPMOST;
 
 typedef struct _Esvg_Element_Descriptor_Internal
@@ -120,6 +121,7 @@ typedef struct _Esvg_Element_Attributes
 	Esvg_Attribute_Animated_Enum stroke_line_join;
 	Esvg_Attribute_Animated_Enum fill_rule;
 	Esvg_Attribute_Animated_Enum visibility;
+	Esvg_Attribute_Animated_Enum display;
 	/* FIXME do we really need this? */
 	int sets;
 	/* has something changed ? */
@@ -264,6 +266,10 @@ static int * _esvg_element_attribute_animated_fetch(Esvg_Element *thiz, const ch
 	{
 		animated = &thiz->current_attr->visibility.animated;
 	}
+	else if (strcmp(attr, "display") == 0)
+	{
+		animated = &thiz->current_attr->display.animated;
+	}
 	return animated;
 }
 
@@ -334,6 +340,7 @@ static void _esvg_element_attribute_presentation_setup(Esvg_Element_Attributes *
 	esvg_attribute_enum_unset(&a->stroke_line_join.base, ESVG_LINE_JOIN_MITER);
 	esvg_attribute_number_unset(&a->stop_opacity.base, 1.0);
 	esvg_attribute_enum_unset(&a->visibility.base, ESVG_VISIBILITY_VISIBLE);
+	esvg_attribute_enum_unset(&a->display.base, ESVG_DISPLAY_BLOCK);
 }
 
 static void _esvg_element_attribute_presentation_merge(
@@ -369,6 +376,8 @@ static void _esvg_element_attribute_presentation_merge(
 	esvg_attribute_animated_number_merge(&s->stop_opacity, &d->stop_opacity);
 	/* stop color */
 	esvg_attribute_animated_color_merge(&s->stop_color, &d->stop_color);
+	/* display */
+	esvg_attribute_animated_enum_merge(&s->display, &d->display);
 	
 }
 
@@ -406,6 +415,8 @@ static void _esvg_element_attribute_presentation_merge_rel(
 	esvg_attribute_animated_number_merge_rel(&rel->stop_opacity, &s->stop_opacity, &d->stop_opacity);
 	/* stop color */
 	esvg_attribute_animated_color_merge_rel(&rel->stop_color, &s->stop_color, &d->stop_color);
+	/* display */
+	esvg_attribute_animated_enum_merge_rel(&rel->display, &s->display, &d->display);
 }
 /*----------------------------------------------------------------------------*
  *                               Setup helpers                                *
@@ -831,6 +842,24 @@ static void _esvg_element_visibility_get(Edom_Tag *t, Esvg_Animated_Enum *visibi
 	esvg_attribute_animated_enum_get(&thiz->current_attr->visibility,
 		visibility);
 }
+
+static void _esvg_element_display_set(Edom_Tag *t, Esvg_Animated_Enum *display)
+{
+	Esvg_Element *thiz;
+
+	thiz = _esvg_element_get(t);
+	esvg_attribute_animated_enum_extended_set(&thiz->current_attr->display,
+		display, ESVG_DISPLAY_BLOCK, thiz->current_attr_animate, &thiz->current_attr->sets);
+}
+
+static void _esvg_element_display_get(Edom_Tag *t, Esvg_Animated_Enum *display)
+{
+	Esvg_Element *thiz;
+
+	thiz = _esvg_element_get(t);
+	esvg_attribute_animated_enum_get(&thiz->current_attr->display,
+		display);
+}
 /*----------------------------------------------------------------------------*
  *                           The Edom Tag interface                           *
  *----------------------------------------------------------------------------*/
@@ -1018,6 +1047,12 @@ static Eina_Bool _esvg_element_attribute_set(Edom_Tag *t, const char *key, const
 		Esvg_Visibility visibility;
 		esvg_visibility_string_from(&visibility, value);
 		esvg_element_visibility_set(thiz->e, visibility);
+	}
+	else if (strcmp(key, "display") == 0)
+	{
+		Esvg_Display display;
+		esvg_display_string_from(&display, value);
+		esvg_element_display_set(thiz->e, display);
 	}
 	/* TODO in theory we should not allow css attributes to continue */
 	else
@@ -1728,6 +1763,7 @@ Edom_Tag * esvg_element_new(Esvg_Element_Descriptor *descriptor, Esvg_Type type,
 #define _esvg_element_visibility_is_set NULL
 #define _esvg_element_stop_color_is_set NULL
 #define _esvg_element_stop_opacity_is_set NULL
+#define _esvg_element_display_is_set NULL
 #include "generated/esvg_generated_element.c"
 
 /*============================================================================*
@@ -2127,6 +2163,16 @@ EAPI void esvg_element_visibility_set(Ender_Element *e, Esvg_Visibility visibili
 EAPI void esvg_element_visibility_unset(Ender_Element *e)
 {
 }
+
+/**
+ * To be documented
+ * FIXME: To be fixed
+ */
+EAPI void esvg_element_display_set(Ender_Element *e, Esvg_Display display)
+{
+	esvg_element_property_enum_set(e, ESVG_ELEMENT_DISPLAY, display);
+}
+
 
 /**
  * To be documented

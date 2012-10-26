@@ -127,6 +127,7 @@ static void _esvg_animation_begin_cb(Ender_Element *e,
 	Esvg_Animation *thiz = h->thiz;
 
 	/* call the begin interface */
+	DBG("Begin event '%s' received", event_name);
 	_esvg_animation_begin(thiz, h->ev->offset);
 }
 
@@ -137,11 +138,13 @@ static void _esvg_animation_end_cb(Ender_Element *e,
 	Esvg_Animation *thiz = h->thiz;
 
 	/* call the end interface */
+	DBG("End event '%s' received", event_name);
 	if (!thiz->started)
 		return;
 	DBG("Disabling animation");
 	if (thiz->descriptor.disable)
 		thiz->descriptor.disable(thiz->thiz_t);
+	thiz->started = EINA_FALSE;
 }
 
 static Eina_Bool _esvg_animation_event_setup(Esvg_Animation *thiz, Eina_List *events,
@@ -166,6 +169,12 @@ static Eina_Bool _esvg_animation_event_setup(Esvg_Animation *thiz, Eina_List *ev
 					ref = thiz->thiz_e;
 				else
 					ref = thiz->ctx.parent_e;
+			}
+			else
+			{
+				Ender_Element *topmost;
+				esvg_element_internal_topmost_get(thiz->thiz_t, &topmost);
+				esvg_svg_element_get(topmost, ae->id, &ref);
 			}
 
 			if (ref)
@@ -282,6 +291,7 @@ static Eina_Bool _esvg_animation_attribute_name_setup(Esvg_Animation *thiz)
 			p = ender_element_property_get(ctx->parent_e, ctx->target.attribute_name.curr);
 			if (!p)
 			{
+				ERR("Property '%s' not found", ctx->target.attribute_name.curr);
 				ret = EINA_FALSE;
 				goto done;
 			}

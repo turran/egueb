@@ -218,12 +218,21 @@ static Esvg_Element_Setup_Return _esvg_renderable_propagate(Esvg_Renderable *thi
 		Enesim_Error **error)
 {
 	Esvg_Element_Setup_Return ret;
+	Eina_Bool visible;
 
 	/* check if it is visible or not */
 	if (attr->visibility.v == ESVG_VISIBILITY_VISIBLE)
-		enesim_renderer_visibility_set(thiz->r, EINA_TRUE);
+		visible = EINA_TRUE;
 	else
-		enesim_renderer_visibility_set(thiz->r, EINA_FALSE);
+		visible = EINA_FALSE;
+
+	/* check if it should display or not */
+	if (attr->display.v != ESVG_DISPLAY_NONE)
+		visible = visible && EINA_TRUE;
+	else
+		visible = EINA_FALSE;
+
+	enesim_renderer_visibility_set(thiz->r, visible);
 
 	if (!thiz->descriptor.renderer_propagate)
 		return ESVG_SETUP_OK;
