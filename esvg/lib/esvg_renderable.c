@@ -317,6 +317,13 @@ static Esvg_Element_Setup_Return _esvg_renderable_setup(Edom_Tag *t,
 	Esvg_Element_Setup_Return ret;
 
 	thiz = _esvg_renderable_get(t);
+#if 0
+	/* FIXME for later */
+	/* check if it is visible or not */
+	if (!attr->visibility)
+		return ESVG_SETUP_OK;
+#endif
+
 	if (thiz->descriptor.setup)
 	{
 		if (!thiz->descriptor.setup(t, c, context, attr, error))

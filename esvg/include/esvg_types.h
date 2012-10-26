@@ -471,6 +471,13 @@ typedef struct _Esvg_Animation_Event
 	int64_t offset;
 } Esvg_Animation_Event;
 
+typedef enum _Esvg_Visibility
+{
+	ESVG_VISIBILITY_VISIBLE,
+	ESVG_VISIBILITY_HIDDEN,
+	ESVG_VISIBILITY_COLLAPSE
+} Esvg_Visibility;
+
 typedef void (*Esvg_Uri_Get)(const char *uri, const char *fragment, void *data);
 
 typedef struct _Esvg_Uri_Descriptor
@@ -548,6 +555,8 @@ EAPI Eina_Bool esvg_duration_string_from(Esvg_Duration *d, const char *attr);
 EAPI Eina_Bool esvg_additive_string_from(Esvg_Additive *add, const char *attr);
 EAPI Eina_Bool esvg_accumulate_string_from(Esvg_Accumulate *acc, const char *attr);
 EAPI Eina_Bool esvg_repeat_count_string_from(int *rc, const char *attr);
+EAPI Eina_Bool esvg_visibility_string_from(Esvg_Visibility *v, const char *attr);
+
 
 EAPI Eina_Bool esvg_type_is_animation(Esvg_Type type);
 EAPI Eina_Bool esvg_type_is_paint_server(Esvg_Type type);

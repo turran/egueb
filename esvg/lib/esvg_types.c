@@ -2289,7 +2289,8 @@ EAPI Eina_Bool esvg_animation_event_string_from(Esvg_Animation_Event *e, const c
 				e->event = strndup(start, len);
 			}
 			/* offset */
-			_animation_clock_parse(end + 1, &e->offset);
+			if (*end)
+				_animation_clock_parse(end + 1, &e->offset);
 		}
 	}
 	return EINA_TRUE;
@@ -2305,3 +2306,17 @@ EAPI void esvg_animation_event_offset_set(Esvg_Animation_Event *a, int64_t offse
 {
 
 }
+
+EAPI Eina_Bool esvg_visibility_string_from(Esvg_Visibility *v, const char *attr)
+{
+	if (!strcmp(attr, "visible"))
+		*v = ESVG_VISIBILITY_VISIBLE;
+	else if (!strcmp(attr, "hidden"))
+		*v = ESVG_VISIBILITY_HIDDEN;
+	else if (!strcmp(attr, "collapse"))
+		*v = ESVG_VISIBILITY_COLLAPSE;
+	else
+		return EINA_FALSE;
+	return EINA_TRUE;
+}
+

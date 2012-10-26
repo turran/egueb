@@ -329,6 +329,7 @@ static void _esvg_element_attribute_presentation_setup(Esvg_Element_Attributes *
 	esvg_attribute_enum_unset(&a->stroke_line_cap.base, ESVG_LINE_CAP_BUTT);
 	esvg_attribute_enum_unset(&a->stroke_line_join.base, ESVG_LINE_JOIN_MITER);
 	esvg_attribute_number_unset(&a->stop_opacity.base, 1.0);
+	esvg_attribute_bool_unset(&a->visibility.base, EINA_TRUE);
 }
 
 static void _esvg_element_attribute_presentation_merge(
@@ -1008,6 +1009,12 @@ static Eina_Bool _esvg_element_attribute_set(Edom_Tag *t, const char *key, const
 		double stop_opacity = esvg_number_string_from(value, 1.0);
 		esvg_element_stop_opacity_set(thiz->e, stop_opacity);
 	}
+	else if (strcmp(key, "visibility") == 0)
+	{
+		Esvg_Visibility visibility;
+		esvg_visibility_string_from(&visibility, value);
+		//esvg_element_visibility_set(thiz->e, visibility);
+	}
 	/* TODO in theory we should not allow css attributes to continue */
 	else
 	{
@@ -1219,7 +1226,7 @@ Eina_Bool esvg_element_attribute_animation_add(Edom_Tag *t, const char *attr,
 {
 	int *animated;
 
-	DBG("adding animation on %s", attr);
+	DBG("Adding animation on '%s'", attr);
 	animated = _esvg_element_attribute_animated_get(t, attr);
 	if (animated)
 	{
@@ -1237,7 +1244,7 @@ void esvg_element_attribute_animation_remove(Edom_Tag *t, const char *attr)
 {
 	int *animated;
 
-	DBG("removing animation on %s", attr);
+	DBG("Removing animation on '%s'", attr);
 	animated = _esvg_element_attribute_animated_get(t, attr);
 	if (animated)
 		(*animated)--;
