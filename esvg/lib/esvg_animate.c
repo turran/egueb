@@ -32,6 +32,8 @@
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
+#define ESVG_LOG_DEFAULT esvg_log_animate
+
 typedef struct _Esvg_Animate
 {
 	/* properties */
@@ -75,12 +77,11 @@ static Eina_Bool _esvg_animate_type_descriptor_get(Edom_Tag *t,
 		const char *name, Esvg_Attribute_Animated_Descriptor **d)
 {
 	if (!strcmp(name, "esvg_animated_transform"))
-	{
-		*d = NULL;
-		return EINA_TRUE;
-	}
+		goto done;
 	*d = esvg_attribute_animated_descriptor_get(name);
 	if (*d) return EINA_TRUE;
+done:
+	ERR("Can not animate '%s'", name);
 	return EINA_FALSE;
 }
 
