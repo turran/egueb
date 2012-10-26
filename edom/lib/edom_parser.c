@@ -43,7 +43,6 @@ struct _Edom_Parser
 	Edom_Parser_Descriptor *descriptor;
 	Eina_Strbuf *string;
 	char *root;
-	char *location;
 	void *data;
 };
 
@@ -374,38 +373,6 @@ EAPI void edom_parser_delete(Edom_Parser *thiz)
 	eina_hash_free(thiz->entities);
 	eina_strbuf_free(thiz->string);
 	free(thiz);
-}
-
-EAPI void edom_parser_location_set(Edom_Parser *thiz, const char *location)
-{
-	if (thiz->location)
-	{
-		free(thiz->location);
-		thiz->location = NULL;
-	}
-	if (location)
-	{
-		const char *tmp;
-		size_t len;
-
-		thiz->location = strdup(location);
-		/* get last '/' */
-		len = strlen(location);
-		tmp = location + len;
-		while (*tmp != '/' && tmp != location)
-			tmp--;
-
-		len = (tmp - location) + 1;
-		thiz->root = malloc(len + 1);
-		strncpy(thiz->root, location, len);
-		thiz->root[len] = '\0';
-	}
-}
-
-EAPI const char * edom_parser_location_get(Edom_Parser *thiz)
-{
-	if (!thiz) return NULL;
-	return thiz->location;
 }
 
 EAPI const char * edom_parser_root_get(Edom_Parser *thiz)

@@ -71,8 +71,6 @@ typedef struct _Edom_Parser_Descriptor
 
 EAPI Edom_Parser * edom_parser_new(Edom_Parser_Descriptor *descriptor, void *data);
 EAPI void edom_parser_delete(Edom_Parser *thiz);
-EAPI void edom_parser_location_set(Edom_Parser *thiz, const char *location);
-EAPI const char * edom_parser_location_get(Edom_Parser *thiz);
 EAPI const char * edom_parser_root_get(Edom_Parser *thiz);
 EAPI Eina_Bool edom_parser_parse(Edom_Parser *thiz, const char *content, size_t len);
 EAPI void * edom_parser_data_get(Edom_Parser *thiz);
