@@ -40,7 +40,7 @@ EAPI void esvg_element_stroke_line_cap_set(Ender_Element *e, Esvg_Stroke_Line_Ca
 EAPI void esvg_element_stroke_line_cap_unset(Ender_Element *e);
 EAPI void esvg_element_stroke_line_join_set(Ender_Element *e, Esvg_Stroke_Line_Join join);
 EAPI void esvg_element_stroke_line_join_unset(Ender_Element *e);
-EAPI void esvg_element_visibility_set(Ender_Element *e, Eina_Bool visibility);
+EAPI void esvg_element_visibility_set(Ender_Element *e, Esvg_Visibility visibility);
 EAPI void esvg_element_visibility_unset(Ender_Element *e);
 EAPI void esvg_element_stop_opacity_set(Ender_Element *e, double stop_opacity);
 EAPI void esvg_element_stop_opacity_get(Ender_Element *e, double *stop_opacity);

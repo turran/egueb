@@ -158,6 +158,7 @@ void esvg_attribute_presentation_setup(Esvg_Attribute_Presentation *thiz)
 	thiz->stroke_line_cap.v = ESVG_LINE_CAP_BUTT;
 	thiz->stroke_line_join.v = ESVG_LINE_JOIN_MITER;
 	thiz->stop_opacity.v = 1.0;
+	thiz->visibility.v = ESVG_VISIBILITY_VISIBLE;
 }
 
 void esvg_attribute_presentation_cleanup(Esvg_Attribute_Presentation *thiz)
@@ -204,7 +205,7 @@ void esvg_attribute_presentation_merge_rel(const Esvg_Attribute_Presentation *re
 	/* stroke opacity */
 	esvg_attribute_number_merge_rel(&rel->stroke_opacity, &s->stroke_opacity, &d->stroke_opacity);
 	/* visibility */
-	esvg_attribute_bool_merge_rel(&rel->visibility, &s->visibility, &d->visibility);
+	esvg_attribute_enum_merge_rel(&rel->visibility, &s->visibility, &d->visibility);
 	/* stop opacity */
 	esvg_attribute_number_merge_rel(&rel->stop_opacity, &s->stop_opacity, &d->stop_opacity);
 	/* stop color */

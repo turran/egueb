@@ -1359,6 +1359,56 @@ void esvg_attribute_enum_set(Esvg_Attribute_Enum *a, int v)
 	a->v = v;
 	a->is_set = EINA_TRUE;
 }
+
+void esvg_attribute_animated_enum_set(Esvg_Attribute_Animated_Enum *aa,
+	const Esvg_Animated_Enum *v,
+	int def,
+	Eina_Bool animate)
+{
+	Esvg_Attribute_Enum *a;
+	/* get the attribute to change */
+	if (animate)
+		a = &aa->anim;
+	else
+		a = &aa->base;
+	/* get the value to set */
+	if (v)
+		esvg_attribute_enum_set(a, v->base);
+	else
+		esvg_attribute_enum_unset(a, def);
+}
+
+
+void esvg_attribute_animated_enum_extended_set(Esvg_Attribute_Animated_Enum *aa,
+	const Esvg_Animated_Enum *v,
+	int def,
+	Eina_Bool animate,
+	int *set)
+{
+	Eina_Bool was_set;
+	Eina_Bool is_set;
+
+	was_set = aa->anim.is_set || aa->base.is_set;
+	esvg_attribute_animated_enum_set(aa, v, def, animate);
+	is_set = aa->anim.is_set || aa->base.is_set;
+	if (was_set && !is_set)
+		(*set)--;
+	else if (!was_set && is_set)
+		(*set)++;
+}
+
+void esvg_attribute_animated_enum_get(Esvg_Attribute_Animated_Enum *aa,
+	Esvg_Animated_Enum *v)
+{
+	if (!v) return;
+
+	v->base = aa->base.v;
+	if (aa->animated && aa->anim.is_set)
+		v->anim = aa->anim.v;
+	else
+		v->anim = v->base;
+}
+
 /*----------------------------------------------------------------------------*
  *                              Normal attributes                             *
  *----------------------------------------------------------------------------*/

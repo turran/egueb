@@ -119,7 +119,7 @@ typedef struct _Esvg_Element_Attributes
 	Esvg_Attribute_Animated_Enum stroke_line_cap;
 	Esvg_Attribute_Animated_Enum stroke_line_join;
 	Esvg_Attribute_Animated_Enum fill_rule;
-	Esvg_Attribute_Animated_Bool visibility;
+	Esvg_Attribute_Animated_Enum visibility;
 	/* FIXME do we really need this? */
 	int sets;
 	/* has something changed ? */
@@ -329,7 +329,7 @@ static void _esvg_element_attribute_presentation_setup(Esvg_Element_Attributes *
 	esvg_attribute_enum_unset(&a->stroke_line_cap.base, ESVG_LINE_CAP_BUTT);
 	esvg_attribute_enum_unset(&a->stroke_line_join.base, ESVG_LINE_JOIN_MITER);
 	esvg_attribute_number_unset(&a->stop_opacity.base, 1.0);
-	esvg_attribute_bool_unset(&a->visibility.base, EINA_TRUE);
+	esvg_attribute_enum_unset(&a->visibility.base, ESVG_VISIBILITY_VISIBLE);
 }
 
 static void _esvg_element_attribute_presentation_merge(
@@ -360,7 +360,7 @@ static void _esvg_element_attribute_presentation_merge(
 	/* stroke opacity */
 	esvg_attribute_animated_number_merge(&s->stroke_opacity, &d->stroke_opacity);
 	/* visibility */
-	//esvg_attribute_animated_bool_merge(&s->visibility, &d->visibility);
+	esvg_attribute_animated_enum_merge(&s->visibility, &d->visibility);
 	/* stop opacity */
 	esvg_attribute_animated_number_merge(&s->stop_opacity, &d->stop_opacity);
 	/* stop color */
@@ -397,7 +397,7 @@ static void _esvg_element_attribute_presentation_merge_rel(
 	/* stroke opacity */
 	esvg_attribute_animated_number_merge_rel(&rel->stroke_opacity, &s->stroke_opacity, &d->stroke_opacity);
 	/* visibility */
-	//esvg_attribute_animated_bool_merge_rel(&rel->visibility, &s->visibility, &d->visibility);
+	esvg_attribute_animated_enum_merge_rel(&rel->visibility, &s->visibility, &d->visibility);
 	/* stop opacity */
 	esvg_attribute_animated_number_merge_rel(&rel->stop_opacity, &s->stop_opacity, &d->stop_opacity);
 	/* stop color */
@@ -810,21 +810,21 @@ static void _esvg_element_stop_opacity_get(Edom_Tag *t, Esvg_Animated_Number *st
 		stop_opacity);
 }
 
-static void _esvg_element_visibility_set(Edom_Tag *t, Esvg_Animated_Bool *visibility)
+static void _esvg_element_visibility_set(Edom_Tag *t, Esvg_Animated_Enum *visibility)
 {
 	Esvg_Element *thiz;
 
 	thiz = _esvg_element_get(t);
-	esvg_attribute_animated_bool_extended_set(&thiz->current_attr->visibility,
-		visibility, EINA_TRUE, thiz->current_attr_animate, &thiz->current_attr->sets);
+	esvg_attribute_animated_enum_extended_set(&thiz->current_attr->visibility,
+		visibility, ESVG_VISIBILITY_VISIBLE, thiz->current_attr_animate, &thiz->current_attr->sets);
 }
 
-static void _esvg_element_visibility_get(Edom_Tag *t, Esvg_Animated_Bool *visibility)
+static void _esvg_element_visibility_get(Edom_Tag *t, Esvg_Animated_Enum *visibility)
 {
 	Esvg_Element *thiz;
 
 	thiz = _esvg_element_get(t);
-	esvg_attribute_animated_bool_get(&thiz->current_attr->visibility,
+	esvg_attribute_animated_enum_get(&thiz->current_attr->visibility,
 		visibility);
 }
 /*----------------------------------------------------------------------------*
@@ -1013,7 +1013,7 @@ static Eina_Bool _esvg_element_attribute_set(Edom_Tag *t, const char *key, const
 	{
 		Esvg_Visibility visibility;
 		esvg_visibility_string_from(&visibility, value);
-		//esvg_element_visibility_set(thiz->e, visibility);
+		esvg_element_visibility_set(thiz->e, visibility);
 	}
 	/* TODO in theory we should not allow css attributes to continue */
 	else
@@ -1611,6 +1611,14 @@ void esvg_element_property_number_set(Ender_Element *e, Ender_Property *p, doubl
 	ender_element_property_value_set(e, p, &a, NULL);
 }
 
+void esvg_element_property_enum_set(Ender_Element *e, Ender_Property *p, int v)
+{
+	Esvg_Animated_Enum a;
+
+	a.base = v;
+	ender_element_property_value_set(e, p, &a, NULL);
+}
+
 #if 0
 /* FIXME this functions should be implemented */
 void esvg_element_request_setup(Edom_Tag *t)
@@ -2103,8 +2111,9 @@ EAPI void esvg_element_stroke_line_join_unset(Ender_Element *e)
  * To be documented
  * FIXME: To be fixed
  */
-EAPI void esvg_element_visibility_set(Ender_Element *e, Eina_Bool visibility)
+EAPI void esvg_element_visibility_set(Ender_Element *e, Esvg_Visibility visibility)
 {
+	esvg_element_property_enum_set(e, ESVG_ELEMENT_VISIBILITY, visibility);
 }
 
 /**

@@ -287,6 +287,17 @@ void esvg_attribute_animated_enum_merge(const Esvg_Attribute_Animated_Enum *v,
 void esvg_attribute_enum_merge_rel(const Esvg_Attribute_Enum *rel,
 		const Esvg_Attribute_Enum *v,
 		Esvg_Attribute_Enum *d);
+void esvg_attribute_animated_enum_set(Esvg_Attribute_Animated_Enum *aa,
+	const Esvg_Animated_Enum *v,
+	int def,
+	Eina_Bool animate);
+void esvg_attribute_animated_enum_extended_set(Esvg_Attribute_Animated_Enum *aa,
+	const Esvg_Animated_Enum *v,
+	int def,
+	Eina_Bool animate,
+	int *set);
+void esvg_attribute_animated_enum_get(Esvg_Attribute_Animated_Enum *aa,
+	Esvg_Animated_Enum *v);
 
 
 void esvg_attribute_transform_set(Esvg_Attribute_Transform *a, const Enesim_Matrix *v, const Enesim_Matrix *def);

@@ -64,7 +64,7 @@ typedef struct _Esvg_Attribute_Presentation {
 	Esvg_Attribute_Number stroke_opacity;
 	Esvg_Attribute_Number fill_opacity;
 	Esvg_Attribute_Enum fill_rule;
-	Esvg_Attribute_Bool visibility;
+	Esvg_Attribute_Enum visibility;
 	Esvg_Attribute_Color stop_color;
 	Esvg_Attribute_Number stop_opacity;
 	/* are they set? */

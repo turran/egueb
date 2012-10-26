@@ -114,6 +114,7 @@ void esvg_element_property_string_set(Ender_Element *e, Ender_Property *p, const
 void esvg_element_property_length_set(Ender_Element *e, Ender_Property *p, const Esvg_Length *v);
 void esvg_element_property_paint_set(Ender_Element *e, Ender_Property *p, const Esvg_Paint *v);
 void esvg_element_property_number_set(Ender_Element *e, Ender_Property *p, double v);
+void esvg_element_property_enum_set(Ender_Element *e, Ender_Property *p, int v);
 
 
 #endif

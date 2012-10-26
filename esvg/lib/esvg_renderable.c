@@ -219,6 +219,12 @@ static Esvg_Element_Setup_Return _esvg_renderable_propagate(Esvg_Renderable *thi
 {
 	Esvg_Element_Setup_Return ret;
 
+	/* check if it is visible or not */
+	if (attr->visibility.v == ESVG_VISIBILITY_VISIBLE)
+		enesim_renderer_visibility_set(thiz->r, EINA_TRUE);
+	else
+		enesim_renderer_visibility_set(thiz->r, EINA_FALSE);
+
 	if (!thiz->descriptor.renderer_propagate)
 		return ESVG_SETUP_OK;
 
@@ -317,13 +323,6 @@ static Esvg_Element_Setup_Return _esvg_renderable_setup(Edom_Tag *t,
 	Esvg_Element_Setup_Return ret;
 
 	thiz = _esvg_renderable_get(t);
-#if 0
-	/* FIXME for later */
-	/* check if it is visible or not */
-	if (!attr->visibility)
-		return ESVG_SETUP_OK;
-#endif
-
 	if (thiz->descriptor.setup)
 	{
 		if (!thiz->descriptor.setup(t, c, context, attr, error))
