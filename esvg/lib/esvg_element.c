@@ -260,6 +260,10 @@ static int * _esvg_element_attribute_animated_fetch(Esvg_Element *thiz, const ch
 	{
 		animated = &thiz->current_attr->stop_opacity.animated;
 	}
+	else if (strcmp(attr, "visibility") == 0)
+	{
+		animated = &thiz->current_attr->visibility.animated;
+	}
 	return animated;
 }
 
