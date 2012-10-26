@@ -2113,6 +2113,8 @@ EAPI Eina_Bool esvg_clock_string_from(int64_t *clock, const char *attr)
 			scale = ESVG_CLOCK_SECONDS * 60;
 		else if (*tmp == 'h')
 			scale = ESVG_CLOCK_SECONDS * 60 * 60;
+		else if (!*tmp)
+			scale = ESVG_CLOCK_SECONDS;
 		else
 			return EINA_FALSE;
 
