@@ -60,6 +60,17 @@ namespace "esvg" : 0 {
 		int "anim";
 	};
 
+	/* TODO add the enum constraints */
+	struct "esvg_animated_display" {
+		int "base";
+		int "anim";
+	};
+	/* TODO add the enum constraints */
+	struct "esvg_animated_visibility" {
+		int "base";
+		int "anim";
+	};
+
 	struct "esvg_animated_length" {
 		esvg_length "base";
 		esvg_length "anim";
@@ -118,8 +129,8 @@ namespace "esvg" : 0 {
 		esvg_animated_length "stroke-width";
 		esvg_animated_number "fill-opacity";
 		esvg_animated_number "stroke-opacity";
-		esvg_animated_enum "visibility";
-		esvg_animated_enum "display";
+		esvg_animated_visibility "visibility";
+		esvg_animated_display "display";
 		esvg_animated_color "stop-color";
 		esvg_animated_number "stop-opacity";
 		/* other attributes */

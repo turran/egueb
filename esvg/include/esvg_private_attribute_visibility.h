@@ -1,0 +1,6 @@
+#ifndef _ESVG_PRIVATE_ATTRIBUTE_VISIBILITY_H_
+#define _ESVG_PRIVATE_ATTRIBUTE_VISIBILITY_H_
+
+extern Esvg_Attribute_Animated_Descriptor esvg_attribute_animated_visibility_descriptor;
+
+#endif

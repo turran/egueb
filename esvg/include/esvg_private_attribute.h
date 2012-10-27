@@ -279,26 +279,6 @@ void esvg_attribute_animated_paint_merge(const Esvg_Attribute_Animated_Paint *v,
 void esvg_attribute_paint_merge_rel(const Esvg_Attribute_Paint *rel,
 		const Esvg_Attribute_Paint *v,
 		Esvg_Attribute_Paint *d);
-void esvg_attribute_animated_enum_merge_rel(const Esvg_Attribute_Animated_Enum *rel,
-		const Esvg_Attribute_Animated_Enum *v,
-		Esvg_Attribute_Enum *d);
-void esvg_attribute_animated_enum_merge(const Esvg_Attribute_Animated_Enum *v,
-		Esvg_Attribute_Enum *d);
-void esvg_attribute_enum_merge_rel(const Esvg_Attribute_Enum *rel,
-		const Esvg_Attribute_Enum *v,
-		Esvg_Attribute_Enum *d);
-void esvg_attribute_animated_enum_set(Esvg_Attribute_Animated_Enum *aa,
-	const Esvg_Animated_Enum *v,
-	int def,
-	Eina_Bool animate);
-void esvg_attribute_animated_enum_extended_set(Esvg_Attribute_Animated_Enum *aa,
-	const Esvg_Animated_Enum *v,
-	int def,
-	Eina_Bool animate,
-	int *set);
-void esvg_attribute_animated_enum_get(Esvg_Attribute_Animated_Enum *aa,
-	Esvg_Animated_Enum *v);
-
 
 void esvg_attribute_transform_set(Esvg_Attribute_Transform *a, const Enesim_Matrix *v, const Enesim_Matrix *def);
 void esvg_attribute_transform_unset(Esvg_Attribute_Transform *a, const Enesim_Matrix *def);
@@ -353,7 +333,8 @@ void esvg_attribute_animated_number_get(Esvg_Attribute_Animated_Number *aa,
 	Esvg_Animated_Number *v);
 
 
-void esvg_attribute_enum_unset(Esvg_Attribute_Enum *a, int def);
-void esvg_attribute_enum_set(Esvg_Attribute_Enum *a, int v);
+#include "esvg_private_attribute_display.h"
+#include "esvg_private_attribute_enum.h"
+#include "esvg_private_attribute_visibility.h"
 
 #endif
