@@ -210,6 +210,8 @@ void esvg_attribute_presentation_merge_rel(const Esvg_Attribute_Presentation *re
 	esvg_attribute_number_merge_rel(&rel->stop_opacity, &s->stop_opacity, &d->stop_opacity);
 	/* stop color */
 	esvg_attribute_color_merge_rel(&rel->stop_color, &s->stop_color, &d->stop_color);
+	/* display */
+	esvg_attribute_enum_merge_rel(&rel->display, &s->display, &d->display);
 }
 
 void esvg_attribute_presentation_dump(Esvg_Attribute_Presentation *thiz)

@@ -61,15 +61,11 @@ void esvg_attribute_enum_interpolate(void *a, void *b, double m,
 {
 	int *va = a;
 	int *vb = b;
-	int *vacc = acc;
-	Esvg_Animated_Enum *vadd = add;
 	Esvg_Animated_Enum *r = res;
 
-	etch_interpolate_int32(*va, *vb, m, &r->base);
-	if (vacc)
-		r->base += *vacc * mul;
-	if (vadd)
-		r->base += vadd->anim;
+	/* enums can not accumulate or add */
+	if (m < 1) r->base = *va;
+	else r->base = *vb;
 }
 /*----------------------------------------------------------------------------*
  *                                   Basic                                    *

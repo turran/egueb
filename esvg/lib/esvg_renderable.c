@@ -232,7 +232,7 @@ static Esvg_Element_Setup_Return _esvg_renderable_propagate(Esvg_Renderable *thi
 	else
 		visible = EINA_FALSE;
 
-	enesim_renderer_visibility_set(thiz->r, visible);
+	enesim_renderer_visibility_set(thiz->implementation_r, visible);
 
 	if (!thiz->descriptor.renderer_propagate)
 		return ESVG_SETUP_OK;
