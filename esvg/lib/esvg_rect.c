@@ -117,6 +117,10 @@ static Eina_Bool _esvg_rect_attribute_set(Ender_Element *e,
 		esvg_length_string_from(&height, value);
 		esvg_rect_height_set(e, &height);
 	}
+	else
+	{
+		return EINA_FALSE;
+	}
 
 	return EINA_TRUE;
 }

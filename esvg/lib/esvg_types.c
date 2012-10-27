@@ -557,7 +557,11 @@ static Eina_Bool _esvg_color_keyword_from(Esvg_Color *color, const char *attr_va
 	/* convert the attr to lowercase */
 	argb = eina_hash_find(_colors, attr_val);
 
-	if (!argb) return EINA_FALSE;
+	if (!argb)
+	{
+		ERR("Color '%s' not found", attr_val);
+		return EINA_FALSE;
+	}
 
 	color->r = (*argb >> 16) & 0xff;
 	color->g = (*argb >> 8) & 0xff;
@@ -1763,68 +1767,63 @@ EAPI Eina_Bool esvg_color_string_from(Esvg_Color *color, const char *attr_val)
 	 * check if it starts with the rbg(:
 	 * rgb(c,c,c) (size at least 10)
 	 */
-	else if (sz >= 10)
-	{
-		/* starts with rgb( and finish with ) ? */
-		if ((attr_val[0] == 'r') &&
+	else if (sz >= 10 && (attr_val[0] == 'r') &&
 		    (attr_val[1] == 'g') &&
 		    (attr_val[2] == 'b') &&
 		    (attr_val[3] == '(') &&
 		    (attr_val[sz - 1] == ')'))
-		{
-			unsigned char cl[3];
-			const char *iter;
-			const char *tmp;
-			long val;
-			int nbr = 0;
+	{
+		unsigned char cl[3];
+		const char *iter;
+		const char *tmp;
+		long val;
+		int nbr = 0;
 
-			/* n, n, n */
-			/* n%, n%, n% */
-			iter = tmp = attr_val + 4;
-			while (*tmp)
+		/* n, n, n */
+		/* n%, n%, n% */
+		iter = tmp = attr_val + 4;
+		while (*tmp)
+		{
+			ESVG_SPACE_SKIP(tmp);
+			if (*tmp == ',')
 			{
-				ESVG_SPACE_SKIP(tmp);
-				if (*tmp == ',')
-				{
-                                        tmp++;
-					iter = tmp;
-				}
-				if (_esvg_long_get(iter, &tmp, &val))
-				{
-					if ((*tmp != ' ') && (*tmp != ',') && (*tmp != '%') && (*tmp != ')'))
-						break;
-					if ((val >= 0) && (val <= 255))
-					{
-						if (*tmp == '%')
-						{
-							tmp++;
-							cl[nbr] = (unsigned char)((255L * val) / 100L);
-						}
-						else
-						{
-							cl[nbr] = (unsigned char)val;
-						}
-						nbr++;
-                                        }
-                                        if (nbr == 3)
-                                        {
-						/* check the last parameter */
-						ESVG_SPACE_SKIP(tmp);
-						if ((*tmp == ')') && (*(tmp + 1) == '\0'))
-						{
-							/* parsing is correct, we set the color and return */
-							color->r = cl[0];
-							color->g = cl[1];
-							color->b = cl[2];
-							return EINA_TRUE;
-						}
-                                        }
-				}
-                                else
-					break;
+				tmp++;
+				iter = tmp;
 			}
+			if (_esvg_long_get(iter, &tmp, &val))
+			{
+				if ((*tmp != ' ') && (*tmp != ',') && (*tmp != '%') && (*tmp != ')'))
+					break;
+				if ((val >= 0) && (val <= 255))
+				{
+					if (*tmp == '%')
+					{
+						tmp++;
+						cl[nbr] = (unsigned char)((255L * val) / 100L);
+					}
+					else
+					{
+						cl[nbr] = (unsigned char)val;
+					}
+					nbr++;
+				}
+				if (nbr == 3)
+				{
+					/* check the last parameter */
+					ESVG_SPACE_SKIP(tmp);
+					if ((*tmp == ')') && (*(tmp + 1) == '\0'))
+					{
+						/* parsing is correct, we set the color and return */
+						color->r = cl[0];
+						color->g = cl[1];
+						color->b = cl[2];
+						return EINA_TRUE;
+					}
+				}
+			}
+			else
+				break;
 		}
-		return EINA_FALSE;
 	}
 	/* is a keyword */
 	else
@@ -2198,7 +2197,7 @@ EAPI Eina_Bool esvg_fill_string_from(Esvg_Fill *fill, const char *attr)
 {
 	Eina_Bool ret = EINA_TRUE;
 
-	if (!strcmp(attr, "fill"))
+	if (!strcmp(attr, "freeze"))
 		*fill = ESVG_FILL_FREEZE;
 	else if (!strcmp(attr, "remove"))
 		*fill = ESVG_FILL_REMOVE;

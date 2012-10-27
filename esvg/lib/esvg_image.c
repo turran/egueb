@@ -210,6 +210,10 @@ static Eina_Bool _esvg_image_attribute_set(Ender_Element *e,
 	{
 		esvg_image_xlink_href_set(e, value);
 	}
+	else
+	{
+		return EINA_FALSE;
+	}
 
 	return EINA_TRUE;
 }

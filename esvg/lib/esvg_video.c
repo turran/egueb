@@ -206,6 +206,10 @@ static Eina_Bool _esvg_video_attribute_set(Ender_Element *e,
 	{
 		esvg_video_xlink_href_set(e, value);
 	}
+	else
+	{
+		return EINA_FALSE;
+	}
 
 	return EINA_TRUE;
 }

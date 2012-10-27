@@ -85,7 +85,9 @@ static Eina_Bool _esvg_text_attribute_set(Ender_Element *e,
 	}
 #endif
 	else
+	{
 		return EINA_FALSE;
+	}
 
 	return EINA_TRUE;
 }

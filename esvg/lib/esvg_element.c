@@ -942,6 +942,13 @@ static Eina_Bool _esvg_element_attribute_set(Edom_Tag *t, const char *key, const
 	Esvg_Element *thiz;
 
 	thiz = _esvg_element_get(t);
+	DBG("Setting attribute '%s' with value '%s' on element '%s'",
+		key, value, esvg_type_string_to(esvg_element_internal_type_get(t)));
+	if (thiz->descriptor.attribute_set)
+	{
+		if (thiz->descriptor.attribute_set(thiz->e, key, value))
+			return EINA_TRUE;
+	}
 	if (strcmp(key, "id") == 0)
 	{
 		esvg_element_id_set(thiz->e, value);
@@ -1057,8 +1064,10 @@ static Eina_Bool _esvg_element_attribute_set(Edom_Tag *t, const char *key, const
 	/* TODO in theory we should not allow css attributes to continue */
 	else
 	{
-		if (thiz->descriptor.attribute_set)
-			return thiz->descriptor.attribute_set(thiz->e, key, value);
+		ERR("Unsupported attribute set '%s' with value '%s' on element '%s'",
+				key, value,
+				esvg_type_string_to(esvg_element_internal_type_get(t)));
+		return EINA_FALSE;
 	}
 
 	return EINA_TRUE;
@@ -1067,8 +1076,18 @@ static Eina_Bool _esvg_element_attribute_set(Edom_Tag *t, const char *key, const
 static Eina_Bool _esvg_element_attribute_get(Edom_Tag *t, const char *key, char **value)
 {
 	Esvg_Element *thiz;
+	Eina_Bool ret;
 
 	thiz = _esvg_element_get(t);
+	DBG("Setting attribute '%s' on element '%s'",
+		key, esvg_type_string_to(esvg_element_internal_type_get(t)));
+	/* we need to first call the implemenation as there might be name collisions */
+	if (thiz->descriptor.attribute_get)
+	{
+			if (thiz->descriptor.attribute_get(t, key, value))
+				return EINA_TRUE;
+	}
+
 	/* FIXME handle common properties */
 	if (strcmp(key, "id") == 0)
 	{
@@ -1180,8 +1199,8 @@ static Eina_Bool _esvg_element_attribute_get(Edom_Tag *t, const char *key, char 
 #endif
 	else
 	{
-		if (thiz->descriptor.attribute_get)
-			return thiz->descriptor.attribute_get(t, key, value);
+		ERR("Unsupported attribute get '%s'", key);
+		return EINA_FALSE;
 	}
 	return EINA_TRUE;
 }

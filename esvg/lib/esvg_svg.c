@@ -712,6 +712,10 @@ static Eina_Bool _esvg_svg_attribute_set(Ender_Element *e, const char *key, cons
 		Esvg_View_Box vb = esvg_view_box_get(value);
 		esvg_svg_viewbox_set(e, &vb);
 	}
+	else
+	{
+		return EINA_FALSE;
+	}
 
 	return EINA_TRUE;
 }

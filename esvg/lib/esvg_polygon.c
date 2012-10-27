@@ -67,6 +67,10 @@ static Eina_Bool _esvg_polygon_attribute_set(Ender_Element *e,
 	{
 		esvg_points_string_from(value, _esvg_polygon_points_cb, e);
 	}
+	else
+	{
+		return EINA_FALSE;
+	}
 
 	return EINA_TRUE;
 }

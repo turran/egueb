@@ -113,6 +113,10 @@ static Eina_Bool _esvg_clip_path_attribute_set(Ender_Element *e,
 		esvg_parser_gradient_units_string_from(&units, value);
 		esvg_clip_path_units_set(e, units);
 	}
+	else
+	{
+		return EINA_FALSE;
+	}
 	return EINA_TRUE;
 }
 

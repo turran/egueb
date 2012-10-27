@@ -87,6 +87,10 @@ static Eina_Bool _esvg_circle_attribute_set(Ender_Element *e,
 		esvg_length_string_from(&radius, value);
 		esvg_circle_r_set(e, &radius);
 	}
+	else
+	{
+		return EINA_FALSE;
+	}
 
 	return EINA_TRUE;
 }

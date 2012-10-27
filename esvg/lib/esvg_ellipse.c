@@ -95,6 +95,10 @@ static Eina_Bool _esvg_ellipse_attribute_set(Ender_Element *e,
 		esvg_length_string_from(&ry, value);
 		esvg_ellipse_ry_set(e, &ry);
 	}
+	else
+	{
+		return EINA_FALSE;
+	}
 
 	return EINA_TRUE;
 }

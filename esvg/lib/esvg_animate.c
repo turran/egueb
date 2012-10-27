@@ -65,7 +65,7 @@ static void _esvg_animate_free(Edom_Tag *t)
 static Eina_Bool _esvg_animate_attribute_set(Ender_Element *e,
 		const char *key, const char *value)
 {
-	return EINA_TRUE;
+	return EINA_FALSE;
 }
 
 static Eina_Bool _esvg_animate_attribute_get(Edom_Tag *tag, const char *attribute, char **value)

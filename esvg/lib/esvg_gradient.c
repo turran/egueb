@@ -240,6 +240,7 @@ static Eina_Bool _esvg_gradient_attribute_set(Ender_Element *e,
 		thiz = _esvg_gradient_get(t);
 		if (thiz->descriptor.attribute_set)
 			return thiz->descriptor.attribute_set(e, key, value);
+		return EINA_FALSE;
 	}
 	return EINA_TRUE;
 }

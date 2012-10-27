@@ -378,9 +378,12 @@ static Eina_Bool _esvg_animate_transform_attribute_set(Ender_Element *e,
 
 		esvg_animate_transform_type_string_from(&type, value);
 		esvg_animate_transform_type_set(e, type);
-		return EINA_TRUE;
 	}
-	return EINA_FALSE;
+	else
+	{
+		return EINA_FALSE;
+	}
+	return EINA_TRUE;
 }
 
 static Eina_Bool _esvg_animate_transform_attribute_get(Edom_Tag *tag, const char *attribute, char **value)

@@ -175,6 +175,10 @@ static Eina_Bool _esvg_linear_gradient_attribute_set(Ender_Element *e,
 		esvg_length_string_from(&y, value);
 		esvg_linear_gradient_y2_set(e, &y);
 	}
+	else
+	{
+		return EINA_FALSE;
+	}
 
 	return EINA_TRUE;
 }
