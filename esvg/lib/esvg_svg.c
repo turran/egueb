@@ -1166,7 +1166,7 @@ void esvg_svg_element_get(Ender_Element *e, const char *uri, Ender_Element **el)
 	data.ret = el;
 	/* resolve the uri for relative/absolute */
 	DBG("Looking for %s", uri);
-	!esvg_iri_string_from(uri, &_uri_element_descriptor, &data);
+	esvg_iri_string_from(uri, &_uri_element_descriptor, &data);
 }
 
 void esvg_svg_image_load(Ender_Element *e, const char *uri, Enesim_Surface **s, double width, double height)
