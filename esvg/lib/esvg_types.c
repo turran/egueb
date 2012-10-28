@@ -559,7 +559,6 @@ static Eina_Bool _esvg_color_keyword_from(Esvg_Color *color, const char *attr_va
 
 	if (!argb)
 	{
-		ERR("Color '%s' not found", attr_val);
 		return EINA_FALSE;
 	}
 
@@ -1142,10 +1141,11 @@ void esvg_paint_copy(Esvg_Paint *dst, Esvg_Paint *src)
 	if (src->type == ESVG_PAINT_SERVER)
 	{
 		if (src->value.paint_server)
+		{
 			dst->value.paint_server = strdup(src->value.paint_server);
+		}
 	}
 }
-
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/

@@ -142,8 +142,6 @@ void esvg_attribute_presentation_setup(Esvg_Attribute_Presentation *thiz)
 	Esvg_Color black = { 0, 0, 0 };
 	Esvg_Length one = { ESVG_UNIT_LENGTH_PX, 1 };
 
-	/* first do the cleanup */
-	esvg_attribute_presentation_cleanup(thiz);
 	/* now the default values */
 	thiz->color.v = black;
 	thiz->stroke_width.v = ESVG_LENGTH_1;
@@ -159,21 +157,6 @@ void esvg_attribute_presentation_setup(Esvg_Attribute_Presentation *thiz)
 	thiz->stroke_line_join.v = ESVG_LINE_JOIN_MITER;
 	thiz->stop_opacity.v = 1.0;
 	thiz->visibility.v = ESVG_VISIBILITY_VISIBLE;
-}
-
-void esvg_attribute_presentation_cleanup(Esvg_Attribute_Presentation *thiz)
-{
-	/* TODO free every attribute that can be allocated, i.e strings */
-	if (thiz->fill.v.type == ESVG_PAINT_SERVER)
-	{
-		if (thiz->fill.v.value.paint_server)
-			free(thiz->fill.v.value.paint_server);
-	}
-	if (thiz->stroke.v.type == ESVG_PAINT_SERVER)
-	{
-		if (thiz->stroke.v.value.paint_server)
-			free(thiz->stroke.v.value.paint_server);
-	}
 }
 
 void esvg_attribute_presentation_merge_rel(const Esvg_Attribute_Presentation *rel,

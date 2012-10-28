@@ -319,6 +319,31 @@ static void _esvg_element_state_compose(Esvg_Element *thiz,
 /*----------------------------------------------------------------------------*
  *                            Attribute helpers                               *
  *----------------------------------------------------------------------------*/
+/* TODO free every attribute that can be allocated, i.e strings */
+static void _esvg_element_attribute_presentation_free(Esvg_Element_Attributes *a)
+{
+	Esvg_Attribute_Paint *p;
+	/* we should only free the base values */
+	
+	p = &a->fill.base;
+	/* TODO make this a function */
+	if (p->v.type == ESVG_PAINT_SERVER)
+	{
+		if (p->v.value.paint_server)
+		{
+			free(p->v.value.paint_server);
+		}
+	}
+	p = &a->stroke.base;
+	if (p->v.type == ESVG_PAINT_SERVER)
+	{
+		if (p->v.value.paint_server)
+		{
+			free(p->v.value.paint_server);
+		}
+	}
+}
+
 /* initialize the presentation attributes with default values */
 static void _esvg_element_attribute_presentation_setup(Esvg_Element_Attributes *a)
 {
@@ -1212,9 +1237,8 @@ static void _esvg_element_free(Edom_Tag *t)
 	thiz = _esvg_element_get(t);
 	/* remove every child object */
 	edom_tag_child_foreach(t, _esvg_element_child_free_cb, NULL);
-	//esvg_attribute_presentation_cleanup(&thiz->attr_xml);
-	//esvg_attribute_presentation_cleanup(&thiz->attr_css);
-	esvg_attribute_presentation_cleanup(&thiz->attr_final);
+	_esvg_element_attribute_presentation_free(&thiz->attr_xml);
+	_esvg_element_attribute_presentation_free(&thiz->attr_css);
 	if (thiz->descriptor.free)
 		thiz->descriptor.free(t);
 	if (thiz->id)

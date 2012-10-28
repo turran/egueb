@@ -1298,6 +1298,8 @@ void esvg_attribute_paint_set(Esvg_Attribute_Paint *a, const Esvg_Paint *v,
 	else
 	{
 		a->v = *v;
+		if (v->type == ESVG_PAINT_SERVER)
+			a->v.value.paint_server = strdup(v->value.paint_server);
 		a->is_set = EINA_TRUE;
 	}
 }

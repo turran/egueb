@@ -68,11 +68,13 @@ struct log
 	{ &esvg_log_gradient,		"esvg_gradient" },
 	{ &esvg_log_image,		"esvg_image" },
 	{ &esvg_log_line,		"esvg_line" },
+	{ &esvg_log_linear_gradient,	"esvg_linear_gradient" },
 	{ &esvg_log_parser, 		"esvg_parser" },
 	{ &esvg_log_path,		"esvg_path" },
 	{ &esvg_log_polygon,		"esvg_polygon" },
 	{ &esvg_log_polyline,		"esvg_polyline" },
 	{ &esvg_log_rect,		"esvg_rect" },
+	{ &esvg_log_radial_gradient,	"esvg_radial_gradient" },
 	{ &esvg_log_renderable,		"esvg_renderable" },
 	{ &esvg_log_set,		"esvg_set" },
 	{ &esvg_log_stop,		"esvg_stop" },
@@ -272,10 +274,12 @@ int esvg_log_ellipse 		= -1;
 int esvg_log_gradient 		= -1;
 int esvg_log_image 		= -1;
 int esvg_log_line 		= -1;
+int esvg_log_linear_gradient	= -1;
 int esvg_log_parser 		= -1;
 int esvg_log_path 		= -1;
 int esvg_log_polygon 		= -1;
 int esvg_log_polyline 		= -1;
+int esvg_log_radial_gradient	= -1;
 int esvg_log_rect 		= -1;
 int esvg_log_renderable		= -1;
 int esvg_log_set 		= -1;

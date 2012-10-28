@@ -90,10 +90,18 @@ static Esvg_Referenceable_Reference * _esvg_renderable_get_reference(Edom_Tag *t
 
 	/* FIXME remove the old reference in case we already had one */
 	esvg_element_internal_topmost_get(t, &topmost);
-	if (!topmost) return NULL;
+	if (!topmost)
+	{
+		ERR("No topmost available");
+		return NULL;
+	}
 
 	esvg_svg_element_get(topmost, uri, &e);
-	if (!e) return NULL;
+	if (!e)
+	{
+		ERR("'%s' not found", uri);
+		return NULL;
+	}
 
 	/* TODO then, check that the referenced element is of type paint server */
 	ref_t = ender_element_object_get(e);
@@ -127,10 +135,15 @@ static void _esvg_renderable_paint_set(Edom_Tag *t,
 	{
 		Esvg_Referenceable_Reference *rr;
 
+		DBG("Trying to use '%s' as paint server", current->value.paint_server);
 		if (!esvg_paint_is_equal(current, old))
 		{
 			rr = _esvg_renderable_get_reference(t, current->value.paint_server);
-			if (!rr) goto done;
+			if (!rr)
+			{
+				ERR("Impossible to get a reference to '%s' paint server", current->value.paint_server); 
+				goto done;
+			}
 			/* TODO finally, get the renderer? */
 			*renderer = rr->data;
 			*reference = rr;
@@ -295,11 +308,13 @@ static Esvg_Element_Setup_Return _esvg_renderable_propagate(Esvg_Renderable *thi
 	 */
 	if (attr->fill.is_set && attr->fill.v.type == ESVG_PAINT_SERVER && thiz->fill_reference)
 	{
+		DBG("Using '%s' as fill paint server", attr->fill.v.value.paint_server);
 		esvg_referenceable_reference_propagate(thiz->fill_reference, c, error);
 	}
 	/* in case we are going to use the stroke renderer do its own setup */
 	if (attr->stroke.is_set && attr->stroke.v.type == ESVG_PAINT_SERVER && thiz->stroke_reference)
 	{
+		DBG("Using '%s' as stroke paint server", attr->fill.v.value.paint_server);
 		esvg_referenceable_reference_propagate(thiz->stroke_reference, c, error);
 	}
 	return ESVG_SETUP_OK;
@@ -315,6 +330,10 @@ static void _esvg_renderable_free(Edom_Tag *t)
 	Esvg_Renderable *thiz;
 
 	thiz = _esvg_renderable_get(t);
+	/* free the old clip path */
+	if (thiz->clip_path_last)
+		free(thiz->clip_path_last);
+	/* TODO fill_paint_last, stroke_paint_last */
 	if (thiz->descriptor.free)
 		thiz->descriptor.free(t);
 	enesim_renderer_unref(thiz->r);

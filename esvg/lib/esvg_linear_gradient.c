@@ -33,6 +33,8 @@
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
+#define ESVG_LOG_DEFAULT esvg_log_linear_gradient
+
 static Ender_Property *ESVG_LINEAR_GRADIENT_X1;
 static Ender_Property *ESVG_LINEAR_GRADIENT_Y1;
 static Ender_Property *ESVG_LINEAR_GRADIENT_X2;

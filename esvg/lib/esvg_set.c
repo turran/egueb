@@ -112,6 +112,7 @@ static void _esvg_set_animation_start_cb(Etch_Animation *a, void *data)
 	{
 		void *dp;
 
+		DBG("Storing current value");
 		dp = thiz->d->destination_new();
 		ender_element_property_value_get(thiz->parent_e, thiz->p, dp, NULL);
 		if (thiz->d->destination_keep)
@@ -132,6 +133,7 @@ static void _esvg_set_animation_stop_cb(Etch_Animation *a, void *data)
 	/* in case of "remove" set the value it had when the animation started */
 	if (fill == ESVG_FILL_REMOVE)
 	{
+		DBG("Going back to previous value");
 		_esvg_set_property_set(thiz, thiz->destination_prev);
 	}
 	ender_event_dispatch(thiz->thiz_e, "end", NULL);

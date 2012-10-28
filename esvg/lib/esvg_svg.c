@@ -566,7 +566,7 @@ static Eina_Bool _esvg_svg_child_initialize(Edom_Tag *t, Edom_Tag *child_t, void
 
  	thiz = data;
 
-	//printf("initializing %s\n", esvg_type_string_to(esvg_element_internal_type_get(child_t)));
+	DBG("Initializing '%s'", esvg_type_string_to(esvg_element_internal_type_get(child_t)));
 	/* add a callback whenever the child property has changed
 	 * to initialize that child too */
 	child_e = esvg_element_ender_get(child_t);
@@ -578,7 +578,11 @@ static Eina_Bool _esvg_svg_child_initialize(Edom_Tag *t, Edom_Tag *child_t, void
 	ender_event_listener_add(child_e, "Mutation:id", _esvg_svg_child_id_cb, thiz);
 	/* add the id to the hash of ids */
 	esvg_element_id_get(child_e, &id);
-	if (id) eina_hash_add(thiz->ids, id, child_e);
+	if (id)
+	{
+		DBG("Adding '%s' to the list of ids", id);
+		eina_hash_add(thiz->ids, id, child_e);
+	}
 
 	/* add the style to the list of styles */
 	if (esvg_style_is_internal(child_t))
@@ -1162,7 +1166,7 @@ void esvg_svg_element_get(Ender_Element *e, const char *uri, Ender_Element **el)
 	data.ret = el;
 	/* resolve the uri for relative/absolute */
 	DBG("Looking for %s", uri);
-	esvg_iri_string_from(uri, &_uri_element_descriptor, &data);
+	!esvg_iri_string_from(uri, &_uri_element_descriptor, &data);
 }
 
 void esvg_svg_image_load(Ender_Element *e, const char *uri, Enesim_Surface **s, double width, double height)

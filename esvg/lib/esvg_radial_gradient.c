@@ -33,6 +33,8 @@
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
+#define ESVG_LOG_DEFAULT esvg_log_radial_gradient
+
 static Ender_Property *ESVG_RADIAL_GRADIENT_CX;
 static Ender_Property *ESVG_RADIAL_GRADIENT_CY;
 static Ender_Property *ESVG_RADIAL_GRADIENT_FX;
@@ -241,6 +243,10 @@ static Eina_Bool _esvg_radial_gradient_attribute_set(Ender_Element *e,
 		esvg_length_string_from(&fy, value);
 		esvg_radial_gradient_fy_set(e, &fy);
 	}
+	else
+	{
+		return EINA_FALSE;
+	}
 	return EINA_TRUE;
 }
 
@@ -311,7 +317,6 @@ static Eina_Bool _esvg_radial_gradient_propagate(Edom_Tag *t,
 	double fy;
 	double rad;
 
-
 	thiz = _esvg_radial_gradient_get(t);
 
 	gu = gctx->units;
@@ -378,6 +383,10 @@ static Eina_Bool _esvg_radial_gradient_propagate(Edom_Tag *t,
 	enesim_renderer_gradient_radial_focus_x_set(r, fx);
 	enesim_renderer_gradient_radial_focus_y_set(r, fy);
 	enesim_renderer_gradient_radial_radius_set(r, rad);
+
+	DBG("Setup transform %" ENESIM_MATRIX_FORMAT " cx %g cy %g fx %g fy %g"
+			" rad %g", ENESIM_MATRIX_ARGS (&m),
+			cx, cy, fx, fy, rad);
 
 	return ESVG_SETUP_OK;
 }
