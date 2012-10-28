@@ -21,6 +21,8 @@ esvg_attribute.c \
 esvg_attribute_animation.c \
 esvg_attribute_display.c \
 esvg_attribute_enum.c \
+esvg_attribute_length.c \
+esvg_attribute_paint.c \
 esvg_attribute_presentation.c \
 esvg_attribute_visibility.c \
 esvg_animate.c \
