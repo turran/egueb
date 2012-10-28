@@ -81,6 +81,7 @@ static void _esvg_animate_paint_interpolate(void *a, void *b, double m,
 
 	if (va->type != vb->type)
 	{
+		r->base.type = ESVG_PAINT_NONE;
 		return;
 	}
 	r->base.type = va->type;
