@@ -157,6 +157,7 @@ void esvg_attribute_presentation_setup(Esvg_Attribute_Presentation *thiz)
 	thiz->stroke_line_join.v = ESVG_LINE_JOIN_MITER;
 	thiz->stop_opacity.v = 1.0;
 	thiz->visibility.v = ESVG_VISIBILITY_VISIBLE;
+	thiz->clip_path.v.type = ESVG_CLIP_PATH_NONE;
 }
 
 void esvg_attribute_presentation_merge_rel(const Esvg_Attribute_Presentation *rel,
@@ -165,7 +166,7 @@ void esvg_attribute_presentation_merge_rel(const Esvg_Attribute_Presentation *re
 {
 	/* FIXME check if actually something has changed */
 	/* clip_path */
-	esvg_attribute_string_merge_rel(&rel->clip_path, &s->clip_path, &d->clip_path);
+	esvg_attribute_clip_path_merge_rel(&rel->clip_path, &s->clip_path, &d->clip_path);
 	/* color */
 	esvg_attribute_color_merge_rel(&rel->color, &s->color, &d->color);
 	/* opacity */

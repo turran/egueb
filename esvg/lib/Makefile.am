@@ -20,6 +20,7 @@ esvg_a.c \
 esvg_attribute.c \
 esvg_attribute_animation.c \
 esvg_attribute_display.c \
+esvg_attribute_clip_path.c \
 esvg_attribute_enum.c \
 esvg_attribute_length.c \
 esvg_attribute_paint.c \

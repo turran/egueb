@@ -62,7 +62,7 @@ typedef struct _Esvg_Renderable
 	Esvg_Referenceable_Reference *fill_reference;
 	Esvg_Referenceable_Reference *stroke_reference;
 
-	char *clip_path_last;
+	Esvg_Clip_Path clip_path_last;
 	Esvg_Referenceable_Reference *clip_path_reference;
 
 	Esvg_Renderable_Context context;
@@ -255,29 +255,30 @@ static Esvg_Element_Setup_Return _esvg_renderable_propagate(Esvg_Renderable *thi
 	 * enesim states despend on that behaviour
 	 */
 	/* FIXME this should be part of the renderable behaviour too */
-	if (!esvg_string_is_equal(attr->clip_path.v, thiz->clip_path_last))
+	if (!esvg_clip_path_is_equal(&attr->clip_path.v, &thiz->clip_path_last))
 	{
 		/* whenever a clip path is set, we should reference it, etc, etc
 		 * similar to the gradient and also make the renderable renderer
 		 * use the clip path renderer to render
 		 */
-		if (thiz->clip_path_last)
+		if (thiz->clip_path_last.type == ESVG_CLIP_PATH_IRI)
 		{
-			free(thiz->clip_path_last);
+			free(thiz->clip_path_last.value.iri);
 			/* TODO destroy the reference */
-			thiz->clip_path_last = NULL;
+			thiz->clip_path_last.value.iri = NULL;
 			enesim_renderer_proxy_proxied_set(thiz->r, thiz->implementation_r);
 		}
 
-		if (attr->clip_path.v)
+		if (attr->clip_path.v.type == ESVG_CLIP_PATH_IRI)
 		{
 			Esvg_Referenceable_Reference *rr;
 
-			thiz->clip_path_last = strdup(attr->clip_path.v);
-			rr = _esvg_renderable_get_reference(t, thiz->clip_path_last);
+			thiz->clip_path_last.type = ESVG_CLIP_PATH_IRI;
+			thiz->clip_path_last.value.iri = strdup(attr->clip_path.v.value.iri);
+			rr = _esvg_renderable_get_reference(t, thiz->clip_path_last.value.iri);
 			if (!rr)
 			{
-				ERR("Impossible to get a reference to '%s' clip path", thiz->clip_path_last);
+				ERR("Impossible to get a reference to '%s' clip path", thiz->clip_path_last.value.iri);
 			}
 			else
 			{
@@ -337,9 +338,7 @@ static void _esvg_renderable_free(Edom_Tag *t)
 	Esvg_Renderable *thiz;
 
 	thiz = _esvg_renderable_get(t);
-	/* free the old clip path */
-	if (thiz->clip_path_last)
-		free(thiz->clip_path_last);
+	/* TODO free the old clip path */
 	/* TODO fill_paint_last, stroke_paint_last */
 	if (thiz->descriptor.free)
 		thiz->descriptor.free(t);

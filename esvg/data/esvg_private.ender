@@ -34,6 +34,12 @@ namespace "esvg" : 0 {
 		string "paint_server";
 	};
 
+	union "esvg_clip_path" {
+		/* fix this */
+		bool "none";
+		string "iri";
+	};
+
 	/* animated types */
 	struct "esvg_animated_number" {
 		double "base";
@@ -91,6 +97,12 @@ namespace "esvg" : 0 {
 		esvg_paint "anim";
 	};
 
+
+	struct "esvg_animated_clip_path" {
+		esvg_clip_path "base";
+		esvg_clip_path "anim";
+	};
+
 	union "esvg_duration" {
 		/* fix we should include the long variants on ender */
 		long "clock";
@@ -120,7 +132,7 @@ namespace "esvg" : 0 {
 		string "class";
 		string "style";
 		/* presentation attributes */
-		esvg_animated_string "clip-path";
+		esvg_animated_clip_path "clip-path";
 		esvg_animated_number "opacity";
 		/* once the color is done we can the union paint for filling and stroking */
 		esvg_animated_color "color";

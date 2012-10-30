@@ -52,7 +52,7 @@
  */
 
 typedef struct _Esvg_Attribute_Presentation {
-	Esvg_Attribute_String clip_path;
+	Esvg_Attribute_Clip_Path clip_path;
 	Esvg_Attribute_Color color;
 	Esvg_Attribute_Number opacity;
 	Esvg_Attribute_Paint fill;

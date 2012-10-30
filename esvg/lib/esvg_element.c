@@ -107,7 +107,7 @@ typedef struct _Esvg_Element_Setup_Data
 
 typedef struct _Esvg_Element_Attributes
 {
-	Esvg_Attribute_Animated_String clip_path;
+	Esvg_Attribute_Animated_Clip_Path clip_path;
 	Esvg_Attribute_Animated_Color color;
 	Esvg_Attribute_Animated_Number opacity;
 	Esvg_Attribute_Animated_Paint fill;
@@ -373,7 +373,7 @@ static void _esvg_element_attribute_presentation_merge(
 	Esvg_Attribute_Presentation *d)
 {
 	/* clip path */
-	esvg_attribute_animated_string_merge(&s->clip_path, &d->clip_path);
+	esvg_attribute_animated_clip_path_merge(&s->clip_path, &d->clip_path);
 	/* color */
 	esvg_attribute_animated_color_merge(&s->color, &d->color);
 	/* opacity */
@@ -412,7 +412,7 @@ static void _esvg_element_attribute_presentation_merge_rel(
 	Esvg_Attribute_Presentation *d)
 {
 	/* clip path */
-	esvg_attribute_animated_string_merge_rel(&rel->clip_path, &s->clip_path, &d->clip_path);
+	esvg_attribute_animated_clip_path_merge_rel(&rel->clip_path, &s->clip_path, &d->clip_path);
 	/* color */
 	esvg_attribute_animated_color_merge_rel(&rel->color, &s->color, &d->color);
 	/* opacity */
@@ -606,21 +606,22 @@ static void _esvg_element_style_get(Edom_Tag *t, const char **style)
 }
 
 /* presentation attributes */
-static void _esvg_element_clip_path_set(Edom_Tag *t, Esvg_Animated_String *clip_path)
+static void _esvg_element_clip_path_set(Edom_Tag *t, Esvg_Animated_Clip_Path *clip_path)
 {
 	Esvg_Element *thiz;
+	Esvg_Clip_Path def = { ESVG_CLIP_PATH_NONE };
 
 	thiz = _esvg_element_get(t);
-	esvg_attribute_animated_string_extended_set(&thiz->current_attr->clip_path,
-		clip_path, thiz->current_attr_animate, &thiz->current_attr->sets);
+	esvg_attribute_animated_clip_path_extended_set(&thiz->current_attr->clip_path,
+		clip_path, &def, thiz->current_attr_animate, &thiz->current_attr->sets);
 }
 
-static void _esvg_element_clip_path_get(Edom_Tag *t, Esvg_Animated_String *clip_path)
+static void _esvg_element_clip_path_get(Edom_Tag *t, Esvg_Animated_Clip_Path *clip_path)
 {
 	Esvg_Element *thiz;
 
 	thiz = _esvg_element_get(t);
-	esvg_attribute_animated_string_get(&thiz->current_attr->clip_path,
+	esvg_attribute_animated_clip_path_get(&thiz->current_attr->clip_path,
 		clip_path);
 }
 
@@ -996,7 +997,10 @@ static Eina_Bool _esvg_element_attribute_set(Edom_Tag *t, const char *key, const
 	/* common presentation attributes */
 	else if (strcmp(key, "clip-path") == 0)
 	{
-		esvg_element_clip_path_set(thiz->e, value);
+		Esvg_Clip_Path clip_path;
+
+		esvg_clip_path_string_from(&clip_path, value);
+		esvg_element_clip_path_set(thiz->e, &clip_path);
 	}
 	else if (strcmp(key, "opacity") == 0)
 	{
@@ -1685,6 +1689,21 @@ void esvg_element_property_paint_set(Ender_Element *e, Ender_Property *p, const 
 	}
 }
 
+void esvg_element_property_clip_path_set(Ender_Element *e, Ender_Property *p, const Esvg_Clip_Path *v)
+{
+	if (!v)
+	{
+		ender_element_property_value_set(e, p, NULL, NULL);
+	}
+	else
+	{
+		Esvg_Animated_Clip_Path a;
+
+		a.base = *v;
+		ender_element_property_value_set(e, p, &a, NULL);
+	}
+}
+
 void esvg_element_property_number_set(Ender_Element *e, Ender_Property *p, double v)
 {
 	Esvg_Animated_Number a;
@@ -1941,17 +1960,9 @@ EAPI Eina_Bool esvg_element_style_is_set(Ender_Element *e)
  * To be documented
  * FIXME: To be fixed
  */
-EAPI void esvg_element_clip_path_set(Ender_Element *e, const char *id)
+EAPI void esvg_element_clip_path_set(Ender_Element *e, Esvg_Clip_Path *clip_path)
 {
-	Esvg_Animated_String a;
-
-	if (!id)
-	{
-		ender_element_property_value_set(e, ESVG_ELEMENT_CLIP_PATH, NULL, NULL);
-		return;
-	}
-	a.base = (char *)id;
-	ender_element_property_value_set(e, ESVG_ELEMENT_CLIP_PATH, &a, NULL);
+	esvg_element_property_clip_path_set(e, ESVG_ELEMENT_CLIP_PATH, clip_path);
 }
 
 /**

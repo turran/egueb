@@ -1411,6 +1411,30 @@ EAPI Eina_Bool esvg_paint_is_equal(const Esvg_Paint *p1,
 	}
 }
 
+EAPI Eina_Bool esvg_clip_path_is_equal(const Esvg_Clip_Path *p1,
+		const Esvg_Clip_Path *p2)
+{
+	/* sanity checks */
+	if (p1 == p2) return EINA_TRUE;
+	if (!p1) return EINA_FALSE;
+	if (!p2) return EINA_FALSE;
+
+	if (p1->type != p2->type) return EINA_FALSE;
+	/* ok, we have values and same types, now compare each type */
+	switch (p1->type)
+	{
+		case ESVG_CLIP_PATH_NONE:
+		return EINA_TRUE;
+
+		case ESVG_CLIP_PATH_IRI:
+		return esvg_string_is_equal(p1->value.iri, p2->value.iri);
+
+		/* FIXME what to do in this cases? add an assert? */
+		default:
+		return EINA_FALSE;
+	}
+}
+
 /*
  * none, currentColor, <color>, <uri>?
  */

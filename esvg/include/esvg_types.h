@@ -602,6 +602,8 @@ EAPI Eina_Bool esvg_accumulate_string_from(Esvg_Accumulate *acc, const char *att
 EAPI Eina_Bool esvg_repeat_count_string_from(int *rc, const char *attr);
 EAPI Eina_Bool esvg_visibility_string_from(Esvg_Visibility *v, const char *attr);
 EAPI Eina_Bool esvg_display_string_from(Esvg_Display *d, const char *attr);
+EAPI Eina_Bool esvg_clip_path_is_equal(const Esvg_Clip_Path *p1,
+		const Esvg_Clip_Path *p2);
 EAPI Eina_Bool esvg_clip_path_string_from(Esvg_Clip_Path *cp, const char *attr);
 EAPI Eina_Bool esvg_type_is_animation(Esvg_Type type);
 EAPI Eina_Bool esvg_type_is_paint_server(Esvg_Type type);

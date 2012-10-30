@@ -14,7 +14,7 @@ EAPI void esvg_element_transform_get(Ender_Element *e, Enesim_Matrix *transform)
 EAPI void esvg_element_style_set(Ender_Element *e, const char *style);
 EAPI void esvg_element_style_get(Ender_Element *e, const char **style);
 EAPI Eina_Bool esvg_element_style_is_set(Ender_Element *e);
-EAPI void esvg_element_clip_path_set(Ender_Element *e, const char *id);
+EAPI void esvg_element_clip_path_set(Ender_Element *e, Esvg_Clip_Path *clip_path);
 EAPI void esvg_element_clip_path_unset(Ender_Element *e);
 EAPI void esvg_element_opacity_set(Ender_Element *e, double opacity);
 EAPI void esvg_element_opacity_get(Ender_Element *e, double *opacity);
