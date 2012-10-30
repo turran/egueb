@@ -2362,3 +2362,18 @@ EAPI Eina_Bool esvg_display_string_from(Esvg_Display *d, const char *attr)
 	return EINA_TRUE;
 }
 
+EAPI Eina_Bool esvg_clip_path_string_from(Esvg_Clip_Path *cp, const char *attr)
+{
+	if (!strcmp(attr, "none"))
+	{
+		cp->type = ESVG_CLIP_PATH_NONE;
+		cp->value.iri = NULL;
+	}
+	else
+	{
+		cp->type = ESVG_CLIP_PATH_IRI;
+		cp->value.iri = strdup(attr);
+	}
+	return EINA_TRUE;
+}
+

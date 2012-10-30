@@ -60,17 +60,17 @@ typedef struct _Esvg_Attribute_Units
 	Eina_Bool is_set;
 } Esvg_Attribute_Units;
 
-typedef struct _Esvg_Clip_Path
+typedef struct _Esvg_Element_Clip_Path
 {
 	/* properties */
 	Esvg_Attribute_Units units;
 	/* private */
 	Eina_Bool tree_changed : 1;
-} Esvg_Clip_Path;
+} Esvg_Element_Clip_Path;
 
-static Esvg_Clip_Path * _esvg_clip_path_get(Edom_Tag *t)
+static Esvg_Element_Clip_Path * _esvg_clip_path_get(Edom_Tag *t)
 {
-	Esvg_Clip_Path *thiz;
+	Esvg_Element_Clip_Path *thiz;
 
 	if (esvg_element_internal_type_get(t) != ESVG_CLIPPATH)
 		return NULL;
@@ -137,7 +137,7 @@ static Eina_Bool _esvg_clip_path_child_add(Edom_Tag *tag, Edom_Tag *child)
 	type = esvg_element_internal_type_get(child);
 	if (esvg_type_is_renderable(type))
 	{
-		Esvg_Clip_Path *thiz;
+		Esvg_Element_Clip_Path *thiz;
 
 		thiz = _esvg_clip_path_get(tag);
 		thiz->tree_changed = EINA_TRUE;
@@ -226,12 +226,12 @@ static Esvg_Element_Setup_Return _esvg_clip_path_setup(Edom_Tag *e,
 		Esvg_Attribute_Presentation *attr,
 		Enesim_Error **error)
 {
-	Esvg_Clip_Path *thiz;
+	Esvg_Element_Clip_Path *thiz;
 
 	thiz = _esvg_clip_path_get(e);
 	DBG("Clip path '%s' setup", esvg_element_internal_id_get(e));
 #if 0
-	Esvg_Clip_Path *thiz;
+	Esvg_Element_Clip_Path *thiz;
 
 	thiz = _esvg_clip_path_get(t);
 	/* if the clip path is set use that as the renderer element */
@@ -324,7 +324,7 @@ static Eina_Bool _esvg_clip_path_reference_propagate(Edom_Tag *t,
 
 static void _esvg_clip_path_free(Edom_Tag *t)
 {
-	Esvg_Clip_Path *thiz;
+	Esvg_Element_Clip_Path *thiz;
 
 	thiz = _esvg_clip_path_get(t);
 	free(thiz);
@@ -352,10 +352,10 @@ static Esvg_Referenceable_Descriptor _descriptor = {
  *----------------------------------------------------------------------------*/
 static Edom_Tag * _esvg_clip_path_new(void)
 {
-	Esvg_Clip_Path *thiz;
+	Esvg_Element_Clip_Path *thiz;
 	Edom_Tag *t;
 
-	thiz = calloc(1, sizeof(Esvg_Clip_Path));
+	thiz = calloc(1, sizeof(Esvg_Element_Clip_Path));
 	if (!thiz) return NULL;
 
 	t = esvg_referenceable_new(&_descriptor, ESVG_CLIPPATH, thiz);
@@ -365,7 +365,7 @@ static Edom_Tag * _esvg_clip_path_new(void)
 
 static void _esvg_clip_path_clip_path_units_set(Edom_Tag *t, Esvg_Clip_Path_Units units)
 {
-	Esvg_Clip_Path *thiz;
+	Esvg_Element_Clip_Path *thiz;
 
 	thiz = _esvg_clip_path_get(t);
 	thiz->units.v = units;
@@ -374,7 +374,7 @@ static void _esvg_clip_path_clip_path_units_set(Edom_Tag *t, Esvg_Clip_Path_Unit
 
 static void _esvg_clip_path_clip_path_units_get(Edom_Tag *t, Esvg_Clip_Path_Units *units)
 {
-	Esvg_Clip_Path *thiz;
+	Esvg_Element_Clip_Path *thiz;
 
 	thiz = _esvg_clip_path_get(t);
 	if (units) *units = thiz->units.v;
@@ -382,7 +382,7 @@ static void _esvg_clip_path_clip_path_units_get(Edom_Tag *t, Esvg_Clip_Path_Unit
 
 static Eina_Bool _esvg_clip_path_clip_path_units_is_set(Edom_Tag *t)
 {
-	Esvg_Clip_Path *thiz;
+	Esvg_Element_Clip_Path *thiz;
 
 	thiz = _esvg_clip_path_get(t);
 	return thiz->units.is_set;

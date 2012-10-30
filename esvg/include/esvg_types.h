@@ -251,6 +251,30 @@ typedef struct _Esvg_Animated_Paint
 	Esvg_Paint anim;
 } Esvg_Animated_Paint;
 
+typedef enum _Esvg_Clip_Path_Type
+{
+	ESVG_CLIP_PATH_NONE,
+	ESVG_CLIP_PATH_IRI,
+	ESVG_CLIP_PATH_TYPES,
+} Esvg_Clip_Path_Type;
+
+typedef union _Esvg_Clip_Path_Value
+{
+	char *iri;
+} Esvg_Clip_Path_Value;
+
+typedef struct _Esvg_Clip_Path
+{
+	Esvg_Clip_Path_Type type;
+	Esvg_Clip_Path_Value value;
+} Esvg_Clip_Path;
+
+typedef struct _Esvg_Animated_Clip_Path
+{
+	Esvg_Clip_Path base;
+	Esvg_Clip_Path anim;
+} Esvg_Animated_Clip_Path;
+
 typedef struct _Esvg_Animated_Bool
 {
 	Eina_Bool base;
@@ -578,7 +602,7 @@ EAPI Eina_Bool esvg_accumulate_string_from(Esvg_Accumulate *acc, const char *att
 EAPI Eina_Bool esvg_repeat_count_string_from(int *rc, const char *attr);
 EAPI Eina_Bool esvg_visibility_string_from(Esvg_Visibility *v, const char *attr);
 EAPI Eina_Bool esvg_display_string_from(Esvg_Display *d, const char *attr);
-
+EAPI Eina_Bool esvg_clip_path_string_from(Esvg_Clip_Path *cp, const char *attr);
 EAPI Eina_Bool esvg_type_is_animation(Esvg_Type type);
 EAPI Eina_Bool esvg_type_is_paint_server(Esvg_Type type);
 EAPI Eina_Bool esvg_type_is_shape(Esvg_Type type);

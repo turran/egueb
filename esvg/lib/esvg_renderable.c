@@ -272,15 +272,22 @@ static Esvg_Element_Setup_Return _esvg_renderable_propagate(Esvg_Renderable *thi
 		if (attr->clip_path.v)
 		{
 			Esvg_Referenceable_Reference *rr;
-			Esvg_Clip_Path_Referenceable_Data *rdata;
 
 			thiz->clip_path_last = strdup(attr->clip_path.v);
 			rr = _esvg_renderable_get_reference(t, thiz->clip_path_last);
+			if (!rr)
+			{
+				ERR("Impossible to get a reference to '%s' clip path", thiz->clip_path_last);
+			}
+			else
+			{
+				Esvg_Clip_Path_Referenceable_Data *rdata;
 
-			thiz->clip_path_reference = rr;
-			rdata = rr->data;
-			/* get the clip path renderer and use that as our new proxied renderer */
-			enesim_renderer_proxy_proxied_set(thiz->r, rdata->proxy);
+				thiz->clip_path_reference = rr;
+				rdata = rr->data;
+				/* get the clip path renderer and use that as our new proxied renderer */
+				enesim_renderer_proxy_proxied_set(thiz->r, rdata->proxy);
+			}
 		}
 	}
 	/* FIXME there are cases where this is not needed, liek the 'use' given that
