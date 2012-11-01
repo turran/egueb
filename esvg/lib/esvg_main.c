@@ -132,11 +132,8 @@ static void _register_enders(void)
 	esvg_set_init();
 }
 
-/* FIXME the constructor should be done per namespace, not generic */
-static void _constructor_callback(Ender_Element *e, void *data)
+static void _namespace_constructor_callback(Ender_Element *e, void *data)
 {
-	if (!esvg_is_element(e))
-		return;
 	esvg_element_initialize(e);
 }
 
@@ -146,7 +143,6 @@ static Eina_Bool _esvg_ender_init(void)
 	Ender_Namespace *edom;
 
 	ender_init(NULL, NULL);
-	ender_element_new_listener_add(_constructor_callback, NULL);
 	edom = ender_namespace_find("edom", 0);
 	if (!edom)
 	{
@@ -181,7 +177,6 @@ descriptor_err:
 
 static void _esvg_ender_shutdown(void)
 {
-	ender_element_new_listener_remove(_constructor_callback, NULL);
 	ender_shutdown();
 }
 
@@ -298,6 +293,8 @@ Ender_Namespace * esvg_namespace_get(void)
 	if (!namespace)
 	{
 		namespace = ender_namespace_new("esvg", 0);
+		ender_namespace_element_new_listener_add(namespace,
+				_namespace_constructor_callback, NULL);
 	}
 	return namespace;
 }

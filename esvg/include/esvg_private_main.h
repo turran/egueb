@@ -129,7 +129,7 @@ extern int esvg_log_video;
 
 #define ESVG_ANIMATE_BASE_MAGIC 0xe5500015
 
-#define ESVG_ELEMENT_NEW(name) ender_element_new_namespace_from(name, esvg_namespace_get());
+#define ESVG_ELEMENT_NEW(name) ender_namespace_element_new(esvg_namespace_get(), name);
 
 extern int esvg_log_dom_global;
 Ender_Namespace * esvg_namespace_get(void);
