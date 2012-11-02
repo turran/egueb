@@ -172,10 +172,10 @@ static Esvg_Element_Setup_Return _esvg_g_setup(Edom_Tag *t,
 	{
 		esvg_renderable_container_clear(thiz->container);
 		enesim_renderer_compound_layer_clear(thiz->r);
+		/* reset our internal bounds */
+		thiz->ll = thiz->tt = INT_MAX;
+		thiz->rr = thiz->bb = -INT_MAX;
 	}
-	/* reset our internal bounds */
-	thiz->ll = thiz->tt = INT_MAX;
-	thiz->rr = thiz->bb = -INT_MAX;
 	ret = esvg_element_internal_child_setup(t, c, error, NULL, _esvg_g_setup_post, thiz);
 	enesim_rectangle_coords_from(&ctx->bounds, thiz->ll, thiz->tt, thiz->ll + thiz->rr + 1, thiz->tt + thiz->bb + 1);
 	DBG("Final bounds %" ENESIM_RECTANGLE_FORMAT, ENESIM_RECTANGLE_ARGS(&ctx->bounds));
