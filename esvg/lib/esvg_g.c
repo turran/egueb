@@ -29,6 +29,8 @@
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
+#define ESVG_LOG_DEFAULT esvg_log_g
+
 typedef struct _Esvg_G
 {
 	/* properties */
@@ -38,6 +40,8 @@ typedef struct _Esvg_G
 	Eina_Bool renderable_tree_changed : 1;
 	/* our renderer */
 	Enesim_Renderer *r;
+	/* the boundings */
+	double ll, rr, tt, bb;
 } Esvg_G;
 
 static Esvg_G * _esvg_g_get(Edom_Tag *t)
@@ -64,11 +68,28 @@ static Eina_Bool _esvg_g_setup_post(Edom_Tag *t,
 	/* check if it is a renderable */
 	if (esvg_type_is_renderable(type) && thiz->renderable_tree_changed)
 	{
-		Enesim_Renderer *r = NULL;
+		const Esvg_Element_Context *child_ctx;
+		Enesim_Renderer *child_r = NULL;
 
+		/* get the context of the element */
+		child_ctx = esvg_element_context_get(child);
+		/* get the max bounds */
+		{
+			double l, r, t, b;
+
+			l = child_ctx->bounds.x;
+			r = child_ctx->bounds.x + child_ctx->bounds.w - 1;
+			t = child_ctx->bounds.y;
+			b = child_ctx->bounds.y + child_ctx->bounds.h - 1;
+
+			if (l < thiz->ll) thiz->ll = l;
+			if (t < thiz->tt) thiz->tt = t;
+			if (r > thiz->rr) thiz->rr = r;
+			if (b > thiz->bb) thiz->bb = b;
+		}
 		/* add to the compound */
-		esvg_renderable_internal_renderer_get(child, &r);
-		enesim_renderer_compound_layer_add(thiz->r, r);
+		esvg_renderable_internal_renderer_get(child, &child_r);
+		enesim_renderer_compound_layer_add(thiz->r, child_r);
 		/* add it to the container */
 		esvg_renderable_container_renderable_add(thiz->container, child);
 	}
@@ -152,8 +173,14 @@ static Esvg_Element_Setup_Return _esvg_g_setup(Edom_Tag *t,
 		esvg_renderable_container_clear(thiz->container);
 		enesim_renderer_compound_layer_clear(thiz->r);
 	}
+	/* reset our internal bounds */
+	thiz->ll = thiz->tt = INT_MAX;
+	thiz->rr = thiz->bb = -INT_MAX;
 	ret = esvg_element_internal_child_setup(t, c, error, NULL, _esvg_g_setup_post, thiz);
+	enesim_rectangle_coords_from(&ctx->bounds, thiz->ll, thiz->tt, thiz->ll + thiz->rr + 1, thiz->tt + thiz->bb + 1);
+	DBG("Final bounds %" ENESIM_RECTANGLE_FORMAT, ENESIM_RECTANGLE_ARGS(&ctx->bounds));
 	thiz->renderable_tree_changed = EINA_FALSE;
+
 	return ret;
 }
 

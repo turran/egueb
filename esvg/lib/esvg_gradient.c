@@ -335,10 +335,18 @@ static Esvg_Element_Setup_Return _esvg_gradient_setup(Edom_Tag *t,
 		if (!topmost)
 			goto state_changed_done;
 
+		if (!thiz->current.href)
+			goto state_changed_done;
+
+		DBG("Using '%s' to inherit properties and stops from", thiz->current.href);
 		/* TODO add the event handlers on the new generate */
 		esvg_svg_element_get(topmost, thiz->current.href, &href_e);
 		if (!href_e)
+		{
+			WARN("Impossible to get the element '%s'", thiz->current.href);
 			goto state_changed_done;
+		}
+
 		/* TODO check that the referring gradient is of the same type? */
 		/* TODO check if this gradient has childs, if not also generate them */
 		thiz->stops_changed = EINA_TRUE;
@@ -452,6 +460,7 @@ static void _esvg_gradient_href_set(Edom_Tag *t, const char *href)
 	Esvg_Gradient *thiz;
 
 	thiz = _esvg_gradient_get(t);
+	ERR("Setting href = %s", href);
 	if (thiz->current.href)
 	{
 		free(thiz->current.href);

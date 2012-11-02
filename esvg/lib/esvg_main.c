@@ -54,7 +54,9 @@ struct log
 {
 	int *d;
 	const char *name;
-} logs[] = {
+};
+
+static struct log logs[] = {
 	{ &esvg_log_a,			"esvg_a" },
 	{ &esvg_log_animate,		"esvg_animate" },
 	{ &esvg_log_animate_base,	"esvg_animate_base" },
@@ -65,6 +67,7 @@ struct log
 	{ &esvg_log_clip_path,		"esvg_clip_path" },
 	{ &esvg_log_element,		"esvg_element" },
 	{ &esvg_log_ellipse,		"esvg_ellipse" },
+	{ &esvg_log_g,			"esvg_g" },
 	{ &esvg_log_gradient,		"esvg_gradient" },
 	{ &esvg_log_image,		"esvg_image" },
 	{ &esvg_log_line,		"esvg_line" },
@@ -266,6 +269,7 @@ int esvg_log_circle 		= -1;
 int esvg_log_clip_path 		= -1;
 int esvg_log_element 		= -1;
 int esvg_log_ellipse 		= -1;
+int esvg_log_g 			= -1;
 int esvg_log_gradient 		= -1;
 int esvg_log_image 		= -1;
 int esvg_log_line 		= -1;

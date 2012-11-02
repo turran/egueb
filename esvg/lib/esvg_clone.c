@@ -60,10 +60,12 @@ static void _descriptor_property(Ender_Property *prop, void *data)
 		return;
 
 	/* FIXME we need to implement this functionality */
-	if (!ender_element_property_value_is_set(ddata->our, prop))
+	if (!ender_element_property_value_is_set(ddata->our, prop)) {
+		DBG("Property '%s' is not set", name);
 		return;
+	}
 	name = ender_property_name_get(prop);
-	//printf("new property %s\n", name);
+	DBG("Setting property '%s'", name);
 	ender_element_property_value_get_simple(ddata->ref, prop, &v);
 	ender_element_property_value_set_simple(ddata->our, prop, v);
 	ender_value_unref(v);

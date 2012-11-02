@@ -261,7 +261,7 @@ typedef enum _Esvg_Clip_Path_Type
 typedef union _Esvg_Clip_Path_Value
 {
 	char *iri;
-} Esvg_Clip_Path_Value;
+} __attribute__((packed)) Esvg_Clip_Path_Value;
 
 typedef struct _Esvg_Clip_Path
 {

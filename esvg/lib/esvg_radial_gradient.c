@@ -347,12 +347,14 @@ static Eina_Bool _esvg_radial_gradient_propagate(Edom_Tag *t,
 
 	if (gu == ESVG_OBJECT_BOUNDING_BOX)
 	{
+		DBG("Using object bounding box %g %g %g %g", ctx->bounds.x, ctx->bounds.y, ctx->bounds.w, ctx->bounds.h);
 		/* check that the coordinates shold be set with (0,0) -> (1, 1) */
 		cx = esvg_length_final_get(&lcx, 1, 1);
 		cy = esvg_length_final_get(&lcy, 1, 1);
 		fx = esvg_length_final_get(&lfx, 1, 1);
 		fy = esvg_length_final_get(&lfy, 1, 1);
-		rad = esvg_length_full_final_get(&lrad, 1, 1, 1);
+		/* the enesim renderer radius is not scaled by the transformation? */
+		rad = esvg_length_full_final_get(&lrad, ctx->bounds.w, ctx->bounds.h, 1);
 		enesim_matrix_values_set(&m, ctx->bounds.w, 0, ctx->bounds.x, 0, ctx->bounds.h, ctx->bounds.y, 0, 0, 1);
 		/* transform the bounds using the context matrix */
 		enesim_matrix_compose(&ctx->transform, &m, &m);
