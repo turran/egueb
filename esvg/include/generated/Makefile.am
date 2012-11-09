@@ -24,6 +24,7 @@ esvg_generated_radial_gradient.c \
 esvg_generated_referenceable.c \
 esvg_generated_renderable.c \
 esvg_generated_rect.c \
+esvg_generated_script.c \
 esvg_generated_set.c \
 esvg_generated_stop.c \
 esvg_generated_style.c \

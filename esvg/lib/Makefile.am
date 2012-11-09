@@ -54,6 +54,7 @@ esvg_referenceable.c \
 esvg_renderable.c \
 esvg_renderable_container.c \
 esvg_rect.c \
+esvg_script.c \
 esvg_set.c \
 esvg_stop.c \
 esvg_style.c \

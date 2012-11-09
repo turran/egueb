@@ -326,5 +326,9 @@ namespace "esvg" : 0 {
 		esvg_animated_length "height";
 		esvg_animated_string "xlink:href";
 	};
+
+	class "script" : "element" {
+		string "content_script_type";
+	};
 };
 

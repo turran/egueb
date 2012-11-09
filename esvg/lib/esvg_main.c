@@ -127,6 +127,7 @@ static void _register_enders(void)
 	esvg_image_init();
 	esvg_text_init();
 	esvg_video_init();
+	esvg_script_init();
 
 	esvg_animation_init();
 	esvg_animate_base_init();
