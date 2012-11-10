@@ -17,6 +17,10 @@ AC_CONFIG_MACRO_DIR([m4])
 AC_CONFIG_HEADERS([config.h])
 AC_USE_SYSTEM_EXTENSIONS
 
+# compiler
+AC_PROG_CC
+AC_PROG_CXX
+
 AM_INIT_AUTOMAKE([1.6 dist-bzip2])
 m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])])
 
@@ -102,9 +106,6 @@ AM_CONDITIONAL([WANT_ESVG], [test "x${want_esvg}" = "xyes"])
 
 ### Checks for programs
 
-# compiler
-AC_PROG_CC
-
 # pkg-config
 PKG_PROG_PKG_CONFIG
 
@@ -161,11 +162,33 @@ if test "x${want_ecss}" = "xyes" && test "x${want_edom}" = "xyes" ; then
       esvg_requirements="emage >= ${ENESIM_VERSION} ${esvg_requirements}"
    fi
    PKG_CHECK_MODULES([ESVG], [${esvg_requirements}], [want_esvg="yes"], [want_esvg="no"])
-   # Optional external tags
+   # Video backends
    PKG_CHECK_MODULES([ESVG_VIDEO], [${esvg_video_requirements}], [have_esvg_video="yes"], [have_esvg_video="no"])
    if test "x${have_esvg_video}" = "xyes" ; then
       AC_DEFINE(BUILD_ESVG_VIDEO, [1], [Esvg Video Support])
    fi
+   # Script backends
+   # V8 code taken from elev8
+   # Check for libv8 and v8.h by linking a bit of code using v8
+   AC_LANG_PUSH(C++)
+   AC_SUBST(V8_LIBS)
+   AC_MSG_CHECKING([for libv8])
+   saved_LIBS="$LIBS"
+   LIBS="$LIBS -lv8"
+   AC_LINK_IFELSE(
+    [AC_LANG_PROGRAM(
+     [[
+      #include <v8.h>
+      v8::Persistent<v8::Number> n;
+     ]],
+     [[
+      n = v8::Persistent<v8::Number>::New(v8::Number::New(0));
+      v8::Handle<v8::Object> o = v8::Object::New();
+     ]],
+   )],[[V8_LIBS="-lv8"], [have_esvg_script_v8="yes"]], [have_esvg_script_v8="no"])
+   LIBS="$saved_LIBS"
+   AC_MSG_RESULT([${have_esvg_script_v8}])
+   AC_LANG_POP
 fi
 
 AM_CONDITIONAL(BUILD_ECSS, [test "x${want_ecss}" = "xyes"])
@@ -173,6 +196,7 @@ AM_CONDITIONAL(BUILD_EDOM, [test "x${want_edom}" = "xyes"])
 AM_CONDITIONAL(BUILD_EMAGE, [test "x${have_emage}" = "xyes"])
 AM_CONDITIONAL(BUILD_ESVG, [test "x${want_esvg}" = "xyes"])
 AM_CONDITIONAL(BUILD_ESVG_VIDEO, [test "x${have_esvg_video}" = "xyes"])
+AM_CONDITIONAL(BUILD_ESVG_SCRIPT_V8, [test "x${have_esvg_script_v8}" = "xyes"])
 
 ### Checks for header files
 
@@ -239,8 +263,10 @@ echo
 echo "CSS support.................................: ${want_ecss}"
 echo "DOM support.................................: ${want_edom}"
 echo "SVG support.................................: ${want_esvg}"
-echo "  External tags:"
-echo "  video support (GStreamer).................: ${have_esvg_video}"
+echo "  Video support:"
+echo "    GStreamer...............................: ${have_esvg_video}"
+echo "  Scripting support:"
+echo "    V8......................................: ${have_esvg_script_v8}"
 echo
 echo "Installation Path...........................: ${prefix}"
 echo
