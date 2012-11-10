@@ -368,9 +368,26 @@ static Esvg_Element_Setup_Return _esvg_renderable_setup(Edom_Tag *t,
 
 	return ESVG_SETUP_OK;
 }
+
+/* The ender wrapper */
+#define _esvg_renderable_delete NULL
+#define _esvg_renderable_renderer_get esvg_renderable_internal_renderer_get
+#define _esvg_renderable_renderer_set NULL
+#define _esvg_renderable_renderer_is_set NULL
+#include "generated/esvg_generated_renderable.c"
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
+void esvg_renderable_init(void)
+{
+	_esvg_renderable_init();
+}
+
+void esvg_renderable_shutdown(void)
+{
+	_esvg_renderable_shutdown();
+}
+
 void esvg_renderable_implementation_renderer_get(Edom_Tag *t, Enesim_Renderer **r)
 {
 	Esvg_Renderable *thiz;
@@ -388,13 +405,6 @@ void esvg_renderable_internal_renderer_get(Edom_Tag *t, Enesim_Renderer **r)
 	thiz = _esvg_renderable_get(t);
 	*r = thiz->r;
 }
-
-/* The ender wrapper */
-#define _esvg_renderable_delete NULL
-#define _esvg_renderable_renderer_get esvg_renderable_internal_renderer_get
-#define _esvg_renderable_renderer_set NULL
-#define _esvg_renderable_renderer_is_set NULL
-#include "generated/esvg_generated_renderable.c"
 
 Eina_Bool esvg_is_renderable_internal(Edom_Tag *t)
 {

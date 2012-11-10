@@ -105,12 +105,21 @@ static Edom_Tag * _esvg_animate_new(void)
 	t = esvg_animate_base_new(&_descriptor, ESVG_ANIMATE, thiz);
 	return t;
 }
-/*============================================================================*
- *                                 Global                                     *
- *============================================================================*/
 /* The ender wrapper */
 #define _esvg_animate_delete NULL
 #include "generated/esvg_generated_animate.c"
+/*============================================================================*
+ *                                 Global                                     *
+ *============================================================================*/
+void esvg_animate_init(void)
+{
+	_esvg_animate_init();
+}
+
+void esvg_animate_shutdown(void)
+{
+	_esvg_animate_shutdown();
+}
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/

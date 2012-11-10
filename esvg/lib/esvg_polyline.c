@@ -247,9 +247,7 @@ static void _esvg_polyline_point_add(Edom_Tag *t, Esvg_Point *p)
 	*new_point = *p;
 	thiz->points = eina_list_append(thiz->points, new_point);
 }
-/*============================================================================*
- *                                 Global                                     *
- *============================================================================*/
+
 /* The ender wrapper */
 #define _esvg_polyline_delete NULL
 #define _esvg_polyline_point_is_set NULL
@@ -258,6 +256,19 @@ static void _esvg_polyline_point_add(Edom_Tag *t, Esvg_Point *p)
 #define _esvg_polyline_point_clear NULL
 #define _esvg_polyline_point_remove NULL
 #include "generated/esvg_generated_polyline.c"
+/*============================================================================*
+ *                                 Global                                     *
+ *============================================================================*/
+
+void esvg_polyline_init(void)
+{
+	_esvg_polyline_init();
+}
+
+void esvg_polyline_shutdown(void)
+{
+	_esvg_polyline_shutdown();
+}
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/

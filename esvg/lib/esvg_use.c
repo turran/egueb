@@ -377,9 +377,7 @@ static void _esvg_use_link_get(Edom_Tag *t, const char **link)
 	thiz = _esvg_use_get(t);
 	*link = thiz->current.link;
 }
-/*============================================================================*
- *                                 Global                                     *
- *============================================================================*/
+
 /* The ender wrapper */
 #define _esvg_use_delete NULL
 #define _esvg_use_x_is_set NULL
@@ -388,6 +386,18 @@ static void _esvg_use_link_get(Edom_Tag *t, const char **link)
 #define _esvg_use_height_is_set NULL
 #define _esvg_use_link_is_set NULL
 #include "generated/esvg_generated_use.c"
+/*============================================================================*
+ *                                 Global                                     *
+ *============================================================================*/
+void esvg_use_init(void)
+{
+	_esvg_use_init();
+}
+
+void esvg_use_shutdown(void)
+{
+	_esvg_use_shutdown();
+}
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/

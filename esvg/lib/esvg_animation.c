@@ -616,9 +616,7 @@ static Esvg_Element_Setup_Return _esvg_animation_setup(Edom_Tag *t,
 
 	return ESVG_SETUP_OK;
 }
-/*============================================================================*
- *                                 Global                                     *
- *============================================================================*/
+
 /* The ender wrapper */
 #define _esvg_animation_delete NULL
 #define _esvg_animation_attribute_name_is_set NULL
@@ -639,6 +637,18 @@ static Esvg_Element_Setup_Return _esvg_animation_setup(Edom_Tag *t,
 #define _esvg_animation_end_add NULL
 #define _esvg_animation_fill_is_set NULL
 #include "generated/esvg_generated_animation.c"
+/*============================================================================*
+ *                                 Global                                     *
+ *============================================================================*/
+void esvg_animation_init(void)
+{
+	_esvg_animation_init();
+}
+
+void esvg_animation_shutdown(void)
+{
+	_esvg_animation_shutdown();
+}
 
 Eina_Bool esvg_is_animation_internal(Edom_Tag *t)
 {

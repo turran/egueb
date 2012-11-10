@@ -463,12 +463,22 @@ static Eina_Bool _esvg_linear_gradient_y2_is_set(Edom_Tag *t)
 	thiz = _esvg_linear_gradient_get(t);
 	return thiz->y2.is_set;
 }
-/*============================================================================*
- *                                 Global                                     *
- *============================================================================*/
 /* The ender wrapper */
 #define _esvg_linear_gradient_delete NULL
 #include "generated/esvg_generated_linear_gradient.c"
+/*============================================================================*
+ *                                 Global                                     *
+ *============================================================================*/
+void esvg_linear_gradient_init(void)
+{
+	_esvg_linear_gradient_init();
+}
+
+void esvg_linear_gradient_shutdown(void)
+{
+	_esvg_linear_gradient_shutdown();
+}
+
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/

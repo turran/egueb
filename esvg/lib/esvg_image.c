@@ -518,9 +518,7 @@ static void _esvg_image_xlink_href_get(Edom_Tag *t, Esvg_Animated_String *href)
 	esvg_attribute_animated_string_get(&thiz->href,
 		href);
 }
-/*============================================================================*
- *                                 Global                                     *
- *============================================================================*/
+
 /* The ender wrapper */
 #define _esvg_image_delete NULL
 #define _esvg_image_x_is_set NULL
@@ -529,6 +527,19 @@ static void _esvg_image_xlink_href_get(Edom_Tag *t, Esvg_Animated_String *href)
 #define _esvg_image_height_is_set NULL
 #define _esvg_image_xlink_href_is_set NULL
 #include "generated/esvg_generated_image.c"
+
+/*============================================================================*
+ *                                 Global                                     *
+ *============================================================================*/
+void esvg_image_init(void)
+{
+	_esvg_image_init();
+}
+
+void esvg_image_shutdown(void)
+{
+	_esvg_image_shutdown();
+}
 
 #if 0
 void esvg_image_damage_add(Edom_Tag *t, Eina_Rectangle *area)

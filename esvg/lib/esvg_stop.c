@@ -168,9 +168,23 @@ static void _esvg_stop_offset_get(Edom_Tag *t, Esvg_Length *offset)
 	*offset = thiz->offset;
 }
 
+/* The ender wrapper  */
+#define _esvg_stop_delete NULL
+#define _esvg_stop_offset_is_set NULL
+#include "generated/esvg_generated_stop.c"
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
+void esvg_stop_init(void)
+{
+	_esvg_stop_init();
+}
+
+void esvg_stop_shutdown(void)
+{
+	_esvg_stop_shutdown();
+}
+
 Enesim_Renderer_Gradient_Stop * esvg_stop_gradient_stop_get(Edom_Tag *t)
 {
 	Esvg_Stop *thiz;
@@ -178,11 +192,6 @@ Enesim_Renderer_Gradient_Stop * esvg_stop_gradient_stop_get(Edom_Tag *t)
 	thiz = _esvg_stop_get(t);
 	return &thiz->s;
 }
-
-/* The ender wrapper  */
-#define _esvg_stop_delete NULL
-#define _esvg_stop_offset_is_set NULL
-#include "generated/esvg_generated_stop.c"
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/

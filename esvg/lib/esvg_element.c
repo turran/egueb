@@ -886,6 +886,31 @@ static void _esvg_element_display_get(Edom_Tag *t, Esvg_Animated_Enum *display)
 	esvg_attribute_animated_enum_get(&thiz->current_attr->display,
 		display);
 }
+
+/* The ender wrapper */
+#define _esvg_element_delete NULL
+#define _esvg_element_type_set NULL
+#define _esvg_element_type_is_set NULL
+#define _esvg_element_topmost_set NULL
+#define _esvg_element_topmost_is_set NULL
+#define _esvg_element_topmost_get esvg_element_internal_topmost_get
+#define _esvg_element_id_is_set NULL
+#define _esvg_element_class_is_set NULL
+#define _esvg_element_style_is_set NULL
+#define _esvg_element_clip_path_is_set NULL
+#define _esvg_element_color_is_set NULL
+#define _esvg_element_fill_is_set NULL
+#define _esvg_element_stroke_is_set NULL
+#define _esvg_element_stroke_width_is_set NULL
+#define _esvg_element_stroke_opacity_is_set NULL
+#define _esvg_element_fill_is_set NULL
+#define _esvg_element_fill_opacity_is_set NULL
+#define _esvg_element_opacity_is_set NULL
+#define _esvg_element_visibility_is_set NULL
+#define _esvg_element_stop_color_is_set NULL
+#define _esvg_element_stop_opacity_is_set NULL
+#define _esvg_element_display_is_set NULL
+#include "generated/esvg_generated_element.c"
 /*----------------------------------------------------------------------------*
  *                           The Edom Tag interface                           *
  *----------------------------------------------------------------------------*/
@@ -897,7 +922,7 @@ static const char * _esvg_element_name_get(Edom_Tag *t)
 	return esvg_type_string_to(thiz->type);
 }
 
-static Edom_Tag * _esvg_element_topmost_get(Edom_Tag *t)
+static Edom_Tag * _esvg_element_tag_topmost_get(Edom_Tag *t)
 {
 	Esvg_Element *thiz;
 
@@ -1774,7 +1799,7 @@ Edom_Tag * esvg_element_new(Esvg_Element_Descriptor *descriptor, Esvg_Type type,
 
 	/* the tag interface */
 	pdescriptor.name_get = _esvg_element_name_get;
-	pdescriptor.topmost_get = _esvg_element_topmost_get;
+	pdescriptor.topmost_get = _esvg_element_tag_topmost_get;
 	pdescriptor.child_add = _esvg_element_child_add;
 	pdescriptor.child_remove = _esvg_element_child_remove;
 	pdescriptor.attribute_set = _esvg_element_attribute_set;
@@ -1803,31 +1828,15 @@ Edom_Tag * esvg_element_new(Esvg_Element_Descriptor *descriptor, Esvg_Type type,
 	return t;
 }
 
-/* The ender wrapper */
-#define _esvg_element_delete NULL
-#define _esvg_element_type_set NULL
-#define _esvg_element_type_is_set NULL
-#define _esvg_element_topmost_set NULL
-#define _esvg_element_topmost_is_set NULL
-#define _esvg_element_topmost_get esvg_element_internal_topmost_get
-#define _esvg_element_id_is_set NULL
-#define _esvg_element_class_is_set NULL
-#define _esvg_element_style_is_set NULL
-#define _esvg_element_clip_path_is_set NULL
-#define _esvg_element_color_is_set NULL
-#define _esvg_element_fill_is_set NULL
-#define _esvg_element_stroke_is_set NULL
-#define _esvg_element_stroke_width_is_set NULL
-#define _esvg_element_stroke_opacity_is_set NULL
-#define _esvg_element_fill_is_set NULL
-#define _esvg_element_fill_opacity_is_set NULL
-#define _esvg_element_opacity_is_set NULL
-#define _esvg_element_visibility_is_set NULL
-#define _esvg_element_stop_color_is_set NULL
-#define _esvg_element_stop_opacity_is_set NULL
-#define _esvg_element_display_is_set NULL
-#include "generated/esvg_generated_element.c"
+void esvg_element_init(void)
+{
+	_esvg_element_init();
+}
 
+void esvg_element_shutdown(void)
+{
+	_esvg_element_shutdown();
+}
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/

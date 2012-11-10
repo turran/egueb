@@ -117,9 +117,23 @@ static Esvg_Element_Setup_Return _esvg_referenceable_setup(Edom_Tag *t,
 
 	return ESVG_SETUP_OK;
 }
+
+/* The ender wrapper */
+#define _esvg_referenceable_delete NULL
+#include "generated/esvg_generated_referenceable.c"
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
+void esvg_referenceable_init(void)
+{
+	_esvg_referenceable_init();
+}
+
+void esvg_referenceable_shutdown(void)
+{
+	_esvg_referenceable_shutdown();
+}
+
 Eina_Bool esvg_is_referenceable_internal(Edom_Tag *t)
 {
 	Esvg_Referenceable *thiz;
@@ -221,10 +235,6 @@ void esvg_referenceable_reference_foreach(Edom_Tag *t, Esvg_Referenceable_Cb cb,
 			break;
 	}
 }
-
-/* The ender wrapper */
-#define _esvg_referenceable_delete NULL
-#include "generated/esvg_generated_referenceable.c"
 
 void * esvg_referenceable_data_get(Edom_Tag *t)
 {

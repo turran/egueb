@@ -506,13 +506,23 @@ static void _esvg_path_d_get(Edom_Tag *t, Esvg_Animated_List *cmds)
 	thiz = _esvg_path_get(t);
 	esvg_attribute_animated_list_get(&thiz->commands, cmds);
 }
-/*============================================================================*
- *                                 Global                                     *
- *============================================================================*/
+
 /* The ender wrapper */
 #define _esvg_path_delete NULL
 #define _esvg_path_d_is_set NULL
 #include "generated/esvg_generated_path.c"
+/*============================================================================*
+ *                                 Global                                     *
+ *============================================================================*/
+void esvg_path_init(void)
+{
+	_esvg_path_init();
+}
+
+void esvg_path_shutdown(void)
+{
+	_esvg_path_shutdown();
+}
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/

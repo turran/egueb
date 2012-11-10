@@ -103,12 +103,21 @@ static Edom_Tag * _esvg_style_new(void)
 	return t;
 }
 
-/*============================================================================*
- *                                 Global                                     *
- *============================================================================*/
 /* The ender wrapper */
 #define _esvg_style_delete NULL
 #include "generated/esvg_generated_style.c"
+/*============================================================================*
+ *                                 Global                                     *
+ *============================================================================*/
+void esvg_style_init(void)
+{
+	_esvg_style_init();
+}
+
+void esvg_style_shutdown(void)
+{
+	_esvg_style_shutdown();
+}
 
 Eina_Bool esvg_style_is_internal(Edom_Tag *t)
 {

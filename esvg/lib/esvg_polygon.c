@@ -224,15 +224,25 @@ static void _esvg_polygon_point_get(Edom_Tag *t, const Eina_List **pts)
 	thiz = _esvg_polygon_get(t);
 	*pts = thiz->points;
 }
-/*============================================================================*
- *                                 Global                                     *
- *============================================================================*/
+
 /* The ender wrapper */
 #define _esvg_polygon_delete NULL
 #define _esvg_polygon_point_is_set NULL
 #define _esvg_polygon_point_clear NULL
 #define _esvg_polygon_point_remove NULL
 #include "generated/esvg_generated_polygon.c"
+/*============================================================================*
+ *                                 Global                                     *
+ *============================================================================*/
+void esvg_polygon_init(void)
+{
+	_esvg_polygon_init();
+}
+
+void esvg_polygon_shutdown(void)
+{
+	_esvg_polygon_shutdown();
+}
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/

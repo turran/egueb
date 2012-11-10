@@ -442,9 +442,7 @@ static void _esvg_rect_ry_get(Edom_Tag *t, Esvg_Animated_Coord *ry)
 	thiz = _esvg_rect_get(t);
 	esvg_attribute_animated_length_get(&thiz->ry, ry);
 }
-/*============================================================================*
- *                                 Global                                     *
- *============================================================================*/
+
 /* The ender wrapper */
 #define _esvg_rect_delete NULL
 #define _esvg_rect_x_is_set NULL
@@ -454,6 +452,18 @@ static void _esvg_rect_ry_get(Edom_Tag *t, Esvg_Animated_Coord *ry)
 #define _esvg_rect_width_is_set NULL
 #define _esvg_rect_height_is_set NULL
 #include "generated/esvg_generated_rect.c"
+/*============================================================================*
+ *                                 Global                                     *
+ *============================================================================*/
+void esvg_rect_init(void)
+{
+	_esvg_rect_init();
+}
+
+void esvg_rect_shutdown(void)
+{
+	_esvg_rect_shutdown();
+}
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/

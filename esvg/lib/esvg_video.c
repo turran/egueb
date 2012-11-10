@@ -499,9 +499,7 @@ static void _esvg_video_xlink_href_get(Edom_Tag *t, Esvg_Animated_String *href)
 	esvg_attribute_animated_string_get(&thiz->href,
 		href);
 }
-/*============================================================================*
- *                                 Global                                     *
- *============================================================================*/
+
 /* The ender wrapper */
 #define _esvg_video_delete NULL
 #define _esvg_video_x_is_set NULL
@@ -510,6 +508,18 @@ static void _esvg_video_xlink_href_get(Edom_Tag *t, Esvg_Animated_String *href)
 #define _esvg_video_height_is_set NULL
 #define _esvg_video_xlink_href_is_set NULL
 #include "generated/esvg_generated_video.c"
+/*============================================================================*
+ *                                 Global                                     *
+ *============================================================================*/
+void esvg_video_init(void)
+{
+	_esvg_video_init();
+}
+
+void esvg_video_shutdown(void)
+{
+	_esvg_video_shutdown();
+}
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/

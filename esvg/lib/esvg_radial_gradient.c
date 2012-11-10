@@ -574,12 +574,22 @@ static Eina_Bool _esvg_radial_gradient_r_is_set(Edom_Tag *t)
 	thiz = _esvg_radial_gradient_get(t);
 	return esvg_attribute_animated_length_is_set(&thiz->rad);
 }
-/*============================================================================*
- *                                 Global                                     *
- *============================================================================*/
+
 /* The ender wrapper */
 #define _esvg_radial_gradient_delete NULL
 #include "generated/esvg_generated_radial_gradient.c"
+/*============================================================================*
+ *                                 Global                                     *
+ *============================================================================*/
+void esvg_radial_gradient_init(void)
+{
+	_esvg_radial_gradient_init();
+}
+
+void esvg_radial_gradient_shutdown(void)
+{
+	_esvg_radial_gradient_shutdown();
+}
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/

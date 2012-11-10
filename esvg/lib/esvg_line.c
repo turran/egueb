@@ -354,9 +354,7 @@ static void _esvg_line_y2_get(Edom_Tag *t, Esvg_Animated_Coord *y2)
 	thiz = _esvg_line_get(t);
 	esvg_attribute_animated_length_get(&thiz->y2, y2);
 }
-/*============================================================================*
- *                                 Global                                     *
- *============================================================================*/
+
 /* The ender wrapper */
 #define _esvg_line_delete NULL
 #define _esvg_line_x1_is_set NULL
@@ -365,6 +363,18 @@ static void _esvg_line_y2_get(Edom_Tag *t, Esvg_Animated_Coord *y2)
 #define _esvg_line_y2_is_set NULL
 
 #include "generated/esvg_generated_line.c"
+/*============================================================================*
+ *                                 Global                                     *
+ *============================================================================*/
+void esvg_line_init(void)
+{
+	_esvg_line_init();
+}
+
+void esvg_line_shutdown(void)
+{
+	_esvg_line_shutdown();
+}
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/

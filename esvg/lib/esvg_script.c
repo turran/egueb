@@ -23,6 +23,7 @@
 #include "esvg_private_attribute_presentation.h"
 #include "esvg_private_context.h"
 #include "esvg_private_element.h"
+#include "esvg_private_script.h"
 
 #include "esvg_script.h"
 
@@ -38,6 +39,7 @@ typedef struct _Esvg_Script
 {
 	/* properties */
 	char *content_script_type;
+	char *cdata;
 	/* interface */
 	/* private */
 } Esvg_Script;
@@ -77,7 +79,18 @@ static Eina_Bool _esvg_script_attribute_get(Edom_Tag *tag, const char *attribute
 
 static void _esvg_script_cdata_set(Edom_Tag *t, const char *cdata, unsigned int length)
 {
-	printf("setting cdata!!!!\n");
+	Esvg_Script *thiz;
+
+	thiz = _esvg_script_get(t);
+	if (thiz->cdata)
+	{
+		free(thiz->cdata);
+		thiz->cdata = NULL;
+	}
+	if (cdata && length)
+	{
+		thiz->cdata = strndup(cdata, length);
+	}
 }
 
 static void _esvg_script_free(Edom_Tag *t)
@@ -96,6 +109,13 @@ static Esvg_Element_Setup_Return _esvg_script_setup(Edom_Tag *t,
 		Enesim_Error **error)
 {
 	/* call the implementation of the script */
+	if (!esvg_element_changed(t))
+		return ESVG_SETUP_OK;
+
+	/* delete the previous instance of the script */
+	/* create a new one */
+
+	printf("doing the setup on the script\n");
 }
 
 static Esvg_Element_Descriptor _descriptor = {
@@ -153,9 +173,23 @@ static void _esvg_script_content_script_type_get(Edom_Tag *t, const char **type)
 	thiz = _esvg_script_get(t);
 	*type = thiz->content_script_type;
 }
+/* The ender wrapper */
+#define _esvg_script_content_script_type_is_set NULL
+#define _esvg_script_delete NULL
+#include "generated/esvg_generated_script.c"
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
+void esvg_script_init(void)
+{
+	_esvg_script_init();
+}
+
+void esvg_script_shutdown(void)
+{
+	_esvg_script_shutdown();
+}
+
 Eina_Bool esvg_is_script_internal(Edom_Tag *t)
 {
 	if (esvg_element_internal_type_get(t) != ESVG_A)
@@ -163,10 +197,16 @@ Eina_Bool esvg_is_script_internal(Edom_Tag *t)
 	return EINA_TRUE;
 }
 
-/* The ender wrapper */
-#define _esvg_script_content_script_type_is_set NULL
-#define _esvg_script_delete NULL
-#include "generated/esvg_generated_script.c"
+void esvg_script_descriptor_register(Esvg_Script_Descriptor *d, const char *type)
+{
+	/* create our hash of scrip descriptor */
+	/* add a new entry on the hash */
+}
+
+void esvg_script_descriptor_unregister(Esvg_Script_Descriptor *d, const char *type)
+{
+	/* remove it from our hash */
+}
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/

@@ -388,13 +388,21 @@ static Eina_Bool _esvg_clip_path_clip_path_units_is_set(Edom_Tag *t)
 	return thiz->units.is_set;
 }
 
-/*============================================================================*
- *                                 Global                                     *
- *============================================================================*/
 /* The ender wrapper */
 #define _esvg_clip_path_delete NULL
 #include "generated/esvg_generated_clip_path.c"
+/*============================================================================*
+ *                                 Global                                     *
+ *============================================================================*/
+void esvg_clip_path_init(void)
+{
+	_esvg_clip_path_init();
+}
 
+void esvg_clip_path_shutdown(void)
+{
+	_esvg_clip_path_shutdown();
+}
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/

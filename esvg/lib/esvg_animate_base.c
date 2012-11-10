@@ -869,9 +869,7 @@ static Eina_Bool _esvg_animate_base_setup(Edom_Tag *t,
 
 	return EINA_TRUE;
 }
-/*============================================================================*
- *                                 Global                                     *
- *============================================================================*/
+
 /* The ender wrapper */
 #define _esvg_animate_base_delete NULL
 #define _esvg_animate_base_to_is_set NULL
@@ -881,6 +879,18 @@ static Eina_Bool _esvg_animate_base_setup(Edom_Tag *t,
 #define _esvg_animate_base_key_times_is_set NULL
 #define _esvg_animate_base_key_splines_is_set NULL
 #include "generated/esvg_generated_animate_base.c"
+/*============================================================================*
+ *                                 Global                                     *
+ *============================================================================*/
+void esvg_animate_base_init(void)
+{
+	_esvg_animate_base_init();
+}
+
+void esvg_animate_base_shutdown(void)
+{
+	_esvg_animate_base_shutdown();
+}
 
 Eina_Bool esvg_is_animate_base_internal(Edom_Tag *t)
 {

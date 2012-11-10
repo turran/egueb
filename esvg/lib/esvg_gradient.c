@@ -554,14 +554,23 @@ static void _esvg_gradient_spread_method_get(Edom_Tag *t, Esvg_Spread_Method *sp
 	if (spread_method) *spread_method = thiz->spread_method.v;
 }
 
-/*============================================================================*
- *                                 Global                                     *
- *============================================================================*/
-/* The ender wrapper */
 #define _esvg_gradient_delete NULL
 #define _esvg_gradient_href_is_set NULL
 #define _esvg_gradient_spread_method_is_set NULL
 #include "generated/esvg_generated_gradient.c"
+/*============================================================================*
+ *                                 Global                                     *
+ *============================================================================*/
+/* The ender wrapper */
+void esvg_gradient_init(void)
+{
+	_esvg_gradient_init();
+}
+
+void esvg_gradient_shutdown(void)
+{
+	_esvg_gradient_shutdown();
+}
 
 Edom_Tag * esvg_gradient_new(Esvg_Gradient_Descriptor *descriptor,
 		Esvg_Type type,

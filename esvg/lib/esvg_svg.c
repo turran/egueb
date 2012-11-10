@@ -1147,9 +1147,39 @@ static void _esvg_svg_y_dpi_get(Edom_Tag *t, double *y_dpi)
 	thiz = _esvg_svg_get(t);
 	*y_dpi = thiz->y_dpi;
 }
+
+/* The ender wrapper */
+#define _esvg_svg_delete NULL
+#define _esvg_svg_x_is_set NULL
+#define _esvg_svg_y_is_set NULL
+#define _esvg_svg_width_is_set NULL
+#define _esvg_svg_height_is_set NULL
+#define _esvg_svg_actual_width_set NULL
+#define _esvg_svg_actual_width_is_set NULL
+#define _esvg_svg_actual_height_set NULL
+#define _esvg_svg_actual_height_is_set NULL
+#define _esvg_svg_viewbox_get NULL
+#define _esvg_svg_viewbox_is_set NULL
+#define _esvg_svg_container_width_get esvg_svg_internal_container_width_get
+#define _esvg_svg_container_width_is_set NULL
+#define _esvg_svg_container_height_get esvg_svg_internal_container_height_get
+#define _esvg_svg_container_height_is_set NULL
+#define _esvg_svg_x_dpi_is_set NULL
+#define _esvg_svg_y_dpi_is_set NULL
+#include "generated/esvg_generated_svg.c"
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
+void esvg_svg_init(void)
+{
+	_esvg_svg_init();
+}
+
+void esvg_svg_shutdown(void)
+{
+	_esvg_svg_shutdown();
+}
+
 void esvg_svg_element_get(Ender_Element *e, const char *uri, Ender_Element **el)
 {
 	Esvg_Svg *thiz;
@@ -1351,26 +1381,6 @@ Etch * esvg_svg_etch_get(Ender_Element *e)
 	thiz = _esvg_svg_get(t);
 	return thiz->etch;
 }
-
-/* The ender wrapper */
-#define _esvg_svg_delete NULL
-#define _esvg_svg_x_is_set NULL
-#define _esvg_svg_y_is_set NULL
-#define _esvg_svg_width_is_set NULL
-#define _esvg_svg_height_is_set NULL
-#define _esvg_svg_actual_width_set NULL
-#define _esvg_svg_actual_width_is_set NULL
-#define _esvg_svg_actual_height_set NULL
-#define _esvg_svg_actual_height_is_set NULL
-#define _esvg_svg_viewbox_get NULL
-#define _esvg_svg_viewbox_is_set NULL
-#define _esvg_svg_container_width_get esvg_svg_internal_container_width_get
-#define _esvg_svg_container_width_is_set NULL
-#define _esvg_svg_container_height_get esvg_svg_internal_container_height_get
-#define _esvg_svg_container_height_is_set NULL
-#define _esvg_svg_x_dpi_is_set NULL
-#define _esvg_svg_y_dpi_is_set NULL
-#include "generated/esvg_generated_svg.c"
 
 #if 0
 void esvg_svg_style_add(Edom_Tag *tag, Esvg_Parser_Style *s)

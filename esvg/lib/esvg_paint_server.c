@@ -105,11 +105,20 @@ static void _esvg_paint_server_free(Edom_Tag *t)
 		thiz->descriptor.free(t);
 	free(thiz);
 }
+#define _esvg_paint_server_delete NULL
+#include "generated/esvg_generated_paint_server.c"
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
-#define _esvg_paint_server_delete NULL
-#include "generated/esvg_generated_paint_server.c"
+void esvg_paint_server_init(void)
+{
+	_esvg_paint_server_init();
+}
+
+void esvg_paint_server_shutdown(void)
+{
+	_esvg_paint_server_shutdown();
+}
 
 Eina_Bool esvg_is_paint_server_internal(Edom_Tag *t)
 {

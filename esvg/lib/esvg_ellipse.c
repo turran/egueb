@@ -354,9 +354,7 @@ static void _esvg_ellipse_ry_get(Edom_Tag *t, Esvg_Animated_Length *ry)
 	thiz = _esvg_ellipse_get(t);
 	esvg_attribute_animated_length_get(&thiz->ry, ry);
 }
-/*============================================================================*
- *                                 Global                                     *
- *============================================================================*/
+
 /* The ender wrapper */
 #define _esvg_ellipse_delete NULL
 #define _esvg_ellipse_cx_is_set NULL
@@ -364,6 +362,18 @@ static void _esvg_ellipse_ry_get(Edom_Tag *t, Esvg_Animated_Length *ry)
 #define _esvg_ellipse_rx_is_set NULL
 #define _esvg_ellipse_ry_is_set NULL
 #include "generated/esvg_generated_ellipse.c"
+/*============================================================================*
+ *                                 Global                                     *
+ *============================================================================*/
+void esvg_ellipse_init(void)
+{
+	_esvg_ellipse_init();
+}
+
+void esvg_ellipse_shutdown(void)
+{
+	_esvg_ellipse_shutdown();
+}
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/

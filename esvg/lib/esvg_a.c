@@ -238,6 +238,11 @@ static void _esvg_a_xlink_href_get(Edom_Tag *t, Esvg_Animated_String *href)
 	esvg_attribute_animated_string_get(&thiz->href,
 		href);
 }
+
+/* The ender wrapper */
+#define _esvg_a_xlink_href_is_set NULL
+#define _esvg_a_delete NULL
+#include "generated/esvg_generated_a.c"
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
@@ -248,10 +253,16 @@ Eina_Bool esvg_is_a_internal(Edom_Tag *t)
 	return EINA_TRUE;
 }
 
-/* The ender wrapper */
-#define _esvg_a_xlink_href_is_set NULL
-#define _esvg_a_delete NULL
-#include "generated/esvg_generated_a.c"
+void esvg_a_init(void)
+{
+	_esvg_a_init();
+}
+
+void esvg_a_shutdown(void)
+{
+	_esvg_a_shutdown();
+}
+
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/
