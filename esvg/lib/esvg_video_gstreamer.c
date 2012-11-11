@@ -23,8 +23,6 @@
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
-#ifdef BUILD_ESVG_VIDEO
-
 typedef struct _Esvg_Video_Gstreamer
 	GstElement *enesim_sink;
 	GstElement *playbin2;
@@ -77,9 +75,50 @@ static void _esvg_video_buffer_display(GstElement *enesim_sink, Enesim_Buffer *b
 		enesim_renderer_unlock(thiz->image);
 	}
 }
-
-static void _esvg_video_pipeline_setup(Esvg_Video *thiz)
+/*----------------------------------------------------------------------------*
+ *                           The Video interface                              *
+ *----------------------------------------------------------------------------*/
+static void * _esvg_video_descriptor_new(Edom_Tag *t)
 {
+	Esvg_Video_Gstreamer *thiz;
+	GstElement *enesim_sink;
+
+	thiz = calloc(1, sizeof(Esvg_Video_Gstreamer));
+	enesim_sink = gst_element_factory_make("enesim_sink", NULL);
+	/* TODO fallback to appsink in case enesim sink is not found */
+	/* TODO playbin2 will overwrite our sink, we need
+	 * to increase the priority
+	 */
+	if (!enesim_sink)
+	{
+		ERR("No enesim sink element found");
+		enesim_renderer_unref(thiz->image);
+		free(thiz);
+		return NULL;
+	}
+	g_signal_connect (enesim_sink, "buffer-display",
+          G_CALLBACK (_esvg_video_buffer_display), thiz);
+	thiz->enesim_sink = gst_object_ref(enesim_sink);
+
+	thiz->playbin2 = gst_element_factory_make("playbin2", "svg_video");
+	g_object_set(thiz->playbin2, "video-sink", thiz->enesim_sink, NULL);
+	
+	return thiz;
+}
+
+static void _esvg_video_gstreamer_free(Edom_Tag *t, void *data)
+{
+	Esvg_Video_Gstreamer *thiz = data;
+
+	gst_element_set_state(thiz->playbin2, GST_STATE_NULL);
+	gst_object_unref(thiz->playbin2);
+	gst_object_unref(thiz->enesim_sink);
+	free(thiz);
+}
+
+static void _esvg_video_gstreamer_setup(Edom_Tag *t, void *data)
+{
+	Esvg_Video_Gstreamer *thiz = data;
 	GstState current;
 	GstState pending;
 	GstStateChangeReturn ret;
@@ -109,37 +148,11 @@ static void _esvg_video_pipeline_setup(Esvg_Video *thiz)
 	gst_element_set_state(thiz->playbin2, GST_STATE_PLAYING);
 }
 
-static void _esvg_video_pipeline_cleanup(Esvg_Video *thiz)
-{
-	gst_element_set_state(thiz->playbin2, GST_STATE_NULL);
-	gst_object_unref(thiz->playbin2);
-	gst_object_unref(thiz->enesim_sink);
-}
-
-void _esvg_video_gstreamer_new(void)
-{
-	enesim_sink = gst_element_factory_make("enesim_sink", NULL);
-	/* TODO fallback to appsink in case enesim sink is not found */
-	/* TODO playbin2 will overwrite our sink, we need
-	 * to increase the priority
-	 */
-	if (!enesim_sink)
-	{
-		ERR("No enesim sink element found");
-		enesim_renderer_unref(thiz->image);
-		free(thiz);
-		return NULL;
-	}
-	g_signal_connect (enesim_sink, "buffer-display",
-          G_CALLBACK (_esvg_video_buffer_display), thiz);
-	thiz->enesim_sink = gst_object_ref(enesim_sink);
-
-	thiz->playbin2 = gst_element_factory_make("playbin2", "svg_video");
-	g_object_set(thiz->playbin2, "video-sink", thiz->enesim_sink, NULL);
-
-}
-
-#endif
+static Esvg_Video_Descriptor _descriptor = {
+	/* .new 	= */ _esvg_video_gstreamer_new,
+	/* .free 	= */ _esvg_video_gstreamer_free,
+	/* .setup 	= */ _esvg_video_gstreamer_setup,
+};
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/

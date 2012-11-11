@@ -25,9 +25,10 @@
 #include "esvg_private_element.h"
 #include "esvg_private_renderable.h"
 #include "esvg_private_svg.h"
+#include "esvg_private_video.h"
 #include "esvg_video.h"
 
-#ifdef BUILD_ESVG_VIDEO
+#ifdef BUILD_ESVG_VIDEO_GSTREAMER
 #include <gst/gst.h>
 #endif
 /* This object tries to follow the spec found on:
@@ -61,13 +62,16 @@ typedef struct _Esvg_Video
 	double gheight;
 	char *ghref;
 	/* private */
-#ifdef BUILD_ESVG_VIDEO
+#ifdef BUILD_ESVG_VIDEO_GSTREAMER
 	GstElement *enesim_sink;
 	GstElement *playbin2;
 #endif
 	Enesim_Renderer *image;
 	Enesim_Buffer *b;
 	Enesim_Surface *s;
+	/* our own implementation */
+	Esvg_Video_Descriptor *descriptor;
+	void *descriptor_data;
 } Esvg_Video;
 
 static Esvg_Video * _esvg_video_get(Edom_Tag *t)
@@ -80,7 +84,7 @@ static Esvg_Video * _esvg_video_get(Edom_Tag *t)
 	return thiz;
 }
 
-#ifdef BUILD_ESVG_VIDEO
+#ifdef BUILD_ESVG_VIDEO_GSTREAMER
 static char * _esvg_video_path_urify(const char *s)
 {
 	/* FIXME we need a way to check if the path stats with an uri */
@@ -317,8 +321,13 @@ static Eina_Bool _esvg_video_renderer_propagate(Edom_Tag *t,
 	}
 	DBG("Using real uri %s for %s", real, thiz->ghref);
 	thiz->real_href = real;
+#if 0
+	/* call the descriptor setup */
+	if (thiz->descriptor->setup)
+		thiz->descriptor->setup(t, thiz->descriptor_data);
+#endif
 
-#ifdef BUILD_ESVG_VIDEO
+#ifdef BUILD_ESVG_VIDEO_GSTREAMER
 	_esvg_video_pipeline_setup(thiz);
 #endif
 done:
@@ -330,7 +339,14 @@ static void _esvg_video_free(Edom_Tag *t)
 	Esvg_Video *thiz;
 
 	thiz = _esvg_video_get(t);
-#ifdef BUILD_ESVG_VIDEO
+#if 0
+	if (thiz->descriptor)
+	{
+		if (thiz->descriptor->cleanup)
+			thiz->descriptor->cleanup(t, thiz->descriptor_data);
+	}
+#endif
+#ifdef BUILD_ESVG_VIDEO_GSTREAMER
 	_esvg_video_pipeline_cleanup(thiz);
 #endif
 	free(thiz);
@@ -360,7 +376,7 @@ static Edom_Tag * _esvg_video_new(void)
 	Esvg_Video *thiz;
 	Edom_Tag *t;
 	Enesim_Renderer *r;
-#ifdef BUILD_ESVG_VIDEO
+#ifdef BUILD_ESVG_VIDEO_GSTREAMER
 	GstElement *enesim_sink;
 #endif
 
@@ -378,7 +394,12 @@ static Edom_Tag * _esvg_video_new(void)
 	thiz->height.base.v = thiz->height.anim.v = ESVG_LENGTH_0;
 	/* FIXME: href default value */
 
-#ifdef BUILD_ESVG_VIDEO
+	/* for now use the gstreamer backend only */
+#if 0
+	thiz->descriptor = &esvg_video_gstreamer_descriptor;
+#endif
+
+#ifdef BUILD_ESVG_VIDEO_GSTREAMER
 	enesim_sink = gst_element_factory_make("enesim_sink", NULL);
 	/* TODO fallback to appsink in case enesim sink is not found */
 	/* TODO playbin2 will overwrite our sink, we need

@@ -61,7 +61,7 @@ AC_SUBST([ESVG_BUILD])
 ecss_requirements="eina"
 edom_requirements="eina"
 esvg_requirements="etex >= ${ENESIM_VERSION} enesim >= ${ENESIM_VERSION} eina >= ${EINA_VERSION} ender >= ${ENDER_VERSION} etch >= ${ETCH_VERSION}"
-esvg_video_requirements="gstreamer-0.10"
+gstreamer_requirements="gstreamer-0.10"
 
 AC_SUBST([esvg_requirements])
 
@@ -163,9 +163,9 @@ if test "x${want_ecss}" = "xyes" && test "x${want_edom}" = "xyes" ; then
    fi
    PKG_CHECK_MODULES([ESVG], [${esvg_requirements}], [want_esvg="yes"], [want_esvg="no"])
    # Video backends
-   PKG_CHECK_MODULES([ESVG_VIDEO], [${esvg_video_requirements}], [have_esvg_video="yes"], [have_esvg_video="no"])
-   if test "x${have_esvg_video}" = "xyes" ; then
-      AC_DEFINE(BUILD_ESVG_VIDEO, [1], [Esvg Video Support])
+   PKG_CHECK_MODULES([GSTREAMER], [${gstreamer_requirements}], [have_gstreamer="yes"], [have_gstreamer="no"])
+   if test "x${have_gstreamer}" = "xyes" ; then
+      AC_DEFINE(BUILD_ESVG_VIDEO_GSTREAMER, [1], [Esvg Video Gstreamer Support])
    fi
    # Script backends
    # V8 code taken from elev8
@@ -185,9 +185,9 @@ if test "x${want_ecss}" = "xyes" && test "x${want_edom}" = "xyes" ; then
       n = v8::Persistent<v8::Number>::New(v8::Number::New(0));
       v8::Handle<v8::Object> o = v8::Object::New();
      ]],
-   )],[[V8_LIBS="-lv8"], [have_esvg_script_v8="yes"]], [have_esvg_script_v8="no"])
+   )],[[V8_LIBS="-lv8"], [have_v8="yes"]], [have_v8="no"])
    LIBS="$saved_LIBS"
-   AC_MSG_RESULT([${have_esvg_script_v8}])
+   AC_MSG_RESULT([${have_v8}])
    AC_LANG_POP
 fi
 
@@ -195,8 +195,8 @@ AM_CONDITIONAL(BUILD_ECSS, [test "x${want_ecss}" = "xyes"])
 AM_CONDITIONAL(BUILD_EDOM, [test "x${want_edom}" = "xyes"])
 AM_CONDITIONAL(BUILD_EMAGE, [test "x${have_emage}" = "xyes"])
 AM_CONDITIONAL(BUILD_ESVG, [test "x${want_esvg}" = "xyes"])
-AM_CONDITIONAL(BUILD_ESVG_VIDEO, [test "x${have_esvg_video}" = "xyes"])
-AM_CONDITIONAL(BUILD_ESVG_SCRIPT_V8, [test "x${have_esvg_script_v8}" = "xyes"])
+AM_CONDITIONAL(BUILD_ESVG_VIDEO_GSTREAMER, [test "x${have_gstreamer}" = "xyes"])
+AM_CONDITIONAL(BUILD_ESVG_SCRIPT_V8, [test "x${have_v8}" = "xyes"])
 
 ### Checks for header files
 
@@ -264,9 +264,9 @@ echo "CSS support.................................: ${want_ecss}"
 echo "DOM support.................................: ${want_edom}"
 echo "SVG support.................................: ${want_esvg}"
 echo "  Video support:"
-echo "    GStreamer...............................: ${have_esvg_video}"
+echo "    GStreamer...............................: ${have_gstreamer}"
 echo "  Scripting support:"
-echo "    V8......................................: ${have_esvg_script_v8}"
+echo "    V8......................................: ${have_v8}"
 echo
 echo "Installation Path...........................: ${prefix}"
 echo

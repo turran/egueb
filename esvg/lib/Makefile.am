@@ -11,7 +11,7 @@ AM_CPPFLAGS = \
 -DENESIM_EXTENSION \
 @ESVG_BUILD@ \
 @ESVG_CFLAGS@ \
-@ESVG_VIDEO_CFLAGS@
+@GSTREAMER_CFLAGS@
 
 lib_LTLIBRARIES = libesvg.la
 
@@ -73,6 +73,6 @@ esvg_video.c
 libesvg_la_LIBADD = \
 $(top_builddir)/edom/lib/libedom.la \
 $(top_builddir)/ecss/lib/libecss.la \
-@ESVG_LIBS@ @ESVG_VIDEO_LIBS@ -lm
+@ESVG_LIBS@ @GSTREAMER_LIBS@ -lm
 
 libesvg_la_LDFLAGS = -no-undefined -version-info @version_info@
