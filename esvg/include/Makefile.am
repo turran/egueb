@@ -68,4 +68,5 @@ esvg_private_script.h \
 esvg_private_stop.h \
 esvg_private_style.h \
 esvg_private_svg.h \
-esvg_private_types.h
+esvg_private_types.h \
+esvg_private_video.h
