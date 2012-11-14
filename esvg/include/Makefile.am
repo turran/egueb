@@ -65,6 +65,7 @@ esvg_private_renderable.h \
 esvg_private_renderable_behaviour.h \
 esvg_private_renderable_container.h \
 esvg_private_script.h \
+esvg_private_scriptor.h \
 esvg_private_stop.h \
 esvg_private_style.h \
 esvg_private_svg.h \

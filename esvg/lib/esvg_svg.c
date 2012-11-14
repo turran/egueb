@@ -15,10 +15,6 @@
  * License along with this library.
  * If not, see <http://www.gnu.org/licenses/>.
  */
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
-
 #include "esvg_private_main.h"
 #include "esvg_private_attribute_presentation.h"
 #include "esvg_private_context.h"
@@ -28,6 +24,7 @@
 #include "esvg_private_svg.h"
 #include "esvg_private_a.h"
 #include "esvg_private_input.h"
+#include "esvg_private_scriptor.h"
 #include "esvg_private_style.h"
 
 #include "esvg_svg.h"
@@ -112,6 +109,8 @@ typedef struct _Esvg_Svg
 	/* svg inclusion */
 	Eina_List *svgs; /* the list of svg documents found on the svg */
 	Eina_List *image_svgs; /* the list of svg images on the svg */
+	/* scripts */
+	Eina_Hash *scriptors;
 } Esvg_Svg;
 
 typedef struct _Esvg_Svg_Uri_Data
@@ -883,6 +882,8 @@ static void _esvg_svg_free(Edom_Tag *t)
 	enesim_renderer_unref(thiz->clipper);
 	enesim_renderer_unref(thiz->background);
 	enesim_renderer_unref(thiz->compound);
+	/* TODO remove etch and all the animation system  */
+	/* TODO free the scriptors */
 	free(thiz);
 }
 
@@ -945,11 +946,13 @@ static Edom_Tag * _esvg_svg_new(void)
 	thiz->y_dpi = 96.0;
 
 	/* no default value for the view_box */
+
 	/* the animation system */
 	thiz->etch = etch_new();
 	etch_timer_fps_set(thiz->etch, 30);
 	t = esvg_renderable_new(&_descriptor, ESVG_SVG, thiz);
-
+	/* the script system */
+	thiz->scriptors = eina_hash_string_superfast_new(NULL);
 	return t;
 }
 
@@ -1172,12 +1175,34 @@ static void _esvg_svg_y_dpi_get(Edom_Tag *t, double *y_dpi)
  *============================================================================*/
 void esvg_svg_init(void)
 {
+	/* initialize the ender interface */
 	_esvg_svg_init();
 }
 
 void esvg_svg_shutdown(void)
 {
 	_esvg_svg_shutdown();
+}
+/*----------------------------------------------------------------------------*
+ *                     The scriptor related functions                         *
+ *----------------------------------------------------------------------------*/
+Esvg_Scriptor * esvg_svg_scriptor_get(Edom_Tag *t, const char *type)
+{
+	Esvg_Svg *thiz;
+	Esvg_Scriptor *scriptor;
+	Esvg_Scriptor_Descriptor *descriptor;
+
+	thiz = _esvg_svg_get(t);
+
+	/* return the created scriptor in case it exists on the svg */
+	scriptor = eina_hash_find(thiz->scriptors, type);
+	if (scriptor) return scriptor;
+
+	descriptor = esvg_scriptor_descriptor_find(type);
+	if (!descriptor) return NULL;
+
+	scriptor = esvg_scriptor_new(descriptor);
+	return scriptor;
 }
 
 void esvg_svg_element_get(Ender_Element *e, const char *uri, Ender_Element **el)

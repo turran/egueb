@@ -185,7 +185,8 @@ if test "x${want_ecss}" = "xyes" && test "x${want_edom}" = "xyes" ; then
       n = v8::Persistent<v8::Number>::New(v8::Number::New(0));
       v8::Handle<v8::Object> o = v8::Object::New();
      ]],
-   )],[[V8_LIBS="-lv8"], [have_v8="yes"]], [have_v8="no"])
+   )],[[V8_LIBS="-lv8"]
+      [have_v8="yes"]], [have_v8="no"])
    LIBS="$saved_LIBS"
    AC_MSG_RESULT([${have_v8}])
    AC_LANG_POP
@@ -196,7 +197,11 @@ AM_CONDITIONAL(BUILD_EDOM, [test "x${want_edom}" = "xyes"])
 AM_CONDITIONAL(BUILD_EMAGE, [test "x${have_emage}" = "xyes"])
 AM_CONDITIONAL(BUILD_ESVG, [test "x${want_esvg}" = "xyes"])
 AM_CONDITIONAL(BUILD_ESVG_VIDEO_GSTREAMER, [test "x${have_gstreamer}" = "xyes"])
-AM_CONDITIONAL(BUILD_ESVG_SCRIPT_V8, [test "x${have_v8}" = "xyes"])
+
+if test "x${have_v8}" = "xyes" ; then
+  AC_DEFINE(BUILD_ESVG_SCRIPTOR_V8, [1], [JS Scripting V8 Support])
+fi
+AM_CONDITIONAL(BUILD_ESVG_SCRIPTOR_V8, [test "x${have_v8}" = "xyes"])
 
 ### Checks for header files
 

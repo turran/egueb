@@ -46,6 +46,10 @@
 # endif
 #endif
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 typedef struct _Edom_Parser Edom_Parser;
 typedef struct _Edom_Tag Edom_Tag;
 
@@ -133,7 +137,7 @@ EAPI void edom_tag_text_get(Edom_Tag *thiz, Edom_String *string);
 
 EAPI void edom_tag_id_set(Edom_Tag *thiz, const char *id);
 EAPI char * edom_tag_id_get(Edom_Tag *thiz);
-EAPI void edom_tag_class_set(Edom_Tag *thiz, const char *class);
+EAPI void edom_tag_class_set(Edom_Tag *thiz, const char *c);
 EAPI char * edom_tag_class_get(Edom_Tag *thiz);
 
 EAPI Eina_Bool edom_tag_child_add(Edom_Tag *thiz, Edom_Tag *child);
@@ -148,5 +152,9 @@ EAPI Edom_Tag * edom_tag_topmost_get(Edom_Tag *thiz);
 EAPI void edom_tag_dump(Edom_Tag *thiz);
 EAPI void edom_tag_attributes_from_xml(Edom_Tag *thiz,
 		const char *attributes, unsigned int length);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /*_EDOM_H*/

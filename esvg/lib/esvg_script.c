@@ -15,15 +15,11 @@
  * License along with this library.
  * If not, see <http://www.gnu.org/licenses/>.
  */
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
-
 #include "esvg_private_main.h"
 #include "esvg_private_attribute_presentation.h"
 #include "esvg_private_context.h"
 #include "esvg_private_element.h"
-#include "esvg_private_script.h"
+#include "esvg_private_scriptor.h"
 
 #include "esvg_script.h"
 
@@ -195,17 +191,6 @@ Eina_Bool esvg_is_script_internal(Edom_Tag *t)
 	if (esvg_element_internal_type_get(t) != ESVG_A)
 		return EINA_FALSE;
 	return EINA_TRUE;
-}
-
-void esvg_script_descriptor_register(Esvg_Script_Descriptor *d, const char *type)
-{
-	/* create our hash of scrip descriptor */
-	/* add a new entry on the hash */
-}
-
-void esvg_script_descriptor_unregister(Esvg_Script_Descriptor *d, const char *type)
-{
-	/* remove it from our hash */
 }
 /*============================================================================*
  *                                   API                                      *

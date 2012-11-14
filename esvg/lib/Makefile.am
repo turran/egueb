@@ -55,6 +55,7 @@ esvg_renderable.c \
 esvg_renderable_container.c \
 esvg_rect.c \
 esvg_script.c \
+esvg_scriptor.c \
 esvg_set.c \
 esvg_stop.c \
 esvg_style.c \
@@ -76,3 +77,12 @@ $(top_builddir)/ecss/lib/libecss.la \
 @ESVG_LIBS@ @GSTREAMER_LIBS@ -lm
 
 libesvg_la_LDFLAGS = -no-undefined -version-info @version_info@
+
+# conditional code
+if BUILD_ESVG_SCRIPTOR_V8
+libesvg_la_SOURCES += esvg_scriptor_js_v8.cc
+libesvg_la_LIBADD += @V8_LIBS@
+endif
+
+
+
