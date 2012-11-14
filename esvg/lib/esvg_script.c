@@ -20,6 +20,7 @@
 #include "esvg_private_context.h"
 #include "esvg_private_element.h"
 #include "esvg_private_scriptor.h"
+#include "esvg_private_svg.h"
 
 #include "esvg_script.h"
 
@@ -107,7 +108,6 @@ static Esvg_Element_Setup_Return _esvg_script_setup(Edom_Tag *t,
 {
 	Esvg_Script *thiz;
 	Ender_Element *topmost;
-	Edom_Tag *topmost_t;
 
 	/* call the implementation of the script */
 	if (!esvg_element_changed(t))
@@ -121,8 +121,7 @@ static Esvg_Element_Setup_Return _esvg_script_setup(Edom_Tag *t,
 	}
 	/* create a new context */
 	esvg_element_internal_topmost_get(t, &topmost);
-	topmost_t = ender_element_object_get(topmost);
-	thiz->scriptor = esvg_svg_scriptor_get(topmost_t, thiz->content_script_type);
+	thiz->scriptor = esvg_svg_scriptor_get(topmost, thiz->content_script_type);
 	if (!thiz->scriptor) return ESVG_SETUP_OK;
 
 	/* run the script */

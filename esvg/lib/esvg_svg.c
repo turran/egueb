@@ -1186,12 +1186,14 @@ void esvg_svg_shutdown(void)
 /*----------------------------------------------------------------------------*
  *                     The scriptor related functions                         *
  *----------------------------------------------------------------------------*/
-Esvg_Scriptor * esvg_svg_scriptor_get(Edom_Tag *t, const char *type)
+Esvg_Scriptor * esvg_svg_scriptor_get(Ender_Element *e, const char *type)
 {
 	Esvg_Svg *thiz;
 	Esvg_Scriptor *scriptor;
 	Esvg_Scriptor_Descriptor *descriptor;
+	Edom_Tag *t;
 
+	t = ender_element_object_get(e);
 	thiz = _esvg_svg_get(t);
 
 	/* return the created scriptor in case it exists on the svg */
@@ -1201,7 +1203,7 @@ Esvg_Scriptor * esvg_svg_scriptor_get(Edom_Tag *t, const char *type)
 	descriptor = esvg_scriptor_descriptor_find(type);
 	if (!descriptor) return NULL;
 
-	scriptor = esvg_scriptor_new(descriptor);
+	scriptor = esvg_scriptor_new(descriptor, e);
 	return scriptor;
 }
 
@@ -1290,6 +1292,9 @@ Enesim_Surface * esvg_svg_surface_new(Ender_Element *e, int w, int h)
 	return s;
 }
 
+/*----------------------------------------------------------------------------*
+ *                        The application interface                           *
+ *----------------------------------------------------------------------------*/
 void esvg_svg_go_to(Ender_Element *e, const char *uri)
 {
 	Edom_Tag *t;
@@ -1301,6 +1306,21 @@ void esvg_svg_go_to(Ender_Element *e, const char *uri)
 		return;
 	if (thiz->application_descriptor->go_to)
 		thiz->application_descriptor->go_to(thiz->thiz_e, thiz->application_data, uri);
+}
+
+void esvg_svg_script_alert(Ender_Element *e, const char *msg)
+{
+	Edom_Tag *t;
+	Esvg_Svg *thiz;
+
+	t = ender_element_object_get(e);
+	thiz = _esvg_svg_get(t);
+	printf("alert = %s\n", msg);
+	if (!thiz->application_descriptor)
+		return;
+	if (thiz->application_descriptor->script_alert)
+		thiz->application_descriptor->script_alert(thiz->thiz_e, thiz->application_data, msg);
+
 }
 
 #if 0

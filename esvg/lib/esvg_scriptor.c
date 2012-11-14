@@ -47,7 +47,8 @@ void esvg_scriptor_shutdown(void)
 #endif
 }
 
-Esvg_Scriptor * esvg_scriptor_new(Esvg_Scriptor_Descriptor *descriptor)
+Esvg_Scriptor * esvg_scriptor_new(Esvg_Scriptor_Descriptor *descriptor,
+		Ender_Element *e)
 {
 	Esvg_Scriptor *thiz;
 	void *ctx;
@@ -55,7 +56,7 @@ Esvg_Scriptor * esvg_scriptor_new(Esvg_Scriptor_Descriptor *descriptor)
 	if (!descriptor) return NULL;
 	if (!descriptor->context_new) return NULL;
 
-	ctx = descriptor->context_new();
+	ctx = descriptor->context_new(e);
 	if (!ctx) return NULL;
 
 	thiz = calloc(1, sizeof(Esvg_Scriptor));

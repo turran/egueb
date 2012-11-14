@@ -13,7 +13,7 @@ typedef struct _Esvg_Svg_Application_Descriptor
 	/* function to create a surface */
 	/* function to get data from an external url */
 	/* script based functions */
-	Esvg_Svg_Script_Alert alert;
+	Esvg_Svg_Script_Alert script_alert;
 } Esvg_Svg_Application_Descriptor;
 
 EAPI Ender_Element * esvg_svg_new(void);

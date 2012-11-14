@@ -17,6 +17,7 @@
  */
 #include "esvg_private_main.h"
 #include "esvg_private_scriptor.h"
+#include "esvg_private_svg.h"
 
 #include <v8.h>
 using namespace v8;
@@ -25,38 +26,43 @@ using namespace v8;
  *============================================================================*/
 typedef struct _Esvg_Scriptor_Js_V8
 {
+	Ender_Element *svg;
 	Persistent<Context> context;
 } Esvg_Scriptor_Js_V8;
 
 v8::Handle<v8::Value> Alert(const v8::Arguments& args)
 {
-	v8::String::Utf8Value str(args[0]); // Convert first argument to V8 String
-	//const char* cstr = ToCString(str); // Convert V8 String to C string
+	Esvg_Scriptor_Js_V8 *thiz;
+
+	String::Utf8Value str(args[0]); // Convert first argument to V8 String
+	Local<External> wrap = Local<External>::Cast(args.Data());
+	thiz = static_cast<Esvg_Scriptor_Js_V8*>(wrap->Value());
 
 	/* call the svg with the string */
-	printf("alert!!!\n");
-	return v8::Undefined();
+	esvg_svg_script_alert(thiz->svg, *str);
+	return Undefined();
 }
 /*----------------------------------------------------------------------------*
  *                          The script  interface                             *
  *----------------------------------------------------------------------------*/
-static void * _v8_context_new(void)
+static void * _v8_context_new(Ender_Element *e)
 {
 	Esvg_Scriptor_Js_V8 *thiz;
 	HandleScope handle_scope;
 	Persistent<Context> context;
 
+	thiz = (Esvg_Scriptor_Js_V8 *)calloc(1, sizeof(Esvg_Scriptor_Js_V8));
 	/* create the global object */
 	Handle<ObjectTemplate> global = ObjectTemplate::New();
 	/* add default implementation of the alert message */
-	global->Set(String::New("alert"), FunctionTemplate::New(Alert));
+	global->Set(String::New("alert"), FunctionTemplate::New(Alert, External::New(thiz)));
 
 	context = Context::New(NULL, global);
 	/* TODO register all the types that we own?
 	 * i.e the js idl?
 	 */
-	thiz = (Esvg_Scriptor_Js_V8 *)calloc(1, sizeof(Esvg_Scriptor_Js_V8));
 	thiz->context = context;
+	thiz->svg = e;
 
 	return thiz;
 }
