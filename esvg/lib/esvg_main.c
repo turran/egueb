@@ -43,6 +43,7 @@
 #include "esvg_private_animate_base.h"
 #include "esvg_private_clip_path.h"
 #include "esvg_private_script.h"
+#include "esvg_private_scriptor.h"
 
 #include "esvg_main.h"
 #include "esvg_element.h"
@@ -135,6 +136,8 @@ static void _register_enders(void)
 	esvg_animate_init();
 	esvg_animate_transform_init();
 	esvg_set_init();
+
+	esvg_scriptor_init();
 }
 
 static void _namespace_constructor_callback(Ender_Element *e, void *data)

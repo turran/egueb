@@ -38,6 +38,7 @@ typedef struct _Esvg_Script
 	char *cdata;
 	/* interface */
 	/* private */
+	Esvg_Scriptor *scriptor;
 } Esvg_Script;
 
 static Esvg_Script * _esvg_script_get(Edom_Tag *t)
@@ -104,14 +105,28 @@ static Esvg_Element_Setup_Return _esvg_script_setup(Edom_Tag *t,
 		Esvg_Attribute_Presentation *attr,
 		Enesim_Error **error)
 {
+	Esvg_Script *thiz;
+	Ender_Element *topmost;
+	Edom_Tag *topmost_t;
+
 	/* call the implementation of the script */
 	if (!esvg_element_changed(t))
 		return ESVG_SETUP_OK;
 
-	/* delete the previous instance of the script */
-	/* create a new one */
+	thiz = _esvg_script_get(t);
+	if (thiz->scriptor)
+	{
+		/* TODO delete the previous instance of the script */
+		thiz->scriptor = NULL;
+	}
+	/* create a new context */
+	esvg_element_internal_topmost_get(t, &topmost);
+	topmost_t = ender_element_object_get(topmost);
+	thiz->scriptor = esvg_svg_scriptor_get(topmost_t, thiz->content_script_type);
+	if (!thiz->scriptor) return ESVG_SETUP_OK;
 
-	printf("doing the setup on the script\n");
+	/* run the script */
+	esvg_scriptor_run(thiz->scriptor, thiz->cdata);
 }
 
 static Esvg_Element_Descriptor _descriptor = {

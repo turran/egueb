@@ -3,6 +3,8 @@
 
 typedef const char * (*Esvg_Svg_Base_Dir_Get)(Ender_Element *e, void *data);
 typedef void (*Esvg_Svg_Go_To)(Ender_Element *e, void *data, const char *uri);
+/* script related functions */
+typedef void (*Esvg_Svg_Script_Alert)(Ender_Element *e, void *data, const char *msg);
 typedef struct _Esvg_Svg_Application_Descriptor
 {
 	Esvg_Svg_Base_Dir_Get base_dir_get;
@@ -10,6 +12,8 @@ typedef struct _Esvg_Svg_Application_Descriptor
 	Esvg_Svg_Go_To go_to;
 	/* function to create a surface */
 	/* function to get data from an external url */
+	/* script based functions */
+	Esvg_Svg_Script_Alert alert;
 } Esvg_Svg_Application_Descriptor;
 
 EAPI Ender_Element * esvg_svg_new(void);

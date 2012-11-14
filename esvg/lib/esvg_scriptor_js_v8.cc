@@ -34,43 +34,29 @@ v8::Handle<v8::Value> Alert(const v8::Arguments& args)
 	//const char* cstr = ToCString(str); // Convert V8 String to C string
 
 	/* call the svg with the string */
+	printf("alert!!!\n");
 	return v8::Undefined();
 }
-
-#if 0
-  // Create a stack-allocated handle scope.
-  HandleScope handle_scope;
-  // Create a new context.
-  Handle<Context> context = Context::New();
-  // Enter the created context for compiling and
-  // running the hello world script.
-  Context::Scope context_scope(context);
-  // Create a string containing the JavaScript source code.
-  Handle<String> source = String::New("'Hello' + ', World!'");
-  // Compile the source code.
-  Handle<Script> script = Script::Compile(source);
-  // Run the script to get the result.
-  Handle<Value> result = script->Run();
-  // Convert the result to an ASCII string and print it.
-  String::AsciiValue ascii(result);
-  printf("%s\n", *ascii);
-  return 0;
-#endif
 /*----------------------------------------------------------------------------*
  *                          The script  interface                             *
  *----------------------------------------------------------------------------*/
 static void * _v8_context_new(void)
 {
 	Esvg_Scriptor_Js_V8 *thiz;
+	HandleScope handle_scope;
+	Persistent<Context> context;
 
-	thiz = (Esvg_Scriptor_Js_V8 *)calloc(1, sizeof(Esvg_Scriptor_Js_V8));
-	thiz->context = Context::New();
+	/* create the global object */
+	Handle<ObjectTemplate> global = ObjectTemplate::New();
+	/* add default implementation of the alert message */
+	global->Set(String::New("alert"), FunctionTemplate::New(Alert));
+
+	context = Context::New(NULL, global);
 	/* TODO register all the types that we own?
 	 * i.e the js idl?
 	 */
-	/* add default implementation of the alert message
-	global->Set(v8::String::New("alert"), v8::FunctionTemplate::New(Alert));
-	*/
+	thiz = (Esvg_Scriptor_Js_V8 *)calloc(1, sizeof(Esvg_Scriptor_Js_V8));
+	thiz->context = context;
 
 	return thiz;
 }
@@ -83,9 +69,18 @@ static void _v8_context_free(void *ctx)
 	free(thiz);
 }
 
-static void _v8_run(void *ctx, const char *script)
+static void _v8_run(void *ctx, const char *s)
 {
+	Esvg_Scriptor_Js_V8 *thiz = (Esvg_Scriptor_Js_V8 *)ctx;
+	HandleScope handle_scope;
 
+	thiz->context->Enter();
+	/* create the source string */
+	Handle<String> source = String::New(s);
+	/* compile it */
+	Handle<Script> script = Script::Compile(source);
+	/* run it */
+ 	script->Run();
 }
 
 static Esvg_Scriptor_Descriptor _descriptor = {
