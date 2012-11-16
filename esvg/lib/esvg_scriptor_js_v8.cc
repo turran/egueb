@@ -77,6 +77,9 @@ static void _v8_element_property_to_js(Ender_Property *prop,
 	Ender_Container *c;
 	const char *name = (const char *)data;
 
+#if 0
+	Persistent<FunctionTemplate> tmpl = Persistent<FunctionTemplate>::New(External::Wrap(data));
+#endif
 	/* FIXME we need to figure out how to pass the
 	 * handle as a void *
 	 */
@@ -96,7 +99,7 @@ static Persistent<FunctionTemplate> _v8_element_descriptor_to_js(
 		Ender_Descriptor *descriptor)
 {
 	const char *name;
-	const void *ot;
+	void *cb_data;
 
 	/* find the descriptor name in the hash of templates */
 	name = ender_descriptor_name_get(descriptor);
@@ -126,8 +129,11 @@ static Persistent<FunctionTemplate> _v8_element_descriptor_to_js(
 		_prototypes[name] = tmpl;
 	}
 	/* start adding the properties for such descriptor */
+#if 0
+	cb_data = static_cast<void *>(External::Unwrap(tmpl));
+#endif
 	ender_descriptor_property_list(descriptor, _v8_element_property_to_js,
-			&tmpl);
+			(void *)name);
 	/* TODO add the functions */
 
 	/* get the parent descriptor and do the same */
