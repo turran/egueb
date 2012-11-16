@@ -21,6 +21,19 @@
 
 #include <v8.h>
 using namespace v8;
+/*
+ * We need to implement functions on ender, that way we can introspect
+ * correctly an object, based on its atttributes (properties for ender)
+ * and functions. I suppose that whenever a function return an ender
+ * element, we need to wrap that function so we can assign the prototype
+ * of the returned element based on some lookup of its ender descriptor
+ *
+ * For getters/setters it is very simple, we just call the
+ * ender_element_property_set. But with a value? or without?
+ *
+ * We need to add the ender element passed on the context new
+ * as the global object
+ */
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
@@ -29,6 +42,35 @@ typedef struct _Esvg_Scriptor_Js_V8
 	Ender_Element *svg;
 	Persistent<Context> context;
 } Esvg_Scriptor_Js_V8;
+
+static void _v8_element_property_to_js(Ender_Property *prop,
+		void *data)
+{
+
+}
+
+static void _v8_element_descriptor_to_js(Esvg_Scriptor_Js_V8 *thiz,
+		Ender_Descriptor *descriptor)
+{
+	/* start adding the properties for such descriptor */
+	ender_descriptor_property_list(descriptor, _v8_element_property_to_js,
+			NULL);
+	/* TODO add the functions */
+	/* get the parent descriptor and do the same */
+	descriptor = ender_descriptor_parent(descriptor);
+	if (!descriptor) return;
+
+	_v8_element_descriptor_to_js(thiz, descriptor);
+}
+
+static void _v8_element_to_js(Esvg_Scriptor_Js_V8 *thiz, Ender_Element *e)
+{
+	Ender_Descriptor *descriptor;
+
+	descriptor = ender_element_descriptor_get(e);
+	/* TODO in case the descriptor is already registered dont do nothing */
+	_v8_element_descriptor_to_js(thiz, descriptor);
+}
 
 v8::Handle<v8::Value> Alert(const v8::Arguments& args)
 {
