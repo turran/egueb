@@ -104,9 +104,21 @@ static Persistent<FunctionTemplate> _v8_element_descriptor_to_js(
 
 	if (tmpl.IsEmpty())
 	{
+		Ender_Namespace *ns;
+		const char *ns_name = "SVG";
+		char real_name[PATH_MAX];
+
+#if 0
+		ns = ender_descriptor_namespace_get(descriptor);
+		ns_name = ender_namespace_name_get(ns);
+#endif
+		strcpy(real_name, ns_name);
+		strcat(real_name, name);
+
 		/* create a new prototype and store it */
 		HandleScope handle_scope;
 		Handle<FunctionTemplate> l_tmpl = FunctionTemplate::New();
+		l_tmpl->SetClassName(String::New(real_name));
 		Handle<ObjectTemplate> o_tmpl = l_tmpl->InstanceTemplate();
 
 		o_tmpl->SetInternalFieldCount(1);
