@@ -51,31 +51,38 @@ typedef struct _Esvg_Scriptor_Js_V8
  */
 static std::map<const char *, Persistent<FunctionTemplate> > _prototypes;
 
-#if 0
-static Handle<Value> GetPointX(Local<String> property, const AccessorInfo &info)
+static Handle<Value> Getter(Local<String> property, const AccessorInfo &info)
 {
 	Local<Object> self = info.Holder();
+	Local<External> data = Local<External>::Cast(info.Data());
 	Local<External> wrap = Local<External>::Cast(self->GetInternalField(0));
-	void* ptr = wrap->Value();
-	int value = static_cast<Point*>(ptr)->x_;
-	return Integer::New(value);
+	Ender_Element *e = static_cast<Ender_Element *>(wrap->Value());
+	Ender_Property *p = static_cast<Ender_Property *>(data->Value());
+
+	printf("getting\n");
+	ender_element_property_value_get_simple(e, p, NULL);
+	return Undefined();
 }
 
-static void SetPointX(Local<String> property, Local<Value> value,
+static void Setter(Local<String> property, Local<Value> value,
 		const AccessorInfo& info)
 {
 	Local<Object> self = info.Holder();
+	Local<External> data = Local<External>::Cast(info.Data());
 	Local<External> wrap = Local<External>::Cast(self->GetInternalField(0));
-	void* ptr = wrap->Value();
-	static_cast<Point*>(ptr)->x_ = value->Int32Value();
+	Ender_Element *e = static_cast<Ender_Element *>(wrap->Value());
+	Ender_Property *p = static_cast<Ender_Property *>(data->Value());
+
+	printf("setting\n");
+	ender_element_property_value_set_simple(e, p, NULL);
 }
-#endif
 
 static void _v8_element_property_to_js(Ender_Property *prop,
 		void *data)
 {
 	Ender_Container *c;
 	const char *name = (const char *)data;
+	const char *pname;
 
 #if 0
 	Persistent<FunctionTemplate> tmpl = Persistent<FunctionTemplate>::New(External::Wrap(data));
@@ -90,8 +97,12 @@ static void _v8_element_property_to_js(Ender_Property *prop,
 	 * compound containers, we need to use the specification
 	 * as found on the svg spec
 	 */
-	printf("property of name = %s\n", ender_property_name_get(prop));
+	pname = ender_property_name_get(prop);
+	printf("property of name = %s\n", pname);
 	/* add an accessor to the template */
+	HandleScope handle_scope;
+	Handle<ObjectTemplate> p_tmpl = tmpl->PrototypeTemplate();
+	p_tmpl->SetAccessor(String::New(pname), Getter, Setter, External::New(prop));
 }
 
 static Persistent<FunctionTemplate> _v8_element_descriptor_to_js(
