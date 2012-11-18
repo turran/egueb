@@ -1169,6 +1169,8 @@ static void _esvg_svg_y_dpi_get(Edom_Tag *t, double *y_dpi)
 #define _esvg_svg_container_height_is_set NULL
 #define _esvg_svg_x_dpi_is_set NULL
 #define _esvg_svg_y_dpi_is_set NULL
+/* functions */
+#define _esvg_svg_getElementById esvg_svg_internal_element_find
 #include "generated/esvg_generated_svg.c"
 /*============================================================================*
  *                                 Global                                     *
