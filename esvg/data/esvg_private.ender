@@ -239,6 +239,7 @@ namespace "esvg" : 0 {
 		double "container_height";
 		double "x_dpi";
 		double "y_dpi";
+		ender "getElementById" (string);
 	};
 
 	class "g" : "renderable" {
