@@ -32,6 +32,7 @@ esvg_radial_gradient.h \
 esvg_rect.h \
 esvg_referenceable.h \
 esvg_renderable.h \
+esvg_script.h \
 esvg_set.h \
 esvg_stop.h \
 esvg_style.h \
@@ -51,6 +52,7 @@ esvg_private_attribute_clip_path.h \
 esvg_private_attribute_display.h \
 esvg_private_attribute_enum.h \
 esvg_private_attribute_presentation.h \
+esvg_private_attribute_visibility.h \
 esvg_private_clip_path.h \
 esvg_private_clone.h \
 esvg_private_context.h \
