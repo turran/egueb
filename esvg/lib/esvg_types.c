@@ -1844,6 +1844,7 @@ EAPI Eina_Bool esvg_color_string_from(Esvg_Color *color, const char *attr_val)
 			else
 				break;
 		}
+		return EINA_FALSE;
 	}
 	/* is a keyword */
 	else

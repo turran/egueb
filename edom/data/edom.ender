@@ -1,9 +1,4 @@
 namespace "edom" : 0 {
-	struct "attribute" {
-		string "name";
-		string "value";
-	};
-
 	/* given that on some callbacks eina simple xml
 	 * passes the length of string for faster process
 	 * we need that option too
@@ -17,8 +12,10 @@ namespace "edom" : 0 {
 		object "parent";
 		object "topmost";
 		[object] "child";
-		attribute "attribute";
 		edom_string "cdata";
 		edom_string "text";
+
+		string "getAttribute" (string);
+		string "setAttribute" (string);
 	};
 };

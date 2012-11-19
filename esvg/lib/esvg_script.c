@@ -126,6 +126,7 @@ static Esvg_Element_Setup_Return _esvg_script_setup(Edom_Tag *t,
 
 	/* run the script */
 	esvg_scriptor_run(thiz->scriptor, thiz->cdata);
+	return ESVG_SETUP_OK;
 }
 
 static Esvg_Element_Descriptor _descriptor = {

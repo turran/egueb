@@ -51,7 +51,7 @@ typedef struct _Esvg_Scriptor_Js_V8
  */
 static std::map<const char *, Persistent<FunctionTemplate> > _prototypes;
 
-static Handle<Value> Getter(Local<String> property, const AccessorInfo &info)
+static Handle<Value> _v8_getter(Local<String> property, const AccessorInfo &info)
 {
 	Local<Object> self = info.Holder();
 	Local<External> data = Local<External>::Cast(info.Data());
@@ -64,7 +64,7 @@ static Handle<Value> Getter(Local<String> property, const AccessorInfo &info)
 	return Undefined();
 }
 
-static void Setter(Local<String> property, Local<Value> value,
+static void _v8_setter(Local<String> property, Local<Value> value,
 		const AccessorInfo& info)
 {
 	Local<Object> self = info.Holder();
@@ -75,6 +75,34 @@ static void Setter(Local<String> property, Local<Value> value,
 
 	printf("setting\n");
 	ender_element_property_value_set_simple(e, p, NULL);
+}
+
+static v8::Handle<v8::Value> _v8_function(const v8::Arguments& args)
+{
+	Local<Object> self = args.Holder();
+	Local<External> data = Local<External>::Cast(args.Data());
+	Local<External> wrap = Local<External>::Cast(self->GetInternalField(0));
+	Ender_Element *e = static_cast<Ender_Element *>(wrap->Value());
+	Ender_Function *f = static_cast<Ender_Function *>(data->Value());
+
+	printf("calling function %s on %p\n", ender_function_name_get(f), e);
+
+}
+
+static void _v8_element_function_to_js(Ender_Function *f,
+		void *data)
+{
+	Ender_Container *c;
+	const char *name = (const char *)data;
+	const char *fname;
+
+	fname = ender_function_name_get(f);
+	printf("adding function %s\n", fname);
+	Persistent<FunctionTemplate> tmpl = _prototypes[name];
+	HandleScope handle_scope;
+	Handle<ObjectTemplate> p_tmpl = tmpl->PrototypeTemplate();
+	p_tmpl->Set(String::New(fname), FunctionTemplate::New(_v8_function,
+			External::New(f)));
 }
 
 static void _v8_element_property_to_js(Ender_Property *prop,
@@ -102,7 +130,9 @@ static void _v8_element_property_to_js(Ender_Property *prop,
 	/* add an accessor to the template */
 	HandleScope handle_scope;
 	Handle<ObjectTemplate> p_tmpl = tmpl->PrototypeTemplate();
-	p_tmpl->SetAccessor(String::New(pname), Getter, Setter, External::New(prop));
+	/* TODO we should not support setters */
+	p_tmpl->SetAccessor(String::New(pname), _v8_getter, _v8_setter,
+			External::New(prop));
 }
 
 static Persistent<FunctionTemplate> _v8_element_descriptor_to_js(
@@ -145,7 +175,8 @@ static Persistent<FunctionTemplate> _v8_element_descriptor_to_js(
 #endif
 	ender_descriptor_property_list(descriptor, _v8_element_property_to_js,
 			(void *)name);
-	/* TODO add the functions */
+	ender_descriptor_function_list(descriptor, _v8_element_function_to_js,
+			(void *)name);
 
 	/* get the parent descriptor and do the same */
 	descriptor = ender_descriptor_parent(descriptor);

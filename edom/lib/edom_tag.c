@@ -63,7 +63,7 @@ static void _tag_dump(Edom_Tag *thiz, int level)
 	}
 }
 
-static Eina_Bool _attributes_set(void *data, const char *key,
+static Eina_Bool _attribute_set(void *data, const char *key,
 		const char *value)
 {
 	Edom_Tag *thiz = data;
@@ -73,7 +73,7 @@ static Eina_Bool _attributes_set(void *data, const char *key,
 	return EINA_FALSE;
 }
 
-static Eina_Bool _attributes_get(void *data, const char *key, char **value)
+static Eina_Bool _attribute_get(void *data, const char *key, char **value)
 {
 	Edom_Tag *thiz = data;
 
@@ -126,28 +126,31 @@ EAPI void edom_tag_delete(Edom_Tag *thiz)
  * To be documented
  * FIXME: To be fixed
  */
-EAPI void edom_tag_attributes_from_xml(Edom_Tag *thiz,
-		const char *attributes, unsigned int length)
+EAPI void edom_tag_attributes_from_xml(Edom_Tag *thiz, const char *attributes,
+		unsigned int length)
 {
-	eina_simple_xml_attributes_parse(attributes, length, _attributes_set, thiz);
+	eina_simple_xml_attributes_parse(attributes, length, _attribute_set, thiz);
 }
 
 /**
  * To be documented
  * FIXME: To be fixed
  */
-EAPI Eina_Bool edom_tag_attribute_set(Edom_Tag *thiz, const Edom_Attribute *attribute)
+EAPI void edom_tag_attribute_set(Edom_Tag *thiz, const char *name,
+		const char *value)
 {
-	return  _attributes_set(thiz, attribute->name, attribute->value);
+	_attribute_set(thiz, name, value);
 }
 
 /**
  * To be documented
  * FIXME: To be fixed
  */
-EAPI Eina_Bool edom_tag_attribute_get(Edom_Tag *thiz, Edom_Attribute *attribute)
+EAPI char * edom_tag_attribute_get(Edom_Tag *thiz, const char *name)
 {
-	return  _attributes_get(thiz, attribute->name, &attribute->value);
+	char *value;
+	_attribute_get(thiz, name, &value);
+	return value;
 }
 
 /**
@@ -156,12 +159,7 @@ EAPI Eina_Bool edom_tag_attribute_get(Edom_Tag *thiz, Edom_Attribute *attribute)
  */
 EAPI char * edom_tag_id_get(Edom_Tag *thiz)
 {
-	Edom_Attribute attr;
-
-	attr.name = "id";
-	if (!edom_tag_attribute_get(thiz, &attr))
-		return NULL;
-	return attr.value;
+	return edom_tag_attribute_get(thiz, "id");
 }
 
 /**
@@ -170,11 +168,7 @@ EAPI char * edom_tag_id_get(Edom_Tag *thiz)
  */
 EAPI void edom_tag_id_set(Edom_Tag *thiz, const char *id)
 {
-	Edom_Attribute attr;
-
-	attr.name = "id";
-	attr.value = (char *)id;
-	edom_tag_attribute_set(thiz, &attr);
+	edom_tag_attribute_set(thiz, "id", id);
 }
 
 /**
@@ -183,12 +177,7 @@ EAPI void edom_tag_id_set(Edom_Tag *thiz, const char *id)
  */
 EAPI char * edom_tag_class_get(Edom_Tag *thiz)
 {
-	Edom_Attribute attr;
-
-	attr.name = "class";
-	if (!edom_tag_attribute_get(thiz, &attr))
-		return NULL;
-	return attr.value;
+	return edom_tag_attribute_get(thiz, "class");
 }
 
 /**
@@ -197,11 +186,7 @@ EAPI char * edom_tag_class_get(Edom_Tag *thiz)
  */
 EAPI void edom_tag_class_set(Edom_Tag *thiz, const char *class)
 {
-	Edom_Attribute attr;
-
-	attr.name = "class";
-	attr.value = (char *)class;
-	edom_tag_attribute_set(thiz, &attr);
+	edom_tag_attribute_set(thiz, "class", class);
 }
 
 /**
