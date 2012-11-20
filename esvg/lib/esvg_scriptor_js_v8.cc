@@ -51,6 +51,89 @@ typedef struct _Esvg_Scriptor_Js_V8
  */
 static std::map<const char *, Persistent<FunctionTemplate> > _prototypes;
 
+static Ender_Value * _v8_value_to_ender(Handle<Value> v, Ender_Container *c)
+{
+	Ender_Value *vv = NULL;
+	Ender_Value_Type vtype;
+
+	vtype = ender_container_type_get(c);
+	switch (vtype)
+	{
+		case ENDER_STRING:
+		if (v->IsString())
+		{
+			String::Utf8Value str(v);
+			vv = ender_value_basic_new(ENDER_STRING);
+			ender_value_static_string_set(vv, *str);
+		}
+		case ENDER_MATRIX:
+		case ENDER_BOOL:
+		case ENDER_UINT32:
+		case ENDER_INT32:
+		case ENDER_UINT64:
+		case ENDER_INT64:
+		case ENDER_DOUBLE:
+		case ENDER_COLOR:
+		case ENDER_ARGB:
+		case ENDER_OBJECT:
+		case ENDER_SURFACE:
+		case ENDER_ENDER:
+		case ENDER_POINTER:
+		case ENDER_VALUE:
+		case ENDER_LIST:
+		case ENDER_STRUCT:
+		case ENDER_UNION:
+		default:
+		break;
+	}
+	return vv;
+}
+
+static Handle<Value> _v8_value_from_ender(Ender_Value *v)
+{
+	Ender_Value_Type vtype;
+	Handle<Value> vv = Undefined();
+
+	vtype = ender_value_type_get(v);
+	switch (vtype)
+	{
+		case ENDER_STRING:
+		case ENDER_MATRIX:
+		case ENDER_BOOL:
+		case ENDER_UINT32:
+		case ENDER_INT32:
+		case ENDER_UINT64:
+		case ENDER_INT64:
+		case ENDER_DOUBLE:
+		case ENDER_COLOR:
+		case ENDER_ARGB:
+		case ENDER_OBJECT:
+		case ENDER_SURFACE:
+		case ENDER_ENDER:
+		case ENDER_POINTER:
+		case ENDER_VALUE:
+		case ENDER_LIST:
+		case ENDER_STRUCT:
+		case ENDER_UNION:
+		default:
+		break;
+	}
+	return vv;
+}
+
+static v8::Handle<v8::Value> _v8_alert(const v8::Arguments& args)
+{
+	Esvg_Scriptor_Js_V8 *thiz;
+
+	String::Utf8Value str(args[0]); // Convert first argument to V8 String
+	Local<External> wrap = Local<External>::Cast(args.Data());
+	thiz = static_cast<Esvg_Scriptor_Js_V8*>(wrap->Value());
+
+	/* call the svg with the string */
+	esvg_svg_script_alert(thiz->svg, *str);
+	return Undefined();
+}
+
 static Handle<Value> _v8_getter(Local<String> property, const AccessorInfo &info)
 {
 	Local<Object> self = info.Holder();
@@ -84,9 +167,48 @@ static v8::Handle<v8::Value> _v8_function(const v8::Arguments& args)
 	Local<External> wrap = Local<External>::Cast(self->GetInternalField(0));
 	Ender_Element *e = static_cast<Ender_Element *>(wrap->Value());
 	Ender_Function *f = static_cast<Ender_Function *>(data->Value());
+	Ender_Value *ret = NULL;
+	Eina_List *vargs = NULL;
+	Eina_List *l;
+
+	/* check that we have the correct number of arguments */
+	if (args.Length() != ender_function_args_count(f))
+	{
+		printf("wrong number of arguments %d %d\n", args.Length(),
+				ender_function_args_count(f));
+		return Undefined();
+	}
+
+	/* get the return value */
+	Ender_Container *c = ender_function_ret_get(f);
+	if (c)
+	{
+		ret = ender_value_new_container_from(c);
+	}
+	/* get the function args */
+	Eina_List *fargs = (Eina_List *)ender_function_args_get(f);
+	for (int i = 0; i < args.Length(); i++)
+	{
+		Ender_Value *v;
+		c = (Ender_Container *)fargs->data;
+
+		v = _v8_value_to_ender(args[i], c);
+		/* TODO check that the container is the same */
+		fargs = fargs->next;
+		vargs = eina_list_append(vargs, v);
+	}
 
 	printf("calling function %s on %p\n", ender_function_name_get(f), e);
-
+	ender_element_function_call_simple(e, f, ret, vargs);
+	/* transform the return value */
+	if (ret)
+	{
+		return _v8_value_from_ender(ret);	
+	}
+	else
+	{
+		return Undefined();
+	}
 }
 
 static void _v8_element_function_to_js(Ender_Function *f,
@@ -205,18 +327,6 @@ static Handle<Object> _v8_element_to_js(Esvg_Scriptor_Js_V8 *thiz, Ender_Element
 	return handle_scope.Close(obj);
 }
 
-v8::Handle<v8::Value> Alert(const v8::Arguments& args)
-{
-	Esvg_Scriptor_Js_V8 *thiz;
-
-	String::Utf8Value str(args[0]); // Convert first argument to V8 String
-	Local<External> wrap = Local<External>::Cast(args.Data());
-	thiz = static_cast<Esvg_Scriptor_Js_V8*>(wrap->Value());
-
-	/* call the svg with the string */
-	esvg_svg_script_alert(thiz->svg, *str);
-	return Undefined();
-}
 /*----------------------------------------------------------------------------*
  *                          The script  interface                             *
  *----------------------------------------------------------------------------*/
@@ -232,7 +342,7 @@ static void * _v8_context_new(Ender_Element *e)
 	/* create the global object */
 	Handle<ObjectTemplate> global = ObjectTemplate::New();
 	/* add default implementation of the alert message */
-	global->Set(String::New("alert"), FunctionTemplate::New(Alert, External::New(thiz)));
+	global->Set(String::New("alert"), FunctionTemplate::New(_v8_alert, External::New(thiz)));
 	context = Context::New(NULL, global);
 	/* enter the context so all the following operation are done there */
 	context->Enter();
