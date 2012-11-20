@@ -1532,7 +1532,7 @@ EAPI const char * esvg_type_string_to(Esvg_Type type)
 		case ESVG_POLYLINE: return "polyline";
 		case ESVG_RADIALGRADIENT: return "radialGradient";
 		case ESVG_RECT: return "rect";
-		case ESVG_SCRIPT: return "";
+		case ESVG_SCRIPT: return "script";
 		case ESVG_SET: return "set";
 		case ESVG_STOP: return "stop";
 		case ESVG_STYLE: return "style";

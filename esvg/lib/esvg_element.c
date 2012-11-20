@@ -1129,7 +1129,7 @@ static Eina_Bool _esvg_element_attribute_get(Edom_Tag *t, const char *key, char 
 	Eina_Bool ret;
 
 	thiz = _esvg_element_get(t);
-	DBG("Setting attribute '%s' on element '%s'",
+	DBG("Getting attribute '%s' on element '%s'",
 		key, esvg_type_string_to(esvg_element_internal_type_get(t)));
 	/* we need to first call the implemenation as there might be name collisions */
 	if (thiz->descriptor.attribute_get)
