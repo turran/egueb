@@ -38,8 +38,6 @@ static Eina_Bool _property_is_valid(Ender_Property *prop)
 {
 	if (prop == EDOM_PARENT)
 		return EINA_FALSE;
-	else if (prop == EDOM_ATTRIBUTE)
-		return EINA_FALSE;
 	/* we handle the child case using the foreach */
 	else if (prop == EDOM_CHILD)
 		return EINA_FALSE;

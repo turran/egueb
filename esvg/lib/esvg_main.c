@@ -166,7 +166,6 @@ static Eina_Bool _esvg_ender_init(void)
 		goto descriptor_err;
 	}
 	/* get the needed properties to avoid the hash lookup */
-	EDOM_ATTRIBUTE = ender_descriptor_property_get(tag_descriptor, "attribute");
 	EDOM_PARENT = ender_descriptor_property_get(tag_descriptor, "parent");
 	EDOM_CHILD = ender_descriptor_property_get(tag_descriptor, "child");
 	EDOM_TOPMOST = ender_descriptor_property_get(tag_descriptor, "topmost");
@@ -257,7 +256,6 @@ static void _esvg_dependencies_shutdown(void)
  *                                 Global                                     *
  *============================================================================*/
 /* Shortcuts for edom node properties */
-Ender_Property *EDOM_ATTRIBUTE = NULL;
 Ender_Property *EDOM_CDATA = NULL;
 Ender_Property *EDOM_TOPMOST = NULL;
 Ender_Property *EDOM_CHILD = NULL;

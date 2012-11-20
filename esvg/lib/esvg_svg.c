@@ -1393,9 +1393,11 @@ char * esvg_svg_uri_resolve(Ender_Element *e, const char *uri)
 Ender_Element * esvg_svg_internal_element_find(Edom_Tag *t, const char *id)
 {
 	Esvg_Svg *thiz;
+	Ender_Element *found;
 
 	thiz = _esvg_svg_get(t);
-	return eina_hash_find(thiz->ids, id);
+	found = eina_hash_find(thiz->ids, id);
+	return found;
 }
 
 void esvg_svg_internal_container_width_get(Edom_Tag *t, double *container_width)

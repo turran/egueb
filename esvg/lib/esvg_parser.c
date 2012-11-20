@@ -551,14 +551,13 @@ static void * _esvg_parser_topmost_get(Edom_Parser *parser)
 	return thiz->topmost;
 }
 
-static Eina_Bool _esvg_parser_tag_attribute_set(Edom_Parser *parser, void *t, const char *name, const char *value)
+static Eina_Bool _esvg_parser_tag_attribute_set(Edom_Parser *parser, void *tag, const char *name, const char *value)
 {
-	Ender_Element *tag = t;
-	Edom_Attribute attribute;
+	Ender_Element *e = tag;
+	Edom_Tag *t;
 
-	attribute.name = name;
-	attribute.value = (char *)value;
-	ender_element_property_value_set(tag, EDOM_ATTRIBUTE, &attribute, NULL);
+	t = ender_element_object_get(e);
+	edom_tag_attribute_set(t, name, value);
 	return EINA_TRUE;
 }
 

@@ -45,6 +45,9 @@ typedef struct _Esvg_Scriptor_Js_V8
 	Persistent<Context> context;
 } Esvg_Scriptor_Js_V8;
 
+static Handle<Object> _v8_element_to_js(Esvg_Scriptor_Js_V8 *thiz,
+		Ender_Element *e);
+
 /* FIXME or we either use the stl or an eina hash, but looks like
  * we cannot access the pointer of the persistent handle to pass
  * it to eina_hash?
@@ -66,6 +69,8 @@ static Ender_Value * _v8_value_to_ender(Handle<Value> v, Ender_Container *c)
 			vv = ender_value_basic_new(ENDER_STRING);
 			ender_value_static_string_set(vv, *str);
 		}
+		break;
+
 		case ENDER_MATRIX:
 		case ENDER_BOOL:
 		case ENDER_UINT32:
@@ -109,7 +114,16 @@ static Handle<Value> _v8_value_from_ender(Ender_Value *v)
 		case ENDER_ARGB:
 		case ENDER_OBJECT:
 		case ENDER_SURFACE:
+		break;
+
 		case ENDER_ENDER:
+		{
+			Ender_Element *e = ender_value_ender_get(v);
+			if (!e) break;
+			Local<Object> global = Context::GetCurrent()->Global();
+			Esvg_Scriptor_Js_V8 *thiz = (Esvg_Scriptor_Js_V8 *)global->GetPointerFromInternalField(1);
+			vv = _v8_element_to_js(thiz, e);
+		}
 		case ENDER_POINTER:
 		case ENDER_VALUE:
 		case ENDER_LIST:
@@ -203,7 +217,7 @@ static v8::Handle<v8::Value> _v8_function(const v8::Arguments& args)
 	/* transform the return value */
 	if (ret)
 	{
-		return _v8_value_from_ender(ret);	
+		return _v8_value_from_ender(ret);
 	}
 	else
 	{
@@ -312,7 +326,8 @@ static Persistent<FunctionTemplate> _v8_element_descriptor_to_js(
 	return tmpl;
 }
 
-static Handle<Object> _v8_element_to_js(Esvg_Scriptor_Js_V8 *thiz, Ender_Element *e)
+static Handle<Object> _v8_element_to_js(Esvg_Scriptor_Js_V8 *thiz,
+		Ender_Element *e)
 {
 	Ender_Descriptor *descriptor;
 	HandleScope handle_scope;
@@ -343,7 +358,9 @@ static void * _v8_context_new(Ender_Element *e)
 	Handle<ObjectTemplate> global = ObjectTemplate::New();
 	/* add default implementation of the alert message */
 	global->Set(String::New("alert"), FunctionTemplate::New(_v8_alert, External::New(thiz)));
+	global->SetInternalFieldCount(1);
 	context = Context::New(NULL, global);
+	context->Global()->SetPointerInInternalField(0, thiz);
 	/* enter the context so all the following operation are done there */
 	context->Enter();
 
