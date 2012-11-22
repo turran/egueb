@@ -79,6 +79,17 @@ static Ender_Property *ESVG_ELEMENT_STOP_OPACITY;
 static Ender_Property *ESVG_ELEMENT_DISPLAY;
 static Ender_Property *ESVG_ELEMENT_TOPMOST;
 
+static Ender_Property *ESVG_ELEMENT_ONMOUSEOVER;
+static Ender_Property *ESVG_ELEMENT_ONFOCUSIN;
+static Ender_Property *ESVG_ELEMENT_ONFOCUSOUT;
+static Ender_Property *ESVG_ELEMENT_ONACTIVATE;
+static Ender_Property *ESVG_ELEMENT_ONCLICK;
+static Ender_Property *ESVG_ELEMENT_ONMOUSEDOWN;
+static Ender_Property *ESVG_ELEMENT_ONMOUSEUP;
+static Ender_Property *ESVG_ELEMENT_ONMOUSEOVER;
+static Ender_Property *ESVG_ELEMENT_ONMOUSEMOVE;
+static Ender_Property *ESVG_ELEMENT_ONMOUSEOUT;
+
 typedef struct _Esvg_Element_Descriptor_Internal
 {
 	Esvg_Element_Initialize initialize;
@@ -142,6 +153,15 @@ typedef struct _Esvg_Element
 	Esvg_Attribute_Animated_Transform transform;
 	Esvg_Element_Attributes attr_xml;
 	Esvg_Element_Attributes attr_css;
+	char *onfocusin;
+	char *onfocusout;
+	char *onactivate;
+	char *onclick;
+	char *onmousedown;
+	char *onmouseup;
+	char *onmouseover;
+	char *onmousemove;
+	char *onmouseout;
 	/* the descriptor interface */
 	Esvg_Element_Descriptor_Internal descriptor;
 	/* private */
@@ -883,6 +903,240 @@ static void _esvg_element_display_get(Edom_Tag *t, Esvg_Animated_Enum *display)
 		display);
 }
 
+static void _esvg_element_onfocusin_set(Edom_Tag *t, const char *v)
+{
+	Esvg_Element *thiz;
+
+	thiz = _esvg_element_get(t);
+	if (thiz->onfocusin)
+	{
+		free(thiz->onfocusin);
+		thiz->onfocusin = NULL;
+	}
+
+	if (v)
+	{
+		thiz->onfocusin = strdup(v);
+	}
+}
+
+static void _esvg_element_onfocusin_get(Edom_Tag *t, const char **v)
+{
+	Esvg_Element *thiz;
+
+	if (!v) return;
+	thiz = _esvg_element_get(t);
+	*v = thiz->onfocusin;
+}
+
+static void _esvg_element_onfocusout_set(Edom_Tag *t, const char *v)
+{
+	Esvg_Element *thiz;
+
+	thiz = _esvg_element_get(t);
+	if (thiz->onfocusout)
+	{
+		free(thiz->onfocusout);
+		thiz->onfocusout = NULL;
+	}
+
+	if (v)
+	{
+		thiz->onfocusout = strdup(v);
+	}
+}
+
+static void _esvg_element_onfocusout_get(Edom_Tag *t, const char **v)
+{
+	Esvg_Element *thiz;
+
+	if (!v) return;
+	thiz = _esvg_element_get(t);
+	*v = thiz->onfocusout;
+}
+
+static void _esvg_element_onactivate_set(Edom_Tag *t, const char *v)
+{
+	Esvg_Element *thiz;
+
+	thiz = _esvg_element_get(t);
+	if (thiz->onactivate)
+	{
+		free(thiz->onactivate);
+		thiz->onactivate = NULL;
+	}
+
+	if (v)
+	{
+		thiz->onactivate = strdup(v);
+	}
+}
+
+static void _esvg_element_onactivate_get(Edom_Tag *t, const char **v)
+{
+	Esvg_Element *thiz;
+
+	if (!v) return;
+	thiz = _esvg_element_get(t);
+	*v = thiz->onactivate;
+}
+
+static void _esvg_element_onclick_set(Edom_Tag *t, const char *v)
+{
+	Esvg_Element *thiz;
+
+	thiz = _esvg_element_get(t);
+	if (thiz->onclick)
+	{
+		free(thiz->onclick);
+		thiz->onclick = NULL;
+	}
+
+	if (v)
+	{
+		thiz->onclick = strdup(v);
+	}
+}
+
+static void _esvg_element_onclick_get(Edom_Tag *t, const char **v)
+{
+	Esvg_Element *thiz;
+
+	if (!v) return;
+	thiz = _esvg_element_get(t);
+	*v = thiz->onclick;
+}
+
+static void _esvg_element_onmousedown_set(Edom_Tag *t, const char *v)
+{
+	Esvg_Element *thiz;
+
+	thiz = _esvg_element_get(t);
+	if (thiz->onmousedown)
+	{
+		free(thiz->onmousedown);
+		thiz->onmousedown = NULL;
+	}
+
+	if (v)
+	{
+		thiz->onmousedown = strdup(v);
+	}
+}
+
+static void _esvg_element_onmousedown_get(Edom_Tag *t, const char **v)
+{
+	Esvg_Element *thiz;
+
+	if (!v) return;
+	thiz = _esvg_element_get(t);
+	*v = thiz->onmousedown;
+}
+
+static void _esvg_element_onmouseup_set(Edom_Tag *t, const char *v)
+{
+	Esvg_Element *thiz;
+
+	thiz = _esvg_element_get(t);
+	if (thiz->onmouseup)
+	{
+		free(thiz->onmouseup);
+		thiz->onmouseup = NULL;
+	}
+
+	if (v)
+	{
+		thiz->onmouseup = strdup(v);
+	}
+}
+
+static void _esvg_element_onmouseup_get(Edom_Tag *t, const char **v)
+{
+	Esvg_Element *thiz;
+
+	if (!v) return;
+	thiz = _esvg_element_get(t);
+	*v = thiz->onmouseup;
+}
+
+static void _esvg_element_onmouseover_set(Edom_Tag *t, const char *v)
+{
+	Esvg_Element *thiz;
+
+	thiz = _esvg_element_get(t);
+	if (thiz->onmouseover)
+	{
+		free(thiz->onmouseover);
+		thiz->onmouseover = NULL;
+	}
+
+	if (v)
+	{
+		thiz->onmouseover = strdup(v);
+	}
+}
+
+static void _esvg_element_onmouseover_get(Edom_Tag *t, const char **v)
+{
+	Esvg_Element *thiz;
+
+	if (!v) return;
+	thiz = _esvg_element_get(t);
+	*v = thiz->onmouseover;
+}
+
+static void _esvg_element_onmousemove_set(Edom_Tag *t, const char *v)
+{
+	Esvg_Element *thiz;
+
+	thiz = _esvg_element_get(t);
+	if (thiz->onmousemove)
+	{
+		free(thiz->onmousemove);
+		thiz->onmousemove = NULL;
+	}
+
+	if (v)
+	{
+		thiz->onmousemove = strdup(v);
+	}
+}
+
+static void _esvg_element_onmousemove_get(Edom_Tag *t, const char **v)
+{
+	Esvg_Element *thiz;
+
+	if (!v) return;
+	thiz = _esvg_element_get(t);
+	*v = thiz->onmousemove;
+}
+
+static void _esvg_element_onmouseout_set(Edom_Tag *t, const char *v)
+{
+	Esvg_Element *thiz;
+
+	thiz = _esvg_element_get(t);
+	if (thiz->onmouseout)
+	{
+		free(thiz->onmouseout);
+		thiz->onmouseout = NULL;
+	}
+
+	if (v)
+	{
+		thiz->onmouseout = strdup(v);
+	}
+}
+
+static void _esvg_element_onmouseout_get(Edom_Tag *t, const char **v)
+{
+	Esvg_Element *thiz;
+
+	if (!v) return;
+	thiz = _esvg_element_get(t);
+	*v = thiz->onmouseout;
+}
+
 /* The ender wrapper */
 #define _esvg_element_delete NULL
 #define _esvg_element_type_set NULL
@@ -906,6 +1160,16 @@ static void _esvg_element_display_get(Edom_Tag *t, Esvg_Animated_Enum *display)
 #define _esvg_element_stop_color_is_set NULL
 #define _esvg_element_stop_opacity_is_set NULL
 #define _esvg_element_display_is_set NULL
+
+#define _esvg_element_onfocusin_is_set NULL
+#define _esvg_element_onfocusout_is_set NULL
+#define _esvg_element_onactivate_is_set NULL
+#define _esvg_element_onclick_is_set NULL
+#define _esvg_element_onmousedown_is_set NULL
+#define _esvg_element_onmouseup_is_set NULL
+#define _esvg_element_onmouseover_is_set NULL
+#define _esvg_element_onmousemove_is_set NULL
+#define _esvg_element_onmouseout_is_set NULL
 #include "generated/esvg_generated_element.c"
 /*----------------------------------------------------------------------------*
  *                           The Edom Tag interface                           *
@@ -2270,6 +2534,14 @@ EAPI void esvg_element_stop_color_get(Ender_Element *e, Esvg_Color *stop_color)
 {
 }
 
+/**
+ * To be documented
+ * FIXME: To be fixed
+ */
+EAPI void esvg_element_onfocusin_set(Ender_Element *e, const char *v)
+{
+	ender_element_property_value_set(e, ESVG_ELEMENT_ONFOCUSIN, v, NULL);
+}
 
 /**
  * To be documented

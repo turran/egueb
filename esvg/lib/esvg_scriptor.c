@@ -73,6 +73,9 @@ void esvg_scriptor_free(Esvg_Scriptor *thiz)
 	free(thiz);
 }
 
+/* TODO also pass a void * with a container that describes what's inside
+ * such data, this way we can pass event data
+ */
 void esvg_scriptor_run(Esvg_Scriptor *thiz, const char *script)
 {
 	if (thiz->descriptor->run)

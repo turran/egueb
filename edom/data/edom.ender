@@ -15,7 +15,7 @@ namespace "edom" : 0 {
 		edom_string "cdata";
 		edom_string "text";
 
-		string "getAttribute" (string);
-		string "setAttribute" (string);
+		string "attribute_get","getAttribute" (string);
+		"attribute_set","setAttribute" (string, string);
 	};
 };

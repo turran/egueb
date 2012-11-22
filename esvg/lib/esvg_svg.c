@@ -56,11 +56,13 @@ static Ender_Property *ESVG_SVG_X;
 static Ender_Property *ESVG_SVG_Y;
 static Ender_Property *ESVG_SVG_WIDTH;
 static Ender_Property *ESVG_SVG_HEIGHT;
-static Ender_Property *ESVG_SVG_ACTUAL_WIDTH;
-static Ender_Property *ESVG_SVG_ACTUAL_HEIGHT;
 static Ender_Property *ESVG_SVG_VIEWBOX;
 static Ender_Property *ESVG_SVG_X_DPI;
 static Ender_Property *ESVG_SVG_Y_DPI;
+static Ender_Property *ESVG_SVG_CONTENT_SCRIPT_TYPE;
+
+static Ender_Property *ESVG_SVG_ACTUAL_WIDTH;
+static Ender_Property *ESVG_SVG_ACTUAL_HEIGHT;
 static Ender_Property *ESVG_SVG_CONTAINER_WIDTH;
 static Ender_Property *ESVG_SVG_CONTAINER_HEIGHT;
 
@@ -78,6 +80,7 @@ typedef struct _Esvg_Svg
 	double container_height;
 	double x_dpi;
 	double y_dpi;
+	char *content_script_type;
 	/* user provded properties */
 	double base_font_size;
 	/* private */
@@ -715,6 +718,10 @@ static Eina_Bool _esvg_svg_attribute_set(Ender_Element *e, const char *key, cons
 		Esvg_View_Box vb = esvg_view_box_get(value);
 		esvg_svg_viewbox_set(e, &vb);
 	}
+	else if (strcmp(key, "contentScriptType") == 0)
+	{
+		esvg_svg_content_script_type_set(e, value);
+	}
 	else
 	{
 		return EINA_FALSE;
@@ -945,6 +952,7 @@ static Edom_Tag * _esvg_svg_new(void)
 	thiz->x_dpi = 96.0;
 	thiz->y_dpi = 96.0;
 
+	thiz->content_script_type = strdup("application/ecmascript");
 	/* no default value for the view_box */
 
 	/* the animation system */
@@ -1151,6 +1159,32 @@ static void _esvg_svg_y_dpi_get(Edom_Tag *t, double *y_dpi)
 	*y_dpi = thiz->y_dpi;
 }
 
+static void _esvg_svg_content_script_type_set(Edom_Tag *t, const char *v)
+{
+	Esvg_Svg *thiz;
+
+	thiz = _esvg_svg_get(t);
+	if (thiz->content_script_type)
+	{
+		free(thiz->content_script_type);
+		thiz->content_script_type = NULL;
+	}
+
+	if (v)
+	{
+		thiz->content_script_type = strdup(v);
+	}
+}
+
+static void _esvg_svg_content_script_type_get(Edom_Tag *t, const char **v)
+{
+	Esvg_Svg *thiz;
+
+	if (!v) return;
+	thiz = _esvg_svg_get(t);
+	*v = thiz->content_script_type;
+}
+
 /* The ender wrapper */
 #define _esvg_svg_delete NULL
 #define _esvg_svg_x_is_set NULL
@@ -1169,6 +1203,7 @@ static void _esvg_svg_y_dpi_get(Edom_Tag *t, double *y_dpi)
 #define _esvg_svg_container_height_is_set NULL
 #define _esvg_svg_x_dpi_is_set NULL
 #define _esvg_svg_y_dpi_is_set NULL
+#define _esvg_svg_content_script_type_is_set NULL
 /* functions */
 #define _esvg_svg_getElementById esvg_svg_internal_element_find
 #include "generated/esvg_generated_svg.c"
@@ -1577,6 +1612,26 @@ EAPI void esvg_svg_height_get(Ender_Element *e, Esvg_Length *height)
 EAPI void esvg_svg_viewbox_set(Ender_Element *e, Esvg_View_Box *vb)
 {
 	ender_element_property_value_set(e, ESVG_SVG_VIEWBOX, vb, NULL);
+}
+
+/**
+ * To be documented
+ * FIXME: To be fixed
+ */
+EAPI void esvg_svg_content_script_type_set(Ender_Element *e, const char *v)
+{
+	ender_element_property_value_set(e, ESVG_SVG_CONTENT_SCRIPT_TYPE, v, NULL);
+}
+
+/**
+ * To be documented
+ * FIXME: To be fixed
+ */
+EAPI void esvg_svg_content_script_type_get(Ender_Element *e, const char **v)
+{
+	Edom_Tag *t;
+	t = ender_element_object_get(e);
+	_esvg_svg_content_script_type_get(t, v);
 }
 
 /* FIXME the below two functions should return the actual width/height based
@@ -1995,5 +2050,3 @@ EAPI const char * esvg_svg_base_dir_get(Ender_Element *e)
 	thiz = _esvg_svg_get(t);
 	return _esvg_svg_base_dir_get(thiz);
 }
-
-

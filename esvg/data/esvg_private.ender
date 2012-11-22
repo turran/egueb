@@ -148,6 +148,16 @@ namespace "esvg" : 0 {
 		/* other attributes */
 		esvg_animated_transform "transform";
 		ender "topmost";
+		/* event attributes */
+		string "onfocusin";
+		string "onfocusout";
+		string "onactivate";
+		string "onclick";
+		string "onmousedown";
+		string "onmouseup";
+		string "onmouseover";
+		string "onmousemove";
+		string "onmouseout";
 	};
 
 	abstract "referenceable" : "element" {
@@ -239,6 +249,7 @@ namespace "esvg" : 0 {
 		double "container_height";
 		double "x_dpi";
 		double "y_dpi";
+		string "content_script_type";
 		ender "getElementById" (string);
 	};
 
