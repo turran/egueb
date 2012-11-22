@@ -15,6 +15,6 @@ typedef struct _Esvg_Event_Mouse
 	 *  readonly attribute boolean          altKey;
 	 *  readonly attribute boolean          metaKey;
 	 */
-} Esvg_Event_Mouse;
+} __attribute__((packed)) Esvg_Event_Mouse;
 
 #endif

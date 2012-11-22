@@ -47,6 +47,16 @@ EAPI void esvg_element_stop_opacity_set(Ender_Element *e, double stop_opacity);
 EAPI void esvg_element_stop_opacity_get(Ender_Element *e, double *stop_opacity);
 EAPI void esvg_element_stop_color_set(Ender_Element *e, Esvg_Color *stop_color);
 EAPI void esvg_element_stop_color_get(Ender_Element *e, Esvg_Color *stop_color);
+/* events */
+EAPI void esvg_element_onfocusin_set(Ender_Element *e, const char *v);
+EAPI void esvg_element_onfocusout_set(Ender_Element *e, const char *v);
+EAPI void esvg_element_onactivate_set(Ender_Element *e, const char *v);
+EAPI void esvg_element_onclick_set(Ender_Element *e, const char *v);
+EAPI void esvg_element_onmousedown_set(Ender_Element *e, const char *v);
+EAPI void esvg_element_onmouseup_set(Ender_Element *e, const char *v);
+EAPI void esvg_element_onmouseover_set(Ender_Element *e, const char *v);
+EAPI void esvg_element_onmousemove_set(Ender_Element *e, const char *v);
+EAPI void esvg_element_onmouseout_set(Ender_Element *e, const char *v);
 
 EAPI Ender_Element * esvg_element_topmost_get(Ender_Element *e);
 

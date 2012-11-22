@@ -26,16 +26,6 @@
  * TODO
  * use pointers to determine the state/final/whatever states, that
  * should be swapped on setup/cleanup
- * handle the following attributes and pass them to the parser context
- * onfocusin
- * onfocusout
- * onactivate
- * onclick
- * onmousedown
- * onmouseup
- * onmouseover
- * onmousemove
- * onmouseout
  * We need to keep track whenever an attribute is being animated or not,
  * to know what value (the base or the anim) we shold choose for merging
  * one possible way could be:
@@ -340,7 +330,7 @@ static void _esvg_element_attribute_presentation_free(Esvg_Element_Attributes *a
 {
 	Esvg_Attribute_Paint *p;
 	/* we should only free the base values */
-	
+
 	p = &a->fill.base;
 	/* TODO make this a function */
 	if (p->v.type == ESVG_PAINT_SERVER)
@@ -419,7 +409,6 @@ static void _esvg_element_attribute_presentation_merge(
 	esvg_attribute_animated_color_merge(&s->stop_color, &d->stop_color);
 	/* display */
 	esvg_attribute_animated_enum_merge(&s->display, &d->display);
-	
 }
 
 static void _esvg_element_attribute_presentation_merge_rel(
@@ -1374,6 +1363,42 @@ static Eina_Bool _esvg_element_attribute_set(Edom_Tag *t, const char *key, const
 		Esvg_Display display;
 		esvg_display_string_from(&display, value);
 		esvg_element_display_set(thiz->e, display);
+	}
+	else if (!strcmp(key, "onfocusin"))
+	{
+		esvg_element_onfocusin_set(thiz->e, value);
+	}
+	else if (!strcmp(key, "onfocusout"))
+	{
+		esvg_element_onfocusout_set(thiz->e, value);
+	}
+	else if (!strcmp(key, "onactivate"))
+	{
+		esvg_element_onactivate_set(thiz->e, value);
+	}
+	else if (!strcmp(key, "onclick"))
+	{
+		esvg_element_onclick_set(thiz->e, value);
+	}
+	else if (!strcmp(key, "onmousedown"))
+	{
+		esvg_element_onmousedown_set(thiz->e, value);
+	}
+	else if (!strcmp(key, "onmouseup"))
+	{
+		esvg_element_onmouseup_set(thiz->e, value);
+	}
+	else if (!strcmp(key, "onmouseover"))
+	{
+		esvg_element_onmouseover_set(thiz->e, value);
+	}
+	else if (!strcmp(key, "onmousemove"))
+	{
+		esvg_element_onmousemove_set(thiz->e, value);
+	}
+	else if (!strcmp(key, "onmouseout"))
+	{
+		esvg_element_onmouseout_set(thiz->e, value);
 	}
 	/* TODO in theory we should not allow css attributes to continue */
 	else
@@ -2541,6 +2566,78 @@ EAPI void esvg_element_stop_color_get(Ender_Element *e, Esvg_Color *stop_color)
 EAPI void esvg_element_onfocusin_set(Ender_Element *e, const char *v)
 {
 	ender_element_property_value_set(e, ESVG_ELEMENT_ONFOCUSIN, v, NULL);
+}
+
+/**
+ * To be documented
+ * FIXME: To be fixed
+ */
+EAPI void esvg_element_onfocusout_set(Ender_Element *e, const char *v)
+{
+	ender_element_property_value_set(e, ESVG_ELEMENT_ONFOCUSOUT, v, NULL);
+}
+
+/**
+ * To be documented
+ * FIXME: To be fixed
+ */
+EAPI void esvg_element_onactivate_set(Ender_Element *e, const char *v)
+{
+	ender_element_property_value_set(e, ESVG_ELEMENT_ONACTIVATE, v, NULL);
+}
+
+/**
+ * To be documented
+ * FIXME: To be fixed
+ */
+EAPI void esvg_element_onclick_set(Ender_Element *e, const char *v)
+{
+	ender_element_property_value_set(e, ESVG_ELEMENT_ONCLICK, v, NULL);
+}
+
+/**
+ * To be documented
+ * FIXME: To be fixed
+ */
+EAPI void esvg_element_onmousedown_set(Ender_Element *e, const char *v)
+{
+	ender_element_property_value_set(e, ESVG_ELEMENT_ONMOUSEDOWN, v, NULL);
+}
+
+/**
+ * To be documented
+ * FIXME: To be fixed
+ */
+EAPI void esvg_element_onmouseup_set(Ender_Element *e, const char *v)
+{
+	ender_element_property_value_set(e, ESVG_ELEMENT_ONMOUSEUP, v, NULL);
+}
+
+/**
+ * To be documented
+ * FIXME: To be fixed
+ */
+EAPI void esvg_element_onmouseover_set(Ender_Element *e, const char *v)
+{
+	ender_element_property_value_set(e, ESVG_ELEMENT_ONMOUSEOVER, v, NULL);
+}
+
+/**
+ * To be documented
+ * FIXME: To be fixed
+ */
+EAPI void esvg_element_onmousemove_set(Ender_Element *e, const char *v)
+{
+	ender_element_property_value_set(e, ESVG_ELEMENT_ONMOUSEMOVE, v, NULL);
+}
+
+/**
+ * To be documented
+ * FIXME: To be fixed
+ */
+EAPI void esvg_element_onmouseout_set(Ender_Element *e, const char *v)
+{
+	ender_element_property_value_set(e, ESVG_ELEMENT_ONMOUSEOUT, v, NULL);
 }
 
 /**
