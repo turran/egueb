@@ -17,6 +17,10 @@ lib_LTLIBRARIES = libesvg.la
 
 libesvg_la_SOURCES = \
 esvg_a.c \
+esvg_animate.c \
+esvg_animate_base.c \
+esvg_animate_transform.c \
+esvg_animation.c \
 esvg_attribute.c \
 esvg_attribute_animation.c \
 esvg_attribute_display.c \
@@ -26,10 +30,6 @@ esvg_attribute_length.c \
 esvg_attribute_paint.c \
 esvg_attribute_presentation.c \
 esvg_attribute_visibility.c \
-esvg_animate.c \
-esvg_animate_base.c \
-esvg_animate_transform.c \
-esvg_animation.c \
 esvg_circle.c \
 esvg_clip_path.c \
 esvg_clone.c \
@@ -50,10 +50,10 @@ esvg_path.c \
 esvg_polygon.c \
 esvg_polyline.c \
 esvg_radial_gradient.c \
+esvg_rect.c \
 esvg_referenceable.c \
 esvg_renderable.c \
 esvg_renderable_container.c \
-esvg_rect.c \
 esvg_script.c \
 esvg_scriptor.c \
 esvg_set.c \
@@ -64,6 +64,10 @@ esvg_text.c \
 esvg_types.c \
 esvg_use.c \
 esvg_video.c
+
+if BUILD_ESVG_SCRIPTOR_V8
+libesvg_la_SOURCES += esvg_scriptor_js_v8.cc
+endif
 
 #esvg_attribute_regular.c \
 #esvg_gradient.c \
@@ -76,13 +80,8 @@ $(top_builddir)/edom/lib/libedom.la \
 $(top_builddir)/ecss/lib/libecss.la \
 @ESVG_LIBS@ @GSTREAMER_LIBS@ -lm
 
-libesvg_la_LDFLAGS = -no-undefined -version-info @version_info@
-
-# conditional code
 if BUILD_ESVG_SCRIPTOR_V8
-libesvg_la_SOURCES += esvg_scriptor_js_v8.cc
 libesvg_la_LIBADD += @V8_LIBS@
 endif
 
-
-
+libesvg_la_LDFLAGS = -no-undefined -version-info @version_info@

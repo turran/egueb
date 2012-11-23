@@ -42,7 +42,9 @@
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
-#define ESVG_LOG_DEFAULT esvg_log_element
+#define ESVG_LOG_DEFAULT _esvg_element_log
+
+static int _esvg_element_log = -1;
 
 #define ESVG_ELEMENT_MAGIC_CHECK(d) \
 	do {\
@@ -2115,12 +2117,22 @@ Edom_Tag * esvg_element_new(Esvg_Element_Descriptor *descriptor, Esvg_Type type,
 
 void esvg_element_init(void)
 {
+	_esvg_element_log = eina_log_domain_register("esvg_element", ESVG_LOG_COLOR_DEFAULT);
+	if (_esvg_element_log < 0)
+	{
+		EINA_LOG_ERR("Can not create log domain.");
+		return;
+	}
 	_esvg_element_init();
 }
 
 void esvg_element_shutdown(void)
 {
+	if (_esvg_element_log < 0)
+		return;
 	_esvg_element_shutdown();
+	eina_log_domain_unregister(_esvg_element_log);
+	_esvg_element_log = -1;
 }
 /*============================================================================*
  *                                   API                                      *

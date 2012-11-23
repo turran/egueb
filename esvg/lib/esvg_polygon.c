@@ -24,7 +24,10 @@
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
-#define ESVG_LOG_DEFAULT esvg_log_polygon
+#define ESVG_LOG_DEFAULT _esvg_polygon_log
+
+static int _esvg_polygon_log = -1;
+
 static Ender_Property *ESVG_POLYGON_POINT;
 
 typedef struct _Esvg_Polygon
@@ -232,12 +235,22 @@ static void _esvg_polygon_point_get(Edom_Tag *t, const Eina_List **pts)
  *============================================================================*/
 void esvg_polygon_init(void)
 {
+	_esvg_polygon_log = eina_log_domain_register("esvg_polygon", ESVG_LOG_COLOR_DEFAULT);
+	if (_esvg_polygon_log < 0)
+	{
+		EINA_LOG_ERR("Can not create log domain.");
+		return;
+	}
 	_esvg_polygon_init();
 }
 
 void esvg_polygon_shutdown(void)
 {
+	if (_esvg_polygon_log < 0)
+		return;
 	_esvg_polygon_shutdown();
+	eina_log_domain_unregister(_esvg_polygon_log);
+	_esvg_polygon_log = -1;
 }
 /*============================================================================*
  *                                   API                                      *

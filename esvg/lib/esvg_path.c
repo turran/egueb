@@ -24,7 +24,9 @@
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
-#define ESVG_LOG_DEFAULT esvg_log_path
+#define ESVG_LOG_DEFAULT _esvg_path_log
+
+static int _esvg_path_log = -1;
 
 static Ender_Property *ESVG_PATH_D;
 
@@ -512,12 +514,22 @@ static void _esvg_path_d_get(Edom_Tag *t, Esvg_Animated_List *cmds)
  *============================================================================*/
 void esvg_path_init(void)
 {
+	_esvg_path_log = eina_log_domain_register("esvg_path", ESVG_LOG_COLOR_DEFAULT);
+	if (_esvg_path_log < 0)
+	{
+		EINA_LOG_ERR("Can not create log domain.");
+		return;
+	}
 	_esvg_path_init();
 }
 
 void esvg_path_shutdown(void)
 {
+	if (_esvg_path_log < 0)
+		return;
 	_esvg_path_shutdown();
+	eina_log_domain_unregister(_esvg_path_log);
+	_esvg_path_log = -1;
 }
 /*============================================================================*
  *                                   API                                      *

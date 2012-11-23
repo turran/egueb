@@ -39,5 +39,6 @@ void * esvg_gradient_data_get(Edom_Tag *t);
 Edom_Tag * esvg_gradient_href_tag_get(Edom_Tag *t);
 /* generated function */
 void esvg_gradient_init(void);
+void esvg_gradient_shutdown(void);
 
 #endif

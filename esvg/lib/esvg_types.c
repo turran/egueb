@@ -27,6 +27,10 @@
  *                                  Local                                     *
  *============================================================================*/
 
+#define ESVG_LOG_DEFAULT _esvg_type_log
+
+static int _esvg_type_log = -1;
+
 #if 1
 # define eina_strtod strtod
 #else
@@ -138,8 +142,6 @@ eina_strtod(const char *nptr, char **endptr)
   return res;
 }
 #endif
-
-#define ESVG_LOG_DEFAULT esvg_log_type
 
 #define ESVG_IS_HEXA(c) \
 	(((c >= 48) && (c <= 57)) || \
@@ -1141,6 +1143,24 @@ void esvg_paint_copy(Esvg_Paint *dst, Esvg_Paint *src)
 			dst->value.paint_server = strdup(src->value.paint_server);
 		}
 	}
+}
+
+void esvg_type_init(void)
+{
+	_esvg_type_log = eina_log_domain_register("esvg_type", ESVG_LOG_COLOR_DEFAULT);
+	if (_esvg_type_log < 0)
+	{
+		EINA_LOG_ERR("Can not create log domain.");
+		return;
+	}
+}
+
+void esvg_type_shutdown(void)
+{
+	if (_esvg_type_log < 0)
+		return;
+	eina_log_domain_unregister(_esvg_type_log);
+	_esvg_type_log = -1;
 }
 /*============================================================================*
  *                                   API                                      *

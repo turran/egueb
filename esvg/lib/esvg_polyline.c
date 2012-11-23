@@ -24,7 +24,9 @@
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
-#define ESVG_LOG_DEFAULT esvg_log_polyline
+#define ESVG_LOG_DEFAULT _esvg_polyline_log
+
+static int _esvg_polyline_log = -1;
 
 static Ender_Property *ESVG_POLYLINE_POINT;
 
@@ -255,15 +257,24 @@ static void _esvg_polyline_point_add(Edom_Tag *t, Esvg_Point *p)
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
-
 void esvg_polyline_init(void)
 {
+	_esvg_polyline_log = eina_log_domain_register("esvg_polyline", ESVG_LOG_COLOR_DEFAULT);
+	if (_esvg_polyline_log < 0)
+	{
+		EINA_LOG_ERR("Can not create log domain.");
+		return;
+	}
 	_esvg_polyline_init();
 }
 
 void esvg_polyline_shutdown(void)
 {
+	if (_esvg_polyline_log < 0)
+		return;
 	_esvg_polyline_shutdown();
+	eina_log_domain_unregister(_esvg_polyline_log);
+	_esvg_polyline_log = -1;
 }
 /*============================================================================*
  *                                   API                                      *

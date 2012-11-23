@@ -60,7 +60,9 @@
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
-#define ESVG_LOG_DEFAULT esvg_log_parser
+#define ESVG_LOG_DEFAULT _esvg_parser_log
+
+static int _esvg_parser_log = -1;
 
 typedef struct _Esvg_Parser
 {
@@ -643,6 +645,23 @@ static Edom_Parser_Descriptor _info_descriptor = {
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
+void esvg_parser_init(void)
+{
+	_esvg_parser_log = eina_log_domain_register("esvg_parser", ESVG_LOG_COLOR_DEFAULT);
+	if (_esvg_parser_log < 0)
+	{
+		EINA_LOG_ERR("Can not create log domain.");
+		return;
+	}
+}
+
+void esvg_parser_shutdown(void)
+{
+	if (_esvg_parser_log < 0)
+		return;
+	eina_log_domain_unregister(_esvg_parser_log);
+	_esvg_parser_log = -1;
+}
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/

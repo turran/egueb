@@ -29,7 +29,9 @@
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
-#define ESVG_LOG_DEFAULT esvg_log_renderable
+#define ESVG_LOG_DEFAULT _esvg_renderable_log
+
+static int _esvg_renderable_log = -1;
 
 #define ESVG_RENDERABLE_MAGIC_CHECK(d) \
 	do {\
@@ -376,12 +378,22 @@ static Esvg_Element_Setup_Return _esvg_renderable_setup(Edom_Tag *t,
  *============================================================================*/
 void esvg_renderable_init(void)
 {
+	_esvg_renderable_log = eina_log_domain_register("esvg_renderable", ESVG_LOG_COLOR_DEFAULT);
+	if (_esvg_renderable_log < 0)
+	{
+		EINA_LOG_ERR("Can not create log domain.");
+		return;
+	}
 	_esvg_renderable_init();
 }
 
 void esvg_renderable_shutdown(void)
 {
+	if (_esvg_renderable_log < 0)
+		return;
 	_esvg_renderable_shutdown();
+	eina_log_domain_unregister(_esvg_renderable_log);
+	_esvg_renderable_log = -1;
 }
 
 void esvg_renderable_implementation_renderer_get(Edom_Tag *t, Enesim_Renderer **r)

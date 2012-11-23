@@ -30,6 +30,7 @@ Edom_Tag * esvg_animate_base_new(Esvg_Animate_Base_Descriptor *descriptor, Esvg_
 Etch_Interpolator_Type esvg_animate_base_calc_mode_etch_to(Esvg_Calc_Mode c);
 /* generated function */
 void esvg_animate_base_init(void);
+void esvg_animate_base_shutdown(void);
 
 #endif
 

@@ -24,7 +24,9 @@
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
-#define ESVG_LOG_DEFAULT esvg_log_circle
+#define ESVG_LOG_DEFAULT _esvg_circle_log
+
+static int _esvg_circle_log = -1;
 
 static Ender_Property *ESVG_CIRCLE_CX;
 static Ender_Property *ESVG_CIRCLE_CY;
@@ -322,18 +324,29 @@ static void _esvg_circle_r_get(Edom_Tag *t, Esvg_Animated_Length *radius)
 #define _esvg_circle_cx_is_set NULL
 #define _esvg_circle_cy_is_set NULL
 #define _esvg_circle_r_is_set NULL
-#include "generated/esvg_generated_circle.c"/*============================================================================*
+#include "generated/esvg_generated_circle.c"
+/*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
 
 void esvg_circle_init(void)
 {
+	_esvg_circle_log = eina_log_domain_register("esvg_circle", ESVG_LOG_COLOR_DEFAULT);
+	if (_esvg_circle_log < 0)
+	{
+		EINA_LOG_ERR("Can not create log domain.");
+		return;
+	}
 	_esvg_circle_init();
 }
 
 void esvg_circle_shutdown(void)
 {
+	if (_esvg_circle_log < 0)
+		return;
 	_esvg_circle_shutdown();
+	eina_log_domain_unregister(_esvg_circle_log);
+	_esvg_circle_log = -1;
 }
 /*============================================================================*
  *                                   API                                      *

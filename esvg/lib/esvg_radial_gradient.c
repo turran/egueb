@@ -29,7 +29,9 @@
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
-#define ESVG_LOG_DEFAULT esvg_log_radial_gradient
+#define ESVG_LOG_DEFAULT _esvg_radial_gradient_log
+
+static int _esvg_radial_gradient_log = -1;
 
 static Ender_Property *ESVG_RADIAL_GRADIENT_CX;
 static Ender_Property *ESVG_RADIAL_GRADIENT_CY;
@@ -579,12 +581,22 @@ static Eina_Bool _esvg_radial_gradient_r_is_set(Edom_Tag *t)
  *============================================================================*/
 void esvg_radial_gradient_init(void)
 {
+	_esvg_radial_gradient_log = eina_log_domain_register("esvg_radial_gradient", ESVG_LOG_COLOR_DEFAULT);
+	if (_esvg_radial_gradient_log < 0)
+	{
+		EINA_LOG_ERR("Can not create log domain.");
+		return;
+	}
 	_esvg_radial_gradient_init();
 }
 
 void esvg_radial_gradient_shutdown(void)
 {
+	if (_esvg_radial_gradient_log < 0)
+		return;
 	_esvg_radial_gradient_shutdown();
+	eina_log_domain_unregister(_esvg_radial_gradient_log);
+	_esvg_radial_gradient_log = -1;
 }
 /*============================================================================*
  *                                   API                                      *

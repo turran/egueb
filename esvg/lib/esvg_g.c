@@ -25,7 +25,9 @@
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
-#define ESVG_LOG_DEFAULT esvg_log_g
+#define ESVG_LOG_DEFAULT _esvg_g_log
+
+static int _esvg_g_log = -1;
 
 typedef struct _Esvg_G
 {
@@ -245,12 +247,22 @@ static Edom_Tag * _esvg_g_new(void)
  *============================================================================*/
 void esvg_g_init(void)
 {
+	_esvg_g_log = eina_log_domain_register("esvg_g", ESVG_LOG_COLOR_DEFAULT);
+	if (_esvg_g_log < 0)
+	{
+		EINA_LOG_ERR("Can not create log domain.");
+		return;
+	}
 	_esvg_g_init();
 }
 
 void esvg_g_shutdown(void)
 {
+	if (_esvg_g_log < 0)
+		return;
 	_esvg_g_shutdown();
+	eina_log_domain_unregister(_esvg_g_log);
+	_esvg_g_log = -1;
 }
 /*============================================================================*
  *                                   API                                      *

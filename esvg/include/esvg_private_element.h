@@ -113,8 +113,11 @@ Eina_Bool esvg_element_internal_child_setup(Edom_Tag *t,
 void esvg_element_property_string_set(Ender_Element *e, Ender_Property *p, const char *v);
 void esvg_element_property_length_set(Ender_Element *e, Ender_Property *p, const Esvg_Length *v);
 void esvg_element_property_paint_set(Ender_Element *e, Ender_Property *p, const Esvg_Paint *v);
+void esvg_element_property_clip_path_set(Ender_Element *e, Ender_Property *p, const Esvg_Clip_Path *v);
 void esvg_element_property_number_set(Ender_Element *e, Ender_Property *p, double v);
 void esvg_element_property_enum_set(Ender_Element *e, Ender_Property *p, int v);
 
+void esvg_element_init(void);
+void esvg_element_shutdown(void);
 
 #endif

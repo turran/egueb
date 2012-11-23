@@ -12,4 +12,7 @@ typedef struct _Esvg_Video_Descriptor
 	Esvg_Video_Setup setup;
 } Esvg_Video_Descriptor;
 
+void esvg_video_init(void);
+void esvg_video_shutdown(void);
+
 #endif

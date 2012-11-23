@@ -62,37 +62,6 @@
 #define ESVG_LOG_COLOR_DEFAULT EINA_COLOR_ORANGE
 /* Whenever a file needs to generate a log, it must declare this first */
 
-/* The log domaings */
-extern int esvg_log_a;
-extern int esvg_log_animate;
-extern int esvg_log_animate_base;
-extern int esvg_log_animate_transform;
-extern int esvg_log_animation;
-extern int esvg_log_clone;
-extern int esvg_log_circle;
-extern int esvg_log_clip_path;
-extern int esvg_log_element;
-extern int esvg_log_ellipse;
-extern int esvg_log_g;
-extern int esvg_log_gradient;
-extern int esvg_log_image;
-extern int esvg_log_line;
-extern int esvg_log_linear_gradient;
-extern int esvg_log_parser;
-extern int esvg_log_path;
-extern int esvg_log_polygon;
-extern int esvg_log_polyline;
-extern int esvg_log_radial_gradient;
-extern int esvg_log_rect;
-extern int esvg_log_renderable;
-extern int esvg_log_set;
-extern int esvg_log_stop;
-extern int esvg_log_svg;
-extern int esvg_log_text;
-extern int esvg_log_type;
-extern int esvg_log_use;
-extern int esvg_log_video;
-
 #ifdef ERR
 # undef ERR
 #endif
@@ -134,11 +103,6 @@ extern int esvg_log_video;
 
 extern int esvg_log_dom_global;
 Ender_Namespace * esvg_namespace_get(void);
-
-void esvg_element_init(void);
-void esvg_renderable_init(void);
-void esvg_svg_init(void);
-void esvg_rect_init(void);
 
 #if 0
 

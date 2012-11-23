@@ -24,7 +24,10 @@
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
-#define ESVG_LOG_DEFAULT esvg_log_ellipse
+#define ESVG_LOG_DEFAULT _esvg_ellipse_log
+
+static int _esvg_ellipse_log =-1;
+
 static Ender_Property *ESVG_ELLIPSE_CX;
 static Ender_Property *ESVG_ELLIPSE_CY;
 static Ender_Property *ESVG_ELLIPSE_RX;
@@ -363,12 +366,22 @@ static void _esvg_ellipse_ry_get(Edom_Tag *t, Esvg_Animated_Length *ry)
  *============================================================================*/
 void esvg_ellipse_init(void)
 {
+	_esvg_ellipse_log = eina_log_domain_register("esvg_ellipse", ESVG_LOG_COLOR_DEFAULT);
+	if (_esvg_ellipse_log < 0)
+	{
+		EINA_LOG_ERR("Can not create log domain.");
+		return;
+	}
 	_esvg_ellipse_init();
 }
 
 void esvg_ellipse_shutdown(void)
 {
+	if (_esvg_ellipse_log < 0)
+		return;
 	_esvg_ellipse_shutdown();
+	eina_log_domain_unregister(_esvg_ellipse_log);
+	_esvg_ellipse_log = -1;
 }
 /*============================================================================*
  *                                   API                                      *

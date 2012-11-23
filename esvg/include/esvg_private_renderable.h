@@ -62,4 +62,7 @@ typedef Enesim_Renderer * (*Esvg_Shape_Renderer_Get)(Enesim_Renderer *);
 typedef Eina_Bool (*Esvg_Shape_Setup)(Enesim_Renderer *r, const Esvg_Element_Context *estate,
 		const Esvg_Renderable_Context *dstate);
 
+void esvg_renderable_init(void);
+void esvg_renderable_shutdown(void);
+
 #endif

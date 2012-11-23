@@ -45,7 +45,9 @@
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
-#define ESVG_LOG_DEFAULT esvg_log_clip_path
+#define ESVG_LOG_DEFAULT _esvg_clip_path_log
+
+static int _esvg_clip_path_log = -1;
 
 static Ender_Property *ESVG_CLIP_PATH_CLIP_PATH_UNITS;
 
@@ -392,12 +394,22 @@ static Eina_Bool _esvg_clip_path_clip_path_units_is_set(Edom_Tag *t)
  *============================================================================*/
 void esvg_clip_path_init(void)
 {
+	_esvg_clip_path_log = eina_log_domain_register("esvg_clip_path", ESVG_LOG_COLOR_DEFAULT);
+	if (_esvg_clip_path_log < 0)
+	{
+		EINA_LOG_ERR("Can not create log domain.");
+		return;
+	}
 	_esvg_clip_path_init();
 }
 
 void esvg_clip_path_shutdown(void)
 {
+	if (_esvg_clip_path_log < 0)
+		return;
 	_esvg_clip_path_shutdown();
+	eina_log_domain_unregister(_esvg_clip_path_log);
+	_esvg_clip_path_log = -1;
 }
 /*============================================================================*
  *                                   API                                      *

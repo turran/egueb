@@ -24,7 +24,9 @@
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
-#define ESVG_LOG_DEFAULT esvg_log_text
+#define ESVG_LOG_DEFAULT _esvg_text_log
+
+static int _esvg_text_log = -1;
 
 static Ender_Property *ESVG_TEXT_X;
 static Ender_Property *ESVG_TEXT_Y;
@@ -302,12 +304,22 @@ static void _esvg_text_y_get(Edom_Tag *t, Esvg_Animated_Coord *y)
  *============================================================================*/
 void esvg_text_init(void)
 {
+	_esvg_text_log = eina_log_domain_register("esvg_text", ESVG_LOG_COLOR_DEFAULT);
+	if (_esvg_text_log < 0)
+	{
+		EINA_LOG_ERR("Can not create log domain.");
+		return;
+	}
 	_esvg_text_init();
 }
 
 void esvg_text_shutdown(void)
 {
+	if (_esvg_text_log < 0)
+		return;
 	_esvg_text_shutdown();
+	eina_log_domain_unregister(_esvg_text_log);
+	_esvg_text_log = -1;
 }
 /*============================================================================*
  *                                   API                                      *

@@ -24,7 +24,9 @@
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
-#define ESVG_LOG_DEFAULT esvg_log_rect
+#define ESVG_LOG_DEFAULT _esvg_rect_log
+
+static int _esvg_rect_log = -1;
 
 static Ender_Property *ESVG_RECT_X;
 static Ender_Property *ESVG_RECT_Y;
@@ -453,12 +455,22 @@ static void _esvg_rect_ry_get(Edom_Tag *t, Esvg_Animated_Coord *ry)
  *============================================================================*/
 void esvg_rect_init(void)
 {
+	_esvg_rect_log = eina_log_domain_register("esvg_rect", ESVG_LOG_COLOR_DEFAULT);
+	if (_esvg_rect_log < 0)
+	{
+		EINA_LOG_ERR("Can not create log domain.");
+		return;
+	}
 	_esvg_rect_init();
 }
 
 void esvg_rect_shutdown(void)
 {
+	if (_esvg_rect_log < 0)
+		return;
 	_esvg_rect_shutdown();
+	eina_log_domain_unregister(_esvg_rect_log);
+	_esvg_rect_log = -1;
 }
 /*============================================================================*
  *                                   API                                      *

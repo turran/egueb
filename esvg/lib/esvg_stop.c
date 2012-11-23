@@ -24,7 +24,9 @@
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
-#define ESVG_LOG_DEFAULT esvg_log_stop
+#define ESVG_LOG_DEFAULT _esvg_stop_log
+
+static int _esvg_stop_log = -1;
 
 static Ender_Property *ESVG_STOP_OFFSET;
 
@@ -173,12 +175,22 @@ static void _esvg_stop_offset_get(Edom_Tag *t, Esvg_Length *offset)
  *============================================================================*/
 void esvg_stop_init(void)
 {
+	_esvg_stop_log = eina_log_domain_register("esvg_stop", ESVG_LOG_COLOR_DEFAULT);
+	if (_esvg_stop_log < 0)
+	{
+		EINA_LOG_ERR("Can not create log domain.");
+		return;
+	}
 	_esvg_stop_init();
 }
 
 void esvg_stop_shutdown(void)
 {
+	if (_esvg_stop_log < 0)
+		return;
 	_esvg_stop_shutdown();
+	eina_log_domain_unregister(_esvg_stop_log);
+	_esvg_stop_log = -1;
 }
 
 Enesim_Renderer_Gradient_Stop * esvg_stop_gradient_stop_get(Edom_Tag *t)

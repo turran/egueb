@@ -34,7 +34,9 @@
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
-#define ESVG_LOG_DEFAULT esvg_log_gradient
+#define ESVG_LOG_DEFAULT _esvg_gradient_log
+
+static int _esvg_gradient_log = -1;
 
 #define ESVG_GRADIENT_MAGIC_CHECK(d) \
 	do {\
@@ -560,12 +562,22 @@ static void _esvg_gradient_spread_method_get(Edom_Tag *t, Esvg_Spread_Method *sp
 /* The ender wrapper */
 void esvg_gradient_init(void)
 {
+	_esvg_gradient_log = eina_log_domain_register("esvg_gradient", ESVG_LOG_COLOR_DEFAULT);
+	if (_esvg_gradient_log < 0)
+	{
+		EINA_LOG_ERR("Can not create log domain.");
+		return;
+	}
 	_esvg_gradient_init();
 }
 
 void esvg_gradient_shutdown(void)
 {
+	if (_esvg_gradient_log < 0)
+		return;
 	_esvg_gradient_shutdown();
+	eina_log_domain_unregister(_esvg_gradient_log);
+	_esvg_gradient_log = -1;
 }
 
 Edom_Tag * esvg_gradient_new(Esvg_Gradient_Descriptor *descriptor,

@@ -39,7 +39,9 @@
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
-#define ESVG_LOG_DEFAULT esvg_log_use
+#define ESVG_LOG_DEFAULT _esvg_use_log
+
+static int _esvg_use_log = -1;
 
 static Ender_Property *ESVG_USE_X;
 static Ender_Property *ESVG_USE_Y;
@@ -387,12 +389,22 @@ static void _esvg_use_link_get(Edom_Tag *t, const char **link)
  *============================================================================*/
 void esvg_use_init(void)
 {
+	_esvg_use_log = eina_log_domain_register("esvg_use", ESVG_LOG_COLOR_DEFAULT);
+	if (_esvg_use_log < 0)
+	{
+		EINA_LOG_ERR("Can not create log domain.");
+		return;
+	}
 	_esvg_use_init();
 }
 
 void esvg_use_shutdown(void)
 {
+	if (_esvg_use_log < 0)
+		return;
 	_esvg_use_shutdown();
+	eina_log_domain_unregister(_esvg_use_log);
+	_esvg_use_log = -1;
 }
 /*============================================================================*
  *                                   API                                      *

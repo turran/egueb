@@ -33,7 +33,9 @@
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
-#define ESVG_LOG_DEFAULT esvg_log_video
+#define ESVG_LOG_DEFAULT _esvg_video_log
+
+static int _esvg_video_log = -1;
 
 static Ender_Property *ESVG_VIDEO_X;
 static Ender_Property *ESVG_VIDEO_Y;
@@ -530,12 +532,22 @@ static void _esvg_video_xlink_href_get(Edom_Tag *t, Esvg_Animated_String *href)
  *============================================================================*/
 void esvg_video_init(void)
 {
+	_esvg_video_log = eina_log_domain_register("esvg_video", ESVG_LOG_COLOR_DEFAULT);
+	if (_esvg_video_log < 0)
+	{
+		EINA_LOG_ERR("Can not create log domain.");
+		return;
+	}
 	_esvg_video_init();
 }
 
 void esvg_video_shutdown(void)
 {
+	if (_esvg_video_log < 0)
+		return;
 	_esvg_video_shutdown();
+	eina_log_domain_unregister(_esvg_video_log);
+	_esvg_video_log = -1;
 }
 /*============================================================================*
  *                                   API                                      *

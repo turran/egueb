@@ -41,7 +41,9 @@
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
-#define ESVG_LOG_DEFAULT esvg_log_animate_base
+#define ESVG_LOG_DEFAULT _esvg_animate_base_log
+
+static int _esvg_animate_base_log = -1;
 
 #define ESVG_ANIMATE_BASE_MAGIC_CHECK(d) \
 	do {\
@@ -884,12 +886,22 @@ static Eina_Bool _esvg_animate_base_setup(Edom_Tag *t,
  *============================================================================*/
 void esvg_animate_base_init(void)
 {
+	_esvg_animate_base_log = eina_log_domain_register("esvg_animate_base", ESVG_LOG_COLOR_DEFAULT);
+	if (_esvg_animate_base_log < 0)
+	{
+		EINA_LOG_ERR("Can not create log domain.");
+		return;
+	}
 	_esvg_animate_base_init();
 }
 
 void esvg_animate_base_shutdown(void)
 {
+	if (_esvg_animate_base_log < 0)
+		return;
 	_esvg_animate_base_shutdown();
+	eina_log_domain_unregister(_esvg_animate_base_log);
+	_esvg_animate_base_log = -1;
 }
 
 Eina_Bool esvg_is_animate_base_internal(Edom_Tag *t)

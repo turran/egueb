@@ -39,7 +39,9 @@
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
-#define ESVG_LOG_DEFAULT esvg_log_image
+#define ESVG_LOG_DEFAULT _esvg_image_log
+
+static int _esvg_image_log = -1;
 
 static Ender_Property *ESVG_IMAGE_X;
 static Ender_Property *ESVG_IMAGE_Y;
@@ -529,12 +531,22 @@ static void _esvg_image_xlink_href_get(Edom_Tag *t, Esvg_Animated_String *href)
  *============================================================================*/
 void esvg_image_init(void)
 {
+	_esvg_image_log = eina_log_domain_register("esvg_image", ESVG_LOG_COLOR_DEFAULT);
+	if (_esvg_image_log < 0)
+	{
+		EINA_LOG_ERR("Can not create log domain.");
+		return;
+	}
 	_esvg_image_init();
 }
 
 void esvg_image_shutdown(void)
 {
+	if (_esvg_image_log < 0)
+		return;
 	_esvg_image_shutdown();
+	eina_log_domain_unregister(_esvg_image_log);
+	_esvg_image_log = -1;
 }
 
 #if 0

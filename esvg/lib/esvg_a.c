@@ -19,6 +19,7 @@
 #include "esvg_private_attribute_presentation.h"
 #include "esvg_private_context.h"
 #include "esvg_private_element.h"
+#include "esvg_private_a.h"
 #include "esvg_private_svg.h"
 
 #include "esvg_element.h"
@@ -35,7 +36,9 @@
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
-#define ESVG_LOG_DEFAULT esvg_log_a
+#define ESVG_LOG_DEFAULT _esvg_a_log
+
+static int _esvg_a_log = -1;
 
 static Ender_Property *ESVG_A_XLINK_HREF;
 
@@ -251,12 +254,22 @@ Eina_Bool esvg_is_a_internal(Edom_Tag *t)
 
 void esvg_a_init(void)
 {
+	_esvg_a_log = eina_log_domain_register("esvg_a", ESVG_LOG_COLOR_DEFAULT);
+	if (_esvg_a_log < 0)
+	{
+		EINA_LOG_ERR("Can not create log domain.");
+		return;
+	}
 	_esvg_a_init();
 }
 
 void esvg_a_shutdown(void)
 {
+	if (_esvg_a_log < 0)
+		return;
 	_esvg_a_shutdown();
+	eina_log_domain_unregister(_esvg_a_log);
+	_esvg_a_log = -1;
 }
 
 /*============================================================================*

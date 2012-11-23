@@ -9,6 +9,7 @@ typedef struct _Esvg_Clip_Path_Referenceable_Data
 } Esvg_Clip_Path_Referenceable_Data;
 
 void esvg_clip_path_init(void);
+void esvg_clip_path_shutdown(void);
 
 #endif
 

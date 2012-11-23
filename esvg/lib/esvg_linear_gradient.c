@@ -29,7 +29,9 @@
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
-#define ESVG_LOG_DEFAULT esvg_log_linear_gradient
+#define ESVG_LOG_DEFAULT _esvg_linear_gradient_log
+
+static int _esvg_linear_gradient_log = -1;
 
 static Ender_Property *ESVG_LINEAR_GRADIENT_X1;
 static Ender_Property *ESVG_LINEAR_GRADIENT_Y1;
@@ -467,12 +469,22 @@ static Eina_Bool _esvg_linear_gradient_y2_is_set(Edom_Tag *t)
  *============================================================================*/
 void esvg_linear_gradient_init(void)
 {
+	_esvg_linear_gradient_log = eina_log_domain_register("esvg_linear_gradient", ESVG_LOG_COLOR_DEFAULT);
+	if (_esvg_linear_gradient_log < 0)
+	{
+		EINA_LOG_ERR("Can not create log domain.");
+		return;
+	}
 	_esvg_linear_gradient_init();
 }
 
 void esvg_linear_gradient_shutdown(void)
 {
+	if (_esvg_linear_gradient_log < 0)
+		return;
 	_esvg_linear_gradient_shutdown();
+	eina_log_domain_unregister(_esvg_linear_gradient_log);
+	_esvg_linear_gradient_log = -1;
 }
 
 /*============================================================================*

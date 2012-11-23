@@ -23,7 +23,9 @@
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
-#define ESVG_LOG_DEFAULT esvg_log_clone
+#define ESVG_LOG_DEFAULT _esvg_clone_log
+
+static int _esvg_clone_log = -1;
 
 typedef struct _Esvg_Clone
 {
@@ -53,12 +55,12 @@ static void _descriptor_property(Ender_Property *prop, void *data)
 	if (!_property_is_valid(prop))
 		return;
 
+	name = ender_property_name_get(prop);
 	/* FIXME we need to implement this functionality */
 	if (!ender_element_property_value_is_set(ddata->our, prop)) {
 		DBG("Property '%s' is not set", name);
 		return;
 	}
-	name = ender_property_name_get(prop);
 	DBG("Setting property '%s'", name);
 	ender_element_property_value_get_simple(ddata->ref, prop, &v);
 	ender_element_property_value_set_simple(ddata->our, prop, v);
@@ -121,6 +123,24 @@ static Ender_Element * _esvg_clone_duplicate(Ender_Element *e)
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
+void esvg_clone_init(void)
+{
+	_esvg_clone_log = eina_log_domain_register("esvg_clone", ESVG_LOG_COLOR_DEFAULT);
+	if (_esvg_clone_log < 0)
+	{
+		EINA_LOG_ERR("Can not create log domain.");
+		return;
+	}
+}
+
+void esvg_clone_shutdown(void)
+{
+	if (_esvg_clone_log < 0)
+		return;
+	eina_log_domain_unregister(_esvg_clone_log);
+	_esvg_clone_log = -1;
+}
+
 Ender_Element * esvg_clone_new(Ender_Element *e)
 {
 	Ender_Element *clone;

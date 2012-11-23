@@ -22,13 +22,16 @@
 #include "esvg_private_attribute_animation.h"
 #include "esvg_private_animation.h"
 #include "esvg_private_animate_base.h"
+#include "esvg_private_animate.h"
 #include "esvg_private_svg.h"
 
 #include "esvg_animate.h"
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
-#define ESVG_LOG_DEFAULT esvg_log_animate
+#define ESVG_LOG_DEFAULT _esvg_animate_log
+
+static int _esvg_animate_log = -1;
 
 typedef struct _Esvg_Animate
 {
@@ -109,12 +112,22 @@ static Edom_Tag * _esvg_animate_new(void)
  *============================================================================*/
 void esvg_animate_init(void)
 {
+	_esvg_animate_log = eina_log_domain_register("esvg_animate", ESVG_LOG_COLOR_DEFAULT);
+	if (_esvg_animate_log < 0)
+	{
+		EINA_LOG_ERR("Can not create log domain.");
+		return;
+	}
 	_esvg_animate_init();
 }
 
 void esvg_animate_shutdown(void)
 {
+	if (_esvg_animate_log < 0)
+		return;
 	_esvg_animate_shutdown();
+	eina_log_domain_unregister(_esvg_animate_log);
+	_esvg_animate_log = -1;
 }
 /*============================================================================*
  *                                   API                                      *

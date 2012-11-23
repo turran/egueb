@@ -50,7 +50,9 @@
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
-#define ESVG_LOG_DEFAULT esvg_log_svg
+#define ESVG_LOG_DEFAULT _esvg_svg_log
+
+static int _esvg_svg_log = -1;
 
 static Ender_Property *ESVG_SVG_X;
 static Ender_Property *ESVG_SVG_Y;
@@ -1212,13 +1214,23 @@ static void _esvg_svg_content_script_type_get(Edom_Tag *t, const char **v)
  *============================================================================*/
 void esvg_svg_init(void)
 {
-	/* initialize the ender interface */
+	_esvg_svg_log = eina_log_domain_register("esvg_svg", ESVG_LOG_COLOR_DEFAULT);
+	if (_esvg_svg_log < 0)
+	{
+		EINA_LOG_ERR("Can not create log domain.");
+		return;
+	}
+	/* FIXME: initialize the ender interface */
 	_esvg_svg_init();
 }
 
 void esvg_svg_shutdown(void)
 {
+	if (_esvg_svg_log < 0)
+		return;
 	_esvg_svg_shutdown();
+	eina_log_domain_unregister(_esvg_svg_log);
+	_esvg_svg_log = -1;
 }
 /*----------------------------------------------------------------------------*
  *                     The scriptor related functions                         *

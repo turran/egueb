@@ -29,6 +29,9 @@ void esvg_svg_scriptor_register(Esvg_Scriptor_Descriptor *d, const char *type);
 void esvg_svg_scriptor_unregister(Esvg_Scriptor_Descriptor *d, const char *type);
 Esvg_Scriptor * esvg_svg_scriptor_get(Ender_Element *e, const char *type);
 
+void esvg_svg_init(void);
+void esvg_svg_shutdown(void);
+
 #ifdef __cplusplus
 }
 #endif
