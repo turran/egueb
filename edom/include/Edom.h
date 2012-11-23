@@ -73,6 +73,9 @@ typedef struct _Edom_Parser_Descriptor
 	Edom_Parser_Tag_Text_Set tag_text_set;
 } Edom_Parser_Descriptor;
 
+EAPI void edom_init(void);
+EAPI void edom_shutdown(void);
+
 EAPI Edom_Parser * edom_parser_new(Edom_Parser_Descriptor *descriptor, void *data);
 EAPI void edom_parser_delete(Edom_Parser *thiz);
 EAPI const char * edom_parser_root_get(Edom_Parser *thiz);
@@ -90,7 +93,7 @@ typedef struct _Edom_Attribute
 typedef struct _Edom_String
 {
 	const char *s;
-	int length;
+	unsigned int length;
 } Edom_String;
 
 typedef Eina_Bool (*Edom_Tag_Foreach)(Edom_Tag *thiz, Edom_Tag *child, void *data);

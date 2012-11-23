@@ -56,7 +56,6 @@ static const char * _edom_parser_get_entity(Edom_Parser *thiz, const char *s, co
 {
 	const char *tmp;
 	char entity[128];
-	const char *rep;
 	int len;
 
 	tmp = s;
