@@ -1,5 +1,7 @@
 MAINTAINERCLEANFILES = Makefile.in
 
+SUBDIRS = script_providers video_providers
+
 AM_CPPFLAGS = \
 -I. \
 -I$(top_srcdir)/ecss/include \
@@ -10,8 +12,7 @@ AM_CPPFLAGS = \
 -I$(top_builddir)/esvg/include \
 -DENESIM_EXTENSION \
 @ESVG_BUILD@ \
-@ESVG_CFLAGS@ \
-@GSTREAMER_CFLAGS@
+@ESVG_CFLAGS@
 
 lib_LTLIBRARIES = libesvg.la
 
@@ -55,7 +56,7 @@ esvg_referenceable.c \
 esvg_renderable.c \
 esvg_renderable_container.c \
 esvg_script.c \
-esvg_scriptor.c \
+esvg_script_provider.c \
 esvg_set.c \
 esvg_stop.c \
 esvg_style.c \
@@ -63,11 +64,8 @@ esvg_svg.c \
 esvg_text.c \
 esvg_types.c \
 esvg_use.c \
-esvg_video.c
-
-if BUILD_ESVG_SCRIPTOR_V8
-libesvg_la_SOURCES += esvg_scriptor_js_v8.cc
-endif
+esvg_video.c \
+esvg_video_provider.c
 
 #esvg_attribute_regular.c \
 #esvg_gradient.c \
@@ -78,10 +76,8 @@ endif
 libesvg_la_LIBADD = \
 $(top_builddir)/edom/lib/libedom.la \
 $(top_builddir)/ecss/lib/libecss.la \
+$(top_builddir)/esvg/lib/video_providers/libesvg_video_providers.la \
+$(top_builddir)/esvg/lib/script_providers/libesvg_script_providers.la \
 @ESVG_LIBS@ @GSTREAMER_LIBS@ -lm
-
-if BUILD_ESVG_SCRIPTOR_V8
-libesvg_la_LIBADD += @V8_LIBS@
-endif
 
 libesvg_la_LDFLAGS = -no-undefined -version-info @version_info@

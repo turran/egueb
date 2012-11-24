@@ -16,6 +16,9 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 #include "esvg_private_video.h"
+#ifdef BUILD_ESVG_VIDEO_GSTREAMER
+#include <gst/gst.h>
+#endif
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
@@ -51,7 +54,7 @@ static void _esvg_video_buffer_display(GstElement *enesim_sink, Enesim_Buffer *b
 		/* damage the whole buffer */
 		//enesim_renderer_image_damage_add
 		eina_rectangle_coords_from(&area, 0, 0, ceil(thiz->gwidth), ceil(thiz->gheight));
-		enesim_renderer_image_damage_add(thiz->image, &area); 
+		enesim_renderer_image_damage_add(thiz->image, &area);
 	}
 	else
 	{
@@ -98,7 +101,7 @@ static void * _esvg_video_descriptor_new(Edom_Tag *t)
 
 	thiz->playbin2 = gst_element_factory_make("playbin2", "svg_video");
 	g_object_set(thiz->playbin2, "video-sink", thiz->enesim_sink, NULL);
-	
+
 	return thiz;
 }
 
