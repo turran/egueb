@@ -39,6 +39,9 @@ using namespace v8;
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
+#define ESVG_LOG_DEFAULT _esvg_scriptor_js_v8_log
+static int _esvg_scriptor_js_v8_log = -1;
+
 typedef struct _Esvg_Scriptor_Js_V8
 {
 	Ender_Element *svg;
@@ -156,7 +159,7 @@ static Handle<Value> _v8_getter(Local<String> property, const AccessorInfo &info
 	Ender_Element *e = static_cast<Ender_Element *>(wrap->Value());
 	Ender_Property *p = static_cast<Ender_Property *>(data->Value());
 
-	printf("getting\n");
+	DBG("Getting '%s' property", ender_property_name_get(p));
 	ender_element_property_value_get_simple(e, p, NULL);
 	return Undefined();
 }
@@ -170,7 +173,7 @@ static void _v8_setter(Local<String> property, Local<Value> value,
 	Ender_Element *e = static_cast<Ender_Element *>(wrap->Value());
 	Ender_Property *p = static_cast<Ender_Property *>(data->Value());
 
-	printf("setting\n");
+	DBG("Setting '%s' property", ender_property_name_get(p));
 	ender_element_property_value_set_simple(e, p, NULL);
 }
 
@@ -188,7 +191,9 @@ static v8::Handle<v8::Value> _v8_function(const v8::Arguments& args)
 	/* check that we have the correct number of arguments */
 	if (args.Length() != ender_function_args_count(f))
 	{
-		printf("wrong number of arguments %d %d\n", args.Length(),
+		ERR("Wrong number of arguments for function '%s'"
+				"%d %d", ender_function_name_get(f),
+				args.Length(),
 				ender_function_args_count(f));
 		return Undefined();
 	}
@@ -212,7 +217,7 @@ static v8::Handle<v8::Value> _v8_function(const v8::Arguments& args)
 		vargs = eina_list_append(vargs, v);
 	}
 
-	printf("calling function %s on %p\n", ender_function_name_get(f), e);
+	DBG("Calling function '%s' on %p", ender_function_name_get(f), e);
 	ender_element_function_call_simple(e, f, ret, vargs);
 	/* transform the return value */
 	if (ret)
@@ -233,7 +238,7 @@ static void _v8_element_function_to_js(Ender_Function *f,
 	const char *fname;
 
 	fname = ender_function_name_get(f);
-	printf("adding function %s\n", fname);
+	DBG("Adding function '%s'", fname);
 	Persistent<FunctionTemplate> tmpl = _prototypes[name];
 	HandleScope handle_scope;
 	Handle<ObjectTemplate> p_tmpl = tmpl->PrototypeTemplate();
@@ -262,7 +267,7 @@ static void _v8_element_property_to_js(Ender_Property *prop,
 	 * as found on the svg spec
 	 */
 	pname = ender_property_name_get(prop);
-	printf("property of name = %s\n", pname);
+	DBG("Adding property '%s'", pname);
 	/* add an accessor to the template */
 	HandleScope handle_scope;
 	Handle<ObjectTemplate> p_tmpl = tmpl->PrototypeTemplate();
@@ -404,12 +409,23 @@ static Esvg_Scriptor_Descriptor _descriptor = {
  *============================================================================*/
 void esvg_scriptor_js_v8_init(void)
 {
+	_esvg_scriptor_js_v8_log = eina_log_domain_register(
+			"esvg_scriptor_js_v8", ESVG_LOG_COLOR_DEFAULT);
+	if (_esvg_scriptor_js_v8_log < 0)
+	{
+		EINA_LOG_ERR("Can not create log domain.");
+		return;
+	}
 	esvg_scriptor_register(&_descriptor, "application/ecmascript");
 }
 
 void esvg_scriptor_js_v8_shutdown(void)
 {
+	if (_esvg_scriptor_js_v8_log < 0)
+		return;
 	esvg_scriptor_unregister(&_descriptor, "application/ecmascript");
+	eina_log_domain_unregister(_esvg_scriptor_js_v8_log);
+	_esvg_scriptor_js_v8_log = -1;
 }
 /*============================================================================*
  *                                   API                                      *
