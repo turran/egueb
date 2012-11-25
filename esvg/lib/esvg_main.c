@@ -25,10 +25,6 @@
 #include <Edom.h>
 
 
-#if BUILD_ESVG_VIDEO
-#include <gst/gst.h>
-#endif
-
 #include "esvg_types.h"
 
 #include "esvg_private_main.h"
@@ -192,9 +188,6 @@ static Eina_Bool _esvg_dependencies_init(void)
 		fprintf(stderr, "Esvg: Ender init failed");
 		goto shutdown_etch;
 	}
-#if BUILD_ESVG_VIDEO
-	gst_init(NULL, NULL);
-#endif
 
 	esvg_clone_init();
 	esvg_parser_init();

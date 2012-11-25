@@ -36,6 +36,8 @@
 #include "esvg_defs.h"
 #include "esvg_animate.h"
 #include "esvg_animate_transform.h"
+#include "esvg_video_provider.h"
+#include "esvg_script_provider.h"
 #include "esvg_svg.h"
 #include "esvg_ellipse.h"
 #include "esvg_rect.h"

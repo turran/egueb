@@ -20,6 +20,32 @@
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
+#define ESVG_LOG_COLOR_DEFAULT EINA_COLOR_ORANGE
+/* Whenever a file needs to generate a log, it must declare this first */
+
+#ifdef ERR
+# undef ERR
+#endif
+#define ERR(...) EINA_LOG_DOM_ERR(_esvg_video_provider_gstreamer_log, __VA_ARGS__)
+
+#ifdef WARN
+# undef WARN
+#endif
+#define WARN(...) EINA_LOG_DOM_WARN(_esvg_video_provider_gstreamer_log, __VA_ARGS__)
+
+#ifdef INFO
+# undef INFO
+#endif
+#define INFO(...) EINA_LOG_DOM_INFO(_esvg_video_provider_gstreamer_log, __VA_ARGS__)
+
+#ifdef DBG
+# undef DBG
+#endif
+#define DBG(...) EINA_LOG_DOM_DBG(_esvg_video_provider_gstreamer_log, __VA_ARGS__)
+
+/* FIXME we still need to register the log domain */
+static int _esvg_video_provider_gstreamer_log = -1;
+
 typedef struct _Esvg_Video_Gstreamer
 {
 	GstElement *enesim_sink;
@@ -30,7 +56,8 @@ typedef struct _Esvg_Video_Gstreamer
 	Enesim_Buffer *b;
 	Enesim_Surface *s;
 
-	Esvg_Video_Provider_Context ctx;
+	uint32_t width;
+	uint32_t height;
 } Esvg_Video_Gstreamer;
 
 static char * _esvg_video_path_urify(const char *s)
@@ -59,7 +86,7 @@ static void _esvg_video_buffer_display(GstElement *enesim_sink, Enesim_Buffer *b
 		Eina_Rectangle area;
 		/* damage the whole buffer */
 		//enesim_renderer_image_damage_add
-		eina_rectangle_coords_from(&area, 0, 0, ceil(thiz->ctx.width), ceil(thiz->ctx.height));
+		eina_rectangle_coords_from(&area, 0, 0, thiz->width, thiz->height);
 		enesim_renderer_image_damage_add(thiz->image, &area);
 	}
 	else
@@ -87,6 +114,13 @@ static void * _esvg_video_gstreamer_create(Enesim_Renderer *image)
 {
 	Esvg_Video_Gstreamer *thiz;
 	GstElement *enesim_sink;
+	static Eina_Bool _gst_init = EINA_FALSE;
+
+	if (!_gst_init)
+	{
+		gst_init(NULL, NULL);
+		_gst_init = EINA_TRUE;
+	}
 
 	enesim_sink = gst_element_factory_make("enesim_sink", NULL);
 	if (!enesim_sink)
@@ -134,8 +168,8 @@ static void _esvg_video_gstreamer_setup(void *data, const Esvg_Video_Provider_Co
 	guint height;
 	gchar *uri;
 
-	width = ceil(thiz->ctx.width);
-	height = ceil(thiz->ctx.height);
+	width = ceil(ctx->width);
+	height = ceil(ctx->height);
 
 	/* FIXME later the pool */
 	/* set the element properties */
@@ -149,30 +183,21 @@ static void _esvg_video_gstreamer_setup(void *data, const Esvg_Video_Provider_Co
 		gst_element_set_state(thiz->playbin2, GST_STATE_READY);
 
 	/* we need to transform the real href into a playbin2 uri */
-	uri = _esvg_video_path_urify(thiz->ctx.href);
+	uri = _esvg_video_path_urify(ctx->href);
 	g_object_set(thiz->playbin2, "uri", uri, NULL);
 	free(uri);
 
 	gst_element_set_state(thiz->playbin2, GST_STATE_PLAYING);
 }
 
-static Esvg_Video_Provider_Descriptor _descriptor = {
+/*============================================================================*
+ *                                 Global                                     *
+ *============================================================================*/
+Esvg_Video_Provider_Descriptor esvg_video_provider_gstreamer_descriptor = {
 	/* .create 	= */ _esvg_video_gstreamer_create,
 	/* .free 	= */ _esvg_video_gstreamer_free,
 	/* .setup 	= */ _esvg_video_gstreamer_setup,
 };
-/*============================================================================*
- *                                 Global                                     *
- *============================================================================*/
-void esvg_video_provider_descriptor_gstreamer_init(void)
-{
-
-}
-
-void esvg_video_provider_descriptor_gstreamer_shutdown(void)
-{
-
-}
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/

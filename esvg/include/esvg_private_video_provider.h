@@ -13,6 +13,10 @@ void esvg_video_provider_setup(Esvg_Video_Provider *thiz,
 void esvg_video_provider_free(Esvg_Video_Provider *thiz);
 void esvg_video_provider_play(Esvg_Video_Provider *thiz);
 
+#if BUILD_ESVG_VIDEO_GSTREAMER
+Esvg_Video_Provider_Descriptor esvg_video_provider_gstreamer_descriptor;
+#endif
+
 #ifdef __cplusplus
 }
 #endif

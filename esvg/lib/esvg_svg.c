@@ -1260,9 +1260,36 @@ Esvg_Script_Provider * esvg_svg_script_provider_get(Ender_Element *e, const char
 /*----------------------------------------------------------------------------*
  *                       The video provider functions                         *
  *----------------------------------------------------------------------------*/
-Esvg_Video_Provider_Descriptor * esvg_svg_video_provider_descriptor_get(Ender_Element *e)
+Esvg_Video_Provider_Descriptor * esvg_svg_video_provider_descriptor_get(
+		Ender_Element *e)
 {
-	/* TODO check for the application descriptor */
+	Esvg_Svg *thiz;
+	const Esvg_Svg_Application_Descriptor *descriptor;
+	Esvg_Video_Provider_Descriptor *ret = NULL;
+	Edom_Tag *t;
+
+	t = ender_element_object_get(e);
+	thiz = _esvg_svg_get(t);
+
+	descriptor = thiz->application_descriptor;
+	if (descriptor)
+	{
+		if (descriptor->video_provider_descriptor_get)
+		{
+			ret = descriptor->video_provider_descriptor_get(e,
+					thiz->application_data);
+		}
+	}
+	if (!ret)
+	{
+		/* get the default video descriptor */
+		/* FIXME for now only gstreamer */
+#if BUILD_ESVG_VIDEO_GSTREAMER
+		ret = &esvg_video_provider_gstreamer_descriptor;
+#endif
+
+	}
+	return ret;
 }
 
 void esvg_svg_element_get(Ender_Element *e, const char *uri, Ender_Element **el)

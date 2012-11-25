@@ -68,6 +68,10 @@
 #include "esvg_element.h"
 #include "esvg_renderable.h"
 
+/* providers */
+#include "esvg_video_provider.h"
+#include "esvg_script_provider.h"
+
 /* shapes */
 #include "esvg_path.h"
 #include "esvg_polygon.h"
@@ -104,10 +108,6 @@
 
 /* parsing */
 #include "esvg_parser.h"
-
-/* providers */
-#include "esvg_video_provider.h"
-#include "esvg_script_provider.h"
 
 EAPI Eina_Bool esvg_is_shape(Edom_Tag *e);
 

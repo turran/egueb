@@ -28,7 +28,7 @@ struct _Esvg_Video_Provider_Context
 {
 	double width;
 	double height;
-	const char *href;
+	char *href;
 };
 
 #ifdef __cplusplus
