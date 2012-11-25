@@ -6,14 +6,26 @@ extern "C" {
 #endif
 
 typedef const char * (*Esvg_Svg_Base_Dir_Get)(Ender_Element *e, void *data);
+
 /* Function to be called whenever the svg wants to go to another uri */
 typedef void (*Esvg_Svg_Go_To)(Ender_Element *e, void *data, const char *uri);
+
 /* Function to be called whenever the scripting engine calls the alert()
  * function
  */
-typedef void (*Esvg_Svg_Script_Alert)(Ender_Element *e, void *data, const char *msg);
+typedef void (*Esvg_Svg_Script_Alert)(Ender_Element *e, void *data,
+		const char *msg);
+
 /* Function to be called whenever a <video> tag needs to render a video */
-typedef Esvg_Video_Provider_Descriptor * (*Esvg_Svg_Video_Provider_Descriptor_Get)(Ender_Element *e, void *data);
+typedef Esvg_Video_Provider_Descriptor *
+		(*Esvg_Svg_Video_Provider_Descriptor_Get)(Ender_Element *e,
+		void *data);
+
+/* TODO Function to be called whenever a <image> tag needs to load an image
+ * resource
+ * typedef Esvg_Image_Provider_Descriptor * (*Esvg_Svg_Image_Provider_Descriptor_Get)
+ * Ender_Element *e, void *data);
+ */
 
 typedef struct _Esvg_Svg_Application_Descriptor
 {
