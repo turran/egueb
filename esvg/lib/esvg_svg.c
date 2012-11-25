@@ -24,7 +24,7 @@
 #include "esvg_private_svg.h"
 #include "esvg_private_a.h"
 #include "esvg_private_input.h"
-#include "esvg_private_scriptor.h"
+#include "esvg_private_script_provider.h"
 #include "esvg_private_style.h"
 
 #include "esvg_svg.h"
@@ -32,7 +32,9 @@
 #include "esvg_renderable.h"
 #include "esvg_event.h"
 #include "esvg_parser.h"
+#include "esvg_video_provider.h"
 
+#include "esvg_private_video_provider.h"
 /*
  * Given that a svg element can clip, we should use a clipper with a compound
  * inside as the renderer
@@ -1233,13 +1235,13 @@ void esvg_svg_shutdown(void)
 	_esvg_svg_log = -1;
 }
 /*----------------------------------------------------------------------------*
- *                     The scriptor related functions                         *
+ *                      The script provider functions                         *
  *----------------------------------------------------------------------------*/
-Esvg_Scriptor * esvg_svg_scriptor_get(Ender_Element *e, const char *type)
+Esvg_Script_Provider * esvg_svg_script_provider_get(Ender_Element *e, const char *type)
 {
 	Esvg_Svg *thiz;
-	Esvg_Scriptor *scriptor;
-	Esvg_Scriptor_Descriptor *descriptor;
+	Esvg_Script_Provider *scriptor;
+	Esvg_Script_Provider_Descriptor *descriptor;
 	Edom_Tag *t;
 
 	t = ender_element_object_get(e);
@@ -1249,11 +1251,18 @@ Esvg_Scriptor * esvg_svg_scriptor_get(Ender_Element *e, const char *type)
 	scriptor = eina_hash_find(thiz->scriptors, type);
 	if (scriptor) return scriptor;
 
-	descriptor = esvg_scriptor_descriptor_find(type);
+	descriptor = esvg_script_provider_descriptor_find(type);
 	if (!descriptor) return NULL;
 
-	scriptor = esvg_scriptor_new(descriptor, e);
+	scriptor = esvg_script_provider_new(descriptor, e);
 	return scriptor;
+}
+/*----------------------------------------------------------------------------*
+ *                       The video provider functions                         *
+ *----------------------------------------------------------------------------*/
+Esvg_Video_Provider_Descriptor * esvg_svg_video_provider_descriptor_get(Ender_Element *e)
+{
+	/* TODO check for the application descriptor */
 }
 
 void esvg_svg_element_get(Ender_Element *e, const char *uri, Ender_Element **el)
@@ -1355,21 +1364,6 @@ void esvg_svg_go_to(Ender_Element *e, const char *uri)
 		return;
 	if (thiz->application_descriptor->go_to)
 		thiz->application_descriptor->go_to(thiz->thiz_e, thiz->application_data, uri);
-}
-
-void esvg_svg_script_alert(Ender_Element *e, const char *msg)
-{
-	Edom_Tag *t;
-	Esvg_Svg *thiz;
-
-	t = ender_element_object_get(e);
-	thiz = _esvg_svg_get(t);
-	printf("alert = %s\n", msg);
-	if (!thiz->application_descriptor)
-		return;
-	if (thiz->application_descriptor->script_alert)
-		thiz->application_descriptor->script_alert(thiz->thiz_e, thiz->application_data, msg);
-
 }
 
 #if 0
@@ -1773,6 +1767,25 @@ EAPI void esvg_svg_time_set(Ender_Element *e, double secs)
 	t = ender_element_object_get(e);
 	thiz = _esvg_svg_get(t);
 	//etch_timer_goto(Etch *e, unsigned long frame);
+}
+
+/**
+ * To be documented
+ * FIXME: To be fixed
+ */
+EAPI void esvg_svg_script_alert(Ender_Element *e, const char *msg)
+{
+	Edom_Tag *t;
+	Esvg_Svg *thiz;
+
+	t = ender_element_object_get(e);
+	thiz = _esvg_svg_get(t);
+	ERR("script alert msg '%s'", msg);
+	if (!thiz->application_descriptor)
+		return;
+	if (thiz->application_descriptor->script_alert)
+		thiz->application_descriptor->script_alert(thiz->thiz_e, thiz->application_data, msg);
+
 }
 
 /**

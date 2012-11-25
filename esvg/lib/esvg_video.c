@@ -25,6 +25,7 @@
 
 #include "esvg_video.h"
 #include "esvg_video_provider.h"
+#include "esvg_private_video_provider.h"
 
 /* This object tries to follow the spec found on:
  * http://www.w3.org/TR/SVGTiny12/multimedia.html#VideoElement
@@ -60,9 +61,8 @@ typedef struct _Esvg_Video
 	char *ghref;
 	/* private */
 	Enesim_Renderer *image;
-	Enesim_Buffer *b;
-	Enesim_Surface *s;
 	/* our own implementation */
+	Esvg_Video_Provider_Descriptor *descriptor;
 	Esvg_Video_Provider *provider;
 } Esvg_Video;
 
@@ -224,12 +224,26 @@ static Eina_Bool _esvg_video_renderer_propagate(Edom_Tag *t,
 	}
 	DBG("Using real uri %s for %s", real, thiz->ghref);
 	thiz->real_href = real;
-#if 0
-	/* call the descriptor setup */
-	if (thiz->descriptor->setup)
-		thiz->descriptor->setup(t, thiz->descriptor_data);
-#endif
 
+	/* create our own provider */
+	if (!thiz->provider)
+	{
+		Esvg_Video_Provider_Descriptor *descriptor;
+
+		descriptor = esvg_svg_video_provider_descriptor_get(topmost);
+		thiz->provider = esvg_video_provider_new(descriptor,
+			enesim_renderer_ref(thiz->image));
+		if (!thiz->provider)
+		{
+			ERR("No video provider found");
+			goto done;
+		}
+		thiz->descriptor = descriptor;
+	}
+
+	/* do the setup on the provider */
+	esvg_video_provider_setup(thiz->provider, NULL);
+	esvg_video_provider_play(thiz->provider);
 done:
 	return EINA_TRUE;
 }
@@ -239,13 +253,11 @@ static void _esvg_video_free(Edom_Tag *t)
 	Esvg_Video *thiz;
 
 	thiz = _esvg_video_get(t);
-#if 0
-	if (thiz->descriptor)
+	if (thiz->provider)
 	{
-		if (thiz->descriptor->cleanup)
-			thiz->descriptor->cleanup(t, thiz->descriptor_data);
+		esvg_video_provider_free(thiz->provider);
+		thiz->provider = NULL;
 	}
-#endif
 	free(thiz);
 }
 
@@ -288,10 +300,6 @@ static Edom_Tag * _esvg_video_new(void)
 	thiz->height.base.v = thiz->height.anim.v = ESVG_LENGTH_0;
 	/* FIXME: href default value */
 
-	/* for now use the gstreamer backend only */
-#if 0
-	thiz->descriptor = &esvg_video_gstreamer_descriptor;
-#endif
 	t = esvg_renderable_new(&_descriptor, ESVG_VIDEO, thiz);
 
 	return t;

@@ -10,10 +10,15 @@ AM_CPPFLAGS = \
 -I$(top_builddir)/esvg/include \
 -DENESIM_EXTENSION \
 @ESVG_BUILD@ \
-@ESVG_CFLAGS@ \
-@GSTREAMER_CFLAGS@
+@ESVG_CFLAGS@
 
 noinst_LTLIBRARIES = libesvg_video_providers.la
 
 libesvg_video_providers_la_SOURCES =
 libesvg_video_providers_la_LIBADD =
+
+if BUILD_ESVG_VIDEO_GSTREAMER
+AM_CPPFLAGS += @GSTREAMER_CFLAGS@
+libesvg_video_providers_la_SOURCES += esvg_video_provider_gstreamer.c
+libesvg_video_providers_la_LIBADD += @GSTREAMER_LIBS@
+endif

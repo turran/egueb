@@ -33,6 +33,7 @@ esvg_rect.h \
 esvg_referenceable.h \
 esvg_renderable.h \
 esvg_script.h \
+esvg_script_provider.h \
 esvg_set.h \
 esvg_stop.h \
 esvg_style.h \
@@ -70,9 +71,10 @@ esvg_private_renderable.h \
 esvg_private_renderable_behaviour.h \
 esvg_private_renderable_container.h \
 esvg_private_script.h \
-esvg_private_scriptor.h \
+esvg_private_script_provider.h \
 esvg_private_stop.h \
 esvg_private_style.h \
 esvg_private_svg.h \
 esvg_private_types.h \
-esvg_private_video.h
+esvg_private_video.h \
+esvg_private_video_provider.h

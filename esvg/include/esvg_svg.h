@@ -1,6 +1,10 @@
 #ifndef _ESVG_SVG_H_
 #define _ESVG_SVG_H_
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 typedef const char * (*Esvg_Svg_Base_Dir_Get)(Ender_Element *e, void *data);
 typedef void (*Esvg_Svg_Go_To)(Ender_Element *e, void *data, const char *uri);
 /* script related functions */
@@ -51,6 +55,8 @@ EAPI double esvg_svg_time_get(Ender_Element *e);
 EAPI void esvg_svg_time_set(Ender_Element *e, double secs);
 EAPI void esvg_svg_time_tick(Ender_Element *e);
 
+EAPI void esvg_svg_script_alert(Ender_Element *e, const char *msg);
+
 EAPI void esvg_svg_feed_mouse_move(Ender_Element *e, int x, int y);
 EAPI void esvg_svg_feed_mouse_down(Ender_Element *e, int button);
 EAPI void esvg_svg_feed_mouse_up(Ender_Element *e, int button);
@@ -72,5 +78,9 @@ EAPI Eina_Bool esvg_svg_draw(Ender_Element *e, Enesim_Surface *s,
 		Eina_Rectangle *clip, int x, int y, Enesim_Error **error);
 EAPI Eina_Bool esvg_svg_draw_list(Ender_Element *e, Enesim_Surface *s,
 		Eina_List *clips, int x, int y, Enesim_Error **error);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

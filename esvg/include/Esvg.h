@@ -105,6 +105,10 @@
 /* parsing */
 #include "esvg_parser.h"
 
+/* providers */
+#include "esvg_video_provider.h"
+#include "esvg_script_provider.h"
+
 EAPI Eina_Bool esvg_is_shape(Edom_Tag *e);
 
 EAPI Edom_Tag * esvg_pattern_new(void);

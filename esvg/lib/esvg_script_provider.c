@@ -16,41 +16,47 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 #include "esvg_private_main.h"
-#include "esvg_private_scriptor.h"
+
+#include "esvg_script_provider.h"
+#include "esvg_private_script_provider.h"
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
-struct _Esvg_Scriptor
+struct _Esvg_Script_Provider
 {
-	Esvg_Scriptor_Descriptor *descriptor;
+	Esvg_Script_Provider_Descriptor *descriptor;
 	void *ctx;
 };
 
-static Eina_Hash * _scriptor_descriptors = NULL;
+static Eina_Hash * _script_provider_descriptors = NULL;
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
-void esvg_scriptor_init(void)
+void esvg_script_provider_init(void)
 {
 	/* create our hash of scrip descriptor */
-	_scriptor_descriptors = eina_hash_string_superfast_new(NULL);
+	_script_provider_descriptors = eina_hash_string_superfast_new(NULL);
 #ifdef BUILD_ESVG_SCRIPTOR_V8
-	esvg_scriptor_js_v8_init();
+	esvg_script_provider_js_v8_init();
+	esvg_script_provider_register(&esvg_script_provider_js_v8_descriptor,
+			"application/ecmascript");
 #endif
 }
 
-void esvg_scriptor_shutdown(void)
+void esvg_script_provider_shutdown(void)
 {
 	/* TODO remove the script descriptors */
 #ifdef BUILD_ESVG_SCRIPTOR_V8
-	esvg_scriptor_js_v8_shutdown();
+	esvg_script_provider_unregister(&esvg_script_provider_js_v8_descriptor,
+			"application/ecmascript");
+	esvg_script_provider_js_v8_shutdown();
 #endif
 }
 
-Esvg_Scriptor * esvg_scriptor_new(Esvg_Scriptor_Descriptor *descriptor,
+Esvg_Script_Provider * esvg_script_provider_new(Esvg_Script_Provider_Descriptor *descriptor,
 		Ender_Element *e)
 {
-	Esvg_Scriptor *thiz;
+	Esvg_Script_Provider *thiz;
 	void *ctx;
 
 	if (!descriptor) return NULL;
@@ -59,14 +65,14 @@ Esvg_Scriptor * esvg_scriptor_new(Esvg_Scriptor_Descriptor *descriptor,
 	ctx = descriptor->context_new(e);
 	if (!ctx) return NULL;
 
-	thiz = calloc(1, sizeof(Esvg_Scriptor));
+	thiz = calloc(1, sizeof(Esvg_Script_Provider));
 	thiz->descriptor = descriptor;
 	thiz->ctx = ctx;
 
 	return thiz;
 }
 
-void esvg_scriptor_free(Esvg_Scriptor *thiz)
+void esvg_script_provider_free(Esvg_Script_Provider *thiz)
 {
 	if (thiz->descriptor->context_free)
 		thiz->descriptor->context_free(thiz->ctx);
@@ -76,30 +82,30 @@ void esvg_scriptor_free(Esvg_Scriptor *thiz)
 /* TODO also pass a void * with a container that describes what's inside
  * such data, this way we can pass event data
  */
-void esvg_scriptor_run(Esvg_Scriptor *thiz, const char *script)
+void esvg_script_provider_run(Esvg_Script_Provider *thiz, const char *script)
 {
 	if (thiz->descriptor->run)
 		thiz->descriptor->run(thiz->ctx, script);
 }
 
-Esvg_Scriptor_Descriptor * esvg_scriptor_descriptor_find(const char *type)
+Esvg_Script_Provider_Descriptor * esvg_script_provider_descriptor_find(const char *type)
 {
-	Esvg_Scriptor_Descriptor *descriptor;
+	Esvg_Script_Provider_Descriptor *descriptor;
 
-	descriptor = eina_hash_find(_scriptor_descriptors, type);
+	descriptor = eina_hash_find(_script_provider_descriptors, type);
 	return descriptor;
 }
 
-void esvg_scriptor_register(Esvg_Scriptor_Descriptor *d, const char *type)
+void esvg_script_provider_register(Esvg_Script_Provider_Descriptor *d, const char *type)
 {
 	/* add a new entry on the hash */
-	eina_hash_add(_scriptor_descriptors, type, d);
+	eina_hash_add(_script_provider_descriptors, type, d);
 }
 
-void esvg_scriptor_unregister(Esvg_Scriptor_Descriptor *d, const char *type)
+void esvg_script_provider_unregister(Esvg_Script_Provider_Descriptor *d, const char *type)
 {
 	/* remove it from our hash */
-	eina_hash_del(_scriptor_descriptors, type, d);
+	eina_hash_del(_script_provider_descriptors, type, d);
 }
 /*============================================================================*
  *                                   API                                      *

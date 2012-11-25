@@ -15,9 +15,19 @@
  * License along with this library.
  * If not, see <http://www.gnu.org/licenses/>.
  */
-#include "esvg_private_main.h"
-#include "esvg_private_scriptor.h"
-#include "esvg_private_svg.h"
+#include "Esvg.h"
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+void esvg_script_provider_js_v8_init(void);
+void esvg_script_provider_js_v8_shutdown(void);
+
+#ifdef __cplusplus
+}
+#endif
+
 
 #include <v8.h>
 #include <map>
@@ -39,16 +49,38 @@ using namespace v8;
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
-#define ESVG_LOG_DEFAULT _esvg_scriptor_js_v8_log
-static int _esvg_scriptor_js_v8_log = -1;
+#define ESVG_LOG_COLOR_DEFAULT EINA_COLOR_ORANGE
+/* Whenever a file needs to generate a log, it must declare this first */
 
-typedef struct _Esvg_Scriptor_Js_V8
+#ifdef ERR
+# undef ERR
+#endif
+#define ERR(...) EINA_LOG_DOM_ERR(_esvg_script_provider_js_v8_log, __VA_ARGS__)
+
+#ifdef WARN
+# undef WARN
+#endif
+#define WARN(...) EINA_LOG_DOM_WARN(_esvg_script_provider_js_v8_log, __VA_ARGS__)
+
+#ifdef INFO
+# undef INFO
+#endif
+#define INFO(...) EINA_LOG_DOM_INFO(_esvg_script_provider_js_v8_log, __VA_ARGS__)
+
+#ifdef DBG
+# undef DBG
+#endif
+#define DBG(...) EINA_LOG_DOM_DBG(_esvg_script_provider_js_v8_log, __VA_ARGS__)
+
+static int _esvg_script_provider_js_v8_log = -1;
+
+typedef struct _Esvg_Script_Provider_Js_V8
 {
 	Ender_Element *svg;
 	Persistent<Context> context;
-} Esvg_Scriptor_Js_V8;
+} Esvg_Script_Provider_Js_V8;
 
-static Handle<Object> _v8_element_to_js(Esvg_Scriptor_Js_V8 *thiz,
+static Handle<Object> _v8_element_to_js(Esvg_Script_Provider_Js_V8 *thiz,
 		Ender_Element *e);
 
 /* FIXME or we either use the stl or an eina hash, but looks like
@@ -124,7 +156,7 @@ static Handle<Value> _v8_value_from_ender(Ender_Value *v)
 			Ender_Element *e = ender_value_ender_get(v);
 			if (!e) break;
 			Local<Object> global = Context::GetCurrent()->Global();
-			Esvg_Scriptor_Js_V8 *thiz = (Esvg_Scriptor_Js_V8 *)global->GetPointerFromInternalField(1);
+			Esvg_Script_Provider_Js_V8 *thiz = (Esvg_Script_Provider_Js_V8 *)global->GetPointerFromInternalField(1);
 			vv = _v8_element_to_js(thiz, e);
 		}
 		case ENDER_POINTER:
@@ -140,11 +172,11 @@ static Handle<Value> _v8_value_from_ender(Ender_Value *v)
 
 static v8::Handle<v8::Value> _v8_alert(const v8::Arguments& args)
 {
-	Esvg_Scriptor_Js_V8 *thiz;
+	Esvg_Script_Provider_Js_V8 *thiz;
 
 	String::Utf8Value str(args[0]); // Convert first argument to V8 String
 	Local<External> wrap = Local<External>::Cast(args.Data());
-	thiz = static_cast<Esvg_Scriptor_Js_V8*>(wrap->Value());
+	thiz = static_cast<Esvg_Script_Provider_Js_V8*>(wrap->Value());
 
 	/* call the svg with the string */
 	esvg_svg_script_alert(thiz->svg, *str);
@@ -277,7 +309,7 @@ static void _v8_element_property_to_js(Ender_Property *prop,
 }
 
 static Persistent<FunctionTemplate> _v8_element_descriptor_to_js(
-		Esvg_Scriptor_Js_V8 *thiz,
+		Esvg_Script_Provider_Js_V8 *thiz,
 		Ender_Descriptor *descriptor)
 {
 	const char *name;
@@ -331,7 +363,7 @@ static Persistent<FunctionTemplate> _v8_element_descriptor_to_js(
 	return tmpl;
 }
 
-static Handle<Object> _v8_element_to_js(Esvg_Scriptor_Js_V8 *thiz,
+static Handle<Object> _v8_element_to_js(Esvg_Script_Provider_Js_V8 *thiz,
 		Ender_Element *e)
 {
 	Ender_Descriptor *descriptor;
@@ -352,11 +384,11 @@ static Handle<Object> _v8_element_to_js(Esvg_Scriptor_Js_V8 *thiz,
  *----------------------------------------------------------------------------*/
 static void * _v8_context_new(Ender_Element *e)
 {
-	Esvg_Scriptor_Js_V8 *thiz;
+	Esvg_Script_Provider_Js_V8 *thiz;
 	HandleScope handle_scope;
 	Persistent<Context> context;
 
-	thiz = (Esvg_Scriptor_Js_V8 *)calloc(1, sizeof(Esvg_Scriptor_Js_V8));
+	thiz = (Esvg_Script_Provider_Js_V8 *)calloc(1, sizeof(Esvg_Script_Provider_Js_V8));
 	thiz->svg = e;
 
 	/* create the global object */
@@ -380,7 +412,7 @@ static void * _v8_context_new(Ender_Element *e)
 
 static void _v8_context_free(void *ctx)
 {
-	Esvg_Scriptor_Js_V8 *thiz = (Esvg_Scriptor_Js_V8 *)ctx;
+	Esvg_Script_Provider_Js_V8 *thiz = (Esvg_Script_Provider_Js_V8 *)ctx;
 
 	thiz->context.Dispose();
 	free(thiz);
@@ -388,7 +420,7 @@ static void _v8_context_free(void *ctx)
 
 static void _v8_run(void *ctx, const char *s)
 {
-	Esvg_Scriptor_Js_V8 *thiz = (Esvg_Scriptor_Js_V8 *)ctx;
+	Esvg_Script_Provider_Js_V8 *thiz = (Esvg_Script_Provider_Js_V8 *)ctx;
 	HandleScope handle_scope;
 
 	/* create the source string */
@@ -399,34 +431,33 @@ static void _v8_run(void *ctx, const char *s)
  	script->Run();
 }
 
-static Esvg_Scriptor_Descriptor _descriptor = {
-	/* .context_new 	= */ _v8_context_new,
-	/* .context_free	= */ _v8_context_free,
-	/* .run 		= */ _v8_run,
-};
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
-void esvg_scriptor_js_v8_init(void)
+void esvg_script_provider_js_v8_init(void)
 {
-	_esvg_scriptor_js_v8_log = eina_log_domain_register(
-			"esvg_scriptor_js_v8", ESVG_LOG_COLOR_DEFAULT);
-	if (_esvg_scriptor_js_v8_log < 0)
+	_esvg_script_provider_js_v8_log = eina_log_domain_register(
+			"esvg_script_provider_js_v8", ESVG_LOG_COLOR_DEFAULT);
+	if (_esvg_script_provider_js_v8_log < 0)
 	{
 		EINA_LOG_ERR("Can not create log domain.");
 		return;
 	}
-	esvg_scriptor_register(&_descriptor, "application/ecmascript");
 }
 
-void esvg_scriptor_js_v8_shutdown(void)
+void esvg_script_provider_js_v8_shutdown(void)
 {
-	if (_esvg_scriptor_js_v8_log < 0)
+	if (_esvg_script_provider_js_v8_log < 0)
 		return;
-	esvg_scriptor_unregister(&_descriptor, "application/ecmascript");
-	eina_log_domain_unregister(_esvg_scriptor_js_v8_log);
-	_esvg_scriptor_js_v8_log = -1;
+	eina_log_domain_unregister(_esvg_script_provider_js_v8_log);
+	_esvg_script_provider_js_v8_log = -1;
 }
+
+Esvg_Script_Provider_Descriptor esvg_script_provider_js_v8_descriptor = {
+	/* .context_new 	= */ _v8_context_new,
+	/* .context_free	= */ _v8_context_free,
+	/* .run 		= */ _v8_run,
+};
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/

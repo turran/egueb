@@ -15,16 +15,22 @@
  * License along with this library.
  * If not, see <http://www.gnu.org/licenses/>.
  */
-#include "esvg_private_video.h"
-#ifdef BUILD_ESVG_VIDEO_GSTREAMER
+#include "Esvg.h"
 #include <gst/gst.h>
-#endif
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
 typedef struct _Esvg_Video_Gstreamer
+{
 	GstElement *enesim_sink;
 	GstElement *playbin2;
+
+	Enesim_Renderer *image;
+
+	Enesim_Buffer *b;
+	Enesim_Surface *s;
+
+	Esvg_Video_Provider_Context ctx;
 } Esvg_Video_Gstreamer;
 
 static char * _esvg_video_path_urify(const char *s)
@@ -46,14 +52,14 @@ static char * _esvg_video_path_urify(const char *s)
 
 static void _esvg_video_buffer_display(GstElement *enesim_sink, Enesim_Buffer *b, gpointer user_data)
 {
-	Esvg_Video *thiz = user_data;
+	Esvg_Video_Gstreamer *thiz = user_data;
 
 	if (thiz->b == b)
 	{
 		Eina_Rectangle area;
 		/* damage the whole buffer */
 		//enesim_renderer_image_damage_add
-		eina_rectangle_coords_from(&area, 0, 0, ceil(thiz->gwidth), ceil(thiz->gheight));
+		eina_rectangle_coords_from(&area, 0, 0, ceil(thiz->ctx.width), ceil(thiz->ctx.height));
 		enesim_renderer_image_damage_add(thiz->image, &area);
 	}
 	else
@@ -77,24 +83,26 @@ static void _esvg_video_buffer_display(GstElement *enesim_sink, Enesim_Buffer *b
 /*----------------------------------------------------------------------------*
  *                           The Video interface                              *
  *----------------------------------------------------------------------------*/
-static void * _esvg_video_descriptor_new(Edom_Tag *t)
+static void * _esvg_video_gstreamer_create(Enesim_Renderer *image)
 {
 	Esvg_Video_Gstreamer *thiz;
 	GstElement *enesim_sink;
 
-	thiz = calloc(1, sizeof(Esvg_Video_Gstreamer));
 	enesim_sink = gst_element_factory_make("enesim_sink", NULL);
+	if (!enesim_sink)
+	{
+		ERR("No enesim sink element found");
+		enesim_renderer_unref(image);
+		return NULL;
+	}
+
+	thiz = calloc(1, sizeof(Esvg_Video_Gstreamer));
+	thiz->image = image;
+
 	/* TODO fallback to appsink in case enesim sink is not found */
 	/* TODO playbin2 will overwrite our sink, we need
 	 * to increase the priority
 	 */
-	if (!enesim_sink)
-	{
-		ERR("No enesim sink element found");
-		enesim_renderer_unref(thiz->image);
-		free(thiz);
-		return NULL;
-	}
 	g_signal_connect (enesim_sink, "buffer-display",
           G_CALLBACK (_esvg_video_buffer_display), thiz);
 	thiz->enesim_sink = gst_object_ref(enesim_sink);
@@ -105,17 +113,18 @@ static void * _esvg_video_descriptor_new(Edom_Tag *t)
 	return thiz;
 }
 
-static void _esvg_video_gstreamer_free(Edom_Tag *t, void *data)
+static void _esvg_video_gstreamer_free(void *data)
 {
 	Esvg_Video_Gstreamer *thiz = data;
 
+	enesim_renderer_unref(thiz->image);
 	gst_element_set_state(thiz->playbin2, GST_STATE_NULL);
 	gst_object_unref(thiz->playbin2);
 	gst_object_unref(thiz->enesim_sink);
 	free(thiz);
 }
 
-static void _esvg_video_gstreamer_setup(Edom_Tag *t, void *data)
+static void _esvg_video_gstreamer_setup(void *data, const Esvg_Video_Provider_Context *ctx)
 {
 	Esvg_Video_Gstreamer *thiz = data;
 	GstState current;
@@ -125,8 +134,8 @@ static void _esvg_video_gstreamer_setup(Edom_Tag *t, void *data)
 	guint height;
 	gchar *uri;
 
-	width = ceil(thiz->gwidth);
-	height = ceil(thiz->gheight);
+	width = ceil(thiz->ctx.width);
+	height = ceil(thiz->ctx.height);
 
 	/* FIXME later the pool */
 	/* set the element properties */
@@ -140,21 +149,30 @@ static void _esvg_video_gstreamer_setup(Edom_Tag *t, void *data)
 		gst_element_set_state(thiz->playbin2, GST_STATE_READY);
 
 	/* we need to transform the real href into a playbin2 uri */
-	uri = _esvg_video_path_urify(thiz->real_href);
+	uri = _esvg_video_path_urify(thiz->ctx.href);
 	g_object_set(thiz->playbin2, "uri", uri, NULL);
 	free(uri);
 
 	gst_element_set_state(thiz->playbin2, GST_STATE_PLAYING);
 }
 
-static Esvg_Video_Descriptor _descriptor = {
-	/* .new 	= */ _esvg_video_gstreamer_new,
+static Esvg_Video_Provider_Descriptor _descriptor = {
+	/* .create 	= */ _esvg_video_gstreamer_create,
 	/* .free 	= */ _esvg_video_gstreamer_free,
 	/* .setup 	= */ _esvg_video_gstreamer_setup,
 };
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
+void esvg_video_provider_descriptor_gstreamer_init(void)
+{
+
+}
+
+void esvg_video_provider_descriptor_gstreamer_shutdown(void)
+{
+
+}
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/

@@ -1,12 +1,12 @@
 #ifndef _ESVG_PRIVATE_SVG_H_
 #define _ESVG_PRIVATE_SVG_H_
 
+#include "esvg_script_provider.h"
+#include "esvg_video_provider.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif
-
-/* FIXME for now */
-#include "esvg_private_scriptor.h"
 
 Etch * esvg_svg_etch_get(Ender_Element *e);
 Ender_Element * esvg_svg_internal_element_find(Edom_Tag *t, const char *id);
@@ -21,13 +21,12 @@ void esvg_svg_internal_container_height_get(Edom_Tag *t, double *container_heigh
 
 /* application related functions */
 void esvg_svg_go_to(Ender_Element *e, const char *uri);
-void esvg_svg_script_alert(Ender_Element *e, const char *msg);
-
 
 /* script related functions */
-void esvg_svg_scriptor_register(Esvg_Scriptor_Descriptor *d, const char *type);
-void esvg_svg_scriptor_unregister(Esvg_Scriptor_Descriptor *d, const char *type);
-Esvg_Scriptor * esvg_svg_scriptor_get(Ender_Element *e, const char *type);
+Esvg_Script_Provider * esvg_svg_script_provider_get(Ender_Element *e, const char *type);
+
+/* video related functions */
+Esvg_Video_Provider_Descriptor * esvg_svg_video_provider_descriptor_get(Ender_Element *e);
 
 void esvg_svg_init(void);
 void esvg_svg_shutdown(void);

@@ -19,8 +19,8 @@
 #include "esvg_private_attribute_presentation.h"
 #include "esvg_private_context.h"
 #include "esvg_private_element.h"
-#include "esvg_private_scriptor.h"
 #include "esvg_private_svg.h"
+#include "esvg_private_script_provider.h"
 
 #include "esvg_script.h"
 
@@ -39,7 +39,7 @@ typedef struct _Esvg_Script
 	char *cdata;
 	/* interface */
 	/* private */
-	Esvg_Scriptor *scriptor;
+	Esvg_Script_Provider *scriptor;
 } Esvg_Script;
 
 static Esvg_Script * _esvg_script_get(Edom_Tag *t)
@@ -121,11 +121,11 @@ static Esvg_Element_Setup_Return _esvg_script_setup(Edom_Tag *t,
 	}
 	/* create a new context */
 	esvg_element_internal_topmost_get(t, &topmost);
-	thiz->scriptor = esvg_svg_scriptor_get(topmost, thiz->content_script_type);
+	thiz->scriptor = esvg_svg_script_provider_get(topmost, thiz->content_script_type);
 	if (!thiz->scriptor) return ESVG_SETUP_OK;
 
 	/* run the script */
-	esvg_scriptor_run(thiz->scriptor, thiz->cdata);
+	esvg_script_provider_run(thiz->scriptor, thiz->cdata);
 	return ESVG_SETUP_OK;
 }
 
