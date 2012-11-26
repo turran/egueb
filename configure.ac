@@ -238,6 +238,8 @@ ecss/lib/Makefile
 esvg/Makefile
 esvg/bin/Makefile
 esvg/lib/Makefile
+esvg/lib/video_providers/Makefile
+esvg/lib/script_providers/Makefile
 esvg/include/Makefile
 esvg/include/generated/Makefile
 esvg/modules/Makefile
