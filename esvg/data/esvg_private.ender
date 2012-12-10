@@ -250,7 +250,8 @@ namespace "esvg" : 0 {
 		double "x_dpi";
 		double "y_dpi";
 		string "content_script_type";
-		ender "getElementById" (string);
+
+		ender "element_get_by_id", "getElementById" (string);
 	};
 
 	class "g" : "renderable" {

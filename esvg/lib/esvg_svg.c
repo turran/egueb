@@ -70,6 +70,8 @@ static Ender_Property *ESVG_SVG_ACTUAL_HEIGHT;
 static Ender_Property *ESVG_SVG_CONTAINER_WIDTH;
 static Ender_Property *ESVG_SVG_CONTAINER_HEIGHT;
 
+static Ender_Function *ESVG_SVG_ELEMENT_GET_BY_ID;
+
 typedef struct _Esvg_Svg
 {
 	/* properties */
@@ -1189,6 +1191,16 @@ static void _esvg_svg_content_script_type_get(Edom_Tag *t, const char **v)
 	*v = thiz->content_script_type;
 }
 
+static Ender_Element *_esvg_svg_element_get_by_id(Edom_Tag *t, const char *id)
+{
+	Esvg_Svg *thiz;
+	Ender_Element *found;
+
+	thiz = _esvg_svg_get(t);
+	found = eina_hash_find(thiz->ids, id);
+	return found;
+}
+
 /* The ender wrapper */
 #define _esvg_svg_delete NULL
 #define _esvg_svg_x_is_set NULL
@@ -1208,8 +1220,6 @@ static void _esvg_svg_content_script_type_get(Edom_Tag *t, const char **v)
 #define _esvg_svg_x_dpi_is_set NULL
 #define _esvg_svg_y_dpi_is_set NULL
 #define _esvg_svg_content_script_type_is_set NULL
-/* functions */
-#define _esvg_svg_getElementById esvg_svg_internal_element_find
 #include "generated/esvg_generated_svg.c"
 /*============================================================================*
  *                                 Global                                     *
@@ -1458,16 +1468,6 @@ char * esvg_svg_uri_resolve(Ender_Element *e, const char *uri)
 	return ret;
 }
 
-Ender_Element * esvg_svg_internal_element_find(Edom_Tag *t, const char *id)
-{
-	Esvg_Svg *thiz;
-	Ender_Element *found;
-
-	thiz = _esvg_svg_get(t);
-	found = eina_hash_find(thiz->ids, id);
-	return found;
-}
-
 void esvg_svg_internal_container_width_get(Edom_Tag *t, double *container_width)
 {
 	Esvg_Svg *thiz;
@@ -1548,7 +1548,7 @@ EAPI Ender_Element * esvg_svg_element_find(Ender_Element *e, const char *id)
 	Edom_Tag *t;
 
 	t = ender_element_object_get(e);
-	return esvg_svg_internal_element_find(t, id);
+	return _esvg_svg_element_get_by_id(t, id);
 }
 
 /**
