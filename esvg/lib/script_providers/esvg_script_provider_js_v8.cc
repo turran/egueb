@@ -325,6 +325,7 @@ static Persistent<FunctionTemplate> _v8_element_descriptor_to_js(
 		const char *ns_name = "SVG";
 		char real_name[PATH_MAX];
 
+		/* FIXME given that we now support aliases, dont do this */
 #if 0
 		ns = ender_descriptor_namespace_get(descriptor);
 		ns_name = ender_namespace_name_get(ns);

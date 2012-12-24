@@ -2,12 +2,12 @@ using "edom" : 0;
 
 namespace "esvg" : 0 {
 	/* basic types */
-	struct "esvg_length" {
+	struct "length","SVGLength" {
 		double "value";
 		int "unit";
 	};
 
-	struct "esvg_viewbox" {
+	struct "viewbox","SVGViewBox" {
 		double "min_x";
 		double "min_y";
 		double "width";
@@ -15,18 +15,18 @@ namespace "esvg" : 0 {
 	};
 
 	/* the color needs a byte definition or int8 in ender */
-	struct "esvg_color" {
+	struct "color","SVGColor" {
 		int "r";
 		int "g";
 		int "b";
 	};
 
-	struct "esvg_point" {
+	struct "point","SVGPoint" {
 		double "x";
 		double "y";
 	};
 
-	union "esvg_paint" {
+	union "paint","SVGPaint" {
 		/* fix this */
 		bool "none";
 		bool "current_color";
@@ -34,76 +34,72 @@ namespace "esvg" : 0 {
 		string "paint_server";
 	};
 
-	union "esvg_clip_path" {
-		/* fix this */
-		bool "none";
-		string "iri";
-	};
+	/* FIXME remove the clippath */
 
 	/* animated types */
-	struct "esvg_animated_number" {
+	struct "animated_number","SVGAnimatedNumber" {
 		double "base";
 		double "anim";
 	};
 
-	struct "esvg_animated_transform" {
+	struct "animated_transform","SVGAnimatedTransform" {
 		matrix "base";
 		matrix "anim";
 	};
 
-	struct "esvg_animated_string" {
+	struct "animated_string","SVGAnimatedString" {
 		string "base";
 		string "anim";
 	};
 
-	struct "esvg_animated_bool" {
+	struct "animated_bool","SVGAnimatedBool" {
 		bool "base";
 		bool "anim";
 	};
 
-	struct "esvg_animated_enum" {
+	struct "animated_enum","SVGAnimatedEnum" {
 		int "base";
 		int "anim";
 	};
 
 	/* TODO add the enum constraints */
-	struct "esvg_animated_display" {
+	struct "animated_display","SVGAnimatedDisplay" {
 		int "base";
 		int "anim";
 	};
 	/* TODO add the enum constraints */
-	struct "esvg_animated_visibility" {
+	struct "animated_visibility","SVGAnimatedVisibility" {
 		int "base";
 		int "anim";
 	};
 
-	struct "esvg_animated_length" {
+	struct "animated_length","SVGAnimatedLength" {
 		esvg_length "base";
 		esvg_length "anim";
 	};
 
-	struct "esvg_animated_coord" {
+	struct "animated_coord","SVGAnimatedCoord" {
 		esvg_length "base";
 		esvg_length "anim";
 	};
 
-	struct "esvg_animated_color" {
+	struct "animated_color","SVGAnimatedColor" {
 		esvg_color "base";
 		esvg_color "anim";
 	};
 
-	struct "esvg_animated_paint" {
+	struct "animated_paint","SVGAnimatedPaint" {
 		esvg_paint "base";
 		esvg_paint "anim";
 	};
 
 
-	struct "esvg_animated_clip_path" {
-		esvg_clip_path "base";
-		esvg_clip_path "anim";
+	struct "animated_clip_path","SVGAnimatedClipPath" {
+		string "base";
+		string "anim";
 	};
 
-	union "esvg_duration" {
+	union "duration","SVGDuration" {
 		/* fix we should include the long variants on ender */
 		long "clock";
 	};
