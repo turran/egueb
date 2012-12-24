@@ -210,6 +210,9 @@ static Eina_Bool _esvg_set_setup(Edom_Tag *t,
 	Esvg_Duration *dur = &actx->timing.dur;
 	Ender_Element *svg_e;
 	Ender_Container *ec;
+	Ender_Descriptor *descriptor;
+	const Ender_Constraint *cnst;
+	Ender_Constraint_Type cnst_type;
 	Etch *etch;
 	Etch_Data etch_data;
 	Etch_Animation *etch_a;
@@ -231,7 +234,16 @@ static Eina_Bool _esvg_set_setup(Edom_Tag *t,
 
 	/* get the descriptor */
 	ec = ender_property_container_get(actx->p);
-	name = ender_container_registered_name_get(ec);
+	cnst = ender_container_constraint_get(ec);
+	if (!cnst)
+		return EINA_FALSE;
+	cnst_type = ender_constraint_type_get(cnst);
+	if (cnst_type != ENDER_CONSTRAINT_DESCRIPTOR)
+		return EINA_FALSE;
+	descriptor = ender_constraint_descriptor_descriptor_get(cnst);
+	if (!descriptor)
+		return EINA_FALSE;
+	name = ender_descriptor_name_get(descriptor);
 	if (!strcmp(name, "esvg_animated_transform"))
 		return EINA_FALSE;
 	else if (!strcmp(name, "esvg_animated_frequency"))

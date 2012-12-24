@@ -60,15 +60,11 @@
 /* keep track of the initialization */
 static int _esvg_init_count = 0;
 
-void esvg_types_init(void);
-
 static void _register_enders(void)
 {
 	/* register the dependency */
 	/* FIXME do we actually need this ? */
 	ender_loader_load("edom");
-	/* the types first */
-	esvg_types_init();
 	/* now the abstracts */
 	esvg_element_init();
 	esvg_referenceable_init();
@@ -241,7 +237,6 @@ Ender_Namespace * esvg_namespace_get(void)
 	}
 	return namespace;
 }
-#include "generated/esvg_generated_types.c"
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/
