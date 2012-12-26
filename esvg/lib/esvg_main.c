@@ -65,6 +65,8 @@ static void _register_enders(void)
 	/* register the dependency */
 	/* FIXME do we actually need this ? */
 	ender_loader_load("edom");
+	/* first the types */
+	esvg_length_init();
 	/* now the abstracts */
 	esvg_element_init();
 	esvg_referenceable_init();

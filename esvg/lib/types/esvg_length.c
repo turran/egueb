@@ -20,6 +20,10 @@
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
+#define ESVG_LOG_DEFAULT _esvg_length_log
+
+static int _esvg_length_log = -1;
+
 static Ender_Property *ESVG_LENGTH_VALUE;
 static Ender_Property *ESVG_LENGTH_UNIT;
 
@@ -35,6 +39,21 @@ static Ender_Property *ESVG_LENGTH_UNIT;
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
+void esvg_length_init(void)
+{
+	_esvg_length_log = eina_log_domain_register("esvg_length", ESVG_LOG_COLOR_DEFAULT);
+	if (_esvg_length_log < 0)
+	{
+		EINA_LOG_ERR("Can not create log domain.");
+		return;
+	}
+	_esvg_length_init();
+}
+
+void esvg_length_shutdown(void)
+{
+
+}
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/
