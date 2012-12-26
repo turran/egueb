@@ -3,7 +3,7 @@ rm -f config.cache
 
 m4_define([v_maj], [0])
 m4_define([v_min], [0])
-m4_define([v_mic], [18])
+m4_define([v_mic], [19])
 m4_define([v_ver], [v_maj.v_min.v_mic])
 
 m4_define([lt_cur], m4_eval(v_maj + v_min))
@@ -238,8 +238,10 @@ ecss/lib/Makefile
 esvg/Makefile
 esvg/bin/Makefile
 esvg/lib/Makefile
+esvg/lib/elements/Makefile
 esvg/lib/video_providers/Makefile
 esvg/lib/script_providers/Makefile
+esvg/lib/types/Makefile
 esvg/include/Makefile
 esvg/include/generated/Makefile
 esvg/modules/Makefile
