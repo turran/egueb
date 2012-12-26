@@ -19,11 +19,9 @@ namespace "esvg" : 0 {
 		double "height";
 	};
 
-	/* the color needs a byte definition or int8 in ender */
 	struct "color","SVGColor" {
-		int "r";
-		int "g";
-		int "b";
+		int "type";
+		RGBColor "rgb","rgbColor";
 	};
 
 	struct "point","SVGPoint" {
@@ -31,12 +29,9 @@ namespace "esvg" : 0 {
 		double "y";
 	};
 
-	union "paint","SVGPaint" {
-		/* fix this */
-		bool "none";
-		bool "current_color";
-		esvg_color "color";
-		string "paint_server";
+	struct "paint","SVGPaint" : "SVGColor" {
+		int "type";
+		string "uri";
 	};
 
 	/* FIXME remove the clippath */
@@ -78,12 +73,12 @@ namespace "esvg" : 0 {
 		int "anim";
 	};
 
-	struct "animated_color","SVGAnimatedColor" {
-		esvg_color "base";
-		esvg_color "anim";
+	struct "color_animated","SVGAnimatedColor" {
+		SVGColor "base";
+		SVGColor "anim";
 	};
 
-	struct "animated_paint","SVGAnimatedPaint" {
+	struct "paint_animated","SVGAnimatedPaint" {
 		esvg_paint "base";
 		esvg_paint "anim";
 	};
@@ -126,15 +121,15 @@ namespace "esvg" : 0 {
 		esvg_animated_clip_path "clip-path";
 		esvg_animated_number "opacity";
 		/* once the color is done we can the union paint for filling and stroking */
-		esvg_animated_color "color";
-		esvg_animated_paint "fill";
-		esvg_animated_paint "stroke";
+		SVGAnimatedColor "color";
+		SVGAnimatedPaint "fill";
+		SVGAnimatedPaint "stroke";
 		SVGAnimatedLength "stroke-width";
 		esvg_animated_number "fill-opacity";
 		esvg_animated_number "stroke-opacity";
 		esvg_animated_visibility "visibility";
 		esvg_animated_display "display";
-		esvg_animated_color "stop-color";
+		SVGAnimatedColor "stop-color";
 		esvg_animated_number "stop-opacity";
 		/* other attributes */
 		esvg_animated_transform "transform";

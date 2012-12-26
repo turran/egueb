@@ -307,16 +307,16 @@ void esvg_attribute_paint_unset(Esvg_Attribute_Paint *a, const Esvg_Paint *def);
 void esvg_attribute_paint_set(Esvg_Attribute_Paint *a, const Esvg_Paint *v,
 		const Esvg_Paint *def);
 void esvg_attribute_animated_paint_set(Esvg_Attribute_Animated_Paint *aa,
-	const Esvg_Animated_Paint *v,
+	const Esvg_Paint_Animated *v,
 	const Esvg_Paint *def,
 	Eina_Bool animate);
 void esvg_attribute_animated_paint_extended_set(Esvg_Attribute_Animated_Paint *aa,
-	const Esvg_Animated_Paint *v,
+	const Esvg_Paint_Animated *v,
 	const Esvg_Paint *def,
 	Eina_Bool animate,
 	int *set);
 void esvg_attribute_animated_paint_get(Esvg_Attribute_Animated_Paint *aa,
-	Esvg_Animated_Paint *v);
+	Esvg_Paint_Animated *v);
 
 
 void esvg_attribute_number_unset(Esvg_Attribute_Number *a, double def);

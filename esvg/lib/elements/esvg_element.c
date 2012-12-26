@@ -690,7 +690,7 @@ static void _esvg_element_color_get(Edom_Tag *t, Esvg_Animated_Color *color)
 		color);
 }
 
-static void _esvg_element_fill_set(Edom_Tag *t, const Esvg_Animated_Paint *fill)
+static void _esvg_element_fill_set(Edom_Tag *t, const Esvg_Paint_Animated *fill)
 {
 	Esvg_Element *thiz;
 	Esvg_Color black = { 0, 0, 0 };
@@ -701,7 +701,7 @@ static void _esvg_element_fill_set(Edom_Tag *t, const Esvg_Animated_Paint *fill)
 		fill, &def, thiz->current_attr_animate, &thiz->current_attr->sets);
 }
 
-static void _esvg_element_fill_get(Edom_Tag *t, Esvg_Animated_Paint *fill)
+static void _esvg_element_fill_get(Edom_Tag *t, Esvg_Paint_Animated *fill)
 {
 	Esvg_Element *thiz;
 
@@ -749,7 +749,7 @@ static void _esvg_element_fill_rule_set(Edom_Tag *t, Esvg_Animated_Enum *fill_ru
 	thiz = _esvg_element_get(t);
 }
 
-static void _esvg_element_stroke_set(Edom_Tag *t, const Esvg_Animated_Paint *stroke)
+static void _esvg_element_stroke_set(Edom_Tag *t, const Esvg_Paint_Animated *stroke)
 {
 	Esvg_Element *thiz;
 	Esvg_Paint def = { ESVG_PAINT_NONE };
@@ -759,7 +759,7 @@ static void _esvg_element_stroke_set(Edom_Tag *t, const Esvg_Animated_Paint *str
 		stroke, &def, thiz->current_attr_animate, &thiz->current_attr->sets);
 }
 
-static void _esvg_element_stroke_get(Edom_Tag *t, Esvg_Animated_Paint *stroke)
+static void _esvg_element_stroke_get(Edom_Tag *t, Esvg_Paint_Animated *stroke)
 {
 	Esvg_Element *thiz;
 
@@ -1994,7 +1994,7 @@ void esvg_element_property_paint_set(Ender_Element *e, Ender_Property *p, const 
 	}
 	else
 	{
-		Esvg_Animated_Paint a;
+		Esvg_Paint_Animated a;
 
 		a.base = *v;
 		ender_element_property_value_set(e, p, &a, NULL);

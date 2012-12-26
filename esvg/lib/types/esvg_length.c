@@ -26,6 +26,7 @@ static int _esvg_length_log = -1;
 
 static Ender_Property *ESVG_LENGTH_VALUE;
 static Ender_Property *ESVG_LENGTH_UNIT;
+
 static Ender_Property *ESVG_LENGTH_ANIMATED_BASE;
 static Ender_Property *ESVG_LENGTH_ANIMATED_ANIM;
 

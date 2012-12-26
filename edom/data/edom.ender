@@ -18,4 +18,11 @@ namespace "edom" : 0 {
 		string "attribute_get","getAttribute" (string);
 		"attribute_set","setAttribute" (string, string);
 	};
+
+	/* the color needs a byte definition or int8 in ender */
+	struct "color","RGBColor" {
+		int "r";
+		int "g";
+		int "b";
+	};
 };

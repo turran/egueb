@@ -51,20 +51,20 @@ static void _esvg_animate_paint_value_free(void *value)
 
 static void * _esvg_animate_paint_destination_new(void)
 {
-	Esvg_Animated_Paint *v;
-	v = calloc(1, sizeof(Esvg_Animated_Paint));
+	Esvg_Paint_Animated *v;
+	v = calloc(1, sizeof(Esvg_Paint_Animated));
 	return v;
 }
 
 static void _esvg_animate_paint_destination_free(void *destination, Eina_Bool deep)
 {
-	Esvg_Animated_Paint *d = destination;
+	Esvg_Paint_Animated *d = destination;
 	free(d);
 }
 
 static void _esvg_animate_paint_destination_value_to(void *destination, void **value)
 {
-	Esvg_Animated_Paint *d = destination;
+	Esvg_Paint_Animated *d = destination;
 	Esvg_Paint *v = *value;
 
 	*v = d->base;
@@ -76,8 +76,8 @@ static void _esvg_animate_paint_interpolate(void *a, void *b, double m,
 	Esvg_Paint *va = a;
 	Esvg_Paint *vb = b;
 	Esvg_Paint *vacc = acc;
-	Esvg_Animated_Paint *vadd = add;
-	Esvg_Animated_Paint *r = res;
+	Esvg_Paint_Animated *vadd = add;
+	Esvg_Paint_Animated *r = res;
 
 	if (va->type != vb->type)
 	{
@@ -207,7 +207,7 @@ void esvg_attribute_animated_paint_merge(const Esvg_Attribute_Animated_Paint *v,
 }
 
 void esvg_attribute_animated_paint_set(Esvg_Attribute_Animated_Paint *aa,
-	const Esvg_Animated_Paint *v,
+	const Esvg_Paint_Animated *v,
 	const Esvg_Paint *def,
 	Eina_Bool animate)
 {
@@ -226,7 +226,7 @@ void esvg_attribute_animated_paint_set(Esvg_Attribute_Animated_Paint *aa,
 }
 
 void esvg_attribute_animated_paint_extended_set(Esvg_Attribute_Animated_Paint *aa,
-	const Esvg_Animated_Paint *v,
+	const Esvg_Paint_Animated *v,
 	const Esvg_Paint *def,
 	Eina_Bool animate,
 	int *set)
@@ -244,7 +244,7 @@ void esvg_attribute_animated_paint_extended_set(Esvg_Attribute_Animated_Paint *a
 }
 
 void esvg_attribute_animated_paint_get(Esvg_Attribute_Animated_Paint *aa,
-	Esvg_Animated_Paint *v)
+	Esvg_Paint_Animated *v)
 {
 	if (!v) return;
 
