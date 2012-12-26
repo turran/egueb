@@ -347,12 +347,12 @@ static Eina_Bool _esvg_radial_gradient_propagate(Edom_Tag *t,
 	{
 		DBG("Using object bounding box %g %g %g %g", ctx->bounds.x, ctx->bounds.y, ctx->bounds.w, ctx->bounds.h);
 		/* check that the coordinates shold be set with (0,0) -> (1, 1) */
-		cx = esvg_length_final_get(&lcx, 1, 1);
-		cy = esvg_length_final_get(&lcy, 1, 1);
-		fx = esvg_length_final_get(&lfx, 1, 1);
-		fy = esvg_length_final_get(&lfy, 1, 1);
+		cx = esvg_coord_final_get(&lcx, 1, 1);
+		cy = esvg_coord_final_get(&lcy, 1, 1);
+		fx = esvg_coord_final_get(&lfx, 1, 1);
+		fy = esvg_coord_final_get(&lfy, 1, 1);
 		/* the enesim renderer radius is not scaled by the transformation? */
-		rad = esvg_length_full_final_get(&lrad, ctx->bounds.w, ctx->bounds.h, 1);
+		rad = esvg_length_final_get(&lrad, ctx->bounds.w, ctx->bounds.h, 1);
 		enesim_matrix_values_set(&m, ctx->bounds.w, 0, ctx->bounds.x, 0, ctx->bounds.h, ctx->bounds.y, 0, 0, 1);
 		/* transform the bounds using the context matrix */
 		enesim_matrix_compose(&ctx->transform, &m, &m);
@@ -366,11 +366,11 @@ static Eina_Bool _esvg_radial_gradient_propagate(Edom_Tag *t,
 		w = ctx->viewbox.width;
 		h = ctx->viewbox.height;
 
-		cx = esvg_length_final_get(&lcx, w, ctx->font_size);
-		cy = esvg_length_final_get(&lcy, h, ctx->font_size);
-		fx = esvg_length_final_get(&lfx, w, ctx->font_size);
-		fy = esvg_length_final_get(&lfy, h, ctx->font_size);
-		rad = esvg_length_full_final_get(&lrad, w, h, ctx->font_size);
+		cx = esvg_coord_final_get(&lcx, w, ctx->font_size);
+		cy = esvg_coord_final_get(&lcy, h, ctx->font_size);
+		fx = esvg_coord_final_get(&lfx, w, ctx->font_size);
+		fy = esvg_coord_final_get(&lfy, h, ctx->font_size);
+		rad = esvg_length_final_get(&lrad, w, h, ctx->font_size);
 		m = ctx->transform;
 	}
 	if (enesim_matrix_type_get(&gctx->transform) != ENESIM_MATRIX_IDENTITY)
@@ -428,7 +428,7 @@ static Edom_Tag * _esvg_radial_gradient_new(void)
 	return t;
 }
 
-static void _esvg_radial_gradient_cx_set(Edom_Tag *t, const Esvg_Animated_Length *cx)
+static void _esvg_radial_gradient_cx_set(Edom_Tag *t, const Esvg_Length_Animated *cx)
 {
 	Esvg_Radial_Gradient *thiz;
 	Esvg_Length def = { ESVG_UNIT_LENGTH_PX, 0 };
@@ -440,7 +440,7 @@ static void _esvg_radial_gradient_cx_set(Edom_Tag *t, const Esvg_Animated_Length
 		cx, &def, animating);
 }
 
-static void _esvg_radial_gradient_cx_get(Edom_Tag *t, Esvg_Animated_Length *cx)
+static void _esvg_radial_gradient_cx_get(Edom_Tag *t, Esvg_Length_Animated *cx)
 {
 	Esvg_Radial_Gradient *thiz;
 
@@ -457,7 +457,7 @@ static Eina_Bool _esvg_radial_gradient_cx_is_set(Edom_Tag *t)
 	return esvg_attribute_animated_length_is_set(&thiz->cx);
 }
 
-static void _esvg_radial_gradient_cy_set(Edom_Tag *t, const Esvg_Animated_Length *cy)
+static void _esvg_radial_gradient_cy_set(Edom_Tag *t, const Esvg_Length_Animated *cy)
 {
 	Esvg_Radial_Gradient *thiz;
 	Esvg_Length def = { ESVG_UNIT_LENGTH_PX, 0 };
@@ -469,7 +469,7 @@ static void _esvg_radial_gradient_cy_set(Edom_Tag *t, const Esvg_Animated_Length
 		cy, &def, animating);
 }
 
-static void _esvg_radial_gradient_cy_get(Edom_Tag *t, Esvg_Animated_Length *cy)
+static void _esvg_radial_gradient_cy_get(Edom_Tag *t, Esvg_Length_Animated *cy)
 {
 	Esvg_Radial_Gradient *thiz;
 
@@ -486,7 +486,7 @@ static Eina_Bool _esvg_radial_gradient_cy_is_set(Edom_Tag *t)
 	return esvg_attribute_animated_length_is_set(&thiz->cy);
 }
 
-static void _esvg_radial_gradient_fx_set(Edom_Tag *t, const Esvg_Animated_Length *fx)
+static void _esvg_radial_gradient_fx_set(Edom_Tag *t, const Esvg_Length_Animated *fx)
 {
 	Esvg_Radial_Gradient *thiz;
 	Esvg_Length def = { ESVG_UNIT_LENGTH_PX, 0 };
@@ -498,7 +498,7 @@ static void _esvg_radial_gradient_fx_set(Edom_Tag *t, const Esvg_Animated_Length
 		fx, &def, animating);
 }
 
-static void _esvg_radial_gradient_fx_get(Edom_Tag *t, Esvg_Animated_Length *fx)
+static void _esvg_radial_gradient_fx_get(Edom_Tag *t, Esvg_Length_Animated *fx)
 {
 	Esvg_Radial_Gradient *thiz;
 
@@ -515,7 +515,7 @@ static Eina_Bool _esvg_radial_gradient_fx_is_set(Edom_Tag *t)
 	return esvg_attribute_animated_length_is_set(&thiz->fx);
 }
 
-static void _esvg_radial_gradient_fy_set(Edom_Tag *t, const Esvg_Animated_Length *fy)
+static void _esvg_radial_gradient_fy_set(Edom_Tag *t, const Esvg_Length_Animated *fy)
 {
 	Esvg_Radial_Gradient *thiz;
 	Esvg_Length def = { ESVG_UNIT_LENGTH_PX, 0 };
@@ -527,7 +527,7 @@ static void _esvg_radial_gradient_fy_set(Edom_Tag *t, const Esvg_Animated_Length
 		fy, &def, animating);
 }
 
-static void _esvg_radial_gradient_fy_get(Edom_Tag *t, Esvg_Animated_Length *fy)
+static void _esvg_radial_gradient_fy_get(Edom_Tag *t, Esvg_Length_Animated *fy)
 {
 	Esvg_Radial_Gradient *thiz;
 
@@ -544,7 +544,7 @@ static Eina_Bool _esvg_radial_gradient_fy_is_set(Edom_Tag *t)
 	return esvg_attribute_animated_length_is_set(&thiz->fy);
 }
 
-static void _esvg_radial_gradient_r_set(Edom_Tag *t, const Esvg_Animated_Length *r)
+static void _esvg_radial_gradient_r_set(Edom_Tag *t, const Esvg_Length_Animated *r)
 {
 	Esvg_Radial_Gradient *thiz;
 	Esvg_Length def = { ESVG_UNIT_LENGTH_PX, 0 };
@@ -556,7 +556,7 @@ static void _esvg_radial_gradient_r_set(Edom_Tag *t, const Esvg_Animated_Length 
 		r, &def, animating);
 }
 
-static void _esvg_radial_gradient_r_get(Edom_Tag *t, Esvg_Animated_Length *r)
+static void _esvg_radial_gradient_r_get(Edom_Tag *t, Esvg_Length_Animated *r)
 {
 	Esvg_Radial_Gradient *thiz;
 

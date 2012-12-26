@@ -248,10 +248,10 @@ static Eina_Bool _esvg_linear_gradient_propagate(Edom_Tag *t,
 	if (gu == ESVG_OBJECT_BOUNDING_BOX)
 	{
 		/* check that the coordinates shold be set with (0,0) -> (1, 1) */
-		x1 = esvg_length_final_get(&lx1, 1, 1);
-		y1 = esvg_length_final_get(&ly1, 1, 1);
-		x2 = esvg_length_final_get(&lx2, 1, 1);
-		y2 = esvg_length_final_get(&ly2, 1, 1);
+		x1 = esvg_coord_final_get(&lx1, 1, 1);
+		y1 = esvg_coord_final_get(&ly1, 1, 1);
+		x2 = esvg_coord_final_get(&lx2, 1, 1);
+		y2 = esvg_coord_final_get(&ly2, 1, 1);
 		enesim_matrix_values_set(&m, ctx->bounds.w, 0, ctx->bounds.x, 0, ctx->bounds.h, ctx->bounds.y, 0, 0, 1);
 		/* transform the bounds using the context matrix */
 		enesim_matrix_compose(&ctx->transform, &m, &m);
@@ -264,10 +264,10 @@ static Eina_Bool _esvg_linear_gradient_propagate(Edom_Tag *t,
 		/* use the user space coordiantes */
 		w = ctx->viewbox.width;
 		h = ctx->viewbox.height;
-		x1 = esvg_length_final_get(&lx1, w, ctx->font_size);
-		y1 = esvg_length_final_get(&ly1, h, ctx->font_size);
-		x2 = esvg_length_final_get(&lx2, w, ctx->font_size);
-		y2 = esvg_length_final_get(&ly2, h, ctx->font_size);
+		x1 = esvg_coord_final_get(&lx1, w, ctx->font_size);
+		y1 = esvg_coord_final_get(&ly1, h, ctx->font_size);
+		x2 = esvg_coord_final_get(&lx2, w, ctx->font_size);
+		y2 = esvg_coord_final_get(&ly2, h, ctx->font_size);
 
 		m = ctx->transform;
 	}

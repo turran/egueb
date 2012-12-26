@@ -185,17 +185,17 @@ static Esvg_Element_Setup_Return _esvg_rect_setup(Edom_Tag *t,
 	/* position */
 	esvg_attribute_animated_length_final_get(&thiz->x, &lx);
 	esvg_attribute_animated_length_final_get(&thiz->y, &ly);
-	thiz->gx = esvg_length_final_get(&lx, ctx->viewbox.width, ctx->font_size);
-	thiz->gy = esvg_length_final_get(&ly, ctx->viewbox.height, ctx->font_size);
+	thiz->gx = esvg_coord_final_get(&lx, ctx->viewbox.width, ctx->font_size);
+	thiz->gy = esvg_coord_final_get(&ly, ctx->viewbox.height, ctx->font_size);
 	/* size */
 	esvg_attribute_animated_length_final_get(&thiz->width, &lw);
 	esvg_attribute_animated_length_final_get(&thiz->height, &lh);
-	thiz->gwidth = esvg_length_final_get(&lw, ctx->viewbox.width, ctx->font_size);
-	thiz->gheight = esvg_length_final_get(&lh, ctx->viewbox.height, ctx->font_size);
+	thiz->gwidth = esvg_coord_final_get(&lw, ctx->viewbox.width, ctx->font_size);
+	thiz->gheight = esvg_coord_final_get(&lh, ctx->viewbox.height, ctx->font_size);
 	/* rx and ry */
 	esvg_attribute_animated_length_final_get(&thiz->rx, &lrx);
 	esvg_attribute_animated_length_final_get(&thiz->ry, &lry);
-	thiz->grx = esvg_length_final_get(&lrx, ctx->viewbox.width, ctx->font_size);
+	thiz->grx = esvg_coord_final_get(&lrx, ctx->viewbox.width, ctx->font_size);
 	/* set the bounds */
 	enesim_rectangle_coords_from(&ctx->bounds,
 			thiz->gx, thiz->gy, thiz->gwidth, thiz->gheight);
@@ -361,7 +361,7 @@ static void _esvg_rect_y_get(Edom_Tag *t, Esvg_Animated_Coord *y)
 	esvg_attribute_animated_length_get(&thiz->y, y);
 }
 
-static void _esvg_rect_width_set(Edom_Tag *t, const Esvg_Animated_Length *width)
+static void _esvg_rect_width_set(Edom_Tag *t, const Esvg_Length_Animated *width)
 {
 	Esvg_Rect *thiz;
 	Esvg_Length def = { ESVG_UNIT_LENGTH_PX, 0 };
@@ -373,7 +373,7 @@ static void _esvg_rect_width_set(Edom_Tag *t, const Esvg_Animated_Length *width)
 	thiz->changed = EINA_TRUE;
 }
 
-static void _esvg_rect_width_get(Edom_Tag *t, Esvg_Animated_Length *width)
+static void _esvg_rect_width_get(Edom_Tag *t, Esvg_Length_Animated *width)
 {
 	Esvg_Rect *thiz;
 
@@ -381,7 +381,7 @@ static void _esvg_rect_width_get(Edom_Tag *t, Esvg_Animated_Length *width)
 	esvg_attribute_animated_length_get(&thiz->width, width);
 }
 
-static void _esvg_rect_height_set(Edom_Tag *t, const Esvg_Animated_Length *height)
+static void _esvg_rect_height_set(Edom_Tag *t, const Esvg_Length_Animated *height)
 {
 	Esvg_Rect *thiz;
 	Esvg_Length def = { ESVG_UNIT_LENGTH_PX, 0 };
@@ -393,7 +393,7 @@ static void _esvg_rect_height_set(Edom_Tag *t, const Esvg_Animated_Length *heigh
 	thiz->changed = EINA_TRUE;
 }
 
-static void _esvg_rect_height_get(Edom_Tag *t, Esvg_Animated_Length *height)
+static void _esvg_rect_height_get(Edom_Tag *t, Esvg_Length_Animated *height)
 {
 	Esvg_Rect *thiz;
 

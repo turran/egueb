@@ -768,7 +768,7 @@ static void _esvg_element_stroke_get(Edom_Tag *t, Esvg_Animated_Paint *stroke)
 		stroke);
 }
 
-static void _esvg_element_stroke_width_set(Edom_Tag *t, const Esvg_Animated_Length *stroke_width)
+static void _esvg_element_stroke_width_set(Edom_Tag *t, const Esvg_Length_Animated *stroke_width)
 {
 	Esvg_Element *thiz;
 	Esvg_Length def = { ESVG_UNIT_LENGTH_PX, 1 };
@@ -779,7 +779,7 @@ static void _esvg_element_stroke_width_set(Edom_Tag *t, const Esvg_Animated_Leng
 		stroke_width, &def, thiz->current_attr_animate, &thiz->current_attr->sets);
 }
 
-static void _esvg_element_stroke_width_get(Edom_Tag *t, Esvg_Animated_Length *stroke_width)
+static void _esvg_element_stroke_width_get(Edom_Tag *t, Esvg_Length_Animated *stroke_width)
 {
 	Esvg_Element *thiz;
 
@@ -1979,7 +1979,7 @@ void esvg_element_property_length_set(Ender_Element *e, Ender_Property *p, const
 	}
 	else
 	{
-		Esvg_Animated_Length a;
+		Esvg_Length_Animated a;
 
 		a.base = *v;
 		ender_element_property_value_set(e, p, &a, NULL);

@@ -282,13 +282,13 @@ static Eina_Bool _esvg_image_renderer_propagate(Edom_Tag *t,
 	/* set the position */
 	esvg_attribute_animated_length_final_get(&thiz->x, &lx);
 	esvg_attribute_animated_length_final_get(&thiz->y, &ly);
-	x = esvg_length_final_get(&lx, ctx->viewbox.width, ctx->font_size);
-	y = esvg_length_final_get(&ly, ctx->viewbox.height, ctx->font_size);
+	x = esvg_coord_final_get(&lx, ctx->viewbox.width, ctx->font_size);
+	y = esvg_coord_final_get(&ly, ctx->viewbox.height, ctx->font_size);
 	/* set the size */
 	esvg_attribute_animated_length_final_get(&thiz->width, &lwidth);
 	esvg_attribute_animated_length_final_get(&thiz->height, &lheight);
-	width = esvg_length_final_get(&lwidth, ctx->viewbox.width, ctx->font_size);
-	height = esvg_length_final_get(&lheight, ctx->viewbox.height, ctx->font_size);
+	width = esvg_coord_final_get(&lwidth, ctx->viewbox.width, ctx->font_size);
+	height = esvg_coord_final_get(&lheight, ctx->viewbox.height, ctx->font_size);
 
 #if 0
 	double iw;
@@ -457,7 +457,7 @@ static void _esvg_image_y_get(Edom_Tag *t, Esvg_Animated_Coord *y)
 	esvg_attribute_animated_length_get(&thiz->y, y);
 }
 
-static void _esvg_image_width_set(Edom_Tag *t, const Esvg_Animated_Length *width)
+static void _esvg_image_width_set(Edom_Tag *t, const Esvg_Length_Animated *width)
 {
 	Esvg_Image *thiz;
 	Esvg_Length def = { ESVG_UNIT_LENGTH_PX, 0 };
@@ -469,7 +469,7 @@ static void _esvg_image_width_set(Edom_Tag *t, const Esvg_Animated_Length *width
 	thiz->changed = EINA_TRUE;
 }
 
-static void _esvg_image_width_get(Edom_Tag *t, Esvg_Animated_Length *width)
+static void _esvg_image_width_get(Edom_Tag *t, Esvg_Length_Animated *width)
 {
 	Esvg_Image *thiz;
 
@@ -477,7 +477,7 @@ static void _esvg_image_width_get(Edom_Tag *t, Esvg_Animated_Length *width)
 	esvg_attribute_animated_length_get(&thiz->width, width);
 }
 
-static void _esvg_image_height_set(Edom_Tag *t, const Esvg_Animated_Length *height)
+static void _esvg_image_height_set(Edom_Tag *t, const Esvg_Length_Animated *height)
 {
 	Esvg_Image *thiz;
 	Esvg_Length def = { ESVG_UNIT_LENGTH_PX, 0 };
@@ -489,7 +489,7 @@ static void _esvg_image_height_set(Edom_Tag *t, const Esvg_Animated_Length *heig
 	thiz->changed = EINA_TRUE;
 }
 
-static void _esvg_image_height_get(Edom_Tag *t, Esvg_Animated_Length *height)
+static void _esvg_image_height_get(Edom_Tag *t, Esvg_Length_Animated *height)
 {
 	Esvg_Image *thiz;
 

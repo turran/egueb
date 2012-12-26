@@ -216,7 +216,7 @@ static void _esvg_renderable_context_set(Edom_Tag *t,
 		stroke_viewport = hypot(ctx->viewbox.width, ctx->viewbox.height) / M_SQRT2;
 	}
 	/* FIXME */
-	rctx->stroke_weight = esvg_length_final_get(
+	rctx->stroke_weight = esvg_coord_final_get(
 			&attr->stroke_width.v,
 			stroke_viewport, ctx->font_size);
 }

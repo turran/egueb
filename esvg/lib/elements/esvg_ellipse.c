@@ -154,13 +154,13 @@ static Esvg_Element_Setup_Return _esvg_ellipse_setup(Edom_Tag *t,
 	/* position */
 	esvg_attribute_animated_length_final_get(&thiz->cx, &lcx);
 	esvg_attribute_animated_length_final_get(&thiz->cy, &lcy);
-	thiz->gcx = esvg_length_final_get(&lcx, ctx->viewbox.width, ctx->font_size);
-	thiz->gcy = esvg_length_final_get(&lcy, ctx->viewbox.height, ctx->font_size);
+	thiz->gcx = esvg_coord_final_get(&lcx, ctx->viewbox.width, ctx->font_size);
+	thiz->gcy = esvg_coord_final_get(&lcy, ctx->viewbox.height, ctx->font_size);
 	/* radius */
 	esvg_attribute_animated_length_final_get(&thiz->rx, &lrx);
 	esvg_attribute_animated_length_final_get(&thiz->ry, &lry);
-	thiz->grx = esvg_length_final_get(&lrx, ctx->viewbox.width, ctx->font_size);
-	thiz->gry = esvg_length_final_get(&lry, ctx->viewbox.height, ctx->font_size);
+	thiz->grx = esvg_coord_final_get(&lrx, ctx->viewbox.width, ctx->font_size);
+	thiz->gry = esvg_coord_final_get(&lry, ctx->viewbox.height, ctx->font_size);
 	/* set the bounds */
 	enesim_rectangle_coords_from(&ctx->bounds,
 			thiz->gcx - thiz->grx,
@@ -314,7 +314,7 @@ static void _esvg_ellipse_cy_get(Edom_Tag *t, Esvg_Animated_Coord *cy)
 	esvg_attribute_animated_length_get(&thiz->cy, cy);
 }
 
-static void _esvg_ellipse_rx_set(Edom_Tag *t, const Esvg_Animated_Length *rx)
+static void _esvg_ellipse_rx_set(Edom_Tag *t, const Esvg_Length_Animated *rx)
 {
 	Esvg_Ellipse *thiz;
 	Esvg_Length def = { ESVG_UNIT_LENGTH_PX, 0 };
@@ -326,7 +326,7 @@ static void _esvg_ellipse_rx_set(Edom_Tag *t, const Esvg_Animated_Length *rx)
 	thiz->changed = EINA_TRUE;
 }
 
-static void _esvg_ellipse_rx_get(Edom_Tag *t, Esvg_Animated_Length *rx)
+static void _esvg_ellipse_rx_get(Edom_Tag *t, Esvg_Length_Animated *rx)
 {
 	Esvg_Ellipse *thiz;
 
@@ -334,7 +334,7 @@ static void _esvg_ellipse_rx_get(Edom_Tag *t, Esvg_Animated_Length *rx)
 	esvg_attribute_animated_length_get(&thiz->rx, rx);
 }
 
-static void _esvg_ellipse_ry_set(Edom_Tag *t, const Esvg_Animated_Length *ry)
+static void _esvg_ellipse_ry_set(Edom_Tag *t, const Esvg_Length_Animated *ry)
 {
 	Esvg_Ellipse *thiz;
 	Esvg_Length def = { ESVG_UNIT_LENGTH_PX, 0 };
@@ -346,7 +346,7 @@ static void _esvg_ellipse_ry_set(Edom_Tag *t, const Esvg_Animated_Length *ry)
 	thiz->changed = EINA_TRUE;
 }
 
-static void _esvg_ellipse_ry_get(Edom_Tag *t, Esvg_Animated_Length *ry)
+static void _esvg_ellipse_ry_get(Edom_Tag *t, Esvg_Length_Animated *ry)
 {
 	Esvg_Ellipse *thiz;
 

@@ -226,16 +226,16 @@ void esvg_attribute_length_merge_rel(const Esvg_Attribute_Length *rel,
 		const Esvg_Attribute_Length *v,
 		Esvg_Attribute_Length *d);
 void esvg_attribute_animated_length_set(Esvg_Attribute_Animated_Length *aa,
-	const Esvg_Animated_Length *v,
+	const Esvg_Length_Animated *v,
 	const Esvg_Length *def,
 	Eina_Bool animate);
 void esvg_attribute_animated_length_extended_set(Esvg_Attribute_Animated_Length *aa,
-	const Esvg_Animated_Length *v,
+	const Esvg_Length_Animated *v,
 	const Esvg_Length *def,
 	Eina_Bool animate,
 	int *set);
 void esvg_attribute_animated_length_get(Esvg_Attribute_Animated_Length *aa,
-	Esvg_Animated_Length *v);
+	Esvg_Length_Animated *v);
 Eina_Bool esvg_attribute_animated_length_is_set(Esvg_Attribute_Animated_Length *aa);
 void esvg_attribute_length_unset(Esvg_Attribute_Length *a, const Esvg_Length *def);
 void esvg_attribute_length_set(Esvg_Attribute_Length *a, const Esvg_Length *v,

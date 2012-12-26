@@ -20,6 +20,7 @@ esvg_event.h \
 esvg_g.h \
 esvg_gradient.h \
 esvg_image.h \
+esvg_length.h \
 esvg_line.h \
 esvg_linear_gradient.h \
 esvg_main.h \

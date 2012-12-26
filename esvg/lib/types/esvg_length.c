@@ -26,6 +26,8 @@ static int _esvg_length_log = -1;
 
 static Ender_Property *ESVG_LENGTH_VALUE;
 static Ender_Property *ESVG_LENGTH_UNIT;
+static Ender_Property *ESVG_LENGTH_ANIMATED_BASE;
+static Ender_Property *ESVG_LENGTH_ANIMATED_ANIM;
 
 #define _esvg_length_new NULL
 #define _esvg_length_delete NULL
@@ -36,6 +38,16 @@ static Ender_Property *ESVG_LENGTH_UNIT;
 #define _esvg_length_unit_get NULL
 #define _esvg_length_unit_is_set NULL
 #include "generated/esvg_generated_length.c"
+
+#define _esvg_length_animated_new NULL
+#define _esvg_length_animated_delete NULL
+#define _esvg_length_animated_base_set NULL
+#define _esvg_length_animated_base_get NULL
+#define _esvg_length_animated_base_is_set NULL
+#define _esvg_length_animated_anim_set NULL
+#define _esvg_length_animated_anim_get NULL
+#define _esvg_length_animated_anim_is_set NULL
+#include "generated/esvg_generated_length_animated.c"
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
@@ -48,11 +60,13 @@ void esvg_length_init(void)
 		return;
 	}
 	_esvg_length_init();
+	_esvg_length_animated_init();
 }
 
 void esvg_length_shutdown(void)
 {
-
+	_esvg_length_shutdown();
+	_esvg_length_animated_shutdown();
 }
 /*============================================================================*
  *                                   API                                      *
@@ -150,8 +164,17 @@ EAPI Eina_Bool esvg_length_is_equal(Esvg_Length *length1, Esvg_Length *length2)
 	return EINA_FALSE;
 }
 
-/* FIXME rename this to esvg_coord_ */
-EAPI double esvg_length_final_get(const Esvg_Length *l, double parent_length, double font_size)
+EAPI double esvg_length_final_get(const Esvg_Length *l, double width, double height, double font_size)
+{
+	double length = 0;
+	if (l->unit == ESVG_UNIT_LENGTH_PERCENT)
+	{
+		length = hypot(width, height) * M_SQRT1_2;
+	}
+	return esvg_coord_final_get(l, length, font_size);
+}
+
+EAPI double esvg_coord_final_get(const Esvg_Length *l, double parent_length, double font_size)
 {
 	double ret;
 	/* Here we should transform the length/coord to an absolute
@@ -201,17 +224,6 @@ EAPI double esvg_length_final_get(const Esvg_Length *l, double parent_length, do
 	}
 
 	return ret;
-}
-
-/* FIXME rename this to esvg_length_ */
-EAPI double esvg_length_full_final_get(const Esvg_Length *l, double width, double height, double font_size)
-{
-	double length = 0;
-	if (l->unit == ESVG_UNIT_LENGTH_PERCENT)
-	{
-		length = hypot(width, height) * M_SQRT1_2;
-	}
-	return esvg_length_final_get(l, length, font_size);
 }
 
 

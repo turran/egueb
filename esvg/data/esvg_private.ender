@@ -7,6 +7,11 @@ namespace "esvg" : 0 {
 		int "unit";
 	};
 
+	struct "length_animated","SVGAnimatedLength" {
+		SVGLength "base";
+		SVGLength "anim";
+	};
+
 	struct "viewbox","SVGViewBox" {
 		double "min_x";
 		double "min_y";
@@ -73,16 +78,6 @@ namespace "esvg" : 0 {
 		int "anim";
 	};
 
-	struct "animated_length","SVGAnimatedLength" {
-		esvg_length "base";
-		esvg_length "anim";
-	};
-
-	struct "animated_coord","SVGAnimatedCoord" {
-		esvg_length "base";
-		esvg_length "anim";
-	};
-
 	struct "animated_color","SVGAnimatedColor" {
 		esvg_color "base";
 		esvg_color "anim";
@@ -134,7 +129,7 @@ namespace "esvg" : 0 {
 		esvg_animated_color "color";
 		esvg_animated_paint "fill";
 		esvg_animated_paint "stroke";
-		esvg_animated_length "stroke-width";
+		SVGAnimatedLength "stroke-width";
 		esvg_animated_number "fill-opacity";
 		esvg_animated_number "stroke-opacity";
 		esvg_animated_visibility "visibility";
@@ -219,25 +214,25 @@ namespace "esvg" : 0 {
 	};
 
 	class "linear_gradient" : "gradient" {
-		esvg_length "x1";
-		esvg_length "y1";
-		esvg_length "x2";
-		esvg_length "y2";
+		SVGLength "x1";
+		SVGLength "y1";
+		SVGLength "x2";
+		SVGLength "y2";
 	};
 
 	class "radial_gradient" : "gradient" {
-		esvg_animated_coord "cx";
-		esvg_animated_coord "cy";
-		esvg_animated_coord "fx";
-		esvg_animated_coord "fy";
-		esvg_animated_length "r";
+		SVGAnimatedLength "cx";
+		SVGAnimatedLength "cy";
+		SVGAnimatedLength "fx";
+		SVGAnimatedLength "fy";
+		SVGAnimatedLength "r";
 	};
 
 	class "svg" : "renderable" {
-		esvg_length "x";
-		esvg_length "y";
-		esvg_length "width";
-		esvg_length "height";
+		SVGLength "x";
+		SVGLength "y";
+		SVGLength "width";
+		SVGLength "height";
 		double "actual_width";
 		double "actual_height";
 		esvg_viewbox "viewbox";
@@ -255,33 +250,33 @@ namespace "esvg" : 0 {
 	};
 
 	class "use" : "renderable" {
-		esvg_length "x";
-		esvg_length "y";
-		esvg_length "width";
-		esvg_length "height";
+		SVGLength "x";
+		SVGLength "y";
+		SVGLength "width";
+		SVGLength "height";
 		string "link";
 	};
 
 	class "rect" : "renderable" {
-		esvg_animated_coord "x";
-		esvg_animated_coord "y";
-		esvg_animated_length "width";
-		esvg_animated_length "height";
-		esvg_animated_length "rx";
-		esvg_animated_length "ry";
+		SVGAnimatedLength "x";
+		SVGAnimatedLength "y";
+		SVGAnimatedLength "width";
+		SVGAnimatedLength "height";
+		SVGAnimatedLength "rx";
+		SVGAnimatedLength "ry";
 	};
 
 	class "ellipse" : "renderable" {
-		esvg_animated_coord "cx";
-		esvg_animated_coord "cy";
-		esvg_animated_length "rx";
-		esvg_animated_length "ry";
+		SVGAnimatedLength "cx";
+		SVGAnimatedLength "cy";
+		SVGAnimatedLength "rx";
+		SVGAnimatedLength "ry";
 	};
 
 	class "circle" : "renderable" {
-		esvg_animated_coord "cx";
-		esvg_animated_coord "cy";
-		esvg_animated_length "r";
+		SVGAnimatedLength "cx";
+		SVGAnimatedLength "cy";
+		SVGAnimatedLength "r";
 	};
 
 	class "path" : "renderable" {
@@ -289,10 +284,10 @@ namespace "esvg" : 0 {
 	};
 
 	class "line" : "renderable" {
-		esvg_animated_coord "x1";
-		esvg_animated_coord "x2";
-		esvg_animated_coord "y1";
-		esvg_animated_coord "y2";
+		SVGAnimatedLength "x1";
+		SVGAnimatedLength "x2";
+		SVGAnimatedLength "y1";
+		SVGAnimatedLength "y2";
 	};
 
 	class "polyline" : "renderable" {
@@ -304,12 +299,12 @@ namespace "esvg" : 0 {
 	};
 
 	class "text" : "renderable" {
-		esvg_animated_coord "x";
-		esvg_animated_coord "y";
+		SVGAnimatedLength "x";
+		SVGAnimatedLength "y";
 	};
 
 	class "stop" : "element" {
-		esvg_length "offset";
+		SVGLength "offset";
 	};
 
 	class "defs" : "element" {
@@ -321,18 +316,18 @@ namespace "esvg" : 0 {
 	};
 
 	class "image" : "renderable" {
-		esvg_animated_coord "x";
-		esvg_animated_coord "y";
-		esvg_animated_length "width";
-		esvg_animated_length "height";
+		SVGAnimatedLength "x";
+		SVGAnimatedLength "y";
+		SVGAnimatedLength "width";
+		SVGAnimatedLength "height";
 		esvg_animated_string "xlink:href";
 	};
 
 	class "video" : "renderable" {
-		esvg_animated_coord "x";
-		esvg_animated_coord "y";
-		esvg_animated_length "width";
-		esvg_animated_length "height";
+		SVGAnimatedLength "x";
+		SVGAnimatedLength "y";
+		SVGAnimatedLength "width";
+		SVGAnimatedLength "height";
 		esvg_animated_string "xlink:href";
 	};
 

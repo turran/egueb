@@ -270,8 +270,8 @@ static inline void _esvg_svg_size_apply(Esvg_Svg *thiz, Esvg_Element_Context *ct
 	double width;
 	double height;
 
-	width = esvg_length_final_get(&thiz->width, ctx->viewbox.width, ctx->font_size);
-	height = esvg_length_final_get(&thiz->height, ctx->viewbox.height, ctx->font_size);
+	width = esvg_coord_final_get(&thiz->width, ctx->viewbox.width, ctx->font_size);
+	height = esvg_coord_final_get(&thiz->height, ctx->viewbox.height, ctx->font_size);
 	enesim_renderer_clipper_width_set(thiz->clipper, width);
 	enesim_renderer_clipper_height_set(thiz->clipper, height);
 	ctx->viewbox.width = width;
@@ -818,8 +818,8 @@ static Esvg_Element_Setup_Return _esvg_svg_setup(Edom_Tag *t,
 	 */
 	//if (changed)
 	{
-		width = esvg_length_final_get(&thiz->width, ctx->viewbox.width, thiz->base_font_size);
-		height = esvg_length_final_get(&thiz->height, ctx->viewbox.height, thiz->base_font_size);
+		width = esvg_coord_final_get(&thiz->width, ctx->viewbox.width, thiz->base_font_size);
+		height = esvg_coord_final_get(&thiz->height, ctx->viewbox.height, thiz->base_font_size);
 		enesim_renderer_clipper_width_set(thiz->clipper, width);
 		enesim_renderer_clipper_height_set(thiz->clipper, height);
 		/* the viewbox will set a new user space coordinate */
@@ -1097,7 +1097,7 @@ static void _esvg_svg_actual_width_get(Edom_Tag *t, double *actual_width)
 
 	thiz = _esvg_svg_get(t);
 	esvg_svg_internal_container_width_get(t, &cw);
-	aw = esvg_length_final_get(&thiz->width, cw, thiz->base_font_size);
+	aw = esvg_coord_final_get(&thiz->width, cw, thiz->base_font_size);
 	*actual_width = aw;
 }
 
@@ -1109,7 +1109,7 @@ static void _esvg_svg_actual_height_get(Edom_Tag *t, double *actual_height)
 
 	thiz = _esvg_svg_get(t);
 	esvg_svg_internal_container_height_get(t, &ch);
-	ah = esvg_length_final_get(&thiz->height, ch, thiz->base_font_size);
+	ah = esvg_coord_final_get(&thiz->height, ch, thiz->base_font_size);
 	*actual_height = ah;
 }
 

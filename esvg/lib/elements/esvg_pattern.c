@@ -75,10 +75,10 @@ static Eina_Bool _pattern_setup(Enesim_Renderer *r,
 		Eina_Rectangle bbox;
 
 		/* check that the coordinates shold be set with (0,0) -> (1, 1) */
-		x = esvg_length_final_get(&thiz->x, 1);
-		y = esvg_length_final_get(&thiz->y, 1);
-		w = esvg_length_final_get(&thiz->width, 1);
-		h = esvg_length_final_get(&thiz->height, 1);
+		x = esvg_coord_final_get(&thiz->x, 1);
+		y = esvg_coord_final_get(&thiz->y, 1);
+		w = esvg_coord_final_get(&thiz->width, 1);
+		h = esvg_coord_final_get(&thiz->height, 1);
 
 		enesim_renderer_destination_boundings(rel, &bbox, 0, 0);
 		enesim_matrix_values_set(&m, bbox.w, 0, bbox.x, 0, bbox.h, bbox.y, 0, 0, 1);
@@ -91,10 +91,10 @@ static Eina_Bool _pattern_setup(Enesim_Renderer *r,
 		/* use the user space coordiantes */
 		vw = state->viewbox_w;
 		vh = state->viewbox_h;
-		x = esvg_length_final_get(&thiz->x, vw);
-		y = esvg_length_final_get(&thiz->y, vh);
-		w = esvg_length_final_get(&thiz->width, vw);
-		h = esvg_length_final_get(&thiz->height, vh);
+		x = esvg_coord_final_get(&thiz->x, vw);
+		y = esvg_coord_final_get(&thiz->y, vh);
+		w = esvg_coord_final_get(&thiz->width, vw);
+		h = esvg_coord_final_get(&thiz->height, vh);
 
 		m = state->transform;
 	}

@@ -155,10 +155,10 @@ static Esvg_Element_Setup_Return _esvg_line_setup(Edom_Tag *t,
 	esvg_attribute_animated_length_final_get(&thiz->y1, &ly1);
 	esvg_attribute_animated_length_final_get(&thiz->x2, &lx2);
 	esvg_attribute_animated_length_final_get(&thiz->y2, &ly2);
-	thiz->gx1 = esvg_length_final_get(&lx1, ctx->viewbox.width, ctx->font_size);
-	thiz->gy1 = esvg_length_final_get(&ly1, ctx->viewbox.height, ctx->font_size);
-	thiz->gx2 = esvg_length_final_get(&lx2, ctx->viewbox.width, ctx->font_size);
-	thiz->gy2 = esvg_length_final_get(&ly2, ctx->viewbox.height, ctx->font_size);
+	thiz->gx1 = esvg_coord_final_get(&lx1, ctx->viewbox.width, ctx->font_size);
+	thiz->gy1 = esvg_coord_final_get(&ly1, ctx->viewbox.height, ctx->font_size);
+	thiz->gx2 = esvg_coord_final_get(&lx2, ctx->viewbox.width, ctx->font_size);
+	thiz->gy2 = esvg_coord_final_get(&ly2, ctx->viewbox.height, ctx->font_size);
 	/* the bounds */
 	enesim_rectangle_coords_from(&ctx->bounds,
 			thiz->gx1 < thiz->gx2 ? thiz->gx1 : thiz->gx2,

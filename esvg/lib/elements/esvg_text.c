@@ -149,8 +149,8 @@ static Esvg_Element_Setup_Return _esvg_text_setup(Edom_Tag *t,
 	/* position */
 	esvg_attribute_animated_length_final_get(&thiz->x, &lx);
 	esvg_attribute_animated_length_final_get(&thiz->y, &ly);
-	thiz->gx = esvg_length_final_get(&lx, ctx->viewbox.width, ctx->font_size);
-	thiz->gy = esvg_length_final_get(&ly, ctx->viewbox.height, ctx->font_size);
+	thiz->gx = esvg_coord_final_get(&lx, ctx->viewbox.width, ctx->font_size);
+	thiz->gy = esvg_coord_final_get(&ly, ctx->viewbox.height, ctx->font_size);
 
 	DBG("calling the setup on the text (%g %g)", thiz->gx, thiz->gy);
 

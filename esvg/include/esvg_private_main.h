@@ -177,7 +177,7 @@ void * esvg_gradient_data_get(Enesim_Renderer *r);
 /* length */
 
 Eina_Bool esvg_length_is_equal(Esvg_Length *length1, Esvg_Length *length2);
-double esvg_length_final_get(const Esvg_Length *l, double parent_length);
+double esvg_coord_final_get(const Esvg_Length *l, double parent_length);
 
 #endif
 #endif

@@ -141,12 +141,12 @@ static Esvg_Element_Setup_Return _esvg_circle_setup(Edom_Tag *t,
 	/* position */
 	esvg_attribute_animated_length_final_get(&thiz->cx, &lcx);
 	esvg_attribute_animated_length_final_get(&thiz->cy, &lcy);
-	thiz->gcx = esvg_length_final_get(&lcx, ctx->viewbox.width, ctx->font_size);
-	thiz->gcy = esvg_length_final_get(&lcy, ctx->viewbox.height, ctx->font_size);
+	thiz->gcx = esvg_coord_final_get(&lcx, ctx->viewbox.width, ctx->font_size);
+	thiz->gcy = esvg_coord_final_get(&lcy, ctx->viewbox.height, ctx->font_size);
 	/* radius */
 	esvg_attribute_animated_length_final_get(&thiz->radius, &lradius);
 	/* set the size */
-	thiz->gradius = esvg_length_full_final_get(&lradius, ctx->viewbox.width, ctx->viewbox.height, ctx->font_size);
+	thiz->gradius = esvg_length_final_get(&lradius, ctx->viewbox.width, ctx->viewbox.height, ctx->font_size);
 	/* set the bounds */
 	enesim_rectangle_coords_from(&ctx->bounds,
 			thiz->gcx - thiz->gradius,
@@ -298,7 +298,7 @@ static void _esvg_circle_cy_get(Edom_Tag *t, Esvg_Animated_Coord *cy)
 	esvg_attribute_animated_length_get(&thiz->cy, cy);
 }
 
-static void _esvg_circle_r_set(Edom_Tag *t, const Esvg_Animated_Length *radius)
+static void _esvg_circle_r_set(Edom_Tag *t, const Esvg_Length_Animated *radius)
 {
 	Esvg_Circle *thiz;
 	Esvg_Length def = { ESVG_UNIT_LENGTH_PX, 0 };
@@ -311,7 +311,7 @@ static void _esvg_circle_r_set(Edom_Tag *t, const Esvg_Animated_Length *radius)
 	thiz->changed = EINA_TRUE;
 }
 
-static void _esvg_circle_r_get(Edom_Tag *t, Esvg_Animated_Length *radius)
+static void _esvg_circle_r_get(Edom_Tag *t, Esvg_Length_Animated *radius)
 {
 	Esvg_Circle *thiz;
 

@@ -10,7 +10,6 @@ esvg_generated_animated_clip_path.c \
 esvg_generated_animated_coord.c \
 esvg_generated_animated_color.c \
 esvg_generated_animated_display.c \
-esvg_generated_animated_length.c \
 esvg_generated_animated_number.c \
 esvg_generated_animated_paint.c \
 esvg_generated_animated_string.c \
@@ -30,6 +29,7 @@ esvg_generated_paint_server.c \
 esvg_generated_polygon.c \
 esvg_generated_polyline.c \
 esvg_generated_length.c \
+esvg_generated_length_animated.c \
 esvg_generated_line.c \
 esvg_generated_linear_gradient.c \
 esvg_generated_paint.c \

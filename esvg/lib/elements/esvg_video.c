@@ -172,13 +172,13 @@ static Esvg_Element_Setup_Return _esvg_video_setup(Edom_Tag *t,
 	/* set the position */
 	esvg_attribute_animated_length_final_get(&thiz->x, &lx);
 	esvg_attribute_animated_length_final_get(&thiz->y, &ly);
-	thiz->gx = esvg_length_final_get(&lx, ctx->viewbox.width, ctx->font_size);
-	thiz->gy = esvg_length_final_get(&ly, ctx->viewbox.height, ctx->font_size);
+	thiz->gx = esvg_coord_final_get(&lx, ctx->viewbox.width, ctx->font_size);
+	thiz->gy = esvg_coord_final_get(&ly, ctx->viewbox.height, ctx->font_size);
 	/* set the size */
 	esvg_attribute_animated_length_final_get(&thiz->width, &lwidth);
 	esvg_attribute_animated_length_final_get(&thiz->height, &lheight);
-	thiz->ctx.width = esvg_length_final_get(&lwidth, ctx->viewbox.width, ctx->font_size);
-	thiz->ctx.height = esvg_length_final_get(&lheight, ctx->viewbox.height, ctx->font_size);
+	thiz->ctx.width = esvg_coord_final_get(&lwidth, ctx->viewbox.width, ctx->font_size);
+	thiz->ctx.height = esvg_coord_final_get(&lheight, ctx->viewbox.height, ctx->font_size);
 	/* set the href */
 	esvg_attribute_animated_string_final_get(&thiz->href, &thiz->ghref);
 
@@ -339,7 +339,7 @@ static void _esvg_video_y_get(Edom_Tag *t, Esvg_Animated_Coord *y)
 	esvg_attribute_animated_length_get(&thiz->y, y);
 }
 
-static void _esvg_video_width_set(Edom_Tag *t, const Esvg_Animated_Length *width)
+static void _esvg_video_width_set(Edom_Tag *t, const Esvg_Length_Animated *width)
 {
 	Esvg_Video *thiz;
 	Esvg_Length def = { ESVG_UNIT_LENGTH_PX, 0 };
@@ -350,7 +350,7 @@ static void _esvg_video_width_set(Edom_Tag *t, const Esvg_Animated_Length *width
 	esvg_attribute_animated_length_set(&thiz->width, width, &def, animating);
 }
 
-static void _esvg_video_width_get(Edom_Tag *t, Esvg_Animated_Length *width)
+static void _esvg_video_width_get(Edom_Tag *t, Esvg_Length_Animated *width)
 {
 	Esvg_Video *thiz;
 
@@ -358,7 +358,7 @@ static void _esvg_video_width_get(Edom_Tag *t, Esvg_Animated_Length *width)
 	esvg_attribute_animated_length_get(&thiz->width, width);
 }
 
-static void _esvg_video_height_set(Edom_Tag *t, const Esvg_Animated_Length *height)
+static void _esvg_video_height_set(Edom_Tag *t, const Esvg_Length_Animated *height)
 {
 	Esvg_Video *thiz;
 	Esvg_Length def = { ESVG_UNIT_LENGTH_PX, 0 };
@@ -369,7 +369,7 @@ static void _esvg_video_height_set(Edom_Tag *t, const Esvg_Animated_Length *heig
 	esvg_attribute_animated_length_set(&thiz->height, height, &def, animating);
 }
 
-static void _esvg_video_height_get(Edom_Tag *t, Esvg_Animated_Length *height)
+static void _esvg_video_height_get(Edom_Tag *t, Esvg_Length_Animated *height)
 {
 	Esvg_Video *thiz;
 

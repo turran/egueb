@@ -42,20 +42,20 @@ static Eina_Bool _esvg_animate_length_value_get(const char *attr, void **value)
 
 static void * _esvg_animate_length_destination_new(void)
 {
-	Esvg_Animated_Length *v;
-	v = calloc(1, sizeof(Esvg_Animated_Length));
+	Esvg_Length_Animated *v;
+	v = calloc(1, sizeof(Esvg_Length_Animated));
 	return v;
 }
 
 static void _esvg_animate_length_destination_free(void *destination, Eina_Bool deep)
 {
-	Esvg_Animated_Length *d = destination;
+	Esvg_Length_Animated *d = destination;
 	free(d);
 }
 
 static void _esvg_animate_length_destination_value_to(void *destination, void **value)
 {
-	Esvg_Animated_Length *d = destination;
+	Esvg_Length_Animated *d = destination;
 	Esvg_Length *v = *value;
 
 	*v = d->base;
@@ -67,8 +67,8 @@ static void _esvg_animate_length_interpolate(void *a, void *b, double m,
 	Esvg_Length *va = a;
 	Esvg_Length *vb = b;
 	Esvg_Length *vacc = acc;
-	Esvg_Animated_Length *vadd = add;
-	Esvg_Animated_Length *r = res;
+	Esvg_Length_Animated *vadd = add;
+	Esvg_Length_Animated *r = res;
 
 	r->base.unit = va->unit;
 	etch_interpolate_double(va->value, vb->value, m, &r->base.value);
@@ -173,7 +173,7 @@ void esvg_attribute_animated_length_merge(const Esvg_Attribute_Animated_Length *
 }
 
 void esvg_attribute_animated_length_set(Esvg_Attribute_Animated_Length *aa,
-	const Esvg_Animated_Length *v,
+	const Esvg_Length_Animated *v,
 	const Esvg_Length *def,
 	Eina_Bool animate)
 {
@@ -191,7 +191,7 @@ void esvg_attribute_animated_length_set(Esvg_Attribute_Animated_Length *aa,
 }
 
 void esvg_attribute_animated_length_extended_set(Esvg_Attribute_Animated_Length *aa,
-	const Esvg_Animated_Length *v,
+	const Esvg_Length_Animated *v,
 	const Esvg_Length *def,
 	Eina_Bool animate,
 	int *set)
@@ -209,7 +209,7 @@ void esvg_attribute_animated_length_extended_set(Esvg_Attribute_Animated_Length 
 }
 
 void esvg_attribute_animated_length_get(Esvg_Attribute_Animated_Length *aa,
-	Esvg_Animated_Length *v)
+	Esvg_Length_Animated *v)
 {
 	if (!v) return;
 
