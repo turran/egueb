@@ -142,9 +142,9 @@ static Eina_Bool _esvg_animate_transform_value_get(const char *attr, void **valu
 
 static void * _esvg_animate_transform_destination_new(void)
 {
-	Esvg_Animated_Transform *v;
+	Esvg_Matrix_Animated *v;
 
-	v = calloc(1, sizeof(Esvg_Animated_Transform));
+	v = calloc(1, sizeof(Esvg_Matrix_Animated));
 	enesim_matrix_identity(&v->base);
 	enesim_matrix_identity(&v->anim);
 	return v;
@@ -152,7 +152,7 @@ static void * _esvg_animate_transform_destination_new(void)
 
 static void _esvg_animate_transform_destination_free(void *destination, Eina_Bool deep)
 {
-	Esvg_Animated_Transform *d = destination;
+	Esvg_Matrix_Animated *d = destination;
 	free(d);
 }
 /*----------------------------------------------------------------------------*
@@ -164,8 +164,8 @@ static void _esvg_animate_transform_translate_interpolate(void *a, void *b,
 	Esvg_Animate_Transform_Data *va = a;
 	Esvg_Animate_Transform_Data *vb = b;
 	Esvg_Animate_Transform_Data *vacc = acc;
-	Esvg_Animated_Transform *vadd = add;
-	Esvg_Animated_Transform *r = res;
+	Esvg_Matrix_Animated *vadd = add;
+	Esvg_Matrix_Animated *r = res;
 	double tx;
 	double ty = 0;
 
@@ -204,9 +204,9 @@ static void _esvg_animate_transform_rotate_interpolate(void *a, void *b,
 {
 	Esvg_Animate_Transform_Data *va = a;
 	Esvg_Animate_Transform_Data *vb = b;
-	Esvg_Animated_Transform *vadd = add;
+	Esvg_Matrix_Animated *vadd = add;
 	Esvg_Animate_Transform_Data *vacc = acc;
-	Esvg_Animated_Transform *r = res;
+	Esvg_Matrix_Animated *r = res;
 	Enesim_Matrix m1;
 	double angle;
 
@@ -258,9 +258,9 @@ static void _esvg_animate_transform_scale_interpolate(void *a, void *b,
 {
 	Esvg_Animate_Transform_Data *va = a;
 	Esvg_Animate_Transform_Data *vb = b;
-	Esvg_Animated_Transform *vadd = add;
+	Esvg_Matrix_Animated *vadd = add;
 	Esvg_Animate_Transform_Data *vacc = acc;
-	Esvg_Animated_Transform *r = res;
+	Esvg_Matrix_Animated *r = res;
 	double sx = 0;
 	double sy = 1;
 
@@ -300,9 +300,9 @@ static void _esvg_animate_transform_skewx_interpolate(void *a, void *b,
 {
 	Esvg_Animate_Transform_Data *va = a;
 	Esvg_Animate_Transform_Data *vb = b;
-	Esvg_Animated_Transform *vadd = add;
+	Esvg_Matrix_Animated *vadd = add;
 	Esvg_Animate_Transform_Data *vacc = acc;
-	Esvg_Animated_Transform *r = res;
+	Esvg_Matrix_Animated *r = res;
 	double angle;
 
 	etch_interpolate_double(va->values[0], vb->values[0], m, &angle);
@@ -334,8 +334,8 @@ static void _esvg_animate_transform_skewy_interpolate(void *a, void *b,
 	Esvg_Animate_Transform_Data *va = a;
 	Esvg_Animate_Transform_Data *vb = b;
 	Esvg_Animate_Transform_Data *vacc = acc;
-	Esvg_Animated_Transform *vadd = add;
-	Esvg_Animated_Transform *r = res;
+	Esvg_Matrix_Animated *vadd = add;
+	Esvg_Matrix_Animated *r = res;
 	double angle;
 
 	etch_interpolate_double(va->values[0], vb->values[0], m, &angle);

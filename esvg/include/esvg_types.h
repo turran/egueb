@@ -18,11 +18,12 @@
 #ifndef _ESVG_TYPES_H
 #define _ESVG_TYPES_H
 
-#include "esvg_length.h"
-#include "esvg_color.h"
-#include "esvg_paint.h"
-#include "esvg_number.h"
 #include "esvg_boolean.h"
+#include "esvg_color.h"
+#include "esvg_length.h"
+#include "esvg_matrix.h"
+#include "esvg_number.h"
+#include "esvg_paint.h"
 
 #define ESVG_CLOCK_SECONDS (1000000000LL)
 #define ESVG_CLOCK_MSECONDS (1000000LL)
@@ -121,12 +122,6 @@ typedef enum _Esvg_Attribute_Type
 	ESVG_ATTR_AUTO,
 	ESVG_ATTR_TYPES,
 } Esvg_Attribute_Type;
-
-typedef struct _Esvg_Animated_Transform
-{
-	Enesim_Matrix base;
-	Enesim_Matrix anim;
-} __attribute__((packed)) Esvg_Animated_Transform;
 
 typedef struct _Esvg_Animated_String
 {

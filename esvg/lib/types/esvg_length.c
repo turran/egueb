@@ -72,7 +72,7 @@ void esvg_length_shutdown(void)
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/
-EAPI Eina_Bool esvg_length_string_from(Esvg_Length *length, const char *attr_val)
+EAPI Eina_Bool esvg_length_string_from(Esvg_Length *thiz, const char *attr_val)
 {
 	char *endptr;
 	double val;
@@ -89,8 +89,8 @@ EAPI Eina_Bool esvg_length_string_from(Esvg_Length *length, const char *attr_val
 	/* else, conversion has been done */
 	if ((endptr == NULL) || (*endptr == '\0'))
 	{
-		length->value = val;
-		length->unit = ESVG_UNIT_LENGTH_PX;
+		thiz->value = val;
+		thiz->unit = ESVG_UNIT_LENGTH_PX;
 		return EINA_TRUE;
 	}
 
@@ -99,8 +99,8 @@ EAPI Eina_Bool esvg_length_string_from(Esvg_Length *length, const char *attr_val
 	{
 		if (endptr[0] == '%')
 		{
-			length->value = val;
-			length->unit = ESVG_UNIT_LENGTH_PERCENT;
+			thiz->value = val;
+			thiz->unit = ESVG_UNIT_LENGTH_PERCENT;
 		}
 	}
 	else if (endptr[2] == '\0')
@@ -109,49 +109,50 @@ EAPI Eina_Bool esvg_length_string_from(Esvg_Length *length, const char *attr_val
 		{
 			if (endptr[1] == 'm')
 			{
-				length->value = val;
-				length->unit = ESVG_UNIT_LENGTH_EM;
+				thiz->value = val;
+				thiz->unit = ESVG_UNIT_LENGTH_EM;
 			}
 			else if (endptr[1] == 'x')
 			{
-				length->value = val;
-				length->unit = ESVG_UNIT_LENGTH_EX;
+				thiz->value = val;
+				thiz->unit = ESVG_UNIT_LENGTH_EX;
 			}
 		}
 		else if (endptr[0] == 'p')
 		{
 			if (endptr[1] == 'c')
 			{
-				length->value = val;
-				length->unit = ESVG_UNIT_LENGTH_PC;
+				thiz->value = val;
+				thiz->unit = ESVG_UNIT_LENGTH_PC;
 			}
 			else if (endptr[1] == 't')
 			{
-				length->value = val;
-				length->unit = ESVG_UNIT_LENGTH_PT;
+				thiz->value = val;
+				thiz->unit = ESVG_UNIT_LENGTH_PT;
 			}
 			else if (endptr[1] == 'x')
 			{
-				length->value = val;
-				length->unit = ESVG_UNIT_LENGTH_PX;
+				thiz->value = val;
+				thiz->unit = ESVG_UNIT_LENGTH_PX;
 			}
 		}
 		else if ((endptr[0] == 'c') && (endptr[1] == 'm'))
 		{
-			length->value = val;
-			length->unit = ESVG_UNIT_LENGTH_CM;
+			thiz->value = val;
+			thiz->unit = ESVG_UNIT_LENGTH_CM;
 		}
 		else if ((endptr[0] == 'm') && (endptr[1] == 'm'))
 		{
-			length->value = val;
-			length->unit = ESVG_UNIT_LENGTH_MM;
+			thiz->value = val;
+			thiz->unit = ESVG_UNIT_LENGTH_MM;
 		}
 		else if ((endptr[0] == 'i') && (endptr[1] == 'n'))
 		{
-			length->value = val;
-			length->unit = ESVG_UNIT_LENGTH_IN;
+			thiz->value = val;
+			thiz->unit = ESVG_UNIT_LENGTH_IN;
 		}
 	}
+
 	return EINA_TRUE;
 }
 
@@ -226,5 +227,3 @@ EAPI double esvg_coord_final_get(const Esvg_Length *l, double parent_length, dou
 
 	return ret;
 }
-
-

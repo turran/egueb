@@ -11,9 +11,13 @@ namespace "esvg" : 0 {
 		int "unit";
 	};
 
-	struct "length_animated","SVGAnimatedLength" {
-		SVGLength "base";
-		SVGLength "anim";
+	struct "matrix","SVGMatrix" {
+		double "a";
+		double "b";
+		double "c";
+		double "d";
+		double "e";
+		double "f";
 	};
 
 	struct "viewbox","SVGViewBox" {
@@ -49,9 +53,14 @@ namespace "esvg" : 0 {
 		double "anim";
 	};
 
-	struct "transform_animated","SVGAnimatedTransform" {
-		matrix "base";
-		matrix "anim";
+	struct "length_animated","SVGAnimatedLength" {
+		SVGLength "base";
+		SVGLength "anim";
+	};
+
+	struct "matrix_animated","SVGAnimatedMatrix" {
+		SVGMatrix "base";
+		SVGMatrix "anim";
 	};
 
 	struct "string_animated","SVGAnimatedString" {
@@ -139,7 +148,7 @@ namespace "esvg" : 0 {
 		SVGAnimatedColor "stop-color";
 		SVGAnimatedNumber "stop-opacity";
 		/* other attributes */
-		esvg_animated_transform "transform";
+		SVGMatrixAnimated "transform";
 		ender "topmost";
 		/* event attributes */
 		string "onfocusin";
@@ -173,7 +182,7 @@ namespace "esvg" : 0 {
 		string "href";
 		int "spread_method";
 		int "gradient_units";
-		esvg_animated_transform "gradient_transform";
+		SVGMatrixAnimated "gradient_transform";
 	};
 
 	abstract "animation" : "element" {

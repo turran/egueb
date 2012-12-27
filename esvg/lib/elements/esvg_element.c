@@ -559,7 +559,7 @@ static void _esvg_element_class_get(Edom_Tag *t, const char **class)
 		*class = thiz->class;
 }
 
-static void _esvg_element_transform_set(Edom_Tag *t, const Esvg_Animated_Transform *transform)
+static void _esvg_element_transform_set(Edom_Tag *t, const Esvg_Matrix_Animated *transform)
 {
 	Esvg_Element *thiz;
 	Enesim_Matrix m;
@@ -570,7 +570,7 @@ static void _esvg_element_transform_set(Edom_Tag *t, const Esvg_Animated_Transfo
 		transform, &m, thiz->current_attr_animate, &thiz->current_attr->sets);
 }
 
-static void _esvg_element_transform_get(Edom_Tag *t, Esvg_Animated_Transform *transform)
+static void _esvg_element_transform_get(Edom_Tag *t, Esvg_Matrix_Animated *transform)
 {
 	Esvg_Element *thiz;
 
@@ -2228,7 +2228,7 @@ EAPI void esvg_element_class_set(Ender_Element *e, const char *class)
  */
 EAPI void esvg_element_transform_set(Ender_Element *e, const Enesim_Matrix *transform)
 {
-	Esvg_Animated_Transform a;
+	Esvg_Matrix_Animated a;
 
 	if (!transform)
 	{
@@ -2245,7 +2245,7 @@ EAPI void esvg_element_transform_set(Ender_Element *e, const Enesim_Matrix *tran
  */
 EAPI void esvg_element_transform_get(Ender_Element *e, Enesim_Matrix *transform)
 {
-	Esvg_Animated_Transform a;
+	Esvg_Matrix_Animated a;
 	Edom_Tag *t;
 
 	if (!transform) return;

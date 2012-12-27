@@ -284,16 +284,16 @@ void esvg_attribute_paint_merge_rel(const Esvg_Attribute_Paint *rel,
 void esvg_attribute_transform_set(Esvg_Attribute_Transform *a, const Enesim_Matrix *v, const Enesim_Matrix *def);
 void esvg_attribute_transform_unset(Esvg_Attribute_Transform *a, const Enesim_Matrix *def);
 void esvg_attribute_animated_transform_set(Esvg_Attribute_Animated_Transform *aa,
-	const Esvg_Animated_Transform *v,
+	const Esvg_Matrix_Animated *v,
 	const Enesim_Matrix *def,
 	Eina_Bool animate);
 void esvg_attribute_animated_transform_extended_set(Esvg_Attribute_Animated_Transform *aa,
-	const Esvg_Animated_Transform *v,
+	const Esvg_Matrix_Animated *v,
 	const Enesim_Matrix *def,
 	Eina_Bool animate,
 	int *set);
 void esvg_attribute_animated_transform_get(Esvg_Attribute_Animated_Transform *aa,
-	Esvg_Animated_Transform *v);
+	Esvg_Matrix_Animated *v);
 void esvg_attribute_animated_transform_final_get(Esvg_Attribute_Animated_Transform *aa, Enesim_Matrix *m);
 Eina_Bool esvg_attribute_animated_transform_is_set(Esvg_Attribute_Animated_Transform *aa);
 

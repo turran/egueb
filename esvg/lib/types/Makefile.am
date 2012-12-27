@@ -18,6 +18,7 @@ libesvg_types_la_SOURCES = \
 esvg_boolean.c \
 esvg_color.c \
 esvg_length.c \
+esvg_matrix.c \
 esvg_number.c \
 esvg_paint.c \
 esvg_point.c \

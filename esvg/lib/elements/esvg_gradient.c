@@ -507,7 +507,7 @@ static Eina_Bool _esvg_gradient_gradient_units_is_set(Edom_Tag *t)
 	return thiz->units.is_set;
 }
 
-static void _esvg_gradient_gradient_transform_set(Edom_Tag *t, const Esvg_Animated_Transform *transform)
+static void _esvg_gradient_gradient_transform_set(Edom_Tag *t, const Esvg_Matrix_Animated *transform)
 {
 	Esvg_Gradient *thiz;
 	Enesim_Matrix m;
@@ -520,7 +520,7 @@ static void _esvg_gradient_gradient_transform_set(Edom_Tag *t, const Esvg_Animat
 		transform, &m, animating);
 }
 
-static void _esvg_gradient_gradient_transform_get(Edom_Tag *t, Esvg_Animated_Transform *transform)
+static void _esvg_gradient_gradient_transform_get(Edom_Tag *t, Esvg_Matrix_Animated *transform)
 {
 	Esvg_Gradient *thiz;
 
@@ -680,7 +680,7 @@ EAPI Eina_Bool esvg_gradient_units_is_set(Ender_Element *e)
 
 EAPI void esvg_gradient_transform_set(Ender_Element *e, const Enesim_Matrix *transform)
 {
-	Esvg_Animated_Transform a;
+	Esvg_Matrix_Animated a;
 
 	if (!transform)
 	{

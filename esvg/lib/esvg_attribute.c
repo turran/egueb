@@ -430,7 +430,7 @@ void esvg_attribute_transform_unset(Esvg_Attribute_Transform *a,
 }
 
 void esvg_attribute_animated_transform_set(Esvg_Attribute_Animated_Transform *aa,
-	const Esvg_Animated_Transform *v,
+	const Esvg_Matrix_Animated *v,
 	const Enesim_Matrix *def,
 	Eina_Bool animate)
 {
@@ -448,7 +448,7 @@ void esvg_attribute_animated_transform_set(Esvg_Attribute_Animated_Transform *aa
 }
 
 void esvg_attribute_animated_transform_extended_set(Esvg_Attribute_Animated_Transform *aa,
-	const Esvg_Animated_Transform *v,
+	const Esvg_Matrix_Animated *v,
 	const Enesim_Matrix *def,
 	Eina_Bool animate,
 	int *set)
@@ -466,7 +466,7 @@ void esvg_attribute_animated_transform_extended_set(Esvg_Attribute_Animated_Tran
 }
 
 void esvg_attribute_animated_transform_get(Esvg_Attribute_Animated_Transform *aa,
-	Esvg_Animated_Transform *v)
+	Esvg_Matrix_Animated *v)
 {
 	if (!v) return;
 
