@@ -47,7 +47,7 @@ typedef struct _Esvg_Attribute_Transform
 
 typedef struct _Esvg_Attribute_Number
 {
-	double v;
+	Esvg_Number v;
 	Eina_Bool is_set;
 } Esvg_Attribute_Number;
 
@@ -319,19 +319,20 @@ void esvg_attribute_animated_paint_get(Esvg_Attribute_Animated_Paint *aa,
 	Esvg_Paint_Animated *v);
 
 
-void esvg_attribute_number_unset(Esvg_Attribute_Number *a, double def);
-void esvg_attribute_number_set(Esvg_Attribute_Number *a, double v);
+void esvg_attribute_number_unset(Esvg_Attribute_Number *a, const Esvg_Number *v);
+void esvg_attribute_number_set(Esvg_Attribute_Number *a, const Esvg_Number *v,
+	const Esvg_Number *def);
 void esvg_attribute_animated_number_set(Esvg_Attribute_Animated_Number *aa,
-	const Esvg_Animated_Number *v,
-	double def,
+	const Esvg_Number_Animated *v,
+	const Esvg_Number *def,
 	Eina_Bool animate);
 void esvg_attribute_animated_number_extended_set(Esvg_Attribute_Animated_Number *aa,
-	const Esvg_Animated_Number *v,
-	double def,
+	const Esvg_Number_Animated *v,
+	const Esvg_Number *def,
 	Eina_Bool animate,
 	int *set);
 void esvg_attribute_animated_number_get(Esvg_Attribute_Animated_Number *aa,
-	Esvg_Animated_Number *v);
+	Esvg_Number_Animated *v);
 
 
 #include "esvg_private_attribute_display.h"

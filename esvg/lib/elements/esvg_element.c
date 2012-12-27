@@ -359,19 +359,20 @@ static void _esvg_element_attribute_presentation_setup(Esvg_Element_Attributes *
 	Esvg_Length one = { ESVG_UNIT_LENGTH_PX, 1 };
 	Esvg_Paint color = { ESVG_PAINT_COLOR, { black } };
 	Esvg_Paint none = { ESVG_PAINT_NONE };
+	Esvg_Number onen = { 1.0 };
 
 	/* now the default values */
 	esvg_attribute_color_unset(&a->color.base, &black);
 	esvg_attribute_length_unset(&a->stroke_width.base, &one);
-	esvg_attribute_number_unset(&a->stroke_opacity.base, 1.0);
-	esvg_attribute_number_unset(&a->fill_opacity.base, 1.0);
-	esvg_attribute_number_unset(&a->opacity.base, 1.0);
+	esvg_attribute_number_unset(&a->stroke_opacity.base, &onen);
+	esvg_attribute_number_unset(&a->fill_opacity.base, &onen);
+	esvg_attribute_number_unset(&a->opacity.base, &onen);
 	esvg_attribute_enum_unset(&a->fill_rule.base, ESVG_NON_ZERO);
 	esvg_attribute_paint_unset(&a->fill.base, &color);
 	esvg_attribute_paint_unset(&a->stroke.base, &none);
 	esvg_attribute_enum_unset(&a->stroke_line_cap.base, ESVG_LINE_CAP_BUTT);
 	esvg_attribute_enum_unset(&a->stroke_line_join.base, ESVG_LINE_JOIN_MITER);
-	esvg_attribute_number_unset(&a->stop_opacity.base, 1.0);
+	esvg_attribute_number_unset(&a->stop_opacity.base, &onen);
 	esvg_attribute_enum_unset(&a->visibility.base, ESVG_VISIBILITY_VISIBLE);
 	esvg_attribute_enum_unset(&a->display.base, ESVG_DISPLAY_BLOCK);
 }
@@ -639,16 +640,17 @@ static void _esvg_element_clip_path_unset(Edom_Tag *t)
 	thiz = _esvg_element_get(t);
 }
 
-static void _esvg_element_opacity_set(Edom_Tag *t, Esvg_Animated_Number *opacity)
+static void _esvg_element_opacity_set(Edom_Tag *t, Esvg_Number_Animated *opacity)
 {
 	Esvg_Element *thiz;
+	Esvg_Number def = { 1.0 };
 
 	thiz = _esvg_element_get(t);
 	esvg_attribute_animated_number_extended_set(&thiz->current_attr->opacity,
-		opacity, 1.0, thiz->current_attr_animate, &thiz->current_attr->sets);
+		opacity, &def, thiz->current_attr_animate, &thiz->current_attr->sets);
 }
 
-static void _esvg_element_opacity_get(Edom_Tag *t, Esvg_Animated_Number *opacity)
+static void _esvg_element_opacity_get(Edom_Tag *t, Esvg_Number_Animated *opacity)
 {
 	Esvg_Element *thiz;
 
@@ -717,16 +719,17 @@ static void _esvg_element_fill_unset(Edom_Tag *t)
 	thiz = _esvg_element_get(t);
 }
 
-static void _esvg_element_fill_opacity_set(Edom_Tag *t, Esvg_Animated_Number *fill_opacity)
+static void _esvg_element_fill_opacity_set(Edom_Tag *t, Esvg_Number_Animated *fill_opacity)
 {
 	Esvg_Element *thiz;
+	Esvg_Number def = { 1.0 };
 
 	thiz = _esvg_element_get(t);
 	esvg_attribute_animated_number_extended_set(&thiz->current_attr->fill_opacity,
-		fill_opacity, 1.0, thiz->current_attr_animate, &thiz->current_attr->sets);
+		fill_opacity, &def, thiz->current_attr_animate, &thiz->current_attr->sets);
 }
 
-static void _esvg_element_fill_opacity_get(Edom_Tag *t, Esvg_Animated_Number *fill_opacity)
+static void _esvg_element_fill_opacity_get(Edom_Tag *t, Esvg_Number_Animated *fill_opacity)
 {
 	Esvg_Element *thiz;
 
@@ -788,16 +791,17 @@ static void _esvg_element_stroke_width_get(Edom_Tag *t, Esvg_Length_Animated *st
 		stroke_width);
 }
 
-static void _esvg_element_stroke_opacity_set(Edom_Tag *t, Esvg_Animated_Number *stroke_opacity)
+static void _esvg_element_stroke_opacity_set(Edom_Tag *t, Esvg_Number_Animated *stroke_opacity)
 {
 	Esvg_Element *thiz;
+	Esvg_Number def = { 1.0 };
 
 	thiz = _esvg_element_get(t);
 	esvg_attribute_animated_number_extended_set(&thiz->current_attr->stroke_opacity,
-		stroke_opacity, 1.0, thiz->current_attr_animate, &thiz->current_attr->sets);
+		stroke_opacity, &def, thiz->current_attr_animate, &thiz->current_attr->sets);
 }
 
-static void _esvg_element_stroke_opacity_get(Edom_Tag *t, Esvg_Animated_Number *stroke_opacity)
+static void _esvg_element_stroke_opacity_get(Edom_Tag *t, Esvg_Number_Animated *stroke_opacity)
 {
 	Esvg_Element *thiz;
 
@@ -840,16 +844,17 @@ static void _esvg_element_stop_color_get(Edom_Tag *t, Esvg_Color_Animated *stop_
 		stop_color);
 }
 
-static void _esvg_element_stop_opacity_set(Edom_Tag *t, Esvg_Animated_Number *stop_opacity)
+static void _esvg_element_stop_opacity_set(Edom_Tag *t, Esvg_Number_Animated *stop_opacity)
 {
 	Esvg_Element *thiz;
+	Esvg_Number def = { 1.0 };
 
 	thiz = _esvg_element_get(t);
 	esvg_attribute_animated_number_extended_set(&thiz->current_attr->stop_opacity,
-		stop_opacity, 1.0, thiz->current_attr_animate, &thiz->current_attr->sets);
+		stop_opacity, &def, thiz->current_attr_animate, &thiz->current_attr->sets);
 }
 
-static void _esvg_element_stop_opacity_get(Edom_Tag *t, Esvg_Animated_Number *stop_opacity)
+static void _esvg_element_stop_opacity_get(Edom_Tag *t, Esvg_Number_Animated *stop_opacity)
 {
 	Esvg_Element *thiz;
 
@@ -1280,8 +1285,9 @@ static Eina_Bool _esvg_element_attribute_set(Edom_Tag *t, const char *key, const
 	}
 	else if (strcmp(key, "opacity") == 0)
 	{
-		double opacity = esvg_number_string_from(value, 1.0);
-		esvg_element_opacity_set(thiz->e, opacity);
+		Esvg_Number opacity;
+		esvg_number_string_from(&opacity, value, 1.0);
+		esvg_element_opacity_set(thiz->e, &opacity);
 	}
 	else if (strcmp(key, "color") == 0)
 	{
@@ -1306,8 +1312,9 @@ static Eina_Bool _esvg_element_attribute_set(Edom_Tag *t, const char *key, const
 	}
 	else if (strcmp(key, "fill-opacity") == 0)
 	{
-		double fill_opacity = esvg_number_string_from(value, 1.0);
-		esvg_element_fill_opacity_set(thiz->e, fill_opacity);
+		Esvg_Number fill_opacity;
+		esvg_number_string_from(&fill_opacity, value, 1.0);
+		esvg_element_fill_opacity_set(thiz->e, &fill_opacity);
 	}
 	else if (strcmp(key, "stroke") == 0)
 	{
@@ -1325,8 +1332,10 @@ static Eina_Bool _esvg_element_attribute_set(Edom_Tag *t, const char *key, const
 	}
 	else if (strcmp(key, "stroke-opacity") == 0)
 	{
-		double stroke_opacity = esvg_number_string_from(value, 1.0);
-		esvg_element_stroke_opacity_set(thiz->e, stroke_opacity);
+		Esvg_Number stroke_opacity;
+
+		esvg_number_string_from(&stroke_opacity, value, 1.0);
+		esvg_element_stroke_opacity_set(thiz->e, &stroke_opacity);
 	}
 	else if (strcmp(key, "stroke-linecap") == 0)
 	{
@@ -1351,8 +1360,10 @@ static Eina_Bool _esvg_element_attribute_set(Edom_Tag *t, const char *key, const
 	}
 	else if (strcmp(key, "stop-opacity") == 0)
 	{
-		double stop_opacity = esvg_number_string_from(value, 1.0);
-		esvg_element_stop_opacity_set(thiz->e, stop_opacity);
+		Esvg_Number stop_opacity;
+
+		esvg_number_string_from(&stop_opacity, value, 1.0);
+		esvg_element_stop_opacity_set(thiz->e, &stop_opacity);
 	}
 	else if (strcmp(key, "visibility") == 0)
 	{
@@ -2016,12 +2027,19 @@ void esvg_element_property_clip_path_set(Ender_Element *e, Ender_Property *p, co
 	}
 }
 
-void esvg_element_property_number_set(Ender_Element *e, Ender_Property *p, double v)
+void esvg_element_property_number_set(Ender_Element *e, Ender_Property *p, const Esvg_Number *v)
 {
-	Esvg_Animated_Number a;
+	if (!v)
+	{
+		ender_element_property_value_set(e, p, NULL, NULL);
+	}
+	else
+	{
+		Esvg_Number_Animated a;
 
-	a.base = v;
-	ender_element_property_value_set(e, p, &a, NULL);
+		a.base = *v;
+		ender_element_property_value_set(e, p, &a, NULL);
+	}
 }
 
 void esvg_element_property_enum_set(Ender_Element *e, Ender_Property *p, int v)
@@ -2283,28 +2301,25 @@ EAPI void esvg_element_clip_path_unset(Ender_Element *e)
  * To be documented
  * FIXME: To be fixed
  */
-EAPI void esvg_element_opacity_set(Ender_Element *e, double opacity)
+EAPI void esvg_element_opacity_set(Ender_Element *e, const Esvg_Number *v)
 {
-	Esvg_Animated_Number a;
-
-	a.base = opacity;
-	ender_element_property_value_set(e, ESVG_ELEMENT_OPACITY, &a, NULL);
+	esvg_element_property_number_set(e, ESVG_ELEMENT_OPACITY, v);
 }
 
 /**
  * To be documented
  * FIXME: To be fixed
  */
-EAPI void esvg_element_opacity_get(Ender_Element *e, double *opacity)
+EAPI void esvg_element_opacity_get(Ender_Element *e, Esvg_Number *v)
 {
-	Esvg_Animated_Number a;
+	Esvg_Number_Animated a;
 	Edom_Tag *t;
 
-	if (!opacity) return;
+	if (!v) return;
 
 	t = ender_element_object_get(e);
 	_esvg_element_opacity_get(t, &a);
-	*opacity = a.base;
+	*v = a.base;
 }
 
 
@@ -2369,16 +2384,16 @@ EAPI void esvg_element_fill_unset(Ender_Element *e)
  * To be documented
  * FIXME: To be fixed
  */
-EAPI void esvg_element_fill_opacity_set(Ender_Element *e, double fill_opacity)
+EAPI void esvg_element_fill_opacity_set(Ender_Element *e, const Esvg_Number *v)
 {
-	esvg_element_property_number_set(e, ESVG_ELEMENT_FILL_OPACITY, fill_opacity);
+	esvg_element_property_number_set(e, ESVG_ELEMENT_FILL_OPACITY, v);
 }
 
 /**
  * To be documented
  * FIXME: To be fixed
  */
-EAPI void esvg_element_fill_opacity_get(Ender_Element *e, double *fill_opacity)
+EAPI void esvg_element_fill_opacity_get(Ender_Element *e, Esvg_Number *v)
 {
 }
 
@@ -2445,25 +2460,25 @@ EAPI void esvg_element_stroke_width_unset(Ender_Element *e)
  * To be documented
  * FIXME: To be fixed
  */
-EAPI void esvg_element_stroke_opacity_set(Ender_Element *e, double stroke_opacity)
+EAPI void esvg_element_stroke_opacity_set(Ender_Element *e, const Esvg_Number *v)
 {
-	esvg_element_property_number_set(e, ESVG_ELEMENT_STROKE_OPACITY, stroke_opacity);
+	esvg_element_property_number_set(e, ESVG_ELEMENT_STROKE_OPACITY, v);
 }
 
 /**
  * To be documented
  * FIXME: To be fixed
  */
-EAPI void esvg_element_stroke_opacity_get(Ender_Element *e, double *stroke_opacity)
+EAPI void esvg_element_stroke_opacity_get(Ender_Element *e, Esvg_Number *v)
 {
-	Esvg_Animated_Number a;
+	Esvg_Number_Animated a;
 	Edom_Tag *t;
 
-	if (!stroke_opacity) return;
+	if (!v) return;
 
 	t = ender_element_object_get(e);
 	_esvg_element_stroke_opacity_get(t, &a);
-	*stroke_opacity = a.base;
+	*v = a.base;
 }
 
 
@@ -2538,19 +2553,16 @@ EAPI void esvg_element_display_set(Ender_Element *e, Esvg_Display display)
  * To be documented
  * FIXME: To be fixed
  */
-EAPI void esvg_element_stop_opacity_set(Ender_Element *e, double stop_opacity)
+EAPI void esvg_element_stop_opacity_set(Ender_Element *e, const Esvg_Number *v)
 {
-	Esvg_Animated_Number a;
-
-	a.base = stop_opacity;
-	ender_element_property_value_set(e, ESVG_ELEMENT_STOP_OPACITY, &a, NULL);
+	esvg_element_property_number_set(e, ESVG_ELEMENT_STOP_OPACITY, v);
 }
 
 /**
  * To be documented
  * FIXME: To be fixed
  */
-EAPI void esvg_element_stop_opacity_get(Ender_Element *e, double *stop_opacity)
+EAPI void esvg_element_stop_opacity_get(Ender_Element *e, Esvg_Number *v)
 {
 }
 

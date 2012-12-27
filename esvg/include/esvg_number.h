@@ -18,13 +18,18 @@
 #ifndef _ESVG_NUMBER_H
 #define _ESVG_NUMBER_H
 
-typedef double Esvg_Number;
+typedef struct _Esvg_Number
+{
+	double value;
+} Esvg_Number;
 
-typedef struct _Esvg_Animated_Number
+typedef struct _Esvg_Number_Animated
 {
 	Esvg_Number base;
 	Esvg_Number anim;
-} Esvg_Animated_Number;
+} Esvg_Number_Animated;
+
+EAPI Eina_Bool esvg_number_string_from(Esvg_Number *v, const char *attr_val, double default_nbr);
 
 #endif
 

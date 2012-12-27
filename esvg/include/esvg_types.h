@@ -462,7 +462,6 @@ EAPI const char * esvg_type_string_to(Esvg_Type type);
 
 EAPI Eina_Bool esvg_string_is_equal(const char *s1, const char *s2);
 
-EAPI double esvg_number_string_from(const char *attr_val, double default_nbr);
 /* FIXME rename this: remove the _parser_ */
 EAPI Eina_Bool esvg_parser_gradient_units_string_from(Esvg_Gradient_Units *gu, const char *value);
 EAPI Eina_Bool esvg_parser_fill_rule_get(Esvg_Fill_Rule *rule, const char *attr);

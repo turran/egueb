@@ -302,10 +302,12 @@ static void _esvg_animate_base_values_cb(const char *v, void *user_data)
 static void _esvg_animate_base_time_cb(const char *v, void *user_data)
 {
 	Esvg_Animate_Base_Times_Data *data = user_data;
+	Esvg_Number n;
 	double percent;
 	int64_t *t;
 
-	percent = esvg_number_string_from(v, 1.0);
+	esvg_number_string_from(&n, v, 1.0);
+	percent = n.value;
 	if (percent < 0.0)
 		percent = 0;
 	else if (percent > 1.0)

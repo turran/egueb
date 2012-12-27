@@ -141,13 +141,14 @@ void esvg_attribute_presentation_setup(Esvg_Attribute_Presentation *thiz)
 {
 	Esvg_Color black = { 0, 0, 0 };
 	Esvg_Length one = { ESVG_UNIT_LENGTH_PX, 1 };
+	Esvg_Number onen = { 1.0 };
 
 	/* now the default values */
 	thiz->color.v = black;
 	thiz->stroke_width.v = ESVG_LENGTH_1;
-	thiz->stroke_opacity.v = 1.0;
-	thiz->fill_opacity.v = 1.0;
-	thiz->opacity.v = 1.0;
+	thiz->stroke_opacity.v = onen;
+	thiz->fill_opacity.v = onen;
+	thiz->opacity.v = onen;
 	thiz->fill_rule.v = ESVG_NON_ZERO;
 	thiz->fill.v.type = ESVG_PAINT_COLOR;
 	thiz->fill.v.value.color = black;
@@ -155,7 +156,7 @@ void esvg_attribute_presentation_setup(Esvg_Attribute_Presentation *thiz)
 	thiz->stroke_width.v = one;
 	thiz->stroke_line_cap.v = ESVG_LINE_CAP_BUTT;
 	thiz->stroke_line_join.v = ESVG_LINE_JOIN_MITER;
-	thiz->stop_opacity.v = 1.0;
+	thiz->stop_opacity.v = onen;
 	thiz->visibility.v = ESVG_VISIBILITY_VISIBLE;
 	thiz->clip_path.v.type = ESVG_CLIP_PATH_NONE;
 }

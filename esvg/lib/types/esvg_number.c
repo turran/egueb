@@ -70,4 +70,31 @@ void esvg_number_shutdown(void)
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/
+EAPI Eina_Bool esvg_number_string_from(Esvg_Number *v, const char *attr_val, double default_nbr)
+{
+	char *endptr;
+	double val = default_nbr;
+
+	v->value = default_nbr;
+
+	if (!attr_val || !*attr_val)
+		return EINA_FALSE;
+
+	val = eina_strtod(attr_val, &endptr);
+	if (errno == ERANGE)
+		return EINA_FALSE;
+	if ((val == 0) && (attr_val == endptr))
+		return EINA_FALSE;
+
+	/* else, conversion has been done */
+	if ((endptr == NULL) || (*endptr == '\0'))
+	{
+		v->value = val;
+		return EINA_TRUE;
+	}
+
+	ERR("Number %s is invalid", attr_val);
+	return EINA_FALSE;
+}
+
 

@@ -688,8 +688,9 @@ static Eina_Bool _esvg_svg_attribute_set(Ender_Element *e, const char *key, cons
 {
 	if (strcmp(key, "version") == 0)
 	{
-		double version = esvg_number_string_from(value, 0.0);
-		esvg_svg_version_set(e, version);
+		Esvg_Number n;
+		esvg_number_string_from(&n, value, 0.0);
+		esvg_svg_version_set(e, n.value);
 	}
 	else if (strcmp(key, "x") == 0)
 	{

@@ -805,30 +805,6 @@ void esvg_type_shutdown(void)
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/
-EAPI double esvg_number_string_from(const char *attr_val, double default_nbr)
-{
-	char *endptr;
-	double val = default_nbr;
-
-	if (!attr_val || !*attr_val)
-		return val;
-
-	val = eina_strtod(attr_val, &endptr);
-	if (errno == ERANGE)
-		return val;
-	if ((val == 0) && (attr_val == endptr))
-		return val;
-
-	/* else, conversion has been done */
-	if ((endptr == NULL) || (*endptr == '\0'))
-	{
-		return val;
-	}
-
-	ERR("Number %s is invalid", attr_val);
-	return default_nbr;
-}
-
 /*
  * [ <absoluteURI> | <relativeURI> ] [ "#" <elementID> ]
  */

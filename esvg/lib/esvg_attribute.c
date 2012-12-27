@@ -31,37 +31,37 @@
  *----------------------------------------------------------------------------*/
 static void * _esvg_animate_number_new(void)
 {
-	double *v;
+	Esvg_Number *v;
 
-	v = calloc(1, sizeof(double));
+	v = calloc(1, sizeof(Esvg_Number));
 	return v;
 }
 
 static Eina_Bool _esvg_animate_number_get(const char *attr, void **value)
 {
-	double *v = *value;
+	Esvg_Number *v = *value;
 
-	*v = esvg_number_string_from(attr, 1.0);
+	esvg_number_string_from(v, attr, 1.0);
 	return EINA_TRUE;
 }
 
 static void * _esvg_animate_number_destination_new(void)
 {
-	Esvg_Animated_Number *d;
-	d = calloc(1, sizeof(Esvg_Animated_Number));
+	Esvg_Number_Animated *d;
+	d = calloc(1, sizeof(Esvg_Number_Animated));
 	return d;
 }
 
 static void _esvg_animate_number_destination_free(void *destination, Eina_Bool deep)
 {
-	Esvg_Animated_Number *d = destination;
+	Esvg_Number_Animated *d = destination;
 	free(d);
 }
 
 static void _esvg_animate_number_destination_value_to(void *destination, void **value)
 {
-	Esvg_Animated_Number *d = destination;
-	double *v = *value;
+	Esvg_Number_Animated *d = destination;
+	Esvg_Number *v = *value;
 
 	*v = d->base;
 }
@@ -71,12 +71,12 @@ static void _esvg_animate_number_interpolate(void *a, void *b, double m,
 {
 	Esvg_Number *va = a;
 	Esvg_Number *vb = b;
-	Esvg_Animated_Number *vadd = add;
-	Esvg_Animated_Number *r = res;
+	Esvg_Number_Animated *vadd = add;
+	Esvg_Number_Animated *r = res;
 
-	etch_interpolate_double(*va, *vb, m, &r->base);
+	etch_interpolate_double(va->value, vb->value, m, &r->base.value);
 	if (vadd)
-		r->base += vadd->anim;
+		r->base.value += vadd->anim.value;
 }
 
 /*----------------------------------------------------------------------------*
@@ -913,8 +913,8 @@ void esvg_attribute_number_merge_rel(const Esvg_Attribute_Number *rel,
 
 /* TODO pass the possible range values */
 void esvg_attribute_animated_number_set(Esvg_Attribute_Animated_Number *aa,
-	const Esvg_Animated_Number *v,
-	double def,
+	const Esvg_Number_Animated *v,
+	const Esvg_Number *def,
 	Eina_Bool animate)
 {
 	Esvg_Attribute_Number *a;
@@ -925,14 +925,14 @@ void esvg_attribute_animated_number_set(Esvg_Attribute_Animated_Number *aa,
 		a = &aa->base;
 	/* get the value to set */
 	if (v)
-		esvg_attribute_number_set(a, v->base);
+		esvg_attribute_number_set(a, &v->base, def);
 	else
 		esvg_attribute_number_unset(a, def);
 }
 
 void esvg_attribute_animated_number_extended_set(Esvg_Attribute_Animated_Number *aa,
-	const Esvg_Animated_Number *v,
-	double def,
+	const Esvg_Number_Animated *v,
+	const Esvg_Number *def,
 	Eina_Bool animate,
 	int *set)
 {
@@ -949,7 +949,7 @@ void esvg_attribute_animated_number_extended_set(Esvg_Attribute_Animated_Number 
 }
 
 void esvg_attribute_animated_number_get(Esvg_Attribute_Animated_Number *aa,
-	Esvg_Animated_Number *v)
+	Esvg_Number_Animated *v)
 {
 	if (!v) return;
 
@@ -960,16 +960,24 @@ void esvg_attribute_animated_number_get(Esvg_Attribute_Animated_Number *aa,
 		v->anim = v->base;
 }
 
-void esvg_attribute_number_unset(Esvg_Attribute_Number *a, double def)
+void esvg_attribute_number_unset(Esvg_Attribute_Number *a, const Esvg_Number *def)
 {
-	a->v = def;
+	a->v = *def;
 	a->is_set = EINA_FALSE;
 }
 
-void esvg_attribute_number_set(Esvg_Attribute_Number *a, double v)
+void esvg_attribute_number_set(Esvg_Attribute_Number *a, const Esvg_Number *v,
+		const Esvg_Number *def)
 {
-	a->v = v;
-	a->is_set = EINA_TRUE;
+	if (!v)
+	{
+		esvg_attribute_number_unset(a, def);
+	}
+	else
+	{
+		a->v = *v;
+		a->is_set = EINA_TRUE;
+	}
 }
 
 

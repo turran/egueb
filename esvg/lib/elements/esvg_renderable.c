@@ -178,7 +178,7 @@ static void _esvg_renderable_context_set(Edom_Tag *t,
 	thiz = _esvg_renderable_get(t);
 	ctx = esvg_element_context_get(t);
 
-	opacity = attr->opacity.v * 255;
+	opacity = attr->opacity.v.value * 255;
 	enesim_color_components_from(&rctx->color,
 			opacity, 0xff, 0xff, 0xff);
 
@@ -186,7 +186,7 @@ static void _esvg_renderable_context_set(Edom_Tag *t,
 	_esvg_renderable_paint_set(t, &rctx->draw_mode, &rctx->fill_color,
 			&rctx->fill_renderer,
 			ENESIM_SHAPE_DRAW_MODE_FILL,
-			attr->fill_opacity.v,
+			attr->fill_opacity.v.value,
 			&attr->color.v,
 			&thiz->fill_reference,
 			&attr->fill.v,
@@ -203,7 +203,7 @@ static void _esvg_renderable_context_set(Edom_Tag *t,
 	_esvg_renderable_paint_set(t, &rctx->draw_mode, &rctx->stroke_color,
 			&rctx->stroke_renderer,
 			ENESIM_SHAPE_DRAW_MODE_STROKE,
-			attr->stroke_opacity.v,
+			attr->stroke_opacity.v.value,
 			&attr->color.v,
 			&thiz->stroke_reference,
 			&attr->stroke.v,
