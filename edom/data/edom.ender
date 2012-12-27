@@ -11,7 +11,7 @@ namespace "edom" : 0 {
 	abstract "tag" {
 		object "parent";
 		object "topmost";
-		[object] "child";
+		[tag] "child";
 		edom_string "cdata";
 		edom_string "text";
 
