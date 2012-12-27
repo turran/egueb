@@ -11,6 +11,7 @@ esvg_animate.h \
 esvg_animate_base.h \
 esvg_animate_transform.h \
 esvg_animation.h \
+esvg_boolean.h \
 esvg_circle.h \
 esvg_clip_path.h \
 esvg_color.h \
@@ -25,6 +26,7 @@ esvg_length.h \
 esvg_line.h \
 esvg_linear_gradient.h \
 esvg_main.h \
+esvg_number.h \
 esvg_paint.h \
 esvg_paint_server.h \
 esvg_parser.h \

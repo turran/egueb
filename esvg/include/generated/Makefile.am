@@ -5,14 +5,13 @@ esvg_generated_a.c \
 esvg_generated_animate.c \
 esvg_generated_animate_base.c \
 esvg_generated_animate_transform.c \
-esvg_generated_animated_bool.c \
 esvg_generated_animated_clip_path.c \
 esvg_generated_animated_display.c \
-esvg_generated_animated_number.c \
 esvg_generated_animated_string.c \
 esvg_generated_animated_transform.c \
 esvg_generated_animated_visibility.c \
 esvg_generated_animation.c \
+esvg_generated_boolean_animated.c \
 esvg_generated_color.c \
 esvg_generated_color_animated.c \
 esvg_generated_circle.c \
@@ -30,6 +29,8 @@ esvg_generated_length.c \
 esvg_generated_length_animated.c \
 esvg_generated_line.c \
 esvg_generated_linear_gradient.c \
+esvg_generated_number.c \
+esvg_generated_number_animated.c \
 esvg_generated_paint.c \
 esvg_generated_paint_animated.c \
 esvg_generated_point.c \

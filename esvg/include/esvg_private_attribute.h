@@ -182,16 +182,16 @@ void esvg_attribute_color_merge_rel(const Esvg_Attribute_Color *rel,
 		const Esvg_Attribute_Color *v,
 		Esvg_Attribute_Color *d);
 void esvg_attribute_animated_color_set(Esvg_Attribute_Animated_Color *aa,
-	const Esvg_Animated_Color *v,
+	const Esvg_Color_Animated *v,
 	const Esvg_Color *def,
 	Eina_Bool animate);
 void esvg_attribute_animated_color_extended_set(Esvg_Attribute_Animated_Color *aa,
-	const Esvg_Animated_Color *v,
+	const Esvg_Color_Animated *v,
 	const Esvg_Color *def,
 	Eina_Bool animate,
 	int *set);
 void esvg_attribute_animated_color_get(Esvg_Attribute_Animated_Color *aa,
-	Esvg_Animated_Color *v);
+	Esvg_Color_Animated *v);
 
 
 void esvg_attribute_animated_string_merge_rel(const Esvg_Attribute_Animated_String *rel,
@@ -251,16 +251,16 @@ void esvg_attribute_bool_merge_rel(const Esvg_Attribute_Bool *rel,
 		const Esvg_Attribute_Bool *v,
 		Esvg_Attribute_Bool *d);
 void esvg_attribute_animated_bool_set(Esvg_Attribute_Animated_Bool *aa,
-	const Esvg_Animated_Bool *v,
+	const Esvg_Boolean_Animated *v,
 	Eina_Bool def,
 	Eina_Bool animate);
 void esvg_attribute_animated_bool_extended_set(Esvg_Attribute_Animated_Bool *aa,
-	const Esvg_Animated_Bool *v,
+	const Esvg_Boolean_Animated *v,
 	Eina_Bool def,
 	Eina_Bool animate,
 	int *set);
 void esvg_attribute_animated_bool_get(Esvg_Attribute_Animated_Bool *aa,
-	Esvg_Animated_Bool *v);
+	Esvg_Boolean_Animated *v);
 void esvg_attribute_bool_unset(Esvg_Attribute_Bool *a, Eina_Bool def);
 void esvg_attribute_bool_set(Esvg_Attribute_Bool *a, Eina_Bool v);void esvg_attribute_animated_number_merge_rel(const Esvg_Attribute_Animated_Number *rel,
 		const Esvg_Attribute_Animated_Number *v,

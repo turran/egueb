@@ -67,6 +67,10 @@ static void _register_enders(void)
 	ender_loader_load("edom");
 	/* first the types */
 	esvg_length_init();
+	esvg_color_init();
+	esvg_paint_init();
+	esvg_number_init();
+	esvg_boolean_init();
 	/* now the abstracts */
 	esvg_element_init();
 	esvg_referenceable_init();

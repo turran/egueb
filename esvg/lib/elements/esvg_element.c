@@ -664,7 +664,7 @@ static void _esvg_element_opacity_unset(Edom_Tag *t)
 	thiz = _esvg_element_get(t);
 }
 
-static void _esvg_element_color_set(Edom_Tag *t, const Esvg_Animated_Color *color)
+static void _esvg_element_color_set(Edom_Tag *t, const Esvg_Color_Animated *color)
 {
 	Esvg_Element *thiz;
 	const Esvg_Color def = { 0, 0, 0};
@@ -681,7 +681,7 @@ static void _esvg_element_color_unset(Edom_Tag *t)
 	thiz = _esvg_element_get(t);
 }
 
-static void _esvg_element_color_get(Edom_Tag *t, Esvg_Animated_Color *color)
+static void _esvg_element_color_get(Edom_Tag *t, Esvg_Color_Animated *color)
 {
 	Esvg_Element *thiz;
 
@@ -820,7 +820,7 @@ static void _esvg_element_stroke_line_join_set(Edom_Tag *t, Esvg_Animated_Enum *
 	thiz = _esvg_element_get(t);
 }
 
-static void _esvg_element_stop_color_set(Edom_Tag *t, Esvg_Animated_Color *stop_color)
+static void _esvg_element_stop_color_set(Edom_Tag *t, Esvg_Color_Animated *stop_color)
 {
 	Esvg_Element *thiz;
 	const Esvg_Color def = { 0, 0, 0};
@@ -830,7 +830,7 @@ static void _esvg_element_stop_color_set(Edom_Tag *t, Esvg_Animated_Color *stop_
 		stop_color, &def, thiz->current_attr_animate);
 }
 
-static void _esvg_element_stop_color_get(Edom_Tag *t, Esvg_Animated_Color *stop_color)
+static void _esvg_element_stop_color_get(Edom_Tag *t, Esvg_Color_Animated *stop_color)
 {
 	Esvg_Element *thiz;
 
@@ -2331,7 +2331,7 @@ EAPI void esvg_element_color_set(Ender_Element *e, const Esvg_Color *color)
  */
 EAPI void esvg_element_color_get(Ender_Element *e, Esvg_Color *color)
 {
-	Esvg_Animated_Color a;
+	Esvg_Color_Animated a;
 	Edom_Tag *t;
 
 	if (!color) return;

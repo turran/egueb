@@ -2,6 +2,10 @@ using "edom" : 0;
 
 namespace "esvg" : 0 {
 	/* basic types */
+	struct "number","SVGNumber" {
+		double "value";
+	};
+
 	struct "length","SVGLength" {
 		double "value";
 		int "unit";
@@ -37,22 +41,22 @@ namespace "esvg" : 0 {
 	/* FIXME remove the clippath */
 
 	/* animated types */
-	struct "animated_number","SVGAnimatedNumber" {
+	struct "number_animated","SVGAnimatedNumber" {
 		double "base";
 		double "anim";
 	};
 
-	struct "animated_transform","SVGAnimatedTransform" {
+	struct "transform_animated","SVGAnimatedTransform" {
 		matrix "base";
 		matrix "anim";
 	};
 
-	struct "animated_string","SVGAnimatedString" {
+	struct "string_animated","SVGAnimatedString" {
 		string "base";
 		string "anim";
 	};
 
-	struct "animated_bool","SVGAnimatedBool" {
+	struct "boolean_animated","SVGAnimatedBoolean" {
 		bool "base";
 		bool "anim";
 	};
@@ -119,18 +123,18 @@ namespace "esvg" : 0 {
 		string "style";
 		/* presentation attributes */
 		esvg_animated_clip_path "clip-path";
-		esvg_animated_number "opacity";
+		SVGAnimatedNumber "opacity";
 		/* once the color is done we can the union paint for filling and stroking */
 		SVGAnimatedColor "color";
 		SVGAnimatedPaint "fill";
 		SVGAnimatedPaint "stroke";
 		SVGAnimatedLength "stroke-width";
-		esvg_animated_number "fill-opacity";
-		esvg_animated_number "stroke-opacity";
+		SVGAnimatedNumber "fill-opacity";
+		SVGAnimatedNumber "stroke-opacity";
 		esvg_animated_visibility "visibility";
 		esvg_animated_display "display";
 		SVGAnimatedColor "stop-color";
-		esvg_animated_number "stop-opacity";
+		SVGAnimatedNumber "stop-opacity";
 		/* other attributes */
 		esvg_animated_transform "transform";
 		ender "topmost";
@@ -307,7 +311,7 @@ namespace "esvg" : 0 {
 	};
 
 	class "a" : "element" {
-		esvg_animated_string "xlink:href";
+		SVGAnimatedString "xlink:href";
 	};
 
 	class "image" : "renderable" {
@@ -315,7 +319,7 @@ namespace "esvg" : 0 {
 		SVGAnimatedLength "y";
 		SVGAnimatedLength "width";
 		SVGAnimatedLength "height";
-		esvg_animated_string "xlink:href";
+		SVGAnimatedString "xlink:href";
 	};
 
 	class "video" : "renderable" {
@@ -323,7 +327,7 @@ namespace "esvg" : 0 {
 		SVGAnimatedLength "y";
 		SVGAnimatedLength "width";
 		SVGAnimatedLength "height";
-		esvg_animated_string "xlink:href";
+		SVGAnimatedString "xlink:href";
 	};
 
 	class "script" : "element" {

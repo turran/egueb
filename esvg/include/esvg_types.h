@@ -21,6 +21,8 @@
 #include "esvg_length.h"
 #include "esvg_color.h"
 #include "esvg_paint.h"
+#include "esvg_number.h"
+#include "esvg_boolean.h"
 
 #define ESVG_CLOCK_SECONDS (1000000000LL)
 #define ESVG_CLOCK_MSECONDS (1000000LL)
@@ -126,14 +128,6 @@ typedef struct _Esvg_Animated_Transform
 	Enesim_Matrix anim;
 } __attribute__((packed)) Esvg_Animated_Transform;
 
-typedef double Esvg_Number;
-
-typedef struct _Esvg_Animated_Number
-{
-	Esvg_Number base;
-	Esvg_Number anim;
-} Esvg_Animated_Number;
-
 typedef struct _Esvg_Animated_String
 {
 	char *base;
@@ -202,12 +196,6 @@ typedef struct _Esvg_Animated_Clip_Path
 	Esvg_Clip_Path base;
 	Esvg_Clip_Path anim;
 } Esvg_Animated_Clip_Path;
-
-typedef struct _Esvg_Animated_Bool
-{
-	Eina_Bool base;
-	Eina_Bool anim;
-} Esvg_Animated_Bool;
 
 typedef enum _Esvg_Path_Command_Type
 {

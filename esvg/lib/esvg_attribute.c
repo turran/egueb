@@ -544,7 +544,7 @@ void esvg_attribute_color_merge_rel(const Esvg_Attribute_Color *rel,
 }
 
 void esvg_attribute_animated_color_set(Esvg_Attribute_Animated_Color *aa,
-	const Esvg_Animated_Color *v,
+	const Esvg_Color_Animated *v,
 	const Esvg_Color *def,
 	Eina_Bool animate)
 {
@@ -563,7 +563,7 @@ void esvg_attribute_animated_color_set(Esvg_Attribute_Animated_Color *aa,
 }
 
 void esvg_attribute_animated_color_extended_set(Esvg_Attribute_Animated_Color *aa,
-	const Esvg_Animated_Color *v,
+	const Esvg_Color_Animated *v,
 	const Esvg_Color *def,
 	Eina_Bool animate,
 	int *set)
@@ -581,7 +581,7 @@ void esvg_attribute_animated_color_extended_set(Esvg_Attribute_Animated_Color *a
 }
 
 void esvg_attribute_animated_color_get(Esvg_Attribute_Animated_Color *aa,
-	Esvg_Animated_Color *v)
+	Esvg_Color_Animated *v)
 {
 	if (!v) return;
 
@@ -798,7 +798,7 @@ void esvg_attribute_bool_merge_rel(const Esvg_Attribute_Bool *rel,
 }
 
 void esvg_attribute_animated_bool_set(Esvg_Attribute_Animated_Bool *aa,
-	const Esvg_Animated_Bool *v,
+	const Esvg_Boolean_Animated *v,
 	Eina_Bool def,
 	Eina_Bool animate)
 {
@@ -816,7 +816,7 @@ void esvg_attribute_animated_bool_set(Esvg_Attribute_Animated_Bool *aa,
 }
 
 void esvg_attribute_animated_bool_extended_set(Esvg_Attribute_Animated_Bool *aa,
-	const Esvg_Animated_Bool *v,
+	const Esvg_Boolean_Animated *v,
 	Eina_Bool def,
 	Eina_Bool animate,
 	int *set)
@@ -834,7 +834,7 @@ void esvg_attribute_animated_bool_extended_set(Esvg_Attribute_Animated_Bool *aa,
 }
 
 void esvg_attribute_animated_bool_get(Esvg_Attribute_Animated_Bool *aa,
-	Esvg_Animated_Bool *v)
+	Esvg_Boolean_Animated *v)
 {
 	if (!v) return;
 
