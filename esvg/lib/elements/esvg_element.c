@@ -335,19 +335,19 @@ static void _esvg_element_attribute_presentation_free(Esvg_Element_Attributes *a
 
 	p = &a->fill.base;
 	/* TODO make this a function */
-	if (p->v.type == ESVG_PAINT_SERVER)
+	if (p->v.type == ESVG_PAINT_TYPE_SERVER)
 	{
-		if (p->v.value.paint_server)
+		if (p->v.uri)
 		{
-			free(p->v.value.paint_server);
+			free(p->v.uri);
 		}
 	}
 	p = &a->stroke.base;
-	if (p->v.type == ESVG_PAINT_SERVER)
+	if (p->v.type == ESVG_PAINT_TYPE_SERVER)
 	{
-		if (p->v.value.paint_server)
+		if (p->v.uri)
 		{
-			free(p->v.value.paint_server);
+			free(p->v.uri);
 		}
 	}
 }
@@ -357,8 +357,8 @@ static void _esvg_element_attribute_presentation_setup(Esvg_Element_Attributes *
 {
 	Esvg_Color black = { 0, 0, 0 };
 	Esvg_Length one = { ESVG_UNIT_LENGTH_PX, 1 };
-	Esvg_Paint color = { ESVG_PAINT_COLOR, { black } };
-	Esvg_Paint none = { ESVG_PAINT_NONE };
+	Esvg_Paint color = { ESVG_PAINT_TYPE_COLOR, black };
+	Esvg_Paint none = { ESVG_PAINT_TYPE_NONE };
 	Esvg_Number onen = { 1.0 };
 
 	/* now the default values */
@@ -696,7 +696,7 @@ static void _esvg_element_fill_set(Edom_Tag *t, const Esvg_Paint_Animated *fill)
 {
 	Esvg_Element *thiz;
 	Esvg_Color black = { 0, 0, 0 };
-	Esvg_Paint def = { ESVG_PAINT_COLOR, { black } };
+	Esvg_Paint def = { ESVG_PAINT_TYPE_COLOR, black };
 
 	thiz = _esvg_element_get(t);
 	esvg_attribute_animated_paint_extended_set(&thiz->current_attr->fill,
@@ -755,7 +755,7 @@ static void _esvg_element_fill_rule_set(Edom_Tag *t, Esvg_Animated_Enum *fill_ru
 static void _esvg_element_stroke_set(Edom_Tag *t, const Esvg_Paint_Animated *stroke)
 {
 	Esvg_Element *thiz;
-	Esvg_Paint def = { ESVG_PAINT_NONE };
+	Esvg_Paint def = { ESVG_PAINT_TYPE_NONE };
 
 	thiz = _esvg_element_get(t);
 	esvg_attribute_animated_paint_extended_set(&thiz->current_attr->stroke,

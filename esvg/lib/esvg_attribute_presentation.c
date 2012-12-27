@@ -29,15 +29,15 @@ static void _paint_dump(Esvg_Paint *p)
 {
 	switch (p->type)
 	{
-		case ESVG_PAINT_CURRENT_COLOR:
+		case ESVG_PAINT_TYPE_CURRENT_COLOR:
 		printf("current color");
 		break;
 
-		case ESVG_PAINT_COLOR:
-		_color_dump(&p->value.color);
+		case ESVG_PAINT_TYPE_COLOR:
+		_color_dump(&p->color);
 		break;
 
-		case ESVG_PAINT_SERVER:
+		case ESVG_PAINT_TYPE_SERVER:
 		printf("paint server");
 		break;
 
@@ -150,9 +150,9 @@ void esvg_attribute_presentation_setup(Esvg_Attribute_Presentation *thiz)
 	thiz->fill_opacity.v = onen;
 	thiz->opacity.v = onen;
 	thiz->fill_rule.v = ESVG_NON_ZERO;
-	thiz->fill.v.type = ESVG_PAINT_COLOR;
-	thiz->fill.v.value.color = black;
-	thiz->stroke.v.type = ESVG_PAINT_NONE;
+	thiz->fill.v.type = ESVG_PAINT_TYPE_COLOR;
+	thiz->fill.v.color = black;
+	thiz->stroke.v.type = ESVG_PAINT_TYPE_NONE;
 	thiz->stroke_width.v = one;
 	thiz->stroke_line_cap.v = ESVG_LINE_CAP_BUTT;
 	thiz->stroke_line_join.v = ESVG_LINE_JOIN_MITER;

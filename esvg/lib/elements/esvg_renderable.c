@@ -121,25 +121,25 @@ static void _esvg_renderable_paint_set(Edom_Tag *t,
 	uint8_t op = opacity * 255;
 
 	/* FIXME the fill color multiplies the fill renderer */
-	if (current->type == ESVG_PAINT_COLOR)
+	if (current->type == ESVG_PAINT_TYPE_COLOR)
 	{
-		const Esvg_Color *c = &current->value.color;
+		const Esvg_Color *c = &current->color;
 
 		enesim_color_components_from(rcolor,
 				op, c->r, c->g, c->b);
 		*rdraw_mode |= mode;
 	}
-	else if (current->type == ESVG_PAINT_SERVER)
+	else if (current->type == ESVG_PAINT_TYPE_SERVER)
 	{
 		Esvg_Referenceable_Reference *rr;
 
-		DBG("Trying to use '%s' as paint server", current->value.paint_server);
+		DBG("Trying to use '%s' as paint server", current->uri);
 		if (!esvg_paint_is_equal(current, old))
 		{
-			rr = _esvg_renderable_get_reference(t, current->value.paint_server);
+			rr = _esvg_renderable_get_reference(t, current->uri);
 			if (!rr)
 			{
-				ERR("Impossible to get a reference to '%s' paint server", current->value.paint_server); 
+				ERR("Impossible to get a reference to '%s' paint server", current->uri); 
 				goto done;
 			}
 			/* TODO finally, get the renderer? */
@@ -151,11 +151,11 @@ static void _esvg_renderable_paint_set(Edom_Tag *t,
 				op, 0xff, 0xff, 0xff);
 		*rdraw_mode |= mode;
 	}
-	else if (current->type == ESVG_PAINT_NONE)
+	else if (current->type == ESVG_PAINT_TYPE_NONE)
 	{
 		*rdraw_mode &= ~mode;
 	}
-	else if (current->type == ESVG_PAINT_CURRENT_COLOR)
+	else if (current->type == ESVG_PAINT_TYPE_CURRENT_COLOR)
 	{
 		enesim_color_components_from(rcolor,
 				op, current_color->r, current_color->g, current_color->b);
@@ -312,15 +312,15 @@ static Esvg_Element_Setup_Return _esvg_renderable_propagate(Esvg_Renderable *thi
 	/* we need to propagate the referenceables paint servers so they can catch up
 	 * our new context (bounds, transformation, whatever)
 	 */
-	if (attr->fill.is_set && attr->fill.v.type == ESVG_PAINT_SERVER && thiz->fill_reference)
+	if (attr->fill.is_set && attr->fill.v.type == ESVG_PAINT_TYPE_SERVER && thiz->fill_reference)
 	{
-		DBG("Using '%s' as fill paint server", attr->fill.v.value.paint_server);
+		DBG("Using '%s' as fill paint server", attr->fill.v.uri);
 		esvg_referenceable_reference_propagate(thiz->fill_reference, c, error);
 	}
 	/* in case we are going to use the stroke renderer do its own setup */
-	if (attr->stroke.is_set && attr->stroke.v.type == ESVG_PAINT_SERVER && thiz->stroke_reference)
+	if (attr->stroke.is_set && attr->stroke.v.type == ESVG_PAINT_TYPE_SERVER && thiz->stroke_reference)
 	{
-		DBG("Using '%s' as stroke paint server", attr->fill.v.value.paint_server);
+		DBG("Using '%s' as stroke paint server", attr->fill.v.uri);
 		esvg_referenceable_reference_propagate(thiz->stroke_reference, c, error);
 	}
 	return ESVG_SETUP_OK;
@@ -462,11 +462,11 @@ Edom_Tag * esvg_renderable_new(Esvg_Renderable_Descriptor *descriptor, Esvg_Type
 	thiz->descriptor.free = descriptor->free;
 	/* default values */
 	/* set the previous values with the same value as the default */
-	thiz->fill_paint_last.type = ESVG_PAINT_COLOR;
-	thiz->fill_paint_last.value.color.r = 0;
-	thiz->fill_paint_last.value.color.g = 0;
-	thiz->fill_paint_last.value.color.b = 0;
-	thiz->stroke_paint_last.type = ESVG_PAINT_NONE;
+	thiz->fill_paint_last.type = ESVG_PAINT_TYPE_COLOR;
+	thiz->fill_paint_last.color.r = 0;
+	thiz->fill_paint_last.color.g = 0;
+	thiz->fill_paint_last.color.b = 0;
+	thiz->stroke_paint_last.type = ESVG_PAINT_TYPE_NONE;
 	/* the initial context */
 	thiz->context.draw_mode = ENESIM_SHAPE_DRAW_MODE_FILL;
 	thiz->context.fill_color = 0xff000000;

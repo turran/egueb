@@ -20,23 +20,18 @@
 
 typedef enum _Esvg_Paint_Type
 {
-	ESVG_PAINT_NONE,
-	ESVG_PAINT_CURRENT_COLOR,
-	ESVG_PAINT_COLOR,
-	ESVG_PAINT_SERVER,
+	ESVG_PAINT_TYPE_NONE,
+	ESVG_PAINT_TYPE_CURRENT_COLOR,
+	ESVG_PAINT_TYPE_COLOR,
+	ESVG_PAINT_TYPE_SERVER,
 	ESVG_PAINT_TYPES,
 } Esvg_Paint_Type;
-
-typedef union _Esvg_Paint_Value
-{
-	Esvg_Color color;
-	char *paint_server;
-} __attribute__((packed)) Esvg_Paint_Value;
 
 typedef struct _Esvg_Paint
 {
 	Esvg_Paint_Type type;
-	Esvg_Paint_Value value;
+	Esvg_Color color;
+	char *uri;
 } Esvg_Paint;
 
 typedef struct _Esvg_Paint_Animated

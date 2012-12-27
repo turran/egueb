@@ -25,6 +25,7 @@
 static int _esvg_paint_log = -1;
 
 static Ender_Property *ESVG_PAINT_TYPE;
+static Ender_Property *ESVG_PAINT_COLOR;
 static Ender_Property *ESVG_PAINT_URI;
 
 static Ender_Property *ESVG_PAINT_ANIMATED_BASE;
@@ -35,6 +36,9 @@ static Ender_Property *ESVG_PAINT_ANIMATED_ANIM;
 #define _esvg_paint_type_set NULL
 #define _esvg_paint_type_get NULL
 #define _esvg_paint_type_is_set NULL
+#define _esvg_paint_color_set NULL
+#define _esvg_paint_color_get NULL
+#define _esvg_paint_color_is_set NULL
 #define _esvg_paint_uri_set NULL
 #define _esvg_paint_uri_get NULL
 #define _esvg_paint_uri_is_set NULL
@@ -72,17 +76,17 @@ void esvg_paint_shutdown(void)
 
 void esvg_paint_copy(Esvg_Paint *dst, Esvg_Paint *src)
 {
-	if (dst->type == ESVG_PAINT_SERVER)
+	if (dst->type == ESVG_PAINT_TYPE_SERVER)
 	{
-		if (dst->value.paint_server)
-			free(dst->value.paint_server);
+		if (dst->uri)
+			free(dst->uri);
 	}
 	*dst = *src;
-	if (src->type == ESVG_PAINT_SERVER)
+	if (src->type == ESVG_PAINT_TYPE_SERVER)
 	{
-		if (src->value.paint_server)
+		if (src->uri)
 		{
-			dst->value.paint_server = strdup(src->value.paint_server);
+			dst->uri = strdup(src->uri);
 		}
 	}
 }
@@ -98,23 +102,23 @@ EAPI Eina_Bool esvg_paint_string_from(Esvg_Paint *paint, const char *attr)
 	/* none */
 	if (strncmp(attr, "none", 4) == 0)
 	{
-		paint->type = ESVG_PAINT_NONE;
+		paint->type = ESVG_PAINT_TYPE_NONE;
 	}
 	/* currentColor */
 	else if (strncmp(attr, "currentColor", 12) == 0)
 	{
-		paint->type = ESVG_PAINT_CURRENT_COLOR;
+		paint->type = ESVG_PAINT_TYPE_CURRENT_COLOR;
 	}
 	/* color name */
-	else if (esvg_color_string_from(&paint->value.color, attr))
+	else if (esvg_color_string_from(&paint->color, attr))
 	{
-		paint->type = ESVG_PAINT_COLOR;
+		paint->type = ESVG_PAINT_TYPE_COLOR;
 	}
 	/* uri */
 	else
 	{
-		paint->type = ESVG_PAINT_SERVER;
-		paint->value.paint_server = strdup(attr);
+		paint->type = ESVG_PAINT_TYPE_SERVER;
+		paint->uri = strdup(attr);
 	}
 
 	return EINA_TRUE;
@@ -132,15 +136,15 @@ EAPI Eina_Bool esvg_paint_is_equal(const Esvg_Paint *p1,
 	/* ok, we have values and same types, now compare each type */
 	switch (p1->type)
 	{
-		case ESVG_PAINT_NONE:
-		case ESVG_PAINT_CURRENT_COLOR:
+		case ESVG_PAINT_TYPE_NONE:
+		case ESVG_PAINT_TYPE_CURRENT_COLOR:
 		return EINA_TRUE;
 
-		case ESVG_PAINT_COLOR:
-		return esvg_color_is_equal(&p1->value.color, &p2->value.color);
+		case ESVG_PAINT_TYPE_COLOR:
+		return esvg_color_is_equal(&p1->color, &p2->color);
 
-		case ESVG_PAINT_SERVER:
-		return esvg_string_is_equal(p1->value.paint_server, p2->value.paint_server);
+		case ESVG_PAINT_TYPE_SERVER:
+		return esvg_string_is_equal(p1->uri, p2->uri);
 
 		/* FIXME what to do in this cases? add an assert? */
 		default:

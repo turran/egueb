@@ -27,20 +27,24 @@
 
 static int _esvg_color_log = -1;
 
-static Ender_Property *ESVG_COLOR_TYPE;
-static Ender_Property *ESVG_COLOR_RGB;
+static Ender_Property *ESVG_COLOR_R;
+static Ender_Property *ESVG_COLOR_G;
+static Ender_Property *ESVG_COLOR_B;
 
 static Ender_Property *ESVG_COLOR_ANIMATED_BASE;
 static Ender_Property *ESVG_COLOR_ANIMATED_ANIM;
 
 #define _esvg_color_new NULL
 #define _esvg_color_delete NULL
-#define _esvg_color_type_set NULL
-#define _esvg_color_type_get NULL
-#define _esvg_color_type_is_set NULL
-#define _esvg_color_rgb_set NULL
-#define _esvg_color_rgb_get NULL
-#define _esvg_color_rgb_is_set NULL
+#define _esvg_color_r_set NULL
+#define _esvg_color_r_get NULL
+#define _esvg_color_r_is_set NULL
+#define _esvg_color_g_set NULL
+#define _esvg_color_g_get NULL
+#define _esvg_color_g_is_set NULL
+#define _esvg_color_b_set NULL
+#define _esvg_color_b_get NULL
+#define _esvg_color_b_is_set NULL
 #include "generated/esvg_generated_color.c"
 
 #define _esvg_color_animated_new NULL

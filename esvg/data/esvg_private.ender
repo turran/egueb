@@ -23,9 +23,11 @@ namespace "esvg" : 0 {
 		double "height";
 	};
 
+	/* the color needs a byte definition or int8 in ender */
 	struct "color","SVGColor" {
-		int "type";
-		RGBColor "rgb","rgbColor";
+		int "r";
+		int "g";
+		int "b";
 	};
 
 	struct "point","SVGPoint" {
@@ -33,8 +35,9 @@ namespace "esvg" : 0 {
 		double "y";
 	};
 
-	struct "paint","SVGPaint" : "SVGColor" {
+	struct "paint","SVGPaint" {
 		int "type";
+		SVGColor "color";
 		string "uri";
 	};
 

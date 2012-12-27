@@ -44,8 +44,8 @@ static void _esvg_animate_paint_value_free(void *value)
 {
 	Esvg_Paint *v = value;
 
-	if (v->type == ESVG_PAINT_SERVER)
-		free(v->value.paint_server);
+	if (v->type == ESVG_PAINT_TYPE_SERVER)
+		free(v->uri);
 	free(v);
 }
 
@@ -81,21 +81,21 @@ static void _esvg_animate_paint_interpolate(void *a, void *b, double m,
 
 	if (va->type != vb->type)
 	{
-		r->base.type = ESVG_PAINT_NONE;
+		r->base.type = ESVG_PAINT_TYPE_NONE;
 		return;
 	}
 	r->base.type = va->type;
 	switch (va->type)
 	{
-		case ESVG_PAINT_COLOR:{
+		case ESVG_PAINT_TYPE_COLOR:{
 		uint32_t acolor;
 		uint32_t bcolor;
 		uint32_t dcolor;
 
-		enesim_argb_components_from(&acolor, 0xff, va->value.color.r, va->value.color.g, va->value.color.b);
-		enesim_argb_components_from(&bcolor, 0xff, vb->value.color.r, vb->value.color.g, vb->value.color.b);
+		enesim_argb_components_from(&acolor, 0xff, va->color.r, va->color.g, va->color.b);
+		enesim_argb_components_from(&bcolor, 0xff, vb->color.r, vb->color.g, vb->color.b);
 		etch_interpolate_argb(acolor, bcolor, m, &dcolor);
-		enesim_argb_components_to(dcolor, NULL, &r->base.value.color.r, &r->base.value.color.g, &r->base.value.color.b);
+		enesim_argb_components_to(dcolor, NULL, &r->base.color.r, &r->base.color.g, &r->base.color.b);
 #if 0
 		if (vacc)
 			r->base.value += vacc->value * mul;
@@ -105,9 +105,9 @@ static void _esvg_animate_paint_interpolate(void *a, void *b, double m,
 		}
 		break;
 
-		case ESVG_PAINT_SERVER:
-		case ESVG_PAINT_NONE:
-		case ESVG_PAINT_CURRENT_COLOR:
+		case ESVG_PAINT_TYPE_SERVER:
+		case ESVG_PAINT_TYPE_NONE:
+		case ESVG_PAINT_TYPE_CURRENT_COLOR:
 		default:
 		printf("NOT SUPPORTED\n");
 		return;
@@ -163,8 +163,8 @@ void esvg_attribute_paint_set(Esvg_Attribute_Paint *a, const Esvg_Paint *v,
 	else
 	{
 		a->v = *v;
-		if (v->type == ESVG_PAINT_SERVER)
-			a->v.value.paint_server = strdup(v->value.paint_server);
+		if (v->type == ESVG_PAINT_TYPE_SERVER)
+			a->v.uri = strdup(v->uri);
 		a->is_set = EINA_TRUE;
 	}
 }
