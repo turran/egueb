@@ -25,6 +25,7 @@
 #include "esvg_number.h"
 #include "esvg_paint.h"
 #include "esvg_rect.h"
+#include "esvg_string.h"
 
 #define ESVG_CLOCK_SECONDS (1000000000LL)
 #define ESVG_CLOCK_MSECONDS (1000000LL)
@@ -123,12 +124,6 @@ typedef enum _Esvg_Attribute_Type
 	ESVG_ATTR_AUTO,
 	ESVG_ATTR_TYPES,
 } Esvg_Attribute_Type;
-
-typedef struct _Esvg_Animated_String
-{
-	char *base;
-	char *anim;
-} Esvg_Animated_String;
 
 typedef struct _Esvg_Animated_Enum
 {

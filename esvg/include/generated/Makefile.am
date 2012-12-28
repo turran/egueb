@@ -47,6 +47,7 @@ esvg_generated_rect_animated.c \
 esvg_generated_script.c \
 esvg_generated_set.c \
 esvg_generated_stop.c \
+esvg_generated_string_animated.c \
 esvg_generated_style.c \
 esvg_generated_svg.c \
 esvg_generated_text.c \

@@ -22,7 +22,8 @@ esvg_matrix.c \
 esvg_number.c \
 esvg_paint.c \
 esvg_point.c \
-esvg_rect.c
+esvg_rect.c \
+esvg_string.c
 
 libesvg_types_la_LIBADD =
 

@@ -218,7 +218,7 @@ static Edom_Tag * _esvg_a_new(void)
 	return t;
 }
 
-static void _esvg_a_xlink_href_set(Edom_Tag *t, Esvg_Animated_String *href)
+static void _esvg_a_xlink_href_set(Edom_Tag *t, Esvg_String_Animated *href)
 {
 	Esvg_A *thiz;
 	Eina_Bool animating;
@@ -229,7 +229,7 @@ static void _esvg_a_xlink_href_set(Edom_Tag *t, Esvg_Animated_String *href)
 		href, animating);
 }
 
-static void _esvg_a_xlink_href_get(Edom_Tag *t, Esvg_Animated_String *href)
+static void _esvg_a_xlink_href_get(Edom_Tag *t, Esvg_String_Animated *href)
 {
 	Esvg_A *thiz;
 

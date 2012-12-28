@@ -99,14 +99,14 @@ static Eina_Bool _esvg_animate_string_get(const char *attr, void **value)
 
 static void * _esvg_animate_string_destination_new(void)
 {
-	Esvg_Animated_String *v;
-	v = calloc(1, sizeof(Esvg_Animated_String));
+	Esvg_String_Animated *v;
+	v = calloc(1, sizeof(Esvg_String_Animated));
 	return v;
 }
 
 static void _esvg_animate_string_destination_free(void *destination, Eina_Bool deep)
 {
-	Esvg_Animated_String *d = destination;
+	Esvg_String_Animated *d = destination;
 	if (deep)
 	{
 		free(d->base);
@@ -116,13 +116,13 @@ static void _esvg_animate_string_destination_free(void *destination, Eina_Bool d
 
 static void _esvg_animate_string_destination_keep(void *destination)
 {
-	Esvg_Animated_String *d = destination;
+	Esvg_String_Animated *d = destination;
 	d->base = strdup(d->base);
 }
 
 static void _esvg_animate_string_destination_value_to(void *destination, void **value)
 {
-	Esvg_Animated_String *d = destination;
+	Esvg_String_Animated *d = destination;
 	*value = strdup(d->base);
 }
 
@@ -131,7 +131,7 @@ static void _esvg_animate_string_interpolate(void *a, void *b, double m,
 {
 	char *va = a;
 	char *vb = b;
-	Esvg_Animated_String *r = res;
+	Esvg_String_Animated *r = res;
 
 	r->base = va;
 	/* TODO
@@ -666,7 +666,7 @@ void esvg_attribute_string_merge_rel(const Esvg_Attribute_String *rel,
 }
 
 void esvg_attribute_animated_string_set(Esvg_Attribute_Animated_String *aa,
-	const Esvg_Animated_String *v,
+	const Esvg_String_Animated *v,
 	Eina_Bool animate)
 {
 	Esvg_Attribute_String *a;
@@ -684,7 +684,7 @@ void esvg_attribute_animated_string_set(Esvg_Attribute_Animated_String *aa,
 }
 
 void esvg_attribute_animated_string_extended_set(Esvg_Attribute_Animated_String *aa,
-	const Esvg_Animated_String *v,
+	const Esvg_String_Animated *v,
 	Eina_Bool animate,
 	int *set)
 {
@@ -701,7 +701,7 @@ void esvg_attribute_animated_string_extended_set(Esvg_Attribute_Animated_String 
 }
 
 void esvg_attribute_animated_string_get(Esvg_Attribute_Animated_String *aa,
-	Esvg_Animated_String *v)
+	Esvg_String_Animated *v)
 {
 	if (!v) return;
 

@@ -377,7 +377,7 @@ static void _esvg_video_height_get(Edom_Tag *t, Esvg_Length_Animated *height)
 	esvg_attribute_animated_length_get(&thiz->height, height);
 }
 
-static void _esvg_video_xlink_href_set(Edom_Tag *t, Esvg_Animated_String *href)
+static void _esvg_video_xlink_href_set(Edom_Tag *t, Esvg_String_Animated *href)
 {
 	Esvg_Video *thiz;
 	Eina_Bool animating;
@@ -388,7 +388,7 @@ static void _esvg_video_xlink_href_set(Edom_Tag *t, Esvg_Animated_String *href)
 		href, animating);
 }
 
-static void _esvg_video_xlink_href_get(Edom_Tag *t, Esvg_Animated_String *href)
+static void _esvg_video_xlink_href_get(Edom_Tag *t, Esvg_String_Animated *href)
 {
 	Esvg_Video *thiz;
 

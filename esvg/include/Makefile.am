@@ -42,6 +42,7 @@ esvg_script.h \
 esvg_script_provider.h \
 esvg_set.h \
 esvg_stop.h \
+esvg_string.h \
 esvg_style.h \
 esvg_svg.h \
 esvg_text.h \
