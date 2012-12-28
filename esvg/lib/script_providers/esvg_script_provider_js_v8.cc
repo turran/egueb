@@ -314,31 +314,18 @@ static Persistent<FunctionTemplate> _v8_element_descriptor_to_js(
 	/* find the descriptor name in the hash of templates */
 	name = ender_descriptor_name_get(descriptor);
 	Persistent<FunctionTemplate> tmpl = _prototypes[name];
+	if (!tmpl.IsEmpty()) return tmpl;
 
-	if (tmpl.IsEmpty())
-	{
-		Ender_Namespace *ns;
-		const char *ns_name = "SVG";
-		char real_name[PATH_MAX];
+	DBG("Adding descriptor '%s'", ender_descriptor_name_get(descriptor));
+	/* create a new prototype and store it */
+	HandleScope handle_scope;
+	Handle<FunctionTemplate> l_tmpl = FunctionTemplate::New();
+	l_tmpl->SetClassName(String::New(name));
+	Handle<ObjectTemplate> o_tmpl = l_tmpl->InstanceTemplate();
 
-		/* FIXME given that we now support aliases, dont do this */
-#if 0
-		ns = ender_descriptor_namespace_get(descriptor);
-		ns_name = ender_namespace_name_get(ns);
-#endif
-		strcpy(real_name, ns_name);
-		strcat(real_name, name);
-
-		/* create a new prototype and store it */
-		HandleScope handle_scope;
-		Handle<FunctionTemplate> l_tmpl = FunctionTemplate::New();
-		l_tmpl->SetClassName(String::New(real_name));
-		Handle<ObjectTemplate> o_tmpl = l_tmpl->InstanceTemplate();
-
-		o_tmpl->SetInternalFieldCount(1);
-		tmpl = Persistent<FunctionTemplate>::New(l_tmpl);
-		_prototypes[name] = tmpl;
-	}
+	o_tmpl->SetInternalFieldCount(1);
+	tmpl = Persistent<FunctionTemplate>::New(l_tmpl);
+	_prototypes[name] = tmpl;
 	/* start adding the properties for such descriptor */
 #if 0
 	cb_data = static_cast<void *>(External::Unwrap(tmpl));
@@ -347,7 +334,6 @@ static Persistent<FunctionTemplate> _v8_element_descriptor_to_js(
 			(void *)name);
 	ender_descriptor_function_list(descriptor, _v8_element_function_to_js,
 			(void *)name);
-
 	/* get the parent descriptor and do the same */
 	descriptor = ender_descriptor_parent(descriptor);
 	if (descriptor)

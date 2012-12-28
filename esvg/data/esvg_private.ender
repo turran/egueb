@@ -100,8 +100,8 @@ namespace "esvg" : 0 {
 	};
 
 	struct "paint_animated","SVGAnimatedPaint" {
-		esvg_paint "base";
-		esvg_paint "anim";
+		SVGPaint "base";
+		SVGPaint "anim";
 	};
 
 
