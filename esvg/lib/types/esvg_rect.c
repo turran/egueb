@@ -96,3 +96,49 @@ void esvg_rect_shutdown(void)
 	_esvg_rect_shutdown();
 	_esvg_rect_animated_shutdown();
 }
+/*============================================================================*
+ *                                   API                                      *
+ *============================================================================*/
+/* FIXME: fix parsing with ' ' and ',' (do like rgb(c,c,c)) */
+Eina_Bool esvg_rect_string_from(Esvg_Rect *thiz, const char *attr_val)
+{
+	const char *iter;
+	const char *tmp;
+	char *endptr;
+	double val;
+	double *vbp;
+	int nbr = 0;
+
+        iter = tmp = attr_val;
+	vbp = (double *)thiz;
+	while (*tmp)
+	{
+		while (*tmp)
+		{
+			if ((*tmp == ' ') || (*tmp == ','))
+				tmp++;
+			else
+			{
+				iter = tmp;
+				break;
+			}
+		}
+		val = eina_strtod(iter, &endptr);
+		if ((errno != ERANGE) &&
+		    !((val == 0) && (attr_val == endptr)))
+		{
+			*vbp = val;
+			vbp++;
+			tmp = endptr;
+			nbr++;
+			/* we store only the 4 first numbers */
+			if (nbr >= 4)
+			{
+				return EINA_TRUE;
+			}
+		}
+	}
+	return EINA_TRUE;
+}
+
+

@@ -29,7 +29,7 @@ typedef struct _Esvg_Element_Event_Topmost_Changed {
 typedef struct _Esvg_Element_Context {
 	double dpi_x;
 	double dpi_y;
-	Esvg_View_Box viewbox; /* the current viewbox */
+	Esvg_Rect viewbox; /* the current viewbox */
 	double font_size; /* the propagated value of the current font size? FIXME here or in the attributes? */
 	Enesim_Rectangle bounds; /* the bounds of the object */
 	Enesim_Matrix transform; /* the current transformation */

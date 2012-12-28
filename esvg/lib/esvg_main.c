@@ -71,6 +71,8 @@ static void _register_enders(void)
 	esvg_paint_init();
 	esvg_number_init();
 	esvg_boolean_init();
+	esvg_rect_init();
+	esvg_matrix_init();
 	/* now the abstracts */
 	esvg_element_init();
 	esvg_referenceable_init();

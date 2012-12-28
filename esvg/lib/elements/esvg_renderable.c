@@ -213,7 +213,7 @@ static void _esvg_renderable_context_set(Edom_Tag *t,
 	/* handle the stroke weight */
 	if (attr->stroke_width.v.unit == ESVG_UNIT_LENGTH_PERCENT)
 	{
-		stroke_viewport = hypot(ctx->viewbox.width, ctx->viewbox.height) / M_SQRT2;
+		stroke_viewport = hypot(ctx->viewbox.w, ctx->viewbox.h) / M_SQRT2;
 	}
 	/* FIXME */
 	rctx->stroke_weight = esvg_coord_final_get(

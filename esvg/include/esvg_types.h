@@ -253,14 +253,6 @@ typedef struct _Esvg_Point
 	double y;
 } Esvg_Point;
 
-typedef struct _Esvg_View_Box
-{
-	double min_x;
-	double min_y;
-	double width;
-	double height;
-} Esvg_View_Box;
-
 typedef enum _Esvg_Stroke_Line_Cap
 {
 	ESVG_LINE_CAP_BUTT,
@@ -466,8 +458,6 @@ EAPI Eina_Bool esvg_parser_spread_method_get(Esvg_Spread_Method *smethod, const 
 EAPI Eina_Bool esvg_path_string_from(const char *value, Esvg_Command_Cb cb, void *data);
 EAPI Eina_Bool esvg_transformation_string_from(Enesim_Matrix *matrix, const char *attr);
 
-/* FIXME rename this from _get to _string_from */
-Esvg_View_Box esvg_view_box_get(const char *attr_val);
 EAPI Esvg_Stroke_Line_Cap esvg_stroke_line_cap_string_from(const char *value);
 EAPI Esvg_Stroke_Line_Join esvg_stroke_line_join_string_from(const char *value);
 EAPI Eina_Bool esvg_attribute_type_string_from(Esvg_Attribute_Type *type, const char *value);

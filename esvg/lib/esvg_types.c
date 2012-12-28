@@ -741,50 +741,6 @@ Eina_Bool esvg_long_get(const char *iter, const char **tmp, long *l)
 }
 
 
-/* FIXME: fix parsing with ' ' and ',' (do like rgb(c,c,c)) */
-Esvg_View_Box esvg_view_box_get(const char *attr_val)
-{
-	Esvg_View_Box vb = { 0, 0, 0, 0 };
-	const char *iter;
-	const char *tmp;
-	char *endptr;
-	double val;
-	double *vbp;
-	int nbr = 0;
-
-        iter = tmp = attr_val;
-	vbp = (double *)&vb;
-	while (*tmp)
-	{
-		while (*tmp)
-		{
-			if ((*tmp == ' ') || (*tmp == ','))
-				tmp++;
-			else
-			{
-				iter = tmp;
-				break;
-			}
-		}
-		val = eina_strtod(iter, &endptr);
-		if ((errno != ERANGE) &&
-		    !((val == 0) && (attr_val == endptr)))
-		{
-			*vbp = val;
-			vbp++;
-			tmp = endptr;
-			nbr++;
-			/* we store only the 4 first numbers */
-			if (nbr >= 4)
-			{
-				return vb;
-			}
-		}
-	}
-
-	return vb;
-}
-
 void esvg_type_init(void)
 {
 	_esvg_type_log = eina_log_domain_register("esvg_type", ESVG_LOG_COLOR_DEFAULT);

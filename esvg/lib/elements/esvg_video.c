@@ -172,13 +172,13 @@ static Esvg_Element_Setup_Return _esvg_video_setup(Edom_Tag *t,
 	/* set the position */
 	esvg_attribute_animated_length_final_get(&thiz->x, &lx);
 	esvg_attribute_animated_length_final_get(&thiz->y, &ly);
-	thiz->gx = esvg_coord_final_get(&lx, ctx->viewbox.width, ctx->font_size);
-	thiz->gy = esvg_coord_final_get(&ly, ctx->viewbox.height, ctx->font_size);
+	thiz->gx = esvg_coord_final_get(&lx, ctx->viewbox.w, ctx->font_size);
+	thiz->gy = esvg_coord_final_get(&ly, ctx->viewbox.h, ctx->font_size);
 	/* set the size */
 	esvg_attribute_animated_length_final_get(&thiz->width, &lwidth);
 	esvg_attribute_animated_length_final_get(&thiz->height, &lheight);
-	thiz->ctx.width = esvg_coord_final_get(&lwidth, ctx->viewbox.width, ctx->font_size);
-	thiz->ctx.height = esvg_coord_final_get(&lheight, ctx->viewbox.height, ctx->font_size);
+	thiz->ctx.width = esvg_coord_final_get(&lwidth, ctx->viewbox.w, ctx->font_size);
+	thiz->ctx.height = esvg_coord_final_get(&lheight, ctx->viewbox.h, ctx->font_size);
 	/* set the href */
 	esvg_attribute_animated_string_final_get(&thiz->href, &thiz->ghref);
 

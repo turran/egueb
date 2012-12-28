@@ -363,8 +363,8 @@ static Eina_Bool _esvg_radial_gradient_propagate(Edom_Tag *t,
 		double h;
 
 		/* use the user space coordiantes */
-		w = ctx->viewbox.width;
-		h = ctx->viewbox.height;
+		w = ctx->viewbox.w;
+		h = ctx->viewbox.h;
 
 		cx = esvg_coord_final_get(&lcx, w, ctx->font_size);
 		cy = esvg_coord_final_get(&lcy, h, ctx->font_size);

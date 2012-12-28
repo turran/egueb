@@ -26,4 +26,6 @@ typedef struct _Esvg_Rect_Animated
 	Esvg_Rect anim;
 } Esvg_Rect_Animated;
 
+Eina_Bool esvg_rect_string_from(Esvg_Rect *thiz, const char *attr_val);
+
 #endif

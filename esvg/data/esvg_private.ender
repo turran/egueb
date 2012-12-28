@@ -32,13 +32,6 @@ namespace "esvg" : 0 {
 		SVGRect "anim";
 	};
 
-	struct "viewbox","SVGViewBox" {
-		double "min_x";
-		double "min_y";
-		double "width";
-		double "height";
-	};
-
 	/* the color needs a byte definition or int8 in ender */
 	struct "color","SVGColor" {
 		int "r";
@@ -256,9 +249,9 @@ namespace "esvg" : 0 {
 		SVGLength "y";
 		SVGLength "width";
 		SVGLength "height";
+		SVGRect "viewbox";
 		double "actual_width";
 		double "actual_height";
-		esvg_viewbox "viewbox";
 		double "container_width";
 		double "container_height";
 		double "x_dpi";

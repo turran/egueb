@@ -2082,7 +2082,7 @@ double esvg_element_context_other_length_calculate(Esvg_Element_Context *t, Esvg
 void esvg_element_context_dump(const Esvg_Element_Context *c)
 {
 	DBG("dpi %g %g", c->dpi_x, c->dpi_y);
-	DBG("viewbox %g %g %g %g", c->viewbox.min_x, c->viewbox.min_y, c->viewbox.width, c->viewbox.height);
+	DBG("viewbox %g %g %g %g", c->viewbox.x, c->viewbox.y, c->viewbox.w, c->viewbox.h);
 	DBG("transformation %" ENESIM_MATRIX_FORMAT, ENESIM_MATRIX_ARGS (&c->transform));
 }
 

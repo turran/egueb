@@ -154,13 +154,13 @@ static Esvg_Element_Setup_Return _esvg_ellipse_setup(Edom_Tag *t,
 	/* position */
 	esvg_attribute_animated_length_final_get(&thiz->cx, &lcx);
 	esvg_attribute_animated_length_final_get(&thiz->cy, &lcy);
-	thiz->gcx = esvg_coord_final_get(&lcx, ctx->viewbox.width, ctx->font_size);
-	thiz->gcy = esvg_coord_final_get(&lcy, ctx->viewbox.height, ctx->font_size);
+	thiz->gcx = esvg_coord_final_get(&lcx, ctx->viewbox.w, ctx->font_size);
+	thiz->gcy = esvg_coord_final_get(&lcy, ctx->viewbox.h, ctx->font_size);
 	/* radius */
 	esvg_attribute_animated_length_final_get(&thiz->rx, &lrx);
 	esvg_attribute_animated_length_final_get(&thiz->ry, &lry);
-	thiz->grx = esvg_coord_final_get(&lrx, ctx->viewbox.width, ctx->font_size);
-	thiz->gry = esvg_coord_final_get(&lry, ctx->viewbox.height, ctx->font_size);
+	thiz->grx = esvg_coord_final_get(&lrx, ctx->viewbox.w, ctx->font_size);
+	thiz->gry = esvg_coord_final_get(&lry, ctx->viewbox.h, ctx->font_size);
 	/* set the bounds */
 	enesim_rectangle_coords_from(&ctx->bounds,
 			thiz->gcx - thiz->grx,

@@ -76,7 +76,7 @@ typedef struct _Esvg_Svg
 {
 	/* properties */
 	double version;
-	Esvg_View_Box view_box;
+	Esvg_Rect view_box;
 	Eina_Bool view_box_set;
 	Esvg_Coord x;
 	Esvg_Coord y;
@@ -270,12 +270,12 @@ static inline void _esvg_svg_size_apply(Esvg_Svg *thiz, Esvg_Element_Context *ct
 	double width;
 	double height;
 
-	width = esvg_coord_final_get(&thiz->width, ctx->viewbox.width, ctx->font_size);
-	height = esvg_coord_final_get(&thiz->height, ctx->viewbox.height, ctx->font_size);
+	width = esvg_coord_final_get(&thiz->width, ctx->viewbox.w, ctx->font_size);
+	height = esvg_coord_final_get(&thiz->height, ctx->viewbox.h, ctx->font_size);
 	enesim_renderer_clipper_width_set(thiz->clipper, width);
 	enesim_renderer_clipper_height_set(thiz->clipper, height);
-	ctx->viewbox.width = width;
-	ctx->viewbox.height = height;
+	ctx->viewbox.w = width;
+	ctx->viewbox.h = height;
 }
 
 static inline void _esvg_svg_viewbox_apply(Esvg_Svg *thiz, Esvg_Element_Context *ctx)
@@ -291,16 +291,16 @@ static inline void _esvg_svg_viewbox_apply(Esvg_Svg *thiz, Esvg_Element_Context 
 	if (!thiz->view_box_set)
 		return;
 
-	new_vw = thiz->view_box.width / ctx->viewbox.width;
-	new_vh = thiz->view_box.height / ctx->viewbox.height;
+	new_vw = thiz->view_box.w / ctx->viewbox.w;
+	new_vh = thiz->view_box.h / ctx->viewbox.h;
 
-	width = thiz->view_box.width;
-	height = thiz->view_box.height;
+	width = thiz->view_box.w;
+	height = thiz->view_box.h;
 
 	enesim_matrix_scale(&scale, 1.0/new_vw, 1.0/new_vh);
 	enesim_matrix_compose(&scale, &ctx->transform, &ctx->transform);
-	ctx->viewbox.width = width;
-	ctx->viewbox.height = height;
+	ctx->viewbox.w = width;
+	ctx->viewbox.h = height;
 }
 
 /* call the setup on every element of the list of changed elements */
@@ -722,8 +722,9 @@ static Eina_Bool _esvg_svg_attribute_set(Ender_Element *e, const char *key, cons
 	}
 	else if (strcmp(key, "viewBox") == 0)
 	{
-		Esvg_View_Box vb = esvg_view_box_get(value);
-		esvg_svg_viewbox_set(e, &vb);
+		Esvg_Rect viewbox;
+		esvg_rect_string_from(&viewbox, value);
+		esvg_svg_viewbox_set(e, &viewbox);
 	}
 	else if (strcmp(key, "contentScriptType") == 0)
 	{
@@ -799,10 +800,10 @@ static Esvg_Element_Setup_Return _esvg_svg_setup(Edom_Tag *t,
 	if (!changed && !thiz->elements_changed && !thiz->renderable_tree_changed)
 		return EINA_TRUE;
 
-	ctx->viewbox.min_x = 0;
-	ctx->viewbox.min_y = 0;
-	ctx->viewbox.width = thiz->container_width;
-	ctx->viewbox.height = thiz->container_height;
+	ctx->viewbox.x = 0;
+	ctx->viewbox.y = 0;
+	ctx->viewbox.w = thiz->container_width;
+	ctx->viewbox.h = thiz->container_height;
 
 	ctx->dpi_y = thiz->x_dpi;
 	ctx->dpi_x = thiz->y_dpi;
@@ -819,8 +820,8 @@ static Esvg_Element_Setup_Return _esvg_svg_setup(Edom_Tag *t,
 	 */
 	//if (changed)
 	{
-		width = esvg_coord_final_get(&thiz->width, ctx->viewbox.width, thiz->base_font_size);
-		height = esvg_coord_final_get(&thiz->height, ctx->viewbox.height, thiz->base_font_size);
+		width = esvg_coord_final_get(&thiz->width, ctx->viewbox.w, thiz->base_font_size);
+		height = esvg_coord_final_get(&thiz->height, ctx->viewbox.h, thiz->base_font_size);
 		enesim_renderer_clipper_width_set(thiz->clipper, width);
 		enesim_renderer_clipper_height_set(thiz->clipper, height);
 		/* the viewbox will set a new user space coordinate */
@@ -831,18 +832,18 @@ static Esvg_Element_Setup_Return _esvg_svg_setup(Edom_Tag *t,
 			double new_vw;
 			double new_vh;
 
-			new_vw = thiz->view_box.width / width;
-			new_vh = thiz->view_box.height / height;
+			new_vw = thiz->view_box.w / width;
+			new_vh = thiz->view_box.h / height;
 
-			width = thiz->view_box.width;
-			height = thiz->view_box.height;
+			width = thiz->view_box.w;
+			height = thiz->view_box.h;
 
 			enesim_matrix_scale(&scale, 1.0/new_vw, 1.0/new_vh);
 			enesim_matrix_compose(&scale, &ctx->transform, &ctx->transform);
 			/* TODO handle current matrix */
 		}
-		ctx->viewbox.width = width;
-		ctx->viewbox.height = height;
+		ctx->viewbox.w = width;
+		ctx->viewbox.h = height;
 		/* FIXME for now, it should really be base_font_size * attr.font-size */
 		ctx->font_size = thiz->base_font_size;
 
@@ -1068,7 +1069,7 @@ static void _esvg_svg_height_get(Edom_Tag *t, Esvg_Length *height)
 	if (height) *height = thiz->height;
 }
 
-static void _esvg_svg_viewbox_set(Edom_Tag *t, Esvg_View_Box *vb)
+static void _esvg_svg_viewbox_set(Edom_Tag *t, Esvg_Rect *vb)
 {
 	Esvg_Svg *thiz;
 
@@ -1643,9 +1644,9 @@ EAPI void esvg_svg_height_get(Ender_Element *e, Esvg_Length *height)
  * To be documented
  * FIXME: To be fixed
  */
-EAPI void esvg_svg_viewbox_set(Ender_Element *e, Esvg_View_Box *vb)
+EAPI void esvg_svg_viewbox_set(Ender_Element *e, Esvg_Rect *v)
 {
-	ender_element_property_value_set(e, ESVG_SVG_VIEWBOX, vb, NULL);
+	ender_element_property_value_set(e, ESVG_SVG_VIEWBOX, v, NULL);
 }
 
 /**

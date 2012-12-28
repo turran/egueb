@@ -141,12 +141,12 @@ static Esvg_Element_Setup_Return _esvg_circle_setup(Edom_Tag *t,
 	/* position */
 	esvg_attribute_animated_length_final_get(&thiz->cx, &lcx);
 	esvg_attribute_animated_length_final_get(&thiz->cy, &lcy);
-	thiz->gcx = esvg_coord_final_get(&lcx, ctx->viewbox.width, ctx->font_size);
-	thiz->gcy = esvg_coord_final_get(&lcy, ctx->viewbox.height, ctx->font_size);
+	thiz->gcx = esvg_coord_final_get(&lcx, ctx->viewbox.w, ctx->font_size);
+	thiz->gcy = esvg_coord_final_get(&lcy, ctx->viewbox.h, ctx->font_size);
 	/* radius */
 	esvg_attribute_animated_length_final_get(&thiz->radius, &lradius);
 	/* set the size */
-	thiz->gradius = esvg_length_final_get(&lradius, ctx->viewbox.width, ctx->viewbox.height, ctx->font_size);
+	thiz->gradius = esvg_length_final_get(&lradius, ctx->viewbox.w, ctx->viewbox.h, ctx->font_size);
 	/* set the bounds */
 	enesim_rectangle_coords_from(&ctx->bounds,
 			thiz->gcx - thiz->gradius,

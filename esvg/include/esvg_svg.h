@@ -48,7 +48,7 @@ EAPI void esvg_svg_width_set(Ender_Element *e, Esvg_Length *width);
 EAPI void esvg_svg_width_get(Ender_Element *e, Esvg_Length *width);
 EAPI void esvg_svg_height_set(Ender_Element *e, Esvg_Length *height);
 EAPI void esvg_svg_height_get(Ender_Element *e, Esvg_Length *height);
-EAPI void esvg_svg_viewbox_set(Ender_Element *e, Esvg_View_Box *vb);
+EAPI void esvg_svg_viewbox_set(Ender_Element *e, Esvg_Rect *v);
 EAPI void esvg_svg_content_script_type_set(Ender_Element *e, const char *v);
 EAPI void esvg_svg_content_script_type_get(Ender_Element *e, const char **v);
 

@@ -185,17 +185,17 @@ static Esvg_Element_Setup_Return _esvg_element_rect_setup(Edom_Tag *t,
 	/* position */
 	esvg_attribute_animated_length_final_get(&thiz->x, &lx);
 	esvg_attribute_animated_length_final_get(&thiz->y, &ly);
-	thiz->gx = esvg_coord_final_get(&lx, ctx->viewbox.width, ctx->font_size);
-	thiz->gy = esvg_coord_final_get(&ly, ctx->viewbox.height, ctx->font_size);
+	thiz->gx = esvg_coord_final_get(&lx, ctx->viewbox.w, ctx->font_size);
+	thiz->gy = esvg_coord_final_get(&ly, ctx->viewbox.h, ctx->font_size);
 	/* size */
 	esvg_attribute_animated_length_final_get(&thiz->width, &lw);
 	esvg_attribute_animated_length_final_get(&thiz->height, &lh);
-	thiz->gwidth = esvg_coord_final_get(&lw, ctx->viewbox.width, ctx->font_size);
-	thiz->gheight = esvg_coord_final_get(&lh, ctx->viewbox.height, ctx->font_size);
+	thiz->gwidth = esvg_coord_final_get(&lw, ctx->viewbox.w, ctx->font_size);
+	thiz->gheight = esvg_coord_final_get(&lh, ctx->viewbox.h, ctx->font_size);
 	/* rx and ry */
 	esvg_attribute_animated_length_final_get(&thiz->rx, &lrx);
 	esvg_attribute_animated_length_final_get(&thiz->ry, &lry);
-	thiz->grx = esvg_coord_final_get(&lrx, ctx->viewbox.width, ctx->font_size);
+	thiz->grx = esvg_coord_final_get(&lrx, ctx->viewbox.w, ctx->font_size);
 	/* set the bounds */
 	enesim_rectangle_coords_from(&ctx->bounds,
 			thiz->gx, thiz->gy, thiz->gwidth, thiz->gheight);
@@ -477,7 +477,7 @@ void esvg_element_rect_shutdown(void)
  *============================================================================*/
 EAPI Ender_Element * esvg_element_rect_new(void)
 {
-	return ESVG_ELEMENT_NEW("rect");
+	return ESVG_ELEMENT_NEW("SVGRectElement");
 }
 
 EAPI Eina_Bool esvg_is_rect(Ender_Element *e)
