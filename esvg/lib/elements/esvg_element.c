@@ -183,6 +183,80 @@ static Esvg_Element * _esvg_element_get(Edom_Tag *t)
 	return thiz;
 }
 
+/*----------------------------------------------------------------------------*
+ *                              Event handlers                                *
+ *----------------------------------------------------------------------------*/
+static void _esvg_element_event_handler(Ender_Element *e, const char *script)
+{
+	if (!script) return;
+	/* get the topmost svg */
+	/* call the script with the passed in arg */
+	printf("calling with %s\n", script);
+}
+
+static void _esvg_element_onfocusin_call(Ender_Element *e,
+		const char *event_name, void *event_data, void *data)
+{
+	Esvg_Element *thiz = data;
+	_esvg_element_event_handler(e, thiz->onfocusin);
+}
+
+static void _esvg_element_onfocusout_call(Ender_Element *e,
+		const char *event_name, void *event_data, void *data)
+{
+	Esvg_Element *thiz = data;
+	_esvg_element_event_handler(e, thiz->onfocusout);
+}
+
+static void _esvg_element_onactivate_call(Ender_Element *e,
+		const char *event_name, void *event_data, void *data)
+{
+	Esvg_Element *thiz = data;
+	_esvg_element_event_handler(e, thiz->onactivate);
+}
+
+static void _esvg_element_onclick_call(Ender_Element *e,
+		const char *event_name, void *event_data, void *data)
+{
+	Esvg_Element *thiz = data;
+	_esvg_element_event_handler(e, thiz->onclick);
+}
+
+static void _esvg_element_onmousedown_call(Ender_Element *e,
+		const char *event_name, void *event_data, void *data)
+{
+	Esvg_Element *thiz = data;
+	_esvg_element_event_handler(e, thiz->onmousedown);
+}
+
+static void _esvg_element_onmouseup_call(Ender_Element *e,
+		const char *event_name, void *event_data, void *data)
+{
+	Esvg_Element *thiz = data;
+	_esvg_element_event_handler(e, thiz->onmouseup);
+}
+
+static void _esvg_element_onmouseover_call(Ender_Element *e,
+		const char *event_name, void *event_data, void *data)
+{
+	Esvg_Element *thiz = data;
+	_esvg_element_event_handler(e, thiz->onmouseover);
+}
+
+static void _esvg_element_onmousemove_call(Ender_Element *e,
+		const char *event_name, void *event_data, void *data)
+{
+	Esvg_Element *thiz = data;
+	_esvg_element_event_handler(e, thiz->onmousemove);
+}
+
+static void _esvg_element_onmouseout_call(Ender_Element *e,
+		const char *event_name, void *event_data, void *data)
+{
+	Esvg_Element *thiz = data;
+	_esvg_element_event_handler(e, thiz->onmouseout);
+}
+
 /* called on every child of an element, whenever the element is being freed */
 static Eina_Bool _esvg_element_child_free_cb(Edom_Tag *t, Edom_Tag *child,
 		void *data)
@@ -1832,6 +1906,16 @@ void esvg_element_initialize(Ender_Element *e)
 
 	/* register the mutation events */
 	ender_event_listener_add(e, "Mutation", _esvg_element_mutation_cb, thiz);
+	/* register the dom events */
+	ender_event_listener_add(e, "focusin", _esvg_element_onfocusin_call, thiz);
+	ender_event_listener_add(e, "focusout", _esvg_element_onfocusout_call, thiz);
+	ender_event_listener_add(e, "activate", _esvg_element_onactivate_call, thiz);
+	ender_event_listener_add(e, "click", _esvg_element_onclick_call, thiz);
+	ender_event_listener_add(e, "mousedown", _esvg_element_onmousedown_call, thiz);
+	ender_event_listener_add(e, "mouseup", _esvg_element_onmouseup_call, thiz);
+	ender_event_listener_add(e, "mouseover", _esvg_element_onmouseover_call, thiz);
+	ender_event_listener_add(e, "mousemove", _esvg_element_onmousemove_call, thiz);
+	ender_event_listener_add(e, "mouseout", _esvg_element_onmouseout_call, thiz);
 
 	if (thiz->descriptor.initialize)
 		thiz->descriptor.initialize(e);
