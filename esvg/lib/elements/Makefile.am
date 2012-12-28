@@ -24,6 +24,7 @@ esvg_circle.c \
 esvg_clip_path.c \
 esvg_defs.c \
 esvg_element.c \
+esvg_element_rect.c \
 esvg_ellipse.c \
 esvg_g.c \
 esvg_gradient.c \
@@ -35,7 +36,6 @@ esvg_path.c \
 esvg_polygon.c \
 esvg_polyline.c \
 esvg_radial_gradient.c \
-esvg_rect.c \
 esvg_referenceable.c \
 esvg_renderable.c \
 esvg_script.c \

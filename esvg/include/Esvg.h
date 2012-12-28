@@ -79,7 +79,7 @@
 #include "esvg_line.h"
 #include "esvg_circle.h"
 #include "esvg_ellipse.h"
-#include "esvg_rect.h"
+#include "esvg_element_rect.h"
 #include "esvg_image.h"
 #include "esvg_text.h"
 #include "esvg_use.h"

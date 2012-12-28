@@ -17,6 +17,7 @@ esvg_clip_path.h \
 esvg_color.h \
 esvg_defs.h \
 esvg_element.h \
+esvg_element_rect.h \
 esvg_ellipse.h \
 esvg_event.h \
 esvg_g.h \
@@ -34,9 +35,9 @@ esvg_path.h \
 esvg_polygon.h \
 esvg_polyline.h \
 esvg_radial_gradient.h \
-esvg_rect.h \
 esvg_referenceable.h \
 esvg_renderable.h \
+esvg_rect.h \
 esvg_script.h \
 esvg_script_provider.h \
 esvg_set.h \

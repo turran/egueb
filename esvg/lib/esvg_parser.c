@@ -40,7 +40,7 @@
 #include "esvg_script_provider.h"
 #include "esvg_svg.h"
 #include "esvg_ellipse.h"
-#include "esvg_rect.h"
+#include "esvg_element_rect.h"
 #include "esvg_circle.h"
 #include "esvg_image.h"
 #include "esvg_path.h"
@@ -362,7 +362,7 @@ static Eina_Bool _esvg_parser_tag_get(Edom_Parser *parser, const char *content,
 			}
 			else if (strncmp("rect", content, sz) == 0)
 			{
-				*tag = ESVG_RECT;
+				*tag = ESVG_ELEMENT_RECT;
 				return EINA_TRUE;
 			}
 			else
@@ -471,8 +471,8 @@ static void * _esvg_parser_tag_new(Edom_Parser *parser, int tag_id)
 		tag = esvg_ellipse_new();
 		break;
 
-		case ESVG_RECT:
-		tag = esvg_rect_new();
+		case ESVG_ELEMENT_RECT:
+		tag = esvg_element_rect_new();
 		break;
 
 		case ESVG_LINE:

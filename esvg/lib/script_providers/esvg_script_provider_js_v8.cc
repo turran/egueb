@@ -106,7 +106,6 @@ static Ender_Value * _v8_value_to_ender(Handle<Value> v, Ender_Container *c)
 		}
 		break;
 
-		case ENDER_MATRIX:
 		case ENDER_BOOL:
 		case ENDER_UINT32:
 		case ENDER_INT32:
@@ -116,7 +115,6 @@ static Ender_Value * _v8_value_to_ender(Handle<Value> v, Ender_Container *c)
 		case ENDER_COLOR:
 		case ENDER_ARGB:
 		case ENDER_OBJECT:
-		case ENDER_SURFACE:
 		case ENDER_ENDER:
 		case ENDER_POINTER:
 		case ENDER_VALUE:
@@ -138,7 +136,6 @@ static Handle<Value> _v8_value_from_ender(Ender_Value *v)
 	switch (vtype)
 	{
 		case ENDER_STRING:
-		case ENDER_MATRIX:
 		case ENDER_BOOL:
 		case ENDER_UINT32:
 		case ENDER_INT32:
@@ -148,7 +145,6 @@ static Handle<Value> _v8_value_from_ender(Ender_Value *v)
 		case ENDER_COLOR:
 		case ENDER_ARGB:
 		case ENDER_OBJECT:
-		case ENDER_SURFACE:
 		break;
 
 		case ENDER_ENDER:

@@ -132,7 +132,7 @@ static Eina_Bool _parser_pattern_child_supported(Edom_Tag *tag, int tag_id)
 		case ESVG_SVG:
 		case ESVG_CIRCLE:
 		case ESVG_ELLIPSE:
-		case ESVG_RECT:
+		case ESVG_ELEMENT_RECT:
 		case ESVG_LINE:
 		case ESVG_PATH:
 		case ESVG_POLYLINE:

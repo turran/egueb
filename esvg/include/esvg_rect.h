@@ -1,19 +1,29 @@
-#ifndef _ESVG_RECT_H_
-#define _ESVG_RECT_H_
+/* Esvg - SVG
+ * Copyright (C) 2011 Jorge Luis Zapata, Vincent Torri
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library.
+ * If not, see <http://www.gnu.org/licenses/>.
+ */
+#ifndef _ESVG_RECT_H
+#define _ESVG_RECT_H
 
-EAPI Ender_Element *esvg_rect_new(void);
-EAPI Eina_Bool esvg_is_rect(Ender_Element *e);
-EAPI void esvg_rect_x_set(Ender_Element *e, const Esvg_Coord *x);
-EAPI void esvg_rect_x_get(Ender_Element *e, Esvg_Coord *x);
-EAPI void esvg_rect_y_set(Ender_Element *e, const Esvg_Coord *y);
-EAPI void esvg_rect_y_get(Ender_Element *e, Esvg_Coord *y);
-EAPI void esvg_rect_width_set(Ender_Element *e, const Esvg_Length *width);
-EAPI void esvg_rect_width_get(Ender_Element *e, Esvg_Length *width);
-EAPI void esvg_rect_height_set(Ender_Element *e, const Esvg_Length *height);
-EAPI void esvg_rect_height_get(Ender_Element *e, Esvg_Length *height);
-EAPI void esvg_rect_rx_set(Ender_Element *e, const Esvg_Coord *rx);
-EAPI void esvg_rect_rx_get(Ender_Element *e, Esvg_Coord *rx);
-EAPI void esvg_rect_ry_set(Ender_Element *e, const Esvg_Coord *ry);
-EAPI void esvg_rect_ry_get(Ender_Element *e, Esvg_Coord *ry);
+typedef Enesim_Rectangle Esvg_Rect;
+
+typedef struct _Esvg_Rect_Animated
+{
+	Esvg_Rect base;
+	Esvg_Rect anim;
+} Esvg_Rect_Animated;
 
 #endif

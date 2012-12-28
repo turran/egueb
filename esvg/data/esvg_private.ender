@@ -20,6 +20,18 @@ namespace "esvg" : 0 {
 		double "f";
 	};
 
+	struct "rect","SVGRect" {
+		double "x";
+		double "y";
+		double "width";
+		double "height";
+	};
+
+	struct "rect_animated","SVGAnimatedRect" {
+		SVGRect "base";
+		SVGRect "anim";
+	};
+
 	struct "viewbox","SVGViewBox" {
 		double "min_x";
 		double "min_y";
@@ -268,7 +280,7 @@ namespace "esvg" : 0 {
 		string "link";
 	};
 
-	class "rect" : "renderable" {
+	class "element_rect","SVGRectElement" : "renderable" {
 		SVGAnimatedLength "x";
 		SVGAnimatedLength "y";
 		SVGAnimatedLength "width";

@@ -24,6 +24,7 @@
 #include "esvg_matrix.h"
 #include "esvg_number.h"
 #include "esvg_paint.h"
+#include "esvg_rect.h"
 
 #define ESVG_CLOCK_SECONDS (1000000000LL)
 #define ESVG_CLOCK_MSECONDS (1000000LL)
@@ -95,7 +96,7 @@ typedef enum _Esvg_Type {
 	ESVG_POLYGON,
 	ESVG_POLYLINE,
 	ESVG_RADIALGRADIENT,
-	ESVG_RECT,
+	ESVG_ELEMENT_RECT,
 	ESVG_SCRIPT,
 	ESVG_SET,
 	ESVG_STOP,

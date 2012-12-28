@@ -951,7 +951,7 @@ EAPI const char * esvg_type_string_to(Esvg_Type type)
 		case ESVG_POLYGON: return "polygon";
 		case ESVG_POLYLINE: return "polyline";
 		case ESVG_RADIALGRADIENT: return "radialGradient";
-		case ESVG_RECT: return "rect";
+		case ESVG_ELEMENT_RECT: return "rect";
 		case ESVG_SCRIPT: return "script";
 		case ESVG_SET: return "set";
 		case ESVG_STOP: return "stop";
@@ -1006,7 +1006,7 @@ EAPI Eina_Bool esvg_type_is_shape(Esvg_Type type)
 	switch (type)
 	{
 		case ESVG_LINE:
-		case ESVG_RECT:
+		case ESVG_ELEMENT_RECT:
 		case ESVG_POLYLINE:
 		case ESVG_POLYGON:
 		case ESVG_ELLIPSE:

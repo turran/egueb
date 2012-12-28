@@ -88,7 +88,7 @@ static void _register_enders(void)
 	esvg_polyline_init();
 	esvg_g_init();
 	esvg_svg_init();
-	esvg_rect_init();
+	esvg_element_rect_init();
 	esvg_stop_init();
 	esvg_use_init();
 	esvg_defs_init();
@@ -119,7 +119,7 @@ static Eina_Bool _esvg_ender_init(void)
 	Ender_Descriptor *tag_descriptor;
 	Ender_Namespace *edom;
 
-	ender_init(NULL, NULL);
+	ender_init();
 	edom = ender_namespace_find("edom", 0);
 	if (!edom)
 	{
