@@ -69,6 +69,42 @@ void esvg_length_shutdown(void)
 	_esvg_length_shutdown();
 	_esvg_length_animated_shutdown();
 }
+
+static const char * _esvg_length_units_string_to(Esvg_Length *thiz)
+{
+	switch (thiz->unit)
+	{
+		case ESVG_UNIT_LENGTH_EM:
+		return "em";
+
+		case ESVG_UNIT_LENGTH_EX:
+		return "ex";
+
+		case ESVG_UNIT_LENGTH_PX:
+		return "px";
+
+		case ESVG_UNIT_LENGTH_PT:
+		return "pt";
+
+		case ESVG_UNIT_LENGTH_PC:
+		return "pc";
+
+		case ESVG_UNIT_LENGTH_CM:
+		return "cm";
+
+		case ESVG_UNIT_LENGTH_MM:
+		return "mm";
+
+		case ESVG_UNIT_LENGTH_IN:
+		return "in";
+
+		case ESVG_UNIT_LENGTH_PERCENT:
+		return "%";
+
+		default:
+		return NULL;
+	}
+}
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/
@@ -154,6 +190,18 @@ EAPI Eina_Bool esvg_length_string_from(Esvg_Length *thiz, const char *attr_val)
 	}
 
 	return EINA_TRUE;
+}
+
+EAPI char * esvg_length_string_to(Esvg_Length *thiz)
+{
+	char ret[1024];
+	const char *units;
+
+	if (!thiz) return NULL;
+	units = _esvg_length_units_string_to(thiz);
+	if (!units) return NULL;
+	snprintf(ret, 1024, "%g%s", thiz->value, units);
+	return strdup(ret);
 }
 
 EAPI Eina_Bool esvg_length_is_equal(Esvg_Length *length1, Esvg_Length *length2)

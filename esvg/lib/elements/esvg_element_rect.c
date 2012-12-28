@@ -68,6 +68,62 @@ static Esvg_Element_Rect * _esvg_element_rect_get(Edom_Tag *t)
 }
 
 /*----------------------------------------------------------------------------*
+ *                               Helper getters                               *
+ *----------------------------------------------------------------------------*/
+static void _esvg_element_rect_final_width_get(Edom_Tag *t,
+		Esvg_Length *width)
+{
+	Esvg_Element_Rect *thiz;
+
+	thiz = _esvg_element_rect_get(t);
+	esvg_attribute_animated_length_final_get(&thiz->width, width);
+}
+
+static void _esvg_element_rect_final_height_get(Edom_Tag *t,
+		Esvg_Length *height)
+{
+	Esvg_Element_Rect *thiz;
+
+	thiz = _esvg_element_rect_get(t);
+	esvg_attribute_animated_length_final_get(&thiz->height, height);
+}
+
+static void _esvg_element_rect_final_x_get(Edom_Tag *t,
+		Esvg_Length *x)
+{
+	Esvg_Element_Rect *thiz;
+
+	thiz = _esvg_element_rect_get(t);
+	esvg_attribute_animated_length_final_get(&thiz->x, x);
+}
+
+static void _esvg_element_rect_final_y_get(Edom_Tag *t,
+		Esvg_Length *y)
+{
+	Esvg_Element_Rect *thiz;
+
+	thiz = _esvg_element_rect_get(t);
+	esvg_attribute_animated_length_final_get(&thiz->y, y);
+}
+
+static void _esvg_element_rect_final_rx_get(Edom_Tag *t,
+		Esvg_Length *rx)
+{
+	Esvg_Element_Rect *thiz;
+
+	thiz = _esvg_element_rect_get(t);
+	esvg_attribute_animated_length_final_get(&thiz->rx, rx);
+}
+
+static void _esvg_element_rect_final_ry_get(Edom_Tag *t,
+		Esvg_Length *ry)
+{
+	Esvg_Element_Rect *thiz;
+
+	thiz = _esvg_element_rect_get(t);
+	esvg_attribute_animated_length_final_get(&thiz->ry, ry);
+}
+/*----------------------------------------------------------------------------*
  *                       The Esvg Renderable interface                        *
  *----------------------------------------------------------------------------*/
 static Eina_Bool _esvg_element_rect_attribute_set(Ender_Element *e,
@@ -123,9 +179,56 @@ static Eina_Bool _esvg_element_rect_attribute_set(Ender_Element *e,
 	return EINA_TRUE;
 }
 
-static Eina_Bool _esvg_element_rect_attribute_get(Edom_Tag *tag, const char *attribute, char **value)
+static Eina_Bool _esvg_element_rect_attribute_get(Edom_Tag *tag, const char *key, char **value)
 {
-	return EINA_FALSE;
+	if (strcmp(key, "x") == 0)
+	{
+		Esvg_Coord x;
+
+		_esvg_element_rect_final_x_get(tag, &x);
+		*value = esvg_length_string_to(&x);
+	}
+	else if (strcmp(key, "y") == 0)
+	{
+		Esvg_Coord y;
+
+		_esvg_element_rect_final_y_get(tag, &y);
+		*value = esvg_length_string_to(&y);
+	}
+	else if (strcmp(key, "rx") == 0)
+	{
+		Esvg_Coord rx;
+
+		_esvg_element_rect_final_rx_get(tag, &rx);
+		*value = esvg_length_string_to(&rx);
+	}
+	else if (strcmp(key, "ry") == 0)
+	{
+		Esvg_Coord ry;
+
+		_esvg_element_rect_final_ry_get(tag, &ry);
+		*value = esvg_length_string_to(&ry);
+	}
+	else if (strcmp(key, "width") == 0)
+	{
+		Esvg_Coord width;
+
+		_esvg_element_rect_final_width_get(tag, &width);
+		*value = esvg_length_string_to(&width);
+	}
+	else if (strcmp(key, "height") == 0)
+	{
+		Esvg_Coord height;
+
+		_esvg_element_rect_final_height_get(tag, &height);
+		*value = esvg_length_string_to(&height);
+	}
+	else
+	{
+		return EINA_FALSE;
+	}
+
+	return EINA_TRUE;
 }
 
 static int * _esvg_element_rect_attribute_animated_fetch(Edom_Tag *t, const char *attr)

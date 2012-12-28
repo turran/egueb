@@ -136,6 +136,13 @@ static Handle<Value> _v8_value_from_ender(Ender_Value *v)
 	switch (vtype)
 	{
 		case ENDER_STRING:
+		{
+			const char *s;
+
+			s = ender_value_string_get(v);
+			vv = String::New(s);
+		}
+
 		case ENDER_BOOL:
 		case ENDER_UINT32:
 		case ENDER_INT32:
@@ -256,6 +263,8 @@ static v8::Handle<v8::Value> _v8_function(const v8::Arguments& args)
 	{
 		return Undefined();
 	}
+	/* TODO free the ret? how to do it? */
+	/* TODO free the args */
 }
 
 static void _v8_element_function_to_js(Ender_Function *f,

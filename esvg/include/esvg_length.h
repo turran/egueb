@@ -70,6 +70,7 @@ static inline void esvg_length_set(Esvg_Length *length, double value, Esvg_Unit_
 }
 
 EAPI Eina_Bool esvg_length_string_from(Esvg_Length *length, const char *attr_val);
+EAPI char * esvg_length_string_to(Esvg_Length *thiz);
 EAPI Eina_Bool esvg_length_is_equal(Esvg_Length *length1, Esvg_Length *length2);
 EAPI double esvg_coord_final_get(const Esvg_Length *l, double parent_length, double font_size);
 EAPI double esvg_length_final_get(const Esvg_Length *l, double width, double height, double font_size);
