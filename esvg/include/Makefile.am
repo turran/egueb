@@ -27,6 +27,7 @@ esvg_length.h \
 esvg_line.h \
 esvg_linear_gradient.h \
 esvg_main.h \
+esvg_matrix.h \
 esvg_number.h \
 esvg_paint.h \
 esvg_paint_server.h \
