@@ -410,15 +410,23 @@ static void _v8_context_free(void *ctx)
 	free(thiz);
 }
 
-static void _v8_run(void *ctx, const char *s)
+static void _v8_run(void *ctx, const char *s, Ender_Value *v)
 {
 	Esvg_Script_Provider_Js_V8 *thiz = (Esvg_Script_Provider_Js_V8 *)ctx;
 	HandleScope handle_scope;
 
+	thiz->context->Enter();
 	/* create the source string */
 	Handle<String> source = String::New(s);
 	/* compile it */
 	Handle<Script> script = Script::Compile(source);
+#if 0
+	if (v)
+	{
+		Local<Object> global = Context::GetCurrent()->Global();
+		global->Set(String::New("evt"), _v8_value_from_ender(v));
+	}
+#endif
 	/* run it */
  	script->Run();
 }

@@ -10,7 +10,7 @@ typedef struct _Esvg_Script_Provider_Descriptor Esvg_Script_Provider_Descriptor;
 
 typedef void * (*Esvg_Script_Provider_Context_New)(Ender_Element *e);
 typedef void (*Esvg_Script_Provider_Context_Free)(void *ctx);
-typedef void (*Esvg_Script_Provider_Run)(void *ctx, const char *script);
+typedef void (*Esvg_Script_Provider_Run)(void *ctx, const char *script, Ender_Value *v);
 
 struct _Esvg_Script_Provider_Descriptor {
 	Esvg_Script_Provider_Context_New context_new;

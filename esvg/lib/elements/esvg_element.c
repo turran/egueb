@@ -19,9 +19,11 @@
 #include "esvg_private_attribute_presentation.h"
 #include "esvg_private_context.h"
 #include "esvg_private_element.h"
+#include "esvg_private_svg.h"
 
 #include "esvg_main.h"
 #include "esvg_element.h"
+#include "esvg_script_provider.h"
 /*
  * TODO
  * use pointers to determine the state/final/whatever states, that
@@ -186,75 +188,108 @@ static Esvg_Element * _esvg_element_get(Edom_Tag *t)
 /*----------------------------------------------------------------------------*
  *                              Event handlers                                *
  *----------------------------------------------------------------------------*/
-static void _esvg_element_event_handler(Ender_Element *e, const char *script)
+static void _esvg_element_event_handler(Esvg_Element *thiz, const char *script,
+		Ender_Value *v)
 {
+	Esvg_Script_Provider *provider;
+	const char *content_script_type;
+
 	if (!script) return;
-	/* get the topmost svg */
+	if (!thiz->topmost) return;
+
+	esvg_svg_content_script_type_get(thiz->topmost, &content_script_type);
+	provider = esvg_svg_script_provider_get(thiz->topmost, content_script_type);
+	if (!provider) return;
 	/* call the script with the passed in arg */
 	printf("calling with %s\n", script);
+	esvg_script_provider_run(provider, script, v);
 }
 
 static void _esvg_element_onfocusin_call(Ender_Element *e,
 		const char *event_name, void *event_data, void *data)
 {
 	Esvg_Element *thiz = data;
-	_esvg_element_event_handler(e, thiz->onfocusin);
+	_esvg_element_event_handler(thiz, thiz->onfocusin, NULL);
 }
 
 static void _esvg_element_onfocusout_call(Ender_Element *e,
 		const char *event_name, void *event_data, void *data)
 {
 	Esvg_Element *thiz = data;
-	_esvg_element_event_handler(e, thiz->onfocusout);
+	_esvg_element_event_handler(thiz, thiz->onfocusout, NULL);
 }
 
 static void _esvg_element_onactivate_call(Ender_Element *e,
 		const char *event_name, void *event_data, void *data)
 {
 	Esvg_Element *thiz = data;
-	_esvg_element_event_handler(e, thiz->onactivate);
+	_esvg_element_event_handler(thiz, thiz->onactivate, NULL);
+}
+
+static void _esvg_element_mouse_event_call(Esvg_Element *thiz,
+		void *event_data, const char *script)
+{
+	Ender_Value *v;
+	Ender_Descriptor *d;
+	Ender_Container *c;
+
+	if (!script) return;
+
+	d = ender_descriptor_find("MouseEvent");
+	if (!d)
+	{
+		ERR("'MouseEvent' not defined");
+		return;
+	}
+
+	c = ender_container_struct_new(d);
+	v = ender_value_new_container_from(c);
+	ender_value_struct_set(v, event_data);
+	
+	_esvg_element_event_handler(thiz, script, v);
+	ender_value_unref(v);
 }
 
 static void _esvg_element_onclick_call(Ender_Element *e,
 		const char *event_name, void *event_data, void *data)
 {
 	Esvg_Element *thiz = data;
-	_esvg_element_event_handler(e, thiz->onclick);
+	_esvg_element_mouse_event_call(thiz, event_data, thiz->onclick);
 }
 
 static void _esvg_element_onmousedown_call(Ender_Element *e,
 		const char *event_name, void *event_data, void *data)
 {
 	Esvg_Element *thiz = data;
-	_esvg_element_event_handler(e, thiz->onmousedown);
+	_esvg_element_mouse_event_call(thiz, event_data, thiz->onmousedown);
 }
 
 static void _esvg_element_onmouseup_call(Ender_Element *e,
 		const char *event_name, void *event_data, void *data)
 {
 	Esvg_Element *thiz = data;
-	_esvg_element_event_handler(e, thiz->onmouseup);
+	_esvg_element_mouse_event_call(thiz, event_data, thiz->onmouseup);
 }
 
 static void _esvg_element_onmouseover_call(Ender_Element *e,
 		const char *event_name, void *event_data, void *data)
 {
 	Esvg_Element *thiz = data;
-	_esvg_element_event_handler(e, thiz->onmouseover);
+	_esvg_element_mouse_event_call(thiz, event_data, thiz->onmouseover);
 }
 
 static void _esvg_element_onmousemove_call(Ender_Element *e,
 		const char *event_name, void *event_data, void *data)
 {
 	Esvg_Element *thiz = data;
-	_esvg_element_event_handler(e, thiz->onmousemove);
+	_esvg_element_mouse_event_call(thiz, event_data, thiz->onmousemove);
 }
 
 static void _esvg_element_onmouseout_call(Ender_Element *e,
 		const char *event_name, void *event_data, void *data)
 {
 	Esvg_Element *thiz = data;
-	_esvg_element_event_handler(e, thiz->onmouseout);
+	_esvg_element_mouse_event_call(thiz, event_data, thiz->onmouseout);
 }
 
 /* called on every child of an element, whenever the element is being freed */

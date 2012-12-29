@@ -18,4 +18,11 @@ namespace "edom" : 0 {
 		string "attribute_get","getAttribute" (string);
 		"attribute_set","setAttribute" (string, string);
 	};
+
+	struct "event_mouse","MouseEvent" {
+		int "screen_x","ScreenX";
+		int "screen_y","ScreenY";
+		int "client_x","ClientX";
+		int "client_y","ClientY";
+	};
 };

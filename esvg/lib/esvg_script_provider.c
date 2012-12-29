@@ -82,10 +82,11 @@ void esvg_script_provider_free(Esvg_Script_Provider *thiz)
 /* TODO also pass a void * with a container that describes what's inside
  * such data, this way we can pass event data
  */
-void esvg_script_provider_run(Esvg_Script_Provider *thiz, const char *script)
+void esvg_script_provider_run(Esvg_Script_Provider *thiz, const char *script,
+		Ender_Value *v)
 {
 	if (thiz->descriptor->run)
-		thiz->descriptor->run(thiz->ctx, script);
+		thiz->descriptor->run(thiz->ctx, script, v);
 }
 
 Esvg_Script_Provider_Descriptor * esvg_script_provider_descriptor_find(const char *type)

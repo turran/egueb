@@ -9,6 +9,7 @@ typedef struct _Esvg_Event_Mouse
 	int client_y;
 	int button;
 	Ender_Element *related_target;
+	Ender_Element *target;
 	/* TODO
 	 *  readonly attribute boolean          ctrlKey;
 	 *  readonly attribute boolean          shiftKey;

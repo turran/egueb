@@ -14,7 +14,7 @@ Esvg_Script_Provider_Descriptor * esvg_script_provider_descriptor_find(const cha
 
 Esvg_Script_Provider * esvg_script_provider_new(Esvg_Script_Provider_Descriptor *descriptor, Ender_Element *e);
 void esvg_script_provider_free(Esvg_Script_Provider *thiz);
-void esvg_script_provider_run(Esvg_Script_Provider *thiz, const char *script);
+void esvg_script_provider_run(Esvg_Script_Provider *thiz, const char *script, Ender_Value *v);
 
 #ifdef BUILD_ESVG_SCRIPTOR_V8
 Esvg_Script_Provider_Descriptor esvg_script_provider_js_v8_descriptor;

@@ -69,7 +69,7 @@ void esvg_input_feed_mouse_down(Esvg_Input *thiz, int button)
 	thiz->grabbed = thiz->over;
 	thiz->downx = thiz->x;
 	thiz->downy = thiz->y;
-	
+
 	//printf("mouse down! on %s\n", esvg_element_name_get(thiz->over));
 	ender_event_dispatch(thiz->over, "mousedown", &ev);
 }

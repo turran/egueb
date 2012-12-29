@@ -125,7 +125,7 @@ static Esvg_Element_Setup_Return _esvg_script_setup(Edom_Tag *t,
 	if (!thiz->scriptor) return ESVG_SETUP_OK;
 
 	/* run the script */
-	esvg_script_provider_run(thiz->scriptor, thiz->cdata);
+	esvg_script_provider_run(thiz->scriptor, thiz->cdata, NULL);
 	return ESVG_SETUP_OK;
 }
 
