@@ -49,7 +49,7 @@ static void _post_parse_cb(Edom_Parser *parser, void *data)
 		ref_r = esvg_parser_element_renderer_get(ref_t);
 		clone = esvg_element_clone(ref_r);
 		printf("clone = %p\n", clone);
-		esvg_use_link_set(r, clone);
+		esvg_element_use_link_set(r, clone);
 	}
 	printf("reference!!! %p %s\n", ref_t, thiz->href);
 #endif
@@ -130,7 +130,7 @@ Edom_Tag * esvg_parser_filter_new(Edom_Context *c, Edom_Tag *topmost)
 	Enesim_Renderer *r;
 
 	r = esvg_filter_new();
-	tag = esvg_parser_shape_new(c, &_descriptor, ESVG_CIRCLE, topmost, r, NULL);
+	tag = esvg_parser_shape_new(c, &_descriptor, ESVG_ELEMENT_CIRCLE, topmost, r, NULL);
 
 	return tag;
 }

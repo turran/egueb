@@ -853,7 +853,7 @@ static Eina_Bool _esvg_animate_base_setup(Edom_Tag *t,
 	if (!svg_e)
 		return EINA_FALSE;
 
-	etch = esvg_svg_etch_get(svg_e);
+	etch = esvg_element_svg_etch_get(svg_e);
 	if (!etch)
 		return EINA_FALSE;
 

@@ -41,7 +41,7 @@ static const char * _base_dir_get(Ender_Element *e, void *data)
 	return data;
 }
 
-static Esvg_Svg_Application_Descriptor _descriptor = {
+static Esvg_Element_Svg_Application_Descriptor _descriptor = {
 	/* .base_dir_get 	= */ _base_dir_get,
 	/* .go_to 		= */ NULL,
 };
@@ -106,23 +106,23 @@ int main(int argc, char *argv[])
 	/* set the application descriptor in case the svg needs it */
 	strncpy(tmp, argv[1], PATH_MAX);
 	base_dir = dirname(tmp);
-	esvg_svg_application_descriptor_set(tag, &_descriptor, base_dir);
+	esvg_element_svg_application_descriptor_set(tag, &_descriptor, base_dir);
 
 	/* set the final image size as the container size */
 	printf("setting %d %d\n", width, height);
-	esvg_svg_container_width_set(tag, width);
-	esvg_svg_container_height_set(tag, height);
+	esvg_element_svg_container_width_set(tag, width);
+	esvg_element_svg_container_height_set(tag, height);
 	/* FIXME once the renderable class is implemented
 	 * get the renderer, for now test the parsing
 	 */
-	if (!esvg_svg_setup(tag, &err))
+	if (!esvg_element_svg_setup(tag, &err))
 	{
 		printf("The setup failed\n");
 	}
 
 	/* get the actual svg size to use */
-	esvg_svg_actual_width_get(tag, &aw);
-	esvg_svg_actual_height_get(tag, &ah);
+	esvg_element_svg_actual_width_get(tag, &aw);
+	esvg_element_svg_actual_height_get(tag, &ah);
 
 	width = ceil(aw);
 	height = ceil(ah);

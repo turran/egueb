@@ -197,8 +197,8 @@ static void _esvg_element_event_handler(Esvg_Element *thiz, const char *script,
 	if (!script) return;
 	if (!thiz->topmost) return;
 
-	esvg_svg_content_script_type_get(thiz->topmost, &content_script_type);
-	provider = esvg_svg_script_provider_get(thiz->topmost, content_script_type);
+	esvg_element_svg_content_script_type_get(thiz->topmost, &content_script_type);
+	provider = esvg_element_svg_script_provider_get(thiz->topmost, content_script_type);
 	if (!provider) return;
 	/* call the script with the passed in arg */
 	printf("calling with %s\n", script);
@@ -479,8 +479,8 @@ static void _esvg_element_attribute_presentation_setup(Esvg_Element_Attributes *
 	esvg_attribute_enum_unset(&a->fill_rule.base, ESVG_NON_ZERO);
 	esvg_attribute_paint_unset(&a->fill.base, &color);
 	esvg_attribute_paint_unset(&a->stroke.base, &none);
-	esvg_attribute_enum_unset(&a->stroke_line_cap.base, ESVG_LINE_CAP_BUTT);
-	esvg_attribute_enum_unset(&a->stroke_line_join.base, ESVG_LINE_JOIN_MITER);
+	esvg_attribute_enum_unset(&a->stroke_line_cap.base, ESVG_ELEMENT_LINE_CAP_BUTT);
+	esvg_attribute_enum_unset(&a->stroke_line_join.base, ESVG_ELEMENT_LINE_JOIN_MITER);
 	esvg_attribute_number_unset(&a->stop_opacity.base, &onen);
 	esvg_attribute_enum_unset(&a->visibility.base, ESVG_VISIBILITY_VISIBLE);
 	esvg_attribute_enum_unset(&a->display.base, ESVG_DISPLAY_BLOCK);

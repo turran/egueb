@@ -16,23 +16,23 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 #include "esvg_private_main.h"
-#include "esvg_image_provider.h"
+#include "esvg_element_image_provider.h"
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
-struct _Esvg_Image_Provider
+struct _Esvg_Element_Image_Provider
 {
-	Esvg_Image_Provider_Descriptor *descriptor;
+	Esvg_Element_Image_Provider_Descriptor *descriptor;
 	void *data;
 };
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
-Esvg_Image_Provider * esvg_image_provider_new(
-		Esvg_Image_Provider_Descriptor *descriptor,
+Esvg_Element_Image_Provider * esvg_element_image_provider_new(
+		Esvg_Element_Image_Provider_Descriptor *descriptor,
 		Enesim_Renderer *image)
 {
-	Esvg_Image_Provider *thiz;
+	Esvg_Element_Image_Provider *thiz;
 	void *data;
 
 	if (!descriptor)
@@ -43,14 +43,14 @@ Esvg_Image_Provider * esvg_image_provider_new(
 	data = descriptor->create(image);
 	if (!data) return NULL;
 
-	thiz = calloc(1, sizeof(Esvg_Image_Provider));
+	thiz = calloc(1, sizeof(Esvg_Element_Image_Provider));
 	thiz->data = data;
 	thiz->descriptor = descriptor;
 
 	return thiz;
 }
 
-void esvg_image_provider_free(Esvg_Image_Provider *thiz)
+void esvg_element_image_provider_free(Esvg_Element_Image_Provider *thiz)
 {
 	if (!thiz) return;
 	if (!thiz->descriptor->free) return;
@@ -58,7 +58,7 @@ void esvg_image_provider_free(Esvg_Image_Provider *thiz)
 	free(thiz);
 }
 
-void esvg_image_provider_load(Esvg_Image_Provider *thiz)
+void esvg_element_image_provider_load(Esvg_Element_Image_Provider *thiz)
 {
 	if (!thiz) return;
 	if (!thiz->descriptor->load) return;

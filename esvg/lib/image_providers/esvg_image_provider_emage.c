@@ -26,54 +26,54 @@
 #ifdef ERR
 # undef ERR
 #endif
-#define ERR(...) EINA_LOG_DOM_ERR(_esvg_image_provider_emage_log, __VA_ARGS__)
+#define ERR(...) EINA_LOG_DOM_ERR(_esvg_element_image_provider_emage_log, __VA_ARGS__)
 
 #ifdef WARN
 # undef WARN
 #endif
-#define WARN(...) EINA_LOG_DOM_WARN(_esvg_image_provider_emage_log, __VA_ARGS__)
+#define WARN(...) EINA_LOG_DOM_WARN(_esvg_element_image_provider_emage_log, __VA_ARGS__)
 
 #ifdef INFO
 # undef INFO
 #endif
-#define INFO(...) EINA_LOG_DOM_INFO(_esvg_image_provider_emage_log, __VA_ARGS__)
+#define INFO(...) EINA_LOG_DOM_INFO(_esvg_element_image_provider_emage_log, __VA_ARGS__)
 
 #ifdef DBG
 # undef DBG
 #endif
-#define DBG(...) EINA_LOG_DOM_DBG(_esvg_image_provider_emage_log, __VA_ARGS__)
+#define DBG(...) EINA_LOG_DOM_DBG(_esvg_element_image_provider_emage_log, __VA_ARGS__)
 
 /* FIXME we still need to register the log domain */
-static int _esvg_image_provider_emage_log = -1;
+static int _esvg_element_image_provider_emage_log = -1;
 
-typedef struct _Esvg_Image_Emage
+typedef struct _Esvg_Element_Image_Emage
 {
 	Enesim_Renderer *image;
-} Esvg_Image_Emage;
+} Esvg_Element_Image_Emage;
 /*----------------------------------------------------------------------------*
  *                           The Image interface                              *
  *----------------------------------------------------------------------------*/
-static void * _esvg_image_emage_create(Enesim_Renderer *image)
+static void * _esvg_element_image_emage_create(Enesim_Renderer *image)
 {
-	Esvg_Image_Emage *thiz;
+	Esvg_Element_Image_Emage *thiz;
 
-	thiz = calloc(1, sizeof(Esvg_Image_Emage));
+	thiz = calloc(1, sizeof(Esvg_Element_Image_Emage));
 	thiz->image = image;
 
 	return thiz;
 }
 
-static void _esvg_image_emage_free(void *data)
+static void _esvg_element_image_emage_free(void *data)
 {
-	Esvg_Image_Emage *thiz = data;
+	Esvg_Element_Image_Emage *thiz = data;
 
 	enesim_renderer_unref(thiz->image);
 	free(thiz);
 }
 
-static void _esvg_image_emage_load(void *data)
+static void _esvg_element_image_emage_load(void *data)
 {
-	Esvg_Image_Emage *thiz = data;
+	Esvg_Element_Image_Emage *thiz = data;
 	Enesim_Surface *s = NULL;
 	Eina_Bool ret;
 
@@ -93,10 +93,10 @@ static void _esvg_image_emage_load(void *data)
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
-Esvg_Image_Provider_Descriptor esvg_image_provider_emage_descriptor = {
-	/* .create 	= */ _esvg_image_emage_create,
-	/* .free 	= */ _esvg_image_emage_free,
-	/* .load 	= */ _esvg_image_emage_load,
+Esvg_Element_Image_Provider_Descriptor esvg_element_image_provider_emage_descriptor = {
+	/* .create 	= */ _esvg_element_image_emage_create,
+	/* .free 	= */ _esvg_element_image_emage_free,
+	/* .load 	= */ _esvg_element_image_emage_load,
 };
 /*============================================================================*
  *                                   API                                      *

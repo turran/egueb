@@ -79,28 +79,28 @@ static void _register_enders(void)
 	esvg_referenceable_init();
 	esvg_renderable_init();
 	esvg_paint_server_init();
-	esvg_gradient_init();
+	esvg_element_gradient_init();
 	/* now the classes */
-	esvg_line_init();
-	esvg_linear_gradient_init();
+	esvg_element_line_init();
+	esvg_element_linear_gradient_init();
 	esvg_radial_gradient_init();
-	esvg_circle_init();
-	esvg_ellipse_init();
-	esvg_path_init();
-	esvg_polygon_init();
-	esvg_polyline_init();
-	esvg_g_init();
-	esvg_svg_init();
+	esvg_element_circle_init();
+	esvg_element_ellipse_init();
+	esvg_element_path_init();
+	esvg_element_polygon_init();
+	esvg_element_polyline_init();
+	esvg_element_g_init();
+	esvg_element_svg_init();
 	esvg_element_rect_init();
 	esvg_stop_init();
-	esvg_use_init();
-	esvg_defs_init();
+	esvg_element_use_init();
+	esvg_element_defs_init();
 	esvg_a_init();
 	esvg_clip_path_init();
 	esvg_style_init();
-	esvg_image_init();
-	esvg_text_init();
-	esvg_video_init();
+	esvg_element_image_init();
+	esvg_element_text_init();
+	esvg_element_video_init();
 	esvg_script_init();
 
 	esvg_animation_init();
@@ -218,7 +218,7 @@ static void _esvg_dependencies_shutdown(void)
 	esvg_type_shutdown();
 	esvg_parser_shutdown();
 	esvg_clone_shutdown();
-#if BUILD_ESVG_VIDEO
+#if BUILD_ESVG_ELEMENT_VIDEO
 	gst_deinit();
 #endif
 }

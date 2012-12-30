@@ -12,29 +12,29 @@ esvg_animate_base.h \
 esvg_animate_transform.h \
 esvg_animation.h \
 esvg_boolean.h \
-esvg_circle.h \
+esvg_element_circle.h \
 esvg_clip_path.h \
 esvg_color.h \
-esvg_defs.h \
+esvg_element_defs.h \
 esvg_element.h \
 esvg_element_rect.h \
-esvg_ellipse.h \
+esvg_element_ellipse.h \
 esvg_event.h \
-esvg_g.h \
-esvg_gradient.h \
-esvg_image.h \
+esvg_element_g.h \
+esvg_element_gradient.h \
+esvg_element_image.h \
 esvg_length.h \
-esvg_line.h \
-esvg_linear_gradient.h \
+esvg_element_line.h \
+esvg_element_linear_gradient.h \
 esvg_main.h \
 esvg_matrix.h \
 esvg_number.h \
 esvg_paint.h \
 esvg_paint_server.h \
 esvg_parser.h \
-esvg_path.h \
-esvg_polygon.h \
-esvg_polyline.h \
+esvg_element_path.h \
+esvg_element_polygon.h \
+esvg_element_polyline.h \
 esvg_radial_gradient.h \
 esvg_referenceable.h \
 esvg_renderable.h \
@@ -45,11 +45,11 @@ esvg_set.h \
 esvg_stop.h \
 esvg_string.h \
 esvg_style.h \
-esvg_svg.h \
-esvg_text.h \
+esvg_element_svg.h \
+esvg_element_text.h \
 esvg_types.h \
-esvg_use.h \
-esvg_video.h \
+esvg_element_use.h \
+esvg_element_video.h \
 esvg_video_provider.h
 
 EXTRA_DIST = \

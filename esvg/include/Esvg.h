@@ -73,31 +73,31 @@
 #include "esvg_script_provider.h"
 
 /* shapes */
-#include "esvg_path.h"
-#include "esvg_polygon.h"
-#include "esvg_polyline.h"
-#include "esvg_line.h"
-#include "esvg_circle.h"
-#include "esvg_ellipse.h"
+#include "esvg_element_path.h"
+#include "esvg_element_polygon.h"
+#include "esvg_element_polyline.h"
+#include "esvg_element_line.h"
+#include "esvg_element_circle.h"
+#include "esvg_element_ellipse.h"
 #include "esvg_element_rect.h"
-#include "esvg_image.h"
-#include "esvg_text.h"
-#include "esvg_use.h"
-#include "esvg_video.h"
+#include "esvg_element_image.h"
+#include "esvg_element_text.h"
+#include "esvg_element_use.h"
+#include "esvg_element_video.h"
 /* containers */
-#include "esvg_svg.h"
-#include "esvg_g.h"
+#include "esvg_element_svg.h"
+#include "esvg_element_g.h"
 
 /* other */
 #include "esvg_a.h"
 #include "esvg_event.h"
-#include "esvg_defs.h"
+#include "esvg_element_defs.h"
 #include "esvg_style.h"
 
 /* paint servers */
-#include "esvg_gradient.h"
+#include "esvg_element_gradient.h"
 #include "esvg_stop.h"
-#include "esvg_linear_gradient.h"
+#include "esvg_element_linear_gradient.h"
 #include "esvg_radial_gradient.h"
 
 /* animation */

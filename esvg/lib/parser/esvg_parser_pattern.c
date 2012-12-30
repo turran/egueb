@@ -81,7 +81,7 @@ Eina_Bool _parser_pattern_attribute_set(Edom_Tag *tag,
 	}
 	else if (strcmp(key, "patternUnits") == 0)
 	{
-		Esvg_Gradient_Units units;
+		Esvg_Element_Gradient_Units units;
 
 		esvg_parser_gradient_units_string_from(&units, value);
 		esvg_pattern_units_set(r, units);
@@ -128,18 +128,18 @@ static Eina_Bool _parser_pattern_child_supported(Edom_Tag *tag, int tag_id)
 {
 	switch (tag_id)
 	{
-		case ESVG_USE:
-		case ESVG_SVG:
-		case ESVG_CIRCLE:
-		case ESVG_ELLIPSE:
+		case ESVG_ELEMENT_USE:
+		case ESVG_ELEMENT_SVG:
+		case ESVG_ELEMENT_CIRCLE:
+		case ESVG_ELEMENT_ELLIPSE:
 		case ESVG_ELEMENT_RECT:
-		case ESVG_LINE:
-		case ESVG_PATH:
-		case ESVG_POLYLINE:
-		case ESVG_POLYGON:
-		case ESVG_TEXT:
-		case ESVG_G:
-		case ESVG_IMAGE:
+		case ESVG_ELEMENT_LINE:
+		case ESVG_ELEMENT_PATH:
+		case ESVG_ELEMENT_POLYLINE:
+		case ESVG_ELEMENT_POLYGON:
+		case ESVG_ELEMENT_TEXT:
+		case ESVG_ELEMENT_G:
+		case ESVG_ELEMENT_IMAGE:
 		return EINA_TRUE;
 
 		default:

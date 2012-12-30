@@ -30,6 +30,7 @@ void esvg_script_provider_js_v8_shutdown(void);
 
 
 #include <v8.h>
+#include <list>
 #include <map>
 
 using namespace v8;
@@ -78,6 +79,7 @@ typedef struct _Esvg_Script_Provider_Js_V8
 {
 	Ender_Element *svg;
 	Persistent<Context> context;
+	
 } Esvg_Script_Provider_Js_V8;
 
 static Handle<Object> _v8_element_to_js(Esvg_Script_Provider_Js_V8 *thiz,
@@ -88,6 +90,7 @@ static Handle<Object> _v8_element_to_js(Esvg_Script_Provider_Js_V8 *thiz,
  * it to eina_hash?
  */
 static std::map<const char *, Persistent<FunctionTemplate> > _prototypes;
+static std::list<Persistent<Script> > _scripts;
 
 static Ender_Value * _v8_value_to_ender(Handle<Value> v, Ender_Container *c)
 {
@@ -182,7 +185,7 @@ static v8::Handle<v8::Value> _v8_alert(const v8::Arguments& args)
 	thiz = static_cast<Esvg_Script_Provider_Js_V8*>(wrap->Value());
 
 	/* call the svg with the string */
-	esvg_svg_script_alert(thiz->svg, *str);
+	esvg_element_svg_script_alert(thiz->svg, *str);
 	return Undefined();
 }
 
@@ -413,14 +416,17 @@ static void _v8_context_free(void *ctx)
 static void _v8_run(void *ctx, const char *s, Ender_Value *v)
 {
 	Esvg_Script_Provider_Js_V8 *thiz = (Esvg_Script_Provider_Js_V8 *)ctx;
+	Persistent<Context> context = thiz->context;
 	HandleScope handle_scope;
 
 	thiz->context->Enter();
 	/* create the source string */
 	Handle<String> source = String::New(s);
 	/* compile it */
-	Handle<Script> script = Script::Compile(source);
-#if 0
+	Persistent<Script> script = Persistent<Script>::New(Script::New(source));
+	//Handle<Script> script = Script::Compile(source);
+	printf("running %s\n", s);
+#if 1
 	if (v)
 	{
 		Local<Object> global = Context::GetCurrent()->Global();
@@ -429,8 +435,18 @@ static void _v8_run(void *ctx, const char *s, Ender_Value *v)
 #endif
 	/* run it */
  	script->Run();
+	_scripts.push_front(script);
+#if 0
+	/* get the function */
+	Handle<Value> process_val = context->Global()->Get(String::New("enlarge_circle"));
+	if (!process_val->IsFunction())
+	{
+		ERR("is not a function 'enlarge circle'");
+		return;
+	}
+	Handle<Function> process_fun = Handle<Function>::Cast(process_val);
+#endif
 }
-
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/

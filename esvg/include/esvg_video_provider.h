@@ -1,5 +1,5 @@
-#ifndef _ESVG_VIDEO_PROVIDER_H_
-#define _ESVG_VIDEO_PROVIDER_H_
+#ifndef _ESVG_ELEMENT_VIDEO_PROVIDER_H_
+#define _ESVG_ELEMENT_VIDEO_PROVIDER_H_
 
 #ifdef __cplusplus
 extern "C" {

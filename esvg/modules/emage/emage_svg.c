@@ -59,7 +59,7 @@ static const char * _emage_svg_base_dir_get(Ender_Element *e, void *data)
 	return data;
 }
 
-static Esvg_Svg_Application_Descriptor _emage_svg_descriptor = {
+static Esvg_Element_Svg_Application_Descriptor _emage_svg_descriptor = {
 	/* .base_dir_get 	= */ _emage_svg_base_dir_get,
 	/* .go_to 		= */ NULL,
 };
@@ -216,15 +216,15 @@ static Eina_Error _emage_svg_load(Emage_Data *data, Enesim_Buffer *buffer, void 
 		if (!strcmp(tmp, "."))
 			tmp = "./";
 		base_dir = strdup(tmp);
-		esvg_svg_application_descriptor_set(e, &_emage_svg_descriptor, base_dir);
+		esvg_element_svg_application_descriptor_set(e, &_emage_svg_descriptor, base_dir);
 		free(location);
 		location = base_dir;
 	}
 	/* we should render into the swdata? */
-	esvg_svg_container_width_set(e, w);
-	esvg_svg_container_height_set(e, h);
-	esvg_svg_actual_width_get(e, &svg_w);
-	esvg_svg_actual_height_get(e, &svg_h);
+	esvg_element_svg_container_width_set(e, w);
+	esvg_element_svg_container_height_set(e, h);
+	esvg_element_svg_actual_width_get(e, &svg_w);
+	esvg_element_svg_actual_height_get(e, &svg_h);
 
 	w = (int)ceil(svg_w);
 	h = (int)ceil(svg_h);
@@ -235,13 +235,13 @@ static Eina_Error _emage_svg_load(Emage_Data *data, Enesim_Buffer *buffer, void 
 		ret = EMAGE_ERROR_LOADING;
 		goto err_surface;
 	}
-	if (!esvg_svg_setup(e, &err))
+	if (!esvg_element_svg_setup(e, &err))
 	{
 		enesim_error_dump(err);
 		ret = EMAGE_ERROR_LOADING;
 		goto err_setup;
 	}
-	if (!esvg_svg_draw(e, s, NULL, 0, 0, NULL))
+	if (!esvg_element_svg_draw(e, s, NULL, 0, 0, NULL))
 	{
 		ret = EMAGE_ERROR_LOADING;
 		enesim_error_dump(err);

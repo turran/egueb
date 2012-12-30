@@ -94,7 +94,7 @@ static Esvg_Referenceable_Reference * _esvg_renderable_get_reference(Edom_Tag *t
 		return NULL;
 	}
 
-	esvg_svg_element_get(topmost, uri, &e);
+	esvg_element_svg_element_get(topmost, uri, &e);
 	if (!e)
 	{
 		ERR("'%s' not found", uri);

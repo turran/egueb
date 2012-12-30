@@ -142,12 +142,12 @@ static void _esvg_animate_string_interpolate(void *a, void *b, double m,
 /*----------------------------------------------------------------------------*
  *                   The path command type descriptor                         *
  *----------------------------------------------------------------------------*/
-static void _esvg_animate_path_command_get_cb(Esvg_Path_Command *cmd, void *data)
+static void _esvg_animate_path_command_get_cb(Esvg_Element_Path_Command *cmd, void *data)
 {
-	Esvg_Path_Command *pcmd;
+	Esvg_Element_Path_Command *pcmd;
 	Eina_List **dst = data;
 
-	pcmd = calloc(1, sizeof(Esvg_Path_Command));
+	pcmd = calloc(1, sizeof(Esvg_Element_Path_Command));
 	*pcmd = *cmd;
 	*dst = eina_list_append(*dst, pcmd);
 }
@@ -159,13 +159,13 @@ static void * _esvg_animate_path_command_value_new(void)
 
 static Eina_Bool _esvg_animate_path_command_value_get(const char *attr, void **value)
 {
-	esvg_path_string_from(attr, _esvg_animate_path_command_get_cb, value);
+	esvg_element_path_string_from(attr, _esvg_animate_path_command_get_cb, value);
 	return EINA_TRUE;
 }
 
 static void _esvg_animate_path_command_value_free(void *d)
 {
-	Esvg_Path_Command *pcmd;
+	Esvg_Element_Path_Command *pcmd;
 	Eina_List *l = d;
 
 	EINA_LIST_FREE(l, pcmd)
@@ -183,7 +183,7 @@ static void * _esvg_animate_path_command_destination_new(void)
 static void _esvg_animate_path_command_destination_free(void *destination, Eina_Bool deep)
 {
 	Esvg_Animated_List *d = destination;
-	Esvg_Path_Command *cmd;
+	Esvg_Element_Path_Command *cmd;
 
 	if (deep)
 	{
@@ -204,15 +204,15 @@ static void _esvg_animate_path_command_destination_keep(void *destination)
 static void _esvg_animate_path_command_destination_value_from(void *destination, void *value)
 {
 	Esvg_Animated_List *d = destination;
-	Esvg_Path_Command *cmd;
+	Esvg_Element_Path_Command *cmd;
 	Eina_List *v = value;
 	Eina_List *l;
 
 	EINA_LIST_FOREACH (v, l, cmd)
 	{
-		Esvg_Path_Command *ncmd;
+		Esvg_Element_Path_Command *ncmd;
 
-		ncmd = calloc(1, sizeof(Esvg_Path_Command));
+		ncmd = calloc(1, sizeof(Esvg_Element_Path_Command));
 		*ncmd = *cmd;
 		d->base = eina_list_append(d->base, ncmd);
 	}
@@ -228,7 +228,7 @@ static void _esvg_animate_path_command_interpolate(void *a, void *b, double m,
 		void *add, void *acc, int mul, void *res)
 {
 	Esvg_Animated_List *r = res;
-	Esvg_Path_Command *ca;
+	Esvg_Element_Path_Command *ca;
 	Eina_List *va = a;
 	Eina_List *vb = b;
 	Eina_List *l1, *l2, *l3;
@@ -237,8 +237,8 @@ static void _esvg_animate_path_command_interpolate(void *a, void *b, double m,
 	l3 = r->base;
 	EINA_LIST_FOREACH (va, l1, ca)
 	{
-		Esvg_Path_Command *cb = l2->data;
-		Esvg_Path_Command *cr = l3->data;
+		Esvg_Element_Path_Command *cb = l2->data;
+		Esvg_Element_Path_Command *cr = l3->data;
 
 		if (m <= 0.5)
 			cr->relative = ca->relative;
@@ -246,21 +246,21 @@ static void _esvg_animate_path_command_interpolate(void *a, void *b, double m,
 			cr->relative = cb->relative;
 		switch (ca->type)
 		{
-			case ESVG_PATH_MOVE_TO:
+			case ESVG_ELEMENT_PATH_MOVE_TO:
 			etch_interpolate_double(ca->data.move_to.x, cb->data.move_to.x, m, &cr->data.move_to.x);
 			etch_interpolate_double(ca->data.move_to.y, cb->data.move_to.y, m, &cr->data.move_to.y);
 			break;
-			case ESVG_PATH_LINE_TO:
+			case ESVG_ELEMENT_PATH_LINE_TO:
 			etch_interpolate_double(ca->data.line_to.x, cb->data.line_to.x, m, &cr->data.line_to.x);
 			etch_interpolate_double(ca->data.line_to.y, cb->data.line_to.y, m, &cr->data.line_to.y);
 			break;
-			case ESVG_PATH_HLINE_TO:
+			case ESVG_ELEMENT_PATH_HLINE_TO:
 			etch_interpolate_double(ca->data.hline_to.c, cb->data.hline_to.c, m, &cr->data.hline_to.c);
 			break;
-			case ESVG_PATH_VLINE_TO:
+			case ESVG_ELEMENT_PATH_VLINE_TO:
 			etch_interpolate_double(ca->data.vline_to.c, cb->data.vline_to.c, m, &cr->data.vline_to.c);
 			break;
-			case ESVG_PATH_CUBIC_TO:
+			case ESVG_ELEMENT_PATH_CUBIC_TO:
 			etch_interpolate_double(ca->data.cubic_to.ctrl_x1, cb->data.cubic_to.ctrl_x1, m, &cr->data.cubic_to.ctrl_x1);
 			etch_interpolate_double(ca->data.cubic_to.ctrl_y1, cb->data.cubic_to.ctrl_y1, m, &cr->data.cubic_to.ctrl_y1);
 			etch_interpolate_double(ca->data.cubic_to.ctrl_x0, cb->data.cubic_to.ctrl_x0, m, &cr->data.cubic_to.ctrl_x0);
@@ -268,27 +268,27 @@ static void _esvg_animate_path_command_interpolate(void *a, void *b, double m,
 			etch_interpolate_double(ca->data.cubic_to.x, cb->data.cubic_to.x, m, &cr->data.cubic_to.x);
 			etch_interpolate_double(ca->data.cubic_to.y, cb->data.cubic_to.y, m, &cr->data.cubic_to.y);
 			break;
-			case ESVG_PATH_SCUBIC_TO:
+			case ESVG_ELEMENT_PATH_SCUBIC_TO:
 			etch_interpolate_double(ca->data.scubic_to.ctrl_x, cb->data.scubic_to.ctrl_x, m, &cr->data.scubic_to.ctrl_x);
 			etch_interpolate_double(ca->data.scubic_to.ctrl_y, cb->data.scubic_to.ctrl_y, m, &cr->data.scubic_to.ctrl_y);
 			etch_interpolate_double(ca->data.scubic_to.x, cb->data.scubic_to.x, m, &cr->data.scubic_to.x);
 			etch_interpolate_double(ca->data.scubic_to.y, cb->data.scubic_to.y, m, &cr->data.scubic_to.y);
 			break;
-			case ESVG_PATH_QUADRATIC_TO:
+			case ESVG_ELEMENT_PATH_QUADRATIC_TO:
 			etch_interpolate_double(ca->data.quadratic_to.ctrl_x, cb->data.quadratic_to.ctrl_x, m, &cr->data.quadratic_to.ctrl_x);
 			etch_interpolate_double(ca->data.quadratic_to.ctrl_y, cb->data.quadratic_to.ctrl_y, m, &cr->data.quadratic_to.ctrl_y);
 			etch_interpolate_double(ca->data.quadratic_to.x, cb->data.quadratic_to.x, m, &cr->data.quadratic_to.x);
 			etch_interpolate_double(ca->data.quadratic_to.y, cb->data.quadratic_to.y, m, &cr->data.quadratic_to.y);
 			break;
-			case ESVG_PATH_SQUADRATIC_TO:
+			case ESVG_ELEMENT_PATH_SQUADRATIC_TO:
 			etch_interpolate_double(ca->data.squadratic_to.x, cb->data.squadratic_to.x, m, &cr->data.squadratic_to.x);
 			etch_interpolate_double(ca->data.squadratic_to.y, cb->data.squadratic_to.y, m, &cr->data.squadratic_to.y);
 			break;
-			case ESVG_PATH_ARC_TO:
+			case ESVG_ELEMENT_PATH_ARC_TO:
 			etch_interpolate_double(ca->data.arc_to.x, cb->data.arc_to.x, m, &cr->data.arc_to.x);
 			etch_interpolate_double(ca->data.arc_to.y, cb->data.arc_to.y, m, &cr->data.arc_to.y);
 			break;
-			case ESVG_PATH_CLOSE:
+			case ESVG_ELEMENT_PATH_CLOSE:
 			break;
 		}
 		l2 = l2->next;

@@ -40,14 +40,14 @@ typedef enum _Esvg_Type {
 	ESVG_ANIMATECOLOR,
 	ESVG_ANIMATEMOTION,
 	ESVG_ANIMATETRANSFORM,
-	ESVG_CIRCLE,
+	ESVG_ELEMENT_CIRCLE,
 	ESVG_CLIPPATH,
 	ESVG_COLOR_PROFILE, /* 10 */
 	ESVG_CURSOR,
 	ESVG_DEFINITION_SRC,
-	ESVG_DEFS,
+	ESVG_ELEMENT_DEFS,
 	ESVG_DESC,
-	ESVG_ELLIPSE,
+	ESVG_ELEMENT_ELLIPSE,
 	ESVG_FEBLEND,
 	ESVG_FECOLORMATRIX,
 	ESVG_FECOMPONENTTRANSFER,
@@ -80,38 +80,38 @@ typedef enum _Esvg_Type {
 	ESVG_FONT_FACE_SRC,
 	ESVG_FONT_FACE_URI,
 	ESVG_FOREIGNOBJECT,
-	ESVG_G,
-	ESVG_GLYPH,
-	ESVG_GLYPHREF, /* 50 */
+	ESVG_ELEMENT_G,
+	ESVG_ELEMENT_GLYPH,
+	ESVG_ELEMENT_GLYPHREF, /* 50 */
 	ESVG_HKERN,
-	ESVG_IMAGE,
-	ESVG_LINE,
-	ESVG_LINEARGRADIENT,
+	ESVG_ELEMENT_IMAGE,
+	ESVG_ELEMENT_LINE,
+	ESVG_ELEMENT_LINEARGRADIENT,
 	ESVG_MARKER,
 	ESVG_MASK,
 	ESVG_METADATA,
 	ESVG_MISSING_GLYPH,
 	ESVG_MPATH,
-	ESVG_PATH, /* 60 */
+	ESVG_ELEMENT_PATH, /* 60 */
 	ESVG_PATTERN,
-	ESVG_POLYGON,
-	ESVG_POLYLINE,
+	ESVG_ELEMENT_POLYGON,
+	ESVG_ELEMENT_POLYLINE,
 	ESVG_RADIALGRADIENT,
 	ESVG_ELEMENT_RECT,
 	ESVG_SCRIPT,
 	ESVG_SET,
 	ESVG_STOP,
 	ESVG_STYLE,
-	ESVG_SVG, /* 70 */
+	ESVG_ELEMENT_SVG, /* 70 */
 	ESVG_SWITCH,
 	ESVG_SYMBOL,
-	ESVG_TEXT,
-	ESVG_TEXTPATH,
+	ESVG_ELEMENT_TEXT,
+	ESVG_ELEMENT_TEXTPATH,
 	ESVG_TITLE,
 	ESVG_TREF,
 	ESVG_TSPAN,
-	ESVG_USE,
-	ESVG_VIDEO,
+	ESVG_ELEMENT_USE,
+	ESVG_ELEMENT_VIDEO,
 	ESVG_VIEW,
 	ESVG_VKERN,
 	ESVG_PARSE_TAGS
@@ -140,14 +140,14 @@ typedef struct _Esvg_Animated_List
 /* FIXME when doing clipping or masking, we also use this
  * so better change the name
  */
-typedef enum _Esvg_Gradient_Units
+typedef enum _Esvg_Element_Gradient_Units
 {
-	ESVG_USER_SPACE_ON_USE,
+	ESVG_ELEMENT_USER_SPACE_ON_USE,
 	ESVG_OBJECT_BOUNDING_BOX,
-	ESVG_GRADIENT_UNITS,
-} Esvg_Gradient_Units, Esvg_Pattern_Units;
+	ESVG_ELEMENT_GRADIENT_UNITS,
+} Esvg_Element_Gradient_Units, Esvg_Pattern_Units;
 
-typedef Esvg_Gradient_Units Esvg_Clip_Path_Units;
+typedef Esvg_Element_Gradient_Units Esvg_Clip_Path_Units;
 
 typedef enum _Esvg_Paint_Server_Type
 {
@@ -188,24 +188,24 @@ typedef struct _Esvg_Animated_Clip_Path
 	Esvg_Clip_Path anim;
 } Esvg_Animated_Clip_Path;
 
-typedef enum _Esvg_Path_Command_Type
+typedef enum _Esvg_Element_Path_Command_Type
 {
-	ESVG_PATH_MOVE_TO,
-	ESVG_PATH_LINE_TO,
-	ESVG_PATH_HLINE_TO,
-	ESVG_PATH_VLINE_TO,
-	ESVG_PATH_CUBIC_TO,
-	ESVG_PATH_SCUBIC_TO,
-	ESVG_PATH_QUADRATIC_TO,
-	ESVG_PATH_SQUADRATIC_TO,
-	ESVG_PATH_ARC_TO,
-	ESVG_PATH_CLOSE,
-	ESVG_PATH_COMMAND_TYPES
-} Esvg_Path_Command_Type;
+	ESVG_ELEMENT_PATH_MOVE_TO,
+	ESVG_ELEMENT_PATH_LINE_TO,
+	ESVG_ELEMENT_PATH_HLINE_TO,
+	ESVG_ELEMENT_PATH_VLINE_TO,
+	ESVG_ELEMENT_PATH_CUBIC_TO,
+	ESVG_ELEMENT_PATH_SCUBIC_TO,
+	ESVG_ELEMENT_PATH_QUADRATIC_TO,
+	ESVG_ELEMENT_PATH_SQUADRATIC_TO,
+	ESVG_ELEMENT_PATH_ARC_TO,
+	ESVG_ELEMENT_PATH_CLOSE,
+	ESVG_ELEMENT_PATH_COMMAND_TYPES
+} Esvg_Element_Path_Command_Type;
 
-typedef struct _Esvg_Path_Command
+typedef struct _Esvg_Element_Path_Command
 {
-	Esvg_Path_Command_Type type;
+	Esvg_Element_Path_Command_Type type;
 	union {
 		struct {
 			double c;
@@ -240,7 +240,7 @@ typedef struct _Esvg_Path_Command
  	} data;
 	Eina_Bool relative;
 	Eina_Bool is_closed;
-} Esvg_Path_Command;
+} Esvg_Element_Path_Command;
 
 typedef struct _Esvg_Point
 {
@@ -250,16 +250,16 @@ typedef struct _Esvg_Point
 
 typedef enum _Esvg_Stroke_Line_Cap
 {
-	ESVG_LINE_CAP_BUTT,
-	ESVG_LINE_CAP_ROUND,
-	ESVG_LINE_CAP_SQUARE,
+	ESVG_ELEMENT_LINE_CAP_BUTT,
+	ESVG_ELEMENT_LINE_CAP_ROUND,
+	ESVG_ELEMENT_LINE_CAP_SQUARE,
 } Esvg_Stroke_Line_Cap;
 
 typedef enum _Esvg_Stroke_Line_Join
 {
-	ESVG_LINE_JOIN_MITER,
-	ESVG_LINE_JOIN_ROUND,
-	ESVG_LINE_JOIN_BEVEL,
+	ESVG_ELEMENT_LINE_JOIN_MITER,
+	ESVG_ELEMENT_LINE_JOIN_ROUND,
+	ESVG_ELEMENT_LINE_JOIN_BEVEL,
 } Esvg_Stroke_Line_Join;
 
 /* attributes */
@@ -435,7 +435,7 @@ EAPI Eina_Bool esvg_iri_string_from(const char *attr, Esvg_Uri_Descriptor *descr
 EAPI Eina_Bool esvg_uri_string_from(const char *attr, Esvg_Uri_Descriptor *descriptor, void *data);
 
 typedef void (*Esvg_Free_Cb)(void *data);
-typedef void (*Esvg_Command_Cb)(Esvg_Path_Command *cmd, void *data);
+typedef void (*Esvg_Command_Cb)(Esvg_Element_Path_Command *cmd, void *data);
 typedef void (*Esvg_Timing_Cb)(Esvg_Timing *t, void *data);
 typedef void (*Esvg_Points_Cb)(Esvg_Point *p, void *data);
 typedef void (*Esvg_List_Cb)(const char *item, void *data);
@@ -446,11 +446,11 @@ EAPI const char * esvg_type_string_to(Esvg_Type type);
 EAPI Eina_Bool esvg_string_is_equal(const char *s1, const char *s2);
 
 /* FIXME rename this: remove the _parser_ */
-EAPI Eina_Bool esvg_parser_gradient_units_string_from(Esvg_Gradient_Units *gu, const char *value);
+EAPI Eina_Bool esvg_parser_gradient_units_string_from(Esvg_Element_Gradient_Units *gu, const char *value);
 EAPI Eina_Bool esvg_parser_fill_rule_get(Esvg_Fill_Rule *rule, const char *attr);
 EAPI Eina_Bool esvg_parser_spread_method_get(Esvg_Spread_Method *smethod, const char *attr);
 
-EAPI Eina_Bool esvg_path_string_from(const char *value, Esvg_Command_Cb cb, void *data);
+EAPI Eina_Bool esvg_element_path_string_from(const char *value, Esvg_Command_Cb cb, void *data);
 EAPI Eina_Bool esvg_transformation_string_from(Enesim_Matrix *matrix, const char *attr);
 
 EAPI Esvg_Stroke_Line_Cap esvg_stroke_line_cap_string_from(const char *value);

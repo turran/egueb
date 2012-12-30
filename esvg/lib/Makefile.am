@@ -38,10 +38,10 @@ esvg_types.c \
 esvg_video_provider.c
 
 #esvg_attribute_regular.c \
-#esvg_gradient.c \
+#esvg_element_gradient.c \
 #esvg_pattern.c \
 #esvg_shape.c \
-#esvg_use.c
+#esvg_element_use.c
 
 libesvg_la_LIBADD = \
 $(top_builddir)/edom/lib/libedom.la \
