@@ -381,7 +381,7 @@ static Eina_Bool esvg_parser_path_line_to(Eina_Bool relative,
 		return EINA_FALSE;
 	}
 
-	cmd->type = ESVG_ELEMENT_PATH_LINE_TO;
+	cmd->type = ESVG_PATH_LINE_TO;
 	cmd->relative = relative;
 	cmd->data.line_to.x = p.x;
 	cmd->data.line_to.y = p.y;
@@ -399,7 +399,7 @@ static Eina_Bool esvg_parser_path_move_to(Eina_Bool relative,
 		ERR("Can not get point");
 		return EINA_FALSE;
 	}
-	cmd->type = ESVG_ELEMENT_PATH_MOVE_TO;
+	cmd->type = ESVG_PATH_MOVE_TO;
 	cmd->relative = relative;
 	cmd->data.move_to.x = p.x;
 	cmd->data.move_to.y = p.y;
@@ -417,7 +417,7 @@ static Eina_Bool esvg_parser_path_hline_to(Eina_Bool relative,
 		ERR("Can not get coord");
 		return EINA_FALSE;
 	}
-	cmd->type = ESVG_ELEMENT_PATH_HLINE_TO;
+	cmd->type = ESVG_PATH_HLINE_TO;
 	cmd->relative = relative;
 	cmd->data.hline_to.c = c;
 
@@ -434,7 +434,7 @@ static Eina_Bool esvg_parser_path_vline_to(Eina_Bool relative,
 		ERR("Can not get coord");
 		return EINA_FALSE;
 	}
-	cmd->type = ESVG_ELEMENT_PATH_VLINE_TO;
+	cmd->type = ESVG_PATH_VLINE_TO;
 	cmd->relative = relative;
 	cmd->data.hline_to.c = c;
 
@@ -464,7 +464,7 @@ static Eina_Bool esvg_parser_path_cubic_to(Eina_Bool relative,
 		return EINA_FALSE;
 	}
 
-	cmd->type = ESVG_ELEMENT_PATH_CUBIC_TO;
+	cmd->type = ESVG_PATH_CUBIC_TO;
 	cmd->relative = relative;
 	cmd->data.cubic_to.ctrl_x0 = ctrl0.x;
 	cmd->data.cubic_to.ctrl_y0 = ctrl0.y;
@@ -493,7 +493,7 @@ static Eina_Bool esvg_parser_path_scubic_to(Eina_Bool relative,
 		return EINA_FALSE;
 	}
 
-	cmd->type = ESVG_ELEMENT_PATH_SCUBIC_TO;
+	cmd->type = ESVG_PATH_SCUBIC_TO;
 	cmd->relative = relative;
 	cmd->data.scubic_to.ctrl_x = ctrl.x;
 	cmd->data.scubic_to.ctrl_y = ctrl.y;
@@ -520,7 +520,7 @@ static Eina_Bool esvg_parser_path_quadratic_to(	Eina_Bool relative,
 		return EINA_FALSE;
 	}
 
-	cmd->type = ESVG_ELEMENT_PATH_QUADRATIC_TO;
+	cmd->type = ESVG_PATH_QUADRATIC_TO;
 	cmd->relative = relative;
 	cmd->data.quadratic_to.ctrl_x = ctrl.x;
 	cmd->data.quadratic_to.ctrl_y = ctrl.y;
@@ -541,7 +541,7 @@ static Eina_Bool esvg_parser_path_squadratic_to(Eina_Bool relative,
 		ERR("Can not get point");
 		return EINA_FALSE;
 	}
-	cmd->type = ESVG_ELEMENT_PATH_SQUADRATIC_TO;
+	cmd->type = ESVG_PATH_SQUADRATIC_TO;
 	cmd->relative = relative;
 	cmd->data.squadratic_to.x = p.x;
 	cmd->data.squadratic_to.y = p.y;
@@ -586,7 +586,7 @@ static Eina_Bool esvg_parser_path_arc_to(Eina_Bool relative,
 		return EINA_FALSE;
 	}
 
-	cmd->type = ESVG_ELEMENT_PATH_ARC_TO;
+	cmd->type = ESVG_PATH_ARC_TO;
 	cmd->relative = relative;
 	cmd->data.arc_to.rx = radii.x;
 	cmd->data.arc_to.ry = radii.y;
@@ -602,7 +602,7 @@ static Eina_Bool esvg_parser_path_arc_to(Eina_Bool relative,
 static Eina_Bool esvg_parser_path_close(char **value,
 		Esvg_Element_Path_Command *cmd)
 {
-	cmd->type = ESVG_ELEMENT_PATH_CLOSE;
+	cmd->type = ESVG_PATH_CLOSE;
 	cmd->relative = EINA_FALSE;
 
 	return EINA_TRUE;
@@ -842,88 +842,88 @@ EAPI const char * esvg_type_string_to(Esvg_Type type)
 {
 	switch (type)
 	{
-		case ESVG_A: return "a";
-		case ESVG_ALTGLYPH: return "";
-		case ESVG_ALTGLYPHDEF: return "";
-		case ESVG_ALTGLYPHITEM: return "";
-		case ESVG_ANIMATE: return "animate";
-		case ESVG_ANIMATECOLOR: return "animateColor";
-		case ESVG_ANIMATEMOTION: return "animateMotion";
-		case ESVG_ANIMATETRANSFORM: return "animateTransform";
-		case ESVG_ELEMENT_CIRCLE: return "circle";
-		case ESVG_CLIPPATH: return "clipPath";
-		case ESVG_COLOR_PROFILE: return "" /* 10 */;
-		case ESVG_CURSOR: return "cursor";
-		case ESVG_DEFINITION_SRC: return "";
-		case ESVG_ELEMENT_DEFS: return "defs";
-		case ESVG_DESC: return "desc";
-		case ESVG_ELEMENT_ELLIPSE: return "ellipse";
-		case ESVG_FEBLEND: return "feBlend";
-		case ESVG_FECOLORMATRIX: return "";
-		case ESVG_FECOMPONENTTRANSFER: return "";
-		case ESVG_FECOMPOSITE: return "";
-		case ESVG_FECONVOLVEMATRIX: return "" /* 20 */;
-		case ESVG_FEDIFFUSELIGHTING: return "";
-		case ESVG_FEDISPLACEMENTMAP: return "";
-		case ESVG_FEDISTANTLIGHT: return "";
-		case ESVG_FEFLOOD: return "";
-		case ESVG_FEFUNCA: return "";
-		case ESVG_FEFUNCB: return "";
-		case ESVG_FEFUNCG: return "";
-		case ESVG_FEFUNCR: return "";
-		case ESVG_FEGAUSSIANBLUR: return "";
-		case ESVG_FEIMAGE: return "" /* 30 */;
-		case ESVG_FEMERGE: return "";
-		case ESVG_FEMERGENODE: return "";
-		case ESVG_FEMORPHOLOGY: return "";
-		case ESVG_FEOFFSET: return "";
-		case ESVG_FEPOINTLIGHT: return "";
-		case ESVG_FESPECULARLIGHTING: return "";
-		case ESVG_FESPOTLIGHT: return "";
-		case ESVG_FETILE: return "";
-		case ESVG_FETURBULENCE: return "";
-		case ESVG_FILTER: return "" /* 40 */;
-		case ESVG_FONT: return "";
-		case ESVG_FONT_FACE: return "";
-		case ESVG_FONT_FACE_FORMAT: return "";
-		case ESVG_FONT_FACE_NAME: return "";
-		case ESVG_FONT_FACE_SRC: return "";
-		case ESVG_FONT_FACE_URI: return "";
-		case ESVG_FOREIGNOBJECT: return "";
-		case ESVG_ELEMENT_G: return "g";
-		case ESVG_ELEMENT_GLYPH: return "";
-		case ESVG_ELEMENT_GLYPHREF: return "" /* 50 */;
-		case ESVG_HKERN: return "";
-		case ESVG_ELEMENT_IMAGE: return "image";
-		case ESVG_ELEMENT_LINE: return "line";
-		case ESVG_ELEMENT_LINEARGRADIENT: return "linearGradient";
-		case ESVG_MARKER: return "marker";
-		case ESVG_MASK: return "mask";
-		case ESVG_METADATA: return "";
-		case ESVG_MISSING_GLYPH: return "";
-		case ESVG_MPATH: return "";
-		case ESVG_ELEMENT_PATH: return "path" /* 60 */;
-		case ESVG_PATTERN: return "pattern";
-		case ESVG_ELEMENT_POLYGON: return "polygon";
-		case ESVG_ELEMENT_POLYLINE: return "polyline";
-		case ESVG_RADIALGRADIENT: return "radialGradient";
-		case ESVG_ELEMENT_RECT: return "rect";
-		case ESVG_SCRIPT: return "script";
-		case ESVG_SET: return "set";
-		case ESVG_STOP: return "stop";
-		case ESVG_STYLE: return "style";
-		case ESVG_ELEMENT_SVG: return "svg" /* 70 */;
-		case ESVG_SWITCH: return "";
-		case ESVG_SYMBOL: return "";
-		case ESVG_ELEMENT_TEXT: return "text";
-		case ESVG_ELEMENT_TEXTPATH: return "";
-		case ESVG_TITLE: return "";
-		case ESVG_TREF: return "";
-		case ESVG_TSPAN: return "";
-		case ESVG_ELEMENT_USE: return "use";
-		case ESVG_ELEMENT_VIDEO: return "video";
-		case ESVG_VIEW: return "";
-		case ESVG_VKERN: return "";
+		case ESVG_TYPE_A: return "a";
+		case ESVG_TYPE_ALTGLYPH: return "";
+		case ESVG_TYPE_ALTGLYPHDEF: return "";
+		case ESVG_TYPE_ALTGLYPHITEM: return "";
+		case ESVG_TYPE_ANIMATE: return "animate";
+		case ESVG_TYPE_ANIMATECOLOR: return "animateColor";
+		case ESVG_TYPE_ANIMATEMOTION: return "animateMotion";
+		case ESVG_TYPE_ANIMATETRANSFORM: return "animateTransform";
+		case ESVG_TYPE_CIRCLE: return "circle";
+		case ESVG_TYPE_CLIPPATH: return "clipPath";
+		case ESVG_TYPE_COLOR_PROFILE: return "" /* 10 */;
+		case ESVG_TYPE_CURSOR: return "cursor";
+		case ESVG_TYPE_DEFINITION_SRC: return "";
+		case ESVG_TYPE_DEFS: return "defs";
+		case ESVG_TYPE_DESC: return "desc";
+		case ESVG_TYPE_ELLIPSE: return "ellipse";
+		case ESVG_TYPE_FEBLEND: return "feBlend";
+		case ESVG_TYPE_FECOLORMATRIX: return "";
+		case ESVG_TYPE_FECOMPONENTTRANSFER: return "";
+		case ESVG_TYPE_FECOMPOSITE: return "";
+		case ESVG_TYPE_FECONVOLVEMATRIX: return "" /* 20 */;
+		case ESVG_TYPE_FEDIFFUSELIGHTING: return "";
+		case ESVG_TYPE_FEDISPLACEMENTMAP: return "";
+		case ESVG_TYPE_FEDISTANTLIGHT: return "";
+		case ESVG_TYPE_FEFLOOD: return "";
+		case ESVG_TYPE_FEFUNCA: return "";
+		case ESVG_TYPE_FEFUNCB: return "";
+		case ESVG_TYPE_FEFUNCG: return "";
+		case ESVG_TYPE_FEFUNCR: return "";
+		case ESVG_TYPE_FEGAUSSIANBLUR: return "";
+		case ESVG_TYPE_FEIMAGE: return "" /* 30 */;
+		case ESVG_TYPE_FEMERGE: return "";
+		case ESVG_TYPE_FEMERGENODE: return "";
+		case ESVG_TYPE_FEMORPHOLOGY: return "";
+		case ESVG_TYPE_FEOFFSET: return "";
+		case ESVG_TYPE_FEPOINTLIGHT: return "";
+		case ESVG_TYPE_FESPECULARLIGHTING: return "";
+		case ESVG_TYPE_FESPOTLIGHT: return "";
+		case ESVG_TYPE_FETILE: return "";
+		case ESVG_TYPE_FETURBULENCE: return "";
+		case ESVG_TYPE_FILTER: return "" /* 40 */;
+		case ESVG_TYPE_FONT: return "";
+		case ESVG_TYPE_FONT_FACE: return "";
+		case ESVG_TYPE_FONT_FACE_FORMAT: return "";
+		case ESVG_TYPE_FONT_FACE_NAME: return "";
+		case ESVG_TYPE_FONT_FACE_SRC: return "";
+		case ESVG_TYPE_FONT_FACE_URI: return "";
+		case ESVG_TYPE_FOREIGNOBJECT: return "";
+		case ESVG_TYPE_G: return "g";
+		case ESVG_TYPE_GLYPH: return "";
+		case ESVG_TYPE_GLYPHREF: return "" /* 50 */;
+		case ESVG_TYPE_HKERN: return "";
+		case ESVG_TYPE_IMAGE: return "image";
+		case ESVG_TYPE_LINE: return "line";
+		case ESVG_TYPE_LINEARGRADIENT: return "linearGradient";
+		case ESVG_TYPE_MARKER: return "marker";
+		case ESVG_TYPE_MASK: return "mask";
+		case ESVG_TYPE_METADATA: return "";
+		case ESVG_TYPE_MISSING_GLYPH: return "";
+		case ESVG_TYPE_MPATH: return "";
+		case ESVG_TYPE_PATH: return "path" /* 60 */;
+		case ESVG_TYPE_PATTERN: return "pattern";
+		case ESVG_TYPE_POLYGON: return "polygon";
+		case ESVG_TYPE_POLYLINE: return "polyline";
+		case ESVG_TYPE_RADIALGRADIENT: return "radialGradient";
+		case ESVG_TYPE_RECT: return "rect";
+		case ESVG_TYPE_SCRIPT: return "script";
+		case ESVG_TYPE_SET: return "set";
+		case ESVG_TYPE_STOP: return "stop";
+		case ESVG_TYPE_STYLE: return "style";
+		case ESVG_TYPE_SVG: return "svg" /* 70 */;
+		case ESVG_TYPE_SWITCH: return "";
+		case ESVG_TYPE_SYMBOL: return "";
+		case ESVG_TYPE_TEXT: return "text";
+		case ESVG_TYPE_TEXTPATH: return "";
+		case ESVG_TYPE_TITLE: return "";
+		case ESVG_TYPE_TREF: return "";
+		case ESVG_TYPE_TSPAN: return "";
+		case ESVG_TYPE_USE: return "use";
+		case ESVG_TYPE_VIDEO: return "video";
+		case ESVG_TYPE_VIEW: return "";
+		case ESVG_TYPE_VKERN: return "";
 		default: return "unknown";
 	}
 }
@@ -932,10 +932,10 @@ EAPI Eina_Bool esvg_type_is_animation(Esvg_Type type)
 {
 	switch (type)
 	{
-		case ESVG_ANIMATE:
-		case ESVG_ANIMATECOLOR:
-		case ESVG_ANIMATETRANSFORM:
-		case ESVG_SET:
+		case ESVG_TYPE_ANIMATE:
+		case ESVG_TYPE_ANIMATECOLOR:
+		case ESVG_TYPE_ANIMATETRANSFORM:
+		case ESVG_TYPE_SET:
 		return EINA_TRUE;
 
 		default:
@@ -947,9 +947,9 @@ EAPI Eina_Bool esvg_type_is_paint_server(Esvg_Type type)
 {
 	switch (type)
 	{
-		case ESVG_ELEMENT_LINEARGRADIENT:
-		case ESVG_RADIALGRADIENT:
-		case ESVG_PATTERN:
+		case ESVG_TYPE_LINEARGRADIENT:
+		case ESVG_TYPE_RADIALGRADIENT:
+		case ESVG_TYPE_PATTERN:
 		return EINA_TRUE;
 
 		default:
@@ -961,13 +961,13 @@ EAPI Eina_Bool esvg_type_is_shape(Esvg_Type type)
 {
 	switch (type)
 	{
-		case ESVG_ELEMENT_LINE:
-		case ESVG_ELEMENT_RECT:
-		case ESVG_ELEMENT_POLYLINE:
-		case ESVG_ELEMENT_POLYGON:
-		case ESVG_ELEMENT_ELLIPSE:
-		case ESVG_ELEMENT_CIRCLE:
-		case ESVG_ELEMENT_PATH:
+		case ESVG_TYPE_LINE:
+		case ESVG_TYPE_RECT:
+		case ESVG_TYPE_POLYLINE:
+		case ESVG_TYPE_POLYGON:
+		case ESVG_TYPE_ELLIPSE:
+		case ESVG_TYPE_CIRCLE:
+		case ESVG_TYPE_PATH:
 		return EINA_TRUE;
 
 		default:
@@ -981,12 +981,12 @@ EAPI Eina_Bool esvg_type_is_renderable(Esvg_Type type)
 		return EINA_TRUE;
 	switch (type)
 	{
-		case ESVG_ELEMENT_SVG:
-		case ESVG_ELEMENT_G:
-		case ESVG_ELEMENT_IMAGE:
-		case ESVG_ELEMENT_TEXT:
-		case ESVG_ELEMENT_USE:
-		case ESVG_ELEMENT_VIDEO:
+		case ESVG_TYPE_SVG:
+		case ESVG_TYPE_G:
+		case ESVG_TYPE_IMAGE:
+		case ESVG_TYPE_TEXT:
+		case ESVG_TYPE_USE:
+		case ESVG_TYPE_VIDEO:
 		return EINA_TRUE;
 
 		default:
@@ -999,7 +999,7 @@ EAPI Eina_Bool esvg_parser_gradient_units_string_from(Esvg_Element_Gradient_Unit
 {
 	if (strncmp(attr, "userSpaceOnUse", 14) == 0)
 	{
-		*gu = ESVG_ELEMENT_USER_SPACE_ON_USE;
+		*gu = ESVG_USER_SPACE_ON_USE;
 	}
 	else if (strncmp(attr, "objectBoundingBox", 17) == 0)
 	{
@@ -1102,28 +1102,28 @@ EAPI Eina_Bool esvg_string_is_equal(const char *s1, const char *s2)
 
 EAPI Esvg_Stroke_Line_Cap esvg_stroke_line_cap_string_from(const char *value)
 {
-	Esvg_Stroke_Line_Cap stroke_line_cap = ESVG_ELEMENT_LINE_CAP_BUTT;
+	Esvg_Stroke_Line_Cap stroke_line_cap = ESVG_STROKE_LINE_CAP_BUTT;
 
 	if (!strcmp(value, "butt"))
-		stroke_line_cap = ESVG_ELEMENT_LINE_CAP_BUTT;
+		stroke_line_cap = ESVG_STROKE_LINE_CAP_BUTT;
 	else if (!strcmp(value, "round"))
-		stroke_line_cap = ESVG_ELEMENT_LINE_CAP_ROUND;
+		stroke_line_cap = ESVG_STROKE_LINE_CAP_ROUND;
 	else if (!strcmp(value, "square"))
-		stroke_line_cap = ESVG_ELEMENT_LINE_CAP_SQUARE;
+		stroke_line_cap = ESVG_STROKE_LINE_CAP_SQUARE;
 
 	return stroke_line_cap;
 }
 
 EAPI Esvg_Stroke_Line_Join esvg_stroke_line_join_string_from(const char *value)
 {
-	Esvg_Stroke_Line_Join stroke_line_join = ESVG_ELEMENT_LINE_JOIN_MITER;
+	Esvg_Stroke_Line_Join stroke_line_join = ESVG_STROKE_LINE_JOIN_MITER;
 
 	if (!strcmp(value, "miter"))
-		stroke_line_join = ESVG_ELEMENT_LINE_JOIN_MITER;
+		stroke_line_join = ESVG_STROKE_LINE_JOIN_MITER;
 	else if (!strcmp(value, "round"))
-		stroke_line_join = ESVG_ELEMENT_LINE_JOIN_ROUND;
+		stroke_line_join = ESVG_STROKE_LINE_JOIN_ROUND;
 	else if (!strcmp(value, "bevel"))
-		stroke_line_join = ESVG_ELEMENT_LINE_JOIN_BEVEL;
+		stroke_line_join = ESVG_STROKE_LINE_JOIN_BEVEL;
 
 	return stroke_line_join;
 }

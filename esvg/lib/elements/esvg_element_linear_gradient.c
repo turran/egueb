@@ -52,7 +52,7 @@ static Esvg_Element_Linear_Gradient * _esvg_element_linear_gradient_get(Edom_Tag
 {
 	Esvg_Element_Linear_Gradient *thiz;
 
-	if (esvg_element_internal_type_get(t) != ESVG_ELEMENT_LINEARGRADIENT)
+	if (esvg_element_internal_type_get(t) != ESVG_TYPE_LINEARGRADIENT)
 		return NULL;
 	thiz = esvg_element_gradient_data_get(t);
 
@@ -322,7 +322,7 @@ static Edom_Tag * _esvg_element_linear_gradient_new(void)
 	thiz->x2.v = ESVG_LENGTH_100_PERCENT;
 	thiz->y2.v = ESVG_LENGTH_0;
 
-	t = esvg_element_gradient_new(&_descriptor, ESVG_ELEMENT_LINEARGRADIENT, thiz);
+	t = esvg_element_gradient_new(&_descriptor, ESVG_TYPE_LINEARGRADIENT, thiz);
 	return t;
 }
 
@@ -463,7 +463,7 @@ static Eina_Bool _esvg_element_linear_gradient_y2_is_set(Edom_Tag *t)
 }
 /* The ender wrapper */
 #define _esvg_element_linear_gradient_delete NULL
-#include "generated/esvg_generated_linear_gradient.c"
+#include "generated/esvg_generated_element_linear_gradient.c"
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
@@ -502,7 +502,7 @@ EAPI Eina_Bool esvg_is_linear_gradient(Ender_Element *e)
 
 	t = (Edom_Tag *)ender_element_object_get(e);
 	type = esvg_element_internal_type_get(t);
-	return (type == ESVG_ELEMENT_LINEARGRADIENT) ? EINA_TRUE : EINA_FALSE;
+	return (type == ESVG_TYPE_LINEARGRADIENT) ? EINA_TRUE : EINA_FALSE;
 }
 
 EAPI void esvg_element_linear_gradient_x1_set(Ender_Element *e, const Esvg_Coord *x1)

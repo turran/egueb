@@ -164,9 +164,9 @@ static Eina_Bool _esvg_element_gradient_stop_propagate(Edom_Tag *t, Edom_Tag *ch
 
 	/* only propagate stops */
 	type = esvg_element_internal_type_get(child);
-	if (type != ESVG_STOP) return EINA_TRUE;
+	if (type != ESVG_TYPE_STOP) return EINA_TRUE;
 
-	stop = esvg_stop_gradient_stop_get(child);
+	stop = esvg_element_stop_gradient_stop_get(child);
 	DBG("Adding a gradient stop at position %g with color %08x", stop->pos, stop->argb);
 	enesim_renderer_gradient_stop_add(r, stop);
 	return EINA_TRUE;
@@ -268,8 +268,8 @@ static Eina_Bool _esvg_element_gradient_child_add(Edom_Tag *t, Edom_Tag *child)
 	/* only support stops and animate variants */
 	switch (type)
 	{
-		case ESVG_STOP:
-		case ESVG_ANIMATE:
+		case ESVG_TYPE_STOP:
+		case ESVG_TYPE_ANIMATE:
 		break;
 
 		default:
@@ -555,7 +555,7 @@ static void _esvg_element_gradient_spread_method_get(Edom_Tag *t, Esvg_Spread_Me
 #define _esvg_element_gradient_delete NULL
 #define _esvg_element_gradient_href_is_set NULL
 #define _esvg_element_gradient_spread_method_is_set NULL
-#include "generated/esvg_generated_gradient.c"
+#include "generated/esvg_generated_element_gradient.c"
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/

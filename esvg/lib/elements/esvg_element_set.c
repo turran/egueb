@@ -23,8 +23,8 @@
 #include "esvg_private_animation.h"
 #include "esvg_private_svg.h"
 
-#include "esvg_set.h"
-#include "esvg_animation.h"
+#include "esvg_element_set.h"
+#include "esvg_element_animation.h"
 
 /* We can optimize this, as there's no need to interpolate any value
  * during the set lifetime .... we need to know what to do with "sandwich"
@@ -33,11 +33,11 @@
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
-#define ESVG_LOG_DEFAULT _esvg_set_log
+#define ESVG_LOG_DEFAULT _esvg_element_set_log
 
-static int _esvg_set_log = -1;
+static int _esvg_element_set_log = -1;
 
-static Ender_Property *ESVG_SET_TO;
+static Ender_Property *ESVG_ELEMENT_SET_TO;
 
 typedef struct _Esvg_Set
 {
@@ -58,30 +58,30 @@ typedef struct _Esvg_Set
 	/* etch related data */
 	Etch *etch;
 	Etch_Animation *etch_a;
-} Esvg_Set;
+} Esvg_Element_Set;
 
-static Esvg_Set * _esvg_set_get(Edom_Tag *t)
+static Esvg_Element_Set * _esvg_element_set_get(Edom_Tag *t)
 {
-	Esvg_Set *thiz;
+	Esvg_Element_Set *thiz;
 
 	thiz = esvg_animation_data_get(t);
 
 	return thiz;
 }
 
-static void _esvg_set_cleanup(Esvg_Set *thiz)
+static void _esvg_element_set_cleanup(Esvg_Element_Set *thiz)
 {
 
 }
 
-static void _esvg_set_interpolator_cb(Etch_Data *a, Etch_Data *b, double m, Etch_Data *res, void *data)
+static void _esvg_element_set_interpolator_cb(Etch_Data *a, Etch_Data *b, double m, Etch_Data *res, void *data)
 {
-	Esvg_Set *thiz = data;
+	Esvg_Element_Set *thiz = data;
 
 	thiz->d->interpolator(a->data.external, b->data.external, m, NULL, NULL, 0, res->data.external);
 }
 
-static void _esvg_set_property_set(Esvg_Set *thiz, void *data)
+static void _esvg_element_set_property_set(Esvg_Element_Set *thiz, void *data)
 {
 	Esvg_Attribute_Type old_type;
 
@@ -94,18 +94,18 @@ static void _esvg_set_property_set(Esvg_Set *thiz, void *data)
 	esvg_element_attribute_type_set(thiz->parent_t, old_type);
 }
 
-static void _esvg_set_animation_cb(Etch_Animation_Keyframe *k,
+static void _esvg_element_set_animation_cb(Etch_Animation_Keyframe *k,
 		const Etch_Data *curr,
 		const Etch_Data *prev,
 		void *user_data)
 {
-	Esvg_Set *thiz = user_data;
-	_esvg_set_property_set(thiz, thiz->destination_data);
+	Esvg_Element_Set *thiz = user_data;
+	_esvg_element_set_property_set(thiz, thiz->destination_data);
 }
 
-static void _esvg_set_animation_start_cb(Etch_Animation *a, void *data)
+static void _esvg_element_set_animation_start_cb(Etch_Animation *a, void *data)
 {
-	Esvg_Set *thiz = data;
+	Esvg_Element_Set *thiz = data;
 	Esvg_Fill fill;
 
 	esvg_animation_fill_get(thiz->thiz_e, &fill);
@@ -126,9 +126,9 @@ static void _esvg_set_animation_start_cb(Etch_Animation *a, void *data)
 	ender_event_dispatch(thiz->thiz_e, "begin", NULL);
 }
 
-static void _esvg_set_animation_stop_cb(Etch_Animation *a, void *data)
+static void _esvg_element_set_animation_stop_cb(Etch_Animation *a, void *data)
 {
-	Esvg_Set *thiz = data;
+	Esvg_Element_Set *thiz = data;
 	Esvg_Fill fill;
 
 	esvg_animation_fill_get(thiz->thiz_e, &fill);
@@ -136,57 +136,57 @@ static void _esvg_set_animation_stop_cb(Etch_Animation *a, void *data)
 	if (fill == ESVG_FILL_REMOVE)
 	{
 		DBG("Going back to previous value");
-		_esvg_set_property_set(thiz, thiz->destination_prev);
+		_esvg_element_set_property_set(thiz, thiz->destination_prev);
 	}
 	ender_event_dispatch(thiz->thiz_e, "end", NULL);
 }
 /*----------------------------------------------------------------------------*
  *                           The Animation interface                          *
  *----------------------------------------------------------------------------*/
-static void _esvg_set_enable(Edom_Tag *t, int64_t offset)
+static void _esvg_element_set_enable(Edom_Tag *t, int64_t offset)
 {
-	Esvg_Set *thiz;
+	Esvg_Element_Set *thiz;
 
-	thiz = _esvg_set_get(t);
+	thiz = _esvg_element_set_get(t);
 	if (!thiz->etch_a) return;
 	etch_animation_offset_add(thiz->etch_a, offset);
 	etch_animation_enable(thiz->etch_a);
 }
 
-static void _esvg_set_disable(Edom_Tag *t)
+static void _esvg_element_set_disable(Edom_Tag *t)
 {
-	Esvg_Set *thiz;
+	Esvg_Element_Set *thiz;
 
-	thiz = _esvg_set_get(t);
+	thiz = _esvg_element_set_get(t);
 	if (!thiz->etch_a) return;
 	etch_animation_disable(thiz->etch_a);
 }
 
-static void _esvg_set_initialize(Ender_Element *e)
+static void _esvg_element_set_initialize(Ender_Element *e)
 {
-	Esvg_Set *thiz;
+	Esvg_Element_Set *thiz;
 	Edom_Tag *t;
 
 	t = ender_element_object_get(e);
-	thiz = _esvg_set_get(t);
+	thiz = _esvg_element_set_get(t);
 	thiz->thiz_e = e;
 }
 
-static void _esvg_set_free(Edom_Tag *t)
+static void _esvg_element_set_free(Edom_Tag *t)
 {
-	Esvg_Set *thiz;
+	Esvg_Element_Set *thiz;
 
-	thiz = _esvg_set_get(t);
-	_esvg_set_cleanup(thiz);
+	thiz = _esvg_element_set_get(t);
+	_esvg_element_set_cleanup(thiz);
 	free(thiz);
 }
 
-static Eina_Bool _esvg_set_attribute_set(Ender_Element *e,
+static Eina_Bool _esvg_element_set_attribute_set(Ender_Element *e,
 		const char *key, const char *value)
 {
 	if (strcmp(key, "to") == 0)
 	{
-		esvg_set_to_set(e, value);
+		esvg_element_set_to_set(e, value);
 	}
 	else
 	{
@@ -195,17 +195,17 @@ static Eina_Bool _esvg_set_attribute_set(Ender_Element *e,
 	return EINA_TRUE;
 }
 
-static Eina_Bool _esvg_set_attribute_get(Edom_Tag *tag, const char *attribute, char **value)
+static Eina_Bool _esvg_element_set_attribute_get(Edom_Tag *tag, const char *attribute, char **value)
 {
 	return EINA_FALSE;
 }
 
-static Eina_Bool _esvg_set_setup(Edom_Tag *t,
+static Eina_Bool _esvg_element_set_setup(Edom_Tag *t,
 		Esvg_Context *c,
 		Esvg_Animation_Context *actx,
 		Enesim_Error **error)
 {
-	Esvg_Set *thiz;
+	Esvg_Element_Set *thiz;
 	Esvg_Attribute_Animated_Descriptor *d;
 	Esvg_Duration *dur = &actx->timing.dur;
 	Ender_Element *svg_e;
@@ -220,8 +220,8 @@ static Eina_Bool _esvg_set_setup(Edom_Tag *t,
 	const char *name;
 	void *to_data;
 
-	thiz = _esvg_set_get(t);
-	_esvg_set_cleanup(thiz);
+	thiz = _esvg_element_set_get(t);
+	_esvg_element_set_cleanup(thiz);
 
 	/* get the etch associated with the topmost svg */
 	esvg_element_internal_topmost_get(t, &svg_e);
@@ -274,10 +274,10 @@ static Eina_Bool _esvg_set_setup(Edom_Tag *t,
 	etch_data.data.external = to_data;
 	/* create the animation */
 	etch_a = etch_animation_external_add(thiz->etch,
-			_esvg_set_interpolator_cb,
-			_esvg_set_animation_cb,
-			_esvg_set_animation_start_cb,
-			_esvg_set_animation_stop_cb,
+			_esvg_element_set_interpolator_cb,
+			_esvg_element_set_animation_cb,
+			_esvg_element_set_animation_start_cb,
+			_esvg_element_set_animation_stop_cb,
 			NULL,
 			NULL,
 			thiz->destination_data,
@@ -307,22 +307,22 @@ static Eina_Bool _esvg_set_setup(Edom_Tag *t,
 }
 
 static Esvg_Animation_Descriptor _descriptor = {
-	/* .attribute_get 	= */ _esvg_set_attribute_get,
-	/* .free 		= */ _esvg_set_free,
-	/* .initialize 		= */ _esvg_set_initialize,
-	/* .attribute_set 	= */ _esvg_set_attribute_set,
-	/* .setup 		= */ _esvg_set_setup,
-	/* .enable 		= */ _esvg_set_enable,
-	/* .disable 		= */ _esvg_set_disable,
+	/* .attribute_get 	= */ _esvg_element_set_attribute_get,
+	/* .free 		= */ _esvg_element_set_free,
+	/* .initialize 		= */ _esvg_element_set_initialize,
+	/* .attribute_set 	= */ _esvg_element_set_attribute_set,
+	/* .setup 		= */ _esvg_element_set_setup,
+	/* .enable 		= */ _esvg_element_set_enable,
+	/* .disable 		= */ _esvg_element_set_disable,
 };
 /*----------------------------------------------------------------------------*
  *                           The Ender interface                              *
  *----------------------------------------------------------------------------*/
-static void _esvg_set_to_set(Edom_Tag *t, const char *to)
+static void _esvg_element_set_to_set(Edom_Tag *t, const char *to)
 {
-	Esvg_Set *thiz;
+	Esvg_Element_Set *thiz;
 
-	thiz = _esvg_set_get(t);
+	thiz = _esvg_element_set_get(t);
 	if (thiz->to)
 	{
 		free(thiz->to);
@@ -332,50 +332,50 @@ static void _esvg_set_to_set(Edom_Tag *t, const char *to)
 		thiz->to = strdup(to);
 }
 
-static void _esvg_set_to_get(Edom_Tag *t, const char **to)
+static void _esvg_element_set_to_get(Edom_Tag *t, const char **to)
 {
-	Esvg_Set *thiz;
+	Esvg_Element_Set *thiz;
 
 	if (!to) return;
-	thiz = _esvg_set_get(t);
+	thiz = _esvg_element_set_get(t);
 	*to = thiz->to;
 }
 
-static Edom_Tag * _esvg_set_new(void)
+static Edom_Tag * _esvg_element_set_new(void)
 {
-	Esvg_Set *thiz;
+	Esvg_Element_Set *thiz;
 	Edom_Tag *t;
 
-	thiz = calloc(1, sizeof(Esvg_Set));
-	t = esvg_animation_new(&_descriptor, ESVG_SET, thiz);
+	thiz = calloc(1, sizeof(Esvg_Element_Set));
+	t = esvg_animation_new(&_descriptor, ESVG_TYPE_SET, thiz);
 	return t;
 }
 
 /* The ender wrapper */
-#define _esvg_set_delete NULL
-#define _esvg_set_to_is_set NULL
-#include "generated/esvg_generated_set.c"
+#define _esvg_element_set_delete NULL
+#define _esvg_element_set_to_is_set NULL
+#include "generated/esvg_generated_element_set.c"
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
-void esvg_set_init(void)
+void esvg_element_set_init(void)
 {
-	_esvg_set_log = eina_log_domain_register("esvg_set", ESVG_LOG_COLOR_DEFAULT);
-	if (_esvg_set_log < 0)
+	_esvg_element_set_log = eina_log_domain_register("esvg_set", ESVG_LOG_COLOR_DEFAULT);
+	if (_esvg_element_set_log < 0)
 	{
 		EINA_LOG_ERR("Can not create log domain.");
 		return;
 	}
-	_esvg_set_init();
+	_esvg_element_set_init();
 }
 
-void esvg_set_shutdown(void)
+void esvg_element_set_shutdown(void)
 {
-	if (_esvg_set_log < 0)
+	if (_esvg_element_set_log < 0)
 		return;
-	_esvg_set_shutdown();
-	eina_log_domain_unregister(_esvg_set_log);
-	_esvg_set_log = -1;
+	_esvg_element_set_shutdown();
+	eina_log_domain_unregister(_esvg_element_set_log);
+	_esvg_element_set_log = -1;
 }
 /*============================================================================*
  *                                   API                                      *
@@ -384,7 +384,7 @@ void esvg_set_shutdown(void)
  * To be documented
  * FIXME: To be fixed
  */
-EAPI Ender_Element * esvg_set_new(void)
+EAPI Ender_Element * esvg_element_set_new(void)
 {
 	return ESVG_ELEMENT_NEW("set");
 }
@@ -392,20 +392,20 @@ EAPI Ender_Element * esvg_set_new(void)
  * To be documented
  * FIXME: To be fixed
  */
-EAPI void esvg_set_to_set(Ender_Element *e, const char *v)
+EAPI void esvg_element_set_to_set(Ender_Element *e, const char *v)
 {
-	ender_element_property_value_set(e, ESVG_SET_TO, v, NULL);
+	ender_element_property_value_set(e, ESVG_ELEMENT_SET_TO, v, NULL);
 }
 
 /**
  * To be documented
  * FIXME: To be fixed
  */
-EAPI void esvg_set_to_get(Ender_Element *e, const char **v)
+EAPI void esvg_element_set_to_get(Ender_Element *e, const char **v)
 {
 	Edom_Tag *t;
 
 	t = ender_element_object_get(e);
-	_esvg_set_to_get(t, v);
+	_esvg_element_set_to_get(t, v);
 }
 

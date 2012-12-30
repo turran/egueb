@@ -46,7 +46,7 @@ static Esvg_Element_G * _esvg_element_g_get(Edom_Tag *t)
 {
 	Esvg_Element_G *thiz;
 
-	if (esvg_element_internal_type_get(t) != ESVG_ELEMENT_G)
+	if (esvg_element_internal_type_get(t) != ESVG_TYPE_G)
 		return NULL;
 	thiz = esvg_renderable_data_get(t);
 
@@ -91,7 +91,7 @@ static Eina_Bool _esvg_element_g_setup_post(Edom_Tag *t,
 		/* add it to the container */
 		esvg_renderable_container_renderable_add(thiz->container, child);
 	}
- 	else if (type == ESVG_A)
+ 	else if (type == ESVG_TYPE_A)
 	{
 		return esvg_element_internal_child_setup(child, c, error,
 				NULL, _esvg_element_g_setup_post, thiz);
@@ -122,7 +122,7 @@ static Eina_Bool _esvg_element_g_child_add(Edom_Tag *t, Edom_Tag *child)
 		return EINA_FALSE;
 
 	type = esvg_element_internal_type_get(child);
-	if (esvg_type_is_renderable(type) || type == ESVG_A)
+	if (esvg_type_is_renderable(type) || type == ESVG_TYPE_A)
 	{
 		thiz->renderable_tree_changed = EINA_TRUE;
 	}
@@ -140,7 +140,7 @@ static Eina_Bool _esvg_element_g_child_remove(Edom_Tag *t, Edom_Tag *child)
 		return EINA_FALSE;
 
 	type = esvg_element_internal_type_get(child);
-	if (esvg_type_is_renderable(type) || type == ESVG_A)
+	if (esvg_type_is_renderable(type) || type == ESVG_TYPE_A)
 	{
 		thiz->renderable_tree_changed = EINA_TRUE;
 	}
@@ -236,12 +236,12 @@ static Edom_Tag * _esvg_element_g_new(void)
 	thiz->r = r;
 	enesim_renderer_rop_set(r, ENESIM_BLEND);
 
-	t = esvg_renderable_new(&_descriptor, ESVG_ELEMENT_G, thiz);
+	t = esvg_renderable_new(&_descriptor, ESVG_TYPE_G, thiz);
 	return t;
 }
 /* The ender wrapper */
 #define _esvg_element_g_delete NULL
-#include "generated/esvg_generated_g.c"
+#include "generated/esvg_generated_element_g.c"
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
@@ -279,5 +279,5 @@ EAPI Eina_Bool esvg_is_g(Ender_Element *e)
 
 	t = (Edom_Tag *)ender_element_object_get(e);
 	type = esvg_element_internal_type_get(t);
-	return (type == ESVG_ELEMENT_G) ? EINA_TRUE : EINA_FALSE;
+	return (type == ESVG_TYPE_G) ? EINA_TRUE : EINA_FALSE;
 }

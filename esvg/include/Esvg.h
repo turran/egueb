@@ -89,22 +89,23 @@
 #include "esvg_element_g.h"
 
 /* other */
-#include "esvg_a.h"
-#include "esvg_event.h"
+#include "esvg_element_a.h"
 #include "esvg_element_defs.h"
-#include "esvg_style.h"
+#include "esvg_element_style.h"
+#include "esvg_element_clip_path.h"
+#include "esvg_event.h"
 
 /* paint servers */
 #include "esvg_element_gradient.h"
-#include "esvg_stop.h"
+#include "esvg_element_stop.h"
 #include "esvg_element_linear_gradient.h"
-#include "esvg_radial_gradient.h"
+#include "esvg_element_radial_gradient.h"
 
 /* animation */
-#include "esvg_animation.h"
-#include "esvg_animate.h"
+#include "esvg_element_animation.h"
 #include "esvg_animate_base.h"
-#include "esvg_set.h"
+#include "esvg_element_animate.h"
+#include "esvg_element_set.h"
 
 /* parsing */
 #include "esvg_parser.h"

@@ -83,7 +83,7 @@ static void _register_enders(void)
 	/* now the classes */
 	esvg_element_line_init();
 	esvg_element_linear_gradient_init();
-	esvg_radial_gradient_init();
+	esvg_element_radial_gradient_init();
 	esvg_element_circle_init();
 	esvg_element_ellipse_init();
 	esvg_element_path_init();
@@ -92,12 +92,12 @@ static void _register_enders(void)
 	esvg_element_g_init();
 	esvg_element_svg_init();
 	esvg_element_rect_init();
-	esvg_stop_init();
+	esvg_element_stop_init();
 	esvg_element_use_init();
 	esvg_element_defs_init();
 	esvg_a_init();
 	esvg_clip_path_init();
-	esvg_style_init();
+	esvg_element_style_init();
 	esvg_element_image_init();
 	esvg_element_text_init();
 	esvg_element_video_init();
@@ -107,7 +107,7 @@ static void _register_enders(void)
 	esvg_animate_base_init();
 	esvg_animate_init();
 	esvg_animate_transform_init();
-	esvg_set_init();
+	esvg_element_set_init();
 
 	esvg_script_provider_init();
 }

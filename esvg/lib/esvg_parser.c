@@ -31,11 +31,11 @@
 
 #include "esvg_types.h"
 #include "esvg_main.h"
-#include "esvg_a.h"
-#include "esvg_clip_path.h"
+#include "esvg_element_a.h"
+#include "esvg_element_clip_path.h"
 #include "esvg_element_defs.h"
-#include "esvg_animate.h"
-#include "esvg_animate_transform.h"
+#include "esvg_element_animate.h"
+#include "esvg_element_animate_transform.h"
 #include "esvg_video_provider.h"
 #include "esvg_script_provider.h"
 #include "esvg_element_svg.h"
@@ -48,12 +48,12 @@
 #include "esvg_element_polyline.h"
 #include "esvg_element_line.h"
 #include "esvg_element_linear_gradient.h"
-#include "esvg_radial_gradient.h"
+#include "esvg_element_radial_gradient.h"
 #include "esvg_element_g.h"
 #include "esvg_script.h"
-#include "esvg_set.h"
-#include "esvg_stop.h"
-#include "esvg_style.h"
+#include "esvg_element_set.h"
+#include "esvg_element_stop.h"
+#include "esvg_element_style.h"
 #include "esvg_element_text.h"
 #include "esvg_element_use.h"
 #include "esvg_element_video.h"
@@ -176,12 +176,12 @@ static Eina_Bool _esvg_parser_tag_get(Edom_Parser *parser, const char *content,
 	{
 		if (content[0] == 'a')
 		{
-			*tag = ESVG_A;
+			*tag = ESVG_TYPE_A;
 			return EINA_TRUE;
 		}
 		else if (content[0] == 'g')
 		{
-			*tag = ESVG_ELEMENT_G;
+			*tag = ESVG_TYPE_G;
 			return EINA_TRUE;
 		}
 		else
@@ -199,12 +199,12 @@ static Eina_Bool _esvg_parser_tag_get(Edom_Parser *parser, const char *content,
 		{
 			if ((content[1] == 'e') && (content[2] == 't'))
 			{
-				*tag = ESVG_SET;
+				*tag = ESVG_TYPE_SET;
 				return EINA_TRUE;
 			}
 			else if ((content[1] == 'v') && (content[2] == 'g'))
 			{
-				*tag = ESVG_ELEMENT_SVG;
+				*tag = ESVG_TYPE_SVG;
 				return EINA_TRUE;
 			}
 			else
@@ -214,7 +214,7 @@ static Eina_Bool _esvg_parser_tag_get(Edom_Parser *parser, const char *content,
 		{
 			if ((content[1] == 's') && (content[2] == 'e'))
 			{
-				*tag = ESVG_ELEMENT_USE;
+				*tag = ESVG_TYPE_USE;
 				return EINA_TRUE;
 			}
 			else
@@ -229,12 +229,12 @@ static Eina_Bool _esvg_parser_tag_get(Edom_Parser *parser, const char *content,
 		{
 			if (strncmp("animate", content, sz) == 0)
 			{
-				*tag = ESVG_ANIMATE;
+				*tag = ESVG_TYPE_ANIMATE;
 				return EINA_TRUE;
 			}
 			else if (strncmp("animateTransform", content, sz) == 0)
 			{
-				*tag = ESVG_ANIMATETRANSFORM;
+				*tag = ESVG_TYPE_ANIMATETRANSFORM;
 				return EINA_TRUE;
 			}
 
@@ -243,12 +243,12 @@ static Eina_Bool _esvg_parser_tag_get(Edom_Parser *parser, const char *content,
 		{
 			if (strncmp("circle", content, sz) == 0)
 			{
-				*tag = ESVG_ELEMENT_CIRCLE;
+				*tag = ESVG_TYPE_CIRCLE;
 				return EINA_TRUE;
 			}
 			else if (strncmp("clipPath", content, sz) == 0)
 			{
-				*tag = ESVG_CLIPPATH;
+				*tag = ESVG_TYPE_CLIPPATH;
 				return EINA_TRUE;
 			}
 			else
@@ -258,12 +258,12 @@ static Eina_Bool _esvg_parser_tag_get(Edom_Parser *parser, const char *content,
 		{
 			if (strncmp("defs", content, sz) == 0)
 			{
-				*tag = ESVG_ELEMENT_DEFS;
+				*tag = ESVG_TYPE_DEFS;
 				return EINA_TRUE;
 			}
 			else if (strncmp("desc", content, sz) == 0)
 			{
-				*tag = ESVG_DESC;
+				*tag = ESVG_TYPE_DESC;
 				return EINA_TRUE;
 			}
 			else
@@ -273,7 +273,7 @@ static Eina_Bool _esvg_parser_tag_get(Edom_Parser *parser, const char *content,
 		{
 			if (strncmp("ellipse", content, sz) == 0)
 			{
-				*tag = ESVG_ELEMENT_ELLIPSE;
+				*tag = ESVG_TYPE_ELLIPSE;
 				return EINA_TRUE;
 			}
 			else
@@ -306,7 +306,7 @@ static Eina_Bool _esvg_parser_tag_get(Edom_Parser *parser, const char *content,
 		{
 			if (strncmp("image", content, sz) == 0)
 			{
-				*tag = ESVG_ELEMENT_IMAGE;
+				*tag = ESVG_TYPE_IMAGE;
 				return EINA_TRUE;
 			}
 			else
@@ -316,12 +316,12 @@ static Eina_Bool _esvg_parser_tag_get(Edom_Parser *parser, const char *content,
 		{
 			if (strncmp("line", content, sz) == 0)
 			{
-				*tag = ESVG_ELEMENT_LINE;
+				*tag = ESVG_TYPE_LINE;
 				return EINA_TRUE;
 			}
 			else if (strncmp("linearGradient", content, sz) == 0)
 			{
-				*tag = ESVG_ELEMENT_LINEARGRADIENT;
+				*tag = ESVG_TYPE_LINEARGRADIENT;
 				return EINA_TRUE;
 			}
 			else
@@ -334,22 +334,22 @@ static Eina_Bool _esvg_parser_tag_get(Edom_Parser *parser, const char *content,
 		{
 			if (strncmp("path", content, sz) == 0)
 			{
-				*tag = ESVG_ELEMENT_PATH;
+				*tag = ESVG_TYPE_PATH;
 				return EINA_TRUE;
 			}
 			else if (strncmp("pattern", content, sz) == 0)
 			{
-				*tag = ESVG_PATTERN;
+				*tag = ESVG_TYPE_PATTERN;
 				return EINA_TRUE;
 			}
 			else if (strncmp("polyline", content, sz) == 0)
 			{
-				*tag = ESVG_ELEMENT_POLYLINE;
+				*tag = ESVG_TYPE_POLYLINE;
 				return EINA_TRUE;
 			}
 			else if (strncmp("polygon", content, sz) == 0)
 			{
-				*tag = ESVG_ELEMENT_POLYGON;
+				*tag = ESVG_TYPE_POLYGON;
 				return EINA_TRUE;
 			}
 		}
@@ -357,12 +357,12 @@ static Eina_Bool _esvg_parser_tag_get(Edom_Parser *parser, const char *content,
 		{
 			if (strncmp("radialGradient", content, sz) == 0)
 			{
-				*tag = ESVG_RADIALGRADIENT;
+				*tag = ESVG_TYPE_RADIALGRADIENT;
 				return EINA_TRUE;
 			}
 			else if (strncmp("rect", content, sz) == 0)
 			{
-				*tag = ESVG_ELEMENT_RECT;
+				*tag = ESVG_TYPE_RECT;
 				return EINA_TRUE;
 			}
 			else
@@ -372,17 +372,17 @@ static Eina_Bool _esvg_parser_tag_get(Edom_Parser *parser, const char *content,
 		{
 			if (strncmp("script", content, sz) == 0)
 			{
-				*tag = ESVG_SCRIPT;
+				*tag = ESVG_TYPE_SCRIPT;
 				return EINA_TRUE;
 			}
 			else if (strncmp("stop", content, sz) == 0)
 			{
-				*tag = ESVG_STOP;
+				*tag = ESVG_TYPE_STOP;
 				return EINA_TRUE;
 			}
 			else if (strncmp("style", content, sz) == 0)
 			{
-				*tag = ESVG_STYLE;
+				*tag = ESVG_TYPE_STYLE;
 				return EINA_TRUE;
 			}
 		}
@@ -390,7 +390,7 @@ static Eina_Bool _esvg_parser_tag_get(Edom_Parser *parser, const char *content,
 		{
 			if (strncmp("text", content, sz) == 0)
 			{
-				*tag = ESVG_ELEMENT_TEXT;
+				*tag = ESVG_TYPE_TEXT;
 				return EINA_TRUE;
 			}
 		}
@@ -409,7 +409,7 @@ static Eina_Bool _esvg_parser_tag_get(Edom_Parser *parser, const char *content,
 			}
 			else if (strncmp("video", content, sz) == 0)
 			{
-				*tag = ESVG_ELEMENT_VIDEO;
+				*tag = ESVG_TYPE_VIDEO;
 				return EINA_TRUE;
 			}
 			else
@@ -428,114 +428,114 @@ static void * _esvg_parser_tag_new(Edom_Parser *parser, int tag_id)
 	Ender_Element *tag = NULL;
 
 	thiz = edom_parser_data_get(parser);
-	if (!thiz->topmost && tag_id != ESVG_ELEMENT_SVG)
+	if (!thiz->topmost && tag_id != ESVG_TYPE_SVG)
 	{
 		DBG("you need at least a topmost svg");
 	}
 
 	switch (tag_id)
 	{
-		case ESVG_ELEMENT_LINEARGRADIENT:
+		case ESVG_TYPE_LINEARGRADIENT:
                   tag = esvg_element_linear_gradient_new();
 		break;
 
-		case ESVG_RADIALGRADIENT:
-		tag = esvg_radial_gradient_new();
+		case ESVG_TYPE_RADIALGRADIENT:
+		tag = esvg_element_radial_gradient_new();
 		break;
 
 #if 0
-		case ESVG_PATTERN:
+		case ESVG_TYPE_PATTERN:
 		tag = esvg_parser_pattern_new(parser);
 		break;
 #endif
 
-		case ESVG_ELEMENT_DEFS:
+		case ESVG_TYPE_DEFS:
 		tag = esvg_element_defs_new();
 		break;
 
-		case ESVG_ELEMENT_USE:
+		case ESVG_TYPE_USE:
 		tag = esvg_element_use_new();
 		break;
 
-		case ESVG_ELEMENT_SVG:
+		case ESVG_TYPE_SVG:
 		tag = esvg_element_svg_new();
 		if (!thiz->topmost)
 			thiz->topmost = tag;
 		break;
 
-		case ESVG_ELEMENT_CIRCLE:
+		case ESVG_TYPE_CIRCLE:
 		tag = esvg_element_circle_new();
 		break;
 
-		case ESVG_ELEMENT_ELLIPSE:
+		case ESVG_TYPE_ELLIPSE:
 		tag = esvg_element_ellipse_new();
 		break;
 
-		case ESVG_ELEMENT_RECT:
+		case ESVG_TYPE_RECT:
 		tag = esvg_element_rect_new();
 		break;
 
-		case ESVG_ELEMENT_LINE:
+		case ESVG_TYPE_LINE:
 		tag = esvg_element_line_new();
 		break;
 
-		case ESVG_ELEMENT_PATH:
+		case ESVG_TYPE_PATH:
 		tag = esvg_element_path_new();
 		break;
 
-		case ESVG_ELEMENT_POLYLINE:
+		case ESVG_TYPE_POLYLINE:
 		tag = esvg_element_polyline_new();
 		break;
 
-		case ESVG_ELEMENT_POLYGON:
+		case ESVG_TYPE_POLYGON:
 		tag = esvg_element_polygon_new();
 		break;
 
-		case ESVG_ELEMENT_TEXT:
+		case ESVG_TYPE_TEXT:
 		tag = esvg_element_text_new();
 		break;
 
-		case ESVG_ELEMENT_G:
+		case ESVG_TYPE_G:
 		tag = esvg_element_g_new();
 		break;
 
-		case ESVG_A:
+		case ESVG_TYPE_A:
 		tag = esvg_a_new();
 		break;
 
-		case ESVG_SCRIPT:
+		case ESVG_TYPE_SCRIPT:
 		tag = esvg_script_new();
 		break;
 
-		case ESVG_STYLE:
-		tag = esvg_style_new();
+		case ESVG_TYPE_STYLE:
+		tag = esvg_element_style_new();
 		break;
 
-		case ESVG_ELEMENT_IMAGE:
+		case ESVG_TYPE_IMAGE:
 		tag = esvg_element_image_new();
 		break;
 
-		case ESVG_CLIPPATH:
+		case ESVG_TYPE_CLIPPATH:
 		tag = esvg_clip_path_new();
 		break;
 
-		case ESVG_SET:
-		tag = esvg_set_new();
+		case ESVG_TYPE_SET:
+		tag = esvg_element_set_new();
 		break;
 
-		case ESVG_STOP:
-		tag = esvg_stop_new();
+		case ESVG_TYPE_STOP:
+		tag = esvg_element_stop_new();
 		break;
 
-		case ESVG_ANIMATE:
+		case ESVG_TYPE_ANIMATE:
 		tag = esvg_animate_new();
 		break;
 
-		case ESVG_ANIMATETRANSFORM:
+		case ESVG_TYPE_ANIMATETRANSFORM:
 		tag = esvg_animate_transform_new();
 		break;
 
-		case ESVG_ELEMENT_VIDEO:
+		case ESVG_TYPE_VIDEO:
 		tag = esvg_element_video_new();
 		break;
 
@@ -616,7 +616,7 @@ static Eina_Bool _esvg_parser_info_tag_get(Edom_Parser *parser, const char *cont
 {
 	if (strncmp("svg", content, sz) == 0)
 	{
-		*tag = ESVG_ELEMENT_SVG;
+		*tag = ESVG_TYPE_SVG;
 		return EINA_TRUE;
 	}
 	return EINA_FALSE;

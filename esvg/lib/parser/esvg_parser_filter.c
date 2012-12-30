@@ -130,7 +130,7 @@ Edom_Tag * esvg_parser_filter_new(Edom_Context *c, Edom_Tag *topmost)
 	Enesim_Renderer *r;
 
 	r = esvg_filter_new();
-	tag = esvg_parser_shape_new(c, &_descriptor, ESVG_ELEMENT_CIRCLE, topmost, r, NULL);
+	tag = esvg_parser_shape_new(c, &_descriptor, ESVG_TYPE_CIRCLE, topmost, r, NULL);
 
 	return tag;
 }

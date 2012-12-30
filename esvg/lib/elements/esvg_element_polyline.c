@@ -44,7 +44,7 @@ static Esvg_Element_Polyline * _esvg_element_polyline_get(Edom_Tag *t)
 {
 	Esvg_Element_Polyline *thiz;
 
-	if (esvg_element_internal_type_get(t) != ESVG_ELEMENT_POLYLINE)
+	if (esvg_element_internal_type_get(t) != ESVG_TYPE_POLYLINE)
 		return NULL;
 	thiz = esvg_renderable_data_get(t);
 
@@ -229,7 +229,7 @@ static Edom_Tag * _esvg_element_polyline_new(void)
 
 
 	/* default values */
-	t = esvg_renderable_new(&_descriptor, ESVG_ELEMENT_POLYLINE, thiz);
+	t = esvg_renderable_new(&_descriptor, ESVG_TYPE_POLYLINE, thiz);
 	return t;
 }
 
@@ -253,7 +253,7 @@ static void _esvg_element_polyline_point_add(Edom_Tag *t, Esvg_Point *p)
 #define _esvg_element_polyline_point_get NULL
 #define _esvg_element_polyline_point_clear NULL
 #define _esvg_element_polyline_point_remove NULL
-#include "generated/esvg_generated_polyline.c"
+#include "generated/esvg_generated_element_polyline.c"
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/

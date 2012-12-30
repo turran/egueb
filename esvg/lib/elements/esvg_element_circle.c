@@ -51,7 +51,7 @@ static Esvg_Element_Circle * _esvg_element_circle_get(Edom_Tag *t)
 {
 	Esvg_Element_Circle *thiz;
 
-	if (esvg_element_internal_type_get(t) != ESVG_ELEMENT_CIRCLE)
+	if (esvg_element_internal_type_get(t) != ESVG_TYPE_CIRCLE)
 		return NULL;
 	thiz = esvg_renderable_data_get(t);
 
@@ -254,7 +254,7 @@ static Edom_Tag * _esvg_element_circle_new(void)
 	thiz->cy.base.v = thiz->cx.anim.v = ESVG_COORD_0;
 	thiz->radius.base.v = thiz->radius.anim.v = ESVG_LENGTH_0;
 
-	t = esvg_renderable_new(&_descriptor, ESVG_ELEMENT_CIRCLE, thiz);
+	t = esvg_renderable_new(&_descriptor, ESVG_TYPE_CIRCLE, thiz);
 	return t;
 }
 
@@ -324,7 +324,7 @@ static void _esvg_element_circle_r_get(Edom_Tag *t, Esvg_Length_Animated *radius
 #define _esvg_element_circle_cx_is_set NULL
 #define _esvg_element_circle_cy_is_set NULL
 #define _esvg_element_circle_r_is_set NULL
-#include "generated/esvg_generated_circle.c"
+#include "generated/esvg_generated_element_circle.c"
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
@@ -363,7 +363,7 @@ EAPI Eina_Bool esvg_is_circle(Ender_Element *e)
 
 	t = (Edom_Tag *)ender_element_object_get(e);
 	type = esvg_element_internal_type_get(t);
-	return (type == ESVG_ELEMENT_CIRCLE) ? EINA_TRUE : EINA_FALSE;
+	return (type == ESVG_TYPE_CIRCLE) ? EINA_TRUE : EINA_FALSE;
 }
 
 EAPI void esvg_element_circle_cx_set(Ender_Element *e, const Esvg_Coord *cx)

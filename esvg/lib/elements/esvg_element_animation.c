@@ -23,7 +23,7 @@
 #include "esvg_private_animation.h"
 #include "esvg_private_svg.h"
 
-#include "esvg_animation.h"
+#include "esvg_element_animation.h"
 #include "esvg_element_svg.h"
 
 /*
@@ -36,27 +36,27 @@
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
-#define ESVG_LOG_DEFAULT _esvg_animation_log
+#define ESVG_LOG_DEFAULT _esvg_element_animation_log
 
-static int _esvg_animation_log = -1;
+static int _esvg_element_animation_log = -1;
 
-#define ESVG_ANIMATION_MAGIC_CHECK(d) \
+#define ESVG_ELEMENT_ANIMATION_MAGIC_CHECK(d) \
 	do {\
-		if (!EINA_MAGIC_CHECK(d, ESVG_ANIMATION_MAGIC))\
-			EINA_MAGIC_FAIL(d, ESVG_ANIMATION_MAGIC);\
+		if (!EINA_MAGIC_CHECK(d, ESVG_ELEMENT_ANIMATION_MAGIC))\
+			EINA_MAGIC_FAIL(d, ESVG_ELEMENT_ANIMATION_MAGIC);\
 	} while(0)
 
-static Ender_Property *ESVG_ANIMATION_ATTRIBUTE_NAME;
-static Ender_Property *ESVG_ANIMATION_ATTRIBUTE_TYPE;
-static Ender_Property *ESVG_ANIMATION_ADDITIVE;
-static Ender_Property *ESVG_ANIMATION_ACCUMULATE;
-static Ender_Property *ESVG_ANIMATION_REPEAT_COUNT;
-static Ender_Property *ESVG_ANIMATION_DUR;
-static Ender_Property *ESVG_ANIMATION_BEGIN;
-static Ender_Property *ESVG_ANIMATION_END;
-static Ender_Property *ESVG_ANIMATION_FILL;
+static Ender_Property *ESVG_ELEMENT_ANIMATION_ATTRIBUTE_NAME;
+static Ender_Property *ESVG_ELEMENT_ANIMATION_ATTRIBUTE_TYPE;
+static Ender_Property *ESVG_ELEMENT_ANIMATION_ADDITIVE;
+static Ender_Property *ESVG_ELEMENT_ANIMATION_ACCUMULATE;
+static Ender_Property *ESVG_ELEMENT_ANIMATION_REPEAT_COUNT;
+static Ender_Property *ESVG_ELEMENT_ANIMATION_DUR;
+static Ender_Property *ESVG_ELEMENT_ANIMATION_BEGIN;
+static Ender_Property *ESVG_ELEMENT_ANIMATION_END;
+static Ender_Property *ESVG_ELEMENT_ANIMATION_FILL;
 
-typedef struct _Esvg_Animation_Descriptor_Internal
+typedef struct _Esvg_Element_Animation_Descriptor_Internal
 {
 	Edom_Tag_Free free;
 	Esvg_Element_Initialize initialize;
@@ -65,15 +65,15 @@ typedef struct _Esvg_Animation_Descriptor_Internal
 	Esvg_Animation_Setup setup;
 	Esvg_Animation_Enable enable;
 	Esvg_Animation_Disable disable;
-} Esvg_Animation_Descriptor_Internal;
+} Esvg_Element_Animation_Descriptor_Internal;
 
-typedef struct _Esvg_Animation
+typedef struct _Esvg_Element_Animation
 {
 	EINA_MAGIC
 	/* properties */
 	Esvg_Animation_Context ctx;
 	/* interface */
-	Esvg_Animation_Descriptor_Internal descriptor;
+	Esvg_Element_Animation_Descriptor_Internal descriptor;
 	/* private */
 	Edom_Tag *thiz_t;
 	Ender_Element *thiz_e;
@@ -82,26 +82,26 @@ typedef struct _Esvg_Animation
 	Eina_Bool started;
 	Eina_Bool attribute_name_changed : 1;
 	void *data;
-} Esvg_Animation;
+} Esvg_Element_Animation;
 
-typedef struct _Esvg_Animation_Handler
+typedef struct _Esvg_Element_Animation_Handler
 {
-	Esvg_Animation *thiz;
+	Esvg_Element_Animation *thiz;
 	Esvg_Animation_Event *ev;
 	Ender_Listener *l;
-} Esvg_Animation_Handler;
+} Esvg_Element_Animation_Handler;
 
-static Esvg_Animation * _esvg_animation_get(Edom_Tag *t)
+static Esvg_Element_Animation * _esvg_element_animation_get(Edom_Tag *t)
 {
-	Esvg_Animation *thiz;
+	Esvg_Element_Animation *thiz;
 
 	thiz = esvg_element_data_get(t);
-	ESVG_ANIMATION_MAGIC_CHECK(thiz);
+	ESVG_ELEMENT_ANIMATION_MAGIC_CHECK(thiz);
 
 	return thiz;
 }
 
-static void _esvg_animation_begin(Esvg_Animation *thiz, int64_t offset)
+static void _esvg_element_animation_begin(Esvg_Element_Animation *thiz, int64_t offset)
 {
 	Ender_Element *svg;
 	double seconds;
@@ -118,22 +118,22 @@ static void _esvg_animation_begin(Esvg_Animation *thiz, int64_t offset)
 		thiz->descriptor.enable(thiz->thiz_t, offset);
 }
 
-static void _esvg_animation_begin_cb(Ender_Element *e,
+static void _esvg_element_animation_begin_cb(Ender_Element *e,
 		const char *event_name, void *event_data, void *data)
 {
-	Esvg_Animation_Handler *h = data;
-	Esvg_Animation *thiz = h->thiz;
+	Esvg_Element_Animation_Handler *h = data;
+	Esvg_Element_Animation *thiz = h->thiz;
 
 	/* call the begin interface */
 	DBG("Begin event '%s' received", event_name);
-	_esvg_animation_begin(thiz, h->ev->offset);
+	_esvg_element_animation_begin(thiz, h->ev->offset);
 }
 
-static void _esvg_animation_end_cb(Ender_Element *e,
+static void _esvg_element_animation_end_cb(Ender_Element *e,
 		const char *event_name, void *event_data, void *data)
 {
-	Esvg_Animation_Handler *h = data;
-	Esvg_Animation *thiz = h->thiz;
+	Esvg_Element_Animation_Handler *h = data;
+	Esvg_Element_Animation *thiz = h->thiz;
 
 	/* call the end interface */
 	DBG("End event '%s' received", event_name);
@@ -145,7 +145,7 @@ static void _esvg_animation_end_cb(Ender_Element *e,
 	thiz->started = EINA_FALSE;
 }
 
-static Eina_Bool _esvg_animation_event_setup(Esvg_Animation *thiz, Eina_List *events,
+static Eina_Bool _esvg_element_animation_event_setup(Esvg_Element_Animation *thiz, Eina_List *events,
 		Eina_List **phandlers, Ender_Event_Callback cb, int64_t *offset)
 {
 	Esvg_Animation_Event *ae;
@@ -177,9 +177,9 @@ static Eina_Bool _esvg_animation_event_setup(Esvg_Animation *thiz, Eina_List *ev
 
 			if (ref)
 			{
-				Esvg_Animation_Handler *h;
+				Esvg_Element_Animation_Handler *h;
 
-				h = calloc(1, sizeof(Esvg_Animation_Handler));
+				h = calloc(1, sizeof(Esvg_Element_Animation_Handler));
 				h->l = ender_event_listener_add(ref, ae->event, cb, h);
 				h->thiz = thiz;
 				h->ev = ae;
@@ -204,9 +204,9 @@ static Eina_Bool _esvg_animation_event_setup(Esvg_Animation *thiz, Eina_List *ev
 	return EINA_TRUE;
 }
 
-static void _esvg_animation_event_release(Eina_List *events)
+static void _esvg_element_animation_event_release(Eina_List *events)
 {
-	Esvg_Animation_Handler *h;
+	Esvg_Element_Animation_Handler *h;
 
 	EINA_LIST_FREE(events, h)
 	{
@@ -215,42 +215,42 @@ static void _esvg_animation_event_release(Eina_List *events)
 	}
 }
 
-static Eina_Bool _esvg_animation_begin_setup(Esvg_Animation *thiz)
+static Eina_Bool _esvg_element_animation_begin_setup(Esvg_Element_Animation *thiz)
 {
 	int64_t offset = INT64_MAX;
 
-	if (!_esvg_animation_event_setup(thiz, thiz->ctx.timing.begin,
-			&thiz->begin_events, _esvg_animation_begin_cb, &offset))
+	if (!_esvg_element_animation_event_setup(thiz, thiz->ctx.timing.begin,
+			&thiz->begin_events, _esvg_element_animation_begin_cb, &offset))
 		return EINA_FALSE;
 	/* in case there is no event to trigger, just start now */
 	if (!thiz->begin_events)
 	{
-		_esvg_animation_begin(thiz, offset);
+		_esvg_element_animation_begin(thiz, offset);
 	}
 	return EINA_TRUE;
 }
 
-static void _esvg_animation_begin_release(Esvg_Animation *thiz)
+static void _esvg_element_animation_begin_release(Esvg_Element_Animation *thiz)
 {
-	_esvg_animation_event_release(thiz->begin_events);
+	_esvg_element_animation_event_release(thiz->begin_events);
 }
 
-static Eina_Bool _esvg_animation_end_setup(Esvg_Animation *thiz)
+static Eina_Bool _esvg_element_animation_end_setup(Esvg_Element_Animation *thiz)
 {
 	int64_t offset = INT64_MAX;
 
-	if (!_esvg_animation_event_setup(thiz, thiz->ctx.timing.end,
-			&thiz->end_events, _esvg_animation_end_cb, &offset))
+	if (!_esvg_element_animation_event_setup(thiz, thiz->ctx.timing.end,
+			&thiz->end_events, _esvg_element_animation_end_cb, &offset))
 		return EINA_FALSE;
 	return EINA_TRUE;
 }
 
-static void _esvg_animation_end_release(Esvg_Animation *thiz)
+static void _esvg_element_animation_end_release(Esvg_Element_Animation *thiz)
 {
-	_esvg_animation_event_release(thiz->end_events);
+	_esvg_element_animation_event_release(thiz->end_events);
 }
 
-static Eina_Bool _esvg_animation_attribute_name_setup(Esvg_Animation *thiz)
+static Eina_Bool _esvg_element_animation_attribute_name_setup(Esvg_Element_Animation *thiz)
 {
 	Esvg_Attribute_Animation_Attribute_Name *attr_name;
 	Esvg_Animation_Context *ctx;
@@ -303,12 +303,12 @@ done:
 /*----------------------------------------------------------------------------*
  *                           The Ender interface                              *
  *----------------------------------------------------------------------------*/
-static void _esvg_animation_attribute_name_set(Edom_Tag *t, const char *attribute_name)
+static void _esvg_element_animation_attribute_name_set(Edom_Tag *t, const char *attribute_name)
 {
-	Esvg_Animation *thiz;
+	Esvg_Element_Animation *thiz;
 	Esvg_Attribute_Animation_Attribute_Name *attr_name;
 
-	thiz = _esvg_animation_get(t);
+	thiz = _esvg_element_animation_get(t);
 	attr_name = &thiz->ctx.target.attribute_name;
 	if (attr_name->curr)
 	{
@@ -320,146 +320,146 @@ static void _esvg_animation_attribute_name_set(Edom_Tag *t, const char *attribut
 	thiz->attribute_name_changed = EINA_TRUE;
 }
 
-static void _esvg_animation_attribute_name_get(Edom_Tag *t, const char **attribute_name)
+static void _esvg_element_animation_attribute_name_get(Edom_Tag *t, const char **attribute_name)
 {
-	Esvg_Animation *thiz;
+	Esvg_Element_Animation *thiz;
 	Esvg_Attribute_Animation_Attribute_Name *attr_name;
 
 	if (!attribute_name) return;
-	thiz = _esvg_animation_get(t);
+	thiz = _esvg_element_animation_get(t);
 	attr_name = &thiz->ctx.target.attribute_name;
 	*attribute_name = attr_name->curr;
 }
 
-static void _esvg_animation_attribute_type_set(Edom_Tag *t, Esvg_Attribute_Type attribute_type)
+static void _esvg_element_animation_attribute_type_set(Edom_Tag *t, Esvg_Attribute_Type attribute_type)
 {
-	Esvg_Animation *thiz;
+	Esvg_Element_Animation *thiz;
 
-	thiz = _esvg_animation_get(t);
+	thiz = _esvg_element_animation_get(t);
 	thiz->ctx.target.attribute_type = attribute_type;
 }
 
-static void _esvg_animation_attribute_type_get(Edom_Tag *t, Esvg_Attribute_Type *attribute_type)
+static void _esvg_element_animation_attribute_type_get(Edom_Tag *t, Esvg_Attribute_Type *attribute_type)
 {
-	Esvg_Animation *thiz;
+	Esvg_Element_Animation *thiz;
 
 	if (!attribute_type) return;
-	thiz = _esvg_animation_get(t);
+	thiz = _esvg_element_animation_get(t);
 	*attribute_type = thiz->ctx.target.attribute_type;
 }
 
-static void _esvg_animation_dur_set(Edom_Tag *t, Esvg_Duration *dur)
+static void _esvg_element_animation_dur_set(Edom_Tag *t, Esvg_Duration *dur)
 {
-	Esvg_Animation *thiz;
+	Esvg_Element_Animation *thiz;
 
 	if (!dur) return;
-	thiz = _esvg_animation_get(t);
+	thiz = _esvg_element_animation_get(t);
 	thiz->ctx.timing.dur = *dur;
 }
 
-static void _esvg_animation_dur_get(Edom_Tag *t, Esvg_Duration *dur)
+static void _esvg_element_animation_dur_get(Edom_Tag *t, Esvg_Duration *dur)
 {
-	Esvg_Animation *thiz;
+	Esvg_Element_Animation *thiz;
 
 	if (!dur) return;
-	thiz = _esvg_animation_get(t);
+	thiz = _esvg_element_animation_get(t);
 	*dur = thiz->ctx.timing.dur;
 }
 
-static void _esvg_animation_additive_set(Edom_Tag *t, Esvg_Additive additive)
+static void _esvg_element_animation_additive_set(Edom_Tag *t, Esvg_Additive additive)
 {
-	Esvg_Animation *thiz;
+	Esvg_Element_Animation *thiz;
 
-	thiz = _esvg_animation_get(t);
+	thiz = _esvg_element_animation_get(t);
 	thiz->ctx.addition.additive = additive;
 }
 
-static void _esvg_animation_additive_get(Edom_Tag *t, Esvg_Additive *additive)
+static void _esvg_element_animation_additive_get(Edom_Tag *t, Esvg_Additive *additive)
 {
-	Esvg_Animation *thiz;
+	Esvg_Element_Animation *thiz;
 
 	if (!additive) return;
-	thiz = _esvg_animation_get(t);
+	thiz = _esvg_element_animation_get(t);
 	*additive = thiz->ctx.addition.additive;
 }
 
-static void _esvg_animation_accumulate_set(Edom_Tag *t, Esvg_Accumulate accumulate)
+static void _esvg_element_animation_accumulate_set(Edom_Tag *t, Esvg_Accumulate accumulate)
 {
-	Esvg_Animation *thiz;
+	Esvg_Element_Animation *thiz;
 
-	thiz = _esvg_animation_get(t);
+	thiz = _esvg_element_animation_get(t);
 	thiz->ctx.addition.accumulate = accumulate;
 }
 
-static void _esvg_animation_accumulate_get(Edom_Tag *t, Esvg_Accumulate *accumulate)
+static void _esvg_element_animation_accumulate_get(Edom_Tag *t, Esvg_Accumulate *accumulate)
 {
-	Esvg_Animation *thiz;
+	Esvg_Element_Animation *thiz;
 
 	if (!accumulate) return;
-	thiz = _esvg_animation_get(t);
+	thiz = _esvg_element_animation_get(t);
 	*accumulate = thiz->ctx.addition.accumulate;
 }
 
-static void _esvg_animation_repeat_count_set(Edom_Tag *t, int repeat_count)
+static void _esvg_element_animation_repeat_count_set(Edom_Tag *t, int repeat_count)
 {
-	Esvg_Animation *thiz;
+	Esvg_Element_Animation *thiz;
 
-	thiz = _esvg_animation_get(t);
+	thiz = _esvg_element_animation_get(t);
 	thiz->ctx.timing.repeat_count = repeat_count;
 }
 
-static void _esvg_animation_repeat_count_get(Edom_Tag *t, int *repeat_count)
+static void _esvg_element_animation_repeat_count_get(Edom_Tag *t, int *repeat_count)
 {
-	Esvg_Animation *thiz;
+	Esvg_Element_Animation *thiz;
 
 	if (!repeat_count) return;
-	thiz = _esvg_animation_get(t);
+	thiz = _esvg_element_animation_get(t);
 	*repeat_count = thiz->ctx.timing.repeat_count;
 }
 
-static void _esvg_animation_begin_set(Edom_Tag *t, Eina_List *begin)
+static void _esvg_element_animation_begin_set(Edom_Tag *t, Eina_List *begin)
 {
-	Esvg_Animation *thiz;
+	Esvg_Element_Animation *thiz;
 
-	thiz = _esvg_animation_get(t);
+	thiz = _esvg_element_animation_get(t);
 	thiz->ctx.timing.begin = begin;
 }
 
-static void _esvg_animation_end_set(Edom_Tag *t, Eina_List *end)
+static void _esvg_element_animation_end_set(Edom_Tag *t, Eina_List *end)
 {
-	Esvg_Animation *thiz;
+	Esvg_Element_Animation *thiz;
 
-	thiz = _esvg_animation_get(t);
+	thiz = _esvg_element_animation_get(t);
 	thiz->ctx.timing.end = end;
 }
 
-static void _esvg_animation_fill_set(Edom_Tag *t, Esvg_Fill fill)
+static void _esvg_element_animation_fill_set(Edom_Tag *t, Esvg_Fill fill)
 {
-	Esvg_Animation *thiz;
+	Esvg_Element_Animation *thiz;
 
-	thiz = _esvg_animation_get(t);
+	thiz = _esvg_element_animation_get(t);
 	thiz->ctx.timing.fill = fill;
 }
 
-static void _esvg_animation_fill_get(Edom_Tag *t, Esvg_Fill *fill)
+static void _esvg_element_animation_fill_get(Edom_Tag *t, Esvg_Fill *fill)
 {
-	Esvg_Animation *thiz;
+	Esvg_Element_Animation *thiz;
 
 	if (!fill) return;
-	thiz = _esvg_animation_get(t);
+	thiz = _esvg_element_animation_get(t);
 	*fill = thiz->ctx.timing.fill;
 }
 
 /*----------------------------------------------------------------------------*
  *                         The Esvg Element interface                         *
  *----------------------------------------------------------------------------*/
-static void _esvg_animation_initialize(Ender_Element *e)
+static void _esvg_element_animation_initialize(Ender_Element *e)
 {
-	Esvg_Animation *thiz;
+	Esvg_Element_Animation *thiz;
 	Edom_Tag *t;
 
 	t = ender_element_object_get(e);
-	thiz = _esvg_animation_get(t);
+	thiz = _esvg_element_animation_get(t);
 	thiz->thiz_e = e;
 
 	/* call the interface */
@@ -467,20 +467,20 @@ static void _esvg_animation_initialize(Ender_Element *e)
 		thiz->descriptor.initialize(e);
 }
 
-static Eina_Bool _esvg_animation_attribute_set(Ender_Element *e,
+static Eina_Bool _esvg_element_animation_attribute_set(Ender_Element *e,
 		const char *key, const char *value)
 {
 	/* target attributes */
 	if (strcmp(key, "attributeName") == 0)
 	{
-		esvg_animation_attribute_name_set(e, value);
+		esvg_element_animation_attribute_name_set(e, value);
 	}
 	else if (strcmp(key, "attributeType") == 0)
 	{
 		Esvg_Attribute_Type type;
 
 		if (esvg_attribute_type_string_from(&type, value))
-			esvg_animation_attribute_type_set(e, type);
+			esvg_element_animation_attribute_type_set(e, type);
 	}
 	/* timing attributes */
 	else if (!strcmp(key, "dur"))
@@ -488,21 +488,21 @@ static Eina_Bool _esvg_animation_attribute_set(Ender_Element *e,
 		Esvg_Duration dur;
 
 		if (esvg_duration_string_from(&dur, value))
-			esvg_animation_dur_set(e, &dur);
+			esvg_element_animation_dur_set(e, &dur);
 	}
 	else if (!strcmp(key, "begin"))
 	{
 		Eina_List *begin = NULL;
 
-		esvg_animation_event_list_string_from(&begin, value);
-		esvg_animation_begin_set(e, begin);
+		esvg_element_animation_event_list_string_from(&begin, value);
+		esvg_element_animation_begin_set(e, begin);
 	}
 	else if (!strcmp(key, "end"))
 	{
 		Eina_List *end = NULL;
 
-		esvg_animation_event_list_string_from(&end, value);
-		esvg_animation_end_set(e, end);
+		esvg_element_animation_event_list_string_from(&end, value);
+		esvg_element_animation_end_set(e, end);
 	}
 	/* addition attributes */
 	else if (!strcmp(key, "additive"))
@@ -510,69 +510,68 @@ static Eina_Bool _esvg_animation_attribute_set(Ender_Element *e,
 		Esvg_Additive add;
 
 		esvg_additive_string_from(&add, value);
-		esvg_animation_additive_set(e, add);
+		esvg_element_animation_additive_set(e, add);
 	}
 	else if (!strcmp(key, "accumulate"))
 	{
 		Esvg_Accumulate acc;
 
 		esvg_accumulate_string_from(&acc, value);
-		esvg_animation_accumulate_set(e, acc);
+		esvg_element_animation_accumulate_set(e, acc);
 	}
 	else if (!strcmp(key, "repeatCount"))
 	{
 		int rc;
 
 		esvg_repeat_count_string_from(&rc, value);
-		esvg_animation_repeat_count_set(e, rc);
+		esvg_element_animation_repeat_count_set(e, rc);
 	}
 	else if (!strcmp(key, "fill"))
 	{
 		Esvg_Fill fill;
 
 		esvg_fill_string_from(&fill, value);
-		esvg_animation_fill_set(e, fill);
+		esvg_element_animation_fill_set(e, fill);
 	}
 	else
 	{
-		Esvg_Animation *thiz;
+		Esvg_Element_Animation *thiz;
 		Edom_Tag *t;
 
 		t = ender_element_object_get(e);
-		thiz = _esvg_animation_get(t);
+		thiz = _esvg_element_animation_get(t);
 		if (thiz->descriptor.attribute_set)
 			return thiz->descriptor.attribute_set(e, key, value);
 		return EINA_FALSE;
 	}
-	
 
 	return EINA_TRUE;
 }
 
-static Eina_Bool _esvg_animation_attribute_get(Edom_Tag *tag, const char *attribute, char **value)
+static Eina_Bool _esvg_element_animation_attribute_get(Edom_Tag *tag, const char *attribute, char **value)
 {
 	return EINA_FALSE;
 }
 
-static void _esvg_animation_free(Edom_Tag *t)
+static void _esvg_element_animation_free(Edom_Tag *t)
 {
-	Esvg_Animation *thiz;
+	Esvg_Element_Animation *thiz;
 
-	thiz = _esvg_animation_get(t);
+	thiz = _esvg_element_animation_get(t);
 	if (thiz->descriptor.free)
 		thiz->descriptor.free(t);
 	free(thiz);
 }
 
 /* TODO optimize so many 'ifs' */
-static Esvg_Element_Setup_Return _esvg_animation_setup(Edom_Tag *t,
+static Esvg_Element_Setup_Return _esvg_element_animation_setup(Edom_Tag *t,
 		Esvg_Context *c,
 		const Esvg_Element_Context *parent_context,
 		Esvg_Element_Context *context,
 		Esvg_Attribute_Presentation *attr,
 		Enesim_Error **error)
 {
-	Esvg_Animation *thiz;
+	Esvg_Element_Animation *thiz;
 	Esvg_Animation_Context *ctx;
 	Edom_Tag *parent_t;
 	Ender_Element *parent_e;
@@ -583,7 +582,7 @@ static Esvg_Element_Setup_Return _esvg_animation_setup(Edom_Tag *t,
 	if (!esvg_element_changed(t))
 		return ESVG_SETUP_OK;
 
-	thiz = _esvg_animation_get(t);
+	thiz = _esvg_element_animation_get(t);
 	ctx = &thiz->ctx;
 
 	/* get the parent */
@@ -594,12 +593,12 @@ static Esvg_Element_Setup_Return _esvg_animation_setup(Edom_Tag *t,
 	/* check if the name has changed */
 	if (thiz->attribute_name_changed)
 	{
-		if (!_esvg_animation_attribute_name_setup(thiz))
+		if (!_esvg_element_animation_attribute_name_setup(thiz))
 			return ESVG_SETUP_OK;
 	}
 
-	_esvg_animation_begin_release(thiz);
-	_esvg_animation_end_release(thiz);
+	_esvg_element_animation_begin_release(thiz);
+	_esvg_element_animation_end_release(thiz);
 
 	/* generate every animation */
 	if (thiz->descriptor.setup)
@@ -609,87 +608,87 @@ static Esvg_Element_Setup_Return _esvg_animation_setup(Edom_Tag *t,
 	}
 
 	/* do the begin and end conditions */
-	_esvg_animation_begin_setup(thiz);
-	_esvg_animation_end_setup(thiz);
+	_esvg_element_animation_begin_setup(thiz);
+	_esvg_element_animation_end_setup(thiz);
 
 	return ESVG_SETUP_OK;
 }
 
 /* The ender wrapper */
-#define _esvg_animation_delete NULL
-#define _esvg_animation_attribute_name_is_set NULL
-#define _esvg_animation_attribute_type_is_set NULL
-#define _esvg_animation_additive_is_set NULL
-#define _esvg_animation_accumulate_is_set NULL
-#define _esvg_animation_repeat_count_is_set NULL
-#define _esvg_animation_dur_is_set NULL
-#define _esvg_animation_begin_get NULL
-#define _esvg_animation_begin_is_set NULL
-#define _esvg_animation_begin_clear NULL
-#define _esvg_animation_begin_remove NULL
-#define _esvg_animation_begin_add NULL
-#define _esvg_animation_end_get NULL
-#define _esvg_animation_end_is_set NULL
-#define _esvg_animation_end_clear NULL
-#define _esvg_animation_end_remove NULL
-#define _esvg_animation_end_add NULL
-#define _esvg_animation_fill_is_set NULL
-#include "generated/esvg_generated_animation.c"
+#define _esvg_element_animation_delete NULL
+#define _esvg_element_animation_attribute_name_is_set NULL
+#define _esvg_element_animation_attribute_type_is_set NULL
+#define _esvg_element_animation_additive_is_set NULL
+#define _esvg_element_animation_accumulate_is_set NULL
+#define _esvg_element_animation_repeat_count_is_set NULL
+#define _esvg_element_animation_dur_is_set NULL
+#define _esvg_element_animation_begin_get NULL
+#define _esvg_element_animation_begin_is_set NULL
+#define _esvg_element_animation_begin_clear NULL
+#define _esvg_element_animation_begin_remove NULL
+#define _esvg_element_animation_begin_add NULL
+#define _esvg_element_animation_end_get NULL
+#define _esvg_element_animation_end_is_set NULL
+#define _esvg_element_animation_end_clear NULL
+#define _esvg_element_animation_end_remove NULL
+#define _esvg_element_animation_end_add NULL
+#define _esvg_element_animation_fill_is_set NULL
+#include "generated/esvg_generated_element_animation.c"
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
-void esvg_animation_init(void)
+void esvg_element_animation_init(void)
 {
-	_esvg_animation_log = eina_log_domain_register("esvg_animation", ESVG_LOG_COLOR_DEFAULT);
-	if (_esvg_animation_log < 0)
+	_esvg_element_animation_log = eina_log_domain_register("esvg_element_animation", ESVG_LOG_COLOR_DEFAULT);
+	if (_esvg_element_animation_log < 0)
 	{
 		EINA_LOG_ERR("Can not create log domain.");
 		return;
 	}
-	_esvg_animation_init();
+	_esvg_element_animation_init();
 }
 
-void esvg_animation_shutdown(void)
+void esvg_element_animation_shutdown(void)
 {
-	if (_esvg_animation_log < 0)
+	if (_esvg_element_animation_log < 0)
 		return;
-	_esvg_animation_shutdown();
-	eina_log_domain_unregister(_esvg_animation_log);
-	_esvg_animation_log = -1;
+	_esvg_element_animation_shutdown();
+	eina_log_domain_unregister(_esvg_element_animation_log);
+	_esvg_element_animation_log = -1;
 }
 
 Eina_Bool esvg_is_animation_internal(Edom_Tag *t)
 {
-	Esvg_Animation *thiz;
+	Esvg_Element_Animation *thiz;
 	Eina_Bool ret;
 
 	if (!esvg_is_element_internal(t))
 		return EINA_FALSE;
 	thiz = esvg_element_data_get(t);
-	ret = EINA_MAGIC_CHECK(thiz, ESVG_ANIMATION_MAGIC);
+	ret = EINA_MAGIC_CHECK(thiz, ESVG_ELEMENT_ANIMATION_MAGIC);
 
 	return ret;
 }
 
-void * esvg_animation_data_get(Edom_Tag *t)
+void * esvg_element_animation_data_get(Edom_Tag *t)
 {
-	Esvg_Animation *thiz;
+	Esvg_Element_Animation *thiz;
 
-	thiz = _esvg_animation_get(t);
+	thiz = _esvg_element_animation_get(t);
 	return thiz->data;
 }
 
-Edom_Tag * esvg_animation_new(Esvg_Animation_Descriptor *descriptor, Esvg_Type type,
+Edom_Tag * esvg_element_animation_new(Esvg_Animation_Descriptor *descriptor, Esvg_Type type,
 		void *data)
 {
-	Esvg_Animation *thiz;
+	Esvg_Element_Animation *thiz;
 	Esvg_Element_Descriptor pdescriptor;
 	Edom_Tag *t;
 
-	thiz = calloc(1, sizeof(Esvg_Animation));
+	thiz = calloc(1, sizeof(Esvg_Element_Animation));
 	if (!thiz) return NULL;
 
-	EINA_MAGIC_SET(thiz, ESVG_ANIMATION_MAGIC);
+	EINA_MAGIC_SET(thiz, ESVG_ELEMENT_ANIMATION_MAGIC);
 	thiz->data = data;
 	/* our own descriptor */
 	thiz->descriptor.setup = descriptor->setup;
@@ -705,11 +704,11 @@ Edom_Tag * esvg_animation_new(Esvg_Animation_Descriptor *descriptor, Esvg_Type t
 	thiz->ctx.addition.accumulate = ESVG_ACCUMULATE_NONE;
 	thiz->ctx.timing.dur.type = ESVG_DURATION_TYPE_INDEFINITE;
 
-	pdescriptor.attribute_set = _esvg_animation_attribute_set;
-	pdescriptor.attribute_get = _esvg_animation_attribute_get;
-	pdescriptor.free = _esvg_animation_free;
-	pdescriptor.initialize = _esvg_animation_initialize;
-	pdescriptor.setup = _esvg_animation_setup;
+	pdescriptor.attribute_set = _esvg_element_animation_attribute_set;
+	pdescriptor.attribute_get = _esvg_element_animation_attribute_get;
+	pdescriptor.free = _esvg_element_animation_free;
+	pdescriptor.initialize = _esvg_element_animation_initialize;
+	pdescriptor.setup = _esvg_element_animation_setup;
 	pdescriptor.cdata_set = NULL;
 	pdescriptor.text_set = NULL;
 	pdescriptor.text_get = NULL;
@@ -739,165 +738,165 @@ EAPI Eina_Bool esvg_is_animation(Ender_Element *e)
  * To be documented
  * FIXME: To be fixed
  */
-EAPI void esvg_animation_attribute_name_set(Ender_Element *e, const char *name)
+EAPI void esvg_element_animation_attribute_name_set(Ender_Element *e, const char *name)
 {
-	ender_element_property_value_set(e, ESVG_ANIMATION_ATTRIBUTE_NAME, name, NULL);
+	ender_element_property_value_set(e, ESVG_ELEMENT_ANIMATION_ATTRIBUTE_NAME, name, NULL);
 }
 
 /**
  * To be documented
  * FIXME: To be fixed
  */
-EAPI void esvg_animation_attribute_name_get(Ender_Element *e, const char **name)
+EAPI void esvg_element_animation_attribute_name_get(Ender_Element *e, const char **name)
 {
 	Edom_Tag *t;
 
 	t = ender_element_object_get(e);
-	_esvg_animation_attribute_name_get(t, name);
+	_esvg_element_animation_attribute_name_get(t, name);
 }
 
 /**
  * To be documented
  * FIXME: To be fixed
  */
-EAPI void esvg_animation_attribute_type_set(Ender_Element *e, Esvg_Attribute_Type type)
+EAPI void esvg_element_animation_attribute_type_set(Ender_Element *e, Esvg_Attribute_Type type)
 {
-	ender_element_property_value_set(e, ESVG_ANIMATION_ATTRIBUTE_TYPE, type, NULL);
+	ender_element_property_value_set(e, ESVG_ELEMENT_ANIMATION_ATTRIBUTE_TYPE, type, NULL);
 }
 
 /**
  * To be documented
  * FIXME: To be fixed
  */
-EAPI void esvg_animation_attribute_type_get(Ender_Element *e, Esvg_Attribute_Type *type)
-{
-	Edom_Tag *t;
-
-	t = ender_element_object_get(e);
-	_esvg_animation_attribute_type_get(t, type);
-}
-
-/**
- * To be documented
- * FIXME: To be fixed
- */
-EAPI void esvg_animation_dur_set(Ender_Element *e, Esvg_Duration *dur)
-{
-	ender_element_property_value_set(e, ESVG_ANIMATION_DUR, dur, NULL);
-}
-
-/**
- * To be documented
- * FIXME: To be fixed
- */
-EAPI void esvg_animation_dur_get(Ender_Element *e, Esvg_Duration *dur)
+EAPI void esvg_element_animation_attribute_type_get(Ender_Element *e, Esvg_Attribute_Type *type)
 {
 	Edom_Tag *t;
 
 	t = ender_element_object_get(e);
-	_esvg_animation_dur_get(t, dur);
+	_esvg_element_animation_attribute_type_get(t, type);
 }
 
 /**
  * To be documented
  * FIXME: To be fixed
  */
-EAPI void esvg_animation_additive_set(Ender_Element *e, Esvg_Additive additive)
+EAPI void esvg_element_animation_dur_set(Ender_Element *e, Esvg_Duration *dur)
 {
-	ender_element_property_value_set(e, ESVG_ANIMATION_ADDITIVE, additive, NULL);
+	ender_element_property_value_set(e, ESVG_ELEMENT_ANIMATION_DUR, dur, NULL);
 }
 
 /**
  * To be documented
  * FIXME: To be fixed
  */
-EAPI void esvg_animation_additive_get(Ender_Element *e, Esvg_Additive *additive)
-{
-	Edom_Tag *t;
-
-	t = ender_element_object_get(e);
-	_esvg_animation_additive_get(t, additive);
-}
-
-/**
- * To be documented
- * FIXME: To be fixed
- */
-EAPI void esvg_animation_accumulate_set(Ender_Element *e, Esvg_Accumulate accumulate)
-{
-	ender_element_property_value_set(e, ESVG_ANIMATION_ACCUMULATE, accumulate, NULL);
-}
-
-/**
- * To be documented
- * FIXME: To be fixed
- */
-EAPI void esvg_animation_accumulate_get(Ender_Element *e, Esvg_Accumulate *accumulate)
+EAPI void esvg_element_animation_dur_get(Ender_Element *e, Esvg_Duration *dur)
 {
 	Edom_Tag *t;
 
 	t = ender_element_object_get(e);
-	_esvg_animation_accumulate_get(t, accumulate);
+	_esvg_element_animation_dur_get(t, dur);
 }
 
 /**
  * To be documented
  * FIXME: To be fixed
  */
-EAPI void esvg_animation_repeat_count_set(Ender_Element *e, int repeat_count)
+EAPI void esvg_element_animation_additive_set(Ender_Element *e, Esvg_Additive additive)
 {
-	ender_element_property_value_set(e, ESVG_ANIMATION_REPEAT_COUNT, repeat_count, NULL);
+	ender_element_property_value_set(e, ESVG_ELEMENT_ANIMATION_ADDITIVE, additive, NULL);
 }
 
 /**
  * To be documented
  * FIXME: To be fixed
  */
-EAPI void esvg_animation_repeat_count_get(Ender_Element *e, int *repeat_count)
-{
-	Edom_Tag *t;
-
-	t = ender_element_object_get(e);
-	_esvg_animation_repeat_count_get(t, repeat_count);
-}
-
-/**
- * To be documented
- * FIXME: To be fixed
- */
-EAPI void esvg_animation_begin_set(Ender_Element *e, Eina_List *begin)
-{
-	ender_element_property_value_set(e, ESVG_ANIMATION_BEGIN, begin, NULL);
-}
-
-/**
- * To be documented
- * FIXME: To be fixed
- */
-EAPI void esvg_animation_end_set(Ender_Element *e, Eina_List *end)
-{
-	ender_element_property_value_set(e, ESVG_ANIMATION_END, end, NULL);
-}
-
-/**
- * To be documented
- * FIXME: To be fixed
- */
-EAPI void esvg_animation_fill_set(Ender_Element *e, Esvg_Fill fill)
-{
-	ender_element_property_value_set(e, ESVG_ANIMATION_FILL, fill, NULL);
-}
-
-/**
- * To be documented
- * FIXME: To be fixed
- */
-EAPI void esvg_animation_fill_get(Ender_Element *e, Esvg_Fill *fill)
+EAPI void esvg_element_animation_additive_get(Ender_Element *e, Esvg_Additive *additive)
 {
 	Edom_Tag *t;
 
 	t = ender_element_object_get(e);
-	_esvg_animation_fill_get(t, fill);
+	_esvg_element_animation_additive_get(t, additive);
+}
+
+/**
+ * To be documented
+ * FIXME: To be fixed
+ */
+EAPI void esvg_element_animation_accumulate_set(Ender_Element *e, Esvg_Accumulate accumulate)
+{
+	ender_element_property_value_set(e, ESVG_ELEMENT_ANIMATION_ACCUMULATE, accumulate, NULL);
+}
+
+/**
+ * To be documented
+ * FIXME: To be fixed
+ */
+EAPI void esvg_element_animation_accumulate_get(Ender_Element *e, Esvg_Accumulate *accumulate)
+{
+	Edom_Tag *t;
+
+	t = ender_element_object_get(e);
+	_esvg_element_animation_accumulate_get(t, accumulate);
+}
+
+/**
+ * To be documented
+ * FIXME: To be fixed
+ */
+EAPI void esvg_element_animation_repeat_count_set(Ender_Element *e, int repeat_count)
+{
+	ender_element_property_value_set(e, ESVG_ELEMENT_ANIMATION_REPEAT_COUNT, repeat_count, NULL);
+}
+
+/**
+ * To be documented
+ * FIXME: To be fixed
+ */
+EAPI void esvg_element_animation_repeat_count_get(Ender_Element *e, int *repeat_count)
+{
+	Edom_Tag *t;
+
+	t = ender_element_object_get(e);
+	_esvg_element_animation_repeat_count_get(t, repeat_count);
+}
+
+/**
+ * To be documented
+ * FIXME: To be fixed
+ */
+EAPI void esvg_element_animation_begin_set(Ender_Element *e, Eina_List *begin)
+{
+	ender_element_property_value_set(e, ESVG_ELEMENT_ANIMATION_BEGIN, begin, NULL);
+}
+
+/**
+ * To be documented
+ * FIXME: To be fixed
+ */
+EAPI void esvg_element_animation_end_set(Ender_Element *e, Eina_List *end)
+{
+	ender_element_property_value_set(e, ESVG_ELEMENT_ANIMATION_END, end, NULL);
+}
+
+/**
+ * To be documented
+ * FIXME: To be fixed
+ */
+EAPI void esvg_element_animation_fill_set(Ender_Element *e, Esvg_Fill fill)
+{
+	ender_element_property_value_set(e, ESVG_ELEMENT_ANIMATION_FILL, fill, NULL);
+}
+
+/**
+ * To be documented
+ * FIXME: To be fixed
+ */
+EAPI void esvg_element_animation_fill_get(Ender_Element *e, Esvg_Fill *fill)
+{
+	Edom_Tag *t;
+
+	t = ender_element_object_get(e);
+	_esvg_element_animation_fill_get(t, fill);
 }
 
 

@@ -3,14 +3,15 @@ MAINTAINERCLEANFILES = Makefile.in config.h.in~ config.h.in
 GENERATED_FLAGS = -x
 
 GENERATED_ELEMENTS = \
+esvg_generated_element.c \
 esvg_generated_element_a.c \
 esvg_generated_element_animate.c \
 esvg_generated_element_animate_base.c \
+esvg_generated_element_animate_transform.c \
 esvg_generated_element_animation.c \
 esvg_generated_element_circle.c \
 esvg_generated_element_clip_path.c \
 esvg_generated_element_defs.c \
-esvg_generated_element_element.c \
 esvg_generated_element_element_rect.c \
 esvg_generated_element_ellipse.c \
 esvg_generated_element_g.c \
@@ -20,8 +21,6 @@ esvg_generated_element_polygon.c \
 esvg_generated_element_polyline.c \
 esvg_generated_element_line.c \
 esvg_generated_element_linear_gradient.c \
-esvg_generated_element_paint.c \
-esvg_generated_element_paint_animated.c \
 esvg_generated_element_path.c \
 esvg_generated_element_radial_gradient.c \
 esvg_generated_element_script.c \
@@ -37,6 +36,7 @@ esvg_generated_referenceable.c \
 esvg_generated_renderable.c
 
 GENERATED_TYPES = \
+esvg_generated_boolean_animated.c \
 esvg_generated_color.c \
 esvg_generated_color_animated.c \
 esvg_generated_length.c \
@@ -45,6 +45,8 @@ esvg_generated_matrix.c \
 esvg_generated_matrix_animated.c \
 esvg_generated_number.c \
 esvg_generated_number_animated.c \
+esvg_generated_paint.c \
+esvg_generated_paint_animated.c \
 esvg_generated_point.c \
 esvg_generated_rect.c \
 esvg_generated_rect_animated.c \

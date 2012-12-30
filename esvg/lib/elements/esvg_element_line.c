@@ -54,7 +54,7 @@ static Esvg_Element_Line * _esvg_element_line_get(Edom_Tag *t)
 {
 	Esvg_Element_Line *thiz;
 
-	if (esvg_element_internal_type_get(t) != ESVG_ELEMENT_LINE)
+	if (esvg_element_internal_type_get(t) != ESVG_TYPE_LINE)
 		return NULL;
 	thiz = esvg_renderable_data_get(t);
 
@@ -269,7 +269,7 @@ static Edom_Tag * _esvg_element_line_new(void)
 	thiz->x2.base.v = thiz->x2.anim.v = ESVG_COORD_0;
 	thiz->y2.base.v = thiz->y2.anim.v = ESVG_COORD_0;
 
-	t = esvg_renderable_new(&_descriptor, ESVG_ELEMENT_LINE, thiz);
+	t = esvg_renderable_new(&_descriptor, ESVG_TYPE_LINE, thiz);
 	return t;
 }
 
@@ -360,7 +360,7 @@ static void _esvg_element_line_y2_get(Edom_Tag *t, Esvg_Animated_Coord *y2)
 #define _esvg_element_line_y1_is_set NULL
 #define _esvg_element_line_y2_is_set NULL
 
-#include "generated/esvg_generated_line.c"
+#include "generated/esvg_generated_element_line.c"
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
@@ -398,7 +398,7 @@ EAPI Eina_Bool esvg_is_line(Ender_Element *e)
 
 	t = (Edom_Tag *)ender_element_object_get(e);
 	type = esvg_element_internal_type_get(t);
-	return (type == ESVG_ELEMENT_LINE) ? EINA_TRUE : EINA_FALSE;
+	return (type == ESVG_TYPE_LINE) ? EINA_TRUE : EINA_FALSE;
 }
 
 EAPI void esvg_element_line_x1_set(Ender_Element *e, const Esvg_Coord *x1)

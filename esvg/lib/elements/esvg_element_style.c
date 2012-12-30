@@ -21,7 +21,7 @@
 #include "esvg_private_element.h"
 #include "esvg_private_style.h"
 
-#include "esvg_style.h"
+#include "esvg_element_style.h"
 /*
  * In order to support styling we need to keep track of every element
  * parsed, that is, generate the DOM tree. This way we can support Ecss
@@ -31,16 +31,16 @@
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
-typedef struct _Esvg_Style
+typedef struct _Esvg_Element_Style
 {
 	Ecss_Style *s;
-} Esvg_Style;
+} Esvg_Element_Style;
 
-static Esvg_Style * _esvg_style_get(Edom_Tag *t)
+static Esvg_Element_Style * _esvg_element_style_get(Edom_Tag *t)
 {
-	Esvg_Style *thiz;
+	Esvg_Element_Style *thiz;
 
-	if (esvg_element_internal_type_get(t) != ESVG_STYLE)
+	if (esvg_element_internal_type_get(t) != ESVG_TYPE_STYLE)
 		return NULL;
 	thiz = esvg_element_data_get(t);
 
@@ -49,12 +49,12 @@ static Esvg_Style * _esvg_style_get(Edom_Tag *t)
 /*----------------------------------------------------------------------------*
  *                         The Esvg Element interface                         *
  *----------------------------------------------------------------------------*/
-static void _esvg_style_cdata(Edom_Tag *t, const char *cdata, unsigned int length)
+static void _esvg_element_style_cdata(Edom_Tag *t, const char *cdata, unsigned int length)
 {
-	Esvg_Style *thiz;
+	Esvg_Element_Style *thiz;
 	Ecss_Style *s;
 
-	thiz = _esvg_style_get(t);
+	thiz = _esvg_element_style_get(t);
 
 	s = ecss_style_load_from_content(cdata, length);
 	if (!s) return;
@@ -62,11 +62,11 @@ static void _esvg_style_cdata(Edom_Tag *t, const char *cdata, unsigned int lengt
 	thiz->s = s;
 }
 
-static void _esvg_style_free(Edom_Tag *t)
+static void _esvg_element_style_free(Edom_Tag *t)
 {
-	Esvg_Style *thiz;
+	Esvg_Element_Style *thiz;
 
-	thiz = _esvg_style_get(t);
+	thiz = _esvg_element_style_get(t);
 	free(thiz);
 }
 
@@ -74,10 +74,10 @@ static Esvg_Element_Descriptor _descriptor = {
 	/* .child_add		= */ NULL,
 	/* .child_remove	= */ NULL,
 	/* .attribute_get 	= */ NULL,
-	/* .cdata_set 		= */ _esvg_style_cdata,
+	/* .cdata_set 		= */ _esvg_element_style_cdata,
 	/* .text_set 		= */ NULL,
 	/* .text_get 		= */ NULL,
-	/* .free 		= */ _esvg_style_free,
+	/* .free 		= */ _esvg_element_style_free,
 	/* .attribute_set 	= */ NULL,
 	/* .initialize 		= */ NULL,
 	/* .setup		= */ NULL,
@@ -85,53 +85,53 @@ static Esvg_Element_Descriptor _descriptor = {
 /*----------------------------------------------------------------------------*
  *                           The Ender interface                              *
  *----------------------------------------------------------------------------*/
-static Edom_Tag * _esvg_style_new(void)
+static Edom_Tag * _esvg_element_style_new(void)
 {
-	Esvg_Style *thiz;
+	Esvg_Element_Style *thiz;
 	Edom_Tag *t;
 
-	thiz = calloc(1, sizeof(Esvg_Style));
+	thiz = calloc(1, sizeof(Esvg_Element_Style));
 	if (!thiz) return NULL;
 
 	/* default values */
 
-	t = esvg_element_new(&_descriptor, ESVG_STYLE, thiz);
+	t = esvg_element_new(&_descriptor, ESVG_TYPE_STYLE, thiz);
 	return t;
 }
 
 /* The ender wrapper */
-#define _esvg_style_delete NULL
-#include "generated/esvg_generated_style.c"
+#define _esvg_element_style_delete NULL
+#include "generated/esvg_generated_element_style.c"
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
-void esvg_style_init(void)
+void esvg_element_style_init(void)
 {
-	_esvg_style_init();
+	_esvg_element_style_init();
 }
 
-void esvg_style_shutdown(void)
+void esvg_element_style_shutdown(void)
 {
-	_esvg_style_shutdown();
+	_esvg_element_style_shutdown();
 }
 
-Eina_Bool esvg_style_is_internal(Edom_Tag *t)
+Eina_Bool esvg_element_style_is_internal(Edom_Tag *t)
 {
-	if (esvg_element_internal_type_get(t) == ESVG_STYLE)
+	if (esvg_element_internal_type_get(t) == ESVG_TYPE_STYLE)
 		return EINA_TRUE;
 	return EINA_FALSE;
 }
 
-void esvg_style_apply(Edom_Tag *t, Edom_Tag *root)
+void esvg_element_style_apply(Edom_Tag *t, Edom_Tag *root)
 {
-	Esvg_Style *thiz;
+	Esvg_Element_Style *thiz;
 
-	thiz = _esvg_style_get(t);
-	esvg_element_style_apply(root, thiz->s);
+	thiz = _esvg_element_style_get(t);
+	esvg_element_ecss_style_apply(root, thiz->s);
 }
 
 #if 0
-void esvg_parser_style_style_set(Esvg_Style *thiz, Ecss_Style *style)
+void esvg_parser_style_style_set(Esvg_Element_Style *thiz, Ecss_Style *style)
 {
 	thiz->s = style;
 }
@@ -140,7 +140,7 @@ void esvg_parser_style_style_set(Esvg_Style *thiz, Ecss_Style *style)
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/
-EAPI Ender_Element * esvg_style_new(void)
+EAPI Ender_Element * esvg_element_style_new(void)
 {
 	return ESVG_ELEMENT_NEW("style");
 }

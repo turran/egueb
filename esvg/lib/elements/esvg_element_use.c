@@ -77,7 +77,7 @@ static Esvg_Element_Use * _esvg_element_use_get(Edom_Tag *t)
 {
 	Esvg_Element_Use *thiz;
 
-	if (esvg_element_internal_type_get(t) != ESVG_ELEMENT_USE)
+	if (esvg_element_internal_type_get(t) != ESVG_TYPE_USE)
 		return NULL;
 	thiz = esvg_renderable_data_get(t);
 
@@ -282,7 +282,7 @@ static Edom_Tag * _esvg_element_use_new(void)
 	thiz->width = ESVG_LENGTH_0;
 	thiz->height = ESVG_LENGTH_0;
 
-	t = esvg_renderable_new(&_descriptor, ESVG_ELEMENT_USE, thiz);
+	t = esvg_renderable_new(&_descriptor, ESVG_TYPE_USE, thiz);
 	return t;
 }
 
@@ -383,7 +383,7 @@ static void _esvg_element_use_link_get(Edom_Tag *t, const char **link)
 #define _esvg_element_use_width_is_set NULL
 #define _esvg_element_use_height_is_set NULL
 #define _esvg_element_use_link_is_set NULL
-#include "generated/esvg_generated_use.c"
+#include "generated/esvg_generated_element_use.c"
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
@@ -421,7 +421,7 @@ EAPI Eina_Bool esvg_is_use(Ender_Element *e)
 
 	t = (Edom_Tag *)ender_element_object_get(e);
 	type = esvg_element_internal_type_get(t);
-	return (type == ESVG_ELEMENT_USE) ? EINA_TRUE : EINA_FALSE;
+	return (type == ESVG_TYPE_USE) ? EINA_TRUE : EINA_FALSE;
 }
 
 EAPI void esvg_element_use_x_set(Ender_Element *e, const Esvg_Coord *x)

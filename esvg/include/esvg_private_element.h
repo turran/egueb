@@ -78,7 +78,7 @@ Eina_Bool esvg_element_attribute_animate_get(Edom_Tag *t);
 
 void esvg_element_initialize(Ender_Element *e);
 
-void esvg_element_style_apply(Edom_Tag *t, Ecss_Style *s);
+void esvg_element_ecss_style_apply(Edom_Tag *t, Ecss_Style *s);
 
 void esvg_element_topmost_set(Edom_Tag *t, Ender_Element *topmost);
 void esvg_element_state_compose(Edom_Tag *t, const Esvg_Element_Context *s, Esvg_Element_Context *d);

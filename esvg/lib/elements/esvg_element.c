@@ -479,8 +479,8 @@ static void _esvg_element_attribute_presentation_setup(Esvg_Element_Attributes *
 	esvg_attribute_enum_unset(&a->fill_rule.base, ESVG_NON_ZERO);
 	esvg_attribute_paint_unset(&a->fill.base, &color);
 	esvg_attribute_paint_unset(&a->stroke.base, &none);
-	esvg_attribute_enum_unset(&a->stroke_line_cap.base, ESVG_ELEMENT_LINE_CAP_BUTT);
-	esvg_attribute_enum_unset(&a->stroke_line_join.base, ESVG_ELEMENT_LINE_JOIN_MITER);
+	esvg_attribute_enum_unset(&a->stroke_line_cap.base, ESVG_STROKE_LINE_CAP_BUTT);
+	esvg_attribute_enum_unset(&a->stroke_line_join.base, ESVG_STROKE_LINE_JOIN_MITER);
 	esvg_attribute_number_unset(&a->stop_opacity.base, &onen);
 	esvg_attribute_enum_unset(&a->visibility.base, ESVG_VISIBILITY_VISIBLE);
 	esvg_attribute_enum_unset(&a->display.base, ESVG_DISPLAY_BLOCK);
@@ -1275,7 +1275,7 @@ static void _esvg_element_onmouseout_get(Edom_Tag *t, const char **v)
 #define _esvg_element_onmouseover_is_set NULL
 #define _esvg_element_onmousemove_is_set NULL
 #define _esvg_element_onmouseout_is_set NULL
-#include "generated/esvg_generated_element.c"
+#include "generated/esvg_generated_element_element.c"
 /*----------------------------------------------------------------------------*
  *                           The Edom Tag interface                           *
  *----------------------------------------------------------------------------*/
@@ -1956,7 +1956,7 @@ void esvg_element_initialize(Ender_Element *e)
 		thiz->descriptor.initialize(e);
 }
 
-void esvg_element_style_apply(Edom_Tag *t, Ecss_Style *s)
+void esvg_element_ecss_style_apply(Edom_Tag *t, Ecss_Style *s)
 {
 	esvg_element_attribute_type_set(t, ESVG_ATTR_CSS);
 	ecss_context_style_apply(&_esvg_element_css_context, s, t);

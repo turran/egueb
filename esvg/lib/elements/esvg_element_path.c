@@ -44,7 +44,7 @@ static Esvg_Element_Path * _esvg_element_path_get(Edom_Tag *t)
 {
 	Esvg_Element_Path *thiz;
 
-	if (esvg_element_internal_type_get(t) != ESVG_ELEMENT_PATH)
+	if (esvg_element_internal_type_get(t) != ESVG_TYPE_PATH)
 		return NULL;
 	thiz = esvg_renderable_data_get(t);
 
@@ -157,7 +157,7 @@ static Eina_Bool _esvg_element_path_renderer_propagate(Edom_Tag *t,
 		 */
 		switch (pcmd->type)
 		{
-			case ESVG_ELEMENT_PATH_MOVE_TO:
+			case ESVG_PATH_MOVE_TO:
 			DBG("move_to %c (%g, %g)", pcmd->relative ? 'R' : 'A',
 					pcmd->data.move_to.x,  pcmd->data.move_to.y);
 			cmd.type = ENESIM_COMMAND_MOVE_TO;
@@ -175,7 +175,7 @@ static Eina_Bool _esvg_element_path_renderer_propagate(Edom_Tag *t,
 			cur.y = cmd.definition.move_to.y;
 			break;
 
-			case ESVG_ELEMENT_PATH_LINE_TO:
+			case ESVG_PATH_LINE_TO:
 			DBG("line_to %c (%g, %g)", pcmd->relative ? 'R' : 'A',
 					pcmd->data.line_to.x,  pcmd->data.line_to.y);
 			cmd.type = ENESIM_COMMAND_LINE_TO;
@@ -193,7 +193,7 @@ static Eina_Bool _esvg_element_path_renderer_propagate(Edom_Tag *t,
 			cur.y = cmd.definition.line_to.y;
 			break;
 
-			case ESVG_ELEMENT_PATH_HLINE_TO:
+			case ESVG_PATH_HLINE_TO:
 			DBG("hline_to %c (%g)", pcmd->relative ? 'R' : 'A',
 					pcmd->data.hline_to.c);
 			cmd.type = ENESIM_COMMAND_LINE_TO;
@@ -211,7 +211,7 @@ static Eina_Bool _esvg_element_path_renderer_propagate(Edom_Tag *t,
 			cur.y = cmd.definition.line_to.y;
 			break;
 
-			case ESVG_ELEMENT_PATH_VLINE_TO:
+			case ESVG_PATH_VLINE_TO:
 			DBG("vline_to %c (%g)", pcmd->relative ? 'R' : 'A',
 					pcmd->data.vline_to.c);
 			cmd.type = ENESIM_COMMAND_LINE_TO;
@@ -229,7 +229,7 @@ static Eina_Bool _esvg_element_path_renderer_propagate(Edom_Tag *t,
 			cur.y = cmd.definition.line_to.y;
 			break;
 
-			case ESVG_ELEMENT_PATH_CUBIC_TO:
+			case ESVG_PATH_CUBIC_TO:
 			DBG("cubic_to %c ((%g, %g) (%g, %g) (%g, %g))",
 					pcmd->relative ? 'R' : 'A',
 					pcmd->data.cubic_to.ctrl_x0,
@@ -262,7 +262,7 @@ static Eina_Bool _esvg_element_path_renderer_propagate(Edom_Tag *t,
 			cur.y = cmd.definition.cubic_to.y;
 			break;
 
-			case ESVG_ELEMENT_PATH_SCUBIC_TO:
+			case ESVG_PATH_SCUBIC_TO:
 			DBG("scubic_to %c ((%g, %g) (%g, %g))",
 					pcmd->relative ? 'R' : 'A',
 					pcmd->data.scubic_to.ctrl_x,
@@ -288,7 +288,7 @@ static Eina_Bool _esvg_element_path_renderer_propagate(Edom_Tag *t,
 			cur.y = cmd.definition.scubic_to.y;
 			break;
 
-			case ESVG_ELEMENT_PATH_QUADRATIC_TO:
+			case ESVG_PATH_QUADRATIC_TO:
 			DBG("quadratic_to %c ((%g, %g) (%g, %g))",
 					pcmd->relative ? 'R' : 'A',
 					pcmd->data.quadratic_to.ctrl_x,
@@ -315,7 +315,7 @@ static Eina_Bool _esvg_element_path_renderer_propagate(Edom_Tag *t,
 			cur.y = cmd.definition.quadratic_to.y;
 			break;
 
-			case ESVG_ELEMENT_PATH_SQUADRATIC_TO:
+			case ESVG_PATH_SQUADRATIC_TO:
 			DBG("squadratic_to %c (%g, %g)",
 					pcmd->relative ? 'R' : 'A',
 					pcmd->data.squadratic_to.x,
@@ -335,7 +335,7 @@ static Eina_Bool _esvg_element_path_renderer_propagate(Edom_Tag *t,
 			cur.y = cmd.definition.squadratic_to.y;
 			break;
 
-			case ESVG_ELEMENT_PATH_ARC_TO:
+			case ESVG_PATH_ARC_TO:
 			DBG("arc_to %c ((%g, %g) %g %g %g (%g, %g))",
 					pcmd->relative ? 'R' : 'A',
 					pcmd->data.arc_to.rx,
@@ -365,7 +365,7 @@ static Eina_Bool _esvg_element_path_renderer_propagate(Edom_Tag *t,
 			cur.y = cmd.definition.arc_to.y;
 			break;
 
-			case ESVG_ELEMENT_PATH_CLOSE:
+			case ESVG_PATH_CLOSE:
 			DBG("close");
 			cmd.type = ENESIM_COMMAND_CLOSE;
 			cmd.definition.close.close = EINA_TRUE;
@@ -434,7 +434,7 @@ static Edom_Tag * _esvg_element_path_new(void)
 	enesim_renderer_rop_set(r, ENESIM_BLEND);
 	/* default values */
 
-	t = esvg_renderable_new(&_descriptor, ESVG_ELEMENT_PATH, thiz);
+	t = esvg_renderable_new(&_descriptor, ESVG_TYPE_PATH, thiz);
 	return t;
 }
 
@@ -508,7 +508,7 @@ static void _esvg_element_path_d_get(Edom_Tag *t, Esvg_Animated_List *cmds)
 /* The ender wrapper */
 #define _esvg_element_path_delete NULL
 #define _esvg_element_path_d_is_set NULL
-#include "generated/esvg_generated_path.c"
+#include "generated/esvg_generated_element_path.c"
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/

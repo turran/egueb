@@ -35,7 +35,7 @@ static Esvg_Element_Defs * _esvg_element_defs_get(Edom_Tag *t)
 {
 	Esvg_Element_Defs *thiz;
 
-	if (esvg_element_internal_type_get(t) != ESVG_ELEMENT_DEFS)
+	if (esvg_element_internal_type_get(t) != ESVG_TYPE_DEFS)
 		return NULL;
 	thiz = esvg_element_data_get(t);
 
@@ -76,13 +76,13 @@ static Edom_Tag * _esvg_element_defs_new(void)
 	thiz = calloc(1, sizeof(Esvg_Element_Defs));
 	if (!thiz) return NULL;
 
-	t = esvg_element_new(&_descriptor, ESVG_ELEMENT_DEFS, thiz);
+	t = esvg_element_new(&_descriptor, ESVG_TYPE_DEFS, thiz);
 	return t;
 }
 
 /* The ender wrapper */
 #define _esvg_element_defs_delete NULL
-#include "generated/esvg_generated_defs.c"
+#include "generated/esvg_generated_element_defs.c"
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/

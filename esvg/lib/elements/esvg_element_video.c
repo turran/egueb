@@ -67,7 +67,7 @@ static Esvg_Element_Video * _esvg_element_video_get(Edom_Tag *t)
 {
 	Esvg_Element_Video *thiz;
 
-	if (esvg_element_internal_type_get(t) != ESVG_ELEMENT_VIDEO)
+	if (esvg_element_internal_type_get(t) != ESVG_TYPE_VIDEO)
 		return NULL;
 	thiz = esvg_renderable_data_get(t);
 	return thiz;
@@ -296,7 +296,7 @@ static Edom_Tag * _esvg_element_video_new(void)
 	thiz->height.base.v = thiz->height.anim.v = ESVG_LENGTH_0;
 	/* FIXME: href default value */
 
-	t = esvg_renderable_new(&_descriptor, ESVG_ELEMENT_VIDEO, thiz);
+	t = esvg_renderable_new(&_descriptor, ESVG_TYPE_VIDEO, thiz);
 
 	return t;
 }
@@ -404,7 +404,7 @@ static void _esvg_element_video_xlink_href_get(Edom_Tag *t, Esvg_String_Animated
 #define _esvg_element_video_width_is_set NULL
 #define _esvg_element_video_height_is_set NULL
 #define _esvg_element_video_xlink_href_is_set NULL
-#include "generated/esvg_generated_video.c"
+#include "generated/esvg_generated_element_video.c"
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
@@ -442,7 +442,7 @@ EAPI Eina_Bool esvg_is_video(Ender_Element *e)
 
 	t = (Edom_Tag *)ender_element_object_get(e);
 	type = esvg_element_internal_type_get(t);
-	return (type == ESVG_ELEMENT_VIDEO) ? EINA_TRUE : EINA_FALSE;
+	return (type == ESVG_TYPE_VIDEO) ? EINA_TRUE : EINA_FALSE;
 }
 
 EAPI void esvg_element_video_x_set(Ender_Element *e, const Esvg_Coord *x)

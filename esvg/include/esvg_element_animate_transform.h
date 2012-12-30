@@ -15,11 +15,11 @@
  * License along with this library.
  * If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef _ESVG_ANIMATE_TRANSFORM_H
-#define _ESVG_ANIMATE_TRANSFORM_H
+#ifndef _ESVG_ELEMENT_ANIMATE_TRANSFORM_H
+#define _ESVG_ELEMENT_ANIMATE_TRANSFORM_H
 
-EAPI Ender_Element * esvg_animate_transform_new(void);
-EAPI void esvg_animate_transform_type_set(Ender_Element *e, Esvg_Animate_Transform_Type type);
-EAPI void esvg_animate_transform_type_get(Ender_Element *e, Esvg_Animate_Transform_Type *type);
+EAPI Ender_Element * esvg_element_animate_transform_new(void);
+EAPI void esvg_element_animate_transform_type_set(Ender_Element *e, Esvg_Animate_Transform_Type type);
+EAPI void esvg_element_animate_transform_type_get(Ender_Element *e, Esvg_Animate_Transform_Type *type);
 
 #endif

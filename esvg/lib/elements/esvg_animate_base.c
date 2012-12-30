@@ -25,7 +25,7 @@
 #include "esvg_private_svg.h"
 
 #include "esvg_animate_base.h"
-#include "esvg_animation.h"
+#include "esvg_element_animation.h"
 /*
  * This file handles the common attribute handling for the
  * 'animate_base value attributes'. The elements that inherit
@@ -894,7 +894,7 @@ static Eina_Bool _esvg_animate_base_setup(Edom_Tag *t,
 #define _esvg_animate_base_calc_mode_is_set NULL
 #define _esvg_animate_base_key_times_is_set NULL
 #define _esvg_animate_base_key_splines_is_set NULL
-#include "generated/esvg_generated_animate_base.c"
+#include "generated/esvg_generated_element_animate_base.c"
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/

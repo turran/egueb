@@ -152,7 +152,7 @@ static Esvg_Element_Svg * _esvg_element_svg_get(Edom_Tag *t)
 {
 	Esvg_Element_Svg *thiz;
 
-	if (esvg_element_internal_type_get(t) != ESVG_ELEMENT_SVG)
+	if (esvg_element_internal_type_get(t) != ESVG_TYPE_SVG)
 		return NULL;
 	thiz = esvg_renderable_data_get(t);
 
@@ -225,7 +225,7 @@ static Eina_Bool _esvg_element_svg_setup_pre(Edom_Tag *t,
 	{
 		return EINA_TRUE;
 	}
- 	else if (type == ESVG_A)
+ 	else if (type == ESVG_TYPE_A)
 	{
 		return EINA_TRUE;
 	}
@@ -257,7 +257,7 @@ static Eina_Bool _esvg_element_svg_setup_post(Edom_Tag *t,
 		/* add it to the container */
 		esvg_renderable_container_renderable_add(thiz->container, child);
 	}
- 	else if (type == ESVG_A)
+ 	else if (type == ESVG_TYPE_A)
 	{
 		return esvg_element_internal_child_setup(child, c, error,
 				_esvg_element_svg_setup_pre, _esvg_element_svg_setup_post, thiz);
@@ -593,7 +593,7 @@ static Eina_Bool _esvg_element_svg_child_initialize(Edom_Tag *t, Edom_Tag *child
 	}
 
 	/* add the style to the list of styles */
-	if (esvg_style_is_internal(child_t))
+	if (esvg_element_style_is_internal(child_t))
 	{
 		thiz->styles = eina_list_append(thiz->styles, child_t);
 		thiz->styles_changed = EINA_TRUE;
@@ -628,7 +628,7 @@ static Eina_Bool _esvg_element_svg_child_deinitialize(Edom_Tag *t, Edom_Tag *chi
 	if (id) eina_hash_del(thiz->ids, id, child_e);
 
 	/* add the style to the list of styles */
-	if (esvg_style_is_internal(child_t))
+	if (esvg_element_style_is_internal(child_t))
 	{
 		thiz->styles = eina_list_remove(thiz->styles, child_t);
 		thiz->styles_changed = EINA_TRUE;
@@ -751,7 +751,7 @@ static Eina_Bool _esvg_element_svg_child_add(Edom_Tag *t, Edom_Tag *child)
 
 	thiz = _esvg_element_svg_get(t);
 	type = esvg_element_internal_type_get(child);
-	if (esvg_type_is_renderable(type) || type == ESVG_A)
+	if (esvg_type_is_renderable(type) || type == ESVG_TYPE_A)
 	{
 		thiz->renderable_tree_changed = EINA_TRUE;
 	}
@@ -769,7 +769,7 @@ static Eina_Bool _esvg_element_svg_child_remove(Edom_Tag *t, Edom_Tag *child)
 
 	thiz = _esvg_element_svg_get(t);
 	type = esvg_element_internal_type_get(child);
-	if (esvg_type_is_renderable(type) || type == ESVG_A)
+	if (esvg_type_is_renderable(type) || type == ESVG_TYPE_A)
 	{
 		thiz->renderable_tree_changed = EINA_TRUE;
 	}
@@ -855,7 +855,7 @@ static Esvg_Element_Setup_Return _esvg_element_svg_setup(Edom_Tag *t,
 			/* TODO what if we have a sub svg with its own styles? */
 			EINA_LIST_FREE(thiz->styles, style)
 			{
-				esvg_style_apply(style, t);
+				esvg_element_style_apply(style, t);
 			}
 			thiz->styles_changed = EINA_FALSE;
 		}
@@ -966,7 +966,7 @@ static Edom_Tag * _esvg_element_svg_new(void)
 	/* the animation system */
 	thiz->etch = etch_new();
 	etch_timer_fps_set(thiz->etch, 30);
-	t = esvg_renderable_new(&_descriptor, ESVG_ELEMENT_SVG, thiz);
+	t = esvg_renderable_new(&_descriptor, ESVG_TYPE_SVG, thiz);
 	/* the script system */
 	thiz->scriptors = eina_hash_string_superfast_new(NULL);
 	return t;
@@ -1222,7 +1222,7 @@ static Ender_Element *_esvg_element_svg_element_get_by_id(Edom_Tag *t, const cha
 #define _esvg_element_svg_x_dpi_is_set NULL
 #define _esvg_element_svg_y_dpi_is_set NULL
 #define _esvg_element_svg_content_script_type_is_set NULL
-#include "generated/esvg_generated_svg.c"
+#include "generated/esvg_generated_element_svg.c"
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
@@ -1524,7 +1524,7 @@ void esvg_element_svg_style_apply(Edom_Tag *tag)
 	EINA_LIST_FOREACH(thiz->styles, l, s)
 	{
 		printf("applying style %p\n", s);
-		esvg_style_apply(s, thiz->tag);
+		esvg_element_style_apply(s, thiz->tag);
 	}
 }
 #endif
@@ -1559,7 +1559,7 @@ EAPI Ender_Element * esvg_element_svg_element_find(Ender_Element *e, const char 
  */
 EAPI Eina_Bool esvg_is_svg(Ender_Element *e)
 {
-	if (esvg_element_type_get(e) != ESVG_ELEMENT_SVG)
+	if (esvg_element_type_get(e) != ESVG_TYPE_SVG)
 		return EINA_FALSE;
 	return EINA_TRUE;
 }

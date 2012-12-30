@@ -30,9 +30,9 @@
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
-static Ender_Property *ESVG_SCRIPT_CONTENT_SCRIPT_TYPE;
+static Ender_Property *ESVG_ELEMENT_SCRIPT_CONTENT_SCRIPT_TYPE;
 
-typedef struct _Esvg_Script
+typedef struct _Esvg_Element_Script
 {
 	/* properties */
 	char *content_script_type;
@@ -40,13 +40,13 @@ typedef struct _Esvg_Script
 	/* interface */
 	/* private */
 	Esvg_Script_Provider *scriptor;
-} Esvg_Script;
+} Esvg_Element_Script;
 
-static Esvg_Script * _esvg_script_get(Edom_Tag *t)
+static Esvg_Element_Script * _esvg_element_script_get(Edom_Tag *t)
 {
-	Esvg_Script *thiz;
+	Esvg_Element_Script *thiz;
 
-	if (esvg_element_internal_type_get(t) != ESVG_SCRIPT)
+	if (esvg_element_internal_type_get(t) != ESVG_TYPE_SCRIPT)
 		return NULL;
 	thiz = esvg_element_data_get(t);
 
@@ -56,12 +56,12 @@ static Esvg_Script * _esvg_script_get(Edom_Tag *t)
 /*----------------------------------------------------------------------------*
  *                         The Esvg Element interface                         *
  *----------------------------------------------------------------------------*/
-static Eina_Bool _esvg_script_attribute_set(Ender_Element *e,
+static Eina_Bool _esvg_element_script_attribute_set(Ender_Element *e,
 		const char *key, const char *value)
 {
 	if (strcmp(key, "contentScriptType") == 0)
 	{
-		esvg_script_content_script_type_set(e, value);
+		esvg_element_script_content_script_type_set(e, value);
 	}
 	else
 	{
@@ -70,16 +70,16 @@ static Eina_Bool _esvg_script_attribute_set(Ender_Element *e,
 	return EINA_TRUE;
 }
 
-static Eina_Bool _esvg_script_attribute_get(Edom_Tag *tag, const char *attribute, char **value)
+static Eina_Bool _esvg_element_script_attribute_get(Edom_Tag *tag, const char *attribute, char **value)
 {
 	return EINA_FALSE;
 }
 
-static void _esvg_script_cdata_set(Edom_Tag *t, const char *cdata, unsigned int length)
+static void _esvg_element_script_cdata_set(Edom_Tag *t, const char *cdata, unsigned int length)
 {
-	Esvg_Script *thiz;
+	Esvg_Element_Script *thiz;
 
-	thiz = _esvg_script_get(t);
+	thiz = _esvg_element_script_get(t);
 	if (thiz->cdata)
 	{
 		free(thiz->cdata);
@@ -91,29 +91,29 @@ static void _esvg_script_cdata_set(Edom_Tag *t, const char *cdata, unsigned int 
 	}
 }
 
-static void _esvg_script_free(Edom_Tag *t)
+static void _esvg_element_script_free(Edom_Tag *t)
 {
-	Esvg_Script *thiz;
+	Esvg_Element_Script *thiz;
 
-	thiz = _esvg_script_get(t);
+	thiz = _esvg_element_script_get(t);
 	free(thiz);
 }
 
-static Esvg_Element_Setup_Return _esvg_script_setup(Edom_Tag *t,
+static Esvg_Element_Setup_Return _esvg_element_script_setup(Edom_Tag *t,
 		Esvg_Context *c,
 		const Esvg_Element_Context *parent_context,
 		Esvg_Element_Context *context,
 		Esvg_Attribute_Presentation *attr,
 		Enesim_Error **error)
 {
-	Esvg_Script *thiz;
+	Esvg_Element_Script *thiz;
 	Ender_Element *topmost;
 
 	/* call the implementation of the script */
 	if (!esvg_element_changed(t))
 		return ESVG_SETUP_OK;
 
-	thiz = _esvg_script_get(t);
+	thiz = _esvg_element_script_get(t);
 	if (thiz->scriptor)
 	{
 		/* TODO delete the previous instance of the script */
@@ -125,47 +125,47 @@ static Esvg_Element_Setup_Return _esvg_script_setup(Edom_Tag *t,
 	if (!thiz->scriptor) return ESVG_SETUP_OK;
 
 	/* run the script */
-	esvg_script_provider_run(thiz->scriptor, thiz->cdata, NULL);
+	esvg_element_script_provider_run(thiz->scriptor, thiz->cdata, NULL);
 	return ESVG_SETUP_OK;
 }
 
 static Esvg_Element_Descriptor _descriptor = {
 	/* .child_add		= */ NULL,
 	/* .child_remove	= */ NULL,
-	/* .attribute_get 	= */ _esvg_script_attribute_get,
-	/* .cdata_set 		= */ _esvg_script_cdata_set,
+	/* .attribute_get 	= */ _esvg_element_script_attribute_get,
+	/* .cdata_set 		= */ _esvg_element_script_cdata_set,
 	/* .text_set 		= */ NULL,
 	/* .text_get 		= */ NULL,
-	/* .free 		= */ _esvg_script_free,
-	/* .attribute_set 	= */ _esvg_script_attribute_set,
+	/* .free 		= */ _esvg_element_script_free,
+	/* .attribute_set 	= */ _esvg_element_script_attribute_set,
 	/* .attribute_animated_fetch = */ NULL,
 	/* .initialize 		= */ NULL,
-	/* .setup		= */ _esvg_script_setup,
+	/* .setup		= */ _esvg_element_script_setup,
 };
 /*----------------------------------------------------------------------------*
  *                           The Ender interface                              *
  *----------------------------------------------------------------------------*/
-static Edom_Tag * _esvg_script_new(void)
+static Edom_Tag * _esvg_element_script_new(void)
 {
-	Esvg_Script *thiz;
+	Esvg_Element_Script *thiz;
 	Edom_Tag *t;
 
-	thiz = calloc(1, sizeof(Esvg_Script));
+	thiz = calloc(1, sizeof(Esvg_Element_Script));
 	if (!thiz) return NULL;
 
 	/* default values */
 	thiz->content_script_type = strdup("application/ecmascript");
 
-	t = esvg_element_new(&_descriptor, ESVG_SCRIPT, thiz);
+	t = esvg_element_new(&_descriptor, ESVG_TYPE_SCRIPT, thiz);
 
 	return t;
 }
 
-static void _esvg_script_content_script_type_set(Edom_Tag *t, const char *type)
+static void _esvg_element_script_content_script_type_set(Edom_Tag *t, const char *type)
 {
-	Esvg_Script *thiz;
+	Esvg_Element_Script *thiz;
 
-	thiz = _esvg_script_get(t);
+	thiz = _esvg_element_script_get(t);
 	if (thiz->content_script_type)
 	{
 		free(thiz->content_script_type);
@@ -177,46 +177,46 @@ static void _esvg_script_content_script_type_set(Edom_Tag *t, const char *type)
 	}
 }
 
-static void _esvg_script_content_script_type_get(Edom_Tag *t, const char **type)
+static void _esvg_element_script_content_script_type_get(Edom_Tag *t, const char **type)
 {
-	Esvg_Script *thiz;
+	Esvg_Element_Script *thiz;
 
-	thiz = _esvg_script_get(t);
+	thiz = _esvg_element_script_get(t);
 	*type = thiz->content_script_type;
 }
 /* The ender wrapper */
-#define _esvg_script_content_script_type_is_set NULL
-#define _esvg_script_delete NULL
-#include "generated/esvg_generated_script.c"
+#define _esvg_element_script_content_script_type_is_set NULL
+#define _esvg_element_script_delete NULL
+#include "generated/esvg_generated_element_script.c"
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
-void esvg_script_init(void)
+void esvg_element_script_init(void)
 {
-	_esvg_script_init();
+	_esvg_element_script_init();
 }
 
-void esvg_script_shutdown(void)
+void esvg_element_script_shutdown(void)
 {
-	_esvg_script_shutdown();
+	_esvg_element_script_shutdown();
 }
 
 Eina_Bool esvg_is_script_internal(Edom_Tag *t)
 {
-	if (esvg_element_internal_type_get(t) != ESVG_A)
+	if (esvg_element_internal_type_get(t) != ESVG_TYPE_SCRIPT)
 		return EINA_FALSE;
 	return EINA_TRUE;
 }
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/
-EAPI Ender_Element * esvg_script_new(void)
+EAPI Ender_Element * esvg_element_script_new(void)
 {
 	return ESVG_ELEMENT_NEW("script");
 }
 
-EAPI void esvg_script_content_script_type_set(Ender_Element *e, const char *type)
+EAPI void esvg_element_script_content_script_type_set(Ender_Element *e, const char *type)
 {
-	ender_element_property_value_set(e, ESVG_SCRIPT_CONTENT_SCRIPT_TYPE, type, NULL);
+	ender_element_property_value_set(e, ESVG_ELEMENT_SCRIPT_CONTENT_SCRIPT_TYPE, type, NULL);
 }
 

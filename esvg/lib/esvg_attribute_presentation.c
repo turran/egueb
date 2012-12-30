@@ -96,15 +96,15 @@ static void _line_cap_dump(Esvg_Stroke_Line_Cap cap)
 {
 	switch (cap)
 	{
-		case ESVG_ELEMENT_LINE_CAP_BUTT:
+		case ESVG_STROKE_LINE_CAP_BUTT:
 		printf("butt");
 		break;
 
-		case ESVG_ELEMENT_LINE_CAP_ROUND:
+		case ESVG_STROKE_LINE_CAP_ROUND:
 		printf("round");
 		break;
 
-		case ESVG_ELEMENT_LINE_CAP_SQUARE:
+		case ESVG_STROKE_LINE_CAP_SQUARE:
 		printf("square");
 		break;
 
@@ -117,15 +117,15 @@ static void _line_join_dump(Esvg_Stroke_Line_Join join)
 {
 	switch (join)
 	{
-		case ESVG_ELEMENT_LINE_JOIN_MITER:
+		case ESVG_STROKE_LINE_JOIN_MITER:
 		printf("miter");
 		break;
 
-		case ESVG_ELEMENT_LINE_JOIN_ROUND:
+		case ESVG_STROKE_LINE_JOIN_ROUND:
 		printf("round");
 		break;
 
-		case ESVG_ELEMENT_LINE_JOIN_BEVEL:
+		case ESVG_STROKE_LINE_JOIN_BEVEL:
 		printf("bevel");
 		break;
 
@@ -154,8 +154,8 @@ void esvg_attribute_presentation_setup(Esvg_Attribute_Presentation *thiz)
 	thiz->fill.v.color = black;
 	thiz->stroke.v.type = ESVG_PAINT_TYPE_NONE;
 	thiz->stroke_width.v = one;
-	thiz->stroke_line_cap.v = ESVG_ELEMENT_LINE_CAP_BUTT;
-	thiz->stroke_line_join.v = ESVG_ELEMENT_LINE_JOIN_MITER;
+	thiz->stroke_line_cap.v = ESVG_STROKE_LINE_CAP_BUTT;
+	thiz->stroke_line_join.v = ESVG_STROKE_LINE_JOIN_MITER;
 	thiz->stop_opacity.v = onen;
 	thiz->visibility.v = ESVG_VISIBILITY_VISIBLE;
 	thiz->clip_path.v.type = ESVG_CLIP_PATH_NONE;

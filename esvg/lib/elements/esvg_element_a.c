@@ -23,7 +23,7 @@
 #include "esvg_private_svg.h"
 
 #include "esvg_element.h"
-#include "esvg_a.h"
+#include "esvg_element_a.h"
 #include "esvg_event.h"
 
 /* TODO
@@ -36,11 +36,11 @@
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
-#define ESVG_LOG_DEFAULT _esvg_a_log
+#define ESVG_LOG_DEFAULT _esvg_element_a_log
 
-static int _esvg_a_log = -1;
+static int _esvg_element_a_log = -1;
 
-static Ender_Property *ESVG_A_XLINK_HREF;
+static Ender_Property *ESVG_ELEMENT_A_XLINK_HREF;
 
 typedef struct _Esvg_A
 {
@@ -51,18 +51,18 @@ typedef struct _Esvg_A
 	char *real_href;
 } Esvg_A;
 
-static Esvg_A * _esvg_a_get(Edom_Tag *t)
+static Esvg_A * _esvg_element_a_get(Edom_Tag *t)
 {
 	Esvg_A *thiz;
 
-	if (esvg_element_internal_type_get(t) != ESVG_A)
+	if (esvg_element_internal_type_get(t) != ESVG_TYPE_A)
 		return NULL;
 	thiz = esvg_element_data_get(t);
 
 	return thiz;
 }
 
-static void _esvg_a_renderable_click(Ender_Element *e,
+static void _esvg_element_a_renderable_click(Ender_Element *e,
 		const char *event_name, void *event_data, void *data)
 {
 	Esvg_A *thiz = data;
@@ -76,13 +76,13 @@ static void _esvg_a_renderable_click(Ender_Element *e,
 /*----------------------------------------------------------------------------*
  *                         The Esvg Element interface                         *
  *----------------------------------------------------------------------------*/
-static Eina_Bool _esvg_a_child_add(Edom_Tag *t, Edom_Tag *child)
+static Eina_Bool _esvg_element_a_child_add(Edom_Tag *t, Edom_Tag *child)
 {
 	Esvg_A *thiz;
 	Esvg_Type type;
 	Ender_Element *e;
 
-	thiz = _esvg_a_get(t);
+	thiz = _esvg_element_a_get(t);
 	type = esvg_element_internal_type_get(child);
 	if (esvg_type_is_animation(type))
 		return EINA_TRUE;
@@ -92,41 +92,41 @@ static Eina_Bool _esvg_a_child_add(Edom_Tag *t, Edom_Tag *child)
 
 	e = esvg_element_ender_get(child);
 	/* add the mouse click event */
-	ender_event_listener_add(e, "click", _esvg_a_renderable_click, thiz);
+	ender_event_listener_add(e, "click", _esvg_element_a_renderable_click, thiz);
 	return EINA_TRUE;
 }
 
-static Eina_Bool _esvg_a_child_remove(Edom_Tag *t, Edom_Tag *child)
+static Eina_Bool _esvg_element_a_child_remove(Edom_Tag *t, Edom_Tag *child)
 {
 	Esvg_A *thiz;
 	Esvg_Type type;
 	Ender_Element *e;
 
-	thiz = _esvg_a_get(t);
+	thiz = _esvg_element_a_get(t);
 	type = esvg_element_internal_type_get(child);
 	if (!esvg_type_is_renderable(type))
 		return EINA_TRUE;
 
 	e = esvg_element_ender_get(child);
 	/* remove the mouse click event */
-	ender_event_listener_remove_full(e, "click", _esvg_a_renderable_click, thiz);
+	ender_event_listener_remove_full(e, "click", _esvg_element_a_renderable_click, thiz);
 	return EINA_TRUE;
 }
 
-static void _esvg_a_free(Edom_Tag *t)
+static void _esvg_element_a_free(Edom_Tag *t)
 {
 	Esvg_A *thiz;
 
-	thiz = _esvg_a_get(t);
+	thiz = _esvg_element_a_get(t);
 	free(thiz);
 }
 
-static Eina_Bool _esvg_a_attribute_set(Ender_Element *e,
+static Eina_Bool _esvg_element_a_attribute_set(Ender_Element *e,
 		const char *key, const char *value)
 {
 	if (strcmp(key, "xlink:href") == 0)
 	{
-		esvg_a_xlink_href_set(e, value);
+		esvg_element_a_xlink_href_set(e, value);
 	}
 	else
 	{
@@ -139,23 +139,23 @@ static Eina_Bool _esvg_a_attribute_set(Ender_Element *e,
 	return EINA_TRUE;
 }
 
-static Eina_Bool _esvg_a_attribute_get(Edom_Tag *tag, const char *attribute, char **value)
+static Eina_Bool _esvg_element_a_attribute_get(Edom_Tag *tag, const char *attribute, char **value)
 {
 	return EINA_FALSE;
 }
 
-static int * _esvg_a_attribute_animated_fetch(Edom_Tag *t, const char *attr)
+static int * _esvg_element_a_attribute_animated_fetch(Edom_Tag *t, const char *attr)
 {
 	Esvg_A *thiz;
 	int *animated = NULL;
 
-	thiz = _esvg_a_get(t);
+	thiz = _esvg_element_a_get(t);
 	if (!strcmp(attr, "xlink:href"))
 		animated = &thiz->href.animated;
 	return animated;
 }
 
-static Esvg_Element_Setup_Return _esvg_a_setup(Edom_Tag *t,
+static Esvg_Element_Setup_Return _esvg_element_a_setup(Edom_Tag *t,
 		Esvg_Context *c,
 		const Esvg_Element_Context *parent_context,
 		Esvg_Element_Context *context,
@@ -167,7 +167,7 @@ static Esvg_Element_Setup_Return _esvg_a_setup(Edom_Tag *t,
 	char *href;
 	char *real;
 
-	thiz = _esvg_a_get(t);
+	thiz = _esvg_element_a_get(t);
 
 	esvg_attribute_animated_string_final_get(&thiz->href, &href);
 	if (!href) goto done;
@@ -189,22 +189,22 @@ done:
 }
 
 static Esvg_Element_Descriptor _descriptor = {
-	/* .child_add		= */ _esvg_a_child_add,
-	/* .child_remove	= */ _esvg_a_child_remove,
-	/* .attribute_get 	= */ _esvg_a_attribute_get,
+	/* .child_add		= */ _esvg_element_a_child_add,
+	/* .child_remove	= */ _esvg_element_a_child_remove,
+	/* .attribute_get 	= */ _esvg_element_a_attribute_get,
 	/* .cdata_set 		= */ NULL,
 	/* .text_set 		= */ NULL,
 	/* .text_get 		= */ NULL,
-	/* .free 		= */ _esvg_a_free,
-	/* .attribute_set 	= */ _esvg_a_attribute_set,
-	/* .attribute_animated_fetch = */ _esvg_a_attribute_animated_fetch,
+	/* .free 		= */ _esvg_element_a_free,
+	/* .attribute_set 	= */ _esvg_element_a_attribute_set,
+	/* .attribute_animated_fetch = */ _esvg_element_a_attribute_animated_fetch,
 	/* .initialize 		= */ NULL,
-	/* .setup		= */ _esvg_a_setup,
+	/* .setup		= */ _esvg_element_a_setup,
 };
 /*----------------------------------------------------------------------------*
  *                           The Ender interface                              *
  *----------------------------------------------------------------------------*/
-static Edom_Tag * _esvg_a_new(void)
+static Edom_Tag * _esvg_element_a_new(void)
 {
 	Esvg_A *thiz;
 	Edom_Tag *t;
@@ -214,68 +214,68 @@ static Edom_Tag * _esvg_a_new(void)
 
 	/* default values */
 
-	t = esvg_element_new(&_descriptor, ESVG_A, thiz);
+	t = esvg_element_new(&_descriptor, ESVG_TYPE_A, thiz);
 	return t;
 }
 
-static void _esvg_a_xlink_href_set(Edom_Tag *t, Esvg_String_Animated *href)
+static void _esvg_element_a_xlink_href_set(Edom_Tag *t, Esvg_String_Animated *href)
 {
 	Esvg_A *thiz;
 	Eina_Bool animating;
 
-	thiz = _esvg_a_get(t);
+	thiz = _esvg_element_a_get(t);
 	animating = esvg_element_attribute_animate_get(t);
 	esvg_attribute_animated_string_set(&thiz->href,
 		href, animating);
 }
 
-static void _esvg_a_xlink_href_get(Edom_Tag *t, Esvg_String_Animated *href)
+static void _esvg_element_a_xlink_href_get(Edom_Tag *t, Esvg_String_Animated *href)
 {
 	Esvg_A *thiz;
 
-	thiz = _esvg_a_get(t);
+	thiz = _esvg_element_a_get(t);
 	esvg_attribute_animated_string_get(&thiz->href,
 		href);
 }
 
 /* The ender wrapper */
-#define _esvg_a_xlink_href_is_set NULL
-#define _esvg_a_delete NULL
-#include "generated/esvg_generated_a.c"
+#define _esvg_element_a_xlink_href_is_set NULL
+#define _esvg_element_a_delete NULL
+#include "generated/esvg_generated_element_a.c"
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
 Eina_Bool esvg_is_a_internal(Edom_Tag *t)
 {
-	if (esvg_element_internal_type_get(t) != ESVG_A)
+	if (esvg_element_internal_type_get(t) != ESVG_TYPE_A)
 		return EINA_FALSE;
 	return EINA_TRUE;
 }
 
-void esvg_a_init(void)
+void esvg_element_a_init(void)
 {
-	_esvg_a_log = eina_log_domain_register("esvg_a", ESVG_LOG_COLOR_DEFAULT);
-	if (_esvg_a_log < 0)
+	_esvg_element_a_log = eina_log_domain_register("esvg_a", ESVG_LOG_COLOR_DEFAULT);
+	if (_esvg_element_a_log < 0)
 	{
 		EINA_LOG_ERR("Can not create log domain.");
 		return;
 	}
-	_esvg_a_init();
+	_esvg_element_a_init();
 }
 
-void esvg_a_shutdown(void)
+void esvg_element_a_shutdown(void)
 {
-	if (_esvg_a_log < 0)
+	if (_esvg_element_a_log < 0)
 		return;
-	_esvg_a_shutdown();
-	eina_log_domain_unregister(_esvg_a_log);
-	_esvg_a_log = -1;
+	_esvg_element_a_shutdown();
+	eina_log_domain_unregister(_esvg_element_a_log);
+	_esvg_element_a_log = -1;
 }
 
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/
-EAPI Ender_Element * esvg_a_new(void)
+EAPI Ender_Element * esvg_element_a_new(void)
 {
 	return ESVG_ELEMENT_NEW("a");
 }
@@ -288,7 +288,7 @@ EAPI Eina_Bool esvg_is_a(Ender_Element *e)
 	return esvg_is_a_internal(t);
 }
 
-EAPI void esvg_a_xlink_href_set(Ender_Element *e, const char *href)
+EAPI void esvg_element_a_xlink_href_set(Ender_Element *e, const char *href)
 {
-	esvg_element_property_string_set(e, ESVG_A_XLINK_HREF, href);
+	esvg_element_property_string_set(e, ESVG_ELEMENT_A_XLINK_HREF, href);
 }

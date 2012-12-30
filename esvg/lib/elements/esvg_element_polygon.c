@@ -43,7 +43,7 @@ static Esvg_Element_Polygon * _esvg_element_polygon_get(Edom_Tag *t)
 {
 	Esvg_Element_Polygon *thiz;
 
-	if (esvg_element_internal_type_get(t) != ESVG_ELEMENT_POLYGON)
+	if (esvg_element_internal_type_get(t) != ESVG_TYPE_POLYGON)
 		return NULL;
 	thiz = esvg_renderable_data_get(t);
 
@@ -183,7 +183,7 @@ static Edom_Tag * _esvg_element_polygon_new(void)
 	thiz->r = r;
 	/* default values */
 
-	t = esvg_renderable_new(&_descriptor, ESVG_ELEMENT_POLYGON, thiz);
+	t = esvg_renderable_new(&_descriptor, ESVG_TYPE_POLYGON, thiz);
 	return t;
 }
 
@@ -229,7 +229,7 @@ static void _esvg_element_polygon_point_get(Edom_Tag *t, const Eina_List **pts)
 #define _esvg_element_polygon_point_is_set NULL
 #define _esvg_element_polygon_point_clear NULL
 #define _esvg_element_polygon_point_remove NULL
-#include "generated/esvg_generated_polygon.c"
+#include "generated/esvg_generated_element_polygon.c"
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
@@ -267,7 +267,7 @@ EAPI Eina_Bool esvg_is_polygon(Ender_Element *e)
 
 	t = (Edom_Tag *)ender_element_object_get(e);
 	type = esvg_element_internal_type_get(t);
-	return (type == ESVG_ELEMENT_POLYGON) ? EINA_TRUE : EINA_FALSE;
+	return (type == ESVG_TYPE_POLYGON) ? EINA_TRUE : EINA_FALSE;
 }
 
 EAPI void esvg_element_polygon_point_add(Ender_Element *e, Esvg_Point *p)

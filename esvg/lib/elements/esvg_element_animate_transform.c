@@ -25,7 +25,7 @@
 #include "esvg_private_animate_transform.h"
 #include "esvg_private_svg.h"
 
-#include "esvg_animate_transform.h"
+#include "esvg_element_animate_transform.h"
 /* This file handles the 'animateTransform' tag. The idea
  * is that you can animate transformations by animating
  * the numbers that define a transformation and its type
@@ -76,11 +76,11 @@
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
-#define ESVG_LOG_DEFAULT _esvg_animate_transform_log
+#define ESVG_LOG_DEFAULT _esvg_element_animate_transform_log
 
-static int _esvg_animate_transform_log = -1;
+static int _esvg_element_animate_transform_log = -1;
 
-static Ender_Property *ESVG_ANIMATE_TRANSFORM_TYPE;
+static Ender_Property *ESVG_ELEMENT_ANIMATE_TRANSFORM_TYPE;
 
 typedef struct _Esvg_Animate_Transform_Data
 {
@@ -94,13 +94,13 @@ typedef struct _Esvg_Animate_Transform
 	Esvg_Animate_Transform_Type type;
 	/* interface */
 	/* private */
-} Esvg_Animate_Transform;
+} Esvg_Element_Animate_Transform;
 
-static Esvg_Animate_Transform * _esvg_animate_transform_get(Edom_Tag *t)
+static Esvg_Element_Animate_Transform * _esvg_element_animate_transform_get(Edom_Tag *t)
 {
-	Esvg_Animate_Transform *thiz;
+	Esvg_Element_Animate_Transform *thiz;
 
-	if (esvg_element_internal_type_get(t) != ESVG_ANIMATETRANSFORM)
+	if (esvg_element_internal_type_get(t) != ESVG_TYPE_ANIMATETRANSFORM)
 		return NULL;
 	thiz = esvg_animate_base_data_get(t);
 
@@ -110,7 +110,7 @@ static Esvg_Animate_Transform * _esvg_animate_transform_get(Edom_Tag *t)
 /* whenever the list values function is called, store the value
  * in our own list of values
  */
-static Eina_Bool _esvg_animate_transform_values_cb(double v, void *user_data)
+static Eina_Bool _esvg_element_animate_transform_values_cb(double v, void *user_data)
 {
 	Esvg_Animate_Transform_Data *data = user_data;
 
@@ -123,7 +123,7 @@ static Eina_Bool _esvg_animate_transform_values_cb(double v, void *user_data)
 	return EINA_TRUE;
 }
 
-static void * _esvg_animate_transform_value_new(void)
+static void * _esvg_element_animate_transform_value_new(void)
 {
 	Esvg_Animate_Transform_Data *data;
 
@@ -131,16 +131,16 @@ static void * _esvg_animate_transform_value_new(void)
 	return data;
 }
 
-static Eina_Bool _esvg_animate_transform_value_get(const char *attr, void **value)
+static Eina_Bool _esvg_element_animate_transform_value_get(const char *attr, void **value)
 {
 	Esvg_Animate_Transform_Data *v = *value;
 
-	esvg_number_list_string_from(attr, _esvg_animate_transform_values_cb,
+	esvg_number_list_string_from(attr, _esvg_element_animate_transform_values_cb,
 				v);
 	return EINA_TRUE;
 }
 
-static void * _esvg_animate_transform_destination_new(void)
+static void * _esvg_element_animate_transform_destination_new(void)
 {
 	Esvg_Matrix_Animated *v;
 
@@ -150,7 +150,7 @@ static void * _esvg_animate_transform_destination_new(void)
 	return v;
 }
 
-static void _esvg_animate_transform_destination_free(void *destination, Eina_Bool deep)
+static void _esvg_element_animate_transform_destination_free(void *destination, Eina_Bool deep)
 {
 	Esvg_Matrix_Animated *d = destination;
 	free(d);
@@ -158,7 +158,7 @@ static void _esvg_animate_transform_destination_free(void *destination, Eina_Boo
 /*----------------------------------------------------------------------------*
  *                        The translate type descriptor                       *
  *----------------------------------------------------------------------------*/
-static void _esvg_animate_transform_translate_interpolate(void *a, void *b,
+static void _esvg_element_animate_transform_translate_interpolate(void *a, void *b,
 		double m, void *add, void *acc, int mul, void *res)
 {
 	Esvg_Animate_Transform_Data *va = a;
@@ -186,20 +186,20 @@ static void _esvg_animate_transform_translate_interpolate(void *a, void *b,
 }
 
 static Esvg_Attribute_Animated_Descriptor _translate_descriptor = {
-	/* .value_new			= */ _esvg_animate_transform_value_new,
-	/* .value_get			= */ _esvg_animate_transform_value_get,
+	/* .value_new			= */ _esvg_element_animate_transform_value_new,
+	/* .value_get			= */ _esvg_element_animate_transform_value_get,
 	/* .value_free			= */ free,
-	/* .destination_new		= */ _esvg_animate_transform_destination_new,
-	/* .destination_free		= */ _esvg_animate_transform_destination_free,
+	/* .destination_new		= */ _esvg_element_animate_transform_destination_new,
+	/* .destination_free		= */ _esvg_element_animate_transform_destination_free,
 	/* .destination_keep		= */ NULL,
 	/* .destination_value_from	= */ NULL,
 	/* .destination_value_to	= */ NULL,
-	/* .interpolate		= */ _esvg_animate_transform_translate_interpolate,
+	/* .interpolate		= */ _esvg_element_animate_transform_translate_interpolate,
 };
 /*----------------------------------------------------------------------------*
  *                          The rotate type descriptor                        *
  *----------------------------------------------------------------------------*/
-static void _esvg_animate_transform_rotate_interpolate(void *a, void *b,
+static void _esvg_element_animate_transform_rotate_interpolate(void *a, void *b,
 		double m, void *add, void *acc, int mul, void *res)
 {
 	Esvg_Animate_Transform_Data *va = a;
@@ -240,20 +240,20 @@ static void _esvg_animate_transform_rotate_interpolate(void *a, void *b,
 }
 
 static Esvg_Attribute_Animated_Descriptor _rotate_descriptor = {
-	/* .value_new			= */ _esvg_animate_transform_value_new,
-	/* .value_get			= */ _esvg_animate_transform_value_get,
+	/* .value_new			= */ _esvg_element_animate_transform_value_new,
+	/* .value_get			= */ _esvg_element_animate_transform_value_get,
 	/* .value_free			= */ free,
-	/* .destination_new		= */ _esvg_animate_transform_destination_new,
-	/* .destination_free		= */ _esvg_animate_transform_destination_free,
+	/* .destination_new		= */ _esvg_element_animate_transform_destination_new,
+	/* .destination_free		= */ _esvg_element_animate_transform_destination_free,
 	/* .destination_keep		= */ NULL,
 	/* .destination_value_from	= */ NULL,
 	/* .destination_value_to	= */ NULL,
-	/* .interpolate		= */ _esvg_animate_transform_rotate_interpolate,
+	/* .interpolate		= */ _esvg_element_animate_transform_rotate_interpolate,
 };
 /*----------------------------------------------------------------------------*
  *                          The scale type descriptor                         *
  *----------------------------------------------------------------------------*/
-static void _esvg_animate_transform_scale_interpolate(void *a, void *b,
+static void _esvg_element_animate_transform_scale_interpolate(void *a, void *b,
 		double m, void *add, void *acc, int mul, void *res)
 {
 	Esvg_Animate_Transform_Data *va = a;
@@ -282,20 +282,20 @@ static void _esvg_animate_transform_scale_interpolate(void *a, void *b,
 }
 
 static Esvg_Attribute_Animated_Descriptor _scale_descriptor = {
-	/* .value_new			= */ _esvg_animate_transform_value_new,
-	/* .value_get			= */ _esvg_animate_transform_value_get,
+	/* .value_new			= */ _esvg_element_animate_transform_value_new,
+	/* .value_get			= */ _esvg_element_animate_transform_value_get,
 	/* .value_free			= */ free,
-	/* .destination_new		= */ _esvg_animate_transform_destination_new,
-	/* .destination_free		= */ _esvg_animate_transform_destination_free,
+	/* .destination_new		= */ _esvg_element_animate_transform_destination_new,
+	/* .destination_free		= */ _esvg_element_animate_transform_destination_free,
 	/* .destination_keep		= */ NULL,
 	/* .destination_value_from	= */ NULL,
 	/* .destination_value_to	= */ NULL,
-	/* .interpolate		= */ _esvg_animate_transform_scale_interpolate,
+	/* .interpolate		= */ _esvg_element_animate_transform_scale_interpolate,
 };
 /*----------------------------------------------------------------------------*
  *                          The skewx type descriptor                         *
  *----------------------------------------------------------------------------*/
-static void _esvg_animate_transform_skewx_interpolate(void *a, void *b,
+static void _esvg_element_animate_transform_skewx_interpolate(void *a, void *b,
 		double m, void *add, void *acc, int mul, void *res)
 {
 	Esvg_Animate_Transform_Data *va = a;
@@ -314,21 +314,21 @@ static void _esvg_animate_transform_skewx_interpolate(void *a, void *b,
 }
 
 static Esvg_Attribute_Animated_Descriptor _skewx_descriptor = {
-	/* .value_new			= */ _esvg_animate_transform_value_new,
-	/* .value_get			= */ _esvg_animate_transform_value_get,
+	/* .value_new			= */ _esvg_element_animate_transform_value_new,
+	/* .value_get			= */ _esvg_element_animate_transform_value_get,
 	/* .value_free			= */ free,
-	/* .destination_new		= */ _esvg_animate_transform_destination_new,
-	/* .destination_free		= */ _esvg_animate_transform_destination_free,
+	/* .destination_new		= */ _esvg_element_animate_transform_destination_new,
+	/* .destination_free		= */ _esvg_element_animate_transform_destination_free,
 	/* .destination_keep		= */ NULL,
 	/* .destination_value_from	= */ NULL,
 	/* .destination_value_to	= */ NULL,
-	/* .interpolate		= */ _esvg_animate_transform_skewx_interpolate,
+	/* .interpolate		= */ _esvg_element_animate_transform_skewx_interpolate,
 };
 
 /*----------------------------------------------------------------------------*
  *                          The skewy type descriptor                         *
  *----------------------------------------------------------------------------*/
-static void _esvg_animate_transform_skewy_interpolate(void *a, void *b,
+static void _esvg_element_animate_transform_skewy_interpolate(void *a, void *b,
 		double m, void *add, void *acc, int mul, void *res)
 {
 	Esvg_Animate_Transform_Data *va = a;
@@ -347,36 +347,36 @@ static void _esvg_animate_transform_skewy_interpolate(void *a, void *b,
 }
 
 static Esvg_Attribute_Animated_Descriptor _skewy_descriptor = {
-	/* .value_new			= */ _esvg_animate_transform_value_new,
-	/* .value_get			= */ _esvg_animate_transform_value_get,
+	/* .value_new			= */ _esvg_element_animate_transform_value_new,
+	/* .value_get			= */ _esvg_element_animate_transform_value_get,
 	/* .value_free			= */ free,
-	/* .destination_new		= */ _esvg_animate_transform_destination_new,
-	/* .destination_free		= */ _esvg_animate_transform_destination_free,
+	/* .destination_new		= */ _esvg_element_animate_transform_destination_new,
+	/* .destination_free		= */ _esvg_element_animate_transform_destination_free,
 	/* .destination_keep		= */ NULL,
 	/* .destination_value_from	= */ NULL,
 	/* .destination_value_to	= */ NULL,
-	/* .interpolate		= */ _esvg_animate_transform_skewy_interpolate,
+	/* .interpolate		= */ _esvg_element_animate_transform_skewy_interpolate,
 };
 /*----------------------------------------------------------------------------*
  *                         The Esvg Element interface                         *
  *----------------------------------------------------------------------------*/
-static void _esvg_animate_transform_free(Edom_Tag *t)
+static void _esvg_element_animate_transform_free(Edom_Tag *t)
 {
-	Esvg_Animate_Transform *thiz;
+	Esvg_Element_Animate_Transform *thiz;
 
-	thiz = _esvg_animate_transform_get(t);
+	thiz = _esvg_element_animate_transform_get(t);
 	free(thiz);
 }
 
-static Eina_Bool _esvg_animate_transform_attribute_set(Ender_Element *e,
+static Eina_Bool _esvg_element_animate_transform_attribute_set(Ender_Element *e,
 		const char *key, const char *value)
 {
 	if (!strcmp(key, "type"))
 	{
 		Esvg_Animate_Transform_Type type;
 
-		esvg_animate_transform_type_string_from(&type, value);
-		esvg_animate_transform_type_set(e, type);
+		esvg_element_animate_transform_type_string_from(&type, value);
+		esvg_element_animate_transform_type_set(e, type);
 	}
 	else
 	{
@@ -385,21 +385,21 @@ static Eina_Bool _esvg_animate_transform_attribute_set(Ender_Element *e,
 	return EINA_TRUE;
 }
 
-static Eina_Bool _esvg_animate_transform_attribute_get(Edom_Tag *tag, const char *attribute, char **value)
+static Eina_Bool _esvg_element_animate_transform_attribute_get(Edom_Tag *tag, const char *attribute, char **value)
 {
 	return EINA_FALSE;
 }
 
-static Eina_Bool _esvg_animate_transform_type_descriptor_get(Edom_Tag *t,
+static Eina_Bool _esvg_element_animate_transform_type_descriptor_get(Edom_Tag *t,
 		const char *name, Esvg_Attribute_Animated_Descriptor **d)
 {
-	Esvg_Animate_Transform *thiz;
+	Esvg_Element_Animate_Transform *thiz;
 
 	/* based on the property name get the correct descriptor */
 	if (strcmp(name, "esvg_animated_transform"))
 		return EINA_FALSE;
 	/* check the type and use the correct generator */
-	thiz = _esvg_animate_transform_get(t);
+	thiz = _esvg_element_animate_transform_get(t);
 	switch (thiz->type)
 	{
 		case ESVG_ANIMATE_TRANSFORM_TYPE_TRANSLATE:
@@ -429,68 +429,68 @@ static Eina_Bool _esvg_animate_transform_type_descriptor_get(Edom_Tag *t,
 }
 
 static Esvg_Animate_Base_Descriptor _descriptor = {
-	/* .attribute_get	= */ _esvg_animate_transform_attribute_get,
-	/* .free		= */ _esvg_animate_transform_free,
+	/* .attribute_get	= */ _esvg_element_animate_transform_attribute_get,
+	/* .free		= */ _esvg_element_animate_transform_free,
 	/* .initialize		= */ NULL,
-	/* .attribute_set	= */ _esvg_animate_transform_attribute_set,
-	/* .type_descriptor_get	= */ _esvg_animate_transform_type_descriptor_get,
+	/* .attribute_set	= */ _esvg_element_animate_transform_attribute_set,
+	/* .type_descriptor_get	= */ _esvg_element_animate_transform_type_descriptor_get,
 };
 /*----------------------------------------------------------------------------*
  *                           The Ender interface                              *
  *----------------------------------------------------------------------------*/
-static void _esvg_animate_transform_type_set(Edom_Tag *t, Esvg_Animate_Transform_Type type)
+static void _esvg_element_animate_transform_type_set(Edom_Tag *t, Esvg_Animate_Transform_Type type)
 {
-	Esvg_Animate_Transform *thiz;
+	Esvg_Element_Animate_Transform *thiz;
 
-	thiz = _esvg_animate_transform_get(t);
+	thiz = _esvg_element_animate_transform_get(t);
 	thiz->type = type;
 }
 
-static void _esvg_animate_transform_type_get(Edom_Tag *t, Esvg_Animate_Transform_Type *type)
+static void _esvg_element_animate_transform_type_get(Edom_Tag *t, Esvg_Animate_Transform_Type *type)
 {
-	Esvg_Animate_Transform *thiz;
+	Esvg_Element_Animate_Transform *thiz;
 
 	if (!type) return;
-	thiz = _esvg_animate_transform_get(t);
+	thiz = _esvg_element_animate_transform_get(t);
 	*type = thiz->type;
 }
 
-static Edom_Tag * _esvg_animate_transform_new(void)
+static Edom_Tag * _esvg_element_animate_transform_new(void)
 {
-	Esvg_Animate_Transform *thiz;
+	Esvg_Element_Animate_Transform *thiz;
 	Edom_Tag *t;
 
-	thiz = calloc(1, sizeof(Esvg_Animate_Transform));
+	thiz = calloc(1, sizeof(Esvg_Element_Animate_Transform));
 
-	t = esvg_animate_base_new(&_descriptor, ESVG_ANIMATETRANSFORM, thiz);
+	t = esvg_animate_base_new(&_descriptor, ESVG_TYPE_ANIMATETRANSFORM, thiz);
 	return t;
 }
 
 /* The ender wrapper */
-#define _esvg_animate_transform_delete NULL
-#define _esvg_animate_transform_type_is_set NULL
-#include "generated/esvg_generated_animate_transform.c"
+#define _esvg_element_animate_transform_delete NULL
+#define _esvg_element_animate_transform_type_is_set NULL
+#include "generated/esvg_generated_element_animate_transform.c"
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
-void esvg_animate_transform_init(void)
+void esvg_element_animate_transform_init(void)
 {
-	_esvg_animate_transform_log = eina_log_domain_register("esvg_animate_transform", ESVG_LOG_COLOR_DEFAULT);
-	if (_esvg_animate_transform_log < 0)
+	_esvg_element_animate_transform_log = eina_log_domain_register("esvg_element_animate_transform", ESVG_LOG_COLOR_DEFAULT);
+	if (_esvg_element_animate_transform_log < 0)
 	{
 		EINA_LOG_ERR("Can not create log domain.");
 		return;
 	}
-	_esvg_animate_transform_init();
+	_esvg_element_animate_transform_init();
 }
 
-void esvg_animate_transform_shutdown(void)
+void esvg_element_animate_transform_shutdown(void)
 {
-	if (_esvg_animate_transform_log < 0)
+	if (_esvg_element_animate_transform_log < 0)
 		return;
-	_esvg_animate_transform_shutdown();
-	eina_log_domain_unregister(_esvg_animate_transform_log);
-	_esvg_animate_transform_log = -1;
+	_esvg_element_animate_transform_shutdown();
+	eina_log_domain_unregister(_esvg_element_animate_transform_log);
+	_esvg_element_animate_transform_log = -1;
 }
 /*============================================================================*
  *                                   API                                      *
@@ -499,7 +499,7 @@ void esvg_animate_transform_shutdown(void)
  * To be documented
  * FIXME: To be fixed
  */
-EAPI Ender_Element * esvg_animate_transform_new(void)
+EAPI Ender_Element * esvg_element_animate_transform_new(void)
 {
 	return ESVG_ELEMENT_NEW("animate_transform");
 }
@@ -508,15 +508,15 @@ EAPI Ender_Element * esvg_animate_transform_new(void)
  * To be documented
  * FIXME: To be fixed
  */
-EAPI void esvg_animate_transform_type_set(Ender_Element *e, Esvg_Animate_Transform_Type type)
+EAPI void esvg_element_animate_transform_type_set(Ender_Element *e, Esvg_Animate_Transform_Type type)
 {
-	ender_element_property_value_set(e, ESVG_ANIMATE_TRANSFORM_TYPE, type, NULL);
+	ender_element_property_value_set(e, ESVG_ELEMENT_ANIMATE_TRANSFORM_TYPE, type, NULL);
 }
 
 /**
  * To be documented
  * FIXME: To be fixed
  */
-EAPI void esvg_animate_transform_type_get(Ender_Element *e, Esvg_Animate_Transform_Type *type)
+EAPI void esvg_element_animate_transform_type_get(Ender_Element *e, Esvg_Animate_Transform_Type *type)
 {
 }

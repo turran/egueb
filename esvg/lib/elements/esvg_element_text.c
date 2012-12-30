@@ -47,7 +47,7 @@ static Esvg_Element_Text * _esvg_element_text_get(Edom_Tag *t)
 {
 	Esvg_Element_Text *thiz;
 
-	if (esvg_element_internal_type_get(t) != ESVG_ELEMENT_TEXT)
+	if (esvg_element_internal_type_get(t) != ESVG_TYPE_TEXT)
 		return NULL;
 	thiz = esvg_renderable_data_get(t);
 
@@ -250,7 +250,7 @@ static Edom_Tag * _esvg_element_text_new(void)
 	thiz->x.base.v = thiz->x.anim.v = ESVG_COORD_0;
 	thiz->y.base.v = thiz->y.anim.v = ESVG_COORD_0;
 
-	t = esvg_renderable_new(&_descriptor, ESVG_ELEMENT_TEXT, thiz);
+	t = esvg_renderable_new(&_descriptor, ESVG_TYPE_TEXT, thiz);
 	return t;
 }
 
@@ -298,7 +298,7 @@ static void _esvg_element_text_y_get(Edom_Tag *t, Esvg_Animated_Coord *y)
 #define _esvg_element_text_delete NULL
 #define _esvg_element_text_x_is_set NULL
 #define _esvg_element_text_y_is_set NULL
-#include "generated/esvg_generated_text.c"
+#include "generated/esvg_generated_element_text.c"
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
@@ -336,7 +336,7 @@ EAPI Eina_Bool esvg_is_text(Ender_Element *e)
 
 	t = (Edom_Tag *)ender_element_object_get(e);
 	type = esvg_element_internal_type_get(t);
-	return (type == ESVG_ELEMENT_TEXT) ? EINA_TRUE : EINA_FALSE;
+	return (type == ESVG_TYPE_TEXT) ? EINA_TRUE : EINA_FALSE;
 }
 
 EAPI void esvg_element_text_x_set(Ender_Element *e, const Esvg_Coord *x)

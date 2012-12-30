@@ -15,9 +15,9 @@
  * License along with this library.
  * If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef _ESVG_ANIMATE_H
-#define _ESVG_ANIMATE_H
+#ifndef _ESVG_ELEMENT_ANIMATE_H
+#define _ESVG_ELEMENT_ANIMATE_H
 
-EAPI Ender_Element * esvg_animate_new(void);
+EAPI Ender_Element * esvg_element_animate_new(void);
 
 #endif

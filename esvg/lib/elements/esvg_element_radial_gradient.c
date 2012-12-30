@@ -25,21 +25,21 @@
 #include "esvg_private_stop.h"
 #include "esvg_private_types.h"
 
-#include "esvg_radial_gradient.h"
+#include "esvg_element_radial_gradient.h"
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
-#define ESVG_LOG_DEFAULT _esvg_radial_gradient_log
+#define ESVG_LOG_DEFAULT _esvg_element_radial_gradient_log
 
-static int _esvg_radial_gradient_log = -1;
+static int _esvg_element_radial_gradient_log = -1;
 
-static Ender_Property *ESVG_RADIAL_GRADIENT_CX;
-static Ender_Property *ESVG_RADIAL_GRADIENT_CY;
-static Ender_Property *ESVG_RADIAL_GRADIENT_FX;
-static Ender_Property *ESVG_RADIAL_GRADIENT_FY;
-static Ender_Property *ESVG_RADIAL_GRADIENT_R;
+static Ender_Property *ESVG_ELEMENT_RADIAL_GRADIENT_CX;
+static Ender_Property *ESVG_ELEMENT_RADIAL_GRADIENT_CY;
+static Ender_Property *ESVG_ELEMENT_RADIAL_GRADIENT_FX;
+static Ender_Property *ESVG_ELEMENT_RADIAL_GRADIENT_FY;
+static Ender_Property *ESVG_ELEMENT_RADIAL_GRADIENT_R;
 
-typedef struct _Esvg_Radial_Gradient
+typedef struct _Esvg_Element_Radial_Gradient
 {
 	EINA_MAGIC
 	/* properties */
@@ -50,20 +50,20 @@ typedef struct _Esvg_Radial_Gradient
 	Esvg_Attribute_Animated_Length fy;
 	Esvg_Attribute_Animated_Length rad;
 	/* private */
-} Esvg_Radial_Gradient;
+} Esvg_Element_Radial_Gradient;
 
-static Esvg_Radial_Gradient * _esvg_radial_gradient_get(Edom_Tag *t)
+static Esvg_Element_Radial_Gradient * _esvg_element_radial_gradient_get(Edom_Tag *t)
 {
-	Esvg_Radial_Gradient *thiz;
+	Esvg_Element_Radial_Gradient *thiz;
 
-	if (esvg_element_internal_type_get(t) != ESVG_RADIALGRADIENT)
+	if (esvg_element_internal_type_get(t) != ESVG_TYPE_RADIALGRADIENT)
 		return NULL;
 	thiz = esvg_element_gradient_data_get(t);
 
 	return thiz;
 }
 
-static Eina_Bool _esvg_radial_gradient_deep_fy_get(Esvg_Radial_Gradient *thiz,
+static Eina_Bool _esvg_element_radial_gradient_deep_fy_get(Esvg_Element_Radial_Gradient *thiz,
 		Edom_Tag *t,
 		Esvg_Length *fy)
 {
@@ -77,12 +77,12 @@ static Eina_Bool _esvg_radial_gradient_deep_fy_get(Esvg_Radial_Gradient *thiz,
 		href = esvg_element_gradient_href_tag_get(t);
  		if (href)
 		{
-			Esvg_Radial_Gradient *other;
+			Esvg_Element_Radial_Gradient *other;
 
-			other = _esvg_radial_gradient_get(href);
+			other = _esvg_element_radial_gradient_get(href);
 			if (!other) return EINA_FALSE;
 
-			return _esvg_radial_gradient_deep_fy_get(other, href, fy);
+			return _esvg_element_radial_gradient_deep_fy_get(other, href, fy);
 		}
 		return EINA_FALSE;
 	}
@@ -93,7 +93,7 @@ static Eina_Bool _esvg_radial_gradient_deep_fy_get(Esvg_Radial_Gradient *thiz,
 	}
 }
 
-static Eina_Bool _esvg_radial_gradient_deep_fx_get(Esvg_Radial_Gradient *thiz,
+static Eina_Bool _esvg_element_radial_gradient_deep_fx_get(Esvg_Element_Radial_Gradient *thiz,
 		Edom_Tag *t,
 		Esvg_Length *fx)
 {
@@ -107,12 +107,12 @@ static Eina_Bool _esvg_radial_gradient_deep_fx_get(Esvg_Radial_Gradient *thiz,
 		href = esvg_element_gradient_href_tag_get(t);
 		if (href)
 		{
-			Esvg_Radial_Gradient *other;
+			Esvg_Element_Radial_Gradient *other;
 
-			other = _esvg_radial_gradient_get(href);
+			other = _esvg_element_radial_gradient_get(href);
 			if (!other) return EINA_FALSE;
 
-			return _esvg_radial_gradient_deep_fx_get(other, href, fx);
+			return _esvg_element_radial_gradient_deep_fx_get(other, href, fx);
 		}
 		return EINA_FALSE;
 	}
@@ -123,7 +123,7 @@ static Eina_Bool _esvg_radial_gradient_deep_fx_get(Esvg_Radial_Gradient *thiz,
 	}
 }
 
-static void _esvg_radial_gradient_deep_cx_get(Esvg_Radial_Gradient *thiz,
+static void _esvg_element_radial_gradient_deep_cx_get(Esvg_Element_Radial_Gradient *thiz,
 		Edom_Tag *t,
 		Esvg_Length *cx)
 {
@@ -134,16 +134,16 @@ static void _esvg_radial_gradient_deep_cx_get(Esvg_Radial_Gradient *thiz,
 	esvg_attribute_animated_length_merge(&thiz->cx, &l);
 	if (!l.is_set && href)
 	{
-		Esvg_Radial_Gradient *other;
+		Esvg_Element_Radial_Gradient *other;
 
-		other = _esvg_radial_gradient_get(href);
-		_esvg_radial_gradient_deep_cx_get(other, href, cx);
+		other = _esvg_element_radial_gradient_get(href);
+		_esvg_element_radial_gradient_deep_cx_get(other, href, cx);
 	}
 	else
 		*cx = l.v;
 }
 
-static void _esvg_radial_gradient_deep_cy_get(Esvg_Radial_Gradient *thiz,
+static void _esvg_element_radial_gradient_deep_cy_get(Esvg_Element_Radial_Gradient *thiz,
 		Edom_Tag *t,
 		Esvg_Coord *cy)
 {
@@ -154,16 +154,16 @@ static void _esvg_radial_gradient_deep_cy_get(Esvg_Radial_Gradient *thiz,
 	esvg_attribute_animated_length_merge(&thiz->cy, &l);
 	if (!l.is_set && href)
 	{
-		Esvg_Radial_Gradient *other;
+		Esvg_Element_Radial_Gradient *other;
 
-		other = _esvg_radial_gradient_get(href);
-		_esvg_radial_gradient_deep_cy_get(other, href, cy);
+		other = _esvg_element_radial_gradient_get(href);
+		_esvg_element_radial_gradient_deep_cy_get(other, href, cy);
 	}
 	else
 		*cy = l.v;
 }
 
-static void _esvg_radial_gradient_deep_rad_get(Esvg_Radial_Gradient *thiz,
+static void _esvg_element_radial_gradient_deep_rad_get(Esvg_Element_Radial_Gradient *thiz,
 		Edom_Tag *t,
 		Esvg_Length *rad)
 {
@@ -174,36 +174,36 @@ static void _esvg_radial_gradient_deep_rad_get(Esvg_Radial_Gradient *thiz,
 	esvg_attribute_animated_length_merge(&thiz->rad, &l);
 	if (!l.is_set && href)
 	{
-		Esvg_Radial_Gradient *other;
+		Esvg_Element_Radial_Gradient *other;
 
-		other = _esvg_radial_gradient_get(href);
-		_esvg_radial_gradient_deep_rad_get(other, href, rad);
+		other = _esvg_element_radial_gradient_get(href);
+		_esvg_element_radial_gradient_deep_rad_get(other, href, rad);
 	}
 	else
 		*rad = l.v;
 }
 
-static void _esvg_radial_gradient_merge(Esvg_Radial_Gradient *thiz,
+static void _esvg_element_radial_gradient_merge(Esvg_Element_Radial_Gradient *thiz,
 		Edom_Tag *t,
 		Esvg_Coord *cx, Esvg_Coord *cy,
 		Esvg_Coord *fx, Esvg_Coord *fy,
 		Esvg_Length *rad)
 {
-	_esvg_radial_gradient_deep_cx_get(thiz, t, cx);
-	_esvg_radial_gradient_deep_cy_get(thiz, t, cy);
+	_esvg_element_radial_gradient_deep_cx_get(thiz, t, cx);
+	_esvg_element_radial_gradient_deep_cy_get(thiz, t, cy);
 	/* for fx and fy, if those are not set or inherited, then use
 	 * cx or cy accordingly
 	 */
-	if (!_esvg_radial_gradient_deep_fx_get(thiz, t, fx))
+	if (!_esvg_element_radial_gradient_deep_fx_get(thiz, t, fx))
 		*fx = *cx;
-	if (!_esvg_radial_gradient_deep_fy_get(thiz, t, fy))
+	if (!_esvg_element_radial_gradient_deep_fy_get(thiz, t, fy))
 		*fy = *cy;
-	_esvg_radial_gradient_deep_rad_get(thiz, t, rad);
+	_esvg_element_radial_gradient_deep_rad_get(thiz, t, rad);
 }
 /*----------------------------------------------------------------------------*
  *                       Esvg Paint Server interface                          *
  *----------------------------------------------------------------------------*/
-static Eina_Bool _esvg_radial_gradient_attribute_set(Ender_Element *e,
+static Eina_Bool _esvg_element_radial_gradient_attribute_set(Ender_Element *e,
 		const char *key, const char *value)
 {
 	if (strcmp(key, "cx") == 0)
@@ -211,35 +211,35 @@ static Eina_Bool _esvg_radial_gradient_attribute_set(Ender_Element *e,
 		Esvg_Coord cx;
 
 		esvg_length_string_from(&cx, value);
-		esvg_radial_gradient_cx_set(e, &cx);
+		esvg_element_radial_gradient_cx_set(e, &cx);
 	}
 	else if (strcmp(key, "cy") == 0)
 	{
 		Esvg_Coord cy;
 
 		esvg_length_string_from(&cy, value);
-		esvg_radial_gradient_cy_set(e, &cy);
+		esvg_element_radial_gradient_cy_set(e, &cy);
 	}
 	else if (strcmp(key, "r") == 0)
 	{
 		Esvg_Length rad;
 
 		esvg_length_string_from(&rad, value);
-		esvg_radial_gradient_r_set(e, &rad);
+		esvg_element_radial_gradient_r_set(e, &rad);
 	}
 	else if (strcmp(key, "fx") == 0)
 	{
 		Esvg_Length fx;
 
 		esvg_length_string_from(&fx, value);
-		esvg_radial_gradient_fx_set(e, &fx);
+		esvg_element_radial_gradient_fx_set(e, &fx);
 	}
 	else if (strcmp(key, "fy") == 0)
 	{
 		Esvg_Length fy;
 
 		esvg_length_string_from(&fy, value);
-		esvg_radial_gradient_fy_set(e, &fy);
+		esvg_element_radial_gradient_fy_set(e, &fy);
 	}
 	else
 	{
@@ -248,12 +248,12 @@ static Eina_Bool _esvg_radial_gradient_attribute_set(Ender_Element *e,
 	return EINA_TRUE;
 }
 
-static int * _esvg_radial_gradient_attribute_animated_fetch(Edom_Tag *t, const char *attr)
+static int * _esvg_element_radial_gradient_attribute_animated_fetch(Edom_Tag *t, const char *attr)
 {
-	Esvg_Radial_Gradient *thiz;
+	Esvg_Element_Radial_Gradient *thiz;
 	int *animated = NULL;
 
-	thiz = _esvg_radial_gradient_get(t);
+	thiz = _esvg_element_radial_gradient_get(t);
 	if (!strcmp(attr, "cx"))
 	{
 		animated = &thiz->cx.animated;	
@@ -278,12 +278,12 @@ static int * _esvg_radial_gradient_attribute_animated_fetch(Edom_Tag *t, const c
 }
 
 
-static Eina_Bool _esvg_radial_gradient_attribute_get(Edom_Tag *tag, const char *attribute, char **value)
+static Eina_Bool _esvg_element_radial_gradient_attribute_get(Edom_Tag *tag, const char *attribute, char **value)
 {
 	return EINA_FALSE;
 }
 
-static Enesim_Renderer * _esvg_radial_gradient_renderer_new(Edom_Tag *t)
+static Enesim_Renderer * _esvg_element_radial_gradient_renderer_new(Edom_Tag *t)
 {
 	Enesim_Renderer *r;
 
@@ -292,7 +292,7 @@ static Enesim_Renderer * _esvg_radial_gradient_renderer_new(Edom_Tag *t)
 	return r;
 }
 
-static Eina_Bool _esvg_radial_gradient_propagate(Edom_Tag *t,
+static Eina_Bool _esvg_element_radial_gradient_propagate(Edom_Tag *t,
 		Esvg_Context *c,
 		const Esvg_Element_Context *ctx,
 		const Esvg_Attribute_Presentation *attr,
@@ -300,7 +300,7 @@ static Eina_Bool _esvg_radial_gradient_propagate(Edom_Tag *t,
 		Enesim_Renderer *r,
 		Enesim_Error **error)
 {
-	Esvg_Radial_Gradient *thiz;
+	Esvg_Element_Radial_Gradient *thiz;
 	Esvg_Element_Gradient_Units gu;
 	Enesim_Repeat_Mode mode;
 	Enesim_Matrix m;
@@ -315,7 +315,7 @@ static Eina_Bool _esvg_radial_gradient_propagate(Edom_Tag *t,
 	double fy;
 	double rad;
 
-	thiz = _esvg_radial_gradient_get(t);
+	thiz = _esvg_element_radial_gradient_get(t);
 
 	gu = gctx->units;
 	switch (gctx->spread_method)
@@ -341,7 +341,7 @@ static Eina_Bool _esvg_radial_gradient_propagate(Edom_Tag *t,
 	 * we need to found which one isnt set and use that
 	 * for the calculus
 	 */
-	_esvg_radial_gradient_merge(thiz, t, &lcx, &lcy, &lfx, &lfy, &lrad);
+	_esvg_element_radial_gradient_merge(thiz, t, &lcx, &lcy, &lfx, &lfy, &lrad);
 
 	if (gu == ESVG_OBJECT_BOUNDING_BOX)
 	{
@@ -391,217 +391,217 @@ static Eina_Bool _esvg_radial_gradient_propagate(Edom_Tag *t,
 	return ESVG_SETUP_OK;
 }
 
-static void _esvg_radial_gradient_free(Edom_Tag *t)
+static void _esvg_element_radial_gradient_free(Edom_Tag *t)
 {
-	Esvg_Radial_Gradient *thiz;
+	Esvg_Element_Radial_Gradient *thiz;
 
-	thiz = _esvg_radial_gradient_get(t);
+	thiz = _esvg_element_radial_gradient_get(t);
 	free(thiz);
 }
 
 static Esvg_Element_Gradient_Descriptor _descriptor = {
 	/* .child_add		= */ NULL,
 	/* .child_remove	= */ NULL,
-	/* .attribute_get 	= */ _esvg_radial_gradient_attribute_get,
+	/* .attribute_get 	= */ _esvg_element_radial_gradient_attribute_get,
 	/* .cdata_set 		= */ NULL,
-	/* .free 		= */ _esvg_radial_gradient_free,
+	/* .free 		= */ _esvg_element_radial_gradient_free,
 	/* .initialize 		= */ NULL,
-	/* .attribute_set 	= */ _esvg_radial_gradient_attribute_set,
-	/* .attribute_animated_fetch = */ _esvg_radial_gradient_attribute_animated_fetch,
+	/* .attribute_set 	= */ _esvg_element_radial_gradient_attribute_set,
+	/* .attribute_animated_fetch = */ _esvg_element_radial_gradient_attribute_animated_fetch,
 	/* .setup		= */ NULL,
-	/* .renderer_new	= */ _esvg_radial_gradient_renderer_new,
-	/* .propagate		= */ _esvg_radial_gradient_propagate,
+	/* .renderer_new	= */ _esvg_element_radial_gradient_renderer_new,
+	/* .propagate		= */ _esvg_element_radial_gradient_propagate,
 };
 /*----------------------------------------------------------------------------*
  *                           The Ender interface                              *
  *----------------------------------------------------------------------------*/
-static Edom_Tag * _esvg_radial_gradient_new(void)
+static Edom_Tag * _esvg_element_radial_gradient_new(void)
 {
-	Esvg_Radial_Gradient *thiz;
+	Esvg_Element_Radial_Gradient *thiz;
 	Edom_Tag *t;
 
-	thiz = calloc(1, sizeof(Esvg_Radial_Gradient));
+	thiz = calloc(1, sizeof(Esvg_Element_Radial_Gradient));
 
 	/* default values */
 
-	t = esvg_element_gradient_new(&_descriptor, ESVG_RADIALGRADIENT, thiz);
+	t = esvg_element_gradient_new(&_descriptor, ESVG_TYPE_RADIALGRADIENT, thiz);
 	return t;
 }
 
-static void _esvg_radial_gradient_cx_set(Edom_Tag *t, const Esvg_Length_Animated *cx)
+static void _esvg_element_radial_gradient_cx_set(Edom_Tag *t, const Esvg_Length_Animated *cx)
 {
-	Esvg_Radial_Gradient *thiz;
+	Esvg_Element_Radial_Gradient *thiz;
 	Esvg_Length def = { ESVG_UNIT_LENGTH_PX, 0 };
 	Eina_Bool animating;
 
-	thiz = _esvg_radial_gradient_get(t);
+	thiz = _esvg_element_radial_gradient_get(t);
 	animating = esvg_element_attribute_animate_get(t);
 	esvg_attribute_animated_length_set(&thiz->cx,
 		cx, &def, animating);
 }
 
-static void _esvg_radial_gradient_cx_get(Edom_Tag *t, Esvg_Length_Animated *cx)
+static void _esvg_element_radial_gradient_cx_get(Edom_Tag *t, Esvg_Length_Animated *cx)
 {
-	Esvg_Radial_Gradient *thiz;
+	Esvg_Element_Radial_Gradient *thiz;
 
-	thiz = _esvg_radial_gradient_get(t);
+	thiz = _esvg_element_radial_gradient_get(t);
 	esvg_attribute_animated_length_get(&thiz->cx,
 		cx);
 }
 
-static Eina_Bool _esvg_radial_gradient_cx_is_set(Edom_Tag *t)
+static Eina_Bool _esvg_element_radial_gradient_cx_is_set(Edom_Tag *t)
 {
-	Esvg_Radial_Gradient *thiz;
+	Esvg_Element_Radial_Gradient *thiz;
 
-	thiz = _esvg_radial_gradient_get(t);
+	thiz = _esvg_element_radial_gradient_get(t);
 	return esvg_attribute_animated_length_is_set(&thiz->cx);
 }
 
-static void _esvg_radial_gradient_cy_set(Edom_Tag *t, const Esvg_Length_Animated *cy)
+static void _esvg_element_radial_gradient_cy_set(Edom_Tag *t, const Esvg_Length_Animated *cy)
 {
-	Esvg_Radial_Gradient *thiz;
+	Esvg_Element_Radial_Gradient *thiz;
 	Esvg_Length def = { ESVG_UNIT_LENGTH_PX, 0 };
 	Eina_Bool animating;
 
-	thiz = _esvg_radial_gradient_get(t);
+	thiz = _esvg_element_radial_gradient_get(t);
 	animating = esvg_element_attribute_animate_get(t);
 	esvg_attribute_animated_length_set(&thiz->cy,
 		cy, &def, animating);
 }
 
-static void _esvg_radial_gradient_cy_get(Edom_Tag *t, Esvg_Length_Animated *cy)
+static void _esvg_element_radial_gradient_cy_get(Edom_Tag *t, Esvg_Length_Animated *cy)
 {
-	Esvg_Radial_Gradient *thiz;
+	Esvg_Element_Radial_Gradient *thiz;
 
-	thiz = _esvg_radial_gradient_get(t);
+	thiz = _esvg_element_radial_gradient_get(t);
 	esvg_attribute_animated_length_get(&thiz->cy,
 		cy);
 }
 
-static Eina_Bool _esvg_radial_gradient_cy_is_set(Edom_Tag *t)
+static Eina_Bool _esvg_element_radial_gradient_cy_is_set(Edom_Tag *t)
 {
-	Esvg_Radial_Gradient *thiz;
+	Esvg_Element_Radial_Gradient *thiz;
 
-	thiz = _esvg_radial_gradient_get(t);
+	thiz = _esvg_element_radial_gradient_get(t);
 	return esvg_attribute_animated_length_is_set(&thiz->cy);
 }
 
-static void _esvg_radial_gradient_fx_set(Edom_Tag *t, const Esvg_Length_Animated *fx)
+static void _esvg_element_radial_gradient_fx_set(Edom_Tag *t, const Esvg_Length_Animated *fx)
 {
-	Esvg_Radial_Gradient *thiz;
+	Esvg_Element_Radial_Gradient *thiz;
 	Esvg_Length def = { ESVG_UNIT_LENGTH_PX, 0 };
 	Eina_Bool animating;
 
-	thiz = _esvg_radial_gradient_get(t);
+	thiz = _esvg_element_radial_gradient_get(t);
 	animating = esvg_element_attribute_animate_get(t);
 	esvg_attribute_animated_length_set(&thiz->fx,
 		fx, &def, animating);
 }
 
-static void _esvg_radial_gradient_fx_get(Edom_Tag *t, Esvg_Length_Animated *fx)
+static void _esvg_element_radial_gradient_fx_get(Edom_Tag *t, Esvg_Length_Animated *fx)
 {
-	Esvg_Radial_Gradient *thiz;
+	Esvg_Element_Radial_Gradient *thiz;
 
-	thiz = _esvg_radial_gradient_get(t);
+	thiz = _esvg_element_radial_gradient_get(t);
 	esvg_attribute_animated_length_get(&thiz->fx,
 		fx);
 }
 
-static Eina_Bool _esvg_radial_gradient_fx_is_set(Edom_Tag *t)
+static Eina_Bool _esvg_element_radial_gradient_fx_is_set(Edom_Tag *t)
 {
-	Esvg_Radial_Gradient *thiz;
+	Esvg_Element_Radial_Gradient *thiz;
 
-	thiz = _esvg_radial_gradient_get(t);
+	thiz = _esvg_element_radial_gradient_get(t);
 	return esvg_attribute_animated_length_is_set(&thiz->fx);
 }
 
-static void _esvg_radial_gradient_fy_set(Edom_Tag *t, const Esvg_Length_Animated *fy)
+static void _esvg_element_radial_gradient_fy_set(Edom_Tag *t, const Esvg_Length_Animated *fy)
 {
-	Esvg_Radial_Gradient *thiz;
+	Esvg_Element_Radial_Gradient *thiz;
 	Esvg_Length def = { ESVG_UNIT_LENGTH_PX, 0 };
 	Eina_Bool animating;
 
-	thiz = _esvg_radial_gradient_get(t);
+	thiz = _esvg_element_radial_gradient_get(t);
 	animating = esvg_element_attribute_animate_get(t);
 	esvg_attribute_animated_length_set(&thiz->fy,
 		fy, &def, animating);
 }
 
-static void _esvg_radial_gradient_fy_get(Edom_Tag *t, Esvg_Length_Animated *fy)
+static void _esvg_element_radial_gradient_fy_get(Edom_Tag *t, Esvg_Length_Animated *fy)
 {
-	Esvg_Radial_Gradient *thiz;
+	Esvg_Element_Radial_Gradient *thiz;
 
-	thiz = _esvg_radial_gradient_get(t);
+	thiz = _esvg_element_radial_gradient_get(t);
 	esvg_attribute_animated_length_get(&thiz->fy,
 		fy);
 }
 
-static Eina_Bool _esvg_radial_gradient_fy_is_set(Edom_Tag *t)
+static Eina_Bool _esvg_element_radial_gradient_fy_is_set(Edom_Tag *t)
 {
-	Esvg_Radial_Gradient *thiz;
+	Esvg_Element_Radial_Gradient *thiz;
 
-	thiz = _esvg_radial_gradient_get(t);
+	thiz = _esvg_element_radial_gradient_get(t);
 	return esvg_attribute_animated_length_is_set(&thiz->fy);
 }
 
-static void _esvg_radial_gradient_r_set(Edom_Tag *t, const Esvg_Length_Animated *r)
+static void _esvg_element_radial_gradient_r_set(Edom_Tag *t, const Esvg_Length_Animated *r)
 {
-	Esvg_Radial_Gradient *thiz;
+	Esvg_Element_Radial_Gradient *thiz;
 	Esvg_Length def = { ESVG_UNIT_LENGTH_PX, 0 };
 	Eina_Bool animating;
 
-	thiz = _esvg_radial_gradient_get(t);
+	thiz = _esvg_element_radial_gradient_get(t);
 	animating = esvg_element_attribute_animate_get(t);
 	esvg_attribute_animated_length_set(&thiz->rad,
 		r, &def, animating);
 }
 
-static void _esvg_radial_gradient_r_get(Edom_Tag *t, Esvg_Length_Animated *r)
+static void _esvg_element_radial_gradient_r_get(Edom_Tag *t, Esvg_Length_Animated *r)
 {
-	Esvg_Radial_Gradient *thiz;
+	Esvg_Element_Radial_Gradient *thiz;
 
-	thiz = _esvg_radial_gradient_get(t);
+	thiz = _esvg_element_radial_gradient_get(t);
 	esvg_attribute_animated_length_get(&thiz->rad,
 		r);
 }
 
-static Eina_Bool _esvg_radial_gradient_r_is_set(Edom_Tag *t)
+static Eina_Bool _esvg_element_radial_gradient_r_is_set(Edom_Tag *t)
 {
-	Esvg_Radial_Gradient *thiz;
+	Esvg_Element_Radial_Gradient *thiz;
 
-	thiz = _esvg_radial_gradient_get(t);
+	thiz = _esvg_element_radial_gradient_get(t);
 	return esvg_attribute_animated_length_is_set(&thiz->rad);
 }
 
 /* The ender wrapper */
-#define _esvg_radial_gradient_delete NULL
-#include "generated/esvg_generated_radial_gradient.c"
+#define _esvg_element_radial_gradient_delete NULL
+#include "generated/esvg_generated_element_radial_gradient.c"
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
-void esvg_radial_gradient_init(void)
+void esvg_element_radial_gradient_init(void)
 {
-	_esvg_radial_gradient_log = eina_log_domain_register("esvg_radial_gradient", ESVG_LOG_COLOR_DEFAULT);
-	if (_esvg_radial_gradient_log < 0)
+	_esvg_element_radial_gradient_log = eina_log_domain_register("esvg_element_radial_gradient", ESVG_LOG_COLOR_DEFAULT);
+	if (_esvg_element_radial_gradient_log < 0)
 	{
 		EINA_LOG_ERR("Can not create log domain.");
 		return;
 	}
-	_esvg_radial_gradient_init();
+	_esvg_element_radial_gradient_init();
 }
 
-void esvg_radial_gradient_shutdown(void)
+void esvg_element_radial_gradient_shutdown(void)
 {
-	if (_esvg_radial_gradient_log < 0)
+	if (_esvg_element_radial_gradient_log < 0)
 		return;
-	_esvg_radial_gradient_shutdown();
-	eina_log_domain_unregister(_esvg_radial_gradient_log);
-	_esvg_radial_gradient_log = -1;
+	_esvg_element_radial_gradient_shutdown();
+	eina_log_domain_unregister(_esvg_element_radial_gradient_log);
+	_esvg_element_radial_gradient_log = -1;
 }
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/
-EAPI Ender_Element * esvg_radial_gradient_new(void)
+EAPI Ender_Element * esvg_element_radial_gradient_new(void)
 {
 	return ESVG_ELEMENT_NEW("radial_gradient");
 }
@@ -613,121 +613,120 @@ EAPI Eina_Bool esvg_is_radial_gradient(Ender_Element *e)
 
 	t = (Edom_Tag *)ender_element_object_get(e);
 	type = esvg_element_internal_type_get(t);
-	return (type == ESVG_RADIALGRADIENT) ? EINA_TRUE : EINA_FALSE;
+	return (type == ESVG_TYPE_RADIALGRADIENT) ? EINA_TRUE : EINA_FALSE;
 }
 
-EAPI void esvg_radial_gradient_cx_set(Ender_Element *e, const Esvg_Coord *cx)
+EAPI void esvg_element_radial_gradient_cx_set(Ender_Element *e, const Esvg_Coord *cx)
 {
-	ender_element_property_value_set(e, ESVG_RADIAL_GRADIENT_CX, cx, NULL);
+	ender_element_property_value_set(e, ESVG_ELEMENT_RADIAL_GRADIENT_CX, cx, NULL);
 }
 
-EAPI void esvg_radial_gradient_cx_get(Ender_Element *e, Esvg_Coord *cx)
+EAPI void esvg_element_radial_gradient_cx_get(Ender_Element *e, Esvg_Coord *cx)
 {
 	Esvg_Animated_Coord a;
 	Edom_Tag *t;
 
 	t = (Edom_Tag *)ender_element_object_get(e);
-	_esvg_radial_gradient_cx_get(t, &a);
+	_esvg_element_radial_gradient_cx_get(t, &a);
 	*cx = a.base;
-	
 }
 
-EAPI Eina_Bool esvg_radial_gradient_cx_is_set(Ender_Element *e)
+EAPI Eina_Bool esvg_element_radial_gradient_cx_is_set(Ender_Element *e)
 {
 	Edom_Tag *t;
 
 	t = (Edom_Tag *)ender_element_object_get(e);
-	return _esvg_radial_gradient_cx_is_set(t);
+	return _esvg_element_radial_gradient_cx_is_set(t);
 }
 
-EAPI void esvg_radial_gradient_cy_set(Ender_Element *e, const Esvg_Coord *cy)
+EAPI void esvg_element_radial_gradient_cy_set(Ender_Element *e, const Esvg_Coord *cy)
 {
-	ender_element_property_value_set(e, ESVG_RADIAL_GRADIENT_CY, cy, NULL);
+	ender_element_property_value_set(e, ESVG_ELEMENT_RADIAL_GRADIENT_CY, cy, NULL);
 }
 
-EAPI void esvg_radial_gradient_cy_get(Ender_Element *e, Esvg_Coord *cy)
+EAPI void esvg_element_radial_gradient_cy_get(Ender_Element *e, Esvg_Coord *cy)
 {
 	Esvg_Animated_Coord a;
 	Edom_Tag *t;
 
 	t = (Edom_Tag *)ender_element_object_get(e);
-	_esvg_radial_gradient_cy_get(t, &a);
+	_esvg_element_radial_gradient_cy_get(t, &a);
 	*cy = a.base;
 }
 
-EAPI Eina_Bool esvg_radial_gradient_cy_is_set(Ender_Element *e)
+EAPI Eina_Bool esvg_element_radial_gradient_cy_is_set(Ender_Element *e)
 {
 	Edom_Tag *t;
 
 	t = (Edom_Tag *)ender_element_object_get(e);
-	return _esvg_radial_gradient_cy_is_set(t);
+	return _esvg_element_radial_gradient_cy_is_set(t);
 }
 
-EAPI void esvg_radial_gradient_fx_set(Ender_Element *e, const Esvg_Coord *fx)
+EAPI void esvg_element_radial_gradient_fx_set(Ender_Element *e, const Esvg_Coord *fx)
 {
-	ender_element_property_value_set(e, ESVG_RADIAL_GRADIENT_FX, fx, NULL);
+	ender_element_property_value_set(e, ESVG_ELEMENT_RADIAL_GRADIENT_FX, fx, NULL);
 }
 
-EAPI void esvg_radial_gradient_fx_get(Ender_Element *e, Esvg_Coord *fx)
+EAPI void esvg_element_radial_gradient_fx_get(Ender_Element *e, Esvg_Coord *fx)
 {
 	Esvg_Animated_Coord a;
 	Edom_Tag *t;
 
 	t = (Edom_Tag *)ender_element_object_get(e);
-	_esvg_radial_gradient_fx_get(t, &a);
+	_esvg_element_radial_gradient_fx_get(t, &a);
 	*fx = a.base;
 }
 
-EAPI Eina_Bool esvg_radial_gradient_fx_is_set(Ender_Element *e)
+EAPI Eina_Bool esvg_element_radial_gradient_fx_is_set(Ender_Element *e)
 {
 	Edom_Tag *t;
 
 	t = (Edom_Tag *)ender_element_object_get(e);
-	return _esvg_radial_gradient_fx_is_set(t);
+	return _esvg_element_radial_gradient_fx_is_set(t);
 }
 
-EAPI void esvg_radial_gradient_fy_set(Ender_Element *e, const Esvg_Coord *fy)
+EAPI void esvg_element_radial_gradient_fy_set(Ender_Element *e, const Esvg_Coord *fy)
 {
-	ender_element_property_value_set(e, ESVG_RADIAL_GRADIENT_FY, fy, NULL);
+	ender_element_property_value_set(e, ESVG_ELEMENT_RADIAL_GRADIENT_FY, fy, NULL);
 }
 
-EAPI void esvg_radial_gradient_fy_get(Ender_Element *e, Esvg_Coord *fy)
+EAPI void esvg_element_radial_gradient_fy_get(Ender_Element *e, Esvg_Coord *fy)
 {
 	Esvg_Animated_Coord a;
 	Edom_Tag *t;
 
 	t = (Edom_Tag *)ender_element_object_get(e);
-	_esvg_radial_gradient_fy_get(t, &a);
+	_esvg_element_radial_gradient_fy_get(t, &a);
 	*fy = a.base;
 }
 
-EAPI Eina_Bool esvg_radial_gradient_fy_is_set(Ender_Element *e)
+EAPI Eina_Bool esvg_element_radial_gradient_fy_is_set(Ender_Element *e)
 {
 	Edom_Tag *t;
 
 	t = (Edom_Tag *)ender_element_object_get(e);
-	return _esvg_radial_gradient_fy_is_set(t);
+	return _esvg_element_radial_gradient_fy_is_set(t);
 }
 
-EAPI void esvg_radial_gradient_r_set(Ender_Element *e, const Esvg_Length *rad)
+EAPI void esvg_element_radial_gradient_r_set(Ender_Element *e, const Esvg_Length *rad)
 {
-	ender_element_property_value_set(e, ESVG_RADIAL_GRADIENT_R, rad, NULL);
+	ender_element_property_value_set(e, ESVG_ELEMENT_RADIAL_GRADIENT_R, rad, NULL);
 }
 
-EAPI void esvg_radial_gradient_r_get(Ender_Element *e, Esvg_Length *rad)
+EAPI void esvg_element_radial_gradient_r_get(Ender_Element *e, Esvg_Length *rad)
 {
 	Esvg_Animated_Coord a;
 	Edom_Tag *t;
 
 	t = (Edom_Tag *)ender_element_object_get(e);
-	_esvg_radial_gradient_r_get(t, &a);
+	_esvg_element_radial_gradient_r_get(t, &a);
 	*rad = a.base;
 }
 
-EAPI Eina_Bool esvg_radial_gradient_r_is_set(Ender_Element *e)
+EAPI Eina_Bool esvg_element_radial_gradient_r_is_set(Ender_Element *e)
 {
 	Edom_Tag *t;
 
 	t = (Edom_Tag *)ender_element_object_get(e);
-	return _esvg_radial_gradient_r_is_set(t);
+	return _esvg_element_radial_gradient_r_is_set(t);
 }

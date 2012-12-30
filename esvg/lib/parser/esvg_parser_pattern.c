@@ -128,18 +128,18 @@ static Eina_Bool _parser_pattern_child_supported(Edom_Tag *tag, int tag_id)
 {
 	switch (tag_id)
 	{
-		case ESVG_ELEMENT_USE:
+		case ESVG_TYPE_USE:
 		case ESVG_ELEMENT_SVG:
-		case ESVG_ELEMENT_CIRCLE:
-		case ESVG_ELEMENT_ELLIPSE:
+		case ESVG_TYPE_CIRCLE:
+		case ESVG_TYPE_ELLIPSE:
 		case ESVG_ELEMENT_RECT:
 		case ESVG_ELEMENT_LINE:
 		case ESVG_ELEMENT_PATH:
 		case ESVG_ELEMENT_POLYLINE:
 		case ESVG_ELEMENT_POLYGON:
-		case ESVG_ELEMENT_TEXT:
-		case ESVG_ELEMENT_G:
-		case ESVG_ELEMENT_IMAGE:
+		case ESVG_TYPE_TEXT:
+		case ESVG_TYPE_G:
+		case ESVG_TYPE_IMAGE:
 		return EINA_TRUE;
 
 		default:

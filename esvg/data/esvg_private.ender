@@ -129,7 +129,7 @@ namespace "esvg" : 0 {
 		[esvg_path_command] "anim";
 	};
 
-	/* objects */
+	/* elements */
 
 	abstract "element","SVGElement" : "tag" {
 		/* core */
@@ -179,18 +179,18 @@ namespace "esvg" : 0 {
 
 	};
 
-	class "clip_path","SVGClipPathElement" : "SVGReferenceable" {
+	class "element_clip_path","SVGClipPathElement" : "SVGReferenceable" {
 		int "clip_path_units";
 	};
 
-	abstract "gradient","SVGGradientElement" : "SVGPaintServer" {
+	abstract "element_gradient","SVGGradientElement" : "SVGPaintServer" {
 		string "href";
 		int "spread_method";
 		int "gradient_units";
 		SVGAnimatedMatrix "gradient_transform";
 	};
 
-	abstract "animation","SVGAnimationElement" : "SVGElement" {
+	abstract "element_animation","SVGAnimationElement" : "SVGElement" {
 		string "attribute_name";
 		int "attribute_type";
 		int "additive";
@@ -213,30 +213,30 @@ namespace "esvg" : 0 {
 		string "key_splines";
 	};
 
-	class "set","SVGSetElement" : "SVGAnimation" {
+	class "element_set","SVGSetElement" : "SVGAnimation" {
 		string "to";
 	};
 
-	class "animate","SVGAnimateElement" : "SVGAnimateBase" {
+	class "element_animate","SVGAnimateElement" : "SVGAnimateBase" {
 
 	};
 
-	class "animate_transform","SVGAnimateTrasnformElement" : "SVGAnimateBase" {
+	class "element_animate_transform","SVGAnimateTransformElement" : "SVGAnimateBase" {
 		int "type";
 	};
 
-	class "style","SVGStyleElement" : "SVGElement" {
+	class "element_style","SVGStyleElement" : "SVGElement" {
 
 	};
 
-	class "linear_gradient","SVGLinearGradientElement" : "SVGGradient" {
+	class "element_linear_gradient","SVGLinearGradientElement" : "SVGGradient" {
 		SVGLength "x1";
 		SVGLength "y1";
 		SVGLength "x2";
 		SVGLength "y2";
 	};
 
-	class "radial_gradient","SVGRadialGradientElement" : "SVGGradient" {
+	class "element_radial_gradient","SVGRadialGradientElement" : "SVGGradient" {
 		SVGAnimatedLength "cx";
 		SVGAnimatedLength "cy";
 		SVGAnimatedLength "fx";
@@ -244,7 +244,7 @@ namespace "esvg" : 0 {
 		SVGAnimatedLength "r";
 	};
 
-	class "svg","SVGSVGElement" : "SVGRenderable" {
+	class "element_svg","SVGSVGElement" : "SVGRenderable" {
 		SVGLength "x";
 		SVGLength "y";
 		SVGLength "width";
@@ -261,11 +261,11 @@ namespace "esvg" : 0 {
 		ender "element_get_by_id", "getElementById" (string);
 	};
 
-	class "g","SVGGElement" : "SVGRenderable" {
+	class "element_g","SVGGElement" : "SVGRenderable" {
 
 	};
 
-	class "use","SVGUseElement" : "SVGRenderable" {
+	class "element_use","SVGUseElement" : "SVGRenderable" {
 		SVGLength "x";
 		SVGLength "y";
 		SVGLength "width";
@@ -282,56 +282,56 @@ namespace "esvg" : 0 {
 		SVGAnimatedLength "ry";
 	};
 
-	class "ellipse","SVGEllipseElement" : "SVGRenderable" {
+	class "element_ellipse","SVGEllipseElement" : "SVGRenderable" {
 		SVGAnimatedLength "cx";
 		SVGAnimatedLength "cy";
 		SVGAnimatedLength "rx";
 		SVGAnimatedLength "ry";
 	};
 
-	class "circle","SVGCircleElement" : "SVGRenderable" {
+	class "element_circle","SVGCircleElement" : "SVGRenderable" {
 		SVGAnimatedLength "cx";
 		SVGAnimatedLength "cy";
 		SVGAnimatedLength "r";
 	};
 
-	class "path","SVGPathElement" : "SVGRenderable" {
+	class "element_path","SVGPathElement" : "SVGRenderable" {
 		esvg_animated_path_command "d";
 	};
 
-	class "line","SVGLineElement" : "SVGRenderable" {
+	class "element_line","SVGLineElement" : "SVGRenderable" {
 		SVGAnimatedLength "x1";
 		SVGAnimatedLength "x2";
 		SVGAnimatedLength "y1";
 		SVGAnimatedLength "y2";
 	};
 
-	class "polyline","SVGPolylineElement" : "SVGRenderable" {
+	class "element_polyline","SVGPolylineElement" : "SVGRenderable" {
 		[esvg_point] "point";
 	};
 
-	class "polygon","SVGPolygonElement" : "SVGRenderable" {
+	class "element_polygon","SVGPolygonElement" : "SVGRenderable" {
 		[esvg_point] "point";
 	};
 
-	class "text","SVGTextElement" : "SVGRenderable" {
+	class "element_text","SVGTextElement" : "SVGRenderable" {
 		SVGAnimatedLength "x";
 		SVGAnimatedLength "y";
 	};
 
-	class "stop","SVGStopElement" : "SVGElement" {
+	class "element_stop","SVGStopElement" : "SVGElement" {
 		SVGLength "offset";
 	};
 
-	class "defs","SVGDefsElement" : "SVGElement" {
+	class "element_defs","SVGDefsElement" : "SVGElement" {
 
 	};
 
-	class "a","SVGAElement" : "SVGElement" {
+	class "element_a","SVGAElement" : "SVGElement" {
 		SVGAnimatedString "xlink:href";
 	};
 
-	class "SVGImageElement" : "SVGRenderable" {
+	class "element_image", "SVGImageElement" : "SVGRenderable" {
 		SVGAnimatedLength "x";
 		SVGAnimatedLength "y";
 		SVGAnimatedLength "width";
@@ -339,7 +339,7 @@ namespace "esvg" : 0 {
 		SVGAnimatedString "xlink:href";
 	};
 
-	class "video","SVGVideoElement" : "SVGRenderable" {
+	class "element_video","SVGVideoElement" : "SVGRenderable" {
 		SVGAnimatedLength "x";
 		SVGAnimatedLength "y";
 		SVGAnimatedLength "width";
@@ -347,7 +347,7 @@ namespace "esvg" : 0 {
 		SVGAnimatedString "xlink:href";
 	};
 
-	class "SVGScriptElement" : "SVGElement" {
+	class "element_script","SVGScriptElement" : "SVGElement" {
 		string "content_script_type";
 	};
 };
