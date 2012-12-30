@@ -22,7 +22,7 @@
 #include "esvg_private_svg.h"
 #include "esvg_private_script_provider.h"
 
-#include "esvg_script.h"
+#include "esvg_element_script.h"
 
 /* This is the place holder for the script tag, it should bypass
  * any logic to the real script handler, js, python, whatever
@@ -125,7 +125,7 @@ static Esvg_Element_Setup_Return _esvg_element_script_setup(Edom_Tag *t,
 	if (!thiz->scriptor) return ESVG_SETUP_OK;
 
 	/* run the script */
-	esvg_element_script_provider_run(thiz->scriptor, thiz->cdata, NULL);
+	esvg_script_provider_run(thiz->scriptor, thiz->cdata, NULL);
 	return ESVG_SETUP_OK;
 }
 
@@ -212,7 +212,7 @@ Eina_Bool esvg_is_script_internal(Edom_Tag *t)
  *============================================================================*/
 EAPI Ender_Element * esvg_element_script_new(void)
 {
-	return ESVG_ELEMENT_NEW("script");
+	return ESVG_ELEMENT_NEW("SVGScriptElement");
 }
 
 EAPI void esvg_element_script_content_script_type_set(Ender_Element *e, const char *type)

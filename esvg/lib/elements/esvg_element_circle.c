@@ -353,7 +353,7 @@ void esvg_element_circle_shutdown(void)
  *============================================================================*/
 EAPI Ender_Element * esvg_element_circle_new(void)
 {
-	return ESVG_ELEMENT_NEW("circle");
+	return ESVG_ELEMENT_NEW("SVGCircleElement");
 }
 
 EAPI Eina_Bool esvg_is_circle(Ender_Element *e)

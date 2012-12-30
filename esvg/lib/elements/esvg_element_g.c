@@ -269,7 +269,7 @@ void esvg_element_g_shutdown(void)
  *============================================================================*/
 EAPI Ender_Element * esvg_element_g_new(void)
 {
-	return ESVG_ELEMENT_NEW("g");
+	return ESVG_ELEMENT_NEW("SVGGElement");
 }
 
 EAPI Eina_Bool esvg_is_g(Ender_Element *e)

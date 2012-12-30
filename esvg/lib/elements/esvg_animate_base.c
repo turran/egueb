@@ -111,7 +111,7 @@ static Esvg_Animate_Base * _esvg_animate_base_get(Edom_Tag *t)
 {
 	Esvg_Animate_Base *thiz;
 
-	thiz = esvg_animation_data_get(t);
+	thiz = esvg_element_animation_data_get(t);
 	ESVG_ANIMATE_BASE_MAGIC_CHECK(thiz);
 
 	return thiz;
@@ -894,7 +894,7 @@ static Eina_Bool _esvg_animate_base_setup(Edom_Tag *t,
 #define _esvg_animate_base_calc_mode_is_set NULL
 #define _esvg_animate_base_key_times_is_set NULL
 #define _esvg_animate_base_key_splines_is_set NULL
-#include "generated/esvg_generated_element_animate_base.c"
+#include "generated/esvg_generated_animate_base.c"
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
@@ -967,7 +967,7 @@ Edom_Tag * esvg_animate_base_new(Esvg_Animate_Base_Descriptor *descriptor, Esvg_
 	pdescriptor.enable = _esvg_animate_base_enable;
 	pdescriptor.disable = _esvg_animate_base_disable;
 
-	t = esvg_animation_new(&pdescriptor, type, thiz);
+	t = esvg_element_animation_new(&pdescriptor, type, thiz);
 
 	return t;
 }

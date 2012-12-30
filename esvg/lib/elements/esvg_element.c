@@ -1275,7 +1275,7 @@ static void _esvg_element_onmouseout_get(Edom_Tag *t, const char **v)
 #define _esvg_element_onmouseover_is_set NULL
 #define _esvg_element_onmousemove_is_set NULL
 #define _esvg_element_onmouseout_is_set NULL
-#include "generated/esvg_generated_element_element.c"
+#include "generated/esvg_generated_element.c"
 /*----------------------------------------------------------------------------*
  *                           The Edom Tag interface                           *
  *----------------------------------------------------------------------------*/

@@ -93,6 +93,7 @@
 #include "esvg_element_defs.h"
 #include "esvg_element_style.h"
 #include "esvg_element_clip_path.h"
+#include "esvg_element_script.h"
 #include "esvg_event.h"
 
 /* paint servers */

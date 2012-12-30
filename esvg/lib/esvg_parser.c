@@ -46,11 +46,11 @@
 #include "esvg_element_path.h"
 #include "esvg_element_polygon.h"
 #include "esvg_element_polyline.h"
+#include "esvg_element_g.h"
 #include "esvg_element_line.h"
 #include "esvg_element_linear_gradient.h"
 #include "esvg_element_radial_gradient.h"
-#include "esvg_element_g.h"
-#include "esvg_script.h"
+#include "esvg_element_script.h"
 #include "esvg_element_set.h"
 #include "esvg_element_stop.h"
 #include "esvg_element_style.h"
@@ -436,7 +436,7 @@ static void * _esvg_parser_tag_new(Edom_Parser *parser, int tag_id)
 	switch (tag_id)
 	{
 		case ESVG_TYPE_LINEARGRADIENT:
-                  tag = esvg_element_linear_gradient_new();
+                tag = esvg_element_linear_gradient_new();
 		break;
 
 		case ESVG_TYPE_RADIALGRADIENT:
@@ -500,11 +500,11 @@ static void * _esvg_parser_tag_new(Edom_Parser *parser, int tag_id)
 		break;
 
 		case ESVG_TYPE_A:
-		tag = esvg_a_new();
+		tag = esvg_element_a_new();
 		break;
 
 		case ESVG_TYPE_SCRIPT:
-		tag = esvg_script_new();
+		tag = esvg_element_script_new();
 		break;
 
 		case ESVG_TYPE_STYLE:
@@ -516,7 +516,7 @@ static void * _esvg_parser_tag_new(Edom_Parser *parser, int tag_id)
 		break;
 
 		case ESVG_TYPE_CLIPPATH:
-		tag = esvg_clip_path_new();
+		tag = esvg_element_clip_path_new();
 		break;
 
 		case ESVG_TYPE_SET:
@@ -528,11 +528,11 @@ static void * _esvg_parser_tag_new(Edom_Parser *parser, int tag_id)
 		break;
 
 		case ESVG_TYPE_ANIMATE:
-		tag = esvg_animate_new();
+		tag = esvg_element_animate_new();
 		break;
 
 		case ESVG_TYPE_ANIMATETRANSFORM:
-		tag = esvg_animate_transform_new();
+		tag = esvg_element_animate_transform_new();
 		break;
 
 		case ESVG_TYPE_VIDEO:

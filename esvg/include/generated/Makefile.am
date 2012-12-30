@@ -6,7 +6,7 @@ GENERATED_ELEMENTS = \
 esvg_generated_element.c \
 esvg_generated_element_a.c \
 esvg_generated_element_animate.c \
-esvg_generated_element_animate_base.c \
+esvg_generated_animate_base.c \
 esvg_generated_element_animate_transform.c \
 esvg_generated_element_animation.c \
 esvg_generated_element_circle.c \
@@ -22,6 +22,7 @@ esvg_generated_element_polyline.c \
 esvg_generated_element_line.c \
 esvg_generated_element_linear_gradient.c \
 esvg_generated_element_path.c \
+esvg_generated_element_rect.c \
 esvg_generated_element_radial_gradient.c \
 esvg_generated_element_script.c \
 esvg_generated_element_set.c \

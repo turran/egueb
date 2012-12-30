@@ -100,5 +100,5 @@ void esvg_element_defs_shutdown(void)
  *============================================================================*/
 EAPI Ender_Element * esvg_element_defs_new(void)
 {
-	return ESVG_ELEMENT_NEW("defs");
+	return ESVG_ELEMENT_NEW("SVGDefsElement");
 }

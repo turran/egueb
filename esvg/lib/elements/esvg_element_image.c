@@ -563,7 +563,7 @@ void esvg_element_image_damage_add(Edom_Tag *t, Eina_Rectangle *area)
  *============================================================================*/
 EAPI Ender_Element * esvg_element_image_new(void)
 {
-	return ESVG_ELEMENT_NEW("image");
+	return ESVG_ELEMENT_NEW("SVGImageElement");
 }
 
 EAPI Eina_Bool esvg_is_image(Ender_Element *e)

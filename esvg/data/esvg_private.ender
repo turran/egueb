@@ -229,14 +229,14 @@ namespace "esvg" : 0 {
 
 	};
 
-	class "element_linear_gradient","SVGLinearGradientElement" : "SVGGradient" {
+	class "element_linear_gradient","SVGLinearGradientElement" : "SVGGradientElement" {
 		SVGLength "x1";
 		SVGLength "y1";
 		SVGLength "x2";
 		SVGLength "y2";
 	};
 
-	class "element_radial_gradient","SVGRadialGradientElement" : "SVGGradient" {
+	class "element_radial_gradient","SVGRadialGradientElement" : "SVGGradientElement" {
 		SVGAnimatedLength "cx";
 		SVGAnimatedLength "cy";
 		SVGAnimatedLength "fx";

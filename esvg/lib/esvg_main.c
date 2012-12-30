@@ -95,18 +95,18 @@ static void _register_enders(void)
 	esvg_element_stop_init();
 	esvg_element_use_init();
 	esvg_element_defs_init();
-	esvg_a_init();
-	esvg_clip_path_init();
+	esvg_element_a_init();
+	esvg_element_clip_path_init();
 	esvg_element_style_init();
 	esvg_element_image_init();
 	esvg_element_text_init();
 	esvg_element_video_init();
-	esvg_script_init();
+	esvg_element_script_init();
 
-	esvg_animation_init();
+	esvg_element_animation_init();
 	esvg_animate_base_init();
-	esvg_animate_init();
-	esvg_animate_transform_init();
+	esvg_element_animate_init();
+	esvg_element_animate_transform_init();
 	esvg_element_set_init();
 
 	esvg_script_provider_init();

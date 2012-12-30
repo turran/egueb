@@ -492,7 +492,7 @@ void esvg_element_linear_gradient_shutdown(void)
  *============================================================================*/
 EAPI Ender_Element * esvg_element_linear_gradient_new(void)
 {
-	return ESVG_ELEMENT_NEW("linear_gradient");
+	return ESVG_ELEMENT_NEW("SVGLinearGradientElement");
 }
 
 EAPI Eina_Bool esvg_is_linear_gradient(Ender_Element *e)

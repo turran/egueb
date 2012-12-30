@@ -411,7 +411,7 @@ void esvg_element_use_shutdown(void)
  *============================================================================*/
 EAPI Ender_Element * esvg_element_use_new(void)
 {
-	return ESVG_ELEMENT_NEW("use");
+	return ESVG_ELEMENT_NEW("SVGUseElement");
 }
 
 EAPI Eina_Bool esvg_is_use(Ender_Element *e)

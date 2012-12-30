@@ -416,7 +416,7 @@ void esvg_element_clip_path_shutdown(void)
  *============================================================================*/
 EAPI Ender_Element * esvg_element_clip_path_new(void)
 {
-	return ESVG_ELEMENT_NEW("clip_path");
+	return ESVG_ELEMENT_NEW("SVGClipPathElement");
 }
 
 EAPI Eina_Bool esvg_is_clip_path(Ender_Element *e)

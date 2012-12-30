@@ -257,7 +257,7 @@ void esvg_element_polygon_shutdown(void)
  *============================================================================*/
 EAPI Ender_Element * esvg_element_polygon_new(void)
 {
-	return ESVG_ELEMENT_NEW("polygon");
+	return ESVG_ELEMENT_NEW("SVGPolygonElement");
 }
 
 EAPI Eina_Bool esvg_is_polygon(Ender_Element *e)

@@ -432,7 +432,7 @@ void esvg_element_video_shutdown(void)
  *============================================================================*/
 EAPI Ender_Element * esvg_element_video_new(void)
 {
-	return ESVG_ELEMENT_NEW("video");
+	return ESVG_ELEMENT_NEW("SVGVideoElement");
 }
 
 EAPI Eina_Bool esvg_is_video(Ender_Element *e)

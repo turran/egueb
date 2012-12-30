@@ -494,14 +494,14 @@ static Eina_Bool _esvg_element_animation_attribute_set(Ender_Element *e,
 	{
 		Eina_List *begin = NULL;
 
-		esvg_element_animation_event_list_string_from(&begin, value);
+		esvg_animation_event_list_string_from(&begin, value);
 		esvg_element_animation_begin_set(e, begin);
 	}
 	else if (!strcmp(key, "end"))
 	{
 		Eina_List *end = NULL;
 
-		esvg_element_animation_event_list_string_from(&end, value);
+		esvg_animation_event_list_string_from(&end, value);
 		esvg_element_animation_end_set(e, end);
 	}
 	/* addition attributes */

@@ -603,7 +603,7 @@ void esvg_element_radial_gradient_shutdown(void)
  *============================================================================*/
 EAPI Ender_Element * esvg_element_radial_gradient_new(void)
 {
-	return ESVG_ELEMENT_NEW("radial_gradient");
+	return ESVG_ELEMENT_NEW("SVGRadialGradientElement");
 }
 
 EAPI Eina_Bool esvg_is_radial_gradient(Ender_Element *e)

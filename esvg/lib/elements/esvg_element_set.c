@@ -64,7 +64,7 @@ static Esvg_Element_Set * _esvg_element_set_get(Edom_Tag *t)
 {
 	Esvg_Element_Set *thiz;
 
-	thiz = esvg_animation_data_get(t);
+	thiz = esvg_element_animation_data_get(t);
 
 	return thiz;
 }
@@ -108,7 +108,7 @@ static void _esvg_element_set_animation_start_cb(Etch_Animation *a, void *data)
 	Esvg_Element_Set *thiz = data;
 	Esvg_Fill fill;
 
-	esvg_animation_fill_get(thiz->thiz_e, &fill);
+	esvg_element_animation_fill_get(thiz->thiz_e, &fill);
 	/* in case of "remove" pick the last value it had */
 	if (fill == ESVG_FILL_REMOVE)
 	{
@@ -131,7 +131,7 @@ static void _esvg_element_set_animation_stop_cb(Etch_Animation *a, void *data)
 	Esvg_Element_Set *thiz = data;
 	Esvg_Fill fill;
 
-	esvg_animation_fill_get(thiz->thiz_e, &fill);
+	esvg_element_animation_fill_get(thiz->thiz_e, &fill);
 	/* in case of "remove" set the value it had when the animation started */
 	if (fill == ESVG_FILL_REMOVE)
 	{
@@ -347,7 +347,7 @@ static Edom_Tag * _esvg_element_set_new(void)
 	Edom_Tag *t;
 
 	thiz = calloc(1, sizeof(Esvg_Element_Set));
-	t = esvg_animation_new(&_descriptor, ESVG_TYPE_SET, thiz);
+	t = esvg_element_animation_new(&_descriptor, ESVG_TYPE_SET, thiz);
 	return t;
 }
 
@@ -386,7 +386,7 @@ void esvg_element_set_shutdown(void)
  */
 EAPI Ender_Element * esvg_element_set_new(void)
 {
-	return ESVG_ELEMENT_NEW("set");
+	return ESVG_ELEMENT_NEW("SVGSetElement");
 }
 /**
  * To be documented

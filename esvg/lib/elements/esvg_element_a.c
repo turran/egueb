@@ -277,7 +277,7 @@ void esvg_element_a_shutdown(void)
  *============================================================================*/
 EAPI Ender_Element * esvg_element_a_new(void)
 {
-	return ESVG_ELEMENT_NEW("a");
+	return ESVG_ELEMENT_NEW("SVGAElement");
 }
 
 EAPI Eina_Bool esvg_is_a(Ender_Element *e)

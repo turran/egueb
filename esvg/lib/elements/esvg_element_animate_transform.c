@@ -375,7 +375,7 @@ static Eina_Bool _esvg_element_animate_transform_attribute_set(Ender_Element *e,
 	{
 		Esvg_Animate_Transform_Type type;
 
-		esvg_element_animate_transform_type_string_from(&type, value);
+		esvg_animate_transform_type_string_from(&type, value);
 		esvg_element_animate_transform_type_set(e, type);
 	}
 	else
@@ -501,7 +501,7 @@ void esvg_element_animate_transform_shutdown(void)
  */
 EAPI Ender_Element * esvg_element_animate_transform_new(void)
 {
-	return ESVG_ELEMENT_NEW("animate_transform");
+	return ESVG_ELEMENT_NEW("SVGAnimateTransformElement");
 }
 
 /**

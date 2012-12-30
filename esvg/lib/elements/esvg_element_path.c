@@ -536,7 +536,7 @@ void esvg_element_path_shutdown(void)
  *============================================================================*/
 EAPI Ender_Element * esvg_element_path_new(void)
 {
-	return ESVG_ELEMENT_NEW("path");
+	return ESVG_ELEMENT_NEW("SVGPathElement");
 }
 
 EAPI Eina_Bool esvg_is_path(Ender_Element *e)

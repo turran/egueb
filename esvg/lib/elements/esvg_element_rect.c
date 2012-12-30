@@ -552,7 +552,7 @@ static void _esvg_element_rect_ry_get(Edom_Tag *t, Esvg_Animated_Coord *ry)
 #define _esvg_element_rect_ry_is_set NULL
 #define _esvg_element_rect_width_is_set NULL
 #define _esvg_element_rect_height_is_set NULL
-#include "generated/esvg_generated_element_element_rect.c"
+#include "generated/esvg_generated_element_rect.c"
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/

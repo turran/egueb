@@ -281,7 +281,7 @@ void esvg_element_polyline_shutdown(void)
  *============================================================================*/
 EAPI Ender_Element * esvg_element_polyline_new(void)
 {
-	return ESVG_ELEMENT_NEW("polyline");
+	return ESVG_ELEMENT_NEW("SVGPolylineElement");
 }
 
 EAPI void esvg_element_polyline_point_add(Ender_Element *e, Esvg_Point *p)

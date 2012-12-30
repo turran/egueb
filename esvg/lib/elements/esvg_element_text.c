@@ -326,7 +326,7 @@ void esvg_element_text_shutdown(void)
  *============================================================================*/
 EAPI Ender_Element * esvg_element_text_new(void)
 {
-	return ESVG_ELEMENT_NEW("text");
+	return ESVG_ELEMENT_NEW("SVGTextElement");
 }
 
 EAPI Eina_Bool esvg_is_text(Ender_Element *e)

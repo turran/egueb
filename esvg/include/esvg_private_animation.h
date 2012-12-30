@@ -40,8 +40,8 @@ typedef struct _Esvg_Animation_Descriptor {
 } Esvg_Animation_Descriptor;
 
 Eina_Bool esvg_is_animation_internal(Edom_Tag *t);
-void * esvg_animation_data_get(Edom_Tag *t);
-Edom_Tag * esvg_animation_new(Esvg_Animation_Descriptor *descriptor, Esvg_Type type, void *data);
+void * esvg_element_animation_data_get(Edom_Tag *t);
+Edom_Tag * esvg_element_animation_new(Esvg_Animation_Descriptor *descriptor, Esvg_Type type, void *data);
 /* generated function */
 void esvg_animation_init(void);
 void esvg_animation_shutdown(void);

@@ -138,6 +138,6 @@ void esvg_element_animate_shutdown(void)
  */
 EAPI Ender_Element * esvg_element_animate_new(void)
 {
-	return ESVG_ELEMENT_NEW("animate");
+	return ESVG_ELEMENT_NEW("SVGAnimateElement");
 }
 

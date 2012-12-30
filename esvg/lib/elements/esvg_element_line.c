@@ -388,7 +388,7 @@ void esvg_element_line_shutdown(void)
  *============================================================================*/
 EAPI Ender_Element * esvg_element_line_new(void)
 {
-	return ESVG_ELEMENT_NEW("line");
+	return ESVG_ELEMENT_NEW("SVGLineElement");
 }
 
 EAPI Eina_Bool esvg_is_line(Ender_Element *e)

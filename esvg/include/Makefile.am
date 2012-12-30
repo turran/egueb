@@ -28,6 +28,7 @@ esvg_element_path.h \
 esvg_element_polygon.h \
 esvg_element_polyline.h \
 esvg_element_radial_gradient.h \
+esvg_element_script.h \
 esvg_element_set.h \
 esvg_element_stop.h \
 esvg_element_style.h \
@@ -46,7 +47,6 @@ esvg_parser.h \
 esvg_referenceable.h \
 esvg_renderable.h \
 esvg_rect.h \
-esvg_script.h \
 esvg_script_provider.h \
 esvg_string.h \
 esvg_types.h \

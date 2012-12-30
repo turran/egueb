@@ -388,7 +388,7 @@ void esvg_element_ellipse_shutdown(void)
  *============================================================================*/
 EAPI Ender_Element * esvg_element_ellipse_new(void)
 {
-	return ESVG_ELEMENT_NEW("ellipse");
+	return ESVG_ELEMENT_NEW("SVGEllipseElement");
 }
 
 EAPI Eina_Bool esvg_is_ellipse(Ender_Element *e)
