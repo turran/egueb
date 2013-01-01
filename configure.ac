@@ -41,22 +41,7 @@ ENESIM_VERSION="0.0.16"
 ETCH_VERSION="0.0.5"
 ENDER_VERSION="0.0.8"
 
-AC_CANONICAL_BUILD
 AC_CANONICAL_HOST
-
-ECSS_BUILD=""
-EDOM_BUILD=""
-ESVG_BUILD=""
-case "$host_os" in
-   mingw*)
-      ECSS_BUILD="-DECSS_BUILD"
-      EDOM_BUILD="-DEDOM_BUILD"
-      ESVG_BUILD="-DESVG_BUILD"
-   ;;
-esac
-AC_SUBST([ECSS_BUILD])
-AC_SUBST([EDOM_BUILD])
-AC_SUBST([ESVG_BUILD])
 
 ecss_requirements="eina"
 edom_requirements="eina"

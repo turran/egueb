@@ -1,5 +1,4 @@
-MAINTAINERCLEANFILES = \
-Makefile.in
+MAINTAINERCLEANFILES = Makefile.in
 
 AM_CPPFLAGS = \
 -I. \
@@ -7,7 +6,7 @@ AM_CPPFLAGS = \
 -I$(top_srcdir)/esvg/include \
 -I$(top_srcdir)/ecss/include \
 -I$(top_srcdir)/edom/include \
-@ESVG_BUILD@ \
+-DESVG_BUILD \
 @ESVG_EMAGE_CFLAGS@
 
 # PNG

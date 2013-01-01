@@ -56,7 +56,7 @@ EXTRA_DIST = \
 esvg_private_a.h \
 esvg_private_animate.h \
 esvg_private_animate_base.h \
-esvg_private_animate_tranform.h \
+esvg_private_animate_transform.h \
 esvg_private_animation.h \
 esvg_private_attribute.h \
 esvg_private_attribute_animation.h \
