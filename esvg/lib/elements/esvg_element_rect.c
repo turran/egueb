@@ -323,8 +323,7 @@ static Eina_Bool _esvg_element_rect_renderer_propagate(Edom_Tag *t,
 	/* set the size */
 	enesim_renderer_rectangle_size_set(thiz->r, thiz->gwidth, thiz->gheight);
 
-	/* FIXME enesim does not supports rx *and* ry */
-	enesim_renderer_rectangle_corner_radius_set(thiz->r, thiz->grx);
+	enesim_renderer_rectangle_corner_radii_set(thiz->r, thiz->grx, thiz->gry);
 	enesim_renderer_rectangle_corners_set(thiz->r,
 			EINA_TRUE, EINA_TRUE, EINA_TRUE, EINA_TRUE);
 
