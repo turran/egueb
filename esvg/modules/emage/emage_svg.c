@@ -39,45 +39,45 @@
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
-typedef enum _Emage_Svg_Tag_Type
+typedef enum _Enesim_Image_Svg_Tag_Type
 {
-	EMAGE_SVG_SVG,
-} Emage_Svg_Tag_Type;
+	ENESIM_IMAGE_SVG_SVG,
+} Enesim_Image_Svg_Tag_Type;
 
-typedef struct _Emage_Svg_Svg
+typedef struct _Enesim_Image_Svg_Svg
 {
 	Esvg_Length width;
 	Esvg_Length height;
-} Emage_Svg_Svg;
+} Enesim_Image_Svg_Svg;
 
 /*----------------------------------------------------------------------------*
  *                        Esvg Application Descriptor                         *
  *----------------------------------------------------------------------------*/
 /* given that we only support this callback, we pass the dir name as the data */
-static const char * _emage_svg_base_dir_get(Ender_Element *e, void *data)
+static const char * _enesim_image_svg_base_dir_get(Ender_Element *e, void *data)
 {
 	return data;
 }
 
-static Esvg_Element_Svg_Application_Descriptor _emage_svg_descriptor = {
-	/* .base_dir_get 	= */ _emage_svg_base_dir_get,
+static Esvg_Element_Svg_Application_Descriptor _enesim_image_svg_descriptor = {
+	/* .base_dir_get 	= */ _enesim_image_svg_base_dir_get,
 	/* .go_to 		= */ NULL,
 };
 /*----------------------------------------------------------------------------*
  *                          Emage Provider API                                *
  *----------------------------------------------------------------------------*/
-typedef struct _Emage_Svg_Options
+typedef struct _Enesim_Image_Svg_Options
 {
 	int container_width;
 	int container_height;
-} Emage_Svg_Options;
+} Enesim_Image_Svg_Options;
 
 static const int _default_width = 640;
 static const int _default_height = 480;
 
 static void _options_parse_cb(void *data, const char *key, const char *value)
 {
-	Emage_Svg_Options *thiz = data;
+	Enesim_Image_Svg_Options *thiz = data;
 
 	if (!strcmp(key, "width"))
 		thiz->container_width = atoi(value);
@@ -85,14 +85,14 @@ static void _options_parse_cb(void *data, const char *key, const char *value)
 		thiz->container_height = atoi(value);
 }
 
-static void * _emage_svg_options_parse(const char *options_str)
+static void * _enesim_image_svg_options_parse(const char *options_str)
 {
-	Emage_Svg_Options *options;
+	Enesim_Image_Svg_Options *options;
 
-	options = calloc(1, sizeof(Emage_Svg_Options));
+	options = calloc(1, sizeof(Enesim_Image_Svg_Options));
 	options->container_width = _default_width;
 	options->container_height = _default_height;
-	emage_options_parse(options_str, _options_parse_cb, options);
+	enesim_image_options_parse(options_str, _options_parse_cb, options);
 	/* the options we support are:
 	 * container_size=wxh
 	 */
@@ -100,16 +100,16 @@ static void * _emage_svg_options_parse(const char *options_str)
 	return options;
 }
 
-static void _emage_svg_options_free(void *data)
+static void _enesim_image_svg_options_free(void *data)
 {
-	Emage_Svg_Options *options = data;
+	Enesim_Image_Svg_Options *options = data;
 	free(options);
 }
 
 /* Here we should parse the first svg element only and return its
  * size, for now, we dont support this feature
  */
-static Eina_Error _emage_svg_info_load(Emage_Data *data, int *w, int *h, Enesim_Buffer_Format *sfmt, void *options)
+static Eina_Error _enesim_image_svg_info_load(Enesim_Image_Data *data, int *w, int *h, Enesim_Buffer_Format *sfmt, void *options)
 {
 	Esvg_Length width;
 	Esvg_Length height;
@@ -123,26 +123,26 @@ static Eina_Error _emage_svg_info_load(Emage_Data *data, int *w, int *h, Enesim_
 	size_t size;
 
 	/* first try to map the data */
-	mmap = emage_data_mmap(data, &size);
+	mmap = enesim_image_data_mmap(data, &size);
 	/* in case it fails, we should try to read the whole svg */
 	if (!mmap)
 	{
-		size = emage_data_length(data);
-		if (!size) return EMAGE_ERROR_LOADING;
+		size = enesim_image_data_length(data);
+		if (!size) return ENESIM_IMAGE_ERROR_LOADING;
 
 		mmap = malloc(size);
-		emage_data_read(data, mmap, size);
+		enesim_image_data_read(data, mmap, size);
 		mmaped = EINA_FALSE;
 	}
 	if (!esvg_parser_info_load_from_buffer(mmap, size, &width, &height))
 	{
-		ret = EMAGE_ERROR_LOADING;
+		ret = ENESIM_IMAGE_ERROR_LOADING;
 		goto err_load;
 	}
 	/* get the final size */
 	if (options)
 	{
-		Emage_Svg_Options *o = options;
+		Enesim_Image_Svg_Options *o = options;
 
 		cw = o->container_width;
 		ch = o->container_height;
@@ -162,7 +162,7 @@ err_load:
 	return ret;
 }
 
-static Eina_Error _emage_svg_load(Emage_Data *data, Enesim_Buffer *buffer, void *options)
+static Eina_Error _enesim_image_svg_load(Enesim_Image_Data *data, Enesim_Buffer *buffer, void *options)
 {
 	Ender_Element *e;
 	Enesim_Surface *s;
@@ -179,34 +179,34 @@ static Eina_Error _emage_svg_load(Emage_Data *data, Enesim_Buffer *buffer, void 
 	size_t size;
 
 	/* first try to map the data */
-	mmap = emage_data_mmap(data, &size);
+	mmap = enesim_image_data_mmap(data, &size);
 	/* in case it fails, we should try to read the whole svg */
 	if (!mmap)
 	{
-		size = emage_data_length(data);
-		if (!size) return EMAGE_ERROR_LOADING;
+		size = enesim_image_data_length(data);
+		if (!size) return ENESIM_IMAGE_ERROR_LOADING;
 
 		mmap = malloc(size);
-		emage_data_read(data, mmap, size);
+		enesim_image_data_read(data, mmap, size);
 		mmaped = EINA_FALSE;
 	}
 
 	e = esvg_parser_load_from_buffer(mmap, size);
 	if (!e)
 	{
-		ret = EMAGE_ERROR_LOADING;
+		ret = ENESIM_IMAGE_ERROR_LOADING;
 		goto err_parse;
 	}
 
 	if (options)
 	{
-		Emage_Svg_Options *o = options;
+		Enesim_Image_Svg_Options *o = options;
 
 		w = o->container_width;
 		h = o->container_height;
 	}
 	/* set the application descriptor in case the svg needs it */
-	location = emage_data_location(data);
+	location = enesim_image_data_location(data);
 	if (location)
 	{
 		char *base_dir;
@@ -216,7 +216,7 @@ static Eina_Error _emage_svg_load(Emage_Data *data, Enesim_Buffer *buffer, void 
 		if (!strcmp(tmp, "."))
 			tmp = "./";
 		base_dir = strdup(tmp);
-		esvg_element_svg_application_descriptor_set(e, &_emage_svg_descriptor, base_dir);
+		esvg_element_svg_application_descriptor_set(e, &_enesim_image_svg_descriptor, base_dir);
 		free(location);
 		location = base_dir;
 	}
@@ -232,18 +232,18 @@ static Eina_Error _emage_svg_load(Emage_Data *data, Enesim_Buffer *buffer, void 
 	s = enesim_surface_new_buffer_from(buffer);
 	if (!s)
 	{
-		ret = EMAGE_ERROR_LOADING;
+		ret = ENESIM_IMAGE_ERROR_LOADING;
 		goto err_surface;
 	}
 	if (!esvg_element_svg_setup(e, &err))
 	{
 		enesim_error_dump(err);
-		ret = EMAGE_ERROR_LOADING;
+		ret = ENESIM_IMAGE_ERROR_LOADING;
 		goto err_setup;
 	}
 	if (!esvg_element_svg_draw(e, s, NULL, 0, 0, NULL))
 	{
-		ret = EMAGE_ERROR_LOADING;
+		ret = ENESIM_IMAGE_ERROR_LOADING;
 		enesim_error_dump(err);
 	}
 
@@ -259,22 +259,22 @@ err_parse:
 	return ret;
 }
 
-static Emage_Provider _provider = {
+static Enesim_Image_Provider _provider = {
 	/* .name = 		*/ "svg",
-	/* .type = 		*/ EMAGE_PROVIDER_SW,
-	/* .options_parse = 	*/ _emage_svg_options_parse,
-	/* .options_free = 	*/ _emage_svg_options_free,
+	/* .type = 		*/ ENESIM_IMAGE_PROVIDER_SW,
+	/* .options_parse = 	*/ _enesim_image_svg_options_parse,
+	/* .options_free = 	*/ _enesim_image_svg_options_free,
 	/* .loadable = 		*/ NULL,
 	/* .saveable = 		*/ NULL,
-	/* .info_get = 		*/ _emage_svg_info_load,
-	/* .load = 		*/ _emage_svg_load,
+	/* .info_get = 		*/ _enesim_image_svg_info_load,
+	/* .load = 		*/ _enesim_image_svg_load,
 	/* .save = 		*/ NULL,
 };
 
 /*----------------------------------------------------------------------------*
  *                           Emage Finder API                                 *
  *----------------------------------------------------------------------------*/
-static const char * _emage_svg_data_from(Emage_Data *data)
+static const char * _enesim_image_svg_data_from(Enesim_Image_Data *data)
 {
 	char buf[256];
 	char *ret = NULL;
@@ -282,7 +282,7 @@ static const char * _emage_svg_data_from(Emage_Data *data)
 	int i;
 
 	/* only try to find the <svg tag in the first 256 bytes */
-	count = emage_data_read(data, buf, 256);
+	count = enesim_image_data_read(data, buf, 256);
 	for (i = 0; i < count; i++)
 	{
 		if (buf[i] == '<' && i + 4 < count)
@@ -298,16 +298,16 @@ static const char * _emage_svg_data_from(Emage_Data *data)
 	return ret;
 }
 
-static const char * _emage_svg_extension_from(const char *ext)
+static const char * _enesim_image_svg_extension_from(const char *ext)
 {
 	if (!strcmp(ext, "svg"))
 		return "image/svg+xml";
 	return NULL;
 }
 
-static Emage_Finder _finder = {
-	/* .data_from 		= */ _emage_svg_data_from,
-	/* .extension_from 	= */ _emage_svg_extension_from,
+static Enesim_Image_Finder _finder = {
+	/* .data_from 		= */ _enesim_image_svg_data_from,
+	/* .extension_from 	= */ _enesim_image_svg_extension_from,
 };
 /*----------------------------------------------------------------------------*
  *                             Module API                                     *
@@ -317,11 +317,11 @@ Eina_Bool svg_provider_init(void)
 	/* @todo
 	 * - Register svg specific errors
 	 */
-	if (!emage_provider_register(&_provider, "image/svg+xml"))
+	if (!enesim_image_provider_register(&_provider, "image/svg+xml"))
 		return EINA_FALSE;
-	if (!emage_finder_register(&_finder))
+	if (!enesim_image_finder_register(&_finder))
 	{
-		emage_provider_unregister(&_provider, "image/svg+xml");
+		enesim_image_provider_unregister(&_provider, "image/svg+xml");
 		return EINA_FALSE;
 	}
 	return EINA_TRUE;
@@ -329,8 +329,8 @@ Eina_Bool svg_provider_init(void)
 
 void svg_provider_shutdown(void)
 {
-	emage_finder_unregister(&_finder);
-	emage_provider_unregister(&_provider, "image/svg+xml");
+	enesim_image_finder_unregister(&_finder);
+	enesim_image_provider_unregister(&_provider, "image/svg+xml");
 }
 
 EINA_MODULE_INIT(svg_provider_init);

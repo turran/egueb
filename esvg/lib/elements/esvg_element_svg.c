@@ -443,7 +443,7 @@ static void _esvg_element_svg_image_uri_absolute_get(const char *name,
 		if (width != 0 && height != 0)
 			sprintf(options, "width=%d;height=%d", (int)width, (int)height);
 
-		ret = emage_file_load(name, s, ENESIM_FORMAT_ARGB8888, NULL, options);
+		ret = enesim_image_file_load(name, s, ENESIM_FORMAT_ARGB8888, NULL, options);
 		if (!ret)
 		{
 			Eina_Error err;
@@ -1342,8 +1342,8 @@ void esvg_element_svg_image_load(Ender_Element *e, const char *uri, Enesim_Surfa
 	/* check if the uri starts with image:data (embedded image) first */
 	if (!strncmp(uri, "data:image", 10))
 	{
-		Emage_Data *edata_buffer;
-		Emage_Data *edata_base64;
+		Enesim_Image_Data *edata_buffer;
+		Enesim_Image_Data *edata_base64;
 		Eina_Bool ret;
 		char mime[PATH_MAX];
 		char format[7];
@@ -1362,16 +1362,16 @@ void esvg_element_svg_image_load(Ender_Element *e, const char *uri, Enesim_Surfa
 			return;
 		uri += 7;
 
-		edata_buffer = emage_data_buffer_new((char *)uri, strlen(uri));
-		edata_base64 = emage_data_base64_new(edata_buffer);
-		if (!emage_load(edata_base64, mime, s, ENESIM_FORMAT_ARGB8888, NULL, NULL))
+		edata_buffer = enesim_image_data_buffer_new((char *)uri, strlen(uri));
+		edata_base64 = enesim_image_data_base64_new(edata_buffer);
+		if (!enesim_image_load(edata_base64, mime, s, ENESIM_FORMAT_ARGB8888, NULL, NULL))
 		{
 			Eina_Error err;
 
 			err = eina_error_get();
 			ERR("Embedded Image with mime '%s' failed to load with error: %s", mime, eina_error_msg_get(err));
 		}
-		emage_data_free(edata_base64);
+		enesim_image_data_free(edata_base64);
 	}
 	else
 	{

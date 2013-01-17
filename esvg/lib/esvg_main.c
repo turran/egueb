@@ -179,7 +179,7 @@ static Eina_Bool _esvg_dependencies_init(void)
 		goto shutdown_enesim;
 	}
 
-	if (!emage_init())
+	if (!enesim_image_init())
 	{
 		fprintf(stderr, "Esvg: Emage init failed");
 		goto shutdown_etex;
@@ -203,7 +203,7 @@ static Eina_Bool _esvg_dependencies_init(void)
 shutdown_etch:
 	etch_shutdown();
 	edom_shutdown();
-	emage_shutdown();
+	enesim_image_shutdown();
 shutdown_etex:
 	etex_shutdown();
 shutdown_enesim:

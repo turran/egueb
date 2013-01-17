@@ -88,7 +88,7 @@ int main(int argc, char *argv[])
 	if (!esvg_init())
 		return -1;
 
-	if (!emage_init())
+	if (!enesim_image_init())
 		goto shutdown_esvg;
 
 	tag = esvg_parser_load(argv[1]);
@@ -148,10 +148,10 @@ int main(int argc, char *argv[])
 	{
 		enesim_error_dump(err);
 	}
-	emage_file_save(argv[2], s, NULL);
+	enesim_image_file_save(argv[2], s, NULL);
 
 	enesim_surface_unref(s);
-	emage_shutdown();
+	enesim_image_shutdown();
 	esvg_shutdown();
 
 	return 0;
