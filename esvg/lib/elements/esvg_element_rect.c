@@ -339,7 +339,7 @@ static Eina_Bool _esvg_element_rect_renderer_propagate(Edom_Tag *t,
 
 	DBG("fc %08x sc %08x c %08x %g", rctx->fill_color, rctx->stroke_color, rctx->color, rctx->stroke_weight);
 	/* base properties */
-	enesim_renderer_geometry_transformation_set(thiz->r, &ctx->transform);
+	enesim_renderer_transformation_set(thiz->r, &ctx->transform);
 	enesim_renderer_color_set(thiz->r, rctx->color);
 
 	return EINA_TRUE;

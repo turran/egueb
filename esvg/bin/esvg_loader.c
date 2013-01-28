@@ -25,7 +25,6 @@
 #include <stdio.h>
 #include <math.h>
 
-#include <Emage.h>
 #include <Esvg.h>
 
 /*
@@ -88,9 +87,6 @@ int main(int argc, char *argv[])
 	if (!esvg_init())
 		return -1;
 
-	if (!enesim_image_init())
-		goto shutdown_esvg;
-
 	tag = esvg_parser_load(argv[1]);
 	if (!tag)
 	{
@@ -151,7 +147,6 @@ int main(int argc, char *argv[])
 	enesim_image_file_save(argv[2], s, NULL);
 
 	enesim_surface_unref(s);
-	enesim_image_shutdown();
 	esvg_shutdown();
 
 	return 0;

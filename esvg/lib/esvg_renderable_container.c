@@ -83,7 +83,7 @@ static Ender_Element * _esvg_renderable_container_element_at(void *data, int x, 
 		Eina_Rectangle bounds;
 
 		esvg_renderable_internal_renderer_get(t, &r);
-		enesim_renderer_destination_boundings(r, &bounds, 0, 0);
+		enesim_renderer_destination_bounds(r, &bounds, 0, 0);
 		//printf("%s: %d %d - %d %d %d %d\n", edom_tag_name_get(t), x, y, bounds.x, bounds.y, bounds.w, bounds.h);
 		if (!eina_rectangles_intersect(&bounds, &in))
 			continue;

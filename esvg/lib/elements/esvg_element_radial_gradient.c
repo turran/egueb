@@ -377,7 +377,7 @@ static Eina_Bool _esvg_element_radial_gradient_propagate(Edom_Tag *t,
 	{
 		enesim_matrix_compose(&m, &gctx->transform, &m);
 	}
-	enesim_renderer_geometry_transformation_set(r, &m);
+	enesim_renderer_transformation_set(r, &m);
 	enesim_renderer_gradient_radial_center_x_set(r, cx);
 	enesim_renderer_gradient_radial_center_y_set(r, cy);
 	enesim_renderer_gradient_radial_focus_x_set(r, fx);

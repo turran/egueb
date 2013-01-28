@@ -23,13 +23,7 @@
 #include <math.h>
 #include <libgen.h>
 
-#if HAVE_EMAGE
-# include <Emage.h>
-#endif
-
 #include <Esvg.h>
-
-#if HAVE_EMAGE
 
 /*
  * To implement the load_info interface we need to parse the svg tree, but
@@ -259,9 +253,8 @@ err_parse:
 	return ret;
 }
 
-static Enesim_Image_Provider _provider = {
+static Enesim_Image_Provider_Descriptor _provider = {
 	/* .name = 		*/ "svg",
-	/* .type = 		*/ ENESIM_IMAGE_PROVIDER_SW,
 	/* .options_parse = 	*/ _enesim_image_svg_options_parse,
 	/* .options_free = 	*/ _enesim_image_svg_options_free,
 	/* .loadable = 		*/ NULL,
@@ -317,7 +310,7 @@ Eina_Bool svg_provider_init(void)
 	/* @todo
 	 * - Register svg specific errors
 	 */
-	if (!enesim_image_provider_register(&_provider, "image/svg+xml"))
+	if (!enesim_image_provider_register(&_provider, ENESIM_IMAGE_PROVIDER_PRIORITY_PRIMARY, "image/svg+xml"))
 		return EINA_FALSE;
 	if (!enesim_image_finder_register(&_finder))
 	{
@@ -335,5 +328,3 @@ void svg_provider_shutdown(void)
 
 EINA_MODULE_INIT(svg_provider_init);
 EINA_MODULE_SHUTDOWN(svg_provider_shutdown);
-
-#endif

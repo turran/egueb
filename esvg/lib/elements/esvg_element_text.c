@@ -111,7 +111,7 @@ static void _esvg_element_text_text_set(Edom_Tag *t, const char *text, unsigned 
 	modified[length] = '\0';
 
 	DBG("setting text %s", modified);
-	enesim_text_span_text_set(thiz->r, modified);
+	enesim_renderer_text_span_text_set(thiz->r, modified);
 	modified[length] = past;
 	thiz->changed = EINA_TRUE;
 }
@@ -123,7 +123,7 @@ static void _esvg_element_text_text_get(Edom_Tag *t, const char **text, unsigned
 	thiz = _esvg_element_text_get(t);
 
 	DBG("getting text");
-	enesim_text_span_text_get(thiz->r, text);
+	enesim_renderer_text_span_text_get(thiz->r, text);
 	*length = 0;
 }
 
@@ -170,8 +170,8 @@ static Eina_Bool _esvg_element_text_renderer_propagate(Edom_Tag *t,
 
 	thiz = _esvg_element_text_get(t);
 
-	enesim_text_base_size_set(thiz->r, (int)ctx->font_size);
-	enesim_text_base_max_ascent_get(thiz->r, &max);
+	enesim_renderer_text_base_size_set(thiz->r, (int)ctx->font_size);
+	enesim_renderer_text_base_max_ascent_get(thiz->r, &max);
 
 	enesim_renderer_origin_set(thiz->r, thiz->gx, thiz->gy - max);
 	enesim_renderer_color_set(thiz->r, rctx->fill_color);
@@ -238,10 +238,10 @@ static Edom_Tag * _esvg_element_text_new(void)
 	thiz = calloc(1, sizeof(Esvg_Element_Text));
 	if (!thiz) return NULL;
 
-	r = enesim_text_span_new();
-	enesim_text_base_font_name_set(r, "/usr/share/fonts/truetype/freefont/FreeSans.ttf");
+	r = enesim_renderer_text_span_new();
+	enesim_renderer_text_base_font_name_set(r, "/usr/share/fonts/truetype/freefont/FreeSans.ttf");
 	enesim_renderer_color_set(r, 0xff000000);
-	enesim_text_span_text_set(r, "Hello");
+	enesim_renderer_text_span_text_set(r, "Hello");
 	thiz->r = r;
 
 	/* Default values */

@@ -27,8 +27,6 @@
 #include <Eina.h>
 #include <Ecss.h>
 #include <Enesim.h>
-#include <Etex.h>
-#include <Emage.h>
 #include <Ender.h>
 #include <Edom.h>
 #include <Etch.h>

@@ -275,7 +275,7 @@ static Eina_Bool _esvg_element_linear_gradient_propagate(Edom_Tag *t,
 	{
 		enesim_matrix_compose(&m, &gctx->transform, &m);
 	}
-	enesim_renderer_geometry_transformation_set(r, &m);
+	enesim_renderer_transformation_set(r, &m);
 	enesim_renderer_gradient_linear_x0_set(r, x1);
 	enesim_renderer_gradient_linear_y0_set(r, y1);
 	enesim_renderer_gradient_linear_x1_set(r, x2);

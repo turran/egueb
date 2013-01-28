@@ -20,7 +20,7 @@
 #include <config.h>
 #endif
 
-#include <Etex.h>
+#include <Enesim.h>
 #include <Ender.h>
 #include <Edom.h>
 
@@ -173,18 +173,6 @@ static Eina_Bool _esvg_dependencies_init(void)
 		goto shutdown_eina;
 	}
 
-	if (!enesim_text_init())
-	{
-		fprintf(stderr, "Esvg: Etex init failed");
-		goto shutdown_enesim;
-	}
-
-	if (!enesim_image_init())
-	{
-		fprintf(stderr, "Esvg: Emage init failed");
-		goto shutdown_etex;
-	}
-
 	edom_init();
 	etch_init();
 
@@ -203,9 +191,6 @@ static Eina_Bool _esvg_dependencies_init(void)
 shutdown_etch:
 	etch_shutdown();
 	edom_shutdown();
-	enesim_image_shutdown();
-shutdown_etex:
-	enesim_text_shutdown();
 shutdown_enesim:
 	enesim_shutdown();
 shutdown_eina:
@@ -276,7 +261,6 @@ EAPI int esvg_shutdown(void)
 	_esvg_dependencies_shutdown();
 	_esvg_ender_shutdown();
 	edom_shutdown();
-	enesim_text_shutdown();
 	enesim_shutdown();
 	eina_shutdown();
 

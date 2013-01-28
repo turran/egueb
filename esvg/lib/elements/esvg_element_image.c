@@ -313,7 +313,7 @@ static Eina_Bool _esvg_element_image_renderer_propagate(Edom_Tag *t,
 		enesim_renderer_rectangle_y_set(thiz->rectangle, y);
 		enesim_renderer_rectangle_width_set(thiz->rectangle, width);
 		enesim_renderer_rectangle_height_set(thiz->rectangle, height);
-		enesim_renderer_geometry_transformation_set(thiz->rectangle, &ctx->transform);
+		enesim_renderer_transformation_set(thiz->rectangle, &ctx->transform);
 		enesim_renderer_proxy_proxied_set(thiz->proxy, thiz->rectangle);
 	}
 	else
@@ -322,7 +322,7 @@ static Eina_Bool _esvg_element_image_renderer_propagate(Edom_Tag *t,
 		enesim_renderer_image_y_set(thiz->image, y);
 		enesim_renderer_image_width_set(thiz->image, width);
 		enesim_renderer_image_height_set(thiz->image, height);
-		enesim_renderer_geometry_transformation_set(thiz->image, &ctx->transform);
+		enesim_renderer_transformation_set(thiz->image, &ctx->transform);
 		enesim_renderer_proxy_proxied_set(thiz->proxy, thiz->image);
 	}
 
