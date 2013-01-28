@@ -15,7 +15,18 @@ SUBDIRS += esvg
 endif
 
 MAINTAINERCLEANFILES = \
-Makefile.in
+Makefile.in \
+aclocal.m4 \
+compile \
+config.gues \
+config.h.in \
+config.h.in~ \
+config.sub \
+configure \
+depcomp \
+install-sh \
+ltmain.sh \
+missing
 
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA =
