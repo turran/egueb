@@ -299,11 +299,19 @@ static Esvg_Element_Setup_Return _esvg_element_rect_setup(Edom_Tag *t,
 	esvg_attribute_animated_length_final_get(&thiz->rx, &lrx);
 	esvg_attribute_animated_length_final_get(&thiz->ry, &lry);
 	thiz->grx = esvg_coord_final_get(&lrx, ctx->viewbox.w, ctx->font_size);
+	thiz->gry = esvg_coord_final_get(&lry, ctx->viewbox.h, ctx->font_size);
+	/* in case only rx is set, use rx as ry */
+	/* FIXME we should use the is_set variant */
+	if (!thiz->gry && thiz->grx)
+		thiz->gry = thiz->grx;
+
 	/* set the bounds */
 	enesim_rectangle_coords_from(&ctx->bounds,
 			thiz->gx, thiz->gy, thiz->gwidth, thiz->gheight);
 
-	DBG("calling the setup on the rect (%g %g %g %g)", thiz->gx, thiz->gy, thiz->gwidth, thiz->gheight);
+	DBG("calling the setup on the rect (x: %g, y: %g, w: %g, h: %g, rx: %g"
+			", ry: %g)", thiz->gx, thiz->gy, thiz->gwidth,
+			thiz->gheight, thiz->grx, thiz->gry);
 	return ESVG_SETUP_OK;
 }
 
