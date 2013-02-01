@@ -307,11 +307,11 @@ namespace "esvg" : 0 {
 	};
 
 	class "element_polyline","SVGPolylineElement" : "SVGRenderable" {
-		[esvg_point] "point";
+		[SVGPoint] "point";
 	};
 
 	class "element_polygon","SVGPolygonElement" : "SVGRenderable" {
-		[esvg_point] "point";
+		[SVGPoint] "point";
 	};
 
 	class "element_text","SVGTextElement" : "SVGRenderable" {

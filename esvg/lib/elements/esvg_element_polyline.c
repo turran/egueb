@@ -142,6 +142,7 @@ static Eina_Bool _esvg_element_polyline_renderer_propagate(Edom_Tag *t,
 
 		enesim_renderer_figure_clear(r);
 		enesim_renderer_figure_polygon_add(r);
+		DBG("using the figure for %d vertices", nvert);
 		EINA_LIST_FOREACH(thiz->points, l, p)
 		{
 			DBG("(%f, %f) ", p->x, p->y);
