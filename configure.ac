@@ -45,7 +45,7 @@ AC_CANONICAL_HOST
 
 ecss_requirements="eina"
 edom_requirements="eina"
-esvg_requirements="etex >= ${ENESIM_VERSION} enesim >= ${ENESIM_VERSION} eina >= ${EINA_VERSION} ender >= ${ENDER_VERSION} etch >= ${ETCH_VERSION}"
+esvg_requirements="ender >= ${ENDER_VERSION} etch >= ${ETCH_VERSION} enesim >= ${ENESIM_VERSION} eina >= ${EINA_VERSION}"
 gstreamer_requirements="gstreamer-0.10"
 
 AC_SUBST([esvg_requirements])
@@ -138,14 +138,6 @@ if test "x${want_edom}" = "xyes" ; then
 fi
 
 if test "x${want_ecss}" = "xyes" && test "x${want_edom}" = "xyes" ; then
-   PKG_CHECK_MODULES([ESVG_EMAGE], [emage >= ${ENESIM_VERSION}], [have_emage="yes"], [have_emage="no"])
-   AC_MSG_CHECKING([whether emage support is available])
-   AC_MSG_RESULT([${have_emage}])
-
-   if test "x${have_emage}" = "xyes" ; then
-      AC_DEFINE(HAVE_EMAGE, [1], [Emage Support])
-      esvg_requirements="emage >= ${ENESIM_VERSION} ${esvg_requirements}"
-   fi
    PKG_CHECK_MODULES([ESVG], [${esvg_requirements}], [want_esvg="yes"], [want_esvg="no"])
    # Video backends
    PKG_CHECK_MODULES([GSTREAMER], [${gstreamer_requirements}], [have_gstreamer="yes"], [have_gstreamer="no"])

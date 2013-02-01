@@ -58,7 +58,7 @@ static Esvg_Element_Svg_Application_Descriptor _enesim_image_svg_descriptor = {
 	/* .go_to 		= */ NULL,
 };
 /*----------------------------------------------------------------------------*
- *                          Emage Provider API                                *
+ *                         Enesim Image Provider API                          *
  *----------------------------------------------------------------------------*/
 typedef struct _Enesim_Image_Svg_Options
 {
@@ -265,7 +265,7 @@ static Enesim_Image_Provider_Descriptor _provider = {
 };
 
 /*----------------------------------------------------------------------------*
- *                           Emage Finder API                                 *
+ *                           Enesim Image Finder API                          *
  *----------------------------------------------------------------------------*/
 static const char * _enesim_image_svg_data_from(Enesim_Image_Data *data)
 {
