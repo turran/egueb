@@ -338,31 +338,31 @@ Esvg_Attribute_Animated_Descriptor * esvg_attribute_animated_descriptor_get(cons
 {
 	Esvg_Attribute_Animated_Descriptor *d = NULL;
 
-	if (!strcmp(name, "esvg_animated_length") || !strcmp(name, "esvg_animated_coord"))
+	if (!strcmp(name, "SVGAnimatedLength") || !strcmp(name, "SVGAnimatedCoord"))
 	{
 		d = &esvg_attribute_animated_length_descriptor;
 	}
-	else if (!strcmp(name, "esvg_animated_number"))
+	else if (!strcmp(name, "SVGAnimatedNumber"))
 	{
 		d = &esvg_attribute_animated_number_descriptor;
 	}
-	else if (!strcmp(name, "esvg_animated_string"))
+	else if (!strcmp(name, "SVGAnimatedString"))
 	{
 		d = &esvg_attribute_animated_string_descriptor;
 	}
-	else if (!strcmp(name, "esvg_animated_path_command"))
+	else if (!strcmp(name, "SVGAnimatedPathCommand"))
 	{
 		d = &esvg_attribute_animated_path_command_descriptor;
 	}
-	else if (!strcmp(name, "esvg_animated_visibility"))
+	else if (!strcmp(name, "SVGAnimatedVisibility"))
 	{
 		d = &esvg_attribute_animated_visibility_descriptor;
 	}
-	else if (!strcmp(name, "esvg_animated_display"))
+	else if (!strcmp(name, "SVGAnimatedDisplay"))
 	{
 		d = &esvg_attribute_animated_display_descriptor;
 	}
-	else if (!strcmp(name, "esvg_animated_paint"))
+	else if (!strcmp(name, "SVGAnimatedPaint"))
 	{
 		d = &esvg_attribute_animated_paint_descriptor;
 	}

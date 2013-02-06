@@ -110,9 +110,10 @@ namespace "esvg" : 0 {
 		string "anim";
 	};
 
-	union "duration","SVGDuration" {
+	struct "duration","SVGDuration" {
+		int "type";
 		/* fix we should include the long variants on ender */
-		long "clock";
+		/*long "clock";*/
 	};
 
 	struct "esvg_path_vline_to" {
@@ -198,13 +199,13 @@ namespace "esvg" : 0 {
 		int "repeat_count";
 		int "fill";
 		/* FIXME later we should use a time object? */
-		esvg_duration "dur";
+		SVGDuration "dur";
 		/* FIXME we use objects for now, we should use the real struct once it is defined */
 		[object] "begin";
 		[object] "end";
 	};
 
-	abstract "animate_base","SVGAnimateBase" : "SVGAnimation" {
+	abstract "animate_base","SVGAnimateBase" : "SVGAnimationElement" {
 		string "from";
 		string "to";
 		string "values";
@@ -213,7 +214,7 @@ namespace "esvg" : 0 {
 		string "key_splines";
 	};
 
-	class "element_set","SVGSetElement" : "SVGAnimation" {
+	class "element_set","SVGSetElement" : "SVGAnimationElement" {
 		string "to";
 	};
 

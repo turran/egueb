@@ -75,7 +75,7 @@ static Eina_Bool _esvg_element_animate_attribute_get(Edom_Tag *tag, const char *
 static Eina_Bool _esvg_element_animate_type_descriptor_get(Edom_Tag *t,
 		const char *name, Esvg_Attribute_Animated_Descriptor **d)
 {
-	if (!strcmp(name, "esvg_animated_transform"))
+	if (!strcmp(name, "SVGAnimatedTransform"))
 		goto done;
 	*d = esvg_attribute_animated_descriptor_get(name);
 	if (*d) return EINA_TRUE;
@@ -100,7 +100,6 @@ static Edom_Tag * _esvg_element_animate_new(void)
 	Edom_Tag *t;
 
 	thiz = calloc(1, sizeof(Esvg_Element_Animate));
-
 	t = esvg_animate_base_new(&_descriptor, ESVG_TYPE_ANIMATE, thiz);
 	return t;
 }

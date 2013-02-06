@@ -1412,28 +1412,6 @@ EAPI Eina_Bool esvg_calc_mode_string_from(Esvg_Calc_Mode *c, const char *attr)
 	return ret;
 }
 
-EAPI Eina_Bool esvg_duration_string_from(Esvg_Duration *d, const char *attr)
-{
-	Eina_Bool ret = EINA_TRUE;
-
-	if (!strcmp(attr, "indefinite"))
-		d->type = ESVG_DURATION_TYPE_INDEFINITE;
-	else if (!strcmp(attr, "media"))
-		d->type = ESVG_DURATION_TYPE_MEDIA;
-	else
-	{
-		ret = esvg_clock_string_from(&d->data.clock, attr);
-		if (!ret)
-		{
-			ERR("Impossible to parse the duration '%s'", attr);
-			return ret;
-		}
-		d->type = ESVG_DURATION_TYPE_CLOCK;
-		DBG("duration is %" ETCH_TIME_FORMAT, ETCH_TIME_ARGS(d->data.clock));
-	}
-	return ret;
-}
-
 EAPI Eina_Bool esvg_additive_string_from(Esvg_Additive *add, const char *attr)
 {
 	Eina_Bool ret = EINA_TRUE;

@@ -40,6 +40,7 @@ GENERATED_TYPES = \
 esvg_generated_boolean_animated.c \
 esvg_generated_color.c \
 esvg_generated_color_animated.c \
+esvg_generated_duration.c \
 esvg_generated_length.c \
 esvg_generated_length_animated.c \
 esvg_generated_matrix.c \

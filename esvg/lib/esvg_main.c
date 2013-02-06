@@ -68,6 +68,7 @@ static void _register_enders(void)
 	/* first the types */
 	esvg_length_init();
 	esvg_color_init();
+	esvg_duration_init();
 	esvg_point_init();
 	esvg_paint_init();
 	esvg_number_init();
