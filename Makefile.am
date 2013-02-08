@@ -18,7 +18,7 @@ MAINTAINERCLEANFILES = \
 Makefile.in \
 aclocal.m4 \
 compile \
-config.gues \
+config.guess \
 config.h.in \
 config.h.in~ \
 config.sub \
@@ -26,7 +26,11 @@ configure \
 depcomp \
 install-sh \
 ltmain.sh \
-missing
+missing \
+ylwrap \
+$(PACKAGE)-$(VERSION).tar.bz2 \
+$(PACKAGE)-$(VERSION).tar.gz
+
 
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA =
