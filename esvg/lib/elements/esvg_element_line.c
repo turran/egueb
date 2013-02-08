@@ -194,7 +194,7 @@ static Eina_Bool _esvg_element_line_renderer_propagate(Edom_Tag *t,
 	enesim_renderer_shape_stroke_location_set(thiz->r, ENESIM_SHAPE_STROKE_CENTER);
 	enesim_renderer_shape_stroke_cap_set(thiz->r, rctx->stroke_cap);
 	enesim_renderer_shape_stroke_join_set(thiz->r, rctx->stroke_join);
-	enesim_renderer_shape_draw_mode_set(thiz->r, rctx->draw_mode);
+	enesim_renderer_shape_draw_mode_set(thiz->r, ENESIM_SHAPE_DRAW_MODE_STROKE);
 
 	/* base properties */
 	enesim_renderer_transformation_set(thiz->r, &ctx->transform);
