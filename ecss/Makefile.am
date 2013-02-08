@@ -1,4 +1,4 @@
 MAINTAINERCLEANFILES = Makefile.in
 
-SUBDIRS = lib include tests
+SUBDIRS = lib tests
 

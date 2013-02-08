@@ -1,11 +1,5 @@
 MAINTAINERCLEANFILES = Makefile.in
 
-AM_CPPFLAGS = \
--I. \
--I$(top_srcdir)/ecss/include \
--DECSS_BUILD \
-@ECSS_CFLAGS@
-
 AM_YFLAGS = -d -p ecss_
 AM_LFLAGS = -o$(LEX_OUTPUT_ROOT).c
 
@@ -15,6 +9,8 @@ ecss_grammar.c \
 ecss_grammar.h
 
 lib_LTLIBRARIES = libecss.la
+
+include_HEADERS = Ecss.h
 
 libecss_la_SOURCES = \
 ecss_context.c \
@@ -26,7 +22,12 @@ ecss_grammar.y \
 ecss_filter.c \
 ecss_filter_class.c \
 ecss_filter_id.c \
-ecss_lexer.l
+ecss_lexer.l \
+ecss_private.h
+
+libecss_la_CPPFLAGS = \
+-DECSS_BUILD \
+@ECSS_CFLAGS@
 
 libecss_la_LIBADD = \
 @ECSS_LIBS@ \

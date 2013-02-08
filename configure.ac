@@ -205,12 +205,10 @@ AC_C_BIGENDIAN
 
 AC_CONFIG_FILES([
 edom/Makefile
-edom/include/Makefile
 edom/lib/Makefile
 edom/data/Makefile
 ecss/Makefile
 ecss/tests/Makefile
-ecss/include/Makefile
 ecss/lib/Makefile
 esvg/Makefile
 esvg/bin/Makefile
