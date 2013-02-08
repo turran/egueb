@@ -1,4 +1,4 @@
-MAINTAINERCLEANFILES = Makefile.in config.h.in~ config.h.in
+MAINTAINERCLEANFILES = Makefile.in
 
 GENERATED_FLAGS = -x
 
