@@ -1,11 +1,11 @@
 MAINTAINERCLEANFILES = Makefile.in
 
 AM_CPPFLAGS = \
--I. \
--I$(top_builddir)/ \
--I$(top_srcdir)/esvg/include \
--I$(top_srcdir)/ecss/include \
--I$(top_srcdir)/edom/include \
+-I$(top_srcdir)/ecss/lib \
+-I$(top_srcdir)/edom/lib \
+-I$(top_srcdir)/esvg/lib \
+-I$(top_srcdir)/esvg/lib/types \
+-I$(top_srcdir)/esvg/lib/elements \
 -DESVG_BUILD \
 @ESVG_CFLAGS@
 

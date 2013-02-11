@@ -140,5 +140,3 @@ Eina_Bool esvg_rect_string_from(Esvg_Rect *thiz, const char *attr_val)
 	}
 	return EINA_TRUE;
 }
-
-

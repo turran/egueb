@@ -1,11 +1,11 @@
 MAINTAINERCLEANFILES = Makefile.in
 
 AM_CPPFLAGS = \
--I. \
--I$(top_srcdir)/ecss/include \
--I$(top_srcdir)/edom/include \
--I$(top_srcdir)/esvg/include \
--I$(top_builddir)/esvg/include \
+-I$(top_srcdir)/ecss/lib \
+-I$(top_srcdir)/edom/lib \
+-I$(top_srcdir)/esvg/lib \
+-I$(top_builddir)/esvg/lib \
+-I$(top_srcdir)/esvg/lib/types \
 -DENESIM_EXTENSION \
 -DESVG_BUILD \
 @ESVG_CFLAGS@
@@ -43,6 +43,52 @@ esvg_element_use.c \
 esvg_element_video.c \
 esvg_paint_server.c \
 esvg_referenceable.c \
-esvg_renderable.c
+esvg_renderable.c \
+esvg_animate_base.h \
+esvg_element_a.h \
+esvg_element_animate.h \
+esvg_element_animate_transform.h \
+esvg_element_animation.h \
+esvg_element_circle.h \
+esvg_element_clip_path.h \
+esvg_element_defs.h \
+esvg_element_ellipse.h \
+esvg_element_g.h \
+esvg_element_gradient.h \
+esvg_element.h \
+esvg_element_image.h \
+esvg_element_linear_gradient.h \
+esvg_element_line.h \
+esvg_element_path.h \
+esvg_element_polygon.h \
+esvg_element_polyline.h \
+esvg_element_radial_gradient.h \
+esvg_element_rect.h \
+esvg_element_script.h \
+esvg_element_set.h \
+esvg_element_stop.h \
+esvg_element_style.h \
+esvg_element_svg.h \
+esvg_element_text.h \
+esvg_element_use.h \
+esvg_element_video.h \
+esvg_paint_server.h \
+esvg_private_a.h \
+esvg_private_animate_base.h \
+esvg_private_animate.h \
+esvg_private_animate_transform.h \
+esvg_private_animation.h \
+esvg_private_clip_path.h \
+esvg_private_element.h \
+esvg_private_gradient.h \
+esvg_private_paint_server.h \
+esvg_private_renderable_behaviour.h \
+esvg_private_renderable.h \
+esvg_private_stop.h \
+esvg_private_style.h \
+esvg_private_svg.h \
+esvg_private_video.h \
+esvg_referenceable.h \
+esvg_renderable.h
 
 libesvg_elements_la_LIBADD =
