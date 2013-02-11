@@ -17,7 +17,6 @@ esvg_element_animation.h \
 esvg_element_circle.h \
 esvg_element_clip_path.h \
 esvg_element_defs.h \
-esvg_element_rect.h \
 esvg_element_ellipse.h \
 esvg_element_g.h \
 esvg_element_gradient.h \
@@ -28,6 +27,7 @@ esvg_element_path.h \
 esvg_element_polygon.h \
 esvg_element_polyline.h \
 esvg_element_radial_gradient.h \
+esvg_element_rect.h \
 esvg_element_script.h \
 esvg_element_set.h \
 esvg_element_stop.h \
