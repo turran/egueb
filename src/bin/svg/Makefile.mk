@@ -9,4 +9,4 @@ src_bin_svg_esvg_loader_CPPFLAGS = \
 @ESVG_CFLAGS@
 
 src_bin_svg_esvg_loader_SOURCES =  src/bin/svg/esvg_loader.c
-src_bin_svg_esvg_loader_LDADD = src/lib/svg/lib/libesvg.la @ESVG_LIBS@ -lm
+src_bin_svg_esvg_loader_LDADD = src/lib/svg/libesvg.la @ESVG_LIBS@ -lm

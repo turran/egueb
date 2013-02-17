@@ -59,6 +59,7 @@ src/lib/svg/esvg_private_video_provider.h
 src_lib_svg_libesvg_la_CPPFLAGS = \
 -I$(top_srcdir)/src/lib/css \
 -I$(top_srcdir)/src/lib/dom \
+-I$(top_srcdir)/src/lib/svg \
 -I$(top_srcdir)/src/lib/svg/types \
 -I$(top_srcdir)/src/lib/svg/elements \
 -DENESIM_EXTENSION \
