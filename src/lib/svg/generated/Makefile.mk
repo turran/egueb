@@ -54,12 +54,12 @@ src/lib/svg/generated/esvg_generated_string_animated.c
 
 GENERATED_FILES = $(GENERATED_ELEMENTS) $(GENERATED_TYPES)
 
-src_lib_svg_generated_esvg_generated_matrix_GFLAGS = -o
-src_lib_svg_generated_esvg_generated_rect_GFLAGS = -o
+esvg_generated_matrix_GFLAGS = -o
+esvg_generated_rect_GFLAGS = -o
 
 CLEANFILES += $(GENERATED_FILES)
 
 BUILT_SOURCES = $(GENERATED_FILES)
 
 $(GENERATED_FILES): $(top_srcdir)/data/svg/esvg_private.ender
-	ender_generator $(GENERATED_FLAGS) $(value $(addsuffix _GFLAGS,$(basename $@))) $(top_srcdir)/data/svg/esvg_private.ender $(basename $(notdir $(subst esvg_generated_,,$@))) $@
+	ender_generator $(GENERATED_FLAGS) $(value $(addsuffix _GFLAGS,$(basename $(notdir $@)))) $(top_srcdir)/data/svg/esvg_private.ender $(basename $(notdir $(subst esvg_generated_,,$@))) $@
