@@ -204,23 +204,6 @@ AC_C_BIGENDIAN
 ## Make the debug preprocessor configurable
 
 AC_CONFIG_FILES([
-edom/Makefile
-edom/lib/Makefile
-edom/data/Makefile
-ecss/Makefile
-ecss/tests/Makefile
-ecss/lib/Makefile
-esvg/Makefile
-esvg/bin/Makefile
-esvg/lib/Makefile
-esvg/lib/generated/Makefile
-esvg/lib/elements/Makefile
-esvg/lib/script_providers/Makefile
-esvg/lib/types/Makefile
-esvg/lib/video_providers/Makefile
-esvg/modules/Makefile
-esvg/modules/emage/Makefile
-esvg/data/Makefile
 Makefile
 esvg.pc
 ecss.pc

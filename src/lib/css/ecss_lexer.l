@@ -13,7 +13,7 @@
 
 #include "Ecss.h"
 #include "ecss_private.h"
-#include "ecss_grammar.h"
+#include "src_lib_css_libecss_la-ecss_grammar.h"
 #define YY_NO_UNISTD_H
 %}
 
