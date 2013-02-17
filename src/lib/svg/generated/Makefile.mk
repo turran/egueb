@@ -62,4 +62,4 @@ CLEANFILES += $(GENERATED_FILES)
 BUILT_SOURCES = $(GENERATED_FILES)
 
 $(GENERATED_FILES): $(top_srcdir)/data/svg/esvg_private.ender
-	ender_generator $(GENERATED_FLAGS) $(value $(addsuffix _GFLAGS,$(basename $@))) $(top_srcdir)/data/svg/esvg_private.ender $(basename $(subst esvg_generated_,,$@)) $@
+	ender_generator $(GENERATED_FLAGS) $(value $(addsuffix _GFLAGS,$(basename $@))) $(top_srcdir)/data/svg/esvg_private.ender $(basename $(notdir $(subst esvg_generated_,,$@))) $@
