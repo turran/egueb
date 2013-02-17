@@ -62,6 +62,8 @@ src_lib_svg_libesvg_la_CPPFLAGS = \
 -I$(top_srcdir)/src/lib/svg \
 -I$(top_srcdir)/src/lib/svg/types \
 -I$(top_srcdir)/src/lib/svg/elements \
+-I$(top_builddir)/src/lib/svg/types \
+-I$(top_builddir)/src/lib/svg/elements \
 -DENESIM_EXTENSION \
 -DESVG_BUILD \
 @ESVG_CFLAGS@
