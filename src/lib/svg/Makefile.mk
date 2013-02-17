@@ -3,7 +3,7 @@ lib_LTLIBRARIES += src/lib/svg/libesvg.la
 
 installed_svgheadersdir = $(pkgincludedir)-@VMAJ@/svg
 dist_installed_svgheaders_DATA = \
-Esvg.h \
+src/lib/svg/Esvg.h \
 src/lib/svg/esvg_event.h \
 src/lib/svg/esvg_main.h \
 src/lib/svg/esvg_parser.h \
