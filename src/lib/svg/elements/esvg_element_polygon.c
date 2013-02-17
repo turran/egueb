@@ -229,7 +229,7 @@ static void _esvg_element_polygon_point_get(Edom_Tag *t, const Eina_List **pts)
 #define _esvg_element_polygon_point_is_set NULL
 #define _esvg_element_polygon_point_clear NULL
 #define _esvg_element_polygon_point_remove NULL
-#include "generated/esvg_generated_element_polygon.c"
+#include "esvg_generated_element_polygon.c"
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/

@@ -324,7 +324,7 @@ static void _esvg_element_circle_r_get(Edom_Tag *t, Esvg_Length_Animated *radius
 #define _esvg_element_circle_cx_is_set NULL
 #define _esvg_element_circle_cy_is_set NULL
 #define _esvg_element_circle_r_is_set NULL
-#include "generated/esvg_generated_element_circle.c"
+#include "esvg_generated_element_circle.c"
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/

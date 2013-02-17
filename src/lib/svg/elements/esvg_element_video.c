@@ -404,7 +404,7 @@ static void _esvg_element_video_xlink_href_get(Edom_Tag *t, Esvg_String_Animated
 #define _esvg_element_video_width_is_set NULL
 #define _esvg_element_video_height_is_set NULL
 #define _esvg_element_video_xlink_href_is_set NULL
-#include "generated/esvg_generated_element_video.c"
+#include "esvg_generated_element_video.c"
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/

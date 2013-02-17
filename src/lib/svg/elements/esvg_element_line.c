@@ -360,7 +360,7 @@ static void _esvg_element_line_y2_get(Edom_Tag *t, Esvg_Animated_Coord *y2)
 #define _esvg_element_line_y1_is_set NULL
 #define _esvg_element_line_y2_is_set NULL
 
-#include "generated/esvg_generated_element_line.c"
+#include "esvg_generated_element_line.c"
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/

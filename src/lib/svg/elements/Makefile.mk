@@ -1,3 +1,36 @@
+GENERATED_FILES += \
+src/lib/svg/elements/esvg_generated_element.c \
+src/lib/svg/elements/esvg_generated_element_a.c \
+src/lib/svg/elements/esvg_generated_element_animate.c \
+src/lib/svg/elements/esvg_generated_animate_base.c \
+src/lib/svg/elements/esvg_generated_element_animate_transform.c \
+src/lib/svg/elements/esvg_generated_element_animation.c \
+src/lib/svg/elements/esvg_generated_element_circle.c \
+src/lib/svg/elements/esvg_generated_element_clip_path.c \
+src/lib/svg/elements/esvg_generated_element_defs.c \
+src/lib/svg/elements/esvg_generated_element_element_rect.c \
+src/lib/svg/elements/esvg_generated_element_ellipse.c \
+src/lib/svg/elements/esvg_generated_element_g.c \
+src/lib/svg/elements/esvg_generated_element_gradient.c \
+src/lib/svg/elements/esvg_generated_element_image.c \
+src/lib/svg/elements/esvg_generated_element_polygon.c \
+src/lib/svg/elements/esvg_generated_element_polyline.c \
+src/lib/svg/elements/esvg_generated_element_line.c \
+src/lib/svg/elements/esvg_generated_element_linear_gradient.c \
+src/lib/svg/elements/esvg_generated_element_path.c \
+src/lib/svg/elements/esvg_generated_element_rect.c \
+src/lib/svg/elements/esvg_generated_element_radial_gradient.c \
+src/lib/svg/elements/esvg_generated_element_script.c \
+src/lib/svg/elements/esvg_generated_element_set.c \
+src/lib/svg/elements/esvg_generated_element_stop.c \
+src/lib/svg/elements/esvg_generated_element_style.c \
+src/lib/svg/elements/esvg_generated_element_svg.c \
+src/lib/svg/elements/esvg_generated_element_text.c \
+src/lib/svg/elements/esvg_generated_element_use.c \
+src/lib/svg/elements/esvg_generated_element_video.c \
+src/lib/svg/elements/esvg_generated_paint_server.c \
+src/lib/svg/elements/esvg_generated_referenceable.c \
+src/lib/svg/elements/esvg_generated_renderable.c
 
 dist_installed_svgheaders_DATA += \
 src/lib/svg/elements/esvg_animate_base.h \

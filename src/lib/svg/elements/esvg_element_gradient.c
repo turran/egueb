@@ -555,7 +555,7 @@ static void _esvg_element_gradient_spread_method_get(Edom_Tag *t, Esvg_Spread_Me
 #define _esvg_element_gradient_delete NULL
 #define _esvg_element_gradient_href_is_set NULL
 #define _esvg_element_gradient_spread_method_is_set NULL
-#include "generated/esvg_generated_element_gradient.c"
+#include "esvg_generated_element_gradient.c"
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/

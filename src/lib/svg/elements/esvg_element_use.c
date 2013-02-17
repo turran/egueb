@@ -383,7 +383,7 @@ static void _esvg_element_use_link_get(Edom_Tag *t, const char **link)
 #define _esvg_element_use_width_is_set NULL
 #define _esvg_element_use_height_is_set NULL
 #define _esvg_element_use_link_is_set NULL
-#include "generated/esvg_generated_element_use.c"
+#include "esvg_generated_element_use.c"
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/

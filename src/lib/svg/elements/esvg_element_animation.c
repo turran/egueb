@@ -633,7 +633,7 @@ static Esvg_Element_Setup_Return _esvg_element_animation_setup(Edom_Tag *t,
 #define _esvg_element_animation_end_remove NULL
 #define _esvg_element_animation_end_add NULL
 #define _esvg_element_animation_fill_is_set NULL
-#include "generated/esvg_generated_element_animation.c"
+#include "esvg_generated_element_animation.c"
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/

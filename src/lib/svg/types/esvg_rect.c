@@ -65,7 +65,7 @@ static void _esvg_rect_height_get(Esvg_Rect *thiz, double *v)
 #define _esvg_rect_width_is_set NULL
 #define _esvg_rect_height_set NULL
 #define _esvg_rect_height_is_set NULL
-#include "generated/esvg_generated_rect.c"
+#include "esvg_generated_rect.c"
 
 #define _esvg_rect_animated_new NULL
 #define _esvg_rect_animated_delete NULL
@@ -75,7 +75,7 @@ static void _esvg_rect_height_get(Esvg_Rect *thiz, double *v)
 #define _esvg_rect_animated_anim_set NULL
 #define _esvg_rect_animated_anim_get NULL
 #define _esvg_rect_animated_anim_is_set NULL
-#include "generated/esvg_generated_rect_animated.c"
+#include "esvg_generated_rect_animated.c"
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/

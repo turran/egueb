@@ -38,7 +38,7 @@ static Ender_Property *ESVG_LENGTH_ANIMATED_ANIM;
 #define _esvg_length_unit_set NULL
 #define _esvg_length_unit_get NULL
 #define _esvg_length_unit_is_set NULL
-#include "generated/esvg_generated_length.c"
+#include "esvg_generated_length.c"
 
 #define _esvg_length_animated_new NULL
 #define _esvg_length_animated_delete NULL
@@ -48,7 +48,7 @@ static Ender_Property *ESVG_LENGTH_ANIMATED_ANIM;
 #define _esvg_length_animated_anim_set NULL
 #define _esvg_length_animated_anim_get NULL
 #define _esvg_length_animated_anim_is_set NULL
-#include "generated/esvg_generated_length_animated.c"
+#include "esvg_generated_length_animated.c"
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/

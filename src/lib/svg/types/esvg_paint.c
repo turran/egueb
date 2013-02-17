@@ -42,7 +42,7 @@ static Ender_Property *ESVG_PAINT_ANIMATED_ANIM;
 #define _esvg_paint_uri_set NULL
 #define _esvg_paint_uri_get NULL
 #define _esvg_paint_uri_is_set NULL
-#include "generated/esvg_generated_paint.c"
+#include "esvg_generated_paint.c"
 
 #define _esvg_paint_animated_new NULL
 #define _esvg_paint_animated_delete NULL
@@ -52,7 +52,7 @@ static Ender_Property *ESVG_PAINT_ANIMATED_ANIM;
 #define _esvg_paint_animated_anim_set NULL
 #define _esvg_paint_animated_anim_get NULL
 #define _esvg_paint_animated_anim_is_set NULL
-#include "generated/esvg_generated_paint_animated.c"
+#include "esvg_generated_paint_animated.c"
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/

@@ -116,7 +116,7 @@ static Esvg_Element_Setup_Return _esvg_referenceable_setup(Edom_Tag *t,
 
 /* The ender wrapper */
 #define _esvg_referenceable_delete NULL
-#include "generated/esvg_generated_referenceable.c"
+#include "esvg_generated_referenceable.c"
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/

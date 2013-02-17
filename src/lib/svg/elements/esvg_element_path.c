@@ -508,7 +508,7 @@ static void _esvg_element_path_d_get(Edom_Tag *t, Esvg_Animated_List *cmds)
 /* The ender wrapper */
 #define _esvg_element_path_delete NULL
 #define _esvg_element_path_d_is_set NULL
-#include "generated/esvg_generated_element_path.c"
+#include "esvg_generated_element_path.c"
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/

@@ -36,7 +36,7 @@ static Ender_Property *ESVG_POINT_Y;
 #define _esvg_point_y_set NULL
 #define _esvg_point_y_get NULL
 #define _esvg_point_y_is_set NULL
-#include "generated/esvg_generated_point.c"
+#include "esvg_generated_point.c"
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/

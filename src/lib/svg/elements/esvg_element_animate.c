@@ -105,7 +105,7 @@ static Edom_Tag * _esvg_element_animate_new(void)
 }
 /* The ender wrapper */
 #define _esvg_element_animate_delete NULL
-#include "generated/esvg_generated_element_animate.c"
+#include "esvg_generated_element_animate.c"
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/

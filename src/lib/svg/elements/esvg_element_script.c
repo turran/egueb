@@ -187,7 +187,7 @@ static void _esvg_element_script_content_script_type_get(Edom_Tag *t, const char
 /* The ender wrapper */
 #define _esvg_element_script_content_script_type_is_set NULL
 #define _esvg_element_script_delete NULL
-#include "generated/esvg_generated_element_script.c"
+#include "esvg_generated_element_script.c"
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/

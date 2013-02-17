@@ -36,7 +36,7 @@ static Ender_Property *ESVG_NUMBER_ANIMATED_ANIM;
 #define _esvg_number_value_set NULL
 #define _esvg_number_value_get NULL
 #define _esvg_number_value_is_set NULL
-#include "generated/esvg_generated_number.c"
+#include "esvg_generated_number.c"
 
 #define _esvg_number_animated_new NULL
 #define _esvg_number_animated_delete NULL
@@ -46,7 +46,7 @@ static Ender_Property *ESVG_NUMBER_ANIMATED_ANIM;
 #define _esvg_number_animated_anim_set NULL
 #define _esvg_number_animated_anim_get NULL
 #define _esvg_number_animated_anim_is_set NULL
-#include "generated/esvg_generated_number_animated.c"
+#include "esvg_generated_number_animated.c"
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/

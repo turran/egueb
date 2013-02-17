@@ -45,7 +45,7 @@ static Ender_Property *ESVG_COLOR_ANIMATED_ANIM;
 #define _esvg_color_b_set NULL
 #define _esvg_color_b_get NULL
 #define _esvg_color_b_is_set NULL
-#include "generated/esvg_generated_color.c"
+#include "esvg_generated_color.c"
 
 #define _esvg_color_animated_new NULL
 #define _esvg_color_animated_delete NULL
@@ -55,7 +55,7 @@ static Ender_Property *ESVG_COLOR_ANIMATED_ANIM;
 #define _esvg_color_animated_anim_set NULL
 #define _esvg_color_animated_anim_get NULL
 #define _esvg_color_animated_anim_is_set NULL
-#include "generated/esvg_generated_color_animated.c"
+#include "esvg_generated_color_animated.c"
 
 static unsigned char _esvg_c_to_h(char c)
 {

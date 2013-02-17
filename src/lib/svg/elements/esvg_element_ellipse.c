@@ -360,7 +360,7 @@ static void _esvg_element_ellipse_ry_get(Edom_Tag *t, Esvg_Length_Animated *ry)
 #define _esvg_element_ellipse_cy_is_set NULL
 #define _esvg_element_ellipse_rx_is_set NULL
 #define _esvg_element_ellipse_ry_is_set NULL
-#include "generated/esvg_generated_element_ellipse.c"
+#include "esvg_generated_element_ellipse.c"
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/

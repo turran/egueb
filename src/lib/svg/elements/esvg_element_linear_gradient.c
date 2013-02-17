@@ -463,7 +463,7 @@ static Eina_Bool _esvg_element_linear_gradient_y2_is_set(Edom_Tag *t)
 }
 /* The ender wrapper */
 #define _esvg_element_linear_gradient_delete NULL
-#include "generated/esvg_generated_element_linear_gradient.c"
+#include "esvg_generated_element_linear_gradient.c"
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/

@@ -37,7 +37,7 @@ static Ender_Property *ESVG_STRING_ANIMATED_ANIM;
 #define _esvg_string_animated_anim_set NULL
 #define _esvg_string_animated_anim_get NULL
 #define _esvg_string_animated_anim_is_set NULL
-#include "generated/esvg_generated_string_animated.c"
+#include "esvg_generated_string_animated.c"
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/

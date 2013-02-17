@@ -169,7 +169,7 @@ static void _esvg_element_stop_offset_get(Edom_Tag *t, Esvg_Length *offset)
 /* The ender wrapper  */
 #define _esvg_element_stop_delete NULL
 #define _esvg_element_stop_offset_is_set NULL
-#include "generated/esvg_generated_element_stop.c"
+#include "esvg_generated_element_stop.c"
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/

@@ -254,7 +254,7 @@ static void _esvg_element_polyline_point_add(Edom_Tag *t, Esvg_Point *p)
 #define _esvg_element_polyline_point_get NULL
 #define _esvg_element_polyline_point_clear NULL
 #define _esvg_element_polyline_point_remove NULL
-#include "generated/esvg_generated_element_polyline.c"
+#include "esvg_generated_element_polyline.c"
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/

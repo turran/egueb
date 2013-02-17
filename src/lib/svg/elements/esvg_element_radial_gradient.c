@@ -575,7 +575,7 @@ static Eina_Bool _esvg_element_radial_gradient_r_is_set(Edom_Tag *t)
 
 /* The ender wrapper */
 #define _esvg_element_radial_gradient_delete NULL
-#include "generated/esvg_generated_element_radial_gradient.c"
+#include "esvg_generated_element_radial_gradient.c"
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/

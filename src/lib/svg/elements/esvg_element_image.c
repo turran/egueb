@@ -524,7 +524,7 @@ static void _esvg_element_image_xlink_href_get(Edom_Tag *t, Esvg_String_Animated
 #define _esvg_element_image_width_is_set NULL
 #define _esvg_element_image_height_is_set NULL
 #define _esvg_element_image_xlink_href_is_set NULL
-#include "generated/esvg_generated_element_image.c"
+#include "esvg_generated_element_image.c"
 
 /*============================================================================*
  *                                 Global                                     *

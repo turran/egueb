@@ -28,6 +28,8 @@ bin_PROGRAMS =
 check_PROGRAMS =
 CLEANFILES =
 EXTRA_DIST =
+GENERATED_FLAGS = -x
+GENERATED_FILES =
 
 ### Libraries
 
@@ -41,7 +43,6 @@ endif
 
 if BUILD_ESVG
 include src/lib/svg/Makefile.mk
-include src/lib/svg/generated/Makefile.mk
 include src/lib/svg/elements/Makefile.mk
 include src/lib/svg/types/Makefile.mk
 include src/lib/svg/image_providers/Makefile.mk
@@ -77,6 +78,13 @@ if BUILD_ECSS
 include src/tests/css/Makefile.mk
 endif
 
+
+### The rule for the generated files
+CLEANFILES += $(GENERATED_FILES)
+BUILT_SOURCES = $(GENERATED_FILES)
+
+$(GENERATED_FILES): $(top_srcdir)/data/svg/esvg_private.ender
+	ender_generator $(GENERATED_FLAGS) $(value $(addsuffix _GFLAGS,$(basename $(notdir $@)))) $(top_srcdir)/data/svg/esvg_private.ender $(basename $(notdir $(subst esvg_generated_,,$@))) $@
 
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA =

@@ -1222,7 +1222,7 @@ static Ender_Element *_esvg_element_svg_element_get_by_id(Edom_Tag *t, const cha
 #define _esvg_element_svg_x_dpi_is_set NULL
 #define _esvg_element_svg_y_dpi_is_set NULL
 #define _esvg_element_svg_content_script_type_is_set NULL
-#include "generated/esvg_generated_element_svg.c"
+#include "esvg_generated_element_svg.c"
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/

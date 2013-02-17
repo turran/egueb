@@ -298,7 +298,7 @@ static void _esvg_element_text_y_get(Edom_Tag *t, Esvg_Animated_Coord *y)
 #define _esvg_element_text_delete NULL
 #define _esvg_element_text_x_is_set NULL
 #define _esvg_element_text_y_is_set NULL
-#include "generated/esvg_generated_element_text.c"
+#include "esvg_generated_element_text.c"
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/

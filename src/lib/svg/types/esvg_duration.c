@@ -39,7 +39,7 @@ static Ender_Property *ESVG_DURATION_ANIMATED_ANIM;
 #define _esvg_duration_clock_set NULL
 #define _esvg_duration_clock_get NULL
 #define _esvg_duration_clock_is_set NULL
-#include "generated/esvg_generated_duration.c"
+#include "esvg_generated_duration.c"
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/

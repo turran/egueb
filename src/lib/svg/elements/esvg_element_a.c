@@ -241,7 +241,7 @@ static void _esvg_element_a_xlink_href_get(Edom_Tag *t, Esvg_String_Animated *hr
 /* The ender wrapper */
 #define _esvg_element_a_xlink_href_is_set NULL
 #define _esvg_element_a_delete NULL
-#include "generated/esvg_generated_element_a.c"
+#include "esvg_generated_element_a.c"
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/

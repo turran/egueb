@@ -37,7 +37,7 @@ static Ender_Property *ESVG_BOOLEAN_ANIMATED_ANIM;
 #define _esvg_boolean_animated_anim_set NULL
 #define _esvg_boolean_animated_anim_get NULL
 #define _esvg_boolean_animated_anim_is_set NULL
-#include "generated/esvg_generated_boolean_animated.c"
+#include "esvg_generated_boolean_animated.c"
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/

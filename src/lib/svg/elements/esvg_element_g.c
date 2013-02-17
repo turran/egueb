@@ -241,7 +241,7 @@ static Edom_Tag * _esvg_element_g_new(void)
 }
 /* The ender wrapper */
 #define _esvg_element_g_delete NULL
-#include "generated/esvg_generated_element_g.c"
+#include "esvg_generated_element_g.c"
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/

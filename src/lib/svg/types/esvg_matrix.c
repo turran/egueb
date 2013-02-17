@@ -81,7 +81,7 @@ static void _esvg_matrix_f_get(Esvg_Matrix *thiz, double *v)
 #define _esvg_matrix_e_is_set NULL
 #define _esvg_matrix_f_set NULL
 #define _esvg_matrix_f_is_set NULL
-#include "generated/esvg_generated_matrix.c"
+#include "esvg_generated_matrix.c"
 
 #define _esvg_matrix_animated_new NULL
 #define _esvg_matrix_animated_delete NULL
@@ -91,7 +91,7 @@ static void _esvg_matrix_f_get(Esvg_Matrix *thiz, double *v)
 #define _esvg_matrix_animated_anim_set NULL
 #define _esvg_matrix_animated_anim_get NULL
 #define _esvg_matrix_animated_anim_is_set NULL
-#include "generated/esvg_generated_matrix_animated.c"
+#include "esvg_generated_matrix_animated.c"
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
