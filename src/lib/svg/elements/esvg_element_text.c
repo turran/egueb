@@ -170,8 +170,8 @@ static Eina_Bool _esvg_element_text_renderer_propagate(Edom_Tag *t,
 
 	thiz = _esvg_element_text_get(t);
 
-	enesim_renderer_text_base_size_set(thiz->r, (int)ctx->font_size);
-	enesim_renderer_text_base_max_ascent_get(thiz->r, &max);
+	enesim_renderer_text_span_size_set(thiz->r, (int)ctx->font_size);
+	enesim_renderer_text_span_max_ascent_get(thiz->r, &max);
 
 	enesim_renderer_origin_set(thiz->r, thiz->gx, thiz->gy - max);
 	enesim_renderer_color_set(thiz->r, rctx->fill_color);
@@ -239,7 +239,7 @@ static Edom_Tag * _esvg_element_text_new(void)
 	if (!thiz) return NULL;
 
 	r = enesim_renderer_text_span_new();
-	enesim_renderer_text_base_font_name_set(r, "/usr/share/fonts/truetype/freefont/FreeSans.ttf");
+	enesim_renderer_text_span_font_name_set(r, "/usr/share/fonts/truetype/freefont/FreeSans.ttf");
 	enesim_renderer_color_set(r, 0xff000000);
 	enesim_renderer_text_span_text_set(r, "Hello");
 	thiz->r = r;
