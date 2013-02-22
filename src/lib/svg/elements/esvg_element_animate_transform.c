@@ -396,7 +396,7 @@ static Eina_Bool _esvg_element_animate_transform_type_descriptor_get(Edom_Tag *t
 	Esvg_Element_Animate_Transform *thiz;
 
 	/* based on the property name get the correct descriptor */
-	if (strcmp(name, "esvg_animated_transform"))
+	if (strcmp(name, "SVGAnimatedMatrix"))
 		return EINA_FALSE;
 	/* check the type and use the correct generator */
 	thiz = _esvg_element_animate_transform_get(t);
