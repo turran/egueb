@@ -26,6 +26,7 @@
 #include "esvg_paint.h"
 #include "esvg_rect.h"
 #include "esvg_string.h"
+#include "esvg_path.h"
 
 #define ESVG_CLOCK_SECONDS (1000000000LL)
 #define ESVG_CLOCK_MSECONDS (1000000LL)
@@ -187,60 +188,6 @@ typedef struct _Esvg_Animated_Clip_Path
 	Esvg_Clip_Path base;
 	Esvg_Clip_Path anim;
 } Esvg_Animated_Clip_Path;
-
-typedef enum _Esvg_Element_Path_Command_Type
-{
-	ESVG_PATH_MOVE_TO,
-	ESVG_PATH_LINE_TO,
-	ESVG_PATH_HLINE_TO,
-	ESVG_PATH_VLINE_TO,
-	ESVG_PATH_CUBIC_TO,
-	ESVG_PATH_SCUBIC_TO,
-	ESVG_PATH_QUADRATIC_TO,
-	ESVG_PATH_SQUADRATIC_TO,
-	ESVG_PATH_ARC_TO,
-	ESVG_PATH_CLOSE,
-	ESVG_PATH_COMMAND_TYPES
-} Esvg_Element_Path_Command_Type;
-
-typedef struct _Esvg_Element_Path_Command
-{
-	Esvg_Element_Path_Command_Type type;
-	union {
-		struct {
-			double c;
-		} hline_to, vline_to;
-		struct {
-			double x;
-			double y;
-		} move_to, line_to, squadratic_to;
-		struct {
-			double ctrl_x0;
-			double ctrl_y0;
-			double ctrl_x1;
-			double ctrl_y1;
-			double x;
-			double y;
-		} cubic_to;
-		struct {
-			double ctrl_x;
-			double ctrl_y;
-			double x;
-			double y;
-		} scubic_to, quadratic_to;
-		struct {
-			double rx;
-			double ry;
-			double angle;
-			double large;
-			double sweep;
-			double x;
-			double y;
-		} arc_to;
- 	} data;
-	Eina_Bool relative;
-	Eina_Bool is_closed;
-} Esvg_Element_Path_Command;
 
 typedef struct _Esvg_Point
 {
@@ -435,7 +382,6 @@ EAPI Eina_Bool esvg_iri_string_from(const char *attr, Esvg_Uri_Descriptor *descr
 EAPI Eina_Bool esvg_uri_string_from(const char *attr, Esvg_Uri_Descriptor *descriptor, void *data);
 
 typedef void (*Esvg_Free_Cb)(void *data);
-typedef void (*Esvg_Command_Cb)(Esvg_Element_Path_Command *cmd, void *data);
 typedef void (*Esvg_Timing_Cb)(Esvg_Timing *t, void *data);
 typedef void (*Esvg_Points_Cb)(Esvg_Point *p, void *data);
 typedef void (*Esvg_List_Cb)(const char *item, void *data);
@@ -450,7 +396,6 @@ EAPI Eina_Bool esvg_parser_gradient_units_string_from(Esvg_Element_Gradient_Unit
 EAPI Eina_Bool esvg_parser_fill_rule_get(Esvg_Fill_Rule *rule, const char *attr);
 EAPI Eina_Bool esvg_parser_spread_method_get(Esvg_Spread_Method *smethod, const char *attr);
 
-EAPI Eina_Bool esvg_element_path_string_from(const char *value, Esvg_Command_Cb cb, void *data);
 EAPI Eina_Bool esvg_transformation_string_from(Enesim_Matrix *matrix, const char *attr);
 
 EAPI Esvg_Stroke_Line_Cap esvg_stroke_line_cap_string_from(const char *value);

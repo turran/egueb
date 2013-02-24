@@ -116,18 +116,7 @@ namespace "esvg" : 0 {
 		/*long "clock";*/
 	};
 
-	struct "esvg_path_vline_to" {
-		double "c";
-	};
-
-	union "esvg_path_command" {
-		esvg_path_simple_line "hline";
-		esvg_path_simple_line "vline";
-	};
-
-	struct "esvg_animated_path_command" {
-		[esvg_path_command] "base";
-		[esvg_path_command] "anim";
+	class "path_seg_list","SVGPathSegList" {
 	};
 
 	/* elements */
@@ -297,7 +286,7 @@ namespace "esvg" : 0 {
 	};
 
 	class "element_path","SVGPathElement" : "SVGRenderable" {
-		esvg_animated_path_command "d";
+		SVGPathSegList "d";
 	};
 
 	class "element_line","SVGLineElement" : "SVGRenderable" {

@@ -14,7 +14,8 @@ src/lib/svg/types/esvg_generated_paint_animated.c \
 src/lib/svg/types/esvg_generated_point.c \
 src/lib/svg/types/esvg_generated_rect.c \
 src/lib/svg/types/esvg_generated_rect_animated.c \
-src/lib/svg/types/esvg_generated_string_animated.c
+src/lib/svg/types/esvg_generated_string_animated.c \
+src/lib/svg/types/esvg_generated_path_seg_list.c
 
 esvg_generated_matrix_GFLAGS = -o
 esvg_generated_rect_GFLAGS = -o
@@ -27,6 +28,7 @@ src/lib/svg/types/esvg_matrix.h \
 src/lib/svg/types/esvg_number.h \
 src/lib/svg/types/esvg_paint.h \
 src/lib/svg/types/esvg_rect.h \
+src/lib/svg/types/esvg_path.h \
 src/lib/svg/types/esvg_string.h
 
 src_lib_svg_libesvg_la_SOURCES += \
@@ -37,6 +39,8 @@ src/lib/svg/types/esvg_length.c \
 src/lib/svg/types/esvg_matrix.c \
 src/lib/svg/types/esvg_number.c \
 src/lib/svg/types/esvg_paint.c \
+src/lib/svg/types/esvg_path.c \
+src/lib/svg/types/esvg_path_private.h \
 src/lib/svg/types/esvg_point.c \
 src/lib/svg/types/esvg_rect.c \
 src/lib/svg/types/esvg_string.c

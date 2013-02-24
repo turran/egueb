@@ -310,7 +310,7 @@ Eina_Bool svg_provider_init(void)
 	/* @todo
 	 * - Register svg specific errors
 	 */
-	if (!enesim_image_provider_register(&_provider, ENESIM_IMAGE_PROVIDER_PRIORITY_PRIMARY, "image/svg+xml"))
+	if (!enesim_image_provider_register(&_provider, ENESIM_PRIORITY_PRIMARY, "image/svg+xml"))
 		return EINA_FALSE;
 	if (!enesim_image_finder_register(&_finder))
 	{

@@ -22,7 +22,7 @@
 #include "esvg_private_main.h"
 #include "esvg_types.h"
 #include "esvg_private_attribute.h"
-
+#include "esvg_path_private.h"
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
@@ -142,99 +142,80 @@ static void _esvg_animate_string_interpolate(void *a, void *b, double m,
 /*----------------------------------------------------------------------------*
  *                   The path command type descriptor                         *
  *----------------------------------------------------------------------------*/
-static void _esvg_animate_path_command_get_cb(Esvg_Element_Path_Command *cmd, void *data)
-{
-	Esvg_Element_Path_Command *pcmd;
-	Eina_List **dst = data;
-
-	pcmd = calloc(1, sizeof(Esvg_Element_Path_Command));
-	*pcmd = *cmd;
-	*dst = eina_list_append(*dst, pcmd);
-}
-
 static void * _esvg_animate_path_command_value_new(void)
 {
-	return NULL;
+	Esvg_Path_Seg_List *sl;
+
+	sl = esvg_path_seg_list_new();
+	return sl;
 }
 
 static Eina_Bool _esvg_animate_path_command_value_get(const char *attr, void **value)
 {
-	esvg_element_path_string_from(attr, _esvg_animate_path_command_get_cb, value);
-	return EINA_TRUE;
+	Esvg_Path_Seg_List *sl = *value;
+	return esvg_path_seg_list_string_from(sl, attr);
 }
 
 static void _esvg_animate_path_command_value_free(void *d)
 {
-	Esvg_Element_Path_Command *pcmd;
-	Eina_List *l = d;
-
-	EINA_LIST_FREE(l, pcmd)
-		free(pcmd);
+	esvg_path_seg_list_unref(d);
 }
 
 static void * _esvg_animate_path_command_destination_new(void)
 {
-	Esvg_Animated_List *v;
+	Esvg_Path_Seg_List *sl;
 
-	v = calloc(1, sizeof(Esvg_Animated_List));
-	return v;
+	sl = esvg_path_seg_list_new();
+	return sl;
 }
 
 static void _esvg_animate_path_command_destination_free(void *destination, Eina_Bool deep)
 {
-	Esvg_Animated_List *d = destination;
-	Esvg_Element_Path_Command *cmd;
-
-	if (deep)
-	{
-		EINA_LIST_FREE (d->base, cmd)
-			free(cmd);
-	}
-	free(d);
+	esvg_path_seg_list_unref(destination);
 }
 
 static void _esvg_animate_path_command_destination_keep(void *destination)
 {
-	Esvg_Animated_List *d = destination;
-
 	/* TODO */
 	printf("TODO!\n");
 }
 
 static void _esvg_animate_path_command_destination_value_from(void *destination, void *value)
 {
-	Esvg_Animated_List *d = destination;
+	Esvg_Path_Seg_List *dst = destination;
+	Esvg_Path_Seg_List *v = value;
 	Esvg_Element_Path_Command *cmd;
-	Eina_List *v = value;
 	Eina_List *l;
 
-	EINA_LIST_FOREACH (v, l, cmd)
+	EINA_LIST_FOREACH (v->commands, l, cmd)
 	{
 		Esvg_Element_Path_Command *ncmd;
 
 		ncmd = calloc(1, sizeof(Esvg_Element_Path_Command));
 		*ncmd = *cmd;
-		d->base = eina_list_append(d->base, ncmd);
+		esvg_path_seg_list_add(dst, ncmd);
 	}
 }
 
 static void _esvg_animate_path_command_destination_value_to(void *destination, void **value)
 {
-	Esvg_Animated_List *d = destination;
-	*value = d->base;
+	printf("TODO!\n");
 }
 
 static void _esvg_animate_path_command_interpolate(void *a, void *b, double m,
 		void *add, void *acc, int mul, void *res)
 {
-	Esvg_Animated_List *r = res;
+	Esvg_Path_Seg_List *r = res;
+	Esvg_Path_Seg_List *pa = a;
+	Esvg_Path_Seg_List *pb = b;
 	Esvg_Element_Path_Command *ca;
-	Eina_List *va = a;
-	Eina_List *vb = b;
+	Eina_List *va = pa->commands;
+	Eina_List *vb = pb->commands;
 	Eina_List *l1, *l2, *l3;
 	
 	l2 = vb;
-	l3 = r->base;
+	l3 = r->commands;
+
 	EINA_LIST_FOREACH (va, l1, ca)
 	{
 		Esvg_Element_Path_Command *cb = l2->data;
@@ -288,12 +269,16 @@ static void _esvg_animate_path_command_interpolate(void *a, void *b, double m,
 			etch_interpolate_double(ca->data.arc_to.x, cb->data.arc_to.x, m, &cr->data.arc_to.x);
 			etch_interpolate_double(ca->data.arc_to.y, cb->data.arc_to.y, m, &cr->data.arc_to.y);
 			break;
+
 			case ESVG_PATH_CLOSE:
+			default:
 			break;
+
 		}
 		l2 = l2->next;
 		l3 = l3->next;
 	}
+	esvg_path_seg_list_ref(r);
 }
 /*============================================================================*
  *                                 Global                                     *
@@ -350,7 +335,7 @@ Esvg_Attribute_Animated_Descriptor * esvg_attribute_animated_descriptor_get(cons
 	{
 		d = &esvg_attribute_animated_string_descriptor;
 	}
-	else if (!strcmp(name, "SVGAnimatedPathCommand"))
+	else if (!strcmp(name, "SVGPathSegList"))
 	{
 		d = &esvg_attribute_animated_path_command_descriptor;
 	}

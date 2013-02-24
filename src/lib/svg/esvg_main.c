@@ -76,6 +76,7 @@ static void _register_enders(void)
 	esvg_rect_init();
 	esvg_matrix_init();
 	esvg_string_init();
+	esvg_path_init();
 	/* now the abstracts */
 	esvg_element_init();
 	esvg_referenceable_init();
