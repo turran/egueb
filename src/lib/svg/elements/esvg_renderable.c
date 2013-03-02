@@ -226,7 +226,7 @@ static Esvg_Element_Setup_Return _esvg_renderable_propagate(Esvg_Renderable *thi
 		const Esvg_Element_Context *parent_context,
 		Esvg_Element_Context *context,
 		Esvg_Attribute_Presentation *attr,
-		Enesim_Error **error)
+		Enesim_Log **error)
 {
 	Esvg_Element_Setup_Return ret;
 	Eina_Bool visible;
@@ -349,7 +349,7 @@ static Esvg_Element_Setup_Return _esvg_renderable_setup(Edom_Tag *t,
 		const Esvg_Element_Context *parent_context,
 		Esvg_Element_Context *context,
 		Esvg_Attribute_Presentation *attr,
-		Enesim_Error **error)
+		Enesim_Log **error)
 {
 	Esvg_Renderable *thiz;
 	Esvg_Element_Setup_Return ret;

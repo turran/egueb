@@ -203,7 +203,7 @@ static Eina_Bool _esvg_element_set_attribute_get(Edom_Tag *tag, const char *attr
 static Eina_Bool _esvg_element_set_setup(Edom_Tag *t,
 		Esvg_Context *c,
 		Esvg_Animation_Context *actx,
-		Enesim_Error **error)
+		Enesim_Log **error)
 {
 	Esvg_Element_Set *thiz;
 	Esvg_Attribute_Animated_Descriptor *d;

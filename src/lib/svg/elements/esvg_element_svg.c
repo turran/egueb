@@ -214,7 +214,7 @@ static Eina_Bool _esvg_element_svg_relative_to_absolute(Esvg_Element_Svg *thiz, 
 static Eina_Bool _esvg_element_svg_setup_pre(Edom_Tag *t,
 		Edom_Tag *child,
 		Esvg_Context *c,
-		Enesim_Error **error,
+		Enesim_Log **error,
 		void *data)
 {
 	Esvg_Type type;
@@ -239,7 +239,7 @@ static Eina_Bool _esvg_element_svg_setup_pre(Edom_Tag *t,
 static Eina_Bool _esvg_element_svg_setup_post(Edom_Tag *t,
 		Edom_Tag *child,
 		Esvg_Context *c,
-		Enesim_Error **error,
+		Enesim_Log **error,
 		void *data)
 {
 	Esvg_Type type;
@@ -307,7 +307,7 @@ static inline void _esvg_element_svg_viewbox_apply(Esvg_Element_Svg *thiz, Esvg_
 /* FIXME fix the return value */
 static void _esvg_element_svg_element_changed_setup(Esvg_Element_Svg *thiz,
 		Esvg_Context *c,
-		Enesim_Error **error)
+		Enesim_Log **error)
 {
 	Ender_Element *e;
 	Eina_List *l, *l_next;
@@ -782,7 +782,7 @@ static Esvg_Element_Setup_Return _esvg_element_svg_setup(Edom_Tag *t,
 		Esvg_Context *c,
 		Esvg_Element_Context *ctx,
 		Esvg_Attribute_Presentation *attr,
-		Enesim_Error **error)
+		Enesim_Log **error)
 {
 	Esvg_Element_Svg *thiz;
 	Edom_Tag *style;
@@ -1904,7 +1904,7 @@ EAPI void esvg_element_svg_base_font_size_set(Ender_Element *e, double base_font
  * in case of a referenceable for example, it will do
  * also the propagate
  */
-EAPI Eina_Bool esvg_element_svg_setup(Ender_Element *e, Enesim_Error **error)
+EAPI Eina_Bool esvg_element_svg_setup(Ender_Element *e, Enesim_Log **error)
 {
 	Esvg_Context context;
 	Edom_Tag *t;
@@ -1995,7 +1995,7 @@ EAPI void esvg_element_svg_y_dpi_get(Ender_Element *e, double *y_dpi)
  * FIXME: To be fixed
  */
 EAPI Eina_Bool esvg_element_svg_draw(Ender_Element *e, Enesim_Surface *s,
-		Eina_Rectangle *clip, int x, int y, Enesim_Error **error)
+		Eina_Rectangle *clip, int x, int y, Enesim_Log **error)
 {
 	Edom_Tag *t;
 	Enesim_Renderer *r = NULL;
@@ -2013,7 +2013,7 @@ EAPI Eina_Bool esvg_element_svg_draw(Ender_Element *e, Enesim_Surface *s,
  * FIXME: To be fixed
  */
 EAPI Eina_Bool esvg_element_svg_draw_list(Ender_Element *e, Enesim_Surface *s,
-		Eina_List *clips, int x, int y, Enesim_Error **error)
+		Eina_List *clips, int x, int y, Enesim_Log **error)
 {
 	Edom_Tag *t;
 	Enesim_Renderer *r = NULL;

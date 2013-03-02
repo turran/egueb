@@ -830,7 +830,7 @@ static void _esvg_animate_base_free(Edom_Tag *t)
 static Eina_Bool _esvg_animate_base_setup(Edom_Tag *t,
 		Esvg_Context *c,
 		Esvg_Animation_Context *actx,
-		Enesim_Error **error)
+		Enesim_Log **error)
 {
 	Esvg_Animate_Base *thiz;
 	Esvg_Attribute_Animated_Descriptor *d;

@@ -23,7 +23,7 @@ typedef void (*Esvg_Animation_Disable)(Edom_Tag *t);
 typedef Eina_Bool (*Esvg_Animation_Setup)(Edom_Tag *t,
 		Esvg_Context *c,
 		Esvg_Animation_Context *rctx,
-		Enesim_Error **error);
+		Enesim_Log **error);
 
 /* TODO add virtual functions to enable/disable the animation */
 typedef struct _Esvg_Animation_Descriptor {

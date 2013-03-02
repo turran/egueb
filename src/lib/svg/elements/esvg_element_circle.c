@@ -131,7 +131,7 @@ static Esvg_Element_Setup_Return _esvg_element_circle_setup(Edom_Tag *t,
 		Esvg_Context *c,
 		Esvg_Element_Context *ctx,
 		Esvg_Attribute_Presentation *attr,
-		Enesim_Error **error)
+		Enesim_Log **error)
 {
 	Esvg_Element_Circle *thiz;
 	Esvg_Length lcx, lcy;
@@ -162,7 +162,7 @@ static Eina_Bool _esvg_element_circle_renderer_propagate(Edom_Tag *t,
 		const Esvg_Element_Context *ctx,
 		const Esvg_Attribute_Presentation *attr,
 		Esvg_Renderable_Context *rctx,
-		Enesim_Error **error)
+		Enesim_Log **error)
 {
 	Esvg_Element_Circle *thiz;
 

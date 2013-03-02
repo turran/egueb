@@ -202,7 +202,7 @@ static Eina_Bool _esvg_element_linear_gradient_propagate(Edom_Tag *t,
 		const Esvg_Attribute_Presentation *attr,
 		Esvg_Element_Gradient_Context *gctx,
 		Enesim_Renderer *r,
-		Enesim_Error **error)
+		Enesim_Log **error)
 {
 	Esvg_Element_Linear_Gradient *thiz;
 	Esvg_Element_Gradient_Units gu;

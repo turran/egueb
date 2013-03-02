@@ -87,15 +87,15 @@ EAPI const char * esvg_element_svg_base_dir_get(Ender_Element *e);
 EAPI double esvg_element_svg_base_font_size_get(Ender_Element *e);
 EAPI void esvg_element_svg_base_font_size_set(Ender_Element *e, double base_font_size);
 
-EAPI Eina_Bool esvg_element_svg_setup(Ender_Element *e, Enesim_Error **error);
+EAPI Eina_Bool esvg_element_svg_setup(Ender_Element *e, Enesim_Log **error);
 
 typedef Eina_Bool (*Esvg_Element_Svg_Damage_Cb)(Ender_Element *e, Eina_Rectangle *damage,
 		void *data);
 EAPI void esvg_element_svg_damages_get(Ender_Element *e, Esvg_Element_Svg_Damage_Cb cb, void *data);
 EAPI Eina_Bool esvg_element_svg_draw(Ender_Element *e, Enesim_Surface *s,
-		Eina_Rectangle *clip, int x, int y, Enesim_Error **error);
+		Eina_Rectangle *clip, int x, int y, Enesim_Log **error);
 EAPI Eina_Bool esvg_element_svg_draw_list(Ender_Element *e, Enesim_Surface *s,
-		Eina_List *clips, int x, int y, Enesim_Error **error);
+		Eina_List *clips, int x, int y, Enesim_Log **error);
 
 #ifdef __cplusplus
 }

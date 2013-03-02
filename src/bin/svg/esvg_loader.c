@@ -58,7 +58,7 @@ int main(int argc, char *argv[])
 	Enesim_Renderer *background;
 	Enesim_Renderer *r;
 	Enesim_Surface *s;
-	Enesim_Error *err = NULL;
+	Enesim_Log *err = NULL;
 	Eina_Bool ret;
 	char tmp[PATH_MAX];
 	char *base_dir;
@@ -142,7 +142,7 @@ int main(int argc, char *argv[])
 	ret = enesim_renderer_draw(compound, s, NULL, 0, 0, &err);
 	if (!ret || err)
 	{
-		enesim_error_dump(err);
+		enesim_log_dump(err);
 	}
 	enesim_image_file_save(argv[2], s, NULL);
 

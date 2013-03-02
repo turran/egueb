@@ -160,7 +160,7 @@ static Eina_Error _enesim_image_svg_load(Enesim_Image_Data *data, Enesim_Buffer 
 {
 	Ender_Element *e;
 	Enesim_Surface *s;
-	Enesim_Error *err = NULL;
+	Enesim_Log *err = NULL;
 	Eina_Bool r;
 	Eina_Bool mmaped = EINA_TRUE;
 	Eina_Error ret = 0;
@@ -231,14 +231,14 @@ static Eina_Error _enesim_image_svg_load(Enesim_Image_Data *data, Enesim_Buffer 
 	}
 	if (!esvg_element_svg_setup(e, &err))
 	{
-		enesim_error_dump(err);
+		enesim_log_dump(err);
 		ret = ENESIM_IMAGE_ERROR_LOADING;
 		goto err_setup;
 	}
 	if (!esvg_element_svg_draw(e, s, NULL, 0, 0, NULL))
 	{
 		ret = ENESIM_IMAGE_ERROR_LOADING;
-		enesim_error_dump(err);
+		enesim_log_dump(err);
 	}
 
 err_setup:

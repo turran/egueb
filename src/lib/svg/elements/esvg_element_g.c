@@ -56,7 +56,7 @@ static Esvg_Element_G * _esvg_element_g_get(Edom_Tag *t)
 static Eina_Bool _esvg_element_g_setup_post(Edom_Tag *t,
 		Edom_Tag *child,
 		Esvg_Context *c,
-		Enesim_Error **error,
+		Enesim_Log **error,
 		void *data)
 {
 	Esvg_Type type;
@@ -160,7 +160,7 @@ static Esvg_Element_Setup_Return _esvg_element_g_setup(Edom_Tag *t,
 		Esvg_Context *c,
 		Esvg_Element_Context *ctx,
 		Esvg_Attribute_Presentation *attr,
-		Enesim_Error **error)
+		Enesim_Log **error)
 {
 	Esvg_Element_G *thiz;
 	Esvg_Element_Setup_Return ret;
@@ -196,7 +196,7 @@ static Eina_Bool _esvg_element_g_renderer_propagate(Edom_Tag *t,
 		const Esvg_Element_Context *ctx,
 		const Esvg_Attribute_Presentation *attr,
 		Esvg_Renderable_Context *rctx,
-		Enesim_Error **error)
+		Enesim_Log **error)
 {
 	Esvg_Element_G *thiz;
 

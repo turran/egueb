@@ -7,14 +7,14 @@ typedef Esvg_Element_Setup_Return (*Esvg_Renderable_Setup)(Edom_Tag *t,
 		Esvg_Context *c,
 		Esvg_Element_Context *ctx,
 		Esvg_Attribute_Presentation *attr,
-		Enesim_Error **error);
+		Enesim_Log **error);
 
 typedef Eina_Bool (*Esvg_Renderable_Renderer_Propagate)(Edom_Tag *t,
 		Esvg_Context *c,
 		const Esvg_Element_Context *ctx,
 		const Esvg_Attribute_Presentation *attr,
 		Esvg_Renderable_Context *rctx,
-		Enesim_Error **error);
+		Enesim_Log **error);
 
 /* this function should set every coordinate/length of the renderable
  * and the bounds?
@@ -22,7 +22,7 @@ typedef Eina_Bool (*Esvg_Renderable_Renderer_Propagate)(Edom_Tag *t,
 typedef Eina_Bool (*Esvg_Renderable_Geometry_Set)(Edom_Tag *t,
 		Esvg_Context *c,
 		Esvg_Element_Context *ctx,
-		Enesim_Error **error);
+		Enesim_Log **error);
 
 typedef struct _Esvg_Renderable_Descriptor {
 	/* the tag interface */

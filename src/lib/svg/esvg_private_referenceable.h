@@ -16,14 +16,14 @@ typedef Esvg_Element_Setup_Return (*Esvg_Referenceable_Setup)(Edom_Tag *t,
 		Esvg_Context *c,
 		Esvg_Element_Context *ctx,
 		Esvg_Attribute_Presentation *attr,
-		Enesim_Error **error);
+		Enesim_Log **error);
 
 typedef Eina_Bool (*Esvg_Referenceable_Propagate)(Edom_Tag *t,
 		Esvg_Context *c,
 		const Esvg_Element_Context *parent_ctx,
 		const Esvg_Attribute_Presentation *attr,
 		void *data,
-		Enesim_Error **error);
+		Enesim_Log **error);
 
 typedef void (*Esvg_Referenceable_Cleanup)(Edom_Tag *t);
 
@@ -61,7 +61,7 @@ void esvg_referenceable_reference_remove(Edom_Tag *t, Esvg_Referenceable_Referen
 void esvg_referenceable_reference_foreach(Edom_Tag *t, Esvg_Referenceable_Cb cb, void *data);
 void esvg_referenceable_reference_propagate(Esvg_Referenceable_Reference *rr,
 		Esvg_Context *c,
-		Enesim_Error **error);
+		Enesim_Log **error);
 /* internal functions */
 Eina_Bool esvg_is_referenceable_internal(Edom_Tag *t);
 /* generated function */

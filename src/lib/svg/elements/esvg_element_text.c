@@ -139,7 +139,7 @@ static Esvg_Element_Setup_Return _esvg_element_text_setup(Edom_Tag *t,
 		Esvg_Context *c,
 		Esvg_Element_Context *ctx,
 		Esvg_Attribute_Presentation *attr,
-		Enesim_Error **error)
+		Enesim_Log **error)
 {
 	Esvg_Element_Text *thiz;
 	Esvg_Length lx, ly;
@@ -162,7 +162,7 @@ static Eina_Bool _esvg_element_text_renderer_propagate(Edom_Tag *t,
 		const Esvg_Element_Context *ctx,
 		const Esvg_Attribute_Presentation *attr,
 		Esvg_Renderable_Context *rctx,
-		Enesim_Error **error)
+		Enesim_Log **error)
 {
 	Esvg_Element_Text *thiz;
 	Enesim_Matrix inv;

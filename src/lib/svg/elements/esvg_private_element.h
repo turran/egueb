@@ -46,11 +46,11 @@ typedef Esvg_Element_Setup_Return (*Esvg_Element_Setup)(Edom_Tag *t,
 		const Esvg_Element_Context *parent_ctx,
 		Esvg_Element_Context *ctx,
 		Esvg_Attribute_Presentation *attr,
-		Enesim_Error **error);
+		Enesim_Log **error);
 typedef Eina_Bool (*Esvg_Element_Setup_Interceptor)(Edom_Tag *t,
 		Edom_Tag *child,
 		Esvg_Context *c,
-		Enesim_Error **error,
+		Enesim_Log **error,
 		void *data);
 typedef struct _Esvg_Element_Descriptor {
 	/* the tag interface */
@@ -92,7 +92,7 @@ Esvg_Element_Setup_Return esvg_element_setup_rel(Edom_Tag *t,
 		Esvg_Context *c,
 		const Esvg_Element_Context *rel_state,
 		const Esvg_Attribute_Presentation *rel_attr,
-		Enesim_Error **error);
+		Enesim_Log **error);
 Eina_Bool esvg_element_attribute_animation_add(Edom_Tag *t, const char *attr, int *index);
 void esvg_element_attribute_animation_remove(Edom_Tag *t, const char *attr);
 /* internal functions */
@@ -102,10 +102,10 @@ Eina_Bool esvg_is_element_internal(Edom_Tag *t);
 void esvg_element_internal_topmost_get(Edom_Tag *t, Ender_Element **e);
 Esvg_Element_Setup_Return esvg_element_internal_setup(Edom_Tag *t,
 		Esvg_Context *c,
-		Enesim_Error **error);
+		Enesim_Log **error);
 Eina_Bool esvg_element_internal_child_setup(Edom_Tag *t,
 		Esvg_Context *c,
-		Enesim_Error **error,
+		Enesim_Log **error,
 		Esvg_Element_Setup_Interceptor pre,
 		Esvg_Element_Setup_Interceptor post,
 		void *data);

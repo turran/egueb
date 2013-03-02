@@ -104,7 +104,7 @@ static Esvg_Element_Setup_Return _esvg_element_script_setup(Edom_Tag *t,
 		const Esvg_Element_Context *parent_context,
 		Esvg_Element_Context *context,
 		Esvg_Attribute_Presentation *attr,
-		Enesim_Error **error)
+		Enesim_Log **error)
 {
 	Esvg_Element_Script *thiz;
 	Ender_Element *topmost;

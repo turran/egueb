@@ -299,7 +299,7 @@ static Esvg_Element_Setup_Return _esvg_element_gradient_setup(Edom_Tag *t,
 		Esvg_Context *c,
 		Esvg_Element_Context *ctx,
 		Esvg_Attribute_Presentation *attr,
-		Enesim_Error **error)
+		Enesim_Log **error)
 {
 	Esvg_Element_Gradient *thiz;
 	Eina_Bool child_ret;
@@ -399,7 +399,7 @@ static Eina_Bool _esvg_element_gradient_propagate(Edom_Tag *t,
 		const Esvg_Element_Context *ctx,
 		const Esvg_Attribute_Presentation *attr,
 		void *data,
-		Enesim_Error **error)
+		Enesim_Log **error)
 {
 	Esvg_Element_Gradient *thiz;
 	Esvg_Element_Gradient_Context gctx;

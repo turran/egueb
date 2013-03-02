@@ -171,7 +171,7 @@ static Esvg_Element_Setup_Return _esvg_element_use_setup(Edom_Tag *t,
 		Esvg_Context *c,
 		Esvg_Element_Context *ctx,
 		Esvg_Attribute_Presentation *attr,
-		Enesim_Error **error)
+		Enesim_Log **error)
 {
 	Esvg_Element_Use *thiz;
 	Ender_Element *topmost;

@@ -99,7 +99,7 @@ typedef struct _Esvg_Element_Descriptor_Internal
 typedef struct _Esvg_Element_Setup_Data
 {
 	Esvg_Context *c;
-	Enesim_Error **error;
+	Enesim_Log **error;
 	Esvg_Element_Setup_Interceptor pre;
 	Esvg_Element_Setup_Interceptor post;
 	Eina_Bool ret;
@@ -1807,7 +1807,7 @@ void esvg_element_internal_topmost_get(Edom_Tag *t, Ender_Element **e)
 /* FIXME what do we do here? return bool or the setup return? */
 Eina_Bool esvg_element_internal_child_setup(Edom_Tag *t,
 		Esvg_Context *c,
-		Enesim_Error **error,
+		Enesim_Log **error,
 		Esvg_Element_Setup_Interceptor pre,
 		Esvg_Element_Setup_Interceptor post,
 		void *data)
@@ -1829,7 +1829,7 @@ Esvg_Element_Setup_Return esvg_element_setup_rel(Edom_Tag *t,
 		Esvg_Context *c,
 		const Esvg_Element_Context *rel_state,
 		const Esvg_Attribute_Presentation *rel_attr,
-		Enesim_Error **error)
+		Enesim_Log **error)
 {
 	Esvg_Element *thiz;
 	Esvg_Element_Setup_Return ret;
@@ -1912,7 +1912,7 @@ Esvg_Element_Setup_Return esvg_element_setup_rel(Edom_Tag *t,
 
 Esvg_Element_Setup_Return esvg_element_internal_setup(Edom_Tag *t,
 		Esvg_Context *c,
-		Enesim_Error **error)
+		Enesim_Log **error)
 {
 	Edom_Tag *parent_t;
 	Esvg_Element_Context *parent_state = NULL;

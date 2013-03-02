@@ -222,7 +222,7 @@ static Esvg_Element_Setup_Return _esvg_element_clip_path_setup(Edom_Tag *e,
 		Esvg_Context *c,
 		Esvg_Element_Context *state,
 		Esvg_Attribute_Presentation *attr,
-		Enesim_Error **error)
+		Enesim_Log **error)
 {
 	Esvg_Element_Clip_Path *thiz;
 
@@ -291,7 +291,7 @@ static Eina_Bool _esvg_element_clip_path_reference_propagate(Edom_Tag *t,
 		const Esvg_Element_Context *ctx,
 		const Esvg_Attribute_Presentation *attr,
 		void *user_data,
-		Enesim_Error **error)
+		Enesim_Log **error)
 {
 	Esvg_Element_Context clone_ctx;
 	Esvg_Clip_Path_Referenceable_Data *data = user_data;

@@ -13,7 +13,7 @@ typedef Eina_Bool (*Esvg_Element_Gradient_Propagate)(Edom_Tag *t,
 		const Esvg_Attribute_Presentation *attr,
 		Esvg_Element_Gradient_Context *gctx,
 		Enesim_Renderer *r,
-		Enesim_Error **error);
+		Enesim_Log **error);
 
 typedef struct _Esvg_Element_Gradient_Descriptor {
 	/* the tag interface */
