@@ -1,3 +1,7 @@
+SMIL
+====
++ We need to move the common animation code into smil namespace
+
 EDOM
 ====
 + The context concept is working correctly but the logic of what tag to accept or tag
