@@ -86,6 +86,30 @@ BUILT_SOURCES = $(GENERATED_FILES)
 $(GENERATED_FILES): $(top_srcdir)/data/svg/esvg_private.ender
 	ender_generator $(GENERATED_FLAGS) $(value $(addsuffix _GFLAGS,$(basename $(notdir $@)))) $(top_srcdir)/data/svg/esvg_private.ender $(basename $(notdir $(subst esvg_generated_,,$@))) $@
 
+sed_process = \
+$(SED) \
+-e 's,@VERSION\@,$(VERSION),g' \
+-e 's,@VMAJ\@,$(VMAJ),g' \
+-e 's,@prefix\@,$(prefix),g' \
+-e 's,@exec_prefix\@,$(exec_prefix),g' \
+-e 's,@libdir\@,$(libdir),g' \
+-e 's,@includedir\@,$(includedir),g' \
+-e 's,@pkgincludedir\@,$(pkgincludedir),g' \
+-e 's,@edom_requirements\@,$(edom_requirements),g' \
+-e 's,@ecss_requirements\@,$(ecss_requirements),g' \
+-e 's,@esvg_requirements\@,$(esvg_requirements),g' \
+-e 's,@build_opencl\@,$(build_opencl),g' \
+-e 's,@build_opengl\@,$(build_opengl),g' \
+< $< > $@ || rm $@
+
+pc_verbose = $(pc_verbose_@AM_V@)
+pc_verbose_ = $(pc_verbose_@AM_DEFAULT_V@)
+pc_verbose_0 = @echo "  PC      " $@;
+
+%.pc: %.pc.in Makefile
+	@rm -f $@
+	$(pc_verbose)$(sed_process)
+
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA =
 

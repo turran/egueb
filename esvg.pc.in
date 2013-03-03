@@ -4,10 +4,11 @@ libdir=@libdir@
 includedir=@includedir@
 datarootdir=@datarootdir@
 datadir=@datadir@/@PACKAGE@
+pkgincludedir=@pkgincludedir@-@VMAJ@
 
 Name: ESVG
 Description: ESVG
-@pkgconfig_requires_private@: edom ecss @esvg_requirements@
+Requires.private: edom ecss @esvg_requirements@
 Version: @VERSION@
 Libs: -L${libdir} -lesvg
-Cflags: -I${includedir} -I${includedir}/esvg
+Cflags: -I${pkgincludedir}/svg -I${pkgincludedir}/dom -I${pkgincludedir}/css

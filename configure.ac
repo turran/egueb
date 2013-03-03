@@ -33,6 +33,8 @@ AC_DEFINE_UNQUOTED([VERSION_MAJOR], [v_maj], [Major version])
 AC_DEFINE_UNQUOTED([VERSION_MINOR], [v_min], [Minor version])
 AC_DEFINE_UNQUOTED([VERSION_MICRO], [v_mic], [Micro version])
 
+VMAJ=v_maj
+AC_SUBST([VMAJ])
 
 ### Needed information
 
@@ -205,9 +207,6 @@ AC_C_BIGENDIAN
 
 AC_CONFIG_FILES([
 Makefile
-esvg.pc
-ecss.pc
-edom.pc
 ])
 
 AC_OUTPUT

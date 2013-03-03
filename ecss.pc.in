@@ -4,10 +4,11 @@ libdir=@libdir@
 includedir=@includedir@
 datarootdir=@datarootdir@
 datadir=@datadir@/@PACKAGE@
+pkgincludedir=@pkgincludedir@-@VMAJ@
 
 Name: ECSS
 Description: ECSS
-@pkgconfig_requires_private@: eina
+Requires.private: eina
 Version: @VERSION@
 Libs: -L${libdir} -lecss
-Cflags: -I${includedir}
+Cflags: -I${pkgincludedir}/css
