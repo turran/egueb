@@ -22,7 +22,7 @@
 
 #include <Eina.h>
 
-#include "Edom.h"
+#include "Egueb_Dom.h"
 /* TODO
  * + Add a function to iterate over the childs
  * + Add a descriptor function to iterate over the attributes

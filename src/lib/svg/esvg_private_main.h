@@ -28,7 +28,7 @@
 #include <Ecss.h>
 #include <Enesim.h>
 #include <Ender.h>
-#include <Edom.h>
+#include <Egueb_Dom.h>
 #include <Etch.h>
 
 #ifdef EAPI

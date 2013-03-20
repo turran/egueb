@@ -22,8 +22,8 @@
 
 #include <ctype.h> /* for isspace() */
 
-#include "Edom.h"
-#include "edom_private.h"
+#include "Egueb_Dom.h"
+#include "egueb_dom_private.h"
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/

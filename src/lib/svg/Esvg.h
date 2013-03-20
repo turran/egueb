@@ -19,7 +19,7 @@
 #define _ESVG_H
 
 #include <Eina.h>
-#include <Edom.h>
+#include <Egueb_Dom.h>
 #include <Enesim.h>
 #include <Ender.h>
 
