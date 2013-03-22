@@ -50,6 +50,8 @@
 extern "C" {
 #endif
 
+#include "egueb_dom_main.h"
+
 typedef struct _Edom_Parser Edom_Parser;
 typedef struct _Edom_Tag Edom_Tag;
 
@@ -72,9 +74,6 @@ typedef struct _Edom_Parser_Descriptor
 	Edom_Parser_Tag_Cdata_Set tag_cdata_set;
 	Edom_Parser_Tag_Text_Set tag_text_set;
 } Edom_Parser_Descriptor;
-
-EAPI void edom_init(void);
-EAPI void edom_shutdown(void);
 
 EAPI Edom_Parser * edom_parser_new(Edom_Parser_Descriptor *descriptor, void *data);
 EAPI void edom_parser_delete(Edom_Parser *thiz);

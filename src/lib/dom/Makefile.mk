@@ -2,7 +2,9 @@
 lib_LTLIBRARIES += src/lib/dom/libedom.la
 
 installed_domheadersdir = $(pkgincludedir)-@VMAJ@/dom
-dist_installed_domheaders_DATA = src/lib/dom/Egueb_Dom.h
+dist_installed_domheaders_DATA = \
+src/lib/dom/Egueb_Dom.h \
+src/lib/dom/egueb_dom_main.h
 
 src_lib_dom_libedom_la_SOURCES = \
 src/lib/dom/egueb_dom_main.c \

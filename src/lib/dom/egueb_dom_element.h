@@ -16,16 +16,20 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _EGUEB_DOM_STRING_H_
-#define _EGUEB_DOM_STRING_H_
+#ifndef _EGUEB_DOM_ELEMENT_H_
+#ifndef _EGUEB_DOM_ELEMENT_H_
 
-typedef struct _Egueb_Dom_String Egueb_Dom_String;
+typedef void (*Egueb_Dom_Element_Klass_Init)(Egueb_Dom_Node_Klass *klass);
 
-EAPI Egueb_Dom_String * egueb_dom_string_new(const char *str);
-EAPI Egueb_Dom_String * egueb_dom_string_new_with_length(const char *str, int len);
-EAPI Egueb_Dom_String * egueb_dom_string_steal(char *str);
-EAPI Egueb_Dom_String * egueb_dom_string_ref(Egueb_Dom_String *thiz);
-EAPI void egueb_dom_string_unref(Egueb_Dom_String *thiz);
-const char * egueb_dom_string_string_get(Egueb_Dom_String *thiz);
+typedef struct _Egueb_Dom_Element_Klass
+{
+	/* some specific class functions? */
+} Egueb_Dom_Element_Klass;
+
+typedef struct _Egueb_Dom_Element_Descriptor Egueb_Dom_Element_Descriptor;
+
+EAPI Egueb_Dom_Element_Descriptor * egueb_dom_element_descriptor_get(void);
+EAPI Egueb_Dom_Element_Descriptor * egueb_dom_element_descriptor_new(
+		Egueb_Dom_Element_Klass_Init init, void *klass);
 
 #endif

@@ -16,11 +16,7 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
-
-#include <Eina.h>
+#include "egueb_dom_private.h"
 
 #include "Egueb_Dom.h"
 /* TODO

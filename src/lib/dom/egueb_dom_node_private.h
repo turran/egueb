@@ -16,16 +16,16 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _EGUEB_DOM_STRING_H_
-#define _EGUEB_DOM_STRING_H_
+#ifndef _EGUEB_DOM_NODE_PRIVATE_H_
+#ifndef _EGUEB_DOM_NODE_PRIVATE_H_
 
-typedef struct _Egueb_Dom_String Egueb_Dom_String;
-
-EAPI Egueb_Dom_String * egueb_dom_string_new(const char *str);
-EAPI Egueb_Dom_String * egueb_dom_string_new_with_length(const char *str, int len);
-EAPI Egueb_Dom_String * egueb_dom_string_steal(char *str);
-EAPI Egueb_Dom_String * egueb_dom_string_ref(Egueb_Dom_String *thiz);
-EAPI void egueb_dom_string_unref(Egueb_Dom_String *thiz);
-const char * egueb_dom_string_string_get(Egueb_Dom_String *thiz);
+struct _Egueb_Dom_Node
+{
+	EINA_INLIST;
+	Egueb_Dom_Node *parent;
+	Eina_Inlist *children;
+	Eina_Hash *user_data;
+	void *external_data;
+};
 
 #endif

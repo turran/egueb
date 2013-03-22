@@ -1,5 +1,5 @@
-/* Edom - DOM
- * Copyright (C) 2011 Jorge Luis Zapata
+/* Egueb
+ * Copyright (C) 2011 - 2013 Jorge Luis Zapata
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -15,45 +15,31 @@
  * License along with this library.
  * If not, see <http://www.gnu.org/licenses/>.
  */
-#include "egueb_dom_private.h"
-
-#include "egueb_dom_main.h"
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
-static int _init_count = 0;
+struct _Egueb_Dom_Node_List
+{
+	Egueb_Dom_Node *node;
+};
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
-int edom_log_dom_global = -1;
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/
-EAPI void edom_init(void)
+/*
+ * readonly attribute unsigned long length;
+ */
+EAPI Eina_Error egueb_dom_node_list_length(Egueb_Dom_Node_List *thiz, int *length)
 {
-	if (_init_count) goto done;
-	eina_init();
-	edom_log_dom_global = eina_log_domain_register("edom", 0);
-	if (edom_log_dom_global < 0)
-	{
-		EINA_LOG_ERR("Edom: Can not create a general log domain.");
-		goto shutdown_eina;
-	}
-done:
-	_init_count++;
-	return;
 
-shutdown_eina:
-	eina_shutdown();
 }
 
-EAPI void edom_shutdown(void)
+/*
+ * Node item(in unsigned long index);
+ */
+EAPI Eina_Error egueb_dom_node_list_item_at(Egueb_Dom_Node_List *thiz, int index, Egueb_Dom_Node **item)
 {
-	if (_init_count != 1) goto done;
-	eina_log_domain_unregister(edom_log_dom_global);
-        edom_log_dom_global = -1;
-	eina_shutdown();
-done:
-	_init_count--;
-}
 
+}

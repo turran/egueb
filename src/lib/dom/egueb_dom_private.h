@@ -19,6 +19,12 @@
 #ifndef _EDOM_PRIVATE_H
 #define _EDOM_PRIVATE_H
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
+#include <Eina.h>
+
 #ifdef ERR
 # undef ERR
 #endif
