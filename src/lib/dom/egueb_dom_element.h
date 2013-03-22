@@ -26,10 +26,4 @@ typedef struct _Egueb_Dom_Element_Klass
 	/* some specific class functions? */
 } Egueb_Dom_Element_Klass;
 
-typedef struct _Egueb_Dom_Element_Descriptor Egueb_Dom_Element_Descriptor;
-
-EAPI Egueb_Dom_Element_Descriptor * egueb_dom_element_descriptor_get(void);
-EAPI Egueb_Dom_Element_Descriptor * egueb_dom_element_descriptor_new(
-		Egueb_Dom_Element_Klass_Init init, void *klass);
-
 #endif
