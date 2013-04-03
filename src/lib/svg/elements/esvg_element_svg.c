@@ -15,16 +15,16 @@
  * License along with this library.
  * If not, see <http://www.gnu.org/licenses/>.
  */
-#include "esvg_private_main.h"
+#include "esvg_main_private.h"
 #include "esvg_private_attribute_presentation.h"
-#include "esvg_private_context.h"
+#include "esvg_context_private.h"
 #include "esvg_element_private.h"
 #include "esvg_renderable_private.h"
-#include "esvg_private_renderable_container.h"
+#include "esvg_renderable_container_private.h"
 #include "esvg_element_svg_private.h"
 #include "esvg_element_a_private.h"
-#include "esvg_private_input.h"
-#include "esvg_private_script_provider.h"
+#include "esvg_input_private.h"
+#include "esvg_script_provider_private.h"
 #include "esvg_element_style_private.h"
 
 #include "esvg_element_svg.h"
@@ -34,7 +34,7 @@
 #include "esvg_parser.h"
 #include "esvg_video_provider.h"
 
-#include "esvg_private_video_provider.h"
+#include "esvg_video_provider_private.h"
 /*
  * Given that a svg element can clip, we should use a clipper with a compound
  * inside as the renderer

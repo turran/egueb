@@ -6,9 +6,9 @@
  * do this
  */
 #include "esvg_types.h"
-#include "esvg_private_attribute.h"
+#include "esvg_attribute_private.h"
 #include "esvg_private_attribute_presentation.h"
-#include "esvg_private_context.h"
+#include "esvg_context_private.h"
 #include "esvg_private_renderable_behaviour.h"
 
 /* element */

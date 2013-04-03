@@ -3,7 +3,7 @@
 
 
 #include "esvg_types.h"
-#include "esvg_private_attribute.h"
+#include "esvg_attribute_private.h"
 
 /* ‘alignment-baseline’,
  * ‘baseline-shift’,

@@ -19,9 +19,9 @@
 #include <config.h>
 #endif
 
-#include "esvg_private_main.h"
+#include "esvg_main_private.h"
 #include "esvg_types.h"
-#include "esvg_private_attribute.h"
+#include "esvg_attribute_private.h"
 #include "esvg_path_private.h"
 /*============================================================================*
  *                                  Local                                     *

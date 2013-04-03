@@ -15,15 +15,15 @@
  * License along with this library.
  * If not, see <http://www.gnu.org/licenses/>.
  */
-#include "esvg_private_main.h"
+#include "esvg_main_private.h"
 #include "esvg_private_attribute_presentation.h"
-#include "esvg_private_context.h"
+#include "esvg_context_private.h"
 #include "esvg_element_private.h"
 #include "esvg_renderable_private.h"
-#include "esvg_private_referenceable.h"
-#include "esvg_private_types.h"
-#include "esvg_private_renderable_container.h"
-#include "esvg_private_input.h"
+#include "esvg_referenceable_private.h"
+#include "esvg_types_private.h"
+#include "esvg_renderable_container_private.h"
+#include "esvg_input_private.h"
 
 #include "esvg_event.h"
 /* The renderable container abstracts the input handling of events

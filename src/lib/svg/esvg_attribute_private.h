@@ -335,9 +335,9 @@ void esvg_attribute_animated_number_get(Esvg_Attribute_Animated_Number *aa,
 	Esvg_Number_Animated *v);
 
 
-#include "esvg_private_attribute_display.h"
-#include "esvg_private_attribute_clip_path.h"
-#include "esvg_private_attribute_enum.h"
-#include "esvg_private_attribute_visibility.h"
+#include "esvg_attribute_display_private.h"
+#include "esvg_attribute_clip_path_private.h"
+#include "esvg_attribute_enum_private.h"
+#include "esvg_attribute_visibility_private.h"
 
 #endif
