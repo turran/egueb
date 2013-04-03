@@ -31,6 +31,7 @@ src/lib/svg/elements/esvg_generated_element_video.c
 dist_installed_svgheaders_DATA += \
 src/lib/svg/elements/esvg_element.h \
 src/lib/svg/elements/esvg_element_a.h \
+src/lib/svg/elements/esvg_element_a_private.h \
 src/lib/svg/elements/esvg_element_animate.h \
 src/lib/svg/elements/esvg_element_animate_transform.h \
 src/lib/svg/elements/esvg_element_animation.h \
@@ -59,16 +60,22 @@ src/lib/svg/elements/esvg_element_video.h
 
 src_lib_svg_libesvg_la_SOURCES += \
 src/lib/svg/elements/esvg_element.c \
+src/lib/svg/elements/esvg_element_private.h \
 src/lib/svg/elements/esvg_element_a.c \
 src/lib/svg/elements/esvg_element_animate.c \
+src/lib/svg/elements/esvg_element_animate_private.h \
 src/lib/svg/elements/esvg_element_animate_transform.c \
+src/lib/svg/elements/esvg_element_animate_transform_private.h \
 src/lib/svg/elements/esvg_element_animation.c \
+src/lib/svg/elements/esvg_element_animation_private.h \
 src/lib/svg/elements/esvg_element_circle.c \
 src/lib/svg/elements/esvg_element_clip_path.c \
+src/lib/svg/elements/esvg_element_clip_path_private.h \
 src/lib/svg/elements/esvg_element_defs.c \
 src/lib/svg/elements/esvg_element_ellipse.c \
 src/lib/svg/elements/esvg_element_g.c \
 src/lib/svg/elements/esvg_element_gradient.c \
+src/lib/svg/elements/esvg_element_gradient_private.h \
 src/lib/svg/elements/esvg_element_image.c \
 src/lib/svg/elements/esvg_element_line.c \
 src/lib/svg/elements/esvg_element_linear_gradient.c \
@@ -107,21 +114,12 @@ src/lib/svg/elements/esvg_element_rect.h \
 src/lib/svg/elements/esvg_element_script.h \
 src/lib/svg/elements/esvg_element_set.h \
 src/lib/svg/elements/esvg_element_stop.h \
+src/lib/svg/elements/esvg_element_stop_private.h \
 src/lib/svg/elements/esvg_element_style.h \
+src/lib/svg/elements/esvg_element_style_private.h \
 src/lib/svg/elements/esvg_element_svg.h \
+src/lib/svg/elements/esvg_element_svg_private.h \
 src/lib/svg/elements/esvg_element_text.h \
 src/lib/svg/elements/esvg_element_use.h \
 src/lib/svg/elements/esvg_element_video.h \
-src/lib/svg/elements/esvg_private_a.h \
-src/lib/svg/elements/esvg_private_animate_base.h \
-src/lib/svg/elements/esvg_private_animate.h \
-src/lib/svg/elements/esvg_private_animate_transform.h \
-src/lib/svg/elements/esvg_private_animation.h \
-src/lib/svg/elements/esvg_private_clip_path.h \
-src/lib/svg/elements/esvg_private_element.h \
-src/lib/svg/elements/esvg_private_gradient.h \
-src/lib/svg/elements/esvg_private_paint_server.h \
-src/lib/svg/elements/esvg_private_stop.h \
-src/lib/svg/elements/esvg_private_style.h \
-src/lib/svg/elements/esvg_private_svg.h \
-src/lib/svg/elements/esvg_private_video.h
+src/lib/svg/elements/esvg_element_video_private.h

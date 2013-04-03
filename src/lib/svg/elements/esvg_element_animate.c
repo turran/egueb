@@ -18,12 +18,12 @@
 #include "esvg_private_main.h"
 #include "esvg_private_attribute_presentation.h"
 #include "esvg_private_context.h"
-#include "esvg_private_element.h"
+#include "esvg_element_private.h"
 #include "esvg_private_attribute_animation.h"
-#include "esvg_private_animation.h"
-#include "esvg_private_animate_base.h"
-#include "esvg_private_animate.h"
-#include "esvg_private_svg.h"
+#include "esvg_element_animation_private.h"
+#include "esvg_animate_base_private.h"
+#include "esvg_element_animate_private.h"
+#include "esvg_element_svg_private.h"
 
 #include "esvg_element_animate.h"
 /*============================================================================*

@@ -32,8 +32,10 @@ src/lib/svg/esvg_attribute_presentation.c \
 src/lib/svg/esvg_attribute_visibility.c \
 src/lib/svg/esvg_animate_base.c \
 src/lib/svg/esvg_animate_base.h \
+src/lib/svg/esvg_animate_base_private.h \
 src/lib/svg/esvg_paint_server.h \
 src/lib/svg/esvg_paint_server.c \
+src/lib/svg/esvg_paint_server_private.h \
 src/lib/svg/esvg_referenceable.c \
 src/lib/svg/esvg_referenceable.h \
 src/lib/svg/esvg_renderable.c \

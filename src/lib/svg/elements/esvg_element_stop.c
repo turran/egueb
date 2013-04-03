@@ -18,8 +18,8 @@
 #include "esvg_private_main.h"
 #include "esvg_private_attribute_presentation.h"
 #include "esvg_private_context.h"
-#include "esvg_private_element.h"
-#include "esvg_private_stop.h"
+#include "esvg_element_private.h"
+#include "esvg_element_stop_private.h"
 #include "esvg_element_stop.h"
 /*============================================================================*
  *                                  Local                                     *
