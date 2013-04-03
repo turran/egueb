@@ -1296,7 +1296,7 @@ Esvg_Video_Provider_Descriptor * esvg_element_svg_video_provider_descriptor_get(
 	{
 		/* get the default video descriptor */
 		/* FIXME for now only gstreamer */
-#if BUILD_ESVG_ELEMENT_VIDEO_GSTREAMER
+#if BUILD_ESVG_VIDEO_GSTREAMER
 		ret = &esvg_video_provider_gstreamer_descriptor;
 #endif
 
