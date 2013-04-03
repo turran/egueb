@@ -937,11 +937,11 @@ static Edom_Tag * _esvg_element_svg_new(void)
 	r = enesim_renderer_background_new();
 	enesim_renderer_rop_set(r, ENESIM_FILL);
 	enesim_renderer_background_color_set(r, 0x00000000);
-	enesim_renderer_compound_layer_add(thiz->compound, r);
+	enesim_renderer_compound_layer_add(thiz->compound, enesim_renderer_ref(r));
 	thiz->background = r;
 
 	r = enesim_renderer_clipper_new();
-	enesim_renderer_clipper_content_set(r, thiz->compound);
+	enesim_renderer_clipper_content_set(r, enesim_renderer_ref(thiz->compound));
 	thiz->clipper = r;
 
 	thiz->ids = eina_hash_string_superfast_new(NULL);
