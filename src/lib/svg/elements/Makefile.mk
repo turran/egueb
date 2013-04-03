@@ -2,7 +2,6 @@ GENERATED_FILES += \
 src/lib/svg/elements/esvg_generated_element.c \
 src/lib/svg/elements/esvg_generated_element_a.c \
 src/lib/svg/elements/esvg_generated_element_animate.c \
-src/lib/svg/elements/esvg_generated_animate_base.c \
 src/lib/svg/elements/esvg_generated_element_animate_transform.c \
 src/lib/svg/elements/esvg_generated_element_animation.c \
 src/lib/svg/elements/esvg_generated_element_circle.c \
@@ -27,13 +26,9 @@ src/lib/svg/elements/esvg_generated_element_style.c \
 src/lib/svg/elements/esvg_generated_element_svg.c \
 src/lib/svg/elements/esvg_generated_element_text.c \
 src/lib/svg/elements/esvg_generated_element_use.c \
-src/lib/svg/elements/esvg_generated_element_video.c \
-src/lib/svg/elements/esvg_generated_paint_server.c \
-src/lib/svg/elements/esvg_generated_referenceable.c \
-src/lib/svg/elements/esvg_generated_renderable.c
+src/lib/svg/elements/esvg_generated_element_video.c
 
 dist_installed_svgheaders_DATA += \
-src/lib/svg/elements/esvg_animate_base.h \
 src/lib/svg/elements/esvg_element.h \
 src/lib/svg/elements/esvg_element_a.h \
 src/lib/svg/elements/esvg_element_animate.h \
@@ -60,16 +55,12 @@ src/lib/svg/elements/esvg_element_style.h \
 src/lib/svg/elements/esvg_element_svg.h \
 src/lib/svg/elements/esvg_element_text.h \
 src/lib/svg/elements/esvg_element_use.h \
-src/lib/svg/elements/esvg_element_video.h \
-src/lib/svg/elements/esvg_paint_server.h \
-src/lib/svg/elements/esvg_referenceable.h \
-src/lib/svg/elements/esvg_renderable.h
+src/lib/svg/elements/esvg_element_video.h
 
 src_lib_svg_libesvg_la_SOURCES += \
 src/lib/svg/elements/esvg_element.c \
 src/lib/svg/elements/esvg_element_a.c \
 src/lib/svg/elements/esvg_element_animate.c \
-src/lib/svg/elements/esvg_animate_base.c \
 src/lib/svg/elements/esvg_element_animate_transform.c \
 src/lib/svg/elements/esvg_element_animation.c \
 src/lib/svg/elements/esvg_element_circle.c \
@@ -94,10 +85,6 @@ src/lib/svg/elements/esvg_element_svg.c \
 src/lib/svg/elements/esvg_element_text.c \
 src/lib/svg/elements/esvg_element_use.c \
 src/lib/svg/elements/esvg_element_video.c \
-src/lib/svg/elements/esvg_paint_server.c \
-src/lib/svg/elements/esvg_referenceable.c \
-src/lib/svg/elements/esvg_renderable.c \
-src/lib/svg/elements/esvg_animate_base.h \
 src/lib/svg/elements/esvg_element_a.h \
 src/lib/svg/elements/esvg_element_animate.h \
 src/lib/svg/elements/esvg_element_animate_transform.h \
@@ -125,7 +112,6 @@ src/lib/svg/elements/esvg_element_svg.h \
 src/lib/svg/elements/esvg_element_text.h \
 src/lib/svg/elements/esvg_element_use.h \
 src/lib/svg/elements/esvg_element_video.h \
-src/lib/svg/elements/esvg_paint_server.h \
 src/lib/svg/elements/esvg_private_a.h \
 src/lib/svg/elements/esvg_private_animate_base.h \
 src/lib/svg/elements/esvg_private_animate.h \
@@ -135,11 +121,7 @@ src/lib/svg/elements/esvg_private_clip_path.h \
 src/lib/svg/elements/esvg_private_element.h \
 src/lib/svg/elements/esvg_private_gradient.h \
 src/lib/svg/elements/esvg_private_paint_server.h \
-src/lib/svg/elements/esvg_private_renderable_behaviour.h \
-src/lib/svg/elements/esvg_private_renderable.h \
 src/lib/svg/elements/esvg_private_stop.h \
 src/lib/svg/elements/esvg_private_style.h \
 src/lib/svg/elements/esvg_private_svg.h \
-src/lib/svg/elements/esvg_private_video.h \
-src/lib/svg/elements/esvg_referenceable.h \
-src/lib/svg/elements/esvg_renderable.h
+src/lib/svg/elements/esvg_private_video.h

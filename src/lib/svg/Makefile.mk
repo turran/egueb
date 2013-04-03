@@ -4,16 +4,25 @@ lib_LTLIBRARIES += src/lib/svg/libesvg.la
 installed_svgheadersdir = $(pkgincludedir)-@VMAJ@/svg
 dist_installed_svgheaders_DATA = \
 src/lib/svg/Esvg.h \
+src/lib/svg/esvg_animate_base.h \
 src/lib/svg/esvg_event.h \
 src/lib/svg/esvg_main.h \
 src/lib/svg/esvg_parser.h \
 src/lib/svg/esvg_script_provider.h \
 src/lib/svg/esvg_types.h \
-src/lib/svg/esvg_video_provider.h
+src/lib/svg/esvg_video_provider.h \
+src/lib/svg/esvg_paint_server.h \
+src/lib/svg/esvg_referenceable.h \
+src/lib/svg/esvg_renderable.h
+
+GENERATED_FILES += \
+src/lib/svg/elements/esvg_generated_animate_base.c \
+src/lib/svg/elements/esvg_generated_paint_server.c \
+src/lib/svg/elements/esvg_generated_referenceable.c \
+src/lib/svg/elements/esvg_generated_renderable.c
 
 src_lib_svg_libesvg_la_SOURCES = \
 src/lib/svg/esvg_attribute.c \
-src/lib/svg/esvg_attribute_animation.c \
 src/lib/svg/esvg_attribute_clip_path.c \
 src/lib/svg/esvg_attribute_display.c \
 src/lib/svg/esvg_attribute_enum.c \
@@ -21,6 +30,14 @@ src/lib/svg/esvg_attribute_length.c \
 src/lib/svg/esvg_attribute_paint.c \
 src/lib/svg/esvg_attribute_presentation.c \
 src/lib/svg/esvg_attribute_visibility.c \
+src/lib/svg/esvg_animate_base.c \
+src/lib/svg/esvg_animate_base.h \
+src/lib/svg/esvg_paint_server.h \
+src/lib/svg/esvg_paint_server.c \
+src/lib/svg/esvg_referenceable.c \
+src/lib/svg/esvg_referenceable.h \
+src/lib/svg/esvg_renderable.c \
+src/lib/svg/esvg_renderable.h \
 src/lib/svg/esvg_clone.c \
 src/lib/svg/esvg_context.c \
 src/lib/svg/esvg_eina.c \
@@ -48,6 +65,8 @@ src/lib/svg/esvg_private_renderable_container.h \
 src/lib/svg/esvg_private_script_provider.h \
 src/lib/svg/esvg_private_script.h \
 src/lib/svg/esvg_private_types.h \
+src/lib/svg/esvg_private_renderable_behaviour.h \
+src/lib/svg/esvg_private_renderable.h \
 src/lib/svg/esvg_private_video_provider.h
 
 #esvg_attribute_regular.c \
