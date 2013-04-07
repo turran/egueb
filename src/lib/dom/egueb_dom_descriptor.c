@@ -15,23 +15,16 @@
  * License along with this library.
  * If not, see <http://www.gnu.org/licenses/>.
  */
+#include "egueb_dom_private.h"
+
+#include "egueb_dom_descriptor.h"
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
 struct _Egueb_Dom_Descriptor
 {
-	Egueb_Dom_Descriptor *parent;
-	Eina_Hash *attributes;
-	char *name;
-	size_t size;
-};
-
-struct _Egueb_Dom_Descriptor_Attribute
-{
-	Egueb_Dom_Descriptor_Accessor set;
-	Egueb_Dom_Descriptor_Accessor get;
-	Egueb_Dom_Descriptor_Accessor unset;
-	char *name;
+	Ender_Descriptor *ender_descriptor;
+	Enesim_Object_Descriptor *object_descriptor;
 };
 /*============================================================================*
  *                                 Global                                     *
@@ -39,37 +32,17 @@ struct _Egueb_Dom_Descriptor_Attribute
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/
-EAPI Egueb_Dom_Descriptor * egueb_dom_element_descriptor_new(
-		Egueb_Dom_Descriptor *parent,
-		const char *name,
-		Egueb_Dom_Element_Klass_Init init, void *klass)
+EAPI Egueb_Dom_Descriptor * egueb_dom_descriptor_new(void)
 {
 
 }
 
-EAPI const Egueb_Dom_Descriptor_Attribute * egueb_dom_descriptor_attribute_add(
-		Egueb_Dom_Descriptor *thiz, const char *name,
-		Egueb_Dom_Descriptor_Accessor set,
-		Egueb_Dom_Descriptor_Accessor get,
-		Egueb_Dom_Descriptor_Unsetter unset)
+EAPI void egueb_dom_descriptor_ender_descriptor_set(Egueb_Dom_Descriptor *thiz, Ender_Descriptor *ed)
 {
 
 }
 
-EAPI const Egueb_Dom_Descriptor_Attribute * egueb_dom_descriptor_attrbute_get(
-		Egueb_Dom_Descriptor *thiz)
-{
-
-}
-
-EAPI Eina_Error egueb_dom_descriptor_attribute_value_set(
-		const Egueb_Dom_Descriptor_Attribute *attr, void *value)
-{
-
-}
-
-EAPI Eina_Error egueb_dom_descriptor_attribute_value_get(
-		const Egueb_Dom_Descriptor_Attribute *attr, void *value)
+EAPI void egueb_dom_descriptor_object_descriptor_set(Egueb_Dom_Descriptor *thiz, Enesim_Object_Descriptor *eod)
 {
 
 }

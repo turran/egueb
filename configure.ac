@@ -3,7 +3,7 @@ rm -f config.cache
 
 m4_define([v_maj], [0])
 m4_define([v_min], [0])
-m4_define([v_mic], [19])
+m4_define([v_mic], [20])
 m4_define([v_ver], [v_maj.v_min.v_mic])
 
 m4_define([lt_cur], m4_eval(v_maj + v_min))
@@ -39,14 +39,14 @@ AC_SUBST([VMAJ])
 ### Needed information
 
 EINA_VERSION="1.0.99"
-ENESIM_VERSION="0.0.16"
+ENESIM_VERSION="0.0.18"
 ETCH_VERSION="0.0.5"
 ENDER_VERSION="0.0.8"
 
 AC_CANONICAL_HOST
 
 ecss_requirements="eina"
-edom_requirements="eina"
+edom_requirements="eina ender >= ${ENDER_VERSION} enesim >= ${ENESIM_VERSION}"
 esvg_requirements="ender >= ${ENDER_VERSION} etch >= ${ETCH_VERSION} enesim >= ${ENESIM_VERSION} eina >= ${EINA_VERSION}"
 gstreamer_requirements="gstreamer-0.10"
 

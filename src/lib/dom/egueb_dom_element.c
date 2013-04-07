@@ -15,6 +15,16 @@
  * License along with this library.
  * If not, see <http://www.gnu.org/licenses/>.
  */
+#include "egueb_dom_private.h"
+
+#include "egueb_dom_descriptor.h"
+#include "egueb_dom_string.h"
+#include "egueb_dom_node_list.h"
+#include "egueb_dom_named_node_map.h"
+#include "egueb_dom_node.h"
+#include "egueb_dom_element.h"
+
+#include "egueb_dom_node_private.h"
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
@@ -24,7 +34,7 @@
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/
-EAPI Egueb_Dom_Element_Descriptor * egueb_dom_element_descriptor_get(void)
+EAPI Egueb_Dom_Descriptor * egueb_dom_element_descriptor_get(void)
 {
 
 }

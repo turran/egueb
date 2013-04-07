@@ -19,13 +19,16 @@
 #ifndef _EGUEB_DOM_ELEMENT_PRIVATE_H_
 #ifndef _EGUEB_DOM_ELEMENT_PRIVATE_H_
 
-struct _Egueb_Dom_Element
+typedef struct _Egueb_Dom_Element
 {
 	Egueb_Dom_Node parent;
-	Egueb_Dom_Element_Descriptor *descriptor;
-	Egueb_Dom_Element_Klass *klass;
 	void *external_data;
 };
+
+typedef struct _Egueb_Dom_Element_Class
+{
+	Egueb_Dom_Node_Class parent;
+} Egueb_Dom_Element_Class;
 
 #endif
 

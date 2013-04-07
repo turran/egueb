@@ -24,6 +24,8 @@
 #endif
 
 #include <Eina.h>
+#include <Enesim.h>
+#include <Ender.h>
 
 #ifdef ERR
 # undef ERR

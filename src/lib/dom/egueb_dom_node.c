@@ -15,6 +15,14 @@
  * License along with this library.
  * If not, see <http://www.gnu.org/licenses/>.
  */
+#include "egueb_dom_private.h"
+
+#include "egueb_dom_string.h"
+#include "egueb_dom_node_list.h"
+#include "egueb_dom_named_node_map.h"
+#include "egueb_dom_node.h"
+
+#include "egueb_dom_node_private.h"
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
@@ -98,7 +106,7 @@ EAPI Eina_Error egueb_dom_node_child_last_get(Egueb_Dom_Node *thiz, Egueb_Dom_No
 /*
  * readonly attribute Node previousSibling;
  */
-EAPI Eina_Error egueb_dom_node_sibling_previous_get(Egueb_Dom_Node *thiz, Egueb_Dome_Node **sibling)
+EAPI Eina_Error egueb_dom_node_sibling_previous_get(Egueb_Dom_Node *thiz, Egueb_Dom_Node **sibling)
 {
 
 }
@@ -106,7 +114,7 @@ EAPI Eina_Error egueb_dom_node_sibling_previous_get(Egueb_Dom_Node *thiz, Egueb_
 /*
  * readonly attribute Node nextSibling;
  */
-EAPI Eina_Error egueb_dom_node_sibling_next_get(Egueb_Dom_Node *thiz, Egueb_Dome_Node **sibling)
+EAPI Eina_Error egueb_dom_node_sibling_next_get(Egueb_Dom_Node *thiz, Egueb_Dom_Node **sibling)
 {
 
 }

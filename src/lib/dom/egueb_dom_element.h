@@ -17,13 +17,6 @@
  */
 
 #ifndef _EGUEB_DOM_ELEMENT_H_
-#ifndef _EGUEB_DOM_ELEMENT_H_
-
-typedef void (*Egueb_Dom_Element_Klass_Init)(Egueb_Dom_Node_Klass *klass);
-
-typedef struct _Egueb_Dom_Element_Klass
-{
-	/* some specific class functions? */
-} Egueb_Dom_Element_Klass;
+#define _EGUEB_DOM_ELEMENT_H_
 
 #endif
