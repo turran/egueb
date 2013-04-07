@@ -80,10 +80,10 @@ Enesim_Object_Descriptor * egueb_dom_node_descriptor_get(void)
 			_egueb_dom_node_instance_deinit, "node");
 
 		edd = egueb_dom_descriptor_new();
-		egueb_dom_descriptor_ender_set(edd,
+		egueb_dom_descriptor_ender_descriptor_set(edd,
 				_egueb_dom_node_ender_descriptor_get());
 		enesim_object_descriptor_private_set(d, edd);
-		egueb_dom_descriptor_enesim_set(edd, d);
+		egueb_dom_descriptor_object_descriptor_set(edd, d);
 	}
 	return d;
 }

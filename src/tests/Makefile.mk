@@ -3,7 +3,7 @@ tests_dom_CPPFLAGS = \
 @EDOM_CFLAGS@
 
 tests_dom_LDADD = \
-$(top_builddir)/src/lib/libenesim.la \
+$(top_builddir)/src/lib/dom/libedom.la \
 @EDOM_LIBS@
 
 tests_css_CPPFLAGS = \

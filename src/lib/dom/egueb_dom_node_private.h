@@ -59,16 +59,16 @@ Enesim_Object_Descriptor * egueb_dom_node_descriptor_get(void);
 				_##prefix##_instance_deinit, #type);		\
 										\
 			edd = egueb_dom_descriptor_new();			\
-			egueb_dom_descriptor_ender_set(edd, 			\
-					_prefix_##ender_descriptor_get());	\
+			egueb_dom_descriptor_ender_descriptor_set(edd, 		\
+					_##prefix##_ender_descriptor_get());	\
 			enesim_object_descriptor_private_set(d, edd);		\
-			egueb_dom_descriptor_enesim_set(edd, d);		\
+			egueb_dom_descriptor_object_descriptor_set(edd, d);	\
 		}								\
 		return d;							\
 	}									\
 /* Macro to define an ender abstract descriptor */
-#define EGUEB_DOM_NODE_ENDER_ABSTRACT_BOILERPLATE(parent, type, prefix)		\
-	static Ender_Descriptor * _prefix_##ender_descriptor_get(void) 		\
+#define EGUEB_DOM_NODE_ENDER_ABSTRACT_BOILERPLATE(parent, type, ns, prefix)	\
+	static Ender_Descriptor * _##prefix##_ender_descriptor_get(void) 	\
 	{									\
 		static Ender_Descriptor *d = NULL;				\
 		if (!d)								\
@@ -77,18 +77,18 @@ Enesim_Object_Descriptor * egueb_dom_node_descriptor_get(void);
 			Ender_Descriptor *ed;					\
 										\
 			edd = enesim_object_descriptor_private_get(parent);	\
-			ed = egueb_dom_descriptor_ender_get(edd);		\
+			ed = egueb_dom_descriptor_ender_descriptor_get(edd);	\
 			d = ender_namespace_descriptor_add(ns, #type, 		\
 					NULL,					\
-					ENDER_DESTRUCTOR(egueb_dom_node_unref)	\
+					ENDER_DESTRUCTOR(egueb_dom_node_unref),	\
 					ed, ENDER_TYPE_ABSTRACT, -1);		\
 			_##prefix##_descriptor_init(d);				\
 		}								\
 		return d;							\
 	}									\
 /* Macro to define an ender class descriptor */
-#define EGUEB_DOM_NODE_ENDER_CLASS_BOILERPLATE(parent, type, prefix)		\
-	static Ender_Descriptor * _prefix_##ender_descriptor_get(void) 		\
+#define EGUEB_DOM_NODE_ENDER_CLASS_BOILERPLATE(parent, type, ns, prefix)	\
+	static Ender_Descriptor * _##prefix##_ender_descriptor_get(void) 	\
 	{									\
 		static Ender_Descriptor *d = NULL;				\
 		if (!d)								\
@@ -97,10 +97,10 @@ Enesim_Object_Descriptor * egueb_dom_node_descriptor_get(void);
 			Ender_Descriptor *ed;					\
 										\
 			edd = enesim_object_descriptor_private_get(parent);	\
-			ed = egueb_dom_descriptor_ender_get(edd);		\
+			ed = egueb_dom_descriptor_ender_descriptor_get(edd);	\
 			d = ender_namespace_descriptor_add(ns, #type, 		\
-					ENDER_CONSTRUCTOR(prefix##_new),	\
-					ENDER_DESTRUCTOR(egueb_dom_node_unref)	\
+					ENDER_CREATOR(prefix##_new),		\
+					ENDER_DESTRUCTOR(egueb_dom_node_unref),	\
 					ed, ENDER_TYPE_CLASS, -1);		\
 			_##prefix##_descriptor_init(d);				\
 		}								\
@@ -108,15 +108,16 @@ Enesim_Object_Descriptor * egueb_dom_node_descriptor_get(void);
 	}									\
 
 /* Macro to define a new abstract node  */
-#define EGUEB_DOM_NODE_ABSTRACT_BOILERPLATE(parent, type, class_type, prefix) 	\
+#define EGUEB_DOM_NODE_ABSTRACT_BOILERPLATE(parent, type, class_type, ns, prefix) \
 	EGUEB_DOM_NODE_DESCRIPTOR_DEFINITION_BOILERPLATE(prefix)		\
-	EGUEB_DOM_NODE_ENDER_ABSTRACT_BOILERPLATE(parent, type, prefix)		\
+	EGUEB_DOM_NODE_ENDER_ABSTRACT_BOILERPLATE(parent, type, ns, prefix)	\
 	EGUEB_DOM_NODE_DESCRIPTOR_BOILERPLATE(parent, type, class_type, prefix)
 
 /* Macro to define a new class node */
-#define EGUEB_DOM_NODE_CLASS_BOILERPLATE(parent, type, class_type, prefix) 	\
+#define EGUEB_DOM_NODE_CLASS_BOILERPLATE(parent, type, class_type, ns, prefix) 	\
+	static class_type prefix##_klass; 					\
 	EGUEB_DOM_NODE_DESCRIPTOR_DEFINITION_BOILERPLATE(prefix)		\
-	EGUEB_DOM_NODE_ENDER_CLASS_BOILERPLATE(parent, type, prefix)		\
+	EGUEB_DOM_NODE_ENDER_CLASS_BOILERPLATE(parent, type, ns, prefix)	\
 	EGUEB_DOM_NODE_DESCRIPTOR_BOILERPLATE(parent, type, class_type, prefix)
 
 #endif

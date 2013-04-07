@@ -33,6 +33,8 @@ EAPI void edom_init(void)
 {
 	if (_init_count) goto done;
 	eina_init();
+	enesim_init();
+	ender_init();
 	edom_log_dom_global = eina_log_domain_register("edom", 0);
 	if (edom_log_dom_global < 0)
 	{
@@ -52,6 +54,8 @@ EAPI void edom_shutdown(void)
 	if (_init_count != 1) goto done;
 	eina_log_domain_unregister(edom_log_dom_global);
         edom_log_dom_global = -1;
+	ender_shutdown();
+	enesim_shutdown();
 	eina_shutdown();
 done:
 	_init_count--;
