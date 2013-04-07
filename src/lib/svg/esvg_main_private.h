@@ -100,6 +100,8 @@
 #define ESVG_ELEMENT_NEW(name) ender_namespace_element_new(esvg_namespace_get(), name);
 
 extern int esvg_log_dom_global;
+
+#define ESVG_NAMESPACE esvg_namespace_get()
 Ender_Namespace * esvg_namespace_get(void);
 
 double eina_strtod(const char *nptr, char **endptr);

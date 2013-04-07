@@ -2,6 +2,7 @@
  * create a new element that inherits from a node
  */
 #include "Egueb_Dom.h"
+#include "egueb_dom_node_private.h"
 
 typedef struct _MyObject
 {

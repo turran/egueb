@@ -19,6 +19,8 @@
 #define _EDOM_H
 
 #include <Eina.h>
+#include <Enesim.h>
+#include <Ender.h>
 
 #ifdef EAPI
 # undef EAPI
@@ -51,6 +53,10 @@ extern "C" {
 #endif
 
 #include "egueb_dom_main.h"
+#include "egueb_dom_string.h"
+#include "egueb_dom_node_list.h"
+#include "egueb_dom_named_node_map.h"
+#include "egueb_dom_node.h"
 
 typedef struct _Edom_Parser Edom_Parser;
 typedef struct _Edom_Tag Edom_Tag;

@@ -22,6 +22,9 @@
 EAPI void edom_init(void);
 EAPI void edom_shutdown(void);
 
+#define EDOM_NAMESPACE edom_namespace_get()
+EAPI Ender_Namespace * edom_namespace_get();
+
 /* Errors (Exceptions) */
 EAPI Eina_Error EGUEB_DOM_ERROR_INDEX_SIZE;
 EAPI Eina_Error EGUEB_DOM_ERROR_DOMSTRING_SIZE;

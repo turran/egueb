@@ -26,6 +26,8 @@ src/lib/svg/esvg_attribute.c \
 src/lib/svg/esvg_attribute_private.h \
 src/lib/svg/esvg_attribute_clip_path.c \
 src/lib/svg/esvg_attribute_clip_path_private.h \
+src/lib/svg/esvg_attribute_color.c \
+src/lib/svg/esvg_attribute_color_private.h \
 src/lib/svg/esvg_attribute_display.c \
 src/lib/svg/esvg_attribute_display_private.h \
 src/lib/svg/esvg_attribute_enum.c \

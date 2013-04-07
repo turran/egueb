@@ -57,3 +57,11 @@ done:
 	_init_count--;
 }
 
+/* FIXME once svg is done, use the macro from ender */
+EAPI Ender_Namespace * edom_namespace_get(void)
+{
+	static Ender_Namespace *ns = NULL;
+
+	if (!ns) ns = ender_namespace_new("egueb_dom", 0);
+	return ns;
+}
