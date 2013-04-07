@@ -22,6 +22,7 @@
 EAPI void edom_init(void);
 EAPI void edom_shutdown(void);
 
+/* FIXME make this private */
 #define EDOM_NAMESPACE edom_namespace_get()
 EAPI Ender_Namespace * edom_namespace_get();
 

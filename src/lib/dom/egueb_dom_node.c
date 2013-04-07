@@ -17,7 +17,9 @@
  */
 #include "egueb_dom_private.h"
 
+#include "egueb_dom_main.h"
 #include "egueb_dom_string.h"
+#include "egueb_dom_descriptor.h"
 #include "egueb_dom_node_list.h"
 #include "egueb_dom_named_node_map.h"
 #include "egueb_dom_node.h"
@@ -26,26 +28,72 @@
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
+static void _egueb_dom_node_class_init(void *k)
+{
+
+}
+
+static void _egueb_dom_node_descriptor_init(Ender_Descriptor *d)
+{
+
+}
+
+
+static void _egueb_dom_node_instance_init(void *o)
+{
+
+}
+
+static void _egueb_dom_node_instance_deinit(void *o)
+{
+
+}
+
+static Ender_Descriptor * _egueb_dom_node_ender_descriptor_get(void)
+{
+	static Ender_Descriptor *d = NULL;
+	if (!d)
+	{
+		Ender_Descriptor *ed;
+
+		d = ender_namespace_descriptor_add(EDOM_NAMESPACE, "node", 
+				NULL,
+				ENDER_DESTRUCTOR(egueb_dom_node_unref),
+				ed, ENDER_TYPE_ABSTRACT, -1);
+		_egueb_dom_node_descriptor_init(d);
+	}
+	return d;
+}
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
-#if 0
-void egueb_dom_node_init(Egueb_Dom_Descriptor *descriptor)
+Enesim_Object_Descriptor * egueb_dom_node_descriptor_get(void)
 {
+	static Enesim_Object_Descriptor *d = NULL;
+	if (!d)	
+	{
+		Egueb_Dom_Descriptor *edd;
 
+		d = enesim_object_descriptor_new(ENESIM_OBJECT_DESCRIPTOR,
+			sizeof(Egueb_Dom_Node_Class), _egueb_dom_node_class_init,
+			sizeof(Egueb_Dom_Node), _egueb_dom_node_instance_init,
+			_egueb_dom_node_instance_deinit, "node");
+
+		edd = egueb_dom_descriptor_new();
+		egueb_dom_descriptor_ender_set(edd,
+				_egueb_dom_node_ender_descriptor_get());
+		enesim_object_descriptor_private_set(d, edd);
+		egueb_dom_descriptor_enesim_set(edd, d);
+	}
+	return d;
 }
-#endif
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/
-#if 0
-EAPI Egueb_Dom_Node * egueb_dom_node_new(Egueb_Dom_Descriptor *descriptor,
-		void *data)
+EAPI void egueb_dom_node_unref(Egueb_Dom_Node *thiz)
 {
 
 }
-#endif
-
 /*
  * readonly attribute DOMString nodeName;
  */

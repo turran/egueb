@@ -53,6 +53,7 @@ extern "C" {
 #endif
 
 #include "egueb_dom_main.h"
+#include "egueb_dom_descriptor.h"
 #include "egueb_dom_string.h"
 #include "egueb_dom_node_list.h"
 #include "egueb_dom_named_node_map.h"
