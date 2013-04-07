@@ -75,7 +75,7 @@ endif
 ### Tests
 
 if BUILD_ECSS
-include src/tests/css/Makefile.mk
+include src/tests/Makefile.mk
 endif
 
 
