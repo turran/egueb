@@ -10,7 +10,7 @@ src/lib/dom/egueb_dom_element.h \
 src/lib/dom/egueb_dom_main.h
 
 src_lib_dom_libedom_la_SOURCES = \
-src/lib/dom/egueb_dom_descriptor.h \
+src/lib/dom/egueb_dom_descriptor.c \
 src/lib/dom/egueb_dom_element.c \
 src/lib/dom/egueb_dom_element_private.h \
 src/lib/dom/egueb_dom_node.c \

@@ -34,15 +34,34 @@ struct _Egueb_Dom_Descriptor
  *============================================================================*/
 EAPI Egueb_Dom_Descriptor * egueb_dom_descriptor_new(void)
 {
+	Egueb_Dom_Descriptor *thiz;
 
+	thiz = calloc(1, sizeof(Egueb_Dom_Descriptor));
+	return thiz;
 }
 
-EAPI void egueb_dom_descriptor_ender_descriptor_set(Egueb_Dom_Descriptor *thiz, Ender_Descriptor *ed)
+EAPI Ender_Descriptor * egueb_dom_descriptor_ender_descriptor_get(
+		Egueb_Dom_Descriptor *thiz)
 {
-
+	return thiz->ender_descriptor;
 }
 
-EAPI void egueb_dom_descriptor_object_descriptor_set(Egueb_Dom_Descriptor *thiz, Enesim_Object_Descriptor *eod)
+EAPI Enesim_Object_Descriptor * egueb_dom_descriptor_object_descriptor_get(
+		Egueb_Dom_Descriptor *thiz)
 {
+	return thiz->object_descriptor;
+}
 
+EAPI void egueb_dom_descriptor_ender_descriptor_set(Egueb_Dom_Descriptor *thiz,
+		Ender_Descriptor *ed)
+{
+	if (thiz->ender_descriptor) return;
+	thiz->ender_descriptor = ed;
+}
+
+EAPI void egueb_dom_descriptor_object_descriptor_set(Egueb_Dom_Descriptor *thiz,
+		Enesim_Object_Descriptor *eod)
+{
+	if (thiz->object_descriptor) return;
+	thiz->object_descriptor = eod;
 }
