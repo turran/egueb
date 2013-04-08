@@ -26,16 +26,26 @@ struct _Egueb_Dom_Node
 	Egueb_Dom_Node *parent;
 	Eina_Inlist *children;
 	Eina_Hash *user_data;
+	int ref;
 	void *external_data;
 };
 
 typedef struct _Egueb_Dom_Node_Class
 {
 	Enesim_Object_Class base;
+	Egueb_Dom_Node_Type type;
 } Egueb_Dom_Node_Class;
 
 #define EGUEB_DOM_NODE_DESCRIPTOR egueb_dom_node_descriptor_get()
 Enesim_Object_Descriptor * egueb_dom_node_descriptor_get(void);
+
+#define EGUEB_DOM_NODE_CLASS_GET(o) EGUEB_DOM_NODE_CLASS(			\
+		(ENESIM_OBJECT_INSTANCE(thiz))->klass)
+#define EGUEB_DOM_NODE_CLASS(k) ENESIM_OBJECT_CLASS_CHECK(k,			\
+		Egueb_Dom_Node_Class, EGUEB_DOM_NODE_DESCRIPTOR)
+#define EGUEB_DOM_NODE(o) ENESIM_OBJECT_INSTANCE_CHECK(o,			\
+		Egueb_Dom_Node, EGUEB_DOM_NODE_DESCRIPTOR)
+
 
 /* Macro to define the common node descriptor functions */
 #define EGUEB_DOM_NODE_DESCRIPTOR_DEFINITION_BOILERPLATE(prefix)		\

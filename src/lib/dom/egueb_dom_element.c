@@ -17,6 +17,7 @@
  */
 #include "egueb_dom_private.h"
 
+#include "egueb_dom_main.h"
 #include "egueb_dom_descriptor.h"
 #include "egueb_dom_string.h"
 #include "egueb_dom_node_list.h"
@@ -25,20 +26,42 @@
 #include "egueb_dom_element.h"
 
 #include "egueb_dom_node_private.h"
+#include "egueb_dom_element_private.h"
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
+EGUEB_DOM_NODE_ABSTRACT_BOILERPLATE(EGUEB_DOM_NODE_DESCRIPTOR,
+		Egueb_Dom_Element, Egueb_Dom_Element_Class, EDOM_NAMESPACE,
+		egueb_dom_element);
+
+static void _egueb_dom_element_class_init(void *k)
+{
+	Egueb_Dom_Node_Class *klass = EGUEB_DOM_NODE_CLASS(k);
+
+	klass->type = EGUEB_DOM_NODE_TYPE_ELEMENT_NODE;
+	printf("class init\n");
+}
+
+static void _egueb_dom_element_descriptor_init(Ender_Descriptor *d)
+{
+	printf("descriptor init\n");
+}
+
+static void _egueb_dom_element_instance_init(void *o)
+{
+	printf("instance init\n");
+}
+
+static void _egueb_dom_element_instance_deinit(void *o)
+{
+	printf("instance deinit\n");
+}
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/
-EAPI Egueb_Dom_Descriptor * egueb_dom_element_descriptor_get(void)
-{
-
-}
-
 /*
  * readonly attribute DOMString       tagName;
  */

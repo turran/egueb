@@ -17,18 +17,23 @@
  */
 
 #ifndef _EGUEB_DOM_ELEMENT_PRIVATE_H_
-#ifndef _EGUEB_DOM_ELEMENT_PRIVATE_H_
+#define _EGUEB_DOM_ELEMENT_PRIVATE_H_
 
 typedef struct _Egueb_Dom_Element
 {
 	Egueb_Dom_Node parent;
 	void *external_data;
-};
+} Egueb_Dom_Element;
 
 typedef struct _Egueb_Dom_Element_Class
 {
 	Egueb_Dom_Node_Class parent;
 } Egueb_Dom_Element_Class;
 
-#endif
+#define EGUEB_DOM_ELEMENT_DESCRIPTOR egueb_dom_element_descriptor_get()
+#define EGUEB_DOM_ELEMENT_CLASS(k) ENESIM_OBJECT_CLASS_CHECK(k,			\
+		Egueb_Dom_Element_Class, EGUEB_DOM_ELEMENT_DESCRIPTOR)
+#define EGUEB_DOM_ELEMENT(o) ENESIM_OBJECT_INSTANCE_CHECK(o,			\
+		Egueb_Dom_Element, EGUEB_DOM_ELEMENT_DESCRIPTOR)
 
+#endif

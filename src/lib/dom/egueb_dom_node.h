@@ -38,6 +38,7 @@ typedef enum _Egueb_Dom_Node_Type
 } Egueb_Dom_Node_Type;
 
 EAPI void egueb_dom_node_unref(Egueb_Dom_Node *thiz);
+EAPI Egueb_Dom_Node * egueb_dom_node_ref(Egueb_Dom_Node *thiz);
 EAPI Eina_Error egueb_dom_node_name_get(Egueb_Dom_Node *thiz, Egueb_Dom_String **name);
 EAPI Eina_Error egueb_dom_node_value_get(Egueb_Dom_Node *thiz, Egueb_Dom_String **value);
 EAPI Eina_Error egueb_dom_node_type_get(Egueb_Dom_Node *thiz, Egueb_Dom_Node_Type *type);
