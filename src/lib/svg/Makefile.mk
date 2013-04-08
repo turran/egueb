@@ -34,8 +34,12 @@ src/lib/svg/esvg_attribute_enum.c \
 src/lib/svg/esvg_attribute_enum_private.h \
 src/lib/svg/esvg_attribute_length.c \
 src/lib/svg/esvg_attribute_length_private.h \
+src/lib/svg/esvg_attribute_number.c \
+src/lib/svg/esvg_attribute_number_private.h \
 src/lib/svg/esvg_attribute_paint.c \
 src/lib/svg/esvg_attribute_presentation.c \
+src/lib/svg/esvg_attribute_string.c \
+src/lib/svg/esvg_attribute_string_private.h \
 src/lib/svg/esvg_attribute_visibility.c \
 src/lib/svg/esvg_attribute_visibility_private.h \
 src/lib/svg/esvg_animate_base.c \

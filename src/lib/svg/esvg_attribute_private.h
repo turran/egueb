@@ -9,12 +9,6 @@ typedef struct _Esvg_Attribute_Bool
 	Eina_Bool is_set;
 } Esvg_Attribute_Bool;
 
-typedef struct _Esvg_Attribute_String
-{
-	char *v;
-	Eina_Bool is_set;
-} Esvg_Attribute_String;
-
 typedef struct _Esvg_Attribute_Paint
 {
 	Esvg_Paint v;
@@ -26,12 +20,6 @@ typedef struct _Esvg_Attribute_Transform
 	Enesim_Matrix v;
 	Eina_Bool is_set;
 } Esvg_Attribute_Transform;
-
-typedef struct _Esvg_Attribute_Number
-{
-	Esvg_Number v;
-	Eina_Bool is_set;
-} Esvg_Attribute_Number;
 
 typedef struct _Esvg_Attribute_Enum
 {
@@ -77,18 +65,9 @@ typedef struct _Esvg_Attribute_Animated_Descriptor
 } Esvg_Attribute_Animated_Descriptor;
 
 extern Esvg_Attribute_Animated_Descriptor esvg_attribute_animated_paint_descriptor; 
-extern Esvg_Attribute_Animated_Descriptor esvg_attribute_animated_string_descriptor; 
 extern Esvg_Attribute_Animated_Descriptor esvg_attribute_animated_path_command_descriptor; 
 extern Esvg_Attribute_Animated_Descriptor esvg_attribute_animated_length_descriptor; 
-extern Esvg_Attribute_Animated_Descriptor esvg_attribute_animated_number_descriptor; 
 Esvg_Attribute_Animated_Descriptor * esvg_attribute_animated_descriptor_get(const char *name);
-
-typedef struct _Esvg_Attribute_Animated_Number
-{
-	Esvg_Attribute_Number base;
-	Esvg_Attribute_Number anim;
-	int animated;
-} Esvg_Attribute_Animated_Number;
 
 typedef struct _Esvg_Attribute_Animated_Paint
 {
@@ -96,13 +75,6 @@ typedef struct _Esvg_Attribute_Animated_Paint
 	Esvg_Attribute_Paint anim;
 	int animated;
 } Esvg_Attribute_Animated_Paint;
-
-typedef struct _Esvg_Attribute_Animated_String
-{
-	Esvg_Attribute_String base;
-	Esvg_Attribute_String anim;
-	int animated;
-} Esvg_Attribute_Animated_String;
 
 typedef struct _Esvg_Attribute_Animated_Bool
 {
@@ -139,27 +111,6 @@ void esvg_attribute_animated_list_final_get(Esvg_Attribute_Animated_List *aa, Ei
 void esvg_attribute_animated_list_get(Esvg_Attribute_Animated_List *aa,
 	Esvg_Animated_List *v);
 
-void esvg_attribute_animated_string_merge_rel(const Esvg_Attribute_Animated_String *rel,
-		const Esvg_Attribute_Animated_String *v,
-		Esvg_Attribute_String *d);
-void esvg_attribute_animated_string_merge(const Esvg_Attribute_Animated_String *v,
-		Esvg_Attribute_String *d);
-void esvg_attribute_string_merge_rel(const Esvg_Attribute_String *rel,
-		const Esvg_Attribute_String *v,
-		Esvg_Attribute_String *d);
-void esvg_attribute_animated_string_set(Esvg_Attribute_Animated_String *aa,
-	const Esvg_String_Animated *v,
-	Eina_Bool animate);
-void esvg_attribute_animated_string_extended_set(Esvg_Attribute_Animated_String *aa,
-	const Esvg_String_Animated *v,
-	Eina_Bool animate,
-	int *set);
-void esvg_attribute_animated_string_get(Esvg_Attribute_Animated_String *aa,
-	Esvg_String_Animated *v);
-void esvg_attribute_string_unset(Esvg_Attribute_String *a);
-void esvg_attribute_string_set(Esvg_Attribute_String *a, const char *v);
-void esvg_attribute_animated_string_final_get(Esvg_Attribute_Animated_String *aa, char **v);
-
 void esvg_attribute_animated_bool_merge_rel(const Esvg_Attribute_Animated_Bool *rel,
 		const Esvg_Attribute_Animated_Bool *v,
 		Esvg_Attribute_Bool *d);
@@ -180,16 +131,7 @@ void esvg_attribute_animated_bool_extended_set(Esvg_Attribute_Animated_Bool *aa,
 void esvg_attribute_animated_bool_get(Esvg_Attribute_Animated_Bool *aa,
 	Esvg_Boolean_Animated *v);
 void esvg_attribute_bool_unset(Esvg_Attribute_Bool *a, Eina_Bool def);
-void esvg_attribute_bool_set(Esvg_Attribute_Bool *a, Eina_Bool v);void esvg_attribute_animated_number_merge_rel(const Esvg_Attribute_Animated_Number *rel,
-		const Esvg_Attribute_Animated_Number *v,
-		Esvg_Attribute_Number *d);
-
-
-void esvg_attribute_animated_number_merge(const Esvg_Attribute_Animated_Number *v,
-		Esvg_Attribute_Number *d);
-void esvg_attribute_number_merge_rel(const Esvg_Attribute_Number *rel,
-		const Esvg_Attribute_Number *v,
-		Esvg_Attribute_Number *d);
+void esvg_attribute_bool_set(Esvg_Attribute_Bool *a, Eina_Bool v);
 void esvg_attribute_animated_paint_merge_rel(const Esvg_Attribute_Animated_Paint *rel,
 		const Esvg_Attribute_Animated_Paint *v,
 		Esvg_Attribute_Paint *d);
@@ -233,28 +175,13 @@ void esvg_attribute_animated_paint_extended_set(Esvg_Attribute_Animated_Paint *a
 void esvg_attribute_animated_paint_get(Esvg_Attribute_Animated_Paint *aa,
 	Esvg_Paint_Animated *v);
 
-
-void esvg_attribute_number_unset(Esvg_Attribute_Number *a, const Esvg_Number *v);
-void esvg_attribute_number_set(Esvg_Attribute_Number *a, const Esvg_Number *v,
-	const Esvg_Number *def);
-void esvg_attribute_animated_number_set(Esvg_Attribute_Animated_Number *aa,
-	const Esvg_Number_Animated *v,
-	const Esvg_Number *def,
-	Eina_Bool animate);
-void esvg_attribute_animated_number_extended_set(Esvg_Attribute_Animated_Number *aa,
-	const Esvg_Number_Animated *v,
-	const Esvg_Number *def,
-	Eina_Bool animate,
-	int *set);
-void esvg_attribute_animated_number_get(Esvg_Attribute_Animated_Number *aa,
-	Esvg_Number_Animated *v);
-
-
 #include "esvg_attribute_display_private.h"
 #include "esvg_attribute_clip_path_private.h"
 #include "esvg_attribute_color_private.h"
 #include "esvg_attribute_enum_private.h"
 #include "esvg_attribute_length_private.h"
+#include "esvg_attribute_number_private.h"
+#include "esvg_attribute_string_private.h"
 #include "esvg_attribute_visibility_private.h"
 
 #endif
