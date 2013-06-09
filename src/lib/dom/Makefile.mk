@@ -1,5 +1,5 @@
 
-lib_LTLIBRARIES += src/lib/dom/libedom.la
+lib_LTLIBRARIES += src/lib/dom/libegueb_dom.la
 
 installed_domheadersdir = $(pkgincludedir)-@VMAJ@/dom
 dist_installed_domheaders_DATA = \
@@ -27,7 +27,7 @@ src/lib/dom/egueb_dom_value_dom_string.h \
 src/lib/dom/egueb_dom_value_int.h \
 src/lib/dom/egueb_dom_value_list.h
 
-src_lib_dom_libedom_la_SOURCES = \
+src_lib_dom_libegueb_dom_la_SOURCES = \
 src/lib/dom/egueb_dom_attr.c \
 src/lib/dom/egueb_dom_attr_private.h \
 src/lib/dom/egueb_dom_character_data.c \
@@ -70,10 +70,10 @@ src/lib/dom/egueb_dom_value_dom_string.c \
 src/lib/dom/egueb_dom_value_int.c \
 src/lib/dom/egueb_dom_value_list.c
 
-src_lib_dom_libedom_la_CPPFLAGS = \
+src_lib_dom_libegueb_dom_la_CPPFLAGS = \
 -I$(top_srcdir)/src/lib/dom \
 -DEDOM_BUILD @EDOM_CFLAGS@
 
-src_lib_dom_libedom_la_LIBADD = @EDOM_LIBS@
+src_lib_dom_libegueb_dom_la_LIBADD = @EDOM_LIBS@
 
-src_lib_dom_libedom_la_LDFLAGS = -no-undefined -version-info @version_info@
+src_lib_dom_libegueb_dom_la_LDFLAGS = -no-undefined -version-info @version_info@

@@ -1,5 +1,5 @@
 
-lib_LTLIBRARIES += src/lib/svg/libesvg.la
+lib_LTLIBRARIES += src/lib/svg/libegueb_svg.la
 
 installed_svgheadersdir = $(pkgincludedir)-@VMAJ@/svg
 dist_installed_svgheaders_DATA = \
@@ -57,7 +57,7 @@ src/lib/svg/egueb_svg_stroke_line_cap.h \
 src/lib/svg/egueb_svg_stroke_line_join.h \
 src/lib/svg/egueb_svg_visibility.h
 
-src_lib_svg_libesvg_la_SOURCES = \
+src_lib_svg_libegueb_svg_la_SOURCES = \
 src/lib/svg/egueb_svg_attr_clip_path.c \
 src/lib/svg/egueb_svg_attr_color.c \
 src/lib/svg/egueb_svg_attr_font_size.c \
@@ -132,7 +132,7 @@ src/lib/svg/egueb_svg_stroke_line_cap.c \
 src/lib/svg/egueb_svg_stroke_line_join.c \
 src/lib/svg/egueb_svg_visibility.c
 
-src_lib_svg_libesvg_la_CPPFLAGS = \
+src_lib_svg_libegueb_svg_la_CPPFLAGS = \
 -I$(top_srcdir)/src/lib/css \
 -I$(top_srcdir)/src/lib/dom \
 -I$(top_srcdir)/src/lib/smil \
@@ -145,10 +145,10 @@ src_lib_svg_libesvg_la_CPPFLAGS = \
 -DESVG_BUILD \
 @ESVG_CFLAGS@
 
-src_lib_svg_libesvg_la_LIBADD = \
-$(top_builddir)/src/lib/dom/libedom.la \
-$(top_builddir)/src/lib/css/libecss.la \
+src_lib_svg_libegueb_svg_la_LIBADD = \
+$(top_builddir)/src/lib/dom/libegueb_dom.la \
+$(top_builddir)/src/lib/css/libegueb_css.la \
 $(top_builddir)/src/lib/smil/libegueb_smil.la \
 @ESVG_LIBS@ @GSTREAMER_LIBS@ -lm
 
-src_lib_svg_libesvg_la_LDFLAGS = -no-undefined -version-info @version_info@
+src_lib_svg_libegueb_svg_la_LDFLAGS = -no-undefined -version-info @version_info@

@@ -117,13 +117,13 @@ pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA =
 
 if BUILD_ECSS
-pkgconfig_DATA += ecss.pc
+pkgconfig_DATA += egueb-css.pc
 endif
 
 if BUILD_EDOM
-pkgconfig_DATA += edom.pc
+pkgconfig_DATA += egueb-dom.pc
 endif
 
 if BUILD_ESVG
-pkgconfig_DATA += esvg.pc
+pkgconfig_DATA += egueb-svg.pc
 endif

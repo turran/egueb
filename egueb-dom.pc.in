@@ -6,9 +6,9 @@ datarootdir=@datarootdir@
 datadir=@datadir@/@PACKAGE@
 pkgincludedir=@pkgincludedir@-@VMAJ@
 
-Name: ESVG
-Description: ESVG
-Requires.private: edom ecss @esvg_requirements@
+Name: Egueb DOM
+Description: Egueb DOM implementation
+Requires.private: eina
 Version: @VERSION@
-Libs: -L${libdir} -lesvg
-Cflags: -I${pkgincludedir}/svg -I${pkgincludedir}/dom -I${pkgincludedir}/css
+Libs: -L${libdir} -lgueb_edom
+Cflags: -I${pkgincludedir}/svg

@@ -6,9 +6,9 @@ datarootdir=@datarootdir@
 datadir=@datadir@/@PACKAGE@
 pkgincludedir=@pkgincludedir@-@VMAJ@
 
-Name: EDOM
-Description: EDOM
+Name: Egueb CSS
+Description: Egueb CSS implementation
 Requires.private: eina
 Version: @VERSION@
-Libs: -L${libdir} -ledom
-Cflags: -I${pkgincludedir}/svg
+Libs: -L${libdir} -legueb_css
+Cflags: -I${pkgincludedir}/css
