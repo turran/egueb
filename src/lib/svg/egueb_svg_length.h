@@ -51,10 +51,10 @@ typedef struct _Egueb_Svg_Length_Animated
 
 typedef Egueb_Svg_Length_Animated Egueb_Svg_Animated_Coord;
 
-const extern Egueb_Svg_Length EGUEB_SVG_LENGTH_0;
-const extern Egueb_Svg_Length EGUEB_SVG_LENGTH_1;
-const extern Egueb_Svg_Length EGUEB_SVG_LENGTH_100_PERCENT;
-const extern Egueb_Svg_Length EGUEB_SVG_LENGTH_50_PERCENT;
+extern const Egueb_Svg_Length EGUEB_SVG_LENGTH_0;
+extern const Egueb_Svg_Length EGUEB_SVG_LENGTH_1;
+extern const Egueb_Svg_Length EGUEB_SVG_LENGTH_100_PERCENT;
+extern const Egueb_Svg_Length EGUEB_SVG_LENGTH_50_PERCENT;
 
 static inline Eina_Bool egueb_svg_length_is_relative(Egueb_Svg_Length *length)
 {

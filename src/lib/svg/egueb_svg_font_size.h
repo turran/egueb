@@ -61,7 +61,7 @@ typedef struct _Egueb_Svg_Font_Size_Animated
 	Egueb_Svg_Font_Size anim;
 } Egueb_Svg_Font_Size_Animated;
 
-const extern Egueb_Svg_Font_Size EGUEB_SVG_FONT_SIZE_MEDIUM;
+extern const Egueb_Svg_Font_Size EGUEB_SVG_FONT_SIZE_MEDIUM;
 
 EAPI const Egueb_Dom_Value_Descriptor * egueb_svg_font_size_descriptor_get(void);
 EAPI Eina_Bool egueb_svg_font_size_string_from(Egueb_Svg_Font_Size *font_size, const char *attr_val);

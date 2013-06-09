@@ -122,6 +122,7 @@ endif
 
 if BUILD_EDOM
 pkgconfig_DATA += egueb-dom.pc
+pkgconfig_DATA += egueb-smil.pc
 endif
 
 if BUILD_ESVG

@@ -16,6 +16,7 @@ src/lib/dom/egueb_dom_event_mutation.h \
 src/lib/dom/egueb_dom_list.h \
 src/lib/dom/egueb_dom_main.h \
 src/lib/dom/egueb_dom_node.h \
+src/lib/dom/egueb_dom_node_list.h \
 src/lib/dom/egueb_dom_node_map_named.h \
 src/lib/dom/egueb_dom_parser.h \
 src/lib/dom/egueb_dom_string.h \

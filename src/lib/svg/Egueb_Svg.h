@@ -63,15 +63,67 @@
 
 /* basic data types */
 #include "egueb_svg_main.h"
-#include "egueb_svg_document.h"
+#include "egueb_svg_clip_path.h"
+#include "egueb_svg_color.h"
+#include "egueb_svg_display.h"
+#include "egueb_svg_length.h"
+#include "egueb_svg_fill_rule.h"
+#include "egueb_svg_font_size.h"
+#include "egueb_svg_matrix.h"
+#include "egueb_svg_number.h"
+#include "egueb_svg_paint.h"
+#include "egueb_svg_referenceable_units.h"
+#include "egueb_svg_rect.h"
+#include "egueb_svg_string.h"
+#include "egueb_svg_stroke_line_cap.h"
+#include "egueb_svg_stroke_line_join.h"
+#include "egueb_svg_visibility.h"
 
-#if 0
-#include "egueb_svg_types.h"
+/* attributes */
+#include "egueb_svg_attr_clip_path.h"
+#include "egueb_svg_attr_color.h"
+#include "egueb_svg_attr_font_size.h"
+#include "egueb_svg_attr_length.h"
+#include "egueb_svg_attr_matrix.h"
+#include "egueb_svg_attr_number.h"
+#include "egueb_svg_attr_paint.h"
+#include "egueb_svg_attr_rect.h"
+#include "egueb_svg_attr_referenceable_units.h"
+#include "egueb_svg_attr_string.h"
+#include "egueb_svg_attr_stroke_line_cap.h"
+#include "egueb_svg_attr_stroke_line_join.h"
+#include "egueb_svg_attr_visibility.h"
 
 /* main abstractions */
-#include "egueb_svg_element.h"
+#include "egueb_svg_gradient.h"
+#include "egueb_svg_shape.h"
+#include "egueb_svg_paint_server.h"
+#include "egueb_svg_painter.h"
+#include "egueb_svg_reference.h"
+#include "egueb_svg_referenceable.h"
 #include "egueb_svg_renderable.h"
 
+/* document */
+#include "egueb_svg_document.h"
+
+/* elements */
+#include "egueb_svg_element.h"
+#include "egueb_svg_element_circle.h"
+#include "egueb_svg_element_clip_path.h"
+#include "egueb_svg_element_defs.h"
+#include "egueb_svg_element_ellipse.h"
+#include "egueb_svg_element_g.h"
+#include "egueb_svg_element_image.h"
+#include "egueb_svg_element_line.h"
+#include "egueb_svg_element_linear_gradient.h"
+#include "egueb_svg_element_radial_gradient.h"
+#include "egueb_svg_element_rect.h"
+#include "egueb_svg_element_use.h"
+#include "egueb_svg_element_stop.h"
+#include "egueb_svg_element_svg.h"
+#include "egueb_svg_element_text.h"
+
+#if 0
 /* providers */
 #include "egueb_svg_video_provider.h"
 #include "egueb_svg_script_provider.h"

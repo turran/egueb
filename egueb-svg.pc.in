@@ -8,7 +8,7 @@ pkgincludedir=@pkgincludedir@-@VMAJ@
 
 Name: Egueb SVG
 Description: Egueb SVG implementation
-Requires.private: egueb-dom egueb-css @esvg_requirements@
+Requires.private: egueb-dom egueb-css egueb-smil @esvg_requirements@
 Version: @VERSION@
 Libs: -L${libdir} -legueb_svg
 Cflags: -I${pkgincludedir}/svg -I${pkgincludedir}/dom -I${pkgincludedir}/css
