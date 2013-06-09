@@ -32,12 +32,15 @@ EAPI void egueb_svg_element_svg_animations_fps_set(Egueb_Dom_Node *n, int fps);
 EAPI double egueb_svg_element_svg_time_get(Egueb_Dom_Node *n);
 EAPI void egueb_svg_element_svg_time_set(Egueb_Dom_Node *n, double secs);
 EAPI void egueb_svg_element_svg_time_tick(Egueb_Dom_Node *n);
-EAPI void egueb_svg_element_svg_actual_width_get(Egueb_Dom_Node *n, double *actual_width);
-EAPI void egueb_svg_element_svg_actual_height_get(Egueb_Dom_Node *n, double *actual_height);
 
 typedef Eina_Bool (*Egueb_Svg_Element_Svg_Damage_Cb)(Egueb_Dom_Node *n, Eina_Rectangle *damage,
 		void *data);
 EAPI void egueb_svg_element_svg_damages_get(Egueb_Dom_Node *n, Egueb_Svg_Element_Svg_Damage_Cb cb, void *data);
+
+EAPI Eina_Error egueb_svg_element_svg_width_get(Egueb_Dom_Node *n,
+		Egueb_Svg_Length_Animated *width);
+EAPI Eina_Error egueb_svg_element_svg_height_get(Egueb_Dom_Node *n,
+		Egueb_Svg_Length_Animated *height);
 
 #if 0
 typedef const char * (*Egueb_Svg_Element_Svg_Base_Dir_Get)(Ender_Element *e, void *data);

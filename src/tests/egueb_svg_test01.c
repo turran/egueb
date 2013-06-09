@@ -36,17 +36,15 @@ int main(int argc, char **argv)
 		/* first of all set the container size */
 		egueb_svg_document_width_set(doc, 640);
 		egueb_svg_document_height_set(doc, 480);
-		/* now process the svg document */
-		egueb_dom_document_process(doc);
+		egueb_svg_document_actual_width_get(doc, &w);
+		egueb_svg_document_actual_height_get(doc, &h);
 
-		/* FIXME for now we create a surface like
-	 	 * this, later we should get the real size
-		 */
-		egueb_svg_element_svg_actual_width_get(topmost, &w);
-		egueb_svg_element_svg_actual_height_get(topmost, &h);
 		s = enesim_surface_new(ENESIM_FORMAT_ARGB8888, lround(w), lround(h));
 		if (s)
 		{
+			/* now process the svg document */
+			egueb_dom_document_process(doc);
+			/* finally draw */
 			if (!egueb_svg_element_svg_draw(topmost, s,
 				NULL, 0, 0, &log))
 			{

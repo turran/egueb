@@ -39,6 +39,9 @@ EAPI Eina_Error egueb_svg_document_height_set(Egueb_Dom_Node *n,
 		double height);
 EAPI Eina_Error egueb_svg_document_height_get(Egueb_Dom_Node *n,
 		double *height);
+EAPI void egueb_svg_document_actual_width_get(Egueb_Dom_Node *n, double *actual_width);
+EAPI void egueb_svg_document_actual_height_get(Egueb_Dom_Node *n, double *actual_height);
+
 EAPI Eina_Error egueb_svg_document_font_size_set(Egueb_Dom_Node *n,
 		double font_size);
 EAPI Eina_Error egueb_svg_document_font_size_get(Egueb_Dom_Node *n,

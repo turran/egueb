@@ -732,6 +732,48 @@ EAPI Eina_Error egueb_svg_document_height_get(Egueb_Dom_Node *n,
 	return EINA_ERROR_NONE;
 }
 
+EAPI void egueb_svg_document_actual_width_get(Egueb_Dom_Node *n, double *actual_width)
+{
+	Egueb_Dom_Node *topmost = NULL;
+
+	egueb_dom_document_element_get(n, &topmost);
+	if (!topmost)
+	{
+		*actual_width = 0;
+	}
+	else
+	{
+		Egueb_Svg_Document *thiz;
+		Egueb_Svg_Length_Animated width;
+
+		thiz = EGUEB_SVG_DOCUMENT(n);
+		egueb_svg_element_svg_width_get(topmost, &width);
+		*actual_width = egueb_svg_coord_final_get(&width.anim, thiz->width, thiz->font_size);
+		egueb_dom_node_unref(topmost);
+	}
+}
+
+EAPI void egueb_svg_document_actual_height_get(Egueb_Dom_Node *n, double *actual_height)
+{
+	Egueb_Dom_Node *topmost = NULL;
+
+	egueb_dom_document_element_get(n, &topmost);
+	if (!topmost)
+	{
+		*actual_height = 0;
+	}
+	else
+	{
+		Egueb_Svg_Document *thiz;
+		Egueb_Svg_Length_Animated height;
+
+		thiz = EGUEB_SVG_DOCUMENT(n);
+		egueb_svg_element_svg_height_get(topmost, &height);
+		*actual_height = egueb_svg_coord_final_get(&height.anim, thiz->height, thiz->font_size);
+		egueb_dom_node_unref(topmost);
+	}
+}
+
 EAPI Eina_Error egueb_svg_document_font_size_set(Egueb_Dom_Node *n,
 		double font_size)
 {

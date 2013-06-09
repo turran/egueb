@@ -12,7 +12,7 @@ src_tests_libmydom_la_CPPFLAGS = \
 @EDOM_CFLAGS@
 
 src_tests_libmydom_la_LIBADD = \
-$(top_builddir)/src/lib/dom/libedom.la \
+$(top_builddir)/src/lib/dom/libegueb_dom.la \
 $(top_builddir)/src/lib/smil/libegueb_smil.la \
 @EDOM_LIBS@
 
@@ -21,7 +21,7 @@ tests_dom_CPPFLAGS = \
 @EDOM_CFLAGS@
 
 tests_dom_LDADD = \
-$(top_builddir)/src/lib/dom/libedom.la \
+$(top_builddir)/src/lib/dom/libegueb_dom.la \
 $(top_builddir)/src/tests/libmydom.la \
 @EDOM_LIBS@
 
@@ -39,7 +39,7 @@ $(tests_dom_CPPFLAGS) \
 @ESVG_CFLAGS@
 
 tests_svg_LDADD = \
-$(top_builddir)/src/lib/svg/libesvg.la \
+$(top_builddir)/src/lib/svg/libegueb_svg.la \
 $(tests_dom_LDADD) \
 @ESVG_LIBS@
 

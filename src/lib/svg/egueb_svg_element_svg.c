@@ -1228,36 +1228,6 @@ static void _egueb_svg_element_svg_viewbox_set(Egueb_Dom_Tag *t, Egueb_Svg_Rect 
 	}
 }
 
-/* FIXME the below two functions should return the actual width/height based
- * on the width and height properties, if it is relative it should use the
- * the container width/height to compute them, this is are helper functions
- * to know the real size of the svg, this way we'll know on the upper libraries
- * the preferred area
- */
-static void _egueb_svg_element_svg_actual_width_get(Egueb_Dom_Tag *t, double *actual_width)
-{
-	Egueb_Svg_Element_Svg *thiz;
-	double aw;
-	double cw;
-
-	thiz = _egueb_svg_element_svg_get(t);
-	egueb_svg_element_svg_internal_container_width_get(t, &cw);
-	aw = egueb_svg_coord_final_get(&thiz->width, cw, thiz->base_font_size);
-	*actual_width = aw;
-}
-
-static void _egueb_svg_element_svg_actual_height_get(Egueb_Dom_Tag *t, double *actual_height)
-{
-	Egueb_Svg_Element_Svg *thiz;
-	double ah;
-	double ch;
-
-	thiz = _egueb_svg_element_svg_get(t);
-	egueb_svg_element_svg_internal_container_height_get(t, &ch);
-	ah = egueb_svg_coord_final_get(&thiz->height, ch, thiz->base_font_size);
-	*actual_height = ah;
-}
-
 static void _egueb_svg_element_svg_x_dpi_set(Egueb_Dom_Tag *t, double x_dpi)
 {
 	Egueb_Svg_Element_Svg *thiz;
@@ -1336,10 +1306,6 @@ static Ender_Element *_egueb_svg_element_svg_element_get_by_id(Egueb_Dom_Tag *t,
 #define _egueb_svg_element_svg_y_is_set NULL
 #define _egueb_svg_element_svg_width_is_set NULL
 #define _egueb_svg_element_svg_height_is_set NULL
-#define _egueb_svg_element_svg_actual_width_set NULL
-#define _egueb_svg_element_svg_actual_width_is_set NULL
-#define _egueb_svg_element_svg_actual_height_set NULL
-#define _egueb_svg_element_svg_actual_height_is_set NULL
 #define _egueb_svg_element_svg_viewbox_get NULL
 #define _egueb_svg_element_svg_viewbox_is_set NULL
 #define _egueb_svg_element_svg_x_dpi_is_set NULL
@@ -1856,32 +1822,6 @@ EAPI void egueb_svg_element_svg_time_set(Egueb_Dom_Node *n, double secs)
 	//etch_timer_goto(Etch *n, unsigned long frame);
 }
 
-/* FIXME the below two functions should return the actual width/height based
- * on the width and height properties, if it is relative it should use the
- * the container width/height to compute them, this is are helper functions
- * to know the real size of the svg, this way we'll know on the upper libraries
- * the preferred area
- */
-EAPI void egueb_svg_element_svg_actual_width_get(Egueb_Dom_Node *n, double *actual_width)
-{
-	Egueb_Svg_Element_Svg *thiz;
-
-	thiz = EGUEB_SVG_ELEMENT_SVG(n);
-	enesim_renderer_rectangle_width_get(thiz->rectangle, actual_width);
-}
-
-/**
- * To be documented
- * FIXME: To be fixed
- */
-EAPI void egueb_svg_element_svg_actual_height_get(Egueb_Dom_Node *n, double *actual_height)
-{
-	Egueb_Svg_Element_Svg *thiz;
-
-	thiz = EGUEB_SVG_ELEMENT_SVG(n);
-	enesim_renderer_rectangle_height_get(thiz->rectangle, actual_height);
-}
-
 #if 0
 /**
  * To be documented
@@ -2089,8 +2029,12 @@ EAPI void egueb_svg_element_svg_damages_get(Egueb_Dom_Node *n,
 	int tw, th;
 
 	thiz = EGUEB_SVG_ELEMENT_SVG(n);
+#if 0
 	egueb_svg_element_svg_actual_width_get(n, &aw);
 	egueb_svg_element_svg_actual_height_get(n, &ah);
+#endif
+	aw = 640;
+	ah = 480;
 	tw = ceil(aw);
 	th = ceil(ah);
 
@@ -2120,6 +2064,40 @@ EAPI void egueb_svg_element_svg_damages_get(Egueb_Dom_Node *n,
 	}
 	eina_iterator_free(iter);
 	eina_tiler_clear(thiz->tiler);
+}
+
+EAPI Eina_Error egueb_svg_element_svg_width_get(Egueb_Dom_Node *n,
+		Egueb_Svg_Length_Animated *width)
+{
+	Egueb_Svg_Element_Svg *thiz;
+
+	thiz = EGUEB_SVG_ELEMENT_SVG(n);
+	if (egueb_dom_attr_type_is_set(thiz->width, EGUEB_DOM_ATTR_TYPE_BASE))
+		egueb_dom_attr_get(thiz->width, EGUEB_DOM_ATTR_TYPE_BASE, &width->base);
+	else
+		egueb_dom_attr_get(thiz->width, EGUEB_DOM_ATTR_TYPE_DEFAULT, &width->base);
+	if (egueb_dom_attr_type_is_set(thiz->width, EGUEB_DOM_ATTR_TYPE_ANIMATED))
+		egueb_dom_attr_get(thiz->width, EGUEB_DOM_ATTR_TYPE_ANIMATED, &width->anim);
+	else
+		width->anim = width->base;
+	return EINA_ERROR_NONE;
+}
+
+EAPI Eina_Error egueb_svg_element_svg_height_get(Egueb_Dom_Node *n,
+		Egueb_Svg_Length_Animated *height)
+{
+	Egueb_Svg_Element_Svg *thiz;
+
+	thiz = EGUEB_SVG_ELEMENT_SVG(n);
+	if (egueb_dom_attr_type_is_set(thiz->height, EGUEB_DOM_ATTR_TYPE_BASE))
+		egueb_dom_attr_get(thiz->height, EGUEB_DOM_ATTR_TYPE_BASE, &height->base);
+	else
+		egueb_dom_attr_get(thiz->height, EGUEB_DOM_ATTR_TYPE_DEFAULT, &height->base);
+	if (egueb_dom_attr_type_is_set(thiz->height, EGUEB_DOM_ATTR_TYPE_ANIMATED))
+		egueb_dom_attr_get(thiz->height, EGUEB_DOM_ATTR_TYPE_ANIMATED, &height->anim);
+	else
+		height->anim = height->base;
+	return EINA_ERROR_NONE;
 }
 
 #if 0
