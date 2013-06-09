@@ -72,6 +72,8 @@ typedef struct _Egueb_Svg_Element_Svg
 
 	/* damages */
 	Eina_Tiler *tiler;
+	int tw;
+	int th;
 
 #if 0
 	double version;
@@ -93,8 +95,6 @@ typedef struct _Egueb_Svg_Element_Svg
 	/* input */
 	Egueb_Svg_Renderable_Container *container;
 	Egueb_Svg_Input *input;
-	int tw;
-	int th;
 	/* svg inclusion */
 	Eina_List *svgs; /* the list of svg documents found on the svg */
 	Eina_List *image_svgs; /* the list of svg images on the svg */
@@ -107,6 +107,20 @@ typedef struct _Egueb_Svg_Element_Svg_Class
 {
 	Egueb_Svg_Renderable_Container_Class base;
 } Egueb_Svg_Element_Svg_Class;
+
+static Eina_Bool _egueb_svg_element_svg_damage_cb(Enesim_Renderer *r,
+		const Eina_Rectangle *area, Eina_Bool past,
+		void *data)
+{
+	Eina_Tiler *tiler = data;
+	const char *name;
+
+	eina_tiler_rect_add(tiler, area);
+	enesim_renderer_name_get(r, &name);
+	DBG("Renderer %s has changed at area %d %d %d %d", name, area->x,
+			area->y, area->w, area->h);
+	return EINA_TRUE;
+}
 
 /* whenever a child is added which can have a painter, check if it is set
  * if not, define the generic painter for it
@@ -380,19 +394,6 @@ static const char * _egueb_svg_element_svg_base_dir_get(Egueb_Svg_Element_Svg *t
 	if (thiz->application_descriptor->base_dir_get)
 		return thiz->application_descriptor->base_dir_get(thiz->thiz_e, thiz->application_data);
 	return NULL;
-}
-
-static Eina_Bool _egueb_svg_element_svg_damage_cb(Enesim_Renderer *r,
-		const Eina_Rectangle *area, Eina_Bool past,
-		void *data)
-{
-	Eina_Tiler *tiler = data;
-	const char *name;
-
-	eina_tiler_rect_add(tiler, area);
-	enesim_renderer_name_get(r, &name);
-	DBG("renderer %s has changed at area %d %d %d %d", name, area->x, area->y, area->w, area->h);
-	return EINA_TRUE;
 }
 
 static Eina_Bool _egueb_svg_element_svg_relative_to_absolute(Egueb_Svg_Element_Svg *thiz, const char *relative, char *absolute, size_t len)
@@ -2073,55 +2074,55 @@ EAPI Eina_Bool egueb_svg_element_svg_draw_list(Egueb_Dom_Node *n, Enesim_Surface
 	return ret;
 }
 
-#if 0
 /**
  * To be documented
  * FIXME: To be fixed
  */
-EAPI void egueb_svg_element_svg_damages_get(Ender_Element *e, Egueb_Svg_Element_Svg_Damage_Cb cb, void *data)
+EAPI void egueb_svg_element_svg_damages_get(Egueb_Dom_Node *n,
+		Egueb_Svg_Element_Svg_Damage_Cb cb, void *data)
 {
-	Egueb_Dom_Tag *t;
 	Egueb_Svg_Element_Svg *thiz;
 	Enesim_Renderer *r;
 	Eina_Iterator *iter;
 	Eina_Rectangle *rect;
-	int cw;
-	int ch;
+	double aw, ah;
+	int tw, th;
 
-	t = ender_element_object_get(e);
-	thiz = _egueb_svg_element_svg_get(t);
+	thiz = EGUEB_SVG_ELEMENT_SVG(n);
+	egueb_svg_element_svg_actual_width_get(n, &aw);
+	egueb_svg_element_svg_actual_height_get(n, &ah);
+	tw = ceil(aw);
+	th = ceil(ah);
 
-	cw = ceil(thiz->container_width);
-	ch = ceil(thiz->container_height);
-
-	if (!thiz->tiler || thiz->tw != cw || thiz->th != ch)
+	if (!thiz->tiler || thiz->tw != tw || thiz->th != th)
 	{
 		Eina_Rectangle full;
 
 		if (thiz->tiler)
 			eina_tiler_free(thiz->tiler);
-		thiz->tiler = eina_tiler_new(cw, ch);
-		thiz->tw = cw;
-		thiz->th = ch;
+		thiz->tiler = eina_tiler_new(tw, th);
+		thiz->tw = tw;
+		thiz->th = th;
 
-		eina_rectangle_coords_from(&full, 0, 0, cw, ch);
-		cb(e, &full, data);
+		eina_rectangle_coords_from(&full, 0, 0, tw, th);
+		cb(n, &full, data);
 		return;
 	}
 
-	egueb_svg_renderable_internal_renderer_get(t, &r);
+	r = egueb_svg_renderable_renderer_get(n);
 	/* TODO first generate the damages on every svg image we have */
 	enesim_renderer_damages_get(r, _egueb_svg_element_svg_damage_cb, thiz->tiler);
 
 	iter = eina_tiler_iterator_new(thiz->tiler);
 	EINA_ITERATOR_FOREACH(iter, rect)
 	{
-		cb(e, rect, data);
+		cb(n, rect, data);
 	}
 	eina_iterator_free(iter);
 	eina_tiler_clear(thiz->tiler);
 }
 
+#if 0
 /**
  * To be documented
  * FIXME: To be fixed
