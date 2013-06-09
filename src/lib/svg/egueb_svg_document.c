@@ -775,6 +775,50 @@ EAPI Eina_Error egueb_svg_document_element_get_by_iri(Egueb_Dom_Node *n,
 	return data.error;
 }
 
+/**
+ * To be documented
+ * FIXME: To be fixed
+ */
+EAPI void egueb_svg_document_feed_mouse_move(Egueb_Dom_Node *n, int x, int y)
+{
+#if 0
+	Egueb_Svg_Document_Svg *thiz;
+
+	thiz = EGUEB_SVG_DOCUMENT(t);
+	egueb_svg_input_feed_mouse_move(thiz->input, x, y);
+#endif
+}
+
+/**
+ * To be documented
+ * FIXME: To be fixed
+ */
+EAPI void egueb_svg_document_feed_mouse_down(Egueb_Dom_Node *n, int button)
+{
+#if 0
+	Egueb_Svg_Document_Svg *thiz;
+
+	thiz = EGUEB_SVG_DOCUMENT(t);
+	egueb_svg_input_feed_mouse_down(thiz->input, button);
+#endif
+}
+
+/**
+ * To be documented
+ * FIXME: To be fixed
+ */
+EAPI void egueb_svg_element_svg_feed_mouse_up(Egueb_Dom_Node *n, int button)
+{
+#if 0
+	Egueb_Svg_Document_Svg *thiz;
+
+	thiz = EGUEB_SVG_DOCUMENT(t);
+	egueb_svg_input_feed_mouse_up(thiz->input, button);
+#endif
+}
+
+
+/* FIXME This might not be needed */
 EAPI Eina_Error egueb_svg_document_iri_clone(Egueb_Dom_Node *n,
 		Egueb_Dom_String *iri, Egueb_Dom_Node **cloned)
 {

@@ -1905,48 +1905,6 @@ EAPI void egueb_svg_element_svg_script_alert(Ender_Element *e, const char *msg)
  * To be documented
  * FIXME: To be fixed
  */
-EAPI void egueb_svg_element_svg_feed_mouse_move(Ender_Element *e, int x, int y)
-{
-	Egueb_Dom_Tag *t;
-	Egueb_Svg_Element_Svg *thiz;
-
-	t = ender_element_object_get(e);
-	thiz = _egueb_svg_element_svg_get(t);
-	egueb_svg_input_feed_mouse_move(thiz->input, x, y);
-}
-
-/**
- * To be documented
- * FIXME: To be fixed
- */
-EAPI void egueb_svg_element_svg_feed_mouse_down(Ender_Element *e, int button)
-{
-	Egueb_Dom_Tag *t;
-	Egueb_Svg_Element_Svg *thiz;
-
-	t = ender_element_object_get(e);
-	thiz = _egueb_svg_element_svg_get(t);
-	egueb_svg_input_feed_mouse_down(thiz->input, button);
-}
-
-/**
- * To be documented
- * FIXME: To be fixed
- */
-EAPI void egueb_svg_element_svg_feed_mouse_up(Ender_Element *e, int button)
-{
-	Egueb_Dom_Tag *t;
-	Egueb_Svg_Element_Svg *thiz;
-
-	t = ender_element_object_get(e);
-	thiz = _egueb_svg_element_svg_get(t);
-	egueb_svg_input_feed_mouse_up(thiz->input, button);
-}
-
-/**
- * To be documented
- * FIXME: To be fixed
- */
 EAPI Eina_List * egueb_svg_element_svg_intersection_list_get(Ender_Element *e, Enesim_Rectangle *rect)
 {
 	return NULL;

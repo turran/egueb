@@ -97,10 +97,6 @@ EAPI Ender_Element * egueb_svg_element_svg_element_find(Ender_Element *e, const 
 
 EAPI void egueb_svg_element_svg_script_alert(Ender_Element *e, const char *msg);
 
-EAPI void egueb_svg_element_svg_feed_mouse_move(Ender_Element *e, int x, int y);
-EAPI void egueb_svg_element_svg_feed_mouse_down(Ender_Element *e, int button);
-EAPI void egueb_svg_element_svg_feed_mouse_up(Ender_Element *e, int button);
-
 EAPI Eina_List * egueb_svg_element_svg_intersection_list_get(Ender_Element *e, Enesim_Rectangle *rect);
 
 EAPI void egueb_svg_element_svg_application_descriptor_set(Ender_Element *e, const Egueb_Svg_Element_Svg_Application_Descriptor *descriptor, void *data);
