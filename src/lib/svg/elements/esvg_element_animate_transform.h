@@ -18,8 +18,8 @@
 #ifndef _ESVG_ELEMENT_ANIMATE_TRANSFORM_H
 #define _ESVG_ELEMENT_ANIMATE_TRANSFORM_H
 
-EAPI Ender_Element * esvg_element_animate_transform_new(void);
-EAPI void esvg_element_animate_transform_type_set(Ender_Element *e, Esvg_Animate_Transform_Type type);
-EAPI void esvg_element_animate_transform_type_get(Ender_Element *e, Esvg_Animate_Transform_Type *type);
+EAPI Ender_Element * egueb_svg_element_animate_transform_new(void);
+EAPI void egueb_svg_element_animate_transform_type_set(Ender_Element *e, Egueb_Svg_Animate_Transform_Type type);
+EAPI void egueb_svg_element_animate_transform_type_get(Ender_Element *e, Egueb_Svg_Animate_Transform_Type *type);
 
 #endif

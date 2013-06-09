@@ -15,17 +15,17 @@
  * License along with this library.
  * If not, see <http://www.gnu.org/licenses/>.
  */
-#include "esvg_main_private.h"
-#include "esvg_private_attribute_presentation.h"
+#include "egueb_svg_main_private.h"
+#include "egueb_svg_private_attribute_presentation.h"
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
-static void _color_dump(Esvg_Color *c)
+static void _color_dump(Egueb_Svg_Color *c)
 {
 	printf("%02x%02x%02x", c->r, c->g, c->b);
 }
 
-static void _paint_dump(Esvg_Paint *p)
+static void _paint_dump(Egueb_Svg_Paint *p)
 {
 	switch (p->type)
 	{
@@ -46,7 +46,7 @@ static void _paint_dump(Esvg_Paint *p)
 	}
 }
 
-static void _length_dump(Esvg_Length *l)
+static void _length_dump(Egueb_Svg_Length *l)
 {
 	printf("%g", l->value);
 	switch (l->unit)
@@ -92,7 +92,7 @@ static void _length_dump(Esvg_Length *l)
 	}
 }
 
-static void _line_cap_dump(Esvg_Stroke_Line_Cap cap)
+static void _line_cap_dump(Egueb_Svg_Stroke_Line_Cap cap)
 {
 	switch (cap)
 	{
@@ -113,7 +113,7 @@ static void _line_cap_dump(Esvg_Stroke_Line_Cap cap)
 	}
 }
 
-static void _line_join_dump(Esvg_Stroke_Line_Join join)
+static void _line_join_dump(Egueb_Svg_Stroke_Line_Join join)
 {
 	switch (join)
 	{
@@ -137,11 +137,11 @@ static void _line_join_dump(Esvg_Stroke_Line_Join join)
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
-void esvg_attribute_presentation_setup(Esvg_Attribute_Presentation *thiz)
+void egueb_svg_attribute_presentation_setup(Egueb_Svg_Attribute_Presentation *thiz)
 {
-	Esvg_Color black = { 0, 0, 0 };
-	Esvg_Length one = { ESVG_UNIT_LENGTH_PX, 1 };
-	Esvg_Number onen = { 1.0 };
+	Egueb_Svg_Color black = { 0, 0, 0 };
+	Egueb_Svg_Length one = { ESVG_UNIT_LENGTH_PX, 1 };
+	Egueb_Svg_Number onen = { 1.0 };
 
 	/* now the default values */
 	thiz->color.v = black;
@@ -161,45 +161,45 @@ void esvg_attribute_presentation_setup(Esvg_Attribute_Presentation *thiz)
 	thiz->clip_path.v.type = ESVG_CLIP_PATH_NONE;
 }
 
-void esvg_attribute_presentation_merge_rel(const Esvg_Attribute_Presentation *rel,
-		const Esvg_Attribute_Presentation *s,
-		Esvg_Attribute_Presentation *d)
+void egueb_svg_attribute_presentation_merge_rel(const Egueb_Svg_Attribute_Presentation *rel,
+		const Egueb_Svg_Attribute_Presentation *s,
+		Egueb_Svg_Attribute_Presentation *d)
 {
 	/* FIXME check if actually something has changed */
 	/* clip_path */
-	esvg_attribute_clip_path_merge_rel(&rel->clip_path, &s->clip_path, &d->clip_path);
+	egueb_svg_attribute_clip_path_merge_rel(&rel->clip_path, &s->clip_path, &d->clip_path);
 	/* color */
-	esvg_attribute_color_merge_rel(&rel->color, &s->color, &d->color);
+	egueb_svg_attribute_color_merge_rel(&rel->color, &s->color, &d->color);
 	/* opacity */
-	esvg_attribute_number_merge_rel(&rel->opacity, &s->opacity, &d->opacity);
+	egueb_svg_attribute_number_merge_rel(&rel->opacity, &s->opacity, &d->opacity);
 	/* FIXME do the real merge_rel (multiply, etc, etc) */
 	/* fill */
-	esvg_attribute_paint_merge_rel(&rel->fill, &s->fill, &d->fill);
+	egueb_svg_attribute_paint_merge_rel(&rel->fill, &s->fill, &d->fill);
 	/* fill opacity */
-	esvg_attribute_number_merge_rel(&rel->fill_opacity, &s->fill_opacity, &d->fill_opacity);
+	egueb_svg_attribute_number_merge_rel(&rel->fill_opacity, &s->fill_opacity, &d->fill_opacity);
 	/* fill rule */
-	esvg_attribute_enum_merge_rel(&rel->fill_rule, &s->fill_rule, &d->fill_rule);
+	egueb_svg_attribute_enum_merge_rel(&rel->fill_rule, &s->fill_rule, &d->fill_rule);
 	/* stroke */
-	esvg_attribute_paint_merge_rel(&rel->stroke, &s->stroke, &d->stroke);
+	egueb_svg_attribute_paint_merge_rel(&rel->stroke, &s->stroke, &d->stroke);
 	/* stroke width */
-	esvg_attribute_length_merge_rel(&rel->stroke_width, &s->stroke_width, &d->stroke_width);
+	egueb_svg_attribute_length_merge_rel(&rel->stroke_width, &s->stroke_width, &d->stroke_width);
 	/* stroke line cap */
-	esvg_attribute_enum_merge_rel(&rel->stroke_line_cap, &s->stroke_line_cap, &d->stroke_line_cap);
+	egueb_svg_attribute_enum_merge_rel(&rel->stroke_line_cap, &s->stroke_line_cap, &d->stroke_line_cap);
 	/* stroke line join */
-	esvg_attribute_enum_merge_rel(&rel->stroke_line_join, &s->stroke_line_join, &d->stroke_line_join);
+	egueb_svg_attribute_enum_merge_rel(&rel->stroke_line_join, &s->stroke_line_join, &d->stroke_line_join);
 	/* stroke opacity */
-	esvg_attribute_number_merge_rel(&rel->stroke_opacity, &s->stroke_opacity, &d->stroke_opacity);
+	egueb_svg_attribute_number_merge_rel(&rel->stroke_opacity, &s->stroke_opacity, &d->stroke_opacity);
 	/* visibility */
-	esvg_attribute_enum_merge_rel(&rel->visibility, &s->visibility, &d->visibility);
+	egueb_svg_attribute_enum_merge_rel(&rel->visibility, &s->visibility, &d->visibility);
 	/* stop opacity */
-	esvg_attribute_number_merge_rel(&rel->stop_opacity, &s->stop_opacity, &d->stop_opacity);
+	egueb_svg_attribute_number_merge_rel(&rel->stop_opacity, &s->stop_opacity, &d->stop_opacity);
 	/* stop color */
-	esvg_attribute_color_merge_rel(&rel->stop_color, &s->stop_color, &d->stop_color);
+	egueb_svg_attribute_color_merge_rel(&rel->stop_color, &s->stop_color, &d->stop_color);
 	/* display */
-	esvg_attribute_enum_merge_rel(&rel->display, &s->display, &d->display);
+	egueb_svg_attribute_enum_merge_rel(&rel->display, &s->display, &d->display);
 }
 
-void esvg_attribute_presentation_dump(Esvg_Attribute_Presentation *thiz)
+void egueb_svg_attribute_presentation_dump(Egueb_Svg_Attribute_Presentation *thiz)
 {
 #if 0
 	/* disabled for now */

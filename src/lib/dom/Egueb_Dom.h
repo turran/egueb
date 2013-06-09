@@ -1,4 +1,4 @@
-/* Edom - DOM
+/* Egueb_Dom - DOM
  * Copyright (C) 2011 Jorge Luis Zapata, Vincent Torri
  *
  * This library is free software; you can redistribute it and/or
@@ -15,8 +15,8 @@
  * License along with this library.
  * If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef _EDOM_H
-#define _EDOM_H
+#ifndef _EGUEB_DOM_H
+#define _EGUEB_DOM_H
 
 #include <Eina.h>
 #include <Enesim.h>
@@ -27,7 +27,7 @@
 #endif
 
 #ifdef _WIN32
-# ifdef EDOM_BUILD
+# ifdef EGUEB_DOM_BUILD
 #  ifdef DLL_EXPORT
 #   define EAPI __declspec(dllexport)
 #  else
@@ -53,117 +53,28 @@ extern "C" {
 #endif
 
 #include "egueb_dom_main.h"
-#include "egueb_dom_descriptor.h"
+#include "egueb_dom_list.h"
 #include "egueb_dom_string.h"
 #include "egueb_dom_node_list.h"
-#include "egueb_dom_named_node_map.h"
+#include "egueb_dom_node_map_named.h"
 #include "egueb_dom_node.h"
-
-typedef struct _Edom_Parser Edom_Parser;
-typedef struct _Edom_Tag Edom_Tag;
-
-/* parser */
-typedef Eina_Bool (*Edom_Parser_Tag_Get)(Edom_Parser *parser, const char *content, size_t len, int *tag);
-typedef void * (*Edom_Parser_Tag_New)(Edom_Parser *parser, int tag);
-typedef void * (*Edom_Parser_Topmost_Get)(Edom_Parser *parser);
-typedef Eina_Bool (*Edom_Parser_Tag_Attribute_Set)(Edom_Parser *parser, void *t, const char *attribute, const char *value);
-typedef Eina_Bool (*Edom_Parser_Tag_Child_Add)(Edom_Parser *parser, void *t, void *child);
-typedef void (*Edom_Parser_Tag_Cdata_Set)(Edom_Parser *parser, void *t, const char *cdata, unsigned int length);
-typedef void (*Edom_Parser_Tag_Text_Set)(Edom_Parser *parser, void *t, const char *text, unsigned int length);
-
-typedef struct _Edom_Parser_Descriptor
-{
-	Edom_Parser_Tag_Get tag_get;
-	Edom_Parser_Tag_New tag_new;
-	Edom_Parser_Topmost_Get topmost_get;
-	Edom_Parser_Tag_Attribute_Set tag_attribute_set;
-	Edom_Parser_Tag_Child_Add tag_child_add;
-	Edom_Parser_Tag_Cdata_Set tag_cdata_set;
-	Edom_Parser_Tag_Text_Set tag_text_set;
-} Edom_Parser_Descriptor;
-
-EAPI Edom_Parser * edom_parser_new(Edom_Parser_Descriptor *descriptor, void *data);
-EAPI void edom_parser_delete(Edom_Parser *thiz);
-EAPI const char * edom_parser_root_get(Edom_Parser *thiz);
-EAPI Eina_Bool edom_parser_parse(Edom_Parser *thiz, const char *content, size_t len);
-EAPI void * edom_parser_data_get(Edom_Parser *thiz);
-EAPI void * edom_parser_topmost_get(Edom_Parser *thiz);
-
-/* tag */
-typedef struct _Edom_Attribute
-{
-	const char *name;
-	char *value;
-} Edom_Attribute;
-
-typedef struct _Edom_String
-{
-	const char *s;
-	unsigned int length;
-} Edom_String;
-
-typedef Eina_Bool (*Edom_Tag_Foreach)(Edom_Tag *thiz, Edom_Tag *child, void *data);
-typedef const char * (*Edom_Tag_Name_Get)(Edom_Tag *t);
-typedef Edom_Tag * (*Edom_Tag_Topmost_Get)(Edom_Tag *t);
-typedef Eina_Bool (*Edom_Tag_Attribute_Set)(Edom_Tag *t, const char *attribute, const char *value);
-typedef Eina_Bool (*Edom_Tag_Attribute_Get)(Edom_Tag *t, const char *attribute, char **value);
-typedef Eina_Bool (*Edom_Tag_Child_Add)(Edom_Tag *t, Edom_Tag *child);
-typedef Eina_Bool (*Edom_Tag_Child_Remove)(Edom_Tag *t, Edom_Tag *child);
-typedef void (*Edom_Tag_Cdata_Set)(Edom_Tag *t, const char *cdata, unsigned int length);
-typedef void (*Edom_Tag_Text_Set)(Edom_Tag *t, const char *text, unsigned int length);
-typedef void (*Edom_Tag_Text_Get)(Edom_Tag *t, const char **text, unsigned int *length);
-typedef void (*Edom_Tag_Free)(Edom_Tag *t);
-
-typedef struct _Edom_Tag_Descriptor
-{
-	Edom_Tag_Name_Get name_get;
-	/* attribute handling */
-	Edom_Tag_Attribute_Set attribute_set;
-	Edom_Tag_Attribute_Get attribute_get;
-	/* child handling */
-	Edom_Tag_Topmost_Get topmost_get;
-	Edom_Tag_Child_Add child_add;
-	Edom_Tag_Child_Remove child_remove;
-	/* cdata */
-	Edom_Tag_Cdata_Set cdata_set;
-	/* text */
-	Edom_Tag_Text_Set text_set;
-	Edom_Tag_Text_Get text_get;
-	Edom_Tag_Free free;
-} Edom_Tag_Descriptor;
-
-EAPI Edom_Tag * edom_tag_new(Edom_Tag_Descriptor *d, void *data);
-EAPI void edom_tag_delete(Edom_Tag *thiz);
-EAPI void * edom_tag_data_get(Edom_Tag *thiz);
-
-EAPI const char * edom_tag_name_get(Edom_Tag *thiz);
-
-EAPI void edom_tag_attribute_set(Edom_Tag *thiz, const char *name, const char *v);
-EAPI char * edom_tag_attribute_get(Edom_Tag *thiz, const char *name);
-EAPI void edom_tag_cdata_set(Edom_Tag *thiz, Edom_String *string);
-EAPI void edom_tag_text_set(Edom_Tag *thiz, Edom_String *string);
-EAPI void edom_tag_text_get(Edom_Tag *thiz, Edom_String *string);
-
-EAPI void edom_tag_id_set(Edom_Tag *thiz, const char *id);
-EAPI char * edom_tag_id_get(Edom_Tag *thiz);
-EAPI void edom_tag_class_set(Edom_Tag *thiz, const char *c);
-EAPI char * edom_tag_class_get(Edom_Tag *thiz);
-
-EAPI Eina_Bool edom_tag_child_add(Edom_Tag *thiz, Edom_Tag *child);
-EAPI Eina_Bool edom_tag_child_remove(Edom_Tag *thiz, Edom_Tag *child);
-EAPI Edom_Tag * edom_tag_child_get(Edom_Tag *thiz);
-EAPI void edom_tag_child_foreach(Edom_Tag *thiz, Edom_Tag_Foreach foreach, void *data);
-EAPI void edom_tag_child_reverse_foreach(Edom_Tag *thiz, Edom_Tag_Foreach foreach, void *data);
-EAPI Edom_Tag * edom_tag_next_get(Edom_Tag *thiz);
-EAPI Edom_Tag * edom_tag_parent_get(Edom_Tag *thiz);
-EAPI Edom_Tag * edom_tag_topmost_get(Edom_Tag *thiz);
-
-EAPI void edom_tag_dump(Edom_Tag *thiz);
-EAPI void edom_tag_attributes_from_xml(Edom_Tag *thiz,
-		const char *attributes, unsigned int length);
+#include "egueb_dom_element.h"
+#include "egueb_dom_document.h"
+#include "egueb_dom_parser.h"
+#include "egueb_dom_event.h"
+#include "egueb_dom_event_mutation.h"
+#include "egueb_dom_attr.h"
+#include "egueb_dom_attr_string.h"
+#include "egueb_dom_character_data.h"
+#include "egueb_dom_text.h"
+#include "egueb_dom_uri.h"
+#include "egueb_dom_utils.h"
+#include "egueb_dom_value.h"
+#include "egueb_dom_value_dom_string.h"
+#include "egueb_dom_value_int.h"
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif /*_EDOM_H*/
+#endif /*_EGUEB_DOM_H*/

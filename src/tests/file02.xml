@@ -1,0 +1,7 @@
+<myelement>
+	<myelement prop1="string1">
+		<myelement prop1="string2"/>
+	</myelement>
+	<myelement prop1="string3"/>
+</myelement>
+

@@ -15,21 +15,21 @@
  * License along with this library.
  * If not, see <http://www.gnu.org/licenses/>.
  */
-#include "esvg_main_private.h"
-#include "esvg_types.h"
-#include "esvg_attribute_private.h"
+#include "egueb_svg_main_private.h"
+#include "egueb_svg_types.h"
+#include "egueb_svg_attribute_private.h"
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
 /*----------------------------------------------------------------------------*
  *                            Animated Descriptor                             *
  *----------------------------------------------------------------------------*/
-static void * _esvg_animate_string_new(void)
+static void * _egueb_svg_animate_string_new(void)
 {
 	return NULL;
 }
 
-static Eina_Bool _esvg_animate_string_get(const char *attr, void **value)
+static Eina_Bool _egueb_svg_animate_string_get(const char *attr, void **value)
 {
 	char *v;
 
@@ -39,16 +39,16 @@ static Eina_Bool _esvg_animate_string_get(const char *attr, void **value)
 	return EINA_TRUE;
 }
 
-static void * _esvg_animate_string_destination_new(void)
+static void * _egueb_svg_animate_string_destination_new(void)
 {
-	Esvg_String_Animated *v;
-	v = calloc(1, sizeof(Esvg_String_Animated));
+	Egueb_Svg_String_Animated *v;
+	v = calloc(1, sizeof(Egueb_Svg_String_Animated));
 	return v;
 }
 
-static void _esvg_animate_string_destination_free(void *destination, Eina_Bool deep)
+static void _egueb_svg_animate_string_destination_free(void *destination, Eina_Bool deep)
 {
-	Esvg_String_Animated *d = destination;
+	Egueb_Svg_String_Animated *d = destination;
 	if (deep)
 	{
 		free(d->base);
@@ -56,24 +56,24 @@ static void _esvg_animate_string_destination_free(void *destination, Eina_Bool d
 	free(d);
 }
 
-static void _esvg_animate_string_destination_keep(void *destination)
+static void _egueb_svg_animate_string_destination_keep(void *destination)
 {
-	Esvg_String_Animated *d = destination;
+	Egueb_Svg_String_Animated *d = destination;
 	d->base = strdup(d->base);
 }
 
-static void _esvg_animate_string_destination_value_to(void *destination, void **value)
+static void _egueb_svg_animate_string_destination_value_to(void *destination, void **value)
 {
-	Esvg_String_Animated *d = destination;
+	Egueb_Svg_String_Animated *d = destination;
 	*value = strdup(d->base);
 }
 
-static void _esvg_animate_string_interpolate(void *a, void *b, double m,
+static void _egueb_svg_animate_string_interpolate(void *a, void *b, double m,
 		void *add, void *acc, int mul, void *res)
 {
 	char *va = a;
 	char *vb = b;
-	Esvg_String_Animated *r = res;
+	Egueb_Svg_String_Animated *r = res;
 
 	r->base = va;
 	/* TODO
@@ -84,24 +84,24 @@ static void _esvg_animate_string_interpolate(void *a, void *b, double m,
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
-Esvg_Attribute_Animated_Descriptor esvg_attribute_animated_string_descriptor = {
-	/* .value_new 			= */ _esvg_animate_string_new,
-	/* .value_get 			= */ _esvg_animate_string_get,
+Egueb_Svg_Attribute_Animated_Descriptor egueb_svg_attribute_animated_string_descriptor = {
+	/* .value_new 			= */ _egueb_svg_animate_string_new,
+	/* .value_get 			= */ _egueb_svg_animate_string_get,
 	/* .value_free 			= */ free,
-	/* .destination_new 		= */ _esvg_animate_string_destination_new,
-	/* .destination_free 		= */ _esvg_animate_string_destination_free,
-	/* .destination_keep		= */ _esvg_animate_string_destination_keep,
+	/* .destination_new 		= */ _egueb_svg_animate_string_destination_new,
+	/* .destination_free 		= */ _egueb_svg_animate_string_destination_free,
+	/* .destination_keep		= */ _egueb_svg_animate_string_destination_keep,
 	/* .destination_value_from 	= */ NULL,
-	/* .destination_value_to 	= */ _esvg_animate_string_destination_value_to,
-	/* .interpolate 		= */ _esvg_animate_string_interpolate,
+	/* .destination_value_to 	= */ _egueb_svg_animate_string_destination_value_to,
+	/* .interpolate 		= */ _egueb_svg_animate_string_interpolate,
 };
 
-void esvg_attribute_animated_string_merge_rel(const Esvg_Attribute_Animated_String *rel,
-		const Esvg_Attribute_Animated_String *v,
-		Esvg_Attribute_String *d)
+void egueb_svg_attribute_animated_string_merge_rel(const Egueb_Svg_Attribute_Animated_String *rel,
+		const Egueb_Svg_Attribute_Animated_String *v,
+		Egueb_Svg_Attribute_String *d)
 {
-	const Esvg_Attribute_String *rr = NULL;
-	const Esvg_Attribute_String *vv = NULL;
+	const Egueb_Svg_Attribute_String *rr = NULL;
+	const Egueb_Svg_Attribute_String *vv = NULL;
 
 	if (v->animated && v->anim.is_set)
 		vv = &v->anim;
@@ -113,11 +113,11 @@ void esvg_attribute_animated_string_merge_rel(const Esvg_Attribute_Animated_Stri
 	if (!rr)
 		rr = &rel->base;
 
-	esvg_attribute_string_merge_rel(rr, vv, d);
+	egueb_svg_attribute_string_merge_rel(rr, vv, d);
 }
 
-void esvg_attribute_animated_string_merge(const Esvg_Attribute_Animated_String *v,
-		Esvg_Attribute_String *d)
+void egueb_svg_attribute_animated_string_merge(const Egueb_Svg_Attribute_Animated_String *v,
+		Egueb_Svg_Attribute_String *d)
 {
 	if (v->animated && v->anim.is_set)
 	{
@@ -131,9 +131,9 @@ void esvg_attribute_animated_string_merge(const Esvg_Attribute_Animated_String *
 	}
 }
 
-void esvg_attribute_string_merge_rel(const Esvg_Attribute_String *rel,
-		const Esvg_Attribute_String *v,
-		Esvg_Attribute_String *d)
+void egueb_svg_attribute_string_merge_rel(const Egueb_Svg_Attribute_String *rel,
+		const Egueb_Svg_Attribute_String *v,
+		Egueb_Svg_Attribute_String *d)
 {
 	if (!v->is_set)
 	{
@@ -147,11 +147,11 @@ void esvg_attribute_string_merge_rel(const Esvg_Attribute_String *rel,
 	}
 }
 
-void esvg_attribute_animated_string_set(Esvg_Attribute_Animated_String *aa,
-	const Esvg_String_Animated *v,
+void egueb_svg_attribute_animated_string_set(Egueb_Svg_Attribute_Animated_String *aa,
+	const Egueb_Svg_String_Animated *v,
 	Eina_Bool animate)
 {
-	Esvg_Attribute_String *a;
+	Egueb_Svg_Attribute_String *a;
 
 	/* get the attribute to change */
 	if (animate)
@@ -160,13 +160,13 @@ void esvg_attribute_animated_string_set(Esvg_Attribute_Animated_String *aa,
 		a = &aa->base;
 	/* get the value to set */
 	if (v)
-		esvg_attribute_string_set(a, v->base);
+		egueb_svg_attribute_string_set(a, v->base);
 	else
-		esvg_attribute_string_unset(a);
+		egueb_svg_attribute_string_unset(a);
 }
 
-void esvg_attribute_animated_string_extended_set(Esvg_Attribute_Animated_String *aa,
-	const Esvg_String_Animated *v,
+void egueb_svg_attribute_animated_string_extended_set(Egueb_Svg_Attribute_Animated_String *aa,
+	const Egueb_Svg_String_Animated *v,
 	Eina_Bool animate,
 	int *set)
 {
@@ -174,7 +174,7 @@ void esvg_attribute_animated_string_extended_set(Esvg_Attribute_Animated_String 
 	Eina_Bool is_set;
 
 	was_set = aa->anim.is_set || aa->base.is_set;
-	esvg_attribute_animated_string_set(aa, v, animate);
+	egueb_svg_attribute_animated_string_set(aa, v, animate);
 	is_set = aa->anim.is_set || aa->base.is_set;
 	if (was_set && !is_set)
 		(*set)--;
@@ -182,8 +182,8 @@ void esvg_attribute_animated_string_extended_set(Esvg_Attribute_Animated_String 
 		(*set)++;
 }
 
-void esvg_attribute_animated_string_get(Esvg_Attribute_Animated_String *aa,
-	Esvg_String_Animated *v)
+void egueb_svg_attribute_animated_string_get(Egueb_Svg_Attribute_Animated_String *aa,
+	Egueb_Svg_String_Animated *v)
 {
 	if (!v) return;
 
@@ -194,7 +194,7 @@ void esvg_attribute_animated_string_get(Esvg_Attribute_Animated_String *aa,
 		v->anim = v->base;
 }
 
-void esvg_attribute_string_unset(Esvg_Attribute_String *a)
+void egueb_svg_attribute_string_unset(Egueb_Svg_Attribute_String *a)
 {
 	if (a->v)
 	{
@@ -205,12 +205,12 @@ void esvg_attribute_string_unset(Esvg_Attribute_String *a)
 }
 
 
-void esvg_attribute_string_set(Esvg_Attribute_String *a, const char *v)
+void egueb_svg_attribute_string_set(Egueb_Svg_Attribute_String *a, const char *v)
 {
 	if (a->v == v)
 		return;
 
-	esvg_attribute_string_unset(a);
+	egueb_svg_attribute_string_unset(a);
 	if (v)
 	{
 		a->v = strdup(v);
@@ -218,7 +218,7 @@ void esvg_attribute_string_set(Esvg_Attribute_String *a, const char *v)
 	}
 }
 
-void esvg_attribute_animated_string_final_get(Esvg_Attribute_Animated_String *aa, char **v)
+void egueb_svg_attribute_animated_string_final_get(Egueb_Svg_Attribute_Animated_String *aa, char **v)
 {
 	if (aa->animated && aa->anim.is_set)
 		*v = aa->anim.v;

@@ -2,8 +2,8 @@
 #define _ESVG_ATTRIBUTE_PRESENTATION_H_
 
 
-#include "esvg_types.h"
-#include "esvg_attribute_private.h"
+#include "egueb_svg_types.h"
+#include "egueb_svg_attribute_private.h"
 
 /* ‘alignment-baseline’,
  * ‘baseline-shift’,
@@ -51,34 +51,34 @@
  * ‘writing-mode’
  */
 
-typedef struct _Esvg_Attribute_Presentation {
-	Esvg_Attribute_Clip_Path clip_path;
-	Esvg_Attribute_Color color;
-	Esvg_Attribute_Number opacity;
-	Esvg_Attribute_Paint fill;
-	Esvg_Attribute_Paint stroke;
-	Esvg_Attribute_Length stroke_width;
-	Esvg_Attribute_Enum stroke_line_cap;
-	Esvg_Attribute_Enum stroke_line_join;
-	Esvg_Attribute_Number stroke_opacity;
-	Esvg_Attribute_Number fill_opacity;
-	Esvg_Attribute_Enum fill_rule;
-	Esvg_Attribute_Enum visibility;
-	Esvg_Attribute_Color stop_color;
-	Esvg_Attribute_Number stop_opacity;
-	Esvg_Attribute_Enum display;
+typedef struct _Egueb_Svg_Attribute_Presentation {
+	Egueb_Svg_Attribute_Clip_Path clip_path;
+	Egueb_Svg_Attribute_Color color;
+	Egueb_Svg_Attribute_Number opacity;
+	Egueb_Svg_Attribute_Paint fill;
+	Egueb_Svg_Attribute_Paint stroke;
+	Egueb_Svg_Attribute_Length stroke_width;
+	Egueb_Svg_Attribute_Enum stroke_line_cap;
+	Egueb_Svg_Attribute_Enum stroke_line_join;
+	Egueb_Svg_Attribute_Number stroke_opacity;
+	Egueb_Svg_Attribute_Number fill_opacity;
+	Egueb_Svg_Attribute_Enum fill_rule;
+	Egueb_Svg_Attribute_Enum visibility;
+	Egueb_Svg_Attribute_Color stop_color;
+	Egueb_Svg_Attribute_Number stop_opacity;
+	Egueb_Svg_Attribute_Enum display;
 	/* are they set? */
 	/* how may are set ? */
 	int sets;
 	/* has something changed ? */
 	Eina_Bool changed;
-} Esvg_Attribute_Presentation;
+} Egueb_Svg_Attribute_Presentation;
 
-void esvg_attribute_presentation_setup(Esvg_Attribute_Presentation *thiz);
-void esvg_attribute_presentation_dump(Esvg_Attribute_Presentation *thiz);
-void esvg_attribute_presentation_merge_rel(
-		const Esvg_Attribute_Presentation *rel,
-		const Esvg_Attribute_Presentation *s,
-		Esvg_Attribute_Presentation *d);
+void egueb_svg_attribute_presentation_setup(Egueb_Svg_Attribute_Presentation *thiz);
+void egueb_svg_attribute_presentation_dump(Egueb_Svg_Attribute_Presentation *thiz);
+void egueb_svg_attribute_presentation_merge_rel(
+		const Egueb_Svg_Attribute_Presentation *rel,
+		const Egueb_Svg_Attribute_Presentation *s,
+		Egueb_Svg_Attribute_Presentation *d);
 
 #endif

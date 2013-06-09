@@ -15,17 +15,17 @@
  * License along with this library.
  * If not, see <http://www.gnu.org/licenses/>.
  */
-#include "esvg_main_private.h"
-#include "esvg_private_attribute_presentation.h"
-#include "esvg_context_private.h"
-#include "esvg_element_private.h"
-#include "esvg_private_attribute_animation.h"
-#include "esvg_element_animation_private.h"
-#include "esvg_animate_base_private.h"
-#include "esvg_element_animate_transform_private.h"
-#include "esvg_element_svg_private.h"
+#include "egueb_svg_main_private.h"
+#include "egueb_svg_private_attribute_presentation.h"
+#include "egueb_svg_context_private.h"
+#include "egueb_svg_element_private.h"
+#include "egueb_svg_private_attribute_animation.h"
+#include "egueb_svg_element_animation_private.h"
+#include "egueb_svg_animate_base_private.h"
+#include "egueb_svg_element_animate_transform_private.h"
+#include "egueb_svg_element_svg_private.h"
 
-#include "esvg_element_animate_transform.h"
+#include "egueb_svg_element_animate_transform.h"
 /* This file handles the 'animateTransform' tag. The idea
  * is that you can animate transformations by animating
  * the numbers that define a transformation and its type
@@ -76,33 +76,33 @@
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
-#define ESVG_LOG_DEFAULT _esvg_element_animate_transform_log
+#define ESVG_LOG_DEFAULT _egueb_svg_element_animate_transform_log
 
-static int _esvg_element_animate_transform_log = -1;
+static int _egueb_svg_element_animate_transform_log = -1;
 
 static Ender_Property *ESVG_ELEMENT_ANIMATE_TRANSFORM_TYPE;
 
-typedef struct _Esvg_Animate_Transform_Data
+typedef struct _Egueb_Svg_Animate_Transform_Data
 {
 	double values[3];
 	int count;
-} Esvg_Animate_Transform_Data;
+} Egueb_Svg_Animate_Transform_Data;
 
-typedef struct _Esvg_Animate_Transform
+typedef struct _Egueb_Svg_Animate_Transform
 {
 	/* properties */
-	Esvg_Animate_Transform_Type type;
+	Egueb_Svg_Animate_Transform_Type type;
 	/* interface */
 	/* private */
-} Esvg_Element_Animate_Transform;
+} Egueb_Svg_Element_Animate_Transform;
 
-static Esvg_Element_Animate_Transform * _esvg_element_animate_transform_get(Edom_Tag *t)
+static Egueb_Svg_Element_Animate_Transform * _egueb_svg_element_animate_transform_get(Egueb_Dom_Tag *t)
 {
-	Esvg_Element_Animate_Transform *thiz;
+	Egueb_Svg_Element_Animate_Transform *thiz;
 
-	if (esvg_element_internal_type_get(t) != ESVG_TYPE_ANIMATETRANSFORM)
+	if (egueb_svg_element_internal_type_get(t) != ESVG_TYPE_ANIMATETRANSFORM)
 		return NULL;
-	thiz = esvg_animate_base_data_get(t);
+	thiz = egueb_svg_animate_base_data_get(t);
 
 	return thiz;
 }
@@ -110,9 +110,9 @@ static Esvg_Element_Animate_Transform * _esvg_element_animate_transform_get(Edom
 /* whenever the list values function is called, store the value
  * in our own list of values
  */
-static Eina_Bool _esvg_element_animate_transform_values_cb(double v, void *user_data)
+static Eina_Bool _egueb_svg_element_animate_transform_values_cb(double v, void *user_data)
 {
-	Esvg_Animate_Transform_Data *data = user_data;
+	Egueb_Svg_Animate_Transform_Data *data = user_data;
 
 	if (data->count > 3)
 		return EINA_FALSE;
@@ -123,49 +123,49 @@ static Eina_Bool _esvg_element_animate_transform_values_cb(double v, void *user_
 	return EINA_TRUE;
 }
 
-static void * _esvg_element_animate_transform_value_new(void)
+static void * _egueb_svg_element_animate_transform_value_new(void)
 {
-	Esvg_Animate_Transform_Data *data;
+	Egueb_Svg_Animate_Transform_Data *data;
 
-	data = calloc(1, sizeof(Esvg_Animate_Transform_Data));
+	data = calloc(1, sizeof(Egueb_Svg_Animate_Transform_Data));
 	return data;
 }
 
-static Eina_Bool _esvg_element_animate_transform_value_get(const char *attr, void **value)
+static Eina_Bool _egueb_svg_element_animate_transform_value_get(const char *attr, void **value)
 {
-	Esvg_Animate_Transform_Data *v = *value;
+	Egueb_Svg_Animate_Transform_Data *v = *value;
 
-	esvg_number_list_string_from(attr, _esvg_element_animate_transform_values_cb,
+	egueb_svg_number_list_string_from(attr, _egueb_svg_element_animate_transform_values_cb,
 				v);
 	return EINA_TRUE;
 }
 
-static void * _esvg_element_animate_transform_destination_new(void)
+static void * _egueb_svg_element_animate_transform_destination_new(void)
 {
-	Esvg_Matrix_Animated *v;
+	Egueb_Svg_Matrix_Animated *v;
 
-	v = calloc(1, sizeof(Esvg_Matrix_Animated));
+	v = calloc(1, sizeof(Egueb_Svg_Matrix_Animated));
 	enesim_matrix_identity(&v->base);
 	enesim_matrix_identity(&v->anim);
 	return v;
 }
 
-static void _esvg_element_animate_transform_destination_free(void *destination, Eina_Bool deep)
+static void _egueb_svg_element_animate_transform_destination_free(void *destination, Eina_Bool deep)
 {
-	Esvg_Matrix_Animated *d = destination;
+	Egueb_Svg_Matrix_Animated *d = destination;
 	free(d);
 }
 /*----------------------------------------------------------------------------*
  *                        The translate type descriptor                       *
  *----------------------------------------------------------------------------*/
-static void _esvg_element_animate_transform_translate_interpolate(void *a, void *b,
+static void _egueb_svg_element_animate_transform_translate_interpolate(void *a, void *b,
 		double m, void *add, void *acc, int mul, void *res)
 {
-	Esvg_Animate_Transform_Data *va = a;
-	Esvg_Animate_Transform_Data *vb = b;
-	Esvg_Animate_Transform_Data *vacc = acc;
-	Esvg_Matrix_Animated *vadd = add;
-	Esvg_Matrix_Animated *r = res;
+	Egueb_Svg_Animate_Transform_Data *va = a;
+	Egueb_Svg_Animate_Transform_Data *vb = b;
+	Egueb_Svg_Animate_Transform_Data *vacc = acc;
+	Egueb_Svg_Matrix_Animated *vadd = add;
+	Egueb_Svg_Matrix_Animated *r = res;
 	double tx;
 	double ty = 0;
 
@@ -185,28 +185,28 @@ static void _esvg_element_animate_transform_translate_interpolate(void *a, void 
 		enesim_matrix_compose(&vadd->anim, &r->base, &r->base);
 }
 
-static Esvg_Attribute_Animated_Descriptor _translate_descriptor = {
-	/* .value_new			= */ _esvg_element_animate_transform_value_new,
-	/* .value_get			= */ _esvg_element_animate_transform_value_get,
+static Egueb_Svg_Attribute_Animated_Descriptor _translate_descriptor = {
+	/* .value_new			= */ _egueb_svg_element_animate_transform_value_new,
+	/* .value_get			= */ _egueb_svg_element_animate_transform_value_get,
 	/* .value_free			= */ free,
-	/* .destination_new		= */ _esvg_element_animate_transform_destination_new,
-	/* .destination_free		= */ _esvg_element_animate_transform_destination_free,
+	/* .destination_new		= */ _egueb_svg_element_animate_transform_destination_new,
+	/* .destination_free		= */ _egueb_svg_element_animate_transform_destination_free,
 	/* .destination_keep		= */ NULL,
 	/* .destination_value_from	= */ NULL,
 	/* .destination_value_to	= */ NULL,
-	/* .interpolate		= */ _esvg_element_animate_transform_translate_interpolate,
+	/* .interpolate		= */ _egueb_svg_element_animate_transform_translate_interpolate,
 };
 /*----------------------------------------------------------------------------*
  *                          The rotate type descriptor                        *
  *----------------------------------------------------------------------------*/
-static void _esvg_element_animate_transform_rotate_interpolate(void *a, void *b,
+static void _egueb_svg_element_animate_transform_rotate_interpolate(void *a, void *b,
 		double m, void *add, void *acc, int mul, void *res)
 {
-	Esvg_Animate_Transform_Data *va = a;
-	Esvg_Animate_Transform_Data *vb = b;
-	Esvg_Matrix_Animated *vadd = add;
-	Esvg_Animate_Transform_Data *vacc = acc;
-	Esvg_Matrix_Animated *r = res;
+	Egueb_Svg_Animate_Transform_Data *va = a;
+	Egueb_Svg_Animate_Transform_Data *vb = b;
+	Egueb_Svg_Matrix_Animated *vadd = add;
+	Egueb_Svg_Animate_Transform_Data *vacc = acc;
+	Egueb_Svg_Matrix_Animated *r = res;
 	Enesim_Matrix m1;
 	double angle;
 
@@ -239,28 +239,28 @@ static void _esvg_element_animate_transform_rotate_interpolate(void *a, void *b,
 		enesim_matrix_compose(&vadd->anim, &r->base, &r->base);
 }
 
-static Esvg_Attribute_Animated_Descriptor _rotate_descriptor = {
-	/* .value_new			= */ _esvg_element_animate_transform_value_new,
-	/* .value_get			= */ _esvg_element_animate_transform_value_get,
+static Egueb_Svg_Attribute_Animated_Descriptor _rotate_descriptor = {
+	/* .value_new			= */ _egueb_svg_element_animate_transform_value_new,
+	/* .value_get			= */ _egueb_svg_element_animate_transform_value_get,
 	/* .value_free			= */ free,
-	/* .destination_new		= */ _esvg_element_animate_transform_destination_new,
-	/* .destination_free		= */ _esvg_element_animate_transform_destination_free,
+	/* .destination_new		= */ _egueb_svg_element_animate_transform_destination_new,
+	/* .destination_free		= */ _egueb_svg_element_animate_transform_destination_free,
 	/* .destination_keep		= */ NULL,
 	/* .destination_value_from	= */ NULL,
 	/* .destination_value_to	= */ NULL,
-	/* .interpolate		= */ _esvg_element_animate_transform_rotate_interpolate,
+	/* .interpolate		= */ _egueb_svg_element_animate_transform_rotate_interpolate,
 };
 /*----------------------------------------------------------------------------*
  *                          The scale type descriptor                         *
  *----------------------------------------------------------------------------*/
-static void _esvg_element_animate_transform_scale_interpolate(void *a, void *b,
+static void _egueb_svg_element_animate_transform_scale_interpolate(void *a, void *b,
 		double m, void *add, void *acc, int mul, void *res)
 {
-	Esvg_Animate_Transform_Data *va = a;
-	Esvg_Animate_Transform_Data *vb = b;
-	Esvg_Matrix_Animated *vadd = add;
-	Esvg_Animate_Transform_Data *vacc = acc;
-	Esvg_Matrix_Animated *r = res;
+	Egueb_Svg_Animate_Transform_Data *va = a;
+	Egueb_Svg_Animate_Transform_Data *vb = b;
+	Egueb_Svg_Matrix_Animated *vadd = add;
+	Egueb_Svg_Animate_Transform_Data *vacc = acc;
+	Egueb_Svg_Matrix_Animated *r = res;
 	double sx = 0;
 	double sy = 1;
 
@@ -281,28 +281,28 @@ static void _esvg_element_animate_transform_scale_interpolate(void *a, void *b,
 		enesim_matrix_compose(&vadd->anim, &r->base, &r->base);
 }
 
-static Esvg_Attribute_Animated_Descriptor _scale_descriptor = {
-	/* .value_new			= */ _esvg_element_animate_transform_value_new,
-	/* .value_get			= */ _esvg_element_animate_transform_value_get,
+static Egueb_Svg_Attribute_Animated_Descriptor _scale_descriptor = {
+	/* .value_new			= */ _egueb_svg_element_animate_transform_value_new,
+	/* .value_get			= */ _egueb_svg_element_animate_transform_value_get,
 	/* .value_free			= */ free,
-	/* .destination_new		= */ _esvg_element_animate_transform_destination_new,
-	/* .destination_free		= */ _esvg_element_animate_transform_destination_free,
+	/* .destination_new		= */ _egueb_svg_element_animate_transform_destination_new,
+	/* .destination_free		= */ _egueb_svg_element_animate_transform_destination_free,
 	/* .destination_keep		= */ NULL,
 	/* .destination_value_from	= */ NULL,
 	/* .destination_value_to	= */ NULL,
-	/* .interpolate		= */ _esvg_element_animate_transform_scale_interpolate,
+	/* .interpolate		= */ _egueb_svg_element_animate_transform_scale_interpolate,
 };
 /*----------------------------------------------------------------------------*
  *                          The skewx type descriptor                         *
  *----------------------------------------------------------------------------*/
-static void _esvg_element_animate_transform_skewx_interpolate(void *a, void *b,
+static void _egueb_svg_element_animate_transform_skewx_interpolate(void *a, void *b,
 		double m, void *add, void *acc, int mul, void *res)
 {
-	Esvg_Animate_Transform_Data *va = a;
-	Esvg_Animate_Transform_Data *vb = b;
-	Esvg_Matrix_Animated *vadd = add;
-	Esvg_Animate_Transform_Data *vacc = acc;
-	Esvg_Matrix_Animated *r = res;
+	Egueb_Svg_Animate_Transform_Data *va = a;
+	Egueb_Svg_Animate_Transform_Data *vb = b;
+	Egueb_Svg_Matrix_Animated *vadd = add;
+	Egueb_Svg_Animate_Transform_Data *vacc = acc;
+	Egueb_Svg_Matrix_Animated *r = res;
 	double angle;
 
 	etch_interpolate_double(va->values[0], vb->values[0], m, &angle);
@@ -313,29 +313,29 @@ static void _esvg_element_animate_transform_skewx_interpolate(void *a, void *b,
 		enesim_matrix_compose(&vadd->anim, &r->base, &r->base);
 }
 
-static Esvg_Attribute_Animated_Descriptor _skewx_descriptor = {
-	/* .value_new			= */ _esvg_element_animate_transform_value_new,
-	/* .value_get			= */ _esvg_element_animate_transform_value_get,
+static Egueb_Svg_Attribute_Animated_Descriptor _skewx_descriptor = {
+	/* .value_new			= */ _egueb_svg_element_animate_transform_value_new,
+	/* .value_get			= */ _egueb_svg_element_animate_transform_value_get,
 	/* .value_free			= */ free,
-	/* .destination_new		= */ _esvg_element_animate_transform_destination_new,
-	/* .destination_free		= */ _esvg_element_animate_transform_destination_free,
+	/* .destination_new		= */ _egueb_svg_element_animate_transform_destination_new,
+	/* .destination_free		= */ _egueb_svg_element_animate_transform_destination_free,
 	/* .destination_keep		= */ NULL,
 	/* .destination_value_from	= */ NULL,
 	/* .destination_value_to	= */ NULL,
-	/* .interpolate		= */ _esvg_element_animate_transform_skewx_interpolate,
+	/* .interpolate		= */ _egueb_svg_element_animate_transform_skewx_interpolate,
 };
 
 /*----------------------------------------------------------------------------*
  *                          The skewy type descriptor                         *
  *----------------------------------------------------------------------------*/
-static void _esvg_element_animate_transform_skewy_interpolate(void *a, void *b,
+static void _egueb_svg_element_animate_transform_skewy_interpolate(void *a, void *b,
 		double m, void *add, void *acc, int mul, void *res)
 {
-	Esvg_Animate_Transform_Data *va = a;
-	Esvg_Animate_Transform_Data *vb = b;
-	Esvg_Animate_Transform_Data *vacc = acc;
-	Esvg_Matrix_Animated *vadd = add;
-	Esvg_Matrix_Animated *r = res;
+	Egueb_Svg_Animate_Transform_Data *va = a;
+	Egueb_Svg_Animate_Transform_Data *vb = b;
+	Egueb_Svg_Animate_Transform_Data *vacc = acc;
+	Egueb_Svg_Matrix_Animated *vadd = add;
+	Egueb_Svg_Matrix_Animated *r = res;
 	double angle;
 
 	etch_interpolate_double(va->values[0], vb->values[0], m, &angle);
@@ -346,37 +346,37 @@ static void _esvg_element_animate_transform_skewy_interpolate(void *a, void *b,
 		enesim_matrix_compose(&vadd->anim, &r->base, &r->base);
 }
 
-static Esvg_Attribute_Animated_Descriptor _skewy_descriptor = {
-	/* .value_new			= */ _esvg_element_animate_transform_value_new,
-	/* .value_get			= */ _esvg_element_animate_transform_value_get,
+static Egueb_Svg_Attribute_Animated_Descriptor _skewy_descriptor = {
+	/* .value_new			= */ _egueb_svg_element_animate_transform_value_new,
+	/* .value_get			= */ _egueb_svg_element_animate_transform_value_get,
 	/* .value_free			= */ free,
-	/* .destination_new		= */ _esvg_element_animate_transform_destination_new,
-	/* .destination_free		= */ _esvg_element_animate_transform_destination_free,
+	/* .destination_new		= */ _egueb_svg_element_animate_transform_destination_new,
+	/* .destination_free		= */ _egueb_svg_element_animate_transform_destination_free,
 	/* .destination_keep		= */ NULL,
 	/* .destination_value_from	= */ NULL,
 	/* .destination_value_to	= */ NULL,
-	/* .interpolate		= */ _esvg_element_animate_transform_skewy_interpolate,
+	/* .interpolate		= */ _egueb_svg_element_animate_transform_skewy_interpolate,
 };
 /*----------------------------------------------------------------------------*
  *                         The Esvg Element interface                         *
  *----------------------------------------------------------------------------*/
-static void _esvg_element_animate_transform_free(Edom_Tag *t)
+static void _egueb_svg_element_animate_transform_free(Egueb_Dom_Tag *t)
 {
-	Esvg_Element_Animate_Transform *thiz;
+	Egueb_Svg_Element_Animate_Transform *thiz;
 
-	thiz = _esvg_element_animate_transform_get(t);
+	thiz = _egueb_svg_element_animate_transform_get(t);
 	free(thiz);
 }
 
-static Eina_Bool _esvg_element_animate_transform_attribute_set(Ender_Element *e,
+static Eina_Bool _egueb_svg_element_animate_transform_attribute_set(Ender_Element *e,
 		const char *key, const char *value)
 {
 	if (!strcmp(key, "type"))
 	{
-		Esvg_Animate_Transform_Type type;
+		Egueb_Svg_Animate_Transform_Type type;
 
-		esvg_animate_transform_type_string_from(&type, value);
-		esvg_element_animate_transform_type_set(e, type);
+		egueb_svg_animate_transform_type_string_from(&type, value);
+		egueb_svg_element_animate_transform_type_set(e, type);
 	}
 	else
 	{
@@ -385,21 +385,21 @@ static Eina_Bool _esvg_element_animate_transform_attribute_set(Ender_Element *e,
 	return EINA_TRUE;
 }
 
-static Eina_Bool _esvg_element_animate_transform_attribute_get(Edom_Tag *tag, const char *attribute, char **value)
+static Eina_Bool _egueb_svg_element_animate_transform_attribute_get(Egueb_Dom_Tag *tag, const char *attribute, char **value)
 {
 	return EINA_FALSE;
 }
 
-static Eina_Bool _esvg_element_animate_transform_type_descriptor_get(Edom_Tag *t,
-		const char *name, Esvg_Attribute_Animated_Descriptor **d)
+static Eina_Bool _egueb_svg_element_animate_transform_type_descriptor_get(Egueb_Dom_Tag *t,
+		const char *name, Egueb_Svg_Attribute_Animated_Descriptor **d)
 {
-	Esvg_Element_Animate_Transform *thiz;
+	Egueb_Svg_Element_Animate_Transform *thiz;
 
 	/* based on the property name get the correct descriptor */
 	if (strcmp(name, "SVGAnimatedMatrix"))
 		return EINA_FALSE;
 	/* check the type and use the correct generator */
-	thiz = _esvg_element_animate_transform_get(t);
+	thiz = _egueb_svg_element_animate_transform_get(t);
 	switch (thiz->type)
 	{
 		case ESVG_ANIMATE_TRANSFORM_TYPE_TRANSLATE:
@@ -428,69 +428,69 @@ static Eina_Bool _esvg_element_animate_transform_type_descriptor_get(Edom_Tag *t
 	return EINA_TRUE;
 }
 
-static Esvg_Animate_Base_Descriptor _descriptor = {
-	/* .attribute_get	= */ _esvg_element_animate_transform_attribute_get,
-	/* .free		= */ _esvg_element_animate_transform_free,
+static Egueb_Svg_Animate_Base_Descriptor _descriptor = {
+	/* .attribute_get	= */ _egueb_svg_element_animate_transform_attribute_get,
+	/* .free		= */ _egueb_svg_element_animate_transform_free,
 	/* .initialize		= */ NULL,
-	/* .attribute_set	= */ _esvg_element_animate_transform_attribute_set,
-	/* .type_descriptor_get	= */ _esvg_element_animate_transform_type_descriptor_get,
+	/* .attribute_set	= */ _egueb_svg_element_animate_transform_attribute_set,
+	/* .type_descriptor_get	= */ _egueb_svg_element_animate_transform_type_descriptor_get,
 };
 /*----------------------------------------------------------------------------*
  *                           The Ender interface                              *
  *----------------------------------------------------------------------------*/
-static void _esvg_element_animate_transform_type_set(Edom_Tag *t, Esvg_Animate_Transform_Type type)
+static void _egueb_svg_element_animate_transform_type_set(Egueb_Dom_Tag *t, Egueb_Svg_Animate_Transform_Type type)
 {
-	Esvg_Element_Animate_Transform *thiz;
+	Egueb_Svg_Element_Animate_Transform *thiz;
 
-	thiz = _esvg_element_animate_transform_get(t);
+	thiz = _egueb_svg_element_animate_transform_get(t);
 	thiz->type = type;
 }
 
-static void _esvg_element_animate_transform_type_get(Edom_Tag *t, Esvg_Animate_Transform_Type *type)
+static void _egueb_svg_element_animate_transform_type_get(Egueb_Dom_Tag *t, Egueb_Svg_Animate_Transform_Type *type)
 {
-	Esvg_Element_Animate_Transform *thiz;
+	Egueb_Svg_Element_Animate_Transform *thiz;
 
 	if (!type) return;
-	thiz = _esvg_element_animate_transform_get(t);
+	thiz = _egueb_svg_element_animate_transform_get(t);
 	*type = thiz->type;
 }
 
-static Edom_Tag * _esvg_element_animate_transform_new(void)
+static Egueb_Dom_Tag * _egueb_svg_element_animate_transform_new(void)
 {
-	Esvg_Element_Animate_Transform *thiz;
-	Edom_Tag *t;
+	Egueb_Svg_Element_Animate_Transform *thiz;
+	Egueb_Dom_Tag *t;
 
-	thiz = calloc(1, sizeof(Esvg_Element_Animate_Transform));
+	thiz = calloc(1, sizeof(Egueb_Svg_Element_Animate_Transform));
 
-	t = esvg_animate_base_new(&_descriptor, ESVG_TYPE_ANIMATETRANSFORM, thiz);
+	t = egueb_svg_animate_base_new(&_descriptor, ESVG_TYPE_ANIMATETRANSFORM, thiz);
 	return t;
 }
 
 /* The ender wrapper */
-#define _esvg_element_animate_transform_delete NULL
-#define _esvg_element_animate_transform_type_is_set NULL
-#include "esvg_generated_element_animate_transform.c"
+#define _egueb_svg_element_animate_transform_delete NULL
+#define _egueb_svg_element_animate_transform_type_is_set NULL
+#include "egueb_svg_generated_element_animate_transform.c"
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
-void esvg_element_animate_transform_init(void)
+void egueb_svg_element_animate_transform_init(void)
 {
-	_esvg_element_animate_transform_log = eina_log_domain_register("esvg_element_animate_transform", ESVG_LOG_COLOR_DEFAULT);
-	if (_esvg_element_animate_transform_log < 0)
+	_egueb_svg_element_animate_transform_log = eina_log_domain_register("egueb_svg_element_animate_transform", ESVG_LOG_COLOR_DEFAULT);
+	if (_egueb_svg_element_animate_transform_log < 0)
 	{
 		EINA_LOG_ERR("Can not create log domain.");
 		return;
 	}
-	_esvg_element_animate_transform_init();
+	_egueb_svg_element_animate_transform_init();
 }
 
-void esvg_element_animate_transform_shutdown(void)
+void egueb_svg_element_animate_transform_shutdown(void)
 {
-	if (_esvg_element_animate_transform_log < 0)
+	if (_egueb_svg_element_animate_transform_log < 0)
 		return;
-	_esvg_element_animate_transform_shutdown();
-	eina_log_domain_unregister(_esvg_element_animate_transform_log);
-	_esvg_element_animate_transform_log = -1;
+	_egueb_svg_element_animate_transform_shutdown();
+	eina_log_domain_unregister(_egueb_svg_element_animate_transform_log);
+	_egueb_svg_element_animate_transform_log = -1;
 }
 /*============================================================================*
  *                                   API                                      *
@@ -499,7 +499,7 @@ void esvg_element_animate_transform_shutdown(void)
  * To be documented
  * FIXME: To be fixed
  */
-EAPI Ender_Element * esvg_element_animate_transform_new(void)
+EAPI Ender_Element * egueb_svg_element_animate_transform_new(void)
 {
 	return ESVG_ELEMENT_NEW("SVGAnimateTransformElement");
 }
@@ -508,7 +508,7 @@ EAPI Ender_Element * esvg_element_animate_transform_new(void)
  * To be documented
  * FIXME: To be fixed
  */
-EAPI void esvg_element_animate_transform_type_set(Ender_Element *e, Esvg_Animate_Transform_Type type)
+EAPI void egueb_svg_element_animate_transform_type_set(Ender_Element *e, Egueb_Svg_Animate_Transform_Type type)
 {
 	ender_element_property_value_set(e, ESVG_ELEMENT_ANIMATE_TRANSFORM_TYPE, type, NULL);
 }
@@ -517,6 +517,6 @@ EAPI void esvg_element_animate_transform_type_set(Ender_Element *e, Esvg_Animate
  * To be documented
  * FIXME: To be fixed
  */
-EAPI void esvg_element_animate_transform_type_get(Ender_Element *e, Esvg_Animate_Transform_Type *type)
+EAPI void egueb_svg_element_animate_transform_type_get(Ender_Element *e, Egueb_Svg_Animate_Transform_Type *type)
 {
 }

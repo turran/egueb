@@ -15,9 +15,9 @@
  * License along with this library.
  * If not, see <http://www.gnu.org/licenses/>.
  */
-#include "esvg_main_private.h"
-#include "esvg_types.h"
-#include "esvg_attribute_private.h"
+#include "egueb_svg_main_private.h"
+#include "egueb_svg_types.h"
+#include "egueb_svg_attribute_private.h"
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
@@ -27,7 +27,7 @@
 /*----------------------------------------------------------------------------*
  *                            Animated Descriptor                             *
  *----------------------------------------------------------------------------*/
-void * esvg_attribute_enum_value_new(void)
+void * egueb_svg_attribute_enum_value_new(void)
 {
 	int *v;
 
@@ -35,33 +35,33 @@ void * esvg_attribute_enum_value_new(void)
 	return v;
 }
 
-void * esvg_attribute_enum_destination_new(void)
+void * egueb_svg_attribute_enum_destination_new(void)
 {
-	Esvg_Animated_Enum *v;
-	v = calloc(1, sizeof(Esvg_Animated_Enum));
+	Egueb_Svg_Animated_Enum *v;
+	v = calloc(1, sizeof(Egueb_Svg_Animated_Enum));
 	return v;
 }
 
-void esvg_attribute_enum_destination_free(void *destination, Eina_Bool deep)
+void egueb_svg_attribute_enum_destination_free(void *destination, Eina_Bool deep)
 {
-	Esvg_Animated_Enum *d = destination;
+	Egueb_Svg_Animated_Enum *d = destination;
 	free(d);
 }
 
-void esvg_attribute_enum_destination_value_to(void *destination, void **value)
+void egueb_svg_attribute_enum_destination_value_to(void *destination, void **value)
 {
-	Esvg_Animated_Enum *d = destination;
+	Egueb_Svg_Animated_Enum *d = destination;
 	int *v = *value;
 
 	*v = d->base;
 }
 
-void esvg_attribute_enum_interpolate(void *a, void *b, double m,
+void egueb_svg_attribute_enum_interpolate(void *a, void *b, double m,
 		void *add, void *acc, int mul, void *res)
 {
 	int *va = a;
 	int *vb = b;
-	Esvg_Animated_Enum *r = res;
+	Egueb_Svg_Animated_Enum *r = res;
 
 	/* enums can not accumulate or add */
 	if (m < 1) r->base = *va;
@@ -70,21 +70,21 @@ void esvg_attribute_enum_interpolate(void *a, void *b, double m,
 /*----------------------------------------------------------------------------*
  *                                   Basic                                    *
  *----------------------------------------------------------------------------*/
-void esvg_attribute_enum_unset(Esvg_Attribute_Enum *a, int def)
+void egueb_svg_attribute_enum_unset(Egueb_Svg_Attribute_Enum *a, int def)
 {
 	a->v = def;
 	a->is_set = EINA_FALSE;
 }
 
-void esvg_attribute_enum_set(Esvg_Attribute_Enum *a, int v)
+void egueb_svg_attribute_enum_set(Egueb_Svg_Attribute_Enum *a, int v)
 {
 	a->v = v;
 	a->is_set = EINA_TRUE;
 }
 
-void esvg_attribute_enum_merge_rel(const Esvg_Attribute_Enum *rel,
-		const Esvg_Attribute_Enum *v,
-		Esvg_Attribute_Enum *d)
+void egueb_svg_attribute_enum_merge_rel(const Egueb_Svg_Attribute_Enum *rel,
+		const Egueb_Svg_Attribute_Enum *v,
+		Egueb_Svg_Attribute_Enum *d)
 {
 	if (!v->is_set)
 	{
@@ -100,12 +100,12 @@ void esvg_attribute_enum_merge_rel(const Esvg_Attribute_Enum *rel,
 /*----------------------------------------------------------------------------*
  *                                  Animated                                  *
  *----------------------------------------------------------------------------*/
-void esvg_attribute_animated_enum_merge_rel(const Esvg_Attribute_Animated_Enum *rel,
-		const Esvg_Attribute_Animated_Enum *v,
-		Esvg_Attribute_Enum *d)
+void egueb_svg_attribute_animated_enum_merge_rel(const Egueb_Svg_Attribute_Animated_Enum *rel,
+		const Egueb_Svg_Attribute_Animated_Enum *v,
+		Egueb_Svg_Attribute_Enum *d)
 {
-	const Esvg_Attribute_Enum *rr = NULL;
-	const Esvg_Attribute_Enum *vv = NULL;
+	const Egueb_Svg_Attribute_Enum *rr = NULL;
+	const Egueb_Svg_Attribute_Enum *vv = NULL;
 
 	if (v->animated && v->anim.is_set)
 		vv = &v->anim;
@@ -117,11 +117,11 @@ void esvg_attribute_animated_enum_merge_rel(const Esvg_Attribute_Animated_Enum *
 	if (!rr)
 		rr = &rel->base;
 
-	esvg_attribute_enum_merge_rel(rr, vv, d);
+	egueb_svg_attribute_enum_merge_rel(rr, vv, d);
 }
 
-void esvg_attribute_animated_enum_merge(const Esvg_Attribute_Animated_Enum *v,
-		Esvg_Attribute_Enum *d)
+void egueb_svg_attribute_animated_enum_merge(const Egueb_Svg_Attribute_Animated_Enum *v,
+		Egueb_Svg_Attribute_Enum *d)
 {
 	if (v->animated && v->anim.is_set)
 	{
@@ -135,12 +135,12 @@ void esvg_attribute_animated_enum_merge(const Esvg_Attribute_Animated_Enum *v,
 	}
 }
 
-void esvg_attribute_animated_enum_set(Esvg_Attribute_Animated_Enum *aa,
-	const Esvg_Animated_Enum *v,
+void egueb_svg_attribute_animated_enum_set(Egueb_Svg_Attribute_Animated_Enum *aa,
+	const Egueb_Svg_Animated_Enum *v,
 	int def,
 	Eina_Bool animate)
 {
-	Esvg_Attribute_Enum *a;
+	Egueb_Svg_Attribute_Enum *a;
 	/* get the attribute to change */
 	if (animate)
 		a = &aa->anim;
@@ -148,14 +148,14 @@ void esvg_attribute_animated_enum_set(Esvg_Attribute_Animated_Enum *aa,
 		a = &aa->base;
 	/* get the value to set */
 	if (v)
-		esvg_attribute_enum_set(a, v->base);
+		egueb_svg_attribute_enum_set(a, v->base);
 	else
-		esvg_attribute_enum_unset(a, def);
+		egueb_svg_attribute_enum_unset(a, def);
 }
 
 
-void esvg_attribute_animated_enum_extended_set(Esvg_Attribute_Animated_Enum *aa,
-	const Esvg_Animated_Enum *v,
+void egueb_svg_attribute_animated_enum_extended_set(Egueb_Svg_Attribute_Animated_Enum *aa,
+	const Egueb_Svg_Animated_Enum *v,
 	int def,
 	Eina_Bool animate,
 	int *set)
@@ -164,7 +164,7 @@ void esvg_attribute_animated_enum_extended_set(Esvg_Attribute_Animated_Enum *aa,
 	Eina_Bool is_set;
 
 	was_set = aa->anim.is_set || aa->base.is_set;
-	esvg_attribute_animated_enum_set(aa, v, def, animate);
+	egueb_svg_attribute_animated_enum_set(aa, v, def, animate);
 	is_set = aa->anim.is_set || aa->base.is_set;
 	if (was_set && !is_set)
 		(*set)--;
@@ -172,8 +172,8 @@ void esvg_attribute_animated_enum_extended_set(Esvg_Attribute_Animated_Enum *aa,
 		(*set)++;
 }
 
-void esvg_attribute_animated_enum_get(Esvg_Attribute_Animated_Enum *aa,
-	Esvg_Animated_Enum *v)
+void egueb_svg_attribute_animated_enum_get(Egueb_Svg_Attribute_Animated_Enum *aa,
+	Egueb_Svg_Animated_Enum *v)
 {
 	if (!v) return;
 

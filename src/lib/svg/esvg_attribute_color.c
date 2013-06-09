@@ -15,18 +15,18 @@
  * License along with this library.
  * If not, see <http://www.gnu.org/licenses/>.
  */
-#include "esvg_main_private.h"
-#include "esvg_types.h"
-#include "esvg_attribute_private.h"
+#include "egueb_svg_main_private.h"
+#include "egueb_svg_types.h"
+#include "egueb_svg_attribute_private.h"
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
-void esvg_attribute_animated_color_merge_rel(const Esvg_Attribute_Animated_Color *rel,
-		const Esvg_Attribute_Animated_Color *v,
-		Esvg_Attribute_Color *d)
+void egueb_svg_attribute_animated_color_merge_rel(const Egueb_Svg_Attribute_Animated_Color *rel,
+		const Egueb_Svg_Attribute_Animated_Color *v,
+		Egueb_Svg_Attribute_Color *d)
 {
-	const Esvg_Attribute_Color *rr = NULL;
-	const Esvg_Attribute_Color *vv = NULL;
+	const Egueb_Svg_Attribute_Color *rr = NULL;
+	const Egueb_Svg_Attribute_Color *vv = NULL;
 
 	if (v->animated && v->anim.is_set)
 		vv = &v->anim;
@@ -38,11 +38,11 @@ void esvg_attribute_animated_color_merge_rel(const Esvg_Attribute_Animated_Color
 	if (!rr)
 		rr = &rel->base;
 
-	esvg_attribute_color_merge_rel(rr, vv, d);
+	egueb_svg_attribute_color_merge_rel(rr, vv, d);
 }
 
-void esvg_attribute_animated_color_merge(const Esvg_Attribute_Animated_Color *v,
-		Esvg_Attribute_Color *d)
+void egueb_svg_attribute_animated_color_merge(const Egueb_Svg_Attribute_Animated_Color *v,
+		Egueb_Svg_Attribute_Color *d)
 {
 	if (v->animated && v->anim.is_set)
 	{
@@ -56,9 +56,9 @@ void esvg_attribute_animated_color_merge(const Esvg_Attribute_Animated_Color *v,
 	}
 }
 
-void esvg_attribute_color_merge_rel(const Esvg_Attribute_Color *rel,
-		const Esvg_Attribute_Color *v,
-		Esvg_Attribute_Color *d)
+void egueb_svg_attribute_color_merge_rel(const Egueb_Svg_Attribute_Color *rel,
+		const Egueb_Svg_Attribute_Color *v,
+		Egueb_Svg_Attribute_Color *d)
 {
 	if (!v->is_set)
 	{
@@ -72,12 +72,12 @@ void esvg_attribute_color_merge_rel(const Esvg_Attribute_Color *rel,
 	}
 }
 
-void esvg_attribute_animated_color_set(Esvg_Attribute_Animated_Color *aa,
-	const Esvg_Color_Animated *v,
-	const Esvg_Color *def,
+void egueb_svg_attribute_animated_color_set(Egueb_Svg_Attribute_Animated_Color *aa,
+	const Egueb_Svg_Color_Animated *v,
+	const Egueb_Svg_Color *def,
 	Eina_Bool animate)
 {
-	Esvg_Attribute_Color *a;
+	Egueb_Svg_Attribute_Color *a;
 
 	/* get the attribute to change */
 	if (animate)
@@ -86,14 +86,14 @@ void esvg_attribute_animated_color_set(Esvg_Attribute_Animated_Color *aa,
 		a = &aa->base;
 	/* get the value to set */
 	if (v)
-		esvg_attribute_color_set(a, &v->base, def);
+		egueb_svg_attribute_color_set(a, &v->base, def);
 	else
-		esvg_attribute_color_unset(a, def);
+		egueb_svg_attribute_color_unset(a, def);
 }
 
-void esvg_attribute_animated_color_extended_set(Esvg_Attribute_Animated_Color *aa,
-	const Esvg_Color_Animated *v,
-	const Esvg_Color *def,
+void egueb_svg_attribute_animated_color_extended_set(Egueb_Svg_Attribute_Animated_Color *aa,
+	const Egueb_Svg_Color_Animated *v,
+	const Egueb_Svg_Color *def,
 	Eina_Bool animate,
 	int *set)
 {
@@ -101,7 +101,7 @@ void esvg_attribute_animated_color_extended_set(Esvg_Attribute_Animated_Color *a
 	Eina_Bool is_set;
 
 	was_set = aa->anim.is_set || aa->base.is_set;
-	esvg_attribute_animated_color_set(aa, v, def, animate);
+	egueb_svg_attribute_animated_color_set(aa, v, def, animate);
 	is_set = aa->anim.is_set || aa->base.is_set;
 	if (was_set && !is_set)
 		(*set)--;
@@ -109,8 +109,8 @@ void esvg_attribute_animated_color_extended_set(Esvg_Attribute_Animated_Color *a
 		(*set)++;
 }
 
-void esvg_attribute_animated_color_get(Esvg_Attribute_Animated_Color *aa,
-	Esvg_Color_Animated *v)
+void egueb_svg_attribute_animated_color_get(Egueb_Svg_Attribute_Animated_Color *aa,
+	Egueb_Svg_Color_Animated *v)
 {
 	if (!v) return;
 
@@ -121,18 +121,18 @@ void esvg_attribute_animated_color_get(Esvg_Attribute_Animated_Color *aa,
 		v->anim = v->base;
 }
 
-void esvg_attribute_color_unset(Esvg_Attribute_Color *a, const Esvg_Color *def)
+void egueb_svg_attribute_color_unset(Egueb_Svg_Attribute_Color *a, const Egueb_Svg_Color *def)
 {
 	a->v = *def;
 	a->is_set = EINA_FALSE;
 }
 
-void esvg_attribute_color_set(Esvg_Attribute_Color *a, const Esvg_Color *v,
-		const Esvg_Color *def)
+void egueb_svg_attribute_color_set(Egueb_Svg_Attribute_Color *a, const Egueb_Svg_Color *v,
+		const Egueb_Svg_Color *def)
 {
 	if (!v)
 	{
-		esvg_attribute_color_unset(a, def);
+		egueb_svg_attribute_color_unset(a, def);
 	}
 	else
 	{

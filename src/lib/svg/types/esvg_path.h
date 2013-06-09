@@ -18,7 +18,7 @@
 #ifndef _ESVG_PATH_H
 #define _ESVG_PATH_H
 
-typedef enum _Esvg_Element_Path_Command_Type
+typedef enum _Egueb_Svg_Element_Path_Command_Type
 {
 	ESVG_PATH_MOVE_TO,
 	ESVG_PATH_LINE_TO,
@@ -31,11 +31,11 @@ typedef enum _Esvg_Element_Path_Command_Type
 	ESVG_PATH_ARC_TO,
 	ESVG_PATH_CLOSE,
 	ESVG_PATH_COMMAND_TYPES
-} Esvg_Element_Path_Command_Type;
+} Egueb_Svg_Element_Path_Command_Type;
 
-typedef struct _Esvg_Element_Path_Command
+typedef struct _Egueb_Svg_Element_Path_Command
 {
-	Esvg_Element_Path_Command_Type type;
+	Egueb_Svg_Element_Path_Command_Type type;
 	union {
 		struct {
 			double c;
@@ -70,23 +70,23 @@ typedef struct _Esvg_Element_Path_Command
  	} data;
 	Eina_Bool relative;
 	Eina_Bool is_closed;
-} Esvg_Element_Path_Command;
+} Egueb_Svg_Element_Path_Command;
 
 
-typedef void (*Esvg_Command_Cb)(Esvg_Element_Path_Command *cmd, void *data);
+typedef void (*Egueb_Svg_Command_Cb)(Egueb_Svg_Element_Path_Command *cmd, void *data);
 
-EAPI Eina_Bool esvg_path_data_string_from(const char *value, Esvg_Command_Cb cb, void *data);
+EAPI Eina_Bool egueb_svg_path_data_string_from(const char *value, Egueb_Svg_Command_Cb cb, void *data);
 
-typedef struct _Esvg_Path_Seg_List Esvg_Path_Seg_List;
+typedef struct _Egueb_Svg_Path_Seg_List Egueb_Svg_Path_Seg_List;
 
-EAPI Esvg_Path_Seg_List * esvg_path_seg_list_new(void);
-EAPI Esvg_Path_Seg_List * esvg_path_seg_list_ref(Esvg_Path_Seg_List *thiz);
-EAPI void esvg_path_seg_list_unref(Esvg_Path_Seg_List *thiz);
-EAPI Eina_Bool esvg_path_seg_list_string_from(Esvg_Path_Seg_List *thiz,
+EAPI Egueb_Svg_Path_Seg_List * egueb_svg_path_seg_list_new(void);
+EAPI Egueb_Svg_Path_Seg_List * egueb_svg_path_seg_list_ref(Egueb_Svg_Path_Seg_List *thiz);
+EAPI void egueb_svg_path_seg_list_unref(Egueb_Svg_Path_Seg_List *thiz);
+EAPI Eina_Bool egueb_svg_path_seg_list_string_from(Egueb_Svg_Path_Seg_List *thiz,
 		const char *attr);
-EAPI void esvg_path_seg_list_clear(Esvg_Path_Seg_List *thiz);
-EAPI void esvg_path_seg_list_add(Esvg_Path_Seg_List *thiz, const Esvg_Element_Path_Command *cmd);
-EAPI Eina_Bool esvg_path_seg_list_string_from(Esvg_Path_Seg_List *thiz,
+EAPI void egueb_svg_path_seg_list_clear(Egueb_Svg_Path_Seg_List *thiz);
+EAPI void egueb_svg_path_seg_list_add(Egueb_Svg_Path_Seg_List *thiz, const Egueb_Svg_Element_Path_Command *cmd);
+EAPI Eina_Bool egueb_svg_path_seg_list_string_from(Egueb_Svg_Path_Seg_List *thiz,
 		const char *attr);
 #endif
 

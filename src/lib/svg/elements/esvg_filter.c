@@ -16,8 +16,8 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 #include "Esvg.h"
-#include "esvg_private.h"
-#include "esvg_values.h"
+#include "egueb_svg_private.h"
+#include "egueb_svg_values.h"
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/

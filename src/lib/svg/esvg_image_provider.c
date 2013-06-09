@@ -15,24 +15,24 @@
  * License along with this library.
  * If not, see <http://www.gnu.org/licenses/>.
  */
-#include "esvg_main_private.h"
-#include "esvg_element_image_provider.h"
+#include "egueb_svg_main_private.h"
+#include "egueb_svg_element_image_provider.h"
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
-struct _Esvg_Element_Image_Provider
+struct _Egueb_Svg_Element_Image_Provider
 {
-	Esvg_Element_Image_Provider_Descriptor *descriptor;
+	Egueb_Svg_Element_Image_Provider_Descriptor *descriptor;
 	void *data;
 };
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
-Esvg_Element_Image_Provider * esvg_element_image_provider_new(
-		Esvg_Element_Image_Provider_Descriptor *descriptor,
+Egueb_Svg_Element_Image_Provider * egueb_svg_element_image_provider_new(
+		Egueb_Svg_Element_Image_Provider_Descriptor *descriptor,
 		Enesim_Renderer *image)
 {
-	Esvg_Element_Image_Provider *thiz;
+	Egueb_Svg_Element_Image_Provider *thiz;
 	void *data;
 
 	if (!descriptor)
@@ -43,14 +43,14 @@ Esvg_Element_Image_Provider * esvg_element_image_provider_new(
 	data = descriptor->create(image);
 	if (!data) return NULL;
 
-	thiz = calloc(1, sizeof(Esvg_Element_Image_Provider));
+	thiz = calloc(1, sizeof(Egueb_Svg_Element_Image_Provider));
 	thiz->data = data;
 	thiz->descriptor = descriptor;
 
 	return thiz;
 }
 
-void esvg_element_image_provider_free(Esvg_Element_Image_Provider *thiz)
+void egueb_svg_element_image_provider_free(Egueb_Svg_Element_Image_Provider *thiz)
 {
 	if (!thiz) return;
 	if (!thiz->descriptor->free) return;
@@ -58,7 +58,7 @@ void esvg_element_image_provider_free(Esvg_Element_Image_Provider *thiz)
 	free(thiz);
 }
 
-void esvg_element_image_provider_load(Esvg_Element_Image_Provider *thiz)
+void egueb_svg_element_image_provider_load(Egueb_Svg_Element_Image_Provider *thiz)
 {
 	if (!thiz) return;
 	if (!thiz->descriptor->load) return;

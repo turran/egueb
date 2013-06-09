@@ -15,10 +15,10 @@
  * License along with this library.
  * If not, see <http://www.gnu.org/licenses/>.
  */
-#include "esvg_main_private.h"
-#include "esvg_private_attribute_presentation.h"
-#include "esvg_context_private.h"
-#include "esvg_element_private.h"
+#include "egueb_svg_main_private.h"
+#include "egueb_svg_private_attribute_presentation.h"
+#include "egueb_svg_context_private.h"
+#include "egueb_svg_element_private.h"
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
@@ -26,18 +26,18 @@ static int _run = 1;
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
-void esvg_context_init(Esvg_Context *thiz)
+void egueb_svg_context_init(Egueb_Svg_Context *thiz)
 {
 	thiz->run = _run++;
 	thiz->queue = NULL;
 }
 
-void esvg_context_shutdown(Esvg_Context *thiz)
+void egueb_svg_context_shutdown(Egueb_Svg_Context *thiz)
 {
 	eina_list_free(thiz->queue);
 }
 
-void esvg_context_setup_enqueue(Esvg_Context *thiz, Edom_Tag *t)
+void egueb_svg_context_setup_enqueue(Egueb_Svg_Context *thiz, Egueb_Dom_Tag *t)
 {
 	printf("enqueuing tag %p\n", t);
 	/* FIXME it might be possible that an element is enqueued
@@ -50,10 +50,10 @@ void esvg_context_setup_enqueue(Esvg_Context *thiz, Edom_Tag *t)
 	thiz->queue = eina_list_append(thiz->queue, t);
 }
 
-void esvg_context_setup_dequeue(Esvg_Context *thiz)
+void egueb_svg_context_setup_dequeue(Egueb_Svg_Context *thiz)
 {
 	Eina_List *l;
-	Edom_Tag *t;
+	Egueb_Dom_Tag *t;
 
 	/* FIXME it might be possible that the element enqueue again? */
 	EINA_LIST_FOREACH(thiz->queue, l, t)

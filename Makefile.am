@@ -23,6 +23,7 @@ m4/ltoptions.m4 \
 m4/ltsugar.m4 \
 m4/ltversion.m4
 
+noinst_LTLIBRARIES =
 lib_LTLIBRARIES =
 bin_PROGRAMS =
 check_PROGRAMS =
@@ -39,27 +40,29 @@ endif
 
 if BUILD_EDOM
 include src/lib/dom/Makefile.mk
+include src/lib/dom/parser/Makefile.mk
+include src/lib/smil/Makefile.mk
 endif
 
 if BUILD_ESVG
 include src/lib/svg/Makefile.mk
-include src/lib/svg/elements/Makefile.mk
-include src/lib/svg/types/Makefile.mk
-include src/lib/svg/image_providers/Makefile.mk
-include src/lib/svg/script_providers/Makefile.mk
-include src/lib/svg/video_providers/Makefile.mk
+# include src/lib/svg/elements/Makefile.mk
+# include src/lib/svg/types/Makefile.mk
+# include src/lib/svg/image_providers/Makefile.mk
+# include src/lib/svg/script_providers/Makefile.mk
+# include src/lib/svg/video_providers/Makefile.mk
 endif
 
 ### Modules
 
 if BUILD_ESVG
-include src/modules/svg/enesim_image/Makefile.mk
+# include src/modules/svg/enesim_image/Makefile.mk
 endif
 
 ### Binaries
 
 if BUILD_ESVG
-include src/bin/svg/Makefile.mk
+#include src/bin/svg/Makefile.mk
 endif
 
 ### Data

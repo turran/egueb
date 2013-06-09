@@ -15,21 +15,21 @@
  * License along with this library.
  * If not, see <http://www.gnu.org/licenses/>.
  */
-#include "esvg_main_private.h"
-#include "esvg_types.h"
-#include "esvg_attribute_private.h"
+#include "egueb_svg_main_private.h"
+#include "egueb_svg_types.h"
+#include "egueb_svg_attribute_private.h"
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
 /*----------------------------------------------------------------------------*
  *                                   Basic                                    *
  *----------------------------------------------------------------------------*/
-void esvg_attribute_animated_number_merge_rel(const Esvg_Attribute_Animated_Number *rel,
-		const Esvg_Attribute_Animated_Number *v,
-		Esvg_Attribute_Number *d)
+void egueb_svg_attribute_animated_number_merge_rel(const Egueb_Svg_Attribute_Animated_Number *rel,
+		const Egueb_Svg_Attribute_Animated_Number *v,
+		Egueb_Svg_Attribute_Number *d)
 {
-	const Esvg_Attribute_Number *rr = NULL;
-	const Esvg_Attribute_Number *vv = NULL;
+	const Egueb_Svg_Attribute_Number *rr = NULL;
+	const Egueb_Svg_Attribute_Number *vv = NULL;
 
 	if (v->animated && v->anim.is_set)
 		vv = &v->anim;
@@ -41,11 +41,11 @@ void esvg_attribute_animated_number_merge_rel(const Esvg_Attribute_Animated_Numb
 	if (!rr)
 		rr = &rel->base;
 
-	esvg_attribute_number_merge_rel(rr, vv, d);
+	egueb_svg_attribute_number_merge_rel(rr, vv, d);
 }
 
-void esvg_attribute_animated_number_merge(const Esvg_Attribute_Animated_Number *v,
-		Esvg_Attribute_Number *d)
+void egueb_svg_attribute_animated_number_merge(const Egueb_Svg_Attribute_Animated_Number *v,
+		Egueb_Svg_Attribute_Number *d)
 {
 	if (v->animated && v->anim.is_set)
 	{
@@ -59,9 +59,9 @@ void esvg_attribute_animated_number_merge(const Esvg_Attribute_Animated_Number *
 	}
 }
 
-void esvg_attribute_number_merge_rel(const Esvg_Attribute_Number *rel,
-		const Esvg_Attribute_Number *v,
-		Esvg_Attribute_Number *d)
+void egueb_svg_attribute_number_merge_rel(const Egueb_Svg_Attribute_Number *rel,
+		const Egueb_Svg_Attribute_Number *v,
+		Egueb_Svg_Attribute_Number *d)
 {
 	if (!v->is_set)
 	{
@@ -76,12 +76,12 @@ void esvg_attribute_number_merge_rel(const Esvg_Attribute_Number *rel,
 }
 
 /* TODO pass the possible range values */
-void esvg_attribute_animated_number_set(Esvg_Attribute_Animated_Number *aa,
-	const Esvg_Number_Animated *v,
-	const Esvg_Number *def,
+void egueb_svg_attribute_animated_number_set(Egueb_Svg_Attribute_Animated_Number *aa,
+	const Egueb_Svg_Number_Animated *v,
+	const Egueb_Svg_Number *def,
 	Eina_Bool animate)
 {
-	Esvg_Attribute_Number *a;
+	Egueb_Svg_Attribute_Number *a;
 	/* get the attribute to change */
 	if (animate)
 		a = &aa->anim;
@@ -89,14 +89,14 @@ void esvg_attribute_animated_number_set(Esvg_Attribute_Animated_Number *aa,
 		a = &aa->base;
 	/* get the value to set */
 	if (v)
-		esvg_attribute_number_set(a, &v->base, def);
+		egueb_svg_attribute_number_set(a, &v->base, def);
 	else
-		esvg_attribute_number_unset(a, def);
+		egueb_svg_attribute_number_unset(a, def);
 }
 
-void esvg_attribute_animated_number_extended_set(Esvg_Attribute_Animated_Number *aa,
-	const Esvg_Number_Animated *v,
-	const Esvg_Number *def,
+void egueb_svg_attribute_animated_number_extended_set(Egueb_Svg_Attribute_Animated_Number *aa,
+	const Egueb_Svg_Number_Animated *v,
+	const Egueb_Svg_Number *def,
 	Eina_Bool animate,
 	int *set)
 {
@@ -104,7 +104,7 @@ void esvg_attribute_animated_number_extended_set(Esvg_Attribute_Animated_Number 
 	Eina_Bool is_set;
 
 	was_set = aa->anim.is_set || aa->base.is_set;
-	esvg_attribute_animated_number_set(aa, v, def, animate);
+	egueb_svg_attribute_animated_number_set(aa, v, def, animate);
 	is_set = aa->anim.is_set || aa->base.is_set;
 	if (was_set && !is_set)
 		(*set)--;
@@ -112,8 +112,8 @@ void esvg_attribute_animated_number_extended_set(Esvg_Attribute_Animated_Number 
 		(*set)++;
 }
 
-void esvg_attribute_animated_number_get(Esvg_Attribute_Animated_Number *aa,
-	Esvg_Number_Animated *v)
+void egueb_svg_attribute_animated_number_get(Egueb_Svg_Attribute_Animated_Number *aa,
+	Egueb_Svg_Number_Animated *v)
 {
 	if (!v) return;
 
@@ -124,18 +124,18 @@ void esvg_attribute_animated_number_get(Esvg_Attribute_Animated_Number *aa,
 		v->anim = v->base;
 }
 
-void esvg_attribute_number_unset(Esvg_Attribute_Number *a, const Esvg_Number *def)
+void egueb_svg_attribute_number_unset(Egueb_Svg_Attribute_Number *a, const Egueb_Svg_Number *def)
 {
 	a->v = *def;
 	a->is_set = EINA_FALSE;
 }
 
-void esvg_attribute_number_set(Esvg_Attribute_Number *a, const Esvg_Number *v,
-		const Esvg_Number *def)
+void egueb_svg_attribute_number_set(Egueb_Svg_Attribute_Number *a, const Egueb_Svg_Number *v,
+		const Egueb_Svg_Number *def)
 {
 	if (!v)
 	{
-		esvg_attribute_number_unset(a, def);
+		egueb_svg_attribute_number_unset(a, def);
 	}
 	else
 	{
@@ -146,66 +146,66 @@ void esvg_attribute_number_set(Esvg_Attribute_Number *a, const Esvg_Number *v,
 /*----------------------------------------------------------------------------*
  *                            Animated Descriptor                             *
  *----------------------------------------------------------------------------*/
-static void * _esvg_animate_number_new(void)
+static void * _egueb_svg_animate_number_new(void)
 {
-	Esvg_Number *v;
+	Egueb_Svg_Number *v;
 
-	v = calloc(1, sizeof(Esvg_Number));
+	v = calloc(1, sizeof(Egueb_Svg_Number));
 	return v;
 }
 
-static Eina_Bool _esvg_animate_number_get(const char *attr, void **value)
+static Eina_Bool _egueb_svg_animate_number_get(const char *attr, void **value)
 {
-	Esvg_Number *v = *value;
+	Egueb_Svg_Number *v = *value;
 
-	esvg_number_string_from(v, attr, 1.0);
+	egueb_svg_number_string_from(v, attr, 1.0);
 	return EINA_TRUE;
 }
 
-static void * _esvg_animate_number_destination_new(void)
+static void * _egueb_svg_animate_number_destination_new(void)
 {
-	Esvg_Number_Animated *d;
-	d = calloc(1, sizeof(Esvg_Number_Animated));
+	Egueb_Svg_Number_Animated *d;
+	d = calloc(1, sizeof(Egueb_Svg_Number_Animated));
 	return d;
 }
 
-static void _esvg_animate_number_destination_free(void *destination, Eina_Bool deep)
+static void _egueb_svg_animate_number_destination_free(void *destination, Eina_Bool deep)
 {
-	Esvg_Number_Animated *d = destination;
+	Egueb_Svg_Number_Animated *d = destination;
 	free(d);
 }
 
-static void _esvg_animate_number_destination_value_to(void *destination, void **value)
+static void _egueb_svg_animate_number_destination_value_to(void *destination, void **value)
 {
-	Esvg_Number_Animated *d = destination;
-	Esvg_Number *v = *value;
+	Egueb_Svg_Number_Animated *d = destination;
+	Egueb_Svg_Number *v = *value;
 
 	*v = d->base;
 }
 
-static void _esvg_animate_number_interpolate(void *a, void *b, double m,
+static void _egueb_svg_animate_number_interpolate(void *a, void *b, double m,
 		void *add, void *acc, int mul, void *res)
 {
-	Esvg_Number *va = a;
-	Esvg_Number *vb = b;
-	Esvg_Number_Animated *vadd = add;
-	Esvg_Number_Animated *r = res;
+	Egueb_Svg_Number *va = a;
+	Egueb_Svg_Number *vb = b;
+	Egueb_Svg_Number_Animated *vadd = add;
+	Egueb_Svg_Number_Animated *r = res;
 
 	etch_interpolate_double(va->value, vb->value, m, &r->base.value);
 	if (vadd)
 		r->base.value += vadd->anim.value;
 }
 
-Esvg_Attribute_Animated_Descriptor esvg_attribute_animated_number_descriptor = {
-	/* .value_new 			= */ _esvg_animate_number_new,
-	/* .value_get 			= */ _esvg_animate_number_get,
+Egueb_Svg_Attribute_Animated_Descriptor egueb_svg_attribute_animated_number_descriptor = {
+	/* .value_new 			= */ _egueb_svg_animate_number_new,
+	/* .value_get 			= */ _egueb_svg_animate_number_get,
 	/* .value_free 			= */ free,
-	/* .destination_new 		= */ _esvg_animate_number_destination_new,
-	/* .destination_free 		= */ _esvg_animate_number_destination_free,
+	/* .destination_new 		= */ _egueb_svg_animate_number_destination_new,
+	/* .destination_free 		= */ _egueb_svg_animate_number_destination_free,
 	/* .destination_keep 		= */ NULL,
 	/* .destination_value_from 	= */ NULL,
-	/* .destination_value_to 	= */ _esvg_animate_number_destination_value_to,
-	/* .interpolate 		= */ _esvg_animate_number_interpolate,
+	/* .destination_value_to 	= */ _egueb_svg_animate_number_destination_value_to,
+	/* .interpolate 		= */ _egueb_svg_animate_number_interpolate,
 };
 
 

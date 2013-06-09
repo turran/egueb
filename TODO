@@ -1,11 +1,11 @@
-SMIL
-====
-+ We need to move the common animation code into smil namespace
-
-EDOM
-====
-+ The context concept is working correctly but the logic of what tag to accept or tag
-  added callback should be done on the Edom_Tag associated with the context
+Refactor
+========
++ Remove the has_changed, changed functions. Make a common
+  function to notify a change by passing a node and a bool
+  pointer which will create the listeners and set the bool
++ The clip path is by default not inherited unless the inherited
+  is set, several presentation attributes work like that, we need
+  to fix the initializers of the attr
 
 ECSS
 ====

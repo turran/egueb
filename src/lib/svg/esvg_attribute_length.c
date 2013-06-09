@@ -15,60 +15,60 @@
  * License along with this library.
  * If not, see <http://www.gnu.org/licenses/>.
  */
-#include "esvg_main_private.h"
-#include "esvg_types.h"
-#include "esvg_attribute_private.h"
+#include "egueb_svg_main_private.h"
+#include "egueb_svg_types.h"
+#include "egueb_svg_attribute_private.h"
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
 /*----------------------------------------------------------------------------*
  *                            Animated Descriptor                             *
  *----------------------------------------------------------------------------*/
-static void * _esvg_animate_length_value_new(void)
+static void * _egueb_svg_animate_length_value_new(void)
 {
-	Esvg_Length *v;
+	Egueb_Svg_Length *v;
 
-	v = calloc(1, sizeof(Esvg_Length));
+	v = calloc(1, sizeof(Egueb_Svg_Length));
 	return v;
 }
 
-static Eina_Bool _esvg_animate_length_value_get(const char *attr, void **value)
+static Eina_Bool _egueb_svg_animate_length_value_get(const char *attr, void **value)
 {
-	Esvg_Length *v = *value;
+	Egueb_Svg_Length *v = *value;
 
-	esvg_length_string_from(v, attr);
+	egueb_svg_length_string_from(v, attr);
 	return EINA_TRUE;
 }
 
-static void * _esvg_animate_length_destination_new(void)
+static void * _egueb_svg_animate_length_destination_new(void)
 {
-	Esvg_Length_Animated *v;
-	v = calloc(1, sizeof(Esvg_Length_Animated));
+	Egueb_Svg_Length_Animated *v;
+	v = calloc(1, sizeof(Egueb_Svg_Length_Animated));
 	return v;
 }
 
-static void _esvg_animate_length_destination_free(void *destination, Eina_Bool deep)
+static void _egueb_svg_animate_length_destination_free(void *destination, Eina_Bool deep)
 {
-	Esvg_Length_Animated *d = destination;
+	Egueb_Svg_Length_Animated *d = destination;
 	free(d);
 }
 
-static void _esvg_animate_length_destination_value_to(void *destination, void **value)
+static void _egueb_svg_animate_length_destination_value_to(void *destination, void **value)
 {
-	Esvg_Length_Animated *d = destination;
-	Esvg_Length *v = *value;
+	Egueb_Svg_Length_Animated *d = destination;
+	Egueb_Svg_Length *v = *value;
 
 	*v = d->base;
 }
 
-static void _esvg_animate_length_interpolate(void *a, void *b, double m,
+static void _egueb_svg_animate_length_interpolate(void *a, void *b, double m,
 		void *add, void *acc, int mul, void *res)
 {
-	Esvg_Length *va = a;
-	Esvg_Length *vb = b;
-	Esvg_Length *vacc = acc;
-	Esvg_Length_Animated *vadd = add;
-	Esvg_Length_Animated *r = res;
+	Egueb_Svg_Length *va = a;
+	Egueb_Svg_Length *vb = b;
+	Egueb_Svg_Length *vacc = acc;
+	Egueb_Svg_Length_Animated *vadd = add;
+	Egueb_Svg_Length_Animated *r = res;
 
 	r->base.unit = va->unit;
 	etch_interpolate_double(va->value, vb->value, m, &r->base.value);
@@ -82,23 +82,23 @@ static void _esvg_animate_length_interpolate(void *a, void *b, double m,
  *                                 Global                                     *
  *============================================================================*/
 /* The different animated desriptors */
-Esvg_Attribute_Animated_Descriptor esvg_attribute_animated_length_descriptor = {
-	/* .value_new 			= */ _esvg_animate_length_value_new,
-	/* .value_get 			= */ _esvg_animate_length_value_get,
+Egueb_Svg_Attribute_Animated_Descriptor egueb_svg_attribute_animated_length_descriptor = {
+	/* .value_new 			= */ _egueb_svg_animate_length_value_new,
+	/* .value_get 			= */ _egueb_svg_animate_length_value_get,
 	/* .value_free 			= */ free,
-	/* .destination_new 		= */ _esvg_animate_length_destination_new,
-	/* .destination_free 		= */ _esvg_animate_length_destination_free,
+	/* .destination_new 		= */ _egueb_svg_animate_length_destination_new,
+	/* .destination_free 		= */ _egueb_svg_animate_length_destination_free,
 	/* .destination_keep 		= */ NULL,
 	/* .destination_value_from 	= */ NULL,
-	/* .destination_value_to 	= */ _esvg_animate_length_destination_value_to,
-	/* .interpolate 		= */ _esvg_animate_length_interpolate,
+	/* .destination_value_to 	= */ _egueb_svg_animate_length_destination_value_to,
+	/* .interpolate 		= */ _egueb_svg_animate_length_interpolate,
 };
 /*----------------------------------------------------------------------------*
  *                                   Basic                                    *
  *----------------------------------------------------------------------------*/
-void esvg_attribute_length_merge_rel(const Esvg_Attribute_Length *rel,
-		const Esvg_Attribute_Length *v,
-		Esvg_Attribute_Length *d)
+void egueb_svg_attribute_length_merge_rel(const Egueb_Svg_Attribute_Length *rel,
+		const Egueb_Svg_Attribute_Length *v,
+		Egueb_Svg_Attribute_Length *d)
 {
 	if (!v->is_set)
 	{
@@ -112,18 +112,18 @@ void esvg_attribute_length_merge_rel(const Esvg_Attribute_Length *rel,
 	}
 }
 
-void esvg_attribute_length_unset(Esvg_Attribute_Length *a, const Esvg_Length *def)
+void egueb_svg_attribute_length_unset(Egueb_Svg_Attribute_Length *a, const Egueb_Svg_Length *def)
 {
 	a->v = *def;
 	a->is_set = EINA_FALSE;
 }
 
-void esvg_attribute_length_set(Esvg_Attribute_Length *a, const Esvg_Length *v,
-		const Esvg_Length *def)
+void egueb_svg_attribute_length_set(Egueb_Svg_Attribute_Length *a, const Egueb_Svg_Length *v,
+		const Egueb_Svg_Length *def)
 {
 	if (!v)
 	{
-		esvg_attribute_length_unset(a, def);
+		egueb_svg_attribute_length_unset(a, def);
 	}
 	else
 	{
@@ -136,12 +136,12 @@ void esvg_attribute_length_set(Esvg_Attribute_Length *a, const Esvg_Length *v,
 /*----------------------------------------------------------------------------*
  *                                  Animated                                  *
  *----------------------------------------------------------------------------*/
-void esvg_attribute_animated_length_merge_rel(const Esvg_Attribute_Animated_Length *rel,
-		const Esvg_Attribute_Animated_Length *v,
-		Esvg_Attribute_Length *d)
+void egueb_svg_attribute_animated_length_merge_rel(const Egueb_Svg_Attribute_Animated_Length *rel,
+		const Egueb_Svg_Attribute_Animated_Length *v,
+		Egueb_Svg_Attribute_Length *d)
 {
-	const Esvg_Attribute_Length *rr = NULL;
-	const Esvg_Attribute_Length *vv = NULL;
+	const Egueb_Svg_Attribute_Length *rr = NULL;
+	const Egueb_Svg_Attribute_Length *vv = NULL;
 
 	if (v->animated && v->anim.is_set)
 		vv = &v->anim;
@@ -153,12 +153,12 @@ void esvg_attribute_animated_length_merge_rel(const Esvg_Attribute_Animated_Leng
 	if (!rr)
 		rr = &rel->base;
 
-	esvg_attribute_length_merge_rel(rr, vv, d);
+	egueb_svg_attribute_length_merge_rel(rr, vv, d);
 }
 
 /* FIXME rename the merge variants */
-void esvg_attribute_animated_length_merge(const Esvg_Attribute_Animated_Length *v,
-		Esvg_Attribute_Length *d)
+void egueb_svg_attribute_animated_length_merge(const Egueb_Svg_Attribute_Animated_Length *v,
+		Egueb_Svg_Attribute_Length *d)
 {
 	if (v->animated && v->anim.is_set)
 	{
@@ -172,12 +172,12 @@ void esvg_attribute_animated_length_merge(const Esvg_Attribute_Animated_Length *
 	}
 }
 
-void esvg_attribute_animated_length_set(Esvg_Attribute_Animated_Length *aa,
-	const Esvg_Length_Animated *v,
-	const Esvg_Length *def,
+void egueb_svg_attribute_animated_length_set(Egueb_Svg_Attribute_Animated_Length *aa,
+	const Egueb_Svg_Length_Animated *v,
+	const Egueb_Svg_Length *def,
 	Eina_Bool animate)
 {
-	Esvg_Attribute_Length *a;
+	Egueb_Svg_Attribute_Length *a;
 	/* get the attribute to change */
 	if (animate)
 		a = &aa->anim;
@@ -185,14 +185,14 @@ void esvg_attribute_animated_length_set(Esvg_Attribute_Animated_Length *aa,
 		a = &aa->base;
 	/* get the value to set */
 	if (v)
-		esvg_attribute_length_set(a, &v->base, def);
+		egueb_svg_attribute_length_set(a, &v->base, def);
 	else
-		esvg_attribute_length_unset(a, def);
+		egueb_svg_attribute_length_unset(a, def);
 }
 
-void esvg_attribute_animated_length_extended_set(Esvg_Attribute_Animated_Length *aa,
-	const Esvg_Length_Animated *v,
-	const Esvg_Length *def,
+void egueb_svg_attribute_animated_length_extended_set(Egueb_Svg_Attribute_Animated_Length *aa,
+	const Egueb_Svg_Length_Animated *v,
+	const Egueb_Svg_Length *def,
 	Eina_Bool animate,
 	int *set)
 {
@@ -200,7 +200,7 @@ void esvg_attribute_animated_length_extended_set(Esvg_Attribute_Animated_Length 
 	Eina_Bool is_set;
 
 	was_set = aa->anim.is_set || aa->base.is_set;
-	esvg_attribute_animated_length_set(aa, v, def, animate);
+	egueb_svg_attribute_animated_length_set(aa, v, def, animate);
 	is_set = aa->anim.is_set || aa->base.is_set;
 	if (was_set && !is_set)
 		(*set)--;
@@ -208,8 +208,8 @@ void esvg_attribute_animated_length_extended_set(Esvg_Attribute_Animated_Length 
 		(*set)++;
 }
 
-void esvg_attribute_animated_length_get(Esvg_Attribute_Animated_Length *aa,
-	Esvg_Length_Animated *v)
+void egueb_svg_attribute_animated_length_get(Egueb_Svg_Attribute_Animated_Length *aa,
+	Egueb_Svg_Length_Animated *v)
 {
 	if (!v) return;
 
@@ -220,7 +220,7 @@ void esvg_attribute_animated_length_get(Esvg_Attribute_Animated_Length *aa,
 		v->anim = v->base;
 }
 
-Eina_Bool esvg_attribute_animated_length_is_set(Esvg_Attribute_Animated_Length *aa)
+Eina_Bool egueb_svg_attribute_animated_length_is_set(Egueb_Svg_Attribute_Animated_Length *aa)
 {
 	if ((aa->animated && aa->anim.is_set) || (aa->base.is_set))
 		return EINA_TRUE;
@@ -228,8 +228,8 @@ Eina_Bool esvg_attribute_animated_length_is_set(Esvg_Attribute_Animated_Length *
 		return EINA_FALSE;
 }
 
-void esvg_attribute_animated_length_final_get(Esvg_Attribute_Animated_Length *aa,
-	Esvg_Length *v)
+void egueb_svg_attribute_animated_length_final_get(Egueb_Svg_Attribute_Animated_Length *aa,
+	Egueb_Svg_Length *v)
 {
 	if (aa->animated && aa->anim.is_set)
 		*v = aa->anim.v;

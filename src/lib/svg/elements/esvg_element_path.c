@@ -15,49 +15,49 @@
  * License along with this library.
  * If not, see <http://www.gnu.org/licenses/>.
  */
-#include "esvg_main_private.h"
-#include "esvg_private_attribute_presentation.h"
-#include "esvg_context_private.h"
-#include "esvg_element_private.h"
-#include "esvg_renderable_private.h"
+#include "egueb_svg_main_private.h"
+#include "egueb_svg_private_attribute_presentation.h"
+#include "egueb_svg_context_private.h"
+#include "egueb_svg_element_private.h"
+#include "egueb_svg_renderable_private.h"
 
-#include "esvg_path_private.h"
-#include "esvg_path.h"
+#include "egueb_svg_path_private.h"
+#include "egueb_svg_path.h"
 
-#include "esvg_element_path.h"
+#include "egueb_svg_element_path.h"
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
-#define ESVG_LOG_DEFAULT _esvg_element_path_log
+#define ESVG_LOG_DEFAULT _egueb_svg_element_path_log
 
-static int _esvg_element_path_log = -1;
+static int _egueb_svg_element_path_log = -1;
 
 static Ender_Property *ESVG_ELEMENT_PATH_D;
 
-typedef struct _Esvg_Element_Path_D
+typedef struct _Egueb_Svg_Element_Path_D
 {
-	Esvg_Path_Seg_List *seg_list;
-	Esvg_Path_Seg_List *animated_seg_list;
+	Egueb_Svg_Path_Seg_List *seg_list;
+	Egueb_Svg_Path_Seg_List *animated_seg_list;
 	Eina_Bool changed;
 	int animated;
-} Esvg_Element_Path_D;
+} Egueb_Svg_Element_Path_D;
 
-typedef struct _Esvg_Element_Path
+typedef struct _Egueb_Svg_Element_Path
 {
 	EINA_MAGIC
 	/* properties */
-	Esvg_Element_Path_D d;
+	Egueb_Svg_Element_Path_D d;
 	/* private */
 	Enesim_Renderer *r;
-} Esvg_Element_Path;
+} Egueb_Svg_Element_Path;
 
-static Esvg_Element_Path * _esvg_element_path_get(Edom_Tag *t)
+static Egueb_Svg_Element_Path * _egueb_svg_element_path_get(Egueb_Dom_Tag *t)
 {
-	Esvg_Element_Path *thiz;
+	Egueb_Svg_Element_Path *thiz;
 
-	if (esvg_element_internal_type_get(t) != ESVG_TYPE_PATH)
+	if (egueb_svg_element_internal_type_get(t) != ESVG_TYPE_PATH)
 		return NULL;
-	thiz = esvg_renderable_data_get(t);
+	thiz = egueb_svg_renderable_data_get(t);
 
 	return thiz;
 }
@@ -65,18 +65,18 @@ static Esvg_Element_Path * _esvg_element_path_get(Edom_Tag *t)
 /*----------------------------------------------------------------------------*
  *                       The Esvg Renderable interface                        *
  *----------------------------------------------------------------------------*/
-static Eina_Bool _esvg_element_path_attribute_set(Ender_Element *e, const char *key, const char *value)
+static Eina_Bool _egueb_svg_element_path_attribute_set(Ender_Element *e, const char *key, const char *value)
 {
 	if (strcmp(key, "d") == 0)
 	{
-		Esvg_Path_Seg_List *seg_list;
-		seg_list = esvg_path_seg_list_new();
-		if (!esvg_path_seg_list_string_from(seg_list, value))
+		Egueb_Svg_Path_Seg_List *seg_list;
+		seg_list = egueb_svg_path_seg_list_new();
+		if (!egueb_svg_path_seg_list_string_from(seg_list, value))
 		{
-			esvg_path_seg_list_unref(seg_list);
+			egueb_svg_path_seg_list_unref(seg_list);
 			return EINA_FALSE;
 		}
-		esvg_element_path_d_set(e, seg_list);
+		egueb_svg_element_path_d_set(e, seg_list);
 	}
 	else
 	{
@@ -86,17 +86,17 @@ static Eina_Bool _esvg_element_path_attribute_set(Ender_Element *e, const char *
 	return EINA_TRUE;
 }
 
-static Eina_Bool _esvg_element_path_attribute_get(Edom_Tag *tag, const char *attribute, char **value)
+static Eina_Bool _egueb_svg_element_path_attribute_get(Egueb_Dom_Tag *tag, const char *attribute, char **value)
 {
 	return EINA_FALSE;
 }
 
-static int * _esvg_element_path_attribute_animated_fetch(Edom_Tag *t, const char *attr)
+static int * _egueb_svg_element_path_attribute_animated_fetch(Egueb_Dom_Tag *t, const char *attr)
 {
-	Esvg_Element_Path *thiz;
+	Egueb_Svg_Element_Path *thiz;
 	int *animated = NULL;
 
-	thiz = _esvg_element_path_get(t);
+	thiz = _egueb_svg_element_path_get(t);
 	if (!strcmp(attr, "d"))
 	{
 		animated = &thiz->d.animated;
@@ -104,39 +104,39 @@ static int * _esvg_element_path_attribute_animated_fetch(Edom_Tag *t, const char
 	return animated;
 }
 
-static Enesim_Renderer * _esvg_element_path_renderer_get(Edom_Tag *t)
+static Enesim_Renderer * _egueb_svg_element_path_renderer_get(Egueb_Dom_Tag *t)
 {
-	Esvg_Element_Path *thiz;
+	Egueb_Svg_Element_Path *thiz;
 
-	thiz = _esvg_element_path_get(t);
+	thiz = _egueb_svg_element_path_get(t);
 	return thiz->r;
 }
 
-static Esvg_Element_Setup_Return _esvg_element_path_setup(Edom_Tag *t,
-		Esvg_Context *c,
-		Esvg_Element_Context *ctx,
-		Esvg_Attribute_Presentation *attr,
+static Egueb_Svg_Element_Setup_Return _egueb_svg_element_path_setup(Egueb_Dom_Tag *t,
+		Egueb_Svg_Context *c,
+		Egueb_Svg_Element_Context *ctx,
+		Egueb_Svg_Attribute_Presentation *attr,
 		Enesim_Log **error)
 {
 	return ESVG_SETUP_OK;
 }
 
-static Eina_Bool _esvg_element_path_renderer_propagate(Edom_Tag *t,
-		Esvg_Context *c,
-		const Esvg_Element_Context *ctx,
-		const Esvg_Attribute_Presentation *attr,
-		Esvg_Renderable_Context *rctx,
+static Eina_Bool _egueb_svg_element_path_renderer_propagate(Egueb_Dom_Tag *t,
+		Egueb_Svg_Context *c,
+		const Egueb_Svg_Element_Context *ctx,
+		const Egueb_Svg_Attribute_Presentation *attr,
+		Egueb_Svg_Renderable_Context *rctx,
 		Enesim_Log **error)
 {
-	Esvg_Element_Path *thiz;
-	Esvg_Path_Seg_List *seg_list;
-	Esvg_Element_Path_Command *pcmd;
+	Egueb_Svg_Element_Path *thiz;
+	Egueb_Svg_Path_Seg_List *seg_list;
+	Egueb_Svg_Element_Path_Command *pcmd;
 	Eina_List *l;
 	Eina_List *commands;
-	Esvg_Point cur = { 0, 0 };
+	Egueb_Svg_Point cur = { 0, 0 };
 	Eina_Bool first; /* TODO handle correctly the first flag */
 
-	thiz = _esvg_element_path_get(t);
+	thiz = _egueb_svg_element_path_get(t);
 
 	//DBG("path setup");
 	/* shape properties */
@@ -400,74 +400,74 @@ static Eina_Bool _esvg_element_path_renderer_propagate(Edom_Tag *t,
 	return EINA_TRUE;
 }
 
-static void _esvg_element_path_free(Edom_Tag *t)
+static void _egueb_svg_element_path_free(Egueb_Dom_Tag *t)
 {
-	Esvg_Element_Path *thiz;
+	Egueb_Svg_Element_Path *thiz;
 
-	thiz = _esvg_element_path_get(t);
+	thiz = _egueb_svg_element_path_get(t);
 	if (thiz->d.seg_list)
 	{
 		thiz->d.seg_list->owner = NULL;
-		esvg_path_seg_list_unref(thiz->d.seg_list);
+		egueb_svg_path_seg_list_unref(thiz->d.seg_list);
 	}
 	if (thiz->d.animated_seg_list)
 	{
 		thiz->d.animated_seg_list->owner = NULL;
-		esvg_path_seg_list_unref(thiz->d.animated_seg_list);
+		egueb_svg_path_seg_list_unref(thiz->d.animated_seg_list);
 	}
 	enesim_renderer_unref(thiz->r);
 	free(thiz);
 }
 
-static Esvg_Renderable_Descriptor _descriptor = {
+static Egueb_Svg_Renderable_Descriptor _descriptor = {
 	/* .child_add		= */ NULL,
 	/* .child_remove	= */ NULL,
-	/* .attribute_get 	= */ _esvg_element_path_attribute_get,
+	/* .attribute_get 	= */ _egueb_svg_element_path_attribute_get,
 	/* .cdata_set 		= */ NULL,
 	/* .text_set 		= */ NULL,
 	/* .text_get		     = */ NULL,
-	/* .free 		= */ _esvg_element_path_free,
+	/* .free 		= */ _egueb_svg_element_path_free,
 	/* .initialize 		= */ NULL,
-	/* .attribute_set 	= */ _esvg_element_path_attribute_set,
-	/* .attribute_animated_fetch 	= */ _esvg_element_path_attribute_animated_fetch,
-	/* .setup		= */ _esvg_element_path_setup,
-	/* .renderer_get	= */ _esvg_element_path_renderer_get,
-	/* .renderer_propagate	= */ _esvg_element_path_renderer_propagate,
+	/* .attribute_set 	= */ _egueb_svg_element_path_attribute_set,
+	/* .attribute_animated_fetch 	= */ _egueb_svg_element_path_attribute_animated_fetch,
+	/* .setup		= */ _egueb_svg_element_path_setup,
+	/* .renderer_get	= */ _egueb_svg_element_path_renderer_get,
+	/* .renderer_propagate	= */ _egueb_svg_element_path_renderer_propagate,
 };
 /*----------------------------------------------------------------------------*
  *                           The Ender interface                              *
  *----------------------------------------------------------------------------*/
-static Edom_Tag * _esvg_element_path_new(void)
+static Egueb_Dom_Tag * _egueb_svg_element_path_new(void)
 {
-	Esvg_Element_Path *thiz;
-	Edom_Tag *t;
+	Egueb_Svg_Element_Path *thiz;
+	Egueb_Dom_Tag *t;
 	Enesim_Renderer *r;
 
-	thiz = calloc(1, sizeof(Esvg_Element_Path));
+	thiz = calloc(1, sizeof(Egueb_Svg_Element_Path));
 	if (!thiz) return NULL;
 
-	thiz->d.seg_list = esvg_path_seg_list_new();
-	thiz->d.animated_seg_list = esvg_path_seg_list_new();
+	thiz->d.seg_list = egueb_svg_path_seg_list_new();
+	thiz->d.animated_seg_list = egueb_svg_path_seg_list_new();
 
 	r = enesim_renderer_path_new();
 	thiz->r = r;
 	enesim_renderer_rop_set(r, ENESIM_BLEND);
 	/* default values */
 
-	t = esvg_renderable_new(&_descriptor, ESVG_TYPE_PATH, thiz);
+	t = egueb_svg_renderable_new(&_descriptor, ESVG_TYPE_PATH, thiz);
 	return t;
 }
 
-static void _esvg_element_path_d_set(Edom_Tag *t, Esvg_Path_Seg_List *seg_list)
+static void _egueb_svg_element_path_d_set(Egueb_Dom_Tag *t, Egueb_Svg_Path_Seg_List *seg_list)
 {
-	Esvg_Element_Path *thiz;
-	Esvg_Path_Seg_List **current;
-	Esvg_Path_Seg_List *old;
+	Egueb_Svg_Element_Path *thiz;
+	Egueb_Svg_Path_Seg_List **current;
+	Egueb_Svg_Path_Seg_List *old;
 
 	if (!seg_list)
-		seg_list = esvg_path_seg_list_new();
+		seg_list = egueb_svg_path_seg_list_new();
 
-	thiz = _esvg_element_path_get(t);
+	thiz = _egueb_svg_element_path_get(t);
 	if (thiz->d.animated)
 		current = &thiz->d.animated_seg_list;
 	else
@@ -475,64 +475,64 @@ static void _esvg_element_path_d_set(Edom_Tag *t, Esvg_Path_Seg_List *seg_list)
 
 	old = *current;
 	old->owner = NULL;
-	esvg_path_seg_list_unref(old);
+	egueb_svg_path_seg_list_unref(old);
 
 	*current = seg_list;
-	seg_list->owner = esvg_element_ender_get(t);
+	seg_list->owner = egueb_svg_element_ender_get(t);
 	thiz->d.changed = EINA_TRUE;
 }
 
-static void _esvg_element_path_d_get(Edom_Tag *t, Esvg_Path_Seg_List **seg_list)
+static void _egueb_svg_element_path_d_get(Egueb_Dom_Tag *t, Egueb_Svg_Path_Seg_List **seg_list)
 {
 }
 
 /* The ender wrapper */
-#define _esvg_element_path_delete NULL
-#define _esvg_element_path_d_is_set NULL
-#include "esvg_generated_element_path.c"
+#define _egueb_svg_element_path_delete NULL
+#define _egueb_svg_element_path_d_is_set NULL
+#include "egueb_svg_generated_element_path.c"
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
-void esvg_element_path_init(void)
+void egueb_svg_element_path_init(void)
 {
-	_esvg_element_path_log = eina_log_domain_register("esvg_element_path", ESVG_LOG_COLOR_DEFAULT);
-	if (_esvg_element_path_log < 0)
+	_egueb_svg_element_path_log = eina_log_domain_register("egueb_svg_element_path", ESVG_LOG_COLOR_DEFAULT);
+	if (_egueb_svg_element_path_log < 0)
 	{
 		EINA_LOG_ERR("Can not create log domain.");
 		return;
 	}
-	_esvg_element_path_init();
+	_egueb_svg_element_path_init();
 }
 
-void esvg_element_path_shutdown(void)
+void egueb_svg_element_path_shutdown(void)
 {
-	if (_esvg_element_path_log < 0)
+	if (_egueb_svg_element_path_log < 0)
 		return;
-	_esvg_element_path_shutdown();
-	eina_log_domain_unregister(_esvg_element_path_log);
-	_esvg_element_path_log = -1;
+	_egueb_svg_element_path_shutdown();
+	eina_log_domain_unregister(_egueb_svg_element_path_log);
+	_egueb_svg_element_path_log = -1;
 }
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/
-EAPI Ender_Element * esvg_element_path_new(void)
+EAPI Ender_Element * egueb_svg_element_path_new(void)
 {
 	return ESVG_ELEMENT_NEW("SVGPathElement");
 }
 
-EAPI Eina_Bool esvg_is_path(Ender_Element *e)
+EAPI Eina_Bool egueb_svg_is_path(Ender_Element *e)
 {
 	Eina_Bool ret = EINA_TRUE;
 
 	return ret;
 }
 
-EAPI void esvg_element_path_d_set(Ender_Element *e, Esvg_Path_Seg_List *d)
+EAPI void egueb_svg_element_path_d_set(Ender_Element *e, Egueb_Svg_Path_Seg_List *d)
 {
 	ender_element_property_value_set(e, ESVG_ELEMENT_PATH_D, d, NULL);
 }
 
-EAPI void esvg_element_path_d_get(Ender_Element *e, Esvg_Path_Seg_List **d)
+EAPI void egueb_svg_element_path_d_get(Ender_Element *e, Egueb_Svg_Path_Seg_List **d)
 {
 }
 

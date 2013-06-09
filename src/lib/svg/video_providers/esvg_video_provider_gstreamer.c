@@ -26,27 +26,27 @@
 #ifdef ERR
 # undef ERR
 #endif
-#define ERR(...) EINA_LOG_DOM_ERR(_esvg_video_provider_gstreamer_log, __VA_ARGS__)
+#define ERR(...) EINA_LOG_DOM_ERR(_egueb_svg_video_provider_gstreamer_log, __VA_ARGS__)
 
 #ifdef WARN
 # undef WARN
 #endif
-#define WARN(...) EINA_LOG_DOM_WARN(_esvg_video_provider_gstreamer_log, __VA_ARGS__)
+#define WARN(...) EINA_LOG_DOM_WARN(_egueb_svg_video_provider_gstreamer_log, __VA_ARGS__)
 
 #ifdef INFO
 # undef INFO
 #endif
-#define INFO(...) EINA_LOG_DOM_INFO(_esvg_video_provider_gstreamer_log, __VA_ARGS__)
+#define INFO(...) EINA_LOG_DOM_INFO(_egueb_svg_video_provider_gstreamer_log, __VA_ARGS__)
 
 #ifdef DBG
 # undef DBG
 #endif
-#define DBG(...) EINA_LOG_DOM_DBG(_esvg_video_provider_gstreamer_log, __VA_ARGS__)
+#define DBG(...) EINA_LOG_DOM_DBG(_egueb_svg_video_provider_gstreamer_log, __VA_ARGS__)
 
 /* FIXME we still need to register the log domain */
-static int _esvg_video_provider_gstreamer_log = -1;
+static int _egueb_svg_video_provider_gstreamer_log = -1;
 
-typedef struct _Esvg_Element_Video_Gstreamer
+typedef struct _Egueb_Svg_Element_Video_Gstreamer
 {
 	GstElement *enesim_sink;
 	GstElement *playbin2;
@@ -58,9 +58,9 @@ typedef struct _Esvg_Element_Video_Gstreamer
 
 	uint32_t width;
 	uint32_t height;
-} Esvg_Element_Video_Gstreamer;
+} Egueb_Svg_Element_Video_Gstreamer;
 
-static char * _esvg_element_video_path_urify(const char *s)
+static char * _egueb_svg_element_video_path_urify(const char *s)
 {
 	/* FIXME we need a way to check if the path stats with an uri */
 	if (*s == '/')
@@ -77,9 +77,9 @@ static char * _esvg_element_video_path_urify(const char *s)
 	}
 }
 
-static void _esvg_element_video_buffer_display(GstElement *enesim_sink, Enesim_Buffer *b, gpointer user_data)
+static void _egueb_svg_element_video_buffer_display(GstElement *enesim_sink, Enesim_Buffer *b, gpointer user_data)
 {
-	Esvg_Element_Video_Gstreamer *thiz = user_data;
+	Egueb_Svg_Element_Video_Gstreamer *thiz = user_data;
 
 	if (thiz->b == b)
 	{
@@ -110,9 +110,9 @@ static void _esvg_element_video_buffer_display(GstElement *enesim_sink, Enesim_B
 /*----------------------------------------------------------------------------*
  *                           The Video interface                              *
  *----------------------------------------------------------------------------*/
-static void * _esvg_element_video_gstreamer_create(Enesim_Renderer *image)
+static void * _egueb_svg_element_video_gstreamer_create(Enesim_Renderer *image)
 {
-	Esvg_Element_Video_Gstreamer *thiz;
+	Egueb_Svg_Element_Video_Gstreamer *thiz;
 	GstElement *enesim_sink;
 	static Eina_Bool _gst_init = EINA_FALSE;
 
@@ -130,7 +130,7 @@ static void * _esvg_element_video_gstreamer_create(Enesim_Renderer *image)
 		return NULL;
 	}
 
-	thiz = calloc(1, sizeof(Esvg_Element_Video_Gstreamer));
+	thiz = calloc(1, sizeof(Egueb_Svg_Element_Video_Gstreamer));
 	thiz->image = image;
 
 	/* TODO fallback to appsink in case enesim sink is not found */
@@ -138,7 +138,7 @@ static void * _esvg_element_video_gstreamer_create(Enesim_Renderer *image)
 	 * to increase the priority
 	 */
 	g_signal_connect (enesim_sink, "buffer-display",
-          G_CALLBACK (_esvg_element_video_buffer_display), thiz);
+          G_CALLBACK (_egueb_svg_element_video_buffer_display), thiz);
 	thiz->enesim_sink = gst_object_ref(enesim_sink);
 
 	thiz->playbin2 = gst_element_factory_make("playbin2", "svg_video");
@@ -147,9 +147,9 @@ static void * _esvg_element_video_gstreamer_create(Enesim_Renderer *image)
 	return thiz;
 }
 
-static void _esvg_element_video_gstreamer_free(void *data)
+static void _egueb_svg_element_video_gstreamer_free(void *data)
 {
-	Esvg_Element_Video_Gstreamer *thiz = data;
+	Egueb_Svg_Element_Video_Gstreamer *thiz = data;
 
 	enesim_renderer_unref(thiz->image);
 	gst_element_set_state(thiz->playbin2, GST_STATE_NULL);
@@ -158,9 +158,9 @@ static void _esvg_element_video_gstreamer_free(void *data)
 	free(thiz);
 }
 
-static void _esvg_element_video_gstreamer_setup(void *data, const Esvg_Video_Provider_Context *ctx)
+static void _egueb_svg_element_video_gstreamer_setup(void *data, const Egueb_Svg_Video_Provider_Context *ctx)
 {
-	Esvg_Element_Video_Gstreamer *thiz = data;
+	Egueb_Svg_Element_Video_Gstreamer *thiz = data;
 	GstState current;
 	GstState pending;
 	GstStateChangeReturn ret;
@@ -183,7 +183,7 @@ static void _esvg_element_video_gstreamer_setup(void *data, const Esvg_Video_Pro
 		gst_element_set_state(thiz->playbin2, GST_STATE_READY);
 
 	/* we need to transform the real href into a playbin2 uri */
-	uri = _esvg_element_video_path_urify(ctx->href);
+	uri = _egueb_svg_element_video_path_urify(ctx->href);
 	g_object_set(thiz->playbin2, "uri", uri, NULL);
 	free(uri);
 
@@ -193,10 +193,10 @@ static void _esvg_element_video_gstreamer_setup(void *data, const Esvg_Video_Pro
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
-Esvg_Video_Provider_Descriptor esvg_video_provider_gstreamer_descriptor = {
-	/* .create 	= */ _esvg_element_video_gstreamer_create,
-	/* .free 	= */ _esvg_element_video_gstreamer_free,
-	/* .setup 	= */ _esvg_element_video_gstreamer_setup,
+Egueb_Svg_Video_Provider_Descriptor egueb_svg_video_provider_gstreamer_descriptor = {
+	/* .create 	= */ _egueb_svg_element_video_gstreamer_create,
+	/* .free 	= */ _egueb_svg_element_video_gstreamer_free,
+	/* .setup 	= */ _egueb_svg_element_video_gstreamer_setup,
 };
 /*============================================================================*
  *                                   API                                      *

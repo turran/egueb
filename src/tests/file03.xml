@@ -1,0 +1,7 @@
+<myelement>
+	<myelement prop1="value1">
+		<set attributeName="prop1" attributeType="XML" to="value2"
+           begin="3s" dur="6s" fill="freeze" />
+	<myelement/>
+</myelement>
+

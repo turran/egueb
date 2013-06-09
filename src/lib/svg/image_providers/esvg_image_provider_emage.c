@@ -26,54 +26,54 @@
 #ifdef ERR
 # undef ERR
 #endif
-#define ERR(...) EINA_LOG_DOM_ERR(_esvg_element_image_provider_enesim_image_log, __VA_ARGS__)
+#define ERR(...) EINA_LOG_DOM_ERR(_egueb_svg_element_image_provider_enesim_image_log, __VA_ARGS__)
 
 #ifdef WARN
 # undef WARN
 #endif
-#define WARN(...) EINA_LOG_DOM_WARN(_esvg_element_image_provider_enesim_image_log, __VA_ARGS__)
+#define WARN(...) EINA_LOG_DOM_WARN(_egueb_svg_element_image_provider_enesim_image_log, __VA_ARGS__)
 
 #ifdef INFO
 # undef INFO
 #endif
-#define INFO(...) EINA_LOG_DOM_INFO(_esvg_element_image_provider_enesim_image_log, __VA_ARGS__)
+#define INFO(...) EINA_LOG_DOM_INFO(_egueb_svg_element_image_provider_enesim_image_log, __VA_ARGS__)
 
 #ifdef DBG
 # undef DBG
 #endif
-#define DBG(...) EINA_LOG_DOM_DBG(_esvg_element_image_provider_enesim_image_log, __VA_ARGS__)
+#define DBG(...) EINA_LOG_DOM_DBG(_egueb_svg_element_image_provider_enesim_image_log, __VA_ARGS__)
 
 /* FIXME we still need to register the log domain */
-static int _esvg_element_image_provider_enesim_image_log = -1;
+static int _egueb_svg_element_image_provider_enesim_image_log = -1;
 
-typedef struct _Esvg_Element_Image_Emage
+typedef struct _Egueb_Svg_Element_Image_Emage
 {
 	Enesim_Renderer *image;
-} Esvg_Element_Image_Emage;
+} Egueb_Svg_Element_Image_Emage;
 /*----------------------------------------------------------------------------*
  *                           The Image interface                              *
  *----------------------------------------------------------------------------*/
-static void * _esvg_element_image_enesim_image_create(Enesim_Renderer *image)
+static void * _egueb_svg_element_image_enesim_image_create(Enesim_Renderer *image)
 {
-	Esvg_Element_Image_Emage *thiz;
+	Egueb_Svg_Element_Image_Emage *thiz;
 
-	thiz = calloc(1, sizeof(Esvg_Element_Image_Emage));
+	thiz = calloc(1, sizeof(Egueb_Svg_Element_Image_Emage));
 	thiz->image = image;
 
 	return thiz;
 }
 
-static void _esvg_element_image_enesim_image_free(void *data)
+static void _egueb_svg_element_image_enesim_image_free(void *data)
 {
-	Esvg_Element_Image_Emage *thiz = data;
+	Egueb_Svg_Element_Image_Emage *thiz = data;
 
 	enesim_renderer_unref(thiz->image);
 	free(thiz);
 }
 
-static void _esvg_element_image_enesim_image_load(void *data)
+static void _egueb_svg_element_image_enesim_image_load(void *data)
 {
-	Esvg_Element_Image_Emage *thiz = data;
+	Egueb_Svg_Element_Image_Emage *thiz = data;
 	Enesim_Surface *s = NULL;
 	Eina_Bool ret;
 
@@ -93,10 +93,10 @@ static void _esvg_element_image_enesim_image_load(void *data)
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
-Esvg_Element_Image_Provider_Descriptor esvg_element_image_provider_enesim_image_descriptor = {
-	/* .create 	= */ _esvg_element_image_enesim_image_create,
-	/* .free 	= */ _esvg_element_image_enesim_image_free,
-	/* .load 	= */ _esvg_element_image_enesim_image_load,
+Egueb_Svg_Element_Image_Provider_Descriptor egueb_svg_element_image_provider_enesim_image_descriptor = {
+	/* .create 	= */ _egueb_svg_element_image_enesim_image_create,
+	/* .free 	= */ _egueb_svg_element_image_enesim_image_free,
+	/* .load 	= */ _egueb_svg_element_image_enesim_image_load,
 };
 /*============================================================================*
  *                                   API                                      *

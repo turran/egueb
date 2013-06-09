@@ -34,24 +34,24 @@
 
 
 
-struct _Edom_Tag
+struct _Egueb_Dom_Tag
 {
 	EINA_INLIST;
-	Edom_Tag_Descriptor descriptor;
-	Edom_Tag *parent;
+	Egueb_Dom_Tag_Descriptor descriptor;
+	Egueb_Dom_Tag *parent;
 	Eina_Inlist *children;
 	void *data;
 };
 
-static void _tag_dump(Edom_Tag *thiz, int level)
+static void _tag_dump(Egueb_Dom_Tag *thiz, int level)
 {
-	Edom_Tag *child;
+	Egueb_Dom_Tag *child;
 	const char *name;
 	int i;
 
 	for (i = 0; i < level; i++)
 		printf(" ");
-	name = edom_tag_name_get(thiz);
+	name = egueb_dom_tag_name_get(thiz);
 	printf("%s\n", name ? name : "(UNKNOWN)");
 	EINA_INLIST_FOREACH(thiz->children, child)
 	{
@@ -62,7 +62,7 @@ static void _tag_dump(Edom_Tag *thiz, int level)
 static Eina_Bool _attribute_set(void *data, const char *key,
 		const char *value)
 {
-	Edom_Tag *thiz = data;
+	Egueb_Dom_Tag *thiz = data;
 
 	if (thiz->descriptor.attribute_set)
 		return thiz->descriptor.attribute_set(thiz, key, value);
@@ -71,7 +71,7 @@ static Eina_Bool _attribute_set(void *data, const char *key,
 
 static Eina_Bool _attribute_get(void *data, const char *key, char **value)
 {
-	Edom_Tag *thiz = data;
+	Egueb_Dom_Tag *thiz = data;
 
 	if (thiz->descriptor.attribute_get)
 		return thiz->descriptor.attribute_get(thiz, key, value);
@@ -80,7 +80,7 @@ static Eina_Bool _attribute_get(void *data, const char *key, char **value)
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
-void edom_tag_dump(Edom_Tag *thiz)
+void egueb_dom_tag_dump(Egueb_Dom_Tag *thiz)
 {
 	if (!thiz) return;
 	_tag_dump(thiz, 0);
@@ -92,15 +92,15 @@ void edom_tag_dump(Edom_Tag *thiz)
  * To be documented
  * FIXME: To be fixed
  */
-EAPI Edom_Tag * edom_tag_new(Edom_Tag_Descriptor *descriptor,
+EAPI Egueb_Dom_Tag * egueb_dom_tag_new(Egueb_Dom_Tag_Descriptor *descriptor,
 		void *data)
 {
-	Edom_Tag *thiz;
+	Egueb_Dom_Tag *thiz;
 
 	if (!descriptor)
 		return NULL;
 
-	thiz = calloc(1, sizeof(Edom_Tag));
+	thiz = calloc(1, sizeof(Egueb_Dom_Tag));
 	thiz->descriptor = *descriptor;
 	thiz->data = data;
 
@@ -111,7 +111,7 @@ EAPI Edom_Tag * edom_tag_new(Edom_Tag_Descriptor *descriptor,
  * To be documented
  * FIXME: To be fixed
  */
-EAPI void edom_tag_delete(Edom_Tag *thiz)
+EAPI void egueb_dom_tag_delete(Egueb_Dom_Tag *thiz)
 {
 	if (thiz->descriptor.free)
 		thiz->descriptor.free(thiz);
@@ -122,7 +122,7 @@ EAPI void edom_tag_delete(Edom_Tag *thiz)
  * To be documented
  * FIXME: To be fixed
  */
-EAPI void edom_tag_attributes_from_xml(Edom_Tag *thiz, const char *attributes,
+EAPI void egueb_dom_tag_attributes_from_xml(Egueb_Dom_Tag *thiz, const char *attributes,
 		unsigned int length)
 {
 	eina_simple_xml_attributes_parse(attributes, length, _attribute_set, thiz);
@@ -132,7 +132,7 @@ EAPI void edom_tag_attributes_from_xml(Edom_Tag *thiz, const char *attributes,
  * To be documented
  * FIXME: To be fixed
  */
-EAPI void edom_tag_attribute_set(Edom_Tag *thiz, const char *name,
+EAPI void egueb_dom_tag_attribute_set(Egueb_Dom_Tag *thiz, const char *name,
 		const char *value)
 {
 	_attribute_set(thiz, name, value);
@@ -142,7 +142,7 @@ EAPI void edom_tag_attribute_set(Edom_Tag *thiz, const char *name,
  * To be documented
  * FIXME: To be fixed
  */
-EAPI char * edom_tag_attribute_get(Edom_Tag *thiz, const char *name)
+EAPI char * egueb_dom_tag_attribute_get(Egueb_Dom_Tag *thiz, const char *name)
 {
 	char *value;
 	_attribute_get(thiz, name, &value);
@@ -153,43 +153,43 @@ EAPI char * edom_tag_attribute_get(Edom_Tag *thiz, const char *name)
  * To be documented
  * FIXME: To be fixed
  */
-EAPI char * edom_tag_id_get(Edom_Tag *thiz)
+EAPI char * egueb_dom_tag_id_get(Egueb_Dom_Tag *thiz)
 {
-	return edom_tag_attribute_get(thiz, "id");
+	return egueb_dom_tag_attribute_get(thiz, "id");
 }
 
 /**
  * To be documented
  * FIXME: To be fixed
  */
-EAPI void edom_tag_id_set(Edom_Tag *thiz, const char *id)
+EAPI void egueb_dom_tag_id_set(Egueb_Dom_Tag *thiz, const char *id)
 {
-	edom_tag_attribute_set(thiz, "id", id);
+	egueb_dom_tag_attribute_set(thiz, "id", id);
 }
 
 /**
  * To be documented
  * FIXME: To be fixed
  */
-EAPI char * edom_tag_class_get(Edom_Tag *thiz)
+EAPI char * egueb_dom_tag_class_get(Egueb_Dom_Tag *thiz)
 {
-	return edom_tag_attribute_get(thiz, "class");
+	return egueb_dom_tag_attribute_get(thiz, "class");
 }
 
 /**
  * To be documented
  * FIXME: To be fixed
  */
-EAPI void edom_tag_class_set(Edom_Tag *thiz, const char *class)
+EAPI void egueb_dom_tag_class_set(Egueb_Dom_Tag *thiz, const char *class)
 {
-	edom_tag_attribute_set(thiz, "class", class);
+	egueb_dom_tag_attribute_set(thiz, "class", class);
 }
 
 /**
  * To be documented
  * FIXME: To be fixed
  */
-EAPI void * edom_tag_data_get(Edom_Tag *thiz)
+EAPI void * egueb_dom_tag_data_get(Egueb_Dom_Tag *thiz)
 {
 	return thiz->data;
 }
@@ -198,7 +198,7 @@ EAPI void * edom_tag_data_get(Edom_Tag *thiz)
  * To be documented
  * FIXME: To be fixed
  */
-EAPI Eina_Bool edom_tag_child_add(Edom_Tag *thiz, Edom_Tag *child)
+EAPI Eina_Bool egueb_dom_tag_child_add(Egueb_Dom_Tag *thiz, Egueb_Dom_Tag *child)
 {
 	Eina_Bool ret = EINA_TRUE;
 
@@ -219,7 +219,7 @@ EAPI Eina_Bool edom_tag_child_add(Edom_Tag *thiz, Edom_Tag *child)
  * To be documented
  * FIXME: To be fixed
  */
-EAPI Eina_Bool edom_tag_child_remove(Edom_Tag *thiz, Edom_Tag *child)
+EAPI Eina_Bool egueb_dom_tag_child_remove(Egueb_Dom_Tag *thiz, Egueb_Dom_Tag *child)
 {
 	Eina_Bool ret = EINA_TRUE;
 
@@ -240,9 +240,9 @@ EAPI Eina_Bool edom_tag_child_remove(Edom_Tag *thiz, Edom_Tag *child)
  * To be documented
  * FIXME: To be fixed
  */
-EAPI Edom_Tag * edom_tag_child_get(Edom_Tag *thiz)
+EAPI Egueb_Dom_Tag * egueb_dom_tag_child_get(Egueb_Dom_Tag *thiz)
 {
-	return EINA_INLIST_CONTAINER_GET(thiz->children, Edom_Tag);
+	return EINA_INLIST_CONTAINER_GET(thiz->children, Egueb_Dom_Tag);
 }
 
 
@@ -250,9 +250,9 @@ EAPI Edom_Tag * edom_tag_child_get(Edom_Tag *thiz)
  * To be documented
  * FIXME: To be fixed
  */
-EAPI void edom_tag_child_foreach(Edom_Tag *thiz, Edom_Tag_Foreach foreach, void *data)
+EAPI void egueb_dom_tag_child_foreach(Egueb_Dom_Tag *thiz, Egueb_Dom_Tag_Foreach foreach, void *data)
 {
-	Edom_Tag *child;
+	Egueb_Dom_Tag *child;
 	Eina_Inlist *tmp;
 
 	if (!foreach) return;
@@ -268,9 +268,9 @@ EAPI void edom_tag_child_foreach(Edom_Tag *thiz, Edom_Tag_Foreach foreach, void 
  * To be documented
  * FIXME: To be fixed
  */
-EAPI void edom_tag_child_reverse_foreach(Edom_Tag *thiz, Edom_Tag_Foreach foreach, void *data)
+EAPI void egueb_dom_tag_child_reverse_foreach(Egueb_Dom_Tag *thiz, Egueb_Dom_Tag_Foreach foreach, void *data)
 {
-	Edom_Tag *child;
+	Egueb_Dom_Tag *child;
 	Eina_Inlist *tmp;
 
 	if (!foreach) return;
@@ -287,19 +287,19 @@ EAPI void edom_tag_child_reverse_foreach(Edom_Tag *thiz, Edom_Tag_Foreach foreac
  * To be documented
  * FIXME: To be fixed
  */
-EAPI Edom_Tag * edom_tag_next_get(Edom_Tag *thiz)
+EAPI Egueb_Dom_Tag * egueb_dom_tag_next_get(Egueb_Dom_Tag *thiz)
 {
 	Eina_Inlist *il;
 
 	il = EINA_INLIST_GET(thiz);
-	return EINA_INLIST_CONTAINER_GET(il->next, Edom_Tag);
+	return EINA_INLIST_CONTAINER_GET(il->next, Egueb_Dom_Tag);
 }
 
 /**
  * To be documented
  * FIXME: To be fixed
  */
-EAPI Edom_Tag * edom_tag_topmost_get(Edom_Tag *thiz)
+EAPI Egueb_Dom_Tag * egueb_dom_tag_topmost_get(Egueb_Dom_Tag *thiz)
 {
 	if (thiz->descriptor.topmost_get)
 		return thiz->descriptor.topmost_get(thiz);
@@ -310,7 +310,7 @@ EAPI Edom_Tag * edom_tag_topmost_get(Edom_Tag *thiz)
  * To be documented
  * FIXME: To be fixed
  */
-EAPI Edom_Tag * edom_tag_parent_get(Edom_Tag *thiz)
+EAPI Egueb_Dom_Tag * egueb_dom_tag_parent_get(Egueb_Dom_Tag *thiz)
 {
 	return thiz->parent;
 }
@@ -319,7 +319,7 @@ EAPI Edom_Tag * edom_tag_parent_get(Edom_Tag *thiz)
  * To be documented
  * FIXME: To be fixed
  */
-EAPI const char * edom_tag_name_get(Edom_Tag *thiz)
+EAPI const char * egueb_dom_tag_name_get(Egueb_Dom_Tag *thiz)
 {
 	if (!thiz->descriptor.name_get) return NULL;
 	return thiz->descriptor.name_get(thiz);
@@ -329,7 +329,7 @@ EAPI const char * edom_tag_name_get(Edom_Tag *thiz)
  * To be documented
  * FIXME: To be fixed
  */
-EAPI void edom_tag_cdata_set(Edom_Tag *thiz, Edom_String *string)
+EAPI void egueb_dom_tag_cdata_set(Egueb_Dom_Tag *thiz, Egueb_Dom_String *string)
 {
 	int length;
 
@@ -347,7 +347,7 @@ EAPI void edom_tag_cdata_set(Edom_Tag *thiz, Edom_String *string)
  * To be documented
  * FIXME: To be fixed
  */
-EAPI void edom_tag_text_set(Edom_Tag *thiz, Edom_String *string)
+EAPI void egueb_dom_tag_text_set(Egueb_Dom_Tag *thiz, Egueb_Dom_String *string)
 {
 	int length;
 
@@ -365,7 +365,7 @@ EAPI void edom_tag_text_set(Edom_Tag *thiz, Edom_String *string)
  * To be documented
  * FIXME: To be fixed
  */
-EAPI void edom_tag_text_get(Edom_Tag *thiz, Edom_String *string)
+EAPI void egueb_dom_tag_text_get(Egueb_Dom_Tag *thiz, Egueb_Dom_String *string)
 {
 	if (!thiz->descriptor.text_get) return;
 	thiz->descriptor.text_get(thiz, &string->s, &string->length);

@@ -1,7 +1,7 @@
 #ifndef _ESVG_PATH_PRIVATE
 #define _ESVG_PATH_PRIVATE
 
-struct _Esvg_Path_Seg_List
+struct _Egueb_Svg_Path_Seg_List
 {
 	Ender_Element *owner;
 	Eina_List *commands;

@@ -16,9 +16,9 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 #include "Esvg.h"
-#include "Esvg_Parser.h"
-#include "esvg_parser_private.h"
-#include "esvg_values.h"
+#include "Egueb_Svg_Parser.h"
+#include "egueb_svg_parser_private.h"
+#include "egueb_svg_values.h"
 /*
  * The pattern parser might be kind of complicated given that we can parse
  * the same as the svg i think, but everything must be rendered to an image
@@ -28,84 +28,84 @@
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
-typedef struct _Esvg_Parser_Pattern
+typedef struct _Egueb_Svg_Parser_Pattern
 {
-	Edom_Tag *tag;
+	Egueb_Dom_Tag *tag;
 	Enesim_Renderer *r;
 	char *href;
-} Esvg_Parser_Pattern;
+} Egueb_Svg_Parser_Pattern;
 
-static Esvg_Parser_Pattern * _esvg_parser_pattern_get(Edom_Tag *tag)
+static Egueb_Svg_Parser_Pattern * _egueb_svg_parser_pattern_get(Egueb_Dom_Tag *tag)
 {
-	Esvg_Parser_Pattern *thiz;
+	Egueb_Svg_Parser_Pattern *thiz;
 
-	thiz = esvg_parser_paint_server_data_get(tag);
+	thiz = egueb_svg_parser_paint_server_data_get(tag);
 	return thiz;
 }
 
-Eina_Bool _parser_pattern_attribute_set(Edom_Tag *tag,
+Eina_Bool _parser_pattern_attribute_set(Egueb_Dom_Tag *tag,
 		const char *key, const char *value)
 {
 	Enesim_Renderer *r;
 	Eina_Bool ret = EINA_TRUE;
 
-	r = esvg_parser_element_renderer_get(tag);
+	r = egueb_svg_parser_element_renderer_get(tag);
 
 	if (strcmp(key, "x") == 0)
 	{
-		Esvg_Coord x;
+		Egueb_Svg_Coord x;
 
-		esvg_length_string_from(&x, value, ESVG_COORD_0);
-		esvg_pattern_x_set(r, &x);
+		egueb_svg_length_string_from(&x, value, ESVG_COORD_0);
+		egueb_svg_pattern_x_set(r, &x);
 	}
 	else if (strcmp(key, "y") == 0)
 	{
-		Esvg_Coord y;
+		Egueb_Svg_Coord y;
 
-		esvg_length_string_from(&y, value, ESVG_COORD_0);
-		esvg_pattern_y_set(r, &y);
+		egueb_svg_length_string_from(&y, value, ESVG_COORD_0);
+		egueb_svg_pattern_y_set(r, &y);
 	}
 	else if (strcmp(key, "width") == 0)
 	{
-		Esvg_Length width;
+		Egueb_Svg_Length width;
 
-		esvg_length_string_from(&width, value, ESVG_LENGTH_0);
-		esvg_pattern_width_set(r, &width);
+		egueb_svg_length_string_from(&width, value, ESVG_LENGTH_0);
+		egueb_svg_pattern_width_set(r, &width);
 	}
 	else if (strcmp(key, "height") == 0)
 	{
-		Esvg_Length height;
+		Egueb_Svg_Length height;
 
-		esvg_length_string_from(&height, value, ESVG_LENGTH_0);
-		esvg_pattern_height_set(r, &height);
+		egueb_svg_length_string_from(&height, value, ESVG_LENGTH_0);
+		egueb_svg_pattern_height_set(r, &height);
 	}
 	else if (strcmp(key, "patternUnits") == 0)
 	{
-		Esvg_Element_Gradient_Units units;
+		Egueb_Svg_Element_Gradient_Units units;
 
-		esvg_parser_gradient_units_string_from(&units, value);
-		esvg_pattern_units_set(r, units);
+		egueb_svg_parser_gradient_units_string_from(&units, value);
+		egueb_svg_pattern_units_set(r, units);
 	}
 	else if (strcmp(key, "patternTransform") == 0)
 	{
 		Enesim_Matrix matrix;
 
-		esvg_transformation_string_from(&matrix, value);
-		esvg_pattern_transform_set(r, &matrix);
+		egueb_svg_transformation_string_from(&matrix, value);
+		egueb_svg_pattern_transform_set(r, &matrix);
 	}
 	else if (strcmp(key, "xlink:href") == 0)
 	{
 #if 0
-		Esvg_Parser_Pattern *thiz;
-		Edom_Parser *parser;
+		Egueb_Svg_Parser_Pattern *thiz;
+		Egueb_Dom_Parser *parser;
 
-		parser = edom_tag_parser_get(tag);
-		thiz = _esvg_parser_pattern_get(tag);
+		parser = egueb_dom_tag_parser_get(tag);
+		thiz = _egueb_svg_parser_pattern_get(tag);
 		thiz->href = strdup(value);
 		/* always add the callback, as we should inherit every property which is *not* set
 		 * including the stops
 		 */
-		esvg_parser_post_parse_add(parser, _post_parse_href_cb, thiz);
+		egueb_svg_parser_post_parse_add(parser, _post_parse_href_cb, thiz);
 #endif
 	}
 	else
@@ -114,17 +114,17 @@ Eina_Bool _parser_pattern_attribute_set(Edom_Tag *tag,
 	return EINA_TRUE;
 }
 
-static const char * _parser_pattern_attribute_get(Edom_Tag *tag, const char *attribute)
+static const char * _parser_pattern_attribute_get(Egueb_Dom_Tag *tag, const char *attribute)
 {
 	return NULL;
 }
 
-static const char * _parser_pattern_name_get(Edom_Tag *tag)
+static const char * _parser_pattern_name_get(Egueb_Dom_Tag *tag)
 {
 	return "pattern";
 }
 
-static Eina_Bool _parser_pattern_child_supported(Edom_Tag *tag, int tag_id)
+static Eina_Bool _parser_pattern_child_supported(Egueb_Dom_Tag *tag, int tag_id)
 {
 	switch (tag_id)
 	{
@@ -147,21 +147,21 @@ static Eina_Bool _parser_pattern_child_supported(Edom_Tag *tag, int tag_id)
 	}
 }
 
-static Eina_Bool _parser_pattern_child_add(Edom_Tag *tag, Edom_Tag *child)
+static Eina_Bool _parser_pattern_child_add(Egueb_Dom_Tag *tag, Egueb_Dom_Tag *child)
 {
-	Esvg_Parser_Pattern *thiz;
+	Egueb_Svg_Parser_Pattern *thiz;
 	Enesim_Renderer *r;
 	int tag_id;
 
-	thiz = _esvg_parser_pattern_get(tag);
-	r = esvg_parser_element_renderer_get(child);
+	thiz = _egueb_svg_parser_pattern_get(tag);
+	r = egueb_svg_parser_element_renderer_get(child);
 	if (r)
-		esvg_pattern_content_set(thiz->r, r);
+		egueb_svg_pattern_content_set(thiz->r, r);
 
 	return EINA_TRUE;
 }
 
-static Edom_Tag_Descriptor _descriptor = {
+static Egueb_Dom_Tag_Descriptor _descriptor = {
 	/* .name_get 		= */ _parser_pattern_name_get,
 	/* .attribute_set 	= */ _parser_pattern_attribute_set,
 	/* .attribute_get 	= */ _parser_pattern_attribute_get,
@@ -172,16 +172,16 @@ static Edom_Tag_Descriptor _descriptor = {
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
-Edom_Tag * esvg_parser_pattern_new(Edom_Parser *parser)
+Egueb_Dom_Tag * egueb_svg_parser_pattern_new(Egueb_Dom_Parser *parser)
 {
-	Esvg_Parser_Pattern *thiz;
+	Egueb_Svg_Parser_Pattern *thiz;
 	Enesim_Renderer *r;
-	Edom_Tag *tag;
+	Egueb_Dom_Tag *tag;
 
-	thiz = calloc(1, sizeof(Esvg_Parser_Pattern));
-	r = esvg_pattern_new();
+	thiz = calloc(1, sizeof(Egueb_Svg_Parser_Pattern));
+	r = egueb_svg_pattern_new();
 	thiz->r = r;
-	tag = esvg_parser_paint_server_new(parser, &_descriptor, ESVG_PATTERN,
+	tag = egueb_svg_parser_paint_server_new(parser, &_descriptor, ESVG_PATTERN,
 			r, thiz);
 	thiz->tag = tag;
 

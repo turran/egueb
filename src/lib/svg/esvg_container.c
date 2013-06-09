@@ -15,14 +15,14 @@
  * License along with this library.
  * If not, see <http://www.gnu.org/licenses/>.
  */
-#include "esvg_main_private.h"
-#include "esvg_private_attribute_presentation.h"
-#include "esvg_context_private.h"
-#include "esvg_element_private.h"
-#include "esvg_renderable_private.h"
+#include "egueb_svg_main_private.h"
+#include "egueb_svg_private_attribute_presentation.h"
+#include "egueb_svg_context_private.h"
+#include "egueb_svg_element_private.h"
+#include "egueb_svg_renderable_private.h"
 
-#include "esvg_element.h"
-#include "esvg_renderable.h"
+#include "egueb_svg_element.h"
+#include "egueb_svg_renderable.h"
 
 /* This abstraction should add every shape into its own list of renderables
  * Basically <g> and <svg> should inherit from here
@@ -30,7 +30,7 @@
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
-//#define ESVG_LOG_DEFAULT esvg_log_container
+//#define ESVG_LOG_DEFAULT egueb_svg_log_container
 
 #define ESVG_CONTAINER_MAGIC_CHECK(d) \
 	do {\
@@ -38,27 +38,27 @@
 			EINA_MAGIC_FAIL(d, ESVG_CONTAINER_MAGIC);\
 	} while(0)
 
-typedef struct _Esvg_Container_Descriptor_Internal
+typedef struct _Egueb_Svg_Container_Descriptor_Internal
 {
-	Edom_Tag_Free free;
-	Edom_Tag_Child_Add child_add;
-	Edom_Tag_Child_Remove child_remove;
-} Esvg_Container_Descriptor_Internal;
+	Egueb_Dom_Tag_Free free;
+	Egueb_Dom_Tag_Child_Add child_add;
+	Egueb_Dom_Tag_Child_Remove child_remove;
+} Egueb_Svg_Container_Descriptor_Internal;
 
-typedef struct _Esvg_Container
+typedef struct _Egueb_Svg_Container
 {
 	EINA_MAGIC
 	/* properties */
 	/* private */
-	Esvg_Container_Descriptor_Internal descriptor;
+	Egueb_Svg_Container_Descriptor_Internal descriptor;
 	void *data;
-} Esvg_Container;
+} Egueb_Svg_Container;
 
-static Esvg_Container * _esvg_container_get(Edom_Tag *t)
+static Egueb_Svg_Container * _egueb_svg_container_get(Egueb_Dom_Tag *t)
 {
-	Esvg_Container *thiz;
+	Egueb_Svg_Container *thiz;
 
-	thiz = esvg_renderable_data_get(t);
+	thiz = egueb_svg_renderable_data_get(t);
 	ESVG_CONTAINER_MAGIC_CHECK(thiz);
 
 	return thiz;
@@ -66,21 +66,21 @@ static Esvg_Container * _esvg_container_get(Edom_Tag *t)
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
-void * esvg_container_data_get(Enesim_Renderer *r)
+void * egueb_svg_container_data_get(Enesim_Renderer *r)
 {
-	Esvg_Container *thiz;
+	Egueb_Svg_Container *thiz;
 
-	thiz = _esvg_container_get(r);
+	thiz = _egueb_svg_container_get(r);
 	return thiz->data;
 }
 
-Enesim_Renderer * esvg_container_new(Esvg_Container_Descriptor *descriptor, void *data)
+Enesim_Renderer * egueb_svg_container_new(Egueb_Svg_Container_Descriptor *descriptor, void *data)
 {
-	Esvg_Container *thiz;
-	Esvg_Element_Descriptor pdescriptor;
+	Egueb_Svg_Container *thiz;
+	Egueb_Svg_Element_Descriptor pdescriptor;
 	Enesim_Renderer *r;
 
-	thiz = calloc(1, sizeof(Esvg_Container));
+	thiz = calloc(1, sizeof(Egueb_Svg_Container));
 	if (!thiz) return NULL;
 
 	EINA_MAGIC_SET(thiz, ESVG_CONTAINER_MAGIC);
@@ -98,20 +98,20 @@ Enesim_Renderer * esvg_container_new(Esvg_Container_Descriptor *descriptor, void
 	pdescriptor.has_changed = NULL;
 	pdescriptor.is_renderable = descriptor->is_renderable;
 
-	r = esvg_element_new(&pdescriptor, thiz);
+	r = egueb_svg_element_new(&pdescriptor, thiz);
 	return r;
 }
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/
-EAPI Eina_Bool esvg_is_container(Enesim_Renderer *r)
+EAPI Eina_Bool egueb_svg_is_container(Enesim_Renderer *r)
 {
-	Esvg_Container *thiz;
+	Egueb_Svg_Container *thiz;
 	Eina_Bool ret;
 
-	if (!esvg_is_element(r))
+	if (!egueb_svg_is_element(r))
 		return EINA_FALSE;
-	thiz = esvg_element_data_get(r);
+	thiz = egueb_svg_element_data_get(r);
 	ret = EINA_MAGIC_CHECK(thiz, ESVG_CONTAINER_MAGIC);
 
 	return ret;
@@ -120,50 +120,50 @@ EAPI Eina_Bool esvg_is_container(Enesim_Renderer *r)
 /* TODO
  * add common API functions for external accessible functions like fill/stroke/whatever
  */
-EAPI void esvg_container_element_add(Enesim_Renderer *r, Enesim_Renderer *child)
+EAPI void egueb_svg_container_element_add(Enesim_Renderer *r, Enesim_Renderer *child)
 {
-	Esvg_Container *thiz;
+	Egueb_Svg_Container *thiz;
 
 	if (!r) return;
 	if (!child) return;
 
-	if (!esvg_is_element(child))
+	if (!egueb_svg_is_element(child))
 		return;
-	thiz = _esvg_container_get(r);
+	thiz = _egueb_svg_container_get(r);
 	if (!thiz) return;
 
 	/* TODO check if the child already has a parent */
 	if (thiz->element_add)
 	{
 		if (thiz->element_add(r, child))
-			esvg_element_parent_set(child, r);
+			egueb_svg_element_parent_set(child, r);
 	}
 }
 
-EAPI void esvg_container_element_remove(Enesim_Renderer *r, Enesim_Renderer *child)
+EAPI void egueb_svg_container_element_remove(Enesim_Renderer *r, Enesim_Renderer *child)
 {
-	Esvg_Container *thiz;
+	Egueb_Svg_Container *thiz;
 
 	if (!r) return;
 	if (!child) return;
 
-	if (!esvg_is_element(child))
+	if (!egueb_svg_is_element(child))
 		return;
-	thiz = _esvg_container_get(r);
+	thiz = _egueb_svg_container_get(r);
 	if (!thiz) return;
 	if (thiz->element_remove)
 	{
 		thiz->element_remove(r, child);
-		esvg_element_parent_set(child, NULL);
+		egueb_svg_element_parent_set(child, NULL);
 	}
 }
 
-EAPI Enesim_Renderer * esvg_container_element_at(Enesim_Renderer *r, double x, double y)
+EAPI Enesim_Renderer * egueb_svg_container_element_at(Enesim_Renderer *r, double x, double y)
 {
-	Esvg_Container *thiz;
+	Egueb_Svg_Container *thiz;
 	Enesim_Renderer *at = NULL;
 
-	thiz = _esvg_container_get(r);
+	thiz = _egueb_svg_container_get(r);
 
 	if (thiz->element_at)
 		at = thiz->element_at(r, x, y);

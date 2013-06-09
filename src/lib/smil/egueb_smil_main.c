@@ -15,19 +15,80 @@
  * License along with this library.
  * If not, see <http://www.gnu.org/licenses/>.
  */
+#include "egueb_smil_private.h"
+
+#include "egueb_smil_main.h"
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
+static int _init_count = 0;
+
+/* our helpful strings */
+static void _egueb_smil_strings_init(void)
+{
+	EGUEB_SMIL_ATTRIBUTE_NAME = egueb_dom_string_new_with_string("attributeName");
+	EGUEB_SMIL_BEGIN = egueb_dom_string_new_with_string("begin");
+	EGUEB_SMIL_DUR = egueb_dom_string_new_with_string("dur");
+	EGUEB_SMIL_END = egueb_dom_string_new_with_string("end");
+	EGUEB_SMIL_FILL = egueb_dom_string_new_with_string("fill");
+	EGUEB_SMIL_TO = egueb_dom_string_new_with_string("to");
+}
+
+static void _egueb_smil_strings_shutdown(void)
+{
+	egueb_dom_string_unref(EGUEB_SMIL_ATTRIBUTE_NAME);
+	egueb_dom_string_unref(EGUEB_SMIL_BEGIN);
+	egueb_dom_string_unref(EGUEB_SMIL_DUR);
+	egueb_dom_string_unref(EGUEB_SMIL_END);
+	egueb_dom_string_unref(EGUEB_SMIL_FILL);
+	egueb_dom_string_unref(EGUEB_SMIL_TO);
+}
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
+int egueb_smil_log_global = -1;
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/
-/* the thing is that we dont know how to animate every value type, so we need
- * to register some types before, liek what esvg does with its types
- */
-EAPI void egueb_smil_type_register(void)
-{
+Egueb_Dom_String *EGUEB_SMIL_ATTRIBUTE_NAME;
+Egueb_Dom_String *EGUEB_SMIL_BEGIN;
+Egueb_Dom_String *EGUEB_SMIL_DUR;
+Egueb_Dom_String *EGUEB_SMIL_END;
+Egueb_Dom_String *EGUEB_SMIL_FILL;
+Egueb_Dom_String *EGUEB_SMIL_TO;
 
+EAPI void egueb_smil_init(void)
+{
+	if (_init_count) goto done;
+	egueb_dom_init();
+	etch_init();
+
+	egueb_smil_log_global = eina_log_domain_register("egueb_smil", 0);
+	if (egueb_smil_log_global < 0)
+	{
+		EINA_LOG_ERR("Egueb_Smil: Can not create a general log domain.");
+		goto shutdown_eina;
+	}
+	_egueb_smil_strings_init();
+done:
+	_init_count++;
+	return;
+
+shutdown_eina:
+	egueb_dom_shutdown();
 }
+
+EAPI void egueb_smil_shutdown(void)
+{
+	if (_init_count != 1) goto done;
+	_egueb_smil_strings_shutdown();
+	eina_log_domain_unregister(egueb_smil_log_global);
+        egueb_smil_log_global = -1;
+
+	etch_shutdown();
+	egueb_dom_shutdown();
+done:
+	_init_count--;
+}
+
+

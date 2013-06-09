@@ -23,65 +23,65 @@
 #include <Ecss.h>
 #include <Ender.h>
 
-#include "esvg_main_private.h"
-#include "esvg_private_attribute_presentation.h"
-#include "esvg_context_private.h"
-#include "esvg_element_private.h"
-#include "esvg_parser_private.h"
+#include "egueb_svg_main_private.h"
+#include "egueb_svg_private_attribute_presentation.h"
+#include "egueb_svg_context_private.h"
+#include "egueb_svg_element_private.h"
+#include "egueb_svg_parser_private.h"
 
-#include "esvg_types.h"
-#include "esvg_main.h"
-#include "esvg_element_a.h"
-#include "esvg_element_clip_path.h"
-#include "esvg_element_defs.h"
-#include "esvg_element_animate.h"
-#include "esvg_element_animate_transform.h"
-#include "esvg_video_provider.h"
-#include "esvg_script_provider.h"
-#include "esvg_element_svg.h"
-#include "esvg_element_ellipse.h"
-#include "esvg_element_rect.h"
-#include "esvg_element_circle.h"
-#include "esvg_element_image.h"
-#include "esvg_element_path.h"
-#include "esvg_element_polygon.h"
-#include "esvg_element_polyline.h"
-#include "esvg_element_g.h"
-#include "esvg_element_line.h"
-#include "esvg_element_linear_gradient.h"
-#include "esvg_element_radial_gradient.h"
-#include "esvg_element_script.h"
-#include "esvg_element_set.h"
-#include "esvg_element_stop.h"
-#include "esvg_element_style.h"
-#include "esvg_element_text.h"
-#include "esvg_element_use.h"
-#include "esvg_element_video.h"
+#include "egueb_svg_types.h"
+#include "egueb_svg_main.h"
+#include "egueb_svg_element_a.h"
+#include "egueb_svg_element_clip_path.h"
+#include "egueb_svg_element_defs.h"
+#include "egueb_svg_element_animate.h"
+#include "egueb_svg_element_animate_transform.h"
+#include "egueb_svg_video_provider.h"
+#include "egueb_svg_script_provider.h"
+#include "egueb_svg_element_svg.h"
+#include "egueb_svg_element_ellipse.h"
+#include "egueb_svg_element_rect.h"
+#include "egueb_svg_element_circle.h"
+#include "egueb_svg_element_image.h"
+#include "egueb_svg_element_path.h"
+#include "egueb_svg_element_polygon.h"
+#include "egueb_svg_element_polyline.h"
+#include "egueb_svg_element_g.h"
+#include "egueb_svg_element_line.h"
+#include "egueb_svg_element_linear_gradient.h"
+#include "egueb_svg_element_radial_gradient.h"
+#include "egueb_svg_element_script.h"
+#include "egueb_svg_element_set.h"
+#include "egueb_svg_element_stop.h"
+#include "egueb_svg_element_style.h"
+#include "egueb_svg_element_text.h"
+#include "egueb_svg_element_use.h"
+#include "egueb_svg_element_video.h"
 
-#include "esvg_parser.h"
+#include "egueb_svg_parser.h"
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
-#define ESVG_LOG_DEFAULT _esvg_parser_log
+#define ESVG_LOG_DEFAULT _egueb_svg_parser_log
 
-static int _esvg_parser_log = -1;
+static int _egueb_svg_parser_log = -1;
 
-typedef struct _Esvg_Parser
+typedef struct _Egueb_Svg_Parser
 {
 	Ender_Element *topmost;
-} Esvg_Parser;
+} Egueb_Svg_Parser;
 
-static void _esvg_parser_tree_dump(Edom_Tag *t, int level);
+static void _egueb_svg_parser_tree_dump(Egueb_Dom_Tag *t, int level);
 
-static Eina_Bool _esvg_parser_tree_dump_cb(Edom_Tag *t, Edom_Tag *child, void *data)
+static Eina_Bool _egueb_svg_parser_tree_dump_cb(Egueb_Dom_Tag *t, Egueb_Dom_Tag *child, void *data)
 {
 	int *level = data;
 
-	_esvg_parser_tree_dump(child, *level);
+	_egueb_svg_parser_tree_dump(child, *level);
 	return EINA_TRUE;
 }
 
-static void _esvg_parser_tree_dump(Edom_Tag *t, int level)
+static void _egueb_svg_parser_tree_dump(Egueb_Dom_Tag *t, int level)
 {
 	char out[PATH_MAX];
 	const char *name;
@@ -90,14 +90,14 @@ static void _esvg_parser_tree_dump(Edom_Tag *t, int level)
 	for (i = 0; i < level; i++)
 		out[i] = ' ';
 	out[i] = '\0';
-	name = edom_tag_name_get(t);
+	name = egueb_dom_tag_name_get(t);
 	strncat(out, name ? name : "(UNKNOWN)", PATH_MAX - i);
 	INFO("%s", out);
 	level += 1;
-	edom_tag_child_foreach(t, _esvg_parser_tree_dump_cb, &level);
+	egueb_dom_tag_child_foreach(t, _egueb_svg_parser_tree_dump_cb, &level);
 }
 
-static char * _esvg_parser_file_open(const char *filename, size_t *sz)
+static char * _egueb_svg_parser_file_open(const char *filename, size_t *sz)
 {
 	FILE *f;
 	char *buf;
@@ -145,473 +145,94 @@ close_f:
 	return NULL;
 }
 
-static Ender_Element * _esvg_parser_parse(Edom_Parser *parser, const char *buffer, size_t size)
+static Ender_Element * _egueb_svg_parser_parse(Egueb_Dom_Parser *parser, const char *buffer, size_t size)
 {
 	Ender_Element *e = NULL;
-	Edom_Tag *t;
+	Egueb_Dom_Tag *t;
 
-	if (!edom_parser_parse(parser, buffer, size))
+	if (!egueb_dom_parser_parse(parser, buffer, size))
 	{
 		DBG("Can not parse buffer");
 		goto done;
 	}
 
 	/* check if we have a valid renderer */
-	e = edom_parser_topmost_get(parser);
+	e = egueb_dom_parser_topmost_get(parser);
 	/* useful for debugging */
 	t = ender_element_object_get(e);
-	_esvg_parser_tree_dump(t, 0);
+	_egueb_svg_parser_tree_dump(t, 0);
 done:
-	edom_parser_delete(parser);
+	egueb_dom_parser_delete(parser);
 	return e;
 }
 /*----------------------------------------------------------------------------*
- *                            Edom parser interface                           *
+ *                            Egueb_Dom parser interface                           *
  *----------------------------------------------------------------------------*/
-static Eina_Bool _esvg_parser_tag_get(Edom_Parser *parser, const char *content,
-		 size_t sz, int *tag)
+static void * _egueb_svg_parser_topmost_get(Egueb_Dom_Parser *parser)
 {
-	/* sz ==1 : 2 cases : a and g */
-	if (sz == 1)
-	{
-		if (content[0] == 'a')
-		{
-			*tag = ESVG_TYPE_A;
-			return EINA_TRUE;
-		}
-		else if (content[0] == 'g')
-		{
-			*tag = ESVG_TYPE_G;
-			return EINA_TRUE;
-		}
-		else
-		{
-			DBG("tag <%s> not supported by SVG Tiny 1.1 spec", content);
-		}
-	}
-	else if (sz == 2)
-	{
-		DBG("tag <%s> not supported by SVG Tiny 1.1 spec", content);
-	}
-	else if (sz == 3)
-	{
-		if (content[0] == 's')
-		{
-			if ((content[1] == 'e') && (content[2] == 't'))
-			{
-				*tag = ESVG_TYPE_SET;
-				return EINA_TRUE;
-			}
-			else if ((content[1] == 'v') && (content[2] == 'g'))
-			{
-				*tag = ESVG_TYPE_SVG;
-				return EINA_TRUE;
-			}
-			else
-				DBG("tag <%s> not supported by SVG Tiny 1.1 spec", content);
-		}
-		else if (content[0] == 'u')
-		{
-			if ((content[1] == 's') && (content[2] == 'e'))
-			{
-				*tag = ESVG_TYPE_USE;
-				return EINA_TRUE;
-			}
-			else
-				DBG("tag <%s> not supported by SVG Tiny 1.1 spec", content);
-		}
-		else
-			DBG("tag <%s> not supported by SVG Tiny 1.1 spec", content);
-	}
-	else
-	{
-		if (content[0] == 'a')
-		{
-			if (strncmp("animate", content, sz) == 0)
-			{
-				*tag = ESVG_TYPE_ANIMATE;
-				return EINA_TRUE;
-			}
-			else if (strncmp("animateTransform", content, sz) == 0)
-			{
-				*tag = ESVG_TYPE_ANIMATETRANSFORM;
-				return EINA_TRUE;
-			}
+	Egueb_Svg_Parser *thiz;
 
-		}
-		else if (content[0] == 'c')
-		{
-			if (strncmp("circle", content, sz) == 0)
-			{
-				*tag = ESVG_TYPE_CIRCLE;
-				return EINA_TRUE;
-			}
-			else if (strncmp("clipPath", content, sz) == 0)
-			{
-				*tag = ESVG_TYPE_CLIPPATH;
-				return EINA_TRUE;
-			}
-			else
-				DBG("tag <%s> not supported by SVG Tiny 1.1 spec", content);
-		}
-		else if (content[0] == 'd')
-		{
-			if (strncmp("defs", content, sz) == 0)
-			{
-				*tag = ESVG_TYPE_DEFS;
-				return EINA_TRUE;
-			}
-			else if (strncmp("desc", content, sz) == 0)
-			{
-				*tag = ESVG_TYPE_DESC;
-				return EINA_TRUE;
-			}
-			else
-				DBG("tag <%s> not supported by SVG Tiny 1.1 spec", content);
-		}
-		else if (content[0] == 'e')
-		{
-			if (strncmp("ellipse", content, sz) == 0)
-			{
-				*tag = ESVG_TYPE_ELLIPSE;
-				return EINA_TRUE;
-			}
-			else
-				DBG("tag <%s> not supported by SVG Tiny 1.1 spec", content);
-		}
-		else if (content[0] == 'f')
-		{
-		}
-		else if (content[0] == 'g')
-		{
-			/* <g> already managed */
-			if (strncmp("glyph", content, sz) == 0)
-			{
-			}
-			else if (strncmp("glyphRef", content, sz) == 0)
-			{
-			}
-			else
-				DBG("tag <%s> not supported by SVG Tiny 1.1 spec", content);
-		}
-		else if (content[0] == 'h')
-		{
-			if (strncmp("hkern", content, sz) == 0)
-			{
-			}
-			else
-				DBG("tag <%s> not supported by SVG Tiny 1.1 spec", content);
-		}
-		else if (content[0] == 'i')
-		{
-			if (strncmp("image", content, sz) == 0)
-			{
-				*tag = ESVG_TYPE_IMAGE;
-				return EINA_TRUE;
-			}
-			else
-				DBG("tag <%s> not supported by SVG Tiny 1.1 spec", content);
-		}
-		else if (content[0] == 'l')
-		{
-			if (strncmp("line", content, sz) == 0)
-			{
-				*tag = ESVG_TYPE_LINE;
-				return EINA_TRUE;
-			}
-			else if (strncmp("linearGradient", content, sz) == 0)
-			{
-				*tag = ESVG_TYPE_LINEARGRADIENT;
-				return EINA_TRUE;
-			}
-			else
-				DBG("tag <%s> not supported by SVG Tiny 1.1 spec", content);
-		}
-		else if (content[0] == 'm')
-		{
-		}
-		else if (content[0] == 'p')
-		{
-			if (strncmp("path", content, sz) == 0)
-			{
-				*tag = ESVG_TYPE_PATH;
-				return EINA_TRUE;
-			}
-			else if (strncmp("pattern", content, sz) == 0)
-			{
-				*tag = ESVG_TYPE_PATTERN;
-				return EINA_TRUE;
-			}
-			else if (strncmp("polyline", content, sz) == 0)
-			{
-				*tag = ESVG_TYPE_POLYLINE;
-				return EINA_TRUE;
-			}
-			else if (strncmp("polygon", content, sz) == 0)
-			{
-				*tag = ESVG_TYPE_POLYGON;
-				return EINA_TRUE;
-			}
-		}
-		else if (content[0] == 'r')
-		{
-			if (strncmp("radialGradient", content, sz) == 0)
-			{
-				*tag = ESVG_TYPE_RADIALGRADIENT;
-				return EINA_TRUE;
-			}
-			else if (strncmp("rect", content, sz) == 0)
-			{
-				*tag = ESVG_TYPE_RECT;
-				return EINA_TRUE;
-			}
-			else
-				DBG("tag <%s> not supported by SVG Tiny 1.1 spec", content);
-		}
-		else if (content[0] == 's')
-		{
-			if (strncmp("script", content, sz) == 0)
-			{
-				*tag = ESVG_TYPE_SCRIPT;
-				return EINA_TRUE;
-			}
-			else if (strncmp("stop", content, sz) == 0)
-			{
-				*tag = ESVG_TYPE_STOP;
-				return EINA_TRUE;
-			}
-			else if (strncmp("style", content, sz) == 0)
-			{
-				*tag = ESVG_TYPE_STYLE;
-				return EINA_TRUE;
-			}
-		}
-		else if (content[0] == 't')
-		{
-			if (strncmp("text", content, sz) == 0)
-			{
-				*tag = ESVG_TYPE_TEXT;
-				return EINA_TRUE;
-			}
-		}
-		else if (content[0] == 'u')
-		{
-			/* <use> already managed */
-			DBG("tag <%s> not supported by SVG Tiny 1.1 spec", content);
-		}
-		else if (content[0] == 'v')
-		{
-			if (strncmp("view", content, sz) == 0)
-			{
-			}
-			else if (strncmp("vkern", content, sz) == 0)
-			{
-			}
-			else if (strncmp("video", content, sz) == 0)
-			{
-				*tag = ESVG_TYPE_VIDEO;
-				return EINA_TRUE;
-			}
-			else
-				DBG("tag <%s> not supported by SVG Tiny 1.1 spec", content);
-		}
-		else
-			DBG("tag <%s> not supported by SVG Tiny 1.1 spec", content);
-	}
-
-	return EINA_FALSE;
-}
-
-static void * _esvg_parser_tag_new(Edom_Parser *parser, int tag_id)
-{
-	Esvg_Parser *thiz;
-	Ender_Element *tag = NULL;
-
-	thiz = edom_parser_data_get(parser);
-	if (!thiz->topmost && tag_id != ESVG_TYPE_SVG)
-	{
-		DBG("you need at least a topmost svg");
-	}
-
-	switch (tag_id)
-	{
-		case ESVG_TYPE_LINEARGRADIENT:
-                tag = esvg_element_linear_gradient_new();
-		break;
-
-		case ESVG_TYPE_RADIALGRADIENT:
-		tag = esvg_element_radial_gradient_new();
-		break;
-
-#if 0
-		case ESVG_TYPE_PATTERN:
-		tag = esvg_parser_pattern_new(parser);
-		break;
-#endif
-
-		case ESVG_TYPE_DEFS:
-		tag = esvg_element_defs_new();
-		break;
-
-		case ESVG_TYPE_USE:
-		tag = esvg_element_use_new();
-		break;
-
-		case ESVG_TYPE_SVG:
-		tag = esvg_element_svg_new();
-		if (!thiz->topmost)
-			thiz->topmost = tag;
-		break;
-
-		case ESVG_TYPE_CIRCLE:
-		tag = esvg_element_circle_new();
-		break;
-
-		case ESVG_TYPE_ELLIPSE:
-		tag = esvg_element_ellipse_new();
-		break;
-
-		case ESVG_TYPE_RECT:
-		tag = esvg_element_rect_new();
-		break;
-
-		case ESVG_TYPE_LINE:
-		tag = esvg_element_line_new();
-		break;
-
-		case ESVG_TYPE_PATH:
-		tag = esvg_element_path_new();
-		break;
-
-		case ESVG_TYPE_POLYLINE:
-		tag = esvg_element_polyline_new();
-		break;
-
-		case ESVG_TYPE_POLYGON:
-		tag = esvg_element_polygon_new();
-		break;
-
-		case ESVG_TYPE_TEXT:
-		tag = esvg_element_text_new();
-		break;
-
-		case ESVG_TYPE_G:
-		tag = esvg_element_g_new();
-		break;
-
-		case ESVG_TYPE_A:
-		tag = esvg_element_a_new();
-		break;
-
-		case ESVG_TYPE_SCRIPT:
-		tag = esvg_element_script_new();
-		break;
-
-		case ESVG_TYPE_STYLE:
-		tag = esvg_element_style_new();
-		break;
-
-		case ESVG_TYPE_IMAGE:
-		tag = esvg_element_image_new();
-		break;
-
-		case ESVG_TYPE_CLIPPATH:
-		tag = esvg_element_clip_path_new();
-		break;
-
-		case ESVG_TYPE_SET:
-		tag = esvg_element_set_new();
-		break;
-
-		case ESVG_TYPE_STOP:
-		tag = esvg_element_stop_new();
-		break;
-
-		case ESVG_TYPE_ANIMATE:
-		tag = esvg_element_animate_new();
-		break;
-
-		case ESVG_TYPE_ANIMATETRANSFORM:
-		tag = esvg_element_animate_transform_new();
-		break;
-
-		case ESVG_TYPE_VIDEO:
-		tag = esvg_element_video_new();
-		break;
-
-		default:
-		DBG("can't create the tag %s (%d)", esvg_type_string_to(tag_id), tag_id);
-		break;
-	}
-
-	return tag;
-}
-
-static void * _esvg_parser_topmost_get(Edom_Parser *parser)
-{
-	Esvg_Parser *thiz;
-
-	thiz = edom_parser_data_get(parser);
+	thiz = egueb_dom_parser_data_get(parser);
 	return thiz->topmost;
 }
 
-static Eina_Bool _esvg_parser_tag_attribute_set(Edom_Parser *parser, void *tag, const char *name, const char *value)
+static Eina_Bool _egueb_svg_parser_tag_attribute_set(Egueb_Dom_Parser *parser, void *tag, const char *name, const char *value)
 {
 	Ender_Element *e = tag;
-	Edom_Tag *t;
+	Egueb_Dom_Tag *t;
 
 	t = ender_element_object_get(e);
-	edom_tag_attribute_set(t, name, value);
+	egueb_dom_tag_attribute_set(t, name, value);
 	return EINA_TRUE;
 }
 
-static Eina_Bool _esvg_parser_tag_child_add(Edom_Parser *parser, void *t, void *child)
+static Eina_Bool _egueb_svg_parser_tag_child_add(Egueb_Dom_Parser *parser, void *t, void *child)
 {
 	Ender_Element *tag = t;
-	Edom_Tag *child_tag;
+	Egueb_Dom_Tag *child_tag;
 
 	/* add it */
 	/* FIXME on add/remove functions ender should have a return value */
 	child_tag = ender_element_object_get(child);
-	ender_element_property_value_add(tag, EDOM_CHILD, child_tag, NULL);
+	ender_element_property_value_add(tag, EGUEB_DOM_CHILD, child_tag, NULL);
 	return EINA_TRUE;
 }
 
-static void _esvg_parser_tag_cdata_set(Edom_Parser *parser, void *t, const char *cdata, unsigned int length)
+static void _egueb_svg_parser_tag_cdata_set(Egueb_Dom_Parser *parser, void *t, const char *cdata, unsigned int length)
 {
 	Ender_Element *tag = t;
-	Edom_String s;
+	Egueb_Dom_String s;
 
 	DBG("parser cdata %d", length);
 	s.s = cdata;
 	s.length = length;
-	ender_element_property_value_set(tag, EDOM_CDATA, &s, NULL);
+	ender_element_property_value_set(tag, EGUEB_DOM_CDATA, &s, NULL);
 }
 
-static void _esvg_parser_tag_text_set(Edom_Parser *parser, void *t, const char *text, unsigned int length)
+static void _egueb_svg_parser_tag_text_set(Egueb_Dom_Parser *parser, void *t, const char *text, unsigned int length)
 {
 	Ender_Element *tag = t;
-	Edom_String s;
+	Egueb_Dom_String s;
 
 	s.s = text;
 	s.length = length;
-	ender_element_property_value_set(tag, EDOM_TEXT, &s, NULL);
+	ender_element_property_value_set(tag, EGUEB_DOM_TEXT, &s, NULL);
 }
 
-static Edom_Parser_Descriptor _descriptor = {
-	/* .tag_get 		= */ _esvg_parser_tag_get,
-	/* .tag_new 		= */ _esvg_parser_tag_new,
-	/* .topmost_get 	= */ _esvg_parser_topmost_get,
-	/* .tag_attribute_set 	= */ _esvg_parser_tag_attribute_set,
-	/* .tag_child_add 	= */ _esvg_parser_tag_child_add,
-	/* .tag_cdata_set 	= */ _esvg_parser_tag_cdata_set,
-	/* .tag_text_set 	= */ _esvg_parser_tag_text_set,
+static Egueb_Dom_Parser_Descriptor _descriptor = {
+	/* .tag_get 		= */ _egueb_svg_parser_tag_get,
+	/* .tag_new 		= */ _egueb_svg_parser_tag_new,
+	/* .topmost_get 	= */ _egueb_svg_parser_topmost_get,
+	/* .tag_attribute_set 	= */ _egueb_svg_parser_tag_attribute_set,
+	/* .tag_child_add 	= */ _egueb_svg_parser_tag_child_add,
+	/* .tag_cdata_set 	= */ _egueb_svg_parser_tag_cdata_set,
+	/* .tag_text_set 	= */ _egueb_svg_parser_tag_text_set,
 
 };
 /*----------------------------------------------------------------------------*
- *                            Edom parser interface                           *
+ *                            Egueb_Dom parser interface                           *
  *----------------------------------------------------------------------------*/
-static Eina_Bool _esvg_parser_info_tag_get(Edom_Parser *parser, const char *content,
+static Eina_Bool _egueb_svg_parser_info_tag_get(Egueb_Dom_Parser *parser, const char *content,
 		 size_t sz, int *tag)
 {
 	if (strncmp("svg", content, sz) == 0)
@@ -622,23 +243,23 @@ static Eina_Bool _esvg_parser_info_tag_get(Edom_Parser *parser, const char *cont
 	return EINA_FALSE;
 }
 
-static void * _esvg_parser_info_tag_new(Edom_Parser *parser, int tag_id)
+static void * _egueb_svg_parser_info_tag_new(Egueb_Dom_Parser *parser, int tag_id)
 {
-	Esvg_Parser *thiz;
+	Egueb_Svg_Parser *thiz;
 	Ender_Element *tag = NULL;
 
-	thiz = edom_parser_data_get(parser);
-	tag = esvg_element_svg_new();
+	thiz = egueb_dom_parser_data_get(parser);
+	tag = egueb_svg_element_svg_new();
 	if (!thiz->topmost)
 		thiz->topmost = tag;
 	return tag;
 }
 
-static Edom_Parser_Descriptor _info_descriptor = {
-	/* .tag_get 		= */ _esvg_parser_info_tag_get,
-	/* .tag_new 		= */ _esvg_parser_info_tag_new,
-	/* .topmost_get 	= */ _esvg_parser_topmost_get,
-	/* .tag_attribute_set 	= */ _esvg_parser_tag_attribute_set,
+static Egueb_Dom_Parser_Descriptor _info_descriptor = {
+	/* .tag_get 		= */ _egueb_svg_parser_info_tag_get,
+	/* .tag_new 		= */ _egueb_svg_parser_info_tag_new,
+	/* .topmost_get 	= */ _egueb_svg_parser_topmost_get,
+	/* .tag_attribute_set 	= */ _egueb_svg_parser_tag_attribute_set,
 	/* .tag_child_add 	= */ NULL,
 	/* .tag_cdata_set 	= */ NULL,
 	/* .tag_text_set 	= */ NULL,
@@ -647,22 +268,22 @@ static Edom_Parser_Descriptor _info_descriptor = {
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
-void esvg_parser_init(void)
+void egueb_svg_parser_init(void)
 {
-	_esvg_parser_log = eina_log_domain_register("esvg_parser", ESVG_LOG_COLOR_DEFAULT);
-	if (_esvg_parser_log < 0)
+	_egueb_svg_parser_log = eina_log_domain_register("egueb_svg_parser", ESVG_LOG_COLOR_DEFAULT);
+	if (_egueb_svg_parser_log < 0)
 	{
 		EINA_LOG_ERR("Can not create log domain.");
 		return;
 	}
 }
 
-void esvg_parser_shutdown(void)
+void egueb_svg_parser_shutdown(void)
 {
-	if (_esvg_parser_log < 0)
+	if (_egueb_svg_parser_log < 0)
 		return;
-	eina_log_domain_unregister(_esvg_parser_log);
-	_esvg_parser_log = -1;
+	eina_log_domain_unregister(_egueb_svg_parser_log);
+	_egueb_svg_parser_log = -1;
 }
 /*============================================================================*
  *                                   API                                      *
@@ -671,36 +292,36 @@ void esvg_parser_shutdown(void)
  * @param width The parsed svg's width attribute
  * @param height The parsed svg's height attribute
  */
-EAPI Eina_Bool esvg_parser_info_load(const char *filename,
-		Esvg_Length *width, Esvg_Length *height)
+EAPI Eina_Bool egueb_svg_parser_info_load(const char *filename,
+		Egueb_Svg_Length *width, Egueb_Svg_Length *height)
 {
 	Ender_Element *e;
 	Eina_Bool ret;
 	char *buffer;
 	size_t size;
 
-	buffer = _esvg_parser_file_open(filename, &size);
+	buffer = _egueb_svg_parser_file_open(filename, &size);
 	if (!buffer) return EINA_FALSE;
 
-	ret = esvg_parser_info_load_from_buffer(buffer, size, width, height);
+	ret = egueb_svg_parser_info_load_from_buffer(buffer, size, width, height);
 	free(buffer);
 	return ret;
 }
 
-EAPI Eina_Bool esvg_parser_info_load_from_buffer(const char *buffer,
-		size_t size, Esvg_Length *width, Esvg_Length *height)
+EAPI Eina_Bool egueb_svg_parser_info_load_from_buffer(const char *buffer,
+		size_t size, Egueb_Svg_Length *width, Egueb_Svg_Length *height)
 {
-	Esvg_Parser *thiz;
-	Edom_Parser *info_parser;
+	Egueb_Svg_Parser *thiz;
+	Egueb_Dom_Parser *info_parser;
 	Ender_Element *e;
 
-	thiz = calloc(1, sizeof(Esvg_Parser));
-	info_parser = edom_parser_new(&_info_descriptor, thiz);
-	e = _esvg_parser_parse(info_parser, buffer, size);
+	thiz = calloc(1, sizeof(Egueb_Svg_Parser));
+	info_parser = egueb_dom_parser_new(&_info_descriptor, thiz);
+	e = _egueb_svg_parser_parse(info_parser, buffer, size);
 	if (!e) return EINA_FALSE;
 
-	esvg_element_svg_width_get(e, width);
-	esvg_element_svg_height_get(e, height);
+	egueb_svg_element_svg_width_get(e, width);
+	egueb_svg_element_svg_height_get(e, height);
 	//ender_element_unref(e);
 
 	return EINA_TRUE;
@@ -709,36 +330,36 @@ EAPI Eina_Bool esvg_parser_info_load_from_buffer(const char *buffer,
 /**
  *
  */
-EAPI Ender_Element * esvg_parser_load(const char *filename)
+EAPI Ender_Element * egueb_svg_parser_load(const char *filename)
 {
 	Ender_Element *e;
 	char *buffer;
 	size_t size;
 
-	buffer = _esvg_parser_file_open(filename, &size);
+	buffer = _egueb_svg_parser_file_open(filename, &size);
 	if (!buffer) return NULL;
 
-	e = esvg_parser_load_from_buffer(buffer, size);
+	e = egueb_svg_parser_load_from_buffer(buffer, size);
 	free(buffer);
 
 	return e;
 }
 
-EAPI Ender_Element * esvg_parser_load_from_buffer(const char *buffer, size_t size)
+EAPI Ender_Element * egueb_svg_parser_load_from_buffer(const char *buffer, size_t size)
 {
-	Esvg_Parser *thiz;
-	Edom_Parser *parser;
+	Egueb_Svg_Parser *thiz;
+	Egueb_Dom_Parser *parser;
 	Ender_Element *e;
 
-	thiz = calloc(1, sizeof(Esvg_Parser));
-	parser = edom_parser_new(&_descriptor, thiz);
-	return _esvg_parser_parse(parser, buffer, size);
+	thiz = calloc(1, sizeof(Egueb_Svg_Parser));
+	parser = egueb_dom_parser_new(&_descriptor, thiz);
+	return _egueb_svg_parser_parse(parser, buffer, size);
 }
 
 /**
  * FIXME for later
  */
-EAPI void esvg_parser_save(Enesim_Renderer *r, const char *filename)
+EAPI void egueb_svg_parser_save(Enesim_Renderer *r, const char *filename)
 {
 
 }

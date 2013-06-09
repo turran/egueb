@@ -78,20 +78,20 @@ int main(int argc, char **argv)
 /*----------------------------------------------------------------------------*
  *                          The script  interface                             *
  *----------------------------------------------------------------------------*/
-static Esvg_Script_Descriptor _descriptor = {
+static Egueb_Svg_Script_Descriptor _descriptor = {
 
 };
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
-void esvg_script_js_sm_init(void)
+void egueb_svg_script_js_sm_init(void)
 {
-	esvg_script_descriptor_register(&descriptor, "application/ecmascript");
+	egueb_svg_script_descriptor_register(&descriptor, "application/ecmascript");
 }
 
-void esvg_script_js_sm_shutdown(void)
+void egueb_svg_script_js_sm_shutdown(void)
 {
-	esvg_script_descriptor_unregister(&descriptor, "application/ecmascript");
+	egueb_svg_script_descriptor_unregister(&descriptor, "application/ecmascript");
 }
 /*============================================================================*
  *                                   API                                      *

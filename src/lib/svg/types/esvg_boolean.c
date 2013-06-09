@@ -15,46 +15,46 @@
  * License along with this library.
  * If not, see <http://www.gnu.org/licenses/>.
  */
-#include "esvg_main_private.h"
+#include "egueb_svg_main_private.h"
 
-#include "esvg_types.h"
-#include "esvg_types_private.h"
+#include "egueb_svg_types.h"
+#include "egueb_svg_types_private.h"
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
-#define ESVG_LOG_DEFAULT _esvg_boolean_log
+#define ESVG_LOG_DEFAULT _egueb_svg_boolean_log
 
-static int _esvg_boolean_log = -1;
+static int _egueb_svg_boolean_log = -1;
 
 static Ender_Property *ESVG_BOOLEAN_ANIMATED_BASE;
 static Ender_Property *ESVG_BOOLEAN_ANIMATED_ANIM;
 
-#define _esvg_boolean_animated_new NULL
-#define _esvg_boolean_animated_delete NULL
-#define _esvg_boolean_animated_base_set NULL
-#define _esvg_boolean_animated_base_get NULL
-#define _esvg_boolean_animated_base_is_set NULL
-#define _esvg_boolean_animated_anim_set NULL
-#define _esvg_boolean_animated_anim_get NULL
-#define _esvg_boolean_animated_anim_is_set NULL
-#include "esvg_generated_boolean_animated.c"
+#define _egueb_svg_boolean_animated_new NULL
+#define _egueb_svg_boolean_animated_delete NULL
+#define _egueb_svg_boolean_animated_base_set NULL
+#define _egueb_svg_boolean_animated_base_get NULL
+#define _egueb_svg_boolean_animated_base_is_set NULL
+#define _egueb_svg_boolean_animated_anim_set NULL
+#define _egueb_svg_boolean_animated_anim_get NULL
+#define _egueb_svg_boolean_animated_anim_is_set NULL
+#include "egueb_svg_generated_boolean_animated.c"
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
-void esvg_boolean_init(void)
+void egueb_svg_boolean_init(void)
 {
-	_esvg_boolean_log = eina_log_domain_register("esvg_boolean", ESVG_LOG_COLOR_DEFAULT);
-	if (_esvg_boolean_log < 0)
+	_egueb_svg_boolean_log = eina_log_domain_register("egueb_svg_boolean", ESVG_LOG_COLOR_DEFAULT);
+	if (_egueb_svg_boolean_log < 0)
 	{
 		EINA_LOG_ERR("Can not create log domain.");
 		return;
 	}
-	_esvg_boolean_animated_init();
+	_egueb_svg_boolean_animated_init();
 }
 
-void esvg_boolean_shutdown(void)
+void egueb_svg_boolean_shutdown(void)
 {
-	_esvg_boolean_animated_shutdown();
+	_egueb_svg_boolean_animated_shutdown();
 }
 
 

@@ -15,69 +15,69 @@
  * License along with this library.
  * If not, see <http://www.gnu.org/licenses/>.
  */
-#include "esvg_main_private.h"
-#include "esvg_types.h"
-#include "esvg_attribute_private.h"
+#include "egueb_svg_main_private.h"
+#include "egueb_svg_types.h"
+#include "egueb_svg_attribute_private.h"
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
 /*----------------------------------------------------------------------------*
  *                            Animated Descriptor                             *
  *----------------------------------------------------------------------------*/
-static void * _esvg_animate_paint_value_new(void)
+static void * _egueb_svg_animate_paint_value_new(void)
 {
-	Esvg_Paint *v;
+	Egueb_Svg_Paint *v;
 
-	v = calloc(1, sizeof(Esvg_Paint));
+	v = calloc(1, sizeof(Egueb_Svg_Paint));
 	return v;
 }
 
-static Eina_Bool _esvg_animate_paint_value_get(const char *attr, void **value)
+static Eina_Bool _egueb_svg_animate_paint_value_get(const char *attr, void **value)
 {
-	Esvg_Paint *v = *value;
+	Egueb_Svg_Paint *v = *value;
 
-	esvg_paint_string_from(v, attr);
+	egueb_svg_paint_string_from(v, attr);
 	return EINA_TRUE;
 }
 
-static void _esvg_animate_paint_value_free(void *value)
+static void _egueb_svg_animate_paint_value_free(void *value)
 {
-	Esvg_Paint *v = value;
+	Egueb_Svg_Paint *v = value;
 
 	if (v->type == ESVG_PAINT_TYPE_SERVER)
 		free(v->uri);
 	free(v);
 }
 
-static void * _esvg_animate_paint_destination_new(void)
+static void * _egueb_svg_animate_paint_destination_new(void)
 {
-	Esvg_Paint_Animated *v;
-	v = calloc(1, sizeof(Esvg_Paint_Animated));
+	Egueb_Svg_Paint_Animated *v;
+	v = calloc(1, sizeof(Egueb_Svg_Paint_Animated));
 	return v;
 }
 
-static void _esvg_animate_paint_destination_free(void *destination, Eina_Bool deep)
+static void _egueb_svg_animate_paint_destination_free(void *destination, Eina_Bool deep)
 {
-	Esvg_Paint_Animated *d = destination;
+	Egueb_Svg_Paint_Animated *d = destination;
 	free(d);
 }
 
-static void _esvg_animate_paint_destination_value_to(void *destination, void **value)
+static void _egueb_svg_animate_paint_destination_value_to(void *destination, void **value)
 {
-	Esvg_Paint_Animated *d = destination;
-	Esvg_Paint *v = *value;
+	Egueb_Svg_Paint_Animated *d = destination;
+	Egueb_Svg_Paint *v = *value;
 
 	*v = d->base;
 }
 
-static void _esvg_animate_paint_interpolate(void *a, void *b, double m,
+static void _egueb_svg_animate_paint_interpolate(void *a, void *b, double m,
 		void *add, void *acc, int mul, void *res)
 {
-	Esvg_Paint *va = a;
-	Esvg_Paint *vb = b;
-	Esvg_Paint *vacc = acc;
-	Esvg_Paint_Animated *vadd = add;
-	Esvg_Paint_Animated *r = res;
+	Egueb_Svg_Paint *va = a;
+	Egueb_Svg_Paint *vb = b;
+	Egueb_Svg_Paint *vacc = acc;
+	Egueb_Svg_Paint_Animated *vadd = add;
+	Egueb_Svg_Paint_Animated *r = res;
 
 	if (va->type != vb->type)
 	{
@@ -117,23 +117,23 @@ static void _esvg_animate_paint_interpolate(void *a, void *b, double m,
  *                                 Global                                     *
  *============================================================================*/
 /* The different animated desriptors */
-Esvg_Attribute_Animated_Descriptor esvg_attribute_animated_paint_descriptor = {
-	/* .value_new 			= */ _esvg_animate_paint_value_new,
-	/* .value_get 			= */ _esvg_animate_paint_value_get,
-	/* .value_free 			= */ _esvg_animate_paint_value_free,
-	/* .destination_new 		= */ _esvg_animate_paint_destination_new,
-	/* .destination_free 		= */ _esvg_animate_paint_destination_free,
+Egueb_Svg_Attribute_Animated_Descriptor egueb_svg_attribute_animated_paint_descriptor = {
+	/* .value_new 			= */ _egueb_svg_animate_paint_value_new,
+	/* .value_get 			= */ _egueb_svg_animate_paint_value_get,
+	/* .value_free 			= */ _egueb_svg_animate_paint_value_free,
+	/* .destination_new 		= */ _egueb_svg_animate_paint_destination_new,
+	/* .destination_free 		= */ _egueb_svg_animate_paint_destination_free,
 	/* .destination_keep 		= */ NULL,
 	/* .destination_value_from 	= */ NULL,
-	/* .destination_value_to 	= */ _esvg_animate_paint_destination_value_to,
-	/* .interpolate 		= */ _esvg_animate_paint_interpolate,
+	/* .destination_value_to 	= */ _egueb_svg_animate_paint_destination_value_to,
+	/* .interpolate 		= */ _egueb_svg_animate_paint_interpolate,
 };
 /*----------------------------------------------------------------------------*
  *                                   Basic                                    *
  *----------------------------------------------------------------------------*/
-void esvg_attribute_paint_merge_rel(const Esvg_Attribute_Paint *rel,
-		const Esvg_Attribute_Paint *v,
-		Esvg_Attribute_Paint *d)
+void egueb_svg_attribute_paint_merge_rel(const Egueb_Svg_Attribute_Paint *rel,
+		const Egueb_Svg_Attribute_Paint *v,
+		Egueb_Svg_Attribute_Paint *d)
 {
 	if (!v->is_set)
 	{
@@ -147,18 +147,18 @@ void esvg_attribute_paint_merge_rel(const Esvg_Attribute_Paint *rel,
 	}
 }
 
-void esvg_attribute_paint_unset(Esvg_Attribute_Paint *a, const Esvg_Paint *def)
+void egueb_svg_attribute_paint_unset(Egueb_Svg_Attribute_Paint *a, const Egueb_Svg_Paint *def)
 {
 	a->v = *def;
 	a->is_set = EINA_FALSE;
 }
 
-void esvg_attribute_paint_set(Esvg_Attribute_Paint *a, const Esvg_Paint *v,
-		const Esvg_Paint *def)
+void egueb_svg_attribute_paint_set(Egueb_Svg_Attribute_Paint *a, const Egueb_Svg_Paint *v,
+		const Egueb_Svg_Paint *def)
 {
 	if (!v)
 	{
-		esvg_attribute_paint_unset(a, def);
+		egueb_svg_attribute_paint_unset(a, def);
 	}
 	else
 	{
@@ -171,12 +171,12 @@ void esvg_attribute_paint_set(Esvg_Attribute_Paint *a, const Esvg_Paint *v,
 /*----------------------------------------------------------------------------*
  *                                  Animated                                  *
  *----------------------------------------------------------------------------*/
-void esvg_attribute_animated_paint_merge_rel(const Esvg_Attribute_Animated_Paint *rel,
-		const Esvg_Attribute_Animated_Paint *v,
-		Esvg_Attribute_Paint *d)
+void egueb_svg_attribute_animated_paint_merge_rel(const Egueb_Svg_Attribute_Animated_Paint *rel,
+		const Egueb_Svg_Attribute_Animated_Paint *v,
+		Egueb_Svg_Attribute_Paint *d)
 {
-	const Esvg_Attribute_Paint *rr = NULL;
-	const Esvg_Attribute_Paint *vv = NULL;
+	const Egueb_Svg_Attribute_Paint *rr = NULL;
+	const Egueb_Svg_Attribute_Paint *vv = NULL;
 
 	if (v->animated && v->anim.is_set)
 		vv = &v->anim;
@@ -188,11 +188,11 @@ void esvg_attribute_animated_paint_merge_rel(const Esvg_Attribute_Animated_Paint
 	if (!rr)
 		rr = &rel->base;
 
-	esvg_attribute_paint_merge_rel(rr, vv, d);
+	egueb_svg_attribute_paint_merge_rel(rr, vv, d);
 }
 
-void esvg_attribute_animated_paint_merge(const Esvg_Attribute_Animated_Paint *v,
-		Esvg_Attribute_Paint *d)
+void egueb_svg_attribute_animated_paint_merge(const Egueb_Svg_Attribute_Animated_Paint *v,
+		Egueb_Svg_Attribute_Paint *d)
 {
 	if (v->animated && v->anim.is_set)
 	{
@@ -206,12 +206,12 @@ void esvg_attribute_animated_paint_merge(const Esvg_Attribute_Animated_Paint *v,
 	}
 }
 
-void esvg_attribute_animated_paint_set(Esvg_Attribute_Animated_Paint *aa,
-	const Esvg_Paint_Animated *v,
-	const Esvg_Paint *def,
+void egueb_svg_attribute_animated_paint_set(Egueb_Svg_Attribute_Animated_Paint *aa,
+	const Egueb_Svg_Paint_Animated *v,
+	const Egueb_Svg_Paint *def,
 	Eina_Bool animate)
 {
-	Esvg_Attribute_Paint *a;
+	Egueb_Svg_Attribute_Paint *a;
 
 	/* get the attribute to change */
 	if (animate)
@@ -220,14 +220,14 @@ void esvg_attribute_animated_paint_set(Esvg_Attribute_Animated_Paint *aa,
 		a = &aa->base;
 	/* get the value to set */
 	if (v)
-		esvg_attribute_paint_set(a, &v->base, def);
+		egueb_svg_attribute_paint_set(a, &v->base, def);
 	else
-		esvg_attribute_paint_unset(a, def);
+		egueb_svg_attribute_paint_unset(a, def);
 }
 
-void esvg_attribute_animated_paint_extended_set(Esvg_Attribute_Animated_Paint *aa,
-	const Esvg_Paint_Animated *v,
-	const Esvg_Paint *def,
+void egueb_svg_attribute_animated_paint_extended_set(Egueb_Svg_Attribute_Animated_Paint *aa,
+	const Egueb_Svg_Paint_Animated *v,
+	const Egueb_Svg_Paint *def,
 	Eina_Bool animate,
 	int *set)
 {
@@ -235,7 +235,7 @@ void esvg_attribute_animated_paint_extended_set(Esvg_Attribute_Animated_Paint *a
 	Eina_Bool is_set;
 
 	was_set = aa->anim.is_set || aa->base.is_set;
-	esvg_attribute_animated_paint_set(aa, v, def, animate);
+	egueb_svg_attribute_animated_paint_set(aa, v, def, animate);
 	is_set = aa->anim.is_set || aa->base.is_set;
 	if (was_set && !is_set)
 		(*set)--;
@@ -243,8 +243,8 @@ void esvg_attribute_animated_paint_extended_set(Esvg_Attribute_Animated_Paint *a
 		(*set)++;
 }
 
-void esvg_attribute_animated_paint_get(Esvg_Attribute_Animated_Paint *aa,
-	Esvg_Paint_Animated *v)
+void egueb_svg_attribute_animated_paint_get(Egueb_Svg_Attribute_Animated_Paint *aa,
+	Egueb_Svg_Paint_Animated *v)
 {
 	if (!v) return;
 

@@ -28,7 +28,7 @@
 /*
  * To implement the load_info interface we need to parse the svg tree, but
  * only the first svg tag and its width/height properties. So we need
- * to create an Edom interface to retrieve such information
+ * to create an Egueb_Dom interface to retrieve such information
  */
 /*============================================================================*
  *                                  Local                                     *

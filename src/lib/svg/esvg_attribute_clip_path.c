@@ -15,69 +15,69 @@
  * License along with this library.
  * If not, see <http://www.gnu.org/licenses/>.
  */
-#include "esvg_main_private.h"
-#include "esvg_types.h"
-#include "esvg_attribute_private.h"
+#include "egueb_svg_main_private.h"
+#include "egueb_svg_types.h"
+#include "egueb_svg_attribute_private.h"
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
 /*----------------------------------------------------------------------------*
  *                            Animated Descriptor                             *
  *----------------------------------------------------------------------------*/
-static void * _esvg_animate_clip_path_value_new(void)
+static void * _egueb_svg_animate_clip_path_value_new(void)
 {
-	Esvg_Clip_Path *v;
+	Egueb_Svg_Clip_Path *v;
 
-	v = calloc(1, sizeof(Esvg_Clip_Path));
+	v = calloc(1, sizeof(Egueb_Svg_Clip_Path));
 	return v;
 }
 
-static Eina_Bool _esvg_animate_clip_path_value_get(const char *attr, void **value)
+static Eina_Bool _egueb_svg_animate_clip_path_value_get(const char *attr, void **value)
 {
-	Esvg_Clip_Path *v = *value;
+	Egueb_Svg_Clip_Path *v = *value;
 
-	esvg_clip_path_string_from(v, attr);
+	egueb_svg_clip_path_string_from(v, attr);
 	return EINA_TRUE;
 }
 
-static void _esvg_animate_clip_path_value_free(void *value)
+static void _egueb_svg_animate_clip_path_value_free(void *value)
 {
-	Esvg_Clip_Path *v = value;
+	Egueb_Svg_Clip_Path *v = value;
 
 	if (v->type == ESVG_CLIP_PATH_IRI)
 		free(v->value.iri);
 	free(v);
 }
 
-static void * _esvg_animate_clip_path_destination_new(void)
+static void * _egueb_svg_animate_clip_path_destination_new(void)
 {
-	Esvg_Animated_Clip_Path *v;
-	v = calloc(1, sizeof(Esvg_Animated_Clip_Path));
+	Egueb_Svg_Animated_Clip_Path *v;
+	v = calloc(1, sizeof(Egueb_Svg_Animated_Clip_Path));
 	return v;
 }
 
-static void _esvg_animate_clip_path_destination_free(void *destination, Eina_Bool deep)
+static void _egueb_svg_animate_clip_path_destination_free(void *destination, Eina_Bool deep)
 {
-	Esvg_Animated_Clip_Path *d = destination;
+	Egueb_Svg_Animated_Clip_Path *d = destination;
 	free(d);
 }
 
-static void _esvg_animate_clip_path_destination_value_to(void *destination, void **value)
+static void _egueb_svg_animate_clip_path_destination_value_to(void *destination, void **value)
 {
-	Esvg_Animated_Clip_Path *d = destination;
-	Esvg_Clip_Path *v = *value;
+	Egueb_Svg_Animated_Clip_Path *d = destination;
+	Egueb_Svg_Clip_Path *v = *value;
 
 	*v = d->base;
 }
 
-static void _esvg_animate_clip_path_interpolate(void *a, void *b, double m,
+static void _egueb_svg_animate_clip_path_interpolate(void *a, void *b, double m,
 		void *add, void *acc, int mul, void *res)
 {
-	Esvg_Clip_Path *va = a;
-	Esvg_Clip_Path *vb = b;
-	Esvg_Clip_Path *vacc = acc;
-	Esvg_Animated_Clip_Path *vadd = add;
-	Esvg_Animated_Clip_Path *r = res;
+	Egueb_Svg_Clip_Path *va = a;
+	Egueb_Svg_Clip_Path *vb = b;
+	Egueb_Svg_Clip_Path *vacc = acc;
+	Egueb_Svg_Animated_Clip_Path *vadd = add;
+	Egueb_Svg_Animated_Clip_Path *r = res;
 
 	if (va->type != vb->type)
 	{
@@ -100,23 +100,23 @@ static void _esvg_animate_clip_path_interpolate(void *a, void *b, double m,
  *                                 Global                                     *
  *============================================================================*/
 /* The different animated desriptors */
-Esvg_Attribute_Animated_Descriptor esvg_attribute_animated_clip_path_descriptor = {
-	/* .value_new 			= */ _esvg_animate_clip_path_value_new,
-	/* .value_get 			= */ _esvg_animate_clip_path_value_get,
-	/* .value_free 			= */ _esvg_animate_clip_path_value_free,
-	/* .destination_new 		= */ _esvg_animate_clip_path_destination_new,
-	/* .destination_free 		= */ _esvg_animate_clip_path_destination_free,
+Egueb_Svg_Attribute_Animated_Descriptor egueb_svg_attribute_animated_clip_path_descriptor = {
+	/* .value_new 			= */ _egueb_svg_animate_clip_path_value_new,
+	/* .value_get 			= */ _egueb_svg_animate_clip_path_value_get,
+	/* .value_free 			= */ _egueb_svg_animate_clip_path_value_free,
+	/* .destination_new 		= */ _egueb_svg_animate_clip_path_destination_new,
+	/* .destination_free 		= */ _egueb_svg_animate_clip_path_destination_free,
 	/* .destination_keep 		= */ NULL,
 	/* .destination_value_from 	= */ NULL,
-	/* .destination_value_to 	= */ _esvg_animate_clip_path_destination_value_to,
-	/* .interpolate 		= */ _esvg_animate_clip_path_interpolate,
+	/* .destination_value_to 	= */ _egueb_svg_animate_clip_path_destination_value_to,
+	/* .interpolate 		= */ _egueb_svg_animate_clip_path_interpolate,
 };
 /*----------------------------------------------------------------------------*
  *                                   Basic                                    *
  *----------------------------------------------------------------------------*/
-void esvg_attribute_clip_path_merge_rel(const Esvg_Attribute_Clip_Path *rel,
-		const Esvg_Attribute_Clip_Path *v,
-		Esvg_Attribute_Clip_Path *d)
+void egueb_svg_attribute_clip_path_merge_rel(const Egueb_Svg_Attribute_Clip_Path *rel,
+		const Egueb_Svg_Attribute_Clip_Path *v,
+		Egueb_Svg_Attribute_Clip_Path *d)
 {
 	if (!v->is_set)
 	{
@@ -130,18 +130,18 @@ void esvg_attribute_clip_path_merge_rel(const Esvg_Attribute_Clip_Path *rel,
 	}
 }
 
-void esvg_attribute_clip_path_unset(Esvg_Attribute_Clip_Path *a, const Esvg_Clip_Path *def)
+void egueb_svg_attribute_clip_path_unset(Egueb_Svg_Attribute_Clip_Path *a, const Egueb_Svg_Clip_Path *def)
 {
 	a->v = *def;
 	a->is_set = EINA_FALSE;
 }
 
-void esvg_attribute_clip_path_set(Esvg_Attribute_Clip_Path *a, const Esvg_Clip_Path *v,
-		const Esvg_Clip_Path *def)
+void egueb_svg_attribute_clip_path_set(Egueb_Svg_Attribute_Clip_Path *a, const Egueb_Svg_Clip_Path *v,
+		const Egueb_Svg_Clip_Path *def)
 {
 	if (!v)
 	{
-		esvg_attribute_clip_path_unset(a, def);
+		egueb_svg_attribute_clip_path_unset(a, def);
 	}
 	else
 	{
@@ -154,12 +154,12 @@ void esvg_attribute_clip_path_set(Esvg_Attribute_Clip_Path *a, const Esvg_Clip_P
 /*----------------------------------------------------------------------------*
  *                                  Animated                                  *
  *----------------------------------------------------------------------------*/
-void esvg_attribute_animated_clip_path_merge_rel(const Esvg_Attribute_Animated_Clip_Path *rel,
-		const Esvg_Attribute_Animated_Clip_Path *v,
-		Esvg_Attribute_Clip_Path *d)
+void egueb_svg_attribute_animated_clip_path_merge_rel(const Egueb_Svg_Attribute_Animated_Clip_Path *rel,
+		const Egueb_Svg_Attribute_Animated_Clip_Path *v,
+		Egueb_Svg_Attribute_Clip_Path *d)
 {
-	const Esvg_Attribute_Clip_Path *rr = NULL;
-	const Esvg_Attribute_Clip_Path *vv = NULL;
+	const Egueb_Svg_Attribute_Clip_Path *rr = NULL;
+	const Egueb_Svg_Attribute_Clip_Path *vv = NULL;
 
 	if (v->animated && v->anim.is_set)
 		vv = &v->anim;
@@ -171,11 +171,11 @@ void esvg_attribute_animated_clip_path_merge_rel(const Esvg_Attribute_Animated_C
 	if (!rr)
 		rr = &rel->base;
 
-	esvg_attribute_clip_path_merge_rel(rr, vv, d);
+	egueb_svg_attribute_clip_path_merge_rel(rr, vv, d);
 }
 
-void esvg_attribute_animated_clip_path_merge(const Esvg_Attribute_Animated_Clip_Path *v,
-		Esvg_Attribute_Clip_Path *d)
+void egueb_svg_attribute_animated_clip_path_merge(const Egueb_Svg_Attribute_Animated_Clip_Path *v,
+		Egueb_Svg_Attribute_Clip_Path *d)
 {
 	if (v->animated && v->anim.is_set)
 	{
@@ -189,12 +189,12 @@ void esvg_attribute_animated_clip_path_merge(const Esvg_Attribute_Animated_Clip_
 	}
 }
 
-void esvg_attribute_animated_clip_path_set(Esvg_Attribute_Animated_Clip_Path *aa,
-	const Esvg_Animated_Clip_Path *v,
-	const Esvg_Clip_Path *def,
+void egueb_svg_attribute_animated_clip_path_set(Egueb_Svg_Attribute_Animated_Clip_Path *aa,
+	const Egueb_Svg_Animated_Clip_Path *v,
+	const Egueb_Svg_Clip_Path *def,
 	Eina_Bool animate)
 {
-	Esvg_Attribute_Clip_Path *a;
+	Egueb_Svg_Attribute_Clip_Path *a;
 
 	/* get the attribute to change */
 	if (animate)
@@ -203,14 +203,14 @@ void esvg_attribute_animated_clip_path_set(Esvg_Attribute_Animated_Clip_Path *aa
 		a = &aa->base;
 	/* get the value to set */
 	if (v)
-		esvg_attribute_clip_path_set(a, &v->base, def);
+		egueb_svg_attribute_clip_path_set(a, &v->base, def);
 	else
-		esvg_attribute_clip_path_unset(a, def);
+		egueb_svg_attribute_clip_path_unset(a, def);
 }
 
-void esvg_attribute_animated_clip_path_extended_set(Esvg_Attribute_Animated_Clip_Path *aa,
-	const Esvg_Animated_Clip_Path *v,
-	const Esvg_Clip_Path *def,
+void egueb_svg_attribute_animated_clip_path_extended_set(Egueb_Svg_Attribute_Animated_Clip_Path *aa,
+	const Egueb_Svg_Animated_Clip_Path *v,
+	const Egueb_Svg_Clip_Path *def,
 	Eina_Bool animate,
 	int *set)
 {
@@ -218,7 +218,7 @@ void esvg_attribute_animated_clip_path_extended_set(Esvg_Attribute_Animated_Clip
 	Eina_Bool is_set;
 
 	was_set = aa->anim.is_set || aa->base.is_set;
-	esvg_attribute_animated_clip_path_set(aa, v, def, animate);
+	egueb_svg_attribute_animated_clip_path_set(aa, v, def, animate);
 	is_set = aa->anim.is_set || aa->base.is_set;
 	if (was_set && !is_set)
 		(*set)--;
@@ -226,8 +226,8 @@ void esvg_attribute_animated_clip_path_extended_set(Esvg_Attribute_Animated_Clip
 		(*set)++;
 }
 
-void esvg_attribute_animated_clip_path_get(Esvg_Attribute_Animated_Clip_Path *aa,
-	Esvg_Animated_Clip_Path *v)
+void egueb_svg_attribute_animated_clip_path_get(Egueb_Svg_Attribute_Animated_Clip_Path *aa,
+	Egueb_Svg_Animated_Clip_Path *v)
 {
 	if (!v) return;
 

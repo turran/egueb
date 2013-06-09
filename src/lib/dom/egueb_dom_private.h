@@ -1,4 +1,4 @@
-/* Edom - DOM
+/* Egueb_Dom - DOM
  * Copyright (C) 2011 Jorge Luis Zapata
  *
  * This library is free software; you can redistribute it and/or
@@ -16,8 +16,8 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _EDOM_PRIVATE_H
-#define _EDOM_PRIVATE_H
+#ifndef _EGUEB_DOM_PRIVATE_H
+#define _EGUEB_DOM_PRIVATE_H
 
 #ifdef HAVE_CONFIG_H
 #include <config.h>
@@ -30,24 +30,24 @@
 #ifdef ERR
 # undef ERR
 #endif
-#define ERR(...) EINA_LOG_DOM_ERR(edom_log_dom_global, __VA_ARGS__)
+#define ERR(...) EINA_LOG_DOM_ERR(egueb_dom_log_dom_global, __VA_ARGS__)
 
 #ifdef WARN
 # undef WARN
 #endif
-#define WARN(...) EINA_LOG_DOM_WARN(edom_log_dom_global, __VA_ARGS__)
+#define WARN(...) EINA_LOG_DOM_WARN(egueb_dom_log_dom_global, __VA_ARGS__)
 
 #ifdef INFO
 # undef INFO
 #endif
-#define INFO(...) EINA_LOG_DOM_INFO(edom_log_dom_global, __VA_ARGS__)
+#define INFO(...) EINA_LOG_DOM_INFO(egueb_dom_log_dom_global, __VA_ARGS__)
 
 #ifdef DBG
 # undef DBG
 #endif
-#define DBG(...) EINA_LOG_DOM_DBG(edom_log_dom_global, __VA_ARGS__)
+#define DBG(...) EINA_LOG_DOM_DBG(egueb_dom_log_dom_global, __VA_ARGS__)
 
-extern int edom_log_dom_global;
+extern int egueb_dom_log_dom_global;
 
 /* parser */
 /* tag */

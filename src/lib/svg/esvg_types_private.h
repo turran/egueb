@@ -14,12 +14,12 @@
 	if (*t == ',') t++; \
 	ESVG_SPACE_SKIP(t);
 
-Eina_Bool esvg_long_get(const char *iter, const char **tmp, long *l);
+Eina_Bool egueb_svg_long_get(const char *iter, const char **tmp, long *l);
 
-void esvg_paint_copy(Esvg_Paint *dst, Esvg_Paint *src);
+void egueb_svg_paint_copy(Egueb_Svg_Paint *dst, Egueb_Svg_Paint *src);
 
-void esvg_type_init(void);
-void esvg_type_shutdown(void);
+void egueb_svg_type_init(void);
+void egueb_svg_type_shutdown(void);
 
 #endif
 

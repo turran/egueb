@@ -16,8 +16,8 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 #include "Esvg.h"
-#include "esvg_parser_private.h"
-#include "esvg_values.h"
+#include "egueb_svg_parser_private.h"
+#include "egueb_svg_values.h"
 /* TODO add fthe following missing properties
  * in
  * result
@@ -27,76 +27,76 @@
  *============================================================================*/
 /* several tags use the xlink:href property, we should add a single code for that
  * and some special callback */
-static void _post_parse_cb(Edom_Parser *parser, void *data)
+static void _post_parse_cb(Egueb_Dom_Parser *parser, void *data)
 {
 #if 0
-	Esvg_Parser_Use *thiz = data;
-	Edom_Tag *ref_t = NULL;
-	Edom_Tag *tag;
+	Egueb_Svg_Parser_Use *thiz = data;
+	Egueb_Dom_Tag *ref_t = NULL;
+	Egueb_Dom_Tag *tag;
 	Enesim_Renderer *r;
 	Eina_Bool ret;
 
 	r = thiz->r;
 	tag = thiz->tag;
 
-	ret = esvg_href_get(&ref_t, tag, thiz->href);
+	ret = egueb_svg_href_get(&ref_t, tag, thiz->href);
 	if (ret)
 	{
 		Enesim_Renderer *ref_r;
 		Enesim_Renderer *clone;
 
 		printf("tag found %p\n", ref_t);
-		ref_r = esvg_parser_element_renderer_get(ref_t);
-		clone = esvg_element_clone(ref_r);
+		ref_r = egueb_svg_parser_element_renderer_get(ref_t);
+		clone = egueb_svg_element_clone(ref_r);
 		printf("clone = %p\n", clone);
-		esvg_element_use_link_set(r, clone);
+		egueb_svg_element_use_link_set(r, clone);
 	}
 	printf("reference!!! %p %s\n", ref_t, thiz->href);
 #endif
 }
 
-static Eina_Bool _parser_filter_attribute_set(Edom_Tag *tag, const char *key,
+static Eina_Bool _parser_filter_attribute_set(Egueb_Dom_Tag *tag, const char *key,
 		const char *value)
 {
 	Enesim_Renderer *r;
 
-	r = esvg_parser_element_renderer_get(tag);
+	r = egueb_svg_parser_element_renderer_get(tag);
 	if (strcmp(key, "x") == 0)
 	{
-		Esvg_Coord x;
+		Egueb_Svg_Coord x;
 
-		esvg_length_string_from(&x, value, ESVG_COORD_0);
-		esvg_filter_x_set(r, &x);
+		egueb_svg_length_string_from(&x, value, ESVG_COORD_0);
+		egueb_svg_filter_x_set(r, &x);
 	}
 	else if (strcmp(key, "y") == 0)
 	{
-		Esvg_Coord y;
+		Egueb_Svg_Coord y;
 
-		esvg_length_string_from(&y, value, ESVG_COORD_0);
-		esvg_filter_y_set(r, &y);
+		egueb_svg_length_string_from(&y, value, ESVG_COORD_0);
+		egueb_svg_filter_y_set(r, &y);
 	}
 	else if (strcmp(key, "width") == 0)
 	{
-		Esvg_Length width;
+		Egueb_Svg_Length width;
 
-		esvg_length_string_from(&width, value, ESVG_LENGTH_0);
-		esvg_filter_width_set(r, &width);
+		egueb_svg_length_string_from(&width, value, ESVG_LENGTH_0);
+		egueb_svg_filter_width_set(r, &width);
 	}
 	else if (strcmp(key, "height") == 0)
 	{
-		Esvg_Length height;
+		Egueb_Svg_Length height;
 
-		esvg_length_string_from(&height, value, ESVG_LENGTH_0);
-		esvg_filter_height_set(r, &height);
+		egueb_svg_length_string_from(&height, value, ESVG_LENGTH_0);
+		egueb_svg_filter_height_set(r, &height);
 	}
 	else if (strcmp(key, "xlink:href") == 0)
 	{
-		Edom_Parser *parser;
+		Egueb_Dom_Parser *parser;
 
 		/* register the post parsing callback */
-		parser = edom_tag_parser_get(tag);
+		parser = egueb_dom_tag_parser_get(tag);
 		thiz->href = strdup(value);
-		esvg_parser_post_parse_add(parser, _post_parse_cb, thiz);
+		egueb_svg_parser_post_parse_add(parser, _post_parse_cb, thiz);
 	}
 	else
 	{
@@ -106,17 +106,17 @@ static Eina_Bool _parser_filter_attribute_set(Edom_Tag *tag, const char *key,
 	return EINA_TRUE;
 }
 
-static const char * _parser_filter_attribute_get(Edom_Tag *tag, const char *attribute)
+static const char * _parser_filter_attribute_get(Egueb_Dom_Tag *tag, const char *attribute)
 {
 	return NULL;
 }
 
-static const char * _parser_filter_name_get(Edom_Tag *tag)
+static const char * _parser_filter_name_get(Egueb_Dom_Tag *tag)
 {
 	return "filter";
 }
 
-static Edom_Tag_Descriptor _descriptor = {
+static Egueb_Dom_Tag_Descriptor _descriptor = {
 	/* .name_get 		= */ _parser_filter_name_get,
 	/* .attribute_set 	= */ _parser_filter_attribute_set,
 	/* .attribute_get 	= */ _parser_filter_attribute_get,
@@ -124,13 +124,13 @@ static Edom_Tag_Descriptor _descriptor = {
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
-Edom_Tag * esvg_parser_filter_new(Edom_Context *c, Edom_Tag *topmost)
+Egueb_Dom_Tag * egueb_svg_parser_filter_new(Egueb_Dom_Context *c, Egueb_Dom_Tag *topmost)
 {
-	Edom_Tag *tag;
+	Egueb_Dom_Tag *tag;
 	Enesim_Renderer *r;
 
-	r = esvg_filter_new();
-	tag = esvg_parser_shape_new(c, &_descriptor, ESVG_TYPE_CIRCLE, topmost, r, NULL);
+	r = egueb_svg_filter_new();
+	tag = egueb_svg_parser_shape_new(c, &_descriptor, ESVG_TYPE_CIRCLE, topmost, r, NULL);
 
 	return tag;
 }

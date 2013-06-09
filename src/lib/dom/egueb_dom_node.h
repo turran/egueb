@@ -19,7 +19,15 @@
 #ifndef _EGUEB_DOM_NODE_H_
 #define _EGUEB_DOM_NODE_H_
 
+#include "egueb_dom_string.h"
+#include "egueb_dom_node_list.h"
+#include "egueb_dom_node_map_named.h"
+#include "egueb_dom_event.h"
+
 typedef struct _Egueb_Dom_Node Egueb_Dom_Node;
+typedef struct _Egueb_Dom_Node_Class Egueb_Dom_Node_Class;
+typedef struct _Egueb_Dom_Node_Event_Listener Egueb_Dom_Node_Event_Listener;
+typedef Eina_Bool (*Egueb_Dom_Node_Cb)(Egueb_Dom_Node *n, void *data);
 
 typedef enum _Egueb_Dom_Node_Type
 {
@@ -39,15 +47,45 @@ typedef enum _Egueb_Dom_Node_Type
 
 EAPI void egueb_dom_node_unref(Egueb_Dom_Node *thiz);
 EAPI Egueb_Dom_Node * egueb_dom_node_ref(Egueb_Dom_Node *thiz);
+EAPI int egueb_dom_node_ref_get(Egueb_Dom_Node *thiz);
+
+EAPI void egueb_dom_node_weak_ref(Egueb_Dom_Node *thiz,
+		Egueb_Dom_Event_Listener l, void *data);
+EAPI void egueb_dom_node_weak_unref(Egueb_Dom_Node *thiz,
+		Egueb_Dom_Event_Listener l, void *data);
+EAPI void egueb_dom_node_weak_ref_add(Egueb_Dom_Node *thiz,
+		Egueb_Dom_Node **weak_location);
+EAPI void egueb_dom_node_weak_ref_remove(Egueb_Dom_Node *thiz,
+		Egueb_Dom_Node **weak_location);
+
 EAPI Eina_Error egueb_dom_node_name_get(Egueb_Dom_Node *thiz, Egueb_Dom_String **name);
 EAPI Eina_Error egueb_dom_node_value_get(Egueb_Dom_Node *thiz, Egueb_Dom_String **value);
 EAPI Eina_Error egueb_dom_node_type_get(Egueb_Dom_Node *thiz, Egueb_Dom_Node_Type *type);
+EAPI Eina_Error egueb_dom_node_document_get(Egueb_Dom_Node *thiz, Egueb_Dom_Node **owner);
 EAPI Eina_Error egueb_dom_node_parent_get(Egueb_Dom_Node *thiz, Egueb_Dom_Node **parent);
 EAPI Eina_Error egueb_dom_node_children_get(Egueb_Dom_Node *thiz, Egueb_Dom_Node_List *children);
+EAPI Eina_Bool egueb_dom_node_children_foreach(Egueb_Dom_Node *thiz, Egueb_Dom_Node_Cb cb, void *data);
 EAPI Eina_Error egueb_dom_node_child_first_get(Egueb_Dom_Node *thiz, Egueb_Dom_Node **last);
 EAPI Eina_Error egueb_dom_node_child_last_get(Egueb_Dom_Node *thiz, Egueb_Dom_Node **last);
 EAPI Eina_Error egueb_dom_node_sibling_previous_get(Egueb_Dom_Node *thiz, Egueb_Dom_Node **sibling);
 EAPI Eina_Error egueb_dom_node_sibling_next_get(Egueb_Dom_Node *thiz, Egueb_Dom_Node **sibling);
-EAPI Eina_Error egueb_dom_node_attributes_get(Egueb_Dom_Node *thiz, Egueb_Dom_Named_Node_Map *map);
+EAPI Eina_Error egueb_dom_node_attributes_get(Egueb_Dom_Node *thiz, Egueb_Dom_Node_Map_Named **map);
+EAPI Eina_Error egueb_dom_node_child_remove(Egueb_Dom_Node *thiz, Egueb_Dom_Node *child);
+EAPI Eina_Error egueb_dom_node_child_append(Egueb_Dom_Node *thiz, Egueb_Dom_Node *child);
+EAPI Eina_Error egueb_dom_node_insert_before(Egueb_Dom_Node *thiz,
+		Egueb_Dom_Node *child, Egueb_Dom_Node *ref);
+
+EAPI Eina_Error egueb_dom_node_clone(Egueb_Dom_Node *thiz, Eina_Bool live,
+		Eina_Bool deep, Egueb_Dom_Node **clone);
+
+EAPI Egueb_Dom_Node_Event_Listener * egueb_dom_node_event_listener_add(Egueb_Dom_Node *thiz,
+		const Egueb_Dom_String *type, Egueb_Dom_Event_Listener listener,
+		Eina_Bool capture, void *data);
+EAPI void egueb_dom_node_event_listener_remove(Egueb_Dom_Node *thiz,
+		const Egueb_Dom_String *type, Egueb_Dom_Event_Listener listener,
+		Eina_Bool capture, void *data);
+EAPI void egueb_dom_node_event_listener_free(Egueb_Dom_Node_Event_Listener *node_listener);
+EAPI Eina_Error egueb_dom_node_event_dispatch(Egueb_Dom_Node *thiz,
+		Egueb_Dom_Event *event, Eina_Bool *notprevented);
 
 #endif

@@ -1,7 +1,7 @@
 #ifndef _ESVG_INPUT_H_
 #define _ESVG_INPUT_H_
 
-typedef struct _Esvg_Event_Mouse
+typedef struct _Egueb_Svg_Event_Mouse
 {
 	int screen_x;
 	int screen_y;
@@ -16,6 +16,6 @@ typedef struct _Esvg_Event_Mouse
 	 *  readonly attribute boolean          altKey;
 	 *  readonly attribute boolean          metaKey;
 	 */
-} __attribute__((packed)) Esvg_Event_Mouse;
+} __attribute__((packed)) Egueb_Svg_Event_Mouse;
 
 #endif

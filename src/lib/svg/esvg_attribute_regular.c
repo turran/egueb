@@ -16,15 +16,15 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 #include "Esvg.h"
-#include "esvg_private.h"
-#include "esvg_values.h"
+#include "egueb_svg_private.h"
+#include "egueb_svg_values.h"
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
-void esvg_attribute_regular_setup(Esvg_Attribute_Presentation *thiz)
+void egueb_svg_attribute_regular_setup(Egueb_Svg_Attribute_Presentation *thiz)
 {
 	/* TODO set default values */
 }

@@ -15,31 +15,31 @@
  * License along with this library.
  * If not, see <http://www.gnu.org/licenses/>.
  */
-#include "esvg_main_private.h"
-#include "esvg_types.h"
-#include "esvg_attribute_private.h"
+#include "egueb_svg_main_private.h"
+#include "egueb_svg_types.h"
+#include "egueb_svg_attribute_private.h"
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
-static Eina_Bool _esvg_attribute_display_value_get(const char *attr, void **value)
+static Eina_Bool _egueb_svg_attribute_display_value_get(const char *attr, void **value)
 {
-	Esvg_Display *v = *value;
+	Egueb_Svg_Display *v = *value;
 
-	esvg_display_string_from(v, attr);
+	egueb_svg_display_string_from(v, attr);
 	return EINA_TRUE;
 }
 
 /* The different animated desriptors */
-Esvg_Attribute_Animated_Descriptor esvg_attribute_animated_display_descriptor = {
-	/* .value_new 			= */ esvg_attribute_enum_value_new,
-	/* .value_get 			= */ _esvg_attribute_display_value_get,
+Egueb_Svg_Attribute_Animated_Descriptor egueb_svg_attribute_animated_display_descriptor = {
+	/* .value_new 			= */ egueb_svg_attribute_enum_value_new,
+	/* .value_get 			= */ _egueb_svg_attribute_display_value_get,
 	/* .value_free 			= */ free,
-	/* .destination_new 		= */ esvg_attribute_enum_destination_new,
-	/* .destination_free 		= */ esvg_attribute_enum_destination_free,
+	/* .destination_new 		= */ egueb_svg_attribute_enum_destination_new,
+	/* .destination_free 		= */ egueb_svg_attribute_enum_destination_free,
 	/* .destination_keep 		= */ NULL,
 	/* .destination_value_from 	= */ NULL,
-	/* .destination_value_to 	= */ esvg_attribute_enum_destination_value_to,
-	/* .interpolate 		= */ esvg_attribute_enum_interpolate,
+	/* .destination_value_to 	= */ egueb_svg_attribute_enum_destination_value_to,
+	/* .interpolate 		= */ egueb_svg_attribute_enum_interpolate,
 };
 /*============================================================================*
  *                                 Global                                     *

@@ -18,11 +18,11 @@
 #ifndef _ESVG_BOOLEAN_H
 #define _ESVG_BOOLEAN_H
 
-typedef struct _Esvg_Boolean_Animated
+typedef struct _Egueb_Svg_Boolean_Animated
 {
 	Eina_Bool base;
 	Eina_Bool anim;
-} Esvg_Boolean_Animated;
+} Egueb_Svg_Boolean_Animated;
 
 #endif
 

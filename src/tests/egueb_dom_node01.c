@@ -4,58 +4,54 @@
 #include "Egueb_Dom.h"
 #include "egueb_dom_node_private.h"
 
-typedef struct _MyObject
+typedef struct _MyNode
 {
 	Egueb_Dom_Node parent;
-} MyObject;
+} MyNode;
 
-typedef struct _MyObject_Class
+typedef struct _MyNode_Class
 {
 	Egueb_Dom_Node_Class parent;
-} MyObject_Class;
+} MyNode_Class;
 
-MyObject * myobject_new(void);
+MyNode * mynode_new(void);
 
-EGUEB_DOM_NODE_CLASS_BOILERPLATE(EGUEB_DOM_NODE_DESCRIPTOR, MyObject, MyObject_Class, EDOM_NAMESPACE, myobject);
-#define MYOBJECT_DESCRIPTOR myobject_descriptor_get()
-#define MYOBJECT_CLASS(k) ENESIM_OBJECT_CLASS_CHECK(k, MyObject_Class, MYOBJECT_DESCRIPTOR)
-#define MYOBJECT(o) ENESIM_OBJECT_INSTANCE_CHECK(o, MyObject, MYOBJECT_DESCRIPTOR)
+#define MYNODE_DESCRIPTOR mynode_descriptor_get()
+#define MYNODE_CLASS(k) ENESIM_OBJECT_CLASS_CHECK(k, MyNode_Class, MYNODE_DESCRIPTOR)
+#define MYNODE(o) ENESIM_OBJECT_INSTANCE_CHECK(o, MyNode, MYNODE_DESCRIPTOR)
 
-static void _myobject_class_init(void *k)
+ENESIM_OBJECT_INSTANCE_BOILERPLATE(EGUEB_DOM_NODE_DESCRIPTOR, MyNode, MyNode_Class, mynode);
+
+static void _mynode_class_init(void *k)
 {
 	printf("class init\n");
 }
 
-static void _myobject_descriptor_init(Ender_Descriptor *d)
-{
-	printf("descriptor init\n");
-}
-
-static void _myobject_instance_init(void *o)
+static void _mynode_instance_init(void *o)
 {
 	printf("instance init\n");
 }
 
-static void _myobject_instance_deinit(void *o)
+static void _mynode_instance_deinit(void *o)
 {
 	printf("instance deinit\n");
 }
 
-MyObject * myobject_new(void)
+MyNode * mynode_new(void)
 {
-	MyObject *thiz;
+	MyNode *thiz;
 
-	thiz = ENESIM_OBJECT_INSTANCE_NEW(myobject);
+	thiz = ENESIM_OBJECT_INSTANCE_NEW(mynode);
 	return thiz;
 }
 
 int main(void)
 {
-	MyObject *my;
+	MyNode *my;
 
-	edom_init();
+	mylib_init();
 
-	my = myobject_new();
-	edom_shutdown();
+	my = mynode_new();
+	mylib_shutdown();
 	return 0;
 }

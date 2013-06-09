@@ -1,41 +1,41 @@
 #ifndef _ESVG_PRIVATE_ATTRIBUTE_COLOR_H_
 #define _ESVG_PRIVATE_ATTRIBUTE_COLOR_H_
 
-typedef struct _Esvg_Attribute_Color
+typedef struct _Egueb_Svg_Attribute_Color
 {
-	Esvg_Color v;
+	Egueb_Svg_Color v;
 	Eina_Bool is_set;
-} Esvg_Attribute_Color;
+} Egueb_Svg_Attribute_Color;
 
-typedef struct _Esvg_Attribute_Animated_Color
+typedef struct _Egueb_Svg_Attribute_Animated_Color
 {
-	Esvg_Attribute_Color base;
-	Esvg_Attribute_Color anim;
+	Egueb_Svg_Attribute_Color base;
+	Egueb_Svg_Attribute_Color anim;
 	int animated;
-} Esvg_Attribute_Animated_Color;
+} Egueb_Svg_Attribute_Animated_Color;
 
-void esvg_attribute_animated_color_merge_rel(const Esvg_Attribute_Animated_Color *rel,
-		const Esvg_Attribute_Animated_Color *v,
-		Esvg_Attribute_Color *d);
-void esvg_attribute_animated_color_merge(const Esvg_Attribute_Animated_Color *v,
-		Esvg_Attribute_Color *d);
-void esvg_attribute_color_merge_rel(const Esvg_Attribute_Color *rel,
-		const Esvg_Attribute_Color *v,
-		Esvg_Attribute_Color *d);
-void esvg_attribute_animated_color_set(Esvg_Attribute_Animated_Color *aa,
-	const Esvg_Color_Animated *v,
-	const Esvg_Color *def,
+void egueb_svg_attribute_animated_color_merge_rel(const Egueb_Svg_Attribute_Animated_Color *rel,
+		const Egueb_Svg_Attribute_Animated_Color *v,
+		Egueb_Svg_Attribute_Color *d);
+void egueb_svg_attribute_animated_color_merge(const Egueb_Svg_Attribute_Animated_Color *v,
+		Egueb_Svg_Attribute_Color *d);
+void egueb_svg_attribute_color_merge_rel(const Egueb_Svg_Attribute_Color *rel,
+		const Egueb_Svg_Attribute_Color *v,
+		Egueb_Svg_Attribute_Color *d);
+void egueb_svg_attribute_animated_color_set(Egueb_Svg_Attribute_Animated_Color *aa,
+	const Egueb_Svg_Color_Animated *v,
+	const Egueb_Svg_Color *def,
 	Eina_Bool animate);
-void esvg_attribute_animated_color_extended_set(Esvg_Attribute_Animated_Color *aa,
-	const Esvg_Color_Animated *v,
-	const Esvg_Color *def,
+void egueb_svg_attribute_animated_color_extended_set(Egueb_Svg_Attribute_Animated_Color *aa,
+	const Egueb_Svg_Color_Animated *v,
+	const Egueb_Svg_Color *def,
 	Eina_Bool animate,
 	int *set);
-void esvg_attribute_animated_color_get(Esvg_Attribute_Animated_Color *aa,
-	Esvg_Color_Animated *v);
+void egueb_svg_attribute_animated_color_get(Egueb_Svg_Attribute_Animated_Color *aa,
+	Egueb_Svg_Color_Animated *v);
 
-void esvg_attribute_color_unset(Esvg_Attribute_Color *a, const Esvg_Color *def);
-void esvg_attribute_color_set(Esvg_Attribute_Color *a, const Esvg_Color *v,
-		const Esvg_Color *def);
+void egueb_svg_attribute_color_unset(Egueb_Svg_Attribute_Color *a, const Egueb_Svg_Color *def);
+void egueb_svg_attribute_color_set(Egueb_Svg_Attribute_Color *a, const Egueb_Svg_Color *v,
+		const Egueb_Svg_Color *def);
 
 #endif

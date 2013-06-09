@@ -15,21 +15,21 @@
  * License along with this library.
  * If not, see <http://www.gnu.org/licenses/>.
  */
-#include "esvg_main_private.h"
-#include "esvg_private_attribute_presentation.h"
-#include "esvg_context_private.h"
-#include "esvg_element_private.h"
-#include "esvg_renderable_private.h"
-#include "esvg_input_private.h"
+#include "egueb_svg_main_private.h"
+#include "egueb_svg_private_attribute_presentation.h"
+#include "egueb_svg_context_private.h"
+#include "egueb_svg_element_private.h"
+#include "egueb_svg_renderable_private.h"
+#include "egueb_svg_input_private.h"
 
-#include "esvg_element.h"
-#include "esvg_event.h"
+#include "egueb_svg_element.h"
+#include "egueb_svg_event.h"
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
-struct _Esvg_Input
+struct _Egueb_Svg_Input
 {
-	Esvg_Input_Descriptor *descriptor;
+	Egueb_Svg_Input_Descriptor *descriptor;
 	int downx;
 	int downy;
 	int x;
@@ -41,24 +41,24 @@ struct _Esvg_Input
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
-Esvg_Input * esvg_input_new(Esvg_Input_Descriptor *descriptor, void *data)
+Egueb_Svg_Input * egueb_svg_input_new(Egueb_Svg_Input_Descriptor *descriptor, void *data)
 {
-	Esvg_Input *thiz;
+	Egueb_Svg_Input *thiz;
 
-	thiz = calloc(1, sizeof(Esvg_Input));
+	thiz = calloc(1, sizeof(Egueb_Svg_Input));
 	thiz->descriptor = descriptor;
 	thiz->data = data;
 	return thiz;
 }
 
-void esvg_input_free(Esvg_Input *thiz)
+void egueb_svg_input_free(Egueb_Svg_Input *thiz)
 {
 	free(thiz);
 }
 
-void esvg_input_feed_mouse_down(Esvg_Input *thiz, int button)
+void egueb_svg_input_feed_mouse_down(Egueb_Svg_Input *thiz, int button)
 {
-	Esvg_Event_Mouse ev;
+	Egueb_Svg_Event_Mouse ev;
 	double rel_x, rel_y;
 
 	if (!thiz->over)
@@ -70,19 +70,19 @@ void esvg_input_feed_mouse_down(Esvg_Input *thiz, int button)
 	thiz->downx = thiz->x;
 	thiz->downy = thiz->y;
 
-	//printf("mouse down! on %s\n", esvg_element_name_get(thiz->over));
+	//printf("mouse down! on %s\n", egueb_svg_element_name_get(thiz->over));
 	ender_event_dispatch(thiz->over, "mousedown", &ev);
 }
 
-void esvg_input_feed_mouse_up(Esvg_Input *thiz, int button)
+void egueb_svg_input_feed_mouse_up(Egueb_Svg_Input *thiz, int button)
 {
-	Esvg_Event_Mouse ev;
+	Egueb_Svg_Event_Mouse ev;
 
 	/* send the event to the grabbed object */
 	if (!thiz->grabbed)
 		return;
 
-	//printf("mouse up! on %s\n", esvg_element_name_get(thiz->grabbed));
+	//printf("mouse up! on %s\n", egueb_svg_element_name_get(thiz->grabbed));
 	ender_event_dispatch(thiz->grabbed, "mouseup", &ev);
 	/* in case the down coordinates are the same as the current coordinates
 	 * send a click event
@@ -91,16 +91,16 @@ void esvg_input_feed_mouse_up(Esvg_Input *thiz, int button)
 	if ((fabs(thiz->downx - thiz->x) < 2) &&
 			(fabs(thiz->downy - thiz->y) < 2))
 	{
-		//printf("mouse click! on %s\n", esvg_element_name_get(thiz->grabbed));
+		//printf("mouse click! on %s\n", egueb_svg_element_name_get(thiz->grabbed));
 		ender_event_dispatch(thiz->grabbed, "click", &ev);
 	}
 	thiz->grabbed = NULL;
 
 }
 
-void esvg_input_feed_mouse_move(Esvg_Input *thiz, int x, int y)
+void egueb_svg_input_feed_mouse_move(Egueb_Svg_Input *thiz, int x, int y)
 {
-	Esvg_Event_Mouse ev;
+	Egueb_Svg_Event_Mouse ev;
 	Ender_Element *e;
 
 	thiz->x = x;
@@ -155,7 +155,7 @@ void esvg_input_feed_mouse_move(Esvg_Input *thiz, int x, int y)
 		if (e)
 		{
 			ender_event_dispatch(e, "mousemove", &ev);
-			//printf("mouse move! on %s\n", esvg_element_name_get(e));
+			//printf("mouse move! on %s\n", egueb_svg_element_name_get(e));
 		}
 	}
 	else
@@ -165,14 +165,14 @@ void esvg_input_feed_mouse_move(Esvg_Input *thiz, int x, int y)
 		{
 			ender_event_dispatch(thiz->over, "mousemove", &ev);
 			ender_event_dispatch(thiz->over, "mouseout", &ev);
-			//printf("mouse out! on %s\n", esvg_element_name_get(thiz->over));
+			//printf("mouse out! on %s\n", egueb_svg_element_name_get(thiz->over));
 		}
 		/* send in event on r */
 		if (e)
 		{
 			ender_event_dispatch(e, "mouseover", &ev);
 			ender_event_dispatch(e, "mousemove", &ev);
-			//printf("mouse in! %s\n", esvg_element_name_get(e));
+			//printf("mouse in! %s\n", egueb_svg_element_name_get(e));
 		}
 	}
 	/* update the current over */

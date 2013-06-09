@@ -15,56 +15,56 @@
  * License along with this library.
  * If not, see <http://www.gnu.org/licenses/>.
  */
-#include "esvg_main_private.h"
-#include "esvg_private_attribute_presentation.h"
-#include "esvg_context_private.h"
-#include "esvg_element_private.h"
-#include "esvg_renderable_private.h"
-#include "esvg_element_polygon.h"
+#include "egueb_svg_main_private.h"
+#include "egueb_svg_private_attribute_presentation.h"
+#include "egueb_svg_context_private.h"
+#include "egueb_svg_element_private.h"
+#include "egueb_svg_renderable_private.h"
+#include "egueb_svg_element_polygon.h"
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
-#define ESVG_LOG_DEFAULT _esvg_element_polygon_log
+#define ESVG_LOG_DEFAULT _egueb_svg_element_polygon_log
 
-static int _esvg_element_polygon_log = -1;
+static int _egueb_svg_element_polygon_log = -1;
 
 static Ender_Property *ESVG_ELEMENT_POLYGON_POINT;
 
-typedef struct _Esvg_Element_Polygon
+typedef struct _Egueb_Svg_Element_Polygon
 {
 	/* properties */
 	Eina_List *points;
 	/* private */
 	Enesim_Renderer *r;
 	Eina_Bool changed : 1;
-} Esvg_Element_Polygon;
+} Egueb_Svg_Element_Polygon;
 
-static Esvg_Element_Polygon * _esvg_element_polygon_get(Edom_Tag *t)
+static Egueb_Svg_Element_Polygon * _egueb_svg_element_polygon_get(Egueb_Dom_Tag *t)
 {
-	Esvg_Element_Polygon *thiz;
+	Egueb_Svg_Element_Polygon *thiz;
 
-	if (esvg_element_internal_type_get(t) != ESVG_TYPE_POLYGON)
+	if (egueb_svg_element_internal_type_get(t) != ESVG_TYPE_POLYGON)
 		return NULL;
-	thiz = esvg_renderable_data_get(t);
+	thiz = egueb_svg_renderable_data_get(t);
 
 	return thiz;
 }
 
-static void _esvg_element_polygon_points_cb(Esvg_Point *p, void *data)
+static void _egueb_svg_element_polygon_points_cb(Egueb_Svg_Point *p, void *data)
 {
 	Ender_Element *e = data;
 
-	esvg_element_polygon_point_add(e, p);
+	egueb_svg_element_polygon_point_add(e, p);
 }
 /*----------------------------------------------------------------------------*
  *                       The Esvg Renderable interface                        *
  *----------------------------------------------------------------------------*/
-static Eina_Bool _esvg_element_polygon_attribute_set(Ender_Element *e,
+static Eina_Bool _egueb_svg_element_polygon_attribute_set(Ender_Element *e,
 		const char *key, const char *value)
 {
 	if (strcmp(key, "points") == 0)
 	{
-		esvg_points_string_from(value, _esvg_element_polygon_points_cb, e);
+		egueb_svg_points_string_from(value, _egueb_svg_element_polygon_points_cb, e);
 	}
 	else
 	{
@@ -74,38 +74,38 @@ static Eina_Bool _esvg_element_polygon_attribute_set(Ender_Element *e,
 	return EINA_TRUE;
 }
 
-static Eina_Bool _esvg_element_polygon_attribute_get(Edom_Tag *tag, const char *attribute, char **value)
+static Eina_Bool _egueb_svg_element_polygon_attribute_get(Egueb_Dom_Tag *tag, const char *attribute, char **value)
 {
 	return EINA_FALSE;
 }
 
-static Enesim_Renderer * _esvg_element_polygon_renderer_get(Edom_Tag *t)
+static Enesim_Renderer * _egueb_svg_element_polygon_renderer_get(Egueb_Dom_Tag *t)
 {
-	Esvg_Element_Polygon *thiz;
+	Egueb_Svg_Element_Polygon *thiz;
 
-	thiz = _esvg_element_polygon_get(t);
+	thiz = _egueb_svg_element_polygon_get(t);
 	return thiz->r;
 }
 
-static Esvg_Element_Setup_Return _esvg_element_polygon_setup(Edom_Tag *t,
-		Esvg_Context *c,
-		Esvg_Element_Context *ctx,
-		Esvg_Attribute_Presentation *attr,
+static Egueb_Svg_Element_Setup_Return _egueb_svg_element_polygon_setup(Egueb_Dom_Tag *t,
+		Egueb_Svg_Context *c,
+		Egueb_Svg_Element_Context *ctx,
+		Egueb_Svg_Attribute_Presentation *attr,
 		Enesim_Log **error)
 {
 	return ESVG_SETUP_OK;
 }
 
-static Eina_Bool _esvg_element_polygon_renderer_propagate(Edom_Tag *t,
-		Esvg_Context *c,
-		const Esvg_Element_Context *ctx,
-		const Esvg_Attribute_Presentation *attr,
-		Esvg_Renderable_Context *rctx,
+static Eina_Bool _egueb_svg_element_polygon_renderer_propagate(Egueb_Dom_Tag *t,
+		Egueb_Svg_Context *c,
+		const Egueb_Svg_Element_Context *ctx,
+		const Egueb_Svg_Attribute_Presentation *attr,
+		Egueb_Svg_Renderable_Context *rctx,
 		Enesim_Log **error)
 {
-	Esvg_Element_Polygon *thiz;
+	Egueb_Svg_Element_Polygon *thiz;
 
-	thiz = _esvg_element_polygon_get(t);
+	thiz = _egueb_svg_element_polygon_get(t);
 
 	DBG("polygon setup");
 	/* the shape must always be closed */
@@ -134,12 +134,12 @@ static Eina_Bool _esvg_element_polygon_renderer_propagate(Edom_Tag *t,
 	return EINA_TRUE;
 }
 
-static void _esvg_element_polygon_free(Edom_Tag *t)
+static void _egueb_svg_element_polygon_free(Egueb_Dom_Tag *t)
 {
-	Esvg_Element_Polygon *thiz;
-	Esvg_Point *p;
+	Egueb_Svg_Element_Polygon *thiz;
+	Egueb_Svg_Point *p;
 
-	thiz = _esvg_element_polygon_get(t);
+	thiz = _egueb_svg_element_polygon_get(t);
 	EINA_LIST_FREE(thiz->points, p)
 	{
 		free(p);
@@ -148,31 +148,31 @@ static void _esvg_element_polygon_free(Edom_Tag *t)
 	free(thiz);
 }
 
-static Esvg_Renderable_Descriptor _descriptor = {
+static Egueb_Svg_Renderable_Descriptor _descriptor = {
 	/* .child_add		= */ NULL,
 	/* .child_remove	= */ NULL,
-	/* .attribute_get 	= */ _esvg_element_polygon_attribute_get,
+	/* .attribute_get 	= */ _egueb_svg_element_polygon_attribute_get,
 	/* .cdata_set 		= */ NULL,
 	/* .text_set 		= */ NULL,
 	/* .text_get		     = */ NULL,
-	/* .free 		= */ _esvg_element_polygon_free,
+	/* .free 		= */ _egueb_svg_element_polygon_free,
 	/* .initialize 		= */ NULL,
-	/* .attribute_set 	= */ _esvg_element_polygon_attribute_set,
+	/* .attribute_set 	= */ _egueb_svg_element_polygon_attribute_set,
 	/* .attribute_animated_fetch = */ NULL,
-	/* .setup		= */ _esvg_element_polygon_setup,
-	/* .renderer_get	= */ _esvg_element_polygon_renderer_get,
-	/* .renderer_propagate	= */ _esvg_element_polygon_renderer_propagate,
+	/* .setup		= */ _egueb_svg_element_polygon_setup,
+	/* .renderer_get	= */ _egueb_svg_element_polygon_renderer_get,
+	/* .renderer_propagate	= */ _egueb_svg_element_polygon_renderer_propagate,
 };
 /*----------------------------------------------------------------------------*
  *                           The Ender interface                              *
  *----------------------------------------------------------------------------*/
-static Edom_Tag * _esvg_element_polygon_new(void)
+static Egueb_Dom_Tag * _egueb_svg_element_polygon_new(void)
 {
-	Esvg_Element_Polygon *thiz;
-	Edom_Tag *t;
+	Egueb_Svg_Element_Polygon *thiz;
+	Egueb_Dom_Tag *t;
 	Enesim_Renderer *r;
 
-	thiz = calloc(1, sizeof(Esvg_Element_Polygon));
+	thiz = calloc(1, sizeof(Egueb_Svg_Element_Polygon));
 	if (!thiz) return NULL;
 
 	r = enesim_renderer_figure_new();
@@ -183,94 +183,94 @@ static Edom_Tag * _esvg_element_polygon_new(void)
 	thiz->r = r;
 	/* default values */
 
-	t = esvg_renderable_new(&_descriptor, ESVG_TYPE_POLYGON, thiz);
+	t = egueb_svg_renderable_new(&_descriptor, ESVG_TYPE_POLYGON, thiz);
 	return t;
 }
 
-static void _esvg_element_polygon_point_add(Edom_Tag *t, Esvg_Point *p)
+static void _egueb_svg_element_polygon_point_add(Egueb_Dom_Tag *t, Egueb_Svg_Point *p)
 {
-	Esvg_Element_Polygon *thiz;
-	Esvg_Point *new_point;
+	Egueb_Svg_Element_Polygon *thiz;
+	Egueb_Svg_Point *new_point;
 
 	if (!p) return;
 
-	thiz = _esvg_element_polygon_get(t);
-	new_point = calloc(1, sizeof(Esvg_Point));
+	thiz = _egueb_svg_element_polygon_get(t);
+	new_point = calloc(1, sizeof(Egueb_Svg_Point));
 	*new_point = *p;
 	thiz->points = eina_list_append(thiz->points, new_point);
 	enesim_renderer_figure_polygon_vertex_add(thiz->r, new_point->x, new_point->y);
 	thiz->changed = EINA_TRUE;
 }
 
-static void _esvg_element_polygon_point_set(Edom_Tag *t, const Eina_List *pts)
+static void _egueb_svg_element_polygon_point_set(Egueb_Dom_Tag *t, const Eina_List *pts)
 {
-	Esvg_Element_Polygon *thiz;
-	Esvg_Point *pt;
+	Egueb_Svg_Element_Polygon *thiz;
+	Egueb_Svg_Point *pt;
 	const Eina_List *l;
 
-	thiz = _esvg_element_polygon_get(t);
+	thiz = _egueb_svg_element_polygon_get(t);
 	/* FIXME remove what we had */
 	EINA_LIST_FOREACH (pts, l, pt)
 	{
-		_esvg_element_polygon_point_add(t, pt);
+		_egueb_svg_element_polygon_point_add(t, pt);
 	}
 }
 
-static void _esvg_element_polygon_point_get(Edom_Tag *t, const Eina_List **pts)
+static void _egueb_svg_element_polygon_point_get(Egueb_Dom_Tag *t, const Eina_List **pts)
 {
-	Esvg_Element_Polygon *thiz;
+	Egueb_Svg_Element_Polygon *thiz;
 
-	thiz = _esvg_element_polygon_get(t);
+	thiz = _egueb_svg_element_polygon_get(t);
 	*pts = thiz->points;
 }
 
 /* The ender wrapper */
-#define _esvg_element_polygon_delete NULL
-#define _esvg_element_polygon_point_is_set NULL
-#define _esvg_element_polygon_point_clear NULL
-#define _esvg_element_polygon_point_remove NULL
-#include "esvg_generated_element_polygon.c"
+#define _egueb_svg_element_polygon_delete NULL
+#define _egueb_svg_element_polygon_point_is_set NULL
+#define _egueb_svg_element_polygon_point_clear NULL
+#define _egueb_svg_element_polygon_point_remove NULL
+#include "egueb_svg_generated_element_polygon.c"
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
-void esvg_element_polygon_init(void)
+void egueb_svg_element_polygon_init(void)
 {
-	_esvg_element_polygon_log = eina_log_domain_register("esvg_element_polygon", ESVG_LOG_COLOR_DEFAULT);
-	if (_esvg_element_polygon_log < 0)
+	_egueb_svg_element_polygon_log = eina_log_domain_register("egueb_svg_element_polygon", ESVG_LOG_COLOR_DEFAULT);
+	if (_egueb_svg_element_polygon_log < 0)
 	{
 		EINA_LOG_ERR("Can not create log domain.");
 		return;
 	}
-	_esvg_element_polygon_init();
+	_egueb_svg_element_polygon_init();
 }
 
-void esvg_element_polygon_shutdown(void)
+void egueb_svg_element_polygon_shutdown(void)
 {
-	if (_esvg_element_polygon_log < 0)
+	if (_egueb_svg_element_polygon_log < 0)
 		return;
-	_esvg_element_polygon_shutdown();
-	eina_log_domain_unregister(_esvg_element_polygon_log);
-	_esvg_element_polygon_log = -1;
+	_egueb_svg_element_polygon_shutdown();
+	eina_log_domain_unregister(_egueb_svg_element_polygon_log);
+	_egueb_svg_element_polygon_log = -1;
 }
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/
-EAPI Ender_Element * esvg_element_polygon_new(void)
+EAPI Ender_Element * egueb_svg_element_polygon_new(void)
 {
 	return ESVG_ELEMENT_NEW("SVGPolygonElement");
 }
 
-EAPI Eina_Bool esvg_is_polygon(Ender_Element *e)
+EAPI Eina_Bool egueb_svg_is_polygon(Ender_Element *e)
 {
-	Edom_Tag *t;
-	Esvg_Type type;
+	Egueb_Dom_Tag *t;
+	Egueb_Svg_Type type;
 
-	t = (Edom_Tag *)ender_element_object_get(e);
-	type = esvg_element_internal_type_get(t);
+	t = (Egueb_Dom_Tag *)ender_element_object_get(e);
+	type = egueb_svg_element_internal_type_get(t);
 	return (type == ESVG_TYPE_POLYGON) ? EINA_TRUE : EINA_FALSE;
 }
 
-EAPI void esvg_element_polygon_point_add(Ender_Element *e, Esvg_Point *p)
+EAPI void egueb_svg_element_polygon_point_add(Ender_Element *e, Egueb_Svg_Point *p)
 {
 	ender_element_property_value_add(e, ESVG_ELEMENT_POLYGON_POINT, p, NULL);
 }
