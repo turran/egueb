@@ -70,11 +70,6 @@ typedef struct _Egueb_Svg_Element_Svg
 	/* keep track if the renderable tree has changed, includeing the <a> tag */
 	Eina_Bool renderable_tree_changed : 1;
 
-	/* damages */
-	Eina_Tiler *tiler;
-	int tw;
-	int th;
-
 #if 0
 	double version;
 	double x_dpi;
@@ -107,20 +102,6 @@ typedef struct _Egueb_Svg_Element_Svg_Class
 {
 	Egueb_Svg_Renderable_Container_Class base;
 } Egueb_Svg_Element_Svg_Class;
-
-static Eina_Bool _egueb_svg_element_svg_damage_cb(Enesim_Renderer *r,
-		const Eina_Rectangle *area, Eina_Bool past,
-		void *data)
-{
-	Eina_Tiler *tiler = data;
-	const char *name;
-
-	eina_tiler_rect_add(tiler, area);
-	enesim_renderer_name_get(r, &name);
-	DBG("Renderer %s has changed at area %d %d %d %d", name, area->x,
-			area->y, area->w, area->h);
-	return EINA_TRUE;
-}
 
 /* whenever a child is added which can have a painter, check if it is set
  * if not, define the generic painter for it
@@ -2012,58 +1993,6 @@ EAPI Eina_Bool egueb_svg_element_svg_draw_list(Egueb_Dom_Node *n, Enesim_Surface
 	ret = enesim_renderer_draw_list(r, s, clips, x, y, error);
 	enesim_renderer_unref(r);
 	return ret;
-}
-
-/**
- * To be documented
- * FIXME: To be fixed
- */
-EAPI void egueb_svg_element_svg_damages_get(Egueb_Dom_Node *n,
-		Egueb_Svg_Element_Svg_Damage_Cb cb, void *data)
-{
-	Egueb_Svg_Element_Svg *thiz;
-	Enesim_Renderer *r;
-	Eina_Iterator *iter;
-	Eina_Rectangle *rect;
-	double aw, ah;
-	int tw, th;
-
-	thiz = EGUEB_SVG_ELEMENT_SVG(n);
-#if 0
-	egueb_svg_element_svg_actual_width_get(n, &aw);
-	egueb_svg_element_svg_actual_height_get(n, &ah);
-#endif
-	aw = 640;
-	ah = 480;
-	tw = ceil(aw);
-	th = ceil(ah);
-
-	if (!thiz->tiler || thiz->tw != tw || thiz->th != th)
-	{
-		Eina_Rectangle full;
-
-		if (thiz->tiler)
-			eina_tiler_free(thiz->tiler);
-		thiz->tiler = eina_tiler_new(tw, th);
-		thiz->tw = tw;
-		thiz->th = th;
-
-		eina_rectangle_coords_from(&full, 0, 0, tw, th);
-		cb(n, &full, data);
-		return;
-	}
-
-	r = egueb_svg_renderable_renderer_get(n);
-	/* TODO first generate the damages on every svg image we have */
-	enesim_renderer_damages_get(r, _egueb_svg_element_svg_damage_cb, thiz->tiler);
-
-	iter = eina_tiler_iterator_new(thiz->tiler);
-	EINA_ITERATOR_FOREACH(iter, rect)
-	{
-		cb(n, rect, data);
-	}
-	eina_iterator_free(iter);
-	eina_tiler_clear(thiz->tiler);
 }
 
 EAPI Eina_Error egueb_svg_element_svg_width_get(Egueb_Dom_Node *n,

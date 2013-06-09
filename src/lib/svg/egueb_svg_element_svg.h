@@ -33,10 +33,6 @@ EAPI double egueb_svg_element_svg_time_get(Egueb_Dom_Node *n);
 EAPI void egueb_svg_element_svg_time_set(Egueb_Dom_Node *n, double secs);
 EAPI void egueb_svg_element_svg_time_tick(Egueb_Dom_Node *n);
 
-typedef Eina_Bool (*Egueb_Svg_Element_Svg_Damage_Cb)(Egueb_Dom_Node *n, Eina_Rectangle *damage,
-		void *data);
-EAPI void egueb_svg_element_svg_damages_get(Egueb_Dom_Node *n, Egueb_Svg_Element_Svg_Damage_Cb cb, void *data);
-
 EAPI Eina_Error egueb_svg_element_svg_width_get(Egueb_Dom_Node *n,
 		Egueb_Svg_Length_Animated *width);
 EAPI Eina_Error egueb_svg_element_svg_height_get(Egueb_Dom_Node *n,

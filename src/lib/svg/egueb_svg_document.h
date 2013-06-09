@@ -57,6 +57,9 @@ EAPI void egueb_svg_document_feed_mouse_move(Egueb_Dom_Node *n, int x, int y);
 EAPI void egueb_svg_document_feed_mouse_down(Egueb_Dom_Node *n, int button);
 EAPI void egueb_svg_document_feed_mouse_up(Egueb_Dom_Node *n, int button);
 
+typedef Eina_Bool (*Egueb_Svg_Document_Damage_Cb)(Egueb_Dom_Node *n, Eina_Rectangle *damage,
+		void *data);
+EAPI void egueb_svg_document_damages_get(Egueb_Dom_Node *n, Egueb_Svg_Document_Damage_Cb cb, void *data);
 
 #endif
 

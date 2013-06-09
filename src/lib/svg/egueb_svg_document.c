@@ -38,6 +38,8 @@
 #include "egueb_svg_element_svg.h"
 #include "egueb_svg_element_text.h"
 #include "egueb_dom_document.h"
+/* abstracts */
+#include "egueb_svg_renderable.h"
 
 #include "egueb_dom_document_private.h"
 
@@ -58,6 +60,11 @@ typedef struct _Egueb_Svg_Document
 	double width;
 	double height;
 	double font_size;
+
+	/* damages */
+	Eina_Tiler *tiler;
+	int tw;
+	int th;
 
 	double last_width;
 	double last_height;
@@ -507,6 +514,21 @@ static Eina_Bool _egueb_svg_document_has_changed(Egueb_Svg_Document *thiz)
 		return EINA_TRUE;
 	return EINA_FALSE;
 }
+
+static Eina_Bool _egueb_svg_document_damage_cb(Enesim_Renderer *r,
+		const Eina_Rectangle *area, Eina_Bool past,
+		void *data)
+{
+	Eina_Tiler *tiler = data;
+	const char *name;
+
+	eina_tiler_rect_add(tiler, area);
+	enesim_renderer_name_get(r, &name);
+	DBG("Renderer %s has changed at area %d %d %d %d", name, area->x,
+			area->y, area->w, area->h);
+	return EINA_TRUE;
+}
+
 /*----------------------------------------------------------------------------*
  *                     The URI interface for elements                         *
  *----------------------------------------------------------------------------*/
@@ -859,6 +881,58 @@ EAPI void egueb_svg_document_feed_mouse_up(Egueb_Dom_Node *n, int button)
 #endif
 }
 
+/**
+ * To be documented
+ * FIXME: To be fixed
+ */
+EAPI void egueb_svg_document_damages_get(Egueb_Dom_Node *n,
+		Egueb_Svg_Document_Damage_Cb cb, void *data)
+{
+	Egueb_Svg_Document *thiz;
+	Egueb_Dom_Node *topmost = NULL;
+	Enesim_Renderer *r;
+	Eina_Iterator *iter;
+	Eina_Rectangle *rect;
+	double aw, ah;
+	int tw, th;
+
+	thiz = EGUEB_SVG_DOCUMENT(n);
+	egueb_svg_document_actual_width_get(n, &aw);
+	egueb_svg_document_actual_height_get(n, &ah);
+	tw = ceil(aw);
+	th = ceil(ah);
+
+	if (!thiz->tiler || thiz->tw != tw || thiz->th != th)
+	{
+		Eina_Rectangle full;
+
+		if (thiz->tiler)
+			eina_tiler_free(thiz->tiler);
+		thiz->tiler = eina_tiler_new(tw, th);
+		thiz->tw = tw;
+		thiz->th = th;
+
+		eina_rectangle_coords_from(&full, 0, 0, tw, th);
+		cb(n, &full, data);
+		return;
+	}
+
+	egueb_dom_document_element_get(n, &topmost);
+	if (!topmost) return;
+
+	r = egueb_svg_renderable_renderer_get(topmost);
+	/* TODO first generate the damages on every svg image we have */
+	enesim_renderer_damages_get(r, _egueb_svg_document_damage_cb, thiz->tiler);
+
+	iter = eina_tiler_iterator_new(thiz->tiler);
+	EINA_ITERATOR_FOREACH(iter, rect)
+	{
+		cb(n, rect, data);
+	}
+	eina_iterator_free(iter);
+	eina_tiler_clear(thiz->tiler);
+	egueb_dom_node_unref(topmost);
+}
 
 /* FIXME This might not be needed */
 EAPI Eina_Error egueb_svg_document_iri_clone(Egueb_Dom_Node *n,
