@@ -807,7 +807,7 @@ EAPI void egueb_svg_document_feed_mouse_down(Egueb_Dom_Node *n, int button)
  * To be documented
  * FIXME: To be fixed
  */
-EAPI void egueb_svg_element_svg_feed_mouse_up(Egueb_Dom_Node *n, int button)
+EAPI void egueb_svg_document_feed_mouse_up(Egueb_Dom_Node *n, int button)
 {
 #if 0
 	Egueb_Svg_Document_Svg *thiz;
