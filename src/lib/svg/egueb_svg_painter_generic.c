@@ -95,7 +95,7 @@ static void _egueb_svg_renderable_paint_set(Egueb_Dom_Node *n,
 			}
 
 			egueb_svg_document_element_get_by_iri(doc, &iri, &ref);
-			if (!ref /* || !egueb_svg_element_is_paint_server(n) */)
+			if (!ref || !egueb_svg_is_paint_server(ref))
 			{
 				if (ref) egueb_dom_node_unref(ref);
 			}
@@ -103,9 +103,10 @@ static void _egueb_svg_renderable_paint_set(Egueb_Dom_Node *n,
 			{
 				*reference = egueb_svg_referenceable_reference_add(ref,
 						n, NULL);
-				egueb_svg_reference_paint_server_renderer_get(*reference, renderer);
 			}
 		}
+		if (*reference)
+			egueb_svg_reference_paint_server_renderer_get(*reference, renderer);
 		enesim_color_components_from(rcolor,
 				op, 0xff, 0xff, 0xff);
 		*rdraw_mode |= mode;

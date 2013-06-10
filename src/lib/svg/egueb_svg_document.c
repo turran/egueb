@@ -606,12 +606,18 @@ static void _egueb_svg_document_process(Egueb_Dom_Document *d)
 	/* if so, force a complete process */
 	if (changed)
 	{
+		Egueb_Dom_Node *n;
+
 		if (!d->element)
 		{
 			DBG("Nothing to process. No topmost element found");
 			return;
 		}
 		DBG("Processing topmost element only");
+		/* remove every enqueued element */
+		EINA_LIST_FREE(d->current_enqueued, n)
+			egueb_dom_node_unref(n);
+
 		egueb_dom_element_process(d->element);
 		thiz->last_width = thiz->width;
 		thiz->last_height = thiz->height;
