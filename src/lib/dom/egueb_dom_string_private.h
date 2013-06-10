@@ -31,8 +31,8 @@ Ender_Descriptor * egueb_dom_string_descriptor_get(void);
 
 #define EGUEB_DOM_STRING_STATIC(value) 			\
 	{						\
-		/* .owned */ EINA_TRUE,			\
-		/* .str */ value,			\
+		/* .owned */ EINA_FALSE,		\
+		/* .str */ (char *)value,		\
 		/* .ref */ 1				\
 	}
 

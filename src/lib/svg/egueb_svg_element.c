@@ -2644,6 +2644,16 @@ EAPI void egueb_svg_element_fill_rule_unset(Egueb_Dom_Node *n)
 {
 }
 
+EAPI Eina_Error egueb_svg_element_font_size_set(Egueb_Dom_Node *n,
+		const Egueb_Svg_Font_Size *font_size)
+{
+	Egueb_Svg_Element *thiz;
+
+	thiz = EGUEB_SVG_ELEMENT(n);
+	return egueb_dom_attr_set(thiz->font_size, EGUEB_DOM_ATTR_TYPE_BASE,
+			font_size);
+}
+
 /**
  * To be documented
  * FIXME: To be fixed

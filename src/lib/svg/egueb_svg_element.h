@@ -27,6 +27,7 @@
 #include "egueb_svg_display.h"
 #include "egueb_svg_visibility.h"
 #include "egueb_svg_fill_rule.h"
+#include "egueb_svg_font_size.h"
 #include "egueb_svg_stroke_line_join.h"
 #include "egueb_svg_stroke_line_cap.h"
 #include "egueb_svg_clip_path.h"
@@ -43,6 +44,9 @@ EAPI Eina_Error egueb_svg_element_geometry_relative_set(Egueb_Dom_Node *n,
 
 EAPI void egueb_svg_element_clip_path_final_get(Egueb_Dom_Node *n,
 		Egueb_Svg_Clip_Path *clip_path);
+
+EAPI Eina_Error egueb_svg_element_font_size_set(Egueb_Dom_Node *n,
+		const Egueb_Svg_Font_Size *font_size);
 #if 0
 /* core */
 EAPI Egueb_Svg_Type egueb_svg_element_type_get(Ender_Element *e);

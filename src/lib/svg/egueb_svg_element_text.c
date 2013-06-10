@@ -18,6 +18,7 @@
 
 #include "egueb_svg_main_private.h"
 #include "egueb_svg_main.h"
+#include "egueb_svg_length.h"
 #include "egueb_svg_element_text.h"
 #include "egueb_svg_document.h"
 #include "egueb_svg_shape_private.h"
@@ -392,10 +393,6 @@ static void _egueb_svg_element_text_instance_deinit(void *o)
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
-
-/*============================================================================*
- *                                 Global                                     *
- *============================================================================*/
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/
@@ -407,31 +404,20 @@ EAPI Egueb_Dom_Node * egueb_svg_element_text_new(void)
 	return n;
 }
 
-#if 0
-EAPI void egueb_svg_element_text_x_set(Ender_Element *e, const Egueb_Svg_Coord *x)
+EAPI Eina_Error egueb_svg_element_text_x_set(Egueb_Dom_Node *n,
+		const Egueb_Svg_Length *x)
 {
-	egueb_svg_element_property_length_set(e, ESVG_ELEMENT_TEXT_X, x);
+	Egueb_Svg_Element_Text *thiz;
+
+	thiz = EGUEB_SVG_ELEMENT_TEXT(n);
+	return egueb_dom_attr_set(thiz->x, EGUEB_DOM_ATTR_TYPE_BASE, x);
 }
 
-EAPI void egueb_svg_element_text_x_get(Ender_Element *e, Egueb_Svg_Coord *x)
+EAPI Eina_Error egueb_svg_element_text_y_set(Egueb_Dom_Node *n,
+		const Egueb_Svg_Length *y)
 {
-}
+	Egueb_Svg_Element_Text *thiz;
 
-EAPI void egueb_svg_element_text_y_set(Ender_Element *e, const Egueb_Svg_Coord *y)
-{
-	egueb_svg_element_property_length_set(e, ESVG_ELEMENT_TEXT_Y, y);
+	thiz = EGUEB_SVG_ELEMENT_TEXT(n);
+	return egueb_dom_attr_set(thiz->y, EGUEB_DOM_ATTR_TYPE_BASE, y);
 }
-
-EAPI void egueb_svg_element_text_y_get(Ender_Element *e, Egueb_Svg_Coord *y)
-{
-}
-
-EAPI void egueb_svg_element_text_text_set(Ender_Element *e, const char *text)
-{
-	/* set the egueb_dom TEXT */
-}
-
-EAPI void egueb_svg_element_text_text_get(Ender_Element *e, const char **text)
-{
-}
-#endif

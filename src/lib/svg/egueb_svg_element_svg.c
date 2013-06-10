@@ -2001,14 +2001,7 @@ EAPI Eina_Error egueb_svg_element_svg_width_get(Egueb_Dom_Node *n,
 	Egueb_Svg_Element_Svg *thiz;
 
 	thiz = EGUEB_SVG_ELEMENT_SVG(n);
-	if (egueb_dom_attr_type_is_set(thiz->width, EGUEB_DOM_ATTR_TYPE_BASE))
-		egueb_dom_attr_get(thiz->width, EGUEB_DOM_ATTR_TYPE_BASE, &width->base);
-	else
-		egueb_dom_attr_get(thiz->width, EGUEB_DOM_ATTR_TYPE_DEFAULT, &width->base);
-	if (egueb_dom_attr_type_is_set(thiz->width, EGUEB_DOM_ATTR_TYPE_ANIMATED))
-		egueb_dom_attr_get(thiz->width, EGUEB_DOM_ATTR_TYPE_ANIMATED, &width->anim);
-	else
-		width->anim = width->base;
+	EGUEB_SVG_ELEMENT_ATTR_SIMPLE_GET(thiz->width, width);
 	return EINA_ERROR_NONE;
 }
 
@@ -2018,14 +2011,7 @@ EAPI Eina_Error egueb_svg_element_svg_height_get(Egueb_Dom_Node *n,
 	Egueb_Svg_Element_Svg *thiz;
 
 	thiz = EGUEB_SVG_ELEMENT_SVG(n);
-	if (egueb_dom_attr_type_is_set(thiz->height, EGUEB_DOM_ATTR_TYPE_BASE))
-		egueb_dom_attr_get(thiz->height, EGUEB_DOM_ATTR_TYPE_BASE, &height->base);
-	else
-		egueb_dom_attr_get(thiz->height, EGUEB_DOM_ATTR_TYPE_DEFAULT, &height->base);
-	if (egueb_dom_attr_type_is_set(thiz->height, EGUEB_DOM_ATTR_TYPE_ANIMATED))
-		egueb_dom_attr_get(thiz->height, EGUEB_DOM_ATTR_TYPE_ANIMATED, &height->anim);
-	else
-		height->anim = height->base;
+	EGUEB_SVG_ELEMENT_ATTR_SIMPLE_GET(thiz->height, height);
 	return EINA_ERROR_NONE;
 }
 

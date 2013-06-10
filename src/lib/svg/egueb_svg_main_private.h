@@ -82,24 +82,26 @@
 #endif
 #define DBG(...) EINA_LOG_DOM_DBG(ESVG_LOG_DEFAULT, __VA_ARGS__)
 
-/* all the possible magic numbers */
-#define ESVG_ELEMENT_MAGIC 0xe5500001
-/* basic abstractions */
-#define ESVG_RENDERABLE_MAGIC 0xe5500002
-#define ESVG_REFERENCEABLE_MAGIC 0xe5500003
-#define ESVG_INSTANTIABLE_MAGIC 0xe5500004
-#define ESVG_ELEMENT_ANIMATION_MAGIC 0xe5500005
-#define ESVG_PAINT_SERVER_MAGIC 0xe5500006
-
-#define ESVG_ELEMENT_GRADIENT_MAGIC 0xe5500010
-#define ESVG_PATTERN_MAGIC 0xe5500012
-
-#define ESVG_CLIP_PATH_MAGIC 0xe5500013
-#define ESVG_ELEMENT_IMAGE_MAGIC 0xe5500014
-
-#define ESVG_ANIMATE_BASE_MAGIC 0xe5500015
-
 extern int egueb_svg_log_dom_global;
 
-double eina_strtod(const char *nptr, char **endptr);
+#define EGUEB_SVG_ELEMENT_ATTR_SIMPLE_GET(attr, val)				\
+	if (egueb_dom_attr_type_is_set(attr, EGUEB_DOM_ATTR_TYPE_BASE))		\
+	{									\
+		egueb_dom_attr_get(attr, EGUEB_DOM_ATTR_TYPE_BASE, &val->base);	\
+	}									\
+	else									\
+	{									\
+		egueb_dom_attr_get(attr, EGUEB_DOM_ATTR_TYPE_DEFAULT,		\
+				&val->base);					\
+	}									\
+	if (egueb_dom_attr_type_is_set(attr, EGUEB_DOM_ATTR_TYPE_ANIMATED))	\
+	{									\
+		egueb_dom_attr_get(attr, EGUEB_DOM_ATTR_TYPE_ANIMATED,		\
+			&val->anim);						\
+	}									\
+	else									\
+	{									\
+		val->anim = val->base;						\
+	}
+
 #endif

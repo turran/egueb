@@ -20,14 +20,9 @@
 #define _EGUEB_SVG_ELEMENT_TEXT_H_
 
 EAPI Egueb_Dom_Node * egueb_svg_element_text_new(void);
-#if 0
-EAPI Eina_Bool egueb_svg_is_text(Ender_Element *e);
-EAPI void egueb_svg_element_text_x_set(Ender_Element *e, const Egueb_Svg_Coord *x);
-EAPI void egueb_svg_element_text_x_get(Ender_Element *e, Egueb_Svg_Coord *x);
-EAPI void egueb_svg_element_text_y_set(Ender_Element *e, const Egueb_Svg_Coord *y);
-EAPI void egueb_svg_element_text_y_get(Ender_Element *e, Egueb_Svg_Coord *y);
-EAPI void egueb_svg_element_text_text_set(Ender_Element *e, const char *text);
-EAPI void egueb_svg_element_text_text_get(Ender_Element *e, const char **text);
-#endif
-#endif
+EAPI Eina_Error egueb_svg_element_text_x_set(Egueb_Dom_Node *n,
+		const Egueb_Svg_Length *x);
+EAPI Eina_Error egueb_svg_element_text_y_set(Egueb_Dom_Node *n,
+		const Egueb_Svg_Length *y);
 
+#endif

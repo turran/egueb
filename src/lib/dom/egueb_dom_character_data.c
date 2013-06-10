@@ -22,6 +22,7 @@
 #include "egueb_dom_node.h"
 #include "egueb_dom_character_data.h"
 #include "egueb_dom_character_data_private.h"
+#include "egueb_dom_string_private.h"
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
@@ -114,6 +115,17 @@ EAPI Eina_Error egueb_dom_character_data_append_data(Egueb_Dom_Node *n,
 	enesim_text_buffer_string_insert(thiz->buffer,
 			egueb_dom_string_string_get(data), -1, len);
 	egueb_dom_string_unref(data);
+	return EINA_ERROR_NONE;
+}
+
+EAPI Eina_Error egueb_dom_character_data_append_data_inline(Egueb_Dom_Node *n,
+		const char *data)
+{
+	Egueb_Dom_String *s;
+
+	s = egueb_dom_string_new_with_static_string(data);
+	egueb_dom_character_data_append_data(n, s);
+	return EINA_ERROR_NONE;
 }
 
 #if 0

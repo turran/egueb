@@ -25,5 +25,7 @@ EAPI Eina_Error egueb_dom_character_data_length_get(Egueb_Dom_Node *n,
 		int *length);
 EAPI Eina_Error egueb_dom_character_data_append_data(Egueb_Dom_Node *n,
 		Egueb_Dom_String *data);
+EAPI Eina_Error egueb_dom_character_data_append_data_inline(Egueb_Dom_Node *n,
+		const char *data);
 
 #endif
