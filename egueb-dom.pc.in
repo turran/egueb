@@ -10,5 +10,5 @@ Name: Egueb DOM
 Description: Egueb DOM implementation
 Requires.private: eina
 Version: @VERSION@
-Libs: -L${libdir} -legueb_edom
+Libs: -L${libdir} -legueb_dom
 Cflags: -I${pkgincludedir}/svg
