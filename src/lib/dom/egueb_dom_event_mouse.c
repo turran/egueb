@@ -61,11 +61,11 @@ typedef struct _Egueb_Dom_Event_Mouse_Class
 } Egueb_Dom_Event_Mouse_Class;
 
 static Egueb_Dom_String _EGUEB_DOM_EVENT_MOUSE_CLICK = EGUEB_DOM_STRING_STATIC("click");
-static Egueb_Dom_String _EGUEB_DOM_EVENT_MOUSE_DOWN = EGUEB_DOM_STRING_STATIC("down");
-static Egueb_Dom_String _EGUEB_DOM_EVENT_MOUSE_UP = EGUEB_DOM_STRING_STATIC("up");
-static Egueb_Dom_String _EGUEB_DOM_EVENT_MOUSE_OVER = EGUEB_DOM_STRING_STATIC("over");
-static Egueb_Dom_String _EGUEB_DOM_EVENT_MOUSE_MOVE = EGUEB_DOM_STRING_STATIC("move");
-static Egueb_Dom_String _EGUEB_DOM_EVENT_MOUSE_OUT = EGUEB_DOM_STRING_STATIC("out");
+static Egueb_Dom_String _EGUEB_DOM_EVENT_MOUSE_DOWN = EGUEB_DOM_STRING_STATIC("mousedown");
+static Egueb_Dom_String _EGUEB_DOM_EVENT_MOUSE_UP = EGUEB_DOM_STRING_STATIC("mouseup");
+static Egueb_Dom_String _EGUEB_DOM_EVENT_MOUSE_OVER = EGUEB_DOM_STRING_STATIC("mouseover");
+static Egueb_Dom_String _EGUEB_DOM_EVENT_MOUSE_MOVE = EGUEB_DOM_STRING_STATIC("mousemove");
+static Egueb_Dom_String _EGUEB_DOM_EVENT_MOUSE_OUT = EGUEB_DOM_STRING_STATIC("mouseout");
 /*----------------------------------------------------------------------------*
  *                              Object interface                              *
  *----------------------------------------------------------------------------*/

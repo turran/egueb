@@ -1,5 +1,5 @@
-/* Esvg - SVG
- * Copyright (C) 2011 Jorge Luis Zapata, Vincent Torri
+/* Egueb
+ * Copyright (C) 2011 - 2013 Jorge Luis Zapata
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -15,15 +15,9 @@
  * License along with this library.
  * If not, see <http://www.gnu.org/licenses/>.
  */
-#include "egueb_svg_main_private.h"
-#include "egueb_svg_private_attribute_presentation.h"
-#include "egueb_svg_context_private.h"
-#include "egueb_svg_element_private.h"
-#include "egueb_svg_renderable_private.h"
-#include "egueb_svg_input_private.h"
 
-#include "egueb_svg_element.h"
-#include "egueb_svg_event.h"
+#include "egueb_svg_main_private.h"
+#include "egueb_svg_input_private.h"
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
@@ -35,8 +29,8 @@ struct _Egueb_Svg_Input
 	int x;
 	int y;
 	void *data;
-	Ender_Element *over;
-	Ender_Element *grabbed;
+	Egueb_Dom_Node *over;
+	Egueb_Dom_Node *grabbed;
 };
 /*============================================================================*
  *                                 Global                                     *
@@ -58,7 +52,7 @@ void egueb_svg_input_free(Egueb_Svg_Input *thiz)
 
 void egueb_svg_input_feed_mouse_down(Egueb_Svg_Input *thiz, int button)
 {
-	Egueb_Svg_Event_Mouse ev;
+	Egueb_Dom_Event *ev;
 	double rel_x, rel_y;
 
 	if (!thiz->over)
@@ -71,19 +65,19 @@ void egueb_svg_input_feed_mouse_down(Egueb_Svg_Input *thiz, int button)
 	thiz->downy = thiz->y;
 
 	//printf("mouse down! on %s\n", egueb_svg_element_name_get(thiz->over));
-	ender_event_dispatch(thiz->over, "mousedown", &ev);
+	//egueb_dom_node_event_dispatch(thiz->over, "mousedown", &ev);
 }
 
 void egueb_svg_input_feed_mouse_up(Egueb_Svg_Input *thiz, int button)
 {
-	Egueb_Svg_Event_Mouse ev;
+	Egueb_Dom_Event *ev;
 
 	/* send the event to the grabbed object */
 	if (!thiz->grabbed)
 		return;
 
 	//printf("mouse up! on %s\n", egueb_svg_element_name_get(thiz->grabbed));
-	ender_event_dispatch(thiz->grabbed, "mouseup", &ev);
+	//egueb_dom_node_event_dispatch(thiz->grabbed, "mouseup", &ev);
 	/* in case the down coordinates are the same as the current coordinates
 	 * send a click event
 	 */
@@ -92,7 +86,7 @@ void egueb_svg_input_feed_mouse_up(Egueb_Svg_Input *thiz, int button)
 			(fabs(thiz->downy - thiz->y) < 2))
 	{
 		//printf("mouse click! on %s\n", egueb_svg_element_name_get(thiz->grabbed));
-		ender_event_dispatch(thiz->grabbed, "click", &ev);
+		//egueb_dom_node_event_dispatch(thiz->grabbed, "click", &ev);
 	}
 	thiz->grabbed = NULL;
 
@@ -100,8 +94,8 @@ void egueb_svg_input_feed_mouse_up(Egueb_Svg_Input *thiz, int button)
 
 void egueb_svg_input_feed_mouse_move(Egueb_Svg_Input *thiz, int x, int y)
 {
-	Egueb_Svg_Event_Mouse ev;
-	Ender_Element *e;
+	Egueb_Dom_Event *ev;
+	Egueb_Dom_Node *n;
 
 	thiz->x = x;
 	thiz->y = y;
@@ -126,7 +120,7 @@ void egueb_svg_input_feed_mouse_move(Egueb_Svg_Input *thiz, int x, int y)
 			ev_ds.y = y;
 			ev_ds.rel_x = rel_x;
 			ev_ds.rel_y = rel_y;
-			ender_event_dispatch(thiz->grabbed,
+			egueb_dom_node_event_dispatch(thiz->grabbed,
 					eon_input_event_names[EON_INPUT_EVENT_MOUSE_DRAG_START], &ev_ds);
 			thiz->pointer.dragging = EINA_TRUE;
 		}
@@ -138,24 +132,24 @@ void egueb_svg_input_feed_mouse_move(Egueb_Svg_Input *thiz, int x, int y)
 		ev.rel_y = rel_y;
 		ev.offset_x = offset_x;
 		ev.offset_y = offset_y;
-		ender_event_dispatch(thiz->grabbed,
+		egueb_dom_node_event_dispatch(thiz->grabbed,
 					eon_input_event_names[EON_INPUT_EVENT_MOUSE_MOVE], &ev);
 
 		return;
 	}
 #endif
 	/* get the element at x,y */
-	e = thiz->descriptor->element_at(thiz->data, x, y);
-	ev.screen_x = x;
-	ev.screen_y = y;
+	n = thiz->descriptor->element_at(thiz->data, x, y);
+	//ev.screen_x = x;
+	//ev.screen_y = y;
 
-	if (e == thiz->over)
+	if (n == thiz->over)
 	{
 		/* send move */
-		if (e)
+		if (n)
 		{
-			ender_event_dispatch(e, "mousemove", &ev);
-			//printf("mouse move! on %s\n", egueb_svg_element_name_get(e));
+			//egueb_dom_node_event_dispatch(n, "mousemove", &ev);
+			//printf("mouse move! on %s\n", egueb_svg_element_name_get(n));
 		}
 	}
 	else
@@ -163,20 +157,20 @@ void egueb_svg_input_feed_mouse_move(Egueb_Svg_Input *thiz, int x, int y)
 		/* send out event on i->r */
 		if (thiz->over)
 		{
-			ender_event_dispatch(thiz->over, "mousemove", &ev);
-			ender_event_dispatch(thiz->over, "mouseout", &ev);
+			//egueb_dom_node_event_dispatch(thiz->over, "mousemove", &ev);
+			//egueb_dom_node_event_dispatch(thiz->over, "mouseout", &ev);
 			//printf("mouse out! on %s\n", egueb_svg_element_name_get(thiz->over));
 		}
 		/* send in event on r */
-		if (e)
+		if (n)
 		{
-			ender_event_dispatch(e, "mouseover", &ev);
-			ender_event_dispatch(e, "mousemove", &ev);
-			//printf("mouse in! %s\n", egueb_svg_element_name_get(e));
+			//egueb_dom_node_event_dispatch(n, "mouseover", &ev);
+			//egueb_dom_node_event_dispatch(n, "mousemove", &ev);
+			//printf("mouse in! %s\n", egueb_svg_element_name_get(n));
 		}
 	}
 	/* update the current over */
-	thiz->over = e;
+	thiz->over = n;
 }
 /*============================================================================*
  *                                   API                                      *
