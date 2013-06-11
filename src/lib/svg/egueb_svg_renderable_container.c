@@ -280,3 +280,11 @@ void egueb_svg_renderable_container_renderable_remove(Egueb_Svg_Renderable_Conta
  *                                   API                                      *
  *============================================================================*/
 #endif
+EAPI Eina_Bool egueb_svg_is_renderable_container(Egueb_Dom_Node *n)
+{
+	if (!n) return EINA_FALSE;
+	if (!enesim_object_instance_inherits(ENESIM_OBJECT_INSTANCE(n),
+			EGUEB_SVG_RENDERABLE_CONTAINER_DESCRIPTOR))
+		return EINA_FALSE;
+	return EINA_TRUE;
+}

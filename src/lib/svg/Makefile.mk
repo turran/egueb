@@ -53,6 +53,7 @@ src/lib/svg/egueb_svg_reference.h \
 src/lib/svg/egueb_svg_referenceable.h \
 src/lib/svg/egueb_svg_referenceable_units.h \
 src/lib/svg/egueb_svg_renderable.h \
+src/lib/svg/egueb_svg_renderable_container.h \
 src/lib/svg/egueb_svg_stroke_line_cap.h \
 src/lib/svg/egueb_svg_stroke_line_join.h \
 src/lib/svg/egueb_svg_visibility.h

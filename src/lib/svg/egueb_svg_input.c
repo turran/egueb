@@ -47,6 +47,17 @@ Egueb_Svg_Input * egueb_svg_input_new(Egueb_Svg_Input_Descriptor *descriptor, vo
 
 void egueb_svg_input_free(Egueb_Svg_Input *thiz)
 {
+	if (thiz->over)
+	{
+		egueb_dom_node_unref(thiz->over);
+		thiz->over = NULL;
+	}
+	if (thiz->grabbed)
+	{
+		egueb_dom_node_unref(thiz->grabbed);
+		thiz->over = NULL;
+	}
+
 	free(thiz);
 }
 

@@ -102,6 +102,7 @@
 #include "egueb_svg_reference.h"
 #include "egueb_svg_referenceable.h"
 #include "egueb_svg_renderable.h"
+#include "egueb_svg_renderable_container.h"
 
 /* document */
 #include "egueb_svg_document.h"

@@ -15,12 +15,10 @@
  * License along with this library.
  * If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef _EGUEB_DOM_EVENT_UI_H_
-#define _EGUEB_DOM_EVENT_UI_H_
 
-EAPI Eina_Error egueb_dom_event_ui_detail_get(Egueb_Dom_Event *n, int *detail);
-EAPI void egueb_dom_event_ui_init(Egueb_Dom_Event *e, Egueb_Dom_String *type,
-		Eina_Bool bubbleable, Eina_Bool cancelable, int detail);
+#ifndef _EGUEB_SVG_RENDERABLE_CONTAINER_H_
+#define _EGUEB_SVG_RENDERABLE_CONTAINER_H_
+
+EAPI Eina_Bool egueb_svg_is_renderable_container(Egueb_Dom_Node *n);
 
 #endif
-

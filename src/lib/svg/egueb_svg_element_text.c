@@ -308,7 +308,7 @@ static void _egueb_svg_element_text_bounds_get(Egueb_Svg_Renderable *r,
 static Egueb_Dom_String * _egueb_svg_element_text_tag_name_get(
 		Egueb_Dom_Element *e)
 {
-	return egueb_dom_string_ref(EGUEB_SVG_NAME_RECT);
+	return egueb_dom_string_ref(EGUEB_SVG_NAME_TEXT);
 }
 /*----------------------------------------------------------------------------*
  *                              Object interface                              *

@@ -39,6 +39,7 @@ src/lib/dom/egueb_dom_element_private.h \
 src/lib/dom/egueb_dom_event.c \
 src/lib/dom/egueb_dom_event_private.h \
 src/lib/dom/egueb_dom_event_mouse.c \
+src/lib/dom/egueb_dom_event_mouse_private.h \
 src/lib/dom/egueb_dom_event_mutation.c \
 src/lib/dom/egueb_dom_event_mutation_private.h \
 src/lib/dom/egueb_dom_event_ui.c \

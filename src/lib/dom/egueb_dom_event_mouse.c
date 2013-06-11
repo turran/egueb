@@ -21,6 +21,7 @@
 #include "egueb_dom_node.h"
 #include "egueb_dom_event.h"
 #include "egueb_dom_string_private.h"
+#include "egueb_dom_event_mouse.h"
 #include "egueb_dom_event_ui_private.h"
 /*============================================================================*
  *                                  Local                                     *
@@ -44,6 +45,11 @@ typedef struct _Egueb_Dom_Event_Mouse
 	int client_y;
 	int screen_x;
 	int screen_y;
+	Eina_Bool alt_key;
+	Eina_Bool ctrl_key;
+	Eina_Bool shift_key;
+	Eina_Bool meta_key;
+	int button;
 } Egueb_Dom_Event_Mouse;
 
 /* altKey of type boolean, readonly
@@ -83,6 +89,14 @@ static void _egueb_dom_event_mouse_instance_init(void *o)
 
 static void _egueb_dom_event_mouse_instance_deinit(void *o)
 {
+	Egueb_Dom_Event_Mouse *thiz;
+
+	thiz = EGUEB_DOM_EVENT_MOUSE(o);
+	if (thiz->related)
+	{
+		egueb_dom_node_unref(thiz->related);
+		thiz->related = NULL;
+	}
 }
 /*============================================================================*
  *                                 Global                                     *
@@ -92,6 +106,134 @@ Egueb_Dom_Event * egueb_dom_event_mouse_new(void)
 	Egueb_Dom_Event *event;
 	event = ENESIM_OBJECT_INSTANCE_NEW(egueb_dom_event_mouse);
 	return event;
+}
+
+void egueb_dom_event_mouse_click_init(Egueb_Dom_Event *e,
+		int screen_x, int screen_y, int client_x, int client_y,
+		Eina_Bool alt_key, Eina_Bool ctrl_key, Eina_Bool shift_key,
+		Eina_Bool meta_key, int button, int detail)
+{
+	Egueb_Dom_Event_Mouse *thiz;
+
+	thiz = EGUEB_DOM_EVENT_MOUSE(e);
+	thiz->screen_x = screen_x;
+	thiz->screen_y = screen_y;
+	thiz->client_x = client_x;
+	thiz->client_y = client_y;
+	thiz->alt_key = alt_key;
+	thiz->ctrl_key = ctrl_key;
+	thiz->shift_key = shift_key;
+	thiz->meta_key = meta_key;
+	thiz->button = button;
+	egueb_dom_event_ui_init(e, EGUEB_DOM_EVENT_MOUSE_CLICK,
+			EINA_TRUE, EINA_TRUE, detail);
+}
+
+void egueb_dom_event_mouse_down_init(Egueb_Dom_Event *e,
+		int screen_x, int screen_y, int client_x, int client_y,
+		Eina_Bool alt_key, Eina_Bool ctrl_key, Eina_Bool shift_key,
+		Eina_Bool meta_key, int button, int detail)
+{
+	Egueb_Dom_Event_Mouse *thiz;
+
+	thiz = EGUEB_DOM_EVENT_MOUSE(e);
+	thiz->screen_x = screen_x;
+	thiz->screen_y = screen_y;
+	thiz->client_x = client_x;
+	thiz->client_y = client_y;
+	thiz->alt_key = alt_key;
+	thiz->ctrl_key = ctrl_key;
+	thiz->shift_key = shift_key;
+	thiz->meta_key = meta_key;
+	thiz->button = button;
+	egueb_dom_event_ui_init(e, EGUEB_DOM_EVENT_MOUSE_DOWN,
+			EINA_TRUE, EINA_TRUE, detail);
+}
+
+void egueb_dom_event_mouse_up_init(Egueb_Dom_Event *e,
+		int screen_x, int screen_y, int client_x, int client_y,
+		Eina_Bool alt_key, Eina_Bool ctrl_key, Eina_Bool shift_key,
+		Eina_Bool meta_key, int button, int detail)
+{
+	Egueb_Dom_Event_Mouse *thiz;
+
+	thiz = EGUEB_DOM_EVENT_MOUSE(e);
+	thiz->screen_x = screen_x;
+	thiz->screen_y = screen_y;
+	thiz->client_x = client_x;
+	thiz->client_y = client_y;
+	thiz->alt_key = alt_key;
+	thiz->ctrl_key = ctrl_key;
+	thiz->shift_key = shift_key;
+	thiz->meta_key = meta_key;
+	thiz->button = button;
+	egueb_dom_event_ui_init(e, EGUEB_DOM_EVENT_MOUSE_UP,
+			EINA_TRUE, EINA_TRUE, detail);
+}
+
+void egueb_dom_event_mouse_move_init(Egueb_Dom_Event *e,
+		int screen_x, int screen_y, int client_x, int client_y,
+		Eina_Bool alt_key, Eina_Bool ctrl_key, Eina_Bool shift_key,
+		Eina_Bool meta_key, int button, int detail)
+{
+	Egueb_Dom_Event_Mouse *thiz;
+
+	thiz = EGUEB_DOM_EVENT_MOUSE(e);
+	thiz->screen_x = screen_x;
+	thiz->screen_y = screen_y;
+	thiz->client_x = client_x;
+	thiz->client_y = client_y;
+	thiz->alt_key = alt_key;
+	thiz->ctrl_key = ctrl_key;
+	thiz->shift_key = shift_key;
+	thiz->meta_key = meta_key;
+	thiz->button = button;
+	egueb_dom_event_ui_init(e, EGUEB_DOM_EVENT_MOUSE_MOVE,
+			EINA_TRUE, EINA_FALSE, detail);
+}
+
+void egueb_dom_event_mouse_over_init(Egueb_Dom_Event *e,
+		int screen_x, int screen_y, int client_x, int client_y,
+		Eina_Bool alt_key, Eina_Bool ctrl_key, Eina_Bool shift_key,
+		Eina_Bool meta_key, int button, int detail, Egueb_Dom_Node *related)
+{
+	Egueb_Dom_Event_Mouse *thiz;
+
+	thiz = EGUEB_DOM_EVENT_MOUSE(e);
+	thiz->screen_x = screen_x;
+	thiz->screen_y = screen_y;
+	thiz->client_x = client_x;
+	thiz->client_y = client_y;
+	thiz->alt_key = alt_key;
+	thiz->ctrl_key = ctrl_key;
+	thiz->shift_key = shift_key;
+	thiz->meta_key = meta_key;
+	thiz->button = button;
+	thiz->related = related;
+	egueb_dom_event_ui_init(e, EGUEB_DOM_EVENT_MOUSE_OVER,
+			EINA_TRUE, EINA_FALSE, detail);
+}
+
+void egueb_dom_event_mouse_out_init(Egueb_Dom_Event *e,
+		int screen_x, int screen_y, int client_x, int client_y,
+		Eina_Bool alt_key, Eina_Bool ctrl_key, Eina_Bool shift_key,
+		Eina_Bool meta_key, int button, int detail, Egueb_Dom_Node *related)
+{
+	Egueb_Dom_Event_Mouse *thiz;
+
+	thiz = EGUEB_DOM_EVENT_MOUSE(e);
+	thiz->screen_x = screen_x;
+	thiz->screen_y = screen_y;
+	thiz->client_x = client_x;
+	thiz->client_y = client_y;
+	thiz->alt_key = alt_key;
+	thiz->ctrl_key = ctrl_key;
+	thiz->shift_key = shift_key;
+	thiz->meta_key = meta_key;
+	thiz->button = button;
+	thiz->related = related;
+	egueb_dom_event_ui_init(e, EGUEB_DOM_EVENT_MOUSE_OUT,
+			EINA_TRUE, EINA_FALSE, detail);
 }
 /*============================================================================*
  *                                   API                                      *

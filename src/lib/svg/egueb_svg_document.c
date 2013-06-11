@@ -40,7 +40,9 @@
 #include "egueb_dom_document.h"
 /* abstracts */
 #include "egueb_svg_renderable.h"
+#include "egueb_svg_renderable_container.h"
 
+#include "egueb_svg_input_private.h"
 #include "egueb_dom_document_private.h"
 
 /*============================================================================*
@@ -66,6 +68,10 @@ typedef struct _Egueb_Svg_Document
 	int tw;
 	int th;
 
+	/* input */
+	Egueb_Svg_Input *input;
+
+	/* our own state */
 	double last_width;
 	double last_height;
 	Eina_Bool changed;
@@ -572,6 +578,82 @@ static Egueb_Dom_Uri_Descriptor _element_uri_descriptor = {
 	/* .relative_get 	= */ _egueb_svg_document_element_uri_relative_get,
 };
 /*----------------------------------------------------------------------------*
+ *                              Input interface                               *
+ *----------------------------------------------------------------------------*/
+static Egueb_Dom_Node * _egueb_svg_document_input_element_at_recursive(
+		Egueb_Dom_Node *n, Eina_Rectangle *ptr)
+{
+	Egueb_Dom_Node *ret = NULL;
+	Eina_Rectangle bounds;
+
+	if (!egueb_svg_is_renderable(n))
+		goto done;
+
+	if (egueb_svg_is_renderable_container(n))
+	{
+		Egueb_Dom_Node *child = NULL;
+		egueb_dom_node_child_first_get(n, &child);
+		while (child)
+		{
+			Egueb_Dom_Node *tmp;
+
+			ret = _egueb_svg_document_input_element_at_recursive(
+					egueb_dom_node_ref(child), ptr);
+			if (ret)
+			{
+				egueb_dom_node_unref(child);
+				break;
+			}
+
+			egueb_dom_node_sibling_next_get(child, &tmp);
+			egueb_dom_node_unref(child);
+			child = tmp;
+		}
+	}
+
+	if (!ret)
+	{
+		/* check the bounds */
+		egueb_svg_renderable_user_bounds_get(n, &bounds);
+		if (eina_rectangles_intersect(&bounds, ptr))
+		{
+			Egueb_Dom_String *name;
+
+			egueb_dom_node_name_get(n, &name);
+			ERR("Element '%s' found with bounds %"
+					EINA_RECTANGLE_FORMAT,
+					egueb_dom_string_string_get(name),
+					EINA_RECTANGLE_ARGS(&bounds));
+			egueb_dom_string_unref(name);
+			ret = egueb_dom_node_ref(n);
+		}
+	}
+done:
+	egueb_dom_node_unref(n);
+	return ret;
+}
+
+static Egueb_Dom_Node * _egueb_svg_document_input_element_at(void *data,
+		int x, int y)
+{
+	Egueb_Svg_Document *thiz = data;
+	Egueb_Dom_Node *n = NULL;
+	Egueb_Dom_Node *ret;
+	Eina_Rectangle ptr;
+
+	egueb_dom_document_element_get(EGUEB_DOM_NODE(thiz), &n);
+	if (!n) return NULL;
+
+	/* iterate over the whole tree */
+	eina_rectangle_coords_from(&ptr, x, y, 1, 1);
+	ret = _egueb_svg_document_input_element_at_recursive(n, &ptr);
+	return ret;
+}
+
+static Egueb_Svg_Input_Descriptor _document_svg_input_descriptor = {
+	/* .element_ad 		= */ _egueb_svg_document_input_element_at,
+};
+/*----------------------------------------------------------------------------*
  *                            Document interface                              *
  *----------------------------------------------------------------------------*/
 static Egueb_Dom_Node * _egueb_svg_document_class_element_create(
@@ -650,10 +732,15 @@ static void _egueb_svg_document_instance_init(void *o)
 
 	thiz = EGUEB_SVG_DOCUMENT(o);
 	thiz->font_size = 16;
+	thiz->input = egueb_svg_input_new(&_document_svg_input_descriptor, thiz);
 }
 
 static void _egueb_svg_document_instance_deinit(void *o)
 {
+	Egueb_Svg_Document *thiz;
+
+	thiz = EGUEB_SVG_DOCUMENT(o);
+	egueb_svg_input_free(thiz->input);
 }
 /*============================================================================*
  *                                 Global                                     *
@@ -851,12 +938,10 @@ EAPI Eina_Error egueb_svg_document_element_get_by_iri(Egueb_Dom_Node *n,
  */
 EAPI void egueb_svg_document_feed_mouse_move(Egueb_Dom_Node *n, int x, int y)
 {
-#if 0
-	Egueb_Svg_Document_Svg *thiz;
+	Egueb_Svg_Document *thiz;
 
-	thiz = EGUEB_SVG_DOCUMENT(t);
+	thiz = EGUEB_SVG_DOCUMENT(n);
 	egueb_svg_input_feed_mouse_move(thiz->input, x, y);
-#endif
 }
 
 /**
@@ -865,12 +950,10 @@ EAPI void egueb_svg_document_feed_mouse_move(Egueb_Dom_Node *n, int x, int y)
  */
 EAPI void egueb_svg_document_feed_mouse_down(Egueb_Dom_Node *n, int button)
 {
-#if 0
-	Egueb_Svg_Document_Svg *thiz;
+	Egueb_Svg_Document *thiz;
 
-	thiz = EGUEB_SVG_DOCUMENT(t);
+	thiz = EGUEB_SVG_DOCUMENT(n);
 	egueb_svg_input_feed_mouse_down(thiz->input, button);
-#endif
 }
 
 /**
@@ -879,12 +962,10 @@ EAPI void egueb_svg_document_feed_mouse_down(Egueb_Dom_Node *n, int button)
  */
 EAPI void egueb_svg_document_feed_mouse_up(Egueb_Dom_Node *n, int button)
 {
-#if 0
-	Egueb_Svg_Document_Svg *thiz;
+	Egueb_Svg_Document *thiz;
 
-	thiz = EGUEB_SVG_DOCUMENT(t);
+	thiz = EGUEB_SVG_DOCUMENT(n);
 	egueb_svg_input_feed_mouse_up(thiz->input, button);
-#endif
 }
 
 /**

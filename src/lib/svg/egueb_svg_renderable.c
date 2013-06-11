@@ -183,6 +183,17 @@ EAPI void egueb_svg_renderable_bounds_get(Egueb_Dom_Node *n,
 		klass->bounds_get(EGUEB_SVG_RENDERABLE(n), bounds);
 }
 
+EAPI void egueb_svg_renderable_user_bounds_get(Egueb_Dom_Node *n,
+		Eina_Rectangle *bounds)
+{
+	Enesim_Renderer *r;
+
+	r = egueb_svg_renderable_renderer_get(n);
+	if (!r) return;
+
+	enesim_renderer_destination_bounds(r, bounds, 0, 0);
+}
+
 EAPI Eina_Error egueb_svg_renderable_transform_get(Egueb_Dom_Node *n,
 		Egueb_Svg_Matrix_Animated *m)
 {

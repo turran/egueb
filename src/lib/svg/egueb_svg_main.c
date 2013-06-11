@@ -36,6 +36,7 @@ static void _egueb_svg_strings_init(void)
 	EGUEB_SVG_NAME_LINEAR_GRADIENT = egueb_dom_string_new_with_string("linearGradient");
 	EGUEB_SVG_NAME_RADIAL_GRADIENT = egueb_dom_string_new_with_string("radialGradient");
 	EGUEB_SVG_NAME_RECT = egueb_dom_string_new_with_string("rect");
+	EGUEB_SVG_NAME_TEXT = egueb_dom_string_new_with_string("text");
 	EGUEB_SVG_NAME_USE = egueb_dom_string_new_with_string("use");
 	EGUEB_SVG_NAME_STOP = egueb_dom_string_new_with_string("stop");
 	EGUEB_SVG_NAME_SVG = egueb_dom_string_new_with_string("svg");
@@ -94,6 +95,7 @@ static void _egueb_svg_strings_shutdown(void)
 	egueb_dom_string_unref(EGUEB_SVG_NAME_LINEAR_GRADIENT);
 	egueb_dom_string_unref(EGUEB_SVG_NAME_RADIAL_GRADIENT);
 	egueb_dom_string_unref(EGUEB_SVG_NAME_RECT);
+	egueb_dom_string_unref(EGUEB_SVG_NAME_TEXT);
 	egueb_dom_string_unref(EGUEB_SVG_NAME_USE);
 	egueb_dom_string_unref(EGUEB_SVG_NAME_STOP);
 	egueb_dom_string_unref(EGUEB_SVG_NAME_SVG);
@@ -207,6 +209,7 @@ Egueb_Dom_String *EGUEB_SVG_NAME_LINE;
 Egueb_Dom_String *EGUEB_SVG_NAME_LINEAR_GRADIENT;
 Egueb_Dom_String *EGUEB_SVG_NAME_RADIAL_GRADIENT;
 Egueb_Dom_String *EGUEB_SVG_NAME_RECT;
+Egueb_Dom_String *EGUEB_SVG_NAME_TEXT;
 Egueb_Dom_String *EGUEB_SVG_NAME_USE;
 Egueb_Dom_String *EGUEB_SVG_NAME_STOP;
 Egueb_Dom_String *EGUEB_SVG_NAME_SVG;
