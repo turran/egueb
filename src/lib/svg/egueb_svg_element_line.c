@@ -173,6 +173,14 @@ static void _egueb_svg_element_line_bounds_get(Egueb_Svg_Renderable *r,
 			fabs(thiz->gy1 - thiz->gy2));
 }
 /*----------------------------------------------------------------------------*
+ *                              Element interface                             *
+ *----------------------------------------------------------------------------*/
+static Egueb_Dom_String * _egueb_svg_element_line_tag_name_get(
+		Egueb_Dom_Element *e)
+{
+	return egueb_dom_string_ref(EGUEB_SVG_NAME_LINE);
+}
+/*----------------------------------------------------------------------------*
  *                              Object interface                              *
  *----------------------------------------------------------------------------*/
 EGUEB_DOM_ATTR_FETCH_DEFINE(egueb_svg_element_line, Egueb_Svg_Element_Line, x1);
@@ -188,6 +196,7 @@ static void _egueb_svg_element_line_class_init(void *k)
 {
 	Egueb_Svg_Shape_Class *klass;
 	Egueb_Svg_Renderable_Class *r_klass;
+	Egueb_Dom_Element_Class *e_klass;
 
 	klass = EGUEB_SVG_SHAPE_CLASS(k);
 	klass->generate_geometry = _egueb_svg_element_line_generate_geometry;
@@ -196,6 +205,9 @@ static void _egueb_svg_element_line_class_init(void *k)
 	r_klass = EGUEB_SVG_RENDERABLE_CLASS(k);
 	r_klass->renderer_get = _egueb_svg_element_line_renderer_get;
 	r_klass->bounds_get = _egueb_svg_element_line_bounds_get;
+
+	e_klass= EGUEB_DOM_ELEMENT_CLASS(k);
+	e_klass->tag_name_get = _egueb_svg_element_line_tag_name_get;
 }
 
 static void _egueb_svg_element_line_class_deinit(void *k)
