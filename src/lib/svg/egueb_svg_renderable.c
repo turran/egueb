@@ -120,6 +120,7 @@ static void _egueb_svg_renderable_instance_init(void *o)
 	EGUEB_DOM_ELEMENT_CLASS_PROPERTY_ADD(thiz, egueb_svg_renderable, transform);
 	/* create the main proxy renderer */
 	r = enesim_renderer_proxy_new();
+	enesim_renderer_rop_set(r, ENESIM_BLEND);
 	thiz->proxy = r;
 }
 

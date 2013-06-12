@@ -248,14 +248,13 @@ static Egueb_Dom_Value_Descriptor _descriptor;
 static void _egueb_svg_color_data_from(Egueb_Dom_Value *v, Egueb_Dom_Value_Data *data)
 {
 	EINA_SAFETY_ON_FALSE_RETURN(v->descriptor == &_descriptor);
-	v->data.ptr = data->ptr;
-	v->owned = EINA_FALSE;
+	egueb_dom_value_primitive_data_from(v, data);
 }
 
 static void _egueb_svg_color_data_to(Egueb_Dom_Value *v, Egueb_Dom_Value_Data *data)
 {
 	EINA_SAFETY_ON_FALSE_RETURN(v->descriptor == &_descriptor);
-	data->ptr = v->data.ptr;
+	egueb_dom_value_primitive_data_to(v, data);
 }
 
 static void _egueb_svg_color_free(Egueb_Dom_Value *v)

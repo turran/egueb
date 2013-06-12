@@ -305,6 +305,7 @@ static void _egueb_svg_element_svg_instance_init(void *o)
 	enesim_renderer_shape_draw_mode_set(r, ENESIM_SHAPE_DRAW_MODE_FILL);
 	enesim_renderer_rectangle_x_set(r, 0);
 	enesim_renderer_rectangle_y_set(r, 0);
+	enesim_renderer_rop_set(r, ENESIM_BLEND);
 	thiz->rectangle = r;
 
 	/* the animation system */

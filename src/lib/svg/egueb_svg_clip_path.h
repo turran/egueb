@@ -37,11 +37,11 @@ typedef struct _Egueb_Svg_Clip_Path
 	Egueb_Svg_Clip_Path_Value value;
 } Egueb_Svg_Clip_Path;
 
-typedef struct _Egueb_Svg_Animated_Clip_Path
+typedef struct _Egueb_Svg_Clip_Path_Animated
 {
 	Egueb_Svg_Clip_Path base;
 	Egueb_Svg_Clip_Path anim;
-} Egueb_Svg_Animated_Clip_Path;
+} Egueb_Svg_Clip_Path_Animated;
 
 #define EGUEB_SVG_CLIP_PATH_INIT { EGUEB_SVG_CLIP_PATH_TYPE_NONE, { NULL }}
 

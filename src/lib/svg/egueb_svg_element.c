@@ -1934,15 +1934,6 @@ EAPI Eina_Error egueb_svg_element_presentation_relative_set(Egueb_Dom_Node *n,
 	return EINA_ERROR_NONE;
 }
 
-EAPI void egueb_svg_element_clip_path_final_get(Egueb_Dom_Node *n,
-		Egueb_Svg_Clip_Path *clip_path)
-{
-	Egueb_Svg_Element *thiz;
-
-	thiz = EGUEB_SVG_ELEMENT(n);
-	egueb_dom_attr_final_get(thiz->clip_path, clip_path);
-}
-
 #if 0
 
 /**
@@ -2044,15 +2035,38 @@ EAPI void egueb_svg_element_style_get(Egueb_Dom_Node *n, const char **style)
  */
 EAPI void egueb_svg_element_clip_path_set(Egueb_Dom_Node *n, Egueb_Svg_Clip_Path *clip_path)
 {
+	Egueb_Svg_Element *thiz;
+
+	thiz = EGUEB_SVG_ELEMENT(n);
+	egueb_dom_attr_set(thiz->clip_path, EGUEB_DOM_ATTR_TYPE_BASE, clip_path);
 }
 
 /**
  * To be documented
  * FIXME: To be fixed
  */
-EAPI void egueb_svg_element_clip_path_unset(Egueb_Dom_Node *n)
+EAPI void egueb_svg_element_clip_path_get(Egueb_Dom_Node *n, Egueb_Svg_Clip_Path_Animated *clip_path)
 {
+	Egueb_Svg_Element *thiz;
+
+	thiz = EGUEB_SVG_ELEMENT(n);
+	EGUEB_SVG_ELEMENT_ATTR_PRIMITIVE_GET(thiz->clip_path, clip_path, egueb_svg_clip_path_copy);
+
 }
+
+/**
+ * To be documented
+ * FIXME: To be fixed
+ */
+EAPI void egueb_svg_element_clip_path_final_get(Egueb_Dom_Node *n,
+		Egueb_Svg_Clip_Path *clip_path)
+{
+	Egueb_Svg_Element *thiz;
+
+	thiz = EGUEB_SVG_ELEMENT(n);
+	egueb_dom_attr_final_get(thiz->clip_path, clip_path);
+}
+
 
 /**
  * To be documented
@@ -2095,16 +2109,25 @@ EAPI void egueb_svg_element_color_set(Egueb_Dom_Node *n, const Egueb_Svg_Color *
  * To be documented
  * FIXME: To be fixed
  */
-EAPI void egueb_svg_element_color_get(Egueb_Dom_Node *n, Egueb_Svg_Color *color)
+EAPI void egueb_svg_element_color_get(Egueb_Dom_Node *n, Egueb_Svg_Color_Animated *color)
 {
+	Egueb_Svg_Element *thiz;
+
+	thiz = EGUEB_SVG_ELEMENT(n);
+	EGUEB_SVG_ELEMENT_ATTR_SIMPLE_GET(thiz->color, color);
 }
 
 /**
  * To be documented
  * FIXME: To be fixed
  */
-EAPI void egueb_svg_element_color_unset(Egueb_Dom_Node *n)
+EAPI void egueb_svg_element_color_final_get(Egueb_Dom_Node *n,
+		Egueb_Svg_Color *color)
 {
+	Egueb_Svg_Element *thiz;
+
+	thiz = EGUEB_SVG_ELEMENT(n);
+	egueb_dom_attr_final_get(thiz->color, color);
 }
 
 /**
@@ -2123,8 +2146,25 @@ EAPI void egueb_svg_element_fill_set(Egueb_Dom_Node *n, const Egueb_Svg_Paint *f
  * To be documented
  * FIXME: To be fixed
  */
-EAPI void egueb_svg_element_fill_unset(Egueb_Dom_Node *n)
+EAPI void egueb_svg_element_fill_get(Egueb_Dom_Node *n, Egueb_Svg_Paint_Animated *fill)
 {
+	Egueb_Svg_Element *thiz;
+
+	thiz = EGUEB_SVG_ELEMENT(n);
+	EGUEB_SVG_ELEMENT_ATTR_PRIMITIVE_GET(thiz->fill, fill, egueb_svg_paint_copy);
+}
+
+/**
+ * To be documented
+ * FIXME: To be fixed
+ */
+EAPI void egueb_svg_element_fill_final_get(Egueb_Dom_Node *n,
+		Egueb_Svg_Paint *fill)
+{
+	Egueb_Svg_Element *thiz;
+
+	thiz = EGUEB_SVG_ELEMENT(n);
+	egueb_dom_attr_final_get(thiz->fill, fill);
 }
 
 /**
@@ -2183,14 +2223,35 @@ EAPI Eina_Error egueb_svg_element_font_size_set(Egueb_Dom_Node *n,
  */
 EAPI void egueb_svg_element_stroke_set(Egueb_Dom_Node *n, const Egueb_Svg_Paint *stroke)
 {
+	Egueb_Svg_Element *thiz;
+
+	thiz = EGUEB_SVG_ELEMENT(n);
+	egueb_dom_attr_set(thiz->stroke, EGUEB_DOM_ATTR_TYPE_BASE, stroke);
 }
 
 /**
  * To be documented
  * FIXME: To be fixed
  */
-EAPI void egueb_svg_element_stroke_unset(Egueb_Dom_Node *n)
+EAPI void egueb_svg_element_stroke_get(Egueb_Dom_Node *n, Egueb_Svg_Paint_Animated *stroke)
 {
+	Egueb_Svg_Element *thiz;
+
+	thiz = EGUEB_SVG_ELEMENT(n);
+	EGUEB_SVG_ELEMENT_ATTR_PRIMITIVE_GET(thiz->stroke, stroke, egueb_svg_paint_copy);
+}
+
+/**
+ * To be documented
+ * FIXME: To be fixed
+ */
+EAPI void egueb_svg_element_stroke_final_get(Egueb_Dom_Node *n,
+		Egueb_Svg_Paint *stroke)
+{
+	Egueb_Svg_Element *thiz;
+
+	thiz = EGUEB_SVG_ELEMENT(n);
+	egueb_dom_attr_final_get(thiz->stroke, stroke);
 }
 
 /**
