@@ -1996,6 +1996,25 @@ EAPI Eina_Bool egueb_svg_element_svg_draw_list(Egueb_Dom_Node *n, Enesim_Surface
 	return ret;
 }
 
+/**
+ * To be documented
+ * FIXME: To be fixed
+ */
+EAPI Eina_Bool egueb_svg_element_svg_fill_list(Egueb_Dom_Node *n, Enesim_Surface *s,
+		Eina_List *clips, int x, int y, Enesim_Log **error)
+{
+	Enesim_Renderer *r;
+	Eina_Bool ret;
+
+	r = egueb_svg_renderable_renderer_get(n);
+	if (!r) return EINA_FALSE;
+
+	enesim_renderer_rop_set(r, ENESIM_FILL);
+	ret = enesim_renderer_draw_list(r, s, clips, x, y, error);
+	enesim_renderer_unref(r);
+	return ret;
+}
+
 EAPI Eina_Error egueb_svg_element_svg_width_get(Egueb_Dom_Node *n,
 		Egueb_Svg_Length_Animated *width)
 {

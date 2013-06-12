@@ -106,14 +106,16 @@ EAPI Eina_Error egueb_dom_character_data_append_data(Egueb_Dom_Node *n,
 		Egueb_Dom_String *data)
 {
 	Egueb_Dom_Character_Data *thiz;
+	const char *str;
 	int len;
 
 	if (!data) return EGUEB_DOM_ERROR_NOT_FOUND;
+	str = egueb_dom_string_string_get(data);
+	if (!str) return EGUEB_DOM_ERROR_NOT_FOUND;
 
 	thiz = EGUEB_DOM_CHARACTER_DATA(n);
 	len = enesim_text_buffer_string_length(thiz->buffer);
-	enesim_text_buffer_string_insert(thiz->buffer,
-			egueb_dom_string_string_get(data), -1, len);
+	enesim_text_buffer_string_insert(thiz->buffer, str, -1, len);
 	egueb_dom_string_unref(data);
 	return EINA_ERROR_NONE;
 }
