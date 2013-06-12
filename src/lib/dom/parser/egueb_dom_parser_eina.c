@@ -246,9 +246,14 @@ static Eina_Bool _egueb_dom_parser_eina_cb(void *data, Eina_Simple_XML_Type type
 		_egueb_dom_parser_eina_tag_cdata_set(thiz, content, length);
 		break;
 
+#if 0
+		/* FIXME once we start adding support for the doctype, we need
+		 * to check the eina version with a macro
+		 */
 		case EINA_SIMPLE_XML_DOCTYPE_CHILD:
 		_egueb_dom_parser_eina_doctype_child(thiz, content, length);
 		break;
+#endif
 
 		case EINA_SIMPLE_XML_IGNORED:
 		case EINA_SIMPLE_XML_COMMENT:
