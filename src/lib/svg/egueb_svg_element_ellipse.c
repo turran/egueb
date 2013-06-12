@@ -101,7 +101,7 @@ static Eina_Bool _egueb_svg_element_ellipse_generate_geometry(Egueb_Svg_Shape *s
 	/* update the viewbox */
 	enesim_rectangle_coords_from(&e->viewbox, thiz->gcx - thiz->grx, thiz->gcy - thiz->gry,
 			thiz->grx * 2, thiz->gry * 2);
- 
+
 	DBG("cx: %g, cy: %g, rx: %g, ry: %g", thiz->gcx, thiz->gcy, thiz->grx, thiz->gry);
 
 	return EINA_TRUE;
@@ -131,6 +131,14 @@ static void _egueb_svg_element_ellipse_bounds_get(Egueb_Svg_Renderable *r,
 			thiz->grx * 2, thiz->gry * 2);
 }
 /*----------------------------------------------------------------------------*
+ *                              Element interface                             *
+ *----------------------------------------------------------------------------*/
+static Egueb_Dom_String * _egueb_svg_element_ellipse_tag_name_get(
+		Egueb_Dom_Element *e)
+{
+	return egueb_dom_string_ref(EGUEB_SVG_NAME_ELLIPSE);
+}
+/*----------------------------------------------------------------------------*
  *                              Object interface                              *
  *----------------------------------------------------------------------------*/
 EGUEB_DOM_ATTR_FETCH_DEFINE(egueb_svg_element_ellipse, Egueb_Svg_Element_Ellipse, cx);
@@ -146,6 +154,7 @@ static void _egueb_svg_element_ellipse_class_init(void *k)
 {
 	Egueb_Svg_Shape_Class *klass;
 	Egueb_Svg_Renderable_Class *r_klass;
+	Egueb_Dom_Element_Class *e_klass;
 
 	klass = EGUEB_SVG_SHAPE_CLASS(k);
 	klass->generate_geometry = _egueb_svg_element_ellipse_generate_geometry;
@@ -153,6 +162,9 @@ static void _egueb_svg_element_ellipse_class_init(void *k)
 	r_klass = EGUEB_SVG_RENDERABLE_CLASS(k);
 	r_klass->renderer_get = _egueb_svg_element_ellipse_renderer_get;
 	r_klass->bounds_get = _egueb_svg_element_ellipse_bounds_get;
+
+	e_klass= EGUEB_DOM_ELEMENT_CLASS(k);
+	e_klass->tag_name_get = _egueb_svg_element_ellipse_tag_name_get;
 }
 
 static void _egueb_svg_element_ellipse_class_deinit(void *k)
