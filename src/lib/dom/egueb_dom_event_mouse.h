@@ -29,6 +29,7 @@ extern Egueb_Dom_String *EGUEB_DOM_EVENT_MOUSE_MOVE;
 extern Egueb_Dom_String *EGUEB_DOM_EVENT_MOUSE_OUT;
 
 EAPI Eina_Error egueb_dom_event_mouse_related_get(Egueb_Dom_Event *e, Egueb_Dom_Node **related);
+EAPI Egueb_Dom_Event * egueb_dom_event_mouse_new(void);
 
 #endif
 

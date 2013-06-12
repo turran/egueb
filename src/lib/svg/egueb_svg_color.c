@@ -467,5 +467,13 @@ EAPI Eina_Bool egueb_svg_color_string_from(Egueb_Svg_Color *color, const char *a
 
 EAPI char * egueb_svg_color_string_to(Egueb_Svg_Color *thiz)
 {
+	ERR("TODO");
 	return NULL;
+}
+
+EAPI void egueb_svg_color_components_from(Egueb_Svg_Color *thiz, uint8_t r, uint8_t g, uint8_t b)
+{
+	thiz->r = r;
+	thiz->g = g;
+	thiz->b = b;
 }

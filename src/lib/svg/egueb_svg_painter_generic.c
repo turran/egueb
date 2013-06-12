@@ -118,7 +118,8 @@ static void _egueb_svg_renderable_paint_set(Egueb_Dom_Node *n,
 	}
 	else if (current->type == EGUEB_SVG_PAINT_TYPE_CURRENT_COLOR)
 	{
-		DBG("Paint type 'currentColor'");
+		DBG("Paint type 'currentColor' %02x %02x %02x", current_color->r,
+				current_color->g, current_color->b);
 		enesim_color_components_from(rcolor,
 				op, current_color->r, current_color->g, current_color->b);
 		*rdraw_mode |= mode;
@@ -288,10 +289,10 @@ static Eina_Bool _egueb_svg_painter_generic_resolve(Egueb_Svg_Painter *p,
 	egueb_dom_node_unref(doc);
 
 	/* finally dump the painter */
-	DBG("Common visibility: %d, opacity %08x", p->visibility, p->color);
-	DBG("Shape draw_mode: %08x", p->draw_mode);
-	DBG("Fill color: %08x, renderer: %p", p->fill_color, p->fill_renderer);
-	DBG("Stroke color: %08x, renderer: %p", p->stroke_color, p->stroke_renderer);
+	INFO("Common visibility: %d, opacity %08x", p->visibility, p->color);
+	INFO("Shape draw_mode: %08x", p->draw_mode);
+	INFO("Fill color: %08x, renderer: %p", p->fill_color, p->fill_renderer);
+	INFO("Stroke color: %08x, renderer: %p", p->stroke_color, p->stroke_renderer);
 #if 0
 	/* FIXME there are cases where this is not needed, liek the 'use' given that
 	 * the 'g' will do it

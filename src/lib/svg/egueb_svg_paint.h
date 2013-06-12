@@ -46,6 +46,7 @@ typedef struct _Egueb_Svg_Paint_Animated
 
 extern const Egueb_Svg_Paint EGUEB_SVG_PAINT_BLACK;
 extern const Egueb_Svg_Paint EGUEB_SVG_PAINT_NONE;
+extern const Egueb_Svg_Paint EGUEB_SVG_PAINT_CURRENT_COLOR;
 
 EAPI const Egueb_Dom_Value_Descriptor * egueb_svg_paint_descriptor_get(void);
 

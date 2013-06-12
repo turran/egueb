@@ -2085,6 +2085,10 @@ EAPI void egueb_svg_element_opacity_unset(Egueb_Dom_Node *n)
  */
 EAPI void egueb_svg_element_color_set(Egueb_Dom_Node *n, const Egueb_Svg_Color *color)
 {
+	Egueb_Svg_Element *thiz;
+
+	thiz = EGUEB_SVG_ELEMENT(n);
+	egueb_dom_attr_set(thiz->color, EGUEB_DOM_ATTR_TYPE_BASE, color);
 }
 
 /**
@@ -2109,6 +2113,10 @@ EAPI void egueb_svg_element_color_unset(Egueb_Dom_Node *n)
  */
 EAPI void egueb_svg_element_fill_set(Egueb_Dom_Node *n, const Egueb_Svg_Paint *fill)
 {
+	Egueb_Svg_Element *thiz;
+
+	thiz = EGUEB_SVG_ELEMENT(n);
+	egueb_dom_attr_set(thiz->fill, EGUEB_DOM_ATTR_TYPE_BASE, fill);
 }
 
 /**

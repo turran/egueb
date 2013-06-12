@@ -17,6 +17,8 @@
  */
 
 #include "egueb_svg_main_private.h"
+#include "egueb_svg_main.h"
+#include "egueb_dom_event_mouse_private.h"
 #include "egueb_svg_input_private.h"
 /*============================================================================*
  *                                  Local                                     *
@@ -105,7 +107,6 @@ void egueb_svg_input_feed_mouse_up(Egueb_Svg_Input *thiz, int button)
 
 void egueb_svg_input_feed_mouse_move(Egueb_Svg_Input *thiz, int x, int y)
 {
-	Egueb_Dom_Event *ev;
 	Egueb_Dom_Node *n;
 
 	thiz->x = x;
@@ -159,8 +160,13 @@ void egueb_svg_input_feed_mouse_move(Egueb_Svg_Input *thiz, int x, int y)
 		/* send move */
 		if (n)
 		{
-			//egueb_dom_node_event_dispatch(n, "mousemove", &ev);
-			//printf("mouse move! on %s\n", egueb_svg_element_name_get(n));
+			Egueb_Dom_Event *ev;
+
+			ev = egueb_dom_event_mouse_new();
+			egueb_dom_event_mouse_move_init(ev, x, y, x, y,
+					EINA_FALSE, EINA_FALSE, EINA_FALSE,
+					EINA_FALSE, 0, 0);
+			egueb_dom_node_event_dispatch(egueb_dom_node_ref(n), ev, NULL);
 		}
 	}
 	else
@@ -168,19 +174,37 @@ void egueb_svg_input_feed_mouse_move(Egueb_Svg_Input *thiz, int x, int y)
 		/* send out event on i->r */
 		if (thiz->over)
 		{
+
+			Egueb_Dom_Event *ev;
+
 			//egueb_dom_node_event_dispatch(thiz->over, "mousemove", &ev);
-			//egueb_dom_node_event_dispatch(thiz->over, "mouseout", &ev);
-			//printf("mouse out! on %s\n", egueb_svg_element_name_get(thiz->over));
+			ev = egueb_dom_event_mouse_new();
+			egueb_dom_event_mouse_out_init(ev, x, y, x, y,
+					EINA_FALSE, EINA_FALSE, EINA_FALSE,
+					EINA_FALSE, 0, 0, n ? egueb_dom_node_ref(n) : NULL);
+			egueb_dom_node_event_dispatch(egueb_dom_node_ref(thiz->over), ev, NULL);
+			DBG("Out");
 		}
 		/* send in event on r */
 		if (n)
 		{
-			//egueb_dom_node_event_dispatch(n, "mouseover", &ev);
+			Egueb_Dom_Event *ev;
+
+			ev = egueb_dom_event_mouse_new();
+			egueb_dom_event_mouse_over_init(ev, x, y, x, y,
+					EINA_FALSE, EINA_FALSE, EINA_FALSE,
+					EINA_FALSE, 0, 0, thiz->over ? egueb_dom_node_ref(thiz->over) : NULL);
+			egueb_dom_node_event_dispatch(egueb_dom_node_ref(n), ev, NULL);
 			//egueb_dom_node_event_dispatch(n, "mousemove", &ev);
-			//printf("mouse in! %s\n", egueb_svg_element_name_get(n));
+			DBG("Over");
 		}
 	}
+
 	/* update the current over */
+	if (thiz->over)
+	{
+		egueb_dom_node_unref(thiz->over);
+	}
 	thiz->over = n;
 }
 /*============================================================================*

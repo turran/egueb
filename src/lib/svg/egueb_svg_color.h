@@ -23,9 +23,9 @@
  */
 typedef struct _Egueb_Svg_Color
 {
-	uint32_t r;
-	uint32_t g;
-	uint32_t b;
+	uint8_t r;
+	uint8_t g;
+	uint8_t b;
 } Egueb_Svg_Color;
 
 typedef struct _Egueb_Svg_Color_Animated
@@ -40,5 +40,6 @@ EAPI const Egueb_Dom_Value_Descriptor * egueb_svg_color_descriptor_get(void);
 EAPI Eina_Bool egueb_svg_color_string_from(Egueb_Svg_Color *color, const char *attr_val);
 EAPI char * egueb_svg_color_string_to(Egueb_Svg_Color *thiz);
 EAPI Eina_Bool egueb_svg_color_is_equal(const Egueb_Svg_Color *c1, const Egueb_Svg_Color *c2);
+EAPI void egueb_svg_color_components_from(Egueb_Svg_Color *thiz, uint8_t r, uint8_t g, uint8_t b);
 
 #endif

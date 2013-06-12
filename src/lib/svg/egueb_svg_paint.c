@@ -112,6 +112,12 @@ const Egueb_Svg_Paint EGUEB_SVG_PAINT_NONE = {
 	NULL
 };
 
+const Egueb_Svg_Paint EGUEB_SVG_PAINT_CURRENT_COLOR = {
+	EGUEB_SVG_PAINT_TYPE_CURRENT_COLOR,
+	{ 0, 0, 0 },
+	NULL
+};
+
 EAPI const Egueb_Dom_Value_Descriptor * egueb_svg_paint_descriptor_get(void)
 {
 	return &_descriptor;

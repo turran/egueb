@@ -101,13 +101,6 @@ static void _egueb_dom_event_mouse_instance_deinit(void *o)
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
-Egueb_Dom_Event * egueb_dom_event_mouse_new(void)
-{
-	Egueb_Dom_Event *event;
-	event = ENESIM_OBJECT_INSTANCE_NEW(egueb_dom_event_mouse);
-	return event;
-}
-
 void egueb_dom_event_mouse_click_init(Egueb_Dom_Event *e,
 		int screen_x, int screen_y, int client_x, int client_y,
 		Eina_Bool alt_key, Eina_Bool ctrl_key, Eina_Bool shift_key,
@@ -258,3 +251,9 @@ EAPI Eina_Error egueb_dom_event_mouse_related_get(Egueb_Dom_Event *e, Egueb_Dom_
 	return EINA_ERROR_NONE;
 }
 
+EAPI Egueb_Dom_Event * egueb_dom_event_mouse_new(void)
+{
+	Egueb_Dom_Event *event;
+	event = ENESIM_OBJECT_INSTANCE_NEW(egueb_dom_event_mouse);
+	return event;
+}

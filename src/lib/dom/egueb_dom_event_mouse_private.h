@@ -34,7 +34,7 @@ void egueb_dom_event_mouse_up_init(Egueb_Dom_Event *e,
 void egueb_dom_event_mouse_move_init(Egueb_Dom_Event *e,
 		int screen_x, int screen_y, int client_x, int client_y,
 		Eina_Bool alt_key, Eina_Bool ctrl_key, Eina_Bool shift_key,
-		Eina_Bool meta_key, int button, int detail)
+		Eina_Bool meta_key, int button, int detail);
 void egueb_dom_event_mouse_over_init(Egueb_Dom_Event *e,
 		int screen_x, int screen_y, int client_x, int client_y,
 		Eina_Bool alt_key, Eina_Bool ctrl_key, Eina_Bool shift_key,
