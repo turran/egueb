@@ -28,7 +28,7 @@ struct _Egueb_Dom_Node
 	EINA_INLIST;
 	Egueb_Dom_Node *parent;
 	Eina_Inlist *children;
-	Egueb_Dom_Document *owner_document;
+	Egueb_Dom_Node *owner_document;
 
 	/* event related data */
 	Eina_Hash *events;
@@ -67,6 +67,6 @@ Enesim_Object_Descriptor * egueb_dom_node_descriptor_get(void);
 		Egueb_Dom_Node, EGUEB_DOM_NODE_DESCRIPTOR)
 
 void egueb_dom_node_document_set(Egueb_Dom_Node *thiz,
-		Egueb_Dom_Document *document);
+		Egueb_Dom_Node *document);
 
 #endif

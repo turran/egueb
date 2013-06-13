@@ -205,7 +205,7 @@ static void _egueb_dom_node_instance_deinit(void *o)
  * event per target
  */
 static void _egueb_dom_node_document_set(Egueb_Dom_Node *thiz,
-		Egueb_Dom_Event *evt, Egueb_Dom_Document *document)
+		Egueb_Dom_Event *evt, Egueb_Dom_Node *document)
 {
 	Egueb_Dom_Node *child;
 
@@ -224,9 +224,16 @@ static void _egueb_dom_node_document_set(Egueb_Dom_Node *thiz,
  *                                 Global                                     *
  *============================================================================*/
 void egueb_dom_node_document_set(Egueb_Dom_Node *thiz,
-		Egueb_Dom_Document *document)
+		Egueb_Dom_Node *document)
 {
 	Egueb_Dom_Event *event;
+
+	if (document)
+	{
+		Egueb_Dom_Node_Type type;
+		egueb_dom_node_type_get(document, &type);
+		if (type != EGUEB_DOM_NODE_TYPE_DOCUMENT_NODE) return;
+	}
 
 	/* first remove */
 	if ((document != thiz->owner_document) && (thiz->owner_document))

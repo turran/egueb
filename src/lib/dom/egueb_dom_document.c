@@ -339,7 +339,7 @@ EAPI Eina_Error egueb_dom_document_element_create(Egueb_Dom_Node *n,
 	if (new_element)
 	{
 		/* TODO keep track of the document inserted event */
-		egueb_dom_node_document_set(new_element, thiz);
+		egueb_dom_node_document_set(new_element, EGUEB_DOM_NODE(thiz));
 		if (!thiz->element)
 		{
 			egueb_dom_document_element_set(n, new_element);
@@ -392,7 +392,7 @@ EAPI Eina_Error egueb_dom_document_element_set(Egueb_Dom_Node *n,
 	if (element)
 	{
 		/* TODO keep track of every node inserted here */
-		egueb_dom_node_document_set(element, thiz);
+		egueb_dom_node_document_set(element, n);
 		/* register the needed events */
 		egueb_dom_node_event_listener_add(element,
 				EGUEB_DOM_EVENT_MUTATION_NODE_INSERTED,

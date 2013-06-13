@@ -266,7 +266,7 @@ static Egueb_Svg_Reference * _egueb_svg_element_clip_path_reference_new(
 		Egueb_Dom_Node *doc;
 
 		egueb_dom_node_document_get(EGUEB_DOM_NODE(r), &doc);
-		egueb_dom_node_document_set(EGUEB_DOM_NODE(g), EGUEB_DOM_DOCUMENT(doc));
+		egueb_dom_node_document_set(EGUEB_DOM_NODE(g), doc);
 		egueb_dom_node_unref(doc);
 	}
 	/* make the group get the presentation attributes from ourelves and
