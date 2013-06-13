@@ -67,7 +67,7 @@ static Eina_Bool _egueb_svg_element_tspan_mutation_get_tspan(Egueb_Dom_Event *e,
 
 	egueb_dom_event_target_get(e, &target);
 	egueb_dom_node_type_get(target, &type);
-	if (type != EGUEB_DOM_NODE_TYPE_TSPAN_NODE)
+	if (type != EGUEB_DOM_NODE_TYPE_TEXT_NODE)
 	{
 		goto not_tspan;
 	}
@@ -90,15 +90,15 @@ static void _egueb_svg_element_tspan_node_inserted_cb(Egueb_Dom_Event *e,
 	if (_egueb_svg_element_tspan_mutation_get_tspan(e, n, &tspan))
 	{
 		Egueb_Svg_Element_Tspan *thiz;
-		Enesim_Tspan_Buffer *nb = NULL;
+		Enesim_Text_Buffer *nb = NULL;
 
 		thiz = EGUEB_SVG_ELEMENT_TSPAN(n);
 		/* set the internal buffer of the tspan span to be the one
 		 * on the tspan node */
 		egueb_dom_character_data_buffer_get(tspan, &nb);
-		enesim_renderer_tspan_span_real_buffer_set(thiz->r, nb);
+		enesim_renderer_text_span_real_buffer_set(thiz->r, nb);
 		/* now make the tspan node to use our own buffer from now on */
-		enesim_renderer_tspan_span_buffer_get(thiz->r, &nb);
+		enesim_renderer_text_span_buffer_get(thiz->r, &nb);
 		egueb_dom_character_data_buffer_set(tspan, nb);
 		egueb_dom_node_unref(tspan);
 	}
@@ -113,10 +113,10 @@ static void _egueb_svg_element_tspan_node_removed_cb(Egueb_Dom_Event *e,
 	if (_egueb_svg_element_tspan_mutation_get_tspan(e, n, &tspan))
 	{
 		Egueb_Svg_Element_Tspan *thiz;
-		Enesim_Tspan_Buffer *nb;
+		Enesim_Text_Buffer *nb;
 
 		thiz = EGUEB_SVG_ELEMENT_TSPAN(n);
-		enesim_renderer_tspan_span_real_buffer_get(thiz->r, &nb);
+		enesim_renderer_text_span_real_buffer_get(thiz->r, &nb);
 		egueb_dom_character_data_buffer_set(tspan, nb);
 		egueb_dom_node_unref(tspan);
 	}
@@ -172,8 +172,8 @@ static Eina_Bool _egueb_svg_element_tspan_generate_geometry(Egueb_Svg_Shape *s)
 	egueb_dom_attr_final_get(e->font_size, &font_size);
 	gfont = egueb_svg_font_size_final_get(&font_size, e_parent->viewbox.w, e_parent->viewbox.h, doc_font_size, doc_font_size);
 
-	enesim_renderer_tspan_span_size_set(thiz->r, ceil(gfont));
-	enesim_renderer_tspan_span_max_ascent_get(thiz->r, &max);
+	enesim_renderer_text_span_size_set(thiz->r, ceil(gfont));
+	enesim_renderer_text_span_max_ascent_get(thiz->r, &max);
 	enesim_renderer_origin_set(thiz->r, thiz->gx, thiz->gy - max);
 
 	DBG("matrix %" ENESIM_MATRIX_FORMAT, ENESIM_MATRIX_ARGS (&e->transform));
@@ -271,10 +271,9 @@ static void _egueb_svg_element_tspan_instance_init(void *o)
 	Enesim_Renderer *r;
 
 	thiz = EGUEB_SVG_ELEMENT_TSPAN(o);
-	thiz->r = enesim_renderer_tspan_span_new();
-	enesim_renderer_tspan_span_font_name_set(thiz->r, "/usr/share/fonts/truetype/freefont/FreeSans.ttf");
+	thiz->r = enesim_renderer_text_span_new();
+	enesim_renderer_text_span_font_name_set(thiz->r, "/usr/share/fonts/truetype/freefont/FreeSans.ttf");
 	enesim_renderer_color_set(thiz->r, 0xff000000);
-	enesim_renderer_tspan_span_tspan_set(thiz->r, "Hello");
 
 	/* Default values */
 	enesim_renderer_rop_set(thiz->r, ENESIM_BLEND);

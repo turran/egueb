@@ -37,6 +37,7 @@
 #include "egueb_svg_element_stop.h"
 #include "egueb_svg_element_svg.h"
 #include "egueb_svg_element_text.h"
+#include "egueb_svg_element_tspan.h"
 #include "egueb_dom_document.h"
 /* abstracts */
 #include "egueb_svg_renderable.h"
@@ -372,6 +373,11 @@ static Eina_Bool _egueb_svg_document_element_id_get(const char *name, size_t sz,
 				*id = EGUEB_SVG_TYPE_TEXT;
 				return EINA_TRUE;
 			}
+			else if (strncmp("tspan", name, sz) == 0)
+			{
+				*id = EGUEB_SVG_TYPE_TSPAN;
+				return EINA_TRUE;
+			}
 		}
 		else if (name[0] == 'u')
 		{
@@ -455,6 +461,10 @@ static Egueb_Dom_Node * _egueb_svg_document_element_create(int id)
 #endif
 		case EGUEB_SVG_TYPE_TEXT:
 		ret = egueb_svg_element_text_new();
+		break;
+
+		case EGUEB_SVG_TYPE_TSPAN:
+		ret = egueb_svg_element_tspan_new();
 		break;
 
 		case EGUEB_SVG_TYPE_G:

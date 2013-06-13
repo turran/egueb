@@ -38,6 +38,7 @@ extern Egueb_Dom_String *EGUEB_SVG_NAME_LINEAR_GRADIENT;
 extern Egueb_Dom_String *EGUEB_SVG_NAME_RADIAL_GRADIENT;
 extern Egueb_Dom_String *EGUEB_SVG_NAME_RECT;
 extern Egueb_Dom_String *EGUEB_SVG_NAME_TEXT;
+extern Egueb_Dom_String *EGUEB_SVG_NAME_TSPAN;
 extern Egueb_Dom_String *EGUEB_SVG_NAME_USE;
 extern Egueb_Dom_String *EGUEB_SVG_NAME_STOP;
 extern Egueb_Dom_String *EGUEB_SVG_NAME_SVG;

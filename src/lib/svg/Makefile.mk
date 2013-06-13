@@ -36,6 +36,7 @@ src/lib/svg/egueb_svg_element_use.h \
 src/lib/svg/egueb_svg_element_stop.h \
 src/lib/svg/egueb_svg_element_svg.h \
 src/lib/svg/egueb_svg_element_text.h \
+src/lib/svg/egueb_svg_element_tspan.h \
 src/lib/svg/egueb_svg_fill_rule.h \
 src/lib/svg/egueb_svg_font_size.h \
 src/lib/svg/egueb_svg_gradient.h \
@@ -92,6 +93,7 @@ src/lib/svg/egueb_svg_element_stop.c \
 src/lib/svg/egueb_svg_element_svg.c \
 src/lib/svg/egueb_svg_element_svg_private.h \
 src/lib/svg/egueb_svg_element_text.c \
+src/lib/svg/egueb_svg_element_tspan.c \
 src/lib/svg/egueb_svg_fill_rule.c \
 src/lib/svg/egueb_svg_font_size.c \
 src/lib/svg/egueb_svg_gradient.c \
