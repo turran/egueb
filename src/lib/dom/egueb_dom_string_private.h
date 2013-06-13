@@ -27,7 +27,7 @@ struct _Egueb_Dom_String
 };
 
 #define EGUEB_DOM_STRING_ATTR_DESCRIPTOR egueb_dom_string_descriptor_get()
-Ender_Descriptor * egueb_dom_string_descriptor_get(void);
+Enesim_Object_Descriptor * egueb_dom_string_descriptor_get(void);
 
 #define EGUEB_DOM_STRING_STATIC(value) 			\
 	{						\
