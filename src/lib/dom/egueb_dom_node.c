@@ -158,6 +158,7 @@ static void _egueb_dom_node_instance_init(void *o)
 	thiz->ref = 1;
 	thiz->events = eina_hash_string_superfast_new(
 			_egueb_dom_node_event_container_free);
+	thiz->user_data = eina_hash_string_superfast_new(NULL);
 }
 
 static void _egueb_dom_node_instance_deinit(void *o)
@@ -196,6 +197,8 @@ static void _egueb_dom_node_instance_deinit(void *o)
 	egueb_dom_node_event_dispatch(thiz, event, NULL);
 	/* remove the whole set of events */
 	eina_hash_free(thiz->events);
+	/* and the user data */
+	eina_hash_free(thiz->user_data);
 }
 
 /* we use this instead of an event listener to avoid allocation of a new
@@ -702,6 +705,39 @@ EAPI Eina_Error egueb_dom_node_event_dispatch(Egueb_Dom_Node *thiz,
 	egueb_dom_event_unref(event);
 }
 
+/* Introduced in DOM Level 3:
+ * DOMUserData        setUserData(in DOMString key, 
+                                 in DOMUserData data, 
+                                 in UserDataHandler handler);
+ */
+EAPI Eina_Error egueb_dom_node_user_data_set(Egueb_Dom_Node *thiz,
+		Egueb_Dom_String *key, void *data)
+{
+	const char *str;
+
+	if (!key) return EGUEB_DOM_ERROR_NOT_FOUND;
+	str = egueb_dom_string_string_get(key);
+	if (!str) return EGUEB_DOM_ERROR_NOT_FOUND;
+	if (!data)
+		eina_hash_del_by_key(thiz->user_data, key);
+	else
+		eina_hash_add(thiz->user_data, str, data);
+	return EINA_ERROR_NONE;
+}
+
+/* Introduced in DOM Level 3:
+ * DOMUserData        getUserData(in DOMString key);
+ */
+EAPI void * egueb_dom_node_user_data_get(Egueb_Dom_Node *thiz,
+		Egueb_Dom_String *key)
+{
+	const char *str;
+
+	if (!key) return NULL;
+	str = egueb_dom_string_string_get(key);
+	return eina_hash_find(thiz->user_data, str);
+}
+
 #if 0
 // Introduced in DOM Level 2:
   interface EventListener {
@@ -761,11 +797,5 @@ EAPI Eina_Error egueb_dom_node_event_dispatch(Egueb_Dom_Node *thiz,
   // Introduced in DOM Level 3:
   DOMObject          getFeature(in DOMString feature, 
                                 in DOMString version);
-  // Introduced in DOM Level 3:
-  DOMUserData        setUserData(in DOMString key, 
-                                 in DOMUserData data, 
-                                 in UserDataHandler handler);
-  // Introduced in DOM Level 3:
-  DOMUserData        getUserData(in DOMString key);
 
 #endif
