@@ -89,6 +89,12 @@ EAPI void egueb_dom_character_data_buffer_set(Egueb_Dom_Node *n,
 EAPI Eina_Error egueb_dom_character_data_data_get(Egueb_Dom_Node *n,
 		Egueb_Dom_String **data)
 {
+	Egueb_Dom_Character_Data *thiz;
+	const char *content;
+
+	thiz = EGUEB_DOM_CHARACTER_DATA(n);
+	content = enesim_text_buffer_string_get(thiz->buffer);
+	*data = egueb_dom_string_new_with_static_string(content);
 	return EINA_ERROR_NONE;
 }
 
