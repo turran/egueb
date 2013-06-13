@@ -31,6 +31,12 @@
 #define EGUEB_SVG_ELEMENT_TEXT(o) ENESIM_OBJECT_INSTANCE_CHECK(o, 		\
 		Egueb_Svg_Element_Text, EGUEB_SVG_ELEMENT_TEXT_DESCRIPTOR)
 
+typedef struct _Egueb_Svg_Element_Text_Pen
+{
+	double x;
+	double y;
+} Egueb_Svg_Element_Text_Pen;
+
 typedef struct _Egueb_Svg_Element_Text
 {
 	Egueb_Svg_Shape base;
@@ -44,6 +50,7 @@ typedef struct _Egueb_Svg_Element_Text
 	double gfont;
 	Enesim_Renderer *r;
 	Eina_Bool renderable_tree_changed;
+	Egueb_Svg_Element_Text_Pen pen;
 } Egueb_Svg_Element_Text;
 
 typedef struct _Egueb_Svg_Element_Text_Class
@@ -51,30 +58,29 @@ typedef struct _Egueb_Svg_Element_Text_Class
 	Egueb_Svg_Shape_Class base;
 } Egueb_Svg_Element_Text_Class;
 
-typedef struct _Egueb_Svg_Element_Text_Position
-{
-	double x;
-	double y;
-} Egueb_Svg_Element_Text_Position;
-
-
 static void _egueb_svg_element_text_children_generate_geometry(
 		Egueb_Svg_Element_Text *thiz, Enesim_Renderer *r)
 {
 	Egueb_Svg_Element *e;
+	Egueb_Svg_Element_Text_Pen *pen = &thiz->pen;
 	Enesim_Matrix inv;
+	Enesim_Rectangle bounds;
 	int max;
 
 	e = EGUEB_SVG_ELEMENT(thiz);
 	enesim_renderer_text_span_size_set(r, ceil(thiz->gfont));
 	enesim_renderer_text_span_max_ascent_get(r, &max);
-	enesim_renderer_origin_set(r, thiz->gx, thiz->gy - max);
+	enesim_renderer_origin_set(r, pen->x, pen->y - max);
 
-	DBG("matrix %" ENESIM_MATRIX_FORMAT, ENESIM_MATRIX_ARGS (&e->transform));
+	INFO("matrix %" ENESIM_MATRIX_FORMAT, ENESIM_MATRIX_ARGS (&e->transform));
 	enesim_matrix_inverse(&e->transform, &inv);
 	enesim_renderer_transformation_set(r, &inv);
 
-	DBG("x: %g, y: %g, font-size: %g", thiz->gx, thiz->gy, ceil(thiz->gfont));
+	INFO("x: %g, y: %g, font-size: %g", pen->x, pen->y, ceil(thiz->gfont));
+	/* increment the pen position */
+	enesim_renderer_shape_geometry_get(r, &bounds);
+	INFO("advancing by w: %g, h: %g", bounds.w, bounds.h);
+	pen->x += bounds.w;
 }
 
 static Eina_Bool _egueb_svg_element_text_children_process_cb(Egueb_Dom_Node *child,
@@ -164,9 +170,9 @@ static void _egueb_svg_element_text_node_inserted_cb(Egueb_Dom_Event *e,
 
 		/* create a renderer for this text node */
 		r = enesim_renderer_text_span_new();
+		enesim_renderer_rop_set(r, ENESIM_BLEND);
 		enesim_renderer_text_span_font_name_set(r, "/usr/share/fonts/truetype/freefont/FreeSans.ttf");
 		enesim_renderer_color_set(r, 0xff000000);
-		enesim_renderer_text_span_text_set(r, "Hello");
 
 		/* set the internal buffer of the text span to be the one
 		 * on the text node */
@@ -301,6 +307,9 @@ static Eina_Bool _egueb_svg_element_text_generate_geometry(Egueb_Svg_Shape *s)
 	thiz->gfont = egueb_svg_font_size_final_get(&font_size, e_parent->viewbox.w, e_parent->viewbox.h, doc_font_size, doc_font_size);
 
 	/* iterate over the children and generate the position */
+	/* reset our pen to */
+	thiz->pen.x = thiz->gx;
+	thiz->pen.y = thiz->gy;
 	egueb_dom_node_children_foreach(EGUEB_DOM_NODE(s),
 		_egueb_svg_element_text_children_process_cb,
 		thiz);
