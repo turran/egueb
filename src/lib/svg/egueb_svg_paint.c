@@ -155,7 +155,24 @@ EAPI Eina_Bool egueb_svg_paint_string_from(Egueb_Svg_Paint *paint, const char *a
 
 EAPI char * egueb_svg_paint_string_to(Egueb_Svg_Paint *thiz)
 {
-	ERR("Not implemented");
+	switch (thiz->type)
+	{
+		case EGUEB_SVG_PAINT_TYPE_NONE:
+		return strdup("none");
+		break;
+
+		case EGUEB_SVG_PAINT_TYPE_CURRENT_COLOR:
+		return strdup("currentColor");
+		break;
+
+		case EGUEB_SVG_PAINT_TYPE_COLOR:
+		return egueb_svg_color_string_to(&thiz->color);
+		break;
+
+		case EGUEB_SVG_PAINT_TYPE_SERVER:
+		return strdup(thiz->uri);
+		break;
+	}
 	return NULL;
 }
 
