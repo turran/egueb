@@ -30,6 +30,7 @@ static void _egueb_svg_strings_init(void)
 	EGUEB_SVG_NAME_CIRCLE = egueb_dom_string_new_with_string("circle");
 	EGUEB_SVG_NAME_CLIP_PATH = egueb_dom_string_new_with_string("clipPath");
 	EGUEB_SVG_NAME_DEFS = egueb_dom_string_new_with_string("defs");
+	EGUEB_SVG_NAME_DESC = egueb_dom_string_new_with_string("desc");
 	EGUEB_SVG_NAME_ELLIPSE = egueb_dom_string_new_with_string("ellipse");
 	EGUEB_SVG_NAME_G = egueb_dom_string_new_with_string("g");
 	EGUEB_SVG_NAME_LINE = egueb_dom_string_new_with_string("line");
@@ -90,6 +91,7 @@ static void _egueb_svg_strings_shutdown(void)
 	egueb_dom_string_unref(EGUEB_SVG_NAME_CIRCLE);
 	egueb_dom_string_unref(EGUEB_SVG_NAME_CLIP_PATH);
 	egueb_dom_string_unref(EGUEB_SVG_NAME_DEFS);
+	egueb_dom_string_unref(EGUEB_SVG_NAME_DESC);
 	egueb_dom_string_unref(EGUEB_SVG_NAME_ELLIPSE);
 	egueb_dom_string_unref(EGUEB_SVG_NAME_G);
 	egueb_dom_string_unref(EGUEB_SVG_NAME_LINE);
@@ -205,6 +207,7 @@ EAPI Eina_Bool egueb_svg_string_is_equal(const char *s1, const char *s2)
 Egueb_Dom_String *EGUEB_SVG_NAME_CIRCLE;
 Egueb_Dom_String *EGUEB_SVG_NAME_CLIP_PATH;
 Egueb_Dom_String *EGUEB_SVG_NAME_DEFS;
+Egueb_Dom_String *EGUEB_SVG_NAME_DESC;
 Egueb_Dom_String *EGUEB_SVG_NAME_ELLIPSE;
 Egueb_Dom_String *EGUEB_SVG_NAME_G;
 Egueb_Dom_String *EGUEB_SVG_NAME_LINE;

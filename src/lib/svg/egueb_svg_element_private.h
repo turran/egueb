@@ -104,6 +104,8 @@ typedef struct _Egueb_Svg_Element
 	Egueb_Svg_Rect viewbox;
 	/* the current transformation */
 	Enesim_Matrix transform;
+	/* the current font size */
+	double final_font_size;
 	/* private */
 	/* some nodes need to do the setup not based on its parent, but on
 	 * another node, like the <g> created by a <use> for that we use this

@@ -24,6 +24,7 @@ src/lib/svg/egueb_svg_document.h \
 src/lib/svg/egueb_svg_element.h \
 src/lib/svg/egueb_svg_element_circle.h \
 src/lib/svg/egueb_svg_element_clip_path.h \
+src/lib/svg/egueb_svg_element_desc.h \
 src/lib/svg/egueb_svg_element_defs.h \
 src/lib/svg/egueb_svg_element_ellipse.h \
 src/lib/svg/egueb_svg_element_g.h \
@@ -80,6 +81,7 @@ src/lib/svg/egueb_svg_document.c \
 src/lib/svg/egueb_svg_element.c \
 src/lib/svg/egueb_svg_element_circle.c \
 src/lib/svg/egueb_svg_element_clip_path.c \
+src/lib/svg/egueb_svg_element_desc.c \
 src/lib/svg/egueb_svg_element_defs.c \
 src/lib/svg/egueb_svg_element_ellipse.c \
 src/lib/svg/egueb_svg_element_g.c \
@@ -93,6 +95,7 @@ src/lib/svg/egueb_svg_element_stop.c \
 src/lib/svg/egueb_svg_element_svg.c \
 src/lib/svg/egueb_svg_element_svg_private.h \
 src/lib/svg/egueb_svg_element_text.c \
+src/lib/svg/egueb_svg_element_text_private.h \
 src/lib/svg/egueb_svg_element_tspan.c \
 src/lib/svg/egueb_svg_fill_rule.c \
 src/lib/svg/egueb_svg_font_size.c \

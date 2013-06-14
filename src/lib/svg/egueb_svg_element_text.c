@@ -20,8 +20,10 @@
 #include "egueb_svg_main.h"
 #include "egueb_svg_length.h"
 #include "egueb_svg_element_text.h"
+#include "egueb_svg_element_tspan.h"
 #include "egueb_svg_document.h"
 #include "egueb_svg_shape_private.h"
+#include "egueb_svg_element_text_private.h"
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
@@ -30,12 +32,6 @@
 		Egueb_Svg_Element_Text_Class, EGUEB_SVG_ELEMENT_TEXT_DESCRIPTOR)
 #define EGUEB_SVG_ELEMENT_TEXT(o) ENESIM_OBJECT_INSTANCE_CHECK(o, 		\
 		Egueb_Svg_Element_Text, EGUEB_SVG_ELEMENT_TEXT_DESCRIPTOR)
-
-typedef struct _Egueb_Svg_Element_Text_Pen
-{
-	double x;
-	double y;
-} Egueb_Svg_Element_Text_Pen;
 
 typedef struct _Egueb_Svg_Element_Text
 {
@@ -103,9 +99,17 @@ static Eina_Bool _egueb_svg_element_text_children_process_cb(Egueb_Dom_Node *chi
 		if (thiz->renderable_tree_changed)
 			enesim_renderer_compound_layer_add(thiz->r, enesim_renderer_ref(r));
 	}
-	else if (type == EGUEB_DOM_NODE_TYPE_ELEMENT_NODE)
+	else if (type == EGUEB_DOM_NODE_TYPE_ELEMENT_NODE && egueb_svg_is_element_tspan(child))
 	{
-		/* get the tspan renderer in case it is a tspan */
+		egueb_dom_element_process(EGUEB_DOM_ELEMENT(child));
+		if (thiz->renderable_tree_changed)
+		{
+			Enesim_Renderer *r;
+
+			/* get the tspan renderer in case it is a tspan */
+			r = egueb_svg_renderable_renderer_get(child);
+			enesim_renderer_compound_layer_add(thiz->r, r);
+		}
 	}
 	else
 	{
@@ -303,8 +307,7 @@ static Eina_Bool _egueb_svg_element_text_generate_geometry(Egueb_Svg_Shape *s)
 	/* FIXME the font size accumulates from its parent, so we need to do
 	 * similar to the transformation
 	 */
-	egueb_dom_attr_final_get(e->font_size, &font_size);
-	thiz->gfont = egueb_svg_font_size_final_get(&font_size, e_parent->viewbox.w, e_parent->viewbox.h, doc_font_size, doc_font_size);
+	thiz->gfont = e->final_font_size;
 
 	/* iterate over the children and generate the position */
 	/* reset our pen to */
@@ -398,6 +401,8 @@ static void _egueb_svg_element_text_instance_init(void *o)
 	Enesim_Renderer *r;
 
 	thiz = EGUEB_SVG_ELEMENT_TEXT(o);
+	thiz->renderable_tree_changed = EINA_TRUE;
+
 	thiz->r = enesim_renderer_compound_new();
 	enesim_renderer_rop_set(thiz->r, ENESIM_BLEND);
 
@@ -441,6 +446,14 @@ static void _egueb_svg_element_text_instance_deinit(void *o)
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
+EAPI void egueb_svg_element_text_pen_get(Egueb_Dom_Node *n,
+		Egueb_Svg_Element_Text_Pen **pen)
+{
+	Egueb_Svg_Element_Text *thiz;
+
+	thiz = EGUEB_SVG_ELEMENT_TEXT(n);
+	*pen = &thiz->pen;
+}
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/

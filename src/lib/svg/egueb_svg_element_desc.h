@@ -15,16 +15,10 @@
  * License along with this library.
  * If not, see <http://www.gnu.org/licenses/>.
  */
+#ifndef _EGUEB_SVG_ELEMENT_DESC_H_
+#define _EGUEB_SVG_ELEMENT_DESC_H_
 
-#ifndef _EGUEB_SVG_ELEMENT_TSPAN_H_
-#define _EGUEB_SVG_ELEMENT_TSPAN_H_
-
-EAPI Eina_Bool egueb_svg_is_element_tspan(Egueb_Dom_Node *n);
-EAPI Egueb_Dom_Node * egueb_svg_element_tspan_new(void);
-EAPI Eina_Error egueb_svg_element_tspan_x_set(Egueb_Dom_Node *n,
-		const Egueb_Svg_Length *x);
-EAPI Eina_Error egueb_svg_element_tspan_y_set(Egueb_Dom_Node *n,
-		const Egueb_Svg_Length *y);
+EAPI Egueb_Dom_Node * egueb_svg_element_desc_new(void);
 
 #endif
 

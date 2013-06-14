@@ -550,3 +550,15 @@ EAPI Eina_Bool egueb_dom_attr_string_get(Egueb_Dom_Node *attr,
 	egueb_dom_value_reset(&v);
 	return ret;
 }
+
+EAPI void egueb_dom_attr_inherited_get(Egueb_Dom_Node *attr,
+		Egueb_Dom_Node **inherited)
+{
+	Egueb_Dom_Attr *thiz;
+
+	thiz = EGUEB_DOM_ATTR(attr);
+	if (thiz->inherited)
+		*inherited = egueb_dom_node_ref(thiz->inherited);
+	else
+		*inherited = NULL;
+}

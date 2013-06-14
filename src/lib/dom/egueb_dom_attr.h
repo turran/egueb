@@ -79,6 +79,9 @@ EAPI Eina_Bool egueb_dom_attr_string_set(Egueb_Dom_Node *attr,
 EAPI Eina_Bool egueb_dom_attr_string_get(Egueb_Dom_Node *attr,
 		Egueb_Dom_String **str);
 
+EAPI void egueb_dom_attr_inherited_get(Egueb_Dom_Node *attr,
+		Egueb_Dom_Node **inherited);
+
 #define EGUEB_DOM_ATTR_FETCH_DEFINE(prefix, type, name)				\
 	static void _##prefix##_##name##_fetch(Egueb_Dom_Node *n, 		\
 			Egueb_Dom_Node **a)					\

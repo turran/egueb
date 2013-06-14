@@ -111,6 +111,7 @@
 #include "egueb_svg_element.h"
 #include "egueb_svg_element_circle.h"
 #include "egueb_svg_element_clip_path.h"
+#include "egueb_svg_element_desc.h"
 #include "egueb_svg_element_defs.h"
 #include "egueb_svg_element_ellipse.h"
 #include "egueb_svg_element_g.h"
@@ -122,6 +123,7 @@
 #include "egueb_svg_element_use.h"
 #include "egueb_svg_element_stop.h"
 #include "egueb_svg_element_svg.h"
+#include "egueb_svg_element_tspan.h"
 #include "egueb_svg_element_text.h"
 
 #if 0

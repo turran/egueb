@@ -1195,19 +1195,28 @@ static Ecss_Context _egueb_svg_element_css_context = {
 #endif
 
 static void _egueb_svg_element_presentation_attributes_process(
-		Egueb_Svg_Element *thiz, Egueb_Dom_Node *relative)
+		Egueb_Svg_Element *thiz, Egueb_Dom_Node *relative,
+		Egueb_Dom_Node *geometry)
 {
-	Egueb_Svg_Element *rel;
+	Egueb_Svg_Element *rel, *geom;
+	Egueb_Dom_Node *inherited;
 
 	if (!relative) return;
-	if (!enesim_object_instance_inherits(
-				ENESIM_OBJECT_INSTANCE(relative),
-				EGUEB_SVG_ELEMENT_DESCRIPTOR))
+	if (!geometry) return;
+	if (!egueb_svg_is_element(relative))
 	{
-		WARN("Parent does not inherit from the SVGElement interface");
+		WARN("Relative presentation node does not inherit from the "
+				"SVGElement interface");
+		return;
+	}
+	if (!egueb_svg_is_element(geometry))
+	{
+		WARN("Relative geometry node does not inherit from the "
+				"SVGElement interface");
 		return;
 	}
 	rel = EGUEB_SVG_ELEMENT(relative);
+	geom = EGUEB_SVG_ELEMENT(geometry);
 	/* TODO in case we have a parent and neither the parent
 	 * or ourselves have changed an inheritable property
 	 * just continue without generating again the final
@@ -1224,6 +1233,33 @@ static void _egueb_svg_element_presentation_attributes_process(
 	egueb_dom_attr_inheritable_process(thiz->stroke_width, rel->stroke_width);
 	egueb_dom_attr_inheritable_process(thiz->stroke_opacity, rel->stroke_opacity);
 	egueb_dom_attr_inheritable_process(thiz->visibility, rel->visibility);
+	/* the font size is accumulative based on the parent's property */
+	egueb_dom_attr_inheritable_process(thiz->font_size, rel->font_size);
+	egueb_dom_attr_inherited_get(thiz->font_size, &inherited);
+	if (inherited)
+	{
+		thiz->final_font_size = rel->final_font_size;
+		egueb_dom_node_unref(inherited);
+	}
+	else
+	{
+		Egueb_Svg_Font_Size font_size;
+		double w = 1;
+		double h = 1;
+
+		egueb_dom_attr_final_get(thiz->font_size, &font_size);
+		/* for a relative length, we need the geometry */
+		if (font_size.type == EGUEB_SVG_FONT_SIZE_TYPE_LENGTH &&
+				font_size.value.length.unit ==
+				EGUEB_SVG_UNIT_LENGTH_PERCENT)
+		{
+			w = geom->viewbox.w;
+			h = geom->viewbox.h;
+		}
+		thiz->final_font_size = egueb_svg_font_size_final_get(
+				&font_size, w, h, rel->final_font_size,
+				rel->final_font_size);
+	}
 }
 /*----------------------------------------------------------------------------*
  *                             Element interface                              *
@@ -1234,6 +1270,7 @@ static Eina_Bool _egueb_svg_element_process(Egueb_Dom_Element *e)
 	Egueb_Svg_Element_Class *klass;
 	Egueb_Dom_String *style;
 	Egueb_Dom_Node *relative = NULL;
+	Egueb_Dom_Node *geometry = NULL;
 	Eina_Bool ret = EINA_TRUE;
 
 	thiz = EGUEB_SVG_ELEMENT(e);
@@ -1255,13 +1292,15 @@ static Eina_Bool _egueb_svg_element_process(Egueb_Dom_Element *e)
 	if (style) egueb_dom_string_unref(style);
 
 	egueb_svg_element_presentation_relative_get(EGUEB_DOM_NODE(e), &relative);
+	egueb_svg_element_geometry_relative_get(EGUEB_DOM_NODE(e), &geometry);
 	/* propagate the inheritable attributes (the presentation attributes) */
-	_egueb_svg_element_presentation_attributes_process(thiz, relative);
+	_egueb_svg_element_presentation_attributes_process(thiz, relative, geometry);
 
 	/* now call the element interface for processing this element */
 	klass = EGUEB_SVG_ELEMENT_CLASS_GET(thiz);
 	if (klass->process) ret = klass->process(thiz);
 	if (relative) egueb_dom_node_unref(relative);
+	if (geometry) egueb_dom_node_unref(geometry);
 
 	return ret;
 }

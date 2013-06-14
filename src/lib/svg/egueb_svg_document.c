@@ -26,6 +26,7 @@
 #include "egueb_svg_element_circle.h"
 #include "egueb_svg_element_clip_path.h"
 #include "egueb_svg_element_defs.h"
+#include "egueb_svg_element_desc.h"
 #include "egueb_svg_element_ellipse.h"
 #include "egueb_svg_element_g.h"
 #include "egueb_svg_element_image.h"
@@ -434,6 +435,11 @@ static Egueb_Dom_Node * _egueb_svg_document_element_create(int id)
 		case EGUEB_SVG_TYPE_CIRCLE:
 		ret = egueb_svg_element_circle_new();
 		break;
+
+		case EGUEB_SVG_TYPE_DESC:
+		ret = egueb_svg_element_desc_new();
+		break;
+
 		case EGUEB_SVG_TYPE_ELLIPSE:
 		ret = egueb_svg_element_ellipse_new();
 		break;

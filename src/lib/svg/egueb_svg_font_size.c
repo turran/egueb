@@ -172,10 +172,13 @@ EAPI double egueb_svg_font_size_final_get(const Egueb_Svg_Font_Size *thiz,
 	switch (thiz->type)
 	{
 		case EGUEB_SVG_FONT_SIZE_TYPE_ABSOLUTE:
-
+		ERR("TODO");
 		break;
 		case EGUEB_SVG_FONT_SIZE_TYPE_RELATIVE:
-
+		if (thiz->value.relative == EGUEB_SVG_FONT_SIZE_RELATIVE_LARGER)
+			ret = font_size * 1.25;
+		else
+			ret = font_size * 0.75;
 		break;
 		case EGUEB_SVG_FONT_SIZE_TYPE_LENGTH:
 		ret = egueb_svg_length_final_get(&thiz->value.length, width, height, font_size);

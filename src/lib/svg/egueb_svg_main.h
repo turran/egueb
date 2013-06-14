@@ -31,6 +31,7 @@ EAPI int egueb_svg_shutdown(void);
 extern Egueb_Dom_String *EGUEB_SVG_NAME_CIRCLE;
 extern Egueb_Dom_String *EGUEB_SVG_NAME_CLIP_PATH;
 extern Egueb_Dom_String *EGUEB_SVG_NAME_DEFS;
+extern Egueb_Dom_String *EGUEB_SVG_NAME_DESC;
 extern Egueb_Dom_String *EGUEB_SVG_NAME_ELLIPSE;
 extern Egueb_Dom_String *EGUEB_SVG_NAME_G;
 extern Egueb_Dom_String *EGUEB_SVG_NAME_LINE;

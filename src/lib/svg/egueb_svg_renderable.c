@@ -59,7 +59,13 @@ static Eina_Bool _egueb_svg_renderable_process(Egueb_Svg_Element *e)
 
 	/* first process the renderable itself */
 	if (klass->process)
-		if (!klass->process(thiz)) return EINA_FALSE;
+	{
+		if (!klass->process(thiz))
+		{
+			WARN("Process failed");
+			return EINA_FALSE;
+		}
+	}
 	/* now resolve the clip path */
 	egueb_svg_element_clip_path_final_get(EGUEB_DOM_NODE(e), &clip_path);
 	egueb_svg_element_clip_path_resolve(EGUEB_DOM_NODE(e), &clip_path,
@@ -79,7 +85,11 @@ static Eina_Bool _egueb_svg_renderable_process(Egueb_Svg_Element *e)
 		if (klass->renderer_get)
 			ren = klass->renderer_get(thiz);
 		DBG("Renderer: %p", ren);
-		if (!ren) return EINA_FALSE;
+		if (!ren)
+		{
+			WARN("No renderer found");
+			return EINA_FALSE;
+		}
 	}
 	enesim_renderer_proxy_proxied_set(thiz->proxy, ren);
 

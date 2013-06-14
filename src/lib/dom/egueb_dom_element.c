@@ -728,7 +728,8 @@ EAPI void egueb_dom_element_enqueue_process(Egueb_Dom_Node *n)
 		return;
 	}
 	thiz->enqueued = EINA_TRUE;
-	egueb_dom_document_enqueue_process(n->owner_document, n);
+	egueb_dom_document_enqueue_process(
+			EGUEB_DOM_DOCUMENT(n->owner_document), n);
 }
 
 EAPI Eina_Bool egueb_dom_element_is_enqueued(Egueb_Dom_Node *n)

@@ -96,14 +96,27 @@ static Eina_Bool _egueb_svg_shape_process(Egueb_Svg_Renderable *r)
 
 	/* generate the geometry of the element */
 	if (klass->generate_geometry)
+	{
 		if (!klass->generate_geometry(thiz))
+		{
+			WARN("Failed generating the geometry");
 			return EINA_FALSE;
+		}
+	}
 
 	/* propagate the presentation attributes */
 	/* resolve the painter based on the presentation attributes */
-	if (!thiz->painter) return EINA_FALSE;
-	if (!egueb_svg_painter_resolve(thiz->painter, EGUEB_SVG_ELEMENT(thiz)))
+	if (!thiz->painter)
+	{
+		WARN("No painter available");
 		return EINA_FALSE;
+	}
+
+	if (!egueb_svg_painter_resolve(thiz->painter, EGUEB_SVG_ELEMENT(thiz)))
+	{
+		WARN("Painter resolving failed");
+		return EINA_FALSE;
+	}
 
 	/* finally call the renderer propagate implementation */
 	if (klass->renderer_propagate)
