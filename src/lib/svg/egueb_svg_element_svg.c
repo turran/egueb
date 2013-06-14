@@ -103,8 +103,38 @@ typedef struct _Egueb_Svg_Element_Svg_Class
 	Egueb_Svg_Renderable_Container_Class base;
 } Egueb_Svg_Element_Svg_Class;
 
+static void _egueb_svg_element_svg_set_generic_painter(Egueb_Dom_Node *n)
+{
+	if (egueb_svg_is_shape(n))
+	{
+		Egueb_Svg_Painter *painter;
+
+		painter = egueb_svg_painter_generic_new();
+		DBG("Setting the generic painter on the shape");
+		egueb_svg_shape_painter_set(n, painter);
+	}
+	else if (egueb_svg_is_renderable_container(n))
+	{
+		Egueb_Dom_Node *child;
+
+		/* iterate over the shapes to set the painter too */
+		egueb_dom_node_child_first_get(n, &child);
+		while (child)
+		{
+			Egueb_Dom_Node *tmp;
+
+			_egueb_svg_element_svg_set_generic_painter(child);
+			egueb_dom_node_sibling_next_get(child, &tmp);
+			egueb_dom_node_unref(child);
+			child = tmp;
+		}
+	}
+}
+
 /* whenever a child is added which can have a painter, check if it is set
- * if not, define the generic painter for it
+ * if not, define the generic painter for it. Not that a node inserted
+ * does not trigger the event for each of the children of the inserted
+ * tree, so we need to iterate there
  */
 static void _egueb_svg_element_svg_node_inserted_cb(Egueb_Dom_Event *e,
 		void *data)
@@ -112,15 +142,7 @@ static void _egueb_svg_element_svg_node_inserted_cb(Egueb_Dom_Event *e,
 	Egueb_Dom_Node *target = NULL;
 
 	egueb_dom_event_target_get(e, &target);
-	if (egueb_svg_is_shape(target))
-	{
-		Egueb_Svg_Painter *painter;
-
-		painter = egueb_svg_painter_generic_new();
-		DBG("Setting the generic painter on the shape");
-		egueb_svg_shape_painter_set(target, painter);
-
-	}
+	_egueb_svg_element_svg_set_generic_painter(target);
 	egueb_dom_node_unref(target);
 }
 /*----------------------------------------------------------------------------*
