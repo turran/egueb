@@ -18,61 +18,6 @@
 #ifndef _ESVG_PATH_H
 #define _ESVG_PATH_H
 
-typedef enum _Egueb_Svg_Element_Path_Command_Type
-{
-	ESVG_PATH_MOVE_TO,
-	ESVG_PATH_LINE_TO,
-	ESVG_PATH_HLINE_TO,
-	ESVG_PATH_VLINE_TO,
-	ESVG_PATH_CUBIC_TO,
-	ESVG_PATH_SCUBIC_TO,
-	ESVG_PATH_QUADRATIC_TO,
-	ESVG_PATH_SQUADRATIC_TO,
-	ESVG_PATH_ARC_TO,
-	ESVG_PATH_CLOSE,
-	ESVG_PATH_COMMAND_TYPES
-} Egueb_Svg_Element_Path_Command_Type;
-
-typedef struct _Egueb_Svg_Element_Path_Command
-{
-	Egueb_Svg_Element_Path_Command_Type type;
-	union {
-		struct {
-			double c;
-		} hline_to, vline_to;
-		struct {
-			double x;
-			double y;
-		} move_to, line_to, squadratic_to;
-		struct {
-			double ctrl_x0;
-			double ctrl_y0;
-			double ctrl_x1;
-			double ctrl_y1;
-			double x;
-			double y;
-		} cubic_to;
-		struct {
-			double ctrl_x;
-			double ctrl_y;
-			double x;
-			double y;
-		} scubic_to, quadratic_to;
-		struct {
-			double rx;
-			double ry;
-			double angle;
-			double large;
-			double sweep;
-			double x;
-			double y;
-		} arc_to;
- 	} data;
-	Eina_Bool relative;
-	Eina_Bool is_closed;
-} Egueb_Svg_Element_Path_Command;
-
-
 typedef void (*Egueb_Svg_Command_Cb)(Egueb_Svg_Element_Path_Command *cmd, void *data);
 
 EAPI Eina_Bool egueb_svg_path_data_string_from(const char *value, Egueb_Svg_Command_Cb cb, void *data);

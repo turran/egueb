@@ -1,5 +1,5 @@
-/* Esvg - SVG
- * Copyright (C) 2011 Jorge Luis Zapata, Vincent Torri
+/* Egueb
+ * Copyright (C) 2011 - 2013 Jorge Luis Zapata
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -15,525 +15,395 @@
  * License along with this library.
  * If not, see <http://www.gnu.org/licenses/>.
  */
+
 #include "egueb_svg_main_private.h"
-#include "egueb_svg_private_attribute_presentation.h"
-#include "egueb_svg_context_private.h"
-#include "egueb_svg_element_private.h"
-#include "egueb_svg_renderable_private.h"
-
-#include "egueb_svg_path_private.h"
-#include "egueb_svg_path.h"
-
+#include "egueb_svg_main.h"
+#include "egueb_svg_point.h"
+#include "egueb_svg_path_seg.h"
+#include "egueb_svg_attr_path_seg_list.h"
 #include "egueb_svg_element_path.h"
+#include "egueb_svg_document.h"
+#include "egueb_svg_shape_private.h"
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
-#define ESVG_LOG_DEFAULT _egueb_svg_element_path_log
-
-static int _egueb_svg_element_path_log = -1;
-
-static Ender_Property *ESVG_ELEMENT_PATH_D;
-
-typedef struct _Egueb_Svg_Element_Path_D
-{
-	Egueb_Svg_Path_Seg_List *seg_list;
-	Egueb_Svg_Path_Seg_List *animated_seg_list;
-	Eina_Bool changed;
-	int animated;
-} Egueb_Svg_Element_Path_D;
+#define EGUEB_SVG_ELEMENT_PATH_DESCRIPTOR egueb_svg_element_path_descriptor_get()
+#define EGUEB_SVG_ELEMENT_PATH_CLASS(k) ENESIM_OBJECT_CLASS_CHECK(k, 		\
+		Egueb_Svg_Element_Path_Class, EGUEB_SVG_ELEMENT_PATH_DESCRIPTOR)
+#define EGUEB_SVG_ELEMENT_PATH(o) ENESIM_OBJECT_INSTANCE_CHECK(o, 		\
+		Egueb_Svg_Element_Path, EGUEB_SVG_ELEMENT_PATH_DESCRIPTOR)
 
 typedef struct _Egueb_Svg_Element_Path
 {
-	EINA_MAGIC
+	Egueb_Svg_Shape base;
 	/* properties */
-	Egueb_Svg_Element_Path_D d;
+	Egueb_Dom_Node *d;
 	/* private */
 	Enesim_Renderer *r;
 } Egueb_Svg_Element_Path;
 
-static Egueb_Svg_Element_Path * _egueb_svg_element_path_get(Egueb_Dom_Tag *t)
+typedef struct _Egueb_Svg_Element_Path_Class
 {
-	Egueb_Svg_Element_Path *thiz;
+	Egueb_Svg_Shape_Class base;
+} Egueb_Svg_Element_Path_Class;
 
-	if (egueb_svg_element_internal_type_get(t) != ESVG_TYPE_PATH)
-		return NULL;
-	thiz = egueb_svg_renderable_data_get(t);
-
-	return thiz;
-}
-
-/*----------------------------------------------------------------------------*
- *                       The Esvg Renderable interface                        *
- *----------------------------------------------------------------------------*/
-static Eina_Bool _egueb_svg_element_path_attribute_set(Ender_Element *e, const char *key, const char *value)
+static void _egueb_svg_element_path_d_cb(void *data, void *user_data)
 {
-	if (strcmp(key, "d") == 0)
-	{
-		Egueb_Svg_Path_Seg_List *seg_list;
-		seg_list = egueb_svg_path_seg_list_new();
-		if (!egueb_svg_path_seg_list_string_from(seg_list, value))
-		{
-			egueb_svg_path_seg_list_unref(seg_list);
-			return EINA_FALSE;
-		}
-		egueb_svg_element_path_d_set(e, seg_list);
-	}
-	else
-	{
-		return EINA_FALSE;
-	}
-
-	return EINA_TRUE;
-}
-
-static Eina_Bool _egueb_svg_element_path_attribute_get(Egueb_Dom_Tag *tag, const char *attribute, char **value)
-{
-	return EINA_FALSE;
-}
-
-static int * _egueb_svg_element_path_attribute_animated_fetch(Egueb_Dom_Tag *t, const char *attr)
-{
-	Egueb_Svg_Element_Path *thiz;
-	int *animated = NULL;
-
-	thiz = _egueb_svg_element_path_get(t);
-	if (!strcmp(attr, "d"))
-	{
-		animated = &thiz->d.animated;
-	}
-	return animated;
-}
-
-static Enesim_Renderer * _egueb_svg_element_path_renderer_get(Egueb_Dom_Tag *t)
-{
-	Egueb_Svg_Element_Path *thiz;
-
-	thiz = _egueb_svg_element_path_get(t);
-	return thiz->r;
-}
-
-static Egueb_Svg_Element_Setup_Return _egueb_svg_element_path_setup(Egueb_Dom_Tag *t,
-		Egueb_Svg_Context *c,
-		Egueb_Svg_Element_Context *ctx,
-		Egueb_Svg_Attribute_Presentation *attr,
-		Enesim_Log **error)
-{
-	return ESVG_SETUP_OK;
-}
-
-static Eina_Bool _egueb_svg_element_path_renderer_propagate(Egueb_Dom_Tag *t,
-		Egueb_Svg_Context *c,
-		const Egueb_Svg_Element_Context *ctx,
-		const Egueb_Svg_Attribute_Presentation *attr,
-		Egueb_Svg_Renderable_Context *rctx,
-		Enesim_Log **error)
-{
-	Egueb_Svg_Element_Path *thiz;
-	Egueb_Svg_Path_Seg_List *seg_list;
-	Egueb_Svg_Element_Path_Command *pcmd;
-	Eina_List *l;
-	Eina_List *commands;
+	Egueb_Svg_Element_Path *thiz = user_data;
+	Egueb_Svg_Path_Seg *pcmd = data;
 	Egueb_Svg_Point cur = { 0, 0 };
-	Eina_Bool first; /* TODO handle correctly the first flag */
+	Enesim_Path_Command cmd;
+	Eina_Bool first = EINA_TRUE;
 
-	thiz = _egueb_svg_element_path_get(t);
-
-	//DBG("path setup");
-	/* shape properties */
-	enesim_renderer_shape_fill_color_set(thiz->r, rctx->fill_color);
-	enesim_renderer_shape_fill_renderer_set(thiz->r, rctx->fill_renderer);
-	enesim_renderer_shape_stroke_color_set(thiz->r, rctx->stroke_color);
-	enesim_renderer_shape_stroke_renderer_set(thiz->r, rctx->stroke_renderer);
-
-	enesim_renderer_shape_fill_rule_set(thiz->r, rctx->fill_rule);
-	enesim_renderer_shape_stroke_weight_set(thiz->r, rctx->stroke_weight);
-	enesim_renderer_shape_stroke_location_set(thiz->r, ENESIM_SHAPE_STROKE_CENTER);
-	enesim_renderer_shape_stroke_cap_set(thiz->r, rctx->stroke_cap);
-	enesim_renderer_shape_stroke_join_set(thiz->r, rctx->stroke_join);
-	enesim_renderer_shape_draw_mode_set(thiz->r, rctx->draw_mode);
-	/* base properties */
-	enesim_renderer_transformation_set(thiz->r, &ctx->transform);
-	enesim_renderer_color_set(thiz->r, rctx->color);
-
-	if (thiz->d.animated)
-		seg_list = thiz->d.animated_seg_list;
-	else
-		seg_list = thiz->d.seg_list;
-
-	if (!thiz->d.changed && !seg_list->changed)
-		return EINA_TRUE;
-
-	commands = seg_list->commands;
-	/* we need to generate again the commands */
-	enesim_renderer_path_command_clear(thiz->r);
-	EINA_LIST_FOREACH(commands, l, pcmd)
+	/* FIXME or we either use the generic command API
+	 * of enesim or use the direct function call
+	 */
+	switch (pcmd->type)
 	{
-		Enesim_Path_Command cmd;
-		/* FIXME or we either use the generic command API
-		 * of enesim or use the direct function call
-		 */
-		switch (pcmd->type)
+		case ESVG_PATH_MOVE_TO:
+		DBG("move_to %c (%g, %g)", pcmd->relative ? 'R' : 'A',
+				pcmd->data.move_to.x,  pcmd->data.move_to.y);
+		cmd.type = ENESIM_PATH_COMMAND_MOVE_TO;
+		if (!first && pcmd->relative)
 		{
-			case ESVG_PATH_MOVE_TO:
-			DBG("move_to %c (%g, %g)", pcmd->relative ? 'R' : 'A',
-					pcmd->data.move_to.x,  pcmd->data.move_to.y);
-			cmd.type = ENESIM_PATH_COMMAND_MOVE_TO;
-			if (!first && pcmd->relative)
-			{
-				cmd.definition.move_to.x = cur.x + pcmd->data.move_to.x;
-				cmd.definition.move_to.y = cur.y + pcmd->data.move_to.y;
-			}
-			else
-			{
-				cmd.definition.move_to.x = pcmd->data.move_to.x;
-				cmd.definition.move_to.y = pcmd->data.move_to.y;
-			}
-			cur.x = cmd.definition.move_to.x;
-			cur.y = cmd.definition.move_to.y;
-			break;
-
-			case ESVG_PATH_LINE_TO:
-			DBG("line_to %c (%g, %g)", pcmd->relative ? 'R' : 'A',
-					pcmd->data.line_to.x,  pcmd->data.line_to.y);
-			cmd.type = ENESIM_PATH_COMMAND_LINE_TO;
-			if (pcmd->relative)
-			{
-				cmd.definition.line_to.x = cur.x + pcmd->data.line_to.x;
-				cmd.definition.line_to.y = cur.y + pcmd->data.line_to.y;
-			}
-			else
-			{
-				cmd.definition.line_to.x = pcmd->data.line_to.x;
-				cmd.definition.line_to.y = pcmd->data.line_to.y;
-			}
-			cur.x = cmd.definition.line_to.x;
-			cur.y = cmd.definition.line_to.y;
-			break;
-
-			case ESVG_PATH_HLINE_TO:
-			DBG("hline_to %c (%g)", pcmd->relative ? 'R' : 'A',
-					pcmd->data.hline_to.c);
-			cmd.type = ENESIM_PATH_COMMAND_LINE_TO;
-			if (pcmd->relative)
-			{
-				cmd.definition.line_to.x = cur.x + pcmd->data.hline_to.c;
-				cmd.definition.line_to.y = cur.y;
-			}
-			else
-			{
-				cmd.definition.line_to.x = pcmd->data.hline_to.c;
-				cmd.definition.line_to.y = cur.y;
-			}
-			cur.x = cmd.definition.line_to.x;
-			cur.y = cmd.definition.line_to.y;
-			break;
-
-			case ESVG_PATH_VLINE_TO:
-			DBG("vline_to %c (%g)", pcmd->relative ? 'R' : 'A',
-					pcmd->data.vline_to.c);
-			cmd.type = ENESIM_PATH_COMMAND_LINE_TO;
-			if (pcmd->relative)
-			{
-				cmd.definition.line_to.x = cur.x;
-				cmd.definition.line_to.y = cur.y + pcmd->data.vline_to.c;
-			}
-			else
-			{
-				cmd.definition.line_to.x = cur.x;
-				cmd.definition.line_to.y = pcmd->data.vline_to.c;
-			}
-			cur.x = cmd.definition.line_to.x;
-			cur.y = cmd.definition.line_to.y;
-			break;
-
-			case ESVG_PATH_CUBIC_TO:
-			DBG("cubic_to %c ((%g, %g) (%g, %g) (%g, %g))",
-					pcmd->relative ? 'R' : 'A',
-					pcmd->data.cubic_to.ctrl_x0,
-					pcmd->data.cubic_to.ctrl_y0,
-					pcmd->data.cubic_to.ctrl_x1,
-					pcmd->data.cubic_to.ctrl_y1,
-					pcmd->data.cubic_to.x,
-					pcmd->data.cubic_to.y);
-			cmd.type = ENESIM_PATH_COMMAND_CUBIC_TO;
-			if (pcmd->relative)
-			{
-				cmd.definition.cubic_to.x = cur.x + pcmd->data.cubic_to.x;
-				cmd.definition.cubic_to.y = cur.y + pcmd->data.cubic_to.y;
-				cmd.definition.cubic_to.ctrl_x0 = cur.x + pcmd->data.cubic_to.ctrl_x0;
-				cmd.definition.cubic_to.ctrl_y0 = cur.y + pcmd->data.cubic_to.ctrl_y0;
-				cmd.definition.cubic_to.ctrl_x1 = cur.x + pcmd->data.cubic_to.ctrl_x1;
-				cmd.definition.cubic_to.ctrl_y1 = cur.y + pcmd->data.cubic_to.ctrl_y1;
-
-			}
-			else
-			{
-				cmd.definition.cubic_to.x = pcmd->data.cubic_to.x;
-				cmd.definition.cubic_to.y = pcmd->data.cubic_to.y;
-				cmd.definition.cubic_to.ctrl_x0 = pcmd->data.cubic_to.ctrl_x0;
-				cmd.definition.cubic_to.ctrl_y0 = pcmd->data.cubic_to.ctrl_y0;
-				cmd.definition.cubic_to.ctrl_x1 = pcmd->data.cubic_to.ctrl_x1;
-				cmd.definition.cubic_to.ctrl_y1 = pcmd->data.cubic_to.ctrl_y1;
-			}
-			cur.x = cmd.definition.cubic_to.x;
-			cur.y = cmd.definition.cubic_to.y;
-			break;
-
-			case ESVG_PATH_SCUBIC_TO:
-			DBG("scubic_to %c ((%g, %g) (%g, %g))",
-					pcmd->relative ? 'R' : 'A',
-					pcmd->data.scubic_to.ctrl_x,
-					pcmd->data.scubic_to.ctrl_y,
-					pcmd->data.scubic_to.x,
-					pcmd->data.scubic_to.y);
-			cmd.type = ENESIM_PATH_COMMAND_SCUBIC_TO;
-			if (pcmd->relative)
-			{
-				cmd.definition.scubic_to.x = cur.x + pcmd->data.scubic_to.x;
-				cmd.definition.scubic_to.y = cur.y + pcmd->data.scubic_to.y;
-				cmd.definition.scubic_to.ctrl_x = cur.x + pcmd->data.scubic_to.ctrl_x;
-				cmd.definition.scubic_to.ctrl_y = cur.y + pcmd->data.scubic_to.ctrl_y;
-			}
-			else
-			{
-				cmd.definition.scubic_to.x = pcmd->data.scubic_to.x;
-				cmd.definition.scubic_to.y = pcmd->data.scubic_to.y;
-				cmd.definition.scubic_to.ctrl_x = pcmd->data.scubic_to.ctrl_x;
-				cmd.definition.scubic_to.ctrl_y = pcmd->data.scubic_to.ctrl_y;
-			}
-			cur.x = cmd.definition.scubic_to.x;
-			cur.y = cmd.definition.scubic_to.y;
-			break;
-
-			case ESVG_PATH_QUADRATIC_TO:
-			DBG("quadratic_to %c ((%g, %g) (%g, %g))",
-					pcmd->relative ? 'R' : 'A',
-					pcmd->data.quadratic_to.ctrl_x,
-					pcmd->data.quadratic_to.ctrl_y,
-					pcmd->data.quadratic_to.x,
-					pcmd->data.quadratic_to.y);
-			cmd.type = ENESIM_PATH_COMMAND_QUADRATIC_TO;
-			if (pcmd->relative)
-			{
-				cmd.definition.quadratic_to.x = cur.x + pcmd->data.quadratic_to.x;
-				cmd.definition.quadratic_to.y = cur.y + pcmd->data.quadratic_to.y;
-				cmd.definition.quadratic_to.ctrl_x = cur.x + pcmd->data.quadratic_to.ctrl_x;
-				cmd.definition.quadratic_to.ctrl_y = cur.y + pcmd->data.quadratic_to.ctrl_y;
-
-			}
-			else
-			{
-				cmd.definition.quadratic_to.x = pcmd->data.quadratic_to.x;
-				cmd.definition.quadratic_to.y = pcmd->data.quadratic_to.y;
-				cmd.definition.quadratic_to.ctrl_x = pcmd->data.quadratic_to.ctrl_x;
-				cmd.definition.quadratic_to.ctrl_y = pcmd->data.quadratic_to.ctrl_y;
-			}
-			cur.x = cmd.definition.quadratic_to.x;
-			cur.y = cmd.definition.quadratic_to.y;
-			break;
-
-			case ESVG_PATH_SQUADRATIC_TO:
-			DBG("squadratic_to %c (%g, %g)",
-					pcmd->relative ? 'R' : 'A',
-					pcmd->data.squadratic_to.x,
-					pcmd->data.squadratic_to.y);
-			cmd.type = ENESIM_PATH_COMMAND_SQUADRATIC_TO;
-			if (pcmd->relative)
-			{
-				cmd.definition.squadratic_to.x = cur.x + pcmd->data.squadratic_to.x;
-				cmd.definition.squadratic_to.y = cur.y + pcmd->data.squadratic_to.y;
-			}
-			else
-			{
-				cmd.definition.squadratic_to.x = pcmd->data.squadratic_to.x;
-				cmd.definition.squadratic_to.y = pcmd->data.squadratic_to.y;
-			}
-			cur.x = cmd.definition.squadratic_to.x;
-			cur.y = cmd.definition.squadratic_to.y;
-			break;
-
-			case ESVG_PATH_ARC_TO:
-			DBG("arc_to %c ((%g, %g) %g %g %g (%g, %g))",
-					pcmd->relative ? 'R' : 'A',
-					pcmd->data.arc_to.rx,
-					pcmd->data.arc_to.ry,
-					pcmd->data.arc_to.angle,
-					pcmd->data.arc_to.large,
-					pcmd->data.arc_to.sweep,
-					pcmd->data.arc_to.x,
-					pcmd->data.arc_to.y);
-			cmd.type = ENESIM_PATH_COMMAND_ARC_TO;
-			if (pcmd->relative)
-			{
-				cmd.definition.arc_to.x = cur.x + pcmd->data.arc_to.x;
-				cmd.definition.arc_to.y = cur.y + pcmd->data.arc_to.y;
-			}
-			else
-			{
-				cmd.definition.arc_to.x = pcmd->data.arc_to.x;
-				cmd.definition.arc_to.y = pcmd->data.arc_to.y;
-			}
-			cmd.definition.arc_to.rx = pcmd->data.arc_to.rx;
-			cmd.definition.arc_to.ry = pcmd->data.arc_to.ry;
-			cmd.definition.arc_to.angle = pcmd->data.arc_to.angle;
-			cmd.definition.arc_to.large = pcmd->data.arc_to.large;
-			cmd.definition.arc_to.sweep = pcmd->data.arc_to.sweep;
-			cur.x = cmd.definition.arc_to.x;
-			cur.y = cmd.definition.arc_to.y;
-			break;
-
-			case ESVG_PATH_CLOSE:
-			DBG("close");
-			cmd.type = ENESIM_PATH_COMMAND_CLOSE;
-			cmd.definition.close.close = EINA_TRUE;
-			break;
-
-			default:
-			continue;
-			break;
+			cmd.definition.move_to.x = cur.x + pcmd->data.move_to.x;
+			cmd.definition.move_to.y = cur.y + pcmd->data.move_to.y;
 		}
-		first = EINA_FALSE;
-		enesim_renderer_path_command_add(thiz->r, &cmd);
-	}
-	thiz->d.changed = EINA_FALSE;
+		else
+		{
+			cmd.definition.move_to.x = pcmd->data.move_to.x;
+			cmd.definition.move_to.y = pcmd->data.move_to.y;
+		}
+		cur.x = cmd.definition.move_to.x;
+		cur.y = cmd.definition.move_to.y;
+		break;
 
+		case ESVG_PATH_LINE_TO:
+		DBG("line_to %c (%g, %g)", pcmd->relative ? 'R' : 'A',
+				pcmd->data.line_to.x,  pcmd->data.line_to.y);
+		cmd.type = ENESIM_PATH_COMMAND_LINE_TO;
+		if (pcmd->relative)
+		{
+			cmd.definition.line_to.x = cur.x + pcmd->data.line_to.x;
+			cmd.definition.line_to.y = cur.y + pcmd->data.line_to.y;
+		}
+		else
+		{
+			cmd.definition.line_to.x = pcmd->data.line_to.x;
+			cmd.definition.line_to.y = pcmd->data.line_to.y;
+		}
+		cur.x = cmd.definition.line_to.x;
+		cur.y = cmd.definition.line_to.y;
+		break;
+
+		case ESVG_PATH_HLINE_TO:
+		DBG("hline_to %c (%g)", pcmd->relative ? 'R' : 'A',
+				pcmd->data.hline_to.c);
+		cmd.type = ENESIM_PATH_COMMAND_LINE_TO;
+		if (pcmd->relative)
+		{
+			cmd.definition.line_to.x = cur.x + pcmd->data.hline_to.c;
+			cmd.definition.line_to.y = cur.y;
+		}
+		else
+		{
+			cmd.definition.line_to.x = pcmd->data.hline_to.c;
+			cmd.definition.line_to.y = cur.y;
+		}
+		cur.x = cmd.definition.line_to.x;
+		cur.y = cmd.definition.line_to.y;
+		break;
+
+		case ESVG_PATH_VLINE_TO:
+		DBG("vline_to %c (%g)", pcmd->relative ? 'R' : 'A',
+				pcmd->data.vline_to.c);
+		cmd.type = ENESIM_PATH_COMMAND_LINE_TO;
+		if (pcmd->relative)
+		{
+			cmd.definition.line_to.x = cur.x;
+			cmd.definition.line_to.y = cur.y + pcmd->data.vline_to.c;
+		}
+		else
+		{
+			cmd.definition.line_to.x = cur.x;
+			cmd.definition.line_to.y = pcmd->data.vline_to.c;
+		}
+		cur.x = cmd.definition.line_to.x;
+		cur.y = cmd.definition.line_to.y;
+		break;
+
+		case ESVG_PATH_CUBIC_TO:
+		DBG("cubic_to %c ((%g, %g) (%g, %g) (%g, %g))",
+				pcmd->relative ? 'R' : 'A',
+				pcmd->data.cubic_to.ctrl_x0,
+				pcmd->data.cubic_to.ctrl_y0,
+				pcmd->data.cubic_to.ctrl_x1,
+				pcmd->data.cubic_to.ctrl_y1,
+				pcmd->data.cubic_to.x,
+				pcmd->data.cubic_to.y);
+		cmd.type = ENESIM_PATH_COMMAND_CUBIC_TO;
+		if (pcmd->relative)
+		{
+			cmd.definition.cubic_to.x = cur.x + pcmd->data.cubic_to.x;
+			cmd.definition.cubic_to.y = cur.y + pcmd->data.cubic_to.y;
+			cmd.definition.cubic_to.ctrl_x0 = cur.x + pcmd->data.cubic_to.ctrl_x0;
+			cmd.definition.cubic_to.ctrl_y0 = cur.y + pcmd->data.cubic_to.ctrl_y0;
+			cmd.definition.cubic_to.ctrl_x1 = cur.x + pcmd->data.cubic_to.ctrl_x1;
+			cmd.definition.cubic_to.ctrl_y1 = cur.y + pcmd->data.cubic_to.ctrl_y1;
+
+		}
+		else
+		{
+			cmd.definition.cubic_to.x = pcmd->data.cubic_to.x;
+			cmd.definition.cubic_to.y = pcmd->data.cubic_to.y;
+			cmd.definition.cubic_to.ctrl_x0 = pcmd->data.cubic_to.ctrl_x0;
+			cmd.definition.cubic_to.ctrl_y0 = pcmd->data.cubic_to.ctrl_y0;
+			cmd.definition.cubic_to.ctrl_x1 = pcmd->data.cubic_to.ctrl_x1;
+			cmd.definition.cubic_to.ctrl_y1 = pcmd->data.cubic_to.ctrl_y1;
+		}
+		cur.x = cmd.definition.cubic_to.x;
+		cur.y = cmd.definition.cubic_to.y;
+		break;
+
+		case ESVG_PATH_SCUBIC_TO:
+		DBG("scubic_to %c ((%g, %g) (%g, %g))",
+				pcmd->relative ? 'R' : 'A',
+				pcmd->data.scubic_to.ctrl_x,
+				pcmd->data.scubic_to.ctrl_y,
+				pcmd->data.scubic_to.x,
+				pcmd->data.scubic_to.y);
+		cmd.type = ENESIM_PATH_COMMAND_SCUBIC_TO;
+		if (pcmd->relative)
+		{
+			cmd.definition.scubic_to.x = cur.x + pcmd->data.scubic_to.x;
+			cmd.definition.scubic_to.y = cur.y + pcmd->data.scubic_to.y;
+			cmd.definition.scubic_to.ctrl_x = cur.x + pcmd->data.scubic_to.ctrl_x;
+			cmd.definition.scubic_to.ctrl_y = cur.y + pcmd->data.scubic_to.ctrl_y;
+		}
+		else
+		{
+			cmd.definition.scubic_to.x = pcmd->data.scubic_to.x;
+			cmd.definition.scubic_to.y = pcmd->data.scubic_to.y;
+			cmd.definition.scubic_to.ctrl_x = pcmd->data.scubic_to.ctrl_x;
+			cmd.definition.scubic_to.ctrl_y = pcmd->data.scubic_to.ctrl_y;
+		}
+		cur.x = cmd.definition.scubic_to.x;
+		cur.y = cmd.definition.scubic_to.y;
+		break;
+
+		case ESVG_PATH_QUADRATIC_TO:
+		DBG("quadratic_to %c ((%g, %g) (%g, %g))",
+				pcmd->relative ? 'R' : 'A',
+				pcmd->data.quadratic_to.ctrl_x,
+				pcmd->data.quadratic_to.ctrl_y,
+				pcmd->data.quadratic_to.x,
+				pcmd->data.quadratic_to.y);
+		cmd.type = ENESIM_PATH_COMMAND_QUADRATIC_TO;
+		if (pcmd->relative)
+		{
+			cmd.definition.quadratic_to.x = cur.x + pcmd->data.quadratic_to.x;
+			cmd.definition.quadratic_to.y = cur.y + pcmd->data.quadratic_to.y;
+			cmd.definition.quadratic_to.ctrl_x = cur.x + pcmd->data.quadratic_to.ctrl_x;
+			cmd.definition.quadratic_to.ctrl_y = cur.y + pcmd->data.quadratic_to.ctrl_y;
+
+		}
+		else
+		{
+			cmd.definition.quadratic_to.x = pcmd->data.quadratic_to.x;
+			cmd.definition.quadratic_to.y = pcmd->data.quadratic_to.y;
+			cmd.definition.quadratic_to.ctrl_x = pcmd->data.quadratic_to.ctrl_x;
+			cmd.definition.quadratic_to.ctrl_y = pcmd->data.quadratic_to.ctrl_y;
+		}
+		cur.x = cmd.definition.quadratic_to.x;
+		cur.y = cmd.definition.quadratic_to.y;
+		break;
+
+		case ESVG_PATH_SQUADRATIC_TO:
+		DBG("squadratic_to %c (%g, %g)",
+				pcmd->relative ? 'R' : 'A',
+				pcmd->data.squadratic_to.x,
+				pcmd->data.squadratic_to.y);
+		cmd.type = ENESIM_PATH_COMMAND_SQUADRATIC_TO;
+		if (pcmd->relative)
+		{
+			cmd.definition.squadratic_to.x = cur.x + pcmd->data.squadratic_to.x;
+			cmd.definition.squadratic_to.y = cur.y + pcmd->data.squadratic_to.y;
+		}
+		else
+		{
+			cmd.definition.squadratic_to.x = pcmd->data.squadratic_to.x;
+			cmd.definition.squadratic_to.y = pcmd->data.squadratic_to.y;
+		}
+		cur.x = cmd.definition.squadratic_to.x;
+		cur.y = cmd.definition.squadratic_to.y;
+		break;
+
+		case ESVG_PATH_ARC_TO:
+		DBG("arc_to %c ((%g, %g) %g %g %g (%g, %g))",
+				pcmd->relative ? 'R' : 'A',
+				pcmd->data.arc_to.rx,
+				pcmd->data.arc_to.ry,
+				pcmd->data.arc_to.angle,
+				pcmd->data.arc_to.large,
+				pcmd->data.arc_to.sweep,
+				pcmd->data.arc_to.x,
+				pcmd->data.arc_to.y);
+		cmd.type = ENESIM_PATH_COMMAND_ARC_TO;
+		if (pcmd->relative)
+		{
+			cmd.definition.arc_to.x = cur.x + pcmd->data.arc_to.x;
+			cmd.definition.arc_to.y = cur.y + pcmd->data.arc_to.y;
+		}
+		else
+		{
+			cmd.definition.arc_to.x = pcmd->data.arc_to.x;
+			cmd.definition.arc_to.y = pcmd->data.arc_to.y;
+		}
+		cmd.definition.arc_to.rx = pcmd->data.arc_to.rx;
+		cmd.definition.arc_to.ry = pcmd->data.arc_to.ry;
+		cmd.definition.arc_to.angle = pcmd->data.arc_to.angle;
+		cmd.definition.arc_to.large = pcmd->data.arc_to.large;
+		cmd.definition.arc_to.sweep = pcmd->data.arc_to.sweep;
+		cur.x = cmd.definition.arc_to.x;
+		cur.y = cmd.definition.arc_to.y;
+		break;
+
+		case ESVG_PATH_CLOSE:
+		DBG("close");
+		cmd.type = ENESIM_PATH_COMMAND_CLOSE;
+		cmd.definition.close.close = EINA_TRUE;
+		break;
+
+		default:
+		break;
+	}
+	first = EINA_FALSE;
+	enesim_renderer_path_command_add(thiz->r, &cmd);
+}
+/*----------------------------------------------------------------------------*
+ *                               Shape interface                              *
+ *----------------------------------------------------------------------------*/
+static Eina_Bool _egueb_svg_element_path_generate_geometry(Egueb_Svg_Shape *s,
+		Egueb_Svg_Element *parent, Egueb_Dom_Node *doc)
+{
+	Egueb_Svg_Element_Path *thiz;
+	Egueb_Svg_Element *e;
+	Egueb_Dom_List *d;
+
+	thiz = EGUEB_SVG_ELEMENT_PATH(s);
+
+	/* TODO Be sure that we modified the points */
+	egueb_dom_attr_final_get(thiz->d, &d);
+	enesim_renderer_path_command_clear(thiz->r);
+	if (d)
+	{
+		egueb_dom_list_foreach(d, _egueb_svg_element_path_d_cb, thiz);
+		egueb_dom_list_unref(d);
+	}
+
+	e = EGUEB_SVG_ELEMENT(s);
+	/* set the transformation */
+	enesim_renderer_transformation_set(thiz->r, &e->transform);
+done:
 	return EINA_TRUE;
 }
-
-static void _egueb_svg_element_path_free(Egueb_Dom_Tag *t)
+/*----------------------------------------------------------------------------*
+ *                            Renderable interface                            *
+ *----------------------------------------------------------------------------*/
+static Enesim_Renderer * _egueb_svg_element_path_renderer_get(
+		Egueb_Svg_Renderable *r)
 {
 	Egueb_Svg_Element_Path *thiz;
 
-	thiz = _egueb_svg_element_path_get(t);
-	if (thiz->d.seg_list)
-	{
-		thiz->d.seg_list->owner = NULL;
-		egueb_svg_path_seg_list_unref(thiz->d.seg_list);
-	}
-	if (thiz->d.animated_seg_list)
-	{
-		thiz->d.animated_seg_list->owner = NULL;
-		egueb_svg_path_seg_list_unref(thiz->d.animated_seg_list);
-	}
-	enesim_renderer_unref(thiz->r);
-	free(thiz);
+	thiz = EGUEB_SVG_ELEMENT_PATH(r);
+	return enesim_renderer_ref(thiz->r);
 }
 
-static Egueb_Svg_Renderable_Descriptor _descriptor = {
-	/* .child_add		= */ NULL,
-	/* .child_remove	= */ NULL,
-	/* .attribute_get 	= */ _egueb_svg_element_path_attribute_get,
-	/* .cdata_set 		= */ NULL,
-	/* .text_set 		= */ NULL,
-	/* .text_get		     = */ NULL,
-	/* .free 		= */ _egueb_svg_element_path_free,
-	/* .initialize 		= */ NULL,
-	/* .attribute_set 	= */ _egueb_svg_element_path_attribute_set,
-	/* .attribute_animated_fetch 	= */ _egueb_svg_element_path_attribute_animated_fetch,
-	/* .setup		= */ _egueb_svg_element_path_setup,
-	/* .renderer_get	= */ _egueb_svg_element_path_renderer_get,
-	/* .renderer_propagate	= */ _egueb_svg_element_path_renderer_propagate,
-};
-/*----------------------------------------------------------------------------*
- *                           The Ender interface                              *
- *----------------------------------------------------------------------------*/
-static Egueb_Dom_Tag * _egueb_svg_element_path_new(void)
+static void _egueb_svg_element_path_bounds_get(Egueb_Svg_Renderable *r,
+		Enesim_Rectangle *bounds)
 {
 	Egueb_Svg_Element_Path *thiz;
-	Egueb_Dom_Tag *t;
+
+	thiz = EGUEB_SVG_ELEMENT_PATH(r);
+}
+/*----------------------------------------------------------------------------*
+ *                              Element interface                             *
+ *----------------------------------------------------------------------------*/
+static Egueb_Dom_String * _egueb_svg_element_path_tag_name_get(
+		Egueb_Dom_Element *e)
+{
+	return egueb_dom_string_ref(EGUEB_SVG_NAME_PATH);
+}
+/*----------------------------------------------------------------------------*
+ *                              Object interface                              *
+ *----------------------------------------------------------------------------*/
+EGUEB_DOM_ATTR_FETCH_DEFINE(egueb_svg_element_path, Egueb_Svg_Element_Path, d);
+
+ENESIM_OBJECT_INSTANCE_BOILERPLATE(EGUEB_SVG_SHAPE_DESCRIPTOR,
+		Egueb_Svg_Element_Path, Egueb_Svg_Element_Path_Class,
+		egueb_svg_element_path);
+
+static void _egueb_svg_element_path_class_init(void *k)
+{
+	Egueb_Svg_Shape_Class *klass;
+	Egueb_Svg_Renderable_Class *r_klass;
+	Egueb_Dom_Element_Class *e_klass;
+
+	klass = EGUEB_SVG_SHAPE_CLASS(k);
+	klass->generate_geometry = _egueb_svg_element_path_generate_geometry;
+
+	r_klass = EGUEB_SVG_RENDERABLE_CLASS(k);
+	r_klass->bounds_get = _egueb_svg_element_path_bounds_get;
+	r_klass->renderer_get = _egueb_svg_element_path_renderer_get;
+
+	e_klass= EGUEB_DOM_ELEMENT_CLASS(k);
+	e_klass->tag_name_get = _egueb_svg_element_path_tag_name_get;
+}
+
+static void _egueb_svg_element_path_class_deinit(void *k)
+{
+}
+
+static void _egueb_svg_element_path_instance_init(void *o)
+{
+	Egueb_Svg_Element_Path *thiz;
 	Enesim_Renderer *r;
 
-	thiz = calloc(1, sizeof(Egueb_Svg_Element_Path));
-	if (!thiz) return NULL;
-
-	thiz->d.seg_list = egueb_svg_path_seg_list_new();
-	thiz->d.animated_seg_list = egueb_svg_path_seg_list_new();
-
+	thiz = EGUEB_SVG_ELEMENT_PATH(o);
 	r = enesim_renderer_path_new();
 	thiz->r = r;
-	enesim_renderer_rop_set(r, ENESIM_BLEND);
-	/* default values */
 
-	t = egueb_svg_renderable_new(&_descriptor, ESVG_TYPE_PATH, thiz);
-	return t;
+	/* Default values */
+	enesim_renderer_rop_set(thiz->r, ENESIM_BLEND);
+
+	/* create the properties */
+	thiz->d = egueb_svg_attr_path_seg_list_new(
+			egueb_dom_string_ref(EGUEB_SVG_D),
+			NULL, EINA_TRUE, EINA_FALSE, EINA_FALSE);
+	EGUEB_DOM_ELEMENT_CLASS_PROPERTY_ADD(thiz, egueb_svg_element_path, d);
 }
 
-static void _egueb_svg_element_path_d_set(Egueb_Dom_Tag *t, Egueb_Svg_Path_Seg_List *seg_list)
+static void _egueb_svg_element_path_instance_deinit(void *o)
 {
 	Egueb_Svg_Element_Path *thiz;
-	Egueb_Svg_Path_Seg_List **current;
-	Egueb_Svg_Path_Seg_List *old;
 
-	if (!seg_list)
-		seg_list = egueb_svg_path_seg_list_new();
-
-	thiz = _egueb_svg_element_path_get(t);
-	if (thiz->d.animated)
-		current = &thiz->d.animated_seg_list;
-	else
-		current = &thiz->d.seg_list;
-
-	old = *current;
-	old->owner = NULL;
-	egueb_svg_path_seg_list_unref(old);
-
-	*current = seg_list;
-	seg_list->owner = egueb_svg_element_ender_get(t);
-	thiz->d.changed = EINA_TRUE;
+	thiz = EGUEB_SVG_ELEMENT_PATH(o);
+	enesim_renderer_unref(thiz->r);
+	/* destroy the properties */
+	egueb_dom_node_unref(thiz->d);
 }
 
-static void _egueb_svg_element_path_d_get(Egueb_Dom_Tag *t, Egueb_Svg_Path_Seg_List **seg_list)
-{
-}
-
-/* The ender wrapper */
-#define _egueb_svg_element_path_delete NULL
-#define _egueb_svg_element_path_d_is_set NULL
-#include "egueb_svg_generated_element_path.c"
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
-void egueb_svg_element_path_init(void)
-{
-	_egueb_svg_element_path_log = eina_log_domain_register("egueb_svg_element_path", ESVG_LOG_COLOR_DEFAULT);
-	if (_egueb_svg_element_path_log < 0)
-	{
-		EINA_LOG_ERR("Can not create log domain.");
-		return;
-	}
-	_egueb_svg_element_path_init();
-}
-
-void egueb_svg_element_path_shutdown(void)
-{
-	if (_egueb_svg_element_path_log < 0)
-		return;
-	_egueb_svg_element_path_shutdown();
-	eina_log_domain_unregister(_egueb_svg_element_path_log);
-	_egueb_svg_element_path_log = -1;
-}
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/
-EAPI Ender_Element * egueb_svg_element_path_new(void)
+EAPI Egueb_Dom_Node * egueb_svg_element_path_new(void)
 {
-	return ESVG_ELEMENT_NEW("SVGPathElement");
+	Egueb_Dom_Node *n;
+
+	n = ENESIM_OBJECT_INSTANCE_NEW(egueb_svg_element_path);
+	return n;
 }
-
-EAPI Eina_Bool egueb_svg_is_path(Ender_Element *e)
-{
-	Eina_Bool ret = EINA_TRUE;
-
-	return ret;
-}
-
-EAPI void egueb_svg_element_path_d_set(Ender_Element *e, Egueb_Svg_Path_Seg_List *d)
-{
-	ender_element_property_value_set(e, ESVG_ELEMENT_PATH_D, d, NULL);
-}
-
-EAPI void egueb_svg_element_path_d_get(Ender_Element *e, Egueb_Svg_Path_Seg_List **d)
-{
-}
-
 

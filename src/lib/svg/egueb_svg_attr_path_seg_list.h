@@ -15,10 +15,11 @@
  * License along with this library.
  * If not, see <http://www.gnu.org/licenses/>.
  */
+#ifndef _EGUEB_SVG_ATTR_PATH_SEG_LIST_H_
+#define _EGUEB_SVG_ATTR_PATH_SEG_LIST_H_
 
-#ifndef _EGUEB_SVG_ELEMENT_PATH_H_
-#define _EGUEB_SVG_ELEMENT_PATH_H_
-
-EAPI Egueb_Dom_Node * egueb_svg_element_path_new(void);
+Egueb_Dom_Node * egueb_svg_attr_path_seg_list_new(Egueb_Dom_String *name,
+		Egueb_Dom_List *def, Eina_Bool animatable, Eina_Bool stylable,
+		Eina_Bool inheritable);
 
 #endif

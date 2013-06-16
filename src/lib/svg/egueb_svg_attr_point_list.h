@@ -23,6 +23,3 @@ Egueb_Dom_Node * egueb_svg_attr_point_list_new(Egueb_Dom_String *name,
 		Eina_Bool inheritable);
 
 #endif
-
-
-

@@ -193,12 +193,15 @@ static Eina_Bool _egueb_svg_element_polyline_generate_geometry(Egueb_Svg_Shape *
 		DBG("using the line (%f, %f) (%f, %f)", pts[0].x, pts[0].y, pts[1].x, pts[1].y);
 	}
 #endif
-	egueb_dom_attr_final_get(thiz->points, &points);
 	/* TODO Be sure that we modified the points */
+	egueb_dom_attr_final_get(thiz->points, &points);
 	enesim_renderer_figure_clear(thiz->r);
-	enesim_renderer_figure_polygon_add(thiz->r);
-	egueb_dom_list_foreach(points, _egueb_svg_element_polyline_points_cb, thiz);
-	egueb_dom_list_unref(points);
+	if (points)
+	{
+		enesim_renderer_figure_polygon_add(thiz->r);
+		egueb_dom_list_foreach(points, _egueb_svg_element_polyline_points_cb, thiz);
+		egueb_dom_list_unref(points);
+	}
 
 	e = EGUEB_SVG_ELEMENT(s);
 	/* set the transformation */

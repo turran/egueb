@@ -72,6 +72,10 @@
 #include "egueb_svg_matrix.h"
 #include "egueb_svg_number.h"
 #include "egueb_svg_paint.h"
+#include "egueb_svg_path_seg.h"
+#include "egueb_svg_path_seg_list.h"
+#include "egueb_svg_point.h"
+#include "egueb_svg_point_list.h"
 #include "egueb_svg_referenceable_units.h"
 #include "egueb_svg_rect.h"
 #include "egueb_svg_string.h"
@@ -118,6 +122,9 @@
 #include "egueb_svg_element_image.h"
 #include "egueb_svg_element_line.h"
 #include "egueb_svg_element_linear_gradient.h"
+#include "egueb_svg_element_path.h"
+#include "egueb_svg_element_polygon.h"
+#include "egueb_svg_element_polyline.h"
 #include "egueb_svg_element_radial_gradient.h"
 #include "egueb_svg_element_rect.h"
 #include "egueb_svg_element_use.h"
@@ -132,28 +139,13 @@
 #include "egueb_svg_script_provider.h"
 
 /* shapes */
-#include "egueb_svg_element_path.h"
-#include "egueb_svg_element_polygon.h"
-#include "egueb_svg_element_polyline.h"
-#include "egueb_svg_element_line.h"
-#include "egueb_svg_element_circle.h"
-#include "egueb_svg_element_ellipse.h"
-#include "egueb_svg_element_rect.h"
-#include "egueb_svg_element_image.h"
-#include "egueb_svg_element_text.h"
-#include "egueb_svg_element_use.h"
 #include "egueb_svg_element_video.h"
 /* containers */
-#include "egueb_svg_element_svg.h"
-#include "egueb_svg_element_g.h"
 
 /* other */
 #include "egueb_svg_element_a.h"
-#include "egueb_svg_element_defs.h"
 #include "egueb_svg_element_style.h"
-#include "egueb_svg_element_clip_path.h"
 #include "egueb_svg_element_script.h"
-#include "egueb_svg_event.h"
 
 /* paint servers */
 #include "egueb_svg_element_gradient.h"

@@ -65,13 +65,16 @@ static Eina_Bool _egueb_svg_element_polygon_generate_geometry(Egueb_Svg_Shape *s
 	Egueb_Dom_List *points;
 
 	thiz = EGUEB_SVG_ELEMENT_POLYGON(s);
-	egueb_dom_attr_final_get(thiz->points, &points);
 	/* TODO Be sure that we modified the points */
+	egueb_dom_attr_final_get(thiz->points, &points);
 	enesim_renderer_figure_clear(thiz->r);
-	enesim_renderer_figure_polygon_add(thiz->r);
-	egueb_dom_list_foreach(points, _egueb_svg_element_polygon_points_cb, thiz);
-	enesim_renderer_figure_polygon_close(thiz->r, EINA_TRUE);
-	egueb_dom_list_unref(points);
+	if (points)
+	{
+		enesim_renderer_figure_polygon_add(thiz->r);
+		egueb_dom_list_foreach(points, _egueb_svg_element_polygon_points_cb, thiz);
+		enesim_renderer_figure_polygon_close(thiz->r, EINA_TRUE);
+		egueb_dom_list_unref(points);
+	}
 
 	e = EGUEB_SVG_ELEMENT(s);
 	/* set the transformation */

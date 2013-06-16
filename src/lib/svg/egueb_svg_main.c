@@ -35,6 +35,7 @@ static void _egueb_svg_strings_init(void)
 	EGUEB_SVG_NAME_G = egueb_dom_string_new_with_string("g");
 	EGUEB_SVG_NAME_LINE = egueb_dom_string_new_with_string("line");
 	EGUEB_SVG_NAME_LINEAR_GRADIENT = egueb_dom_string_new_with_string("linearGradient");
+	EGUEB_SVG_NAME_PATH = egueb_dom_string_new_with_string("path");
 	EGUEB_SVG_NAME_POLYGON = egueb_dom_string_new_with_string("polygon");
 	EGUEB_SVG_NAME_POLYLINE = egueb_dom_string_new_with_string("polyline");
 	EGUEB_SVG_NAME_RADIAL_GRADIENT = egueb_dom_string_new_with_string("radialGradient");
@@ -51,6 +52,7 @@ static void _egueb_svg_strings_init(void)
 	EGUEB_SVG_COLOR = egueb_dom_string_new_with_string("color");
 	EGUEB_SVG_CX = egueb_dom_string_new_with_string("cx");
 	EGUEB_SVG_CY = egueb_dom_string_new_with_string("cy");
+	EGUEB_SVG_D = egueb_dom_string_new_with_string("d");
 	EGUEB_SVG_FILL = egueb_dom_string_new_with_string("fill");
 	EGUEB_SVG_FILL_OPACITY = egueb_dom_string_new_with_string("fill-opacity");
 	EGUEB_SVG_FONT_SIZE = egueb_dom_string_new_with_string("font-size");
@@ -99,6 +101,7 @@ static void _egueb_svg_strings_shutdown(void)
 	egueb_dom_string_unref(EGUEB_SVG_NAME_G);
 	egueb_dom_string_unref(EGUEB_SVG_NAME_LINE);
 	egueb_dom_string_unref(EGUEB_SVG_NAME_LINEAR_GRADIENT);
+	egueb_dom_string_unref(EGUEB_SVG_NAME_PATH);
 	egueb_dom_string_unref(EGUEB_SVG_NAME_POLYGON);
 	egueb_dom_string_unref(EGUEB_SVG_NAME_POLYLINE);
 	egueb_dom_string_unref(EGUEB_SVG_NAME_RADIAL_GRADIENT);
@@ -115,6 +118,7 @@ static void _egueb_svg_strings_shutdown(void)
 	egueb_dom_string_unref(EGUEB_SVG_COLOR);
 	egueb_dom_string_unref(EGUEB_SVG_CX);
 	egueb_dom_string_unref(EGUEB_SVG_CY);
+	egueb_dom_string_unref(EGUEB_SVG_D);
 	egueb_dom_string_unref(EGUEB_SVG_FILL);
 	egueb_dom_string_unref(EGUEB_SVG_FILL_OPACITY);
 	egueb_dom_string_unref(EGUEB_SVG_FONT_SIZE);
@@ -218,6 +222,7 @@ Egueb_Dom_String *EGUEB_SVG_NAME_ELLIPSE;
 Egueb_Dom_String *EGUEB_SVG_NAME_G;
 Egueb_Dom_String *EGUEB_SVG_NAME_LINE;
 Egueb_Dom_String *EGUEB_SVG_NAME_LINEAR_GRADIENT;
+Egueb_Dom_String *EGUEB_SVG_NAME_PATH;
 Egueb_Dom_String *EGUEB_SVG_NAME_POLYGON;
 Egueb_Dom_String *EGUEB_SVG_NAME_POLYLINE;
 Egueb_Dom_String *EGUEB_SVG_NAME_RADIAL_GRADIENT;
@@ -234,6 +239,7 @@ Egueb_Dom_String *EGUEB_SVG_CLIP_PATH_UNITS;
 Egueb_Dom_String *EGUEB_SVG_COLOR;
 Egueb_Dom_String *EGUEB_SVG_CX;
 Egueb_Dom_String *EGUEB_SVG_CY;
+Egueb_Dom_String *EGUEB_SVG_D;
 Egueb_Dom_String *EGUEB_SVG_FILL;
 Egueb_Dom_String *EGUEB_SVG_FILL_OPACITY;
 Egueb_Dom_String *EGUEB_SVG_FONT_SIZE;
