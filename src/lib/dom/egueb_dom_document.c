@@ -145,11 +145,15 @@ static void _egueb_dom_document_mutation_node_inserted_cb(Egueb_Dom_Event *ev,
 	Egueb_Dom_Document *thiz = EGUEB_DOM_DOCUMENT(data);
 	Egueb_Dom_Node *target;
 	Egueb_Dom_Node_Type type;
+	Egueb_Dom_String *name;
 
 	egueb_dom_event_target_get(ev, &target);
 	egueb_dom_node_type_get(target, &type);
 
-	DBG("Node inserted");
+	egueb_dom_node_name_get(target, &name);
+	DBG("Node '%s' inserted", egueb_dom_string_string_get(name));
+	egueb_dom_string_unref(name);
+
 	/* addr the element to the ids */
 	if (type == EGUEB_DOM_NODE_TYPE_ELEMENT_NODE)
 	{
@@ -178,12 +182,16 @@ static void _egueb_dom_document_mutation_node_removed_cb(Egueb_Dom_Event *ev,
 {
 	Egueb_Dom_Document *thiz = EGUEB_DOM_DOCUMENT(data);
 	Egueb_Dom_Node *target;
+	Egueb_Dom_String *name;
 	Egueb_Dom_Node_Type type;
 
 	egueb_dom_event_target_get(ev, &target);
 	egueb_dom_node_type_get(target, &type);
 
-	DBG("Node removed");
+	egueb_dom_node_name_get(target, &name);
+	DBG("Node '%s' removed", egueb_dom_string_string_get(name));
+	egueb_dom_string_unref(name);
+
 	/* remove the element from the ids */
 	if (type == EGUEB_DOM_NODE_TYPE_ELEMENT_NODE)
 	{
