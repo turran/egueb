@@ -107,7 +107,7 @@ static char * _myelement_to_string(Egueb_Dom_Node *n)
 			egueb_dom_attr_name_get(attr, &attr_name);
 			if (!attr_name) goto no_name;
 
-			egueb_dom_attr_string_get(attr, &attr_value);
+			egueb_dom_attr_string_get(attr, EGUEB_DOM_ATTR_TYPE_BASE, &attr_value);
 			if (!attr_value) goto no_value;
 
 			ret = eina_str_dup_printf("%s %s=\"%s\"", str,

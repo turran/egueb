@@ -75,9 +75,9 @@ EAPI Eina_Bool egueb_dom_attr_final_get_va(Egueb_Dom_Node *n, va_list args);
 EAPI Eina_Bool egueb_dom_attr_final_get(Egueb_Dom_Node *n, ...);
 
 EAPI Eina_Bool egueb_dom_attr_string_set(Egueb_Dom_Node *attr,
-		Egueb_Dom_String *str);
+		Egueb_Dom_Attr_Type type, Egueb_Dom_String *str);
 EAPI Eina_Bool egueb_dom_attr_string_get(Egueb_Dom_Node *attr,
-		Egueb_Dom_String **str);
+		Egueb_Dom_Attr_Type type, Egueb_Dom_String **str);
 
 EAPI void egueb_dom_attr_inherited_get(Egueb_Dom_Node *attr,
 		Egueb_Dom_Node **inherited);

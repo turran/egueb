@@ -77,5 +77,8 @@ typedef struct _Egueb_Dom_Element_Class
 Enesim_Object_Descriptor * egueb_dom_element_descriptor_get(void);
 Eina_Error egueb_dom_element_process(Egueb_Dom_Element *thiz);
 Eina_Error egueb_dom_element_process_children(Egueb_Dom_Element *thiz);
+Eina_Error egueb_dom_element_attribute_type_set(Egueb_Dom_Node *node,
+		const Egueb_Dom_String *name, Egueb_Dom_Attr_Type type,
+		Egueb_Dom_String *value);
 
 #endif

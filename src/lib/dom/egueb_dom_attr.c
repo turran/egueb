@@ -522,7 +522,7 @@ EAPI Eina_Bool egueb_dom_attr_final_get(Egueb_Dom_Node *n, ...)
 }
 
 EAPI Eina_Bool egueb_dom_attr_string_set(Egueb_Dom_Node *attr,
-		Egueb_Dom_String *str)
+		Egueb_Dom_Attr_Type type, Egueb_Dom_String *str)
 {
 	Egueb_Dom_Value v = EGUEB_DOM_VALUE_INIT;
 	const Egueb_Dom_Value_Descriptor *d;
@@ -531,13 +531,13 @@ EAPI Eina_Bool egueb_dom_attr_string_set(Egueb_Dom_Node *attr,
 	d = egueb_dom_attr_value_descriptor_get(attr);
 	egueb_dom_value_init(&v, d);
 	egueb_dom_value_string_from(&v, str);
-	ret = egueb_dom_attr_value_set(attr, EGUEB_DOM_ATTR_TYPE_BASE, &v);
+	ret = egueb_dom_attr_value_set(attr, type, &v);
 	egueb_dom_value_reset(&v);
 	return ret;
 }
 
 EAPI Eina_Bool egueb_dom_attr_string_get(Egueb_Dom_Node *attr,
-		Egueb_Dom_String **str)
+		Egueb_Dom_Attr_Type type, Egueb_Dom_String **str)
 {
 	Egueb_Dom_Value v = EGUEB_DOM_VALUE_INIT;
 	const Egueb_Dom_Value_Descriptor *d;
@@ -545,7 +545,7 @@ EAPI Eina_Bool egueb_dom_attr_string_get(Egueb_Dom_Node *attr,
 
 	d = egueb_dom_attr_value_descriptor_get(attr);
 	egueb_dom_value_init(&v, d);
-	ret = egueb_dom_attr_value_get(attr, EGUEB_DOM_ATTR_TYPE_BASE, &v);
+	ret = egueb_dom_attr_value_get(attr, type, &v);
 	egueb_dom_value_string_to(&v, str);
 	egueb_dom_value_reset(&v);
 	return ret;
