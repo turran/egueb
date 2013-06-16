@@ -1293,7 +1293,7 @@ static Eina_Bool _egueb_svg_element_process(Egueb_Dom_Element *e)
 
 		str = egueb_dom_string_string_get(style);
 		/* TODO revert the style */
-		ERR("Using a style");
+		DBG("Using a style");
 		/* apply the new style */
 		ecss_context_inline_style_apply(&_egueb_svg_element_css_context, str, thiz);
 		/* swap the styles */

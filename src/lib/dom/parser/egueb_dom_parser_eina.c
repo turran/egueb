@@ -261,7 +261,7 @@ static Eina_Bool _egueb_dom_parser_eina_cb(void *data, Eina_Simple_XML_Type type
 		break;
 
 		default:
-		ERR("Unsupported case %d", type);
+		WARN("Unsupported case %d", type);
 		break;
 	}
 

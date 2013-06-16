@@ -118,10 +118,12 @@ static void _egueb_dom_attr_instance_deinit(void *o)
 Eina_Error egueb_dom_attr_set_va(Egueb_Dom_Node *n,
 		int prop_mask, va_list args)
 {
+	Egueb_Dom_Attr *thiz;
 	const Egueb_Dom_Value_Descriptor *d;
 	Eina_Error ret = EINA_ERROR_NONE;
 	int i = 0;
 
+	thiz = EGUEB_DOM_ATTR(n);
 	d = egueb_dom_attr_value_descriptor_get(n);
 	while (prop_mask)
 	{
@@ -141,6 +143,7 @@ Eina_Error egueb_dom_attr_set_va(Egueb_Dom_Node *n,
 				ret = EGUEB_DOM_ERROR_NOT_FOUND;
 				break;
 			}
+			thiz->set_mask |= type;
 		}
 		prop_mask = prop_mask >> 1;
 		i++;
@@ -403,7 +406,7 @@ EAPI Eina_Bool egueb_dom_attr_value_set(Egueb_Dom_Node *n,
 			e = EGUEB_DOM_ELEMENT(thiz->owner);
 			e->inheritable_changed = EINA_TRUE;
 		}
-
+		thiz->set_mask |= type;
 	}
 	return EINA_TRUE;
 }
