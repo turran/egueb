@@ -309,6 +309,10 @@ static void _egueb_svg_element_text_renderer_propagate(Egueb_Svg_Shape *s,
 	Egueb_Svg_Element_Text *thiz;
 
 	thiz = EGUEB_SVG_ELEMENT_TEXT(s);
+	if (thiz->renderable_tree_changed)
+	{
+		enesim_renderer_compound_layer_clear(thiz->r);
+	}
 	egueb_dom_node_children_foreach(EGUEB_DOM_NODE(s),
 		_egueb_svg_element_text_children_propagate_cb,
 		thiz);
@@ -382,7 +386,6 @@ static void _egueb_svg_element_text_instance_init(void *o)
 	Enesim_Renderer *r;
 
 	thiz = EGUEB_SVG_ELEMENT_TEXT(o);
-	thiz->renderable_tree_changed = EINA_TRUE;
 
 	thiz->r = enesim_renderer_compound_new();
 	enesim_renderer_rop_set(thiz->r, ENESIM_BLEND);
