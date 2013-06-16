@@ -32,6 +32,8 @@
 #include "egueb_svg_element_image.h"
 #include "egueb_svg_element_line.h"
 #include "egueb_svg_element_linear_gradient.h"
+#include "egueb_svg_element_polygon.h"
+#include "egueb_svg_element_polyline.h"
 #include "egueb_svg_element_radial_gradient.h"
 #include "egueb_svg_element_rect.h"
 #include "egueb_svg_element_use.h"
@@ -456,7 +458,7 @@ static Egueb_Dom_Node * _egueb_svg_document_element_create(int id)
 		case EGUEB_SVG_TYPE_PATH:
 		ret = egueb_svg_element_path_new();
 		break;
-
+#endif
 		case EGUEB_SVG_TYPE_POLYLINE:
 		ret = egueb_svg_element_polyline_new();
 		break;
@@ -464,7 +466,7 @@ static Egueb_Dom_Node * _egueb_svg_document_element_create(int id)
 		case EGUEB_SVG_TYPE_POLYGON:
 		ret = egueb_svg_element_polygon_new();
 		break;
-#endif
+
 		case EGUEB_SVG_TYPE_TEXT:
 		ret = egueb_svg_element_text_new();
 		break;

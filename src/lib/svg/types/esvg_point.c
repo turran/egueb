@@ -58,20 +58,4 @@ void egueb_svg_point_shutdown(void)
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/
-EAPI Eina_Bool egueb_svg_point_string_from(Egueb_Svg_Point *thiz, const char *attr)
-{
-	const char *tmp;
-	char *endptr;
 
-	ESVG_SPACE_SKIP(attr);
-	tmp = attr;
-
-	thiz->x = eina_strtod(tmp, &endptr);
-	tmp = endptr;
-	ESVG_SPACE_COMMA_SKIP(tmp);
-	thiz->y = eina_strtod(tmp, &endptr);
-	tmp = endptr;
-	ESVG_SPACE_COMMA_SKIP(tmp);
-
-	return EINA_TRUE;
-}

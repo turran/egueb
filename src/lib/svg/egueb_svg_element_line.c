@@ -51,12 +51,12 @@ typedef struct _Egueb_Svg_Element_Line_Class
 /*----------------------------------------------------------------------------*
  *                               Shape interface                              *
  *----------------------------------------------------------------------------*/
-static Eina_Bool _egueb_svg_element_line_generate_geometry(Egueb_Svg_Shape *s)
+static Eina_Bool _egueb_svg_element_line_generate_geometry(Egueb_Svg_Shape *s,
+		Egueb_Svg_Element *relative, Egueb_Dom_Node *doc)
 {
 	Egueb_Svg_Element_Line *thiz;
-	Egueb_Svg_Element *e, *e_parent;
+	Egueb_Svg_Element *e;
 	Egueb_Svg_Length x1, y1, x2, y2;
-	Egueb_Dom_Node *relative, *doc;
 	double font_size;
 
 	thiz = EGUEB_SVG_ELEMENT_LINE(s);
@@ -66,30 +66,11 @@ static Eina_Bool _egueb_svg_element_line_generate_geometry(Egueb_Svg_Shape *s)
 	egueb_dom_attr_final_get(thiz->y2, &y2);
 
 	/* calculate the real size */
-	egueb_svg_element_geometry_relative_get(EGUEB_DOM_NODE(s), &relative);
-	if (!relative)
-	{
-		WARN("No relative available");
-		return EINA_FALSE;
-	}
-	egueb_dom_node_document_get(EGUEB_DOM_NODE(s), &doc);
-	if (!doc)
-	{
-		WARN("No document set");
-		egueb_dom_node_unref(relative);
-		return EINA_FALSE;
-	}
-
-	e_parent = EGUEB_SVG_ELEMENT(relative);
 	egueb_svg_document_font_size_get(doc, &font_size);
-
-	thiz->gx1 = egueb_svg_coord_final_get(&x1, e_parent->viewbox.w, font_size);
-	thiz->gy1 = egueb_svg_coord_final_get(&y1, e_parent->viewbox.h, font_size);
-	thiz->gx2 = egueb_svg_coord_final_get(&x2, e_parent->viewbox.w, font_size);
-	thiz->gy2 = egueb_svg_coord_final_get(&y2, e_parent->viewbox.h, font_size);
-
-	egueb_dom_node_unref(relative);
-	egueb_dom_node_unref(doc);
+	thiz->gx1 = egueb_svg_coord_final_get(&x1, relative->viewbox.w, font_size);
+	thiz->gy1 = egueb_svg_coord_final_get(&y1, relative->viewbox.h, font_size);
+	thiz->gx2 = egueb_svg_coord_final_get(&x2, relative->viewbox.w, font_size);
+	thiz->gy2 = egueb_svg_coord_final_get(&y2, relative->viewbox.h, font_size);
 
 	/* set the position */
 	enesim_renderer_line_x0_set(thiz->r, thiz->gx1);

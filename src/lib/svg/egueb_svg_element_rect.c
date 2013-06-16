@@ -53,12 +53,12 @@ typedef struct _Egueb_Svg_Element_Rect_Class
 /*----------------------------------------------------------------------------*
  *                               Shape interface                              *
  *----------------------------------------------------------------------------*/
-static Eina_Bool _egueb_svg_element_rect_generate_geometry(Egueb_Svg_Shape *s)
+static Eina_Bool _egueb_svg_element_rect_generate_geometry(Egueb_Svg_Shape *s,
+		Egueb_Svg_Element *relative, Egueb_Dom_Node *doc)
 {
 	Egueb_Svg_Element_Rect *thiz;
-	Egueb_Svg_Element *e, *e_parent;
+	Egueb_Svg_Element *e;
 	Egueb_Svg_Length x, y, rx, ry, w, h;
-	Egueb_Dom_Node *relative, *doc;
 	Eina_Bool rx_set, ry_set;
 	double grx, gry;
 	double font_size;
@@ -82,33 +82,13 @@ static Eina_Bool _egueb_svg_element_rect_generate_geometry(Egueb_Svg_Shape *s)
 	egueb_dom_attr_final_get(thiz->width, &w);
 	egueb_dom_attr_final_get(thiz->height, &h);
 
-	/* calculate the real size */
-	egueb_svg_element_geometry_relative_get(EGUEB_DOM_NODE(s), &relative);
-	if (!relative)
-	{
-		WARN("No relative available");
-		return EINA_FALSE;
-	}
-	egueb_dom_node_document_get(EGUEB_DOM_NODE(s), &doc);
-	if (!doc)
-	{
-		WARN("No document set");
-		egueb_dom_node_unref(relative);
-		return EINA_FALSE;
-	}
-
-	e_parent = EGUEB_SVG_ELEMENT(relative);
 	egueb_svg_document_font_size_get(doc, &font_size);
-
-	thiz->gx = egueb_svg_coord_final_get(&x, e_parent->viewbox.w, font_size);
-	thiz->gy = egueb_svg_coord_final_get(&y, e_parent->viewbox.h, font_size);
-	thiz->gw = egueb_svg_coord_final_get(&w, e_parent->viewbox.w, font_size);
-	thiz->gh = egueb_svg_coord_final_get(&h, e_parent->viewbox.h, font_size);
-	grx = egueb_svg_coord_final_get(&rx, e_parent->viewbox.w, font_size);
-	gry = egueb_svg_coord_final_get(&ry, e_parent->viewbox.h, font_size);
-
-	egueb_dom_node_unref(relative);
-	egueb_dom_node_unref(doc);
+	thiz->gx = egueb_svg_coord_final_get(&x, relative->viewbox.w, font_size);
+	thiz->gy = egueb_svg_coord_final_get(&y, relative->viewbox.h, font_size);
+	thiz->gw = egueb_svg_coord_final_get(&w, relative->viewbox.w, font_size);
+	thiz->gh = egueb_svg_coord_final_get(&h, relative->viewbox.h, font_size);
+	grx = egueb_svg_coord_final_get(&rx, relative->viewbox.w, font_size);
+	gry = egueb_svg_coord_final_get(&ry, relative->viewbox.h, font_size);
 
 	/* set the position */
 	enesim_renderer_rectangle_position_set(thiz->r, thiz->gx, thiz->gy);

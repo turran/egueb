@@ -17,13 +17,10 @@
  */
 
 #include "egueb_svg_main_private.h"
-
-#include "egueb_dom_attr.h"
 #include "egueb_svg_clip_path.h"
-
+#include "egueb_svg_attr_clip_path.h"
 #include "egueb_dom_attr_private.h"
 #include "egueb_dom_attr_primitive_private.h"
-#include "egueb_svg_attr_clip_path.h"
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/

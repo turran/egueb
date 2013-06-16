@@ -132,13 +132,13 @@ static void _egueb_svg_element_tspan_node_removed_cb(Egueb_Dom_Event *e,
 /*----------------------------------------------------------------------------*
  *                               Shape interface                              *
  *----------------------------------------------------------------------------*/
-static Eina_Bool _egueb_svg_element_tspan_generate_geometry(Egueb_Svg_Shape *s)
+static Eina_Bool _egueb_svg_element_tspan_generate_geometry(Egueb_Svg_Shape *s,
+		Egueb_Svg_Element *relative, Egueb_Dom_Node *doc)
 {
 	Egueb_Svg_Element_Tspan *thiz;
 	Egueb_Svg_Element_Text_Pen *pen;
-	Egueb_Svg_Element *e, *e_parent;
+	Egueb_Svg_Element *e;
 	Egueb_Svg_Length x, y;
-	Egueb_Dom_Node *relative, *doc;
 	Enesim_Rectangle bounds;
 	Enesim_Matrix inv;
 	double gx, gy;
@@ -150,30 +150,12 @@ static Eina_Bool _egueb_svg_element_tspan_generate_geometry(Egueb_Svg_Shape *s)
 	egueb_dom_attr_final_get(thiz->y, &y);
 
 	/* calculate the real size */
-	egueb_svg_element_geometry_relative_get(EGUEB_DOM_NODE(s), &relative);
-	if (!relative)
-	{
-		WARN("No relative available");
-		return EINA_FALSE;
-	}
-	egueb_dom_node_document_get(EGUEB_DOM_NODE(s), &doc);
-	if (!doc)
-	{
-		WARN("No document set");
-		egueb_dom_node_unref(relative);
-		return EINA_FALSE;
-	}
-
-	e_parent = EGUEB_SVG_ELEMENT(relative);
 	egueb_svg_document_font_size_get(doc, &doc_font_size);
-
-	thiz->gx = egueb_svg_coord_final_get(&x, e_parent->viewbox.w, doc_font_size);
-	thiz->gy = egueb_svg_coord_final_get(&y, e_parent->viewbox.h, doc_font_size);
+	thiz->gx = egueb_svg_coord_final_get(&x, relative->viewbox.w, doc_font_size);
+	thiz->gy = egueb_svg_coord_final_get(&y, relative->viewbox.h, doc_font_size);
 
 	/* get the pen we should use for every span */
-	egueb_svg_element_text_pen_get(relative, &pen);
-	egueb_dom_node_unref(relative);
-	egueb_dom_node_unref(doc);
+	egueb_svg_element_text_pen_get(EGUEB_DOM_NODE(relative), &pen);
 
 	/* set the position */
 	e = EGUEB_SVG_ELEMENT(s);

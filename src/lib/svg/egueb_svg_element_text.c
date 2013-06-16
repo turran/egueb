@@ -265,13 +265,13 @@ not_us:
 /*----------------------------------------------------------------------------*
  *                               Shape interface                              *
  *----------------------------------------------------------------------------*/
-static Eina_Bool _egueb_svg_element_text_generate_geometry(Egueb_Svg_Shape *s)
+static Eina_Bool _egueb_svg_element_text_generate_geometry(Egueb_Svg_Shape *s,
+		Egueb_Svg_Element *relative, Egueb_Dom_Node *doc)
 {
 	Egueb_Svg_Element_Text *thiz;
-	Egueb_Svg_Element *e, *e_parent;
+	Egueb_Svg_Element *e;
 	Egueb_Svg_Length x, y;
 	Egueb_Svg_Font_Size font_size;
-	Egueb_Dom_Node *relative, *doc;
 	double doc_font_size, gfont;
 
 	thiz = EGUEB_SVG_ELEMENT_TEXT(s);
@@ -279,28 +279,9 @@ static Eina_Bool _egueb_svg_element_text_generate_geometry(Egueb_Svg_Shape *s)
 	egueb_dom_attr_final_get(thiz->y, &y);
 
 	/* calculate the real size */
-	egueb_svg_element_geometry_relative_get(EGUEB_DOM_NODE(s), &relative);
-	if (!relative)
-	{
-		WARN("No relative available");
-		return EINA_FALSE;
-	}
-	egueb_dom_node_document_get(EGUEB_DOM_NODE(s), &doc);
-	if (!doc)
-	{
-		WARN("No document set");
-		egueb_dom_node_unref(relative);
-		return EINA_FALSE;
-	}
-
-	e_parent = EGUEB_SVG_ELEMENT(relative);
 	egueb_svg_document_font_size_get(doc, &doc_font_size);
-
-	thiz->gx = egueb_svg_coord_final_get(&x, e_parent->viewbox.w, doc_font_size);
-	thiz->gy = egueb_svg_coord_final_get(&y, e_parent->viewbox.h, doc_font_size);
-
-	egueb_dom_node_unref(relative);
-	egueb_dom_node_unref(doc);
+	thiz->gx = egueb_svg_coord_final_get(&x, relative->viewbox.w, doc_font_size);
+	thiz->gy = egueb_svg_coord_final_get(&y, relative->viewbox.h, doc_font_size);
 
 	/* set the position */
 	e = EGUEB_SVG_ELEMENT(s);

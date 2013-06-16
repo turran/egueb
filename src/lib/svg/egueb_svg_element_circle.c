@@ -51,12 +51,12 @@ typedef struct _Egueb_Svg_Element_Circle_Class
 /*----------------------------------------------------------------------------*
  *                               Shape interface                              *
  *----------------------------------------------------------------------------*/
-static Eina_Bool _egueb_svg_element_circle_generate_geometry(Egueb_Svg_Shape *s)
+static Eina_Bool _egueb_svg_element_circle_generate_geometry(Egueb_Svg_Shape *s,
+		Egueb_Svg_Element *relative, Egueb_Dom_Node *doc)
 {
 	Egueb_Svg_Element_Circle *thiz;
-	Egueb_Svg_Element *e, *e_parent;
+	Egueb_Svg_Element *e;
 	Egueb_Svg_Length cx, cy, radius;
-	Egueb_Dom_Node *relative, *doc;
 	double font_size;
 
 	thiz = EGUEB_SVG_ELEMENT_CIRCLE(s);
@@ -65,29 +65,10 @@ static Eina_Bool _egueb_svg_element_circle_generate_geometry(Egueb_Svg_Shape *s)
 	egueb_dom_attr_final_get(thiz->radius, &radius);
 
 	/* calculate the real size */
-	egueb_svg_element_geometry_relative_get(EGUEB_DOM_NODE(s), &relative);
-	if (!relative)
-	{
-		WARN("No relative available");
-		return EINA_FALSE;
-	}
-	egueb_dom_node_document_get(EGUEB_DOM_NODE(s), &doc);
-	if (!doc)
-	{
-		WARN("No document set");
-		egueb_dom_node_unref(relative);
-		return EINA_FALSE;
-	}
-
-	e_parent = EGUEB_SVG_ELEMENT(relative);
 	egueb_svg_document_font_size_get(doc, &font_size);
-
-	thiz->gcx = egueb_svg_coord_final_get(&cx, e_parent->viewbox.w, font_size);
-	thiz->gcy = egueb_svg_coord_final_get(&cy, e_parent->viewbox.h, font_size);
-	thiz->gradius = egueb_svg_length_final_get(&radius, e_parent->viewbox.w, e_parent->viewbox.h, font_size);
-
-	egueb_dom_node_unref(relative);
-	egueb_dom_node_unref(doc);
+	thiz->gcx = egueb_svg_coord_final_get(&cx, relative->viewbox.w, font_size);
+	thiz->gcy = egueb_svg_coord_final_get(&cy, relative->viewbox.h, font_size);
+	thiz->gradius = egueb_svg_length_final_get(&radius, relative->viewbox.w, relative->viewbox.h, font_size);
 
 	/* set the position */
 	enesim_renderer_circle_center_set(thiz->r, thiz->gcx, thiz->gcy);

@@ -97,7 +97,33 @@ static Eina_Bool _egueb_svg_shape_process(Egueb_Svg_Renderable *r)
 	/* generate the geometry of the element */
 	if (klass->generate_geometry)
 	{
-		if (!klass->generate_geometry(thiz))
+		Egueb_Dom_Node *relative, *doc;
+		Eina_Bool ret;
+
+		egueb_svg_element_geometry_relative_get(EGUEB_DOM_NODE(r),
+				&relative);
+		if (!relative)
+		{
+			WARN("No relative available");
+			return EINA_FALSE;
+		}
+
+		egueb_dom_node_document_get(EGUEB_DOM_NODE(r), &doc);
+		if (!doc)
+		{
+			Egueb_Dom_String *name;
+			egueb_dom_node_name_get(EGUEB_DOM_NODE(r), &name);
+			WARN("No document set on %s", egueb_dom_string_string_get(name));
+			egueb_dom_node_unref(relative);
+			return EINA_FALSE;
+		}
+
+		ret = klass->generate_geometry(thiz,
+				EGUEB_SVG_ELEMENT(relative), doc);
+		egueb_dom_node_unref(doc);
+		egueb_dom_node_unref(relative);
+
+		if (!ret)
 		{
 			WARN("Failed generating the geometry");
 			return EINA_FALSE;

@@ -11,6 +11,7 @@ src/lib/svg/egueb_svg_attr_length.h \
 src/lib/svg/egueb_svg_attr_matrix.h \
 src/lib/svg/egueb_svg_attr_number.h \
 src/lib/svg/egueb_svg_attr_paint.h \
+src/lib/svg/egueb_svg_attr_point_list.h \
 src/lib/svg/egueb_svg_attr_rect.h \
 src/lib/svg/egueb_svg_attr_referenceable_units.h \
 src/lib/svg/egueb_svg_attr_string.h \
@@ -31,6 +32,8 @@ src/lib/svg/egueb_svg_element_g.h \
 src/lib/svg/egueb_svg_element_image.h \
 src/lib/svg/egueb_svg_element_line.h \
 src/lib/svg/egueb_svg_element_linear_gradient.h \
+src/lib/svg/egueb_svg_element_polygon.h \
+src/lib/svg/egueb_svg_element_polyline.h \
 src/lib/svg/egueb_svg_element_radial_gradient.h \
 src/lib/svg/egueb_svg_element_rect.h \
 src/lib/svg/egueb_svg_element_use.h \
@@ -50,6 +53,8 @@ src/lib/svg/egueb_svg_number.h \
 src/lib/svg/egueb_svg_paint.h \
 src/lib/svg/egueb_svg_paint_server.h \
 src/lib/svg/egueb_svg_painter.h \
+src/lib/svg/egueb_svg_point.h \
+src/lib/svg/egueb_svg_point_list.h \
 src/lib/svg/egueb_svg_rect.h \
 src/lib/svg/egueb_svg_reference.h \
 src/lib/svg/egueb_svg_referenceable.h \
@@ -68,6 +73,7 @@ src/lib/svg/egueb_svg_attr_length.c \
 src/lib/svg/egueb_svg_attr_matrix.c \
 src/lib/svg/egueb_svg_attr_number.c \
 src/lib/svg/egueb_svg_attr_paint.c \
+src/lib/svg/egueb_svg_attr_point_list.c \
 src/lib/svg/egueb_svg_attr_rect.c \
 src/lib/svg/egueb_svg_attr_referenceable_units.c \
 src/lib/svg/egueb_svg_attr_string.c \
@@ -88,6 +94,8 @@ src/lib/svg/egueb_svg_element_g.c \
 src/lib/svg/egueb_svg_element_image.c \
 src/lib/svg/egueb_svg_element_line.c \
 src/lib/svg/egueb_svg_element_linear_gradient.c \
+src/lib/svg/egueb_svg_element_polygon.c \
+src/lib/svg/egueb_svg_element_polyline.c \
 src/lib/svg/egueb_svg_element_radial_gradient.c \
 src/lib/svg/egueb_svg_element_rect.c \
 src/lib/svg/egueb_svg_element_use.c \
@@ -115,6 +123,8 @@ src/lib/svg/egueb_svg_painter.c \
 src/lib/svg/egueb_svg_painter_private.h \
 src/lib/svg/egueb_svg_painter_clip_path.c \
 src/lib/svg/egueb_svg_painter_generic.c \
+src/lib/svg/egueb_svg_point.c \
+src/lib/svg/egueb_svg_point_list.c \
 src/lib/svg/egueb_svg_rect.c \
 src/lib/svg/egueb_svg_reference.c \
 src/lib/svg/egueb_svg_reference_private.h \

@@ -31,7 +31,8 @@ typedef struct _Egueb_Svg_Shape
 	Egueb_Svg_Painter *painter;
 } Egueb_Svg_Shape;
 
-typedef Eina_Bool (*Egueb_Svg_Shape_Generate_Geometry)(Egueb_Svg_Shape *thiz);
+typedef Eina_Bool (*Egueb_Svg_Shape_Generate_Geometry)(Egueb_Svg_Shape *thiz,
+		Egueb_Svg_Element *relative, Egueb_Dom_Node *doc); 
 typedef void (*Egueb_Svg_Shape_Renderer_Propagate)(Egueb_Svg_Shape *thiz,
 		Egueb_Svg_Painter *painter);
 

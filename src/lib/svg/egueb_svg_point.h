@@ -15,15 +15,15 @@
  * License along with this library.
  * If not, see <http://www.gnu.org/licenses/>.
  */
+#ifndef _EGUEB_SVG_POINT_H
+#define _EGUEB_SVG_POINT_H
 
-#ifndef _EGUEB_SVG_ELEMENT_POLYGON_H_
-#define _EGUEB_SVG_ELEMENT_POLYGON_H_
+typedef struct _Egueb_Svg_Point
+{
+	double x;
+	double y;
+} Egueb_Svg_Point;
 
-EAPI Egueb_Dom_Node * egueb_svg_element_polygon_new(void);
-#if 0
-EAPI void egueb_svg_element_polygon_point_add(Ender_Element *e, Egueb_Svg_Point *p);
+EAPI Eina_Bool egueb_svg_point_string_from(Egueb_Svg_Point *thiz, const char *attr);
+
 #endif
-
-#endif
-
-

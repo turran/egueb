@@ -15,15 +15,14 @@
  * License along with this library.
  * If not, see <http://www.gnu.org/licenses/>.
  */
+#ifndef _EGUEB_SVG_ATTR_POINT_LIST_H_
+#define _EGUEB_SVG_ATTR_POINT_LIST_H_
 
-#ifndef _EGUEB_SVG_ELEMENT_POLYGON_H_
-#define _EGUEB_SVG_ELEMENT_POLYGON_H_
-
-EAPI Egueb_Dom_Node * egueb_svg_element_polygon_new(void);
-#if 0
-EAPI void egueb_svg_element_polygon_point_add(Ender_Element *e, Egueb_Svg_Point *p);
-#endif
+Egueb_Dom_Node * egueb_svg_attr_point_list_new(Egueb_Dom_String *name,
+		Egueb_Dom_List *def, Eina_Bool animatable, Eina_Bool stylable,
+		Eina_Bool inheritable);
 
 #endif
+
 
 

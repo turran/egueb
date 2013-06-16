@@ -16,14 +16,12 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _EGUEB_SVG_ELEMENT_POLYGON_H_
-#define _EGUEB_SVG_ELEMENT_POLYGON_H_
+#ifndef _EGUEB_SVG_POINT_LIST_H_
+#define _EGUEB_SVG_POINT_LIST_H_
 
-EAPI Egueb_Dom_Node * egueb_svg_element_polygon_new(void);
-#if 0
-EAPI void egueb_svg_element_polygon_point_add(Ender_Element *e, Egueb_Svg_Point *p);
+EAPI const Egueb_Dom_Value_Descriptor * egueb_svg_point_list_descriptor_get(void);
+EAPI Eina_Bool egueb_svg_point_list_string_from(Egueb_Dom_List *l, const char *str);
+EAPI char * egueb_svg_point_list_string_to(Egueb_Dom_List *l);
+
 #endif
-
-#endif
-
 

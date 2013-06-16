@@ -75,12 +75,6 @@ typedef enum _Egueb_Svg_Spread_Method
 	ESVG_SPREAD_METHOD_REPEAT,
 } Egueb_Svg_Spread_Method;
 
-typedef struct _Egueb_Svg_Point
-{
-	double x;
-	double y;
-} Egueb_Svg_Point;
-
 /* attributes */
 typedef struct _Egueb_Svg_Attribute_Regular {
 } Egueb_Svg_Attribute_Regular;
