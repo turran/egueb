@@ -275,6 +275,7 @@ static void _egueb_svg_element_path_d_cb(void *data, void *user_data)
 		break;
 
 		default:
+		return;
 		break;
 	}
 	first = EINA_FALSE;

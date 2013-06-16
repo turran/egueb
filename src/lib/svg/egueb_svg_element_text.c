@@ -93,7 +93,7 @@ static Eina_Bool _egueb_svg_element_text_children_process_cb(Egueb_Dom_Node *chi
 
 		private_data = egueb_dom_string_new_with_static_string("_renderer");
 		r = egueb_dom_node_user_data_get(child, private_data);
-		egueb_dom_string_unref (private_data);
+		egueb_dom_string_unref(private_data);
 
 		_egueb_svg_element_text_children_generate_geometry(thiz, r);
 		if (thiz->renderable_tree_changed)
