@@ -381,6 +381,8 @@ EAPI Eina_Bool egueb_dom_attr_value_set(Egueb_Dom_Node *n,
 	if (klass->value_set(thiz, type, value) && thiz->owner)
 	{
 		Egueb_Dom_Event *event;
+		Egueb_Dom_Element *e;
+		e = EGUEB_DOM_ELEMENT(thiz->owner);
 
 		/* trigger the mutation event */
 		event = egueb_dom_event_mutation_new();
@@ -401,11 +403,8 @@ EAPI Eina_Bool egueb_dom_attr_value_set(Egueb_Dom_Node *n,
 		 * the final values
 		 */
 		if (egueb_dom_attr_is_inheritable(n))
-		{
-			Egueb_Dom_Element *e;
-			e = EGUEB_DOM_ELEMENT(thiz->owner);
 			e->inheritable_changed = EINA_TRUE;
-		}
+		e->attr_changed = EINA_TRUE;
 		thiz->set_mask |= type;
 	}
 	return EINA_TRUE;

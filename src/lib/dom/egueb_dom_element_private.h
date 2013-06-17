@@ -31,6 +31,8 @@ typedef struct _Egueb_Dom_Element
 	Eina_Ordered_Hash *attributes;
 	/* flag that informs that an inhertiable property has changed */
 	Eina_Bool inheritable_changed;
+	/* flag that informs that an attribute has changed */
+	Eina_Bool attr_changed;
 
 	/* TODO identifier of the last time an element has done the setup */
 	int last_run;

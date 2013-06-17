@@ -443,6 +443,7 @@ Eina_Error egueb_dom_element_process(Egueb_Dom_Element *thiz)
 	if (klass->process) return klass->process(thiz);
 	/* unset the flag that informs the inheritable change */
 	thiz->inheritable_changed = EINA_FALSE;
+	thiz->attr_changed = EINA_FALSE;
 	return EINA_ERROR_NONE;
 }
 

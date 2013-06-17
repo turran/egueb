@@ -24,6 +24,23 @@
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
+static void _egueb_svg_path_seg_list_string_to_cb(void *data, void *user_data)
+{
+	Egueb_Svg_Path_Seg *seg = data;
+	Eina_Strbuf *strbuf = user_data;
+	char *str;
+
+	str = egueb_svg_path_seg_string_to(seg);
+	if (eina_strbuf_length_get(strbuf))
+	{
+		eina_strbuf_append_char(strbuf, ' ');
+	}
+	if (str)
+	{
+		eina_strbuf_append(strbuf, str);
+		free(str);
+	}
+}
 /*----------------------------------------------------------------------------*
  *                         Parsing related functions                          *
  *----------------------------------------------------------------------------*/
@@ -555,7 +572,13 @@ EAPI Eina_Bool egueb_svg_path_seg_list_string_from(Egueb_Dom_List *l,
 
 EAPI char * egueb_svg_path_seg_list_string_to(Egueb_Dom_List *l)
 {
-	ERR("Not supported");
-	return NULL;
+	Eina_Strbuf *strbuf;
+	char *ret;
+
+	strbuf = eina_strbuf_new();
+	egueb_dom_list_foreach(l, _egueb_svg_path_seg_list_string_to_cb, strbuf);
+	ret = eina_strbuf_string_steal(strbuf);
+	eina_strbuf_free(strbuf);
+	return ret;
 }
 
