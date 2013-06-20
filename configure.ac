@@ -196,7 +196,7 @@ AM_CONDITIONAL(BUILD_ESVG_SCRIPTOR_V8, [test "x${have_v8}" = "xyes"])
 AM_PROG_CC_C_O
 AC_C_BIGENDIAN
 #EFL_ATTRIBUTE_UNUSED
-#EFL_COMPILER_FLAG([-Wall])
+EFL_COMPILER_FLAG([-Wall])
 
 ### Checks for linker characteristics
 

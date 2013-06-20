@@ -1152,7 +1152,24 @@ EAPI void egueb_svg_document_image_data_load(Egueb_Dom_Node *n,
 		Egueb_Svg_Document_Image_Load_Descriptor *d,
 		void *user_data)
 {
+	Enesim_Surface *s = NULL;
 
+	if (!d || !d->loaded)
+		return;
+
+	/* TODO check if there is an application callback */
+	if (!enesim_image_load(data, NULL, &s, ENESIM_FORMAT_ARGB8888, NULL, NULL))
+	{
+		Eina_Error err;
+
+		err = eina_error_get();
+		ERR("Can not load image, error: %s", eina_error_msg_get(err));
+		if (d->failed) d->failed(user_data);
+	}
+	else
+	{
+		d->loaded(s, user_data);
+	}
 }
 
 EAPI void egueb_svg_document_uri_fetch(Egueb_Dom_Node *n,
@@ -1163,14 +1180,39 @@ EAPI void egueb_svg_document_uri_fetch(Egueb_Dom_Node *n,
 	Egueb_Svg_Document *thiz;
 	char *absolute;
 
+	if (!d || !d->fetched)
+		goto done;
+
 	thiz = EGUEB_SVG_DOCUMENT(n);
 	/* resolve the uri to make it absolute */
 	absolute = _egueb_svg_document_uri_get_absolute(thiz,
 		egueb_dom_string_string_get(uri));
 	ERR("URI is %s", absolute);
-	free(absolute);
-	/* call the application to fetch the data */
+	/* in case of a http uri, delegate it to the application */
+	if (!strncmp(absolute, "/", 1))
+	{
+		Enesim_Image_Data *data;
+
+		data = enesim_image_data_file_new(absolute, "rb");
+		if (data)
+		{
+			if (d->fetched) d->fetched(data, user_data);
+			enesim_image_data_free(data);
+		}
+		else
+		{
+			if (d->failed) d->failed(user_data);
+		}
+	}
+	else
+	{
+		/* TODO call the application to fetch the data */
+		ERR("TODO");
+	}
 	/* call the descriptor functions */
+	free(absolute);
+done:
+	egueb_dom_string_unref(uri);
 }
 
 EAPI void egueb_svg_document_location_get_cb_set(Egueb_Dom_Node *n,

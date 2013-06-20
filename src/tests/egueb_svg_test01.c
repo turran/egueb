@@ -6,6 +6,11 @@ static void help(void)
 	exit(1);
 }
 
+static const char * filename_get(void *user_data)
+{
+	return user_data;
+}
+
 int main(int argc, char **argv)
 {
 	Egueb_Dom_Node *doc;
@@ -24,6 +29,8 @@ int main(int argc, char **argv)
 		goto done;
 	}
 	doc = egueb_svg_document_new(NULL);
+	/* set our handlers */
+	egueb_svg_document_filename_get_cb_set(doc, filename_get, (void *)argv[1]);
 	egueb_dom_parser_parse(im, doc);
 	enesim_image_data_free(im);
 	egueb_dom_document_element_get(doc, &topmost);

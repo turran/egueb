@@ -58,10 +58,13 @@ typedef struct _Egueb_Svg_Element_Image
 	double gx, gy, gw, gh;
 	char *real_href;
 	Enesim_Renderer *r;
+	/* the renderer in case the image is invalid */
 	Enesim_Renderer *rectangle;
-	Enesim_Renderer *image;
 	Enesim_Renderer *checker;
-	Enesim_Surface *s;
+	/* the renderer in case the image is not a svg */
+	Enesim_Renderer *image;
+	/* the node in case we need to instantiate a new svg */
+	Egueb_Dom_Node *svg;
 } Egueb_Svg_Element_Image;
 
 typedef struct _Egueb_Svg_Element_Image_Class
@@ -76,12 +79,22 @@ typedef struct _Egueb_Svg_Element_Image_Class
 static void _egueb_svg_element_image_loaded(Enesim_Surface *s,
 		void *user_data)
 {
+	Egueb_Svg_Element_Image *thiz;
+	Egueb_Dom_Node *n = user_data;
+
+	thiz = EGUEB_SVG_ELEMENT_IMAGE(n);
 	ERR("Image loaded");
+	enesim_renderer_image_src_set(thiz->image, s);
+	enesim_renderer_proxy_proxied_set(thiz->r, thiz->image);
+	egueb_dom_node_unref(n);
 }
 
 static void _egueb_svg_element_image_failed(void *user_data)
 {
+	Egueb_Dom_Node *n = user_data;
+
 	ERR("Image failed");
+	egueb_dom_node_unref(n);
 }
 
 static Egueb_Svg_Document_Image_Load_Descriptor _image_data_load_descriptor = {
@@ -94,12 +107,32 @@ static Egueb_Svg_Document_Image_Load_Descriptor _image_data_load_descriptor = {
 static void _egueb_svg_element_uri_fetched(Enesim_Image_Data *data,
 		void *user_data)
 {
-	ERR("Uri fetched");
+	Egueb_Dom_Node *n = user_data;
+	Egueb_Dom_Node *doc;
+
+	/* TODO get the mime type, if is svg, then do create the node
+	 * otherwise load it
+	 */
+	egueb_dom_node_document_get(n, &doc);
+	if (!doc)
+	{
+		WARN("No document set");
+		goto done;
+	}
+	egueb_svg_document_image_data_load(doc, data,
+			&_image_data_load_descriptor,
+			egueb_dom_node_ref(n));
+	egueb_dom_node_unref(doc);
+done:
+	egueb_dom_node_unref(n);
 }
 
 static void _egueb_svg_element_uri_failed(void *user_data)
 {
+	Egueb_Dom_Node *n = user_data;
+
 	ERR("Uri failed");
+	egueb_dom_node_unref(n);
 }
 
 static Egueb_Svg_Document_Uri_Fetch_Descriptor _image_uri_fetch_descriptor = {
@@ -121,6 +154,8 @@ static void _egueb_svg_element_image_uri_load(Egueb_Svg_Element_Image *thiz,
 		Enesim_Image_Data *base_64;
 		Enesim_Image_Data *data;
 
+		/* TODO only use the real data, not the metadata */
+		/* TODO if it is a svg, then just parse it */
 		base_64 = enesim_image_data_buffer_new(str, strlen(str));
 		data = enesim_image_data_base64_new(base_64);
 		egueb_svg_document_image_data_load(doc, data,
@@ -331,6 +366,7 @@ static Eina_Bool _egueb_svg_element_image_process(
 	thiz->gy = egueb_svg_coord_final_get(&y, e_parent->viewbox.h, font_size);
 	thiz->gw = egueb_svg_coord_final_get(&w, e_parent->viewbox.w, font_size);
 	thiz->gh = egueb_svg_coord_final_get(&h, e_parent->viewbox.h, font_size);
+
 	/* TODO be sure to know if the xlink has changed */
 	_egueb_svg_element_image_uri_load(thiz, doc, uri);
 
@@ -339,25 +375,19 @@ static Eina_Bool _egueb_svg_element_image_process(
 	egueb_dom_string_unref(uri);
 
 	e = EGUEB_SVG_ELEMENT(r);
-	/* set the image */
-	if (!thiz->s)
-	{
-		enesim_renderer_rectangle_x_set(thiz->rectangle, thiz->gx);
-		enesim_renderer_rectangle_y_set(thiz->rectangle, thiz->gy);
-		enesim_renderer_rectangle_width_set(thiz->rectangle, thiz->gw);
-		enesim_renderer_rectangle_height_set(thiz->rectangle, thiz->gh);
-		enesim_renderer_transformation_set(thiz->rectangle, &e->transform);
-		enesim_renderer_proxy_proxied_set(thiz->r, thiz->rectangle);
-	}
-	else
-	{
-		enesim_renderer_image_x_set(thiz->image, thiz->gx);
-		enesim_renderer_image_y_set(thiz->image, thiz->gy);
-		enesim_renderer_image_width_set(thiz->image, thiz->gw);
-		enesim_renderer_image_height_set(thiz->image, thiz->gh);
-		enesim_renderer_transformation_set(thiz->image, &e->transform);
-		enesim_renderer_proxy_proxied_set(thiz->r, thiz->image);
-	}
+	/* setup our own renderers */
+	enesim_renderer_rectangle_x_set(thiz->rectangle, thiz->gx);
+	enesim_renderer_rectangle_y_set(thiz->rectangle, thiz->gy);
+	enesim_renderer_rectangle_width_set(thiz->rectangle, thiz->gw);
+	enesim_renderer_rectangle_height_set(thiz->rectangle, thiz->gh);
+	enesim_renderer_transformation_set(thiz->rectangle, &e->transform);
+
+	enesim_renderer_image_x_set(thiz->image, thiz->gx);
+	enesim_renderer_image_y_set(thiz->image, thiz->gy);
+	enesim_renderer_image_width_set(thiz->image, thiz->gw);
+	enesim_renderer_image_height_set(thiz->image, thiz->gh);
+	enesim_renderer_transformation_set(thiz->image, &e->transform);
+
 	return EINA_TRUE;
 }
 
