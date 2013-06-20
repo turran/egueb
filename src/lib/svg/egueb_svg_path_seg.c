@@ -61,66 +61,31 @@ EAPI char * egueb_svg_path_seg_string_to(Egueb_Svg_Path_Seg *thiz)
 		ret = eina_str_dup_printf("%c %g", cmd, thiz->data.vline_to.c);
 		break;
 
-#if 0
 		case ESVG_PATH_CUBIC_TO:
-		DBG("cubic_to %c ((%g, %g) (%g, %g) (%g, %g))",
-				pcmd->relative ? 'R' : 'A',
-				pcmd->data.cubic_to.ctrl_x0,
-				pcmd->data.cubic_to.ctrl_y0,
-				pcmd->data.cubic_to.ctrl_x1,
-				pcmd->data.cubic_to.ctrl_y1,
-				pcmd->data.cubic_to.x,
-				pcmd->data.cubic_to.y);
-		cmd.type = ENESIM_PATH_COMMAND_CUBIC_TO;
-		if (pcmd->relative)
-		{
-			cmd.definition.cubic_to.x = cur.x + pcmd->data.cubic_to.x;
-			cmd.definition.cubic_to.y = cur.y + pcmd->data.cubic_to.y;
-			cmd.definition.cubic_to.ctrl_x0 = cur.x + pcmd->data.cubic_to.ctrl_x0;
-			cmd.definition.cubic_to.ctrl_y0 = cur.y + pcmd->data.cubic_to.ctrl_y0;
-			cmd.definition.cubic_to.ctrl_x1 = cur.x + pcmd->data.cubic_to.ctrl_x1;
-			cmd.definition.cubic_to.ctrl_y1 = cur.y + pcmd->data.cubic_to.ctrl_y1;
-
-		}
-		else
-		{
-			cmd.definition.cubic_to.x = pcmd->data.cubic_to.x;
-			cmd.definition.cubic_to.y = pcmd->data.cubic_to.y;
-			cmd.definition.cubic_to.ctrl_x0 = pcmd->data.cubic_to.ctrl_x0;
-			cmd.definition.cubic_to.ctrl_y0 = pcmd->data.cubic_to.ctrl_y0;
-			cmd.definition.cubic_to.ctrl_x1 = pcmd->data.cubic_to.ctrl_x1;
-			cmd.definition.cubic_to.ctrl_y1 = pcmd->data.cubic_to.ctrl_y1;
-		}
-		cur.x = cmd.definition.cubic_to.x;
-		cur.y = cmd.definition.cubic_to.y;
+		cmd = 'C';
+		if (thiz->relative)
+			cmd = 'c';
+		ret = eina_str_dup_printf("%c %g %g %g %g %g %g", cmd,
+				thiz->data.cubic_to.ctrl_x0,
+				thiz->data.cubic_to.ctrl_y0,
+				thiz->data.cubic_to.ctrl_x1,
+				thiz->data.cubic_to.ctrl_y1,
+				thiz->data.cubic_to.x,
+				thiz->data.cubic_to.y);
 		break;
 
 		case ESVG_PATH_SCUBIC_TO:
-		DBG("scubic_to %c ((%g, %g) (%g, %g))",
-				pcmd->relative ? 'R' : 'A',
-				pcmd->data.scubic_to.ctrl_x,
-				pcmd->data.scubic_to.ctrl_y,
-				pcmd->data.scubic_to.x,
-				pcmd->data.scubic_to.y);
-		cmd.type = ENESIM_PATH_COMMAND_SCUBIC_TO;
-		if (pcmd->relative)
-		{
-			cmd.definition.scubic_to.x = cur.x + pcmd->data.scubic_to.x;
-			cmd.definition.scubic_to.y = cur.y + pcmd->data.scubic_to.y;
-			cmd.definition.scubic_to.ctrl_x = cur.x + pcmd->data.scubic_to.ctrl_x;
-			cmd.definition.scubic_to.ctrl_y = cur.y + pcmd->data.scubic_to.ctrl_y;
-		}
-		else
-		{
-			cmd.definition.scubic_to.x = pcmd->data.scubic_to.x;
-			cmd.definition.scubic_to.y = pcmd->data.scubic_to.y;
-			cmd.definition.scubic_to.ctrl_x = pcmd->data.scubic_to.ctrl_x;
-			cmd.definition.scubic_to.ctrl_y = pcmd->data.scubic_to.ctrl_y;
-		}
-		cur.x = cmd.definition.scubic_to.x;
-		cur.y = cmd.definition.scubic_to.y;
+		cmd = 'S';
+		if (thiz->relative)
+			cmd = 's';
+		ret = eina_str_dup_printf("%c %g %g %g %g", cmd,
+				thiz->data.scubic_to.ctrl_x,
+				thiz->data.scubic_to.ctrl_y,
+				thiz->data.scubic_to.x,
+				thiz->data.scubic_to.y);
 		break;
 
+#if 0
 		case ESVG_PATH_QUADRATIC_TO:
 		DBG("quadratic_to %c ((%g, %g) (%g, %g))",
 				pcmd->relative ? 'R' : 'A',

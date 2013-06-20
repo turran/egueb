@@ -56,7 +56,7 @@ endif
 ### Modules
 
 if BUILD_ESVG
-# include src/modules/svg/enesim_image/Makefile.mk
+include src/modules/svg/enesim_image/Makefile.mk
 endif
 
 ### Binaries

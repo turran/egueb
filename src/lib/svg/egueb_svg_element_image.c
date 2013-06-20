@@ -69,15 +69,72 @@ typedef struct _Egueb_Svg_Element_Image_Class
 	Egueb_Svg_Renderable_Class base;
 } Egueb_Svg_Element_Image_Class;
 
-static Eina_Bool _egueb_svg_element_image_is_svg(const char *uri)
-{
-	char *last;
 
-	last = strrchr(uri, '.');
-	if (!last) return EINA_FALSE;
-	if (!strcmp(last + 1, "svg"))
-		return EINA_TRUE;
-	return EINA_FALSE;
+/*----------------------------------------------------------------------------*
+ *                           Image load descriptor                            *
+ *----------------------------------------------------------------------------*/
+static void _egueb_svg_element_image_loaded(Enesim_Surface *s,
+		void *user_data)
+{
+	ERR("Image loaded");
+}
+
+static void _egueb_svg_element_image_failed(void *user_data)
+{
+	ERR("Image failed");
+}
+
+static Egueb_Svg_Document_Image_Load_Descriptor _image_data_load_descriptor = {
+	/* .loaded = */ _egueb_svg_element_image_loaded,
+	/* .failed = */ _egueb_svg_element_image_failed,
+};
+/*----------------------------------------------------------------------------*
+ *                            Uri fetch descriptor                            *
+ *----------------------------------------------------------------------------*/
+static void _egueb_svg_element_uri_fetched(Enesim_Image_Data *data,
+		void *user_data)
+{
+	ERR("Uri fetched");
+}
+
+static void _egueb_svg_element_uri_failed(void *user_data)
+{
+	ERR("Uri failed");
+}
+
+static Egueb_Svg_Document_Uri_Fetch_Descriptor _image_uri_fetch_descriptor = {
+	/* .loaded = */ _egueb_svg_element_uri_fetched,
+	/* .failed = */ _egueb_svg_element_uri_failed,
+};
+
+static void _egueb_svg_element_image_uri_load(Egueb_Svg_Element_Image *thiz,
+		Egueb_Dom_Node *doc, Egueb_Dom_String * uri)
+{
+	const char *str;
+
+	str = egueb_dom_string_string_get(uri);
+	/* check if the data is inlined, if so, just let the document
+	 * load it
+	 */
+	if (!strncmp(str, "data:image", 10))
+	{
+		Enesim_Image_Data *base_64;
+		Enesim_Image_Data *data;
+
+		base_64 = enesim_image_data_buffer_new(str, strlen(str));
+		data = enesim_image_data_base64_new(base_64);
+		egueb_svg_document_image_data_load(doc, data,
+				&_image_data_load_descriptor,
+				egueb_dom_node_ref(EGUEB_DOM_NODE(thiz)));
+	}
+	/* otherwise, let the document get the data and call our own callback */
+	/* this callback should again make the document load the image for us */
+	else
+	{
+		egueb_svg_document_uri_fetch(doc, egueb_dom_string_ref(uri),
+				&_image_uri_fetch_descriptor,
+				egueb_dom_node_ref(EGUEB_DOM_NODE(thiz)));
+	}
 }
 
 #if 0
@@ -223,185 +280,6 @@ static Eina_Bool _egueb_svg_element_image_renderer_propagate(Egueb_Dom_Tag *t,
 
 	return EINA_TRUE;
 }
-
-static void _egueb_svg_element_image_free(Egueb_Dom_Tag *t)
-{
-	Egueb_Svg_Element_Image *thiz;
-
-	thiz = _egueb_svg_element_image_get(t);
-	free(thiz);
-}
-
-#if 0
-static Eina_Bool _egueb_svg_element_image_has_changed(Egueb_Dom_Tag *t)
-{
-	Egueb_Svg_Element_Image *thiz;
-
-	thiz = _egueb_svg_element_image_get(t);
-	if (!thiz->changed) return EINA_FALSE;
-
-	if (egueb_svg_length_is_equal(&thiz->x, &thiz->past.x))
-		return EINA_TRUE;
-	if (egueb_svg_length_is_equal(&thiz->y, &thiz->past.y))
-		return EINA_TRUE;
-	if (egueb_svg_length_is_equal(&thiz->width, &thiz->past.width))
-		return EINA_TRUE;
-	if (egueb_svg_length_is_equal(&thiz->height, &thiz->past.height))
-		return EINA_TRUE;
-
-	return EINA_FALSE;
-}
-#endif
-
-static Egueb_Svg_Renderable_Descriptor _descriptor = {
-	/* .child_add		     = */ NULL,
-	/* .child_remove	     = */ NULL,
-	/* .attribute_get 	     = */ _egueb_svg_element_image_attribute_get,
-	/* .cdata_set 		     = */ NULL,
-	/* .text_set 		     = */ NULL,
-	/* .text_get 		     = */ NULL,
-	/* .free 		     = */ _egueb_svg_element_image_free,
-	/* .initialize 		     = */ NULL,
-	/* .attribute_set 	     = */ _egueb_svg_element_image_attribute_set,
-	/* .attribute_animated_fetch = */ _egueb_svg_element_image_attribute_animated_fetch,
-	/* .setup		     = */ _egueb_svg_element_image_setup,
-	/* .renderer_get	     = */ _egueb_svg_element_image_renderer_get,
-	/* .renderer_propagate	     = */ _egueb_svg_element_image_renderer_propagate,
-};
-
-/*----------------------------------------------------------------------------*
- *                           The Ender interface                              *
- *----------------------------------------------------------------------------*/
-static Egueb_Dom_Tag * _egueb_svg_element_image_new(void)
-{
-	Egueb_Svg_Element_Image *thiz;
-	Egueb_Dom_Tag *t;
-	Enesim_Renderer *r;
-
-	thiz = calloc(1, sizeof(Egueb_Svg_Element_Image));
-	if (!thiz) return NULL;
-	EINA_MAGIC_SET(thiz, ESVG_ELEMENT_IMAGE_MAGIC);
-
-
-	/* Default values */
-	thiz->x.base.v = thiz->x.anim.v = ESVG_COORD_0;
-	thiz->y.base.v = thiz->y.anim.v = ESVG_COORD_0;
-	thiz->width.base.v = thiz->width.anim.v = ESVG_LENGTH_0;
-	thiz->height.base.v = thiz->height.anim.v = ESVG_LENGTH_0;
-	/* FIXME: href default value */
-
-	t = egueb_svg_renderable_new(&_descriptor, ESVG_TYPE_IMAGE, thiz);
-	return t;
-}
-
-static void _egueb_svg_element_image_x_set(Egueb_Dom_Tag *t, const Egueb_Svg_Animated_Coord *x)
-{
-	Egueb_Svg_Element_Image *thiz;
-	Egueb_Svg_Length def = { ESVG_UNIT_LENGTH_PX, 0 };
-	Eina_Bool animating;
-
-	thiz = _egueb_svg_element_image_get(t);
-	animating = egueb_svg_element_attribute_animate_get(t);
-	egueb_svg_attribute_animated_length_set(&thiz->x, x, &def, animating);
-	thiz->changed = EINA_TRUE;
-}
-
-static void _egueb_svg_element_image_x_get(Egueb_Dom_Tag *t, Egueb_Svg_Animated_Coord *x)
-{
-	Egueb_Svg_Element_Image *thiz;
-
-	thiz = _egueb_svg_element_image_get(t);
-	egueb_svg_attribute_animated_length_get(&thiz->x, x);
-}
-
-static void _egueb_svg_element_image_y_set(Egueb_Dom_Tag *t, const Egueb_Svg_Animated_Coord *y)
-{
-	Egueb_Svg_Element_Image *thiz;
-	Egueb_Svg_Length def = { ESVG_UNIT_LENGTH_PX, 0 };
-	Eina_Bool animating;
-
-	thiz = _egueb_svg_element_image_get(t);
-	animating = egueb_svg_element_attribute_animate_get(t);
-	egueb_svg_attribute_animated_length_set(&thiz->y, y, &def, animating);
-	thiz->changed = EINA_TRUE;
-}
-
-static void _egueb_svg_element_image_y_get(Egueb_Dom_Tag *t, Egueb_Svg_Animated_Coord *y)
-{
-	Egueb_Svg_Element_Image *thiz;
-
-	thiz = _egueb_svg_element_image_get(t);
-	egueb_svg_attribute_animated_length_get(&thiz->y, y);
-}
-
-static void _egueb_svg_element_image_width_set(Egueb_Dom_Tag *t, const Egueb_Svg_Length_Animated *width)
-{
-	Egueb_Svg_Element_Image *thiz;
-	Egueb_Svg_Length def = { ESVG_UNIT_LENGTH_PX, 0 };
-	Eina_Bool animating;
-
-	thiz = _egueb_svg_element_image_get(t);
-	animating = egueb_svg_element_attribute_animate_get(t);
-	egueb_svg_attribute_animated_length_set(&thiz->width, width, &def, animating);
-	thiz->changed = EINA_TRUE;
-}
-
-static void _egueb_svg_element_image_width_get(Egueb_Dom_Tag *t, Egueb_Svg_Length_Animated *width)
-{
-	Egueb_Svg_Element_Image *thiz;
-
-	thiz = _egueb_svg_element_image_get(t);
-	egueb_svg_attribute_animated_length_get(&thiz->width, width);
-}
-
-static void _egueb_svg_element_image_height_set(Egueb_Dom_Tag *t, const Egueb_Svg_Length_Animated *height)
-{
-	Egueb_Svg_Element_Image *thiz;
-	Egueb_Svg_Length def = { ESVG_UNIT_LENGTH_PX, 0 };
-	Eina_Bool animating;
-
-	thiz = _egueb_svg_element_image_get(t);
-	animating = egueb_svg_element_attribute_animate_get(t);
-	egueb_svg_attribute_animated_length_set(&thiz->height, height, &def, animating);
-	thiz->changed = EINA_TRUE;
-}
-
-static void _egueb_svg_element_image_height_get(Egueb_Dom_Tag *t, Egueb_Svg_Length_Animated *height)
-{
-	Egueb_Svg_Element_Image *thiz;
-
-	thiz = _egueb_svg_element_image_get(t);
-	egueb_svg_attribute_animated_length_get(&thiz->height, height);
-}
-
-static void _egueb_svg_element_image_xlink_href_set(Egueb_Dom_Tag *t, Egueb_Svg_String_Animated *href)
-{
-	Egueb_Svg_Element_Image *thiz;
-	Eina_Bool animating;
-
-	thiz = _egueb_svg_element_image_get(t);
-	animating = egueb_svg_element_attribute_animate_get(t);
-	egueb_svg_attribute_animated_string_set(&thiz->href,
-		href, animating);
-}
-
-static void _egueb_svg_element_image_xlink_href_get(Egueb_Dom_Tag *t, Egueb_Svg_String_Animated *href)
-{
-	Egueb_Svg_Element_Image *thiz;
-
-	thiz = _egueb_svg_element_image_get(t);
-	egueb_svg_attribute_animated_string_get(&thiz->href,
-		href);
-}
-
-/* The ender wrapper */
-#define _egueb_svg_element_image_delete NULL
-#define _egueb_svg_element_image_x_is_set NULL
-#define _egueb_svg_element_image_y_is_set NULL
-#define _egueb_svg_element_image_width_is_set NULL
-#define _egueb_svg_element_image_height_is_set NULL
-#define _egueb_svg_element_image_xlink_href_is_set NULL
-#include "egueb_svg_generated_element_image.c"
 #endif
 /*----------------------------------------------------------------------------*
  *                            Renderable interface                            *
@@ -412,6 +290,7 @@ static Eina_Bool _egueb_svg_element_image_process(
 	Egueb_Svg_Element_Image *thiz;
 	Egueb_Svg_Element *e, *e_parent;
 	Egueb_Svg_Length x, y, rx, ry, w, h;
+	Egueb_Dom_String *uri;
 	Egueb_Dom_Node *relative, *doc;
 	Eina_Bool rx_set, ry_set;
 	double font_size;
@@ -421,12 +300,19 @@ static Eina_Bool _egueb_svg_element_image_process(
 	egueb_dom_attr_final_get(thiz->y, &y);
 	egueb_dom_attr_final_get(thiz->width, &w);
 	egueb_dom_attr_final_get(thiz->height, &h);
+	egueb_dom_attr_final_get(thiz->xlink_href, &uri);
+
+	if (!egueb_dom_string_is_valid(uri)) {
+		WARN("No uri set, nothing to do");
+		return EINA_FALSE;
+	}
 
 	/* calculate the real size */
 	egueb_svg_element_geometry_relative_get(EGUEB_DOM_NODE(r), &relative);
 	if (!relative)
 	{
 		WARN("No relative available");
+		egueb_dom_string_unref(uri);
 		return EINA_FALSE;
 	}
 	egueb_dom_node_document_get(EGUEB_DOM_NODE(r), &doc);
@@ -434,6 +320,7 @@ static Eina_Bool _egueb_svg_element_image_process(
 	{
 		WARN("No document set");
 		egueb_dom_node_unref(relative);
+		egueb_dom_string_unref(uri);
 		return EINA_FALSE;
 	}
 
@@ -444,13 +331,12 @@ static Eina_Bool _egueb_svg_element_image_process(
 	thiz->gy = egueb_svg_coord_final_get(&y, e_parent->viewbox.h, font_size);
 	thiz->gw = egueb_svg_coord_final_get(&w, e_parent->viewbox.w, font_size);
 	thiz->gh = egueb_svg_coord_final_get(&h, e_parent->viewbox.h, font_size);
+	/* TODO be sure to know if the xlink has changed */
+	_egueb_svg_element_image_uri_load(thiz, doc, uri);
 
 	egueb_dom_node_unref(relative);
 	egueb_dom_node_unref(doc);
-
-#if 0
-	_egueb_svg_element_image_load(t, thiz, width, height);
-#endif
+	egueb_dom_string_unref(uri);
 
 	e = EGUEB_SVG_ELEMENT(r);
 	/* set the image */

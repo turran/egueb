@@ -30,7 +30,7 @@ tests_css_CPPFLAGS = \
 @ECSS_CFLAGS@
 
 tests_css_LDADD = \
-$(top_builddir)/src/lib/css/libecss.la \
+$(top_builddir)/src/lib/css/libegueb_css.la \
 @ECSS_LIBS@
 
 tests_svg_CPPFLAGS = \

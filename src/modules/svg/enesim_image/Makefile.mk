@@ -1,6 +1,6 @@
 
 enesim_image_svg_LTLIBRARIES = src/modules/svg/enesim_image/enesim_image_svg.la
-enesim_image_svgdir = $(pkglibdir)/enesim_image
+enesim_image_svgdir = $(libdir)/enesim/image/
 
 src_modules_svg_enesim_image_enesim_image_svg_la_SOURCES = \
 src/modules/svg/enesim_image/enesim_image_svg.c
@@ -14,7 +14,7 @@ src_modules_svg_enesim_image_enesim_image_svg_la_CPPFLAGS = \
 -DESVG_BUILD \
 @ESVG_CFLAGS@
 
-src_modules_svg_enesim_image_enesim_image_svg_la_LIBADD = src/lib/svg/libesvg.la @ESVG_LIBS@
+src_modules_svg_enesim_image_enesim_image_svg_la_LIBADD = $(top_builddir)/src/lib/svg/libegueb_svg.la @ESVG_LIBS@
 
 src_modules_svg_enesim_image_enesim_image_svg_la_LDFLAGS = -no-undefined -module -avoid-version
 

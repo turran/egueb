@@ -1,4 +1,4 @@
-/* Esvg - SVG
+/* Egueb_Svg - SVG
  * Copyright (C) 2011 Jorge Luis Zapata, Vincent Torri
  *
  * This library is free software; you can redistribute it and/or
@@ -23,7 +23,7 @@
 #include <math.h>
 #include <libgen.h>
 
-#include <Esvg.h>
+#include <Egueb_Svg.h>
 
 /*
  * To implement the load_info interface we need to parse the svg tree, but
@@ -33,30 +33,21 @@
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
-typedef enum _Enesim_Image_Svg_Tag_Type
-{
-	ENESIM_IMAGE_SVG_SVG,
-} Enesim_Image_Svg_Tag_Type;
-
-typedef struct _Enesim_Image_Svg_Svg
-{
-	Esvg_Length width;
-	Esvg_Length height;
-} Enesim_Image_Svg_Svg;
-
 /*----------------------------------------------------------------------------*
- *                        Esvg Application Descriptor                         *
+ *                           Application Descriptor                           *
  *----------------------------------------------------------------------------*/
+#if 0
 /* given that we only support this callback, we pass the dir name as the data */
 static const char * _enesim_image_svg_base_dir_get(Ender_Element *e, void *data)
 {
 	return data;
 }
 
-static Esvg_Element_Svg_Application_Descriptor _enesim_image_svg_descriptor = {
+static Egueb_Svg_Element_Svg_Application_Descriptor _enesim_image_svg_descriptor = {
 	/* .base_dir_get 	= */ _enesim_image_svg_base_dir_get,
 	/* .go_to 		= */ NULL,
 };
+#endif
 /*----------------------------------------------------------------------------*
  *                         Enesim Image Provider API                          *
  *----------------------------------------------------------------------------*/
@@ -105,33 +96,23 @@ static void _enesim_image_svg_options_free(void *data)
  */
 static Eina_Error _enesim_image_svg_info_load(Enesim_Image_Data *data, int *w, int *h, Enesim_Buffer_Format *sfmt, void *options)
 {
-	Esvg_Length width;
-	Esvg_Length height;
-	Eina_Bool mmaped = EINA_FALSE;
+	Egueb_Dom_Node *doc;
+	Egueb_Dom_Node *topmost;
+	Egueb_Svg_Length width;
+	Egueb_Svg_Length height;
 	Eina_Error ret = 0;
 	double svg_w;
 	double svg_h;
 	int cw = _default_width;
 	int ch = _default_height;
-	char *mmap;
-	size_t size;
 
-	/* first try to map the data */
-	mmap = enesim_image_data_mmap(data, &size);
-	/* in case it fails, we should try to read the whole svg */
-	if (!mmap)
-	{
-		size = enesim_image_data_length(data);
-		if (!size) return ENESIM_IMAGE_ERROR_LOADING;
-
-		mmap = malloc(size);
-		enesim_image_data_read(data, mmap, size);
-		mmaped = EINA_FALSE;
-	}
-	if (!esvg_parser_info_load_from_buffer(mmap, size, &width, &height))
+	doc = egueb_svg_document_new(NULL);
+	egueb_dom_parser_parse(data, doc);
+	egueb_dom_document_element_get(doc, &topmost);
+	if (!topmost)
 	{
 		ret = ENESIM_IMAGE_ERROR_LOADING;
-		goto err_load;
+		goto err_parse;
 	}
 	/* get the final size */
 	if (options)
@@ -141,52 +122,37 @@ static Eina_Error _enesim_image_svg_info_load(Enesim_Image_Data *data, int *w, i
 		cw = o->container_width;
 		ch = o->container_height;
 	}
-	/* FIXME this is not EAPI */
-	/* FIXME the 16 should be part of the options, same as container width */
-	svg_w = esvg_coord_final_get(&width, cw, 16);
-	svg_h = esvg_coord_final_get(&height, ch, 16);
+	egueb_svg_document_width_set(doc, cw);
+	egueb_svg_document_height_set(doc, ch);
+	egueb_svg_document_actual_width_get(doc, &svg_w);
+	egueb_svg_document_actual_height_get(doc, &svg_h);
 
 	*w = (int)ceil(svg_w);
 	*h = (int)ceil(svg_h);
 	*sfmt = ENESIM_BUFFER_FORMAT_ARGB8888_PRE;
 
-err_load:
-	if (mmaped)
-		free(mmap);
+err_parse:
 	return ret;
 }
 
 static Eina_Error _enesim_image_svg_load(Enesim_Image_Data *data, Enesim_Buffer *buffer, void *options)
 {
-	Ender_Element *e;
+	Egueb_Dom_Node *doc;
+	Egueb_Dom_Node *topmost;
 	Enesim_Surface *s;
 	Enesim_Log *err = NULL;
 	Eina_Bool r;
-	Eina_Bool mmaped = EINA_TRUE;
 	Eina_Error ret = 0;
 	double svg_w;
 	double svg_h;
 	int w = _default_width;
 	int h = _default_height;
 	char *location;
-	char *mmap;
-	size_t size;
 
-	/* first try to map the data */
-	mmap = enesim_image_data_mmap(data, &size);
-	/* in case it fails, we should try to read the whole svg */
-	if (!mmap)
-	{
-		size = enesim_image_data_length(data);
-		if (!size) return ENESIM_IMAGE_ERROR_LOADING;
-
-		mmap = malloc(size);
-		enesim_image_data_read(data, mmap, size);
-		mmaped = EINA_FALSE;
-	}
-
-	e = esvg_parser_load_from_buffer(mmap, size);
-	if (!e)
+	doc = egueb_svg_document_new(NULL);
+	egueb_dom_parser_parse(data, doc);
+	egueb_dom_document_element_get(doc, &topmost);
+	if (!topmost)
 	{
 		ret = ENESIM_IMAGE_ERROR_LOADING;
 		goto err_parse;
@@ -203,6 +169,7 @@ static Eina_Error _enesim_image_svg_load(Enesim_Image_Data *data, Enesim_Buffer 
 	location = enesim_image_data_location(data);
 	if (location)
 	{
+#if 0
 		char *base_dir;
 		char *tmp;
 
@@ -210,32 +177,22 @@ static Eina_Error _enesim_image_svg_load(Enesim_Image_Data *data, Enesim_Buffer 
 		if (!strcmp(tmp, "."))
 			tmp = "./";
 		base_dir = strdup(tmp);
-		esvg_element_svg_application_descriptor_set(e, &_enesim_image_svg_descriptor, base_dir);
+		egueb_svg_element_svg_application_descriptor_set(e, &_enesim_image_svg_descriptor, base_dir);
 		free(location);
 		location = base_dir;
+#endif
 	}
 	/* we should render into the swdata? */
-	esvg_element_svg_container_width_set(e, w);
-	esvg_element_svg_container_height_set(e, h);
-	esvg_element_svg_actual_width_get(e, &svg_w);
-	esvg_element_svg_actual_height_get(e, &svg_h);
-
-	w = (int)ceil(svg_w);
-	h = (int)ceil(svg_h);
-
+	egueb_svg_document_width_set(doc, w);
+	egueb_svg_document_height_set(doc, h);
 	s = enesim_surface_new_buffer_from(buffer);
 	if (!s)
 	{
 		ret = ENESIM_IMAGE_ERROR_LOADING;
 		goto err_surface;
 	}
-	if (!esvg_element_svg_setup(e, &err))
-	{
-		enesim_log_dump(err);
-		ret = ENESIM_IMAGE_ERROR_LOADING;
-		goto err_setup;
-	}
-	if (!esvg_element_svg_draw(e, s, NULL, 0, 0, NULL))
+	egueb_dom_document_process(doc);
+	if (!egueb_svg_element_svg_draw(topmost, s, NULL, 0, 0, NULL))
 	{
 		ret = ENESIM_IMAGE_ERROR_LOADING;
 		enesim_log_dump(err);
@@ -246,8 +203,7 @@ err_setup:
 err_surface:
 	//ender_element_unref(e);
 err_parse:
-	if (mmaped)
-		free(mmap);
+	egueb_dom_node_unref(doc);
 	if (location)
 		free(location);
 	return ret;
@@ -310,6 +266,7 @@ Eina_Bool svg_provider_init(void)
 	/* @todo
 	 * - Register svg specific errors
 	 */
+	egueb_svg_init();
 	if (!enesim_image_provider_register(&_provider, ENESIM_PRIORITY_PRIMARY, "image/svg+xml"))
 		return EINA_FALSE;
 	if (!enesim_image_finder_register(&_finder))
@@ -324,6 +281,7 @@ void svg_provider_shutdown(void)
 {
 	enesim_image_finder_unregister(&_finder);
 	enesim_image_provider_unregister(&_provider, "image/svg+xml");
+	egueb_svg_shutdown();
 }
 
 EINA_MODULE_INIT(svg_provider_init);
