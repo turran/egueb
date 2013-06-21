@@ -74,6 +74,46 @@ typedef struct _Egueb_Svg_Element_Image_Class
 
 
 /*----------------------------------------------------------------------------*
+ *                                  Helpers                                   *
+ *----------------------------------------------------------------------------*/
+static Eina_Bool _egueb_svg_element_image_parse_data(const char **ostr,
+		char *base, char *mime)
+{
+	const char *tmp;
+	const char *str = *ostr;
+	/* only use the real data, not the metadata */
+	tmp = strchr(str, ';');
+	if (!tmp)
+	{
+		ERR("Bad formed data");
+		return EINA_FALSE;
+	}
+
+	/* mime */
+	str += 5;
+	strncpy(mime, str, tmp - str);
+	mime[tmp - str] = '\0';
+	str = tmp + 1;
+
+	/* the base */
+	tmp = strchr(str, ',');
+	if (!tmp)
+	{
+		ERR("Bad formed data");
+		return EINA_FALSE;
+	}
+
+	strncpy(base, str, tmp - str);
+	if (strncmp(base, "base64", 6))
+	{
+		WARN("Unsupported base '%s'", base);
+		return EINA_FALSE;
+	}
+	str += 7;
+	*ostr = str;
+	return EINA_TRUE;
+}
+/*----------------------------------------------------------------------------*
  *                           Image load descriptor                            *
  *----------------------------------------------------------------------------*/
 static void _egueb_svg_element_image_loaded(Enesim_Surface *s,
@@ -83,7 +123,7 @@ static void _egueb_svg_element_image_loaded(Enesim_Surface *s,
 	Egueb_Dom_Node *n = user_data;
 
 	thiz = EGUEB_SVG_ELEMENT_IMAGE(n);
-	ERR("Image loaded");
+	INFO("Image loaded");
 	enesim_renderer_image_src_set(thiz->image, s);
 	enesim_renderer_proxy_proxied_set(thiz->r, thiz->image);
 	egueb_dom_node_unref(n);
@@ -109,20 +149,34 @@ static void _egueb_svg_element_uri_fetched(Enesim_Image_Data *data,
 {
 	Egueb_Dom_Node *n = user_data;
 	Egueb_Dom_Node *doc;
+	const char *mime;
 
-	/* TODO get the mime type, if is svg, then do create the node
-	 * otherwise load it
-	 */
-	egueb_dom_node_document_get(n, &doc);
-	if (!doc)
+	mime = enesim_image_mime_data_from(data);
+	if (!mime)
 	{
-		WARN("No document set");
+		ERR("Impossible to identify the image data");
 		goto done;
 	}
-	egueb_svg_document_image_data_load(doc, data,
-			&_image_data_load_descriptor,
-			egueb_dom_node_ref(n));
-	egueb_dom_node_unref(doc);
+	INFO("Uri fetched with MIME '%s'", mime);
+	/* if is svg, then do create the node otherwise load it */
+	if (!strcmp(mime, "image/svg+xml"))
+	{
+		ERR("TODO, parse the svg file");
+		/* parse the file */
+	}
+	else
+	{
+		egueb_dom_node_document_get(n, &doc);
+		if (!doc)
+		{
+			WARN("No document set");
+			goto done;
+		}
+		egueb_svg_document_image_data_load(doc, data,
+				&_image_data_load_descriptor,
+				egueb_dom_node_ref(n));
+		egueb_dom_node_unref(doc);
+	}
 done:
 	egueb_dom_node_unref(n);
 }
@@ -153,10 +207,21 @@ static void _egueb_svg_element_image_uri_load(Egueb_Svg_Element_Image *thiz,
 	{
 		Enesim_Image_Data *base_64;
 		Enesim_Image_Data *data;
+		char mime[1024];
+		char base[1024];
 
-		/* TODO only use the real data, not the metadata */
+		if (!_egueb_svg_element_image_parse_data(&str, base, mime))
+		{
+			ERR("Failed to parse the image data");
+			return;
+		}
+
 		/* TODO if it is a svg, then just parse it */
-		base_64 = enesim_image_data_buffer_new(str, strlen(str));
+		/* TODO Be sure to keep a reference of the string, so we can safely
+		 * delegate the image loading
+		 */
+		DBG("Loading a base64 based image with MIME '%s'", mime);
+		base_64 = enesim_image_data_buffer_new((char *)str, strlen(str));
 		data = enesim_image_data_base64_new(base_64);
 		egueb_svg_document_image_data_load(doc, data,
 				&_image_data_load_descriptor,
