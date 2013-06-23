@@ -164,7 +164,6 @@ static void _egueb_dom_node_instance_init(void *o)
 static void _egueb_dom_node_instance_deinit(void *o)
 {
 	Egueb_Dom_Node *thiz = EGUEB_DOM_NODE(o);
-	Egueb_Dom_Node_Event_Container *container;
 	Egueb_Dom_Event *event;
 	Egueb_Dom_String *name = NULL;
 
@@ -380,7 +379,7 @@ EAPI Eina_Error egueb_dom_node_name_get(Egueb_Dom_Node *thiz, Egueb_Dom_String *
  */
 EAPI Eina_Error egueb_dom_node_value_get(Egueb_Dom_Node *thiz, Egueb_Dom_String **value)
 {
-
+	return EINA_ERROR_NONE;
 }
 
 /* Modified in DOM Level 2:
@@ -388,8 +387,6 @@ EAPI Eina_Error egueb_dom_node_value_get(Egueb_Dom_Node *thiz, Egueb_Dom_String 
  */
 EAPI Eina_Error egueb_dom_node_document_get(Egueb_Dom_Node *thiz, Egueb_Dom_Node **owner)
 {
-	Egueb_Dom_Node *other = NULL;
-
 	if (!thiz->owner_document) *owner = NULL;
 	else *owner = egueb_dom_node_ref(EGUEB_DOM_NODE(thiz->owner_document));
 	return EINA_ERROR_NONE;
@@ -404,6 +401,7 @@ EAPI Eina_Error egueb_dom_node_type_get(Egueb_Dom_Node *thiz, Egueb_Dom_Node_Typ
 
 	klass = EGUEB_DOM_NODE_CLASS_GET(thiz);
 	*type = klass->type;
+	return EINA_ERROR_NONE;
 }
 
 /*
@@ -423,6 +421,7 @@ EAPI Eina_Error egueb_dom_node_parent_get(Egueb_Dom_Node *thiz, Egueb_Dom_Node *
 EAPI Eina_Error egueb_dom_node_children_get(Egueb_Dom_Node *thiz, Egueb_Dom_Node_List *children)
 {
 	//*children = EINA_INLIST_CONTAINER_GET(thiz->children, Egueb_Dom_Tag);
+	return EINA_ERROR_NONE;
 }
 
 EAPI Eina_Bool egueb_dom_node_children_foreach(Egueb_Dom_Node *thiz, Egueb_Dom_Node_Cb cb, void *data)
@@ -710,6 +709,7 @@ EAPI Eina_Error egueb_dom_node_event_dispatch(Egueb_Dom_Node *thiz,
 	}
 	event->dispatching = EINA_FALSE;
 	egueb_dom_event_unref(event);
+	return EINA_ERROR_NONE;
 }
 
 /* Introduced in DOM Level 3:

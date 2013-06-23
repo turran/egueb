@@ -17,11 +17,14 @@
  */
 #include "egueb_svg_main_private.h"
 #include "egueb_svg_main.h"
+#include "egueb_svg_document.h"
+#include "egueb_svg_element.h"
 #include "egueb_svg_rect.h"
 #include "egueb_svg_length.h"
 #include "egueb_svg_attr_rect.h"
 #include "egueb_svg_attr_length.h"
 #include "egueb_svg_element_svg.h"
+#include "egueb_svg_renderable_container.h"
 #include "egueb_svg_shape.h"
 
 #include "egueb_svg_element_svg_private.h"
@@ -162,12 +165,12 @@ static Eina_Bool _egueb_svg_element_svg_process(Egueb_Svg_Renderable *r)
 	Egueb_Svg_Element_Svg *thiz;
 	Egueb_Svg_Element *e;
 	Egueb_Svg_Rect viewbox;
-	Egueb_Svg_Length w, h;
+	Egueb_Svg_Length w, h, x, y;
 	Egueb_Dom_Node *svg_doc;
 	Egueb_Dom_Node *relative = NULL;
 	Enesim_Matrix relative_transform;
-	double width, height;
-	double relative_width, relative_height;
+	double gw, gh, gx, gy;
+	double relative_width, relative_height, relative_x, relative_y;
 	double font_size;
 
 	/* TODO First apply the local styles */
@@ -180,9 +183,10 @@ static Eina_Bool _egueb_svg_element_svg_process(Egueb_Svg_Renderable *r)
 	egueb_svg_element_geometry_relative_get(EGUEB_DOM_NODE(r), &relative);
 	if (!relative)
 	{
-
 		egueb_svg_document_width_get(svg_doc, &relative_width);
 		egueb_svg_document_height_get(svg_doc, &relative_height);
+		relative_x = 0;
+		relative_y = 0;
 		enesim_matrix_identity(&relative_transform);
 	}
 	else
@@ -192,6 +196,8 @@ static Eina_Bool _egueb_svg_element_svg_process(Egueb_Svg_Renderable *r)
 		svg_parent = EGUEB_SVG_ELEMENT(relative);
 		relative_width = svg_parent->viewbox.w;
 		relative_height = svg_parent->viewbox.h;
+		relative_x = svg_parent->viewbox.x;
+		relative_y = svg_parent->viewbox.y;
 		relative_transform = svg_parent->transform;
 		egueb_dom_node_unref(relative);
 	}
@@ -203,14 +209,19 @@ static Eina_Bool _egueb_svg_element_svg_process(Egueb_Svg_Renderable *r)
 	/* caluclate the new bounds */
 	egueb_dom_attr_final_get(thiz->width, &w);
 	egueb_dom_attr_final_get(thiz->height, &h);
+	egueb_dom_attr_final_get(thiz->x, &x);
+	egueb_dom_attr_final_get(thiz->y, &y);
 
-	width = egueb_svg_coord_final_get(&w, relative_width, font_size);
-	height = egueb_svg_coord_final_get(&h, relative_height, font_size);
+	gw = egueb_svg_coord_final_get(&w, relative_width, font_size);
+	gh = egueb_svg_coord_final_get(&h, relative_height, font_size);
+	gx = egueb_svg_coord_final_get(&x, relative_x, font_size);
+	gy = egueb_svg_coord_final_get(&y, relative_y, font_size);
 
-	enesim_renderer_rectangle_size_set(thiz->rectangle, width, height);
+	enesim_renderer_rectangle_position_set(thiz->rectangle, gx, gy);
+	enesim_renderer_rectangle_size_set(thiz->rectangle, gw, gh);
 	enesim_renderer_transformation_set(thiz->rectangle, &relative_transform);
 
-	DBG("width: %g, height: %g", width, height);
+	DBG("x: %g, y: %g, width: %g, height: %g", gx, gy, gw, gh);
 	e = EGUEB_SVG_ELEMENT(r);
 	/* the viewbox will set a new user space coordinate */
 	/* FIXME check zeros */
@@ -222,18 +233,18 @@ static Eina_Bool _egueb_svg_element_svg_process(Egueb_Svg_Renderable *r)
 
 		DBG("viewBox available '%g %g %g %g'", viewbox.x, viewbox.y,
 				viewbox.w, viewbox.h);
-		new_vw = viewbox.w / width;
-		new_vh = viewbox.h / height;
+		new_vw = viewbox.w / gw;
+		new_vh = viewbox.h / gh;
 
-		width = viewbox.w;
-		height = viewbox.h;
+		gw = viewbox.w;
+		gh = viewbox.h;
 
 		enesim_matrix_scale(&scale, 1.0/new_vw, 1.0/new_vh);
 		enesim_matrix_compose(&scale, &relative_transform, &e->transform);
 	}
 	/* set the new viewbox */
-	e->viewbox.w = width;
-	e->viewbox.h = height;
+	e->viewbox.w = gw;
+	e->viewbox.h = gh;
 
 	if (!egueb_svg_renderable_container_process(r))
 		return EINA_FALSE;
@@ -1820,10 +1831,12 @@ EAPI double egueb_svg_element_svg_time_get(Egueb_Dom_Node *n)
  */
 EAPI void egueb_svg_element_svg_time_set(Egueb_Dom_Node *n, double secs)
 {
+#if 0
 	Egueb_Svg_Element_Svg *thiz;
 
 	thiz = EGUEB_SVG_ELEMENT_SVG(n);
-	//etch_timer_goto(Etch *n, unsigned long frame);
+	etch_timer_goto(Etch *n, unsigned long frame);
+#endif
 }
 
 #if 0

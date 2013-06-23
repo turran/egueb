@@ -18,8 +18,10 @@
 
 #include "egueb_svg_main_private.h"
 #include "egueb_svg_main.h"
+#include "egueb_svg_element.h"
 #include "egueb_svg_element_image.h"
 #include "egueb_svg_document.h"
+#include "egueb_svg_renderable.h"
 #include "egueb_svg_attr_string.h"
 #include "egueb_svg_renderable_private.h"
 /* TODO
@@ -72,7 +74,6 @@ typedef struct _Egueb_Svg_Element_Image_Class
 	Egueb_Svg_Renderable_Class base;
 } Egueb_Svg_Element_Image_Class;
 
-
 /*----------------------------------------------------------------------------*
  *                                  Helpers                                   *
  *----------------------------------------------------------------------------*/
@@ -112,6 +113,35 @@ static Eina_Bool _egueb_svg_element_image_parse_data(const char **ostr,
 	str += 7;
 	*ostr = str;
 	return EINA_TRUE;
+}
+
+static void _egueb_svg_element_image_svg_load(Egueb_Dom_Node *n,
+		Egueb_Dom_Node *doc, Enesim_Image_Data *data)
+{
+	Egueb_Svg_Element_Image *thiz;
+	Egueb_Dom_Node *new_doc;
+	Egueb_Dom_Node *topmost = NULL;
+	Enesim_Renderer *r;
+
+	ERR("Parsing the svg file");
+	/* parse the file */
+	new_doc = egueb_svg_document_new(NULL);
+	egueb_dom_parser_parse(data, new_doc);
+	egueb_dom_document_element_get(new_doc, &topmost);
+	egueb_dom_node_unref(new_doc);
+
+	/* keep the node */
+	thiz = EGUEB_SVG_ELEMENT_IMAGE(n);
+	thiz->svg = topmost;
+
+	/* TODO check that the node is a svg element */
+	egueb_dom_node_document_set(thiz->svg, doc);
+	egueb_svg_element_geometry_relative_set(thiz->svg, n);
+	egueb_dom_element_process(topmost);
+
+	/* set the proxy for the svg */
+	r = egueb_svg_renderable_renderer_get(thiz->svg);
+	enesim_renderer_proxy_proxied_set(thiz->r, r);
 }
 /*----------------------------------------------------------------------------*
  *                           Image load descriptor                            *
@@ -157,26 +187,27 @@ static void _egueb_svg_element_uri_fetched(Enesim_Image_Data *data,
 		ERR("Impossible to identify the image data");
 		goto done;
 	}
+
 	INFO("Uri fetched with MIME '%s'", mime);
+	egueb_dom_node_document_get(n, &doc);
+	if (!doc)
+	{
+		WARN("No document set");
+		goto done;
+	}
+
 	/* if is svg, then do create the node otherwise load it */
 	if (!strcmp(mime, "image/svg+xml"))
 	{
-		ERR("TODO, parse the svg file");
-		/* parse the file */
+		_egueb_svg_element_image_svg_load(n, doc, data);
 	}
 	else
 	{
-		egueb_dom_node_document_get(n, &doc);
-		if (!doc)
-		{
-			WARN("No document set");
-			goto done;
-		}
 		egueb_svg_document_image_data_load(doc, data,
 				&_image_data_load_descriptor,
 				egueb_dom_node_ref(n));
-		egueb_dom_node_unref(doc);
 	}
+	egueb_dom_node_unref(doc);
 done:
 	egueb_dom_node_unref(n);
 }
@@ -198,6 +229,13 @@ static void _egueb_svg_element_image_uri_load(Egueb_Svg_Element_Image *thiz,
 		Egueb_Dom_Node *doc, Egueb_Dom_String * uri)
 {
 	const char *str;
+
+	/* in case we had an element, be sure to remove it */
+	if (thiz->svg)
+	{
+		egueb_dom_node_unref(thiz->svg);
+		thiz->svg = NULL;
+	}
 
 	str = egueb_dom_string_string_get(uri);
 	/* check if the data is inlined, if so, just let the document
@@ -425,12 +463,18 @@ static Eina_Bool _egueb_svg_element_image_process(
 	}
 
 	e_parent = EGUEB_SVG_ELEMENT(relative);
+	e = EGUEB_SVG_ELEMENT(r);
 	egueb_svg_document_font_size_get(doc, &font_size);
 
 	thiz->gx = egueb_svg_coord_final_get(&x, e_parent->viewbox.w, font_size);
 	thiz->gy = egueb_svg_coord_final_get(&y, e_parent->viewbox.h, font_size);
 	thiz->gw = egueb_svg_coord_final_get(&w, e_parent->viewbox.w, font_size);
 	thiz->gh = egueb_svg_coord_final_get(&h, e_parent->viewbox.h, font_size);
+	/* set the viewbox in case we have a svg image */
+	e->viewbox.x = thiz->gx;
+	e->viewbox.y = thiz->gy;
+	e->viewbox.w = thiz->gw;
+	e->viewbox.h = thiz->gh;
 
 	/* TODO be sure to know if the xlink has changed */
 	_egueb_svg_element_image_uri_load(thiz, doc, uri);
@@ -439,7 +483,6 @@ static Eina_Bool _egueb_svg_element_image_process(
 	egueb_dom_node_unref(doc);
 	egueb_dom_string_unref(uri);
 
-	e = EGUEB_SVG_ELEMENT(r);
 	/* setup our own renderers */
 	enesim_renderer_rectangle_x_set(thiz->rectangle, thiz->gx);
 	enesim_renderer_rectangle_y_set(thiz->rectangle, thiz->gy);
@@ -575,6 +618,11 @@ static void _egueb_svg_element_image_instance_deinit(void *o)
 	Egueb_Svg_Element_Image *thiz;
 
 	thiz = EGUEB_SVG_ELEMENT_IMAGE(o);
+	if (thiz->svg)
+	{
+		egueb_dom_node_unref(thiz->svg);
+		thiz->svg = NULL;
+	}
 	enesim_renderer_unref(thiz->r);
 	/* destroy the properties */
 	egueb_dom_node_unref(thiz->x);
