@@ -74,7 +74,8 @@ src/lib/dom/egueb_dom_value_list.c
 
 src_lib_dom_libegueb_dom_la_CPPFLAGS = \
 -I$(top_srcdir)/src/lib/dom \
--DEDOM_BUILD @EDOM_CFLAGS@
+-DEGUEB_DOM_BUILD \
+@EDOM_CFLAGS@
 
 src_lib_dom_libegueb_dom_la_LIBADD = @EDOM_LIBS@
 

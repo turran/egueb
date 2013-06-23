@@ -25,7 +25,7 @@
 #endif
 
 #ifdef _WIN32
-# ifdef ECSS_BUILD
+# ifdef EGUEB_CSS_BUILD
 #  ifdef DLL_EXPORT
 #   define EAPI __declspec(dllexport)
 #  else

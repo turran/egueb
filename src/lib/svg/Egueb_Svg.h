@@ -29,7 +29,7 @@
 #endif
 
 #ifdef _WIN32
-# ifdef ESVG_BUILD
+# ifdef EGUEB_SVG_BUILD
 #  ifdef DLL_EXPORT
 #   define EAPI __declspec(dllexport)
 #  else

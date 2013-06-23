@@ -168,7 +168,7 @@ src_lib_svg_libegueb_svg_la_CPPFLAGS = \
 -I$(top_builddir)/src/lib/svg/types \
 -I$(top_builddir)/src/lib/svg/elements \
 -DENESIM_EXTENSION \
--DESVG_BUILD \
+-DEGUEB_SVG_BUILD \
 @ESVG_CFLAGS@
 
 src_lib_svg_libegueb_svg_la_LIBADD = \

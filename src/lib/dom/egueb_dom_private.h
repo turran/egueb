@@ -27,6 +27,8 @@
 #include <Enesim.h>
 #include <Ender.h>
 
+#include "Egueb_Dom.h"
+
 #ifdef ERR
 # undef ERR
 #endif

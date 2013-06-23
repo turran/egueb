@@ -230,7 +230,7 @@ EAPI Eina_Bool egueb_smil_timing_string_from(Egueb_Smil_Timing *thiz,
 			/* id */
 			if (*end == '.')
 			{
-				thiz->id = strndup(start, len);
+				thiz->id = eina_strndup(start, len);
 				/* advance after the point */
 				ret = _animation_name_parse(end + 1, &start, &len);
 				end = start + len;
@@ -251,7 +251,7 @@ EAPI Eina_Bool egueb_smil_timing_string_from(Egueb_Smil_Timing *thiz,
 			/* event name */
 			else
 			{
-				thiz->event = strndup(start, len);
+				thiz->event = eina_strndup(start, len);
 			}
 			/* offset */
 			if (*end)
