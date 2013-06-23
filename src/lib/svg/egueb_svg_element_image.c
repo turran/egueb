@@ -19,6 +19,7 @@
 #include "egueb_svg_main_private.h"
 #include "egueb_svg_main.h"
 #include "egueb_svg_element.h"
+#include "egueb_svg_element_g.h"
 #include "egueb_svg_element_image.h"
 #include "egueb_svg_document.h"
 #include "egueb_svg_renderable.h"
@@ -66,7 +67,7 @@ typedef struct _Egueb_Svg_Element_Image
 	/* the renderer in case the image is not a svg */
 	Enesim_Renderer *image;
 	/* the node in case we need to instantiate a new svg */
-	Egueb_Dom_Node *svg;
+	Egueb_Dom_Node *g;
 } Egueb_Svg_Element_Image;
 
 typedef struct _Egueb_Svg_Element_Image_Class
@@ -122,25 +123,32 @@ static void _egueb_svg_element_image_svg_load(Egueb_Dom_Node *n,
 	Egueb_Dom_Node *new_doc;
 	Egueb_Dom_Node *topmost = NULL;
 	Enesim_Renderer *r;
+	Enesim_Matrix m;
+	Eina_Error err;
 
 	ERR("Parsing the svg file");
 	/* parse the file */
 	new_doc = egueb_svg_document_new(NULL);
 	egueb_dom_parser_parse(data, new_doc);
 	egueb_dom_document_element_get(new_doc, &topmost);
+	egueb_dom_node_document_set(topmost, NULL);
 	egueb_dom_node_unref(new_doc);
 
+	/* TODO check that the node is a svg element */
 	/* keep the node */
 	thiz = EGUEB_SVG_ELEMENT_IMAGE(n);
-	thiz->svg = topmost;
-
-	/* TODO check that the node is a svg element */
-	egueb_dom_node_document_set(thiz->svg, doc);
-	egueb_svg_element_geometry_relative_set(thiz->svg, n);
-	egueb_dom_element_process(topmost);
+	thiz->g = egueb_svg_element_g_new();
+	err = egueb_dom_node_child_append(thiz->g, topmost);
+	egueb_dom_node_document_set(thiz->g, doc);
+	/* set the transformation */
+	enesim_matrix_translate(&m, thiz->gx, thiz->gy);
+	egueb_svg_renderable_transform_set(thiz->g, &m);
+	/* finally process it */
+	egueb_svg_element_geometry_relative_set(thiz->g, n);
+	egueb_dom_element_process(thiz->g);
 
 	/* set the proxy for the svg */
-	r = egueb_svg_renderable_renderer_get(thiz->svg);
+	r = egueb_svg_renderable_renderer_get(thiz->g);
 	enesim_renderer_proxy_proxied_set(thiz->r, r);
 }
 /*----------------------------------------------------------------------------*
@@ -231,10 +239,10 @@ static void _egueb_svg_element_image_uri_load(Egueb_Svg_Element_Image *thiz,
 	const char *str;
 
 	/* in case we had an element, be sure to remove it */
-	if (thiz->svg)
+	if (thiz->g)
 	{
-		egueb_dom_node_unref(thiz->svg);
-		thiz->svg = NULL;
+		egueb_dom_node_unref(thiz->g);
+		thiz->g = NULL;
 	}
 
 	str = egueb_dom_string_string_get(uri);
@@ -618,10 +626,10 @@ static void _egueb_svg_element_image_instance_deinit(void *o)
 	Egueb_Svg_Element_Image *thiz;
 
 	thiz = EGUEB_SVG_ELEMENT_IMAGE(o);
-	if (thiz->svg)
+	if (thiz->g)
 	{
-		egueb_dom_node_unref(thiz->svg);
-		thiz->svg = NULL;
+		egueb_dom_node_unref(thiz->g);
+		thiz->g = NULL;
 	}
 	enesim_renderer_unref(thiz->r);
 	/* destroy the properties */

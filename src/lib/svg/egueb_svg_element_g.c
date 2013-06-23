@@ -142,7 +142,6 @@ EAPI Egueb_Dom_Node * egueb_svg_element_g_new(void)
 	return n;
 }
 
-
 #if 0
 static Eina_Bool _egueb_svg_element_g_setup_post(Egueb_Dom_Tag *t,
 		Egueb_Dom_Tag *child,

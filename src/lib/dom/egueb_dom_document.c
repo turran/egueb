@@ -103,6 +103,8 @@ static Eina_Bool _egueb_dom_parser_transform_text(Egueb_Dom_Parser *thiz, const 
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
+static void _egueb_dom_document_remove_element(Egueb_Dom_Document *thiz);
+
 static void _egueb_dom_document_mutation_attr_modified_cb(Egueb_Dom_Event *ev,
 		void *data)
 {
@@ -246,40 +248,41 @@ static void _egueb_dom_document_element_removed_from_document_cb(
 		Egueb_Dom_Event *ev, void *data)
 {
 	Egueb_Dom_Document *thiz = data;
-	Egueb_Dom_Node *target;
 	Egueb_Dom_Event_Phase phase;
 
 	egueb_dom_event_phase_get(ev, &phase);
 	if (phase != EGUEB_DOM_EVENT_PHASE_AT_TARGET)
 		return;
 
-	egueb_dom_event_target_get(ev, &target);
+	_egueb_dom_document_remove_element(thiz);
+}
+
+static void _egueb_dom_document_remove_element(Egueb_Dom_Document *thiz)
+{
 	/* remove the events registered */
-	egueb_dom_node_event_listener_remove(target,
+	egueb_dom_node_event_listener_remove(thiz->element,
 			EGUEB_DOM_EVENT_MUTATION_NODE_INSERTED_INTO_DOCUMENT,
 			_egueb_dom_document_element_insterted_into_document_cb,
 			EINA_FALSE, thiz);
-	egueb_dom_node_event_listener_remove(target,
+	egueb_dom_node_event_listener_remove(thiz->element,
 			EGUEB_DOM_EVENT_MUTATION_NODE_REMOVED_FROM_DOCUMENT,
 			_egueb_dom_document_element_removed_from_document_cb,
 			EINA_FALSE, thiz);
-	egueb_dom_node_event_listener_remove(target,
+	egueb_dom_node_event_listener_remove(thiz->element,
 			EGUEB_DOM_EVENT_MUTATION_NODE_INSERTED,
 			_egueb_dom_document_mutation_node_inserted_cb,
 			EINA_TRUE, thiz);
-	egueb_dom_node_event_listener_remove(target,
+	egueb_dom_node_event_listener_remove(thiz->element,
 			EGUEB_DOM_EVENT_MUTATION_NODE_REMOVED,
 			_egueb_dom_document_mutation_node_removed_cb,
 			EINA_TRUE, thiz);
-	egueb_dom_node_event_listener_remove(target,
+	egueb_dom_node_event_listener_remove(thiz->element,
 			EGUEB_DOM_EVENT_MUTATION_ATTR_MODIFIED,
 			_egueb_dom_document_mutation_attr_modified_cb,
 			EINA_TRUE, thiz);
 	/* update our own state */
 	egueb_dom_node_unref(thiz->element);
 	thiz->element = NULL;
-
-	egueb_dom_node_unref(target);
 }
 /*----------------------------------------------------------------------------*
  *                              Object interface                              *
@@ -318,8 +321,7 @@ static void _egueb_dom_document_instance_deinit(void *o)
 
 	if (thiz->element)
 	{
-		egueb_dom_node_unref(thiz->element);
-		thiz->element = NULL;
+		_egueb_dom_document_remove_element(thiz);
 	}
 	eina_hash_free(thiz->ids);
 }
