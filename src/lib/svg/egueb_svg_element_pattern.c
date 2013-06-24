@@ -160,7 +160,7 @@ static Eina_Bool _egueb_svg_element_pattern_process(
 static Egueb_Dom_String * _egueb_svg_element_pattern_tag_name_get(
 		Egueb_Dom_Element *e)
 {
-	return egueb_dom_string_ref(EGUEB_SVG_NAME_RECT);
+	return egueb_dom_string_ref(EGUEB_SVG_NAME_PATTERN);
 }
 /*----------------------------------------------------------------------------*
  *                              Object interface                              *
@@ -200,12 +200,12 @@ static void _egueb_svg_element_pattern_instance_init(void *o)
 	thiz = EGUEB_SVG_ELEMENT_PATTERN(o);
 	/* create the properties */
 	thiz->units = egueb_svg_attr_referenceable_units_new(
-			egueb_dom_string_ref(EGUEB_SVG_ELEMENT_PATTERN_UNITS),
+			egueb_dom_string_ref(EGUEB_SVG_PATTERN_UNITS),
 			EGUEB_SVG_REFERENCEABLE_UNITS_USER_SPACE_ON_USE, EINA_TRUE,
 			EINA_FALSE, EINA_FALSE);
 
 	thiz->transform = egueb_svg_attr_matrix_new(
-			egueb_dom_string_ref(EGUEB_SVG_ELEMENT_PATTERN_TRANSFORM),
+			egueb_dom_string_ref(EGUEB_SVG_PATTERN_TRANSFORM),
 			&EGUEB_SVG_MATRIX_IDENTITY, EINA_TRUE,
 			EINA_FALSE, EINA_FALSE);
 	thiz->xlink_href = egueb_svg_attr_string_new(
