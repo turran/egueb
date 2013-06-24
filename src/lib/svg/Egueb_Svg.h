@@ -100,6 +100,7 @@
 #include "egueb_svg_element_line.h"
 #include "egueb_svg_element_linear_gradient.h"
 #include "egueb_svg_element_path.h"
+#include "egueb_svg_element_pattern.h"
 #include "egueb_svg_element_polygon.h"
 #include "egueb_svg_element_polyline.h"
 #include "egueb_svg_element_radial_gradient.h"

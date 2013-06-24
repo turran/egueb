@@ -36,6 +36,7 @@ src/lib/svg/egueb_svg_element_image.h \
 src/lib/svg/egueb_svg_element_line.h \
 src/lib/svg/egueb_svg_element_linear_gradient.h \
 src/lib/svg/egueb_svg_element_path.h \
+src/lib/svg/egueb_svg_element_pattern.h \
 src/lib/svg/egueb_svg_element_polygon.h \
 src/lib/svg/egueb_svg_element_polyline.h \
 src/lib/svg/egueb_svg_element_radial_gradient.h \
@@ -103,6 +104,7 @@ src/lib/svg/egueb_svg_element_image.c \
 src/lib/svg/egueb_svg_element_line.c \
 src/lib/svg/egueb_svg_element_linear_gradient.c \
 src/lib/svg/egueb_svg_element_path.c \
+src/lib/svg/egueb_svg_element_pattern.c \
 src/lib/svg/egueb_svg_element_polygon.c \
 src/lib/svg/egueb_svg_element_polyline.c \
 src/lib/svg/egueb_svg_element_radial_gradient.c \
