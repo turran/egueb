@@ -22,6 +22,7 @@
 #include "egueb_dom_string.h"
 #include "egueb_dom_node.h"
 
+EAPI Enesim_Object_Descriptor * egueb_dom_document_descriptor_get(void);
 EAPI Eina_Error egueb_dom_document_element_create(Egueb_Dom_Node *n,
 		Egueb_Dom_String *name, Egueb_Dom_Node **ret);
 EAPI Eina_Error egueb_dom_document_element_get(Egueb_Dom_Node *n,

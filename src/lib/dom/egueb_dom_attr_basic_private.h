@@ -49,6 +49,4 @@ typedef struct _Egueb_Dom_Attr_Basic_Class
 	Egueb_Dom_Attr_Basic_Value_Get value_get;
 } Egueb_Dom_Attr_Basic_Class;
 
-Enesim_Object_Descriptor * egueb_dom_attr_basic_descriptor_get(void);
-
 #endif
