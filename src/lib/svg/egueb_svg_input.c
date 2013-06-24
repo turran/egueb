@@ -105,7 +105,7 @@ void egueb_svg_input_feed_mouse_up(Egueb_Svg_Input *thiz, int button)
 			(fabs(thiz->downy - thiz->y) < 2))
 	{
 		ev = egueb_dom_event_mouse_new();
-		egueb_dom_event_mouse_up_init(ev, thiz->x, thiz->y, thiz->x, thiz->y,
+		egueb_dom_event_mouse_click_init(ev, thiz->x, thiz->y, thiz->x, thiz->y,
 				EINA_FALSE, EINA_FALSE, EINA_FALSE,
 				EINA_FALSE, 0, 0);
 		egueb_dom_node_event_dispatch(thiz->grabbed, ev, NULL);

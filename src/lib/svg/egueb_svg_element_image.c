@@ -25,20 +25,7 @@
 #include "egueb_svg_renderable.h"
 #include "egueb_svg_attr_string.h"
 #include "egueb_svg_renderable_private.h"
-/* TODO
- * to handle svg images we need to:
- * 1. make svg be able to load svgs. we need this to use the descriptor
- * functions set on the svg to actually load a local/remote file
- * 2. add on the svg functions to add external image svgs that will be
- * processed on the damages and on the draw
- * 3. the svg_image_add needs to also pass a callback to be called
- * whenever such svg is going to be processed for damages and for drawing
- * 4. whenever something changes on the image (file, size, etc) destroy
- * such external svg
- * 5. the damages are always relative to the svg, so we need to transform
- * them to the destination svg (apply the transformation matrix the object
- * currently has)
- */
+
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
@@ -290,10 +277,9 @@ static Eina_Bool _egueb_svg_element_image_process(
 {
 	Egueb_Svg_Element_Image *thiz;
 	Egueb_Svg_Element *e, *e_parent;
-	Egueb_Svg_Length x, y, rx, ry, w, h;
+	Egueb_Svg_Length x, y, w, h;
 	Egueb_Dom_String *uri;
 	Egueb_Dom_Node *relative, *doc;
-	Eina_Bool rx_set, ry_set;
 	double font_size;
 
 	thiz = EGUEB_SVG_ELEMENT_IMAGE(r);
