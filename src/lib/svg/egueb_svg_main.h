@@ -28,6 +28,7 @@ EAPI int egueb_svg_shutdown(void);
 
 
 /* TODO add a string per element */
+EAPI extern Egueb_Dom_String *EGUEB_SVG_NAME_A;
 EAPI extern Egueb_Dom_String *EGUEB_SVG_NAME_CIRCLE;
 EAPI extern Egueb_Dom_String *EGUEB_SVG_NAME_CLIP_PATH;
 EAPI extern Egueb_Dom_String *EGUEB_SVG_NAME_DEFS;

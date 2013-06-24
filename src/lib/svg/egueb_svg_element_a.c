@@ -1,5 +1,5 @@
-/* Esvg - SVG
- * Copyright (C) 2011 Jorge Luis Zapata, Vincent Torri
+/* Egueb
+ * Copyright (C) 2011 - 2013 Jorge Luis Zapata
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -15,16 +15,12 @@
  * License along with this library.
  * If not, see <http://www.gnu.org/licenses/>.
  */
-#include "egueb_svg_main_private.h"
-#include "egueb_svg_private_attribute_presentation.h"
-#include "egueb_svg_context_private.h"
-#include "egueb_svg_element_private.h"
-#include "egueb_svg_element_a_private.h"
-#include "egueb_svg_element_svg_private.h"
 
-#include "egueb_svg_element.h"
+#include "egueb_svg_main_private.h"
+#include "egueb_svg_main.h"
 #include "egueb_svg_element_a.h"
-#include "egueb_svg_event.h"
+#include "egueb_svg_attr_string.h"
+#include "egueb_svg_renderable_container_private.h"
 
 /* TODO
  * whenever a child is added, if it is of type renderable, then
@@ -36,36 +32,32 @@
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
-#define ESVG_LOG_DEFAULT _egueb_svg_element_a_log
+#define EGUEB_SVG_ELEMENT_A_DESCRIPTOR egueb_svg_element_a_descriptor_get()
+#define EGUEB_SVG_ELEMENT_A_CLASS(k) ENESIM_OBJECT_CLASS_CHECK(k, 		\
+		Egueb_Svg_Element_A_Class, EGUEB_SVG_ELEMENT_A_DESCRIPTOR)
+#define EGUEB_SVG_ELEMENT_A(o) ENESIM_OBJECT_INSTANCE_CHECK(o, 		\
+		Egueb_Svg_Element_A, EGUEB_SVG_ELEMENT_A_DESCRIPTOR)
 
-static int _egueb_svg_element_a_log = -1;
-
-static Ender_Property *ESVG_ELEMENT_A_XLINK_HREF;
-
-typedef struct _Egueb_Svg_A
+typedef struct _Egueb_Svg_Element_A
 {
+	Egueb_Svg_Renderable_Container base;
 	/* properties */
-	Egueb_Svg_Attribute_Animated_String href;
+	Egueb_Dom_Node *xlink_href;
 	/* interface */
 	/* private */
-	char *real_href;
-} Egueb_Svg_A;
+} Egueb_Svg_Element_A;
 
-static Egueb_Svg_A * _egueb_svg_element_a_get(Egueb_Dom_Tag *t)
+typedef struct _Egueb_Svg_Element_A_Class
 {
-	Egueb_Svg_A *thiz;
+	Egueb_Svg_Renderable_Container_Class base;
+} Egueb_Svg_Element_A_Class;
 
-	if (egueb_svg_element_internal_type_get(t) != ESVG_TYPE_A)
-		return NULL;
-	thiz = egueb_svg_element_data_get(t);
 
-	return thiz;
-}
-
+#if 0
 static void _egueb_svg_element_a_renderable_click(Ender_Element *e,
 		const char *event_name, void *event_data, void *data)
 {
-	Egueb_Svg_A *thiz = data;
+	Egueb_Svg_Element_A *thiz = data;
 	Egueb_Svg_Event_Mouse *ev = event_data;
 	Ender_Element *svg;
 
@@ -73,12 +65,14 @@ static void _egueb_svg_element_a_renderable_click(Ender_Element *e,
 	svg = egueb_svg_element_topmost_get(e);
 	egueb_svg_element_svg_go_to(svg, thiz->real_href);
 }
+#endif
 /*----------------------------------------------------------------------------*
  *                         The Esvg Element interface                         *
  *----------------------------------------------------------------------------*/
+#if 0
 static Eina_Bool _egueb_svg_element_a_child_add(Egueb_Dom_Tag *t, Egueb_Dom_Tag *child)
 {
-	Egueb_Svg_A *thiz;
+	Egueb_Svg_Element_A *thiz;
 	Egueb_Svg_Type type;
 	Ender_Element *e;
 
@@ -98,7 +92,7 @@ static Eina_Bool _egueb_svg_element_a_child_add(Egueb_Dom_Tag *t, Egueb_Dom_Tag 
 
 static Eina_Bool _egueb_svg_element_a_child_remove(Egueb_Dom_Tag *t, Egueb_Dom_Tag *child)
 {
-	Egueb_Svg_A *thiz;
+	Egueb_Svg_Element_A *thiz;
 	Egueb_Svg_Type type;
 	Ender_Element *e;
 
@@ -115,7 +109,7 @@ static Eina_Bool _egueb_svg_element_a_child_remove(Egueb_Dom_Tag *t, Egueb_Dom_T
 
 static void _egueb_svg_element_a_free(Egueb_Dom_Tag *t)
 {
-	Egueb_Svg_A *thiz;
+	Egueb_Svg_Element_A *thiz;
 
 	thiz = _egueb_svg_element_a_get(t);
 	free(thiz);
@@ -146,7 +140,7 @@ static Eina_Bool _egueb_svg_element_a_attribute_get(Egueb_Dom_Tag *tag, const ch
 
 static int * _egueb_svg_element_a_attribute_animated_fetch(Egueb_Dom_Tag *t, const char *attr)
 {
-	Egueb_Svg_A *thiz;
+	Egueb_Svg_Element_A *thiz;
 	int *animated = NULL;
 
 	thiz = _egueb_svg_element_a_get(t);
@@ -159,10 +153,10 @@ static Egueb_Svg_Element_Setup_Return _egueb_svg_element_a_setup(Egueb_Dom_Tag *
 		Egueb_Svg_Context *c,
 		const Egueb_Svg_Element_Context *parent_context,
 		Egueb_Svg_Element_Context *context,
-		Egueb_Svg_Attribute_Presentation *attr,
+		Egueb_Svg_Element_Attribute_Presentation *attr,
 		Enesim_Log **error)
 {
-	Egueb_Svg_A *thiz;
+	Egueb_Svg_Element_A *thiz;
 	Ender_Element *topmost;
 	char *href;
 	char *real;
@@ -201,85 +195,71 @@ static Egueb_Svg_Element_Descriptor _descriptor = {
 	/* .initialize 		= */ NULL,
 	/* .setup		= */ _egueb_svg_element_a_setup,
 };
+#endif
 /*----------------------------------------------------------------------------*
- *                           The Ender interface                              *
+ *                              Element interface                             *
  *----------------------------------------------------------------------------*/
-static Egueb_Dom_Tag * _egueb_svg_element_a_new(void)
+static Egueb_Dom_String * _egueb_svg_element_a_tag_name_get(
+		Egueb_Dom_Element *e)
 {
-	Egueb_Svg_A *thiz;
-	Egueb_Dom_Tag *t;
+	return egueb_dom_string_ref(EGUEB_SVG_NAME_A);
+}
+/*----------------------------------------------------------------------------*
+ *                              Object interface                              *
+ *----------------------------------------------------------------------------*/
+EGUEB_DOM_ATTR_FETCH_DEFINE(egueb_svg_element_a, Egueb_Svg_Element_A, xlink_href);
 
-	thiz = calloc(1, sizeof(Egueb_Svg_A));
-	if (!thiz) return NULL;
+ENESIM_OBJECT_INSTANCE_BOILERPLATE(EGUEB_SVG_RENDERABLE_CONTAINER_DESCRIPTOR,
+		Egueb_Svg_Element_A, Egueb_Svg_Element_A_Class,
+		egueb_svg_element_a);
 
-	/* default values */
+static void _egueb_svg_element_a_class_init(void *k)
+{
+	Egueb_Dom_Element_Class *e_klass;
 
-	t = egueb_svg_element_new(&_descriptor, ESVG_TYPE_A, thiz);
-	return t;
+	e_klass= EGUEB_DOM_ELEMENT_CLASS(k);
+	e_klass->tag_name_get = _egueb_svg_element_a_tag_name_get;
 }
 
-static void _egueb_svg_element_a_xlink_href_set(Egueb_Dom_Tag *t, Egueb_Svg_String_Animated *href)
+static void _egueb_svg_element_a_class_deinit(void *k)
 {
-	Egueb_Svg_A *thiz;
-	Eina_Bool animating;
-
-	thiz = _egueb_svg_element_a_get(t);
-	animating = egueb_svg_element_attribute_animate_get(t);
-	egueb_svg_attribute_animated_string_set(&thiz->href,
-		href, animating);
 }
 
-static void _egueb_svg_element_a_xlink_href_get(Egueb_Dom_Tag *t, Egueb_Svg_String_Animated *href)
+static void _egueb_svg_element_a_instance_init(void *o)
 {
-	Egueb_Svg_A *thiz;
+	Egueb_Svg_Element_A *thiz;
 
-	thiz = _egueb_svg_element_a_get(t);
-	egueb_svg_attribute_animated_string_get(&thiz->href,
-		href);
+	thiz = EGUEB_SVG_ELEMENT_A(o);
+	/* create the properties */
+	thiz->xlink_href = egueb_svg_attr_string_new(
+			egueb_dom_string_ref(EGUEB_SVG_XLINK_HREF),
+			NULL, EINA_TRUE, EINA_FALSE, EINA_FALSE);
+	EGUEB_DOM_ELEMENT_CLASS_PROPERTY_ADD(thiz, egueb_svg_element_a, xlink_href);
 }
 
-/* The ender wrapper */
-#define _egueb_svg_element_a_xlink_href_is_set NULL
-#define _egueb_svg_element_a_delete NULL
-#include "egueb_svg_generated_element_a.c"
+static void _egueb_svg_element_a_instance_deinit(void *o)
+{
+	Egueb_Svg_Element_A *thiz;
+
+	thiz = EGUEB_SVG_ELEMENT_A(o);
+	/* destroy the properties */
+	egueb_dom_node_unref(thiz->xlink_href);
+}
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
-Eina_Bool egueb_svg_is_a_internal(Egueb_Dom_Tag *t)
-{
-	if (egueb_svg_element_internal_type_get(t) != ESVG_TYPE_A)
-		return EINA_FALSE;
-	return EINA_TRUE;
-}
-
-void egueb_svg_element_a_init(void)
-{
-	_egueb_svg_element_a_log = eina_log_domain_register("egueb_svg_a", ESVG_LOG_COLOR_DEFAULT);
-	if (_egueb_svg_element_a_log < 0)
-	{
-		EINA_LOG_ERR("Can not create log domain.");
-		return;
-	}
-	_egueb_svg_element_a_init();
-}
-
-void egueb_svg_element_a_shutdown(void)
-{
-	if (_egueb_svg_element_a_log < 0)
-		return;
-	_egueb_svg_element_a_shutdown();
-	eina_log_domain_unregister(_egueb_svg_element_a_log);
-	_egueb_svg_element_a_log = -1;
-}
-
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/
-EAPI Ender_Element * egueb_svg_element_a_new(void)
+EAPI Egueb_Dom_Node * egueb_svg_element_a_new(void)
 {
-	return ESVG_ELEMENT_NEW("SVGAElement");
+	Egueb_Dom_Node *n;
+
+	n = ENESIM_OBJECT_INSTANCE_NEW(egueb_svg_element_a);
+	return n;
 }
 
+#if 0
 EAPI Eina_Bool egueb_svg_is_a(Ender_Element *e)
 {
 	Egueb_Dom_Tag *t;
@@ -290,5 +270,6 @@ EAPI Eina_Bool egueb_svg_is_a(Ender_Element *e)
 
 EAPI void egueb_svg_element_a_xlink_href_set(Ender_Element *e, const char *href)
 {
-	egueb_svg_element_property_string_set(e, ESVG_ELEMENT_A_XLINK_HREF, href);
+	egueb_svg_element_property_string_set(e, EGUEB_SVG_ELEMENT_A_XLINK_HREF, href);
 }
+#endif

@@ -23,6 +23,7 @@
 #include "egueb_svg_string.h"
 #include "egueb_svg_length.h"
 /* elements */
+#include "egueb_svg_element_a.h"
 #include "egueb_svg_element_circle.h"
 #include "egueb_svg_element_clip_path.h"
 #include "egueb_svg_element_defs.h"
@@ -488,11 +489,11 @@ static Egueb_Dom_Node * _egueb_svg_document_element_create(int id)
 		case EGUEB_SVG_TYPE_G:
 		ret = egueb_svg_element_g_new();
 		break;
-#if 0
+
 		case EGUEB_SVG_TYPE_A:
 		ret = egueb_svg_element_a_new();
 		break;
-
+#if 0
 		case EGUEB_SVG_TYPE_SCRIPT:
 		ret = egueb_svg_element_script_new();
 		break;

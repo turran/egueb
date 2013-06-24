@@ -25,6 +25,7 @@ src/lib/svg/egueb_svg_color.h \
 src/lib/svg/egueb_svg_display.h \
 src/lib/svg/egueb_svg_document.h \
 src/lib/svg/egueb_svg_element.h \
+src/lib/svg/egueb_svg_element_a.h \
 src/lib/svg/egueb_svg_element_circle.h \
 src/lib/svg/egueb_svg_element_clip_path.h \
 src/lib/svg/egueb_svg_element_desc.h \
@@ -91,6 +92,7 @@ src/lib/svg/egueb_svg_color.c \
 src/lib/svg/egueb_svg_display.c \
 src/lib/svg/egueb_svg_document.c \
 src/lib/svg/egueb_svg_element.c \
+src/lib/svg/egueb_svg_element_a.c \
 src/lib/svg/egueb_svg_element_circle.c \
 src/lib/svg/egueb_svg_element_clip_path.c \
 src/lib/svg/egueb_svg_element_desc.c \
