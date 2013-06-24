@@ -160,6 +160,7 @@ Egueb_Svg_Reference * egueb_svg_reference_clip_path_new(void)
 	return r;
 }
 
+/* TODO remove this function */
 void egueb_svg_reference_clip_path_g_set(Egueb_Svg_Reference *r, Egueb_Dom_Node *g)
 {
 	Egueb_Svg_Reference_Clip_Path *thiz;

@@ -148,6 +148,7 @@ src/lib/svg/egueb_svg_reference_gradient_radial.c \
 src/lib/svg/egueb_svg_reference_clip_path.c \
 src/lib/svg/egueb_svg_reference_paint_server.c \
 src/lib/svg/egueb_svg_reference_paint_server_private.h \
+src/lib/svg/egueb_svg_reference_pattern.c \
 src/lib/svg/egueb_svg_referenceable.c \
 src/lib/svg/egueb_svg_referenceable_private.h \
 src/lib/svg/egueb_svg_referenceable_units.c \

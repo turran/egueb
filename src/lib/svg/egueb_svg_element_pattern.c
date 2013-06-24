@@ -154,6 +154,12 @@ static Eina_Bool _egueb_svg_element_pattern_process(
 	/* iterate over the children and call the process there */
 	return EINA_TRUE;
 }
+
+static Egueb_Svg_Reference * _egueb_svg_element_pattern_reference_new(
+		Egueb_Svg_Referenceable *r, Egueb_Dom_Node *referencer)
+{
+	return NULL;
+}
 /*----------------------------------------------------------------------------*
  *                              Element interface                             *
  *----------------------------------------------------------------------------*/
@@ -184,6 +190,7 @@ static void _egueb_svg_element_pattern_class_init(void *k)
 
 	klass = EGUEB_SVG_REFERENCEABLE_CLASS(k);
 	klass->process = _egueb_svg_element_pattern_process;
+	klass->reference_new = _egueb_svg_element_pattern_reference_new;
 
 	e_klass= EGUEB_DOM_ELEMENT_CLASS(k);
 	e_klass->tag_name_get = _egueb_svg_element_pattern_tag_name_get;
