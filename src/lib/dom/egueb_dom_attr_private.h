@@ -80,8 +80,6 @@ typedef struct _Egueb_Dom_Attr_Class
 } Egueb_Dom_Attr_Class;
 
 Enesim_Object_Descriptor * egueb_dom_attr_descriptor_get(void);
-void egueb_dom_attr_init(Egueb_Dom_Node *n, Egueb_Dom_String *name,
-		Eina_Bool animatable, Eina_Bool stylable, Eina_Bool inheritable);
 
 const Egueb_Dom_Value_Descriptor * egueb_dom_attr_value_descriptor_get(
 		Egueb_Dom_Node *n);

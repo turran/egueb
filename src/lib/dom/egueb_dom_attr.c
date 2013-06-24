@@ -223,7 +223,10 @@ void egueb_dom_attr_copy(Egueb_Dom_Node *n,
 	other->set_mask = thiz->set_mask;
 }
 
-void egueb_dom_attr_init(Egueb_Dom_Node *n, Egueb_Dom_String *name,
+/*============================================================================*
+ *                                   API                                      *
+ *============================================================================*/
+EAPI void egueb_dom_attr_init(Egueb_Dom_Node *n, Egueb_Dom_String *name,
 		Eina_Bool animatable, Eina_Bool stylable, Eina_Bool inheritable)
 {
 	Egueb_Dom_Attr *thiz;
@@ -233,9 +236,7 @@ void egueb_dom_attr_init(Egueb_Dom_Node *n, Egueb_Dom_String *name,
 	thiz->flag_mask = egueb_dom_attr_flag_mask_generate(animatable,
 			stylable, inheritable);
 }
-/*============================================================================*
- *                                   API                                      *
- *============================================================================*/
+
 EAPI Eina_Error egueb_dom_attr_name_get(Egueb_Dom_Node *n,
 		Egueb_Dom_String **name)
 {
