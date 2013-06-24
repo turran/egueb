@@ -103,8 +103,6 @@ static Eina_Bool _egueb_dom_parser_transform_text(Egueb_Dom_Parser *thiz, const 
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
-static void _egueb_dom_document_remove_element(Egueb_Dom_Document *thiz);
-
 static void _egueb_dom_document_mutation_attr_modified_cb(Egueb_Dom_Event *ev,
 		void *data)
 {
@@ -254,11 +252,6 @@ static void _egueb_dom_document_element_removed_from_document_cb(
 	if (phase != EGUEB_DOM_EVENT_PHASE_AT_TARGET)
 		return;
 
-	_egueb_dom_document_remove_element(thiz);
-}
-
-static void _egueb_dom_document_remove_element(Egueb_Dom_Document *thiz)
-{
 	/* remove the events registered */
 	egueb_dom_node_event_listener_remove(thiz->element,
 			EGUEB_DOM_EVENT_MUTATION_NODE_INSERTED_INTO_DOCUMENT,
@@ -321,7 +314,7 @@ static void _egueb_dom_document_instance_deinit(void *o)
 
 	if (thiz->element)
 	{
-		_egueb_dom_document_remove_element(thiz);
+		egueb_dom_node_document_set(thiz->element, NULL);
 	}
 	eina_hash_free(thiz->ids);
 }

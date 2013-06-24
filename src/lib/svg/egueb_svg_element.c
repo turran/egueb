@@ -17,10 +17,14 @@
  */
 
 #include "egueb_svg_main_private.h"
+#include "egueb_svg_main.h"
 #include "egueb_svg_element.h"
 #include "egueb_svg_reference.h"
 #include "egueb_svg_referenceable.h"
-#include "egueb_svg_main.h"
+#include "egueb_svg_referenceable_units.h"
+#include "egueb_svg_element_clip_path.h"
+#include "egueb_svg_document.h"
+
 #include "egueb_svg_element_private.h"
 #include "egueb_dom_string_private.h"
 /*
@@ -74,7 +78,6 @@ static const char * _egueb_svg_element_css_property_get(void *e, const char *pro
 static void _egueb_svg_element_css_property_set(void *e, const char *property, const char *value)
 {
 	Egueb_Dom_Node *n = e;
-	Egueb_Dom_Node *attr;
 	Egueb_Dom_String *prop;
 	Egueb_Dom_String *val;
 
@@ -528,6 +531,20 @@ static Egueb_Dom_Tag * _egueb_svg_element_tag_topmost_get(Egueb_Dom_Tag *t)
 
 #endif
 
+static void _egueb_svg_element_geometry_process(
+		Egueb_Svg_Element *thiz, Egueb_Dom_Node *geometry)
+{
+	Egueb_Svg_Element *geom;
+	if (!egueb_svg_is_element(geometry))
+	{
+		WARN("Relative geometry node does not inherit from the "
+				"SVGElement interface");
+		return;
+	}
+	geom = EGUEB_SVG_ELEMENT(geometry);
+	thiz->viewbox = geom->viewbox;
+}
+
 static void _egueb_svg_element_presentation_attributes_process(
 		Egueb_Svg_Element *thiz, Egueb_Dom_Node *relative,
 		Egueb_Dom_Node *geometry)
@@ -642,6 +659,8 @@ static Eina_Bool _egueb_svg_element_process(Egueb_Dom_Element *e)
 
 	egueb_svg_element_presentation_relative_get(EGUEB_DOM_NODE(e), &relative);
 	egueb_svg_element_geometry_relative_get(EGUEB_DOM_NODE(e), &geometry);
+	/* propagate the geometry information */
+	_egueb_svg_element_geometry_process(thiz, geometry);
 	/* propagate the inheritable attributes (the presentation attributes) */
 	_egueb_svg_element_presentation_attributes_process(thiz, relative, geometry);
 
@@ -821,9 +840,6 @@ void egueb_svg_element_clip_path_resolve(Egueb_Dom_Node *n,
 		Egueb_Svg_Clip_Path *clip_path_current,
 		Egueb_Svg_Clip_Path *clip_path_last, Egueb_Svg_Reference **r)
 {
-	Egueb_Svg_Element *thiz;
-
-	thiz = EGUEB_SVG_ELEMENT(n);
 	if (!egueb_svg_clip_path_is_equal(clip_path_current, clip_path_last))
 	{
 		DBG("Clip path changed");
