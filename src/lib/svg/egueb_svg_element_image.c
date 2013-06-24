@@ -282,151 +282,6 @@ static void _egueb_svg_element_image_uri_load(Egueb_Svg_Element_Image *thiz,
 				egueb_dom_node_ref(EGUEB_DOM_NODE(thiz)));
 	}
 }
-
-#if 0
-static void _egueb_svg_element_image_svg_load(void)
-{
-	if (_egueb_svg_element_svg_image_is_svg(name))
-	{
-		Egueb_Svg_Element_Svg_Image *image;
-		Ender_Element *e;
-		double aw, ah;
-		int w, h;
-
-		e = egueb_svg_parser_load(name, NULL, NULL);
-		if (!e) return;
-
-		/* set the container size */
-		egueb_svg_element_svg_container_width_set(e, width);
-		egueb_svg_element_svg_container_height_set(e, height);
-		/* create a surface of the desired size */
-		w = ceil(width);
-		h = ceil(height);
-		*s = enesim_surface_new(ENESIM_FORMAT_ARGB8888, w, h);
-
-		/* FIXME when to destroy it? the image might change
-		 * the uri and surface unreffed but not the ender element
-		 */
-		image = calloc(1, sizeof(Egueb_Svg_Element_Svg_Image));
-		image->svg = e;
-		image->s = s;
-
-		/* add the svg to the list of svgs */
-		thiz->image_svgs = eina_list_append(thiz->image_svgs, image);
-	}
-	else
-}
-
-static void _egueb_svg_element_image_load(Egueb_Dom_Tag *t, Egueb_Svg_Element_Image *thiz, double width, double height)
-{
-	Enesim_Surface *s = NULL;
-	Ender_Element *topmost;
-	char *href;
-	char *real;
-
-	/* set up the options */
-	/* FIXME this width is without the viewbox transformation, we should transform
-	 * and the assign the lengths
-	 */
-
-	egueb_svg_attribute_animated_string_final_get(&thiz->href, &href);
-	if (!href) goto cleanup;
-
-	egueb_svg_element_internal_topmost_get(t, &topmost);
-	if (!strncmp(href, "data:image", 10))
-	{
-		real = href;
-	}
-	else
-	{
-		real = egueb_svg_element_svg_uri_resolve(topmost, href);
-		if (!real) goto cleanup;
-	}
-	/* check that the href has actually changed */
-	DBG("Using real uri %s for %s", href, real);
-	if (thiz->real_href)
-	{
-		if (!strcmp(thiz->real_href, real))
-			return;
-		free(thiz->real_href);
-	}
-	thiz->real_href = real;
-	egueb_svg_element_svg_image_load(topmost, thiz->real_href, &s, width, height);
-cleanup:
-	if (thiz->s)
-	{
-		enesim_surface_unref(thiz->s);
-		thiz->s = NULL;
-	}
-	DBG("Using the surface %p", s);
-	enesim_renderer_image_src_set(thiz->image, s);
-	thiz->s = s;
-}
-
-static Eina_Bool _egueb_svg_element_image_renderer_propagate(Egueb_Dom_Tag *t,
-		Egueb_Svg_Context *c,
-		const Egueb_Svg_Element_Context *ctx,
-		const Egueb_Svg_Attribute_Presentation *attr,
-		Egueb_Svg_Renderable_Context *rctx,
-		Enesim_Log **error)
-{
-	Egueb_Svg_Element_Image *thiz;
-	Egueb_Svg_Length lx, ly;
-	Egueb_Svg_Length lwidth, lheight;
-	double x, y;
-	double width, height;
-
-	thiz = _egueb_svg_element_image_get(t);
-	/* set the position */
-	egueb_svg_attribute_animated_length_final_get(&thiz->x, &lx);
-	egueb_svg_attribute_animated_length_final_get(&thiz->y, &ly);
-	x = egueb_svg_coord_final_get(&lx, ctx->viewbox.w, ctx->font_size);
-	y = egueb_svg_coord_final_get(&ly, ctx->viewbox.h, ctx->font_size);
-	/* set the size */
-	egueb_svg_attribute_animated_length_final_get(&thiz->width, &lwidth);
-	egueb_svg_attribute_animated_length_final_get(&thiz->height, &lheight);
-	width = egueb_svg_coord_final_get(&lwidth, ctx->viewbox.w, ctx->font_size);
-	height = egueb_svg_coord_final_get(&lheight, ctx->viewbox.h, ctx->font_size);
-
-#if 0
-	double iw;
-	double ih;
-	const Egueb_Svg_Element_Context *parent_ctx;
-	Egueb_Dom_Tag *parent_t;
-
-	/* get the final transformation of the parent and apply it to the width/height to get the image size */
-	parent_t = egueb_dom_tag_parent_get(t);
-	parent_ctx = egueb_svg_element_context_get(parent_t);
-	/* load the image of that size */
-	iw = width * parent_ctx->transform.base.xx;
-	ih = height * parent_ctx->transform.base.yy;
-	printf("iw = %g ih = %g\n", iw, ih);
-#endif
-	_egueb_svg_element_image_load(t, thiz, width, height);
-
-	/* set the image */
-	if (!thiz->s)
-	{
-		enesim_renderer_rectangle_x_set(thiz->rectangle, x);
-		enesim_renderer_rectangle_y_set(thiz->rectangle, y);
-		enesim_renderer_rectangle_width_set(thiz->rectangle, width);
-		enesim_renderer_rectangle_height_set(thiz->rectangle, height);
-		enesim_renderer_transformation_set(thiz->rectangle, &ctx->transform);
-		enesim_renderer_proxy_proxied_set(thiz->proxy, thiz->rectangle);
-	}
-	else
-	{
-		enesim_renderer_image_x_set(thiz->image, x);
-		enesim_renderer_image_y_set(thiz->image, y);
-		enesim_renderer_image_width_set(thiz->image, width);
-		enesim_renderer_image_height_set(thiz->image, height);
-		enesim_renderer_transformation_set(thiz->image, &ctx->transform);
-		enesim_renderer_proxy_proxied_set(thiz->proxy, thiz->image);
-	}
-
-	return EINA_TRUE;
-}
-#endif
 /*----------------------------------------------------------------------------*
  *                            Renderable interface                            *
  *----------------------------------------------------------------------------*/
@@ -642,15 +497,6 @@ static void _egueb_svg_element_image_instance_deinit(void *o)
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
-#if 0
-void egueb_svg_element_image_damage_add(Egueb_Dom_Tag *t, Eina_Rectangle *area)
-{
-	Egueb_Svg_Element_Image *thiz;
-
-	thiz = _egueb_svg_element_image_get(t);
-	enesim_renderer_image_damage_add(thiz->image, area);
-}
-#endif
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/
@@ -663,11 +509,6 @@ EAPI Egueb_Dom_Node * egueb_svg_element_image_new(void)
 }
 
 #if 0
-EAPI Ender_Element * egueb_svg_element_image_new(void)
-{
-	return ESVG_ELEMENT_NEW("SVGImageElement");
-}
-
 EAPI Eina_Bool egueb_svg_is_image(Ender_Element *e)
 {
 	Egueb_Dom_Tag *t;

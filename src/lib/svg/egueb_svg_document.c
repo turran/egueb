@@ -669,7 +669,7 @@ static Egueb_Dom_Node * _egueb_svg_document_input_element_at_recursive(
 	if (egueb_svg_is_renderable_container(n))
 	{
 		Egueb_Dom_Node *child = NULL;
-		egueb_dom_node_child_first_get(n, &child);
+		egueb_dom_node_child_last_get(n, &child);
 		while (child)
 		{
 			Egueb_Dom_Node *tmp;
@@ -682,7 +682,7 @@ static Egueb_Dom_Node * _egueb_svg_document_input_element_at_recursive(
 				break;
 			}
 
-			egueb_dom_node_sibling_next_get(child, &tmp);
+			egueb_dom_node_sibling_previous_get(child, &tmp);
 			egueb_dom_node_unref(child);
 			child = tmp;
 		}

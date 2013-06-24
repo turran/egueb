@@ -45,6 +45,7 @@ typedef struct _Egueb_Svg_Element_A
 	Egueb_Dom_Node *xlink_href;
 	/* interface */
 	/* private */
+	Egueb_Dom_String *gxlink_href;
 } Egueb_Svg_Element_A;
 
 typedef struct _Egueb_Svg_Element_A_Class
@@ -53,149 +54,87 @@ typedef struct _Egueb_Svg_Element_A_Class
 } Egueb_Svg_Element_A_Class;
 
 
-#if 0
-static void _egueb_svg_element_a_renderable_click(Ender_Element *e,
-		const char *event_name, void *event_data, void *data)
+static void _egueb_svg_element_a_renderable_click_cb(Egueb_Dom_Event *e,
+		void *data)
 {
 	Egueb_Svg_Element_A *thiz = data;
-	Egueb_Svg_Event_Mouse *ev = event_data;
-	Ender_Element *svg;
 
-	DBG("Clicking on '%s'", thiz->real_href);
+	ERR("Clicking on '%s'", egueb_dom_string_string_get(thiz->gxlink_href));
+#if 0
 	svg = egueb_svg_element_topmost_get(e);
 	egueb_svg_element_svg_go_to(svg, thiz->real_href);
-}
 #endif
+}
+
+static Eina_Bool _egueb_svg_element_a_get_target(Egueb_Dom_Event *e,
+		Egueb_Dom_Node *n, Egueb_Dom_Node **t)
+{
+	Egueb_Dom_Node *target = NULL;
+	Egueb_Dom_Node *related = NULL;
+
+	egueb_dom_event_mutation_related_get(e, &related);
+	if (related != n)
+	{
+		egueb_dom_node_unref(related);
+		return EINA_FALSE;
+	}
+	egueb_dom_node_unref(related);
+	egueb_dom_event_target_get(e, &target);
+	if (!egueb_svg_is_renderable(target))
+	{
+		egueb_dom_node_unref(target);
+		return EINA_FALSE;
+	}
+	*t = target;
+	return EINA_TRUE;
+}
+
+static void _egueb_svg_element_a_node_inserted_cb(Egueb_Dom_Event *e,
+		void *data)
+{
+	Egueb_Dom_Node *n = data;
+	Egueb_Dom_Node *target = NULL;
+
+	if (!_egueb_svg_element_a_get_target(e, n, &target))
+		return;
+	egueb_dom_node_event_listener_add(target, EGUEB_DOM_EVENT_MOUSE_CLICK,
+			_egueb_svg_element_a_renderable_click_cb, EINA_FALSE, n);
+	egueb_dom_node_unref(target);
+}
+
+static void _egueb_svg_element_a_node_removed_cb(Egueb_Dom_Event *e,
+		void *data)
+{
+	Egueb_Dom_Node *n = data;
+	Egueb_Dom_Node *target = NULL;
+
+	if (!_egueb_svg_element_a_get_target(e, n, &target))
+		return;
+	egueb_dom_node_event_listener_remove(target, EGUEB_DOM_EVENT_MOUSE_CLICK,
+			_egueb_svg_element_a_renderable_click_cb, EINA_FALSE, n);
+	egueb_dom_node_unref(target);
+}
 /*----------------------------------------------------------------------------*
- *                         The Esvg Element interface                         *
+ *                            Renderable interface                            *
  *----------------------------------------------------------------------------*/
-#if 0
-static Eina_Bool _egueb_svg_element_a_child_add(Egueb_Dom_Tag *t, Egueb_Dom_Tag *child)
+static Eina_Bool _egueb_svg_element_a_process(Egueb_Svg_Renderable *r)
 {
 	Egueb_Svg_Element_A *thiz;
-	Egueb_Svg_Type type;
-	Ender_Element *e;
+	Egueb_Dom_String *gxlink_href = NULL;
 
-	thiz = _egueb_svg_element_a_get(t);
-	type = egueb_svg_element_internal_type_get(child);
-	if (egueb_svg_type_is_animation(type))
-		return EINA_TRUE;
+	thiz = EGUEB_SVG_ELEMENT_A(r);
+	egueb_dom_attr_final_get(thiz->xlink_href, &gxlink_href);
+	if (thiz->gxlink_href)
+	{
+		egueb_dom_string_unref(thiz->gxlink_href);
+		thiz->gxlink_href = NULL;
+	}
+	thiz->gxlink_href = gxlink_href;
 
-	if (!egueb_svg_type_is_renderable(type))
+	if (!egueb_svg_renderable_container_process(r))
 		return EINA_FALSE;
-
-	e = egueb_svg_element_ender_get(child);
-	/* add the mouse click event */
-	ender_event_listener_add(e, "click", _egueb_svg_element_a_renderable_click, thiz);
 	return EINA_TRUE;
 }
-
-static Eina_Bool _egueb_svg_element_a_child_remove(Egueb_Dom_Tag *t, Egueb_Dom_Tag *child)
-{
-	Egueb_Svg_Element_A *thiz;
-	Egueb_Svg_Type type;
-	Ender_Element *e;
-
-	thiz = _egueb_svg_element_a_get(t);
-	type = egueb_svg_element_internal_type_get(child);
-	if (!egueb_svg_type_is_renderable(type))
-		return EINA_TRUE;
-
-	e = egueb_svg_element_ender_get(child);
-	/* remove the mouse click event */
-	ender_event_listener_remove_full(e, "click", _egueb_svg_element_a_renderable_click, thiz);
-	return EINA_TRUE;
-}
-
-static void _egueb_svg_element_a_free(Egueb_Dom_Tag *t)
-{
-	Egueb_Svg_Element_A *thiz;
-
-	thiz = _egueb_svg_element_a_get(t);
-	free(thiz);
-}
-
-static Eina_Bool _egueb_svg_element_a_attribute_set(Ender_Element *e,
-		const char *key, const char *value)
-{
-	if (strcmp(key, "xlink:href") == 0)
-	{
-		egueb_svg_element_a_xlink_href_set(e, value);
-	}
-	else
-	{
-		return EINA_FALSE;
-	}
-	/*
-	 * a color and a opacity are part of the presentation attributes
-	 * and already parsed on the element
-	 */
-	return EINA_TRUE;
-}
-
-static Eina_Bool _egueb_svg_element_a_attribute_get(Egueb_Dom_Tag *tag, const char *attribute, char **value)
-{
-	return EINA_FALSE;
-}
-
-static int * _egueb_svg_element_a_attribute_animated_fetch(Egueb_Dom_Tag *t, const char *attr)
-{
-	Egueb_Svg_Element_A *thiz;
-	int *animated = NULL;
-
-	thiz = _egueb_svg_element_a_get(t);
-	if (!strcmp(attr, "xlink:href"))
-		animated = &thiz->href.animated;
-	return animated;
-}
-
-static Egueb_Svg_Element_Setup_Return _egueb_svg_element_a_setup(Egueb_Dom_Tag *t,
-		Egueb_Svg_Context *c,
-		const Egueb_Svg_Element_Context *parent_context,
-		Egueb_Svg_Element_Context *context,
-		Egueb_Svg_Element_Attribute_Presentation *attr,
-		Enesim_Log **error)
-{
-	Egueb_Svg_Element_A *thiz;
-	Ender_Element *topmost;
-	char *href;
-	char *real;
-
-	thiz = _egueb_svg_element_a_get(t);
-
-	egueb_svg_attribute_animated_string_final_get(&thiz->href, &href);
-	if (!href) goto done;
-
-	egueb_svg_element_internal_topmost_get(t, &topmost);
-	real = egueb_svg_element_svg_uri_resolve(topmost, href);
-	if (!real) goto done;
-
-	/* set the resolved uri */
-	if (thiz->real_href)
-	{
-		free(thiz->real_href);
-		thiz->real_href = NULL;
-	}
-	thiz->real_href = real;
-done:
-	/* call the setup on the children */
-	return EINA_TRUE;
-}
-
-static Egueb_Svg_Element_Descriptor _descriptor = {
-	/* .child_add		= */ _egueb_svg_element_a_child_add,
-	/* .child_remove	= */ _egueb_svg_element_a_child_remove,
-	/* .attribute_get 	= */ _egueb_svg_element_a_attribute_get,
-	/* .cdata_set 		= */ NULL,
-	/* .text_set 		= */ NULL,
-	/* .text_get 		= */ NULL,
-	/* .free 		= */ _egueb_svg_element_a_free,
-	/* .attribute_set 	= */ _egueb_svg_element_a_attribute_set,
-	/* .attribute_animated_fetch = */ _egueb_svg_element_a_attribute_animated_fetch,
-	/* .initialize 		= */ NULL,
-	/* .setup		= */ _egueb_svg_element_a_setup,
-};
-#endif
 /*----------------------------------------------------------------------------*
  *                              Element interface                             *
  *----------------------------------------------------------------------------*/
@@ -215,7 +154,11 @@ ENESIM_OBJECT_INSTANCE_BOILERPLATE(EGUEB_SVG_RENDERABLE_CONTAINER_DESCRIPTOR,
 
 static void _egueb_svg_element_a_class_init(void *k)
 {
+	Egueb_Svg_Renderable_Class *klass;
 	Egueb_Dom_Element_Class *e_klass;
+
+	klass = EGUEB_SVG_RENDERABLE_CLASS(k);
+	klass->process = _egueb_svg_element_a_process;
 
 	e_klass= EGUEB_DOM_ELEMENT_CLASS(k);
 	e_klass->tag_name_get = _egueb_svg_element_a_tag_name_get;
@@ -235,6 +178,15 @@ static void _egueb_svg_element_a_instance_init(void *o)
 			egueb_dom_string_ref(EGUEB_SVG_XLINK_HREF),
 			NULL, EINA_TRUE, EINA_FALSE, EINA_FALSE);
 	EGUEB_DOM_ELEMENT_CLASS_PROPERTY_ADD(thiz, egueb_svg_element_a, xlink_href);
+	/* whenever a renderable is added/removed, add/remove the click event */
+	egueb_dom_node_event_listener_add(EGUEB_DOM_NODE(o),
+			EGUEB_DOM_EVENT_MUTATION_NODE_INSERTED,
+			_egueb_svg_element_a_node_inserted_cb,
+			EINA_FALSE, o);
+	egueb_dom_node_event_listener_add(EGUEB_DOM_NODE(o),
+			EGUEB_DOM_EVENT_MUTATION_NODE_REMOVED,
+			_egueb_svg_element_a_node_removed_cb,
+			EINA_FALSE, o);
 }
 
 static void _egueb_svg_element_a_instance_deinit(void *o)
@@ -244,6 +196,11 @@ static void _egueb_svg_element_a_instance_deinit(void *o)
 	thiz = EGUEB_SVG_ELEMENT_A(o);
 	/* destroy the properties */
 	egueb_dom_node_unref(thiz->xlink_href);
+	if (thiz->gxlink_href)
+	{
+		egueb_dom_string_unref(thiz->gxlink_href);
+		thiz->gxlink_href = NULL;
+	}
 }
 /*============================================================================*
  *                                 Global                                     *

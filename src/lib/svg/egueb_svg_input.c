@@ -73,12 +73,15 @@ void egueb_svg_input_feed_mouse_down(Egueb_Svg_Input *thiz, int button)
 	/* store the coordinates where the mouse buton down was done to
 	 * trigger the click later
 	 */
-	thiz->grabbed = thiz->over;
+	thiz->grabbed = egueb_dom_node_ref(thiz->over);
 	thiz->downx = thiz->x;
 	thiz->downy = thiz->y;
 
-	//printf("mouse down! on %s\n", egueb_svg_element_name_get(thiz->over));
-	//egueb_dom_node_event_dispatch(thiz->over, "mousedown", &ev);
+	ev = egueb_dom_event_mouse_new();
+	egueb_dom_event_mouse_down_init(ev, thiz->x, thiz->y, thiz->x, thiz->y,
+			EINA_FALSE, EINA_FALSE, EINA_FALSE,
+			EINA_FALSE, 0, 0);
+	egueb_dom_node_event_dispatch(thiz->grabbed, ev, NULL);
 }
 
 void egueb_svg_input_feed_mouse_up(Egueb_Svg_Input *thiz, int button)
@@ -89,8 +92,11 @@ void egueb_svg_input_feed_mouse_up(Egueb_Svg_Input *thiz, int button)
 	if (!thiz->grabbed)
 		return;
 
-	//printf("mouse up! on %s\n", egueb_svg_element_name_get(thiz->grabbed));
-	//egueb_dom_node_event_dispatch(thiz->grabbed, "mouseup", &ev);
+	ev = egueb_dom_event_mouse_new();
+	egueb_dom_event_mouse_up_init(ev, thiz->x, thiz->y, thiz->x, thiz->y,
+			EINA_FALSE, EINA_FALSE, EINA_FALSE,
+			EINA_FALSE, 0, 0);
+	egueb_dom_node_event_dispatch(thiz->grabbed, ev, NULL);
 	/* in case the down coordinates are the same as the current coordinates
 	 * send a click event
 	 */
@@ -98,11 +104,14 @@ void egueb_svg_input_feed_mouse_up(Egueb_Svg_Input *thiz, int button)
 	if ((fabs(thiz->downx - thiz->x) < 2) &&
 			(fabs(thiz->downy - thiz->y) < 2))
 	{
-		//printf("mouse click! on %s\n", egueb_svg_element_name_get(thiz->grabbed));
-		//egueb_dom_node_event_dispatch(thiz->grabbed, "click", &ev);
+		ev = egueb_dom_event_mouse_new();
+		egueb_dom_event_mouse_up_init(ev, thiz->x, thiz->y, thiz->x, thiz->y,
+				EINA_FALSE, EINA_FALSE, EINA_FALSE,
+				EINA_FALSE, 0, 0);
+		egueb_dom_node_event_dispatch(thiz->grabbed, ev, NULL);
 	}
+	egueb_dom_node_unref(thiz->grabbed);
 	thiz->grabbed = NULL;
-
 }
 
 void egueb_svg_input_feed_mouse_move(Egueb_Svg_Input *thiz, int x, int y)
