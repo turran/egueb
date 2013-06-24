@@ -48,7 +48,7 @@ static Eina_Bool _egueb_svg_renderable_container_children_process_cb(
 			enesim_renderer_compound_layer_add(thiz->compound, r);
 		}
 	}
-	if (!egueb_dom_element_process(EGUEB_DOM_ELEMENT(child)))
+	if (!egueb_dom_element_process(child))
 		WARN("Child failed to process");
 	return EINA_TRUE;
 }

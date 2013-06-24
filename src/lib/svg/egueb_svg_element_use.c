@@ -84,7 +84,7 @@ static Eina_Bool _egueb_svg_element_use_process(Egueb_Svg_Element *e)
 {
 	Egueb_Svg_Element_Use *thiz;
 	Egueb_Svg_Element *e_parent;
-	Egueb_Svg_Length x, y, rx, ry, w, h;
+	Egueb_Svg_Length x, y, w, h;
 	Egueb_Dom_String *xlink = NULL;
 	Egueb_Dom_Node *relative, *doc;
 	double gx, gy, gw, gh;
@@ -149,8 +149,7 @@ static Eina_Bool _egueb_svg_element_use_process(Egueb_Svg_Element *e)
 			/* add it to the g */
 			egueb_dom_node_child_append(thiz->g, egueb_dom_node_ref(thiz->clone));
 			/* process this element and set its relativeness */
-			/* FIXME export this function and change it to receive a node */
-			egueb_dom_element_process(EGUEB_DOM_ELEMENT(thiz->clone));
+			egueb_dom_element_process(thiz->clone);
 		}
 	}
 	egueb_dom_node_unref(doc);

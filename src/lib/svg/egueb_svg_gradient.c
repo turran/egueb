@@ -542,7 +542,7 @@ static Eina_Bool _egueb_svg_gradient_children_process_cb(
 	egueb_dom_node_type_get(child, &type);
 	if (type != EGUEB_DOM_NODE_TYPE_ELEMENT_NODE)
 		return EINA_TRUE;
-	egueb_dom_element_process(EGUEB_DOM_ELEMENT(child));
+	egueb_dom_element_process(child);
 	return EINA_TRUE;
 }
 /*----------------------------------------------------------------------------*

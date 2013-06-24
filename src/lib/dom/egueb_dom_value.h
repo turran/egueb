@@ -38,7 +38,7 @@ typedef struct _Egueb_Dom_Value
 	Egueb_Dom_Value_Data data;
 } Egueb_Dom_Value;
 
-#define EGUEB_DOM_VALUE_INIT { 0, EINA_FALSE,  0 }
+#define EGUEB_DOM_VALUE_INIT { 0, EINA_FALSE,  { 0 } }
 
 EAPI void egueb_dom_value_init(Egueb_Dom_Value *thiz,
 		const Egueb_Dom_Value_Descriptor *descriptor);

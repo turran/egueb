@@ -435,18 +435,6 @@ static void _egueb_dom_element_instance_deinit(void *o)
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
-Eina_Error egueb_dom_element_process(Egueb_Dom_Element *thiz)
-{
-	Egueb_Dom_Element_Class *klass;
-
-	klass = EGUEB_DOM_ELEMENT_CLASS_GET(thiz);
-	if (klass->process) return klass->process(thiz);
-	/* unset the flag that informs the inheritable change */
-	thiz->inheritable_changed = EINA_FALSE;
-	thiz->attr_changed = EINA_FALSE;
-	return EINA_ERROR_NONE;
-}
-
 Eina_Error egueb_dom_element_process_children(Egueb_Dom_Element *thiz)
 {
 	Egueb_Dom_Node *n;
@@ -757,6 +745,20 @@ EAPI Eina_Bool egueb_dom_element_is_enqueued(Egueb_Dom_Node *n)
 
 	thiz = EGUEB_DOM_ELEMENT(n);
 	return thiz->enqueued;
+}
+
+EAPI Eina_Bool egueb_dom_element_process(Egueb_Dom_Node *n)
+{
+	Egueb_Dom_Element *thiz;
+	Egueb_Dom_Element_Class *klass;
+
+	thiz = EGUEB_DOM_ELEMENT(n);
+	klass = EGUEB_DOM_ELEMENT_CLASS_GET(thiz);
+	if (klass->process) return klass->process(thiz);
+	/* unset the flag that informs the inheritable change */
+	thiz->inheritable_changed = EINA_FALSE;
+	thiz->attr_changed = EINA_FALSE;
+	return EINA_TRUE;
 }
 
 #if 0

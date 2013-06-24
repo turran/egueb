@@ -25,7 +25,6 @@
 #include "egueb_svg_element.h"
 #include "egueb_svg_element_clip_path.h"
 #include "egueb_svg_reference_private.h"
-#include "egueb_dom_element_private.h"
 /* TODO we still need to implement a way to inform whenever some node
  * has changed inside the <g> we need to enqueue it for later process
  */
@@ -100,7 +99,7 @@ static Eina_Bool _egueb_svg_reference_clip_path_process(
 		enesim_matrix_identity(&m);
 		egueb_svg_renderable_transform_set(thiz->g, &m);
 	}
-	ret = egueb_dom_element_process(EGUEB_DOM_ELEMENT(thiz->g));
+	ret = egueb_dom_element_process(thiz->g);
 
 	return ret;
 }

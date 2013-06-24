@@ -114,7 +114,7 @@ static Eina_Bool _egueb_svg_element_clip_path_children_process_cb(
 	if (!_egueb_svg_element_clip_path_node_is_clonable(child))
 	{
 		DBG("Processing not clonable child");
-		if (!egueb_dom_element_process(EGUEB_DOM_ELEMENT(child)))
+		if (!egueb_dom_element_process(child))
 			WARN("Child failed to process");
 	}
 	return EINA_TRUE;

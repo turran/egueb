@@ -19,7 +19,6 @@
 #include "egueb_svg_main.h"
 #include "egueb_svg_element_private.h"
 #include "egueb_svg_element_defs.h"
-#include "egueb_dom_element_private.h"
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
@@ -66,7 +65,7 @@ static Eina_Bool _egueb_svg_element_defs_children_process_cb(
 		return EINA_TRUE;
 	if (egueb_svg_is_renderable(child))
 		return EINA_TRUE;
-	egueb_dom_element_process(EGUEB_DOM_ELEMENT(child));
+	egueb_dom_element_process(child);
 	return EINA_TRUE;
 }
 /*----------------------------------------------------------------------------*

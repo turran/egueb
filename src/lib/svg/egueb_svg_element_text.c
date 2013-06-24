@@ -101,7 +101,7 @@ static Eina_Bool _egueb_svg_element_text_children_process_cb(Egueb_Dom_Node *chi
 	}
 	else if (type == EGUEB_DOM_NODE_TYPE_ELEMENT_NODE && egueb_svg_is_element_tspan(child))
 	{
-		egueb_dom_element_process(EGUEB_DOM_ELEMENT(child));
+		egueb_dom_element_process(child);
 		if (thiz->renderable_tree_changed)
 		{
 			Enesim_Renderer *r;

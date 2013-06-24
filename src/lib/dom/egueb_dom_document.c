@@ -336,9 +336,9 @@ void egueb_dom_document_process_default(Egueb_Dom_Document *thiz)
 		INFO("Processing '%s'", egueb_dom_string_string_get(name));
 		egueb_dom_string_unref(name);
 
-		e = EGUEB_DOM_ELEMENT(n);
-		egueb_dom_element_process(e);
+		egueb_dom_element_process(n);
 		thiz->current_enqueued = eina_list_remove_list(thiz->current_enqueued, l);
+		e = EGUEB_DOM_ELEMENT(n);
 		e->enqueued = EINA_FALSE;
 
 		egueb_dom_node_unref(n);
