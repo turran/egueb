@@ -587,7 +587,7 @@ static char * _egueb_svg_document_uri_get_absolute(Egueb_Svg_Document *thiz,
 		}
 	}
 	/* ok, we got the location, not concat it with the uri */
-	ERR("location is '%s' and uri '%s'", location, uri);
+	INFO("location is '%s' and uri '%s'", location, uri);
 	ret = eina_str_dup_printf("%s/%s", location, uri);
 	if (free_location)
 		free((char *)location);
@@ -1187,7 +1187,7 @@ EAPI void egueb_svg_document_uri_fetch(Egueb_Dom_Node *n,
 	/* resolve the uri to make it absolute */
 	absolute = _egueb_svg_document_uri_get_absolute(thiz,
 		egueb_dom_string_string_get(uri));
-	ERR("URI is %s", absolute);
+	DBG("URI is %s", absolute);
 	/* in case of a http uri, delegate it to the application */
 	if (!strncmp(absolute, "/", 1))
 	{
