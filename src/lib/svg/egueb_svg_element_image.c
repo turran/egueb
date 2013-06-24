@@ -118,15 +118,15 @@ static void _egueb_svg_element_image_svg_load(Egueb_Dom_Node *n,
 	new_doc = egueb_svg_document_new(NULL);
 	egueb_dom_parser_parse(data, new_doc);
 	egueb_dom_document_element_get(new_doc, &topmost);
-	egueb_dom_node_document_set(topmost, NULL);
 	egueb_dom_node_unref(new_doc);
 
 	/* TODO check that the node is a svg element */
 	/* keep the node */
 	thiz = EGUEB_SVG_ELEMENT_IMAGE(n);
 	thiz->g = egueb_svg_element_g_new();
+	egueb_dom_document_node_adopt(doc, thiz->g, &thiz->g);
+	egueb_dom_document_node_adopt(doc, topmost, &topmost);
 	err = egueb_dom_node_child_append(thiz->g, topmost);
-	egueb_dom_node_document_set(thiz->g, doc);
 	/* set the transformation */
 	enesim_matrix_translate(&m, thiz->gx, thiz->gy);
 	egueb_svg_renderable_transform_set(thiz->g, &m);

@@ -486,6 +486,39 @@ EAPI Eina_Error egueb_dom_document_element_get_by_id(Egueb_Dom_Node *n,
 	return EINA_ERROR_NONE;
 }
 
+/* Introduced in DOM Level 3:
+ * Node adoptNode(in Node source) raises(DOMException);
+ */
+EAPI Eina_Error egueb_dom_document_node_adopt(Egueb_Dom_Node *n, Egueb_Dom_Node *adopted, Egueb_Dom_Node **ret)
+{
+	Egueb_Dom_Node_Type type;
+	Eina_Error err = EINA_ERROR_NONE;
+
+	egueb_dom_node_type_get(adopted, &type);
+	switch (type)
+	{
+		case EGUEB_DOM_NODE_TYPE_ELEMENT_NODE:
+		/* TODO be sure to remove it from its parent */
+		egueb_dom_node_document_set(adopted, n);
+		break;
+
+		default:
+		err = EGUEB_DOM_ERROR_NOT_SUPPORTED;
+		break;
+	}
+	if (err == EINA_ERROR_NONE)
+	{
+		if (ret) *ret = egueb_dom_node_ref(adopted);
+	}
+	else
+	{
+		if (ret) *ret = NULL;
+	}
+	egueb_dom_node_unref(adopted);
+
+	return err;
+}
+
 EAPI void egueb_dom_document_process(Egueb_Dom_Node *n)
 {
 	Egueb_Dom_Document *thiz;
@@ -532,6 +565,34 @@ interface Document : Node {
   // Introduced in DOM Level 2:
   NodeList           getElementsByTagNameNS(in DOMString namespaceURI, 
                                             in DOMString localName);
+
+// Introduced in DOM Level 3:
+  readonly attribute DOMString       inputEncoding;
+  // Introduced in DOM Level 3:
+  readonly attribute DOMString       xmlEncoding;
+  // Introduced in DOM Level 3:
+           attribute boolean         xmlStandalone;
+                                        // raises(DOMException) on setting
+
+  // Introduced in DOM Level 3:
+           attribute DOMString       xmlVersion;
+                                        // raises(DOMException) on setting
+
+  // Introduced in DOM Level 3:
+           attribute boolean         strictErrorChecking;
+  // Introduced in DOM Level 3:
+           attribute DOMString       documentURI;
+  // Introduced in DOM Level 3:
+  readonly attribute DOMConfiguration domConfig;
+  // Introduced in DOM Level 3:
+  void               normalizeDocument();
+  // Introduced in DOM Level 3:
+  Node               renameNode(in Node n, 
+                                in DOMString namespaceURI, 
+                                in DOMString qualifiedName)
+                                        raises(DOMException);
+};
+
 };
 
 #endif
