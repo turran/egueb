@@ -16,39 +16,13 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _ESVG_H
-#define _ESVG_H
+#ifndef _EGUEB_SVG_H_
+#define _EGUEB_SVG_H_
 
 #include <Eina.h>
 #include <Egueb_Dom.h>
 #include <Enesim.h>
 #include <Ender.h>
-
-#ifdef EAPI
-# undef EAPI
-#endif
-
-#ifdef _WIN32
-# ifdef EGUEB_SVG_BUILD
-#  ifdef DLL_EXPORT
-#   define EAPI __declspec(dllexport)
-#  else
-#   define EAPI
-#  endif
-# else
-#  define EAPI __declspec(dllimport)
-# endif
-#else
-# ifdef __GNUC__
-#  if __GNUC__ >= 4
-#   define EAPI __attribute__ ((visibility("default")))
-#  else
-#   define EAPI
-#  endif
-# else
-#  define EAPI
-# endif
-#endif
 
 /**
  * @mainpage Esvg
@@ -60,6 +34,8 @@
  *
  * @todo
  */
+
+#include "egueb_svg_build.h"
 
 /* basic data types */
 #include "egueb_svg_main.h"

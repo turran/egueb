@@ -45,7 +45,7 @@ typedef struct _Egueb_Svg_Clip_Path_Animated
 
 #define EGUEB_SVG_CLIP_PATH_INIT { EGUEB_SVG_CLIP_PATH_TYPE_NONE, { NULL }}
 
-extern const Egueb_Svg_Clip_Path EGUEB_SVG_CLIP_PATH_NONE;
+EAPI extern const Egueb_Svg_Clip_Path EGUEB_SVG_CLIP_PATH_NONE;
 
 EAPI const Egueb_Dom_Value_Descriptor * egueb_svg_clip_path_descriptor_get(void);
 EAPI Eina_Bool egueb_svg_clip_path_is_equal(const Egueb_Svg_Clip_Path *p1,

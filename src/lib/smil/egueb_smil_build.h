@@ -16,26 +16,33 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _EGUEB_SMIL_H_
-#define _EGUEB_SMIL_H_
+#ifndef _EGUEB_SMIL_BUILD_H_
+#define _EGUEB_SMIL_BUILD_H_
 
-#include <Eina.h>
-#include <Egueb_Dom.h>
-
-#include "egueb_smil_build.h"
-
-/* events */
-#include "egueb_smil_event.h"
-/* values */
-#include "egueb_smil_accumulate.h"
-#include "egueb_smil_clock.h"
-#include "egueb_smil_fill.h"
-#include "egueb_smil_timing.h"
-/* properties */
-#include "egueb_smil_attr_fill.h"
-/* elements */
-#include "egueb_smil_animation.h"
-#include "egueb_smil_set.h"
-
+#ifdef EAPI
+# undef EAPI
 #endif
 
+#ifdef _WIN32
+# ifdef EGUEB_SMIL_BUILD
+#  ifdef DLL_EXPORT
+#   define EAPI __declspec(dllexport)
+#  else
+#   define EAPI
+#  endif
+# else
+#  define EAPI __declspec(dllimport)
+# endif
+#else
+# ifdef __GNUC__
+#  if __GNUC__ >= 4
+#   define EAPI __attribute__ ((visibility("default")))
+#  else
+#   define EAPI
+#  endif
+# else
+#  define EAPI
+# endif
+#endif
+
+#endif

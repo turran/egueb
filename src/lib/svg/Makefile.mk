@@ -19,6 +19,7 @@ src/lib/svg/egueb_svg_attr_string.h \
 src/lib/svg/egueb_svg_attr_stroke_line_cap.h \
 src/lib/svg/egueb_svg_attr_stroke_line_join.h \
 src/lib/svg/egueb_svg_attr_visibility.h \
+src/lib/svg/egueb_svg_build.h \
 src/lib/svg/egueb_svg_clip_path.h \
 src/lib/svg/egueb_svg_color.h \
 src/lib/svg/egueb_svg_display.h \

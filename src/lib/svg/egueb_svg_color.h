@@ -34,7 +34,7 @@ typedef struct _Egueb_Svg_Color_Animated
 	Egueb_Svg_Color anim;
 } Egueb_Svg_Color_Animated;
 
-extern const Egueb_Svg_Color EGUEB_SVG_COLOR_BLACK;
+EAPI extern const Egueb_Svg_Color EGUEB_SVG_COLOR_BLACK;
 
 EAPI const Egueb_Dom_Value_Descriptor * egueb_svg_color_descriptor_get(void);
 EAPI Eina_Bool egueb_svg_color_string_from(Egueb_Svg_Color *color, const char *attr_val);

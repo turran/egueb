@@ -42,7 +42,7 @@ typedef enum _Egueb_Svg_Font_Size_Relative
 	EGUEB_SVG_FONT_SIZE_RELATIVE_SMALLER,
 } Egueb_Svg_Font_Size_Relative;
 
-typedef struct _Egueb_Svg_Font_Size_Value
+typedef union _Egueb_Svg_Font_Size_Value
 {
 	Egueb_Svg_Length length;
 	Egueb_Svg_Font_Size_Relative relative;
@@ -61,7 +61,7 @@ typedef struct _Egueb_Svg_Font_Size_Animated
 	Egueb_Svg_Font_Size anim;
 } Egueb_Svg_Font_Size_Animated;
 
-extern const Egueb_Svg_Font_Size EGUEB_SVG_FONT_SIZE_MEDIUM;
+EAPI extern const Egueb_Svg_Font_Size EGUEB_SVG_FONT_SIZE_MEDIUM;
 
 EAPI const Egueb_Dom_Value_Descriptor * egueb_svg_font_size_descriptor_get(void);
 EAPI Eina_Bool egueb_svg_font_size_string_from(Egueb_Svg_Font_Size *font_size, const char *attr_val);

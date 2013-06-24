@@ -6,6 +6,7 @@ dist_installed_domheaders_DATA = \
 src/lib/dom/Egueb_Dom.h \
 src/lib/dom/egueb_dom_attr.h \
 src/lib/dom/egueb_dom_attr_string.h \
+src/lib/dom/egueb_dom_build.h \
 src/lib/dom/egueb_dom_character_data.h \
 src/lib/dom/egueb_dom_document.h \
 src/lib/dom/egueb_dom_element.h \

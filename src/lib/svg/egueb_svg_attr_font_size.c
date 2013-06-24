@@ -115,7 +115,12 @@ static void _egueb_svg_attr_font_size_instance_deinit(void *o)
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/
-const Egueb_Svg_Font_Size EGUEB_SVG_FONT_SIZE_MEDIUM = { EGUEB_SVG_FONT_SIZE_TYPE_ABSOLUTE, EGUEB_SVG_FONT_SIZE_ABSOLUTE_MEDIUM };
+const Egueb_Svg_Font_Size EGUEB_SVG_FONT_SIZE_MEDIUM = {
+	EGUEB_SVG_FONT_SIZE_TYPE_ABSOLUTE,
+	{
+		{ EGUEB_SVG_FONT_SIZE_ABSOLUTE_MEDIUM }
+	}
+};
 
 EAPI Egueb_Dom_Node * egueb_svg_attr_font_size_new(Egueb_Dom_String *name,
 		const Egueb_Svg_Font_Size *def, Eina_Bool animatable,

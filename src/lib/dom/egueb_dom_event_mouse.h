@@ -21,12 +21,12 @@
 
 #include "egueb_dom_event.h"
 
-extern Egueb_Dom_String *EGUEB_DOM_EVENT_MOUSE_CLICK;
-extern Egueb_Dom_String *EGUEB_DOM_EVENT_MOUSE_DOWN;
-extern Egueb_Dom_String *EGUEB_DOM_EVENT_MOUSE_UP;
-extern Egueb_Dom_String *EGUEB_DOM_EVENT_MOUSE_OVER;
-extern Egueb_Dom_String *EGUEB_DOM_EVENT_MOUSE_MOVE;
-extern Egueb_Dom_String *EGUEB_DOM_EVENT_MOUSE_OUT;
+EAPI extern Egueb_Dom_String *EGUEB_DOM_EVENT_MOUSE_CLICK;
+EAPI extern Egueb_Dom_String *EGUEB_DOM_EVENT_MOUSE_DOWN;
+EAPI extern Egueb_Dom_String *EGUEB_DOM_EVENT_MOUSE_UP;
+EAPI extern Egueb_Dom_String *EGUEB_DOM_EVENT_MOUSE_OVER;
+EAPI extern Egueb_Dom_String *EGUEB_DOM_EVENT_MOUSE_MOVE;
+EAPI extern Egueb_Dom_String *EGUEB_DOM_EVENT_MOUSE_OUT;
 
 EAPI Eina_Error egueb_dom_event_mouse_related_get(Egueb_Dom_Event *e, Egueb_Dom_Node **related);
 EAPI Egueb_Dom_Event * egueb_dom_event_mouse_new(void);

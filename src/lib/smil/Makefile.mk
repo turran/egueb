@@ -6,6 +6,7 @@ src/lib/smil/Egueb_Smil.h \
 src/lib/smil/egueb_smil_accumulate.h \
 src/lib/smil/egueb_smil_additive.h \
 src/lib/smil/egueb_smil_animation.h \
+src/lib/smil/egueb_smil_build.h \
 src/lib/smil/egueb_smil_clock.h \
 src/lib/smil/egueb_smil_duration.h \
 src/lib/smil/egueb_smil_event.h \

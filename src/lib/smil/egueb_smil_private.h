@@ -28,7 +28,7 @@
 #include <Etch.h>
 #include <Egueb_Dom.h>
 
-#include "Egueb_Smil.h"
+#include "egueb_smil_build.h"
 
 #ifdef ERR
 # undef ERR
