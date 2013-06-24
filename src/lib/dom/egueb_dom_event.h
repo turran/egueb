@@ -31,6 +31,7 @@ typedef enum _Egueb_Dom_Event_Phase
 typedef struct _Egueb_Dom_Event Egueb_Dom_Event;
 typedef void (*Egueb_Dom_Event_Listener)(Egueb_Dom_Event *ev, void *data);
 
+EAPI Enesim_Object_Descriptor * egueb_dom_event_descriptor_get(void);
 EAPI Eina_Error egueb_dom_event_phase_get(Egueb_Dom_Event *thiz, Egueb_Dom_Event_Phase *phase);
 EAPI Eina_Error egueb_dom_event_target_get(Egueb_Dom_Event *thiz, Egueb_Dom_Node **target);
 EAPI Eina_Error egueb_dom_event_target_current_get(Egueb_Dom_Event *thiz, Egueb_Dom_Node **target);

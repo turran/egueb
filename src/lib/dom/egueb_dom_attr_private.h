@@ -79,10 +79,6 @@ typedef struct _Egueb_Dom_Attr_Class
 	Egueb_Dom_Attr_Value_Set value_set;
 } Egueb_Dom_Attr_Class;
 
-Enesim_Object_Descriptor * egueb_dom_attr_descriptor_get(void);
-
-const Egueb_Dom_Value_Descriptor * egueb_dom_attr_value_descriptor_get(
-		Egueb_Dom_Node *n);
 Eina_Error egueb_dom_attr_get_va(Egueb_Dom_Node *n,
 		int prop_mask, va_list args);
 Eina_Error egueb_dom_attr_set_va(Egueb_Dom_Node *n,

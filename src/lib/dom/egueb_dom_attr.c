@@ -185,17 +185,6 @@ Eina_Error egueb_dom_attr_get_va(Egueb_Dom_Node *n,
 	return ret;
 }
 
-const Egueb_Dom_Value_Descriptor *
-egueb_dom_attr_value_descriptor_get(Egueb_Dom_Node *n)
-{
-	Egueb_Dom_Attr_Class *klass;
-	Egueb_Dom_Attr *thiz;
-
-	thiz = EGUEB_DOM_ATTR(n);
-	klass = EGUEB_DOM_ATTR_CLASS_GET(n);
-	return klass->value_descriptor_get(thiz);
-}
-
 void egueb_dom_attr_copy(Egueb_Dom_Node *n,
 		Egueb_Dom_Node *to)
 {
@@ -235,6 +224,17 @@ EAPI void egueb_dom_attr_init(Egueb_Dom_Node *n, Egueb_Dom_String *name,
 	thiz->name = name;
 	thiz->flag_mask = egueb_dom_attr_flag_mask_generate(animatable,
 			stylable, inheritable);
+}
+
+EAPI const Egueb_Dom_Value_Descriptor *
+egueb_dom_attr_value_descriptor_get(Egueb_Dom_Node *n)
+{
+	Egueb_Dom_Attr_Class *klass;
+	Egueb_Dom_Attr *thiz;
+
+	thiz = EGUEB_DOM_ATTR(n);
+	klass = EGUEB_DOM_ATTR_CLASS_GET(n);
+	return klass->value_descriptor_get(thiz);
 }
 
 EAPI Eina_Error egueb_dom_attr_name_get(Egueb_Dom_Node *n,

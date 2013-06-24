@@ -24,6 +24,8 @@
 #include "egueb_dom_attr.h"
 #include "egueb_dom_value.h"
 
+EAPI Enesim_Object_Descriptor * egueb_dom_element_descriptor_get(void);
+
 EAPI Eina_Error egueb_dom_element_tag_name_get(Egueb_Dom_Node *node,
 		Egueb_Dom_String **name);
 EAPI Eina_Error egueb_dom_element_attribute_get(Egueb_Dom_Node *node,

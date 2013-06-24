@@ -45,6 +45,12 @@ typedef enum _Egueb_Dom_Attr_Type
 /* function definition to get a property from an element instance */
 typedef void (*Egueb_Dom_Attr_Fetch)(Egueb_Dom_Node *n, Egueb_Dom_Node **p);
 
+EAPI Enesim_Object_Descriptor * egueb_dom_attr_descriptor_get(void);
+EAPI Enesim_Object_Descriptor * egueb_dom_attr_primitive_descriptor_get(void);
+EAPI Enesim_Object_Descriptor * egueb_dom_attr_object_descriptor_get(void);
+
+EAPI const Egueb_Dom_Value_Descriptor * egueb_dom_attr_value_descriptor_get(
+		Egueb_Dom_Node *n);
 EAPI void egueb_dom_attr_init(Egueb_Dom_Node *n, Egueb_Dom_String *name,
 		Eina_Bool animatable, Eina_Bool stylable, Eina_Bool inheritable);
 EAPI Eina_Error egueb_dom_attr_name_get(Egueb_Dom_Node *n,

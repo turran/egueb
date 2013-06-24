@@ -49,7 +49,6 @@ typedef struct _Egueb_Dom_Attr_Primitive_Class
 	Egueb_Dom_Attr_Primitive_Value_Get value_get;
 } Egueb_Dom_Attr_Primitive_Class;
 
-Enesim_Object_Descriptor * egueb_dom_attr_primitive_descriptor_get(void);
 Eina_Bool egueb_dom_attr_primitive_value_get(Egueb_Dom_Attr *p,
 		Egueb_Dom_Attr_Type type, void ***o);
 void egueb_dom_attr_primitive_unref(Egueb_Dom_Attr *p,
