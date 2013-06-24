@@ -45,6 +45,8 @@ src/lib/dom/egueb_dom_event_mutation.c \
 src/lib/dom/egueb_dom_event_mutation_private.h \
 src/lib/dom/egueb_dom_event_ui.c \
 src/lib/dom/egueb_dom_event_ui_private.h \
+src/lib/dom/egueb_dom_input.c \
+src/lib/dom/egueb_dom_input_private.h \
 src/lib/dom/egueb_dom_list.c \
 src/lib/dom/egueb_dom_list_private.h \
 src/lib/dom/egueb_dom_main.c \

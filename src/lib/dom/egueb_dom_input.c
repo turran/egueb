@@ -16,16 +16,19 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "egueb_svg_main_private.h"
-#include "egueb_svg_main.h"
+#include "egueb_dom_private.h"
+#include "egueb_dom_main.h"
+#include "egueb_dom_node.h"
+#include "egueb_dom_event.h"
+#include "egueb_dom_event_mouse.h"
 #include "egueb_dom_event_mouse_private.h"
-#include "egueb_svg_input_private.h"
+#include "egueb_dom_input_private.h"
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
-struct _Egueb_Svg_Input
+struct _Egueb_Dom_Input
 {
-	Egueb_Svg_Input_Descriptor *descriptor;
+	Egueb_Dom_Input_Descriptor *descriptor;
 	int downx;
 	int downy;
 	int x;
@@ -37,17 +40,17 @@ struct _Egueb_Svg_Input
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
-Egueb_Svg_Input * egueb_svg_input_new(Egueb_Svg_Input_Descriptor *descriptor, void *data)
+Egueb_Dom_Input * egueb_dom_input_new(Egueb_Dom_Input_Descriptor *descriptor, void *data)
 {
-	Egueb_Svg_Input *thiz;
+	Egueb_Dom_Input *thiz;
 
-	thiz = calloc(1, sizeof(Egueb_Svg_Input));
+	thiz = calloc(1, sizeof(Egueb_Dom_Input));
 	thiz->descriptor = descriptor;
 	thiz->data = data;
 	return thiz;
 }
 
-void egueb_svg_input_free(Egueb_Svg_Input *thiz)
+void egueb_dom_input_free(Egueb_Dom_Input *thiz)
 {
 	if (thiz->over)
 	{
@@ -63,7 +66,7 @@ void egueb_svg_input_free(Egueb_Svg_Input *thiz)
 	free(thiz);
 }
 
-void egueb_svg_input_feed_mouse_down(Egueb_Svg_Input *thiz, int button)
+void egueb_dom_input_feed_mouse_down(Egueb_Dom_Input *thiz, int button)
 {
 	Egueb_Dom_Event *ev;
 	double rel_x, rel_y;
@@ -84,7 +87,7 @@ void egueb_svg_input_feed_mouse_down(Egueb_Svg_Input *thiz, int button)
 	egueb_dom_node_event_dispatch(thiz->grabbed, ev, NULL);
 }
 
-void egueb_svg_input_feed_mouse_up(Egueb_Svg_Input *thiz, int button)
+void egueb_dom_input_feed_mouse_up(Egueb_Dom_Input *thiz, int button)
 {
 	Egueb_Dom_Event *ev;
 
@@ -114,7 +117,7 @@ void egueb_svg_input_feed_mouse_up(Egueb_Svg_Input *thiz, int button)
 	thiz->grabbed = NULL;
 }
 
-void egueb_svg_input_feed_mouse_move(Egueb_Svg_Input *thiz, int x, int y)
+void egueb_dom_input_feed_mouse_move(Egueb_Dom_Input *thiz, int x, int y)
 {
 	Egueb_Dom_Node *n;
 

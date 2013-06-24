@@ -120,8 +120,6 @@ src/lib/svg/egueb_svg_fill_rule.c \
 src/lib/svg/egueb_svg_font_size.c \
 src/lib/svg/egueb_svg_gradient.c \
 src/lib/svg/egueb_svg_gradient_private.h \
-src/lib/svg/egueb_svg_input.c \
-src/lib/svg/egueb_svg_input_private.h \
 src/lib/svg/egueb_svg_length.c \
 src/lib/svg/egueb_svg_main.c \
 src/lib/svg/egueb_svg_main_private.h \

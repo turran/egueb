@@ -49,7 +49,7 @@
 #include "egueb_svg_renderable.h"
 #include "egueb_svg_renderable_container.h"
 
-#include "egueb_svg_input_private.h"
+#include "egueb_dom_input_private.h"
 #include "egueb_dom_document_private.h"
 
 #include <unistd.h>
@@ -79,7 +79,7 @@ typedef struct _Egueb_Svg_Document
 	int th;
 
 	/* input */
-	Egueb_Svg_Input *input;
+	Egueb_Dom_Input *input;
 
 	/* our own state */
 	double last_width;
@@ -727,7 +727,7 @@ static Egueb_Dom_Node * _egueb_svg_document_input_element_at(void *data,
 	return ret;
 }
 
-static Egueb_Svg_Input_Descriptor _document_svg_input_descriptor = {
+static Egueb_Dom_Input_Descriptor _document_svg_input_descriptor = {
 	/* .element_ad 		= */ _egueb_svg_document_input_element_at,
 };
 /*----------------------------------------------------------------------------*
@@ -809,7 +809,7 @@ static void _egueb_svg_document_instance_init(void *o)
 
 	thiz = EGUEB_SVG_DOCUMENT(o);
 	thiz->font_size = 16;
-	thiz->input = egueb_svg_input_new(&_document_svg_input_descriptor, thiz);
+	thiz->input = egueb_dom_input_new(&_document_svg_input_descriptor, thiz);
 }
 
 static void _egueb_svg_document_instance_deinit(void *o)
@@ -817,7 +817,7 @@ static void _egueb_svg_document_instance_deinit(void *o)
 	Egueb_Svg_Document *thiz;
 
 	thiz = EGUEB_SVG_DOCUMENT(o);
-	egueb_svg_input_free(thiz->input);
+	egueb_dom_input_free(thiz->input);
 }
 /*============================================================================*
  *                                 Global                                     *
@@ -1052,7 +1052,7 @@ EAPI void egueb_svg_document_feed_mouse_move(Egueb_Dom_Node *n, int x, int y)
 	Egueb_Svg_Document *thiz;
 
 	thiz = EGUEB_SVG_DOCUMENT(n);
-	egueb_svg_input_feed_mouse_move(thiz->input, x, y);
+	egueb_dom_input_feed_mouse_move(thiz->input, x, y);
 }
 
 /**
@@ -1064,7 +1064,7 @@ EAPI void egueb_svg_document_feed_mouse_down(Egueb_Dom_Node *n, int button)
 	Egueb_Svg_Document *thiz;
 
 	thiz = EGUEB_SVG_DOCUMENT(n);
-	egueb_svg_input_feed_mouse_down(thiz->input, button);
+	egueb_dom_input_feed_mouse_down(thiz->input, button);
 }
 
 /**
@@ -1076,7 +1076,7 @@ EAPI void egueb_svg_document_feed_mouse_up(Egueb_Dom_Node *n, int button)
 	Egueb_Svg_Document *thiz;
 
 	thiz = EGUEB_SVG_DOCUMENT(n);
-	egueb_svg_input_feed_mouse_up(thiz->input, button);
+	egueb_dom_input_feed_mouse_up(thiz->input, button);
 }
 
 /**
