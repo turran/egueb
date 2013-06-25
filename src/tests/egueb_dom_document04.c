@@ -42,6 +42,16 @@ int main(int argc, char **argv)
 	}
 	egueb_dom_node_unref(root);
 
+	/* now test the dangling nodes */
+	doc = mydocument_new();
+	child = myelement_new();
+	egueb_dom_document_node_adopt(doc, child, &child);
+	egueb_dom_node_unref(doc);
+
+	printf("[testing] get the document of dangling node\n");
+	egueb_dom_node_document_get(child, &doc);
+	printf("[testing] doc = %p\n", doc);
+
 	return 0;
 }
 

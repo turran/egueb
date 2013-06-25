@@ -48,7 +48,6 @@ struct _Egueb_Dom_Node_Event_Listener
 
 static void _egueb_dom_node_weak_ref_cb(Egueb_Dom_Event *e, void *data)
 {
-	Egueb_Dom_Node *destroyed;
 	Egueb_Dom_Node **weak_location = data;
 	Egueb_Dom_Event_Phase phase;
 
@@ -57,9 +56,20 @@ static void _egueb_dom_node_weak_ref_cb(Egueb_Dom_Event *e, void *data)
 		return;
 
 	DBG("Weak reference destroyed, unsetting the pointer");
-	egueb_dom_event_target_get(e, &destroyed);
 	*weak_location = NULL;
-	egueb_dom_node_unref(destroyed);
+}
+
+static void _egueb_dom_node_document_destroyed_cb(Egueb_Dom_Event *e,
+		void *data)
+{
+	Egueb_Dom_Node *thiz = data;
+	Egueb_Dom_Event_Phase phase;
+
+	egueb_dom_event_phase_get(e, &phase);
+	if (phase != EGUEB_DOM_EVENT_PHASE_AT_TARGET)
+		return;
+	/* TODO shall we trigger the event document removed from? */
+	thiz->owner_document = NULL;
 }
 
 static void _egueb_dom_node_event_container_free(void *d)
@@ -181,6 +191,14 @@ static void _egueb_dom_node_instance_deinit(void *o)
 				egueb_dom_string_string_get(name));
 	}
 	egueb_dom_string_unref(name);
+	/* remove the document weak ref */
+	if (thiz->owner_document)
+	{
+		egueb_dom_node_weak_unref(thiz->owner_document,
+			_egueb_dom_node_document_destroyed_cb, thiz);
+		thiz->owner_document = NULL;
+	}
+
 	/* remove every child */
 	while (thiz->children)
 	{
@@ -208,7 +226,21 @@ static void _egueb_dom_node_document_set(Egueb_Dom_Node *thiz,
 {
 	Egueb_Dom_Node *child;
 
-	thiz->owner_document = document;
+	/* remove previous weak ref */
+	if (thiz->owner_document)
+	{
+		egueb_dom_node_weak_unref(thiz->owner_document,
+			_egueb_dom_node_document_destroyed_cb, thiz);
+		thiz->owner_document = NULL;
+	}
+	/* add a wek ref */
+	if (document)
+	{
+		egueb_dom_node_weak_ref(document,
+			_egueb_dom_node_document_destroyed_cb, thiz);
+		thiz->owner_document = document;
+	}
+
 	/* dispatch on the node first */
 	egueb_dom_node_event_dispatch(thiz, egueb_dom_event_ref(evt), NULL);
 	/* now on every children */
@@ -245,7 +277,6 @@ void egueb_dom_node_document_set(Egueb_Dom_Node *thiz,
 	/* now add */
 	if (document != thiz->owner_document)
 	{
-		thiz->owner_document = document;
 		/* trigger the node inserted into document mutation event */
 		event = egueb_dom_event_mutation_new();
 		egueb_dom_event_mutation_init_node_inserted_into_document(event);
