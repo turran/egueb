@@ -32,6 +32,9 @@ EAPI Eina_Error egueb_dom_element_attribute_get(Egueb_Dom_Node *node,
 		const Egueb_Dom_String *name, Egueb_Dom_String **value);
 EAPI Eina_Error egueb_dom_element_attribute_set(Egueb_Dom_Node *node,
 		const Egueb_Dom_String *name, Egueb_Dom_String *value);
+Eina_Error egueb_dom_element_attribute_type_set(Egueb_Dom_Node *node,
+		const Egueb_Dom_String *name, Egueb_Dom_Attr_Type type,
+		Egueb_Dom_String *value);
 
 EAPI Eina_Error egueb_dom_element_property_fetch(Egueb_Dom_Node *node,
 		const Egueb_Dom_String *name, Egueb_Dom_Node **p);

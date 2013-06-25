@@ -456,24 +456,6 @@ Eina_Error egueb_dom_element_process_children(Egueb_Dom_Element *thiz)
 	}
 	return ret;
 }
-
-Eina_Error egueb_dom_element_attribute_type_set(Egueb_Dom_Node *node,
-		const Egueb_Dom_String *name, Egueb_Dom_Attr_Type type,
-		Egueb_Dom_String *value)
-{
-	Egueb_Dom_Node *p = NULL;
-	Eina_Error ret = EGUEB_DOM_ERROR_NOT_FOUND;
-
-	egueb_dom_element_property_fetch(node, name, &p);
-	/* set the value */
-	if (p)
-	{
-		if (egueb_dom_attr_string_set(p, type, value))
-			ret = EINA_ERROR_NONE;
-		egueb_dom_node_unref(p);
-	}
-	return ret;
-}
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/
@@ -547,6 +529,25 @@ EAPI Eina_Error egueb_dom_element_attribute_set(Egueb_Dom_Node *node,
 	}
 
 	return EINA_ERROR_NONE;
+}
+
+
+EAPI Eina_Error egueb_dom_element_attribute_type_set(Egueb_Dom_Node *node,
+		const Egueb_Dom_String *name, Egueb_Dom_Attr_Type type,
+		Egueb_Dom_String *value)
+{
+	Egueb_Dom_Node *p = NULL;
+	Eina_Error ret = EGUEB_DOM_ERROR_NOT_FOUND;
+
+	egueb_dom_element_property_fetch(node, name, &p);
+	/* set the value */
+	if (p)
+	{
+		if (egueb_dom_attr_string_set(p, type, value))
+			ret = EINA_ERROR_NONE;
+		egueb_dom_node_unref(p);
+	}
+	return ret;
 }
 
 EAPI Eina_Error egueb_dom_element_property_fetch(Egueb_Dom_Node *node,

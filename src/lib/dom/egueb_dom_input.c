@@ -19,10 +19,10 @@
 #include "egueb_dom_private.h"
 #include "egueb_dom_main.h"
 #include "egueb_dom_node.h"
+#include "egueb_dom_input.h"
 #include "egueb_dom_event.h"
 #include "egueb_dom_event_mouse.h"
 #include "egueb_dom_event_mouse_private.h"
-#include "egueb_dom_input_private.h"
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
@@ -40,7 +40,10 @@ struct _Egueb_Dom_Input
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
-Egueb_Dom_Input * egueb_dom_input_new(Egueb_Dom_Input_Descriptor *descriptor, void *data)
+/*============================================================================*
+ *                                   API                                      *
+ *============================================================================*/
+EAPI Egueb_Dom_Input * egueb_dom_input_new(Egueb_Dom_Input_Descriptor *descriptor, void *data)
 {
 	Egueb_Dom_Input *thiz;
 
@@ -50,7 +53,7 @@ Egueb_Dom_Input * egueb_dom_input_new(Egueb_Dom_Input_Descriptor *descriptor, vo
 	return thiz;
 }
 
-void egueb_dom_input_free(Egueb_Dom_Input *thiz)
+EAPI void egueb_dom_input_free(Egueb_Dom_Input *thiz)
 {
 	if (thiz->over)
 	{
@@ -66,7 +69,7 @@ void egueb_dom_input_free(Egueb_Dom_Input *thiz)
 	free(thiz);
 }
 
-void egueb_dom_input_feed_mouse_down(Egueb_Dom_Input *thiz, int button)
+EAPI void egueb_dom_input_feed_mouse_down(Egueb_Dom_Input *thiz, int button)
 {
 	Egueb_Dom_Event *ev;
 	double rel_x, rel_y;
@@ -87,7 +90,7 @@ void egueb_dom_input_feed_mouse_down(Egueb_Dom_Input *thiz, int button)
 	egueb_dom_node_event_dispatch(thiz->grabbed, ev, NULL);
 }
 
-void egueb_dom_input_feed_mouse_up(Egueb_Dom_Input *thiz, int button)
+EAPI void egueb_dom_input_feed_mouse_up(Egueb_Dom_Input *thiz, int button)
 {
 	Egueb_Dom_Event *ev;
 
@@ -117,7 +120,7 @@ void egueb_dom_input_feed_mouse_up(Egueb_Dom_Input *thiz, int button)
 	thiz->grabbed = NULL;
 }
 
-void egueb_dom_input_feed_mouse_move(Egueb_Dom_Input *thiz, int x, int y)
+EAPI void egueb_dom_input_feed_mouse_move(Egueb_Dom_Input *thiz, int x, int y)
 {
 	Egueb_Dom_Node *n;
 
@@ -219,7 +222,4 @@ void egueb_dom_input_feed_mouse_move(Egueb_Dom_Input *thiz, int x, int y)
 	}
 	thiz->over = n;
 }
-/*============================================================================*
- *                                   API                                      *
- *============================================================================*/
 

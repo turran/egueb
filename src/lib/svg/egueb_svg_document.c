@@ -49,7 +49,6 @@
 #include "egueb_svg_renderable.h"
 #include "egueb_svg_renderable_container.h"
 
-#include "egueb_dom_input_private.h"
 #include "egueb_dom_document_private.h"
 
 #include <unistd.h>
@@ -784,7 +783,7 @@ static void _egueb_svg_document_process(Egueb_Dom_Document *d)
 	else
 	{
 		DBG("Processing list of changed elements");
-		egueb_dom_document_process_default(d);
+		egueb_dom_document_process_default(EGUEB_DOM_NODE(d));
 	}
 	thiz->changed = EINA_FALSE;
 }

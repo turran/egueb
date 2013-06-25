@@ -43,6 +43,7 @@ extern "C" {
 #include "egueb_dom_attr.h"
 #include "egueb_dom_attr_string.h"
 #include "egueb_dom_character_data.h"
+#include "egueb_dom_input.h"
 #include "egueb_dom_text.h"
 #include "egueb_dom_uri.h"
 #include "egueb_dom_utils.h"

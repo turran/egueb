@@ -16,8 +16,8 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _EGUEB_SVG_PRIVATE_INPUT_H_
-#define _EGUEB_SVG_PRIVATE_INPUT_H_
+#ifndef _EGUEB_DOM_INPUT_H_
+#define _EGUEB_DOM_INPUT_H_
 
 typedef Egueb_Dom_Node * (*Egueb_Dom_Input_Element_At)(void *data, int x, int y);
 
@@ -27,11 +27,11 @@ typedef struct _Egueb_Dom_Input_Descriptor
 	Egueb_Dom_Input_Element_At element_at;
 } Egueb_Dom_Input_Descriptor;
 
-Egueb_Dom_Input * egueb_dom_input_new(Egueb_Dom_Input_Descriptor *descriptor, void *data);
-void egueb_dom_input_free(Egueb_Dom_Input *thiz);
-void egueb_dom_input_feed_mouse_move(Egueb_Dom_Input *thiz, int x, int y);
-void egueb_dom_input_feed_mouse_down(Egueb_Dom_Input *thiz, int button);
-void egueb_dom_input_feed_mouse_up(Egueb_Dom_Input *thiz, int button);
+EAPI Egueb_Dom_Input * egueb_dom_input_new(Egueb_Dom_Input_Descriptor *descriptor, void *data);
+EAPI void egueb_dom_input_free(Egueb_Dom_Input *thiz);
+EAPI void egueb_dom_input_feed_mouse_move(Egueb_Dom_Input *thiz, int x, int y);
+EAPI void egueb_dom_input_feed_mouse_down(Egueb_Dom_Input *thiz, int button);
+EAPI void egueb_dom_input_feed_mouse_up(Egueb_Dom_Input *thiz, int button);
 
 #endif
 

@@ -54,7 +54,6 @@ typedef struct _Egueb_Dom_Document_Class
 #define EGUEB_DOM_DOCUMENT(o) ENESIM_OBJECT_INSTANCE_CHECK(o,			\
 		Egueb_Dom_Document, EGUEB_DOM_DOCUMENT_DESCRIPTOR)
 
-void egueb_dom_document_process_default(Egueb_Dom_Document *thiz);
 void egueb_dom_document_enqueue_process(Egueb_Dom_Document *thiz,
 		Egueb_Dom_Node *n);
 void egueb_dom_document_dequeue_process(Egueb_Dom_Document *thiz,

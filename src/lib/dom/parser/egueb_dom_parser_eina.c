@@ -103,6 +103,7 @@ static Egueb_Dom_Node * _egueb_dom_parser_eina_tag_new(Egueb_Dom_Parser_Eina *th
 	Egueb_Dom_Node *doc;
 	Egueb_Dom_Node *node;
 	Egueb_Dom_Node *parent;
+	Egueb_Dom_Node *topmost;
 	Egueb_Dom_String *str;
 
 	parent = _egueb_dom_parser_eina_context_get(thiz);
@@ -113,6 +114,18 @@ static Egueb_Dom_Node * _egueb_dom_parser_eina_tag_new(Egueb_Dom_Parser_Eina *th
 	egueb_dom_document_element_create(doc, str, &node);
 	egueb_dom_string_unref(str);
 	if (!node) return NULL;
+
+	/* in case we dont have a topmost element, set it */
+	egueb_dom_document_element_get(doc, &topmost);
+	if (!topmost)
+	{
+		egueb_dom_document_element_set(doc, node);
+	}
+	else
+	{
+		egueb_dom_node_unref(topmost);
+	}
+
 
 	/* first add the child */
 	if (parent) egueb_dom_node_child_append(parent, node);
