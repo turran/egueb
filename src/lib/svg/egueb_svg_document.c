@@ -753,11 +753,13 @@ static Egueb_Dom_Node * _egueb_svg_document_class_element_create(
 	return ret;
 }
 
-static void _egueb_svg_document_process(Egueb_Dom_Document *d)
+static void _egueb_svg_document_process(Egueb_Dom_Node *n)
 {
 	Egueb_Svg_Document *thiz;
+	Egueb_Dom_Document *d;
 	Eina_Bool changed;
 
+	d = EGUEB_DOM_DOCUMENT(n);
 	thiz = EGUEB_SVG_DOCUMENT(d);
 	/* be sure we have actually changed */
 	changed = _egueb_svg_document_has_changed(thiz);
@@ -783,7 +785,7 @@ static void _egueb_svg_document_process(Egueb_Dom_Document *d)
 	else
 	{
 		DBG("Processing list of changed elements");
-		egueb_dom_document_process_default(EGUEB_DOM_NODE(d));
+		egueb_dom_document_process_default(n);
 	}
 	thiz->changed = EINA_FALSE;
 }

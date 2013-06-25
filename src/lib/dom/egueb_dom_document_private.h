@@ -37,7 +37,7 @@ typedef struct _Egueb_Dom_Document
 
 typedef Egueb_Dom_Node * (*Egueb_Dom_Document_Element_Create)(
 		Egueb_Dom_Document *thiz, const char *name);
-typedef void (*Egueb_Dom_Document_Process)(Egueb_Dom_Document *thiz);
+typedef void (*Egueb_Dom_Document_Process)(Egueb_Dom_Node *n);
 typedef struct _Egueb_Dom_Document_Class
 {
 	Egueb_Dom_Node_Class base;

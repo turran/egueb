@@ -240,6 +240,16 @@ static void _egueb_dom_document_element_removed_from_document_cb(
 				target);
 	}
 	egueb_dom_string_unref(id);
+	/* remove the evenets */
+	egueb_dom_node_event_listener_remove(target,
+			EGUEB_DOM_EVENT_MUTATION_NODE_INSERTED_INTO_DOCUMENT,
+			_egueb_dom_document_element_insterted_into_document_cb,
+			EINA_FALSE, thiz);
+	egueb_dom_node_event_listener_remove(target,
+			EGUEB_DOM_EVENT_MUTATION_NODE_REMOVED_FROM_DOCUMENT,
+			_egueb_dom_document_element_removed_from_document_cb,
+			EINA_FALSE, thiz);
+
 	egueb_dom_node_unref(target);
 }
 
@@ -548,7 +558,7 @@ EAPI void egueb_dom_document_process(Egueb_Dom_Node *n)
 
 	thiz->processing = EINA_TRUE;
 	if (klass->process)
-		klass->process(thiz);
+		klass->process(n);
 	thiz->processing = EINA_FALSE;
 }
 
