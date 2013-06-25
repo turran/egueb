@@ -103,6 +103,38 @@ static Eina_Bool _egueb_dom_parser_transform_text(Egueb_Dom_Parser *thiz, const 
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
+static void _egueb_dom_document_insert_id(Egueb_Dom_Document *thiz, Egueb_Dom_Node *n,
+		Egueb_Dom_String *id)
+{
+	/* FIXME to avoid finding the node, we need to know the old
+	 * id, and for that we need to copy the previous data
+	 * which is maybe slower than this? we need to test
+	 */
+	if (eina_hash_del_by_data(thiz->ids, n))
+	{
+		DBG("Previous id found, removing the node");
+		egueb_dom_node_unref(n);
+	}
+
+	if (egueb_dom_string_is_valid(id))
+	{
+		Egueb_Dom_Node *old;
+		const char *str;
+
+		str = egueb_dom_string_string_get(id);
+		old = eina_hash_find(thiz->ids, str);
+		if (old)
+		{
+			WARN("Same id found for '%s', nothing to do", str);
+			egueb_dom_string_unref(id);
+			return;
+		}
+		INFO("Adding id '%s' to the list of ids", str);
+		eina_hash_add(thiz->ids, str, egueb_dom_node_ref(n));
+	}
+	egueb_dom_string_unref(id);
+}
+
 static void _egueb_dom_document_mutation_attr_modified_cb(Egueb_Dom_Event *ev,
 		void *data)
 {
@@ -120,18 +152,8 @@ static void _egueb_dom_document_mutation_attr_modified_cb(Egueb_Dom_Event *ev,
 	{
 		Egueb_Dom_String *attr_val = NULL;
 
-		/* FIXME to avoid finding the node, we need to know the old
-		 * id, and for that we need to copy the previous data
-		 * which is maybe slower than this? we need to test
-		 */
-		eina_hash_del_by_data(thiz->ids, target);
-
 		egueb_dom_event_mutation_value_new_string_get(ev, &attr_val);
-		if (egueb_dom_string_is_valid(attr_val))
-		{
-			INFO("Adding id '%s' to the list of ids", attr_val->str);
-			eina_hash_add(thiz->ids,attr_val->str, egueb_dom_node_ref(target));
-		}
+		_egueb_dom_document_insert_id(thiz, target, attr_val);
 	}
 	if (!egueb_dom_event_mutation_process_prevented(ev))
 		egueb_dom_element_enqueue_process(target);
@@ -199,10 +221,7 @@ static void _egueb_dom_document_element_insterted_into_document_cb(
 	/* add the element to the ids */
 	if (egueb_dom_string_is_valid(id))
 	{
-		INFO("Adding id '%s' to the list of ids", id->str);
-		eina_hash_add(thiz->ids,
-				egueb_dom_string_string_get(id),
-				egueb_dom_node_ref(target));
+		_egueb_dom_document_insert_id(thiz, target, id);
 	}
 	egueb_dom_string_unref(id);
 	egueb_dom_node_unref(target);

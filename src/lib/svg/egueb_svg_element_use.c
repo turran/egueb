@@ -55,6 +55,7 @@ typedef struct _Egueb_Svg_Element_Use
 	Enesim_Renderer *r;
 	Egueb_Dom_Node *g;
 	Egueb_Dom_Node *clone;
+	Eina_Bool document_changed;
 	/* the always present g tag */
 	Egueb_Dom_String *last_xlink;
 } Egueb_Svg_Element_Use;
@@ -67,6 +68,38 @@ typedef struct _Egueb_Svg_Element_Use_Class
 /* Whenever the node has been removed from the document we need to make
  * sure that the <g> node also has the same document
  */
+static void _egueb_dom_element_use_insterted_into_document_cb(
+		Egueb_Dom_Event *ev, void *data)
+{
+	Egueb_Svg_Element_Use *thiz = EGUEB_SVG_ELEMENT_USE(data);
+	Egueb_Dom_Event_Phase phase;
+	Egueb_Dom_Node *doc;
+
+	egueb_dom_event_phase_get(ev, &phase);
+	if (phase != EGUEB_DOM_EVENT_PHASE_AT_TARGET)
+		return;
+
+	egueb_dom_node_document_get(EGUEB_DOM_NODE(thiz), &doc);
+	if (doc)
+	{
+		egueb_dom_document_node_adopt(doc, thiz->g, &thiz->g);
+		egueb_dom_node_unref(doc);
+	}
+	thiz->document_changed = EINA_TRUE;
+}
+
+static void _egueb_dom_element_use_removed_from_document_cb(
+		Egueb_Dom_Event *ev, void *data)
+{
+	Egueb_Svg_Element_Use *thiz = EGUEB_SVG_ELEMENT_USE(data);
+	Egueb_Dom_Event_Phase phase;
+
+	egueb_dom_event_phase_get(ev, &phase);
+	if (phase != EGUEB_DOM_EVENT_PHASE_AT_TARGET)
+		return;
+
+	thiz->document_changed = EINA_TRUE;
+}
 /*----------------------------------------------------------------------------*
  *                             Renderable interface                           *
  *----------------------------------------------------------------------------*/
@@ -132,7 +165,7 @@ static Eina_Bool _egueb_svg_element_use_process(Egueb_Svg_Element *e)
 	 * and create a new one. if the clone has changed, remove
 	 * it and create a new one too
 	 */
-	if (!egueb_dom_string_is_equal(xlink, thiz->last_xlink) ||
+	if (thiz->document_changed || !egueb_dom_string_is_equal(xlink, thiz->last_xlink) ||
 			(thiz->clone && egueb_dom_element_changed(thiz->clone)))
 	{
 		if (thiz->clone)
@@ -151,6 +184,7 @@ static Eina_Bool _egueb_svg_element_use_process(Egueb_Svg_Element *e)
 			/* process this element and set its relativeness */
 			egueb_dom_element_process(thiz->clone);
 		}
+		thiz->document_changed = EINA_FALSE;
 	}
 	egueb_dom_node_unref(doc);
 
@@ -163,6 +197,14 @@ static Eina_Bool _egueb_svg_element_use_process(Egueb_Svg_Element *e)
 	thiz->last_xlink = xlink;
 
 	return EINA_TRUE;
+}
+/*----------------------------------------------------------------------------*
+ *                              Element interface                             *
+ *----------------------------------------------------------------------------*/
+static Egueb_Dom_String * _egueb_svg_element_use_tag_name_get(
+		Egueb_Dom_Element *e)
+{
+	return egueb_dom_string_ref(EGUEB_SVG_NAME_USE);
 }
 /*----------------------------------------------------------------------------*
  *                              Object interface                              *
@@ -181,12 +223,16 @@ static void _egueb_svg_element_use_class_init(void *k)
 {
 	Egueb_Svg_Renderable_Class *klass;
 	Egueb_Svg_Element_Class *e_klass;
+	Egueb_Dom_Element_Class *edom_klass;
 
 	klass = EGUEB_SVG_RENDERABLE_CLASS(k);
 	klass->renderer_get = _egueb_svg_element_use_renderer_get;
 
 	e_klass = EGUEB_SVG_ELEMENT_CLASS(k);
 	e_klass->process = _egueb_svg_element_use_process;
+
+	edom_klass= EGUEB_DOM_ELEMENT_CLASS(k);
+	edom_klass->tag_name_get = _egueb_svg_element_use_tag_name_get;
 }
 
 static void _egueb_svg_element_use_class_deinit(void *k)
@@ -204,6 +250,10 @@ static void _egueb_svg_element_use_instance_init(void *o)
 	thiz->r = r;
 
 	thiz->g = egueb_svg_element_g_new();
+	/* set the relativeness of the node */
+	egueb_svg_element_geometry_relative_set(thiz->g, EGUEB_DOM_NODE(o));
+	/* TODO set the same painter as us */
+
 	r = egueb_svg_renderable_renderer_get(thiz->g);
 	enesim_renderer_shape_fill_renderer_set(thiz->r, r);
 	enesim_renderer_shape_draw_mode_set(thiz->r, ENESIM_SHAPE_DRAW_MODE_FILL);
@@ -237,6 +287,18 @@ static void _egueb_svg_element_use_instance_init(void *o)
 	EGUEB_DOM_ELEMENT_CLASS_PROPERTY_ADD(thiz, egueb_svg_element_use, width);
 	EGUEB_DOM_ELEMENT_CLASS_PROPERTY_ADD(thiz, egueb_svg_element_use, height);
 	EGUEB_DOM_ELEMENT_CLASS_PROPERTY_ADD(thiz, egueb_svg_element_use, xlink_href);
+
+	/* whenever the use element is inserted into a document, be sure
+	 * to set the document on our g too
+	 */
+	egueb_dom_node_event_listener_add(EGUEB_DOM_NODE(o),
+			EGUEB_DOM_EVENT_MUTATION_NODE_INSERTED_INTO_DOCUMENT,
+			_egueb_dom_element_use_insterted_into_document_cb,
+			EINA_FALSE, thiz);
+	egueb_dom_node_event_listener_add(EGUEB_DOM_NODE(o),
+			EGUEB_DOM_EVENT_MUTATION_NODE_REMOVED_FROM_DOCUMENT,
+			_egueb_dom_element_use_removed_from_document_cb,
+			EINA_FALSE, thiz);
 }
 
 static void _egueb_svg_element_use_instance_deinit(void *o)

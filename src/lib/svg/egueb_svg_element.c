@@ -537,8 +537,12 @@ static void _egueb_svg_element_geometry_process(
 	Egueb_Svg_Element *geom;
 	if (!egueb_svg_is_element(geometry))
 	{
-		WARN("Relative geometry node does not inherit from the "
-				"SVGElement interface");
+		WARN("Relative geometry node '%p' does not inherit from the "
+				"SVGElement interface", geometry);
+		{
+			Egueb_Dom_String *name;
+			egueb_dom_node_name_get(EGUEB_DOM_NODE(thiz), &name);
+		}
 		return;
 	}
 	geom = EGUEB_SVG_ELEMENT(geometry);
@@ -556,14 +560,14 @@ static void _egueb_svg_element_presentation_attributes_process(
 	if (!geometry) return;
 	if (!egueb_svg_is_element(relative))
 	{
-		WARN("Relative presentation node does not inherit from the "
-				"SVGElement interface");
+		WARN("Relative presentation node '%p' does not inherit from the "
+				"SVGElement interface", relative);
 		return;
 	}
 	if (!egueb_svg_is_element(geometry))
 	{
-		WARN("Relative geometry node does not inherit from the "
-				"SVGElement interface");
+		WARN("Relative geometry node '%p' does not inherit from the "
+				"SVGElement interface", geometry);
 		return;
 	}
 	rel = EGUEB_SVG_ELEMENT(relative);

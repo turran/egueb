@@ -48,6 +48,7 @@ src/tests/egueb_css_test01 \
 src/tests/egueb_dom_document01 \
 src/tests/egueb_dom_document02 \
 src/tests/egueb_dom_document03 \
+src/tests/egueb_dom_document04 \
 src/tests/egueb_dom_element01 \
 src/tests/egueb_dom_node01 \
 src/tests/egueb_dom_node02 \
@@ -72,6 +73,10 @@ src_tests_egueb_dom_document02_LDADD = $(tests_dom_LDADD)
 src_tests_egueb_dom_document03_SOURCES = src/tests/egueb_dom_document03.c
 src_tests_egueb_dom_document03_CPPFLAGS = $(tests_dom_CPPFLAGS)
 src_tests_egueb_dom_document03_LDADD = $(tests_dom_LDADD)
+
+src_tests_egueb_dom_document04_SOURCES = src/tests/egueb_dom_document04.c
+src_tests_egueb_dom_document04_CPPFLAGS = $(tests_dom_CPPFLAGS)
+src_tests_egueb_dom_document04_LDADD = $(tests_dom_LDADD)
 
 src_tests_egueb_dom_element01_SOURCES = src/tests/egueb_dom_element01.c
 src_tests_egueb_dom_element01_CPPFLAGS = $(tests_dom_CPPFLAGS)

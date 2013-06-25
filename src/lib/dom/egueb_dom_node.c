@@ -581,7 +581,8 @@ EAPI Eina_Error egueb_dom_node_insert_before(Egueb_Dom_Node *thiz,
 	egueb_dom_node_event_dispatch(child, event, NULL);
 
 	/* set the owner document on the child */
-	egueb_dom_node_document_set(child, thiz->owner_document);
+	if (thiz->owner_document != child->owner_document)
+		egueb_dom_node_document_set(child, thiz->owner_document);
 	return EINA_ERROR_NONE;
 }
 
