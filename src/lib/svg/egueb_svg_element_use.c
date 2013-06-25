@@ -25,6 +25,9 @@
 #include "egueb_svg_renderable.h"
 #include "egueb_svg_renderable_private.h"
 #include "egueb_svg_attr_string.h"
+#include "egueb_svg_painter.h"
+
+#include "egueb_svg_painter_private.h"
 /*
  * The 'use' element should be able to create a new instance from another
  * svg tree. Basically we set the 'link' property of the 'use' to the svg
@@ -179,10 +182,17 @@ static Eina_Bool _egueb_svg_element_use_process(Egueb_Svg_Element *e)
 		/* finally clone the reference */
 		if (egueb_svg_document_iri_clone(doc, xlink, &thiz->clone) == EINA_ERROR_NONE)
 		{
+			Egueb_Svg_Painter *painter;
+
 			/* add it to the g */
 			egueb_dom_node_child_append(thiz->g, egueb_dom_node_ref(thiz->clone));
+			/* TODO check that it is a renderable */
+			painter = egueb_svg_painter_generic_new();
+			DBG("Setting the generic painter on the shape");
+			egueb_svg_shape_painter_set(thiz->clone, painter);
+			/* TODO for a container, set the painter on every child */
 			/* process this element and set its relativeness */
-			egueb_dom_element_process(thiz->clone);
+			egueb_dom_element_process(thiz->g);
 		}
 		thiz->document_changed = EINA_FALSE;
 	}
@@ -252,6 +262,7 @@ static void _egueb_svg_element_use_instance_init(void *o)
 	thiz->g = egueb_svg_element_g_new();
 	/* set the relativeness of the node */
 	egueb_svg_element_geometry_relative_set(thiz->g, EGUEB_DOM_NODE(o));
+	egueb_svg_element_presentation_relative_set(thiz->g, EGUEB_DOM_NODE(o));
 	/* TODO set the same painter as us */
 
 	r = egueb_svg_renderable_renderer_get(thiz->g);
