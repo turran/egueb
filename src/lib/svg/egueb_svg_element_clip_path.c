@@ -26,7 +26,9 @@
 #include "egueb_svg_attr_string.h"
 #include "egueb_svg_element_clip_path.h"
 #include "egueb_svg_element_g.h"
+#include "egueb_svg_element_use.h"
 #include "egueb_svg_document.h"
+#include "egueb_svg_shape.h"
 
 #include "egueb_svg_referenceable_private.h"
 #include "egueb_svg_reference_private.h"
@@ -75,35 +77,6 @@ typedef struct _Egueb_Svg_Element_Clip_Path_Class
 static Eina_Bool _egueb_svg_element_clip_path_node_is_clonable(Egueb_Dom_Node *n)
 {
 	return !egueb_smil_is_animation(n);
-}
-
-/* function called whenever we want to clone the clip path children */
-static Eina_Bool _egueb_svg_element_clip_path_children_clone_cb(
-		Egueb_Dom_Node *child, void *data)
-{
-	Egueb_Svg_Reference *ref = data;
-	Egueb_Dom_Node *clone = NULL;
-	Egueb_Dom_Node *g = NULL;
-
-	/* process every child that is not a clonable element */
-	if (!_egueb_svg_element_clip_path_node_is_clonable(child))
-		return EINA_TRUE;
-	/* for a children that is clonable, clone it and add it to the g */
-	egueb_dom_node_clone(child, EINA_TRUE, EINA_TRUE, &clone);
-	/* set the painter on the cloned element */
-	/* TODO put this code on the clip path reference */
-	if (egueb_svg_is_shape(clone))
-	{
-		Egueb_Svg_Painter *painter;
-
-		painter = egueb_svg_painter_clip_path_new(ref);
-		egueb_svg_shape_painter_set(clone, painter);
-	}
-	egueb_svg_reference_clip_path_g_get(ref, &g);
-	egueb_dom_node_child_append(g, clone);
-	egueb_dom_node_unref(g);
-
-	return EINA_TRUE;
 }
 
 /* function called whenever we want to process the clip path children */
@@ -238,6 +211,43 @@ static void _egueb_svg_element_clip_path_attr_modified_cb(Egueb_Dom_Event *e,
 	}
 	egueb_dom_node_unref(target);
 }
+
+/* function called whenever we want to clone the clip path children */
+static Eina_Bool _egueb_svg_element_clip_path_children_clone_cb(
+		Egueb_Dom_Node *child, void *data)
+{
+	Egueb_Svg_Reference *ref = data;
+	Egueb_Dom_Node *clone = NULL;
+	Egueb_Dom_Node *g = NULL;
+
+	/* process every child that is not a clonable element */
+	if (!_egueb_svg_element_clip_path_node_is_clonable(child))
+		return EINA_TRUE;
+	/* for a children that is clonable, clone it and add it to the g */
+	egueb_dom_node_clone(child, EINA_TRUE, EINA_TRUE, &clone);
+	/* set the painter on the cloned element */
+	/* TODO put this code on the clip path reference */
+	if (egueb_svg_is_shape(clone))
+	{
+		Egueb_Svg_Painter *painter;
+
+		painter = egueb_svg_painter_clip_path_new(ref);
+		egueb_svg_shape_painter_set(clone, painter);
+	}
+	/* FIXME this is ugly a shell, but works for now */
+	else if (egueb_svg_element_is_use(clone))
+	{
+		Egueb_Svg_Painter *painter;
+
+		painter = egueb_svg_painter_clip_path_new(ref);
+		egueb_svg_element_use_painter_set(clone, painter);
+	}
+	egueb_svg_reference_clip_path_g_get(ref, &g);
+	egueb_dom_node_child_append(g, clone);
+	egueb_dom_node_unref(g);
+
+	return EINA_TRUE;
+}
 /*----------------------------------------------------------------------------*
  *                           Referenceable interface                          *
  *----------------------------------------------------------------------------*/
@@ -255,34 +265,13 @@ static Egueb_Svg_Reference * _egueb_svg_element_clip_path_reference_new(
 		Egueb_Svg_Referenceable *r, Egueb_Dom_Node *referencer)
 {
 	Egueb_Svg_Reference *ref;
-	Egueb_Dom_Node *g;
 
 	DBG("Creating a new reference");
-	/* TODO we need to check what kind of referencer is */
-	/* create a new group */
-	g = egueb_svg_element_g_new();
-	/* FIXME add a better way to do this */
-	{
-		Egueb_Dom_Node *doc;
-
-		egueb_dom_node_document_get(EGUEB_DOM_NODE(r), &doc);
-		egueb_dom_document_node_adopt(doc, g, &g);
-		egueb_dom_node_unref(doc);
-	}
-	/* make the group get the presentation attributes from ourelves and
-	 * the geometry relative from the referrer
-	 */
-	egueb_svg_element_presentation_relative_set(g, EGUEB_DOM_NODE(r));
-	egueb_svg_element_geometry_relative_set(g, referencer);
-	/* create the reference clip path, set the g there */
 	ref = egueb_svg_reference_clip_path_new();
-	egueb_svg_reference_clip_path_g_set(ref, g);
-
 	/* iterate over the list of children and clone the clonable elements */
 	egueb_dom_node_children_foreach(EGUEB_DOM_NODE(r),
 			_egueb_svg_element_clip_path_children_clone_cb,
 			ref);
-
 	return ref;
 }
 
@@ -293,6 +282,20 @@ static Egueb_Dom_String * _egueb_svg_element_clip_path_tag_name_get(
 		Egueb_Dom_Element *e)
 {
 	return egueb_dom_string_ref(EGUEB_SVG_NAME_CLIP_PATH);
+}
+/*----------------------------------------------------------------------------*
+ *                                Node interface                              *
+ *----------------------------------------------------------------------------*/
+static Eina_Bool _egueb_svg_element_clip_path_child_appendable(Egueb_Dom_Node *n)
+{
+	/* TODO 
+	 * descriptive elements — ‘desc’, ‘metadata’, ‘title’
+	 * animation elements — ‘animate’, ‘animateColor’, ‘animateMotion’, ‘animateTransform’, ‘set’
+	 * shape elements — ‘circle’, ‘ellipse’, ‘line’, ‘path’, ‘polygon’, ‘polyline’, ‘rect’
+	 * ‘text’
+	 * 'use’
+	 */
+	return EINA_TRUE;
 }
 /*----------------------------------------------------------------------------*
  *                              Object interface                              *
@@ -307,6 +310,7 @@ static void _egueb_svg_element_clip_path_class_init(void *k)
 {
 	Egueb_Svg_Referenceable_Class *klass;
 	Egueb_Dom_Element_Class *e_klass;
+	Egueb_Dom_Node_Class *n_klass;
 
 	klass = EGUEB_SVG_REFERENCEABLE_CLASS(k);
 	klass->process = _egueb_svg_element_clip_path_process;
@@ -314,6 +318,9 @@ static void _egueb_svg_element_clip_path_class_init(void *k)
 
 	e_klass= EGUEB_DOM_ELEMENT_CLASS(k);
 	e_klass->tag_name_get = _egueb_svg_element_clip_path_tag_name_get;
+
+	n_klass= EGUEB_DOM_NODE_CLASS(k);
+	n_klass->child_appendable = _egueb_svg_element_clip_path_child_appendable;
 }
 
 static void _egueb_svg_element_clip_path_class_deinit(void *k)

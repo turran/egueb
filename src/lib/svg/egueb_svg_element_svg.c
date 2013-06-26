@@ -24,6 +24,7 @@
 #include "egueb_svg_attr_rect.h"
 #include "egueb_svg_attr_length.h"
 #include "egueb_svg_element_svg.h"
+#include "egueb_svg_element_use.h"
 #include "egueb_svg_renderable_container.h"
 #include "egueb_svg_shape.h"
 
@@ -131,6 +132,15 @@ static void _egueb_svg_element_svg_set_generic_painter(Egueb_Dom_Node *n)
 			egueb_dom_node_unref(child);
 			child = tmp;
 		}
+	}
+	/* FIXME this is ugly as hell, but works for now */
+	else if (egueb_svg_element_is_use(n))
+	{
+		Egueb_Svg_Painter *painter;
+
+		painter = egueb_svg_painter_generic_new();
+		ERR("Setting the generic painter on the element_use");
+		egueb_svg_element_use_painter_set(n, painter);
 	}
 }
 

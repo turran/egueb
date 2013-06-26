@@ -51,9 +51,14 @@ static void _egueb_svg_reference_instance_deinit(void *o)
 void egueb_svg_reference_init(Egueb_Svg_Reference *thiz,
 		Egueb_Dom_Node *referenceable, Egueb_Dom_Node *referencer)
 {
+	Egueb_Svg_Reference_Class *klass;
+
+	klass = EGUEB_SVG_REFERENCE_CLASS_GET(thiz);
 	/* TODO add weak references */
 	thiz->referenceable = egueb_dom_node_ref(referenceable);
 	thiz->referencer = referencer;
+	if (klass->setup)
+		klass->setup(thiz);
 }
 /*============================================================================*
  *                                   API                                      *

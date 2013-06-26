@@ -23,11 +23,15 @@
 #include "egueb_svg_element_use.h"
 #include "egueb_svg_document.h"
 #include "egueb_svg_renderable.h"
-#include "egueb_svg_renderable_private.h"
+#include "egueb_svg_renderable_container.h"
+#include "egueb_svg_shape.h"
+#include "egueb_svg_painter.h"
 #include "egueb_svg_attr_string.h"
 #include "egueb_svg_painter.h"
 
 #include "egueb_svg_painter_private.h"
+#include "egueb_svg_renderable_private.h"
+#include "egueb_svg_shape_private.h"
 /*
  * The 'use' element should be able to create a new instance from another
  * svg tree. Basically we set the 'link' property of the 'use' to the svg
@@ -55,18 +59,83 @@ typedef struct _Egueb_Svg_Element_Use
 	Egueb_Dom_Node *height;
 	Egueb_Dom_Node *xlink_href;
 	/* private */
-	Enesim_Renderer *r;
+	double gx, gy, gw, gh;
+
 	Egueb_Dom_Node *g;
 	Egueb_Dom_Node *clone;
+
 	Eina_Bool document_changed;
-	/* the always present g tag */
 	Egueb_Dom_String *last_xlink;
+	/* TODO use a function for this */
+	Egueb_Svg_Painter *painter;
 } Egueb_Svg_Element_Use;
 
 typedef struct _Egueb_Svg_Element_Use_Class
 {
 	Egueb_Svg_Renderable_Class base;
 } Egueb_Svg_Element_Use_Class;
+
+/* TODO Once we propagate the events from the cloned element
+ * we no longer need this
+ */
+static Eina_Bool _egueb_svg_element_use_set_painter(Egueb_Dom_Node *n, Egueb_Svg_Painter *painter)
+{
+	if (!painter) return EINA_FALSE;
+
+	/* TODO check that it is a renderable */
+	if (egueb_svg_is_shape(n))
+	{
+		egueb_svg_shape_painter_set(n, painter);
+		return EINA_TRUE;
+	}
+#if 0
+	/* TODO for a renderable container we need to copy the painter */
+	else if (egueb_svg_is_renderable_container(n))
+	{
+		Egueb_Dom_Node *child;
+
+		/* iterate over the shapes to set the painter too */
+		egueb_dom_node_child_first_get(n, &child);
+		while (child)
+		{
+			Egueb_Dom_Node *tmp;
+
+			_egueb_svg_element_use_set_generic_painter(child);
+			egueb_dom_node_sibling_next_get(child, &tmp);
+			egueb_dom_node_unref(child);
+			child = tmp;
+		}
+	}
+#endif
+	return EINA_TRUE;
+}
+
+static Eina_Bool _egueb_svg_element_use_setup_cloned(Egueb_Svg_Element_Use *thiz,
+		Egueb_Dom_Node *cloned)
+{
+	Enesim_Matrix m;
+
+	thiz->clone = cloned;
+	/* add the cloned to the group */
+	egueb_dom_node_child_append(thiz->g, egueb_dom_node_ref(thiz->clone));
+	/* transform the group */
+	enesim_matrix_translate(&m, thiz->gx, thiz->gy);
+	egueb_svg_renderable_transform_set(thiz->g, &m);
+
+	_egueb_svg_element_use_set_painter(thiz->clone, thiz->painter);
+	thiz->painter = NULL;
+
+	/* process this element and set its relativeness */
+	return egueb_dom_element_process(thiz->g);
+}
+
+static void _egueb_svg_element_use_cleanup_cloned(Egueb_Svg_Element_Use *thiz)
+{
+	/* remove the clone, this will remove the renderer automatically */
+	egueb_dom_node_child_remove(thiz->g, thiz->clone);
+	egueb_dom_node_unref(thiz->clone);
+	thiz->clone = NULL;
+}
 
 /* Whenever the node has been removed from the document we need to make
  * sure that the <g> node also has the same document
@@ -111,23 +180,21 @@ static Enesim_Renderer * _egueb_svg_element_use_renderer_get(Egueb_Svg_Renderabl
 	Egueb_Svg_Element_Use *thiz;
 
 	thiz = EGUEB_SVG_ELEMENT_USE(r);
-	return enesim_renderer_ref(thiz->r);
+	return egueb_svg_renderable_renderer_get(thiz->g);
 }
-/*----------------------------------------------------------------------------*
- *                              Element interface                             *
- *----------------------------------------------------------------------------*/
-static Eina_Bool _egueb_svg_element_use_process(Egueb_Svg_Element *e)
+
+static Eina_Bool _egueb_svg_element_use_process(Egueb_Svg_Renderable *r)
 {
 	Egueb_Svg_Element_Use *thiz;
 	Egueb_Svg_Element *e_parent;
+	Egueb_Svg_Element *e;
 	Egueb_Svg_Length x, y, w, h;
 	Egueb_Dom_String *xlink = NULL;
 	Egueb_Dom_Node *relative, *doc;
-	double gx, gy, gw, gh;
 	double font_size;
 
 	/* first set the geometry */
-	thiz = EGUEB_SVG_ELEMENT_USE(e);
+	thiz = EGUEB_SVG_ELEMENT_USE(r);
 	egueb_dom_attr_final_get(thiz->x, &x);
 	egueb_dom_attr_final_get(thiz->y, &y);
 	egueb_dom_attr_final_get(thiz->width, &w);
@@ -135,13 +202,13 @@ static Eina_Bool _egueb_svg_element_use_process(Egueb_Svg_Element *e)
 	egueb_dom_attr_final_get(thiz->xlink_href, &xlink);
 
 	/* calculate the real size */
-	egueb_svg_element_geometry_relative_get(EGUEB_DOM_NODE(e), &relative);
+	egueb_svg_element_geometry_relative_get(EGUEB_DOM_NODE(r), &relative);
 	if (!relative)
 	{
 		WARN("No relative available");
 		return EINA_FALSE;
 	}
-	egueb_dom_node_document_get(EGUEB_DOM_NODE(e), &doc);
+	egueb_dom_node_document_get(EGUEB_DOM_NODE(r), &doc);
 	if (!doc)
 	{
 		WARN("No document set");
@@ -152,17 +219,18 @@ static Eina_Bool _egueb_svg_element_use_process(Egueb_Svg_Element *e)
 	e_parent = EGUEB_SVG_ELEMENT(relative);
 	egueb_svg_document_font_size_get(doc, &font_size);
 
-	gx = egueb_svg_coord_final_get(&x, e_parent->viewbox.w, font_size);
-	gy = egueb_svg_coord_final_get(&y, e_parent->viewbox.h, font_size);
-	gw = egueb_svg_coord_final_get(&w, e_parent->viewbox.w, font_size);
-	gh = egueb_svg_coord_final_get(&h, e_parent->viewbox.h, font_size);
+	thiz->gx = egueb_svg_coord_final_get(&x, e_parent->viewbox.w, font_size);
+	thiz->gy = egueb_svg_coord_final_get(&y, e_parent->viewbox.h, font_size);
+	thiz->gw = egueb_svg_coord_final_get(&w, e_parent->viewbox.w, font_size);
+	thiz->gh = egueb_svg_coord_final_get(&h, e_parent->viewbox.h, font_size);
 
 	egueb_dom_node_unref(relative);
 
-	/* set the transformation */
-	enesim_renderer_transformation_set(thiz->r, &e->transform);
 	/* update the viewbox */
-	enesim_rectangle_coords_from(&e->viewbox, gx, gy, gw, gh);
+	e = EGUEB_SVG_ELEMENT(r);
+	enesim_rectangle_coords_from(&e->viewbox, thiz->gx, thiz->gy, thiz->gw, thiz->gh);
+
+	DBG("x: %g, y: %g, w: %g, h: %g", thiz->gx, thiz->gy, thiz->gw, thiz->gh);
 
 	/* in case the xlink attribute has changed, remove the clone
 	 * and create a new one. if the clone has changed, remove
@@ -171,28 +239,16 @@ static Eina_Bool _egueb_svg_element_use_process(Egueb_Svg_Element *e)
 	if (thiz->document_changed || !egueb_dom_string_is_equal(xlink, thiz->last_xlink) ||
 			(thiz->clone && egueb_dom_element_changed(thiz->clone)))
 	{
+		Egueb_Dom_Node *cloned;
 		if (thiz->clone)
 		{
-			/* remove the clone, this will remove the renderer automatically */
-			egueb_dom_node_child_remove(thiz->g, thiz->clone);
-			egueb_dom_node_unref(thiz->clone);
-			thiz->clone = NULL;
+			_egueb_svg_element_use_cleanup_cloned(thiz);
 		}
 
 		/* finally clone the reference */
-		if (egueb_svg_document_iri_clone(doc, xlink, &thiz->clone) == EINA_ERROR_NONE)
+		if (egueb_svg_document_iri_clone(doc, xlink, &cloned) == EINA_ERROR_NONE)
 		{
-			Egueb_Svg_Painter *painter;
-
-			/* add it to the g */
-			egueb_dom_node_child_append(thiz->g, egueb_dom_node_ref(thiz->clone));
-			/* TODO check that it is a renderable */
-			painter = egueb_svg_painter_generic_new();
-			DBG("Setting the generic painter on the shape");
-			egueb_svg_shape_painter_set(thiz->clone, painter);
-			/* TODO for a container, set the painter on every child */
-			/* process this element and set its relativeness */
-			egueb_dom_element_process(thiz->g);
+			_egueb_svg_element_use_setup_cloned(thiz, cloned);
 		}
 		thiz->document_changed = EINA_FALSE;
 	}
@@ -232,14 +288,11 @@ ENESIM_OBJECT_INSTANCE_BOILERPLATE(EGUEB_SVG_RENDERABLE_DESCRIPTOR,
 static void _egueb_svg_element_use_class_init(void *k)
 {
 	Egueb_Svg_Renderable_Class *klass;
-	Egueb_Svg_Element_Class *e_klass;
 	Egueb_Dom_Element_Class *edom_klass;
 
 	klass = EGUEB_SVG_RENDERABLE_CLASS(k);
 	klass->renderer_get = _egueb_svg_element_use_renderer_get;
-
-	e_klass = EGUEB_SVG_ELEMENT_CLASS(k);
-	e_klass->process = _egueb_svg_element_use_process;
+	klass->process = _egueb_svg_element_use_process;
 
 	edom_klass= EGUEB_DOM_ELEMENT_CLASS(k);
 	edom_klass->tag_name_get = _egueb_svg_element_use_tag_name_get;
@@ -252,25 +305,13 @@ static void _egueb_svg_element_use_class_deinit(void *k)
 static void _egueb_svg_element_use_instance_init(void *o)
 {
 	Egueb_Svg_Element_Use *thiz;
-	Enesim_Renderer *r;
 
 	thiz = EGUEB_SVG_ELEMENT_USE(o);
-	r = enesim_renderer_rectangle_new();
-	enesim_renderer_rop_set(r, ENESIM_BLEND);
-	thiz->r = r;
 
 	thiz->g = egueb_svg_element_g_new();
 	/* set the relativeness of the node */
 	egueb_svg_element_geometry_relative_set(thiz->g, EGUEB_DOM_NODE(o));
 	egueb_svg_element_presentation_relative_set(thiz->g, EGUEB_DOM_NODE(o));
-	/* TODO set the same painter as us */
-
-	r = egueb_svg_renderable_renderer_get(thiz->g);
-	enesim_renderer_shape_fill_renderer_set(thiz->r, r);
-	enesim_renderer_shape_draw_mode_set(thiz->r, ENESIM_SHAPE_DRAW_MODE_FILL);
-
-	/* Default values */
-	enesim_renderer_rop_set(thiz->r, ENESIM_BLEND);
 
 	/* create the properties */
 	thiz->x = egueb_svg_attr_length_new(
@@ -319,7 +360,6 @@ static void _egueb_svg_element_use_instance_deinit(void *o)
 	thiz = EGUEB_SVG_ELEMENT_USE(o);
 
 	egueb_dom_node_unref(thiz->g);
-	enesim_renderer_unref(thiz->r);
 
 	if (thiz->last_xlink)
 	{
@@ -335,241 +375,25 @@ static void _egueb_svg_element_use_instance_deinit(void *o)
 	egueb_dom_node_unref(thiz->xlink_href);
 }
 
-#if 0
-/*----------------------------------------------------------------------------*
- *                       The Esvg Renderable interface                        *
- *----------------------------------------------------------------------------*/
-static void _egueb_svg_element_use_initialize(Ender_Element *e)
-{
-	Egueb_Svg_Element_Use *thiz;
-	Egueb_Dom_Tag *t;
-
-	t = ender_element_object_get(e);
-	thiz = _egueb_svg_element_use_get(t);
-	/* whenever the topmost is set on the use
-	 * we should also set the topmost on the g
-	 */
-	ender_event_listener_add(e, "TopmostChanged", _egueb_svg_element_use_topmost_changed_cb, thiz);
-	thiz->container = egueb_svg_renderable_container_new(e);
-	egueb_svg_renderable_container_renderable_add(thiz->container, thiz->g_t);
-}
-
-static Egueb_Svg_Element_Setup_Return _egueb_svg_element_use_setup(Egueb_Dom_Tag *t,
-		Egueb_Svg_Context *c,
-		Egueb_Svg_Element_Context *ctx,
-		Egueb_Svg_Attribute_Presentation *attr,
-		Enesim_Log **error)
-{
-	Egueb_Svg_Element_Use *thiz;
-	Ender_Element *topmost;
-	Ender_Element *link;
-	Egueb_Dom_Tag *cloned_t;
-	Enesim_Matrix translate;
-	double tx, ty;
-
-	thiz = _egueb_svg_element_use_get(t);
-	/* we should append a new transformation */
-	tx = egueb_svg_coord_final_get(&thiz->x, ctx->viewbox.w, ctx->font_size);
-	ty = egueb_svg_coord_final_get(&thiz->y, ctx->viewbox.h, ctx->font_size);
-	enesim_matrix_translate(&translate, tx, ty);
-	enesim_matrix_compose(&ctx->transform, &translate, &ctx->transform);
-
-	/* we take the shortcut here because there's no need to go through
-	 * the normal enesim API
-	 */
-	/* FIXME this should be go away */
-	egueb_svg_element_internal_topmost_get(t, &topmost);
-	if (!topmost)
-	{
-		WARN("No topmost available");
-		return EINA_TRUE;
-	}
-
-	if (thiz->state_changed)
-	{
-		if (thiz->cloned)
-		{
-			/* TODO remove the tree from the g_e */
-			/* TODO remove previous clone */
-			thiz->cloned = NULL;
-		}
-		if (thiz->past.link)
-		{
-			free(thiz->past.link);
-			thiz->past.link = NULL;
-		}
-		if (thiz->current.link)
-		{
-			egueb_svg_element_svg_element_get(topmost, thiz->current.link, &link);
-			thiz->cloned = egueb_svg_clone_new(link);
-
-			if (!thiz->cloned)
-			{
-				WARN("Impossible to clone");
-				return EINA_FALSE;
-			}
-
-			/* TODO add the clone to the generated g */
-			cloned_t = ender_element_object_get(thiz->cloned);
-			ender_element_property_value_add(thiz->g_e, EGUEB_DOM_CHILD, cloned_t, NULL);
-			thiz->past.link = strdup(thiz->current.link);
-		}
-		/* FIXME this should go to the cleanup */
-		thiz->state_changed = EINA_FALSE;
-	}
-
-	/* setup the g */
-	/* FIXME for now */
-	egueb_svg_element_topmost_set(thiz->g_t, topmost);
-	/* Use our own context and attributes as the parent ones */
-	return egueb_svg_element_setup_rel(thiz->g_t, c, ctx, attr, error);
-}
-
-static void _egueb_svg_element_use_free(Egueb_Dom_Tag *t)
-{
-	Egueb_Svg_Element_Use *thiz;
-
-	thiz = _egueb_svg_element_use_get(t);
-	egueb_svg_renderable_container_free(thiz->container);
-	free(thiz);
-}
-
-static Egueb_Svg_Renderable_Descriptor _descriptor = {
-	/* .child_add		= */ NULL,
-	/* .child_remove	= */ NULL,
-	/* .attribute_get 	= */ _egueb_svg_element_use_attribute_get,
-	/* .cdata_set 		= */ NULL,
-	/* .text_set 		= */ NULL,
-	/* .text_get 		= */ NULL,
-	/* .free 		= */ _egueb_svg_element_use_free,
-	/* .initialize 		= */ _egueb_svg_element_use_initialize,
-	/* .attribute_set 	= */ _egueb_svg_element_use_attribute_set,
-	/* .attribute_animated_fetch = */ NULL,
-	/* .setup		= */ _egueb_svg_element_use_setup,
-	/* .renderer_get	= */ _egueb_svg_element_use_renderer_get,
-	/* .renderer_propagate	= */ NULL,
-};
-/*----------------------------------------------------------------------------*
- *                           The Ender interface                              *
- *----------------------------------------------------------------------------*/
-static Egueb_Dom_Tag * _egueb_svg_element_use_new(void)
-{
-	Egueb_Svg_Element_Use *thiz;
-	Egueb_Dom_Tag *t;
-
-	thiz = calloc(1, sizeof(Egueb_Svg_Element_Use));
-	if (!thiz) return NULL;
-	thiz->g_e = egueb_svg_element_g_new();
-	thiz->g_r = egueb_svg_renderable_renderer_get(thiz->g_e);
-	thiz->g_t = ender_element_object_get(thiz->g_e);
-
-	/* Default values */
-	thiz->x = ESVG_COORD_0;
-	thiz->y = ESVG_COORD_0;
-	thiz->width = ESVG_LENGTH_0;
-	thiz->height = ESVG_LENGTH_0;
-
-	t = egueb_svg_renderable_new(&_descriptor, ESVG_TYPE_USE, thiz);
-	return t;
-}
-
-static void _egueb_svg_element_use_x_set(Egueb_Dom_Tag *t, const Egueb_Svg_Coord *x)
-{
-	Egueb_Svg_Element_Use *thiz;
-
-	thiz = _egueb_svg_element_use_get(t);
-	if (x) thiz->x = *x;
-}
-
-static void _egueb_svg_element_use_x_get(Egueb_Dom_Tag *t, Egueb_Svg_Coord *x)
-{
-	Egueb_Svg_Element_Use *thiz;
-
-	thiz = _egueb_svg_element_use_get(t);
-	if (x) *x = thiz->x;
-}
-
-static void _egueb_svg_element_use_y_set(Egueb_Dom_Tag *t, const Egueb_Svg_Coord *y)
-{
-	Egueb_Svg_Element_Use *thiz;
-
-	thiz = _egueb_svg_element_use_get(t);
-	if (y) thiz->y = *y;
-}
-
-static void _egueb_svg_element_use_y_get(Egueb_Dom_Tag *t, Egueb_Svg_Coord *y)
-{
-	Egueb_Svg_Element_Use *thiz;
-
-	thiz = _egueb_svg_element_use_get(t);
-	if (y) *y = thiz->y;
-}
-
-static void _egueb_svg_element_use_width_set(Egueb_Dom_Tag *t, const Egueb_Svg_Length *width)
-{
-	Egueb_Svg_Element_Use *thiz;
-
-	thiz = _egueb_svg_element_use_get(t);
-	if (width) thiz->width = *width;
-}
-
-static void _egueb_svg_element_use_width_get(Egueb_Dom_Tag *t, Egueb_Svg_Length *width)
-{
-	Egueb_Svg_Element_Use *thiz;
-
-	thiz = _egueb_svg_element_use_get(t);
-	if (width) *width = thiz->width;
-}
-
-static void _egueb_svg_element_use_height_set(Egueb_Dom_Tag *t, const Egueb_Svg_Length *height)
-{
-	Egueb_Svg_Element_Use *thiz;
-
-	thiz = _egueb_svg_element_use_get(t);
-	if (height) thiz->height = *height;
-}
-
-static void _egueb_svg_element_use_height_get(Egueb_Dom_Tag *t, Egueb_Svg_Length *height)
-{
-	Egueb_Svg_Element_Use *thiz;
-
-	thiz = _egueb_svg_element_use_get(t);
-	if (height) *height = thiz->height;
-}
-
-static void _egueb_svg_element_use_link_set(Egueb_Dom_Tag *t, const char *link)
-{
-	Egueb_Svg_Element_Use *thiz;
-
-	thiz = _egueb_svg_element_use_get(t);
-	if (thiz->current.link)
-	{
-		free(thiz->current.link);
-		thiz->current.link = NULL;
-	}
-	if (link)
-	{
-		thiz->current.link = strdup(link);
-	}
-	thiz->state_changed = EINA_TRUE;
-}
-
-static void _egueb_svg_element_use_link_get(Egueb_Dom_Tag *t, const char **link)
-{
-	Egueb_Svg_Element_Use *thiz;
-
-	if (!link) return;
-	thiz = _egueb_svg_element_use_get(t);
-	*link = thiz->current.link;
-}
-
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
+/* TODO replace this with a function */
+void egueb_svg_element_use_painter_set(Egueb_Dom_Node *n, Egueb_Svg_Painter *p)
+{
+	Egueb_Svg_Element_Use *thiz;
+
+	thiz = EGUEB_SVG_ELEMENT_USE(n);
+	if (thiz->painter)
+	{
+		egueb_svg_painter_free(thiz->painter);
+		thiz->painter = NULL;
+	}
+	thiz->painter = p;
+}
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/
-#endif
 EAPI Egueb_Dom_Node * egueb_svg_element_use_new(void)
 {
 	Egueb_Dom_Node *n;
@@ -578,16 +402,16 @@ EAPI Egueb_Dom_Node * egueb_svg_element_use_new(void)
 	return n;
 }
 
-#if 0
-EAPI Eina_Bool egueb_svg_is_use(Ender_Element *e)
+EAPI Eina_Bool egueb_svg_element_is_use(Egueb_Dom_Node *n)
 {
-	Egueb_Dom_Tag *t;
-	Egueb_Svg_Type type;
-
-	t = (Egueb_Dom_Tag *)ender_element_object_get(e);
-	type = egueb_svg_element_internal_type_get(t);
-	return (type == ESVG_TYPE_USE) ? EINA_TRUE : EINA_FALSE;
+	if (!n) return EINA_FALSE;
+	if (!enesim_object_instance_inherits(ENESIM_OBJECT_INSTANCE(n),
+			EGUEB_SVG_ELEMENT_USE_DESCRIPTOR))
+		return EINA_FALSE;
+	return EINA_TRUE;
 }
+
+#if 0
 
 EAPI void egueb_svg_element_use_x_set(Ender_Element *e, const Egueb_Svg_Coord *x)
 {

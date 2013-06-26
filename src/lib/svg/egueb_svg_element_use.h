@@ -20,8 +20,9 @@
 #define _EGUEB_SVG_ELEMENT_USE_H_
 
 EAPI Egueb_Dom_Node * egueb_svg_element_use_new(void);
+EAPI Eina_Bool egueb_svg_element_is_use(Egueb_Dom_Node *n);
+
 #if 0
-EAPI Eina_Bool egueb_svg_is_use(Ender_Element *e);
 EAPI void egueb_svg_element_use_x_set(Ender_Element *e, const Egueb_Svg_Coord *x);
 EAPI void egueb_svg_element_use_x_get(Ender_Element *e, Egueb_Svg_Coord *x);
 EAPI void egueb_svg_element_use_y_set(Ender_Element *e, const Egueb_Svg_Coord *y);

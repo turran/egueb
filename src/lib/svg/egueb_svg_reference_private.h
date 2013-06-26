@@ -40,10 +40,12 @@ typedef void (*Egueb_Svg_Reference_Referenceable_Unlink)(Egueb_Svg_Reference *th
  */
 
 typedef Eina_Bool (*Egueb_Svg_Reference_Process)(Egueb_Svg_Reference *thiz);
+typedef void (*Egueb_Svg_Reference_Setup)(Egueb_Svg_Reference *thiz);
 
 typedef struct _Egueb_Svg_Reference_Class
 {
 	Enesim_Object_Class base;
+	Egueb_Svg_Reference_Setup setup;
 	Egueb_Svg_Reference_Process process;
 } Egueb_Svg_Reference_Class;
 
@@ -61,7 +63,6 @@ Enesim_Object_Descriptor * egueb_svg_reference_descriptor_get(void);
 
 /* The clip path reference */
 Egueb_Svg_Reference * egueb_svg_reference_clip_path_new(void);
-void egueb_svg_reference_clip_path_g_set(Egueb_Svg_Reference *r, Egueb_Dom_Node *g);
 void egueb_svg_reference_clip_path_g_get(Egueb_Svg_Reference *r, Egueb_Dom_Node **g);
 void egueb_svg_reference_clip_path_renderer_get(Egueb_Svg_Reference *r,
 		Enesim_Renderer **ren);

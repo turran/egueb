@@ -58,6 +58,25 @@ typedef struct _Egueb_Svg_Reference_Clip_Path_Class
 /*----------------------------------------------------------------------------*
  *                             Reference interface                            *
  *----------------------------------------------------------------------------*/
+static void _egueb_svg_reference_clip_path_setup(
+		Egueb_Svg_Reference *r)
+{
+	Egueb_Svg_Reference_Clip_Path *thiz;
+	Egueb_Dom_Node *doc;
+
+	thiz = EGUEB_SVG_REFERENCE_CLIP_PATH(r);
+	/* TODO we need to check what kind of referencer is */
+	egueb_dom_node_document_get(r->referenceable, &doc);
+	egueb_dom_document_node_adopt(doc, thiz->g, &thiz->g);
+	egueb_dom_node_unref(doc);
+
+	/* make the group get the presentation attributes from ourelves and
+	 * the geometry relative from the referrer
+	 */
+	egueb_svg_element_presentation_relative_set(thiz->g, r->referenceable);
+	egueb_svg_element_geometry_relative_set(thiz->g, r->referencer);
+}
+
 static Eina_Bool _egueb_svg_reference_clip_path_process(
 		Egueb_Svg_Reference *r)
 {
@@ -117,6 +136,7 @@ static void _egueb_svg_reference_clip_path_class_init(void *k)
 
 	klass = EGUEB_SVG_REFERENCE_CLASS(k);
 	klass->process = _egueb_svg_reference_clip_path_process;
+	klass->setup = _egueb_svg_reference_clip_path_setup;
 }
 
 static void _egueb_svg_reference_clip_path_class_deinit(void *k)
@@ -128,6 +148,7 @@ static void _egueb_svg_reference_clip_path_instance_init(void *o)
 	Egueb_Svg_Reference_Clip_Path *thiz;
 
 	thiz = EGUEB_SVG_REFERENCE_CLIP_PATH(o);
+	thiz->g = egueb_svg_element_g_new();
 }
 
 static void _egueb_svg_reference_clip_path_instance_deinit(void *o)
@@ -158,20 +179,6 @@ Egueb_Svg_Reference * egueb_svg_reference_clip_path_new(void)
 	Egueb_Svg_Reference *r;
 	r = ENESIM_OBJECT_INSTANCE_NEW(egueb_svg_reference_clip_path);
 	return r;
-}
-
-/* TODO remove this function */
-void egueb_svg_reference_clip_path_g_set(Egueb_Svg_Reference *r, Egueb_Dom_Node *g)
-{
-	Egueb_Svg_Reference_Clip_Path *thiz;
-
-	thiz = EGUEB_SVG_REFERENCE_CLIP_PATH(r);
-	if (thiz->g)
-	{
-		egueb_dom_node_unref(thiz->g);
-		thiz->g = NULL;
-	}
-	thiz->g = g;
 }
 
 void egueb_svg_reference_clip_path_g_get(Egueb_Svg_Reference *r, Egueb_Dom_Node **g)
@@ -220,7 +227,6 @@ void egueb_svg_reference_clip_path_resolved_renderer_get(Egueb_Svg_Reference *r,
 	}
 	else
 	{
-		Egueb_Dom_Node *referencer = NULL;
 		/* otherwise, use the referencer (the shape that refered this
 		 * reference)
 		 */
