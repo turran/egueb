@@ -76,7 +76,7 @@ EAPI Egueb_Dom_String * egueb_dom_string_new_with_length(const char *str, int le
 	Egueb_Dom_String *thiz;
 
 	thiz = egueb_dom_string_new();
-	thiz->str = eina_strndup(str, len);
+	thiz->str = eina_extra_strndup(str, len);
 	thiz->owned = EINA_TRUE;
 	return thiz;
 

@@ -96,7 +96,7 @@ EAPI Eina_Bool egueb_dom_function_get(const char *attr_val, const char **endptr,
 		EGUEB_DOM_SPACE_SKIP(tmp);
 		if (tmp[0] == ')')
 			goto end;
-		val = eina_strtod(tmp, &end);
+		val = eina_extra_strtod(tmp, &end);
 		if (errno == ERANGE)
 			val = 0;
 		if (end == tmp)

@@ -34,10 +34,10 @@ EAPI Eina_Bool egueb_svg_point_string_from(Egueb_Svg_Point *thiz, const char *at
 	EGUEB_DOM_SPACE_SKIP(attr);
 	tmp = attr;
 
-	thiz->x = eina_strtod(tmp, &endptr);
+	thiz->x = eina_extra_strtod(tmp, &endptr);
 	tmp = endptr;
 	EGUEB_DOM_SPACE_COMMA_SKIP(tmp);
-	thiz->y = eina_strtod(tmp, &endptr);
+	thiz->y = eina_extra_strtod(tmp, &endptr);
 	tmp = endptr;
 	EGUEB_DOM_SPACE_COMMA_SKIP(tmp);
 

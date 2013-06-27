@@ -20,7 +20,6 @@
 
 #include <Eina.h>
 #include <Enesim.h>
-#include <Ender.h>
 
 #ifdef __cplusplus
 extern "C" {

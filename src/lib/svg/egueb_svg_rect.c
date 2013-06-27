@@ -135,7 +135,7 @@ Eina_Bool egueb_svg_rect_string_from(Egueb_Svg_Rect *thiz, const char *attr_val)
 				break;
 			}
 		}
-		val = eina_strtod(iter, &endptr);
+		val = eina_extra_strtod(iter, &endptr);
 		if ((errno != ERANGE) &&
 		    !((val == 0) && (attr_val == endptr)))
 		{

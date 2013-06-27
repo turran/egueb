@@ -28,7 +28,7 @@ typedef struct _Egueb_Dom_Element
 	Egueb_Dom_Node base;
 
 	/* instance specific attributes */
-	Eina_Ordered_Hash *attributes;
+	Eina_Extra_Ordered_Hash *attributes;
 	/* flag that informs that an inhertiable property has changed */
 	Eina_Bool inheritable_changed;
 	/* flag that informs that an attribute has changed */
@@ -54,7 +54,7 @@ typedef struct _Egueb_Dom_Element_Class
 	 * create a property abstraction from which every
 	 * type will inherit from
 	 */
-	Eina_Ordered_Hash *properties;
+	Eina_Extra_Ordered_Hash *properties;
 } Egueb_Dom_Element_Class;
 
 #define EGUEB_DOM_ELEMENT_DESCRIPTOR egueb_dom_element_descriptor_get()

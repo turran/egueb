@@ -588,7 +588,7 @@ static char * _egueb_svg_document_uri_get_absolute(Egueb_Svg_Document *thiz,
 	}
 	/* ok, we got the location, not concat it with the uri */
 	INFO("location is '%s' and uri '%s'", location, uri);
-	ret = eina_str_dup_printf("%s/%s", location, uri);
+	ret = eina_extra_str_dup_printf("%s/%s", location, uri);
 	if (free_location)
 		free((char *)location);
 	if (tmp)
@@ -697,9 +697,9 @@ static Egueb_Dom_Node * _egueb_svg_document_input_element_at_recursive(
 
 			egueb_dom_node_name_get(n, &name);
 			DBG("Element '%s' found with bounds %"
-					EINA_RECTANGLE_FORMAT,
+					EINA_EXTRA_RECTANGLE_FORMAT,
 					egueb_dom_string_string_get(name),
-					EINA_RECTANGLE_ARGS(&bounds));
+					EINA_EXTRA_RECTANGLE_ARGS(&bounds));
 			egueb_dom_string_unref(name);
 			ret = egueb_dom_node_ref(n);
 		}
@@ -889,12 +889,12 @@ EAPI Eina_Error egueb_svg_document_url_get(Egueb_Dom_Node *n,
 	{
 		char *tmp;
 		tmp = getcwd(NULL, 0);
-		ret = eina_str_dup_printf("%s/%s", location, filename);
+		ret = eina_extra_str_dup_printf("%s/%s", location, filename);
 		free(tmp);
 	}
 	else
 	{
-		ret = eina_str_dup_printf("%s/%s", location, filename);
+		ret = eina_extra_str_dup_printf("%s/%s", location, filename);
 	}
 	*url = egueb_dom_string_steal(ret);
 	return EINA_ERROR_NONE;

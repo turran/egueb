@@ -23,13 +23,13 @@
  *============================================================================*/
 #if  0
 double
-eina_strtod(const char *nptr, char **endptr)
+eina_extra_strtod(const char *nptr, char **endptr)
 {
 	return strtod(nptr, endptr);
 }
 #else
 double
-eina_strtod(const char *nptr, char **endptr)
+eina_extra_strtod(const char *nptr, char **endptr)
 {
   char *str;
   int mantisse = 0;

@@ -92,7 +92,7 @@ EAPI Eina_Bool egueb_svg_number_string_from(Egueb_Svg_Number *thiz,
 	if (!attr_val || !*attr_val)
 		return EINA_FALSE;
 
-	val = eina_strtod(attr_val, &endptr);
+	val = eina_extra_strtod(attr_val, &endptr);
 	if (errno == ERANGE)
 		return EINA_FALSE;
 	if ((val == 0) && (attr_val == endptr))

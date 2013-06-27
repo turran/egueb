@@ -41,13 +41,13 @@ AC_SUBST([VMAJ])
 EINA_VERSION="1.0.99"
 ENESIM_VERSION="0.0.18"
 ETCH_VERSION="0.0.5"
-ENDER_VERSION="0.0.8"
+EINA_EXTRA_VERSION="0.0.1"
 
 AC_CANONICAL_HOST
 
 ecss_requirements="eina"
-edom_requirements="eina ender >= ${ENDER_VERSION} enesim >= ${ENESIM_VERSION}"
-esvg_requirements="ender >= ${ENDER_VERSION} etch >= ${ETCH_VERSION} enesim >= ${ENESIM_VERSION} eina >= ${EINA_VERSION}"
+edom_requirements="eina eina-extra >= ${EINA_EXTRA_VERSION} enesim >= ${ENESIM_VERSION}"
+esvg_requirements="eina-extra >= ${EINA_EXTRA_VERSION} etch >= ${ETCH_VERSION} enesim >= ${ENESIM_VERSION} eina >= ${EINA_VERSION}"
 gstreamer_requirements="gstreamer-0.10"
 
 AC_SUBST([esvg_requirements])
@@ -134,12 +134,6 @@ fi
 
 if test "x${want_edom}" = "xyes" ; then
    PKG_CHECK_MODULES([EDOM], [${edom_requirements}], [want_edom="yes"], [want_edom="no"])
-   # ender is optional only for install time, not compile time
-   PKG_CHECK_EXISTS([ender], [have_ender="yes"], [have_ender="no"])
-   if test "x${have_ender}" = "xyes"; then
-      ENDER_DATADIR=$($PKG_CONFIG --variable=datadir ender)
-      AC_SUBST([ENDER_DATADIR])
-   fi
 fi
 
 if test "x${want_ecss}" = "xyes" && test "x${want_edom}" = "xyes" ; then

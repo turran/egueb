@@ -2,6 +2,7 @@
 #include "Egueb_Dom.h"
 #include "Egueb_Smil.h"
 
+#include "Eina_Extra.h"
 #include "egueb_dom_node_private.h"
 #include "egueb_dom_document_private.h"
 #include "egueb_smil_animation_private.h"

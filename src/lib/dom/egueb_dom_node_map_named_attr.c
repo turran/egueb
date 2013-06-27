@@ -83,19 +83,19 @@ static Eina_Error _egueb_dom_node_map_named_attr_at(Egueb_Dom_Node_Map_Named *n,
 
 	thiz = EGUEB_DOM_NODE_MAP_NAMED_ATTR(n);
 	klass = EGUEB_DOM_ELEMENT_CLASS_GET(thiz->own);
-	count = eina_ordered_hash_count (klass->properties);
+	count = eina_extra_ordered_hash_count (klass->properties);
 	if (idx > count)
 	{
 		Egueb_Dom_Element *e;
 
 		e = EGUEB_DOM_ELEMENT(thiz->own);
 		idx -= count;
-		attr = eina_ordered_hash_nth_get(e->attributes, idx);
+		attr = eina_extra_ordered_hash_nth_get(e->attributes, idx);
 	}
 	else
 	{
 		Egueb_Dom_Attr_Fetch fetch;
-		fetch = eina_ordered_hash_nth_get(klass->properties, idx);
+		fetch = eina_extra_ordered_hash_nth_get(klass->properties, idx);
 		if (!fetch)
 		{
 			*node = NULL;
@@ -120,9 +120,9 @@ static int _egueb_dom_node_map_named_attr_length(Egueb_Dom_Node_Map_Named *n)
 	thiz = EGUEB_DOM_NODE_MAP_NAMED_ATTR(n);
 	/* get the number of properties from the class and from the element */
 	klass = EGUEB_DOM_ELEMENT_CLASS_GET(thiz->own);
-	ret += eina_ordered_hash_count (klass->properties);
+	ret += eina_extra_ordered_hash_count (klass->properties);
 	e = EGUEB_DOM_ELEMENT(thiz->own);
-	ret += eina_ordered_hash_count (e->attributes);
+	ret += eina_extra_ordered_hash_count (e->attributes);
 
 	return ret;
 }

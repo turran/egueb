@@ -51,7 +51,7 @@ static Eina_Bool _egueb_svg_path_number_get(char **attr, double *x)
 
 	iter = *attr;
 	EGUEB_DOM_SPACE_COMMA_SKIP(iter);
-	*x = eina_strtod(iter, &endptr);
+	*x = eina_extra_strtod(iter, &endptr);
 	if (iter == endptr)
 		return EINA_FALSE;
 

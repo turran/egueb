@@ -39,7 +39,7 @@ static Eina_Bool _egueb_svg_double_get(const char *iter, const char **tmp, doubl
 	char *endptr;
 	double val;
 
-	val = eina_strtod(iter, &endptr);
+	val = eina_extra_strtod(iter, &endptr);
 	if ((errno != ERANGE) &&
 	    !((val == 0) && (iter == endptr)))
 	{
@@ -285,10 +285,10 @@ EAPI void egueb_svg_points_string_from(const char *value, Egueb_Svg_Points_Cb cb
 	{
 		Egueb_Svg_Point p;
 
-		p.x = eina_strtod(tmp, &endptr);
+		p.x = eina_extra_strtod(tmp, &endptr);
 		tmp = endptr;
 		EGUEB_DOM_SPACE_COMMA_SKIP(tmp);
-		p.y = eina_strtod(tmp, &endptr);
+		p.y = eina_extra_strtod(tmp, &endptr);
 		tmp = endptr;
 		EGUEB_DOM_SPACE_COMMA_SKIP(tmp);
 
@@ -339,7 +339,7 @@ EAPI Eina_Bool egueb_svg_number_list_string_from(const char *attr, Egueb_Svg_Num
 		if (!*tmp)
 			break;
 
-		val = eina_strtod(tmp, &end);
+		val = eina_extra_strtod(tmp, &end);
 		if (errno == ERANGE)
 			val = 0;
 		if (end == tmp)

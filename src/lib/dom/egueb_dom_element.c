@@ -400,7 +400,7 @@ static void _egueb_dom_element_class_init(void *k)
 	n_klass->clone = _egueb_dom_element_clone;
 
 	klass = EGUEB_DOM_ELEMENT_CLASS(k);
-	klass->properties = eina_ordered_hash_new(NULL);
+	klass->properties = eina_extra_ordered_hash_new(NULL);
 }
 
 static void _egueb_dom_element_class_deinit(void *k)
@@ -408,7 +408,7 @@ static void _egueb_dom_element_class_deinit(void *k)
 	Egueb_Dom_Element_Class *klass;
 
 	klass = EGUEB_DOM_ELEMENT_CLASS(k);
-	eina_ordered_hash_free(klass->properties);
+	eina_extra_ordered_hash_free(klass->properties);
 }
 
 static void _egueb_dom_element_instance_init(void *o)
@@ -416,7 +416,7 @@ static void _egueb_dom_element_instance_init(void *o)
 	Egueb_Dom_Element *thiz;
 
 	thiz = EGUEB_DOM_ELEMENT(o);
-	thiz->attributes = eina_ordered_hash_new(EINA_FREE_CB(
+	thiz->attributes = eina_extra_ordered_hash_new(EINA_FREE_CB(
 			egueb_dom_node_unref));
 	/* register some event handlers */
 	egueb_dom_node_event_listener_add(EGUEB_DOM_NODE(o),
@@ -430,7 +430,7 @@ static void _egueb_dom_element_instance_deinit(void *o)
 	Egueb_Dom_Element *thiz;
 
 	thiz = EGUEB_DOM_ELEMENT(o);
-	eina_ordered_hash_free(thiz->attributes);
+	eina_extra_ordered_hash_free(thiz->attributes);
 }
 /*============================================================================*
  *                                 Global                                     *
@@ -516,7 +516,7 @@ EAPI Eina_Error egueb_dom_element_attribute_set(Egueb_Dom_Node *node,
 				egueb_dom_string_string_get(name));
 		/* create a new string attribute */
 		p = egueb_dom_attr_string_new(attr_name, NULL);
-		eina_ordered_hash_add(thiz->attributes,
+		eina_extra_ordered_hash_add(thiz->attributes,
 				egueb_dom_string_string_get(name), p);
 		p = egueb_dom_node_ref(p);
 	}
@@ -559,7 +559,7 @@ EAPI Eina_Error egueb_dom_element_property_fetch(Egueb_Dom_Node *node,
 
 	if (!p) return EGUEB_DOM_ERROR_INVALID_ACCESS;
 	klass = EGUEB_DOM_ELEMENT_CLASS_GET(node);
-	fetch = eina_ordered_hash_find(klass->properties, egueb_dom_string_string_get(name));
+	fetch = eina_extra_ordered_hash_find(klass->properties, egueb_dom_string_string_get(name));
 	/* ok it is a class attribute */
 	if (fetch)
 	{
@@ -572,7 +572,7 @@ EAPI Eina_Error egueb_dom_element_property_fetch(Egueb_Dom_Node *node,
 		Egueb_Dom_Element *thiz;
 
 		thiz = EGUEB_DOM_ELEMENT(node);
-		attr = eina_ordered_hash_find(thiz->attributes, egueb_dom_string_string_get(name));
+		attr = eina_extra_ordered_hash_find(thiz->attributes, egueb_dom_string_string_get(name));
 	}
 
 	if (!attr)
@@ -694,7 +694,7 @@ EAPI Eina_Error egueb_dom_element_class_property_add(Egueb_Dom_Node *n,
 	attr->owner = n;
 	/* add the property fetch in the class */
 	klass = EGUEB_DOM_ELEMENT_CLASS_GET(n);
-	old_fetch = eina_ordered_hash_find(klass->properties,
+	old_fetch = eina_extra_ordered_hash_find(klass->properties,
 			egueb_dom_string_string_get(attr->name));
 	if (old_fetch)
 	{
@@ -704,7 +704,7 @@ EAPI Eina_Error egueb_dom_element_class_property_add(Egueb_Dom_Node *n,
 	}
 
 	DBG("Adding property '%s'", egueb_dom_string_string_get(attr->name));
-	eina_ordered_hash_add(klass->properties,
+	eina_extra_ordered_hash_add(klass->properties,
 			egueb_dom_string_string_get(attr->name), fetch);
 	return EINA_ERROR_NONE;
 }

@@ -87,7 +87,7 @@ static void _egueb_svg_element_script_cdata_set(Egueb_Dom_Tag *t, const char *cd
 	}
 	if (cdata && length)
 	{
-		thiz->cdata = eina_strndup(cdata, length);
+		thiz->cdata = eina_extra_strndup(cdata, length);
 	}
 }
 

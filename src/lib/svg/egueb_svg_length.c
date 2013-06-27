@@ -159,7 +159,7 @@ EAPI Eina_Bool egueb_svg_length_string_from(Egueb_Svg_Length *thiz, const char *
 	if (!attr_val || !*attr_val)
 		return EINA_FALSE;
 
-	val = eina_strtod(attr_val, &endptr);
+	val = eina_extra_strtod(attr_val, &endptr);
 	if (errno == ERANGE)
 		return EINA_FALSE;
 	if ((val == 0) && (attr_val == endptr))
@@ -242,7 +242,7 @@ EAPI char * egueb_svg_length_string_to(Egueb_Svg_Length *thiz)
 	if (!thiz) return NULL;
 	units = _egueb_svg_length_units_string_to(thiz);
 	if (!units) return NULL;
-	return eina_str_dup_printf("%g%s", thiz->value, units);
+	return eina_extra_str_dup_printf("%g%s", thiz->value, units);
 }
 
 EAPI Eina_Bool egueb_svg_length_is_equal(Egueb_Svg_Length *length1, Egueb_Svg_Length *length2)
