@@ -41,6 +41,9 @@ endif
 if BUILD_EDOM
 include src/lib/dom/Makefile.mk
 include src/lib/dom/parser/Makefile.mk
+endif
+
+if BUILD_ESMIL
 include src/lib/smil/Makefile.mk
 endif
 

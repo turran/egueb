@@ -9,12 +9,14 @@ src_tests_libmydom_la_CPPFLAGS = \
 -I$(top_srcdir)/src/lib/dom \
 -I$(top_srcdir)/src/lib/smil \
 -I. \
-@EDOM_CFLAGS@
+@EDOM_CFLAGS@ \
+@ETCH_CFLAGS@
 
 src_tests_libmydom_la_LIBADD = \
 $(top_builddir)/src/lib/dom/libegueb_dom.la \
 $(top_builddir)/src/lib/smil/libegueb_smil.la \
-@EDOM_LIBS@
+@EDOM_LIBS@ \
+@ETCH_LIBS@
 
 tests_dom_CPPFLAGS = \
 -I$(top_srcdir)/src/lib/dom \

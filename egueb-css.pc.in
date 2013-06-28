@@ -4,11 +4,11 @@ libdir=@libdir@
 includedir=@includedir@
 datarootdir=@datarootdir@
 datadir=@datadir@/@PACKAGE@
-pkgincludedir=@pkgincludedir@-@VMAJ@
+pkgincludedir=@pkgincludedir@-@VMAJ@/css
 
 Name: Egueb CSS
 Description: Egueb CSS implementation
 Requires.private: eina
 Version: @VERSION@
 Libs: -L${libdir} -legueb_css
-Cflags: -I${pkgincludedir}/css
+Cflags: -I${pkgincludedir}

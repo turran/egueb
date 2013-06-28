@@ -39,15 +39,16 @@ AC_SUBST([VMAJ])
 ### Needed information
 
 EINA_VERSION="1.0.99"
+EINA_EXTRA_VERSION="0.0.1"
 ENESIM_VERSION="0.0.18"
 ETCH_VERSION="0.0.5"
-EINA_EXTRA_VERSION="0.0.1"
 
 AC_CANONICAL_HOST
 
-ecss_requirements="eina"
-edom_requirements="eina eina-extra >= ${EINA_EXTRA_VERSION} enesim >= ${ENESIM_VERSION}"
-esvg_requirements="eina-extra >= ${EINA_EXTRA_VERSION} etch >= ${ETCH_VERSION} enesim >= ${ENESIM_VERSION} eina >= ${EINA_VERSION}"
+ecss_requirements="eina >= ${EINA_VERSION}"
+edom_requirements="enesim >= ${ENESIM_VERSION} eina-extra >= ${EINA_EXTRA_VERSION} enesim >= ${ENESIM_VERSION} eina >= ${EINA_VERSION}"
+esmil_requirements="etch >= ${ETCH_VERSION} enesim >= ${ENESIM_VERSION} eina-extra >= ${EINA_EXTRA_VERSION}  eina >= ${EINA_VERSION}"
+esvg_requirements="etch >= ${ETCH_VERSION} enesim >= ${ENESIM_VERSION} eina-extra >= ${EINA_EXTRA_VERSION} eina >= ${EINA_VERSION}"
 gstreamer_requirements="gstreamer-0.10"
 
 AC_SUBST([esvg_requirements])
@@ -77,6 +78,18 @@ AC_ARG_ENABLE([edom],
    [want_edom="yes"])
 
 AM_CONDITIONAL([WANT_EDOM], [test "x${want_edom}" = "xyes"])
+
+AC_ARG_ENABLE([esmil],
+   [AS_HELP_STRING([--enable-esmil], [enable Esmil compilation.])],
+   [if test "x${enableval}" = "xyes"; then
+       want_esmil="yes"
+    else
+       want_esmil="no"
+    fi
+   ],
+   [want_esmil="yes"])
+
+AM_CONDITIONAL([WANT_ESMIL], [test "x${want_esmil}" = "xyes"])
 
 AC_ARG_ENABLE([esvg],
    [AS_HELP_STRING([--enable-esvg], [enable Esvg compilation.])],
@@ -133,7 +146,11 @@ if test "x${want_edom}" = "xyes" ; then
    PKG_CHECK_MODULES([EDOM], [${edom_requirements}], [want_edom="yes"], [want_edom="no"])
 fi
 
-if test "x${want_ecss}" = "xyes" && test "x${want_edom}" = "xyes" ; then
+if test "x${want_esmil}" = "xyes" && test "x${want_edom}" = "xyes" ; then
+   PKG_CHECK_MODULES([ESMIL], [${esmil_requirements}], [want_esmil="yes"], [want_esmil="no"])
+fi
+
+if test "x${want_esvg}" = "xyes" && test "x${want_ecss}" = "xyes" && test "x${want_ecss}" = "xyes" && test "x${want_esmil}" = "xyes" ; then
    PKG_CHECK_MODULES([ESVG], [${esvg_requirements}], [want_esvg="yes"], [want_esvg="no"])
    # Video backends
    PKG_CHECK_MODULES([GSTREAMER], [${gstreamer_requirements}], [have_gstreamer="yes"], [have_gstreamer="no"])
@@ -165,9 +182,12 @@ if test "x${want_ecss}" = "xyes" && test "x${want_edom}" = "xyes" ; then
    AC_LANG_POP
 fi
 
+# For Dom test
+PKG_CHECK_MODULES([ETCH], [etch])
+
 AM_CONDITIONAL(BUILD_ECSS, [test "x${want_ecss}" = "xyes"])
 AM_CONDITIONAL(BUILD_EDOM, [test "x${want_edom}" = "xyes"])
-AM_CONDITIONAL(BUILD_EMAGE, [test "x${have_emage}" = "xyes"])
+AM_CONDITIONAL(BUILD_ESMIL, [test "x${want_esmil}" = "xyes"])
 AM_CONDITIONAL(BUILD_ESVG, [test "x${want_esvg}" = "xyes"])
 AM_CONDITIONAL(BUILD_ESVG_VIDEO_GSTREAMER, [test "x${have_gstreamer}" = "xyes"])
 
@@ -220,6 +240,7 @@ echo "Configuration Options Summary:"
 echo
 echo "CSS support.................................: ${want_ecss}"
 echo "DOM support.................................: ${want_edom}"
+echo "SMIL support................................: ${want_esmil}"
 echo "SVG support.................................: ${want_esvg}"
 echo "  Video support:"
 echo "    GStreamer...............................: ${have_gstreamer}"

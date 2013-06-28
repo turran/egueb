@@ -40,11 +40,11 @@ src_lib_smil_libegueb_smil_la_CPPFLAGS = \
 -I$(top_srcdir)/src/lib/smil \
 -I$(top_srcdir)/src/lib/dom \
 -DEGUEB_SMIL_BUILD \
-@EDOM_CFLAGS@
+@ESMIL_CFLAGS@
 
 src_lib_smil_libegueb_smil_la_LIBADD = \
 $(top_builddir)/src/lib/dom/libegueb_dom.la \
-@EDOM_LIBS@ -letch
+@ESMIL_LIBS@
 
 src_lib_smil_libegueb_smil_la_LDFLAGS = -no-undefined -version-info @version_info@
 

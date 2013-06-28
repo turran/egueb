@@ -4,12 +4,12 @@ libdir=@libdir@
 includedir=@includedir@
 datarootdir=@datarootdir@
 datadir=@datadir@/@PACKAGE@
-pkgincludedir=@pkgincludedir@-@VMAJ@
+pkgincludedir=@pkgincludedir@-@VMAJ@/smil
 
 Name: Egueb SMIL
 Description: Egueb SMIL implementation
 Requires.private: egueb-dom
 Version: @VERSION@
 Libs: -L${libdir} -legueb_smil
-Cflags: -I${pkgincludedir}/smil -I${pkgincludedir}/dom
+Cflags: -I${pkgincludedir}
 
