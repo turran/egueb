@@ -1,5 +1,5 @@
-/* Esvg - SVG
- * Copyright (C) 2011 Jorge Luis Zapata, Vincent Torri
+/* Egueb
+ * Copyright (C) 2011 - 2013 Jorge Luis Zapata
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -15,17 +15,14 @@
  * License along with this library.
  * If not, see <http://www.gnu.org/licenses/>.
  */
-#include "egueb_smil_main_private.h"
-#include "egueb_smil_private_attribute_presentation.h"
-#include "egueb_smil_private_attribute_animation.h"
-#include "egueb_smil_context_private.h"
-#include "egueb_smil_element_private.h"
-#include "egueb_smil_element_animation_private.h"
-#include "egueb_smil_animate_base_private.h"
-#include "egueb_smil_element_svg_private.h"
 
-#include "egueb_smil_animate_base.h"
-#include "egueb_smil_element_animation.h"
+#include "egueb_smil_private.h"
+#include "egueb_smil_main.h"
+#include "egueb_smil_set.h"
+#include "egueb_smil_event.h"
+#include "egueb_smil_animation_private.h"
+#include "egueb_smil_animate_base_private.h"
+
 /*
  * This file handles the common attribute handling for the
  * 'animate_base value attributes'. The elements that inherit
@@ -41,23 +38,7 @@
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
-#define EGUEB_SMIL_LOG_DEFAULT _egueb_smil_animate_base_log
-
-static int _egueb_smil_animate_base_log = -1;
-
-#define EGUEB_SMIL_ANIMATE_BASE_MAGIC_CHECK(d) \
-	do {\
-		if (!EINA_MAGIC_CHECK(d, EGUEB_SMIL_ANIMATE_BASE_MAGIC))\
-			EINA_MAGIC_FAIL(d, EGUEB_SMIL_ANIMATE_BASE_MAGIC);\
-	} while(0)
-
-static Ender_Property *EGUEB_SMIL_ANIMATE_BASE_TO;
-static Ender_Property *EGUEB_SMIL_ANIMATE_BASE_FROM;
-static Ender_Property *EGUEB_SMIL_ANIMATE_BASE_VALUES;
-static Ender_Property *EGUEB_SMIL_ANIMATE_BASE_KEY_TIMES;
-static Ender_Property *EGUEB_SMIL_ANIMATE_BASE_KEY_SPLINES;
-static Ender_Property *EGUEB_SMIL_ANIMATE_BASE_CALC_MODE;
-
+#if 0
 typedef struct _Egueb_Smil_Animate_Base_Values_Data
 {
 	Eina_List *values;
@@ -78,44 +59,6 @@ typedef struct _Egueb_Smil_Animate_Base_Descriptor_Internal
 	Egueb_Dom_Tag_Attribute_Get attribute_get;
 	Egueb_Smil_Animate_Base_Attribute_Descriptor_Get type_descriptor_get;
 } Egueb_Smil_Animate_Base_Descriptor_Internal;
-
-typedef struct _Egueb_Smil_Animate_Base
-{
-	EINA_MAGIC
-	/* properties */
-	Egueb_Smil_Animate_Base_Context current;
-	/* interface */
-	Egueb_Smil_Animate_Base_Descriptor_Internal descriptor;
-	/* private */
-	Ender_Element *thiz_e;
-	Egueb_Smil_Attribute_Type attribute_type;
-	Egueb_Smil_Attribute_Animated_Descriptor *d;
-	Eina_List *values;
-	Eina_List *times;
-	void *destination_data;
-	void *destination_add;
-	void *destination_acc;
-	int repeat_count;
-	/* parent relation */
-	Ender_Element *parent_e;
-	Egueb_Dom_Tag *parent_t;
-	Ender_Property *p;
-	/* etch related data */
-	Etch *etch;
-	Etch_Animation *etch_a;
-	/* for the inheritance */
-	void *data;
-} Egueb_Smil_Animate_Base;
-
-static Egueb_Smil_Animate_Base * _egueb_smil_animate_base_get(Egueb_Dom_Tag *t)
-{
-	Egueb_Smil_Animate_Base *thiz;
-
-	thiz = egueb_smil_element_animation_data_get(t);
-	EGUEB_SMIL_ANIMATE_BASE_MAGIC_CHECK(thiz);
-
-	return thiz;
-}
 
 static Etch_Interpolator_Type _egueb_smil_animate_base_calc_mode_etch_to(Egueb_Smil_Calc_Mode c)
 {
@@ -759,80 +702,24 @@ static void _egueb_smil_animate_base_initialize(Ender_Element *e)
 		thiz->descriptor.initialize(e);
 }
 
-static Eina_Bool _egueb_smil_animate_base_attribute_set(Ender_Element *e,
-		const char *key, const char *value)
-{
-	/* value attributes */
-	/* for from and to, we should not fetch the property an generate
-	 * the final data type, we better pass it still as strings
-	 */
-	if (strcmp(key, "calcMode") == 0)
-	{
-		Egueb_Smil_Calc_Mode cm;
-
-		egueb_smil_calc_mode_string_from(&cm, value);
-		egueb_smil_animate_base_calc_mode_set(e, cm);
-	}
-	else if (strcmp(key, "values") == 0)
-	{
-		egueb_smil_animate_base_values_set(e, value);
-	}
-	else if (strcmp(key, "keyTimes") == 0)
-	{
-		egueb_smil_animate_base_key_times_set(e, value);
-	}
-	else if (strcmp(key, "keySplines") == 0)
-	{
-		egueb_smil_animate_base_key_splines_set(e, value);
-	}
-	else if (strcmp(key, "from") == 0)
-	{
-		egueb_smil_animate_base_from_set(e, value);
-	}
-	else if (strcmp(key, "to") == 0)
-	{
-		egueb_smil_animate_base_to_set(e, value);
-	}
-	else if (strcmp(key, "by") == 0)
-	{
-	}
-	else
-	{
-		Egueb_Smil_Animate_Base *thiz;
-		Egueb_Dom_Tag *t;
-
-		t = ender_element_object_get(e);
-		thiz = _egueb_smil_animate_base_get(t);
-
-		if (thiz->descriptor.attribute_set)
-			return thiz->descriptor.attribute_set(e, key, value);
-		return EINA_FALSE;
-	}
-	return EINA_TRUE;
-}
-
-static Eina_Bool _egueb_smil_animate_base_attribute_get(Egueb_Dom_Tag *tag, const char *attribute, char **value)
-{
-	return EINA_FALSE;
-}
-
-static void _egueb_smil_animate_base_free(Egueb_Dom_Tag *t)
-{
-	Egueb_Smil_Animate_Base *thiz;
-
-	thiz = _egueb_smil_animate_base_get(t);
-	_egueb_smil_animate_base_cleanup(thiz);
-	if (thiz->descriptor.free)
-		thiz->descriptor.free(t);
-	free(thiz);
-}
-
 static Eina_Bool _egueb_smil_animate_base_setup(Egueb_Dom_Tag *t,
 		Egueb_Smil_Context *c,
 		Egueb_Smil_Animation_Context *actx,
 		Enesim_Log **error)
 {
+}
+
+/* The ender wrapper */
+#define _egueb_smil_animate_base_calc_mode_is_set NULL
+#endif
+/*----------------------------------------------------------------------------*
+ *                             Animation interface                            *
+ *----------------------------------------------------------------------------*/
+static Eina_Bool _egueb_smil_animate_base_setup(Egueb_Smil_Animation *a,
+		Egueb_Dom_Node *target)
+{
 	Egueb_Smil_Animate_Base *thiz;
+#if 0
 	Egueb_Smil_Attribute_Animated_Descriptor *d;
 	Ender_Element *svg_e;
 	Ender_Container *ec;
@@ -841,8 +728,10 @@ static Eina_Bool _egueb_smil_animate_base_setup(Egueb_Dom_Tag *t,
 	Ender_Constraint_Type cnst_type;
 	Etch *etch;
 	const char *name;
+#endif
 
-	thiz = _egueb_smil_animate_base_get(t);
+	thiz = EGUEB_SMIL_ANIMATE_BASE(a);
+#if 0
 	_egueb_smil_animate_base_cleanup(thiz);
 
 	/* TODO pass the etch from the animation class */
@@ -882,42 +771,74 @@ static Eina_Bool _egueb_smil_animate_base_setup(Egueb_Dom_Tag *t,
 	thiz->p = actx->p;
 	thiz->d = d;
 	_egueb_smil_animate_base_animation_create(thiz, actx);
+#endif
 
 	return EINA_TRUE;
 }
 
-/* The ender wrapper */
-#define _egueb_smil_animate_base_delete NULL
-#define _egueb_smil_animate_base_to_is_set NULL
-#define _egueb_smil_animate_base_from_is_set NULL
-#define _egueb_smil_animate_base_values_is_set NULL
-#define _egueb_smil_animate_base_calc_mode_is_set NULL
-#define _egueb_smil_animate_base_key_times_is_set NULL
-#define _egueb_smil_animate_base_key_splines_is_set NULL
-#include "egueb_smil_generated_animate_base.c"
+static void _egueb_smil_animate_base_cleanup(Egueb_Smil_Animation *a,
+		Egueb_Dom_Node *target)
+{
+}
+
+static void _egueb_smil_animate_base_begin(Egueb_Smil_Animation *a, int64_t offset)
+{
+}
+
+static void _egueb_smil_animate_base_end(Egueb_Smil_Animation *a)
+{
+}
+/*----------------------------------------------------------------------------*
+ *                              Object interface                              *
+ *----------------------------------------------------------------------------*/
+EGUEB_DOM_ATTR_FETCH_DEFINE(egueb_smil_animate_base, Egueb_Smil_Animate_Base, calc_mode);
+EGUEB_DOM_ATTR_FETCH_DEFINE(egueb_smil_animate_base, Egueb_Smil_Animate_Base, by);
+EGUEB_DOM_ATTR_FETCH_DEFINE(egueb_smil_animate_base, Egueb_Smil_Animate_Base, to);
+EGUEB_DOM_ATTR_FETCH_DEFINE(egueb_smil_animate_base, Egueb_Smil_Animate_Base, from);
+EGUEB_DOM_ATTR_FETCH_DEFINE(egueb_smil_animate_base, Egueb_Smil_Animate_Base, values);
+EGUEB_DOM_ATTR_FETCH_DEFINE(egueb_smil_animate_base, Egueb_Smil_Animate_Base, key_times);
+EGUEB_DOM_ATTR_FETCH_DEFINE(egueb_smil_animate_base, Egueb_Smil_Animate_Base, key_splines);
+
+ENESIM_OBJECT_ABSTRACT_BOILERPLATE(EGUEB_SMIL_ANIMATION_DESCRIPTOR,
+		Egueb_Smil_Animate_Base, Egueb_Smil_Animate_Base_Class, egueb_smil_animate_base);
+
+static void _egueb_smil_animate_base_class_init(void *k)
+{
+	Egueb_Smil_Animation_Class *klass;
+
+	klass = EGUEB_SMIL_ANIMATION_CLASS(k);
+	klass->cleanup = _egueb_smil_animate_base_cleanup;
+	klass->setup = _egueb_smil_animate_base_setup;
+	klass->begin = _egueb_smil_animate_base_begin;
+	klass->end = _egueb_smil_animate_base_end;
+}
+
+static void _egueb_smil_animate_base_class_deinit(void *k)
+{
+}
+
+static void _egueb_smil_animate_base_instance_init(void *o)
+{
+}
+
+static void _egueb_smil_animate_base_instance_deinit(void *o)
+{
+	Egueb_Smil_Animate_Base *thiz;
+
+	thiz = EGUEB_SMIL_ANIMATION(o);
+	/* the cleanup will be called as part of the deinitialization */
+	egueb_dom_node_unref(thiz->calc_mode);
+	egueb_dom_node_unref(thiz->by);
+	egueb_dom_node_unref(thiz->to);
+	egueb_dom_node_unref(thiz->from);
+	egueb_dom_node_unref(thiz->values);
+	egueb_dom_node_unref(thiz->key_times);
+	egueb_dom_node_unref(thiz->key_splines);
+}
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
-void egueb_smil_animate_base_init(void)
-{
-	_egueb_smil_animate_base_log = eina_log_domain_register("egueb_smil_animate_base", EGUEB_SMIL_LOG_COLOR_DEFAULT);
-	if (_egueb_smil_animate_base_log < 0)
-	{
-		EINA_LOG_ERR("Can not create log domain.");
-		return;
-	}
-	_egueb_smil_animate_base_init();
-}
-
-void egueb_smil_animate_base_shutdown(void)
-{
-	if (_egueb_smil_animate_base_log < 0)
-		return;
-	_egueb_smil_animate_base_shutdown();
-	eina_log_domain_unregister(_egueb_smil_animate_base_log);
-	_egueb_smil_animate_base_log = -1;
-}
-
+#if 0
 Eina_Bool egueb_smil_is_animate_base_internal(Egueb_Dom_Tag *t)
 {
 	Egueb_Smil_Animate_Base *thiz;
@@ -971,9 +892,11 @@ Egueb_Dom_Tag * egueb_smil_animate_base_new(Egueb_Smil_Animate_Base_Descriptor *
 
 	return t;
 }
+#endif
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/
+#if 0
 /**
  * To be documented
  * FIXME: To be fixed
@@ -1111,4 +1034,4 @@ EAPI void egueb_smil_animate_base_key_splines_get(Ender_Element *e, const char *
 	t = ender_element_object_get(e);
 	_egueb_smil_animate_base_key_splines_get(t, v);
 }
-
+#endif

@@ -47,7 +47,6 @@ typedef struct _Egueb_Smil_Animation
 	Egueb_Dom_Node *target;
 	/* the etch subsystem */
 	Etch *etch;
-	Etch_Animation *etch_a;
 
 	Egueb_Dom_Node *p;
 	const Egueb_Dom_Value_Descriptor *d;

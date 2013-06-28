@@ -22,6 +22,8 @@ src_lib_smil_libegueb_smil_la_SOURCES = \
 src/lib/smil/egueb_smil_accumulate.c \
 src/lib/smil/egueb_smil_additive.c \
 src/lib/smil/egueb_smil_animation.c \
+src/lib/smil/egueb_smil_animate_base.c \
+src/lib/smil/egueb_smil_animate_base_private.h \
 src/lib/smil/egueb_smil_clock.c \
 src/lib/smil/egueb_smil_duration.c \
 src/lib/smil/egueb_smil_event.c \

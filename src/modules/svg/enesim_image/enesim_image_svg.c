@@ -33,6 +33,25 @@
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
+#define ENESIM_IMAGE_LOG_COLOR_DEFAULT EINA_COLOR_GREEN
+
+#ifdef ERR
+# undef ERR
+#endif
+#define ERR(...) EINA_LOG_DOM_ERR(_enesim_image_log_dom_svg, __VA_ARGS__)
+
+#ifdef WRN
+# undef WRN
+#endif
+#define WRN(...) EINA_LOG_DOM_WARN(_enesim_image_log_dom_svg, __VA_ARGS__)
+
+#ifdef DBG
+# undef DBG
+#endif
+#define DBG(...) EINA_LOG_DOM_DBG(_enesim_image_log_dom_svg, __VA_ARGS__)
+
+static int _enesim_image_log_dom_svg = -1;
+
 /*----------------------------------------------------------------------------*
  *                           Application Descriptor                           *
  *----------------------------------------------------------------------------*/
@@ -48,6 +67,10 @@ static Egueb_Svg_Element_Svg_Application_Descriptor _enesim_image_svg_descriptor
 	/* .go_to 		= */ NULL,
 };
 #endif
+static const char * _enesim_image_svg_filename_get(void *user_data)
+{
+	return user_data;
+}
 /*----------------------------------------------------------------------------*
  *                         Enesim Image Provider API                          *
  *----------------------------------------------------------------------------*/
@@ -167,21 +190,7 @@ static Eina_Error _enesim_image_svg_load(Enesim_Image_Data *data, Enesim_Buffer 
 	}
 	/* set the application descriptor in case the svg needs it */
 	location = enesim_image_data_location(data);
-	if (location)
-	{
-#if 0
-		char *base_dir;
-		char *tmp;
-
-		tmp = dirname(location);
-		if (!strcmp(tmp, "."))
-			tmp = "./";
-		base_dir = strdup(tmp);
-		egueb_svg_element_svg_application_descriptor_set(e, &_enesim_image_svg_descriptor, base_dir);
-		free(location);
-		location = base_dir;
-#endif
-	}
+	egueb_svg_document_filename_get_cb_set(doc, _enesim_image_svg_filename_get, location);
 	/* we should render into the swdata? */
 	egueb_svg_document_width_set(doc, w);
 	egueb_svg_document_height_set(doc, h);
@@ -201,11 +210,10 @@ static Eina_Error _enesim_image_svg_load(Enesim_Image_Data *data, Enesim_Buffer 
 err_setup:
 	enesim_surface_unref(s);
 err_surface:
-	//ender_element_unref(e);
-err_parse:
-	egueb_dom_node_unref(doc);
 	if (location)
 		free(location);
+err_parse:
+	egueb_dom_node_unref(doc);
 	return ret;
 }
 
@@ -225,13 +233,14 @@ static Enesim_Image_Provider_Descriptor _provider = {
  *----------------------------------------------------------------------------*/
 static const char * _enesim_image_svg_data_from(Enesim_Image_Data *data)
 {
-	char buf[256];
+	char buf[4096];
 	char *ret = NULL;
 	int count;
 	int i;
 
-	/* only try to find the <svg tag in the first 256 bytes */
-	count = enesim_image_data_read(data, buf, 256);
+	/* TODO we should find the first tag and skip all the comments */
+	/* only try to find the <svg tag in the first 4096 bytes */
+	count = enesim_image_data_read(data, buf, 4096);
 	for (i = 0; i < count; i++)
 	{
 		if (buf[i] == '<' && i + 4 < count)
@@ -267,6 +276,12 @@ Eina_Bool svg_provider_init(void)
 	 * - Register svg specific errors
 	 */
 	egueb_svg_init();
+	_enesim_image_log_dom_svg = eina_log_domain_register("enesim_image_svg", ENESIM_IMAGE_LOG_COLOR_DEFAULT);
+	if (_enesim_image_log_dom_svg < 0)
+	{
+		EINA_LOG_ERR("Enesim: Can not create a general log domain.");
+		return EINA_FALSE;
+	}
 	if (!enesim_image_provider_register(&_provider, ENESIM_PRIORITY_PRIMARY, "image/svg+xml"))
 		return EINA_FALSE;
 	if (!enesim_image_finder_register(&_finder))
@@ -281,6 +296,8 @@ void svg_provider_shutdown(void)
 {
 	enesim_image_finder_unregister(&_finder);
 	enesim_image_provider_unregister(&_provider, "image/svg+xml");
+	eina_log_domain_unregister(_enesim_image_log_dom_svg);
+	_enesim_image_log_dom_svg = -1;
 	egueb_svg_shutdown();
 }
 

@@ -45,7 +45,7 @@ typedef struct _Egueb_Smil_Animation_Event_Foreach_Data
 	int64_t offset;
 } Egueb_Smil_Animation_Event_Foreach_Data;
 
-/* TODO an offset only timing should be treated as an even too
+/* TODO an offset only timing should be treated as an event too
  * so we can have a fine grained system to start/stop animations
  */
 static void _egueb_smil_animation_event_cb(void *item, void *user_data)

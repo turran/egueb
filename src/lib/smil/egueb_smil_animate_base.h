@@ -1,5 +1,5 @@
-/* Esvg - SVG
- * Copyright (C) 2011 Jorge Luis Zapata, Vincent Torri
+/* Egueb
+ * Copyright (C) 2011 - 2013 Jorge Luis Zapata
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -15,9 +15,10 @@
  * License along with this library.
  * If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef _EGUEB_SMIL_ANIMATE_BASE_H
-#define _EGUEB_SMIL_ANIMATE_BASE_H
+#ifndef _EGUEB_SMIL_ANIMATE_BASE_H_
+#define _EGUEB_SMIL_ANIMATE_BASE_H_
 
+#if 0
 EAPI Eina_Bool egueb_smil_is_animate_base(Ender_Element *e);
 EAPI void egueb_smil_animate_base_to_set(Ender_Element *e, const char *v);
 EAPI void egueb_smil_animate_base_to_get(Ender_Element *e, const char **v);
@@ -31,5 +32,6 @@ EAPI void egueb_smil_animate_base_key_times_set(Ender_Element *e, const char *v)
 EAPI void egueb_smil_animate_base_key_times_get(Ender_Element *e, const char **v);
 EAPI void egueb_smil_animate_base_key_splines_set(Ender_Element *e, const char *v);
 EAPI void egueb_smil_animate_base_key_splines_get(Ender_Element *e, const char **v);
+#endif
 
 #endif
