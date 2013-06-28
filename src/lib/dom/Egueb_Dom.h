@@ -20,6 +20,7 @@
 
 #include <Eina.h>
 #include <Enesim.h>
+#include <Etch.h>
 
 #ifdef __cplusplus
 extern "C" {

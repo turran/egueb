@@ -45,6 +45,18 @@ typedef struct _Egueb_Smil_Animation_Event_Foreach_Data
 	int64_t offset;
 } Egueb_Smil_Animation_Event_Foreach_Data;
 
+static void _egueb_smil_animation_inserted_into_document_cb(Egueb_Dom_Event *ev,
+		void *data)
+{
+	Egueb_Smil_Animation *thiz = data;
+	Egueb_Dom_Node *doc;
+
+	egueb_dom_node_document_get(EGUEB_DOM_NODE(thiz), &doc);
+	thiz->document_changed = EINA_TRUE;
+	thiz->etch = egueb_dom_document_etch_get(doc);
+	egueb_dom_node_unref(doc);
+}
+
 /* TODO an offset only timing should be treated as an event too
  * so we can have a fine grained system to start/stop animations
  */
@@ -315,7 +327,6 @@ static void _egueb_smil_animation_fill_get(Egueb_Dom_Tag *t, Egueb_Smil_Fill *fi
 	thiz = EGUEB_SMIL_ANIMATION(t);
 	*fill = thiz->ctx.timing.fill;
 }
-
 /*----------------------------------------------------------------------------*
  *                         The Esvg Element interface                         *
  *----------------------------------------------------------------------------*/
@@ -460,7 +471,7 @@ static Eina_Bool _egueb_smil_animation_process(Egueb_Dom_Element *e)
 	 */
 	egueb_dom_node_parent_get(EGUEB_DOM_NODE(e), &parent);
 	if (!egueb_dom_element_changed(EGUEB_DOM_NODE(e)) &&
-			thiz->target == parent)
+			thiz->target == parent && !thiz->document_changed)
 	{
 		egueb_dom_node_unref(parent);
 		return EINA_TRUE;
@@ -472,6 +483,7 @@ static Eina_Bool _egueb_smil_animation_process(Egueb_Dom_Element *e)
 	/* dont keep a reference to its parent, in case the parent
 	 * is destroyed this will be destroyed first
 	 */
+	thiz->document_changed = EINA_FALSE;
 	egueb_dom_node_unref(parent);
 	return ret;
 }
@@ -530,6 +542,10 @@ static void _egueb_smil_animation_instance_init(void *o)
 	EGUEB_DOM_ELEMENT_CLASS_PROPERTY_ADD(thiz, egueb_smil_animation, dur);
 	EGUEB_DOM_ELEMENT_CLASS_PROPERTY_ADD(thiz, egueb_smil_animation, begin);
 	EGUEB_DOM_ELEMENT_CLASS_PROPERTY_ADD(thiz, egueb_smil_animation, end);
+
+	/* useful events */
+	egueb_dom_node_event_listener_add(n, EGUEB_DOM_EVENT_MUTATION_NODE_INSERTED_INTO_DOCUMENT,
+			_egueb_smil_animation_inserted_into_document_cb, EINA_FALSE, thiz);
 }
 
 static void _egueb_smil_animation_instance_deinit(void *o)
@@ -547,17 +563,6 @@ static void _egueb_smil_animation_instance_deinit(void *o)
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
-/* A better approach would be to query an "animatable" interface on the document
- * and get the etch, but this is C ...
- */
-void egueb_smil_animation_etch_set(Egueb_Dom_Node *n, Etch *etch)
-{
-	Egueb_Smil_Animation *thiz;
-
-	thiz = EGUEB_SMIL_ANIMATION(n);
-	thiz->etch = etch;
-}
-
 #if 0
 Egueb_Dom_Tag * egueb_smil_animation_new(Egueb_Smil_Animation_Descriptor *descriptor, Egueb_Smil_Type type,
 		void *data)

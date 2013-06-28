@@ -80,6 +80,9 @@ typedef struct _Egueb_Svg_Document
 	/* input */
 	Egueb_Dom_Input *input;
 
+	/* animation */
+	Etch *etch;
+
 	/* our own state */
 	double last_width;
 	double last_height;
@@ -732,6 +735,14 @@ static Egueb_Dom_Input_Descriptor _document_svg_input_descriptor = {
 /*----------------------------------------------------------------------------*
  *                            Document interface                              *
  *----------------------------------------------------------------------------*/
+static Etch * _egueb_svg_document_etch_get(Egueb_Dom_Node *n)
+{
+	Egueb_Svg_Document *thiz;
+
+	thiz = EGUEB_SVG_DOCUMENT(n);
+	return thiz->etch;
+}
+
 static Egueb_Dom_Node * _egueb_svg_document_class_element_create(
 		Egueb_Dom_Document *d, const char *name)
 {
@@ -811,6 +822,7 @@ static void _egueb_svg_document_instance_init(void *o)
 	thiz = EGUEB_SVG_DOCUMENT(o);
 	thiz->font_size = 16;
 	thiz->input = egueb_dom_input_new(&_document_svg_input_descriptor, thiz);
+	thiz->etch = etch_new();
 }
 
 static void _egueb_svg_document_instance_deinit(void *o)

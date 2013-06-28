@@ -24,8 +24,9 @@
 #endif
 
 #include <Eina.h>
-#include <Enesim.h>
 #include <Eina_Extra.h>
+#include <Enesim.h>
+#include <Etch.h>
 
 #include "egueb_dom_build.h"
 

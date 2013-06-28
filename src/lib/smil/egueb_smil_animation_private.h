@@ -48,6 +48,9 @@ typedef struct _Egueb_Smil_Animation
 	/* the etch subsystem */
 	Etch *etch;
 
+	/* in case we have changed of document */
+	Eina_Bool document_changed;
+
 	Egueb_Dom_Node *p;
 	const Egueb_Dom_Value_Descriptor *d;
 	Eina_Bool started;

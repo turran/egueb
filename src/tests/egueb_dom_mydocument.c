@@ -27,29 +27,37 @@ typedef struct _MyDocument_Class
 
 ENESIM_OBJECT_INSTANCE_BOILERPLATE(EGUEB_DOM_DOCUMENT_DESCRIPTOR, MyDocument, MyDocument_Class, mydocument);
 
-static Egueb_Dom_Node * _mydocument_class_element_create(Egueb_Dom_Document *d,
+static Egueb_Dom_Node * _mydocument_element_create(Egueb_Dom_Node *n,
 		const char *name)
 {
 	MyDocument *thiz;
 	Egueb_Dom_Node *new_node = NULL;
 
-	thiz = MYDOCUMENT(d);
+	thiz = MYDOCUMENT(n);
 	printf("[mydocument] requesting tag name = %s\n", name);
 	if (!strcmp(name, "myelement"))
 		new_node = myelement_new();
 	else if (!strcmp(name, "set"))
 	{
 		new_node = egueb_smil_set_new();
-		egueb_smil_animation_etch_set(new_node, thiz->etch);
 	}
 	return new_node;
+}
+
+static Etch * _mydocument_etch_get(Egueb_Dom_Node *n)
+{
+	MyDocument *thiz;
+
+	thiz = MYDOCUMENT(n);
+	return thiz->etch;
 }
 
 static void _mydocument_class_init(void *k)
 {
 	Egueb_Dom_Document_Class *klass = EGUEB_DOM_DOCUMENT_CLASS(k);
 
-	klass->element_create = _mydocument_class_element_create;
+	klass->element_create = _mydocument_element_create;
+	klass->etch_get = _mydocument_etch_get;
 	printf("mydocument class init\n");
 }
 
