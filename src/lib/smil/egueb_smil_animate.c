@@ -15,41 +15,33 @@
  * License along with this library.
  * If not, see <http://www.gnu.org/licenses/>.
  */
-#include "egueb_smil_main_private.h"
-#include "egueb_smil_private_attribute_presentation.h"
-#include "egueb_smil_context_private.h"
-#include "egueb_smil_element_private.h"
-#include "egueb_smil_private_attribute_animation.h"
-#include "egueb_smil_element_animation_private.h"
+#include "egueb_smil_private.h"
+#include "egueb_smil_main.h"
+#include "egueb_smil_animate.h"
+#include "egueb_smil_event.h"
+#include "egueb_smil_animate_base.h"
+#include "egueb_smil_animation_private.h"
 #include "egueb_smil_animate_base_private.h"
-#include "egueb_smil_element_animate_private.h"
-#include "egueb_smil_element_svg_private.h"
-
-#include "egueb_smil_element_animate.h"
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
-#define EGUEB_SMIL_LOG_DEFAULT _egueb_smil_element_animate_log
+#define EGUEB_SMIL_ANIMATE_DESCRIPTOR egueb_smil_animate_descriptor_get()
+#define EGUEB_SMIL_ANIMATE_CLASS(k) ENESIM_OBJECT_CLASS_CHECK(k, Egueb_Smil_Animate_Class, EGUEB_SMIL_ANIMATE_DESCRIPTOR)
+#define EGUEB_SMIL_ANIMATE(o) ENESIM_OBJECT_INSTANCE_CHECK(o, Egueb_Smil_Animate, EGUEB_SMIL_ANIMATE_DESCRIPTOR)
 
-static int _egueb_smil_element_animate_log = -1;
-
-typedef struct _Egueb_Smil_Element_Animate
+typedef struct _Egueb_Smil_Animate
 {
+	Egueb_Smil_Animate_Base base;
 	/* properties */
 	/* interface */
 	/* private */
-} Egueb_Smil_Element_Animate;
+} Egueb_Smil_Animate;
 
-static Egueb_Smil_Element_Animate * _egueb_smil_element_animate_get(Egueb_Dom_Tag *t)
+typedef struct _Egueb_Smil_Animate_Class
 {
-	Egueb_Smil_Element_Animate *thiz;
-
-	if (egueb_smil_element_internal_type_get(t) != EGUEB_SMIL_TYPE_ANIMATE)
-		return NULL;
-	thiz = egueb_smil_animate_base_data_get(t);
-
-	return thiz;
-}
+	Egueb_Smil_Animate_Base_Class parent;
+} Egueb_Smil_Animate_Class;
+#if 0
 /*----------------------------------------------------------------------------*
  *                         The Animate Base interface                         *
  *----------------------------------------------------------------------------*/
@@ -106,28 +98,43 @@ static Egueb_Dom_Tag * _egueb_smil_element_animate_new(void)
 /* The ender wrapper */
 #define _egueb_smil_element_animate_delete NULL
 #include "egueb_smil_generated_element_animate.c"
+#endif
+/*----------------------------------------------------------------------------*
+ *                              Element interface                             *
+ *----------------------------------------------------------------------------*/
+static Egueb_Dom_String * _egueb_smil_animate_tag_name_get(
+		Egueb_Dom_Element *e)
+{
+	return egueb_dom_string_ref(EGUEB_SMIL_NAME_ANIMATE);
+}
+/*----------------------------------------------------------------------------*
+ *                              Object interface                              *
+ *----------------------------------------------------------------------------*/
+ENESIM_OBJECT_INSTANCE_BOILERPLATE(EGUEB_SMIL_ANIMATE_BASE_DESCRIPTOR,
+		Egueb_Smil_Animate, Egueb_Smil_Animate_Class, egueb_smil_animate);
+
+static void _egueb_smil_animate_class_init(void *k)
+{
+}
+
+static void _egueb_smil_animate_class_deinit(void *k)
+{
+	Egueb_Dom_Element_Class *e_klass;
+
+	e_klass= EGUEB_DOM_ELEMENT_CLASS(k);
+	e_klass->tag_name_get = _egueb_smil_animate_tag_name_get;
+}
+
+static void _egueb_smil_animate_instance_init(void *o)
+{
+}
+
+static void _egueb_smil_animate_instance_deinit(void *o)
+{
+}
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
-void egueb_smil_element_animate_init(void)
-{
-	_egueb_smil_element_animate_log = eina_log_domain_register("egueb_smil_element_animate", EGUEB_SMIL_LOG_COLOR_DEFAULT);
-	if (_egueb_smil_element_animate_log < 0)
-	{
-		EINA_LOG_ERR("Can not create log domain.");
-		return;
-	}
-	_egueb_smil_element_animate_init();
-}
-
-void egueb_smil_element_animate_shutdown(void)
-{
-	if (_egueb_smil_element_animate_log < 0)
-		return;
-	_egueb_smil_element_animate_shutdown();
-	eina_log_domain_unregister(_egueb_smil_element_animate_log);
-	_egueb_smil_element_animate_log = -1;
-}
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/
@@ -135,8 +142,10 @@ void egueb_smil_element_animate_shutdown(void)
  * To be documented
  * FIXME: To be fixed
  */
-EAPI Ender_Element * egueb_smil_element_animate_new(void)
+EAPI Egueb_Dom_Node * egueb_smil_animate_new(void)
 {
-	return EGUEB_SMIL_ELEMENT_NEW("SVGAnimateElement");
-}
+	Egueb_Dom_Node *n;
 
+	n = ENESIM_OBJECT_INSTANCE_NEW(egueb_smil_animate);
+	return n;
+}

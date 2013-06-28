@@ -517,11 +517,11 @@ static Egueb_Dom_Node * _egueb_svg_document_element_create(int id)
 		case EGUEB_SVG_TYPE_STOP:
 		ret = egueb_svg_element_stop_new();
 		break;
-#if 0
-		case EGUEB_SVG_TYPE_ANIMATE:
-		ret = egueb_svg_element_animate_new();
-		break;
 
+		case EGUEB_SVG_TYPE_ANIMATE:
+		ret = egueb_smil_animate_new();
+		break;
+#if 0
 		case EGUEB_SVG_TYPE_ANIMATETRANSFORM:
 		ret = egueb_svg_element_animate_transform_new();
 		break;

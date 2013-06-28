@@ -41,6 +41,7 @@ extern "C" {
 #include "egueb_dom_event_ui.h"
 #include "egueb_dom_attr.h"
 #include "egueb_dom_attr_string.h"
+#include "egueb_dom_attr_string_list.h"
 #include "egueb_dom_character_data.h"
 #include "egueb_dom_input.h"
 #include "egueb_dom_text.h"
@@ -49,6 +50,7 @@ extern "C" {
 #include "egueb_dom_value.h"
 #include "egueb_dom_value_dom_string.h"
 #include "egueb_dom_value_int.h"
+#include "egueb_dom_string_list.h"
 
 #ifdef __cplusplus
 }

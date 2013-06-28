@@ -18,7 +18,7 @@
 #ifndef _EGUEB_SMIL_ATTR_TIMING_LIST_H_
 #define _EGUEB_SMIL_ATTR_TIMING_LIST_H_
 
-Egueb_Dom_Node * egueb_smil_attr_timing_list_new(Egueb_Dom_String *name,
+EAPI Egueb_Dom_Node * egueb_smil_attr_timing_list_new(Egueb_Dom_String *name,
 		Egueb_Dom_List *def);
 
 #endif

@@ -31,6 +31,9 @@ typedef struct _Egueb_Smil_Animate_Base
 	Egueb_Dom_Node *values;
 	Egueb_Dom_Node *key_times;
 	Egueb_Dom_Node *key_splines;
+
+	/* etch related data */
+	Etch_Animation *etch_a;
 #if 0
 	/* properties */
 	Egueb_Smil_Animate_Base_Context current;
@@ -50,9 +53,6 @@ typedef struct _Egueb_Smil_Animate_Base
 	Ender_Element *parent_e;
 	Egueb_Dom_Tag *parent_t;
 	Ender_Property *p;
-	/* etch related data */
-	Etch *etch;
-	Etch_Animation *etch_a;
 	/* for the inheritance */
 	void *data;
 #endif

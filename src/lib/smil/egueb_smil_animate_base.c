@@ -732,7 +732,6 @@ static Eina_Bool _egueb_smil_animate_base_setup(Egueb_Smil_Animation *a,
 
 	thiz = EGUEB_SMIL_ANIMATE_BASE(a);
 #if 0
-	_egueb_smil_animate_base_cleanup(thiz);
 
 	/* TODO pass the etch from the animation class */
 	/* TODO simplify the animation context */
@@ -779,14 +778,32 @@ static Eina_Bool _egueb_smil_animate_base_setup(Egueb_Smil_Animation *a,
 static void _egueb_smil_animate_base_cleanup(Egueb_Smil_Animation *a,
 		Egueb_Dom_Node *target)
 {
+	Egueb_Smil_Animate_Base *thiz;
+
+	thiz = EGUEB_SMIL_ANIMATE_BASE(a);
 }
 
+/* TODO same as set, share this */
 static void _egueb_smil_animate_base_begin(Egueb_Smil_Animation *a, int64_t offset)
 {
+	Egueb_Smil_Animate_Base *thiz;
+
+	thiz = EGUEB_SMIL_ANIMATE_BASE(a);
+	if (!thiz->etch_a) return;
+	DBG("Beginning set at %" ETCH_TIME_FORMAT, ETCH_TIME_ARGS (offset));
+	etch_animation_offset_add(thiz->etch_a, offset);
+	etch_animation_enable(thiz->etch_a);
 }
 
+/* TODO same as set, share this */
 static void _egueb_smil_animate_base_end(Egueb_Smil_Animation *a)
 {
+	Egueb_Smil_Animate_Base *thiz;
+
+	thiz = EGUEB_SMIL_ANIMATE_BASE(a);
+	if (!thiz->etch_a) return;
+	DBG("Ending");
+	etch_animation_disable(thiz->etch_a);
 }
 /*----------------------------------------------------------------------------*
  *                              Object interface                              *
@@ -819,21 +836,39 @@ static void _egueb_smil_animate_base_class_deinit(void *k)
 
 static void _egueb_smil_animate_base_instance_init(void *o)
 {
+	Egueb_Smil_Animate_Base *thiz;
+
+	thiz = EGUEB_SMIL_ANIMATE_BASE(o);
+	/* create the properties */
+	thiz->by = egueb_dom_attr_string_new(
+			egueb_dom_string_ref(EGUEB_SMIL_BY), NULL);
+	thiz->to = egueb_dom_attr_string_new(
+			egueb_dom_string_ref(EGUEB_SMIL_TO), NULL);
+	thiz->from = egueb_dom_attr_string_new(
+			egueb_dom_string_ref(EGUEB_SMIL_FROM), NULL);
+	thiz->values = egueb_dom_attr_string_list_new(
+			egueb_dom_string_ref(EGUEB_SMIL_VALUES), NULL);
+	EGUEB_DOM_ELEMENT_CLASS_PROPERTY_ADD(thiz, egueb_smil_animate_base, by);
+	EGUEB_DOM_ELEMENT_CLASS_PROPERTY_ADD(thiz, egueb_smil_animate_base, to);
+	EGUEB_DOM_ELEMENT_CLASS_PROPERTY_ADD(thiz, egueb_smil_animate_base, from);
+	EGUEB_DOM_ELEMENT_CLASS_PROPERTY_ADD(thiz, egueb_smil_animate_base, values);
 }
 
 static void _egueb_smil_animate_base_instance_deinit(void *o)
 {
 	Egueb_Smil_Animate_Base *thiz;
 
-	thiz = EGUEB_SMIL_ANIMATION(o);
+	thiz = EGUEB_SMIL_ANIMATE_BASE(o);
 	/* the cleanup will be called as part of the deinitialization */
-	egueb_dom_node_unref(thiz->calc_mode);
 	egueb_dom_node_unref(thiz->by);
 	egueb_dom_node_unref(thiz->to);
 	egueb_dom_node_unref(thiz->from);
 	egueb_dom_node_unref(thiz->values);
+#if 0
+	egueb_dom_node_unref(thiz->calc_mode);
 	egueb_dom_node_unref(thiz->key_times);
 	egueb_dom_node_unref(thiz->key_splines);
+#endif
 }
 /*============================================================================*
  *                                 Global                                     *

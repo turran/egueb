@@ -221,6 +221,14 @@ static void _egueb_smil_set_end(Egueb_Smil_Animation *a)
 	etch_animation_disable(thiz->etch_a);
 }
 /*----------------------------------------------------------------------------*
+ *                              Element interface                             *
+ *----------------------------------------------------------------------------*/
+static Egueb_Dom_String * _egueb_smil_set_tag_name_get(
+		Egueb_Dom_Element *e)
+{
+	return egueb_dom_string_ref(EGUEB_SMIL_NAME_SET);
+}
+/*----------------------------------------------------------------------------*
  *                              Object interface                              *
  *----------------------------------------------------------------------------*/
 EGUEB_DOM_ATTR_FETCH_DEFINE(egueb_smil_set, Egueb_Smil_Set, to);
@@ -231,12 +239,16 @@ ENESIM_OBJECT_INSTANCE_BOILERPLATE(EGUEB_SMIL_ANIMATION_DESCRIPTOR,
 static void _egueb_smil_set_class_init(void *k)
 {
 	Egueb_Smil_Animation_Class *klass;
+	Egueb_Dom_Element_Class *e_klass;
 
 	klass = EGUEB_SMIL_ANIMATION_CLASS(k);
 	klass->cleanup = _egueb_smil_set_cleanup;
 	klass->setup = _egueb_smil_set_setup;
 	klass->begin = _egueb_smil_set_begin;
 	klass->end = _egueb_smil_set_end;
+
+	e_klass= EGUEB_DOM_ELEMENT_CLASS(k);
+	e_klass->tag_name_get = _egueb_smil_set_tag_name_get;
 }
 
 static void _egueb_smil_set_class_deinit(void *k)

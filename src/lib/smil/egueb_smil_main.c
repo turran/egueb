@@ -26,22 +26,34 @@ static int _init_count = 0;
 /* our helpful strings */
 static void _egueb_smil_strings_init(void)
 {
+	EGUEB_SMIL_NAME_SET = egueb_dom_string_new_with_string("set");
+	EGUEB_SMIL_NAME_ANIMATE = egueb_dom_string_new_with_string("animate");
+
 	EGUEB_SMIL_ATTRIBUTE_NAME = egueb_dom_string_new_with_string("attributeName");
 	EGUEB_SMIL_BEGIN = egueb_dom_string_new_with_string("begin");
 	EGUEB_SMIL_DUR = egueb_dom_string_new_with_string("dur");
 	EGUEB_SMIL_END = egueb_dom_string_new_with_string("end");
 	EGUEB_SMIL_FILL = egueb_dom_string_new_with_string("fill");
 	EGUEB_SMIL_TO = egueb_dom_string_new_with_string("to");
+	EGUEB_SMIL_FROM = egueb_dom_string_new_with_string("from");
+	EGUEB_SMIL_BY = egueb_dom_string_new_with_string("by");
+	EGUEB_SMIL_VALUES = egueb_dom_string_new_with_string("values");
 }
 
 static void _egueb_smil_strings_shutdown(void)
 {
+	egueb_dom_string_unref(EGUEB_SMIL_NAME_SET);
+	egueb_dom_string_unref(EGUEB_SMIL_NAME_ANIMATE);
+
 	egueb_dom_string_unref(EGUEB_SMIL_ATTRIBUTE_NAME);
 	egueb_dom_string_unref(EGUEB_SMIL_BEGIN);
 	egueb_dom_string_unref(EGUEB_SMIL_DUR);
 	egueb_dom_string_unref(EGUEB_SMIL_END);
 	egueb_dom_string_unref(EGUEB_SMIL_FILL);
 	egueb_dom_string_unref(EGUEB_SMIL_TO);
+	egueb_dom_string_unref(EGUEB_SMIL_FROM);
+	egueb_dom_string_unref(EGUEB_SMIL_BY);
+	egueb_dom_string_unref(EGUEB_SMIL_VALUES);
 }
 /*============================================================================*
  *                                 Global                                     *
@@ -50,12 +62,18 @@ int egueb_smil_log_global = -1;
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/
+Egueb_Dom_String *EGUEB_SMIL_NAME_SET;
+Egueb_Dom_String *EGUEB_SMIL_NAME_ANIMATE;
+
 Egueb_Dom_String *EGUEB_SMIL_ATTRIBUTE_NAME;
 Egueb_Dom_String *EGUEB_SMIL_BEGIN;
 Egueb_Dom_String *EGUEB_SMIL_DUR;
 Egueb_Dom_String *EGUEB_SMIL_END;
 Egueb_Dom_String *EGUEB_SMIL_FILL;
 Egueb_Dom_String *EGUEB_SMIL_TO;
+Egueb_Dom_String *EGUEB_SMIL_FROM;
+Egueb_Dom_String *EGUEB_SMIL_BY;
+Egueb_Dom_String *EGUEB_SMIL_VALUES;
 
 EAPI void egueb_smil_init(void)
 {

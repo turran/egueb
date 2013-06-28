@@ -16,9 +16,9 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _EGUEB_SMIL_ELEMENT_ANIMATE_H
-#define _EGUEB_SMIL_ELEMENT_ANIMATE_H
+#ifndef _EGUEB_SMIL_ANIMATE_H
+#define _EGUEB_SMIL_ANIMATE_H
 
-EAPI Ender_Element * egueb_smil_element_animate_new(void);
+EAPI Egueb_Dom_Node * egueb_smil_animate_new(void);
 
 #endif

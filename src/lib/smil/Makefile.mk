@@ -5,15 +5,17 @@ dist_installed_smilheaders_DATA = \
 src/lib/smil/Egueb_Smil.h \
 src/lib/smil/egueb_smil_accumulate.h \
 src/lib/smil/egueb_smil_additive.h \
+src/lib/smil/egueb_smil_animate.h \
 src/lib/smil/egueb_smil_animation.h \
+src/lib/smil/egueb_smil_attr_duration.h \
+src/lib/smil/egueb_smil_attr_fill.h \
+src/lib/smil/egueb_smil_attr_timing_list.h \
 src/lib/smil/egueb_smil_build.h \
 src/lib/smil/egueb_smil_clock.h \
 src/lib/smil/egueb_smil_duration.h \
 src/lib/smil/egueb_smil_event.h \
 src/lib/smil/egueb_smil_fill.h \
-src/lib/smil/egueb_smil_attr_duration.h \
-src/lib/smil/egueb_smil_attr_fill.h \
-src/lib/smil/egueb_smil_attr_timing_list.h \
+src/lib/smil/egueb_smil_main.h \
 src/lib/smil/egueb_smil_set.h \
 src/lib/smil/egueb_smil_timing.h \
 src/lib/smil/egueb_smil_timing_list.h
@@ -22,6 +24,7 @@ src_lib_smil_libegueb_smil_la_SOURCES = \
 src/lib/smil/egueb_smil_accumulate.c \
 src/lib/smil/egueb_smil_additive.c \
 src/lib/smil/egueb_smil_animation.c \
+src/lib/smil/egueb_smil_animate.c \
 src/lib/smil/egueb_smil_animate_base.c \
 src/lib/smil/egueb_smil_animate_base_private.h \
 src/lib/smil/egueb_smil_clock.c \

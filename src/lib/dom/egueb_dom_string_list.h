@@ -16,23 +16,12 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _EGUEB_SMIL_MAIN_H_
-#define _EGUEB_SMIL_MAIN_H_
+#ifndef _EGUEB_DOM_STRING_LIST_H_
+#define _EGUEB_DOM_STRING_LIST_H_
 
-EAPI void egueb_smil_init(void);
-EAPI void egueb_smil_shutdown(void);
-
-EAPI extern Egueb_Dom_String *EGUEB_SMIL_NAME_SET;
-EAPI extern Egueb_Dom_String *EGUEB_SMIL_NAME_ANIMATE;
-
-EAPI extern Egueb_Dom_String *EGUEB_SMIL_ATTRIBUTE_NAME;
-EAPI extern Egueb_Dom_String *EGUEB_SMIL_BEGIN;
-EAPI extern Egueb_Dom_String *EGUEB_SMIL_DUR;
-EAPI extern Egueb_Dom_String *EGUEB_SMIL_END;
-EAPI extern Egueb_Dom_String *EGUEB_SMIL_FILL;
-EAPI extern Egueb_Dom_String *EGUEB_SMIL_TO;
-EAPI extern Egueb_Dom_String *EGUEB_SMIL_FROM;
-EAPI extern Egueb_Dom_String *EGUEB_SMIL_BY;
-EAPI extern Egueb_Dom_String *EGUEB_SMIL_VALUES;
+EAPI const Egueb_Dom_Value_Descriptor * egueb_dom_string_list_descriptor_get(void);
+EAPI Eina_Bool egueb_dom_string_list_string_from(Egueb_Dom_List *l, const char *str);
+EAPI char * egueb_dom_string_list_string_to(Egueb_Dom_List *l);
 
 #endif
+
