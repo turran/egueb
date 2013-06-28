@@ -150,7 +150,7 @@ if test "x${want_esmil}" = "xyes" && test "x${want_edom}" = "xyes" ; then
    PKG_CHECK_MODULES([ESMIL], [${esmil_requirements}], [want_esmil="yes"], [want_esmil="no"])
 fi
 
-if test "x${want_esvg}" = "xyes" && test "x${want_ecss}" = "xyes" && test "x${want_ecss}" = "xyes" && test "x${want_esmil}" = "xyes" ; then
+if test "x${want_esvg}" = "xyes" && test "x${want_ecss}" = "xyes" && test "x${want_edom}" = "xyes" && test "x${want_esmil}" = "xyes" ; then
    PKG_CHECK_MODULES([ESVG], [${esvg_requirements}], [want_esvg="yes"], [want_esvg="no"])
    # Video backends
    PKG_CHECK_MODULES([GSTREAMER], [${gstreamer_requirements}], [have_gstreamer="yes"], [have_gstreamer="no"])
