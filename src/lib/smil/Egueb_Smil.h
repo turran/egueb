@@ -24,6 +24,8 @@
 
 #include "egueb_smil_build.h"
 
+#include "egueb_smil_main.h"
+
 /* events */
 #include "egueb_smil_event.h"
 /* values */

@@ -68,16 +68,6 @@ if BUILD_ESVG
 #include src/bin/svg/Makefile.mk
 endif
 
-### Data
-
-if BUILD_EDOM
-include data/dom/Makefile.mk
-endif
-
-if BUILD_ESVG
-include data/svg/Makefile.mk
-endif
-
 ### Tests
 
 if BUILD_ECSS
