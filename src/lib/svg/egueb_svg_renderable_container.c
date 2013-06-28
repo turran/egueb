@@ -116,7 +116,7 @@ static void _egueb_svg_renderable_container_instance_init(void *o)
 	r = enesim_renderer_background_new();
 	enesim_renderer_rop_set(r, ENESIM_FILL);
 	enesim_renderer_background_color_set(r, 0x00000000);
-	enesim_renderer_compound_layer_add(thiz->compound, enesim_renderer_ref(r));
+	enesim_renderer_compound_background_renderer_set(thiz->compound, enesim_renderer_ref(r));
 	thiz->background = r;
 
 	n = EGUEB_DOM_NODE(o);
@@ -155,8 +155,6 @@ Eina_Bool egueb_svg_renderable_container_process(Egueb_Svg_Renderable *r)
 	if (thiz->renderable_tree_changed)
 	{
 		enesim_renderer_compound_layer_clear(thiz->compound);
-		enesim_renderer_compound_layer_add(thiz->compound,
-				enesim_renderer_ref(thiz->background));
 	}
 	/* iterate over the children and call the process there */
 	egueb_dom_node_children_foreach(EGUEB_DOM_NODE(r),
