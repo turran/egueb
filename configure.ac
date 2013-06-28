@@ -97,12 +97,9 @@ AM_CONDITIONAL([WANT_ESVG], [test "x${want_esvg}" = "xyes"])
 PKG_PROG_PKG_CONFIG
 
 # Check whether pkg-config supports Requires.private
-if ${PKG_CONFIG} --atleast-pkgconfig-version 0.22; then
-   pkgconfig_requires_private="Requires.private"
-else
-   pkgconfig_requires_private="Requires"
+if ! $PKG_CONFIG --atleast-pkgconfig-version 0.22; then
+   AC_MSG_ERROR([pkg-config >= 0.22 is required])
 fi
-AC_SUBST([pkgconfig_requires_private])
 
 ENESIM_MODULE_DIR=`${PKG_CONFIG} --variable=pkglibdir enesim`
 AC_SUBST([ENESIM_MODULE_DIR])
