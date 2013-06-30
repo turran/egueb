@@ -25,7 +25,6 @@
 typedef struct _Egueb_Svg_Renderable_Container
 {
 	Egueb_Svg_Renderable base;
-	Enesim_Renderer *background;
 	Enesim_Renderer *compound;
 	Eina_Bool renderable_tree_changed;
 #if 0

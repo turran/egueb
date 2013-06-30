@@ -111,13 +111,9 @@ static void _egueb_svg_renderable_container_instance_init(void *o)
 	/* the rendering system */
 	r = enesim_renderer_compound_new();
 	enesim_renderer_rop_set(r, ENESIM_BLEND);
+	enesim_renderer_compound_background_enable_set(r, EINA_TRUE);
+	enesim_renderer_compound_background_color_set(r, 0x00000000);
 	thiz->compound = r;
-
-	r = enesim_renderer_background_new();
-	enesim_renderer_rop_set(r, ENESIM_FILL);
-	enesim_renderer_background_color_set(r, 0x00000000);
-	enesim_renderer_compound_background_renderer_set(thiz->compound, enesim_renderer_ref(r));
-	thiz->background = r;
 
 	n = EGUEB_DOM_NODE(o);
 	/* our event listeners */
@@ -138,7 +134,6 @@ static void _egueb_svg_renderable_container_instance_deinit(void *o)
 	Egueb_Svg_Renderable_Container *thiz;
 
 	thiz = EGUEB_SVG_RENDERABLE_CONTAINER(o);
-	enesim_renderer_unref(thiz->background);
 	enesim_renderer_unref(thiz->compound);
 }
 /*============================================================================*
