@@ -37,6 +37,7 @@ extern "C" {
 #include "egueb_dom_document.h"
 #include "egueb_dom_parser.h"
 #include "egueb_dom_event.h"
+#include "egueb_dom_event_external.h"
 #include "egueb_dom_event_mouse.h"
 #include "egueb_dom_event_mutation.h"
 #include "egueb_dom_event_ui.h"

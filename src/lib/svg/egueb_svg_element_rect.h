@@ -20,20 +20,17 @@
 #define _EGUEB_SVG_ELEMENT_RECT_H_
 
 EAPI Egueb_Dom_Node * egueb_svg_element_rect_new(void);
-#if 0
-EAPI Eina_Bool egueb_svg_is_rect(Ender_Element *e);
-EAPI void egueb_svg_element_rect_x_set(Ender_Element *e, const Egueb_Svg_Coord *x);
-EAPI void egueb_svg_element_rect_x_get(Ender_Element *e, Egueb_Svg_Coord *x);
-EAPI void egueb_svg_element_rect_y_set(Ender_Element *e, const Egueb_Svg_Coord *y);
-EAPI void egueb_svg_element_rect_y_get(Ender_Element *e, Egueb_Svg_Coord *y);
-EAPI void egueb_svg_element_rect_width_set(Ender_Element *e, const Egueb_Svg_Length *width);
-EAPI void egueb_svg_element_rect_width_get(Ender_Element *e, Egueb_Svg_Length *width);
-EAPI void egueb_svg_element_rect_height_set(Ender_Element *e, const Egueb_Svg_Length *height);
-EAPI void egueb_svg_element_rect_height_get(Ender_Element *e, Egueb_Svg_Length *height);
-EAPI void egueb_svg_element_rect_rx_set(Ender_Element *e, const Egueb_Svg_Coord *rx);
-EAPI void egueb_svg_element_rect_rx_get(Ender_Element *e, Egueb_Svg_Coord *rx);
-EAPI void egueb_svg_element_rect_ry_set(Ender_Element *e, const Egueb_Svg_Coord *ry);
-EAPI void egueb_svg_element_rect_ry_get(Ender_Element *e, Egueb_Svg_Coord *ry);
-#endif
+EAPI void egueb_svg_element_rect_x_set(Egueb_Dom_Node *n, const Egueb_Svg_Coord *x);
+//EAPI void egueb_svg_element_rect_x_get(Egueb_Dom_Node *n, Egueb_Svg_Coord *x);
+EAPI void egueb_svg_element_rect_y_set(Egueb_Dom_Node *n, const Egueb_Svg_Coord *y);
+//EAPI void egueb_svg_element_rect_y_get(Egueb_Dom_Node *n, Egueb_Svg_Coord *y);
+EAPI void egueb_svg_element_rect_width_set(Egueb_Dom_Node *n, const Egueb_Svg_Length *width);
+//EAPI void egueb_svg_element_rect_width_get(Egueb_Dom_Node *n, Egueb_Svg_Length *width);
+EAPI void egueb_svg_element_rect_height_set(Egueb_Dom_Node *n, const Egueb_Svg_Length *height);
+//EAPI void egueb_svg_element_rect_height_get(Egueb_Dom_Node *n, Egueb_Svg_Length *height);
+EAPI void egueb_svg_element_rect_rx_set(Egueb_Dom_Node *n, const Egueb_Svg_Coord *rx);
+//EAPI void egueb_svg_element_rect_rx_get(Egueb_Dom_Node *n, Egueb_Svg_Coord *rx);
+EAPI void egueb_svg_element_rect_ry_set(Egueb_Dom_Node *n, const Egueb_Svg_Coord *ry);
+//EAPI void egueb_svg_element_rect_ry_get(Egueb_Dom_Node *n, Egueb_Svg_Coord *ry);
 
 #endif

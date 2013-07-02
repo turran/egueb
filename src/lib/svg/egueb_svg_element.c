@@ -1668,6 +1668,10 @@ EAPI void egueb_svg_element_stroke_final_get(Egueb_Dom_Node *n,
  */
 EAPI void egueb_svg_element_stroke_width_set(Egueb_Dom_Node *n, const Egueb_Svg_Length *stroke_width)
 {
+	Egueb_Svg_Element *thiz;
+
+	thiz = EGUEB_SVG_ELEMENT(n);
+	egueb_dom_attr_final_get(thiz->stroke, stroke_width);
 }
 
 /**

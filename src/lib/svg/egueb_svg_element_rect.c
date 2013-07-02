@@ -18,6 +18,7 @@
 
 #include "egueb_svg_main_private.h"
 #include "egueb_svg_main.h"
+#include "egueb_svg_length.h"
 #include "egueb_svg_element_rect.h"
 #include "egueb_svg_document.h"
 #include "egueb_svg_shape_private.h"
@@ -247,58 +248,66 @@ EAPI Egueb_Dom_Node * egueb_svg_element_rect_new(void)
 	return n;
 }
 
-#if 0
-EAPI void egueb_svg_element_rect_x_set(Ender_Element *e, const Egueb_Svg_Coord *x)
+EAPI void egueb_svg_element_rect_x_set(Egueb_Dom_Node *n, const Egueb_Svg_Coord *x)
 {
-	egueb_svg_element_property_length_set(e, ESVG_ELEMENT_RECT_X, x);
+	Egueb_Svg_Element_Rect *thiz;
+
+	thiz = EGUEB_SVG_ELEMENT_RECT(n);
+	egueb_dom_attr_set(thiz->x, EGUEB_DOM_ATTR_TYPE_BASE, x);
 }
 
-EAPI void egueb_svg_element_rect_x_get(Ender_Element *e, Egueb_Svg_Coord *x)
-{
-}
-
-EAPI void egueb_svg_element_rect_y_set(Ender_Element *e, const Egueb_Svg_Coord *y)
-{
-	egueb_svg_element_property_length_set(e, ESVG_ELEMENT_RECT_Y, y);
-}
-
-EAPI void egueb_svg_element_rect_y_get(Ender_Element *e, Egueb_Svg_Coord *y)
+EAPI void egueb_svg_element_rect_x_get(Egueb_Dom_Node *n, Egueb_Svg_Coord *x)
 {
 }
 
-EAPI void egueb_svg_element_rect_width_set(Ender_Element *e, const Egueb_Svg_Length *width)
+EAPI void egueb_svg_element_rect_y_set(Egueb_Dom_Node *n, const Egueb_Svg_Coord *y)
 {
-	egueb_svg_element_property_length_set(e, ESVG_ELEMENT_RECT_WIDTH, width);
+	Egueb_Svg_Element_Rect *thiz;
+
+	thiz = EGUEB_SVG_ELEMENT_RECT(n);
+	egueb_dom_attr_set(thiz->y, EGUEB_DOM_ATTR_TYPE_BASE, y);
 }
 
-EAPI void egueb_svg_element_rect_width_get(Ender_Element *e, Egueb_Svg_Length *width)
-{
-}
-
-EAPI void egueb_svg_element_rect_height_set(Ender_Element *e, const Egueb_Svg_Length *height)
-{
-	egueb_svg_element_property_length_set(e, ESVG_ELEMENT_RECT_HEIGHT, height);
-}
-
-EAPI void egueb_svg_element_rect_height_get(Ender_Element *e, Egueb_Svg_Length *height)
+EAPI void egueb_svg_element_rect_y_get(Egueb_Dom_Node *n, Egueb_Svg_Coord *y)
 {
 }
 
-EAPI void egueb_svg_element_rect_rx_set(Ender_Element *e, const Egueb_Svg_Coord *rx)
+EAPI void egueb_svg_element_rect_width_set(Egueb_Dom_Node *n, const Egueb_Svg_Length *width)
 {
-	egueb_svg_element_property_length_set(e, ESVG_ELEMENT_RECT_RX, rx);
+	Egueb_Svg_Element_Rect *thiz;
+
+	thiz = EGUEB_SVG_ELEMENT_RECT(n);
+	egueb_dom_attr_set(thiz->width, EGUEB_DOM_ATTR_TYPE_BASE, width);
 }
 
-EAPI void egueb_svg_element_rect_rx_get(Ender_Element *e, Egueb_Svg_Coord *rx)
+EAPI void egueb_svg_element_rect_width_get(Egueb_Dom_Node *n, Egueb_Svg_Length *width)
 {
 }
 
-EAPI void egueb_svg_element_rect_ry_set(Ender_Element *e, const Egueb_Svg_Coord *ry)
+EAPI void egueb_svg_element_rect_height_set(Egueb_Dom_Node *n, const Egueb_Svg_Length *height)
 {
-	egueb_svg_element_property_length_set(e, ESVG_ELEMENT_RECT_RY, ry);
+	Egueb_Svg_Element_Rect *thiz;
+
+	thiz = EGUEB_SVG_ELEMENT_RECT(n);
+	egueb_dom_attr_set(thiz->height, EGUEB_DOM_ATTR_TYPE_BASE, height);
 }
 
-EAPI void egueb_svg_element_rect_ry_get(Ender_Element *e, Egueb_Svg_Coord *ry)
+EAPI void egueb_svg_element_rect_height_get(Egueb_Dom_Node *n, Egueb_Svg_Length *height)
 {
 }
-#endif
+
+EAPI void egueb_svg_element_rect_rx_set(Egueb_Dom_Node *n, const Egueb_Svg_Coord *rx)
+{
+}
+
+EAPI void egueb_svg_element_rect_rx_get(Egueb_Dom_Node *n, Egueb_Svg_Coord *rx)
+{
+}
+
+EAPI void egueb_svg_element_rect_ry_set(Egueb_Dom_Node *n, const Egueb_Svg_Coord *ry)
+{
+}
+
+EAPI void egueb_svg_element_rect_ry_get(Egueb_Dom_Node *n, Egueb_Svg_Coord *ry)
+{
+}
