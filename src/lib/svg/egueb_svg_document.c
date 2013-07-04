@@ -22,7 +22,10 @@
 #include "egueb_svg_referenceable_units.h"
 #include "egueb_svg_string.h"
 #include "egueb_svg_length.h"
+#include "egueb_svg_overflow.h"
+#include "egueb_svg_point.h"
 /* elements */
+#include "egueb_svg_element.h"
 #include "egueb_svg_element_a.h"
 #include "egueb_svg_element_circle.h"
 #include "egueb_svg_element_clip_path.h"
@@ -777,19 +780,16 @@ static void _egueb_svg_document_process(Egueb_Dom_Node *n)
 	/* if so, force a complete process */
 	if (changed)
 	{
-		Egueb_Dom_Node *n;
-
 		if (!d->element)
 		{
 			DBG("Nothing to process. No topmost element found");
 			return;
 		}
 		DBG("Processing topmost element only");
-		/* remove every enqueued element */
-		EINA_LIST_FREE(d->current_enqueued, n)
-			egueb_dom_node_unref(n);
-
 		egueb_dom_element_process(d->element);
+		/* remove every enqueued element */
+		egueb_dom_document_process_queue_clear(n);
+
 		thiz->last_width = thiz->width;
 		thiz->last_height = thiz->height;
 	}
@@ -983,11 +983,24 @@ EAPI void egueb_svg_document_actual_width_get(Egueb_Dom_Node *n, double *actual_
 	else
 	{
 		Egueb_Svg_Document *thiz;
-		Egueb_Svg_Length_Animated width;
+		Egueb_Svg_Overflow overflow;
 
 		thiz = EGUEB_SVG_DOCUMENT(n);
-		egueb_svg_element_svg_width_get(topmost, &width);
-		*actual_width = egueb_svg_coord_final_get(&width.anim, thiz->width, thiz->font_size);
+		egueb_svg_element_overflow_final_get(topmost, &overflow);
+		if (overflow == EGUEB_SVG_OVERFLOW_VISIBLE)
+		{
+			Enesim_Rectangle r;
+			egueb_svg_renderable_bounds_get(topmost, &r);
+			*actual_width = r.w;
+		}
+		else
+		{
+			Egueb_Svg_Length_Animated width;
+			egueb_svg_element_svg_width_get(topmost, &width);
+			*actual_width = egueb_svg_coord_final_get(&width.anim, thiz->width,
+					thiz->font_size);
+
+		}
 		egueb_dom_node_unref(topmost);
 	}
 }
@@ -1004,11 +1017,24 @@ EAPI void egueb_svg_document_actual_height_get(Egueb_Dom_Node *n, double *actual
 	else
 	{
 		Egueb_Svg_Document *thiz;
-		Egueb_Svg_Length_Animated height;
+		Egueb_Svg_Overflow overflow;
 
 		thiz = EGUEB_SVG_DOCUMENT(n);
-		egueb_svg_element_svg_height_get(topmost, &height);
-		*actual_height = egueb_svg_coord_final_get(&height.anim, thiz->height, thiz->font_size);
+		egueb_svg_element_overflow_final_get(topmost, &overflow);
+		if (overflow == EGUEB_SVG_OVERFLOW_VISIBLE)
+		{
+			Enesim_Rectangle r;
+			egueb_svg_renderable_bounds_get(topmost, &r);
+			*actual_height = r.h;
+		}
+		else
+		{
+			Egueb_Svg_Length_Animated height;
+			egueb_svg_element_svg_height_get(topmost, &height);
+			*actual_height = egueb_svg_coord_final_get(&height.anim, thiz->height,
+					thiz->font_size);
+
+		}
 		egueb_dom_node_unref(topmost);
 	}
 }

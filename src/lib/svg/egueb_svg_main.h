@@ -67,6 +67,7 @@ EAPI extern Egueb_Dom_String *EGUEB_SVG_HEIGHT;
 EAPI extern Egueb_Dom_String *EGUEB_SVG_ID;
 EAPI extern Egueb_Dom_String *EGUEB_SVG_OFFSET;
 EAPI extern Egueb_Dom_String *EGUEB_SVG_OPACITY;
+EAPI extern Egueb_Dom_String *EGUEB_SVG_OVERFLOW;
 EAPI extern Egueb_Dom_String *EGUEB_SVG_PATTERN_UNITS;
 EAPI extern Egueb_Dom_String *EGUEB_SVG_PATTERN_TRANSFORM;
 EAPI extern Egueb_Dom_String *EGUEB_SVG_POINTS;

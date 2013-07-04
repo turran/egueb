@@ -66,6 +66,7 @@ static void _egueb_svg_strings_init(void)
 	EGUEB_SVG_ID = egueb_dom_string_new_with_string("id");
 	EGUEB_SVG_OFFSET = egueb_dom_string_new_with_string("offset");
 	EGUEB_SVG_OPACITY = egueb_dom_string_new_with_string("opacity");
+	EGUEB_SVG_OVERFLOW = egueb_dom_string_new_with_string("overflow");
 	EGUEB_SVG_PATTERN_UNITS = egueb_dom_string_new_with_string("patternUnits");
 	EGUEB_SVG_PATTERN_TRANSFORM = egueb_dom_string_new_with_string("patternTransform");
 	EGUEB_SVG_POINTS = egueb_dom_string_new_with_string("points");
@@ -136,6 +137,7 @@ static void _egueb_svg_strings_shutdown(void)
 	egueb_dom_string_unref(EGUEB_SVG_ID);
 	egueb_dom_string_unref(EGUEB_SVG_OFFSET);
 	egueb_dom_string_unref(EGUEB_SVG_OPACITY);
+	egueb_dom_string_unref(EGUEB_SVG_OVERFLOW);
 	egueb_dom_string_unref(EGUEB_SVG_PATTERN_UNITS);
 	egueb_dom_string_unref(EGUEB_SVG_PATTERN_TRANSFORM);
 	egueb_dom_string_unref(EGUEB_SVG_POINTS);
@@ -261,6 +263,7 @@ Egueb_Dom_String *EGUEB_SVG_HEIGHT;
 Egueb_Dom_String *EGUEB_SVG_ID;
 Egueb_Dom_String *EGUEB_SVG_OFFSET;
 Egueb_Dom_String *EGUEB_SVG_OPACITY;
+Egueb_Dom_String *EGUEB_SVG_OVERFLOW;
 Egueb_Dom_String *EGUEB_SVG_PATTERN_UNITS;
 Egueb_Dom_String *EGUEB_SVG_PATTERN_TRANSFORM;
 Egueb_Dom_String *EGUEB_SVG_POINTS;

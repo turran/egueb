@@ -31,6 +31,7 @@
 #include "egueb_svg_stroke_line_join.h"
 #include "egueb_svg_stroke_line_cap.h"
 #include "egueb_svg_clip_path.h"
+#include "egueb_svg_overflow.h"
 
 EAPI Eina_Bool egueb_svg_is_element(Egueb_Dom_Node *n);
 EAPI Eina_Error egueb_svg_element_presentation_relative_get(Egueb_Dom_Node *n,
@@ -69,6 +70,9 @@ EAPI void egueb_svg_element_clip_path_final_get(Egueb_Dom_Node *n,
 EAPI void egueb_svg_element_opacity_set(Egueb_Dom_Node *n, const Egueb_Svg_Number *v);
 EAPI void egueb_svg_element_opacity_get(Egueb_Dom_Node *n, Egueb_Svg_Number *v);
 EAPI void egueb_svg_element_opacity_unset(Egueb_Dom_Node *n);
+
+EAPI void egueb_svg_element_overflow_set(Egueb_Dom_Node *n, const Egueb_Svg_Overflow o);
+EAPI void egueb_svg_element_overflow_final_get(Egueb_Dom_Node *n, Egueb_Svg_Overflow *o);
 
 EAPI void egueb_svg_element_color_set(Egueb_Dom_Node *n, const Egueb_Svg_Color *color);
 EAPI void egueb_svg_element_color_get(Egueb_Dom_Node *n, Egueb_Svg_Color_Animated *color);

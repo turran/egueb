@@ -36,6 +36,8 @@ EAPI Eina_Error egueb_dom_document_node_adopt(Egueb_Dom_Node *n,
 		Egueb_Dom_Node *adopted, Egueb_Dom_Node **ret);
 
 EAPI void egueb_dom_document_process(Egueb_Dom_Node *n);
+EAPI void egueb_dom_document_process_queue_clear(Egueb_Dom_Node *n);
+
 EAPI Etch * egueb_dom_document_etch_get(Egueb_Dom_Node *n);
 
 #endif

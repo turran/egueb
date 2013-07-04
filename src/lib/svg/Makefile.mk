@@ -10,6 +10,7 @@ src/lib/svg/egueb_svg_attr_font_size.h \
 src/lib/svg/egueb_svg_attr_length.h \
 src/lib/svg/egueb_svg_attr_matrix.h \
 src/lib/svg/egueb_svg_attr_number.h \
+src/lib/svg/egueb_svg_attr_overflow.h \
 src/lib/svg/egueb_svg_attr_paint.h \
 src/lib/svg/egueb_svg_attr_path_seg_list.h \
 src/lib/svg/egueb_svg_attr_point_list.h \
@@ -55,6 +56,7 @@ src/lib/svg/egueb_svg_string.h \
 src/lib/svg/egueb_svg_main.h \
 src/lib/svg/egueb_svg_matrix.h \
 src/lib/svg/egueb_svg_number.h \
+src/lib/svg/egueb_svg_overflow.h \
 src/lib/svg/egueb_svg_paint.h \
 src/lib/svg/egueb_svg_paint_server.h \
 src/lib/svg/egueb_svg_painter.h \
@@ -79,6 +81,7 @@ src/lib/svg/egueb_svg_attr_font_size.c \
 src/lib/svg/egueb_svg_attr_length.c \
 src/lib/svg/egueb_svg_attr_matrix.c \
 src/lib/svg/egueb_svg_attr_number.c \
+src/lib/svg/egueb_svg_attr_overflow.c \
 src/lib/svg/egueb_svg_attr_paint.c \
 src/lib/svg/egueb_svg_attr_path_seg_list.c \
 src/lib/svg/egueb_svg_attr_point_list.c \
@@ -125,6 +128,7 @@ src/lib/svg/egueb_svg_main.c \
 src/lib/svg/egueb_svg_main_private.h \
 src/lib/svg/egueb_svg_matrix.c \
 src/lib/svg/egueb_svg_number.c \
+src/lib/svg/egueb_svg_overflow.c \
 src/lib/svg/egueb_svg_paint.c \
 src/lib/svg/egueb_svg_paint_server.c \
 src/lib/svg/egueb_svg_paint_server_private.h \

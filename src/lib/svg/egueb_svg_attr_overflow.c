@@ -19,39 +19,39 @@
 #include "egueb_svg_main_private.h"
 
 #include "egueb_dom_attr.h"
-#include "egueb_svg_stroke_line_cap.h"
+#include "egueb_svg_overflow.h"
 
 #include "egueb_dom_attr_private.h"
 #include "egueb_dom_attr_basic_private.h"
-#include "egueb_svg_attr_stroke_line_cap.h"
+#include "egueb_svg_attr_overflow.h"
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
-#define EGUEB_SVG_ATTR_STROKE_LINE_CAP_DESCRIPTOR 					\
-		egueb_dom_attr_stroke_line_cap_descriptor_get()
-#define EGUEB_SVG_ATTR_STROKE_LINE_CAP(o) ENESIM_OBJECT_INSTANCE_CHECK(o,		\
-		Egueb_Svg_Attr_Stroke_Line_Cap, EGUEB_SVG_ATTR_STROKE_LINE_CAP_DESCRIPTOR)
+#define EGUEB_SVG_ATTR_OVERFLOW_DESCRIPTOR 					\
+		egueb_dom_attr_overflow_descriptor_get()
+#define EGUEB_SVG_ATTR_OVERFLOW(o) ENESIM_OBJECT_INSTANCE_CHECK(o,		\
+		Egueb_Svg_Attr_Overflow, EGUEB_SVG_ATTR_OVERFLOW_DESCRIPTOR)
 
-typedef struct _Egueb_Svg_Attr_Stroke_Line_Cap
+typedef struct _Egueb_Svg_Attr_Overflow
 {
 	Egueb_Dom_Attr_Basic base;
-	Egueb_Svg_Stroke_Line_Cap styled;
-	Egueb_Svg_Stroke_Line_Cap anim;
-	Egueb_Svg_Stroke_Line_Cap value;
-	Egueb_Svg_Stroke_Line_Cap def;
-} Egueb_Svg_Attr_Stroke_Line_Cap;
+	Egueb_Svg_Overflow styled;
+	Egueb_Svg_Overflow anim;
+	Egueb_Svg_Overflow value;
+	Egueb_Svg_Overflow def;
+} Egueb_Svg_Attr_Overflow;
 
-typedef struct _Egueb_Svg_Attr_Stroke_Line_Cap_Class
+typedef struct _Egueb_Svg_Attr_Overflow_Class
 {
 	Egueb_Dom_Attr_Basic_Class base;
-} Egueb_Svg_Attr_Stroke_Line_Cap_Class;
+} Egueb_Svg_Attr_Overflow_Class;
 
-static Eina_Bool _egueb_svg_attr_stroke_line_cap_value_get(Egueb_Dom_Attr *p,
+static Eina_Bool _egueb_svg_attr_overflow_value_get(Egueb_Dom_Attr *p,
 		Egueb_Dom_Attr_Type type, void **o)
 {
-	Egueb_Svg_Attr_Stroke_Line_Cap *thiz;
+	Egueb_Svg_Attr_Overflow *thiz;
 
-	thiz = EGUEB_SVG_ATTR_STROKE_LINE_CAP(p);
+	thiz = EGUEB_SVG_ATTR_OVERFLOW(p);
 	switch (type)
 	{
 		case EGUEB_DOM_ATTR_TYPE_ANIMATED:
@@ -78,34 +78,34 @@ static Eina_Bool _egueb_svg_attr_stroke_line_cap_value_get(Egueb_Dom_Attr *p,
 }
 
 static const Egueb_Dom_Value_Descriptor *
-_egueb_svg_attr_stroke_line_cap_value_descriptor_get(Egueb_Dom_Attr *p)
+_egueb_svg_attr_overflow_value_descriptor_get(Egueb_Dom_Attr *p)
 {
-	return egueb_svg_stroke_line_cap_descriptor_get();
+	return egueb_svg_overflow_descriptor_get();
 }
 /*----------------------------------------------------------------------------*
  *                              Object interface                              *
  *----------------------------------------------------------------------------*/
 ENESIM_OBJECT_INSTANCE_BOILERPLATE(EGUEB_DOM_ATTR_BASIC_DESCRIPTOR,
-		Egueb_Svg_Attr_Stroke_Line_Cap, Egueb_Svg_Attr_Stroke_Line_Cap_Class,
-		egueb_svg_attr_stroke_line_cap)
+		Egueb_Svg_Attr_Overflow, Egueb_Svg_Attr_Overflow_Class,
+		egueb_svg_attr_overflow)
 
-static void _egueb_svg_attr_stroke_line_cap_class_init(void *k)
+static void _egueb_svg_attr_overflow_class_init(void *k)
 {
 	Egueb_Dom_Attr_Class *p_klass;
 	Egueb_Dom_Attr_Basic_Class *o_klass;
 
 	p_klass = EGUEB_DOM_ATTR_CLASS(k);
-	p_klass->value_descriptor_get = _egueb_svg_attr_stroke_line_cap_value_descriptor_get;
+	p_klass->value_descriptor_get = _egueb_svg_attr_overflow_value_descriptor_get;
 
 	o_klass = EGUEB_DOM_ATTR_BASIC_CLASS(k);
-	o_klass->value_get = _egueb_svg_attr_stroke_line_cap_value_get;
+	o_klass->value_get = _egueb_svg_attr_overflow_value_get;
 }
 
-static void _egueb_svg_attr_stroke_line_cap_instance_init(void *o)
+static void _egueb_svg_attr_overflow_instance_init(void *o)
 {
 }
 
-static void _egueb_svg_attr_stroke_line_cap_instance_deinit(void *o)
+static void _egueb_svg_attr_overflow_instance_deinit(void *o)
 {
 }
 /*============================================================================*
@@ -114,14 +114,15 @@ static void _egueb_svg_attr_stroke_line_cap_instance_deinit(void *o)
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/
-EAPI Egueb_Dom_Node * egueb_svg_attr_stroke_line_cap_new(Egueb_Dom_String *name,
-		const Egueb_Svg_Stroke_Line_Cap def, Eina_Bool animatable,
+EAPI Egueb_Dom_Node * egueb_svg_attr_overflow_new(Egueb_Dom_String *name,
+		const Egueb_Svg_Overflow def, Eina_Bool animatable,
 		Eina_Bool stylable, Eina_Bool inheritable)
 {
 	Egueb_Dom_Node *n;
 
-	n = ENESIM_OBJECT_INSTANCE_NEW(egueb_svg_attr_stroke_line_cap);
+	n = ENESIM_OBJECT_INSTANCE_NEW(egueb_svg_attr_overflow);
 	egueb_dom_attr_init(n, name, animatable, stylable, inheritable);
 	egueb_dom_attr_set(n, EGUEB_DOM_ATTR_TYPE_DEFAULT, def);
 	return n;
 }
+

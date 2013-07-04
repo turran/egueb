@@ -87,14 +87,12 @@ EAPI const Egueb_Dom_Value_Descriptor * egueb_svg_stroke_line_cap_descriptor_get
 
 EAPI Eina_Bool egueb_svg_stroke_line_cap_string_from(Egueb_Svg_Stroke_Line_Cap *thiz, const char *value)
 {
-	Egueb_Svg_Stroke_Line_Cap stroke_line_cap;
-
 	if (!strcmp(value, "butt"))
-		stroke_line_cap = EGUEB_SVG_STROKE_LINE_CAP_BUTT;
+		*thiz = EGUEB_SVG_STROKE_LINE_CAP_BUTT;
 	else if (!strcmp(value, "round"))
-		stroke_line_cap = EGUEB_SVG_STROKE_LINE_CAP_ROUND;
+		*thiz = EGUEB_SVG_STROKE_LINE_CAP_ROUND;
 	else if (!strcmp(value, "square"))
-		stroke_line_cap = EGUEB_SVG_STROKE_LINE_CAP_SQUARE;
+		*thiz = EGUEB_SVG_STROKE_LINE_CAP_SQUARE;
 	else
 		return EINA_FALSE;
 	return EINA_TRUE;

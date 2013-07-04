@@ -21,6 +21,8 @@
 #include "egueb_svg_element.h"
 #include "egueb_svg_rect.h"
 #include "egueb_svg_length.h"
+#include "egueb_svg_overflow.h"
+#include "egueb_svg_point.h"
 #include "egueb_svg_attr_rect.h"
 #include "egueb_svg_attr_length.h"
 #include "egueb_svg_element_svg.h"
@@ -62,9 +64,13 @@ typedef struct _Egueb_Svg_Element_Svg
 	Egueb_Dom_Node *width;
 	Egueb_Dom_Node *height;
 	Egueb_Dom_Node *viewbox;
+	/* not xml attributes */
+	double current_scale;
+	Egueb_Svg_Point current_translate;
+
 	/* private */
-	/* FIXME we use a background because of the blend/fill thing on the redraws */
 	Enesim_Renderer *rectangle;
+	Enesim_Renderer *proxy;
 
 	/* animation */
 	Etch *etch;
@@ -167,7 +173,7 @@ static Enesim_Renderer * _egueb_svg_element_svg_renderer_get(
 	Egueb_Svg_Element_Svg *thiz;
 
 	thiz = EGUEB_SVG_ELEMENT_SVG(r);
-	return enesim_renderer_ref(thiz->rectangle);
+	return enesim_renderer_ref(thiz->proxy);
 }
 
 static Eina_Bool _egueb_svg_element_svg_process(Egueb_Svg_Renderable *r)
@@ -176,6 +182,7 @@ static Eina_Bool _egueb_svg_element_svg_process(Egueb_Svg_Renderable *r)
 	Egueb_Svg_Element *e;
 	Egueb_Svg_Rect viewbox;
 	Egueb_Svg_Length w, h, x, y;
+	Egueb_Svg_Overflow overflow;
 	Egueb_Dom_Node *svg_doc;
 	Egueb_Dom_Node *relative = NULL;
 	Enesim_Matrix relative_transform;
@@ -185,6 +192,7 @@ static Eina_Bool _egueb_svg_element_svg_process(Egueb_Svg_Renderable *r)
 
 	/* TODO First apply the local styles */
 
+	thiz = EGUEB_SVG_ELEMENT_SVG(r);
 	/* check if we are the topmost SVG, if so, use the document
 	 * container size to generate the children viewbox (i.e our
 	 * own bounds
@@ -193,11 +201,17 @@ static Eina_Bool _egueb_svg_element_svg_process(Egueb_Svg_Renderable *r)
 	egueb_svg_element_geometry_relative_get(EGUEB_DOM_NODE(r), &relative);
 	if (!relative)
 	{
+		Enesim_Matrix m;
+
 		egueb_svg_document_width_get(svg_doc, &relative_width);
 		egueb_svg_document_height_get(svg_doc, &relative_height);
 		relative_x = 0;
 		relative_y = 0;
-		enesim_matrix_identity(&relative_transform);
+
+		/* Set our current scale/translate */
+		enesim_matrix_scale(&m, thiz->current_scale, thiz->current_scale);
+		enesim_matrix_translate(&relative_transform, thiz->current_translate.x, thiz->current_translate.y);
+		enesim_matrix_compose(&relative_transform, &m, &relative_transform);
 	}
 	else
 	{
@@ -215,7 +229,6 @@ static Eina_Bool _egueb_svg_element_svg_process(Egueb_Svg_Renderable *r)
 	egueb_svg_document_font_size_get(svg_doc, &font_size);
 	egueb_dom_node_unref(svg_doc);
 
-	thiz = EGUEB_SVG_ELEMENT_SVG(r);
 	/* caluclate the new bounds */
 	egueb_dom_attr_final_get(thiz->width, &w);
 	egueb_dom_attr_final_get(thiz->height, &h);
@@ -252,9 +265,29 @@ static Eina_Bool _egueb_svg_element_svg_process(Egueb_Svg_Renderable *r)
 		enesim_matrix_scale(&scale, 1.0/new_vw, 1.0/new_vh);
 		enesim_matrix_compose(&scale, &relative_transform, &e->transform);
 	}
+	else
+	{
+		DBG("Not using any viewBox");
+		e->transform = relative_transform;
+	}
 	/* set the new viewbox */
 	e->viewbox.w = gw;
 	e->viewbox.h = gh;
+
+	/* decide what renderer to use based on the overflow attribute */
+	egueb_dom_attr_final_get(e->overflow, &overflow);
+	if (overflow == EGUEB_SVG_OVERFLOW_VISIBLE)
+	{
+		Enesim_Renderer *compound;
+
+		compound = egueb_svg_renderable_container_renderer_get(
+				EGUEB_SVG_RENDERABLE(thiz));
+		enesim_renderer_proxy_proxied_set(thiz->proxy, compound);
+	}
+	else
+	{
+		enesim_renderer_proxy_proxied_set(thiz->proxy, enesim_renderer_ref(thiz->rectangle));
+	}
 
 	if (!egueb_svg_renderable_container_process(r))
 		return EINA_FALSE;
@@ -328,6 +361,10 @@ static void _egueb_svg_element_svg_instance_init(void *o)
 			egueb_dom_string_ref(EGUEB_SVG_VIEWBOX),
 			NULL);
 
+	thiz->current_scale = 1.0;
+	thiz->current_translate.x = 0;
+	thiz->current_translate.y = 0;
+
 	EGUEB_DOM_ELEMENT_CLASS_PROPERTY_ADD(thiz, egueb_svg_element_svg, x);
 	EGUEB_DOM_ELEMENT_CLASS_PROPERTY_ADD(thiz, egueb_svg_element_svg, y);
 	EGUEB_DOM_ELEMENT_CLASS_PROPERTY_ADD(thiz, egueb_svg_element_svg, width);
@@ -341,6 +378,9 @@ static void _egueb_svg_element_svg_instance_init(void *o)
 			EINA_TRUE, NULL);
 
 	/* the rendering */
+	r = enesim_renderer_proxy_new();
+	thiz->proxy = r;
+
 	compound = egueb_svg_renderable_container_renderer_get(
 			EGUEB_SVG_RENDERABLE(thiz));
 	r = enesim_renderer_rectangle_new();
@@ -350,6 +390,7 @@ static void _egueb_svg_element_svg_instance_init(void *o)
 	enesim_renderer_rectangle_y_set(r, 0);
 	enesim_renderer_rop_set(r, ENESIM_BLEND);
 	thiz->rectangle = r;
+
 
 	/* the animation system */
 	thiz->etch = etch_new();
@@ -369,6 +410,7 @@ static void _egueb_svg_element_svg_instance_deinit(void *o)
 	egueb_dom_node_unref(thiz->viewbox);
 	/* the rendering */
 	enesim_renderer_unref(thiz->rectangle);
+	enesim_renderer_unref(thiz->proxy);
 	/* remove etch and all the animation system  */
 	etch_delete(thiz->etch);
 	/* TODO free the scriptors */
@@ -2077,6 +2119,36 @@ EAPI Eina_Error egueb_svg_element_svg_height_get(Egueb_Dom_Node *n,
 
 	thiz = EGUEB_SVG_ELEMENT_SVG(n);
 	EGUEB_SVG_ELEMENT_ATTR_SIMPLE_GET(thiz->height, height);
+	return EINA_ERROR_NONE;
+}
+
+EAPI Eina_Error egueb_svg_element_svg_current_scale_set(Egueb_Dom_Node *n,
+		double scale)
+{
+	Egueb_Svg_Element_Svg *thiz;
+
+	thiz = EGUEB_SVG_ELEMENT_SVG(n);
+	thiz->current_scale = scale;
+	egueb_dom_element_enqueue_process(egueb_dom_node_ref(n));
+	return EINA_ERROR_NONE;
+}
+
+EAPI Eina_Error egueb_svg_element_svg_current_translate_set(Egueb_Dom_Node *n,
+		Egueb_Svg_Point *p)
+{
+	Egueb_Svg_Element_Svg *thiz;
+
+	thiz = EGUEB_SVG_ELEMENT_SVG(n);
+	if (!p) 
+	{
+		thiz->current_translate.x = 0;
+		thiz->current_translate.y = 0;
+	}
+	else
+	{
+		thiz->current_translate = *p;
+	}
+	egueb_dom_element_enqueue_process(egueb_dom_node_ref(n));
 	return EINA_ERROR_NONE;
 }
 

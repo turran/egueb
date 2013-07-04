@@ -450,12 +450,34 @@ Eina_Error egueb_dom_element_process_children(Egueb_Dom_Element *thiz)
 		if (n_klass->type != EGUEB_DOM_NODE_TYPE_ELEMENT_NODE)
 			continue;
 
-		ret = egueb_dom_element_process(EGUEB_DOM_ELEMENT(child));
+		ret = egueb_dom_element_process(child);
 		if (ret != EINA_ERROR_NONE)
 			break;
 	}
 	return ret;
 }
+
+ void egueb_dom_element_dequeue_process(Egueb_Dom_Node *n)
+{
+	Egueb_Dom_Element *thiz;
+
+	thiz = EGUEB_DOM_ELEMENT(n);
+	if (!thiz->enqueued)
+	{
+		egueb_dom_node_unref(n);
+		return;
+	}
+	if (!n->owner_document)
+	{
+		WARN("Can not dequeue without a document");
+		egueb_dom_node_unref(n);
+		return;
+	}
+	thiz->enqueued = EINA_FALSE;
+	egueb_dom_document_dequeue_process(
+			EGUEB_DOM_DOCUMENT(n->owner_document), n);
+}
+
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/

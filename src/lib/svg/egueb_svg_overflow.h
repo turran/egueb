@@ -15,13 +15,20 @@
  * License along with this library.
  * If not, see <http://www.gnu.org/licenses/>.
  */
+#ifndef _EGUEB_SVG_OVERFLOW_H
+#define _EGUEB_SVG_OVERFLOW_H
 
-#ifndef _EGUEB_SVG_ATTR_STROKE_LINE_CAP_H_
-#define _EGUEB_SVG_ATTR_STROKE_LINE_CAP_H_
+typedef enum _Egueb_Svg_Overflow
+{
+	EGUEB_SVG_OVERFLOW_VISIBLE,
+	EGUEB_SVG_OVERFLOW_HIDDEN,
+	EGUEB_SVG_OVERFLOW_SCROLL,
+	EGUEB_SVG_OVERFLOW_AUTO,
+} Egueb_Svg_Overflow;
 
-EAPI Egueb_Dom_Node * egueb_svg_attr_stroke_line_cap_new(Egueb_Dom_String *name,
-		const Egueb_Svg_Stroke_Line_Cap def, Eina_Bool animatable,
-		Eina_Bool stylable, Eina_Bool inheritable);
+EAPI const Egueb_Dom_Value_Descriptor * egueb_svg_overflow_descriptor_get(void);
+EAPI Eina_Bool egueb_svg_overflow_string_from(Egueb_Svg_Overflow *thiz, const char *value);
+EAPI char * egueb_svg_overflow_string_to(Egueb_Svg_Overflow thiz);
 
 #endif
 

@@ -40,6 +40,11 @@ EAPI Eina_Error egueb_svg_element_svg_width_get(Egueb_Dom_Node *n,
 EAPI Eina_Error egueb_svg_element_svg_height_get(Egueb_Dom_Node *n,
 		Egueb_Svg_Length_Animated *height);
 
+EAPI Eina_Error egueb_svg_element_svg_current_scale_set(Egueb_Dom_Node *n,
+		double scale);
+EAPI Eina_Error egueb_svg_element_svg_current_translate_set(Egueb_Dom_Node *n,
+		Egueb_Svg_Point *p);
+
 #if 0
 typedef const char * (*Egueb_Svg_Element_Svg_Base_Dir_Get)(Ender_Element *e, void *data);
 

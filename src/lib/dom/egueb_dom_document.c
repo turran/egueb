@@ -191,7 +191,7 @@ static void _egueb_dom_document_mutation_node_removed_cb(Egueb_Dom_Event *ev,
 	egueb_dom_string_unref(name);
 
 	if (!egueb_dom_event_mutation_process_prevented(ev))
-		egueb_dom_document_dequeue_process(thiz, egueb_dom_node_ref(target));
+		egueb_dom_element_dequeue_process(egueb_dom_node_ref(target));
 	egueb_dom_node_unref(target);
 }
 
@@ -359,7 +359,6 @@ void egueb_dom_document_enqueue_process(Egueb_Dom_Document *thiz,
 	INFO("Node '%s' added to the list of damaged nodes",
 			egueb_dom_string_string_get(name));
 	egueb_dom_string_unref(name);
-	e->enqueued = EINA_TRUE;
 	thiz->current_enqueued = eina_list_append(thiz->current_enqueued, node);
 }
 
@@ -383,7 +382,6 @@ void egueb_dom_document_dequeue_process(Egueb_Dom_Document *thiz,
 				egueb_dom_string_string_get(name));
 		egueb_dom_string_unref(name);
 		egueb_dom_node_unref(node);
-		e->enqueued = EINA_FALSE;
 	}
 	egueb_dom_node_unref(node);
 }
@@ -503,7 +501,7 @@ EAPI Eina_Error egueb_dom_document_element_set(Egueb_Dom_Node *n,
 				_egueb_dom_document_mutation_attr_modified_cb,
 				EINA_TRUE, thiz);
 		/* add the element to the process list */
-		egueb_dom_document_enqueue_process(thiz, egueb_dom_node_ref(element));
+		egueb_dom_element_enqueue_process(egueb_dom_node_ref(element));
 	}
 
 	return EINA_ERROR_NONE;
@@ -579,6 +577,24 @@ EAPI void egueb_dom_document_process(Egueb_Dom_Node *n)
 	if (klass->process)
 		klass->process(n);
 	thiz->processing = EINA_FALSE;
+}
+
+EAPI void egueb_dom_document_process_queue_clear(Egueb_Dom_Node *n)
+{
+	Egueb_Dom_Document *thiz;
+	Eina_List *l, *l_next;
+
+	thiz = EGUEB_DOM_DOCUMENT(n);
+	/* process every enqueued node */
+	EINA_LIST_FOREACH_SAFE(thiz->current_enqueued, l, l_next, n)
+	{
+		Egueb_Dom_Element *e;
+
+		thiz->current_enqueued = eina_list_remove_list(thiz->current_enqueued, l);
+		e = EGUEB_DOM_ELEMENT(n);
+		e->enqueued = EINA_FALSE;
+		egueb_dom_node_unref(n);
+	}
 }
 
 EAPI Etch * egueb_dom_document_etch_get(Egueb_Dom_Node *n)
