@@ -983,23 +983,22 @@ EAPI void egueb_svg_document_actual_width_get(Egueb_Dom_Node *n, double *actual_
 	else
 	{
 		Egueb_Svg_Document *thiz;
+		Egueb_Svg_Length_Animated width;
 		Egueb_Svg_Overflow overflow;
 
 		thiz = EGUEB_SVG_DOCUMENT(n);
+
+		egueb_svg_element_svg_width_get(topmost, &width);
+		*actual_width = egueb_svg_coord_final_get(&width.anim, thiz->width,
+				thiz->font_size);
 		egueb_svg_element_overflow_final_get(topmost, &overflow);
+		/* check if we should overflow */
 		if (overflow == EGUEB_SVG_OVERFLOW_VISIBLE)
 		{
-			Enesim_Rectangle r;
-			egueb_svg_renderable_bounds_get(topmost, &r);
-			*actual_width = r.w;
-		}
-		else
-		{
-			Egueb_Svg_Length_Animated width;
-			egueb_svg_element_svg_width_get(topmost, &width);
-			*actual_width = egueb_svg_coord_final_get(&width.anim, thiz->width,
-					thiz->font_size);
-
+			Eina_Rectangle r;
+			egueb_svg_renderable_user_bounds_get(topmost, &r);
+			if (*actual_width < r.x + r.w)
+				*actual_width = r.x + r.w;
 		}
 		egueb_dom_node_unref(topmost);
 	}
@@ -1017,23 +1016,21 @@ EAPI void egueb_svg_document_actual_height_get(Egueb_Dom_Node *n, double *actual
 	else
 	{
 		Egueb_Svg_Document *thiz;
+		Egueb_Svg_Length_Animated height;
 		Egueb_Svg_Overflow overflow;
 
 		thiz = EGUEB_SVG_DOCUMENT(n);
+
+		egueb_svg_element_svg_height_get(topmost, &height);
+		*actual_height = egueb_svg_coord_final_get(&height.anim, thiz->height,
+				thiz->font_size);
 		egueb_svg_element_overflow_final_get(topmost, &overflow);
 		if (overflow == EGUEB_SVG_OVERFLOW_VISIBLE)
 		{
-			Enesim_Rectangle r;
-			egueb_svg_renderable_bounds_get(topmost, &r);
-			*actual_height = r.h;
-		}
-		else
-		{
-			Egueb_Svg_Length_Animated height;
-			egueb_svg_element_svg_height_get(topmost, &height);
-			*actual_height = egueb_svg_coord_final_get(&height.anim, thiz->height,
-					thiz->font_size);
-
+			Eina_Rectangle r;
+			egueb_svg_renderable_user_bounds_get(topmost, &r);
+			if (*actual_height < r.y + r.h)
+				*actual_height = r.y + r.h;
 		}
 		egueb_dom_node_unref(topmost);
 	}
@@ -1158,7 +1155,6 @@ EAPI void egueb_svg_document_damages_get(Egueb_Dom_Node *n,
 	if (!topmost) return;
 
 	r = egueb_svg_renderable_renderer_get(topmost);
-	/* TODO first generate the damages on every svg image we have */
 	enesim_renderer_damages_get(r, _egueb_svg_document_damage_cb, thiz->tiler);
 
 	iter = eina_tiler_iterator_new(thiz->tiler);

@@ -177,7 +177,6 @@ EAPI Enesim_Renderer * egueb_svg_renderable_renderer_get(Egueb_Dom_Node *n)
 EAPI Enesim_Renderer * egueb_svg_renderable_class_renderer_get(Egueb_Dom_Node *n)
 {
 	Egueb_Svg_Renderable_Class *klass;
-	Enesim_Renderer *r;
 
 	klass = EGUEB_SVG_RENDERABLE_CLASS_GET(n);
 	if (klass->renderer_get) return klass->renderer_get(EGUEB_SVG_RENDERABLE(n));
@@ -192,14 +191,6 @@ EAPI void egueb_svg_renderable_bounds_get(Egueb_Dom_Node *n,
 	klass = EGUEB_SVG_RENDERABLE_CLASS_GET(n);
 	if (klass->bounds_get)
 		klass->bounds_get(EGUEB_SVG_RENDERABLE(n), bounds);
-	else
-	{
-		Enesim_Renderer *r;
-
-		r = egueb_svg_renderable_renderer_get(n);
-		if (!r) return;
-		enesim_renderer_bounds(r, bounds);
-	}
 }
 
 EAPI void egueb_svg_renderable_user_bounds_get(Egueb_Dom_Node *n,
