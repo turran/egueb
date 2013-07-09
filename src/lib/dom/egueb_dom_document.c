@@ -572,6 +572,14 @@ EAPI Eina_Error egueb_dom_document_element_get_by_id(Egueb_Dom_Node *n,
 	return EINA_ERROR_NONE;
 }
 
+/* TODO move the svg version here */
+EAPI Eina_Error egueb_dom_document_element_get_by_iri(Egueb_Dom_Node *n,
+		Egueb_Dom_String *id, Egueb_Dom_Node **element)
+{
+	/* import the node in case it belongs to other document */
+	return EINA_ERROR_NONE;
+}
+
 /* Introduced in DOM Level 3:
  * Node adoptNode(in Node source) raises(DOMException);
  */

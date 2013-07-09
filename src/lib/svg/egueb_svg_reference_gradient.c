@@ -29,6 +29,7 @@ static Eina_Bool _egueb_svg_reference_gradient_process(Egueb_Svg_Reference *r)
 	Egueb_Svg_Reference_Gradient *thiz;
 	Egueb_Svg_Reference_Gradient_Class *klass;
 	Enesim_Renderer *ren = NULL;
+	Egueb_Dom_Node *stop_node = NULL;
 	Eina_Bool ret = EINA_TRUE;
 
 	DBG("Processing a gradient reference");
@@ -43,16 +44,22 @@ static Eina_Bool _egueb_svg_reference_gradient_process(Egueb_Svg_Reference *r)
 	if (!ren) return EINA_FALSE;
 
 	/* now the common stops */
-	/* TODO for now */
+	egueb_svg_gradient_deep_stop_get(r->referenceable, &stop_node);
+	enesim_renderer_gradient_stop_clear(ren);
+	while (stop_node)
 	{
-		Enesim_Renderer_Gradient_Stop stop;
+		Egueb_Dom_Node *tmp;
 
-		stop.argb = 0xff0000ff;
-		stop.pos = 0;
-		enesim_renderer_gradient_stop_add(ren, &stop);
-		stop.argb = 0xff00ff00;
-		stop.pos = 1;
-		enesim_renderer_gradient_stop_add(ren, &stop);
+		if (egueb_svg_element_is_stop(stop_node))
+		{
+			Enesim_Renderer_Gradient_Stop *stop;
+			stop = egueb_svg_element_stop_gradient_stop_get(stop_node);
+			enesim_renderer_gradient_stop_add(ren, stop);
+		}
+		egueb_dom_node_sibling_next_get(stop_node, &tmp);
+		egueb_dom_node_unref(stop_node);
+		stop_node = tmp;
+		
 	}
 	enesim_renderer_unref(ren);
 

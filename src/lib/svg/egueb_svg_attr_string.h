@@ -20,8 +20,7 @@
 #define _EGUEB_SVG_ATTR_STRING_H_
 
 EAPI Egueb_Dom_Node * egueb_svg_attr_string_new(Egueb_Dom_String *name,
-		Egueb_Dom_String *def, Eina_Bool animatable,
-		Eina_Bool stylable, Eina_Bool inheritable);
+		Egueb_Dom_String *def);
 
 #endif
 

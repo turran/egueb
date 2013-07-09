@@ -24,13 +24,9 @@
 #include "egueb_svg_attr_matrix.h"
 #include "egueb_svg_attr_string.h"
 #include "egueb_svg_element_stop.h"
+#include "egueb_svg_gradient.h"
 #include "egueb_svg_gradient_private.h"
 
-/*
- * TODO
- * the stops_changed flag has to be cleared somewhere but where? add a cleanup
- * function?
- */
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
@@ -41,12 +37,10 @@
 		thiz = EGUEB_SVG_GRADIENT(n);					\
 		if (!egueb_dom_attr_is_set(thiz->attr))				\
 		{								\
-			Egueb_Dom_Node *href = NULL;				\
-			egueb_svg_gradient_href_node_get(n, &href);		\
-			if (href)						\
+			_egueb_svg_gradient_resolve_xlink_href(thiz);		\
+			if (thiz->xlink_href_node)				\
 			{							\
-				fun(href, attr);				\
-				egueb_dom_node_unref(href);			\
+				fun(thiz->xlink_href_node, attr);		\
 			}							\
 			else							\
 			{							\
@@ -60,37 +54,189 @@
 	}									\
 	else									\
 	{									\
-		Egueb_Dom_Node *href = NULL;					\
-		egueb_svg_gradient_href_node_get(n, &href);			\
-		if (href)							\
-		{								\
-			fun(href, attr);					\
-			egueb_dom_node_unref(href);				\
-		}								\
-		else								\
-		{								\
-			*attr = def;						\
-		}								\
+		*attr = def;							\
 	}
 
-static void _egueb_svg_gradient_node_inserted_or_removed_cb(Egueb_Dom_Event *e,
+/* any change on the stop also trigger a change on the gradient */
+static void _egueb_svg_gradient_stop_request_process_cb(Egueb_Dom_Event *e,
 		void *user_data)
 {
 	Egueb_Svg_Gradient *thiz = user_data;
-	Egueb_Dom_Node *target;
-	Egueb_Dom_Node *related;
 
+	INFO("A stop requested a process, let's request ourselves too");
+	egueb_dom_element_request_process(EGUEB_DOM_NODE(thiz));
+}
+
+/* any change on the xlink href element also trigger a process here */
+static void _egueb_svg_gradient_xlink_href_request_cb(Egueb_Dom_Event *e,
+		void *user_data)
+{
+	Egueb_Svg_Gradient *thiz = user_data;
+
+	INFO("The xlink:href requested a process, let's request ourselves too");
+	egueb_dom_element_request_process(EGUEB_DOM_NODE(thiz));
+}
+
+static Eina_Bool _egueb_svg_gradient_is_our_stop(Egueb_Svg_Gradient *thiz,
+		Egueb_Dom_Event *e, Egueb_Dom_Node **stop)
+{
+	Egueb_Dom_Node *target;
+	Egueb_Dom_Node *relative;
+	Eina_Bool ret = EINA_TRUE;
+
+	egueb_dom_event_mutation_related_get(e, &relative);
+	if (relative != EGUEB_DOM_NODE(thiz))
+	{
+		ret = EINA_FALSE;
+		goto not_us;
+	}
 	egueb_dom_event_target_get(e, &target);
 	if (!egueb_svg_element_is_stop(target))
-		goto no_stop;
-	egueb_dom_event_mutation_related_get(e, &related);
-	if (related != EGUEB_DOM_NODE(thiz))
-		goto no_parent;
-	/* mark that the stops have changed */
-no_stop:
+	{
+		ret = EINA_FALSE;
+		goto not_stop;
+	}
+	*stop = egueb_dom_node_ref(target);
+not_stop:
 	egueb_dom_node_unref(target);
-no_parent:
-	egueb_dom_node_unref(related);
+not_us:
+	egueb_dom_node_unref(relative);
+	return ret;
+}
+
+static void _egueb_svg_gradient_node_inserted_cb(Egueb_Dom_Event *e,
+		void *user_data)
+{
+	Egueb_Svg_Gradient *thiz = user_data;
+	Egueb_Dom_Node *stop;
+
+	if (!_egueb_svg_gradient_is_our_stop(thiz, e, &stop))
+		return;
+	egueb_dom_node_event_listener_add(stop,
+			EGUEB_DOM_EVENT_MUTATION_REQUEST_PROCESS,
+			_egueb_svg_gradient_stop_request_process_cb,
+			EINA_FALSE, thiz);
+	egueb_dom_node_unref(stop);
+}
+
+static void _egueb_svg_gradient_node_removed_cb(Egueb_Dom_Event *e,
+		void *user_data)
+{
+	Egueb_Svg_Gradient *thiz = user_data;
+	Egueb_Dom_Node *stop;
+
+	if (!_egueb_svg_gradient_is_our_stop(thiz, e, &stop))
+		return;
+	egueb_dom_node_event_listener_remove(stop,
+			EGUEB_DOM_EVENT_MUTATION_REQUEST_PROCESS,
+			_egueb_svg_gradient_stop_request_process_cb,
+			EINA_FALSE, thiz);
+	egueb_dom_node_unref(stop);
+}
+
+static void _egueb_svg_gradient_remove_xlink_href(Egueb_Svg_Gradient *thiz)
+{
+	if (thiz->xlink_href_node)
+	{
+		egueb_dom_node_event_listener_remove(thiz->xlink_href_node,
+				EGUEB_DOM_EVENT_MUTATION_REQUEST_PROCESS,
+				_egueb_svg_gradient_xlink_href_request_cb,
+				EINA_FALSE, thiz);
+		egueb_dom_node_unref(thiz->xlink_href_node);
+		thiz->xlink_href_node = NULL;
+	}
+}
+
+static Eina_Bool _egueb_svg_gradient_resolve_xlink_href(Egueb_Svg_Gradient *thiz)
+{
+	Egueb_Dom_String *xlink_href = NULL;
+	Eina_Bool ret = EINA_TRUE;
+
+	egueb_dom_attr_final_get(thiz->xlink_href, &xlink_href);
+	if (!egueb_dom_string_is_equal(xlink_href, thiz->last_xlink_href))
+	{
+		_egueb_svg_gradient_remove_xlink_href(thiz);
+		if (xlink_href)
+		{
+			Egueb_Dom_Node *doc = NULL;
+
+			egueb_dom_node_document_get(EGUEB_DOM_NODE(thiz), &doc);
+			if (!doc)
+			{
+				WARN("No document set");
+				ret = EINA_FALSE;
+				goto no_doc;
+			}
+			egueb_svg_document_element_get_by_iri(doc, xlink_href, &thiz->xlink_href_node);
+			if (thiz->xlink_href_node)
+			{
+				egueb_dom_node_event_listener_add(thiz->xlink_href_node,
+						EGUEB_DOM_EVENT_MUTATION_REQUEST_PROCESS,
+						_egueb_svg_gradient_xlink_href_request_cb,
+						EINA_FALSE, thiz);
+			}
+			egueb_dom_node_unref(doc);
+		}
+	}
+no_doc:
+	/* swap the xlink:href */
+	if (thiz->last_xlink_href)
+	{
+		egueb_dom_string_unref(thiz->last_xlink_href);
+		thiz->last_xlink_href = NULL;
+	}
+	thiz->last_xlink_href = xlink_href;
+	return ret;
+}
+
+static void _egueb_svg_gradient_deep_stop_get(Egueb_Dom_Node *n,
+		Egueb_Dom_Node **stop)
+{
+	Egueb_Dom_Node *child = NULL;
+
+	if (!egueb_svg_is_gradient(n))
+	{
+		*stop = NULL;
+		return;
+	}
+	/* in case we do have a stop, return it, otherwise
+	 * go find the stop on the xlink href node
+	 */
+	egueb_dom_node_child_first_get(n, &child);
+	if (!child)
+	{
+		Egueb_Svg_Gradient *thiz;
+
+		thiz = EGUEB_SVG_GRADIENT(n);
+		_egueb_svg_gradient_resolve_xlink_href(thiz);
+		if (!thiz->xlink_href_node)
+		{
+			*stop = NULL;
+			return;
+		}
+		else
+		{
+			_egueb_svg_gradient_deep_stop_get(thiz->xlink_href_node, stop);
+		}
+	}
+	else
+	{
+		while (child)
+		{
+			if (egueb_svg_element_is_stop(child))
+			{
+				*stop = child;
+				break;
+			}
+			else
+			{
+				Egueb_Dom_Node *tmp = NULL;
+				egueb_dom_node_sibling_next_get(child, &tmp);
+				egueb_dom_node_unref(child);
+				child = tmp;
+			}
+		}
+	}
 }
 
 #if 0
@@ -572,7 +718,6 @@ static Eina_Bool _egueb_svg_gradient_process(
 		Egueb_Svg_Referenceable *r)
 {
 	Egueb_Svg_Gradient *thiz;
-	Egueb_Dom_String *xlink_href = NULL;
 
 	thiz = EGUEB_SVG_GRADIENT(r);
 	DBG("Processing a gradient");
@@ -581,33 +726,8 @@ static Eina_Bool _egueb_svg_gradient_process(
 			_egueb_svg_gradient_children_process_cb,
 			NULL);
 	/* get the xlink:href node */
-	egueb_dom_attr_final_get(thiz->xlink_href, &xlink_href);
-	if (!egueb_dom_string_is_equal(xlink_href, thiz->last_xlink_href))
-	{
-		if (thiz->xlink_href_node)
-		{
-			egueb_dom_node_unref(thiz->xlink_href_node);
-			thiz->xlink_href_node = NULL;
-		}
-
-		if (xlink_href)
-		{
-			Egueb_Dom_Node *doc = NULL;
-			egueb_dom_node_document_get(EGUEB_DOM_NODE(r), &doc);
-			if (doc)
-			{
-				egueb_dom_document_element_get_by_id(doc, xlink_href, &thiz->xlink_href_node);
-				egueb_dom_node_unref(doc);
-			}
-		}
-	}
-	/* swap the xlink:href */
-	if (thiz->last_xlink_href)
-	{
-		egueb_dom_string_unref(thiz->last_xlink_href);
-		thiz->last_xlink_href = NULL;
-	}
-	thiz->last_xlink_href = xlink_href;
+	if (!_egueb_svg_gradient_resolve_xlink_href(thiz))
+		return EINA_FALSE;
 
 	return EINA_TRUE;
 }
@@ -637,6 +757,7 @@ static void _egueb_svg_gradient_class_deinit(void *k)
 static void _egueb_svg_gradient_instance_init(void *o)
 {
 	Egueb_Svg_Gradient *thiz;
+	Egueb_Dom_Node *n;
 
 	thiz = EGUEB_SVG_GRADIENT(o);
 	thiz->units = egueb_svg_attr_referenceable_units_new(
@@ -650,10 +771,21 @@ static void _egueb_svg_gradient_instance_init(void *o)
 			EINA_FALSE, EINA_FALSE);
 	thiz->xlink_href = egueb_svg_attr_string_new(
 			egueb_dom_string_ref(EGUEB_SVG_XLINK_HREF),
-			NULL, EINA_TRUE, EINA_FALSE, EINA_FALSE);
+			NULL);
 	EGUEB_DOM_ELEMENT_CLASS_PROPERTY_ADD(thiz, egueb_svg_gradient, transform);
 	EGUEB_DOM_ELEMENT_CLASS_PROPERTY_ADD(thiz, egueb_svg_gradient, units);
 	EGUEB_DOM_ELEMENT_CLASS_PROPERTY_ADD(thiz, egueb_svg_gradient, xlink_href);
+
+	n = EGUEB_DOM_NODE(o);
+	/* to identify in case a stop was added, we need to process again ourselves */
+	egueb_dom_node_event_listener_add(n,
+			EGUEB_DOM_EVENT_MUTATION_NODE_INSERTED,
+			_egueb_svg_gradient_node_inserted_cb,
+			EINA_FALSE, thiz);
+	egueb_dom_node_event_listener_add(n,
+			EGUEB_DOM_EVENT_MUTATION_NODE_REMOVED,
+			_egueb_svg_gradient_node_removed_cb,
+			EINA_FALSE, thiz);
 }
 
 static void _egueb_svg_gradient_instance_deinit(void *o)
@@ -671,37 +803,12 @@ static void _egueb_svg_gradient_instance_deinit(void *o)
 		egueb_dom_string_unref(thiz->last_xlink_href);
 		thiz->last_xlink_href = NULL;
 	}
-	if (thiz->xlink_href_node)
-	{
-		egueb_dom_node_unref(thiz->xlink_href_node);
-		thiz->xlink_href_node = NULL;
-	}
+	_egueb_svg_gradient_remove_xlink_href(thiz);
 }
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
 #if 0
-/* The ender wrapper */
-void egueb_svg_element_gradient_init(void)
-{
-	_egueb_svg_element_gradient_log = eina_log_domain_register("egueb_svg_element_gradient", ESVG_LOG_COLOR_DEFAULT);
-	if (_egueb_svg_element_gradient_log < 0)
-	{
-		EINA_LOG_ERR("Can not create log domain.");
-		return;
-	}
-	_egueb_svg_element_gradient_init();
-}
-
-void egueb_svg_element_gradient_shutdown(void)
-{
-	if (_egueb_svg_element_gradient_log < 0)
-		return;
-	_egueb_svg_element_gradient_shutdown();
-	eina_log_domain_unregister(_egueb_svg_element_gradient_log);
-	_egueb_svg_element_gradient_log = -1;
-}
-
 Egueb_Dom_Tag * egueb_svg_element_gradient_new(Egueb_Svg_Element_Gradient_Descriptor *descriptor,
 		Egueb_Svg_Type type,
 		void *data)
@@ -752,29 +859,16 @@ Egueb_Dom_Tag * egueb_svg_element_gradient_new(Egueb_Svg_Element_Gradient_Descri
 void egueb_svg_gradient_href_node_get(Egueb_Dom_Node *n, Egueb_Dom_Node **href)
 {
 	Egueb_Svg_Gradient *thiz;
-	Egueb_Dom_String *xlink_href = NULL;
 
 	thiz = EGUEB_SVG_GRADIENT(n);
-	egueb_dom_attr_final_get(thiz->xlink_href, &xlink_href);
-	if (!xlink_href)
+	_egueb_svg_gradient_resolve_xlink_href(thiz);
+	if (!thiz->xlink_href_node)
 	{
 		*href = NULL;
 	}
 	else
 	{
-		Egueb_Dom_Node *doc = NULL;
-
-		egueb_dom_node_document_get(n, &doc);
-		if (!doc)
-		{
-			WARN("No document set");
-			*href = NULL;
-		}
-		else
-		{
-			egueb_dom_document_element_get_by_id(doc, xlink_href, href);
-			egueb_dom_node_unref(doc);
-		}
+		*href = egueb_dom_node_ref(thiz->xlink_href_node);
 	}
 }
 /*============================================================================*
@@ -805,6 +899,12 @@ EAPI void egueb_svg_gradient_deep_transform_get(Egueb_Dom_Node *n,
 	enesim_matrix_identity(&m);
 	EGUEB_SVG_ELEMENT_GRADIENT_DEEP_GET(n, transform, m,
 			egueb_svg_gradient_deep_transform_get);
+}
+
+EAPI void egueb_svg_gradient_deep_stop_get(Egueb_Dom_Node *n,
+		Egueb_Dom_Node **stop)
+{
+	_egueb_svg_gradient_deep_stop_get(n, stop);
 }
 
 #if 0

@@ -32,6 +32,8 @@ EAPI Eina_Error egueb_dom_document_element_set(Egueb_Dom_Node *n,
 		Egueb_Dom_Node *element);
 EAPI Eina_Error egueb_dom_document_element_get_by_id(Egueb_Dom_Node *n,
 		Egueb_Dom_String *id, Egueb_Dom_Node **element);
+EAPI Eina_Error egueb_dom_document_element_get_by_iri(Egueb_Dom_Node *n,
+		Egueb_Dom_String *id, Egueb_Dom_Node **element);
 EAPI Eina_Error egueb_dom_document_node_adopt(Egueb_Dom_Node *n,
 		Egueb_Dom_Node *adopted, Egueb_Dom_Node **ret);
 

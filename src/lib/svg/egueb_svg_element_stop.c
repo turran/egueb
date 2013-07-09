@@ -131,18 +131,16 @@ static void _egueb_svg_element_stop_instance_deinit(void *o)
 	/* destroy the properties */
 	egueb_dom_node_unref(thiz->offset);
 }
-#if 0
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
-Enesim_Renderer_Gradient_Stop * egueb_svg_element_stop_gradient_stop_get(Egueb_Dom_Tag *t)
+Enesim_Renderer_Gradient_Stop * egueb_svg_element_stop_gradient_stop_get(Egueb_Dom_Node *n)
 {
 	Egueb_Svg_Element_Stop *thiz;
 
-	thiz = _egueb_svg_element_stop_get(t);
+	thiz = EGUEB_SVG_ELEMENT_STOP(n);
 	return &thiz->s;
 }
-#endif
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/

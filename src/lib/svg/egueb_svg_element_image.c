@@ -453,7 +453,7 @@ static void _egueb_svg_element_image_instance_init(void *o)
 			EINA_TRUE, EINA_FALSE, EINA_FALSE);
 	thiz->xlink_href = egueb_svg_attr_string_new(
 			egueb_dom_string_ref(EGUEB_SVG_XLINK_HREF),
-			NULL, EINA_TRUE, EINA_FALSE, EINA_FALSE);
+			NULL);
 
 	EGUEB_DOM_ELEMENT_CLASS_PROPERTY_ADD(thiz, egueb_svg_element_image, x);
 	EGUEB_DOM_ELEMENT_CLASS_PROPERTY_ADD(thiz, egueb_svg_element_image, y);

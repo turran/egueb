@@ -176,7 +176,7 @@ static void _egueb_svg_element_a_instance_init(void *o)
 	/* create the properties */
 	thiz->xlink_href = egueb_svg_attr_string_new(
 			egueb_dom_string_ref(EGUEB_SVG_XLINK_HREF),
-			NULL, EINA_TRUE, EINA_FALSE, EINA_FALSE);
+			NULL);
 	EGUEB_DOM_ELEMENT_CLASS_PROPERTY_ADD(thiz, egueb_svg_element_a, xlink_href);
 	/* whenever a renderable is added/removed, add/remove the click event */
 	egueb_dom_node_event_listener_add(EGUEB_DOM_NODE(o),
