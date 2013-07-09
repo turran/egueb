@@ -146,6 +146,15 @@ Enesim_Renderer_Gradient_Stop * egueb_svg_element_stop_gradient_stop_get(Egueb_D
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/
+EAPI Eina_Bool egueb_svg_element_is_stop(Egueb_Dom_Node *n)
+{
+	if (!n) return EINA_FALSE;
+	if (!enesim_object_instance_inherits(ENESIM_OBJECT_INSTANCE(n),
+			EGUEB_SVG_ELEMENT_STOP_DESCRIPTOR))
+		return EINA_FALSE;
+	return EINA_TRUE;
+}
+
 EAPI Egueb_Dom_Node * egueb_svg_element_stop_new(void)
 {
 	Egueb_Dom_Node *n;

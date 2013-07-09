@@ -77,5 +77,7 @@ typedef struct _Egueb_Dom_Element_Class
 	egueb_dom_element_property_set(EGUEB_DOM_ELEMENT(thiz), thiz->var, var);
 
 Eina_Error egueb_dom_element_process_children(Egueb_Dom_Element *thiz);
+void egueb_dom_element_dequeue(Egueb_Dom_Node *n);
+void egueb_dom_element_enqueue(Egueb_Dom_Node *n);
 
 #endif

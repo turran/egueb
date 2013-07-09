@@ -320,6 +320,7 @@ EAPI Eina_Bool egueb_dom_attr_unset(Egueb_Dom_Node *n, int prop_mask)
 	 * at the next set or whenever the property is freed
 	 */
 	thiz->set_mask &= ~prop_mask;
+	return EINA_TRUE;
 }
 
 EAPI Eina_Error egueb_dom_attr_set(Egueb_Dom_Node *n, int prop_mask,

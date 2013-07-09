@@ -130,8 +130,8 @@ static Eina_Bool _egueb_svg_reference_gradient_radial_process(
 	enesim_renderer_gradient_radial_focus_y_set(thiz->r, gfy);
 	enesim_renderer_gradient_radial_radius_set(thiz->r, grad);
 
-	DBG("Coordinats cx = %g, cy = %g, fx = %g, fy = %g, rad = %g", gcx, gcy, gfx, gfy, grad);
-	DBG("Transformation %" ENESIM_MATRIX_FORMAT, ENESIM_MATRIX_ARGS(&m));
+	INFO("Coordinates cx = %g, cy = %g, fx = %g, fy = %g, rad = %g", gcx, gcy, gfx, gfy, grad);
+	INFO("Transformation %" ENESIM_MATRIX_FORMAT, ENESIM_MATRIX_ARGS(&m));
 
 	return EINA_TRUE;
 }

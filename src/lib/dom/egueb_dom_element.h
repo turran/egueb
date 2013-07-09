@@ -58,7 +58,7 @@ EAPI Eina_Error egueb_dom_element_property_value_get(Egueb_Dom_Node *node,
 EAPI Eina_Error egueb_dom_element_class_property_add(Egueb_Dom_Node *n,
 		Egueb_Dom_Node *p, Egueb_Dom_Attr_Fetch fetch);
 EAPI Eina_Bool egueb_dom_element_changed(Egueb_Dom_Node *n);
-EAPI void egueb_dom_element_enqueue_process(Egueb_Dom_Node *n);
+EAPI void egueb_dom_element_request_process(Egueb_Dom_Node *n);
 EAPI Eina_Bool egueb_dom_element_is_enqueued(Egueb_Dom_Node *n);
 EAPI Eina_Bool egueb_dom_element_process(Egueb_Dom_Node *n);
 

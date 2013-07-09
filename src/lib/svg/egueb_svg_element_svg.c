@@ -2129,7 +2129,7 @@ EAPI Eina_Error egueb_svg_element_svg_current_scale_set(Egueb_Dom_Node *n,
 
 	thiz = EGUEB_SVG_ELEMENT_SVG(n);
 	thiz->current_scale = scale;
-	egueb_dom_element_enqueue_process(egueb_dom_node_ref(n));
+	egueb_dom_element_request_process(n);
 	return EINA_ERROR_NONE;
 }
 
@@ -2148,7 +2148,7 @@ EAPI Eina_Error egueb_svg_element_svg_current_translate_set(Egueb_Dom_Node *n,
 	{
 		thiz->current_translate = *p;
 	}
-	egueb_dom_element_enqueue_process(egueb_dom_node_ref(n));
+	egueb_dom_element_request_process(n);
 	return EINA_ERROR_NONE;
 }
 

@@ -19,6 +19,7 @@
 #ifndef _EGUEB_SVG_ELEMENT_STOP_H_
 #define _EGUEB_SVG_ELEMENT_STOP_H_
 
+EAPI Eina_Bool egueb_svg_element_is_stop(Egueb_Dom_Node *n);
 EAPI Egueb_Dom_Node * egueb_svg_element_stop_new(void);
 #if 0
 EAPI void egueb_svg_element_stop_offset_set(Ender_Element *e, const Egueb_Svg_Length *offset);

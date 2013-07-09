@@ -32,6 +32,7 @@
 #include "egueb_dom_string_private.h"
 #include "egueb_dom_attr_private.h"
 #include "egueb_dom_value_private.h"
+#include "egueb_dom_event_mutation_private.h"
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
@@ -457,27 +458,33 @@ Eina_Error egueb_dom_element_process_children(Egueb_Dom_Element *thiz)
 	return ret;
 }
 
- void egueb_dom_element_dequeue_process(Egueb_Dom_Node *n)
+void egueb_dom_element_dequeue(Egueb_Dom_Node *n)
 {
 	Egueb_Dom_Element *thiz;
 
 	thiz = EGUEB_DOM_ELEMENT(n);
 	if (!thiz->enqueued)
 	{
-		egueb_dom_node_unref(n);
-		return;
-	}
-	if (!n->owner_document)
-	{
-		WARN("Can not dequeue without a document");
+		WARN("Element not enqueued");
 		egueb_dom_node_unref(n);
 		return;
 	}
 	thiz->enqueued = EINA_FALSE;
-	egueb_dom_document_dequeue_process(
-			EGUEB_DOM_DOCUMENT(n->owner_document), n);
 }
 
+void egueb_dom_element_enqueue(Egueb_Dom_Node *n)
+{
+	Egueb_Dom_Element *thiz;
+
+	thiz = EGUEB_DOM_ELEMENT(n);
+	if (thiz->enqueued)
+	{
+		WARN("Node already enqueued, nothing to do");
+		egueb_dom_node_unref(n);
+		return;
+	}
+	thiz->enqueued = EINA_TRUE;
+}
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/
@@ -740,34 +747,22 @@ EAPI Eina_Bool egueb_dom_element_changed(Egueb_Dom_Node *n)
 	return thiz->changed;
 }
 
-EAPI void egueb_dom_element_enqueue_process(Egueb_Dom_Node *n)
-{
-	Egueb_Dom_Element *thiz;
-
-	thiz = EGUEB_DOM_ELEMENT(n);
-	if (!n->owner_document)
-	{
-		WARN("Can not enqueue without a document");
-		egueb_dom_node_unref(n);
-		return;
-	}
-	if (thiz->enqueued)
-	{
-		DBG("Node already enqueued, nothing to do");
-		egueb_dom_node_unref(n);
-		return;
-	}
-	thiz->enqueued = EINA_TRUE;
-	egueb_dom_document_enqueue_process(
-			EGUEB_DOM_DOCUMENT(n->owner_document), n);
-}
-
 EAPI Eina_Bool egueb_dom_element_is_enqueued(Egueb_Dom_Node *n)
 {
 	Egueb_Dom_Element *thiz;
 
 	thiz = EGUEB_DOM_ELEMENT(n);
 	return thiz->enqueued;
+}
+
+EAPI void egueb_dom_element_request_process(Egueb_Dom_Node *n)
+{
+	Egueb_Dom_Event *e;
+
+	/* send the request process event */
+	e = egueb_dom_event_mutation_new();
+	egueb_dom_event_mutation_init_request_process(e);
+	egueb_dom_node_event_dispatch(n, e, NULL);
 }
 
 EAPI Eina_Bool egueb_dom_element_process(Egueb_Dom_Node *n)

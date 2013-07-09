@@ -25,10 +25,14 @@
 typedef struct _Egueb_Svg_Gradient
 {
 	Egueb_Svg_Paint_Server base;
+	/* attributes */
 	Egueb_Dom_Node *units;
 	Egueb_Dom_Node *transform;
 	Egueb_Dom_Node *spread_method;
 	Egueb_Dom_Node *xlink_href;
+	/* private */
+	Egueb_Dom_String *last_xlink_href;
+	Egueb_Dom_Node *xlink_href_node;
 } Egueb_Svg_Gradient;
 
 typedef struct _Egueb_Svg_Gradient_Class

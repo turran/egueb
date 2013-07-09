@@ -65,3 +65,8 @@ ESVG
   some research on way to simplify the properties, like simplifying matrices to just
   modifying the inner properties
 
+DOM
+===
++ Add a method to attach an event to a running event propagation (on current target only) this
+  way we use the tree traversing code for several events at once
+
