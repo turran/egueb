@@ -124,7 +124,7 @@ static Eina_Bool _egueb_svg_reference_gradient_linear_process(
 	enesim_renderer_gradient_linear_x1_set(thiz->r, gx2);
 	enesim_renderer_gradient_linear_y1_set(thiz->r, gy2);
 
-	DBG("Coordinats x1 = %g, y1 = %g, x2 = %g, y2 = %g", gx1, gy1, gx2, gy2);
+	DBG("Coordinates x1 = %g, y1 = %g, x2 = %g, y2 = %g", gx1, gy1, gx2, gy2);
 	DBG("Transformation %" ENESIM_MATRIX_FORMAT, ENESIM_MATRIX_ARGS(&m));
 
 	return EINA_TRUE;
