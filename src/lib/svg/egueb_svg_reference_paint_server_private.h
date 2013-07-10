@@ -53,6 +53,8 @@ Enesim_Object_Descriptor * egueb_svg_reference_paint_server_descriptor_get(void)
 /* paint_server */
 void egueb_svg_reference_paint_server_renderer_get(Egueb_Svg_Reference *r,
 		Enesim_Renderer **ren);
+/* implementations */
+Egueb_Svg_Reference * egueb_svg_reference_pattern_new(void);
 
 #endif
 

@@ -42,6 +42,8 @@ typedef struct _Egueb_Svg_Reference_Pattern
 {
 	Egueb_Svg_Reference_Paint_Server base;
 	Egueb_Dom_Node *g;
+	//Enesim_Renderer *content;
+	Enesim_Renderer *r;
 } Egueb_Svg_Reference_Pattern;
 
 typedef struct _Egueb_Svg_Reference_Pattern_Class
@@ -58,7 +60,8 @@ static Enesim_Renderer * _egueb_svg_reference_pattern_renderer_get(
 	Egueb_Svg_Reference_Pattern *thiz;
 
 	thiz = EGUEB_SVG_REFERENCE_PATTERN(p);
-	return egueb_svg_renderable_renderer_get(thiz->g);
+	//return egueb_svg_renderable_renderer_get(thiz->g);
+	return enesim_renderer_ref(thiz->r);
 }
 /*----------------------------------------------------------------------------*
  *                             Reference interface                            *
@@ -98,6 +101,7 @@ static void _egueb_svg_reference_pattern_instance_init(void *o)
 
 	thiz = EGUEB_SVG_REFERENCE_PATTERN(o);
 	thiz->g = egueb_svg_element_g_new();
+	thiz->r = enesim_renderer_pattern_new();
 }
 
 static void _egueb_svg_reference_pattern_instance_deinit(void *o)
@@ -106,6 +110,7 @@ static void _egueb_svg_reference_pattern_instance_deinit(void *o)
 
 	thiz = EGUEB_SVG_REFERENCE_PATTERN(o);
 	egueb_dom_node_unref(thiz->g);
+	enesim_renderer_unref(thiz->r);
 }
 /*============================================================================*
  *                                 Global                                     *

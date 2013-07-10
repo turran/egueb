@@ -70,6 +70,7 @@ typedef Eina_Bool (*Egueb_Dom_Attr_Value_Set)(Egueb_Dom_Attr *thiz,
 		Egueb_Dom_Attr_Type type, Egueb_Dom_Value *value);
 typedef const Egueb_Dom_Value_Descriptor * (*Egueb_Dom_Attr_Value_Descriptor_Get)
 		(Egueb_Dom_Attr *thiz);
+typedef void (*Egueb_Dom_Attr_Clone)(Egueb_Dom_Attr *thiz, Eina_Bool live, Eina_Bool deep, Egueb_Dom_Attr *clone);
 
 typedef struct _Egueb_Dom_Attr_Class
 {
@@ -77,6 +78,7 @@ typedef struct _Egueb_Dom_Attr_Class
 	Egueb_Dom_Attr_Value_Descriptor_Get value_descriptor_get;
 	Egueb_Dom_Attr_Value_Get value_get;
 	Egueb_Dom_Attr_Value_Set value_set;
+	Egueb_Dom_Attr_Clone clone;
 } Egueb_Dom_Attr_Class;
 
 Eina_Error egueb_dom_attr_get_va(Egueb_Dom_Node *n,

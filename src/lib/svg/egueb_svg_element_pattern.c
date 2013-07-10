@@ -21,10 +21,17 @@
 #include "egueb_svg_referenceable_units.h"
 #include "egueb_svg_attr_referenceable_units.h"
 #include "egueb_svg_attr_matrix.h"
-#include "egueb_svg_attr_string.h"
+#include "egueb_svg_attr_xlink_href.h"
 #include "egueb_svg_element_pattern.h"
 
 #include "egueb_svg_paint_server_private.h" 
+#include "egueb_svg_reference_paint_server_private.h"
+/* A pattern from the implementation point of view is a mix between a
+ * gradient and a clipPath. We need to have live clones of the children
+ * on every reference like a clipPath but in case the pattern element
+ * does not have any child, the xlink:href attribute is used to get them
+ * like the gradient
+ */
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
@@ -37,6 +44,36 @@
 #define EGUEB_SVG_ELEMENT_PATTERN(o) ENESIM_OBJECT_INSTANCE_CHECK(o, 		\
 		Egueb_Svg_Element_Pattern, EGUEB_SVG_ELEMENT_PATTERN_DESCRIPTOR)
 
+#define EGUEB_SVG_ELEMENT_PATTERN_DEEP_GET(n, attr, def, fun)			\
+	if (egueb_svg_element_is_pattern(n))					\
+	{									\
+		Egueb_Svg_Element_Pattern *thiz;				\
+		thiz = EGUEB_SVG_ELEMENT_PATTERN(n);				\
+		if (!egueb_dom_attr_is_set(thiz->attr))				\
+		{								\
+			Egueb_Dom_Node *href = NULL;				\
+			_egueb_svg_element_pattern_xlink_href_node_get(		\
+					n, &href);				\
+			if (href)						\
+			{							\
+				fun(href, attr);				\
+				egueb_dom_node_unref(href);			\
+			}							\
+			else							\
+			{							\
+				*attr = def;					\
+			}							\
+		}								\
+		else								\
+		{								\
+			egueb_dom_attr_final_get(thiz->attr, attr);		\
+		}								\
+	}									\
+	else									\
+	{									\
+		*attr = def;							\
+	}
+
 typedef struct _Egueb_Svg_Element_Pattern
 {
 	Egueb_Svg_Paint_Server base;
@@ -48,19 +85,20 @@ typedef struct _Egueb_Svg_Element_Pattern
 	Egueb_Dom_Node *y;
 	Egueb_Dom_Node *width;
 	Egueb_Dom_Node *height;
-	/* private */
-	Enesim_Renderer *content;
-	Enesim_Renderer *r;
-#if 0
-	Eina_Bool units_set : 1;
-	Eina_Bool transform_is_set : 1;
-#endif
 } Egueb_Svg_Element_Pattern;
 
 typedef struct _Egueb_Svg_Element_Pattern_Class
 {
 	Egueb_Svg_Paint_Server_Class base;
 } Egueb_Svg_Element_Pattern_Class;
+
+static void _egueb_svg_element_pattern_xlink_href_node_get(Egueb_Dom_Node *n, Egueb_Dom_Node **href)
+{
+	Egueb_Svg_Element_Pattern *thiz;
+
+	thiz = EGUEB_SVG_ELEMENT_PATTERN(n);
+	egueb_svg_attr_xlink_href_node_get(thiz->xlink_href, href);
+}
 /*----------------------------------------------------------------------------*
  *                       Esvg Paint Server interface                          *
  *----------------------------------------------------------------------------*/
@@ -158,7 +196,10 @@ static Eina_Bool _egueb_svg_element_pattern_process(
 static Egueb_Svg_Reference * _egueb_svg_element_pattern_reference_new(
 		Egueb_Svg_Referenceable *r, Egueb_Dom_Node *referencer)
 {
-	return NULL;
+	Egueb_Svg_Reference *ref;
+
+	ref = egueb_svg_reference_pattern_new();
+	return ref;
 }
 /*----------------------------------------------------------------------------*
  *                              Element interface                             *
@@ -215,7 +256,7 @@ static void _egueb_svg_element_pattern_instance_init(void *o)
 			egueb_dom_string_ref(EGUEB_SVG_PATTERN_TRANSFORM),
 			&EGUEB_SVG_MATRIX_IDENTITY, EINA_TRUE,
 			EINA_FALSE, EINA_FALSE);
-	thiz->xlink_href = egueb_svg_attr_string_new(
+	thiz->xlink_href = egueb_svg_attr_xlink_href_new(
 			egueb_dom_string_ref(EGUEB_SVG_XLINK_HREF),
 			NULL);
 
@@ -265,6 +306,15 @@ static void _egueb_svg_element_pattern_instance_deinit(void *o)
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/
+EAPI Eina_Bool egueb_svg_element_is_pattern(Egueb_Dom_Node *n)
+{
+	if (!n) return EINA_FALSE;
+	if (!enesim_object_instance_inherits(ENESIM_OBJECT_INSTANCE(n),
+			EGUEB_SVG_ELEMENT_PATTERN_DESCRIPTOR))
+		return EINA_FALSE;
+	return EINA_TRUE;
+}
+
 EAPI Egueb_Dom_Node * egueb_svg_element_pattern_new(void)
 {
 	Egueb_Dom_Node *n;
@@ -272,40 +322,26 @@ EAPI Egueb_Dom_Node * egueb_svg_element_pattern_new(void)
 	n = ENESIM_OBJECT_INSTANCE_NEW(egueb_svg_element_pattern);
 	return n;
 }
+
+EAPI void egueb_svg_element_pattern_deep_units_get(Egueb_Dom_Node *n,
+		Egueb_Svg_Referenceable_Units *units)
+{
+	EGUEB_SVG_ELEMENT_PATTERN_DEEP_GET(n, units,
+			EGUEB_SVG_REFERENCEABLE_UNITS_USER_SPACE_ON_USE,
+			egueb_svg_element_pattern_deep_units_get);
+}
+
+EAPI void egueb_svg_element_pattern_deep_transform_get(Egueb_Dom_Node *n,
+		Enesim_Matrix *transform)
+{
+	Enesim_Matrix m;
+
+	enesim_matrix_identity(&m);
+	EGUEB_SVG_ELEMENT_PATTERN_DEEP_GET(n, transform, m,
+			egueb_svg_element_pattern_deep_transform_get);
+}
+
 #if 0
-EAPI Enesim_Renderer * egueb_svg_pattern_new(void)
-{
-	Egueb_Svg_Pattern *thiz;
-	Enesim_Renderer *r;
-
-	thiz = calloc(1, sizeof(Egueb_Svg_Pattern));
-	if (!thiz) return NULL;
-
-	EINA_MAGIC_SET(thiz, ESVG_PATTERN_MAGIC);
-	r = enesim_renderer_pattern_new();
-	thiz->r = r;
-
-	/* Default values */
-	thiz->units = ESVG_OBJECT_BOUNDING_BOX;
-	enesim_matrix_identity(&thiz->transform);
-
-	r = egueb_svg_paint_server_new(&_descriptor, thiz);
-	return r;
-}
-
-EAPI Eina_Bool egueb_svg_is_pattern(Enesim_Renderer *r)
-{
-	Egueb_Svg_Pattern *thiz;
-	Eina_Bool ret;
-
-	if (!egueb_svg_is_paint_server(r))
-		return EINA_FALSE;
-	thiz = egueb_svg_paint_server_data_get(r);
-	ret = EINA_MAGIC_CHECK(thiz, ESVG_PATTERN_MAGIC);
-
-	return ret;
-}
-
 EAPI void egueb_svg_pattern_x_set(Enesim_Renderer *r, const Egueb_Svg_Coord *x)
 {
 	Egueb_Svg_Pattern *thiz;

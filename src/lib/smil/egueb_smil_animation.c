@@ -372,6 +372,13 @@ static Eina_Bool _egueb_dom_animation_setup(Egueb_Smil_Animation *thiz,
 	Egueb_Dom_Node *p;
 	Egueb_Dom_String *attribute_name = NULL;
 
+	/* check that we have an etch */
+	if (!thiz->etch)
+	{
+		ERR("No etch set");
+		return EINA_FALSE;
+	}
+
 	/* set our target */
 	thiz->target = target;
 	egueb_dom_attr_final_get(thiz->attribute_name, &attribute_name);
@@ -479,6 +486,7 @@ static Eina_Bool _egueb_smil_animation_process(Egueb_Dom_Element *e)
 
 	if (!parent) return EINA_FALSE;
 	/* now the setup */
+	_egueb_dom_animation_cleanup(thiz, parent);
 	ret = _egueb_dom_animation_setup(thiz, parent);
 	/* dont keep a reference to its parent, in case the parent
 	 * is destroyed this will be destroyed first
@@ -563,40 +571,9 @@ static void _egueb_smil_animation_instance_deinit(void *o)
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
-#if 0
-Egueb_Dom_Tag * egueb_smil_animation_new(Egueb_Smil_Animation_Descriptor *descriptor, Egueb_Smil_Type type,
-		void *data)
-{
-	Egueb_Smil_Animation *thiz;
-	Egueb_Smil_Element_Descriptor pdescriptor;
-	Egueb_Dom_Tag *t;
-
-	thiz = calloc(1, sizeof(Egueb_Smil_Animation));
-	if (!thiz) return NULL;
-
-	EINA_MAGIC_SET(thiz, EGUEB_SMIL_ELEMENT_ANIMATION_MAGIC);
-	thiz->data = data;
-	/* our own descriptor */
-	/* default values */
-	thiz->ctx.timing.repeat_count = 1;
-	thiz->ctx.timing.fill = EGUEB_SMIL_FILL_REMOVE;
-	thiz->ctx.addition.additive = EGUEB_SMIL_ADDITIVE_REPLACE;
-	thiz->ctx.addition.accumulate = EGUEB_SMIL_ACCUMULATE_NONE;
-	thiz->ctx.timing.dur.type = EGUEB_SMIL_DURATION_TYPE_INDEFINITE;
-
-	pdescriptor.attribute_set = _egueb_smil_animation_attribute_set;
-	pdescriptor.attribute_get = _egueb_smil_animation_attribute_get;
-	pdescriptor.free = _egueb_smil_animation_free;
-	pdescriptor.initialize = _egueb_smil_animation_initialize;
-	pdescriptor.setup = _egueb_smil_animation_setup;
-
-	return t;
-}
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/
-#endif
-
 EAPI Eina_Bool egueb_smil_is_animation(Egueb_Dom_Node *n)
 {
 	if (!n) return EINA_FALSE;

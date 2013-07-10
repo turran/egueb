@@ -23,10 +23,10 @@
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
-#define EGUEB_SVG_PROPERTY_STRING_DESCRIPTOR 					\
+#define EGUEB_SVG_ATTR_STRING_DESCRIPTOR 					\
 		egueb_svg_attr_string_descriptor_get()
-#define EGUEB_SVG_PROPERTY_STRING(o) ENESIM_OBJECT_INSTANCE_CHECK(o,		\
-		Egueb_Svg_Attr_String, EGUEB_SVG_PROPERTY_STRING_DESCRIPTOR)
+#define EGUEB_SVG_ATTR_STRING(o) ENESIM_OBJECT_INSTANCE_CHECK(o,		\
+		Egueb_Svg_Attr_String, EGUEB_SVG_ATTR_STRING_DESCRIPTOR)
 
 typedef struct _Egueb_Svg_Attr_String
 {
@@ -47,7 +47,7 @@ static Eina_Bool _egueb_svg_attr_string_value_get(Egueb_Dom_Attr *p,
 {
 	Egueb_Svg_Attr_String *thiz;
 
-	thiz = EGUEB_SVG_PROPERTY_STRING(p);
+	thiz = EGUEB_SVG_ATTR_STRING(p);
 	switch (type)
 	{
 		case EGUEB_DOM_ATTR_TYPE_ANIMATED:
@@ -105,7 +105,15 @@ static void _egueb_svg_attr_string_instance_deinit(void *o)
 {
 	Egueb_Svg_Attr_String *thiz;
 
-	thiz = EGUEB_SVG_PROPERTY_STRING(o);
+	thiz = EGUEB_SVG_ATTR_STRING(o);
+	if (thiz->styled)
+		egueb_dom_string_unref(thiz->styled);
+	if (thiz->def)
+		egueb_dom_string_unref(thiz->def);
+	if (thiz->value)
+		egueb_dom_string_unref(thiz->value);
+	if (thiz->anim)
+		egueb_dom_string_unref(thiz->anim);
 }
 /*============================================================================*
  *                                 Global                                     *
@@ -119,7 +127,7 @@ EAPI Egueb_Dom_Node * egueb_svg_attr_string_new(Egueb_Dom_String *name,
 	Egueb_Dom_Node *n;
 
 	n = ENESIM_OBJECT_INSTANCE_NEW(egueb_svg_attr_string);
-	egueb_dom_attr_init(n, name, EINA_TRUE, EINA_TRUE, EINA_TRUE);
+	egueb_dom_attr_init(n, name, EINA_TRUE, EINA_FALSE, EINA_FALSE);
 	if (def) egueb_dom_attr_set(n, EGUEB_DOM_ATTR_TYPE_DEFAULT, def);
 	return n;
 }

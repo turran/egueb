@@ -74,6 +74,7 @@
 #include "egueb_svg_attr_stroke_line_cap.h"
 #include "egueb_svg_attr_stroke_line_join.h"
 #include "egueb_svg_attr_visibility.h"
+#include "egueb_svg_attr_xlink_href.h"
 
 /* main abstractions */
 #include "egueb_svg_gradient.h"

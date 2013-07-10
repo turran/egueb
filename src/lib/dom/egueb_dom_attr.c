@@ -77,7 +77,12 @@ static Eina_Bool _egueb_dom_attr_value_get(Egueb_Dom_Attr *thiz,
 static void _egueb_dom_attr_clone(Egueb_Dom_Node *n, Eina_Bool live,
 		Eina_Bool deep, Egueb_Dom_Node *clone)
 {
+	Egueb_Dom_Attr_Class *klass;
+
 	egueb_dom_attr_copy(n, clone);
+	klass = EGUEB_DOM_ATTR_CLASS_GET(n);
+	if (klass->clone)
+		klass->clone(EGUEB_DOM_ATTR(n), live, deep, EGUEB_DOM_ATTR(clone));
 }
 /*----------------------------------------------------------------------------*
  *                              Object interface                              *

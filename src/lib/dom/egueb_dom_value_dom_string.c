@@ -74,7 +74,7 @@ static void _dom_string_copy(const Egueb_Dom_Value *v, Egueb_Dom_Value *copy)
 
 static char * _dom_string_string_to(const Egueb_Dom_Value *v)
 {
-	EINA_SAFETY_ON_FALSE_RETURN(v->descriptor == &_descriptor);
+	EINA_SAFETY_ON_FALSE_RETURN_VAL(v->descriptor == &_descriptor, NULL);
 	if (v->data.ptr)
 		return strdup(egueb_dom_string_string_get(v->data.ptr));
 	else
@@ -83,7 +83,7 @@ static char * _dom_string_string_to(const Egueb_Dom_Value *v)
 
 static Eina_Bool _dom_string_string_from(Egueb_Dom_Value *v, const char *str)
 {
-	EINA_SAFETY_ON_FALSE_RETURN(v->descriptor == &_descriptor);
+	EINA_SAFETY_ON_FALSE_RETURN_VAL(v->descriptor == &_descriptor, EINA_FALSE);
 	if (v->data.ptr)
 	{
 		egueb_dom_string_string_set(v->data.ptr, str);

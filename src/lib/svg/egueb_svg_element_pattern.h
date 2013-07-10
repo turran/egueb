@@ -20,5 +20,6 @@
 #define _EGUEB_SVG_ELEMENT_PATTERN_H_
 
 EAPI Egueb_Dom_Node * egueb_svg_element_pattern_new(void);
+EAPI Eina_Bool egueb_svg_element_is_pattern(Egueb_Dom_Node *n);
 
 #endif
