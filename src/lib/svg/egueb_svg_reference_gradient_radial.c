@@ -18,6 +18,7 @@
 #include "egueb_svg_main_private.h"
 #include "egueb_svg_main.h"
 #include "egueb_svg_length.h"
+#include "egueb_svg_spread_method.h"
 #include "egueb_svg_referenceable_units.h"
 #include "egueb_svg_reference.h"
 #include "egueb_svg_gradient.h"
@@ -178,7 +179,6 @@ static void _egueb_svg_reference_gradient_radial_instance_init(void *o)
 
 	thiz = EGUEB_SVG_REFERENCE_GRADIENT_RADIAL(o);
 	thiz->r = enesim_renderer_gradient_radial_new();
-	enesim_renderer_gradient_mode_set(thiz->r, ENESIM_PAD);
 }
 
 static void _egueb_svg_reference_gradient_radial_instance_deinit(void *o)

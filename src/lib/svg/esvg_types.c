@@ -237,27 +237,6 @@ EAPI Eina_Bool egueb_svg_type_is_renderable(Egueb_Svg_Type type)
 }
 
 
-EAPI Eina_Bool egueb_svg_parser_spread_method_get(Egueb_Svg_Spread_Method *smethod, const char *attr)
-{
-	if (strncmp(attr, "pad", 3) == 0)
-	{
-		*smethod = ESVG_SPREAD_METHOD_PAD;
-	}
-	else if (strncmp(attr, "reflect", 7) == 0)
-	{
-		*smethod = ESVG_SPREAD_METHOD_REFLECT;
-	}
-	else if (strncmp(attr, "repeat", 6) == 0)
-	{
-		*smethod = ESVG_SPREAD_METHOD_REPEAT;
-	}
-	else
-	{
-		return EINA_FALSE;
-	}
-	return EINA_TRUE;
-}
-
 EAPI Eina_Bool egueb_svg_attribute_type_string_from(Egueb_Svg_Attribute_Type *type, const char *value)
 {
 	Eina_Bool ret = EINA_TRUE;

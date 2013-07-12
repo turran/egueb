@@ -103,8 +103,6 @@ static Eina_Bool _egueb_svg_element_rect_generate_geometry(Egueb_Svg_Shape *s,
 	e = EGUEB_SVG_ELEMENT(s);
 	/* set the transformation */
 	enesim_renderer_transformation_set(thiz->r, &e->transform);
-	/* update the viewbox */
-	enesim_rectangle_coords_from(&e->viewbox, thiz->gx, thiz->gy, thiz->gw, thiz->gh);
 
 	DBG("x: %g, y: %g, w: %g, h: %g, rx: %g, ry: %g", thiz->gx, thiz->gy, thiz->gw, thiz->gh,
 			grx, gry);

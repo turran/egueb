@@ -68,13 +68,6 @@ typedef enum _Egueb_Svg_Paint_Server_Type
 	ESVG_PAINT_SERVER_TYPES
 } Egueb_Svg_Paint_Server_Type;
 
-typedef enum _Egueb_Svg_Spread_Method
-{
-	ESVG_SPREAD_METHOD_PAD,
-	ESVG_SPREAD_METHOD_REFLECT,
-	ESVG_SPREAD_METHOD_REPEAT,
-} Egueb_Svg_Spread_Method;
-
 /* attributes */
 typedef struct _Egueb_Svg_Attribute_Regular {
 } Egueb_Svg_Attribute_Regular;

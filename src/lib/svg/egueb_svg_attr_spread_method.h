@@ -16,11 +16,11 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _EGUEB_SVG_ATTR_VISIBILITY_H_
-#define _EGUEB_SVG_ATTR_VISIBILITY_H_
+#ifndef _EGUEB_SVG_ATTR_SPREAD_METHOD_H_
+#define _EGUEB_SVG_ATTR_SPREAD_METHOD_H_
 
-EAPI Egueb_Dom_Node * egueb_svg_attr_visibility_new(Egueb_Dom_String *name,
-		const Egueb_Svg_Visibility def, Eina_Bool animatable,
+EAPI Egueb_Dom_Node * egueb_svg_attr_spread_method_new(Egueb_Dom_String *name,
+		const Egueb_Svg_Spread_Method def, Eina_Bool animatable,
 		Eina_Bool stylable, Eina_Bool inheritable);
 
 #endif

@@ -17,10 +17,36 @@
  */
 #include "egueb_svg_main_private.h"
 #include "egueb_svg_main.h"
+#include "egueb_svg_spread_method.h"
+#include "egueb_svg_referenceable_units.h"
+#include "egueb_svg_gradient.h"
+#include "egueb_svg_element_stop.h"
 #include "egueb_svg_reference_gradient_private.h"
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
+static Eina_Bool _spread_method_to_repeat_mode(Egueb_Svg_Spread_Method s,
+		Enesim_Repeat_Mode *mode)
+{
+	switch (s)
+	{
+		case EGUEB_SVG_SPREAD_METHOD_PAD:
+		*mode = ENESIM_PAD;
+		break;
+
+		case EGUEB_SVG_SPREAD_METHOD_REPEAT:
+		*mode = ENESIM_REPEAT;
+		break;
+
+		case EGUEB_SVG_SPREAD_METHOD_REFLECT:
+		*mode = ENESIM_REFLECT;
+		break;
+
+		default:
+		return EINA_FALSE;
+	}
+	return EINA_TRUE;
+}
 /*----------------------------------------------------------------------------*
  *                             Reference interface                            *
  *----------------------------------------------------------------------------*/
@@ -28,7 +54,9 @@ static Eina_Bool _egueb_svg_reference_gradient_process(Egueb_Svg_Reference *r)
 {
 	Egueb_Svg_Reference_Gradient *thiz;
 	Egueb_Svg_Reference_Gradient_Class *klass;
+	Egueb_Svg_Spread_Method spread_method;
 	Enesim_Renderer *ren = NULL;
+	Enesim_Repeat_Mode mode;
 	Egueb_Dom_Node *stop_node = NULL;
 	Eina_Bool ret = EINA_TRUE;
 
@@ -42,6 +70,11 @@ static Eina_Bool _egueb_svg_reference_gradient_process(Egueb_Svg_Reference *r)
 
 	egueb_svg_reference_paint_server_renderer_get(r, &ren);
 	if (!ren) return EINA_FALSE;
+
+	/* the spread method */
+	egueb_svg_gradient_deep_spread_method_get(r->referenceable, &spread_method);
+	_spread_method_to_repeat_mode(spread_method, &mode);
+	enesim_renderer_gradient_mode_set(ren, mode);
 
 	/* now the common stops */
 	egueb_svg_gradient_deep_stop_get(r->referenceable, &stop_node);

@@ -81,12 +81,6 @@ static Eina_Bool _egueb_svg_element_line_generate_geometry(Egueb_Svg_Shape *s,
 	/* set the transformation */
 	e = EGUEB_SVG_ELEMENT(s);
 	enesim_renderer_transformation_set(thiz->r, &e->transform);
-	/* update the viewbox */
-	enesim_rectangle_coords_from(&e->viewbox,
-			thiz->gx1 < thiz->gx2 ? thiz->gx1 : thiz->gx2,
-			thiz->gy1 < thiz->gy2 ? thiz->gy1 : thiz->gy2,
-			fabs(thiz->gx1 - thiz->gx2),
-			fabs(thiz->gy1 - thiz->gy2));
  
 	DBG("x1: %g, y1: %g, x2: %g, y2: %g", thiz->gx1, thiz->gy1, thiz->gx2, thiz->gy2);
 

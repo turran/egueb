@@ -19,10 +19,12 @@
 #include "egueb_svg_main_private.h"
 #include "egueb_svg_main.h"
 #include "egueb_svg_matrix.h"
+#include "egueb_svg_spread_method.h"
 #include "egueb_svg_referenceable_units.h"
 #include "egueb_svg_attr_referenceable_units.h"
 #include "egueb_svg_attr_matrix.h"
 #include "egueb_svg_attr_xlink_href.h"
+#include "egueb_svg_attr_spread_method.h"
 #include "egueb_svg_element_stop.h"
 #include "egueb_svg_gradient.h"
 #include "egueb_svg_gradient_private.h"
@@ -677,6 +679,7 @@ static Eina_Bool _egueb_svg_gradient_process(
  *----------------------------------------------------------------------------*/
 EGUEB_DOM_ATTR_FETCH_DEFINE(egueb_svg_gradient, Egueb_Svg_Gradient, transform);
 EGUEB_DOM_ATTR_FETCH_DEFINE(egueb_svg_gradient, Egueb_Svg_Gradient, units);
+EGUEB_DOM_ATTR_FETCH_DEFINE(egueb_svg_gradient, Egueb_Svg_Gradient, spread_method);
 EGUEB_DOM_ATTR_FETCH_DEFINE(egueb_svg_gradient, Egueb_Svg_Gradient, xlink_href);
 
 ENESIM_OBJECT_ABSTRACT_BOILERPLATE(EGUEB_SVG_PAINT_SERVER_DESCRIPTOR,
@@ -713,8 +716,13 @@ static void _egueb_svg_gradient_instance_init(void *o)
 	thiz->xlink_href = egueb_svg_attr_xlink_href_new(
 			egueb_dom_string_ref(EGUEB_SVG_XLINK_HREF),
 			NULL);
+	thiz->spread_method = egueb_svg_attr_spread_method_new(
+			egueb_dom_string_ref(EGUEB_SVG_SPREAD_METHOD),
+			EGUEB_SVG_SPREAD_METHOD_PAD, EINA_TRUE, EINA_FALSE,
+			EINA_FALSE);
 	EGUEB_DOM_ELEMENT_CLASS_PROPERTY_ADD(thiz, egueb_svg_gradient, transform);
 	EGUEB_DOM_ELEMENT_CLASS_PROPERTY_ADD(thiz, egueb_svg_gradient, units);
+	EGUEB_DOM_ELEMENT_CLASS_PROPERTY_ADD(thiz, egueb_svg_gradient, spread_method);
 	EGUEB_DOM_ELEMENT_CLASS_PROPERTY_ADD(thiz, egueb_svg_gradient, xlink_href);
 
 	n = EGUEB_DOM_NODE(o);
@@ -737,6 +745,7 @@ static void _egueb_svg_gradient_instance_deinit(void *o)
 	/* the properties */
 	egueb_dom_node_unref(thiz->units);
 	egueb_dom_node_unref(thiz->transform);
+	egueb_dom_node_unref(thiz->spread_method);
 	egueb_dom_node_unref(thiz->xlink_href);
 	/* the private data */
 }
@@ -784,6 +793,14 @@ EAPI void egueb_svg_gradient_deep_stop_get(Egueb_Dom_Node *n,
 		Egueb_Dom_Node **stop)
 {
 	_egueb_svg_gradient_deep_stop_get(n, stop);
+}
+
+EAPI void egueb_svg_gradient_deep_spread_method_get(Egueb_Dom_Node *n,
+		Egueb_Svg_Spread_Method *spread_method)
+{
+	EGUEB_SVG_GRADIENT_DEEP_GET(n, spread_method,
+			EGUEB_SVG_SPREAD_METHOD_PAD,
+			egueb_svg_gradient_deep_spread_method_get);
 }
 
 #if 0

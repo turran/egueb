@@ -79,9 +79,6 @@ static Eina_Bool _egueb_svg_element_ellipse_generate_geometry(Egueb_Svg_Shape *s
 	/* set the transformation */
 	e = EGUEB_SVG_ELEMENT(s);
 	enesim_renderer_transformation_set(thiz->r, &e->transform);
-	/* update the viewbox */
-	enesim_rectangle_coords_from(&e->viewbox, thiz->gcx - thiz->grx, thiz->gcy - thiz->gry,
-			thiz->grx * 2, thiz->gry * 2);
 
 	DBG("cx: %g, cy: %g, rx: %g, ry: %g", thiz->gcx, thiz->gcy, thiz->grx, thiz->gry);
 

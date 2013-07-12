@@ -15,12 +15,19 @@
  * License along with this library.
  * If not, see <http://www.gnu.org/licenses/>.
  */
+#ifndef _EGUEB_SVG_SPREAD_METHOD_H
+#define _EGUEB_SVG_SPREAD_METHOD_H
 
-#ifndef _EGUEB_SVG_ATTR_VISIBILITY_H_
-#define _EGUEB_SVG_ATTR_VISIBILITY_H_
+typedef enum _Egueb_Svg_Spread_Method
+{
+	EGUEB_SVG_SPREAD_METHOD_PAD,
+	EGUEB_SVG_SPREAD_METHOD_REFLECT,
+	EGUEB_SVG_SPREAD_METHOD_REPEAT,
+} Egueb_Svg_Spread_Method;
 
-EAPI Egueb_Dom_Node * egueb_svg_attr_visibility_new(Egueb_Dom_String *name,
-		const Egueb_Svg_Visibility def, Eina_Bool animatable,
-		Eina_Bool stylable, Eina_Bool inheritable);
+EAPI const Egueb_Dom_Value_Descriptor * egueb_svg_spread_method_descriptor_get(void);
+EAPI Eina_Bool egueb_svg_spread_method_string_from(Egueb_Svg_Spread_Method *v, const char *attr);
+EAPI char * egueb_svg_spread_method_string_to(Egueb_Svg_Spread_Method v);
 
 #endif
+

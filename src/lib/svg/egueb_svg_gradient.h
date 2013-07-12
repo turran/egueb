@@ -26,6 +26,8 @@ EAPI void egueb_svg_gradient_deep_transform_get(Egueb_Dom_Node *n,
 		Enesim_Matrix *transform);
 EAPI void egueb_svg_gradient_deep_stop_get(Egueb_Dom_Node *n,
 		Egueb_Dom_Node **stop);
+EAPI void egueb_svg_gradient_deep_spread_method_get(Egueb_Dom_Node *n,
+		Egueb_Svg_Spread_Method *spread_method);
 
 #if 0
 EAPI void egueb_svg_element_gradient_units_set(Ender_Element *e, Egueb_Svg_Element_Gradient_Units units);

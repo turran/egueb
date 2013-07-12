@@ -18,6 +18,7 @@
 #include "egueb_svg_main_private.h"
 #include "egueb_svg_main.h"
 #include "egueb_svg_length.h"
+#include "egueb_svg_spread_method.h"
 #include "egueb_svg_referenceable_units.h"
 #include "egueb_svg_gradient.h"
 #include "egueb_svg_gradient_private.h"

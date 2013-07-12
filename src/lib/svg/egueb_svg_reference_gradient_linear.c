@@ -18,6 +18,7 @@
 #include "egueb_svg_main_private.h"
 #include "egueb_svg_main.h"
 #include "egueb_svg_length.h"
+#include "egueb_svg_spread_method.h"
 #include "egueb_svg_referenceable_units.h"
 #include "egueb_svg_reference.h"
 #include "egueb_svg_gradient.h"
@@ -69,9 +70,9 @@ static Eina_Bool _egueb_svg_reference_gradient_linear_process(
 	/* get the final attributes */
 	r = EGUEB_SVG_REFERENCE(g);
 	egueb_svg_element_linear_gradient_deep_x1_get(r->referenceable, &x1);
-	egueb_svg_element_linear_gradient_deep_x1_get(r->referenceable, &y1);
+	egueb_svg_element_linear_gradient_deep_y1_get(r->referenceable, &y1);
 	egueb_svg_element_linear_gradient_deep_x2_get(r->referenceable, &x2);
-	egueb_svg_element_linear_gradient_deep_x2_get(r->referenceable, &y2);
+	egueb_svg_element_linear_gradient_deep_y2_get(r->referenceable, &y2);
 	egueb_svg_gradient_deep_units_get(r->referenceable, &units);
 	egueb_svg_gradient_deep_transform_get(r->referenceable, &transform);
 

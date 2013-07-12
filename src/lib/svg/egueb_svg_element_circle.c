@@ -77,12 +77,6 @@ static Eina_Bool _egueb_svg_element_circle_generate_geometry(Egueb_Svg_Shape *s,
 	/* set the transformation */
 	e = EGUEB_SVG_ELEMENT(s);
 	enesim_renderer_transformation_set(thiz->r, &e->transform);
-	/* update the viewbox */
-	/* set the bounds */
-	enesim_rectangle_coords_from(&e->viewbox,
-			thiz->gcx - thiz->gradius,
-			thiz->gcy - thiz->gradius,
-			thiz->gradius * 2, thiz->gradius * 2);
 
 	DBG("cx: %g, cy: %g, radius: %g", thiz->gcx, thiz->gcy, thiz->gradius);
 
