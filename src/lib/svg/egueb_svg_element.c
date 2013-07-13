@@ -588,6 +588,7 @@ static void _egueb_svg_element_presentation_attributes_process(
 	egueb_dom_attr_inheritable_process(thiz->stroke_line_join, rel->stroke_line_join);
 	egueb_dom_attr_inheritable_process(thiz->stroke_width, rel->stroke_width);
 	egueb_dom_attr_inheritable_process(thiz->stroke_opacity, rel->stroke_opacity);
+	egueb_dom_attr_inheritable_process(thiz->text_anchor, rel->text_anchor);
 	egueb_dom_attr_inheritable_process(thiz->visibility, rel->visibility);
 	/* the font size is accumulative based on the parent's property */
 	egueb_dom_attr_inheritable_process(thiz->font_size, rel->font_size);
@@ -697,6 +698,7 @@ EGUEB_DOM_ATTR_FETCH_DEFINE(egueb_svg_element, Egueb_Svg_Element, stroke_line_jo
 EGUEB_DOM_ATTR_FETCH_DEFINE(egueb_svg_element, Egueb_Svg_Element, stroke_line_cap);
 EGUEB_DOM_ATTR_FETCH_DEFINE(egueb_svg_element, Egueb_Svg_Element, stroke_width);
 EGUEB_DOM_ATTR_FETCH_DEFINE(egueb_svg_element, Egueb_Svg_Element, stroke_opacity);
+EGUEB_DOM_ATTR_FETCH_DEFINE(egueb_svg_element, Egueb_Svg_Element, text_anchor);
 EGUEB_DOM_ATTR_FETCH_DEFINE(egueb_svg_element, Egueb_Svg_Element, visibility);
 
 ENESIM_OBJECT_ABSTRACT_BOILERPLATE(EGUEB_DOM_ELEMENT_DESCRIPTOR,
@@ -782,6 +784,10 @@ static void _egueb_svg_element_instance_init(void *o)
 			egueb_dom_string_ref(EGUEB_SVG_STROKE_OPACITY),
 			1, EINA_TRUE, EINA_TRUE,
 			EINA_TRUE);
+	thiz->text_anchor = egueb_svg_attr_text_anchor_new(
+			egueb_dom_string_ref(EGUEB_SVG_TEXT_ANCHOR),
+			EGUEB_SVG_TEXT_ANCHOR_START, EINA_TRUE, EINA_TRUE,
+			EINA_TRUE);
 	thiz->visibility = egueb_svg_attr_visibility_new(
 			egueb_dom_string_ref(EGUEB_SVG_VISIBILITY),
 			EGUEB_SVG_VISIBILITY_VISIBLE, EINA_TRUE, EINA_TRUE,
@@ -804,6 +810,7 @@ static void _egueb_svg_element_instance_init(void *o)
 	EGUEB_DOM_ELEMENT_CLASS_PROPERTY_ADD(thiz, egueb_svg_element, stroke_line_cap);
 	EGUEB_DOM_ELEMENT_CLASS_PROPERTY_ADD(thiz, egueb_svg_element, stroke_width);
 	EGUEB_DOM_ELEMENT_CLASS_PROPERTY_ADD(thiz, egueb_svg_element, stroke_opacity);
+	EGUEB_DOM_ELEMENT_CLASS_PROPERTY_ADD(thiz, egueb_svg_element, text_anchor);
 	EGUEB_DOM_ELEMENT_CLASS_PROPERTY_ADD(thiz, egueb_svg_element, visibility);
 	/* our private stuff */
 	enesim_matrix_identity(&thiz->transform);
@@ -832,6 +839,7 @@ static void _egueb_svg_element_instance_deinit(void *o)
 	egueb_dom_node_unref(thiz->stroke_opacity);
 	egueb_dom_node_unref(thiz->stroke_line_cap);
 	egueb_dom_node_unref(thiz->stroke_line_join);
+	egueb_dom_node_unref(thiz->text_anchor);
 	egueb_dom_node_unref(thiz->visibility);
 	/* remove the weak references */
 	if (thiz->geometry_relative)

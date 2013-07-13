@@ -20,6 +20,7 @@ src/lib/svg/egueb_svg_attr_string.h \
 src/lib/svg/egueb_svg_attr_stroke_line_cap.h \
 src/lib/svg/egueb_svg_attr_stroke_line_join.h \
 src/lib/svg/egueb_svg_attr_spread_method.h \
+src/lib/svg/egueb_svg_attr_text_anchor.h \
 src/lib/svg/egueb_svg_attr_visibility.h \
 src/lib/svg/egueb_svg_attr_xlink_href.h \
 src/lib/svg/egueb_svg_build.h \
@@ -95,6 +96,7 @@ src/lib/svg/egueb_svg_attr_string.c \
 src/lib/svg/egueb_svg_attr_stroke_line_cap.c \
 src/lib/svg/egueb_svg_attr_stroke_line_join.c \
 src/lib/svg/egueb_svg_attr_spread_method.c \
+src/lib/svg/egueb_svg_attr_text_anchor.c \
 src/lib/svg/egueb_svg_attr_visibility.c \
 src/lib/svg/egueb_svg_attr_xlink_href.c \
 src/lib/svg/egueb_svg_clip_path.c \

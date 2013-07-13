@@ -82,6 +82,7 @@ static void _egueb_svg_strings_init(void)
 	EGUEB_SVG_STYLE = egueb_dom_string_new_with_string("style");
 	EGUEB_SVG_STOP_COLOR = egueb_dom_string_new_with_string("stop-color");
 	EGUEB_SVG_STOP_OPACITY = egueb_dom_string_new_with_string("stop-opacity");
+	EGUEB_SVG_TEXT_ANCHOR = egueb_dom_string_new_with_string("text-anchor");
 	EGUEB_SVG_TRANSFORM = egueb_dom_string_new_with_string("transform");
 	EGUEB_SVG_VIEWBOX = egueb_dom_string_new_with_string("viewBox");
 	EGUEB_SVG_VISIBILITY = egueb_dom_string_new_with_string("visibility");
@@ -153,6 +154,7 @@ static void _egueb_svg_strings_shutdown(void)
 	egueb_dom_string_unref(EGUEB_SVG_STROKE_OPACITY);
 	egueb_dom_string_unref(EGUEB_SVG_STROKE_WIDTH);
 	egueb_dom_string_unref(EGUEB_SVG_STYLE);
+	egueb_dom_string_unref(EGUEB_SVG_TEXT_ANCHOR);
 	egueb_dom_string_unref(EGUEB_SVG_TRANSFORM);
 	egueb_dom_string_unref(EGUEB_SVG_VIEWBOX);
 	egueb_dom_string_unref(EGUEB_SVG_VISIBILITY);
@@ -279,6 +281,7 @@ Egueb_Dom_String *EGUEB_SVG_STROKE_LINEJOIN;
 Egueb_Dom_String *EGUEB_SVG_STROKE_OPACITY;
 Egueb_Dom_String *EGUEB_SVG_STROKE_WIDTH;
 Egueb_Dom_String *EGUEB_SVG_STYLE;
+Egueb_Dom_String *EGUEB_SVG_TEXT_ANCHOR;
 Egueb_Dom_String *EGUEB_SVG_TRANSFORM;
 Egueb_Dom_String *EGUEB_SVG_VIEWBOX;
 Egueb_Dom_String *EGUEB_SVG_VISIBILITY;

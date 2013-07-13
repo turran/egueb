@@ -83,6 +83,7 @@ EAPI extern Egueb_Dom_String *EGUEB_SVG_STROKE_LINEJOIN;
 EAPI extern Egueb_Dom_String *EGUEB_SVG_STROKE_OPACITY;
 EAPI extern Egueb_Dom_String *EGUEB_SVG_STROKE_WIDTH;
 EAPI extern Egueb_Dom_String *EGUEB_SVG_STYLE;
+EAPI extern Egueb_Dom_String *EGUEB_SVG_TEXT_ANCHOR;
 EAPI extern Egueb_Dom_String *EGUEB_SVG_TRANSFORM;
 EAPI extern Egueb_Dom_String *EGUEB_SVG_VIEWBOX;
 EAPI extern Egueb_Dom_String *EGUEB_SVG_VISIBILITY;

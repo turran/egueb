@@ -36,6 +36,7 @@
 #include "egueb_svg_rect.h"
 #include "egueb_svg_stroke_line_join.h"
 #include "egueb_svg_stroke_line_cap.h"
+#include "egueb_svg_text_anchor.h"
 #include "egueb_svg_visibility.h"
 
 #include "egueb_svg_attr_clip_path.h"
@@ -45,6 +46,7 @@
 #include "egueb_svg_attr_number.h"
 #include "egueb_svg_attr_overflow.h"
 #include "egueb_svg_attr_paint.h"
+#include "egueb_svg_attr_text_anchor.h"
 #include "egueb_svg_attr_visibility.h"
 #include "egueb_svg_attr_stroke_line_cap.h"
 #include "egueb_svg_attr_stroke_line_join.h"
@@ -101,6 +103,7 @@ typedef struct _Egueb_Svg_Element
 	Egueb_Dom_Node *stroke_opacity;
 	Egueb_Dom_Node *stroke_line_join;
 	Egueb_Dom_Node *stroke_line_cap;
+	Egueb_Dom_Node *text_anchor;
 	Egueb_Dom_Node *visibility;
 	/* protected */
 	/* the current viewbox ?? */
