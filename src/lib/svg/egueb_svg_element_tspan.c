@@ -140,7 +140,6 @@ static Eina_Bool _egueb_svg_element_tspan_generate_geometry(Egueb_Svg_Shape *s,
 	Egueb_Svg_Element *e;
 	Egueb_Svg_Length x, y;
 	Enesim_Rectangle bounds;
-	Enesim_Matrix inv;
 	double gx, gy;
 	double doc_font_size, gfont;
 	int max;
@@ -171,8 +170,7 @@ static Eina_Bool _egueb_svg_element_tspan_generate_geometry(Egueb_Svg_Shape *s,
 	enesim_renderer_origin_set(thiz->r, gx, gy - max);
 
 	INFO("matrix %" ENESIM_MATRIX_FORMAT, ENESIM_MATRIX_ARGS (&e->transform));
-	enesim_matrix_inverse(&e->transform, &inv);
-	enesim_renderer_transformation_set(thiz->r, &inv);
+	enesim_renderer_transformation_set(thiz->r, &e->transform);
 
 	INFO("x: %g, y: %g, font-size: %g", gx, gy, ceil(gfont));
 	enesim_renderer_shape_geometry_get(thiz->r, &bounds);

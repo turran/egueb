@@ -59,7 +59,6 @@ static void _egueb_svg_element_text_children_generate_geometry(
 {
 	Egueb_Svg_Element *e;
 	Egueb_Svg_Element_Text_Pen *pen = &thiz->pen;
-	Enesim_Matrix inv;
 	Enesim_Rectangle bounds;
 	int max;
 
@@ -69,8 +68,7 @@ static void _egueb_svg_element_text_children_generate_geometry(
 	enesim_renderer_origin_set(r, pen->x, pen->y - max);
 
 	INFO("matrix %" ENESIM_MATRIX_FORMAT, ENESIM_MATRIX_ARGS (&e->transform));
-	enesim_matrix_inverse(&e->transform, &inv);
-	enesim_renderer_transformation_set(r, &inv);
+	enesim_renderer_transformation_set(r, &e->transform);
 
 	INFO("x: %g, y: %g, font-size: %g", pen->x, pen->y, ceil(thiz->gfont));
 	/* increment the pen position */
