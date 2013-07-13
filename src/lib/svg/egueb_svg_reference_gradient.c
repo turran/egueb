@@ -56,7 +56,7 @@ static Eina_Bool _egueb_svg_reference_gradient_process(Egueb_Svg_Reference *r)
 	Egueb_Svg_Reference_Gradient_Class *klass;
 	Egueb_Svg_Spread_Method spread_method;
 	Enesim_Renderer *ren = NULL;
-	Enesim_Repeat_Mode mode;
+	Enesim_Repeat_Mode mode = ENESIM_PAD;
 	Egueb_Dom_Node *stop_node = NULL;
 	Eina_Bool ret = EINA_TRUE;
 
@@ -88,6 +88,7 @@ static Eina_Bool _egueb_svg_reference_gradient_process(Egueb_Svg_Reference *r)
 			Enesim_Renderer_Gradient_Stop *stop;
 			stop = egueb_svg_element_stop_gradient_stop_get(stop_node);
 			enesim_renderer_gradient_stop_add(ren, stop);
+			DBG("Adding stop at %g color %08x", stop->pos, stop->argb);
 		}
 		egueb_dom_node_sibling_next_get(stop_node, &tmp);
 		egueb_dom_node_unref(stop_node);
