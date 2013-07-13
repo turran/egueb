@@ -75,6 +75,7 @@ src/lib/svg/egueb_svg_renderable_container.h \
 src/lib/svg/egueb_svg_spread_method.h \
 src/lib/svg/egueb_svg_stroke_line_cap.h \
 src/lib/svg/egueb_svg_stroke_line_join.h \
+src/lib/svg/egueb_svg_text_anchor.h \
 src/lib/svg/egueb_svg_visibility.h
 
 src_lib_svg_libegueb_svg_la_SOURCES = \
@@ -170,6 +171,7 @@ src/lib/svg/egueb_svg_string.c \
 src/lib/svg/egueb_svg_string_private.h \
 src/lib/svg/egueb_svg_stroke_line_cap.c \
 src/lib/svg/egueb_svg_stroke_line_join.c \
+src/lib/svg/egueb_svg_text_anchor.c \
 src/lib/svg/egueb_svg_visibility.c
 
 src_lib_svg_libegueb_svg_la_CPPFLAGS = \
