@@ -61,7 +61,6 @@ static Eina_Bool _egueb_svg_reference_gradient_linear_process(
 	Egueb_Svg_Element *e_referencer;
 	Egueb_Svg_Length x1, y1, x2, y2;
 	Egueb_Svg_Referenceable_Units units;
-	Egueb_Dom_Node *relative = NULL;
 	Egueb_Dom_Node *doc = NULL;
 	Enesim_Matrix m, transform;
 	double gx1, gy1, gx2, gy2;

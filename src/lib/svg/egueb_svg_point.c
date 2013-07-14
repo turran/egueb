@@ -31,15 +31,20 @@ EAPI Eina_Bool egueb_svg_point_string_from(Egueb_Svg_Point *thiz, const char *at
 	const char *tmp;
 	char *endptr;
 
+	if (!attr) return EINA_FALSE;
 	EGUEB_DOM_SPACE_SKIP(attr);
+	if (!attr) return EINA_FALSE;
 	tmp = attr;
 
 	thiz->x = eina_extra_strtod(tmp, &endptr);
+	if (tmp == endptr) return EINA_FALSE;
+
 	tmp = endptr;
 	EGUEB_DOM_SPACE_COMMA_SKIP(tmp);
+	if (!tmp) return EINA_FALSE;
+
 	thiz->y = eina_extra_strtod(tmp, &endptr);
-	tmp = endptr;
-	EGUEB_DOM_SPACE_COMMA_SKIP(tmp);
+	if (tmp == endptr) return EINA_FALSE;
 
 	return EINA_TRUE;
 }
