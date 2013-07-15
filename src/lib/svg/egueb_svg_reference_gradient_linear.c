@@ -20,6 +20,7 @@
 #include "egueb_svg_length.h"
 #include "egueb_svg_spread_method.h"
 #include "egueb_svg_referenceable_units.h"
+#include "egueb_svg_element.h"
 #include "egueb_svg_reference.h"
 #include "egueb_svg_gradient.h"
 #include "egueb_svg_element_linear_gradient.h"
@@ -58,7 +59,6 @@ static Eina_Bool _egueb_svg_reference_gradient_linear_process(
 {
 	Egueb_Svg_Reference_Gradient_Linear *thiz;
 	Egueb_Svg_Reference *r;
-	Egueb_Svg_Element *e_referencer;
 	Egueb_Svg_Length x1, y1, x2, y2;
 	Egueb_Svg_Referenceable_Units units;
 	Egueb_Dom_Node *doc = NULL;
@@ -75,11 +75,12 @@ static Eina_Bool _egueb_svg_reference_gradient_linear_process(
 	egueb_svg_gradient_deep_units_get(r->referenceable, &units);
 	egueb_svg_gradient_deep_transform_get(r->referenceable, &transform);
 
-	e_referencer = EGUEB_SVG_ELEMENT(r->referencer);
 	if (units == EGUEB_SVG_REFERENCEABLE_UNITS_OBJECT_BOUNDING_BOX)
 	{
 		Enesim_Rectangle bounds;
+		Egueb_Svg_Element *e_referencer;
 
+		e_referencer = EGUEB_SVG_ELEMENT(r->referencer);
 		/* check that the coordinates shold be set with (0,0) -> (1, 1) */
 		gx1 = egueb_svg_coord_final_get(&x1, 1, 1);
 		gy1 = egueb_svg_coord_final_get(&y1, 1, 1);
@@ -94,9 +95,12 @@ static Eina_Bool _egueb_svg_reference_gradient_linear_process(
 	}
 	else
 	{
+		Egueb_Dom_Node *g_relative;
+		Egueb_Svg_Element *ge_relative;
 		double font_size;
 
-		egueb_dom_node_document_get(EGUEB_DOM_NODE(r->referencer), &doc);
+		DBG("Using the user space on use");
+		egueb_dom_node_document_get(r->referencer, &doc);
 		if (!doc)
 		{
 			WARN("No document set");
@@ -105,14 +109,22 @@ static Eina_Bool _egueb_svg_reference_gradient_linear_process(
 		egueb_svg_document_font_size_get(doc, &font_size);
 		egueb_dom_node_unref(doc);
 
-		/* use the user space coordiantes */
-		gx1 = egueb_svg_coord_final_get(&x1, e_referencer->viewbox.w, font_size);
-		gy1 = egueb_svg_coord_final_get(&y1, e_referencer->viewbox.h, font_size);
-		gx2 = egueb_svg_coord_final_get(&x2, e_referencer->viewbox.w, font_size);
-		gy2 = egueb_svg_coord_final_get(&y2, e_referencer->viewbox.h, font_size);
+		egueb_svg_element_geometry_relative_get(r->referencer, &g_relative);
+		if (!g_relative)
+		{
+			WARN("No relative geometry");
+			return EINA_FALSE;
+		}
+		ge_relative = EGUEB_SVG_ELEMENT(g_relative);
 
-		DBG("Using the user space on use");
-		m = e_referencer->transform;
+		/* use the user space coordiantes */
+		gx1 = egueb_svg_coord_final_get(&x1, ge_relative->viewbox.w, font_size);
+		gy1 = egueb_svg_coord_final_get(&y1, ge_relative->viewbox.h, font_size);
+		gx2 = egueb_svg_coord_final_get(&x2, ge_relative->viewbox.w, font_size);
+		gy2 = egueb_svg_coord_final_get(&y2, ge_relative->viewbox.h, font_size);
+
+		m = ge_relative->transform;
+		egueb_dom_node_unref(g_relative);
 	}
 	/* Apply the gradient transform */
 	if (enesim_matrix_type_get(&transform) != ENESIM_MATRIX_IDENTITY)

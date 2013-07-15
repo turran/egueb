@@ -426,6 +426,13 @@ static void _egueb_dom_document_instance_deinit(void *o)
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
+int egueb_dom_document_current_run_get(Egueb_Dom_Node *n)
+{
+	Egueb_Dom_Document *thiz;
+
+	thiz = EGUEB_DOM_DOCUMENT(n);
+	return thiz->current_run;
+}
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/
@@ -435,19 +442,25 @@ EAPI void egueb_dom_document_process_default(Egueb_Dom_Node *n)
 	Eina_List *l, *l_next;
 
 	thiz = EGUEB_DOM_DOCUMENT(n);
+	/* increment the current run */
+	thiz->current_run++;
 	/* process every enqueued node */
 	EINA_LIST_FOREACH_SAFE(thiz->current_enqueued, l, l_next, n)
 	{
 		Egueb_Dom_String *name = NULL;
 		Egueb_Dom_Element *e;
 
+		e = EGUEB_DOM_ELEMENT(n);
+		if (e->last_run == thiz->current_run)
+			goto skip;
+
 		egueb_dom_node_name_get(n, &name);
 		INFO("Processing '%s'", egueb_dom_string_string_get(name));
 		egueb_dom_string_unref(name);
 
 		egueb_dom_element_process(n);
+skip:
 		thiz->current_enqueued = eina_list_remove_list(thiz->current_enqueued, l);
-		e = EGUEB_DOM_ELEMENT(n);
 		e->enqueued = EINA_FALSE;
 
 		egueb_dom_node_unref(n);

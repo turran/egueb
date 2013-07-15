@@ -21,6 +21,8 @@
 #include "egueb_svg_referenceable.h"
 #include "egueb_svg_renderable.h"
 #include "egueb_svg_attr_matrix.h"
+#include "egueb_svg_element.h"
+
 #include "egueb_svg_renderable_private.h"
 #include "egueb_dom_string_private.h"
 /*============================================================================*
@@ -35,7 +37,6 @@ static Eina_Bool _egueb_svg_renderable_process(Egueb_Svg_Element *e)
 	Egueb_Svg_Renderable_Class *klass;
 	Egueb_Svg_Clip_Path clip_path = EGUEB_SVG_CLIP_PATH_INIT;
 	Egueb_Dom_Node *relative;
-	Egueb_Dom_Node *doc = NULL;
 	Enesim_Renderer *ren = NULL;
 	Egueb_Svg_Matrix m;
 

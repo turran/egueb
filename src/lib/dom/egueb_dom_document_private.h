@@ -32,6 +32,7 @@ typedef struct _Egueb_Dom_Document
 	/* TODO use this
 	Eina_List *later_enqueued;
 	*/
+	int current_run;
 	Eina_Bool processing;
 } Egueb_Dom_Document;
 
@@ -55,6 +56,8 @@ typedef struct _Egueb_Dom_Document_Class
 		Egueb_Dom_Document_Class, EGUEB_DOM_DOCUMENT_DESCRIPTOR)
 #define EGUEB_DOM_DOCUMENT(o) ENESIM_OBJECT_INSTANCE_CHECK(o,			\
 		Egueb_Dom_Document, EGUEB_DOM_DOCUMENT_DESCRIPTOR)
+
+int egueb_dom_document_current_run_get(Egueb_Dom_Node *n);
 
 #endif
 

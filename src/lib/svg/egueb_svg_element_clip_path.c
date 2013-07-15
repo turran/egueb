@@ -611,15 +611,7 @@ EAPI Eina_Error egueb_svg_element_clip_path_units_get(Egueb_Dom_Node *n,
 	Egueb_Svg_Element_Clip_Path *thiz;
 
 	thiz = EGUEB_SVG_ELEMENT_CLIP_PATH(n);
-	if (egueb_dom_attr_type_is_set(thiz->units, EGUEB_DOM_ATTR_TYPE_BASE))
-		egueb_dom_attr_get(thiz->units, EGUEB_DOM_ATTR_TYPE_BASE, &units->base);
-	else
-		egueb_dom_attr_get(thiz->units, EGUEB_DOM_ATTR_TYPE_DEFAULT, &units->base);
-	if (egueb_dom_attr_type_is_set(thiz->units, EGUEB_DOM_ATTR_TYPE_ANIMATED))
-		egueb_dom_attr_get(thiz->units, EGUEB_DOM_ATTR_TYPE_ANIMATED, &units->anim);
-	else
-		units->anim = units->base;
-	return EINA_ERROR_NONE;
+	EGUEB_SVG_ELEMENT_ATTR_ANIMATED_GET_WITH_RETURN(thiz->units, units);
 }
 
 #if 0

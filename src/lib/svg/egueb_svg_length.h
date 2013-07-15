@@ -49,7 +49,7 @@ typedef struct _Egueb_Svg_Length_Animated
 	Egueb_Svg_Length anim;
 } Egueb_Svg_Length_Animated;
 
-typedef Egueb_Svg_Length_Animated Egueb_Svg_Animated_Coord;
+typedef Egueb_Svg_Length_Animated Egueb_Svg_Coord_Animated;
 
 EAPI extern const Egueb_Svg_Length EGUEB_SVG_LENGTH_0;
 EAPI extern const Egueb_Svg_Length EGUEB_SVG_LENGTH_1;

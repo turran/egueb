@@ -769,14 +769,24 @@ EAPI Eina_Bool egueb_dom_element_process(Egueb_Dom_Node *n)
 {
 	Egueb_Dom_Element *thiz;
 	Egueb_Dom_Element_Class *klass;
+	Egueb_Dom_Node *doc;
+	Eina_Bool ret = EINA_TRUE;
 
 	thiz = EGUEB_DOM_ELEMENT(n);
 	klass = EGUEB_DOM_ELEMENT_CLASS_GET(thiz);
-	if (klass->process) return klass->process(thiz);
+	if (klass->process) ret = klass->process(thiz);
 	/* unset the flag that informs the inheritable change */
 	thiz->inheritable_changed = EINA_FALSE;
 	thiz->attr_changed = EINA_FALSE;
-	return EINA_TRUE;
+	/* set the run timestamp */
+	egueb_dom_node_document_get(n, &doc);
+	if (doc)
+	{
+		thiz->last_run = egueb_dom_document_current_run_get(doc);
+		egueb_dom_node_unref(doc);
+	}
+
+	return ret;
 }
 
 #if 0

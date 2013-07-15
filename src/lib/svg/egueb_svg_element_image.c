@@ -478,6 +478,7 @@ static void _egueb_svg_element_image_instance_deinit(void *o)
 	egueb_dom_node_unref(thiz->y);
 	egueb_dom_node_unref(thiz->width);
 	egueb_dom_node_unref(thiz->height);
+	egueb_dom_node_unref(thiz->xlink_href);
 }
 
 /*============================================================================*

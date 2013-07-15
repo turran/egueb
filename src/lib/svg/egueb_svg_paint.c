@@ -172,6 +172,9 @@ EAPI char * egueb_svg_paint_string_to(Egueb_Svg_Paint *thiz)
 		case EGUEB_SVG_PAINT_TYPE_SERVER:
 		return strdup(thiz->uri);
 		break;
+
+		default:
+		break;
 	}
 	return NULL;
 }

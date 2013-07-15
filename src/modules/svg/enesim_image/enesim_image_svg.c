@@ -121,8 +121,6 @@ static Eina_Error _enesim_image_svg_info_load(Enesim_Image_Data *data, int *w, i
 {
 	Egueb_Dom_Node *doc;
 	Egueb_Dom_Node *topmost;
-	Egueb_Svg_Length width;
-	Egueb_Svg_Length height;
 	Eina_Error ret = 0;
 	double svg_w;
 	double svg_h;
@@ -147,6 +145,7 @@ static Eina_Error _enesim_image_svg_info_load(Enesim_Image_Data *data, int *w, i
 	}
 	egueb_svg_document_width_set(doc, cw);
 	egueb_svg_document_height_set(doc, ch);
+	egueb_dom_document_process(doc);
 	egueb_svg_document_actual_width_get(doc, &svg_w);
 	egueb_svg_document_actual_height_get(doc, &svg_h);
 
@@ -164,10 +163,7 @@ static Eina_Error _enesim_image_svg_load(Enesim_Image_Data *data, Enesim_Buffer 
 	Egueb_Dom_Node *topmost;
 	Enesim_Surface *s;
 	Enesim_Log *err = NULL;
-	Eina_Bool r;
 	Eina_Error ret = 0;
-	double svg_w;
-	double svg_h;
 	int w = _default_width;
 	int h = _default_height;
 	char *location;
@@ -207,7 +203,6 @@ static Eina_Error _enesim_image_svg_load(Enesim_Image_Data *data, Enesim_Buffer 
 		enesim_log_dump(err);
 	}
 
-err_setup:
 	enesim_surface_unref(s);
 err_surface:
 	if (location)

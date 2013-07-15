@@ -22,7 +22,11 @@
 #include "egueb_svg_painter.h"
 #include "egueb_svg_reference.h"
 #include "egueb_svg_referenceable.h"
+#include "egueb_svg_document.h"
+#include "egueb_svg_paint_server.h"
+
 #include "egueb_svg_painter_private.h"
+#include "egueb_svg_reference_paint_server_private.h"
 #include "egueb_dom_string_private.h"
 /*============================================================================*
  *                                  Local                                     *
@@ -137,9 +141,6 @@ static void _egueb_svg_renderable_paint_set(Egueb_Dom_Node *n,
 static inline void _egueb_svg_painter_generic_cleanup(
 		Egueb_Svg_Painter *p)
 {
-	Egueb_Svg_Painter_Generic *thiz;
-
-	thiz = EGUEB_SVG_PAINTER_GENERIC(p);
 	/* clear the context */
 	if (p->fill_renderer)
 	{
@@ -258,14 +259,11 @@ static inline void _egueb_svg_painter_generic_resolve_stroke(
 static Eina_Bool _egueb_svg_painter_generic_resolve(Egueb_Svg_Painter *p,
 		Egueb_Svg_Element *e)
 {
-	Egueb_Svg_Painter_Generic *thiz;
 	Egueb_Svg_Color color;
 	Egueb_Svg_Number opacity;
 	Egueb_Dom_Node *doc;
-	Eina_Bool ret = EINA_TRUE;
 	uint8_t lopacity;
 
-	thiz = EGUEB_SVG_PAINTER_GENERIC(p);
 	_egueb_svg_painter_generic_cleanup(p);
 
 	egueb_dom_node_document_get(EGUEB_DOM_NODE(e), &doc);

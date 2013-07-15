@@ -36,6 +36,7 @@
 #include "egueb_smil_attr_fill.h"
 /* elements */
 #include "egueb_smil_animation.h"
+#include "egueb_smil_animate.h"
 #include "egueb_smil_set.h"
 
 #endif

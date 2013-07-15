@@ -60,6 +60,8 @@ Enesim_Object_Descriptor * egueb_svg_reference_descriptor_get(void);
 		Egueb_Svg_Reference, EGUEB_SVG_REFERENCE_DESCRIPTOR)
 
 /* reference */
+void egueb_svg_reference_init(Egueb_Svg_Reference *thiz,
+		Egueb_Dom_Node *referenceable, Egueb_Dom_Node *referencer);
 
 /* The clip path reference */
 Egueb_Svg_Reference * egueb_svg_reference_clip_path_new(void);

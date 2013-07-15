@@ -24,6 +24,9 @@
 #include "egueb_svg_renderable.h"
 #include "egueb_svg_element.h"
 #include "egueb_svg_element_clip_path.h"
+#include "egueb_svg_element_g.h"
+
+#include "egueb_svg_element_private.h"
 #include "egueb_svg_reference_private.h"
 /* TODO we still need to implement a way to inform whenever some node
  * has changed inside the <g> we need to enqueue it for later process
@@ -83,7 +86,6 @@ static Eina_Bool _egueb_svg_reference_clip_path_process(
 	Egueb_Svg_Reference_Clip_Path *thiz;
 	Egueb_Svg_Referenceable_Units_Animated units;
 	Egueb_Svg_Clip_Path clip_path = EGUEB_SVG_CLIP_PATH_INIT;
-	Enesim_Renderer *ren;
 	Enesim_Matrix m;
 	Eina_Bool ret;
 

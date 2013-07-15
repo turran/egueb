@@ -143,6 +143,24 @@ void egueb_svg_element_clip_path_resolve(Egueb_Dom_Node *n,
 		Egueb_Svg_Clip_Path *clip_path_current,
 		Egueb_Svg_Clip_Path *clip_path_last, Egueb_Svg_Reference **r);
 
+/* Helper macro to get the animated/base values of an attribute */
+#define EGUEB_SVG_ELEMENT_ATTR_ANIMATED_GET(attr, val)				\
+	if (egueb_dom_attr_type_is_set(attr, EGUEB_DOM_ATTR_TYPE_BASE))		\
+		egueb_dom_attr_get(attr, EGUEB_DOM_ATTR_TYPE_BASE, &val->base);	\
+	else									\
+		egueb_dom_attr_get(attr, EGUEB_DOM_ATTR_TYPE_DEFAULT, 		\
+				&val->base);					\
+	if (egueb_dom_attr_type_is_set(attr, EGUEB_DOM_ATTR_TYPE_ANIMATED))	\
+		egueb_dom_attr_get(attr, EGUEB_DOM_ATTR_TYPE_ANIMATED, 		\
+				&val->anim);					\
+	else									\
+		val->anim = val->base;
+
+#define EGUEB_SVG_ELEMENT_ATTR_ANIMATED_GET_WITH_RETURN(attr, val)		\
+	if (!val) return EGUEB_DOM_ERROR_INVALID_ACCESS;			\
+	EGUEB_SVG_ELEMENT_ATTR_ANIMATED_GET(attr, val);				\
+	return EINA_ERROR_NONE;
+
 #if 0
 /* element */
 typedef enum _Egueb_Svg_Element_Setup_Return
