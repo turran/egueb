@@ -647,6 +647,21 @@ EAPI void egueb_dom_document_process(Egueb_Dom_Node *n)
 	thiz->processing = EINA_FALSE;
 }
 
+EAPI Eina_Bool egueb_dom_document_needs_process(Egueb_Dom_Node *n)
+{
+	Egueb_Dom_Document *thiz;
+	Egueb_Dom_Document_Class *klass;
+
+	thiz = EGUEB_DOM_DOCUMENT(n);
+	klass = EGUEB_DOM_DOCUMENT_CLASS_GET(n);
+
+	if (klass->needs_process)
+		if (klass->needs_process(n))
+			return EINA_TRUE;
+	if (thiz->current_enqueued) return EINA_TRUE;
+	return EINA_FALSE;
+}
+
 EAPI void egueb_dom_document_process_queue_clear(Egueb_Dom_Node *n)
 {
 	Egueb_Dom_Document *thiz;

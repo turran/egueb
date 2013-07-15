@@ -800,6 +800,14 @@ static void _egueb_svg_document_process(Egueb_Dom_Node *n)
 	}
 	thiz->changed = EINA_FALSE;
 }
+
+static Eina_Bool _egueb_svg_document_needs_process(Egueb_Dom_Node *n)
+{
+	Egueb_Svg_Document *thiz;
+
+	thiz = EGUEB_SVG_DOCUMENT(n);
+	return _egueb_svg_document_has_changed(thiz);
+}
 /*----------------------------------------------------------------------------*
  *                              Object interface                              *
  *----------------------------------------------------------------------------*/
@@ -813,6 +821,7 @@ static void _egueb_svg_document_class_init(void *k)
 
 	klass->element_create = _egueb_svg_document_class_element_create;
 	klass->process = _egueb_svg_document_process;
+	klass->needs_process = _egueb_svg_document_needs_process;
 }
 
 static void _egueb_svg_document_instance_init(void *o)
