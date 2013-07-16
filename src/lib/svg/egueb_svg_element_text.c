@@ -61,16 +61,23 @@ static void _egueb_svg_element_text_children_generate_geometry(
 	Egueb_Svg_Element_Text_Pen *pen = &thiz->pen;
 	Enesim_Rectangle bounds;
 	int max;
+	int size;
 
 	e = EGUEB_SVG_ELEMENT(thiz);
-	enesim_renderer_text_span_size_set(r, ceil(thiz->gfont));
+	size = ceil(thiz->gfont);
+	if (size < 0)
+	{
+		ERR("Negative font size of %d", size);
+		size = 0;
+	}
+	enesim_renderer_text_span_size_set(r, size);
 	enesim_renderer_text_span_max_ascent_get(r, &max);
 	enesim_renderer_origin_set(r, pen->x, pen->y - max);
 
 	INFO("matrix %" ENESIM_MATRIX_FORMAT, ENESIM_MATRIX_ARGS (&e->transform));
 	enesim_renderer_transformation_set(r, &e->transform);
 
-	INFO("x: %g, y: %g, font-size: %g", pen->x, pen->y, ceil(thiz->gfont));
+	INFO("x: %g, y: %g, font-size: %d", pen->x, pen->y, size);
 	/* increment the pen position */
 	enesim_renderer_shape_geometry_get(r, &bounds);
 	INFO("advancing by w: %g, h: %g", bounds.w, bounds.h);

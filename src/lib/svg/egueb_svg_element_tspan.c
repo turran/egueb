@@ -143,6 +143,7 @@ static Eina_Bool _egueb_svg_element_tspan_generate_geometry(Egueb_Svg_Shape *s,
 	double gx, gy;
 	double doc_font_size, gfont;
 	int max;
+	int size;
 
 	thiz = EGUEB_SVG_ELEMENT_TSPAN(s);
 	egueb_dom_attr_final_get(thiz->x, &x);
@@ -165,14 +166,20 @@ static Eina_Bool _egueb_svg_element_tspan_generate_geometry(Egueb_Svg_Shape *s,
 	gx = pen->x;
 	gy = pen->y;
 
-	enesim_renderer_text_span_size_set(thiz->r, ceil(gfont));
+	size = ceil(gfont);
+	if (size < 0)
+	{
+		ERR("Negative font size of %d", size);
+		size = 0;
+	}
+	enesim_renderer_text_span_size_set(thiz->r, size);
 	enesim_renderer_text_span_max_ascent_get(thiz->r, &max);
 	enesim_renderer_origin_set(thiz->r, gx, gy - max);
 
 	INFO("matrix %" ENESIM_MATRIX_FORMAT, ENESIM_MATRIX_ARGS (&e->transform));
 	enesim_renderer_transformation_set(thiz->r, &e->transform);
 
-	INFO("x: %g, y: %g, font-size: %g", gx, gy, ceil(gfont));
+	INFO("x: %g, y: %g, font-size: %d", gx, gy, size);
 	enesim_renderer_shape_geometry_get(thiz->r, &bounds);
 	INFO("advancing by w: %g, h: %g", bounds.w, bounds.h);
 	pen->x += bounds.w;
