@@ -44,9 +44,6 @@ typedef struct _Egueb_Smil_Set
 	Egueb_Dom_Value prv_value;
 	/* etch related data */
 	Etch_Animation *etch_a;
-#if 0
-	void *destination_data;
-#endif
 } Egueb_Smil_Set;
 
 typedef struct _Egueb_Smil_Set_Class

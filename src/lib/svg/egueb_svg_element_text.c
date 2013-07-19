@@ -104,10 +104,10 @@ static Eina_Bool _egueb_svg_element_text_children_process_cb(Egueb_Dom_Node *chi
 		if (thiz->renderable_tree_changed)
 			enesim_renderer_compound_layer_add(thiz->r, enesim_renderer_ref(r));
 	}
-	else if (type == EGUEB_DOM_NODE_TYPE_ELEMENT_NODE && egueb_svg_is_element_tspan(child))
+	else if (type == EGUEB_DOM_NODE_TYPE_ELEMENT_NODE)
 	{
 		egueb_dom_element_process(child);
-		if (thiz->renderable_tree_changed)
+ 		if (egueb_svg_is_element_tspan(child) && thiz->renderable_tree_changed)
 		{
 			Enesim_Renderer *r;
 
@@ -452,6 +452,15 @@ EAPI Egueb_Dom_Node * egueb_svg_element_text_new(void)
 
 	n = ENESIM_OBJECT_INSTANCE_NEW(egueb_svg_element_text);
 	return n;
+}
+
+EAPI Eina_Bool egueb_svg_element_is_text(Egueb_Dom_Node *n)
+{
+	if (!n) return EINA_FALSE;
+	if (!enesim_object_instance_inherits(ENESIM_OBJECT_INSTANCE(n),
+			EGUEB_SVG_ELEMENT_TEXT_DESCRIPTOR))
+		return EINA_FALSE;
+	return EINA_TRUE;
 }
 
 EAPI Eina_Error egueb_svg_element_text_x_set(Egueb_Dom_Node *n,

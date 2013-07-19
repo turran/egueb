@@ -34,6 +34,12 @@ typedef struct _Egueb_Smil_Animate_Base
 
 	/* etch related data */
 	Etch_Animation *etch_a;
+
+	/* private */
+	Egueb_Dom_Value dst_value;
+	Egueb_Dom_Value prv_value;
+	Eina_List *generated_values;
+	Eina_List *generated_times;
 #if 0
 	/* properties */
 	Egueb_Smil_Animate_Base_Context current;

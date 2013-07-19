@@ -115,14 +115,14 @@ ENESIM_OBJECT_INSTANCE_BOILERPLATE(EGUEB_SMIL_ANIMATE_BASE_DESCRIPTOR,
 
 static void _egueb_smil_animate_class_init(void *k)
 {
-}
-
-static void _egueb_smil_animate_class_deinit(void *k)
-{
 	Egueb_Dom_Element_Class *e_klass;
 
 	e_klass= EGUEB_DOM_ELEMENT_CLASS(k);
 	e_klass->tag_name_get = _egueb_smil_animate_tag_name_get;
+}
+
+static void _egueb_smil_animate_class_deinit(void *k)
+{
 }
 
 static void _egueb_smil_animate_instance_init(void *o)

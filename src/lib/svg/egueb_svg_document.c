@@ -822,6 +822,7 @@ static void _egueb_svg_document_class_init(void *k)
 	klass->element_create = _egueb_svg_document_class_element_create;
 	klass->process = _egueb_svg_document_process;
 	klass->needs_process = _egueb_svg_document_needs_process;
+	klass->etch_get = _egueb_svg_document_etch_get;
 }
 
 static void _egueb_svg_document_instance_init(void *o)
