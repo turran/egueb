@@ -35,6 +35,7 @@ src/lib/svg/egueb_svg_element_clip_path.h \
 src/lib/svg/egueb_svg_element_desc.h \
 src/lib/svg/egueb_svg_element_defs.h \
 src/lib/svg/egueb_svg_element_ellipse.h \
+src/lib/svg/egueb_svg_element_filter.h \
 src/lib/svg/egueb_svg_element_g.h \
 src/lib/svg/egueb_svg_element_image.h \
 src/lib/svg/egueb_svg_element_line.h \
@@ -110,6 +111,7 @@ src/lib/svg/egueb_svg_element_clip_path.c \
 src/lib/svg/egueb_svg_element_desc.c \
 src/lib/svg/egueb_svg_element_defs.c \
 src/lib/svg/egueb_svg_element_ellipse.c \
+src/lib/svg/egueb_svg_element_filter.c \
 src/lib/svg/egueb_svg_element_g.c \
 src/lib/svg/egueb_svg_element_image.c \
 src/lib/svg/egueb_svg_element_line.c \

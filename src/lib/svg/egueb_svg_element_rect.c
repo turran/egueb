@@ -286,7 +286,7 @@ EAPI Eina_Error egueb_svg_element_rect_width_set(Egueb_Dom_Node *n, const Egueb_
 	return egueb_dom_attr_set(thiz->width, EGUEB_DOM_ATTR_TYPE_BASE, width);
 }
 
-EAPI Eina_Error egueb_svg_element_rect_width_get(Egueb_Dom_Node *n, Egueb_Svg_Coord_Animated *width)
+EAPI Eina_Error egueb_svg_element_rect_width_get(Egueb_Dom_Node *n, Egueb_Svg_Length_Animated *width)
 {
 	Egueb_Svg_Element_Rect *thiz;
 

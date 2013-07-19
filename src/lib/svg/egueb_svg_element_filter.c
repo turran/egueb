@@ -18,12 +18,17 @@
 
 #include "egueb_svg_main_private.h"
 #include "egueb_svg_main.h"
+#include "egueb_svg_length.h"
+#include "egueb_svg_referenceable_units.h"
 #include "egueb_svg_element.h"
 #include "egueb_svg_element_g.h"
 #include "egueb_svg_element_filter.h"
 #include "egueb_svg_document.h"
+#include "egueb_svg_reference.h"
 #include "egueb_svg_referenceable.h"
 #include "egueb_svg_attr_string.h"
+#include "egueb_svg_attr_length.h"
+
 #include "egueb_svg_referenceable_private.h"
 
 /*============================================================================*
@@ -94,26 +99,28 @@ static void _egueb_svg_element_filter_class_deinit(void *k)
 static void _egueb_svg_element_filter_instance_init(void *o)
 {
 	Egueb_Svg_Element_Filter *thiz;
-	Enesim_Renderer *r;
+	Egueb_Svg_Length minus10, plus120;
 
 	thiz = EGUEB_SVG_ELEMENT_FILTER(o);
+	egueb_svg_length_set(&minus10, -10.0, EGUEB_SVG_UNIT_LENGTH_PERCENT);
+	egueb_svg_length_set(&plus120, 120, EGUEB_SVG_UNIT_LENGTH_PERCENT);
 
 	/* create the properties */
 	thiz->x = egueb_svg_attr_length_new(
 			egueb_dom_string_ref(EGUEB_SVG_X),
-			&EGUEB_SVG_LENGTH_0, EINA_TRUE,
+			&minus10, EINA_TRUE,
 			EINA_FALSE, EINA_FALSE);
 	thiz->y = egueb_svg_attr_length_new(
 			egueb_dom_string_ref(EGUEB_SVG_Y),
-			&EGUEB_SVG_LENGTH_0, EINA_TRUE,
+			&minus10, EINA_TRUE,
 			EINA_FALSE, EINA_FALSE);
 	thiz->width = egueb_svg_attr_length_new(
 			egueb_dom_string_ref(EGUEB_SVG_WIDTH),
-			&EGUEB_SVG_LENGTH_0,
+			&plus120,
 			EINA_TRUE, EINA_FALSE, EINA_FALSE);
 	thiz->height = egueb_svg_attr_length_new(
 			egueb_dom_string_ref(EGUEB_SVG_HEIGHT),
-			&EGUEB_SVG_LENGTH_0,
+			&plus120,
 			EINA_TRUE, EINA_FALSE, EINA_FALSE);
 	thiz->xlink_href = egueb_svg_attr_string_new(
 			egueb_dom_string_ref(EGUEB_SVG_XLINK_HREF),

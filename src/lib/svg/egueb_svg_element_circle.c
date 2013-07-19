@@ -18,6 +18,7 @@
 
 #include "egueb_svg_main_private.h"
 #include "egueb_svg_main.h"
+#include "egueb_svg_length.h"
 #include "egueb_svg_element_circle.h"
 #include "egueb_svg_document.h"
 #include "egueb_svg_shape_private.h"
@@ -201,41 +202,50 @@ EAPI Egueb_Dom_Node * egueb_svg_element_circle_new(void)
 	return n;
 }
 
-#if 0
-EAPI Eina_Bool egueb_svg_is_circle(Ender_Element *e)
+EAPI Eina_Error egueb_svg_element_circle_cx_set(Egueb_Dom_Node *n, const Egueb_Svg_Coord *cx)
 {
-	Egueb_Dom_Tag *t;
-	Egueb_Svg_Type type;
+	Egueb_Svg_Element_Circle *thiz;
 
-	t = (Egueb_Dom_Tag *)ender_element_object_get(e);
-	type = egueb_svg_element_internal_type_get(t);
-	return (type == ESVG_TYPE_CIRCLE) ? EINA_TRUE : EINA_FALSE;
+	thiz = EGUEB_SVG_ELEMENT_CIRCLE(n);
+	return egueb_dom_attr_set(thiz->cx, EGUEB_DOM_ATTR_TYPE_BASE, cx);
 }
 
-EAPI void egueb_svg_element_circle_cx_set(Ender_Element *e, const Egueb_Svg_Coord *cx)
+EAPI Eina_Error egueb_svg_element_circle_cx_get(Egueb_Dom_Node *n, Egueb_Svg_Coord_Animated *cx)
 {
-	egueb_svg_element_property_length_set(e, ESVG_ELEMENT_CIRCLE_CX, cx);
+	Egueb_Svg_Element_Circle *thiz;
+
+	thiz = EGUEB_SVG_ELEMENT_CIRCLE(n);
+	EGUEB_SVG_ELEMENT_ATTR_ANIMATED_GET_WITH_RETURN(thiz->cx, cx);
 }
 
-EAPI void egueb_svg_element_circle_cx_get(Ender_Element *e, Egueb_Svg_Coord *cx)
+EAPI Eina_Error egueb_svg_element_circle_cy_set(Egueb_Dom_Node *n, const Egueb_Svg_Coord *cy)
 {
+	Egueb_Svg_Element_Circle *thiz;
+
+	thiz = EGUEB_SVG_ELEMENT_CIRCLE(n);
+	return egueb_dom_attr_set(thiz->cy, EGUEB_DOM_ATTR_TYPE_BASE, cy);
 }
 
-EAPI void egueb_svg_element_circle_cy_set(Ender_Element *e, const Egueb_Svg_Coord *cy)
+EAPI Eina_Error egueb_svg_element_circle_cy_get(Egueb_Dom_Node *n, Egueb_Svg_Coord_Animated *cy)
 {
-	egueb_svg_element_property_length_set(e, ESVG_ELEMENT_CIRCLE_CY, cy);
+	Egueb_Svg_Element_Circle *thiz;
+
+	thiz = EGUEB_SVG_ELEMENT_CIRCLE(n);
+	EGUEB_SVG_ELEMENT_ATTR_ANIMATED_GET_WITH_RETURN(thiz->cy, cy);
 }
 
-EAPI void egueb_svg_element_circle_cy_get(Ender_Element *e, Egueb_Svg_Coord *cy)
+EAPI Eina_Error egueb_svg_element_circle_r_set(Egueb_Dom_Node *n, const Egueb_Svg_Length *r)
 {
+	Egueb_Svg_Element_Circle *thiz;
+
+	thiz = EGUEB_SVG_ELEMENT_CIRCLE(n);
+	return egueb_dom_attr_set(thiz->radius, EGUEB_DOM_ATTR_TYPE_BASE, r);
 }
 
-EAPI void egueb_svg_element_circle_r_set(Ender_Element *e, const Egueb_Svg_Length *r)
+EAPI Eina_Error egueb_svg_element_circle_r_get(Egueb_Dom_Node *n, Egueb_Svg_Length_Animated *r)
 {
-	egueb_svg_element_property_length_set(e, ESVG_ELEMENT_CIRCLE_R, r);
-}
+	Egueb_Svg_Element_Circle *thiz;
 
-EAPI void egueb_svg_element_circle_r_get(Ender_Element *e, Egueb_Svg_Length *r)
-{
+	thiz = EGUEB_SVG_ELEMENT_CIRCLE(n);
+	EGUEB_SVG_ELEMENT_ATTR_ANIMATED_GET_WITH_RETURN(thiz->radius, r);
 }
-#endif

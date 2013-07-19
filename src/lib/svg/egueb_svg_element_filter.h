@@ -16,15 +16,7 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _EGUEB_SVG_ELEMENT_CIRCLE_H_
-#define _EGUEB_SVG_ELEMENT_CIRCLE_H_
-
-EAPI Egueb_Dom_Node * egueb_svg_element_circle_new(void);
-EAPI Eina_Error egueb_svg_element_circle_cx_set(Egueb_Dom_Node *n, const Egueb_Svg_Coord *cx);
-EAPI Eina_Error egueb_svg_element_circle_cx_get(Egueb_Dom_Node *n, Egueb_Svg_Coord_Animated *cx);
-EAPI Eina_Error egueb_svg_element_circle_cy_set(Egueb_Dom_Node *n, const Egueb_Svg_Coord *cy);
-EAPI Eina_Error egueb_svg_element_circle_cy_get(Egueb_Dom_Node *n, Egueb_Svg_Coord_Animated *cy);
-EAPI Eina_Error egueb_svg_element_circle_r_set(Egueb_Dom_Node *n, const Egueb_Svg_Length *r);
-EAPI Eina_Error egueb_svg_element_circle_r_get(Egueb_Dom_Node *n, Egueb_Svg_Length_Animated *r);
+#ifndef _EGUEB_SVG_ELEMENT_FILTER_H_
+#define _EGUEB_SVG_ELEMENT_FILTER_H_
 
 #endif

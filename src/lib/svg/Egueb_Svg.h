@@ -99,6 +99,7 @@
 #include "egueb_svg_element_desc.h"
 #include "egueb_svg_element_defs.h"
 #include "egueb_svg_element_ellipse.h"
+#include "egueb_svg_element_filter.h"
 #include "egueb_svg_element_g.h"
 #include "egueb_svg_element_image.h"
 #include "egueb_svg_element_line.h"

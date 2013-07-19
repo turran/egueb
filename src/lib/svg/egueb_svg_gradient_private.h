@@ -16,8 +16,8 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _EGUEB_SVG_PRIVATE_GRADIENT_H_
-#define _EGUEB_SVG_PRIVATE_GRADIENT_H_
+#ifndef _EGUEB_SVG_GRADIENT_PRIVATE_H_
+#define _EGUEB_SVG_GRADIENT_PRIVATE_H_
 
 #include "egueb_svg_paint_server_private.h" 
 #include "egueb_svg_reference_gradient_private.h"
