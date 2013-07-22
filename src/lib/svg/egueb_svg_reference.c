@@ -33,9 +33,6 @@ static void _egueb_svg_reference_class_init(void *k)
 
 static void _egueb_svg_reference_instance_init(void *o)
 {
-	Egueb_Svg_Reference *thiz;
-
-	thiz = EGUEB_SVG_REFERENCE(o);
 }
 
 static void _egueb_svg_reference_instance_deinit(void *o)

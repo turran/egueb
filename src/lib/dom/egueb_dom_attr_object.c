@@ -23,6 +23,7 @@
 
 #include "egueb_dom_attr_private.h"
 #include "egueb_dom_attr_object_private.h"
+#include "egueb_dom_value_private.h"
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
@@ -38,10 +39,8 @@ static Eina_Bool _egueb_dom_attr_object_value_get_local(Egueb_Dom_Attr *p,
 static void _egueb_dom_attr_object_free(Egueb_Dom_Attr *p,
 		Egueb_Dom_Attr_Type type)
 {
-	Egueb_Dom_Attr_Object_Class *klass;
 	void **o;
 
-	klass = EGUEB_DOM_ATTR_OBJECT_CLASS_GET(p);
 	if (_egueb_dom_attr_object_value_get_local(p, type, &o))
 	{
 		Egueb_Dom_Value v = EGUEB_DOM_VALUE_INIT;
@@ -61,8 +60,6 @@ static void _egueb_dom_attr_object_free(Egueb_Dom_Attr *p,
 static Eina_Bool _egueb_dom_attr_object_value_get(Egueb_Dom_Attr *p,
 		Egueb_Dom_Attr_Type type, Egueb_Dom_Value *value)
 {
-	Egueb_Dom_Attr_Object *thiz;
-	Egueb_Dom_Attr_Object_Class *klass;
 	const Egueb_Dom_Value_Descriptor *d;
 	Egueb_Dom_Value v = EGUEB_DOM_VALUE_INIT;
 	Egueb_Dom_Value_Data vd;
@@ -75,7 +72,7 @@ static Eina_Bool _egueb_dom_attr_object_value_get(Egueb_Dom_Attr *p,
 	egueb_dom_value_init(&v, d);
 	vd.ptr = *o;
 	egueb_dom_value_data_from(&v, &vd);
-	egueb_dom_value_copy(&v, value);
+	egueb_dom_value_copy(&v, value, EINA_FALSE);
 
 	return EINA_TRUE;
 }
@@ -83,7 +80,6 @@ static Eina_Bool _egueb_dom_attr_object_value_get(Egueb_Dom_Attr *p,
 static Eina_Bool _egueb_dom_attr_object_value_set(Egueb_Dom_Attr *p,
 		Egueb_Dom_Attr_Type type, Egueb_Dom_Value *value)
 {
-	Egueb_Dom_Attr_Object_Class *klass;
 	const Egueb_Dom_Value_Descriptor *d;
 	Egueb_Dom_Value v = EGUEB_DOM_VALUE_INIT;
 	Egueb_Dom_Value_Data vd;
@@ -95,7 +91,7 @@ static Eina_Bool _egueb_dom_attr_object_value_set(Egueb_Dom_Attr *p,
 	egueb_dom_value_init(&v, d);
 	vd.ptr = *o;
 	egueb_dom_value_data_from(&v, &vd);
-	egueb_dom_value_copy(value, &v);
+	egueb_dom_value_copy(value, &v, EINA_FALSE);
 	*o = v.data.ptr;
 
 	/* in case the object is NULL just unset this property

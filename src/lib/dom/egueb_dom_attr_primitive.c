@@ -23,6 +23,7 @@
 
 #include "egueb_dom_attr_private.h"
 #include "egueb_dom_attr_primitive_private.h"
+#include "egueb_dom_value_private.h"
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
@@ -38,10 +39,8 @@ static Eina_Bool _egueb_dom_attr_primitive_value_get_local(Egueb_Dom_Attr *p,
 static void _egueb_dom_attr_primitive_free(Egueb_Dom_Attr *p,
 		Egueb_Dom_Attr_Type type)
 {
-	Egueb_Dom_Attr_Primitive_Class *klass;
 	void *o;
 
-	klass = EGUEB_DOM_ATTR_PRIMITIVE_CLASS_GET(p);
 	if (_egueb_dom_attr_primitive_value_get_local(p, type, &o))
 	{
 		Egueb_Dom_Value v = EGUEB_DOM_VALUE_INIT;
@@ -61,11 +60,6 @@ static void _egueb_dom_attr_primitive_free(Egueb_Dom_Attr *p,
 static Eina_Bool _egueb_dom_attr_primitive_value_get(Egueb_Dom_Attr *p,
 		Egueb_Dom_Attr_Type type, Egueb_Dom_Value *value)
 {
-	Egueb_Dom_Attr_Primitive *thiz;
-	Egueb_Dom_Attr_Primitive_Class *klass;
-	const Egueb_Dom_Value_Descriptor *d;
-	Egueb_Dom_Value v = EGUEB_DOM_VALUE_INIT;
-	Egueb_Dom_Value_Data vd;
 	void *o;
 
 	if (!_egueb_dom_attr_primitive_value_get_local(p, type, &o))
@@ -80,7 +74,6 @@ static Eina_Bool _egueb_dom_attr_primitive_value_get(Egueb_Dom_Attr *p,
 static Eina_Bool _egueb_dom_attr_primitive_value_set(Egueb_Dom_Attr *p,
 		Egueb_Dom_Attr_Type type, Egueb_Dom_Value *value)
 {
-	Egueb_Dom_Attr_Primitive_Class *klass;
 	const Egueb_Dom_Value_Descriptor *d;
 	Egueb_Dom_Value v = EGUEB_DOM_VALUE_INIT;
 	void *o;
@@ -91,7 +84,7 @@ static Eina_Bool _egueb_dom_attr_primitive_value_set(Egueb_Dom_Attr *p,
 	egueb_dom_value_init(&v, d);
 	v.data.ptr = o;
 	v.owned = EINA_FALSE;
-	egueb_dom_value_copy(value, &v);
+	egueb_dom_value_copy(value, &v, EINA_FALSE);
 
 	/* finally set the mask */
 	p->set_mask |= type;

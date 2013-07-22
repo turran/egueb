@@ -24,6 +24,8 @@ typedef struct _Egueb_Svg_String_Animated
 	Egueb_Dom_String *anim;
 } Egueb_Svg_String_Animated;
 
+/* TODO make this function work with a dom string instead */
+EAPI Eina_Bool egueb_svg_string_is_equal(const char *s1, const char *s2);
 EAPI void egueb_svg_string_animated_cleanup(Egueb_Svg_String_Animated *anim);
 
 #endif

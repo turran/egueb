@@ -84,7 +84,8 @@ static void _egueb_svg_font_size_free(Egueb_Dom_Value *v)
 	}
 }
 
-static void _egueb_svg_font_size_copy(const Egueb_Dom_Value *v, Egueb_Dom_Value *copy)
+static void _egueb_svg_font_size_copy(const Egueb_Dom_Value *v, Egueb_Dom_Value *copy,
+		Eina_Bool content)
 {
 	Egueb_Svg_Font_Size *vl;
 	Egueb_Svg_Font_Size *cl;

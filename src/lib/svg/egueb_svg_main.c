@@ -186,11 +186,6 @@ static Eina_Bool _egueb_svg_dependencies_init(void)
 	etch_init();
 	return EINA_TRUE;
 
-shutdown_etch:
-	etch_shutdown();
-	egueb_dom_shutdown();
-shutdown_enesim:
-	enesim_shutdown();
 shutdown_eina:
 	eina_shutdown();
 	return EINA_FALSE;
@@ -209,19 +204,6 @@ static void _egueb_svg_dependencies_shutdown(void)
  *                                 Global                                     *
  *============================================================================*/
 int egueb_svg_log_dom_global = -1;
-
-/* FIXME remove this */
-EAPI Eina_Bool egueb_svg_string_is_equal(const char *s1, const char *s2)
-{
-	/* sanity checks */
-	if (s1 == s2) return EINA_TRUE;
-	if (!s1) return EINA_FALSE;
-	if (!s2) return EINA_FALSE;
-
-	if (strcmp(s1, s2)) return EINA_FALSE;
-	return EINA_TRUE;
-}
-
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/

@@ -79,15 +79,15 @@ static Eina_Bool _egueb_svg_attr_xlink_href_value_get(Egueb_Dom_Attr *p,
 	switch (type)
 	{
 		case EGUEB_DOM_ATTR_TYPE_ANIMATED:
-		*o = &thiz->anim;
+		*o = (void **)&thiz->anim;
 		break;
 
 		case EGUEB_DOM_ATTR_TYPE_BASE:
-		*o = &thiz->value;
+		*o = (void **)&thiz->value;
 		break;
 
 		case EGUEB_DOM_ATTR_TYPE_DEFAULT:
-		*o = &thiz->def;
+		*o = (void **)&thiz->def;
 		break;
 
 		default:

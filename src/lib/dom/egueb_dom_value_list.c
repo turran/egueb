@@ -58,7 +58,7 @@ EAPI void egueb_dom_value_list_free(Egueb_Dom_Value *v)
 }
 
 EAPI void egueb_dom_value_list_copy(const Egueb_Dom_Value *v,
-		Egueb_Dom_Value *copy)
+		Egueb_Dom_Value *copy, Eina_Bool content)
 {
 	Egueb_Dom_List *vl = v->data.ptr;
 	Egueb_Dom_List *cl = v->data.ptr;

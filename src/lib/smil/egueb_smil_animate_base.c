@@ -163,8 +163,10 @@ static void _egueb_smil_animate_base_animation_add_keyframe(Etch_Animation *a,
 	etch_animation_keyframe_time_set(k, time);
 }
 
-static void _egueb_smil_animate_base_interpolator(Etch_Data *a, Etch_Data *b, double m, Etch_Data *res, void *data)
+static void _egueb_smil_animate_base_interpolator_cb(Etch_Data *a, Etch_Data *b, double m, Etch_Data *res, void *data)
 {
+	egueb_dom_value_interpolate(res->data.external, a->data.external,
+			b->data.external, m, NULL, NULL, 0);
 #if 0
 	Egueb_Smil_Animate_Base *thiz = data;
 
@@ -178,7 +180,7 @@ static void _egueb_smil_animate_base_interpolator_add(Etch_Data *a, Etch_Data *b
 	Egueb_Smil_Animate_Base *thiz = data;
 
 	ender_element_property_value_get(thiz->parent_e, thiz->p, thiz->destination_add, NULL);
-	_egueb_smil_animate_base_interpolator(a, b, m, res, data);
+	_egueb_smil_animate_base_interpolator_cb(a, b, m, res, data);
 }
 #endif
 /*----------------------------------------------------------------------------*
@@ -804,11 +806,13 @@ static Eina_Bool _egueb_smil_animate_base_setup(Egueb_Smil_Animation *a,
 	}
 
 	/* default variants */
-	interpolator_cb = _egueb_smil_animate_base_interpolator;
+	interpolator_cb = _egueb_smil_animate_base_interpolator_cb;
 	start_cb = _egueb_smil_animate_base_animation_start_cb;
 
 	/* setup the holder of the destination value */
 	egueb_dom_value_init(&thiz->dst_value, a->d);
+	/* pick the first value and copy it */
+	egueb_dom_value_copy((Egueb_Dom_Value *)thiz->generated_values->data, &thiz->dst_value, EINA_TRUE);
 
 	/* create the animation */
 	etch_a = etch_animation_external_add(a->etch,

@@ -71,6 +71,10 @@ static Eina_Bool _egueb_dom_attr_basic_value_get(Egueb_Dom_Attr *p,
 		d = o;
 		value->data.d = *d;
 		break;
+
+		default:
+		WARN("Unsupported data type for a basic attribute");
+		return EINA_FALSE;
 	}
 
 	return EINA_TRUE;

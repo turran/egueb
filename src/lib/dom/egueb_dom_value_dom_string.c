@@ -22,6 +22,7 @@
 #include "egueb_dom_value.h"
 
 #include "egueb_dom_value_private.h"
+#include "egueb_dom_string_private.h"
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
@@ -57,17 +58,23 @@ static void _dom_string_free(Egueb_Dom_Value *v)
 	v->owned = EINA_FALSE;
 }
 
-static void _dom_string_copy(const Egueb_Dom_Value *v, Egueb_Dom_Value *copy)
+static void _dom_string_copy(const Egueb_Dom_Value *v, Egueb_Dom_Value *copy,
+		Eina_Bool content)
 {
+	Egueb_Dom_String *vs = v->data.ptr;
+
 	EINA_SAFETY_ON_FALSE_RETURN(v->descriptor == &_descriptor);
 	if (copy->data.ptr && copy->owned)
 	{
 		egueb_dom_string_unref(copy->data.ptr);
 		copy->data.ptr = NULL;
 	}
-	if (v->data.ptr)
+	if (vs)
 	{
-		copy->data.ptr = egueb_dom_string_ref(v->data.ptr);
+		if (content)
+			copy->data.ptr = egueb_dom_string_new_with_string(vs->str);
+		else
+			copy->data.ptr = egueb_dom_string_ref(v->data.ptr);
 		copy->owned = EINA_TRUE;
 	}
 }
@@ -100,8 +107,8 @@ static void _dom_string_interpolate(Egueb_Dom_Value *v,
 		Egueb_Dom_Value *a, Egueb_Dom_Value *b, double m,
 		Egueb_Dom_Value *add, Egueb_Dom_Value *acc, int mul)
 {
-	if (m < 1) egueb_dom_value_copy(a, v);
-	else egueb_dom_value_copy(b, v);
+	if (m < 1) egueb_dom_value_copy(a, v, EINA_FALSE);
+	else egueb_dom_value_copy(b, v, EINA_FALSE);
 }
 
 static Egueb_Dom_Value_Descriptor _descriptor = {

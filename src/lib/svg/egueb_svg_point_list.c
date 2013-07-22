@@ -60,10 +60,11 @@ static void _egueb_svg_point_list_free(Egueb_Dom_Value *v)
 	egueb_dom_value_list_free(v);
 }
 
-static void _egueb_svg_point_list_copy(const Egueb_Dom_Value *v, Egueb_Dom_Value *copy)
+static void _egueb_svg_point_list_copy(const Egueb_Dom_Value *v, Egueb_Dom_Value *copy,
+		Eina_Bool content)
 {
 	EINA_SAFETY_ON_FALSE_RETURN(v->descriptor == &_descriptor);
-	egueb_dom_value_list_copy(v, copy);
+	egueb_dom_value_list_copy(v, copy, content);
 }
 
 static char * _egueb_svg_point_list_string_to(const Egueb_Dom_Value *v)

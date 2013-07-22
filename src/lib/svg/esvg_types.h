@@ -147,8 +147,6 @@ typedef Eina_Bool (*Egueb_Svg_Number_List_Cb)(double v, void *data);
 
 EAPI const char * egueb_svg_type_string_to(Egueb_Svg_Type type);
 
-EAPI Eina_Bool egueb_svg_string_is_equal(const char *s1, const char *s2);
-
 /* FIXME rename this: remove the _parser_ */
 EAPI Eina_Bool egueb_svg_parser_gradient_units_string_from(Egueb_Svg_Element_Gradient_Units *gu, const char *value);
 EAPI Eina_Bool egueb_svg_parser_spread_method_get(Egueb_Svg_Spread_Method *smethod, const char *attr);

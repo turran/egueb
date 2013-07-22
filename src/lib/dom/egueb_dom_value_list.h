@@ -25,7 +25,7 @@ EAPI void egueb_dom_value_list_data_to(Egueb_Dom_Value *v,
 		Egueb_Dom_Value_Data *data);
 EAPI void egueb_dom_value_list_free(Egueb_Dom_Value *v);
 EAPI void egueb_dom_value_list_copy(const Egueb_Dom_Value *v,
-		Egueb_Dom_Value *copy);
+		Egueb_Dom_Value *copy, Eina_Bool content);
 EAPI void egueb_dom_list_interpolate(Egueb_Dom_Value *v,
 		Egueb_Dom_Value *a, Egueb_Dom_Value *b, double m,
 		Egueb_Dom_Value *add, Egueb_Dom_Value *acc, int mul);

@@ -146,6 +146,7 @@ static Eina_Bool _egueb_smil_set_setup(Egueb_Smil_Animation *a,
 	egueb_dom_string_unref(to);
 	/* setup the holder of the destination value */
 	egueb_dom_value_init(&thiz->dst_value, a->d);
+	egueb_dom_value_copy(&thiz->to_value, &thiz->dst_value, EINA_TRUE);
 	/* create the animation */
 	etch_a = etch_animation_external_add(a->etch,
 			_egueb_smil_set_interpolator_cb,

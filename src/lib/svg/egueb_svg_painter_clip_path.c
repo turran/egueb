@@ -49,7 +49,6 @@ static Eina_Bool _egueb_svg_painter_clip_path_resolve(Egueb_Svg_Painter *p,
 		Egueb_Svg_Element *e)
 {
 	Egueb_Svg_Painter_Clip_Path *thiz;
-	Egueb_Svg_Reference *other = NULL;
 	Enesim_Renderer *fill_renderer;
 
 	thiz = EGUEB_SVG_PAINTER_CLIP_PATH(p);

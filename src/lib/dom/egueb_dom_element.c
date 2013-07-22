@@ -236,7 +236,7 @@ static void _egueb_dom_element_original_attr_modified_cb(Egueb_Dom_Event *e,
 			egueb_dom_string_string_get(s_attr));
 
 		egueb_dom_value_init(&copy, v->descriptor);
-		egueb_dom_value_copy(v, &copy);
+		egueb_dom_value_copy(v, &copy, EINA_FALSE);
 		err = egueb_dom_element_property_value_set(clone, s_attr,
 				attr_type, &copy);
 		if (err != EINA_ERROR_NONE)

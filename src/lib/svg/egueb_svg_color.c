@@ -284,7 +284,8 @@ static void _egueb_svg_color_free(Egueb_Dom_Value *v)
 	}
 }
 
-static void _egueb_svg_color_copy(const Egueb_Dom_Value *v, Egueb_Dom_Value *copy)
+static void _egueb_svg_color_copy(const Egueb_Dom_Value *v, Egueb_Dom_Value *copy,
+		Eina_Bool content)
 {
 	Egueb_Svg_Color *vl;
 	Egueb_Svg_Color *cl;

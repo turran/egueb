@@ -33,6 +33,7 @@
 #include "egueb_svg_referenceable_private.h"
 #include "egueb_svg_reference_private.h"
 #include "egueb_svg_painter_private.h"
+#include "egueb_svg_shape_private.h"
 
 /* FIXME remove this */
 #include "egueb_dom_document_private.h"
@@ -286,7 +287,8 @@ static Egueb_Dom_String * _egueb_svg_element_clip_path_tag_name_get(
 /*----------------------------------------------------------------------------*
  *                                Node interface                              *
  *----------------------------------------------------------------------------*/
-static Eina_Bool _egueb_svg_element_clip_path_child_appendable(Egueb_Dom_Node *n)
+static Eina_Bool _egueb_svg_element_clip_path_child_appendable(Egueb_Dom_Node *n,
+		Egueb_Dom_Node *child)
 {
 	/* TODO 
 	 * descriptive elements — ‘desc’, ‘metadata’, ‘title’

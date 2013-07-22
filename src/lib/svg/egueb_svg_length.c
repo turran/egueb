@@ -85,7 +85,8 @@ static void _egueb_svg_length_free(Egueb_Dom_Value *v)
 	}
 }
 
-static void _egueb_svg_length_copy(const Egueb_Dom_Value *v, Egueb_Dom_Value *copy)
+static void _egueb_svg_length_copy(const Egueb_Dom_Value *v, Egueb_Dom_Value *copy,
+		Eina_Bool content)
 {
 	Egueb_Svg_Length *vl;
 	Egueb_Svg_Length *cl;
@@ -124,6 +125,22 @@ static void _egueb_svg_length_interpolate(Egueb_Dom_Value *v,
 		Egueb_Dom_Value *a, Egueb_Dom_Value *b, double m,
 		Egueb_Dom_Value *add, Egueb_Dom_Value *acc, int mul)
 {
+	Egueb_Svg_Length *va = a->data.ptr;
+	Egueb_Svg_Length *vb = b->data.ptr;
+	Egueb_Svg_Length *r = v->data.ptr;
+
+	r->unit = va->unit;
+	etch_interpolate_double(va->value, vb->value, m, &r->value);
+	if (acc)
+	{
+		Egueb_Svg_Length *vacc = acc->data.ptr;
+		r->value += vacc->value * mul;
+	}
+	if (add)
+	{
+		Egueb_Svg_Length *vadd = add->data.ptr;
+		r->value += vadd->value;
+	}
 }
 
 static Egueb_Dom_Value_Descriptor _descriptor = {

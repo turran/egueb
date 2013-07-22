@@ -59,11 +59,11 @@ EAPI void egueb_dom_value_reset(Egueb_Dom_Value *thiz)
 }
 
 EAPI void egueb_dom_value_copy(const Egueb_Dom_Value *thiz,
-		Egueb_Dom_Value *copy)
+		Egueb_Dom_Value *copy, Eina_Bool content)
 {
 	EINA_SAFETY_ON_FALSE_RETURN(thiz->descriptor == copy->descriptor);
 	if (thiz->descriptor && thiz->descriptor->copy)
-		thiz->descriptor->copy(thiz, copy);
+		thiz->descriptor->copy(thiz, copy, content);
 	else
 		*copy = *thiz;
 }
@@ -112,7 +112,7 @@ EAPI void egueb_dom_value_primitive_data_from(Egueb_Dom_Value *v, Egueb_Dom_Valu
 	Egueb_Dom_Value vdata = EGUEB_DOM_VALUE_INIT;
 	egueb_dom_value_init(&vdata, v->descriptor);
 	vdata.data.ptr = data->ptr;
-	egueb_dom_value_copy(&vdata, v);
+	egueb_dom_value_copy(&vdata, v, EINA_FALSE);
 }
 
 EAPI void egueb_dom_value_primitive_data_to(Egueb_Dom_Value *v, Egueb_Dom_Value_Data *data)
@@ -120,7 +120,7 @@ EAPI void egueb_dom_value_primitive_data_to(Egueb_Dom_Value *v, Egueb_Dom_Value_
 	Egueb_Dom_Value vdata = EGUEB_DOM_VALUE_INIT;
 	egueb_dom_value_init(&vdata, v->descriptor);
 	vdata.data.ptr = data->ptr;
-	egueb_dom_value_copy(v, &vdata);
+	egueb_dom_value_copy(v, &vdata, EINA_FALSE);
 }
 
 EAPI void egueb_dom_value_enum_interpolate(Egueb_Dom_Value *v,

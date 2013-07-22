@@ -33,7 +33,7 @@ typedef void (*Egueb_Dom_Value_Data_To)(Egueb_Dom_Value *thiz, Egueb_Dom_Value_D
 typedef void (*Egueb_Dom_Value_Init)(Egueb_Dom_Value *thiz);
 typedef void (*Egueb_Dom_Value_Free)(Egueb_Dom_Value *thiz);
 typedef void (*Egueb_Dom_Value_Copy)(const Egueb_Dom_Value *thiz,
-		Egueb_Dom_Value *copy);
+		Egueb_Dom_Value *copy, Eina_Bool content);
 
 typedef char * (*Egueb_Dom_Value_String_To)(const Egueb_Dom_Value *thiz);
 typedef Eina_Bool (*Egueb_Dom_Value_String_From)(Egueb_Dom_Value *thiz,

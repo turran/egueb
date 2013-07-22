@@ -41,3 +41,17 @@ EAPI void egueb_svg_string_animated_cleanup(Egueb_Svg_String_Animated *thiz)
 		thiz->anim = NULL;
 	}
 }
+
+/* FIXME remove this */
+EAPI Eina_Bool egueb_svg_string_is_equal(const char *s1, const char *s2)
+{
+	/* sanity checks */
+	if (s1 == s2) return EINA_TRUE;
+	if (!s1) return EINA_FALSE;
+	if (!s2) return EINA_FALSE;
+
+	if (strcmp(s1, s2)) return EINA_FALSE;
+	return EINA_TRUE;
+}
+
+

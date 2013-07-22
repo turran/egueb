@@ -43,7 +43,7 @@ typedef struct _Egueb_Dom_Value
 EAPI void egueb_dom_value_init(Egueb_Dom_Value *thiz,
 		const Egueb_Dom_Value_Descriptor *descriptor);
 EAPI void egueb_dom_value_reset(Egueb_Dom_Value *thiz);
-EAPI void egueb_dom_value_copy(const Egueb_Dom_Value *thiz, Egueb_Dom_Value *copy);
+EAPI void egueb_dom_value_copy(const Egueb_Dom_Value *thiz, Egueb_Dom_Value *copy, Eina_Bool content);
 EAPI Eina_Bool egueb_dom_value_string_to(const Egueb_Dom_Value *thiz,
 		Egueb_Dom_String **str);
 EAPI Eina_Bool egueb_dom_value_string_from(Egueb_Dom_Value *thiz,

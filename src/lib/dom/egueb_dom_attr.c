@@ -372,7 +372,7 @@ EAPI Eina_Bool egueb_dom_attr_value_get(Egueb_Dom_Node *n,
 	if (!klass->value_get(thiz, type, &v))
 		return EINA_FALSE;
 	/* finally copy the value to the passed in value */
-	egueb_dom_value_copy(&v, value);
+	egueb_dom_value_copy(&v, value, EINA_FALSE);
 	egueb_dom_value_reset(&v);
 	return EINA_TRUE;
 }

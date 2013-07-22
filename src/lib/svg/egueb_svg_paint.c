@@ -18,6 +18,7 @@
 #include "egueb_svg_main_private.h"
 #include "egueb_svg_color.h"
 #include "egueb_svg_paint.h"
+#include "egueb_svg_string.h"
 
 #include "egueb_dom_value_private.h"
 /*============================================================================*
@@ -50,7 +51,8 @@ static void _egueb_svg_paint_free(Egueb_Dom_Value *v)
 	}
 }
 
-static void _egueb_svg_paint_copy(const Egueb_Dom_Value *v, Egueb_Dom_Value *copy)
+static void _egueb_svg_paint_copy(const Egueb_Dom_Value *v, Egueb_Dom_Value *copy,
+		Eina_Bool content)
 {
 	Egueb_Svg_Paint *vd = v->data.ptr;
 	Egueb_Svg_Paint *cd;
@@ -62,6 +64,7 @@ static void _egueb_svg_paint_copy(const Egueb_Dom_Value *v, Egueb_Dom_Value *cop
 		copy->owned = EINA_TRUE;
 	}
 	cd = copy->data.ptr;
+	/* TODO make this function also receive the content arg */
 	egueb_svg_paint_copy(vd, cd);
 }
 

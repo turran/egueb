@@ -24,6 +24,7 @@ EGUEB_DOM_ATTR_FETCH_DEFINE(myelement, MyElement, prop1);
 static Eina_Bool _myelement_process(Egueb_Dom_Element *e)
 {
 	printf("processing %p\n", e);
+	return EINA_TRUE;
 }
 
 static Egueb_Dom_String * _myelement_tag_name_get(Egueb_Dom_Element *e)
