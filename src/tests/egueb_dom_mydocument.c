@@ -44,20 +44,11 @@ static Egueb_Dom_Node * _mydocument_element_create(Egueb_Dom_Node *n,
 	return new_node;
 }
 
-static Etch * _mydocument_etch_get(Egueb_Dom_Node *n)
-{
-	MyDocument *thiz;
-
-	thiz = MYDOCUMENT(n);
-	return thiz->etch;
-}
-
 static void _mydocument_class_init(void *k)
 {
 	Egueb_Dom_Document_Class *klass = EGUEB_DOM_DOCUMENT_CLASS(k);
 
 	klass->element_create = _mydocument_element_create;
-	klass->etch_get = _mydocument_etch_get;
 	printf("mydocument class init\n");
 }
 

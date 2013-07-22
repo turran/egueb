@@ -680,16 +680,6 @@ EAPI void egueb_dom_document_process_queue_clear(Egueb_Dom_Node *n)
 	}
 }
 
-EAPI Etch * egueb_dom_document_etch_get(Egueb_Dom_Node *n)
-{
-	Egueb_Dom_Document_Class *klass;
-
-	klass = EGUEB_DOM_DOCUMENT_CLASS_GET(n);
-	if (klass->etch_get)
-		return klass->etch_get(n);
-	return NULL;
-}
-
 #if 0
 interface Document : Node {
   readonly attribute DocumentType     doctype;

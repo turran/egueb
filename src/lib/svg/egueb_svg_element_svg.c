@@ -150,6 +150,30 @@ static void _egueb_svg_element_svg_set_generic_painter(Egueb_Dom_Node *n)
 	}
 }
 
+static void _egueb_svg_element_svg_set_etch(Egueb_Dom_Node *n, Etch *e)
+{
+	if (egueb_smil_is_animation(n))
+	{
+		egueb_smil_animation_etch_set(n, e);
+	}
+	else
+	{
+		Egueb_Dom_Node *child;
+
+		/* iterate over the children to set the etch too */
+		egueb_dom_node_child_first_get(n, &child);
+		while (child)
+		{
+			Egueb_Dom_Node *tmp;
+
+			_egueb_svg_element_svg_set_etch(child, e);
+			egueb_dom_node_sibling_next_get(child, &tmp);
+			egueb_dom_node_unref(child);
+			child = tmp;
+		}
+	}
+}
+
 /* whenever a child is added which can have a painter, check if it is set
  * if not, define the generic painter for it. Not that a node inserted
  * does not trigger the event for each of the children of the inserted
@@ -162,6 +186,18 @@ static void _egueb_svg_element_svg_node_inserted_cb(Egueb_Dom_Event *e,
 
 	egueb_dom_event_target_get(e, &target);
 	_egueb_svg_element_svg_set_generic_painter(target);
+	egueb_dom_node_unref(target);
+}
+
+/* For every smil animation node, be sure to set the etch on it */
+static void _egueb_svg_element_svg_animation_node_inserted_cb(Egueb_Dom_Event *e,
+		void *data)
+{
+	Egueb_Svg_Element_Svg *thiz = data;
+	Egueb_Dom_Node *target = NULL;
+
+	egueb_dom_event_target_get(e, &target);
+	_egueb_svg_element_svg_set_etch(target, thiz->etch);
 	egueb_dom_node_unref(target);
 }
 /*----------------------------------------------------------------------------*
@@ -376,6 +412,10 @@ static void _egueb_svg_element_svg_instance_init(void *o)
 			EGUEB_DOM_EVENT_MUTATION_NODE_INSERTED,
 			_egueb_svg_element_svg_node_inserted_cb,
 			EINA_TRUE, NULL);
+	egueb_dom_node_event_listener_add(EGUEB_DOM_NODE(o),
+			EGUEB_DOM_EVENT_MUTATION_NODE_INSERTED,
+			_egueb_svg_element_svg_animation_node_inserted_cb,
+			EINA_TRUE, thiz);
 
 	/* the rendering */
 	r = enesim_renderer_proxy_new();

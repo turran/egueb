@@ -20,6 +20,8 @@
 #define _EGUEB_SMIL_ANIMATION_H_
 
 EAPI Eina_Bool egueb_smil_is_animation(Egueb_Dom_Node *n);
+EAPI Etch * egueb_smil_animation_etch_get(Egueb_Dom_Node *n);
+EAPI void egueb_smil_animation_etch_set(Egueb_Dom_Node *n, Etch *etch);
 
 #if 0
 EAPI void egueb_smil_element_animation_attribute_name_set(Ender_Element *e, const char *name);
