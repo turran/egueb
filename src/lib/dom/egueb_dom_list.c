@@ -18,6 +18,7 @@
 #include "egueb_dom_private.h"
 #include "egueb_dom_list.h"
 #include "egueb_dom_list_private.h"
+#include "egueb_dom_value_private.h"
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
@@ -86,7 +87,6 @@ EAPI void egueb_dom_list_clear(Egueb_Dom_List *thiz)
 EAPI void egueb_dom_list_item_remove(Egueb_Dom_List *thiz, int idx)
 {
 	Egueb_Dom_Value v = EGUEB_DOM_VALUE_INIT;
-	Egueb_Dom_Value_Data vd;
 	Eina_List *l;
 
 	/* TODO trigger the mutation event */
@@ -117,4 +117,25 @@ EAPI void egueb_dom_list_foreach(Egueb_Dom_List *thiz, Egueb_Dom_List_Foreach cb
 	if (!thiz) return;
 	EINA_LIST_FOREACH_SAFE(thiz->list, l, l_next, data)
 		cb(data, user_data);
+}
+
+EAPI Egueb_Dom_List * egueb_dom_list_copy(Egueb_Dom_List *thiz)
+{
+	Egueb_Dom_List *ret;
+	Eina_List *l;
+	void *data;
+
+	if (!thiz) return NULL;
+	ret = egueb_dom_list_new(thiz->content_descriptor);
+	EINA_LIST_FOREACH(thiz->list, l, data)
+	{
+		Egueb_Dom_Value v = EGUEB_DOM_VALUE_INIT;
+		Egueb_Dom_Value nv = EGUEB_DOM_VALUE_INIT;;
+
+		egueb_dom_value_init(&v, thiz->content_descriptor);
+		egueb_dom_value_data_from(&v, data);
+		egueb_dom_value_copy(&v, &nv, EINA_TRUE);
+		ret->list = eina_list_append(ret->list, nv.data.ptr);
+	}
+	return ret;
 }

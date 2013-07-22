@@ -24,6 +24,7 @@ typedef struct _Egueb_Dom_List Egueb_Dom_List;
 typedef void (*Egueb_Dom_List_Foreach)(void *data, void *user_data);
 
 EAPI Egueb_Dom_List * egueb_dom_list_new(const Egueb_Dom_Value_Descriptor *d);
+EAPI Egueb_Dom_List * egueb_dom_list_copy(Egueb_Dom_List *thiz);
 EAPI Egueb_Dom_List * egueb_dom_list_ref(Egueb_Dom_List *thiz);
 EAPI void egueb_dom_list_unref(Egueb_Dom_List *thiz);
 
