@@ -329,45 +329,69 @@ static Eina_Bool _egueb_smil_animate_base_values_generate(Egueb_Smil_Animate_Bas
 	if (values)
 	{
 		egueb_dom_list_foreach(values, _egueb_smil_animate_base_values_cb, thiz);
+		egueb_dom_list_unref(values);
 	}
-#if 0
 	else
 	{
-		if (c->value.from)
-		{
-			void *data;
+		Egueb_Smil_Animation *a;
+		Egueb_Dom_String *from = NULL;
+		Egueb_Dom_String *to = NULL;
 
-			data = d->value_new();
-			if (d->value_get(c->value.from, &data))
-				*values = eina_list_append(*values, data);
-			else
-				d->value_free(data);
+		a = EGUEB_SMIL_ANIMATION(thiz);
+
+		/* get the 'from' attribute */
+		egueb_dom_attr_get(thiz->from, EGUEB_DOM_ATTR_TYPE_BASE, &from);
+		if (egueb_dom_string_is_valid(from))
+		{
+			Egueb_Dom_Value v = EGUEB_DOM_VALUE_INIT;
+			Egueb_Dom_Value *nv;
+
+			egueb_dom_value_init(&v, a->d);
+			if (!egueb_dom_value_string_from(&v, from))
+			{
+				ERR("No valid 'from' value");
+				egueb_dom_string_unref(from);
+				return EINA_FALSE;
+			}
+			nv = calloc(1, sizeof(Egueb_Dom_Value));
+			*nv = v;
+			 
+			thiz->generated_values = eina_list_append(thiz->generated_values, nv); 
 		}
 		else
 		{
 			/* mark the missing from */
 			*has_from = EINA_FALSE;
 		}
+		egueb_dom_string_unref(from);
 
-		if (c->value.to)
+		/* get the 'to' attribute */
+		egueb_dom_attr_get(thiz->to, EGUEB_DOM_ATTR_TYPE_BASE, &to);
+		if (egueb_dom_string_is_valid(to))
 		{
-			void *data;
+			Egueb_Dom_Value v = EGUEB_DOM_VALUE_INIT;
+			Egueb_Dom_Value *nv;
 
-			data = d->value_new();
-			if (d->value_get(c->value.to, &data))
-				*values = eina_list_append(*values, data);
-			else
-				d->value_free(data);
+			egueb_dom_value_init(&v, a->d);
+			if (!egueb_dom_value_string_from(&v, to))
+			{
+				ERR("No valid 'to' value");
+				egueb_dom_string_unref(to);
+				return EINA_FALSE;
+			}
+			nv = calloc(1, sizeof(Egueb_Dom_Value));
+			*nv = v;
+			 
+			thiz->generated_values = eina_list_append(thiz->generated_values, nv); 
 		}
-#endif
 #if 0
 		else if (c->value.by)
 		{
 			/* if no from, then everything is dynamic until the animation starts */
 			/* TODO append the from to the values */
 		}
-	}
 #endif
+	}
 
 	return EINA_TRUE;
 }

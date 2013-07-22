@@ -58,6 +58,9 @@ static void _egueb_svg_number_interpolate(Egueb_Dom_Value *v,
 		Egueb_Dom_Value *a, Egueb_Dom_Value *b, double m,
 		Egueb_Dom_Value *add, Egueb_Dom_Value *acc, int mul)
 {
+	etch_interpolate_double(a->data.d, b->data.d, m, &v->data.d);
+	if (add)
+		v->data.d += add->data.d;
 }
 
 static Egueb_Dom_Value_Descriptor _descriptor = {
