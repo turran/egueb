@@ -133,6 +133,7 @@ EAPI Egueb_Dom_List * egueb_dom_list_copy(Egueb_Dom_List *thiz)
 		Egueb_Dom_Value nv = EGUEB_DOM_VALUE_INIT;;
 
 		egueb_dom_value_init(&v, thiz->content_descriptor);
+		egueb_dom_value_init(&nv, thiz->content_descriptor);
 		egueb_dom_value_data_from(&v, data);
 		egueb_dom_value_copy(&v, &nv, EINA_TRUE);
 		ret->list = eina_list_append(ret->list, nv.data.ptr);
