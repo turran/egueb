@@ -469,7 +469,7 @@ static Eina_Bool _egueb_svg_path_seg_list_string_from(Egueb_Dom_Value *v, const 
 	EINA_SAFETY_ON_FALSE_RETURN_VAL(v->descriptor == &_descriptor, EINA_FALSE);
 	if (!v->data.ptr)
 	{
-		v->data.ptr = egueb_dom_list_new(egueb_smil_timing_descriptor_get());
+		v->data.ptr = egueb_dom_list_new(egueb_svg_path_seg_list_descriptor_get());
 		v->owned = EINA_TRUE;
 	}
 	return egueb_svg_path_seg_list_string_from(v->data.ptr, str);

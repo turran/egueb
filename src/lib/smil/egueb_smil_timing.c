@@ -134,7 +134,8 @@ static void _egueb_smil_timing_free(Egueb_Dom_Value *v)
 	}
 }
 
-static void _egueb_smil_timing_copy(const Egueb_Dom_Value *v, Egueb_Dom_Value *copy)
+static void _egueb_smil_timing_copy(const Egueb_Dom_Value *v, Egueb_Dom_Value *copy,
+		Eina_Bool content)
 {
 	const Egueb_Smil_Timing *vd = v->data.ptr;
 	Egueb_Smil_Timing *cd;
