@@ -75,9 +75,12 @@ EAPI void egueb_dom_value_list_copy(const Egueb_Dom_Value *v,
 	}
 }
 
-EAPI void egueb_dom_list_interpolate(Egueb_Dom_Value *v,
+EAPI void egueb_dom_value_list_interpolate(Egueb_Dom_Value *v,
 		Egueb_Dom_Value *a, Egueb_Dom_Value *b, double m,
 		Egueb_Dom_Value *add, Egueb_Dom_Value *acc, int mul)
 {
 	/* iterate over list a, b and v, and interpolate each value */
+	egueb_dom_list_interpolate(v->data.ptr, a->data.ptr, b->data.ptr, m,
+			add ? add->data.ptr : NULL, acc ? acc->data.ptr : NULL,
+			mul);
 }

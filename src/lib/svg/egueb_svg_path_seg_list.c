@@ -479,6 +479,7 @@ static void _egueb_svg_path_seg_list_interpolate(Egueb_Dom_Value *v,
 		Egueb_Dom_Value *a, Egueb_Dom_Value *b, double m,
 		Egueb_Dom_Value *add, Egueb_Dom_Value *acc, int mul)
 {
+	egueb_dom_value_list_interpolate(v, a, b, m, add, acc, mul);
 #if 0
 	Egueb_Svg_Path_Seg_List *r = res;
 	Egueb_Svg_Path_Seg_List *pa = a;

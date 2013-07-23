@@ -142,3 +142,42 @@ EAPI Egueb_Dom_List * egueb_dom_list_copy(Egueb_Dom_List *thiz)
 	}
 	return ret;
 }
+
+EAPI void egueb_dom_list_interpolate(Egueb_Dom_List *v,
+		Egueb_Dom_List *a, Egueb_Dom_List *b, double m,
+		Egueb_Dom_List *add, Egueb_Dom_List *acc, int mul)
+{
+	Eina_List *lv, *la, *lb;
+	void *dv, *da, *db;
+
+	la = a->list;
+	lb = b->list;
+	EINA_LIST_FOREACH(v->list, lv, dv)
+	{
+		Egueb_Dom_Value vv = EGUEB_DOM_VALUE_INIT;
+		Egueb_Dom_Value va = EGUEB_DOM_VALUE_INIT;
+		Egueb_Dom_Value vb = EGUEB_DOM_VALUE_INIT;
+		Egueb_Dom_Value_Data vdata;
+
+		da = la->data;
+		db = lb->data;
+	
+		egueb_dom_value_init(&vv, v->content_descriptor);
+		egueb_dom_value_init(&va, v->content_descriptor);
+		egueb_dom_value_init(&vb, v->content_descriptor);
+
+		vdata.ptr = dv;
+		egueb_dom_value_data_from(&vv, &vdata);
+
+		vdata.ptr = da;
+		egueb_dom_value_data_from(&va, &vdata);
+
+		vdata.ptr = db;
+		egueb_dom_value_data_from(&vb, &vdata);
+
+		egueb_dom_value_interpolate(&vv, &va, &vb, m, NULL, NULL, mul);
+
+		la = la->next;
+		lb = lb->next;
+	}
+}
