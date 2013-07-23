@@ -73,6 +73,7 @@ typedef struct _Egueb_Svg_Path_Seg
 	Eina_Bool is_closed;
 } Egueb_Svg_Path_Seg;
 
+EAPI const Egueb_Dom_Value_Descriptor * egueb_svg_path_seg_descriptor_get(void);
 EAPI char * egueb_svg_path_seg_string_to(Egueb_Svg_Path_Seg *thiz);
 
 #endif
