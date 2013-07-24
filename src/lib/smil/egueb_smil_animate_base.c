@@ -67,6 +67,14 @@ static void _egueb_smil_animate_base_property_set(Egueb_Smil_Animate_Base *thiz,
 	egueb_dom_attr_value_set(a->p, EGUEB_DOM_ATTR_TYPE_ANIMATED, v);
 }
 
+static void _egueb_smil_animate_base_property_get(Egueb_Smil_Animate_Base *thiz, Egueb_Dom_Value *v)
+{
+	Egueb_Smil_Animation *a;
+
+	a = EGUEB_SMIL_ANIMATION(thiz);
+	egueb_dom_attr_value_set(a->p, EGUEB_DOM_ATTR_TYPE_ANIMATED, v);
+}
+
 #if 0
 typedef struct _Egueb_Smil_Animate_Base_Values_Data
 {
@@ -136,17 +144,6 @@ static void * _egueb_smil_animate_base_property_destination_get(Egueb_Smil_Anima
 	return ret;
 }
 
-static void * _egueb_smil_animate_base_property_value_get(Egueb_Smil_Animate_Base *thiz, void *value)
-{
-	void *destination;
-
-	destination = thiz->d->destination_new();
-	ender_element_property_value_get(thiz->parent_e, thiz->p, destination, NULL);
-	/* convert it to a value */
-	thiz->d->destination_value_to(destination, &value);
-	thiz->d->destination_free(destination, EINA_FALSE);
-	return value;
-}
 #endif
 
 static void _egueb_smil_animate_base_animation_add_keyframe(Etch_Animation *a,
@@ -214,29 +211,17 @@ static void _egueb_smil_animate_base_animation_start_cb(Etch_Animation *ea, void
 	egueb_dom_node_event_dispatch(a->target, ev, NULL);
 }
 
-#if 0
 static void _egueb_smil_animate_base_animation_start_and_fetch_cb(Etch_Animation *a, void *data)
 {
 	Egueb_Smil_Animate_Base *thiz = data;
-	Etch_Animation_Keyframe *k;
-	Etch_Data kd;
-	void *first;
+	Egueb_Dom_Value *first;
 
 	/* get the first value and store the current value there */
-	first = eina_list_data_get(thiz->values);
-	first = _egueb_smil_animate_base_property_value_get(thiz, first);
-	/* set it as the first keyframe data */
-	eina_list_data_set(thiz->values, first);
-	/* replace the values pointer */
-	k = etch_animation_keyframe_get(thiz->etch_a, 0);
-	kd.type = ETCH_EXTERNAL;
-	kd.data.external = first;
-	etch_animation_keyframe_value_set(k, &kd);
-
-	/* finally cal the animation */
+	first = eina_list_data_get(thiz->generated_values);
+	_egueb_smil_animate_base_property_get(thiz, first);
+	/* finally call the animation */
 	_egueb_smil_animate_base_animation_start_cb(a, data);
 }
-#endif
 
 static void _egueb_smil_animate_base_animation_stop_cb(Etch_Animation *ea, void *data)
 {
@@ -393,6 +378,24 @@ static Eina_Bool _egueb_smil_animate_base_values_generate(Egueb_Smil_Animate_Bas
 #endif
 	}
 
+	/* in case of no from, add another keyframe at time 0
+	 * the value for such keyframe should be taken
+	 * at the begin animation
+	 */
+	if (!*has_from)
+	{
+		Egueb_Smil_Animation *a;
+		Egueb_Dom_Value *from;
+
+		a = EGUEB_SMIL_ANIMATION(thiz);
+
+		from = calloc(1, sizeof(Egueb_Dom_Value));
+		egueb_dom_value_init(from, a->d);
+		/* just get a dummy value for now, so we can have an allocated value */
+		egueb_dom_attr_final_value_get(a->p, from);
+		thiz->generated_values = eina_list_prepend(thiz->generated_values, from);
+	}
+
 	return EINA_TRUE;
 }
 #if 0
@@ -456,6 +459,11 @@ static Eina_Bool _egueb_smil_animate_base_times_generate(Egueb_Smil_Animate_Base
 			if (!length)
 			{
 				ERR("No generated values");
+				return EINA_FALSE;
+			}
+			if (length == 1)
+			{
+				ERR("No enough values to generate an animation");
 				return EINA_FALSE;
 			}
 
@@ -816,6 +824,7 @@ static Eina_Bool _egueb_smil_animate_base_setup(Egueb_Smil_Animation *a,
 		ERR("No values generated");
 		return EINA_FALSE;
 	}
+
 	_egueb_smil_animate_base_times_generate(thiz);
 	if (!thiz->generated_times)
 	{
@@ -832,10 +841,12 @@ static Eina_Bool _egueb_smil_animate_base_setup(Egueb_Smil_Animation *a,
 	/* default variants */
 	interpolator_cb = _egueb_smil_animate_base_interpolator_cb;
 	start_cb = _egueb_smil_animate_base_animation_start_cb;
+	if (!has_from)
+		start_cb = _egueb_smil_animate_base_animation_start_and_fetch_cb;
 
 	/* setup the holder of the destination value */
 	egueb_dom_value_init(&thiz->dst_value, a->d);
-	/* pick the first value and copy it */
+	/* pick the first value and copy it to allocate in case we need to */
 	egueb_dom_value_copy((Egueb_Dom_Value *)thiz->generated_values->data, &thiz->dst_value, EINA_TRUE);
 
 	/* create the animation */
