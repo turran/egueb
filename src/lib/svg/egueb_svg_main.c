@@ -90,7 +90,6 @@ static void _egueb_svg_strings_init(void)
 	EGUEB_SVG_X = egueb_dom_string_new_with_string("x");
 	EGUEB_SVG_X1 = egueb_dom_string_new_with_string("x1");
 	EGUEB_SVG_X2 = egueb_dom_string_new_with_string("x2");
-	EGUEB_SVG_XLINK_HREF = egueb_dom_string_new_with_string("xlink:href");
 	EGUEB_SVG_Y = egueb_dom_string_new_with_string("y");
 	EGUEB_SVG_Y1 = egueb_dom_string_new_with_string("y1");
 	EGUEB_SVG_Y2 = egueb_dom_string_new_with_string("y2");
@@ -271,7 +270,7 @@ Egueb_Dom_String *EGUEB_SVG_WIDTH;
 Egueb_Dom_String *EGUEB_SVG_X;
 Egueb_Dom_String *EGUEB_SVG_X1;
 Egueb_Dom_String *EGUEB_SVG_X2;
-Egueb_Dom_String *EGUEB_SVG_XLINK_HREF;
+Egueb_Dom_String *EGUEB_DOM_XLINK_HREF;
 Egueb_Dom_String *EGUEB_SVG_Y;
 Egueb_Dom_String *EGUEB_SVG_Y1;
 Egueb_Dom_String *EGUEB_SVG_Y2;

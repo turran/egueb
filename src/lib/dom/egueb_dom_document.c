@@ -17,6 +17,7 @@
  */
 #include "egueb_dom_private.h"
 
+#include "egueb_dom_string.h"
 #include "egueb_dom_main.h"
 #include "egueb_dom_document.h"
 #include "egueb_dom_element.h"
@@ -679,6 +680,31 @@ EAPI void egueb_dom_document_process_queue_clear(Egueb_Dom_Node *n)
 		egueb_dom_node_unref(n);
 	}
 }
+
+#if 0
+EAPI void egueb_dom_document_timer_add_cb_set(Egueb_Dom_Node *n,
+		Egueb_Dom_Document_Timer_Add_Cb cb, void *user_data)
+{
+
+}
+
+EAPI void egueb_dom_document_timer_remove_cb_set(Egueb_Dom_Node *n,
+		Egueb_Dom_Document_Timer_Remove_Cb cb, void *user_data)
+{
+
+}
+
+EAPI Egueb_Dom_Timer * egueb_dom_document_timer_add(Egueb_Dom_Node *n,
+		long timeout, Egueb_Dom_Document_Timer_Cb cb, void *user_data)
+{
+
+}
+
+EAPI void egueb_dom_document_timer_remove(Egueb_Dom_Node *n, Egueb_Dom_Timer *t)
+{
+
+}
+#endif
 
 #if 0
 interface Document : Node {

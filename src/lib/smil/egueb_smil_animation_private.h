@@ -38,6 +38,7 @@ typedef struct _Egueb_Smil_Animation
 	Egueb_Dom_Node *dur;
 	Egueb_Dom_Node *begin;
 	Egueb_Dom_Node *end;
+	Egueb_Dom_Node *xlink_href;
 
 	/* private */
 	Eina_List *begin_events;

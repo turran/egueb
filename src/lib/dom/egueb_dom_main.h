@@ -43,4 +43,7 @@ EAPI extern Eina_Error EGUEB_DOM_ERROR_INVALID_ACCESS;
 EAPI extern Eina_Error EGUEB_DOM_ERROR_VALIDATION;
 EAPI extern Eina_Error EGUEB_DOM_ERROR_TYPE_MISMATCH;
 
+/* Shared strings */
+EAPI extern Egueb_Dom_String *EGUEB_DOM_XLINK_HREF;
+
 #endif

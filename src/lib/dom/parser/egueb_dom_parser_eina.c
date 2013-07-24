@@ -18,8 +18,8 @@
 
 #include "egueb_dom_private.h"
 
-#include "egueb_dom_main.h"
 #include "egueb_dom_string.h"
+#include "egueb_dom_main.h"
 #include "egueb_dom_node_list.h"
 #include "egueb_dom_node_map_named.h"
 #include "egueb_dom_parser.h"

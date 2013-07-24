@@ -91,7 +91,6 @@ EAPI extern Egueb_Dom_String *EGUEB_SVG_WIDTH;
 EAPI extern Egueb_Dom_String *EGUEB_SVG_X;
 EAPI extern Egueb_Dom_String *EGUEB_SVG_X1;
 EAPI extern Egueb_Dom_String *EGUEB_SVG_X2;
-EAPI extern Egueb_Dom_String *EGUEB_SVG_XLINK_HREF;
 EAPI extern Egueb_Dom_String *EGUEB_SVG_Y;
 EAPI extern Egueb_Dom_String *EGUEB_SVG_Y1;
 EAPI extern Egueb_Dom_String *EGUEB_SVG_Y2;

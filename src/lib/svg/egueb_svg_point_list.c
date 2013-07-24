@@ -78,10 +78,17 @@ static Eina_Bool _egueb_svg_point_list_string_from(Egueb_Dom_Value *v, const cha
 	EINA_SAFETY_ON_FALSE_RETURN_VAL(v->descriptor == &_descriptor, EINA_FALSE);
 	if (!v->data.ptr)
 	{
-		v->data.ptr = egueb_dom_list_new(egueb_smil_timing_descriptor_get());
+		v->data.ptr = egueb_dom_list_new(egueb_svg_point_descriptor_get());
 		v->owned = EINA_TRUE;
 	}
 	return egueb_svg_point_list_string_from(v->data.ptr, str);
+}
+
+static void _egueb_svg_point_list_interpolate(Egueb_Dom_Value *v,
+		Egueb_Dom_Value *a, Egueb_Dom_Value *b, double m,
+		Egueb_Dom_Value *add, Egueb_Dom_Value *acc, int mul)
+{
+	egueb_dom_value_list_interpolate(v, a, b, m, add, acc, mul);
 }
 
 static Egueb_Dom_Value_Descriptor _descriptor = {
@@ -94,7 +101,7 @@ static Egueb_Dom_Value_Descriptor _descriptor = {
 	/* .copy 		= */ _egueb_svg_point_list_copy,
 	/* .string_to 		= */ _egueb_svg_point_list_string_to,
 	/* .string_from 	= */ _egueb_svg_point_list_string_from,
-	/* .interpolate 	= */ NULL,
+	/* .interpolate 	= */ _egueb_svg_point_list_interpolate,
 };
 /*============================================================================*
  *                                 Global                                     *

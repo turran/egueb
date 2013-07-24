@@ -18,10 +18,10 @@
 
 #include "egueb_dom_private.h"
 
+#include "egueb_dom_string.h"
 #include "egueb_dom_main.h"
 #include "egueb_dom_node.h"
 #include "egueb_dom_text.h"
-#include "egueb_dom_string.h"
 #include "egueb_dom_character_data_private.h"
 /*============================================================================*
  *                                  Local                                     *

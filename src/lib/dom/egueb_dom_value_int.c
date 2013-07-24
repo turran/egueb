@@ -17,8 +17,8 @@
  */
 #include "egueb_dom_private.h"
 
-#include "egueb_dom_main.h"
 #include "egueb_dom_string.h"
+#include "egueb_dom_main.h"
 #include "egueb_dom_value.h"
 #include "egueb_dom_value_int.h"
 

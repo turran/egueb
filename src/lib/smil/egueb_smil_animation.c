@@ -457,30 +457,56 @@ static void _egueb_dom_animation_node_removed_cb(Egueb_Dom_Event *ev, void *data
 static Eina_Bool _egueb_smil_animation_process(Egueb_Dom_Element *e)
 {
 	Egueb_Smil_Animation *thiz;
-	Egueb_Dom_Node *parent = NULL;
+	Egueb_Dom_Node *target = NULL;
+	Egueb_Dom_String *xlink_href = NULL;
 	Eina_Bool ret;
 
 	thiz = EGUEB_SMIL_ANIMATION(e);
-	/* check if this node has changed, given that we dont inherit
-	 * anything from its parent
-	 */
-	egueb_dom_node_parent_get(EGUEB_DOM_NODE(e), &parent);
-	if (!egueb_dom_element_changed(EGUEB_DOM_NODE(e)) &&
-			thiz->target == parent && !thiz->document_changed)
+	egueb_dom_attr_final_get(thiz->xlink_href, &xlink_href);
+	if (egueb_dom_string_is_valid(xlink_href))
 	{
-		egueb_dom_node_unref(parent);
+		Egueb_Dom_Node *doc;
+
+		egueb_dom_node_document_get(EGUEB_DOM_NODE(e), &doc);
+		if (!doc)
+		{
+			ERR("No document associated with the node");
+			return EINA_FALSE;
+		}
+		egueb_dom_document_element_get_by_id(doc, xlink_href, &target);
+		if (!target)
+		{
+			ERR("Invalid target");
+			egueb_dom_node_unref(doc);
+			egueb_dom_string_unref(xlink_href);
+			return EINA_FALSE;
+		}
+		egueb_dom_string_unref(xlink_href);
+		egueb_dom_node_unref(doc);
+		ERR("we have an xlink!");
+	}
+	else
+	{
+		egueb_dom_node_parent_get(EGUEB_DOM_NODE(e), &target);
+		egueb_dom_string_unref(xlink_href);
+	}
+
+	if (!egueb_dom_element_changed(EGUEB_DOM_NODE(e)) &&
+			thiz->target == target && !thiz->document_changed)
+	{
+		egueb_dom_node_unref(target);
 		return EINA_TRUE;
 	}
 
-	if (!parent) return EINA_FALSE;
+	if (!target) return EINA_FALSE;
 	/* now the setup */
-	_egueb_dom_animation_cleanup(thiz, parent);
-	ret = _egueb_dom_animation_setup(thiz, parent);
-	/* dont keep a reference to its parent, in case the parent
+	_egueb_dom_animation_cleanup(thiz, target);
+	ret = _egueb_dom_animation_setup(thiz, target);
+	/* dont keep a reference to its target, in case the target
 	 * is destroyed this will be destroyed first
 	 */
 	thiz->document_changed = EINA_FALSE;
-	egueb_dom_node_unref(parent);
+	egueb_dom_node_unref(target);
 	return ret;
 }
 /*----------------------------------------------------------------------------*
@@ -491,6 +517,7 @@ EGUEB_DOM_ATTR_FETCH_DEFINE(egueb_smil_animation, Egueb_Smil_Animation, fill);
 EGUEB_DOM_ATTR_FETCH_DEFINE(egueb_smil_animation, Egueb_Smil_Animation, dur);
 EGUEB_DOM_ATTR_FETCH_DEFINE(egueb_smil_animation, Egueb_Smil_Animation, begin);
 EGUEB_DOM_ATTR_FETCH_DEFINE(egueb_smil_animation, Egueb_Smil_Animation, end);
+EGUEB_DOM_ATTR_FETCH_DEFINE(egueb_smil_animation, Egueb_Smil_Animation, xlink_href);
 
 ENESIM_OBJECT_ABSTRACT_BOILERPLATE(EGUEB_DOM_ELEMENT_DESCRIPTOR,
 		Egueb_Smil_Animation, Egueb_Smil_Animation_Class, egueb_smil_animation);
@@ -532,12 +559,16 @@ static void _egueb_smil_animation_instance_init(void *o)
 			egueb_dom_string_ref(EGUEB_SMIL_BEGIN), NULL);
 	thiz->end = egueb_smil_attr_timing_list_new(
 			egueb_dom_string_ref(EGUEB_SMIL_END), NULL);
+	thiz->xlink_href = egueb_dom_attr_string_new(
+			egueb_dom_string_ref(EGUEB_DOM_XLINK_HREF),
+			NULL);
 
 	EGUEB_DOM_ELEMENT_CLASS_PROPERTY_ADD(thiz, egueb_smil_animation, attribute_name);
 	EGUEB_DOM_ELEMENT_CLASS_PROPERTY_ADD(thiz, egueb_smil_animation, fill);
 	EGUEB_DOM_ELEMENT_CLASS_PROPERTY_ADD(thiz, egueb_smil_animation, dur);
 	EGUEB_DOM_ELEMENT_CLASS_PROPERTY_ADD(thiz, egueb_smil_animation, begin);
 	EGUEB_DOM_ELEMENT_CLASS_PROPERTY_ADD(thiz, egueb_smil_animation, end);
+	EGUEB_DOM_ELEMENT_CLASS_PROPERTY_ADD(thiz, egueb_smil_animation, xlink_href);
 }
 
 static void _egueb_smil_animation_instance_deinit(void *o)
@@ -551,6 +582,7 @@ static void _egueb_smil_animation_instance_deinit(void *o)
 	egueb_dom_node_unref(thiz->dur);
 	egueb_dom_node_unref(thiz->begin);
 	egueb_dom_node_unref(thiz->end);
+	egueb_dom_node_unref(thiz->xlink_href);
 }
 /*============================================================================*
  *                                 Global                                     *
