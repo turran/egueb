@@ -72,7 +72,7 @@ static void _egueb_smil_animate_base_property_get(Egueb_Smil_Animate_Base *thiz,
 	Egueb_Smil_Animation *a;
 
 	a = EGUEB_SMIL_ANIMATION(thiz);
-	egueb_dom_attr_value_set(a->p, EGUEB_DOM_ATTR_TYPE_ANIMATED, v);
+	egueb_dom_attr_final_value_get(a->p, v);
 }
 
 #if 0
@@ -211,16 +211,18 @@ static void _egueb_smil_animate_base_animation_start_cb(Etch_Animation *ea, void
 	egueb_dom_node_event_dispatch(a->target, ev, NULL);
 }
 
-static void _egueb_smil_animate_base_animation_start_and_fetch_cb(Etch_Animation *a, void *data)
+static void _egueb_smil_animate_base_animation_start_and_fetch_cb(Etch_Animation *ea, void *data)
 {
 	Egueb_Smil_Animate_Base *thiz = data;
+	Egueb_Smil_Animation *a;
 	Egueb_Dom_Value *first;
 
+	a = EGUEB_SMIL_ANIMATION(thiz);
 	/* get the first value and store the current value there */
 	first = eina_list_data_get(thiz->generated_values);
-	_egueb_smil_animate_base_property_get(thiz, first);
+	egueb_dom_attr_final_value_get(a->p, first);
 	/* finally call the animation */
-	_egueb_smil_animate_base_animation_start_cb(a, data);
+	_egueb_smil_animate_base_animation_start_cb(ea, data);
 }
 
 static void _egueb_smil_animate_base_animation_stop_cb(Etch_Animation *ea, void *data)

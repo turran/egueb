@@ -365,10 +365,12 @@ EAPI Eina_Bool egueb_dom_attr_value_get(Egueb_Dom_Node *n,
 
 	if (!value) return EINA_FALSE;
 
+	thiz = EGUEB_DOM_ATTR(n);
+	if (!(thiz->set_mask & type)) return EINA_FALSE;
+
 	d = egueb_dom_attr_value_descriptor_get(n);
 	egueb_dom_value_init(&v, d);
 
-	thiz = EGUEB_DOM_ATTR(n);
 	klass = EGUEB_DOM_ATTR_CLASS_GET(thiz);
 	if (!klass->value_get(thiz, type, &v))
 		return EINA_FALSE;
