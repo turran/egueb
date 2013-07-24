@@ -152,6 +152,7 @@ EAPI void egueb_dom_list_interpolate(Egueb_Dom_List *v,
 
 	la = a->list;
 	lb = b->list;
+	/* FIXME this wont work for basic values */
 	EINA_LIST_FOREACH(v->list, lv, dv)
 	{
 		Egueb_Dom_Value vv = EGUEB_DOM_VALUE_INIT;

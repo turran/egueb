@@ -32,6 +32,7 @@ typedef struct _Egueb_Svg_Attr_Path_Seg_List
 {
 	Egueb_Dom_Attr_Object base;
 	Egueb_Dom_List *value;
+	Egueb_Dom_List *anim;
 	Egueb_Dom_List *def;
 } Egueb_Svg_Attr_Path_Seg_List;
 
@@ -54,6 +55,10 @@ static Eina_Bool _egueb_svg_attr_path_seg_list_value_get(Egueb_Dom_Attr *p,
 
 		case EGUEB_DOM_ATTR_TYPE_DEFAULT:
 		*o = (void **)&thiz->def;
+		break;
+
+		case EGUEB_DOM_ATTR_TYPE_ANIMATED:
+		*o = (void **)&thiz->anim;
 		break;
 
 		default:

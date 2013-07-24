@@ -91,6 +91,71 @@ static void _egueb_svg_path_seg_interpolate(Egueb_Dom_Value *v,
 		Egueb_Dom_Value *a, Egueb_Dom_Value *b, double m,
 		Egueb_Dom_Value *add, Egueb_Dom_Value *acc, int mul)
 {
+	Egueb_Svg_Path_Seg *cv = v->data.ptr;
+	Egueb_Svg_Path_Seg *cb = b->data.ptr;
+	Egueb_Svg_Path_Seg *ca = a->data.ptr;
+
+	if (m <= 0.5)
+		cv->relative = ca->relative;
+	else
+		cv->relative = cb->relative;
+	switch (ca->type)
+	{
+		case ESVG_PATH_MOVE_TO:
+		etch_interpolate_double(ca->data.move_to.x, cb->data.move_to.x, m, &cv->data.move_to.x);
+		etch_interpolate_double(ca->data.move_to.y, cb->data.move_to.y, m, &cv->data.move_to.y);
+		break;
+
+		case ESVG_PATH_LINE_TO:
+		etch_interpolate_double(ca->data.line_to.x, cb->data.line_to.x, m, &cv->data.line_to.x);
+		etch_interpolate_double(ca->data.line_to.y, cb->data.line_to.y, m, &cv->data.line_to.y);
+		break;
+
+		case ESVG_PATH_HLINE_TO:
+		etch_interpolate_double(ca->data.hline_to.c, cb->data.hline_to.c, m, &cv->data.hline_to.c);
+		break;
+
+		case ESVG_PATH_VLINE_TO:
+		etch_interpolate_double(ca->data.vline_to.c, cb->data.vline_to.c, m, &cv->data.vline_to.c);
+		break;
+
+		case ESVG_PATH_CUBIC_TO:
+		etch_interpolate_double(ca->data.cubic_to.ctrl_x1, cb->data.cubic_to.ctrl_x1, m, &cv->data.cubic_to.ctrl_x1);
+		etch_interpolate_double(ca->data.cubic_to.ctrl_y1, cb->data.cubic_to.ctrl_y1, m, &cv->data.cubic_to.ctrl_y1);
+		etch_interpolate_double(ca->data.cubic_to.ctrl_x0, cb->data.cubic_to.ctrl_x0, m, &cv->data.cubic_to.ctrl_x0);
+		etch_interpolate_double(ca->data.cubic_to.ctrl_y0, cb->data.cubic_to.ctrl_y0, m, &cv->data.cubic_to.ctrl_y0);
+		etch_interpolate_double(ca->data.cubic_to.x, cb->data.cubic_to.x, m, &cv->data.cubic_to.x);
+		etch_interpolate_double(ca->data.cubic_to.y, cb->data.cubic_to.y, m, &cv->data.cubic_to.y);
+		break;
+
+		case ESVG_PATH_SCUBIC_TO:
+		etch_interpolate_double(ca->data.scubic_to.ctrl_x, cb->data.scubic_to.ctrl_x, m, &cv->data.scubic_to.ctrl_x);
+		etch_interpolate_double(ca->data.scubic_to.ctrl_y, cb->data.scubic_to.ctrl_y, m, &cv->data.scubic_to.ctrl_y);
+		etch_interpolate_double(ca->data.scubic_to.x, cb->data.scubic_to.x, m, &cv->data.scubic_to.x);
+		etch_interpolate_double(ca->data.scubic_to.y, cb->data.scubic_to.y, m, &cv->data.scubic_to.y);
+		break;
+
+		case ESVG_PATH_QUADRATIC_TO:
+		etch_interpolate_double(ca->data.quadratic_to.ctrl_x, cb->data.quadratic_to.ctrl_x, m, &cv->data.quadratic_to.ctrl_x);
+		etch_interpolate_double(ca->data.quadratic_to.ctrl_y, cb->data.quadratic_to.ctrl_y, m, &cv->data.quadratic_to.ctrl_y);
+		etch_interpolate_double(ca->data.quadratic_to.x, cb->data.quadratic_to.x, m, &cv->data.quadratic_to.x);
+		etch_interpolate_double(ca->data.quadratic_to.y, cb->data.quadratic_to.y, m, &cv->data.quadratic_to.y);
+		break;
+
+		case ESVG_PATH_SQUADRATIC_TO:
+		etch_interpolate_double(ca->data.squadratic_to.x, cb->data.squadratic_to.x, m, &cv->data.squadratic_to.x);
+		etch_interpolate_double(ca->data.squadratic_to.y, cb->data.squadratic_to.y, m, &cv->data.squadratic_to.y);
+		break;
+
+		case ESVG_PATH_ARC_TO:
+		etch_interpolate_double(ca->data.arc_to.x, cb->data.arc_to.x, m, &cv->data.arc_to.x);
+		etch_interpolate_double(ca->data.arc_to.y, cb->data.arc_to.y, m, &cv->data.arc_to.y);
+		break;
+
+		case ESVG_PATH_CLOSE:
+		default:
+		break;
+	}
 }
 
 static Egueb_Dom_Value_Descriptor _egueb_svg_path_seg_descriptor = {

@@ -347,6 +347,7 @@ static Eina_Bool _egueb_svg_element_path_generate_geometry(Egueb_Svg_Shape *s,
 	if (d)
 	{
 		Egueb_Svg_Element_Path_D_Cb_Data data;
+
 		data.cur.x = data.cur.y = 0;
 		data.thiz = thiz;
 		data.first = EINA_TRUE;
@@ -358,7 +359,6 @@ static Eina_Bool _egueb_svg_element_path_generate_geometry(Egueb_Svg_Shape *s,
 	e = EGUEB_SVG_ELEMENT(s);
 	/* set the transformation */
 	enesim_renderer_transformation_set(thiz->r, &e->transform);
-done:
 	return EINA_TRUE;
 }
 /*----------------------------------------------------------------------------*
@@ -376,9 +376,6 @@ static Enesim_Renderer * _egueb_svg_element_path_renderer_get(
 static void _egueb_svg_element_path_bounds_get(Egueb_Svg_Renderable *r,
 		Enesim_Rectangle *bounds)
 {
-	Egueb_Svg_Element_Path *thiz;
-
-	thiz = EGUEB_SVG_ELEMENT_PATH(r);
 }
 /*----------------------------------------------------------------------------*
  *                              Element interface                             *

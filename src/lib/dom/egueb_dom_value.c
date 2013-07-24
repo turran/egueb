@@ -109,10 +109,15 @@ EAPI void egueb_dom_value_interpolate(Egueb_Dom_Value *thiz,
 
 EAPI void egueb_dom_value_primitive_data_from(Egueb_Dom_Value *v, Egueb_Dom_Value_Data *data)
 {
+#if 0
 	Egueb_Dom_Value vdata = EGUEB_DOM_VALUE_INIT;
 	egueb_dom_value_init(&vdata, v->descriptor);
 	vdata.data.ptr = data->ptr;
 	egueb_dom_value_copy(&vdata, v, EINA_FALSE);
+#else
+	v->owned = EINA_FALSE;
+	v->data.ptr = data->ptr;
+#endif
 }
 
 EAPI void egueb_dom_value_primitive_data_to(Egueb_Dom_Value *v, Egueb_Dom_Value_Data *data)
