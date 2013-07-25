@@ -87,6 +87,8 @@ EAPI void egueb_dom_node_event_listener_remove(Egueb_Dom_Node *thiz,
 EAPI void egueb_dom_node_event_listener_free(Egueb_Dom_Node_Event_Listener *node_listener);
 EAPI Eina_Error egueb_dom_node_event_dispatch(Egueb_Dom_Node *thiz,
 		Egueb_Dom_Event *event, Eina_Bool *notprevented);
+EAPI Eina_Error egueb_dom_node_event_propagate(Egueb_Dom_Node *thiz,
+		Egueb_Dom_Event *event);
 
 EAPI Eina_Error egueb_dom_node_user_data_set(Egueb_Dom_Node *thiz,
 		Egueb_Dom_String *key, void *data);

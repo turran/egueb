@@ -100,22 +100,33 @@ static void _egueb_dom_node_event_dispatch(Egueb_Dom_Node *thiz,
 
 	EINA_LIST_FOREACH(container->listeners, l, nl)
 	{
-		if (evt->target == evt->current_target &&
-				evt->phase == EGUEB_DOM_EVENT_PHASE_AT_TARGET)
-		{
-			nl->listener(evt, nl->data);
-			continue;
-		}
-
 		if (nl->capture && (evt->phase ==
 				EGUEB_DOM_EVENT_PHASE_CAPTURING))
 		{
-			nl->listener(evt, nl->data);
+			if (evt->target == evt->current_target)
+			{
+				evt->phase = EGUEB_DOM_EVENT_PHASE_AT_TARGET;
+				nl->listener(evt, nl->data);
+				evt->phase = EGUEB_DOM_EVENT_PHASE_CAPTURING;
+			}
+			else
+			{
+				nl->listener(evt, nl->data);
+			}
 		}
 		else if (!nl->capture && (evt->phase ==
 				EGUEB_DOM_EVENT_PHASE_BUBBLING))
 		{
-			nl->listener(evt, nl->data);
+			if (evt->target == evt->current_target)
+			{
+				evt->phase = EGUEB_DOM_EVENT_PHASE_AT_TARGET;
+				nl->listener(evt, nl->data);
+				evt->phase = EGUEB_DOM_EVENT_PHASE_BUBBLING;
+			}
+			else
+			{
+				nl->listener(evt, nl->data);
+			}
 		}
 	}
 }
@@ -727,22 +738,27 @@ EAPI Eina_Error egueb_dom_node_event_dispatch(Egueb_Dom_Node *thiz,
 	event->dispatching = EINA_TRUE;
 
 	/* first the capture phase from all its parents */
-	if (thiz->parent)
-	{
-		event->phase = EGUEB_DOM_EVENT_PHASE_CAPTURING;
-		_egueb_dom_node_event_capture(thiz->parent, event);
-	}
-	/* then the target */
-	event->phase = EGUEB_DOM_EVENT_PHASE_AT_TARGET;
-	_egueb_dom_node_event_dispatch(thiz, event);
+	event->phase = EGUEB_DOM_EVENT_PHASE_CAPTURING;
+	_egueb_dom_node_event_capture(thiz, event);
 	/* finally the bubbling phase */
-	if (thiz->parent)
-	{
-		event->phase = EGUEB_DOM_EVENT_PHASE_BUBBLING;
-		_egueb_dom_node_event_bubble(thiz->parent, event);
-	}
+	event->phase = EGUEB_DOM_EVENT_PHASE_BUBBLING;
+	_egueb_dom_node_event_bubble(thiz, event);
+
 	event->dispatching = EINA_FALSE;
 	egueb_dom_event_unref(event);
+	return EINA_ERROR_NONE;
+}
+
+/* propagate an event in another tree */
+EAPI Eina_Error egueb_dom_node_event_propagate(Egueb_Dom_Node *thiz,
+		Egueb_Dom_Event *event)
+{
+	if (!event->dispatching) return EINA_ERROR_NONE;
+	if (event->phase == EGUEB_DOM_EVENT_PHASE_CAPTURING)
+		_egueb_dom_node_event_capture(thiz, event);
+	else if (event->phase == EGUEB_DOM_EVENT_PHASE_BUBBLING)
+		_egueb_dom_node_event_bubble(thiz, event);
+
 	return EINA_ERROR_NONE;
 }
 
