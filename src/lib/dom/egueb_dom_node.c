@@ -100,6 +100,13 @@ static void _egueb_dom_node_event_dispatch(Egueb_Dom_Node *thiz,
 
 	EINA_LIST_FOREACH(container->listeners, l, nl)
 	{
+		if (evt->target == evt->current_target &&
+				evt->phase == EGUEB_DOM_EVENT_PHASE_AT_TARGET)
+		{
+			nl->listener(evt, nl->data);
+			continue;
+		}
+
 		if (nl->capture && (evt->phase ==
 				EGUEB_DOM_EVENT_PHASE_CAPTURING))
 		{
@@ -107,11 +114,6 @@ static void _egueb_dom_node_event_dispatch(Egueb_Dom_Node *thiz,
 		}
 		else if (!nl->capture && (evt->phase ==
 				EGUEB_DOM_EVENT_PHASE_BUBBLING))
-		{
-			nl->listener(evt, nl->data);
-		}
-		else if (evt->target == evt->current_target &&
-				evt->phase == EGUEB_DOM_EVENT_PHASE_AT_TARGET)
 		{
 			nl->listener(evt, nl->data);
 		}

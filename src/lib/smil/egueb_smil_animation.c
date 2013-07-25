@@ -541,6 +541,7 @@ static void _egueb_smil_animation_instance_init(void *o)
 
 	/* add a callback whenever the node has been removed from another */
 	n = EGUEB_DOM_NODE(o);
+	/* FIXME this is only valid for parent target, not for xlink:href */
 	egueb_dom_node_event_listener_add(n,
 			EGUEB_DOM_EVENT_MUTATION_NODE_REMOVED,
 			_egueb_dom_animation_node_removed_cb,

@@ -98,7 +98,7 @@ static void _egueb_svg_element_a_node_inserted_cb(Egueb_Dom_Event *e,
 	if (!_egueb_svg_element_a_get_target(e, n, &target))
 		return;
 	egueb_dom_node_event_listener_add(target, EGUEB_DOM_EVENT_MOUSE_CLICK,
-			_egueb_svg_element_a_renderable_click_cb, EINA_FALSE, n);
+			_egueb_svg_element_a_renderable_click_cb, EINA_TRUE, n);
 	egueb_dom_node_unref(target);
 }
 
@@ -111,7 +111,7 @@ static void _egueb_svg_element_a_node_removed_cb(Egueb_Dom_Event *e,
 	if (!_egueb_svg_element_a_get_target(e, n, &target))
 		return;
 	egueb_dom_node_event_listener_remove(target, EGUEB_DOM_EVENT_MOUSE_CLICK,
-			_egueb_svg_element_a_renderable_click_cb, EINA_FALSE, n);
+			_egueb_svg_element_a_renderable_click_cb, EINA_TRUE, n);
 	egueb_dom_node_unref(target);
 }
 /*----------------------------------------------------------------------------*
@@ -182,11 +182,11 @@ static void _egueb_svg_element_a_instance_init(void *o)
 	egueb_dom_node_event_listener_add(EGUEB_DOM_NODE(o),
 			EGUEB_DOM_EVENT_MUTATION_NODE_INSERTED,
 			_egueb_svg_element_a_node_inserted_cb,
-			EINA_FALSE, o);
+			EINA_TRUE, o);
 	egueb_dom_node_event_listener_add(EGUEB_DOM_NODE(o),
 			EGUEB_DOM_EVENT_MUTATION_NODE_REMOVED,
 			_egueb_svg_element_a_node_removed_cb,
-			EINA_FALSE, o);
+			EINA_TRUE, o);
 }
 
 static void _egueb_svg_element_a_instance_deinit(void *o)

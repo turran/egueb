@@ -75,6 +75,17 @@ typedef struct _Egueb_Svg_Element_Use_Class
 	Egueb_Svg_Renderable_Class base;
 } Egueb_Svg_Element_Use_Class;
 
+/*----------------------------------------------------------------------------*
+ *                               Event forwarders                             *
+ *----------------------------------------------------------------------------*/
+#if 0
+static void _egueb_dom_element_use_g_node_event_cb(Egueb_Dom_Event *ev,
+		void *data)
+{
+
+}
+#endif
+
 /* TODO Once we propagate the events from the cloned element
  * we no longer need this
  */
@@ -312,6 +323,7 @@ static void _egueb_svg_element_use_instance_init(void *o)
 	/* set the relativeness of the node */
 	egueb_svg_element_geometry_relative_set(thiz->g, EGUEB_DOM_NODE(o));
 	egueb_svg_element_presentation_relative_set(thiz->g, EGUEB_DOM_NODE(o));
+	/* add the events that we need to propagate upstream */ 
 
 	/* create the properties */
 	thiz->x = egueb_svg_attr_length_new(
@@ -346,11 +358,11 @@ static void _egueb_svg_element_use_instance_init(void *o)
 	egueb_dom_node_event_listener_add(EGUEB_DOM_NODE(o),
 			EGUEB_DOM_EVENT_MUTATION_NODE_INSERTED_INTO_DOCUMENT,
 			_egueb_dom_element_use_insterted_into_document_cb,
-			EINA_FALSE, thiz);
+			EINA_TRUE, thiz);
 	egueb_dom_node_event_listener_add(EGUEB_DOM_NODE(o),
 			EGUEB_DOM_EVENT_MUTATION_NODE_REMOVED_FROM_DOCUMENT,
 			_egueb_dom_element_use_removed_from_document_cb,
-			EINA_FALSE, thiz);
+			EINA_TRUE, thiz);
 }
 
 static void _egueb_svg_element_use_instance_deinit(void *o)

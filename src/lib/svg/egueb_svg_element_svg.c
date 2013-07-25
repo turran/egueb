@@ -411,11 +411,11 @@ static void _egueb_svg_element_svg_instance_init(void *o)
 	egueb_dom_node_event_listener_add(EGUEB_DOM_NODE(o),
 			EGUEB_DOM_EVENT_MUTATION_NODE_INSERTED,
 			_egueb_svg_element_svg_node_inserted_cb,
-			EINA_TRUE, NULL);
+			EINA_FALSE, NULL);
 	egueb_dom_node_event_listener_add(EGUEB_DOM_NODE(o),
 			EGUEB_DOM_EVENT_MUTATION_NODE_INSERTED,
 			_egueb_svg_element_svg_animation_node_inserted_cb,
-			EINA_TRUE, thiz);
+			EINA_FALSE, thiz);
 
 	/* the rendering */
 	r = enesim_renderer_proxy_new();

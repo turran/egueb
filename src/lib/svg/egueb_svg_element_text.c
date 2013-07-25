@@ -415,11 +415,11 @@ static void _egueb_svg_element_text_instance_init(void *o)
 	egueb_dom_node_event_listener_add(EGUEB_DOM_NODE(o),
 			EGUEB_DOM_EVENT_MUTATION_NODE_INSERTED,
 			_egueb_svg_element_text_node_inserted_cb,
-			EINA_FALSE, thiz);
+			EINA_TRUE, thiz);
 	egueb_dom_node_event_listener_add(EGUEB_DOM_NODE(o),
 			EGUEB_DOM_EVENT_MUTATION_NODE_REMOVED,
 			_egueb_svg_element_text_node_removed_cb,
-			EINA_FALSE, thiz);
+			EINA_TRUE, thiz);
 }
 
 static void _egueb_svg_element_text_instance_deinit(void *o)

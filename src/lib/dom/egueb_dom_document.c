@@ -324,11 +324,11 @@ static void _egueb_dom_document_element_removed_from_document_cb(
 	egueb_dom_node_event_listener_remove(target,
 			EGUEB_DOM_EVENT_MUTATION_NODE_INSERTED_INTO_DOCUMENT,
 			_egueb_dom_document_element_insterted_into_document_cb,
-			EINA_FALSE, thiz);
+			EINA_TRUE, thiz);
 	egueb_dom_node_event_listener_remove(target,
 			EGUEB_DOM_EVENT_MUTATION_NODE_REMOVED_FROM_DOCUMENT,
 			_egueb_dom_document_element_removed_from_document_cb,
-			EINA_FALSE, thiz);
+			EINA_TRUE, thiz);
 
 	egueb_dom_node_unref(target);
 }
@@ -341,7 +341,7 @@ static void _egueb_dom_document_topmost_request_process_cb(
 
 	DBG("Requesting process");
 	egueb_dom_event_target_get(ev, &target);
-	/* Add it to the list in case it is already there */
+	/* Add it to the list in case it is not already there */
 	_egueb_dom_document_element_enqueue(thiz, target);
 }
 
@@ -359,25 +359,25 @@ static void _egueb_dom_document_topmost_removed_from_document_cb(
 	egueb_dom_node_event_listener_remove(thiz->element,
 			EGUEB_DOM_EVENT_MUTATION_NODE_REMOVED_FROM_DOCUMENT,
 			_egueb_dom_document_topmost_removed_from_document_cb,
-			EINA_FALSE, thiz);
+			EINA_TRUE, thiz);
 
 	egueb_dom_node_event_listener_remove(thiz->element,
 			EGUEB_DOM_EVENT_MUTATION_NODE_INSERTED,
 			_egueb_dom_document_mutation_node_inserted_cb,
-			EINA_FALSE, thiz);
+			EINA_TRUE, thiz);
 	egueb_dom_node_event_listener_remove(thiz->element,
 			EGUEB_DOM_EVENT_MUTATION_NODE_REMOVED,
 			_egueb_dom_document_mutation_node_removed_cb,
-			EINA_FALSE, thiz);
+			EINA_TRUE, thiz);
 	egueb_dom_node_event_listener_remove(thiz->element,
 			EGUEB_DOM_EVENT_MUTATION_ATTR_MODIFIED,
 			_egueb_dom_document_mutation_attr_modified_cb,
-			EINA_FALSE, thiz);
+			EINA_TRUE, thiz);
 
 	egueb_dom_node_event_listener_remove(thiz->element,
 			EGUEB_DOM_EVENT_MUTATION_REQUEST_PROCESS,
 			_egueb_dom_document_topmost_request_process_cb,
-			EINA_TRUE, thiz);
+			EINA_FALSE, thiz);
 	/* update our own state */
 	egueb_dom_node_unref(thiz->element);
 	thiz->element = NULL;
@@ -494,11 +494,11 @@ EAPI Eina_Error egueb_dom_document_element_create(Egueb_Dom_Node *n,
 		egueb_dom_node_event_listener_add(new_element,
 				EGUEB_DOM_EVENT_MUTATION_NODE_INSERTED_INTO_DOCUMENT,
 				_egueb_dom_document_element_insterted_into_document_cb,
-				EINA_FALSE, thiz);
+				EINA_TRUE, thiz);
 		egueb_dom_node_event_listener_add(new_element,
 				EGUEB_DOM_EVENT_MUTATION_NODE_REMOVED_FROM_DOCUMENT,
 				_egueb_dom_document_element_removed_from_document_cb,
-				EINA_FALSE, thiz);
+				EINA_TRUE, thiz);
 		egueb_dom_node_document_set(new_element, EGUEB_DOM_NODE(thiz));
 	}
 	*ret = new_element;
@@ -542,25 +542,25 @@ EAPI Eina_Error egueb_dom_document_element_set(Egueb_Dom_Node *n,
 		egueb_dom_node_event_listener_add(element,
 				EGUEB_DOM_EVENT_MUTATION_NODE_REMOVED_FROM_DOCUMENT,
 				_egueb_dom_document_topmost_removed_from_document_cb,
-				EINA_FALSE, thiz);
+				EINA_TRUE, thiz);
 		/* this events are needed to know whenever an element must be queued */
 		egueb_dom_node_event_listener_add(element,
 				EGUEB_DOM_EVENT_MUTATION_NODE_INSERTED,
 				_egueb_dom_document_mutation_node_inserted_cb,
-				EINA_FALSE, thiz);
+				EINA_TRUE, thiz);
 		egueb_dom_node_event_listener_add(element,
 				EGUEB_DOM_EVENT_MUTATION_NODE_REMOVED,
 				_egueb_dom_document_mutation_node_removed_cb,
-				EINA_FALSE, thiz);
+				EINA_TRUE, thiz);
 		egueb_dom_node_event_listener_add(element,
 				EGUEB_DOM_EVENT_MUTATION_ATTR_MODIFIED,
 				_egueb_dom_document_mutation_attr_modified_cb,
-				EINA_FALSE, thiz);
+				EINA_TRUE, thiz);
 		/* in case an element needs to be processed, we will enqueue it */
 		egueb_dom_node_event_listener_add(element,
 				EGUEB_DOM_EVENT_MUTATION_REQUEST_PROCESS,
 				_egueb_dom_document_topmost_request_process_cb,
-				EINA_TRUE, thiz);
+				EINA_FALSE, thiz);
 		/* add the element to the process list */
 		_egueb_dom_document_element_enqueue(thiz, egueb_dom_node_ref(element));
 	}

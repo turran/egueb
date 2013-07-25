@@ -307,10 +307,11 @@ static void _egueb_smil_animate_base_key_splines_cb(const char *v, void *user_da
 #endif
 
 static Eina_Bool _egueb_smil_animate_base_values_generate(Egueb_Smil_Animate_Base *thiz,
-		Eina_Bool *has_from)
+		Eina_Bool *has_from, Eina_Bool *has_by)
 {
 	Egueb_Dom_List *values;
 	*has_from = EINA_TRUE;
+	*has_by = EINA_FALSE;
 
 	egueb_dom_attr_get(thiz->values, EGUEB_DOM_ATTR_TYPE_BASE, &values);
 	if (values)
@@ -371,13 +372,33 @@ static Eina_Bool _egueb_smil_animate_base_values_generate(Egueb_Smil_Animate_Bas
 			 
 			thiz->generated_values = eina_list_append(thiz->generated_values, nv); 
 		}
-#if 0
-		else if (c->value.by)
+		else
 		{
-			/* if no from, then everything is dynamic until the animation starts */
-			/* TODO append the from to the values */
+			Egueb_Dom_String *by = NULL;
+			egueb_dom_attr_get(thiz->by, EGUEB_DOM_ATTR_TYPE_BASE, &by);
+
+			if (egueb_dom_string_is_valid(by))
+			{
+				Egueb_Dom_Value v = EGUEB_DOM_VALUE_INIT;
+				Egueb_Dom_Value *nv;
+
+				egueb_dom_value_init(&v, a->d);
+				if (!egueb_dom_value_string_from(&v, by))
+				{
+					ERR("No valid 'by' value");
+					egueb_dom_string_unref(by);
+					egueb_dom_string_unref(to);
+					return EINA_FALSE;
+				}
+				nv = calloc(1, sizeof(Egueb_Dom_Value));
+				*nv = v;
+			 
+				thiz->generated_values = eina_list_append(thiz->generated_values, nv); 
+				*has_by = EINA_TRUE;
+			}
+			egueb_dom_string_unref(by);
 		}
-#endif
+		egueb_dom_string_unref(to);
 	}
 
 	/* in case of no from, add another keyframe at time 0
@@ -806,7 +827,7 @@ static Eina_Bool _egueb_smil_animate_base_setup(Egueb_Smil_Animation *a,
 	Etch_Animation_State_Callback start_cb;
 	Etch_Interpolator_Type atype;
 	Etch_Animation *etch_a;
-	Eina_Bool has_from;
+	Eina_Bool has_from, has_by;
 	Eina_List *l, *tt;
 #if 0
 	Egueb_Smil_Attribute_Animated_Descriptor *d;
@@ -820,7 +841,7 @@ static Eina_Bool _egueb_smil_animate_base_setup(Egueb_Smil_Animation *a,
 #endif
 
 	thiz = EGUEB_SMIL_ANIMATE_BASE(a);
-	_egueb_smil_animate_base_values_generate(thiz, &has_from);
+	_egueb_smil_animate_base_values_generate(thiz, &has_from, &has_by);
 	if (!thiz->generated_values)
 	{
 		ERR("No values generated");

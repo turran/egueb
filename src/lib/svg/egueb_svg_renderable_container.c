@@ -120,11 +120,11 @@ static void _egueb_svg_renderable_container_instance_init(void *o)
 	egueb_dom_node_event_listener_add(n,
 			EGUEB_DOM_EVENT_MUTATION_NODE_INSERTED,
 			_egueb_svg_renderable_container_tree_modified_cb,
-			EINA_TRUE, thiz);
+			EINA_FALSE, thiz);
 	egueb_dom_node_event_listener_add(n,
 			EGUEB_DOM_EVENT_MUTATION_NODE_REMOVED,
 			_egueb_svg_renderable_container_tree_modified_cb,
-			EINA_TRUE, thiz);
+			EINA_FALSE, thiz);
 	/* mark it as changed */
 	thiz->renderable_tree_changed = EINA_TRUE;
 }
