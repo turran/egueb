@@ -17,7 +17,6 @@
  */
 #include "egueb_svg_main_private.h"
 #include "egueb_svg_main.h"
-#include "egueb_svg_painter.h"
 #include "egueb_svg_reference.h"
 #include "egueb_svg_referenceable.h"
 #include "egueb_svg_referenceable_units.h"
@@ -28,12 +27,10 @@
 #include "egueb_svg_element_g.h"
 #include "egueb_svg_element_use.h"
 #include "egueb_svg_document.h"
-#include "egueb_svg_shape.h"
 
 #include "egueb_svg_referenceable_private.h"
 #include "egueb_svg_reference_private.h"
-#include "egueb_svg_painter_private.h"
-#include "egueb_svg_shape_private.h"
+#include "egueb_svg_element_clip_path_private.h"
 
 /* FIXME remove this */
 #include "egueb_dom_document_private.h"
@@ -66,7 +63,6 @@ typedef struct _Egueb_Svg_Element_Clip_Path
 	/* properties */
 	Egueb_Dom_Node *units;
 	/* private */
-	/* TODO we can have our own clip path reference */
 } Egueb_Svg_Element_Clip_Path;
 
 typedef struct _Egueb_Svg_Element_Clip_Path_Class
@@ -74,18 +70,12 @@ typedef struct _Egueb_Svg_Element_Clip_Path_Class
 	Egueb_Svg_Referenceable_Class base;
 } Egueb_Svg_Element_Clip_Path_Class;
 
-/* return TRUE if the node is of a type different than a smil node */
-static Eina_Bool _egueb_svg_element_clip_path_node_is_clonable(Egueb_Dom_Node *n)
-{
-	return !egueb_smil_is_animation(n);
-}
-
 /* function called whenever we want to process the clip path children */
 static Eina_Bool _egueb_svg_element_clip_path_children_process_cb(
 		Egueb_Dom_Node *child, void *data)
 {
 	/* process every child that is not a clonable element */
-	if (!_egueb_svg_element_clip_path_node_is_clonable(child))
+	if (!egueb_svg_element_clip_path_node_is_clonable(child))
 	{
 		DBG("Processing not clonable child");
 		if (!egueb_dom_element_process(child))
@@ -94,8 +84,36 @@ static Eina_Bool _egueb_svg_element_clip_path_children_process_cb(
 	return EINA_TRUE;
 }
 
+/* we should never process an element that is live cloned or any of its
+ * children
+ */
+static void _egueb_svg_element_clip_path_request_process_cb(
+		Egueb_Dom_Event *e, void *data)
+{
+	Egueb_Svg_Element_Clip_Path *thiz = data;
+	Egueb_Dom_Node *parent = NULL;
+	Egueb_Dom_Node *target = NULL;
+
+	/* if the element that requests is ourselves, just return */
+	egueb_dom_event_target_get(e, &target);
+	if (target == EGUEB_DOM_NODE(thiz))
+		goto done;
+	
+	/* check if the target's parent is ourselves, if so, check that
+	 * it is not clonable, otherwise prevent the process */
+	egueb_dom_node_parent_get(target, &parent);
+	if (parent == EGUEB_DOM_NODE(thiz) &&
+		!egueb_svg_element_clip_path_node_is_clonable(target))
+	/* TODO dont propagate the request process */
+	ERR("FIXME dont propagate the request process");
+	egueb_dom_node_unref(parent);
+done:
+	egueb_dom_node_unref(target);
+}
+
 /* return TRUE whenever the mutation event is prevented because
  * the parent node is ourselves
+ * FIXME remove this
  */
 static Eina_Bool _egueb_svg_element_clip_path_hierarchy_prevented(
 		Egueb_Svg_Element_Clip_Path *thiz, Egueb_Dom_Event *e)
@@ -119,6 +137,7 @@ static Eina_Bool _egueb_svg_element_clip_path_hierarchy_prevented(
 /* whenever a child is added, clone it also add it on every reference
  * in case the bubbling event comes from a node that is not our children
  * not make the document queue the clip path as if it has changed
+ * FIXME remove this, just use a simple verion to recreate again the clones
  */
 static void _egueb_svg_element_clip_path_node_inserted_cb(Egueb_Dom_Event *e,
 		void *data)
@@ -142,7 +161,7 @@ static void _egueb_svg_element_clip_path_node_inserted_cb(Egueb_Dom_Event *e,
 
 	/* in case the node is a clipable element, clone it */
 	egueb_dom_event_target_get(e, &child);
-	if (_egueb_svg_element_clip_path_node_is_clonable(child))
+	if (egueb_svg_element_clip_path_node_is_clonable(child))
 	{
 		ERR("We still need to create live nodes");
 	}
@@ -152,6 +171,7 @@ static void _egueb_svg_element_clip_path_node_inserted_cb(Egueb_Dom_Event *e,
 /* whenever a child is removed, remove the cloned element from every reference
  * in case the bubbling event comes from a node that is not our children
  * not make the document queue the clip path as if it has changed
+ * FIXME remove this, just use a simple verion to recreate again the clones
  */
 static void _egueb_svg_element_clip_path_node_removed_cb(Egueb_Dom_Event *e,
 		void *data)
@@ -175,79 +195,11 @@ static void _egueb_svg_element_clip_path_node_removed_cb(Egueb_Dom_Event *e,
 
 	/* in case the node is a clipable element, clone it */
 	egueb_dom_event_target_get(e, &child);
-	if (_egueb_svg_element_clip_path_node_is_clonable(child))
+	if (egueb_svg_element_clip_path_node_is_clonable(child))
 	{
 		ERR("We still need to remove live nodes");
 	}
 	egueb_dom_node_unref(child);
-}
-
-/* whenever a child changed, dont propagate the change to the document
- * unless the parent is ourselfes and it is not of a clipable type
- */
-static void _egueb_svg_element_clip_path_attr_modified_cb(Egueb_Dom_Event *e,
-		void *data)
-{
-	Egueb_Svg_Element_Clip_Path *thiz = data;
-	Egueb_Dom_Node *parent = NULL;
-	Egueb_Dom_Node *target = NULL;
-
-	/* check that the parent is oursleves */
-	egueb_dom_event_target_get(e, &target);
-	egueb_dom_node_parent_get(target, &parent);
-	if (EGUEB_DOM_NODE(thiz) != parent)
-	{
-		egueb_dom_node_unref(parent);
-		egueb_dom_node_unref(target);
-		return;
-	}
-	egueb_dom_node_unref(parent);
-
-	/* in case the attr modified is from a node that we should clone
-	 * prevent the queue on the document
-	 */
-	if (_egueb_svg_element_clip_path_node_is_clonable(target))
-	{
-		egueb_dom_event_mutation_process_prevent(e);
-	}
-	egueb_dom_node_unref(target);
-}
-
-/* function called whenever we want to clone the clip path children */
-static Eina_Bool _egueb_svg_element_clip_path_children_clone_cb(
-		Egueb_Dom_Node *child, void *data)
-{
-	Egueb_Svg_Reference *ref = data;
-	Egueb_Dom_Node *clone = NULL;
-	Egueb_Dom_Node *g = NULL;
-
-	/* process every child that is not a clonable element */
-	if (!_egueb_svg_element_clip_path_node_is_clonable(child))
-		return EINA_TRUE;
-	/* for a children that is clonable, clone it and add it to the g */
-	egueb_dom_node_clone(child, EINA_TRUE, EINA_TRUE, &clone);
-	/* set the painter on the cloned element */
-	/* TODO put this code on the clip path reference */
-	if (egueb_svg_is_shape(clone))
-	{
-		Egueb_Svg_Painter *painter;
-
-		painter = egueb_svg_painter_clip_path_new(ref);
-		egueb_svg_shape_painter_set(clone, painter);
-	}
-	/* FIXME this is ugly a shell, but works for now */
-	else if (egueb_svg_element_is_use(clone))
-	{
-		Egueb_Svg_Painter *painter;
-
-		painter = egueb_svg_painter_clip_path_new(ref);
-		egueb_svg_element_use_painter_set(clone, painter);
-	}
-	egueb_svg_reference_clip_path_g_get(ref, &g);
-	egueb_dom_node_child_append(g, clone);
-	egueb_dom_node_unref(g);
-
-	return EINA_TRUE;
 }
 /*----------------------------------------------------------------------------*
  *                           Referenceable interface                          *
@@ -269,10 +221,6 @@ static Egueb_Svg_Reference * _egueb_svg_element_clip_path_reference_new(
 
 	DBG("Creating a new reference");
 	ref = egueb_svg_reference_clip_path_new();
-	/* iterate over the list of children and clone the clonable elements */
-	egueb_dom_node_children_foreach(EGUEB_DOM_NODE(r),
-			_egueb_svg_element_clip_path_children_clone_cb,
-			ref);
 	return ref;
 }
 
@@ -350,8 +298,8 @@ static void _egueb_svg_element_clip_path_instance_init(void *o)
 			_egueb_svg_element_clip_path_node_removed_cb,
 			EINA_FALSE, thiz);
 	egueb_dom_node_event_listener_add(EGUEB_DOM_NODE(o),
-			EGUEB_DOM_EVENT_MUTATION_ATTR_MODIFIED,
-			_egueb_svg_element_clip_path_attr_modified_cb,
+			EGUEB_DOM_EVENT_MUTATION_REQUEST_PROCESS,
+			_egueb_svg_element_clip_path_request_process_cb,
 			EINA_FALSE, thiz);
 }
 
@@ -583,13 +531,18 @@ static Egueb_Svg_Referenceable_Descriptor _descriptor = {
 	/* .reference_add	= */ _egueb_svg_element_clip_path_reference_add,
 	/* .reference_remove	= */ NULL,
 };
+#endif
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
+/* return TRUE if the node is of a type different than a smil node */
+Eina_Bool egueb_svg_element_clip_path_node_is_clonable(Egueb_Dom_Node *n)
+{
+	return !egueb_smil_is_animation(n);
+}
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/
-#endif
 EAPI Egueb_Dom_Node * egueb_svg_element_clip_path_new(void)
 {
 	Egueb_Dom_Node *n;

@@ -239,6 +239,16 @@ void egueb_svg_shape_painter_set(Egueb_Dom_Node *n, Egueb_Svg_Painter *painter)
 		thiz->painter = painter;
 	}
 }
+
+Eina_Bool egueb_svg_shape_has_painter(Egueb_Dom_Node *n)
+{
+	Egueb_Svg_Shape *thiz;
+
+	thiz = EGUEB_SVG_SHAPE(n);
+	if (thiz->painter) return EINA_TRUE;
+	else return EINA_FALSE;
+	
+}
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/

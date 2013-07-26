@@ -54,5 +54,6 @@ typedef struct _Egueb_Svg_Shape_Class
 Enesim_Object_Descriptor *  egueb_svg_shape_descriptor_get(void);
 
 void egueb_svg_shape_painter_set(Egueb_Dom_Node *n, Egueb_Svg_Painter *painter);
+Eina_Bool egueb_svg_shape_has_painter(Egueb_Dom_Node *n);
 
 #endif

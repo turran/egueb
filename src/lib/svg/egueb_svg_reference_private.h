@@ -65,7 +65,6 @@ void egueb_svg_reference_init(Egueb_Svg_Reference *thiz,
 
 /* The clip path reference */
 Egueb_Svg_Reference * egueb_svg_reference_clip_path_new(void);
-void egueb_svg_reference_clip_path_g_get(Egueb_Svg_Reference *r, Egueb_Dom_Node **g);
 void egueb_svg_reference_clip_path_renderer_get(Egueb_Svg_Reference *r,
 		Enesim_Renderer **ren);
 void egueb_svg_reference_clip_path_resolved_renderer_get(Egueb_Svg_Reference *r,

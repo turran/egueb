@@ -108,6 +108,7 @@ src/lib/svg/egueb_svg_element.c \
 src/lib/svg/egueb_svg_element_a.c \
 src/lib/svg/egueb_svg_element_circle.c \
 src/lib/svg/egueb_svg_element_clip_path.c \
+src/lib/svg/egueb_svg_element_clip_path_private.h \
 src/lib/svg/egueb_svg_element_desc.c \
 src/lib/svg/egueb_svg_element_defs.c \
 src/lib/svg/egueb_svg_element_ellipse.c \

@@ -2,6 +2,15 @@
 #include "egueb_dom_mydocument.h"
 #include "egueb_dom_myelement.h"
 
+static void _monitor_original_cb(Egueb_Dom_Event *ev, void *data)
+{
+	Egueb_Dom_Node *other = data;
+
+	/* TODO get the name of the event */
+	printf("[testing] the monitor received an event, propagating\n");
+	egueb_dom_node_event_propagate(other, ev);
+}
+
 static void _mutation_attr_modified_original_cb(Egueb_Dom_Event *ev, void *data)
 {
 	Egueb_Dom_Node *other = data;
@@ -42,8 +51,6 @@ int main(void)
 		EGUEB_DOM_EVENT_MUTATION_ATTR_MODIFIED,
 		_mutation_attr_modified_propagated_cb, EINA_FALSE, NULL);
 
-	/* the other tree */
-	egueb_dom_node_child_append(el3, el4);
 	/* register for a mutation event */
 	egueb_dom_node_event_listener_add(el3,
 		EGUEB_DOM_EVENT_MUTATION_ATTR_MODIFIED,
@@ -51,6 +58,9 @@ int main(void)
 	egueb_dom_node_event_listener_add(el3,
 		EGUEB_DOM_EVENT_MUTATION_ATTR_MODIFIED,
 		_mutation_attr_modified_original_cb, EINA_FALSE, el2);
+	egueb_dom_node_event_monitor_add(el3, _monitor_original_cb, el2);
+	/* the other tree */
+	egueb_dom_node_child_append(el3, el4);
 	/* set a property */
 	name = egueb_dom_string_new_with_string("prop1");
 	value_set = egueb_dom_string_new_with_string("value");

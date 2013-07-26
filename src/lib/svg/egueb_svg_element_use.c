@@ -66,8 +66,6 @@ typedef struct _Egueb_Svg_Element_Use
 
 	Eina_Bool document_changed;
 	Egueb_Dom_String *last_xlink;
-	/* TODO use a function for this */
-	Egueb_Svg_Painter *painter;
 } Egueb_Svg_Element_Use;
 
 typedef struct _Egueb_Svg_Element_Use_Class
@@ -76,49 +74,15 @@ typedef struct _Egueb_Svg_Element_Use_Class
 } Egueb_Svg_Element_Use_Class;
 
 /*----------------------------------------------------------------------------*
- *                               Event forwarders                             *
+ *                               Event monitors                               *
  *----------------------------------------------------------------------------*/
-#if 0
-static void _egueb_dom_element_use_g_node_event_cb(Egueb_Dom_Event *ev,
+static void _egueb_dom_element_use_g_node_monitor_cb(Egueb_Dom_Event *ev,
 		void *data)
 {
+	Egueb_Svg_Element_Use *thiz = data;
 
-}
-#endif
-
-/* TODO Once we propagate the events from the cloned element
- * we no longer need this
- */
-static Eina_Bool _egueb_svg_element_use_set_painter(Egueb_Dom_Node *n, Egueb_Svg_Painter *painter)
-{
-	if (!painter) return EINA_FALSE;
-
-	/* TODO check that it is a renderable */
-	if (egueb_svg_is_shape(n))
-	{
-		egueb_svg_shape_painter_set(n, painter);
-		return EINA_TRUE;
-	}
-#if 0
-	/* TODO for a renderable container we need to copy the painter */
-	else if (egueb_svg_is_renderable_container(n))
-	{
-		Egueb_Dom_Node *child;
-
-		/* iterate over the shapes to set the painter too */
-		egueb_dom_node_child_first_get(n, &child);
-		while (child)
-		{
-			Egueb_Dom_Node *tmp;
-
-			_egueb_svg_element_use_set_generic_painter(child);
-			egueb_dom_node_sibling_next_get(child, &tmp);
-			egueb_dom_node_unref(child);
-			child = tmp;
-		}
-	}
-#endif
-	return EINA_TRUE;
+	/* whenever we receive an event, just propagate it */
+	egueb_dom_node_event_propagate(EGUEB_DOM_NODE(thiz), ev);
 }
 
 static Eina_Bool _egueb_svg_element_use_setup_cloned(Egueb_Svg_Element_Use *thiz,
@@ -132,9 +96,6 @@ static Eina_Bool _egueb_svg_element_use_setup_cloned(Egueb_Svg_Element_Use *thiz
 	/* transform the group */
 	enesim_matrix_translate(&m, thiz->gx, thiz->gy);
 	egueb_svg_renderable_transform_set(thiz->g, &m);
-
-	_egueb_svg_element_use_set_painter(thiz->clone, thiz->painter);
-	thiz->painter = NULL;
 
 	/* process this element and set its relativeness */
 	return egueb_dom_element_process(thiz->g);
@@ -324,6 +285,8 @@ static void _egueb_svg_element_use_instance_init(void *o)
 	egueb_svg_element_geometry_relative_set(thiz->g, EGUEB_DOM_NODE(o));
 	egueb_svg_element_presentation_relative_set(thiz->g, EGUEB_DOM_NODE(o));
 	/* add the events that we need to propagate upstream */ 
+	egueb_dom_node_event_monitor_add(thiz->g,
+			_egueb_dom_element_use_g_node_monitor_cb, thiz);
 
 	/* create the properties */
 	thiz->x = egueb_svg_attr_length_new(
@@ -390,19 +353,6 @@ static void _egueb_svg_element_use_instance_deinit(void *o)
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
-/* TODO replace this with a function */
-void egueb_svg_element_use_painter_set(Egueb_Dom_Node *n, Egueb_Svg_Painter *p)
-{
-	Egueb_Svg_Element_Use *thiz;
-
-	thiz = EGUEB_SVG_ELEMENT_USE(n);
-	if (thiz->painter)
-	{
-		egueb_svg_painter_free(thiz->painter);
-		thiz->painter = NULL;
-	}
-	thiz->painter = p;
-}
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/

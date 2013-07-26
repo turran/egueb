@@ -115,7 +115,7 @@ typedef struct _Egueb_Svg_Element_Svg_Class
 
 static void _egueb_svg_element_svg_set_generic_painter(Egueb_Dom_Node *n)
 {
-	if (egueb_svg_is_shape(n))
+	if (egueb_svg_is_shape(n) && (!egueb_svg_shape_has_painter(n)))
 	{
 		Egueb_Svg_Painter *painter;
 
@@ -138,15 +138,6 @@ static void _egueb_svg_element_svg_set_generic_painter(Egueb_Dom_Node *n)
 			egueb_dom_node_unref(child);
 			child = tmp;
 		}
-	}
-	/* FIXME this is ugly as hell, but works for now */
-	else if (egueb_svg_element_is_use(n))
-	{
-		Egueb_Svg_Painter *painter;
-
-		painter = egueb_svg_painter_generic_new();
-		ERR("Setting the generic painter on the element_use");
-		egueb_svg_element_use_painter_set(n, painter);
 	}
 }
 

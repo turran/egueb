@@ -32,6 +32,7 @@ struct _Egueb_Dom_Node
 
 	/* event related data */
 	Eina_Hash *events;
+	Eina_List *monitors;
 
 	/* user provided data */
 	Eina_Hash *user_data;

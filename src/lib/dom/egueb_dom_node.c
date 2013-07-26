@@ -93,7 +93,8 @@ static void _egueb_dom_node_event_dispatch(Egueb_Dom_Node *thiz,
 
 	container = eina_hash_find(thiz->events,
 		egueb_dom_string_string_get(evt->type));
-	if (!container || !container->listeners) return;
+	if (!container || !container->listeners)
+		goto monitors;
 
 	/* set the current target of the event */
 	evt->current_target = thiz;
@@ -127,6 +128,23 @@ static void _egueb_dom_node_event_dispatch(Egueb_Dom_Node *thiz,
 			{
 				nl->listener(evt, nl->data);
 			}
+		}
+	}
+monitors:
+	/* now the monitors */
+ 	if (!thiz->monitors) return;
+
+	EINA_LIST_FOREACH(thiz->monitors, l, nl)
+	{
+		if (evt->target == evt->current_target)
+		{
+			Egueb_Dom_Event_Phase old_phase = evt->phase;
+			nl->listener(evt, nl->data);
+			evt->phase = old_phase;
+		}
+		else
+		{
+			nl->listener(evt, nl->data);
 		}
 	}
 }
@@ -718,6 +736,37 @@ EAPI void egueb_dom_node_event_listener_free(Egueb_Dom_Node_Event_Listener *node
 	container->listeners = eina_list_remove(container->listeners,
 			node_listener);
 	free(node_listener);
+}
+
+EAPI Eina_Error egueb_dom_node_event_monitor_add(Egueb_Dom_Node *thiz,
+		Egueb_Dom_Event_Listener listener,
+		void *data)
+{
+	Egueb_Dom_Node_Event_Listener *nl;
+
+	nl = calloc(1, sizeof(Egueb_Dom_Node_Event_Listener));
+	nl->listener = listener;
+	nl->data = data;
+
+	thiz->monitors = eina_list_append(thiz->monitors, nl);
+	return EINA_ERROR_NONE;
+}
+
+EAPI void egueb_dom_node_event_monitor_remove(Egueb_Dom_Node *thiz,
+		Egueb_Dom_Event_Listener listener,
+		void *data)
+{
+	Egueb_Dom_Node_Event_Listener *nl;
+	Eina_List *l;
+
+	EINA_LIST_FOREACH(thiz->monitors, l, nl)
+	{
+		if (nl->listener != listener || nl->data != data)
+			continue;
+		free(nl);
+		thiz->monitors = eina_list_remove_list(thiz->monitors, l);
+		break;
+	}
 }
 
 /* boolean dispatchEvent(in Event evt) raises(EventException); */
