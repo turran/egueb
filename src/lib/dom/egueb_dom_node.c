@@ -207,6 +207,7 @@ static void _egueb_dom_node_instance_deinit(void *o)
 	Egueb_Dom_Node *thiz = EGUEB_DOM_NODE(o);
 	Egueb_Dom_Event *event;
 	Egueb_Dom_String *name = NULL;
+	Egueb_Dom_Node_Event_Listener *el;
 
 	thiz->destroying = EINA_TRUE;
 
@@ -245,6 +246,11 @@ static void _egueb_dom_node_instance_deinit(void *o)
 	egueb_dom_node_event_dispatch(thiz, event, NULL);
 	/* remove the whole set of events */
 	eina_hash_free(thiz->events);
+	/* remove the monitors */
+	EINA_LIST_FREE(thiz->monitors, el)
+	{
+		free(el);
+	}
 	/* and the user data */
 	eina_hash_free(thiz->user_data);
 }
