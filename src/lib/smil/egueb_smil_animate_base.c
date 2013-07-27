@@ -377,10 +377,13 @@ static Eina_Bool _egueb_smil_animate_base_values_generate(Egueb_Smil_Animate_Bas
 			Egueb_Dom_String *by = NULL;
 			egueb_dom_attr_get(thiz->by, EGUEB_DOM_ATTR_TYPE_BASE, &by);
 
+			/* for 'by' animations we need to interpolate the by value
+			 * from 0, 1 and add the original from
+			 */
 			if (egueb_dom_string_is_valid(by))
 			{
 				Egueb_Dom_Value v = EGUEB_DOM_VALUE_INIT;
-				Egueb_Dom_Value *nv;
+				Egueb_Dom_Value *start, *end;
 
 				egueb_dom_value_init(&v, a->d);
 				if (!egueb_dom_value_string_from(&v, by))
@@ -390,10 +393,15 @@ static Eina_Bool _egueb_smil_animate_base_values_generate(Egueb_Smil_Animate_Bas
 					egueb_dom_string_unref(to);
 					return EINA_FALSE;
 				}
-				nv = calloc(1, sizeof(Egueb_Dom_Value));
-				*nv = v;
-			 
-				thiz->generated_values = eina_list_append(thiz->generated_values, nv); 
+				start = calloc(1, sizeof(Egueb_Dom_Value));
+				*start = v;
+
+				end = calloc(1, sizeof(Egueb_Dom_Value));
+				egueb_dom_value_init(end, a->d);
+				egueb_dom_value_copy(start, end, EINA_TRUE);
+
+				thiz->generated_values = eina_list_append(thiz->generated_values, start);
+				thiz->generated_values = eina_list_append(thiz->generated_values, end);
 				*has_by = EINA_TRUE;
 			}
 			egueb_dom_string_unref(by);
@@ -864,8 +872,15 @@ static Eina_Bool _egueb_smil_animate_base_setup(Egueb_Smil_Animation *a,
 	/* default variants */
 	interpolator_cb = _egueb_smil_animate_base_interpolator_cb;
 	start_cb = _egueb_smil_animate_base_animation_start_cb;
-	if (!has_from)
-		start_cb = _egueb_smil_animate_base_animation_start_and_fetch_cb;
+	if (has_by)
+	{
+		/* TODO in case of from, use the from to add */
+	}
+	else
+	{
+		if (!has_from)
+			start_cb = _egueb_smil_animate_base_animation_start_and_fetch_cb;
+	}
 
 	/* setup the holder of the destination value */
 	egueb_dom_value_init(&thiz->dst_value, a->d);
