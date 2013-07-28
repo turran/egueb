@@ -29,6 +29,7 @@ static void _egueb_smil_strings_init(void)
 	EGUEB_SMIL_NAME_SET = egueb_dom_string_new_with_string("set");
 	EGUEB_SMIL_NAME_ANIMATE = egueb_dom_string_new_with_string("animate");
 
+	EGUEB_SMIL_ADDITIVE = egueb_dom_string_new_with_string("additive");
 	EGUEB_SMIL_ATTRIBUTE_NAME = egueb_dom_string_new_with_string("attributeName");
 	EGUEB_SMIL_BEGIN = egueb_dom_string_new_with_string("begin");
 	EGUEB_SMIL_DUR = egueb_dom_string_new_with_string("dur");
@@ -45,6 +46,7 @@ static void _egueb_smil_strings_shutdown(void)
 	egueb_dom_string_unref(EGUEB_SMIL_NAME_SET);
 	egueb_dom_string_unref(EGUEB_SMIL_NAME_ANIMATE);
 
+	egueb_dom_string_unref(EGUEB_SMIL_ADDITIVE);
 	egueb_dom_string_unref(EGUEB_SMIL_ATTRIBUTE_NAME);
 	egueb_dom_string_unref(EGUEB_SMIL_BEGIN);
 	egueb_dom_string_unref(EGUEB_SMIL_DUR);
@@ -65,6 +67,7 @@ int egueb_smil_log_global = -1;
 Egueb_Dom_String *EGUEB_SMIL_NAME_SET;
 Egueb_Dom_String *EGUEB_SMIL_NAME_ANIMATE;
 
+Egueb_Dom_String *EGUEB_SMIL_ADDITIVE;
 Egueb_Dom_String *EGUEB_SMIL_ATTRIBUTE_NAME;
 Egueb_Dom_String *EGUEB_SMIL_BEGIN;
 Egueb_Dom_String *EGUEB_SMIL_DUR;

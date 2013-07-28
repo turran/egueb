@@ -28,12 +28,17 @@
 /* events */
 #include "egueb_smil_event.h"
 /* values */
+#include "egueb_smil_additive.h"
 #include "egueb_smil_accumulate.h"
 #include "egueb_smil_clock.h"
+#include "egueb_smil_duration.h"
 #include "egueb_smil_fill.h"
 #include "egueb_smil_timing.h"
 /* properties */
+#include "egueb_smil_attr_additive.h"
+#include "egueb_smil_attr_duration.h"
 #include "egueb_smil_attr_fill.h"
+#include "egueb_smil_attr_timing_list.h"
 /* elements */
 #include "egueb_smil_animation.h"
 #include "egueb_smil_animate.h"

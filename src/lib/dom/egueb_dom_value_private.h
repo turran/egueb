@@ -101,4 +101,53 @@ void egueb_dom_value_data_to(Egueb_Dom_Value *thiz, Egueb_Dom_Value_Data *data);
 		egueb_dom_value_data_from(value, &_data);			\
 	}
 
+#define EGUEB_DOM_VALUE_BASIC_BOLIERPLATE(name, type)				\
+	static Egueb_Dom_Value_Descriptor name##_descriptor;			\
+										\
+	static void name##_data_from(Egueb_Dom_Value *v,			\
+			Egueb_Dom_Value_Data *data)				\
+	{									\
+		EINA_SAFETY_ON_FALSE_RETURN(v->descriptor ==			\
+				&##name##_descriptor);				\
+		egueb_dom_value_basic_data_from(v, type, data);			\
+	}									\
+										\
+	static void name##_data_to(Egueb_Dom_Value *v, 				\
+			Egueb_Dom_Value_Data *data)				\
+	{									\
+		EINA_SAFETY_ON_FALSE_RETURN(v->descriptor == 			\
+				&##name##_descriptor);				\
+		egueb_dom_value_basic_data_to(v, type, data);			\
+	}									\
+										\
+	static char * name##_string_to(const Egueb_Dom_Value *v)		\
+	{									\
+		EINA_SAFETY_ON_FALSE_RETURN_VAL(v->descriptor ==		\
+				&##name##_descriptor, NULL);			\
+		return egueb_dom_value_basic_string_to(v, type);		\
+	}									\
+										\
+	static Eina_Bool name##_string_from(Egueb_Dom_Value *v, const char *str)\
+	{									\
+		EINA_SAFETY_ON_FALSE_RETURN_VAL(v->descriptor ==		\
+				&##name##_descriptor, EINA_FALSE);		\
+		return EINA_TRUE;						\
+	}									\
+										\
+	static Egueb_Dom_Value_Descriptor name##_descriptor = {			\
+		/* .data_from 		= */ name##_data_from,			\
+		/* .data_from_type 	= */ type,				\
+		/* .data_to 		= */ name##_data_to,			\
+		/* .data_to_type 	= */ EGUEB_DOM_VALUE_DATA_TYPE_PTR,	\
+		/* .init 		= */ NULL,				\
+		/* .free 		= */ NULL,				\
+		/* .copy 		= */ NULL,				\
+		/* .string_to 		= */ name##_string_to,			\
+		/* .string_from 	= */ name##_string_from,		\
+		/* .interpolate 	= */ NULL,				\
+	};
+
+/* TODO boilerplate code for an object */
+/* TODO boilerplate code for a primitive */
+
 #endif

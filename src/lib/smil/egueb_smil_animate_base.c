@@ -20,6 +20,8 @@
 #include "egueb_smil_main.h"
 #include "egueb_smil_set.h"
 #include "egueb_smil_event.h"
+#include "egueb_smil_additive.h"
+#include "egueb_smil_attr_additive.h"
 #include "egueb_smil_animation_private.h"
 #include "egueb_smil_animate_base_private.h"
 
@@ -162,8 +164,9 @@ static void _egueb_smil_animate_base_animation_add_keyframe(Etch_Animation *a,
 
 static void _egueb_smil_animate_base_interpolator_cb(Etch_Data *a, Etch_Data *b, double m, Etch_Data *res, void *data)
 {
+	Egueb_Smil_Animate_Base *thiz = data;
 	egueb_dom_value_interpolate(res->data.external, a->data.external,
-			b->data.external, m, NULL, NULL, 0);
+			b->data.external, m, thiz->add_value, NULL, 0);
 #if 0
 	Egueb_Smil_Animate_Base *thiz = data;
 
@@ -407,24 +410,6 @@ static Eina_Bool _egueb_smil_animate_base_values_generate(Egueb_Smil_Animate_Bas
 			egueb_dom_string_unref(by);
 		}
 		egueb_dom_string_unref(to);
-	}
-
-	/* in case of no from, add another keyframe at time 0
-	 * the value for such keyframe should be taken
-	 * at the begin animation
-	 */
-	if (!*has_from)
-	{
-		Egueb_Smil_Animation *a;
-		Egueb_Dom_Value *from;
-
-		a = EGUEB_SMIL_ANIMATION(thiz);
-
-		from = calloc(1, sizeof(Egueb_Dom_Value));
-		egueb_dom_value_init(from, a->d);
-		/* just get a dummy value for now, so we can have an allocated value */
-		egueb_dom_attr_final_value_get(a->p, from);
-		thiz->generated_values = eina_list_prepend(thiz->generated_values, from);
 	}
 
 	return EINA_TRUE;
@@ -830,6 +815,7 @@ static Eina_Bool _egueb_smil_animate_base_setup(Egueb_Smil_Animation *a,
 		Egueb_Dom_Node *target)
 {
 	Egueb_Smil_Animate_Base *thiz;
+	Egueb_Smil_Additive additive;
 	Egueb_Dom_Value *v;
 	Etch_Interpolator interpolator_cb;
 	Etch_Animation_State_Callback start_cb;
@@ -849,6 +835,8 @@ static Eina_Bool _egueb_smil_animate_base_setup(Egueb_Smil_Animation *a,
 #endif
 
 	thiz = EGUEB_SMIL_ANIMATE_BASE(a);
+	egueb_dom_attr_final_get(thiz->additive, &additive);
+
 	_egueb_smil_animate_base_values_generate(thiz, &has_from, &has_by);
 	if (!thiz->generated_values)
 	{
@@ -874,12 +862,39 @@ static Eina_Bool _egueb_smil_animate_base_setup(Egueb_Smil_Animation *a,
 	start_cb = _egueb_smil_animate_base_animation_start_cb;
 	if (has_by)
 	{
+		additive = EGUEB_SMIL_ADDITIVE_SUM;
 		/* TODO in case of from, use the from to add */
+		if (has_from)
+		{
+			Egueb_Dom_Value *from;
+
+			from = thiz->generated_values->data;
+			thiz->generated_values = eina_list_remove_list(thiz->generated_values,
+					thiz->generated_values);
+			thiz->add_value = from;
+		}
 	}
 	else
 	{
+		/* in case of no from, add another keyframe at time 0
+		 * the value for such keyframe should be taken
+		 * at the begin animation
+		 */
 		if (!has_from)
+		{
+			Egueb_Smil_Animation *a;
+			Egueb_Dom_Value *from;
+
+			a = EGUEB_SMIL_ANIMATION(thiz);
+
+			from = calloc(1, sizeof(Egueb_Dom_Value));
+			egueb_dom_value_init(from, a->d);
+			/* just get a dummy value for now, so we can have an allocated value */
+			egueb_dom_attr_final_value_get(a->p, from);
+			thiz->generated_values = eina_list_prepend(thiz->generated_values, from);
+
 			start_cb = _egueb_smil_animate_base_animation_start_and_fetch_cb;
+		}
 	}
 
 	/* setup the holder of the destination value */
@@ -996,6 +1011,7 @@ static void _egueb_smil_animate_base_end(Egueb_Smil_Animation *a)
 /*----------------------------------------------------------------------------*
  *                              Object interface                              *
  *----------------------------------------------------------------------------*/
+EGUEB_DOM_ATTR_FETCH_DEFINE(egueb_smil_animate_base, Egueb_Smil_Animate_Base, additive);
 EGUEB_DOM_ATTR_FETCH_DEFINE(egueb_smil_animate_base, Egueb_Smil_Animate_Base, calc_mode);
 EGUEB_DOM_ATTR_FETCH_DEFINE(egueb_smil_animate_base, Egueb_Smil_Animate_Base, by);
 EGUEB_DOM_ATTR_FETCH_DEFINE(egueb_smil_animate_base, Egueb_Smil_Animate_Base, to);
@@ -1028,6 +1044,8 @@ static void _egueb_smil_animate_base_instance_init(void *o)
 
 	thiz = EGUEB_SMIL_ANIMATE_BASE(o);
 	/* create the properties */
+	thiz->additive = egueb_smil_attr_additive_new(
+			egueb_dom_string_ref(EGUEB_SMIL_ADDITIVE), EGUEB_SMIL_ADDITIVE_REPLACE);
 	thiz->by = egueb_dom_attr_string_new(
 			egueb_dom_string_ref(EGUEB_SMIL_BY), NULL);
 	thiz->to = egueb_dom_attr_string_new(
@@ -1048,6 +1066,7 @@ static void _egueb_smil_animate_base_instance_deinit(void *o)
 
 	thiz = EGUEB_SMIL_ANIMATE_BASE(o);
 	/* the cleanup will be called as part of the deinitialization */
+	egueb_dom_node_unref(thiz->additive);
 	egueb_dom_node_unref(thiz->by);
 	egueb_dom_node_unref(thiz->to);
 	egueb_dom_node_unref(thiz->from);

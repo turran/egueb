@@ -7,6 +7,7 @@ src/lib/smil/egueb_smil_accumulate.h \
 src/lib/smil/egueb_smil_additive.h \
 src/lib/smil/egueb_smil_animate.h \
 src/lib/smil/egueb_smil_animation.h \
+src/lib/smil/egueb_smil_attr_additive.h \
 src/lib/smil/egueb_smil_attr_duration.h \
 src/lib/smil/egueb_smil_attr_fill.h \
 src/lib/smil/egueb_smil_attr_timing_list.h \
@@ -27,14 +28,15 @@ src/lib/smil/egueb_smil_animation.c \
 src/lib/smil/egueb_smil_animate.c \
 src/lib/smil/egueb_smil_animate_base.c \
 src/lib/smil/egueb_smil_animate_base_private.h \
+src/lib/smil/egueb_smil_attr_additive.c \
+src/lib/smil/egueb_smil_attr_duration.c \
+src/lib/smil/egueb_smil_attr_fill.c \
+src/lib/smil/egueb_smil_attr_timing_list.c \
 src/lib/smil/egueb_smil_clock.c \
 src/lib/smil/egueb_smil_duration.c \
 src/lib/smil/egueb_smil_event.c \
 src/lib/smil/egueb_smil_fill.c \
 src/lib/smil/egueb_smil_main.c \
-src/lib/smil/egueb_smil_attr_duration.c \
-src/lib/smil/egueb_smil_attr_fill.c \
-src/lib/smil/egueb_smil_attr_timing_list.c \
 src/lib/smil/egueb_smil_set.c \
 src/lib/smil/egueb_smil_timing.c \
 src/lib/smil/egueb_smil_timing_list.c

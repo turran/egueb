@@ -24,6 +24,7 @@ typedef struct _Egueb_Smil_Animate_Base
 	Egueb_Smil_Animation base;
 
 	/* properties */
+	Egueb_Dom_Node *additive;
 	Egueb_Dom_Node *calc_mode;
 	Egueb_Dom_Node *by;
 	Egueb_Dom_Node *to;
@@ -38,6 +39,10 @@ typedef struct _Egueb_Smil_Animate_Base
 	/* private */
 	Egueb_Dom_Value dst_value;
 	Egueb_Dom_Value prv_value;
+	/* In case the animation is 'from by' we need
+	 * an addition value
+	 */
+	Egueb_Dom_Value *add_value;
 	Eina_List *generated_values;
 	Eina_List *generated_times;
 #if 0

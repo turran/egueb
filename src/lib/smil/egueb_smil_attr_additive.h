@@ -15,25 +15,11 @@
  * License along with this library.
  * If not, see <http://www.gnu.org/licenses/>.
  */
+#ifndef _EGUEB_SMIL_PROPERTY_ADDITIVE_H_
+#define _EGUEB_SMIL_PROPERTY_ADDITIVE_H_
 
-#ifndef _EGUEB_SMIL_MAIN_H_
-#define _EGUEB_SMIL_MAIN_H_
-
-EAPI void egueb_smil_init(void);
-EAPI void egueb_smil_shutdown(void);
-
-EAPI extern Egueb_Dom_String *EGUEB_SMIL_NAME_SET;
-EAPI extern Egueb_Dom_String *EGUEB_SMIL_NAME_ANIMATE;
-
-EAPI extern Egueb_Dom_String *EGUEB_SMIL_ADDITIVE;
-EAPI extern Egueb_Dom_String *EGUEB_SMIL_ATTRIBUTE_NAME;
-EAPI extern Egueb_Dom_String *EGUEB_SMIL_BEGIN;
-EAPI extern Egueb_Dom_String *EGUEB_SMIL_DUR;
-EAPI extern Egueb_Dom_String *EGUEB_SMIL_END;
-EAPI extern Egueb_Dom_String *EGUEB_SMIL_FILL;
-EAPI extern Egueb_Dom_String *EGUEB_SMIL_TO;
-EAPI extern Egueb_Dom_String *EGUEB_SMIL_FROM;
-EAPI extern Egueb_Dom_String *EGUEB_SMIL_BY;
-EAPI extern Egueb_Dom_String *EGUEB_SMIL_VALUES;
+Egueb_Dom_Node * egueb_smil_attr_additive_new(Egueb_Dom_String *name,
+		Egueb_Smil_Additive def);
 
 #endif
+
