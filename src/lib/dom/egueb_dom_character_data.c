@@ -48,7 +48,7 @@ static void _egueb_dom_character_data_instance_init(void *o)
 	Egueb_Dom_Character_Data *thiz;
 
 	thiz = EGUEB_DOM_CHARACTER_DATA(o);
-	thiz->buffer = enesim_text_buffer_new();
+	thiz->buffer = enesim_text_buffer_simple_new(0);
 }
 
 static void _egueb_dom_character_data_instance_deinit(void *o)
