@@ -157,7 +157,8 @@ err_parse:
 	return ret;
 }
 
-static Eina_Error _enesim_image_svg_load(Enesim_Image_Data *data, Enesim_Buffer *buffer, void *options)
+static Eina_Error _enesim_image_svg_load(Enesim_Image_Data *data,
+		Enesim_Buffer *buffer, void *options)
 {
 	Egueb_Dom_Node *doc;
 	Egueb_Dom_Node *topmost;

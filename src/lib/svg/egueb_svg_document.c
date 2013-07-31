@@ -1189,13 +1189,13 @@ EAPI void egueb_svg_document_image_data_load(Egueb_Dom_Node *n,
 		Egueb_Svg_Document_Image_Load_Descriptor *d,
 		void *user_data)
 {
-	Enesim_Surface *s = NULL;
+	Enesim_Buffer *b = NULL;
 
 	if (!d || !d->loaded)
 		return;
 
 	/* TODO check if there is an application callback */
-	if (!enesim_image_load(data, NULL, &s, ENESIM_FORMAT_ARGB8888, NULL, NULL))
+	if (!enesim_image_load(data, NULL, &b, NULL, NULL))
 	{
 		Eina_Error err;
 
@@ -1205,6 +1205,9 @@ EAPI void egueb_svg_document_image_data_load(Egueb_Dom_Node *n,
 	}
 	else
 	{
+		Enesim_Surface *s;
+
+		s = enesim_surface_new_buffer_from(b);
 		d->loaded(s, user_data);
 	}
 }
