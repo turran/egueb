@@ -93,7 +93,11 @@ typedef struct _Egueb_Svg_Element
 	Egueb_Dom_Node *color;
 	Egueb_Dom_Node *fill;
 	Egueb_Dom_Node *fill_opacity;
+	Egueb_Dom_Node *font;
+	Egueb_Dom_Node *font_family;
 	Egueb_Dom_Node *font_size;
+	Egueb_Dom_Node *font_style;
+	Egueb_Dom_Node *font_weight;
 	Egueb_Dom_Node *opacity;
 	Egueb_Dom_Node *overflow;
 	Egueb_Dom_Node *stop_color;

@@ -580,6 +580,7 @@ static void _egueb_svg_element_presentation_attributes_process(
 	egueb_dom_attr_inheritable_process(thiz->color, rel->color);
 	egueb_dom_attr_inheritable_process(thiz->fill, rel->fill);
 	egueb_dom_attr_inheritable_process(thiz->fill_opacity, rel->fill_opacity);
+	egueb_dom_attr_inheritable_process(thiz->font_family, rel->font_family);
 	egueb_dom_attr_inheritable_process(thiz->opacity, rel->opacity);
 	egueb_dom_attr_inheritable_process(thiz->overflow, rel->overflow);
 	egueb_dom_attr_inheritable_process(thiz->stop_opacity, rel->stop_opacity);
@@ -688,7 +689,11 @@ EGUEB_DOM_ATTR_FETCH_DEFINE(egueb_svg_element, Egueb_Svg_Element, clip_path);
 EGUEB_DOM_ATTR_FETCH_DEFINE(egueb_svg_element, Egueb_Svg_Element, color);
 EGUEB_DOM_ATTR_FETCH_DEFINE(egueb_svg_element, Egueb_Svg_Element, fill);
 EGUEB_DOM_ATTR_FETCH_DEFINE(egueb_svg_element, Egueb_Svg_Element, fill_opacity);
+EGUEB_DOM_ATTR_FETCH_DEFINE(egueb_svg_element, Egueb_Svg_Element, font);
+EGUEB_DOM_ATTR_FETCH_DEFINE(egueb_svg_element, Egueb_Svg_Element, font_family);
 EGUEB_DOM_ATTR_FETCH_DEFINE(egueb_svg_element, Egueb_Svg_Element, font_size);
+EGUEB_DOM_ATTR_FETCH_DEFINE(egueb_svg_element, Egueb_Svg_Element, font_style);
+EGUEB_DOM_ATTR_FETCH_DEFINE(egueb_svg_element, Egueb_Svg_Element, font_weight);
 EGUEB_DOM_ATTR_FETCH_DEFINE(egueb_svg_element, Egueb_Svg_Element, opacity);
 EGUEB_DOM_ATTR_FETCH_DEFINE(egueb_svg_element, Egueb_Svg_Element, overflow);
 EGUEB_DOM_ATTR_FETCH_DEFINE(egueb_svg_element, Egueb_Svg_Element, stop_color);
@@ -745,6 +750,9 @@ static void _egueb_svg_element_instance_init(void *o)
 			egueb_dom_string_ref(EGUEB_SVG_FILL_OPACITY),
 			1, EINA_TRUE, EINA_TRUE,
 			EINA_TRUE);
+	thiz->font_family = egueb_svg_attr_string_new(
+			egueb_dom_string_ref(EGUEB_SVG_FONT_FAMILY),
+			NULL);
 	thiz->font_size = egueb_svg_attr_font_size_new(
 			egueb_dom_string_ref(EGUEB_SVG_FONT_SIZE),
 			&EGUEB_SVG_FONT_SIZE_MEDIUM, EINA_TRUE, EINA_TRUE, EINA_TRUE);
@@ -800,6 +808,7 @@ static void _egueb_svg_element_instance_init(void *o)
 	EGUEB_DOM_ELEMENT_CLASS_PROPERTY_ADD(thiz, egueb_svg_element, color);
 	EGUEB_DOM_ELEMENT_CLASS_PROPERTY_ADD(thiz, egueb_svg_element, fill);
 	EGUEB_DOM_ELEMENT_CLASS_PROPERTY_ADD(thiz, egueb_svg_element, fill_opacity);
+	EGUEB_DOM_ELEMENT_CLASS_PROPERTY_ADD(thiz, egueb_svg_element, font_family);
 	EGUEB_DOM_ELEMENT_CLASS_PROPERTY_ADD(thiz, egueb_svg_element, font_size);
 	EGUEB_DOM_ELEMENT_CLASS_PROPERTY_ADD(thiz, egueb_svg_element, opacity);
 	EGUEB_DOM_ELEMENT_CLASS_PROPERTY_ADD(thiz, egueb_svg_element, overflow);
@@ -829,6 +838,7 @@ static void _egueb_svg_element_instance_deinit(void *o)
 	egueb_dom_node_unref(thiz->color);
 	egueb_dom_node_unref(thiz->fill);
 	egueb_dom_node_unref(thiz->fill_opacity);
+	egueb_dom_node_unref(thiz->font_family);
 	egueb_dom_node_unref(thiz->font_size);
 	egueb_dom_node_unref(thiz->opacity);
 	egueb_dom_node_unref(thiz->overflow);
