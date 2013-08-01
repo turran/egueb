@@ -55,13 +55,16 @@ int main(int argc, char **argv)
 		s = enesim_surface_new(ENESIM_FORMAT_ARGB8888, lround(w), lround(h));
 		if (s)
 		{
+			Enesim_Buffer *b;
 			/* finally draw */
 			if (!egueb_svg_element_svg_draw(topmost, s,
 				NULL, 0, 0, &log))
 			{
 				enesim_log_dump(log);
 			}
-			enesim_image_file_save(argv[2], s, NULL);
+			b = enesim_surface_buffer_get(s);
+			enesim_image_file_save(argv[2], b, NULL);
+			enesim_buffer_unref(b);
 			enesim_surface_unref(s);
 		}
 		else

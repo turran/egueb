@@ -44,6 +44,7 @@ typedef struct _Egueb_Svg_Element_Text
 	double gx;
 	double gy;
 	double gfont;
+	Enesim_Text_Font *font;
 	Enesim_Renderer *r;
 	Eina_Bool renderable_tree_changed;
 	Egueb_Svg_Element_Text_Pen pen;
@@ -70,8 +71,8 @@ static void _egueb_svg_element_text_children_generate_geometry(
 		ERR("Negative font size of %d", size);
 		size = 0;
 	}
-	enesim_renderer_text_span_size_set(r, size);
-	enesim_renderer_text_span_max_ascent_get(r, &max);
+	enesim_renderer_text_span_font_set(r, enesim_text_font_ref(thiz->font));
+	max = enesim_text_font_max_ascent_get(thiz->font);
 	enesim_renderer_origin_set(r, pen->x, pen->y - max);
 
 	INFO("matrix %" ENESIM_MATRIX_FORMAT, ENESIM_MATRIX_ARGS (&e->transform));
@@ -177,10 +178,11 @@ static void _egueb_svg_element_text_node_inserted_cb(Egueb_Dom_Event *e,
 		Enesim_Text_Buffer *nb = NULL;
 		Enesim_Renderer *r;
 
+		thiz = EGUEB_SVG_ELEMENT_TEXT(n);
 		/* create a renderer for this text node */
 		r = enesim_renderer_text_span_new();
 		enesim_renderer_rop_set(r, ENESIM_BLEND);
-		enesim_renderer_text_span_font_name_set(r, "/usr/share/fonts/truetype/freefont/FreeSans.ttf");
+		enesim_renderer_text_span_font_set(r, enesim_text_font_ref(thiz->font));
 		enesim_renderer_color_set(r, 0xff000000);
 
 		/* set the internal buffer of the text span to be the one
@@ -197,7 +199,6 @@ static void _egueb_svg_element_text_node_inserted_cb(Egueb_Dom_Event *e,
 		egueb_dom_string_unref(private_data);
 
 		/* mark it as a change */
-		thiz = EGUEB_SVG_ELEMENT_TEXT(n);
 		thiz->renderable_tree_changed = EINA_TRUE;
 	}
 	else if (type == EGUEB_DOM_NODE_TYPE_ELEMENT_NODE)
@@ -389,14 +390,17 @@ static void _egueb_svg_element_text_instance_init(void *o)
 {
 	Egueb_Svg_Element_Text *thiz;
 	Enesim_Renderer *r;
+	Enesim_Text_Engine *e;
 
 	thiz = EGUEB_SVG_ELEMENT_TEXT(o);
 
+	/* Default values */
 	thiz->r = enesim_renderer_compound_new();
 	enesim_renderer_rop_set(thiz->r, ENESIM_BLEND);
 
-	/* Default values */
-	enesim_renderer_rop_set(thiz->r, ENESIM_BLEND);
+	e = enesim_text_engine_default_get();
+	thiz->font = enesim_text_font_new_description_from(e, "Sans:style=Regular", 16);
+	enesim_text_engine_unref(e);
 
 	/* create the properties */
 	thiz->x = egueb_svg_attr_length_new(
