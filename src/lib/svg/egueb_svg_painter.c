@@ -91,19 +91,19 @@ EAPI void egueb_svg_painter_color_get(const Egueb_Svg_Painter *thiz,
 }
 
 EAPI void egueb_svg_painter_draw_mode_get(const Egueb_Svg_Painter *thiz,
-		Enesim_Shape_Draw_Mode *draw_mode)
+		Enesim_Renderer_Shape_Draw_Mode *draw_mode)
 {
 	*draw_mode = thiz->draw_mode;
 }
 
 EAPI void egueb_svg_painter_stroke_cap_get(const Egueb_Svg_Painter *thiz,
-		Enesim_Shape_Stroke_Cap *stroke_cap)
+		Enesim_Renderer_Shape_Stroke_Cap *stroke_cap)
 {
 	*stroke_cap = thiz->stroke_cap;
 }
 
 EAPI void egueb_svg_painter_stroke_join_get(const Egueb_Svg_Painter *thiz,
-		Enesim_Shape_Stroke_Join *stroke_join)
+		Enesim_Renderer_Shape_Stroke_Join *stroke_join)
 {
 	*stroke_join = thiz->stroke_join;
 }
@@ -145,7 +145,7 @@ EAPI void egueb_svg_painter_fill_renderer_get(const Egueb_Svg_Painter *thiz,
 }
 
 EAPI void egueb_svg_painter_fill_rule_get(const Egueb_Svg_Painter *thiz,
-		Enesim_Shape_Fill_Rule *fill_rule)
+		Enesim_Renderer_Shape_Fill_Rule *fill_rule)
 {
 	*fill_rule = thiz->fill_rule;
 }

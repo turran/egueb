@@ -416,7 +416,7 @@ static void _egueb_svg_element_svg_instance_init(void *o)
 			EGUEB_SVG_RENDERABLE(thiz));
 	r = enesim_renderer_rectangle_new();
 	enesim_renderer_shape_fill_renderer_set(r, compound);
-	enesim_renderer_shape_draw_mode_set(r, ENESIM_SHAPE_DRAW_MODE_FILL);
+	enesim_renderer_shape_draw_mode_set(r, ENESIM_RENDERER_SHAPE_DRAW_MODE_FILL);
 	enesim_renderer_rectangle_x_set(r, 0);
 	enesim_renderer_rectangle_y_set(r, 0);
 	enesim_renderer_rop_set(r, ENESIM_BLEND);

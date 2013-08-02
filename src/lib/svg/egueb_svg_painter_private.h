@@ -36,16 +36,16 @@ struct _Egueb_Svg_Painter
 	Eina_Bool visibility;
 	Enesim_Color color;
 	/* stroke */
-	Enesim_Shape_Draw_Mode draw_mode;
-	Enesim_Shape_Stroke_Cap stroke_cap;
-	Enesim_Shape_Stroke_Join stroke_join;
+	Enesim_Renderer_Shape_Draw_Mode draw_mode;
+	Enesim_Renderer_Shape_Stroke_Cap stroke_cap;
+	Enesim_Renderer_Shape_Stroke_Join stroke_join;
 	Enesim_Color stroke_color;
 	Enesim_Renderer *stroke_renderer;
 	double stroke_weight;
 	/* fill */
 	Enesim_Renderer *fill_renderer;
 	Enesim_Color fill_color;
-	Enesim_Shape_Fill_Rule fill_rule;
+	Enesim_Renderer_Shape_Fill_Rule fill_rule;
 };
 
 typedef Eina_Bool (*Egueb_Svg_Painter_Resolve)(Egueb_Svg_Painter *thiz,

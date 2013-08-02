@@ -92,8 +92,8 @@ static void _egueb_svg_element_line_renderer_propagate(Egueb_Svg_Shape *s,
 {
 	Egueb_Svg_Element_Line *thiz;
 	Enesim_Color color;
-	Enesim_Shape_Stroke_Cap stroke_cap;
-	Enesim_Shape_Stroke_Join stroke_join;
+	Enesim_Renderer_Shape_Stroke_Cap stroke_cap;
+	Enesim_Renderer_Shape_Stroke_Join stroke_join;
 	Enesim_Color stroke_color;
 	Enesim_Renderer *stroke_renderer;
 	Eina_Bool visibility;
@@ -110,8 +110,8 @@ static void _egueb_svg_element_line_renderer_propagate(Egueb_Svg_Shape *s,
 	egueb_svg_painter_stroke_renderer_get(painter, &stroke_renderer);
 
 	/* overrides */
-	enesim_renderer_shape_draw_mode_set(thiz->r, ENESIM_SHAPE_DRAW_MODE_STROKE);
-	enesim_renderer_shape_stroke_location_set(thiz->r, ENESIM_SHAPE_STROKE_CENTER);
+	enesim_renderer_shape_draw_mode_set(thiz->r, ENESIM_RENDERER_SHAPE_DRAW_MODE_STROKE);
+	enesim_renderer_shape_stroke_location_set(thiz->r, ENESIM_RENDERER_SHAPE_STROKE_LOCATION_CENTER);
 
 	/* shape properties */
 	enesim_renderer_shape_stroke_color_set(thiz->r, stroke_color);

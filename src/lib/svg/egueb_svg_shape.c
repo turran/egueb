@@ -49,15 +49,15 @@ static void _egueb_svg_shape_renderer_propagate(Egueb_Svg_Shape *thiz,
 {
 	Egueb_Svg_Shape_Class *klass;
 	Enesim_Color color;
-	Enesim_Shape_Draw_Mode draw_mode;
-	Enesim_Shape_Stroke_Cap stroke_cap;
-	Enesim_Shape_Stroke_Join stroke_join;
+	Enesim_Renderer_Shape_Draw_Mode draw_mode;
+	Enesim_Renderer_Shape_Stroke_Cap stroke_cap;
+	Enesim_Renderer_Shape_Stroke_Join stroke_join;
 	Enesim_Color stroke_color;
 	Enesim_Renderer *stroke_renderer;
 	double stroke_weight;
 	Enesim_Renderer *fill_renderer;
 	Enesim_Color fill_color;
-	Enesim_Shape_Fill_Rule fill_rule;
+	Enesim_Renderer_Shape_Fill_Rule fill_rule;
 	Enesim_Renderer *r = NULL;
 	Eina_Bool visibility;
 
@@ -87,7 +87,7 @@ static void _egueb_svg_shape_renderer_propagate(Egueb_Svg_Shape *thiz,
 	enesim_renderer_shape_stroke_renderer_set(r, stroke_renderer);
 
 	enesim_renderer_shape_stroke_weight_set(r, stroke_weight);
-	enesim_renderer_shape_stroke_location_set(r, ENESIM_SHAPE_STROKE_CENTER);
+	enesim_renderer_shape_stroke_location_set(r, ENESIM_RENDERER_SHAPE_STROKE_LOCATION_CENTER);
 	enesim_renderer_shape_stroke_cap_set(r, stroke_cap);
 	enesim_renderer_shape_stroke_join_set(r, stroke_join);
 	enesim_renderer_shape_draw_mode_set(r, draw_mode);

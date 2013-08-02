@@ -53,10 +53,10 @@ typedef struct _Egueb_Svg_Painter_Generic_Class {
 
 static void _egueb_svg_renderable_paint_set(Egueb_Dom_Node *n,
 		Egueb_Dom_Node *doc,
-		Enesim_Shape_Draw_Mode *rdraw_mode,
+		Enesim_Renderer_Shape_Draw_Mode *rdraw_mode,
 		Enesim_Color *rcolor,
 		Enesim_Renderer **renderer,
-		Enesim_Shape_Draw_Mode mode,
+		Enesim_Renderer_Shape_Draw_Mode mode,
 		double opacity,
 		const Egueb_Svg_Color *current_color,
 		Egueb_Svg_Reference **reference,
@@ -190,7 +190,7 @@ static inline void _egueb_svg_painter_generic_resolve_fill(
 			&p->draw_mode,
 			&p->fill_color,
 			&p->fill_renderer,
-			ENESIM_SHAPE_DRAW_MODE_FILL,
+			ENESIM_RENDERER_SHAPE_DRAW_MODE_FILL,
 			fill_opacity,
 			color,
 			&thiz->fill,
@@ -199,11 +199,11 @@ static inline void _egueb_svg_painter_generic_resolve_fill(
 #if 0
 	if (attr->fill_rule.v == EGUEB_SVG_EVEN_ODD)
 	{
-		rp->fill_rule = ENESIM_SHAPE_FILL_RULE_EVEN_ODD;
+		rp->fill_rule = ENESIM_RENDERER_SHAPE_FILL_RULE_EVEN_ODD;
 	}
 	else
 	{
-		rp->fill_rule = ENESIM_SHAPE_FILL_RULE_NON_ZERO;
+		rp->fill_rule = ENESIM_RENDERER_SHAPE_FILL_RULE_NON_ZERO;
 	}
 #endif
 	egueb_svg_paint_reset(&fill);
@@ -233,7 +233,7 @@ static inline void _egueb_svg_painter_generic_resolve_stroke(
 			&p->draw_mode,
 			&p->stroke_color,
 			&p->stroke_renderer,
-			ENESIM_SHAPE_DRAW_MODE_STROKE,
+			ENESIM_RENDERER_SHAPE_DRAW_MODE_STROKE,
 			stroke_opacity,
 			color,
 			&thiz->stroke,

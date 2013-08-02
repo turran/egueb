@@ -244,7 +244,7 @@ static Eina_Bool _egueb_svg_element_ellipse_renderer_propagate(Egueb_Dom_Tag *t,
 	enesim_renderer_shape_stroke_renderer_set(thiz->r, rctx->stroke_renderer);
 
 	enesim_renderer_shape_stroke_weight_set(thiz->r, rctx->stroke_weight);
-	enesim_renderer_shape_stroke_location_set(thiz->r, ENESIM_SHAPE_STROKE_CENTER);
+	enesim_renderer_shape_stroke_location_set(thiz->r, ENESIM_RENDERER_SHAPE_STROKE_LOCATION_CENTER);
 	enesim_renderer_shape_draw_mode_set(thiz->r, rctx->draw_mode);
 	/* base properties */
 	enesim_renderer_transformation_set(thiz->r, &ctx->transform);

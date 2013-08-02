@@ -57,7 +57,7 @@ static Eina_Bool _egueb_svg_painter_clip_path_resolve(Egueb_Svg_Painter *p,
 	p->visibility = EINA_TRUE;
 	p->color = ENESIM_COLOR_FULL;
 	p->fill_color = ENESIM_COLOR_FULL;
-	p->draw_mode = ENESIM_SHAPE_DRAW_MODE_FILL;
+	p->draw_mode = ENESIM_RENDERER_SHAPE_DRAW_MODE_FILL;
 
 	/* set the fill renderer */
 	egueb_svg_reference_clip_path_resolved_renderer_get(thiz->ref, &fill_renderer);

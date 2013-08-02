@@ -102,7 +102,7 @@ static Eina_Bool _egueb_svg_element_polyline_renderer_propagate(Egueb_Dom_Tag *t
 	enesim_renderer_shape_stroke_color_set(r, rctx->stroke_color);
 	enesim_renderer_shape_stroke_weight_set(r, rctx->stroke_weight);
 	enesim_renderer_shape_draw_mode_set(r, rctx->draw_mode);
-	enesim_renderer_shape_stroke_location_set(r, ENESIM_SHAPE_STROKE_CENTER);
+	enesim_renderer_shape_stroke_location_set(r, ENESIM_RENDERER_SHAPE_STROKE_LOCATION_CENTER);
 	enesim_renderer_shape_stroke_cap_set(r, rctx->stroke_cap);
 	enesim_renderer_shape_stroke_join_set(r, rctx->stroke_join);
 
@@ -215,8 +215,8 @@ static void _egueb_svg_element_polyline_renderer_propagate(Egueb_Svg_Shape *s,
 {
 	Egueb_Svg_Element_Polyline *thiz;
 	Enesim_Color color;
-	Enesim_Shape_Stroke_Cap stroke_cap;
-	Enesim_Shape_Stroke_Join stroke_join;
+	Enesim_Renderer_Shape_Stroke_Cap stroke_cap;
+	Enesim_Renderer_Shape_Stroke_Join stroke_join;
 	Enesim_Color stroke_color;
 	Enesim_Renderer *stroke_renderer;
 	Eina_Bool visibility;
@@ -233,8 +233,8 @@ static void _egueb_svg_element_polyline_renderer_propagate(Egueb_Svg_Shape *s,
 	egueb_svg_painter_stroke_renderer_get(painter, &stroke_renderer);
 
 	/* overrides */
-	enesim_renderer_shape_draw_mode_set(thiz->r, ENESIM_SHAPE_DRAW_MODE_STROKE);
-	enesim_renderer_shape_stroke_location_set(thiz->r, ENESIM_SHAPE_STROKE_CENTER);
+	enesim_renderer_shape_draw_mode_set(thiz->r, ENESIM_RENDERER_SHAPE_DRAW_MODE_STROKE);
+	enesim_renderer_shape_stroke_location_set(thiz->r, ENESIM_RENDERER_SHAPE_STROKE_LOCATION_CENTER);
 
 	/* shape properties */
 	enesim_renderer_shape_stroke_color_set(thiz->r, stroke_color);
