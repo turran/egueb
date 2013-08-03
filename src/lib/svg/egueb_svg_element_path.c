@@ -39,6 +39,7 @@ typedef struct _Egueb_Svg_Element_Path
 	/* properties */
 	Egueb_Dom_Node *d;
 	/* private */
+	Enesim_Path *path;
 	Enesim_Renderer *r;
 } Egueb_Svg_Element_Path;
 
@@ -327,7 +328,7 @@ static void _egueb_svg_element_path_d_cb(void *data, void *user_data)
 		break;
 	}
 	cb_data->first = EINA_FALSE;
-	enesim_renderer_path_command_add(thiz->r, &cmd);
+	enesim_path_command_add(thiz->path, &cmd);
 }
 /*----------------------------------------------------------------------------*
  *                               Shape interface                              *
@@ -343,7 +344,7 @@ static Eina_Bool _egueb_svg_element_path_generate_geometry(Egueb_Svg_Shape *s,
 
 	/* TODO Be sure that we modified the points */
 	egueb_dom_attr_final_get(thiz->d, &d);
-	enesim_renderer_path_command_clear(thiz->r);
+	enesim_path_command_clear(thiz->path);
 	if (d)
 	{
 		Egueb_Svg_Element_Path_D_Cb_Data data;
@@ -419,9 +420,14 @@ static void _egueb_svg_element_path_instance_init(void *o)
 {
 	Egueb_Svg_Element_Path *thiz;
 	Enesim_Renderer *r;
+	Enesim_Path *path;
 
 	thiz = EGUEB_SVG_ELEMENT_PATH(o);
+	path = enesim_path_new();
+	thiz->path = path;
+
 	r = enesim_renderer_path_new();
+	enesim_renderer_path_path_set(r, enesim_path_ref(thiz->path));
 	thiz->r = r;
 
 	/* Default values */
@@ -440,6 +446,7 @@ static void _egueb_svg_element_path_instance_deinit(void *o)
 
 	thiz = EGUEB_SVG_ELEMENT_PATH(o);
 	enesim_renderer_unref(thiz->r);
+	enesim_path_unref(thiz->path);
 	/* destroy the properties */
 	egueb_dom_node_unref(thiz->d);
 }
