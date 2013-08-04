@@ -283,18 +283,18 @@ static Eina_Bool _egueb_dom_parser_eina_cb(void *data, Eina_Simple_XML_Type type
 /*----------------------------------------------------------------------------*
  *                             Parser interface                               *
  *----------------------------------------------------------------------------*/
-static void _egueb_dom_parser_eina_parse(void *data, Enesim_Image_Data *source)
+static void _egueb_dom_parser_eina_parse(void *data, Enesim_Stream *source)
 {
 	Egueb_Dom_Parser_Eina *thiz = data;
 	void *content;
 	size_t len = 0;
 
-	content = enesim_image_data_mmap(source, &len);
+	content = enesim_stream_mmap(source, &len);
 	if (!content) return;
 
 	eina_simple_xml_parse(content, len, EINA_TRUE, _egueb_dom_parser_eina_cb,
 			thiz);
-	enesim_image_data_munmap(source, content);
+	enesim_stream_munmap(source, content);
 }
 
 static void _egueb_dom_parser_eina_free(void *data)

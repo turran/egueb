@@ -15,14 +15,14 @@ int main(int argc, char **argv)
 {
 	Egueb_Dom_Node *doc;
 	Egueb_Dom_Node *topmost;
-	Enesim_Image_Data *im;
+	Enesim_Stream *im;
 
 	if (argc < 3) help();
 
 	egueb_dom_init();
 	egueb_svg_init();
 
-	im = enesim_image_data_file_new(argv[1], "r+");
+	im = enesim_stream_file_new(argv[1], "r+");
 	if (!im)
 	{
 		printf("[invalid file?]\n");
@@ -32,7 +32,7 @@ int main(int argc, char **argv)
 	/* set our handlers */
 	egueb_svg_document_filename_get_cb_set(doc, filename_get, (void *)argv[1]);
 	egueb_dom_parser_parse(im, doc);
-	enesim_image_data_free(im);
+	enesim_stream_free(im);
 	egueb_dom_document_element_get(doc, &topmost);
 	if (topmost)
 	{

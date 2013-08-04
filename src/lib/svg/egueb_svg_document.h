@@ -28,7 +28,7 @@ typedef struct _Egueb_Svg_Document_Image_Load_Descriptor
 	Egueb_Svg_Document_Failed_Cb failed;
 } Egueb_Svg_Document_Image_Load_Descriptor;
 
-typedef void (*Egueb_Svg_Document_Uri_Fetched_Cb)(Enesim_Image_Data *data, void *user_data);
+typedef void (*Egueb_Svg_Document_Uri_Fetched_Cb)(Enesim_Stream *data, void *user_data);
 
 typedef struct _Egueb_Svg_Document_Uri_Fetch_Descriptor
 {
@@ -82,7 +82,7 @@ EAPI void egueb_svg_document_image_load(Egueb_Dom_Node *n,
 		Egueb_Svg_Document_Image_Load_Descriptor *d,
 		void *user_data);
 EAPI void egueb_svg_document_image_data_load(Egueb_Dom_Node *n,
-		Enesim_Image_Data *data,
+		Enesim_Stream *data,
 		Egueb_Svg_Document_Image_Load_Descriptor *d,
 		void *user_data);
 EAPI void egueb_svg_document_uri_fetch(Egueb_Dom_Node *n,

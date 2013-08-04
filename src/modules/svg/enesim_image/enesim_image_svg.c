@@ -117,7 +117,7 @@ static void _enesim_image_svg_options_free(void *data)
 /* Here we should parse the first svg element only and return its
  * size, for now, we dont support this feature
  */
-static Eina_Error _enesim_image_svg_info_load(Enesim_Image_Data *data, int *w, int *h, Enesim_Buffer_Format *sfmt, void *options)
+static Eina_Error _enesim_image_svg_info_load(Enesim_Stream *data, int *w, int *h, Enesim_Buffer_Format *sfmt, void *options)
 {
 	Egueb_Dom_Node *doc;
 	Egueb_Dom_Node *topmost;
@@ -157,7 +157,7 @@ err_parse:
 	return ret;
 }
 
-static Eina_Error _enesim_image_svg_load(Enesim_Image_Data *data,
+static Eina_Error _enesim_image_svg_load(Enesim_Stream *data,
 		Enesim_Buffer *buffer, void *options)
 {
 	Egueb_Dom_Node *doc;
@@ -186,7 +186,7 @@ static Eina_Error _enesim_image_svg_load(Enesim_Image_Data *data,
 		h = o->container_height;
 	}
 	/* set the application descriptor in case the svg needs it */
-	location = enesim_image_data_location(data);
+	location = enesim_stream_location(data);
 	egueb_svg_document_filename_get_cb_set(doc, _enesim_image_svg_filename_get, location);
 	/* we should render into the swdata? */
 	egueb_svg_document_width_set(doc, w);
@@ -227,7 +227,7 @@ static Enesim_Image_Provider_Descriptor _provider = {
 /*----------------------------------------------------------------------------*
  *                           Enesim Image Finder API                          *
  *----------------------------------------------------------------------------*/
-static const char * _enesim_image_svg_data_from(Enesim_Image_Data *data)
+static const char * _enesim_image_svg_data_from(Enesim_Stream *data)
 {
 	char buf[4096];
 	char *ret = NULL;
@@ -236,7 +236,7 @@ static const char * _enesim_image_svg_data_from(Enesim_Image_Data *data)
 
 	/* TODO we should find the first tag and skip all the comments */
 	/* only try to find the <svg tag in the first 4096 bytes */
-	count = enesim_image_data_read(data, buf, 4096);
+	count = enesim_stream_read(data, buf, 4096);
 	for (i = 0; i < count; i++)
 	{
 		if (buf[i] == '<' && i + 4 < count)

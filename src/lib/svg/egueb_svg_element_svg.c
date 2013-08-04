@@ -1510,8 +1510,8 @@ void egueb_svg_element_svg_image_load(Ender_Element *e, const char *uri, Enesim_
 	/* check if the uri starts with image:data (embedded image) first */
 	if (!strncmp(uri, "data:image", 10))
 	{
-		Enesim_Image_Data *edata_buffer;
-		Enesim_Image_Data *edata_base64;
+		Enesim_Stream *edata_buffer;
+		Enesim_Stream *edata_base64;
 		Eina_Bool ret;
 		char mime[PATH_MAX];
 		char format[7];
@@ -1530,8 +1530,8 @@ void egueb_svg_element_svg_image_load(Ender_Element *e, const char *uri, Enesim_
 			return;
 		uri += 7;
 
-		edata_buffer = enesim_image_data_buffer_new((char *)uri, strlen(uri));
-		edata_base64 = enesim_image_data_base64_new(edata_buffer);
+		edata_buffer = enesim_stream_buffer_new((char *)uri, strlen(uri));
+		edata_base64 = enesim_stream_base64_new(edata_buffer);
 		if (!enesim_image_load(edata_base64, mime, s, ENESIM_FORMAT_ARGB8888, NULL, NULL))
 		{
 			Eina_Error err;
@@ -1539,7 +1539,7 @@ void egueb_svg_element_svg_image_load(Ender_Element *e, const char *uri, Enesim_
 			err = eina_error_get();
 			ERR("Embedded Image with mime '%s' failed to load with error: %s", mime, eina_error_msg_get(err));
 		}
-		enesim_image_data_free(edata_base64);
+		enesim_stream_free(edata_base64);
 	}
 	else
 	{

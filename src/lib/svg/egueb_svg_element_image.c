@@ -104,7 +104,7 @@ static Eina_Bool _egueb_svg_element_image_parse_data(const char **ostr,
 }
 
 static void _egueb_svg_element_image_svg_load(Egueb_Dom_Node *n,
-		Egueb_Dom_Node *doc, Enesim_Image_Data *data)
+		Egueb_Dom_Node *doc, Enesim_Stream *data)
 {
 	Egueb_Svg_Element_Image *thiz;
 	Egueb_Dom_Node *new_doc;
@@ -169,7 +169,7 @@ static Egueb_Svg_Document_Image_Load_Descriptor _image_data_load_descriptor = {
 /*----------------------------------------------------------------------------*
  *                            Uri fetch descriptor                            *
  *----------------------------------------------------------------------------*/
-static void _egueb_svg_element_uri_fetched(Enesim_Image_Data *data,
+static void _egueb_svg_element_uri_fetched(Enesim_Stream *data,
 		void *user_data)
 {
 	Egueb_Dom_Node *n = user_data;
@@ -238,8 +238,8 @@ static void _egueb_svg_element_image_uri_load(Egueb_Svg_Element_Image *thiz,
 	 */
 	if (!strncmp(str, "data:image", 10))
 	{
-		Enesim_Image_Data *base_64;
-		Enesim_Image_Data *data;
+		Enesim_Stream *base_64;
+		Enesim_Stream *data;
 		char mime[1024];
 		char base[1024];
 
@@ -254,8 +254,8 @@ static void _egueb_svg_element_image_uri_load(Egueb_Svg_Element_Image *thiz,
 		 * delegate the image loading
 		 */
 		DBG("Loading a base64 based image with MIME '%s'", mime);
-		base_64 = enesim_image_data_buffer_new((char *)str, strlen(str));
-		data = enesim_image_data_base64_new(base_64);
+		base_64 = enesim_stream_buffer_new((char *)str, strlen(str));
+		data = enesim_stream_base64_new(base_64);
 		egueb_svg_document_image_data_load(doc, data,
 				&_image_data_load_descriptor,
 				egueb_dom_node_ref(EGUEB_DOM_NODE(thiz)));

@@ -71,7 +71,7 @@ void egueb_dom_parser_document_set(Egueb_Dom_Parser *thiz, Egueb_Dom_Node *doc)
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/
-EAPI void egueb_dom_parser_parse(Enesim_Image_Data *data, Egueb_Dom_Node *doc)
+EAPI void egueb_dom_parser_parse(Enesim_Stream *data, Egueb_Dom_Node *doc)
 {
 	Egueb_Dom_Parser *thiz;
 

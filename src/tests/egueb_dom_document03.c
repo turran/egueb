@@ -41,17 +41,17 @@ int main(int argc, char **argv)
 {
 	Egueb_Dom_Node *mydocument;
 	Egueb_Dom_Node *root = NULL;
-	Enesim_Image_Data *im;
+	Enesim_Stream *im;
 
 	if (argc < 2) help();
 
 	mylib_init();
 	mydocument = mydocument_new();
-	im = enesim_image_data_file_new(argv[1], "r+");
+	im = enesim_stream_file_new(argv[1], "r+");
 	if (!im) return -1;
 
 	egueb_dom_parser_parse(im, mydocument);
-	enesim_image_data_free(im);
+	enesim_stream_free(im);
 
 	/* setup our own handlers */
 	_signal_setup();

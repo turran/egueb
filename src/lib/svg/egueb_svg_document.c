@@ -1185,7 +1185,7 @@ EAPI void egueb_svg_document_image_load(Egueb_Dom_Node *n,
 }
 
 EAPI void egueb_svg_document_image_data_load(Egueb_Dom_Node *n,
-		Enesim_Image_Data *data,
+		Enesim_Stream *data,
 		Egueb_Svg_Document_Image_Load_Descriptor *d,
 		void *user_data)
 {
@@ -1231,13 +1231,13 @@ EAPI void egueb_svg_document_uri_fetch(Egueb_Dom_Node *n,
 	/* in case of a http uri, delegate it to the application */
 	if (!strncmp(absolute, "/", 1))
 	{
-		Enesim_Image_Data *data;
+		Enesim_Stream *data;
 
-		data = enesim_image_data_file_new(absolute, "rb");
+		data = enesim_stream_file_new(absolute, "rb");
 		if (data)
 		{
 			if (d->fetched) d->fetched(data, user_data);
-			enesim_image_data_free(data);
+			enesim_stream_free(data);
 		}
 		else
 		{

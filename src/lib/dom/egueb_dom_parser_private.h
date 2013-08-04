@@ -20,7 +20,7 @@
 
 typedef struct _Egueb_Dom_Parser Egueb_Dom_Parser;
 typedef void (*Egueb_Dom_Parser_Free)(void *data);
-typedef void (*Egueb_Dom_Parser_Parse)(void *data, Enesim_Image_Data *im);
+typedef void (*Egueb_Dom_Parser_Parse)(void *data, Enesim_Stream *im);
 
 typedef struct _Egueb_Dom_Parser_Descriptor
 {

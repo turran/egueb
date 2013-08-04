@@ -11,17 +11,17 @@ static void help(void)
 int main(int argc, char **argv)
 {
 	Egueb_Dom_Node *doc, *child, *root;
-	Enesim_Image_Data *im;
+	Enesim_Stream *im;
 
 	if (argc < 2) help();
 
 	mylib_init();
 	doc = mydocument_new();
-	im = enesim_image_data_file_new(argv[1], "r+");
+	im = enesim_stream_file_new(argv[1], "r+");
 	if (!im) return -1;
 
 	egueb_dom_parser_parse(im, doc);
-	enesim_image_data_free(im);
+	enesim_stream_free(im);
 
 	printf("[testing] get the topmost element and destroy the document\n");
 	egueb_dom_document_element_get(doc, &root);

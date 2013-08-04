@@ -15,15 +15,15 @@ int main(int argc, char **argv)
 	Egueb_Dom_Node *clone = NULL;
 	Egueb_Dom_Node *node = NULL;
 	Egueb_Dom_Node *new_node;
-	Enesim_Image_Data *im;
+	Enesim_Stream *im;
 
 	if (argc < 2) help();
 
 	mylib_init();
 	mydocument = mydocument_new();
-	im = enesim_image_data_file_new(argv[1], "r+");
+	im = enesim_stream_file_new(argv[1], "r+");
 	egueb_dom_parser_parse(im, mydocument);
-	enesim_image_data_free(im);
+	enesim_stream_free(im);
 
 	egueb_dom_document_element_get(mydocument, &root);
 	/* check the tree that we have parsed */

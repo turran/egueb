@@ -19,6 +19,6 @@
 #ifndef _EGUEB_DOM_PARSER_H_
 #define _EGUEB_DOM_PARSER_H_
 
-EAPI void egueb_dom_parser_parse(Enesim_Image_Data *data, Egueb_Dom_Node *doc);
+EAPI void egueb_dom_parser_parse(Enesim_Stream *data, Egueb_Dom_Node *doc);
 
 #endif
