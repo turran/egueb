@@ -50,6 +50,7 @@ static void _egueb_svg_shape_renderer_propagate(Egueb_Svg_Shape *thiz,
 	Egueb_Svg_Shape_Class *klass;
 	Enesim_Color color;
 	Enesim_Renderer_Shape_Draw_Mode draw_mode;
+	Enesim_Renderer_Shape_Stroke_Dash *dash;
 	Enesim_Renderer_Shape_Stroke_Cap stroke_cap;
 	Enesim_Renderer_Shape_Stroke_Join stroke_join;
 	Enesim_Color stroke_color;
@@ -59,6 +60,8 @@ static void _egueb_svg_shape_renderer_propagate(Egueb_Svg_Shape *thiz,
 	Enesim_Color fill_color;
 	Enesim_Renderer_Shape_Fill_Rule fill_rule;
 	Enesim_Renderer *r = NULL;
+	Eina_List *stroke_dasharray;
+	Eina_List *l;
 	Eina_Bool visibility;
 
 	r = egueb_svg_renderable_class_renderer_get(EGUEB_DOM_NODE(thiz));
@@ -71,6 +74,7 @@ static void _egueb_svg_shape_renderer_propagate(Egueb_Svg_Shape *thiz,
 	egueb_svg_painter_visibility_get(painter, &visibility);
 	egueb_svg_painter_color_get(painter, &color);
 	egueb_svg_painter_draw_mode_get(painter, &draw_mode);
+	egueb_svg_painter_stroke_dasharray_get(painter, &stroke_dasharray);
 	egueb_svg_painter_stroke_cap_get(painter, &stroke_cap);
 	egueb_svg_painter_stroke_join_get(painter, &stroke_join);
 	egueb_svg_painter_stroke_color_get(painter, &stroke_color);
@@ -85,6 +89,12 @@ static void _egueb_svg_shape_renderer_propagate(Egueb_Svg_Shape *thiz,
 	enesim_renderer_shape_fill_renderer_set(r, fill_renderer);
 	enesim_renderer_shape_stroke_color_set(r, stroke_color);
 	enesim_renderer_shape_stroke_renderer_set(r, stroke_renderer);
+	EINA_LIST_FOREACH(stroke_dasharray, l, dash)
+	{
+		/* TODO add this check on enesim itself */
+		if (!dash->length) continue;
+		enesim_renderer_shape_stroke_dash_add(r, dash);
+	}
 
 	enesim_renderer_shape_stroke_weight_set(r, stroke_weight);
 	enesim_renderer_shape_stroke_location_set(r, ENESIM_RENDERER_SHAPE_STROKE_LOCATION_CENTER);

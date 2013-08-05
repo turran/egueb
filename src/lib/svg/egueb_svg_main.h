@@ -82,6 +82,7 @@ EAPI extern Egueb_Dom_String *EGUEB_SVG_SPREAD_METHOD;
 EAPI extern Egueb_Dom_String *EGUEB_SVG_STOP_COLOR;
 EAPI extern Egueb_Dom_String *EGUEB_SVG_STOP_OPACITY;
 EAPI extern Egueb_Dom_String *EGUEB_SVG_STROKE;
+EAPI extern Egueb_Dom_String *EGUEB_SVG_STROKE_DASHARRAY;
 EAPI extern Egueb_Dom_String *EGUEB_SVG_STROKE_LINECAP;
 EAPI extern Egueb_Dom_String *EGUEB_SVG_STROKE_LINEJOIN;
 EAPI extern Egueb_Dom_String *EGUEB_SVG_STROKE_OPACITY;

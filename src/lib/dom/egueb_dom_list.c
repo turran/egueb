@@ -64,6 +64,7 @@ EAPI void egueb_dom_list_unref(Egueb_Dom_List *thiz)
 
 EAPI int egueb_dom_list_length(Egueb_Dom_List *thiz)
 {
+	if (!thiz) return 0;
 	return eina_list_count(thiz->list);
 }
 

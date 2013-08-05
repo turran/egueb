@@ -51,6 +51,44 @@ typedef struct _Egueb_Svg_Painter_Generic_Class {
 	Egueb_Svg_Painter_Class base;
 } Egueb_Svg_Painter_Generic_Class;
 
+typedef struct _Egueb_Svg_Painter_Generic_Stroke_Dasharray_Data {
+	Egueb_Svg_Painter *p;
+	Egueb_Svg_Element *e;
+	double font_size;
+
+	Enesim_Renderer_Shape_Stroke_Dash *dash;
+} Egueb_Svg_Painter_Generic_Stroke_Dasharray_Data;
+
+static void _egueb_svg_painter_generic_dash_foreach(void *data, void *user_data)
+{
+	Egueb_Svg_Painter_Generic_Stroke_Dasharray_Data *stroke_dasharray_data = user_data;
+	Egueb_Svg_Painter *p = stroke_dasharray_data->p;
+	Egueb_Svg_Element *e = stroke_dasharray_data->e;
+	double font_size = stroke_dasharray_data->font_size;
+	Egueb_Svg_Length *length = data;
+	double viewport = 0;
+	double length_final;
+
+	if (length->unit == EGUEB_SVG_UNIT_LENGTH_PERCENT)
+	{
+		viewport = hypot(e->viewbox.w, e->viewbox.h) / M_SQRT2;
+	}
+	length_final = egueb_svg_coord_final_get(length, viewport, font_size);
+	if (!stroke_dasharray_data->dash)
+	{
+		Enesim_Renderer_Shape_Stroke_Dash *dash;
+		dash = calloc(1, sizeof(Enesim_Renderer_Shape_Stroke_Dash));
+		dash->length = length_final;
+		stroke_dasharray_data->dash = dash;
+	}
+	else
+	{
+		stroke_dasharray_data->dash->gap = length_final;
+		p->stroke_dasharray = eina_list_append(p->stroke_dasharray, stroke_dasharray_data->dash);
+		stroke_dasharray_data->dash = NULL;
+	}
+}
+
 static void _egueb_svg_renderable_paint_set(Egueb_Dom_Node *n,
 		Egueb_Dom_Node *doc,
 		Enesim_Renderer_Shape_Draw_Mode *rdraw_mode,
@@ -214,11 +252,13 @@ static inline void _egueb_svg_painter_generic_resolve_stroke(
 		Egueb_Dom_Node *doc, Egueb_Svg_Color *color)
 {
 	Egueb_Svg_Painter_Generic *thiz;
+	Egueb_Svg_Painter_Generic_Stroke_Dasharray_Data stroke_dasharray_data;
 	Egueb_Svg_Paint stroke = EGUEB_SVG_PAINT_INIT;
 	Egueb_Svg_Length stroke_width;
 	Egueb_Svg_Number stroke_opacity;
 	Egueb_Svg_Stroke_Line_Cap stroke_line_cap;
 	Egueb_Svg_Stroke_Line_Join stroke_line_join;
+	Egueb_Dom_List *stroke_dasharray = NULL;
 	double stroke_viewport = 0;
 	double font_size;
 
@@ -227,6 +267,7 @@ static inline void _egueb_svg_painter_generic_resolve_stroke(
 	egueb_dom_attr_final_get(e->stroke_width, &stroke_width);
 	egueb_dom_attr_final_get(e->stroke_line_cap, &stroke_line_cap);
 	egueb_dom_attr_final_get(e->stroke_line_join, &stroke_line_join);
+	egueb_dom_attr_final_get(e->stroke_dasharray, &stroke_dasharray);
 
 	thiz = EGUEB_SVG_PAINTER_GENERIC(p);
 	_egueb_svg_renderable_paint_set(EGUEB_DOM_NODE(e), doc,
@@ -239,11 +280,27 @@ static inline void _egueb_svg_painter_generic_resolve_stroke(
 			&thiz->stroke,
 			&stroke,
 			&thiz->stroke_paint_last);
+	/* the stroke dash */
+	if (p->stroke_dasharray)
+	{
+		Enesim_Renderer_Shape_Stroke_Dash *dash;
+		EINA_LIST_FREE(p->stroke_dasharray, dash)
+			free(dash);
+	}
+	egueb_svg_document_font_size_get(doc, &font_size);
+
+	stroke_dasharray_data.e = e;
+	stroke_dasharray_data.p = p;
+	stroke_dasharray_data.font_size = font_size;
+	stroke_dasharray_data.dash = NULL;
+	egueb_dom_list_foreach(stroke_dasharray, _egueb_svg_painter_generic_dash_foreach, &stroke_dasharray_data);
+	/* handle the odd/even thing */
+	if (egueb_dom_list_length(stroke_dasharray) % 2)
+		egueb_dom_list_foreach(stroke_dasharray, _egueb_svg_painter_generic_dash_foreach, &stroke_dasharray_data);
 	/* the stroke types */
 	p->stroke_cap = stroke_line_cap;
 	p->stroke_join = stroke_line_join;
 	/* handle the stroke width */
-	egueb_svg_document_font_size_get(doc, &font_size);
 	if (stroke_width.unit == EGUEB_SVG_UNIT_LENGTH_PERCENT)
 	{
 		stroke_viewport = hypot(e->viewbox.w, e->viewbox.h) / M_SQRT2;
@@ -291,43 +348,6 @@ static Eina_Bool _egueb_svg_painter_generic_resolve(Egueb_Svg_Painter *p,
 	INFO("Shape draw_mode: %08x", p->draw_mode);
 	INFO("Fill color: %08x, renderer: %p", p->fill_color, p->fill_renderer);
 	INFO("Stroke color: %08x, renderer: %p", p->stroke_color, p->stroke_renderer);
-#if 0
-	/* FIXME there are cases where this is not needed, liek the 'use' given that
-	 * the 'g' will do it
-	 */
-	if (!context->renderable_behaviour.context_set)
-		_egueb_svg_renderable_context_set(t, attr, &thiz->context);
-	else
-		context->renderable_behaviour.context_set(t, attr, &thiz->context, context->renderable_behaviour.data);
-	/* do the renderer propagate */
-	if (!thiz->descriptor.renderer_propagate(t, c, context, attr, &thiz->context, error))
-		return EGUEB_SVG_SETUP_FAILED;
-	/* given that the propagate above actually sets the bounding box, etc, we need to call the setup
-	 * of the referenceables *after*
-	 * we should really call the "propagate" version and the function should do the setup if needed
-	 */
-	if (thiz->clip_path_reference)
-	{
-		ret = egueb_svg_element_internal_setup(thiz->clip_path_reference->t, c, error);
-		if (ret != EGUEB_SVG_SETUP_OK)
-			return ret;
-	}
-	/* we need to propagate the referenceables paint servers so they can catch up
-	 * our new context (bounds, transformation, whatever)
-	 */
-	if (attr->fill.is_set && attr->fill.v.type == EGUEB_SVG_PAINT_TYPE_SERVER && thiz->fill_reference)
-	{
-		DBG("Using '%s' as fill paint server", attr->fill.v.uri);
-		egueb_svg_referenceable_reference_propagate(thiz->fill_reference, c, error);
-	}
-	/* in case we are going to use the stroke renderer do its own setup */
-	if (attr->stroke.is_set && attr->stroke.v.type == EGUEB_SVG_PAINT_TYPE_SERVER && thiz->stroke_reference)
-	{
-		DBG("Using '%s' as stroke paint server", attr->fill.v.uri);
-		egueb_svg_referenceable_reference_propagate(thiz->stroke_reference, c, error);
-	}
-	return EGUEB_SVG_SETUP_OK;
-#endif
 	return EINA_TRUE;
 }
 /*----------------------------------------------------------------------------*

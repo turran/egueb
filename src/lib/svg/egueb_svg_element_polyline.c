@@ -261,9 +261,6 @@ static Enesim_Renderer * _egueb_svg_element_polyline_renderer_get(
 static void _egueb_svg_element_polyline_bounds_get(Egueb_Svg_Renderable *r,
 		Enesim_Rectangle *bounds)
 {
-	Egueb_Svg_Element_Polyline *thiz;
-
-	thiz = EGUEB_SVG_ELEMENT_POLYLINE(r);
 }
 /*----------------------------------------------------------------------------*
  *                              Element interface                             *

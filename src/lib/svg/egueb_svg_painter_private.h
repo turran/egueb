@@ -35,8 +35,10 @@ struct _Egueb_Svg_Painter
 	/* common */
 	Eina_Bool visibility;
 	Enesim_Color color;
-	/* stroke */
+	/* shape */
 	Enesim_Renderer_Shape_Draw_Mode draw_mode;
+	/* stroke */
+	Eina_List *stroke_dasharray;
 	Enesim_Renderer_Shape_Stroke_Cap stroke_cap;
 	Enesim_Renderer_Shape_Stroke_Join stroke_join;
 	Enesim_Color stroke_color;

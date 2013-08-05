@@ -15,12 +15,13 @@
  * License along with this library.
  * If not, see <http://www.gnu.org/licenses/>.
  */
+#ifndef _EGUEB_SVG_STROKE_DASHARRAY_H
+#define _EGUEB_SVG_STROKE_DASHARRAY_H
 
-#ifndef _EGUEB_SVG_ATTR_STROKE_LINE_CAP_H_
-#define _EGUEB_SVG_ATTR_STROKE_LINE_CAP_H_
-
-EAPI Egueb_Dom_Node * egueb_svg_attr_stroke_line_cap_new(Egueb_Dom_String *name,
-		const Egueb_Svg_Stroke_Line_Cap def, Eina_Bool animatable,
-		Eina_Bool stylable, Eina_Bool inheritable);
+EAPI const Egueb_Dom_Value_Descriptor * egueb_svg_stroke_dasharray_descriptor_get(void);
+EAPI Eina_Bool egueb_svg_stroke_dasharray_string_from(Egueb_Dom_List *l,
+		const char *value);
+EAPI char * egueb_svg_stroke_dasharray_string_to(Egueb_Dom_List *l);
 
 #endif
+

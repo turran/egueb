@@ -94,6 +94,7 @@ src/lib/svg/egueb_svg_attr_point_list.c \
 src/lib/svg/egueb_svg_attr_rect.c \
 src/lib/svg/egueb_svg_attr_referenceable_units.c \
 src/lib/svg/egueb_svg_attr_string.c \
+src/lib/svg/egueb_svg_attr_stroke_dasharray.c \
 src/lib/svg/egueb_svg_attr_stroke_line_cap.c \
 src/lib/svg/egueb_svg_attr_stroke_line_join.c \
 src/lib/svg/egueb_svg_attr_spread_method.c \
@@ -176,6 +177,7 @@ src/lib/svg/egueb_svg_string.c \
 src/lib/svg/egueb_svg_string_private.h \
 src/lib/svg/egueb_svg_stroke_line_cap.c \
 src/lib/svg/egueb_svg_stroke_line_join.c \
+src/lib/svg/egueb_svg_stroke_dasharray.c \
 src/lib/svg/egueb_svg_text_anchor.c \
 src/lib/svg/egueb_svg_visibility.c
 

@@ -79,6 +79,7 @@ static void _egueb_svg_strings_init(void)
 	EGUEB_SVG_RY = egueb_dom_string_new_with_string("ry");
 	EGUEB_SVG_SPREAD_METHOD = egueb_dom_string_new_with_string("spreadMethod");
 	EGUEB_SVG_STROKE = egueb_dom_string_new_with_string("stroke");
+	EGUEB_SVG_STROKE_DASHARRAY = egueb_dom_string_new_with_string("stroke-dasharray");
 	EGUEB_SVG_STROKE_LINECAP = egueb_dom_string_new_with_string("stroke-linecap");
 	EGUEB_SVG_STROKE_LINEJOIN = egueb_dom_string_new_with_string("stroke-linejoin");
 	EGUEB_SVG_STROKE_OPACITY = egueb_dom_string_new_with_string("stroke-opacity");
@@ -156,6 +157,7 @@ static void _egueb_svg_strings_shutdown(void)
 	egueb_dom_string_unref(EGUEB_SVG_STOP_COLOR);
 	egueb_dom_string_unref(EGUEB_SVG_STOP_OPACITY);
 	egueb_dom_string_unref(EGUEB_SVG_STROKE);
+	egueb_dom_string_unref(EGUEB_SVG_STROKE_DASHARRAY);
 	egueb_dom_string_unref(EGUEB_SVG_STROKE_LINECAP);
 	egueb_dom_string_unref(EGUEB_SVG_STROKE_LINEJOIN);
 	egueb_dom_string_unref(EGUEB_SVG_STROKE_OPACITY);
@@ -269,6 +271,7 @@ Egueb_Dom_String *EGUEB_SVG_STOP_COLOR;
 Egueb_Dom_String *EGUEB_SVG_STOP_OPACITY;
 Egueb_Dom_String *EGUEB_SVG_SPREAD_METHOD;
 Egueb_Dom_String *EGUEB_SVG_STROKE;
+Egueb_Dom_String *EGUEB_SVG_STROKE_DASHARRAY;
 Egueb_Dom_String *EGUEB_SVG_STROKE_LINECAP;
 Egueb_Dom_String *EGUEB_SVG_STROKE_LINEJOIN;
 Egueb_Dom_String *EGUEB_SVG_STROKE_OPACITY;

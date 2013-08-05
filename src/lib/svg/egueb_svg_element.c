@@ -585,6 +585,7 @@ static void _egueb_svg_element_presentation_attributes_process(
 	egueb_dom_attr_inheritable_process(thiz->overflow, rel->overflow);
 	egueb_dom_attr_inheritable_process(thiz->stop_opacity, rel->stop_opacity);
 	egueb_dom_attr_inheritable_process(thiz->stroke, rel->stroke);
+	egueb_dom_attr_inheritable_process(thiz->stroke_dasharray, rel->stroke_dasharray);
 	egueb_dom_attr_inheritable_process(thiz->stroke_line_cap, rel->stroke_line_cap);
 	egueb_dom_attr_inheritable_process(thiz->stroke_line_join, rel->stroke_line_join);
 	egueb_dom_attr_inheritable_process(thiz->stroke_width, rel->stroke_width);
@@ -699,6 +700,7 @@ EGUEB_DOM_ATTR_FETCH_DEFINE(egueb_svg_element, Egueb_Svg_Element, overflow);
 EGUEB_DOM_ATTR_FETCH_DEFINE(egueb_svg_element, Egueb_Svg_Element, stop_color);
 EGUEB_DOM_ATTR_FETCH_DEFINE(egueb_svg_element, Egueb_Svg_Element, stop_opacity);
 EGUEB_DOM_ATTR_FETCH_DEFINE(egueb_svg_element, Egueb_Svg_Element, stroke);
+EGUEB_DOM_ATTR_FETCH_DEFINE(egueb_svg_element, Egueb_Svg_Element, stroke_dasharray);
 EGUEB_DOM_ATTR_FETCH_DEFINE(egueb_svg_element, Egueb_Svg_Element, stroke_line_join);
 EGUEB_DOM_ATTR_FETCH_DEFINE(egueb_svg_element, Egueb_Svg_Element, stroke_line_cap);
 EGUEB_DOM_ATTR_FETCH_DEFINE(egueb_svg_element, Egueb_Svg_Element, stroke_width);
@@ -776,6 +778,9 @@ static void _egueb_svg_element_instance_init(void *o)
 			egueb_dom_string_ref(EGUEB_SVG_STROKE),
 			&EGUEB_SVG_PAINT_NONE,
 			EINA_TRUE, EINA_TRUE, EINA_TRUE);
+	thiz->stroke_dasharray = egueb_svg_attr_stroke_dasharray_new(
+			egueb_dom_string_ref(EGUEB_SVG_STROKE_DASHARRAY),
+			NULL, EINA_TRUE, EINA_TRUE, EINA_TRUE);
 	thiz->stroke_line_cap = egueb_svg_attr_stroke_line_cap_new(
 			egueb_dom_string_ref(EGUEB_SVG_STROKE_LINECAP),
 			EGUEB_SVG_STROKE_LINE_CAP_BUTT,
@@ -815,10 +820,11 @@ static void _egueb_svg_element_instance_init(void *o)
 	EGUEB_DOM_ELEMENT_CLASS_PROPERTY_ADD(thiz, egueb_svg_element, stop_opacity);
 	EGUEB_DOM_ELEMENT_CLASS_PROPERTY_ADD(thiz, egueb_svg_element, stop_color);
 	EGUEB_DOM_ELEMENT_CLASS_PROPERTY_ADD(thiz, egueb_svg_element, stroke);
+	EGUEB_DOM_ELEMENT_CLASS_PROPERTY_ADD(thiz, egueb_svg_element, stroke_dasharray);
 	EGUEB_DOM_ELEMENT_CLASS_PROPERTY_ADD(thiz, egueb_svg_element, stroke_line_join);
 	EGUEB_DOM_ELEMENT_CLASS_PROPERTY_ADD(thiz, egueb_svg_element, stroke_line_cap);
-	EGUEB_DOM_ELEMENT_CLASS_PROPERTY_ADD(thiz, egueb_svg_element, stroke_width);
 	EGUEB_DOM_ELEMENT_CLASS_PROPERTY_ADD(thiz, egueb_svg_element, stroke_opacity);
+	EGUEB_DOM_ELEMENT_CLASS_PROPERTY_ADD(thiz, egueb_svg_element, stroke_width);
 	EGUEB_DOM_ELEMENT_CLASS_PROPERTY_ADD(thiz, egueb_svg_element, text_anchor);
 	EGUEB_DOM_ELEMENT_CLASS_PROPERTY_ADD(thiz, egueb_svg_element, visibility);
 	/* our private stuff */
@@ -845,10 +851,11 @@ static void _egueb_svg_element_instance_deinit(void *o)
 	egueb_dom_node_unref(thiz->stop_color);
 	egueb_dom_node_unref(thiz->stop_opacity);
 	egueb_dom_node_unref(thiz->stroke);
-	egueb_dom_node_unref(thiz->stroke_width);
-	egueb_dom_node_unref(thiz->stroke_opacity);
+	egueb_dom_node_unref(thiz->stroke_dasharray);
 	egueb_dom_node_unref(thiz->stroke_line_cap);
 	egueb_dom_node_unref(thiz->stroke_line_join);
+	egueb_dom_node_unref(thiz->stroke_opacity);
+	egueb_dom_node_unref(thiz->stroke_width);
 	egueb_dom_node_unref(thiz->text_anchor);
 	egueb_dom_node_unref(thiz->visibility);
 	/* remove the weak references */

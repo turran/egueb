@@ -97,9 +97,6 @@ static Enesim_Renderer * _egueb_svg_element_polygon_renderer_get(
 static void _egueb_svg_element_polygon_bounds_get(Egueb_Svg_Renderable *r,
 		Enesim_Rectangle *bounds)
 {
-	Egueb_Svg_Element_Polygon *thiz;
-
-	thiz = EGUEB_SVG_ELEMENT_POLYGON(r);
 }
 /*----------------------------------------------------------------------------*
  *                              Element interface                             *

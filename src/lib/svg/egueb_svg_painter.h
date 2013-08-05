@@ -27,6 +27,8 @@ EAPI void egueb_svg_painter_color_get(const Egueb_Svg_Painter *thiz,
 		Enesim_Color *color);
 EAPI void egueb_svg_painter_draw_mode_get(const Egueb_Svg_Painter *thiz,
 		Enesim_Renderer_Shape_Draw_Mode *draw_mode);
+EAPI void egueb_svg_painter_stroke_dasharray_get(const Egueb_Svg_Painter *thiz,
+		Eina_List **l);
 EAPI void egueb_svg_painter_stroke_cap_get(const Egueb_Svg_Painter *thiz,
 		Enesim_Renderer_Shape_Stroke_Cap *stroke_cap);
 EAPI void egueb_svg_painter_stroke_join_get(const Egueb_Svg_Painter *thiz,

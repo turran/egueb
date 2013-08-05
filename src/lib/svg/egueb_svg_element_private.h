@@ -48,6 +48,7 @@
 #include "egueb_svg_attr_paint.h"
 #include "egueb_svg_attr_text_anchor.h"
 #include "egueb_svg_attr_visibility.h"
+#include "egueb_svg_attr_stroke_dasharray.h"
 #include "egueb_svg_attr_stroke_line_cap.h"
 #include "egueb_svg_attr_stroke_line_join.h"
 
@@ -105,6 +106,7 @@ typedef struct _Egueb_Svg_Element
 	Egueb_Dom_Node *stroke;
 	Egueb_Dom_Node *stroke_width;
 	Egueb_Dom_Node *stroke_opacity;
+	Egueb_Dom_Node *stroke_dasharray;
 	Egueb_Dom_Node *stroke_line_join;
 	Egueb_Dom_Node *stroke_line_cap;
 	Egueb_Dom_Node *text_anchor;

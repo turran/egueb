@@ -456,7 +456,7 @@ EAPI void egueb_dom_attr_inheritable_process(Egueb_Dom_Node *n,
 		DBG("Base set, using it");
 		return;
 	}
-	/* in case nnne of the property types is set, inherit from the relative
+	/* in case one of the property types is set, inherit from the relative
 	 * one
 	 */
 	other = EGUEB_DOM_ATTR(rel);

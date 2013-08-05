@@ -96,6 +96,12 @@ EAPI void egueb_svg_painter_draw_mode_get(const Egueb_Svg_Painter *thiz,
 	*draw_mode = thiz->draw_mode;
 }
 
+EAPI void egueb_svg_painter_stroke_dasharray_get(const Egueb_Svg_Painter *thiz,
+		Eina_List **l)
+{
+	*l = thiz->stroke_dasharray;
+}
+
 EAPI void egueb_svg_painter_stroke_cap_get(const Egueb_Svg_Painter *thiz,
 		Enesim_Renderer_Shape_Stroke_Cap *stroke_cap)
 {
