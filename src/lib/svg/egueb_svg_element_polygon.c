@@ -72,7 +72,7 @@ static Eina_Bool _egueb_svg_element_polygon_generate_geometry(Egueb_Svg_Shape *s
 	{
 		enesim_renderer_figure_polygon_add(thiz->r);
 		egueb_dom_list_foreach(points, _egueb_svg_element_polygon_points_cb, thiz);
-		enesim_renderer_figure_polygon_close(thiz->r, EINA_TRUE);
+		enesim_renderer_figure_polygon_close(thiz->r);
 		egueb_dom_list_unref(points);
 	}
 
