@@ -931,7 +931,7 @@ static Ender_Element * _egueb_svg_element_svg_element_at(void *data, int x, int 
 
 	thiz = _egueb_svg_element_svg_get(t);
 	eina_rectangle_coords_from(&in, x, y, 1, 1);
-	enesim_renderer_destination_bounds(thiz->clipper, &bounds, 0, 0);
+	enesim_renderer_destination_bounds_get(thiz->clipper, &bounds, 0, 0);
 	//printf("%s: %d %d - %d %d %d %d\n", egueb_dom_tag_name_get(t), x, y, bounds.x, bounds.y, bounds.w, bounds.h);
 	if (!eina_rectangles_intersect(&bounds, &in))
 		return NULL;

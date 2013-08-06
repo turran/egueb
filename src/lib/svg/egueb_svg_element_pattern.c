@@ -127,7 +127,7 @@ static Eina_Bool _pattern_setup(Enesim_Renderer *r,
 		w = egueb_svg_coord_final_get(&thiz->width, 1);
 		h = egueb_svg_coord_final_get(&thiz->height, 1);
 
-		enesim_renderer_destination_bounds(rel, &bbox, 0, 0);
+		enesim_renderer_destination_bounds_get(rel, &bbox, 0, 0);
 		enesim_matrix_values_set(&m, bbox.w, 0, bbox.x, 0, bbox.h, bbox.y, 0, 0, 1);
 	}
 	else
