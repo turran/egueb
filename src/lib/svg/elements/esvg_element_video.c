@@ -286,7 +286,6 @@ static Egueb_Dom_Tag * _egueb_svg_element_video_new(void)
 	if (!thiz) return NULL;
 
 	r = enesim_renderer_image_new();
-	enesim_renderer_rop_set(r, ENESIM_BLEND);
 	thiz->image = r;
 
 	/* Default values */

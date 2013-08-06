@@ -44,8 +44,13 @@ static Eina_Bool _egueb_svg_renderable_container_children_process_cb(
 		if (egueb_svg_is_renderable(child))
 		{
 			Enesim_Renderer *r;
+			Enesim_Renderer_Compound_Layer *l;
+
 			r = egueb_svg_renderable_renderer_get(child);
-			enesim_renderer_compound_layer_add(thiz->compound, r);
+			l = enesim_renderer_compound_layer_new();
+			enesim_renderer_compound_layer_renderer_set(l, r);
+			enesim_renderer_compound_layer_rop_set(l, ENESIM_BLEND);
+			enesim_renderer_compound_layer_add(thiz->compound, l);
 		}
 	}
 	if (!egueb_dom_element_process(child))
@@ -110,7 +115,6 @@ static void _egueb_svg_renderable_container_instance_init(void *o)
 
 	/* the rendering system */
 	r = enesim_renderer_compound_new();
-	enesim_renderer_rop_set(r, ENESIM_BLEND);
 	enesim_renderer_compound_background_enable_set(r, EINA_TRUE);
 	enesim_renderer_compound_background_color_set(r, 0x00000000);
 	thiz->compound = r;

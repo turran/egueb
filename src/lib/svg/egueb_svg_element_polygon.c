@@ -146,7 +146,6 @@ static void _egueb_svg_element_polygon_instance_init(void *o)
 	thiz->r = r;
 
 	/* Default values */
-	enesim_renderer_rop_set(thiz->r, ENESIM_BLEND);
 
 	/* create the properties */
 	thiz->points = egueb_svg_attr_point_list_new(

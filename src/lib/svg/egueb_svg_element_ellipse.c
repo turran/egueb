@@ -159,7 +159,6 @@ static void _egueb_svg_element_ellipse_instance_init(void *o)
 	thiz->r = r;
 
 	/* Default values */
-	enesim_renderer_rop_set(thiz->r, ENESIM_BLEND);
 
 	/* create the properties */
 	thiz->cx = egueb_svg_attr_length_new(

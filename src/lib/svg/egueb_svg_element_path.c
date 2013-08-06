@@ -428,7 +428,6 @@ static void _egueb_svg_element_path_instance_init(void *o)
 	thiz->r = r;
 
 	/* Default values */
-	enesim_renderer_rop_set(thiz->r, ENESIM_BLEND);
 
 	/* create the properties */
 	thiz->d = egueb_svg_attr_path_seg_list_new(

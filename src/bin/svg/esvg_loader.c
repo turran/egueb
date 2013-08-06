@@ -127,15 +127,12 @@ int main(int argc, char *argv[])
 	r = esvg_renderable_renderer_get(tag);
 
 	compound = enesim_renderer_compound_new();
-	enesim_renderer_rop_set(compound, ENESIM_FILL);
 
 	background = enesim_renderer_background_new();
 	/* FIXME make this configurable */
 	enesim_renderer_background_color_set(background, 0xffffffff);
-	enesim_renderer_rop_set(background, ENESIM_FILL);
 	enesim_renderer_compound_layer_add(compound, background);
 
-	enesim_renderer_rop_set(r, ENESIM_BLEND);
 	enesim_renderer_compound_layer_add(compound, r);
 
 	s = enesim_surface_new(ENESIM_FORMAT_ARGB8888, width, height);

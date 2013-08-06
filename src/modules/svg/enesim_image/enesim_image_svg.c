@@ -198,7 +198,7 @@ static Eina_Error _enesim_image_svg_load(Enesim_Stream *data,
 		goto err_surface;
 	}
 	egueb_dom_document_process(doc);
-	if (!egueb_svg_element_svg_draw(topmost, s, NULL, 0, 0, NULL))
+	if (!egueb_svg_element_svg_draw(topmost, s, ENESIM_FILL, NULL, 0, 0, NULL))
 	{
 		ret = ENESIM_IMAGE_ERROR_LOADING;
 		enesim_log_dump(err);

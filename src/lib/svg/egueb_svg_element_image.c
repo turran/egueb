@@ -413,7 +413,6 @@ static void _egueb_svg_element_image_instance_init(void *o)
 	thiz = EGUEB_SVG_ELEMENT_IMAGE(o);
 
 	r = enesim_renderer_image_new();
-	enesim_renderer_rop_set(r, ENESIM_BLEND);
 	thiz->image = r;
 
 	r = enesim_renderer_checker_new();
@@ -425,14 +424,12 @@ static void _egueb_svg_element_image_instance_init(void *o)
 
 	r = enesim_renderer_rectangle_new();
 	enesim_renderer_shape_fill_renderer_set(r, thiz->checker);
-	enesim_renderer_rop_set(r, ENESIM_BLEND);
 	thiz->rectangle = r;
 
 	r = enesim_renderer_proxy_new();
 	thiz->r = r;
 
 	/* Default values */
-	enesim_renderer_rop_set(thiz->r, ENESIM_BLEND);
 
 	/* create the properties */
 	thiz->x = egueb_svg_attr_length_new(

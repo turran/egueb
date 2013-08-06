@@ -285,7 +285,6 @@ static void _egueb_svg_element_tspan_instance_init(void *o)
 	thiz->r = r;
 
 	/* Default values */
-	enesim_renderer_rop_set(thiz->r, ENESIM_BLEND);
 
 	/* create the properties */
 	thiz->x = egueb_svg_attr_length_new(

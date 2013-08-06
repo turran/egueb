@@ -419,7 +419,6 @@ static void _egueb_svg_element_svg_instance_init(void *o)
 	enesim_renderer_shape_draw_mode_set(r, ENESIM_RENDERER_SHAPE_DRAW_MODE_FILL);
 	enesim_renderer_rectangle_x_set(r, 0);
 	enesim_renderer_rectangle_y_set(r, 0);
-	enesim_renderer_rop_set(r, ENESIM_BLEND);
 	thiz->rectangle = r;
 
 
@@ -2078,8 +2077,9 @@ EAPI void egueb_svg_element_svg_y_dpi_get(Ender_Element *e, double *y_dpi)
  * To be documented
  * FIXME: To be fixed
  */
-EAPI Eina_Bool egueb_svg_element_svg_draw(Egueb_Dom_Node *n, Enesim_Surface *s,
-		Eina_Rectangle *clip, int x, int y, Enesim_Log **error)
+EAPI Eina_Bool egueb_svg_element_svg_draw(Egueb_Dom_Node *n,
+		Enesim_Surface *s, Enesim_Rop rop, Eina_Rectangle *clip,
+		int x, int y, Enesim_Log **error)
 {
 	Enesim_Renderer *r;
 	Eina_Bool ret;
@@ -2088,7 +2088,7 @@ EAPI Eina_Bool egueb_svg_element_svg_draw(Egueb_Dom_Node *n, Enesim_Surface *s,
 	r = egueb_svg_renderable_renderer_get(n);
 	if (!r) return EINA_FALSE;
 
-	ret = enesim_renderer_draw(r, s, clip, x, y, error);
+	ret = enesim_renderer_draw(r, s, rop, clip, x, y, error);
 	enesim_renderer_unref(r);
 	return ret;
 }
@@ -2097,8 +2097,9 @@ EAPI Eina_Bool egueb_svg_element_svg_draw(Egueb_Dom_Node *n, Enesim_Surface *s,
  * To be documented
  * FIXME: To be fixed
  */
-EAPI Eina_Bool egueb_svg_element_svg_draw_list(Egueb_Dom_Node *n, Enesim_Surface *s,
-		Eina_List *clips, int x, int y, Enesim_Log **error)
+EAPI Eina_Bool egueb_svg_element_svg_draw_list(Egueb_Dom_Node *n,
+		Enesim_Surface *s, Enesim_Rop rop, Eina_List *clips,
+		int x, int y, Enesim_Log **error)
 {
 	Enesim_Renderer *r;
 	Eina_Bool ret;
@@ -2109,26 +2110,7 @@ EAPI Eina_Bool egueb_svg_element_svg_draw_list(Egueb_Dom_Node *n, Enesim_Surface
 	r = egueb_svg_renderable_renderer_get(n);
 	if (!r) return EINA_FALSE;
 
-	ret = enesim_renderer_draw_list(r, s, clips, x, y, error);
-	enesim_renderer_unref(r);
-	return ret;
-}
-
-/**
- * To be documented
- * FIXME: To be fixed
- */
-EAPI Eina_Bool egueb_svg_element_svg_fill_list(Egueb_Dom_Node *n, Enesim_Surface *s,
-		Eina_List *clips, int x, int y, Enesim_Log **error)
-{
-	Enesim_Renderer *r;
-	Eina_Bool ret;
-
-	r = egueb_svg_renderable_renderer_get(n);
-	if (!r) return EINA_FALSE;
-
-	enesim_renderer_rop_set(r, ENESIM_FILL);
-	ret = enesim_renderer_draw_list(r, s, clips, x, y, error);
+	ret = enesim_renderer_draw_list(r, s, rop, clips, x, y, error);
 	enesim_renderer_unref(r);
 	return ret;
 }

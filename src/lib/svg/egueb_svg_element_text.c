@@ -103,7 +103,14 @@ static Eina_Bool _egueb_svg_element_text_children_process_cb(Egueb_Dom_Node *chi
 
 		_egueb_svg_element_text_children_generate_geometry(thiz, r);
 		if (thiz->renderable_tree_changed)
-			enesim_renderer_compound_layer_add(thiz->r, enesim_renderer_ref(r));
+		{
+			Enesim_Renderer_Compound_Layer *layer;
+
+			layer = enesim_renderer_compound_layer_new();
+			enesim_renderer_compound_layer_renderer_set(layer, enesim_renderer_ref(r));
+			enesim_renderer_compound_layer_rop_set(layer, ENESIM_BLEND);
+			enesim_renderer_compound_layer_add(thiz->r, layer);
+		}
 	}
 	else if (type == EGUEB_DOM_NODE_TYPE_ELEMENT_NODE)
 	{
@@ -111,10 +118,14 @@ static Eina_Bool _egueb_svg_element_text_children_process_cb(Egueb_Dom_Node *chi
  		if (egueb_svg_is_element_tspan(child) && thiz->renderable_tree_changed)
 		{
 			Enesim_Renderer *r;
+			Enesim_Renderer_Compound_Layer *layer;
 
 			/* get the tspan renderer in case it is a tspan */
 			r = egueb_svg_renderable_renderer_get(child);
-			enesim_renderer_compound_layer_add(thiz->r, r);
+			layer = enesim_renderer_compound_layer_new();
+			enesim_renderer_compound_layer_renderer_set(layer, r);
+			enesim_renderer_compound_layer_rop_set(layer, ENESIM_BLEND);
+			enesim_renderer_compound_layer_add(thiz->r, layer);
 		}
 	}
 	else
@@ -181,7 +192,6 @@ static void _egueb_svg_element_text_node_inserted_cb(Egueb_Dom_Event *e,
 		thiz = EGUEB_SVG_ELEMENT_TEXT(n);
 		/* create a renderer for this text node */
 		r = enesim_renderer_text_span_new();
-		enesim_renderer_rop_set(r, ENESIM_BLEND);
 		enesim_renderer_text_span_font_set(r, enesim_text_font_ref(thiz->font));
 		enesim_renderer_color_set(r, 0xff000000);
 
@@ -396,7 +406,6 @@ static void _egueb_svg_element_text_instance_init(void *o)
 
 	/* Default values */
 	thiz->r = enesim_renderer_compound_new();
-	enesim_renderer_rop_set(thiz->r, ENESIM_BLEND);
 
 	e = enesim_text_engine_default_get();
 	thiz->font = enesim_text_font_new_description_from(e, "Sans:style=Regular", 16);

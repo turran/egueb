@@ -21,11 +21,11 @@
 
 EAPI Egueb_Dom_Node * egueb_svg_element_svg_new(void);
 EAPI Eina_Bool egueb_svg_element_svg_draw(Egueb_Dom_Node *n, Enesim_Surface *s,
-		Eina_Rectangle *clip, int x, int y, Enesim_Log **error);
-EAPI Eina_Bool egueb_svg_element_svg_draw_list(Egueb_Dom_Node *n, Enesim_Surface *s,
-		Eina_List *clips, int x, int y, Enesim_Log **error);
-EAPI Eina_Bool egueb_svg_element_svg_fill_list(Egueb_Dom_Node *n, Enesim_Surface *s,
-		Eina_List *clips, int x, int y, Enesim_Log **error);
+		Enesim_Rop rop, Eina_Rectangle *clip, int x, int y,
+		Enesim_Log **error);
+EAPI Eina_Bool egueb_svg_element_svg_draw_list(Egueb_Dom_Node *n,
+		Enesim_Surface *s, Enesim_Rop rop, Eina_List *clips, int x,
+		int y, Enesim_Log **error);
 
 EAPI void egueb_svg_element_svg_animations_pause(Egueb_Dom_Node *n);
 EAPI void egueb_svg_element_svg_animations_unpause(Egueb_Dom_Node *n);
