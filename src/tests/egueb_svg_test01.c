@@ -57,7 +57,7 @@ int main(int argc, char **argv)
 		{
 			Enesim_Buffer *b;
 			/* finally draw */
-			if (!egueb_svg_element_svg_draw(topmost, s, ENESIM_FILL,
+			if (!egueb_svg_element_svg_draw(topmost, s, ENESIM_ROP_FILL,
 				NULL, 0, 0, &log))
 			{
 				enesim_log_dump(log);
