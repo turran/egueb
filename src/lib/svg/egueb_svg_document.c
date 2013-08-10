@@ -605,12 +605,11 @@ static Eina_Bool _egueb_svg_document_damage_cb(Enesim_Renderer *r,
 		void *data)
 {
 	Eina_Tiler *tiler = data;
-	const char *name;
 
 	eina_tiler_rect_add(tiler, area);
-	enesim_renderer_name_get(r, &name);
-	DBG("Renderer %s has changed at area %d %d %d %d", name, area->x,
-			area->y, area->w, area->h);
+	DBG("Renderer %s has changed at area %d %d %d %d",
+			enesim_renderer_name_get(r),
+			area->x, area->y, area->w, area->h);
 	return EINA_TRUE;
 }
 

@@ -108,7 +108,7 @@ static Eina_Bool _egueb_svg_element_text_children_process_cb(Egueb_Dom_Node *chi
 
 			layer = enesim_renderer_compound_layer_new();
 			enesim_renderer_compound_layer_renderer_set(layer, enesim_renderer_ref(r));
-			enesim_renderer_compound_layer_rop_set(layer, ENESIM_BLEND);
+			enesim_renderer_compound_layer_rop_set(layer, ENESIM_ROP_BLEND);
 			enesim_renderer_compound_layer_add(thiz->r, layer);
 		}
 	}
@@ -124,7 +124,7 @@ static Eina_Bool _egueb_svg_element_text_children_process_cb(Egueb_Dom_Node *chi
 			r = egueb_svg_renderable_renderer_get(child);
 			layer = enesim_renderer_compound_layer_new();
 			enesim_renderer_compound_layer_renderer_set(layer, r);
-			enesim_renderer_compound_layer_rop_set(layer, ENESIM_BLEND);
+			enesim_renderer_compound_layer_rop_set(layer, ENESIM_ROP_BLEND);
 			enesim_renderer_compound_layer_add(thiz->r, layer);
 		}
 	}

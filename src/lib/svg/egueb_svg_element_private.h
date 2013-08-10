@@ -48,6 +48,7 @@
 #include "egueb_svg_attr_paint.h"
 #include "egueb_svg_attr_text_anchor.h"
 #include "egueb_svg_attr_visibility.h"
+#include "egueb_svg_attr_string.h"
 #include "egueb_svg_attr_stroke_dasharray.h"
 #include "egueb_svg_attr_stroke_line_cap.h"
 #include "egueb_svg_attr_stroke_line_join.h"
