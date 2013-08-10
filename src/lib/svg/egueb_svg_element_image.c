@@ -149,7 +149,7 @@ static void _egueb_svg_element_image_loaded(Enesim_Surface *s,
 
 	thiz = EGUEB_SVG_ELEMENT_IMAGE(n);
 	INFO("Image loaded");
-	enesim_renderer_image_src_set(thiz->image, s);
+	enesim_renderer_image_source_surface_set(thiz->image, s);
 	enesim_renderer_proxy_proxied_set(thiz->r, thiz->image);
 	egueb_dom_node_unref(n);
 }
