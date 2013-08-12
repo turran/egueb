@@ -20,6 +20,7 @@
 #include "egueb_svg_main.h"
 #include "egueb_svg_element_stop.h"
 #include "egueb_svg_element_private.h"
+#include "egueb_svg_element_stop_private.h"
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/

@@ -78,6 +78,7 @@ EAPI void egueb_dom_parser_parse(Enesim_Stream *data, Egueb_Dom_Node *doc)
 	if (!data) return;
 
 	thiz = egueb_dom_parser_eina_new();
+
 	if (!thiz->descriptor) return;
 	if (!thiz->descriptor->parse) return;
 

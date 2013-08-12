@@ -1913,12 +1913,12 @@ EAPI double egueb_svg_element_svg_time_get(Egueb_Dom_Node *n)
  */
 EAPI void egueb_svg_element_svg_time_set(Egueb_Dom_Node *n, double secs)
 {
-#if 0
 	Egueb_Svg_Element_Svg *thiz;
+	Etch_Time t;
 
 	thiz = EGUEB_SVG_ELEMENT_SVG(n);
-	etch_timer_goto(Etch *n, unsigned long frame);
-#endif
+	t = secs * EGUEB_SMIL_CLOCK_SECONDS;
+	etch_timer_set(thiz->etch, t);
 }
 
 #if 0

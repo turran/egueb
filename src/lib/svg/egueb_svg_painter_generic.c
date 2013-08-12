@@ -377,8 +377,7 @@ static void _egueb_svg_painter_generic_instance_deinit(void *o)
 {
 	Egueb_Svg_Painter_Generic *thiz;
 
-	/* first the common cleanup */
-	_egueb_svg_painter_generic_cleanup(EGUEB_SVG_PAINTER(o));
+	/* the painter abstract will destroy the renderers */
 	/* now remove the references */
 	thiz = EGUEB_SVG_PAINTER_GENERIC(o);
 	if (thiz->stroke)

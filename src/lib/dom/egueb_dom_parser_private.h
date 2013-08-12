@@ -36,4 +36,7 @@ void * egueb_dom_parser_data_get(Egueb_Dom_Parser *thiz);
 Egueb_Dom_Node * egueb_dom_parser_document_get(Egueb_Dom_Parser *thiz);
 void egueb_dom_parser_document_set(Egueb_Dom_Parser *thiz, Egueb_Dom_Node *doc);
 
+/* FIXME for now, we might want to support multiple parsers */
+EAPI Egueb_Dom_Parser * egueb_dom_parser_eina_new(void);
+
 #endif

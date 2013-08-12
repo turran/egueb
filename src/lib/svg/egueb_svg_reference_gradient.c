@@ -22,6 +22,7 @@
 #include "egueb_svg_gradient.h"
 #include "egueb_svg_element_stop.h"
 #include "egueb_svg_reference_gradient_private.h"
+#include "egueb_svg_element_stop_private.h"
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/

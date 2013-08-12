@@ -126,6 +126,7 @@ src/lib/svg/egueb_svg_element_radial_gradient.c \
 src/lib/svg/egueb_svg_element_rect.c \
 src/lib/svg/egueb_svg_element_use.c \
 src/lib/svg/egueb_svg_element_stop.c \
+src/lib/svg/egueb_svg_element_stop_private.h \
 src/lib/svg/egueb_svg_element_svg.c \
 src/lib/svg/egueb_svg_element_svg_private.h \
 src/lib/svg/egueb_svg_element_text.c \
