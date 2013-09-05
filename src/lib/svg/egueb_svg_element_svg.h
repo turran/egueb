@@ -31,6 +31,7 @@ EAPI void egueb_svg_element_svg_animations_pause(Egueb_Dom_Node *n);
 EAPI void egueb_svg_element_svg_animations_unpause(Egueb_Dom_Node *n);
 EAPI Eina_Bool egueb_svg_element_svg_animations_paused(Egueb_Dom_Node *n);
 EAPI void egueb_svg_element_svg_animations_fps_set(Egueb_Dom_Node *n, int fps);
+EAPI int egueb_svg_element_svg_animations_fps_get(Egueb_Dom_Node *n);
 EAPI double egueb_svg_element_svg_time_get(Egueb_Dom_Node *n);
 EAPI void egueb_svg_element_svg_time_set(Egueb_Dom_Node *n, double secs);
 EAPI void egueb_svg_element_svg_time_tick(Egueb_Dom_Node *n);

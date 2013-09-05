@@ -1882,6 +1882,18 @@ EAPI void egueb_svg_element_svg_animations_fps_set(Egueb_Dom_Node *n, int fps)
  * To be documented
  * FIXME: To be fixed
  */
+EAPI int egueb_svg_element_svg_animations_fps_get(Egueb_Dom_Node *n)
+{
+	Egueb_Svg_Element_Svg *thiz;
+
+	thiz = EGUEB_SVG_ELEMENT_SVG(n);
+	return etch_timer_fps_get(thiz->etch);
+}
+
+/**
+ * To be documented
+ * FIXME: To be fixed
+ */
 EAPI void egueb_svg_element_svg_time_tick(Egueb_Dom_Node *n)
 {
 	Egueb_Svg_Element_Svg *thiz;
