@@ -259,7 +259,7 @@ EAPI char * egueb_svg_length_string_to(Egueb_Svg_Length *thiz)
 	if (!thiz) return NULL;
 	units = _egueb_svg_length_units_string_to(thiz);
 	if (!units) return NULL;
-	return eina_extra_str_dup_printf("%g%s", thiz->value, units);
+	return eina_str_dup_printf("%g%s", thiz->value, units);
 }
 
 EAPI Eina_Bool egueb_svg_length_is_equal(Egueb_Svg_Length *length1, Egueb_Svg_Length *length2)

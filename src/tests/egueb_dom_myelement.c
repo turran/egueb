@@ -87,7 +87,7 @@ static char * _myelement_to_string(Egueb_Dom_Node *n)
 
 	thiz = MYELEMENT(n);
 	egueb_dom_element_tag_name_get(n, &name);
-	str = eina_extra_str_dup_printf("<%s", egueb_dom_string_string_get(name));
+	str = eina_str_dup_printf("<%s", egueb_dom_string_string_get(name));
 	/* dump every proeprty */
 	egueb_dom_node_attributes_get(n, &attrs);
 	if (attrs)
@@ -112,7 +112,7 @@ static char * _myelement_to_string(Egueb_Dom_Node *n)
 			egueb_dom_attr_string_get(attr, EGUEB_DOM_ATTR_TYPE_BASE, &attr_value);
 			if (!attr_value) goto no_value;
 
-			ret = eina_extra_str_dup_printf("%s %s=\"%s\"", str,
+			ret = eina_str_dup_printf("%s %s=\"%s\"", str,
 					egueb_dom_string_string_get(attr_name),
 					egueb_dom_string_string_get(attr_value));
 			free(str);
@@ -128,7 +128,7 @@ no_name:
 	}
 	/* nor some meta information */
 	egueb_dom_node_document_get(n, &doc);
-	ret = eina_extra_str_dup_printf("%s> (ref: %d, doc: %p)", str,
+	ret = eina_str_dup_printf("%s> (ref: %d, doc: %p)", str,
 			egueb_dom_node_ref_get(n), doc);
 	free(str);
 	egueb_dom_string_unref(name);

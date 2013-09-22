@@ -192,35 +192,35 @@ EAPI char * egueb_svg_path_seg_string_to(Egueb_Svg_Path_Seg *thiz)
 		cmd = 'M';
 		if (thiz->relative)
 			cmd = 'm';
-		ret = eina_extra_str_dup_printf("%c %g %g", cmd, thiz->data.move_to.x, thiz->data.move_to.y);
+		ret = eina_str_dup_printf("%c %g %g", cmd, thiz->data.move_to.x, thiz->data.move_to.y);
 		break;
 
 		case ESVG_PATH_LINE_TO:
 		cmd = 'L';
 		if (thiz->relative)
 			cmd = 'l';
-		ret = eina_extra_str_dup_printf("%c %g %g", cmd, thiz->data.line_to.x, thiz->data.line_to.y);
+		ret = eina_str_dup_printf("%c %g %g", cmd, thiz->data.line_to.x, thiz->data.line_to.y);
 		break;
 
 		case ESVG_PATH_HLINE_TO:
 		cmd = 'H';
 		if (thiz->relative)
 			cmd = 'h';
-		ret = eina_extra_str_dup_printf("%c %g", cmd, thiz->data.hline_to.c);
+		ret = eina_str_dup_printf("%c %g", cmd, thiz->data.hline_to.c);
 		break;
 
 		case ESVG_PATH_VLINE_TO:
 		cmd = 'V';
 		if (thiz->relative)
 			cmd = 'v';
-		ret = eina_extra_str_dup_printf("%c %g", cmd, thiz->data.vline_to.c);
+		ret = eina_str_dup_printf("%c %g", cmd, thiz->data.vline_to.c);
 		break;
 
 		case ESVG_PATH_CUBIC_TO:
 		cmd = 'C';
 		if (thiz->relative)
 			cmd = 'c';
-		ret = eina_extra_str_dup_printf("%c %g %g %g %g %g %g", cmd,
+		ret = eina_str_dup_printf("%c %g %g %g %g %g %g", cmd,
 				thiz->data.cubic_to.ctrl_x0,
 				thiz->data.cubic_to.ctrl_y0,
 				thiz->data.cubic_to.ctrl_x1,
@@ -233,7 +233,7 @@ EAPI char * egueb_svg_path_seg_string_to(Egueb_Svg_Path_Seg *thiz)
 		cmd = 'S';
 		if (thiz->relative)
 			cmd = 's';
-		ret = eina_extra_str_dup_printf("%c %g %g %g %g", cmd,
+		ret = eina_str_dup_printf("%c %g %g %g %g", cmd,
 				thiz->data.scubic_to.ctrl_x,
 				thiz->data.scubic_to.ctrl_y,
 				thiz->data.scubic_to.x,
