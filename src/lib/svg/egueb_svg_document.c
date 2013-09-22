@@ -699,9 +699,9 @@ static Egueb_Dom_Node * _egueb_svg_document_input_element_at_recursive(
 
 			egueb_dom_node_name_get(n, &name);
 			DBG("Element '%s' found with bounds %"
-					EINA_EXTRA_RECTANGLE_FORMAT,
+					EINA_RECTANGLE_FORMAT,
 					egueb_dom_string_string_get(name),
-					EINA_EXTRA_RECTANGLE_ARGS(&bounds));
+					EINA_RECTANGLE_ARGS(&bounds));
 			egueb_dom_string_unref(name);
 			ret = egueb_dom_node_ref(n);
 		}
