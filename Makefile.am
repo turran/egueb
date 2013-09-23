@@ -121,3 +121,7 @@ endif
 if BUILD_ESVG
 pkgconfig_DATA += egueb-svg.pc
 endif
+
+### Documentation
+
+include doc/Makefile.mk

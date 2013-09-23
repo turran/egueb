@@ -136,6 +136,9 @@ if test "x${want_ecss}" = "xyes" ; then
    fi
 fi
 
+# doxygen program for documentation building
+ENS_CHECK_DOXYGEN([build_doc="yes"], [build_doc="no"])
+
 ### Checks for libraries
 
 if test "x${want_ecss}" = "xyes" ; then
@@ -221,6 +224,7 @@ EFL_COMPILER_FLAG([-Wall])
 
 AC_CONFIG_FILES([
 Makefile
+doc/Doxyfile
 ])
 
 AC_OUTPUT
