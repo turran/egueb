@@ -136,19 +136,17 @@ Eina_Bool egueb_svg_rect_string_from(Egueb_Svg_Rect *thiz, const char *attr_val)
 				break;
 			}
 		}
-		val = eina_extra_strtod(iter, &endptr);
-		if ((errno != ERANGE) &&
-		    !((val == 0) && (attr_val == endptr)))
+		if (!egueb_dom_double_get(iter, &endptr, &val))
+			return EINA_FALSE;
+
+		*vbp = val;
+		vbp++;
+		tmp = endptr;
+		nbr++;
+		/* we store only the 4 first numbers */
+		if (nbr >= 4)
 		{
-			*vbp = val;
-			vbp++;
-			tmp = endptr;
-			nbr++;
-			/* we store only the 4 first numbers */
-			if (nbr >= 4)
-			{
-				return EINA_TRUE;
-			}
+			return EINA_TRUE;
 		}
 	}
 	return EINA_TRUE;

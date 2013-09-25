@@ -559,6 +559,7 @@ static char * _egueb_svg_document_uri_get_absolute(Egueb_Svg_Document *thiz,
 	const char *location = NULL;
 	char *tmp = NULL;
 	char *ret;
+	int len;
 
 	if (!strncmp(uri, "http://", 7) || !strncmp(uri, "/", 1))
 	{
@@ -591,12 +592,13 @@ static char * _egueb_svg_document_uri_get_absolute(Egueb_Svg_Document *thiz,
 	}
 	/* ok, we got the location, not concat it with the uri */
 	INFO("location is '%s' and uri '%s'", location, uri);
-	ret = eina_str_dup_printf("%s/%s", location, uri);
+	len = asprintf(&ret, "%s/%s", location, uri);
 	if (free_location)
 		free((char *)location);
 	if (tmp)
 		free(tmp);
-
+	if (len < 0)
+		return NULL;
 	return ret;
 }
 
@@ -874,6 +876,7 @@ EAPI Eina_Error egueb_svg_document_url_get(Egueb_Dom_Node *n,
 	const char *location = NULL;
 	const char *filename = NULL;
 	char *ret;
+	int len;
 
 	thiz = EGUEB_SVG_DOCUMENT(n);
 	if (!thiz->filename_get)
@@ -897,14 +900,17 @@ EAPI Eina_Error egueb_svg_document_url_get(Egueb_Dom_Node *n,
 	{
 		char *tmp;
 		tmp = getcwd(NULL, 0);
-		ret = eina_str_dup_printf("%s/%s", location, filename);
+		len = asprintf(&ret, "%s/%s", location, filename);
 		free(tmp);
 	}
 	else
 	{
-		ret = eina_str_dup_printf("%s/%s", location, filename);
+		len = asprintf(&ret, "%s/%s", location, filename);
 	}
-	*url = egueb_dom_string_steal(ret);
+	if (len <= 0)
+		*url = NULL;
+	else
+		*url = egueb_dom_string_steal(ret);
 	return EINA_ERROR_NONE;
 }
 

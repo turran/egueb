@@ -1,6 +1,12 @@
 /* A test of the new dom interface, here we will
  * create a new element that inherits from a node
  */
+#ifndef _GNU_SOURCE
+#define _GNU_SOURCE
+#endif
+
+#include <stdio.h>
+
 #include "Egueb_Dom.h"
 #include "Eina_Extra.h"
 #include "egueb_dom_node_private.h"
@@ -78,16 +84,16 @@ static void _myelement_instance_deinit(void *o)
 
 static char * _myelement_to_string(Egueb_Dom_Node *n)
 {
-	MyElement *thiz;
 	Egueb_Dom_Node *doc = NULL;
 	Egueb_Dom_String *name;
 	Egueb_Dom_Node_Map_Named *attrs = NULL;
 	char *str = NULL;
 	char *ret = NULL;
+	int len;
 
-	thiz = MYELEMENT(n);
 	egueb_dom_element_tag_name_get(n, &name);
-	str = eina_str_dup_printf("<%s", egueb_dom_string_string_get(name));
+	if (asprintf(&str, "<%s", egueb_dom_string_string_get(name)) < 0)
+		return NULL;
 	/* dump every proeprty */
 	egueb_dom_node_attributes_get(n, &attrs);
 	if (attrs)
@@ -112,12 +118,14 @@ static char * _myelement_to_string(Egueb_Dom_Node *n)
 			egueb_dom_attr_string_get(attr, EGUEB_DOM_ATTR_TYPE_BASE, &attr_value);
 			if (!attr_value) goto no_value;
 
-			ret = eina_str_dup_printf("%s %s=\"%s\"", str,
+			if (asprintf(&ret, "%s %s=\"%s\"", str,
 					egueb_dom_string_string_get(attr_name),
-					egueb_dom_string_string_get(attr_value));
+					egueb_dom_string_string_get(attr_value)) < 0)
+				goto no_conversion;
+
 			free(str);
 			str = ret;
-
+no_conversion:
 			egueb_dom_string_unref(attr_value);
 no_value:
 			egueb_dom_string_unref(attr_name);
@@ -128,13 +136,15 @@ no_name:
 	}
 	/* nor some meta information */
 	egueb_dom_node_document_get(n, &doc);
-	ret = eina_str_dup_printf("%s> (ref: %d, doc: %p)", str,
+	len = asprintf(&ret, "%s> (ref: %d, doc: %p)", str,
 			egueb_dom_node_ref_get(n), doc);
 	free(str);
 	egueb_dom_string_unref(name);
 	if (doc) egueb_dom_node_unref(doc);
 
-	return ret;
+	if (len)
+		return ret;
+	return NULL;
 }
 
 static void _myelement_dump(Egueb_Dom_Node *thiz, Eina_Bool deep, int level)

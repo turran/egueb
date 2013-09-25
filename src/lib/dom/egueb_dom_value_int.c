@@ -45,8 +45,12 @@ static void _int_data_to(Egueb_Dom_Value *v, Egueb_Dom_Value_Data *data)
 
 static char * _int_string_to(const Egueb_Dom_Value *v)
 {
+	char *ret;
+
 	EINA_SAFETY_ON_FALSE_RETURN_VAL(v->descriptor == &_descriptor, NULL);
-	return eina_str_dup_printf("%d", v->data.i32);
+	if (asprintf(&ret, "%d", v->data.i32) < 0)
+		return NULL;
+	return ret;
 }
 
 static Eina_Bool _int_string_from(Egueb_Dom_Value *v, const char *str)

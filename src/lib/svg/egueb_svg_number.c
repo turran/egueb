@@ -95,20 +95,12 @@ EAPI Eina_Bool egueb_svg_number_string_from(Egueb_Svg_Number *thiz,
 	if (!attr_val || !*attr_val)
 		return EINA_FALSE;
 
-	val = eina_extra_strtod(attr_val, &endptr);
-	if (errno == ERANGE)
-		return EINA_FALSE;
-	if ((val == 0) && (attr_val == endptr))
-		return EINA_FALSE;
-
-	/* else, conversion has been done */
-	if ((endptr == NULL) || (*endptr == '\0'))
+	if (!egueb_dom_double_get (attr_val, &endptr, thiz))
 	{
-		*thiz = val;
-		return EINA_TRUE;
+		ERR("Number %s is invalid", attr_val);
+		return EINA_FALSE;
 	}
 
-	ERR("Number %s is invalid", attr_val);
 	return EINA_FALSE;
 }
 

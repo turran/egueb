@@ -176,11 +176,11 @@ EAPI Eina_Bool egueb_svg_length_string_from(Egueb_Svg_Length *thiz, const char *
 	if (!attr_val || !*attr_val)
 		return EINA_FALSE;
 
-	val = eina_extra_strtod(attr_val, &endptr);
-	if (errno == ERANGE)
+	if (!egueb_dom_double_get(attr_val, &endptr, &val))
+	{
+		ERR("Length %s is invalid", attr_val);
 		return EINA_FALSE;
-	if ((val == 0) && (attr_val == endptr))
-		return EINA_FALSE;
+	}
 
 	/* else, conversion has been done */
 	if ((endptr == NULL) || (*endptr == '\0'))
@@ -255,11 +255,14 @@ EAPI Eina_Bool egueb_svg_length_string_from(Egueb_Svg_Length *thiz, const char *
 EAPI char * egueb_svg_length_string_to(Egueb_Svg_Length *thiz)
 {
 	const char *units;
+	char *ret;
 
 	if (!thiz) return NULL;
 	units = _egueb_svg_length_units_string_to(thiz);
 	if (!units) return NULL;
-	return eina_str_dup_printf("%g%s", thiz->value, units);
+	if (asprintf(&ret, "%g%s", thiz->value, units) < 0)
+		return NULL;
+	return ret;
 }
 
 EAPI Eina_Bool egueb_svg_length_is_equal(Egueb_Svg_Length *length1, Egueb_Svg_Length *length2)

@@ -43,6 +43,113 @@ EAPI Eina_Bool egueb_dom_long_get(const char *iter, const char **tmp, long *l)
 	return EINA_FALSE;
 }
 
+EAPI Eina_Bool egueb_dom_double_get(const char *nptr, char **endptr, double *r)
+{
+	const char *str;
+	unsigned long long mantisse = 0;
+	unsigned long long dec = 1;
+	unsigned long long val = 1;
+	double res;
+	int has_sign = 0;
+	int has_exp_sign = 0;
+	int dotted = 0;
+	int has_exponent = 0;
+
+	str = nptr;
+
+	if (!str || !*str)
+	{
+		if (endptr) *endptr = (char *)str;
+		return EINA_FALSE;
+	}
+
+	if (*str == '-')
+	{
+		has_sign = 1;
+		str++;
+	}
+	else if (*str == '+')
+		str++;
+
+	while (*str)
+	{
+		if ((*str >= '0') && (*str <= '9'))
+		{
+			mantisse *= 10;
+			mantisse += (*str - '0');
+			if (dotted) dec *= 10;
+		}
+		else if (*str == '.')
+		{
+			if (dotted)
+			{
+				if (endptr) *endptr = (char *)str;
+				return EINA_FALSE;
+			}
+			dotted = 1;
+		}
+		else if ((*str == 'e') || (*str == 'E'))
+		{
+			str++;
+			has_exponent = 1;
+			break;
+		}
+		else
+			break;
+
+		str++;
+	}
+
+	if (*str && has_exponent)
+	{
+		int exponent = 0;
+		int i;
+
+		has_exponent = 0;
+		if (*str == '+') str++;
+		else if (*str == '-')
+		{
+			has_exp_sign = 1;
+			str++;
+		}
+		while (*str)
+		{
+			if ((*str >= '0') && (*str <= '9'))
+			{
+				has_exponent = 1;
+				exponent *= 10;
+				exponent += (*str - '0');
+			}
+			else
+				break;
+			str++;
+		}
+
+		if (has_exponent)
+		{
+			for (i = 0; i < exponent; i++)
+				val *= 10;
+		}
+	}
+
+	if (endptr) *endptr = (char *)str;
+
+	if (has_sign)
+		res = -(double)mantisse / (double)dec;
+	else
+		res = (double)mantisse / (double)dec;
+
+	if (val != 1)
+	{
+		if (has_exp_sign)
+			res /= val;
+		else
+			res *= val;
+	}
+	*r = res;
+	return EINA_TRUE;
+}
+
 EAPI Eina_Bool egueb_dom_list_get(const char *attr, char sep, Egueb_Dom_List_Cb cb, void *data)
 {
 	char *found;
@@ -96,11 +203,8 @@ EAPI Eina_Bool egueb_dom_function_get(const char *attr_val, const char **endptr,
 		EGUEB_DOM_SPACE_SKIP(tmp);
 		if (tmp[0] == ')')
 			goto end;
-		val = eina_extra_strtod(tmp, &end);
-		if (errno == ERANGE)
-			val = 0;
-		if (end == tmp)
-			break;
+		if (!egueb_dom_double_get(tmp, &end, &val))
+			return EINA_FALSE;
 		tmp = end;
 		elements[nvalues] = val;
 		nvalues++;
