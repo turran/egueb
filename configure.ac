@@ -17,6 +17,9 @@ AC_CONFIG_MACRO_DIR([m4])
 AC_CONFIG_HEADERS([config.h])
 AC_USE_SYSTEM_EXTENSIONS
 
+## Add parameters for aclocal (keep in sync with Makefile.am)
+AC_SUBST(ACLOCAL_AMFLAGS, "-I m4 -I common/m4")
+
 # compiler
 AC_PROG_CC
 AC_PROG_CXX
