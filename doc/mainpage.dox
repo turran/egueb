@@ -1,0 +1,7 @@
+/**
+ * @mainpage Egueb
+ * Full state W3C standards library
+ * @section standards Standards supported:
+ * - @ref Egueb_Dom_Group
+ * - @ref Egueb_Svg_Group
+ */

@@ -52,6 +52,12 @@
 extern "C" {
 #endif
 
+/**
+ * @defgroup Egueb_Dom_Group DOM
+ * @brief DOM related API
+ * @{
+ */
+
 #include "egueb_dom_build.h"
 #include "egueb_dom_string.h"
 #include "egueb_dom_main.h"
@@ -79,6 +85,10 @@ extern "C" {
 #include "egueb_dom_value_dom_string.h"
 #include "egueb_dom_value_int.h"
 #include "egueb_dom_string_list.h"
+
+/**
+ * @}
+ */
 
 #ifdef __cplusplus
 }

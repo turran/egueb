@@ -53,6 +53,12 @@
 extern "C" {
 #endif
 
+/**
+ * @defgroup Egueb_Svg_Group SVG
+ * @brief SVG related API
+ * @{
+ */
+
 #include "egueb_svg_build.h"
 
 /* basic data types */
@@ -184,6 +190,10 @@ EAPI void egueb_svg_pattern_transform_get(Egueb_Dom_Tag *e, Enesim_Matrix *trans
 EAPI Eina_Bool egueb_svg_pattern_transform_is_set(Egueb_Dom_Tag *e);
 EAPI void egueb_svg_pattern_content_set(Egueb_Dom_Tag *e, Egueb_Dom_Tag *content);
 #endif
+
+/**
+ * @}
+ */
 
 #ifdef __cplusplus
 }
