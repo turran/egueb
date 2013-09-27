@@ -20,7 +20,7 @@
 #endif
 
 #include <Eina.h>
-#include <Ecss.h>
+#include <Egueb_Css.h>
 #include <Ender.h>
 
 #include "egueb_svg_main_private.h"

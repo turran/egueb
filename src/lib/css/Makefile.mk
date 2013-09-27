@@ -7,7 +7,7 @@ src/lib/css/ecss_grammar.h
 lib_LTLIBRARIES += src/lib/css/libegueb_css.la
 
 installed_cssheadersdir = $(pkgincludedir)-@VMAJ@/css
-dist_installed_cssheaders_DATA = src/lib/css/Ecss.h
+dist_installed_cssheaders_DATA = src/lib/css/Egueb_Css.h
 
 src_lib_css_libegueb_css_la_SOURCES = \
 src/lib/css/ecss_context.c \

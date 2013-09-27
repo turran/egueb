@@ -22,7 +22,7 @@
 
 #include <Eina.h>
 
-#include "Ecss.h"
+#include "Egueb_Css.h"
 #include "ecss_private.h"
 	
 void * ecss__scan_string(const char *yy_str, void *scanner);
