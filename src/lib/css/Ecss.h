@@ -46,15 +46,6 @@
 # endif
 #endif
 
-/**
- * @mainpage Ecss
- * @section intro Introduction
- * @section dependencies Dependencies
- * - Eina
- *
- * @todo
- */
-
 typedef struct _Ecss_Selector Ecss_Selector;
 typedef struct _Ecss_Rule Ecss_Rule;
 typedef struct _Ecss_Style Ecss_Style;

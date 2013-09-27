@@ -23,16 +23,35 @@
 #include <Egueb_Dom.h>
 #include <Enesim.h>
 
-/**
- * @mainpage Esvg
- * @section intro Introduction
- * @section dependencies Dependencies
- * - Eina
- * - Enesim
- * - Etex
- *
- * @todo
- */
+#ifdef EAPI
+# undef EAPI
+#endif
+
+#ifdef _WIN32
+# ifdef EGUEB_DOM_BUILD
+#  ifdef DLL_EXPORT
+#   define EAPI __declspec(dllexport)
+#  else
+#   define EAPI
+#  endif
+# else
+#  define EAPI __declspec(dllimport)
+# endif
+#else
+# ifdef __GNUC__
+#  if __GNUC__ >= 4
+#   define EAPI __attribute__ ((visibility("default")))
+#  else
+#   define EAPI
+#  endif
+# else
+#  define EAPI
+# endif
+#endif
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 #include "egueb_svg_build.h"
 
@@ -164,6 +183,10 @@ EAPI void egueb_svg_pattern_transform_set(Egueb_Dom_Tag *e, const Enesim_Matrix 
 EAPI void egueb_svg_pattern_transform_get(Egueb_Dom_Tag *e, Enesim_Matrix *transform);
 EAPI Eina_Bool egueb_svg_pattern_transform_is_set(Egueb_Dom_Tag *e);
 EAPI void egueb_svg_pattern_content_set(Egueb_Dom_Tag *e, Egueb_Dom_Tag *content);
+#endif
+
+#ifdef __cplusplus
+}
 #endif
 
 #endif /*_ESVG_H*/
