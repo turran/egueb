@@ -80,10 +80,6 @@ static void _egueb_svg_painter_clip_path_class_init(void *k)
 	klass->resolve = _egueb_svg_painter_clip_path_resolve;
 }
 
-static void _egueb_svg_painter_clip_path_class_deinit(void *k)
-{
-}
-
 static void _egueb_svg_painter_clip_path_instance_init(void *o)
 {
 }

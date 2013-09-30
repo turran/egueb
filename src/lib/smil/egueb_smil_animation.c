@@ -535,10 +535,6 @@ static void _egueb_smil_animation_class_init(void *k)
 	klass->process = _egueb_smil_animation_process;
 }
 
-static void _egueb_smil_animation_class_deinit(void *k)
-{
-}
-
 static void _egueb_smil_animation_instance_init(void *o)
 {
 	Egueb_Smil_Animation *thiz;

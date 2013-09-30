@@ -174,10 +174,6 @@ static void _egueb_svg_reference_gradient_linear_class_init(void *k)
 	p_klass->renderer_get = _egueb_svg_reference_gradient_linear_renderer_get;
 }
 
-static void _egueb_svg_reference_gradient_linear_class_deinit(void *k)
-{
-}
-
 static void _egueb_svg_reference_gradient_linear_instance_init(void *o)
 {
 	Egueb_Svg_Reference_Gradient_Linear *thiz;

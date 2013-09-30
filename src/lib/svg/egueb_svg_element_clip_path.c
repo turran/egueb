@@ -273,10 +273,6 @@ static void _egueb_svg_element_clip_path_class_init(void *k)
 	n_klass->child_appendable = _egueb_svg_element_clip_path_child_appendable;
 }
 
-static void _egueb_svg_element_clip_path_class_deinit(void *k)
-{
-}
-
 static void _egueb_svg_element_clip_path_instance_init(void *o)
 {
 	Egueb_Svg_Element_Clip_Path *thiz;

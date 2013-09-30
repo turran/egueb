@@ -38,11 +38,6 @@ static void _egueb_dom_character_data_class_init(void *k)
 {
 }
 
-static void _egueb_dom_character_data_class_deinit(void *k)
-{
-
-}
-
 static void _egueb_dom_character_data_instance_init(void *o)
 {
 	Egueb_Dom_Character_Data *thiz;

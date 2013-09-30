@@ -249,10 +249,6 @@ static void _egueb_smil_set_class_init(void *k)
 	e_klass->tag_name_get = _egueb_smil_set_tag_name_get;
 }
 
-static void _egueb_smil_set_class_deinit(void *k)
-{
-}
-
 static void _egueb_smil_set_instance_init(void *o)
 {
 	Egueb_Smil_Set *thiz;

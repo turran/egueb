@@ -58,11 +58,6 @@ static void _egueb_dom_text_class_init(void *k)
 	n_klass->type = EGUEB_DOM_NODE_TYPE_TEXT_NODE;
 }
 
-static void _egueb_dom_text_class_deinit(void *k)
-{
-
-}
-
 static void _egueb_dom_text_instance_init(void *o)
 {
 }

@@ -401,10 +401,6 @@ static void _egueb_svg_element_image_class_init(void *k)
 	e_klass->tag_name_get = _egueb_svg_element_image_tag_name_get;
 }
 
-static void _egueb_svg_element_image_class_deinit(void *k)
-{
-}
-
 static void _egueb_svg_element_image_instance_init(void *o)
 {
 	Egueb_Svg_Element_Image *thiz;

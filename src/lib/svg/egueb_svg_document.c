@@ -1238,7 +1238,7 @@ EAPI void egueb_svg_document_uri_fetch(Egueb_Dom_Node *n,
 		if (data)
 		{
 			if (d->fetched) d->fetched(data, user_data);
-			enesim_stream_free(data);
+			enesim_stream_unref(data);
 		}
 		else
 		{

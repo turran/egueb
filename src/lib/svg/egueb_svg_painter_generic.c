@@ -365,10 +365,6 @@ static void _egueb_svg_painter_generic_class_init(void *k)
 	klass->resolve = _egueb_svg_painter_generic_resolve;
 }
 
-static void _egueb_svg_painter_generic_class_deinit(void *k)
-{
-}
-
 static void _egueb_svg_painter_generic_instance_init(void *o)
 {
 }

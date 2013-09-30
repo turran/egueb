@@ -36,10 +36,6 @@ static void _egueb_svg_reference_paint_server_class_init(void *k)
 {
 }
 
-static void _egueb_svg_reference_paint_server_class_deinit(void *k)
-{
-}
-
 static void _egueb_svg_reference_paint_server_instance_init(void *o)
 {
 }

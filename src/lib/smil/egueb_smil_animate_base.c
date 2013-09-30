@@ -1034,10 +1034,6 @@ static void _egueb_smil_animate_base_class_init(void *k)
 	klass->end = _egueb_smil_animate_base_end;
 }
 
-static void _egueb_smil_animate_base_class_deinit(void *k)
-{
-}
-
 static void _egueb_smil_animate_base_instance_init(void *o)
 {
 	Egueb_Smil_Animate_Base *thiz;

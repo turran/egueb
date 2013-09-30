@@ -106,10 +106,6 @@ static void _egueb_svg_element_defs_class_init(void *k)
 	e_klass->tag_name_get = _egueb_svg_element_defs_tag_name_get;
 }
 
-static void _egueb_svg_element_defs_class_deinit(void *k)
-{
-}
-
 static void _egueb_svg_element_defs_instance_init(void *o)
 {
 	Egueb_Dom_Node *n;

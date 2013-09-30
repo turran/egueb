@@ -33,10 +33,6 @@ static void _egueb_svg_painter_class_init(void *k)
 {
 }
 
-static void _egueb_svg_painter_class_deinit(void *k)
-{
-}
-
 static void _egueb_svg_painter_instance_init(void *o)
 {
 }

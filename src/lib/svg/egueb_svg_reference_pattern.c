@@ -91,10 +91,6 @@ static void _egueb_svg_reference_pattern_class_init(void *k)
 	p_klass->renderer_get = _egueb_svg_reference_pattern_renderer_get;
 }
 
-static void _egueb_svg_reference_pattern_class_deinit(void *k)
-{
-}
-
 static void _egueb_svg_reference_pattern_instance_init(void *o)
 {
 	Egueb_Svg_Reference_Pattern *thiz;

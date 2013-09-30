@@ -719,10 +719,6 @@ static void _egueb_svg_element_class_init(void *k)
 	klass->process = _egueb_svg_element_process;
 }
 
-static void _egueb_svg_element_class_deinit(void *k)
-{
-}
-
 static void _egueb_svg_element_instance_init(void *o)
 {
 	Egueb_Svg_Element *thiz;

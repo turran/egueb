@@ -146,10 +146,6 @@ static void _egueb_dom_node_map_named_attr_class_init(void *k)
 	klass->length = _egueb_dom_node_map_named_attr_length;
 }
 
-static void _egueb_dom_node_map_named_attr_class_deinit(void *k)
-{
-}
-
 static void _egueb_dom_node_map_named_attr_instance_init(void *o)
 {
 }

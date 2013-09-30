@@ -14,7 +14,7 @@
 
 #include <Eina.h>
 
-#include "Ecss.h"
+#include "Egueb_Css.h"
 #include "ecss_private.h"
 
 void ecss_error(void *data, void *scanner, Ecss_Parser *parser, const char *str);

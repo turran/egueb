@@ -23,7 +23,7 @@ int main(int argc, char **argv)
 	mydocument = mydocument_new();
 	im = enesim_stream_file_new(argv[1], "r+");
 	egueb_dom_parser_parse(im, mydocument);
-	enesim_stream_free(im);
+	enesim_stream_unref(im);
 
 	egueb_dom_document_element_get(mydocument, &root);
 	/* check the tree that we have parsed */

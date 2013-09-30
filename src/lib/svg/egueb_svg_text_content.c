@@ -40,10 +40,6 @@ static void _egueb_svg_text_content_class_init(void *k)
 {
 }
 
-static void _egueb_svg_text_content_class_deinit(void *k)
-{
-}
-
 static void _egueb_svg_text_content_instance_init(void *o)
 {
 	Egueb_Svg_Text_Content *thiz;

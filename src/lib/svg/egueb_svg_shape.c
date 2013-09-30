@@ -206,10 +206,6 @@ static void _egueb_svg_shape_class_init(void *k)
 	r_klass->process = _egueb_svg_shape_process;
 }
 
-static void _egueb_svg_shape_class_deinit(void *k)
-{
-}
-
 static void _egueb_svg_shape_instance_init(void *o)
 {
 	Egueb_Svg_Shape *thiz;

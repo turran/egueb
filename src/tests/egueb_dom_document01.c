@@ -23,7 +23,7 @@ int main(int argc, char **argv)
 	if (!im) return -1;
 
 	egueb_dom_parser_parse(im, mydocument);
-	enesim_stream_free(im);
+	enesim_stream_unref(im);
 	/* test that that we have a root element */
 	egueb_dom_document_element_get(mydocument, &root);
 	printf("[testing] the root element is %p\n", root);

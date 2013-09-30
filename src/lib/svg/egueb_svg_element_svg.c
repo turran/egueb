@@ -355,10 +355,6 @@ static void _egueb_svg_element_svg_class_init(void *k)
 	e_klass->tag_name_get = _egueb_svg_element_svg_tag_name_get;
 }
 
-static void _egueb_svg_element_svg_class_deinit(void *k)
-{
-}
-
 static void _egueb_svg_element_svg_instance_init(void *o)
 {
 	Egueb_Svg_Element_Svg *thiz;
@@ -1538,7 +1534,7 @@ void egueb_svg_element_svg_image_load(Ender_Element *e, const char *uri, Enesim_
 			err = eina_error_get();
 			ERR("Embedded Image with mime '%s' failed to load with error: %s", mime, eina_error_msg_get(err));
 		}
-		enesim_stream_free(edata_base64);
+		enesim_stream_unref(edata_base64);
 	}
 	else
 	{

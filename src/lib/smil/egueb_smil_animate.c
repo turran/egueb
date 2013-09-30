@@ -121,10 +121,6 @@ static void _egueb_smil_animate_class_init(void *k)
 	e_klass->tag_name_get = _egueb_smil_animate_tag_name_get;
 }
 
-static void _egueb_smil_animate_class_deinit(void *k)
-{
-}
-
 static void _egueb_smil_animate_instance_init(void *o)
 {
 }

@@ -101,10 +101,6 @@ static void _egueb_svg_renderable_container_class_init(void *k)
 	klass->process = egueb_svg_renderable_container_process;
 }
 
-static void _egueb_svg_renderable_container_class_deinit(void *k)
-{
-}
-
 static void _egueb_svg_renderable_container_instance_init(void *o)
 {
 	Egueb_Svg_Renderable_Container *thiz;

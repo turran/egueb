@@ -36,10 +36,6 @@ static void _egueb_dom_event_ui_class_init(void *k)
 {
 }
 
-static void _egueb_dom_event_ui_class_deinit(void *k)
-{
-}
-
 static void _egueb_dom_event_ui_instance_init(void *o)
 {
 }
@@ -59,6 +55,7 @@ EAPI Eina_Error egueb_dom_event_ui_detail_get(Egueb_Dom_Event *e, int *detail)
 
 	thiz = EGUEB_DOM_EVENT_UI(e);
 	*detail = thiz->detail;
+	return EINA_ERROR_NONE;
 }
 
 EAPI void egueb_dom_event_ui_init(Egueb_Dom_Event *e, Egueb_Dom_String *type,

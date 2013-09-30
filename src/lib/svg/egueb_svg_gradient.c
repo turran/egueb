@@ -694,10 +694,6 @@ static void _egueb_svg_gradient_class_init(void *k)
 	klass->process = _egueb_svg_gradient_process;
 }
 
-static void _egueb_svg_gradient_class_deinit(void *k)
-{
-}
-
 static void _egueb_svg_gradient_instance_init(void *o)
 {
 	Egueb_Svg_Gradient *thiz;

@@ -63,10 +63,6 @@ static void _egueb_svg_referenceable_class_init(void *k)
 	klass->process = _egueb_svg_referenceable_process;
 }
 
-static void _egueb_svg_referenceable_class_deinit(void *k)
-{
-}
-
 static void _egueb_svg_referenceable_instance_init(void *o)
 {
 }
