@@ -22,8 +22,6 @@
 EAPI void egueb_dom_init(void);
 EAPI void egueb_dom_shutdown(void);
 
-EAPI extern Eina_Error EINA_ERROR_NONE;
-
 /* Errors (Exceptions) */
 EAPI extern Eina_Error EGUEB_DOM_ERROR_INDEX_SIZE;
 EAPI extern Eina_Error EGUEB_DOM_ERROR_DOMSTRING_SIZE;

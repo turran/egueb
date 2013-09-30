@@ -40,7 +40,6 @@ int egueb_dom_log_dom_global = -1;
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/
-EAPI Eina_Error EINA_ERROR_NONE;
 EAPI Eina_Error EGUEB_DOM_ERROR_INDEX_SIZE;
 EAPI Eina_Error EGUEB_DOM_ERROR_DOMSTRING_SIZE;
 EAPI Eina_Error EGUEB_DOM_ERROR_HIERARCHY_REQUEST;
@@ -73,8 +72,6 @@ EAPI void egueb_dom_init(void)
 		goto shutdown_eina;
 	}
 
-	/* TODO this error should go to eina itself */
-	EINA_ERROR_NONE = eina_error_msg_register("");
 	/* register the dom errors */
 	EGUEB_DOM_ERROR_DOMSTRING_SIZE = eina_error_msg_register("The specified range of text does not fit into a DOMString");
 	EGUEB_DOM_ERROR_HIERARCHY_REQUEST = eina_error_msg_register("A Node is inserted somewhere it doesn't belong");
