@@ -184,7 +184,7 @@ static void _egueb_dom_parser_eina_doctype_child(Egueb_Dom_Parser_Eina *thiz,
 		tmp = text;
 		while (!isspace(*text))
 			text++;
-		name = eina_extra_strndup(tmp, text - tmp);
+		name = strndup(tmp, text - tmp);
 		/* get the attribute value */
 		/* skip the spaces until the "" */
 		while (*text != '"')
@@ -194,7 +194,7 @@ static void _egueb_dom_parser_eina_doctype_child(Egueb_Dom_Parser_Eina *thiz,
 		while (*text != '"')
 			text++;
 		/* get the string inside the " " */
-		attr = eina_extra_strndup(tmp, text - tmp);
+		attr = strndup(tmp, text - tmp);
 		DBG("Adding entity '%s' for '%s'", attr, name);
 	}
 }
