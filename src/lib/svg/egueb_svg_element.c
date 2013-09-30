@@ -541,7 +541,7 @@ static void _egueb_svg_element_geometry_process(
 				"SVGElement interface", geometry);
 		{
 			Egueb_Dom_String *name;
-			egueb_dom_node_name_get(EGUEB_DOM_NODE(thiz), &name);
+			egueb_dom_node_name_get(EGUEB_DOM_NODE(thiz), &name, NULL);
 		}
 		return;
 	}
@@ -890,8 +890,7 @@ void egueb_svg_element_clip_path_resolve(Egueb_Dom_Node *n,
 			Egueb_Dom_Node *doc = NULL;
 			Egueb_Dom_String iri = EGUEB_DOM_STRING_STATIC(clip_path_current->value.iri);
 
-			egueb_dom_node_document_get(n, &doc);
-			if (!doc)
+			if (!egueb_dom_node_document_get(n, &doc, NULL))
 			{
 				WARN("No document set");
 				return;

@@ -172,7 +172,7 @@ static void _myelement_dump(Egueb_Dom_Node *thiz, Eina_Bool deep, int level)
 	{
 		Egueb_Dom_Node *sibling = NULL;
 
-		egueb_dom_node_sibling_next_get(child, &sibling);
+		egueb_dom_node_sibling_next_get(child, &sibling, NULL);
 		_myelement_dump(child, deep, level + 1);
 		child = sibling;
 	} while (child);

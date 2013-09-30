@@ -393,11 +393,16 @@ EAPI void egueb_dom_node_weak_ref_remove(Egueb_Dom_Node *thiz,
 /*
  * readonly attribute DOMString nodeName;
  */
-EAPI Eina_Error egueb_dom_node_name_get(Egueb_Dom_Node *thiz, Egueb_Dom_String **name)
+EAPI Eina_Bool egueb_dom_node_name_get(Egueb_Dom_Node *thiz, Egueb_Dom_String **name, Eina_Error *err)
 {
 	Egueb_Dom_Node_Class *klass;
 
-	if (!name) return EGUEB_DOM_ERROR_INVALID_ACCESS;
+	if (!name)
+	{
+		if (err) *err = EGUEB_DOM_ERROR_INVALID_ACCESS;
+		return EINA_FALSE;
+	}
+
 	klass = EGUEB_DOM_NODE_CLASS_GET(thiz);
 	switch (klass->type)
 	{
@@ -435,10 +440,11 @@ EAPI Eina_Error egueb_dom_node_name_get(Egueb_Dom_Node *thiz, Egueb_Dom_String *
 		case EGUEB_DOM_NODE_TYPE_ENTITY_REFERENCE_NODE:
 		case EGUEB_DOM_NODE_TYPE_ENTITY_NODE:
 		default:
-		return EGUEB_DOM_ERROR_NOT_SUPPORTED;
+		if (err) *err = EGUEB_DOM_ERROR_NOT_SUPPORTED;
+		return EINA_TRUE;
 		break;
 	}
-	return EINA_ERROR_NONE;
+	return EINA_FALSE;
 }
 
 /* attribute DOMString nodeValue;

@@ -672,7 +672,7 @@ static Egueb_Dom_Node * _egueb_svg_document_input_element_at_recursive(
 	if (egueb_svg_is_renderable_container(n))
 	{
 		Egueb_Dom_Node *child = NULL;
-		egueb_dom_node_child_last_get(n, &child);
+		egueb_dom_node_child_last_get(n, &child, NULL);
 		while (child)
 		{
 			Egueb_Dom_Node *tmp;
@@ -685,7 +685,7 @@ static Egueb_Dom_Node * _egueb_svg_document_input_element_at_recursive(
 				break;
 			}
 
-			egueb_dom_node_sibling_previous_get(child, &tmp);
+			egueb_dom_node_sibling_previous_get(child, &tmp, NULL);
 			egueb_dom_node_unref(child);
 			child = tmp;
 		}
@@ -699,7 +699,7 @@ static Egueb_Dom_Node * _egueb_svg_document_input_element_at_recursive(
 		{
 			Egueb_Dom_String *name;
 
-			egueb_dom_node_name_get(n, &name);
+			egueb_dom_node_name_get(n, &name, NULL);
 			DBG("Element '%s' found with bounds %"
 					EINA_RECTANGLE_FORMAT,
 					egueb_dom_string_string_get(name),
@@ -1289,7 +1289,7 @@ EAPI Eina_Error egueb_svg_document_iri_clone(Egueb_Dom_Node *n,
 	{
 		DBG("'%s' found, cloning it", egueb_dom_string_string_get(iri));
 		/* clone the returned element */
-		egueb_dom_node_clone(ref, EINA_FALSE, EINA_TRUE, cloned);
+		egueb_dom_node_clone(ref, EINA_FALSE, EINA_TRUE, cloned, NULL);
 		egueb_dom_node_unref(ref);
 	}
 

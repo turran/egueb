@@ -58,25 +58,25 @@ EAPI void egueb_dom_node_weak_ref_add(Egueb_Dom_Node *thiz,
 EAPI void egueb_dom_node_weak_ref_remove(Egueb_Dom_Node *thiz,
 		Egueb_Dom_Node **weak_location);
 
-EAPI Eina_Error egueb_dom_node_name_get(Egueb_Dom_Node *thiz, Egueb_Dom_String **name);
-EAPI Eina_Error egueb_dom_node_value_get(Egueb_Dom_Node *thiz, Egueb_Dom_String **value);
-EAPI Eina_Error egueb_dom_node_type_get(Egueb_Dom_Node *thiz, Egueb_Dom_Node_Type *type);
-EAPI Eina_Error egueb_dom_node_document_get(Egueb_Dom_Node *thiz, Egueb_Dom_Node **owner);
-EAPI Eina_Error egueb_dom_node_parent_get(Egueb_Dom_Node *thiz, Egueb_Dom_Node **parent);
-EAPI Eina_Error egueb_dom_node_children_get(Egueb_Dom_Node *thiz, Egueb_Dom_Node_List *children);
+EAPI Eina_Bool egueb_dom_node_name_get(Egueb_Dom_Node *thiz, Egueb_Dom_String **name,Eina_Error *);
+EAPI Eina_Bool egueb_dom_node_value_get(Egueb_Dom_Node *thiz, Egueb_Dom_String **value,Eina_Error *);
+EAPI Eina_Bool egueb_dom_node_type_get(Egueb_Dom_Node *thiz, Egueb_Dom_Node_Type *type,Eina_Error *);
+EAPI Eina_Bool egueb_dom_node_document_get(Egueb_Dom_Node *thiz, Egueb_Dom_Node **owner,Eina_Error *);
+EAPI Eina_Bool egueb_dom_node_parent_get(Egueb_Dom_Node *thiz, Egueb_Dom_Node **parent,Eina_Error *);
+EAPI Eina_Bool egueb_dom_node_children_get(Egueb_Dom_Node *thiz, Egueb_Dom_Node_List *children,Eina_Error *);
 EAPI Eina_Bool egueb_dom_node_children_foreach(Egueb_Dom_Node *thiz, Egueb_Dom_Node_Cb cb, void *data);
-EAPI Eina_Error egueb_dom_node_child_first_get(Egueb_Dom_Node *thiz, Egueb_Dom_Node **last);
-EAPI Eina_Error egueb_dom_node_child_last_get(Egueb_Dom_Node *thiz, Egueb_Dom_Node **last);
-EAPI Eina_Error egueb_dom_node_sibling_previous_get(Egueb_Dom_Node *thiz, Egueb_Dom_Node **sibling);
-EAPI Eina_Error egueb_dom_node_sibling_next_get(Egueb_Dom_Node *thiz, Egueb_Dom_Node **sibling);
-EAPI Eina_Error egueb_dom_node_attributes_get(Egueb_Dom_Node *thiz, Egueb_Dom_Node_Map_Named **map);
-EAPI Eina_Error egueb_dom_node_child_remove(Egueb_Dom_Node *thiz, Egueb_Dom_Node *child);
-EAPI Eina_Error egueb_dom_node_child_append(Egueb_Dom_Node *thiz, Egueb_Dom_Node *child);
-EAPI Eina_Error egueb_dom_node_insert_before(Egueb_Dom_Node *thiz,
-		Egueb_Dom_Node *child, Egueb_Dom_Node *ref);
+EAPI Eina_Bool egueb_dom_node_child_first_get(Egueb_Dom_Node *thiz, Egueb_Dom_Node **last,Eina_Error *);
+EAPI Eina_Bool egueb_dom_node_child_last_get(Egueb_Dom_Node *thiz, Egueb_Dom_Node **last,Eina_Error *);
+EAPI Eina_Bool egueb_dom_node_sibling_previous_get(Egueb_Dom_Node *thiz, Egueb_Dom_Node **sibling,Eina_Error *);
+EAPI Eina_Bool egueb_dom_node_sibling_next_get(Egueb_Dom_Node *thiz, Egueb_Dom_Node **sibling,Eina_Error *);
+EAPI Eina_Bool egueb_dom_node_attributes_get(Egueb_Dom_Node *thiz, Egueb_Dom_Node_Map_Named **map,Eina_Error *);
+EAPI Eina_Bool egueb_dom_node_child_remove(Egueb_Dom_Node *thiz, Egueb_Dom_Node *child,Eina_Error *);
+EAPI Eina_Bool egueb_dom_node_child_append(Egueb_Dom_Node *thiz, Egueb_Dom_Node *child,Eina_Error *);
+EAPI Eina_Bool egueb_dom_node_insert_before(Egueb_Dom_Node *thiz,
+		Egueb_Dom_Node *child, Egueb_Dom_Node *ref,Eina_Error *);
 
-EAPI Eina_Error egueb_dom_node_clone(Egueb_Dom_Node *thiz, Eina_Bool live,
-		Eina_Bool deep, Egueb_Dom_Node **clone);
+EAPI Eina_Bool egueb_dom_node_clone(Egueb_Dom_Node *thiz, Eina_Bool live,
+		Eina_Bool deep, Egueb_Dom_Node **clone,Eina_Error *);
 
 EAPI Egueb_Dom_Node_Event_Listener * egueb_dom_node_event_listener_add(Egueb_Dom_Node *thiz,
 		const Egueb_Dom_String *type, Egueb_Dom_Event_Listener listener,
@@ -85,19 +85,19 @@ EAPI void egueb_dom_node_event_listener_remove(Egueb_Dom_Node *thiz,
 		const Egueb_Dom_String *type, Egueb_Dom_Event_Listener listener,
 		Eina_Bool capture, void *data);
 EAPI void egueb_dom_node_event_listener_free(Egueb_Dom_Node_Event_Listener *node_listener);
-EAPI Eina_Error egueb_dom_node_event_dispatch(Egueb_Dom_Node *thiz,
-		Egueb_Dom_Event *event, Eina_Bool *notprevented);
-EAPI Eina_Error egueb_dom_node_event_propagate(Egueb_Dom_Node *thiz,
-		Egueb_Dom_Event *event);
-EAPI Eina_Error egueb_dom_node_event_monitor_add(Egueb_Dom_Node *thiz,
+EAPI Eina_Bool egueb_dom_node_event_dispatch(Egueb_Dom_Node *thiz,
+		Egueb_Dom_Event *event, Eina_Bool *notprevented,Eina_Error *);
+EAPI Eina_Bool egueb_dom_node_event_propagate(Egueb_Dom_Node *thiz,
+		Egueb_Dom_Event *event,Eina_Error *);
+EAPI Eina_Bool egueb_dom_node_event_monitor_add(Egueb_Dom_Node *thiz,
 		Egueb_Dom_Event_Listener listener,
-		void *data);
+		void *data,Eina_Error *);
 EAPI void egueb_dom_node_event_monitor_remove(Egueb_Dom_Node *thiz,
 		Egueb_Dom_Event_Listener listener,
 		void *data);
 
-EAPI Eina_Error egueb_dom_node_user_data_set(Egueb_Dom_Node *thiz,
-		Egueb_Dom_String *key, void *data);
+EAPI Eina_Bool egueb_dom_node_user_data_set(Egueb_Dom_Node *thiz,
+		Egueb_Dom_String *key, void *data,Eina_Error *);
 EAPI void * egueb_dom_node_user_data_get(Egueb_Dom_Node *thiz,
 		Egueb_Dom_String *key);
 
