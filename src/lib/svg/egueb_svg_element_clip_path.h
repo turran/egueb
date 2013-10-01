@@ -19,10 +19,20 @@
 #ifndef _EGUEB_SVG_ELEMENT_CLIP_PATH_H_
 #define _EGUEB_SVG_ELEMENT_CLIP_PATH_H_
 
+/**
+ * @defgroup Egueb_Svg_Element_Clip_Path_Group Clip path
+ * @brief Clip path element
+ * @ingroup Egueb_Svg_Element_Group
+ * @{
+ */
 EAPI Egueb_Dom_Node * egueb_svg_element_clip_path_new(void);
 EAPI Eina_Bool egueb_svg_element_is_clip_path(Egueb_Dom_Node *n);
-EAPI Eina_Error egueb_svg_element_clip_path_units_get(Egueb_Dom_Node *n,
+EAPI void egueb_svg_element_clip_path_units_get(Egueb_Dom_Node *n,
 		Egueb_Svg_Referenceable_Units_Animated *units);
+
+/**
+ * @}
+ */
 
 #if 0
 EAPI void egueb_svg_element_clip_path_units_set(Ender_Element *e, Egueb_Svg_Clip_Path_Units units);

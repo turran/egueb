@@ -186,13 +186,14 @@ EAPI Eina_Bool egueb_svg_attr_xlink_href_resolve(Egueb_Dom_Node *attr)
 
 			a = EGUEB_DOM_ATTR(attr);
 			/* TODO is the document also set on the attr? */
-			if (!egueb_dom_node_document_get(a->owner, &doc, NULL))
+			doc = egueb_dom_node_document_get(a->owner);
+			if (!doc)
 			{
 				WARN("No document set");
 				ret = EINA_FALSE;
 				goto no_doc;
 			}
-			egueb_svg_document_element_get_by_iri(doc, str, &thiz->node);
+			thiz->node = egueb_svg_document_element_get_by_iri(doc, str);
 			if (thiz->node)
 			{
 				egueb_dom_node_event_listener_add(thiz->node,

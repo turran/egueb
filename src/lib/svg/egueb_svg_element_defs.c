@@ -60,7 +60,7 @@ static Eina_Bool _egueb_svg_element_defs_children_process_cb(
 {
 	Egueb_Dom_Node_Type type;
 
-	egueb_dom_node_type_get(child, &type);
+	type = egueb_dom_node_type_get(child);
 	if (type != EGUEB_DOM_NODE_TYPE_ELEMENT_NODE)
 		return EINA_TRUE;
 	if (egueb_svg_is_renderable(child))

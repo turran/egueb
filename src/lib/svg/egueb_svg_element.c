@@ -539,10 +539,6 @@ static void _egueb_svg_element_geometry_process(
 	{
 		WARN("Relative geometry node '%p' does not inherit from the "
 				"SVGElement interface", geometry);
-		{
-			Egueb_Dom_String *name;
-			egueb_dom_node_name_get(EGUEB_DOM_NODE(thiz), &name, NULL);
-		}
 		return;
 	}
 	geom = EGUEB_SVG_ELEMENT(geometry);
@@ -665,8 +661,8 @@ static Eina_Bool _egueb_svg_element_process(Egueb_Dom_Element *e)
 	}
 	if (style) egueb_dom_string_unref(style);
 
-	egueb_svg_element_presentation_relative_get(EGUEB_DOM_NODE(e), &relative);
-	egueb_svg_element_geometry_relative_get(EGUEB_DOM_NODE(e), &geometry);
+	relative = egueb_svg_element_presentation_relative_get(EGUEB_DOM_NODE(e));
+	geometry = egueb_svg_element_geometry_relative_get(EGUEB_DOM_NODE(e));
 	/* propagate the geometry information */
 	_egueb_svg_element_geometry_process(thiz, geometry);
 	/* propagate the inheritable attributes (the presentation attributes) */
@@ -890,12 +886,13 @@ void egueb_svg_element_clip_path_resolve(Egueb_Dom_Node *n,
 			Egueb_Dom_Node *doc = NULL;
 			Egueb_Dom_String iri = EGUEB_DOM_STRING_STATIC(clip_path_current->value.iri);
 
-			if (!egueb_dom_node_document_get(n, &doc, NULL))
+			doc = egueb_dom_node_document_get(n);
+			if (!doc)
 			{
 				WARN("No document set");
 				return;
 			}
-			egueb_svg_document_element_get_by_iri(doc, &iri, &ref);
+			ref = egueb_svg_document_element_get_by_iri(doc, &iri);
 			egueb_dom_node_unref(doc);
 
 			if (!ref || !egueb_svg_element_is_clip_path(ref))
@@ -1289,26 +1286,23 @@ EAPI Eina_Bool egueb_svg_is_element(Egueb_Dom_Node *n)
 	return EINA_TRUE;
 }
 
-EAPI Eina_Error egueb_svg_element_geometry_relative_get(Egueb_Dom_Node *n,
-		Egueb_Dom_Node **geometry_relative)
+EAPI Egueb_Dom_Node * egueb_svg_element_geometry_relative_get(Egueb_Dom_Node *n)
 {
 	Egueb_Svg_Element *thiz;
 
 	thiz = EGUEB_SVG_ELEMENT(n);
 	if (thiz->geometry_relative)
 	{
-		*geometry_relative = egueb_dom_node_ref(
-				thiz->geometry_relative);
-		return EINA_ERROR_NONE;
+		return egueb_dom_node_ref(thiz->geometry_relative);
 	}
 	else
 	{
-		return egueb_dom_node_parent_get(n, geometry_relative);
+		return egueb_dom_node_parent_get(n);
 	}
 }
 
-EAPI Eina_Error egueb_svg_element_geometry_relative_set(Egueb_Dom_Node *n,
-		Egueb_Dom_Node *geometry_relative)
+EAPI Eina_Bool egueb_svg_element_geometry_relative_set(Egueb_Dom_Node *n,
+		Egueb_Dom_Node *geometry_relative, Eina_Error *err)
 {
 	Egueb_Svg_Element *thiz;
 
@@ -1322,34 +1316,35 @@ EAPI Eina_Error egueb_svg_element_geometry_relative_set(Egueb_Dom_Node *n,
 	if (geometry_relative)
 	{
 		if (!egueb_svg_is_element(geometry_relative))
-			return EGUEB_DOM_ERROR_NOT_SUPPORTED;
+		{
+			if (err) *err = EGUEB_DOM_ERROR_NOT_SUPPORTED;
+			return EINA_FALSE;
+		}
 		egueb_dom_node_weak_ref_add(geometry_relative,
 			&thiz->geometry_relative);
 	}
-	return EINA_ERROR_NONE;
+	return EINA_TRUE;
 }
 
 
-EAPI Eina_Error egueb_svg_element_presentation_relative_get(Egueb_Dom_Node *n,
-		Egueb_Dom_Node **presentation_relative)
+EAPI Egueb_Dom_Node * egueb_svg_element_presentation_relative_get(
+		Egueb_Dom_Node *n)
 {
 	Egueb_Svg_Element *thiz;
 
 	thiz = EGUEB_SVG_ELEMENT(n);
 	if (thiz->presentation_relative)
 	{
-		*presentation_relative = egueb_dom_node_ref(
-				thiz->presentation_relative);
-		return EINA_ERROR_NONE;
+		return egueb_dom_node_ref(thiz->presentation_relative);
 	}
 	else
 	{
-		return egueb_dom_node_parent_get(n, presentation_relative);
+		return egueb_dom_node_parent_get(n);
 	}
 }
 
-EAPI Eina_Error egueb_svg_element_presentation_relative_set(Egueb_Dom_Node *n,
-		Egueb_Dom_Node *presentation_relative)
+EAPI Eina_Bool egueb_svg_element_presentation_relative_set(Egueb_Dom_Node *n,
+		Egueb_Dom_Node *presentation_relative, Eina_Error *err)
 {
 	Egueb_Svg_Element *thiz;
 
@@ -1363,11 +1358,15 @@ EAPI Eina_Error egueb_svg_element_presentation_relative_set(Egueb_Dom_Node *n,
 	if (presentation_relative)
 	{
 		if (!egueb_svg_is_element(presentation_relative))
-			return EGUEB_DOM_ERROR_NOT_SUPPORTED;
+		{
+			if (err) *err = EGUEB_DOM_ERROR_NOT_SUPPORTED;
+			return EINA_FALSE;
+		}
+
 		egueb_dom_node_weak_ref_add(presentation_relative,
 				&thiz->presentation_relative);
 	}
-	return EINA_ERROR_NONE;
+	return EINA_TRUE;
 }
 
 #if 0
@@ -1672,13 +1671,13 @@ EAPI void egueb_svg_element_fill_rule_unset(Egueb_Dom_Node *n)
 {
 }
 
-EAPI Eina_Error egueb_svg_element_font_size_set(Egueb_Dom_Node *n,
+EAPI void egueb_svg_element_font_size_set(Egueb_Dom_Node *n,
 		const Egueb_Svg_Font_Size *font_size)
 {
 	Egueb_Svg_Element *thiz;
 
 	thiz = EGUEB_SVG_ELEMENT(n);
-	return egueb_dom_attr_set(thiz->font_size, EGUEB_DOM_ATTR_TYPE_BASE,
+	egueb_dom_attr_set(thiz->font_size, EGUEB_DOM_ATTR_TYPE_BASE,
 			font_size);
 }
 

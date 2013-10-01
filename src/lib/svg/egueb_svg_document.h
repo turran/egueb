@@ -39,35 +39,31 @@ typedef struct _Egueb_Svg_Document_Uri_Fetch_Descriptor
 typedef const char * (*Egueb_Svg_Document_String_Get_Cb)(void *user_data);
 
 EAPI Egueb_Dom_Node * egueb_svg_document_new(void *app);
-EAPI Eina_Error egueb_svg_document_title_get(Egueb_Dom_Node *n,
-		Egueb_Dom_String **title);
-EAPI Eina_Error egueb_svg_document_referrer_get(Egueb_Dom_Node *n,
-		Egueb_Dom_String **referrer);
-EAPI Eina_Error egueb_svg_document_domain_get(Egueb_Dom_Node *n,
-		Egueb_Dom_String **domain);
-EAPI Eina_Error egueb_svg_document_url_get(Egueb_Dom_Node *n,
-		Egueb_Dom_String **url);
-EAPI Eina_Error egueb_svg_document_element_root_get(Egueb_Dom_Node *n,
-		Egueb_Dom_Node **root);
+EAPI Egueb_Dom_String * egueb_svg_document_title_get(Egueb_Dom_Node *n);
+EAPI Egueb_Dom_String * egueb_svg_document_referrer_get(Egueb_Dom_Node *n);
+EAPI Egueb_Dom_String * egueb_svg_document_domain_get(Egueb_Dom_Node *n);
+EAPI Egueb_Dom_String * egueb_svg_document_url_get(Egueb_Dom_Node *n);
 
-EAPI Eina_Error egueb_svg_document_width_set(Egueb_Dom_Node *n,
+EAPI Egueb_Dom_Node * egueb_svg_document_element_root_get(Egueb_Dom_Node *n);
+
+EAPI void egueb_svg_document_width_set(Egueb_Dom_Node *n,
 		double width);
-EAPI Eina_Error egueb_svg_document_width_get(Egueb_Dom_Node *n,
+EAPI void egueb_svg_document_width_get(Egueb_Dom_Node *n,
 		double *width);
-EAPI Eina_Error egueb_svg_document_height_set(Egueb_Dom_Node *n,
+EAPI void egueb_svg_document_height_set(Egueb_Dom_Node *n,
 		double height);
-EAPI Eina_Error egueb_svg_document_height_get(Egueb_Dom_Node *n,
+EAPI void egueb_svg_document_height_get(Egueb_Dom_Node *n,
 		double *height);
 EAPI void egueb_svg_document_actual_width_get(Egueb_Dom_Node *n, double *actual_width);
 EAPI void egueb_svg_document_actual_height_get(Egueb_Dom_Node *n, double *actual_height);
 
-EAPI Eina_Error egueb_svg_document_font_size_set(Egueb_Dom_Node *n,
+EAPI void egueb_svg_document_font_size_set(Egueb_Dom_Node *n,
 		double font_size);
-EAPI Eina_Error egueb_svg_document_font_size_get(Egueb_Dom_Node *n,
+EAPI void egueb_svg_document_font_size_get(Egueb_Dom_Node *n,
 		double *font_size);
 
-EAPI Eina_Error egueb_svg_document_element_get_by_iri(Egueb_Dom_Node *n,
-		Egueb_Dom_String *iri, Egueb_Dom_Node **ref);
+EAPI Egueb_Dom_Node * egueb_svg_document_element_get_by_iri(Egueb_Dom_Node *n,
+		Egueb_Dom_String *iri);
 
 EAPI void egueb_svg_document_feed_mouse_move(Egueb_Dom_Node *n, int x, int y);
 EAPI void egueb_svg_document_feed_mouse_down(Egueb_Dom_Node *n, int button);
@@ -95,8 +91,8 @@ EAPI void egueb_svg_document_filename_get_cb_set(Egueb_Dom_Node *n,
 		Egueb_Svg_Document_String_Get_Cb cb, void *user_data);
 
 /* FIXME remove this as move it to the use element */
-EAPI Eina_Error egueb_svg_document_iri_clone(Egueb_Dom_Node *n,
-		Egueb_Dom_String *iri, Egueb_Dom_Node **cloned);
+EAPI Eina_Bool egueb_svg_document_iri_clone(Egueb_Dom_Node *n,
+		Egueb_Dom_String *iri, Egueb_Dom_Node **cloned, Eina_Error *err);
 
 #endif
 

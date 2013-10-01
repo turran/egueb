@@ -36,14 +36,14 @@ EAPI double egueb_svg_element_svg_time_get(Egueb_Dom_Node *n);
 EAPI void egueb_svg_element_svg_time_set(Egueb_Dom_Node *n, double secs);
 EAPI void egueb_svg_element_svg_time_tick(Egueb_Dom_Node *n);
 
-EAPI Eina_Error egueb_svg_element_svg_width_get(Egueb_Dom_Node *n,
+EAPI void egueb_svg_element_svg_width_get(Egueb_Dom_Node *n,
 		Egueb_Svg_Length_Animated *width);
-EAPI Eina_Error egueb_svg_element_svg_height_get(Egueb_Dom_Node *n,
+EAPI void egueb_svg_element_svg_height_get(Egueb_Dom_Node *n,
 		Egueb_Svg_Length_Animated *height);
 
-EAPI Eina_Error egueb_svg_element_svg_current_scale_set(Egueb_Dom_Node *n,
+EAPI void egueb_svg_element_svg_current_scale_set(Egueb_Dom_Node *n,
 		double scale);
-EAPI Eina_Error egueb_svg_element_svg_current_translate_set(Egueb_Dom_Node *n,
+EAPI void egueb_svg_element_svg_current_translate_set(Egueb_Dom_Node *n,
 		Egueb_Svg_Point *p);
 
 #if 0

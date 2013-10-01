@@ -524,21 +524,15 @@ EAPI Eina_Error egueb_dom_document_element_create(Egueb_Dom_Node *n,
 }
 
 /* readonly attribute Element documentElement; */
-EAPI Eina_Error egueb_dom_document_element_get(Egueb_Dom_Node *n,
-		Egueb_Dom_Node **element)
+EAPI Egueb_Dom_Node * egueb_dom_document_element_get(Egueb_Dom_Node *n)
 {
 	Egueb_Dom_Document *thiz;
 
 	thiz = EGUEB_DOM_DOCUMENT(n);
-	if (!element) return EINA_ERROR_NONE;
-	if (thiz->element)
-		*element = egueb_dom_node_ref(thiz->element);
-	else
-		*element = NULL;
-	return EINA_ERROR_NONE;
+	return egueb_dom_node_ref(thiz->element);
 }
 
-EAPI Eina_Error egueb_dom_document_element_set(Egueb_Dom_Node *n,
+EAPI void egueb_dom_document_element_set(Egueb_Dom_Node *n,
 		Egueb_Dom_Node *element)
 {
 	Egueb_Dom_Document *thiz;
@@ -581,8 +575,6 @@ EAPI Eina_Error egueb_dom_document_element_set(Egueb_Dom_Node *n,
 		/* add the element to the process list */
 		_egueb_dom_document_element_enqueue(thiz, egueb_dom_node_ref(element));
 	}
-
-	return EINA_ERROR_NONE;
 }
 
 EAPI Eina_Error egueb_dom_document_element_get_by_id(Egueb_Dom_Node *n,
@@ -614,41 +606,33 @@ EAPI Eina_Error egueb_dom_document_element_get_by_iri(Egueb_Dom_Node *n,
 /* Introduced in DOM Level 3:
  * Node adoptNode(in Node source) raises(DOMException);
  */
-EAPI Eina_Error egueb_dom_document_node_adopt(Egueb_Dom_Node *n, Egueb_Dom_Node *adopted, Egueb_Dom_Node **ret)
+EAPI Egueb_Dom_Node * egueb_dom_document_node_adopt(Egueb_Dom_Node *n, Egueb_Dom_Node *adopted, Eina_Error *err)
 {
 	Egueb_Dom_Node_Type type;
 	Egueb_Dom_Node *other;
 	Eina_Error err = EINA_ERROR_NONE;
 
-	egueb_dom_node_type_get(adopted, &type);
+	type = egueb_dom_node_type_get(adopted);
 	switch (type)
 	{
 		case EGUEB_DOM_NODE_TYPE_ELEMENT_NODE:
 		/* be sure to remove it from its parent */
-		egueb_dom_node_parent_get(adopted, &other);
+		other = egueb_dom_node_parent_get(adopted);
 		if (other)
 		{
 			egueb_dom_node_child_remove(other, adopted);
 			egueb_dom_node_unref(other);
 		}
 		egueb_dom_node_document_set(adopted, n);
+		return adopted;
 		break;
 
 		default:
-		err = EGUEB_DOM_ERROR_NOT_SUPPORTED;
+		if (err) *err = EGUEB_DOM_ERROR_NOT_SUPPORTED;
+		egueb_dom_node_unref(adopted);
+		return NULL;
 		break;
 	}
-	if (err == EINA_ERROR_NONE)
-	{
-		if (ret) *ret = egueb_dom_node_ref(adopted);
-	}
-	else
-	{
-		if (ret) *ret = NULL;
-	}
-	egueb_dom_node_unref(adopted);
-
-	return err;
 }
 
 EAPI void egueb_dom_document_process(Egueb_Dom_Node *n)

@@ -34,16 +34,16 @@
 #include "egueb_svg_overflow.h"
 
 EAPI Eina_Bool egueb_svg_is_element(Egueb_Dom_Node *n);
-EAPI Eina_Error egueb_svg_element_presentation_relative_get(Egueb_Dom_Node *n,
-		Egueb_Dom_Node **presentation_relative);
-EAPI Eina_Error egueb_svg_element_presentation_relative_set(Egueb_Dom_Node *n,
-		Egueb_Dom_Node *presentation_relative);
-EAPI Eina_Error egueb_svg_element_geometry_relative_get(Egueb_Dom_Node *n,
-		Egueb_Dom_Node **geometry_relative);
-EAPI Eina_Error egueb_svg_element_geometry_relative_set(Egueb_Dom_Node *n,
-		Egueb_Dom_Node *geometry_relative);
 
-EAPI Eina_Error egueb_svg_element_font_size_set(Egueb_Dom_Node *n,
+EAPI Egueb_Dom_Node * egueb_svg_element_presentation_relative_get(Egueb_Dom_Node *n);
+EAPI Eina_Bool egueb_svg_element_presentation_relative_set(Egueb_Dom_Node *n,
+		Egueb_Dom_Node *presentation_relative, Eina_Error *err);
+
+EAPI Egueb_Dom_Node * egueb_svg_element_geometry_relative_get(Egueb_Dom_Node *n);
+EAPI Eina_Bool egueb_svg_element_geometry_relative_set(Egueb_Dom_Node *n,
+		Egueb_Dom_Node *geometry_relative, Eina_Error *err);
+
+EAPI void egueb_svg_element_font_size_set(Egueb_Dom_Node *n,
 		const Egueb_Svg_Font_Size *font_size);
 #if 0
 /* core */

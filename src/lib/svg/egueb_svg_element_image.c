@@ -111,27 +111,26 @@ static void _egueb_svg_element_image_svg_load(Egueb_Dom_Node *n,
 	Egueb_Dom_Node *topmost = NULL;
 	Enesim_Renderer *r;
 	Enesim_Matrix m;
-	Eina_Error err;
 
 	INFO("Parsing the svg file");
 	/* parse the file */
 	new_doc = egueb_svg_document_new(NULL);
 	egueb_dom_parser_parse(data, new_doc);
-	egueb_dom_document_element_get(new_doc, &topmost);
+	topmost = egueb_dom_document_element_get(new_doc);
 	egueb_dom_node_unref(new_doc);
 
 	/* TODO check that the node is a svg element */
 	/* keep the node */
 	thiz = EGUEB_SVG_ELEMENT_IMAGE(n);
 	thiz->g = egueb_svg_element_g_new();
-	egueb_dom_document_node_adopt(doc, thiz->g, &thiz->g);
-	egueb_dom_document_node_adopt(doc, topmost, &topmost);
-	err = egueb_dom_node_child_append(thiz->g, topmost);
+	thiz->g = egueb_dom_document_node_adopt(doc, thiz->g, NULL);
+	topmost = egueb_dom_document_node_adopt(doc, topmost, NULL);
+	egueb_dom_node_child_append(thiz->g, topmost, NULL);
 	/* set the transformation */
 	enesim_matrix_translate(&m, thiz->gx, thiz->gy);
 	egueb_svg_renderable_transform_set(thiz->g, &m);
 	/* finally process it */
-	egueb_svg_element_geometry_relative_set(thiz->g, n);
+	egueb_svg_element_geometry_relative_set(thiz->g, n, NULL);
 	egueb_dom_element_process(thiz->g);
 
 	/* set the proxy for the svg */
@@ -184,7 +183,7 @@ static void _egueb_svg_element_uri_fetched(Enesim_Stream *data,
 	}
 
 	INFO("Uri fetched with MIME '%s'", mime);
-	egueb_dom_node_document_get(n, &doc);
+	doc = egueb_dom_node_document_get(n);
 	if (!doc)
 	{
 		WARN("No document set");
@@ -295,14 +294,14 @@ static Eina_Bool _egueb_svg_element_image_process(
 	}
 
 	/* calculate the real size */
-	egueb_svg_element_geometry_relative_get(EGUEB_DOM_NODE(r), &relative);
+	relative = egueb_svg_element_geometry_relative_get(EGUEB_DOM_NODE(r));
 	if (!relative)
 	{
 		WARN("No relative available");
 		egueb_dom_string_unref(uri);
 		return EINA_FALSE;
 	}
-	egueb_dom_node_document_get(EGUEB_DOM_NODE(r), &doc);
+	doc = egueb_dom_node_document_get(EGUEB_DOM_NODE(r));
 	if (!doc)
 	{
 		WARN("No document set");

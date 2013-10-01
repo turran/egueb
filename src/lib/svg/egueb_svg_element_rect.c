@@ -241,98 +241,98 @@ EAPI Egueb_Dom_Node * egueb_svg_element_rect_new(void)
 	return n;
 }
 
-EAPI Eina_Error egueb_svg_element_rect_x_set(Egueb_Dom_Node *n, const Egueb_Svg_Coord *x)
+EAPI void egueb_svg_element_rect_x_set(Egueb_Dom_Node *n, const Egueb_Svg_Coord *x)
 {
 	Egueb_Svg_Element_Rect *thiz;
 
 	thiz = EGUEB_SVG_ELEMENT_RECT(n);
-	return egueb_dom_attr_set(thiz->x, EGUEB_DOM_ATTR_TYPE_BASE, x);
+	egueb_dom_attr_set(thiz->x, EGUEB_DOM_ATTR_TYPE_BASE, x);
 }
 
-EAPI Eina_Error egueb_svg_element_rect_x_get(Egueb_Dom_Node *n, Egueb_Svg_Coord_Animated *x)
+EAPI void egueb_svg_element_rect_x_get(Egueb_Dom_Node *n, Egueb_Svg_Coord_Animated *x)
 {
 	Egueb_Svg_Element_Rect *thiz;
 
 	thiz = EGUEB_SVG_ELEMENT_RECT(n);
-	EGUEB_SVG_ELEMENT_ATTR_ANIMATED_GET_WITH_RETURN(thiz->x, x);
+	EGUEB_SVG_ELEMENT_ATTR_ANIMATED_GET(thiz->x, x);
 }
 
-EAPI Eina_Error egueb_svg_element_rect_y_set(Egueb_Dom_Node *n, const Egueb_Svg_Coord *y)
+EAPI void egueb_svg_element_rect_y_set(Egueb_Dom_Node *n, const Egueb_Svg_Coord *y)
 {
 	Egueb_Svg_Element_Rect *thiz;
 
 	thiz = EGUEB_SVG_ELEMENT_RECT(n);
-	return egueb_dom_attr_set(thiz->y, EGUEB_DOM_ATTR_TYPE_BASE, y);
+	egueb_dom_attr_set(thiz->y, EGUEB_DOM_ATTR_TYPE_BASE, y);
 }
 
-EAPI Eina_Error egueb_svg_element_rect_y_get(Egueb_Dom_Node *n, Egueb_Svg_Coord_Animated *y)
+EAPI void egueb_svg_element_rect_y_get(Egueb_Dom_Node *n, Egueb_Svg_Coord_Animated *y)
 {
 	Egueb_Svg_Element_Rect *thiz;
 
 	thiz = EGUEB_SVG_ELEMENT_RECT(n);
-	EGUEB_SVG_ELEMENT_ATTR_ANIMATED_GET_WITH_RETURN(thiz->y, y);
+	EGUEB_SVG_ELEMENT_ATTR_ANIMATED_GET(thiz->y, y);
 }
 
-EAPI Eina_Error egueb_svg_element_rect_width_set(Egueb_Dom_Node *n, const Egueb_Svg_Length *width)
+EAPI void egueb_svg_element_rect_width_set(Egueb_Dom_Node *n, const Egueb_Svg_Length *width)
 {
 	Egueb_Svg_Element_Rect *thiz;
 
 	thiz = EGUEB_SVG_ELEMENT_RECT(n);
-	return egueb_dom_attr_set(thiz->width, EGUEB_DOM_ATTR_TYPE_BASE, width);
+	egueb_dom_attr_set(thiz->width, EGUEB_DOM_ATTR_TYPE_BASE, width);
 }
 
-EAPI Eina_Error egueb_svg_element_rect_width_get(Egueb_Dom_Node *n, Egueb_Svg_Length_Animated *width)
+EAPI void egueb_svg_element_rect_width_get(Egueb_Dom_Node *n, Egueb_Svg_Length_Animated *width)
 {
 	Egueb_Svg_Element_Rect *thiz;
 
 	thiz = EGUEB_SVG_ELEMENT_RECT(n);
-	EGUEB_SVG_ELEMENT_ATTR_ANIMATED_GET_WITH_RETURN(thiz->width, width);
+	EGUEB_SVG_ELEMENT_ATTR_ANIMATED_GET(thiz->width, width);
 }
 
-EAPI Eina_Error egueb_svg_element_rect_height_set(Egueb_Dom_Node *n, const Egueb_Svg_Length *height)
+EAPI void egueb_svg_element_rect_height_set(Egueb_Dom_Node *n, const Egueb_Svg_Length *height)
 {
 	Egueb_Svg_Element_Rect *thiz;
 
 	thiz = EGUEB_SVG_ELEMENT_RECT(n);
-	return egueb_dom_attr_set(thiz->height, EGUEB_DOM_ATTR_TYPE_BASE, height);
+	egueb_dom_attr_set(thiz->height, EGUEB_DOM_ATTR_TYPE_BASE, height);
 }
 
-EAPI Eina_Error egueb_svg_element_rect_height_get(Egueb_Dom_Node *n, Egueb_Svg_Length_Animated *height)
+EAPI void egueb_svg_element_rect_height_get(Egueb_Dom_Node *n, Egueb_Svg_Length_Animated *height)
 {
 	Egueb_Svg_Element_Rect *thiz;
 
 	thiz = EGUEB_SVG_ELEMENT_RECT(n);
-	EGUEB_SVG_ELEMENT_ATTR_ANIMATED_GET_WITH_RETURN(thiz->height, height);
+	EGUEB_SVG_ELEMENT_ATTR_ANIMATED_GET(thiz->height, height);
 }
 
-EAPI Eina_Error egueb_svg_element_rect_rx_set(Egueb_Dom_Node *n, const Egueb_Svg_Coord *rx)
+EAPI void egueb_svg_element_rect_rx_set(Egueb_Dom_Node *n, const Egueb_Svg_Coord *rx)
 {
 	Egueb_Svg_Element_Rect *thiz;
 
 	thiz = EGUEB_SVG_ELEMENT_RECT(n);
-	return egueb_dom_attr_set(thiz->rx, EGUEB_DOM_ATTR_TYPE_BASE, rx);
+	egueb_dom_attr_set(thiz->rx, EGUEB_DOM_ATTR_TYPE_BASE, rx);
 }
 
-EAPI Eina_Error egueb_svg_element_rect_rx_get(Egueb_Dom_Node *n, Egueb_Svg_Coord_Animated *rx)
+EAPI void egueb_svg_element_rect_rx_get(Egueb_Dom_Node *n, Egueb_Svg_Coord_Animated *rx)
 {
 	Egueb_Svg_Element_Rect *thiz;
 
 	thiz = EGUEB_SVG_ELEMENT_RECT(n);
-	EGUEB_SVG_ELEMENT_ATTR_ANIMATED_GET_WITH_RETURN(thiz->rx, rx);
+	EGUEB_SVG_ELEMENT_ATTR_ANIMATED_GET(thiz->rx, rx);
 }
 
-EAPI Eina_Error egueb_svg_element_rect_ry_set(Egueb_Dom_Node *n, const Egueb_Svg_Coord *ry)
+EAPI void egueb_svg_element_rect_ry_set(Egueb_Dom_Node *n, const Egueb_Svg_Coord *ry)
 {
 	Egueb_Svg_Element_Rect *thiz;
 
 	thiz = EGUEB_SVG_ELEMENT_RECT(n);
-	return egueb_dom_attr_set(thiz->ry, EGUEB_DOM_ATTR_TYPE_BASE, ry);
+	egueb_dom_attr_set(thiz->ry, EGUEB_DOM_ATTR_TYPE_BASE, ry);
 }
 
-EAPI Eina_Error egueb_svg_element_rect_ry_get(Egueb_Dom_Node *n, Egueb_Svg_Coord_Animated *ry)
+EAPI void egueb_svg_element_rect_ry_get(Egueb_Dom_Node *n, Egueb_Svg_Coord_Animated *ry)
 {
 	Egueb_Svg_Element_Rect *thiz;
 
 	thiz = EGUEB_SVG_ELEMENT_RECT(n);
-	EGUEB_SVG_ELEMENT_ATTR_ANIMATED_GET_WITH_RETURN(thiz->ry, ry);
+	EGUEB_SVG_ELEMENT_ATTR_ANIMATED_GET(thiz->ry, ry);
 }

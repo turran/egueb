@@ -19,12 +19,21 @@
 #ifndef _EGUEB_SVG_ELEMENT_CIRCLE_H_
 #define _EGUEB_SVG_ELEMENT_CIRCLE_H_
 
+/**
+ * @defgroup Egueb_Svg_Element_Circle_Group Circle
+ * @brief Circle element
+ * @ingroup Egueb_Svg_Element_Group
+ * @{
+ */
 EAPI Egueb_Dom_Node * egueb_svg_element_circle_new(void);
-EAPI Eina_Error egueb_svg_element_circle_cx_set(Egueb_Dom_Node *n, const Egueb_Svg_Coord *cx);
-EAPI Eina_Error egueb_svg_element_circle_cx_get(Egueb_Dom_Node *n, Egueb_Svg_Coord_Animated *cx);
-EAPI Eina_Error egueb_svg_element_circle_cy_set(Egueb_Dom_Node *n, const Egueb_Svg_Coord *cy);
-EAPI Eina_Error egueb_svg_element_circle_cy_get(Egueb_Dom_Node *n, Egueb_Svg_Coord_Animated *cy);
-EAPI Eina_Error egueb_svg_element_circle_r_set(Egueb_Dom_Node *n, const Egueb_Svg_Length *r);
-EAPI Eina_Error egueb_svg_element_circle_r_get(Egueb_Dom_Node *n, Egueb_Svg_Length_Animated *r);
+EAPI void egueb_svg_element_circle_cx_set(Egueb_Dom_Node *n, const Egueb_Svg_Coord *cx);
+EAPI void egueb_svg_element_circle_cx_get(Egueb_Dom_Node *n, Egueb_Svg_Coord_Animated *cx);
+EAPI void egueb_svg_element_circle_cy_set(Egueb_Dom_Node *n, const Egueb_Svg_Coord *cy);
+EAPI void egueb_svg_element_circle_cy_get(Egueb_Dom_Node *n, Egueb_Svg_Coord_Animated *cy);
+EAPI void egueb_svg_element_circle_r_set(Egueb_Dom_Node *n, const Egueb_Svg_Length *r);
+EAPI void egueb_svg_element_circle_r_get(Egueb_Dom_Node *n, Egueb_Svg_Length_Animated *r);
+/**
+ * @}
+ */
 
 #endif

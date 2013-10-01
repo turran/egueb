@@ -514,15 +514,15 @@ EAPI Eina_Bool egueb_dom_node_children_foreach(Egueb_Dom_Node *thiz, Egueb_Dom_N
 /*
  * readonly attribute Node firstChild;
  */
-EAPI Eina_Error egueb_dom_node_child_first_get(Egueb_Dom_Node *thiz, Egueb_Dom_Node **first)
+EAPI Egueb_Dom_Node * egueb_dom_node_child_first_get(Egueb_Dom_Node *thiz)
 {
 	Egueb_Dom_Node *other = NULL;
 
-	if (!thiz->children) *first = NULL;
+	if (!thiz->children) return NULL;
 	else other = EINA_INLIST_CONTAINER_GET(thiz->children, Egueb_Dom_Node);
 
-	if (other) *first = egueb_dom_node_ref(other);
-	return EINA_ERROR_NONE;
+	if (other) return egueb_dom_node_ref(other);
+	return NULL;
 }
 
 /*
@@ -606,11 +606,12 @@ EAPI Eina_Error egueb_dom_node_child_remove(Egueb_Dom_Node *thiz, Egueb_Dom_Node
 }
 
 /*
- * Node appendChild(in Node newChild)
+ * Node appendChild(in Node newChild) raises(DOMException)
  */
-EAPI Eina_Error egueb_dom_node_child_append(Egueb_Dom_Node *thiz, Egueb_Dom_Node *child)
+EAPI Eina_Bool egueb_dom_node_child_append(Egueb_Dom_Node *thiz, Egueb_Dom_Node *child,
+		Eina_Error *err)
 {
-	return egueb_dom_node_insert_before(thiz, child, NULL);
+	return egueb_dom_node_insert_before(thiz, child, NULL, err);
 }
 
 /*
@@ -619,27 +620,46 @@ EAPI Eina_Error egueb_dom_node_child_append(Egueb_Dom_Node *thiz, Egueb_Dom_Node
                                   in Node refChild)
                                         raises(DOMException);
  */
-EAPI Eina_Error egueb_dom_node_insert_before(Egueb_Dom_Node *thiz,
-		Egueb_Dom_Node *child, Egueb_Dom_Node *ref)
+EAPI Eina_Bool egueb_dom_node_insert_before(Egueb_Dom_Node *thiz,
+		Egueb_Dom_Node *child, Egueb_Dom_Node *ref, Eina_Error *err)
 {
 	Egueb_Dom_Node_Class *klass;
 	Egueb_Dom_Event *event;
 	Eina_Bool appendable = EINA_TRUE;
 
-	if (!thiz) return EGUEB_DOM_ERROR_INVALID_ACCESS;
-	if (!child) return EGUEB_DOM_ERROR_INVALID_ACCESS;
+	if (!thiz)
+	{
+		if (err) *err = EGUEB_DOM_ERROR_INVALID_ACCESS;
+		return EINA_FALSE;
+	}
+	if (!child)
+	{
+		if (err) *err = EGUEB_DOM_ERROR_INVALID_ACCESS;
+		return EINA_FALSE;
+	}
 
 	/* NOT_FOUND_ERR: Raised if refChild is not a child of this node. */
-	if (ref && ref->parent != thiz) return EGUEB_DOM_ERROR_NOT_FOUND;
+	if (ref && ref->parent != thiz)
+	{
+		if (err) *err = EGUEB_DOM_ERROR_NOT_FOUND;
+		return EINA_FALSE;
+	}
 
 	if (child->owner_document && (thiz->owner_document != child->owner_document))
-		return EGUEB_DOM_ERROR_WRONG_DOCUMENT;
+	{
+		if (err) *err = EGUEB_DOM_ERROR_WRONG_DOCUMENT;
+		return EINA_FALSE;
+	}
 
 	klass = EGUEB_DOM_NODE_CLASS_GET(thiz);
 	if (klass->child_appendable)
 		appendable = klass->child_appendable(thiz, child);
 
-	if (!appendable) return EGUEB_DOM_ERROR_HIERARCHY_REQUEST;
+	if (!appendable)
+	{
+		if (err) *err = EGUEB_DOM_ERROR_HIERARCHY_REQUEST;
+		return EINA_FALSE;
+	}
 
 	if (!ref)
 		thiz->children = eina_inlist_append(thiz->children,
@@ -657,7 +677,7 @@ EAPI Eina_Error egueb_dom_node_insert_before(Egueb_Dom_Node *thiz,
 	/* set the owner document on the child */
 	if (thiz->owner_document != child->owner_document)
 		egueb_dom_node_document_set(child, thiz->owner_document);
-	return EINA_ERROR_NONE;
+	return EINA_TRUE;
 }
 
 /*  Node               cloneNode(in boolean deep); */
@@ -750,7 +770,7 @@ EAPI void egueb_dom_node_event_listener_free(Egueb_Dom_Node_Event_Listener *node
 	free(node_listener);
 }
 
-EAPI Eina_Error egueb_dom_node_event_monitor_add(Egueb_Dom_Node *thiz,
+EAPI void egueb_dom_node_event_monitor_add(Egueb_Dom_Node *thiz,
 		Egueb_Dom_Event_Listener listener,
 		void *data)
 {
@@ -761,7 +781,6 @@ EAPI Eina_Error egueb_dom_node_event_monitor_add(Egueb_Dom_Node *thiz,
 	nl->data = data;
 
 	thiz->monitors = eina_list_append(thiz->monitors, nl);
-	return EINA_ERROR_NONE;
 }
 
 EAPI void egueb_dom_node_event_monitor_remove(Egueb_Dom_Node *thiz,
@@ -811,16 +830,16 @@ EAPI Eina_Error egueb_dom_node_event_dispatch(Egueb_Dom_Node *thiz,
 }
 
 /* propagate an event in another tree */
-EAPI Eina_Error egueb_dom_node_event_propagate(Egueb_Dom_Node *thiz,
+EAPI Eina_Bool egueb_dom_node_event_propagate(Egueb_Dom_Node *thiz,
 		Egueb_Dom_Event *event)
 {
-	if (!event->dispatching) return EINA_ERROR_NONE;
+	if (!event->dispatching) return EINA_FALSE;
 	if (event->phase == EGUEB_DOM_EVENT_PHASE_CAPTURING)
 		_egueb_dom_node_event_capture(thiz, event);
 	else if (event->phase == EGUEB_DOM_EVENT_PHASE_BUBBLING)
 		_egueb_dom_node_event_bubble(thiz, event);
 
-	return EINA_ERROR_NONE;
+	return EINA_FALSE;
 }
 
 /* Introduced in DOM Level 3:

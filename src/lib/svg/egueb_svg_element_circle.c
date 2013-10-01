@@ -197,50 +197,50 @@ EAPI Egueb_Dom_Node * egueb_svg_element_circle_new(void)
 	return n;
 }
 
-EAPI Eina_Error egueb_svg_element_circle_cx_set(Egueb_Dom_Node *n, const Egueb_Svg_Coord *cx)
+EAPI void egueb_svg_element_circle_cx_set(Egueb_Dom_Node *n, const Egueb_Svg_Coord *cx)
 {
 	Egueb_Svg_Element_Circle *thiz;
 
 	thiz = EGUEB_SVG_ELEMENT_CIRCLE(n);
-	return egueb_dom_attr_set(thiz->cx, EGUEB_DOM_ATTR_TYPE_BASE, cx);
+	egueb_dom_attr_set(thiz->cx, EGUEB_DOM_ATTR_TYPE_BASE, cx);
 }
 
-EAPI Eina_Error egueb_svg_element_circle_cx_get(Egueb_Dom_Node *n, Egueb_Svg_Coord_Animated *cx)
+EAPI void egueb_svg_element_circle_cx_get(Egueb_Dom_Node *n, Egueb_Svg_Coord_Animated *cx)
 {
 	Egueb_Svg_Element_Circle *thiz;
 
 	thiz = EGUEB_SVG_ELEMENT_CIRCLE(n);
-	EGUEB_SVG_ELEMENT_ATTR_ANIMATED_GET_WITH_RETURN(thiz->cx, cx);
+	EGUEB_SVG_ELEMENT_ATTR_ANIMATED_GET(thiz->cx, cx);
 }
 
-EAPI Eina_Error egueb_svg_element_circle_cy_set(Egueb_Dom_Node *n, const Egueb_Svg_Coord *cy)
+EAPI void egueb_svg_element_circle_cy_set(Egueb_Dom_Node *n, const Egueb_Svg_Coord *cy)
 {
 	Egueb_Svg_Element_Circle *thiz;
 
 	thiz = EGUEB_SVG_ELEMENT_CIRCLE(n);
-	return egueb_dom_attr_set(thiz->cy, EGUEB_DOM_ATTR_TYPE_BASE, cy);
+	egueb_dom_attr_set(thiz->cy, EGUEB_DOM_ATTR_TYPE_BASE, cy);
 }
 
-EAPI Eina_Error egueb_svg_element_circle_cy_get(Egueb_Dom_Node *n, Egueb_Svg_Coord_Animated *cy)
+EAPI void egueb_svg_element_circle_cy_get(Egueb_Dom_Node *n, Egueb_Svg_Coord_Animated *cy)
 {
 	Egueb_Svg_Element_Circle *thiz;
 
 	thiz = EGUEB_SVG_ELEMENT_CIRCLE(n);
-	EGUEB_SVG_ELEMENT_ATTR_ANIMATED_GET_WITH_RETURN(thiz->cy, cy);
+	EGUEB_SVG_ELEMENT_ATTR_ANIMATED_GET(thiz->cy, cy);
 }
 
-EAPI Eina_Error egueb_svg_element_circle_r_set(Egueb_Dom_Node *n, const Egueb_Svg_Length *r)
+EAPI void egueb_svg_element_circle_r_set(Egueb_Dom_Node *n, const Egueb_Svg_Length *r)
 {
 	Egueb_Svg_Element_Circle *thiz;
 
 	thiz = EGUEB_SVG_ELEMENT_CIRCLE(n);
-	return egueb_dom_attr_set(thiz->radius, EGUEB_DOM_ATTR_TYPE_BASE, r);
+	egueb_dom_attr_set(thiz->radius, EGUEB_DOM_ATTR_TYPE_BASE, r);
 }
 
-EAPI Eina_Error egueb_svg_element_circle_r_get(Egueb_Dom_Node *n, Egueb_Svg_Length_Animated *r)
+EAPI void egueb_svg_element_circle_r_get(Egueb_Dom_Node *n, Egueb_Svg_Length_Animated *r)
 {
 	Egueb_Svg_Element_Circle *thiz;
 
 	thiz = EGUEB_SVG_ELEMENT_CIRCLE(n);
-	EGUEB_SVG_ELEMENT_ATTR_ANIMATED_GET_WITH_RETURN(thiz->radius, r);
+	EGUEB_SVG_ELEMENT_ATTR_ANIMATED_GET(thiz->radius, r);
 }

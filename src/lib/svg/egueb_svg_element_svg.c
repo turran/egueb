@@ -128,13 +128,13 @@ static void _egueb_svg_element_svg_set_generic_painter(Egueb_Dom_Node *n)
 		Egueb_Dom_Node *child;
 
 		/* iterate over the shapes to set the painter too */
-		egueb_dom_node_child_first_get(n, &child);
+		child = egueb_dom_node_child_first_get(n);
 		while (child)
 		{
 			Egueb_Dom_Node *tmp;
 
 			_egueb_svg_element_svg_set_generic_painter(child);
-			egueb_dom_node_sibling_next_get(child, &tmp);
+			tmp = egueb_dom_node_sibling_next_get(child);
 			egueb_dom_node_unref(child);
 			child = tmp;
 		}
@@ -152,13 +152,13 @@ static void _egueb_svg_element_svg_set_etch(Egueb_Dom_Node *n, Etch *e)
 		Egueb_Dom_Node *child;
 
 		/* iterate over the children to set the etch too */
-		egueb_dom_node_child_first_get(n, &child);
+		child = egueb_dom_node_child_first_get(n);
 		while (child)
 		{
 			Egueb_Dom_Node *tmp;
 
 			_egueb_svg_element_svg_set_etch(child, e);
-			egueb_dom_node_sibling_next_get(child, &tmp);
+			tmp = egueb_dom_node_sibling_next_get(child);
 			egueb_dom_node_unref(child);
 			child = tmp;
 		}
@@ -224,8 +224,8 @@ static Eina_Bool _egueb_svg_element_svg_process(Egueb_Svg_Renderable *r)
 	 * container size to generate the children viewbox (i.e our
 	 * own bounds
 	 */
-	egueb_dom_node_document_get(EGUEB_DOM_NODE(r), &svg_doc);
-	egueb_svg_element_geometry_relative_get(EGUEB_DOM_NODE(r), &relative);
+	svg_doc = egueb_dom_node_document_get(EGUEB_DOM_NODE(r));
+	relative = egueb_svg_element_geometry_relative_get(EGUEB_DOM_NODE(r));
 	if (!relative)
 	{
 		Enesim_Matrix m;
@@ -2123,27 +2123,25 @@ EAPI Eina_Bool egueb_svg_element_svg_draw_list(Egueb_Dom_Node *n,
 	return ret;
 }
 
-EAPI Eina_Error egueb_svg_element_svg_width_get(Egueb_Dom_Node *n,
+EAPI void egueb_svg_element_svg_width_get(Egueb_Dom_Node *n,
 		Egueb_Svg_Length_Animated *width)
 {
 	Egueb_Svg_Element_Svg *thiz;
 
 	thiz = EGUEB_SVG_ELEMENT_SVG(n);
 	EGUEB_SVG_ELEMENT_ATTR_SIMPLE_GET(thiz->width, width);
-	return EINA_ERROR_NONE;
 }
 
-EAPI Eina_Error egueb_svg_element_svg_height_get(Egueb_Dom_Node *n,
+EAPI void egueb_svg_element_svg_height_get(Egueb_Dom_Node *n,
 		Egueb_Svg_Length_Animated *height)
 {
 	Egueb_Svg_Element_Svg *thiz;
 
 	thiz = EGUEB_SVG_ELEMENT_SVG(n);
 	EGUEB_SVG_ELEMENT_ATTR_SIMPLE_GET(thiz->height, height);
-	return EINA_ERROR_NONE;
 }
 
-EAPI Eina_Error egueb_svg_element_svg_current_scale_set(Egueb_Dom_Node *n,
+EAPI void egueb_svg_element_svg_current_scale_set(Egueb_Dom_Node *n,
 		double scale)
 {
 	Egueb_Svg_Element_Svg *thiz;
@@ -2151,10 +2149,9 @@ EAPI Eina_Error egueb_svg_element_svg_current_scale_set(Egueb_Dom_Node *n,
 	thiz = EGUEB_SVG_ELEMENT_SVG(n);
 	thiz->current_scale = scale;
 	egueb_dom_element_request_process(n);
-	return EINA_ERROR_NONE;
 }
 
-EAPI Eina_Error egueb_svg_element_svg_current_translate_set(Egueb_Dom_Node *n,
+EAPI void egueb_svg_element_svg_current_translate_set(Egueb_Dom_Node *n,
 		Egueb_Svg_Point *p)
 {
 	Egueb_Svg_Element_Svg *thiz;
@@ -2170,7 +2167,6 @@ EAPI Eina_Error egueb_svg_element_svg_current_translate_set(Egueb_Dom_Node *n,
 		thiz->current_translate = *p;
 	}
 	egueb_dom_element_request_process(n);
-	return EINA_ERROR_NONE;
 }
 
 #if 0

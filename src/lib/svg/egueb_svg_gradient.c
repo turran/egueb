@@ -146,7 +146,7 @@ static void _egueb_svg_gradient_deep_stop_get(Egueb_Dom_Node *n,
 	/* in case we do have a stop, return it, otherwise
 	 * go find the stop on the xlink href node
 	 */
-	egueb_dom_node_child_first_get(n, &child);
+	child = egueb_dom_node_child_first_get(n);
 	if (!child)
 	{
 		Egueb_Dom_Node *href = NULL;
@@ -174,7 +174,7 @@ static void _egueb_svg_gradient_deep_stop_get(Egueb_Dom_Node *n,
 			else
 			{
 				Egueb_Dom_Node *tmp = NULL;
-				egueb_dom_node_sibling_next_get(child, &tmp);
+				tmp = egueb_dom_node_sibling_next_get(child);
 				egueb_dom_node_unref(child);
 				child = tmp;
 			}
@@ -648,7 +648,7 @@ static Eina_Bool _egueb_svg_gradient_children_process_cb(
 {
 	Egueb_Dom_Node_Type type;
 
-	egueb_dom_node_type_get(child, &type);
+	type = egueb_dom_node_type_get(child);
 	if (type != EGUEB_DOM_NODE_TYPE_ELEMENT_NODE)
 		return EINA_TRUE;
 	egueb_dom_element_process(child);

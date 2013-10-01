@@ -105,7 +105,8 @@ typedef struct _Egueb_Svg_Document_Uri_Data
 {
 	Egueb_Dom_Node *node;
 	Egueb_Dom_Node *ret;
-	Eina_Error error;
+	Eina_Bool ok;
+	Eina_Error *error;
 } Egueb_Svg_Document_Uri_Data;
 
 typedef enum _Egueb_Svg_Type {
@@ -629,8 +630,8 @@ static void _egueb_svg_document_element_uri_local_get(const char *uri,
 	 * the dom string to the uri descriptor, instead of the char *
 	 */
 	id = egueb_dom_string_new_with_static_string(fragment);
-	data->error = egueb_dom_document_element_get_by_id(data->node, id,
-			&data->ret);
+	egueb_dom_document_element_get_by_id(data->node, id,
+			&data->ret, NULL);
 	egueb_dom_string_unref(id);
 }
 
@@ -672,7 +673,7 @@ static Egueb_Dom_Node * _egueb_svg_document_input_element_at_recursive(
 	if (egueb_svg_is_renderable_container(n))
 	{
 		Egueb_Dom_Node *child = NULL;
-		egueb_dom_node_child_last_get(n, &child, NULL);
+		child = egueb_dom_node_child_last_get(n);
 		while (child)
 		{
 			Egueb_Dom_Node *tmp;
@@ -685,7 +686,7 @@ static Egueb_Dom_Node * _egueb_svg_document_input_element_at_recursive(
 				break;
 			}
 
-			egueb_dom_node_sibling_previous_get(child, &tmp, NULL);
+			tmp = egueb_dom_node_sibling_previous_get(child);
 			egueb_dom_node_unref(child);
 			child = tmp;
 		}
@@ -699,7 +700,7 @@ static Egueb_Dom_Node * _egueb_svg_document_input_element_at_recursive(
 		{
 			Egueb_Dom_String *name;
 
-			egueb_dom_node_name_get(n, &name, NULL);
+			name = egueb_dom_node_name_get(n);
 			DBG("Element '%s' found with bounds %"
 					EINA_RECTANGLE_FORMAT,
 					egueb_dom_string_string_get(name),
@@ -721,7 +722,7 @@ static Egueb_Dom_Node * _egueb_svg_document_input_element_at(void *data,
 	Egueb_Dom_Node *ret;
 	Eina_Rectangle ptr;
 
-	egueb_dom_document_element_get(EGUEB_DOM_NODE(thiz), &n);
+	n = egueb_dom_document_element_get(EGUEB_DOM_NODE(thiz));
 	if (!n) return NULL;
 
 	/* iterate over the whole tree */
@@ -845,32 +846,28 @@ EAPI Egueb_Dom_Node * egueb_svg_document_new(void *app)
 }
 
 /* readonly attribute DOMString title; */
-EAPI Eina_Error egueb_svg_document_title_get(Egueb_Dom_Node *n,
-		Egueb_Dom_String **title)
+EAPI Egueb_Dom_String * egueb_svg_document_title_get(Egueb_Dom_Node *n)
 {
 	/* FIXME here we should use the application interface */
-	return EINA_ERROR_NONE;
+	return NULL;
 }
 
 /* readonly attribute DOMString referrer; */
-EAPI Eina_Error egueb_svg_document_referrer_get(Egueb_Dom_Node *n,
-		Egueb_Dom_String **referrer)
+EAPI Egueb_Dom_String * egueb_svg_document_referrer_get(Egueb_Dom_Node *n)
 {
 	/* FIXME here we should use the application interface */
-	return EINA_ERROR_NONE;
+	return NULL;
 }
 
 /* readonly attribute DOMString domain; */
-EAPI Eina_Error egueb_svg_document_domain_get(Egueb_Dom_Node *n,
-		Egueb_Dom_String **domain)
+EAPI Egueb_Dom_String * egueb_svg_document_domain_get(Egueb_Dom_Node *n)
 {
 	/* FIXME here we should use the application interface */
-	return EINA_ERROR_NONE;
+	return NULL;
 }
 
 /* readonly attribute DOMString URL */
-EAPI Eina_Error egueb_svg_document_url_get(Egueb_Dom_Node *n,
-		Egueb_Dom_String **url)
+EAPI Egueb_Dom_String * egueb_svg_document_url_get(Egueb_Dom_Node *n)
 {
 	Egueb_Svg_Document *thiz;
 	const char *location = NULL;
@@ -879,16 +876,13 @@ EAPI Eina_Error egueb_svg_document_url_get(Egueb_Dom_Node *n,
 	int len;
 
 	thiz = EGUEB_SVG_DOCUMENT(n);
-	if (!thiz->filename_get)
-		return EGUEB_DOM_ERROR_NOT_FOUND;
+	if (!thiz->filename_get) return NULL;
 	filename = thiz->filename_get(thiz->filename_get_data);
-	if (!filename)
-		return EGUEB_DOM_ERROR_NOT_FOUND;
+	if (!filename) return NULL;
 	/* check if it is relative or absolute */
 	if (!strncmp(filename, "http://", 7) || strncmp(filename, "/", 1))
 	{
-		*url = egueb_dom_string_new_with_string(filename);
-		return EINA_ERROR_NONE;
+		return egueb_dom_string_new_with_string(filename);
 	}
 	/* in case of relative check if we have a location */	
 	if (!thiz->location_get)
@@ -907,29 +901,23 @@ EAPI Eina_Error egueb_svg_document_url_get(Egueb_Dom_Node *n,
 	{
 		len = asprintf(&ret, "%s/%s", location, filename);
 	}
-	if (len <= 0)
-		*url = NULL;
-	else
-		*url = egueb_dom_string_steal(ret);
-	return EINA_ERROR_NONE;
+	if (len <= 0) return NULL;
+	return egueb_dom_string_steal(ret);
 }
 
 /* readonly attribute SVGSVGElement rootElement; */
-EAPI Eina_Error egueb_svg_document_element_root_get(Egueb_Dom_Node *n,
-		Egueb_Dom_Node **root)
+EAPI Egueb_Dom_Node * egueb_svg_document_element_root_get(Egueb_Dom_Node *n)
 {
-	egueb_dom_document_element_get(n, root);
-	return EINA_ERROR_NONE;
+	return egueb_dom_document_element_get(n);
 }
 
-EAPI Eina_Error egueb_svg_document_element_root_set(Egueb_Dom_Node *n,
+EAPI void egueb_svg_document_element_root_set(Egueb_Dom_Node *n,
 		Egueb_Dom_Node *root)
 {
 	egueb_dom_document_element_set(n, root);
-	return EINA_ERROR_NONE;
 }
 
-EAPI Eina_Error egueb_svg_document_width_set(Egueb_Dom_Node *n,
+EAPI void egueb_svg_document_width_set(Egueb_Dom_Node *n,
 		double width)
 {
 	Egueb_Svg_Document *thiz;
@@ -937,21 +925,19 @@ EAPI Eina_Error egueb_svg_document_width_set(Egueb_Dom_Node *n,
 	thiz = EGUEB_SVG_DOCUMENT(n);
 	thiz->width = width;
 	thiz->changed = EINA_TRUE;
-	return EINA_ERROR_NONE;
 }
 
-EAPI Eina_Error egueb_svg_document_width_get(Egueb_Dom_Node *n,
+EAPI void egueb_svg_document_width_get(Egueb_Dom_Node *n,
 		double *width)
 {
 	Egueb_Svg_Document *thiz;
 
-	if (!width) return EGUEB_DOM_ERROR_INVALID_ACCESS;
+	if (!width) return;
 	thiz = EGUEB_SVG_DOCUMENT(n);
 	*width = thiz->width;
-	return EINA_ERROR_NONE;
 }
 
-EAPI Eina_Error egueb_svg_document_height_set(Egueb_Dom_Node *n,
+EAPI void egueb_svg_document_height_set(Egueb_Dom_Node *n,
 		double height)
 {
 	Egueb_Svg_Document *thiz;
@@ -959,25 +945,23 @@ EAPI Eina_Error egueb_svg_document_height_set(Egueb_Dom_Node *n,
 	thiz = EGUEB_SVG_DOCUMENT(n);
 	thiz->height = height;
 	thiz->changed = EINA_TRUE;
-	return EINA_ERROR_NONE;
 }
 
-EAPI Eina_Error egueb_svg_document_height_get(Egueb_Dom_Node *n,
+EAPI void egueb_svg_document_height_get(Egueb_Dom_Node *n,
 		double *height)
 {
 	Egueb_Svg_Document *thiz;
 
-	if (!height) return EGUEB_DOM_ERROR_INVALID_ACCESS;
+	if (!height) return;
 	thiz = EGUEB_SVG_DOCUMENT(n);
 	*height = thiz->height;
-	return EINA_ERROR_NONE;
 }
 
 EAPI void egueb_svg_document_actual_width_get(Egueb_Dom_Node *n, double *actual_width)
 {
 	Egueb_Dom_Node *topmost = NULL;
 
-	egueb_dom_document_element_get(n, &topmost);
+	topmost = egueb_dom_document_element_get(n);
 	if (!topmost)
 	{
 		*actual_width = 0;
@@ -1010,7 +994,7 @@ EAPI void egueb_svg_document_actual_height_get(Egueb_Dom_Node *n, double *actual
 {
 	Egueb_Dom_Node *topmost = NULL;
 
-	egueb_dom_document_element_get(n, &topmost);
+	topmost = egueb_dom_document_element_get(n);
 	if (!topmost)
 	{
 		*actual_height = 0;
@@ -1038,7 +1022,7 @@ EAPI void egueb_svg_document_actual_height_get(Egueb_Dom_Node *n, double *actual
 	}
 }
 
-EAPI Eina_Error egueb_svg_document_font_size_set(Egueb_Dom_Node *n,
+EAPI void egueb_svg_document_font_size_set(Egueb_Dom_Node *n,
 		double font_size)
 {
 	Egueb_Svg_Document *thiz;
@@ -1046,39 +1030,35 @@ EAPI Eina_Error egueb_svg_document_font_size_set(Egueb_Dom_Node *n,
 	thiz = EGUEB_SVG_DOCUMENT(n);
 	thiz->font_size = font_size;
 	thiz->changed = EINA_TRUE;
-	return EINA_ERROR_NONE;
 }
 
-EAPI Eina_Error egueb_svg_document_font_size_get(Egueb_Dom_Node *n,
+EAPI void egueb_svg_document_font_size_get(Egueb_Dom_Node *n,
 		double *font_size)
 {
 	Egueb_Svg_Document *thiz;
 
-	if (!font_size) return EGUEB_DOM_ERROR_INVALID_ACCESS;
+	if (!font_size) return;
 	thiz = EGUEB_SVG_DOCUMENT(n);
 	*font_size = thiz->font_size;
-	return EINA_ERROR_NONE;
 }
 
-EAPI Eina_Error egueb_svg_document_element_get_by_iri(Egueb_Dom_Node *n,
-		Egueb_Dom_String *iri, Egueb_Dom_Node **ref)
+EAPI Egueb_Dom_Node * egueb_svg_document_element_get_by_iri(Egueb_Dom_Node *n,
+		Egueb_Dom_String *iri)
 {
 	Egueb_Svg_Document_Uri_Data data;
 	const char *str;
 
-	if (!egueb_dom_string_is_valid(iri) || !ref)
-		return EGUEB_DOM_ERROR_INVALID_ACCESS;
+	if (!egueb_dom_string_is_valid(iri))
+		return NULL;
 
 	data.node = n;
 	data.ret = NULL;
-	data.error = EINA_ERROR_NONE;
 
 	/* resolve the uri for relative/absolute */
 	str = egueb_dom_string_string_get(iri);
 	DBG("Looking for %s", str);
 	egueb_dom_iri_string_from(&_element_uri_descriptor, str, &data);
-	*ref = data.ret;
-	return data.error;
+	return data.ret;
 }
 
 /**
@@ -1153,7 +1133,7 @@ EAPI void egueb_svg_document_damages_get(Egueb_Dom_Node *n,
 		return;
 	}
 
-	egueb_dom_document_element_get(n, &topmost);
+	topmost = egueb_dom_document_element_get(n);
 	if (!topmost) return;
 
 	r = egueb_svg_renderable_renderer_get(topmost);
@@ -1277,21 +1257,19 @@ EAPI void egueb_svg_document_filename_get_cb_set(Egueb_Dom_Node *n,
 }
 
 /* FIXME This might not be needed */
-EAPI Eina_Error egueb_svg_document_iri_clone(Egueb_Dom_Node *n,
-		Egueb_Dom_String *iri, Egueb_Dom_Node **cloned)
+EAPI Eina_Bool egueb_svg_document_iri_clone(Egueb_Dom_Node *n,
+		Egueb_Dom_String *iri, Egueb_Dom_Node **cloned, Eina_Error *err)
 {
 	Egueb_Dom_Node *ref = NULL;
-	Eina_Error err;
+	Eina_Bool ret;
 
-	err = egueb_svg_document_element_get_by_iri(n, iri, &ref);
-	if (err != EINA_ERROR_NONE) return err;
-	if (ref)
-	{
-		DBG("'%s' found, cloning it", egueb_dom_string_string_get(iri));
-		/* clone the returned element */
-		egueb_dom_node_clone(ref, EINA_FALSE, EINA_TRUE, cloned, NULL);
-		egueb_dom_node_unref(ref);
-	}
+	ref = egueb_svg_document_element_get_by_iri(n, iri);
+	if (!ref) return EINA_FALSE;
 
-	return EINA_ERROR_NONE;
+	DBG("'%s' found, cloning it", egueb_dom_string_string_get(iri));
+	/* clone the returned element */
+	ret = egueb_dom_node_clone(ref, EINA_FALSE, EINA_TRUE, cloned, err);
+	egueb_dom_node_unref(ref);
+
+	return ret;
 }

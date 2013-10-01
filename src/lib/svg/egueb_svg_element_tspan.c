@@ -74,7 +74,7 @@ static Eina_Bool _egueb_svg_element_tspan_mutation_get_tspan(Egueb_Dom_Event *e,
 	}
 
 	egueb_dom_event_target_get(e, &target);
-	egueb_dom_node_type_get(target, &type);
+	type = egueb_dom_node_type_get(target);
 	if (type != EGUEB_DOM_NODE_TYPE_TEXT_NODE)
 	{
 		goto not_tspan;

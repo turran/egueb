@@ -101,7 +101,7 @@ static void _egueb_svg_element_clip_path_request_process_cb(
 	
 	/* check if the target's parent is ourselves, if so, check that
 	 * it is not clonable, otherwise prevent the process */
-	egueb_dom_node_parent_get(target, &parent);
+	parent = egueb_dom_node_parent_get(target);
 	if (parent == EGUEB_DOM_NODE(thiz) &&
 		!egueb_svg_element_clip_path_node_is_clonable(target))
 	/* TODO dont propagate the request process */
@@ -335,13 +335,13 @@ EAPI Eina_Bool egueb_svg_element_is_clip_path(Egueb_Dom_Node *n)
 	return EINA_TRUE;
 }
 
-EAPI Eina_Error egueb_svg_element_clip_path_units_get(Egueb_Dom_Node *n,
+EAPI void egueb_svg_element_clip_path_units_get(Egueb_Dom_Node *n,
 		Egueb_Svg_Referenceable_Units_Animated *units)
 {
 	Egueb_Svg_Element_Clip_Path *thiz;
 
 	thiz = EGUEB_SVG_ELEMENT_CLIP_PATH(n);
-	EGUEB_SVG_ELEMENT_ATTR_ANIMATED_GET_WITH_RETURN(thiz->units, units);
+	EGUEB_SVG_ELEMENT_ATTR_ANIMATED_GET(thiz->units, units);
 }
 
 #if 0

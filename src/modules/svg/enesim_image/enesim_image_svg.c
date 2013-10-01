@@ -129,7 +129,7 @@ static Eina_Error _enesim_image_svg_info_load(Enesim_Stream *data, int *w, int *
 
 	doc = egueb_svg_document_new(NULL);
 	egueb_dom_parser_parse(data, doc);
-	egueb_dom_document_element_get(doc, &topmost);
+	topmost = egueb_dom_document_element_get(doc);
 	if (!topmost)
 	{
 		ret = ENESIM_IMAGE_ERROR_LOADING;
@@ -171,7 +171,7 @@ static Eina_Error _enesim_image_svg_load(Enesim_Stream *data,
 
 	doc = egueb_svg_document_new(NULL);
 	egueb_dom_parser_parse(data, doc);
-	egueb_dom_document_element_get(doc, &topmost);
+	topmost = egueb_dom_document_element_get(doc);
 	if (!topmost)
 	{
 		ret = ENESIM_IMAGE_ERROR_LOADING;

@@ -91,7 +91,7 @@ static Eina_Bool _egueb_svg_element_text_children_process_cb(Egueb_Dom_Node *chi
 	Egueb_Svg_Element_Text *thiz = data;
 	Egueb_Dom_Node_Type type;
 
-	egueb_dom_node_type_get(child, &type);
+	type = egueb_dom_node_type_get(child);
 	if (type == EGUEB_DOM_NODE_TYPE_TEXT_NODE)
 	{
 		Egueb_Dom_String *private_data;
@@ -145,7 +145,7 @@ static Eina_Bool _egueb_svg_element_text_children_propagate_cb(Egueb_Dom_Node *c
 	Enesim_Color fill_color;
 	Eina_Bool visibility;
 
-	egueb_dom_node_type_get(child, &type);
+	type = egueb_dom_node_type_get(child);
 	if (type == EGUEB_DOM_NODE_TYPE_TEXT_NODE)
 	{
 		Egueb_Dom_String *private_data;
@@ -181,7 +181,7 @@ static void _egueb_svg_element_text_node_inserted_cb(Egueb_Dom_Event *e,
 		goto not_us;
 	}
 	egueb_dom_event_target_get(e, &target);
-	egueb_dom_node_type_get(target, &type);
+	type = egueb_dom_node_type_get(target);
 	if (type == EGUEB_DOM_NODE_TYPE_TEXT_NODE)
 	{
 		Egueb_Svg_Element_Text *thiz;
@@ -240,7 +240,7 @@ static void _egueb_svg_element_text_node_removed_cb(Egueb_Dom_Event *e,
 		goto not_us;
 	}
 	egueb_dom_event_target_get(e, &target);
-	egueb_dom_node_type_get(target, &type);
+	type = egueb_dom_node_type_get(target);
 	if (type == EGUEB_DOM_NODE_TYPE_TEXT_NODE)
 	{
 		Egueb_Svg_Element_Text *thiz;

@@ -92,7 +92,7 @@ static void _egueb_svg_element_use_setup_cloned(Egueb_Svg_Element_Use *thiz,
 
 	thiz->clone = cloned;
 	/* add the cloned to the group */
-	egueb_dom_node_child_append(thiz->g, egueb_dom_node_ref(thiz->clone));
+	egueb_dom_node_child_append(thiz->g, egueb_dom_node_ref(thiz->clone), NULL);
 	/* transform the group */
 	enesim_matrix_translate(&m, thiz->gx, thiz->gy);
 	egueb_svg_renderable_transform_set(thiz->g, &m);
@@ -101,7 +101,7 @@ static void _egueb_svg_element_use_setup_cloned(Egueb_Svg_Element_Use *thiz,
 static void _egueb_svg_element_use_cleanup_cloned(Egueb_Svg_Element_Use *thiz)
 {
 	/* remove the clone, this will remove the renderer automatically */
-	egueb_dom_node_child_remove(thiz->g, thiz->clone);
+	egueb_dom_node_child_remove(thiz->g, thiz->clone, NULL);
 	egueb_dom_node_unref(thiz->clone);
 	thiz->clone = NULL;
 }
@@ -120,10 +120,10 @@ static void _egueb_dom_element_use_insterted_into_document_cb(
 	if (phase != EGUEB_DOM_EVENT_PHASE_AT_TARGET)
 		return;
 
-	egueb_dom_node_document_get(EGUEB_DOM_NODE(thiz), &doc);
+	doc = egueb_dom_node_document_get(EGUEB_DOM_NODE(thiz));
 	if (doc)
 	{
-		egueb_dom_document_node_adopt(doc, thiz->g, &thiz->g);
+		thiz->g = egueb_dom_document_node_adopt(doc, thiz->g, NULL);
 		egueb_dom_node_unref(doc);
 	}
 	thiz->document_changed = EINA_TRUE;
@@ -171,13 +171,13 @@ static Eina_Bool _egueb_svg_element_use_process(Egueb_Svg_Renderable *r)
 	egueb_dom_attr_final_get(thiz->xlink_href, &xlink);
 
 	/* calculate the real size */
-	egueb_svg_element_geometry_relative_get(EGUEB_DOM_NODE(r), &relative);
+	relative = egueb_svg_element_geometry_relative_get(EGUEB_DOM_NODE(r));
 	if (!relative)
 	{
 		WARN("No relative available");
 		return EINA_FALSE;
 	}
-	egueb_dom_node_document_get(EGUEB_DOM_NODE(r), &doc);
+	doc = egueb_dom_node_document_get(EGUEB_DOM_NODE(r));
 	if (!doc)
 	{
 		WARN("No document set");
@@ -215,7 +215,7 @@ static Eina_Bool _egueb_svg_element_use_process(Egueb_Svg_Renderable *r)
 		}
 
 		/* finally clone the reference */
-		if (egueb_svg_document_iri_clone(doc, xlink, &cloned) == EINA_ERROR_NONE)
+		if (egueb_svg_document_iri_clone(doc, xlink, &cloned, NULL))
 		{
 			_egueb_svg_element_use_setup_cloned(thiz, cloned);
 		}
@@ -275,8 +275,8 @@ static void _egueb_svg_element_use_instance_init(void *o)
 
 	thiz->g = egueb_svg_element_g_new();
 	/* set the relativeness of the node */
-	egueb_svg_element_geometry_relative_set(thiz->g, EGUEB_DOM_NODE(o));
-	egueb_svg_element_presentation_relative_set(thiz->g, EGUEB_DOM_NODE(o));
+	egueb_svg_element_geometry_relative_set(thiz->g, EGUEB_DOM_NODE(o), NULL);
+	egueb_svg_element_presentation_relative_set(thiz->g, EGUEB_DOM_NODE(o), NULL);
 	/* add the events that we need to propagate upstream */ 
 	egueb_dom_node_event_monitor_add(thiz->g,
 			_egueb_dom_element_use_g_node_monitor_cb, thiz);
