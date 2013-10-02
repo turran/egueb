@@ -46,7 +46,7 @@ static void _egueb_svg_element_defs_attr_modified_cb(Egueb_Dom_Event *e,
 	/* a mutation is being triggered from one of our children
 	 * or a children of our children, dont propagate it
 	 */
-	egueb_dom_event_target_get(e, &target);
+	target = egueb_dom_event_target_get(e);
 	if (egueb_svg_is_renderable(target))
 	{
 		DBG("Preventing a process on a renderable element");

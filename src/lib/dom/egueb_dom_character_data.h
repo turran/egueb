@@ -19,18 +19,27 @@
 #ifndef _EGUEB_DOM_CHARACTER_DATA_H_
 #define _EGUEB_DOM_CHARACTER_DATA_H_
 
+/**
+ * @defgroup Egueb_Dom_Character_Data_Group Character Data
+ * @brief Character Data
+ * @ingroup Egueb_Dom_Group
+ * @{
+ */
+
 EAPI void egueb_dom_character_data_buffer_get(Egueb_Dom_Node *n,
 		Enesim_Text_Buffer **buffer);
 EAPI void egueb_dom_character_data_buffer_set(Egueb_Dom_Node *n,
 		Enesim_Text_Buffer *buffer);
 
-EAPI Eina_Error egueb_dom_character_data_data_get(Egueb_Dom_Node *n,
-		Egueb_Dom_String **data);
-EAPI Eina_Error egueb_dom_character_data_length_get(Egueb_Dom_Node *n,
-		int *length);
-EAPI Eina_Error egueb_dom_character_data_append_data(Egueb_Dom_Node *n,
-		Egueb_Dom_String *data);
-EAPI Eina_Error egueb_dom_character_data_append_data_inline(Egueb_Dom_Node *n,
-		const char *data);
+EAPI Egueb_Dom_String * egueb_dom_character_data_data_get(Egueb_Dom_Node *n);
+EAPI int egueb_dom_character_data_length_get(Egueb_Dom_Node *n);
+EAPI Eina_Bool egueb_dom_character_data_append_data(Egueb_Dom_Node *n,
+		Egueb_Dom_String *data, Eina_Error *err);
+EAPI Eina_Bool egueb_dom_character_data_append_data_inline(Egueb_Dom_Node *n,
+		const char *data, Eina_Error *err);
+
+/**
+ * @}
+ */
 
 #endif

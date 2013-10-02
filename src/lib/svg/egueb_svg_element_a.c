@@ -72,14 +72,14 @@ static Eina_Bool _egueb_svg_element_a_get_target(Egueb_Dom_Event *e,
 	Egueb_Dom_Node *target = NULL;
 	Egueb_Dom_Node *related = NULL;
 
-	egueb_dom_event_mutation_related_get(e, &related);
+	related = egueb_dom_event_mutation_related_get(e);
 	if (related != n)
 	{
 		egueb_dom_node_unref(related);
 		return EINA_FALSE;
 	}
 	egueb_dom_node_unref(related);
-	egueb_dom_event_target_get(e, &target);
+	target = egueb_dom_event_target_get(e);
 	if (!egueb_svg_is_renderable(target))
 	{
 		egueb_dom_node_unref(target);

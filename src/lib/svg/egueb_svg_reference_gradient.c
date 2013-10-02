@@ -91,7 +91,7 @@ static Eina_Bool _egueb_svg_reference_gradient_process(Egueb_Svg_Reference *r)
 			enesim_renderer_gradient_stop_add(ren, stop);
 			DBG("Adding stop at %g color %08x", stop->pos, stop->argb);
 		}
-		egueb_dom_node_sibling_next_get(stop_node, &tmp);
+		tmp = egueb_dom_node_sibling_next_get(stop_node);
 		egueb_dom_node_unref(stop_node);
 		stop_node = tmp;
 		

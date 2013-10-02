@@ -93,7 +93,7 @@ static void _egueb_smil_set_animation_start_cb(Etch_Animation *ea, void *data)
 	}
 	ev = egueb_smil_event_new();
 	egueb_smil_event_init(ev, EGUEB_SMIL_EVENT_BEGIN, 0);
-	egueb_dom_node_event_dispatch(a->target, ev, NULL);
+	egueb_dom_node_event_dispatch(a->target, ev, NULL, NULL);
 }
 
 static void _egueb_smil_set_animation_stop_cb(Etch_Animation *ea, void *data)
@@ -113,7 +113,7 @@ static void _egueb_smil_set_animation_stop_cb(Etch_Animation *ea, void *data)
 	}
 	ev = egueb_smil_event_new();
 	egueb_smil_event_init(ev, EGUEB_SMIL_EVENT_END, 0);
-	egueb_dom_node_event_dispatch(a->target, ev, NULL);
+	egueb_dom_node_event_dispatch(a->target, ev, NULL, NULL);
 }
 /*----------------------------------------------------------------------------*
  *                             Animation interface                            *

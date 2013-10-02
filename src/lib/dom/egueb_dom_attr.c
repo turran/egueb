@@ -121,12 +121,12 @@ static void _egueb_dom_attr_instance_deinit(void *o)
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
-Eina_Error egueb_dom_attr_set_va(Egueb_Dom_Node *n,
+Eina_Bool egueb_dom_attr_set_va(Egueb_Dom_Node *n,
 		int prop_mask, va_list args)
 {
 	Egueb_Dom_Attr *thiz;
 	const Egueb_Dom_Value_Descriptor *d;
-	Eina_Error ret = EINA_ERROR_NONE;
+	Eina_Bool ret = EINA_TRUE;
 	int i = 0;
 
 	thiz = EGUEB_DOM_ATTR(n);
@@ -146,7 +146,7 @@ Eina_Error egueb_dom_attr_set_va(Egueb_Dom_Node *n,
 			egueb_dom_value_reset(&v);
 			if (!set)
 			{
-				ret = EGUEB_DOM_ERROR_NOT_FOUND;
+				ret = EINA_FALSE;
 				break;
 			}
 			thiz->set_mask |= type;
@@ -157,12 +157,12 @@ Eina_Error egueb_dom_attr_set_va(Egueb_Dom_Node *n,
 	return ret;
 }
 
-Eina_Error egueb_dom_attr_get_va(Egueb_Dom_Node *n,
+Eina_Bool egueb_dom_attr_get_va(Egueb_Dom_Node *n,
 		int prop_mask, va_list args)
 {
 	Egueb_Dom_Attr *thiz;
 	const Egueb_Dom_Value_Descriptor *d;
-	Eina_Error ret = EINA_ERROR_NONE;
+	Eina_Bool ret = EINA_TRUE;
 	int i = 0;
 
 	thiz = EGUEB_DOM_ATTR(n);
@@ -179,7 +179,7 @@ Eina_Error egueb_dom_attr_get_va(Egueb_Dom_Node *n,
 			/* collect the data */
 			if (!_egueb_dom_attr_value_get(thiz, type, &v))
 			{
-				ret = EGUEB_DOM_ERROR_NOT_FOUND;
+				ret = EINA_FALSE;
 				break;
 			}
 			EGUEB_DOM_VALUE_DATA_TO(&v, d, args);
@@ -243,17 +243,13 @@ egueb_dom_attr_value_descriptor_get(Egueb_Dom_Node *n)
 	return klass->value_descriptor_get(thiz);
 }
 
-EAPI Eina_Error egueb_dom_attr_name_get(Egueb_Dom_Node *n,
-		Egueb_Dom_String **name)
+EAPI Egueb_Dom_String * egueb_dom_attr_name_get(Egueb_Dom_Node *n)
 {
 	Egueb_Dom_Attr *thiz;
 
-	if (!name) return EGUEB_DOM_ERROR_INVALID_ACCESS;
-
 	thiz = EGUEB_DOM_ATTR(n);
-	if (!thiz->name) *name = NULL;
-	else *name = egueb_dom_string_ref(thiz->name);
-	return EINA_ERROR_NONE;
+	if (!thiz->name) return NULL;
+	else return egueb_dom_string_ref(thiz->name);
 }
 
 EAPI Eina_Bool egueb_dom_attr_is_stylable(Egueb_Dom_Node *n)
@@ -329,10 +325,10 @@ EAPI Eina_Bool egueb_dom_attr_unset(Egueb_Dom_Node *n, int prop_mask)
 	return EINA_TRUE;
 }
 
-EAPI Eina_Error egueb_dom_attr_set(Egueb_Dom_Node *n, int prop_mask,
+EAPI Eina_Bool egueb_dom_attr_set(Egueb_Dom_Node *n, int prop_mask,
 	...)
 {
-	Eina_Error ret;
+	Eina_Bool ret;
 	va_list args;
 
 	va_start(args, prop_mask);
@@ -342,10 +338,10 @@ EAPI Eina_Error egueb_dom_attr_set(Egueb_Dom_Node *n, int prop_mask,
 	return ret;
 }
 
-EAPI Eina_Error egueb_dom_attr_get(Egueb_Dom_Node *thiz, int prop_mask,
+EAPI Eina_Bool egueb_dom_attr_get(Egueb_Dom_Node *thiz, int prop_mask,
 	...)
 {
-	Eina_Error ret;
+	Eina_Bool ret;
 	va_list args;
 
 	va_start(args, prop_mask);
@@ -405,7 +401,7 @@ EAPI Eina_Bool egueb_dom_attr_value_set(Egueb_Dom_Node *n,
 				thiz->name,
 				EGUEB_DOM_EVENT_MUTATION_ATTR_TYPE_MODIFICATION,
 				type);
-		egueb_dom_node_event_dispatch(thiz->owner, event, NULL);
+		egueb_dom_node_event_dispatch(thiz->owner, event, NULL, NULL);
 		/* in case the property is inheritable, mark the element
 		 * with a flag informing that. That is helpful on the processing
 		 * functions of the sublcasses of an element to know if they

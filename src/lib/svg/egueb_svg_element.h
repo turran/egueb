@@ -33,6 +33,13 @@
 #include "egueb_svg_clip_path.h"
 #include "egueb_svg_overflow.h"
 
+/**
+ * @defgroup Egueb_Svg_Element_Group Element 
+ * @brief Element
+ * @ingroup Egueb_Svg_Group
+ * @{
+ */
+
 EAPI Eina_Bool egueb_svg_is_element(Egueb_Dom_Node *n);
 
 EAPI Egueb_Dom_Node * egueb_svg_element_presentation_relative_get(Egueb_Dom_Node *n);
@@ -121,5 +128,9 @@ EAPI void egueb_svg_element_onmouseup_set(Egueb_Dom_Node *n, const char *v);
 EAPI void egueb_svg_element_onmouseover_set(Egueb_Dom_Node *n, const char *v);
 EAPI void egueb_svg_element_onmousemove_set(Egueb_Dom_Node *n, const char *v);
 EAPI void egueb_svg_element_onmouseout_set(Egueb_Dom_Node *n, const char *v);
+
+/**
+ * @}
+ */
 
 #endif

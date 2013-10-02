@@ -630,8 +630,7 @@ static void _egueb_svg_document_element_uri_local_get(const char *uri,
 	 * the dom string to the uri descriptor, instead of the char *
 	 */
 	id = egueb_dom_string_new_with_static_string(fragment);
-	egueb_dom_document_element_get_by_id(data->node, id,
-			&data->ret, NULL);
+	data->ret = egueb_dom_document_element_get_by_id(data->node, id, NULL);
 	egueb_dom_string_unref(id);
 }
 
@@ -1032,14 +1031,12 @@ EAPI void egueb_svg_document_font_size_set(Egueb_Dom_Node *n,
 	thiz->changed = EINA_TRUE;
 }
 
-EAPI void egueb_svg_document_font_size_get(Egueb_Dom_Node *n,
-		double *font_size)
+EAPI double egueb_svg_document_font_size_get(Egueb_Dom_Node *n)
 {
 	Egueb_Svg_Document *thiz;
 
-	if (!font_size) return;
 	thiz = EGUEB_SVG_DOCUMENT(n);
-	*font_size = thiz->font_size;
+	return thiz->font_size;
 }
 
 EAPI Egueb_Dom_Node * egueb_svg_document_element_get_by_iri(Egueb_Dom_Node *n,

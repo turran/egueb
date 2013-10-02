@@ -25,14 +25,14 @@ int main(int argc, char **argv)
 	egueb_dom_parser_parse(im, mydocument);
 	enesim_stream_unref(im);
 
-	egueb_dom_document_element_get(mydocument, &root);
+	root = egueb_dom_document_element_get(mydocument);
 	/* check the tree that we have parsed */
 	printf("[testing] original tree\n");
 	myelement_dump(root, EINA_TRUE);
 
 	/* clone the root element deeply */
 	printf("[testing] Cloned tree\n");
-	egueb_dom_node_clone(root, EINA_TRUE, EINA_TRUE, &clone);
+	egueb_dom_node_clone(root, EINA_TRUE, EINA_TRUE, &clone, NULL);
 	myelement_dump(clone, EINA_TRUE);
 
 	/* given that the clone is live, modify the root element
@@ -46,19 +46,19 @@ int main(int argc, char **argv)
 
 	/* remove the last node from the original tree */
 	printf("[testing] Removing the last node from the original tree\n");
-	egueb_dom_node_child_last_get(root, &node);
-	egueb_dom_node_child_remove(root, node);
+	node = egueb_dom_node_child_last_get(root);
+	egueb_dom_node_child_remove(root, node, NULL);
 	myelement_dump(clone, EINA_TRUE);
 
 	/* append the node again */
 	printf("[testing] Adding the last node from the original tree\n");
-	egueb_dom_node_child_append(root, egueb_dom_node_ref(node));
+	egueb_dom_node_child_append(root, egueb_dom_node_ref(node), NULL);
 	myelement_dump(clone, EINA_TRUE);
 
 	printf("[testing] Adding the previois las node before the current last node in the original tree\n");
 	new_node = myelement_new();
 	myelement_prop1_set(new_node, egueb_dom_string_new_with_string("new node"));
-	egueb_dom_node_insert_before(root, new_node, node);
+	egueb_dom_node_insert_before(root, new_node, node, NULL);
 	egueb_dom_node_unref(node);
 	myelement_dump(clone, EINA_TRUE);
 	myelement_dump(root, EINA_TRUE);

@@ -81,9 +81,9 @@ typedef struct _Egueb_Dom_Attr_Class
 	Egueb_Dom_Attr_Clone clone;
 } Egueb_Dom_Attr_Class;
 
-Eina_Error egueb_dom_attr_get_va(Egueb_Dom_Node *n,
+Eina_Bool egueb_dom_attr_get_va(Egueb_Dom_Node *n,
 		int prop_mask, va_list args);
-Eina_Error egueb_dom_attr_set_va(Egueb_Dom_Node *n,
+Eina_Bool egueb_dom_attr_set_va(Egueb_Dom_Node *n,
 		int prop_mask, va_list args);
 void egueb_dom_attr_copy(Egueb_Dom_Node *n,
 		Egueb_Dom_Node *other);

@@ -19,19 +19,29 @@
 #ifndef _EGUEB_DOM_NODE_MAP_NAMED_
 #define _EGUEB_DOM_NODE_MAP_NAMED_
 
+/**
+ * @defgroup Egueb_Dom_Node_Group Node
+ * @brief Node
+ * @ingroup Egueb_Dom_Group
+ * @{
+ */
+
 typedef struct _Egueb_Dom_Node_Map_Named Egueb_Dom_Node_Map_Named;
 
-EAPI Eina_Error egueb_dom_node_map_named_get(
+EAPI Egueb_Dom_Node * egueb_dom_node_map_named_get(
 		Egueb_Dom_Node_Map_Named *thiz, Egueb_Dom_String *name,
-		Egueb_Dom_Node **n);
-EAPI Eina_Error egueb_dom_node_map_named_remove(Egueb_Dom_Node_Map_Named *thiz,
-		Egueb_Dom_String *name, Egueb_Dom_Node *n);
-EAPI Eina_Error egueb_dom_node_map_named_set(Egueb_Dom_Node_Map_Named *thiz,
-		Egueb_Dom_Node *n);
-EAPI Eina_Error egueb_dom_node_map_named_at(Egueb_Dom_Node_Map_Named *thiz,
-		int idx, Egueb_Dom_Node **n);
+		Eina_Error *err);
+EAPI Eina_Bool egueb_dom_node_map_named_remove(Egueb_Dom_Node_Map_Named *thiz,
+		Egueb_Dom_String *name, Egueb_Dom_Node *n, Eina_Error *err);
+EAPI Eina_Bool egueb_dom_node_map_named_set(Egueb_Dom_Node_Map_Named *thiz,
+		Egueb_Dom_Node *n, Eina_Error *err);
+EAPI Egueb_Dom_Node * egueb_dom_node_map_named_at(Egueb_Dom_Node_Map_Named *thiz,
+		int idx);
 EAPI int egueb_dom_node_map_named_length(Egueb_Dom_Node_Map_Named *thiz);
 EAPI void egueb_dom_node_map_named_free(Egueb_Dom_Node_Map_Named *thiz);
 
+/**
+ * @}
+ */
 
 #endif

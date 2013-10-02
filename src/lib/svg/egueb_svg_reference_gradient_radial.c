@@ -20,6 +20,7 @@
 #include "egueb_svg_length.h"
 #include "egueb_svg_spread_method.h"
 #include "egueb_svg_referenceable_units.h"
+#include "egueb_svg_document.h"
 #include "egueb_svg_element.h"
 #include "egueb_svg_reference.h"
 #include "egueb_svg_gradient.h"
@@ -61,7 +62,6 @@ static Eina_Bool _egueb_svg_reference_gradient_radial_process(
 	Egueb_Svg_Reference *r;
 	Egueb_Svg_Length cx, cy, fx, fy, rad;
 	Egueb_Svg_Referenceable_Units units;
-	Egueb_Dom_Node *relative = NULL;
 	Egueb_Dom_Node *doc = NULL;
 	Enesim_Matrix m, transform;
 	double gcx, gcy, gfx, gfy, grad;
@@ -105,16 +105,16 @@ static Eina_Bool _egueb_svg_reference_gradient_radial_process(
 		double font_size;
 
 		DBG("Using the user space on use");
-		egueb_dom_node_document_get(EGUEB_DOM_NODE(r->referencer), &doc);
+		doc = egueb_dom_node_document_get(EGUEB_DOM_NODE(r->referencer));
 		if (!doc)
 		{
 			WARN("No document set");
 			return EINA_FALSE;
 		}
-		egueb_svg_document_font_size_get(doc, &font_size);
+		font_size = egueb_svg_document_font_size_get(doc);
 		egueb_dom_node_unref(doc);
 
-		egueb_svg_element_geometry_relative_get(r->referencer, &g_relative);
+		g_relative = egueb_svg_element_geometry_relative_get(r->referencer);
 		if (!g_relative)
 		{
 			WARN("No relative geometry");

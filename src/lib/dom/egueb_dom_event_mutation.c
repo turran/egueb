@@ -146,18 +146,14 @@ Egueb_Dom_String *EGUEB_DOM_EVENT_MUTATION_CHARACTER_DATA_MODIFIED = &_EGUEB_DOM
 /* Egueb events */
 Egueb_Dom_String *EGUEB_DOM_EVENT_MUTATION_REQUEST_PROCESS = &_EGUEB_DOM_EVENT_MUTATION_REQUEST_PROCESS;
 
-EAPI Eina_Error egueb_dom_event_mutation_related_get(Egueb_Dom_Event *e, Egueb_Dom_Node **related)
+EAPI Egueb_Dom_Node * egueb_dom_event_mutation_related_get(Egueb_Dom_Event *e)
 {
 	Egueb_Dom_Event_Mutation *thiz;
 
-	if (!related) return EINA_ERROR_NONE;
-
 	thiz = EGUEB_DOM_EVENT_MUTATION(e);
-	if (thiz->related) *related = egueb_dom_node_ref(thiz->related);
-	else *related = NULL;
-
-	return EINA_ERROR_NONE;
+	return egueb_dom_node_ref(thiz->related);
 }
+
 /* readonly attribute DOMString        prevValue; */
 EAPI void egueb_dom_event_mutation_value_prev_string_get(Egueb_Dom_Event *e,
 		Egueb_Dom_String **s)

@@ -114,7 +114,7 @@ static void _egueb_dom_document_element_enqueue(Egueb_Dom_Document *thiz,
 
 	if (egueb_dom_element_is_enqueued(node))
 		goto done;
-	egueb_dom_node_name_get(node, &name);
+	name = egueb_dom_node_name_get(node);
 	INFO("Node '%s' added to the list of damaged nodes",
 			egueb_dom_string_string_get(name));
 	egueb_dom_string_unref(name);
@@ -143,7 +143,7 @@ static void _egueb_dom_document_element_dequeue(Egueb_Dom_Document *thiz,
 	/* check if the data exists, so we can remove the reference */
 	thiz->current_enqueued = eina_list_remove_list(
 		thiz->current_enqueued, l);
-	egueb_dom_node_name_get(node, &name);
+	name = egueb_dom_node_name_get(node);
 	INFO("Node '%s' removed from the list of damaged nodes",
 			egueb_dom_string_string_get(name));
 	egueb_dom_string_unref(name);
@@ -193,7 +193,7 @@ static void _egueb_dom_document_topmost_attr_modified_cb(Egueb_Dom_Event *ev,
 	Egueb_Dom_String *attr_name = NULL;
 
 	DBG("Node attr modified");
-	egueb_dom_event_target_get(ev, &target);
+	target = egueb_dom_event_target_get(ev);
 
 	/* check if the attribute is the id */
 	egueb_dom_event_mutation_attr_name_get(ev, &attr_name);
@@ -218,15 +218,15 @@ static void _egueb_dom_document_topmost_node_inserted_cb(Egueb_Dom_Event *ev,
 	Egueb_Dom_Node_Type type;
 	Egueb_Dom_String *name;
 
-	egueb_dom_event_target_get(ev, &target);
-	egueb_dom_node_type_get(target, &type);
+	target = egueb_dom_event_target_get(ev);
+	type = egueb_dom_node_type_get(target);
 	if (type != EGUEB_DOM_NODE_TYPE_ELEMENT_NODE)
 	{
 		egueb_dom_node_unref(target);
 		return;
 	}
 
-	egueb_dom_node_name_get(target, &name);
+	name = egueb_dom_node_name_get(target);
 	DBG("Node '%s' inserted", egueb_dom_string_string_get(name));
 	egueb_dom_string_unref(name);
 
@@ -243,15 +243,15 @@ static void _egueb_dom_document_topmost_node_removed_cb(Egueb_Dom_Event *ev,
 	Egueb_Dom_Node_Type type;
 	Egueb_Dom_String *name;
 
-	egueb_dom_event_target_get(ev, &target);
-	egueb_dom_node_type_get(target, &type);
+	target = egueb_dom_event_target_get(ev);
+	type = egueb_dom_node_type_get(target);
 	if (type != EGUEB_DOM_NODE_TYPE_ELEMENT_NODE)
 	{
 		egueb_dom_node_unref(target);
 		return;
 	}
 
-	egueb_dom_node_name_get(target, &name);
+	name = egueb_dom_node_name_get(target);
 	DBG("Node '%s' removed", egueb_dom_string_string_get(name));
 	egueb_dom_string_unref(name);
 
@@ -269,11 +269,11 @@ static void _egueb_dom_document_element_insterted_into_document_cb(
 	Egueb_Dom_String *id = NULL;
 	Egueb_Dom_String id_attr = EGUEB_DOM_STRING_STATIC("id");
 
-	egueb_dom_event_phase_get(ev, &phase);
+	phase = egueb_dom_event_phase_get(ev);
 	if (phase != EGUEB_DOM_EVENT_PHASE_AT_TARGET)
 		return;
-	egueb_dom_event_target_get(ev, &target);
-	egueb_dom_node_type_get(target, &type);
+	target = egueb_dom_event_target_get(ev);
+	type = egueb_dom_node_type_get(target);
 	if (type != EGUEB_DOM_NODE_TYPE_ELEMENT_NODE)
 	{
 		egueb_dom_node_unref(target);
@@ -281,7 +281,7 @@ static void _egueb_dom_document_element_insterted_into_document_cb(
 	}
 
 	/* remove the element from the ids */
-	egueb_dom_element_attribute_get(target, &id_attr, &id);
+	id = egueb_dom_element_attribute_get(target, &id_attr);
 	/* add the element to the ids */
 	if (egueb_dom_string_is_valid(id))
 	{
@@ -301,11 +301,11 @@ static void _egueb_dom_document_element_removed_from_document_cb(
 	Egueb_Dom_String *id = NULL;
 	Egueb_Dom_String id_attr = EGUEB_DOM_STRING_STATIC("id");
 
-	egueb_dom_event_phase_get(ev, &phase);
+	phase = egueb_dom_event_phase_get(ev);
 	if (phase != EGUEB_DOM_EVENT_PHASE_AT_TARGET)
 		return;
-	egueb_dom_event_target_get(ev, &target);
-	egueb_dom_node_type_get(target, &type);
+	target = egueb_dom_event_target_get(ev);
+	type = egueb_dom_node_type_get(target);
 	if (type != EGUEB_DOM_NODE_TYPE_ELEMENT_NODE)
 	{
 		egueb_dom_node_unref(target);
@@ -313,8 +313,8 @@ static void _egueb_dom_document_element_removed_from_document_cb(
 	}
 
 	/* remove the element from the ids */
-	egueb_dom_event_target_get(ev, &target);
-	egueb_dom_element_attribute_get(target, &id_attr, &id);
+	target = egueb_dom_event_target_get(ev);
+	id = egueb_dom_element_attribute_get(target, &id_attr);
 	if (egueb_dom_string_is_valid(id))
 	{
 		INFO("Removing id '%s' from the list of ids", id->str);
@@ -343,7 +343,7 @@ static void _egueb_dom_document_topmost_request_process_cb(
 	Egueb_Dom_Node *target;
 
 	DBG("Requesting process");
-	egueb_dom_event_target_get(ev, &target);
+	target = egueb_dom_event_target_get(ev);
 	/* Add it to the list in case it is not already there */
 	_egueb_dom_document_element_enqueue(thiz, target);
 }
@@ -354,7 +354,7 @@ static void _egueb_dom_document_topmost_removed_from_document_cb(
 	Egueb_Dom_Document *thiz = data;
 	Egueb_Dom_Event_Phase phase;
 
-	egueb_dom_event_phase_get(ev, &phase);
+	phase = egueb_dom_event_phase_get(ev);
 	if (phase != EGUEB_DOM_EVENT_PHASE_AT_TARGET)
 		return;
 
@@ -472,7 +472,7 @@ EAPI void egueb_dom_document_process_default(Egueb_Dom_Node *n)
 		if (e->last_run == thiz->current_run)
 			goto skip;
 
-		egueb_dom_node_name_get(n, &name);
+		name = egueb_dom_node_name_get(n);
 		INFO("Processing '%s'", egueb_dom_string_string_get(name));
 		egueb_dom_string_unref(name);
 
@@ -491,8 +491,8 @@ skip:
 /*
  *  Element createElement(in DOMString tagName) raises(DOMException);
  */
-EAPI Eina_Error egueb_dom_document_element_create(Egueb_Dom_Node *n,
-		Egueb_Dom_String *name, Egueb_Dom_Node **ret)
+EAPI Egueb_Dom_Node * egueb_dom_document_element_create(Egueb_Dom_Node *n,
+		Egueb_Dom_String *name, Eina_Error *err)
 {
 	Egueb_Dom_Document *thiz;
 	Egueb_Dom_Document_Class *klass;
@@ -518,9 +518,11 @@ EAPI Eina_Error egueb_dom_document_element_create(Egueb_Dom_Node *n,
 				EINA_TRUE, thiz);
 		egueb_dom_node_document_set(new_element, EGUEB_DOM_NODE(thiz));
 	}
-	*ret = new_element;
-
-	return EINA_ERROR_NONE;
+	else
+	{
+		if (err) *err = EGUEB_DOM_ERROR_INVALID_CHARACTER;
+	}
+	return new_element;
 }
 
 /* readonly attribute Element documentElement; */
@@ -577,30 +579,35 @@ EAPI void egueb_dom_document_element_set(Egueb_Dom_Node *n,
 	}
 }
 
-EAPI Eina_Error egueb_dom_document_element_get_by_id(Egueb_Dom_Node *n,
-		Egueb_Dom_String *id, Egueb_Dom_Node **element)
+EAPI Egueb_Dom_Node * egueb_dom_document_element_get_by_id(Egueb_Dom_Node *n,
+		Egueb_Dom_String *id, Eina_Error *err)
 {
 	Egueb_Dom_Document *thiz;
 	Egueb_Dom_Node *found;
 
-	if (!element) return EGUEB_DOM_ERROR_INVALID_ACCESS;
 	if (!egueb_dom_string_is_valid(id))
-		return EGUEB_DOM_ERROR_INVALID_ACCESS;
+	{
+		if (err) *err = EGUEB_DOM_ERROR_INVALID_ACCESS;
+		return NULL;
+	}
 
 	thiz = EGUEB_DOM_DOCUMENT(n);
 	found = eina_hash_find(thiz->ids, id->str);
-	if (!found) return EGUEB_DOM_ERROR_NOT_FOUND;
+	if (!found)
+	{
+		if (err) *err = EGUEB_DOM_ERROR_NOT_FOUND;
+		return NULL;
+	}
 
-	*element = egueb_dom_node_ref(found);
-	return EINA_ERROR_NONE;
+	return egueb_dom_node_ref(found);
 }
 
 /* TODO move the svg version here */
-EAPI Eina_Error egueb_dom_document_element_get_by_iri(Egueb_Dom_Node *n,
-		Egueb_Dom_String *id, Egueb_Dom_Node **element)
+EAPI Egueb_Dom_Node * egueb_dom_document_element_get_by_iri(Egueb_Dom_Node *n,
+		Egueb_Dom_String *id, Eina_Error *err)
 {
 	/* import the node in case it belongs to other document */
-	return EINA_ERROR_NONE;
+	return NULL;
 }
 
 /* Introduced in DOM Level 3:
@@ -610,7 +617,6 @@ EAPI Egueb_Dom_Node * egueb_dom_document_node_adopt(Egueb_Dom_Node *n, Egueb_Dom
 {
 	Egueb_Dom_Node_Type type;
 	Egueb_Dom_Node *other;
-	Eina_Error err = EINA_ERROR_NONE;
 
 	type = egueb_dom_node_type_get(adopted);
 	switch (type)
@@ -620,7 +626,7 @@ EAPI Egueb_Dom_Node * egueb_dom_document_node_adopt(Egueb_Dom_Node *n, Egueb_Dom
 		other = egueb_dom_node_parent_get(adopted);
 		if (other)
 		{
-			egueb_dom_node_child_remove(other, adopted);
+			egueb_dom_node_child_remove(other, adopted, NULL);
 			egueb_dom_node_unref(other);
 		}
 		egueb_dom_node_document_set(adopted, n);

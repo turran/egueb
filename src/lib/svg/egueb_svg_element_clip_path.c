@@ -95,7 +95,7 @@ static void _egueb_svg_element_clip_path_request_process_cb(
 	Egueb_Dom_Node *target = NULL;
 
 	/* if the element that requests is ourselves, just return */
-	egueb_dom_event_target_get(e, &target);
+	target = egueb_dom_event_target_get(e);
 	if (target == EGUEB_DOM_NODE(thiz))
 		goto done;
 	
@@ -121,7 +121,7 @@ static Eina_Bool _egueb_svg_element_clip_path_hierarchy_prevented(
 	Eina_Bool ret = EINA_FALSE;
 	Egueb_Dom_Node *parent = NULL;
 
-	egueb_dom_event_mutation_related_get(e, &parent);
+	parent = egueb_dom_event_mutation_related_get(e);
 	/* if the parent is not ourselves, dont propagate the change to the
 	 * document
 	 */
@@ -160,7 +160,7 @@ static void _egueb_svg_element_clip_path_node_inserted_cb(Egueb_Dom_Event *e,
 	}
 
 	/* in case the node is a clipable element, clone it */
-	egueb_dom_event_target_get(e, &child);
+	child = egueb_dom_event_target_get(e);
 	if (egueb_svg_element_clip_path_node_is_clonable(child))
 	{
 		ERR("We still need to create live nodes");
@@ -194,7 +194,7 @@ static void _egueb_svg_element_clip_path_node_removed_cb(Egueb_Dom_Event *e,
 	}
 
 	/* in case the node is a clipable element, clone it */
-	egueb_dom_event_target_get(e, &child);
+	child = egueb_dom_event_target_get(e);
 	if (egueb_svg_element_clip_path_node_is_clonable(child))
 	{
 		ERR("We still need to remove live nodes");

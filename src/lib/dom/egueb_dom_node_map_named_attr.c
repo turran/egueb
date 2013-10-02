@@ -48,38 +48,44 @@ typedef struct _Egueb_Dom_Node_Map_Named_Attr_Class
 /*----------------------------------------------------------------------------*
  *                           Map named node interface                         *
  *----------------------------------------------------------------------------*/
-static Eina_Error _egueb_dom_node_map_named_attr_get(
+static Egueb_Dom_Node * _egueb_dom_node_map_named_attr_get(
 		Egueb_Dom_Node_Map_Named *n, Egueb_Dom_String *name,
-		Egueb_Dom_Node **node)
+		Eina_Error *err)
 {
 	Egueb_Dom_Node_Map_Named_Attr *thiz;
-	Eina_Error ret;
+	Egueb_Dom_Node *ret;
 
 	thiz = EGUEB_DOM_NODE_MAP_NAMED_ATTR(n);
-	ret = egueb_dom_element_property_fetch(thiz->own, name, node);
+	ret = egueb_dom_element_property_fetch(thiz->own, name);
+	if (!ret)
+	{
+		if (err) *err = EGUEB_DOM_ERROR_NOT_FOUND;
+	}
 	return ret;
 }
 
-static Eina_Error _egueb_dom_node_map_named_attr_remove(
+static Eina_Bool _egueb_dom_node_map_named_attr_remove(
 		Egueb_Dom_Node_Map_Named *n,
-		Egueb_Dom_String *name, Egueb_Dom_Node *node)
+		Egueb_Dom_String *name, Egueb_Dom_Node *node,
+		Eina_Error *err)
 {
-	return EINA_ERROR_NONE;
+	if (err) *err = EGUEB_DOM_ERROR_INVALID_ACCESS;
+	return EINA_FALSE;
 }
 
-static Eina_Error _egueb_dom_node_map_named_attr_set(Egueb_Dom_Node_Map_Named *n,
-		Egueb_Dom_Node *node)
+static Eina_Bool _egueb_dom_node_map_named_attr_set(Egueb_Dom_Node_Map_Named *n,
+		Egueb_Dom_Node *node, Eina_Error *err)
 {
-	return EINA_ERROR_NONE;
+	if (err) *err = EGUEB_DOM_ERROR_INVALID_ACCESS;
+	return EINA_FALSE;
 }
 
-static Eina_Error _egueb_dom_node_map_named_attr_at(Egueb_Dom_Node_Map_Named *n,
-		int idx, Egueb_Dom_Node **node)
+static Egueb_Dom_Node * _egueb_dom_node_map_named_attr_at(Egueb_Dom_Node_Map_Named *n,
+		int idx)
 {
 	Egueb_Dom_Node_Map_Named_Attr *thiz;
-	Egueb_Dom_Element *e;
 	Egueb_Dom_Element_Class *klass;
-	Egueb_Dom_Node *attr;
+	Egueb_Dom_Node *attr = NULL;
 	int count;
 
 	thiz = EGUEB_DOM_NODE_MAP_NAMED_ATTR(n);
@@ -97,18 +103,10 @@ static Eina_Error _egueb_dom_node_map_named_attr_at(Egueb_Dom_Node_Map_Named *n,
 	{
 		Egueb_Dom_Attr_Fetch fetch;
 		fetch = eina_extra_ordered_hash_nth_get(klass->properties, idx);
-		if (!fetch)
-		{
-			*node = NULL;
-			return EGUEB_DOM_ERROR_NOT_FOUND;
-		}
+		if (!fetch) return NULL;
 		fetch(thiz->own, &attr);
 	}
-	if (attr)
-	{
-		*node = egueb_dom_node_ref(attr);
-	}
-	return EINA_ERROR_NONE;
+	return egueb_dom_node_ref(attr);
 }
 
 static int _egueb_dom_node_map_named_attr_length(Egueb_Dom_Node_Map_Named *n)

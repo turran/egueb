@@ -66,7 +66,7 @@ static Eina_Bool _egueb_svg_element_line_generate_geometry(Egueb_Svg_Shape *s,
 	egueb_dom_attr_final_get(thiz->y2, &y2);
 
 	/* calculate the real size */
-	egueb_svg_document_font_size_get(doc, &font_size);
+	font_size = egueb_svg_document_font_size_get(doc);
 	thiz->gx1 = egueb_svg_coord_final_get(&x1, relative->viewbox.w, font_size);
 	thiz->gy1 = egueb_svg_coord_final_get(&y1, relative->viewbox.h, font_size);
 	thiz->gx2 = egueb_svg_coord_final_get(&x2, relative->viewbox.w, font_size);

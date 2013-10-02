@@ -22,23 +22,34 @@
 #include "egueb_dom_string.h"
 #include "egueb_dom_node.h"
 
+/**
+ * @defgroup Egueb_Dom_Document_Group Document
+ * @brief Document
+ * @ingroup Egueb_Dom_Group
+ * @{
+ */
+
 EAPI void egueb_dom_document_process_default(Egueb_Dom_Node *n);
 EAPI Enesim_Object_Descriptor * egueb_dom_document_descriptor_get(void);
-EAPI Eina_Bool egueb_dom_document_element_create(Egueb_Dom_Node *n,
-		Egueb_Dom_String *name, Egueb_Dom_Node **ret, Eina_Error *err);
+EAPI Egueb_Dom_Node * egueb_dom_document_element_create(Egueb_Dom_Node *n,
+		Egueb_Dom_String *name, Eina_Error *err);
 
 EAPI Egueb_Dom_Node * egueb_dom_document_element_get(Egueb_Dom_Node *n);
 EAPI void egueb_dom_document_element_set(Egueb_Dom_Node *n,
 		Egueb_Dom_Node *element);
-EAPI Eina_Bool egueb_dom_document_element_get_by_id(Egueb_Dom_Node *n,
-		Egueb_Dom_String *id, Egueb_Dom_Node **element, Eina_Error *err);
-EAPI Eina_Bool egueb_dom_document_element_get_by_iri(Egueb_Dom_Node *n,
-		Egueb_Dom_String *id, Egueb_Dom_Node **element, Eina_Error *err);
+EAPI Egueb_Dom_Node * egueb_dom_document_element_get_by_id(Egueb_Dom_Node *n,
+		Egueb_Dom_String *id, Eina_Error *err);
+EAPI Egueb_Dom_Node * egueb_dom_document_element_get_by_iri(Egueb_Dom_Node *n,
+		Egueb_Dom_String *id, Eina_Error *err);
 EAPI Egueb_Dom_Node * egueb_dom_document_node_adopt(Egueb_Dom_Node *n,
 		Egueb_Dom_Node *adopted, Eina_Error *err);
 
 EAPI void egueb_dom_document_process(Egueb_Dom_Node *n);
 EAPI void egueb_dom_document_process_queue_clear(Egueb_Dom_Node *n);
 EAPI Eina_Bool egueb_dom_document_needs_process(Egueb_Dom_Node *n);
+
+/**
+ * @}
+ */
 
 #endif

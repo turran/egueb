@@ -19,6 +19,13 @@
 #ifndef _EGUEB_SVG_DOCUMENT_H_
 #define _EGUEB_SVG_DOCUMENT_H_
 
+/**
+ * @defgroup Egueb_Svg_Document_Group Document
+ * @brief Document
+ * @ingroup Egueb_Svg_Group
+ * @{
+ */
+
 typedef void (*Egueb_Svg_Document_Failed_Cb)(void *user_data);
 typedef void (*Egueb_Svg_Document_Image_Loaded)(Enesim_Surface *s, void *user_data);
 
@@ -59,8 +66,7 @@ EAPI void egueb_svg_document_actual_height_get(Egueb_Dom_Node *n, double *actual
 
 EAPI void egueb_svg_document_font_size_set(Egueb_Dom_Node *n,
 		double font_size);
-EAPI void egueb_svg_document_font_size_get(Egueb_Dom_Node *n,
-		double *font_size);
+EAPI double egueb_svg_document_font_size_get(Egueb_Dom_Node *n);
 
 EAPI Egueb_Dom_Node * egueb_svg_document_element_get_by_iri(Egueb_Dom_Node *n,
 		Egueb_Dom_String *iri);
@@ -93,6 +99,10 @@ EAPI void egueb_svg_document_filename_get_cb_set(Egueb_Dom_Node *n,
 /* FIXME remove this as move it to the use element */
 EAPI Eina_Bool egueb_svg_document_iri_clone(Egueb_Dom_Node *n,
 		Egueb_Dom_String *iri, Egueb_Dom_Node **cloned, Eina_Error *err);
+
+/**
+ * @}
+ */
 
 #endif
 

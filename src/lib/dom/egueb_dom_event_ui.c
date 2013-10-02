@@ -49,13 +49,12 @@ static void _egueb_dom_event_ui_instance_deinit(void *o)
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/
-EAPI Eina_Error egueb_dom_event_ui_detail_get(Egueb_Dom_Event *e, int *detail)
+EAPI int egueb_dom_event_ui_detail_get(Egueb_Dom_Event *e)
 {
 	Egueb_Dom_Event_UI *thiz;
 
 	thiz = EGUEB_DOM_EVENT_UI(e);
-	*detail = thiz->detail;
-	return EINA_ERROR_NONE;
+	return thiz->detail;
 }
 
 EAPI void egueb_dom_event_ui_init(Egueb_Dom_Event *e, Egueb_Dom_String *type,

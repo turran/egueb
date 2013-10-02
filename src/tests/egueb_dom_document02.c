@@ -15,7 +15,7 @@ int main(int argc, char **argv)
 	/* create our own hierarchy */
 	el1 = myelement_new();
 	el2 = myelement_new();
-	egueb_dom_node_child_append(el1, el2);
+	egueb_dom_node_child_append(el1, el2, NULL);
 	egueb_dom_document_element_set(mydocument, egueb_dom_node_ref(el1));
 	/* dump it */
 	myelement_dump(el1, EINA_TRUE);

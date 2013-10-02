@@ -175,12 +175,12 @@ static void _egueb_svg_element_text_node_inserted_cb(Egueb_Dom_Event *e,
 	Egueb_Dom_Node *target = NULL;
 	Egueb_Dom_Node_Type type;
 
-	egueb_dom_event_mutation_related_get(e, &related);
+	related = egueb_dom_event_mutation_related_get(e);
 	if (related != n)
 	{
 		goto not_us;
 	}
-	egueb_dom_event_target_get(e, &target);
+	target = egueb_dom_event_target_get(e);
 	type = egueb_dom_node_type_get(target);
 	if (type == EGUEB_DOM_NODE_TYPE_TEXT_NODE)
 	{
@@ -234,12 +234,12 @@ static void _egueb_svg_element_text_node_removed_cb(Egueb_Dom_Event *e,
 	Egueb_Dom_Node *target = NULL;
 	Egueb_Dom_Node_Type type;
 
-	egueb_dom_event_mutation_related_get(e, &related);
+	related = egueb_dom_event_mutation_related_get(e);
 	if (related != n)
 	{
 		goto not_us;
 	}
-	egueb_dom_event_target_get(e, &target);
+	target = egueb_dom_event_target_get(e);
 	type = egueb_dom_node_type_get(target);
 	if (type == EGUEB_DOM_NODE_TYPE_TEXT_NODE)
 	{
@@ -295,7 +295,7 @@ static Eina_Bool _egueb_svg_element_text_generate_geometry(Egueb_Svg_Shape *s,
 	egueb_dom_attr_final_get(thiz->y, &y);
 
 	/* calculate the real size */
-	egueb_svg_document_font_size_get(doc, &doc_font_size);
+	doc_font_size = egueb_svg_document_font_size_get(doc);
 	thiz->gx = egueb_svg_coord_final_get(&x, relative->viewbox.w, doc_font_size);
 	thiz->gy = egueb_svg_coord_final_get(&y, relative->viewbox.h, doc_font_size);
 
@@ -472,20 +472,20 @@ EAPI Eina_Bool egueb_svg_element_is_text(Egueb_Dom_Node *n)
 	return EINA_TRUE;
 }
 
-EAPI Eina_Error egueb_svg_element_text_x_set(Egueb_Dom_Node *n,
+EAPI void egueb_svg_element_text_x_set(Egueb_Dom_Node *n,
 		const Egueb_Svg_Length *x)
 {
 	Egueb_Svg_Element_Text *thiz;
 
 	thiz = EGUEB_SVG_ELEMENT_TEXT(n);
-	return egueb_dom_attr_set(thiz->x, EGUEB_DOM_ATTR_TYPE_BASE, x);
+	egueb_dom_attr_set(thiz->x, EGUEB_DOM_ATTR_TYPE_BASE, x);
 }
 
-EAPI Eina_Error egueb_svg_element_text_y_set(Egueb_Dom_Node *n,
+EAPI void egueb_svg_element_text_y_set(Egueb_Dom_Node *n,
 		const Egueb_Svg_Length *y)
 {
 	Egueb_Svg_Element_Text *thiz;
 
 	thiz = EGUEB_SVG_ELEMENT_TEXT(n);
-	return egueb_dom_attr_set(thiz->y, EGUEB_DOM_ATTR_TYPE_BASE, y);
+	egueb_dom_attr_set(thiz->y, EGUEB_DOM_ATTR_TYPE_BASE, y);
 }

@@ -239,17 +239,12 @@ Egueb_Dom_String *EGUEB_DOM_EVENT_MOUSE_OVER = &_EGUEB_DOM_EVENT_MOUSE_OVER;
 Egueb_Dom_String *EGUEB_DOM_EVENT_MOUSE_MOVE = &_EGUEB_DOM_EVENT_MOUSE_MOVE;
 Egueb_Dom_String *EGUEB_DOM_EVENT_MOUSE_OUT = &_EGUEB_DOM_EVENT_MOUSE_OUT;
 
-EAPI Eina_Error egueb_dom_event_mouse_related_get(Egueb_Dom_Event *e, Egueb_Dom_Node **related)
+EAPI Egueb_Dom_Node * egueb_dom_event_mouse_related_get(Egueb_Dom_Event *e)
 {
 	Egueb_Dom_Event_Mouse *thiz;
 
-	if (!related) return EINA_ERROR_NONE;
-
 	thiz = EGUEB_DOM_EVENT_MOUSE(e);
-	if (thiz->related) *related = egueb_dom_node_ref(thiz->related);
-	else *related = NULL;
-
-	return EINA_ERROR_NONE;
+	return egueb_dom_node_ref(thiz->related);
 }
 
 EAPI Egueb_Dom_Event * egueb_dom_event_mouse_new(void)

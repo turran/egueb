@@ -381,7 +381,7 @@ static Eina_Bool _egueb_dom_animation_setup(Egueb_Smil_Animation *thiz,
 		return EINA_FALSE;
 	}
 	/* get the property from the element */
-	egueb_dom_element_property_fetch(target, attribute_name, &p);
+	p = egueb_dom_element_property_fetch(target, attribute_name);
 	if (!p)
 	{
 		ERR("No Property '%s' found",
@@ -444,12 +444,12 @@ static void _egueb_dom_animation_node_removed_cb(Egueb_Dom_Event *ev, void *data
 	Egueb_Dom_Node *related;
 	Egueb_Dom_Event_Phase phase;
 
-	egueb_dom_event_phase_get(ev, &phase);
+	phase = egueb_dom_event_phase_get(ev);
 	if (phase != EGUEB_DOM_EVENT_PHASE_AT_TARGET)
 		return;
 
-	egueb_dom_event_target_get(ev, &n);
-	egueb_dom_event_mutation_related_get(ev, &related);
+	n = egueb_dom_event_target_get(ev);
+	related = egueb_dom_event_mutation_related_get(ev);
 
 	thiz = EGUEB_SMIL_ANIMATION(n);
 	_egueb_dom_animation_cleanup(thiz, related);
@@ -472,13 +472,13 @@ static Eina_Bool _egueb_smil_animation_process(Egueb_Dom_Element *e)
 	{
 		Egueb_Dom_Node *doc;
 
-		egueb_dom_node_document_get(EGUEB_DOM_NODE(e), &doc);
+		doc = egueb_dom_node_document_get(EGUEB_DOM_NODE(e));
 		if (!doc)
 		{
 			ERR("No document associated with the node");
 			return EINA_FALSE;
 		}
-		egueb_dom_document_element_get_by_id(doc, xlink_href, &target);
+		target = egueb_dom_document_element_get_by_id(doc, xlink_href, NULL);
 		if (!target)
 		{
 			ERR("Invalid target");
@@ -492,7 +492,7 @@ static Eina_Bool _egueb_smil_animation_process(Egueb_Dom_Element *e)
 	}
 	else
 	{
-		egueb_dom_node_parent_get(EGUEB_DOM_NODE(e), &target);
+		target = egueb_dom_node_parent_get(EGUEB_DOM_NODE(e));
 		egueb_dom_string_unref(xlink_href);
 	}
 

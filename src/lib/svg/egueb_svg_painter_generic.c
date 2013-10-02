@@ -136,7 +136,7 @@ static void _egueb_svg_renderable_paint_set(Egueb_Dom_Node *n,
 				*renderer = NULL;
 			}
 
-			egueb_svg_document_element_get_by_iri(doc, &iri, &ref);
+			ref = egueb_svg_document_element_get_by_iri(doc, &iri);
 			if (!ref || !egueb_svg_is_paint_server(ref))
 			{
 				if (ref) egueb_dom_node_unref(ref);
@@ -287,7 +287,7 @@ static inline void _egueb_svg_painter_generic_resolve_stroke(
 		EINA_LIST_FREE(p->stroke_dasharray, dash)
 			free(dash);
 	}
-	egueb_svg_document_font_size_get(doc, &font_size);
+	font_size = egueb_svg_document_font_size_get(doc);
 
 	stroke_dasharray_data.e = e;
 	stroke_dasharray_data.p = p;
@@ -323,7 +323,7 @@ static Eina_Bool _egueb_svg_painter_generic_resolve(Egueb_Svg_Painter *p,
 
 	_egueb_svg_painter_generic_cleanup(p);
 
-	egueb_dom_node_document_get(EGUEB_DOM_NODE(e), &doc);
+	doc = egueb_dom_node_document_get(EGUEB_DOM_NODE(e));
 	if (!doc)
 	{
 		WARN("No document set");

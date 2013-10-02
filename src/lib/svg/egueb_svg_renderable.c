@@ -44,7 +44,7 @@ static Eina_Bool _egueb_svg_renderable_process(Egueb_Svg_Element *e)
 	klass = EGUEB_SVG_RENDERABLE_CLASS_GET(e);
 
 	/* set the new transformation */
-	egueb_svg_element_geometry_relative_get(EGUEB_DOM_NODE(e), &relative);
+	relative = egueb_svg_element_geometry_relative_get(EGUEB_DOM_NODE(e));
 	if (relative)
 	{
 		Egueb_Svg_Element *e_parent;
@@ -200,7 +200,7 @@ EAPI void egueb_svg_renderable_user_bounds_get(Egueb_Dom_Node *n,
 	enesim_renderer_destination_bounds_get(r, bounds, 0, 0);
 }
 
-EAPI Eina_Error egueb_svg_renderable_transform_get(Egueb_Dom_Node *n,
+EAPI void egueb_svg_renderable_transform_get(Egueb_Dom_Node *n,
 		Egueb_Svg_Matrix_Animated *m)
 {
 	Egueb_Svg_Renderable *thiz;
@@ -217,14 +217,13 @@ EAPI Eina_Error egueb_svg_renderable_transform_get(Egueb_Dom_Node *n,
 		egueb_dom_attr_get(thiz->transform, EGUEB_DOM_ATTR_TYPE_ANIMATED, &m->anim);
 	else
 		m->anim = m->base;
-	return EINA_ERROR_NONE;
 }
 
-EAPI Eina_Error egueb_svg_renderable_transform_set(Egueb_Dom_Node *n,
+EAPI void egueb_svg_renderable_transform_set(Egueb_Dom_Node *n,
 		Enesim_Matrix *m)
 {
 	Egueb_Svg_Renderable *thiz;
 
 	thiz = EGUEB_SVG_RENDERABLE(n);
-	return egueb_dom_attr_set(thiz->transform, EGUEB_DOM_ATTR_TYPE_BASE, m);
+	egueb_dom_attr_set(thiz->transform, EGUEB_DOM_ATTR_TYPE_BASE, m);
 }

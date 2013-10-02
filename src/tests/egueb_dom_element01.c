@@ -8,7 +8,7 @@ static void _mutation_attr_modified_cb(Egueb_Dom_Event *ev, void *data)
 	Egueb_Dom_Event_Phase phase;
 
 	egueb_dom_event_mutation_value_new_string_get(ev, &new_value);
-	egueb_dom_event_phase_get(ev, &phase);
+	phase = egueb_dom_event_phase_get(ev);
 	printf("[testing] mutation event attr modified received %d\n", phase);
 	printf("[testing] new value %s\n", egueb_dom_string_string_get(new_value));
 }
@@ -18,9 +18,9 @@ static void _mutation_node_removed_cb(Egueb_Dom_Event *ev, void *data)
 	Egueb_Dom_Event_Phase phase;
 	Egueb_Dom_Node *target, *current_target;
 
-	egueb_dom_event_phase_get(ev, &phase);
-	egueb_dom_event_target_get(ev, &target);
-	egueb_dom_event_target_current_get(ev, &current_target);
+	phase = egueb_dom_event_phase_get(ev);
+	target = egueb_dom_event_target_get(ev);
+	current_target = egueb_dom_event_target_current_get(ev);
 	printf("[testing] mutation event node removed received target: %p, "
 			"phase: %d, current_target: %p\n", target, phase,
 			current_target);
@@ -33,9 +33,9 @@ static void _mutation_node_inserted_cb(Egueb_Dom_Event *ev, void *data)
 	Egueb_Dom_Event_Phase phase;
 	Egueb_Dom_Node *target, *current_target;
 
-	egueb_dom_event_phase_get(ev, &phase);
-	egueb_dom_event_target_get(ev, &target);
-	egueb_dom_event_target_current_get(ev, &current_target);
+	phase = egueb_dom_event_phase_get(ev);
+	target = egueb_dom_event_target_get(ev);
+	current_target = egueb_dom_event_target_current_get(ev);
 	printf("[testing] mutation event node inserted received target: %p, "
 			"phase: %d, current_target: %p\n", target, phase,
 			current_target);
@@ -48,9 +48,9 @@ static void _mutation_node_inserted_into_document_cb(Egueb_Dom_Event *ev, void *
 	Egueb_Dom_Event_Phase phase;
 	Egueb_Dom_Node *target, *current_target;
 
-	egueb_dom_event_phase_get(ev, &phase);
-	egueb_dom_event_target_get(ev, &target);
-	egueb_dom_event_target_current_get(ev, &current_target);
+	phase = egueb_dom_event_phase_get(ev);
+	target = egueb_dom_event_target_get(ev);
+	current_target = egueb_dom_event_target_current_get(ev);
 	printf("[testing] mutation event node inserted into document received "
 			"target: %p, phase: %d, current_target: %p\n", target,
 			phase, current_target);
@@ -63,9 +63,9 @@ static void _mutation_node_removed_from_document_cb(Egueb_Dom_Event *ev, void *d
 	Egueb_Dom_Event_Phase phase;
 	Egueb_Dom_Node *target, *current_target;
 
-	egueb_dom_event_phase_get(ev, &phase);
-	egueb_dom_event_target_get(ev, &target);
-	egueb_dom_event_target_current_get(ev, &current_target);
+	phase = egueb_dom_event_phase_get(ev);
+	target = egueb_dom_event_target_get(ev);
+	current_target = egueb_dom_event_target_current_get(ev);
 	printf("[testing] mutation event node removed from document received "
 			"target: %p, phase: %d, current_target: %p\n", target,
 			phase, current_target);
@@ -116,8 +116,8 @@ int main(void)
 	/* test the property set/get */
 	name = egueb_dom_string_new_with_string("prop1");
 	value_set = egueb_dom_string_new_with_string("value");
-	egueb_dom_element_attribute_set(el1, name, value_set);
-	egueb_dom_element_attribute_get(el1, name, &value_get);
+	egueb_dom_element_attribute_set(el1, name, value_set, NULL);
+	value_get = egueb_dom_element_attribute_get(el1, name);
 	printf("[testing] getting 'prop1' = '%s'\n", egueb_dom_string_string_get(value_get));
 	egueb_dom_string_unref(value_set);
 	egueb_dom_string_unref(value_get);
@@ -126,8 +126,8 @@ int main(void)
 	/* test the generic property set/get */
 	name = egueb_dom_string_new_with_string("attribute");
 	value_set = egueb_dom_string_new_with_string("value");
-	egueb_dom_element_attribute_set(el1, name, value_set);
-	egueb_dom_element_attribute_get(el1, name, &value_get);
+	egueb_dom_element_attribute_set(el1, name, value_set, NULL);
+	value_get = egueb_dom_element_attribute_get(el1, name);
 	printf("[testing] getting 'attribute' = '%s'\n", egueb_dom_string_string_get(value_get));
 	egueb_dom_string_unref(value_set);
 	egueb_dom_string_unref(value_get);
@@ -135,16 +135,16 @@ int main(void)
 
 	/* test adding a node as a child of another */
 	printf("[testing] appending el2 into el1\n");
-	egueb_dom_node_child_append(el1, egueb_dom_node_ref(el2));
+	egueb_dom_node_child_append(el1, egueb_dom_node_ref(el2), NULL);
 	printf("[testing] appending el2 into el1\n");
-	egueb_dom_node_child_append(el2, el3);
+	egueb_dom_node_child_append(el2, el3, NULL);
 
 	/* test importing a node into a document */
 	doc = mydocument_new();
 	printf("[testing] set the main element of the document\n");
 	egueb_dom_document_element_set(doc, egueb_dom_node_ref(el1));
 	printf("[testing] removing el2\n");
-	egueb_dom_node_child_remove(el1, el2);
+	egueb_dom_node_child_remove(el1, el2, NULL);
 	printf("[testing] unrefing el2\n");
 	egueb_dom_node_unref(el2);
 	printf("[testing] unrefing el1\n");

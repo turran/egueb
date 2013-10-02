@@ -91,11 +91,11 @@ static char * _myelement_to_string(Egueb_Dom_Node *n)
 	char *ret = NULL;
 	int len;
 
-	egueb_dom_element_tag_name_get(n, &name);
+	name = egueb_dom_element_tag_name_get(n);
 	if (asprintf(&str, "<%s", egueb_dom_string_string_get(name)) < 0)
 		return NULL;
 	/* dump every proeprty */
-	egueb_dom_node_attributes_get(n, &attrs);
+	attrs = egueb_dom_node_attributes_get(n);
 	if (attrs)
 	{
 		int count;
@@ -108,11 +108,11 @@ static char * _myelement_to_string(Egueb_Dom_Node *n)
 			Egueb_Dom_String *attr_name;
 			Egueb_Dom_String *attr_value = NULL;
 
-			egueb_dom_node_map_named_at(attrs, i, &attr);
+			attr = egueb_dom_node_map_named_at(attrs, i);
 			if (!attr) continue;
 			if (!egueb_dom_attr_is_set(attr)) goto no_name;
 
-			egueb_dom_attr_name_get(attr, &attr_name);
+			attr_name = egueb_dom_attr_name_get(attr);
 			if (!attr_name) goto no_name;
 
 			egueb_dom_attr_string_get(attr, EGUEB_DOM_ATTR_TYPE_BASE, &attr_value);
@@ -135,7 +135,7 @@ no_name:
 		egueb_dom_node_map_named_free(attrs);
 	}
 	/* nor some meta information */
-	egueb_dom_node_document_get(n, &doc);
+	doc = egueb_dom_node_document_get(n);
 	len = asprintf(&ret, "%s> (ref: %d, doc: %p)", str,
 			egueb_dom_node_ref_get(n), doc);
 	free(str);
@@ -165,14 +165,14 @@ static void _myelement_dump(Egueb_Dom_Node *thiz, Eina_Bool deep, int level)
 	/* in case of deep, also do the children */
 	if (!deep) goto done;
 
-	egueb_dom_node_child_first_get(thiz, &child);
+	child = egueb_dom_node_child_first_get(thiz);
 	if (!child) goto done;
 
 	do
 	{
 		Egueb_Dom_Node *sibling = NULL;
 
-		egueb_dom_node_sibling_next_get(child, &sibling, NULL);
+		sibling = egueb_dom_node_sibling_next_get(child);
 		_myelement_dump(child, deep, level + 1);
 		child = sibling;
 	} while (child);
@@ -188,11 +188,10 @@ Egueb_Dom_Node * myelement_new(void)
 	return n;
 }
 
-Eina_Error myelement_prop1_set(Egueb_Dom_Node *n, Egueb_Dom_String *s)
+void myelement_prop1_set(Egueb_Dom_Node *n, Egueb_Dom_String *s)
 {
 	MyElement *thiz = MYELEMENT(n);
-	return egueb_dom_attr_set(thiz->prop1,
-			EGUEB_DOM_ATTR_TYPE_BASE, s, NULL);
+	egueb_dom_attr_set(thiz->prop1, EGUEB_DOM_ATTR_TYPE_BASE, s, NULL);
 }
 
 void myelement_dump(Egueb_Dom_Node *thiz, Eina_Bool deep)

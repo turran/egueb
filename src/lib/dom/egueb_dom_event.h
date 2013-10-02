@@ -20,6 +20,13 @@
 
 #include "egueb_dom_string.h"
 
+/**
+ * @defgroup Egueb_Dom_Event_Group Event
+ * @brief Event
+ * @ingroup Egueb_Dom_Group
+ * @{
+ */
+
 typedef enum _Egueb_Dom_Event_Phase
 {
 	EGUEB_DOM_EVENT_PHASE_CAPTURING,
@@ -32,12 +39,16 @@ typedef struct _Egueb_Dom_Event Egueb_Dom_Event;
 typedef void (*Egueb_Dom_Event_Listener)(Egueb_Dom_Event *ev, void *data);
 
 EAPI Enesim_Object_Descriptor * egueb_dom_event_descriptor_get(void);
-EAPI Eina_Error egueb_dom_event_phase_get(Egueb_Dom_Event *thiz, Egueb_Dom_Event_Phase *phase);
-EAPI Eina_Error egueb_dom_event_target_get(Egueb_Dom_Event *thiz, Egueb_Dom_Node **target);
-EAPI Eina_Error egueb_dom_event_target_current_get(Egueb_Dom_Event *thiz, Egueb_Dom_Node **target);
+EAPI Egueb_Dom_Event_Phase egueb_dom_event_phase_get(Egueb_Dom_Event *thiz);
+EAPI Egueb_Dom_Node * egueb_dom_event_target_get(Egueb_Dom_Event *thiz);
+EAPI Egueb_Dom_Node * egueb_dom_event_target_current_get(Egueb_Dom_Event *thiz);
 EAPI void egueb_dom_event_init(Egueb_Dom_Event *thiz, Egueb_Dom_String *type,
 		Eina_Bool bubbleable, Eina_Bool cancelable);
 EAPI void egueb_dom_event_unref(Egueb_Dom_Event *thiz);
 EAPI Egueb_Dom_Event * egueb_dom_event_ref(Egueb_Dom_Event *thiz);
+
+/**
+ * @}
+ */
 
 #endif

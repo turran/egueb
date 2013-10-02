@@ -18,9 +18,19 @@
 #ifndef _EGUEB_DOM_EVENT_UI_H_
 #define _EGUEB_DOM_EVENT_UI_H_
 
-EAPI Eina_Error egueb_dom_event_ui_detail_get(Egueb_Dom_Event *n, int *detail);
+/**
+ * @defgroup Egueb_Dom_Event_UI_Group UI Event
+ * @brief UI Event
+ * @ingroup Egueb_Dom_Event_Group
+ * @{
+ */
+
+EAPI int egueb_dom_event_ui_detail_get(Egueb_Dom_Event *n);
 EAPI void egueb_dom_event_ui_init(Egueb_Dom_Event *e, Egueb_Dom_String *type,
 		Eina_Bool bubbleable, Eina_Bool cancelable, int detail);
 
-#endif
+/**
+ * @}
+ */
 
+#endif

@@ -21,6 +21,13 @@
 #include "egueb_dom_string.h"
 #include "egueb_dom_event.h"
 
+/**
+ * @defgroup Egueb_Svg_Event_Mutation_Group Mutation Event
+ * @brief Mutation Event
+ * @ingroup Egueb_Dom_Event_Group
+ * @{
+ */
+
 typedef enum _Egueb_Dom_Event_Mutation_Attr_Type
 {
 	EGUEB_DOM_EVENT_MUTATION_ATTR_TYPE_ADDITION = 1,
@@ -39,7 +46,7 @@ EAPI extern Egueb_Dom_String * EGUEB_DOM_EVENT_MUTATION_CHARACTER_DATA_MODIFIED;
 /* Egueb events */
 EAPI extern Egueb_Dom_String * EGUEB_DOM_EVENT_MUTATION_REQUEST_PROCESS;
 
-EAPI Eina_Error egueb_dom_event_mutation_related_get(Egueb_Dom_Event *e, Egueb_Dom_Node **related);
+EAPI Egueb_Dom_Node * egueb_dom_event_mutation_related_get(Egueb_Dom_Event *e);
 
 EAPI void egueb_dom_event_mutation_value_prev_string_get(Egueb_Dom_Event *e,
 		Egueb_Dom_String **s);
@@ -61,5 +68,9 @@ EAPI void egueb_dom_event_mutation_process_prevent(Egueb_Dom_Event *thiz);
 EAPI Eina_Bool egueb_dom_event_mutation_process_prevented(Egueb_Dom_Event *thiz);
 
 EAPI void egueb_dom_event_mutation_init_request_process(Egueb_Dom_Event *e);
+
+/**
+ * @}
+ */
 
 #endif

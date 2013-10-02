@@ -57,7 +57,7 @@ static void _egueb_dom_element_document_removed_cb(Egueb_Dom_Event *e,
 	Egueb_Dom_Element *thiz = data;
 	Egueb_Dom_Event_Phase phase;
 
-	egueb_dom_event_phase_get(e, &phase);
+	phase = egueb_dom_event_phase_get(e);
 	if (phase != EGUEB_DOM_EVENT_PHASE_AT_TARGET)
 		return;
 	thiz->enqueued = EINA_FALSE;
@@ -93,8 +93,8 @@ static void _egueb_dom_element_original_node_inserted_cb(Egueb_Dom_Event *e,
 	/* check if the parent is the same as the node we have registered
 	 * the event
 	 */
-	egueb_dom_event_target_current_get(e, &origin);
-	egueb_dom_event_mutation_related_get(e, &parent);
+	origin = egueb_dom_event_target_current_get(e);
+	parent = egueb_dom_event_mutation_related_get(e);
 	if (origin != parent)
 	{
 		egueb_dom_node_unref(origin);
@@ -104,15 +104,15 @@ static void _egueb_dom_element_original_node_inserted_cb(Egueb_Dom_Event *e,
 	egueb_dom_node_unref(parent);
 
 	DBG("Inserting a node on a cloned element");
-	egueb_dom_event_target_get(e, &origin_child);
-	egueb_dom_node_clone(origin_child, EINA_TRUE, EINA_TRUE, &cloned_child);
+	origin_child = egueb_dom_event_target_get(e);
+	egueb_dom_node_clone(origin_child, EINA_TRUE, EINA_TRUE, &cloned_child, NULL);
 	if (!cloned_child) goto err_clone;
 
 	/* check if it does not have any next sibling (simple append) */
-	egueb_dom_node_sibling_next_get(origin_child, &origin_tmp);
+	origin_tmp = egueb_dom_node_sibling_next_get(origin_child);
 	if (!origin_tmp)
 	{
-		egueb_dom_node_child_append(cloned, cloned_child);
+		egueb_dom_node_child_append(cloned, cloned_child, NULL);
 	}
 	else
 	{
@@ -125,24 +125,23 @@ static void _egueb_dom_element_original_node_inserted_cb(Egueb_Dom_Event *e,
 		 * TODO we might need to find a faster version
 		 */
 		egueb_dom_node_unref(origin_tmp);
-		egueb_dom_node_sibling_previous_get(origin_child, &origin_tmp);
-
-		egueb_dom_node_child_first_get(cloned, &cloned_rel);
+		origin_tmp = egueb_dom_node_sibling_previous_get(origin_child);
+		cloned_rel = egueb_dom_node_child_first_get(cloned);
 		while (origin_tmp)
 		{
 			Egueb_Dom_Node *tmp1 = NULL;
 			Egueb_Dom_Node *tmp2 = NULL;
 
-			egueb_dom_node_sibling_next_get(cloned_rel, &tmp2);
+			tmp2 = egueb_dom_node_sibling_next_get(cloned_rel);
 			egueb_dom_node_unref(cloned_rel);
 			cloned_rel = tmp2;
 
-			egueb_dom_node_sibling_previous_get(origin_tmp, &tmp1);
+			tmp1 = egueb_dom_node_sibling_previous_get(origin_tmp);
 			egueb_dom_node_unref(origin_tmp);
 			origin_tmp = tmp1;
 		}
 		/* we need to insert the new node before the found rel */
-		egueb_dom_node_insert_before(cloned, cloned_child, cloned_rel);
+		egueb_dom_node_insert_before(cloned, cloned_child, cloned_rel, NULL);
 		egueb_dom_node_unref(cloned_rel);
 	}
 
@@ -167,8 +166,8 @@ static void _egueb_dom_element_original_node_removed_cb(Egueb_Dom_Event *e,
 	/* check if the parent is the same as the node we have registered
 	 * the event
 	 */
-	egueb_dom_event_target_current_get(e, &origin);
-	egueb_dom_event_mutation_related_get(e, &parent);
+	origin = egueb_dom_event_target_current_get(e);
+	parent = egueb_dom_event_mutation_related_get(e);
 	if (origin != parent)
 	{
 		egueb_dom_node_unref(origin);
@@ -177,25 +176,25 @@ static void _egueb_dom_element_original_node_removed_cb(Egueb_Dom_Event *e,
 	}
 	egueb_dom_node_unref(parent);
 	DBG("Removing a node from a cloned element");
-	egueb_dom_event_target_get(e, &origin_child);
+	origin_child = egueb_dom_event_target_get(e);
 
 	/* found the child in the cloned children */
-	egueb_dom_node_sibling_previous_get(origin_child, &origin_tmp);
-	egueb_dom_node_child_first_get(cloned, &cloned_child);
+	origin_tmp = egueb_dom_node_sibling_previous_get(origin_child);
+	cloned_child = egueb_dom_node_child_first_get(cloned);
 	while (origin_tmp)
 	{
 		Egueb_Dom_Node *tmp1 = NULL;
 		Egueb_Dom_Node *tmp2 = NULL;
 
-		egueb_dom_node_sibling_next_get(cloned_child, &tmp2);
+		tmp2 = egueb_dom_node_sibling_next_get(cloned_child);
 		egueb_dom_node_unref(cloned_child);
 		cloned_child = tmp2;
 
-		egueb_dom_node_sibling_previous_get(origin_tmp, &tmp1);
+		tmp1 = egueb_dom_node_sibling_previous_get(origin_tmp);
 		egueb_dom_node_unref(origin_tmp);
 		origin_tmp = tmp1;
 	}
-	egueb_dom_node_child_remove(cloned, cloned_child);
+	egueb_dom_node_child_remove(cloned, cloned_child, NULL);
 	egueb_dom_node_unref(cloned_child);
 
 	egueb_dom_node_unref(origin);
@@ -218,16 +217,16 @@ static void _egueb_dom_element_original_attr_modified_cb(Egueb_Dom_Event *e,
 	Egueb_Dom_Event_Mutation_Attr_Type type;
 	Eina_Error err;
 
-	egueb_dom_event_phase_get(e, &phase);
+	phase = egueb_dom_event_phase_get(e);
 	if (phase != EGUEB_DOM_EVENT_PHASE_AT_TARGET)
 		return;
 
 	egueb_dom_event_mutation_attr_type_get(e, &type);
 	egueb_dom_event_mutation_value_new_get(e, &v);
-	egueb_dom_event_mutation_related_get(e, &attr);
+	attr = egueb_dom_event_mutation_related_get(e);
 	egueb_dom_event_mutation_attr_modification_type_get(e, &attr_type);
 
-	egueb_dom_attr_name_get(attr, &s_attr);
+	s_attr = egueb_dom_attr_name_get(attr);
 
 	switch (type)
 	{
@@ -238,9 +237,8 @@ static void _egueb_dom_element_original_attr_modified_cb(Egueb_Dom_Event *e,
 
 		egueb_dom_value_init(&copy, v->descriptor);
 		egueb_dom_value_copy(v, &copy, EINA_FALSE);
-		err = egueb_dom_element_property_value_set(clone, s_attr,
-				attr_type, &copy);
-		if (err != EINA_ERROR_NONE)
+		if (!egueb_dom_element_property_value_set(clone, s_attr,
+				attr_type, &copy, &err))
 		{
 			ERR("Can not set the value '%s'", eina_error_msg_get(err));
 		}
@@ -267,12 +265,12 @@ static void _egueb_dom_element_original_destroyed_cb(Egueb_Dom_Event *e,
 	Egueb_Dom_Event_Phase phase;
 
 	/* unregister every event on the other end */
-	egueb_dom_event_phase_get(e, &phase);
+	phase = egueb_dom_event_phase_get(e);
 	if (phase != EGUEB_DOM_EVENT_PHASE_AT_TARGET)
 		return;
 	
 	DBG("Original destroyed, removing the events on the cloned node");
-	egueb_dom_event_target_get(e, &n);
+	n = egueb_dom_event_target_get(e);
 	egueb_dom_node_event_listener_remove(cloned,
 			EGUEB_DOM_EVENT_MUTATION_NODE_DESTROYED,
 			_egueb_dom_element_clone_destroyed_cb,
@@ -291,12 +289,12 @@ static void _egueb_dom_element_clone_destroyed_cb(Egueb_Dom_Event *e,
 	Egueb_Dom_Event_Phase phase;
 
 	/* unregister every event on the other end */
-	egueb_dom_event_phase_get(e, &phase);
+	phase = egueb_dom_event_phase_get(e);
 	if (phase != EGUEB_DOM_EVENT_PHASE_AT_TARGET)
 		return;
 
 	DBG("Clone destroyed, removing the events on the original node");
-	egueb_dom_event_target_get(e, &cloned);
+	cloned = egueb_dom_event_target_get(e);
 	/* the attr modified */
 	egueb_dom_node_event_listener_remove(n,
 			EGUEB_DOM_EVENT_MUTATION_ATTR_MODIFIED,
@@ -383,8 +381,8 @@ static void _egueb_dom_element_clone(Egueb_Dom_Node *n, Eina_Bool live,
 	{
 		Egueb_Dom_Node *clone_child;
 
-		egueb_dom_node_clone(child, live, deep, &clone_child);
-		egueb_dom_node_child_append(clone, clone_child);
+		egueb_dom_node_clone(child, live, deep, &clone_child, NULL);
+		egueb_dom_node_child_append(clone, clone_child, NULL);
 	}
 }
 /*----------------------------------------------------------------------------*
@@ -437,11 +435,11 @@ static void _egueb_dom_element_instance_deinit(void *o)
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
-Eina_Error egueb_dom_element_process_children(Egueb_Dom_Element *thiz)
+Eina_Bool egueb_dom_element_process_children(Egueb_Dom_Element *thiz)
 {
 	Egueb_Dom_Node *n;
 	Egueb_Dom_Node *child;
-	Eina_Error ret = EINA_ERROR_NONE;
+	Eina_Bool ret = EINA_TRUE;
 
 	n = EGUEB_DOM_NODE(thiz);
 	EINA_INLIST_FOREACH(n->children, child)
@@ -453,7 +451,7 @@ Eina_Error egueb_dom_element_process_children(Egueb_Dom_Element *thiz)
 			continue;
 
 		ret = egueb_dom_element_process(child);
-		if (ret != EINA_ERROR_NONE)
+		if (!ret)
 			break;
 	}
 	return ret;
@@ -492,50 +490,44 @@ void egueb_dom_element_enqueue(Egueb_Dom_Node *n)
 /*
  * readonly attribute DOMString tagName;
  */
-EAPI Eina_Error egueb_dom_element_tag_name_get(Egueb_Dom_Node *node,
-		Egueb_Dom_String **name)
+EAPI Egueb_Dom_String * egueb_dom_element_tag_name_get(Egueb_Dom_Node *node)
 {
 	Egueb_Dom_Element_Class *klass;
 
 	klass = EGUEB_DOM_ELEMENT_CLASS_GET(node);
 	if (klass->tag_name_get)
-	{
-		*name = klass->tag_name_get(EGUEB_DOM_ELEMENT(node));
-	}
-	else
-	{
-		*name = NULL;
-	}
-	return EINA_ERROR_NONE;
+		return klass->tag_name_get(EGUEB_DOM_ELEMENT(node));
+	return NULL;
 }
 
 /*
  * DOMString getAttribute(in DOMString name);
  */
-EAPI Eina_Error egueb_dom_element_attribute_get(Egueb_Dom_Node *node,
-		const Egueb_Dom_String *name, Egueb_Dom_String **value)
+EAPI Egueb_Dom_String * egueb_dom_element_attribute_get(Egueb_Dom_Node *node,
+		const Egueb_Dom_String *name)
 {
 	Egueb_Dom_Node *p = NULL;
+	Egueb_Dom_String *ret = NULL;
 
-	egueb_dom_element_property_fetch(node, name, &p);
-	if (!p) return EINA_ERROR_NONE;
+	p = egueb_dom_element_property_fetch(node, name);
+	if (!p) return NULL;
 
-	egueb_dom_attr_string_get(p, EGUEB_DOM_ATTR_TYPE_BASE, value);
+	egueb_dom_attr_string_get(p, EGUEB_DOM_ATTR_TYPE_BASE, &ret);
 	egueb_dom_node_unref(p);
-
-	return EINA_ERROR_NONE;
+	return ret;
 }
 
 /*
  * void setAttribute(in DOMString name, in DOMString value)
  * raises(DOMException);
  */
-EAPI Eina_Error egueb_dom_element_attribute_set(Egueb_Dom_Node *node,
-		const Egueb_Dom_String *name, Egueb_Dom_String *value)
+EAPI Eina_Bool egueb_dom_element_attribute_set(Egueb_Dom_Node *node,
+		const Egueb_Dom_String *name, Egueb_Dom_String *value,
+		Eina_Error *err)
 {
 	Egueb_Dom_Node *p = NULL;
 
-	egueb_dom_element_property_fetch(node, name, &p);
+	p = egueb_dom_element_property_fetch(node, name);
 	if (!p)
 	{
 		Egueb_Dom_Element *thiz;
@@ -558,36 +550,46 @@ EAPI Eina_Error egueb_dom_element_attribute_set(Egueb_Dom_Node *node,
 		egueb_dom_node_unref(p);
 	}
 
-	return EINA_ERROR_NONE;
+	return EINA_TRUE;
 }
 
 
-EAPI Eina_Error egueb_dom_element_attribute_type_set(Egueb_Dom_Node *node,
+EAPI Eina_Bool egueb_dom_element_attribute_type_set(Egueb_Dom_Node *node,
 		const Egueb_Dom_String *name, Egueb_Dom_Attr_Type type,
-		Egueb_Dom_String *value)
+		Egueb_Dom_String *value, Eina_Error *err)
 {
 	Egueb_Dom_Node *p = NULL;
-	Eina_Error ret = EGUEB_DOM_ERROR_NOT_FOUND;
 
-	egueb_dom_element_property_fetch(node, name, &p);
+	p = egueb_dom_element_property_fetch(node, name);
 	/* set the value */
 	if (p)
 	{
-		if (egueb_dom_attr_string_set(p, type, value))
-			ret = EINA_ERROR_NONE;
+		Eina_Bool ret;
+
+		ret = egueb_dom_attr_string_set(p, type, value);
 		egueb_dom_node_unref(p);
+		
+		if (!ret)
+		{
+			if (err) *err = EGUEB_DOM_ERROR_INVALID_ACCESS;
+			return EINA_FALSE;
+		}
+		return EINA_TRUE;
 	}
-	return ret;
+	else
+	{
+		if (err) *err = EGUEB_DOM_ERROR_NOT_FOUND;
+		return EINA_FALSE;
+	}
 }
 
-EAPI Eina_Error egueb_dom_element_property_fetch(Egueb_Dom_Node *node,
-		const Egueb_Dom_String *name, Egueb_Dom_Node **p)
+EAPI Egueb_Dom_Node * egueb_dom_element_property_fetch(Egueb_Dom_Node *node,
+		const Egueb_Dom_String *name)
 {
 	Egueb_Dom_Element_Class *klass;
 	Egueb_Dom_Attr_Fetch fetch;
 	Egueb_Dom_Node *attr;
 
-	if (!p) return EGUEB_DOM_ERROR_INVALID_ACCESS;
 	klass = EGUEB_DOM_ELEMENT_CLASS_GET(node);
 	fetch = eina_extra_ordered_hash_find(klass->properties, egueb_dom_string_string_get(name));
 	/* ok it is a class attribute */
@@ -607,15 +609,12 @@ EAPI Eina_Error egueb_dom_element_property_fetch(Egueb_Dom_Node *node,
 
 	if (!attr)
 	{
-		*p = NULL;
-		return EGUEB_DOM_ERROR_NOT_FOUND;
+		return NULL;
 	}
 	else
 	{
-		*p = egueb_dom_node_ref(attr);
-		return EINA_ERROR_NONE;
+		return egueb_dom_node_ref(attr);
 	}
-
 }
 
 EAPI Eina_Error egueb_dom_element_property_set_va(Egueb_Dom_Node *node,
@@ -624,7 +623,7 @@ EAPI Eina_Error egueb_dom_element_property_set_va(Egueb_Dom_Node *node,
 	Egueb_Dom_Node *p;
 	Eina_Error ret;
 
-	egueb_dom_element_property_fetch(node, name, &p);
+	p = egueb_dom_element_property_fetch(node, name);
 	if (!p) return EGUEB_DOM_ERROR_NOT_FOUND;
 	ret = egueb_dom_attr_set_va(p, prop_mask, args);
 	egueb_dom_node_unref(p);
@@ -637,7 +636,7 @@ EAPI Eina_Error egueb_dom_element_property_get_va(Egueb_Dom_Node *node,
 	Egueb_Dom_Node *p;
 	Eina_Error ret;
 
-	egueb_dom_element_property_fetch(node, name, &p);
+	p = egueb_dom_element_property_fetch(node, name);
 	if (!p) return EGUEB_DOM_ERROR_NOT_FOUND;
 	ret = egueb_dom_attr_get_va(p, prop_mask, args);
 	egueb_dom_node_unref(p);
@@ -677,39 +676,67 @@ EAPI Eina_Error egueb_dom_element_property_get(Egueb_Dom_Node *node,
 	return ret;
 }
 
-EAPI Eina_Error egueb_dom_element_property_value_set(Egueb_Dom_Node *node,
-		Egueb_Dom_String *name, Egueb_Dom_Attr_Type type, Egueb_Dom_Value *v)
+EAPI Eina_Bool egueb_dom_element_property_value_set(Egueb_Dom_Node *node,
+		Egueb_Dom_String *name, Egueb_Dom_Attr_Type type,
+		Egueb_Dom_Value *v, Eina_Error *err)
 {
 	Egueb_Dom_Node *p;
-	Eina_Error ret = EINA_ERROR_NONE;
+	Eina_Bool ret;
 
-	egueb_dom_element_property_fetch(node, name, &p);
-	if (!p) return EGUEB_DOM_ERROR_NOT_FOUND;
+	p = egueb_dom_element_property_fetch(node, name);
+	if (!p)
+	{
+		if (err) *err = EGUEB_DOM_ERROR_NOT_FOUND;
+		return EINA_FALSE;
+	}
+
 	/* copy it to the property value */
-	if (!egueb_dom_attr_value_set(p, type, v))
-		ret = EGUEB_DOM_ERROR_NOT_SUPPORTED;
+	ret = egueb_dom_attr_value_set(p, type, v);
 	egueb_dom_node_unref(p);
-	return ret;
+
+	if (!ret)
+	{
+		if (err) *err = EGUEB_DOM_ERROR_NOT_SUPPORTED;
+		return EINA_FALSE;
+	}
+	else
+	{
+		return EINA_TRUE;
+	}
 }
 
-EAPI Eina_Error egueb_dom_element_property_value_get(Egueb_Dom_Node *node,
-		Egueb_Dom_String *name, Egueb_Dom_Attr_Type type, Egueb_Dom_Value *v)
+EAPI Eina_Bool egueb_dom_element_property_value_get(Egueb_Dom_Node *node,
+		Egueb_Dom_String *name, Egueb_Dom_Attr_Type type,
+		Egueb_Dom_Value *v, Eina_Error *err)
 {
 	Egueb_Dom_Node *p;
-	Eina_Error ret = EINA_ERROR_NONE;
+	Eina_Bool ret;
 
-	egueb_dom_element_property_fetch(node, name, &p);
-	if (!p) return EGUEB_DOM_ERROR_NOT_FOUND;
+	p = egueb_dom_element_property_fetch(node, name);
+	if (!p)
+	{
+		if (err) *err = EGUEB_DOM_ERROR_NOT_FOUND;
+		return EINA_FALSE;
+	}
+
 	/* copy it to the property value */
-	if (!egueb_dom_attr_value_get(p, type, v))
-		ret = EGUEB_DOM_ERROR_NOT_SUPPORTED;
+	ret = egueb_dom_attr_value_get(p, type, v);
 	egueb_dom_node_unref(p);
-	return ret;
+
+	if (!ret)
+	{
+		if (err) *err = EGUEB_DOM_ERROR_NOT_SUPPORTED;
+		return EINA_FALSE;
+	}
+	else
+	{
+		return EINA_TRUE;
+	}
 }
 
 
-EAPI Eina_Error egueb_dom_element_class_property_add(Egueb_Dom_Node *n,
-		Egueb_Dom_Node *p, Egueb_Dom_Attr_Fetch fetch)
+EAPI Eina_Bool egueb_dom_element_class_property_add(Egueb_Dom_Node *n,
+		Egueb_Dom_Node *p, Egueb_Dom_Attr_Fetch fetch, Eina_Error *err)
 {
 	Egueb_Dom_Element_Class *klass;
 	Egueb_Dom_Attr *attr;
@@ -730,13 +757,14 @@ EAPI Eina_Error egueb_dom_element_class_property_add(Egueb_Dom_Node *n,
 	{
 		WARN("Property '%s' already found",
 				egueb_dom_string_string_get(attr->name));
-		return EGUEB_DOM_ERROR_INUSE_ATTRIBUTE;
+		if (err) *err = EGUEB_DOM_ERROR_INUSE_ATTRIBUTE;
+		return EINA_FALSE;
 	}
 
 	DBG("Adding property '%s'", egueb_dom_string_string_get(attr->name));
 	eina_extra_ordered_hash_add(klass->properties,
 			egueb_dom_string_string_get(attr->name), fetch);
-	return EINA_ERROR_NONE;
+	return EINA_TRUE;
 }
 
 /* Maybe rename this to enqueued? */
@@ -763,7 +791,7 @@ EAPI void egueb_dom_element_request_process(Egueb_Dom_Node *n)
 	/* send the request process event */
 	e = egueb_dom_event_mutation_new();
 	egueb_dom_event_mutation_init_request_process(e);
-	egueb_dom_node_event_dispatch(n, e, NULL);
+	egueb_dom_node_event_dispatch(n, e, NULL, NULL);
 }
 
 EAPI Eina_Bool egueb_dom_element_process(Egueb_Dom_Node *n)
@@ -780,7 +808,7 @@ EAPI Eina_Bool egueb_dom_element_process(Egueb_Dom_Node *n)
 	thiz->inheritable_changed = EINA_FALSE;
 	thiz->attr_changed = EINA_FALSE;
 	/* set the run timestamp */
-	egueb_dom_node_document_get(n, &doc);
+	doc = egueb_dom_node_document_get(n);
 	if (doc)
 	{
 		thiz->last_run = egueb_dom_document_current_run_get(doc);

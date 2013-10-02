@@ -34,7 +34,7 @@ static Eina_Bool _egueb_svg_renderable_container_children_process_cb(
 	Egueb_Dom_Node_Type type;
 
 	/* check that it is an element */
-	egueb_dom_node_type_get(child, &type);
+	type = egueb_dom_node_type_get(child);
 	if (type != EGUEB_DOM_NODE_TYPE_ELEMENT_NODE)
 		return EINA_TRUE;
 
@@ -66,7 +66,7 @@ static void _egueb_svg_renderable_container_tree_modified_cb(Egueb_Dom_Event *e,
 	Egueb_Dom_Node *target = NULL;
 
 	/* check that the parent is this container */
-	egueb_dom_event_mutation_related_get(e, &related);
+	related = egueb_dom_event_mutation_related_get(e);
 	if (!related) return;
 	if (related != EGUEB_DOM_NODE(thiz))
 	{
@@ -76,7 +76,7 @@ static void _egueb_svg_renderable_container_tree_modified_cb(Egueb_Dom_Event *e,
 	egueb_dom_node_unref(related);
 
 	/* get the target and check if it is of type renderable */
-	egueb_dom_event_target_get(e, &target);
+	target = egueb_dom_event_target_get(e);
 	if (!target) return;
 
 	if (enesim_object_instance_inherits(ENESIM_OBJECT_INSTANCE(target),

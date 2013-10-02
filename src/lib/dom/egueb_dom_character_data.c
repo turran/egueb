@@ -50,6 +50,8 @@ static void _egueb_dom_character_data_instance_deinit(void *o)
 {
 	Egueb_Dom_Character_Data *thiz;
 	thiz = EGUEB_DOM_CHARACTER_DATA(o);
+	if (thiz->buffer)
+		enesim_text_buffer_unref(thiz->buffer);
 }
 /*============================================================================*
  *                                 Global                                     *
@@ -82,54 +84,62 @@ EAPI void egueb_dom_character_data_buffer_set(Egueb_Dom_Node *n,
    raises(DOMException) on setting
    raises(DOMException) on retrieval
 */
-EAPI Eina_Error egueb_dom_character_data_data_get(Egueb_Dom_Node *n,
-		Egueb_Dom_String **data)
+EAPI Egueb_Dom_String * egueb_dom_character_data_data_get(Egueb_Dom_Node *n)
 {
 	Egueb_Dom_Character_Data *thiz;
 	const char *content;
 
 	thiz = EGUEB_DOM_CHARACTER_DATA(n);
 	content = enesim_text_buffer_string_get(thiz->buffer);
-	*data = egueb_dom_string_new_with_static_string(content);
-	return EINA_ERROR_NONE;
+	return egueb_dom_string_new_with_static_string(content);
 }
 
 /* readonly attribute unsigned long    length; */
-EAPI Eina_Error egueb_dom_character_data_length_get(Egueb_Dom_Node *n,
-		int *length)
+EAPI int egueb_dom_character_data_length_get(Egueb_Dom_Node *n)
 {
-	return EINA_ERROR_NONE;
+	Egueb_Dom_Character_Data *thiz;
+
+	thiz = EGUEB_DOM_CHARACTER_DATA(n);
+	return enesim_text_buffer_string_length(thiz->buffer);
 }
 
 /* void               appendData(in DOMString arg)
    raises(DOMException);
 */
-EAPI Eina_Error egueb_dom_character_data_append_data(Egueb_Dom_Node *n,
-		Egueb_Dom_String *data)
+EAPI Eina_Bool egueb_dom_character_data_append_data(Egueb_Dom_Node *n,
+		Egueb_Dom_String *data, Eina_Error *err)
 {
 	Egueb_Dom_Character_Data *thiz;
 	const char *str;
 	int len;
 
-	if (!data) return EGUEB_DOM_ERROR_NOT_FOUND;
+	if (!data)
+	{
+		if (err) *err = EGUEB_DOM_ERROR_NOT_FOUND;
+		return EINA_FALSE;
+	}
+
 	str = egueb_dom_string_string_get(data);
-	if (!str) return EGUEB_DOM_ERROR_NOT_FOUND;
+	if (!str)
+	{
+		if (err) *err = EGUEB_DOM_ERROR_NOT_FOUND;
+		return EINA_FALSE;
+	}
 
 	thiz = EGUEB_DOM_CHARACTER_DATA(n);
 	len = enesim_text_buffer_string_length(thiz->buffer);
 	enesim_text_buffer_string_insert(thiz->buffer, str, -1, len);
 	egueb_dom_string_unref(data);
-	return EINA_ERROR_NONE;
+	return EINA_TRUE;
 }
 
-EAPI Eina_Error egueb_dom_character_data_append_data_inline(Egueb_Dom_Node *n,
-		const char *data)
+EAPI Eina_Bool egueb_dom_character_data_append_data_inline(Egueb_Dom_Node *n,
+		const char *data, Eina_Error *err)
 {
 	Egueb_Dom_String *s;
 
 	s = egueb_dom_string_new_with_static_string(data);
-	egueb_dom_character_data_append_data(n, s);
-	return EINA_ERROR_NONE;
+	return egueb_dom_character_data_append_data(n, s, err);
 }
 
 #if 0

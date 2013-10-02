@@ -21,6 +21,13 @@
 #include "egueb_dom_node.h"
 #include "egueb_dom_value.h"
 
+/**
+ * @defgroup Egueb_Dom_Attr_Group Attr 
+ * @brief Attr
+ * @ingroup Egueb_Dom_Group
+ * @{
+ */
+
 typedef enum _Egueb_Dom_Attr_Flag
 {
 	EGUEB_DOM_ATTR_FLAG_STYLABLE	= 1 << 0,
@@ -54,8 +61,7 @@ EAPI const Egueb_Dom_Value_Descriptor * egueb_dom_attr_value_descriptor_get(
 		Egueb_Dom_Node *n);
 EAPI void egueb_dom_attr_init(Egueb_Dom_Node *n, Egueb_Dom_String *name,
 		Eina_Bool animatable, Eina_Bool stylable, Eina_Bool inheritable);
-EAPI Eina_Error egueb_dom_attr_name_get(Egueb_Dom_Node *n,
-		Egueb_Dom_String **name);
+EAPI Egueb_Dom_String * egueb_dom_attr_name_get(Egueb_Dom_Node *n);
 
 EAPI Eina_Bool egueb_dom_attr_is_stylable(Egueb_Dom_Node *n);
 EAPI Eina_Bool egueb_dom_attr_is_animatable(Egueb_Dom_Node *n);
@@ -71,9 +77,9 @@ EAPI Eina_Bool egueb_dom_attr_value_get(Egueb_Dom_Node *n,
 EAPI Eina_Bool egueb_dom_attr_value_set(Egueb_Dom_Node *n,
 		Egueb_Dom_Attr_Type type, Egueb_Dom_Value *value);
 
-EAPI Eina_Error egueb_dom_attr_get(Egueb_Dom_Node *n, int prop_mask,
+EAPI Eina_Bool egueb_dom_attr_get(Egueb_Dom_Node *n, int prop_mask,
 	...);
-EAPI Eina_Error egueb_dom_attr_set(Egueb_Dom_Node *n, int prop_mask,
+EAPI Eina_Bool egueb_dom_attr_set(Egueb_Dom_Node *n, int prop_mask,
 	...);
 EAPI void egueb_dom_attr_inheritable_process(Egueb_Dom_Node *n,
 			Egueb_Dom_Node *rel);
@@ -100,4 +106,9 @@ EAPI void egueb_dom_attr_inherited_get(Egueb_Dom_Node *attr,
 				prefix##_descriptor_get());			\
 		*a = thiz->name;						\
 	}
+
+/**
+ * @}
+ */
+
 #endif

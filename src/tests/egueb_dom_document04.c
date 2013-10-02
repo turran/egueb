@@ -24,19 +24,19 @@ int main(int argc, char **argv)
 	enesim_stream_unref(im);
 
 	printf("[testing] get the topmost element and destroy the document\n");
-	egueb_dom_document_element_get(doc, &root);
+	root = egueb_dom_document_element_get(doc);
 	egueb_dom_node_unref(doc);
 	doc = NULL;
 
 	printf("[testing] get the document of the topmost\n");
-	egueb_dom_node_document_get(root, &doc);
+	doc = egueb_dom_node_document_get(root);
 	printf("[testing] doc = %p\n", doc);
 	
 	printf("[testing] get the document of a child\n");
-	egueb_dom_node_child_first_get(root, &child);
+	child = egueb_dom_node_child_first_get(root);
 	if (child)
 	{
-		egueb_dom_node_document_get(child, &doc);
+		doc = egueb_dom_node_document_get(child);
 		printf("[testing] doc = %p\n", doc);
 		egueb_dom_node_unref(child);
 	}
@@ -45,11 +45,11 @@ int main(int argc, char **argv)
 	/* now test the dangling nodes */
 	doc = mydocument_new();
 	child = myelement_new();
-	egueb_dom_document_node_adopt(doc, child, &child);
+	child = egueb_dom_document_node_adopt(doc, child, NULL);
 	egueb_dom_node_unref(doc);
 
 	printf("[testing] get the document of dangling node\n");
-	egueb_dom_node_document_get(child, &doc);
+	doc = egueb_dom_node_document_get(child);
 	printf("[testing] doc = %p\n", doc);
 
 	return 0;

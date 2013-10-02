@@ -89,7 +89,7 @@ EAPI void egueb_dom_input_feed_mouse_down(Egueb_Dom_Input *thiz, int button)
 	egueb_dom_event_mouse_down_init(ev, thiz->x, thiz->y, thiz->x, thiz->y,
 			EINA_FALSE, EINA_FALSE, EINA_FALSE,
 			EINA_FALSE, 0, 0);
-	egueb_dom_node_event_dispatch(thiz->grabbed, ev, NULL);
+	egueb_dom_node_event_dispatch(thiz->grabbed, ev, NULL, NULL);
 }
 
 EAPI void egueb_dom_input_feed_mouse_up(Egueb_Dom_Input *thiz, int button)
@@ -104,7 +104,7 @@ EAPI void egueb_dom_input_feed_mouse_up(Egueb_Dom_Input *thiz, int button)
 	egueb_dom_event_mouse_up_init(ev, thiz->x, thiz->y, thiz->x, thiz->y,
 			EINA_FALSE, EINA_FALSE, EINA_FALSE,
 			EINA_FALSE, 0, 0);
-	egueb_dom_node_event_dispatch(thiz->grabbed, ev, NULL);
+	egueb_dom_node_event_dispatch(thiz->grabbed, ev, NULL, NULL);
 	/* in case the down coordinates are the same as the current coordinates
 	 * send a click event
 	 */
@@ -116,7 +116,7 @@ EAPI void egueb_dom_input_feed_mouse_up(Egueb_Dom_Input *thiz, int button)
 		egueb_dom_event_mouse_click_init(ev, thiz->x, thiz->y, thiz->x, thiz->y,
 				EINA_FALSE, EINA_FALSE, EINA_FALSE,
 				EINA_FALSE, 0, 0);
-		egueb_dom_node_event_dispatch(thiz->grabbed, ev, NULL);
+		egueb_dom_node_event_dispatch(thiz->grabbed, ev, NULL, NULL);
 	}
 	egueb_dom_node_unref(thiz->grabbed);
 	thiz->grabbed = NULL;
@@ -183,7 +183,7 @@ EAPI void egueb_dom_input_feed_mouse_move(Egueb_Dom_Input *thiz, int x, int y)
 			egueb_dom_event_mouse_move_init(ev, x, y, x, y,
 					EINA_FALSE, EINA_FALSE, EINA_FALSE,
 					EINA_FALSE, 0, 0);
-			egueb_dom_node_event_dispatch(egueb_dom_node_ref(n), ev, NULL);
+			egueb_dom_node_event_dispatch(egueb_dom_node_ref(n), ev, NULL, NULL);
 		}
 	}
 	else
@@ -199,7 +199,7 @@ EAPI void egueb_dom_input_feed_mouse_move(Egueb_Dom_Input *thiz, int x, int y)
 			egueb_dom_event_mouse_out_init(ev, x, y, x, y,
 					EINA_FALSE, EINA_FALSE, EINA_FALSE,
 					EINA_FALSE, 0, 0, n ? egueb_dom_node_ref(n) : NULL);
-			egueb_dom_node_event_dispatch(egueb_dom_node_ref(thiz->over), ev, NULL);
+			egueb_dom_node_event_dispatch(egueb_dom_node_ref(thiz->over), ev, NULL, NULL);
 			DBG("Out");
 		}
 		/* send in event on r */
@@ -211,7 +211,7 @@ EAPI void egueb_dom_input_feed_mouse_move(Egueb_Dom_Input *thiz, int x, int y)
 			egueb_dom_event_mouse_over_init(ev, x, y, x, y,
 					EINA_FALSE, EINA_FALSE, EINA_FALSE,
 					EINA_FALSE, 0, 0, thiz->over ? egueb_dom_node_ref(thiz->over) : NULL);
-			egueb_dom_node_event_dispatch(egueb_dom_node_ref(n), ev, NULL);
+			egueb_dom_node_event_dispatch(egueb_dom_node_ref(n), ev, NULL, NULL);
 			//egueb_dom_node_event_dispatch(n, "mousemove", &ev);
 			DBG("Over");
 		}

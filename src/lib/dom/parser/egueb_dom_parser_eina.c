@@ -111,12 +111,12 @@ static Egueb_Dom_Node * _egueb_dom_parser_eina_tag_new(Egueb_Dom_Parser_Eina *th
 	if (!doc) return NULL;
 
 	str = egueb_dom_string_new_with_length(name, name_length);
-	egueb_dom_document_element_create(doc, str, &node);
+	node = egueb_dom_document_element_create(doc, str, NULL);
 	egueb_dom_string_unref(str);
 	if (!node) return NULL;
 
 	/* in case we dont have a topmost element, set it */
-	egueb_dom_document_element_get(doc, &topmost);
+	topmost = egueb_dom_document_element_get(doc);
 	if (!topmost)
 	{
 		egueb_dom_document_element_set(doc, node);
@@ -128,7 +128,7 @@ static Egueb_Dom_Node * _egueb_dom_parser_eina_tag_new(Egueb_Dom_Parser_Eina *th
 
 
 	/* first add the child */
-	if (parent) egueb_dom_node_child_append(parent, node);
+	if (parent) egueb_dom_node_child_append(parent, node, NULL);
 	/* parse the attributes */
 	_egueb_dom_parser_eina_tag_attribute_set(thiz, node, attrs, attr_length);
 
@@ -158,11 +158,11 @@ static void _egueb_dom_parser_eina_tag_text_set(Egueb_Dom_Parser_Eina *thiz,
 	node = egueb_dom_text_new();
 	if (!node) return;
 
-	if (parent) egueb_dom_node_child_append(parent, node);
+	if (parent) egueb_dom_node_child_append(parent, node, NULL);
 	/* set the content */
 	DBG("Appending string to a text node");
 	str = egueb_dom_string_new_with_length(text, length);
-	egueb_dom_character_data_append_data(node, str);
+	egueb_dom_character_data_append_data(node, str, NULL);
 }
 
 static void _egueb_dom_parser_eina_doctype_child(Egueb_Dom_Parser_Eina *thiz,
@@ -234,7 +234,6 @@ static Eina_Bool _egueb_dom_parser_eina_cb(void *data, Eina_Simple_XML_Type type
 		unsigned int length)
 {
 	Egueb_Dom_Parser_Eina *thiz = data;
-	Eina_Bool ret;
 
 	switch (type)
 	{

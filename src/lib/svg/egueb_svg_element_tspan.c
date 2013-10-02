@@ -67,13 +67,13 @@ static Eina_Bool _egueb_svg_element_tspan_mutation_get_tspan(Egueb_Dom_Event *e,
 	Egueb_Dom_Node_Type type;
 	Eina_Bool ret = EINA_FALSE;
 
-	egueb_dom_event_mutation_related_get(e, &related);
+	related = egueb_dom_event_mutation_related_get(e);
 	if (related != us)
 	{
 		goto not_us;
 	}
 
-	egueb_dom_event_target_get(e, &target);
+	target = egueb_dom_event_target_get(e);
 	type = egueb_dom_node_type_get(target);
 	if (type != EGUEB_DOM_NODE_TYPE_TEXT_NODE)
 	{
@@ -151,7 +151,7 @@ static Eina_Bool _egueb_svg_element_tspan_generate_geometry(Egueb_Svg_Shape *s,
 	egueb_dom_attr_final_get(thiz->y, &y);
 
 	/* calculate the real size */
-	egueb_svg_document_font_size_get(doc, &doc_font_size);
+	doc_font_size = egueb_svg_document_font_size_get(doc);
 	thiz->gx = egueb_svg_coord_final_get(&x, relative->viewbox.w, doc_font_size);
 	thiz->gy = egueb_svg_coord_final_get(&y, relative->viewbox.h, doc_font_size);
 
@@ -339,21 +339,21 @@ EAPI Egueb_Dom_Node * egueb_svg_element_tspan_new(void)
 	return n;
 }
 
-EAPI Eina_Error egueb_svg_element_tspan_x_set(Egueb_Dom_Node *n,
+EAPI void egueb_svg_element_tspan_x_set(Egueb_Dom_Node *n,
 		const Egueb_Svg_Length *x)
 {
 	Egueb_Svg_Element_Tspan *thiz;
 
 	thiz = EGUEB_SVG_ELEMENT_TSPAN(n);
-	return egueb_dom_attr_set(thiz->x, EGUEB_DOM_ATTR_TYPE_BASE, x);
+	egueb_dom_attr_set(thiz->x, EGUEB_DOM_ATTR_TYPE_BASE, x);
 }
 
-EAPI Eina_Error egueb_svg_element_tspan_y_set(Egueb_Dom_Node *n,
+EAPI void egueb_svg_element_tspan_y_set(Egueb_Dom_Node *n,
 		const Egueb_Svg_Length *y)
 {
 	Egueb_Svg_Element_Tspan *thiz;
 
 	thiz = EGUEB_SVG_ELEMENT_TSPAN(n);
-	return egueb_dom_attr_set(thiz->y, EGUEB_DOM_ATTR_TYPE_BASE, y);
+	egueb_dom_attr_set(thiz->y, EGUEB_DOM_ATTR_TYPE_BASE, y);
 }
 

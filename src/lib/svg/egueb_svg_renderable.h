@@ -21,6 +21,13 @@
 
 #include "egueb_svg_matrix.h"
 
+/**
+ * @defgroup Egueb_Svg_Renderable_Group Renderable
+ * @brief Renderable element
+ * @ingroup Egueb_Svg_Element_Group
+ * @{
+ */
+
 EAPI Eina_Bool egueb_svg_is_renderable(Egueb_Dom_Node *n);
 EAPI Enesim_Renderer * egueb_svg_renderable_renderer_get(Egueb_Dom_Node *n);
 EAPI Enesim_Renderer * egueb_svg_renderable_class_renderer_get(Egueb_Dom_Node *n);
@@ -29,9 +36,13 @@ EAPI void egueb_svg_renderable_bounds_get(Egueb_Dom_Node *n,
 EAPI void egueb_svg_renderable_user_bounds_get(Egueb_Dom_Node *n,
 		Eina_Rectangle *bounds);
 
-EAPI Eina_Error egueb_svg_renderable_transform_get(Egueb_Dom_Node *n,
+EAPI void egueb_svg_renderable_transform_get(Egueb_Dom_Node *n,
 		Egueb_Svg_Matrix_Animated *m);
-EAPI Eina_Error egueb_svg_renderable_transform_set(Egueb_Dom_Node *n,
+EAPI void egueb_svg_renderable_transform_set(Egueb_Dom_Node *n,
 		Enesim_Matrix *m);
+
+/**
+ * @}
+ */
 
 #endif

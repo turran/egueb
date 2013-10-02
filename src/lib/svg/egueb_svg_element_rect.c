@@ -83,7 +83,7 @@ static Eina_Bool _egueb_svg_element_rect_generate_geometry(Egueb_Svg_Shape *s,
 	egueb_dom_attr_final_get(thiz->width, &w);
 	egueb_dom_attr_final_get(thiz->height, &h);
 
-	egueb_svg_document_font_size_get(doc, &font_size);
+	font_size = egueb_svg_document_font_size_get(doc);
 	thiz->gx = egueb_svg_coord_final_get(&x, relative->viewbox.w, font_size);
 	thiz->gy = egueb_svg_coord_final_get(&y, relative->viewbox.h, font_size);
 	thiz->gw = egueb_svg_coord_final_get(&w, relative->viewbox.w, font_size);

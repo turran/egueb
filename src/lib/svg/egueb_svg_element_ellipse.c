@@ -66,7 +66,7 @@ static Eina_Bool _egueb_svg_element_ellipse_generate_geometry(Egueb_Svg_Shape *s
 	egueb_dom_attr_final_get(thiz->ry, &ry);
 
 	/* calculate the real size */
-	egueb_svg_document_font_size_get(doc, &font_size);
+	font_size = egueb_svg_document_font_size_get(doc);
 	thiz->gcx = egueb_svg_coord_final_get(&cx, relative->viewbox.w, font_size);
 	thiz->gcy = egueb_svg_coord_final_get(&cy, relative->viewbox.h, font_size);
 	thiz->grx = egueb_svg_coord_final_get(&rx, relative->viewbox.w, font_size);

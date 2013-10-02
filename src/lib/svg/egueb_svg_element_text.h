@@ -21,9 +21,9 @@
 
 EAPI Egueb_Dom_Node * egueb_svg_element_text_new(void);
 EAPI Eina_Bool egueb_svg_element_is_text(Egueb_Dom_Node *n);
-EAPI Eina_Error egueb_svg_element_text_x_set(Egueb_Dom_Node *n,
+EAPI void egueb_svg_element_text_x_set(Egueb_Dom_Node *n,
 		const Egueb_Svg_Length *x);
-EAPI Eina_Error egueb_svg_element_text_y_set(Egueb_Dom_Node *n,
+EAPI void egueb_svg_element_text_y_set(Egueb_Dom_Node *n,
 		const Egueb_Svg_Length *y);
 
 #endif

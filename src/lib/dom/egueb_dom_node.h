@@ -24,6 +24,13 @@
 #include "egueb_dom_node_map_named.h"
 #include "egueb_dom_event.h"
 
+/**
+ * @defgroup Egueb_Dom_Node_Group Node
+ * @brief Node
+ * @ingroup Egueb_Dom_Group
+ * @{
+ */
+
 typedef struct _Egueb_Dom_Node Egueb_Dom_Node;
 typedef struct _Egueb_Dom_Node_Class Egueb_Dom_Node_Class;
 typedef struct _Egueb_Dom_Node_Event_Listener Egueb_Dom_Node_Event_Listener;
@@ -64,7 +71,7 @@ EAPI Egueb_Dom_Node_Type egueb_dom_node_type_get(Egueb_Dom_Node *thiz);
 EAPI Egueb_Dom_Node * egueb_dom_node_document_get(Egueb_Dom_Node *thiz);
 EAPI Egueb_Dom_Node * egueb_dom_node_parent_get(Egueb_Dom_Node *thiz);
 
-EAPI Eina_Bool egueb_dom_node_children_get(Egueb_Dom_Node *thiz, Egueb_Dom_Node_List *children, Eina_Error *err);
+EAPI Egueb_Dom_Node_List * egueb_dom_node_children_get(Egueb_Dom_Node *thiz);
 EAPI Eina_Bool egueb_dom_node_children_foreach(Egueb_Dom_Node *thiz, Egueb_Dom_Node_Cb cb, void *data);
 EAPI Egueb_Dom_Node * egueb_dom_node_child_first_get(Egueb_Dom_Node *thiz);
 EAPI Egueb_Dom_Node * egueb_dom_node_child_last_get(Egueb_Dom_Node *thiz);
@@ -75,7 +82,7 @@ EAPI Eina_Bool egueb_dom_node_insert_before(Egueb_Dom_Node *thiz,
 
 EAPI Egueb_Dom_Node * egueb_dom_node_sibling_previous_get(Egueb_Dom_Node *thiz);
 EAPI Egueb_Dom_Node * egueb_dom_node_sibling_next_get(Egueb_Dom_Node *thiz);
-EAPI Eina_Bool egueb_dom_node_attributes_get(Egueb_Dom_Node *thiz, Egueb_Dom_Node_Map_Named **map, Eina_Error *err);
+EAPI Egueb_Dom_Node_Map_Named * egueb_dom_node_attributes_get(Egueb_Dom_Node *thiz);
 
 EAPI Eina_Bool egueb_dom_node_clone(Egueb_Dom_Node *thiz, Eina_Bool live,
 		Eina_Bool deep, Egueb_Dom_Node **clone, Eina_Error *err);
@@ -102,5 +109,9 @@ EAPI void egueb_dom_node_user_data_set(Egueb_Dom_Node *thiz,
 		Egueb_Dom_String *key, void *data);
 EAPI void * egueb_dom_node_user_data_get(Egueb_Dom_Node *thiz,
 		Egueb_Dom_String *key);
+
+/**
+ * @}
+ */
 
 #endif

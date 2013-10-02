@@ -22,6 +22,7 @@
 #include "egueb_svg_attr_matrix.h"
 /* FIXME remove this later */
 #include "egueb_svg_length.h"
+#include "egueb_svg_element.h"
 #include "egueb_svg_element_text.h"
 
 #include "egueb_svg_painter_private.h"
@@ -34,7 +35,7 @@ static Eina_Bool _egueb_svg_shape_children_process_cb(
 {
 	Egueb_Dom_Node_Type type;
 
-	egueb_dom_node_type_get(child, &type);
+	type = egueb_dom_node_type_get(child);
 	if (type != EGUEB_DOM_NODE_TYPE_ELEMENT_NODE)
 		return EINA_TRUE;
 	egueb_dom_element_process(child);
@@ -47,7 +48,6 @@ static Eina_Bool _egueb_svg_shape_children_process_cb(
 static void _egueb_svg_shape_renderer_propagate(Egueb_Svg_Shape *thiz,
 		Egueb_Svg_Painter *painter)
 {
-	Egueb_Svg_Shape_Class *klass;
 	Enesim_Color color;
 	Enesim_Renderer_Shape_Draw_Mode draw_mode;
 	Enesim_Renderer_Shape_Stroke_Dash *dash;
@@ -125,19 +125,18 @@ static Eina_Bool _egueb_svg_shape_process(Egueb_Svg_Renderable *r)
 		Egueb_Dom_Node *relative, *doc;
 		Eina_Bool ret;
 
-		egueb_svg_element_geometry_relative_get(EGUEB_DOM_NODE(r),
-				&relative);
+		relative = egueb_svg_element_geometry_relative_get(EGUEB_DOM_NODE(r));
 		if (!relative)
 		{
 			WARN("No relative available");
 			return EINA_FALSE;
 		}
 
-		egueb_dom_node_document_get(EGUEB_DOM_NODE(r), &doc);
+		doc = egueb_dom_node_document_get(EGUEB_DOM_NODE(r));
 		if (!doc)
 		{
 			Egueb_Dom_String *name;
-			egueb_dom_node_name_get(EGUEB_DOM_NODE(r), &name);
+			name = egueb_dom_node_name_get(EGUEB_DOM_NODE(r));
 			WARN("No document set on %s", egueb_dom_string_string_get(name));
 			egueb_dom_node_unref(relative);
 			return EINA_FALSE;
@@ -208,9 +207,6 @@ static void _egueb_svg_shape_class_init(void *k)
 
 static void _egueb_svg_shape_instance_init(void *o)
 {
-	Egueb_Svg_Shape *thiz;
-
-	thiz = EGUEB_SVG_SHAPE(o);
 	/* the properties */
 }
 

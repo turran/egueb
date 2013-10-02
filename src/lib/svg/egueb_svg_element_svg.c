@@ -175,7 +175,7 @@ static void _egueb_svg_element_svg_node_inserted_cb(Egueb_Dom_Event *e,
 {
 	Egueb_Dom_Node *target = NULL;
 
-	egueb_dom_event_target_get(e, &target);
+	target = egueb_dom_event_target_get(e);
 	_egueb_svg_element_svg_set_generic_painter(target);
 	egueb_dom_node_unref(target);
 }
@@ -187,7 +187,7 @@ static void _egueb_svg_element_svg_animation_node_inserted_cb(Egueb_Dom_Event *e
 	Egueb_Svg_Element_Svg *thiz = data;
 	Egueb_Dom_Node *target = NULL;
 
-	egueb_dom_event_target_get(e, &target);
+	target = egueb_dom_event_target_get(e);
 	_egueb_svg_element_svg_set_etch(target, thiz->etch);
 	egueb_dom_node_unref(target);
 }
@@ -253,7 +253,7 @@ static Eina_Bool _egueb_svg_element_svg_process(Egueb_Svg_Renderable *r)
 		egueb_dom_node_unref(relative);
 	}
 	/* get the font size */
-	egueb_svg_document_font_size_get(svg_doc, &font_size);
+	font_size = egueb_svg_document_font_size_get(svg_doc);
 	egueb_dom_node_unref(svg_doc);
 
 	/* caluclate the new bounds */

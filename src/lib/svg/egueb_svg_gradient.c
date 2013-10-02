@@ -78,13 +78,13 @@ static Eina_Bool _egueb_svg_gradient_is_our_stop(Egueb_Svg_Gradient *thiz,
 	Egueb_Dom_Node *relative;
 	Eina_Bool ret = EINA_TRUE;
 
-	egueb_dom_event_mutation_related_get(e, &relative);
+	relative = egueb_dom_event_mutation_related_get(e);
 	if (relative != EGUEB_DOM_NODE(thiz))
 	{
 		ret = EINA_FALSE;
 		goto not_us;
 	}
-	egueb_dom_event_target_get(e, &target);
+	target = egueb_dom_event_target_get(e);
 	if (!egueb_svg_element_is_stop(target))
 	{
 		ret = EINA_FALSE;

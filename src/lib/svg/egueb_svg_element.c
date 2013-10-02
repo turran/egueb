@@ -83,7 +83,7 @@ static void _egueb_svg_element_css_property_set(void *e, const char *property, c
 
 	prop = egueb_dom_string_new_with_string(property);
 	val = egueb_dom_string_new_with_string(value);
-	egueb_dom_element_attribute_type_set(n, prop, EGUEB_DOM_ATTR_TYPE_STYLED, val);
+	egueb_dom_element_attribute_type_set(n, prop, EGUEB_DOM_ATTR_TYPE_STYLED, val, NULL);
 	egueb_dom_string_unref(val);
 	egueb_dom_string_unref(prop);
 }

@@ -24,15 +24,15 @@ struct _Egueb_Dom_Node_Map_Named
 	Enesim_Object_Instance base;
 };
 
-typedef Eina_Error (*Egueb_Dom_Node_Map_Named_Get)(
+typedef Egueb_Dom_Node * (*Egueb_Dom_Node_Map_Named_Get)(
 		Egueb_Dom_Node_Map_Named *thiz, Egueb_Dom_String *name,
-		Egueb_Dom_Node **node);
-typedef Eina_Error (*Egueb_Dom_Node_Map_Named_Remove)(Egueb_Dom_Node_Map_Named *thiz,
-		Egueb_Dom_String *name, Egueb_Dom_Node *node);
-typedef Eina_Error (*Egueb_Dom_Node_Map_Named_Set)(Egueb_Dom_Node_Map_Named *thiz,
-		Egueb_Dom_Node *node);
-typedef Eina_Error (*Egueb_Dom_Node_Map_Named_At)(Egueb_Dom_Node_Map_Named *thiz,
-		int idx, Egueb_Dom_Node **n);
+		Eina_Error *err);
+typedef Eina_Bool (*Egueb_Dom_Node_Map_Named_Remove)(Egueb_Dom_Node_Map_Named *thiz,
+		Egueb_Dom_String *name, Egueb_Dom_Node *node, Eina_Error *err);
+typedef Eina_Bool (*Egueb_Dom_Node_Map_Named_Set)(Egueb_Dom_Node_Map_Named *thiz,
+		Egueb_Dom_Node *node, Eina_Error *err);
+typedef Egueb_Dom_Node * (*Egueb_Dom_Node_Map_Named_At)(Egueb_Dom_Node_Map_Named *thiz,
+		int idx);
 typedef int (*Egueb_Dom_Node_Map_Named_Length)(Egueb_Dom_Node_Map_Named *thiz);
 
 typedef struct _Egueb_Dom_Node_Map_Named_Class

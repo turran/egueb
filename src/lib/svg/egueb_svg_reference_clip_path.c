@@ -76,8 +76,8 @@ static Eina_Bool _egueb_svg_reference_clip_path_children_clone_cb(
 	if (!egueb_svg_element_clip_path_node_is_clonable(child))
 		return EINA_TRUE;
 	/* for a children that is clonable, clone it and add it to the g */
-	egueb_dom_node_clone(child, EINA_TRUE, EINA_TRUE, &clone);
-	egueb_dom_node_child_append(thiz->g, clone);
+	egueb_dom_node_clone(child, EINA_TRUE, EINA_TRUE, &clone, NULL);
+	egueb_dom_node_child_append(thiz->g, child, NULL);
 
 	return EINA_TRUE;
 }
@@ -98,13 +98,13 @@ static void _egueb_svg_reference_clip_path_set_painter(Egueb_Dom_Node *n,
 		Egueb_Dom_Node *child;
 
 		/* iterate over the shapes to set the painter too */
-		egueb_dom_node_child_first_get(n, &child);
+		child = egueb_dom_node_child_first_get(n);
 		while (child)
 		{
 			Egueb_Dom_Node *tmp;
 
 			_egueb_svg_reference_clip_path_set_painter(child, thiz);
-			egueb_dom_node_sibling_next_get(child, &tmp);
+			tmp = egueb_dom_node_sibling_next_get(child);
 			egueb_dom_node_unref(child);
 			child = tmp;
 		}
@@ -120,7 +120,7 @@ static void _egueb_svg_reference_clip_path_node_inserted_cb(Egueb_Dom_Event *e,
 	Egueb_Svg_Reference_Clip_Path *thiz = data;
 	Egueb_Dom_Node *target = NULL;
 
-	egueb_dom_event_target_get(e, &target);
+	target = egueb_dom_event_target_get(e);
 	_egueb_svg_reference_clip_path_set_painter(target, thiz);
 	egueb_dom_node_unref(target);
 }
@@ -148,15 +148,15 @@ static void _egueb_svg_reference_clip_path_setup(
 
 	thiz = EGUEB_SVG_REFERENCE_CLIP_PATH(r);
 	/* TODO we need to check what kind of referencer is */
-	egueb_dom_node_document_get(r->referenceable, &doc);
-	egueb_dom_document_node_adopt(doc, thiz->g, &thiz->g);
+	doc = egueb_dom_node_document_get(r->referenceable);
+	thiz->g = egueb_dom_document_node_adopt(doc, thiz->g, NULL);
 	egueb_dom_node_unref(doc);
 
 	/* make the group get the presentation attributes from ourelves and
 	 * the geometry relative from the referrer
 	 */
-	egueb_svg_element_presentation_relative_set(thiz->g, r->referenceable);
-	egueb_svg_element_geometry_relative_set(thiz->g, r->referencer);
+	egueb_svg_element_presentation_relative_set(thiz->g, r->referenceable, NULL);
+	egueb_svg_element_geometry_relative_set(thiz->g, r->referencer, NULL);
 
 	/* iterate over the list of children of the referenceable 
 	 * and clone the clonable elements */

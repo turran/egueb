@@ -116,7 +116,7 @@ static void _egueb_dom_element_use_insterted_into_document_cb(
 	Egueb_Dom_Event_Phase phase;
 	Egueb_Dom_Node *doc;
 
-	egueb_dom_event_phase_get(ev, &phase);
+	phase = egueb_dom_event_phase_get(ev);
 	if (phase != EGUEB_DOM_EVENT_PHASE_AT_TARGET)
 		return;
 
@@ -135,7 +135,7 @@ static void _egueb_dom_element_use_removed_from_document_cb(
 	Egueb_Svg_Element_Use *thiz = EGUEB_SVG_ELEMENT_USE(data);
 	Egueb_Dom_Event_Phase phase;
 
-	egueb_dom_event_phase_get(ev, &phase);
+	phase = egueb_dom_event_phase_get(ev);
 	if (phase != EGUEB_DOM_EVENT_PHASE_AT_TARGET)
 		return;
 
@@ -186,7 +186,7 @@ static Eina_Bool _egueb_svg_element_use_process(Egueb_Svg_Renderable *r)
 	}
 
 	e_parent = EGUEB_SVG_ELEMENT(relative);
-	egueb_svg_document_font_size_get(doc, &font_size);
+	font_size = egueb_svg_document_font_size_get(doc);
 
 	thiz->gx = egueb_svg_coord_final_get(&x, e_parent->viewbox.w, font_size);
 	thiz->gy = egueb_svg_coord_final_get(&y, e_parent->viewbox.h, font_size);

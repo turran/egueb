@@ -63,22 +63,19 @@ EAPI void egueb_dom_event_stop_propagation(Egueb_Dom_Event *thiz)
 
 }
 
-EAPI Eina_Error egueb_dom_event_phase_get(Egueb_Dom_Event *thiz, Egueb_Dom_Event_Phase *phase)
+EAPI Egueb_Dom_Event_Phase egueb_dom_event_phase_get(Egueb_Dom_Event *thiz)
 {
-	*phase = thiz->phase;
-	return EINA_ERROR_NONE;
+	return thiz->phase;
 }
 
-EAPI Eina_Error egueb_dom_event_target_get(Egueb_Dom_Event *thiz, Egueb_Dom_Node **target)
+EAPI Egueb_Dom_Node * egueb_dom_event_target_get(Egueb_Dom_Event *thiz)
 {
-	*target = egueb_dom_node_ref(thiz->target);
-	return EINA_ERROR_NONE;
+	return egueb_dom_node_ref(thiz->target);
 }
 
-EAPI Eina_Error egueb_dom_event_target_current_get(Egueb_Dom_Event *thiz, Egueb_Dom_Node **target_current)
+EAPI Egueb_Dom_Node * egueb_dom_event_target_current_get(Egueb_Dom_Event *thiz)
 {
-	*target_current = egueb_dom_node_ref(thiz->current_target);
-	return EINA_ERROR_NONE;
+	return egueb_dom_node_ref(thiz->current_target);
 }
 
 /* void  initEvent(in DOMString eventTypeArg,
