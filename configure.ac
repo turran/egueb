@@ -1,14 +1,7 @@
 # get rid of that stupid cache mechanism
 rm -f config.cache
 
-m4_define([v_maj], [0])
-m4_define([v_min], [0])
-m4_define([v_mic], [22])
-m4_define([v_ver], [v_maj.v_min.v_mic])
-
-m4_define([lt_cur], m4_eval(v_maj + v_min))
-m4_define([lt_rev], v_mic)
-m4_define([lt_age], v_min)
+ENS_VERSION([0], [0], [23], [1])
 
 AC_INIT([egueb], [v_ver], [egueb-devel@googlegroups.com])
 AC_PREREQ([2.60])
