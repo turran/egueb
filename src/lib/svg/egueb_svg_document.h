@@ -97,8 +97,8 @@ EAPI void egueb_svg_document_filename_get_cb_set(Egueb_Dom_Node *n,
 		Egueb_Svg_Document_String_Get_Cb cb, void *user_data);
 
 /* FIXME remove this as move it to the use element */
-EAPI Eina_Bool egueb_svg_document_iri_clone(Egueb_Dom_Node *n,
-		Egueb_Dom_String *iri, Egueb_Dom_Node **cloned, Eina_Error *err);
+EAPI Egueb_Dom_Node * egueb_svg_document_iri_clone(Egueb_Dom_Node *n,
+		Egueb_Dom_String *iri, Eina_Error *err);
 
 /**
  * @}

@@ -76,7 +76,7 @@ static Eina_Bool _egueb_svg_reference_clip_path_children_clone_cb(
 	if (!egueb_svg_element_clip_path_node_is_clonable(child))
 		return EINA_TRUE;
 	/* for a children that is clonable, clone it and add it to the g */
-	egueb_dom_node_clone(child, EINA_TRUE, EINA_TRUE, &clone, NULL);
+	clone = egueb_dom_node_clone(child, EINA_TRUE, EINA_TRUE, NULL);
 	egueb_dom_node_child_append(thiz->g, child, NULL);
 
 	return EINA_TRUE;

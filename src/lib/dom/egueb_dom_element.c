@@ -105,7 +105,7 @@ static void _egueb_dom_element_original_node_inserted_cb(Egueb_Dom_Event *e,
 
 	DBG("Inserting a node on a cloned element");
 	origin_child = egueb_dom_event_target_get(e);
-	egueb_dom_node_clone(origin_child, EINA_TRUE, EINA_TRUE, &cloned_child, NULL);
+	cloned_child = egueb_dom_node_clone(origin_child, EINA_TRUE, EINA_TRUE, NULL);
 	if (!cloned_child) goto err_clone;
 
 	/* check if it does not have any next sibling (simple append) */
@@ -381,7 +381,7 @@ static void _egueb_dom_element_clone(Egueb_Dom_Node *n, Eina_Bool live,
 	{
 		Egueb_Dom_Node *clone_child;
 
-		egueb_dom_node_clone(child, live, deep, &clone_child, NULL);
+		clone_child = egueb_dom_node_clone(child, live, deep, NULL);
 		egueb_dom_node_child_append(clone, clone_child, NULL);
 	}
 }

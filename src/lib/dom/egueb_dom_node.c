@@ -669,30 +669,31 @@ EAPI Eina_Bool egueb_dom_node_insert_before(Egueb_Dom_Node *thiz,
 }
 
 /*  Node               cloneNode(in boolean deep); */
-EAPI Eina_Bool egueb_dom_node_clone(Egueb_Dom_Node *thiz, Eina_Bool live,
-		Eina_Bool deep, Egueb_Dom_Node **clone, Eina_Error *err)
+EAPI Egueb_Dom_Node * egueb_dom_node_clone(Egueb_Dom_Node *thiz, Eina_Bool live,
+		Eina_Bool deep, Eina_Error *err)
 {
 	Egueb_Dom_Node_Class *klass;
+	Egueb_Dom_Node *ret;
 	Enesim_Object_Descriptor *d;
 	Enesim_Object_Class *k;
 
 	if (!thiz)
 	{
 		if (err) *err = EGUEB_DOM_ERROR_INVALID_ACCESS;
-		return EINA_FALSE;
+		return NULL;
 	}
 
 	/* create the object using the same descriptor and class */
 	d = ENESIM_OBJECT_INSTANCE_DESCRIPTOR_GET(thiz);
 	k = ENESIM_OBJECT_INSTANCE_CLASS(thiz);
-	*clone = enesim_object_descriptor_instance_new(d, k);
+	ret = enesim_object_descriptor_instance_new(d, k);
 
 	/* now call the implementation clone */
 	klass = EGUEB_DOM_NODE_CLASS(k);
 	if (klass->clone)
-		klass->clone(thiz, live, deep, *clone);
+		klass->clone(thiz, live, deep, ret);
 
-	return EINA_TRUE;
+	return ret;
 }
 
 /* void  addEventListener(in DOMString type,

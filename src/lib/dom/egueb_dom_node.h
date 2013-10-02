@@ -84,8 +84,8 @@ EAPI Egueb_Dom_Node * egueb_dom_node_sibling_previous_get(Egueb_Dom_Node *thiz);
 EAPI Egueb_Dom_Node * egueb_dom_node_sibling_next_get(Egueb_Dom_Node *thiz);
 EAPI Egueb_Dom_Node_Map_Named * egueb_dom_node_attributes_get(Egueb_Dom_Node *thiz);
 
-EAPI Eina_Bool egueb_dom_node_clone(Egueb_Dom_Node *thiz, Eina_Bool live,
-		Eina_Bool deep, Egueb_Dom_Node **clone, Eina_Error *err);
+EAPI Egueb_Dom_Node * egueb_dom_node_clone(Egueb_Dom_Node *thiz, Eina_Bool live,
+		Eina_Bool deep, Eina_Error *err);
 
 EAPI Egueb_Dom_Node_Event_Listener * egueb_dom_node_event_listener_add(Egueb_Dom_Node *thiz,
 		const Egueb_Dom_String *type, Egueb_Dom_Event_Listener listener,

@@ -215,7 +215,8 @@ static Eina_Bool _egueb_svg_element_use_process(Egueb_Svg_Renderable *r)
 		}
 
 		/* finally clone the reference */
-		if (egueb_svg_document_iri_clone(doc, xlink, &cloned, NULL))
+		cloned = egueb_svg_document_iri_clone(doc, xlink, NULL);
+		if (cloned)
 		{
 			_egueb_svg_element_use_setup_cloned(thiz, cloned);
 		}

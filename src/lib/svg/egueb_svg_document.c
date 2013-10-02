@@ -1254,19 +1254,19 @@ EAPI void egueb_svg_document_filename_get_cb_set(Egueb_Dom_Node *n,
 }
 
 /* FIXME This might not be needed */
-EAPI Eina_Bool egueb_svg_document_iri_clone(Egueb_Dom_Node *n,
-		Egueb_Dom_String *iri, Egueb_Dom_Node **cloned, Eina_Error *err)
+EAPI Egueb_Dom_Node * egueb_svg_document_iri_clone(Egueb_Dom_Node *n,
+		Egueb_Dom_String *iri, Eina_Error *err)
 {
 	Egueb_Dom_Node *ref = NULL;
-	Eina_Bool ret;
+	Egueb_Dom_Node *cloned;
 
 	ref = egueb_svg_document_element_get_by_iri(n, iri);
-	if (!ref) return EINA_FALSE;
+	if (!ref) return NULL;
 
 	DBG("'%s' found, cloning it", egueb_dom_string_string_get(iri));
 	/* clone the returned element */
-	ret = egueb_dom_node_clone(ref, EINA_FALSE, EINA_TRUE, cloned, err);
+	cloned = egueb_dom_node_clone(ref, EINA_FALSE, EINA_TRUE, err);
 	egueb_dom_node_unref(ref);
 
-	return ret;
+	return cloned;
 }
