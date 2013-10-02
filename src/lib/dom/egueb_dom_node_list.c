@@ -31,15 +31,15 @@ struct _Egueb_Dom_Node_List
 /*
  * readonly attribute unsigned long length;
  */
-EAPI Eina_Error egueb_dom_node_list_length(Egueb_Dom_Node_List *thiz, int *length)
+EAPI int egueb_dom_node_list_length(Egueb_Dom_Node_List *thiz)
 {
-
+	return 0;
 }
 
 /*
  * Node item(in unsigned long index);
  */
-EAPI Eina_Error egueb_dom_node_list_item_at(Egueb_Dom_Node_List *thiz, int index, Egueb_Dom_Node **item)
+EAPI Egueb_Dom_Node * egueb_dom_node_list_item_at(Egueb_Dom_Node_List *thiz, int index)
 {
-
+	return NULL;
 }

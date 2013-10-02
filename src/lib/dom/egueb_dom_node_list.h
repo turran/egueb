@@ -22,7 +22,7 @@
 typedef struct _Egueb_Dom_Node_List Egueb_Dom_Node_List;
 typedef struct _Egueb_Dom_Node Egueb_Dom_Node;
 
-EAPI Eina_Error egueb_dom_node_list_length(Egueb_Dom_Node_List *thiz, int *length);
-EAPI Eina_Error egueb_dom_node_list_item_at(Egueb_Dom_Node_List *thiz, int index, Egueb_Dom_Node **item);
+EAPI int egueb_dom_node_list_length(Egueb_Dom_Node_List *thiz);
+EAPI Egueb_Dom_Node * egueb_dom_node_list_item_at(Egueb_Dom_Node_List *thiz, int index);
 
 #endif

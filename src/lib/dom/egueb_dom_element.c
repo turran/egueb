@@ -617,27 +617,27 @@ EAPI Egueb_Dom_Node * egueb_dom_element_property_fetch(Egueb_Dom_Node *node,
 	}
 }
 
-EAPI Eina_Error egueb_dom_element_property_set_va(Egueb_Dom_Node *node,
+EAPI Eina_Bool egueb_dom_element_property_set_va(Egueb_Dom_Node *node,
 		Egueb_Dom_String *name, int prop_mask, va_list args)
 {
 	Egueb_Dom_Node *p;
-	Eina_Error ret;
+	Eina_Bool ret;
 
 	p = egueb_dom_element_property_fetch(node, name);
-	if (!p) return EGUEB_DOM_ERROR_NOT_FOUND;
+	if (!p) return EINA_FALSE;
 	ret = egueb_dom_attr_set_va(p, prop_mask, args);
 	egueb_dom_node_unref(p);
 	return ret;
 }
 
-EAPI Eina_Error egueb_dom_element_property_get_va(Egueb_Dom_Node *node,
+EAPI Eina_Bool egueb_dom_element_property_get_va(Egueb_Dom_Node *node,
 		Egueb_Dom_String *name, int prop_mask, va_list args)
 {
 	Egueb_Dom_Node *p;
-	Eina_Error ret;
+	Eina_Bool ret;
 
 	p = egueb_dom_element_property_fetch(node, name);
-	if (!p) return EGUEB_DOM_ERROR_NOT_FOUND;
+	if (!p) return EINA_FALSE;
 	ret = egueb_dom_attr_get_va(p, prop_mask, args);
 	egueb_dom_node_unref(p);
 	return ret;
@@ -647,10 +647,10 @@ EAPI Eina_Error egueb_dom_element_property_get_va(Egueb_Dom_Node *node,
 /* Sets the value of a property. The value argument depends
  * on the property itself
  */
-EAPI Eina_Error egueb_dom_element_property_set(Egueb_Dom_Node *node,
+EAPI Eina_Bool egueb_dom_element_property_set(Egueb_Dom_Node *node,
 		Egueb_Dom_String *name, int prop_mask, ...)
 {
-	Eina_Error ret;
+	Eina_Bool ret;
 	va_list args;
 
 	va_start(args, prop_mask);
@@ -663,10 +663,10 @@ EAPI Eina_Error egueb_dom_element_property_set(Egueb_Dom_Node *node,
 /* Gets the value of a property. The value argument depends
  * on the property itself.
  */
-EAPI Eina_Error egueb_dom_element_property_get(Egueb_Dom_Node *node,
+EAPI Eina_Bool egueb_dom_element_property_get(Egueb_Dom_Node *node,
 		Egueb_Dom_String *name, int prop_mask, ...)
 {
-	Eina_Error ret;
+	Eina_Bool ret;
 	va_list args;
 
 	va_start(args, prop_mask);
