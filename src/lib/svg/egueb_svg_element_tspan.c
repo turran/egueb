@@ -106,7 +106,7 @@ static void _egueb_svg_element_tspan_node_inserted_cb(Egueb_Dom_Event *e,
 		egueb_dom_character_data_buffer_get(tspan, &nb);
 		enesim_renderer_text_span_real_buffer_set(thiz->r, nb);
 		/* now make the tspan node to use our own buffer from now on */
-		enesim_renderer_text_span_buffer_get(thiz->r, &nb);
+		nb = enesim_renderer_text_span_buffer_get(thiz->r);
 		egueb_dom_character_data_buffer_set(tspan, nb);
 		egueb_dom_node_unref(tspan);
 	}
@@ -124,7 +124,7 @@ static void _egueb_svg_element_tspan_node_removed_cb(Egueb_Dom_Event *e,
 		Enesim_Text_Buffer *nb;
 
 		thiz = EGUEB_SVG_ELEMENT_TSPAN(n);
-		enesim_renderer_text_span_real_buffer_get(thiz->r, &nb);
+		nb = enesim_renderer_text_span_real_buffer_get(thiz->r);
 		egueb_dom_character_data_buffer_set(tspan, nb);
 		egueb_dom_node_unref(tspan);
 	}
