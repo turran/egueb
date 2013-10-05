@@ -219,6 +219,9 @@ ECSS_CFLAGS="${ECSS_CFLAGS} ${EGUEB_CFLAGS}"
 
 ### Checks for library functions
 
+# Unit tests, coverage and benchmarking
+ENS_CHECK_COVERAGE(yes, [enable_coverage="yes"], [enable_coverage="no"])
+
 ## Make the debug preprocessor configurable
 
 AC_CONFIG_FILES([

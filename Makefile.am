@@ -29,6 +29,7 @@ bin_PROGRAMS =
 check_PROGRAMS =
 CLEANFILES =
 EXTRA_DIST =
+CLEAN_LOCAL =
 GENERATED_FLAGS = -x
 GENERATED_FILES =
 
@@ -125,3 +126,7 @@ endif
 ### Documentation
 
 include doc/Makefile.mk
+
+### Coverage
+
+include common/Makefile_coverage.mk
