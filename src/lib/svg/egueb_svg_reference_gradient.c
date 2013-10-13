@@ -75,7 +75,7 @@ static Eina_Bool _egueb_svg_reference_gradient_process(Egueb_Svg_Reference *r)
 	/* the spread method */
 	egueb_svg_gradient_deep_spread_method_get(r->referenceable, &spread_method);
 	_spread_method_to_repeat_mode(spread_method, &mode);
-	enesim_renderer_gradient_mode_set(ren, mode);
+	enesim_renderer_gradient_repeat_mode_set(ren, mode);
 
 	/* now the common stops */
 	egueb_svg_gradient_deep_stop_get(r->referenceable, &stop_node);

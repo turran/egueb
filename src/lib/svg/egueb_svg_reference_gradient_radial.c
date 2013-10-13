@@ -249,7 +249,7 @@ static Eina_Bool _egueb_svg_element_radial_gradient_propagate(Egueb_Dom_Tag *t,
 		default:
 		return EINA_FALSE;
 	}
-	enesim_renderer_gradient_mode_set(r, mode);
+	enesim_renderer_gradient_repeat_mode_set(r, mode);
 
 	/* the coordinates can come from the href
 	 * we need to found which one isnt set and use that
