@@ -79,17 +79,20 @@ static Eina_Bool _egueb_svg_renderable_process(Egueb_Svg_Element *e)
 	/* set the correct renderer on the proxy */
 	if (ren)
 	{
-		DBG("Clip path: %p", ren);
+		DBG("Clip path: %s", enesim_renderer_name_get(ren));
 	}
 	else
 	{
 		if (klass->renderer_get)
 			ren = klass->renderer_get(thiz);
-		DBG("Renderer: %p", ren);
 		if (!ren)
 		{
 			WARN("No renderer found");
 			return EINA_FALSE;
+		}
+		else
+		{
+			DBG("Renderer: %s", enesim_renderer_name_get(ren));
 		}
 	}
 	enesim_renderer_proxy_proxied_set(thiz->proxy, ren);
