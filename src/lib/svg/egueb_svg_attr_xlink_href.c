@@ -49,10 +49,11 @@ typedef struct _Egueb_Svg_Attr_Xlink_Href_Class
 static void _egueb_svg_attr_xlink_href_node_request_cb(Egueb_Dom_Event *e,
 		void *user_data)
 {
-	Egueb_Svg_Attr_Xlink_Href *thiz = user_data;
+	Egueb_Dom_Attr *attr = user_data;
 
 	ERR("The xlink:href requested a process, let's request ourselves too");
-	egueb_dom_element_request_process(thiz->node);
+	/* request a process on the owner of the attribute */
+	egueb_dom_element_request_process(attr->owner);
 }
 
 static void _egueb_svg_attr_xlink_href_cleanup(Egueb_Svg_Attr_Xlink_Href *thiz)
