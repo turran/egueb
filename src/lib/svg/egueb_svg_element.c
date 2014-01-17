@@ -754,9 +754,14 @@ static void _egueb_svg_element_instance_init(void *o)
 			egueb_dom_string_ref(EGUEB_SVG_OPACITY),
 			1, EINA_TRUE, EINA_TRUE,
 			EINA_TRUE);
+	/* by default the user agent style sheet sets it to HIDDEN
+	 * http://www.w3.org/TR/SVG11/masking.html#OverflowAndClipProperties
+	 * TODO whenever we do support agent style sheets we should go back
+	 * to visible
+	 */
 	thiz->overflow = egueb_svg_attr_overflow_new(
 			egueb_dom_string_ref(EGUEB_SVG_OVERFLOW),
-			EGUEB_SVG_OVERFLOW_VISIBLE, EINA_TRUE, EINA_TRUE,
+			EGUEB_SVG_OVERFLOW_HIDDEN, EINA_TRUE, EINA_TRUE,
 			EINA_TRUE);
 	thiz->stop_color = egueb_svg_attr_color_new(
 			egueb_dom_string_ref(EGUEB_SVG_STOP_COLOR),
