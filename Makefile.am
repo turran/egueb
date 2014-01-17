@@ -64,17 +64,13 @@ include src/modules/svg/enesim_image/Makefile.mk
 endif
 
 ### Binaries
-
-if BUILD_ESVG
-#include src/bin/svg/Makefile.mk
-endif
+include src/bin/Makefile.mk
 
 ### Tests
 
 if BUILD_ECSS
 include src/tests/Makefile.mk
 endif
-
 
 ### The rule for the generated files
 CLEANFILES += $(GENERATED_FILES)
