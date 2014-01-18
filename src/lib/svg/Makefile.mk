@@ -6,6 +6,7 @@ dist_installed_svgheaders_DATA = \
 src/lib/svg/Egueb_Svg.h \
 src/lib/svg/egueb_svg_attr_clip_path.h \
 src/lib/svg/egueb_svg_attr_color.h \
+src/lib/svg/egueb_svg_attr_display.h \
 src/lib/svg/egueb_svg_attr_font_size.h \
 src/lib/svg/egueb_svg_attr_length.h \
 src/lib/svg/egueb_svg_attr_matrix.h \
@@ -83,6 +84,7 @@ src/lib/svg/egueb_svg_visibility.h
 src_lib_svg_libegueb_svg_la_SOURCES = \
 src/lib/svg/egueb_svg_attr_clip_path.c \
 src/lib/svg/egueb_svg_attr_color.c \
+src/lib/svg/egueb_svg_attr_display.c \
 src/lib/svg/egueb_svg_attr_font_size.c \
 src/lib/svg/egueb_svg_attr_length.c \
 src/lib/svg/egueb_svg_attr_matrix.c \

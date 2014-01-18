@@ -88,6 +88,7 @@ extern "C" {
 /* attributes */
 #include "egueb_svg_attr_clip_path.h"
 #include "egueb_svg_attr_color.h"
+#include "egueb_svg_attr_display.h"
 #include "egueb_svg_attr_font_size.h"
 #include "egueb_svg_attr_length.h"
 #include "egueb_svg_attr_matrix.h"

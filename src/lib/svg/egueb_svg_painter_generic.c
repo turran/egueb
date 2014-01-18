@@ -195,6 +195,7 @@ static inline void _egueb_svg_painter_generic_cleanup(
 static inline void _egueb_svg_painter_generic_resolve_visibility(
 		Egueb_Svg_Painter *p, Egueb_Svg_Element *e)
 {
+	Egueb_Svg_Display display;
 	Egueb_Svg_Visibility visibility;
 
 	/* check if it is visible or not */
@@ -203,13 +204,12 @@ static inline void _egueb_svg_painter_generic_resolve_visibility(
 		p->visibility = EINA_TRUE;
 	else
 		p->visibility = EINA_FALSE;
-#if 0
 	/* check if it should display or not */
-	if (attr->display.v != EGUEB_SVG_DISPLAY_NONE)
-		visible = visible && EINA_TRUE;
+	egueb_dom_attr_final_get(e->display, &display);
+	if (display != EGUEB_SVG_DISPLAY_NONE)
+		p->visibility = p->visibility && EINA_TRUE;
 	else
-		visible = EINA_FALSE;
-#endif
+		p->visibility = EINA_FALSE;
 }
 
 static inline void _egueb_svg_painter_generic_resolve_fill(

@@ -41,6 +41,7 @@
 
 #include "egueb_svg_attr_clip_path.h"
 #include "egueb_svg_attr_color.h"
+#include "egueb_svg_attr_display.h"
 #include "egueb_svg_attr_font_size.h"
 #include "egueb_svg_attr_length.h"
 #include "egueb_svg_attr_number.h"
@@ -93,6 +94,7 @@ typedef struct _Egueb_Svg_Element
 	/* presentation attributes */
 	Egueb_Dom_Node *clip_path;
 	Egueb_Dom_Node *color;
+	Egueb_Dom_Node *display;
 	Egueb_Dom_Node *fill;
 	Egueb_Dom_Node *fill_opacity;
 	Egueb_Dom_Node *font;

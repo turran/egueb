@@ -24,5 +24,3 @@ EAPI Egueb_Dom_Node * egueb_svg_attr_overflow_new(Egueb_Dom_String *name,
 		Eina_Bool stylable, Eina_Bool inheritable);
 
 #endif
-
-
