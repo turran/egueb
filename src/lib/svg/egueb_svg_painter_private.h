@@ -22,7 +22,10 @@
 #include "egueb_svg_reference.h"
 #include "egueb_svg_element_private.h"
 
-/* given that the renderables can be childs of several type of parents
+/* A painter defines how a renderable should behave based on the presentation attributes.
+ * The painter members are properties used on enesim mainly to draw shapes, but some
+ * other properties might be added in the future.
+ * Given that the renderables can be childs of several type of parents
  * it is desired to define the behaviour of such renderables, for example
  * shapes being child of a clippath must not process the fill/stroke
  * attributes. A shape being child of a def should not create a renderer
