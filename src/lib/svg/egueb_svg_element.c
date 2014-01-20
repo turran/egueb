@@ -574,7 +574,6 @@ static void _egueb_svg_element_presentation_attributes_process(
 	 * of state of such properties
 	 */
 	egueb_dom_attr_inheritable_process(thiz->color, rel->color);
-	egueb_dom_attr_inheritable_process(thiz->display, rel->display);
 	egueb_dom_attr_inheritable_process(thiz->fill, rel->fill);
 	egueb_dom_attr_inheritable_process(thiz->fill_opacity, rel->fill_opacity);
 	egueb_dom_attr_inheritable_process(thiz->font_family, rel->font_family);
@@ -739,8 +738,8 @@ static void _egueb_svg_element_instance_init(void *o)
 			&EGUEB_SVG_COLOR_BLACK, EINA_TRUE, EINA_TRUE,
 			EINA_TRUE);
 	thiz->display = egueb_svg_attr_display_new(
-			egueb_dom_string_ref(EGUEB_SVG_OVERFLOW),
-			EGUEB_SVG_OVERFLOW_HIDDEN, EINA_TRUE, EINA_TRUE,
+			egueb_dom_string_ref(EGUEB_SVG_DISPLAY),
+			EGUEB_SVG_DISPLAY_INLINE, EINA_TRUE, EINA_TRUE,
 			EINA_TRUE);
 	thiz->fill = egueb_svg_attr_paint_new(
 			egueb_dom_string_ref(EGUEB_SVG_FILL),

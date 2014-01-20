@@ -56,6 +56,7 @@ EAPI extern Egueb_Dom_String *EGUEB_SVG_COLOR;
 EAPI extern Egueb_Dom_String *EGUEB_SVG_CX;
 EAPI extern Egueb_Dom_String *EGUEB_SVG_CY;
 EAPI extern Egueb_Dom_String *EGUEB_SVG_D;
+EAPI extern Egueb_Dom_String *EGUEB_SVG_DISPLAY;
 EAPI extern Egueb_Dom_String *EGUEB_SVG_FILL;
 EAPI extern Egueb_Dom_String *EGUEB_SVG_FILL_OPACITY;
 EAPI extern Egueb_Dom_String *EGUEB_SVG_FONT;
