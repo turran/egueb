@@ -67,6 +67,25 @@ static Eina_Bool _egueb_svg_renderable_process(Egueb_Svg_Element *e)
 			return EINA_FALSE;
 		}
 	}
+
+	/* propagate the presentation attributes */
+	/* resolve the painter based on the presentation attributes */
+	if (!thiz->painter)
+	{
+		WARN("No painter available");
+		return EINA_FALSE;
+	}
+
+	if (!egueb_svg_painter_resolve(thiz->painter, EGUEB_SVG_ELEMENT(thiz)))
+	{
+		WARN("Painter resolving failed");
+		return EINA_FALSE;
+	}
+
+	/* finally call the renderer propagate implementation */
+	if (klass->painter_apply)
+		klass->painter_apply(thiz, thiz->painter);
+
 	/* now resolve the clip path */
 	egueb_svg_element_clip_path_final_get(EGUEB_DOM_NODE(e), &clip_path);
 	egueb_svg_element_clip_path_resolve(EGUEB_DOM_NODE(e), &clip_path,
@@ -146,6 +165,12 @@ static void _egueb_svg_renderable_instance_deinit(void *o)
 		egueb_svg_reference_free(thiz->clip_path);
 		thiz->clip_path = NULL;
 	}
+	/* the painter */
+	if (thiz->painter)
+	{
+		egueb_svg_painter_unref(thiz->painter);
+		thiz->painter = NULL;
+	}
 	/* the rendering */
 	enesim_renderer_unref(thiz->proxy);
 }
@@ -153,6 +178,38 @@ static void _egueb_svg_renderable_instance_deinit(void *o)
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
+Egueb_Svg_Painter * egueb_svg_renderable_class_painter_get(Egueb_Dom_Node *n)
+{
+	Egueb_Svg_Renderable_Class *klass;
+
+	klass = EGUEB_SVG_RENDERABLE_CLASS_GET(n);
+	if (klass->painter_get)
+	{
+		return klass->painter_get(EGUEB_SVG_RENDERABLE(n));
+	}
+	else
+	{
+		return NULL;
+	}
+}
+
+Egueb_Svg_Painter * egueb_svg_renderable_painter_get(Egueb_Dom_Node *n)
+{
+	Egueb_Svg_Renderable *thiz;
+
+	thiz = EGUEB_SVG_RENDERABLE(n);
+	return egueb_svg_painter_ref(thiz->painter);
+}
+
+void egueb_svg_renderable_painter_set(Egueb_Dom_Node *n, Egueb_Svg_Painter *p)
+{
+	Egueb_Svg_Renderable *thiz;
+
+	thiz = EGUEB_SVG_RENDERABLE(n);
+	if (thiz->painter)
+		egueb_svg_painter_unref(thiz->painter);
+	thiz->painter = p;
+}
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/

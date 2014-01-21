@@ -67,10 +67,23 @@ Eina_Bool egueb_svg_painter_resolve(Egueb_Svg_Painter *thiz,
 	return EINA_FALSE;
 }
 
-void egueb_svg_painter_free(Egueb_Svg_Painter *thiz)
+Egueb_Svg_Painter * egueb_svg_painter_ref(Egueb_Svg_Painter *thiz)
 {
-	enesim_object_instance_free(ENESIM_OBJECT_INSTANCE(thiz));
+	if (!thiz) return thiz;
+
+	thiz->ref++;
+	return thiz;
+} 
+
+void egueb_svg_painter_unref(Egueb_Svg_Painter *thiz)
+{
+	thiz->ref--;
+	if (!thiz->ref)
+	{
+		enesim_object_instance_free(ENESIM_OBJECT_INSTANCE(thiz));
+	}
 }
+
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/

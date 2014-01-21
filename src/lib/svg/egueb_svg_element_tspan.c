@@ -188,23 +188,6 @@ static Eina_Bool _egueb_svg_element_tspan_generate_geometry(Egueb_Svg_Shape *s,
 	return EINA_TRUE;
 }
 
-static void _egueb_svg_element_tspan_renderer_propagate(Egueb_Svg_Shape *s,
-		Egueb_Svg_Painter *painter)
-{
-	Egueb_Svg_Element_Tspan *thiz;
-	Enesim_Color color;
-	Enesim_Color fill_color;
-	Eina_Bool visibility;
-
-	thiz = EGUEB_SVG_ELEMENT_TSPAN(s);
-
-	egueb_svg_painter_visibility_get(painter, &visibility);
-	egueb_svg_painter_color_get(painter, &color);
-	egueb_svg_painter_fill_color_get(painter, &fill_color);
-
-	enesim_renderer_color_set(thiz->r, fill_color);
-	enesim_renderer_visibility_set(thiz->r, visibility);
-}
 /*----------------------------------------------------------------------------*
  *                            Renderable interface                            *
  *----------------------------------------------------------------------------*/
@@ -227,6 +210,24 @@ static void _egueb_svg_element_tspan_bounds_get(Egueb_Svg_Renderable *r,
 	enesim_rectangle_coords_from(bounds, thiz->gx, thiz->gy,
 			thiz->gw, thiz->gh);
 #endif
+}
+
+static void _egueb_svg_element_tspan_painter_apply(Egueb_Svg_Renderable *r,
+		Egueb_Svg_Painter *painter)
+{
+	Egueb_Svg_Element_Tspan *thiz;
+	Enesim_Color color;
+	Enesim_Color fill_color;
+	Eina_Bool visibility;
+
+	thiz = EGUEB_SVG_ELEMENT_TSPAN(r);
+
+	egueb_svg_painter_visibility_get(painter, &visibility);
+	egueb_svg_painter_color_get(painter, &color);
+	egueb_svg_painter_fill_color_get(painter, &fill_color);
+
+	enesim_renderer_color_set(thiz->r, fill_color);
+	enesim_renderer_visibility_set(thiz->r, visibility);
 }
 /*----------------------------------------------------------------------------*
  *                              Element interface                             *
@@ -254,11 +255,11 @@ static void _egueb_svg_element_tspan_class_init(void *k)
 
 	klass = EGUEB_SVG_SHAPE_CLASS(k);
 	klass->generate_geometry = _egueb_svg_element_tspan_generate_geometry;
-	klass->renderer_propagate = _egueb_svg_element_tspan_renderer_propagate;
 
 	r_klass = EGUEB_SVG_RENDERABLE_CLASS(k);
 	r_klass->bounds_get = _egueb_svg_element_tspan_bounds_get;
 	r_klass->renderer_get = _egueb_svg_element_tspan_renderer_get;
+	r_klass->painter_apply = _egueb_svg_element_tspan_painter_apply;
 
 	e_klass= EGUEB_DOM_ELEMENT_CLASS(k);
 	e_klass->tag_name_get = _egueb_svg_element_tspan_tag_name_get;

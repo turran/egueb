@@ -113,30 +113,40 @@ typedef struct _Egueb_Svg_Element_Svg_Class
 	Egueb_Svg_Renderable_Container_Class base;
 } Egueb_Svg_Element_Svg_Class;
 
+/* TODO add a function to unset the painter */
 static void _egueb_svg_element_svg_set_generic_painter(Egueb_Dom_Node *n)
 {
-	if (egueb_svg_is_shape(n) && (!egueb_svg_shape_has_painter(n)))
+	if (egueb_svg_is_renderable(n))
 	{
 		Egueb_Svg_Painter *painter;
 
-		painter = egueb_svg_painter_generic_new();
-		DBG("Setting the generic painter on the shape");
-		egueb_svg_shape_painter_set(n, painter);
-	}
-	else if (egueb_svg_is_renderable_container(n))
-	{
-		Egueb_Dom_Node *child;
-
-		/* iterate over the shapes to set the painter too */
-		child = egueb_dom_node_child_first_get(n);
-		while (child)
+		painter = egueb_svg_renderable_painter_get(n);
+		if (painter)
 		{
-			Egueb_Dom_Node *tmp;
+			DBG("Renderable already has a painter nothing do");
+			egueb_svg_painter_unref(painter);
+			return;
+		}
 
-			_egueb_svg_element_svg_set_generic_painter(child);
-			tmp = egueb_dom_node_sibling_next_get(child);
-			egueb_dom_node_unref(child);
-			child = tmp;
+		DBG("Setting the generic painter on the shape");
+		painter = egueb_svg_renderable_class_painter_get(n);
+		egueb_svg_renderable_painter_set(n, painter);
+
+		if (egueb_svg_is_renderable_container(n))
+		{
+			Egueb_Dom_Node *child;
+
+			/* iterate over the shapes to set the painter too */
+			child = egueb_dom_node_child_first_get(n);
+			while (child)
+			{
+				Egueb_Dom_Node *tmp;
+
+				_egueb_svg_element_svg_set_generic_painter(child);
+				tmp = egueb_dom_node_sibling_next_get(child);
+				egueb_dom_node_unref(child);
+				child = tmp;
+			}
 		}
 	}
 }

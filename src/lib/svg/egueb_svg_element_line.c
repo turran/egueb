@@ -87,42 +87,6 @@ static Eina_Bool _egueb_svg_element_line_generate_geometry(Egueb_Svg_Shape *s,
 	return EINA_TRUE;
 }
 
-static void _egueb_svg_element_line_renderer_propagate(Egueb_Svg_Shape *s,
-		Egueb_Svg_Painter *painter)
-{
-	Egueb_Svg_Element_Line *thiz;
-	Enesim_Color color;
-	Enesim_Renderer_Shape_Stroke_Cap stroke_cap;
-	Enesim_Renderer_Shape_Stroke_Join stroke_join;
-	Enesim_Color stroke_color;
-	Enesim_Renderer *stroke_renderer;
-	Eina_Bool visibility;
-	double stroke_weight;
-
-	thiz = EGUEB_SVG_ELEMENT_LINE(s);
-
-	egueb_svg_painter_visibility_get(painter, &visibility);
-	egueb_svg_painter_color_get(painter, &color);
-	egueb_svg_painter_stroke_cap_get(painter, &stroke_cap);
-	egueb_svg_painter_stroke_join_get(painter, &stroke_join);
-	egueb_svg_painter_stroke_color_get(painter, &stroke_color);
-	egueb_svg_painter_stroke_weight_get(painter, &stroke_weight);
-	egueb_svg_painter_stroke_renderer_get(painter, &stroke_renderer);
-
-	/* overrides */
-	enesim_renderer_shape_draw_mode_set(thiz->r, ENESIM_RENDERER_SHAPE_DRAW_MODE_STROKE);
-	enesim_renderer_shape_stroke_location_set(thiz->r, ENESIM_RENDERER_SHAPE_STROKE_LOCATION_CENTER);
-
-	/* shape properties */
-	enesim_renderer_shape_stroke_color_set(thiz->r, stroke_color);
-	enesim_renderer_shape_stroke_weight_set(thiz->r, stroke_weight);
-	enesim_renderer_shape_stroke_cap_set(thiz->r, stroke_cap);
-	enesim_renderer_shape_stroke_join_set(thiz->r, stroke_join);
-
-	/* base properties */
-	enesim_renderer_color_set(thiz->r, color);
-	enesim_renderer_visibility_set(thiz->r, visibility);
-}
 /*----------------------------------------------------------------------------*
  *                            Renderable interface                            *
  *----------------------------------------------------------------------------*/
@@ -146,6 +110,43 @@ static void _egueb_svg_element_line_bounds_get(Egueb_Svg_Renderable *r,
 			thiz->gy1 < thiz->gy2 ? thiz->gy1 : thiz->gy2,
 			fabs(thiz->gx1 - thiz->gx2),
 			fabs(thiz->gy1 - thiz->gy2));
+}
+
+static void _egueb_svg_element_line_painter_apply(Egueb_Svg_Renderable *r,
+		Egueb_Svg_Painter *painter)
+{
+	Egueb_Svg_Element_Line *thiz;
+	Enesim_Color color;
+	Enesim_Renderer_Shape_Stroke_Cap stroke_cap;
+	Enesim_Renderer_Shape_Stroke_Join stroke_join;
+	Enesim_Color stroke_color;
+	Enesim_Renderer *stroke_renderer;
+	Eina_Bool visibility;
+	double stroke_weight;
+
+	thiz = EGUEB_SVG_ELEMENT_LINE(r);
+
+	egueb_svg_painter_visibility_get(painter, &visibility);
+	egueb_svg_painter_color_get(painter, &color);
+	egueb_svg_painter_stroke_cap_get(painter, &stroke_cap);
+	egueb_svg_painter_stroke_join_get(painter, &stroke_join);
+	egueb_svg_painter_stroke_color_get(painter, &stroke_color);
+	egueb_svg_painter_stroke_weight_get(painter, &stroke_weight);
+	egueb_svg_painter_stroke_renderer_get(painter, &stroke_renderer);
+
+	/* overrides */
+	enesim_renderer_shape_draw_mode_set(thiz->r, ENESIM_RENDERER_SHAPE_DRAW_MODE_STROKE);
+	enesim_renderer_shape_stroke_location_set(thiz->r, ENESIM_RENDERER_SHAPE_STROKE_LOCATION_CENTER);
+
+	/* shape properties */
+	enesim_renderer_shape_stroke_color_set(thiz->r, stroke_color);
+	enesim_renderer_shape_stroke_weight_set(thiz->r, stroke_weight);
+	enesim_renderer_shape_stroke_cap_set(thiz->r, stroke_cap);
+	enesim_renderer_shape_stroke_join_set(thiz->r, stroke_join);
+
+	/* base properties */
+	enesim_renderer_color_set(thiz->r, color);
+	enesim_renderer_visibility_set(thiz->r, visibility);
 }
 /*----------------------------------------------------------------------------*
  *                              Element interface                             *
@@ -175,11 +176,11 @@ static void _egueb_svg_element_line_class_init(void *k)
 
 	klass = EGUEB_SVG_SHAPE_CLASS(k);
 	klass->generate_geometry = _egueb_svg_element_line_generate_geometry;
-	klass->renderer_propagate = _egueb_svg_element_line_renderer_propagate;
 
 	r_klass = EGUEB_SVG_RENDERABLE_CLASS(k);
 	r_klass->renderer_get = _egueb_svg_element_line_renderer_get;
 	r_klass->bounds_get = _egueb_svg_element_line_bounds_get;
+	r_klass->painter_apply = _egueb_svg_element_line_painter_apply;
 
 	e_klass= EGUEB_DOM_ELEMENT_CLASS(k);
 	e_klass->tag_name_get = _egueb_svg_element_line_tag_name_get;

@@ -33,14 +33,11 @@ typedef struct _Egueb_Svg_Shape
 
 typedef Eina_Bool (*Egueb_Svg_Shape_Generate_Geometry)(Egueb_Svg_Shape *thiz,
 		Egueb_Svg_Element *relative, Egueb_Dom_Node *doc); 
-typedef void (*Egueb_Svg_Shape_Renderer_Propagate)(Egueb_Svg_Shape *thiz,
-		Egueb_Svg_Painter *painter);
 
 typedef struct _Egueb_Svg_Shape_Class
 {
 	Egueb_Svg_Renderable_Class base;
 	Egueb_Svg_Shape_Generate_Geometry generate_geometry;
-	Egueb_Svg_Shape_Renderer_Propagate renderer_propagate;
 } Egueb_Svg_Shape_Class;
 
 #define EGUEB_SVG_SHAPE_DESCRIPTOR egueb_svg_shape_descriptor_get()
@@ -52,8 +49,5 @@ typedef struct _Egueb_Svg_Shape_Class
 		Egueb_Svg_Shape, EGUEB_SVG_SHAPE_DESCRIPTOR)
 
 Enesim_Object_Descriptor *  egueb_svg_shape_descriptor_get(void);
-
-void egueb_svg_shape_painter_set(Egueb_Dom_Node *n, Egueb_Svg_Painter *painter);
-Eina_Bool egueb_svg_shape_has_painter(Egueb_Dom_Node *n);
 
 #endif

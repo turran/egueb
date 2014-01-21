@@ -319,20 +319,6 @@ static Eina_Bool _egueb_svg_element_text_generate_geometry(Egueb_Svg_Shape *s,
 	return EINA_TRUE;
 }
 
-static void _egueb_svg_element_text_renderer_propagate(Egueb_Svg_Shape *s,
-		Egueb_Svg_Painter *painter)
-{
-	Egueb_Svg_Element_Text *thiz;
-
-	thiz = EGUEB_SVG_ELEMENT_TEXT(s);
-	if (thiz->renderable_tree_changed)
-	{
-		enesim_renderer_compound_layer_clear(thiz->r);
-	}
-	egueb_dom_node_children_foreach(EGUEB_DOM_NODE(s),
-		_egueb_svg_element_text_children_propagate_cb,
-		thiz);
-}
 /*----------------------------------------------------------------------------*
  *                            Renderable interface                            *
  *----------------------------------------------------------------------------*/
@@ -355,6 +341,21 @@ static void _egueb_svg_element_text_bounds_get(Egueb_Svg_Renderable *r,
 	enesim_rectangle_coords_from(bounds, thiz->gx, thiz->gy,
 			thiz->gw, thiz->gh);
 #endif
+}
+
+static void _egueb_svg_element_text_painter_apply(Egueb_Svg_Renderable *r,
+		Egueb_Svg_Painter *painter)
+{
+	Egueb_Svg_Element_Text *thiz;
+
+	thiz = EGUEB_SVG_ELEMENT_TEXT(r);
+	if (thiz->renderable_tree_changed)
+	{
+		enesim_renderer_compound_layer_clear(thiz->r);
+	}
+	egueb_dom_node_children_foreach(EGUEB_DOM_NODE(r),
+		_egueb_svg_element_text_children_propagate_cb,
+		thiz);
 }
 /*----------------------------------------------------------------------------*
  *                              Element interface                             *
@@ -382,11 +383,11 @@ static void _egueb_svg_element_text_class_init(void *k)
 
 	klass = EGUEB_SVG_SHAPE_CLASS(k);
 	klass->generate_geometry = _egueb_svg_element_text_generate_geometry;
-	klass->renderer_propagate = _egueb_svg_element_text_renderer_propagate;
 
 	r_klass = EGUEB_SVG_RENDERABLE_CLASS(k);
 	r_klass->bounds_get = _egueb_svg_element_text_bounds_get;
 	r_klass->renderer_get = _egueb_svg_element_text_renderer_get;
+	r_klass->painter_apply = _egueb_svg_element_text_painter_apply;
 
 	e_klass= EGUEB_DOM_ELEMENT_CLASS(k);
 	e_klass->tag_name_get = _egueb_svg_element_text_tag_name_get;

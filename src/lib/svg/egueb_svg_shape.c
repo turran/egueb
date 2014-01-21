@@ -43,9 +43,9 @@ static Eina_Bool _egueb_svg_shape_children_process_cb(
 }
 
 /*----------------------------------------------------------------------------*
- *                              Shape interface                               *
+ *                            Renderable interface                            *
  *----------------------------------------------------------------------------*/
-static void _egueb_svg_shape_renderer_propagate(Egueb_Svg_Shape *thiz,
+static void _egueb_svg_shape_painter_apply(Egueb_Svg_Renderable *ren,
 		Egueb_Svg_Painter *painter)
 {
 	Enesim_Color color;
@@ -64,7 +64,7 @@ static void _egueb_svg_shape_renderer_propagate(Egueb_Svg_Shape *thiz,
 	Eina_List *l;
 	Eina_Bool visibility;
 
-	r = egueb_svg_renderable_class_renderer_get(EGUEB_DOM_NODE(thiz));
+	r = egueb_svg_renderable_class_renderer_get(EGUEB_DOM_NODE(ren));
 	if (!r)
 	{
 		WARN("No renderer available");
@@ -108,9 +108,15 @@ static void _egueb_svg_shape_renderer_propagate(Egueb_Svg_Shape *thiz,
 
 	enesim_renderer_unref(r);
 }
-/*----------------------------------------------------------------------------*
- *                            Renderable interface                            *
- *----------------------------------------------------------------------------*/
+
+static Egueb_Svg_Painter * _egueb_svg_shape_painter_get(Egueb_Svg_Renderable *r)
+{
+	Egueb_Svg_Shape *thiz;
+
+	thiz = EGUEB_SVG_SHAPE(r);
+	return egueb_svg_painter_ref(thiz->painter);	
+}
+
 static Eina_Bool _egueb_svg_shape_process(Egueb_Svg_Renderable *r)
 {
 	Egueb_Svg_Shape *thiz;
@@ -154,23 +160,6 @@ static Eina_Bool _egueb_svg_shape_process(Egueb_Svg_Renderable *r)
 		}
 	}
 
-	/* propagate the presentation attributes */
-	/* resolve the painter based on the presentation attributes */
-	if (!thiz->painter)
-	{
-		WARN("No painter available");
-		return EINA_FALSE;
-	}
-
-	if (!egueb_svg_painter_resolve(thiz->painter, EGUEB_SVG_ELEMENT(thiz)))
-	{
-		WARN("Painter resolving failed");
-		return EINA_FALSE;
-	}
-
-	/* finally call the renderer propagate implementation */
-	if (klass->renderer_propagate)
-		klass->renderer_propagate(thiz, thiz->painter);
 	/* process the children of the shapes, only smil nodes */
 	/* FIXME once the text element is moved out of the shape inheritance
 	 * we can safely remove this check. Basically a text handles
@@ -195,19 +184,22 @@ ENESIM_OBJECT_ABSTRACT_BOILERPLATE(EGUEB_SVG_RENDERABLE_DESCRIPTOR,
 
 static void _egueb_svg_shape_class_init(void *k)
 {
-	Egueb_Svg_Shape_Class *s_klass;
 	Egueb_Svg_Renderable_Class *r_klass;
-
-	s_klass = EGUEB_SVG_SHAPE_CLASS(k);
-	s_klass->renderer_propagate = _egueb_svg_shape_renderer_propagate;
 
 	r_klass = EGUEB_SVG_RENDERABLE_CLASS(k);
 	r_klass->process = _egueb_svg_shape_process;
+	r_klass->painter_apply = _egueb_svg_shape_painter_apply;
+	r_klass->painter_get = _egueb_svg_shape_painter_get;
 }
 
 static void _egueb_svg_shape_instance_init(void *o)
 {
+	Egueb_Svg_Shape *thiz;
+
+	thiz = EGUEB_SVG_SHAPE(o);
 	/* the properties */
+	/* set the generic painter by default */
+	thiz->painter = egueb_svg_painter_generic_new();
 }
 
 static void _egueb_svg_shape_instance_deinit(void *o)
@@ -216,41 +208,16 @@ static void _egueb_svg_shape_instance_deinit(void *o)
 
 	thiz = EGUEB_SVG_SHAPE(o);
 	/* the properties */
-	/* remove the painter */
+	/* the painter */
 	if (thiz->painter)
 	{
-		egueb_svg_painter_free(thiz->painter);
+		egueb_svg_painter_unref(thiz->painter);
 		thiz->painter = NULL;
 	}
 }
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
-void egueb_svg_shape_painter_set(Egueb_Dom_Node *n, Egueb_Svg_Painter *painter)
-{
-	Egueb_Svg_Shape *thiz;
-
-	thiz = EGUEB_SVG_SHAPE(n);
-	if (thiz->painter)
-	{
-		egueb_svg_painter_free(thiz->painter);
-		thiz->painter = NULL;
-	}
-	if (painter)
-	{
-		thiz->painter = painter;
-	}
-}
-
-Eina_Bool egueb_svg_shape_has_painter(Egueb_Dom_Node *n)
-{
-	Egueb_Svg_Shape *thiz;
-
-	thiz = EGUEB_SVG_SHAPE(n);
-	if (thiz->painter) return EINA_TRUE;
-	else return EINA_FALSE;
-	
-}
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/

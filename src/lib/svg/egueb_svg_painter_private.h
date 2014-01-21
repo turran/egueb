@@ -35,6 +35,7 @@
 struct _Egueb_Svg_Painter
 {
 	Enesim_Object_Instance base;
+	int ref;
 	/* common */
 	Eina_Bool visibility;
 	Enesim_Color color;
@@ -73,7 +74,8 @@ Enesim_Object_Descriptor * egueb_svg_painter_descriptor_get(void);
 		Egueb_Svg_Painter, EGUEB_SVG_PAINTER_DESCRIPTOR)
 
 Eina_Bool egueb_svg_painter_resolve(Egueb_Svg_Painter *thiz, Egueb_Svg_Element *e);
-void egueb_svg_painter_free(Egueb_Svg_Painter *thiz);
+Egueb_Svg_Painter * egueb_svg_painter_ref(Egueb_Svg_Painter *thiz);
+void egueb_svg_painter_unref(Egueb_Svg_Painter *thiz);
 
 /* for now we dont export anything */
 Egueb_Svg_Painter * egueb_svg_painter_generic_new(void);
