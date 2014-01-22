@@ -35,6 +35,10 @@ static void _egueb_svg_painter_class_init(void *k)
 
 static void _egueb_svg_painter_instance_init(void *o)
 {
+	Egueb_Svg_Painter *thiz;
+
+	thiz = EGUEB_SVG_PAINTER(o);
+	thiz->ref = 1;
 }
 
 static void _egueb_svg_painter_instance_deinit(void *o)
