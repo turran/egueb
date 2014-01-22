@@ -80,7 +80,17 @@ static Eina_Bool _egueb_svg_element_g_bounds_cb(
 static void _egueb_svg_element_g_painter_apply(Egueb_Svg_Renderable *r,
 		Egueb_Svg_Painter *painter)
 {
+	Eina_Bool visibility;
+	Enesim_Renderer *ren;
 
+	ren = egueb_svg_renderable_class_renderer_get(EGUEB_DOM_NODE(r));
+	if (!ren)
+	{
+		WARN("No renderer available");
+		return;
+	}
+	egueb_svg_painter_visibility_get(painter, &visibility);
+	enesim_renderer_visibility_set(ren, visibility);
 }
 
 static Egueb_Svg_Painter * _egueb_svg_element_g_painter_get(Egueb_Svg_Renderable *r)
