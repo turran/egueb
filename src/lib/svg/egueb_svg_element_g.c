@@ -33,6 +33,7 @@
 typedef struct _Egueb_Svg_Element_G
 {
 	Egueb_Svg_Renderable_Container base;
+	Egueb_Svg_Painter *painter;
 } Egueb_Svg_Element_G;
 
 typedef struct _Egueb_Svg_Element_G_Class
@@ -76,6 +77,20 @@ static Eina_Bool _egueb_svg_element_g_bounds_cb(
 /*----------------------------------------------------------------------------*
  *                            Renderable interface                            *
  *----------------------------------------------------------------------------*/
+static void _egueb_svg_element_g_painter_apply(Egueb_Svg_Renderable *r,
+		Egueb_Svg_Painter *painter)
+{
+
+}
+
+static Egueb_Svg_Painter * _egueb_svg_element_g_painter_get(Egueb_Svg_Renderable *r)
+{
+	Egueb_Svg_Element_G *thiz;
+
+	thiz = EGUEB_SVG_ELEMENT_G(r);
+	return egueb_svg_painter_ref(thiz->painter);
+}
+
 static void _egueb_svg_element_g_bounds_get(Egueb_Svg_Renderable *r,
 		Enesim_Rectangle *bounds)
 {
@@ -110,6 +125,8 @@ static void _egueb_svg_element_g_class_init(void *k)
 
 	r_klass = EGUEB_SVG_RENDERABLE_CLASS(k);
 	r_klass->bounds_get = _egueb_svg_element_g_bounds_get;
+	r_klass->painter_get = _egueb_svg_element_g_painter_get;
+	r_klass->painter_apply = _egueb_svg_element_g_painter_apply;
 
 	e_klass= EGUEB_DOM_ELEMENT_CLASS(k);
 	e_klass->tag_name_get = _egueb_svg_element_g_tag_name_get;
@@ -117,10 +134,18 @@ static void _egueb_svg_element_g_class_init(void *k)
 
 static void _egueb_svg_element_g_instance_init(void *o)
 {
+	Egueb_Svg_Element_G *thiz;
+
+	thiz = EGUEB_SVG_ELEMENT_G(o);
+	thiz->painter = egueb_svg_painter_g_new();
 }
 
 static void _egueb_svg_element_g_instance_deinit(void *o)
 {
+	Egueb_Svg_Element_G *thiz;
+
+	thiz = EGUEB_SVG_ELEMENT_G(o);
+	egueb_svg_painter_unref(thiz->painter);
 }
 
 /*============================================================================*

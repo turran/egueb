@@ -31,13 +31,13 @@
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
-#define EGUEB_SVG_PAINTER_GENERIC_DESCRIPTOR egueb_svg_painter_generic_descriptor_get()
-#define EGUEB_SVG_PAINTER_GENERIC_CLASS(k) ENESIM_OBJECT_CLASS_CHECK(k, 		\
-		Egueb_Svg_Painter_Generic_Class, EGUEB_SVG_PAINTER_GENERIC_DESCRIPTOR)
-#define EGUEB_SVG_PAINTER_GENERIC(o) ENESIM_OBJECT_INSTANCE_CHECK(o, 		\
-		Egueb_Svg_Painter_Generic, EGUEB_SVG_PAINTER_GENERIC_DESCRIPTOR)
+#define EGUEB_SVG_PAINTER_SHAPE_DESCRIPTOR egueb_svg_painter_shape_descriptor_get()
+#define EGUEB_SVG_PAINTER_SHAPE_CLASS(k) ENESIM_OBJECT_CLASS_CHECK(k, 		\
+		Egueb_Svg_Painter_Shape_Class, EGUEB_SVG_PAINTER_SHAPE_DESCRIPTOR)
+#define EGUEB_SVG_PAINTER_SHAPE(o) ENESIM_OBJECT_INSTANCE_CHECK(o, 		\
+		Egueb_Svg_Painter_Shape, EGUEB_SVG_PAINTER_SHAPE_DESCRIPTOR)
 
-typedef struct _Egueb_Svg_Painter_Generic {
+typedef struct _Egueb_Svg_Painter_Shape {
 	Egueb_Svg_Painter base;
 	/* possible references */
 	Egueb_Svg_Reference *fill;
@@ -45,23 +45,23 @@ typedef struct _Egueb_Svg_Painter_Generic {
 	/* previous generated data */
 	Egueb_Svg_Paint fill_paint_last;
 	Egueb_Svg_Paint stroke_paint_last;
-} Egueb_Svg_Painter_Generic;
+} Egueb_Svg_Painter_Shape;
 
-typedef struct _Egueb_Svg_Painter_Generic_Class {
+typedef struct _Egueb_Svg_Painter_Shape_Class {
 	Egueb_Svg_Painter_Class base;
-} Egueb_Svg_Painter_Generic_Class;
+} Egueb_Svg_Painter_Shape_Class;
 
-typedef struct _Egueb_Svg_Painter_Generic_Stroke_Dasharray_Data {
+typedef struct _Egueb_Svg_Painter_Shape_Stroke_Dasharray_Data {
 	Egueb_Svg_Painter *p;
 	Egueb_Svg_Element *e;
 	double font_size;
 
 	Enesim_Renderer_Shape_Stroke_Dash *dash;
-} Egueb_Svg_Painter_Generic_Stroke_Dasharray_Data;
+} Egueb_Svg_Painter_Shape_Stroke_Dasharray_Data;
 
-static void _egueb_svg_painter_generic_dash_foreach(void *data, void *user_data)
+static void _egueb_svg_painter_shape_dash_foreach(void *data, void *user_data)
 {
-	Egueb_Svg_Painter_Generic_Stroke_Dasharray_Data *stroke_dasharray_data = user_data;
+	Egueb_Svg_Painter_Shape_Stroke_Dasharray_Data *stroke_dasharray_data = user_data;
 	Egueb_Svg_Painter *p = stroke_dasharray_data->p;
 	Egueb_Svg_Element *e = stroke_dasharray_data->e;
 	double font_size = stroke_dasharray_data->font_size;
@@ -176,7 +176,7 @@ static void _egueb_svg_renderable_paint_set(Egueb_Dom_Node *n,
 	egueb_svg_paint_copy(current, old);
 }
 
-static inline void _egueb_svg_painter_generic_cleanup(
+static inline void _egueb_svg_painter_shape_cleanup(
 		Egueb_Svg_Painter *p)
 {
 	/* clear the context */
@@ -192,38 +192,18 @@ static inline void _egueb_svg_painter_generic_cleanup(
 	}
 }
 
-static inline void _egueb_svg_painter_generic_resolve_visibility(
-		Egueb_Svg_Painter *p, Egueb_Svg_Element *e)
-{
-	Egueb_Svg_Display display;
-	Egueb_Svg_Visibility visibility;
-
-	/* check if it is visible or not */
-	egueb_dom_attr_final_get(e->visibility, &visibility);
-	if (visibility == EGUEB_SVG_VISIBILITY_VISIBLE)
-		p->visibility = EINA_TRUE;
-	else
-		p->visibility = EINA_FALSE;
-	/* check if it should display or not */
-	egueb_dom_attr_final_get(e->display, &display);
-	if (display != EGUEB_SVG_DISPLAY_NONE)
-		p->visibility = p->visibility && EINA_TRUE;
-	else
-		p->visibility = EINA_FALSE;
-}
-
-static inline void _egueb_svg_painter_generic_resolve_fill(
+static inline void _egueb_svg_painter_shape_resolve_fill(
 		Egueb_Svg_Painter *p, Egueb_Svg_Element *e,
 		Egueb_Dom_Node *doc, Egueb_Svg_Color *color)
 {
-	Egueb_Svg_Painter_Generic *thiz;
+	Egueb_Svg_Painter_Shape *thiz;
 	Egueb_Svg_Paint fill = EGUEB_SVG_PAINT_INIT;
 	Egueb_Svg_Number fill_opacity;
 
 	egueb_dom_attr_final_get(e->fill, &fill);
 	egueb_dom_attr_final_get(e->fill_opacity, &fill_opacity);
 
-	thiz = EGUEB_SVG_PAINTER_GENERIC(p);
+	thiz = EGUEB_SVG_PAINTER_SHAPE(p);
 	_egueb_svg_renderable_paint_set(EGUEB_DOM_NODE(e), doc,
 			&p->draw_mode,
 			&p->fill_color,
@@ -247,12 +227,12 @@ static inline void _egueb_svg_painter_generic_resolve_fill(
 	egueb_svg_paint_reset(&fill);
 }
 
-static inline void _egueb_svg_painter_generic_resolve_stroke(
+static inline void _egueb_svg_painter_shape_resolve_stroke(
 		Egueb_Svg_Painter *p, Egueb_Svg_Element *e,
 		Egueb_Dom_Node *doc, Egueb_Svg_Color *color)
 {
-	Egueb_Svg_Painter_Generic *thiz;
-	Egueb_Svg_Painter_Generic_Stroke_Dasharray_Data stroke_dasharray_data;
+	Egueb_Svg_Painter_Shape *thiz;
+	Egueb_Svg_Painter_Shape_Stroke_Dasharray_Data stroke_dasharray_data;
 	Egueb_Svg_Paint stroke = EGUEB_SVG_PAINT_INIT;
 	Egueb_Svg_Length stroke_width;
 	Egueb_Svg_Number stroke_opacity;
@@ -269,7 +249,7 @@ static inline void _egueb_svg_painter_generic_resolve_stroke(
 	egueb_dom_attr_final_get(e->stroke_line_join, &stroke_line_join);
 	egueb_dom_attr_final_get(e->stroke_dasharray, &stroke_dasharray);
 
-	thiz = EGUEB_SVG_PAINTER_GENERIC(p);
+	thiz = EGUEB_SVG_PAINTER_SHAPE(p);
 	_egueb_svg_renderable_paint_set(EGUEB_DOM_NODE(e), doc,
 			&p->draw_mode,
 			&p->stroke_color,
@@ -293,10 +273,10 @@ static inline void _egueb_svg_painter_generic_resolve_stroke(
 	stroke_dasharray_data.p = p;
 	stroke_dasharray_data.font_size = font_size;
 	stroke_dasharray_data.dash = NULL;
-	egueb_dom_list_foreach(stroke_dasharray, _egueb_svg_painter_generic_dash_foreach, &stroke_dasharray_data);
+	egueb_dom_list_foreach(stroke_dasharray, _egueb_svg_painter_shape_dash_foreach, &stroke_dasharray_data);
 	/* handle the odd/even thing */
 	if (egueb_dom_list_length(stroke_dasharray) % 2)
-		egueb_dom_list_foreach(stroke_dasharray, _egueb_svg_painter_generic_dash_foreach, &stroke_dasharray_data);
+		egueb_dom_list_foreach(stroke_dasharray, _egueb_svg_painter_shape_dash_foreach, &stroke_dasharray_data);
 	/* the stroke types */
 	p->stroke_cap = stroke_line_cap;
 	p->stroke_join = stroke_line_join;
@@ -313,7 +293,7 @@ static inline void _egueb_svg_painter_generic_resolve_stroke(
 /*----------------------------------------------------------------------------*
  *                             Painter interface                              *
  *----------------------------------------------------------------------------*/
-static Eina_Bool _egueb_svg_painter_generic_resolve(Egueb_Svg_Painter *p,
+static Eina_Bool _egueb_svg_painter_shape_resolve(Egueb_Svg_Painter *p,
 		Egueb_Svg_Element *e)
 {
 	Egueb_Svg_Color color;
@@ -321,7 +301,7 @@ static Eina_Bool _egueb_svg_painter_generic_resolve(Egueb_Svg_Painter *p,
 	Egueb_Dom_Node *doc;
 	uint8_t lopacity;
 
-	_egueb_svg_painter_generic_cleanup(p);
+	_egueb_svg_painter_shape_cleanup(p);
 
 	doc = egueb_dom_node_document_get(EGUEB_DOM_NODE(e));
 	if (!doc)
@@ -329,7 +309,7 @@ static Eina_Bool _egueb_svg_painter_generic_resolve(Egueb_Svg_Painter *p,
 		WARN("No document set");
 		return EINA_FALSE;
 	}
-	_egueb_svg_painter_generic_resolve_visibility(p, e);
+	egueb_svg_painter_resolve_visibility(p, e);
 
 	egueb_dom_attr_final_get(e->opacity, &opacity);
 	egueb_dom_attr_final_get(e->color, &color);
@@ -338,9 +318,9 @@ static Eina_Bool _egueb_svg_painter_generic_resolve(Egueb_Svg_Painter *p,
 	enesim_color_components_from(&p->color,
 			lopacity, 0xff, 0xff, 0xff);
 	/* set the fill */
-	_egueb_svg_painter_generic_resolve_fill(p, e, doc, &color);
+	_egueb_svg_painter_shape_resolve_fill(p, e, doc, &color);
 	/* set the stroke */
-	_egueb_svg_painter_generic_resolve_stroke(p, e, doc, &color);
+	_egueb_svg_painter_shape_resolve_stroke(p, e, doc, &color);
 	egueb_dom_node_unref(doc);
 
 	/* finally dump the painter */
@@ -354,28 +334,28 @@ static Eina_Bool _egueb_svg_painter_generic_resolve(Egueb_Svg_Painter *p,
  *                              Object interface                              *
  *----------------------------------------------------------------------------*/
 ENESIM_OBJECT_INSTANCE_BOILERPLATE(EGUEB_SVG_PAINTER_DESCRIPTOR,
-		Egueb_Svg_Painter_Generic, Egueb_Svg_Painter_Generic_Class,
-		egueb_svg_painter_generic);
+		Egueb_Svg_Painter_Shape, Egueb_Svg_Painter_Shape_Class,
+		egueb_svg_painter_shape);
 
-static void _egueb_svg_painter_generic_class_init(void *k)
+static void _egueb_svg_painter_shape_class_init(void *k)
 {
 	Egueb_Svg_Painter_Class *klass;
 
 	klass = EGUEB_SVG_PAINTER_CLASS(k);
-	klass->resolve = _egueb_svg_painter_generic_resolve;
+	klass->resolve = _egueb_svg_painter_shape_resolve;
 }
 
-static void _egueb_svg_painter_generic_instance_init(void *o)
+static void _egueb_svg_painter_shape_instance_init(void *o)
 {
 }
 
-static void _egueb_svg_painter_generic_instance_deinit(void *o)
+static void _egueb_svg_painter_shape_instance_deinit(void *o)
 {
-	Egueb_Svg_Painter_Generic *thiz;
+	Egueb_Svg_Painter_Shape *thiz;
 
 	/* the painter abstract will destroy the renderers */
 	/* now remove the references */
-	thiz = EGUEB_SVG_PAINTER_GENERIC(o);
+	thiz = EGUEB_SVG_PAINTER_SHAPE(o);
 	if (thiz->stroke)
 	{
 		egueb_svg_reference_free(thiz->stroke);
@@ -390,11 +370,11 @@ static void _egueb_svg_painter_generic_instance_deinit(void *o)
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
-Egueb_Svg_Painter * egueb_svg_painter_generic_new(void)
+Egueb_Svg_Painter * egueb_svg_painter_shape_new(void)
 {
 	Egueb_Svg_Painter *p;
 
-	p = ENESIM_OBJECT_INSTANCE_NEW(egueb_svg_painter_generic);
+	p = ENESIM_OBJECT_INSTANCE_NEW(egueb_svg_painter_shape);
 	return p;
 }
 /*============================================================================*

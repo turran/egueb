@@ -74,11 +74,13 @@ Enesim_Object_Descriptor * egueb_svg_painter_descriptor_get(void);
 		Egueb_Svg_Painter, EGUEB_SVG_PAINTER_DESCRIPTOR)
 
 Eina_Bool egueb_svg_painter_resolve(Egueb_Svg_Painter *thiz, Egueb_Svg_Element *e);
+void egueb_svg_painter_resolve_visibility(Egueb_Svg_Painter *p, Egueb_Svg_Element *e);
 Egueb_Svg_Painter * egueb_svg_painter_ref(Egueb_Svg_Painter *thiz);
 void egueb_svg_painter_unref(Egueb_Svg_Painter *thiz);
 
 /* for now we dont export anything */
-Egueb_Svg_Painter * egueb_svg_painter_generic_new(void);
+Egueb_Svg_Painter * egueb_svg_painter_shape_new(void);
+Egueb_Svg_Painter * egueb_svg_painter_g_new(void);
 Egueb_Svg_Painter * egueb_svg_painter_clip_path_new(Egueb_Svg_Reference *ref);
 
 #endif

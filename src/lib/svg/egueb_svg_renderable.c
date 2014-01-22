@@ -36,9 +36,10 @@ static Eina_Bool _egueb_svg_renderable_process(Egueb_Svg_Element *e)
 	Egueb_Svg_Renderable *thiz;
 	Egueb_Svg_Renderable_Class *klass;
 	Egueb_Svg_Clip_Path clip_path = EGUEB_SVG_CLIP_PATH_INIT;
+	Egueb_Svg_Matrix m;
+	Egueb_Svg_Painter *painter;
 	Egueb_Dom_Node *relative;
 	Enesim_Renderer *ren = NULL;
-	Egueb_Svg_Matrix m;
 
 	thiz = EGUEB_SVG_RENDERABLE(e);
 	klass = EGUEB_SVG_RENDERABLE_CLASS_GET(e);
@@ -70,21 +71,52 @@ static Eina_Bool _egueb_svg_renderable_process(Egueb_Svg_Element *e)
 
 	/* propagate the presentation attributes */
 	/* resolve the painter based on the presentation attributes */
-	if (!thiz->painter)
+	painter = egueb_svg_painter_ref(thiz->painter);
+	if (!painter)
 	{
-		WARN("No painter available");
-		return EINA_FALSE;
+		Egueb_Dom_Node *doc;
+		Egueb_Dom_Node *topmost;
+
+		doc = egueb_dom_node_document_get(EGUEB_DOM_NODE(e));
+		if (!doc)
+		{
+			WARN("No document available");
+			return EINA_FALSE;
+		}
+		topmost = egueb_dom_document_element_get(doc);
+		egueb_dom_node_unref(doc);
+
+		/* The only special case is the topmost svg element */
+		if (topmost == EGUEB_DOM_NODE(e))
+		{
+			painter = egueb_svg_renderable_class_painter_get(EGUEB_DOM_NODE(e));
+			if (!painter)
+			{
+				WARN("Topmost element does not have a painter");
+				egueb_dom_node_unref(topmost);
+				return EINA_FALSE;
+			}
+			egueb_dom_node_unref(topmost);
+		}
+		else
+		{
+			egueb_dom_node_unref(topmost);
+			WARN("No painter available");
+			return EINA_FALSE;
+		}
 	}
 
-	if (!egueb_svg_painter_resolve(thiz->painter, EGUEB_SVG_ELEMENT(thiz)))
+	if (!egueb_svg_painter_resolve(painter, e))
 	{
 		WARN("Painter resolving failed");
+		egueb_svg_painter_unref(painter);
 		return EINA_FALSE;
 	}
 
 	/* finally call the renderer propagate implementation */
 	if (klass->painter_apply)
-		klass->painter_apply(thiz, thiz->painter);
+		klass->painter_apply(thiz, painter);
+	egueb_svg_painter_unref(painter);
 
 	/* now resolve the clip path */
 	egueb_svg_element_clip_path_final_get(EGUEB_DOM_NODE(e), &clip_path);

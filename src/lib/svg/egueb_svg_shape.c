@@ -114,7 +114,7 @@ static Egueb_Svg_Painter * _egueb_svg_shape_painter_get(Egueb_Svg_Renderable *r)
 	Egueb_Svg_Shape *thiz;
 
 	thiz = EGUEB_SVG_SHAPE(r);
-	return egueb_svg_painter_ref(thiz->painter);	
+	return egueb_svg_painter_ref(thiz->painter);
 }
 
 static Eina_Bool _egueb_svg_shape_process(Egueb_Svg_Renderable *r)
@@ -198,8 +198,8 @@ static void _egueb_svg_shape_instance_init(void *o)
 
 	thiz = EGUEB_SVG_SHAPE(o);
 	/* the properties */
-	/* set the generic painter by default */
-	thiz->painter = egueb_svg_painter_generic_new();
+	/* set the shape painter by default */
+	thiz->painter = egueb_svg_painter_shape_new();
 }
 
 static void _egueb_svg_shape_instance_deinit(void *o)

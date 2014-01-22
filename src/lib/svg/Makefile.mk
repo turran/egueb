@@ -150,7 +150,8 @@ src/lib/svg/egueb_svg_paint_server_private.h \
 src/lib/svg/egueb_svg_painter.c \
 src/lib/svg/egueb_svg_painter_private.h \
 src/lib/svg/egueb_svg_painter_clip_path.c \
-src/lib/svg/egueb_svg_painter_generic.c \
+src/lib/svg/egueb_svg_painter_shape.c \
+src/lib/svg/egueb_svg_painter_g.c \
 src/lib/svg/egueb_svg_path_seg.c \
 src/lib/svg/egueb_svg_path_seg_list.c \
 src/lib/svg/egueb_svg_point.c \

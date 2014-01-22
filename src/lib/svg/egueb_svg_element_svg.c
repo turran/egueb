@@ -76,11 +76,14 @@ typedef struct _Egueb_Svg_Element_Svg
 	Etch *etch;
 	Eina_Bool paused;
 
+	/* painter */
+	Egueb_Svg_Painter *painter;
+
 	/* some state flags */
 	/* keep track if the renderable tree has changed, includeing the <a> tag */
+#if 0
 	Eina_Bool renderable_tree_changed : 1;
 
-#if 0
 	double version;
 	double x_dpi;
 	double y_dpi;
@@ -204,6 +207,20 @@ static void _egueb_svg_element_svg_animation_node_inserted_cb(Egueb_Dom_Event *e
 /*----------------------------------------------------------------------------*
  *                            Renderable interface                            *
  *----------------------------------------------------------------------------*/
+static void _egueb_svg_element_svg_painter_apply(Egueb_Svg_Renderable *r,
+		Egueb_Svg_Painter *painter)
+{
+
+}
+
+static Egueb_Svg_Painter * _egueb_svg_element_svg_painter_get(Egueb_Svg_Renderable *r)
+{
+	Egueb_Svg_Element_Svg *thiz;
+
+	thiz = EGUEB_SVG_ELEMENT_SVG(r);
+	return egueb_svg_painter_ref(thiz->painter);
+}
+
 static Enesim_Renderer * _egueb_svg_element_svg_renderer_get(
 		Egueb_Svg_Renderable *r)
 {
@@ -360,6 +377,8 @@ static void _egueb_svg_element_svg_class_init(void *k)
 	klass = EGUEB_SVG_RENDERABLE_CLASS(k);
 	klass->renderer_get = _egueb_svg_element_svg_renderer_get;
 	klass->process = _egueb_svg_element_svg_process;
+	klass->painter_get = _egueb_svg_element_svg_painter_get;
+	klass->painter_apply = _egueb_svg_element_svg_painter_apply;
 
 	e_klass= EGUEB_DOM_ELEMENT_CLASS(k);
 	e_klass->tag_name_get = _egueb_svg_element_svg_tag_name_get;
@@ -428,6 +447,9 @@ static void _egueb_svg_element_svg_instance_init(void *o)
 	thiz->rectangle = r;
 
 
+	/* our own specific painter */
+	thiz->painter = egueb_svg_painter_shape_new(); 
+
 	/* the animation system */
 	thiz->etch = etch_new();
 	etch_timer_fps_set(thiz->etch, 30);
@@ -447,6 +469,8 @@ static void _egueb_svg_element_svg_instance_deinit(void *o)
 	/* the rendering */
 	enesim_renderer_unref(thiz->rectangle);
 	enesim_renderer_unref(thiz->proxy);
+	/* the painter */
+	egueb_svg_painter_unref(thiz->painter);
 	/* remove etch and all the animation system  */
 	etch_delete(thiz->etch);
 	/* TODO free the scriptors */

@@ -84,6 +84,24 @@ void egueb_svg_painter_unref(Egueb_Svg_Painter *thiz)
 	}
 }
 
+void egueb_svg_painter_resolve_visibility(Egueb_Svg_Painter *p, Egueb_Svg_Element *e)
+{
+	Egueb_Svg_Display display;
+	Egueb_Svg_Visibility visibility;
+
+	/* check if it is visible or not */
+	egueb_dom_attr_final_get(e->visibility, &visibility);
+	if (visibility == EGUEB_SVG_VISIBILITY_VISIBLE)
+		p->visibility = EINA_TRUE;
+	else
+		p->visibility = EINA_FALSE;
+	/* check if it should display or not */
+	egueb_dom_attr_final_get(e->display, &display);
+	if (display != EGUEB_SVG_DISPLAY_NONE)
+		p->visibility = p->visibility && EINA_TRUE;
+	else
+		p->visibility = EINA_FALSE;
+}
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/
