@@ -203,10 +203,10 @@ static Enesim_Renderer * _egueb_svg_element_tspan_renderer_get(
 static void _egueb_svg_element_tspan_bounds_get(Egueb_Svg_Renderable *r,
 		Enesim_Rectangle *bounds)
 {
+#if 0
 	Egueb_Svg_Element_Tspan *thiz;
 
 	thiz = EGUEB_SVG_ELEMENT_TSPAN(r);
-#if 0
 	enesim_rectangle_coords_from(bounds, thiz->gx, thiz->gy,
 			thiz->gw, thiz->gh);
 #endif

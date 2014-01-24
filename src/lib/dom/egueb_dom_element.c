@@ -487,6 +487,21 @@ void egueb_dom_element_enqueue(Egueb_Dom_Node *n)
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/
+EAPI Egueb_Dom_String * egueb_dom_element_name_get(Egueb_Dom_Node *node)
+{
+	Egueb_Dom_String *s;
+	Egueb_Dom_String sid = EGUEB_DOM_STRING_STATIC("id");
+
+	/* get the id */
+	s = egueb_dom_element_attribute_get(node, &sid);
+	if (egueb_dom_string_is_valid(s))
+		return s;
+	/* if the id is not available, use the factory name */
+	egueb_dom_string_unref(s);
+	s = egueb_dom_element_tag_name_get(node);
+	return s;
+}
+
 /*
  * readonly attribute DOMString tagName;
  */

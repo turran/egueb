@@ -210,7 +210,13 @@ static void _egueb_svg_element_svg_animation_node_inserted_cb(Egueb_Dom_Event *e
 static void _egueb_svg_element_svg_painter_apply(Egueb_Svg_Renderable *r,
 		Egueb_Svg_Painter *painter)
 {
+	Enesim_Renderer *compound;
+	Eina_Bool visibility;
 
+	compound = egueb_svg_renderable_container_renderer_get(r);
+	egueb_svg_painter_visibility_get(painter, &visibility);
+	enesim_renderer_visibility_set(compound, visibility);
+	enesim_renderer_unref(compound);
 }
 
 static Egueb_Svg_Painter * _egueb_svg_element_svg_painter_get(Egueb_Svg_Renderable *r)
@@ -298,7 +304,7 @@ static Eina_Bool _egueb_svg_element_svg_process(Egueb_Svg_Renderable *r)
 	enesim_renderer_rectangle_size_set(thiz->rectangle, gw, gh);
 	enesim_renderer_transformation_set(thiz->rectangle, &relative_transform);
 
-	DBG("x: %g, y: %g, width: %g, height: %g", gx, gy, gw, gh);
+	DBG_ELEMENT(r, "x: %g, y: %g, width: %g, height: %g", gx, gy, gw, gh);
 	e = EGUEB_SVG_ELEMENT(r);
 	/* the viewbox will set a new user space coordinate */
 	/* FIXME check zeros */
@@ -308,8 +314,8 @@ static Eina_Bool _egueb_svg_element_svg_process(Egueb_Svg_Renderable *r)
 		double new_vw;
 		double new_vh;
 
-		DBG("viewBox available '%g %g %g %g'", viewbox.x, viewbox.y,
-				viewbox.w, viewbox.h);
+		DBG_ELEMENT(r, "viewBox available '%g %g %g %g'", viewbox.x,
+				viewbox.y, viewbox.w, viewbox.h);
 		new_vw = viewbox.w / gw;
 		new_vh = viewbox.h / gh;
 
@@ -321,7 +327,7 @@ static Eina_Bool _egueb_svg_element_svg_process(Egueb_Svg_Renderable *r)
 	}
 	else
 	{
-		DBG("Not using any viewBox");
+		DBG_ELEMENT(r, "Not using any viewBox");
 		e->transform = relative_transform;
 	}
 	/* set the new viewbox */
@@ -448,7 +454,7 @@ static void _egueb_svg_element_svg_instance_init(void *o)
 
 
 	/* our own specific painter */
-	thiz->painter = egueb_svg_painter_shape_new(); 
+	thiz->painter = egueb_svg_painter_g_new();
 
 	/* the animation system */
 	thiz->etch = etch_new();

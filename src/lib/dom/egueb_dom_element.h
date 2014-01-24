@@ -31,8 +31,54 @@
  * @{
  */
 
+#ifdef EINA_ENABLE_LOG
+#ifdef EINA_LOG_LEVEL_MAXIMUM
+#define EGUEB_DOM_ELEMENT_LOG(n, DOM, LEVEL, fmt, ...)				\
+	do {									\
+		if (LEVEL <= EINA_LOG_LEVEL_MAXIMUM) {				\
+			Egueb_Dom_String *s;					\
+			s = egueb_dom_element_name_get(EGUEB_DOM_NODE(n));	\
+			eina_log_print(DOM, LEVEL, __FILE__, __FUNCTION__,	\
+					 __LINE__, "<%s> " fmt,			\
+					egueb_dom_string_string_get(s), 	\
+					## __VA_ARGS__);			\
+			egueb_dom_string_unref(s);				\
+		}								\
+	} while (0)
+#else /* EINA_LOG_LEVEL_MAXIMUM */
+#define EGUEB_DOM_ELEMENT_LOG(n, DOM, LEVEL, fmt, ...)				\
+	do {									\
+		Egueb_Dom_String *s;						\
+		s = egueb_dom_element_name_get(EGUEB_DOM_NODE(n));		\
+		eina_log_print(DOM, LEVEL, __FILE__, __FUNCTION__, __LINE__,	\
+				"<%s> " fmt, egueb_dom_string_string_get(s),	\
+				## __VA_ARGS__);				\
+		egueb_dom_string_unref(s);					\
+	} while (0)
+#endif
+#else
+#define EGUEB_DOM_ELEMENT_LOG(n, DOM, LEVEL, fmt, ...)          \
+	do { (void) n, (void) DOM; (void) LEVEL; (void) fmt; } while (0)
+#endif
+
+#define EGUEB_DOM_ELEMENT_LOG_DOM_CRIT(n, DOM, fmt, ...) \
+  EGUEB_DOM_ELEMENT_LOG(n, DOM, EGUEB_DOM_ELEMENT_LOG_LEVEL_CRITICAL, fmt, ## __VA_ARGS__)
+
+#define EGUEB_DOM_ELEMENT_LOG_DOM_ERR(n, DOM, fmt, ...) \
+  EGUEB_DOM_ELEMENT_LOG(n, DOM, EINA_LOG_LEVEL_ERR, fmt, ## __VA_ARGS__)
+
+#define EGUEB_DOM_ELEMENT_LOG_DOM_INFO(n, DOM, fmt, ...) \
+  EGUEB_DOM_ELEMENT_LOG(n, DOM, EINA_LOG_LEVEL_INFO, fmt, ## __VA_ARGS__)
+
+#define EGUEB_DOM_ELEMENT_LOG_DOM_DBG(n, DOM, fmt, ...) \
+  EGUEB_DOM_ELEMENT_LOG(n, DOM, EINA_LOG_LEVEL_DBG, fmt, ## __VA_ARGS__)
+
+#define EGUEB_DOM_ELEMENT_LOG_DOM_WARN(n, DOM, fmt, ...) \
+  EGUEB_DOM_ELEMENT_LOG(n, DOM, EINA_LOG_LEVEL_WARN, fmt, ## __VA_ARGS__)
+
 EAPI Enesim_Object_Descriptor * egueb_dom_element_descriptor_get(void);
 
+EAPI Egueb_Dom_String * egueb_dom_element_name_get(Egueb_Dom_Node *node);
 EAPI Egueb_Dom_String * egueb_dom_element_tag_name_get(Egueb_Dom_Node *node);
 EAPI Egueb_Dom_String * egueb_dom_element_attribute_get(Egueb_Dom_Node *node,
 		const Egueb_Dom_String *name);

@@ -39,6 +39,7 @@
 
 #define ESVG_LOG_DEFAULT egueb_svg_log_dom_global
 
+/* Generic logs */
 #ifdef ERR
 # undef ERR
 #endif
@@ -58,6 +59,27 @@
 # undef DBG
 #endif
 #define DBG(...) EINA_LOG_DOM_DBG(ESVG_LOG_DEFAULT, __VA_ARGS__)
+
+/* Element based logs */
+#ifdef ERR_ELEMENT
+# undef ERR_ELEMENT
+#endif
+#define ERR_ELEMENT(n, ...) EGUEB_DOM_ELEMENT_LOG_DOM_ERR(n, ESVG_LOG_DEFAULT, __VA_ARGS__)
+
+#ifdef WARN_ELEMENT
+# undef WARN_ELEMENT
+#endif
+#define WARN_ELEMENT(n, ...) EGUEB_DOM_ELEMENT_LOG_DOM_WARN(n, ESVG_LOG_DEFAULT, __VA_ARGS__)
+
+#ifdef INFO_ELEMENT
+# undef INFO_ELEMENT
+#endif
+#define INFO_ELEMENT(n, ...) EGUEB_DOM_ELEMENT_LOG_DOM_INFO(n, ESVG_LOG_DEFAULT, __VA_ARGS__)
+
+#ifdef DBG_ELEMENT
+# undef DBG_ELEMENT
+#endif
+#define DBG_ELEMENT(n, ...) EGUEB_DOM_ELEMENT_LOG_DOM_DBG(n, ESVG_LOG_DEFAULT, __VA_ARGS__)
 
 extern int egueb_svg_log_dom_global;
 

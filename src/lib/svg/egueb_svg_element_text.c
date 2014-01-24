@@ -24,6 +24,9 @@
 #include "egueb_svg_document.h"
 #include "egueb_svg_shape_private.h"
 #include "egueb_svg_element_text_private.h"
+/* TODO make the text inherit from a renderable
+ * make the text content be an interface somehow
+ */
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/

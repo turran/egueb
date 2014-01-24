@@ -55,7 +55,6 @@ static void _egueb_svg_shape_painter_apply(Egueb_Svg_Renderable *ren,
 	Enesim_Renderer_Shape_Stroke_Join stroke_join;
 	Enesim_Color stroke_color;
 	Enesim_Renderer *stroke_renderer;
-	double stroke_weight;
 	Enesim_Renderer *fill_renderer;
 	Enesim_Color fill_color;
 	Enesim_Renderer_Shape_Fill_Rule fill_rule;
@@ -63,11 +62,12 @@ static void _egueb_svg_shape_painter_apply(Egueb_Svg_Renderable *ren,
 	Eina_List *stroke_dasharray;
 	Eina_List *l;
 	Eina_Bool visibility;
+	double stroke_weight;
 
 	r = egueb_svg_renderable_class_renderer_get(EGUEB_DOM_NODE(ren));
 	if (!r)
 	{
-		WARN("No renderer available");
+		WARN_ELEMENT(ren, "No renderer available");
 		return;
 	}
 
@@ -134,7 +134,7 @@ static Eina_Bool _egueb_svg_shape_process(Egueb_Svg_Renderable *r)
 		relative = egueb_svg_element_geometry_relative_get(EGUEB_DOM_NODE(r));
 		if (!relative)
 		{
-			WARN("No relative available");
+			WARN_ELEMENT(r, "No relative available");
 			return EINA_FALSE;
 		}
 
@@ -143,7 +143,7 @@ static Eina_Bool _egueb_svg_shape_process(Egueb_Svg_Renderable *r)
 		{
 			Egueb_Dom_String *name;
 			name = egueb_dom_node_name_get(EGUEB_DOM_NODE(r));
-			WARN("No document set on %s", egueb_dom_string_string_get(name));
+			WARN_ELEMENT(r, "No document set on %s", egueb_dom_string_string_get(name));
 			egueb_dom_node_unref(relative);
 			return EINA_FALSE;
 		}
@@ -155,7 +155,7 @@ static Eina_Bool _egueb_svg_shape_process(Egueb_Svg_Renderable *r)
 
 		if (!ret)
 		{
-			WARN("Failed generating the geometry");
+			WARN_ELEMENT(r, "Failed generating the geometry");
 			return EINA_FALSE;
 		}
 	}
