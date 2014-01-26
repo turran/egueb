@@ -120,7 +120,7 @@ extern int egueb_svg_log_dom_global;
 	}									\
 	else									\
 	{									\
-		copy(&val->base, &val->anim);					\
+		copy(&val->base, &val->anim, EINA_FALSE);			\
 	}
 
 #endif

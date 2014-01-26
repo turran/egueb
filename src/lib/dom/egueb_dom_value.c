@@ -105,6 +105,8 @@ EAPI void egueb_dom_value_interpolate(Egueb_Dom_Value *thiz,
 	/* TODO check that a, b, add, acc and res are from the same type */
 	if (thiz->descriptor && thiz->descriptor->interpolate)
 		thiz->descriptor->interpolate(thiz, a, b, m, add, acc, mul);
+	else
+		ERR("Can not interpolate");
 }
 
 EAPI void egueb_dom_value_primitive_data_from(Egueb_Dom_Value *v, Egueb_Dom_Value_Data *data)

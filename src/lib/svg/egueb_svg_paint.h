@@ -55,7 +55,7 @@ EAPI char * egueb_svg_paint_string_to(Egueb_Svg_Paint *thiz);
 
 EAPI Eina_Bool egueb_svg_paint_is_equal(const Egueb_Svg_Paint *p1,
 		const Egueb_Svg_Paint *p2);
-EAPI void egueb_svg_paint_copy(const Egueb_Svg_Paint *thiz, Egueb_Svg_Paint *copy);
+EAPI void egueb_svg_paint_copy(const Egueb_Svg_Paint *thiz, Egueb_Svg_Paint *copy, Eina_Bool full);
 EAPI void egueb_svg_paint_reset(Egueb_Svg_Paint *thiz);
 
 #endif

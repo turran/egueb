@@ -173,7 +173,7 @@ static void _egueb_svg_renderable_paint_set(Egueb_Dom_Node *n,
 	}
 	/* update the old paint */
 	egueb_svg_paint_reset(old);
-	egueb_svg_paint_copy(current, old);
+	egueb_svg_paint_copy(current, old, EINA_FALSE);
 }
 
 static inline void _egueb_svg_painter_shape_cleanup(

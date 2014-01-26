@@ -50,9 +50,9 @@ EAPI extern const Egueb_Svg_Clip_Path EGUEB_SVG_CLIP_PATH_NONE;
 EAPI const Egueb_Dom_Value_Descriptor * egueb_svg_clip_path_descriptor_get(void);
 EAPI Eina_Bool egueb_svg_clip_path_is_equal(const Egueb_Svg_Clip_Path *p1,
 		const Egueb_Svg_Clip_Path *p2);
-EAPI Eina_Bool egueb_svg_clip_path_string_from(Egueb_Svg_Clip_Path *cp, const char *attr);
+EAPI Eina_Bool egueb_svg_clip_path_string_from(Egueb_Svg_Clip_Path *thiz, const char *attr);
 EAPI char * egueb_svg_clip_path_string_to(const Egueb_Svg_Clip_Path *thiz);
-EAPI void egueb_svg_clip_path_copy(const Egueb_Svg_Clip_Path *thiz, Egueb_Svg_Clip_Path *copy);
+EAPI void egueb_svg_clip_path_copy(const Egueb_Svg_Clip_Path *thiz, Egueb_Svg_Clip_Path *copy, Eina_Bool full);
 EAPI void egueb_svg_clip_path_reset(Egueb_Svg_Clip_Path *thiz);
 
 #endif

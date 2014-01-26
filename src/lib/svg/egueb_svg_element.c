@@ -924,7 +924,7 @@ void egueb_svg_element_clip_path_resolve(Egueb_Dom_Node *n,
 		}
 		/* keep a copy */
 		egueb_svg_clip_path_reset(clip_path_last);
-		egueb_svg_clip_path_copy(clip_path_current, clip_path_last);
+		egueb_svg_clip_path_copy(clip_path_current, clip_path_last, EINA_FALSE);
 	}
 }
 

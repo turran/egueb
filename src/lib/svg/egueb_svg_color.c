@@ -260,85 +260,8 @@ static Eina_Bool _egueb_svg_color_keyword_from(Egueb_Svg_Color *color, const cha
 /*----------------------------------------------------------------------------*
  *                             Value interface                                *
  *----------------------------------------------------------------------------*/
-static Egueb_Dom_Value_Descriptor _descriptor;
-
-static void _egueb_svg_color_data_from(Egueb_Dom_Value *v, Egueb_Dom_Value_Data *data)
-{
-	EINA_SAFETY_ON_FALSE_RETURN(v->descriptor == &_descriptor);
-	egueb_dom_value_primitive_data_from(v, data);
-}
-
-static void _egueb_svg_color_data_to(Egueb_Dom_Value *v, Egueb_Dom_Value_Data *data)
-{
-	EINA_SAFETY_ON_FALSE_RETURN(v->descriptor == &_descriptor);
-	egueb_dom_value_primitive_data_to(v, data);
-}
-
-static void _egueb_svg_color_free(Egueb_Dom_Value *v)
-{
-	EINA_SAFETY_ON_FALSE_RETURN(v->descriptor == &_descriptor);
-	if (v->owned)
-	{
-		free(v->data.ptr);
-		v->data.ptr = NULL;
-	}
-}
-
-static void _egueb_svg_color_copy(const Egueb_Dom_Value *v, Egueb_Dom_Value *copy,
-		Eina_Bool content)
-{
-	Egueb_Svg_Color *vl;
-	Egueb_Svg_Color *cl;
-
-	if (!v->data.ptr)
-		return;
-
-	if (!copy->data.ptr)
-	{
-		copy->data.ptr = calloc(1, sizeof(Egueb_Svg_Color));
-		copy->owned = EINA_TRUE;
-	}
-	cl = copy->data.ptr;
-	vl = v->data.ptr;
-	*cl = *vl;
-}
-
-static char * _egueb_svg_color_string_to(const Egueb_Dom_Value *v)
-{
-	EINA_SAFETY_ON_FALSE_RETURN_VAL(v->descriptor == &_descriptor, NULL);
-	return egueb_svg_color_string_to(v->data.ptr);
-}
-
-static Eina_Bool _egueb_svg_color_string_from(Egueb_Dom_Value *v, const char *str)
-{
-	EINA_SAFETY_ON_FALSE_RETURN_VAL(v->descriptor == &_descriptor, EINA_FALSE);
-	if (!v->data.ptr)
-	{
-		v->data.ptr = calloc(1, sizeof(Egueb_Svg_Color));
-		v->owned = EINA_TRUE;
-	}
-	return egueb_svg_color_string_from(v->data.ptr, str);
-}
-
-static void _egueb_svg_color_interpolate(Egueb_Dom_Value *v,
-		Egueb_Dom_Value *a, Egueb_Dom_Value *b, double m,
-		Egueb_Dom_Value *add, Egueb_Dom_Value *acc, int mul)
-{
-}
-
-static Egueb_Dom_Value_Descriptor _descriptor = {
-	/* .data_from 		= */ _egueb_svg_color_data_from,
-	/* .data_from_type 	= */ EGUEB_DOM_VALUE_DATA_TYPE_PTR,
-	/* .data_to 		= */ _egueb_svg_color_data_to,
-	/* .data_to_type 	= */ EGUEB_DOM_VALUE_DATA_TYPE_PTR,
-	/* .init 		= */ NULL,
-	/* .free 		= */ _egueb_svg_color_free,
-	/* .copy 		= */ _egueb_svg_color_copy,
-	/* .string_to 		= */ _egueb_svg_color_string_to,
-	/* .string_from 	= */ _egueb_svg_color_string_from,
-	/* .interpolate 	= */ _egueb_svg_color_interpolate,
-};
-
+#define _egueb_svg_color_interpolate NULL
+EGUEB_DOM_VALUE_PRIMITIVE_SIMPLE_BOLIERPLATE(egueb_svg_color, Egueb_Svg_Color);
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
@@ -349,7 +272,7 @@ const Egueb_Svg_Color EGUEB_SVG_COLOR_BLACK = { 0, 0, 0};
 
 EAPI const Egueb_Dom_Value_Descriptor * egueb_svg_color_descriptor_get(void)
 {
-	return &_descriptor;
+	return &_egueb_svg_color_descriptor;
 }
 
 EAPI Eina_Bool egueb_svg_color_is_equal(const Egueb_Svg_Color *c1,
