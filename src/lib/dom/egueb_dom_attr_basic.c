@@ -41,9 +41,7 @@ static Eina_Bool _egueb_dom_attr_basic_value_get_local(Egueb_Dom_Attr *p,
 static Eina_Bool _egueb_dom_attr_basic_value_get(Egueb_Dom_Attr *p,
 		Egueb_Dom_Attr_Type type, Egueb_Dom_Value *value)
 {
-	Egueb_Dom_Attr_Basic_Class *klass;
 	const Egueb_Dom_Value_Descriptor *desc;
-	Egueb_Dom_Value_Data vdata;
 	int32_t *i32;
 	int64_t *i64;
 	double *d;
@@ -83,7 +81,6 @@ static Eina_Bool _egueb_dom_attr_basic_value_get(Egueb_Dom_Attr *p,
 static Eina_Bool _egueb_dom_attr_basic_value_set(Egueb_Dom_Attr *p,
 		Egueb_Dom_Attr_Type type, Egueb_Dom_Value *value)
 {
-	Egueb_Dom_Attr_Basic_Class *klass;
 	Egueb_Dom_Value_Data vdata;
 	void *o;
 
