@@ -28,7 +28,7 @@
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
-EGUEB_DOM_ATTR_PRIMITIVE_FULL_BOILERPLATE(Egueb_Svg_Font_Size,
+EGUEB_DOM_ATTR_PRIMITIVE_BOILERPLATE(Egueb_Svg_Font_Size,
 		Egueb_Svg_Attr_Font_Size, egueb_svg_font_size,
 		egueb_svg_attr_font_size)
 /*============================================================================*

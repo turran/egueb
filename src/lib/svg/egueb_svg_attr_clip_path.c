@@ -24,7 +24,7 @@
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
-EGUEB_DOM_ATTR_PRIMITIVE_FULL_BOILERPLATE(Egueb_Svg_Clip_Path,
+EGUEB_DOM_ATTR_PRIMITIVE_BOILERPLATE(Egueb_Svg_Clip_Path,
 		Egueb_Svg_Attr_Clip_Path, egueb_svg_clip_path,
 		egueb_svg_attr_clip_path)
 /*============================================================================*

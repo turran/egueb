@@ -60,7 +60,7 @@ void * egueb_dom_attr_primitive_ref(Egueb_Dom_Attr *p,
  * Helper macro to define a primitive attribute with style, default and
  * animation values
  */
-#define EGUEB_DOM_ATTR_PRIMITIVE_FULL_BOILERPLATE(value, attr, value_prefix,	\
+#define EGUEB_DOM_ATTR_PRIMITIVE_BOILERPLATE(value, attr, value_prefix,	\
 		 attr_prefix) 							\
 										\
 typedef struct _##attr								\

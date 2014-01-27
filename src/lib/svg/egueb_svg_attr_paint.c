@@ -27,7 +27,7 @@
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
-EGUEB_DOM_ATTR_PRIMITIVE_FULL_BOILERPLATE(Egueb_Svg_Paint,
+EGUEB_DOM_ATTR_PRIMITIVE_BOILERPLATE(Egueb_Svg_Paint,
 		Egueb_Svg_Attr_Paint, egueb_svg_paint,
 		egueb_svg_attr_paint)
 /*============================================================================*

@@ -27,7 +27,7 @@
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
-EGUEB_DOM_ATTR_PRIMITIVE_FULL_BOILERPLATE(Egueb_Svg_Length,
+EGUEB_DOM_ATTR_PRIMITIVE_BOILERPLATE(Egueb_Svg_Length,
 		Egueb_Svg_Attr_Length, egueb_svg_length,
 		egueb_svg_attr_length)
 /*============================================================================*
