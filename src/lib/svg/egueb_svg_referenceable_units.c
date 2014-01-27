@@ -25,55 +25,7 @@
 /*----------------------------------------------------------------------------*
  *                             Value interface                                *
  *----------------------------------------------------------------------------*/
-static Egueb_Dom_Value_Descriptor _descriptor;
-
-static void _egueb_svg_referenceable_units_data_from(Egueb_Dom_Value *v,
-		Egueb_Dom_Value_Data *data)
-{
-	EINA_SAFETY_ON_FALSE_RETURN(v->descriptor == &_descriptor);
-	v->data.d = data->d;
-}
-
-static void _egueb_svg_referenceable_units_data_to(Egueb_Dom_Value *v,
-		Egueb_Dom_Value_Data *data)
-{
-	Egueb_Svg_Referenceable_Units *ptr;
-	EINA_SAFETY_ON_FALSE_RETURN(v->descriptor == &_descriptor);
-	ptr = data->ptr;
-	if (!ptr) return;
-	*ptr = v->data.i32;
-}
-
-static char * _egueb_svg_referenceable_units_string_to(const Egueb_Dom_Value *v)
-{
-	EINA_SAFETY_ON_FALSE_RETURN_VAL(v->descriptor == &_descriptor, NULL);
-	return egueb_svg_referenceable_units_string_to(v->data.i32);
-}
-
-static Eina_Bool _egueb_svg_referenceable_units_string_from(Egueb_Dom_Value *v, const char *str)
-{
-	EINA_SAFETY_ON_FALSE_RETURN_VAL(v->descriptor == &_descriptor, EINA_FALSE);
-	return egueb_svg_referenceable_units_string_from((Egueb_Svg_Referenceable_Units *)&v->data.i32, str);
-}
-
-static void _egueb_svg_referenceable_units_interpolate(Egueb_Dom_Value *v,
-		Egueb_Dom_Value *a, Egueb_Dom_Value *b, double m,
-		Egueb_Dom_Value *add, Egueb_Dom_Value *acc, int mul)
-{
-}
-
-static Egueb_Dom_Value_Descriptor _descriptor = {
-	/* .data_from 		= */ _egueb_svg_referenceable_units_data_from,
-	/* .data_from_type 	= */ EGUEB_DOM_VALUE_DATA_TYPE_INT32,
-	/* .data_to 		= */ _egueb_svg_referenceable_units_data_to,
-	/* .data_to_type 	= */ EGUEB_DOM_VALUE_DATA_TYPE_PTR,
-	/* .init 		= */ NULL,
-	/* .free 		= */ NULL,
-	/* .copy 		= */ NULL,
-	/* .string_to 		= */ _egueb_svg_referenceable_units_string_to,
-	/* .string_from 	= */ _egueb_svg_referenceable_units_string_from,
-	/* .interpolate 	= */ _egueb_svg_referenceable_units_interpolate,
-};
+EGUEB_DOM_VALUE_ENUM_BOLIERPLATE(egueb_svg_referenceable_units, Egueb_Svg_Referenceable_Units);
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
@@ -82,7 +34,7 @@ static Egueb_Dom_Value_Descriptor _descriptor = {
  *============================================================================*/
 EAPI const Egueb_Dom_Value_Descriptor * egueb_svg_referenceable_units_descriptor_get(void)
 {
-	return &_descriptor;
+	return &_egueb_svg_referenceable_units_descriptor;
 }
 
 EAPI Eina_Bool egueb_svg_referenceable_units_string_from(Egueb_Svg_Referenceable_Units *thiz, const char *value)

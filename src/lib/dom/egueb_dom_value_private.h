@@ -101,51 +101,65 @@ void egueb_dom_value_data_to(Egueb_Dom_Value *thiz, Egueb_Dom_Value_Data *data);
 		egueb_dom_value_data_from(value, &_data);			\
 	}
 
-#define EGUEB_DOM_VALUE_BASIC_BOLIERPLATE(name, type)				\
-	static Egueb_Dom_Value_Descriptor name##_descriptor;			\
+/* Boilerplate code for an enum
+ * Where name is the name used to prefix every function and c_type is the c_type
+ * of the enum.
+ *
+ * The implementation should provide:
+ * name##_string_to
+ * name##_string_from
+ */
+#define EGUEB_DOM_VALUE_ENUM_BOLIERPLATE(name, c_type)				\
+static Egueb_Dom_Value_Descriptor _##name##_descriptor;				\
 										\
-	static void name##_data_from(Egueb_Dom_Value *v,			\
-			Egueb_Dom_Value_Data *data)				\
-	{									\
-		EINA_SAFETY_ON_FALSE_RETURN(v->descriptor ==			\
-				&##name##_descriptor);				\
-		egueb_dom_value_basic_data_from(v, type, data);			\
-	}									\
+static void _##name##_data_from(Egueb_Dom_Value *v, Egueb_Dom_Value_Data *data)	\
+{										\
+	EINA_SAFETY_ON_FALSE_RETURN(v->descriptor == &_##name##_descriptor);	\
+	v->data.i32 = data->i32;						\
+}										\
 										\
-	static void name##_data_to(Egueb_Dom_Value *v, 				\
-			Egueb_Dom_Value_Data *data)				\
-	{									\
-		EINA_SAFETY_ON_FALSE_RETURN(v->descriptor == 			\
-				&##name##_descriptor);				\
-		egueb_dom_value_basic_data_to(v, type, data);			\
-	}									\
+static void _##name##_data_to(Egueb_Dom_Value *v, Egueb_Dom_Value_Data *data)	\
+{										\
+	c_type *ptr;								\
+	EINA_SAFETY_ON_FALSE_RETURN(v->descriptor == &_##name##_descriptor);	\
+	ptr = data->ptr;							\
+	if (!ptr) return;							\
+	*ptr = v->data.i32;							\
+}										\
 										\
-	static char * name##_string_to(const Egueb_Dom_Value *v)		\
-	{									\
-		EINA_SAFETY_ON_FALSE_RETURN_VAL(v->descriptor ==		\
-				&##name##_descriptor, NULL);			\
-		return egueb_dom_value_basic_string_to(v, type);		\
-	}									\
+static char * _##name##_string_to(const Egueb_Dom_Value *v)			\
+{										\
+	EINA_SAFETY_ON_FALSE_RETURN_VAL(v->descriptor == &_##name##_descriptor,	\
+			NULL);							\
+	return name##_string_to((c_type )v->data.i32);				\
+}										\
 										\
-	static Eina_Bool name##_string_from(Egueb_Dom_Value *v, const char *str)\
-	{									\
-		EINA_SAFETY_ON_FALSE_RETURN_VAL(v->descriptor ==		\
-				&##name##_descriptor, EINA_FALSE);		\
-		return EINA_TRUE;						\
-	}									\
+static Eina_Bool _##name##_string_from(Egueb_Dom_Value *v, const char *str)	\
+{										\
+	EINA_SAFETY_ON_FALSE_RETURN_VAL(v->descriptor == &_##name##_descriptor,	\
+			EINA_FALSE);						\
+	return name##_string_from((c_type *)&v->data.i32, str);			\
+}										\
 										\
-	static Egueb_Dom_Value_Descriptor name##_descriptor = {			\
-		/* .data_from 		= */ name##_data_from,			\
-		/* .data_from_type 	= */ type,				\
-		/* .data_to 		= */ name##_data_to,			\
-		/* .data_to_type 	= */ EGUEB_DOM_VALUE_DATA_TYPE_PTR,	\
-		/* .init 		= */ NULL,				\
-		/* .free 		= */ NULL,				\
-		/* .copy 		= */ NULL,				\
-		/* .string_to 		= */ name##_string_to,			\
-		/* .string_from 	= */ name##_string_from,		\
-		/* .interpolate 	= */ NULL,				\
-	};
+static void _##name##_interpolate(Egueb_Dom_Value *v,				\
+		Egueb_Dom_Value *a, Egueb_Dom_Value *b, double m,		\
+		Egueb_Dom_Value *add, Egueb_Dom_Value *acc, int mul)		\
+{										\
+										\
+}										\
+										\
+static Egueb_Dom_Value_Descriptor _##name##_descriptor = {			\
+	/* .data_from 		= */ _##name##_data_from,			\
+	/* .data_from_type 	= */ EGUEB_DOM_VALUE_DATA_TYPE_INT32,		\
+	/* .data_to 		= */ _##name##_data_to,				\
+	/* .data_to_type 	= */ EGUEB_DOM_VALUE_DATA_TYPE_PTR,		\
+	/* .init 		= */ NULL,					\
+	/* .free 		= */ NULL,					\
+	/* .copy 		= */ NULL,					\
+	/* .string_to 		= */ _##name##_string_to,			\
+	/* .string_from 	= */ _##name##_string_from,			\
+	/* .interpolate 	= */ _##name##_interpolate,			\
+}
 
 /* Boilerplate code for a primitive (struct)
  * Where name is the name used to prefix every function and c_type is the c_type
