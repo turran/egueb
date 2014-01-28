@@ -86,6 +86,9 @@ extern "C" {
 #include "egueb_dom_value_int.h"
 #include "egueb_dom_string_list.h"
 
+#include "egueb_dom_element_external.h"
+#include "egueb_dom_document_external.h"
+
 /**
  * @}
  */
