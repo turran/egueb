@@ -39,6 +39,8 @@
 typedef struct _Egueb_Dom_Attr_String_List
 {
 	Egueb_Dom_Attr_Object base;
+	Egueb_Dom_List *styled;
+	Egueb_Dom_List *anim;
 	Egueb_Dom_List *value;
 	Egueb_Dom_List *def;
 } Egueb_Dom_Attr_String_List;
@@ -56,6 +58,14 @@ static Eina_Bool _egueb_dom_attr_string_list_value_get(Egueb_Dom_Attr *p,
 	thiz = EGUEB_DOM_ATTR_TIMING_LIST(p);
 	switch (type)
 	{
+		case EGUEB_DOM_ATTR_TYPE_ANIMATED:
+		*o = (void **)&thiz->anim;
+		break;
+
+		case EGUEB_DOM_ATTR_TYPE_STYLED:
+		*o = (void **)&thiz->styled;
+		break;
+
 		case EGUEB_DOM_ATTR_TYPE_BASE:
 		*o = (void **)&thiz->value;
 		break;
@@ -109,12 +119,13 @@ static void _egueb_dom_attr_string_list_instance_deinit(void *o)
  *                                   API                                      *
  *============================================================================*/
 EAPI Egueb_Dom_Node * egueb_dom_attr_string_list_new(Egueb_Dom_String *name,
-		Egueb_Dom_List *def)
+		Egueb_Dom_List *def, Eina_Bool animatable, Eina_Bool stylable,
+		Eina_Bool inheritable)
 {
 	Egueb_Dom_Node *n;
 	
 	n = ENESIM_OBJECT_INSTANCE_NEW(egueb_dom_attr_string_list);
-	egueb_dom_attr_init(n, name, EINA_FALSE, EINA_FALSE, EINA_FALSE);
+	egueb_dom_attr_init(n, name, animatable, stylable, inheritable);
 	if (def)
 		egueb_dom_attr_set(n, EGUEB_DOM_ATTR_TYPE_DEFAULT, def);
 	return n;

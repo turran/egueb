@@ -1049,7 +1049,8 @@ static void _egueb_smil_animate_base_instance_init(void *o)
 	thiz->from = egueb_dom_attr_string_new(
 			egueb_dom_string_ref(EGUEB_SMIL_FROM), NULL);
 	thiz->values = egueb_dom_attr_string_list_new(
-			egueb_dom_string_ref(EGUEB_SMIL_VALUES), NULL);
+			egueb_dom_string_ref(EGUEB_SMIL_VALUES), NULL,
+			EINA_FALSE, EINA_FALSE, EINA_FALSE);
 	EGUEB_DOM_ELEMENT_CLASS_PROPERTY_ADD(thiz, egueb_smil_animate_base, by);
 	EGUEB_DOM_ELEMENT_CLASS_PROPERTY_ADD(thiz, egueb_smil_animate_base, to);
 	EGUEB_DOM_ELEMENT_CLASS_PROPERTY_ADD(thiz, egueb_smil_animate_base, from);
