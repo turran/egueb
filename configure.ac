@@ -47,6 +47,9 @@ esmil_requirements="etch >= ${ETCH_VERSION} enesim >= ${ENESIM_VERSION} eina-ext
 esvg_requirements="etch >= ${ETCH_VERSION} enesim >= ${ENESIM_VERSION} eina-extra >= ${EINA_EXTRA_VERSION} eina >= ${EINA_VERSION}"
 gstreamer_requirements="gstreamer-0.10"
 
+AC_SUBST([ecss_requirements])
+AC_SUBST([edom_requirements])
+AC_SUBST([esmil_requirements])
 AC_SUBST([esvg_requirements])
 
 ### Additional options to configure
