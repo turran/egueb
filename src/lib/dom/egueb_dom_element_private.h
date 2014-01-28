@@ -65,17 +65,6 @@ typedef struct _Egueb_Dom_Element_Class
 #define EGUEB_DOM_ELEMENT(o) ENESIM_OBJECT_INSTANCE_CHECK(o,			\
 		Egueb_Dom_Element, EGUEB_DOM_ELEMENT_DESCRIPTOR)
 
-/* Helper function to use on the exported API functions to set/get properties */
-#define EGUEB_DOM_ELEMENT_API_GET(n, type, descriptor, var)			\
-	type *thiz;								\
-	thiz = ENESIM_OBJECT_INSTANCE_CHECK(n,type,descriptor);			\
-	egueb_dom_element_property_get(EGUEB_DOM_ELEMENT(thiz), thiz->var, var);
-
-#define EGUEB_DOM_ELEMENT_API_SET(n, type, descriptor, var)			\
-	type *thiz;								\
-	thiz = ENESIM_OBJECT_INSTANCE_CHECK(n,type,descriptor);			\
-	egueb_dom_element_property_set(EGUEB_DOM_ELEMENT(thiz), thiz->var, var);
-
 Eina_Bool egueb_dom_element_process_children(Egueb_Dom_Element *thiz);
 void egueb_dom_element_dequeue(Egueb_Dom_Node *n);
 void egueb_dom_element_enqueue(Egueb_Dom_Node *n);
