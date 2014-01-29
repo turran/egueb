@@ -28,11 +28,15 @@ typedef Egueb_Dom_String * (*Egueb_Dom_Element_External_Tag_Name_Get)(
 typedef Eina_Bool (*Egueb_Dom_Element_External_Process)(Egueb_Dom_Node *node,
 		void *data);
 
+typedef Eina_Bool (*Egueb_Dom_Element_External_Child_Appendable)(Egueb_Dom_Node *node,
+		Egueb_Dom_Node *child);
+
 typedef struct _Egueb_Dom_Element_External_Descriptor
 {
 	Egueb_Dom_Element_External_Descriptor_Init init;
 	Egueb_Dom_Element_External_Descriptor_Deinit deinit;
 	Egueb_Dom_Element_External_Tag_Name_Get tag_name_get;
+	Egueb_Dom_Element_External_Child_Appendable child_appendable;
 	Egueb_Dom_Element_External_Process process;
 } Egueb_Dom_Element_External_Descriptor;
 

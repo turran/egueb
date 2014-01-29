@@ -64,6 +64,19 @@ static Egueb_Dom_String * _egueb_dom_element_external_tag_name_get(Egueb_Dom_Ele
 	return thiz->descriptor->tag_name_get(EGUEB_DOM_NODE(e), thiz->data);
 }
 /*----------------------------------------------------------------------------*
+ *                               Node interface                               *
+ *----------------------------------------------------------------------------*/
+static Eina_Bool _egueb_dom_element_external_child_appendable(
+		Egueb_Dom_Node *n, Egueb_Dom_Node *child)
+{
+	Egueb_Dom_Element_External *thiz;
+
+	thiz = EGUEB_DOM_ELEMENT_EXTERNAL(n);
+	if (thiz->descriptor->child_appendable)
+		return thiz->descriptor->child_appendable(n, child);
+	return EINA_TRUE;
+}
+/*----------------------------------------------------------------------------*
  *                              Object interface                              *
  *----------------------------------------------------------------------------*/
 ENESIM_OBJECT_INSTANCE_BOILERPLATE(EGUEB_DOM_ELEMENT_DESCRIPTOR,
@@ -73,10 +86,14 @@ ENESIM_OBJECT_INSTANCE_BOILERPLATE(EGUEB_DOM_ELEMENT_DESCRIPTOR,
 static void _egueb_dom_element_external_class_init(void *k)
 {
 	Egueb_Dom_Element_Class *klass;
+	Egueb_Dom_Node_Class *n_klass;
 
 	klass = EGUEB_DOM_ELEMENT_CLASS(k);
 	klass->tag_name_get = _egueb_dom_element_external_tag_name_get;
 	klass->process = _egueb_dom_element_external_process;
+
+	n_klass = EGUEB_DOM_NODE_CLASS(k);
+	n_klass->child_appendable = _egueb_dom_element_external_child_appendable;
 }
 
 static void _egueb_dom_element_external_instance_init(void *o)
