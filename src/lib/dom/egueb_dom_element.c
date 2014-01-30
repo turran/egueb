@@ -329,13 +329,19 @@ static void _egueb_dom_element_clone(Egueb_Dom_Node *n, Eina_Bool live,
 	Egueb_Dom_Attr_Fetch fetch;
 	Eina_List *l;
 
+	/* check if the clone is imeplemented */
+	klass = EGUEB_DOM_ELEMENT_CLASS_GET(n);
+	if (klass->clone)
+	{
+		klass->clone(EGUEB_DOM_ELEMENT(n), EGUEB_DOM_ELEMENT(clone));
+	}
+
 	/* TODO copy every element attribute */
 	/* class properties will be created directly on the constructor */
 	/* set every property */
 	data.thiz = n;
 	data.other = clone;
 
-	klass = EGUEB_DOM_ELEMENT_CLASS_GET(n);
 	/* FIXME fix this */
 	EINA_LIST_FOREACH(klass->properties->order, l, fetch)
 	{
@@ -547,12 +553,18 @@ EAPI Eina_Bool egueb_dom_element_attribute_set(Egueb_Dom_Node *node,
 	{
 		Egueb_Dom_Element *thiz;
 		Egueb_Dom_String *attr_name;
+		Egueb_Dom_Attr *attr;
+
 
 		thiz = EGUEB_DOM_ELEMENT(node);
 		attr_name = egueb_dom_string_new_with_string(
 				egueb_dom_string_string_get(name));
 		/* create a new string attribute */
 		p = egueb_dom_attr_string_new(attr_name, NULL);
+		/* set the owner of the attr */
+		attr = EGUEB_DOM_ATTR(p);
+		attr->owner = node;
+		/* add it to the internal attributes */
 		eina_extra_ordered_hash_add(thiz->attributes,
 				egueb_dom_string_string_get(name), p);
 		p = egueb_dom_node_ref(p);
