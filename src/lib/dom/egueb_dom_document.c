@@ -268,11 +268,17 @@ static void _egueb_dom_document_element_insterted_into_document_cb(
 	Egueb_Dom_Node_Type type;
 	Egueb_Dom_String *id = NULL;
 	Egueb_Dom_String id_attr = EGUEB_DOM_STRING_STATIC("id");
+	Egueb_Dom_String *name;
 
 	phase = egueb_dom_event_phase_get(ev);
 	if (phase != EGUEB_DOM_EVENT_PHASE_AT_TARGET)
 		return;
+
 	target = egueb_dom_event_target_get(ev);
+	name = egueb_dom_node_name_get(target);
+	INFO("Node '%s' inserted into the document", egueb_dom_string_string_get(name));
+	egueb_dom_string_unref(name);
+
 	type = egueb_dom_node_type_get(target);
 	if (type != EGUEB_DOM_NODE_TYPE_ELEMENT_NODE)
 	{
@@ -280,9 +286,8 @@ static void _egueb_dom_document_element_insterted_into_document_cb(
 		return;
 	}
 
-	/* remove the element from the ids */
-	id = egueb_dom_element_attribute_get(target, &id_attr);
 	/* add the element to the ids */
+	id = egueb_dom_element_attribute_get(target, &id_attr);
 	if (egueb_dom_string_is_valid(id))
 	{
 		_egueb_dom_document_insert_id(thiz, target, id);
@@ -300,11 +305,17 @@ static void _egueb_dom_document_element_removed_from_document_cb(
 	Egueb_Dom_Node_Type type;
 	Egueb_Dom_String *id = NULL;
 	Egueb_Dom_String id_attr = EGUEB_DOM_STRING_STATIC("id");
+	Egueb_Dom_String *name;
 
 	phase = egueb_dom_event_phase_get(ev);
 	if (phase != EGUEB_DOM_EVENT_PHASE_AT_TARGET)
 		return;
+
 	target = egueb_dom_event_target_get(ev);
+	name = egueb_dom_node_name_get(target);
+	INFO("Node '%s' removed from the document", egueb_dom_string_string_get(name));
+	egueb_dom_string_unref(name);
+
 	type = egueb_dom_node_type_get(target);
 	if (type != EGUEB_DOM_NODE_TYPE_ELEMENT_NODE)
 	{
@@ -313,7 +324,6 @@ static void _egueb_dom_document_element_removed_from_document_cb(
 	}
 
 	/* remove the element from the ids */
-	target = egueb_dom_event_target_get(ev);
 	id = egueb_dom_element_attribute_get(target, &id_attr);
 	if (egueb_dom_string_is_valid(id))
 	{
