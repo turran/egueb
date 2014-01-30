@@ -20,7 +20,6 @@
 
 #include <Eina.h>
 #include <Enesim.h>
-#include <Etch.h>
 
 #ifdef EAPI
 # undef EAPI
