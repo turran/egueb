@@ -71,22 +71,13 @@ static Egueb_Dom_String * _egueb_svg_element_filter_tag_name_get(
 /*----------------------------------------------------------------------------*
  *                              Object interface                              *
  *----------------------------------------------------------------------------*/
-EGUEB_DOM_ATTR_FETCH_DEFINE(egueb_svg_element_filter, Egueb_Svg_Element_Filter, x);
-EGUEB_DOM_ATTR_FETCH_DEFINE(egueb_svg_element_filter, Egueb_Svg_Element_Filter, y);
-EGUEB_DOM_ATTR_FETCH_DEFINE(egueb_svg_element_filter, Egueb_Svg_Element_Filter, width);
-EGUEB_DOM_ATTR_FETCH_DEFINE(egueb_svg_element_filter, Egueb_Svg_Element_Filter, height);
-EGUEB_DOM_ATTR_FETCH_DEFINE(egueb_svg_element_filter, Egueb_Svg_Element_Filter, xlink_href);
-
 ENESIM_OBJECT_INSTANCE_BOILERPLATE(EGUEB_SVG_REFERENCEABLE_DESCRIPTOR,
 		Egueb_Svg_Element_Filter, Egueb_Svg_Element_Filter_Class,
 		egueb_svg_element_filter);
 
 static void _egueb_svg_element_filter_class_init(void *k)
 {
-	Egueb_Svg_Referenceable_Class *r_klass;
 	Egueb_Dom_Element_Class *e_klass;
-
-	r_klass = EGUEB_SVG_REFERENCEABLE_CLASS(k);
 
 	e_klass= EGUEB_DOM_ELEMENT_CLASS(k);
 	e_klass->tag_name_get = _egueb_svg_element_filter_tag_name_get;
@@ -96,6 +87,7 @@ static void _egueb_svg_element_filter_instance_init(void *o)
 {
 	Egueb_Svg_Element_Filter *thiz;
 	Egueb_Svg_Length minus10, plus120;
+	Egueb_Dom_Node *n;
 
 	thiz = EGUEB_SVG_ELEMENT_FILTER(o);
 	egueb_svg_length_set(&minus10, -10.0, EGUEB_SVG_UNIT_LENGTH_PERCENT);
@@ -122,11 +114,12 @@ static void _egueb_svg_element_filter_instance_init(void *o)
 			egueb_dom_string_ref(EGUEB_DOM_XLINK_HREF),
 			NULL);
 
-	EGUEB_DOM_ELEMENT_CLASS_PROPERTY_ADD(thiz, egueb_svg_element_filter, x);
-	EGUEB_DOM_ELEMENT_CLASS_PROPERTY_ADD(thiz, egueb_svg_element_filter, y);
-	EGUEB_DOM_ELEMENT_CLASS_PROPERTY_ADD(thiz, egueb_svg_element_filter, width);
-	EGUEB_DOM_ELEMENT_CLASS_PROPERTY_ADD(thiz, egueb_svg_element_filter, height);
-	EGUEB_DOM_ELEMENT_CLASS_PROPERTY_ADD(thiz, egueb_svg_element_filter, xlink_href);
+	n = EGUEB_DOM_NODE(o);
+	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->x), NULL);
+	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->y), NULL);
+	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->width), NULL);
+	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->height), NULL);
+	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->xlink_href), NULL);
 }
 
 static void _egueb_svg_element_filter_instance_deinit(void *o)

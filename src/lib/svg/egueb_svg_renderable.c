@@ -153,8 +153,6 @@ static Eina_Bool _egueb_svg_renderable_process(Egueb_Svg_Element *e)
 /*----------------------------------------------------------------------------*
  *                              Object interface                              *
  *----------------------------------------------------------------------------*/
-EGUEB_DOM_ATTR_FETCH_DEFINE(egueb_svg_renderable, Egueb_Svg_Renderable, transform);
-
 ENESIM_OBJECT_ABSTRACT_BOILERPLATE(EGUEB_SVG_ELEMENT_DESCRIPTOR,
 		Egueb_Svg_Renderable, Egueb_Svg_Renderable_Class,
 		egueb_svg_renderable);
@@ -170,6 +168,7 @@ static void _egueb_svg_renderable_class_init(void *k)
 static void _egueb_svg_renderable_instance_init(void *o)
 {
 	Egueb_Svg_Renderable *thiz;
+	Egueb_Dom_Node *n;
 	Enesim_Renderer *r;
 
 	thiz = EGUEB_SVG_RENDERABLE(o);
@@ -178,7 +177,9 @@ static void _egueb_svg_renderable_instance_init(void *o)
 			egueb_dom_string_ref(EGUEB_SVG_TRANSFORM),
 			&EGUEB_SVG_MATRIX_IDENTITY, EINA_TRUE,
 			EINA_FALSE, EINA_FALSE);
-	EGUEB_DOM_ELEMENT_CLASS_PROPERTY_ADD(thiz, egueb_svg_renderable, transform);
+
+	n = EGUEB_DOM_NODE(o);
+	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->transform), NULL);
 	/* create the main proxy renderer */
 	r = enesim_renderer_proxy_new();
 	thiz->proxy = r;

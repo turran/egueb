@@ -229,8 +229,6 @@ static Egueb_Dom_String * _egueb_smil_set_tag_name_get(
 /*----------------------------------------------------------------------------*
  *                              Object interface                              *
  *----------------------------------------------------------------------------*/
-EGUEB_DOM_ATTR_FETCH_DEFINE(egueb_smil_set, Egueb_Smil_Set, to);
-
 ENESIM_OBJECT_INSTANCE_BOILERPLATE(EGUEB_SMIL_ANIMATION_DESCRIPTOR,
 		Egueb_Smil_Set, Egueb_Smil_Set_Class, egueb_smil_set);
 
@@ -252,12 +250,15 @@ static void _egueb_smil_set_class_init(void *k)
 static void _egueb_smil_set_instance_init(void *o)
 {
 	Egueb_Smil_Set *thiz;
+	Egueb_Dom_Node *n;
 
 	thiz = EGUEB_SMIL_SET(o);
 	/* create the properties */
 	thiz->to = egueb_dom_attr_string_new(
 			egueb_dom_string_ref(EGUEB_SMIL_TO), NULL);
-	EGUEB_DOM_ELEMENT_CLASS_PROPERTY_ADD(thiz, egueb_smil_set, to);
+
+	n = EGUEB_DOM_NODE(o);
+	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->to), NULL);
 }
 
 static void _egueb_smil_set_instance_deinit(void *o)

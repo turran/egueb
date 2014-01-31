@@ -245,12 +245,6 @@ static Egueb_Dom_String * _egueb_svg_element_use_tag_name_get(
 /*----------------------------------------------------------------------------*
  *                              Object interface                              *
  *----------------------------------------------------------------------------*/
-EGUEB_DOM_ATTR_FETCH_DEFINE(egueb_svg_element_use, Egueb_Svg_Element_Use, x);
-EGUEB_DOM_ATTR_FETCH_DEFINE(egueb_svg_element_use, Egueb_Svg_Element_Use, y);
-EGUEB_DOM_ATTR_FETCH_DEFINE(egueb_svg_element_use, Egueb_Svg_Element_Use, width);
-EGUEB_DOM_ATTR_FETCH_DEFINE(egueb_svg_element_use, Egueb_Svg_Element_Use, height);
-EGUEB_DOM_ATTR_FETCH_DEFINE(egueb_svg_element_use, Egueb_Svg_Element_Use, xlink_href);
-
 ENESIM_OBJECT_INSTANCE_BOILERPLATE(EGUEB_SVG_RENDERABLE_DESCRIPTOR,
 		Egueb_Svg_Element_Use, Egueb_Svg_Element_Use_Class,
 		egueb_svg_element_use);
@@ -271,6 +265,7 @@ static void _egueb_svg_element_use_class_init(void *k)
 static void _egueb_svg_element_use_instance_init(void *o)
 {
 	Egueb_Svg_Element_Use *thiz;
+	Egueb_Dom_Node *n;
 
 	thiz = EGUEB_SVG_ELEMENT_USE(o);
 
@@ -303,20 +298,21 @@ static void _egueb_svg_element_use_instance_init(void *o)
 			egueb_dom_string_ref(EGUEB_DOM_XLINK_HREF),
 			NULL);
 
-	EGUEB_DOM_ELEMENT_CLASS_PROPERTY_ADD(thiz, egueb_svg_element_use, x);
-	EGUEB_DOM_ELEMENT_CLASS_PROPERTY_ADD(thiz, egueb_svg_element_use, y);
-	EGUEB_DOM_ELEMENT_CLASS_PROPERTY_ADD(thiz, egueb_svg_element_use, width);
-	EGUEB_DOM_ELEMENT_CLASS_PROPERTY_ADD(thiz, egueb_svg_element_use, height);
-	EGUEB_DOM_ELEMENT_CLASS_PROPERTY_ADD(thiz, egueb_svg_element_use, xlink_href);
+	n = EGUEB_DOM_NODE(o);
+	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->x), NULL);
+	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->y), NULL);
+	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->width), NULL);
+	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->height), NULL);
+	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->xlink_href), NULL);
 
 	/* whenever the use element is inserted into a document, be sure
 	 * to set the document on our g too
 	 */
-	egueb_dom_node_event_listener_add(EGUEB_DOM_NODE(o),
+	egueb_dom_node_event_listener_add(n,
 			EGUEB_DOM_EVENT_MUTATION_NODE_INSERTED_INTO_DOCUMENT,
 			_egueb_dom_element_use_insterted_into_document_cb,
 			EINA_TRUE, thiz);
-	egueb_dom_node_event_listener_add(EGUEB_DOM_NODE(o),
+	egueb_dom_node_event_listener_add(n,
 			EGUEB_DOM_EVENT_MUTATION_NODE_REMOVED_FROM_DOCUMENT,
 			_egueb_dom_element_use_removed_from_document_cb,
 			EINA_TRUE, thiz);

@@ -141,13 +141,6 @@ static Egueb_Dom_String * _egueb_svg_element_rect_tag_name_get(
 /*----------------------------------------------------------------------------*
  *                              Object interface                              *
  *----------------------------------------------------------------------------*/
-EGUEB_DOM_ATTR_FETCH_DEFINE(egueb_svg_element_rect, Egueb_Svg_Element_Rect, x);
-EGUEB_DOM_ATTR_FETCH_DEFINE(egueb_svg_element_rect, Egueb_Svg_Element_Rect, y);
-EGUEB_DOM_ATTR_FETCH_DEFINE(egueb_svg_element_rect, Egueb_Svg_Element_Rect, width);
-EGUEB_DOM_ATTR_FETCH_DEFINE(egueb_svg_element_rect, Egueb_Svg_Element_Rect, height);
-EGUEB_DOM_ATTR_FETCH_DEFINE(egueb_svg_element_rect, Egueb_Svg_Element_Rect, rx);
-EGUEB_DOM_ATTR_FETCH_DEFINE(egueb_svg_element_rect, Egueb_Svg_Element_Rect, ry);
-
 ENESIM_OBJECT_INSTANCE_BOILERPLATE(EGUEB_SVG_SHAPE_DESCRIPTOR,
 		Egueb_Svg_Element_Rect, Egueb_Svg_Element_Rect_Class,
 		egueb_svg_element_rect);
@@ -172,6 +165,7 @@ static void _egueb_svg_element_rect_class_init(void *k)
 static void _egueb_svg_element_rect_instance_init(void *o)
 {
 	Egueb_Svg_Element_Rect *thiz;
+	Egueb_Dom_Node *n;
 	Enesim_Renderer *r;
 
 	thiz = EGUEB_SVG_ELEMENT_RECT(o);
@@ -204,12 +198,13 @@ static void _egueb_svg_element_rect_instance_init(void *o)
 			egueb_dom_string_ref(EGUEB_SVG_RY), NULL,
 			EINA_TRUE, EINA_FALSE, EINA_FALSE);
 
-	EGUEB_DOM_ELEMENT_CLASS_PROPERTY_ADD(thiz, egueb_svg_element_rect, x);
-	EGUEB_DOM_ELEMENT_CLASS_PROPERTY_ADD(thiz, egueb_svg_element_rect, y);
-	EGUEB_DOM_ELEMENT_CLASS_PROPERTY_ADD(thiz, egueb_svg_element_rect, width);
-	EGUEB_DOM_ELEMENT_CLASS_PROPERTY_ADD(thiz, egueb_svg_element_rect, height);
-	EGUEB_DOM_ELEMENT_CLASS_PROPERTY_ADD(thiz, egueb_svg_element_rect, rx);
-	EGUEB_DOM_ELEMENT_CLASS_PROPERTY_ADD(thiz, egueb_svg_element_rect, ry);
+	n = EGUEB_DOM_NODE(o);
+	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->x), NULL);
+	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->y), NULL);
+	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->width), NULL);
+	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->height), NULL);
+	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->rx), NULL);
+	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->ry), NULL);
 }
 
 static void _egueb_svg_element_rect_instance_deinit(void *o)

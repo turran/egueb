@@ -117,10 +117,6 @@ static Egueb_Dom_String * _egueb_svg_element_circle_tag_name_get(
 /*----------------------------------------------------------------------------*
  *                              Object interface                              *
  *----------------------------------------------------------------------------*/
-EGUEB_DOM_ATTR_FETCH_DEFINE(egueb_svg_element_circle, Egueb_Svg_Element_Circle, cx);
-EGUEB_DOM_ATTR_FETCH_DEFINE(egueb_svg_element_circle, Egueb_Svg_Element_Circle, cy);
-EGUEB_DOM_ATTR_FETCH_DEFINE(egueb_svg_element_circle, Egueb_Svg_Element_Circle, radius);
-
 ENESIM_OBJECT_INSTANCE_BOILERPLATE(EGUEB_SVG_SHAPE_DESCRIPTOR,
 		Egueb_Svg_Element_Circle, Egueb_Svg_Element_Circle_Class,
 		egueb_svg_element_circle);
@@ -145,6 +141,7 @@ static void _egueb_svg_element_circle_class_init(void *k)
 static void _egueb_svg_element_circle_instance_init(void *o)
 {
 	Egueb_Svg_Element_Circle *thiz;
+	Egueb_Dom_Node *n;
 	Enesim_Renderer *r;
 
 	thiz = EGUEB_SVG_ELEMENT_CIRCLE(o);
@@ -167,9 +164,10 @@ static void _egueb_svg_element_circle_instance_init(void *o)
 			&EGUEB_SVG_LENGTH_0,
 			EINA_TRUE, EINA_FALSE, EINA_FALSE);
 
-	EGUEB_DOM_ELEMENT_CLASS_PROPERTY_ADD(thiz, egueb_svg_element_circle, cx);
-	EGUEB_DOM_ELEMENT_CLASS_PROPERTY_ADD(thiz, egueb_svg_element_circle, cy);
-	EGUEB_DOM_ELEMENT_CLASS_PROPERTY_ADD(thiz, egueb_svg_element_circle, radius);
+	n = EGUEB_DOM_NODE(o);
+	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->cx), NULL);
+	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->cy), NULL);
+	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->radius), NULL);
 }
 
 static void _egueb_svg_element_circle_instance_deinit(void *o)

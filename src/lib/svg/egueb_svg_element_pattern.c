@@ -212,14 +212,6 @@ static Egueb_Dom_String * _egueb_svg_element_pattern_tag_name_get(
 /*----------------------------------------------------------------------------*
  *                              Object interface                              *
  *----------------------------------------------------------------------------*/
-EGUEB_DOM_ATTR_FETCH_DEFINE(egueb_svg_element_pattern, Egueb_Svg_Element_Pattern, transform);
-EGUEB_DOM_ATTR_FETCH_DEFINE(egueb_svg_element_pattern, Egueb_Svg_Element_Pattern, units);
-EGUEB_DOM_ATTR_FETCH_DEFINE(egueb_svg_element_pattern, Egueb_Svg_Element_Pattern, xlink_href);
-EGUEB_DOM_ATTR_FETCH_DEFINE(egueb_svg_element_pattern, Egueb_Svg_Element_Pattern, x);
-EGUEB_DOM_ATTR_FETCH_DEFINE(egueb_svg_element_pattern, Egueb_Svg_Element_Pattern, y);
-EGUEB_DOM_ATTR_FETCH_DEFINE(egueb_svg_element_pattern, Egueb_Svg_Element_Pattern, width);
-EGUEB_DOM_ATTR_FETCH_DEFINE(egueb_svg_element_pattern, Egueb_Svg_Element_Pattern, height);
-
 ENESIM_OBJECT_INSTANCE_BOILERPLATE(EGUEB_SVG_PAINT_SERVER_DESCRIPTOR,
 		Egueb_Svg_Element_Pattern, Egueb_Svg_Element_Pattern_Class,
 		egueb_svg_element_pattern);
@@ -240,6 +232,7 @@ static void _egueb_svg_element_pattern_class_init(void *k)
 static void _egueb_svg_element_pattern_instance_init(void *o)
 {
 	Egueb_Svg_Element_Pattern *thiz;
+	Egueb_Dom_Node *n;
 
 	thiz = EGUEB_SVG_ELEMENT_PATTERN(o);
 	/* create the properties */
@@ -273,13 +266,14 @@ static void _egueb_svg_element_pattern_instance_init(void *o)
 			&EGUEB_SVG_LENGTH_0,
 			EINA_TRUE, EINA_FALSE, EINA_FALSE);
 
-	EGUEB_DOM_ELEMENT_CLASS_PROPERTY_ADD(thiz, egueb_svg_element_pattern, transform);
-	EGUEB_DOM_ELEMENT_CLASS_PROPERTY_ADD(thiz, egueb_svg_element_pattern, units);
-	EGUEB_DOM_ELEMENT_CLASS_PROPERTY_ADD(thiz, egueb_svg_element_pattern, xlink_href);
-	EGUEB_DOM_ELEMENT_CLASS_PROPERTY_ADD(thiz, egueb_svg_element_pattern, x);
-	EGUEB_DOM_ELEMENT_CLASS_PROPERTY_ADD(thiz, egueb_svg_element_pattern, y);
-	EGUEB_DOM_ELEMENT_CLASS_PROPERTY_ADD(thiz, egueb_svg_element_pattern, width);
-	EGUEB_DOM_ELEMENT_CLASS_PROPERTY_ADD(thiz, egueb_svg_element_pattern, height);
+	n = EGUEB_DOM_NODE(o);
+	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->transform), NULL);
+	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->units), NULL);
+	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->xlink_href), NULL);
+	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->x), NULL);
+	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->y), NULL);
+	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->width), NULL);
+	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->height), NULL);
 }
 
 static void _egueb_svg_element_pattern_instance_deinit(void *o)

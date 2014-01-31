@@ -250,8 +250,6 @@ static Eina_Bool _egueb_svg_element_clip_path_child_appendable(Egueb_Dom_Node *n
 /*----------------------------------------------------------------------------*
  *                              Object interface                              *
  *----------------------------------------------------------------------------*/
-EGUEB_DOM_ATTR_FETCH_DEFINE(egueb_svg_element_clip_path, Egueb_Svg_Element_Clip_Path, units);
-
 ENESIM_OBJECT_INSTANCE_BOILERPLATE(EGUEB_SVG_REFERENCEABLE_DESCRIPTOR,
 		Egueb_Svg_Element_Clip_Path, Egueb_Svg_Element_Clip_Path_Class,
 		egueb_svg_element_clip_path);
@@ -276,6 +274,7 @@ static void _egueb_svg_element_clip_path_class_init(void *k)
 static void _egueb_svg_element_clip_path_instance_init(void *o)
 {
 	Egueb_Svg_Element_Clip_Path *thiz;
+	Egueb_Dom_Node *n;
 
 	thiz = EGUEB_SVG_ELEMENT_CLIP_PATH(o);
 	/* create the properties */
@@ -283,7 +282,9 @@ static void _egueb_svg_element_clip_path_instance_init(void *o)
 			egueb_dom_string_ref(EGUEB_SVG_CLIP_PATH_UNITS),
 			EGUEB_SVG_REFERENCEABLE_UNITS_USER_SPACE_ON_USE, EINA_TRUE,
 			EINA_FALSE, EINA_FALSE);
-	EGUEB_DOM_ELEMENT_CLASS_PROPERTY_ADD(thiz, egueb_svg_element_clip_path, units);
+
+	n = EGUEB_DOM_NODE(o);
+	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->units), NULL);
 	/* add the required event handlers */
 	egueb_dom_node_event_listener_add(EGUEB_DOM_NODE(o),
 			EGUEB_DOM_EVENT_MUTATION_NODE_INSERTED,

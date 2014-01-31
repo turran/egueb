@@ -146,8 +146,6 @@ static Egueb_Dom_String * _egueb_svg_element_a_tag_name_get(
 /*----------------------------------------------------------------------------*
  *                              Object interface                              *
  *----------------------------------------------------------------------------*/
-EGUEB_DOM_ATTR_FETCH_DEFINE(egueb_svg_element_a, Egueb_Svg_Element_A, xlink_href);
-
 ENESIM_OBJECT_INSTANCE_BOILERPLATE(EGUEB_SVG_RENDERABLE_CONTAINER_DESCRIPTOR,
 		Egueb_Svg_Element_A, Egueb_Svg_Element_A_Class,
 		egueb_svg_element_a);
@@ -167,13 +165,16 @@ static void _egueb_svg_element_a_class_init(void *k)
 static void _egueb_svg_element_a_instance_init(void *o)
 {
 	Egueb_Svg_Element_A *thiz;
+	Egueb_Dom_Node *n;
 
 	thiz = EGUEB_SVG_ELEMENT_A(o);
 	/* create the properties */
 	thiz->xlink_href = egueb_svg_attr_string_new(
 			egueb_dom_string_ref(EGUEB_DOM_XLINK_HREF),
 			NULL);
-	EGUEB_DOM_ELEMENT_CLASS_PROPERTY_ADD(thiz, egueb_svg_element_a, xlink_href);
+
+	n = EGUEB_DOM_NODE(o);
+	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->xlink_href), NULL);
 	/* whenever a renderable is added/removed, add/remove the click event */
 	egueb_dom_node_event_listener_add(EGUEB_DOM_NODE(o),
 			EGUEB_DOM_EVENT_MUTATION_NODE_INSERTED,

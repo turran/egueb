@@ -517,13 +517,6 @@ static Eina_Bool _egueb_smil_animation_process(Egueb_Dom_Element *e)
 /*----------------------------------------------------------------------------*
  *                              Object interface                              *
  *----------------------------------------------------------------------------*/
-EGUEB_DOM_ATTR_FETCH_DEFINE(egueb_smil_animation, Egueb_Smil_Animation, attribute_name);
-EGUEB_DOM_ATTR_FETCH_DEFINE(egueb_smil_animation, Egueb_Smil_Animation, fill);
-EGUEB_DOM_ATTR_FETCH_DEFINE(egueb_smil_animation, Egueb_Smil_Animation, dur);
-EGUEB_DOM_ATTR_FETCH_DEFINE(egueb_smil_animation, Egueb_Smil_Animation, begin);
-EGUEB_DOM_ATTR_FETCH_DEFINE(egueb_smil_animation, Egueb_Smil_Animation, end);
-EGUEB_DOM_ATTR_FETCH_DEFINE(egueb_smil_animation, Egueb_Smil_Animation, xlink_href);
-
 ENESIM_OBJECT_ABSTRACT_BOILERPLATE(EGUEB_DOM_ELEMENT_DESCRIPTOR,
 		Egueb_Smil_Animation, Egueb_Smil_Animation_Class, egueb_smil_animation);
 
@@ -565,12 +558,12 @@ static void _egueb_smil_animation_instance_init(void *o)
 			egueb_dom_string_ref(EGUEB_DOM_XLINK_HREF),
 			NULL);
 
-	EGUEB_DOM_ELEMENT_CLASS_PROPERTY_ADD(thiz, egueb_smil_animation, attribute_name);
-	EGUEB_DOM_ELEMENT_CLASS_PROPERTY_ADD(thiz, egueb_smil_animation, fill);
-	EGUEB_DOM_ELEMENT_CLASS_PROPERTY_ADD(thiz, egueb_smil_animation, dur);
-	EGUEB_DOM_ELEMENT_CLASS_PROPERTY_ADD(thiz, egueb_smil_animation, begin);
-	EGUEB_DOM_ELEMENT_CLASS_PROPERTY_ADD(thiz, egueb_smil_animation, end);
-	EGUEB_DOM_ELEMENT_CLASS_PROPERTY_ADD(thiz, egueb_smil_animation, xlink_href);
+	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->attribute_name), NULL);
+	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->fill), NULL);
+	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->dur), NULL);
+	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->begin), NULL);
+	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->end), NULL);
+	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->xlink_href), NULL);
 }
 
 static void _egueb_smil_animation_instance_deinit(void *o)

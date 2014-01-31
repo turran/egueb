@@ -37,12 +37,6 @@
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
-typedef struct _Egueb_Dom_Element_Property_Clone_Data
-{
-	Egueb_Dom_Node *thiz;
-	Egueb_Dom_Node *other;
-} Egueb_Dom_Element_Property_Clone_Data;
-
 static void _egueb_dom_element_clone_destroyed_cb(Egueb_Dom_Event *e,
 		void *data);
 static void _egueb_dom_element_original_destroyed_cb(Egueb_Dom_Event *e,
@@ -63,16 +57,27 @@ static void _egueb_dom_element_document_removed_cb(Egueb_Dom_Event *e,
 	thiz->enqueued = EINA_FALSE;
 }
 
-static Eina_Bool _egueb_dom_element_properties_clone_cb(Egueb_Dom_Attr_Fetch fetch,
-		Egueb_Dom_Element_Property_Clone_Data *clone_data)
+static Eina_Bool _egueb_dom_element_properties_clone_cb(const Eina_Hash *hash,
+		const void *key, void *data, void *fdata)
 {
-	Egueb_Dom_Node *pt, *po;
+	Egueb_Dom_Node *clone = fdata;
+	Egueb_Dom_Node *attr = data;
+	Egueb_Dom_Node *n;
+	Egueb_Dom_String *name;
 
-	/* fetch both properties */
-	fetch(clone_data->thiz, &pt);
-	fetch(clone_data->other, &po);
-
-	egueb_dom_attr_copy(pt, po);
+	/* check if the cloned element has such attr */
+	name = egueb_dom_attr_name_get(attr);
+	n = egueb_dom_element_property_fetch(clone, name);
+	egueb_dom_string_unref(name);
+	if (n)
+	{
+		egueb_dom_attr_copy(attr, n);
+	}
+	else
+	{
+		n = egueb_dom_node_clone(attr, EINA_FALSE, EINA_FALSE, NULL);
+		egueb_dom_element_attribute_add(clone, n, NULL); 
+	}
 
 	return EINA_TRUE;
 }
@@ -323,11 +328,9 @@ static void _egueb_dom_element_clone_destroyed_cb(Egueb_Dom_Event *e,
 static void _egueb_dom_element_clone(Egueb_Dom_Node *n, Eina_Bool live,
 		Eina_Bool deep, Egueb_Dom_Node *clone)
 {
-	Egueb_Dom_Element_Property_Clone_Data data;
+	Egueb_Dom_Element *thiz;
 	Egueb_Dom_Element_Class *klass;
 	Egueb_Dom_Node *child;
-	Egueb_Dom_Attr_Fetch fetch;
-	Eina_List *l;
 
 	/* check if the clone is imeplemented */
 	klass = EGUEB_DOM_ELEMENT_CLASS_GET(n);
@@ -336,17 +339,9 @@ static void _egueb_dom_element_clone(Egueb_Dom_Node *n, Eina_Bool live,
 		klass->clone(EGUEB_DOM_ELEMENT(n), EGUEB_DOM_ELEMENT(clone));
 	}
 
-	/* TODO copy every element attribute */
-	/* class properties will be created directly on the constructor */
-	/* set every property */
-	data.thiz = n;
-	data.other = clone;
-
-	/* FIXME fix this */
-	EINA_LIST_FOREACH(klass->properties->order, l, fetch)
-	{
-		_egueb_dom_element_properties_clone_cb(fetch, &data);
-	}
+	/* copy every element attribute */
+	thiz = EGUEB_DOM_ELEMENT(n);
+	eina_hash_foreach(thiz->attributes, _egueb_dom_element_properties_clone_cb, clone);
 	/* in case we are live, every change on the properties should
 	 * trigger a change here
 	 */
@@ -400,21 +395,9 @@ ENESIM_OBJECT_ABSTRACT_BOILERPLATE(EGUEB_DOM_NODE_DESCRIPTOR, Egueb_Dom_Element,
 static void _egueb_dom_element_class_init(void *k)
 {
 	Egueb_Dom_Node_Class *n_klass = EGUEB_DOM_NODE_CLASS(k);
-	Egueb_Dom_Element_Class *klass;
 
 	n_klass->type = EGUEB_DOM_NODE_TYPE_ELEMENT_NODE;
 	n_klass->clone = _egueb_dom_element_clone;
-
-	klass = EGUEB_DOM_ELEMENT_CLASS(k);
-	klass->properties = eina_extra_ordered_hash_new(NULL);
-}
-
-static void _egueb_dom_element_class_deinit(void *k)
-{
-	Egueb_Dom_Element_Class *klass;
-
-	klass = EGUEB_DOM_ELEMENT_CLASS(k);
-	eina_extra_ordered_hash_free(klass->properties);
 }
 
 static void _egueb_dom_element_instance_init(void *o)
@@ -422,7 +405,7 @@ static void _egueb_dom_element_instance_init(void *o)
 	Egueb_Dom_Element *thiz;
 
 	thiz = EGUEB_DOM_ELEMENT(o);
-	thiz->attributes = eina_extra_ordered_hash_new(EINA_FREE_CB(
+	thiz->attributes = eina_hash_string_superfast_new(EINA_FREE_CB(
 			egueb_dom_node_unref));
 	/* register some event handlers */
 	egueb_dom_node_event_listener_add(EGUEB_DOM_NODE(o),
@@ -436,7 +419,7 @@ static void _egueb_dom_element_instance_deinit(void *o)
 	Egueb_Dom_Element *thiz;
 
 	thiz = EGUEB_DOM_ELEMENT(o);
-	eina_extra_ordered_hash_free(thiz->attributes);
+	eina_hash_free(thiz->attributes);
 }
 /*============================================================================*
  *                                 Global                                     *
@@ -551,23 +534,13 @@ EAPI Eina_Bool egueb_dom_element_attribute_set(Egueb_Dom_Node *node,
 	p = egueb_dom_element_property_fetch(node, name);
 	if (!p)
 	{
-		Egueb_Dom_Element *thiz;
 		Egueb_Dom_String *attr_name;
-		Egueb_Dom_Attr *attr;
 
-
-		thiz = EGUEB_DOM_ELEMENT(node);
 		attr_name = egueb_dom_string_new_with_string(
 				egueb_dom_string_string_get(name));
 		/* create a new string attribute */
 		p = egueb_dom_attr_string_new(attr_name, NULL);
-		/* set the owner of the attr */
-		attr = EGUEB_DOM_ATTR(p);
-		attr->owner = node;
-		/* add it to the internal attributes */
-		eina_extra_ordered_hash_add(thiz->attributes,
-				egueb_dom_string_string_get(name), p);
-		p = egueb_dom_node_ref(p);
+		egueb_dom_element_attribute_add(node, egueb_dom_node_ref(p), err);
 	}
 
 	/* set the value */
@@ -613,35 +586,12 @@ EAPI Eina_Bool egueb_dom_element_attribute_type_set(Egueb_Dom_Node *node,
 EAPI Egueb_Dom_Node * egueb_dom_element_property_fetch(Egueb_Dom_Node *node,
 		const Egueb_Dom_String *name)
 {
-	Egueb_Dom_Element_Class *klass;
-	Egueb_Dom_Attr_Fetch fetch;
-	Egueb_Dom_Node *attr;
+	Egueb_Dom_Element *thiz;
+	Egueb_Dom_Node *ret;
 
-	klass = EGUEB_DOM_ELEMENT_CLASS_GET(node);
-	fetch = eina_extra_ordered_hash_find(klass->properties, egueb_dom_string_string_get(name));
-	/* ok it is a class attribute */
-	if (fetch)
-	{
-		/* fetch the atribute */
-		fetch(node, &attr);
- 	}
-	/* we need to find the element attribute or create it otherwise */
-	else
-	{
-		Egueb_Dom_Element *thiz;
-
-		thiz = EGUEB_DOM_ELEMENT(node);
-		attr = eina_extra_ordered_hash_find(thiz->attributes, egueb_dom_string_string_get(name));
-	}
-
-	if (!attr)
-	{
-		return NULL;
-	}
-	else
-	{
-		return egueb_dom_node_ref(attr);
-	}
+	thiz = EGUEB_DOM_ELEMENT(node);
+	ret = eina_hash_find(thiz->attributes, egueb_dom_string_string_get(name));
+	return egueb_dom_node_ref(ret);
 }
 
 EAPI Eina_Bool egueb_dom_element_property_set_va(Egueb_Dom_Node *node,
@@ -761,36 +711,49 @@ EAPI Eina_Bool egueb_dom_element_property_value_get(Egueb_Dom_Node *node,
 	}
 }
 
-
-EAPI Eina_Bool egueb_dom_element_class_property_add(Egueb_Dom_Node *n,
-		Egueb_Dom_Node *p, Egueb_Dom_Attr_Fetch fetch, Eina_Error *err)
+EAPI Eina_Bool egueb_dom_element_attribute_add(Egueb_Dom_Node *n,
+		Egueb_Dom_Node *attr, Eina_Error *err)
 {
-	Egueb_Dom_Element_Class *klass;
-	Egueb_Dom_Attr *attr;
-	Egueb_Dom_Attr_Fetch old_fetch;
+	Egueb_Dom_Element *thiz;
+	Egueb_Dom_Attr *a;
+	Egueb_Dom_Node *old_attr;
 
-	if (!p) return EGUEB_DOM_ERROR_INVALID_ACCESS;
-
-	attr = EGUEB_DOM_ATTR(p);
-	if (!attr->name) return EGUEB_DOM_ERROR_NOT_SUPPORTED;
-	/* set the owner on the property */
-	if (attr->owner) return EGUEB_DOM_ERROR_NOT_SUPPORTED;
-	attr->owner = n;
-	/* add the property fetch in the class */
-	klass = EGUEB_DOM_ELEMENT_CLASS_GET(n);
-	old_fetch = eina_extra_ordered_hash_find(klass->properties,
-			egueb_dom_string_string_get(attr->name));
-	if (old_fetch)
+	if (!n || !attr)
 	{
-		WARN("Property '%s' already found",
-				egueb_dom_string_string_get(attr->name));
-		if (err) *err = EGUEB_DOM_ERROR_INUSE_ATTRIBUTE;
+		if (attr) egueb_dom_node_unref(attr);
+		if (err) *err = EGUEB_DOM_ERROR_INVALID_ACCESS;
 		return EINA_FALSE;
 	}
 
-	DBG("Adding property '%s'", egueb_dom_string_string_get(attr->name));
-	eina_extra_ordered_hash_add(klass->properties,
-			egueb_dom_string_string_get(attr->name), fetch);
+	a = EGUEB_DOM_ATTR(attr);
+	if (!a->name)
+	{
+		egueb_dom_node_unref(attr);
+		if (err) *err = EGUEB_DOM_ERROR_NOT_SUPPORTED;
+	}
+
+	if (a->owner)
+	{
+		egueb_dom_node_unref(attr);
+		if (err) *err = EGUEB_DOM_ERROR_NOT_SUPPORTED;
+	}
+
+	thiz = EGUEB_DOM_ELEMENT(n);
+	old_attr = eina_hash_find(thiz->attributes,
+			egueb_dom_string_string_get(a->name));
+	if (old_attr)
+	{
+		WARN("Attribute '%s' already found",
+				egueb_dom_string_string_get(a->name));
+		if (err) *err = EGUEB_DOM_ERROR_INUSE_ATTRIBUTE;
+		egueb_dom_node_unref(attr);
+		return EINA_FALSE;
+	}
+	DBG("Adding attribute '%s'", egueb_dom_string_string_get(a->name));
+	/* set the owner on the attribute */
+	a->owner = n;
+	eina_hash_add(thiz->attributes, egueb_dom_string_string_get(a->name),
+			attr);
 	return EINA_TRUE;
 }
 

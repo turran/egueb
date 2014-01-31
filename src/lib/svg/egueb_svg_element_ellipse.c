@@ -119,11 +119,6 @@ static Egueb_Dom_String * _egueb_svg_element_ellipse_tag_name_get(
 /*----------------------------------------------------------------------------*
  *                              Object interface                              *
  *----------------------------------------------------------------------------*/
-EGUEB_DOM_ATTR_FETCH_DEFINE(egueb_svg_element_ellipse, Egueb_Svg_Element_Ellipse, cx);
-EGUEB_DOM_ATTR_FETCH_DEFINE(egueb_svg_element_ellipse, Egueb_Svg_Element_Ellipse, cy);
-EGUEB_DOM_ATTR_FETCH_DEFINE(egueb_svg_element_ellipse, Egueb_Svg_Element_Ellipse, rx);
-EGUEB_DOM_ATTR_FETCH_DEFINE(egueb_svg_element_ellipse, Egueb_Svg_Element_Ellipse, ry);
-
 ENESIM_OBJECT_INSTANCE_BOILERPLATE(EGUEB_SVG_SHAPE_DESCRIPTOR,
 		Egueb_Svg_Element_Ellipse, Egueb_Svg_Element_Ellipse_Class,
 		egueb_svg_element_ellipse);
@@ -148,6 +143,7 @@ static void _egueb_svg_element_ellipse_class_init(void *k)
 static void _egueb_svg_element_ellipse_instance_init(void *o)
 {
 	Egueb_Svg_Element_Ellipse *thiz;
+	Egueb_Dom_Node *n;
 	Enesim_Renderer *r;
 
 	thiz = EGUEB_SVG_ELEMENT_ELLIPSE(o);
@@ -174,10 +170,11 @@ static void _egueb_svg_element_ellipse_instance_init(void *o)
 			&EGUEB_SVG_LENGTH_0, EINA_TRUE,
 			EINA_FALSE, EINA_FALSE);
 
-	EGUEB_DOM_ELEMENT_CLASS_PROPERTY_ADD(thiz, egueb_svg_element_ellipse, cx);
-	EGUEB_DOM_ELEMENT_CLASS_PROPERTY_ADD(thiz, egueb_svg_element_ellipse, cy);
-	EGUEB_DOM_ELEMENT_CLASS_PROPERTY_ADD(thiz, egueb_svg_element_ellipse, rx);
-	EGUEB_DOM_ELEMENT_CLASS_PROPERTY_ADD(thiz, egueb_svg_element_ellipse, ry);
+	n = EGUEB_DOM_NODE(o);
+	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->cx), NULL);
+	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->cy), NULL);
+	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->rx), NULL);
+	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->ry), NULL);
 }
 
 static void _egueb_svg_element_ellipse_instance_deinit(void *o)

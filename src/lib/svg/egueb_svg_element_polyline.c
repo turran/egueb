@@ -273,8 +273,6 @@ static Egueb_Dom_String * _egueb_svg_element_polyline_tag_name_get(
 /*----------------------------------------------------------------------------*
  *                              Object interface                              *
  *----------------------------------------------------------------------------*/
-EGUEB_DOM_ATTR_FETCH_DEFINE(egueb_svg_element_polyline, Egueb_Svg_Element_Polyline, points);
-
 ENESIM_OBJECT_INSTANCE_BOILERPLATE(EGUEB_SVG_SHAPE_DESCRIPTOR,
 		Egueb_Svg_Element_Polyline, Egueb_Svg_Element_Polyline_Class,
 		egueb_svg_element_polyline);
@@ -300,6 +298,7 @@ static void _egueb_svg_element_polyline_class_init(void *k)
 static void _egueb_svg_element_polyline_instance_init(void *o)
 {
 	Egueb_Svg_Element_Polyline *thiz;
+	Egueb_Dom_Node *n;
 	Enesim_Renderer *r;
 
 	thiz = EGUEB_SVG_ELEMENT_POLYLINE(o);
@@ -312,7 +311,9 @@ static void _egueb_svg_element_polyline_instance_init(void *o)
 	thiz->points = egueb_svg_attr_point_list_new(
 			egueb_dom_string_ref(EGUEB_SVG_POINTS),
 			NULL, EINA_TRUE, EINA_FALSE, EINA_FALSE);
-	EGUEB_DOM_ELEMENT_CLASS_PROPERTY_ADD(thiz, egueb_svg_element_polyline, points);
+
+	n = EGUEB_DOM_NODE(o);
+	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->points), NULL);
 }
 
 static void _egueb_svg_element_polyline_instance_deinit(void *o)

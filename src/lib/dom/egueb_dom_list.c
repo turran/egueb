@@ -51,12 +51,16 @@ EAPI Egueb_Dom_List * egueb_dom_list_new(const Egueb_Dom_Value_Descriptor *d)
 
 EAPI Egueb_Dom_List * egueb_dom_list_ref(Egueb_Dom_List *thiz)
 {
+	if (!thiz) return thiz;
+
 	thiz->ref++;
 	return thiz;
 }
 
 EAPI void egueb_dom_list_unref(Egueb_Dom_List *thiz)
 {
+	if (!thiz) return;
+
 	thiz->ref--;
 	if (!thiz->ref)
 		free(thiz);

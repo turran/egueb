@@ -680,31 +680,6 @@ static Eina_Bool _egueb_svg_element_process(Egueb_Dom_Element *e)
 /*----------------------------------------------------------------------------*
  *                              Object interface                              *
  *----------------------------------------------------------------------------*/
-EGUEB_DOM_ATTR_FETCH_DEFINE(egueb_svg_element, Egueb_Svg_Element, id);
-EGUEB_DOM_ATTR_FETCH_DEFINE(egueb_svg_element, Egueb_Svg_Element, klass);
-EGUEB_DOM_ATTR_FETCH_DEFINE(egueb_svg_element, Egueb_Svg_Element, style);
-EGUEB_DOM_ATTR_FETCH_DEFINE(egueb_svg_element, Egueb_Svg_Element, clip_path);
-EGUEB_DOM_ATTR_FETCH_DEFINE(egueb_svg_element, Egueb_Svg_Element, color);
-EGUEB_DOM_ATTR_FETCH_DEFINE(egueb_svg_element, Egueb_Svg_Element, display);
-EGUEB_DOM_ATTR_FETCH_DEFINE(egueb_svg_element, Egueb_Svg_Element, fill);
-EGUEB_DOM_ATTR_FETCH_DEFINE(egueb_svg_element, Egueb_Svg_Element, fill_opacity);
-EGUEB_DOM_ATTR_FETCH_DEFINE(egueb_svg_element, Egueb_Svg_Element, font);
-EGUEB_DOM_ATTR_FETCH_DEFINE(egueb_svg_element, Egueb_Svg_Element, font_family);
-EGUEB_DOM_ATTR_FETCH_DEFINE(egueb_svg_element, Egueb_Svg_Element, font_size);
-EGUEB_DOM_ATTR_FETCH_DEFINE(egueb_svg_element, Egueb_Svg_Element, font_style);
-EGUEB_DOM_ATTR_FETCH_DEFINE(egueb_svg_element, Egueb_Svg_Element, font_weight);
-EGUEB_DOM_ATTR_FETCH_DEFINE(egueb_svg_element, Egueb_Svg_Element, opacity);
-EGUEB_DOM_ATTR_FETCH_DEFINE(egueb_svg_element, Egueb_Svg_Element, overflow);
-EGUEB_DOM_ATTR_FETCH_DEFINE(egueb_svg_element, Egueb_Svg_Element, stop_color);
-EGUEB_DOM_ATTR_FETCH_DEFINE(egueb_svg_element, Egueb_Svg_Element, stop_opacity);
-EGUEB_DOM_ATTR_FETCH_DEFINE(egueb_svg_element, Egueb_Svg_Element, stroke);
-EGUEB_DOM_ATTR_FETCH_DEFINE(egueb_svg_element, Egueb_Svg_Element, stroke_dasharray);
-EGUEB_DOM_ATTR_FETCH_DEFINE(egueb_svg_element, Egueb_Svg_Element, stroke_line_join);
-EGUEB_DOM_ATTR_FETCH_DEFINE(egueb_svg_element, Egueb_Svg_Element, stroke_line_cap);
-EGUEB_DOM_ATTR_FETCH_DEFINE(egueb_svg_element, Egueb_Svg_Element, stroke_width);
-EGUEB_DOM_ATTR_FETCH_DEFINE(egueb_svg_element, Egueb_Svg_Element, stroke_opacity);
-EGUEB_DOM_ATTR_FETCH_DEFINE(egueb_svg_element, Egueb_Svg_Element, text_anchor);
-EGUEB_DOM_ATTR_FETCH_DEFINE(egueb_svg_element, Egueb_Svg_Element, visibility);
 
 ENESIM_OBJECT_ABSTRACT_BOILERPLATE(EGUEB_DOM_ELEMENT_DESCRIPTOR,
 		Egueb_Svg_Element, Egueb_Svg_Element_Class, egueb_svg_element);
@@ -720,6 +695,7 @@ static void _egueb_svg_element_class_init(void *k)
 static void _egueb_svg_element_instance_init(void *o)
 {
 	Egueb_Svg_Element *thiz;
+	Egueb_Dom_Node *n;
 
 	thiz = EGUEB_SVG_ELEMENT(o);
 	/* create the properties */
@@ -809,28 +785,30 @@ static void _egueb_svg_element_instance_init(void *o)
 			EGUEB_SVG_VISIBILITY_VISIBLE, EINA_TRUE, EINA_TRUE,
 			EINA_TRUE);
 
-	EGUEB_DOM_ELEMENT_CLASS_PROPERTY_ADD(thiz, egueb_svg_element, id);
-	EGUEB_DOM_ELEMENT_CLASS_PROPERTY_ADD(thiz, egueb_svg_element, klass);
-	EGUEB_DOM_ELEMENT_CLASS_PROPERTY_ADD(thiz, egueb_svg_element, style);
-	EGUEB_DOM_ELEMENT_CLASS_PROPERTY_ADD(thiz, egueb_svg_element, clip_path);
-	EGUEB_DOM_ELEMENT_CLASS_PROPERTY_ADD(thiz, egueb_svg_element, color);
-	EGUEB_DOM_ELEMENT_CLASS_PROPERTY_ADD(thiz, egueb_svg_element, display);
-	EGUEB_DOM_ELEMENT_CLASS_PROPERTY_ADD(thiz, egueb_svg_element, fill);
-	EGUEB_DOM_ELEMENT_CLASS_PROPERTY_ADD(thiz, egueb_svg_element, fill_opacity);
-	EGUEB_DOM_ELEMENT_CLASS_PROPERTY_ADD(thiz, egueb_svg_element, font_family);
-	EGUEB_DOM_ELEMENT_CLASS_PROPERTY_ADD(thiz, egueb_svg_element, font_size);
-	EGUEB_DOM_ELEMENT_CLASS_PROPERTY_ADD(thiz, egueb_svg_element, opacity);
-	EGUEB_DOM_ELEMENT_CLASS_PROPERTY_ADD(thiz, egueb_svg_element, overflow);
-	EGUEB_DOM_ELEMENT_CLASS_PROPERTY_ADD(thiz, egueb_svg_element, stop_opacity);
-	EGUEB_DOM_ELEMENT_CLASS_PROPERTY_ADD(thiz, egueb_svg_element, stop_color);
-	EGUEB_DOM_ELEMENT_CLASS_PROPERTY_ADD(thiz, egueb_svg_element, stroke);
-	EGUEB_DOM_ELEMENT_CLASS_PROPERTY_ADD(thiz, egueb_svg_element, stroke_dasharray);
-	EGUEB_DOM_ELEMENT_CLASS_PROPERTY_ADD(thiz, egueb_svg_element, stroke_line_join);
-	EGUEB_DOM_ELEMENT_CLASS_PROPERTY_ADD(thiz, egueb_svg_element, stroke_line_cap);
-	EGUEB_DOM_ELEMENT_CLASS_PROPERTY_ADD(thiz, egueb_svg_element, stroke_opacity);
-	EGUEB_DOM_ELEMENT_CLASS_PROPERTY_ADD(thiz, egueb_svg_element, stroke_width);
-	EGUEB_DOM_ELEMENT_CLASS_PROPERTY_ADD(thiz, egueb_svg_element, text_anchor);
-	EGUEB_DOM_ELEMENT_CLASS_PROPERTY_ADD(thiz, egueb_svg_element, visibility);
+	n = EGUEB_DOM_NODE(o);
+
+	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->id), NULL);
+	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->klass), NULL);
+	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->style), NULL);
+	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->clip_path), NULL);
+	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->color), NULL);
+	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->display), NULL);
+	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->fill), NULL);
+	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->fill_opacity), NULL);
+	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->font_family), NULL);
+	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->font_size), NULL);
+	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->opacity), NULL);
+	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->overflow), NULL);
+	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->stop_opacity), NULL);
+	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->stop_color), NULL);
+	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->stroke), NULL);
+	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->stroke_dasharray), NULL);
+	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->stroke_line_join), NULL);
+	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->stroke_line_cap), NULL);
+	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->stroke_opacity), NULL);
+	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->stroke_width), NULL);
+	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->text_anchor), NULL);
+	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->visibility), NULL);
 	/* our private stuff */
 	enesim_matrix_identity(&thiz->transform);
 }

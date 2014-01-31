@@ -159,11 +159,6 @@ static Egueb_Dom_String * _egueb_svg_element_line_tag_name_get(
 /*----------------------------------------------------------------------------*
  *                              Object interface                              *
  *----------------------------------------------------------------------------*/
-EGUEB_DOM_ATTR_FETCH_DEFINE(egueb_svg_element_line, Egueb_Svg_Element_Line, x1);
-EGUEB_DOM_ATTR_FETCH_DEFINE(egueb_svg_element_line, Egueb_Svg_Element_Line, y1);
-EGUEB_DOM_ATTR_FETCH_DEFINE(egueb_svg_element_line, Egueb_Svg_Element_Line, x2);
-EGUEB_DOM_ATTR_FETCH_DEFINE(egueb_svg_element_line, Egueb_Svg_Element_Line, y2);
-
 ENESIM_OBJECT_INSTANCE_BOILERPLATE(EGUEB_SVG_SHAPE_DESCRIPTOR,
 		Egueb_Svg_Element_Line, Egueb_Svg_Element_Line_Class,
 		egueb_svg_element_line);
@@ -189,6 +184,7 @@ static void _egueb_svg_element_line_class_init(void *k)
 static void _egueb_svg_element_line_instance_init(void *o)
 {
 	Egueb_Svg_Element_Line *thiz;
+	Egueb_Dom_Node *n;
 	Enesim_Renderer *r;
 
 	thiz = EGUEB_SVG_ELEMENT_LINE(o);
@@ -215,10 +211,11 @@ static void _egueb_svg_element_line_instance_init(void *o)
 			&EGUEB_SVG_LENGTH_0, EINA_TRUE,
 			EINA_FALSE, EINA_FALSE);
 
-	EGUEB_DOM_ELEMENT_CLASS_PROPERTY_ADD(thiz, egueb_svg_element_line, x1);
-	EGUEB_DOM_ELEMENT_CLASS_PROPERTY_ADD(thiz, egueb_svg_element_line, y1);
-	EGUEB_DOM_ELEMENT_CLASS_PROPERTY_ADD(thiz, egueb_svg_element_line, x2);
-	EGUEB_DOM_ELEMENT_CLASS_PROPERTY_ADD(thiz, egueb_svg_element_line, y2);
+	n = EGUEB_DOM_NODE(o);
+	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->x1), NULL);
+	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->y1), NULL);
+	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->x2), NULL);
+	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->y2), NULL);
 }
 
 static void _egueb_svg_element_line_instance_deinit(void *o)

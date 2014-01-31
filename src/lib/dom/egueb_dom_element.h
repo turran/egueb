@@ -80,6 +80,9 @@ EAPI Enesim_Object_Descriptor * egueb_dom_element_descriptor_get(void);
 
 EAPI Egueb_Dom_String * egueb_dom_element_name_get(Egueb_Dom_Node *node);
 EAPI Egueb_Dom_String * egueb_dom_element_tag_name_get(Egueb_Dom_Node *node);
+
+EAPI Eina_Bool egueb_dom_element_attribute_add(Egueb_Dom_Node *n,
+		Egueb_Dom_Node *attr, Eina_Error *err);
 EAPI Egueb_Dom_String * egueb_dom_element_attribute_get(Egueb_Dom_Node *node,
 		const Egueb_Dom_String *name);
 EAPI Eina_Bool egueb_dom_element_attribute_set(Egueb_Dom_Node *node,
@@ -89,8 +92,7 @@ EAPI Eina_Bool egueb_dom_element_attribute_type_set(Egueb_Dom_Node *node,
 		const Egueb_Dom_String *name, Egueb_Dom_Attr_Type type,
 		Egueb_Dom_String *value, Eina_Error *err);
 
-EAPI Egueb_Dom_Node * egueb_dom_element_property_fetch(Egueb_Dom_Node *node,
-		const Egueb_Dom_String *name);
+/* TODO rename every element_property_foo function */
 EAPI Eina_Bool egueb_dom_element_property_set(Egueb_Dom_Node *node,
 		Egueb_Dom_String *name, int prop_mask, ...);
 EAPI Eina_Bool egueb_dom_element_property_get(Egueb_Dom_Node *node,
@@ -108,17 +110,13 @@ EAPI Eina_Bool egueb_dom_element_property_value_get(Egueb_Dom_Node *node,
 		Egueb_Dom_String *name, Egueb_Dom_Attr_Type type,
 		Egueb_Dom_Value *v, Eina_Error *err);
 
-EAPI Eina_Bool egueb_dom_element_class_property_add(Egueb_Dom_Node *n,
-		Egueb_Dom_Node *p, Egueb_Dom_Attr_Fetch fetch, Eina_Error *err);
+EAPI Egueb_Dom_Node * egueb_dom_element_property_fetch(Egueb_Dom_Node *node,
+		const Egueb_Dom_String *name);
+
 EAPI Eina_Bool egueb_dom_element_changed(Egueb_Dom_Node *n);
 EAPI void egueb_dom_element_request_process(Egueb_Dom_Node *n);
 EAPI Eina_Bool egueb_dom_element_is_enqueued(Egueb_Dom_Node *n);
 EAPI Eina_Bool egueb_dom_element_process(Egueb_Dom_Node *n);
-
-#define EGUEB_DOM_ELEMENT_CLASS_PROPERTY_ADD(thiz, prefix, name)		\
-	egueb_dom_element_class_property_add(EGUEB_DOM_NODE(thiz),		\
-			 egueb_dom_node_ref(thiz->name),			\
-			 _##prefix##_##name##_fetch, NULL)
 
 /**
  * @}

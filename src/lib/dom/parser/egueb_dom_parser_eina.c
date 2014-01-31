@@ -26,6 +26,7 @@
 #include "egueb_dom_document.h"
 #include "egueb_dom_character_data.h"
 #include "egueb_dom_text.h"
+#include "egueb_dom_element.h"
 
 #include "egueb_dom_parser_private.h"
 #include <ctype.h> /* for isspace() */
@@ -79,7 +80,7 @@ static Eina_Bool _egueb_dom_parser_eina_tag_attributes_set_cb(void *data, const 
 	name = egueb_dom_string_new_with_static_string(key);
 	v = egueb_dom_string_new_with_static_string(value);
 	DBG("Parsed attribute '%s' with value '%s'", key, value);
-	egueb_dom_element_attribute_set(node, name, v);
+	egueb_dom_element_attribute_set(node, name, v, NULL);
 	egueb_dom_string_unref(name);
 	egueb_dom_string_unref(v);
 

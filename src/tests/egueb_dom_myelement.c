@@ -25,8 +25,6 @@ typedef struct _MyElement_Class
 	Egueb_Dom_Element_Class parent;
 } MyElement_Class;
 
-EGUEB_DOM_ATTR_FETCH_DEFINE(myelement, MyElement, prop1);
-
 static Eina_Bool _myelement_process(Egueb_Dom_Element *e)
 {
 	printf("processing %p\n", e);
@@ -70,7 +68,7 @@ static void _myelement_instance_init(void *o)
 			egueb_dom_string_new_with_string("prop1"),
 			egueb_dom_string_new_with_string("default"));
 	/* add the class attributes (properties) */
-	EGUEB_DOM_ELEMENT_CLASS_PROPERTY_ADD(thiz, myelement, prop1);
+	egueb_dom_element_attribute_add(EGUEB_DOM_NODE(o), egueb_dom_node_ref(thiz->prop1), NULL);
 }
 
 static void _myelement_instance_deinit(void *o)

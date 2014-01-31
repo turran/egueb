@@ -112,11 +112,6 @@ static Egueb_Dom_String * _egueb_svg_element_linear_gradient_tag_name_get(
 /*----------------------------------------------------------------------------*
  *                              Object interface                              *
  *----------------------------------------------------------------------------*/
-EGUEB_DOM_ATTR_FETCH_DEFINE(egueb_svg_element_linear_gradient, Egueb_Svg_Element_Linear_Gradient, x1);
-EGUEB_DOM_ATTR_FETCH_DEFINE(egueb_svg_element_linear_gradient, Egueb_Svg_Element_Linear_Gradient, y1);
-EGUEB_DOM_ATTR_FETCH_DEFINE(egueb_svg_element_linear_gradient, Egueb_Svg_Element_Linear_Gradient, x2);
-EGUEB_DOM_ATTR_FETCH_DEFINE(egueb_svg_element_linear_gradient, Egueb_Svg_Element_Linear_Gradient, y2);
-
 ENESIM_OBJECT_INSTANCE_BOILERPLATE(EGUEB_SVG_GRADIENT_DESCRIPTOR,
 		Egueb_Svg_Element_Linear_Gradient, Egueb_Svg_Element_Linear_Gradient_Class,
 		egueb_svg_element_linear_gradient);
@@ -136,6 +131,7 @@ static void _egueb_svg_element_linear_gradient_class_init(void *k)
 static void _egueb_svg_element_linear_gradient_instance_init(void *o)
 {
 	Egueb_Svg_Element_Linear_Gradient *thiz;
+	Egueb_Dom_Node *n;
 
 	thiz = EGUEB_SVG_ELEMENT_LINEAR_GRADIENT(o);
 	/* create the properties */
@@ -156,10 +152,11 @@ static void _egueb_svg_element_linear_gradient_instance_init(void *o)
 			&EGUEB_SVG_LENGTH_0, EINA_TRUE,
 			EINA_FALSE, EINA_FALSE);
 
-	EGUEB_DOM_ELEMENT_CLASS_PROPERTY_ADD(thiz, egueb_svg_element_linear_gradient, x1);
-	EGUEB_DOM_ELEMENT_CLASS_PROPERTY_ADD(thiz, egueb_svg_element_linear_gradient, y1);
-	EGUEB_DOM_ELEMENT_CLASS_PROPERTY_ADD(thiz, egueb_svg_element_linear_gradient, x2);
-	EGUEB_DOM_ELEMENT_CLASS_PROPERTY_ADD(thiz, egueb_svg_element_linear_gradient, y2);
+	n = EGUEB_DOM_NODE(o);
+	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->x1), NULL);
+	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->y1), NULL);
+	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->x2), NULL);
+	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->y2), NULL);
 }
 
 static void _egueb_svg_element_linear_gradient_instance_deinit(void *o)

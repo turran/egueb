@@ -297,12 +297,6 @@ static Egueb_Dom_String * _egueb_svg_element_radial_gradient_tag_name_get(
 /*----------------------------------------------------------------------------*
  *                              Object interface                              *
  *----------------------------------------------------------------------------*/
-EGUEB_DOM_ATTR_FETCH_DEFINE(egueb_svg_element_radial_gradient, Egueb_Svg_Element_Radial_Gradient, cx);
-EGUEB_DOM_ATTR_FETCH_DEFINE(egueb_svg_element_radial_gradient, Egueb_Svg_Element_Radial_Gradient, cy);
-EGUEB_DOM_ATTR_FETCH_DEFINE(egueb_svg_element_radial_gradient, Egueb_Svg_Element_Radial_Gradient, fx);
-EGUEB_DOM_ATTR_FETCH_DEFINE(egueb_svg_element_radial_gradient, Egueb_Svg_Element_Radial_Gradient, fy);
-EGUEB_DOM_ATTR_FETCH_DEFINE(egueb_svg_element_radial_gradient, Egueb_Svg_Element_Radial_Gradient, r);
-
 ENESIM_OBJECT_INSTANCE_BOILERPLATE(EGUEB_SVG_GRADIENT_DESCRIPTOR,
 		Egueb_Svg_Element_Radial_Gradient, Egueb_Svg_Element_Radial_Gradient_Class,
 		egueb_svg_element_radial_gradient);
@@ -322,6 +316,7 @@ static void _egueb_svg_element_radial_gradient_class_init(void *k)
 static void _egueb_svg_element_radial_gradient_instance_init(void *o)
 {
 	Egueb_Svg_Element_Radial_Gradient *thiz;
+	Egueb_Dom_Node *n;
 
 	thiz = EGUEB_SVG_ELEMENT_RADIAL_GRADIENT(o);
 	/* create the properties */
@@ -346,11 +341,12 @@ static void _egueb_svg_element_radial_gradient_instance_init(void *o)
 			&EGUEB_SVG_LENGTH_0,
 			EINA_TRUE, EINA_FALSE, EINA_FALSE);
 
-	EGUEB_DOM_ELEMENT_CLASS_PROPERTY_ADD(thiz, egueb_svg_element_radial_gradient, cx);
-	EGUEB_DOM_ELEMENT_CLASS_PROPERTY_ADD(thiz, egueb_svg_element_radial_gradient, cy);
-	EGUEB_DOM_ELEMENT_CLASS_PROPERTY_ADD(thiz, egueb_svg_element_radial_gradient, fx);
-	EGUEB_DOM_ELEMENT_CLASS_PROPERTY_ADD(thiz, egueb_svg_element_radial_gradient, fy);
-	EGUEB_DOM_ELEMENT_CLASS_PROPERTY_ADD(thiz, egueb_svg_element_radial_gradient, r);
+	n = EGUEB_DOM_NODE(o);
+	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->cx), NULL);
+	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->cy), NULL);
+	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->fx), NULL);
+	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->fy), NULL);
+	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->r), NULL);
 }
 
 static void _egueb_svg_element_radial_gradient_instance_deinit(void *o)

@@ -240,9 +240,6 @@ static Egueb_Dom_String * _egueb_svg_element_tspan_tag_name_get(
 /*----------------------------------------------------------------------------*
  *                              Object interface                              *
  *----------------------------------------------------------------------------*/
-EGUEB_DOM_ATTR_FETCH_DEFINE(egueb_svg_element_tspan, Egueb_Svg_Element_Tspan, x);
-EGUEB_DOM_ATTR_FETCH_DEFINE(egueb_svg_element_tspan, Egueb_Svg_Element_Tspan, y);
-
 ENESIM_OBJECT_INSTANCE_BOILERPLATE(EGUEB_SVG_SHAPE_DESCRIPTOR,
 		Egueb_Svg_Element_Tspan, Egueb_Svg_Element_Tspan_Class,
 		egueb_svg_element_tspan);
@@ -268,6 +265,7 @@ static void _egueb_svg_element_tspan_class_init(void *k)
 static void _egueb_svg_element_tspan_instance_init(void *o)
 {
 	Egueb_Svg_Element_Tspan *thiz;
+	Egueb_Dom_Node *n;
 	Enesim_Text_Engine *e;
 	Enesim_Renderer *r;
 
@@ -293,15 +291,16 @@ static void _egueb_svg_element_tspan_instance_init(void *o)
 			&EGUEB_SVG_LENGTH_0, EINA_TRUE,
 			EINA_FALSE, EINA_FALSE);
 
-	EGUEB_DOM_ELEMENT_CLASS_PROPERTY_ADD(thiz, egueb_svg_element_tspan, x);
-	EGUEB_DOM_ELEMENT_CLASS_PROPERTY_ADD(thiz, egueb_svg_element_tspan, y);
+	n = EGUEB_DOM_NODE(o);
+	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->x), NULL);
+	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->y), NULL);
 
 	/* add the events */
-	egueb_dom_node_event_listener_add(EGUEB_DOM_NODE(o),
+	egueb_dom_node_event_listener_add(n,
 			EGUEB_DOM_EVENT_MUTATION_NODE_INSERTED,
 			_egueb_svg_element_tspan_node_inserted_cb,
 			EINA_TRUE, thiz);
-	egueb_dom_node_event_listener_add(EGUEB_DOM_NODE(o),
+	egueb_dom_node_event_listener_add(n,
 			EGUEB_DOM_EVENT_MUTATION_NODE_REMOVED,
 			_egueb_svg_element_tspan_node_removed_cb,
 			EINA_TRUE, thiz);

@@ -376,12 +376,6 @@ static Egueb_Dom_String * _egueb_svg_element_image_tag_name_get(
 /*----------------------------------------------------------------------------*
  *                              Object interface                              *
  *----------------------------------------------------------------------------*/
-EGUEB_DOM_ATTR_FETCH_DEFINE(egueb_svg_element_image, Egueb_Svg_Element_Image, x);
-EGUEB_DOM_ATTR_FETCH_DEFINE(egueb_svg_element_image, Egueb_Svg_Element_Image, y);
-EGUEB_DOM_ATTR_FETCH_DEFINE(egueb_svg_element_image, Egueb_Svg_Element_Image, width);
-EGUEB_DOM_ATTR_FETCH_DEFINE(egueb_svg_element_image, Egueb_Svg_Element_Image, height);
-EGUEB_DOM_ATTR_FETCH_DEFINE(egueb_svg_element_image, Egueb_Svg_Element_Image, xlink_href);
-
 ENESIM_OBJECT_INSTANCE_BOILERPLATE(EGUEB_SVG_RENDERABLE_DESCRIPTOR,
 		Egueb_Svg_Element_Image, Egueb_Svg_Element_Image_Class,
 		egueb_svg_element_image);
@@ -403,6 +397,7 @@ static void _egueb_svg_element_image_class_init(void *k)
 static void _egueb_svg_element_image_instance_init(void *o)
 {
 	Egueb_Svg_Element_Image *thiz;
+	Egueb_Dom_Node *n;
 	Enesim_Renderer *r;
 
 	thiz = EGUEB_SVG_ELEMENT_IMAGE(o);
@@ -447,11 +442,12 @@ static void _egueb_svg_element_image_instance_init(void *o)
 			egueb_dom_string_ref(EGUEB_DOM_XLINK_HREF),
 			NULL);
 
-	EGUEB_DOM_ELEMENT_CLASS_PROPERTY_ADD(thiz, egueb_svg_element_image, x);
-	EGUEB_DOM_ELEMENT_CLASS_PROPERTY_ADD(thiz, egueb_svg_element_image, y);
-	EGUEB_DOM_ELEMENT_CLASS_PROPERTY_ADD(thiz, egueb_svg_element_image, width);
-	EGUEB_DOM_ELEMENT_CLASS_PROPERTY_ADD(thiz, egueb_svg_element_image, height);
-	EGUEB_DOM_ELEMENT_CLASS_PROPERTY_ADD(thiz, egueb_svg_element_image, xlink_href);
+	n = EGUEB_DOM_NODE(o);
+	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->x), NULL);
+	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->y), NULL);
+	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->width), NULL);
+	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->height), NULL);
+	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->xlink_href), NULL);
 }
 
 static void _egueb_svg_element_image_instance_deinit(void *o)

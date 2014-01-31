@@ -88,8 +88,6 @@ static Egueb_Dom_String * _egueb_svg_element_stop_tag_name_get(
 /*----------------------------------------------------------------------------*
  *                              Object interface                              *
  *----------------------------------------------------------------------------*/
-EGUEB_DOM_ATTR_FETCH_DEFINE(egueb_svg_element_stop, Egueb_Svg_Element_Stop, offset);
-
 ENESIM_OBJECT_INSTANCE_BOILERPLATE(EGUEB_SVG_ELEMENT_DESCRIPTOR,
 		Egueb_Svg_Element_Stop, Egueb_Svg_Element_Stop_Class,
 		egueb_svg_element_stop);
@@ -109,6 +107,7 @@ static void _egueb_svg_element_stop_class_init(void *k)
 static void _egueb_svg_element_stop_instance_init(void *o)
 {
 	Egueb_Svg_Element_Stop *thiz;
+	Egueb_Dom_Node *n;
 	Enesim_Renderer *r;
 
 	thiz = EGUEB_SVG_ELEMENT_STOP(o);
@@ -117,7 +116,9 @@ static void _egueb_svg_element_stop_instance_init(void *o)
 			egueb_dom_string_ref(EGUEB_SVG_OFFSET),
 			&EGUEB_SVG_LENGTH_0, EINA_TRUE,
 			EINA_FALSE, EINA_FALSE);
-	EGUEB_DOM_ELEMENT_CLASS_PROPERTY_ADD(thiz, egueb_svg_element_stop, offset);
+
+	n = EGUEB_DOM_NODE(o);
+	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->offset), NULL);
 }
 
 static void _egueb_svg_element_stop_instance_deinit(void *o)

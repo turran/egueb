@@ -365,12 +365,6 @@ static Egueb_Dom_String * _egueb_svg_element_svg_tag_name_get(
 /*----------------------------------------------------------------------------*
  *                              Object interface                              *
  *----------------------------------------------------------------------------*/
-EGUEB_DOM_ATTR_FETCH_DEFINE(egueb_svg_element_svg, Egueb_Svg_Element_Svg, x);
-EGUEB_DOM_ATTR_FETCH_DEFINE(egueb_svg_element_svg, Egueb_Svg_Element_Svg, y);
-EGUEB_DOM_ATTR_FETCH_DEFINE(egueb_svg_element_svg, Egueb_Svg_Element_Svg, width);
-EGUEB_DOM_ATTR_FETCH_DEFINE(egueb_svg_element_svg, Egueb_Svg_Element_Svg, height);
-EGUEB_DOM_ATTR_FETCH_DEFINE(egueb_svg_element_svg, Egueb_Svg_Element_Svg, viewbox);
-
 ENESIM_OBJECT_INSTANCE_BOILERPLATE(EGUEB_SVG_RENDERABLE_CONTAINER_DESCRIPTOR,
 		Egueb_Svg_Element_Svg, Egueb_Svg_Element_Svg_Class,
 		egueb_svg_element_svg);
@@ -393,6 +387,7 @@ static void _egueb_svg_element_svg_class_init(void *k)
 static void _egueb_svg_element_svg_instance_init(void *o)
 {
 	Egueb_Svg_Element_Svg *thiz;
+	Egueb_Dom_Node *n;
 	Enesim_Renderer *r;
 	Enesim_Renderer *compound;
 
@@ -423,18 +418,19 @@ static void _egueb_svg_element_svg_instance_init(void *o)
 	thiz->current_translate.x = 0;
 	thiz->current_translate.y = 0;
 
-	EGUEB_DOM_ELEMENT_CLASS_PROPERTY_ADD(thiz, egueb_svg_element_svg, x);
-	EGUEB_DOM_ELEMENT_CLASS_PROPERTY_ADD(thiz, egueb_svg_element_svg, y);
-	EGUEB_DOM_ELEMENT_CLASS_PROPERTY_ADD(thiz, egueb_svg_element_svg, width);
-	EGUEB_DOM_ELEMENT_CLASS_PROPERTY_ADD(thiz, egueb_svg_element_svg, height);
-	EGUEB_DOM_ELEMENT_CLASS_PROPERTY_ADD(thiz, egueb_svg_element_svg, viewbox);
+	n = EGUEB_DOM_NODE(o);
+	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->x), NULL);
+	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->y), NULL);
+	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->width), NULL);
+	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->height), NULL);
+	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->viewbox), NULL);
 
 	/* add the event to set the painter */
-	egueb_dom_node_event_listener_add(EGUEB_DOM_NODE(o),
+	egueb_dom_node_event_listener_add(n,
 			EGUEB_DOM_EVENT_MUTATION_NODE_INSERTED,
 			_egueb_svg_element_svg_node_inserted_cb,
 			EINA_FALSE, NULL);
-	egueb_dom_node_event_listener_add(EGUEB_DOM_NODE(o),
+	egueb_dom_node_event_listener_add(n,
 			EGUEB_DOM_EVENT_MUTATION_NODE_INSERTED,
 			_egueb_svg_element_svg_animation_node_inserted_cb,
 			EINA_FALSE, thiz);

@@ -45,6 +45,66 @@ typedef struct _Egueb_Dom_Node_Map_Named_Attr_Class
 {
 	Egueb_Dom_Node_Map_Named_Class base;
 } Egueb_Dom_Node_Map_Named_Attr_Class;
+
+typedef struct _Egueb_Dom_Node_Map_Named_Attr_Nth_Data
+{
+	int i;
+	int nth;
+	Egueb_Dom_Node *ret;
+} Egueb_Dom_Node_Map_Named_Attr_Nth_Data;
+
+typedef struct _Egueb_Dom_Node_Map_Named_Attr_Count_Data
+{
+	int total;
+} Egueb_Dom_Node_Map_Named_Attr_Count_Data;
+
+static Eina_Bool _eina_hash_nth_get_cb(const Eina_Hash *hash,
+		const void *key, void *data, void *fdata)
+{
+	Egueb_Dom_Node_Map_Named_Attr_Nth_Data *nth_data = fdata;
+
+	if (nth_data->i == nth_data->nth)
+	{
+		nth_data->ret = data;
+		return EINA_FALSE;
+	}
+	else
+	{
+		nth_data->i++;
+		return EINA_TRUE;
+	}
+}
+
+static Eina_Bool _eina_hash_count_cb(const Eina_Hash *hash,
+		const void *key, void *data, void *fdata)
+{
+
+	Egueb_Dom_Node_Map_Named_Attr_Count_Data *count_data = fdata;
+	count_data->total++;
+	return EINA_TRUE;
+}
+
+static Egueb_Dom_Node * _eina_hash_nth_get(Eina_Hash *hash, int nth)
+{
+	Egueb_Dom_Node_Map_Named_Attr_Nth_Data data;
+
+	data.i = 0;
+	data.nth = nth;
+	data.ret = NULL;
+
+	eina_hash_foreach(hash, _eina_hash_nth_get_cb, &data);
+	return egueb_dom_node_ref(data.ret);
+}
+
+static int _eina_hash_count(Eina_Hash *hash)
+{
+	Egueb_Dom_Node_Map_Named_Attr_Count_Data data;
+
+	data.total = 0;
+	eina_hash_foreach(hash, _eina_hash_count_cb, &data);
+	return data.total;
+}
+
 /*----------------------------------------------------------------------------*
  *                           Map named node interface                         *
  *----------------------------------------------------------------------------*/
@@ -84,46 +144,23 @@ static Egueb_Dom_Node * _egueb_dom_node_map_named_attr_at(Egueb_Dom_Node_Map_Nam
 		int idx)
 {
 	Egueb_Dom_Node_Map_Named_Attr *thiz;
-	Egueb_Dom_Element_Class *klass;
-	Egueb_Dom_Node *attr = NULL;
-	int count;
+	Egueb_Dom_Element *e;
 
 	thiz = EGUEB_DOM_NODE_MAP_NAMED_ATTR(n);
-	klass = EGUEB_DOM_ELEMENT_CLASS_GET(thiz->own);
-	count = eina_extra_ordered_hash_count (klass->properties);
-	if (idx > count)
-	{
-		Egueb_Dom_Element *e;
+	e = EGUEB_DOM_ELEMENT(thiz->own);
 
-		e = EGUEB_DOM_ELEMENT(thiz->own);
-		idx -= count;
-		attr = eina_extra_ordered_hash_nth_get(e->attributes, idx);
-	}
-	else
-	{
-		Egueb_Dom_Attr_Fetch fetch;
-		fetch = eina_extra_ordered_hash_nth_get(klass->properties, idx);
-		if (!fetch) return NULL;
-		fetch(thiz->own, &attr);
-	}
-	return egueb_dom_node_ref(attr);
+	return _eina_hash_nth_get(e->attributes, idx);
 }
 
 static int _egueb_dom_node_map_named_attr_length(Egueb_Dom_Node_Map_Named *n)
 {
 	Egueb_Dom_Node_Map_Named_Attr *thiz;
 	Egueb_Dom_Element *e;
-	Egueb_Dom_Element_Class *klass;
-	int ret = 0;
 
 	thiz = EGUEB_DOM_NODE_MAP_NAMED_ATTR(n);
-	/* get the number of properties from the class and from the element */
-	klass = EGUEB_DOM_ELEMENT_CLASS_GET(thiz->own);
-	ret += eina_extra_ordered_hash_count (klass->properties);
 	e = EGUEB_DOM_ELEMENT(thiz->own);
-	ret += eina_extra_ordered_hash_count (e->attributes);
 
-	return ret;
+	return _eina_hash_count(e->attributes);
 }
 /*----------------------------------------------------------------------------*
  *                              Object interface                              *

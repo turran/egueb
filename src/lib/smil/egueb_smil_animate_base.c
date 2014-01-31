@@ -1011,15 +1011,6 @@ static void _egueb_smil_animate_base_end(Egueb_Smil_Animation *a)
 /*----------------------------------------------------------------------------*
  *                              Object interface                              *
  *----------------------------------------------------------------------------*/
-EGUEB_DOM_ATTR_FETCH_DEFINE(egueb_smil_animate_base, Egueb_Smil_Animate_Base, additive);
-EGUEB_DOM_ATTR_FETCH_DEFINE(egueb_smil_animate_base, Egueb_Smil_Animate_Base, calc_mode);
-EGUEB_DOM_ATTR_FETCH_DEFINE(egueb_smil_animate_base, Egueb_Smil_Animate_Base, by);
-EGUEB_DOM_ATTR_FETCH_DEFINE(egueb_smil_animate_base, Egueb_Smil_Animate_Base, to);
-EGUEB_DOM_ATTR_FETCH_DEFINE(egueb_smil_animate_base, Egueb_Smil_Animate_Base, from);
-EGUEB_DOM_ATTR_FETCH_DEFINE(egueb_smil_animate_base, Egueb_Smil_Animate_Base, values);
-EGUEB_DOM_ATTR_FETCH_DEFINE(egueb_smil_animate_base, Egueb_Smil_Animate_Base, key_times);
-EGUEB_DOM_ATTR_FETCH_DEFINE(egueb_smil_animate_base, Egueb_Smil_Animate_Base, key_splines);
-
 ENESIM_OBJECT_ABSTRACT_BOILERPLATE(EGUEB_SMIL_ANIMATION_DESCRIPTOR,
 		Egueb_Smil_Animate_Base, Egueb_Smil_Animate_Base_Class, egueb_smil_animate_base);
 
@@ -1037,6 +1028,7 @@ static void _egueb_smil_animate_base_class_init(void *k)
 static void _egueb_smil_animate_base_instance_init(void *o)
 {
 	Egueb_Smil_Animate_Base *thiz;
+	Egueb_Dom_Node *n;
 
 	thiz = EGUEB_SMIL_ANIMATE_BASE(o);
 	/* create the properties */
@@ -1051,10 +1043,12 @@ static void _egueb_smil_animate_base_instance_init(void *o)
 	thiz->values = egueb_dom_attr_string_list_new(
 			egueb_dom_string_ref(EGUEB_SMIL_VALUES), NULL,
 			EINA_FALSE, EINA_FALSE, EINA_FALSE);
-	EGUEB_DOM_ELEMENT_CLASS_PROPERTY_ADD(thiz, egueb_smil_animate_base, by);
-	EGUEB_DOM_ELEMENT_CLASS_PROPERTY_ADD(thiz, egueb_smil_animate_base, to);
-	EGUEB_DOM_ELEMENT_CLASS_PROPERTY_ADD(thiz, egueb_smil_animate_base, from);
-	EGUEB_DOM_ELEMENT_CLASS_PROPERTY_ADD(thiz, egueb_smil_animate_base, values);
+
+	n = EGUEB_DOM_NODE(o);
+	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->by), NULL);
+	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->to), NULL);
+	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->from), NULL);
+	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->values), NULL);
 }
 
 static void _egueb_smil_animate_base_instance_deinit(void *o)

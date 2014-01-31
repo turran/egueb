@@ -389,8 +389,6 @@ static Egueb_Dom_String * _egueb_svg_element_path_tag_name_get(
 /*----------------------------------------------------------------------------*
  *                              Object interface                              *
  *----------------------------------------------------------------------------*/
-EGUEB_DOM_ATTR_FETCH_DEFINE(egueb_svg_element_path, Egueb_Svg_Element_Path, d);
-
 ENESIM_OBJECT_INSTANCE_BOILERPLATE(EGUEB_SVG_SHAPE_DESCRIPTOR,
 		Egueb_Svg_Element_Path, Egueb_Svg_Element_Path_Class,
 		egueb_svg_element_path);
@@ -415,6 +413,7 @@ static void _egueb_svg_element_path_class_init(void *k)
 static void _egueb_svg_element_path_instance_init(void *o)
 {
 	Egueb_Svg_Element_Path *thiz;
+	Egueb_Dom_Node *n;
 	Enesim_Renderer *r;
 
 	thiz = EGUEB_SVG_ELEMENT_PATH(o);
@@ -429,7 +428,8 @@ static void _egueb_svg_element_path_instance_init(void *o)
 	thiz->d = egueb_svg_attr_path_seg_list_new(
 			egueb_dom_string_ref(EGUEB_SVG_D),
 			NULL, EINA_TRUE, EINA_FALSE, EINA_FALSE);
-	EGUEB_DOM_ELEMENT_CLASS_PROPERTY_ADD(thiz, egueb_svg_element_path, d);
+	n = EGUEB_DOM_NODE(o);
+	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->d), NULL);
 }
 
 static void _egueb_svg_element_path_instance_deinit(void *o)
