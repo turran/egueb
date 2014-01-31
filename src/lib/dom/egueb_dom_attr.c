@@ -252,6 +252,14 @@ EAPI Egueb_Dom_String * egueb_dom_attr_name_get(Egueb_Dom_Node *n)
 	else return egueb_dom_string_ref(thiz->name);
 }
 
+EAPI Egueb_Dom_Node * egueb_dom_attr_owner_get(Egueb_Dom_Node *n)
+{
+	Egueb_Dom_Attr *thiz;
+
+	thiz = EGUEB_DOM_ATTR(n);
+	return egueb_dom_node_ref(thiz->owner);
+}
+
 EAPI Eina_Bool egueb_dom_attr_is_stylable(Egueb_Dom_Node *n)
 {
 	Egueb_Dom_Attr *thiz;
@@ -570,3 +578,4 @@ EAPI void egueb_dom_attr_inherited_get(Egueb_Dom_Node *attr,
 	else
 		*inherited = NULL;
 }
+

@@ -62,6 +62,7 @@ EAPI const Egueb_Dom_Value_Descriptor * egueb_dom_attr_value_descriptor_get(
 EAPI void egueb_dom_attr_init(Egueb_Dom_Node *n, Egueb_Dom_String *name,
 		Eina_Bool animatable, Eina_Bool stylable, Eina_Bool inheritable);
 EAPI Egueb_Dom_String * egueb_dom_attr_name_get(Egueb_Dom_Node *n);
+EAPI Egueb_Dom_Node * egueb_dom_attr_owner_get(Egueb_Dom_Node *n);
 
 EAPI Eina_Bool egueb_dom_attr_is_stylable(Egueb_Dom_Node *n);
 EAPI Eina_Bool egueb_dom_attr_is_animatable(Egueb_Dom_Node *n);
