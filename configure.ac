@@ -41,13 +41,15 @@ ETCH_VERSION="0.0.5"
 AC_CANONICAL_HOST
 
 ecss_requirements="eina >= ${EINA_VERSION}"
-edom_requirements="etch >= ${ETCH_VERSION} enesim >= ${ENESIM_VERSION} eina >= ${EINA_VERSION}"
+edom_requirements_private="etch >= ${ETCH_VERSION}"
+edom_requirements="enesim >= ${ENESIM_VERSION} eina >= ${EINA_VERSION}"
 esmil_requirements="etch >= ${ETCH_VERSION} enesim >= ${ENESIM_VERSION} eina >= ${EINA_VERSION}"
 esvg_requirements="etch >= ${ETCH_VERSION} enesim >= ${ENESIM_VERSION} eina >= ${EINA_VERSION}"
 gstreamer_requirements="gstreamer-0.10"
 
 AC_SUBST([ecss_requirements])
 AC_SUBST([edom_requirements])
+AC_SUBST([edom_requirements_private])
 AC_SUBST([esmil_requirements])
 AC_SUBST([esvg_requirements])
 
@@ -144,7 +146,7 @@ if test "x${want_ecss}" = "xyes" ; then
 fi
 
 if test "x${want_edom}" = "xyes" ; then
-   PKG_CHECK_MODULES([EDOM], [${edom_requirements}], [want_edom="yes"], [want_edom="no"])
+   PKG_CHECK_MODULES([EDOM], [${edom_requirements} ${edom_requirements_private}], [want_edom="yes"], [want_edom="no"])
 fi
 
 if test "x${want_esmil}" = "xyes" && test "x${want_edom}" = "xyes" ; then

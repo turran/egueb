@@ -89,6 +89,7 @@ $(SED) \
 -e 's,@includedir\@,$(includedir),g' \
 -e 's,@pkgincludedir\@,$(pkgincludedir),g' \
 -e 's,@edom_requirements\@,$(edom_requirements),g' \
+-e 's,@edom_requirements_private\@,$(edom_requirements_private),g' \
 -e 's,@ecss_requirements\@,$(ecss_requirements),g' \
 -e 's,@esvg_requirements\@,$(esvg_requirements),g' \
 -e 's,@build_opencl\@,$(build_opencl),g' \
