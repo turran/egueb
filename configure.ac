@@ -35,16 +35,15 @@ AC_SUBST([VMAJ])
 ### Needed information
 
 EINA_VERSION="1.0.99"
-EINA_EXTRA_VERSION="0.0.1"
 ENESIM_VERSION="0.0.18"
 ETCH_VERSION="0.0.5"
 
 AC_CANONICAL_HOST
 
 ecss_requirements="eina >= ${EINA_VERSION}"
-edom_requirements="etch >= ${ETCH_VERSION} enesim >= ${ENESIM_VERSION} eina-extra >= ${EINA_EXTRA_VERSION} eina >= ${EINA_VERSION}"
-esmil_requirements="etch >= ${ETCH_VERSION} enesim >= ${ENESIM_VERSION} eina-extra >= ${EINA_EXTRA_VERSION}  eina >= ${EINA_VERSION}"
-esvg_requirements="etch >= ${ETCH_VERSION} enesim >= ${ENESIM_VERSION} eina-extra >= ${EINA_EXTRA_VERSION} eina >= ${EINA_VERSION}"
+edom_requirements="etch >= ${ETCH_VERSION} enesim >= ${ENESIM_VERSION} eina >= ${EINA_VERSION}"
+esmil_requirements="etch >= ${ETCH_VERSION} enesim >= ${ENESIM_VERSION} eina >= ${EINA_VERSION}"
+esvg_requirements="etch >= ${ETCH_VERSION} enesim >= ${ENESIM_VERSION} eina >= ${EINA_VERSION}"
 gstreamer_requirements="gstreamer-0.10"
 
 AC_SUBST([ecss_requirements])

@@ -24,7 +24,6 @@
 #endif
 
 #include <Eina.h>
-#include <Eina_Extra.h>
 #include <Enesim.h>
 #include <Etch.h>
 
