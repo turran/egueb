@@ -85,9 +85,6 @@ static Eina_Bool _egueb_dom_attr_primitive_value_set(Egueb_Dom_Attr *p,
 	v.data.ptr = o;
 	v.owned = EINA_FALSE;
 	egueb_dom_value_copy(value, &v, EINA_FALSE);
-
-	/* finally set the mask */
-	p->set_mask |= type;
 	return EINA_TRUE;
 }
 /*----------------------------------------------------------------------------*

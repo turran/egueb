@@ -88,8 +88,6 @@ static Eina_Bool _egueb_dom_attr_basic_value_set(Egueb_Dom_Attr *p,
 		return EINA_FALSE;
 	vdata.ptr = o;
 	egueb_dom_value_data_to(value, &vdata);
-	/* finally set the mask */
-	p->set_mask |= type;
 	return EINA_TRUE;
 }
 /*----------------------------------------------------------------------------*

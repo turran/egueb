@@ -419,6 +419,7 @@ EAPI Eina_Bool egueb_dom_attr_value_set(Egueb_Dom_Node *n,
 		if (egueb_dom_attr_is_inheritable(n))
 			e->inheritable_changed = EINA_TRUE;
 		e->attr_changed = EINA_TRUE;
+		/* finally set the mask */
 		thiz->set_mask |= type;
 	}
 	return EINA_TRUE;
