@@ -37,7 +37,6 @@
 typedef struct _Egueb_Dom_Attr
 {
 	Egueb_Dom_Node parent;
-	/* FIXME we need to use this */
 	Egueb_Dom_String *name;
 	int ref;
 	/* we keep a pointer to the element owner but not a reference */

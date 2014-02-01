@@ -5,6 +5,7 @@ installed_domheadersdir = $(pkgincludedir)-@VMAJ@/dom
 dist_installed_domheaders_DATA = \
 src/lib/dom/Egueb_Dom.h \
 src/lib/dom/egueb_dom_attr.h \
+src/lib/dom/egueb_dom_attr_external.h \
 src/lib/dom/egueb_dom_attr_string.h \
 src/lib/dom/egueb_dom_attr_string_list.h \
 src/lib/dom/egueb_dom_build.h \
@@ -37,6 +38,7 @@ src/lib/dom/egueb_dom_value_list.h
 
 src_lib_dom_libegueb_dom_la_SOURCES = \
 src/lib/dom/egueb_dom_attr.c \
+src/lib/dom/egueb_dom_attr_external.c \
 src/lib/dom/egueb_dom_attr_private.h \
 src/lib/dom/egueb_dom_character_data.c \
 src/lib/dom/egueb_dom_character_data_private.h \
