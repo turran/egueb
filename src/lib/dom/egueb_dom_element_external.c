@@ -92,7 +92,7 @@ static Eina_Bool _egueb_dom_element_external_child_appendable(
 
 	thiz = EGUEB_DOM_ELEMENT_EXTERNAL(n);
 	if (thiz->descriptor->child_appendable)
-		return thiz->descriptor->child_appendable(n, child);
+		return thiz->descriptor->child_appendable(n, thiz->data, child);
 	return EINA_TRUE;
 }
 /*----------------------------------------------------------------------------*
