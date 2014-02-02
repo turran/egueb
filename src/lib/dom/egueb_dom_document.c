@@ -498,6 +498,17 @@ skip:
 	 */
 }
 
+EAPI Eina_Bool egueb_dom_document_needs_process_default(Egueb_Dom_Node *n)
+{
+	Egueb_Dom_Document *thiz;
+
+	thiz = EGUEB_DOM_DOCUMENT(n);
+	if (thiz->current_enqueued)
+		return EINA_TRUE;
+	else
+		return EINA_FALSE;
+}
+
 /*
  *  Element createElement(in DOMString tagName) raises(DOMException);
  */
@@ -676,8 +687,7 @@ EAPI Eina_Bool egueb_dom_document_needs_process(Egueb_Dom_Node *n)
 	if (klass->needs_process)
 		if (klass->needs_process(n))
 			return EINA_TRUE;
-	if (thiz->current_enqueued) return EINA_TRUE;
-	return EINA_FALSE;
+	return egueb_dom_document_needs_process_default(n);
 }
 
 EAPI void egueb_dom_document_process_queue_clear(Egueb_Dom_Node *n)
