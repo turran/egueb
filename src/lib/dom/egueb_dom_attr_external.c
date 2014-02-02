@@ -73,7 +73,7 @@ static Eina_Bool _egueb_dom_attr_external_value_set(Egueb_Dom_Attr *a,
 
 	thiz = EGUEB_DOM_ATTR_EXTERNAL(a);
 	if (thiz->descriptor->value_set)
-		return thiz->descriptor->value_get(EGUEB_DOM_NODE(a),
+		return thiz->descriptor->value_set(EGUEB_DOM_NODE(a),
 			thiz->data, type, value);
 	return EINA_FALSE;
 }
