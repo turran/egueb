@@ -174,7 +174,7 @@ static Eina_Bool _egueb_smil_set_setup(Egueb_Smil_Animation *a,
 	etch_animation_keyframe_type_set(k, ETCH_INTERPOLATOR_DISCRETE);
 	etch_animation_keyframe_value_set(k, &etch_data);
 
-	egueb_dom_attr_get(a->dur, EGUEB_DOM_ATTR_TYPE_BASE, &dur);
+	egueb_dom_attr_final_get(a->dur, &dur);
 	if (dur.type == EGUEB_SMIL_DURATION_TYPE_CLOCK)
 	{
 		etch_animation_keyframe_time_set(k, dur.data.clock);
