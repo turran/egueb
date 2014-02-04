@@ -19,24 +19,24 @@
 #ifndef _EGUEB_DOM_ELEMENT_EXTERNAL_H_
 #define _EGUEB_DOM_ELEMENT_EXTERNAL_H_
 
-typedef void * (*Egueb_Dom_Element_External_Descriptor_Init)(Egueb_Dom_Node *node);
+typedef void * (*Egueb_Dom_Element_External_Descriptor_Init)(
+		Egueb_Dom_Node *node);
 typedef void (*Egueb_Dom_Element_External_Descriptor_Deinit)(
 		Egueb_Dom_Node *node, void *data);
-typedef Egueb_Dom_String * (*Egueb_Dom_Element_External_Tag_Name_Get)(
+typedef Egueb_Dom_String * (*Egueb_Dom_Element_External_Descriptor_Tag_Name_Get)(
 		Egueb_Dom_Node *node, void *data);
-typedef Eina_Bool (*Egueb_Dom_Element_External_Process)(Egueb_Dom_Node *node,
-		void *data);
-
-typedef Eina_Bool (*Egueb_Dom_Element_External_Child_Appendable)(Egueb_Dom_Node *node,
-		void *data, Egueb_Dom_Node *child);
+typedef Eina_Bool (*Egueb_Dom_Element_External_Descriptor_Process)(
+		Egueb_Dom_Node *node, void *data);
+typedef Eina_Bool (*Egueb_Dom_Element_External_Descriptor_Child_Appendable)(
+		Egueb_Dom_Node *node, void *data, Egueb_Dom_Node *child);
 
 typedef struct _Egueb_Dom_Element_External_Descriptor
 {
 	Egueb_Dom_Element_External_Descriptor_Init init;
 	Egueb_Dom_Element_External_Descriptor_Deinit deinit;
-	Egueb_Dom_Element_External_Tag_Name_Get tag_name_get;
-	Egueb_Dom_Element_External_Child_Appendable child_appendable;
-	Egueb_Dom_Element_External_Process process;
+	Egueb_Dom_Element_External_Descriptor_Tag_Name_Get tag_name_get;
+	Egueb_Dom_Element_External_Descriptor_Child_Appendable child_appendable;
+	Egueb_Dom_Element_External_Descriptor_Process process;
 } Egueb_Dom_Element_External_Descriptor;
 
 EAPI void * egueb_dom_element_external_data_get(Egueb_Dom_Node *n);
