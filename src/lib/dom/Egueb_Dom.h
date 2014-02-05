@@ -73,6 +73,7 @@ extern "C" {
 #include "egueb_dom_event_mutation.h"
 #include "egueb_dom_event_ui.h"
 #include "egueb_dom_attr.h"
+#include "egueb_dom_attr_int.h"
 #include "egueb_dom_attr_string.h"
 #include "egueb_dom_attr_string_list.h"
 #include "egueb_dom_character_data.h"

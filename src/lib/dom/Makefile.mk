@@ -6,6 +6,7 @@ dist_installed_domheaders_DATA = \
 src/lib/dom/Egueb_Dom.h \
 src/lib/dom/egueb_dom_attr.h \
 src/lib/dom/egueb_dom_attr_external.h \
+src/lib/dom/egueb_dom_attr_int.h \
 src/lib/dom/egueb_dom_attr_string.h \
 src/lib/dom/egueb_dom_attr_string_list.h \
 src/lib/dom/egueb_dom_build.h \
@@ -39,8 +40,17 @@ src/lib/dom/egueb_dom_value_list.h
 
 src_lib_dom_libegueb_dom_la_SOURCES = \
 src/lib/dom/egueb_dom_attr.c \
-src/lib/dom/egueb_dom_attr_external.c \
 src/lib/dom/egueb_dom_attr_private.h \
+src/lib/dom/egueb_dom_attr_external.c \
+src/lib/dom/egueb_dom_attr_int.c \
+src/lib/dom/egueb_dom_attr_string.c \
+src/lib/dom/egueb_dom_attr_string_list.c \
+src/lib/dom/egueb_dom_attr_basic.c \
+src/lib/dom/egueb_dom_attr_basic_private.h \
+src/lib/dom/egueb_dom_attr_object.c \
+src/lib/dom/egueb_dom_attr_object_private.h \
+src/lib/dom/egueb_dom_attr_primitive.c \
+src/lib/dom/egueb_dom_attr_primitive_private.h \
 src/lib/dom/egueb_dom_character_data.c \
 src/lib/dom/egueb_dom_character_data_private.h \
 src/lib/dom/egueb_dom_document.c \
@@ -68,14 +78,6 @@ src/lib/dom/egueb_dom_node_map_named_private.h \
 src/lib/dom/egueb_dom_node_map_named_attr.c \
 src/lib/dom/egueb_dom_parser.c \
 src/lib/dom/egueb_dom_parser_private.h \
-src/lib/dom/egueb_dom_attr_string.c \
-src/lib/dom/egueb_dom_attr_string_list.c \
-src/lib/dom/egueb_dom_attr_basic.c \
-src/lib/dom/egueb_dom_attr_basic_private.h \
-src/lib/dom/egueb_dom_attr_object.c \
-src/lib/dom/egueb_dom_attr_object_private.h \
-src/lib/dom/egueb_dom_attr_primitive.c \
-src/lib/dom/egueb_dom_attr_primitive_private.h \
 src/lib/dom/egueb_dom_private.h \
 src/lib/dom/egueb_dom_string.c \
 src/lib/dom/egueb_dom_string_list.c \

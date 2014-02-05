@@ -58,16 +58,16 @@ typedef struct _Egueb_Dom_Attr_Basic_Class
 										\
 typedef struct _##attr								\
 {										\
-	Egueb_Dom_Attr_Basic base;						\
+	Egueb_Dom_Attr_Basic parent;						\
 	value styled;								\
 	value anim;								\
-	value value;								\
+	value base;								\
 	value def;								\
 } attr;										\
 										\
 typedef struct _##attr##_Class							\
 {										\
-	Egueb_Dom_Attr_Basic_Class base;					\
+	Egueb_Dom_Attr_Basic_Class parent;					\
 } attr##_Class;									\
 										\
 static Eina_Bool _##attr_prefix##_value_get(Egueb_Dom_Attr *p,			\
@@ -88,7 +88,7 @@ static Eina_Bool _##attr_prefix##_value_get(Egueb_Dom_Attr *p,			\
 		break;								\
 										\
 		case EGUEB_DOM_ATTR_TYPE_BASE:					\
-		*o = &thiz->value;						\
+		*o = &thiz->base;						\
 		break;								\
 										\
 		case EGUEB_DOM_ATTR_TYPE_DEFAULT:				\
