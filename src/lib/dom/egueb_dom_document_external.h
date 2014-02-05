@@ -19,7 +19,7 @@
 #ifndef _EGUEB_DOM_DOCUMENT_EXTERNAL_H_
 #define _EGUEB_DOM_DOCUMENT_EXTERNAL_H_
 
-typedef void * (*Egueb_Dom_Document_External_Descriptor_Init)(Egueb_Dom_Node *node);
+typedef void (*Egueb_Dom_Document_External_Descriptor_Init)(Egueb_Dom_Node *node, void *data);
 typedef void (*Egueb_Dom_Document_External_Descriptor_Deinit)(
 		Egueb_Dom_Node *node, void *data);
 typedef Egueb_Dom_Node * (*Egueb_Dom_Document_External_Element_Create)(
@@ -38,6 +38,7 @@ typedef struct _Egueb_Dom_Document_External_Descriptor
 
 EAPI void * egueb_dom_document_external_data_get(Egueb_Dom_Node *n);
 EAPI Egueb_Dom_Node * egueb_dom_document_external_new(
-		const Egueb_Dom_Document_External_Descriptor *descriptor);
+		const Egueb_Dom_Document_External_Descriptor *descriptor,
+		void *data);
 
 #endif

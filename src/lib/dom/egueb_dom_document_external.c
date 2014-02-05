@@ -49,14 +49,14 @@ typedef struct _Egueb_Dom_Document_External_Class
 	Egueb_Dom_Document_Class parent;
 } Egueb_Dom_Document_External_Class;
 
-static void * _egueb_dom_document_external_init(Egueb_Dom_Document_External *thiz)
+static void _egueb_dom_document_external_init(Egueb_Dom_Document_External *thiz)
 {
 	if (!thiz->descriptor)
-		return NULL;
+		return;
 	if (!thiz->descriptor->init)
-		return NULL;
+		return;
 	/* now initialize it */
-	return thiz->descriptor->init(EGUEB_DOM_NODE(thiz));
+	thiz->descriptor->init(EGUEB_DOM_NODE(thiz), thiz->data);
 }
 
 /*----------------------------------------------------------------------------*
@@ -134,13 +134,15 @@ EAPI void * egueb_dom_document_external_data_get(Egueb_Dom_Node *n)
 }
 
 EAPI Egueb_Dom_Node * egueb_dom_document_external_new(
-		const Egueb_Dom_Document_External_Descriptor *descriptor)
+		const Egueb_Dom_Document_External_Descriptor *descriptor,
+		void *data)
 {
 	Egueb_Dom_Document_External *thiz;
 
 	if (!descriptor) return NULL;
 	thiz = ENESIM_OBJECT_INSTANCE_NEW(egueb_dom_document_external);
 	thiz->descriptor = descriptor;
-	thiz->data = _egueb_dom_document_external_init(thiz);
+	thiz->data = data;
+	_egueb_dom_document_external_init(thiz);
 	return EGUEB_DOM_NODE(thiz);
 }

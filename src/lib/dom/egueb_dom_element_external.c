@@ -44,13 +44,13 @@ typedef struct _Egueb_Dom_Element_External_Class
 } Egueb_Dom_Element_External_Class;
 
 
-static void * _egueb_dom_element_external_init(Egueb_Dom_Element_External *thiz)
+static void _egueb_dom_element_external_init(Egueb_Dom_Element_External *thiz)
 {
 	if (!thiz->descriptor)
-		return NULL;
+		return;
 	if (!thiz->descriptor->init)
-		return NULL;
-	return 	thiz->descriptor->init(EGUEB_DOM_NODE(thiz));
+		return;
+	thiz->descriptor->init(EGUEB_DOM_NODE(thiz), thiz->data);
 }
 /*----------------------------------------------------------------------------*
  *                             Element interface                              *
@@ -143,7 +143,8 @@ EAPI void * egueb_dom_element_external_data_get(Egueb_Dom_Node *n)
 }
 
 EAPI Egueb_Dom_Node * egueb_dom_element_external_new(
-		const Egueb_Dom_Element_External_Descriptor *descriptor)
+		const Egueb_Dom_Element_External_Descriptor *descriptor,
+		void *data)
 {
 	Egueb_Dom_Element_External *thiz;
 
@@ -152,8 +153,9 @@ EAPI Egueb_Dom_Node * egueb_dom_element_external_new(
 
 	thiz = ENESIM_OBJECT_INSTANCE_NEW(egueb_dom_element_external);
 	thiz->descriptor = descriptor;
+	thiz->data = data;
 
 	/* now initialize it */
-	thiz->data = _egueb_dom_element_external_init(thiz);
+	_egueb_dom_element_external_init(thiz);
 	return EGUEB_DOM_NODE(thiz);
 }
