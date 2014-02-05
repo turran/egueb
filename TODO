@@ -8,6 +8,8 @@ Refactor
   to fix the initializers of the attr
 + Add a egueb_dom_document_wait_process() which will wait until an enqueued
   process events arrives, in such case, wake up the thread.
++ Modify the clone interface, in order to clone a node we need a doc, just
+  create it as it has been parsed
 
 ECSS
 ====
