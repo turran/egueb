@@ -480,6 +480,9 @@ EAPI void egueb_dom_document_process_default(Egueb_Dom_Node *n)
 
 		e = EGUEB_DOM_ELEMENT(n);
 		if (e->last_run == thiz->current_run)
+			goto dequeue;
+
+		if (!egueb_dom_element_is_enqueued(n))
 			goto skip;
 
 		name = egueb_dom_node_name_get(n);
@@ -487,9 +490,10 @@ EAPI void egueb_dom_document_process_default(Egueb_Dom_Node *n)
 		egueb_dom_string_unref(name);
 
 		egueb_dom_element_process(n);
+dequeue:
+		egueb_dom_element_dequeue(n);
 skip:
 		thiz->current_enqueued = eina_list_remove_list(thiz->current_enqueued, l);
-		e->enqueued = EINA_FALSE;
 
 		egueb_dom_node_unref(n);
 	}
@@ -678,10 +682,8 @@ EAPI void egueb_dom_document_process(Egueb_Dom_Node *n)
 
 EAPI Eina_Bool egueb_dom_document_needs_process(Egueb_Dom_Node *n)
 {
-	Egueb_Dom_Document *thiz;
 	Egueb_Dom_Document_Class *klass;
 
-	thiz = EGUEB_DOM_DOCUMENT(n);
 	klass = EGUEB_DOM_DOCUMENT_CLASS_GET(n);
 
 	if (klass->needs_process)
