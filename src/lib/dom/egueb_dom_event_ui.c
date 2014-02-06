@@ -64,5 +64,6 @@ EAPI void egueb_dom_event_ui_init(Egueb_Dom_Event *e, Egueb_Dom_String *type,
 
 	thiz = EGUEB_DOM_EVENT_UI(e);
 	thiz->detail = detail;
-	egueb_dom_event_init(e, type, bubbleable, cancelable);
+	egueb_dom_event_init(e, type, bubbleable, EINA_TRUE, cancelable,
+			EGUEB_DOM_EVENT_DIRECTION_CAPTURE_BUBBLE);
 }

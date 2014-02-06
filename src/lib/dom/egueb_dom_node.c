@@ -819,12 +819,24 @@ EAPI Eina_Bool egueb_dom_node_event_dispatch(Egueb_Dom_Node *thiz,
 	event->target = thiz;
 	event->dispatching = EINA_TRUE;
 
-	/* first the capture phase from all its parents */
-	event->phase = EGUEB_DOM_EVENT_PHASE_CAPTURING;
-	_egueb_dom_node_event_capture(thiz, event);
-	/* finally the bubbling phase */
-	event->phase = EGUEB_DOM_EVENT_PHASE_BUBBLING;
-	_egueb_dom_node_event_bubble(thiz, event);
+	if (event->direction == EGUEB_DOM_EVENT_DIRECTION_CAPTURE_BUBBLE)
+	{
+		/* first the capture phase from all its parents */
+		event->phase = EGUEB_DOM_EVENT_PHASE_CAPTURING;
+		_egueb_dom_node_event_capture(thiz, event);
+		/* finally the bubbling phase */
+		event->phase = EGUEB_DOM_EVENT_PHASE_BUBBLING;
+		_egueb_dom_node_event_bubble(thiz, event);
+	}
+	else
+	{
+		/* first the bubbling phase */
+		event->phase = EGUEB_DOM_EVENT_PHASE_BUBBLING;
+		_egueb_dom_node_event_bubble(thiz, event);
+		/* finally the capture phase from all its parents */
+		event->phase = EGUEB_DOM_EVENT_PHASE_CAPTURING;
+		_egueb_dom_node_event_capture(thiz, event);
+	}
 
 	event->dispatching = EINA_FALSE;
 	egueb_dom_event_unref(event);

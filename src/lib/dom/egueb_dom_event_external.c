@@ -85,8 +85,9 @@ static void _egueb_dom_event_external_instance_deinit(void *o)
  *                                   API                                      *
  *============================================================================*/
 EAPI Egueb_Dom_Event * egueb_dom_event_external_new(Egueb_Dom_String *type,
-		Eina_Bool bubbleable, Eina_Bool cancelable, void *user_data,
-		Egueb_Dom_Event_External_Free_Cb free_cb)
+		Eina_Bool bubbleable, Eina_Bool capturable,
+		Eina_Bool cancelable, Egueb_Dom_Event_Direction direction,
+		void *user_data, Egueb_Dom_Event_External_Free_Cb free_cb)
 {
 	Egueb_Dom_Event_External *thiz;
 	Egueb_Dom_Event *event;
@@ -96,8 +97,8 @@ EAPI Egueb_Dom_Event * egueb_dom_event_external_new(Egueb_Dom_String *type,
 	thiz->free_cb = free_cb;
 	/* setup the event */
 	event = EGUEB_DOM_EVENT(thiz);
-	egueb_dom_event_init(event, type, bubbleable,
-			cancelable);
+	egueb_dom_event_init(event, type, bubbleable, capturable,
+			cancelable, direction);
 	
 	return event;
 }

@@ -21,8 +21,9 @@
 typedef void (*Egueb_Dom_Event_External_Free_Cb)(void *user_data);
 
 EAPI Egueb_Dom_Event * egueb_dom_event_external_new(Egueb_Dom_String *type,
-		Eina_Bool bubbleable, Eina_Bool cancelable, void *user_data,
-		Egueb_Dom_Event_External_Free_Cb free_cb);
+		Eina_Bool bubbleable, Eina_Bool capturable,
+		Eina_Bool cancelable, Egueb_Dom_Event_Direction direction,
+		void *user_data, Egueb_Dom_Event_External_Free_Cb free_cb);
 EAPI void * egueb_dom_event_external_data_get(Egueb_Dom_Event *event);
 
 #endif

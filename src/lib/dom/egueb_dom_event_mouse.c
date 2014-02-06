@@ -21,6 +21,8 @@
 #include "egueb_dom_main.h"
 #include "egueb_dom_node.h"
 #include "egueb_dom_event.h"
+#include "egueb_dom_event_ui.h"
+
 #include "egueb_dom_string_private.h"
 #include "egueb_dom_event_mouse.h"
 #include "egueb_dom_event_ui_private.h"

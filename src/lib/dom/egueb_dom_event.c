@@ -83,12 +83,15 @@ EAPI Egueb_Dom_Node * egueb_dom_event_target_current_get(Egueb_Dom_Event *thiz)
                                  in boolean cancelableArg);
  */
 EAPI void egueb_dom_event_init(Egueb_Dom_Event *thiz, Egueb_Dom_String *type,
-		Eina_Bool bubbleable, Eina_Bool cancelable)
+		Eina_Bool bubbleable, Eina_Bool capturable,
+		Eina_Bool cancelable, Egueb_Dom_Event_Direction direction)
 {
 	_egueb_dom_event_instance_init(thiz);
 	thiz->type = type;
 	thiz->bubbleable = bubbleable;
+	thiz->capturable = capturable;
 	thiz->cancelable = cancelable;
+	thiz->direction = direction;
 }
 
 EAPI void egueb_dom_event_unref(Egueb_Dom_Event *thiz)

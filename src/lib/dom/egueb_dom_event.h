@@ -35,6 +35,12 @@ typedef enum _Egueb_Dom_Event_Phase
 	EGUEB_DOM_EVENT_PHASES,
 } Egueb_Dom_Event_Phase;
 
+typedef enum _Egueb_Dom_Event_Direction
+{
+	EGUEB_DOM_EVENT_DIRECTION_CAPTURE_BUBBLE,
+	EGUEB_DOM_EVENT_DIRECTION_BUBBLE_CAPTURE,
+} Egueb_Dom_Event_Direction;
+
 typedef struct _Egueb_Dom_Event Egueb_Dom_Event;
 typedef void (*Egueb_Dom_Event_Listener)(Egueb_Dom_Event *ev, void *data);
 
@@ -43,7 +49,8 @@ EAPI Egueb_Dom_Event_Phase egueb_dom_event_phase_get(Egueb_Dom_Event *thiz);
 EAPI Egueb_Dom_Node * egueb_dom_event_target_get(Egueb_Dom_Event *thiz);
 EAPI Egueb_Dom_Node * egueb_dom_event_target_current_get(Egueb_Dom_Event *thiz);
 EAPI void egueb_dom_event_init(Egueb_Dom_Event *thiz, Egueb_Dom_String *type,
-		Eina_Bool bubbleable, Eina_Bool cancelable);
+		Eina_Bool bubbleable, Eina_Bool capturable, Eina_Bool cancelable,
+		Egueb_Dom_Event_Direction direction);
 EAPI void egueb_dom_event_unref(Egueb_Dom_Event *thiz);
 EAPI Egueb_Dom_Event * egueb_dom_event_ref(Egueb_Dom_Event *thiz);
 

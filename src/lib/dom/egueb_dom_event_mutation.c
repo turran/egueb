@@ -82,7 +82,8 @@ void egueb_dom_event_mutation_init_internal(Egueb_Dom_Event *e,
 	thiz->attr = attr;
 	thiz->attr_type = attr_type;
 	thiz->attr_modification_type = attr_modification_type;
-	egueb_dom_event_init(e, type, bubbleable, cancelable);
+	egueb_dom_event_init(e, type, bubbleable, EINA_TRUE, cancelable,
+			EGUEB_DOM_EVENT_DIRECTION_CAPTURE_BUBBLE);
 }
 
 Egueb_Dom_Event * egueb_dom_event_mutation_new(void)

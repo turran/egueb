@@ -31,6 +31,8 @@ struct _Egueb_Dom_Event
 	/* init attributes */
 	Eina_Bool cancelable;
 	Eina_Bool bubbleable;
+	Eina_Bool capturable;
+	Egueb_Dom_Event_Direction direction;
 	/* private */
 	Eina_Bool dispatching;
 	Eina_Bool stopped;

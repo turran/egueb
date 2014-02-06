@@ -88,6 +88,7 @@ EAPI void egueb_smil_event_init(Egueb_Dom_Event *e, Egueb_Dom_String *type, int 
 
 	thiz = EGUEB_SMIL_EVENT(e);
 	thiz->detail = detail;
-	egueb_dom_event_init(e, type, EINA_FALSE, EINA_FALSE);
+	egueb_dom_event_init(e, type, EINA_FALSE, EINA_TRUE, EINA_FALSE,
+			EGUEB_DOM_EVENT_DIRECTION_CAPTURE_BUBBLE);
 }
 
