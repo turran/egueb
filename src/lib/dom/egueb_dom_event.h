@@ -44,7 +44,7 @@ typedef enum _Egueb_Dom_Event_Direction
 typedef struct _Egueb_Dom_Event Egueb_Dom_Event;
 typedef void (*Egueb_Dom_Event_Listener)(Egueb_Dom_Event *ev, void *data);
 
-EAPI Enesim_Object_Descriptor * egueb_dom_event_descriptor_get(void);
+EAPI void egueb_dom_event_stop_propagation(Egueb_Dom_Event *thiz);
 EAPI Egueb_Dom_Event_Phase egueb_dom_event_phase_get(Egueb_Dom_Event *thiz);
 EAPI Egueb_Dom_Node * egueb_dom_event_target_get(Egueb_Dom_Event *thiz);
 EAPI Egueb_Dom_Node * egueb_dom_event_target_current_get(Egueb_Dom_Event *thiz);

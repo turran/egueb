@@ -127,7 +127,7 @@ static Eina_Bool _egueb_svg_element_clip_path_hierarchy_prevented(
 	 */
 	if (EGUEB_DOM_NODE(thiz) != parent)
 	{
-		egueb_dom_event_mutation_process_prevent(e);
+		egueb_dom_event_stop_propagation(e);
 		ret = EINA_TRUE;
 	}
 	egueb_dom_node_unref(parent);
@@ -295,7 +295,7 @@ static void _egueb_svg_element_clip_path_instance_init(void *o)
 			_egueb_svg_element_clip_path_node_removed_cb,
 			EINA_FALSE, thiz);
 	egueb_dom_node_event_listener_add(EGUEB_DOM_NODE(o),
-			EGUEB_DOM_EVENT_MUTATION_REQUEST_PROCESS,
+			EGUEB_DOM_EVENT_PROCESS,
 			_egueb_svg_element_clip_path_request_process_cb,
 			EINA_FALSE, thiz);
 }

@@ -34,6 +34,7 @@
 #include "egueb_dom_attr_private.h"
 #include "egueb_dom_value_private.h"
 #include "egueb_dom_event_mutation_private.h"
+#include "egueb_dom_event_process_private.h"
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
@@ -779,8 +780,7 @@ EAPI void egueb_dom_element_request_process(Egueb_Dom_Node *n)
 	Egueb_Dom_Event *e;
 
 	/* send the request process event */
-	e = egueb_dom_event_mutation_new();
-	egueb_dom_event_mutation_init_request_process(e);
+	e = egueb_dom_event_process_new();
 	egueb_dom_node_event_dispatch(n, e, NULL, NULL);
 }
 

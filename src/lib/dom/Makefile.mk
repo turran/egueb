@@ -65,6 +65,8 @@ src/lib/dom/egueb_dom_event_mouse.c \
 src/lib/dom/egueb_dom_event_mouse_private.h \
 src/lib/dom/egueb_dom_event_mutation.c \
 src/lib/dom/egueb_dom_event_mutation_private.h \
+src/lib/dom/egueb_dom_event_process.c \
+src/lib/dom/egueb_dom_event_process_private.h \
 src/lib/dom/egueb_dom_event_ui.c \
 src/lib/dom/egueb_dom_event_ui_private.h \
 src/lib/dom/egueb_dom_input.c \

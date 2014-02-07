@@ -29,6 +29,8 @@
 #include "egueb_dom_element_private.h"
 #include "egueb_dom_document_private.h"
 
+#include "egueb_dom_event_process_private.h"
+
 #if 0
 thiz->entities = eina_hash_string_superfast_new(NULL);
 /* add common entities */
@@ -396,7 +398,7 @@ static void _egueb_dom_document_topmost_remove_events(Egueb_Dom_Document *thiz)
 			EINA_TRUE, thiz);
 
 	egueb_dom_node_event_listener_remove(thiz->element,
-			EGUEB_DOM_EVENT_MUTATION_REQUEST_PROCESS,
+			EGUEB_DOM_EVENT_PROCESS,
 			_egueb_dom_document_topmost_request_process_cb,
 			EINA_FALSE, thiz);
 }
@@ -596,7 +598,7 @@ EAPI void egueb_dom_document_element_set(Egueb_Dom_Node *n,
 				EINA_TRUE, thiz);
 		/* in case an element needs to be processed, we will enqueue it */
 		egueb_dom_node_event_listener_add(element,
-				EGUEB_DOM_EVENT_MUTATION_REQUEST_PROCESS,
+				EGUEB_DOM_EVENT_PROCESS,
 				_egueb_dom_document_topmost_request_process_cb,
 				EINA_FALSE, thiz);
 		/* add the element to the process list */

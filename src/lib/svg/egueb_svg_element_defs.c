@@ -50,7 +50,7 @@ static void _egueb_svg_element_defs_attr_modified_cb(Egueb_Dom_Event *e,
 	if (egueb_svg_is_renderable(target))
 	{
 		DBG("Preventing a process on a renderable element");
-		egueb_dom_event_mutation_process_prevent(e);
+		egueb_dom_event_stop_propagation(e);
 	}
 	egueb_dom_node_unref(target);
 }

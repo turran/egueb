@@ -61,7 +61,7 @@ static void _egueb_svg_attr_xlink_href_cleanup(Egueb_Svg_Attr_Xlink_Href *thiz)
 	if (thiz->node)
 	{
 		egueb_dom_node_event_listener_remove(thiz->node,
-				EGUEB_DOM_EVENT_MUTATION_REQUEST_PROCESS,
+				EGUEB_DOM_EVENT_PROCESS,
 				_egueb_svg_attr_xlink_href_node_request_cb,
 				EINA_FALSE, thiz);
 		egueb_dom_node_unref(thiz->node);
@@ -198,7 +198,7 @@ EAPI Eina_Bool egueb_svg_attr_xlink_href_resolve(Egueb_Dom_Node *attr)
 			if (thiz->node)
 			{
 				egueb_dom_node_event_listener_add(thiz->node,
-						EGUEB_DOM_EVENT_MUTATION_REQUEST_PROCESS,
+						EGUEB_DOM_EVENT_PROCESS,
 						_egueb_svg_attr_xlink_href_node_request_cb,
 						EINA_FALSE, thiz);
 			}

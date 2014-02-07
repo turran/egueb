@@ -40,8 +40,6 @@ static Egueb_Dom_String _EGUEB_DOM_EVENT_MUTATION_NODE_INSERTED_INTO_DOCUMENT = 
 static Egueb_Dom_String _EGUEB_DOM_EVENT_MUTATION_NODE_REMOVED_FROM_DOCUMENT = EGUEB_DOM_STRING_STATIC("DOMNodeRemovedFromDocument");
 static Egueb_Dom_String _EGUEB_DOM_EVENT_MUTATION_ATTR_MODIFIED = EGUEB_DOM_STRING_STATIC("DOMAtttrModified");
 static Egueb_Dom_String _EGUEB_DOM_EVENT_MUTATION_CHARACTER_DATA_MODIFIED = EGUEB_DOM_STRING_STATIC("DOMCharacterDataModified");
-/* Egueb events */
-static Egueb_Dom_String _EGUEB_DOM_EVENT_MUTATION_REQUEST_PROCESS = EGUEB_DOM_STRING_STATIC("RequestProcess");
 /*----------------------------------------------------------------------------*
  *                              Object interface                              *
  *----------------------------------------------------------------------------*/
@@ -144,8 +142,6 @@ Egueb_Dom_String *EGUEB_DOM_EVENT_MUTATION_NODE_INSERTED_INTO_DOCUMENT = &_EGUEB
 Egueb_Dom_String *EGUEB_DOM_EVENT_MUTATION_NODE_REMOVED_FROM_DOCUMENT = &_EGUEB_DOM_EVENT_MUTATION_NODE_REMOVED_FROM_DOCUMENT;
 Egueb_Dom_String *EGUEB_DOM_EVENT_MUTATION_ATTR_MODIFIED = &_EGUEB_DOM_EVENT_MUTATION_ATTR_MODIFIED;
 Egueb_Dom_String *EGUEB_DOM_EVENT_MUTATION_CHARACTER_DATA_MODIFIED = &_EGUEB_DOM_EVENT_MUTATION_CHARACTER_DATA_MODIFIED;
-/* Egueb events */
-Egueb_Dom_String *EGUEB_DOM_EVENT_MUTATION_REQUEST_PROCESS = &_EGUEB_DOM_EVENT_MUTATION_REQUEST_PROCESS;
 
 EAPI Egueb_Dom_Node * egueb_dom_event_mutation_related_get(Egueb_Dom_Event *e)
 {
@@ -238,25 +234,4 @@ EAPI Eina_Bool egueb_dom_event_mutation_is_attr_modified(
 		return EINA_TRUE;
 	else
 		return EINA_FALSE;
-}
-
-/* TODO remove this */
-EAPI void egueb_dom_event_mutation_process_prevent(Egueb_Dom_Event *e)
-{
-	Egueb_Dom_Event_Mutation *thiz = EGUEB_DOM_EVENT_MUTATION(e);
-	thiz->process_prevent = EINA_TRUE;
-}
-
-EAPI Eina_Bool egueb_dom_event_mutation_process_prevented(Egueb_Dom_Event *e)
-{
-	Egueb_Dom_Event_Mutation *thiz = EGUEB_DOM_EVENT_MUTATION(e);
-	return thiz->process_prevent;
-}
-
-EAPI void egueb_dom_event_mutation_init_request_process(Egueb_Dom_Event *e)
-{
-	egueb_dom_event_mutation_init_internal(e,
-			EGUEB_DOM_EVENT_MUTATION_REQUEST_PROCESS,
-			EINA_TRUE, EINA_FALSE,
-			NULL, NULL, NULL, NULL, 0, 0);
 }

@@ -44,7 +44,7 @@ EAPI extern Egueb_Dom_String * EGUEB_DOM_EVENT_MUTATION_NODE_INSERTED_INTO_DOCUM
 EAPI extern Egueb_Dom_String * EGUEB_DOM_EVENT_MUTATION_ATTR_MODIFIED;
 EAPI extern Egueb_Dom_String * EGUEB_DOM_EVENT_MUTATION_CHARACTER_DATA_MODIFIED;
 /* Egueb events */
-EAPI extern Egueb_Dom_String * EGUEB_DOM_EVENT_MUTATION_REQUEST_PROCESS;
+EAPI extern Egueb_Dom_String * EGUEB_DOM_EVENT_PROCESS;
 
 EAPI Egueb_Dom_Node * egueb_dom_event_mutation_related_get(Egueb_Dom_Event *e);
 
@@ -63,11 +63,6 @@ EAPI void egueb_dom_event_mutation_attr_modification_type_get(Egueb_Dom_Event *e
 
 EAPI Eina_Bool egueb_dom_event_mutation_is_attr_modified(
 		const Egueb_Dom_String *str);
-/* TODO With the new request process, we no longer need the prevent */
-EAPI void egueb_dom_event_mutation_process_prevent(Egueb_Dom_Event *thiz);
-EAPI Eina_Bool egueb_dom_event_mutation_process_prevented(Egueb_Dom_Event *thiz);
-
-EAPI void egueb_dom_event_mutation_init_request_process(Egueb_Dom_Event *e);
 
 /**
  * @}

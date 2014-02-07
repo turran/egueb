@@ -107,7 +107,7 @@ static void _egueb_svg_gradient_node_inserted_cb(Egueb_Dom_Event *e,
 	if (!_egueb_svg_gradient_is_our_stop(thiz, e, &stop))
 		return;
 	egueb_dom_node_event_listener_add(stop,
-			EGUEB_DOM_EVENT_MUTATION_REQUEST_PROCESS,
+			EGUEB_DOM_EVENT_PROCESS,
 			_egueb_svg_gradient_stop_request_process_cb,
 			EINA_FALSE, thiz);
 	egueb_dom_node_unref(stop);
@@ -122,7 +122,7 @@ static void _egueb_svg_gradient_node_removed_cb(Egueb_Dom_Event *e,
 	if (!_egueb_svg_gradient_is_our_stop(thiz, e, &stop))
 		return;
 	egueb_dom_node_event_listener_remove(stop,
-			EGUEB_DOM_EVENT_MUTATION_REQUEST_PROCESS,
+			EGUEB_DOM_EVENT_PROCESS,
 			_egueb_svg_gradient_stop_request_process_cb,
 			EINA_FALSE, thiz);
 	egueb_dom_node_unref(stop);

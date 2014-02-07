@@ -104,30 +104,17 @@ static void _egueb_dom_node_event_dispatch(Egueb_Dom_Node *thiz,
 		if (nl->capture && (evt->phase ==
 				EGUEB_DOM_EVENT_PHASE_CAPTURING))
 		{
-			if (evt->target == evt->current_target)
-			{
-				evt->phase = EGUEB_DOM_EVENT_PHASE_AT_TARGET;
-				nl->listener(evt, nl->data);
-				evt->phase = EGUEB_DOM_EVENT_PHASE_CAPTURING;
-			}
-			else
-			{
-				nl->listener(evt, nl->data);
-			}
+			nl->listener(evt, nl->data);
 		}
 		else if (!nl->capture && (evt->phase ==
 				EGUEB_DOM_EVENT_PHASE_BUBBLING))
 		{
-			if (evt->target == evt->current_target)
-			{
-				evt->phase = EGUEB_DOM_EVENT_PHASE_AT_TARGET;
-				nl->listener(evt, nl->data);
-				evt->phase = EGUEB_DOM_EVENT_PHASE_BUBBLING;
-			}
-			else
-			{
-				nl->listener(evt, nl->data);
-			}
+			nl->listener(evt, nl->data);
+		}
+		if (evt->stopped)
+		{
+			DBG("Event '%s' stopped", egueb_dom_string_string_get(evt->type));
+			break;
 		}
 	}
 monitors:
@@ -161,7 +148,11 @@ static void _egueb_dom_node_event_capture(Egueb_Dom_Node *thiz,
 		egueb_dom_node_unref(parent);
 	}
 	if (!evt->stopped)
+	{
 		_egueb_dom_node_event_dispatch(thiz, evt);
+		return;
+	}
+	DBG("Event '%s' stopped", egueb_dom_string_string_get(evt->type));
 }
 
 static void _egueb_dom_node_event_bubble(Egueb_Dom_Node *thiz,
@@ -171,7 +162,10 @@ static void _egueb_dom_node_event_bubble(Egueb_Dom_Node *thiz,
 
 	_egueb_dom_node_event_dispatch(thiz, evt);
 	if (evt->stopped)
+	{
+		DBG("Event '%s' stopped", egueb_dom_string_string_get(evt->type));
 		return;
+	}
 	parent = egueb_dom_node_parent_get(thiz);
 	if (parent)
 	{
@@ -179,6 +173,56 @@ static void _egueb_dom_node_event_bubble(Egueb_Dom_Node *thiz,
 		egueb_dom_node_unref(parent);
 	}
 }
+
+static void _egueb_dom_node_event_start_capturing(Egueb_Dom_Node *thiz,
+		Egueb_Dom_Event *evt)
+{
+	if (!evt->capturable)
+		return;
+
+	if (evt->stopped)
+	{
+		DBG("Event '%s' stopped", egueb_dom_string_string_get(evt->type));
+		return;
+	}
+	evt->phase = EGUEB_DOM_EVENT_PHASE_CAPTURING;
+	_egueb_dom_node_event_capture(thiz, evt);
+}
+
+static void _egueb_dom_node_event_start_bubbling(Egueb_Dom_Node *thiz,
+		Egueb_Dom_Event *evt)
+{
+	Egueb_Dom_Node *parent = NULL;
+
+	if (!evt->bubbleable)
+		return;
+
+	if (evt->stopped)
+	{
+		DBG("Event '%s' stopped", egueb_dom_string_string_get(evt->type));
+		return;
+	}
+	parent = egueb_dom_node_parent_get(thiz);
+	if (parent)
+	{
+		evt->phase = EGUEB_DOM_EVENT_PHASE_BUBBLING;
+		_egueb_dom_node_event_bubble(parent, evt);
+		egueb_dom_node_unref(parent);
+	}
+}
+
+static void _egueb_dom_node_event_start_at_target(Egueb_Dom_Node *thiz,
+		Egueb_Dom_Event *evt)
+{
+	if (evt->stopped)
+	{
+		DBG("Event '%s' stopped", egueb_dom_string_string_get(evt->type));
+		return;
+	}
+	evt->phase = EGUEB_DOM_EVENT_PHASE_AT_TARGET;
+	_egueb_dom_node_event_dispatch(thiz, evt);
+}
+
 /*----------------------------------------------------------------------------*
  *                              Object interface                              *
  *----------------------------------------------------------------------------*/
@@ -822,20 +866,18 @@ EAPI Eina_Bool egueb_dom_node_event_dispatch(Egueb_Dom_Node *thiz,
 	if (event->direction == EGUEB_DOM_EVENT_DIRECTION_CAPTURE_BUBBLE)
 	{
 		/* first the capture phase from all its parents */
-		event->phase = EGUEB_DOM_EVENT_PHASE_CAPTURING;
-		_egueb_dom_node_event_capture(thiz, event);
+		_egueb_dom_node_event_start_capturing(thiz, event);
+		_egueb_dom_node_event_start_at_target(thiz, event);
 		/* finally the bubbling phase */
-		event->phase = EGUEB_DOM_EVENT_PHASE_BUBBLING;
-		_egueb_dom_node_event_bubble(thiz, event);
+		_egueb_dom_node_event_start_bubbling(thiz, event);
 	}
 	else
 	{
 		/* first the bubbling phase */
-		event->phase = EGUEB_DOM_EVENT_PHASE_BUBBLING;
-		_egueb_dom_node_event_bubble(thiz, event);
+		_egueb_dom_node_event_start_bubbling(thiz, event);
 		/* finally the capture phase from all its parents */
-		event->phase = EGUEB_DOM_EVENT_PHASE_CAPTURING;
-		_egueb_dom_node_event_capture(thiz, event);
+		_egueb_dom_node_event_start_capturing(thiz, event);
+		_egueb_dom_node_event_start_at_target(thiz, event);
 	}
 
 	event->dispatching = EINA_FALSE;
@@ -849,9 +891,13 @@ EAPI Eina_Bool egueb_dom_node_event_propagate(Egueb_Dom_Node *thiz,
 {
 	if (!event->dispatching) return EINA_FALSE;
 	if (event->phase == EGUEB_DOM_EVENT_PHASE_CAPTURING)
+	{
 		_egueb_dom_node_event_capture(thiz, event);
+	}
 	else if (event->phase == EGUEB_DOM_EVENT_PHASE_BUBBLING)
+	{
 		_egueb_dom_node_event_bubble(thiz, event);
+	}
 
 	return EINA_FALSE;
 }
