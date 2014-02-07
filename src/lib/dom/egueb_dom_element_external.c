@@ -28,13 +28,15 @@
 #define EGUEB_DOM_ELEMENT_EXTERNAL_DESCRIPTOR egueb_dom_element_external_descriptor_get()
 #define EGUEB_DOM_ELEMENT_EXTERNAL_CLASS(k) ENESIM_OBJECT_CLASS_CHECK(k, 		\
 		Egueb_Dom_Element_External_Class, EGUEB_DOM_ELEMENT_EXTERNAL_DESCRIPTOR)
+#define EGUEB_DOM_ELEMENT_EXTERNAL_CLASS_GET(o) EGUEB_DOM_ELEMENT_EXTERNAL_CLASS(			\
+		(ENESIM_OBJECT_INSTANCE(o))->klass)
 #define EGUEB_DOM_ELEMENT_EXTERNAL(o) ENESIM_OBJECT_INSTANCE_CHECK(o, 		\
 		Egueb_Dom_Element_External, EGUEB_DOM_ELEMENT_EXTERNAL_DESCRIPTOR)
 
 typedef struct _Egueb_Dom_Element_External
 {
 	Egueb_Dom_Element base;
-	const Egueb_Dom_Element_External_Descriptor *descriptor;
+	Egueb_Dom_Element_External_Descriptor descriptor;
 	void *data;
 } Egueb_Dom_Element_External;
 
@@ -46,11 +48,9 @@ typedef struct _Egueb_Dom_Element_External_Class
 
 static void _egueb_dom_element_external_init(Egueb_Dom_Element_External *thiz)
 {
-	if (!thiz->descriptor)
+	if (!thiz->descriptor.init)
 		return;
-	if (!thiz->descriptor->init)
-		return;
-	thiz->descriptor->init(EGUEB_DOM_NODE(thiz), thiz->data);
+	thiz->descriptor.init(EGUEB_DOM_NODE(thiz), thiz->data);
 }
 /*----------------------------------------------------------------------------*
  *                             Element interface                              *
@@ -60,8 +60,8 @@ static Eina_Bool _egueb_dom_element_external_process(Egueb_Dom_Element *e)
 	Egueb_Dom_Element_External *thiz;
 
 	thiz = EGUEB_DOM_ELEMENT_EXTERNAL(e);
-	if (thiz->descriptor->process)
-		return thiz->descriptor->process(EGUEB_DOM_NODE(e), thiz->data);
+	if (thiz->descriptor.process)
+		return thiz->descriptor.process(EGUEB_DOM_NODE(e), thiz->data);
 	return EINA_TRUE;
 }
 
@@ -70,7 +70,9 @@ static Egueb_Dom_String * _egueb_dom_element_external_tag_name_get(Egueb_Dom_Ele
 	Egueb_Dom_Element_External *thiz;
 
 	thiz = EGUEB_DOM_ELEMENT_EXTERNAL(e);
-	return thiz->descriptor->tag_name_get(EGUEB_DOM_NODE(e), thiz->data);
+	if (thiz->descriptor.tag_name_get)
+		return thiz->descriptor.tag_name_get(EGUEB_DOM_NODE(e), thiz->data);
+	return NULL;
 }
 
 static void _egueb_dom_element_external_clone(Egueb_Dom_Element *e, Egueb_Dom_Element *o)
@@ -91,8 +93,8 @@ static Eina_Bool _egueb_dom_element_external_child_appendable(
 	Egueb_Dom_Element_External *thiz;
 
 	thiz = EGUEB_DOM_ELEMENT_EXTERNAL(n);
-	if (thiz->descriptor->child_appendable)
-		return thiz->descriptor->child_appendable(n, thiz->data, child);
+	if (thiz->descriptor.child_appendable)
+		return thiz->descriptor.child_appendable(n, thiz->data, child);
 	return EINA_TRUE;
 }
 /*----------------------------------------------------------------------------*
@@ -125,8 +127,10 @@ static void _egueb_dom_element_external_instance_deinit(void *o)
 	Egueb_Dom_Element_External *thiz;
 
 	thiz = EGUEB_DOM_ELEMENT_EXTERNAL(o);
-	if (thiz->descriptor->deinit)
-		thiz->descriptor->deinit(EGUEB_DOM_NODE(o), thiz->data);
+	/* invalidate the descriptor */
+	thiz->descriptor.tag_name_get = NULL;
+	if (thiz->descriptor.deinit)
+		thiz->descriptor.deinit(EGUEB_DOM_NODE(o), thiz->data);
 }
 /*============================================================================*
  *                                 Global                                     *
@@ -134,6 +138,15 @@ static void _egueb_dom_element_external_instance_deinit(void *o)
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/
+EAPI Eina_Bool egueb_dom_element_is_external(Egueb_Dom_Node *n)
+{
+	if (!n) return EINA_FALSE;
+	if (!enesim_object_instance_inherits(ENESIM_OBJECT_INSTANCE(n),
+			EGUEB_DOM_ELEMENT_EXTERNAL_DESCRIPTOR))
+		return EINA_FALSE;
+	return EINA_TRUE;
+}
+
 EAPI void * egueb_dom_element_external_data_get(Egueb_Dom_Node *n)
 {
 	Egueb_Dom_Element_External *thiz;
@@ -152,7 +165,7 @@ EAPI Egueb_Dom_Node * egueb_dom_element_external_new(
 	if (!descriptor->tag_name_get) return NULL;
 
 	thiz = ENESIM_OBJECT_INSTANCE_NEW(egueb_dom_element_external);
-	thiz->descriptor = descriptor;
+	thiz->descriptor = *descriptor;
 	thiz->data = data;
 
 	/* now initialize it */

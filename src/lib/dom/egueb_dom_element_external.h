@@ -38,6 +38,7 @@ typedef struct _Egueb_Dom_Element_External_Descriptor
 	Egueb_Dom_Element_External_Descriptor_Process process;
 } Egueb_Dom_Element_External_Descriptor;
 
+EAPI Eina_Bool egueb_dom_element_is_external(Egueb_Dom_Node *n);
 EAPI void * egueb_dom_element_external_data_get(Egueb_Dom_Node *n);
 EAPI Egueb_Dom_Node * egueb_dom_element_external_new(
 		const Egueb_Dom_Element_External_Descriptor *descriptor,
