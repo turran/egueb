@@ -117,6 +117,12 @@ EAPI void egueb_dom_element_request_process(Egueb_Dom_Node *n);
 EAPI Eina_Bool egueb_dom_element_is_enqueued(Egueb_Dom_Node *n);
 EAPI Eina_Bool egueb_dom_element_process(Egueb_Dom_Node *n);
 
+/* helper functions for elements */
+EAPI Egueb_Dom_Node * egueb_dom_element_child_first_get(Egueb_Dom_Node *n);
+EAPI Egueb_Dom_Node * egueb_dom_element_child_last_get(Egueb_Dom_Node *n);
+EAPI Egueb_Dom_Node * egueb_dom_element_sibling_previous_get(Egueb_Dom_Node *n);
+EAPI Egueb_Dom_Node * egueb_dom_element_sibling_next_get(Egueb_Dom_Node *n);
+
 /**
  * @}
  */

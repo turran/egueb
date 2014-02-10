@@ -799,6 +799,75 @@ EAPI Eina_Bool egueb_dom_element_process(Egueb_Dom_Node *n)
 	return ret;
 }
 
+EAPI Egueb_Dom_Node * egueb_dom_element_child_first_get(Egueb_Dom_Node *n)
+{
+	Egueb_Dom_Node *ret;
+
+	ret = egueb_dom_node_child_first_get(n);
+	while (ret && (egueb_dom_node_type_get(ret) != EGUEB_DOM_NODE_TYPE_ELEMENT_NODE))
+	{
+		Egueb_Dom_Node *next;
+
+		next = egueb_dom_node_sibling_next_get(ret);
+		egueb_dom_node_unref(ret);
+		ret = next;
+	}
+	
+	return ret;
+}
+
+EAPI Egueb_Dom_Node * egueb_dom_element_child_last_get(Egueb_Dom_Node *n)
+{
+	Egueb_Dom_Node *ret;
+
+	ret = egueb_dom_node_child_last_get(n);
+	while (ret && (egueb_dom_node_type_get(ret) != EGUEB_DOM_NODE_TYPE_ELEMENT_NODE))
+	{
+		Egueb_Dom_Node *next;
+
+		next = egueb_dom_node_sibling_previous_get(ret);
+		egueb_dom_node_unref(ret);
+		ret = next;
+	}
+	
+	return ret;
+
+}
+
+EAPI Egueb_Dom_Node * egueb_dom_element_sibling_previous_get(Egueb_Dom_Node *n)
+{
+	Egueb_Dom_Node *ret;
+
+	ret = egueb_dom_node_sibling_previous_get(n);
+	while (ret && (egueb_dom_node_type_get(ret) != EGUEB_DOM_NODE_TYPE_ELEMENT_NODE))
+	{
+		Egueb_Dom_Node *next;
+
+		next = egueb_dom_node_sibling_previous_get(ret);
+		egueb_dom_node_unref(ret);
+		ret = next;
+	}
+	
+	return ret;
+}
+
+EAPI Egueb_Dom_Node * egueb_dom_element_sibling_next_get(Egueb_Dom_Node *n)
+{
+	Egueb_Dom_Node *ret;
+
+	ret = egueb_dom_node_sibling_next_get(n);
+	while (ret && (egueb_dom_node_type_get(ret) != EGUEB_DOM_NODE_TYPE_ELEMENT_NODE))
+	{
+		Egueb_Dom_Node *next;
+
+		next = egueb_dom_node_sibling_next_get(ret);
+		egueb_dom_node_unref(ret);
+		ret = next;
+	}
+	
+	return ret;
+}
+
 #if 0
   /* For the remove, we need a way on the element inherited to set it to a default
    * value, but given that it depends on the element itself, we need to use
