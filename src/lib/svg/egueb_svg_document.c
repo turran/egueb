@@ -83,11 +83,6 @@ typedef struct _Egueb_Svg_Document
 	/* input */
 	Egueb_Dom_Input *input;
 
-	/* our own state */
-	double last_width;
-	double last_height;
-	Eina_Bool changed;
-
 	/* application interface */
 	Egueb_Svg_Document_String_Get_Cb location_get;
 	void *location_get_data;
@@ -541,18 +536,6 @@ static Egueb_Dom_Node * _egueb_svg_document_element_create(int id)
 	return ret;
 }
 
-static Eina_Bool _egueb_svg_document_has_changed(Egueb_Svg_Document *thiz)
-{
-	if (!thiz->changed)
-		return EINA_FALSE;
-	/* TODO check that the topmost element has a relative coordinates */
-	if (thiz->width != thiz->last_width)
-		return EINA_TRUE;
-	else if (thiz->height != thiz->last_height)
-		return EINA_TRUE;
-	return EINA_FALSE;
-}
-
 static char * _egueb_svg_document_uri_get_absolute(Egueb_Svg_Document *thiz,
 		const char *uri)
 {
@@ -757,47 +740,6 @@ static Egueb_Dom_Node * _egueb_svg_document_class_element_create(
 	return ret;
 }
 
-static void _egueb_svg_document_process(Egueb_Dom_Node *n)
-{
-	Egueb_Svg_Document *thiz;
-	Egueb_Dom_Document *d;
-	Eina_Bool changed;
-
-	d = EGUEB_DOM_DOCUMENT(n);
-	thiz = EGUEB_SVG_DOCUMENT(d);
-	/* be sure we have actually changed */
-	changed = _egueb_svg_document_has_changed(thiz);
-	/* if so, force a complete process */
-	if (changed)
-	{
-		if (!d->element)
-		{
-			DBG("Nothing to process. No topmost element found");
-			return;
-		}
-		DBG("Processing topmost element only");
-		egueb_dom_element_process(d->element);
-		/* remove every enqueued element */
-		egueb_dom_document_process_queue_clear(n);
-
-		thiz->last_width = thiz->width;
-		thiz->last_height = thiz->height;
-	}
-	else
-	{
-		DBG("Processing list of changed elements");
-		egueb_dom_document_process_default(n);
-	}
-	thiz->changed = EINA_FALSE;
-}
-
-static Eina_Bool _egueb_svg_document_needs_process(Egueb_Dom_Node *n)
-{
-	Egueb_Svg_Document *thiz;
-
-	thiz = EGUEB_SVG_DOCUMENT(n);
-	return _egueb_svg_document_has_changed(thiz);
-}
 /*----------------------------------------------------------------------------*
  *                              Object interface                              *
  *----------------------------------------------------------------------------*/
@@ -810,8 +752,6 @@ static void _egueb_svg_document_class_init(void *k)
 	Egueb_Dom_Document_Class *klass = EGUEB_DOM_DOCUMENT_CLASS(k);
 
 	klass->element_create = _egueb_svg_document_class_element_create;
-	klass->process = _egueb_svg_document_process;
-	klass->needs_process = _egueb_svg_document_needs_process;
 }
 
 static void _egueb_svg_document_instance_init(void *o)
@@ -920,10 +860,17 @@ EAPI void egueb_svg_document_width_set(Egueb_Dom_Node *n,
 		double width)
 {
 	Egueb_Svg_Document *thiz;
+	Egueb_Dom_Node *topmost;
 
 	thiz = EGUEB_SVG_DOCUMENT(n);
 	thiz->width = width;
-	thiz->changed = EINA_TRUE;
+
+	topmost = egueb_dom_document_element_get(n);
+	if (topmost)
+	{
+		egueb_dom_element_request_process(topmost);
+		egueb_dom_node_unref(topmost);
+	}
 }
 
 EAPI void egueb_svg_document_width_get(Egueb_Dom_Node *n,
@@ -940,10 +887,17 @@ EAPI void egueb_svg_document_height_set(Egueb_Dom_Node *n,
 		double height)
 {
 	Egueb_Svg_Document *thiz;
+	Egueb_Dom_Node *topmost;
 
 	thiz = EGUEB_SVG_DOCUMENT(n);
 	thiz->height = height;
-	thiz->changed = EINA_TRUE;
+
+	topmost = egueb_dom_document_element_get(n);
+	if (topmost)
+	{
+		egueb_dom_element_request_process(topmost);
+		egueb_dom_node_unref(topmost);
+	}
 }
 
 EAPI void egueb_svg_document_height_get(Egueb_Dom_Node *n,
@@ -1025,10 +979,17 @@ EAPI void egueb_svg_document_font_size_set(Egueb_Dom_Node *n,
 		double font_size)
 {
 	Egueb_Svg_Document *thiz;
+	Egueb_Dom_Node *topmost;
 
 	thiz = EGUEB_SVG_DOCUMENT(n);
 	thiz->font_size = font_size;
-	thiz->changed = EINA_TRUE;
+
+	topmost = egueb_dom_document_element_get(n);
+	if (topmost)
+	{
+		egueb_dom_element_request_process(topmost);
+		egueb_dom_node_unref(topmost);
+	}
 }
 
 EAPI double egueb_svg_document_font_size_get(Egueb_Dom_Node *n)

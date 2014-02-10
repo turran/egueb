@@ -72,25 +72,6 @@ static Egueb_Dom_Node * _egueb_dom_document_external_class_element_create(
 		return thiz->descriptor->element_create(EGUEB_DOM_NODE(d), thiz->data, name);
 	return NULL;
 }
-
-static void _egueb_dom_document_external_process(Egueb_Dom_Node *n)
-{
-	Egueb_Dom_Document_External *thiz;
-
-	thiz = EGUEB_DOM_DOCUMENT_EXTERNAL(n);
-	if (thiz->descriptor->process)
-		thiz->descriptor->process(n, thiz->data);
-}
-
-static Eina_Bool _egueb_dom_document_external_needs_process(Egueb_Dom_Node *n)
-{
-	Egueb_Dom_Document_External *thiz;
-
-	thiz = EGUEB_DOM_DOCUMENT_EXTERNAL(n);
-	if (thiz->descriptor->needs_process)
-		return thiz->descriptor->needs_process(n, thiz->data);
-	return EINA_TRUE;
-}
 /*----------------------------------------------------------------------------*
  *                              Object interface                              *
  *----------------------------------------------------------------------------*/
@@ -103,8 +84,6 @@ static void _egueb_dom_document_external_class_init(void *k)
 	Egueb_Dom_Document_Class *klass = EGUEB_DOM_DOCUMENT_CLASS(k);
 
 	klass->element_create = _egueb_dom_document_external_class_element_create;
-	klass->process = _egueb_dom_document_external_process;
-	klass->needs_process = _egueb_dom_document_external_needs_process;
 }
 
 static void _egueb_dom_document_external_instance_init(void *o)

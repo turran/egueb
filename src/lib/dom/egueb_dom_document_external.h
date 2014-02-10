@@ -24,16 +24,12 @@ typedef void (*Egueb_Dom_Document_External_Descriptor_Deinit)(
 		Egueb_Dom_Node *node, void *data);
 typedef Egueb_Dom_Node * (*Egueb_Dom_Document_External_Element_Create)(
 		Egueb_Dom_Node *n, void *data, const char *name);
-typedef void (*Egueb_Dom_Document_External_Process)(Egueb_Dom_Node *n, void *data);
-typedef Eina_Bool (*Egueb_Dom_Document_External_Need_Process)(Egueb_Dom_Node *n, void *data);
 
 typedef struct _Egueb_Dom_Document_External_Descriptor
 {
 	Egueb_Dom_Document_External_Descriptor_Init init;
 	Egueb_Dom_Document_External_Descriptor_Deinit deinit;
 	Egueb_Dom_Document_External_Element_Create element_create;
-	Egueb_Dom_Document_External_Process process;
-	Egueb_Dom_Document_External_Need_Process needs_process;
 } Egueb_Dom_Document_External_Descriptor;
 
 EAPI void * egueb_dom_document_external_data_get(Egueb_Dom_Node *n);

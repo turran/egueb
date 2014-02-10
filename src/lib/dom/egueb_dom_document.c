@@ -403,6 +403,9 @@ static void _egueb_dom_document_topmost_remove_events(Egueb_Dom_Document *thiz)
 			EINA_FALSE, thiz);
 }
 /*----------------------------------------------------------------------------*
+ *                               Node interface                               *
+ *----------------------------------------------------------------------------*/
+/*----------------------------------------------------------------------------*
  *                              Object interface                              *
  *----------------------------------------------------------------------------*/
 ENESIM_OBJECT_ABSTRACT_BOILERPLATE(EGUEB_DOM_NODE_DESCRIPTOR,
@@ -412,11 +415,8 @@ ENESIM_OBJECT_ABSTRACT_BOILERPLATE(EGUEB_DOM_NODE_DESCRIPTOR,
 static void _egueb_dom_document_class_init(void *k)
 {
 	Egueb_Dom_Node_Class *n_klass = EGUEB_DOM_NODE_CLASS(k);
-	Egueb_Dom_Document_Class *klass = EGUEB_DOM_DOCUMENT_CLASS(k);
 
 	n_klass->type = EGUEB_DOM_NODE_TYPE_DOCUMENT_NODE;
-	/* set default methods */
-	klass->process = egueb_dom_document_process_default;
 }
 
 static void _egueb_dom_document_instance_init(void *o)
@@ -466,55 +466,6 @@ int egueb_dom_document_current_run_get(Egueb_Dom_Node *n)
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/
-EAPI void egueb_dom_document_process_default(Egueb_Dom_Node *n)
-{
-	Egueb_Dom_Document *thiz;
-	Eina_List *l, *l_next;
-
-	thiz = EGUEB_DOM_DOCUMENT(n);
-	/* increment the current run */
-	thiz->current_run++;
-	/* process every enqueued node */
-	EINA_LIST_FOREACH_SAFE(thiz->current_enqueued, l, l_next, n)
-	{
-		Egueb_Dom_String *name = NULL;
-		Egueb_Dom_Element *e;
-
-		e = EGUEB_DOM_ELEMENT(n);
-		if (e->last_run == thiz->current_run)
-			goto dequeue;
-
-		if (!egueb_dom_element_is_enqueued(n))
-			goto skip;
-
-		name = egueb_dom_node_name_get(n);
-		INFO("Processing '%s'", egueb_dom_string_string_get(name));
-		egueb_dom_string_unref(name);
-
-		egueb_dom_element_process(n);
-dequeue:
-		egueb_dom_element_dequeue(n);
-skip:
-		thiz->current_enqueued = eina_list_remove_list(thiz->current_enqueued, l);
-
-		egueb_dom_node_unref(n);
-	}
-	/* TODO it might be possible that a process of a node implies
-	 * a new change
-	 */
-}
-
-EAPI Eina_Bool egueb_dom_document_needs_process_default(Egueb_Dom_Node *n)
-{
-	Egueb_Dom_Document *thiz;
-
-	thiz = EGUEB_DOM_DOCUMENT(n);
-	if (thiz->current_enqueued)
-		return EINA_TRUE;
-	else
-		return EINA_FALSE;
-}
-
 /*
  *  Element createElement(in DOMString tagName) raises(DOMException);
  */
@@ -671,27 +622,52 @@ EAPI Egueb_Dom_Node * egueb_dom_document_node_adopt(Egueb_Dom_Node *n, Egueb_Dom
 EAPI void egueb_dom_document_process(Egueb_Dom_Node *n)
 {
 	Egueb_Dom_Document *thiz;
-	Egueb_Dom_Document_Class *klass;
+	Eina_List *l, *l_next;
 
 	thiz = EGUEB_DOM_DOCUMENT(n);
-	klass = EGUEB_DOM_DOCUMENT_CLASS_GET(n);
 
 	thiz->processing = EINA_TRUE;
-	if (klass->process)
-		klass->process(n);
+	/* increment the current run */
+	thiz->current_run++;
+	/* process every enqueued node */
+	EINA_LIST_FOREACH_SAFE(thiz->current_enqueued, l, l_next, n)
+	{
+		Egueb_Dom_String *name = NULL;
+		Egueb_Dom_Element *e;
+
+		e = EGUEB_DOM_ELEMENT(n);
+		if (e->last_run == thiz->current_run)
+			goto dequeue;
+
+		if (!egueb_dom_element_is_enqueued(n))
+			goto skip;
+
+		name = egueb_dom_node_name_get(n);
+		INFO("Processing '%s'", egueb_dom_string_string_get(name));
+		egueb_dom_string_unref(name);
+
+		egueb_dom_element_process(n);
+dequeue:
+		egueb_dom_element_dequeue(n);
+skip:
+		thiz->current_enqueued = eina_list_remove_list(thiz->current_enqueued, l);
+
+		egueb_dom_node_unref(n);
+	}
+	/* TODO it might be possible that a process of a node implies
+	 * a new change
+	 */
 	thiz->processing = EINA_FALSE;
 }
 
 EAPI Eina_Bool egueb_dom_document_needs_process(Egueb_Dom_Node *n)
 {
-	Egueb_Dom_Document_Class *klass;
+	Egueb_Dom_Document *thiz;
 
-	klass = EGUEB_DOM_DOCUMENT_CLASS_GET(n);
-
-	if (klass->needs_process)
-		if (klass->needs_process(n))
-			return EINA_TRUE;
-	return egueb_dom_document_needs_process_default(n);
+	thiz = EGUEB_DOM_DOCUMENT(n);
+	if (thiz->current_enqueued)
+		return EINA_TRUE;
+	return EINA_FALSE;
 }
 
 EAPI void egueb_dom_document_process_queue_clear(Egueb_Dom_Node *n)

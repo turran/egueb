@@ -44,8 +44,6 @@ typedef struct _Egueb_Dom_Document_Class
 {
 	Egueb_Dom_Node_Class base;
 	Egueb_Dom_Document_Element_Create element_create;
-	Egueb_Dom_Document_Process process;
-	Egueb_Dom_Document_Need_Process needs_process;
 } Egueb_Dom_Document_Class;
 
 #define EGUEB_DOM_DOCUMENT_DESCRIPTOR egueb_dom_document_descriptor_get()
