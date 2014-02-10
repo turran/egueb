@@ -202,11 +202,9 @@ static Eina_Bool _egueb_svg_element_use_process(Egueb_Svg_Renderable *r)
 	DBG("x: %g, y: %g, w: %g, h: %g", thiz->gx, thiz->gy, thiz->gw, thiz->gh);
 
 	/* in case the xlink attribute has changed, remove the clone
-	 * and create a new one. if the clone has changed, remove
-	 * it and create a new one too
+	 * and create a new one.
 	 */
-	if (thiz->document_changed || !egueb_dom_string_is_equal(xlink, thiz->last_xlink) ||
-			(thiz->clone && egueb_dom_element_changed(thiz->clone)))
+	if (thiz->document_changed || !egueb_dom_string_is_equal(xlink, thiz->last_xlink))
 	{
 		Egueb_Dom_Node *cloned;
 		if (thiz->clone)

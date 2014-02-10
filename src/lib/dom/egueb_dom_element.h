@@ -113,7 +113,6 @@ EAPI Eina_Bool egueb_dom_element_property_value_get(Egueb_Dom_Node *node,
 EAPI Egueb_Dom_Node * egueb_dom_element_property_fetch(Egueb_Dom_Node *node,
 		const Egueb_Dom_String *name);
 
-EAPI Eina_Bool egueb_dom_element_changed(Egueb_Dom_Node *n);
 EAPI void egueb_dom_element_request_process(Egueb_Dom_Node *n);
 EAPI Eina_Bool egueb_dom_element_is_enqueued(Egueb_Dom_Node *n);
 EAPI Eina_Bool egueb_dom_element_process(Egueb_Dom_Node *n);

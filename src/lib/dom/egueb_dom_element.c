@@ -758,15 +758,6 @@ EAPI Eina_Bool egueb_dom_element_attribute_add(Egueb_Dom_Node *n,
 	return EINA_TRUE;
 }
 
-/* Maybe rename this to enqueued? */
-EAPI Eina_Bool egueb_dom_element_changed(Egueb_Dom_Node *n)
-{
-	Egueb_Dom_Element *thiz;
-
-	thiz = EGUEB_DOM_ELEMENT(n);
-	return thiz->changed;
-}
-
 EAPI Eina_Bool egueb_dom_element_is_enqueued(Egueb_Dom_Node *n)
 {
 	Egueb_Dom_Element *thiz;

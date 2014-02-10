@@ -496,7 +496,7 @@ static Eina_Bool _egueb_smil_animation_process(Egueb_Dom_Element *e)
 		egueb_dom_string_unref(xlink_href);
 	}
 
-	if (!egueb_dom_element_changed(EGUEB_DOM_NODE(e)) &&
+	if (!egueb_dom_element_is_enqueued(EGUEB_DOM_NODE(e)) &&
 			thiz->target == target && !thiz->document_changed)
 	{
 		egueb_dom_node_unref(target);

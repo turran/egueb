@@ -36,7 +36,6 @@ typedef struct _Egueb_Dom_Element
 
 	/* TODO identifier of the last time an element has done the setup */
 	int last_run;
-	Eina_Bool changed;
 	Eina_Bool enqueued;
 } Egueb_Dom_Element;
 
