@@ -153,13 +153,15 @@ static void _egueb_dom_parser_eina_tag_text_set(Egueb_Dom_Parser_Eina *thiz,
 	Egueb_Dom_String *str;
 
 	parent = _egueb_dom_parser_eina_context_get(thiz);
+	if (!parent) return;
+
 	doc = egueb_dom_parser_document_get(thiz->parser);
 	if (!doc) return;
 
 	node = egueb_dom_text_new();
 	if (!node) return;
 
-	if (parent) egueb_dom_node_child_append(parent, node, NULL);
+	egueb_dom_node_child_append(parent, node, NULL);
 	/* set the content */
 	DBG("Appending string to a text node");
 	str = egueb_dom_string_new_with_length(text, length);
