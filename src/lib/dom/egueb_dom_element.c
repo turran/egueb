@@ -540,7 +540,8 @@ EAPI Eina_Bool egueb_dom_element_attribute_set(Egueb_Dom_Node *node,
 		attr_name = egueb_dom_string_new_with_string(
 				egueb_dom_string_string_get(name));
 		/* create a new string attribute */
-		p = egueb_dom_attr_string_new(attr_name, NULL);
+		p = egueb_dom_attr_string_new(attr_name, NULL, EINA_FALSE,
+				EINA_FALSE, EINA_FALSE);
 		egueb_dom_element_attribute_add(node, egueb_dom_node_ref(p), err);
 	}
 

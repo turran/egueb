@@ -37,14 +37,16 @@
 
 typedef struct _Egueb_Dom_Attr_String
 {
-	Egueb_Dom_Attr_Object base;
-	Egueb_Dom_String *value;
+	Egueb_Dom_Attr_Object parent;
+	Egueb_Dom_String *base;
 	Egueb_Dom_String *def;
+	Egueb_Dom_String *anim;
+	Egueb_Dom_String *styled;
 } Egueb_Dom_Attr_String;
 
 typedef struct _Egueb_Dom_Attr_String_Class
 {
-	Egueb_Dom_Attr_Object_Class base;
+	Egueb_Dom_Attr_Object_Class parent;
 } Egueb_Dom_Attr_String_Class;
 
 static Eina_Bool _egueb_dom_attr_string_value_get(Egueb_Dom_Attr *p,
@@ -55,8 +57,16 @@ static Eina_Bool _egueb_dom_attr_string_value_get(Egueb_Dom_Attr *p,
 	thiz = EGUEB_DOM_ATTR_STRING(p);
 	switch (type)
 	{
+		case EGUEB_DOM_ATTR_TYPE_ANIMATED:
+		*o = (void **)&thiz->anim;
+		break;
+
+		case EGUEB_DOM_ATTR_TYPE_STYLED:
+		*o = (void **)&thiz->styled;
+		break;
+
 		case EGUEB_DOM_ATTR_TYPE_BASE:
-		*o = (void **)&thiz->value;
+		*o = (void **)&thiz->base;
 		break;
 
 		case EGUEB_DOM_ATTR_TYPE_DEFAULT:
@@ -103,6 +113,14 @@ static void _egueb_dom_attr_string_instance_deinit(void *o)
 	Egueb_Dom_Attr_String *thiz;
 
 	thiz = EGUEB_DOM_ATTR_STRING(o);
+	if (thiz->base)
+		egueb_dom_string_unref(thiz->base);
+	if (thiz->anim)
+		egueb_dom_string_unref(thiz->anim);
+	if (thiz->styled)
+		egueb_dom_string_unref(thiz->styled);
+	if (thiz->def)
+		egueb_dom_string_unref(thiz->def);
 }
 /*============================================================================*
  *                                 Global                                     *
@@ -111,13 +129,13 @@ static void _egueb_dom_attr_string_instance_deinit(void *o)
  *                                   API                                      *
  *============================================================================*/
 EAPI Egueb_Dom_Node * egueb_dom_attr_string_new(Egueb_Dom_String *name,
-		Egueb_Dom_String *def)
+		Egueb_Dom_String *def, Eina_Bool animatable, Eina_Bool stylable,
+		Eina_Bool inheritable)
 {
 	Egueb_Dom_Node *n;
 
 	n = ENESIM_OBJECT_INSTANCE_NEW(egueb_dom_attr_string);
-	egueb_dom_attr_init(n, name, EINA_FALSE, EINA_FALSE,
-			EINA_FALSE);
+	egueb_dom_attr_init(n, name, animatable, stylable, inheritable);
 	if (def)
 		egueb_dom_attr_set(n, EGUEB_DOM_ATTR_TYPE_DEFAULT, def);
 	return n;

@@ -700,11 +700,14 @@ static void _egueb_svg_element_instance_init(void *o)
 	thiz = EGUEB_SVG_ELEMENT(o);
 	/* create the properties */
 	thiz->id = egueb_dom_attr_string_new(
-			egueb_dom_string_ref(EGUEB_SVG_ID), NULL);
+			egueb_dom_string_ref(EGUEB_SVG_ID), NULL, EINA_FALSE,
+			EINA_FALSE, EINA_FALSE);
 	thiz->klass = egueb_dom_attr_string_new(
-			egueb_dom_string_ref(EGUEB_SVG_CLASS), NULL);
+			egueb_dom_string_ref(EGUEB_SVG_CLASS), NULL, EINA_FALSE,
+			EINA_FALSE, EINA_FALSE);
 	thiz->style = egueb_dom_attr_string_new(
-			egueb_dom_string_ref(EGUEB_SVG_STYLE), NULL);
+			egueb_dom_string_ref(EGUEB_SVG_STYLE), NULL, EINA_FALSE,
+			EINA_FALSE, EINA_FALSE);
 	/* the presentation attributes */
 	thiz->clip_path = egueb_svg_attr_clip_path_new(
 			egueb_dom_string_ref(EGUEB_SVG_CLIP_PATH),

@@ -543,7 +543,8 @@ static void _egueb_smil_animation_instance_init(void *o)
 
 	thiz = EGUEB_SMIL_ANIMATION(o);
 	thiz->attribute_name = egueb_dom_attr_string_new(
-			egueb_dom_string_ref(EGUEB_SMIL_ATTRIBUTE_NAME), NULL);
+			egueb_dom_string_ref(EGUEB_SMIL_ATTRIBUTE_NAME), NULL,
+			EINA_FALSE, EINA_FALSE, EINA_FALSE);
 	thiz->fill = egueb_smil_attr_fill_new(
 			egueb_dom_string_ref(EGUEB_SMIL_FILL),
 			EGUEB_SMIL_FILL_REMOVE);
@@ -556,7 +557,7 @@ static void _egueb_smil_animation_instance_init(void *o)
 			egueb_dom_string_ref(EGUEB_SMIL_END), NULL);
 	thiz->xlink_href = egueb_dom_attr_string_new(
 			egueb_dom_string_ref(EGUEB_DOM_XLINK_HREF),
-			NULL);
+			NULL, EINA_FALSE, EINA_FALSE, EINA_FALSE);
 
 	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->attribute_name), NULL);
 	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->fill), NULL);

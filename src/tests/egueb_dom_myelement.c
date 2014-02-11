@@ -65,7 +65,8 @@ static void _myelement_instance_init(void *o)
 	thiz = MYELEMENT(o);
 	thiz->prop1 = egueb_dom_attr_string_new(
 			egueb_dom_string_new_with_string("prop1"),
-			egueb_dom_string_new_with_string("default"));
+			egueb_dom_string_new_with_string("default"),
+			EINA_FALSE, EINA_FALSE, EINA_FALSE);
 	/* add the class attributes (properties) */
 	egueb_dom_element_attribute_add(EGUEB_DOM_NODE(o), egueb_dom_node_ref(thiz->prop1), NULL);
 }

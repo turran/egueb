@@ -1035,11 +1035,14 @@ static void _egueb_smil_animate_base_instance_init(void *o)
 	thiz->additive = egueb_smil_attr_additive_new(
 			egueb_dom_string_ref(EGUEB_SMIL_ADDITIVE), EGUEB_SMIL_ADDITIVE_REPLACE);
 	thiz->by = egueb_dom_attr_string_new(
-			egueb_dom_string_ref(EGUEB_SMIL_BY), NULL);
+			egueb_dom_string_ref(EGUEB_SMIL_BY), NULL, EINA_FALSE,
+			EINA_FALSE, EINA_FALSE);
 	thiz->to = egueb_dom_attr_string_new(
-			egueb_dom_string_ref(EGUEB_SMIL_TO), NULL);
+			egueb_dom_string_ref(EGUEB_SMIL_TO), NULL, EINA_FALSE,
+			EINA_FALSE, EINA_FALSE);
 	thiz->from = egueb_dom_attr_string_new(
-			egueb_dom_string_ref(EGUEB_SMIL_FROM), NULL);
+			egueb_dom_string_ref(EGUEB_SMIL_FROM), NULL,
+			EINA_FALSE, EINA_FALSE, EINA_FALSE);
 	thiz->values = egueb_dom_attr_string_list_new(
 			egueb_dom_string_ref(EGUEB_SMIL_VALUES), NULL,
 			EINA_FALSE, EINA_FALSE, EINA_FALSE);
