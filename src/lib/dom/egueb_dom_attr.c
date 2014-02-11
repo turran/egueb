@@ -221,6 +221,14 @@ void egueb_dom_attr_copy(Egueb_Dom_Node *n,
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/
+EAPI Eina_Bool egueb_dom_is_attr(Egueb_Dom_Node *n)
+{
+	if (!n) return EINA_FALSE;
+	if (egueb_dom_node_type_get(n) != EGUEB_DOM_NODE_TYPE_ATTRIBUTE_NODE)
+		return EINA_FALSE;
+	return EINA_TRUE;
+}
+
 EAPI void egueb_dom_attr_init(Egueb_Dom_Node *n, Egueb_Dom_String *name,
 		Eina_Bool animatable, Eina_Bool stylable, Eina_Bool inheritable)
 {
@@ -431,7 +439,10 @@ EAPI void egueb_dom_attr_inheritable_process(Egueb_Dom_Node *n,
 	Egueb_Dom_Attr *thiz;
 	Egueb_Dom_Attr *other;
 
+	if (!n || !rel) return;
 	if (!egueb_dom_attr_is_inheritable(n)) return;
+	if (!egueb_dom_is_attr(n)) return;
+	if (!egueb_dom_is_attr(rel)) return;
 
 	thiz = EGUEB_DOM_ATTR(n);
 	if (thiz->inherited)
