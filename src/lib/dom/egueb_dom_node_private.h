@@ -20,12 +20,18 @@
 #define _EGUEB_DOM_NODE_PRIVATE_H_
 
 typedef struct _Egueb_Dom_Document Egueb_Dom_Document;
+typedef struct _Egueb_Dom_Node_Id
+{
+	char *id;
+	int length;
+} Egueb_Dom_Node_Id;
 
 struct _Egueb_Dom_Node
 {
 	Enesim_Object_Instance base;
 	/* the tree hierarchy */
 	EINA_INLIST;
+	Egueb_Dom_Node_Id nid;
 	Egueb_Dom_Node *parent;
 	Eina_Inlist *children;
 	Egueb_Dom_Node *owner_document;
