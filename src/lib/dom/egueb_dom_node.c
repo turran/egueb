@@ -111,11 +111,6 @@ static void _egueb_dom_node_event_dispatch(Egueb_Dom_Node *thiz,
 		{
 			nl->listener(evt, nl->data);
 		}
-		if (evt->stopped)
-		{
-			DBG("Event '%s' stopped", egueb_dom_string_string_get(evt->type));
-			break;
-		}
 	}
 monitors:
 	/* now the monitors */
