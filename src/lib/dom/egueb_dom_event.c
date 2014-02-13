@@ -61,11 +61,6 @@ static void _egueb_dom_event_instance_deinit(void *o)
 EAPI void egueb_dom_event_stop_propagation(Egueb_Dom_Event *thiz)
 {
 	if (!thiz) return;
-	if (!thiz->cancelable)
-	{
-		DBG("Impossible to stop a not cancelable event '%s'", egueb_dom_string_string_get(thiz->type));
-		return;
-	}
 	DBG("Stopping propagation of event '%s'", egueb_dom_string_string_get(thiz->type));
 	thiz->stopped = EINA_TRUE;
 }
