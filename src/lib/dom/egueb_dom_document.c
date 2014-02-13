@@ -208,6 +208,10 @@ static void _egueb_dom_document_topmost_attr_modified_cb(Egueb_Dom_Event *ev,
 		_egueb_dom_document_insert_id(thiz, target, attr_val);
 	}
 	/* whenever an attribute has changed, trigger the request process */
+	/* TODO this will make a new event to be triggered from the target and
+	 * then bubble again down, there's no real need for that ... just enqueue it
+	 * directly
+	 */
 	egueb_dom_element_request_process(target);
 	egueb_dom_node_unref(target);
 }
