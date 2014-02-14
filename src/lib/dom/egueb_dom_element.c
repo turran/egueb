@@ -323,6 +323,14 @@ static void _egueb_dom_element_clone_destroyed_cb(Egueb_Dom_Event *e,
 
 	egueb_dom_node_unref(cloned);
 }
+
+static Eina_Bool _egueb_dom_element_attributes_process_cb(const Eina_Hash *hash,
+		const void *key, void *data, void *user_data)
+{
+	Egueb_Dom_Node *attr = data;
+	egueb_dom_attr_process(attr);
+	return EINA_TRUE;
+}
 /*----------------------------------------------------------------------------*
  *                               Node interface                               *
  *----------------------------------------------------------------------------*/
@@ -789,6 +797,10 @@ EAPI Eina_Bool egueb_dom_element_process(Egueb_Dom_Node *n)
 	/* unset the flag that informs the inheritable change */
 	thiz->inheritable_changed = EINA_FALSE;
 	thiz->attr_changed = EINA_FALSE;
+	/* process every attribute */
+	eina_hash_foreach(thiz->attributes,
+			_egueb_dom_element_attributes_process_cb, NULL);
+
 	/* set the run timestamp */
 	doc = egueb_dom_node_document_get(n);
 	if (doc)

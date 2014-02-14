@@ -56,6 +56,7 @@ typedef struct _Egueb_Dom_Attr
 	 * will have the inherited property
 	 */
 	Egueb_Dom_Node *inherited;
+	int changed;
 } Egueb_Dom_Attr;
 
 /* This function should set on the value pointer a reference to the internal
@@ -86,5 +87,6 @@ Eina_Bool egueb_dom_attr_set_va(Egueb_Dom_Node *n,
 		int prop_mask, va_list args);
 void egueb_dom_attr_copy(Egueb_Dom_Node *n,
 		Egueb_Dom_Node *other);
+void egueb_dom_attr_process(Egueb_Dom_Node *n);
 
 #endif

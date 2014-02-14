@@ -98,6 +98,7 @@ EAPI Eina_Bool egueb_dom_attr_string_get(Egueb_Dom_Node *attr,
 
 EAPI void egueb_dom_attr_inherited_get(Egueb_Dom_Node *attr,
 		Egueb_Dom_Node **inherited);
+EAPI Eina_Bool egueb_dom_attr_has_changed(Egueb_Dom_Node *n);
 
 /**
  * @}

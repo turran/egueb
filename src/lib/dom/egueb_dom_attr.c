@@ -218,6 +218,19 @@ void egueb_dom_attr_copy(Egueb_Dom_Node *n,
 	other->set_mask = thiz->set_mask;
 }
 
+/* The owner element must call this to reset the changed counter
+ * It is automatically called everytime an element is processed, but only
+ * for non inheritable attributes. For inheritable attributes the element
+ * implementation is responsible of process theme using the
+ * egueb_dom_attr_inheritable_process function
+ */
+void egueb_dom_attr_process(Egueb_Dom_Node *n)
+{
+	Egueb_Dom_Attr *thiz;
+
+	thiz = EGUEB_DOM_ATTR(n);
+	thiz->changed = 0;
+}
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/
@@ -429,6 +442,8 @@ EAPI Eina_Bool egueb_dom_attr_value_set(Egueb_Dom_Node *n,
 		e->attr_changed = EINA_TRUE;
 		/* finally set the mask */
 		thiz->set_mask |= type;
+		/* mark it as changed */
+		thiz->changed++;
 	}
 	return EINA_TRUE;
 }
@@ -457,20 +472,20 @@ EAPI void egueb_dom_attr_inheritable_process(Egueb_Dom_Node *n,
 			EGUEB_DOM_ATTR_TYPE_ANIMATED, rel))
 	{
 		DBG("Animated set, using it");
-		return;
+		goto done;
 	}
 	if (_egueb_dom_attr_inheritable_process_full(thiz,
 			EGUEB_DOM_ATTR_FLAG_STYLABLE,
 			EGUEB_DOM_ATTR_TYPE_STYLED, rel))
 	{
 		DBG("Styled set, using it");
-		return;
+		goto done;
 	}
 	if (_egueb_dom_attr_inheritable_process(thiz,
 			EGUEB_DOM_ATTR_TYPE_BASE, rel))
 	{
 		DBG("Base set, using it");
-		return;
+		goto done;
 	}
 	/* in case one of the property types is set, inherit from the relative
 	 * one
@@ -480,6 +495,8 @@ EAPI void egueb_dom_attr_inheritable_process(Egueb_Dom_Node *n,
 		thiz->inherited = egueb_dom_node_ref(other->inherited);
 	else
 		thiz->inherited = egueb_dom_node_ref(rel);
+done:
+	egueb_dom_attr_process(n);
 }
 
 EAPI Eina_Bool egueb_dom_attr_final_value_get(Egueb_Dom_Node *n,
@@ -591,3 +608,10 @@ EAPI void egueb_dom_attr_inherited_get(Egueb_Dom_Node *attr,
 		*inherited = NULL;
 }
 
+EAPI Eina_Bool egueb_dom_attr_has_changed(Egueb_Dom_Node *n)
+{
+	Egueb_Dom_Attr *thiz;
+
+	thiz = EGUEB_DOM_ATTR(n);
+	return thiz->changed;
+}
