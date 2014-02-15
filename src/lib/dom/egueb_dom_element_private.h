@@ -61,7 +61,5 @@ typedef struct _Egueb_Dom_Element_Class
 		Egueb_Dom_Element, EGUEB_DOM_ELEMENT_DESCRIPTOR)
 
 Eina_Bool egueb_dom_element_process_children(Egueb_Dom_Element *thiz);
-void egueb_dom_element_dequeue(Egueb_Dom_Node *n);
-void egueb_dom_element_enqueue(Egueb_Dom_Node *n);
 
 #endif

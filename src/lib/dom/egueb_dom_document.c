@@ -109,52 +109,6 @@ static Eina_Bool _egueb_dom_parser_transform_text(Egueb_Dom_Parser *thiz, const 
 /* Forward declarations */
 static void _egueb_dom_document_topmost_remove_events(Egueb_Dom_Document *thiz);
 
-static void _egueb_dom_document_element_enqueue(Egueb_Dom_Document *thiz,
-		Egueb_Dom_Node *node)
-{
-	Egueb_Dom_String *name = NULL;
-
-	if (egueb_dom_element_is_enqueued(node))
-		goto done;
-	name = egueb_dom_node_name_get(node);
-	INFO("Node '%s' added to the list of damaged nodes",
-			egueb_dom_string_string_get(name));
-	egueb_dom_string_unref(name);
-
-	egueb_dom_element_enqueue(node);
-	thiz->current_enqueued = eina_list_append(thiz->current_enqueued,
-			egueb_dom_node_ref(node));
-done:
-	egueb_dom_node_unref(node);
-}
-
-static void _egueb_dom_document_element_dequeue(Egueb_Dom_Document *thiz,
-		Egueb_Dom_Node *node)
-{
-	Eina_List *l;
-	Egueb_Dom_String *name = NULL;
-
-	if (!egueb_dom_element_is_enqueued(node))
-		goto done;
-	l = eina_list_data_find_list(thiz->current_enqueued, node);
-	if (!l)
-	{
-		ERR("Enqueued?");
-		goto done;
-	}
-	/* check if the data exists, so we can remove the reference */
-	thiz->current_enqueued = eina_list_remove_list(
-		thiz->current_enqueued, l);
-	name = egueb_dom_node_name_get(node);
-	INFO("Node '%s' removed from the list of damaged nodes",
-			egueb_dom_string_string_get(name));
-	egueb_dom_string_unref(name);
-	egueb_dom_element_dequeue(node);
-	egueb_dom_node_unref(node);
-done:
-	egueb_dom_node_unref(node);
-}
-
 static void _egueb_dom_document_insert_id(Egueb_Dom_Document *thiz, Egueb_Dom_Node *n,
 		Egueb_Dom_String *id)
 {
@@ -244,7 +198,6 @@ static void _egueb_dom_document_topmost_node_inserted_cb(Egueb_Dom_Event *ev,
 static void _egueb_dom_document_topmost_node_removed_cb(Egueb_Dom_Event *ev,
 		void *data)
 {
-	Egueb_Dom_Document *thiz = EGUEB_DOM_DOCUMENT(data);
 	Egueb_Dom_Node *target;
 	Egueb_Dom_Node_Type type;
 	Egueb_Dom_String *name;
@@ -262,7 +215,7 @@ static void _egueb_dom_document_topmost_node_removed_cb(Egueb_Dom_Event *ev,
 	egueb_dom_string_unref(name);
 
 	/* remove the element from the queue */
-	_egueb_dom_document_element_dequeue(thiz, target);
+	egueb_dom_element_dequeue(target);
 }
 
 static void _egueb_dom_document_element_insterted_into_document_cb(
@@ -355,13 +308,12 @@ static void _egueb_dom_document_element_removed_from_document_cb(
 static void _egueb_dom_document_topmost_request_process_cb(
 		Egueb_Dom_Event *ev, void *data)
 {
-	Egueb_Dom_Document *thiz = data;
 	Egueb_Dom_Node *target;
 
 	DBG("Requesting process");
 	target = egueb_dom_event_target_get(ev);
 	/* Add it to the list in case it is not already there */
-	_egueb_dom_document_element_enqueue(thiz, target);
+	egueb_dom_element_enqueue(target);
 }
 
 static void _egueb_dom_document_topmost_removed_from_document_cb(
@@ -467,6 +419,55 @@ int egueb_dom_document_current_run_get(Egueb_Dom_Node *n)
 	thiz = EGUEB_DOM_DOCUMENT(n);
 	return thiz->current_run;
 }
+
+void egueb_dom_document_element_enqueue(Egueb_Dom_Node *n,
+		Egueb_Dom_Node *node)
+{
+	Egueb_Dom_Document *thiz;
+	Egueb_Dom_String *name = NULL;
+
+	if (egueb_dom_element_is_enqueued(node))
+		goto done;
+
+	thiz = EGUEB_DOM_DOCUMENT(n);
+	name = egueb_dom_node_name_get(node);
+	INFO("Node '%s' added to the list of damaged nodes",
+			egueb_dom_string_string_get(name));
+	egueb_dom_string_unref(name);
+	thiz->current_enqueued = eina_list_append(thiz->current_enqueued,
+			egueb_dom_node_ref(node));
+done:
+	egueb_dom_node_unref(node);
+}
+
+void egueb_dom_document_element_dequeue(Egueb_Dom_Node *n,
+		Egueb_Dom_Node *node)
+{
+	Egueb_Dom_Document *thiz;
+	Egueb_Dom_String *name = NULL;
+	Eina_List *l;
+
+	if (!egueb_dom_element_is_enqueued(node))
+		goto done;
+	thiz = EGUEB_DOM_DOCUMENT(n);
+	l = eina_list_data_find_list(thiz->current_enqueued, node);
+	if (!l)
+	{
+		ERR("Enqueued?");
+		goto done;
+	}
+	/* check if the data exists, so we can remove the reference */
+	thiz->current_enqueued = eina_list_remove_list(
+		thiz->current_enqueued, l);
+	name = egueb_dom_node_name_get(node);
+	INFO("Node '%s' removed from the list of damaged nodes",
+			egueb_dom_string_string_get(name));
+	egueb_dom_string_unref(name);
+	egueb_dom_node_unref(node);
+done:
+	egueb_dom_node_unref(node);
+}
+
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/
@@ -557,7 +558,7 @@ EAPI void egueb_dom_document_element_set(Egueb_Dom_Node *n,
 				_egueb_dom_document_topmost_request_process_cb,
 				EINA_FALSE, thiz);
 		/* add the element to the process list */
-		_egueb_dom_document_element_enqueue(thiz, egueb_dom_node_ref(element));
+		egueb_dom_element_enqueue(egueb_dom_node_ref(element));
 	}
 }
 
@@ -641,10 +642,16 @@ EAPI void egueb_dom_document_process(Egueb_Dom_Node *n)
 
 		e = EGUEB_DOM_ELEMENT(n);
 		if (e->last_run == thiz->current_run)
+		{
+			DBG("Node already processed");
 			goto dequeue;
+		}
 
 		if (!egueb_dom_element_is_enqueued(n))
+		{
+			DBG("Node not queued, skipping");
 			goto skip;
+		}
 
 		name = egueb_dom_node_name_get(n);
 		INFO("Processing '%s'", egueb_dom_string_string_get(name));
@@ -652,7 +659,7 @@ EAPI void egueb_dom_document_process(Egueb_Dom_Node *n)
 
 		egueb_dom_element_process(n);
 dequeue:
-		egueb_dom_element_dequeue(n);
+		e->enqueued = EINA_FALSE;
 skip:
 		thiz->current_enqueued = eina_list_remove_list(thiz->current_enqueued, l);
 

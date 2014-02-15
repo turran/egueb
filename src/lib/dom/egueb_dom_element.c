@@ -455,33 +455,6 @@ Eina_Bool egueb_dom_element_process_children(Egueb_Dom_Element *thiz)
 	return ret;
 }
 
-void egueb_dom_element_dequeue(Egueb_Dom_Node *n)
-{
-	Egueb_Dom_Element *thiz;
-
-	thiz = EGUEB_DOM_ELEMENT(n);
-	if (!thiz->enqueued)
-	{
-		WARN("Element not enqueued");
-		egueb_dom_node_unref(n);
-		return;
-	}
-	thiz->enqueued = EINA_FALSE;
-}
-
-void egueb_dom_element_enqueue(Egueb_Dom_Node *n)
-{
-	Egueb_Dom_Element *thiz;
-
-	thiz = EGUEB_DOM_ELEMENT(n);
-	if (thiz->enqueued)
-	{
-		WARN("Node already enqueued, nothing to do");
-		egueb_dom_node_unref(n);
-		return;
-	}
-	thiz->enqueued = EINA_TRUE;
-}
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/
@@ -775,6 +748,74 @@ EAPI Eina_Bool egueb_dom_element_is_enqueued(Egueb_Dom_Node *n)
 	return thiz->enqueued;
 }
 
+/**
+ * @brief Make the element be dequeued from the processing list
+ * @param[in] n The element to be dequeued [transfer full]
+ */
+EAPI void egueb_dom_element_dequeue(Egueb_Dom_Node *n)
+{
+	Egueb_Dom_Element *thiz;
+	Egueb_Dom_Node *doc;
+
+	doc = egueb_dom_node_document_get(n);
+	if (!doc)
+	{
+		WARN("Element does not have a document");
+		egueb_dom_node_unref(n);
+		return;
+	}
+
+	thiz = EGUEB_DOM_ELEMENT(n);
+	if (!thiz->enqueued)
+	{
+		WARN("Element not enqueued");
+		egueb_dom_node_unref(doc);
+		egueb_dom_node_unref(n);
+		return;
+	}
+	egueb_dom_document_element_dequeue(doc, n);
+	thiz->enqueued = EINA_FALSE;
+	egueb_dom_node_unref(doc);
+}
+
+/**
+ * @brief Make the element be enqueued on the processing list
+ * @param[in] n The element to be enqueued [transfer full]
+ */
+EAPI void egueb_dom_element_enqueue(Egueb_Dom_Node *n)
+{
+	Egueb_Dom_Element *thiz;
+	Egueb_Dom_Node *doc;
+
+	doc = egueb_dom_node_document_get(n);
+	if (!doc)
+	{
+		WARN("Element does not have a document");
+		egueb_dom_node_unref(n);
+		return;
+	}
+
+	thiz = EGUEB_DOM_ELEMENT(n);
+	if (thiz->enqueued)
+	{
+		WARN("Node already enqueued, nothing to do");
+		egueb_dom_node_unref(doc);
+		egueb_dom_node_unref(n);
+		return;
+	}
+	egueb_dom_document_element_enqueue(doc, n);
+	thiz->enqueued = EINA_TRUE;
+	egueb_dom_node_unref(doc);
+}
+
+/**
+ * @brief Request an element for a process
+ * @param[in] n The element to request the process
+ *
+ * This will send an process event on the element for later requesting. If this
+ * event reaches the topmost element in the bubbling phase it will be
+ * automatically enqueued on the list of elements to process
+ */
 EAPI void egueb_dom_element_request_process(Egueb_Dom_Node *n)
 {
 	Egueb_Dom_Event *e;

@@ -56,6 +56,10 @@ typedef struct _Egueb_Dom_Document_Class
 		Egueb_Dom_Document, EGUEB_DOM_DOCUMENT_DESCRIPTOR)
 
 int egueb_dom_document_current_run_get(Egueb_Dom_Node *n);
+void egueb_dom_document_element_enqueue(Egueb_Dom_Node *n,
+		Egueb_Dom_Node *node);
+void egueb_dom_document_element_dequeue(Egueb_Dom_Node *n,
+		Egueb_Dom_Node *node);
 
 #endif
 
