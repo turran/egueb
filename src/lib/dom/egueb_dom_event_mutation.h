@@ -64,6 +64,10 @@ EAPI void egueb_dom_event_mutation_attr_modification_type_get(Egueb_Dom_Event *e
 EAPI Eina_Bool egueb_dom_event_mutation_is_attr_modified(
 		const Egueb_Dom_String *str);
 
+EAPI void egueb_dom_event_mutation_process_prevent(Egueb_Dom_Event *event);
+EAPI Eina_Bool egueb_dom_event_mutation_is_process_prevented(
+		Egueb_Dom_Event *event);
+
 /**
  * @}
  */

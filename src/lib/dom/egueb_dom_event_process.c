@@ -31,7 +31,7 @@ typedef struct _Egueb_Dom_Event_Process_Class
 	Egueb_Dom_Event_Class base;
 } Egueb_Dom_Event_Process_Class;
 
-static Egueb_Dom_String _EGUEB_DOM_EVENT_PROCESS = EGUEB_DOM_STRING_STATIC("RequestProcess");
+static Egueb_Dom_String _EGUEB_DOM_EVENT_PROCESS = EGUEB_DOM_STRING_STATIC("Process");
 /*----------------------------------------------------------------------------*
  *                              Object interface                              *
  *----------------------------------------------------------------------------*/

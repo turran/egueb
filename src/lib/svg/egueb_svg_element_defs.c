@@ -38,21 +38,31 @@ typedef struct _Egueb_Svg_Element_Defs_Class
 	Egueb_Svg_Element_Class base;
 } Egueb_Svg_Element_Defs_Class;
 
+/* in case a child element requests a process, be sure to stop it
+ * there's no need to process any def child, an instance (an thus a clone)
+ * will be used
+ */
+static void _egueb_svg_element_defs_process_cb(Egueb_Dom_Event *e,
+		void *data)
+{
+	if (egueb_dom_event_phase_get(e) != EGUEB_DOM_EVENT_PHASE_BUBBLING)
+		return;
+
+	DBG("Preventing a process on a child element");
+	egueb_dom_event_stop_propagation(e);
+}
+
+/* a mutation is being triggered from one of our children
+ * or a children of our children, prevent the process
+ */
 static void _egueb_svg_element_defs_attr_modified_cb(Egueb_Dom_Event *e,
 		void *data)
 {
-	Egueb_Dom_Node *target = NULL;
+	if (egueb_dom_event_phase_get(e) != EGUEB_DOM_EVENT_PHASE_BUBBLING)
+		return;
 
-	/* a mutation is being triggered from one of our children
-	 * or a children of our children, dont propagate it
-	 */
-	target = egueb_dom_event_target_get(e);
-	if (egueb_svg_is_renderable(target))
-	{
-		DBG("Preventing a process on a renderable element");
-		egueb_dom_event_stop_propagation(e);
-	}
-	egueb_dom_node_unref(target);
+	DBG("Preventing a process on a child element");
+	egueb_dom_event_mutation_process_prevent(e);
 }
 
 static Eina_Bool _egueb_svg_element_defs_children_process_cb(
@@ -118,6 +128,10 @@ static void _egueb_svg_element_defs_instance_init(void *o)
 	egueb_dom_node_event_listener_add(n,
 			EGUEB_DOM_EVENT_MUTATION_ATTR_MODIFIED,
 			_egueb_svg_element_defs_attr_modified_cb,
+			EINA_FALSE, NULL);
+	egueb_dom_node_event_listener_add(n,
+			EGUEB_DOM_EVENT_PROCESS,
+			_egueb_svg_element_defs_process_cb,
 			EINA_FALSE, NULL);
 }
 

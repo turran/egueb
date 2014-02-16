@@ -40,6 +40,7 @@ static Egueb_Dom_String _EGUEB_DOM_EVENT_MUTATION_NODE_INSERTED_INTO_DOCUMENT = 
 static Egueb_Dom_String _EGUEB_DOM_EVENT_MUTATION_NODE_REMOVED_FROM_DOCUMENT = EGUEB_DOM_STRING_STATIC("DOMNodeRemovedFromDocument");
 static Egueb_Dom_String _EGUEB_DOM_EVENT_MUTATION_ATTR_MODIFIED = EGUEB_DOM_STRING_STATIC("DOMAtttrModified");
 static Egueb_Dom_String _EGUEB_DOM_EVENT_MUTATION_CHARACTER_DATA_MODIFIED = EGUEB_DOM_STRING_STATIC("DOMCharacterDataModified");
+
 /*----------------------------------------------------------------------------*
  *                              Object interface                              *
  *----------------------------------------------------------------------------*/
@@ -58,10 +59,15 @@ static void _egueb_dom_event_mutation_instance_init(void *o)
 static void _egueb_dom_event_mutation_instance_deinit(void *o)
 {
 }
-/*============================================================================*
- *                                 Global                                     *
- *============================================================================*/
-void egueb_dom_event_mutation_init_internal(Egueb_Dom_Event *e,
+
+static Egueb_Dom_Event * _egueb_dom_event_mutation_new(void)
+{
+	Egueb_Dom_Event *event;
+	event = ENESIM_OBJECT_INSTANCE_NEW(egueb_dom_event_mutation);
+	return event;
+}
+
+static void _egueb_dom_event_mutation_init_internal(Egueb_Dom_Event *e,
 		Egueb_Dom_String *type, Eina_Bool bubbleable,
 		Eina_Bool cancelable,
 		Egueb_Dom_Node *related,
@@ -84,52 +90,86 @@ void egueb_dom_event_mutation_init_internal(Egueb_Dom_Event *e,
 			EGUEB_DOM_EVENT_DIRECTION_CAPTURE_BUBBLE);
 }
 
-Egueb_Dom_Event * egueb_dom_event_mutation_new(void)
+/*============================================================================*
+ *                                 Global                                     *
+ *============================================================================*/
+Egueb_Dom_Event * egueb_dom_event_mutation_node_inserted_new(Egueb_Dom_Node *parent)
 {
-	Egueb_Dom_Event *event;
-	event = ENESIM_OBJECT_INSTANCE_NEW(egueb_dom_event_mutation);
-	return event;
-}
+	Egueb_Dom_Event *e;
 
-void egueb_dom_event_mutation_init_node_inserted(Egueb_Dom_Event *e, Egueb_Dom_Node *parent)
-{
-	egueb_dom_event_mutation_init_internal(e,
+	e = _egueb_dom_event_mutation_new();
+	_egueb_dom_event_mutation_init_internal(e,
 			EGUEB_DOM_EVENT_MUTATION_NODE_INSERTED,
 			EINA_TRUE, EINA_FALSE,
 			parent, NULL, NULL, NULL, 0, 0);
+	return e;
 }
 
-void egueb_dom_event_mutation_init_node_inserted_into_document(
-		Egueb_Dom_Event *e)
+Egueb_Dom_Event * egueb_dom_event_mutation_node_inserted_into_document_new(
+		void)
 {
-	egueb_dom_event_mutation_init_internal(e,
+	Egueb_Dom_Event *e;
+
+	e = _egueb_dom_event_mutation_new();
+	_egueb_dom_event_mutation_init_internal(e,
 			EGUEB_DOM_EVENT_MUTATION_NODE_INSERTED_INTO_DOCUMENT,
 			EINA_FALSE, EINA_FALSE,
 			NULL, NULL, NULL, NULL, 0, 0);
+	return e;
 }
 
-void egueb_dom_event_mutation_init_node_removed(Egueb_Dom_Event *e, Egueb_Dom_Node *parent)
+Egueb_Dom_Event * egueb_dom_event_mutation_node_removed_new(Egueb_Dom_Node *parent)
 {
-	egueb_dom_event_mutation_init_internal(e,
+	Egueb_Dom_Event *e;
+
+	e = _egueb_dom_event_mutation_new();
+	_egueb_dom_event_mutation_init_internal(e,
 			EGUEB_DOM_EVENT_MUTATION_NODE_REMOVED,
 			EINA_TRUE, EINA_FALSE,
 			parent, NULL, NULL, NULL, 0, 0);
+	return e;
 }
 
-void egueb_dom_event_mutation_init_node_removed_from_document(Egueb_Dom_Event *e)
+Egueb_Dom_Event * egueb_dom_event_mutation_node_removed_from_document_new(void)
 {
-	egueb_dom_event_mutation_init_internal(e,
+	Egueb_Dom_Event *e;
+
+	e = _egueb_dom_event_mutation_new();
+	_egueb_dom_event_mutation_init_internal(e,
 			EGUEB_DOM_EVENT_MUTATION_NODE_REMOVED_FROM_DOCUMENT,
 			EINA_FALSE, EINA_FALSE,
 			NULL, NULL, NULL, NULL, 0, 0);
+	return e;
 }
 
-void egueb_dom_event_mutation_init_node_destroyed(Egueb_Dom_Event *e)
+Egueb_Dom_Event * egueb_dom_event_mutation_node_destroyed_new(void)
 {
-	egueb_dom_event_mutation_init_internal(e,
+	Egueb_Dom_Event *e;
+
+	e = _egueb_dom_event_mutation_new();
+	_egueb_dom_event_mutation_init_internal(e,
 			EGUEB_DOM_EVENT_MUTATION_NODE_DESTROYED,
 			EINA_FALSE, EINA_FALSE,
 			NULL, NULL, NULL, NULL, 0, 0);
+	return e;
+}
+
+Egueb_Dom_Event * egueb_dom_event_mutation_attr_modified_new(
+		Egueb_Dom_Node *related,
+		const Egueb_Dom_Value *prev_value,
+		const Egueb_Dom_Value *new_value,
+		Egueb_Dom_String *name,
+		Egueb_Dom_Event_Mutation_Attr_Type attr_type,
+		Egueb_Dom_Attr_Type attr_modification_type)
+{
+	Egueb_Dom_Event *e;
+
+	e = _egueb_dom_event_mutation_new();
+	_egueb_dom_event_mutation_init_internal(e,
+			EGUEB_DOM_EVENT_MUTATION_ATTR_MODIFIED,
+			EINA_TRUE, EINA_FALSE, related, prev_value, new_value, 
+			name, attr_type, attr_modification_type);
+	return e;
 }
 /*============================================================================*
  *                                   API                                      *
@@ -210,18 +250,6 @@ EAPI void egueb_dom_event_mutation_attr_modification_type_get(Egueb_Dom_Event *e
 	*attr_modification_type = thiz->attr_modification_type;
 }
 
-EAPI void egueb_dom_event_mutation_init(Egueb_Dom_Event *e,
-		Egueb_Dom_String *type, Eina_Bool bubbleable,
-		Eina_Bool cancelable,
-		Egueb_Dom_Node *related,
-		Egueb_Dom_String *prev_value,
-		Egueb_Dom_String *new_value,
-		Egueb_Dom_String *attr,
-		Egueb_Dom_Event_Mutation_Attr_Type attr_type)
-{
-
-}
-
 EAPI Eina_Bool egueb_dom_event_mutation_is_attr_modified(
 		const Egueb_Dom_String *str)
 {
@@ -234,4 +262,38 @@ EAPI Eina_Bool egueb_dom_event_mutation_is_attr_modified(
 		return EINA_TRUE;
 	else
 		return EINA_FALSE;
+}
+
+/**
+ * @brief Prevent the process of the node that triggered the event
+ * @param[in] event The event to prevent for process
+ *
+ * By default EGUEB_DOM_EVENT_MUTATION_NODE_INSERTED,
+ * EGUEB_DOM_EVENT_MUTATION_NODE_REMOVED and
+ * EGUEB_DOM_EVENT_MUTATION_ATTR_MODIFIED will enqueue the node that triggered
+ * the event for process once the event reaches the topmost element. If the
+ * event prevents the process by calling this function, then the node will
+ * not be enqueued.
+ */
+EAPI void egueb_dom_event_mutation_process_prevent(Egueb_Dom_Event *event)
+{
+	Egueb_Dom_Event_Mutation *thiz;
+
+	thiz = EGUEB_DOM_EVENT_MUTATION(event);
+	thiz->process_prevent = EINA_TRUE;
+}
+
+/**
+ * @brief Check if the mutation is event will trigger a process
+ * @param[in] event The mutation event to check
+ * @return EINA_TRUE if the event prevents a process and thus the node will not
+ * be processed or EINA_FALSE if the node will be processed.
+ */
+EAPI Eina_Bool egueb_dom_event_mutation_is_process_prevented(
+		Egueb_Dom_Event *event)
+{
+	Egueb_Dom_Event_Mutation *thiz;
+
+	thiz = EGUEB_DOM_EVENT_MUTATION(event);
+	return thiz->process_prevent;
 }

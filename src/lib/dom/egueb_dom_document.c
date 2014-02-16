@@ -161,13 +161,17 @@ static void _egueb_dom_document_topmost_attr_modified_cb(Egueb_Dom_Event *ev,
 		egueb_dom_event_mutation_value_new_string_get(ev, &attr_val);
 		_egueb_dom_document_insert_id(thiz, target, attr_val);
 	}
-	/* whenever an attribute has changed, trigger the request process */
-	/* TODO this will make a new event to be triggered from the target and
-	 * then bubble again down, there's no real need for that ... just enqueue it
-	 * directly
-	 */
-	egueb_dom_element_request_process(target);
-	egueb_dom_node_unref(target);
+
+	if (!egueb_dom_event_mutation_is_process_prevented(ev))
+	{
+		DBG("Process not prevented, enqueuing");
+		egueb_dom_element_enqueue(target);
+	}
+	else
+	{
+		DBG("Process prevented, nothing to do");
+		egueb_dom_node_unref(target);
+	}
 }
 
 /* a node has been inserted into its parent */
@@ -190,9 +194,16 @@ static void _egueb_dom_document_topmost_node_inserted_cb(Egueb_Dom_Event *ev,
 	DBG("Node '%s' inserted", egueb_dom_string_string_get(name));
 	egueb_dom_string_unref(name);
 
-	/* request a process */
-	egueb_dom_element_request_process(target);
-	egueb_dom_node_unref(target);
+	if (!egueb_dom_event_mutation_is_process_prevented(ev))
+	{
+		DBG("Process not prevented, enqueuing");
+		egueb_dom_element_enqueue(target);
+	}
+	else
+	{
+		DBG("Process prevented, nothing to do");
+		egueb_dom_node_unref(target);
+	}
 }
 
 static void _egueb_dom_document_topmost_node_removed_cb(Egueb_Dom_Event *ev,

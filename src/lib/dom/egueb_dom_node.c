@@ -290,8 +290,7 @@ static void _egueb_dom_node_instance_deinit(void *o)
 	}
 
 	/* before freeing the element, call the destroy event */
-	event = egueb_dom_event_mutation_new();
-	egueb_dom_event_mutation_init_node_destroyed(event);
+	event = egueb_dom_event_mutation_node_destroyed_new();
 	egueb_dom_node_event_dispatch(thiz, event, NULL, NULL);
 	/* remove the whole set of events */
 	eina_hash_free(thiz->events);
@@ -356,16 +355,14 @@ void egueb_dom_node_document_set(Egueb_Dom_Node *thiz,
 	if ((document != thiz->owner_document) && (thiz->owner_document))
 	{
 		/* trigger the node removed from document mutation event */
-		event = egueb_dom_event_mutation_new();
-		egueb_dom_event_mutation_init_node_removed_from_document(event);
+		event = egueb_dom_event_mutation_node_removed_from_document_new();
 		_egueb_dom_node_document_set(thiz, event, NULL);
 	}
 	/* now add */
 	if (document != thiz->owner_document)
 	{
 		/* trigger the node inserted into document mutation event */
-		event = egueb_dom_event_mutation_new();
-		egueb_dom_event_mutation_init_node_inserted_into_document(event);
+		event = egueb_dom_event_mutation_node_inserted_into_document_new();
 		_egueb_dom_node_document_set(thiz, event, document);
 	}
 }
@@ -632,8 +629,7 @@ EAPI Eina_Bool egueb_dom_node_child_remove(Egueb_Dom_Node *thiz, Egueb_Dom_Node 
 	}
 
 	/* trigger the mutation event */
-	event = egueb_dom_event_mutation_new();
-	egueb_dom_event_mutation_init_node_removed(event, thiz);
+	event = egueb_dom_event_mutation_node_removed_new(thiz);
 	egueb_dom_node_event_dispatch(child, event, NULL, NULL);
 
 	thiz->children = eina_inlist_remove(thiz->children, EINA_INLIST_GET(child));
@@ -709,8 +705,7 @@ EAPI Eina_Bool egueb_dom_node_insert_before(Egueb_Dom_Node *thiz,
 	child->parent = thiz;
 
 	/* trigger the node inserted mutation event */
-	event = egueb_dom_event_mutation_new();
-	egueb_dom_event_mutation_init_node_inserted(event, thiz);
+	event = egueb_dom_event_mutation_node_inserted_new(thiz);
 	egueb_dom_node_event_dispatch(child, event, NULL, NULL);
 
 	/* set the owner document on the child */

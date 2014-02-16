@@ -57,23 +57,19 @@ Enesim_Object_Descriptor * egueb_dom_event_mutation_descriptor_get(void);
 #define EGUEB_DOM_EVENT_MUTATION(o) ENESIM_OBJECT_INSTANCE_CHECK(o,		\
 		Egueb_Dom_Event_Mutation, EGUEB_DOM_EVENT_MUTATION_DESCRIPTOR)
 
-void egueb_dom_event_mutation_init_internal(Egueb_Dom_Event *e,
-		Egueb_Dom_String *type, Eina_Bool bubbleable,
-		Eina_Bool cancelable,
+
+Egueb_Dom_Event * egueb_dom_event_mutation_node_inserted_new(Egueb_Dom_Node *parent);
+Egueb_Dom_Event * egueb_dom_event_mutation_node_inserted_into_document_new(
+		void);
+Egueb_Dom_Event * egueb_dom_event_mutation_node_removed_new(Egueb_Dom_Node *parent);
+Egueb_Dom_Event * egueb_dom_event_mutation_node_removed_from_document_new(void);
+Egueb_Dom_Event * egueb_dom_event_mutation_node_destroyed_new(void);
+Egueb_Dom_Event * egueb_dom_event_mutation_attr_modified_new(
 		Egueb_Dom_Node *related,
 		const Egueb_Dom_Value *prev_value,
 		const Egueb_Dom_Value *new_value,
 		Egueb_Dom_String *attr,
 		Egueb_Dom_Event_Mutation_Attr_Type attr_type,
 		Egueb_Dom_Attr_Type attr_modification_type);
-
-Egueb_Dom_Event * egueb_dom_event_mutation_new(void);
-
-void egueb_dom_event_mutation_init_node_inserted(Egueb_Dom_Event *e, Egueb_Dom_Node *parent);
-void egueb_dom_event_mutation_init_node_inserted_into_document(
-		Egueb_Dom_Event *e);
-void egueb_dom_event_mutation_init_node_removed(Egueb_Dom_Event *e, Egueb_Dom_Node *parent);
-void egueb_dom_event_mutation_init_node_removed_from_document(Egueb_Dom_Event *e);
-void egueb_dom_event_mutation_init_node_destroyed(Egueb_Dom_Event *e);
 
 #endif
