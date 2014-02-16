@@ -80,6 +80,23 @@ EAPI Egueb_Dom_Node * egueb_dom_event_target_current_get(Egueb_Dom_Event *thiz)
 	return egueb_dom_node_ref(thiz->current_target);
 }
 
+/**
+ * @brief Get the node relative to the current target
+ * @param[in] thiz The event to get the relative node from
+ * @return The relative node
+ *
+ * For events that are on the @ref EGUEB_DOM_EVENT_PHASE_AT_TARGET phase
+ * the relative node is NULL. For events that on the
+ * @ref EGUEB_DOM_EVENT_PHASE_CAPTURING phase the relative node is the child
+ * node where the event will propagate later. For
+ * @ref EGUEB_DOM_EVENT_PHASE_BUBBLING phase the relative node is the child
+ * node where the event propagated before.
+ */
+EAPI Egueb_Dom_Node * egueb_dom_event_relative_get(Egueb_Dom_Event *thiz)
+{
+	return egueb_dom_node_ref(thiz->relative);
+}
+
 /* void  initEvent(in DOMString eventTypeArg,
                                  in boolean canBubbleArg,
                                  in boolean cancelableArg);

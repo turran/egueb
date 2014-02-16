@@ -132,18 +132,20 @@ monitors:
 }
 
 static void _egueb_dom_node_event_capture(Egueb_Dom_Node *thiz,
-		Egueb_Dom_Event *evt)
+		Egueb_Dom_Event *evt, Egueb_Dom_Node *from)
 {
 	Egueb_Dom_Node *parent = NULL;
 
 	parent = egueb_dom_node_parent_get(thiz);
 	if (parent)
 	{
-		_egueb_dom_node_event_capture(parent, evt);
+		_egueb_dom_node_event_capture(parent, evt, thiz);
 		egueb_dom_node_unref(parent);
 	}
+
 	if (!evt->stopped)
 	{
+		evt->relative = from;
 		_egueb_dom_node_event_dispatch(thiz, evt);
 		return;
 	}
@@ -164,6 +166,7 @@ static void _egueb_dom_node_event_bubble(Egueb_Dom_Node *thiz,
 	parent = egueb_dom_node_parent_get(thiz);
 	if (parent)
 	{
+		evt->relative = thiz;
 		_egueb_dom_node_event_bubble(parent, evt);
 		egueb_dom_node_unref(parent);
 	}
@@ -172,6 +175,8 @@ static void _egueb_dom_node_event_bubble(Egueb_Dom_Node *thiz,
 static void _egueb_dom_node_event_start_capturing(Egueb_Dom_Node *thiz,
 		Egueb_Dom_Event *evt)
 {
+	Egueb_Dom_Node *parent = NULL;
+
 	if (!evt->capturable)
 		return;
 
@@ -180,8 +185,14 @@ static void _egueb_dom_node_event_start_capturing(Egueb_Dom_Node *thiz,
 		DBG("Event '%s' stopped", egueb_dom_string_string_get(evt->type));
 		return;
 	}
-	evt->phase = EGUEB_DOM_EVENT_PHASE_CAPTURING;
-	_egueb_dom_node_event_capture(thiz, evt);
+
+	parent = egueb_dom_node_parent_get(thiz);
+	if (parent)
+	{
+		evt->phase = EGUEB_DOM_EVENT_PHASE_CAPTURING;
+		_egueb_dom_node_event_capture(parent, evt, thiz);
+		egueb_dom_node_unref(parent);
+	}
 }
 
 static void _egueb_dom_node_event_start_bubbling(Egueb_Dom_Node *thiz,
@@ -201,6 +212,7 @@ static void _egueb_dom_node_event_start_bubbling(Egueb_Dom_Node *thiz,
 	if (parent)
 	{
 		evt->phase = EGUEB_DOM_EVENT_PHASE_BUBBLING;
+		evt->relative = thiz;
 		_egueb_dom_node_event_bubble(parent, evt);
 		egueb_dom_node_unref(parent);
 	}
@@ -887,7 +899,7 @@ EAPI Eina_Bool egueb_dom_node_event_propagate(Egueb_Dom_Node *thiz,
 	if (!event->dispatching) return EINA_FALSE;
 	if (event->phase == EGUEB_DOM_EVENT_PHASE_CAPTURING)
 	{
-		_egueb_dom_node_event_capture(thiz, event);
+		_egueb_dom_node_event_capture(thiz, event, NULL);
 	}
 	else if (event->phase == EGUEB_DOM_EVENT_PHASE_BUBBLING)
 	{

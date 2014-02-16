@@ -26,6 +26,7 @@ struct _Egueb_Dom_Event
 	Egueb_Dom_String *type;
 	Egueb_Dom_Node *target;
 	Egueb_Dom_Node *current_target;
+	Egueb_Dom_Node *relative;
 	Egueb_Dom_Event_Phase phase;
 	Eina_Bool bubbles;
 	/* init attributes */
