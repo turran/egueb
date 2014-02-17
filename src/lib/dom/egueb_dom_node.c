@@ -102,12 +102,14 @@ static void _egueb_dom_node_event_dispatch(Egueb_Dom_Node *thiz,
 	EINA_LIST_FOREACH(container->listeners, l, nl)
 	{
 		if (nl->capture && (evt->phase ==
-				EGUEB_DOM_EVENT_PHASE_CAPTURING))
+				EGUEB_DOM_EVENT_PHASE_CAPTURING ||
+				evt->phase == EGUEB_DOM_EVENT_PHASE_AT_TARGET))
 		{
 			nl->listener(evt, nl->data);
 		}
 		else if (!nl->capture && (evt->phase ==
-				EGUEB_DOM_EVENT_PHASE_BUBBLING))
+				EGUEB_DOM_EVENT_PHASE_BUBBLING ||
+				evt->phase == EGUEB_DOM_EVENT_PHASE_AT_TARGET))
 		{
 			nl->listener(evt, nl->data);
 		}
@@ -226,6 +228,8 @@ static void _egueb_dom_node_event_start_at_target(Egueb_Dom_Node *thiz,
 		DBG("Event '%s' stopped", egueb_dom_string_string_get(evt->type));
 		return;
 	}
+	DBG("Dispatching event '%s' at target",
+			egueb_dom_string_string_get(evt->type));
 	evt->phase = EGUEB_DOM_EVENT_PHASE_AT_TARGET;
 	_egueb_dom_node_event_dispatch(thiz, evt);
 }

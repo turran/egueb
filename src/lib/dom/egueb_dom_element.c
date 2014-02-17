@@ -768,7 +768,7 @@ EAPI void egueb_dom_element_dequeue(Egueb_Dom_Node *n)
 	thiz = EGUEB_DOM_ELEMENT(n);
 	if (!thiz->enqueued)
 	{
-		WARN("Element not enqueued");
+		INFO("Element not enqueued");
 		egueb_dom_node_unref(doc);
 		egueb_dom_node_unref(n);
 		return;
@@ -798,7 +798,7 @@ EAPI void egueb_dom_element_enqueue(Egueb_Dom_Node *n)
 	thiz = EGUEB_DOM_ELEMENT(n);
 	if (thiz->enqueued)
 	{
-		WARN("Node already enqueued, nothing to do");
+		INFO("Node already enqueued, nothing to do");
 		egueb_dom_node_unref(doc);
 		egueb_dom_node_unref(n);
 		return;
