@@ -127,6 +127,12 @@ EAPI void egueb_dom_string_string_steal(Egueb_Dom_String *thiz, char *str)
 	thiz->owned = EINA_TRUE;
 }
 
+EAPI Egueb_Dom_String * egueb_dom_string_dup(Egueb_Dom_String *thiz)
+{
+	if (!thiz) return NULL;
+	return egueb_dom_string_new_with_string(thiz->str);
+}
+
 EAPI Eina_Bool egueb_dom_string_is_equal(const Egueb_Dom_String *thiz,
 		const Egueb_Dom_String *other)
 {
