@@ -304,7 +304,7 @@ static Eina_Bool _egueb_svg_element_svg_process(Egueb_Svg_Renderable *r)
 	enesim_renderer_rectangle_size_set(thiz->rectangle, gw, gh);
 	enesim_renderer_transformation_set(thiz->rectangle, &relative_transform);
 
-	DBG_ELEMENT(r, "x: %g, y: %g, width: %g, height: %g", gx, gy, gw, gh);
+	DBG_ELEMENT(EGUEB_DOM_NODE(r), "x: %g, y: %g, width: %g, height: %g", gx, gy, gw, gh);
 	e = EGUEB_SVG_ELEMENT(r);
 	/* the viewbox will set a new user space coordinate */
 	/* FIXME check zeros */
@@ -314,7 +314,7 @@ static Eina_Bool _egueb_svg_element_svg_process(Egueb_Svg_Renderable *r)
 		double new_vw;
 		double new_vh;
 
-		DBG_ELEMENT(r, "viewBox available '%g %g %g %g'", viewbox.x,
+		DBG_ELEMENT(EGUEB_DOM_NODE(r), "viewBox available '%g %g %g %g'", viewbox.x,
 				viewbox.y, viewbox.w, viewbox.h);
 		new_vw = viewbox.w / gw;
 		new_vh = viewbox.h / gh;
@@ -327,7 +327,7 @@ static Eina_Bool _egueb_svg_element_svg_process(Egueb_Svg_Renderable *r)
 	}
 	else
 	{
-		DBG_ELEMENT(r, "Not using any viewBox");
+		DBG_ELEMENT(EGUEB_DOM_NODE(r), "Not using any viewBox");
 		e->transform = relative_transform;
 	}
 	/* set the new viewbox */

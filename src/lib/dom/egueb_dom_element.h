@@ -37,7 +37,7 @@
 	do {									\
 		if (LEVEL <= EINA_LOG_LEVEL_MAXIMUM) {				\
 			Egueb_Dom_String *s;					\
-			s = egueb_dom_element_name_get(EGUEB_DOM_NODE(n));	\
+			s = egueb_dom_element_name_get(n);			\
 			eina_log_print(DOM, LEVEL, __FILE__, __FUNCTION__,	\
 					 __LINE__, "<%s> " fmt,			\
 					egueb_dom_string_string_get(s), 	\
@@ -49,7 +49,7 @@
 #define EGUEB_DOM_ELEMENT_LOG(n, DOM, LEVEL, fmt, ...)				\
 	do {									\
 		Egueb_Dom_String *s;						\
-		s = egueb_dom_element_name_get(EGUEB_DOM_NODE(n));		\
+		s = egueb_dom_element_name_get(n);				\
 		eina_log_print(DOM, LEVEL, __FILE__, __FUNCTION__, __LINE__,	\
 				"<%s> " fmt, egueb_dom_string_string_get(s),	\
 				## __VA_ARGS__);				\

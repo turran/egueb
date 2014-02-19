@@ -629,7 +629,7 @@ static Eina_Bool _egueb_svg_element_process(Egueb_Dom_Element *e)
 	Eina_Bool ret = EINA_TRUE;
 
 	thiz = EGUEB_SVG_ELEMENT(e);
-	DBG_ELEMENT(e, "Processing element");
+	DBG_ELEMENT(EGUEB_DOM_NODE(e), "Processing element");
 	//DBG("Doing the setup on the tag '%s'", egueb_dom_element_tag_name_get(e));
 
 	/* in case a stylesheet has been applied, re-apply the style atribute */
@@ -644,7 +644,7 @@ static Eina_Bool _egueb_svg_element_process(Egueb_Dom_Element *e)
 
 		str = egueb_dom_string_string_get(style);
 		/* TODO revert the style */
-		DBG_ELEMENT(e, "Using a style");
+		DBG_ELEMENT(EGUEB_DOM_NODE(e), "Using a style");
 		/* apply the new style */
 		ecss_context_inline_style_apply(&_egueb_svg_element_css_context, str, thiz);
 		/* swap the styles */
@@ -674,7 +674,7 @@ static Eina_Bool _egueb_svg_element_process(Egueb_Dom_Element *e)
 	if (relative) egueb_dom_node_unref(relative);
 	if (geometry) egueb_dom_node_unref(geometry);
 
-	DBG_ELEMENT(e, "Done processing element with ret %d", ret);
+	DBG_ELEMENT(EGUEB_DOM_NODE(e), "Done processing element with ret %d", ret);
 	return ret;
 }
 /*----------------------------------------------------------------------------*

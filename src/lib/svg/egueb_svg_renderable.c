@@ -57,14 +57,14 @@ static Eina_Bool _egueb_svg_renderable_process(Egueb_Svg_Element *e)
 	}
 	/* TODO in case there is no relative, set our own transform */
 
-	DBG_ELEMENT(e, "New transformation %" ENESIM_MATRIX_FORMAT, ENESIM_MATRIX_ARGS(&e->transform));
+	DBG_ELEMENT(EGUEB_DOM_NODE(e), "New transformation %" ENESIM_MATRIX_FORMAT, ENESIM_MATRIX_ARGS(&e->transform));
 
 	/* first process the renderable itself */
 	if (klass->process)
 	{
 		if (!klass->process(thiz))
 		{
-			WARN_ELEMENT(e, "Process failed");
+			WARN_ELEMENT(EGUEB_DOM_NODE(e), "Process failed");
 			return EINA_FALSE;
 		}
 	}
@@ -80,7 +80,7 @@ static Eina_Bool _egueb_svg_renderable_process(Egueb_Svg_Element *e)
 		doc = egueb_dom_node_document_get(EGUEB_DOM_NODE(e));
 		if (!doc)
 		{
-			WARN_ELEMENT(e, "No document available");
+			WARN_ELEMENT(EGUEB_DOM_NODE(e), "No document available");
 			return EINA_FALSE;
 		}
 		topmost = egueb_dom_document_element_get(doc);
@@ -92,7 +92,7 @@ static Eina_Bool _egueb_svg_renderable_process(Egueb_Svg_Element *e)
 			painter = egueb_svg_renderable_class_painter_get(EGUEB_DOM_NODE(e));
 			if (!painter)
 			{
-				WARN_ELEMENT(e, "Topmost element does not have a painter");
+				WARN_ELEMENT(EGUEB_DOM_NODE(e), "Topmost element does not have a painter");
 				egueb_dom_node_unref(topmost);
 				return EINA_FALSE;
 			}
@@ -101,14 +101,14 @@ static Eina_Bool _egueb_svg_renderable_process(Egueb_Svg_Element *e)
 		else
 		{
 			egueb_dom_node_unref(topmost);
-			WARN_ELEMENT(e, "No painter available");
+			WARN_ELEMENT(EGUEB_DOM_NODE(e), "No painter available");
 			return EINA_FALSE;
 		}
 	}
 
 	if (!egueb_svg_painter_resolve(painter, e))
 	{
-		WARN_ELEMENT(e, "Painter resolving failed");
+		WARN_ELEMENT(EGUEB_DOM_NODE(e), "Painter resolving failed");
 		egueb_svg_painter_unref(painter);
 		return EINA_FALSE;
 	}
@@ -130,7 +130,7 @@ static Eina_Bool _egueb_svg_renderable_process(Egueb_Svg_Element *e)
 	/* set the correct renderer on the proxy */
 	if (ren)
 	{
-		DBG_ELEMENT(e, "Clip path: %s", enesim_renderer_name_get(ren));
+		DBG_ELEMENT(EGUEB_DOM_NODE(e), "Clip path: %s", enesim_renderer_name_get(ren));
 	}
 	else
 	{
@@ -138,12 +138,12 @@ static Eina_Bool _egueb_svg_renderable_process(Egueb_Svg_Element *e)
 			ren = klass->renderer_get(thiz);
 		if (!ren)
 		{
-			WARN_ELEMENT(e, "No renderer found");
+			WARN_ELEMENT(EGUEB_DOM_NODE(e), "No renderer found");
 			return EINA_FALSE;
 		}
 		else
 		{
-			DBG_ELEMENT(e, "Renderer: %s", enesim_renderer_name_get(ren));
+			DBG_ELEMENT(EGUEB_DOM_NODE(e), "Renderer: %s", enesim_renderer_name_get(ren));
 		}
 	}
 	enesim_renderer_proxy_proxied_set(thiz->proxy, ren);
