@@ -18,6 +18,7 @@
 #ifndef _EGUEB_DOM_VALUE_INT_H_
 #define _EGUEB_DOM_VALUE_INT_H_
 
+/* TODO rename this ones to be i32 */
 static inline void egueb_dom_value_int_set(Egueb_Dom_Value *v, int i)
 {
 	v->data.i32 = i;
