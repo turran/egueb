@@ -7,6 +7,7 @@ src/lib/dom/Egueb_Dom.h \
 src/lib/dom/egueb_dom_attr.h \
 src/lib/dom/egueb_dom_attr_external.h \
 src/lib/dom/egueb_dom_attr_boolean.h \
+src/lib/dom/egueb_dom_attr_enum.h \
 src/lib/dom/egueb_dom_attr_int.h \
 src/lib/dom/egueb_dom_attr_string.h \
 src/lib/dom/egueb_dom_attr_string_list.h \
@@ -36,6 +37,7 @@ src/lib/dom/egueb_dom_utils.h \
 src/lib/dom/egueb_dom_value.h \
 src/lib/dom/egueb_dom_value_dom_string.h \
 src/lib/dom/egueb_dom_value_boolean.h \
+src/lib/dom/egueb_dom_value_color.h \
 src/lib/dom/egueb_dom_value_int.h \
 src/lib/dom/egueb_dom_value_double.h \
 src/lib/dom/egueb_dom_value_list.h
@@ -45,6 +47,7 @@ src/lib/dom/egueb_dom_attr.c \
 src/lib/dom/egueb_dom_attr_private.h \
 src/lib/dom/egueb_dom_attr_external.c \
 src/lib/dom/egueb_dom_attr_boolean.c \
+src/lib/dom/egueb_dom_attr_enum.c \
 src/lib/dom/egueb_dom_attr_int.c \
 src/lib/dom/egueb_dom_attr_string.c \
 src/lib/dom/egueb_dom_attr_string_list.c \
@@ -93,6 +96,7 @@ src/lib/dom/egueb_dom_value.c \
 src/lib/dom/egueb_dom_value_private.h \
 src/lib/dom/egueb_dom_value_dom_string.c \
 src/lib/dom/egueb_dom_value_boolean.c \
+src/lib/dom/egueb_dom_value_color.c \
 src/lib/dom/egueb_dom_value_int.c \
 src/lib/dom/egueb_dom_value_double.c \
 src/lib/dom/egueb_dom_value_list.c
