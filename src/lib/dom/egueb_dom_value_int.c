@@ -34,13 +34,13 @@ static Egueb_Dom_Value_Descriptor _descriptor;
 static void _int_data_from(Egueb_Dom_Value *v, Egueb_Dom_Value_Data *data)
 {
 	EINA_SAFETY_ON_FALSE_RETURN(v->descriptor == &_descriptor);
-	egueb_dom_value_int_data_from(v, data);
+	egueb_dom_value_i32_data_from(v, data);
 }
 
 static void _int_data_to(Egueb_Dom_Value *v, Egueb_Dom_Value_Data *data)
 {
 	EINA_SAFETY_ON_FALSE_RETURN(v->descriptor == &_descriptor);
-	egueb_dom_value_int_data_to(v, data);
+	egueb_dom_value_i32_data_to(v, data);
 }
 
 static char * _int_string_to(const Egueb_Dom_Value *v)
@@ -56,6 +56,7 @@ static char * _int_string_to(const Egueb_Dom_Value *v)
 static Eina_Bool _int_string_from(Egueb_Dom_Value *v, const char *str)
 {
 	EINA_SAFETY_ON_FALSE_RETURN_VAL(v->descriptor == &_descriptor, EINA_FALSE);
+	v->data.i32 = atoi(str);
 	return EINA_TRUE;
 }
 

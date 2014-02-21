@@ -24,4 +24,3 @@ EAPI Egueb_Dom_Node * egueb_dom_attr_int_new(Egueb_Dom_String *name,
 		Eina_Bool inheritable);
 
 #endif
-

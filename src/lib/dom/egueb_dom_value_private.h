@@ -104,7 +104,7 @@ static void _##name##_interpolate(Egueb_Dom_Value *v,				\
 		Egueb_Dom_Value *a, Egueb_Dom_Value *b, double m,		\
 		Egueb_Dom_Value *add, Egueb_Dom_Value *acc, int mul)		\
 {										\
-										\
+	egueb_dom_value_enum_interpolate(v, a, b, m, add, acc, mul);		\
 }										\
 										\
 static Egueb_Dom_Value_Descriptor _##name##_descriptor = {			\

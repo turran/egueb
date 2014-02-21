@@ -29,13 +29,13 @@ static Egueb_Dom_Value_Descriptor _descriptor;
 static void _egueb_smil_accumulate_data_from(Egueb_Dom_Value *v, Egueb_Dom_Value_Data *data)
 {
 	EINA_SAFETY_ON_FALSE_RETURN(v->descriptor == &_descriptor);
-	egueb_dom_value_int_data_from(v, data);
+	egueb_dom_value_i32_data_from(v, data);
 }
 
 static void _egueb_smil_accumulate_data_to(Egueb_Dom_Value *v, Egueb_Dom_Value_Data *data)
 {
 	EINA_SAFETY_ON_FALSE_RETURN(v->descriptor == &_descriptor);
-	egueb_dom_value_int_data_to(v, data);
+	egueb_dom_value_i32_data_to(v, data);
 }
 
 static char * _egueb_smil_accumulate_string_to(const Egueb_Dom_Value *v)

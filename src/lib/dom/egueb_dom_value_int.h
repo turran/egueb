@@ -18,29 +18,6 @@
 #ifndef _EGUEB_DOM_VALUE_INT_H_
 #define _EGUEB_DOM_VALUE_INT_H_
 
-/* TODO rename this ones to be i32 */
-static inline void egueb_dom_value_int_set(Egueb_Dom_Value *v, int i)
-{
-	v->data.i32 = i;
-}
-
-static inline int egueb_dom_value_int_get(Egueb_Dom_Value *v)
-{
-	return v->data.i32;
-}
-
-static inline void egueb_dom_value_int_data_from(Egueb_Dom_Value *v, Egueb_Dom_Value_Data *data)
-{
-	v->data.i32 = data->i32;
-}
-
-static inline void egueb_dom_value_int_data_to(Egueb_Dom_Value *v, Egueb_Dom_Value_Data *data)
-{
-	int *ptr = data->ptr;
-	if (!ptr) return;
-	*ptr = v->data.i32;
-}
-
 EAPI const Egueb_Dom_Value_Descriptor *
 		egueb_dom_value_int_descriptor_get(void);
 EAPI void egueb_dom_value_int_interpolate(Egueb_Dom_Value *v,

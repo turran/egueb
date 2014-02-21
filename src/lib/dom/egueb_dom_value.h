@@ -34,12 +34,13 @@ typedef enum _Egueb_Dom_Value_Data_Type
 
 typedef union _Egueb_Dom_Value_Data
 {
-		int32_t i32;
-		int64_t i64;
-		double d;
-		void *ptr;
+	int32_t i32;
+	int64_t i64;
+	double d;
+	void *ptr;
 } Egueb_Dom_Value_Data;
 
+/* The value descriptor. It is used to create new value definitions */
 typedef void (*Egueb_Dom_Value_Data_From)(Egueb_Dom_Value *thiz, Egueb_Dom_Value_Data *data);
 typedef void (*Egueb_Dom_Value_Data_To)(Egueb_Dom_Value *thiz, Egueb_Dom_Value_Data *data);
 
@@ -79,6 +80,34 @@ struct _Egueb_Dom_Value
 	Eina_Bool owned;
 	Egueb_Dom_Value_Data data;
 };
+
+/*----------------------------------------------------------------------------*
+ *                               i32 helpers                                  *
+ *----------------------------------------------------------------------------*/
+static inline void egueb_dom_value_i32_set(Egueb_Dom_Value *v, int i)
+{
+	v->data.i32 = i;
+}
+
+static inline int egueb_dom_value_i32_get(Egueb_Dom_Value *v)
+{
+	return v->data.i32;
+}
+
+static inline void egueb_dom_value_i32_data_from(Egueb_Dom_Value *v,
+		Egueb_Dom_Value_Data *data)
+{
+	v->data.i32 = data->i32;
+}
+
+static inline void egueb_dom_value_i32_data_to(Egueb_Dom_Value *v,
+		Egueb_Dom_Value_Data *data)
+{
+	int *ptr = data->ptr;
+	if (!ptr) return;
+	*ptr = v->data.i32;
+}
+
 
 #define EGUEB_DOM_VALUE_INIT { 0, EINA_FALSE,  { 0 } }
 
