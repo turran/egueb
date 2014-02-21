@@ -27,6 +27,8 @@
 #include <Enesim.h>
 #include <Etch.h>
 
+#include <Egueb_Css.h>
+
 #include "egueb_dom_build.h"
 
 #ifdef ERR

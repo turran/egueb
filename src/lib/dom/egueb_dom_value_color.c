@@ -63,7 +63,7 @@ static void _egueb_dom_value_color_interpolate(Egueb_Dom_Value *v,
 		Egueb_Dom_Value *a, Egueb_Dom_Value *b, double m,
 		Egueb_Dom_Value *add, Egueb_Dom_Value *acc, int mul)
 {
-	etch_interpolate_argb(a->data.i32, b->data.i32, m, &v->data.i32);
+	etch_interpolate_argb((uint32_t)a->data.i32, (uint32_t)b->data.i32, m, (uint32_t *)&v->data.i32);
 }
 
 static Egueb_Dom_Value_Descriptor _descriptor = {

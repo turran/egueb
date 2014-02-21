@@ -18,7 +18,10 @@
 #ifndef _ECSS_H
 #define _ECSS_H
 
+#include <Eina.h>
+
 #include <stddef.h>
+#include <stdint.h>
 
 #ifdef EAPI
 # undef EAPI
@@ -98,5 +101,7 @@ EAPI void ecss_context_inline_style_apply(Ecss_Context *c, const char *style, Ec
 
 EAPI Ecss_Filter * ecss_filter_class_new(const char *name);
 EAPI Ecss_Filter * ecss_filter_id_new(const char *name);
+
+#include "egueb_css_color.h"
 
 #endif /*_ECSS_H*/

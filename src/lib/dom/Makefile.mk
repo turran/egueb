@@ -102,6 +102,7 @@ src/lib/dom/egueb_dom_value_double.c \
 src/lib/dom/egueb_dom_value_list.c
 
 src_lib_dom_libegueb_dom_la_CPPFLAGS = \
+-I$(top_srcdir)/src/lib/css \
 -I$(top_srcdir)/src/lib/dom \
 -DEGUEB_DOM_BUILD \
 @EDOM_CFLAGS@

@@ -20,6 +20,7 @@ src/lib/css/ecss_filter.c \
 src/lib/css/ecss_filter_class.c \
 src/lib/css/ecss_filter_id.c \
 src/lib/css/ecss_lexer.l \
+src/lib/css/egueb_css_color.c \
 src/lib/css/ecss_private.h
 
 src_lib_css_libegueb_css_la_YFLAGS = -d -p ecss_
