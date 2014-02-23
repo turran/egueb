@@ -40,6 +40,7 @@ ETCH_VERSION="0.0.5"
 
 AC_CANONICAL_HOST
 
+egueb_base_requirements="eina >= ${EINA_VERSION}"
 ecss_requirements="eina >= ${EINA_VERSION}"
 edom_requirements_private="etch >= ${ETCH_VERSION}"
 edom_requirements="enesim >= ${ENESIM_VERSION} eina >= ${EINA_VERSION}"
@@ -47,6 +48,7 @@ esmil_requirements="etch >= ${ETCH_VERSION} enesim >= ${ENESIM_VERSION} eina >= 
 esvg_requirements="etch >= ${ETCH_VERSION} enesim >= ${ENESIM_VERSION} eina >= ${EINA_VERSION}"
 gstreamer_requirements="gstreamer-0.10"
 
+AC_SUBST([egueb_base_requirements])
 AC_SUBST([ecss_requirements])
 AC_SUBST([edom_requirements])
 AC_SUBST([edom_requirements_private])
@@ -140,6 +142,7 @@ fi
 ENS_CHECK_DOXYGEN([build_doc="yes"], [build_doc="no"])
 
 ### Checks for libraries
+PKG_CHECK_MODULES([EGUEB_BASE], [${egueb_base_requirements}])
 
 if test "x${want_ecss}" = "xyes" ; then
    PKG_CHECK_MODULES([ECSS], [${ecss_requirements}], [want_ecss="yes"], [want_ecss="no"])
@@ -214,6 +217,7 @@ AM_PROG_CC_C_O
 AC_C_BIGENDIAN
 ENS_CHECK_COMPILER_FLAGS([EGUEB], [-Wall])
 
+EGUEB_BASE_CFLAGS="${EGUEB_CFLAGS} ${EGUEB_BASE_CFLAGS}"
 ESVG_CFLAGS="${ESVG_CFLAGS} ${EGUEB_CFLAGS}"
 EDOM_CFLAGS="${EDOM_CFLAGS} ${EGUEB_CFLAGS}"
 ECSS_CFLAGS="${ECSS_CFLAGS} ${EGUEB_CFLAGS}"
@@ -248,6 +252,7 @@ echo
 echo
 echo "Configuration Options Summary:"
 echo
+echo "Base support................................: yes"
 echo "CSS support.................................: ${want_ecss}"
 echo "DOM support.................................: ${want_edom}"
 echo "SMIL support................................: ${want_esmil}"

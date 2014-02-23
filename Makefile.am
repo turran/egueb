@@ -35,6 +35,8 @@ GENERATED_FILES =
 
 ### Libraries
 
+include src/lib/base/Makefile.mk
+
 if BUILD_ECSS
 include src/lib/css/Makefile.mk
 endif

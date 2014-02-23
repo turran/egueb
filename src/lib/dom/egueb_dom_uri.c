@@ -19,7 +19,6 @@
 
 #include "egueb_dom_string.h"
 #include "egueb_dom_main.h"
-#include "egueb_dom_utils.h"
 #include "egueb_dom_uri.h"
 /*============================================================================*
  *                                  Local                                     *

@@ -82,7 +82,6 @@ extern "C" {
 #include "egueb_dom_input.h"
 #include "egueb_dom_text.h"
 #include "egueb_dom_uri.h"
-#include "egueb_dom_utils.h"
 #include "egueb_dom_value.h"
 #include "egueb_dom_value_boolean.h"
 #include "egueb_dom_value_dom_string.h"

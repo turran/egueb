@@ -33,7 +33,6 @@ src/lib/dom/egueb_dom_string.h \
 src/lib/dom/egueb_dom_string_list.h \
 src/lib/dom/egueb_dom_text.h \
 src/lib/dom/egueb_dom_uri.h \
-src/lib/dom/egueb_dom_utils.h \
 src/lib/dom/egueb_dom_value.h \
 src/lib/dom/egueb_dom_value_dom_string.h \
 src/lib/dom/egueb_dom_value_boolean.h \
@@ -91,7 +90,6 @@ src/lib/dom/egueb_dom_string.c \
 src/lib/dom/egueb_dom_string_list.c \
 src/lib/dom/egueb_dom_text.c \
 src/lib/dom/egueb_dom_uri.c \
-src/lib/dom/egueb_dom_utils.c \
 src/lib/dom/egueb_dom_value.c \
 src/lib/dom/egueb_dom_value_private.h \
 src/lib/dom/egueb_dom_value_dom_string.c \
