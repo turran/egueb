@@ -26,6 +26,8 @@
 #include <Eina.h>
 #include <Enesim.h>
 #include <Etch.h>
+
+#include <Egueb_Base.h>
 #include <Egueb_Dom.h>
 
 #include "egueb_smil_build.h"

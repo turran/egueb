@@ -18,6 +18,8 @@
 #ifndef _ECSS_PRIVATE_H
 #define _ECSS_PRIVATE_H
 
+#include <Egueb_Base.h>
+
 extern int _ecss_log_dom_global;
 
 /*

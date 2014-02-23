@@ -8,7 +8,7 @@ pkgincludedir=@pkgincludedir@-@VMAJ@/smil
 
 Name: Egueb SMIL
 Description: Egueb SMIL implementation
-Requires.private: egueb-dom
+Requires.private: egueb-base egueb-dom
 Version: @VERSION@
 Libs: -L${libdir} -legueb_smil
 Cflags: -I${pkgincludedir}
