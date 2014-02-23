@@ -8,7 +8,7 @@ pkgincludedir=@pkgincludedir@-@VMAJ@/css
 
 Name: Egueb CSS
 Description: Egueb CSS implementation
-Requires.private: eina
+Requires.private: eina egueb-base
 Version: @VERSION@
 Libs: -L${libdir} -legueb_css
 Cflags: -I${pkgincludedir}

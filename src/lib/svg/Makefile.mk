@@ -186,6 +186,7 @@ src/lib/svg/egueb_svg_text_anchor.c \
 src/lib/svg/egueb_svg_visibility.c
 
 src_lib_svg_libegueb_svg_la_CPPFLAGS = \
+-I$(top_srcdir)/src/lib/base \
 -I$(top_srcdir)/src/lib/css \
 -I$(top_srcdir)/src/lib/dom \
 -I$(top_srcdir)/src/lib/smil \
@@ -198,6 +199,7 @@ src_lib_svg_libegueb_svg_la_CPPFLAGS = \
 @EGUEB_SVG_CFLAGS@
 
 src_lib_svg_libegueb_svg_la_LIBADD = \
+$(top_builddir)/src/lib/base/libegueb_base.la \
 $(top_builddir)/src/lib/dom/libegueb_dom.la \
 $(top_builddir)/src/lib/css/libegueb_css.la \
 $(top_builddir)/src/lib/smil/libegueb_smil.la \

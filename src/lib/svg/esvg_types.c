@@ -39,7 +39,7 @@ static Eina_Bool _egueb_svg_double_get(const char *iter, const char **tmp, doubl
 	char *endptr;
 	double val;
 
-	val = egueb_dom_double_get(iter, &endptr);
+	val = egueb_base_double_get(iter, &endptr);
 	if ((errno != ERANGE) &&
 	    !((val == 0) && (iter == endptr)))
 	{
@@ -258,18 +258,18 @@ EAPI void egueb_svg_points_string_from(const char *value, Egueb_Svg_Points_Cb cb
 	const char *tmp;
 	char *endptr;
 
-	EGUEB_DOM_SPACE_SKIP(value);
+	EGUEB_BASE_SPACE_SKIP(value);
 	tmp = value;
 	while (*tmp)
 	{
 		Egueb_Svg_Point p;
 
-		p.x = egueb_dom_double_get(tmp, &endptr);
+		p.x = egueb_base_double_get(tmp, &endptr);
 		tmp = endptr;
-		EGUEB_DOM_SPACE_COMMA_SKIP(tmp);
-		p.y = egueb_dom_double_get(tmp, &endptr);
+		EGUEB_BASE_SPACE_COMMA_SKIP(tmp);
+		p.y = egueb_base_double_get(tmp, &endptr);
 		tmp = endptr;
-		EGUEB_DOM_SPACE_COMMA_SKIP(tmp);
+		EGUEB_BASE_SPACE_COMMA_SKIP(tmp);
 
 		cb(&p, data);
 	}
@@ -309,16 +309,16 @@ EAPI Eina_Bool egueb_svg_number_list_string_from(const char *attr, Egueb_Svg_Num
 	if (!attr) return EINA_FALSE;
 	if (!cb) return EINA_FALSE;
 
-	EGUEB_DOM_SPACE_SKIP(tmp);
+	EGUEB_BASE_SPACE_SKIP(tmp);
 	while (tmp)
 	{
 		double val;
 
-		EGUEB_DOM_SPACE_SKIP(tmp);
+		EGUEB_BASE_SPACE_SKIP(tmp);
 		if (!*tmp)
 			break;
 
-		val = egueb_dom_double_get(tmp, &end);
+		val = egueb_base_double_get(tmp, &end);
 		if (errno == ERANGE)
 			val = 0;
 		if (end == tmp)
@@ -327,7 +327,7 @@ EAPI Eina_Bool egueb_svg_number_list_string_from(const char *attr, Egueb_Svg_Num
 		if (!cb(val, data))
 			break;
 		/* skip the comma and the blanks */
-		EGUEB_DOM_SPACE_COMMA_SKIP(tmp);
+		EGUEB_BASE_SPACE_COMMA_SKIP(tmp);
 	}
 	return EINA_TRUE;
 }

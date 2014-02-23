@@ -53,7 +53,7 @@ EAPI Eina_Bool egueb_dom_uri_string_from(Egueb_Dom_Uri_Descriptor *descriptor,
 {
 	const char *fragment;
 
-	EGUEB_DOM_SPACE_SKIP(attr);
+	EGUEB_BASE_SPACE_SKIP(attr);
 	fragment = _fragment_get(attr);
 	/* TODO check for the local/non-local case */
 	if (*attr == '#')
@@ -79,7 +79,7 @@ EAPI Eina_Bool egueb_dom_iri_string_from(Egueb_Dom_Uri_Descriptor *descriptor,
 		const char *attr, void *data)
 {
 	/* funciri ? */
-	EGUEB_DOM_SPACE_SKIP(attr);
+	EGUEB_BASE_SPACE_SKIP(attr);
 	if (!strncmp(attr, "url(", 4))
 	{
 		char url[PATH_MAX];

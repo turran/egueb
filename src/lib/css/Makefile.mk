@@ -27,10 +27,12 @@ src_lib_css_libegueb_css_la_YFLAGS = -d -p ecss_
 src_lib_css_libegueb_css_la_LFLAGS = -o$(LEX_OUTPUT_ROOT).c
 
 src_lib_css_libegueb_css_la_CPPFLAGS = \
+-I$(top_srcdir)/src/lib/base \
 -DEGUEB_CSS_BUILD \
 @EGUEB_CSS_CFLAGS@
 
 src_lib_css_libegueb_css_la_LIBADD = \
+$(top_builddir)/src/lib/base/libegueb_base.la \
 @EGUEB_CSS_LIBS@ \
 @LEXLIB@
 

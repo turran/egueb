@@ -36,7 +36,7 @@ EAPI Eina_Bool egueb_smil_clock_string_from(int64_t *clock, const char *attr)
 	long v;
 	const char *tmp;
 
-	if (!egueb_dom_long_get(attr, &tmp, &v))
+	if (!egueb_base_long_get(attr, &tmp, &v))
 		return EINA_FALSE;
 
 	if (*tmp == ':')
@@ -44,7 +44,7 @@ EAPI Eina_Bool egueb_smil_clock_string_from(int64_t *clock, const char *attr)
 		long v2;
 
 		tmp++;
-		if (!egueb_dom_long_get(tmp, &tmp, &v2))
+		if (!egueb_base_long_get(tmp, &tmp, &v2))
 			return EINA_FALSE;
 
 		/* Full-clock-val::= Hours ":" Minutes ":" Seconds ("." Fraction)? */
@@ -65,7 +65,7 @@ EAPI Eina_Bool egueb_smil_clock_string_from(int64_t *clock, const char *attr)
 				long f;
 
 				tmp++;
-				if (!egueb_dom_long_get(tmp, &tmp, &f))
+				if (!egueb_base_long_get(tmp, &tmp, &f))
 					return EINA_FALSE;
 			}
 			ret = EINA_TRUE;
@@ -82,7 +82,7 @@ EAPI Eina_Bool egueb_smil_clock_string_from(int64_t *clock, const char *attr)
 		if (*tmp == '.')
 		{
 			tmp++;
-			if (!egueb_dom_long_get(tmp, &tmp, &f))
+			if (!egueb_base_long_get(tmp, &tmp, &f))
 				return EINA_FALSE;
 		}
 

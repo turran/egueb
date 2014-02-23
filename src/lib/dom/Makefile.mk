@@ -100,11 +100,14 @@ src/lib/dom/egueb_dom_value_double.c \
 src/lib/dom/egueb_dom_value_list.c
 
 src_lib_dom_libegueb_dom_la_CPPFLAGS = \
+-I$(top_srcdir)/src/lib/base \
 -I$(top_srcdir)/src/lib/css \
 -I$(top_srcdir)/src/lib/dom \
 -DEGUEB_DOM_BUILD \
 @EGUEB_DOM_CFLAGS@
 
-src_lib_dom_libegueb_dom_la_LIBADD = @EGUEB_DOM_LIBS@
+src_lib_dom_libegueb_dom_la_LIBADD = \
+$(top_builddir)/src/lib/base/libegueb_base.la \
+@EGUEB_DOM_LIBS@
 
 src_lib_dom_libegueb_dom_la_LDFLAGS = -no-undefined -version-info @version_info@

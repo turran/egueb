@@ -9,23 +9,23 @@ src_tests_libmydom_la_CPPFLAGS = \
 -I$(top_srcdir)/src/lib/dom \
 -I$(top_srcdir)/src/lib/smil \
 -I. \
-@EDOM_CFLAGS@ \
+@EGUEB_DOM_CFLAGS@ \
 @ETCH_CFLAGS@
 
 src_tests_libmydom_la_LIBADD = \
 $(top_builddir)/src/lib/dom/libegueb_dom.la \
 $(top_builddir)/src/lib/smil/libegueb_smil.la \
-@EDOM_LIBS@ \
+@EGUEB_DOM_LIBS@ \
 @ETCH_LIBS@
 
 tests_dom_CPPFLAGS = \
 -I$(top_srcdir)/src/lib/dom \
-@EDOM_CFLAGS@
+@EGUEB_DOM_CFLAGS@
 
 tests_dom_LDADD = \
 $(top_builddir)/src/lib/dom/libegueb_dom.la \
 $(top_builddir)/src/tests/libmydom.la \
-@EDOM_LIBS@
+@EGUEB_DOM_LIBS@
 
 tests_css_CPPFLAGS = \
 -I$(top_srcdir)/src/lib/css \
@@ -38,12 +38,12 @@ $(top_builddir)/src/lib/css/libegueb_css.la \
 tests_svg_CPPFLAGS = \
 -I$(top_srcdir)/src/lib/svg \
 $(tests_dom_CPPFLAGS) \
-@ESVG_CFLAGS@
+@EGUEB_SVG_CFLAGS@
 
 tests_svg_LDADD = \
 $(top_builddir)/src/lib/svg/libegueb_svg.la \
 $(tests_dom_LDADD) \
-@ESVG_LIBS@
+@EGUEB_SVG_LIBS@
 
 check_PROGRAMS += \
 src/tests/egueb_css_test01 \

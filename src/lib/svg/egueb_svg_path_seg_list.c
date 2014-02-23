@@ -50,8 +50,8 @@ static Eina_Bool _egueb_svg_path_number_get(char **attr, double *x)
 	char *endptr;
 
 	iter = *attr;
-	EGUEB_DOM_SPACE_COMMA_SKIP(iter);
-	if (!egueb_dom_double_get(iter, &endptr, x))
+	EGUEB_BASE_SPACE_COMMA_SKIP(iter);
+	if (!egueb_base_double_get(iter, &endptr, x))
 		return EINA_FALSE;
 
 	*attr = endptr;
@@ -64,7 +64,7 @@ static Eina_Bool _egueb_svg_path_flag_get(char **attr, Eina_Bool *b)
 	char *iter;
 
 	iter = *attr;
-	EGUEB_DOM_SPACE_COMMA_SKIP(iter);
+	EGUEB_BASE_SPACE_COMMA_SKIP(iter);
 	if (*iter == '0')
 	{
 		*b = EINA_FALSE;
@@ -514,7 +514,7 @@ EAPI Eina_Bool egueb_svg_path_seg_list_string_from(Egueb_Dom_List *l,
 
 	egueb_dom_list_clear(l);
 
-	EGUEB_DOM_SPACE_SKIP(iter);
+	EGUEB_BASE_SPACE_SKIP(iter);
 	/* empty path data */
 	if (!*iter) return EINA_FALSE;
 	/* First char must be 'M' or 'm' */
@@ -572,7 +572,7 @@ EAPI Eina_Bool egueb_svg_path_seg_list_string_from(Egueb_Dom_List *l,
 				last_command = 'L';
 		}
 		first = EINA_FALSE;
-		EGUEB_DOM_SPACE_COMMA_SKIP(iter);
+		EGUEB_BASE_SPACE_COMMA_SKIP(iter);
 	}
 	return ret;
 }

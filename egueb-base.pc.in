@@ -8,7 +8,6 @@ pkgincludedir=@pkgincludedir@-@VMAJ@/base
 
 Name: Egueb base
 Description: Egueb base implementation
-Requires.private: @egueb_base_requirements_private@
 Requires: @egueb_base_requirements@
 Version: @VERSION@
 Libs: -L${libdir} -legueb_base

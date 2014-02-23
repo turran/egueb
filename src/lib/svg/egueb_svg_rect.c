@@ -60,7 +60,7 @@ Eina_Bool egueb_svg_rect_string_from(Egueb_Svg_Rect *thiz, const char *attr_val)
 				break;
 			}
 		}
-		if (!egueb_dom_double_get(iter, &endptr, &val))
+		if (!egueb_base_double_get(iter, &endptr, &val))
 			return EINA_FALSE;
 
 		*vbp = val;

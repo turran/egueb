@@ -130,18 +130,18 @@ EAPI Eina_Bool egueb_svg_point_string_from(Egueb_Svg_Point *thiz, const char *at
 	char *endptr;
 
 	if (!attr) return EINA_FALSE;
-	EGUEB_DOM_SPACE_SKIP(attr);
+	EGUEB_BASE_SPACE_SKIP(attr);
 	if (!attr) return EINA_FALSE;
 	tmp = attr;
 
-	if (!egueb_dom_double_get(tmp, &endptr, &thiz->x))
+	if (!egueb_base_double_get(tmp, &endptr, &thiz->x))
 		return EINA_FALSE;
 
 	tmp = endptr;
-	EGUEB_DOM_SPACE_COMMA_SKIP(tmp);
+	EGUEB_BASE_SPACE_COMMA_SKIP(tmp);
 	if (!tmp) return EINA_FALSE;
 
-	if (!egueb_dom_double_get(tmp, &endptr, &thiz->y))
+	if (!egueb_base_double_get(tmp, &endptr, &thiz->y))
 		return EINA_FALSE;
 
 	return EINA_TRUE;

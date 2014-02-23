@@ -272,9 +272,9 @@ EAPI Eina_Bool egueb_css_color_string_from(Egueb_Css_Color *color, const char *a
 	{
 		if (sz == 4)
 		{
-			if (EGUEB_DOM_IS_HEXA(attr_val[1]) &&
-			    EGUEB_DOM_IS_HEXA(attr_val[2]) &&
-			    EGUEB_DOM_IS_HEXA(attr_val[3]))
+			if (EGUEB_BASE_IS_HEXA(attr_val[1]) &&
+			    EGUEB_BASE_IS_HEXA(attr_val[2]) &&
+			    EGUEB_BASE_IS_HEXA(attr_val[3]))
 			{
 				uint8_t r, g, b;
 
@@ -287,12 +287,12 @@ EAPI Eina_Bool egueb_css_color_string_from(Egueb_Css_Color *color, const char *a
 		}
 		else if (sz == 7)
 		{
-			if (EGUEB_DOM_IS_HEXA(attr_val[1]) &&
-			    EGUEB_DOM_IS_HEXA(attr_val[2]) &&
-			    EGUEB_DOM_IS_HEXA(attr_val[3]) &&
-			    EGUEB_DOM_IS_HEXA(attr_val[4]) &&
-			    EGUEB_DOM_IS_HEXA(attr_val[5]) &&
-			    EGUEB_DOM_IS_HEXA(attr_val[6]))
+			if (EGUEB_BASE_IS_HEXA(attr_val[1]) &&
+			    EGUEB_BASE_IS_HEXA(attr_val[2]) &&
+			    EGUEB_BASE_IS_HEXA(attr_val[3]) &&
+			    EGUEB_BASE_IS_HEXA(attr_val[4]) &&
+			    EGUEB_BASE_IS_HEXA(attr_val[5]) &&
+			    EGUEB_BASE_IS_HEXA(attr_val[6]))
 			{
 				uint8_t r, g, b;
 
@@ -326,13 +326,13 @@ EAPI Eina_Bool egueb_css_color_string_from(Egueb_Css_Color *color, const char *a
 		iter = tmp = attr_val + 4;
 		while (*tmp)
 		{
-			EGUEB_DOM_SPACE_SKIP(tmp);
+			EGUEB_BASE_SPACE_SKIP(tmp);
 			if (*tmp == ',')
 			{
 				tmp++;
 				iter = tmp;
 			}
-			if (egueb_dom_long_get(iter, &tmp, &val))
+			if (egueb_base_long_get(iter, &tmp, &val))
 			{
 				if ((*tmp != ' ') && (*tmp != ',') && (*tmp != '%') && (*tmp != ')'))
 					break;
@@ -352,7 +352,7 @@ EAPI Eina_Bool egueb_css_color_string_from(Egueb_Css_Color *color, const char *a
 				if (nbr == 3)
 				{
 					/* check the last parameter */
-					EGUEB_DOM_SPACE_SKIP(tmp);
+					EGUEB_BASE_SPACE_SKIP(tmp);
 					if ((*tmp == ')') && (*(tmp + 1) == '\0'))
 					{
 						/* parsing is correct, we set the color and return */

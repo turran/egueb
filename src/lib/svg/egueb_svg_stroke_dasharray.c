@@ -129,7 +129,7 @@ EAPI Eina_Bool egueb_svg_stroke_dasharray_string_from(Egueb_Dom_List *l,
 		char *attr = (char *)value;
 		char sep;
 
-		EGUEB_DOM_SPACE_SKIP(attr);
+		EGUEB_BASE_SPACE_SKIP(attr);
 
  		sep = ',';
 		found = strchr(attr, sep);
@@ -144,7 +144,7 @@ EAPI Eina_Bool egueb_svg_stroke_dasharray_string_from(Egueb_Dom_List *l,
 			Egueb_Svg_Length *length;
 
 			*found = '\0';
-			EGUEB_DOM_SPACE_SKIP(attr);
+			EGUEB_BASE_SPACE_SKIP(attr);
 
 			length = calloc(1, sizeof(Egueb_Svg_Length));
 			egueb_svg_length_string_from(length, attr);
@@ -152,7 +152,7 @@ EAPI Eina_Bool egueb_svg_stroke_dasharray_string_from(Egueb_Dom_List *l,
 
 			*found = sep;
 			attr = found + 1;
-			EGUEB_DOM_SPACE_SKIP(attr);
+			EGUEB_BASE_SPACE_SKIP(attr);
 
 			sep = ',';
 			found = strchr(attr, sep);

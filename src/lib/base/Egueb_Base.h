@@ -16,15 +16,15 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _EGUEB_SVG_H_
-#define _EGUEB_SVG_H_
+#ifndef _EGUEB_BASE_H_
+#define _EGUEB_BASE_H_
 
 #ifdef EAPI
 # undef EAPI
 #endif
 
 #ifdef _WIN32
-# ifdef EGUEB_DOM_BUILD
+# ifdef EGUEB_BASE_BUILD
 #  ifdef DLL_EXPORT
 #   define EAPI __declspec(dllexport)
 #  else
@@ -48,6 +48,8 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+#include "egueb_base_utils.h"
 
 #ifdef __cplusplus
 }

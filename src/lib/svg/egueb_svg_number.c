@@ -95,7 +95,7 @@ EAPI Eina_Bool egueb_svg_number_string_from(Egueb_Svg_Number *thiz,
 	if (!attr_val || !*attr_val)
 		return EINA_FALSE;
 
-	if (!egueb_dom_double_get (attr_val, &endptr, thiz))
+	if (!egueb_base_double_get (attr_val, &endptr, thiz))
 	{
 		ERR("Number %s is invalid", attr_val);
 		return EINA_FALSE;
