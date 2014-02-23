@@ -41,69 +41,69 @@ ETCH_VERSION="0.0.5"
 AC_CANONICAL_HOST
 
 egueb_base_requirements="eina >= ${EINA_VERSION}"
-ecss_requirements="eina >= ${EINA_VERSION}"
-edom_requirements_private="etch >= ${ETCH_VERSION}"
-edom_requirements="enesim >= ${ENESIM_VERSION} eina >= ${EINA_VERSION}"
-esmil_requirements="etch >= ${ETCH_VERSION} enesim >= ${ENESIM_VERSION} eina >= ${EINA_VERSION}"
-esvg_requirements="etch >= ${ETCH_VERSION} enesim >= ${ENESIM_VERSION} eina >= ${EINA_VERSION}"
+egueb_css_requirements="eina >= ${EINA_VERSION}"
+egueb_dom_requirements_private="etch >= ${ETCH_VERSION}"
+egueb_dom_requirements="enesim >= ${ENESIM_VERSION} eina >= ${EINA_VERSION}"
+egueb_smil_requirements="etch >= ${ETCH_VERSION} enesim >= ${ENESIM_VERSION} eina >= ${EINA_VERSION}"
+egueb_svg_requirements="etch >= ${ETCH_VERSION} enesim >= ${ENESIM_VERSION} eina >= ${EINA_VERSION}"
 gstreamer_requirements="gstreamer-0.10"
 
 AC_SUBST([egueb_base_requirements])
-AC_SUBST([ecss_requirements])
-AC_SUBST([edom_requirements])
-AC_SUBST([edom_requirements_private])
-AC_SUBST([esmil_requirements])
-AC_SUBST([esvg_requirements])
+AC_SUBST([egueb_css_requirements])
+AC_SUBST([egueb_dom_requirements])
+AC_SUBST([egueb_dom_requirements_private])
+AC_SUBST([egueb_smil_requirements])
+AC_SUBST([egueb_svg_requirements])
 
 ### Additional options to configure
 
-AC_ARG_ENABLE([ecss],
-   [AS_HELP_STRING([--enable-ecss], [enable Ecss compilation.])],
+AC_ARG_ENABLE([egueb_css],
+   [AS_HELP_STRING([--enable-egueb_css], [enable Ecss compilation.])],
    [if test "x${enableval}" = "xyes"; then
-       want_ecss="yes"
+       want_egueb_css="yes"
     else
-       want_ecss="no"
+       want_egueb_css="no"
     fi
    ],
-   [want_ecss="yes"])
+   [want_egueb_css="yes"])
 
-AM_CONDITIONAL([WANT_ECSS], [test "x${want_ecss}" = "xyes"])
+AM_CONDITIONAL([WANT_EGUEB_CSS], [test "x${want_egueb_css}" = "xyes"])
 
-AC_ARG_ENABLE([edom],
-   [AS_HELP_STRING([--enable-edom], [enable Edom compilation.])],
+AC_ARG_ENABLE([egueb_dom],
+   [AS_HELP_STRING([--enable-egueb_dom], [enable Edom compilation.])],
    [if test "x${enableval}" = "xyes"; then
-       want_edom="yes"
+       want_egueb_dom="yes"
     else
-       want_edom="no"
+       want_egueb_dom="no"
     fi
    ],
-   [want_edom="yes"])
+   [want_egueb_dom="yes"])
 
-AM_CONDITIONAL([WANT_EDOM], [test "x${want_edom}" = "xyes"])
+AM_CONDITIONAL([WANT_EGUEB_DOM], [test "x${want_egueb_dom}" = "xyes"])
 
-AC_ARG_ENABLE([esmil],
-   [AS_HELP_STRING([--enable-esmil], [enable Esmil compilation.])],
+AC_ARG_ENABLE([egueb_smil],
+   [AS_HELP_STRING([--enable-egueb_smil], [enable Esmil compilation.])],
    [if test "x${enableval}" = "xyes"; then
-       want_esmil="yes"
+       want_egueb_smil="yes"
     else
-       want_esmil="no"
+       want_egueb_smil="no"
     fi
    ],
-   [want_esmil="yes"])
+   [want_egueb_smil="yes"])
 
-AM_CONDITIONAL([WANT_ESMIL], [test "x${want_esmil}" = "xyes"])
+AM_CONDITIONAL([WANT_EGUEB_SMIL], [test "x${want_egueb_smil}" = "xyes"])
 
-AC_ARG_ENABLE([esvg],
-   [AS_HELP_STRING([--enable-esvg], [enable Esvg compilation.])],
+AC_ARG_ENABLE([egueb_svg],
+   [AS_HELP_STRING([--enable-egueb_svg], [enable Esvg compilation.])],
    [if test "x${enableval}" = "xyes"; then
-       want_esvg="yes"
+       want_egueb_svg="yes"
     else
-       want_esvg="no"
+       want_egueb_svg="no"
     fi
    ],
-   [want_esvg="yes"])
+   [want_egueb_svg="yes"])
 
-AM_CONDITIONAL([WANT_ESVG], [test "x${want_esvg}" = "xyes"])
+AM_CONDITIONAL([WANT_EGUEB_SVG], [test "x${want_egueb_svg}" = "xyes"])
 
 
 ### Checks for programs
@@ -119,22 +119,22 @@ fi
 ENESIM_MODULE_DIR=`${PKG_CONFIG} --variable=pkglibdir enesim`
 AC_SUBST([ENESIM_MODULE_DIR])
 
-# flex (ecss dep)
-if test "x${want_ecss}" = "xyes" ; then
+# flex (egueb_css dep)
+if test "x${want_egueb_css}" = "xyes" ; then
    AM_PROG_LEX
    if test "x$ac_cv_prog_LEX" = "x"; then
       AC_MSG_WARN([Cannot find flex, Ecss compilation disabled])
-      want_ecss="no"
+      want_egueb_css="no"
    fi
 fi
 
-# yacc (ecss dep)
+# yacc (egueb_css dep)
 
-if test "x${want_ecss}" = "xyes" ; then
+if test "x${want_egueb_css}" = "xyes" ; then
    AC_PROG_YACC
    if test "x$ac_cv_prog_YACC" = "x"; then
       AC_MSG_WARN([Cannot find bison, Ecss compilation disabled])
-      want_ecss="no"
+      want_egueb_css="no"
    fi
 fi
 
@@ -144,24 +144,24 @@ ENS_CHECK_DOXYGEN([build_doc="yes"], [build_doc="no"])
 ### Checks for libraries
 PKG_CHECK_MODULES([EGUEB_BASE], [${egueb_base_requirements}])
 
-if test "x${want_ecss}" = "xyes" ; then
-   PKG_CHECK_MODULES([ECSS], [${ecss_requirements}], [want_ecss="yes"], [want_ecss="no"])
+if test "x${want_egueb_css}" = "xyes" ; then
+   PKG_CHECK_MODULES([EGUEB_CSS], [${egueb_css_requirements}], [want_egueb_css="yes"], [want_egueb_css="no"])
 fi
 
-if test "x${want_edom}" = "xyes" ; then
-   PKG_CHECK_MODULES([EDOM], [${edom_requirements} ${edom_requirements_private}], [want_edom="yes"], [want_edom="no"])
+if test "x${want_egueb_dom}" = "xyes" ; then
+   PKG_CHECK_MODULES([EGUEB_DOM], [${egueb_dom_requirements} ${egueb_dom_requirements_private}], [want_egueb_dom="yes"], [want_egueb_dom="no"])
 fi
 
-if test "x${want_esmil}" = "xyes" && test "x${want_edom}" = "xyes" ; then
-   PKG_CHECK_MODULES([ESMIL], [${esmil_requirements}], [want_esmil="yes"], [want_esmil="no"])
+if test "x${want_egueb_smil}" = "xyes" && test "x${want_egueb_dom}" = "xyes" ; then
+   PKG_CHECK_MODULES([EGUEB_SMIL], [${egueb_smil_requirements}], [want_egueb_smil="yes"], [want_egueb_smil="no"])
 fi
 
-if test "x${want_esvg}" = "xyes" && test "x${want_ecss}" = "xyes" && test "x${want_edom}" = "xyes" && test "x${want_esmil}" = "xyes" ; then
-   PKG_CHECK_MODULES([ESVG], [${esvg_requirements}], [want_esvg="yes"], [want_esvg="no"])
+if test "x${want_egueb_svg}" = "xyes" && test "x${want_egueb_css}" = "xyes" && test "x${want_egueb_dom}" = "xyes" && test "x${want_egueb_smil}" = "xyes" ; then
+   PKG_CHECK_MODULES([EGUEB_SVG], [${egueb_svg_requirements}], [want_egueb_svg="yes"], [want_egueb_svg="no"])
    # Video backends
    PKG_CHECK_MODULES([GSTREAMER], [${gstreamer_requirements}], [have_gstreamer="yes"], [have_gstreamer="no"])
    if test "x${have_gstreamer}" = "xyes" ; then
-      AC_DEFINE(BUILD_ESVG_VIDEO_GSTREAMER, [1], [Esvg Video Gstreamer Support])
+      AC_DEFINE(BUILD_EGUEB_SVG_VIDEO_GSTREAMER, [1], [Esvg Video Gstreamer Support])
    fi
    # Script backends
    # V8 code taken from elev8
@@ -191,16 +191,16 @@ fi
 # For Dom test
 PKG_CHECK_MODULES([ETCH], [etch])
 
-AM_CONDITIONAL(BUILD_ECSS, [test "x${want_ecss}" = "xyes"])
-AM_CONDITIONAL(BUILD_EDOM, [test "x${want_edom}" = "xyes"])
-AM_CONDITIONAL(BUILD_ESMIL, [test "x${want_esmil}" = "xyes"])
-AM_CONDITIONAL(BUILD_ESVG, [test "x${want_esvg}" = "xyes"])
-AM_CONDITIONAL(BUILD_ESVG_VIDEO_GSTREAMER, [test "x${have_gstreamer}" = "xyes"])
+AM_CONDITIONAL(BUILD_EGUEB_CSS, [test "x${want_egueb_css}" = "xyes"])
+AM_CONDITIONAL(BUILD_EGUEB_DOM, [test "x${want_egueb_dom}" = "xyes"])
+AM_CONDITIONAL(BUILD_EGUEB_SMIL, [test "x${want_egueb_smil}" = "xyes"])
+AM_CONDITIONAL(BUILD_EGUEB_SVG, [test "x${want_egueb_svg}" = "xyes"])
+AM_CONDITIONAL(BUILD_EGUEB_SVG_VIDEO_GSTREAMER, [test "x${have_gstreamer}" = "xyes"])
 
 if test "x${have_v8}" = "xyes" ; then
-  AC_DEFINE(BUILD_ESVG_SCRIPTOR_V8, [1], [JS Scripting V8 Support])
+  AC_DEFINE(BUILD_EGUEB_SVG_SCRIPTOR_V8, [1], [JS Scripting V8 Support])
 fi
-AM_CONDITIONAL(BUILD_ESVG_SCRIPTOR_V8, [test "x${have_v8}" = "xyes"])
+AM_CONDITIONAL(BUILD_EGUEB_SVG_SCRIPTOR_V8, [test "x${have_v8}" = "xyes"])
 
 ### Checks for header files
 
@@ -218,9 +218,9 @@ AC_C_BIGENDIAN
 ENS_CHECK_COMPILER_FLAGS([EGUEB], [-Wall])
 
 EGUEB_BASE_CFLAGS="${EGUEB_CFLAGS} ${EGUEB_BASE_CFLAGS}"
-ESVG_CFLAGS="${ESVG_CFLAGS} ${EGUEB_CFLAGS}"
-EDOM_CFLAGS="${EDOM_CFLAGS} ${EGUEB_CFLAGS}"
-ECSS_CFLAGS="${ECSS_CFLAGS} ${EGUEB_CFLAGS}"
+EGUEB_SVG_CFLAGS="${EGUEB_SVG_CFLAGS} ${EGUEB_CFLAGS}"
+EGUEB_DOM_CFLAGS="${EGUEB_DOM_CFLAGS} ${EGUEB_CFLAGS}"
+EGUEB_CSS_CFLAGS="${EGUEB_CSS_CFLAGS} ${EGUEB_CFLAGS}"
 
 ### Checks for linker characteristics
 
@@ -253,10 +253,10 @@ echo
 echo "Configuration Options Summary:"
 echo
 echo "Base support................................: yes"
-echo "CSS support.................................: ${want_ecss}"
-echo "DOM support.................................: ${want_edom}"
-echo "SMIL support................................: ${want_esmil}"
-echo "SVG support.................................: ${want_esvg}"
+echo "CSS support.................................: ${want_egueb_css}"
+echo "DOM support.................................: ${want_egueb_dom}"
+echo "SMIL support................................: ${want_egueb_smil}"
+echo "SVG support.................................: ${want_egueb_svg}"
 echo "  Video support:"
 echo "    GStreamer...............................: ${have_gstreamer}"
 echo "  Scripting support:"

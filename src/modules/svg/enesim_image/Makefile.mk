@@ -12,11 +12,11 @@ src_modules_svg_enesim_image_enesim_image_svg_la_CPPFLAGS = \
 -I$(top_srcdir)/src/lib/svg/types \
 -I$(top_srcdir)/src/lib/svg/elements \
 -DEGUEB_SVG_BUILD \
-@ESVG_CFLAGS@
+@EGUEB_SVG_CFLAGS@
 
 src_modules_svg_enesim_image_enesim_image_svg_la_LIBADD = \
 $(top_builddir)/src/lib/svg/libegueb_svg.la \
-@ESVG_LIBS@
+@EGUEB_SVG_LIBS@
 
 src_modules_svg_enesim_image_enesim_image_svg_la_LDFLAGS = -no-undefined -module -avoid-version
 

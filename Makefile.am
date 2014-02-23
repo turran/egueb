@@ -37,20 +37,20 @@ GENERATED_FILES =
 
 include src/lib/base/Makefile.mk
 
-if BUILD_ECSS
+if BUILD_EGUEB_CSS
 include src/lib/css/Makefile.mk
 endif
 
-if BUILD_EDOM
+if BUILD_EGUEB_DOM
 include src/lib/dom/Makefile.mk
 include src/lib/dom/parser/Makefile.mk
 endif
 
-if BUILD_ESMIL
+if BUILD_EGUEB_SMIL
 include src/lib/smil/Makefile.mk
 endif
 
-if BUILD_ESVG
+if BUILD_EGUEB_SVG
 include src/lib/svg/Makefile.mk
 # include src/lib/svg/elements/Makefile.mk
 # include src/lib/svg/types/Makefile.mk
@@ -61,7 +61,7 @@ endif
 
 ### Modules
 
-if BUILD_ESVG
+if BUILD_EGUEB_SVG
 include src/modules/svg/enesim_image/Makefile.mk
 endif
 
@@ -70,7 +70,7 @@ include src/bin/Makefile.mk
 
 ### Tests
 
-if BUILD_ECSS
+if BUILD_EGUEB_CSS
 include src/tests/Makefile.mk
 endif
 
@@ -112,16 +112,16 @@ pkgconfig_DATA =
 
 pkgconfig_DATA += egueb-base.pc
 
-if BUILD_ECSS
+if BUILD_EGUEB_CSS
 pkgconfig_DATA += egueb-css.pc
 endif
 
-if BUILD_EDOM
+if BUILD_EGUEB_DOM
 pkgconfig_DATA += egueb-dom.pc
 pkgconfig_DATA += egueb-smil.pc
 endif
 
-if BUILD_ESVG
+if BUILD_EGUEB_SVG
 pkgconfig_DATA += egueb-svg.pc
 endif
 

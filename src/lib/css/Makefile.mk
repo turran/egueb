@@ -28,10 +28,10 @@ src_lib_css_libegueb_css_la_LFLAGS = -o$(LEX_OUTPUT_ROOT).c
 
 src_lib_css_libegueb_css_la_CPPFLAGS = \
 -DEGUEB_CSS_BUILD \
-@ECSS_CFLAGS@
+@EGUEB_CSS_CFLAGS@
 
 src_lib_css_libegueb_css_la_LIBADD = \
-@ECSS_LIBS@ \
+@EGUEB_CSS_LIBS@ \
 @LEXLIB@
 
 src_lib_css_libegueb_css_la_LDFLAGS = -no-undefined -version-info @version_info@
