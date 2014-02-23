@@ -45,18 +45,14 @@ static void _egueb_dom_value_color_data_to(Egueb_Dom_Value *v, Egueb_Dom_Value_D
 
 static char * _egueb_dom_value_color_string_to(const Egueb_Dom_Value *v)
 {
-	char *ret;
-
 	EINA_SAFETY_ON_FALSE_RETURN_VAL(v->descriptor == &_descriptor, NULL);
-	/* TODO convert the color to a string */
-	return ret;
+	return egueb_css_color_string_to((Egueb_Css_Color)v->data.i32);
 }
 
 static Eina_Bool _egueb_dom_value_color_string_from(Egueb_Dom_Value *v, const char *str)
 {
 	EINA_SAFETY_ON_FALSE_RETURN_VAL(v->descriptor == &_descriptor, EINA_FALSE);
-	/* TODO check for name based colors */
-	return EINA_TRUE;
+	return egueb_css_color_string_from((Egueb_Css_Color *)&v->data.i32, str);
 }
 
 static void _egueb_dom_value_color_interpolate(Egueb_Dom_Value *v,
