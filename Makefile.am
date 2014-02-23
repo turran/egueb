@@ -94,6 +94,7 @@ $(SED) \
 -e 's,@edom_requirements_private\@,$(edom_requirements_private),g' \
 -e 's,@ecss_requirements\@,$(ecss_requirements),g' \
 -e 's,@esvg_requirements\@,$(esvg_requirements),g' \
+-e 's,@egueb_base_requirements\@,$(egueb_base_requirements),g' \
 -e 's,@build_opencl\@,$(build_opencl),g' \
 -e 's,@build_opengl\@,$(build_opengl),g' \
 < $< > $@ || rm $@
@@ -108,6 +109,8 @@ pc_verbose_0 = @echo "  PC      " $@;
 
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA =
+
+pkgconfig_DATA += egueb-base.pc
 
 if BUILD_ECSS
 pkgconfig_DATA += egueb-css.pc
