@@ -74,13 +74,6 @@ if BUILD_EGUEB_CSS
 include src/tests/Makefile.mk
 endif
 
-### The rule for the generated files
-CLEANFILES += $(GENERATED_FILES)
-BUILT_SOURCES = $(GENERATED_FILES)
-
-$(GENERATED_FILES): $(top_srcdir)/data/svg/esvg_private.ender
-	ender_generator $(GENERATED_FLAGS) $(value $(addsuffix _GFLAGS,$(basename $(notdir $@)))) $(top_srcdir)/data/svg/esvg_private.ender $(basename $(notdir $(subst esvg_generated_,,$@))) $@
-
 sed_process = \
 $(SED) \
 -e 's,@VERSION\@,$(VERSION),g' \
@@ -90,10 +83,10 @@ $(SED) \
 -e 's,@libdir\@,$(libdir),g' \
 -e 's,@includedir\@,$(includedir),g' \
 -e 's,@pkgincludedir\@,$(pkgincludedir),g' \
--e 's,@edom_requirements\@,$(edom_requirements),g' \
--e 's,@edom_requirements_private\@,$(edom_requirements_private),g' \
--e 's,@ecss_requirements\@,$(ecss_requirements),g' \
--e 's,@esvg_requirements\@,$(esvg_requirements),g' \
+-e 's,@egueb_dom_requirements\@,$(egueb_dom_requirements),g' \
+-e 's,@egueb_dom_requirements_private\@,$(egueb_dom_requirements_private),g' \
+-e 's,@egueb_css_requirements\@,$(egueb_css_requirements),g' \
+-e 's,@egueb_svg_requirements\@,$(egueb_svg_requirements),g' \
 -e 's,@egueb_base_requirements\@,$(egueb_base_requirements),g' \
 -e 's,@build_opencl\@,$(build_opencl),g' \
 -e 's,@build_opengl\@,$(build_opengl),g' \
