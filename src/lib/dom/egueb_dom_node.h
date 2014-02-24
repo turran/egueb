@@ -32,7 +32,6 @@
  */
 
 typedef struct _Egueb_Dom_Node Egueb_Dom_Node;
-typedef struct _Egueb_Dom_Node_Class Egueb_Dom_Node_Class;
 typedef struct _Egueb_Dom_Node_Event_Listener Egueb_Dom_Node_Event_Listener;
 typedef Eina_Bool (*Egueb_Dom_Node_Cb)(Egueb_Dom_Node *n, void *data);
 
@@ -109,6 +108,12 @@ EAPI void egueb_dom_node_user_data_set(Egueb_Dom_Node *thiz,
 		Egueb_Dom_String *key, void *data);
 EAPI void * egueb_dom_node_user_data_get(Egueb_Dom_Node *thiz,
 		Egueb_Dom_String *key);
+
+#if 0
+EAPI Eina_Bool egueb_dom_node_has_feature(Egueb_Dom_String *name, Egueb_Dom_String *version);
+EAPI Egueb_Dom_Feature * egueb_dom_node_get_feature(Egueb_Dom_String *name, Egueb_Dom_String *version);
+#endif
+
 
 /**
  * @}
