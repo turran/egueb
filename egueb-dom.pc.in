@@ -8,8 +8,8 @@ pkgincludedir=@pkgincludedir@-@VMAJ@/dom
 
 Name: Egueb DOM
 Description: Egueb DOM implementation
-Requires.private: egueb-css @edom_requirements_private@
-Requires: @edom_requirements@
+Requires.private: egueb-css @egueb_dom_requirements_private@
+Requires: @egueb_dom_requirements@
 Version: @VERSION@
 Libs: -L${libdir} -legueb_dom
 Cflags: -I${pkgincludedir}
