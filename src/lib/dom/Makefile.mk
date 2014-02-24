@@ -108,6 +108,7 @@ src_lib_dom_libegueb_dom_la_CPPFLAGS = \
 
 src_lib_dom_libegueb_dom_la_LIBADD = \
 $(top_builddir)/src/lib/base/libegueb_base.la \
+$(top_builddir)/src/lib/css/libegueb_css.la \
 @EGUEB_DOM_LIBS@
 
 src_lib_dom_libegueb_dom_la_LDFLAGS = -no-undefined -version-info @version_info@
