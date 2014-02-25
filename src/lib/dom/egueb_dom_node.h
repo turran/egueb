@@ -109,11 +109,10 @@ EAPI void egueb_dom_node_user_data_set(Egueb_Dom_Node *thiz,
 EAPI void * egueb_dom_node_user_data_get(Egueb_Dom_Node *thiz,
 		Egueb_Dom_String *key);
 
-#if 0
-EAPI Eina_Bool egueb_dom_node_has_feature(Egueb_Dom_String *name, Egueb_Dom_String *version);
-EAPI Egueb_Dom_Feature * egueb_dom_node_get_feature(Egueb_Dom_String *name, Egueb_Dom_String *version);
-#endif
-
+EAPI Eina_Bool egueb_dom_node_is_supported(Egueb_Dom_Node *thiz,
+		Egueb_Dom_String *name, Egueb_Dom_String *version);
+EAPI void * egueb_dom_node_feature_get(Egueb_Dom_Node *thiz,
+		Egueb_Dom_String *name, Egueb_Dom_String *version);
 
 /**
  * @}

@@ -61,26 +61,36 @@ extern "C" {
 #include "egueb_dom_string.h"
 #include "egueb_dom_main.h"
 #include "egueb_dom_list.h"
+
 #include "egueb_dom_node_list.h"
 #include "egueb_dom_node_map_named.h"
 #include "egueb_dom_node.h"
-#include "egueb_dom_element.h"
-#include "egueb_dom_document.h"
-#include "egueb_dom_parser.h"
-#include "egueb_dom_event.h"
-#include "egueb_dom_event_external.h"
-#include "egueb_dom_event_mouse.h"
-#include "egueb_dom_event_mutation.h"
-#include "egueb_dom_event_ui.h"
+
 #include "egueb_dom_attr.h"
+#include "egueb_dom_element.h"
+#include "egueb_dom_character_data.h"
+#include "egueb_dom_document.h"
+#include "egueb_dom_text.h"
+
 #include "egueb_dom_attr_boolean.h"
 #include "egueb_dom_attr_enum.h"
 #include "egueb_dom_attr_int.h"
 #include "egueb_dom_attr_string.h"
 #include "egueb_dom_attr_string_list.h"
-#include "egueb_dom_character_data.h"
+
+#include "egueb_dom_parser.h"
+
+#include "egueb_dom_event.h"
+#include "egueb_dom_event_external.h"
+#include "egueb_dom_event_mouse.h"
+#include "egueb_dom_event_mutation.h"
+#include "egueb_dom_event_ui.h"
+
+#include "egueb_dom_feature.h"
+#include "egueb_dom_feature_render.h"
+
 #include "egueb_dom_input.h"
-#include "egueb_dom_text.h"
+
 #include "egueb_dom_uri.h"
 #include "egueb_dom_value.h"
 #include "egueb_dom_value_boolean.h"

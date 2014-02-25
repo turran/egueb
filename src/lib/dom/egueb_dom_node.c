@@ -25,6 +25,7 @@
 #include "egueb_dom_element.h"
 #include "egueb_dom_event.h"
 #include "egueb_dom_event_mutation.h"
+#include "egueb_dom_feature.h"
 
 #include "egueb_dom_node_private.h"
 #include "egueb_dom_node_map_named_private.h"
@@ -45,6 +46,22 @@ struct _Egueb_Dom_Node_Event_Listener
 	Eina_Bool capture;
 	void *data;
 };
+
+typedef struct _Egueb_Dom_Node_Feature
+{
+	Egueb_Dom_String *version;
+	Egueb_Dom_Feature *feature;
+} Egueb_Dom_Node_Feature;
+
+static void _egueb_dom_node_feature_free(void *d)
+{
+	Egueb_Dom_Node_Feature *thiz = d;
+	if (thiz->version)
+		egueb_dom_string_unref(thiz->version);
+	if (thiz->feature)
+		egueb_dom_feature_unref(thiz->feature);
+	free(thiz);
+}
 
 static void _egueb_dom_node_weak_ref_cb(Egueb_Dom_Event *e, void *data)
 {
@@ -253,6 +270,7 @@ static void _egueb_dom_node_instance_init(void *o)
 	thiz->events = eina_hash_string_superfast_new(
 			_egueb_dom_node_event_container_free);
 	thiz->user_data = eina_hash_string_superfast_new(NULL);
+	thiz->features = eina_hash_string_superfast_new(_egueb_dom_node_feature_free);
 }
 
 static void _egueb_dom_node_instance_deinit(void *o)
@@ -305,6 +323,8 @@ static void _egueb_dom_node_instance_deinit(void *o)
 	}
 	/* and the user data */
 	eina_hash_free(thiz->user_data);
+	/* and the features */
+	eina_hash_free(thiz->features);
 }
 
 /* we use this instead of an event listener to avoid allocation of a new
@@ -370,6 +390,35 @@ void egueb_dom_node_document_set(Egueb_Dom_Node *thiz,
 		_egueb_dom_node_document_set(thiz, event, document);
 	}
 }
+
+Eina_Bool egueb_dom_node_feature_add(Egueb_Dom_Node *thiz,
+		Egueb_Dom_String *name, Egueb_Dom_String *version,
+		Egueb_Dom_Feature *feature)
+{
+	Egueb_Dom_Node_Feature *f;
+	Eina_List *features;
+	const char *str;
+
+	if (!name) return EINA_FALSE;
+	str = egueb_dom_string_string_get(name);
+
+	f = calloc(1, sizeof(Egueb_Dom_Node_Feature));
+	if (version)
+		f->version = egueb_dom_string_ref(version);
+
+	features = eina_hash_find(thiz->features, str);
+	if (!features)
+	{
+		features = eina_list_append(features, f);
+		eina_hash_add(thiz->features, str, features);
+	}
+	else
+	{
+		features = eina_list_append(features, f);
+	}
+	return EINA_TRUE;
+}
+
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/
@@ -940,6 +989,69 @@ EAPI void * egueb_dom_node_user_data_get(Egueb_Dom_Node *thiz,
 	return eina_hash_find(thiz->user_data, str);
 }
 
+/* Introduced in DOM Level 2:
+ * boolean            isSupported(in DOMString feature, 
+ *                                in DOMString version);
+ */
+EAPI Eina_Bool egueb_dom_node_is_supported(Egueb_Dom_Node *thiz,
+		Egueb_Dom_String *name, Egueb_Dom_String *version)
+{
+	Eina_List *features;
+	const char *str;
+
+	if (!name) return EINA_FALSE;
+	str = egueb_dom_string_string_get(name);
+
+	features = eina_hash_find(thiz->features, str);
+	if (!features) return EINA_FALSE;
+	return EINA_TRUE;
+}
+
+/* Introduced in DOM Level 3:
+ * DOMObject          getFeature(in DOMString feature, 
+ *                               in DOMString version);
+ */
+EAPI void * egueb_dom_node_feature_get(Egueb_Dom_Node *thiz,
+		Egueb_Dom_String *name, Egueb_Dom_String *version)
+{
+	Egueb_Dom_Node_Feature *f = NULL;
+	Eina_List *features;
+	const char *str;
+
+	if (!name) return NULL;
+	str = egueb_dom_string_string_get(name);
+
+	features = eina_hash_find(thiz->features, str);
+	if (!features) return NULL;
+
+	if (!version)
+	{
+		/* pick the first one */
+		f = eina_list_data_get(features);
+	}
+	else
+	{
+		Egueb_Dom_Node_Feature *f_tmp;
+		Eina_List *l;
+
+		/* pick the matching one */
+		EINA_LIST_FOREACH(features, l, f_tmp)
+		{
+			if (egueb_dom_string_is_equal(f->version, version))
+			{
+				f = f_tmp;
+				break;
+			}
+		}
+	}
+	if (!f) return NULL;
+
+	if (!f->feature)
+		return egueb_dom_node_ref(thiz);
+	else
+		return egueb_dom_feature_ref(f->feature);
+}
+
 #if 0
 // Introduced in DOM Level 2:
   interface EventListener {
@@ -954,9 +1066,6 @@ EAPI void * egueb_dom_node_user_data_get(Egueb_Dom_Node *thiz,
   boolean            hasChildNodes();
   // Modified in DOM Level 3:
   void               normalize();
-  // Introduced in DOM Level 2:
-  boolean            isSupported(in DOMString feature, 
-                                 in DOMString version);
   // Introduced in DOM Level 2:
   readonly attribute DOMString       namespaceURI;
   // Introduced in DOM Level 2:
@@ -996,8 +1105,5 @@ EAPI void * egueb_dom_node_user_data_get(Egueb_Dom_Node *thiz,
   DOMString          lookupNamespaceURI(in DOMString prefix);
   // Introduced in DOM Level 3:
   boolean            isEqualNode(in Node arg);
-  // Introduced in DOM Level 3:
-  DOMObject          getFeature(in DOMString feature, 
-                                in DOMString version);
 
 #endif

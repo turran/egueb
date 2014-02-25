@@ -598,7 +598,21 @@ static Eina_Bool _egueb_svg_document_damage_cb(Enesim_Renderer *r,
 			area->x, area->y, area->w, area->h);
 	return EINA_TRUE;
 }
+/*----------------------------------------------------------------------------*
+ *                        Render feature interface                            *
+ *----------------------------------------------------------------------------*/
+static Enesim_Renderer * _egueb_svg_document_render_renderer_get(
+		Egueb_Dom_Node *n)
+{
+	/* get the topmost element, get the renderer and return it */
+	printf("callllled\n");
+	return NULL;
+}
 
+static Egueb_Dom_Feature_Render_Descriptor
+_egueb_svg_document_render_descriptor = {
+	/* .renderer_get 	= */ _egueb_svg_document_render_renderer_get,
+};
 /*----------------------------------------------------------------------------*
  *                     The URI interface for elements                         *
  *----------------------------------------------------------------------------*/
@@ -759,6 +773,9 @@ static void _egueb_svg_document_instance_init(void *o)
 	Egueb_Svg_Document *thiz;
 
 	thiz = EGUEB_SVG_DOCUMENT(o);
+	/* register the features */
+	egueb_dom_feature_render_add(EGUEB_DOM_NODE(thiz),
+			&_egueb_svg_document_render_descriptor);
 	thiz->font_size = 16;
 	thiz->input = egueb_dom_input_new(&_document_svg_input_descriptor, thiz);
 }

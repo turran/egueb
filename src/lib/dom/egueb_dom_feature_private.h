@@ -18,6 +18,26 @@
 #ifndef _EGUEB_DOM_FEATURE_PRIVATE_H_
 #define _EGUEB_DOM_FEATURE_PRIVATE_H_
 
+struct _Egueb_Dom_Feature
+{
+	Enesim_Object_Instance parent;
+	int ref;
+};
+
+typedef struct _Egueb_Dom_Feature_Class
+{
+	Enesim_Object_Class parent;
+} Egueb_Dom_Feature_Class;
+
+Enesim_Object_Descriptor * egueb_dom_feature_descriptor_get(void);
+
+#define EGUEB_DOM_FEATURE_DESCRIPTOR egueb_dom_feature_descriptor_get()
+
+#define EGUEB_DOM_FEATURE_CLASS_GET(o) EGUEB_DOM_FEATURE_CLASS(		\
+		(ENESIM_OBJECT_INSTANCE(o))->klass)
+#define EGUEB_DOM_FEATURE_CLASS(k) ENESIM_OBJECT_CLASS_CHECK(k,			\
+		Egueb_Dom_Feature_Class, EGUEB_DOM_FEATURE_DESCRIPTOR)
+#define EGUEB_DOM_FEATURE(o) ENESIM_OBJECT_INSTANCE_CHECK(o,			\
+		Egueb_Dom_Feature, EGUEB_DOM_FEATURE_DESCRIPTOR)
 
 #endif
-

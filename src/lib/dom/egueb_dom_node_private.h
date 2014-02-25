@@ -19,6 +19,8 @@
 #ifndef _EGUEB_DOM_NODE_PRIVATE_H_
 #define _EGUEB_DOM_NODE_PRIVATE_H_
 
+#include "egueb_dom_feature.h"
+
 typedef struct _Egueb_Dom_Document Egueb_Dom_Document;
 typedef struct _Egueb_Dom_Node_Id
 {
@@ -42,6 +44,9 @@ struct _Egueb_Dom_Node
 
 	/* user provided data */
 	Eina_Hash *user_data;
+
+	/* features */
+	Eina_Hash *features;
 
 	/* internal */
 	int ref;
@@ -76,5 +81,8 @@ Enesim_Object_Descriptor * egueb_dom_node_descriptor_get(void);
 
 void egueb_dom_node_document_set(Egueb_Dom_Node *thiz,
 		Egueb_Dom_Node *document);
+Eina_Bool egueb_dom_node_feature_add(Egueb_Dom_Node *thiz,
+		Egueb_Dom_String *name, Egueb_Dom_String *version,
+		Egueb_Dom_Feature *feature);
 
 #endif

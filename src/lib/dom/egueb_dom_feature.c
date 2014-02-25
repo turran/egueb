@@ -15,37 +15,58 @@
  * License along with this library.
  * If not, see <http://www.gnu.org/licenses/>.
  */
+#include "egueb_dom_private.h"
+
+#include "egueb_dom_string.h"
+#include "egueb_dom_main.h"
+#include "egueb_dom_feature.h"
+
+#include "egueb_dom_feature_private.h"
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
+/*----------------------------------------------------------------------------*
+ *                              Object interface                              *
+ *----------------------------------------------------------------------------*/
+ENESIM_OBJECT_ABSTRACT_BOILERPLATE(ENESIM_OBJECT_DESCRIPTOR, Egueb_Dom_Feature,
+		Egueb_Dom_Feature_Class, egueb_dom_feature);
+
+static void _egueb_dom_feature_class_init(void *k)
+{
+}
+
+static void _egueb_dom_feature_instance_init(void *o)
+{
+	Egueb_Dom_Feature *thiz;
+
+	thiz = EGUEB_DOM_FEATURE(o);
+	thiz->ref = 1;
+}
+
+static void _egueb_dom_feature_instance_deinit(void *o)
+{
+}
+
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/
-EAPI Eina_Bool egueb_dom_feature_render_draw(Egueb_Dom_Feature *f, Enesim_Surface *s,
-		Enesim_Rop rop, Eina_Rectangle *clip, int x, int y,
-		Enesim_Log **error)
+Egueb_Dom_Feature * egueb_dom_feature_ref(Egueb_Dom_Feature *thiz)
 {
-	/* get the renderer */
+	if (!thiz) return NULL;
+
+	thiz->ref++;
+	return thiz;
 }
 
-EAPI Eina_Bool egueb_dom_feature_render_draw_list(Egueb_Dom_Feature *f,
-		Enesim_Surface *s, Enesim_Rop rop, Eina_List *clips, int x,
-		int y, Enesim_Log **error)
+void egueb_dom_feature_unref(Egueb_Dom_Feature *thiz)
 {
-	/* get the renderer */
-}
-
-EAPI void egueb_dom_feature_render_damages_get(Egueb_Dom_Feature *f,
-		Egueb_Dom_Feature_Render_Damage_Cb cb, void *data)
-{
-	/* get the renderer */
-}
-
-EAPI void egueb_dom_feature_render_add(Egueb_Dom_Node *n,
-		const Egueb_Dom_Feature_Descriptor *d)
-{
-
+	if (!thiz) return;
+	thiz->ref--;
+	if (!thiz->ref)
+	{
+		enesim_object_instance_free(ENESIM_OBJECT_INSTANCE(thiz));
+	}
 }

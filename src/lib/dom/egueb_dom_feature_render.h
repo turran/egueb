@@ -25,15 +25,15 @@
  * like eon's hints
  */
 
-EAPI extern Egueb_Dom_String *EGUEB_DOM_FEATURE_RENDER;
+EAPI extern Egueb_Dom_String *EGUEB_DOM_FEATURE_RENDER_NAME;
 
 typedef Enesim_Renderer * (*Egueb_Dom_Feature_Render_Renderer_Get)(
 		Egueb_Dom_Node *n);
 
-typedef struct _Egueb_Dom_Feature_Descriptor
+typedef struct _Egueb_Dom_Feature_Render_Descriptor
 {
 	Egueb_Dom_Feature_Render_Renderer_Get renderer_get;
-} Egueb_Dom_Feature_Descriptor;
+} Egueb_Dom_Feature_Render_Descriptor;
 
 typedef Eina_Bool (*Egueb_Dom_Feature_Render_Damage_Cb)(Egueb_Dom_Feature *f,
 		Eina_Rectangle *damage, void *data);
@@ -44,10 +44,10 @@ EAPI Eina_Bool egueb_dom_feature_render_draw(Egueb_Dom_Feature *f, Enesim_Surfac
 EAPI Eina_Bool egueb_dom_feature_render_draw_list(Egueb_Dom_Feature *f,
 		Enesim_Surface *s, Enesim_Rop rop, Eina_List *clips, int x,
 		int y, Enesim_Log **error);
-EAPI void egueb_dom_feature_render_damages_get(Egueb_Dom_Feature *f,
-		Egueb_Dom_Feature_Render_Damage_Cb cb, void *data);
+EAPI Eina_Bool egueb_dom_feature_render_damages_get(Egueb_Dom_Feature *f,
+		Enesim_Surface *s, Egueb_Dom_Feature_Render_Damage_Cb cb, void *data);
 
-EAPI void egueb_dom_feature_render_add(Egueb_Dom_Node *n,
-		const Egueb_Dom_Feature_Descriptor *d);
+EAPI Eina_Bool egueb_dom_feature_render_add(Egueb_Dom_Node *n,
+		const Egueb_Dom_Feature_Render_Descriptor *d);
 
 #endif
