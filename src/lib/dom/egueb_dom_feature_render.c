@@ -108,6 +108,8 @@ EAPI Eina_Bool egueb_dom_feature_render_draw(Egueb_Dom_Feature *f, Enesim_Surfac
 	if (!thiz->n) return EINA_FALSE;
 
 	r = thiz->d->renderer_get(thiz->n);
+	if (!r) return EINA_FALSE;
+
 	ret = enesim_renderer_draw(r, s, rop, clip, x, y, error);
 	enesim_renderer_unref(r);
 	return ret;
@@ -125,6 +127,8 @@ EAPI Eina_Bool egueb_dom_feature_render_draw_list(Egueb_Dom_Feature *f,
 	if (!thiz->n) return EINA_FALSE;
 
 	r = thiz->d->renderer_get(thiz->n);
+	if (!r) return EINA_FALSE;
+
 	ret = enesim_renderer_draw_list(r, s, rop, clips, x, y, error);
 	enesim_renderer_unref(r);
 	return ret;
@@ -158,7 +162,10 @@ EAPI Eina_Bool egueb_dom_feature_render_damages_get(Egueb_Dom_Feature *f,
 		cb(f, &full, data);
 		return EINA_TRUE;
 	}
+
 	r = thiz->d->renderer_get(thiz->n);
+	if (!r) return EINA_FALSE;
+
 	enesim_renderer_damages_get(r, _egueb_dom_feature_render_damage_cb, thiz->tiler);
 
 	iter = eina_tiler_iterator_new(thiz->tiler);

@@ -405,6 +405,7 @@ Eina_Bool egueb_dom_node_feature_add(Egueb_Dom_Node *thiz,
 	f = calloc(1, sizeof(Egueb_Dom_Node_Feature));
 	if (version)
 		f->version = egueb_dom_string_ref(version);
+	f->feature = feature;
 
 	features = eina_hash_find(thiz->features, str);
 	if (!features)

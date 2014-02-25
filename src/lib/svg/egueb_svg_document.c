@@ -604,9 +604,16 @@ static Eina_Bool _egueb_svg_document_damage_cb(Enesim_Renderer *r,
 static Enesim_Renderer * _egueb_svg_document_render_renderer_get(
 		Egueb_Dom_Node *n)
 {
+	Egueb_Dom_Node *topmost;
+	Enesim_Renderer *r;
+
 	/* get the topmost element, get the renderer and return it */
-	printf("callllled\n");
-	return NULL;
+	topmost = egueb_dom_document_element_get(n);
+	if (!topmost) return NULL;
+
+	r = egueb_svg_renderable_renderer_get(topmost);
+	egueb_dom_node_unref(topmost);
+	return r;
 }
 
 static Egueb_Dom_Feature_Render_Descriptor
