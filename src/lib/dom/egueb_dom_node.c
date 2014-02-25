@@ -55,12 +55,17 @@ typedef struct _Egueb_Dom_Node_Feature
 
 static void _egueb_dom_node_feature_free(void *d)
 {
-	Egueb_Dom_Node_Feature *thiz = d;
-	if (thiz->version)
-		egueb_dom_string_unref(thiz->version);
-	if (thiz->feature)
-		egueb_dom_feature_unref(thiz->feature);
-	free(thiz);
+	Egueb_Dom_Node_Feature *thiz;
+	Eina_List *features = d;
+
+	EINA_LIST_FREE(features, thiz)
+	{
+		if (thiz->version)
+			egueb_dom_string_unref(thiz->version);
+		if (thiz->feature)
+			egueb_dom_feature_unref(thiz->feature);
+		free(thiz);
+	}
 }
 
 static void _egueb_dom_node_weak_ref_cb(Egueb_Dom_Event *e, void *data)
