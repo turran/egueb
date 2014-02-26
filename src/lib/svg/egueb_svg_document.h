@@ -45,7 +45,7 @@ typedef struct _Egueb_Svg_Document_Uri_Fetch_Descriptor
 
 typedef const char * (*Egueb_Svg_Document_String_Get_Cb)(void *user_data);
 
-EAPI Egueb_Dom_Node * egueb_svg_document_new(void *app);
+EAPI Egueb_Dom_Node * egueb_svg_document_new(void);
 EAPI Egueb_Dom_String * egueb_svg_document_title_get(Egueb_Dom_Node *n);
 EAPI Egueb_Dom_String * egueb_svg_document_referrer_get(Egueb_Dom_Node *n);
 EAPI Egueb_Dom_String * egueb_svg_document_domain_get(Egueb_Dom_Node *n);

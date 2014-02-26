@@ -20,6 +20,7 @@
 #define _EGUEB_DOM_DOCUMENT_PRIVATE_H_
 
 #include "egueb_dom_node_private.h"
+#include "egueb_dom_implementation.h"
 
 typedef struct _Egueb_Dom_Document
 {
@@ -34,6 +35,7 @@ typedef struct _Egueb_Dom_Document
 	*/
 	int current_run;
 	Eina_Bool processing;
+	Egueb_Dom_Implementation *i;
 } Egueb_Dom_Document;
 
 typedef Egueb_Dom_Node * (*Egueb_Dom_Document_Element_Create)(

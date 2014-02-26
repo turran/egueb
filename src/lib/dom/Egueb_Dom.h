@@ -71,6 +71,7 @@ extern "C" {
 #include "egueb_dom_character_data.h"
 #include "egueb_dom_document.h"
 #include "egueb_dom_text.h"
+#include "egueb_dom_implementation.h"
 
 #include "egueb_dom_attr_boolean.h"
 #include "egueb_dom_attr_enum.h"
@@ -88,6 +89,7 @@ extern "C" {
 
 #include "egueb_dom_feature.h"
 #include "egueb_dom_feature_render.h"
+#include "egueb_dom_feature_window.h"
 
 #include "egueb_dom_input.h"
 
@@ -103,6 +105,9 @@ extern "C" {
 #include "egueb_dom_element_external.h"
 #include "egueb_dom_document_external.h"
 #include "egueb_dom_attr_external.h"
+
+#include "egueb_dom_implementation_source.h"
+#include "egueb_dom_registry.h"
 
 /**
  * @}

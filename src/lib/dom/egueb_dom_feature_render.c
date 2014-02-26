@@ -19,8 +19,6 @@
 
 #include "egueb_dom_string.h"
 #include "egueb_dom_main.h"
-#include "egueb_dom_node_list.h"
-#include "egueb_dom_node_map_named.h"
 #include "egueb_dom_node.h"
 #include "egueb_dom_feature.h"
 #include "egueb_dom_feature_render.h"

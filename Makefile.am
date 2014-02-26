@@ -61,9 +61,8 @@ endif
 
 ### Modules
 
-if BUILD_EGUEB_SVG
-include src/modules/svg/enesim_image/Makefile.mk
-endif
+include src/modules/enesim_image/Makefile.mk
+include src/modules/egueb_source/Makefile.mk
 
 ### Binaries
 include src/bin/Makefile.mk

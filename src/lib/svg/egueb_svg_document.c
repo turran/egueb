@@ -800,7 +800,7 @@ static void _egueb_svg_document_instance_deinit(void *o)
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/
-EAPI Egueb_Dom_Node * egueb_svg_document_new(void *app)
+EAPI Egueb_Dom_Node * egueb_svg_document_new(void)
 {
 	Egueb_Dom_Node *n;
 

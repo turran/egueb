@@ -19,10 +19,14 @@
 
 #include "egueb_dom_string.h"
 #include "egueb_dom_main.h"
+
+#include "egueb_dom_registry_private.h"
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
 static int _init_count = 0;
+static Eina_Bool _initializing;
+static Eina_Bool _deinitializing;
 
 static void _egueb_dom_strings_init(void)
 {
@@ -62,6 +66,9 @@ Egueb_Dom_String *EGUEB_DOM_XLINK_HREF;
 
 EAPI void egueb_dom_init(void)
 {
+	if (_initializing) return;
+
+	_initializing = EINA_TRUE;
 	if (_init_count) goto done;
 	eina_init();
 	enesim_init();
@@ -92,8 +99,10 @@ EAPI void egueb_dom_init(void)
 	EGUEB_DOM_ERROR_WRONG_DOCUMENT = eina_error_msg_register("Node is used in a different document than the one that created it (that doesn't support it)");
 
 	_egueb_dom_strings_init();
+	egueb_dom_registry_init();
 done:
 	_init_count++;
+	_initializing = EINA_FALSE;
 	return;
 
 shutdown_eina:
@@ -102,7 +111,12 @@ shutdown_eina:
 
 EAPI void egueb_dom_shutdown(void)
 {
+	if (_deinitializing)
+		return;
+
+	_deinitializing = EINA_TRUE;
 	if (_init_count != 1) goto done;
+	egueb_dom_registry_shutdown();
 	_egueb_dom_strings_shutdown();
 	eina_log_domain_unregister(egueb_dom_log_dom_global);
         egueb_dom_log_dom_global = -1;
@@ -110,4 +124,5 @@ EAPI void egueb_dom_shutdown(void)
 	eina_shutdown();
 done:
 	_init_count--;
+	_deinitializing = EINA_FALSE;
 }

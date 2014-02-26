@@ -15,10 +15,12 @@
  * License along with this library.
  * If not, see <http://www.gnu.org/licenses/>.
  */
+#ifndef _EGUEB_DOM_IMPLEMENTATION_SOURCE_PRIVATE_H_
+#define _EGUEB_DOM_IMPLEMENTATION_SOURCE_PRIVATE_H_
 
-#ifndef _EGUEB_DOM_PARSER_H_
-#define _EGUEB_DOM_PARSER_H_
-
-EAPI Eina_Bool egueb_dom_parser_parse(Enesim_Stream *data, Egueb_Dom_Node **doc);
+Egueb_Dom_Implementation *
+egueb_dom_implementation_source_implementation_get_by_mime(
+		Egueb_Dom_Implementation_Source *thiz,
+		Egueb_Dom_String *mime);
 
 #endif

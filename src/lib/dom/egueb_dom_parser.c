@@ -22,6 +22,9 @@
 #include "egueb_dom_node_list.h"
 #include "egueb_dom_node_map_named.h"
 #include "egueb_dom_parser.h"
+#include "egueb_dom_implementation.h"
+#include "egueb_dom_implementation_source.h"
+#include "egueb_dom_registry.h"
 
 #include "egueb_dom_parser_private.h"
 /*============================================================================*
@@ -71,18 +74,49 @@ void egueb_dom_parser_document_set(Egueb_Dom_Parser *thiz, Egueb_Dom_Node *doc)
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/
-EAPI void egueb_dom_parser_parse(Enesim_Stream *data, Egueb_Dom_Node *doc)
+EAPI Eina_Bool egueb_dom_parser_parse(Enesim_Stream *data, Egueb_Dom_Node **doc)
 {
 	Egueb_Dom_Parser *thiz;
 
-	if (!data) return;
+	if (!doc) return EINA_FALSE;
+	if (!data) return EINA_FALSE;
 
 	thiz = egueb_dom_parser_eina_new();
 
-	if (!thiz->descriptor) return;
-	if (!thiz->descriptor->parse) return;
+	if (!thiz->descriptor) return EINA_FALSE;
+	if (!thiz->descriptor->parse) return EINA_FALSE;
 
-	egueb_dom_parser_document_set(thiz, doc);
+	/* create a document in case the user does not provide it */
+	if (!*doc)
+	{
+		Egueb_Dom_Implementation *i;
+		Egueb_Dom_String *mime_s;
+		const char *mime;
+
+		mime = enesim_image_mime_data_from(data);
+		if (!mime)
+		{
+			ERR("No document provided and no mime found");
+			return EINA_FALSE;
+		}
+		mime_s = egueb_dom_string_new_with_static_string(mime);
+		i = egueb_dom_registry_implementation_get_by_mime(mime_s);
+		egueb_dom_string_unref(mime_s);
+
+		if (!i)
+		{
+			ERR("No implementation found for mime '%s'", mime);
+			return EINA_FALSE;
+		}
+
+		INFO("New document created for mime '%s'", mime);
+		*doc = egueb_dom_implementation_document_create(i);
+		egueb_dom_implementation_unref(i);
+	}
+
+	egueb_dom_parser_document_set(thiz, *doc);
 	thiz->descriptor->parse(thiz->data, data);
 	egueb_dom_parser_free(thiz);
+
+	return EINA_TRUE;
 }

@@ -17,11 +17,43 @@
  */
 #include "egueb_svg_main_private.h"
 #include "egueb_svg_main.h"
+#include "egueb_svg_document.h"
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
 /* keep track of the initialization */
 static int _egueb_svg_init_count = 0;
+
+/*----------------------------------------------------------------------------*
+ *                      Implementation interface                              *
+ *----------------------------------------------------------------------------*/
+static Egueb_Dom_Node * _impl_document_create(void)
+{
+	return egueb_svg_document_new();
+}
+
+static Egueb_Dom_Implementation_Descriptor _impl_descriptor = {
+	/* .document_create 	= */ _impl_document_create,
+};
+
+/*----------------------------------------------------------------------------*
+ *                    Implementation source interface                         *
+ *----------------------------------------------------------------------------*/
+static Egueb_Dom_Implementation * _impl_source_get_by_mime(
+		Egueb_Dom_String *mime)
+{
+	const char *str;
+
+	str = egueb_dom_string_string_get(mime);
+	if (!strcmp(str, "image/svg+xml"))
+		return egueb_dom_implementation_new(&_impl_descriptor);
+	else
+		return NULL;
+}
+
+static Egueb_Dom_Implementation_Source_Descriptor _impl_source_descriptor = {
+	/* .implementation_get_by_mime 	= */ _impl_source_get_by_mime,
+};
 
 /* our helpful strings */
 static void _egueb_svg_strings_init(void)
@@ -298,6 +330,8 @@ Egueb_Dom_String *EGUEB_SVG_Y2;
  */
 EAPI int egueb_svg_init(void)
 {
+	Egueb_Dom_Implementation_Source *s;
+
 	if (++_egueb_svg_init_count != 1)
 		return _egueb_svg_init_count;
 
@@ -312,6 +346,9 @@ EAPI int egueb_svg_init(void)
 		return --_egueb_svg_init_count;
 	}
 	_egueb_svg_strings_init();
+	/* register our own source */
+	s = egueb_dom_implementation_source_new(&_impl_source_descriptor);
+	egueb_dom_registry_source_add(s);
 
 	return _egueb_svg_init_count;
 }

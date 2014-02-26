@@ -127,8 +127,8 @@ static Eina_Error _enesim_image_svg_info_load(Enesim_Stream *data, int *w, int *
 	int cw = _default_width;
 	int ch = _default_height;
 
-	doc = egueb_svg_document_new(NULL);
-	egueb_dom_parser_parse(data, doc);
+	doc = egueb_svg_document_new();
+	egueb_dom_parser_parse(data, &doc);
 	topmost = egueb_dom_document_element_get(doc);
 	if (!topmost)
 	{
@@ -169,8 +169,8 @@ static Eina_Error _enesim_image_svg_load(Enesim_Stream *data,
 	int h = _default_height;
 	char *location;
 
-	doc = egueb_svg_document_new(NULL);
-	egueb_dom_parser_parse(data, doc);
+	doc = egueb_svg_document_new();
+	egueb_dom_parser_parse(data, &doc);
 	topmost = egueb_dom_document_element_get(doc);
 	if (!topmost)
 	{
@@ -266,7 +266,7 @@ static Enesim_Image_Finder _finder = {
 /*----------------------------------------------------------------------------*
  *                             Module API                                     *
  *----------------------------------------------------------------------------*/
-Eina_Bool svg_provider_init(void)
+static Eina_Bool svg_provider_init(void)
 {
 	/* @todo
 	 * - Register svg specific errors
@@ -288,7 +288,7 @@ Eina_Bool svg_provider_init(void)
 	return EINA_TRUE;
 }
 
-void svg_provider_shutdown(void)
+static void svg_provider_shutdown(void)
 {
 	enesim_image_finder_unregister(&_finder);
 	enesim_image_provider_unregister(&_provider, "image/svg+xml");

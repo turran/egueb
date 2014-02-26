@@ -15,10 +15,10 @@
  * License along with this library.
  * If not, see <http://www.gnu.org/licenses/>.
  */
+#ifndef _EGUEB_DOM_REGISTRY_PRIVATE_H_
+#define _EGUEB_DOM_REGISTRY_PRIVATE_H_
 
-#ifndef _EGUEB_DOM_PARSER_H_
-#define _EGUEB_DOM_PARSER_H_
-
-EAPI Eina_Bool egueb_dom_parser_parse(Enesim_Stream *data, Egueb_Dom_Node **doc);
+void egueb_dom_registry_init(void);
+void egueb_dom_registry_shutdown(void);
 
 #endif

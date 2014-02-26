@@ -83,11 +83,12 @@ int main(int argc, char *argv[])
 		goto shutdown_esvg;
 	}
 	/* create the document */
-	doc = egueb_svg_document_new(NULL);
+	doc = NULL;
+	//egueb_svg_document_new();
+
+	egueb_dom_parser_parse(stream, &doc);
 	/* set the different application callbacks */
 	egueb_svg_document_filename_get_cb_set(doc, _filename_get, argv[1]);
-
-	egueb_dom_parser_parse(stream, doc);
 	enesim_stream_unref(stream);
 
 	svg = egueb_dom_document_element_get(doc);

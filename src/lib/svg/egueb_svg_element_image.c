@@ -114,8 +114,8 @@ static void _egueb_svg_element_image_svg_load(Egueb_Dom_Node *n,
 
 	INFO("Parsing the svg file");
 	/* parse the file */
-	new_doc = egueb_svg_document_new(NULL);
-	egueb_dom_parser_parse(data, new_doc);
+	new_doc = egueb_svg_document_new();
+	egueb_dom_parser_parse(data, &new_doc);
 	topmost = egueb_dom_document_element_get(new_doc);
 	egueb_dom_node_unref(new_doc);
 

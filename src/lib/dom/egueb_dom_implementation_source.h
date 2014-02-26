@@ -15,10 +15,22 @@
  * License along with this library.
  * If not, see <http://www.gnu.org/licenses/>.
  */
+#ifndef _EGUEB_DOM_IMPLEMENTATION_SOURCE_H_
+#define _EGUEB_DOM_IMPLEMENTATION_SOURCE_H_
 
-#ifndef _EGUEB_DOM_PARSER_H_
-#define _EGUEB_DOM_PARSER_H_
+typedef struct _Egueb_Dom_Implementation_Source Egueb_Dom_Implementation_Source;
 
-EAPI Eina_Bool egueb_dom_parser_parse(Enesim_Stream *data, Egueb_Dom_Node **doc);
+typedef Egueb_Dom_Implementation * (*Egueb_Dom_Implementation_Source_Descriptor_Implementation_Get_By_Mime)(Egueb_Dom_String *mime);
+
+typedef struct _Egueb_Dom_Implementation_Source_Descriptor
+{
+	Egueb_Dom_Implementation_Source_Descriptor_Implementation_Get_By_Mime
+			implementation_get_by_mime;
+} Egueb_Dom_Implementation_Source_Descriptor;
+
+EAPI Egueb_Dom_Implementation_Source * egueb_dom_implementation_source_new(
+		const Egueb_Dom_Implementation_Source_Descriptor *d);
+EAPI void egueb_dom_implementation_source_free(
+		Egueb_Dom_Implementation_Source *thiz);
 
 #endif

@@ -24,6 +24,9 @@ src/lib/dom/egueb_dom_event_mutation.h \
 src/lib/dom/egueb_dom_event_ui.h \
 src/lib/dom/egueb_dom_feature.h \
 src/lib/dom/egueb_dom_feature_render.h \
+src/lib/dom/egueb_dom_feature_window.h \
+src/lib/dom/egueb_dom_implementation.h \
+src/lib/dom/egueb_dom_implementation_source.h \
 src/lib/dom/egueb_dom_input.h \
 src/lib/dom/egueb_dom_list.h \
 src/lib/dom/egueb_dom_main.h \
@@ -31,6 +34,7 @@ src/lib/dom/egueb_dom_node.h \
 src/lib/dom/egueb_dom_node_list.h \
 src/lib/dom/egueb_dom_node_map_named.h \
 src/lib/dom/egueb_dom_parser.h \
+src/lib/dom/egueb_dom_registry.h \
 src/lib/dom/egueb_dom_string.h \
 src/lib/dom/egueb_dom_string_list.h \
 src/lib/dom/egueb_dom_text.h \
@@ -78,6 +82,9 @@ src/lib/dom/egueb_dom_event_ui.c \
 src/lib/dom/egueb_dom_event_ui_private.h \
 src/lib/dom/egueb_dom_feature.c \
 src/lib/dom/egueb_dom_feature_render.c \
+src/lib/dom/egueb_dom_feature_window.c \
+src/lib/dom/egueb_dom_implementation.c \
+src/lib/dom/egueb_dom_implementation_source.c \
 src/lib/dom/egueb_dom_input.c \
 src/lib/dom/egueb_dom_list.c \
 src/lib/dom/egueb_dom_list_private.h \
@@ -90,6 +97,7 @@ src/lib/dom/egueb_dom_node_map_named_attr.c \
 src/lib/dom/egueb_dom_parser.c \
 src/lib/dom/egueb_dom_parser_private.h \
 src/lib/dom/egueb_dom_private.h \
+src/lib/dom/egueb_dom_registry.c \
 src/lib/dom/egueb_dom_string.c \
 src/lib/dom/egueb_dom_string_list.c \
 src/lib/dom/egueb_dom_text.c \
@@ -107,6 +115,7 @@ src_lib_dom_libegueb_dom_la_CPPFLAGS = \
 -I$(top_srcdir)/src/lib/base \
 -I$(top_srcdir)/src/lib/css \
 -I$(top_srcdir)/src/lib/dom \
+-DPACKAGE_LIB_DIR=\"$(libdir)\" \
 -DEGUEB_DOM_BUILD \
 @EGUEB_DOM_CFLAGS@
 

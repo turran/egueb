@@ -23,6 +23,7 @@
 #include "egueb_dom_element.h"
 #include "egueb_dom_event.h"
 #include "egueb_dom_event_mutation.h"
+#include "egueb_dom_implementation.h"
 
 #include "egueb_dom_node_private.h"
 #include "egueb_dom_string_private.h"
@@ -417,6 +418,8 @@ static void _egueb_dom_document_instance_deinit(void *o)
 		egueb_dom_node_unref(thiz->element);
 		thiz->element = NULL;
 	}
+	if (thiz->i)
+		egueb_dom_implementation_unref(thiz->i);
 	eina_hash_free(thiz->ids);
 }
 
