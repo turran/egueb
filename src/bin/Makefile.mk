@@ -1,17 +1,16 @@
 
-if BUILD_EGUEB_SVG
+if BUILD_EGUEB_DOM
 
-bin_PROGRAMS += src/bin/egueb_svg_loader
+bin_PROGRAMS += src/bin/egueb_dom_loader
 
-src_bin_egueb_svg_loader_CPPFLAGS = \
+src_bin_egueb_dom_loader_CPPFLAGS = \
 -I$(top_srcdir)/src/lib/dom \
--I$(top_srcdir)/src/lib/svg \
-@EGUEB_SVG_CFLAGS@
+-I$(top_srcdir)/src/lib/dom \
+@EGUEB_DOM_CFLAGS@
 
-src_bin_egueb_svg_loader_SOURCES =  src/bin/egueb_svg_loader.c
-src_bin_egueb_svg_loader_LDADD = \
-$(top_builddir)/src/lib/svg/libegueb_svg.la \
+src_bin_egueb_dom_loader_SOURCES =  src/bin/egueb_dom_loader.c
+src_bin_egueb_dom_loader_LDADD = \
 $(top_builddir)/src/lib/dom/libegueb_dom.la \
-@EGUEB_SVG_LIBS@ -lm
+@EGUEB_DOM_LIBS@ -lm
 
 endif

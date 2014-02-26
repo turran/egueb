@@ -32,7 +32,7 @@
  *----------------------------------------------------------------------------*/
 static void help(void)
 {
-	printf("Usage: egueb_svg_loader FILE.svg FILE.png [width height]\n");
+	printf("Usage: egueb_dom_loader FILE FILE.png [width height]\n");
 	printf("Where width and height defines the size of the destination image\n");
 }
 /*----------------------------------------------------------------------------*
