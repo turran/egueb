@@ -25,11 +25,6 @@
 
 #include <Egueb_Dom.h>
 
-/*
- * To implement the load_info interface we need to parse the svg tree, but
- * only the first svg tag and its width/height properties. So we need
- * to create an Egueb_Dom interface to retrieve such information
- */
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
@@ -38,36 +33,36 @@
 #ifdef ERR
 # undef ERR
 #endif
-#define ERR(...) EINA_LOG_DOM_ERR(_enesim_image_log_dom_svg, __VA_ARGS__)
+#define ERR(...) EINA_LOG_DOM_ERR(_enesim_image_dom_log, __VA_ARGS__)
 
 #ifdef WRN
 # undef WRN
 #endif
-#define WRN(...) EINA_LOG_DOM_WARN(_enesim_image_log_dom_svg, __VA_ARGS__)
+#define WRN(...) EINA_LOG_DOM_WARN(_enesim_image_dom_log, __VA_ARGS__)
 
 #ifdef DBG
 # undef DBG
 #endif
-#define DBG(...) EINA_LOG_DOM_DBG(_enesim_image_log_dom_svg, __VA_ARGS__)
+#define DBG(...) EINA_LOG_DOM_DBG(_enesim_image_dom_log, __VA_ARGS__)
 
-static int _enesim_image_log_dom_svg = -1;
+static int _enesim_image_dom_log = -1;
 
 /*----------------------------------------------------------------------------*
  *                           Application Descriptor                           *
  *----------------------------------------------------------------------------*/
 #if 0
 /* given that we only support this callback, we pass the dir name as the data */
-static const char * _enesim_image_svg_base_dir_get(Ender_Element *e, void *data)
+static const char * _enesim_image_dom_base_dir_get(Ender_Element *e, void *data)
 {
 	return data;
 }
 
-static Egueb_Svg_Element_Svg_Application_Descriptor _enesim_image_svg_descriptor = {
-	/* .base_dir_get 	= */ _enesim_image_svg_base_dir_get,
+static Egueb_Svg_Element_Svg_Application_Descriptor _enesim_image_dom_descriptor = {
+	/* .base_dir_get 	= */ _enesim_image_dom_base_dir_get,
 	/* .go_to 		= */ NULL,
 };
 #endif
-static const char * _enesim_image_svg_filename_get(void *user_data)
+static const char * _enesim_image_dom_filename_get(void *user_data)
 {
 	return user_data;
 }
@@ -93,7 +88,7 @@ static void _options_parse_cb(void *data, const char *key, const char *value)
 		thiz->container_height = atoi(value);
 }
 
-static void * _enesim_image_svg_options_parse(const char *options_str)
+static void * _enesim_image_dom_options_parse(const char *options_str)
 {
 	Enesim_Image_Svg_Options *options;
 
@@ -108,7 +103,7 @@ static void * _enesim_image_svg_options_parse(const char *options_str)
 	return options;
 }
 
-static void _enesim_image_svg_options_free(void *data)
+static void _enesim_image_dom_options_free(void *data)
 {
 	Enesim_Image_Svg_Options *options = data;
 	free(options);
@@ -117,7 +112,7 @@ static void _enesim_image_svg_options_free(void *data)
 /* Here we should parse the first svg element only and return its
  * size, for now, we dont support this feature
  */
-static Eina_Error _enesim_image_svg_info_load(Enesim_Stream *data, int *w, int *h, Enesim_Buffer_Format *sfmt, void *options)
+static Eina_Error _enesim_image_dom_info_load(Enesim_Stream *data, int *w, int *h, Enesim_Buffer_Format *sfmt, void *options)
 {
 	Egueb_Dom_Node *doc = NULL;
 	Egueb_Dom_Feature *window;
@@ -157,7 +152,7 @@ err_parse:
 	return ret;
 }
 
-static Eina_Error _enesim_image_svg_load(Enesim_Stream *data,
+static Eina_Error _enesim_image_dom_load(Enesim_Stream *data,
 		Enesim_Buffer *buffer, void *options)
 {
 	Egueb_Dom_Node *doc = NULL;
@@ -187,7 +182,7 @@ static Eina_Error _enesim_image_svg_load(Enesim_Stream *data,
 	/* set the application descriptor in case the svg needs it */
 #if 0
 	location = enesim_stream_location(data);
-	egueb_svg_document_filename_get_cb_set(doc, _enesim_image_svg_filename_get, location);
+	egueb_svg_document_filename_get_cb_set(doc, _enesim_image_dom_filename_get, location);
 #endif
 	window = egueb_dom_node_feature_get(doc, EGUEB_DOM_FEATURE_WINDOW_NAME, NULL);
 	if (!window)
@@ -234,19 +229,19 @@ err_parse:
 
 static Enesim_Image_Provider_Descriptor _provider = {
 	/* .name = 		*/ "svg",
-	/* .options_parse = 	*/ _enesim_image_svg_options_parse,
-	/* .options_free = 	*/ _enesim_image_svg_options_free,
+	/* .options_parse = 	*/ _enesim_image_dom_options_parse,
+	/* .options_free = 	*/ _enesim_image_dom_options_free,
 	/* .loadable = 		*/ NULL,
 	/* .saveable = 		*/ NULL,
-	/* .info_get = 		*/ _enesim_image_svg_info_load,
-	/* .load = 		*/ _enesim_image_svg_load,
+	/* .info_get = 		*/ _enesim_image_dom_info_load,
+	/* .load = 		*/ _enesim_image_dom_load,
 	/* .save = 		*/ NULL,
 };
 
 /*----------------------------------------------------------------------------*
  *                           Enesim Image Finder API                          *
  *----------------------------------------------------------------------------*/
-static const char * _enesim_image_svg_data_from(Enesim_Stream *data)
+static const char * _enesim_image_dom_data_from(Enesim_Stream *data)
 {
 	char buf[4096];
 	char *ret = NULL;
@@ -271,7 +266,7 @@ static const char * _enesim_image_svg_data_from(Enesim_Stream *data)
 	return ret;
 }
 
-static const char * _enesim_image_svg_extension_from(const char *ext)
+static const char * _enesim_image_dom_extension_from(const char *ext)
 {
 	if (!strcmp(ext, "svg"))
 		return "image/svg+xml";
@@ -279,24 +274,27 @@ static const char * _enesim_image_svg_extension_from(const char *ext)
 }
 
 static Enesim_Image_Finder _finder = {
-	/* .data_from 		= */ _enesim_image_svg_data_from,
-	/* .extension_from 	= */ _enesim_image_svg_extension_from,
+	/* .data_from 		= */ _enesim_image_dom_data_from,
+	/* .extension_from 	= */ _enesim_image_dom_extension_from,
 };
 /*----------------------------------------------------------------------------*
  *                             Module API                                     *
  *----------------------------------------------------------------------------*/
-static Eina_Bool svg_provider_init(void)
+static Eina_Bool _enesim_image_dom_init(void)
 {
 	/* @todo
 	 * - Register svg specific errors
 	 */
 	egueb_dom_init();
-	_enesim_image_log_dom_svg = eina_log_domain_register("enesim_image_svg", ENESIM_IMAGE_LOG_COLOR_DEFAULT);
-	if (_enesim_image_log_dom_svg < 0)
+	_enesim_image_dom_log = eina_log_domain_register("enesim_image_dom", ENESIM_IMAGE_LOG_COLOR_DEFAULT);
+	if (_enesim_image_dom_log < 0)
 	{
 		EINA_LOG_ERR("Enesim: Can not create a general log domain.");
 		return EINA_FALSE;
 	}
+	/* TODO later we need to register the same provider with every mimetype found on the lib
+	 * that supports the render/window interface
+	 */
 	if (!enesim_image_provider_register(&_provider, ENESIM_PRIORITY_PRIMARY, "image/svg+xml"))
 		return EINA_FALSE;
 	if (!enesim_image_finder_register(&_finder))
@@ -307,14 +305,14 @@ static Eina_Bool svg_provider_init(void)
 	return EINA_TRUE;
 }
 
-static void svg_provider_shutdown(void)
+static void _enesim_image_dom_shutdown(void)
 {
 	enesim_image_finder_unregister(&_finder);
 	enesim_image_provider_unregister(&_provider, "image/svg+xml");
-	eina_log_domain_unregister(_enesim_image_log_dom_svg);
-	_enesim_image_log_dom_svg = -1;
+	eina_log_domain_unregister(_enesim_image_dom_log);
+	_enesim_image_dom_log = -1;
 	egueb_dom_shutdown();
 }
 
-EINA_MODULE_INIT(svg_provider_init);
-EINA_MODULE_SHUTDOWN(svg_provider_shutdown);
+EINA_MODULE_INIT(_enesim_image_dom_init);
+EINA_MODULE_SHUTDOWN(_enesim_image_dom_shutdown);
