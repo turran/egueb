@@ -25,7 +25,7 @@
 #include <stdio.h>
 #include <math.h>
 
-#include <Egueb_Svg.h>
+#include <Egueb_Dom.h>
 
 /*----------------------------------------------------------------------------*
  *                                 Helpers                                    *
@@ -38,21 +38,27 @@ static void help(void)
 /*----------------------------------------------------------------------------*
  *                           Application interface                            *
  *----------------------------------------------------------------------------*/
+#if 0
 /* given that we only support this callback, we pass the dir name as the data */
 static const char * _filename_get(void *user_data)
 {
 	char *file = user_data;
 	return file;
 }
+#endif
 
 int main(int argc, char *argv[])
 {
 	Egueb_Dom_Node *doc = NULL;
-	Egueb_Dom_Node *svg = NULL;
+	Egueb_Dom_Feature *render = NULL;
+	Egueb_Dom_Feature *window = NULL;
+	Egueb_Dom_Feature_Window_Type type;
 	Enesim_Surface *s;
 	Enesim_Buffer *b;
 	Enesim_Log *err = NULL;
 	Enesim_Stream *stream;
+	Eina_Bool ret;
+	Eina_Bool needs_process = EINA_TRUE;
 	int width = 640;
 	int height = 480;
 
@@ -73,55 +79,76 @@ int main(int argc, char *argv[])
 		height = atoi(argv[4]);
 	}
 
-	if (!egueb_svg_init())
-		return -1;
-
+	egueb_dom_init();
 	stream = enesim_stream_file_new(argv[1], "r+");
 	if (!stream)
 	{
-		printf("Fail to parse %s\n", argv[1]);
-		goto shutdown_esvg;
+		printf("Fail to load file %s\n", argv[1]);
+		goto shutdown;
 	}
 	/* create the document */
-	doc = NULL;
-	//egueb_svg_document_new();
-
-	egueb_dom_parser_parse(stream, &doc);
-	/* set the different application callbacks */
-	egueb_svg_document_filename_get_cb_set(doc, _filename_get, argv[1]);
+	ret = egueb_dom_parser_parse(stream, &doc);
 	enesim_stream_unref(stream);
-
-	svg = egueb_dom_document_element_get(doc);
-	if (!svg)
+	if (!ret)
 	{
-		printf("The parsed element is not a topmost SVG element\n");
-		goto shutdown_esvg;
+		printf("Fail to parse file %s\n", argv[1]);
+		goto shutdown;
+	}
+	/* set the different application callbacks */
+#if 0
+	/* TODO for later */
+	egueb_svg_document_filename_get_cb_set(doc, _filename_get, argv[1]);
+#endif
+
+	render = egueb_dom_node_feature_get(doc, EGUEB_DOM_FEATURE_RENDER_NAME, NULL);
+	if (!render)
+	{
+		printf("Fail to get the render feature\n");
+		goto shutdown;
+	}
+	window = egueb_dom_node_feature_get(doc, EGUEB_DOM_FEATURE_WINDOW_NAME, NULL);
+	if (window)
+	{
+		egueb_dom_feature_window_type_get(window, &type);
+		if (type == EGUEB_DOM_FEATURE_WINDOW_TYPE_MASTER)
+		{
+			egueb_dom_feature_window_content_size_set(window, width, height);
+			/* now process the document */
+			egueb_dom_document_process(doc);
+			egueb_dom_feature_window_content_size_get(window, &width, &height);
+			needs_process = EINA_FALSE;
+		}
+		else
+		{
+			/* negotiate the window size */
+	
+		}
 	}
 
-	/* set the final image size as the container size */
-	egueb_svg_document_width_set(doc, width);
-	egueb_svg_document_height_set(doc, height);
-	/* now process the document */
-	egueb_dom_document_process(doc);
+	if (needs_process)
+		egueb_dom_document_process(doc);
 
 	s = enesim_surface_new(ENESIM_FORMAT_ARGB8888, width, height);
-	egueb_svg_element_svg_draw(svg, s, ENESIM_ROP_FILL, NULL, 0, 0, &err);
+	egueb_dom_feature_render_draw(render, s, ENESIM_ROP_FILL, NULL, 0, 0, &err);
 	if (err)
 	{
 		enesim_log_dump(err);
 		enesim_log_delete(err);
 	}
+	/* now save the rendered image */
 	b = enesim_surface_buffer_get(s);
 	enesim_image_file_save(argv[2], b, NULL);
 	enesim_buffer_unref(b);
 	enesim_surface_unref(s);
 
-shutdown_esvg:
+shutdown:
+	if (render)
+		egueb_dom_feature_unref(render);
+	if (window)
+		egueb_dom_feature_unref(window);
 	if (doc)
 		egueb_dom_node_unref(doc);
-	if (svg)
-		egueb_dom_node_unref(svg);
-	egueb_svg_shutdown();
+	egueb_dom_shutdown();
 
 	return 0;
 }

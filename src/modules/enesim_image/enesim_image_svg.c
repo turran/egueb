@@ -23,7 +23,7 @@
 #include <math.h>
 #include <libgen.h>
 
-#include <Egueb_Svg.h>
+#include <Egueb_Dom.h>
 
 /*
  * To implement the load_info interface we need to parse the svg tree, but
@@ -119,18 +119,13 @@ static void _enesim_image_svg_options_free(void *data)
  */
 static Eina_Error _enesim_image_svg_info_load(Enesim_Stream *data, int *w, int *h, Enesim_Buffer_Format *sfmt, void *options)
 {
-	Egueb_Dom_Node *doc;
-	Egueb_Dom_Node *topmost;
+	Egueb_Dom_Node *doc = NULL;
+	Egueb_Dom_Feature *window;
 	Eina_Error ret = 0;
-	double svg_w;
-	double svg_h;
 	int cw = _default_width;
 	int ch = _default_height;
 
-	doc = egueb_svg_document_new();
-	egueb_dom_parser_parse(data, &doc);
-	topmost = egueb_dom_document_element_get(doc);
-	if (!topmost)
+	if (!egueb_dom_parser_parse(data, &doc))
 	{
 		ret = ENESIM_IMAGE_ERROR_LOADING;
 		goto err_parse;
@@ -143,16 +138,21 @@ static Eina_Error _enesim_image_svg_info_load(Enesim_Stream *data, int *w, int *
 		cw = o->container_width;
 		ch = o->container_height;
 	}
-	egueb_svg_document_width_set(doc, cw);
-	egueb_svg_document_height_set(doc, ch);
+
+	window = egueb_dom_node_feature_get(doc, EGUEB_DOM_FEATURE_WINDOW_NAME, NULL);
+	if (!window)
+	{
+		ret = ENESIM_IMAGE_ERROR_LOADING;
+		goto err_feature;
+	}
+
+	egueb_dom_feature_window_content_size_set(window, cw, ch);
 	egueb_dom_document_process(doc);
-	egueb_svg_document_actual_width_get(doc, &svg_w);
-	egueb_svg_document_actual_height_get(doc, &svg_h);
-
-	*w = (int)ceil(svg_w);
-	*h = (int)ceil(svg_h);
+	egueb_dom_feature_window_content_size_get(window, w, h);
 	*sfmt = ENESIM_BUFFER_FORMAT_ARGB8888_PRE;
-
+	egueb_dom_feature_unref(window);
+err_feature:
+	egueb_dom_node_unref(doc);
 err_parse:
 	return ret;
 }
@@ -160,19 +160,18 @@ err_parse:
 static Eina_Error _enesim_image_svg_load(Enesim_Stream *data,
 		Enesim_Buffer *buffer, void *options)
 {
-	Egueb_Dom_Node *doc;
-	Egueb_Dom_Node *topmost;
+	Egueb_Dom_Node *doc = NULL;
+	Egueb_Dom_Feature *window, *render;
 	Enesim_Surface *s;
 	Enesim_Log *err = NULL;
 	Eina_Error ret = 0;
 	int w = _default_width;
 	int h = _default_height;
+#if 0
 	char *location;
+#endif
 
-	doc = egueb_svg_document_new();
-	egueb_dom_parser_parse(data, &doc);
-	topmost = egueb_dom_document_element_get(doc);
-	if (!topmost)
+	if (!egueb_dom_parser_parse(data, &doc))
 	{
 		ret = ENESIM_IMAGE_ERROR_LOADING;
 		goto err_parse;
@@ -186,30 +185,50 @@ static Eina_Error _enesim_image_svg_load(Enesim_Stream *data,
 		h = o->container_height;
 	}
 	/* set the application descriptor in case the svg needs it */
+#if 0
 	location = enesim_stream_location(data);
 	egueb_svg_document_filename_get_cb_set(doc, _enesim_image_svg_filename_get, location);
-	/* we should render into the swdata? */
-	egueb_svg_document_width_set(doc, w);
-	egueb_svg_document_height_set(doc, h);
+#endif
+	window = egueb_dom_node_feature_get(doc, EGUEB_DOM_FEATURE_WINDOW_NAME, NULL);
+	if (!window)
+	{
+		ret = ENESIM_IMAGE_ERROR_LOADING;
+		goto err_feature;
+	}
+	egueb_dom_feature_window_content_size_set(window, w, h);
+	egueb_dom_feature_unref(window);
+
+	render = egueb_dom_node_feature_get(doc, EGUEB_DOM_FEATURE_RENDER_NAME, NULL);
+	if (!render)
+	{
+		ret = ENESIM_IMAGE_ERROR_LOADING;
+		goto err_feature;
+	}
+
 	s = enesim_surface_new_buffer_from(buffer);
 	if (!s)
 	{
 		ret = ENESIM_IMAGE_ERROR_LOADING;
 		goto err_surface;
 	}
+
 	egueb_dom_document_process(doc);
-	if (!egueb_svg_element_svg_draw(topmost, s, ENESIM_ROP_FILL, NULL, 0, 0, NULL))
+	if (!egueb_dom_feature_render_draw(render, s, ENESIM_ROP_FILL, NULL, 0, 0, NULL))
 	{
 		ret = ENESIM_IMAGE_ERROR_LOADING;
 		enesim_log_dump(err);
 	}
 
 	enesim_surface_unref(s);
+	egueb_dom_feature_unref(render);
 err_surface:
+#if 0
 	if (location)
 		free(location);
-err_parse:
+#endif
+err_feature:
 	egueb_dom_node_unref(doc);
+err_parse:
 	return ret;
 }
 
@@ -271,7 +290,7 @@ static Eina_Bool svg_provider_init(void)
 	/* @todo
 	 * - Register svg specific errors
 	 */
-	egueb_svg_init();
+	egueb_dom_init();
 	_enesim_image_log_dom_svg = eina_log_domain_register("enesim_image_svg", ENESIM_IMAGE_LOG_COLOR_DEFAULT);
 	if (_enesim_image_log_dom_svg < 0)
 	{
@@ -294,7 +313,7 @@ static void svg_provider_shutdown(void)
 	enesim_image_provider_unregister(&_provider, "image/svg+xml");
 	eina_log_domain_unregister(_enesim_image_log_dom_svg);
 	_enesim_image_log_dom_svg = -1;
-	egueb_svg_shutdown();
+	egueb_dom_shutdown();
 }
 
 EINA_MODULE_INIT(svg_provider_init);
