@@ -32,6 +32,7 @@
 
 #include "egueb_svg_element_svg_private.h"
 #include "egueb_svg_shape_private.h"
+#include "egueb_svg_document_private.h"
 /*
  * Given that a svg element can clip, we should use a clipper with a compound
  * inside as the renderer

@@ -585,19 +585,87 @@ static char * _egueb_svg_document_uri_get_absolute(Egueb_Svg_Document *thiz,
 		return NULL;
 	return ret;
 }
-
-static Eina_Bool _egueb_svg_document_damage_cb(Enesim_Renderer *r,
-		const Eina_Rectangle *area, Eina_Bool past,
-		void *data)
+/*----------------------------------------------------------------------------*
+ *                        Window feature interface                            *
+ *----------------------------------------------------------------------------*/
+static Eina_Bool _egueb_svg_document_window_type_get(
+		Egueb_Dom_Node *n, Egueb_Dom_Feature_Window_Type *type)
 {
-	Eina_Tiler *tiler = data;
-
-	eina_tiler_rect_add(tiler, area);
-	DBG("Renderer %s has changed at area %d %d %d %d",
-			enesim_renderer_name_get(r),
-			area->x, area->y, area->w, area->h);
+	*type = EGUEB_DOM_FEATURE_WINDOW_TYPE_MASTER;
 	return EINA_TRUE;
 }
+
+static Eina_Bool _egueb_svg_document_window_content_size_set(
+		Egueb_Dom_Node *n, int w, int h)
+{
+	Egueb_Svg_Document *thiz;
+	Egueb_Dom_Node *topmost;
+
+	thiz = EGUEB_SVG_DOCUMENT(n);
+	thiz->height = h;
+	thiz->width = w;
+
+	topmost = egueb_dom_document_element_get(n);
+	if (topmost)
+	{
+		egueb_dom_element_request_process(topmost);
+		egueb_dom_node_unref(topmost);
+	}
+	return EINA_TRUE;
+}
+
+static Eina_Bool _egueb_svg_document_window_content_size_get(
+		Egueb_Dom_Node *n, int *w, int *h)
+{
+	Egueb_Svg_Document *thiz;
+	Egueb_Dom_Node *topmost = NULL;
+
+	thiz = EGUEB_SVG_DOCUMENT(n);
+	topmost = egueb_dom_document_element_get(n);
+	if (!topmost)
+	{
+		*h = thiz->height;
+		*w = thiz->width;
+	}
+	else
+	{
+		Egueb_Svg_Length_Animated width;
+		Egueb_Svg_Length_Animated height;
+		Egueb_Svg_Overflow overflow;
+		double dw, dh;
+
+		egueb_svg_element_svg_width_get(topmost, &width);
+		egueb_svg_element_svg_height_get(topmost, &height);
+
+		dw = egueb_svg_coord_final_get(&width.anim, thiz->width,
+				thiz->font_size);
+		dh = egueb_svg_coord_final_get(&height.anim, thiz->height,
+				thiz->font_size);
+		*w = ceil(dw);
+		*h = ceil(dh);
+
+		egueb_svg_element_overflow_final_get(topmost, &overflow);
+		/* check if we should overflow */
+		if (overflow == EGUEB_SVG_OVERFLOW_VISIBLE)
+		{
+			Eina_Rectangle r;
+			egueb_svg_renderable_user_bounds_get(topmost, &r);
+			if (*w < r.x + r.w)
+				*w = r.x + r.w;
+			if (*h < r.y + r.h)
+				*h = r.y + r.h;
+		}
+	}
+
+	return EINA_TRUE;
+}
+
+static Egueb_Dom_Feature_Window_Descriptor 
+_egueb_svg_document_window_descriptor = {
+	/* .type_get 		= */ _egueb_svg_document_window_type_get,
+	/* .content_size_set 	= */ _egueb_svg_document_window_content_size_set,
+	/* .content_size_get 	= */ _egueb_svg_document_window_content_size_get,
+};
 /*----------------------------------------------------------------------------*
  *                        Render feature interface                            *
  *----------------------------------------------------------------------------*/
@@ -781,6 +849,8 @@ static void _egueb_svg_document_instance_init(void *o)
 
 	thiz = EGUEB_SVG_DOCUMENT(o);
 	/* register the features */
+	egueb_dom_feature_window_add(EGUEB_DOM_NODE(thiz),
+			&_egueb_svg_document_window_descriptor);
 	egueb_dom_feature_render_add(EGUEB_DOM_NODE(thiz),
 			&_egueb_svg_document_render_descriptor);
 	thiz->font_size = 16;
@@ -797,6 +867,25 @@ static void _egueb_svg_document_instance_deinit(void *o)
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
+void egueb_svg_document_width_get(Egueb_Dom_Node *n,
+		double *width)
+{
+	Egueb_Svg_Document *thiz;
+
+	if (!width) return;
+	thiz = EGUEB_SVG_DOCUMENT(n);
+	*width = thiz->width;
+}
+
+void egueb_svg_document_height_get(Egueb_Dom_Node *n,
+		double *height)
+{
+	Egueb_Svg_Document *thiz;
+
+	if (!height) return;
+	thiz = EGUEB_SVG_DOCUMENT(n);
+	*height = thiz->height;
+}
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/
@@ -880,125 +969,6 @@ EAPI void egueb_svg_document_element_root_set(Egueb_Dom_Node *n,
 	egueb_dom_document_element_set(n, root);
 }
 
-EAPI void egueb_svg_document_width_set(Egueb_Dom_Node *n,
-		double width)
-{
-	Egueb_Svg_Document *thiz;
-	Egueb_Dom_Node *topmost;
-
-	thiz = EGUEB_SVG_DOCUMENT(n);
-	thiz->width = width;
-
-	topmost = egueb_dom_document_element_get(n);
-	if (topmost)
-	{
-		egueb_dom_element_request_process(topmost);
-		egueb_dom_node_unref(topmost);
-	}
-}
-
-EAPI void egueb_svg_document_width_get(Egueb_Dom_Node *n,
-		double *width)
-{
-	Egueb_Svg_Document *thiz;
-
-	if (!width) return;
-	thiz = EGUEB_SVG_DOCUMENT(n);
-	*width = thiz->width;
-}
-
-EAPI void egueb_svg_document_height_set(Egueb_Dom_Node *n,
-		double height)
-{
-	Egueb_Svg_Document *thiz;
-	Egueb_Dom_Node *topmost;
-
-	thiz = EGUEB_SVG_DOCUMENT(n);
-	thiz->height = height;
-
-	topmost = egueb_dom_document_element_get(n);
-	if (topmost)
-	{
-		egueb_dom_element_request_process(topmost);
-		egueb_dom_node_unref(topmost);
-	}
-}
-
-EAPI void egueb_svg_document_height_get(Egueb_Dom_Node *n,
-		double *height)
-{
-	Egueb_Svg_Document *thiz;
-
-	if (!height) return;
-	thiz = EGUEB_SVG_DOCUMENT(n);
-	*height = thiz->height;
-}
-
-EAPI void egueb_svg_document_actual_width_get(Egueb_Dom_Node *n, double *actual_width)
-{
-	Egueb_Dom_Node *topmost = NULL;
-
-	topmost = egueb_dom_document_element_get(n);
-	if (!topmost)
-	{
-		*actual_width = 0;
-	}
-	else
-	{
-		Egueb_Svg_Document *thiz;
-		Egueb_Svg_Length_Animated width;
-		Egueb_Svg_Overflow overflow;
-
-		thiz = EGUEB_SVG_DOCUMENT(n);
-
-		egueb_svg_element_svg_width_get(topmost, &width);
-		*actual_width = egueb_svg_coord_final_get(&width.anim, thiz->width,
-				thiz->font_size);
-		egueb_svg_element_overflow_final_get(topmost, &overflow);
-		/* check if we should overflow */
-		if (overflow == EGUEB_SVG_OVERFLOW_VISIBLE)
-		{
-			Eina_Rectangle r;
-			egueb_svg_renderable_user_bounds_get(topmost, &r);
-			if (*actual_width < r.x + r.w)
-				*actual_width = r.x + r.w;
-		}
-		egueb_dom_node_unref(topmost);
-	}
-}
-
-EAPI void egueb_svg_document_actual_height_get(Egueb_Dom_Node *n, double *actual_height)
-{
-	Egueb_Dom_Node *topmost = NULL;
-
-	topmost = egueb_dom_document_element_get(n);
-	if (!topmost)
-	{
-		*actual_height = 0;
-	}
-	else
-	{
-		Egueb_Svg_Document *thiz;
-		Egueb_Svg_Length_Animated height;
-		Egueb_Svg_Overflow overflow;
-
-		thiz = EGUEB_SVG_DOCUMENT(n);
-
-		egueb_svg_element_svg_height_get(topmost, &height);
-		*actual_height = egueb_svg_coord_final_get(&height.anim, thiz->height,
-				thiz->font_size);
-		egueb_svg_element_overflow_final_get(topmost, &overflow);
-		if (overflow == EGUEB_SVG_OVERFLOW_VISIBLE)
-		{
-			Eina_Rectangle r;
-			egueb_svg_renderable_user_bounds_get(topmost, &r);
-			if (*actual_height < r.y + r.h)
-				*actual_height = r.y + r.h;
-		}
-		egueb_dom_node_unref(topmost);
-	}
-}
-
 EAPI void egueb_svg_document_font_size_set(Egueb_Dom_Node *n,
 		double font_size)
 {
@@ -1077,58 +1047,6 @@ EAPI void egueb_svg_document_feed_mouse_up(Egueb_Dom_Node *n, int button)
 
 	thiz = EGUEB_SVG_DOCUMENT(n);
 	egueb_dom_input_feed_mouse_up(thiz->input, button);
-}
-
-/**
- * To be documented
- * FIXME: To be fixed
- */
-EAPI void egueb_svg_document_damages_get(Egueb_Dom_Node *n,
-		Egueb_Svg_Document_Damage_Cb cb, void *data)
-{
-	Egueb_Svg_Document *thiz;
-	Egueb_Dom_Node *topmost = NULL;
-	Enesim_Renderer *r;
-	Eina_Iterator *iter;
-	Eina_Rectangle *rect;
-	double aw, ah;
-	int tw, th;
-
-	thiz = EGUEB_SVG_DOCUMENT(n);
-	egueb_svg_document_actual_width_get(n, &aw);
-	egueb_svg_document_actual_height_get(n, &ah);
-	tw = ceil(aw);
-	th = ceil(ah);
-
-	if (!thiz->tiler || thiz->tw != tw || thiz->th != th)
-	{
-		Eina_Rectangle full;
-
-		if (thiz->tiler)
-			eina_tiler_free(thiz->tiler);
-		thiz->tiler = eina_tiler_new(tw, th);
-		thiz->tw = tw;
-		thiz->th = th;
-
-		eina_rectangle_coords_from(&full, 0, 0, tw, th);
-		cb(n, &full, data);
-		return;
-	}
-
-	topmost = egueb_dom_document_element_get(n);
-	if (!topmost) return;
-
-	r = egueb_svg_renderable_renderer_get(topmost);
-	enesim_renderer_damages_get(r, _egueb_svg_document_damage_cb, thiz->tiler);
-
-	iter = eina_tiler_iterator_new(thiz->tiler);
-	EINA_ITERATOR_FOREACH(iter, rect)
-	{
-		cb(n, rect, data);
-	}
-	eina_iterator_free(iter);
-	eina_tiler_clear(thiz->tiler);
-	egueb_dom_node_unref(topmost);
 }
 
 EAPI void egueb_svg_document_image_load(Egueb_Dom_Node *n,

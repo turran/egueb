@@ -53,17 +53,6 @@ EAPI Egueb_Dom_String * egueb_svg_document_url_get(Egueb_Dom_Node *n);
 
 EAPI Egueb_Dom_Node * egueb_svg_document_element_root_get(Egueb_Dom_Node *n);
 
-EAPI void egueb_svg_document_width_set(Egueb_Dom_Node *n,
-		double width);
-EAPI void egueb_svg_document_width_get(Egueb_Dom_Node *n,
-		double *width);
-EAPI void egueb_svg_document_height_set(Egueb_Dom_Node *n,
-		double height);
-EAPI void egueb_svg_document_height_get(Egueb_Dom_Node *n,
-		double *height);
-EAPI void egueb_svg_document_actual_width_get(Egueb_Dom_Node *n, double *actual_width);
-EAPI void egueb_svg_document_actual_height_get(Egueb_Dom_Node *n, double *actual_height);
-
 EAPI void egueb_svg_document_font_size_set(Egueb_Dom_Node *n,
 		double font_size);
 EAPI double egueb_svg_document_font_size_get(Egueb_Dom_Node *n);
@@ -74,10 +63,6 @@ EAPI Egueb_Dom_Node * egueb_svg_document_element_get_by_iri(Egueb_Dom_Node *n,
 EAPI void egueb_svg_document_feed_mouse_move(Egueb_Dom_Node *n, int x, int y);
 EAPI void egueb_svg_document_feed_mouse_down(Egueb_Dom_Node *n, int button);
 EAPI void egueb_svg_document_feed_mouse_up(Egueb_Dom_Node *n, int button);
-
-typedef Eina_Bool (*Egueb_Svg_Document_Damage_Cb)(Egueb_Dom_Node *n, Eina_Rectangle *damage,
-		void *data);
-EAPI void egueb_svg_document_damages_get(Egueb_Dom_Node *n, Egueb_Svg_Document_Damage_Cb cb, void *data);
 
 EAPI void egueb_svg_document_image_load(Egueb_Dom_Node *n,
 		Egueb_Dom_String *uri,
