@@ -22,6 +22,8 @@
 #include "egueb_svg_renderable.h"
 #include "egueb_svg_renderable_container_private.h"
 
+Etch * egueb_svg_element_svg_etch_get(Egueb_Dom_Node *n);
+
 #if 0
 #include "egueb_svg_script_provider.h"
 #include "egueb_svg_video_provider.h"
@@ -30,7 +32,6 @@
 extern "C" {
 #endif
 
-Etch * egueb_svg_element_svg_etch_get(Ender_Element *e);
 Ender_Element * egueb_svg_element_svg_internal_element_find(Egueb_Dom_Tag *t, const char *id);
 void egueb_svg_element_svg_element_get(Ender_Element *e, const char *uri, Ender_Element **el);
 void egueb_svg_element_svg_image_load(Ender_Element *e, const char *uri, Enesim_Surface **s, double width, double height);

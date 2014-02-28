@@ -54,6 +54,7 @@
 #include "egueb_svg_renderable_container.h"
 
 #include "egueb_dom_document_private.h"
+#include "egueb_svg_element_svg_private.h"
 
 #include <unistd.h>
 #include <libgen.h>
@@ -75,11 +76,7 @@ typedef struct _Egueb_Svg_Document
 	double width;
 	double height;
 	double font_size;
-
-	/* damages */
-	Eina_Tiler *tiler;
-	int tw;
-	int th;
+	int fps;
 
 	/* input */
 	Egueb_Dom_Input *input;
@@ -589,6 +586,26 @@ static char * _egueb_svg_document_uri_get_absolute(Egueb_Svg_Document *thiz,
 /*----------------------------------------------------------------------------*
  *                        Window feature interface                            *
  *----------------------------------------------------------------------------*/
+static Etch * _egueb_svg_document_animation_etch_get(Egueb_Dom_Node *n)
+{
+	Egueb_Dom_Node *topmost;
+	Etch *ret;
+
+	topmost = egueb_dom_document_element_get(n);
+	if (!topmost) return NULL;
+
+	ret = egueb_svg_element_svg_etch_get(topmost);
+	egueb_dom_node_unref(topmost);
+	return ret;
+}
+
+static Egueb_Dom_Feature_Animation_Descriptor 
+_egueb_svg_document_animation_descriptor = {
+	/* .etch_get 	= */ _egueb_svg_document_animation_etch_get,
+};
+/*----------------------------------------------------------------------------*
+ *                        Window feature interface                            *
+ *----------------------------------------------------------------------------*/
 static Eina_Bool _egueb_svg_document_window_type_get(
 		Egueb_Dom_Node *n, Egueb_Dom_Feature_Window_Type *type)
 {
@@ -867,6 +884,9 @@ static void _egueb_svg_document_instance_init(void *o)
 			&_egueb_svg_document_window_descriptor);
 	egueb_dom_feature_render_add(EGUEB_DOM_NODE(thiz),
 			&_egueb_svg_document_render_descriptor);
+	egueb_dom_feature_animation_add(EGUEB_DOM_NODE(thiz),
+			&_egueb_svg_document_animation_descriptor);
+	thiz->fps = 30;
 	thiz->font_size = 16;
 	thiz->input = egueb_dom_input_new(&_document_svg_input_descriptor, thiz);
 }

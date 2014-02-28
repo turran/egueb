@@ -36,6 +36,8 @@
 typedef struct _Egueb_Dom_Feature_Animation
 {
 	Egueb_Dom_Feature base;
+	Egueb_Dom_Node *n;
+	const Egueb_Dom_Feature_Animation_Descriptor *d;
 } Egueb_Dom_Feature_Animation;
 
 typedef struct _Egueb_Dom_Feature_Animation_Class
@@ -62,9 +64,6 @@ static void _egueb_dom_feature_animation_instance_init(void *o)
 
 static void _egueb_dom_feature_animation_instance_deinit(void *o)
 {
-	Egueb_Dom_Feature_Animation *thiz;
-
-	thiz = EGUEB_DOM_FEATURE_ANIMATION(o);
 }
 /*============================================================================*
  *                                 Global                                     *
@@ -73,6 +72,52 @@ static void _egueb_dom_feature_animation_instance_deinit(void *o)
  *                                   API                                      *
  *============================================================================*/
 Egueb_Dom_String *EGUEB_DOM_FEATURE_ANIMATION_NAME = &_EGUEB_DOM_FEATURE_ANIMATION_NAME;
+
+EAPI Eina_Bool egueb_dom_feature_animation_fps_set(Egueb_Dom_Feature *f, int fps)
+{
+	Egueb_Dom_Feature_Animation *thiz;
+	Etch *e;
+
+	thiz = EGUEB_DOM_FEATURE_ANIMATION(f);
+	if (!thiz->n) return EINA_FALSE;
+
+	e = thiz->d->etch_get(thiz->n);
+	if (!e) return EINA_FALSE;
+
+	etch_timer_fps_set(e, fps);
+	return EINA_TRUE;
+}
+
+EAPI Eina_Bool egueb_dom_feature_animation_fps_get(Egueb_Dom_Feature *f, int *fps)
+{
+	Egueb_Dom_Feature_Animation *thiz;
+	Etch *e;
+
+	thiz = EGUEB_DOM_FEATURE_ANIMATION(f);
+	if (!thiz->n) return EINA_FALSE;
+
+	e = thiz->d->etch_get(thiz->n);
+	if (!e)
+		*fps = 30;
+	else
+		*fps = etch_timer_fps_get(e);
+	return EINA_TRUE;
+}
+
+EAPI Eina_Bool egueb_dom_feature_animation_tick(Egueb_Dom_Feature *f)
+{
+	Egueb_Dom_Feature_Animation *thiz;
+	Etch *e;
+
+	thiz = EGUEB_DOM_FEATURE_ANIMATION(f);
+	if (!thiz->n) return EINA_FALSE;
+
+	e = thiz->d->etch_get(thiz->n);
+	if (!e) return EINA_FALSE;
+
+	etch_timer_tick(e);
+	return EINA_TRUE;
+}
 
 EAPI Eina_Bool egueb_dom_feature_animation_add(Egueb_Dom_Node *n,
 		const Egueb_Dom_Feature_Animation_Descriptor *d)

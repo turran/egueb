@@ -1442,9 +1442,6 @@ static Ender_Element *_egueb_svg_element_svg_element_get_by_id(Egueb_Dom_Tag *t,
 #define _egueb_svg_element_svg_y_dpi_is_set NULL
 #define _egueb_svg_element_svg_content_script_type_is_set NULL
 #include "egueb_svg_generated_element_svg.c"
-/*============================================================================*
- *                                 Global                                     *
- *============================================================================*/
 void egueb_svg_element_svg_init(void)
 {
 	_egueb_svg_element_svg_log = eina_log_domain_register("egueb_svg_element_svg", ESVG_LOG_COLOR_DEFAULT);
@@ -1670,16 +1667,6 @@ char * egueb_svg_element_svg_uri_resolve(Ender_Element *e, const char *uri)
 	return ret;
 }
 
-Etch * egueb_svg_element_svg_etch_get(Ender_Element *e)
-{
-	Egueb_Svg_Element_Svg *thiz;
-	Egueb_Dom_Tag *t;
-
-	t = ender_element_object_get(e);
-	thiz = _egueb_svg_element_svg_get(t);
-	return thiz->etch;
-}
-
 #if 0
 void egueb_svg_element_svg_style_add(Egueb_Dom_Tag *tag, Egueb_Svg_Parser_Style *s)
 {
@@ -1708,6 +1695,16 @@ void egueb_svg_element_svg_style_apply(Egueb_Dom_Tag *tag)
 }
 #endif
 #endif
+/*============================================================================*
+ *                                 Global                                     *
+ *============================================================================*/
+Etch * egueb_svg_element_svg_etch_get(Egueb_Dom_Node *n)
+{
+	Egueb_Svg_Element_Svg *thiz;
+
+	thiz = EGUEB_SVG_ELEMENT_SVG(n);
+	return thiz->etch;
+}
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/
@@ -1897,42 +1894,6 @@ EAPI Eina_Bool egueb_svg_element_svg_animations_paused(Egueb_Dom_Node *n)
 
 	thiz = EGUEB_SVG_ELEMENT_SVG(n);
 	return thiz->paused;
-}
-
-/**
- * To be documented
- * FIXME: To be fixed
- */
-EAPI void egueb_svg_element_svg_animations_fps_set(Egueb_Dom_Node *n, int fps)
-{
-	Egueb_Svg_Element_Svg *thiz;
-
-	thiz = EGUEB_SVG_ELEMENT_SVG(n);
-	etch_timer_fps_set(thiz->etch, fps);
-}
-
-/**
- * To be documented
- * FIXME: To be fixed
- */
-EAPI int egueb_svg_element_svg_animations_fps_get(Egueb_Dom_Node *n)
-{
-	Egueb_Svg_Element_Svg *thiz;
-
-	thiz = EGUEB_SVG_ELEMENT_SVG(n);
-	return etch_timer_fps_get(thiz->etch);
-}
-
-/**
- * To be documented
- * FIXME: To be fixed
- */
-EAPI void egueb_svg_element_svg_time_tick(Egueb_Dom_Node *n)
-{
-	Egueb_Svg_Element_Svg *thiz;
-
-	thiz = EGUEB_SVG_ELEMENT_SVG(n);
-	etch_timer_tick(thiz->etch);
 }
 
 /**

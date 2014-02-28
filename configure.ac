@@ -42,8 +42,8 @@ AC_CANONICAL_HOST
 
 egueb_base_requirements="eina >= ${EINA_VERSION}"
 egueb_css_requirements="eina >= ${EINA_VERSION}"
-egueb_dom_requirements_private="etch >= ${ETCH_VERSION}"
-egueb_dom_requirements="enesim >= ${ENESIM_VERSION} eina >= ${EINA_VERSION}"
+egueb_dom_requirements_private=""
+egueb_dom_requirements="enesim >= ${ENESIM_VERSION} etch >= ${ETCH_VERSION} eina >= ${EINA_VERSION}"
 egueb_smil_requirements="etch >= ${ETCH_VERSION} enesim >= ${ENESIM_VERSION} eina >= ${EINA_VERSION}"
 egueb_svg_requirements="etch >= ${ETCH_VERSION} enesim >= ${ENESIM_VERSION} eina >= ${EINA_VERSION}"
 gstreamer_requirements="gstreamer-0.10"
