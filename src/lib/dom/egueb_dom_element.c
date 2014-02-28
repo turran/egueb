@@ -798,7 +798,7 @@ EAPI void egueb_dom_element_enqueue(Egueb_Dom_Node *n)
 	thiz = EGUEB_DOM_ELEMENT(n);
 	if (thiz->enqueued)
 	{
-		INFO("Node already enqueued, nothing to do");
+		INFO_ELEMENT(n, "Node already enqueued, nothing to do");
 		egueb_dom_node_unref(doc);
 		egueb_dom_node_unref(n);
 		return;
@@ -834,6 +834,8 @@ EAPI Eina_Bool egueb_dom_element_process(Egueb_Dom_Node *n)
 
 	thiz = EGUEB_DOM_ELEMENT(n);
 	klass = EGUEB_DOM_ELEMENT_CLASS_GET(thiz);
+
+	INFO_ELEMENT(n, "Processing");
 	if (klass->process) ret = klass->process(thiz);
 	/* unset the flag that informs the inheritable change */
 	thiz->inheritable_changed = EINA_FALSE;

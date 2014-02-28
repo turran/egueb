@@ -82,6 +82,7 @@ $(SED) \
 -e 's,@libdir\@,$(libdir),g' \
 -e 's,@includedir\@,$(includedir),g' \
 -e 's,@pkgincludedir\@,$(pkgincludedir),g' \
+-e 's,@pkglibdir\@,$(pkglibdir),g' \
 -e 's,@egueb_dom_requirements\@,$(egueb_dom_requirements),g' \
 -e 's,@egueb_dom_requirements_private\@,$(egueb_dom_requirements_private),g' \
 -e 's,@egueb_css_requirements\@,$(egueb_css_requirements),g' \

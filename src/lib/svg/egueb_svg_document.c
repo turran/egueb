@@ -17,6 +17,7 @@
  */
 #include "egueb_svg_main_private.h"
 
+#include "egueb_svg_main.h"
 #include "egueb_svg_document.h"
 /* needed types */
 #include "egueb_svg_referenceable_units.h"
@@ -414,7 +415,7 @@ static Eina_Bool _egueb_svg_document_element_id_get(const char *name, size_t sz,
 	return EINA_FALSE;
 }
 
-static Egueb_Dom_Node * _egueb_svg_document_element_create(int id)
+static Egueb_Dom_Node * _egueb_svg_document_element_create_by_id(int id)
 {
 	Egueb_Dom_Node *ret = NULL;
 
@@ -808,7 +809,7 @@ static Egueb_Dom_Input_Descriptor _document_svg_input_descriptor = {
 /*----------------------------------------------------------------------------*
  *                            Document interface                              *
  *----------------------------------------------------------------------------*/
-static Egueb_Dom_Node * _egueb_svg_document_class_element_create(
+static Egueb_Dom_Node * _egueb_svg_document_element_create(
 		Egueb_Dom_Document *d, const char *name)
 {
 	Egueb_Dom_Node *ret;
@@ -818,7 +819,7 @@ static Egueb_Dom_Node * _egueb_svg_document_class_element_create(
 	sz = strlen(name);
 	if (!_egueb_svg_document_element_id_get(name, sz, &id))
 		return NULL;
-	ret = _egueb_svg_document_element_create(id);
+	ret = _egueb_svg_document_element_create_by_id(id);
 	if (!ret)
 	{
 		/* FIXME here we should use the application interface to let
@@ -829,6 +830,18 @@ static Egueb_Dom_Node * _egueb_svg_document_class_element_create(
 	return ret;
 }
 
+static Eina_Bool _egueb_svg_document_child_appendable(
+		Egueb_Dom_Document *thiz, Egueb_Dom_Node *child)
+{
+	Egueb_Dom_String *name;
+	Eina_Bool ret;
+
+	name = egueb_dom_node_name_get(child);
+	ret = egueb_dom_string_is_equal(name, EGUEB_SVG_NAME_SVG);
+	egueb_dom_string_unref(name);
+
+	return ret;
+}
 /*----------------------------------------------------------------------------*
  *                              Object interface                              *
  *----------------------------------------------------------------------------*/
@@ -840,7 +853,8 @@ static void _egueb_svg_document_class_init(void *k)
 {
 	Egueb_Dom_Document_Class *klass = EGUEB_DOM_DOCUMENT_CLASS(k);
 
-	klass->element_create = _egueb_svg_document_class_element_create;
+	klass->element_create = _egueb_svg_document_element_create;
+	klass->child_appendable = _egueb_svg_document_child_appendable;
 }
 
 static void _egueb_svg_document_instance_init(void *o)

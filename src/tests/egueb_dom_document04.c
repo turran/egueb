@@ -20,7 +20,7 @@ int main(int argc, char **argv)
 	im = enesim_stream_file_new(argv[1], "r+");
 	if (!im) return -1;
 
-	egueb_dom_parser_parse(im, doc);
+	egueb_dom_parser_parse(im, &doc);
 	enesim_stream_unref(im);
 
 	printf("[testing] get the topmost element and destroy the document\n");

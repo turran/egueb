@@ -1291,7 +1291,16 @@ EAPI Egueb_Dom_Node * egueb_svg_element_geometry_relative_get(Egueb_Dom_Node *n)
 	}
 	else
 	{
-		return egueb_dom_node_parent_get(n);
+		Egueb_Dom_Node *parent;
+
+		parent = egueb_dom_node_parent_get(n);
+		/* check if it is the topmost */
+		if (egueb_dom_node_type_get(parent) == EGUEB_DOM_NODE_TYPE_DOCUMENT_NODE)
+		{
+			egueb_dom_node_unref(parent);
+			parent = NULL;
+		}
+		return parent;
 	}
 }
 
@@ -1333,7 +1342,16 @@ EAPI Egueb_Dom_Node * egueb_svg_element_presentation_relative_get(
 	}
 	else
 	{
-		return egueb_dom_node_parent_get(n);
+		Egueb_Dom_Node *parent;
+
+		parent = egueb_dom_node_parent_get(n);
+		/* check if it is the topmost */
+		if (egueb_dom_node_type_get(parent) == EGUEB_DOM_NODE_TYPE_DOCUMENT_NODE)
+		{
+			egueb_dom_node_unref(parent);
+			parent = NULL;
+		}
+		return parent;
 	}
 }
 

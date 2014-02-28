@@ -50,7 +50,7 @@ int main(int argc, char **argv)
 	im = enesim_stream_file_new(argv[1], "r+");
 	if (!im) return -1;
 
-	egueb_dom_parser_parse(im, mydocument);
+	egueb_dom_parser_parse(im, &mydocument);
 	enesim_stream_unref(im);
 
 	/* setup our own handlers */

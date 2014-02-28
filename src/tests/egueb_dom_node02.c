@@ -22,7 +22,7 @@ int main(int argc, char **argv)
 	mylib_init();
 	mydocument = mydocument_new();
 	im = enesim_stream_file_new(argv[1], "r+");
-	egueb_dom_parser_parse(im, mydocument);
+	egueb_dom_parser_parse(im, &mydocument);
 	enesim_stream_unref(im);
 
 	root = egueb_dom_document_element_get(mydocument);
@@ -32,7 +32,7 @@ int main(int argc, char **argv)
 
 	/* clone the root element deeply */
 	printf("[testing] Cloned tree\n");
-	egueb_dom_node_clone(root, EINA_TRUE, EINA_TRUE, &clone, NULL);
+	clone = egueb_dom_node_clone(root, EINA_TRUE, EINA_TRUE, NULL);
 	myelement_dump(clone, EINA_TRUE);
 
 	/* given that the clone is live, modify the root element

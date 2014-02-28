@@ -113,16 +113,16 @@ int main(int argc, char *argv[])
 		if (type == EGUEB_DOM_FEATURE_WINDOW_TYPE_MASTER)
 		{
 			egueb_dom_feature_window_content_size_set(window, width, height);
-			/* now process the document */
-			egueb_dom_document_process(doc);
-			egueb_dom_feature_window_content_size_get(window, &width, &height);
-			needs_process = EINA_FALSE;
 		}
-		else
+		/* now process the document */
+		egueb_dom_document_process(doc);
+		egueb_dom_feature_window_content_size_get(window, &width, &height);
+		if (width <= 0 || height <= 0)
 		{
-			/* negotiate the window size */
-	
+			printf("Invalid size of the window %d %d\n", width, height);
+			goto shutdown;
 		}
+		needs_process = EINA_FALSE;
 	}
 
 	if (needs_process)

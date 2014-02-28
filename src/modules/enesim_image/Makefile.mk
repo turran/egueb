@@ -1,7 +1,7 @@
 if BUILD_EGUEB_DOM
 
 enesim_image_dom_LTLIBRARIES = src/modules/enesim_image/enesim_image_dom.la
-enesim_image_domdir = @ENESIM_MODULE_DIR@
+enesim_image_domdir = @ENESIM_MODULE_IMAGE_DIR@
 
 src_modules_enesim_image_enesim_image_dom_la_SOURCES = \
 src/modules/enesim_image/enesim_image_dom.c

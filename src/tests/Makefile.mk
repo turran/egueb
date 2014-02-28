@@ -29,11 +29,11 @@ $(top_builddir)/src/tests/libmydom.la \
 
 tests_css_CPPFLAGS = \
 -I$(top_srcdir)/src/lib/css \
-@ECSS_CFLAGS@
+@EGUEB_CSS_CFLAGS@
 
 tests_css_LDADD = \
 $(top_builddir)/src/lib/css/libegueb_css.la \
-@ECSS_LIBS@
+@EGUEB_CSS_LIBS@
 
 tests_svg_CPPFLAGS = \
 -I$(top_srcdir)/src/lib/svg \

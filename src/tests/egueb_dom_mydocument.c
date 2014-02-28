@@ -41,11 +41,18 @@ static Egueb_Dom_Node * _mydocument_element_create(Egueb_Dom_Document *d,
 	return new_node;
 }
 
+static Eina_Bool _mydocument_child_appendable(Egueb_Dom_Document *d,
+		Egueb_Dom_Node *child)
+{
+	return EINA_TRUE;
+}
+
 static void _mydocument_class_init(void *k)
 {
 	Egueb_Dom_Document_Class *klass = EGUEB_DOM_DOCUMENT_CLASS(k);
 
 	klass->element_create = _mydocument_element_create;
+	klass->child_appendable = _mydocument_child_appendable;
 	printf("mydocument class init\n");
 }
 

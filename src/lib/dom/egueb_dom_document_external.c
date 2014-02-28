@@ -62,7 +62,7 @@ static void _egueb_dom_document_external_init(Egueb_Dom_Document_External *thiz)
 /*----------------------------------------------------------------------------*
  *                            Document interface                              *
  *----------------------------------------------------------------------------*/
-static Egueb_Dom_Node * _egueb_dom_document_external_class_element_create(
+static Egueb_Dom_Node * _egueb_dom_document_external_element_create(
 		Egueb_Dom_Document *d, const char *name)
 {
 	Egueb_Dom_Document_External *thiz;
@@ -72,6 +72,20 @@ static Egueb_Dom_Node * _egueb_dom_document_external_class_element_create(
 		return thiz->descriptor->element_create(EGUEB_DOM_NODE(d), thiz->data, name);
 	return NULL;
 }
+
+static Eina_Bool _egueb_dom_document_external_child_appendable(
+		Egueb_Dom_Document *d, Egueb_Dom_Node *child)
+{
+	Egueb_Dom_Document_External *thiz;
+
+	thiz = EGUEB_DOM_DOCUMENT_EXTERNAL(d);
+	if (thiz->descriptor->child_appendable)
+		return thiz->descriptor->child_appendable(EGUEB_DOM_NODE(d), thiz->data, child);
+	return EINA_FALSE;
+}
+/*----------------------------------------------------------------------------*
+ *                               Node interface                               *
+ *----------------------------------------------------------------------------*/
 /*----------------------------------------------------------------------------*
  *                              Object interface                              *
  *----------------------------------------------------------------------------*/
@@ -83,7 +97,9 @@ static void _egueb_dom_document_external_class_init(void *k)
 {
 	Egueb_Dom_Document_Class *klass = EGUEB_DOM_DOCUMENT_CLASS(k);
 
-	klass->element_create = _egueb_dom_document_external_class_element_create;
+	klass->element_create = _egueb_dom_document_external_element_create;
+
+	klass->child_appendable = _egueb_dom_document_external_child_appendable;
 }
 
 static void _egueb_dom_document_external_instance_init(void *o)

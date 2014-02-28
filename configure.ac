@@ -116,8 +116,8 @@ if ! $PKG_CONFIG --atleast-pkgconfig-version 0.22; then
    AC_MSG_ERROR([pkg-config >= 0.22 is required])
 fi
 
-ENESIM_MODULE_DIR=`${PKG_CONFIG} --variable=pkglibdir enesim`
-AC_SUBST([ENESIM_MODULE_DIR])
+ENESIM_MODULE_IMAGE_DIR=`${PKG_CONFIG} --variable=moduleimagedir enesim`
+AC_SUBST([ENESIM_MODULE_IMAGE_DIR])
 
 # flex (egueb_css dep)
 if test "x${want_egueb_css}" = "xyes" ; then

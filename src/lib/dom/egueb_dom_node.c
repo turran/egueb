@@ -739,10 +739,27 @@ EAPI Eina_Bool egueb_dom_node_insert_before(Egueb_Dom_Node *thiz,
 		return EINA_FALSE;
 	}
 
-	if (child->owner_document && (thiz->owner_document != child->owner_document))
+	if (child->owner_document)
 	{
-		if (err) *err = EGUEB_DOM_ERROR_WRONG_DOCUMENT;
-		return EINA_FALSE;
+		Egueb_Dom_Node_Type type;
+
+		type = egueb_dom_node_type_get(thiz);
+ 		if (type == EGUEB_DOM_NODE_TYPE_DOCUMENT_NODE)
+		{
+			if (child->owner_document != thiz)
+			{
+				if (err) *err = EGUEB_DOM_ERROR_WRONG_DOCUMENT;
+				return EINA_FALSE;
+			}
+		}
+		else
+		{
+			if (thiz->owner_document != child->owner_document)
+			{
+				if (err) *err = EGUEB_DOM_ERROR_WRONG_DOCUMENT;
+				return EINA_FALSE;
+			}
+		}
 	}
 
 	klass = EGUEB_DOM_NODE_CLASS_GET(thiz);
@@ -768,7 +785,7 @@ EAPI Eina_Bool egueb_dom_node_insert_before(Egueb_Dom_Node *thiz,
 	egueb_dom_node_event_dispatch(child, event, NULL, NULL);
 
 	/* set the owner document on the child */
-	if (thiz->owner_document != child->owner_document)
+	if ((thiz->owner_document != child->owner_document) && (thiz->owner_document))
 		egueb_dom_node_document_set(child, thiz->owner_document);
 	return EINA_TRUE;
 }

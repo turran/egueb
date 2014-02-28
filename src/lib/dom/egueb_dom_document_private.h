@@ -25,8 +25,6 @@
 typedef struct _Egueb_Dom_Document
 {
 	Egueb_Dom_Node base;
-	/* attribute */ 
-	Egueb_Dom_Node *element;
 	/* private */
 	Eina_Hash *ids;
 	Eina_List *current_enqueued;
@@ -40,12 +38,13 @@ typedef struct _Egueb_Dom_Document
 
 typedef Egueb_Dom_Node * (*Egueb_Dom_Document_Element_Create)(
 		Egueb_Dom_Document *thiz, const char *name);
-typedef void (*Egueb_Dom_Document_Process)(Egueb_Dom_Node *n);
-typedef Eina_Bool (*Egueb_Dom_Document_Need_Process)(Egueb_Dom_Node *n);
+typedef Eina_Bool (*Egueb_Dom_Document_Child_Appendable)(Egueb_Dom_Document *thiz,
+		Egueb_Dom_Node *child);
 typedef struct _Egueb_Dom_Document_Class
 {
 	Egueb_Dom_Node_Class base;
 	Egueb_Dom_Document_Element_Create element_create;
+	Egueb_Dom_Document_Child_Appendable child_appendable;
 } Egueb_Dom_Document_Class;
 
 #define EGUEB_DOM_DOCUMENT_DESCRIPTOR egueb_dom_document_descriptor_get()

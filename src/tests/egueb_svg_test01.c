@@ -31,7 +31,7 @@ int main(int argc, char **argv)
 	doc = egueb_svg_document_new(NULL);
 	/* set our handlers */
 	egueb_svg_document_filename_get_cb_set(doc, filename_get, (void *)argv[1]);
-	egueb_dom_parser_parse(im, doc);
+	egueb_dom_parser_parse(im, &doc);
 	enesim_stream_unref(im);
 	topmost = egueb_dom_document_element_get(doc);
 	if (topmost)
