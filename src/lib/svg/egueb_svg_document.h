@@ -60,10 +60,6 @@ EAPI double egueb_svg_document_font_size_get(Egueb_Dom_Node *n);
 EAPI Egueb_Dom_Node * egueb_svg_document_element_get_by_iri(Egueb_Dom_Node *n,
 		Egueb_Dom_String *iri);
 
-EAPI void egueb_svg_document_feed_mouse_move(Egueb_Dom_Node *n, int x, int y);
-EAPI void egueb_svg_document_feed_mouse_down(Egueb_Dom_Node *n, int button);
-EAPI void egueb_svg_document_feed_mouse_up(Egueb_Dom_Node *n, int button);
-
 EAPI void egueb_svg_document_image_load(Egueb_Dom_Node *n,
 		Egueb_Dom_String *uri,
 		Egueb_Svg_Document_Image_Load_Descriptor *d,

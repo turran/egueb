@@ -25,6 +25,7 @@ src/lib/dom/egueb_dom_event_ui.h \
 src/lib/dom/egueb_dom_feature.h \
 src/lib/dom/egueb_dom_feature_animation.h \
 src/lib/dom/egueb_dom_feature_render.h \
+src/lib/dom/egueb_dom_feature_ui.h \
 src/lib/dom/egueb_dom_feature_window.h \
 src/lib/dom/egueb_dom_implementation.h \
 src/lib/dom/egueb_dom_implementation_source.h \
@@ -84,6 +85,7 @@ src/lib/dom/egueb_dom_event_ui_private.h \
 src/lib/dom/egueb_dom_feature.c \
 src/lib/dom/egueb_dom_feature_animation.c \
 src/lib/dom/egueb_dom_feature_render.c \
+src/lib/dom/egueb_dom_feature_ui.c \
 src/lib/dom/egueb_dom_feature_window.c \
 src/lib/dom/egueb_dom_implementation.c \
 src/lib/dom/egueb_dom_implementation_source.c \

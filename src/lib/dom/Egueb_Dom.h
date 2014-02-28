@@ -88,12 +88,13 @@ extern "C" {
 #include "egueb_dom_event_mutation.h"
 #include "egueb_dom_event_ui.h"
 
+#include "egueb_dom_input.h"
+
 #include "egueb_dom_feature.h"
 #include "egueb_dom_feature_animation.h"
 #include "egueb_dom_feature_render.h"
+#include "egueb_dom_feature_ui.h"
 #include "egueb_dom_feature_window.h"
-
-#include "egueb_dom_input.h"
 
 #include "egueb_dom_uri.h"
 #include "egueb_dom_value.h"

@@ -584,7 +584,22 @@ static char * _egueb_svg_document_uri_get_absolute(Egueb_Svg_Document *thiz,
 	return ret;
 }
 /*----------------------------------------------------------------------------*
- *                        Window feature interface                            *
+ *                          UI feature interface                              *
+ *----------------------------------------------------------------------------*/
+static Egueb_Dom_Input * _egueb_svg_document_ui_input_get(Egueb_Dom_Node *n)
+{
+	Egueb_Svg_Document *thiz;
+
+	thiz = EGUEB_SVG_DOCUMENT(n);
+	return thiz->input;
+}
+
+static Egueb_Dom_Feature_UI_Descriptor 
+_egueb_svg_document_ui_descriptor = {
+	/* .input_get 	= */ _egueb_svg_document_ui_input_get,
+};
+/*----------------------------------------------------------------------------*
+ *                       Animation feature interface                          *
  *----------------------------------------------------------------------------*/
 static Etch * _egueb_svg_document_animation_etch_get(Egueb_Dom_Node *n)
 {
@@ -886,6 +901,8 @@ static void _egueb_svg_document_instance_init(void *o)
 			&_egueb_svg_document_render_descriptor);
 	egueb_dom_feature_animation_add(EGUEB_DOM_NODE(thiz),
 			&_egueb_svg_document_animation_descriptor);
+	egueb_dom_feature_ui_add(EGUEB_DOM_NODE(thiz),
+			&_egueb_svg_document_ui_descriptor);
 	thiz->fps = 30;
 	thiz->font_size = 16;
 	thiz->input = egueb_dom_input_new(&_document_svg_input_descriptor, thiz);
@@ -1051,38 +1068,6 @@ EAPI Egueb_Dom_Node * egueb_svg_document_element_get_by_iri(Egueb_Dom_Node *n,
  * To be documented
  * FIXME: To be fixed
  */
-EAPI void egueb_svg_document_feed_mouse_move(Egueb_Dom_Node *n, int x, int y)
-{
-	Egueb_Svg_Document *thiz;
-
-	thiz = EGUEB_SVG_DOCUMENT(n);
-	egueb_dom_input_feed_mouse_move(thiz->input, x, y);
-}
-
-/**
- * To be documented
- * FIXME: To be fixed
- */
-EAPI void egueb_svg_document_feed_mouse_down(Egueb_Dom_Node *n, int button)
-{
-	Egueb_Svg_Document *thiz;
-
-	thiz = EGUEB_SVG_DOCUMENT(n);
-	egueb_dom_input_feed_mouse_down(thiz->input, button);
-}
-
-/**
- * To be documented
- * FIXME: To be fixed
- */
-EAPI void egueb_svg_document_feed_mouse_up(Egueb_Dom_Node *n, int button)
-{
-	Egueb_Svg_Document *thiz;
-
-	thiz = EGUEB_SVG_DOCUMENT(n);
-	egueb_dom_input_feed_mouse_up(thiz->input, button);
-}
-
 EAPI void egueb_svg_document_image_load(Egueb_Dom_Node *n,
 		Egueb_Dom_String *uri,
 		Egueb_Svg_Document_Image_Load_Descriptor *d,
