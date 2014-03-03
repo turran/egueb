@@ -1,5 +1,5 @@
-/* Ecss - CSS
- * Copyright (C) 2011 Jorge Luis Zapata
+/* Egueb
+ * Copyright (C) 2011 - 2013 Jorge Luis Zapata
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -16,55 +16,26 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifdef HAVE_CONFIG_H
-# include <config.h>
-#endif
-
-#include <Eina.h>
-
-#include "Egueb_Css.h"
-#include "ecss_private.h"
+#include "egueb_dom_private.h"
+#include "egueb_dom_value.h"
+#include "egueb_dom_value_private.h"
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
-static Eina_Bool _id_test(void *data, Ecss_Context *c, Ecss_Element *e)
-{
-	char *id_name = data;
-	const char *id_data;
-
-	/* check if the id attribute is equal to the id set */
-	id_data = c->property_get(e, "id");
-	if (!id_data) return EINA_FALSE;
-
-	if (!strcmp(id_data, id_name))
-		return EINA_TRUE;
-	return EINA_FALSE;
-}
-
-static void _id_free(void *data)
-{
-	free(data);
-}
-
-static Ecss_Filter_Descriptor _descriptor = {
-	/* .test	= */ _id_test,
-	/* .free	= */ _id_free,
-};
+/*----------------------------------------------------------------------------*
+ *                             Value interface                                *
+ *----------------------------------------------------------------------------*/
+#define egueb_dom_value_font_string_from egueb_css_font_string_from
+#define egueb_dom_value_font_string_to egueb_css_font_string_to
+#define _egueb_dom_value_font_interpolate NULL
+EGUEB_DOM_VALUE_PRIMITIVE_SIMPLE_BOLIERPLATE(egueb_dom_value_font, Egueb_Css_Font);
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/
-EAPI Ecss_Filter * ecss_filter_id_new(const char *name)
+EAPI const Egueb_Dom_Value_Descriptor * egueb_dom_value_font_descriptor_get(void)
 {
-	char *n;
-
-	if (!name) return NULL;
-
-	n = strdup(name);
-	if (!n) return NULL;
-
-	return ecss_filter_new(&_descriptor, n);
+	return &_egueb_dom_value_font_descriptor;
 }
-

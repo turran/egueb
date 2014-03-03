@@ -1,4 +1,4 @@
-%option prefix="ecss_"
+%option prefix="egueb_css_"
 %option yylineno
 %option bison-bridge
 %option reentrant
@@ -11,9 +11,13 @@
 
 #include <Eina.h>
 
-#include "Egueb_Css.h"
-#include "ecss_private.h"
-#include "src_lib_css_libegueb_css_la-ecss_grammar.h"
+#include "egueb_css_private.h"
+#include "egueb_css_selector.h"
+#include "egueb_css_rule.h"
+
+#include "egueb_css_rule_private.h"
+#include "egueb_css_selector_private.h"
+#include "src_lib_css_libegueb_css_la-egueb_css_grammar.h"
 #define YY_NO_UNISTD_H
 %}
 

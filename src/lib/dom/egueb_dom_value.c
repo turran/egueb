@@ -106,7 +106,12 @@ EAPI void egueb_dom_value_interpolate(Egueb_Dom_Value *thiz,
 	if (thiz->descriptor && thiz->descriptor->interpolate)
 		thiz->descriptor->interpolate(thiz, a, b, m, add, acc, mul);
 	else
-		ERR("Can not interpolate");
+	{
+		if (m < 1)
+			egueb_dom_value_copy(a, thiz, EINA_FALSE);
+		else 
+			egueb_dom_value_copy(b, thiz, EINA_FALSE);
+	}
 }
 
 EAPI void egueb_dom_value_primitive_data_from(Egueb_Dom_Value *v, Egueb_Dom_Value_Data *data)

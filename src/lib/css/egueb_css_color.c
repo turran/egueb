@@ -16,7 +16,7 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 #include "Egueb_Css.h"
-#include "ecss_private.h"
+#include "egueb_css_private.h"
 #include "egueb_css_color.h"
 /*============================================================================*
  *                                  Local                                     *

@@ -1,5 +1,7 @@
 Refactor
 ========
++ Move the value, the list, even the string implementation to the base
+  lib
 + Remove the has_changed, changed functions. Make a common
   function to notify a change by passing a node and a bool
   pointer which will create the listeners and set the bool

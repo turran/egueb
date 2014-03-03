@@ -1,4 +1,4 @@
-/* Ecss - CSS
+/* Egueb_Css - CSS
  * Copyright (C) 2011 Jorge Luis Zapata
  *
  * This library is free software; you can redistribute it and/or
@@ -16,44 +16,43 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifdef HAVE_CONFIG_H
-# include <config.h>
-#endif
+#include "egueb_css_private.h"
+#include "egueb_css_selector.h"
+#include "egueb_css_rule.h"
+#include "egueb_css_style.h"
+#include "egueb_css_context.h"
 
-#include <Eina.h>
-
-#include "Egueb_Css.h"
-#include "ecss_private.h"
+#include "egueb_css_filter_private.h"
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
-struct _Ecss_Filter
+struct _Egueb_Css_Filter
 {
-	Ecss_Filter_Descriptor descriptor;
+	Egueb_Css_Filter_Descriptor descriptor;
 	void *data;
 };
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
-Eina_Bool ecss_filter_test(Ecss_Filter *f, Ecss_Context *c, Ecss_Element *e)
+Eina_Bool egueb_css_filter_test(Egueb_Css_Filter *f, Egueb_Css_Context *c, void *e)
 {
 	if (f->descriptor.test)
 		return f->descriptor.test(f->data, c, e);
 	return EINA_FALSE;
 }
 
-void ecss_filter_delete(Ecss_Filter *f)
+void egueb_css_filter_delete(Egueb_Css_Filter *f)
 {
 	if (f->descriptor.free)
 		f->descriptor.free(f->data);
 	free(f);
 }
 
-Ecss_Filter * ecss_filter_new(Ecss_Filter_Descriptor *d, void *data)
+Egueb_Css_Filter * egueb_css_filter_new(Egueb_Css_Filter_Descriptor *d, void *data)
 {
-	Ecss_Filter *f;
+	Egueb_Css_Filter *f;
 
-	f = calloc(1, sizeof(Ecss_Filter));
+	f = calloc(1, sizeof(Egueb_Css_Filter));
 	f->data = data;
 	f->descriptor = *d;
 
@@ -62,4 +61,3 @@ Ecss_Filter * ecss_filter_new(Ecss_Filter_Descriptor *d, void *data)
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/
-

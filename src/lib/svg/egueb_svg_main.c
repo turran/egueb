@@ -21,6 +21,7 @@
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
+static Egueb_Dom_String *_egueb_svg_mime;
 /* keep track of the initialization */
 static int _egueb_svg_init_count = 0;
 
@@ -35,29 +36,29 @@ static Egueb_Dom_Node * _impl_document_create(void)
 static Egueb_Dom_Implementation_Descriptor _impl_descriptor = {
 	/* .document_create 	= */ _impl_document_create,
 };
-
 /*----------------------------------------------------------------------------*
  *                    Implementation source interface                         *
  *----------------------------------------------------------------------------*/
-static Egueb_Dom_Implementation * _impl_source_get_by_mime(
-		Egueb_Dom_String *mime)
+static Egueb_Dom_Implementation * _impl_source_implementation_get(void)
 {
-	const char *str;
+	return egueb_dom_implementation_new(&_impl_descriptor);
+}
 
-	str = egueb_dom_string_string_get(mime);
-	if (!strcmp(str, "image/svg+xml"))
-		return egueb_dom_implementation_new(&_impl_descriptor);
-	else
-		return NULL;
+static Egueb_Dom_String * _impl_source_mime_get(void)
+{
+	return egueb_dom_string_ref(_egueb_svg_mime);
 }
 
 static Egueb_Dom_Implementation_Source_Descriptor _impl_source_descriptor = {
-	/* .implementation_get_by_mime 	= */ _impl_source_get_by_mime,
+	/* .implementation_get	= */ _impl_source_implementation_get,
+	/* .mime_get 	 	= */ _impl_source_mime_get,
 };
 
 /* our helpful strings */
 static void _egueb_svg_strings_init(void)
 {
+	/* mime */
+	_egueb_svg_mime = egueb_dom_string_new_with_string("image/svg+xml");
 	/* elements */
 	EGUEB_SVG_NAME_A = egueb_dom_string_new_with_string("a");
 	EGUEB_SVG_NAME_CIRCLE = egueb_dom_string_new_with_string("circle");
@@ -135,6 +136,8 @@ static void _egueb_svg_strings_init(void)
 
 static void _egueb_svg_strings_shutdown(void)
 {
+	/* mime */
+	egueb_dom_string_unref(_egueb_svg_mime);
 	/* elements */
 	egueb_dom_string_unref(EGUEB_SVG_NAME_A);
 	egueb_dom_string_unref(EGUEB_SVG_NAME_CIRCLE);

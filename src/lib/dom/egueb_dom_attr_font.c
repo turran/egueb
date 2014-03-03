@@ -1,5 +1,5 @@
-/* Ecss - CSS
- * Copyright (C) 2011 Jorge Luis Zapata
+/* Egueb
+ * Copyright (C) 2011 - 2013 Jorge Luis Zapata
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -16,62 +16,35 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifdef HAVE_CONFIG_H
-# include <config.h>
-#endif
+#include "egueb_dom_private.h"
 
-#include <Eina.h>
+#include "egueb_dom_string.h"
+#include "egueb_dom_main.h"
+#include "egueb_dom_attr.h"
+#include "egueb_dom_value.h"
+#include "egueb_dom_value_font.h"
 
-#include "Egueb_Css.h"
-#include "ecss_private.h"
+#include "egueb_dom_attr_private.h"
+#include "egueb_dom_attr_primitive_private.h"
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
-
-static int ecss_init_count = 0;
-
+EGUEB_DOM_ATTR_PRIMITIVE_BOILERPLATE(Egueb_Css_Font,
+		Egueb_Dom_Attr_Font, egueb_dom_value_font,
+		egueb_dom_attr_font)
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
-
-int _ecss_log_dom_global = -1;
-
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/
-EAPI int ecss_init(void)
+EAPI Egueb_Dom_Node * egueb_dom_attr_font_new(Egueb_Dom_String *name,
+		Eina_Bool animatable, Eina_Bool stylable,
+		Eina_Bool inheritable)
 {
-	if (++ecss_init_count != 1)
-		return ecss_init_count;
+	Egueb_Dom_Node *n;
 
-	if (!eina_init())
-	{
-		fprintf(stderr, "Ecss: Eina init failed");
-		return --ecss_init_count;
-	}
-
-	_ecss_log_dom_global = eina_log_domain_register("ecss", ECSS_DEFAULT_LOG_COLOR);
-	if (_ecss_log_dom_global < 0)
-	{
-		EINA_LOG_ERR("Ecss Can not create a general log domain.");
-		goto shutdown_eina;
-	}
-
-	return ecss_init_count;
-
-shutdown_eina:
-	eina_shutdown();
-	return --ecss_init_count;
-}
-
-EAPI int ecss_shutdown(void)
-{
-	if (--ecss_init_count != 0)
-		return ecss_init_count;
-
-	eina_log_domain_unregister(_ecss_log_dom_global);
-	_ecss_log_dom_global = -1;
-	eina_shutdown();
-
-	return ecss_init_count;
+	n = ENESIM_OBJECT_INSTANCE_NEW(egueb_dom_attr_font);
+	egueb_dom_attr_init(n, name, animatable, stylable, inheritable);
+	return n;
 }

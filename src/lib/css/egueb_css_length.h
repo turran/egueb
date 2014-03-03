@@ -15,28 +15,31 @@
  * License along with this library.
  * If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef _EGUEB_SVG_COLOR_H
-#define _EGUEB_SVG_COLOR_H
+#ifndef _EGUEB_CSS_LENGTH_H
+#define _EGUEB_CSS_LENGTH_H
 
-typedef struct _Egueb_Svg_Color
+typedef enum _Egueb_Css_Length_Unit
 {
-	uint8_t r;
-	uint8_t g;
-	uint8_t b;
-} Egueb_Svg_Color;
+	EGUEB_CSS_LENGTH_UNIT_EM,
+	EGUEB_CSS_LENGTH_UNIT_EX,
+	EGUEB_CSS_LENGTH_UNIT_PX,
+	EGUEB_CSS_LENGTH_UNIT_PT,
+	EGUEB_CSS_LENGTH_UNIT_PC,
+	EGUEB_CSS_LENGTH_UNIT_CM,
+	EGUEB_CSS_LENGTH_UNIT_MM,
+	EGUEB_CSS_LENGTH_UNIT_IN,
+	EGUEB_CSS_LENGTH_UNITS
+} Egueb_Css_Length_Unit;
 
-typedef struct _Egueb_Svg_Color_Animated
+typedef struct _Egueb_Css_Length
 {
-	Egueb_Svg_Color base;
-	Egueb_Svg_Color anim;
-} Egueb_Svg_Color_Animated;
+	double value;
+	Egueb_Css_Length_Unit unit;
+} Egueb_Css_Length;
 
-EAPI extern const Egueb_Svg_Color EGUEB_SVG_COLOR_BLACK;
-
-EAPI const Egueb_Dom_Value_Descriptor * egueb_svg_color_descriptor_get(void);
-EAPI Eina_Bool egueb_svg_color_string_from(Egueb_Svg_Color *color, const char *attr_val);
-EAPI char * egueb_svg_color_string_to(Egueb_Svg_Color *thiz);
-EAPI Eina_Bool egueb_svg_color_is_equal(const Egueb_Svg_Color *c1, const Egueb_Svg_Color *c2);
-EAPI void egueb_svg_color_components_from(Egueb_Svg_Color *thiz, uint8_t r, uint8_t g, uint8_t b);
+EAPI Eina_Bool egueb_css_length_string_from(Egueb_Css_Length *thiz,
+		const char *str);
+EAPI const char * egueb_css_length_string_to(Egueb_Css_Length thiz);
 
 #endif
+

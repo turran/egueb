@@ -15,13 +15,27 @@
  * License along with this library.
  * If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef _EGUEB_DOM_IMPLEMENTATION_SOURCE_PRIVATE_H_
-#define _EGUEB_DOM_IMPLEMENTATION_SOURCE_PRIVATE_H_
 
-Egueb_Dom_String *
-egueb_dom_implementation_source_mime_get(Egueb_Dom_Implementation_Source *thiz);
+#ifndef _EGUEB_CSS_FONT_WEIGHT_H_
+#define _EGUEB_CSS_FONT_WEIGHT_H_
 
-Egueb_Dom_Implementation *
-egueb_dom_implementation_source_implementation_get(Egueb_Dom_Implementation_Source *thiz);
+typedef enum _Egueb_Css_Font_Weight {
+	EGUEB_CSS_FONT_WEIGHT_NORMAL,
+	EGUEB_CSS_FONT_WEIGHT_BOLD,
+	EGUEB_CSS_FONT_WEIGHT_BOLDER,
+	EGUEB_CSS_FONT_WEIGHT_LIGHTER, 
+	EGUEB_CSS_FONT_WEIGHT_100,
+	EGUEB_CSS_FONT_WEIGHT_200,
+	EGUEB_CSS_FONT_WEIGHT_300,
+	EGUEB_CSS_FONT_WEIGHT_400,
+	EGUEB_CSS_FONT_WEIGHT_500,
+	EGUEB_CSS_FONT_WEIGHT_600,
+	EGUEB_CSS_FONT_WEIGHT_700,
+	EGUEB_CSS_FONT_WEIGHT_800,
+	EGUEB_CSS_FONT_WEIGHT_900,
+} Egueb_Css_Font_Weight;
+
+EAPI Eina_Bool egueb_css_font_weight_string_from(Egueb_Css_Font_Weight *thiz, const char *attr_val);
+EAPI const char * egueb_css_font_weight_string_to(Egueb_Css_Font_Weight thiz);
 
 #endif

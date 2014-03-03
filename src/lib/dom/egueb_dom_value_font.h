@@ -15,13 +15,9 @@
  * License along with this library.
  * If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef _EGUEB_DOM_IMPLEMENTATION_SOURCE_PRIVATE_H_
-#define _EGUEB_DOM_IMPLEMENTATION_SOURCE_PRIVATE_H_
+#ifndef _EGUEB_DOM_VALUE_FONT_H
+#define _EGUEB_DOM_VALUE_FONT_H
 
-Egueb_Dom_String *
-egueb_dom_implementation_source_mime_get(Egueb_Dom_Implementation_Source *thiz);
-
-Egueb_Dom_Implementation *
-egueb_dom_implementation_source_implementation_get(Egueb_Dom_Implementation_Source *thiz);
+EAPI const Egueb_Dom_Value_Descriptor * egueb_dom_value_font_descriptor_get(void);
 
 #endif

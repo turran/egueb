@@ -1,4 +1,4 @@
-/* Ecss - CSS
+/* Egueb_Css - CSS
  * Copyright (C) 2011 Jorge Luis Zapata
  *
  * This library is free software; you can redistribute it and/or
@@ -16,14 +16,16 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifdef HAVE_CONFIG_H
-# include <config.h>
-#endif
+#include "egueb_css_private.h"
+#include "egueb_css_selector.h"
+#include "egueb_css_rule.h"
+#include "egueb_css_style.h"
+#include "egueb_css_context.h"
 
-#include <Eina.h>
-
-#include "Egueb_Css.h"
-#include "ecss_private.h"
+#include "egueb_css_rule_private.h"
+#include "egueb_css_selector_private.h"
+#include "egueb_css_filter_private.h"
+#include "egueb_css_style_private.h"
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
@@ -32,23 +34,23 @@
 	while (*t) { if ((*t == ' ') || (*t == '\n') || (*t == '\t')) t++; else break; }
 
 /* Keep track of the selector state */
-typedef struct _Ecss_State_Selector
+typedef struct _Egueb_Css_State_Selector
 {
-	Ecss_Rule *r;
-	Ecss_Selector *s; /* the current selector in case we have a compound selector */
+	Egueb_Css_Rule *r;
+	Egueb_Css_Selector *s; /* the current selector in case we have a compound selector */
 	int child;
 	int sibling;
-} Ecss_State_Selector;
+} Egueb_Css_State_Selector;
 
-typedef struct _Ecss_State
+typedef struct _Egueb_Css_State
 {
 	Eina_List *active;
 	Eina_List *inactive;
-} Ecss_State;
+} Egueb_Css_State;
 
-static void _element_rule_apply(Ecss_Context *c, Ecss_Element *e, Ecss_Rule *r)
+static void _element_rule_apply(Egueb_Css_Context *c, void *e, Egueb_Css_Rule *r)
 {
-	Ecss_Declaration *d;
+	Egueb_Css_Declaration *d;
 	Eina_List *l;
 
 	EINA_LIST_FOREACH(r->declarations, l, d)
@@ -57,10 +59,10 @@ static void _element_rule_apply(Ecss_Context *c, Ecss_Element *e, Ecss_Rule *r)
 	}
 }
 
-static Eina_Bool _element_matches(Ecss_Context *c, Ecss_Element *e, Ecss_State_Selector *ss)
+static Eina_Bool _element_matches(Egueb_Css_Context *c, void *e, Egueb_Css_State_Selector *ss)
 {
-	Ecss_Rule *r = ss->r;
-	Ecss_Selector *s = ss->s;
+	Egueb_Css_Rule *r = ss->r;
+	Egueb_Css_Selector *s = ss->s;
 	Eina_Bool ret = EINA_FALSE;
 
 	if (!s->subject)
@@ -75,22 +77,22 @@ static Eina_Bool _element_matches(Ecss_Context *c, Ecss_Element *e, Ecss_State_S
 
 	if (ret)
 	{
-		Ecss_Filter *f;
+		Egueb_Css_Filter *f;
 		Eina_List *l;
 
 		EINA_LIST_FOREACH(s->filters, l, f)
 		{
-			if (!ecss_filter_test(f, c, e))
+			if (!egueb_css_filter_test(f, c, e))
 				return EINA_FALSE;
 		}
 	}
 	return ret;
 }
 
-static void _process_element(Ecss_Context *c, Ecss_Element *e, Ecss_State *state)
+static void _process_element(Egueb_Css_Context *c, void *e, Egueb_Css_State *state)
 {
-	Ecss_Element *e1;
-	Ecss_State_Selector *ss;
+	void *e1;
+	Egueb_Css_State_Selector *ss;
 	Eina_List *l;
 	Eina_List *l_next;
 	Eina_List *new_active = NULL;
@@ -103,13 +105,13 @@ static void _process_element(Ecss_Context *c, Ecss_Element *e, Ecss_State *state
 	old_inactive = state->inactive;
 	EINA_LIST_FOREACH(state->inactive, l, ss)
 	{
-		Ecss_Selector *s_next;
-		Ecss_Selector *s = ss->s;
+		Egueb_Css_Selector *s_next;
+		Egueb_Css_Selector *s = ss->s;
 
 		if (_element_matches(c, e, ss))
 		{
 			/* can we apply directly? */
-			s_next = ecss_selector_next_get(s);
+			s_next = egueb_css_selector_next_get(s);
 			if (!s_next)
 			{
 				/* apply */
@@ -128,19 +130,19 @@ static void _process_element(Ecss_Context *c, Ecss_Element *e, Ecss_State *state
 	old_active = state->active;
 	EINA_LIST_FOREACH(state->active, l, ss)
 	{
-		Ecss_Selector *s_next;
-		Ecss_Selector *s = ss->s;
+		Egueb_Css_Selector *s_next;
+		Egueb_Css_Selector *s = ss->s;
 		Eina_Bool keep = EINA_FALSE; /* keep in the list of actives for later */
 		Eina_Bool apply = EINA_FALSE; /* apply if it matches */
 
 		switch (s->c)
 		{
-			case ECSS_NONE:
+			case EGUEB_CSS_NONE:
 			/* this case should not happen */
 			printf(">>> error <<<\n");
 			break;
 
-			case ECSS_DESCENDANT:
+			case EGUEB_CSS_DESCENDANT:
 			if (ss->child > 0)
 			{
 				apply = EINA_TRUE;
@@ -148,17 +150,17 @@ static void _process_element(Ecss_Context *c, Ecss_Element *e, Ecss_State *state
 			}
 			break;
 
-			case ECSS_CHILD:
+			case EGUEB_CSS_CHILD:
 			if (ss->child == 1)
 				apply = EINA_TRUE;
 			break;
 
-			case ECSS_ADJACENT_SIBLING:
+			case EGUEB_CSS_ADJACENT_SIBLING:
 			if (ss->sibling == 1)
 				apply = EINA_TRUE;
 			break;
 
-			case ECSS_SIBLING:
+			case EGUEB_CSS_SIBLING:
 			if (ss->sibling > 0)
 			{
 				apply = EINA_TRUE;
@@ -172,7 +174,7 @@ static void _process_element(Ecss_Context *c, Ecss_Element *e, Ecss_State *state
 		{
 			if (_element_matches(c, e, ss))
 			{
-				s_next = ecss_selector_next_get(s);
+				s_next = egueb_css_selector_next_get(s);
 				if (!s_next)
 				{
 					/* apply */
@@ -229,10 +231,10 @@ static void _process_element(Ecss_Context *c, Ecss_Element *e, Ecss_State *state
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/
-EAPI void ecss_context_style_apply(Ecss_Context *c, Ecss_Style *s, Ecss_Element *e)
+EAPI void egueb_css_context_style_apply(Egueb_Css_Context *c, Egueb_Css_Style *s, void *e)
 {
-	Ecss_State state;
-	Ecss_Rule *r;
+	Egueb_Css_State state;
+	Egueb_Css_Rule *r;
 	Eina_List *l;
 
 	if (!c) return;
@@ -245,10 +247,10 @@ EAPI void ecss_context_style_apply(Ecss_Context *c, Ecss_Style *s, Ecss_Element 
 	/* put every rule on the inactive list */
 	EINA_LIST_FOREACH(s->rules, l, r)
 	{
-		Ecss_State_Selector *ss;
-		Ecss_Selector *s = r->selector;
+		Egueb_Css_State_Selector *ss;
+		Egueb_Css_Selector *s = r->selector;
 
-		ss = malloc(sizeof(Ecss_State_Selector));
+		ss = malloc(sizeof(Egueb_Css_State_Selector));
 		ss->r = r;
 		ss->s = s;
 		ss->child = 0;
@@ -260,7 +262,7 @@ EAPI void ecss_context_style_apply(Ecss_Context *c, Ecss_Style *s, Ecss_Element 
 	/* TODO destroy the state */
 }
 
-EAPI void ecss_context_inline_style_apply(Ecss_Context *c, const char *style, Ecss_Element *e)
+EAPI void egueb_css_context_inline_style_apply(Egueb_Css_Context *c, const char *style, void *e)
 {
 	char *orig;
 	char *v;
@@ -306,5 +308,3 @@ EAPI void ecss_context_inline_style_apply(Ecss_Context *c, const char *style, Ec
 
 	free(orig);
 }
-
-

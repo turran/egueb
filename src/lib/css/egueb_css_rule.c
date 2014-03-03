@@ -1,5 +1,5 @@
-/* Egueb
- * Copyright (C) 2011 - 2013 Jorge Luis Zapata
+/* Egueb_Css - CSS
+ * Copyright (C) 2011 Jorge Luis Zapata
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -15,57 +15,47 @@
  * License along with this library.
  * If not, see <http://www.gnu.org/licenses/>.
  */
-#include "egueb_dom_private.h"
-
-#include "egueb_dom_string.h"
-#include "egueb_dom_main.h"
-#include "egueb_dom_node.h"
-#include "egueb_dom_implementation.h"
-#include "egueb_dom_implementation_source.h"
-
-#include "egueb_dom_implementation_source_private.h"
+#include "egueb_css_private.h"
+#include "egueb_css_selector.h"
+#include "egueb_css_rule.h"
+#include "egueb_css_rule_private.h"
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
-struct _Egueb_Dom_Implementation_Source
-{
-	const Egueb_Dom_Implementation_Source_Descriptor *d;
-};
+
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
-Egueb_Dom_String *
-egueb_dom_implementation_source_mime_get(Egueb_Dom_Implementation_Source *thiz)
+void egueb_css_rule_declaration_insert(Egueb_Css_Rule *thiz, Egueb_Css_Declaration *d)
 {
-	if (thiz->d->mime_get)
-		return thiz->d->mime_get();
-	return NULL;
-}
-
-Egueb_Dom_Implementation *
-egueb_dom_implementation_source_implementation_get(Egueb_Dom_Implementation_Source *thiz)
-{
-	return thiz->d->implementation_get();
+	printf("New declaration of %s %s\n", d->property, d->value);
+	thiz->declarations = eina_list_append(thiz->declarations, d);
 }
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/
-EAPI Egueb_Dom_Implementation_Source * egueb_dom_implementation_source_new(
-		const Egueb_Dom_Implementation_Source_Descriptor *d)
+EAPI Egueb_Css_Rule * egueb_css_rule_new(Egueb_Css_Selector *s)
 {
-	Egueb_Dom_Implementation_Source *thiz;
+	Egueb_Css_Rule *thiz;
 
-	if (!d) return NULL;
-	if (!d->implementation_get) return NULL;
+	if (!s) return NULL;
 
-	thiz = calloc(1, sizeof(Egueb_Dom_Implementation_Source));
-	thiz->d = d;
+	thiz = calloc(1, sizeof(Egueb_Css_Rule));
+	thiz->selector = s;
 
 	return thiz;
 }
 
-EAPI void egueb_dom_implementation_source_free(
-		Egueb_Dom_Implementation_Source *thiz)
+EAPI void egueb_css_rule_declaration_add(Egueb_Css_Rule *thiz, const char *property,
+		const char *value)
 {
-	free(thiz);
+	Egueb_Css_Declaration *d;
+
+	if (!property || !value) return;
+
+	d = malloc(sizeof(Egueb_Css_Declaration));
+	d->property = strdup(property);
+	d->value = strdup(value);
+
+	egueb_css_rule_declaration_insert(thiz, d);
 }

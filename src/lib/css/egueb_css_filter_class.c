@@ -1,4 +1,4 @@
-/* Ecss - CSS
+/* Egueb_Css - CSS
  * Copyright (C) 2011 Jorge Luis Zapata
  *
  * This library is free software; you can redistribute it and/or
@@ -16,18 +16,17 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifdef HAVE_CONFIG_H
-# include <config.h>
-#endif
+#include "egueb_css_private.h"
+#include "egueb_css_selector.h"
+#include "egueb_css_rule.h"
+#include "egueb_css_style.h"
+#include "egueb_css_context.h"
 
-#include <Eina.h>
-
-#include "Egueb_Css.h"
-#include "ecss_private.h"
+#include "egueb_css_filter_private.h"
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
-static Eina_Bool _class_test(void *data, Ecss_Context *c, Ecss_Element *e)
+static Eina_Bool _class_test(void *data, Egueb_Css_Context *c, void *e)
 {
 	char *class_name = data;
 	const char *class_data;
@@ -48,7 +47,7 @@ static void _class_free(void *data)
 	free(data);
 }
 
-static Ecss_Filter_Descriptor _descriptor = {
+static Egueb_Css_Filter_Descriptor _descriptor = {
 	/* .test	= */ _class_test,
 	/* .free	= */ _class_free,
 };
@@ -58,7 +57,7 @@ static Ecss_Filter_Descriptor _descriptor = {
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/
-EAPI Ecss_Filter * ecss_filter_class_new(const char *name)
+EAPI Egueb_Css_Filter * egueb_css_filter_class_new(const char *name)
 {
 	char *n;
 
@@ -67,5 +66,5 @@ EAPI Ecss_Filter * ecss_filter_class_new(const char *name)
 	n = strdup(name);
 	if (!n) return NULL;
 
-	return ecss_filter_new(&_descriptor, n);
+	return egueb_css_filter_new(&_descriptor, n);
 }

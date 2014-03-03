@@ -1,5 +1,5 @@
-/* Ecss - CSS
- * Copyright (C) 2011 Jorge Luis Zapata
+/* Egueb
+ * Copyright (C) 2011 - 2013 Jorge Luis Zapata
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -15,8 +15,8 @@
  * License along with this library.
  * If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef _ECSS_H
-#define _ECSS_H
+#ifndef _EGUEB_CSS_H
+#define _EGUEB_CSS_H
 
 #include <Eina.h>
 
@@ -49,59 +49,21 @@
 # endif
 #endif
 
-typedef struct _Ecss_Selector Ecss_Selector;
-typedef struct _Ecss_Rule Ecss_Rule;
-typedef struct _Ecss_Style Ecss_Style;
-typedef void Ecss_Element;
-typedef struct _Ecss_Filter Ecss_Filter;
+/* core */
+#include "egueb_css_main.h"
+#include "egueb_css_selector.h"
+#include "egueb_css_rule.h"
+#include "egueb_css_style.h"
+#include "egueb_css_context.h"
 
-typedef enum _Ecss_Combinator
-{
-	ECSS_NONE,
-	ECSS_DESCENDANT,
-	ECSS_CHILD,
-	ECSS_ADJACENT_SIBLING,
-	ECSS_SIBLING,
-} Ecss_Combinator;
-
-typedef void (*Ecss_Context_Property_Set)(Ecss_Element *e, const char *property, const char *value);
-typedef const char * (*Ecss_Context_Property_Get)(Ecss_Element *e, const char *property);
-typedef Ecss_Element * (*Ecss_Context_Get_Child)(Ecss_Element *e);
-typedef Ecss_Element * (*Ecss_Context_Get_Next_Sibling)(Ecss_Element *e);
-typedef const char * (*Ecss_Context_Get_Name)(Ecss_Element *e);
-
-typedef struct _Ecss_Context
-{
-	Ecss_Context_Property_Set property_set;
-	Ecss_Context_Property_Get property_get;
-	Ecss_Context_Get_Name get_name;
-	Ecss_Context_Get_Child get_child;
-	Ecss_Context_Get_Next_Sibling get_next_sibling;
-} Ecss_Context;
-
-EAPI int ecss_init(void);
-EAPI int ecss_shutdown(void);
-
-EAPI Ecss_Selector * ecss_selector_new(void);
-EAPI void ecss_selector_subject_set(Ecss_Selector *thiz, const char *subject);
-EAPI void ecss_selector_filter_add(Ecss_Selector *thiz, Ecss_Filter *f);
-EAPI void ecss_selector_combinator_set(Ecss_Selector *thiz, Ecss_Selector *ss, Ecss_Combinator c);
-
-EAPI Ecss_Rule * ecss_rule_new(Ecss_Selector *s);
-EAPI void ecss_rule_declaration_add(Ecss_Rule *thiz, const char *property,
-		const char *value);
-
-EAPI Ecss_Style * ecss_style_new(void);
-EAPI Ecss_Style * ecss_style_load_from_file(const char *file);
-EAPI Ecss_Style * ecss_style_load_from_content(const char *content, size_t len);
-EAPI void ecss_style_rule_add(Ecss_Style *thiz, Ecss_Rule *r);
-
-EAPI void ecss_context_style_apply(Ecss_Context *c, Ecss_Style *s, Ecss_Element *e);
-EAPI void ecss_context_inline_style_apply(Ecss_Context *c, const char *style, Ecss_Element *e);
-
-EAPI Ecss_Filter * ecss_filter_class_new(const char *name);
-EAPI Ecss_Filter * ecss_filter_id_new(const char *name);
-
+/* common parsers */
 #include "egueb_css_color.h"
+#include "egueb_css_length.h"
+#include "egueb_css_percentage.h"
+#include "egueb_css_font_size.h"
+#include "egueb_css_font_style.h"
+#include "egueb_css_font_variant.h"
+#include "egueb_css_font_weight.h"
+#include "egueb_css_font.h"
 
-#endif /*_ECSS_H*/
+#endif /*_EGUEB_CSS_H*/

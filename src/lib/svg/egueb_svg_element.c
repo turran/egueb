@@ -125,7 +125,7 @@ static const char * _egueb_svg_element_css_get_name(void *e)
 	return NULL;
 }
 
-static Ecss_Context _egueb_svg_element_css_context = {
+static Egueb_Css_Context _egueb_svg_element_css_context = {
 	/* .property_set 	= */ _egueb_svg_element_css_property_set,
 	/* .property_get 	= */ _egueb_svg_element_css_property_get,
 	/* .get_name 		= */ _egueb_svg_element_css_get_name,
@@ -646,7 +646,7 @@ static Eina_Bool _egueb_svg_element_process(Egueb_Dom_Element *e)
 		/* TODO revert the style */
 		DBG_ELEMENT(EGUEB_DOM_NODE(e), "Using a style");
 		/* apply the new style */
-		ecss_context_inline_style_apply(&_egueb_svg_element_css_context, str, thiz);
+		egueb_css_context_inline_style_apply(&_egueb_svg_element_css_context, str, thiz);
 		/* swap the styles */
 		if (thiz->last_style)
 		{
@@ -1043,7 +1043,7 @@ Egueb_Svg_Element_Setup_Return egueb_svg_element_setup_rel(Egueb_Dom_Tag *t,
 		if (thiz->style)
 		{
 			egueb_svg_element_attribute_type_set(t, ESVG_ATTR_CSS);
-			ecss_context_inline_style_apply(&_egueb_svg_element_css_context, thiz->style, t);
+			egueb_css_context_inline_style_apply(&_egueb_svg_element_css_context, thiz->style, t);
 			egueb_svg_element_attribute_type_set(t, ESVG_ATTR_XML);
 		}
 		thiz->style_changed = EINA_FALSE;
@@ -1127,10 +1127,10 @@ void egueb_svg_element_initialize(Ender_Element *e)
 		thiz->descriptor.initialize(e);
 }
 
-void egueb_svg_element_ecss_style_apply(Egueb_Dom_Tag *t, Ecss_Style *s)
+void egueb_svg_element_egueb_css_style_apply(Egueb_Dom_Tag *t, Egueb_Css_Style *s)
 {
 	egueb_svg_element_attribute_type_set(t, ESVG_ATTR_CSS);
-	ecss_context_style_apply(&_egueb_svg_element_css_context, s, t);
+	egueb_css_context_style_apply(&_egueb_svg_element_css_context, s, t);
 	egueb_svg_element_attribute_type_set(t, ESVG_ATTR_XML);
 }
 

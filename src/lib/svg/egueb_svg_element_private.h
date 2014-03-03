@@ -206,7 +206,7 @@ Eina_Bool egueb_svg_element_attribute_animate_get(Egueb_Dom_Node *n);
 
 void egueb_svg_element_initialize(Ender_Element *e);
 
-void egueb_svg_element_ecss_style_apply(Egueb_Dom_Node *n, Ecss_Style *s);
+void egueb_svg_element_ecss_style_apply(Egueb_Dom_Node *n, Egueb_Css_Style *s);
 
 void egueb_svg_element_topmost_set(Egueb_Dom_Node *n, Ender_Element *topmost);
 void egueb_svg_element_state_compose(Egueb_Dom_Node *n, const Egueb_Svg_Element_Context *s, Egueb_Svg_Element_Context *d);

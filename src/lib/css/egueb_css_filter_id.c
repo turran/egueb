@@ -1,4 +1,4 @@
-/* Ecss - CSS
+/* Egueb_Css - CSS
  * Copyright (C) 2011 Jorge Luis Zapata
  *
  * This library is free software; you can redistribute it and/or
@@ -16,51 +16,54 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifdef HAVE_CONFIG_H
-# include <config.h>
-#endif
+#include "egueb_css_private.h"
+#include "egueb_css_selector.h"
+#include "egueb_css_rule.h"
+#include "egueb_css_style.h"
+#include "egueb_css_context.h"
 
-#include <Eina.h>
-
-#include "Egueb_Css.h"
-#include "ecss_private.h"
+#include "egueb_css_filter_private.h"
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
+static Eina_Bool _id_test(void *data, Egueb_Css_Context *c, void *e)
+{
+	char *id_name = data;
+	const char *id_data;
 
+	/* check if the id attribute is equal to the id set */
+	id_data = c->property_get(e, "id");
+	if (!id_data) return EINA_FALSE;
+
+	if (!strcmp(id_data, id_name))
+		return EINA_TRUE;
+	return EINA_FALSE;
+}
+
+static void _id_free(void *data)
+{
+	free(data);
+}
+
+static Egueb_Css_Filter_Descriptor _descriptor = {
+	/* .test	= */ _id_test,
+	/* .free	= */ _id_free,
+};
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
-void ecss_rule_declaration_insert(Ecss_Rule *thiz, Ecss_Declaration *d)
-{
-	printf("New declaration of %s %s\n", d->property, d->value);
-	thiz->declarations = eina_list_append(thiz->declarations, d);
-}
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/
-EAPI Ecss_Rule * ecss_rule_new(Ecss_Selector *s)
+EAPI Egueb_Css_Filter * egueb_css_filter_id_new(const char *name)
 {
-	Ecss_Rule *thiz;
+	char *n;
 
-	if (!s) return NULL;
+	if (!name) return NULL;
 
-	thiz = calloc(1, sizeof(Ecss_Rule));
-	thiz->selector = s;
+	n = strdup(name);
+	if (!n) return NULL;
 
-	return thiz;
+	return egueb_css_filter_new(&_descriptor, n);
 }
 
-EAPI void ecss_rule_declaration_add(Ecss_Rule *thiz, const char *property,
-		const char *value)
-{
-	Ecss_Declaration *d;
-
-	if (!property || !value) return;
-
-	d = malloc(sizeof(Ecss_Declaration));
-	d->property = strdup(property);
-	d->value = strdup(value);
-
-	ecss_rule_declaration_insert(thiz, d);
-}

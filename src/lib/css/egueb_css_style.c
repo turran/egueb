@@ -1,4 +1,4 @@
-/* Ecss - CSS
+/* Egueb_Css - CSS
  * Copyright (C) 2011 Jorge Luis Zapata
  *
  * This library is free software; you can redistribute it and/or
@@ -16,18 +16,17 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifdef HAVE_CONFIG_H
-# include <config.h>
-#endif
+#include "egueb_css_private.h"
+#include "egueb_css_selector.h"
+#include "egueb_css_rule.h"
+#include "egueb_css_style.h"
 
-#include <Eina.h>
+#include "egueb_css_style_private.h"
+#include "egueb_css_parser_private.h"
 
-#include "Egueb_Css.h"
-#include "ecss_private.h"
-	
-void * ecss__scan_string(const char *yy_str, void *scanner);
-void ecss__delete_buffer(void *state, void *scanner);
-void ecss__switch_to_buffer(void *state, void *scanner);
+void * egueb_css__scan_string(const char *yy_str, void *scanner);
+void egueb_css__delete_buffer(void *state, void *scanner);
+void egueb_css__switch_to_buffer(void *state, void *scanner);
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
@@ -37,18 +36,18 @@ void ecss__switch_to_buffer(void *state, void *scanner);
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/
-EAPI Ecss_Style * ecss_style_new(void)
+EAPI Egueb_Css_Style * egueb_css_style_new(void)
 {
-	Ecss_Style *thiz;
+	Egueb_Css_Style *thiz;
 
-	thiz = calloc(1, sizeof(Ecss_Style));
+	thiz = calloc(1, sizeof(Egueb_Css_Style));
 	return thiz;
 }
 
-EAPI Ecss_Style * ecss_style_load_from_file(const char *file)
+EAPI Egueb_Css_Style * egueb_css_style_load_from_file(const char *file)
 {
-	Ecss_Style *thiz;
-	Ecss_Parser parser;
+	Egueb_Css_Style *thiz;
+	Egueb_Css_Parser parser;
 	void *scanner;
 	FILE *f;
 	int ret;
@@ -58,14 +57,14 @@ EAPI Ecss_Style * ecss_style_load_from_file(const char *file)
 	f = fopen(file, "r");
 	if (!f) return NULL;
 
-	thiz = ecss_style_new();
+	thiz = egueb_css_style_new();
 	parser.style = thiz;
 
-	ecss_lex_init(&scanner);
-	ecss_set_in(f, scanner);
-	ret = ecss_parse(scanner, &parser);
+	egueb_css_lex_init(&scanner);
+	egueb_css_set_in(f, scanner);
+	ret = egueb_css_parse(scanner, &parser);
 
-	ecss_lex_destroy(scanner);
+	egueb_css_lex_destroy(scanner);
 	fclose(f);
 
 	if (ret)
@@ -77,29 +76,29 @@ EAPI Ecss_Style * ecss_style_load_from_file(const char *file)
 	return thiz;
 }
 
-EAPI Ecss_Style * ecss_style_load_from_content(const char *content, size_t len)
+EAPI Egueb_Css_Style * egueb_css_style_load_from_content(const char *content, size_t len)
 {
-	Ecss_Style *thiz;
-	Ecss_Parser parser;
+	Egueb_Css_Style *thiz;
+	Egueb_Css_Parser parser;
 	char *tmp;
 	void *buffer_state;
 	void *scanner;
 	int ret;
 
-	thiz = ecss_style_new();
+	thiz = egueb_css_style_new();
 	parser.style = thiz;
 
 	tmp = malloc(len + 2);
 	strncpy(tmp, content, len);
 	tmp[len] = tmp [len+1] = 0; // looks like flex/yacc need a double null terminated string
 
-	ecss_lex_init(&scanner);
-	buffer_state = ecss__scan_string(tmp, scanner);
-	ecss__switch_to_buffer(buffer_state, scanner); // switch flex to the buffer we just created
-	ret = ecss_parse(scanner, &parser);
-	ecss__delete_buffer(buffer_state, scanner);
+	egueb_css_lex_init(&scanner);
+	buffer_state = egueb_css__scan_string(tmp, scanner);
+	egueb_css__switch_to_buffer(buffer_state, scanner); // switch flex to the buffer we just created
+	ret = egueb_css_parse(scanner, &parser);
+	egueb_css__delete_buffer(buffer_state, scanner);
 
-	ecss_lex_destroy(scanner);
+	egueb_css_lex_destroy(scanner);
 
 	if (ret)
 	{
@@ -111,7 +110,7 @@ EAPI Ecss_Style * ecss_style_load_from_content(const char *content, size_t len)
 	return thiz;
 }
 
-EAPI void ecss_style_rule_add(Ecss_Style *thiz, Ecss_Rule *r)
+EAPI void egueb_css_style_rule_add(Egueb_Css_Style *thiz, Egueb_Css_Rule *r)
 {
 	if (!thiz) return;
 	if (!r) return;

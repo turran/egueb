@@ -16,35 +16,31 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 #include "egueb_css_private.h"
-#include "egueb_css_font_variant.h"
+#include "egueb_css_percentage.h"
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/
-EAPI Eina_Bool egueb_css_font_variant_string_from(Egueb_Css_Font_Variant *thiz,
+EAPI Eina_Bool egueb_css_percentage_string_from(double *thiz,
 		const char *str)
 {
-	Eina_Bool ret = EINA_TRUE;
+	const char *last;
+	char *endptr;
 
-	if (!strcmp(str, "normal"))
-		*thiz = EGUEB_CSS_FONT_VARIANT_NORMAL;
-	else if (!strcmp(str, "small-caps"))
-		*thiz = EGUEB_CSS_FONT_VARIANT_SMALL_CAPS;
-	else
+	last = str + strlen(str);
+	if (!egueb_base_double_get(str, &endptr, thiz))
 		return EINA_FALSE;
-	return ret;
+	
+	if ((last - endptr) != 1)
+		return EINA_FALSE;
+
+	if (strcmp(endptr, "%"))
+		return EINA_FALSE;
+
+	return EINA_TRUE;
 }
 
-EAPI const char * egueb_css_font_variant_string_to(Egueb_Css_Font_Variant thiz)
+EAPI const char * egueb_css_percentage_string_to(double thiz)
 {
-	switch (thiz)
-	{
-		case EGUEB_CSS_FONT_VARIANT_NORMAL:
-		return "normal";
-
-		case EGUEB_CSS_FONT_VARIANT_SMALL_CAPS:
-		return "small-caps";
-
-		default:
-		return NULL;
-	}
+	return NULL;
 }
+

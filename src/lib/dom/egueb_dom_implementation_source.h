@@ -20,12 +20,13 @@
 
 typedef struct _Egueb_Dom_Implementation_Source Egueb_Dom_Implementation_Source;
 
-typedef Egueb_Dom_Implementation * (*Egueb_Dom_Implementation_Source_Descriptor_Implementation_Get_By_Mime)(Egueb_Dom_String *mime);
+typedef Egueb_Dom_Implementation * (*Egueb_Dom_Implementation_Source_Descriptor_Implementation_Get)(void);
+typedef Egueb_Dom_String * (*Egueb_Dom_Implementation_Source_Descriptor_Mime_Get)(void);
 
 typedef struct _Egueb_Dom_Implementation_Source_Descriptor
 {
-	Egueb_Dom_Implementation_Source_Descriptor_Implementation_Get_By_Mime
-			implementation_get_by_mime;
+	Egueb_Dom_Implementation_Source_Descriptor_Implementation_Get implementation_get;
+	Egueb_Dom_Implementation_Source_Descriptor_Mime_Get mime_get;
 } Egueb_Dom_Implementation_Source_Descriptor;
 
 EAPI Egueb_Dom_Implementation_Source * egueb_dom_implementation_source_new(

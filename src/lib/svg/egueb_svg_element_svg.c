@@ -1683,7 +1683,7 @@ void egueb_svg_element_svg_style_apply(Egueb_Dom_Tag *tag)
 	Eina_List *l;
 
 	/* FIXME  we are iterating over every style and going through the
-	 * tag tree on ecss, we better merge the styles to only parse the tree
+	 * tag tree on egueb_css, we better merge the styles to only parse the tree
 	 * once
 	 */
 	thiz = _egueb_svg_element_svg_get(tag);

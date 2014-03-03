@@ -69,9 +69,18 @@ EAPI Egueb_Dom_Implementation * egueb_dom_registry_implementation_get_by_mime(
 
 	EINA_LIST_FOREACH(_sources, l, s)
 	{
-		i = egueb_dom_implementation_source_implementation_get_by_mime(
-				s, mime);
-		if (i) break;
+		Egueb_Dom_String *i_mime;
+		Eina_Bool equal;
+
+		i_mime = egueb_dom_implementation_source_mime_get(s);
+		equal = egueb_dom_string_is_equal(mime, i_mime);
+		egueb_dom_string_unref(i_mime);
+
+		if (equal)
+		{
+			i = egueb_dom_implementation_source_implementation_get(s);
+			break;
+		}
 	}
 	return i;
 }

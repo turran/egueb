@@ -1,4 +1,4 @@
-/* Ecss - CSS
+/* Egueb_Css - CSS
  * Copyright (C) 2011 Jorge Luis Zapata
  *
  * This library is free software; you can redistribute it and/or
@@ -23,75 +23,55 @@
 #include <Eina.h>
 
 #include "Egueb_Css.h"
-#include "ecss_private.h"
+#include "egueb_css_private.h"
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
+
+static int egueb_css_init_count = 0;
+
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
-Ecss_Selector * ecss_selector_next_get(Ecss_Selector *thiz)
-{
-	Eina_Inlist *l;
 
-	l = EINA_INLIST_GET(thiz)->next;
-	if (!l) return NULL;
-	return EINA_INLIST_CONTAINER_GET(l, Ecss_Selector);
-}
-
-Ecss_Selector * ecss_selector_prev_get(Ecss_Selector *thiz)
-{
-	Eina_Inlist *l;
-
-	l = EINA_INLIST_GET(thiz)->prev;
-	if (!l) return NULL;
-	return EINA_INLIST_CONTAINER_GET(l, Ecss_Selector);
-}
-
-void ecss_selector_dump(Ecss_Selector *thiz)
-{
-	Ecss_Selector *s;
-	Eina_Inlist *l;
-
-	printf("%s %p", thiz->subject ? thiz->subject : "*", thiz->filters);
-	l = EINA_INLIST_GET(thiz)->next;
-	EINA_INLIST_FOREACH(l, s)
-	{
-		printf(" %c %s %p", s->c, s->subject ? s->subject : "*", thiz->filters);
-	}
-	printf("\n");
-}
+int _egueb_css_log_dom_global = -1;
 
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/
-EAPI Ecss_Selector * ecss_selector_new(void)
+EAPI int egueb_css_init(void)
 {
-	Ecss_Selector *thiz;
+	if (++egueb_css_init_count != 1)
+		return egueb_css_init_count;
 
-	thiz = calloc(1, sizeof(Ecss_Selector));
-	return thiz;
+	if (!eina_init())
+	{
+		fprintf(stderr, "Egueb_Css: Eina init failed");
+		return --egueb_css_init_count;
+	}
+
+	_egueb_css_log_dom_global = eina_log_domain_register("egueb_css", EGUEB_CSS_DEFAULT_LOG_COLOR);
+	if (_egueb_css_log_dom_global < 0)
+	{
+		EINA_LOG_ERR("Egueb_Css Can not create a general log domain.");
+		goto shutdown_eina;
+	}
+
+	return egueb_css_init_count;
+
+shutdown_eina:
+	eina_shutdown();
+	return --egueb_css_init_count;
 }
 
-EAPI void ecss_selector_subject_set(Ecss_Selector *thiz, const char *subject)
+EAPI int egueb_css_shutdown(void)
 {
-	if (!thiz) return;
+	if (--egueb_css_init_count != 0)
+		return egueb_css_init_count;
 
-	if (subject)
-		thiz->subject = strdup(subject);
-}
+	eina_log_domain_unregister(_egueb_css_log_dom_global);
+	_egueb_css_log_dom_global = -1;
+	eina_shutdown();
 
-EAPI void ecss_selector_filter_add(Ecss_Selector *thiz, Ecss_Filter *f)
-{
-	thiz->filters = eina_list_append(thiz->filters, f);
-}
-
-EAPI void ecss_selector_combinator_set(Ecss_Selector *thiz, Ecss_Selector *ss, Ecss_Combinator c)
-{
-	if (!thiz) return;
-
-	ss->c = c;
-	/* TODO remove the previous on ss in case it is already set */
-	/* what to do with the return value */
-	eina_inlist_append(EINA_INLIST_GET(thiz), EINA_INLIST_GET(ss));
+	return egueb_css_init_count;
 }

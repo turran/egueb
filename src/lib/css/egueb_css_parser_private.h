@@ -15,28 +15,12 @@
  * License along with this library.
  * If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef _EGUEB_SVG_COLOR_H
-#define _EGUEB_SVG_COLOR_H
+#ifndef _EGUEB_CSS_PARSER_PRIVATE_H_
+#define _EGUEB_CSS_PARSER_PRIVATE_H_
 
-typedef struct _Egueb_Svg_Color
+typedef struct _Egueb_Css_Parser
 {
-	uint8_t r;
-	uint8_t g;
-	uint8_t b;
-} Egueb_Svg_Color;
-
-typedef struct _Egueb_Svg_Color_Animated
-{
-	Egueb_Svg_Color base;
-	Egueb_Svg_Color anim;
-} Egueb_Svg_Color_Animated;
-
-EAPI extern const Egueb_Svg_Color EGUEB_SVG_COLOR_BLACK;
-
-EAPI const Egueb_Dom_Value_Descriptor * egueb_svg_color_descriptor_get(void);
-EAPI Eina_Bool egueb_svg_color_string_from(Egueb_Svg_Color *color, const char *attr_val);
-EAPI char * egueb_svg_color_string_to(Egueb_Svg_Color *thiz);
-EAPI Eina_Bool egueb_svg_color_is_equal(const Egueb_Svg_Color *c1, const Egueb_Svg_Color *c2);
-EAPI void egueb_svg_color_components_from(Egueb_Svg_Color *thiz, uint8_t r, uint8_t g, uint8_t b);
+	Egueb_Css_Style *style;
+} Egueb_Css_Parser;
 
 #endif

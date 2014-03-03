@@ -24,7 +24,7 @@
 #include "egueb_svg_element_style.h"
 /*
  * In order to support styling we need to keep track of every element
- * parsed, that is, generate the DOM tree. This way we can support Ecss
+ * parsed, that is, generate the DOM tree. This way we can support Egueb_Css
  * context to know whenver an element has to be applied with a specific
  * style
  */
@@ -33,7 +33,7 @@
  *============================================================================*/
 typedef struct _Egueb_Svg_Element_Style
 {
-	Ecss_Style *s;
+	Egueb_Css_Style *s;
 } Egueb_Svg_Element_Style;
 
 static Egueb_Svg_Element_Style * _egueb_svg_element_style_get(Egueb_Dom_Tag *t)
@@ -52,11 +52,11 @@ static Egueb_Svg_Element_Style * _egueb_svg_element_style_get(Egueb_Dom_Tag *t)
 static void _egueb_svg_element_style_cdata(Egueb_Dom_Tag *t, const char *cdata, unsigned int length)
 {
 	Egueb_Svg_Element_Style *thiz;
-	Ecss_Style *s;
+	Egueb_Css_Style *s;
 
 	thiz = _egueb_svg_element_style_get(t);
 
-	s = ecss_style_load_from_content(cdata, length);
+	s = egueb_css_style_load_from_content(cdata, length);
 	if (!s) return;
 
 	thiz->s = s;
@@ -127,11 +127,11 @@ void egueb_svg_element_style_apply(Egueb_Dom_Tag *t, Egueb_Dom_Tag *root)
 	Egueb_Svg_Element_Style *thiz;
 
 	thiz = _egueb_svg_element_style_get(t);
-	egueb_svg_element_ecss_style_apply(root, thiz->s);
+	egueb_svg_element_egueb_css_style_apply(root, thiz->s);
 }
 
 #if 0
-void egueb_svg_parser_style_style_set(Egueb_Svg_Element_Style *thiz, Ecss_Style *style)
+void egueb_svg_parser_style_style_set(Egueb_Svg_Element_Style *thiz, Egueb_Css_Style *style)
 {
 	thiz->s = style;
 }

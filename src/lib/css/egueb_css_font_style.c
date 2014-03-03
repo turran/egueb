@@ -16,33 +16,38 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 #include "egueb_css_private.h"
-#include "egueb_css_font_variant.h"
+#include "egueb_css_font_style.h"
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/
-EAPI Eina_Bool egueb_css_font_variant_string_from(Egueb_Css_Font_Variant *thiz,
+EAPI Eina_Bool egueb_css_font_style_string_from(Egueb_Css_Font_Style *thiz,
 		const char *str)
 {
 	Eina_Bool ret = EINA_TRUE;
 
 	if (!strcmp(str, "normal"))
-		*thiz = EGUEB_CSS_FONT_VARIANT_NORMAL;
-	else if (!strcmp(str, "small-caps"))
-		*thiz = EGUEB_CSS_FONT_VARIANT_SMALL_CAPS;
+		*thiz = EGUEB_CSS_FONT_STYLE_NORMAL;
+	else if (!strcmp(str, "italic"))
+		*thiz = EGUEB_CSS_FONT_STYLE_ITALIC;
+	else if (!strcmp(str, "oblique"))
+		*thiz = EGUEB_CSS_FONT_STYLE_OBLIQUE;
 	else
 		return EINA_FALSE;
 	return ret;
 }
 
-EAPI const char * egueb_css_font_variant_string_to(Egueb_Css_Font_Variant thiz)
+EAPI const char * egueb_css_font_style_string_to(Egueb_Css_Font_Style thiz)
 {
 	switch (thiz)
 	{
-		case EGUEB_CSS_FONT_VARIANT_NORMAL:
+		case EGUEB_CSS_FONT_STYLE_NORMAL:
 		return "normal";
 
-		case EGUEB_CSS_FONT_VARIANT_SMALL_CAPS:
-		return "small-caps";
+		case EGUEB_CSS_FONT_STYLE_ITALIC:
+		return "italic";
+
+		case EGUEB_CSS_FONT_STYLE_OBLIQUE:
+		return "oblique";
 
 		default:
 		return NULL;

@@ -1,10 +1,10 @@
-%name-prefix="ecss_"
+%name-prefix="egueb_css_"
 %defines
 %error-verbose
 %locations
 %pure-parser
 %parse-param { void * scanner }
-%parse-param { Ecss_Parser *parser }
+%parse-param { Egueb_Css_Parser *parser }
 %lex-param { void * scanner }
 
 %{
@@ -14,20 +14,30 @@
 
 #include <Eina.h>
 
-#include "Egueb_Css.h"
-#include "ecss_private.h"
+#include "egueb_css_private.h"
+#include "egueb_css_selector.h"
+#include "egueb_css_rule.h"
+#include "egueb_css_style.h"
+#include "egueb_css_context.h"
 
-void ecss_error(void *data, void *scanner, Ecss_Parser *parser, const char *str);
+#include "egueb_css_rule_private.h"
+#include "egueb_css_selector_private.h"
+#include "egueb_css_filter_private.h"
+#include "egueb_css_style_private.h"
+#include "egueb_css_selector_private.h"
+#include "egueb_css_parser_private.h"
+
+void egueb_css_error(void *data, void *scanner, Egueb_Css_Parser *parser, const char *str);
 
 %}
 
 %union {
-	Ecss_Rule *r;
-	Ecss_Declaration *d;
-	Ecss_Selector_Combinator sc;
-	Ecss_Combinator c;
-	Ecss_Selector *s;
-	Ecss_Filter *f;
+	Egueb_Css_Rule *r;
+	Egueb_Css_Declaration *d;
+	Egueb_Css_Selector_Combinator sc;
+	Egueb_Css_Combinator c;
+	Egueb_Css_Selector *s;
+	Egueb_Css_Filter *f;
 	Eina_List *l; // use this for every _list nonterminal
 	char *str;
 }
@@ -56,26 +66,26 @@ rules
 rule
 	: selector '{' declarations '}'
 	{
-		Ecss_Rule *r;
-		Ecss_Declaration *d;
+		Egueb_Css_Rule *r;
+		Egueb_Css_Declaration *d;
 		Eina_List *l;
 
-		r = ecss_rule_new($1);
+		r = egueb_css_rule_new($1);
 		/* add every declaration */
 		EINA_LIST_FOREACH($3, l, d)
 		{
-			ecss_rule_declaration_insert(r, d);
+			egueb_css_rule_declaration_insert(r, d);
 		}
-		ecss_style_rule_add(parser->style, r);
+		egueb_css_style_rule_add(parser->style, r);
 	}
 	;
 
 declaration
 	: T_IDENT ':' value
 	{
-		Ecss_Declaration *d;
+		Egueb_Css_Declaration *d;
 
-		d = malloc(sizeof(Ecss_Declaration));
+		d = malloc(sizeof(Egueb_Css_Declaration));
 		d->property = $1;
 		d->value = $3;
 
@@ -98,20 +108,20 @@ declarations
 selectors
 	: combinator ident filter selectors
 	{
-		Ecss_Selector_Combinator *sc;
-		Ecss_Selector *s;
+		Egueb_Css_Selector_Combinator *sc;
+		Egueb_Css_Selector *s;
 
-		s = ecss_selector_new();
-		ecss_selector_subject_set(s, $2);
+		s = egueb_css_selector_new();
+		egueb_css_selector_subject_set(s, $2);
 
 		if ($4.s)
 		{
-			ecss_selector_combinator_set(s, $4.s, $4.c);
+			egueb_css_selector_combinator_set(s, $4.s, $4.c);
 		}
 
 		if ($3)
 		{
-			ecss_selector_filter_add(s, $3);
+			egueb_css_selector_filter_add(s, $3);
 		}
 
 		$$.s = s;
@@ -123,28 +133,28 @@ selectors
 selector
 	: ident filter selectors
 	{
-		Ecss_Selector *s;
+		Egueb_Css_Selector *s;
 
-		s = ecss_selector_new();
-		ecss_selector_subject_set(s, $1);
+		s = egueb_css_selector_new();
+		egueb_css_selector_subject_set(s, $1);
 
 		if ($3.s)
 		{
-			ecss_selector_combinator_set(s, $3.s, $3.c);
+			egueb_css_selector_combinator_set(s, $3.s, $3.c);
 		}
 		if ($2)
 		{
-			ecss_selector_filter_add(s, $2);
+			egueb_css_selector_filter_add(s, $2);
 		}
 		$$ = s;
 	}
 	;
 
 combinator
-	: '+' { $$ = ECSS_ADJACENT_SIBLING; }
-	| '>' { $$ = ECSS_CHILD; }
-	| '~' { $$ = ECSS_SIBLING; }
-	| { $$ = ECSS_DESCENDANT; }
+	: '+' { $$ = EGUEB_CSS_ADJACENT_SIBLING; }
+	| '>' { $$ = EGUEB_CSS_CHILD; }
+	| '~' { $$ = EGUEB_CSS_SIBLING; }
+	| { $$ = EGUEB_CSS_DESCENDANT; }
 	;
 
 ident
@@ -179,14 +189,14 @@ value
 	;
 
 class
-	: '.' T_IDENT { $$ = ecss_filter_class_new($2); }
+	: '.' T_IDENT { $$ = egueb_css_filter_class_new($2); }
 	;
 
-id	: '#' T_IDENT { $$ = ecss_filter_id_new($2); }
+id	: '#' T_IDENT { $$ = egueb_css_filter_id_new($2); }
 	;
 %%
 
-void ecss_error(void *data, void *scanner, Ecss_Parser *parser, const char *str)
+void egueb_css_error(void *data, void *scanner, Egueb_Css_Parser *parser, const char *str)
 {
 	YYLTYPE *lloc = (YYLTYPE *)data;
 	printf("Parsing error at %d: %d.%d %s", lloc->last_line, lloc->first_column, lloc->last_column, str);

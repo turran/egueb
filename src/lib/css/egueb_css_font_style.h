@@ -15,28 +15,17 @@
  * License along with this library.
  * If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef _EGUEB_SVG_COLOR_H
-#define _EGUEB_SVG_COLOR_H
 
-typedef struct _Egueb_Svg_Color
-{
-	uint8_t r;
-	uint8_t g;
-	uint8_t b;
-} Egueb_Svg_Color;
+#ifndef _EGUEB_CSS_FONT_STYLE_H_
+#define _EGUEB_CSS_FONT_STYLE_H_
 
-typedef struct _Egueb_Svg_Color_Animated
-{
-	Egueb_Svg_Color base;
-	Egueb_Svg_Color anim;
-} Egueb_Svg_Color_Animated;
+typedef enum _Egueb_Css_Font_Style {
+	EGUEB_CSS_FONT_STYLE_NORMAL,
+	EGUEB_CSS_FONT_STYLE_ITALIC,
+	EGUEB_CSS_FONT_STYLE_OBLIQUE,
+} Egueb_Css_Font_Style;
 
-EAPI extern const Egueb_Svg_Color EGUEB_SVG_COLOR_BLACK;
-
-EAPI const Egueb_Dom_Value_Descriptor * egueb_svg_color_descriptor_get(void);
-EAPI Eina_Bool egueb_svg_color_string_from(Egueb_Svg_Color *color, const char *attr_val);
-EAPI char * egueb_svg_color_string_to(Egueb_Svg_Color *thiz);
-EAPI Eina_Bool egueb_svg_color_is_equal(const Egueb_Svg_Color *c1, const Egueb_Svg_Color *c2);
-EAPI void egueb_svg_color_components_from(Egueb_Svg_Color *thiz, uint8_t r, uint8_t g, uint8_t b);
+EAPI Eina_Bool egueb_css_font_style_string_from(Egueb_Css_Font_Style *thiz, const char *attr_val);
+EAPI const char * egueb_css_font_style_string_to(Egueb_Css_Font_Style thiz);
 
 #endif
