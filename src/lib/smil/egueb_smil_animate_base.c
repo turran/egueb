@@ -340,7 +340,7 @@ static Eina_Bool _egueb_smil_animate_base_values_generate(Egueb_Smil_Animate_Bas
 			egueb_dom_value_init(&v, a->d);
 			if (!egueb_dom_value_string_from(&v, from))
 			{
-				ERR("No valid 'from' value");
+				ERR("No valid 'from' value '%s'", egueb_dom_string_string_get(from));
 				egueb_dom_string_unref(from);
 				return EINA_FALSE;
 			}

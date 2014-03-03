@@ -89,7 +89,6 @@ EAPI const Egueb_Dom_Value_Descriptor * egueb_svg_number_descriptor_get(void)
 EAPI Eina_Bool egueb_svg_number_string_from(Egueb_Svg_Number *thiz,
 		const char *attr_val)
 {
-	Egueb_Svg_Number val;
 	char *endptr;
 
 	if (!attr_val || !*attr_val)
@@ -101,7 +100,7 @@ EAPI Eina_Bool egueb_svg_number_string_from(Egueb_Svg_Number *thiz,
 		return EINA_FALSE;
 	}
 
-	return EINA_FALSE;
+	return EINA_TRUE;
 }
 
 EAPI char * egueb_svg_number_string_to(Egueb_Svg_Number thiz)

@@ -78,7 +78,15 @@ static Eina_Bool _egueb_dom_attr_value_get(Egueb_Dom_Attr *thiz,
 static void _egueb_dom_attr_clone(Egueb_Dom_Node *n, Eina_Bool live,
 		Eina_Bool deep, Egueb_Dom_Node *clone)
 {
+	Egueb_Dom_Attr *thiz;
+	Egueb_Dom_Attr *other;
 	Egueb_Dom_Attr_Class *klass;
+
+	/* common properties */
+	thiz = EGUEB_DOM_ATTR(clone);
+	other = EGUEB_DOM_ATTR(n);
+	thiz->name = egueb_dom_string_ref(other->name);
+	thiz->flag_mask = other->flag_mask;
 
 	egueb_dom_attr_copy(n, clone);
 	klass = EGUEB_DOM_ATTR_CLASS_GET(n);

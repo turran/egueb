@@ -25,7 +25,10 @@
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
-EGUEB_DOM_ATTR_BASIC_BOILERPLATE(Eina_Bool,
+/* Eina_Bool is defined as unsigned char, the basic type can not get a
+ * pointer to char, the minimum size is an int32 for now
+ */
+EGUEB_DOM_ATTR_BASIC_BOILERPLATE(int,
 		Egueb_Dom_Attr_Boolean, egueb_dom_value_boolean,
 		egueb_dom_attr_boolean)
 /*============================================================================*

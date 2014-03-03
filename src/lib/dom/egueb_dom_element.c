@@ -712,13 +712,17 @@ EAPI Eina_Bool egueb_dom_element_attribute_add(Egueb_Dom_Node *n,
 	if (!a->name)
 	{
 		egueb_dom_node_unref(attr);
+		ERR("Attribute does not have a name");
 		if (err) *err = EGUEB_DOM_ERROR_NOT_SUPPORTED;
+		return EINA_FALSE;
 	}
 
 	if (a->owner)
 	{
 		egueb_dom_node_unref(attr);
+		ERR("Attribute already has an owner");
 		if (err) *err = EGUEB_DOM_ERROR_NOT_SUPPORTED;
+		return EINA_FALSE;
 	}
 
 	thiz = EGUEB_DOM_ELEMENT(n);
