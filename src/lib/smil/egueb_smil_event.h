@@ -22,9 +22,14 @@
 extern Egueb_Dom_String *EGUEB_SMIL_EVENT_BEGIN;
 extern Egueb_Dom_String *EGUEB_SMIL_EVENT_END;
 extern Egueb_Dom_String *EGUEB_SMIL_EVENT_REPEAT;
+extern Egueb_Dom_String *EGUEB_SMIL_EVENT_ETCH;
 
 EAPI Egueb_Dom_Event * egueb_smil_event_new(void);
 EAPI void egueb_smil_event_init(Egueb_Dom_Event *e, Egueb_Dom_String *type, int detail);
+
+EAPI Egueb_Dom_Event * egueb_smil_event_etch_new(void);
+EAPI void egueb_smil_event_etch_set(Egueb_Dom_Event *e, Etch *etch);
+EAPI Etch * egueb_smil_event_etch_get(Egueb_Dom_Event *e);
 
 #endif
 

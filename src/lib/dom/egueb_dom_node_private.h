@@ -48,6 +48,11 @@ struct _Egueb_Dom_Node
 	/* features */
 	Eina_Hash *features;
 
+	/* is in tree? that is, has an ancestor that has a document
+	 * as a parent?
+	 */
+	Eina_Bool in_tree;
+
 	/* internal */
 	int ref;
 	/* we need this given that we might trigger events and thus do more

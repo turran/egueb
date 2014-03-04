@@ -155,30 +155,6 @@ static void _egueb_svg_element_svg_set_generic_painter(Egueb_Dom_Node *n)
 	}
 }
 
-static void _egueb_svg_element_svg_set_etch(Egueb_Dom_Node *n, Etch *e)
-{
-	if (egueb_smil_is_animation(n))
-	{
-		egueb_smil_animation_etch_set(n, e);
-	}
-	else
-	{
-		Egueb_Dom_Node *child;
-
-		/* iterate over the children to set the etch too */
-		child = egueb_dom_node_child_first_get(n);
-		while (child)
-		{
-			Egueb_Dom_Node *tmp;
-
-			_egueb_svg_element_svg_set_etch(child, e);
-			tmp = egueb_dom_node_sibling_next_get(child);
-			egueb_dom_node_unref(child);
-			child = tmp;
-		}
-	}
-}
-
 /* whenever a child is added which can have a painter, check if it is set
  * if not, define the generic painter for it. Not that a node inserted
  * does not trigger the event for each of the children of the inserted
@@ -194,16 +170,13 @@ static void _egueb_svg_element_svg_node_inserted_cb(Egueb_Dom_Event *e,
 	egueb_dom_node_unref(target);
 }
 
-/* For every smil animation node, be sure to set the etch on it */
-static void _egueb_svg_element_svg_animation_node_inserted_cb(Egueb_Dom_Event *e,
+static void _egueb_svg_element_svg_etch_cb(Egueb_Dom_Event *e,
 		void *data)
 {
 	Egueb_Svg_Element_Svg *thiz = data;
-	Egueb_Dom_Node *target = NULL;
 
-	target = egueb_dom_event_target_get(e);
-	_egueb_svg_element_svg_set_etch(target, thiz->etch);
-	egueb_dom_node_unref(target);
+	INFO("Requesting etch");
+	egueb_smil_event_etch_set(e, thiz->etch);
 }
 /*----------------------------------------------------------------------------*
  *                            Renderable interface                            *
@@ -432,9 +405,9 @@ static void _egueb_svg_element_svg_instance_init(void *o)
 			_egueb_svg_element_svg_node_inserted_cb,
 			EINA_FALSE, NULL);
 	egueb_dom_node_event_listener_add(n,
-			EGUEB_DOM_EVENT_MUTATION_NODE_INSERTED,
-			_egueb_svg_element_svg_animation_node_inserted_cb,
-			EINA_FALSE, thiz);
+			EGUEB_SMIL_EVENT_ETCH,
+			_egueb_svg_element_svg_etch_cb,
+			EINA_TRUE, thiz);
 
 	/* the rendering */
 	r = enesim_renderer_proxy_new();

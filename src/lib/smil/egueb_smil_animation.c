@@ -17,6 +17,7 @@
  */
 
 #include "egueb_smil_private.h"
+#include "egueb_smil_event.h"
 #include "egueb_smil_main.h"
 #include "egueb_smil_animation.h"
 #include "egueb_smil_animation_private.h"
@@ -38,6 +39,7 @@
  *============================================================================*/
 typedef struct _Egueb_Smil_Animation_Event
 {
+	Egueb_Dom_Node *ref;
 	Egueb_Smil_Animation *thiz;
 	Egueb_Smil_Timing *t;
 	Egueb_Dom_Node_Event_Listener *l;
@@ -45,10 +47,47 @@ typedef struct _Egueb_Smil_Animation_Event
 
 typedef struct _Egueb_Smil_Animation_Event_Foreach_Data
 {
+	Egueb_Smil_Animation *thiz;
 	Egueb_Dom_Event_Listener listener;
 	Eina_List *events;
 	int64_t offset;
 } Egueb_Smil_Animation_Event_Foreach_Data;
+
+static Egueb_Dom_Node * _egueb_smil_animation_target_get(Egueb_Smil_Animation *thiz)
+{
+	Egueb_Dom_Node *target = NULL;
+	Egueb_Dom_String *xlink_href = NULL;
+
+	egueb_dom_attr_final_get(thiz->xlink_href, &xlink_href);
+	if (egueb_dom_string_is_valid(xlink_href))
+	{
+		Egueb_Dom_Node *doc;
+
+		doc = egueb_dom_node_document_get(EGUEB_DOM_NODE(thiz));
+		if (!doc)
+		{
+			ERR("No document associated with the node");
+			return NULL;
+		}
+		target = egueb_dom_document_element_get_by_id(doc, xlink_href, NULL);
+		if (!target)
+		{
+			ERR("Invalid target");
+			egueb_dom_node_unref(doc);
+			egueb_dom_string_unref(xlink_href);
+			return NULL;
+		}
+		egueb_dom_string_unref(xlink_href);
+		egueb_dom_node_unref(doc);
+		ERR("we have an xlink!");
+	}
+	else
+	{
+		target = egueb_dom_node_parent_get(EGUEB_DOM_NODE(thiz));
+		egueb_dom_string_unref(xlink_href);
+	}
+	return target;
+}
 
 /* TODO an offset only timing should be treated as an event too
  * so we can have a fine grained system to start/stop animations
@@ -56,41 +95,59 @@ typedef struct _Egueb_Smil_Animation_Event_Foreach_Data
 static void _egueb_smil_animation_event_cb(void *item, void *user_data)
 {
 	Egueb_Smil_Animation_Event_Foreach_Data *data = user_data;
+	Egueb_Smil_Animation *thiz = data->thiz;
 	Egueb_Smil_Timing *t = item;
 
 	/* check the begin conditions and register the needed events */
 	if (t->event)
 	{
-		DBG("Registering event '%s' on element '%s' with offset %"
+		Egueb_Smil_Animation_Event *h;
+		Egueb_Dom_Node *ref;
+		Egueb_Dom_String *event;
+
+		INFO("Registering event '%s' on element '%s' with offset %"
 				ETCH_TIME_FORMAT, t->event,
 				t->id ? t->id : "NULL",
 				ETCH_TIME_ARGS(t->offset));
-#if 0
-		if (!t->id)
+
+		if (t->id)
 		{
-			if (t->repeat)
-				ref = thiz->thiz_e;
-			else
-				ref = thiz->ctx.parent_e;
+			Egueb_Dom_Node *doc;
+			Egueb_Dom_String *id = NULL;
+
+			doc = egueb_dom_node_document_get(EGUEB_DOM_NODE(thiz));
+			if (!doc)
+			{
+				ERR("No document set");
+				return;
+			}
+			id = egueb_dom_string_new_with_string(t->id);
+			ref = egueb_dom_document_element_get_by_id(doc, id, NULL);
+			egueb_dom_node_unref(doc);
+			egueb_dom_string_unref(id);
 		}
 		else
 		{
-			Ender_Element *topmost;
-			egueb_smil_element_internal_topmost_get(thiz->thiz_t, &topmost);
-			egueb_smil_element_svg_element_get(topmost, t->id, &ref);
+			ref = _egueb_smil_animation_target_get(thiz);
 		}
 
-		if (ref)
+		if (!ref)
 		{
-			Egueb_Smil_Animation_Event *h;
-
-			h = calloc(1, sizeof(Egueb_Smil_Animation_Event));
-			h->l = ender_event_listener_add(ref, t->event, cb, h);
-			h->thiz = thiz;
-			h->ev = t;
-			handlers = eina_list_append(handlers, h);
+			ERR("Impossible to find a target");
+			return;
 		}
-#endif
+
+		h = calloc(1, sizeof(Egueb_Smil_Animation_Event));
+		h->t = t;
+		h->thiz = thiz;
+		egueb_dom_node_weak_ref_add(ref, &h->ref);
+		data->events = eina_list_append(data->events, h);
+
+		event = egueb_dom_string_new_with_string(t->event);
+		h->l = egueb_dom_node_event_listener_add(ref, event, data->listener,
+			EINA_FALSE, h);
+		egueb_dom_string_unref(event);
+		egueb_dom_node_unref(ref);
 	}
 	else
 	{
@@ -124,6 +181,7 @@ static Eina_Bool _egueb_smil_animation_event_setup(Egueb_Smil_Animation *thiz,
 
 	egueb_dom_attr_get(p, EGUEB_DOM_ATTR_TYPE_BASE, &l);
 
+	data.thiz = thiz;
 	data.listener = listener;
 	data.offset = 0;
 	data.events = NULL;
@@ -145,7 +203,7 @@ static void _egueb_smil_animation_begin(Egueb_Smil_Animation *thiz, int64_t offs
 	thiz->started = EINA_TRUE;
 	klass = EGUEB_SMIL_ANIMATION_CLASS_GET(thiz);
 
-	DBG("Enabling animation with offset %" ETCH_TIME_FORMAT, ETCH_TIME_ARGS(offset));
+	INFO("Enabling animation with offset %" ETCH_TIME_FORMAT, ETCH_TIME_ARGS(offset));
 	if (klass->begin)
 	{
 		int64_t time;
@@ -161,9 +219,13 @@ static void _egueb_smil_animation_begin_cb(Egueb_Dom_Event *e,
 {
 	Egueb_Smil_Animation_Event *ev = data;
 	Egueb_Smil_Animation *thiz = ev->thiz;
+	Egueb_Dom_String *name;
 
 	/* call the begin interface */
-	//DBG("Begin event '%s' received", event_name);
+	name = egueb_dom_event_type_get(e);
+	INFO("Begin event '%s' received", egueb_dom_string_string_get(name));
+	egueb_dom_string_unref(name);
+
 	_egueb_smil_animation_begin(thiz, ev->t->offset);
 }
 
@@ -183,22 +245,31 @@ static void _egueb_smil_animation_begin_release(Egueb_Smil_Animation *thiz)
 	_egueb_smil_animation_event_release(thiz->begin_events);
 }
 
+static void _egueb_smil_animation_end(Egueb_Smil_Animation *thiz)
+{
+	Egueb_Smil_Animation_Class *klass;
+
+	if (!thiz->started)
+		return;
+	thiz->started = EINA_FALSE;
+	klass = EGUEB_SMIL_ANIMATION_CLASS_GET(thiz);
+
+	INFO("Ending animation");
+	if (klass->end)
+		klass->end(thiz);
+}
+
 static void _egueb_smil_animation_end_cb(Egueb_Dom_Event *e,
 		void *data)
 {
 	Egueb_Smil_Animation_Event *ev = data;
 	Egueb_Smil_Animation *thiz = ev->thiz;
+	Egueb_Dom_String *name;
 
-	/* call the end interface */
-	//DBG("End event '%s' received", event_name);
-	if (!thiz->started)
-		return;
-	DBG("Disabling animation");
-#if 0
-	if (thiz->descriptor.disable)
-		thiz->descriptor.disable(thiz->thiz_t);
-#endif
-	thiz->started = EINA_FALSE;
+	name = egueb_dom_event_type_get(e);
+	INFO("End event '%s' received", egueb_dom_string_string_get(name));
+	egueb_dom_string_unref(name);
+	_egueb_smil_animation_end(thiz);
 }
 
 static Eina_Bool _egueb_smil_animation_end_setup(Egueb_Smil_Animation *thiz)
@@ -286,39 +357,6 @@ static void _egueb_smil_animation_repeat_count_get(Egueb_Dom_Tag *t, int *repeat
 	if (!repeat_count) return;
 	thiz = EGUEB_SMIL_ANIMATION(t);
 	*repeat_count = thiz->ctx.timing.repeat_count;
-}
-
-static void _egueb_smil_animation_begin_set(Egueb_Dom_Tag *t, Eina_List *begin)
-{
-	Egueb_Smil_Animation *thiz;
-
-	thiz = EGUEB_SMIL_ANIMATION(t);
-	thiz->ctx.timing.begin = begin;
-}
-
-static void _egueb_smil_animation_end_set(Egueb_Dom_Tag *t, Eina_List *end)
-{
-	Egueb_Smil_Animation *thiz;
-
-	thiz = EGUEB_SMIL_ANIMATION(t);
-	thiz->ctx.timing.end = end;
-}
-
-static void _egueb_smil_animation_fill_set(Egueb_Dom_Tag *t, Egueb_Smil_Fill fill)
-{
-	Egueb_Smil_Animation *thiz;
-
-	thiz = EGUEB_SMIL_ANIMATION(t);
-	thiz->ctx.timing.fill = fill;
-}
-
-static void _egueb_smil_animation_fill_get(Egueb_Dom_Tag *t, Egueb_Smil_Fill *fill)
-{
-	Egueb_Smil_Animation *thiz;
-
-	if (!fill) return;
-	thiz = EGUEB_SMIL_ANIMATION(t);
-	*fill = thiz->ctx.timing.fill;
 }
 /*----------------------------------------------------------------------------*
  *                         The Esvg Element interface                         *
@@ -437,24 +475,38 @@ static void _egueb_dom_animation_cleanup(Egueb_Smil_Animation *thiz,
 	thiz->target = NULL;
 }
 
-static void _egueb_dom_animation_node_removed_cb(Egueb_Dom_Event *ev, void *data)
+/*----------------------------------------------------------------------------*
+ *                               Event handlers                               *
+ *----------------------------------------------------------------------------*/
+/* Whenever a node has been inserted into the document, request the etch */
+static void _egueb_smil_animation_inserted_into_document_cb(Egueb_Dom_Event *e,
+		void *data)
 {
 	Egueb_Smil_Animation *thiz;
-	Egueb_Dom_Node *n;
-	Egueb_Dom_Node *related;
-	Egueb_Dom_Event_Phase phase;
+	Egueb_Dom_Node *n = data;
+	Egueb_Dom_Event *request;
 
-	phase = egueb_dom_event_phase_get(ev);
-	if (phase != EGUEB_DOM_EVENT_PHASE_AT_TARGET)
-		return;
-
-	n = egueb_dom_event_target_get(ev);
-	related = egueb_dom_event_mutation_related_get(ev);
+	INFO("Smil animation inserted into document");
+	request = egueb_smil_event_etch_new();
+	egueb_dom_node_event_dispatch(n, egueb_dom_event_ref(request), NULL, NULL);
 
 	thiz = EGUEB_SMIL_ANIMATION(n);
-	_egueb_dom_animation_cleanup(thiz, related);
-	egueb_dom_node_unref(n);
-	egueb_dom_node_unref(related);
+	thiz->etch = egueb_smil_event_etch_get(request);
+	thiz->document_changed = EINA_TRUE;
+	egueb_dom_event_unref(request);
+}
+
+/* Whenever a node has been removed from the document, remove the etch,
+ * and the animation
+ */
+static void _egueb_smil_animation_removed_from_document_cb(Egueb_Dom_Event *e,
+		void *data)
+{
+	Egueb_Smil_Animation *thiz = data;
+
+	INFO("Smil animation removed from document");
+	_egueb_dom_animation_cleanup(thiz, thiz->target);
+	thiz->etch = NULL;
 }
 /*----------------------------------------------------------------------------*
  *                             Element interface                              *
@@ -463,37 +515,13 @@ static Eina_Bool _egueb_smil_animation_process(Egueb_Dom_Element *e)
 {
 	Egueb_Smil_Animation *thiz;
 	Egueb_Dom_Node *target = NULL;
-	Egueb_Dom_String *xlink_href = NULL;
 	Eina_Bool ret;
 
 	thiz = EGUEB_SMIL_ANIMATION(e);
-	egueb_dom_attr_final_get(thiz->xlink_href, &xlink_href);
-	if (egueb_dom_string_is_valid(xlink_href))
+	target = _egueb_smil_animation_target_get(thiz);
+	if (!target)
 	{
-		Egueb_Dom_Node *doc;
-
-		doc = egueb_dom_node_document_get(EGUEB_DOM_NODE(e));
-		if (!doc)
-		{
-			ERR("No document associated with the node");
-			return EINA_FALSE;
-		}
-		target = egueb_dom_document_element_get_by_id(doc, xlink_href, NULL);
-		if (!target)
-		{
-			ERR("Invalid target");
-			egueb_dom_node_unref(doc);
-			egueb_dom_string_unref(xlink_href);
-			return EINA_FALSE;
-		}
-		egueb_dom_string_unref(xlink_href);
-		egueb_dom_node_unref(doc);
-		ERR("we have an xlink!");
-	}
-	else
-	{
-		target = egueb_dom_node_parent_get(EGUEB_DOM_NODE(e));
-		egueb_dom_string_unref(xlink_href);
+		return EINA_FALSE;
 	}
 
 	if (!egueb_dom_element_is_enqueued(EGUEB_DOM_NODE(e)) &&
@@ -503,7 +531,6 @@ static Eina_Bool _egueb_smil_animation_process(Egueb_Dom_Element *e)
 		return EINA_TRUE;
 	}
 
-	if (!target) return EINA_FALSE;
 	/* now the setup */
 	_egueb_dom_animation_cleanup(thiz, target);
 	ret = _egueb_dom_animation_setup(thiz, target);
@@ -535,11 +562,14 @@ static void _egueb_smil_animation_instance_init(void *o)
 
 	/* add a callback whenever the node has been removed from another */
 	n = EGUEB_DOM_NODE(o);
-	/* FIXME this is only valid for parent target, not for xlink:href */
 	egueb_dom_node_event_listener_add(n,
-			EGUEB_DOM_EVENT_MUTATION_NODE_REMOVED,
-			_egueb_dom_animation_node_removed_cb,
-			EINA_TRUE, NULL);
+			EGUEB_DOM_EVENT_MUTATION_NODE_INSERTED_INTO_DOCUMENT,
+			_egueb_smil_animation_inserted_into_document_cb,
+			EINA_FALSE, n);
+	egueb_dom_node_event_listener_add(n,
+			EGUEB_DOM_EVENT_MUTATION_NODE_REMOVED_FROM_DOCUMENT,
+			_egueb_smil_animation_removed_from_document_cb,
+			EINA_FALSE, n);
 
 	thiz = EGUEB_SMIL_ANIMATION(o);
 	thiz->attribute_name = egueb_dom_attr_string_new(
@@ -593,23 +623,6 @@ EAPI Eina_Bool egueb_smil_is_animation(Egueb_Dom_Node *n)
 			EGUEB_SMIL_ANIMATION_DESCRIPTOR))
 		return EINA_FALSE;
 	return EINA_TRUE;
-}
-
-EAPI Etch * egueb_smil_animation_etch_get(Egueb_Dom_Node *n)
-{
-	Egueb_Smil_Animation *thiz;
-
-	thiz = EGUEB_SMIL_ANIMATION(n);
-	return thiz->etch;
-}
-
-EAPI void egueb_smil_animation_etch_set(Egueb_Dom_Node *n, Etch *etch)
-{
-	Egueb_Smil_Animation *thiz;
-
-	thiz = EGUEB_SMIL_ANIMATION(n);
-	thiz->etch = etch;
-	thiz->document_changed = EINA_TRUE;
 }
 
 #if 0

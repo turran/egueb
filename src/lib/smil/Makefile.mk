@@ -35,6 +35,7 @@ src/lib/smil/egueb_smil_attr_timing_list.c \
 src/lib/smil/egueb_smil_clock.c \
 src/lib/smil/egueb_smil_duration.c \
 src/lib/smil/egueb_smil_event.c \
+src/lib/smil/egueb_smil_event_etch.c \
 src/lib/smil/egueb_smil_fill.c \
 src/lib/smil/egueb_smil_main.c \
 src/lib/smil/egueb_smil_set.c \

@@ -90,7 +90,6 @@ static void _egueb_dom_node_document_destroyed_cb(Egueb_Dom_Event *e,
 	phase = egueb_dom_event_phase_get(e);
 	if (phase != EGUEB_DOM_EVENT_PHASE_AT_TARGET)
 		return;
-	/* TODO shall we trigger the event document removed from? */
 	thiz->owner_document = NULL;
 }
 
@@ -332,36 +331,43 @@ static void _egueb_dom_node_instance_deinit(void *o)
 	eina_hash_free(thiz->features);
 }
 
-/* we use this instead of an event listener to avoid allocation of a new
- * event per target
- */
-static void _egueb_dom_node_document_set(Egueb_Dom_Node *thiz,
-		Egueb_Dom_Event *evt, Egueb_Dom_Node *document)
+static void _egueb_dom_node_insert_into_document(Egueb_Dom_Node *thiz,
+		Egueb_Dom_Event *evt)
 {
+	Egueb_Dom_Node *parent;
 	Egueb_Dom_Node *child;
 
-	/* remove previous weak ref */
-	if (thiz->owner_document)
-	{
-		egueb_dom_node_weak_unref(thiz->owner_document,
-			_egueb_dom_node_document_destroyed_cb, thiz);
-		thiz->owner_document = NULL;
-	}
-	/* add a wek ref */
-	if (document)
-	{
-		egueb_dom_node_weak_ref(document,
-			_egueb_dom_node_document_destroyed_cb, thiz);
-		thiz->owner_document = document;
-	}
+	parent = thiz->parent;
+	/* in case the parent has a document and we dont, set the owner document */
+	if ((parent->owner_document != thiz->owner_document) && (parent->owner_document))
+		egueb_dom_node_document_set(thiz, parent->owner_document);
 
+	thiz->in_tree = EINA_TRUE;
 	/* dispatch on the node first */
 	egueb_dom_node_event_dispatch(thiz, egueb_dom_event_ref(evt), NULL, NULL);
 	/* now on every children */
 	EINA_INLIST_FOREACH(thiz->children, child)
 	{
-		_egueb_dom_node_document_set(child, egueb_dom_event_ref(evt),
-				document);
+		_egueb_dom_node_insert_into_document(child, egueb_dom_event_ref(evt));
+	}
+	egueb_dom_event_unref(evt);
+}
+
+static void _egueb_dom_node_remove_from_document(Egueb_Dom_Node *thiz,
+		Egueb_Dom_Event *evt)
+{
+	Egueb_Dom_Node *child;
+
+	/* remove the weak reference in case we have one */
+	egueb_dom_node_document_set(thiz, NULL);
+
+	thiz->in_tree = EINA_FALSE;
+	/* dispatch on the node first */
+	egueb_dom_node_event_dispatch(thiz, egueb_dom_event_ref(evt), NULL, NULL);
+	/* now on every children */
+	EINA_INLIST_FOREACH(thiz->children, child)
+	{
+		_egueb_dom_node_remove_from_document(child, egueb_dom_event_ref(evt));
 	}
 	egueb_dom_event_unref(evt);
 }
@@ -380,19 +386,19 @@ void egueb_dom_node_document_set(Egueb_Dom_Node *thiz,
 		if (type != EGUEB_DOM_NODE_TYPE_DOCUMENT_NODE) return;
 	}
 
-	/* first remove */
-	if ((document != thiz->owner_document) && (thiz->owner_document))
+	/* remove previous weak ref */
+	if (thiz->owner_document)
 	{
-		/* trigger the node removed from document mutation event */
-		event = egueb_dom_event_mutation_node_removed_from_document_new();
-		_egueb_dom_node_document_set(thiz, event, NULL);
+		egueb_dom_node_weak_unref(thiz->owner_document,
+			_egueb_dom_node_document_destroyed_cb, thiz);
+		thiz->owner_document = NULL;
 	}
-	/* now add */
-	if (document != thiz->owner_document)
+	/* add a wek ref */
+	if (document)
 	{
-		/* trigger the node inserted into document mutation event */
-		event = egueb_dom_event_mutation_node_inserted_into_document_new();
-		_egueb_dom_node_document_set(thiz, event, document);
+		egueb_dom_node_weak_ref(document,
+			_egueb_dom_node_document_destroyed_cb, thiz);
+		thiz->owner_document = document;
 	}
 }
 
@@ -687,13 +693,19 @@ EAPI Eina_Bool egueb_dom_node_child_remove(Egueb_Dom_Node *thiz, Egueb_Dom_Node 
 		return EINA_FALSE;
 	}
 
+	/* remove the node in the tree in case the parent is on the tree */
+	if (thiz->in_tree && child->in_tree)
+	{
+		event = egueb_dom_event_mutation_node_removed_from_document_new();
+		_egueb_dom_node_remove_from_document(child, event); 
+	}
+
 	/* trigger the mutation event */
 	event = egueb_dom_event_mutation_node_removed_new(thiz);
 	egueb_dom_node_event_dispatch(child, event, NULL, NULL);
 
 	thiz->children = eina_inlist_remove(thiz->children, EINA_INLIST_GET(child));
 	child->parent = NULL;
-	egueb_dom_node_document_set(child, NULL);
 	egueb_dom_node_unref(child);
 
 	return EINA_TRUE;
@@ -784,9 +796,12 @@ EAPI Eina_Bool egueb_dom_node_insert_before(Egueb_Dom_Node *thiz,
 	event = egueb_dom_event_mutation_node_inserted_new(thiz);
 	egueb_dom_node_event_dispatch(child, event, NULL, NULL);
 
-	/* set the owner document on the child */
-	if ((thiz->owner_document != child->owner_document) && (thiz->owner_document))
-		egueb_dom_node_document_set(child, thiz->owner_document);
+	/* insert the node in the tree in case the parent is on the tree too */
+	if (thiz->in_tree && !child->in_tree)
+	{
+		event = egueb_dom_event_mutation_node_inserted_into_document_new();
+		_egueb_dom_node_insert_into_document(child, event); 
+	}
 	return EINA_TRUE;
 }
 

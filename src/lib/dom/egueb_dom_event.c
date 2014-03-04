@@ -127,6 +127,13 @@ EAPI Egueb_Dom_Event * egueb_dom_event_ref(Egueb_Dom_Event *thiz)
 	thiz->ref++;
 	return thiz;
 }
+
+EAPI Egueb_Dom_String * egueb_dom_event_type_get(Egueb_Dom_Event *thiz)
+{
+	if (!thiz) return NULL;
+	return egueb_dom_string_ref(thiz->type);
+}
+
 #if 0
 // Introduced in DOM Level 2:
   interface Event {

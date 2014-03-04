@@ -125,7 +125,7 @@ static void _egueb_dom_document_insert_id(Egueb_Dom_Document *thiz, Egueb_Dom_No
 		egueb_dom_node_unref(n);
 	}
 
-	if (egueb_dom_string_is_valid(id))
+	if (egueb_dom_string_is_valid(id) && thiz->ids)
 	{
 		Egueb_Dom_Node *old;
 		const char *str;
@@ -144,7 +144,7 @@ static void _egueb_dom_document_insert_id(Egueb_Dom_Document *thiz, Egueb_Dom_No
 	egueb_dom_string_unref(id);
 }
 
-static void _egueb_dom_document_topmost_attr_modified_cb(Egueb_Dom_Event *ev,
+static void _egueb_dom_document_attr_modified_cb(Egueb_Dom_Event *ev,
 		void *data)
 {
 	Egueb_Dom_Document *thiz = EGUEB_DOM_DOCUMENT(data);
@@ -178,7 +178,7 @@ static void _egueb_dom_document_topmost_attr_modified_cb(Egueb_Dom_Event *ev,
 }
 
 /* a node has been inserted into its parent */
-static void _egueb_dom_document_topmost_node_inserted_cb(Egueb_Dom_Event *ev,
+static void _egueb_dom_document_node_inserted_cb(Egueb_Dom_Event *ev,
 		void *data)
 {
 	Egueb_Dom_Node *target;
@@ -209,7 +209,7 @@ static void _egueb_dom_document_topmost_node_inserted_cb(Egueb_Dom_Event *ev,
 	}
 }
 
-static void _egueb_dom_document_topmost_node_removed_cb(Egueb_Dom_Event *ev,
+static void _egueb_dom_document_node_removed_cb(Egueb_Dom_Event *ev,
 		void *data)
 {
 	Egueb_Dom_Node *target;
@@ -232,20 +232,15 @@ static void _egueb_dom_document_topmost_node_removed_cb(Egueb_Dom_Event *ev,
 	egueb_dom_element_dequeue(target);
 }
 
-static void _egueb_dom_document_element_insterted_into_document_cb(
+static void _egueb_dom_document_node_insterted_into_document_cb(
 		Egueb_Dom_Event *ev, void *data)
 {
 	Egueb_Dom_Document *thiz = EGUEB_DOM_DOCUMENT(data);
-	Egueb_Dom_Event_Phase phase;
 	Egueb_Dom_Node *target;
 	Egueb_Dom_Node_Type type;
 	Egueb_Dom_String *id = NULL;
 	Egueb_Dom_String id_attr = EGUEB_DOM_STRING_STATIC("id");
 	Egueb_Dom_String *name;
-
-	phase = egueb_dom_event_phase_get(ev);
-	if (phase != EGUEB_DOM_EVENT_PHASE_AT_TARGET)
-		return;
 
 	target = egueb_dom_event_target_get(ev);
 	name = egueb_dom_node_name_get(target);
@@ -269,20 +264,15 @@ static void _egueb_dom_document_element_insterted_into_document_cb(
 	egueb_dom_node_unref(target);
 }
 
-static void _egueb_dom_document_element_removed_from_document_cb(
+static void _egueb_dom_document_node_removed_from_document_cb(
 		Egueb_Dom_Event *ev, void *data)
 {
 	Egueb_Dom_Document *thiz = EGUEB_DOM_DOCUMENT(data);
-	Egueb_Dom_Event_Phase phase;
 	Egueb_Dom_Node *target;
 	Egueb_Dom_Node_Type type;
 	Egueb_Dom_String *id = NULL;
 	Egueb_Dom_String id_attr = EGUEB_DOM_STRING_STATIC("id");
 	Egueb_Dom_String *name;
-
-	phase = egueb_dom_event_phase_get(ev);
-	if (phase != EGUEB_DOM_EVENT_PHASE_AT_TARGET)
-		return;
 
 	target = egueb_dom_event_target_get(ev);
 	name = egueb_dom_node_name_get(target);
@@ -298,7 +288,7 @@ static void _egueb_dom_document_element_removed_from_document_cb(
 
 	/* remove the element from the ids */
 	id = egueb_dom_element_attribute_get(target, &id_attr);
-	if (egueb_dom_string_is_valid(id))
+	if (egueb_dom_string_is_valid(id) && thiz->ids)
 	{
 		INFO("Removing id '%s' from the list of ids", id->str);
 		eina_hash_del(thiz->ids,
@@ -306,22 +296,10 @@ static void _egueb_dom_document_element_removed_from_document_cb(
 				target);
 	}
 	egueb_dom_string_unref(id);
-#if 0
-	/* remove the events */
-	egueb_dom_node_event_listener_remove(target,
-			EGUEB_DOM_EVENT_MUTATION_NODE_INSERTED_INTO_DOCUMENT,
-			_egueb_dom_document_element_insterted_into_document_cb,
-			EINA_TRUE, thiz);
-	egueb_dom_node_event_listener_remove(target,
-			EGUEB_DOM_EVENT_MUTATION_NODE_REMOVED_FROM_DOCUMENT,
-			_egueb_dom_document_element_removed_from_document_cb,
-			EINA_TRUE, thiz);
-#endif
-
 	egueb_dom_node_unref(target);
 }
 
-static void _egueb_dom_document_topmost_request_process_cb(
+static void _egueb_dom_document_request_process_cb(
 		Egueb_Dom_Event *ev, void *data)
 {
 	Egueb_Dom_Node *target;
@@ -332,25 +310,6 @@ static void _egueb_dom_document_topmost_request_process_cb(
 	egueb_dom_element_enqueue(target);
 }
 
-/* get the id and remove it from our list of ids? */
-static void _egueb_dom_document_topmost_removed_from_document_cb(
-		Egueb_Dom_Event *ev, void *data)
-{
-#if 0
-	Egueb_Dom_Document *thiz = data;
-	Egueb_Dom_Event_Phase phase;
-
-	phase = egueb_dom_event_phase_get(ev);
-	if (phase != EGUEB_DOM_EVENT_PHASE_AT_TARGET)
-		return;
-
-	/* remove the events registered */
-	_egueb_dom_document_topmost_remove_events(thiz);
-	/* update our own state */
-	egueb_dom_node_unref(thiz->element);
-	thiz->element = NULL;
-#endif
-}
 /*----------------------------------------------------------------------------*
  *                               Node interface                               *
  *----------------------------------------------------------------------------*/
@@ -402,31 +361,38 @@ static void _egueb_dom_document_instance_init(void *o)
 	Egueb_Dom_Node *n;
 
 	n = EGUEB_DOM_NODE(o);
+	/* a document is always in tree */
+	n->in_tree = EINA_TRUE;
+
 	/* register the needed events */
 	/* in case the element is being inserted into another document or removed
 	 * be sure to keep track of such changes
 	 */
 	egueb_dom_node_event_listener_add(n,
 			EGUEB_DOM_EVENT_MUTATION_NODE_REMOVED_FROM_DOCUMENT,
-			_egueb_dom_document_topmost_removed_from_document_cb,
+			_egueb_dom_document_node_removed_from_document_cb,
+			EINA_TRUE, n);
+	egueb_dom_node_event_listener_add(n,
+			EGUEB_DOM_EVENT_MUTATION_NODE_INSERTED_INTO_DOCUMENT,
+			_egueb_dom_document_node_insterted_into_document_cb,
 			EINA_TRUE, n);
 	/* this events are needed to know whenever an element must be queued */
 	egueb_dom_node_event_listener_add(n,
 			EGUEB_DOM_EVENT_MUTATION_NODE_INSERTED,
-			_egueb_dom_document_topmost_node_inserted_cb,
+			_egueb_dom_document_node_inserted_cb,
 			EINA_FALSE, n);
 	egueb_dom_node_event_listener_add(n,
 			EGUEB_DOM_EVENT_MUTATION_NODE_REMOVED,
-			_egueb_dom_document_topmost_node_removed_cb,
+			_egueb_dom_document_node_removed_cb,
 			EINA_FALSE, n);
 	egueb_dom_node_event_listener_add(n,
 			EGUEB_DOM_EVENT_MUTATION_ATTR_MODIFIED,
-			_egueb_dom_document_topmost_attr_modified_cb,
+			_egueb_dom_document_attr_modified_cb,
 			EINA_FALSE, n);
 	/* in case an element needs to be processed, we will enqueue it */
 	egueb_dom_node_event_listener_add(n,
 			EGUEB_DOM_EVENT_PROCESS,
-			_egueb_dom_document_topmost_request_process_cb,
+			_egueb_dom_document_request_process_cb,
 			EINA_FALSE, n);
 
  	thiz = EGUEB_DOM_DOCUMENT (o);
@@ -445,25 +411,10 @@ static void _egueb_dom_document_instance_deinit(void *o)
 	{
 		egueb_dom_node_unref(n);
 	}
-#if 0
-	if (thiz->element)
-	{
-		/* Be sure to remove the topmost event handlers
-		 * before setting the NULL document. This is done because
-		 * we keep one reference of the topmost. When the element
-		 * is being removed from the document it is also unreffed
-		 * and thus a problem on the other event handlers because
-		 * the node will be no longer valid
-		 */
-		_egueb_dom_document_topmost_remove_events(thiz);
-		egueb_dom_node_document_set(thiz->element, NULL);
-		egueb_dom_node_unref(thiz->element);
-		thiz->element = NULL;
-	}
-#endif
 	if (thiz->i)
 		egueb_dom_implementation_unref(thiz->i);
 	eina_hash_free(thiz->ids);
+	thiz->ids = NULL;
 }
 
 /*============================================================================*
@@ -547,17 +498,6 @@ EAPI Egueb_Dom_Node * egueb_dom_document_element_create(Egueb_Dom_Node *n,
 		new_element = klass->element_create(thiz, str);
 	if (new_element)
 	{
-#if 0
-		/* keep track of the document inserted event */
-		egueb_dom_node_event_listener_add(new_element,
-				EGUEB_DOM_EVENT_MUTATION_NODE_INSERTED_INTO_DOCUMENT,
-				_egueb_dom_document_element_insterted_into_document_cb,
-				EINA_TRUE, thiz);
-		egueb_dom_node_event_listener_add(new_element,
-				EGUEB_DOM_EVENT_MUTATION_NODE_REMOVED_FROM_DOCUMENT,
-				_egueb_dom_document_element_removed_from_document_cb,
-				EINA_TRUE, thiz);
-#endif
 		egueb_dom_node_document_set(new_element, EGUEB_DOM_NODE(thiz));
 	}
 	else
