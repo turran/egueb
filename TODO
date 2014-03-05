@@ -1,5 +1,10 @@
 Refactor
 ========
++ Add an animation context concept, this way we can know whenever
+  a set() is the only animation and thus just implement it as a pulse
+  otherwise handle the sandwich concept and do as it is right now.
++ Add the document fragment node type. This is helpful for out of
+  tree nodes but with the same logic as a document (i.e events)
 + Move the value, the list, even the string implementation to the base
   lib
 + Remove the has_changed, changed functions. Make a common

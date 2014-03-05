@@ -71,6 +71,7 @@ extern "C" {
 #include "egueb_dom_element.h"
 #include "egueb_dom_character_data.h"
 #include "egueb_dom_document.h"
+#include "egueb_dom_document_fragment.h"
 #include "egueb_dom_text.h"
 #include "egueb_dom_implementation.h"
 

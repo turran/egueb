@@ -20,6 +20,7 @@
 #include "egueb_dom_string.h"
 #include "egueb_dom_main.h"
 #include "egueb_dom_document.h"
+#include "egueb_dom_document_fragment.h"
 #include "egueb_dom_element.h"
 #include "egueb_dom_event.h"
 #include "egueb_dom_event_mutation.h"
@@ -107,11 +108,6 @@ static Eina_Bool _egueb_dom_parser_transform_text(Egueb_Dom_Parser *thiz, const 
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
-#if 0
-/* Forward declarations */
-static void _egueb_dom_document_topmost_remove_events(Egueb_Dom_Document *thiz);
-#endif
-
 static void _egueb_dom_document_insert_id(Egueb_Dom_Document *thiz, Egueb_Dom_Node *n,
 		Egueb_Dom_String *id)
 {
@@ -409,6 +405,11 @@ static void _egueb_dom_document_instance_deinit(void *o)
 	/* first remove the list */
 	EINA_LIST_FREE(thiz->current_enqueued, n)
 	{
+		Egueb_Dom_String *name;
+
+		name = egueb_dom_node_name_get(n);
+		DBG("Removing the enqueued node '%s'", egueb_dom_string_string_get(name));
+		egueb_dom_string_unref(name);
 		egueb_dom_node_unref(n);
 	}
 	if (thiz->i)
@@ -498,13 +499,24 @@ EAPI Egueb_Dom_Node * egueb_dom_document_element_create(Egueb_Dom_Node *n,
 		new_element = klass->element_create(thiz, str);
 	if (new_element)
 	{
-		egueb_dom_node_document_set(new_element, EGUEB_DOM_NODE(thiz));
+		egueb_dom_node_document_set(new_element, n);
 	}
 	else
 	{
 		if (err) *err = EGUEB_DOM_ERROR_INVALID_CHARACTER;
 	}
 	return new_element;
+}
+
+/* DocumentFragment   createDocumentFragment(); */
+EAPI Egueb_Dom_Node * egueb_dom_document_document_fragment_create(
+		Egueb_Dom_Node *n)
+{
+	Egueb_Dom_Node *ret;
+
+	ret = egueb_dom_document_fragment_new();
+	egueb_dom_node_document_set(ret, n);
+	return ret;
 }
 
 /* readonly attribute Element documentElement; */
@@ -661,35 +673,9 @@ EAPI void egueb_dom_document_process_queue_clear(Egueb_Dom_Node *n)
 }
 
 #if 0
-EAPI void egueb_dom_document_timer_add_cb_set(Egueb_Dom_Node *n,
-		Egueb_Dom_Document_Timer_Add_Cb cb, void *user_data)
-{
-
-}
-
-EAPI void egueb_dom_document_timer_remove_cb_set(Egueb_Dom_Node *n,
-		Egueb_Dom_Document_Timer_Remove_Cb cb, void *user_data)
-{
-
-}
-
-EAPI Egueb_Dom_Timer * egueb_dom_document_timer_add(Egueb_Dom_Node *n,
-		long timeout, Egueb_Dom_Document_Timer_Cb cb, void *user_data)
-{
-
-}
-
-EAPI void egueb_dom_document_timer_remove(Egueb_Dom_Node *n, Egueb_Dom_Timer *t)
-{
-
-}
-#endif
-
-#if 0
 interface Document : Node {
   readonly attribute DocumentType     doctype;
   readonly attribute DOMImplementation  implementation;
-  DocumentFragment   createDocumentFragment();
   Text               createTextNode(in DOMString data);
   Comment            createComment(in DOMString data);
   CDATASection       createCDATASection(in DOMString data)

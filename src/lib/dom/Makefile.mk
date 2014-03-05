@@ -16,6 +16,7 @@ src/lib/dom/egueb_dom_build.h \
 src/lib/dom/egueb_dom_character_data.h \
 src/lib/dom/egueb_dom_document.h \
 src/lib/dom/egueb_dom_document_external.h \
+src/lib/dom/egueb_dom_document_fragment.h \
 src/lib/dom/egueb_dom_element.h \
 src/lib/dom/egueb_dom_element_external.h \
 src/lib/dom/egueb_dom_event.h \
@@ -71,6 +72,7 @@ src/lib/dom/egueb_dom_character_data.c \
 src/lib/dom/egueb_dom_character_data_private.h \
 src/lib/dom/egueb_dom_document.c \
 src/lib/dom/egueb_dom_document_external.c \
+src/lib/dom/egueb_dom_document_fragment.c \
 src/lib/dom/egueb_dom_element.c \
 src/lib/dom/egueb_dom_element_private.h \
 src/lib/dom/egueb_dom_element_external.c \

@@ -281,23 +281,18 @@ static void _egueb_dom_node_instance_deinit(void *o)
 {
 	Egueb_Dom_Node *thiz = EGUEB_DOM_NODE(o);
 	Egueb_Dom_Event *event;
-	Egueb_Dom_String *name = NULL;
 	Egueb_Dom_Node_Event_Listener *el;
 
 	thiz->destroying = EINA_TRUE;
 
-	name = egueb_dom_node_name_get(thiz);
-	DBG("Destroying node '%s'", egueb_dom_string_string_get(name));
 	/* we can not unref a node which has a parent and is not being
 	 * destroyed
 	 */
 	if (thiz->parent && !thiz->parent->destroying)
 	{
-		ERR("Destroying the node '%s' with a parent. "
-				"Use egueb_dom_node_child_remove()",
-				egueb_dom_string_string_get(name));
+		ERR("Destroying the node with a parent. "
+				"Use egueb_dom_node_child_remove()");
 	}
-	egueb_dom_string_unref(name);
 	/* remove the document weak ref */
 	if (thiz->owner_document)
 	{
@@ -309,10 +304,15 @@ static void _egueb_dom_node_instance_deinit(void *o)
 	/* remove every child */
 	while (thiz->children)
 	{
+		Eina_Error err;
 		Egueb_Dom_Node *child;
 
 		child = EINA_INLIST_CONTAINER_GET(thiz->children, Egueb_Dom_Node);
-		egueb_dom_node_child_remove(thiz, child, NULL);
+		if (!egueb_dom_node_child_remove(thiz, child, &err))
+		{
+			ERR("Failed removing a child (%s), bad things will happen",
+					eina_error_msg_get(err));
+		}
 	}
 
 	/* before freeing the element, call the destroy event */
@@ -377,8 +377,6 @@ static void _egueb_dom_node_remove_from_document(Egueb_Dom_Node *thiz,
 void egueb_dom_node_document_set(Egueb_Dom_Node *thiz,
 		Egueb_Dom_Node *document)
 {
-	Egueb_Dom_Event *event;
-
 	if (document)
 	{
 		Egueb_Dom_Node_Type type;
@@ -440,7 +438,12 @@ EAPI void egueb_dom_node_unref(Egueb_Dom_Node *thiz)
 	thiz->ref--;
 	if (!thiz->ref && !thiz->destroying)
 	{
+		Egueb_Dom_String *name = NULL;
+
+		name = egueb_dom_node_name_get(thiz);
+		DBG("Destroying node '%s'", egueb_dom_string_string_get(name));
 		enesim_object_instance_free(ENESIM_OBJECT_INSTANCE(thiz));
+		egueb_dom_string_unref(name);
 	}
 }
 
@@ -685,11 +688,14 @@ EAPI Eina_Bool egueb_dom_node_child_remove(Egueb_Dom_Node *thiz, Egueb_Dom_Node 
 	if (!thiz)
 	{
 		if (err) *err = EGUEB_DOM_ERROR_NOT_FOUND;
+		egueb_dom_node_unref(child);
 		return EINA_FALSE;
 	}
+
 	if (child->parent != thiz)
 	{
 		if (err) *err = EGUEB_DOM_ERROR_NOT_FOUND;
+		egueb_dom_node_unref(child);
 		return EINA_FALSE;
 	}
 
