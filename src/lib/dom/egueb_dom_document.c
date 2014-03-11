@@ -525,6 +525,25 @@ EAPI Egueb_Dom_Node * egueb_dom_document_element_get(Egueb_Dom_Node *n)
 	return egueb_dom_node_child_first_get(n);
 }
 
+/* attribute DOMString       documentURI; */
+EAPI Egueb_Dom_String * egueb_dom_document_uri_get(Egueb_Dom_Node *n)
+{
+	Egueb_Dom_Document *thiz;
+
+	thiz = EGUEB_DOM_DOCUMENT(n);
+	return egueb_dom_string_ref(thiz->uri);
+}
+
+EAPI void egueb_dom_document_uri_set(Egueb_Dom_Node *n, Egueb_Dom_String *uri)
+{
+	Egueb_Dom_Document *thiz;
+
+	thiz = EGUEB_DOM_DOCUMENT(n);
+	if (thiz->uri)
+		egueb_dom_string_unref(thiz->uri);
+	thiz->uri = uri;
+}
+
 EAPI void egueb_dom_document_element_set(Egueb_Dom_Node *n,
 		Egueb_Dom_Node *element)
 {
@@ -718,8 +737,6 @@ interface Document : Node {
 
   // Introduced in DOM Level 3:
            attribute boolean         strictErrorChecking;
-  // Introduced in DOM Level 3:
-           attribute DOMString       documentURI;
   // Introduced in DOM Level 3:
   readonly attribute DOMConfiguration domConfig;
   // Introduced in DOM Level 3:

@@ -25,6 +25,8 @@
 typedef struct _Egueb_Dom_Document
 {
 	Egueb_Dom_Node base;
+	/* attributes */
+	Egueb_Dom_String *uri;
 	/* private */
 	Eina_Hash *ids;
 	Eina_List *current_enqueued;
