@@ -17,8 +17,10 @@
  */
 #include "egueb_svg_main_private.h"
 #include "egueb_svg_main.h"
-#include "egueb_svg_element_private.h"
 #include "egueb_svg_element_defs.h"
+#include "egueb_svg_renderable.h"
+
+#include "egueb_svg_element_private.h"
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/

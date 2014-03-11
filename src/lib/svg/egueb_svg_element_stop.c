@@ -108,7 +108,6 @@ static void _egueb_svg_element_stop_instance_init(void *o)
 {
 	Egueb_Svg_Element_Stop *thiz;
 	Egueb_Dom_Node *n;
-	Enesim_Renderer *r;
 
 	thiz = EGUEB_SVG_ELEMENT_STOP(o);
 	/* create the properties */

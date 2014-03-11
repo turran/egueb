@@ -115,6 +115,8 @@ EAPI Eina_Bool egueb_dom_feature_animation_tick(Egueb_Dom_Feature *f)
 	e = thiz->d->etch_get(thiz->n);
 	if (!e) return EINA_FALSE;
 
+	/* TODO handle the case of no etch but tick callback for the svg case */
+
 	etch_timer_tick(e);
 	return EINA_TRUE;
 }
