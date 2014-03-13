@@ -54,8 +54,5 @@
 
 extern int egueb_smil_log_global;
 
-/* parser */
-/* tag */
-
 #endif
 

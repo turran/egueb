@@ -15,11 +15,11 @@
  * License along with this library.
  * If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef _EGUEB_SMIL_ATTR_DURATION_H_
-#define _EGUEB_SMIL_ATTR_DURATION_H_
+#ifndef _EGUEB_SMIL_ATTR_REPEAT_COUNT_H_
+#define _EGUEB_SMIL_ATTR_REPEAT_COUNT_H_
 
-Egueb_Dom_Node * egueb_smil_attr_duration_new(Egueb_Dom_String *name,
-		const Egueb_Smil_Duration *def);
+Egueb_Dom_Node * egueb_smil_attr_repeat_count_new(Egueb_Dom_String *name,
+		const Egueb_Smil_Repeat_Count *def);
 
 #endif
 

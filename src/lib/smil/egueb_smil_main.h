@@ -35,5 +35,6 @@ EAPI extern Egueb_Dom_String *EGUEB_SMIL_TO;
 EAPI extern Egueb_Dom_String *EGUEB_SMIL_FROM;
 EAPI extern Egueb_Dom_String *EGUEB_SMIL_BY;
 EAPI extern Egueb_Dom_String *EGUEB_SMIL_VALUES;
+EAPI extern Egueb_Dom_String *EGUEB_SMIL_REPEAT_COUNT;
 
 #endif

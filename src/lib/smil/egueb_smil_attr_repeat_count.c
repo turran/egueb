@@ -17,31 +17,32 @@
  */
 #include "egueb_smil_private.h"
 
-#include "egueb_smil_duration.h"
+#include "egueb_smil_repeat_count.h"
 
 #include "egueb_dom_attr_private.h"
 #include "egueb_dom_attr_primitive_private.h"
-#include "egueb_smil_attr_duration.h"
+#include "egueb_smil_attr_repeat_count.h"
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
-EGUEB_DOM_ATTR_PRIMITIVE_BOILERPLATE(Egueb_Smil_Duration,
-		Egueb_Smil_Attr_Duration, egueb_smil_duration,
-		egueb_smil_attr_duration)
+EGUEB_DOM_ATTR_PRIMITIVE_BOILERPLATE(Egueb_Smil_Repeat_Count,
+		Egueb_Smil_Attr_Repeat_Count, egueb_smil_repeat_count,
+		egueb_smil_attr_repeat_count)
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/
-Egueb_Dom_Node * egueb_smil_attr_duration_new(Egueb_Dom_String *name,
-		const Egueb_Smil_Duration *def)
+Egueb_Dom_Node * egueb_smil_attr_repeat_count_new(Egueb_Dom_String *name,
+		const Egueb_Smil_Repeat_Count *def)
 {
 	Egueb_Dom_Node *n;
 
-	n = ENESIM_OBJECT_INSTANCE_NEW(egueb_smil_attr_duration);
+	n = ENESIM_OBJECT_INSTANCE_NEW(egueb_smil_attr_repeat_count);
 	egueb_dom_attr_init(n, name, EINA_FALSE, EINA_FALSE, EINA_FALSE);
 	if (def)
 		egueb_dom_attr_set(n, EGUEB_DOM_ATTR_TYPE_DEFAULT, def);
 	return n;
 }
+

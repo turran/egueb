@@ -21,12 +21,14 @@
 
 #include "egueb_dom_element_private.h"
 #include "egueb_dom_attr_private.h"
+#include "egueb_smil_clock.h"
 #include "egueb_smil_duration.h"
 #include "egueb_smil_fill.h"
-#include "egueb_smil_clock.h"
+#include "egueb_smil_repeat_count.h"
 #include "egueb_smil_timing.h"
 #include "egueb_smil_attr_duration.h"
 #include "egueb_smil_attr_fill.h"
+#include "egueb_smil_attr_repeat_count.h"
 #include "egueb_smil_attr_timing_list.h"
 
 typedef struct _Egueb_Smil_Animation
@@ -39,6 +41,7 @@ typedef struct _Egueb_Smil_Animation
 	Egueb_Dom_Node *begin;
 	Egueb_Dom_Node *end;
 	Egueb_Dom_Node *xlink_href;
+	Egueb_Dom_Node *repeat_count;
 
 	/* private */
 	Eina_List *begin_events;

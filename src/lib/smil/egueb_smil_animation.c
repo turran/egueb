@@ -588,6 +588,8 @@ static void _egueb_smil_animation_instance_init(void *o)
 	thiz->xlink_href = egueb_dom_attr_string_new(
 			egueb_dom_string_ref(EGUEB_DOM_XLINK_HREF),
 			NULL, EINA_FALSE, EINA_FALSE, EINA_FALSE);
+	thiz->repeat_count = egueb_smil_attr_repeat_count_new(
+			egueb_dom_string_ref(EGUEB_SMIL_REPEAT_COUNT), NULL);
 
 	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->attribute_name), NULL);
 	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->fill), NULL);
@@ -595,6 +597,7 @@ static void _egueb_smil_animation_instance_init(void *o)
 	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->begin), NULL);
 	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->end), NULL);
 	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->xlink_href), NULL);
+	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->repeat_count), NULL);
 }
 
 static void _egueb_smil_animation_instance_deinit(void *o)
