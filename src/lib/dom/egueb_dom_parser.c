@@ -25,6 +25,7 @@
 #include "egueb_dom_implementation.h"
 #include "egueb_dom_implementation_source.h"
 #include "egueb_dom_registry.h"
+#include "egueb_dom_document.h"
 
 #include "egueb_dom_parser_private.h"
 /*============================================================================*
@@ -77,6 +78,7 @@ void egueb_dom_parser_document_set(Egueb_Dom_Parser *thiz, Egueb_Dom_Node *doc)
 EAPI Eina_Bool egueb_dom_parser_parse(Enesim_Stream *data, Egueb_Dom_Node **doc)
 {
 	Egueb_Dom_Parser *thiz;
+	const char *uri;
 
 	if (!doc) return EINA_FALSE;
 	if (!data) return EINA_FALSE;
@@ -115,6 +117,15 @@ EAPI Eina_Bool egueb_dom_parser_parse(Enesim_Stream *data, Egueb_Dom_Node **doc)
 	}
 
 	egueb_dom_parser_document_set(thiz, *doc);
+	/* Set the URI in case we do have one */
+	uri = enesim_stream_uri_get(data);
+	if (uri)
+	{
+		Egueb_Dom_String *suri;
+		suri = egueb_dom_string_new_with_string(uri);
+		egueb_dom_document_uri_set(*doc, suri);
+	}
+
 	thiz->descriptor->parse(thiz->data, data);
 	egueb_dom_parser_free(thiz);
 
