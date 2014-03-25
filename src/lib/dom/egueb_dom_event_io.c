@@ -27,14 +27,22 @@
 #include "egueb_dom_event_io.h"
 
 #include "egueb_dom_string_private.h"
-#include "egueb_dom_event_io_private.h"
+#include "egueb_dom_event_private.h"
 
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
+#define EGUEB_DOM_EVENT_IO_DESCRIPTOR egueb_dom_event_io_descriptor_get()
+Enesim_Object_Descriptor * egueb_dom_event_io_descriptor_get(void);
+#define EGUEB_DOM_EVENT_IO(o) ENESIM_OBJECT_INSTANCE_CHECK(o,		\
+		Egueb_Dom_Event_IO, EGUEB_DOM_EVENT_IO_DESCRIPTOR)
+
 typedef struct _Egueb_Dom_Event_IO
 {
 	Egueb_Dom_Event base;
+	Egueb_Dom_Event_IO_Data_Cb data_cb;
+	Egueb_Dom_Event_IO_Image_Cb image_cb;
+	Egueb_Dom_String *uri;
 } Egueb_Dom_Event_IO;
 
 typedef struct _Egueb_Dom_Event_IO_Class
@@ -42,7 +50,7 @@ typedef struct _Egueb_Dom_Event_IO_Class
 	Egueb_Dom_Event_Class base;
 } Egueb_Dom_Event_IO_Class;
 
-static Egueb_Dom_String _EGUEB_DOM_EVENT_IO_FILE = EGUEB_DOM_STRING_STATIC("IOFile");
+static Egueb_Dom_String _EGUEB_DOM_EVENT_IO_DATA = EGUEB_DOM_STRING_STATIC("IOData");
 static Egueb_Dom_String _EGUEB_DOM_EVENT_IO_IMAGE = EGUEB_DOM_STRING_STATIC("IOImage");
 /*----------------------------------------------------------------------------*
  *                              Object interface                              *
@@ -78,22 +86,48 @@ static Egueb_Dom_Event * _egueb_dom_event_io_new(void)
 Egueb_Dom_String *EGUEB_DOM_EVENT_IO_DATA = &_EGUEB_DOM_EVENT_IO_DATA;
 Egueb_Dom_String *EGUEB_DOM_EVENT_IO_IMAGE = &_EGUEB_DOM_EVENT_IO_IMAGE;
 
-EAPI Egueb_Dom_Event * egueb_dom_event_io_data_new(
+EAPI Egueb_Dom_Event * egueb_dom_event_io_data_new(Egueb_Dom_String *uri,
 		Egueb_Dom_Event_IO_Data_Cb cb)
 {
+	Egueb_Dom_Event_IO *thiz;
 	Egueb_Dom_Event *e;
 
 	e = _egueb_dom_event_io_new();
 	egueb_dom_event_init(e, EGUEB_DOM_EVENT_IO_DATA, EINA_TRUE, EINA_FALSE,
 			EINA_FALSE, EGUEB_DOM_EVENT_DIRECTION_CAPTURE_BUBBLE); 
+	thiz = EGUEB_DOM_EVENT_IO(e);
+	thiz->data_cb = cb;
+	return e;
+}
+
+EAPI Egueb_Dom_Event_IO_Data_Cb egueb_dom_event_io_data_cb_get(
+		Egueb_Dom_Event *e)
+{
+	Egueb_Dom_Event_IO *thiz;
+
+	thiz = EGUEB_DOM_EVENT_IO(e);
+	return thiz->data_cb;
 }
 
 EAPI Egueb_Dom_Event * egueb_dom_event_io_image_new(
-		Egueb_Dom_Event_IO_Image_Cb cb)
+		Egueb_Dom_String *uri, Egueb_Dom_Event_IO_Image_Cb cb)
 {
+	Egueb_Dom_Event_IO *thiz;
 	Egueb_Dom_Event *e;
 
 	e = _egueb_dom_event_io_new();
-	egueb_dom_event_init(e, EGUEB_DOM_EVENT_IO_IMAGEA, EINA_TRUE, EINA_FALSE,
-			EINA_FALSE, EGUEB_DOM_EVENT_DIRECTION_CAPTURE_BUBBLE); 
+	egueb_dom_event_init(e, EGUEB_DOM_EVENT_IO_IMAGE, EINA_TRUE, EINA_FALSE,
+			EINA_FALSE, EGUEB_DOM_EVENT_DIRECTION_CAPTURE_BUBBLE);
+	thiz = EGUEB_DOM_EVENT_IO(e);
+	thiz->image_cb = cb;
+	return e;
+}
+
+EAPI Egueb_Dom_Event_IO_Image_Cb egueb_dom_event_io_image_cb_get(
+		Egueb_Dom_Event *e)
+{
+	Egueb_Dom_Event_IO *thiz;
+
+	thiz = EGUEB_DOM_EVENT_IO(e);
+	return thiz->image_cb;
 }

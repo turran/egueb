@@ -21,11 +21,13 @@ src/lib/dom/egueb_dom_element.h \
 src/lib/dom/egueb_dom_element_external.h \
 src/lib/dom/egueb_dom_event.h \
 src/lib/dom/egueb_dom_event_external.h \
+src/lib/dom/egueb_dom_event_io.h \
 src/lib/dom/egueb_dom_event_mouse.h \
 src/lib/dom/egueb_dom_event_mutation.h \
 src/lib/dom/egueb_dom_event_ui.h \
 src/lib/dom/egueb_dom_feature.h \
 src/lib/dom/egueb_dom_feature_animation.h \
+src/lib/dom/egueb_dom_feature_io.h \
 src/lib/dom/egueb_dom_feature_render.h \
 src/lib/dom/egueb_dom_feature_ui.h \
 src/lib/dom/egueb_dom_feature_window.h \
@@ -79,6 +81,7 @@ src/lib/dom/egueb_dom_element_external.c \
 src/lib/dom/egueb_dom_event.c \
 src/lib/dom/egueb_dom_event_private.h \
 src/lib/dom/egueb_dom_event_external.c \
+src/lib/dom/egueb_dom_event_io.c \
 src/lib/dom/egueb_dom_event_mouse.c \
 src/lib/dom/egueb_dom_event_mouse_private.h \
 src/lib/dom/egueb_dom_event_mutation.c \
@@ -89,6 +92,7 @@ src/lib/dom/egueb_dom_event_ui.c \
 src/lib/dom/egueb_dom_event_ui_private.h \
 src/lib/dom/egueb_dom_feature.c \
 src/lib/dom/egueb_dom_feature_animation.c \
+src/lib/dom/egueb_dom_feature_io.c \
 src/lib/dom/egueb_dom_feature_render.c \
 src/lib/dom/egueb_dom_feature_ui.c \
 src/lib/dom/egueb_dom_feature_window.c \

@@ -42,5 +42,5 @@ EAPI Eina_Bool egueb_dom_feature_io_add(Egueb_Dom_Node *n)
 {
 	if (!n) return EINA_FALSE;
 	return egueb_dom_node_feature_add(n, EGUEB_DOM_FEATURE_IO_NAME, NULL,
-			EGUEB_DOM_FEATURE(thiz));
+			NULL);
 }
