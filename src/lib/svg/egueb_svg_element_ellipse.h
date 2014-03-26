@@ -18,6 +18,13 @@
 #ifndef _EGUEB_SVG_ELEMENT_ELLIPSE_H_
 #define _EGUEB_SVG_ELEMENT_ELLIPSE_H_
 
+/**
+ * @defgroup Egueb_Svg_Element_Ellipse_Group Ellipse
+ * @brief Ellipse element
+ * @ingroup Egueb_Svg_Shape_Group
+ * @{
+ */
+
 EAPI Egueb_Dom_Node * egueb_svg_element_ellipse_new(void);
 
 #if 0
@@ -31,5 +38,9 @@ EAPI void egueb_svg_element_ellipse_rx_get(Ender_Element *e, Egueb_Svg_Length *r
 EAPI void egueb_svg_element_ellipse_ry_set(Ender_Element *e, const Egueb_Svg_Length *ry);
 EAPI void egueb_svg_element_ellipse_ry_get(Ender_Element *e, Egueb_Svg_Length *ry);
 #endif
+
+/**
+ * @}
+ */
 
 #endif

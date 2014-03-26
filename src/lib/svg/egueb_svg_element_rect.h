@@ -22,7 +22,7 @@
 /**
  * @defgroup Egueb_Svg_Element_Rect_Group Rect
  * @brief Rect element
- * @ingroup Egueb_Svg_Element_Group
+ * @ingroup Egueb_Svg_Shape_Group
  * @{
  */
 EAPI Egueb_Dom_Node * egueb_svg_element_rect_new(void);

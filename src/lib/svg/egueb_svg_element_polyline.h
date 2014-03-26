@@ -19,10 +19,20 @@
 #ifndef _EGUEB_SVG_ELEMENT_POLYLINE_H_
 #define _EGUEB_SVG_ELEMENT_POLYLINE_H_
 
+/**
+ * @defgroup Egueb_Svg_Element_Polyline_Group Polyline
+ * @brief Polyline element
+ * @ingroup Egueb_Svg_Shape_Group
+ * @{
+ */
+
 EAPI Egueb_Dom_Node * egueb_svg_element_polyline_new(void);
 #if 0
 EAPI void egueb_svg_element_polyline_point_add(Ender_Element *e, Egueb_Svg_Point *p);
 #endif
 
-#endif
+/**
+ * @}
+ */
 
+#endif

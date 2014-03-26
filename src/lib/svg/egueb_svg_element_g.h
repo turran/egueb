@@ -19,6 +19,17 @@
 #ifndef _EGUEB_SVG_ELEMENT_G_H_
 #define _EGUEB_SVG_ELEMENT_G_H_
 
+/**
+ * @defgroup Egueb_Svg_Element_G_Group G
+ * @brief G element
+ * @ingroup Egueb_Svg_Renderable_Container_Group
+ * @{
+ */
+
 EAPI Egueb_Dom_Node * egueb_svg_element_g_new(void);
+
+/**
+ * @}
+ */
 
 #endif

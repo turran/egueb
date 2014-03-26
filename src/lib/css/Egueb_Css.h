@@ -49,6 +49,12 @@
 # endif
 #endif
 
+/**
+ * @defgroup Egueb_Css_Group CSS
+ * @brief CSS related API
+ * @{
+ */
+
 /* core */
 #include "egueb_css_main.h"
 #include "egueb_css_selector.h"

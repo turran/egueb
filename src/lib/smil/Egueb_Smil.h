@@ -23,6 +23,12 @@
 #include <Egueb_Dom.h>
 #include <Etch.h>
 
+/**
+ * @defgroup Egueb_Smil_Group SMIL
+ * @brief SMIL related API
+ * @{
+ */
+
 /* core */
 #include "egueb_smil_build.h"
 #include "egueb_smil_main.h"
@@ -47,5 +53,8 @@
 #include "egueb_smil_animate.h"
 #include "egueb_smil_set.h"
 
-#endif
+/**
+ * @}
+ */
 
+#endif

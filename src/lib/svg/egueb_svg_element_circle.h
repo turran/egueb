@@ -22,7 +22,7 @@
 /**
  * @defgroup Egueb_Svg_Element_Circle_Group Circle
  * @brief Circle element
- * @ingroup Egueb_Svg_Element_Group
+ * @ingroup Egueb_Svg_Shape_Group
  * @{
  */
 EAPI Egueb_Dom_Node * egueb_svg_element_circle_new(void);

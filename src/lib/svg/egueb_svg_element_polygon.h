@@ -19,10 +19,21 @@
 #ifndef _EGUEB_SVG_ELEMENT_POLYGON_H_
 #define _EGUEB_SVG_ELEMENT_POLYGON_H_
 
+/**
+ * @defgroup Egueb_Svg_Element_Polygon_Group Polygon
+ * @brief Polygon element
+ * @ingroup Egueb_Svg_Shape_Group
+ * @{
+ */
+
 EAPI Egueb_Dom_Node * egueb_svg_element_polygon_new(void);
 #if 0
 EAPI void egueb_svg_element_polygon_point_add(Ender_Element *e, Egueb_Svg_Point *p);
 #endif
+
+/**
+ * @}
+ */
 
 #endif
 

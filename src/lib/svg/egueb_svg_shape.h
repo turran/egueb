@@ -19,6 +19,17 @@
 #ifndef _EGUEB_SVG_SHAPE_H_
 #define _EGUEB_SVG_SHAPE_H_
 
+/**
+ * @defgroup Egueb_Svg_Shape_Group Shape
+ * @brief Shape element
+ * @ingroup Egueb_Svg_Renderable_Group
+ * @{
+ */
+
 EAPI Eina_Bool egueb_svg_is_shape(Egueb_Dom_Node *n);
+
+/**
+ * @}
+ */
 
 #endif

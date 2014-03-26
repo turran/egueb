@@ -19,6 +19,13 @@
 #ifndef _EGUEB_SVG_ELEMENT_SVG_H_
 #define _EGUEB_SVG_ELEMENT_SVG_H_
 
+/**
+ * @defgroup Egueb_Svg_Element_SVG_Group SVG
+ * @brief SVG element
+ * @ingroup Egueb_Svg_Renderable_Container_Group
+ * @{
+ */
+
 EAPI Egueb_Dom_Node * egueb_svg_element_svg_new(void);
 EAPI Eina_Bool egueb_svg_element_svg_draw(Egueb_Dom_Node *n, Enesim_Surface *s,
 		Enesim_Rop rop, Eina_Rectangle *clip, int x, int y,
@@ -118,5 +125,9 @@ EAPI Eina_Bool egueb_svg_element_svg_setup(Ender_Element *e, Enesim_Log **error)
 }
 #endif
 #endif
+
+/**
+ * @}
+ */
 
 #endif

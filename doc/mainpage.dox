@@ -3,5 +3,7 @@
  * Full state W3C standards library
  * @section standards Standards supported:
  * - @ref Egueb_Dom_Group
+ * - @ref Egueb_Css_Group
  * - @ref Egueb_Svg_Group
+ * - @ref Egueb_Smil_Group
  */

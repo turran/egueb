@@ -19,6 +19,17 @@
 #ifndef _EGUEB_SVG_ELEMENT_PATH_H_
 #define _EGUEB_SVG_ELEMENT_PATH_H_
 
+/**
+ * @defgroup Egueb_Svg_Element_Path_Group Path
+ * @brief Path element
+ * @ingroup Egueb_Svg_Shape_Group
+ * @{
+ */
+
 EAPI Egueb_Dom_Node * egueb_svg_element_path_new(void);
+
+/**
+ * @}
+ */
 
 #endif

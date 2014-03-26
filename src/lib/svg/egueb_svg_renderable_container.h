@@ -19,6 +19,17 @@
 #ifndef _EGUEB_SVG_RENDERABLE_CONTAINER_H_
 #define _EGUEB_SVG_RENDERABLE_CONTAINER_H_
 
+/**
+ * @defgroup Egueb_Svg_Renderable_Container_Group Renderable Container
+ * @brief Renderable Container element
+ * @ingroup Egueb_Svg_Renderable_Group
+ * @{
+ */
+
 EAPI Eina_Bool egueb_svg_is_renderable_container(Egueb_Dom_Node *n);
+
+/**
+ * @}
+ */
 
 #endif

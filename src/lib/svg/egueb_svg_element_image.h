@@ -19,6 +19,13 @@
 #ifndef _EGUEB_SVG_ELEMENT_IMAGE_H_
 #define _EGUEB_SVG_ELEMENT_IMAGE_H_
 
+/**
+ * @defgroup Egueb_Svg_Element_Image_Group Image
+ * @brief Image element
+ * @ingroup Egueb_Svg_Renderable_Group
+ * @{
+ */
+
 EAPI Egueb_Dom_Node * egueb_svg_element_image_new(void);
 #if 0
 EAPI Eina_Bool egueb_svg_is_image(Ender_Element *e);
@@ -33,6 +40,10 @@ EAPI void egueb_svg_element_image_height_get(Ender_Element *e, Egueb_Svg_Length 
 EAPI void egueb_svg_element_image_xlink_href_set(Ender_Element *e, const char *href);
 EAPI void egueb_svg_element_image_xlink_href_get(Ender_Element *e, const char **href);
 #endif
+
+/**
+ * @}
+ */
 
 #endif
 

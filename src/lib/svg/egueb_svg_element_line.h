@@ -19,6 +19,13 @@
 #ifndef _EGUEB_SVG_ELEMENT_LINE_H_
 #define _EGUEB_SVG_ELEMENT_LINE_H_
 
+/**
+ * @defgroup Egueb_Svg_Element_Line_Group Line
+ * @brief Line element
+ * @ingroup Egueb_Svg_Shape_Group
+ * @{
+ */
+
 EAPI Egueb_Dom_Node * egueb_svg_element_line_new(void);
 #if 0
 EAPI void egueb_svg_element_line_x1_set(Ender_Element *e, const Egueb_Svg_Coord *x1);
@@ -30,5 +37,9 @@ EAPI void egueb_svg_element_line_x2_get(Ender_Element *e, Egueb_Svg_Coord *x2);
 EAPI void egueb_svg_element_line_y2_set(Ender_Element *e, const Egueb_Svg_Coord *y2);
 EAPI void egueb_svg_element_line_y2_get(Ender_Element *e, Egueb_Svg_Coord *y2);
 #endif
+
+/**
+ * @}
+ */
 
 #endif

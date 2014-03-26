@@ -18,7 +18,18 @@
 #ifndef _EGUEB_SVG_ELEMENT_DESC_H_
 #define _EGUEB_SVG_ELEMENT_DESC_H_
 
+/**
+ * @defgroup Egueb_Svg_Element_Desc_Group Desc
+ * @brief Desc element
+ * @ingroup Egueb_Svg_Element_Group
+ * @{
+ */
+
 EAPI Egueb_Dom_Node * egueb_svg_element_desc_new(void);
+
+/**
+ * @}
+ */
 
 #endif
 
