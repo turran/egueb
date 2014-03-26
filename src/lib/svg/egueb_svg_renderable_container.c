@@ -47,6 +47,8 @@ static Eina_Bool _egueb_svg_renderable_container_children_process_cb(
 			Enesim_Renderer_Compound_Layer *l;
 
 			r = egueb_svg_renderable_renderer_get(child);
+			DBG_ELEMENT(EGUEB_DOM_NODE(thiz), "Adding renderable %s",
+					enesim_renderer_name_get(r));
 			l = enesim_renderer_compound_layer_new();
 			enesim_renderer_compound_layer_renderer_set(l, r);
 			enesim_renderer_compound_layer_rop_set(l, ENESIM_ROP_BLEND);
