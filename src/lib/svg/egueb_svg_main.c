@@ -326,7 +326,6 @@ Egueb_Dom_String *EGUEB_SVG_WIDTH;
 Egueb_Dom_String *EGUEB_SVG_X;
 Egueb_Dom_String *EGUEB_SVG_X1;
 Egueb_Dom_String *EGUEB_SVG_X2;
-Egueb_Dom_String *EGUEB_DOM_XLINK_HREF;
 Egueb_Dom_String *EGUEB_SVG_Y;
 Egueb_Dom_String *EGUEB_SVG_Y1;
 Egueb_Dom_String *EGUEB_SVG_Y2;
