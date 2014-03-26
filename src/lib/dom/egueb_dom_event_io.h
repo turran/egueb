@@ -33,14 +33,16 @@ typedef void (*Egueb_Dom_Event_IO_Data_Cb)(Egueb_Dom_Node *n,
 typedef void (*Egueb_Dom_Event_IO_Image_Cb)(Egueb_Dom_Node *n,
 		Enesim_Surface *s);
 
-EAPI Egueb_Dom_Event * egueb_dom_event_io_data_new(Egueb_Dom_String *uri,
+EAPI Egueb_Dom_Event * egueb_dom_event_io_data_new(Egueb_Dom_Uri *uri,
 		Egueb_Dom_Event_IO_Data_Cb cb);
+EAPI Egueb_Dom_Event * egueb_dom_event_io_image_new(
+		Enesim_Stream *s, Egueb_Dom_Event_IO_Image_Cb cb);
 EAPI Egueb_Dom_Event_IO_Data_Cb egueb_dom_event_io_data_cb_get(
 		Egueb_Dom_Event *e);
-EAPI Egueb_Dom_Event * egueb_dom_event_io_image_new(
-		Egueb_Dom_String *uri, Egueb_Dom_Event_IO_Image_Cb cb);
 EAPI Egueb_Dom_Event_IO_Image_Cb egueb_dom_event_io_image_cb_get(
 		Egueb_Dom_Event *e);
+EAPI Enesim_Stream * egueb_dom_event_io_stream_get(Egueb_Dom_Event *e);
+EAPI void egueb_dom_event_io_uri_get(Egueb_Dom_Event *e, Egueb_Dom_Uri *uri);
 
 /**
  * @}

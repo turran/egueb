@@ -137,44 +137,26 @@ static void _egueb_svg_element_image_svg_load(Egueb_Dom_Node *n,
 	r = egueb_svg_renderable_renderer_get(thiz->g);
 	enesim_renderer_proxy_proxied_set(thiz->r, r);
 }
-/*----------------------------------------------------------------------------*
- *                           Image load descriptor                            *
- *----------------------------------------------------------------------------*/
-static void _egueb_svg_element_image_loaded(Enesim_Surface *s,
-		void *user_data)
+
+static void _egueb_svg_element_image_image_cb(Egueb_Dom_Node *n,
+		Enesim_Surface *s)
 {
 	Egueb_Svg_Element_Image *thiz;
-	Egueb_Dom_Node *n = user_data;
 
 	thiz = EGUEB_SVG_ELEMENT_IMAGE(n);
 	INFO("Image loaded");
 	enesim_renderer_image_source_surface_set(thiz->image, s);
-	enesim_renderer_proxy_proxied_set(thiz->r, thiz->image);
-	egueb_dom_node_unref(n);
+	enesim_renderer_proxy_proxied_set(thiz->r, enesim_renderer_ref(thiz->image));
 }
 
-static void _egueb_svg_element_image_failed(void *user_data)
+static void _egueb_svg_element_image_data_cb(Egueb_Dom_Node *n,
+		Enesim_Stream *data)
 {
-	Egueb_Dom_Node *n = user_data;
-
-	ERR("Image failed");
-	egueb_dom_node_unref(n);
-}
-
-static Egueb_Svg_Document_Image_Load_Descriptor _image_data_load_descriptor = {
-	/* .loaded = */ _egueb_svg_element_image_loaded,
-	/* .failed = */ _egueb_svg_element_image_failed,
-};
-/*----------------------------------------------------------------------------*
- *                            Uri fetch descriptor                            *
- *----------------------------------------------------------------------------*/
-static void _egueb_svg_element_uri_fetched(Enesim_Stream *data,
-		void *user_data)
-{
-	Egueb_Dom_Node *n = user_data;
+	Egueb_Svg_Element_Image *thiz;
 	Egueb_Dom_Node *doc;
 	const char *mime;
 
+	thiz = EGUEB_SVG_ELEMENT_IMAGE(n);
 	mime = enesim_image_mime_data_from(data);
 	if (!mime)
 	{
@@ -197,27 +179,15 @@ static void _egueb_svg_element_uri_fetched(Enesim_Stream *data,
 	}
 	else
 	{
-		egueb_svg_document_image_data_load(doc, data,
-				&_image_data_load_descriptor,
-				egueb_dom_node_ref(n));
+		Egueb_Dom_Event *e;
+
+		e = egueb_dom_event_io_image_new(data, _egueb_svg_element_image_image_cb);
+		egueb_dom_node_event_dispatch(EGUEB_DOM_NODE(thiz), e, NULL, NULL);
 	}
 	egueb_dom_node_unref(doc);
 done:
-	egueb_dom_node_unref(n);
+	enesim_stream_unref(data);
 }
-
-static void _egueb_svg_element_uri_failed(void *user_data)
-{
-	Egueb_Dom_Node *n = user_data;
-
-	ERR("Uri failed");
-	egueb_dom_node_unref(n);
-}
-
-static Egueb_Svg_Document_Uri_Fetch_Descriptor _image_uri_fetch_descriptor = {
-	/* .loaded = */ _egueb_svg_element_uri_fetched,
-	/* .failed = */ _egueb_svg_element_uri_failed,
-};
 
 static void _egueb_svg_element_image_uri_load(Egueb_Svg_Element_Image *thiz,
 		Egueb_Dom_Node *doc, Egueb_Dom_String * uri)
@@ -237,6 +207,7 @@ static void _egueb_svg_element_image_uri_load(Egueb_Svg_Element_Image *thiz,
 	 */
 	if (!strncmp(str, "data:image", 10))
 	{
+		Egueb_Dom_Event *e;
 		Enesim_Stream *base_64;
 		Enesim_Stream *data;
 		char mime[1024];
@@ -255,17 +226,27 @@ static void _egueb_svg_element_image_uri_load(Egueb_Svg_Element_Image *thiz,
 		DBG("Loading a base64 based image with MIME '%s'", mime);
 		base_64 = enesim_stream_buffer_new((char *)str, strlen(str));
 		data = enesim_stream_base64_new(base_64);
-		egueb_svg_document_image_data_load(doc, data,
-				&_image_data_load_descriptor,
-				egueb_dom_node_ref(EGUEB_DOM_NODE(thiz)));
+
+		e = egueb_dom_event_io_image_new(data, _egueb_svg_element_image_image_cb);
+		egueb_dom_node_event_dispatch(EGUEB_DOM_NODE(thiz), e, NULL, NULL);
+		enesim_stream_unref(data);
 	}
 	/* otherwise, let the document get the data and call our own callback */
 	/* this callback should again make the document load the image for us */
 	else
 	{
-		egueb_svg_document_uri_fetch(doc, egueb_dom_string_ref(uri),
-				&_image_uri_fetch_descriptor,
-				egueb_dom_node_ref(EGUEB_DOM_NODE(thiz)));
+		Egueb_Dom_Event *e;
+		Egueb_Dom_Uri u;
+
+		if (!egueb_dom_uri_string_from(&u, uri))
+		{
+			ERR("Wrong URI");
+			return;
+		}
+
+		e = egueb_dom_event_io_data_new(&u, _egueb_svg_element_image_data_cb);
+		egueb_dom_node_event_dispatch(EGUEB_DOM_NODE(thiz), e, NULL, NULL);
+		egueb_dom_uri_cleanup(&u);
 	}
 }
 /*----------------------------------------------------------------------------*

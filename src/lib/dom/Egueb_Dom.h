@@ -62,6 +62,7 @@ extern "C" {
 #include "egueb_dom_string.h"
 #include "egueb_dom_main.h"
 #include "egueb_dom_list.h"
+#include "egueb_dom_uri.h"
 
 #include "egueb_dom_node_list.h"
 #include "egueb_dom_node_map_named.h"
@@ -100,7 +101,6 @@ extern "C" {
 #include "egueb_dom_feature_ui.h"
 #include "egueb_dom_feature_window.h"
 
-#include "egueb_dom_uri.h"
 #include "egueb_dom_value.h"
 #include "egueb_dom_value_boolean.h"
 #include "egueb_dom_value_dom_string.h"

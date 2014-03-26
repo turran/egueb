@@ -94,14 +94,6 @@ typedef struct _Egueb_Svg_Document_Class
 	Egueb_Dom_Document_Class parent;
 } Egueb_Svg_Document_Class;
 
-typedef struct _Egueb_Svg_Document_Uri_Data
-{
-	Egueb_Dom_Node *node;
-	Egueb_Dom_Node *ret;
-	Eina_Bool ok;
-	Eina_Error *error;
-} Egueb_Svg_Document_Uri_Data;
-
 typedef enum _Egueb_Svg_Type {
 	EGUEB_SVG_TYPE_A,
 	EGUEB_SVG_TYPE_ALTGLYPH,
@@ -534,6 +526,7 @@ static Egueb_Dom_Node * _egueb_svg_document_element_create_by_id(int id)
 	return ret;
 }
 
+#if 0
 static char * _egueb_svg_document_uri_get_absolute(Egueb_Svg_Document *thiz,
 		const char *uri)
 {
@@ -583,6 +576,7 @@ static char * _egueb_svg_document_uri_get_absolute(Egueb_Svg_Document *thiz,
 		return NULL;
 	return ret;
 }
+#endif
 /*----------------------------------------------------------------------------*
  *                          UI feature interface                              *
  *----------------------------------------------------------------------------*/
@@ -720,47 +714,6 @@ static Enesim_Renderer * _egueb_svg_document_render_renderer_get(
 static Egueb_Dom_Feature_Render_Descriptor
 _egueb_svg_document_render_descriptor = {
 	/* .renderer_get 	= */ _egueb_svg_document_render_renderer_get,
-};
-/*----------------------------------------------------------------------------*
- *                     The URI interface for elements                         *
- *----------------------------------------------------------------------------*/
-static void _egueb_svg_document_element_uri_local_get(const char *uri,
-		const char *fragment, void *user_data)
-{
-	Egueb_Svg_Document_Uri_Data *data = user_data;
-	Egueb_Dom_String *id;
-
-	DBG("Getting local element with fragment '%s'", fragment);
-	/* FIXME avoid this copy, for that we need to pass directly
-	 * the dom string to the uri descriptor, instead of the char *
-	 */
-	id = egueb_dom_string_new_with_static_string(fragment);
-	data->ret = egueb_dom_document_element_get_by_id(data->node, id, NULL);
-	egueb_dom_string_unref(id);
-}
-
-/* TODO For absolute IRI we should acquire the element using the application
- * descriptor to fetch it
- */
-static void _egueb_svg_document_element_uri_absolute_get(const char *uri,
-		const char *fragment, void *user_data)
-{
-	ERR("Absolute elements '%s:%s' are not supported yet", uri, fragment);
-}
-
-/* TODO For relative IRI should acquire the element concating the location
- * with the uri
- */
-static void _egueb_svg_document_element_uri_relative_get(const char *uri,
-		const char *fragment, void *user_data)
-{
-	ERR("Relative elements '%s:%s' are not supported yet", uri, fragment);
-}
-
-static Egueb_Dom_Uri_Descriptor _element_uri_descriptor = {
-	/* .local_get 		= */ _egueb_svg_document_element_uri_local_get,
-	/* .absolute_get 	= */ _egueb_svg_document_element_uri_absolute_get,
-	/* .relative_get 	= */ _egueb_svg_document_element_uri_relative_get,
 };
 /*----------------------------------------------------------------------------*
  *                              Input interface                               *
@@ -903,6 +856,7 @@ static void _egueb_svg_document_instance_init(void *o)
 			&_egueb_svg_document_animation_descriptor);
 	egueb_dom_feature_ui_add(EGUEB_DOM_NODE(thiz),
 			&_egueb_svg_document_ui_descriptor);
+	egueb_dom_feature_io_add(EGUEB_DOM_NODE(thiz));
 	thiz->fps = 30;
 	thiz->font_size = 16;
 	thiz->input = egueb_dom_input_new(&_document_svg_input_descriptor, thiz);
@@ -1048,22 +1002,32 @@ EAPI double egueb_svg_document_font_size_get(Egueb_Dom_Node *n)
 EAPI Egueb_Dom_Node * egueb_svg_document_element_get_by_iri(Egueb_Dom_Node *n,
 		Egueb_Dom_String *iri)
 {
-	Egueb_Svg_Document_Uri_Data data;
-	const char *str;
+	Egueb_Dom_Uri uri = { 0 };
 
 	if (!egueb_dom_string_is_valid(iri))
 		return NULL;
 
-	data.node = n;
-	data.ret = NULL;
-
 	/* resolve the uri for relative/absolute */
-	str = egueb_dom_string_string_get(iri);
-	DBG("Looking for %s", str);
-	egueb_dom_iri_string_from(&_element_uri_descriptor, str, &data);
-	return data.ret;
+	DBG("Looking for %s", egueb_dom_string_string_get(iri));
+	if (!egueb_dom_uri_iri_from(&uri, iri))
+		return NULL;
+	/* get the element by iri, only local ones for now */
+	if (uri.location || !uri.fragment)
+	{
+		ERR("Unsupported iri %s", egueb_dom_string_string_get(iri));
+		egueb_dom_uri_cleanup(&uri);
+		return NULL;
+	}
+	else
+	{
+		Egueb_Dom_Node *ret;
+		ret = egueb_dom_document_element_get_by_id(n, uri.fragment, NULL);
+		egueb_dom_uri_cleanup(&uri);
+		return ret;
+	}
 }
 
+#if 0
 /**
  * To be documented
  * FIXME: To be fixed
@@ -1084,6 +1048,7 @@ EAPI void egueb_svg_document_image_load(Egueb_Dom_Node *n,
 	free(absolute);
 }
 
+/* FIXME remove */
 EAPI void egueb_svg_document_image_data_load(Egueb_Dom_Node *n,
 		Enesim_Stream *data,
 		Egueb_Svg_Document_Image_Load_Descriptor *d,
@@ -1112,6 +1077,7 @@ EAPI void egueb_svg_document_image_data_load(Egueb_Dom_Node *n,
 	}
 }
 
+/* FIXME remove */
 EAPI void egueb_svg_document_uri_fetch(Egueb_Dom_Node *n,
 		Egueb_Dom_String *uri,
 		Egueb_Svg_Document_Uri_Fetch_Descriptor *d,
@@ -1154,7 +1120,9 @@ EAPI void egueb_svg_document_uri_fetch(Egueb_Dom_Node *n,
 done:
 	egueb_dom_string_unref(uri);
 }
+#endif
 
+/* FIXME remove */
 EAPI void egueb_svg_document_location_get_cb_set(Egueb_Dom_Node *n,
 		Egueb_Svg_Document_String_Get_Cb cb, void *user_data)
 {
@@ -1165,6 +1133,7 @@ EAPI void egueb_svg_document_location_get_cb_set(Egueb_Dom_Node *n,
 	thiz->location_get_data = user_data;
 }
 
+/* FIXME remove */
 EAPI void egueb_svg_document_filename_get_cb_set(Egueb_Dom_Node *n,
 		Egueb_Svg_Document_String_Get_Cb cb, void *user_data)
 {

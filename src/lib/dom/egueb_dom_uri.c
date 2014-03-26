@@ -48,55 +48,106 @@ static const char * _fragment_get(const char *uri)
 /*
  * [ <absoluteURI> | <relativeURI> ] [ "#" <elementID> ]
  */
-EAPI Eina_Bool egueb_dom_uri_string_from(Egueb_Dom_Uri_Descriptor *descriptor,
-		const char *attr, void *data)
+EAPI Eina_Bool egueb_dom_uri_string_from(Egueb_Dom_Uri *thiz, Egueb_Dom_String *s)
 {
+	const char *s_s;
 	const char *fragment;
 
-	EGUEB_BASE_SPACE_SKIP(attr);
-	fragment = _fragment_get(attr);
+	s_s = egueb_dom_string_string_get(s);
+	EGUEB_BASE_SPACE_SKIP(s_s);
+
+	fragment = _fragment_get(s_s);
 	/* TODO check for the local/non-local case */
-	if (*attr == '#')
+	if (*s_s == '#')
 	{
 		if (!fragment) return EINA_FALSE;
-		DBG("getting %s", fragment);
-		descriptor->local_get(NULL, fragment, data);
+
+		DBG("Getting URI fragment %s", fragment);
+		thiz->type = EGUEB_DOM_URI_TYPE_RELATIVE;
+		thiz->location = NULL;
+		thiz->fragment = egueb_dom_string_new_with_string(fragment);
 	}
 	else
 	{
-		DBG("getting %s %s", attr, fragment);
-		/* TODO very naive way of handling relative/absolute, we need the scheme too, etc */
+		DBG("Getting URI from %s %s", s_s, fragment);
+
 		/* check for the relative/absolute case */
-		if (*attr == '/')
-			descriptor->absolute_get(attr, fragment, data);
+		/* TODO very naive way of handling relative/absolute, we need the scheme too, etc */
+		if (strstr(s_s, "://"))
+		{
+			thiz->type = EGUEB_DOM_URI_TYPE_ABSOLUTE;
+			if (fragment)
+			{
+				thiz->location = egueb_dom_string_new_with_length(s_s, fragment - s_s - 1);
+				thiz->fragment = egueb_dom_string_new_with_string(fragment);
+			}
+			else
+			{
+				thiz->location = egueb_dom_string_new_with_string(s_s);
+				thiz->fragment = NULL;
+			}
+		}
 		else
-			descriptor->relative_get(attr, fragment, data);
+		{
+			thiz->type = EGUEB_DOM_URI_TYPE_RELATIVE;
+			if (fragment)
+			{
+				thiz->location = egueb_dom_string_new_with_length(s_s, fragment - s_s - 1);
+				thiz->fragment = egueb_dom_string_new_with_string(fragment);
+			}
+			else
+			{
+				thiz->location = egueb_dom_string_new_with_string(s_s);
+				thiz->fragment = NULL;
+			}
+		}
 	}
 	return EINA_TRUE;
+
 }
 
-EAPI Eina_Bool egueb_dom_iri_string_from(Egueb_Dom_Uri_Descriptor *descriptor,
-		const char *attr, void *data)
+EAPI Eina_Bool egueb_dom_uri_iri_from(Egueb_Dom_Uri *thiz, Egueb_Dom_String *iri)
 {
-	/* funciri ? */
-	EGUEB_BASE_SPACE_SKIP(attr);
-	if (!strncmp(attr, "url(", 4))
-	{
-		char url[PATH_MAX];
-		int i = 0;
+	Eina_Bool ret;
+	const char *s_iri;
 
-		attr += 4;
+	s_iri = egueb_dom_string_string_get(iri);
+	EGUEB_BASE_SPACE_SKIP(s_iri);
+
+	/* funciri ? */
+	if (!strncmp(s_iri, "url(", 4))
+	{
+		Egueb_Dom_String *url;
+		const char *end;
+
+		s_iri += 4;
+		end = s_iri;
 		/* also remove the last spaces */
-		while (*attr != ')' && *attr != '\0')
-			url[i++] = *attr++;
-		url[i] = '\0';
-		return egueb_dom_uri_string_from(descriptor, url, data);
+		while (*end != ')' && *end != '\0')
+			end++;
+		url = egueb_dom_string_new_with_length(s_iri, end - s_iri);
+		ret = egueb_dom_uri_string_from(thiz, url);
+		egueb_dom_string_unref(url);
+		return ret;
 	}
 	/* iri */
 	else
 	{
-		return egueb_dom_uri_string_from(descriptor, attr, data);
+		return egueb_dom_uri_string_from(thiz, iri);
 	}
+
 }
 
-
+EAPI void egueb_dom_uri_cleanup(Egueb_Dom_Uri *thiz)
+{
+	if (thiz->location)
+	{
+		egueb_dom_string_unref(thiz->location);
+		thiz->location = NULL;
+	}
+	if (thiz->fragment)
+	{
+		egueb_dom_string_unref(thiz->fragment);
+		thiz->fragment = NULL;
+	}
+}

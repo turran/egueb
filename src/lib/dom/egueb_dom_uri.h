@@ -19,18 +19,21 @@
 #ifndef _EGUEB_DOM_URI_H_
 #define _EGUEB_DOM_URI_H_
 
-typedef void (*Egueb_Dom_Uri_Get)(const char *uri, const char *fragment, void *data);
-
-typedef struct _Egueb_Dom_Uri_Descriptor
+typedef enum _Egueb_Dom_Uri_Type
 {
-	Egueb_Dom_Uri_Get local_get;
-	Egueb_Dom_Uri_Get absolute_get;
-	Egueb_Dom_Uri_Get relative_get;
-} Egueb_Dom_Uri_Descriptor;
+	EGUEB_DOM_URI_TYPE_RELATIVE,
+	EGUEB_DOM_URI_TYPE_ABSOLUTE,
+} Egueb_Dom_Uri_Type;
 
-EAPI Eina_Bool egueb_dom_iri_string_from(Egueb_Dom_Uri_Descriptor *descriptor,
-		const char *str, void *data);
-EAPI Eina_Bool egueb_dom_uri_string_from(Egueb_Dom_Uri_Descriptor *descriptor,
-		const char *str, void *data);
+typedef struct _Egueb_Dom_Uri
+{
+	Egueb_Dom_Uri_Type type;
+	Egueb_Dom_String *location;
+	Egueb_Dom_String *fragment;
+} Egueb_Dom_Uri;
+
+EAPI void egueb_dom_uri_cleanup(Egueb_Dom_Uri *thiz);
+EAPI Eina_Bool egueb_dom_uri_string_from(Egueb_Dom_Uri *thiz, Egueb_Dom_String *s);
+EAPI Eina_Bool egueb_dom_uri_iri_from(Egueb_Dom_Uri *thiz, Egueb_Dom_String *iri);
 
 #endif

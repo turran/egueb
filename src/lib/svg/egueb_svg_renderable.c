@@ -94,7 +94,6 @@ static Eina_Bool _egueb_svg_renderable_process(Egueb_Svg_Element *e)
 			{
 				WARN_ELEMENT(EGUEB_DOM_NODE(e), "Topmost element does not have a painter");
 				egueb_dom_node_unref(topmost);
-				return EINA_FALSE;
 			}
 			egueb_dom_node_unref(topmost);
 		}
@@ -102,21 +101,22 @@ static Eina_Bool _egueb_svg_renderable_process(Egueb_Svg_Element *e)
 		{
 			egueb_dom_node_unref(topmost);
 			WARN_ELEMENT(EGUEB_DOM_NODE(e), "No painter available");
-			return EINA_FALSE;
 		}
 	}
 
-	if (!egueb_svg_painter_resolve(painter, e))
+	if (painter)
 	{
-		WARN_ELEMENT(EGUEB_DOM_NODE(e), "Painter resolving failed");
+		if (!egueb_svg_painter_resolve(painter, e))
+		{
+			WARN_ELEMENT(EGUEB_DOM_NODE(e), "Painter resolving failed");
+			egueb_svg_painter_unref(painter);
+			return EINA_FALSE;
+		}
+		/* finally call the renderer propagate implementation */
+		if (klass->painter_apply)
+			klass->painter_apply(thiz, painter);
 		egueb_svg_painter_unref(painter);
-		return EINA_FALSE;
 	}
-
-	/* finally call the renderer propagate implementation */
-	if (klass->painter_apply)
-		klass->painter_apply(thiz, painter);
-	egueb_svg_painter_unref(painter);
 
 	/* now resolve the clip path */
 	egueb_svg_element_clip_path_final_get(EGUEB_DOM_NODE(e), &clip_path);
