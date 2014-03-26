@@ -80,13 +80,6 @@ typedef struct _Egueb_Svg_Document
 
 	/* input */
 	Egueb_Dom_Input *input;
-
-	/* application interface */
-	Egueb_Svg_Document_String_Get_Cb location_get;
-	void *location_get_data;
-	Egueb_Svg_Document_String_Get_Cb filename_get;
-	void *filename_get_data;
-
 } Egueb_Svg_Document;
 
 typedef struct _Egueb_Svg_Document_Class
@@ -526,57 +519,6 @@ static Egueb_Dom_Node * _egueb_svg_document_element_create_by_id(int id)
 	return ret;
 }
 
-#if 0
-static char * _egueb_svg_document_uri_get_absolute(Egueb_Svg_Document *thiz,
-		const char *uri)
-{
-	Eina_Bool free_location = EINA_FALSE;
-	const char *location = NULL;
-	char *tmp = NULL;
-	char *ret;
-	int len;
-
-	if (!strncmp(uri, "http://", 7) || !strncmp(uri, "/", 1))
-	{
-		ERR("absolute uri '%s'", uri);
-		return strdup(uri);
-	}
-
-	if (thiz->location_get)
-	{
-		location = thiz->location_get(thiz->location_get_data);
-	}
-	if (!location)
-	{
-		const char *filename = NULL;
-		if (thiz->filename_get)
-		{
-			filename = thiz->filename_get(thiz->filename_get_data);
-		}
-
-		if (!filename)
-		{
-			location = getcwd(NULL, 0);
-			free_location = EINA_TRUE;
-		}
-		else
-		{
-			tmp = strdup(filename);
-			location = dirname(tmp);
-		}
-	}
-	/* ok, we got the location, not concat it with the uri */
-	INFO("location is '%s' and uri '%s'", location, uri);
-	len = asprintf(&ret, "%s/%s", location, uri);
-	if (free_location)
-		free((char *)location);
-	if (tmp)
-		free(tmp);
-	if (len < 0)
-		return NULL;
-	return ret;
-}
-#endif
 /*----------------------------------------------------------------------------*
  *                          UI feature interface                              *
  *----------------------------------------------------------------------------*/
@@ -923,6 +865,7 @@ EAPI Egueb_Dom_String * egueb_svg_document_domain_get(Egueb_Dom_Node *n)
 	return NULL;
 }
 
+#if 0
 /* readonly attribute DOMString URL */
 EAPI Egueb_Dom_String * egueb_svg_document_url_get(Egueb_Dom_Node *n)
 {
@@ -961,6 +904,7 @@ EAPI Egueb_Dom_String * egueb_svg_document_url_get(Egueb_Dom_Node *n)
 	if (len <= 0) return NULL;
 	return egueb_dom_string_steal(ret);
 }
+#endif
 
 /* readonly attribute SVGSVGElement rootElement; */
 EAPI Egueb_Dom_Node * egueb_svg_document_element_root_get(Egueb_Dom_Node *n)
@@ -1025,123 +969,6 @@ EAPI Egueb_Dom_Node * egueb_svg_document_element_get_by_iri(Egueb_Dom_Node *n,
 		egueb_dom_uri_cleanup(&uri);
 		return ret;
 	}
-}
-
-#if 0
-/**
- * To be documented
- * FIXME: To be fixed
- */
-EAPI void egueb_svg_document_image_load(Egueb_Dom_Node *n,
-		Egueb_Dom_String *uri,
-		Egueb_Svg_Document_Image_Load_Descriptor *d,
-		void *user_data)
-{
-	Egueb_Svg_Document *thiz;
-	char *absolute;
-
-	thiz = EGUEB_SVG_DOCUMENT(n);
-	absolute = _egueb_svg_document_uri_get_absolute(thiz,
-		egueb_dom_string_string_get(uri));
-	/* resolve the uri to make it absolute */
-	ERR("URI is %s", absolute);
-	free(absolute);
-}
-
-/* FIXME remove */
-EAPI void egueb_svg_document_image_data_load(Egueb_Dom_Node *n,
-		Enesim_Stream *data,
-		Egueb_Svg_Document_Image_Load_Descriptor *d,
-		void *user_data)
-{
-	Enesim_Buffer *b = NULL;
-
-	if (!d || !d->loaded)
-		return;
-
-	/* TODO check if there is an application callback */
-	if (!enesim_image_load(data, NULL, &b, NULL, NULL))
-	{
-		Eina_Error err;
-
-		err = eina_error_get();
-		ERR("Can not load image, error: %s", eina_error_msg_get(err));
-		if (d->failed) d->failed(user_data);
-	}
-	else
-	{
-		Enesim_Surface *s;
-
-		s = enesim_surface_new_buffer_from(b);
-		d->loaded(s, user_data);
-	}
-}
-
-/* FIXME remove */
-EAPI void egueb_svg_document_uri_fetch(Egueb_Dom_Node *n,
-		Egueb_Dom_String *uri,
-		Egueb_Svg_Document_Uri_Fetch_Descriptor *d,
-		void *user_data)
-{
-	Egueb_Svg_Document *thiz;
-	char *absolute;
-
-	if (!d || !d->fetched)
-		goto done;
-
-	thiz = EGUEB_SVG_DOCUMENT(n);
-	/* resolve the uri to make it absolute */
-	absolute = _egueb_svg_document_uri_get_absolute(thiz,
-		egueb_dom_string_string_get(uri));
-	DBG("URI is %s", absolute);
-	/* in case of a http uri, delegate it to the application */
-	if (!strncmp(absolute, "/", 1))
-	{
-		Enesim_Stream *data;
-
-		data = enesim_stream_file_new(absolute, "rb");
-		if (data)
-		{
-			if (d->fetched) d->fetched(data, user_data);
-			enesim_stream_unref(data);
-		}
-		else
-		{
-			if (d->failed) d->failed(user_data);
-		}
-	}
-	else
-	{
-		/* TODO call the application to fetch the data */
-		ERR("TODO");
-	}
-	/* call the descriptor functions */
-	free(absolute);
-done:
-	egueb_dom_string_unref(uri);
-}
-#endif
-
-/* FIXME remove */
-EAPI void egueb_svg_document_location_get_cb_set(Egueb_Dom_Node *n,
-		Egueb_Svg_Document_String_Get_Cb cb, void *user_data)
-{
-	Egueb_Svg_Document *thiz;
-
-	thiz = EGUEB_SVG_DOCUMENT(n);
-	thiz->location_get = cb;
-	thiz->location_get_data = user_data;
-}
-
-/* FIXME remove */
-EAPI void egueb_svg_document_filename_get_cb_set(Egueb_Dom_Node *n,
-		Egueb_Svg_Document_String_Get_Cb cb, void *user_data)
-{
-	Egueb_Svg_Document *thiz;
-
-	thiz = EGUEB_SVG_DOCUMENT(n);
-	thiz->filename_get = cb;
-	thiz->filename_get_data = user_data;
 }
 
 /* FIXME This might not be needed */

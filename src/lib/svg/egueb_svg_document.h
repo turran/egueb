@@ -26,22 +26,10 @@
  * @{
  */
 
-typedef void (*Egueb_Svg_Document_Failed_Cb)(void *user_data);
-typedef void (*Egueb_Svg_Document_Image_Loaded)(Enesim_Surface *s, void *user_data);
-
-typedef struct _Egueb_Svg_Document_Image_Load_Descriptor
-{
-	Egueb_Svg_Document_Image_Loaded loaded;
-	Egueb_Svg_Document_Failed_Cb failed;
-} Egueb_Svg_Document_Image_Load_Descriptor;
-
-typedef const char * (*Egueb_Svg_Document_String_Get_Cb)(void *user_data);
-
 EAPI Egueb_Dom_Node * egueb_svg_document_new(void);
 EAPI Egueb_Dom_String * egueb_svg_document_title_get(Egueb_Dom_Node *n);
 EAPI Egueb_Dom_String * egueb_svg_document_referrer_get(Egueb_Dom_Node *n);
 EAPI Egueb_Dom_String * egueb_svg_document_domain_get(Egueb_Dom_Node *n);
-EAPI Egueb_Dom_String * egueb_svg_document_url_get(Egueb_Dom_Node *n);
 
 EAPI Egueb_Dom_Node * egueb_svg_document_element_root_get(Egueb_Dom_Node *n);
 
@@ -51,19 +39,6 @@ EAPI double egueb_svg_document_font_size_get(Egueb_Dom_Node *n);
 
 EAPI Egueb_Dom_Node * egueb_svg_document_element_get_by_iri(Egueb_Dom_Node *n,
 		Egueb_Dom_String *iri);
-
-EAPI void egueb_svg_document_image_load(Egueb_Dom_Node *n,
-		Egueb_Dom_String *uri,
-		Egueb_Svg_Document_Image_Load_Descriptor *d,
-		void *user_data);
-EAPI void egueb_svg_document_image_data_load(Egueb_Dom_Node *n,
-		Enesim_Stream *data,
-		Egueb_Svg_Document_Image_Load_Descriptor *d,
-		void *user_data);
-EAPI void egueb_svg_document_location_get_cb_set(Egueb_Dom_Node *n,
-		Egueb_Svg_Document_String_Get_Cb cb, void *user_data);
-EAPI void egueb_svg_document_filename_get_cb_set(Egueb_Dom_Node *n,
-		Egueb_Svg_Document_String_Get_Cb cb, void *user_data);
 
 /* FIXME remove this as move it to the use element */
 EAPI Egueb_Dom_Node * egueb_svg_document_iri_clone(Egueb_Dom_Node *n,
