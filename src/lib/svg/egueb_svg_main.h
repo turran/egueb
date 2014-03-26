@@ -35,6 +35,7 @@ EAPI extern Egueb_Dom_String *EGUEB_SVG_NAME_DEFS;
 EAPI extern Egueb_Dom_String *EGUEB_SVG_NAME_DESC;
 EAPI extern Egueb_Dom_String *EGUEB_SVG_NAME_ELLIPSE;
 EAPI extern Egueb_Dom_String *EGUEB_SVG_NAME_G;
+EAPI extern Egueb_Dom_String *EGUEB_SVG_NAME_IMAGE;
 EAPI extern Egueb_Dom_String *EGUEB_SVG_NAME_LINE;
 EAPI extern Egueb_Dom_String *EGUEB_SVG_NAME_LINEAR_GRADIENT;
 EAPI extern Egueb_Dom_String *EGUEB_SVG_NAME_PATH;

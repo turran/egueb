@@ -312,6 +312,8 @@ static Eina_Bool _egueb_svg_element_image_process(
 	egueb_dom_node_unref(doc);
 	egueb_dom_string_unref(uri);
 
+	DBG_ELEMENT(EGUEB_DOM_NODE(r), "x: %g, y: %g, width: %g, height: %g",
+			thiz->gx, thiz->gy, thiz->gw, thiz->gh);
 	/* setup our own renderers */
 	enesim_renderer_rectangle_x_set(thiz->rectangle, thiz->gx);
 	enesim_renderer_rectangle_y_set(thiz->rectangle, thiz->gy);
@@ -352,7 +354,7 @@ static void _egueb_svg_element_image_bounds_get(Egueb_Svg_Renderable *r,
 static Egueb_Dom_String * _egueb_svg_element_image_tag_name_get(
 		Egueb_Dom_Element *e)
 {
-	return egueb_dom_string_ref(EGUEB_SVG_NAME_RECT);
+	return egueb_dom_string_ref(EGUEB_SVG_NAME_IMAGE);
 }
 /*----------------------------------------------------------------------------*
  *                              Object interface                              *

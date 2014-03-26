@@ -67,6 +67,7 @@ static void _egueb_svg_strings_init(void)
 	EGUEB_SVG_NAME_DESC = egueb_dom_string_new_with_string("desc");
 	EGUEB_SVG_NAME_ELLIPSE = egueb_dom_string_new_with_string("ellipse");
 	EGUEB_SVG_NAME_G = egueb_dom_string_new_with_string("g");
+	EGUEB_SVG_NAME_IMAGE = egueb_dom_string_new_with_string("image");
 	EGUEB_SVG_NAME_LINE = egueb_dom_string_new_with_string("line");
 	EGUEB_SVG_NAME_LINEAR_GRADIENT = egueb_dom_string_new_with_string("linearGradient");
 	EGUEB_SVG_NAME_PATH = egueb_dom_string_new_with_string("path");
@@ -146,6 +147,7 @@ static void _egueb_svg_strings_shutdown(void)
 	egueb_dom_string_unref(EGUEB_SVG_NAME_DESC);
 	egueb_dom_string_unref(EGUEB_SVG_NAME_ELLIPSE);
 	egueb_dom_string_unref(EGUEB_SVG_NAME_G);
+	egueb_dom_string_unref(EGUEB_SVG_NAME_IMAGE);
 	egueb_dom_string_unref(EGUEB_SVG_NAME_LINE);
 	egueb_dom_string_unref(EGUEB_SVG_NAME_LINEAR_GRADIENT);
 	egueb_dom_string_unref(EGUEB_SVG_NAME_PATH);
@@ -261,6 +263,7 @@ Egueb_Dom_String *EGUEB_SVG_NAME_DEFS;
 Egueb_Dom_String *EGUEB_SVG_NAME_DESC;
 Egueb_Dom_String *EGUEB_SVG_NAME_ELLIPSE;
 Egueb_Dom_String *EGUEB_SVG_NAME_G;
+Egueb_Dom_String *EGUEB_SVG_NAME_IMAGE;
 Egueb_Dom_String *EGUEB_SVG_NAME_LINE;
 Egueb_Dom_String *EGUEB_SVG_NAME_LINEAR_GRADIENT;
 Egueb_Dom_String *EGUEB_SVG_NAME_PATH;
