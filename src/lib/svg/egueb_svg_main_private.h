@@ -61,6 +61,11 @@
 #endif
 #define DBG(...) EINA_LOG_DOM_DBG(ESVG_LOG_DEFAULT, __VA_ARGS__)
 
+#ifdef CRIT
+# undef CRIT
+#endif
+#define CRIT(...) EINA_LOG_DOM_CRIT(ESVG_LOG_DEFAULT, __VA_ARGS__)
+
 /* Element based logs */
 #ifdef ERR_ELEMENT
 # undef ERR_ELEMENT
@@ -81,6 +86,11 @@
 # undef DBG_ELEMENT
 #endif
 #define DBG_ELEMENT(n, ...) EGUEB_DOM_ELEMENT_LOG_DOM_DBG(n, ESVG_LOG_DEFAULT, __VA_ARGS__)
+
+#ifdef CRIT_ELEMENT
+# undef CRIT_ELEMENT
+#endif
+#define CRIT_ELEMENT(n, ...) EGUEB_DOM_ELEMENT_LOG_DOM_CRIT(n, ESVG_LOG_DEFAULT, __VA_ARGS__)
 
 extern int egueb_svg_log_dom_global;
 

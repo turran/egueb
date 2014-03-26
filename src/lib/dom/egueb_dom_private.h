@@ -52,6 +52,11 @@
 #endif
 #define DBG(...) EINA_LOG_DOM_DBG(egueb_dom_log_dom_global, __VA_ARGS__)
 
+#ifdef CRIT
+# undef CRIT
+#endif
+#define CRIT(...) EINA_LOG_DOM_CRIT(egueb_dom_log_dom_global, __VA_ARGS__)
+
 /* Element based logs */
 #ifdef ERR_ELEMENT
 # undef ERR_ELEMENT
@@ -72,6 +77,11 @@
 # undef DBG_ELEMENT
 #endif
 #define DBG_ELEMENT(n, ...) EGUEB_DOM_ELEMENT_LOG_DOM_DBG(n, egueb_dom_log_dom_global, __VA_ARGS__)
+
+#ifdef CRIT_ELEMENT
+# undef CRIT_ELEMENT
+#endif
+#define CRIT_ELEMENT(n, ...) EGUEB_DOM_ELEMENT_LOG_DOM_CRIT(n, egueb_dom_log_dom_global, __VA_ARGS__)
 
 extern int egueb_dom_log_dom_global;
 

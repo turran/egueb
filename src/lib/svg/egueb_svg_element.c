@@ -1345,6 +1345,11 @@ EAPI Egueb_Dom_Node * egueb_svg_element_presentation_relative_get(
 		Egueb_Dom_Node *parent;
 
 		parent = egueb_dom_node_parent_get(n);
+		if (!parent)
+		{
+			CRIT_ELEMENT(n, "No parent available");
+			return NULL;
+		}
 		/* check if it is the topmost */
 		if (egueb_dom_node_type_get(parent) == EGUEB_DOM_NODE_TYPE_DOCUMENT_NODE)
 		{
