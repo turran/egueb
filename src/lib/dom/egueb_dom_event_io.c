@@ -160,6 +160,7 @@ EAPI void egueb_dom_event_io_uri_get(Egueb_Dom_Event *e, Egueb_Dom_Uri *uri)
 	Egueb_Dom_Event_IO *thiz;
 
 	thiz = EGUEB_DOM_EVENT_IO(e);
+	uri->type = thiz->uri.type;
 	uri->location = thiz->uri.location;
 	if (uri->location)
 		uri->location = egueb_dom_string_ref(uri->location);
