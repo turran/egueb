@@ -97,6 +97,7 @@ static Eina_Error _enesim_image_dom_info_load(Enesim_Stream *data, int *w, int *
 {
 	Egueb_Dom_Node *doc = NULL;
 	Egueb_Dom_Feature *window;
+	Egueb_Dom_Feature *io;
 	Eina_Error ret = 0;
 	int cw = _default_width;
 	int ch = _default_height;
@@ -122,6 +123,13 @@ static Eina_Error _enesim_image_dom_info_load(Enesim_Stream *data, int *w, int *
 		goto err_feature;
 	}
 
+	io = egueb_dom_node_feature_get(doc, EGUEB_DOM_FEATURE_IO_NAME, NULL);
+	if (io)
+	{
+		egueb_dom_feature_io_default_enable(io, EINA_TRUE);
+		egueb_dom_feature_unref(io);
+	}
+
 	egueb_dom_feature_window_content_size_set(window, cw, ch);
 	egueb_dom_document_process(doc);
 	egueb_dom_feature_window_content_size_get(window, w, h);
@@ -137,7 +145,7 @@ static Eina_Error _enesim_image_dom_load(Enesim_Stream *data,
 		Enesim_Buffer *buffer, void *options)
 {
 	Egueb_Dom_Node *doc = NULL;
-	Egueb_Dom_Feature *window, *render;
+	Egueb_Dom_Feature *window, *render, *io;
 	Enesim_Surface *s;
 	Enesim_Log *err = NULL;
 	Eina_Error ret = 0;
@@ -166,6 +174,13 @@ static Eina_Error _enesim_image_dom_load(Enesim_Stream *data,
 	egueb_dom_feature_window_content_size_set(window, w, h);
 	egueb_dom_feature_unref(window);
 
+	io = egueb_dom_node_feature_get(doc, EGUEB_DOM_FEATURE_IO_NAME, NULL);
+	if (io)
+	{
+		egueb_dom_feature_io_default_enable(io, EINA_TRUE);
+		egueb_dom_feature_unref(io);
+	}
+
 	render = egueb_dom_node_feature_get(doc, EGUEB_DOM_FEATURE_RENDER_NAME, NULL);
 	if (!render)
 	{
@@ -188,12 +203,8 @@ static Eina_Error _enesim_image_dom_load(Enesim_Stream *data,
 	}
 
 	enesim_surface_unref(s);
-	egueb_dom_feature_unref(render);
 err_surface:
-#if 0
-	if (location)
-		free(location);
-#endif
+	egueb_dom_feature_unref(render);
 err_feature:
 	egueb_dom_node_unref(doc);
 err_parse:
