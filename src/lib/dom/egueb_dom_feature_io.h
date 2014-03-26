@@ -27,6 +27,8 @@
 
 EAPI extern Egueb_Dom_String *EGUEB_DOM_FEATURE_IO_NAME;
 EAPI Eina_Bool egueb_dom_feature_io_add(Egueb_Dom_Node *n);
+EAPI void egueb_dom_feature_io_default_enable(Egueb_Dom_Feature *f,
+		Eina_Bool enable);
 
 #endif
 
