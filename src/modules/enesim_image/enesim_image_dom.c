@@ -48,25 +48,6 @@
 static int _enesim_image_dom_log = -1;
 
 /*----------------------------------------------------------------------------*
- *                           Application Descriptor                           *
- *----------------------------------------------------------------------------*/
-#if 0
-/* given that we only support this callback, we pass the dir name as the data */
-static const char * _enesim_image_dom_base_dir_get(Ender_Element *e, void *data)
-{
-	return data;
-}
-
-static Egueb_Svg_Element_Svg_Application_Descriptor _enesim_image_dom_descriptor = {
-	/* .base_dir_get 	= */ _enesim_image_dom_base_dir_get,
-	/* .go_to 		= */ NULL,
-};
-#endif
-static const char * _enesim_image_dom_filename_get(void *user_data)
-{
-	return user_data;
-}
-/*----------------------------------------------------------------------------*
  *                         Enesim Image Provider API                          *
  *----------------------------------------------------------------------------*/
 typedef struct _Enesim_Image_Svg_Options
