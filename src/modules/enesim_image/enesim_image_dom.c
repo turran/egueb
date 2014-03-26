@@ -143,9 +143,6 @@ static Eina_Error _enesim_image_dom_load(Enesim_Stream *data,
 	Eina_Error ret = 0;
 	int w = _default_width;
 	int h = _default_height;
-#if 0
-	char *location;
-#endif
 
 	if (!egueb_dom_parser_parse(data, &doc))
 	{
@@ -160,11 +157,6 @@ static Eina_Error _enesim_image_dom_load(Enesim_Stream *data,
 		w = o->container_width;
 		h = o->container_height;
 	}
-	/* set the application descriptor in case the svg needs it */
-#if 0
-	location = enesim_stream_location(data);
-	egueb_svg_document_filename_get_cb_set(doc, _enesim_image_dom_filename_get, location);
-#endif
 	window = egueb_dom_node_feature_get(doc, EGUEB_DOM_FEATURE_WINDOW_NAME, NULL);
 	if (!window)
 	{
