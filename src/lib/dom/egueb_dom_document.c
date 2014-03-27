@@ -531,7 +531,10 @@ EAPI Egueb_Dom_String * egueb_dom_document_uri_get(Egueb_Dom_Node *n)
 	Egueb_Dom_Document *thiz;
 
 	thiz = EGUEB_DOM_DOCUMENT(n);
-	return egueb_dom_string_ref(thiz->uri);
+	if (thiz->uri)
+		return egueb_dom_string_ref(thiz->uri);
+	else
+		return NULL;
 }
 
 EAPI void egueb_dom_document_uri_set(Egueb_Dom_Node *n, Egueb_Dom_String *uri)

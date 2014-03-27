@@ -70,6 +70,10 @@ static void _egueb_dom_feature_io_data_load(Egueb_Dom_String *location,
 			DBG("Data '%s' loaded correctly", filename);
 			cb(node, s);
 		}
+		else
+		{
+			WARN("Failed opening file '%s'", filename);
+		}
 	}
 	else
 	{
@@ -117,6 +121,7 @@ static void _egueb_dom_feature_io_relative_data_cb(Egueb_Dom_Uri *uri,
 	if (ret < 0)
 		goto beach;
 
+	DBG("Loading relative data at '%s'", filename);
 	location = egueb_dom_string_steal(filename);
 	cb = egueb_dom_event_io_data_cb_get(ev);
 	_egueb_dom_feature_io_data_load(location, cb, node);
