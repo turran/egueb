@@ -400,6 +400,18 @@ void egueb_dom_node_document_set(Egueb_Dom_Node *thiz,
 	}
 }
 
+void egueb_dom_node_document_set_recursive(Egueb_Dom_Node *thiz,
+		Egueb_Dom_Node *document)
+{
+	Egueb_Dom_Node *child;
+
+	egueb_dom_node_document_set(thiz, document);
+	EINA_INLIST_FOREACH(thiz->children, child)
+	{
+		egueb_dom_node_document_set_recursive(child, document);
+	}
+}
+
 Eina_Bool egueb_dom_node_feature_add(Egueb_Dom_Node *thiz,
 		Egueb_Dom_String *name, Egueb_Dom_String *version,
 		Egueb_Dom_Feature *feature)

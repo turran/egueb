@@ -611,7 +611,7 @@ EAPI Egueb_Dom_Node * egueb_dom_document_node_adopt(Egueb_Dom_Node *n, Egueb_Dom
 			egueb_dom_node_child_remove(other, adopted, NULL);
 			egueb_dom_node_unref(other);
 		}
-		egueb_dom_node_document_set(adopted, n);
+		egueb_dom_node_document_set_recursive(adopted, n);
 		return adopted;
 		break;
 
