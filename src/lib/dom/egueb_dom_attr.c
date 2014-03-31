@@ -38,7 +38,7 @@ static Eina_Bool _egueb_dom_attr_inheritable_process(Egueb_Dom_Attr *thiz,
 {
 	if (thiz->set_mask & type)
 	{
-		if (thiz->inherited_mask & type)
+		if ((thiz->inherited_mask & type) && rel)
 		{
 			Egueb_Dom_Attr *other;
 
@@ -421,27 +421,32 @@ EAPI Eina_Bool egueb_dom_attr_value_set(Egueb_Dom_Node *n,
 
 	thiz = EGUEB_DOM_ATTR(n);
 	klass = EGUEB_DOM_ATTR_CLASS_GET(thiz);
-	if (klass->value_set(thiz, type, value) && thiz->owner)
+	if (klass->value_set(thiz, type, value))
 	{
-		Egueb_Dom_Event *event;
-		Egueb_Dom_Element *e;
-		e = EGUEB_DOM_ELEMENT(thiz->owner);
 
 		/* trigger the mutation event */
-		event = egueb_dom_event_mutation_attr_modified_new(
-				n, NULL, value, thiz->name,
-				EGUEB_DOM_EVENT_MUTATION_ATTR_TYPE_MODIFICATION,
-				type);
-		egueb_dom_node_event_dispatch(thiz->owner, event, NULL, NULL);
-		/* in case the property is inheritable, mark the element
-		 * with a flag informing that. That is helpful on the processing
-		 * functions of the sublcasses of an element to know if they
-		 * need to process again the inheritance feature to calculate
-		 * the final values
-		 */
-		if (egueb_dom_attr_is_inheritable(n))
-			e->inheritable_changed = EINA_TRUE;
-		e->attr_changed = EINA_TRUE;
+ 		if (thiz->owner)
+		{
+			Egueb_Dom_Event *event;
+			Egueb_Dom_Element *e;
+			e = EGUEB_DOM_ELEMENT(thiz->owner);
+
+			event = egueb_dom_event_mutation_attr_modified_new(
+					n, NULL, value, thiz->name,
+					EGUEB_DOM_EVENT_MUTATION_ATTR_TYPE_MODIFICATION,
+					type);
+			egueb_dom_node_event_dispatch(thiz->owner, event, NULL, NULL);
+
+			/* in case the property is inheritable, mark the element
+			 * with a flag informing that. That is helpful on the processing
+			 * functions of the sublcasses of an element to know if they
+			 * need to process again the inheritance feature to calculate
+			 * the final values
+			 */
+			if (egueb_dom_attr_is_inheritable(n))
+				e->inheritable_changed = EINA_TRUE;
+			e->attr_changed = EINA_TRUE;
+		}
 		/* finally set the mask */
 		thiz->set_mask |= type;
 		/* mark it as changed */
@@ -456,10 +461,9 @@ EAPI void egueb_dom_attr_inheritable_process(Egueb_Dom_Node *n,
 	Egueb_Dom_Attr *thiz;
 	Egueb_Dom_Attr *other;
 
-	if (!n || !rel) return;
+	if (!n) return;
 	if (!egueb_dom_attr_is_inheritable(n)) return;
 	if (!egueb_dom_is_attr(n)) return;
-	if (!egueb_dom_is_attr(rel)) return;
 
 	thiz = EGUEB_DOM_ATTR(n);
 	if (thiz->inherited)
@@ -467,7 +471,6 @@ EAPI void egueb_dom_attr_inheritable_process(Egueb_Dom_Node *n,
 		egueb_dom_node_unref(thiz->inherited);
 		thiz->inherited = NULL;
 	}
-	if (!rel) return;
 
 	if (_egueb_dom_attr_inheritable_process_full(thiz,
 			EGUEB_DOM_ATTR_FLAG_ANIMATABLE,
@@ -489,14 +492,17 @@ EAPI void egueb_dom_attr_inheritable_process(Egueb_Dom_Node *n,
 		DBG("Base set, using it");
 		goto done;
 	}
-	/* in case one of the property types is set, inherit from the relative
+	/* in case none of the property types is set, inherit from the relative
 	 * one
 	 */
-	other = EGUEB_DOM_ATTR(rel);
-	if (other->inherited)
-		thiz->inherited = egueb_dom_node_ref(other->inherited);
-	else
-		thiz->inherited = egueb_dom_node_ref(rel);
+	if (rel)
+	{
+		other = EGUEB_DOM_ATTR(rel);
+		if (other->inherited)
+			thiz->inherited = egueb_dom_node_ref(other->inherited);
+		else
+			thiz->inherited = egueb_dom_node_ref(rel);
+	}
 done:
 	egueb_dom_attr_process(n);
 }
@@ -637,5 +643,5 @@ EAPI Eina_Bool egueb_dom_attr_has_changed(Egueb_Dom_Node *n)
 	Egueb_Dom_Attr *thiz;
 
 	thiz = EGUEB_DOM_ATTR(n);
-	return thiz->changed;
+	return !!thiz->changed;
 }
