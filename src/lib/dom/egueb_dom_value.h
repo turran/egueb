@@ -141,7 +141,7 @@ EAPI void egueb_dom_value_enum_interpolate(Egueb_Dom_Value *v,
  * name##_string_to
  * name##_string_from
  */
-#define EGUEB_DOM_VALUE_ENUM_BOLIERPLATE(name, c_type)				\
+#define EGUEB_DOM_VALUE_ENUM_BOILERPLATE(name, c_type)				\
 static Egueb_Dom_Value_Descriptor _##name##_descriptor;				\
 										\
 static void _##name##_data_from(Egueb_Dom_Value *v, Egueb_Dom_Value_Data *data)	\
@@ -203,7 +203,7 @@ static Egueb_Dom_Value_Descriptor _##name##_descriptor = {			\
  * name##_string_to
  * name##_string_from
  */
-#define EGUEB_DOM_VALUE_PRIMITIVE_BOLIERPLATE(name, c_type)			\
+#define EGUEB_DOM_VALUE_PRIMITIVE_BOILERPLATE(name, c_type)			\
 static Egueb_Dom_Value_Descriptor _##name##_descriptor;				\
 										\
 static void _##name##_data_from(Egueb_Dom_Value *v, Egueb_Dom_Value_Data *data)	\
@@ -262,6 +262,34 @@ static Eina_Bool _##name##_string_from(Egueb_Dom_Value *v, const char *str)	\
 	return name##_string_from(v->data.ptr, str);				\
 }										\
 										\
+static void _##name##_interpolate(Egueb_Dom_Value *v, Egueb_Dom_Value *a,	\
+		Egueb_Dom_Value *b, double m, Egueb_Dom_Value *add,		\
+		Egueb_Dom_Value *acc, int mul)					\
+{										\
+	void *p_add = NULL;							\
+	void *p_acc = NULL;							\
+										\
+	EINA_SAFETY_ON_FALSE_RETURN(v->descriptor == &_##name##_descriptor);	\
+	EINA_SAFETY_ON_FALSE_RETURN(a->descriptor == &_##name##_descriptor);	\
+	EINA_SAFETY_ON_FALSE_RETURN(b->descriptor == &_##name##_descriptor);	\
+										\
+	if (add)								\
+	{									\
+		EINA_SAFETY_ON_FALSE_RETURN(add->descriptor ==			\
+				&_##name##_descriptor);				\
+		p_add = add->data.ptr;						\
+	}									\
+										\
+	if (acc)								\
+	{									\
+		EINA_SAFETY_ON_FALSE_RETURN(acc->descriptor ==			\
+				&_##name##_descriptor);				\
+		p_acc = acc->data.ptr;						\
+	}									\
+	name##_interpolate(v->data.ptr, a->data.ptr, b->data.ptr, m, p_add,	\
+			p_acc, mul);						\
+}										\
+										\
 static Egueb_Dom_Value_Descriptor _##name##_descriptor = {			\
 	/* .data_from 		= */ _##name##_data_from,			\
 	/* .data_from_type 	= */ EGUEB_DOM_VALUE_DATA_TYPE_PTR,		\
@@ -283,7 +311,7 @@ static Egueb_Dom_Value_Descriptor _##name##_descriptor = {			\
  * name##_string_to
  * name##_string_from
  */
-#define EGUEB_DOM_VALUE_PRIMITIVE_SIMPLE_BOLIERPLATE(name, c_type)		\
+#define EGUEB_DOM_VALUE_PRIMITIVE_SIMPLE_BOILERPLATE(name, c_type)		\
 static inline void name##_reset(c_type *t)					\
 {										\
 	/* nothing here */							\
@@ -295,7 +323,7 @@ static inline void name##_copy(const c_type *s, c_type *d,			\
 	/* simple copy */							\
 	*d = *s;								\
 }										\
-EGUEB_DOM_VALUE_PRIMITIVE_BOLIERPLATE(name, c_type)
+EGUEB_DOM_VALUE_PRIMITIVE_BOILERPLATE(name, c_type)
 
 /* TODO boilerplate code for an object */
 

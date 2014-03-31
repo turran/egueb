@@ -25,7 +25,7 @@
 /*----------------------------------------------------------------------------*
  *                             Value interface                                *
  *----------------------------------------------------------------------------*/
-EGUEB_DOM_VALUE_ENUM_BOLIERPLATE(egueb_svg_stroke_line_join, Egueb_Svg_Stroke_Line_Join);
+EGUEB_DOM_VALUE_ENUM_BOILERPLATE(egueb_svg_stroke_line_join, Egueb_Svg_Stroke_Line_Join);
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/

@@ -105,6 +105,7 @@ src/lib/svg/egueb_svg_attr_visibility.c \
 src/lib/svg/egueb_svg_attr_xlink_href.c \
 src/lib/svg/egueb_svg_clip_path.c \
 src/lib/svg/egueb_svg_color.c \
+src/lib/svg/egueb_svg_color_private.h \
 src/lib/svg/egueb_svg_display.c \
 src/lib/svg/egueb_svg_document.c \
 src/lib/svg/egueb_svg_document_private.h \
@@ -140,6 +141,7 @@ src/lib/svg/egueb_svg_font_size.c \
 src/lib/svg/egueb_svg_gradient.c \
 src/lib/svg/egueb_svg_gradient_private.h \
 src/lib/svg/egueb_svg_length.c \
+src/lib/svg/egueb_svg_length_private.h \
 src/lib/svg/egueb_svg_main.c \
 src/lib/svg/egueb_svg_main_private.h \
 src/lib/svg/egueb_svg_matrix.c \

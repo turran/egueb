@@ -60,17 +60,7 @@ static Eina_Bool _egueb_svg_font_size_relative_string_from(
 /*----------------------------------------------------------------------------*
  *                             Value interface                                *
  *----------------------------------------------------------------------------*/
-#define _egueb_svg_font_size_interpolate NULL
-EGUEB_DOM_VALUE_PRIMITIVE_SIMPLE_BOLIERPLATE(egueb_svg_font_size, Egueb_Svg_Font_Size);
-/*============================================================================*
- *                                   API                                      *
- *============================================================================*/
-EAPI const Egueb_Dom_Value_Descriptor * egueb_svg_font_size_descriptor_get(void)
-{
-	return &_egueb_svg_font_size_descriptor;
-}
-
-EAPI Eina_Bool egueb_svg_font_size_string_from(Egueb_Svg_Font_Size *thiz, const char *attr_val)
+static Eina_Bool egueb_svg_font_size_string_from(Egueb_Svg_Font_Size *thiz, const char *attr_val)
 {
 	if (_egueb_svg_font_size_absolute_string_from(&thiz->value.absolute, attr_val))
 		thiz->type = EGUEB_SVG_FONT_SIZE_TYPE_ABSOLUTE;
@@ -83,10 +73,26 @@ EAPI Eina_Bool egueb_svg_font_size_string_from(Egueb_Svg_Font_Size *thiz, const 
 	return EINA_TRUE;
 }
 
-EAPI char * egueb_svg_font_size_string_to(Egueb_Svg_Font_Size *thiz)
+static char * egueb_svg_font_size_string_to(Egueb_Svg_Font_Size *thiz)
 {
 	ERR("TODO");
 	return NULL;
+}
+
+static void egueb_svg_font_size_interpolate(Egueb_Svg_Font_Size *v,
+		Egueb_Svg_Font_Size *a, Egueb_Svg_Font_Size *b, double m,
+		Egueb_Svg_Font_Size *add, Egueb_Svg_Font_Size *acc, int mul)
+{
+	ERR("Not implemented");
+}
+
+EGUEB_DOM_VALUE_PRIMITIVE_SIMPLE_BOILERPLATE(egueb_svg_font_size, Egueb_Svg_Font_Size);
+/*============================================================================*
+ *                                   API                                      *
+ *============================================================================*/
+EAPI const Egueb_Dom_Value_Descriptor * egueb_svg_font_size_descriptor_get(void)
+{
+	return &_egueb_svg_font_size_descriptor;
 }
 
 EAPI double egueb_svg_font_size_final_get(const Egueb_Svg_Font_Size *thiz,

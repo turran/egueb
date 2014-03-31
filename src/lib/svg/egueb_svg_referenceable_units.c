@@ -25,7 +25,7 @@
 /*----------------------------------------------------------------------------*
  *                             Value interface                                *
  *----------------------------------------------------------------------------*/
-EGUEB_DOM_VALUE_ENUM_BOLIERPLATE(egueb_svg_referenceable_units, Egueb_Svg_Referenceable_Units);
+EGUEB_DOM_VALUE_ENUM_BOILERPLATE(egueb_svg_referenceable_units, Egueb_Svg_Referenceable_Units);
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/

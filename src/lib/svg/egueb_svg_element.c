@@ -515,20 +515,6 @@ static void _egueb_svg_element_onmouseout_get(Egueb_Dom_Tag *t, const char **v)
 	thiz = EGUEB_SVG_ELEMENT(t);
 	*v = thiz->onmouseout;
 }
-
-/*----------------------------------------------------------------------------*
- *                           The Egueb_Dom Tag interface                           *
- *----------------------------------------------------------------------------*/
-static Egueb_Dom_Tag * _egueb_svg_element_tag_topmost_get(Egueb_Dom_Tag *t)
-{
-	Egueb_Svg_Element *thiz;
-
-	thiz = EGUEB_SVG_ELEMENT(t);
-	if (!thiz->topmost) return NULL;
-
-	return ender_element_object_get(thiz->topmost);
-}
-
 #endif
 
 static void _egueb_svg_element_geometry_process(
@@ -1256,14 +1242,6 @@ const Egueb_Svg_Attribute_Presentation * egueb_svg_element_attribute_presentatio
 /*----------------------------------------------------------------------------*
  *                           Property API helpers                             *
  *----------------------------------------------------------------------------*/
-#if 0
-void egueb_svg_element_context_dump(const Egueb_Svg_Element_Context *c)
-{
-	DBG("dpi %g %g", c->dpi_x, c->dpi_y);
-	DBG("viewbox %g %g %g %g", c->viewbox.x, c->viewbox.y, c->viewbox.w, c->viewbox.h);
-	DBG("transformation %" ENESIM_MATRIX_FORMAT, ENESIM_MATRIX_ARGS (&c->transform));
-}
-#endif
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/
@@ -1385,45 +1363,6 @@ EAPI Eina_Bool egueb_svg_element_presentation_relative_set(Egueb_Dom_Node *n,
 	}
 	return EINA_TRUE;
 }
-
-#if 0
-
-/**
- * To be documented
- * FIXME: To be fixed
- */
-EAPI const char * egueb_svg_element_name_get(Ender_Element *e)
-{
-	Egueb_Dom_Tag *t;
-
-	t = ender_element_object_get(e);
-	return egueb_dom_tag_name_get(t);
-}
-
-/**
- * To be documented
- * FIXME: To be fixed
- */
-EAPI Ender_Element * egueb_svg_element_topmost_get(Ender_Element *e)
-{
-	Egueb_Dom_Tag *t;
-	Ender_Element *topmost;
-
-	t = ender_element_object_get(e);
-	egueb_svg_element_internal_topmost_get(t, &topmost);
-	return topmost;
-}
-
-/**
- * To be documented
- * FIXME: To be fixed
- */
-EAPI Eina_Bool egueb_svg_element_style_is_set(Egueb_Dom_Node *n)
-{
-	return EINA_FALSE;
-}
-
-#endif
 
 /**
  * To be documented
@@ -1873,6 +1812,7 @@ EAPI void egueb_svg_element_stop_color_get(Egueb_Dom_Node *n, Egueb_Svg_Color *s
 {
 }
 
+#if 0
 /**
  * To be documented
  * FIXME: To be fixed
@@ -1944,3 +1884,4 @@ EAPI void egueb_svg_element_onmousemove_set(Egueb_Dom_Node *n, const char *v)
 EAPI void egueb_svg_element_onmouseout_set(Egueb_Dom_Node *n, const char *v)
 {
 }
+#endif

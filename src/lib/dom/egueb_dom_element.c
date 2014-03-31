@@ -794,7 +794,7 @@ EAPI void egueb_dom_element_enqueue(Egueb_Dom_Node *n)
 	doc = egueb_dom_node_document_get(n);
 	if (!doc)
 	{
-		WARN("Element does not have a document");
+		WARN_ELEMENT(n, "Element does not have a document");
 		egueb_dom_node_unref(n);
 		return;
 	}

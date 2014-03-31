@@ -88,6 +88,7 @@ EAPI void egueb_dom_attr_inheritable_process(Egueb_Dom_Node *n,
 
 EAPI Eina_Bool egueb_dom_attr_final_value_get(Egueb_Dom_Node *n,
 		Egueb_Dom_Value *value);
+EAPI Eina_Bool egueb_dom_attr_final_string_get(Egueb_Dom_Node *n, Egueb_Dom_String **s);
 EAPI Eina_Bool egueb_dom_attr_final_get_va(Egueb_Dom_Node *n, va_list args);
 EAPI Eina_Bool egueb_dom_attr_final_get(Egueb_Dom_Node *n, ...);
 

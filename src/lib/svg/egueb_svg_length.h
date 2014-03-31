@@ -70,8 +70,6 @@ static inline void egueb_svg_length_set(Egueb_Svg_Length *length, double value, 
 }
 
 EAPI const Egueb_Dom_Value_Descriptor * egueb_svg_length_descriptor_get(void);
-EAPI Eina_Bool egueb_svg_length_string_from(Egueb_Svg_Length *length, const char *attr_val);
-EAPI char * egueb_svg_length_string_to(Egueb_Svg_Length *thiz);
 EAPI Eina_Bool egueb_svg_length_is_equal(Egueb_Svg_Length *length1, Egueb_Svg_Length *length2);
 EAPI double egueb_svg_coord_final_get(const Egueb_Svg_Length *l, double parent_length, double font_size);
 EAPI double egueb_svg_length_final_get(const Egueb_Svg_Length *l, double width, double height, double font_size);

@@ -25,10 +25,25 @@
 /*----------------------------------------------------------------------------*
  *                             Value interface                                *
  *----------------------------------------------------------------------------*/
-#define egueb_dom_value_font_string_from egueb_css_font_string_from
-#define egueb_dom_value_font_string_to egueb_css_font_string_to
-#define _egueb_dom_value_font_interpolate NULL
-EGUEB_DOM_VALUE_PRIMITIVE_SIMPLE_BOLIERPLATE(egueb_dom_value_font, Egueb_Css_Font);
+static Eina_Bool egueb_dom_value_font_string_from(Egueb_Css_Font *thiz,
+		const char *str)
+{
+	return egueb_css_font_string_from(thiz, str);
+}
+
+static char * egueb_dom_value_font_string_to(Egueb_Css_Font *thiz)
+{
+	return egueb_css_font_string_to(thiz);
+}
+
+static void egueb_dom_value_font_interpolate(Egueb_Css_Font *v,
+		Egueb_Css_Font *a, Egueb_Css_Font *b, double m,
+		Egueb_Css_Font *add, Egueb_Css_Font *acc, int mul)
+{
+	ERR("Not implemented");
+}
+
+EGUEB_DOM_VALUE_PRIMITIVE_SIMPLE_BOILERPLATE(egueb_dom_value_font, Egueb_Css_Font);
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/

@@ -28,7 +28,5 @@ typedef struct _Egueb_Svg_Rect_Animated
 } Egueb_Svg_Rect_Animated;
 
 EAPI const Egueb_Dom_Value_Descriptor * egueb_svg_rect_descriptor_get(void);
-Eina_Bool egueb_svg_rect_string_from(Egueb_Svg_Rect *thiz, const char *attr_val);
-EAPI char * egueb_svg_rect_string_to(Egueb_Svg_Rect *thiz);
 
 #endif

@@ -524,6 +524,28 @@ EAPI Eina_Bool egueb_dom_attr_final_value_get(Egueb_Dom_Node *n,
 		return EINA_FALSE;
 }
 
+EAPI Eina_Bool egueb_dom_attr_final_string_get(Egueb_Dom_Node *n, Egueb_Dom_String **s)
+{
+	Egueb_Dom_Attr *thiz;
+
+	thiz = EGUEB_DOM_ATTR(n);
+	/* in case we have an inherited property use that one */
+	if (thiz->inherited)
+		return egueb_dom_attr_final_string_get(thiz->inherited, s);
+
+	/* do the sandwich */
+	if (egueb_dom_attr_string_get(n, EGUEB_DOM_ATTR_TYPE_ANIMATED, s))
+		return EINA_TRUE;
+	else if (egueb_dom_attr_string_get(n, EGUEB_DOM_ATTR_TYPE_STYLED, s))
+		return EINA_TRUE;
+	else if (egueb_dom_attr_string_get(n, EGUEB_DOM_ATTR_TYPE_BASE, s))
+		return EINA_TRUE;
+	else if (egueb_dom_attr_string_get(n, EGUEB_DOM_ATTR_TYPE_DEFAULT, s))
+		return EINA_TRUE;
+	else
+		return EINA_FALSE;
+}
+
 EAPI Eina_Bool egueb_dom_attr_final_get_va(Egueb_Dom_Node *n, va_list args)
 {
 	Egueb_Dom_Attr *thiz;

@@ -26,18 +26,8 @@
 /*----------------------------------------------------------------------------*
  *                             Value interface                                *
  *----------------------------------------------------------------------------*/
-#define _egueb_svg_rect_interpolate NULL
-EGUEB_DOM_VALUE_PRIMITIVE_SIMPLE_BOLIERPLATE(egueb_svg_rect, Egueb_Svg_Rect);
-/*============================================================================*
- *                                   API                                      *
- *============================================================================*/
-EAPI const Egueb_Dom_Value_Descriptor * egueb_svg_rect_descriptor_get(void)
-{
-	return &_egueb_svg_rect_descriptor;
-}
-
 /* FIXME: fix parsing with ' ' and ',' (do like rgb(c,c,c)) */
-Eina_Bool egueb_svg_rect_string_from(Egueb_Svg_Rect *thiz, const char *attr_val)
+static Eina_Bool egueb_svg_rect_string_from(Egueb_Svg_Rect *thiz, const char *attr_val)
 {
 	const char *iter;
 	const char *tmp;
@@ -76,8 +66,26 @@ Eina_Bool egueb_svg_rect_string_from(Egueb_Svg_Rect *thiz, const char *attr_val)
 	return EINA_TRUE;
 }
 
-EAPI char * egueb_svg_rect_string_to(Egueb_Svg_Rect *thiz)
+static char * egueb_svg_rect_string_to(Egueb_Svg_Rect *thiz)
 {
 	ERR("Not implemented");
 	return NULL;
 }
+
+static void egueb_svg_rect_interpolate(Egueb_Svg_Rect *v,
+		Egueb_Svg_Rect *a, Egueb_Svg_Rect *b, double m,
+		Egueb_Svg_Rect *add, Egueb_Svg_Rect *acc, int mul)
+{
+	ERR("Not implemented");
+}
+
+EGUEB_DOM_VALUE_PRIMITIVE_SIMPLE_BOILERPLATE(egueb_svg_rect, Egueb_Svg_Rect);
+/*============================================================================*
+ *                                   API                                      *
+ *============================================================================*/
+EAPI const Egueb_Dom_Value_Descriptor * egueb_svg_rect_descriptor_get(void)
+{
+	return &_egueb_svg_rect_descriptor;
+}
+
+

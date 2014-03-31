@@ -18,6 +18,7 @@
 
 #include "egueb_svg_main_private.h"
 #include "egueb_svg_length.h"
+#include "egueb_svg_length_private.h"
 
 #include "egueb_dom_value_private.h"
 /*============================================================================*
@@ -61,43 +62,27 @@ static const char * _egueb_svg_length_units_string_to(Egueb_Svg_Length *thiz)
 /*----------------------------------------------------------------------------*
  *                             Value interface                                *
  *----------------------------------------------------------------------------*/
-static void _egueb_svg_length_interpolate(Egueb_Dom_Value *v,
-		Egueb_Dom_Value *a, Egueb_Dom_Value *b, double m,
-		Egueb_Dom_Value *add, Egueb_Dom_Value *acc, int mul)
+static void egueb_svg_length_interpolate(Egueb_Svg_Length *thiz,
+		Egueb_Svg_Length *a, Egueb_Svg_Length *b, double m,
+		Egueb_Svg_Length *add, Egueb_Svg_Length *acc, int mul)
 {
-	Egueb_Svg_Length *va = a->data.ptr;
-	Egueb_Svg_Length *vb = b->data.ptr;
-	Egueb_Svg_Length *r = v->data.ptr;
-
-	r->unit = va->unit;
-	etch_interpolate_double(va->value, vb->value, m, &r->value);
+	thiz->unit = a->unit;
+	etch_interpolate_double(a->value, b->value, m, &thiz->value);
 	if (acc)
 	{
-		Egueb_Svg_Length *vacc = acc->data.ptr;
-		r->value += vacc->value * mul;
+		thiz->value += acc->value * mul;
 	}
 	if (add)
 	{
-		Egueb_Svg_Length *vadd = add->data.ptr;
-		r->value += vadd->value;
+		thiz->value += add->value;
 	}
 }
 
-EGUEB_DOM_VALUE_PRIMITIVE_SIMPLE_BOLIERPLATE(egueb_svg_length, Egueb_Svg_Length);
+EGUEB_DOM_VALUE_PRIMITIVE_SIMPLE_BOILERPLATE(egueb_svg_length, Egueb_Svg_Length);
 /*============================================================================*
- *                                   API                                      *
+ *                                 Global                                     *
  *============================================================================*/
-const Egueb_Svg_Length EGUEB_SVG_LENGTH_0 = { 0, EGUEB_SVG_UNIT_LENGTH_PX};
-const Egueb_Svg_Length EGUEB_SVG_LENGTH_1 = { 1, EGUEB_SVG_UNIT_LENGTH_PX};
-const Egueb_Svg_Length EGUEB_SVG_LENGTH_100_PERCENT = { 100, EGUEB_SVG_UNIT_LENGTH_PERCENT};
-const Egueb_Svg_Length EGUEB_SVG_LENGTH_50_PERCENT = { 50, EGUEB_SVG_UNIT_LENGTH_PERCENT};
-
-EAPI const Egueb_Dom_Value_Descriptor * egueb_svg_length_descriptor_get(void)
-{
-	return &_egueb_svg_length_descriptor;
-}
-
-EAPI Eina_Bool egueb_svg_length_string_from(Egueb_Svg_Length *thiz, const char *attr_val)
+Eina_Bool egueb_svg_length_string_from(Egueb_Svg_Length *thiz, const char *attr_val)
 {
 	char *endptr;
 	double val;
@@ -181,7 +166,7 @@ EAPI Eina_Bool egueb_svg_length_string_from(Egueb_Svg_Length *thiz, const char *
 	return EINA_TRUE;
 }
 
-EAPI char * egueb_svg_length_string_to(Egueb_Svg_Length *thiz)
+char * egueb_svg_length_string_to(Egueb_Svg_Length *thiz)
 {
 	const char *units;
 	char *ret;
@@ -192,6 +177,19 @@ EAPI char * egueb_svg_length_string_to(Egueb_Svg_Length *thiz)
 	if (asprintf(&ret, "%g%s", thiz->value, units) < 0)
 		return NULL;
 	return ret;
+}
+
+/*============================================================================*
+ *                                   API                                      *
+ *============================================================================*/
+const Egueb_Svg_Length EGUEB_SVG_LENGTH_0 = { 0, EGUEB_SVG_UNIT_LENGTH_PX};
+const Egueb_Svg_Length EGUEB_SVG_LENGTH_1 = { 1, EGUEB_SVG_UNIT_LENGTH_PX};
+const Egueb_Svg_Length EGUEB_SVG_LENGTH_100_PERCENT = { 100, EGUEB_SVG_UNIT_LENGTH_PERCENT};
+const Egueb_Svg_Length EGUEB_SVG_LENGTH_50_PERCENT = { 50, EGUEB_SVG_UNIT_LENGTH_PERCENT};
+
+EAPI const Egueb_Dom_Value_Descriptor * egueb_svg_length_descriptor_get(void)
+{
+	return &_egueb_svg_length_descriptor;
 }
 
 EAPI Eina_Bool egueb_svg_length_is_equal(Egueb_Svg_Length *length1, Egueb_Svg_Length *length2)

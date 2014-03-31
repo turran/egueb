@@ -27,8 +27,36 @@
 /*----------------------------------------------------------------------------*
  *                             Value interface                                *
  *----------------------------------------------------------------------------*/
-#define _egueb_svg_clip_path_interpolate NULL
-EGUEB_DOM_VALUE_PRIMITIVE_BOLIERPLATE(egueb_svg_clip_path, Egueb_Svg_Clip_Path);
+static Eina_Bool egueb_svg_clip_path_string_from(Egueb_Svg_Clip_Path *thiz,
+		const char *str)
+{
+	if (!strcmp(str, "none"))
+	{
+		thiz->type = EGUEB_SVG_CLIP_PATH_TYPE_NONE;
+		thiz->value.iri = NULL;
+	}
+	else
+	{
+		thiz->type = EGUEB_SVG_CLIP_PATH_TYPE_IRI;
+		thiz->value.iri = strdup(str);
+	}
+	return EINA_TRUE;
+}
+
+static char * egueb_svg_clip_path_string_to(Egueb_Svg_Clip_Path *thiz)
+{
+	ERR("Not implemented");
+	return NULL;
+}
+
+static void egueb_svg_clip_path_interpolate(Egueb_Svg_Clip_Path *v,
+		Egueb_Svg_Clip_Path *a, Egueb_Svg_Clip_Path *b, double m,
+		Egueb_Svg_Clip_Path *add, Egueb_Svg_Clip_Path *acc, int mul)
+{
+	ERR("Not implemented");
+}
+
+EGUEB_DOM_VALUE_PRIMITIVE_BOILERPLATE(egueb_svg_clip_path, Egueb_Svg_Clip_Path);
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
@@ -67,28 +95,6 @@ EAPI Eina_Bool egueb_svg_clip_path_is_equal(const Egueb_Svg_Clip_Path *p1,
 		default:
 		return EINA_FALSE;
 	}
-}
-
-EAPI Eina_Bool egueb_svg_clip_path_string_from(Egueb_Svg_Clip_Path *thiz,
-		const char *attr)
-{
-	if (!strcmp(attr, "none"))
-	{
-		thiz->type = EGUEB_SVG_CLIP_PATH_TYPE_NONE;
-		thiz->value.iri = NULL;
-	}
-	else
-	{
-		thiz->type = EGUEB_SVG_CLIP_PATH_TYPE_IRI;
-		thiz->value.iri = strdup(attr);
-	}
-	return EINA_TRUE;
-}
-
-EAPI char * egueb_svg_clip_path_string_to(const Egueb_Svg_Clip_Path *thiz)
-{
-	ERR("Not implemented");
-	return NULL;
 }
 
 EAPI void egueb_svg_clip_path_copy(const Egueb_Svg_Clip_Path *thiz,

@@ -21,14 +21,77 @@
 #include "egueb_svg_string.h"
 
 #include "egueb_dom_value_private.h"
+#include "egueb_svg_color_private.h"
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
 /*----------------------------------------------------------------------------*
  *                             Value interface                                *
  *----------------------------------------------------------------------------*/
-#define _egueb_svg_paint_interpolate NULL
-EGUEB_DOM_VALUE_PRIMITIVE_BOLIERPLATE(egueb_svg_paint, Egueb_Svg_Paint);
+/*
+ * none, currentColor, <color>, <uri>?
+ */
+static Eina_Bool egueb_svg_paint_string_from(Egueb_Svg_Paint *paint, const char *attr)
+{
+	/* none */
+	if (strncmp(attr, "none", 4) == 0)
+	{
+		paint->type = EGUEB_SVG_PAINT_TYPE_NONE;
+	}
+	/* currentColor */
+	else if (strncmp(attr, "currentColor", 12) == 0)
+	{
+		paint->type = EGUEB_SVG_PAINT_TYPE_CURRENT_COLOR;
+	}
+	/* color name */
+	else if (egueb_svg_color_string_from(&paint->color, attr))
+	{
+		paint->type = EGUEB_SVG_PAINT_TYPE_COLOR;
+	}
+	/* uri */
+	else
+	{
+		paint->type = EGUEB_SVG_PAINT_TYPE_SERVER;
+		paint->uri = strdup(attr);
+	}
+
+	return EINA_TRUE;
+}
+
+static char * egueb_svg_paint_string_to(Egueb_Svg_Paint *thiz)
+{
+	switch (thiz->type)
+	{
+		case EGUEB_SVG_PAINT_TYPE_NONE:
+		return strdup("none");
+		break;
+
+		case EGUEB_SVG_PAINT_TYPE_CURRENT_COLOR:
+		return strdup("currentColor");
+		break;
+
+		case EGUEB_SVG_PAINT_TYPE_COLOR:
+		return egueb_svg_color_string_to(&thiz->color);
+		break;
+
+		case EGUEB_SVG_PAINT_TYPE_SERVER:
+		return strdup(thiz->uri);
+		break;
+
+		default:
+		break;
+	}
+	return NULL;
+}
+
+static void egueb_svg_paint_interpolate(Egueb_Svg_Paint *v,
+		Egueb_Svg_Paint *a, Egueb_Svg_Paint *b, double m,
+		Egueb_Svg_Paint *add, Egueb_Svg_Paint *acc, int mul)
+{
+	ERR("Not implemented");
+}
+
+EGUEB_DOM_VALUE_PRIMITIVE_BOILERPLATE(egueb_svg_paint, Egueb_Svg_Paint);
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
@@ -56,62 +119,6 @@ const Egueb_Svg_Paint EGUEB_SVG_PAINT_CURRENT_COLOR = {
 EAPI const Egueb_Dom_Value_Descriptor * egueb_svg_paint_descriptor_get(void)
 {
 	return &_egueb_svg_paint_descriptor;
-}
-
-/*
- * none, currentColor, <color>, <uri>?
- */
-EAPI Eina_Bool egueb_svg_paint_string_from(Egueb_Svg_Paint *paint, const char *attr)
-{
-	/* none */
-	if (strncmp(attr, "none", 4) == 0)
-	{
-		paint->type = EGUEB_SVG_PAINT_TYPE_NONE;
-	}
-	/* currentColor */
-	else if (strncmp(attr, "currentColor", 12) == 0)
-	{
-		paint->type = EGUEB_SVG_PAINT_TYPE_CURRENT_COLOR;
-	}
-	/* color name */
-	else if (egueb_svg_color_string_from(&paint->color, attr))
-	{
-		paint->type = EGUEB_SVG_PAINT_TYPE_COLOR;
-	}
-	/* uri */
-	else
-	{
-		paint->type = EGUEB_SVG_PAINT_TYPE_SERVER;
-		paint->uri = strdup(attr);
-	}
-
-	return EINA_TRUE;
-}
-
-EAPI char * egueb_svg_paint_string_to(Egueb_Svg_Paint *thiz)
-{
-	switch (thiz->type)
-	{
-		case EGUEB_SVG_PAINT_TYPE_NONE:
-		return strdup("none");
-		break;
-
-		case EGUEB_SVG_PAINT_TYPE_CURRENT_COLOR:
-		return strdup("currentColor");
-		break;
-
-		case EGUEB_SVG_PAINT_TYPE_COLOR:
-		return egueb_svg_color_string_to(&thiz->color);
-		break;
-
-		case EGUEB_SVG_PAINT_TYPE_SERVER:
-		return strdup(thiz->uri);
-		break;
-
-		default:
-		break;
-	}
-	return NULL;
 }
 
 EAPI Eina_Bool egueb_svg_paint_is_equal(const Egueb_Svg_Paint *p1,

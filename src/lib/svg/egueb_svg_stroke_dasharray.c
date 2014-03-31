@@ -19,7 +19,9 @@
 #include "egueb_svg_length.h"
 #include "egueb_svg_stroke_dasharray.h"
 #include "egueb_dom_value_list.h"
+
 #include "egueb_dom_value_private.h"
+#include "egueb_svg_length_private.h"
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
