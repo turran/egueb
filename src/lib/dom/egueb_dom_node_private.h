@@ -55,6 +55,12 @@ struct _Egueb_Dom_Node
 
 	/* internal */
 	int ref;
+
+#if 0
+	/* The freeze count */
+	int freezed;
+#endif
+
 	/* we need this given that we might trigger events and thus do more
 	 * refs/unrefs while the node is being destroyed
 	 */

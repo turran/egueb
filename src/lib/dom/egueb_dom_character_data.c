@@ -21,7 +21,13 @@
 #include "egueb_dom_string.h"
 #include "egueb_dom_main.h"
 #include "egueb_dom_node.h"
+#include "egueb_dom_attr.h"
+#include "egueb_dom_value.h"
 #include "egueb_dom_character_data.h"
+#include "egueb_dom_event.h"
+#include "egueb_dom_event_mutation.h"
+
+#include "egueb_dom_event_mutation_private.h"
 #include "egueb_dom_character_data_private.h"
 #include "egueb_dom_string_private.h"
 /*============================================================================*
@@ -110,6 +116,7 @@ EAPI Eina_Bool egueb_dom_character_data_append_data(Egueb_Dom_Node *n,
 		Egueb_Dom_String *data, Eina_Error *err)
 {
 	Egueb_Dom_Character_Data *thiz;
+	Egueb_Dom_Event *event;
 	const char *str;
 	int len;
 
@@ -130,6 +137,10 @@ EAPI Eina_Bool egueb_dom_character_data_append_data(Egueb_Dom_Node *n,
 	len = enesim_text_buffer_string_length(thiz->buffer);
 	enesim_text_buffer_string_insert(thiz->buffer, str, -1, len);
 	egueb_dom_string_unref(data);
+
+	event = egueb_dom_event_mutation_character_data_modified_new();
+	egueb_dom_node_event_dispatch(EGUEB_DOM_NODE(thiz), event, NULL, NULL);
+
 	return EINA_TRUE;
 }
 

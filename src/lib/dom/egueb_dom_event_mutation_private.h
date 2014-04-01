@@ -63,6 +63,7 @@ Egueb_Dom_Event * egueb_dom_event_mutation_node_inserted_into_document_new(
 		void);
 Egueb_Dom_Event * egueb_dom_event_mutation_node_removed_new(Egueb_Dom_Node *parent);
 Egueb_Dom_Event * egueb_dom_event_mutation_node_removed_from_document_new(void);
+Egueb_Dom_Event * egueb_dom_event_mutation_character_data_modified_new(void);
 Egueb_Dom_Event * egueb_dom_event_mutation_node_destroyed_new(void);
 Egueb_Dom_Event * egueb_dom_event_mutation_attr_modified_new(
 		Egueb_Dom_Node *related,

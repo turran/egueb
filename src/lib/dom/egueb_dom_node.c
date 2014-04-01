@@ -1109,6 +1109,28 @@ EAPI void * egueb_dom_node_feature_get(Egueb_Dom_Node *thiz,
 }
 
 #if 0
+EAPI void egueb_dom_node_freeze(Egueb_Dom_Node *thiz)
+{
+	thiz->freeze++;
+}
+
+EAPI Eina_Bool egueb_dom_node_is_freezed(Egueb_Dom_Node *thiz)
+{
+	return !!thiz->freezed;
+}
+
+EAPI void egueb_dom_node_thaw(Egueb_Dom_Node *thiz)
+{
+	if (!thiz->freeze)
+	{
+		CRIT("Node already thawed");
+		return;
+	}
+	thiz->freeze--;
+}
+#endif
+
+#if 0
 // Introduced in DOM Level 2:
   interface EventListener {
     void               handleEvent(in Event evt);

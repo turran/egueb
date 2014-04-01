@@ -171,6 +171,18 @@ Egueb_Dom_Event * egueb_dom_event_mutation_attr_modified_new(
 			name, attr_type, attr_modification_type);
 	return e;
 }
+
+Egueb_Dom_Event * egueb_dom_event_mutation_character_data_modified_new(void)
+{
+	Egueb_Dom_Event *e;
+
+	e = _egueb_dom_event_mutation_new();
+	_egueb_dom_event_mutation_init_internal(e,
+			EGUEB_DOM_EVENT_MUTATION_CHARACTER_DATA_MODIFIED,
+			EINA_TRUE, EINA_FALSE, NULL, NULL, NULL,
+			NULL, 0, 0);
+	return e;
+}
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/
