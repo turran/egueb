@@ -29,11 +29,11 @@ ECSS
 
 ESVG
 ====
++ Instead of setting the painter directly on nodes that change the painter of a renderable use a bubbling
+  event for that 
 + Split the gstreamer code from the video tag
 + Once all the todos of esvg are done we need to add support for external objects, one can be the
   <video> tag
-+ Implement a enesim sink for gstreamer
-+ Implement an esvg source for gstreamer
 + Change again the setup to receive the context and attribute of the parent instead of picking it up from its
   parent, this is required for the <use> where the <g> it creates internally is not part of the DOM tree
 + Replace every attribute with the new Esvg_Attribute_Foo, which includes the is_set
