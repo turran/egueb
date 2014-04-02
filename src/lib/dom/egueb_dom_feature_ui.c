@@ -114,7 +114,7 @@ EAPI void egueb_dom_feature_ui_feed_mouse_up(Egueb_Dom_Feature *f, int button)
 	egueb_dom_input_feed_mouse_up(i, button);
 }
 
-EAPI void egueb_dom_feature_feed_mouse_wheel(Egueb_Dom_Feature *f, int deltax, int deltay, int deltaz)
+EAPI void egueb_dom_feature_ui_feed_mouse_wheel(Egueb_Dom_Feature *f, int deltax, int deltay, int deltaz)
 {
 	Egueb_Dom_Input *i;
 

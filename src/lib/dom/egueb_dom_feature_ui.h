@@ -32,7 +32,7 @@ EAPI void egueb_dom_feature_ui_feed_mouse_down(Egueb_Dom_Feature *f, int button)
 EAPI void egueb_dom_feature_ui_feed_mouse_up(Egueb_Dom_Feature *f, int button);
 EAPI Eina_Bool egueb_dom_feature_ui_add(Egueb_Dom_Node *n,
 		const Egueb_Dom_Feature_UI_Descriptor *d);
-EAPI void egueb_dom_feature_feed_mouse_wheel(Egueb_Dom_Feature *f, int deltax, int deltay, int deltaz);
+EAPI void egueb_dom_feature_ui_feed_mouse_wheel(Egueb_Dom_Feature *f, int deltax, int deltay, int deltaz);
 
 #endif
 
