@@ -814,11 +814,30 @@ EAPI Eina_Bool egueb_dom_node_insert_before(Egueb_Dom_Node *thiz,
 	event = egueb_dom_event_mutation_node_inserted_new(thiz);
 	egueb_dom_node_event_dispatch(child, event, NULL, NULL);
 
-	/* insert the node in the tree in case the parent is on the tree too */
+	/* insert the node in the tree in case the parent is on the tree too,
+	 * the document will be set too in case the child does not have one
+	 */
 	if (thiz->in_tree && !child->in_tree)
 	{
 		event = egueb_dom_event_mutation_node_inserted_into_document_new();
 		_egueb_dom_node_insert_into_document(child, event); 
+	}
+	/* otherwise, check if the parent has a doc and the child doesnt, if that's
+	 * the case, the child needs to be part of the document too
+	 */
+	else if (!child->owner_document)
+	{
+		Egueb_Dom_Node_Type type;
+
+		type = egueb_dom_node_type_get(thiz);
+		if (type == EGUEB_DOM_NODE_TYPE_DOCUMENT_NODE)
+		{
+			egueb_dom_node_document_set_recursive(child, thiz);
+		}
+		else if (thiz->owner_document)
+		{
+			egueb_dom_node_document_set_recursive(child, thiz->owner_document);
+		}
 	}
 	return EINA_TRUE;
 }
