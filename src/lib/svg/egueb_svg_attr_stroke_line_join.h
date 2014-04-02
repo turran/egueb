@@ -16,8 +16,8 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _EGUEB_SVG_PROPERTY_STROKE_LINE_JOIN_H_
-#define _EGUEB_SVG_PROPERTY_STROKE_LINE_JOIN_H_
+#ifndef _EGUEB_SVG_ATTR_STROKE_LINE_JOIN_H_
+#define _EGUEB_SVG_ATTR_STROKE_LINE_JOIN_H_
 
 EAPI Egueb_Dom_Node * egueb_svg_attr_stroke_line_join_new(Egueb_Dom_String *name,
 		const Egueb_Svg_Stroke_Line_Join def, Eina_Bool animatable,

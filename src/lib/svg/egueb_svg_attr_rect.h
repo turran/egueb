@@ -16,8 +16,8 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _EGUEB_SVG_PROPERTY_RECT_H_
-#define _EGUEB_SVG_PROPERTY_RECT_H_
+#ifndef _EGUEB_SVG_ATTR_RECT_H_
+#define _EGUEB_SVG_ATTR_RECT_H_
 
 EAPI Egueb_Dom_Node * egueb_svg_attr_rect_new(Egueb_Dom_String *name,
 		const Egueb_Svg_Rect *def);
