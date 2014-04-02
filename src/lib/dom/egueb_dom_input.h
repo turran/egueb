@@ -32,6 +32,7 @@ EAPI void egueb_dom_input_free(Egueb_Dom_Input *thiz);
 EAPI void egueb_dom_input_feed_mouse_move(Egueb_Dom_Input *thiz, int x, int y);
 EAPI void egueb_dom_input_feed_mouse_down(Egueb_Dom_Input *thiz, int button);
 EAPI void egueb_dom_input_feed_mouse_up(Egueb_Dom_Input *thiz, int button);
+EAPI void egueb_dom_input_feed_mouse_wheel(Egueb_Dom_Input *thiz, int deltax, int deltay, int deltaz);
 
 #endif
 

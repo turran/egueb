@@ -114,6 +114,15 @@ EAPI void egueb_dom_feature_ui_feed_mouse_up(Egueb_Dom_Feature *f, int button)
 	egueb_dom_input_feed_mouse_up(i, button);
 }
 
+EAPI void egueb_dom_feature_feed_mouse_wheel(Egueb_Dom_Feature *f, int deltax, int deltay, int deltaz)
+{
+	Egueb_Dom_Input *i;
+
+	if (!_egueb_dom_feature_ui_input_get(f, &i))
+		return;
+	egueb_dom_input_feed_mouse_wheel(i, deltax, deltay, deltaz);
+}
+
 EAPI Eina_Bool egueb_dom_feature_ui_add(Egueb_Dom_Node *n,
 		const Egueb_Dom_Feature_UI_Descriptor *d)
 {

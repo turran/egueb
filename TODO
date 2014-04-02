@@ -1,5 +1,7 @@
 Refactor
 ========
++ Cleanup the feature ui. Just get the input object given
+  that we need to replicate lot of API
 + Add the navigation feature, this way document implementations
   can use common definitions for going to a specific URI, going
   back, next, etc.
