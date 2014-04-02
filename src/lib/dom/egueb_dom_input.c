@@ -25,6 +25,14 @@
 #include "egueb_dom_event.h"
 #include "egueb_dom_event_mouse.h"
 #include "egueb_dom_event_mouse_private.h"
+
+/* TODO
+ * Right now on every mouse move we go down through the tree to look for
+ * node. We better pass the current over node to let the implementation
+ * be more clever by just looking if the same node is still inside.
+ * The algorithm then can check if the current node is really inside and if
+ * not go iterating up if the parent is inside, and then down again if required
+ */
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
