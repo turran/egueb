@@ -74,7 +74,6 @@ EAPI void egueb_dom_input_free(Egueb_Dom_Input *thiz)
 EAPI void egueb_dom_input_feed_mouse_down(Egueb_Dom_Input *thiz, int button)
 {
 	Egueb_Dom_Event *ev;
-	double rel_x, rel_y;
 
 	if (!thiz->over)
 		return;
@@ -88,7 +87,7 @@ EAPI void egueb_dom_input_feed_mouse_down(Egueb_Dom_Input *thiz, int button)
 	ev = egueb_dom_event_mouse_new();
 	egueb_dom_event_mouse_down_init(ev, thiz->x, thiz->y, thiz->x, thiz->y,
 			EINA_FALSE, EINA_FALSE, EINA_FALSE,
-			EINA_FALSE, 0, 0);
+			EINA_FALSE, button, 0);
 	egueb_dom_node_event_dispatch(thiz->grabbed, ev, NULL, NULL);
 }
 
@@ -103,7 +102,7 @@ EAPI void egueb_dom_input_feed_mouse_up(Egueb_Dom_Input *thiz, int button)
 	ev = egueb_dom_event_mouse_new();
 	egueb_dom_event_mouse_up_init(ev, thiz->x, thiz->y, thiz->x, thiz->y,
 			EINA_FALSE, EINA_FALSE, EINA_FALSE,
-			EINA_FALSE, 0, 0);
+			EINA_FALSE, button, 0);
 	egueb_dom_node_event_dispatch(thiz->grabbed, ev, NULL, NULL);
 	/* in case the down coordinates are the same as the current coordinates
 	 * send a click event
