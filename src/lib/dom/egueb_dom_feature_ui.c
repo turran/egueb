@@ -48,19 +48,6 @@ typedef struct _Egueb_Dom_Feature_UI_Class
 
 static Egueb_Dom_String _EGUEB_DOM_FEATURE_UI_NAME = EGUEB_DOM_STRING_STATIC("EguebDomUI");
 
-static inline Eina_Bool _egueb_dom_feature_ui_input_get(Egueb_Dom_Feature *f, Egueb_Dom_Input **i)
-{
-	Egueb_Dom_Feature_UI *thiz;
-
-	thiz = EGUEB_DOM_FEATURE_UI(f);
-	if (!thiz->n) return EINA_FALSE;
-
-	*i = thiz->d->input_get(thiz->n);
-	if (!*i) return EINA_FALSE;
-
-	return EINA_TRUE;
-}
-
 /*----------------------------------------------------------------------------*
  *                              Object interface                              *
  *----------------------------------------------------------------------------*/
@@ -87,40 +74,17 @@ static void _egueb_dom_feature_ui_instance_deinit(void *o)
  *============================================================================*/
 Egueb_Dom_String *EGUEB_DOM_FEATURE_UI_NAME = &_EGUEB_DOM_FEATURE_UI_NAME;
 
-EAPI void egueb_dom_feature_ui_feed_mouse_move(Egueb_Dom_Feature *f, int x, int y)
+EAPI Eina_Bool egueb_dom_feature_ui_input_get(Egueb_Dom_Feature *f, Egueb_Dom_Input **i)
 {
-	Egueb_Dom_Input *i;
+	Egueb_Dom_Feature_UI *thiz;
 
-	if (!_egueb_dom_feature_ui_input_get(f, &i))
-		return;
-	egueb_dom_input_feed_mouse_move(i, x, y);
-}
+	thiz = EGUEB_DOM_FEATURE_UI(f);
+	if (!thiz->n) return EINA_FALSE;
 
-EAPI void egueb_dom_feature_ui_feed_mouse_down(Egueb_Dom_Feature *f, int button)
-{
-	Egueb_Dom_Input *i;
+	*i = thiz->d->input_get(thiz->n);
+	if (!*i) return EINA_FALSE;
 
-	if (!_egueb_dom_feature_ui_input_get(f, &i))
-		return;
-	egueb_dom_input_feed_mouse_down(i, button);
-}
-
-EAPI void egueb_dom_feature_ui_feed_mouse_up(Egueb_Dom_Feature *f, int button)
-{
-	Egueb_Dom_Input *i;
-
-	if (!_egueb_dom_feature_ui_input_get(f, &i))
-		return;
-	egueb_dom_input_feed_mouse_up(i, button);
-}
-
-EAPI void egueb_dom_feature_ui_feed_mouse_wheel(Egueb_Dom_Feature *f, int deltax, int deltay, int deltaz)
-{
-	Egueb_Dom_Input *i;
-
-	if (!_egueb_dom_feature_ui_input_get(f, &i))
-		return;
-	egueb_dom_input_feed_mouse_wheel(i, deltax, deltay, deltaz);
+	return EINA_TRUE;
 }
 
 EAPI Eina_Bool egueb_dom_feature_ui_add(Egueb_Dom_Node *n,

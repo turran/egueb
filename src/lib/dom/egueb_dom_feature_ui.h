@@ -27,12 +27,9 @@ typedef struct _Egueb_Dom_Feature_UI_Descriptor
 	Egueb_Dom_Feature_UI_Descriptor_Input_Get input_get;
 } Egueb_Dom_Feature_UI_Descriptor;
 
-EAPI void egueb_dom_feature_ui_feed_mouse_move(Egueb_Dom_Feature *f, int x, int y);
-EAPI void egueb_dom_feature_ui_feed_mouse_down(Egueb_Dom_Feature *f, int button);
-EAPI void egueb_dom_feature_ui_feed_mouse_up(Egueb_Dom_Feature *f, int button);
+EAPI Eina_Bool egueb_dom_feature_ui_input_get(Egueb_Dom_Feature *f, Egueb_Dom_Input **i);
 EAPI Eina_Bool egueb_dom_feature_ui_add(Egueb_Dom_Node *n,
 		const Egueb_Dom_Feature_UI_Descriptor *d);
-EAPI void egueb_dom_feature_ui_feed_mouse_wheel(Egueb_Dom_Feature *f, int deltax, int deltay, int deltaz);
 
 #endif
 

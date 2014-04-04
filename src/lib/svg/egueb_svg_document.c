@@ -527,7 +527,7 @@ static Egueb_Dom_Input * _egueb_svg_document_ui_input_get(Egueb_Dom_Node *n)
 	Egueb_Svg_Document *thiz;
 
 	thiz = EGUEB_SVG_DOCUMENT(n);
-	return thiz->input;
+	return egueb_dom_input_ref(thiz->input);
 }
 
 static Egueb_Dom_Feature_UI_Descriptor 
@@ -713,19 +713,60 @@ done:
 	return ret;
 }
 
-static Egueb_Dom_Node * _egueb_svg_document_input_element_at(void *data,
-		int x, int y)
+static Egueb_Dom_Node * _egueb_svg_document_input_element_at(
+		Egueb_Dom_Node *current, int x, int y, void *data)
 {
 	Egueb_Svg_Document *thiz = data;
 	Egueb_Dom_Node *n = NULL;
 	Egueb_Dom_Node *ret;
 	Eina_Rectangle ptr;
 
-	n = egueb_dom_document_element_get(EGUEB_DOM_NODE(thiz));
-	if (!n) return NULL;
+	eina_rectangle_coords_from(&ptr, x, y, 1, 1);
+#if 0
+	/* check that the new coords are still on current bounds */
+	if (current)
+	{
+		Eina_Rectangle bounds;
+
+		egueb_svg_renderable_user_bounds_get(current, &bounds);
+		if (eina_rectangles_intersect(&bounds, &ptr))
+		{
+			return egueb_dom_node_ref(current);
+		}
+		else
+		{
+			Egueb_Dom_Node *parent;
+
+			/* go up until the parent is inside the bounds */
+			parent = egueb_dom_node_parent_get(current);
+			while (!n)
+			{
+				Egueb_Dom_Node *tmp;
+				if (!parent)
+					break;
+				if (egueb_svg_is_renderable(parent))
+				{
+					egueb_svg_renderable_user_bounds_get(parent, &bounds);
+					if (eina_rectangles_intersect(&bounds, &ptr))
+					{
+						n = parent;
+					}
+				}
+				tmp = egueb_dom_node_parent_get(parent);
+				egueb_dom_node_unref(parent);
+				parent = tmp;
+			}
+		}
+	}
+#endif
+
+	if (!n)
+	{
+		n = egueb_dom_document_element_get(EGUEB_DOM_NODE(thiz));
+		if (!n) return NULL;
+	}
 
 	/* iterate over the whole tree */
-	eina_rectangle_coords_from(&ptr, x, y, 1, 1);
 	ret = _egueb_svg_document_input_element_at_recursive(n, &ptr);
 	return ret;
 }
@@ -809,7 +850,11 @@ static void _egueb_svg_document_instance_deinit(void *o)
 	Egueb_Svg_Document *thiz;
 
 	thiz = EGUEB_SVG_DOCUMENT(o);
-	egueb_dom_input_free(thiz->input);
+	if (thiz->input)
+	{
+		egueb_dom_input_unref(thiz->input);
+		thiz->input = NULL;
+	}
 }
 /*============================================================================*
  *                                 Global                                     *

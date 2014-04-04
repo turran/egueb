@@ -46,24 +46,10 @@ struct _Egueb_Dom_Input
 	void *data;
 	Egueb_Dom_Node *over;
 	Egueb_Dom_Node *grabbed;
+	int ref;
 };
-/*============================================================================*
- *                                 Global                                     *
- *============================================================================*/
-/*============================================================================*
- *                                   API                                      *
- *============================================================================*/
-EAPI Egueb_Dom_Input * egueb_dom_input_new(Egueb_Dom_Input_Descriptor *descriptor, void *data)
-{
-	Egueb_Dom_Input *thiz;
 
-	thiz = calloc(1, sizeof(Egueb_Dom_Input));
-	thiz->descriptor = descriptor;
-	thiz->data = data;
-	return thiz;
-}
-
-EAPI void egueb_dom_input_free(Egueb_Dom_Input *thiz)
+static void _egueb_dom_input_free(Egueb_Dom_Input *thiz)
 {
 	if (thiz->over)
 	{
@@ -77,6 +63,38 @@ EAPI void egueb_dom_input_free(Egueb_Dom_Input *thiz)
 	}
 
 	free(thiz);
+}
+/*============================================================================*
+ *                                 Global                                     *
+ *============================================================================*/
+/*============================================================================*
+ *                                   API                                      *
+ *============================================================================*/
+EAPI Egueb_Dom_Input * egueb_dom_input_new(Egueb_Dom_Input_Descriptor *descriptor, void *data)
+{
+	Egueb_Dom_Input *thiz;
+
+	thiz = calloc(1, sizeof(Egueb_Dom_Input));
+	thiz->descriptor = descriptor;
+	thiz->data = data;
+	thiz->ref = 1;
+
+	return thiz;
+}
+
+EAPI void egueb_dom_input_unref(Egueb_Dom_Input *thiz)
+{
+	thiz->ref--;
+	if (!thiz->ref)
+	{
+		_egueb_dom_input_free(thiz);
+	}
+}
+
+EAPI Egueb_Dom_Input * egueb_dom_input_ref(Egueb_Dom_Input *thiz)
+{
+	thiz->ref++;
+	return thiz;
 }
 
 EAPI void egueb_dom_input_feed_mouse_down(Egueb_Dom_Input *thiz, int button)
@@ -175,7 +193,7 @@ EAPI void egueb_dom_input_feed_mouse_move(Egueb_Dom_Input *thiz, int x, int y)
 	}
 #endif
 	/* get the element at x,y */
-	n = thiz->descriptor->element_at(thiz->data, x, y);
+	n = thiz->descriptor->element_at(thiz->over, x, y, thiz->data);
 	//ev.screen_x = x;
 	//ev.screen_y = y;
 

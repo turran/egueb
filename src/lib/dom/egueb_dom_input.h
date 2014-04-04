@@ -19,7 +19,8 @@
 #ifndef _EGUEB_DOM_INPUT_H_
 #define _EGUEB_DOM_INPUT_H_
 
-typedef Egueb_Dom_Node * (*Egueb_Dom_Input_Element_At)(void *data, int x, int y);
+typedef Egueb_Dom_Node * (*Egueb_Dom_Input_Element_At)(Egueb_Dom_Node *current,
+		int x, int y, void *data);
 
 typedef struct _Egueb_Dom_Input Egueb_Dom_Input;
 typedef struct _Egueb_Dom_Input_Descriptor
@@ -28,7 +29,8 @@ typedef struct _Egueb_Dom_Input_Descriptor
 } Egueb_Dom_Input_Descriptor;
 
 EAPI Egueb_Dom_Input * egueb_dom_input_new(Egueb_Dom_Input_Descriptor *descriptor, void *data);
-EAPI void egueb_dom_input_free(Egueb_Dom_Input *thiz);
+EAPI void egueb_dom_input_unref(Egueb_Dom_Input *thiz);
+EAPI Egueb_Dom_Input * egueb_dom_input_ref(Egueb_Dom_Input *thiz);
 EAPI void egueb_dom_input_feed_mouse_move(Egueb_Dom_Input *thiz, int x, int y);
 EAPI void egueb_dom_input_feed_mouse_down(Egueb_Dom_Input *thiz, int button);
 EAPI void egueb_dom_input_feed_mouse_up(Egueb_Dom_Input *thiz, int button);
