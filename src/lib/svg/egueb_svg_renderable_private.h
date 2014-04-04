@@ -63,9 +63,10 @@ typedef struct _Egueb_Svg_Renderable_Class
 		Egueb_Svg_Renderable, EGUEB_SVG_RENDERABLE_DESCRIPTOR)
 
 Enesim_Object_Descriptor *  egueb_svg_renderable_descriptor_get(void);
-
-Egueb_Svg_Painter * egueb_svg_renderable_class_painter_get(Egueb_Dom_Node *n);
+Enesim_Renderer * egueb_svg_renderable_renderer_get(Egueb_Dom_Node *n);
+Enesim_Renderer * egueb_svg_renderable_class_renderer_get(Egueb_Dom_Node *n);
 Egueb_Svg_Painter * egueb_svg_renderable_painter_get(Egueb_Dom_Node *n);
+Egueb_Svg_Painter * egueb_svg_renderable_class_painter_get(Egueb_Dom_Node *n);
 void egueb_svg_renderable_painter_set(Egueb_Dom_Node *n, Egueb_Svg_Painter *p);
 
 #endif

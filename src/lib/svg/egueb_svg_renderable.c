@@ -243,6 +243,24 @@ void egueb_svg_renderable_painter_set(Egueb_Dom_Node *n, Egueb_Svg_Painter *p)
 		egueb_svg_painter_unref(thiz->painter);
 	thiz->painter = p;
 }
+
+Enesim_Renderer * egueb_svg_renderable_renderer_get(Egueb_Dom_Node *n)
+{
+	Egueb_Svg_Renderable *thiz;
+
+	thiz = EGUEB_SVG_RENDERABLE(n);
+	return enesim_renderer_ref(thiz->proxy);
+}
+
+Enesim_Renderer * egueb_svg_renderable_class_renderer_get(Egueb_Dom_Node *n)
+{
+	Egueb_Svg_Renderable_Class *klass;
+
+	klass = EGUEB_SVG_RENDERABLE_CLASS_GET(n);
+	if (klass->renderer_get) return klass->renderer_get(EGUEB_SVG_RENDERABLE(n));
+	else return NULL;
+}
+
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/
@@ -253,23 +271,6 @@ EAPI Eina_Bool egueb_svg_is_renderable(Egueb_Dom_Node *n)
 			EGUEB_SVG_RENDERABLE_DESCRIPTOR))
 		return EINA_FALSE;
 	return EINA_TRUE;
-}
-
-EAPI Enesim_Renderer * egueb_svg_renderable_renderer_get(Egueb_Dom_Node *n)
-{
-	Egueb_Svg_Renderable *thiz;
-
-	thiz = EGUEB_SVG_RENDERABLE(n);
-	return enesim_renderer_ref(thiz->proxy);
-}
-
-EAPI Enesim_Renderer * egueb_svg_renderable_class_renderer_get(Egueb_Dom_Node *n)
-{
-	Egueb_Svg_Renderable_Class *klass;
-
-	klass = EGUEB_SVG_RENDERABLE_CLASS_GET(n);
-	if (klass->renderer_get) return klass->renderer_get(EGUEB_SVG_RENDERABLE(n));
-	else return NULL;
 }
 
 EAPI void egueb_svg_renderable_bounds_get(Egueb_Dom_Node *n,

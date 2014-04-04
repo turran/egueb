@@ -29,8 +29,6 @@
  */
 
 EAPI Eina_Bool egueb_svg_is_renderable(Egueb_Dom_Node *n);
-EAPI Enesim_Renderer * egueb_svg_renderable_renderer_get(Egueb_Dom_Node *n);
-EAPI Enesim_Renderer * egueb_svg_renderable_class_renderer_get(Egueb_Dom_Node *n);
 EAPI void egueb_svg_renderable_bounds_get(Egueb_Dom_Node *n,
 		Enesim_Rectangle *bounds);
 EAPI void egueb_svg_renderable_user_bounds_get(Egueb_Dom_Node *n,
