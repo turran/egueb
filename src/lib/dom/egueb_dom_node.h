@@ -51,6 +51,7 @@ typedef enum _Egueb_Dom_Node_Type
 	EGUEB_DOM_NODE_TYPE_NOTATION_NODE = 12,
 } Egueb_Dom_Node_Type;
 
+EAPI Eina_Bool egueb_dom_node_is_destroying(Egueb_Dom_Node *thiz);
 EAPI void egueb_dom_node_unref(Egueb_Dom_Node *thiz);
 EAPI Egueb_Dom_Node * egueb_dom_node_ref(Egueb_Dom_Node *thiz);
 EAPI int egueb_dom_node_ref_get(Egueb_Dom_Node *thiz);

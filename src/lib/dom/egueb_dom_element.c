@@ -573,6 +573,8 @@ EAPI Egueb_Dom_Node * egueb_dom_element_property_fetch(Egueb_Dom_Node *node,
 	Egueb_Dom_Node *ret;
 
 	thiz = EGUEB_DOM_ELEMENT(node);
+	if (!name) return NULL;
+
 	ret = eina_hash_find(thiz->attributes, egueb_dom_string_string_get(name));
 	return egueb_dom_node_ref(ret);
 }
@@ -761,6 +763,13 @@ EAPI void egueb_dom_element_dequeue(Egueb_Dom_Node *n)
 	Egueb_Dom_Element *thiz;
 	Egueb_Dom_Node *doc;
 
+	if (egueb_dom_node_is_destroying(n))
+	{
+		WARN("Element is being destroyed, nothing to do");
+		egueb_dom_node_unref(n);
+		return;
+	}
+
 	doc = egueb_dom_node_document_get(n);
 	if (!doc)
 	{
@@ -790,6 +799,13 @@ EAPI void egueb_dom_element_enqueue(Egueb_Dom_Node *n)
 {
 	Egueb_Dom_Element *thiz;
 	Egueb_Dom_Node *doc;
+
+	if (egueb_dom_node_is_destroying(n))
+	{
+		WARN("Element is being destroyed, nothing to do");
+		egueb_dom_node_unref(n);
+		return;
+	}
 
 	doc = egueb_dom_node_document_get(n);
 	if (!doc)

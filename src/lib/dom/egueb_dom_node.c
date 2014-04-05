@@ -280,44 +280,8 @@ static void _egueb_dom_node_instance_init(void *o)
 static void _egueb_dom_node_instance_deinit(void *o)
 {
 	Egueb_Dom_Node *thiz = EGUEB_DOM_NODE(o);
-	Egueb_Dom_Event *event;
 	Egueb_Dom_Node_Event_Listener *el;
 
-	thiz->destroying = EINA_TRUE;
-
-	/* we can not unref a node which has a parent and is not being
-	 * destroyed
-	 */
-	if (thiz->parent && !thiz->parent->destroying)
-	{
-		ERR("Destroying the node with a parent. "
-				"Use egueb_dom_node_child_remove()");
-	}
-	/* remove the document weak ref */
-	if (thiz->owner_document)
-	{
-		egueb_dom_node_weak_unref(thiz->owner_document,
-			_egueb_dom_node_document_destroyed_cb, thiz);
-		thiz->owner_document = NULL;
-	}
-
-	/* remove every child */
-	while (thiz->children)
-	{
-		Eina_Error err;
-		Egueb_Dom_Node *child;
-
-		child = EINA_INLIST_CONTAINER_GET(thiz->children, Egueb_Dom_Node);
-		if (!egueb_dom_node_child_remove(thiz, child, &err))
-		{
-			ERR("Failed removing a child (%s), bad things will happen",
-					eina_error_msg_get(err));
-		}
-	}
-
-	/* before freeing the element, call the destroy event */
-	event = egueb_dom_event_mutation_node_destroyed_new();
-	egueb_dom_node_event_dispatch(thiz, event, NULL, NULL);
 	/* remove the whole set of events */
 	eina_hash_free(thiz->events);
 	/* remove the monitors */
@@ -371,6 +335,56 @@ static void _egueb_dom_node_remove_from_document(Egueb_Dom_Node *thiz,
 	}
 	egueb_dom_event_unref(evt);
 }
+
+static void _egueb_dom_node_free(Egueb_Dom_Node *thiz)
+{
+	Egueb_Dom_String *name = NULL;
+	Egueb_Dom_Event *event;
+
+	name = egueb_dom_node_name_get(thiz);
+	DBG("Destroying node '%s'", egueb_dom_string_string_get(name));
+	egueb_dom_string_unref(name);
+
+	thiz->destroying = EINA_TRUE;
+
+	/* we can not unref a node which has a parent and is not being
+	 * destroyed
+	 */
+	if (thiz->parent && !thiz->parent->destroying)
+	{
+		CRIT("Destroying the node with a parent. "
+				"Use egueb_dom_node_child_remove()");
+	}
+
+	/* remove every child */
+	while (thiz->children)
+	{
+		Eina_Error err;
+		Egueb_Dom_Node *child;
+
+		child = EINA_INLIST_CONTAINER_GET(thiz->children, Egueb_Dom_Node);
+		if (!egueb_dom_node_child_remove(thiz, child, &err))
+		{
+			ERR("Failed removing a child (%s), bad things will happen",
+					eina_error_msg_get(err));
+		}
+	}
+
+	/* before freeing the element, call the destroy event */
+	event = egueb_dom_event_mutation_node_destroyed_new();
+	egueb_dom_node_event_dispatch(thiz, event, NULL, NULL);
+	/* remove the document weak ref */
+	if (thiz->owner_document)
+	{
+		egueb_dom_node_weak_unref(thiz->owner_document,
+			_egueb_dom_node_document_destroyed_cb, thiz);
+		thiz->owner_document = NULL;
+	}
+
+	/* finally free the enesim instance */
+	enesim_object_instance_free(ENESIM_OBJECT_INSTANCE(thiz));
+}
+
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
@@ -444,18 +458,19 @@ Eina_Bool egueb_dom_node_feature_add(Egueb_Dom_Node *thiz,
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/
+EAPI Eina_Bool egueb_dom_node_is_destroying(Egueb_Dom_Node *thiz)
+{
+	if (!thiz) return EINA_FALSE;
+	return thiz->destroying;
+}
+
 EAPI void egueb_dom_node_unref(Egueb_Dom_Node *thiz)
 {
 	if (!thiz) return;
 	thiz->ref--;
 	if (!thiz->ref && !thiz->destroying)
 	{
-		Egueb_Dom_String *name = NULL;
-
-		name = egueb_dom_node_name_get(thiz);
-		DBG("Destroying node '%s'", egueb_dom_string_string_get(name));
-		enesim_object_instance_free(ENESIM_OBJECT_INSTANCE(thiz));
-		egueb_dom_string_unref(name);
+		_egueb_dom_node_free(thiz);
 	}
 }
 
