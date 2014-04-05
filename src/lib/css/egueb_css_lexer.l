@@ -14,9 +14,11 @@
 #include "egueb_css_private.h"
 #include "egueb_css_selector.h"
 #include "egueb_css_rule.h"
+#include "egueb_css_style.h"
 
 #include "egueb_css_rule_private.h"
 #include "egueb_css_selector_private.h"
+#include "egueb_css_parser_private.h"
 #include "src_lib_css_libegueb_css_la-egueb_css_grammar.h"
 #define YY_NO_UNISTD_H
 %}
