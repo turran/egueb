@@ -84,6 +84,7 @@ EAPI Egueb_Dom_String * egueb_dom_string_new_with_length(const char *str, int le
 
 EAPI Egueb_Dom_String * egueb_dom_string_ref(Egueb_Dom_String *thiz)
 {
+	if (!thiz) return NULL;
 	thiz->ref++;
 	return thiz;
 }
