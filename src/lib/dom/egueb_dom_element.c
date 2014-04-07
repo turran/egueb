@@ -20,6 +20,7 @@
 #include "egueb_dom_string.h"
 #include "egueb_dom_main.h"
 #include "egueb_dom_element.h"
+#include "egueb_dom_document.h"
 #include "egueb_dom_event_mutation.h"
 #include "egueb_dom_attr.h"
 #include "egueb_dom_attr.h"
@@ -856,7 +857,19 @@ EAPI Eina_Bool egueb_dom_element_process(Egueb_Dom_Node *n)
 	klass = EGUEB_DOM_ELEMENT_CLASS_GET(thiz);
 
 	INFO_ELEMENT(n, "Processing");
-	if (klass->process) ret = klass->process(thiz);
+	/* check if the document is actually processing, if so
+	 * it means that or eiher the document called us, or some other
+	 * element wants to process this element, remove the enqueued flag
+	 */
+	doc = egueb_dom_node_document_get(n);
+	if (doc)
+	{
+		if (egueb_dom_document_is_processing(doc))
+			thiz->enqueued = EINA_FALSE;
+	}
+
+	if (klass->process)
+		ret = klass->process(thiz);
 	/* unset the flag that informs the inheritable change */
 	thiz->inheritable_changed = EINA_FALSE;
 	thiz->attr_changed = EINA_FALSE;
@@ -865,7 +878,6 @@ EAPI Eina_Bool egueb_dom_element_process(Egueb_Dom_Node *n)
 			_egueb_dom_element_attributes_process_cb, NULL);
 
 	/* set the run timestamp */
-	doc = egueb_dom_node_document_get(n);
 	if (doc)
 	{
 		thiz->last_run = egueb_dom_document_current_run_get(doc);

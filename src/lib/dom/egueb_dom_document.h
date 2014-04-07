@@ -49,6 +49,7 @@ EAPI Egueb_Dom_Node * egueb_dom_document_node_adopt(Egueb_Dom_Node *n,
 		Egueb_Dom_Node *adopted, Eina_Error *err);
 
 EAPI void egueb_dom_document_process(Egueb_Dom_Node *n);
+EAPI Eina_Bool egueb_dom_document_is_processing(Egueb_Dom_Node *n);
 EAPI Eina_Bool egueb_dom_document_needs_process(Egueb_Dom_Node *n);
 EAPI void egueb_dom_document_process_queue_clear(Egueb_Dom_Node *n);
 

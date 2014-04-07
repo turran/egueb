@@ -626,15 +626,20 @@ EAPI Egueb_Dom_Node * egueb_dom_document_node_adopt(Egueb_Dom_Node *n, Egueb_Dom
 EAPI void egueb_dom_document_process(Egueb_Dom_Node *n)
 {
 	Egueb_Dom_Document *thiz;
+	Eina_List *current_enqueued;
 	Eina_List *l, *l_next;
 
 	thiz = EGUEB_DOM_DOCUMENT(n);
 
+	DBG("Processing document");
 	thiz->processing = EINA_TRUE;
 	/* increment the current run */
 	thiz->current_run++;
 	/* process every enqueued node */
-	EINA_LIST_FOREACH_SAFE(thiz->current_enqueued, l, l_next, n)
+	current_enqueued = thiz->current_enqueued;
+	thiz->current_enqueued = NULL;
+
+	EINA_LIST_FOREACH_SAFE(current_enqueued, l, l_next, n)
 	{
 		Egueb_Dom_Element *e;
 
@@ -642,28 +647,32 @@ EAPI void egueb_dom_document_process(Egueb_Dom_Node *n)
 		if (e->last_run == thiz->current_run)
 		{
 			DBG_ELEMENT(n, "Node already processed");
-			goto dequeue;
+			goto skip;
 		}
 
 		if (!egueb_dom_element_is_enqueued(n))
 		{
-			DBG_ELEMENT(n, "Node not queued, skipping");
+			WARN_ELEMENT(n, "Node not queued, skipping");
 			goto skip;
 		}
 
 		INFO_ELEMENT(n, "Processing enqueued element");
 		egueb_dom_element_process(n);
-dequeue:
-		e->enqueued = EINA_FALSE;
 skip:
-		thiz->current_enqueued = eina_list_remove_list(thiz->current_enqueued, l);
+		current_enqueued = eina_list_remove_list(current_enqueued, l);
 
 		egueb_dom_node_unref(n);
 	}
-	/* TODO it might be possible that a process of a node implies
-	 * a new change
-	 */
 	thiz->processing = EINA_FALSE;
+}
+
+EAPI Eina_Bool egueb_dom_document_is_processing(Egueb_Dom_Node *n)
+{
+	Egueb_Dom_Document *thiz;
+
+	if (!n) return EINA_FALSE;
+	thiz = EGUEB_DOM_DOCUMENT(n);
+	return thiz->processing;
 }
 
 EAPI Eina_Bool egueb_dom_document_needs_process(Egueb_Dom_Node *n)
