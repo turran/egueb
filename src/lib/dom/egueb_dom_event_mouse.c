@@ -255,3 +255,29 @@ EAPI Egueb_Dom_Event * egueb_dom_event_mouse_new(void)
 	event = ENESIM_OBJECT_INSTANCE_NEW(egueb_dom_event_mouse);
 	return event;
 }
+
+EAPI void egueb_dom_event_mouse_client_coords_get(Egueb_Dom_Event *e, int *x, int *y)
+{
+	Egueb_Dom_Event_Mouse *thiz;
+
+	thiz = EGUEB_DOM_EVENT_MOUSE(e);
+	if (x) *x = thiz->client_x;
+	if (y) *y = thiz->client_y;
+}
+
+EAPI void egueb_dom_event_mouse_screen_coords_get(Egueb_Dom_Event *e, int *x, int *y)
+{
+	Egueb_Dom_Event_Mouse *thiz;
+
+	thiz = EGUEB_DOM_EVENT_MOUSE(e);
+	if (x) *x = thiz->screen_x;
+	if (y) *y = thiz->screen_y;
+}
+
+EAPI int egueb_dom_event_mouse_button_get(Egueb_Dom_Event *e)
+{
+	Egueb_Dom_Event_Mouse *thiz;
+
+	thiz = EGUEB_DOM_EVENT_MOUSE(e);
+	return thiz->button;
+}

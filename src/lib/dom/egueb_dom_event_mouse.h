@@ -35,8 +35,12 @@ EAPI extern Egueb_Dom_String *EGUEB_DOM_EVENT_MOUSE_OVER;
 EAPI extern Egueb_Dom_String *EGUEB_DOM_EVENT_MOUSE_MOVE;
 EAPI extern Egueb_Dom_String *EGUEB_DOM_EVENT_MOUSE_OUT;
 
-EAPI Egueb_Dom_Node * egueb_dom_event_mouse_related_get(Egueb_Dom_Event *e);
 EAPI Egueb_Dom_Event * egueb_dom_event_mouse_new(void);
+
+EAPI Egueb_Dom_Node * egueb_dom_event_mouse_related_get(Egueb_Dom_Event *e);
+EAPI void egueb_dom_event_mouse_client_coords_get(Egueb_Dom_Event *e, int *x, int *y);
+EAPI void egueb_dom_event_mouse_screen_coords_get(Egueb_Dom_Event *e, int *x, int *y);
+EAPI int egueb_dom_event_mouse_button_get(Egueb_Dom_Event *e);
 
 /**
  * @}
