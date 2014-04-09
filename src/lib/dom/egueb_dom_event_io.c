@@ -52,8 +52,11 @@ typedef struct _Egueb_Dom_Event_IO_Class
 	Egueb_Dom_Event_Class base;
 } Egueb_Dom_Event_IO_Class;
 
+static Egueb_Dom_String _EGUEB_DOM_EVENT_IO_DONE = EGUEB_DOM_STRING_STATIC("IODone");
 static Egueb_Dom_String _EGUEB_DOM_EVENT_IO_DATA = EGUEB_DOM_STRING_STATIC("IOData");
 static Egueb_Dom_String _EGUEB_DOM_EVENT_IO_IMAGE = EGUEB_DOM_STRING_STATIC("IOImage");
+
+
 /*----------------------------------------------------------------------------*
  *                              Object interface                              *
  *----------------------------------------------------------------------------*/
@@ -84,6 +87,27 @@ static Egueb_Dom_Event * _egueb_dom_event_io_new(void)
 	event = ENESIM_OBJECT_INSTANCE_NEW(egueb_dom_event_io);
 	return event;
 }
+
+static Egueb_Dom_Event * egueb_dom_event_io_done_new(Egueb_Dom_Event_IO *thiz)
+{
+	Egueb_Dom_Event *e;
+	Egueb_Dom_Event_IO *ret;
+
+	e = _egueb_dom_event_io_new();
+	egueb_dom_event_init(e, EGUEB_DOM_EVENT_IO_DONE, EINA_TRUE, EINA_TRUE,
+			EINA_FALSE, EGUEB_DOM_EVENT_DIRECTION_CAPTURE_BUBBLE); 
+	ret = EGUEB_DOM_EVENT_IO(e);
+	/* copy the uri */
+	ret->uri = thiz->uri;
+	if (thiz->uri.location)
+		ret->uri.location = egueb_dom_string_ref(thiz->uri.location);
+	if (thiz->uri.fragment)
+		ret->uri.fragment = egueb_dom_string_ref(thiz->uri.fragment);
+	/* copy the stream */
+	if (thiz->stream)
+		ret->stream = enesim_stream_ref(thiz->stream);
+	return e;
+}
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
@@ -92,6 +116,7 @@ static Egueb_Dom_Event * _egueb_dom_event_io_new(void)
  *============================================================================*/
 Egueb_Dom_String *EGUEB_DOM_EVENT_IO_DATA = &_EGUEB_DOM_EVENT_IO_DATA;
 Egueb_Dom_String *EGUEB_DOM_EVENT_IO_IMAGE = &_EGUEB_DOM_EVENT_IO_IMAGE;
+Egueb_Dom_String *EGUEB_DOM_EVENT_IO_DONE = &_EGUEB_DOM_EVENT_IO_DONE;
 
 EAPI Egueb_Dom_Event * egueb_dom_event_io_data_new(Egueb_Dom_Uri *uri,
 		Egueb_Dom_Event_IO_Data_Cb cb)
@@ -114,15 +139,6 @@ EAPI Egueb_Dom_Event * egueb_dom_event_io_data_new(Egueb_Dom_Uri *uri,
 	return e;
 }
 
-EAPI Egueb_Dom_Event_IO_Data_Cb egueb_dom_event_io_data_cb_get(
-		Egueb_Dom_Event *e)
-{
-	Egueb_Dom_Event_IO *thiz;
-
-	thiz = EGUEB_DOM_EVENT_IO(e);
-	return thiz->data_cb;
-}
-
 EAPI Egueb_Dom_Event * egueb_dom_event_io_image_new(
 		Enesim_Stream *stream, Egueb_Dom_Event_IO_Image_Cb cb)
 {
@@ -136,15 +152,6 @@ EAPI Egueb_Dom_Event * egueb_dom_event_io_image_new(
 	thiz->image_cb = cb;
 	thiz->stream = enesim_stream_ref(stream);
 	return e;
-}
-
-EAPI Egueb_Dom_Event_IO_Image_Cb egueb_dom_event_io_image_cb_get(
-		Egueb_Dom_Event *e)
-{
-	Egueb_Dom_Event_IO *thiz;
-
-	thiz = EGUEB_DOM_EVENT_IO(e);
-	return thiz->image_cb;
 }
 
 EAPI Enesim_Stream * egueb_dom_event_io_stream_get(Egueb_Dom_Event *e)
@@ -168,4 +175,49 @@ EAPI void egueb_dom_event_io_uri_get(Egueb_Dom_Event *e, Egueb_Dom_Uri *uri)
 	uri->fragment = thiz->uri.fragment;
 	if (uri->fragment)
 		uri->fragment = egueb_dom_string_ref(uri->fragment);
+}
+
+/* TODO remove the previous getters and just let the app call this */
+EAPI void egueb_dom_event_io_image_finish(Egueb_Dom_Event *e, Enesim_Surface *s)
+{
+	Egueb_Dom_Event_IO *thiz;
+	Egueb_Dom_Event *done;
+	Egueb_Dom_Node *n;
+
+	if (!e) return;
+
+	n = egueb_dom_event_target_get(e);
+
+	thiz = EGUEB_DOM_EVENT_IO(e);
+	/* call the callback */
+	if (thiz->image_cb)
+	{
+		thiz->image_cb(n, s);
+	}
+	/* send the event */
+	done = egueb_dom_event_io_done_new(thiz);
+	egueb_dom_node_event_dispatch(n, done, NULL, NULL);
+	egueb_dom_node_unref(n);
+}
+
+EAPI void egueb_dom_event_io_data_finish(Egueb_Dom_Event *e, Enesim_Stream *s)
+{
+	Egueb_Dom_Event_IO *thiz;
+	Egueb_Dom_Event *done;
+	Egueb_Dom_Node *n;
+
+	if (!e) return;
+
+	n = egueb_dom_event_target_get(e);
+
+	thiz = EGUEB_DOM_EVENT_IO(e);
+	/* call the callback */
+	if (thiz->data_cb)
+	{
+		thiz->data_cb(n, s);
+	}
+	/* send the event */
+	done = egueb_dom_event_io_done_new(thiz);
+	egueb_dom_node_event_dispatch(n, done, NULL, NULL);
+	egueb_dom_node_unref(n);
 }
