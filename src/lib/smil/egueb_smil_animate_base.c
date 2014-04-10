@@ -210,7 +210,7 @@ static void _egueb_smil_animate_base_animation_start_cb(Etch_Animation *ea, void
 		egueb_dom_attr_final_value_get(a->p, &thiz->prv_value);
 	}
 	ev = egueb_smil_event_new();
-	egueb_smil_event_init(ev, EGUEB_SMIL_EVENT_BEGIN, 0);
+	egueb_smil_event_init(ev, egueb_dom_string_ref(EGUEB_SMIL_EVENT_BEGIN), 0);
 	egueb_dom_node_event_dispatch(a->target, ev, NULL, NULL);
 }
 
@@ -244,7 +244,7 @@ static void _egueb_smil_animate_base_animation_stop_cb(Etch_Animation *ea, void 
 		_egueb_smil_animate_base_property_set(thiz, &thiz->prv_value);
 	}
 	ev = egueb_smil_event_new();
-	egueb_smil_event_init(ev, EGUEB_SMIL_EVENT_END, 0);
+	egueb_smil_event_init(ev, egueb_dom_string_ref(EGUEB_SMIL_EVENT_END), 0);
 	egueb_dom_node_event_dispatch(a->target, ev, NULL, NULL);
 }
 

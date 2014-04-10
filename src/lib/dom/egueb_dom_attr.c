@@ -432,7 +432,8 @@ EAPI Eina_Bool egueb_dom_attr_value_set(Egueb_Dom_Node *n,
 			e = EGUEB_DOM_ELEMENT(thiz->owner);
 
 			event = egueb_dom_event_mutation_attr_modified_new(
-					n, NULL, value, thiz->name,
+					egueb_dom_node_ref(n), NULL, value,
+					egueb_dom_string_ref(thiz->name),
 					EGUEB_DOM_EVENT_MUTATION_ATTR_TYPE_MODIFICATION,
 					type);
 			egueb_dom_node_event_dispatch(thiz->owner, event, NULL, NULL);

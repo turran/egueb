@@ -94,8 +94,9 @@ static Egueb_Dom_Event * egueb_dom_event_io_done_new(Egueb_Dom_Event_IO *thiz)
 	Egueb_Dom_Event_IO *ret;
 
 	e = _egueb_dom_event_io_new();
-	egueb_dom_event_init(e, EGUEB_DOM_EVENT_IO_DONE, EINA_TRUE, EINA_TRUE,
-			EINA_FALSE, EGUEB_DOM_EVENT_DIRECTION_CAPTURE_BUBBLE); 
+	egueb_dom_event_init(e, egueb_dom_string_ref(EGUEB_DOM_EVENT_IO_DONE),
+			EINA_TRUE, EINA_TRUE, EINA_FALSE,
+			EGUEB_DOM_EVENT_DIRECTION_CAPTURE_BUBBLE);
 	ret = EGUEB_DOM_EVENT_IO(e);
 	/* copy the uri */
 	ret->uri = thiz->uri;
@@ -127,8 +128,9 @@ EAPI Egueb_Dom_Event * egueb_dom_event_io_data_new(Egueb_Dom_Uri *uri,
 	if (!uri) return NULL;
 
 	e = _egueb_dom_event_io_new();
-	egueb_dom_event_init(e, EGUEB_DOM_EVENT_IO_DATA, EINA_TRUE, EINA_TRUE,
-			EINA_FALSE, EGUEB_DOM_EVENT_DIRECTION_CAPTURE_BUBBLE); 
+	egueb_dom_event_init(e, egueb_dom_string_ref(EGUEB_DOM_EVENT_IO_DATA),
+			EINA_TRUE, EINA_TRUE, EINA_FALSE,
+			EGUEB_DOM_EVENT_DIRECTION_CAPTURE_BUBBLE); 
 	thiz = EGUEB_DOM_EVENT_IO(e);
 	thiz->uri = *uri;
 	if (thiz->uri.location)
@@ -146,8 +148,9 @@ EAPI Egueb_Dom_Event * egueb_dom_event_io_image_new(
 	Egueb_Dom_Event *e;
 
 	e = _egueb_dom_event_io_new();
-	egueb_dom_event_init(e, EGUEB_DOM_EVENT_IO_IMAGE, EINA_TRUE, EINA_TRUE,
-			EINA_FALSE, EGUEB_DOM_EVENT_DIRECTION_CAPTURE_BUBBLE);
+	egueb_dom_event_init(e, egueb_dom_string_ref(EGUEB_DOM_EVENT_IO_IMAGE),
+			EINA_TRUE, EINA_TRUE, EINA_FALSE,
+			EGUEB_DOM_EVENT_DIRECTION_CAPTURE_BUBBLE);
 	thiz = EGUEB_DOM_EVENT_IO(e);
 	thiz->image_cb = cb;
 	thiz->stream = enesim_stream_ref(stream);

@@ -58,6 +58,19 @@ static void _egueb_dom_event_mutation_instance_init(void *o)
 
 static void _egueb_dom_event_mutation_instance_deinit(void *o)
 {
+	Egueb_Dom_Event_Mutation *thiz;
+
+	thiz = EGUEB_DOM_EVENT_MUTATION(o);
+	if (thiz->related)
+	{
+		egueb_dom_node_unref(thiz->related);
+		thiz->related = NULL;
+	}
+	if (thiz->attr)
+	{
+		egueb_dom_string_unref(thiz->attr);
+		thiz->attr = NULL;
+	}
 }
 
 static Egueb_Dom_Event * _egueb_dom_event_mutation_new(void)
@@ -99,7 +112,7 @@ Egueb_Dom_Event * egueb_dom_event_mutation_node_inserted_new(Egueb_Dom_Node *par
 
 	e = _egueb_dom_event_mutation_new();
 	_egueb_dom_event_mutation_init_internal(e,
-			EGUEB_DOM_EVENT_MUTATION_NODE_INSERTED,
+			egueb_dom_string_ref(EGUEB_DOM_EVENT_MUTATION_NODE_INSERTED),
 			EINA_TRUE, EINA_FALSE,
 			parent, NULL, NULL, NULL, 0, 0);
 	return e;
@@ -112,7 +125,7 @@ Egueb_Dom_Event * egueb_dom_event_mutation_node_inserted_into_document_new(
 
 	e = _egueb_dom_event_mutation_new();
 	_egueb_dom_event_mutation_init_internal(e,
-			EGUEB_DOM_EVENT_MUTATION_NODE_INSERTED_INTO_DOCUMENT,
+			egueb_dom_string_ref(EGUEB_DOM_EVENT_MUTATION_NODE_INSERTED_INTO_DOCUMENT),
 			EINA_FALSE, EINA_FALSE,
 			NULL, NULL, NULL, NULL, 0, 0);
 	return e;
@@ -124,7 +137,7 @@ Egueb_Dom_Event * egueb_dom_event_mutation_node_removed_new(Egueb_Dom_Node *pare
 
 	e = _egueb_dom_event_mutation_new();
 	_egueb_dom_event_mutation_init_internal(e,
-			EGUEB_DOM_EVENT_MUTATION_NODE_REMOVED,
+			egueb_dom_string_ref(EGUEB_DOM_EVENT_MUTATION_NODE_REMOVED),
 			EINA_TRUE, EINA_FALSE,
 			parent, NULL, NULL, NULL, 0, 0);
 	return e;
@@ -136,7 +149,7 @@ Egueb_Dom_Event * egueb_dom_event_mutation_node_removed_from_document_new(void)
 
 	e = _egueb_dom_event_mutation_new();
 	_egueb_dom_event_mutation_init_internal(e,
-			EGUEB_DOM_EVENT_MUTATION_NODE_REMOVED_FROM_DOCUMENT,
+			egueb_dom_string_ref(EGUEB_DOM_EVENT_MUTATION_NODE_REMOVED_FROM_DOCUMENT),
 			EINA_FALSE, EINA_FALSE,
 			NULL, NULL, NULL, NULL, 0, 0);
 	return e;
@@ -148,7 +161,7 @@ Egueb_Dom_Event * egueb_dom_event_mutation_node_destroyed_new(void)
 
 	e = _egueb_dom_event_mutation_new();
 	_egueb_dom_event_mutation_init_internal(e,
-			EGUEB_DOM_EVENT_MUTATION_NODE_DESTROYED,
+			egueb_dom_string_ref(EGUEB_DOM_EVENT_MUTATION_NODE_DESTROYED),
 			EINA_FALSE, EINA_FALSE,
 			NULL, NULL, NULL, NULL, 0, 0);
 	return e;
@@ -166,7 +179,7 @@ Egueb_Dom_Event * egueb_dom_event_mutation_attr_modified_new(
 
 	e = _egueb_dom_event_mutation_new();
 	_egueb_dom_event_mutation_init_internal(e,
-			EGUEB_DOM_EVENT_MUTATION_ATTR_MODIFIED,
+			egueb_dom_string_ref(EGUEB_DOM_EVENT_MUTATION_ATTR_MODIFIED),
 			EINA_TRUE, EINA_FALSE, related, prev_value, new_value, 
 			name, attr_type, attr_modification_type);
 	return e;
@@ -178,7 +191,7 @@ Egueb_Dom_Event * egueb_dom_event_mutation_character_data_modified_new(void)
 
 	e = _egueb_dom_event_mutation_new();
 	_egueb_dom_event_mutation_init_internal(e,
-			EGUEB_DOM_EVENT_MUTATION_CHARACTER_DATA_MODIFIED,
+			egueb_dom_string_ref(EGUEB_DOM_EVENT_MUTATION_CHARACTER_DATA_MODIFIED),
 			EINA_TRUE, EINA_FALSE, NULL, NULL, NULL,
 			NULL, 0, 0);
 	return e;

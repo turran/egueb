@@ -21,6 +21,7 @@
 #include "egueb_svg_font_size.h"
 
 #include "egueb_dom_value_private.h"
+#include "egueb_svg_length_private.h"
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/

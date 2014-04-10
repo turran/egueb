@@ -137,21 +137,24 @@ static void _egueb_dom_node_event_dispatch(Egueb_Dom_Node *thiz,
 	}
 monitors:
 	/* now the monitors */
- 	if (!thiz->monitors) return;
-
-	EINA_LIST_FOREACH(thiz->monitors, l, nl)
+	if (thiz->monitors)
 	{
-		if (evt->target == evt->current_target)
+		EINA_LIST_FOREACH(thiz->monitors, l, nl)
 		{
-			Egueb_Dom_Event_Phase old_phase = evt->phase;
-			nl->listener(evt, nl->data);
-			evt->phase = old_phase;
-		}
-		else
-		{
-			nl->listener(evt, nl->data);
+			if (evt->target == evt->current_target)
+			{
+				Egueb_Dom_Event_Phase old_phase = evt->phase;
+				nl->listener(evt, nl->data);
+				evt->phase = old_phase;
+			}
+			else
+			{
+				nl->listener(evt, nl->data);
+			}
 		}
 	}
+	/* unset the target */
+	evt->current_target = NULL;
 }
 
 static void _egueb_dom_node_event_capture(Egueb_Dom_Node *thiz,
@@ -734,7 +737,7 @@ EAPI Eina_Bool egueb_dom_node_child_remove(Egueb_Dom_Node *thiz, Egueb_Dom_Node 
 	}
 
 	/* trigger the mutation event */
-	event = egueb_dom_event_mutation_node_removed_new(thiz);
+	event = egueb_dom_event_mutation_node_removed_new(egueb_dom_node_ref(thiz));
 	egueb_dom_node_event_dispatch(child, event, NULL, NULL);
 
 	thiz->children = eina_inlist_remove(thiz->children, EINA_INLIST_GET(child));
@@ -826,7 +829,7 @@ EAPI Eina_Bool egueb_dom_node_insert_before(Egueb_Dom_Node *thiz,
 	child->parent = thiz;
 
 	/* trigger the node inserted mutation event */
-	event = egueb_dom_event_mutation_node_inserted_new(thiz);
+	event = egueb_dom_event_mutation_node_inserted_new(egueb_dom_node_ref(thiz));
 	egueb_dom_node_event_dispatch(child, event, NULL, NULL);
 
 	/* insert the node in the tree in case the parent is on the tree too,
@@ -1005,7 +1008,7 @@ EAPI Eina_Bool egueb_dom_node_event_dispatch(Egueb_Dom_Node *thiz,
 	/* NOT_SUPPORTED_ERR Raised if the Event object has not been created using DocumentEvent.createEvent() or does not support the interface CustomEvent */
 
 	/* setup the event with the basic attributes */
-	event->target = thiz;
+	event->target = egueb_dom_node_ref(thiz);
 	event->dispatching = EINA_TRUE;
 
 	if (event->direction == EGUEB_DOM_EVENT_DIRECTION_CAPTURE_BUBBLE)

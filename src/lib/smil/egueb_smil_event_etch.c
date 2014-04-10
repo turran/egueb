@@ -70,9 +70,10 @@ EAPI Egueb_Dom_Event * egueb_smil_event_etch_new(void)
 {
 	Egueb_Dom_Event *event;
 	event = ENESIM_OBJECT_INSTANCE_NEW(egueb_smil_event_etch);
-	egueb_dom_event_init(event, EGUEB_SMIL_EVENT_ETCH, EINA_FALSE, EINA_TRUE, EINA_FALSE,
+	egueb_dom_event_init(event, egueb_dom_string_ref(EGUEB_SMIL_EVENT_ETCH),
+			EINA_FALSE, EINA_TRUE, EINA_FALSE,
 			EGUEB_DOM_EVENT_DIRECTION_CAPTURE_BUBBLE);
-
+	return event;
 }
 
 EAPI void egueb_smil_event_etch_set(Egueb_Dom_Event *e, Etch *etch)

@@ -49,6 +49,23 @@ static void _egueb_dom_event_instance_init(void *o)
 
 static void _egueb_dom_event_instance_deinit(void *o)
 {
+	Egueb_Dom_Event *thiz;
+
+	thiz = EGUEB_DOM_EVENT(o);
+	if (thiz->type)
+	{
+		egueb_dom_string_unref(thiz->type);
+		thiz->type = NULL;
+	}
+	if (thiz->target)
+	{
+		egueb_dom_node_unref(thiz->target);
+		thiz->target = NULL;
+	}
+	if (thiz->current_target)
+	{
+		ERR("Current target is still set");
+	}
 }
 
 /*============================================================================*

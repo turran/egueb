@@ -121,7 +121,7 @@ void egueb_dom_event_mouse_click_init(Egueb_Dom_Event *e,
 	thiz->shift_key = shift_key;
 	thiz->meta_key = meta_key;
 	thiz->button = button;
-	egueb_dom_event_ui_init(e, EGUEB_DOM_EVENT_MOUSE_CLICK,
+	egueb_dom_event_ui_init(e, egueb_dom_string_ref(EGUEB_DOM_EVENT_MOUSE_CLICK),
 			EINA_TRUE, EINA_TRUE, detail);
 }
 
@@ -142,7 +142,7 @@ void egueb_dom_event_mouse_down_init(Egueb_Dom_Event *e,
 	thiz->shift_key = shift_key;
 	thiz->meta_key = meta_key;
 	thiz->button = button;
-	egueb_dom_event_ui_init(e, EGUEB_DOM_EVENT_MOUSE_DOWN,
+	egueb_dom_event_ui_init(e, egueb_dom_string_ref(EGUEB_DOM_EVENT_MOUSE_DOWN),
 			EINA_TRUE, EINA_TRUE, detail);
 }
 
@@ -163,7 +163,7 @@ void egueb_dom_event_mouse_up_init(Egueb_Dom_Event *e,
 	thiz->shift_key = shift_key;
 	thiz->meta_key = meta_key;
 	thiz->button = button;
-	egueb_dom_event_ui_init(e, EGUEB_DOM_EVENT_MOUSE_UP,
+	egueb_dom_event_ui_init(e, egueb_dom_string_ref(EGUEB_DOM_EVENT_MOUSE_UP),
 			EINA_TRUE, EINA_TRUE, detail);
 }
 
@@ -184,7 +184,7 @@ void egueb_dom_event_mouse_move_init(Egueb_Dom_Event *e,
 	thiz->shift_key = shift_key;
 	thiz->meta_key = meta_key;
 	thiz->button = button;
-	egueb_dom_event_ui_init(e, EGUEB_DOM_EVENT_MOUSE_MOVE,
+	egueb_dom_event_ui_init(e, egueb_dom_string_ref(EGUEB_DOM_EVENT_MOUSE_MOVE),
 			EINA_TRUE, EINA_FALSE, detail);
 }
 
@@ -206,7 +206,7 @@ void egueb_dom_event_mouse_over_init(Egueb_Dom_Event *e,
 	thiz->meta_key = meta_key;
 	thiz->button = button;
 	thiz->related = related;
-	egueb_dom_event_ui_init(e, EGUEB_DOM_EVENT_MOUSE_OVER,
+	egueb_dom_event_ui_init(e, egueb_dom_string_ref(EGUEB_DOM_EVENT_MOUSE_OVER),
 			EINA_TRUE, EINA_FALSE, detail);
 }
 
@@ -228,7 +228,7 @@ void egueb_dom_event_mouse_out_init(Egueb_Dom_Event *e,
 	thiz->meta_key = meta_key;
 	thiz->button = button;
 	thiz->related = related;
-	egueb_dom_event_ui_init(e, EGUEB_DOM_EVENT_MOUSE_OUT,
+	egueb_dom_event_ui_init(e, egueb_dom_string_ref(EGUEB_DOM_EVENT_MOUSE_OUT),
 			EINA_TRUE, EINA_FALSE, detail);
 }
 /*============================================================================*

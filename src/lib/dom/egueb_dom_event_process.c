@@ -59,8 +59,9 @@ Egueb_Dom_Event * egueb_dom_event_process_new(void)
 {
 	Egueb_Dom_Event *event;
 	event = ENESIM_OBJECT_INSTANCE_NEW(egueb_dom_event_process);
-	egueb_dom_event_init(event, EGUEB_DOM_EVENT_PROCESS, EINA_TRUE,
-			EINA_FALSE, EINA_TRUE,
+	egueb_dom_event_init(event,
+			egueb_dom_string_ref(EGUEB_DOM_EVENT_PROCESS),
+			EINA_TRUE, EINA_FALSE, EINA_TRUE,
 			EGUEB_DOM_EVENT_DIRECTION_CAPTURE_BUBBLE);
 	return event;
 }
