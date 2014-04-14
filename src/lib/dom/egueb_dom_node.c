@@ -305,9 +305,16 @@ static void _egueb_dom_node_insert_into_document(Egueb_Dom_Node *thiz,
 	Egueb_Dom_Node *child;
 
 	parent = thiz->parent;
-	/* in case the parent has a document and we dont, set the owner document */
-	if ((parent->owner_document != thiz->owner_document) && (parent->owner_document))
+	if (egueb_dom_node_type_get(parent) == EGUEB_DOM_NODE_TYPE_DOCUMENT_NODE)
+	{
+		/* in case the parent is a document, set it */
+		egueb_dom_node_document_set(thiz, parent);
+	}
+	else if ((parent->owner_document != thiz->owner_document) && (parent->owner_document))
+	{
+		/* in case the parent has a document and we dont, set the owner document */
 		egueb_dom_node_document_set(thiz, parent->owner_document);
+	}
 
 	thiz->in_tree = EINA_TRUE;
 	/* dispatch on the node first */
