@@ -93,18 +93,19 @@ static void _enesim_image_dom_options_free(void *data)
 /* Here we should parse the first svg element only and return its
  * size, for now, we dont support this feature
  */
-static Eina_Error _enesim_image_dom_info_load(Enesim_Stream *data, int *w, int *h, Enesim_Buffer_Format *sfmt, void *options)
+static Eina_Bool _enesim_image_dom_info_load(Enesim_Stream *data, int *w, int *h,
+		Enesim_Buffer_Format *sfmt, void *options, Eina_Error *err)
 {
 	Egueb_Dom_Node *doc = NULL;
 	Egueb_Dom_Feature *window;
 	Egueb_Dom_Feature *io;
-	Eina_Error ret = 0;
+	Eina_Bool ret = EINA_FALSE;
 	int cw = _default_width;
 	int ch = _default_height;
 
 	if (!egueb_dom_parser_parse(data, &doc))
 	{
-		ret = ENESIM_IMAGE_ERROR_LOADING;
+		*err = ENESIM_IMAGE_ERROR_LOADING;
 		goto err_parse;
 	}
 	/* get the final size */
@@ -135,26 +136,27 @@ static Eina_Error _enesim_image_dom_info_load(Enesim_Stream *data, int *w, int *
 	egueb_dom_feature_window_content_size_get(window, w, h);
 	*sfmt = ENESIM_BUFFER_FORMAT_ARGB8888_PRE;
 	egueb_dom_feature_unref(window);
+	ret = EINA_TRUE;
+
 err_feature:
 	egueb_dom_node_unref(doc);
 err_parse:
 	return ret;
 }
 
-static Eina_Error _enesim_image_dom_load(Enesim_Stream *data,
-		Enesim_Buffer *buffer, void *options)
+static Eina_Bool _enesim_image_dom_load(Enesim_Stream *data,
+		Enesim_Buffer *buffer, void *options, Eina_Error *err)
 {
 	Egueb_Dom_Node *doc = NULL;
 	Egueb_Dom_Feature *window, *render, *io;
 	Enesim_Surface *s;
-	Enesim_Log *err = NULL;
-	Eina_Error ret = 0;
+	Eina_Bool ret = EINA_FALSE;
 	int w = _default_width;
 	int h = _default_height;
 
 	if (!egueb_dom_parser_parse(data, &doc))
 	{
-		ret = ENESIM_IMAGE_ERROR_LOADING;
+		*err = ENESIM_IMAGE_ERROR_LOADING;
 		goto err_parse;
 	}
 
@@ -168,7 +170,7 @@ static Eina_Error _enesim_image_dom_load(Enesim_Stream *data,
 	window = egueb_dom_node_feature_get(doc, EGUEB_DOM_FEATURE_WINDOW_NAME, NULL);
 	if (!window)
 	{
-		ret = ENESIM_IMAGE_ERROR_LOADING;
+		*err = ENESIM_IMAGE_ERROR_LOADING;
 		goto err_feature;
 	}
 	egueb_dom_feature_window_content_size_set(window, w, h);
@@ -184,24 +186,26 @@ static Eina_Error _enesim_image_dom_load(Enesim_Stream *data,
 	render = egueb_dom_node_feature_get(doc, EGUEB_DOM_FEATURE_RENDER_NAME, NULL);
 	if (!render)
 	{
-		ret = ENESIM_IMAGE_ERROR_LOADING;
+		*err = ENESIM_IMAGE_ERROR_LOADING;
 		goto err_feature;
 	}
 
 	s = enesim_surface_new_buffer_from(buffer);
 	if (!s)
 	{
-		ret = ENESIM_IMAGE_ERROR_LOADING;
+		*err = ENESIM_IMAGE_ERROR_LOADING;
 		goto err_surface;
 	}
 
 	egueb_dom_document_process(doc);
 	if (!egueb_dom_feature_render_draw(render, s, ENESIM_ROP_FILL, NULL, 0, 0, NULL))
 	{
-		ret = ENESIM_IMAGE_ERROR_LOADING;
-		enesim_log_dump(err);
+		*err = ENESIM_IMAGE_ERROR_LOADING;
+		goto err_draw;
 	}
+	ret = EINA_TRUE;
 
+err_draw:
 	enesim_surface_unref(s);
 err_surface:
 	egueb_dom_feature_unref(render);
