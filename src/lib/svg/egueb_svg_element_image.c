@@ -55,6 +55,8 @@ typedef struct _Egueb_Svg_Element_Image
 	Enesim_Renderer *image;
 	/* the node in case we need to instantiate a new svg */
 	Egueb_Dom_Node *g;
+	/* a document in case the user provides the document directly */
+	//Egueb_Dom_Node *doc;
 } Egueb_Svg_Element_Image;
 
 typedef struct _Egueb_Svg_Element_Image_Class

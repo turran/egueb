@@ -39,7 +39,7 @@
 #include "egueb_svg_text_anchor.h"
 #include "egueb_svg_visibility.h"
 
-#include "egueb_svg_attr_clip_path.h"
+#include "egueb_svg_attr_clip_path_private.h"
 #include "egueb_svg_attr_color.h"
 #include "egueb_svg_attr_display.h"
 #include "egueb_svg_attr_font_size.h"

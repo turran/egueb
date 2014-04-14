@@ -16,10 +16,10 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _EGUEB_SVG_ATTR_CLIP_PATH_H_
-#define _EGUEB_SVG_ATTR_CLIP_PATH_H_
+#ifndef _EGUEB_SVG_ATTR_CLIP_PATH_PRIVATE_H_
+#define _EGUEB_SVG_ATTR_CLIP_PATH_PRIVATE_H_
 
-EAPI Egueb_Dom_Node * egueb_svg_attr_clip_path_new(Egueb_Dom_String *name,
+Egueb_Dom_Node * egueb_svg_attr_clip_path_new(Egueb_Dom_String *name,
 		const Egueb_Svg_Clip_Path *def, Eina_Bool animatable,
 		Eina_Bool stylable, Eina_Bool inheritable);
 
