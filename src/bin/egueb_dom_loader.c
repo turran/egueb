@@ -137,7 +137,7 @@ int main(int argc, char *argv[])
 	}
 	/* now save the rendered image */
 	b = enesim_surface_buffer_get(s);
-	enesim_image_file_save(argv[2], b, NULL);
+	enesim_image_file_save(argv[2], b, NULL, NULL);
 	enesim_buffer_unref(b);
 	enesim_surface_unref(s);
 

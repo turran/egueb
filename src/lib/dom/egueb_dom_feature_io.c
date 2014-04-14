@@ -156,15 +156,13 @@ static void _egueb_dom_feature_io_image_cb(Egueb_Dom_Event *ev, void *data)
 	Enesim_Buffer *b = NULL;
 	Enesim_Stream *s;
 	Enesim_Surface *src = NULL;
+	Eina_Error err;
 
 	s = egueb_dom_event_io_stream_get(ev);
 	if (!s) return;
 
-	if (!enesim_image_load(s, NULL, &b, NULL, NULL))
+	if (!enesim_image_load(s, NULL, &b, NULL, NULL, &err))
 	{
-		Eina_Error err;
-
-		err = eina_error_get();
 		ERR("Can not load image, error: %s", eina_error_msg_get(err));
 	}
 	else
