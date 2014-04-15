@@ -19,10 +19,11 @@
 #include "egueb_svg_main_private.h"
 #include "egueb_svg_main.h"
 #include "egueb_svg_point.h"
-#include "egueb_svg_attr_point_list.h"
 #include "egueb_svg_element_polygon.h"
 #include "egueb_svg_document.h"
+
 #include "egueb_svg_shape_private.h"
+#include "egueb_svg_attr_point_list_private.h"
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/

@@ -21,8 +21,6 @@
 #include "egueb_svg_referenceable.h"
 #include "egueb_svg_referenceable_units.h"
 #include "egueb_svg_string.h"
-#include "egueb_svg_attr_referenceable_units.h"
-#include "egueb_svg_attr_string.h"
 #include "egueb_svg_element_clip_path.h"
 #include "egueb_svg_element_g.h"
 #include "egueb_svg_element_use.h"
@@ -31,6 +29,8 @@
 #include "egueb_svg_referenceable_private.h"
 #include "egueb_svg_reference_private.h"
 #include "egueb_svg_element_clip_path_private.h"
+#include "egueb_svg_attr_referenceable_units_private.h"
+#include "egueb_svg_attr_string_private.h"
 
 /* FIXME remove this */
 #include "egueb_dom_document_private.h"

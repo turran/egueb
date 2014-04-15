@@ -19,7 +19,6 @@
 #include "egueb_svg_main.h"
 #include "egueb_svg_matrix.h"
 #include "egueb_svg_painter.h"
-#include "egueb_svg_attr_matrix.h"
 /* FIXME remove this later */
 #include "egueb_svg_length.h"
 #include "egueb_svg_element.h"
@@ -27,6 +26,7 @@
 
 #include "egueb_svg_painter_private.h"
 #include "egueb_svg_shape_private.h"
+#include "egueb_svg_attr_matrix_private.h"
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/

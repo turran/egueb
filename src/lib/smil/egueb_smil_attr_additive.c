@@ -22,7 +22,7 @@
 
 #include "egueb_dom_attr_private.h"
 #include "egueb_dom_attr_primitive_private.h"
-#include "egueb_smil_attr_additive.h"
+#include "egueb_smil_attr_additive_private.h"
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
@@ -100,9 +100,6 @@ static void _egueb_smil_attr_additive_instance_deinit(void *o)
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
-/*============================================================================*
- *                                   API                                      *
- *============================================================================*/
 Egueb_Dom_Node * egueb_smil_attr_additive_new(Egueb_Dom_String *name,
 		Egueb_Smil_Additive def)
 {
@@ -114,5 +111,6 @@ Egueb_Dom_Node * egueb_smil_attr_additive_new(Egueb_Dom_String *name,
 
 	return n;
 }
-
-
+/*============================================================================*
+ *                                   API                                      *
+ *============================================================================*/

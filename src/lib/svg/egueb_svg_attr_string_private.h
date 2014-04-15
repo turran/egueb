@@ -16,10 +16,10 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _EGUEB_SVG_ATTR_STRING_H_
-#define _EGUEB_SVG_ATTR_STRING_H_
+#ifndef _EGUEB_SVG_ATTR_STRING_PRIVATE_H_
+#define _EGUEB_SVG_ATTR_STRING_PRIVATE_H_
 
-EAPI Egueb_Dom_Node * egueb_svg_attr_string_new(Egueb_Dom_String *name,
+Egueb_Dom_Node * egueb_svg_attr_string_new(Egueb_Dom_String *name,
 		Egueb_Dom_String *def);
 
 #endif

@@ -16,11 +16,11 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _EGUEB_SVG_ATTR_STROKE_LINE_JOIN_H_
-#define _EGUEB_SVG_ATTR_STROKE_LINE_JOIN_H_
+#ifndef _EGUEB_SVG_ATTR_FONT_SIZE_PRIVATE_H_
+#define _EGUEB_SVG_ATTR_FONT_SIZE_PRIVATE_H_
 
-EAPI Egueb_Dom_Node * egueb_svg_attr_stroke_line_join_new(Egueb_Dom_String *name,
-		const Egueb_Svg_Stroke_Line_Join def, Eina_Bool animatable,
+Egueb_Dom_Node * egueb_svg_attr_font_size_new(Egueb_Dom_String *name,
+		const Egueb_Svg_Font_Size *def, Eina_Bool animatable,
 		Eina_Bool stylable, Eina_Bool inheritable);
 
 #endif

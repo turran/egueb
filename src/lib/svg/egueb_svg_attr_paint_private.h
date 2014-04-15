@@ -15,10 +15,13 @@
  * License along with this library.
  * If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef _EGUEB_SMIL_ATTR_TIMING_LIST_H_
-#define _EGUEB_SMIL_ATTR_TIMING_LIST_H_
 
-EAPI Egueb_Dom_Node * egueb_smil_attr_timing_list_new(Egueb_Dom_String *name,
-		Egueb_Dom_List *def);
+#ifndef _EGUEB_SVG_ATTR_PAINT_PRIVATE_H_
+#define _EGUEB_SVG_ATTR_PAINT_PRIVATE_H_
+
+Egueb_Dom_Node * egueb_svg_attr_paint_new(Egueb_Dom_String *name,
+		const Egueb_Svg_Paint *def, Eina_Bool animatable,
+		Eina_Bool stylable, Eina_Bool inheritable);
 
 #endif
+

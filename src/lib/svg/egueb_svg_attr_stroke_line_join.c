@@ -23,7 +23,7 @@
 
 #include "egueb_dom_attr_private.h"
 #include "egueb_dom_attr_basic_private.h"
-#include "egueb_svg_attr_stroke_line_join.h"
+#include "egueb_svg_attr_stroke_line_join_private.h"
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
@@ -33,10 +33,7 @@ EGUEB_DOM_ATTR_BASIC_BOILERPLATE(Egueb_Svg_Stroke_Line_Join,
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
-/*============================================================================*
- *                                   API                                      *
- *============================================================================*/
-EAPI Egueb_Dom_Node * egueb_svg_attr_stroke_line_join_new(Egueb_Dom_String *name,
+Egueb_Dom_Node * egueb_svg_attr_stroke_line_join_new(Egueb_Dom_String *name,
 		const Egueb_Svg_Stroke_Line_Join def, Eina_Bool animatable,
 		Eina_Bool stylable, Eina_Bool inheritable)
 {
@@ -47,3 +44,6 @@ EAPI Egueb_Dom_Node * egueb_svg_attr_stroke_line_join_new(Egueb_Dom_String *name
 	egueb_dom_attr_set(n, EGUEB_DOM_ATTR_TYPE_DEFAULT, def);
 	return n;
 }
+/*============================================================================*
+ *                                   API                                      *
+ *============================================================================*/

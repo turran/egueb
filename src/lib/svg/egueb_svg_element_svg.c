@@ -23,8 +23,6 @@
 #include "egueb_svg_length.h"
 #include "egueb_svg_overflow.h"
 #include "egueb_svg_point.h"
-#include "egueb_svg_attr_rect.h"
-#include "egueb_svg_attr_length.h"
 #include "egueb_svg_element_svg.h"
 #include "egueb_svg_element_use.h"
 #include "egueb_svg_renderable_container.h"
@@ -33,6 +31,8 @@
 #include "egueb_svg_element_svg_private.h"
 #include "egueb_svg_shape_private.h"
 #include "egueb_svg_document_private.h"
+#include "egueb_svg_attr_rect_private.h"
+#include "egueb_svg_attr_length_private.h"
 /*
  * Given that a svg element can clip, we should use a clipper with a compound
  * inside as the renderer

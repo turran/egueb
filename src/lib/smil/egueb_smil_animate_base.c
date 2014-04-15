@@ -21,9 +21,10 @@
 #include "egueb_smil_set.h"
 #include "egueb_smil_event.h"
 #include "egueb_smil_additive.h"
-#include "egueb_smil_attr_additive.h"
+
 #include "egueb_smil_animation_private.h"
 #include "egueb_smil_animate_base_private.h"
+#include "egueb_smil_attr_additive_private.h"
 
 /*
  * This file handles the common attribute handling for the

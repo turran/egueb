@@ -15,10 +15,11 @@
  * License along with this library.
  * If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef _EGUEB_SVG_ATTR_POINT_LIST_H_
-#define _EGUEB_SVG_ATTR_POINT_LIST_H_
 
-Egueb_Dom_Node * egueb_svg_attr_point_list_new(Egueb_Dom_String *name,
+#ifndef _EGUEB_SVG_ATTR_STROKE_DASHARRAY_PRIVATE_H_
+#define _EGUEB_SVG_ATTR_STROKE_DASHARRAY_PRIVATE_H_
+
+Egueb_Dom_Node * egueb_svg_attr_stroke_dasharray_new(Egueb_Dom_String *name,
 		Egueb_Dom_List *def, Eina_Bool animatable, Eina_Bool stylable,
 		Eina_Bool inheritable);
 

@@ -19,13 +19,13 @@
 #include "egueb_svg_main.h"
 #include "egueb_svg_matrix.h"
 #include "egueb_svg_referenceable_units.h"
-#include "egueb_svg_attr_referenceable_units.h"
-#include "egueb_svg_attr_matrix.h"
 #include "egueb_svg_attr_xlink_href.h"
 #include "egueb_svg_element_pattern.h"
 
 #include "egueb_svg_paint_server_private.h" 
 #include "egueb_svg_reference_paint_server_private.h"
+#include "egueb_svg_attr_matrix_private.h"
+#include "egueb_svg_attr_referenceable_units_private.h"
 /* A pattern from the implementation point of view is a mix between a
  * gradient and a clipPath. We need to have live clones of the children
  * on every reference like a clipPath but in case the pattern element

@@ -16,10 +16,10 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 #include "egueb_svg_main_private.h"
-#include "egueb_svg_attr_string.h"
 
 #include "egueb_dom_attr_private.h"
 #include "egueb_dom_attr_object_private.h"
+#include "egueb_svg_attr_string_private.h"
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
@@ -118,10 +118,7 @@ static void _egueb_svg_attr_string_instance_deinit(void *o)
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
-/*============================================================================*
- *                                   API                                      *
- *============================================================================*/
-EAPI Egueb_Dom_Node * egueb_svg_attr_string_new(Egueb_Dom_String *name,
+Egueb_Dom_Node * egueb_svg_attr_string_new(Egueb_Dom_String *name,
 		Egueb_Dom_String *def)
 {
 	Egueb_Dom_Node *n;
@@ -131,3 +128,6 @@ EAPI Egueb_Dom_Node * egueb_svg_attr_string_new(Egueb_Dom_String *name,
 	if (def) egueb_dom_attr_set(n, EGUEB_DOM_ATTR_TYPE_DEFAULT, def);
 	return n;
 }
+/*============================================================================*
+ *                                   API                                      *
+ *============================================================================*/

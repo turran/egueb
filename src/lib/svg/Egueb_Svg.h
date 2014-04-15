@@ -86,21 +86,6 @@ extern "C" {
 #include "egueb_svg_visibility.h"
 
 /* attributes */
-#include "egueb_svg_attr_color.h"
-#include "egueb_svg_attr_display.h"
-#include "egueb_svg_attr_font_size.h"
-#include "egueb_svg_attr_length.h"
-#include "egueb_svg_attr_matrix.h"
-#include "egueb_svg_attr_number.h"
-#include "egueb_svg_attr_overflow.h"
-#include "egueb_svg_attr_paint.h"
-#include "egueb_svg_attr_rect.h"
-#include "egueb_svg_attr_referenceable_units.h"
-#include "egueb_svg_attr_spread_method.h"
-#include "egueb_svg_attr_string.h"
-#include "egueb_svg_attr_stroke_line_cap.h"
-#include "egueb_svg_attr_stroke_line_join.h"
-#include "egueb_svg_attr_visibility.h"
 #include "egueb_svg_attr_xlink_href.h"
 
 /* main abstractions */

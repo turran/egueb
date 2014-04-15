@@ -42,12 +42,6 @@
 #include "egueb_smil_fill.h"
 #include "egueb_smil_repeat_count.h"
 #include "egueb_smil_timing.h"
-/* properties */
-#include "egueb_smil_attr_additive.h"
-#include "egueb_smil_attr_duration.h"
-#include "egueb_smil_attr_fill.h"
-#include "egueb_smil_attr_repeat_count.h"
-#include "egueb_smil_attr_timing_list.h"
 /* elements */
 #include "egueb_smil_animation.h"
 #include "egueb_smil_animate.h"

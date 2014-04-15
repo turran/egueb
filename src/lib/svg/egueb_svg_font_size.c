@@ -91,6 +91,13 @@ EGUEB_DOM_VALUE_PRIMITIVE_SIMPLE_BOILERPLATE(egueb_svg_font_size, Egueb_Svg_Font
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/
+const Egueb_Svg_Font_Size EGUEB_SVG_FONT_SIZE_MEDIUM = {
+	EGUEB_SVG_FONT_SIZE_TYPE_ABSOLUTE,
+	{
+		{ EGUEB_SVG_FONT_SIZE_ABSOLUTE_MEDIUM }
+	}
+};
+
 EAPI const Egueb_Dom_Value_Descriptor * egueb_svg_font_size_descriptor_get(void)
 {
 	return &_egueb_svg_font_size_descriptor;

@@ -20,11 +20,11 @@
 #include "egueb_svg_reference.h"
 #include "egueb_svg_referenceable.h"
 #include "egueb_svg_renderable.h"
-#include "egueb_svg_attr_matrix.h"
 #include "egueb_svg_element.h"
 
 #include "egueb_svg_renderable_private.h"
 #include "egueb_dom_string_private.h"
+#include "egueb_svg_attr_matrix_private.h"
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/

@@ -16,12 +16,11 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _EGUEB_SVG_ATTR_FONT_SIZE_H_
-#define _EGUEB_SVG_ATTR_FONT_SIZE_H_
+#ifndef _EGUEB_SVG_ATTR_VISIBILITY_PRIVATE_H_
+#define _EGUEB_SVG_ATTR_VISIBILITY_PRIVATE_H_
 
-EAPI Egueb_Dom_Node * egueb_svg_attr_font_size_new(Egueb_Dom_String *name,
-		const Egueb_Svg_Font_Size *def, Eina_Bool animatable,
+Egueb_Dom_Node * egueb_svg_attr_visibility_new(Egueb_Dom_String *name,
+		const Egueb_Svg_Visibility def, Eina_Bool animatable,
 		Eina_Bool stylable, Eina_Bool inheritable);
 
 #endif
-

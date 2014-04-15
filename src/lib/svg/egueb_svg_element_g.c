@@ -18,9 +18,10 @@
 #include "egueb_svg_main_private.h"
 #include "egueb_svg_main.h"
 #include "egueb_svg_matrix.h"
-#include "egueb_svg_attr_matrix.h"
-#include "egueb_svg_renderable_container_private.h"
 #include "egueb_svg_element_g.h"
+
+#include "egueb_svg_renderable_container_private.h"
+#include "egueb_svg_attr_matrix_private.h"
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/

@@ -17,8 +17,10 @@
  */
 #include "egueb_svg_main_private.h"
 #include "egueb_svg_stroke_dasharray.h"
+
 #include "egueb_dom_attr_private.h"
 #include "egueb_dom_attr_object_private.h"
+#include "egueb_svg_attr_stroke_dasharray_private.h"
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
@@ -102,10 +104,7 @@ static void _egueb_svg_attr_stroke_dasharray_instance_deinit(void *o)
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
-/*============================================================================*
- *                                   API                                      *
- *============================================================================*/
-EAPI Egueb_Dom_Node * egueb_svg_attr_stroke_dasharray_new(Egueb_Dom_String *name,
+Egueb_Dom_Node * egueb_svg_attr_stroke_dasharray_new(Egueb_Dom_String *name,
 		Egueb_Dom_List *def, Eina_Bool animatable, Eina_Bool stylable,
 		Eina_Bool inheritable)
 {
@@ -117,5 +116,6 @@ EAPI Egueb_Dom_Node * egueb_svg_attr_stroke_dasharray_new(Egueb_Dom_String *name
 		egueb_dom_attr_set(n, EGUEB_DOM_ATTR_TYPE_DEFAULT, def);
 	return n;
 }
-
-
+/*============================================================================*
+ *                                   API                                      *
+ *============================================================================*/

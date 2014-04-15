@@ -21,7 +21,7 @@
 
 #include "egueb_dom_attr_private.h"
 #include "egueb_dom_attr_primitive_private.h"
-#include "egueb_smil_attr_repeat_count.h"
+#include "egueb_smil_attr_repeat_count_private.h"
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
@@ -30,9 +30,6 @@ EGUEB_DOM_ATTR_PRIMITIVE_BOILERPLATE(Egueb_Smil_Repeat_Count,
 		egueb_smil_attr_repeat_count)
 /*============================================================================*
  *                                 Global                                     *
- *============================================================================*/
-/*============================================================================*
- *                                   API                                      *
  *============================================================================*/
 Egueb_Dom_Node * egueb_smil_attr_repeat_count_new(Egueb_Dom_String *name,
 		const Egueb_Smil_Repeat_Count *def)
@@ -45,4 +42,6 @@ Egueb_Dom_Node * egueb_smil_attr_repeat_count_new(Egueb_Dom_String *name,
 		egueb_dom_attr_set(n, EGUEB_DOM_ATTR_TYPE_DEFAULT, def);
 	return n;
 }
-
+/*============================================================================*
+ *                                   API                                      *
+ *============================================================================*/

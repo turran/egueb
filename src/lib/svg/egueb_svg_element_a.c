@@ -19,7 +19,8 @@
 #include "egueb_svg_main_private.h"
 #include "egueb_svg_main.h"
 #include "egueb_svg_element_a.h"
-#include "egueb_svg_attr_string.h"
+
+#include "egueb_svg_attr_string_private.h"
 #include "egueb_svg_renderable_container_private.h"
 
 /* TODO

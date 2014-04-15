@@ -21,7 +21,7 @@
 
 #include "egueb_dom_attr_private.h"
 #include "egueb_dom_attr_object_private.h"
-#include "egueb_smil_attr_timing_list.h"
+#include "egueb_smil_attr_timing_list_private.h"
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
@@ -100,10 +100,7 @@ static void _egueb_smil_attr_timing_list_instance_deinit(void *o)
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
-/*============================================================================*
- *                                   API                                      *
- *============================================================================*/
-EAPI Egueb_Dom_Node * egueb_smil_attr_timing_list_new(Egueb_Dom_String *name,
+Egueb_Dom_Node * egueb_smil_attr_timing_list_new(Egueb_Dom_String *name,
 		Egueb_Dom_List *def)
 {
 	Egueb_Dom_Node *n;
@@ -114,3 +111,6 @@ EAPI Egueb_Dom_Node * egueb_smil_attr_timing_list_new(Egueb_Dom_String *name,
 		egueb_dom_attr_set(n, EGUEB_DOM_ATTR_TYPE_DEFAULT, def);
 	return n;
 }
+/*============================================================================*
+ *                                   API                                      *
+ *============================================================================*/

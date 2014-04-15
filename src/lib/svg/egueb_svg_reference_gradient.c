@@ -32,15 +32,15 @@ static Eina_Bool _spread_method_to_repeat_mode(Egueb_Svg_Spread_Method s,
 	switch (s)
 	{
 		case EGUEB_SVG_SPREAD_METHOD_PAD:
-		*mode = ENESIM_PAD;
+		*mode = ENESIM_REPEAT_MODE_PAD;
 		break;
 
 		case EGUEB_SVG_SPREAD_METHOD_REPEAT:
-		*mode = ENESIM_REPEAT;
+		*mode = ENESIM_REPEAT_MODE_REPEAT;
 		break;
 
 		case EGUEB_SVG_SPREAD_METHOD_REFLECT:
-		*mode = ENESIM_REFLECT;
+		*mode = ENESIM_REPEAT_MODE_REFLECT;
 		break;
 
 		default:
@@ -57,7 +57,7 @@ static Eina_Bool _egueb_svg_reference_gradient_process(Egueb_Svg_Reference *r)
 	Egueb_Svg_Reference_Gradient_Class *klass;
 	Egueb_Svg_Spread_Method spread_method;
 	Enesim_Renderer *ren = NULL;
-	Enesim_Repeat_Mode mode = ENESIM_PAD;
+	Enesim_Repeat_Mode mode = ENESIM_REPEAT_MODE_PAD;
 	Egueb_Dom_Node *stop_node = NULL;
 	Eina_Bool ret = EINA_TRUE;
 

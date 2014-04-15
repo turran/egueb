@@ -20,9 +20,10 @@
 #include "egueb_svg_main.h"
 #include "egueb_svg_point.h"
 #include "egueb_svg_path_seg.h"
-#include "egueb_svg_attr_path_seg_list.h"
 #include "egueb_svg_element_path.h"
 #include "egueb_svg_document.h"
+
+#include "egueb_svg_attr_path_seg_list_private.h"
 #include "egueb_svg_shape_private.h"
 /*============================================================================*
  *                                  Local                                     *

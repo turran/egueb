@@ -15,10 +15,13 @@
  * License along with this library.
  * If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef _EGUEB_SMIL_PROPERTY_FILL_H_
-#define _EGUEB_SMIL_PROPERTY_FILL_H_
 
-Egueb_Dom_Node * egueb_smil_attr_fill_new(Egueb_Dom_String *name,
-		Egueb_Smil_Fill def);
+#ifndef _EGUEB_SVG_ATTR_STROKE_LINE_JOIN_PRIVATE_H_
+#define _EGUEB_SVG_ATTR_STROKE_LINE_JOIN_PRIVATE_H_
+
+Egueb_Dom_Node * egueb_svg_attr_stroke_line_join_new(Egueb_Dom_String *name,
+		const Egueb_Svg_Stroke_Line_Join def, Eina_Bool animatable,
+		Eina_Bool stylable, Eina_Bool inheritable);
 
 #endif
+

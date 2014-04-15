@@ -19,6 +19,7 @@
 #include "egueb_svg_path_seg_list.h"
 #include "egueb_dom_attr_private.h"
 #include "egueb_dom_attr_object_private.h"
+#include "egueb_svg_attr_path_seg_list_private.h"
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
@@ -102,10 +103,7 @@ static void _egueb_svg_attr_path_seg_list_instance_deinit(void *o)
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
-/*============================================================================*
- *                                   API                                      *
- *============================================================================*/
-EAPI Egueb_Dom_Node * egueb_svg_attr_path_seg_list_new(Egueb_Dom_String *name,
+Egueb_Dom_Node * egueb_svg_attr_path_seg_list_new(Egueb_Dom_String *name,
 		Egueb_Dom_List *def, Eina_Bool animatable, Eina_Bool stylable,
 		Eina_Bool inheritable)
 {
@@ -117,3 +115,6 @@ EAPI Egueb_Dom_Node * egueb_svg_attr_path_seg_list_new(Egueb_Dom_String *name,
 		egueb_dom_attr_set(n, EGUEB_DOM_ATTR_TYPE_DEFAULT, def);
 	return n;
 }
+/*============================================================================*
+ *                                   API                                      *
+ *============================================================================*/

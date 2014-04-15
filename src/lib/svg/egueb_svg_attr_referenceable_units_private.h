@@ -16,12 +16,13 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _EGUEB_SVG_ATTR_PAINT_H_
-#define _EGUEB_SVG_ATTR_PAINT_H_
+#ifndef _EGUEB_SVG_ATTR_REFERENCEABLE_UNITS_PRIVATE_H_
+#define _EGUEB_SVG_ATTR_REFERENCEABLE_UNITS_PRIVATE_H_
 
-EAPI Egueb_Dom_Node * egueb_svg_attr_paint_new(Egueb_Dom_String *name,
-		const Egueb_Svg_Paint *def, Eina_Bool animatable,
+Egueb_Dom_Node * egueb_svg_attr_referenceable_units_new(Egueb_Dom_String *name,
+		const Egueb_Svg_Referenceable_Units def, Eina_Bool animatable,
 		Eina_Bool stylable, Eina_Bool inheritable);
 
 #endif
+
 

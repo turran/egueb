@@ -15,14 +15,11 @@
  * License along with this library.
  * If not, see <http://www.gnu.org/licenses/>.
  */
+#ifndef _EGUEB_SMIL_ATTR_DURATION_PRIVATE_H_
+#define _EGUEB_SMIL_ATTR_DURATION_PRIVATE_H_
 
-#ifndef _EGUEB_SVG_ATTR_REFERENCEABLE_UNITS_H_
-#define _EGUEB_SVG_ATTR_REFERENCEABLE_UNITS_H_
-
-EAPI Egueb_Dom_Node * egueb_svg_attr_referenceable_units_new(Egueb_Dom_String *name,
-		const Egueb_Svg_Referenceable_Units def, Eina_Bool animatable,
-		Eina_Bool stylable, Eina_Bool inheritable);
+Egueb_Dom_Node * egueb_smil_attr_duration_new(Egueb_Dom_String *name,
+		const Egueb_Smil_Duration *def);
 
 #endif
-
 

@@ -39,22 +39,23 @@
 #include "egueb_svg_text_anchor.h"
 #include "egueb_svg_visibility.h"
 
-#include "egueb_svg_attr_clip_path_private.h"
-#include "egueb_svg_attr_color.h"
-#include "egueb_svg_attr_display.h"
-#include "egueb_svg_attr_font_size.h"
-#include "egueb_svg_attr_length.h"
-#include "egueb_svg_attr_number.h"
-#include "egueb_svg_attr_overflow.h"
-#include "egueb_svg_attr_paint.h"
-#include "egueb_svg_attr_text_anchor.h"
-#include "egueb_svg_attr_visibility.h"
-#include "egueb_svg_attr_string.h"
-#include "egueb_svg_attr_stroke_dasharray.h"
-#include "egueb_svg_attr_stroke_line_cap.h"
-#include "egueb_svg_attr_stroke_line_join.h"
-
 #include "egueb_svg_reference.h"
+
+#include "egueb_svg_attr_clip_path_private.h"
+#include "egueb_svg_attr_color_private.h"
+#include "egueb_svg_attr_display_private.h"
+#include "egueb_svg_attr_font_size_private.h"
+#include "egueb_svg_attr_length_private.h"
+#include "egueb_svg_attr_number_private.h"
+#include "egueb_svg_attr_overflow_private.h"
+#include "egueb_svg_attr_paint_private.h"
+#include "egueb_svg_attr_text_anchor_private.h"
+#include "egueb_svg_attr_visibility_private.h"
+#include "egueb_svg_attr_string_private.h"
+#include "egueb_svg_attr_stroke_dasharray_private.h"
+#include "egueb_svg_attr_stroke_line_cap_private.h"
+#include "egueb_svg_attr_stroke_line_join_private.h"
+
 
 #if 0
 /* FIXME given that we include every header

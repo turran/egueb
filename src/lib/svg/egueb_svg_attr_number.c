@@ -23,7 +23,7 @@
 
 #include "egueb_dom_attr_private.h"
 #include "egueb_dom_attr_basic_private.h"
-#include "egueb_svg_attr_number.h"
+#include "egueb_svg_attr_number_private.h"
 /* TODO add a final_get so we can get the style+animating+base+default values */
 /*============================================================================*
  *                                  Local                                     *
@@ -112,10 +112,7 @@ static void _egueb_svg_attr_number_instance_deinit(void *o)
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
-/*============================================================================*
- *                                   API                                      *
- *============================================================================*/
-EAPI Egueb_Dom_Node * egueb_svg_attr_number_new(Egueb_Dom_String *name,
+Egueb_Dom_Node * egueb_svg_attr_number_new(Egueb_Dom_String *name,
 		Egueb_Svg_Number def, Eina_Bool animatable,
 		Eina_Bool stylable, Eina_Bool inheritable)
 {
@@ -127,3 +124,7 @@ EAPI Egueb_Dom_Node * egueb_svg_attr_number_new(Egueb_Dom_String *name,
 	return n;
 
 }
+/*============================================================================*
+ *                                   API                                      *
+ *============================================================================*/
+

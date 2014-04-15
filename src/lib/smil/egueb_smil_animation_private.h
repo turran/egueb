@@ -26,10 +26,10 @@
 #include "egueb_smil_fill.h"
 #include "egueb_smil_repeat_count.h"
 #include "egueb_smil_timing.h"
-#include "egueb_smil_attr_duration.h"
-#include "egueb_smil_attr_fill.h"
-#include "egueb_smil_attr_repeat_count.h"
-#include "egueb_smil_attr_timing_list.h"
+#include "egueb_smil_attr_duration_private.h"
+#include "egueb_smil_attr_fill_private.h"
+#include "egueb_smil_attr_repeat_count_private.h"
+#include "egueb_smil_attr_timing_list_private.h"
 
 typedef struct _Egueb_Smil_Animation
 {

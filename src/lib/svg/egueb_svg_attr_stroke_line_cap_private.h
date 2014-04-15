@@ -16,12 +16,11 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _EGUEB_SVG_ATTR_MATRIX_H_
-#define _EGUEB_SVG_ATTR_MATRIX_H_
+#ifndef _EGUEB_SVG_ATTR_STROKE_LINE_CAP_PRIVATE_H_
+#define _EGUEB_SVG_ATTR_STROKE_LINE_CAP_PRIVATE_H_
 
-EAPI Egueb_Dom_Node * egueb_svg_attr_matrix_new(Egueb_Dom_String *name,
-		const Egueb_Svg_Matrix *def, Eina_Bool animatable,
+Egueb_Dom_Node * egueb_svg_attr_stroke_line_cap_new(Egueb_Dom_String *name,
+		const Egueb_Svg_Stroke_Line_Cap def, Eina_Bool animatable,
 		Eina_Bool stylable, Eina_Bool inheritable);
 
 #endif
-

@@ -15,11 +15,12 @@
  * License along with this library.
  * If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef _EGUEB_SMIL_ATTR_REPEAT_COUNT_H_
-#define _EGUEB_SMIL_ATTR_REPEAT_COUNT_H_
 
-Egueb_Dom_Node * egueb_smil_attr_repeat_count_new(Egueb_Dom_String *name,
-		const Egueb_Smil_Repeat_Count *def);
+#ifndef _EGUEB_SVG_ATTR_LENGTH_PRIVATE_H_
+#define _EGUEB_SVG_ATTR_LENGTH_PRIVATE_H_
+
+Egueb_Dom_Node * egueb_svg_attr_length_new(Egueb_Dom_String *name,
+		const Egueb_Svg_Length *def, Eina_Bool animatable,
+		Eina_Bool stylable, Eina_Bool inheritable);
 
 #endif
-

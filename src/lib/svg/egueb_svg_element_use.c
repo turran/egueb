@@ -26,12 +26,12 @@
 #include "egueb_svg_renderable_container.h"
 #include "egueb_svg_shape.h"
 #include "egueb_svg_painter.h"
-#include "egueb_svg_attr_string.h"
 #include "egueb_svg_painter.h"
 
 #include "egueb_svg_painter_private.h"
 #include "egueb_svg_renderable_private.h"
 #include "egueb_svg_shape_private.h"
+#include "egueb_svg_attr_string_private.h"
 /*
  * The 'use' element should be able to create a new instance from another
  * svg tree. Basically we set the 'link' property of the 'use' to the svg

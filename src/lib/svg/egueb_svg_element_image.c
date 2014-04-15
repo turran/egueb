@@ -23,7 +23,8 @@
 #include "egueb_svg_element_image.h"
 #include "egueb_svg_document.h"
 #include "egueb_svg_renderable.h"
-#include "egueb_svg_attr_string.h"
+
+#include "egueb_svg_attr_string_private.h"
 #include "egueb_svg_renderable_private.h"
 
 /*============================================================================*

@@ -23,7 +23,7 @@
 
 #include "egueb_dom_attr_private.h"
 #include "egueb_dom_attr_primitive_private.h"
-#include "egueb_svg_attr_length.h"
+#include "egueb_svg_attr_length_private.h"
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
@@ -33,10 +33,7 @@ EGUEB_DOM_ATTR_PRIMITIVE_BOILERPLATE(Egueb_Svg_Length,
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
-/*============================================================================*
- *                                   API                                      *
- *============================================================================*/
-EAPI Egueb_Dom_Node * egueb_svg_attr_length_new(Egueb_Dom_String *name,
+Egueb_Dom_Node * egueb_svg_attr_length_new(Egueb_Dom_String *name,
 		const Egueb_Svg_Length *def, Eina_Bool animatable,
 		Eina_Bool stylable, Eina_Bool inheritable)
 {
@@ -47,3 +44,6 @@ EAPI Egueb_Dom_Node * egueb_svg_attr_length_new(Egueb_Dom_String *name,
 	if (def) egueb_dom_attr_set(n, EGUEB_DOM_ATTR_TYPE_DEFAULT, def);
 	return n;
 }
+/*============================================================================*
+ *                                   API                                      *
+ *============================================================================*/

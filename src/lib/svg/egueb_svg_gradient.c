@@ -21,14 +21,14 @@
 #include "egueb_svg_matrix.h"
 #include "egueb_svg_spread_method.h"
 #include "egueb_svg_referenceable_units.h"
-#include "egueb_svg_attr_referenceable_units.h"
-#include "egueb_svg_attr_matrix.h"
 #include "egueb_svg_attr_xlink_href.h"
-#include "egueb_svg_attr_spread_method.h"
 #include "egueb_svg_element_stop.h"
 #include "egueb_svg_gradient.h"
-#include "egueb_svg_gradient_private.h"
 
+#include "egueb_svg_gradient_private.h"
+#include "egueb_svg_attr_referenceable_units_private.h"
+#include "egueb_svg_attr_matrix_private.h"
+#include "egueb_svg_attr_spread_method_private.h"
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/

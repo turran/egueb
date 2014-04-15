@@ -16,12 +16,11 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _EGUEB_SVG_ATTR_DISPLAY_H_
-#define _EGUEB_SVG_ATTR_DISPLAY_H_
+#ifndef _EGUEB_SVG_ATTR_OVERFLOW_PRIVATE_H_
+#define _EGUEB_SVG_ATTR_OVERFLOW_PRIVATE_H_
 
-EAPI Egueb_Dom_Node * egueb_svg_attr_display_new(Egueb_Dom_String *name,
-		const Egueb_Svg_Display def, Eina_Bool animatable,
+Egueb_Dom_Node * egueb_svg_attr_overflow_new(Egueb_Dom_String *name,
+		const Egueb_Svg_Overflow def, Eina_Bool animatable,
 		Eina_Bool stylable, Eina_Bool inheritable);
 
 #endif
-

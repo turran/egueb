@@ -222,6 +222,7 @@ static Enesim_Image_Provider_Descriptor _provider = {
 	/* .loadable = 		*/ NULL,
 	/* .saveable = 		*/ NULL,
 	/* .info_get = 		*/ _enesim_image_dom_info_load,
+	/* .formats_get = 	*/ NULL,
 	/* .load = 		*/ _enesim_image_dom_load,
 	/* .save = 		*/ NULL,
 };

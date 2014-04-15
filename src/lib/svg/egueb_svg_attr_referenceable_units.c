@@ -23,7 +23,7 @@
 
 #include "egueb_dom_attr_private.h"
 #include "egueb_dom_attr_basic_private.h"
-#include "egueb_svg_attr_referenceable_units.h"
+#include "egueb_svg_attr_referenceable_units_private.h"
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
@@ -111,10 +111,7 @@ static void _egueb_svg_attr_referenceable_units_instance_deinit(void *o)
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
-/*============================================================================*
- *                                   API                                      *
- *============================================================================*/
-EAPI Egueb_Dom_Node * egueb_svg_attr_referenceable_units_new(Egueb_Dom_String *name,
+Egueb_Dom_Node * egueb_svg_attr_referenceable_units_new(Egueb_Dom_String *name,
 		const Egueb_Svg_Referenceable_Units def, Eina_Bool animatable,
 		Eina_Bool stylable, Eina_Bool inheritable)
 {
@@ -125,4 +122,6 @@ EAPI Egueb_Dom_Node * egueb_svg_attr_referenceable_units_new(Egueb_Dom_String *n
 	egueb_dom_attr_set(n, EGUEB_DOM_ATTR_TYPE_DEFAULT, def);
 	return n;
 }
-
+/*============================================================================*
+ *                                   API                                      *
+ *============================================================================*/

@@ -16,13 +16,11 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _EGUEB_SVG_ATTR_TEXT_ANCHOR_H_
-#define _EGUEB_SVG_ATTR_TEXT_ANCHOR_H_
+#ifndef _EGUEB_SVG_ATTR_RECT_PRIVATE_H_
+#define _EGUEB_SVG_ATTR_RECT_PRIVATE_H_
 
-EAPI Egueb_Dom_Node * egueb_svg_attr_text_anchor_new(Egueb_Dom_String *name,
-		const Egueb_Svg_Text_Anchor def, Eina_Bool animatable,
-		Eina_Bool stylable, Eina_Bool inheritable);
+Egueb_Dom_Node * egueb_svg_attr_rect_new(Egueb_Dom_String *name,
+		const Egueb_Svg_Rect *def);
 
 #endif
-
 

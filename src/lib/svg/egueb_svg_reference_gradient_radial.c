@@ -235,15 +235,15 @@ static Eina_Bool _egueb_svg_element_radial_gradient_propagate(Egueb_Dom_Tag *t,
 	switch (gctx->spread_method)
 	{
 		case ESVG_SPREAD_METHOD_PAD:
-		mode = ENESIM_PAD;
+		mode = ENESIM_REPEAT_MODE_PAD;
 		break;
 
 		case ESVG_SPREAD_METHOD_REPEAT:
-		mode = ENESIM_REPEAT;
+		mode = ENESIM_REPEAT_MODE_REPEAT;
 		break;
 
 		case ESVG_SPREAD_METHOD_REFLECT:
-		mode = ENESIM_REFLECT;
+		mode = ENESIM_REPEAT_MODE_REFLECT;
 		break;
 
 		default:

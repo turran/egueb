@@ -26,10 +26,10 @@
 #include "egueb_svg_document.h"
 #include "egueb_svg_reference.h"
 #include "egueb_svg_referenceable.h"
-#include "egueb_svg_attr_string.h"
-#include "egueb_svg_attr_length.h"
 
 #include "egueb_svg_referenceable_private.h"
+#include "egueb_svg_attr_string_private.h"
+#include "egueb_svg_attr_length_private.h"
 
 /*============================================================================*
  *                                  Local                                     *
