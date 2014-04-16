@@ -42,7 +42,6 @@ typedef struct _Egueb_Svg_Reference_Pattern
 {
 	Egueb_Svg_Reference_Paint_Server base;
 	Egueb_Dom_Node *g;
-	//Enesim_Renderer *content;
 	Enesim_Renderer *r;
 } Egueb_Svg_Reference_Pattern;
 
@@ -50,6 +49,87 @@ typedef struct _Egueb_Svg_Reference_Pattern_Class
 {
 	Egueb_Svg_Reference_Paint_Server_Class base;
 } Egueb_Svg_Reference_Pattern_Class;
+
+#if 0
+static Eina_Bool _pattern_setup(Enesim_Renderer *r,
+		const Egueb_Svg_Element_Context *state,
+		Enesim_Renderer *rel)
+{
+	Egueb_Svg_Pattern *thiz;
+	Egueb_Svg_Pattern_Units pu;
+	Enesim_Matrix m;
+	double x;
+	double y;
+	double w;
+	double h;
+
+	thiz = _egueb_svg_pattern_get(r);
+	pu = thiz->units;
+	if (pu == ESVG_OBJECT_BOUNDING_BOX)
+	{
+		Eina_Rectangle bbox;
+
+		/* check that the coordinates shold be set with (0,0) -> (1, 1) */
+		x = egueb_svg_coord_final_get(&thiz->x, 1);
+		y = egueb_svg_coord_final_get(&thiz->y, 1);
+		w = egueb_svg_coord_final_get(&thiz->width, 1);
+		h = egueb_svg_coord_final_get(&thiz->height, 1);
+
+		enesim_renderer_destination_bounds_get(rel, &bbox, 0, 0);
+		enesim_matrix_values_set(&m, bbox.w, 0, bbox.x, 0, bbox.h, bbox.y, 0, 0, 1);
+	}
+	else
+	{
+		double vw;
+		double vh;
+
+		/* use the user space coordiantes */
+		vw = state->viewbox_w;
+		vh = state->viewbox_h;
+		x = egueb_svg_coord_final_get(&thiz->x, vw);
+		y = egueb_svg_coord_final_get(&thiz->y, vh);
+		w = egueb_svg_coord_final_get(&thiz->width, vw);
+		h = egueb_svg_coord_final_get(&thiz->height, vh);
+
+		m = state->transform;
+	}
+
+	/* set the properties */
+	enesim_renderer_pattern_x_set(thiz->r, x);
+	enesim_renderer_pattern_y_set(thiz->r, y);
+	enesim_renderer_pattern_width_set(thiz->r, w);
+	enesim_renderer_pattern_height_set(thiz->r, h);
+
+	printf("pattern setup %g %g %g %g\n", x, y, w, h);
+	if (enesim_matrix_type_get(&thiz->transform) != ENESIM_MATRIX_IDENTITY)
+	{
+		enesim_matrix_compose(&m, &thiz->transform, &m);
+	}
+	enesim_renderer_transformation_set(thiz->r, &m);
+	enesim_renderer_pattern_source_set(thiz->r, thiz->content);
+	printf("ok, the content set %p\n", thiz->content);
+
+	/* TODO we need to set the new viewbox */
+	/* 1. setup the content */
+	/* 2. get the content renderer */
+	/* 3. assign it */
+#if 0
+	{
+		Egueb_Svg_Element_Context new_state;
+
+		memset(&new_state, 0, sizeof(Egueb_Svg_Element_Context));
+		new_state.viewbox_w = w;
+		new_state.viewbox_h = h;
+		new_state.transform = m;
+
+		egueb_svg_element_setup(thiz->content, estate, attr, s, error);
+		enesim_renderer_pattern_source_set(thiz->r, thiz->content);
+	}
+#endif
+
+	return EINA_TRUE;
+}
+#endif
 
 /*----------------------------------------------------------------------------*
  *                           Paint server interface                           *
@@ -60,7 +140,6 @@ static Enesim_Renderer * _egueb_svg_reference_pattern_renderer_get(
 	Egueb_Svg_Reference_Pattern *thiz;
 
 	thiz = EGUEB_SVG_REFERENCE_PATTERN(p);
-	//return egueb_svg_renderable_renderer_get(thiz->g);
 	return enesim_renderer_ref(thiz->r);
 }
 /*----------------------------------------------------------------------------*
@@ -120,4 +199,3 @@ Egueb_Svg_Reference * egueb_svg_reference_pattern_new(void)
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/
-

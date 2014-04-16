@@ -100,95 +100,12 @@ static void _egueb_svg_element_pattern_xlink_href_node_get(Egueb_Dom_Node *n, Eg
 	egueb_svg_attr_xlink_href_node_get(thiz->xlink_href, href);
 }
 /*----------------------------------------------------------------------------*
- *                       Esvg Paint Server interface                          *
- *----------------------------------------------------------------------------*/
-#if 0
-static Eina_Bool _pattern_setup(Enesim_Renderer *r,
-		const Egueb_Svg_Element_Context *state,
-		Enesim_Renderer *rel)
-{
-	Egueb_Svg_Pattern *thiz;
-	Egueb_Svg_Pattern_Units pu;
-	Enesim_Matrix m;
-	double x;
-	double y;
-	double w;
-	double h;
-
-	thiz = _egueb_svg_pattern_get(r);
-	pu = thiz->units;
-	if (pu == ESVG_OBJECT_BOUNDING_BOX)
-	{
-		Eina_Rectangle bbox;
-
-		/* check that the coordinates shold be set with (0,0) -> (1, 1) */
-		x = egueb_svg_coord_final_get(&thiz->x, 1);
-		y = egueb_svg_coord_final_get(&thiz->y, 1);
-		w = egueb_svg_coord_final_get(&thiz->width, 1);
-		h = egueb_svg_coord_final_get(&thiz->height, 1);
-
-		enesim_renderer_destination_bounds_get(rel, &bbox, 0, 0);
-		enesim_matrix_values_set(&m, bbox.w, 0, bbox.x, 0, bbox.h, bbox.y, 0, 0, 1);
-	}
-	else
-	{
-		double vw;
-		double vh;
-
-		/* use the user space coordiantes */
-		vw = state->viewbox_w;
-		vh = state->viewbox_h;
-		x = egueb_svg_coord_final_get(&thiz->x, vw);
-		y = egueb_svg_coord_final_get(&thiz->y, vh);
-		w = egueb_svg_coord_final_get(&thiz->width, vw);
-		h = egueb_svg_coord_final_get(&thiz->height, vh);
-
-		m = state->transform;
-	}
-
-	/* set the properties */
-	enesim_renderer_pattern_x_set(thiz->r, x);
-	enesim_renderer_pattern_y_set(thiz->r, y);
-	enesim_renderer_pattern_width_set(thiz->r, w);
-	enesim_renderer_pattern_height_set(thiz->r, h);
-
-	printf("pattern setup %g %g %g %g\n", x, y, w, h);
-	if (enesim_matrix_type_get(&thiz->transform) != ENESIM_MATRIX_IDENTITY)
-	{
-		enesim_matrix_compose(&m, &thiz->transform, &m);
-	}
-	enesim_renderer_transformation_set(thiz->r, &m);
-	enesim_renderer_pattern_source_set(thiz->r, thiz->content);
-	printf("ok, the content set %p\n", thiz->content);
-
-	/* TODO we need to set the new viewbox */
-	/* 1. setup the content */
-	/* 2. get the content renderer */
-	/* 3. assign it */
-#if 0
-	{
-		Egueb_Svg_Element_Context new_state;
-
-		memset(&new_state, 0, sizeof(Egueb_Svg_Element_Context));
-		new_state.viewbox_w = w;
-		new_state.viewbox_h = h;
-		new_state.transform = m;
-
-		egueb_svg_element_setup(thiz->content, estate, attr, s, error);
-		enesim_renderer_pattern_source_set(thiz->r, thiz->content);
-	}
-#endif
-
-	return EINA_TRUE;
-}
-#endif
-/*----------------------------------------------------------------------------*
  *                           Referenceable interface                          *
  *----------------------------------------------------------------------------*/
 static Eina_Bool _egueb_svg_element_pattern_process(
 		Egueb_Svg_Referenceable *r)
 {
-	DBG("Processing a element_pattern");
+	DBG("Processing a pattern");
 	/* iterate over the children and call the process there */
 	return EINA_TRUE;
 }
