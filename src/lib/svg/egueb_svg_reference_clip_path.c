@@ -34,6 +34,7 @@
 #include "egueb_svg_reference_private.h"
 #include "egueb_svg_painter_private.h"
 #include "egueb_svg_shape_private.h"
+#include "egueb_svg_event_request_painter_private.h"
 
 /* TODO we still need to implement a way to inform whenever some node
  * has changed inside the <g> we need to enqueue it for later process
@@ -82,6 +83,7 @@ static Eina_Bool _egueb_svg_reference_clip_path_children_clone_cb(
 	return EINA_TRUE;
 }
 
+#if 0
 static void _egueb_svg_reference_clip_path_set_painter(Egueb_Dom_Node *n,
 		Egueb_Svg_Reference_Clip_Path *thiz)
 {
@@ -119,10 +121,11 @@ static void _egueb_svg_reference_clip_path_set_painter(Egueb_Dom_Node *n,
 		}
 	}
 }
-
+#endif
 /*----------------------------------------------------------------------------*
  *                               Event listeners                              *
  *----------------------------------------------------------------------------*/
+#if 0
 static void _egueb_svg_reference_clip_path_node_inserted_cb(Egueb_Dom_Event *e,
 		void *data)
 {
@@ -133,7 +136,21 @@ static void _egueb_svg_reference_clip_path_node_inserted_cb(Egueb_Dom_Event *e,
 	_egueb_svg_reference_clip_path_set_painter(target, thiz);
 	egueb_dom_node_unref(target);
 }
+#endif
 
+static void _egueb_svg_reference_clip_path_event_request_painter_cb(Egueb_Dom_Event *e,
+		void *data)
+{
+	Egueb_Svg_Reference_Clip_Path *thiz = data;
+	Egueb_Svg_Painter *painter;
+	Egueb_Dom_Node *n;
+
+	n = egueb_dom_event_target_get(e);
+	DBG_ELEMENT(n, "Setting the clip path painter on the renderable");
+	painter = egueb_svg_painter_clip_path_new(EGUEB_SVG_REFERENCE(thiz));
+	egueb_svg_event_request_painter_painter_set(e, painter);
+	egueb_dom_node_unref(n);
+}
 /*----------------------------------------------------------------------------*
  *                               Event monitors                               *
  *----------------------------------------------------------------------------*/
@@ -156,7 +173,7 @@ static void _egueb_svg_reference_clip_path_setup(
 	Egueb_Dom_Node *doc;
 
 	thiz = EGUEB_SVG_REFERENCE_CLIP_PATH(r);
-	/* TODO we need to check what kind of referencer is */
+	/* Make the document adopt the g, given that it has no document yet */
 	doc = egueb_dom_node_document_get(r->referenceable);
 	thiz->g = egueb_dom_document_node_adopt(doc, thiz->g, NULL);
 	egueb_dom_node_unref(doc);
@@ -242,9 +259,15 @@ static void _egueb_svg_reference_clip_path_instance_init(void *o)
 	thiz = EGUEB_SVG_REFERENCE_CLIP_PATH(o);
 	thiz->g = egueb_svg_element_g_new();
 	egueb_dom_node_event_listener_add(thiz->g,
+			EGUEB_SVG_EVENT_REQUEST_PAINTER,
+			_egueb_svg_reference_clip_path_event_request_painter_cb,
+			EINA_FALSE, thiz);
+#if 0
+	egueb_dom_node_event_listener_add(thiz->g,
 			EGUEB_DOM_EVENT_MUTATION_NODE_INSERTED,
 			_egueb_svg_reference_clip_path_node_inserted_cb,
 			EINA_TRUE, thiz);
+#endif
 	/* add the events that we need to propagate upstream */ 
 	egueb_dom_node_event_monitor_add(thiz->g,
 			_egueb_dom_reference_clip_path_monitor_cb, thiz);

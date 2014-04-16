@@ -22,10 +22,12 @@
 #include "egueb_svg_attr_xlink_href.h"
 #include "egueb_svg_element_pattern.h"
 
+#include "egueb_svg_element_pattern_private.h"
 #include "egueb_svg_paint_server_private.h" 
 #include "egueb_svg_reference_paint_server_private.h"
 #include "egueb_svg_attr_matrix_private.h"
 #include "egueb_svg_attr_referenceable_units_private.h"
+#include "egueb_svg_attr_rect_private.h"
 /* A pattern from the implementation point of view is a mix between a
  * gradient and a clipPath. We need to have live clones of the children
  * on every reference like a clipPath but in case the pattern element
@@ -85,6 +87,7 @@ typedef struct _Egueb_Svg_Element_Pattern
 	Egueb_Dom_Node *y;
 	Egueb_Dom_Node *width;
 	Egueb_Dom_Node *height;
+	Egueb_Dom_Node *viewbox;
 } Egueb_Svg_Element_Pattern;
 
 typedef struct _Egueb_Svg_Element_Pattern_Class
@@ -99,14 +102,36 @@ static void _egueb_svg_element_pattern_xlink_href_node_get(Egueb_Dom_Node *n, Eg
 	thiz = EGUEB_SVG_ELEMENT_PATTERN(n);
 	egueb_svg_attr_xlink_href_node_get(thiz->xlink_href, href);
 }
+
+static Eina_Bool _egueb_svg_pattern_children_process_cb(
+		Egueb_Dom_Node *child, void *data)
+{
+	Egueb_Dom_Node_Type type;
+
+	type = egueb_dom_node_type_get(child);
+	if (type != EGUEB_DOM_NODE_TYPE_ELEMENT_NODE)
+		return EINA_TRUE;
+	egueb_dom_element_process(child);
+	return EINA_TRUE;
+}
 /*----------------------------------------------------------------------------*
  *                           Referenceable interface                          *
  *----------------------------------------------------------------------------*/
 static Eina_Bool _egueb_svg_element_pattern_process(
 		Egueb_Svg_Referenceable *r)
 {
+	Egueb_Svg_Element_Pattern *thiz;
+
+	thiz = EGUEB_SVG_ELEMENT_PATTERN(r);
 	DBG("Processing a pattern");
 	/* iterate over the children and call the process there */
+	egueb_dom_node_children_foreach(EGUEB_DOM_NODE(r),
+			_egueb_svg_pattern_children_process_cb,
+			NULL);
+	/* get the xlink:href node */
+	if (!egueb_svg_attr_xlink_href_resolve(thiz->xlink_href))
+		return EINA_FALSE;
+
 	return EINA_TRUE;
 }
 
@@ -182,6 +207,9 @@ static void _egueb_svg_element_pattern_instance_init(void *o)
 			egueb_dom_string_ref(EGUEB_SVG_HEIGHT),
 			&EGUEB_SVG_LENGTH_0,
 			EINA_TRUE, EINA_FALSE, EINA_FALSE);
+	thiz->viewbox = egueb_svg_attr_rect_new(
+			egueb_dom_string_ref(EGUEB_SVG_VIEWBOX),
+			NULL);
 
 	n = EGUEB_DOM_NODE(o);
 	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->transform), NULL);
@@ -191,6 +219,7 @@ static void _egueb_svg_element_pattern_instance_init(void *o)
 	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->y), NULL);
 	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->width), NULL);
 	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->height), NULL);
+	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->viewbox), NULL);
 }
 
 static void _egueb_svg_element_pattern_instance_deinit(void *o)
@@ -206,10 +235,57 @@ static void _egueb_svg_element_pattern_instance_deinit(void *o)
 	egueb_dom_node_unref(thiz->y);
 	egueb_dom_node_unref(thiz->width);
 	egueb_dom_node_unref(thiz->height);
+	egueb_dom_node_unref(thiz->viewbox);
 }
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
+void egueb_svg_element_pattern_deep_units_get(Egueb_Dom_Node *n,
+		Egueb_Svg_Referenceable_Units *units)
+{
+	EGUEB_SVG_ELEMENT_PATTERN_DEEP_GET(n, units,
+			EGUEB_SVG_REFERENCEABLE_UNITS_USER_SPACE_ON_USE,
+			egueb_svg_element_pattern_deep_units_get);
+}
+
+void egueb_svg_element_pattern_deep_transform_get(Egueb_Dom_Node *n,
+		Enesim_Matrix *transform)
+{
+	Enesim_Matrix m;
+
+	enesim_matrix_identity(&m);
+	EGUEB_SVG_ELEMENT_PATTERN_DEEP_GET(n, transform, m,
+			egueb_svg_element_pattern_deep_transform_get);
+}
+
+void egueb_svg_element_pattern_deep_x_get(Egueb_Dom_Node *n,
+		Egueb_Svg_Length *x)
+{
+	EGUEB_SVG_ELEMENT_PATTERN_DEEP_GET(n, x,
+		EGUEB_SVG_LENGTH_0, egueb_svg_element_pattern_deep_x_get);
+}
+
+void egueb_svg_element_pattern_deep_y_get(Egueb_Dom_Node *n,
+		Egueb_Svg_Length *y)
+{
+	EGUEB_SVG_ELEMENT_PATTERN_DEEP_GET(n, y,
+		EGUEB_SVG_LENGTH_0, egueb_svg_element_pattern_deep_y_get);
+}
+
+void egueb_svg_element_pattern_deep_width_get(Egueb_Dom_Node *n,
+		Egueb_Svg_Length *width)
+{
+	EGUEB_SVG_ELEMENT_PATTERN_DEEP_GET(n, width,
+		EGUEB_SVG_LENGTH_0, egueb_svg_element_pattern_deep_width_get);
+}
+
+void egueb_svg_element_pattern_deep_height_get(Egueb_Dom_Node *n,
+		Egueb_Svg_Length *height)
+{
+	EGUEB_SVG_ELEMENT_PATTERN_DEEP_GET(n, height,
+		EGUEB_SVG_LENGTH_0, egueb_svg_element_pattern_deep_height_get);
+}
+
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/
@@ -228,24 +304,6 @@ EAPI Egueb_Dom_Node * egueb_svg_element_pattern_new(void)
 
 	n = ENESIM_OBJECT_INSTANCE_NEW(egueb_svg_element_pattern);
 	return n;
-}
-
-EAPI void egueb_svg_element_pattern_deep_units_get(Egueb_Dom_Node *n,
-		Egueb_Svg_Referenceable_Units *units)
-{
-	EGUEB_SVG_ELEMENT_PATTERN_DEEP_GET(n, units,
-			EGUEB_SVG_REFERENCEABLE_UNITS_USER_SPACE_ON_USE,
-			egueb_svg_element_pattern_deep_units_get);
-}
-
-EAPI void egueb_svg_element_pattern_deep_transform_get(Egueb_Dom_Node *n,
-		Enesim_Matrix *transform)
-{
-	Enesim_Matrix m;
-
-	enesim_matrix_identity(&m);
-	EGUEB_SVG_ELEMENT_PATTERN_DEEP_GET(n, transform, m,
-			egueb_svg_element_pattern_deep_transform_get);
 }
 
 #if 0

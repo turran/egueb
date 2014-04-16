@@ -910,6 +910,19 @@ void egueb_svg_element_children_clone(Egueb_Dom_Node *n, Egueb_Dom_Node *from)
 	}
 }
 
+void egueb_svg_element_children_process(Egueb_Dom_Node *n)
+{
+	Egueb_Dom_Node *child;
+
+	EINA_INLIST_FOREACH(n->children, child)
+	{
+		Egueb_Dom_Node_Type type;
+		type = egueb_dom_node_type_get(child);
+		if (type == EGUEB_DOM_NODE_TYPE_ELEMENT_NODE)
+			egueb_dom_element_process(child);
+	}
+}
+
 #if 0
 Eina_Bool egueb_svg_element_attribute_animation_add(Egueb_Dom_Tag *t, const char *attr,
 		int *index)

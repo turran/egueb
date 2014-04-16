@@ -23,11 +23,57 @@
 #include "egueb_svg_element.h"
 
 #include "egueb_svg_renderable_private.h"
+#include "egueb_svg_event_request_painter_private.h"
 #include "egueb_dom_string_private.h"
 #include "egueb_svg_attr_matrix_private.h"
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
+/*----------------------------------------------------------------------------*
+ *                               Event handlers                               *
+ *----------------------------------------------------------------------------*/
+/* Whenever a node has been inserted into the document, request the painter */
+static void _egueb_svg_renderable_inserted_cb(Egueb_Dom_Event *e,
+		void *data)
+{
+	Egueb_Svg_Renderable *thiz;
+	Egueb_Dom_Event_Phase phase;
+	Egueb_Dom_Node *n = data;
+	Egueb_Dom_Event *request;
+
+	phase = egueb_dom_event_phase_get(e);
+	if (phase != EGUEB_DOM_EVENT_PHASE_AT_TARGET)
+		return;
+
+	INFO_ELEMENT(n, "Renderable inserted into document");
+	request = egueb_svg_event_request_painter_new();
+	egueb_dom_node_event_dispatch(n, egueb_dom_event_ref(request), NULL, NULL);
+
+	thiz = EGUEB_SVG_RENDERABLE(n);
+	thiz->painter = egueb_svg_event_request_painter_painter_get(request);
+	egueb_dom_event_unref(request);
+}
+
+/* Whenever a node has been removed from the document, remove the painter
+ */
+static void _egueb_svg_renderable_removed_cb(Egueb_Dom_Event *e,
+		void *data)
+{
+	Egueb_Svg_Renderable *thiz;
+	Egueb_Dom_Event_Phase phase;
+	Egueb_Dom_Node *n = data;
+
+	phase = egueb_dom_event_phase_get(e);
+	if (phase != EGUEB_DOM_EVENT_PHASE_AT_TARGET)
+		return;
+	INFO_ELEMENT(n, "Renderable removed from document");
+	thiz = EGUEB_SVG_RENDERABLE(n);
+	if (thiz->painter)
+	{
+		egueb_svg_painter_unref(thiz->painter);
+		thiz->painter = NULL;
+	}
+}
 /*----------------------------------------------------------------------------*
  *                             Element interface                              *
  *----------------------------------------------------------------------------*/
@@ -180,6 +226,15 @@ static void _egueb_svg_renderable_instance_init(void *o)
 
 	n = EGUEB_DOM_NODE(o);
 	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->transform), NULL);
+	/* request for a painter whenever a renderable has been inserted into a document */
+	egueb_dom_node_event_listener_add(n,
+			EGUEB_DOM_EVENT_MUTATION_NODE_INSERTED,
+			_egueb_svg_renderable_inserted_cb,
+			EINA_FALSE, n);
+	egueb_dom_node_event_listener_add(n,
+			EGUEB_DOM_EVENT_MUTATION_NODE_REMOVED,
+			_egueb_svg_renderable_removed_cb,
+			EINA_FALSE, n);
 	/* create the main proxy renderer */
 	r = enesim_renderer_proxy_new();
 	thiz->proxy = r;
@@ -232,16 +287,6 @@ Egueb_Svg_Painter * egueb_svg_renderable_painter_get(Egueb_Dom_Node *n)
 
 	thiz = EGUEB_SVG_RENDERABLE(n);
 	return egueb_svg_painter_ref(thiz->painter);
-}
-
-void egueb_svg_renderable_painter_set(Egueb_Dom_Node *n, Egueb_Svg_Painter *p)
-{
-	Egueb_Svg_Renderable *thiz;
-
-	thiz = EGUEB_SVG_RENDERABLE(n);
-	if (thiz->painter)
-		egueb_svg_painter_unref(thiz->painter);
-	thiz->painter = p;
 }
 
 Enesim_Renderer * egueb_svg_renderable_renderer_get(Egueb_Dom_Node *n)

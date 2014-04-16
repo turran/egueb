@@ -136,6 +136,8 @@ src/lib/svg/egueb_svg_element_svg_private.h \
 src/lib/svg/egueb_svg_element_text.c \
 src/lib/svg/egueb_svg_element_text_private.h \
 src/lib/svg/egueb_svg_element_tspan.c \
+src/lib/svg/egueb_svg_event_request_painter.c \
+src/lib/svg/egueb_svg_event_request_painter_private.h \
 src/lib/svg/egueb_svg_fill_rule.c \
 src/lib/svg/egueb_svg_font_size.c \
 src/lib/svg/egueb_svg_gradient.c \

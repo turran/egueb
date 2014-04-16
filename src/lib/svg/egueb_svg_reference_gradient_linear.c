@@ -27,6 +27,7 @@
 #include "egueb_svg_element_linear_gradient.h"
 
 #include "egueb_svg_element_private.h"
+#include "egueb_svg_gradient_private.h"
 #include "egueb_svg_reference_gradient_private.h"
 /*============================================================================*
  *                                  Local                                     *

@@ -289,7 +289,38 @@ void egueb_svg_gradient_href_node_get(Egueb_Dom_Node *n, Egueb_Dom_Node **href)
 	thiz = EGUEB_SVG_GRADIENT(n);
 	egueb_svg_attr_xlink_href_node_get(thiz->xlink_href, href);
 }
-/*============================================================================*
+
+void egueb_svg_gradient_deep_units_get(Egueb_Dom_Node *n,
+		Egueb_Svg_Referenceable_Units *units)
+{
+	EGUEB_SVG_GRADIENT_DEEP_GET(n, units,
+			EGUEB_SVG_REFERENCEABLE_UNITS_OBJECT_BOUNDING_BOX,
+			egueb_svg_gradient_deep_units_get);
+}
+
+void egueb_svg_gradient_deep_transform_get(Egueb_Dom_Node *n,
+		Enesim_Matrix *transform)
+{
+	Enesim_Matrix m;
+
+	enesim_matrix_identity(&m);
+	EGUEB_SVG_GRADIENT_DEEP_GET(n, transform, m,
+			egueb_svg_gradient_deep_transform_get);
+}
+
+void egueb_svg_gradient_deep_stop_get(Egueb_Dom_Node *n,
+		Egueb_Dom_Node **stop)
+{
+	_egueb_svg_gradient_deep_stop_get(n, stop);
+}
+
+void egueb_svg_gradient_deep_spread_method_get(Egueb_Dom_Node *n,
+		Egueb_Svg_Spread_Method *spread_method)
+{
+	EGUEB_SVG_GRADIENT_DEEP_GET(n, spread_method,
+			EGUEB_SVG_SPREAD_METHOD_PAD,
+			egueb_svg_gradient_deep_spread_method_get);
+}/*============================================================================*
  *                                   API                                      *
  *============================================================================*/
 EAPI Eina_Bool egueb_svg_is_gradient(Egueb_Dom_Node *n)
@@ -301,37 +332,6 @@ EAPI Eina_Bool egueb_svg_is_gradient(Egueb_Dom_Node *n)
 	return EINA_TRUE;
 }
 
-EAPI void egueb_svg_gradient_deep_units_get(Egueb_Dom_Node *n,
-		Egueb_Svg_Referenceable_Units *units)
-{
-	EGUEB_SVG_GRADIENT_DEEP_GET(n, units,
-			EGUEB_SVG_REFERENCEABLE_UNITS_OBJECT_BOUNDING_BOX,
-			egueb_svg_gradient_deep_units_get);
-}
-
-EAPI void egueb_svg_gradient_deep_transform_get(Egueb_Dom_Node *n,
-		Enesim_Matrix *transform)
-{
-	Enesim_Matrix m;
-
-	enesim_matrix_identity(&m);
-	EGUEB_SVG_GRADIENT_DEEP_GET(n, transform, m,
-			egueb_svg_gradient_deep_transform_get);
-}
-
-EAPI void egueb_svg_gradient_deep_stop_get(Egueb_Dom_Node *n,
-		Egueb_Dom_Node **stop)
-{
-	_egueb_svg_gradient_deep_stop_get(n, stop);
-}
-
-EAPI void egueb_svg_gradient_deep_spread_method_get(Egueb_Dom_Node *n,
-		Egueb_Svg_Spread_Method *spread_method)
-{
-	EGUEB_SVG_GRADIENT_DEEP_GET(n, spread_method,
-			EGUEB_SVG_SPREAD_METHOD_PAD,
-			egueb_svg_gradient_deep_spread_method_get);
-}
 
 #if 0
 EAPI void egueb_svg_element_gradient_href_set(Ender_Element *e, const char *href)

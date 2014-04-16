@@ -24,7 +24,19 @@
 #include "egueb_svg_element.h"
 #include "egueb_svg_element_g.h"
 #include "egueb_svg_element_pattern.h"
+
+#include "egueb_svg_element_private.h"
+#include "egueb_svg_renderable_private.h"
+#include "egueb_svg_element_pattern_private.h"
 #include "egueb_svg_reference_paint_server_private.h"
+#include "egueb_svg_event_request_painter_private.h"
+
+/*
+ * The pattern's attributes x, y, w, h defines the size of the pattern tile.
+ * And the behaviour is that the pattern tile always repeats (no restrict,
+ * pad, reflect, whatever). For that we need to create a rectangle renderer of
+ * the size x, y, w, h (the pattern attributes)
+ */
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
@@ -50,86 +62,21 @@ typedef struct _Egueb_Svg_Reference_Pattern_Class
 	Egueb_Svg_Reference_Paint_Server_Class base;
 } Egueb_Svg_Reference_Pattern_Class;
 
-#if 0
-static Eina_Bool _pattern_setup(Enesim_Renderer *r,
-		const Egueb_Svg_Element_Context *state,
-		Enesim_Renderer *rel)
+/*----------------------------------------------------------------------------*
+ *                               Event listeners                              *
+ *----------------------------------------------------------------------------*/
+static void _egueb_svg_reference_pattern_event_request_painter_cb(Egueb_Dom_Event *e,
+		void *data)
 {
-	Egueb_Svg_Pattern *thiz;
-	Egueb_Svg_Pattern_Units pu;
-	Enesim_Matrix m;
-	double x;
-	double y;
-	double w;
-	double h;
+	Egueb_Svg_Painter *painter;
+	Egueb_Dom_Node *n;
 
-	thiz = _egueb_svg_pattern_get(r);
-	pu = thiz->units;
-	if (pu == ESVG_OBJECT_BOUNDING_BOX)
-	{
-		Eina_Rectangle bbox;
-
-		/* check that the coordinates shold be set with (0,0) -> (1, 1) */
-		x = egueb_svg_coord_final_get(&thiz->x, 1);
-		y = egueb_svg_coord_final_get(&thiz->y, 1);
-		w = egueb_svg_coord_final_get(&thiz->width, 1);
-		h = egueb_svg_coord_final_get(&thiz->height, 1);
-
-		enesim_renderer_destination_bounds_get(rel, &bbox, 0, 0);
-		enesim_matrix_values_set(&m, bbox.w, 0, bbox.x, 0, bbox.h, bbox.y, 0, 0, 1);
-	}
-	else
-	{
-		double vw;
-		double vh;
-
-		/* use the user space coordiantes */
-		vw = state->viewbox_w;
-		vh = state->viewbox_h;
-		x = egueb_svg_coord_final_get(&thiz->x, vw);
-		y = egueb_svg_coord_final_get(&thiz->y, vh);
-		w = egueb_svg_coord_final_get(&thiz->width, vw);
-		h = egueb_svg_coord_final_get(&thiz->height, vh);
-
-		m = state->transform;
-	}
-
-	/* set the properties */
-	enesim_renderer_pattern_x_set(thiz->r, x);
-	enesim_renderer_pattern_y_set(thiz->r, y);
-	enesim_renderer_pattern_width_set(thiz->r, w);
-	enesim_renderer_pattern_height_set(thiz->r, h);
-
-	printf("pattern setup %g %g %g %g\n", x, y, w, h);
-	if (enesim_matrix_type_get(&thiz->transform) != ENESIM_MATRIX_IDENTITY)
-	{
-		enesim_matrix_compose(&m, &thiz->transform, &m);
-	}
-	enesim_renderer_transformation_set(thiz->r, &m);
-	enesim_renderer_pattern_source_set(thiz->r, thiz->content);
-	printf("ok, the content set %p\n", thiz->content);
-
-	/* TODO we need to set the new viewbox */
-	/* 1. setup the content */
-	/* 2. get the content renderer */
-	/* 3. assign it */
-#if 0
-	{
-		Egueb_Svg_Element_Context new_state;
-
-		memset(&new_state, 0, sizeof(Egueb_Svg_Element_Context));
-		new_state.viewbox_w = w;
-		new_state.viewbox_h = h;
-		new_state.transform = m;
-
-		egueb_svg_element_setup(thiz->content, estate, attr, s, error);
-		enesim_renderer_pattern_source_set(thiz->r, thiz->content);
-	}
-#endif
-
-	return EINA_TRUE;
+	n = egueb_dom_event_target_get(e);
+	ERR("Setting the generic painter on the renderable");
+	painter = egueb_svg_renderable_class_painter_get(n);
+	egueb_svg_event_request_painter_painter_set(e, painter);
+	egueb_dom_node_unref(n);
 }
-#endif
 
 /*----------------------------------------------------------------------------*
  *                           Paint server interface                           *
@@ -145,10 +92,120 @@ static Enesim_Renderer * _egueb_svg_reference_pattern_renderer_get(
 /*----------------------------------------------------------------------------*
  *                             Reference interface                            *
  *----------------------------------------------------------------------------*/
+static void _egueb_svg_reference_pattern_setup(
+		Egueb_Svg_Reference *r)
+{
+	Egueb_Svg_Reference_Pattern *thiz;
+	Egueb_Dom_Node *doc;
+
+	thiz = EGUEB_SVG_REFERENCE_PATTERN(r);
+
+	/* Make the document adopt the g, given that it has no document yet */
+	doc = egueb_dom_node_document_get(r->referenceable);
+	thiz->g = egueb_dom_document_node_adopt(doc, thiz->g, NULL);
+	egueb_dom_node_unref(doc);
+	/* clone every children, for smil elements we wont send the etch
+	 * request up in the three and thus it will simply not work
+	 */
+	egueb_svg_element_children_clone(thiz->g, r->referenceable);
+	/* make the group get the presentation attributes from ourelves and
+	 * the geometry relative from the referrer
+	 */
+	egueb_svg_element_presentation_relative_set(thiz->g, r->referenceable, NULL);
+	egueb_svg_element_geometry_relative_set(thiz->g, r->referencer, NULL);
+}
+
 static Eina_Bool _egueb_svg_reference_pattern_process(
 		Egueb_Svg_Reference *r)
 {
-	return EINA_TRUE;
+	Egueb_Svg_Reference_Pattern *thiz;
+	Egueb_Svg_Length x, y, w, h;
+	Egueb_Svg_Referenceable_Units units;
+	Egueb_Dom_Node *doc;
+	Enesim_Matrix m, transform;
+	Eina_Bool ret;
+	double gx, gy, gw, gh;
+
+	thiz = EGUEB_SVG_REFERENCE_PATTERN(r);
+	DBG("Processing a pattern reference");
+	/* get the final attributes */
+	egueb_svg_element_pattern_deep_x_get(r->referenceable, &x);
+	egueb_svg_element_pattern_deep_y_get(r->referenceable, &y);
+	egueb_svg_element_pattern_deep_width_get(r->referenceable, &w);
+	egueb_svg_element_pattern_deep_height_get(r->referenceable, &h);
+	egueb_svg_element_pattern_deep_units_get(r->referenceable, &units);
+	egueb_svg_element_pattern_deep_transform_get(r->referenceable, &transform);
+
+	if (units == EGUEB_SVG_REFERENCEABLE_UNITS_OBJECT_BOUNDING_BOX)
+	{
+		Egueb_Svg_Element *e_referencer;
+		Enesim_Rectangle bounds;
+
+		e_referencer = EGUEB_SVG_ELEMENT(r->referencer);
+		/* check that the coordinates shold be set with (0,0) -> (1, 1) */
+		gx = egueb_svg_coord_final_get(&x, 1, 1);
+		gy = egueb_svg_coord_final_get(&y, 1, 1);
+		gw = egueb_svg_length_final_get(&w, 1, 1, 1);
+		gh = egueb_svg_length_final_get(&h, 1, 1, 1);
+
+		egueb_svg_renderable_bounds_get(r->referencer, &bounds);
+		enesim_matrix_values_set(&m, bounds.w, 0, bounds.x, 0, bounds.h, bounds.y, 0, 0, 1);
+		DBG("Using the object bounding box %" ENESIM_RECTANGLE_FORMAT, ENESIM_RECTANGLE_ARGS(&bounds));
+		/* transform the bounds using the context matrix */
+		enesim_matrix_compose(&e_referencer->transform, &m, &m);
+	}
+	else
+	{
+		Egueb_Dom_Node *g_relative;
+		Egueb_Svg_Element *ge_relative;
+		double font_size;
+
+		DBG("Using the user space on use");
+		doc = egueb_dom_node_document_get(r->referencer);
+		if (!doc)
+		{
+			WARN("No document set");
+			return EINA_FALSE;
+		}
+		font_size = egueb_svg_document_font_size_get(doc);
+		egueb_dom_node_unref(doc);
+
+		g_relative = egueb_svg_element_geometry_relative_get(r->referencer);
+		if (!g_relative)
+		{
+			WARN("No relative geometry");
+			return EINA_FALSE;
+		}
+		ge_relative = EGUEB_SVG_ELEMENT(g_relative);
+
+		/* use the user space coordiantes */
+		gx = egueb_svg_coord_final_get(&x, ge_relative->viewbox.w, font_size);
+		gy = egueb_svg_coord_final_get(&y, ge_relative->viewbox.h, font_size);
+		gw = egueb_svg_length_final_get(&w, ge_relative->viewbox.w, ge_relative->viewbox.h, font_size);
+		gh = egueb_svg_length_final_get(&h, ge_relative->viewbox.w, ge_relative->viewbox.h, font_size);
+
+		m = ge_relative->transform;
+		egueb_dom_node_unref(g_relative);
+	}
+	/* Apply the pattern transform */
+	if (enesim_matrix_type_get(&transform) != ENESIM_MATRIX_IDENTITY)
+		enesim_matrix_compose(&m, &transform, &m);
+
+	/* set the renderer properties */
+	thiz = EGUEB_SVG_REFERENCE_PATTERN(r);
+	/* TODO once the transformation is done, use this */
+	//enesim_renderer_transformation_set(thiz->r, &m);
+	enesim_renderer_pattern_x_set(thiz->r, gx);
+	enesim_renderer_pattern_y_set(thiz->r, gy);
+	enesim_renderer_pattern_width_set(thiz->r, gw);
+	enesim_renderer_pattern_height_set(thiz->r, gh);
+
+	INFO("Coordinates x = %g, y = %g, w = %g, h = %g", gx, gy, gw, gh);
+	INFO("Transformation %" ENESIM_MATRIX_FORMAT, ENESIM_MATRIX_ARGS(&m));
+
+	ret = egueb_dom_element_process(thiz->g);
+
+	return ret;
 }
 /*----------------------------------------------------------------------------*
  *                              Object interface                              *
@@ -165,6 +222,7 @@ static void _egueb_svg_reference_pattern_class_init(void *k)
 
 	klass = EGUEB_SVG_REFERENCE_CLASS(k);
 	klass->process = _egueb_svg_reference_pattern_process;
+	klass->setup = _egueb_svg_reference_pattern_setup;
 
 	p_klass = EGUEB_SVG_REFERENCE_PAINT_SERVER_CLASS(k);
 	p_klass->renderer_get = _egueb_svg_reference_pattern_renderer_get;
@@ -173,10 +231,19 @@ static void _egueb_svg_reference_pattern_class_init(void *k)
 static void _egueb_svg_reference_pattern_instance_init(void *o)
 {
 	Egueb_Svg_Reference_Pattern *thiz;
+	Enesim_Renderer *src;
 
 	thiz = EGUEB_SVG_REFERENCE_PATTERN(o);
 	thiz->g = egueb_svg_element_g_new();
+	egueb_dom_node_event_listener_add(thiz->g,
+			EGUEB_SVG_EVENT_REQUEST_PAINTER,
+			_egueb_svg_reference_pattern_event_request_painter_cb,
+			EINA_FALSE, NULL);
+	src = egueb_svg_renderable_renderer_get(thiz->g);
+
 	thiz->r = enesim_renderer_pattern_new();
+	enesim_renderer_pattern_repeat_mode_set(thiz->r, ENESIM_REPEAT_MODE_REPEAT);
+	enesim_renderer_pattern_source_renderer_set(thiz->r, src);
 }
 
 static void _egueb_svg_reference_pattern_instance_deinit(void *o)

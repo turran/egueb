@@ -27,6 +27,7 @@
 #include "egueb_svg_element_radial_gradient.h"
 
 #include "egueb_svg_element_private.h"
+#include "egueb_svg_gradient_private.h"
 #include "egueb_svg_reference_gradient_private.h"
 /*============================================================================*
  *                                  Local                                     *
@@ -85,7 +86,7 @@ static Eina_Bool _egueb_svg_reference_gradient_radial_process(
 		Enesim_Rectangle bounds;
 
 		e_referencer = EGUEB_SVG_ELEMENT(r->referencer);
-		/* check that the coordinates shold be set with (0,0) -> (1, 1) */
+		/* check that the coordinates should be set with (0,0) -> (1, 1) */
 		gcx = egueb_svg_coord_final_get(&cx, 1, 1);
 		gcy = egueb_svg_coord_final_get(&cy, 1, 1);
 		gfx = egueb_svg_coord_final_get(&fx, 1, 1);
