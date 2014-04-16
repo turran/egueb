@@ -83,61 +83,9 @@ static Eina_Bool _egueb_svg_reference_clip_path_children_clone_cb(
 	return EINA_TRUE;
 }
 
-#if 0
-static void _egueb_svg_reference_clip_path_set_painter(Egueb_Dom_Node *n,
-		Egueb_Svg_Reference_Clip_Path *thiz)
-{
-	if (egueb_svg_is_renderable(n))
-	{
-		Egueb_Svg_Painter *painter;
-
-		painter = egueb_svg_renderable_painter_get(n);
-		if (painter)
-		{
-			DBG("Renderable already has a painter nothing do");
-			egueb_svg_painter_unref(painter);
-			return;
-		}
-
-		DBG("Setting the clip path painter on the shape");
-		painter = egueb_svg_painter_clip_path_new(EGUEB_SVG_REFERENCE(thiz));
-		egueb_svg_renderable_painter_set(n, painter);
-
-		if (egueb_svg_is_renderable_container(n))
-		{
-			Egueb_Dom_Node *child;
-
-			/* iterate over the shapes to set the painter too */
-			child = egueb_dom_node_child_first_get(n);
-			while (child)
-			{
-				Egueb_Dom_Node *tmp;
-
-				_egueb_svg_reference_clip_path_set_painter(child, thiz);
-				tmp = egueb_dom_node_sibling_next_get(child);
-				egueb_dom_node_unref(child);
-				child = tmp;
-			}
-		}
-	}
-}
-#endif
 /*----------------------------------------------------------------------------*
  *                               Event listeners                              *
  *----------------------------------------------------------------------------*/
-#if 0
-static void _egueb_svg_reference_clip_path_node_inserted_cb(Egueb_Dom_Event *e,
-		void *data)
-{
-	Egueb_Svg_Reference_Clip_Path *thiz = data;
-	Egueb_Dom_Node *target = NULL;
-
-	target = egueb_dom_event_target_get(e);
-	_egueb_svg_reference_clip_path_set_painter(target, thiz);
-	egueb_dom_node_unref(target);
-}
-#endif
-
 static void _egueb_svg_reference_clip_path_event_request_painter_cb(Egueb_Dom_Event *e,
 		void *data)
 {
@@ -262,12 +210,6 @@ static void _egueb_svg_reference_clip_path_instance_init(void *o)
 			EGUEB_SVG_EVENT_REQUEST_PAINTER,
 			_egueb_svg_reference_clip_path_event_request_painter_cb,
 			EINA_FALSE, thiz);
-#if 0
-	egueb_dom_node_event_listener_add(thiz->g,
-			EGUEB_DOM_EVENT_MUTATION_NODE_INSERTED,
-			_egueb_svg_reference_clip_path_node_inserted_cb,
-			EINA_TRUE, thiz);
-#endif
 	/* add the events that we need to propagate upstream */ 
 	egueb_dom_node_event_monitor_add(thiz->g,
 			_egueb_dom_reference_clip_path_monitor_cb, thiz);

@@ -132,61 +132,6 @@ static void _egueb_svg_element_svg_event_request_painter_cb(Egueb_Dom_Event *e,
 	egueb_dom_node_unref(n);
 }
 
-#if 0
-/* TODO add a function to unset the painter */
-static void _egueb_svg_element_svg_set_generic_painter(Egueb_Dom_Node *n)
-{
-	if (egueb_svg_is_renderable(n))
-	{
-		Egueb_Svg_Painter *painter;
-
-		painter = egueb_svg_renderable_painter_get(n);
-		if (painter)
-		{
-			DBG("Renderable already has a painter nothing do");
-			egueb_svg_painter_unref(painter);
-			return;
-		}
-
-		DBG("Setting the generic painter on the shape");
-		painter = egueb_svg_renderable_class_painter_get(n);
-		egueb_svg_renderable_painter_set(n, painter);
-
-		if (egueb_svg_is_renderable_container(n))
-		{
-			Egueb_Dom_Node *child;
-
-			/* iterate over the shapes to set the painter too */
-			child = egueb_dom_node_child_first_get(n);
-			while (child)
-			{
-				Egueb_Dom_Node *tmp;
-
-				_egueb_svg_element_svg_set_generic_painter(child);
-				tmp = egueb_dom_node_sibling_next_get(child);
-				egueb_dom_node_unref(child);
-				child = tmp;
-			}
-		}
-	}
-}
-
-/* whenever a child is added which can have a painter, check if it is set
- * if not, define the generic painter for it. Not that a node inserted
- * does not trigger the event for each of the children of the inserted
- * tree, so we need to iterate there
- */
-static void _egueb_svg_element_svg_node_inserted_cb(Egueb_Dom_Event *e,
-		void *data)
-{
-	Egueb_Dom_Node *target = NULL;
-
-	target = egueb_dom_event_target_get(e);
-	_egueb_svg_element_svg_set_generic_painter(target);
-	egueb_dom_node_unref(target);
-}
-#endif
-
 static void _egueb_svg_element_svg_etch_cb(Egueb_Dom_Event *e,
 		void *data)
 {
@@ -417,12 +362,6 @@ static void _egueb_svg_element_svg_instance_init(void *o)
 	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->viewbox), NULL);
 
 	/* add the event to set the painter */
-#if 0
-	egueb_dom_node_event_listener_add(n,
-			EGUEB_DOM_EVENT_MUTATION_NODE_INSERTED,
-			_egueb_svg_element_svg_node_inserted_cb,
-			EINA_FALSE, NULL);
-#endif
 	egueb_dom_node_event_listener_add(n,
 			EGUEB_SMIL_EVENT_ETCH,
 			_egueb_svg_element_svg_etch_cb,
