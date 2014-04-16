@@ -152,6 +152,7 @@ Enesim_Object_Descriptor * egueb_svg_element_descriptor_get(void);
 void egueb_svg_element_clip_path_resolve(Egueb_Dom_Node *n,
 		Egueb_Svg_Clip_Path *clip_path_current,
 		Egueb_Svg_Clip_Path *clip_path_last, Egueb_Svg_Reference **r);
+void egueb_svg_element_children_clone(Egueb_Dom_Node *n, Egueb_Dom_Node *from);
 
 /* Helper macro to get the animated/base values of an attribute */
 #define EGUEB_SVG_ELEMENT_ATTR_ANIMATED_GET(attr, val)				\

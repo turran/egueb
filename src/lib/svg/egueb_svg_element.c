@@ -895,6 +895,21 @@ void egueb_svg_element_clip_path_resolve(Egueb_Dom_Node *n,
 	}
 }
 
+void egueb_svg_element_children_clone(Egueb_Dom_Node *n, Egueb_Dom_Node *from)
+{
+	Egueb_Dom_Node *from_child;
+
+	/* clone every children */
+	EINA_INLIST_FOREACH(from->children, from_child)
+	{
+		Egueb_Dom_Node *n_child;
+
+		n_child = egueb_dom_node_clone(from_child, EINA_TRUE, EINA_TRUE, NULL);
+		if (n_child)
+			egueb_dom_node_child_append(n, n_child, NULL);
+	}
+}
+
 #if 0
 Eina_Bool egueb_svg_element_attribute_animation_add(Egueb_Dom_Tag *t, const char *attr,
 		int *index)
