@@ -72,7 +72,7 @@ static void _egueb_svg_reference_pattern_event_request_painter_cb(Egueb_Dom_Even
 	Egueb_Dom_Node *n;
 
 	n = egueb_dom_event_target_get(e);
-	ERR("Setting the generic painter on the renderable");
+	DBG_ELEMENT(n, "Setting the generic painter on the renderable");
 	painter = egueb_svg_renderable_class_painter_get(n);
 	egueb_svg_event_request_painter_painter_set(e, painter);
 	egueb_dom_node_unref(n);
