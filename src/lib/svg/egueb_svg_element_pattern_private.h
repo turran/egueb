@@ -20,6 +20,7 @@
 #define _EGUEB_SVG_PATTERN_PRIVATE_H_
 
 #include "egueb_svg_length.h"
+#include "egueb_svg_rect.h"
 
 void egueb_svg_element_pattern_deep_units_get(Egueb_Dom_Node *n,
 		Egueb_Svg_Referenceable_Units *units);
@@ -33,5 +34,7 @@ void egueb_svg_element_pattern_deep_width_get(Egueb_Dom_Node *n,
 		Egueb_Svg_Length *width);
 void egueb_svg_element_pattern_deep_height_get(Egueb_Dom_Node *n,
 		Egueb_Svg_Length *height);
+Eina_Bool egueb_svg_element_pattern_deep_viewbox_get(Egueb_Dom_Node *n,
+		Egueb_Svg_Rect *vb);
 
 #endif

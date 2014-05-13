@@ -54,6 +54,7 @@ typedef struct _Egueb_Svg_Reference_Pattern
 {
 	Egueb_Svg_Reference_Paint_Server base;
 	Egueb_Dom_Node *g;
+	Enesim_Renderer *tile;
 	Enesim_Renderer *r;
 } Egueb_Svg_Reference_Pattern;
 
@@ -121,9 +122,11 @@ static Eina_Bool _egueb_svg_reference_pattern_process(
 	Egueb_Svg_Reference_Pattern *thiz;
 	Egueb_Svg_Length x, y, w, h;
 	Egueb_Svg_Referenceable_Units units;
+	Egueb_Svg_Rect vb;
 	Egueb_Dom_Node *doc;
 	Enesim_Matrix m, transform;
 	Eina_Bool ret;
+	Eina_Bool has_viewbox;
 	double gx, gy, gw, gh;
 
 	thiz = EGUEB_SVG_REFERENCE_PATTERN(r);
@@ -135,6 +138,7 @@ static Eina_Bool _egueb_svg_reference_pattern_process(
 	egueb_svg_element_pattern_deep_height_get(r->referenceable, &h);
 	egueb_svg_element_pattern_deep_units_get(r->referenceable, &units);
 	egueb_svg_element_pattern_deep_transform_get(r->referenceable, &transform);
+	has_viewbox = egueb_svg_element_pattern_deep_viewbox_get(r->referenceable, &vb);
 
 	if (units == EGUEB_SVG_REFERENCEABLE_UNITS_OBJECT_BOUNDING_BOX)
 	{
@@ -191,14 +195,26 @@ static Eina_Bool _egueb_svg_reference_pattern_process(
 	if (enesim_matrix_type_get(&transform) != ENESIM_MATRIX_IDENTITY)
 		enesim_matrix_compose(&m, &transform, &m);
 
+	if (has_viewbox)
+	{
+		Egueb_Svg_Element *e;
+		Enesim_Matrix em;
+
+		e = EGUEB_SVG_ELEMENT(thiz->g);
+		enesim_rectangle_coords_from(&e->viewbox, vb.x, vb.y, vb.w, vb.h);
+		enesim_matrix_values_set(&em, vb.w, 0, vb.x, 0, vb.h, vb.y, 0, 0, 1);
+		INFO("Using a new viewbox %g %g %g %g", vb.x, vb.y, vb.w, vb.h);
+		egueb_svg_renderable_transform_set(thiz->g, &em);
+	}
+
 	/* set the renderer properties */
 	thiz = EGUEB_SVG_REFERENCE_PATTERN(r);
 	/* TODO once the transformation is done, use this */
-	//enesim_renderer_transformation_set(thiz->r, &m);
-	enesim_renderer_pattern_x_set(thiz->r, gx);
-	enesim_renderer_pattern_y_set(thiz->r, gy);
-	enesim_renderer_pattern_width_set(thiz->r, gw);
-	enesim_renderer_pattern_height_set(thiz->r, gh);
+	enesim_renderer_rectangle_x_set(thiz->tile, gx);
+	enesim_renderer_rectangle_y_set(thiz->tile, gy);
+	enesim_renderer_rectangle_width_set(thiz->tile, gw);
+	enesim_renderer_rectangle_height_set(thiz->tile, gh);
+	enesim_renderer_transformation_set(thiz->tile, &m);
 
 	INFO("Coordinates x = %g, y = %g, w = %g, h = %g", gx, gy, gw, gh);
 	INFO("Transformation %" ENESIM_MATRIX_FORMAT, ENESIM_MATRIX_ARGS(&m));
@@ -241,9 +257,13 @@ static void _egueb_svg_reference_pattern_instance_init(void *o)
 			EINA_FALSE, NULL);
 	src = egueb_svg_renderable_renderer_get(thiz->g);
 
+	thiz->tile = enesim_renderer_rectangle_new();
+	enesim_renderer_shape_fill_renderer_set(thiz->tile, src);
+	enesim_renderer_shape_draw_mode_set(thiz->tile, ENESIM_RENDERER_SHAPE_DRAW_MODE_FILL);
+
 	thiz->r = enesim_renderer_pattern_new();
 	enesim_renderer_pattern_repeat_mode_set(thiz->r, ENESIM_REPEAT_MODE_REPEAT);
-	enesim_renderer_pattern_source_renderer_set(thiz->r, src);
+	enesim_renderer_pattern_source_renderer_set(thiz->r, enesim_renderer_ref(thiz->tile));
 }
 
 static void _egueb_svg_reference_pattern_instance_deinit(void *o)
@@ -253,6 +273,7 @@ static void _egueb_svg_reference_pattern_instance_deinit(void *o)
 	thiz = EGUEB_SVG_REFERENCE_PATTERN(o);
 	egueb_dom_node_unref(thiz->g);
 	enesim_renderer_unref(thiz->r);
+	enesim_renderer_unref(thiz->tile);
 }
 /*============================================================================*
  *                                 Global                                     *

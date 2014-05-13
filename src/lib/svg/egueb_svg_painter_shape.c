@@ -327,7 +327,7 @@ static Eina_Bool _egueb_svg_painter_shape_resolve(Egueb_Svg_Painter *p,
 	INFO("Common visibility: %d, opacity %08x", p->visibility, p->color);
 	INFO("Shape draw_mode: %08x", p->draw_mode);
 	INFO("Fill color: %08x, renderer: %p", p->fill_color, p->fill_renderer);
-	INFO("Stroke color: %08x, renderer: %p", p->stroke_color, p->stroke_renderer);
+	INFO("Stroke color: %08x, renderer: %p, weight: %g", p->stroke_color, p->stroke_renderer, p->stroke_weight);
 	return EINA_TRUE;
 }
 /*----------------------------------------------------------------------------*

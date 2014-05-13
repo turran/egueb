@@ -286,6 +286,42 @@ void egueb_svg_element_pattern_deep_height_get(Egueb_Dom_Node *n,
 		EGUEB_SVG_LENGTH_0, egueb_svg_element_pattern_deep_height_get);
 }
 
+Eina_Bool egueb_svg_element_pattern_deep_viewbox_get(Egueb_Dom_Node *n,
+		Egueb_Svg_Rect *vb)
+{
+	if (egueb_svg_element_is_pattern(n))
+	{
+		Egueb_Svg_Element_Pattern *thiz;
+		thiz = EGUEB_SVG_ELEMENT_PATTERN(n);
+		if (!egueb_dom_attr_is_set(thiz->viewbox))
+		{
+			Egueb_Dom_Node *href = NULL;
+			_egueb_svg_element_pattern_xlink_href_node_get(	
+					n, &href);
+			if (href)
+			{
+				Eina_Bool ret;
+				ret = egueb_svg_element_pattern_deep_viewbox_get(href, vb);
+				egueb_dom_node_unref(href);
+				return ret;
+			}
+			else
+			{
+				return EINA_FALSE;
+			}
+		}
+		else
+		{
+			egueb_dom_attr_final_get(thiz->viewbox, vb);
+			return EINA_TRUE;
+		}
+	}
+	else
+	{
+		return EINA_FALSE;
+	}
+}
+
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/
