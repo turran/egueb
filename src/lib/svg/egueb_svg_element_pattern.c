@@ -180,7 +180,7 @@ static void _egueb_svg_element_pattern_instance_init(void *o)
 	/* create the properties */
 	thiz->units = egueb_svg_attr_referenceable_units_new(
 			egueb_dom_string_ref(EGUEB_SVG_PATTERN_UNITS),
-			EGUEB_SVG_REFERENCEABLE_UNITS_USER_SPACE_ON_USE, EINA_TRUE,
+			EGUEB_SVG_REFERENCEABLE_UNITS_OBJECT_BOUNDING_BOX, EINA_TRUE,
 			EINA_FALSE, EINA_FALSE);
 
 	thiz->transform = egueb_svg_attr_matrix_new(
@@ -244,7 +244,7 @@ void egueb_svg_element_pattern_deep_units_get(Egueb_Dom_Node *n,
 		Egueb_Svg_Referenceable_Units *units)
 {
 	EGUEB_SVG_ELEMENT_PATTERN_DEEP_GET(n, units,
-			EGUEB_SVG_REFERENCEABLE_UNITS_USER_SPACE_ON_USE,
+			EGUEB_SVG_REFERENCEABLE_UNITS_OBJECT_BOUNDING_BOX,
 			egueb_svg_element_pattern_deep_units_get);
 }
 
