@@ -40,11 +40,6 @@ typedef struct _Egueb_Svg_Element_Polyline
 	Egueb_Dom_Node *points;
 	/* private */
 	Enesim_Renderer *r;
-#if 0
-	Enesim_Renderer *proxy;
-	Enesim_Renderer *line;
-	Enesim_Renderer *figure;
-#endif
 } Egueb_Svg_Element_Polyline;
 
 typedef struct _Egueb_Svg_Element_Polyline_Class
@@ -61,93 +56,6 @@ static void _egueb_svg_element_polyline_points_cb(void *data, void *user_data)
 	enesim_renderer_figure_polygon_vertex_add(thiz->r, pt->x, pt->y);
 }
 
-#if 0
-/*----------------------------------------------------------------------------*
- *                       The Esvg Renderable interface                        *
- *----------------------------------------------------------------------------*/
-static Egueb_Svg_Element_Setup_Return _egueb_svg_element_polyline_setup(Egueb_Dom_Tag *t,
-		Egueb_Svg_Context *c,
-		Egueb_Svg_Element_Context *ctx,
-		Egueb_Svg_Attribute_Presentation *attr,
-		Enesim_Log **error)
-{
-	return ESVG_SETUP_OK;
-}
-
-static Eina_Bool _egueb_svg_element_polyline_renderer_propagate(Egueb_Dom_Tag *t,
-		Egueb_Svg_Context *c,
-		const Egueb_Svg_Element_Context *ctx,
-		const Egueb_Svg_Attribute_Presentation *attr,
-		Egueb_Svg_Renderable_Context *rctx,
-		Enesim_Log **error)
-{
-	Egueb_Svg_Element_Polyline *thiz;
-	Enesim_Renderer *r;
-	int nvert;
-
-	thiz = _egueb_svg_element_polyline_get(t);
-
-	/* FIXME gets the parents size or the topmost? */
-	/* FIXME we should keep the old fill renderer */
-
-	nvert = eina_list_count(thiz->points);
-	if (nvert > 2)
-		r = thiz->figure;
-	else
-		r = thiz->line;
-
-	/* shape properties */
-	enesim_renderer_shape_fill_color_set(r, rctx->fill_color);
-	enesim_renderer_shape_fill_rule_set(r, rctx->fill_rule);
-	enesim_renderer_shape_fill_renderer_set(r, rctx->fill_renderer);
-	enesim_renderer_shape_stroke_color_set(r, rctx->stroke_color);
-	enesim_renderer_shape_stroke_weight_set(r, rctx->stroke_weight);
-	enesim_renderer_shape_draw_mode_set(r, rctx->draw_mode);
-	enesim_renderer_shape_stroke_location_set(r, ENESIM_RENDERER_SHAPE_STROKE_LOCATION_CENTER);
-	enesim_renderer_shape_stroke_cap_set(r, rctx->stroke_cap);
-	enesim_renderer_shape_stroke_join_set(r, rctx->stroke_join);
-
-	/* base properties */
-	enesim_renderer_transformation_set(r, &ctx->transform);
-	enesim_renderer_color_set(r, rctx->color);
-	DBG("calling the setup on the polyline");
-	enesim_renderer_proxy_proxied_set(thiz->proxy, r);
-
-	return EINA_TRUE;
-}
-
-static void _egueb_svg_element_polyline_free(Egueb_Dom_Tag *t)
-{
-	Egueb_Svg_Element_Polyline *thiz;
-	Egueb_Svg_Point *p;
-
-	thiz = _egueb_svg_element_polyline_get(t);
-	EINA_LIST_FREE(thiz->points, p)
-	{
-		free(p);
-	}
-	enesim_renderer_unref(thiz->proxy);
-	enesim_renderer_unref(thiz->line);
-	enesim_renderer_unref(thiz->figure);
-	free(thiz);
-}
-
-static Egueb_Svg_Renderable_Descriptor _descriptor = {
-	/* .child_add		= */ NULL,
-	/* .child_remove	= */ NULL,
-	/* .attribute_get 	= */ _egueb_svg_element_polyline_attribute_get,
-	/* .cdata_set 		= */ NULL,
-	/* .text_set 		= */ NULL,
-	/* .text_get		     = */ NULL,
-	/* .free 		= */ _egueb_svg_element_polyline_free,
-	/* .initialize 		= */ NULL,
-	/* .attribute_set 	= */ _egueb_svg_element_polyline_attribute_set,
-	/* .attribute_animated_fetch = */ NULL,
-	/* .setup		= */ _egueb_svg_element_polyline_setup,
-	/* .renderer_get	= */ _egueb_svg_element_polyline_renderer_get,
-	/* .renderer_propagate	= */ _egueb_svg_element_polyline_renderer_propagate,
-};
-#endif
 /*----------------------------------------------------------------------------*
  *                               Shape interface                              *
  *----------------------------------------------------------------------------*/
@@ -159,41 +67,6 @@ static Eina_Bool _egueb_svg_element_polyline_generate_geometry(Egueb_Svg_Shape *
 	Egueb_Dom_List *points;
 
 	thiz = EGUEB_SVG_ELEMENT_POLYLINE(s);
-#if 0
-	/* setup the points */
-	if (nvert > 2)
-	{
-		Egueb_Svg_Point *p;
-		Eina_List *l;
-
-		enesim_renderer_figure_clear(r);
-		enesim_renderer_figure_polygon_add(r);
-		DBG("using the figure for %d vertices", nvert);
-		EINA_LIST_FOREACH(thiz->points, l, p)
-		{
-			DBG("(%f, %f) ", p->x, p->y);
-			enesim_renderer_figure_polygon_vertex_add(r, p->x, p->y);
-		}
-	}
-	else
-	{
-		Egueb_Svg_Point *p;
-		Egueb_Svg_Point pts[2] = { { 0, 0 }, { 0, 0 } };
-		Egueb_Svg_Point *pt = pts;
-		Eina_List *l;
-
-		EINA_LIST_FOREACH(thiz->points, l, p)
-		{
-			*pt = *p;
-			pt++;
-		}
-		enesim_renderer_line_x0_set(r, pts[0].x);
-		enesim_renderer_line_y0_set(r, pts[0].y);
-		enesim_renderer_line_x1_set(r, pts[1].x);
-		enesim_renderer_line_y1_set(r, pts[1].y);
-		DBG("using the line (%f, %f) (%f, %f)", pts[0].x, pts[0].y, pts[1].x, pts[1].y);
-	}
-#endif
 	/* TODO Be sure that we modified the points */
 	egueb_dom_attr_final_get(thiz->points, &points);
 	enesim_renderer_figure_clear(thiz->r);
