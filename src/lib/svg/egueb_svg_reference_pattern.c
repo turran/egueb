@@ -24,6 +24,7 @@
 #include "egueb_svg_element.h"
 #include "egueb_svg_element_g.h"
 #include "egueb_svg_element_pattern.h"
+#include "egueb_svg_document.h"
 
 #include "egueb_svg_element_private.h"
 #include "egueb_svg_renderable_private.h"
@@ -181,7 +182,6 @@ static Eina_Bool _egueb_svg_reference_pattern_process(
 			return EINA_FALSE;
 		}
 		ge_relative = EGUEB_SVG_ELEMENT(g_relative);
-
 		/* use the user space coordiantes */
 		gx = egueb_svg_coord_final_get(&x, ge_relative->viewbox.w, font_size);
 		gy = egueb_svg_coord_final_get(&y, ge_relative->viewbox.h, font_size);
