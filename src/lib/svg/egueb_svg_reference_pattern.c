@@ -191,30 +191,30 @@ static Eina_Bool _egueb_svg_reference_pattern_process(
 		m = ge_relative->transform;
 		egueb_dom_node_unref(g_relative);
 	}
-	/* Apply the pattern transform */
-	if (enesim_matrix_type_get(&transform) != ENESIM_MATRIX_IDENTITY)
-		enesim_matrix_compose(&m, &transform, &m);
-
 	if (has_viewbox)
 	{
 		Egueb_Svg_Element *e;
-		Enesim_Matrix em;
+		Enesim_Matrix em1, em2;
 
 		e = EGUEB_SVG_ELEMENT(thiz->g);
 		enesim_rectangle_coords_from(&e->viewbox, vb.x, vb.y, vb.w, vb.h);
-		enesim_matrix_values_set(&em, vb.w, 0, vb.x, 0, vb.h, vb.y, 0, 0, 1);
+		enesim_matrix_scale(&em1, gw / vb.w, gh / vb.h);
+		enesim_matrix_translate(&em2, -vb.x, -vb.y);
+		enesim_matrix_compose(&em2, &em1, &em2);
 		INFO("Using a new viewbox %g %g %g %g", vb.x, vb.y, vb.w, vb.h);
-		egueb_svg_renderable_transform_set(thiz->g, &em);
+		egueb_svg_renderable_transform_set(thiz->g, &em2);
 	}
 
-	/* set the renderer properties */
+	/* set the content properties */
 	thiz = EGUEB_SVG_REFERENCE_PATTERN(r);
-	/* TODO once the transformation is done, use this */
 	enesim_renderer_rectangle_x_set(thiz->tile, gx);
 	enesim_renderer_rectangle_y_set(thiz->tile, gy);
 	enesim_renderer_rectangle_width_set(thiz->tile, gw);
 	enesim_renderer_rectangle_height_set(thiz->tile, gh);
 	enesim_renderer_transformation_set(thiz->tile, &m);
+
+	/* set the container properties */
+	enesim_renderer_transformation_set(thiz->r, &transform);
 
 	INFO("Coordinates x = %g, y = %g, w = %g, h = %g", gx, gy, gw, gh);
 	INFO("Transformation %" ENESIM_MATRIX_FORMAT, ENESIM_MATRIX_ARGS(&m));
