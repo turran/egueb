@@ -98,6 +98,7 @@ static void _egueb_svg_reference_clip_path_event_request_painter_cb(Egueb_Dom_Ev
 	painter = egueb_svg_painter_clip_path_new(EGUEB_SVG_REFERENCE(thiz));
 	egueb_svg_event_request_painter_painter_set(e, painter);
 	egueb_dom_node_unref(n);
+	egueb_dom_event_stop_propagation(e);
 }
 /*----------------------------------------------------------------------------*
  *                               Event monitors                               *
