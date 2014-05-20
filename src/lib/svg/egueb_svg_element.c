@@ -899,10 +899,16 @@ void egueb_svg_element_children_clone(Egueb_Dom_Node *n, Egueb_Dom_Node *from)
 {
 	Egueb_Dom_Node *from_child;
 
+	/* TODO add the needed events whenever a children is added/removed to the from node */
 	/* clone every children */
 	EINA_INLIST_FOREACH(from->children, from_child)
 	{
 		Egueb_Dom_Node *n_child;
+		Egueb_Dom_String *s;
+
+		s = egueb_dom_node_name_get(from_child);
+		DBG_ELEMENT(n, "Cloning child %s", egueb_dom_string_string_get(s));
+		egueb_dom_string_unref(s);
 
 		n_child = egueb_dom_node_clone(from_child, EINA_TRUE, EINA_TRUE, NULL);
 		if (n_child)
