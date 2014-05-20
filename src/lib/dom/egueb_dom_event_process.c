@@ -16,11 +16,23 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 #include "egueb_dom_private.h"
+
+#include "egueb_dom_string.h"
+#include "egueb_dom_main.h"
+#include "egueb_dom_node_list.h"
+#include "egueb_dom_node.h"
+#include "egueb_dom_attr.h"
+#include "egueb_dom_value.h"
+#include "egueb_dom_event.h"
+#include "egueb_dom_event_process.h"
+
 #include "egueb_dom_string_private.h"
 #include "egueb_dom_event_process_private.h"
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
+#define EGUEB_DOM_EVENT_PROCESS_DESCRIPTOR egueb_dom_event_process_descriptor_get()
+
 typedef struct _Egueb_Dom_Event_Process
 {
 	Egueb_Dom_Event base;
@@ -64,4 +76,15 @@ Egueb_Dom_Event * egueb_dom_event_process_new(void)
 			EINA_TRUE, EINA_FALSE, EINA_TRUE,
 			EGUEB_DOM_EVENT_DIRECTION_CAPTURE_BUBBLE);
 	return event;
+}
+/*============================================================================*
+ *                                   API                                      *
+ *============================================================================*/
+EAPI Eina_Bool egueb_dom_event_is_process(Egueb_Dom_Event *e)
+{
+	if (!e) return EINA_FALSE;
+	if (!enesim_object_instance_inherits(ENESIM_OBJECT_INSTANCE(e),
+			EGUEB_DOM_EVENT_PROCESS_DESCRIPTOR))
+		return EINA_FALSE;
+	return EINA_TRUE;
 }

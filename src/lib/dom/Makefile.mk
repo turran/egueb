@@ -24,6 +24,7 @@ src/lib/dom/egueb_dom_event_external.h \
 src/lib/dom/egueb_dom_event_io.h \
 src/lib/dom/egueb_dom_event_mouse.h \
 src/lib/dom/egueb_dom_event_mutation.h \
+src/lib/dom/egueb_dom_event_process.h \
 src/lib/dom/egueb_dom_event_ui.h \
 src/lib/dom/egueb_dom_feature.h \
 src/lib/dom/egueb_dom_feature_animation.h \

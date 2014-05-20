@@ -15,13 +15,9 @@
  * License along with this library.
  * If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef _EGUEB_DOM_EVENT_PROCESS_PRIVATE_H_
-#define _EGUEB_DOM_EVENT_PROCESS_PRIVATE_H_
+#ifndef _EGUEB_DOM_EVENT_PROCESS_H_
+#define _EGUEB_DOM_EVENT_PROCESS_H_
 
-#include "egueb_dom_event_private.h"
-
-extern Egueb_Dom_String *EGUEB_DOM_EVENT_PROCESS;
-
-Egueb_Dom_Event * egueb_dom_event_process_new(void);
+EAPI Eina_Bool egueb_dom_event_is_process(Egueb_Dom_Event *e);
 
 #endif

@@ -90,6 +90,7 @@ extern "C" {
 #include "egueb_dom_event_io.h"
 #include "egueb_dom_event_mouse.h"
 #include "egueb_dom_event_mutation.h"
+#include "egueb_dom_event_process.h"
 #include "egueb_dom_event_ui.h"
 
 #include "egueb_dom_input.h"
