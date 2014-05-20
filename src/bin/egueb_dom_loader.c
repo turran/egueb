@@ -38,15 +38,6 @@ static void help(void)
 /*----------------------------------------------------------------------------*
  *                           Application interface                            *
  *----------------------------------------------------------------------------*/
-#if 0
-/* given that we only support this callback, we pass the dir name as the data */
-static const char * _filename_get(void *user_data)
-{
-	char *file = user_data;
-	return file;
-}
-#endif
-
 int main(int argc, char *argv[])
 {
 	Egueb_Dom_Node *doc = NULL;
@@ -94,11 +85,6 @@ int main(int argc, char *argv[])
 		printf("Fail to parse file %s\n", argv[1]);
 		goto shutdown;
 	}
-	/* set the different application callbacks */
-#if 0
-	/* TODO for later */
-	egueb_svg_document_filename_get_cb_set(doc, _filename_get, argv[1]);
-#endif
 
 	render = egueb_dom_node_feature_get(doc, EGUEB_DOM_FEATURE_RENDER_NAME, NULL);
 	if (!render)
