@@ -33,7 +33,6 @@
 #include "egueb_svg_document_private.h"
 #include "egueb_svg_attr_rect_private.h"
 #include "egueb_svg_attr_length_private.h"
-#include "egueb_svg_event_request_painter_private.h"
 /*
  * Given that a svg element can clip, we should use a clipper with a compound
  * inside as the renderer
@@ -118,19 +117,6 @@ typedef struct _Egueb_Svg_Element_Svg_Class
 	Egueb_Svg_Renderable_Container_Class base;
 } Egueb_Svg_Element_Svg_Class;
 
-
-static void _egueb_svg_element_svg_event_request_painter_cb(Egueb_Dom_Event *e,
-		void *data)
-{
-	Egueb_Dom_Node *n;
-	Egueb_Svg_Painter *painter;
-
-	n = egueb_dom_event_target_get(e);
-	DBG_ELEMENT(n, "Setting the generic painter on the renderable");
-	painter = egueb_svg_renderable_class_painter_get(n);
-	egueb_svg_event_request_painter_painter_set(e, painter);
-	egueb_dom_node_unref(n);
-}
 
 static void _egueb_svg_element_svg_etch_cb(Egueb_Dom_Event *e,
 		void *data)
@@ -366,11 +352,6 @@ static void _egueb_svg_element_svg_instance_init(void *o)
 			EGUEB_SMIL_EVENT_ETCH,
 			_egueb_svg_element_svg_etch_cb,
 			EINA_TRUE, thiz);
-	egueb_dom_node_event_listener_add(n,
-			EGUEB_SVG_EVENT_REQUEST_PAINTER,
-			_egueb_svg_element_svg_event_request_painter_cb,
-			EINA_FALSE, NULL);
-
 	/* the rendering */
 	r = enesim_renderer_proxy_new();
 	thiz->proxy = r;

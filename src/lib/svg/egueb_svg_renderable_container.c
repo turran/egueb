@@ -18,6 +18,7 @@
 
 #include "egueb_svg_main_private.h"
 #include "egueb_svg_renderable_container_private.h"
+#include "egueb_svg_event_request_painter_private.h"
 
 /* The renderable container abstracts the input handling of events
  * to propagate the input events to its children. We need to keep
@@ -27,6 +28,19 @@
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
+static void _egueb_svg_renderable_container_request_painter_cb(Egueb_Dom_Event *e,
+		void *data)
+{
+	Egueb_Dom_Node *n;
+	Egueb_Svg_Painter *painter;
+
+	n = egueb_dom_event_target_get(e);
+	DBG_ELEMENT(n, "Setting the generic painter on the renderable");
+	painter = egueb_svg_renderable_class_painter_get(n);
+	egueb_svg_event_request_painter_painter_set(e, painter);
+	egueb_dom_node_unref(n);
+}
+
 static Eina_Bool _egueb_svg_renderable_container_children_process_cb(
 		Egueb_Dom_Node *child, void *data)
 {
@@ -127,6 +141,10 @@ static void _egueb_svg_renderable_container_instance_init(void *o)
 			EGUEB_DOM_EVENT_MUTATION_NODE_REMOVED,
 			_egueb_svg_renderable_container_tree_modified_cb,
 			EINA_FALSE, thiz);
+	egueb_dom_node_event_listener_add(n,
+			EGUEB_SVG_EVENT_REQUEST_PAINTER,
+			_egueb_svg_renderable_container_request_painter_cb,
+			EINA_FALSE, NULL);
 	/* mark it as changed */
 	thiz->renderable_tree_changed = EINA_TRUE;
 }
