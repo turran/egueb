@@ -46,6 +46,7 @@ EAPI extern Egueb_Dom_String * EGUEB_DOM_EVENT_MUTATION_CHARACTER_DATA_MODIFIED;
 /* Egueb events */
 EAPI extern Egueb_Dom_String * EGUEB_DOM_EVENT_PROCESS;
 
+EAPI Eina_Bool egueb_dom_event_is_mutation(Egueb_Dom_Event *e);
 EAPI Egueb_Dom_Node * egueb_dom_event_mutation_related_get(Egueb_Dom_Event *e);
 
 EAPI void egueb_dom_event_mutation_value_prev_string_get(Egueb_Dom_Event *e,
