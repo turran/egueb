@@ -81,6 +81,31 @@ static void _egueb_svg_reference_pattern_event_request_painter_cb(Egueb_Dom_Even
 }
 
 /*----------------------------------------------------------------------------*
+ *                               Event monitors                               *
+ *----------------------------------------------------------------------------*/
+static void _egueb_svg_reference_pattern_event_monitor_cb(Egueb_Dom_Event *e,
+		void *data)
+{
+	Egueb_Svg_Reference *r = data;
+	Egueb_Dom_Node *doc;
+	Egueb_Dom_Node *svg;
+
+	if (!egueb_dom_event_is_mutation(e) && !egueb_dom_event_is_process(e))
+		return;
+	/* We need to propagate the event not through the referenceable but
+	 * through the topmost element. That is because it is very possible
+	 * that the referenceable tree ends up in a defs element and thus
+	 * it will not be propagated
+	 */
+	doc = egueb_dom_node_document_get(r->referenceable);
+	svg = egueb_svg_document_element_root_get(doc);
+	egueb_dom_node_unref(doc);
+
+	egueb_dom_node_event_propagate(svg, e);
+	egueb_dom_node_unref(svg);
+}
+
+/*----------------------------------------------------------------------------*
  *                           Paint server interface                           *
  *----------------------------------------------------------------------------*/
 static Enesim_Renderer * _egueb_svg_reference_pattern_renderer_get(
@@ -107,7 +132,7 @@ static void _egueb_svg_reference_pattern_setup(
 	thiz->g = egueb_dom_document_node_adopt(doc, thiz->g, NULL);
 	egueb_dom_node_unref(doc);
 	/* clone every children, for smil elements we wont send the etch
-	 * request up in the three and thus it will simply not work
+	 * request up in the tree and thus it will simply not work
 	 */
 	egueb_svg_element_children_clone(thiz->g, r->referenceable);
 	/* make the group get the presentation attributes from ourelves and
@@ -251,6 +276,12 @@ static void _egueb_svg_reference_pattern_instance_init(void *o)
 
 	thiz = EGUEB_SVG_REFERENCE_PATTERN(o);
 	thiz->g = egueb_svg_element_g_new();
+	/* Monitor the events that we need to propagate upstream */
+	egueb_dom_node_event_monitor_add(thiz->g,
+			_egueb_svg_reference_pattern_event_monitor_cb, thiz);
+	/* Whenever a child element requests a painter, make sure to set the
+	 * default one
+	 */
 	egueb_dom_node_event_listener_add(thiz->g,
 			EGUEB_SVG_EVENT_REQUEST_PAINTER,
 			_egueb_svg_reference_pattern_event_request_painter_cb,
