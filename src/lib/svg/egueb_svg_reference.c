@@ -37,7 +37,6 @@ static void _egueb_svg_reference_instance_init(void *o)
 
 static void _egueb_svg_reference_instance_deinit(void *o)
 {
-	Egueb_Svg_Reference *thiz = EGUEB_SVG_REFERENCE(o);
 	/* decide what to do with the referencer and the referenceable
 	 * refs, keep it, own it?
 	 */
