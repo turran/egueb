@@ -56,11 +56,9 @@ static Eina_Bool _egueb_dom_feature_render_damage_cb(Enesim_Renderer *r,
 	Eina_Tiler *tiler = data;
 
 	eina_tiler_rect_add(tiler, area);
-#if 0
 	DBG("Renderer %s has changed at area %d %d %d %d",
 			enesim_renderer_name_get(r),
 			area->x, area->y, area->w, area->h);
-#endif
 	return EINA_TRUE;
 }
 /*----------------------------------------------------------------------------*
