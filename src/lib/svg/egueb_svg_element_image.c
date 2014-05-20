@@ -211,10 +211,11 @@ static void _egueb_svg_element_image_uri_load(Egueb_Svg_Element_Image *thiz,
 	if (!strncmp(str, "data:image", 10))
 	{
 		Egueb_Dom_Event *e;
-		Enesim_Stream *base_64;
+		Enesim_Stream *base64;
 		Enesim_Stream *data;
 		char mime[1024];
 		char base[1024];
+		char *base64_data;
 
 		if (!_egueb_svg_element_image_parse_data(&str, base, mime))
 		{
@@ -227,8 +228,10 @@ static void _egueb_svg_element_image_uri_load(Egueb_Svg_Element_Image *thiz,
 		 * delegate the image loading
 		 */
 		DBG("Loading a base64 based image with MIME '%s'", mime);
-		base_64 = enesim_stream_buffer_new((char *)str, strlen(str));
-		data = enesim_stream_base64_new(base_64);
+
+		base64_data = strdup(str);
+		base64 = enesim_stream_buffer_new(base64_data, strlen(base64_data));
+		data = enesim_stream_base64_new(base64);
 
 		e = egueb_dom_event_io_image_new(data, _egueb_svg_element_image_image_cb);
 		egueb_dom_node_event_dispatch(EGUEB_DOM_NODE(thiz), e, NULL, NULL);
