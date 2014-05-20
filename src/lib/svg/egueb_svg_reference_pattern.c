@@ -127,6 +127,7 @@ static void _egueb_svg_reference_pattern_setup(
 
 	thiz = EGUEB_SVG_REFERENCE_PATTERN(r);
 
+	DBG_ELEMENT(EGUEB_DOM_NODE(r->referenceable), "Cloning the children into our own <g>");
 	/* Make the document adopt the g, given that it has no document yet */
 	doc = egueb_dom_node_document_get(r->referenceable);
 	thiz->g = egueb_dom_document_node_adopt(doc, thiz->g, NULL);
@@ -242,7 +243,8 @@ static Eina_Bool _egueb_svg_reference_pattern_process(
 	enesim_renderer_transformation_set(thiz->r, &transform);
 
 	INFO("Coordinates x = %g, y = %g, w = %g, h = %g", gx, gy, gw, gh);
-	INFO("Transformation %" ENESIM_MATRIX_FORMAT, ENESIM_MATRIX_ARGS(&m));
+	INFO("Tile transformation %" ENESIM_MATRIX_FORMAT, ENESIM_MATRIX_ARGS(&m));
+	INFO("Pattern transformation %" ENESIM_MATRIX_FORMAT, ENESIM_MATRIX_ARGS(&transform));
 
 	ret = egueb_dom_element_process(thiz->g);
 
