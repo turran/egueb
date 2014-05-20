@@ -80,7 +80,7 @@ int main(int argc, char *argv[])
 	}
 
 	egueb_dom_init();
-	stream = enesim_stream_file_new(argv[1], "r+");
+	stream = enesim_stream_file_new(argv[1], "r");
 	if (!stream)
 	{
 		printf("Fail to load file %s\n", argv[1]);
