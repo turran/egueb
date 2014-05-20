@@ -208,6 +208,15 @@ Egueb_Dom_String *EGUEB_DOM_EVENT_MUTATION_NODE_REMOVED_FROM_DOCUMENT = &_EGUEB_
 Egueb_Dom_String *EGUEB_DOM_EVENT_MUTATION_ATTR_MODIFIED = &_EGUEB_DOM_EVENT_MUTATION_ATTR_MODIFIED;
 Egueb_Dom_String *EGUEB_DOM_EVENT_MUTATION_CHARACTER_DATA_MODIFIED = &_EGUEB_DOM_EVENT_MUTATION_CHARACTER_DATA_MODIFIED;
 
+EAPI Eina_Bool egueb_dom_event_is_mutation(Egueb_Dom_Event *e)
+{
+	if (!e) return EINA_FALSE;
+	if (!enesim_object_instance_inherits(ENESIM_OBJECT_INSTANCE(e),
+			EGUEB_DOM_EVENT_MUTATION_DESCRIPTOR))
+		return EINA_FALSE;
+	return EINA_TRUE;
+}
+
 EAPI Egueb_Dom_Node * egueb_dom_event_mutation_related_get(Egueb_Dom_Event *e)
 {
 	Egueb_Dom_Event_Mutation *thiz;
