@@ -88,8 +88,15 @@ static void _egueb_dom_element_use_g_node_monitor_cb(Egueb_Dom_Event *ev,
 static void _egueb_svg_element_use_setup_cloned(Egueb_Svg_Element_Use *thiz,
 		Egueb_Dom_Node *cloned)
 {
+	Egueb_Dom_Node *doc;
 	Enesim_Matrix m;
 
+	doc = egueb_dom_node_document_get(EGUEB_DOM_NODE(thiz));
+	if (doc)
+	{
+		thiz->g = egueb_dom_document_node_adopt(doc, thiz->g, NULL);
+		egueb_dom_node_unref(doc);
+	}
 	thiz->clone = cloned;
 	/* add the cloned to the group */
 	egueb_dom_node_child_append(thiz->g, egueb_dom_node_ref(thiz->clone), NULL);
@@ -106,26 +113,19 @@ static void _egueb_svg_element_use_cleanup_cloned(Egueb_Svg_Element_Use *thiz)
 	thiz->clone = NULL;
 }
 
-/* Whenever the node has been removed from the document we need to make
- * sure that the <g> node also has the same document
+/* Whenever the node has been inserted/removed into/from the document we need
+ * to make sure that the <g> node also has the same document
  */
 static void _egueb_dom_element_use_insterted_into_document_cb(
 		Egueb_Dom_Event *ev, void *data)
 {
 	Egueb_Svg_Element_Use *thiz = EGUEB_SVG_ELEMENT_USE(data);
 	Egueb_Dom_Event_Phase phase;
-	Egueb_Dom_Node *doc;
 
 	phase = egueb_dom_event_phase_get(ev);
 	if (phase != EGUEB_DOM_EVENT_PHASE_AT_TARGET)
 		return;
 
-	doc = egueb_dom_node_document_get(EGUEB_DOM_NODE(thiz));
-	if (doc)
-	{
-		thiz->g = egueb_dom_document_node_adopt(doc, thiz->g, NULL);
-		egueb_dom_node_unref(doc);
-	}
 	thiz->document_changed = EINA_TRUE;
 }
 
