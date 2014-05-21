@@ -66,6 +66,15 @@ static void _egueb_smil_event_etch_instance_deinit(void *o)
  *============================================================================*/
 Egueb_Dom_String *EGUEB_SMIL_EVENT_ETCH = &_EGUEB_SMIL_EVENT_ETCH;
 
+EAPI Eina_Bool egueb_smil_event_is_etch(Egueb_Dom_Event *e)
+{
+	if (!e) return EINA_FALSE;
+	if (!enesim_object_instance_inherits(ENESIM_OBJECT_INSTANCE(e),
+			EGUEB_SMIL_EVENT_ETCH_DESCRIPTOR))
+		return EINA_FALSE;
+	return EINA_TRUE;
+}
+
 EAPI Egueb_Dom_Event * egueb_smil_event_etch_new(void)
 {
 	Egueb_Dom_Event *event;
