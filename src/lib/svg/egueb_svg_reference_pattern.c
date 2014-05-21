@@ -74,8 +74,8 @@ static void _egueb_svg_reference_pattern_event_request_painter_cb(Egueb_Dom_Even
 	Egueb_Dom_Node *n;
 
 	n = egueb_dom_event_target_get(e);
-	DBG_ELEMENT(n, "Setting the generic painter on the renderable");
 	painter = egueb_svg_renderable_class_painter_get(n);
+	DBG_ELEMENT(n, "Setting the generic painter on the renderable %p", painter);
 	egueb_svg_event_request_painter_painter_set(e, painter);
 	egueb_dom_node_unref(n);
 }
@@ -90,7 +90,7 @@ static void _egueb_svg_reference_pattern_event_monitor_cb(Egueb_Dom_Event *e,
 	Egueb_Dom_Node *doc;
 	Egueb_Dom_Node *svg;
 
-	if (!egueb_dom_event_is_mutation(e) && !egueb_dom_event_is_process(e))
+	if (egueb_smil_event_is_etch(e))
 		return;
 	/* We need to propagate the event not through the referenceable but
 	 * through the topmost element. That is because it is very possible
@@ -282,10 +282,17 @@ static void _egueb_svg_reference_pattern_class_init(void *k)
 static void _egueb_svg_reference_pattern_instance_init(void *o)
 {
 	Egueb_Svg_Reference_Pattern *thiz;
+	Egueb_Svg_Painter *painter;
 	Enesim_Renderer *src;
 
 	thiz = EGUEB_SVG_REFERENCE_PATTERN(o);
 	thiz->g = egueb_svg_element_g_new();
+	/* given that the g is never inserted into the document tree, we must
+	 * set the painter directly
+	 */
+	painter = egueb_svg_renderable_class_painter_get(thiz->g);
+	egueb_svg_renderable_painter_set(thiz->g, painter);
+
 	/* Monitor the events that we need to propagate upstream */
 	egueb_dom_node_event_monitor_add(thiz->g,
 			_egueb_svg_reference_pattern_event_monitor_cb, thiz);
