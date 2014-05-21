@@ -349,28 +349,6 @@ EAPI Eina_Bool egueb_svg_calc_mode_string_from(Egueb_Svg_Calc_Mode *c, const cha
 	return ret;
 }
 
-EAPI Eina_Bool egueb_svg_additive_string_from(Egueb_Svg_Additive *add, const char *attr)
-{
-	Eina_Bool ret = EINA_TRUE;
-
-	if (!strcmp(attr, "sum"))
-		*add = ESVG_ADDITIVE_SUM;
-	else if (!strcmp(attr, "replace"))
-		*add = ESVG_ADDITIVE_REPLACE;
-	else
-		ret = EINA_FALSE;
-	return ret;
-}
-
-EAPI Eina_Bool egueb_svg_repeat_count_string_from(int *rc, const char *attr)
-{
-	if (!strcmp(attr, "indefinite"))
-		*rc = -1;
-	else
-		*rc = atoi(attr);
-	return EINA_TRUE;
-}
-
 EAPI Eina_Bool egueb_svg_animate_key_spline_string_from(Egueb_Svg_Animate_Key_Spline *spline, const char *s)
 {
 	return EINA_TRUE;
