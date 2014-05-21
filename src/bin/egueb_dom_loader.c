@@ -43,6 +43,7 @@ int main(int argc, char *argv[])
 	Egueb_Dom_Node *doc = NULL;
 	Egueb_Dom_Feature *render = NULL;
 	Egueb_Dom_Feature *window = NULL;
+	Egueb_Dom_Feature *io = NULL;
 	Egueb_Dom_Feature_Window_Type type;
 	Enesim_Surface *s;
 	Enesim_Buffer *b;
@@ -92,6 +93,12 @@ int main(int argc, char *argv[])
 		printf("Fail to get the render feature\n");
 		goto shutdown;
 	}
+	io = egueb_dom_node_feature_get(doc, EGUEB_DOM_FEATURE_IO_NAME, NULL);
+	if (io)
+	{
+		egueb_dom_feature_io_default_enable(io, EINA_TRUE);
+	}
+
 	window = egueb_dom_node_feature_get(doc, EGUEB_DOM_FEATURE_WINDOW_NAME, NULL);
 	if (window)
 	{
@@ -132,6 +139,8 @@ shutdown:
 		egueb_dom_feature_unref(render);
 	if (window)
 		egueb_dom_feature_unref(window);
+	if (io)
+		egueb_dom_feature_unref(io);
 	if (doc)
 		egueb_dom_node_unref(doc);
 	egueb_dom_shutdown();
