@@ -36,5 +36,6 @@ void egueb_svg_element_pattern_deep_height_get(Egueb_Dom_Node *n,
 		Egueb_Svg_Length *height);
 Eina_Bool egueb_svg_element_pattern_deep_viewbox_get(Egueb_Dom_Node *n,
 		Egueb_Svg_Rect *vb);
+Egueb_Dom_Node * egueb_svg_element_pattern_deep_children_get(Egueb_Dom_Node *n);
 
 #endif

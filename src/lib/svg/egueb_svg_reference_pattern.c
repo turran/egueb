@@ -123,6 +123,7 @@ static void _egueb_svg_reference_pattern_setup(
 		Egueb_Svg_Reference *r)
 {
 	Egueb_Svg_Reference_Pattern *thiz;
+	Egueb_Dom_Node *from;
 	Egueb_Dom_Node *doc;
 
 	thiz = EGUEB_SVG_REFERENCE_PATTERN(r);
@@ -132,10 +133,17 @@ static void _egueb_svg_reference_pattern_setup(
 	doc = egueb_dom_node_document_get(r->referenceable);
 	thiz->g = egueb_dom_document_node_adopt(doc, thiz->g, NULL);
 	egueb_dom_node_unref(doc);
+
 	/* clone every children, for smil elements we wont send the etch
-	 * request up in the tree and thus it will simply not work
+	 * request up in the tree and thus it will simply not work. All
+	 * the animations should be handlded on the referenceable elements
 	 */
-	egueb_svg_element_children_clone(thiz->g, r->referenceable);
+	from = egueb_svg_element_pattern_deep_children_get(r->referenceable);
+	if (from)
+	{
+		egueb_svg_element_children_clone(thiz->g, from);
+		egueb_dom_node_unref(from);
+	}
 	/* make the group get the presentation attributes from ourelves and
 	 * the geometry relative from the referrer
 	 */

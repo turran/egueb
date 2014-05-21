@@ -322,6 +322,38 @@ Eina_Bool egueb_svg_element_pattern_deep_viewbox_get(Egueb_Dom_Node *n,
 	}
 }
 
+Egueb_Dom_Node * egueb_svg_element_pattern_deep_children_get(Egueb_Dom_Node *n)
+{
+	if (egueb_svg_element_is_pattern(n))
+	{
+		Egueb_Dom_Node *children;
+		Egueb_Dom_Node *href = NULL;
+
+		children = egueb_dom_element_child_first_get(n);
+		if (children)
+		{
+			egueb_dom_node_unref(children);
+			return egueb_dom_node_ref(n);
+		}
+
+		_egueb_svg_element_pattern_xlink_href_node_get(n, &href);
+		if (href)
+		{
+			children = egueb_svg_element_pattern_deep_children_get(href);
+			egueb_dom_node_unref(href);
+			return children;
+		}
+		else
+		{
+			return NULL;
+		}
+	}
+	else
+	{
+		return NULL;
+	}
+}
+
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/
