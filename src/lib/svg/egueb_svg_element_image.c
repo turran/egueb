@@ -147,7 +147,7 @@ static void _egueb_svg_element_image_image_cb(Egueb_Dom_Node *n,
 	Egueb_Svg_Element_Image *thiz;
 
 	thiz = EGUEB_SVG_ELEMENT_IMAGE(n);
-	INFO("Image loaded");
+	INFO_ELEMENT(n, "Image loaded");
 	enesim_renderer_image_source_surface_set(thiz->image, s);
 	enesim_renderer_proxy_proxied_set(thiz->r, enesim_renderer_ref(thiz->image));
 }
@@ -163,11 +163,11 @@ static void _egueb_svg_element_image_data_cb(Egueb_Dom_Node *n,
 	mime = enesim_image_mime_data_from(data);
 	if (!mime)
 	{
-		ERR("Impossible to identify the image data");
+		ERR_ELEMENT(n, "Impossible to identify the image data");
 		goto done;
 	}
 
-	INFO("Uri fetched with MIME '%s'", mime);
+	INFO_ELEMENT(n, "Uri fetched with MIME '%s'", mime);
 	doc = egueb_dom_node_document_get(n);
 	if (!doc)
 	{
@@ -219,7 +219,7 @@ static void _egueb_svg_element_image_uri_load(Egueb_Svg_Element_Image *thiz,
 
 		if (!_egueb_svg_element_image_parse_data(&str, base, mime))
 		{
-			ERR("Failed to parse the image data");
+			ERR_ELEMENT(EGUEB_DOM_NODE(thiz), "Failed to parse the image data");
 			return;
 		}
 
@@ -227,7 +227,7 @@ static void _egueb_svg_element_image_uri_load(Egueb_Svg_Element_Image *thiz,
 		/* TODO Be sure to keep a reference of the string, so we can safely
 		 * delegate the image loading
 		 */
-		DBG("Loading a base64 based image with MIME '%s'", mime);
+		DBG_ELEMENT(EGUEB_DOM_NODE(thiz), "Loading a base64 based image with MIME '%s'", mime);
 
 		base64_data = strdup(str);
 		base64 = enesim_stream_buffer_new(base64_data, strlen(base64_data));
@@ -246,7 +246,7 @@ static void _egueb_svg_element_image_uri_load(Egueb_Svg_Element_Image *thiz,
 
 		if (!egueb_dom_uri_string_from(&u, uri))
 		{
-			ERR("Wrong URI");
+			ERR_ELEMENT(EGUEB_DOM_NODE(thiz), "Wrong URI");
 			return;
 		}
 
