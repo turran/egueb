@@ -61,6 +61,8 @@ extern "C" {
 
 #include "egueb_svg_build.h"
 
+/** @defgroup Egueb_Svg_Type_Group Types */
+
 /* basic data types */
 #include "egueb_svg_main.h"
 #include "egueb_svg_clip_path.h"

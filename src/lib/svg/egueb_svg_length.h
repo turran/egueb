@@ -18,6 +18,13 @@
 #ifndef _EGUEB_SVG_LENGTH_H
 #define _EGUEB_SVG_LENGTH_H
 
+/**
+ * @defgroup Egueb_Svg_Length_Group Length
+ * @brief Length type
+ * @ingroup Egueb_Svg_Type_Group
+ * @{
+ */
+
 /* FIXME implement the unit type as the spec or just
  * ABSOLUTE/RELATIVE?
  */
@@ -73,5 +80,9 @@ EAPI const Egueb_Dom_Value_Descriptor * egueb_svg_length_descriptor_get(void);
 EAPI Eina_Bool egueb_svg_length_is_equal(Egueb_Svg_Length *length1, Egueb_Svg_Length *length2);
 EAPI double egueb_svg_coord_final_get(const Egueb_Svg_Length *l, double parent_length, double font_size);
 EAPI double egueb_svg_length_final_get(const Egueb_Svg_Length *l, double width, double height, double font_size);
+
+/**
+ * @}
+ */
 
 #endif

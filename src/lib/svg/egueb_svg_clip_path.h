@@ -19,6 +19,13 @@
 #ifndef _EGUEB_SVG_CLIP_PATH_H
 #define _EGUEB_SVG_CLIP_PATH_H
 
+/**
+ * @defgroup Egueb_Svg_Clip_Path_Group Clip path
+ * @brief Clip path type
+ * @ingroup Egueb_Svg_Type_Group
+ * @{
+ */
+
 typedef enum _Egueb_Svg_Clip_Path_Type
 {
 	EGUEB_SVG_CLIP_PATH_TYPE_NONE,
@@ -52,5 +59,9 @@ EAPI Eina_Bool egueb_svg_clip_path_is_equal(const Egueb_Svg_Clip_Path *p1,
 		const Egueb_Svg_Clip_Path *p2);
 EAPI void egueb_svg_clip_path_copy(const Egueb_Svg_Clip_Path *thiz, Egueb_Svg_Clip_Path *copy, Eina_Bool full);
 EAPI void egueb_svg_clip_path_reset(Egueb_Svg_Clip_Path *thiz);
+
+/**
+ * @}
+ */
 
 #endif

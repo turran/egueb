@@ -18,6 +18,13 @@
 #ifndef _EGUEB_SVG_DISPLAY_H
 #define _EGUEB_SVG_DISPLAY_H
 
+/**
+ * @defgroup Egueb_Svg_Display_Group Display
+ * @brief Display type
+ * @ingroup Egueb_Svg_Type_Group
+ * @{
+ */
+
 typedef enum _Egueb_Svg_Display
 {
 	EGUEB_SVG_DISPLAY_INLINE,
@@ -42,5 +49,9 @@ typedef enum _Egueb_Svg_Display
 EAPI const Egueb_Dom_Value_Descriptor * egueb_svg_display_descriptor_get(void);
 EAPI Eina_Bool egueb_svg_display_string_from(Egueb_Svg_Display *d, const char *attr);
 EAPI char * egueb_svg_display_string_to(Egueb_Svg_Display thiz);
+
+/**
+ * @}
+ */
 
 #endif

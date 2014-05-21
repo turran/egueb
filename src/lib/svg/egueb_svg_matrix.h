@@ -19,6 +19,13 @@
 #ifndef _EGUEB_SVG_MATRIX_H
 #define _EGUEB_SVG_MATRIX_H
 
+/**
+ * @defgroup Egueb_Svg_Matrix_Group Matrix
+ * @brief Matrix type
+ * @ingroup Egueb_Svg_Type_Group
+ * @{
+ */
+
 typedef Enesim_Matrix Egueb_Svg_Matrix;
 
 typedef struct _Egueb_Svg_Matrix_Animated
@@ -32,5 +39,9 @@ EAPI extern const Egueb_Svg_Matrix EGUEB_SVG_MATRIX_IDENTITY;
 EAPI const Egueb_Dom_Value_Descriptor * egueb_svg_matrix_descriptor_get(void);
 EAPI Eina_Bool egueb_svg_matrix_string_from(Egueb_Svg_Matrix *matrix, const char *attr);
 EAPI char * egueb_svg_matrix_string_to(Egueb_Svg_Matrix *thiz);
+
+/**
+ * @}
+ */
 
 #endif
