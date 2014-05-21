@@ -119,6 +119,7 @@ static void _egueb_svg_reference_clip_path_setup(
 		Egueb_Svg_Reference *r)
 {
 	Egueb_Svg_Reference_Clip_Path *thiz;
+	Egueb_Svg_Painter *painter;
 	Egueb_Dom_Node *doc;
 
 	thiz = EGUEB_SVG_REFERENCE_CLIP_PATH(r);
@@ -126,6 +127,12 @@ static void _egueb_svg_reference_clip_path_setup(
 	doc = egueb_dom_node_document_get(r->referenceable);
 	thiz->g = egueb_dom_document_node_adopt(doc, thiz->g, NULL);
 	egueb_dom_node_unref(doc);
+
+	/* given that the g is never inserted into the document tree, we must
+	 * set the painter directly
+	 */
+	painter = egueb_svg_painter_clip_path_new(r);
+	egueb_svg_renderable_painter_set(thiz->g, painter);
 
 	/* make the group get the presentation attributes from ourelves and
 	 * the geometry relative from the referrer

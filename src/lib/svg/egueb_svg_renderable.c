@@ -36,7 +36,6 @@
 static void _egueb_svg_renderable_inserted_cb(Egueb_Dom_Event *e,
 		void *data)
 {
-	Egueb_Svg_Renderable *thiz;
 	Egueb_Dom_Event_Phase phase;
 	Egueb_Dom_Node *n = data;
 	Egueb_Dom_Event *request;
@@ -45,12 +44,12 @@ static void _egueb_svg_renderable_inserted_cb(Egueb_Dom_Event *e,
 	if (phase != EGUEB_DOM_EVENT_PHASE_AT_TARGET)
 		return;
 
-	INFO_ELEMENT(n, "Renderable inserted into document");
+	INFO_ELEMENT(n, "Renderable inserted into document, requesting a painter");
 	request = egueb_svg_event_request_painter_new();
 	egueb_dom_node_event_dispatch(n, egueb_dom_event_ref(request), NULL, NULL);
 
-	thiz = EGUEB_SVG_RENDERABLE(n);
-	thiz->painter = egueb_svg_event_request_painter_painter_get(request);
+	egueb_svg_renderable_painter_set(n,
+			egueb_svg_event_request_painter_painter_get(request));
 	egueb_dom_event_unref(request);
 }
 
@@ -287,6 +286,16 @@ Egueb_Svg_Painter * egueb_svg_renderable_painter_get(Egueb_Dom_Node *n)
 
 	thiz = EGUEB_SVG_RENDERABLE(n);
 	return egueb_svg_painter_ref(thiz->painter);
+}
+
+void egueb_svg_renderable_painter_set(Egueb_Dom_Node *n, Egueb_Svg_Painter *p)
+{
+	Egueb_Svg_Renderable *thiz;
+
+	thiz = EGUEB_SVG_RENDERABLE(n);
+	if (thiz->painter)
+		egueb_svg_painter_unref(thiz->painter);
+	thiz->painter = p;
 }
 
 Enesim_Renderer * egueb_svg_renderable_renderer_get(Egueb_Dom_Node *n)
