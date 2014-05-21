@@ -116,7 +116,7 @@ static Egueb_Dom_Node * _egueb_dom_node_map_named_attr_get(
 	Egueb_Dom_Node *ret;
 
 	thiz = EGUEB_DOM_NODE_MAP_NAMED_ATTR(n);
-	ret = egueb_dom_element_property_fetch(thiz->own, name);
+	ret = egueb_dom_element_attribute_fetch(thiz->own, name);
 	if (!ret)
 	{
 		if (err) *err = EGUEB_DOM_ERROR_NOT_FOUND;

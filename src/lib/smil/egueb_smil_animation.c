@@ -419,7 +419,7 @@ static Eina_Bool _egueb_dom_animation_setup(Egueb_Smil_Animation *thiz,
 		return EINA_FALSE;
 	}
 	/* get the property from the element */
-	p = egueb_dom_element_property_fetch(target, attribute_name);
+	p = egueb_dom_element_attribute_fetch(target, attribute_name);
 	if (!p)
 	{
 		ERR("No Property '%s' found",

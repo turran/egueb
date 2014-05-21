@@ -69,7 +69,7 @@ static Eina_Bool _egueb_dom_element_properties_clone_cb(const Eina_Hash *hash,
 
 	/* check if the cloned element has such attr */
 	name = egueb_dom_attr_name_get(attr);
-	n = egueb_dom_element_property_fetch(clone, name);
+	n = egueb_dom_element_attribute_fetch(clone, name);
 	egueb_dom_string_unref(name);
 	if (n)
 	{
@@ -244,7 +244,7 @@ static void _egueb_dom_element_original_attr_modified_cb(Egueb_Dom_Event *e,
 
 		egueb_dom_value_init(&copy, v->descriptor);
 		egueb_dom_value_copy(v, &copy, EINA_FALSE);
-		if (!egueb_dom_element_property_value_set(clone, s_attr,
+		if (!egueb_dom_element_attribute_value_set(clone, s_attr,
 				attr_type, &copy, &err))
 		{
 			ERR("Can not set the value '%s'", eina_error_msg_get(err));
@@ -496,7 +496,7 @@ EAPI Egueb_Dom_String * egueb_dom_element_attribute_get(Egueb_Dom_Node *node,
 	Egueb_Dom_Node *p = NULL;
 	Egueb_Dom_String *ret = NULL;
 
-	p = egueb_dom_element_property_fetch(node, name);
+	p = egueb_dom_element_attribute_fetch(node, name);
 	if (!p) return NULL;
 
 	egueb_dom_attr_string_get(p, EGUEB_DOM_ATTR_TYPE_BASE, &ret);
@@ -514,7 +514,7 @@ EAPI Eina_Bool egueb_dom_element_attribute_set(Egueb_Dom_Node *node,
 {
 	Egueb_Dom_Node *p = NULL;
 
-	p = egueb_dom_element_property_fetch(node, name);
+	p = egueb_dom_element_attribute_fetch(node, name);
 	if (!p)
 	{
 		Egueb_Dom_String *attr_name;
@@ -544,7 +544,7 @@ EAPI Eina_Bool egueb_dom_element_attribute_type_set(Egueb_Dom_Node *node,
 {
 	Egueb_Dom_Node *p = NULL;
 
-	p = egueb_dom_element_property_fetch(node, name);
+	p = egueb_dom_element_attribute_fetch(node, name);
 	/* set the value */
 	if (p)
 	{
@@ -567,7 +567,7 @@ EAPI Eina_Bool egueb_dom_element_attribute_type_set(Egueb_Dom_Node *node,
 	}
 }
 
-EAPI Egueb_Dom_Node * egueb_dom_element_property_fetch(Egueb_Dom_Node *node,
+EAPI Egueb_Dom_Node * egueb_dom_element_attribute_fetch(Egueb_Dom_Node *node,
 		const Egueb_Dom_String *name)
 {
 	Egueb_Dom_Element *thiz;
@@ -580,26 +580,26 @@ EAPI Egueb_Dom_Node * egueb_dom_element_property_fetch(Egueb_Dom_Node *node,
 	return egueb_dom_node_ref(ret);
 }
 
-EAPI Eina_Bool egueb_dom_element_property_set_va(Egueb_Dom_Node *node,
+EAPI Eina_Bool egueb_dom_element_attribute_masked_set_va(Egueb_Dom_Node *node,
 		Egueb_Dom_String *name, int prop_mask, va_list args)
 {
 	Egueb_Dom_Node *p;
 	Eina_Bool ret;
 
-	p = egueb_dom_element_property_fetch(node, name);
+	p = egueb_dom_element_attribute_fetch(node, name);
 	if (!p) return EINA_FALSE;
 	ret = egueb_dom_attr_set_va(p, prop_mask, args);
 	egueb_dom_node_unref(p);
 	return ret;
 }
 
-EAPI Eina_Bool egueb_dom_element_property_get_va(Egueb_Dom_Node *node,
+EAPI Eina_Bool egueb_dom_element_attribute_masked_get_va(Egueb_Dom_Node *node,
 		Egueb_Dom_String *name, int prop_mask, va_list args)
 {
 	Egueb_Dom_Node *p;
 	Eina_Bool ret;
 
-	p = egueb_dom_element_property_fetch(node, name);
+	p = egueb_dom_element_attribute_fetch(node, name);
 	if (!p) return EINA_FALSE;
 	ret = egueb_dom_attr_get_va(p, prop_mask, args);
 	egueb_dom_node_unref(p);
@@ -610,14 +610,14 @@ EAPI Eina_Bool egueb_dom_element_property_get_va(Egueb_Dom_Node *node,
 /* Sets the value of a property. The value argument depends
  * on the property itself
  */
-EAPI Eina_Bool egueb_dom_element_property_set(Egueb_Dom_Node *node,
+EAPI Eina_Bool egueb_dom_element_attribute_masked_set(Egueb_Dom_Node *node,
 		Egueb_Dom_String *name, int prop_mask, ...)
 {
 	Eina_Bool ret;
 	va_list args;
 
 	va_start(args, prop_mask);
-	ret = egueb_dom_element_property_set_va(node, name, prop_mask, args);
+	ret = egueb_dom_element_attribute_masked_set_va(node, name, prop_mask, args);
 	va_end(args);
 
 	return ret;
@@ -626,27 +626,27 @@ EAPI Eina_Bool egueb_dom_element_property_set(Egueb_Dom_Node *node,
 /* Gets the value of a property. The value argument depends
  * on the property itself.
  */
-EAPI Eina_Bool egueb_dom_element_property_get(Egueb_Dom_Node *node,
+EAPI Eina_Bool egueb_dom_element_attribute_masked_get(Egueb_Dom_Node *node,
 		Egueb_Dom_String *name, int prop_mask, ...)
 {
 	Eina_Bool ret;
 	va_list args;
 
 	va_start(args, prop_mask);
-	ret = egueb_dom_element_property_get_va(node, name, prop_mask, args);
+	ret = egueb_dom_element_attribute_masked_get_va(node, name, prop_mask, args);
 	va_end(args);
 
 	return ret;
 }
 
-EAPI Eina_Bool egueb_dom_element_property_value_set(Egueb_Dom_Node *node,
+EAPI Eina_Bool egueb_dom_element_attribute_value_set(Egueb_Dom_Node *node,
 		Egueb_Dom_String *name, Egueb_Dom_Attr_Type type,
 		Egueb_Dom_Value *v, Eina_Error *err)
 {
 	Egueb_Dom_Node *p;
 	Eina_Bool ret;
 
-	p = egueb_dom_element_property_fetch(node, name);
+	p = egueb_dom_element_attribute_fetch(node, name);
 	if (!p)
 	{
 		if (err) *err = EGUEB_DOM_ERROR_NOT_FOUND;
@@ -668,14 +668,14 @@ EAPI Eina_Bool egueb_dom_element_property_value_set(Egueb_Dom_Node *node,
 	}
 }
 
-EAPI Eina_Bool egueb_dom_element_property_value_get(Egueb_Dom_Node *node,
+EAPI Eina_Bool egueb_dom_element_attribute_value_get(Egueb_Dom_Node *node,
 		Egueb_Dom_String *name, Egueb_Dom_Attr_Type type,
 		Egueb_Dom_Value *v, Eina_Error *err)
 {
 	Egueb_Dom_Node *p;
 	Eina_Bool ret;
 
-	p = egueb_dom_element_property_fetch(node, name);
+	p = egueb_dom_element_attribute_fetch(node, name);
 	if (!p)
 	{
 		if (err) *err = EGUEB_DOM_ERROR_NOT_FOUND;
