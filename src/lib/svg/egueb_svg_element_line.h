@@ -27,16 +27,15 @@
  */
 
 EAPI Egueb_Dom_Node * egueb_svg_element_line_new(void);
-#if 0
-EAPI void egueb_svg_element_line_x1_set(Ender_Element *e, const Egueb_Svg_Coord *x1);
-EAPI void egueb_svg_element_line_x1_get(Ender_Element *e, Egueb_Svg_Coord *x1);
-EAPI void egueb_svg_element_line_y1_set(Ender_Element *e, const Egueb_Svg_Coord *y1);
-EAPI void egueb_svg_element_line_y1_get(Ender_Element *e, Egueb_Svg_Coord *y1);
-EAPI void egueb_svg_element_line_x2_set(Ender_Element *e, const Egueb_Svg_Coord *x2);
-EAPI void egueb_svg_element_line_x2_get(Ender_Element *e, Egueb_Svg_Coord *x2);
-EAPI void egueb_svg_element_line_y2_set(Ender_Element *e, const Egueb_Svg_Coord *y2);
-EAPI void egueb_svg_element_line_y2_get(Ender_Element *e, Egueb_Svg_Coord *y2);
-#endif
+EAPI void egueb_svg_element_line_x1_set(Egueb_Dom_Node *n, const Egueb_Svg_Coord *v);
+EAPI void egueb_svg_element_line_x1_get(Egueb_Dom_Node *n, Egueb_Svg_Coord_Animated *v);
+EAPI void egueb_svg_element_line_y1_set(Egueb_Dom_Node *n, const Egueb_Svg_Coord *v);
+EAPI void egueb_svg_element_line_y1_get(Egueb_Dom_Node *n, Egueb_Svg_Coord_Animated *v);
+EAPI void egueb_svg_element_line_x2_set(Egueb_Dom_Node *n, const Egueb_Svg_Coord *v);
+EAPI void egueb_svg_element_line_x2_get(Egueb_Dom_Node *n, Egueb_Svg_Coord_Animated *v);
+EAPI void egueb_svg_element_line_y2_set(Egueb_Dom_Node *n, const Egueb_Svg_Coord *v);
+EAPI void egueb_svg_element_line_y2_get(Egueb_Dom_Node *n, Egueb_Svg_Coord_Animated *v);
+
 
 /**
  * @}

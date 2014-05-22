@@ -17,6 +17,7 @@
  */
 #include "egueb_svg_main_private.h"
 #include "egueb_svg_main.h"
+#include "egueb_svg_length.h"
 #include "egueb_svg_element_line.h"
 #include "egueb_svg_document.h"
 #include "egueb_svg_shape_private.h"
@@ -245,40 +246,66 @@ EAPI Egueb_Dom_Node * egueb_svg_element_line_new(void)
 	return n;
 }
 
-#if 0
-EAPI void egueb_svg_element_line_x1_set(Ender_Element *e, const Egueb_Svg_Coord *x1)
+EAPI void egueb_svg_element_line_x1_set(Egueb_Dom_Node *n, const Egueb_Svg_Coord *v)
 {
-	egueb_svg_element_property_length_set(e, ESVG_ELEMENT_LINE_X1, x1);
+	Egueb_Svg_Element_Line *thiz;
+
+	thiz = EGUEB_SVG_ELEMENT_LINE(n);
+	egueb_dom_attr_set(thiz->x1, EGUEB_DOM_ATTR_TYPE_BASE, v);
 }
 
-EAPI void egueb_svg_element_line_x1_get(Ender_Element *e, Egueb_Svg_Coord *x1)
+EAPI void egueb_svg_element_line_x1_get(Egueb_Dom_Node *n, Egueb_Svg_Coord_Animated *v)
 {
+	Egueb_Svg_Element_Line *thiz;
+
+	thiz = EGUEB_SVG_ELEMENT_LINE(n);
+	EGUEB_SVG_ELEMENT_ATTR_ANIMATED_GET(thiz->x1, v);
 }
 
-EAPI void egueb_svg_element_line_y1_set(Ender_Element *e, const Egueb_Svg_Coord *y1)
+EAPI void egueb_svg_element_line_y1_set(Egueb_Dom_Node *n, const Egueb_Svg_Coord *v)
 {
-	egueb_svg_element_property_length_set(e, ESVG_ELEMENT_LINE_Y1, y1);
+	Egueb_Svg_Element_Line *thiz;
+
+	thiz = EGUEB_SVG_ELEMENT_LINE(n);
+	egueb_dom_attr_set(thiz->y1, EGUEB_DOM_ATTR_TYPE_BASE, v);
 }
 
-EAPI void egueb_svg_element_line_y1_get(Ender_Element *e, Egueb_Svg_Coord *y1)
+EAPI void egueb_svg_element_line_y1_get(Egueb_Dom_Node *n, Egueb_Svg_Coord_Animated *v)
 {
+	Egueb_Svg_Element_Line *thiz;
+
+	thiz = EGUEB_SVG_ELEMENT_LINE(n);
+	EGUEB_SVG_ELEMENT_ATTR_ANIMATED_GET(thiz->y1, v);
 }
 
-EAPI void egueb_svg_element_line_x2_set(Ender_Element *e, const Egueb_Svg_Coord *x2)
+EAPI void egueb_svg_element_line_x2_set(Egueb_Dom_Node *n, const Egueb_Svg_Coord *v)
 {
-	egueb_svg_element_property_length_set(e, ESVG_ELEMENT_LINE_X2, x2);
+	Egueb_Svg_Element_Line *thiz;
+
+	thiz = EGUEB_SVG_ELEMENT_LINE(n);
+	egueb_dom_attr_set(thiz->x2, EGUEB_DOM_ATTR_TYPE_BASE, v);
 }
 
-EAPI void egueb_svg_element_line_x2_get(Ender_Element *e, Egueb_Svg_Coord *x2)
+EAPI void egueb_svg_element_line_x2_get(Egueb_Dom_Node *n, Egueb_Svg_Coord_Animated *v)
 {
+	Egueb_Svg_Element_Line *thiz;
+
+	thiz = EGUEB_SVG_ELEMENT_LINE(n);
+	EGUEB_SVG_ELEMENT_ATTR_ANIMATED_GET(thiz->x2, v);
 }
 
-EAPI void egueb_svg_element_line_y2_set(Ender_Element *e, const Egueb_Svg_Coord *y2)
+EAPI void egueb_svg_element_line_y2_set(Egueb_Dom_Node *n, const Egueb_Svg_Coord *v)
 {
-	egueb_svg_element_property_length_set(e, ESVG_ELEMENT_LINE_Y2, y2);
+	Egueb_Svg_Element_Line *thiz;
+
+	thiz = EGUEB_SVG_ELEMENT_LINE(n);
+	egueb_dom_attr_set(thiz->y2, EGUEB_DOM_ATTR_TYPE_BASE, v);
 }
 
-EAPI void egueb_svg_element_line_y2_get(Ender_Element *e, Egueb_Svg_Coord *y2)
+EAPI void egueb_svg_element_line_y2_get(Egueb_Dom_Node *n, Egueb_Svg_Coord_Animated *v)
 {
+	Egueb_Svg_Element_Line *thiz;
+
+	thiz = EGUEB_SVG_ELEMENT_LINE(n);
+	EGUEB_SVG_ELEMENT_ATTR_ANIMATED_GET(thiz->y2, v);
 }
-#endif
