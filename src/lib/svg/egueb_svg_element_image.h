@@ -27,19 +27,16 @@
  */
 
 EAPI Egueb_Dom_Node * egueb_svg_element_image_new(void);
-#if 0
-EAPI Eina_Bool egueb_svg_is_image(Ender_Element *e);
-EAPI void egueb_svg_element_image_x_set(Ender_Element *e,  const Egueb_Svg_Coord *x);
-EAPI void egueb_svg_element_image_x_get(Ender_Element *e, Egueb_Svg_Coord *x);
-EAPI void egueb_svg_element_image_y_set(Ender_Element *e,  const Egueb_Svg_Coord *y);
-EAPI void egueb_svg_element_image_y_get(Ender_Element *e, Egueb_Svg_Coord *y);
-EAPI void egueb_svg_element_image_width_set(Ender_Element *e,  const Egueb_Svg_Length *width);
-EAPI void egueb_svg_element_image_width_get(Ender_Element *e, Egueb_Svg_Length *width);
-EAPI void egueb_svg_element_image_height_set(Ender_Element *e,  const Egueb_Svg_Length *height);
-EAPI void egueb_svg_element_image_height_get(Ender_Element *e, Egueb_Svg_Length *height);
-EAPI void egueb_svg_element_image_xlink_href_set(Ender_Element *e, const char *href);
-EAPI void egueb_svg_element_image_xlink_href_get(Ender_Element *e, const char **href);
-#endif
+EAPI void egueb_svg_element_image_x_set(Egueb_Dom_Node *n, const Egueb_Svg_Coord *v);
+EAPI void egueb_svg_element_image_x_get(Egueb_Dom_Node *n, Egueb_Svg_Coord_Animated *v);
+EAPI void egueb_svg_element_image_y_set(Egueb_Dom_Node *n, const Egueb_Svg_Coord *v);
+EAPI void egueb_svg_element_image_y_get(Egueb_Dom_Node *n, Egueb_Svg_Coord_Animated *v);
+EAPI void egueb_svg_element_image_width_set(Egueb_Dom_Node *n, const Egueb_Svg_Length *v);
+EAPI void egueb_svg_element_image_width_get(Egueb_Dom_Node *n, Egueb_Svg_Length_Animated *v);
+EAPI void egueb_svg_element_image_height_set(Egueb_Dom_Node *n, const Egueb_Svg_Length *v);
+EAPI void egueb_svg_element_image_height_get(Egueb_Dom_Node *n, Egueb_Svg_Length_Animated *v);
+EAPI void egueb_svg_element_image_xlink_href_set(Egueb_Dom_Node *n, Egueb_Dom_String *v);
+EAPI void egueb_svg_element_image_xlink_href_get(Egueb_Dom_Node *n, Egueb_Svg_String_Animated *v);
 
 /**
  * @}

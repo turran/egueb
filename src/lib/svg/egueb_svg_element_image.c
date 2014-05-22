@@ -18,6 +18,7 @@
 
 #include "egueb_svg_main_private.h"
 #include "egueb_svg_main.h"
+#include "egueb_svg_string.h"
 #include "egueb_svg_element.h"
 #include "egueb_svg_element_g.h"
 #include "egueb_svg_element_image.h"
@@ -472,59 +473,82 @@ EAPI Egueb_Dom_Node * egueb_svg_element_image_new(void)
 	return n;
 }
 
-#if 0
-EAPI Eina_Bool egueb_svg_is_image(Ender_Element *e)
+EAPI void egueb_svg_element_image_x_set(Egueb_Dom_Node *n, const Egueb_Svg_Coord *v)
 {
-	Egueb_Dom_Tag *t;
-	Egueb_Svg_Type type;
+	Egueb_Svg_Element_Image *thiz;
 
-	t = (Egueb_Dom_Tag *)ender_element_object_get(e);
-	type = egueb_svg_element_internal_type_get(t);
-	return (type == ESVG_TYPE_IMAGE) ? EINA_TRUE : EINA_FALSE;
+	thiz = EGUEB_SVG_ELEMENT_IMAGE(n);
+	egueb_dom_attr_set(thiz->x, EGUEB_DOM_ATTR_TYPE_BASE, v);
 }
 
-EAPI void egueb_svg_element_image_x_set(Ender_Element *e, const Egueb_Svg_Coord *x)
+EAPI void egueb_svg_element_image_x_get(Egueb_Dom_Node *n, Egueb_Svg_Coord_Animated *v)
 {
-	egueb_svg_element_property_length_set(e, ESVG_ELEMENT_IMAGE_X, x);
+	Egueb_Svg_Element_Image *thiz;
+
+	thiz = EGUEB_SVG_ELEMENT_IMAGE(n);
+	EGUEB_SVG_ELEMENT_ATTR_ANIMATED_GET(thiz->x, v);
 }
 
-EAPI void egueb_svg_element_image_x_get(Ender_Element *e, Egueb_Svg_Coord *x)
+EAPI void egueb_svg_element_image_y_set(Egueb_Dom_Node *n, const Egueb_Svg_Coord *v)
 {
+	Egueb_Svg_Element_Image *thiz;
+
+	thiz = EGUEB_SVG_ELEMENT_IMAGE(n);
+	egueb_dom_attr_set(thiz->y, EGUEB_DOM_ATTR_TYPE_BASE, v);
 }
 
-EAPI void egueb_svg_element_image_y_set(Ender_Element *e, const Egueb_Svg_Coord *y)
+EAPI void egueb_svg_element_image_y_get(Egueb_Dom_Node *n, Egueb_Svg_Coord_Animated *v)
 {
-	egueb_svg_element_property_length_set(e, ESVG_ELEMENT_IMAGE_Y, y);
+	Egueb_Svg_Element_Image *thiz;
+
+	thiz = EGUEB_SVG_ELEMENT_IMAGE(n);
+	EGUEB_SVG_ELEMENT_ATTR_ANIMATED_GET(thiz->y, v);
 }
 
-EAPI void egueb_svg_element_image_y_get(Ender_Element *e, Egueb_Svg_Coord *y)
+EAPI void egueb_svg_element_image_width_set(Egueb_Dom_Node *n, const Egueb_Svg_Length *v)
 {
+	Egueb_Svg_Element_Image *thiz;
+
+	thiz = EGUEB_SVG_ELEMENT_IMAGE(n);
+	egueb_dom_attr_set(thiz->width, EGUEB_DOM_ATTR_TYPE_BASE, v);
 }
 
-EAPI void egueb_svg_element_image_width_set(Ender_Element *e, const Egueb_Svg_Length *width)
+EAPI void egueb_svg_element_image_width_get(Egueb_Dom_Node *n, Egueb_Svg_Length_Animated *v)
 {
-	egueb_svg_element_property_length_set(e, ESVG_ELEMENT_IMAGE_WIDTH, width);
+	Egueb_Svg_Element_Image *thiz;
+
+	thiz = EGUEB_SVG_ELEMENT_IMAGE(n);
+	EGUEB_SVG_ELEMENT_ATTR_ANIMATED_GET(thiz->width, v);
 }
 
-EAPI void egueb_svg_element_image_width_get(Ender_Element *e, Egueb_Svg_Length *width)
+EAPI void egueb_svg_element_image_height_set(Egueb_Dom_Node *n, const Egueb_Svg_Length *v)
 {
+	Egueb_Svg_Element_Image *thiz;
+
+	thiz = EGUEB_SVG_ELEMENT_IMAGE(n);
+	egueb_dom_attr_set(thiz->height, EGUEB_DOM_ATTR_TYPE_BASE, v);
 }
 
-EAPI void egueb_svg_element_image_height_set(Ender_Element *e, const Egueb_Svg_Length *height)
+EAPI void egueb_svg_element_image_height_get(Egueb_Dom_Node *n, Egueb_Svg_Length_Animated *v)
 {
-	egueb_svg_element_property_length_set(e, ESVG_ELEMENT_IMAGE_HEIGHT, height);
+	Egueb_Svg_Element_Image *thiz;
+
+	thiz = EGUEB_SVG_ELEMENT_IMAGE(n);
+	EGUEB_SVG_ELEMENT_ATTR_ANIMATED_GET(thiz->height, v);
 }
 
-EAPI void egueb_svg_element_image_height_get(Ender_Element *e, Egueb_Svg_Length *height)
+EAPI void egueb_svg_element_image_xlink_href_set(Egueb_Dom_Node *n, Egueb_Dom_String *v)
 {
+	Egueb_Svg_Element_Image *thiz;
+
+	thiz = EGUEB_SVG_ELEMENT_IMAGE(n);
+	egueb_dom_attr_set(thiz->xlink_href, EGUEB_DOM_ATTR_TYPE_BASE, v);
 }
 
-EAPI void egueb_svg_element_image_xlink_href_set(Ender_Element *e, const char *href)
+EAPI void egueb_svg_element_image_xlink_href_get(Egueb_Dom_Node *n, Egueb_Svg_String_Animated *v)
 {
-	egueb_svg_element_property_string_set(e, ESVG_ELEMENT_IMAGE_XLINK_HREF, href);
-}
+	Egueb_Svg_Element_Image *thiz;
 
-EAPI void egueb_svg_element_image_xlink_href_get(Ender_Element *e, const char **href)
-{
+	thiz = EGUEB_SVG_ELEMENT_IMAGE(n);
+	EGUEB_SVG_ELEMENT_ATTR_ANIMATED_GET(thiz->xlink_href, v);
 }
-#endif
