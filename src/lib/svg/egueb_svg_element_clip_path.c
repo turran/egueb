@@ -336,6 +336,15 @@ EAPI Eina_Bool egueb_svg_element_is_clip_path(Egueb_Dom_Node *n)
 	return EINA_TRUE;
 }
 
+EAPI void egueb_svg_element_clip_path_units_set(Egueb_Dom_Node *n,
+		Egueb_Svg_Referenceable_Units v)
+{
+	Egueb_Svg_Element_Clip_Path *thiz;
+
+	thiz = EGUEB_SVG_ELEMENT_CLIP_PATH(n);
+	egueb_dom_attr_set(thiz->units, EGUEB_DOM_ATTR_TYPE_BASE, v);
+}
+
 EAPI void egueb_svg_element_clip_path_units_get(Egueb_Dom_Node *n,
 		Egueb_Svg_Referenceable_Units_Animated *units)
 {
@@ -344,11 +353,3 @@ EAPI void egueb_svg_element_clip_path_units_get(Egueb_Dom_Node *n,
 	thiz = EGUEB_SVG_ELEMENT_CLIP_PATH(n);
 	EGUEB_SVG_ELEMENT_ATTR_ANIMATED_GET(thiz->units, units);
 }
-
-#if 0
-EAPI void egueb_svg_element_clip_path_units_set(Ender_Element *e, Egueb_Svg_Clip_Path_Units units)
-{
-	ender_element_property_value_set(e, ESVG_ELEMENT_CLIP_PATH_CLIP_PATH_UNITS, units, NULL);
-}
-
-#endif

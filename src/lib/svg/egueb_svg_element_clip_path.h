@@ -27,6 +27,8 @@
  */
 EAPI Egueb_Dom_Node * egueb_svg_element_clip_path_new(void);
 EAPI Eina_Bool egueb_svg_element_is_clip_path(Egueb_Dom_Node *n);
+EAPI void egueb_svg_element_clip_path_units_set(Egueb_Dom_Node *n,
+		Egueb_Svg_Referenceable_Units v);
 EAPI void egueb_svg_element_clip_path_units_get(Egueb_Dom_Node *n,
 		Egueb_Svg_Referenceable_Units_Animated *units);
 
@@ -34,7 +36,4 @@ EAPI void egueb_svg_element_clip_path_units_get(Egueb_Dom_Node *n,
  * @}
  */
 
-#if 0
-EAPI void egueb_svg_element_clip_path_units_set(Ender_Element *e, Egueb_Svg_Clip_Path_Units units);
-#endif
 #endif
