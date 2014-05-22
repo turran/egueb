@@ -19,6 +19,17 @@
 #ifndef _EGUEB_SVG_PAINT_SERVER_H_
 #define _EGUEB_SVG_PAINT_SERVER_H_
 
+/**
+ * @defgroup Egueb_Svg_Paint_Server_Group Paint servers
+ * @brief Paint servers
+ * @ingroup Egueb_Svg_Element_Group
+ * @{
+ */
+
 EAPI Eina_Bool egueb_svg_is_paint_server(Egueb_Dom_Node *n);
+
+/**
+ * @}
+ */
 
 #endif

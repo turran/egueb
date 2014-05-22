@@ -18,6 +18,13 @@
 #ifndef _EGUEB_SVG_GRADIENT_H_
 #define _EGUEB_SVG_GRADIENT_H_
 
+/**
+ * @defgroup Egueb_Svg_Gradient_Group Gradients
+ * @brief Gradient
+ * @ingroup Egueb_Svg_Paint_Server_Group
+ * @{
+ */
+
 EAPI Eina_Bool egueb_svg_is_gradient(Egueb_Dom_Node *n);
 
 EAPI void egueb_svg_gradient_xlink_href_set(Egueb_Dom_Node *n, Egueb_Dom_String *v);
@@ -30,5 +37,9 @@ EAPI void egueb_svg_gradient_gradient_transform_set(Egueb_Dom_Node *n,
 		Enesim_Matrix *m);
 EAPI void egueb_svg_gradient_gradient_transform_get(Egueb_Dom_Node *n,
 		Egueb_Svg_Matrix_Animated *m);
+
+/**
+ * @}
+ */
 
 #endif

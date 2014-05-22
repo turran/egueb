@@ -18,6 +18,7 @@
 
 #include "egueb_svg_main_private.h"
 #include "egueb_svg_main.h"
+#include "egueb_svg_length.h"
 #include "egueb_svg_element_stop.h"
 #include "egueb_svg_element_private.h"
 #include "egueb_svg_element_stop_private.h"
@@ -158,9 +159,18 @@ EAPI Egueb_Dom_Node * egueb_svg_element_stop_new(void)
 	return n;
 }
 
-#if 0
-EAPI void egueb_svg_element_stop_offset_set(Ender_Element *e, const Egueb_Svg_Length *offset)
+EAPI void egueb_svg_element_stop_offset_set(Egueb_Dom_Node *n, const Egueb_Svg_Length *v)
 {
-	ender_element_property_value_set(e, ESVG_ELEMENT_STOP_OFFSET, offset, NULL);
+	Egueb_Svg_Element_Stop *thiz;
+
+	thiz = EGUEB_SVG_ELEMENT_STOP(n);
+	egueb_dom_attr_set(thiz->offset, EGUEB_DOM_ATTR_TYPE_BASE, v);
 }
-#endif
+
+EAPI void egueb_svg_element_stop_offset_get(Egueb_Dom_Node *n, Egueb_Svg_Length_Animated *v)
+{
+	Egueb_Svg_Element_Stop *thiz;
+
+	thiz = EGUEB_SVG_ELEMENT_STOP(n);
+	EGUEB_SVG_ELEMENT_ATTR_ANIMATED_GET(thiz->offset, v);
+}

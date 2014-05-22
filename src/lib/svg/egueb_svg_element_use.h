@@ -21,18 +21,15 @@
 
 EAPI Egueb_Dom_Node * egueb_svg_element_use_new(void);
 EAPI Eina_Bool egueb_svg_element_is_use(Egueb_Dom_Node *n);
-
-#if 0
-EAPI void egueb_svg_element_use_x_set(Ender_Element *e, const Egueb_Svg_Coord *x);
-EAPI void egueb_svg_element_use_x_get(Ender_Element *e, Egueb_Svg_Coord *x);
-EAPI void egueb_svg_element_use_y_set(Ender_Element *e, const Egueb_Svg_Coord *y);
-EAPI void egueb_svg_element_use_y_get(Ender_Element *e, Egueb_Svg_Coord *y);
-EAPI void egueb_svg_element_use_width_set(Ender_Element *e, const Egueb_Svg_Length *width);
-EAPI void egueb_svg_element_use_width_get(Ender_Element *e, Egueb_Svg_Length *width);
-EAPI void egueb_svg_element_use_height_set(Ender_Element *e, const Egueb_Svg_Length *height);
-EAPI void egueb_svg_element_use_height_get(Ender_Element *e, Egueb_Svg_Length *height);
-EAPI void egueb_svg_element_use_link_set(Ender_Element *e, const char *link);
-EAPI void egueb_svg_element_use_link_get(Ender_Element *e, const char **link);
-#endif
+EAPI void egueb_svg_element_use_x_set(Egueb_Dom_Node *n, const Egueb_Svg_Coord *v);
+EAPI void egueb_svg_element_use_x_get(Egueb_Dom_Node *n, Egueb_Svg_Coord_Animated *v);
+EAPI void egueb_svg_element_use_y_set(Egueb_Dom_Node *n, const Egueb_Svg_Coord *v);
+EAPI void egueb_svg_element_use_y_get(Egueb_Dom_Node *n, Egueb_Svg_Coord_Animated *v);
+EAPI void egueb_svg_element_use_width_set(Egueb_Dom_Node *n, const Egueb_Svg_Length *v);
+EAPI void egueb_svg_element_use_width_get(Egueb_Dom_Node *n, Egueb_Svg_Length_Animated *v);
+EAPI void egueb_svg_element_use_height_set(Egueb_Dom_Node *n, const Egueb_Svg_Length *v);
+EAPI void egueb_svg_element_use_height_get(Egueb_Dom_Node *n, Egueb_Svg_Length_Animated *v);
+EAPI void egueb_svg_element_use_xlink_href_set(Egueb_Dom_Node *n, Egueb_Dom_String *v);
+EAPI void egueb_svg_element_use_xlink_href_get(Egueb_Dom_Node *n, Egueb_Svg_String_Animated *v);
 
 #endif

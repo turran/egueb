@@ -18,6 +18,13 @@
 #ifndef _EGUEB_SVG_ELEMENT_LINEAR_GRADIENT_H_
 #define _EGUEB_SVG_ELEMENT_LINEAR_GRADIENT_H_
 
+/**
+ * @defgroup Egueb_Svg_Element_Linear_Gradient_Group Linear gradient
+ * @brief Linear gradient
+ * @ingroup Egueb_Svg_Gradient_Group
+ * @{
+ */
+
 EAPI Egueb_Dom_Node * egueb_svg_element_linear_gradient_new(void);
 EAPI Eina_Bool egueb_svg_is_element_linear_gradient(Egueb_Dom_Node *n);
 EAPI void egueb_svg_element_linear_gradient_x1_set(Egueb_Dom_Node *n, const Egueb_Svg_Coord *v);
@@ -28,5 +35,9 @@ EAPI void egueb_svg_element_linear_gradient_x2_set(Egueb_Dom_Node *n, const Egue
 EAPI void egueb_svg_element_linear_gradient_x2_get(Egueb_Dom_Node *n, Egueb_Svg_Coord_Animated *v);
 EAPI void egueb_svg_element_linear_gradient_y2_set(Egueb_Dom_Node *n, const Egueb_Svg_Coord *v);
 EAPI void egueb_svg_element_linear_gradient_y2_get(Egueb_Dom_Node *n, Egueb_Svg_Coord_Animated *v);
+
+/**
+ * @}
+ */
 
 #endif

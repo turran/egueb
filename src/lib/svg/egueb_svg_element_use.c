@@ -18,6 +18,8 @@
 
 #include "egueb_svg_main_private.h"
 #include "egueb_svg_main.h"
+#include "egueb_svg_length.h"
+#include "egueb_svg_string.h"
 #include "egueb_svg_element.h"
 #include "egueb_svg_element_g.h"
 #include "egueb_svg_element_use.h"
@@ -361,70 +363,83 @@ EAPI Eina_Bool egueb_svg_element_is_use(Egueb_Dom_Node *n)
 	return EINA_TRUE;
 }
 
-#if 0
-
-EAPI void egueb_svg_element_use_x_set(Ender_Element *e, const Egueb_Svg_Coord *x)
+EAPI void egueb_svg_element_use_x_set(Egueb_Dom_Node *n, const Egueb_Svg_Coord *v)
 {
-	ender_element_property_value_set(e, ESVG_ELEMENT_USE_X, x, NULL);
+	Egueb_Svg_Element_Use *thiz;
+
+	thiz = EGUEB_SVG_ELEMENT_USE(n);
+	egueb_dom_attr_set(thiz->x, EGUEB_DOM_ATTR_TYPE_BASE, v);
 }
 
-EAPI void egueb_svg_element_use_x_get(Ender_Element *e, Egueb_Svg_Coord *x)
+EAPI void egueb_svg_element_use_x_get(Egueb_Dom_Node *n, Egueb_Svg_Coord_Animated *v)
 {
-	Egueb_Dom_Tag *t;
+	Egueb_Svg_Element_Use *thiz;
 
-	t = (Egueb_Dom_Tag *)ender_element_object_get(e);
-	_egueb_svg_element_use_x_get(t, x);
+	thiz = EGUEB_SVG_ELEMENT_USE(n);
+	EGUEB_SVG_ELEMENT_ATTR_ANIMATED_GET(thiz->x, v);
 }
 
-EAPI void egueb_svg_element_use_y_set(Ender_Element *e, const Egueb_Svg_Coord *y)
+EAPI void egueb_svg_element_use_y_set(Egueb_Dom_Node *n, const Egueb_Svg_Coord *v)
 {
-	ender_element_property_value_set(e, ESVG_ELEMENT_USE_Y, y, NULL);
+	Egueb_Svg_Element_Use *thiz;
+
+	thiz = EGUEB_SVG_ELEMENT_USE(n);
+	egueb_dom_attr_set(thiz->y, EGUEB_DOM_ATTR_TYPE_BASE, v);
 }
 
-EAPI void egueb_svg_element_use_y_get(Ender_Element *e, Egueb_Svg_Coord *y)
+EAPI void egueb_svg_element_use_y_get(Egueb_Dom_Node *n, Egueb_Svg_Coord_Animated *v)
 {
-	Egueb_Dom_Tag *t;
+	Egueb_Svg_Element_Use *thiz;
 
-	t = (Egueb_Dom_Tag *)ender_element_object_get(e);
-	_egueb_svg_element_use_y_get(t, y);
+	thiz = EGUEB_SVG_ELEMENT_USE(n);
+	EGUEB_SVG_ELEMENT_ATTR_ANIMATED_GET(thiz->y, v);
 }
 
-EAPI void egueb_svg_element_use_width_set(Ender_Element *e, const Egueb_Svg_Length *width)
+EAPI void egueb_svg_element_use_width_set(Egueb_Dom_Node *n, const Egueb_Svg_Length *v)
 {
-	ender_element_property_value_set(e, ESVG_ELEMENT_USE_WIDTH, width, NULL);
+	Egueb_Svg_Element_Use *thiz;
+
+	thiz = EGUEB_SVG_ELEMENT_USE(n);
+	egueb_dom_attr_set(thiz->width, EGUEB_DOM_ATTR_TYPE_BASE, v);
 }
 
-EAPI void egueb_svg_element_use_width_get(Ender_Element *e, Egueb_Svg_Length *width)
+EAPI void egueb_svg_element_use_width_get(Egueb_Dom_Node *n, Egueb_Svg_Length_Animated *v)
 {
-	Egueb_Dom_Tag *t;
+	Egueb_Svg_Element_Use *thiz;
 
-	t = (Egueb_Dom_Tag *)ender_element_object_get(e);
-	_egueb_svg_element_use_width_get(t, width);
+	thiz = EGUEB_SVG_ELEMENT_USE(n);
+	EGUEB_SVG_ELEMENT_ATTR_ANIMATED_GET(thiz->width, v);
 }
 
-EAPI void egueb_svg_element_use_height_set(Ender_Element *e, const Egueb_Svg_Length *height)
+EAPI void egueb_svg_element_use_height_set(Egueb_Dom_Node *n, const Egueb_Svg_Length *v)
 {
-	ender_element_property_value_set(e, ESVG_ELEMENT_USE_HEIGHT, height, NULL);
+	Egueb_Svg_Element_Use *thiz;
+
+	thiz = EGUEB_SVG_ELEMENT_USE(n);
+	egueb_dom_attr_set(thiz->height, EGUEB_DOM_ATTR_TYPE_BASE, v);
 }
 
-EAPI void egueb_svg_element_use_height_get(Ender_Element *e, Egueb_Svg_Length *height)
+EAPI void egueb_svg_element_use_height_get(Egueb_Dom_Node *n, Egueb_Svg_Length_Animated *v)
 {
-	Egueb_Dom_Tag *t;
+	Egueb_Svg_Element_Use *thiz;
 
-	t = (Egueb_Dom_Tag *)ender_element_object_get(e);
-	_egueb_svg_element_use_height_get(t, height);
+	thiz = EGUEB_SVG_ELEMENT_USE(n);
+	EGUEB_SVG_ELEMENT_ATTR_ANIMATED_GET(thiz->height, v);
 }
 
-EAPI void egueb_svg_element_use_link_set(Ender_Element *e, const char *v)
+EAPI void egueb_svg_element_use_xlink_href_set(Egueb_Dom_Node *n, Egueb_Dom_String *v)
 {
-	ender_element_property_value_set(e, ESVG_ELEMENT_USE_LINK, v, NULL);
+	Egueb_Svg_Element_Use *thiz;
+
+	thiz = EGUEB_SVG_ELEMENT_USE(n);
+	egueb_dom_attr_set(thiz->xlink_href, EGUEB_DOM_ATTR_TYPE_BASE, v);
 }
 
-EAPI void egueb_svg_element_use_link_get(Ender_Element *e, const char **link)
+EAPI void egueb_svg_element_use_xlink_href_get(Egueb_Dom_Node *n, Egueb_Svg_String_Animated *v)
 {
-	Egueb_Dom_Tag *t;
+	Egueb_Svg_Element_Use *thiz;
 
-	t = (Egueb_Dom_Tag *)ender_element_object_get(e);
-	_egueb_svg_element_use_link_get(t, link);
+	thiz = EGUEB_SVG_ELEMENT_USE(n);
+	EGUEB_SVG_ELEMENT_ATTR_ANIMATED_GET(thiz->xlink_href, v);
 }
-#endif
+

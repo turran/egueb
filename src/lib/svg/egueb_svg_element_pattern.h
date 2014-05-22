@@ -19,6 +19,13 @@
 #ifndef _EGUEB_SVG_ELEMENT_PATTERN_H_
 #define _EGUEB_SVG_ELEMENT_PATTERN_H_
 
+/**
+ * @defgroup Egueb_Svg_Element_Pattern_Group Pattern
+ * @brief Pattern
+ * @ingroup Egueb_Svg_Paint_Server_Group
+ * @{
+ */
+
 EAPI Egueb_Dom_Node * egueb_svg_element_pattern_new(void);
 EAPI Eina_Bool egueb_svg_element_is_pattern(Egueb_Dom_Node *n);
 
@@ -40,5 +47,9 @@ EAPI void egueb_svg_element_pattern_pattern_transform_set(Egueb_Dom_Node *n,
 		Enesim_Matrix *m);
 EAPI void egueb_svg_element_pattern_pattern_transform_get(Egueb_Dom_Node *n,
 		Egueb_Svg_Matrix_Animated *m);
+
+/**
+ * @}
+ */
 
 #endif

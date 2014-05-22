@@ -18,6 +18,13 @@
 #ifndef _EGUEB_SVG_ELEMENT_RADIAL_GRADIENT_H_
 #define _EGUEB_SVG_ELEMENT_RADIAL_GRADIENT_H_
 
+/**
+ * @defgroup Egueb_Svg_Element_Radial_Gradient_Group Radial gradient
+ * @brief Radial gradient
+ * @ingroup Egueb_Svg_Gradient_Group
+ * @{
+ */
+
 EAPI Egueb_Dom_Node * egueb_svg_element_radial_gradient_new(void);
 EAPI Eina_Bool egueb_svg_is_element_radial_gradient(Egueb_Dom_Node *n);
 EAPI void egueb_svg_element_radial_gradient_cx_set(Egueb_Dom_Node *n, const Egueb_Svg_Coord *v);
@@ -30,5 +37,9 @@ EAPI void egueb_svg_element_radial_gradient_fy_set(Egueb_Dom_Node *n, const Egue
 EAPI void egueb_svg_element_radial_gradient_fy_get(Egueb_Dom_Node *n, Egueb_Svg_Coord_Animated *v);
 EAPI void egueb_svg_element_radial_gradient_r_set(Egueb_Dom_Node *n, const Egueb_Svg_Length *r);
 EAPI void egueb_svg_element_radial_gradient_r_get(Egueb_Dom_Node *n, Egueb_Svg_Length_Animated *r);
+
+/**
+ * @}
+ */
 
 #endif

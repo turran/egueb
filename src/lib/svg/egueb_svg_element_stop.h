@@ -19,10 +19,20 @@
 #ifndef _EGUEB_SVG_ELEMENT_STOP_H_
 #define _EGUEB_SVG_ELEMENT_STOP_H_
 
+/**
+ * @defgroup Egueb_Svg_Element_Stop_Group Stop
+ * @brief Gradient stop
+ * @ingroup Egueb_Svg_Gradient_Group
+ * @{
+ */
+
 EAPI Eina_Bool egueb_svg_element_is_stop(Egueb_Dom_Node *n);
 EAPI Egueb_Dom_Node * egueb_svg_element_stop_new(void);
-#if 0
-EAPI void egueb_svg_element_stop_offset_set(Ender_Element *e, const Egueb_Svg_Length *offset);
-#endif
+EAPI void egueb_svg_element_stop_offset_set(Egueb_Dom_Node *n, const Egueb_Svg_Length *v);
+EAPI void egueb_svg_element_stop_offset_get(Egueb_Dom_Node *n, Egueb_Svg_Length_Animated *v);
+
+/**
+ * @}
+ */
 
 #endif
