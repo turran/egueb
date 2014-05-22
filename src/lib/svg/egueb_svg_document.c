@@ -25,6 +25,7 @@
 #include "egueb_svg_length.h"
 #include "egueb_svg_overflow.h"
 #include "egueb_svg_point.h"
+#include "egueb_svg_matrix.h"
 /* elements */
 #include "egueb_svg_element.h"
 #include "egueb_svg_element_a.h"

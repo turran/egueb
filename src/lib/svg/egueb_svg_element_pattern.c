@@ -17,7 +17,9 @@
  */
 #include "egueb_svg_main_private.h"
 #include "egueb_svg_main.h"
+#include "egueb_svg_length.h"
 #include "egueb_svg_matrix.h"
+#include "egueb_svg_string.h"
 #include "egueb_svg_referenceable_units.h"
 #include "egueb_svg_attr_xlink_href.h"
 #include "egueb_svg_element_pattern.h"
@@ -374,127 +376,118 @@ EAPI Egueb_Dom_Node * egueb_svg_element_pattern_new(void)
 	return n;
 }
 
-#if 0
-EAPI void egueb_svg_pattern_x_set(Enesim_Renderer *r, const Egueb_Svg_Coord *x)
+EAPI void egueb_svg_element_pattern_x_set(Egueb_Dom_Node *n, const Egueb_Svg_Coord *v)
 {
-	Egueb_Svg_Pattern *thiz;
+	Egueb_Svg_Element_Pattern *thiz;
 
-	thiz = _egueb_svg_pattern_get(r);
-	if (x) thiz->x = *x;
+	thiz = EGUEB_SVG_ELEMENT_PATTERN(n);
+	egueb_dom_attr_set(thiz->x, EGUEB_DOM_ATTR_TYPE_BASE, v);
 }
 
-EAPI void egueb_svg_pattern_x_get(Enesim_Renderer *r, Egueb_Svg_Coord *x)
+EAPI void egueb_svg_element_pattern_x_get(Egueb_Dom_Node *n, Egueb_Svg_Coord_Animated *v)
 {
-	Egueb_Svg_Pattern *thiz;
+	Egueb_Svg_Element_Pattern *thiz;
 
-	thiz = _egueb_svg_pattern_get(r);
-	if (x) *x = thiz->x;
+	thiz = EGUEB_SVG_ELEMENT_PATTERN(n);
+	EGUEB_SVG_ELEMENT_ATTR_ANIMATED_GET(thiz->x, v);
 }
 
-EAPI void egueb_svg_pattern_y_set(Enesim_Renderer *r, const Egueb_Svg_Coord *y)
+EAPI void egueb_svg_element_pattern_y_set(Egueb_Dom_Node *n, const Egueb_Svg_Coord *v)
 {
-	Egueb_Svg_Pattern *thiz;
+	Egueb_Svg_Element_Pattern *thiz;
 
-	thiz = _egueb_svg_pattern_get(r);
-	if (y) thiz->y = *y;
+	thiz = EGUEB_SVG_ELEMENT_PATTERN(n);
+	egueb_dom_attr_set(thiz->y, EGUEB_DOM_ATTR_TYPE_BASE, v);
 }
 
-EAPI void egueb_svg_pattern_y_get(Enesim_Renderer *r, Egueb_Svg_Coord *y)
+EAPI void egueb_svg_element_pattern_y_get(Egueb_Dom_Node *n, Egueb_Svg_Coord_Animated *v)
 {
-	Egueb_Svg_Pattern *thiz;
+	Egueb_Svg_Element_Pattern *thiz;
 
-	thiz = _egueb_svg_pattern_get(r);
-	if (y) *y = thiz->y;
+	thiz = EGUEB_SVG_ELEMENT_PATTERN(n);
+	EGUEB_SVG_ELEMENT_ATTR_ANIMATED_GET(thiz->y, v);
 }
 
-EAPI void egueb_svg_pattern_width_set(Enesim_Renderer *r, const Egueb_Svg_Length *width)
+EAPI void egueb_svg_element_pattern_width_set(Egueb_Dom_Node *n, const Egueb_Svg_Length *v)
 {
-	Egueb_Svg_Pattern *thiz;
+	Egueb_Svg_Element_Pattern *thiz;
 
-	thiz = _egueb_svg_pattern_get(r);
-	if (width) thiz->width = *width;
+	thiz = EGUEB_SVG_ELEMENT_PATTERN(n);
+	egueb_dom_attr_set(thiz->width, EGUEB_DOM_ATTR_TYPE_BASE, v);
 }
 
-EAPI void egueb_svg_pattern_width_get(Enesim_Renderer *r, Egueb_Svg_Length *width)
+EAPI void egueb_svg_element_pattern_width_get(Egueb_Dom_Node *n, Egueb_Svg_Length_Animated *v)
 {
-	Egueb_Svg_Pattern *thiz;
+	Egueb_Svg_Element_Pattern *thiz;
 
-	thiz = _egueb_svg_pattern_get(r);
-	if (width) *width = thiz->width;
+	thiz = EGUEB_SVG_ELEMENT_PATTERN(n);
+	EGUEB_SVG_ELEMENT_ATTR_ANIMATED_GET(thiz->width, v);
 }
 
-EAPI void egueb_svg_pattern_height_set(Enesim_Renderer *r, const Egueb_Svg_Length *height)
+EAPI void egueb_svg_element_pattern_height_set(Egueb_Dom_Node *n, const Egueb_Svg_Length *v)
 {
-	Egueb_Svg_Pattern *thiz;
+	Egueb_Svg_Element_Pattern *thiz;
 
-	thiz = _egueb_svg_pattern_get(r);
-	if (height) thiz->height = *height;
+	thiz = EGUEB_SVG_ELEMENT_PATTERN(n);
+	egueb_dom_attr_set(thiz->height, EGUEB_DOM_ATTR_TYPE_BASE, v);
 }
 
-EAPI void egueb_svg_pattern_height_get(Enesim_Renderer *r, Egueb_Svg_Length *height)
+EAPI void egueb_svg_element_pattern_height_get(Egueb_Dom_Node *n, Egueb_Svg_Length_Animated *v)
 {
-	Egueb_Svg_Pattern *thiz;
+	Egueb_Svg_Element_Pattern *thiz;
 
-	thiz = _egueb_svg_pattern_get(r);
-	if (height) *height = thiz->height;
+	thiz = EGUEB_SVG_ELEMENT_PATTERN(n);
+	EGUEB_SVG_ELEMENT_ATTR_ANIMATED_GET(thiz->height, v);
 }
 
-EAPI void egueb_svg_pattern_units_set(Enesim_Renderer *r, Egueb_Svg_Pattern_Units units)
+EAPI void egueb_svg_element_pattern_xlink_href_set(Egueb_Dom_Node *n, Egueb_Dom_String *v)
 {
-	Egueb_Svg_Pattern *thiz;
+	Egueb_Svg_Element_Pattern *thiz;
 
-	thiz = _egueb_svg_pattern_get(r);
-	thiz->units = units;
-	thiz->units_set = EINA_TRUE;
+	thiz = EGUEB_SVG_ELEMENT_PATTERN(n);
+	egueb_dom_attr_set(thiz->xlink_href, EGUEB_DOM_ATTR_TYPE_BASE, v);
 }
 
-EAPI void egueb_svg_pattern_units_get(Enesim_Renderer *r, Egueb_Svg_Pattern_Units *units)
+EAPI void egueb_svg_element_pattern_xlink_href_get(Egueb_Dom_Node *n, Egueb_Svg_String_Animated *v)
 {
-	Egueb_Svg_Pattern *thiz;
+	Egueb_Svg_Element_Pattern *thiz;
 
-	thiz = _egueb_svg_pattern_get(r);
-	if (units) *units = thiz->units;
+	thiz = EGUEB_SVG_ELEMENT_PATTERN(n);
+	EGUEB_SVG_ELEMENT_ATTR_ANIMATED_GET(thiz->xlink_href, v);
 }
 
-EAPI Eina_Bool egueb_svg_pattern_units_is_set(Enesim_Renderer *r)
+EAPI void egueb_svg_element_pattern_pattern_units_set(Egueb_Dom_Node *n,
+		Egueb_Svg_Referenceable_Units v)
 {
-	Egueb_Svg_Pattern *thiz;
+	Egueb_Svg_Element_Pattern *thiz;
 
-	thiz = _egueb_svg_pattern_get(r);
-	return thiz->units_set;
+	thiz = EGUEB_SVG_ELEMENT_PATTERN(n);
+	egueb_dom_attr_set(thiz->units, EGUEB_DOM_ATTR_TYPE_BASE, v);
 }
 
-EAPI void egueb_svg_pattern_transform_set(Enesim_Renderer *r, const Enesim_Matrix *transform)
+EAPI void egueb_svg_element_pattern_pattern_units_get(Egueb_Dom_Node *n,
+		Egueb_Svg_Referenceable_Units_Animated *v)
 {
-	Egueb_Svg_Pattern *thiz;
+	Egueb_Svg_Element_Pattern *thiz;
 
-	thiz = _egueb_svg_pattern_get(r);
-	if (transform) thiz->transform = *transform;
+	thiz = EGUEB_SVG_ELEMENT_PATTERN(n);
+	EGUEB_SVG_ELEMENT_ATTR_ANIMATED_GET(thiz->units, v);
 }
 
-EAPI void egueb_svg_pattern_transform_get(Enesim_Renderer *r, Enesim_Matrix *transform)
+EAPI void egueb_svg_element_pattern_pattern_transform_set(Egueb_Dom_Node *n,
+		Enesim_Matrix *m)
 {
-	Egueb_Svg_Pattern *thiz;
+	Egueb_Svg_Element_Pattern *thiz;
 
-	thiz = _egueb_svg_pattern_get(r);
-	if (transform) *transform = thiz->transform;
+	thiz = EGUEB_SVG_ELEMENT_PATTERN(n);
+	egueb_dom_attr_set(thiz->transform, EGUEB_DOM_ATTR_TYPE_BASE, m);
 }
 
-EAPI Eina_Bool egueb_svg_pattern_transform_is_set(Enesim_Renderer *r)
+EAPI void egueb_svg_element_pattern_pattern_transform_get(Egueb_Dom_Node *n,
+		Egueb_Svg_Matrix_Animated *m)
 {
-	Egueb_Svg_Pattern *thiz;
+	Egueb_Svg_Element_Pattern *thiz;
 
-	thiz = _egueb_svg_pattern_get(r);
-	return thiz->transform_is_set;
+	thiz = EGUEB_SVG_ELEMENT_PATTERN(n);
+	EGUEB_SVG_ELEMENT_ATTR_ANIMATED_GET(thiz->transform, m);
 }
-
-EAPI void egueb_svg_pattern_content_set(Enesim_Renderer *r, Enesim_Renderer *content)
-{
-	Egueb_Svg_Pattern *thiz;
-
-	thiz = _egueb_svg_pattern_get(r);
-	/* FIXME for now */
-	thiz->content = content;
-	egueb_svg_element_parent_set(content, r);
-}
-#endif

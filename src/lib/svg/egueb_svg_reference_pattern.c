@@ -17,6 +17,8 @@
  */
 #include "egueb_svg_main_private.h"
 #include "egueb_svg_main.h"
+#include "egueb_svg_matrix.h"
+#include "egueb_svg_string.h"
 #include "egueb_svg_reference.h"
 #include "egueb_svg_referenceable.h"
 #include "egueb_svg_referenceable_units.h"
