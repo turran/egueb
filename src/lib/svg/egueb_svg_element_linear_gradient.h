@@ -20,27 +20,13 @@
 
 EAPI Egueb_Dom_Node * egueb_svg_element_linear_gradient_new(void);
 EAPI Eina_Bool egueb_svg_is_element_linear_gradient(Egueb_Dom_Node *n);
-EAPI void egueb_svg_element_linear_gradient_deep_x1_get(Egueb_Dom_Node *n,
-		Egueb_Svg_Coord *x1);
-EAPI void egueb_svg_element_linear_gradient_deep_y1_get(Egueb_Dom_Node *n,
-		Egueb_Svg_Coord *y1);
-EAPI void egueb_svg_element_linear_gradient_deep_x2_get(Egueb_Dom_Node *n,
-		Egueb_Svg_Coord *x2);
-EAPI void egueb_svg_element_linear_gradient_deep_y2_get(Egueb_Dom_Node *n,
-		Egueb_Svg_Coord *y2);
-#if 0
-EAPI void egueb_svg_element_linear_gradient_x1_set(Ender_Element *e, const Egueb_Svg_Coord *x1);
-EAPI void egueb_svg_element_linear_gradient_x1_get(Ender_Element *e, Egueb_Svg_Coord *x1);
-EAPI Eina_Bool egueb_svg_element_linear_gradient_x1_is_set(Ender_Element *e);
-EAPI void egueb_svg_element_linear_gradient_y1_set(Ender_Element *e, const Egueb_Svg_Coord *y1);
-EAPI void egueb_svg_element_linear_gradient_y1_get(Ender_Element *e, Egueb_Svg_Coord *y1);
-EAPI Eina_Bool egueb_svg_element_linear_gradient_y1_is_set(Ender_Element *e);
-EAPI void egueb_svg_element_linear_gradient_x2_set(Ender_Element *e, const Egueb_Svg_Coord *x2);
-EAPI void egueb_svg_element_linear_gradient_x2_get(Ender_Element *e, Egueb_Svg_Coord *x2);
-EAPI Eina_Bool egueb_svg_element_linear_gradient_x2_is_set(Ender_Element *e);
-EAPI void egueb_svg_element_linear_gradient_y2_set(Ender_Element *e, const Egueb_Svg_Coord *y2);
-EAPI void egueb_svg_element_linear_gradient_y2_get(Ender_Element *e, Egueb_Svg_Coord *y2);
-EAPI Eina_Bool egueb_svg_element_linear_gradient_y2_is_set(Ender_Element *e);
-#endif
+EAPI void egueb_svg_element_linear_gradient_x1_set(Egueb_Dom_Node *n, const Egueb_Svg_Coord *v);
+EAPI void egueb_svg_element_linear_gradient_x1_get(Egueb_Dom_Node *n, Egueb_Svg_Coord_Animated *v);
+EAPI void egueb_svg_element_linear_gradient_y1_set(Egueb_Dom_Node *n, const Egueb_Svg_Coord *v);
+EAPI void egueb_svg_element_linear_gradient_y1_get(Egueb_Dom_Node *n, Egueb_Svg_Coord_Animated *v);
+EAPI void egueb_svg_element_linear_gradient_x2_set(Egueb_Dom_Node *n, const Egueb_Svg_Coord *v);
+EAPI void egueb_svg_element_linear_gradient_x2_get(Egueb_Dom_Node *n, Egueb_Svg_Coord_Animated *v);
+EAPI void egueb_svg_element_linear_gradient_y2_set(Egueb_Dom_Node *n, const Egueb_Svg_Coord *v);
+EAPI void egueb_svg_element_linear_gradient_y2_get(Egueb_Dom_Node *n, Egueb_Svg_Coord_Animated *v);
 
 #endif

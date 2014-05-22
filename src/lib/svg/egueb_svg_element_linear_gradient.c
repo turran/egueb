@@ -23,6 +23,8 @@
 #include "egueb_svg_gradient.h"
 #include "egueb_svg_gradient_private.h"
 #include "egueb_svg_element_linear_gradient.h"
+
+#include "egueb_svg_element_linear_gradient_private.h"
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
@@ -174,6 +176,34 @@ static void _egueb_svg_element_linear_gradient_instance_deinit(void *o)
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
+void egueb_svg_element_linear_gradient_deep_x1_get(Egueb_Dom_Node *n,
+		Egueb_Svg_Length *x1)
+{
+	EGUEB_SVG_ELEMENT_LINEAR_GRADIENT_DEEP_LENGTH_GET(n, x1,
+		EGUEB_SVG_LENGTH_0, egueb_svg_element_linear_gradient_deep_x1_get);
+}
+
+void egueb_svg_element_linear_gradient_deep_y1_get(Egueb_Dom_Node *n,
+		Egueb_Svg_Length *y1)
+{
+	EGUEB_SVG_ELEMENT_LINEAR_GRADIENT_DEEP_LENGTH_GET(n, y1,
+		EGUEB_SVG_LENGTH_0, egueb_svg_element_linear_gradient_deep_y1_get);
+}
+
+void egueb_svg_element_linear_gradient_deep_x2_get(Egueb_Dom_Node *n,
+		Egueb_Svg_Length *x2)
+{
+	EGUEB_SVG_ELEMENT_LINEAR_GRADIENT_DEEP_LENGTH_GET(n, x2,
+		EGUEB_SVG_LENGTH_100_PERCENT, egueb_svg_element_linear_gradient_deep_x2_get);
+}
+
+void egueb_svg_element_linear_gradient_deep_y2_get(Egueb_Dom_Node *n,
+		Egueb_Svg_Length *y2)
+{
+	EGUEB_SVG_ELEMENT_LINEAR_GRADIENT_DEEP_LENGTH_GET(n, y2,
+		EGUEB_SVG_LENGTH_0, egueb_svg_element_linear_gradient_deep_y2_get);
+}
+
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/
@@ -194,172 +224,67 @@ EAPI Eina_Bool egueb_svg_is_element_linear_gradient(Egueb_Dom_Node *n)
 	return EINA_TRUE;
 }
 
-EAPI void egueb_svg_element_linear_gradient_deep_x1_get(Egueb_Dom_Node *n,
-		Egueb_Svg_Length *x1)
+EAPI void egueb_svg_element_linear_gradient_x1_set(Egueb_Dom_Node *n, const Egueb_Svg_Coord *v)
 {
-	EGUEB_SVG_ELEMENT_LINEAR_GRADIENT_DEEP_LENGTH_GET(n, x1,
-		EGUEB_SVG_LENGTH_0, egueb_svg_element_linear_gradient_deep_x1_get);
+	Egueb_Svg_Element_Linear_Gradient *thiz;
+
+	thiz = EGUEB_SVG_ELEMENT_LINEAR_GRADIENT(n);
+	egueb_dom_attr_set(thiz->x1, EGUEB_DOM_ATTR_TYPE_BASE, v);
 }
 
-EAPI void egueb_svg_element_linear_gradient_deep_y1_get(Egueb_Dom_Node *n,
-		Egueb_Svg_Length *y1)
+EAPI void egueb_svg_element_linear_gradient_x1_get(Egueb_Dom_Node *n, Egueb_Svg_Coord_Animated *v)
 {
-	EGUEB_SVG_ELEMENT_LINEAR_GRADIENT_DEEP_LENGTH_GET(n, y1,
-		EGUEB_SVG_LENGTH_0, egueb_svg_element_linear_gradient_deep_y1_get);
+	Egueb_Svg_Element_Linear_Gradient *thiz;
+
+	thiz = EGUEB_SVG_ELEMENT_LINEAR_GRADIENT(n);
+	EGUEB_SVG_ELEMENT_ATTR_ANIMATED_GET(thiz->x1, v);
 }
 
-EAPI void egueb_svg_element_linear_gradient_deep_x2_get(Egueb_Dom_Node *n,
-		Egueb_Svg_Length *x2)
+EAPI void egueb_svg_element_linear_gradient_y1_set(Egueb_Dom_Node *n, const Egueb_Svg_Coord *v)
 {
-	EGUEB_SVG_ELEMENT_LINEAR_GRADIENT_DEEP_LENGTH_GET(n, x2,
-		EGUEB_SVG_LENGTH_100_PERCENT, egueb_svg_element_linear_gradient_deep_x2_get);
+	Egueb_Svg_Element_Linear_Gradient *thiz;
+
+	thiz = EGUEB_SVG_ELEMENT_LINEAR_GRADIENT(n);
+	egueb_dom_attr_set(thiz->y1, EGUEB_DOM_ATTR_TYPE_BASE, v);
 }
 
-EAPI void egueb_svg_element_linear_gradient_deep_y2_get(Egueb_Dom_Node *n,
-		Egueb_Svg_Length *y2)
+EAPI void egueb_svg_element_linear_gradient_y1_get(Egueb_Dom_Node *n, Egueb_Svg_Coord_Animated *v)
 {
-	EGUEB_SVG_ELEMENT_LINEAR_GRADIENT_DEEP_LENGTH_GET(n, y2,
-		EGUEB_SVG_LENGTH_0, egueb_svg_element_linear_gradient_deep_y2_get);
+	Egueb_Svg_Element_Linear_Gradient *thiz;
+
+	thiz = EGUEB_SVG_ELEMENT_LINEAR_GRADIENT(n);
+	EGUEB_SVG_ELEMENT_ATTR_ANIMATED_GET(thiz->y1, v);
 }
 
-#if 0
-EAPI void egueb_svg_element_linear_gradient_deep_y1_get(Egueb_Svg_Element_Linear_Gradient *thiz,
-		Egueb_Dom_Tag *t,
-		Egueb_Svg_Coord *y1)
+EAPI void egueb_svg_element_linear_gradient_x2_set(Egueb_Dom_Node *n, const Egueb_Svg_Coord *v)
 {
-	Egueb_Dom_Tag *href;
+	Egueb_Svg_Element_Linear_Gradient *thiz;
 
-	href = egueb_svg_element_gradient_href_tag_get(t);
-	if (!thiz->y1.is_set && href)
-	{
-		Egueb_Svg_Element_Linear_Gradient *other;
-
-		other = _egueb_svg_element_linear_gradient_get(href);
-		_egueb_svg_element_linear_gradient_deep_y1_get(other, href, y1);
-	}
-	else
-		*y1 = thiz->y1.v;
+	thiz = EGUEB_SVG_ELEMENT_LINEAR_GRADIENT(n);
+	egueb_dom_attr_set(thiz->x2, EGUEB_DOM_ATTR_TYPE_BASE, v);
 }
 
-EAPI void egueb_svg_element_linear_gradient_deep_x2_get(Egueb_Svg_Element_Linear_Gradient *thiz,
-		Egueb_Dom_Tag *t,
-		Egueb_Svg_Coord *x2)
+EAPI void egueb_svg_element_linear_gradient_x2_get(Egueb_Dom_Node *n, Egueb_Svg_Coord_Animated *v)
 {
-	Egueb_Dom_Tag *href;
+	Egueb_Svg_Element_Linear_Gradient *thiz;
 
-	href = egueb_svg_element_gradient_href_tag_get(t);
-	if (!thiz->x2.is_set && href)
-	{
-		Egueb_Svg_Element_Linear_Gradient *other;
-
-		other = _egueb_svg_element_linear_gradient_get(href);
-		_egueb_svg_element_linear_gradient_deep_x2_get(other, href, x2);
-	}
-	else
-		*x2 = thiz->x2.v;
+	thiz = EGUEB_SVG_ELEMENT_LINEAR_GRADIENT(n);
+	EGUEB_SVG_ELEMENT_ATTR_ANIMATED_GET(thiz->x2, v);
 }
 
-EAPI void egueb_svg_element_linear_gradient_deep_y2_get(Egueb_Svg_Element_Linear_Gradient *thiz,
-		Egueb_Dom_Tag *t,
-		Egueb_Svg_Coord *y2)
+EAPI void egueb_svg_element_linear_gradient_y2_set(Egueb_Dom_Node *n, const Egueb_Svg_Coord *v)
 {
-	Egueb_Dom_Tag *href;
+	Egueb_Svg_Element_Linear_Gradient *thiz;
 
-	href = egueb_svg_element_gradient_href_tag_get(t);
-	if (!thiz->y2.is_set && href)
-	{
-		Egueb_Svg_Element_Linear_Gradient *other;
-
-		other = _egueb_svg_element_linear_gradient_get(href);
-		_egueb_svg_element_linear_gradient_deep_y2_get(other, href, y2);
-	}
-	else
-		*y2 = thiz->y2.v;
-}
-#endif
-
-#if 0
-EAPI void egueb_svg_element_linear_gradient_x1_set(Ender_Element *e, const Egueb_Svg_Coord *x1)
-{
-	ender_element_property_value_set(e, ESVG_ELEMENT_LINEAR_GRADIENT_X1, x1, NULL);
+	thiz = EGUEB_SVG_ELEMENT_LINEAR_GRADIENT(n);
+	egueb_dom_attr_set(thiz->y2, EGUEB_DOM_ATTR_TYPE_BASE, v);
 }
 
-EAPI void egueb_svg_element_linear_gradient_x1_get(Ender_Element *e, Egueb_Svg_Coord *x1)
+EAPI void egueb_svg_element_linear_gradient_y2_get(Egueb_Dom_Node *n, Egueb_Svg_Coord_Animated *v)
 {
-	Egueb_Dom_Tag *t;
+	Egueb_Svg_Element_Linear_Gradient *thiz;
 
-	t = (Egueb_Dom_Tag *)ender_element_object_get(e);
-	_egueb_svg_element_linear_gradient_x1_get(t, x1);
+	thiz = EGUEB_SVG_ELEMENT_LINEAR_GRADIENT(n);
+	EGUEB_SVG_ELEMENT_ATTR_ANIMATED_GET(thiz->y2, v);
 }
 
-EAPI Eina_Bool egueb_svg_element_linear_gradient_x1_is_set(Ender_Element *e)
-{
-	Egueb_Dom_Tag *t;
-
-	t = (Egueb_Dom_Tag *)ender_element_object_get(e);
-	return _egueb_svg_element_linear_gradient_x1_is_set(t);
-}
-
-EAPI void egueb_svg_element_linear_gradient_y1_set(Ender_Element *e, const Egueb_Svg_Coord *y1)
-{
-	ender_element_property_value_set(e, ESVG_ELEMENT_LINEAR_GRADIENT_Y1, y1, NULL);
-}
-
-EAPI void egueb_svg_element_linear_gradient_y1_get(Ender_Element *e, Egueb_Svg_Coord *y1)
-{
-	Egueb_Dom_Tag *t;
-
-	t = (Egueb_Dom_Tag *)ender_element_object_get(e);
-	_egueb_svg_element_linear_gradient_y1_get(t, y1);
-}
-
-EAPI Eina_Bool egueb_svg_element_linear_gradient_y1_is_set(Ender_Element *e)
-{
-	Egueb_Dom_Tag *t;
-
-	t = (Egueb_Dom_Tag *)ender_element_object_get(e);
-	return _egueb_svg_element_linear_gradient_y1_is_set(t);
-}
-
-EAPI void egueb_svg_element_linear_gradient_x2_set(Ender_Element *e, const Egueb_Svg_Coord *x2)
-{
-	ender_element_property_value_set(e, ESVG_ELEMENT_LINEAR_GRADIENT_X2, x2, NULL);
-}
-
-EAPI void egueb_svg_element_linear_gradient_x2_get(Ender_Element *e, Egueb_Svg_Coord *x2)
-{
-	Egueb_Dom_Tag *t;
-
-	t = (Egueb_Dom_Tag *)ender_element_object_get(e);
-	_egueb_svg_element_linear_gradient_x2_get(t, x2);
-}
-
-EAPI Eina_Bool egueb_svg_element_linear_gradient_x2_is_set(Ender_Element *e)
-{
-	Egueb_Dom_Tag *t;
-
-	t = (Egueb_Dom_Tag *)ender_element_object_get(e);
-	return _egueb_svg_element_linear_gradient_x2_is_set(t);
-}
-
-EAPI void egueb_svg_element_linear_gradient_y2_set(Ender_Element *e, const Egueb_Svg_Coord *y2)
-{
-	ender_element_property_value_set(e, ESVG_ELEMENT_LINEAR_GRADIENT_Y2, y2, NULL);
-}
-
-EAPI void egueb_svg_element_linear_gradient_y2_get(Ender_Element *e, Egueb_Svg_Coord *y2)
-{
-	Egueb_Dom_Tag *t;
-
-	t = (Egueb_Dom_Tag *)ender_element_object_get(e);
-	_egueb_svg_element_linear_gradient_y2_get(t, y2);
-}
-
-EAPI Eina_Bool egueb_svg_element_linear_gradient_y2_is_set(Ender_Element *e)
-{
-	Egueb_Dom_Tag *t;
-
-	t = (Egueb_Dom_Tag *)ender_element_object_get(e);
-	return _egueb_svg_element_linear_gradient_y2_is_set(t);
-}
-#endif
