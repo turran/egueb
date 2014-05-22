@@ -16,8 +16,8 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _EGUEB_SVG_PATTERN_PRIVATE_H_
-#define _EGUEB_SVG_PATTERN_PRIVATE_H_
+#ifndef _EGUEB_SVG_ELEMENT_PATTERN_PRIVATE_H_
+#define _EGUEB_SVG_ELEMENT_PATTERN_PRIVATE_H_
 
 #include "egueb_svg_length.h"
 #include "egueb_svg_rect.h"
