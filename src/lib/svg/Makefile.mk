@@ -122,11 +122,13 @@ src/lib/svg/egueb_svg_element_g.c \
 src/lib/svg/egueb_svg_element_image.c \
 src/lib/svg/egueb_svg_element_line.c \
 src/lib/svg/egueb_svg_element_linear_gradient.c \
+src/lib/svg/egueb_svg_element_linear_gradient_private.h \
 src/lib/svg/egueb_svg_element_path.c \
 src/lib/svg/egueb_svg_element_pattern.c \
 src/lib/svg/egueb_svg_element_polygon.c \
 src/lib/svg/egueb_svg_element_polyline.c \
 src/lib/svg/egueb_svg_element_radial_gradient.c \
+src/lib/svg/egueb_svg_element_radial_gradient_private.h \
 src/lib/svg/egueb_svg_element_rect.c \
 src/lib/svg/egueb_svg_element_use.c \
 src/lib/svg/egueb_svg_element_stop.c \
