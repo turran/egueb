@@ -18,6 +18,7 @@
 
 #include "egueb_svg_main_private.h"
 #include "egueb_svg_main.h"
+#include "egueb_svg_length.h"
 #include "egueb_svg_element_ellipse.h"
 #include "egueb_svg_document.h"
 #include "egueb_svg_shape_private.h"
@@ -189,62 +190,6 @@ static void _egueb_svg_element_ellipse_instance_deinit(void *o)
 	egueb_dom_node_unref(thiz->rx);
 	egueb_dom_node_unref(thiz->ry);
 }
-#if 0
-
-static Egueb_Svg_Element_Setup_Return _egueb_svg_element_ellipse_setup(Egueb_Dom_Tag *t,
-		Egueb_Svg_Context *c,
-		Egueb_Svg_Element_Context *ctx,
-		Egueb_Svg_Attribute_Presentation *attr,
-		Enesim_Log **error)
-{
-	Egueb_Svg_Element_Ellipse *thiz;
-	Egueb_Svg_Length lcx, lcy;
-	Egueb_Svg_Length lrx, lry;
-
-	thiz = _egueb_svg_element_ellipse_get(t);
-	/* position */
-	egueb_svg_attribute_animated_length_final_get(&thiz->cx, &lcx);
-	egueb_svg_attribute_animated_length_final_get(&thiz->cy, &lcy);
-	thiz->gcx = egueb_svg_coord_final_get(&lcx, ctx->viewbox.w, ctx->font_size);
-	thiz->gcy = egueb_svg_coord_final_get(&lcy, ctx->viewbox.h, ctx->font_size);
-	/* radius */
-	egueb_svg_attribute_animated_length_final_get(&thiz->rx, &lrx);
-	egueb_svg_attribute_animated_length_final_get(&thiz->ry, &lry);
-	thiz->grx = egueb_svg_coord_final_get(&lrx, ctx->viewbox.w, ctx->font_size);
-	thiz->gry = egueb_svg_coord_final_get(&lry, ctx->viewbox.h, ctx->font_size);
-	/* set the bounds */
-	DBG("calling the setup on the ellipse (%g %g %g %g)", thiz->gcx, thiz->gcy, thiz->grx, thiz->gry);
-
-	return ESVG_SETUP_OK;
-}
-static Eina_Bool _egueb_svg_element_ellipse_renderer_propagate(Egueb_Dom_Tag *t,
-		Egueb_Svg_Context *c,
-		const Egueb_Svg_Element_Context *ctx,
-		const Egueb_Svg_Attribute_Presentation *attr,
-		Egueb_Svg_Renderable_Context *rctx,
-		Enesim_Log **error)
-{
-	Egueb_Svg_Element_Ellipse *thiz;
-
-	thiz = _egueb_svg_element_ellipse_get(t);
-
-
-	/* shape properties */
-	enesim_renderer_shape_fill_color_set(thiz->r, rctx->fill_color);
-	enesim_renderer_shape_fill_renderer_set(thiz->r, rctx->fill_renderer);
-	enesim_renderer_shape_stroke_color_set(thiz->r, rctx->stroke_color);
-	enesim_renderer_shape_stroke_renderer_set(thiz->r, rctx->stroke_renderer);
-
-	enesim_renderer_shape_stroke_weight_set(thiz->r, rctx->stroke_weight);
-	enesim_renderer_shape_stroke_location_set(thiz->r, ENESIM_RENDERER_SHAPE_STROKE_LOCATION_CENTER);
-	enesim_renderer_shape_draw_mode_set(thiz->r, rctx->draw_mode);
-	/* base properties */
-	enesim_renderer_transformation_set(thiz->r, &ctx->transform);
-	enesim_renderer_color_set(thiz->r, rctx->color);
-
-	return EINA_TRUE;
-}
-#endif
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
@@ -259,50 +204,66 @@ EAPI Egueb_Dom_Node * egueb_svg_element_ellipse_new(void)
 	return n;
 }
 
-#if 0
-EAPI Eina_Bool egueb_svg_is_ellipse(Ender_Element *e)
+EAPI void egueb_svg_element_ellipse_cx_set(Egueb_Dom_Node *n, const Egueb_Svg_Coord *cx)
 {
-	Egueb_Dom_Tag *t;
-	Egueb_Svg_Type type;
+	Egueb_Svg_Element_Ellipse *thiz;
 
-	t = (Egueb_Dom_Tag *)ender_element_object_get(e);
-	type = egueb_svg_element_internal_type_get(t);
-	return (type == ESVG_TYPE_ELLIPSE) ? EINA_TRUE : EINA_FALSE;
+	thiz = EGUEB_SVG_ELEMENT_ELLIPSE(n);
+	egueb_dom_attr_set(thiz->cx, EGUEB_DOM_ATTR_TYPE_BASE, cx);
 }
 
-EAPI void egueb_svg_element_ellipse_cx_set(Ender_Element *e, const Egueb_Svg_Coord *cx)
+EAPI void egueb_svg_element_ellipse_cx_get(Egueb_Dom_Node *n, Egueb_Svg_Coord_Animated *cx)
 {
-	egueb_svg_element_property_length_set(e, ESVG_ELEMENT_ELLIPSE_CX, cx);
+	Egueb_Svg_Element_Ellipse *thiz;
+
+	thiz = EGUEB_SVG_ELEMENT_ELLIPSE(n);
+	EGUEB_SVG_ELEMENT_ATTR_ANIMATED_GET(thiz->cx, cx);
 }
 
-EAPI void egueb_svg_element_ellipse_cx_get(Ender_Element *e, Egueb_Svg_Coord *cx)
+EAPI void egueb_svg_element_ellipse_cy_set(Egueb_Dom_Node *n, const Egueb_Svg_Coord *y)
 {
+	Egueb_Svg_Element_Ellipse *thiz;
+
+	thiz = EGUEB_SVG_ELEMENT_ELLIPSE(n);
+	egueb_dom_attr_set(thiz->cy, EGUEB_DOM_ATTR_TYPE_BASE, y);
 }
 
-EAPI void egueb_svg_element_ellipse_cy_set(Ender_Element *e, const Egueb_Svg_Coord *cy)
+EAPI void egueb_svg_element_ellipse_cy_get(Egueb_Dom_Node *n, Egueb_Svg_Coord_Animated *y)
 {
-	egueb_svg_element_property_length_set(e, ESVG_ELEMENT_ELLIPSE_CY, cy);
+	Egueb_Svg_Element_Ellipse *thiz;
+
+	thiz = EGUEB_SVG_ELEMENT_ELLIPSE(n);
+	EGUEB_SVG_ELEMENT_ATTR_ANIMATED_GET(thiz->cy, y);
 }
 
-EAPI void egueb_svg_element_ellipse_cy_get(Ender_Element *e, Egueb_Svg_Coord *cy)
+EAPI void egueb_svg_element_ellipse_rx_set(Egueb_Dom_Node *n, const Egueb_Svg_Length *rx)
 {
+	Egueb_Svg_Element_Ellipse *thiz;
+
+	thiz = EGUEB_SVG_ELEMENT_ELLIPSE(n);
+	egueb_dom_attr_set(thiz->rx, EGUEB_DOM_ATTR_TYPE_BASE, rx);
 }
 
-EAPI void egueb_svg_element_ellipse_rx_set(Ender_Element *e, const Egueb_Svg_Length *rx)
+EAPI void egueb_svg_element_ellipse_rx_get(Egueb_Dom_Node *n, Egueb_Svg_Length_Animated *rx)
 {
-	egueb_svg_element_property_length_set(e, ESVG_ELEMENT_ELLIPSE_RX, rx);
+	Egueb_Svg_Element_Ellipse *thiz;
+
+	thiz = EGUEB_SVG_ELEMENT_ELLIPSE(n);
+	EGUEB_SVG_ELEMENT_ATTR_ANIMATED_GET(thiz->rx, rx);
 }
 
-EAPI void egueb_svg_element_ellipse_rx_get(Ender_Element *e, Egueb_Svg_Length *rx)
+EAPI void egueb_svg_element_ellipse_ry_set(Egueb_Dom_Node *n, const Egueb_Svg_Length *ry)
 {
+	Egueb_Svg_Element_Ellipse *thiz;
+
+	thiz = EGUEB_SVG_ELEMENT_ELLIPSE(n);
+	egueb_dom_attr_set(thiz->ry, EGUEB_DOM_ATTR_TYPE_BASE, ry);
 }
 
-EAPI void egueb_svg_element_ellipse_ry_set(Ender_Element *e, const Egueb_Svg_Length *ry)
+EAPI void egueb_svg_element_ellipse_ry_get(Egueb_Dom_Node *n, Egueb_Svg_Length_Animated *ry)
 {
-	egueb_svg_element_property_length_set(e, ESVG_ELEMENT_ELLIPSE_RY, ry);
-}
+	Egueb_Svg_Element_Ellipse *thiz;
 
-EAPI void egueb_svg_element_ellipse_ry_get(Ender_Element *e, Egueb_Svg_Length *ry)
-{
+	thiz = EGUEB_SVG_ELEMENT_ELLIPSE(n);
+	EGUEB_SVG_ELEMENT_ATTR_ANIMATED_GET(thiz->ry, ry);
 }
-#endif

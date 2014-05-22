@@ -26,18 +26,17 @@
  */
 
 EAPI Egueb_Dom_Node * egueb_svg_element_ellipse_new(void);
+EAPI void egueb_svg_element_ellipse_cx_set(Egueb_Dom_Node *n, const Egueb_Svg_Coord *cx);
+EAPI void egueb_svg_element_ellipse_cx_get(Egueb_Dom_Node *n, Egueb_Svg_Coord_Animated *cx);
 
-#if 0
-EAPI Eina_Bool egueb_svg_is_ellipse(Ender_Element *e);
-EAPI void egueb_svg_element_ellipse_cx_set(Ender_Element *e, const Egueb_Svg_Coord *cx);
-EAPI void egueb_svg_element_ellipse_cx_get(Ender_Element *e, Egueb_Svg_Coord *cx);
-EAPI void egueb_svg_element_ellipse_cy_set(Ender_Element *e, const Egueb_Svg_Coord *cy);
-EAPI void egueb_svg_element_ellipse_cy_get(Ender_Element *e, Egueb_Svg_Coord *cy);
-EAPI void egueb_svg_element_ellipse_rx_set(Ender_Element *e, const Egueb_Svg_Length *rx);
-EAPI void egueb_svg_element_ellipse_rx_get(Ender_Element *e, Egueb_Svg_Length *rx);
-EAPI void egueb_svg_element_ellipse_ry_set(Ender_Element *e, const Egueb_Svg_Length *ry);
-EAPI void egueb_svg_element_ellipse_ry_get(Ender_Element *e, Egueb_Svg_Length *ry);
-#endif
+EAPI void egueb_svg_element_ellipse_cy_set(Egueb_Dom_Node *n, const Egueb_Svg_Coord *y);
+EAPI void egueb_svg_element_ellipse_cy_get(Egueb_Dom_Node *n, Egueb_Svg_Coord_Animated *y);
+
+EAPI void egueb_svg_element_ellipse_rx_set(Egueb_Dom_Node *n, const Egueb_Svg_Length *rx);
+EAPI void egueb_svg_element_ellipse_rx_get(Egueb_Dom_Node *n, Egueb_Svg_Length_Animated *rx);
+
+EAPI void egueb_svg_element_ellipse_ry_set(Egueb_Dom_Node *n, const Egueb_Svg_Length *ry);
+EAPI void egueb_svg_element_ellipse_ry_get(Egueb_Dom_Node *n, Egueb_Svg_Length_Animated *ry);
 
 /**
  * @}
