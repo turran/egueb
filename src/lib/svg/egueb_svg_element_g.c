@@ -162,10 +162,6 @@ static void _egueb_svg_element_g_instance_deinit(void *o)
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/
-/**
- * To be documented
- * FIXME: To be fixed
- */
 EAPI Egueb_Dom_Node * egueb_svg_element_g_new(void)
 {
 	Egueb_Dom_Node *n;
