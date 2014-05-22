@@ -27,10 +27,8 @@
  */
 
 EAPI Egueb_Dom_Node * egueb_svg_element_a_new(void);
-#if 0
-EAPI Eina_Bool egueb_svg_is_a(Ender_Element *e);
-EAPI void egueb_svg_element_a_xlink_href_set(Ender_Element *e, const char *href);
-#endif
+EAPI void egueb_svg_element_a_xlink_href_set(Egueb_Dom_Node *n, Egueb_Dom_String *v);
+EAPI void egueb_svg_element_a_xlink_href_get(Egueb_Dom_Node *n, Egueb_Svg_String_Animated *v);
 
 /**
  * @}

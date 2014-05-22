@@ -18,6 +18,7 @@
 
 #include "egueb_svg_main_private.h"
 #include "egueb_svg_main.h"
+#include "egueb_svg_string.h"
 #include "egueb_svg_element_a.h"
 
 #include "egueb_svg_attr_string_private.h"
@@ -214,17 +215,18 @@ EAPI Egueb_Dom_Node * egueb_svg_element_a_new(void)
 	return n;
 }
 
-#if 0
-EAPI Eina_Bool egueb_svg_is_a(Ender_Element *e)
+EAPI void egueb_svg_element_a_xlink_href_set(Egueb_Dom_Node *n, Egueb_Dom_String *v)
 {
-	Egueb_Dom_Tag *t;
+	Egueb_Svg_Element_A *thiz;
 
-	t = ender_element_object_get(e);
-	return egueb_svg_is_a_internal(t);
+	thiz = EGUEB_SVG_ELEMENT_A(n);
+	egueb_dom_attr_set(thiz->xlink_href, EGUEB_DOM_ATTR_TYPE_BASE, v);
 }
 
-EAPI void egueb_svg_element_a_xlink_href_set(Ender_Element *e, const char *href)
+EAPI void egueb_svg_element_a_xlink_href_get(Egueb_Dom_Node *n, Egueb_Svg_String_Animated *v)
 {
-	egueb_svg_element_property_string_set(e, EGUEB_SVG_ELEMENT_A_XLINK_HREF, href);
+	Egueb_Svg_Element_A *thiz;
+
+	thiz = EGUEB_SVG_ELEMENT_A(n);
+	EGUEB_SVG_ELEMENT_ATTR_ANIMATED_GET(thiz->xlink_href, v);
 }
-#endif
