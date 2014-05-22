@@ -364,6 +364,43 @@ static void _egueb_svg_element_radial_gradient_instance_deinit(void *o)
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
+void egueb_svg_element_radial_gradient_deep_cx_get(Egueb_Dom_Node *n,
+		Egueb_Svg_Length *cx)
+{
+	EGUEB_SVG_ELEMENT_RADIAL_GRADIENT_DEEP_LENGTH_GET(n, cx,
+		EGUEB_SVG_LENGTH_50_PERCENT,
+		egueb_svg_element_radial_gradient_deep_cx_get);
+}
+
+void egueb_svg_element_radial_gradient_deep_cy_get(Egueb_Dom_Node *n,
+		Egueb_Svg_Length *cy)
+{
+	EGUEB_SVG_ELEMENT_RADIAL_GRADIENT_DEEP_LENGTH_GET(n, cy,
+		EGUEB_SVG_LENGTH_50_PERCENT,
+		egueb_svg_element_radial_gradient_deep_cy_get);
+}
+
+Eina_Bool egueb_svg_element_radial_gradient_deep_fx_get(Egueb_Dom_Node *n,
+		Egueb_Svg_Length *fx)
+{
+	EGUEB_SVG_ELEMENT_RADIAL_GRADIENT_DEEP_COND_LENGTH_GET(n, fx,
+		egueb_svg_element_radial_gradient_deep_fx_get);
+}
+
+Eina_Bool egueb_svg_element_radial_gradient_deep_fy_get(Egueb_Dom_Node *n,
+		Egueb_Svg_Length *fy)
+{
+	EGUEB_SVG_ELEMENT_RADIAL_GRADIENT_DEEP_COND_LENGTH_GET(n, fy,
+		egueb_svg_element_radial_gradient_deep_fy_get);
+}
+
+void egueb_svg_element_radial_gradient_deep_r_get(Egueb_Dom_Node *n,
+		Egueb_Svg_Length *r)
+{
+	EGUEB_SVG_ELEMENT_RADIAL_GRADIENT_DEEP_LENGTH_GET(n, r,
+		EGUEB_SVG_LENGTH_50_PERCENT,
+		egueb_svg_element_radial_gradient_deep_r_get);
+}
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/
@@ -384,157 +421,82 @@ EAPI Eina_Bool egueb_svg_is_element_radial_gradient(Egueb_Dom_Node *n)
 	return EINA_TRUE;
 }
 
-EAPI void egueb_svg_element_radial_gradient_deep_cx_get(Egueb_Dom_Node *n,
-		Egueb_Svg_Length *cx)
+EAPI void egueb_svg_element_radial_gradient_cx_set(Egueb_Dom_Node *n, const Egueb_Svg_Coord *v)
 {
-	EGUEB_SVG_ELEMENT_RADIAL_GRADIENT_DEEP_LENGTH_GET(n, cx,
-		EGUEB_SVG_LENGTH_50_PERCENT,
-		egueb_svg_element_radial_gradient_deep_cx_get);
+	Egueb_Svg_Element_Radial_Gradient *thiz;
+
+	thiz = EGUEB_SVG_ELEMENT_RADIAL_GRADIENT(n);
+	egueb_dom_attr_set(thiz->cx, EGUEB_DOM_ATTR_TYPE_BASE, v);
 }
 
-EAPI void egueb_svg_element_radial_gradient_deep_cy_get(Egueb_Dom_Node *n,
-		Egueb_Svg_Length *cy)
+EAPI void egueb_svg_element_radial_gradient_cx_get(Egueb_Dom_Node *n, Egueb_Svg_Coord_Animated *v)
 {
-	EGUEB_SVG_ELEMENT_RADIAL_GRADIENT_DEEP_LENGTH_GET(n, cy,
-		EGUEB_SVG_LENGTH_50_PERCENT,
-		egueb_svg_element_radial_gradient_deep_cy_get);
+	Egueb_Svg_Element_Radial_Gradient *thiz;
+
+	thiz = EGUEB_SVG_ELEMENT_RADIAL_GRADIENT(n);
+	EGUEB_SVG_ELEMENT_ATTR_ANIMATED_GET(thiz->cx, v);
 }
 
-EAPI Eina_Bool egueb_svg_element_radial_gradient_deep_fx_get(Egueb_Dom_Node *n,
-		Egueb_Svg_Length *fx)
+EAPI void egueb_svg_element_radial_gradient_cy_set(Egueb_Dom_Node *n, const Egueb_Svg_Coord *v)
 {
-	EGUEB_SVG_ELEMENT_RADIAL_GRADIENT_DEEP_COND_LENGTH_GET(n, fx,
-		egueb_svg_element_radial_gradient_deep_fx_get);
+	Egueb_Svg_Element_Radial_Gradient *thiz;
+
+	thiz = EGUEB_SVG_ELEMENT_RADIAL_GRADIENT(n);
+	egueb_dom_attr_set(thiz->cy, EGUEB_DOM_ATTR_TYPE_BASE, v);
 }
 
-EAPI Eina_Bool egueb_svg_element_radial_gradient_deep_fy_get(Egueb_Dom_Node *n,
-		Egueb_Svg_Length *fy)
+EAPI void egueb_svg_element_radial_gradient_cy_get(Egueb_Dom_Node *n, Egueb_Svg_Coord_Animated *v)
 {
-	EGUEB_SVG_ELEMENT_RADIAL_GRADIENT_DEEP_COND_LENGTH_GET(n, fy,
-		egueb_svg_element_radial_gradient_deep_fy_get);
+	Egueb_Svg_Element_Radial_Gradient *thiz;
+
+	thiz = EGUEB_SVG_ELEMENT_RADIAL_GRADIENT(n);
+	EGUEB_SVG_ELEMENT_ATTR_ANIMATED_GET(thiz->cy, v);
 }
 
-EAPI void egueb_svg_element_radial_gradient_deep_r_get(Egueb_Dom_Node *n,
-		Egueb_Svg_Length *r)
+EAPI void egueb_svg_element_radial_gradient_fx_set(Egueb_Dom_Node *n, const Egueb_Svg_Coord *v)
 {
-	EGUEB_SVG_ELEMENT_RADIAL_GRADIENT_DEEP_LENGTH_GET(n, r,
-		EGUEB_SVG_LENGTH_50_PERCENT,
-		egueb_svg_element_radial_gradient_deep_r_get);
+	Egueb_Svg_Element_Radial_Gradient *thiz;
+
+	thiz = EGUEB_SVG_ELEMENT_RADIAL_GRADIENT(n);
+	egueb_dom_attr_set(thiz->fx, EGUEB_DOM_ATTR_TYPE_BASE, v);
 }
 
-#if 0
-EAPI void egueb_svg_element_radial_gradient_cx_set(Ender_Element *e, const Egueb_Svg_Coord *cx)
+EAPI void egueb_svg_element_radial_gradient_fx_get(Egueb_Dom_Node *n, Egueb_Svg_Coord_Animated *v)
 {
-	ender_element_property_value_set(e, ESVG_ELEMENT_RADIAL_GRADIENT_CX, cx, NULL);
+	Egueb_Svg_Element_Radial_Gradient *thiz;
+
+	thiz = EGUEB_SVG_ELEMENT_RADIAL_GRADIENT(n);
+	EGUEB_SVG_ELEMENT_ATTR_ANIMATED_GET(thiz->fx, v);
 }
 
-EAPI void egueb_svg_element_radial_gradient_cx_get(Ender_Element *e, Egueb_Svg_Coord *cx)
+EAPI void egueb_svg_element_radial_gradient_fy_set(Egueb_Dom_Node *n, const Egueb_Svg_Coord *v)
 {
-	Egueb_Svg_Animated_Coord a;
-	Egueb_Dom_Tag *t;
+	Egueb_Svg_Element_Radial_Gradient *thiz;
 
-	t = (Egueb_Dom_Tag *)ender_element_object_get(e);
-	_egueb_svg_element_radial_gradient_cx_get(t, &a);
-	*cx = a.base;
+	thiz = EGUEB_SVG_ELEMENT_RADIAL_GRADIENT(n);
+	egueb_dom_attr_set(thiz->fy, EGUEB_DOM_ATTR_TYPE_BASE, v);
 }
 
-EAPI Eina_Bool egueb_svg_element_radial_gradient_cx_is_set(Ender_Element *e)
+EAPI void egueb_svg_element_radial_gradient_fy_get(Egueb_Dom_Node *n, Egueb_Svg_Coord_Animated *v)
 {
-	Egueb_Dom_Tag *t;
+	Egueb_Svg_Element_Radial_Gradient *thiz;
 
-	t = (Egueb_Dom_Tag *)ender_element_object_get(e);
-	return _egueb_svg_element_radial_gradient_cx_is_set(t);
+	thiz = EGUEB_SVG_ELEMENT_RADIAL_GRADIENT(n);
+	EGUEB_SVG_ELEMENT_ATTR_ANIMATED_GET(thiz->fy, v);
 }
 
-EAPI void egueb_svg_element_radial_gradient_cy_set(Ender_Element *e, const Egueb_Svg_Coord *cy)
+EAPI void egueb_svg_element_radial_gradient_r_set(Egueb_Dom_Node *n, const Egueb_Svg_Length *r)
 {
-	ender_element_property_value_set(e, ESVG_ELEMENT_RADIAL_GRADIENT_CY, cy, NULL);
+	Egueb_Svg_Element_Radial_Gradient *thiz;
+
+	thiz = EGUEB_SVG_ELEMENT_RADIAL_GRADIENT(n);
+	egueb_dom_attr_set(thiz->r, EGUEB_DOM_ATTR_TYPE_BASE, r);
 }
 
-EAPI void egueb_svg_element_radial_gradient_cy_get(Ender_Element *e, Egueb_Svg_Coord *cy)
+EAPI void egueb_svg_element_radial_gradient_r_get(Egueb_Dom_Node *n, Egueb_Svg_Length_Animated *r)
 {
-	Egueb_Svg_Animated_Coord a;
-	Egueb_Dom_Tag *t;
+	Egueb_Svg_Element_Radial_Gradient *thiz;
 
-	t = (Egueb_Dom_Tag *)ender_element_object_get(e);
-	_egueb_svg_element_radial_gradient_cy_get(t, &a);
-	*cy = a.base;
+	thiz = EGUEB_SVG_ELEMENT_RADIAL_GRADIENT(n);
+	EGUEB_SVG_ELEMENT_ATTR_ANIMATED_GET(thiz->r, r);
 }
-
-EAPI Eina_Bool egueb_svg_element_radial_gradient_cy_is_set(Ender_Element *e)
-{
-	Egueb_Dom_Tag *t;
-
-	t = (Egueb_Dom_Tag *)ender_element_object_get(e);
-	return _egueb_svg_element_radial_gradient_cy_is_set(t);
-}
-
-EAPI void egueb_svg_element_radial_gradient_fx_set(Ender_Element *e, const Egueb_Svg_Coord *fx)
-{
-	ender_element_property_value_set(e, ESVG_ELEMENT_RADIAL_GRADIENT_FX, fx, NULL);
-}
-
-EAPI void egueb_svg_element_radial_gradient_fx_get(Ender_Element *e, Egueb_Svg_Coord *fx)
-{
-	Egueb_Svg_Animated_Coord a;
-	Egueb_Dom_Tag *t;
-
-	t = (Egueb_Dom_Tag *)ender_element_object_get(e);
-	_egueb_svg_element_radial_gradient_fx_get(t, &a);
-	*fx = a.base;
-}
-
-EAPI Eina_Bool egueb_svg_element_radial_gradient_fx_is_set(Ender_Element *e)
-{
-	Egueb_Dom_Tag *t;
-
-	t = (Egueb_Dom_Tag *)ender_element_object_get(e);
-	return _egueb_svg_element_radial_gradient_fx_is_set(t);
-}
-
-EAPI void egueb_svg_element_radial_gradient_fy_set(Ender_Element *e, const Egueb_Svg_Coord *fy)
-{
-	ender_element_property_value_set(e, ESVG_ELEMENT_RADIAL_GRADIENT_FY, fy, NULL);
-}
-
-EAPI void egueb_svg_element_radial_gradient_fy_get(Ender_Element *e, Egueb_Svg_Coord *fy)
-{
-	Egueb_Svg_Animated_Coord a;
-	Egueb_Dom_Tag *t;
-
-	t = (Egueb_Dom_Tag *)ender_element_object_get(e);
-	_egueb_svg_element_radial_gradient_fy_get(t, &a);
-	*fy = a.base;
-}
-
-EAPI Eina_Bool egueb_svg_element_radial_gradient_fy_is_set(Ender_Element *e)
-{
-	Egueb_Dom_Tag *t;
-
-	t = (Egueb_Dom_Tag *)ender_element_object_get(e);
-	return _egueb_svg_element_radial_gradient_fy_is_set(t);
-}
-
-EAPI void egueb_svg_element_radial_gradient_r_set(Ender_Element *e, const Egueb_Svg_Length *rad)
-{
-	ender_element_property_value_set(e, ESVG_ELEMENT_RADIAL_GRADIENT_R, rad, NULL);
-}
-
-EAPI void egueb_svg_element_radial_gradient_r_get(Ender_Element *e, Egueb_Svg_Length *rad)
-{
-	Egueb_Svg_Animated_Coord a;
-	Egueb_Dom_Tag *t;
-
-	t = (Egueb_Dom_Tag *)ender_element_object_get(e);
-	_egueb_svg_element_radial_gradient_r_get(t, &a);
-	*rad = a.base;
-}
-
-EAPI Eina_Bool egueb_svg_element_radial_gradient_r_is_set(Ender_Element *e)
-{
-	Egueb_Dom_Tag *t;
-
-	t = (Egueb_Dom_Tag *)ender_element_object_get(e);
-	return _egueb_svg_element_radial_gradient_r_is_set(t);
-}
-#endif
