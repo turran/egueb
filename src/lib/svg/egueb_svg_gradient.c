@@ -19,6 +19,8 @@
 #include "egueb_svg_main_private.h"
 #include "egueb_svg_main.h"
 #include "egueb_svg_matrix.h"
+#include "egueb_svg_length.h"
+#include "egueb_svg_string.h"
 #include "egueb_svg_spread_method.h"
 #include "egueb_svg_referenceable_units.h"
 #include "egueb_svg_attr_xlink_href.h"
@@ -332,69 +334,54 @@ EAPI Eina_Bool egueb_svg_is_gradient(Egueb_Dom_Node *n)
 	return EINA_TRUE;
 }
 
-
-#if 0
-EAPI void egueb_svg_element_gradient_href_set(Ender_Element *e, const char *href)
+EAPI void egueb_svg_gradient_xlink_href_set(Egueb_Dom_Node *n, Egueb_Dom_String *v)
 {
-	ender_element_property_value_set(e, ESVG_GRADIENT_HREF, href, NULL);
+	Egueb_Svg_Gradient *thiz;
+
+	thiz = EGUEB_SVG_GRADIENT(n);
+	egueb_dom_attr_set(thiz->xlink_href, EGUEB_DOM_ATTR_TYPE_BASE, v);
 }
 
-EAPI void egueb_svg_element_gradient_href_get(Ender_Element *e, const char **href)
+EAPI void egueb_svg_gradient_xlink_href_get(Egueb_Dom_Node *n, Egueb_Svg_String_Animated *v)
 {
-	Egueb_Dom_Tag *t;
+	Egueb_Svg_Gradient *thiz;
 
-	t = (Egueb_Dom_Tag *)ender_element_object_get(e);
-	_egueb_svg_element_gradient_href_get(t, href);
+	thiz = EGUEB_SVG_GRADIENT(n);
+	EGUEB_SVG_ELEMENT_ATTR_ANIMATED_GET(thiz->xlink_href, v);
 }
 
-EAPI void egueb_svg_element_gradient_units_set(Ender_Element *e, Egueb_Svg_Element_Gradient_Units units)
+EAPI void egueb_svg_gradient_gradient_units_set(Egueb_Dom_Node *n,
+		Egueb_Svg_Referenceable_Units v)
 {
-	ender_element_property_value_set(e, ESVG_GRADIENT_GRADIENT_UNITS, units, NULL);
+	Egueb_Svg_Gradient *thiz;
+
+	thiz = EGUEB_SVG_GRADIENT(n);
+	egueb_dom_attr_set(thiz->units, EGUEB_DOM_ATTR_TYPE_BASE, v);
 }
 
-EAPI void egueb_svg_element_gradient_units_get(Ender_Element *e, Egueb_Svg_Element_Gradient_Units *units)
+EAPI void egueb_svg_gradient_gradient_units_get(Egueb_Dom_Node *n,
+		Egueb_Svg_Referenceable_Units_Animated *v)
 {
+	Egueb_Svg_Gradient *thiz;
+
+	thiz = EGUEB_SVG_GRADIENT(n);
+	EGUEB_SVG_ELEMENT_ATTR_ANIMATED_GET(thiz->units, v);
 }
 
-EAPI Eina_Bool egueb_svg_element_gradient_units_is_set(Ender_Element *e)
+EAPI void egueb_svg_gradient_gradient_transform_set(Egueb_Dom_Node *n,
+		Enesim_Matrix *m)
 {
-	/* for now return false */
-	return EINA_FALSE;
+	Egueb_Svg_Gradient *thiz;
+
+	thiz = EGUEB_SVG_GRADIENT(n);
+	egueb_dom_attr_set(thiz->transform, EGUEB_DOM_ATTR_TYPE_BASE, m);
 }
 
-EAPI void egueb_svg_element_gradient_transform_set(Ender_Element *e, const Enesim_Matrix *transform)
+EAPI void egueb_svg_gradient_gradient_transform_get(Egueb_Dom_Node *n,
+		Egueb_Svg_Matrix_Animated *m)
 {
-	Egueb_Svg_Matrix_Animated a;
+	Egueb_Svg_Gradient *thiz;
 
-	if (!transform)
-	{
-		ender_element_property_value_set(e, ESVG_GRADIENT_GRADIENT_TRANSFORM, NULL, NULL);
-		return;
-	}
-	a.base = *transform;
-	ender_element_property_value_set(e, ESVG_GRADIENT_GRADIENT_TRANSFORM, &a, NULL);
+	thiz = EGUEB_SVG_GRADIENT(n);
+	EGUEB_SVG_ELEMENT_ATTR_ANIMATED_GET(thiz->transform, m);
 }
-
-EAPI void egueb_svg_element_gradient_transform_get(Ender_Element *e, Enesim_Matrix *transform)
-{
-}
-
-EAPI Eina_Bool egueb_svg_element_gradient_transform_is_set(Ender_Element *e)
-{
-	/* for now return false */
-	return EINA_FALSE;
-}
-
-EAPI void egueb_svg_element_gradient_spread_method_set(Ender_Element *e, Egueb_Svg_Spread_Method spread_method)
-{
-	ender_element_property_value_set(e, ESVG_GRADIENT_SPREAD_METHOD, spread_method, NULL);
-}
-
-EAPI void egueb_svg_element_gradient_spread_method_get(Ender_Element *e, Egueb_Svg_Spread_Method *spread_method)
-{
-	Egueb_Dom_Tag *t;
-
-	t = (Egueb_Dom_Tag *)ender_element_object_get(e);
-	_egueb_svg_element_gradient_spread_method_get(t, spread_method);
-}
-#endif

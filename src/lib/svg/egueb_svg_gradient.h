@@ -20,17 +20,15 @@
 
 EAPI Eina_Bool egueb_svg_is_gradient(Egueb_Dom_Node *n);
 
-#if 0
-EAPI void egueb_svg_element_gradient_units_set(Ender_Element *e, Egueb_Svg_Element_Gradient_Units units);
-EAPI void egueb_svg_element_gradient_units_get(Ender_Element *e, Egueb_Svg_Element_Gradient_Units *units);
-EAPI Eina_Bool egueb_svg_element_gradient_units_is_set(Ender_Element *e);
-EAPI void egueb_svg_element_gradient_transform_set(Ender_Element *e, const Enesim_Matrix *transform);
-EAPI void egueb_svg_element_gradient_transform_get(Ender_Element *e, Enesim_Matrix *transform);
-EAPI Eina_Bool egueb_svg_element_gradient_transform_is_set(Ender_Element *e);
-EAPI void egueb_svg_element_gradient_spread_method_set(Ender_Element *e, Egueb_Svg_Spread_Method spread_method);
-EAPI void egueb_svg_element_gradient_spread_method_get(Ender_Element *e, Egueb_Svg_Spread_Method *spread_method);
-EAPI void egueb_svg_element_gradient_href_set(Ender_Element *e, const char *href);
-EAPI void egueb_svg_element_gradient_href_get(Ender_Element *e, const char **href);
-#endif
+EAPI void egueb_svg_gradient_xlink_href_set(Egueb_Dom_Node *n, Egueb_Dom_String *v);
+EAPI void egueb_svg_gradient_xlink_href_get(Egueb_Dom_Node *n, Egueb_Svg_String_Animated *v);
+EAPI void egueb_svg_gradient_gradient_units_set(Egueb_Dom_Node *n,
+		Egueb_Svg_Referenceable_Units v);
+EAPI void egueb_svg_gradient_gradient_units_get(Egueb_Dom_Node *n,
+		Egueb_Svg_Referenceable_Units_Animated *v);
+EAPI void egueb_svg_gradient_gradient_transform_set(Egueb_Dom_Node *n,
+		Enesim_Matrix *m);
+EAPI void egueb_svg_gradient_gradient_transform_get(Egueb_Dom_Node *n,
+		Egueb_Svg_Matrix_Animated *m);
 
 #endif
