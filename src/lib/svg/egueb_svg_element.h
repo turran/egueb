@@ -42,92 +42,25 @@
 
 EAPI Eina_Bool egueb_svg_is_element(Egueb_Dom_Node *n);
 
-EAPI Egueb_Dom_Node * egueb_svg_element_presentation_relative_get(Egueb_Dom_Node *n);
-EAPI Eina_Bool egueb_svg_element_presentation_relative_set(Egueb_Dom_Node *n,
-		Egueb_Dom_Node *presentation_relative, Eina_Error *err);
-
-EAPI Egueb_Dom_Node * egueb_svg_element_geometry_relative_get(Egueb_Dom_Node *n);
-EAPI Eina_Bool egueb_svg_element_geometry_relative_set(Egueb_Dom_Node *n,
-		Egueb_Dom_Node *geometry_relative, Eina_Error *err);
-
-EAPI void egueb_svg_element_font_size_set(Egueb_Dom_Node *n,
-		const Egueb_Svg_Font_Size *font_size);
-#if 0
-/* core */
-EAPI Egueb_Svg_Type egueb_svg_element_type_get(Ender_Element *e);
-EAPI const char * egueb_svg_element_name_get(Ender_Element *e);
-EAPI Ender_Element * egueb_svg_element_topmost_get(Ender_Element *e);
-EAPI Eina_Bool egueb_svg_element_style_is_set(Egueb_Dom_Node *n);
-#endif
-/* attributes */
-EAPI void egueb_svg_element_id_set(Egueb_Dom_Node *n, const char *id);
-EAPI void egueb_svg_element_id_get(Egueb_Dom_Node *n, const char **id);
-EAPI void egueb_svg_element_class_set(Egueb_Dom_Node *n, const char *id);
-EAPI void egueb_svg_element_transform_set(Egueb_Dom_Node *n, const Enesim_Matrix *transform);
-EAPI void egueb_svg_element_transform_get(Egueb_Dom_Node *n, Enesim_Matrix *transform);
-EAPI void egueb_svg_element_style_set(Egueb_Dom_Node *n, const char *style);
-EAPI void egueb_svg_element_style_get(Egueb_Dom_Node *n, const char **style);
-
-EAPI void egueb_svg_element_clip_path_set(Egueb_Dom_Node *n, Egueb_Svg_Clip_Path *clip_path);
-EAPI void egueb_svg_element_clip_path_get(Egueb_Dom_Node *n, Egueb_Svg_Clip_Path_Animated *clip_path);
-EAPI void egueb_svg_element_clip_path_final_get(Egueb_Dom_Node *n,
-		Egueb_Svg_Clip_Path *clip_path);
-
-
+EAPI void egueb_svg_element_clip_path_set(Egueb_Dom_Node *n, Egueb_Svg_Clip_Path *v);
+EAPI void egueb_svg_element_clip_path_get(Egueb_Dom_Node *n, Egueb_Svg_Clip_Path_Animated *v);
 EAPI void egueb_svg_element_opacity_set(Egueb_Dom_Node *n, const Egueb_Svg_Number *v);
-EAPI void egueb_svg_element_opacity_get(Egueb_Dom_Node *n, Egueb_Svg_Number *v);
-EAPI void egueb_svg_element_opacity_unset(Egueb_Dom_Node *n);
-
-EAPI void egueb_svg_element_overflow_set(Egueb_Dom_Node *n, const Egueb_Svg_Overflow o);
-EAPI void egueb_svg_element_overflow_final_get(Egueb_Dom_Node *n, Egueb_Svg_Overflow *o);
-
-EAPI void egueb_svg_element_color_set(Egueb_Dom_Node *n, const Egueb_Svg_Color *color);
-EAPI void egueb_svg_element_color_get(Egueb_Dom_Node *n, Egueb_Svg_Color_Animated *color);
-EAPI void egueb_svg_element_color_final_get(Egueb_Dom_Node *n,
-		Egueb_Svg_Color *color);
-
-EAPI void egueb_svg_element_fill_set(Egueb_Dom_Node *n, const Egueb_Svg_Paint *fill);
-EAPI void egueb_svg_element_fill_get(Egueb_Dom_Node *n, Egueb_Svg_Paint_Animated *fill);
-EAPI void egueb_svg_element_fill_final_get(Egueb_Dom_Node *n,
-		Egueb_Svg_Paint *fill);
-
+EAPI void egueb_svg_element_opacity_get(Egueb_Dom_Node *n, Egueb_Svg_Number_Animated *v);
+EAPI void egueb_svg_element_overflow_set(Egueb_Dom_Node *n, const Egueb_Svg_Overflow v);
+EAPI void egueb_svg_element_overflow_get(Egueb_Dom_Node *n, Egueb_Svg_Overflow_Animated *v);
+EAPI void egueb_svg_element_color_set(Egueb_Dom_Node *n, const Egueb_Svg_Color *v);
+EAPI void egueb_svg_element_color_get(Egueb_Dom_Node *n, Egueb_Svg_Color_Animated *v);
+EAPI void egueb_svg_element_fill_set(Egueb_Dom_Node *n, const Egueb_Svg_Paint *v);
+EAPI void egueb_svg_element_fill_get(Egueb_Dom_Node *n, Egueb_Svg_Paint_Animated *v);
 EAPI void egueb_svg_element_fill_opacity_set(Egueb_Dom_Node *n, const Egueb_Svg_Number *v);
-EAPI void egueb_svg_element_fill_opacity_get(Egueb_Dom_Node *n, Egueb_Svg_Number *v);
-EAPI void egueb_svg_element_fill_opacity_unset(Egueb_Dom_Node *n);
-EAPI void egueb_svg_element_fill_rule_set(Egueb_Dom_Node *n, Egueb_Svg_Fill_Rule fill_rule);
-EAPI void egueb_svg_element_fill_rule_unset(Egueb_Dom_Node *n);
-
-EAPI void egueb_svg_element_stroke_set(Egueb_Dom_Node *n, const Egueb_Svg_Paint *stroke);
-EAPI void egueb_svg_element_stroke_get(Egueb_Dom_Node *n, Egueb_Svg_Paint_Animated *stroke);
-EAPI void egueb_svg_element_stroke_final_get(Egueb_Dom_Node *n,
-		Egueb_Svg_Paint *stroke);
-
+EAPI void egueb_svg_element_fill_opacity_get(Egueb_Dom_Node *n, Egueb_Svg_Number_Animated *v);
+EAPI void egueb_svg_element_font_size_set(Egueb_Dom_Node *n, const Egueb_Svg_Font_Size *v);
+EAPI void egueb_svg_element_stroke_set(Egueb_Dom_Node *n, const Egueb_Svg_Paint *v);
+EAPI void egueb_svg_element_stroke_get(Egueb_Dom_Node *n, Egueb_Svg_Paint_Animated *v);
 EAPI void egueb_svg_element_stroke_width_set(Egueb_Dom_Node *n, const Egueb_Svg_Length *stroke_width);
-EAPI void egueb_svg_element_stroke_width_unset(Egueb_Dom_Node *n);
+EAPI void egueb_svg_element_stroke_width_get(Egueb_Dom_Node *n, Egueb_Svg_Length_Animated *v);
 EAPI void egueb_svg_element_stroke_opacity_set(Egueb_Dom_Node *n, const Egueb_Svg_Number *v);
-EAPI void egueb_svg_element_stroke_opacity_get(Egueb_Dom_Node *n, Egueb_Svg_Number *v);
-EAPI void egueb_svg_element_stroke_opacity_unset(Egueb_Dom_Node *n);
-EAPI void egueb_svg_element_stroke_line_cap_set(Egueb_Dom_Node *n, Egueb_Svg_Stroke_Line_Cap cap);
-EAPI void egueb_svg_element_stroke_line_cap_unset(Egueb_Dom_Node *n);
-EAPI void egueb_svg_element_stroke_line_join_set(Egueb_Dom_Node *n, Egueb_Svg_Stroke_Line_Join join);
-EAPI void egueb_svg_element_stroke_line_join_unset(Egueb_Dom_Node *n);
-EAPI void egueb_svg_element_visibility_set(Egueb_Dom_Node *n, Egueb_Svg_Visibility visibility);
-EAPI void egueb_svg_element_visibility_unset(Egueb_Dom_Node *n);
-EAPI void egueb_svg_element_display_set(Egueb_Dom_Node *n, Egueb_Svg_Display display);
-EAPI void egueb_svg_element_stop_opacity_set(Egueb_Dom_Node *n, const Egueb_Svg_Number *v);
-EAPI void egueb_svg_element_stop_opacity_get(Egueb_Dom_Node *n, Egueb_Svg_Number *v);
-EAPI void egueb_svg_element_stop_color_set(Egueb_Dom_Node *n, Egueb_Svg_Color *stop_color);
-EAPI void egueb_svg_element_stop_color_get(Egueb_Dom_Node *n, Egueb_Svg_Color *stop_color);
-/* events */
-EAPI void egueb_svg_element_onfocusin_set(Egueb_Dom_Node *n, const char *v);
-EAPI void egueb_svg_element_onfocusout_set(Egueb_Dom_Node *n, const char *v);
-EAPI void egueb_svg_element_onactivate_set(Egueb_Dom_Node *n, const char *v);
-EAPI void egueb_svg_element_onclick_set(Egueb_Dom_Node *n, const char *v);
-EAPI void egueb_svg_element_onmousedown_set(Egueb_Dom_Node *n, const char *v);
-EAPI void egueb_svg_element_onmouseup_set(Egueb_Dom_Node *n, const char *v);
-EAPI void egueb_svg_element_onmouseover_set(Egueb_Dom_Node *n, const char *v);
-EAPI void egueb_svg_element_onmousemove_set(Egueb_Dom_Node *n, const char *v);
-EAPI void egueb_svg_element_onmouseout_set(Egueb_Dom_Node *n, const char *v);
+EAPI void egueb_svg_element_stroke_opacity_get(Egueb_Dom_Node *n, Egueb_Svg_Number_Animated *v);
 
 /**
  * @}

@@ -24,6 +24,12 @@ typedef enum _Egueb_Svg_Fill_Rule
 	ESVG_EVEN_ODD
 } Egueb_Svg_Fill_Rule;
 
+typedef struct _Egueb_Svg_Fill_Rule_Animated
+{
+	Egueb_Svg_Fill_Rule base;
+	Egueb_Svg_Fill_Rule anim;
+} Egueb_Svg_Fill_Rule_Animated;
+
 EAPI Eina_Bool egueb_svg_parser_fill_rule_string_from(Egueb_Svg_Fill_Rule *rule, const char *attr);
 
 #endif

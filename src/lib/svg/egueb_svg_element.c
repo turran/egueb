@@ -929,6 +929,156 @@ void egueb_svg_element_children_process(Egueb_Dom_Node *n)
 	}
 }
 
+Egueb_Dom_Node * egueb_svg_element_geometry_relative_get(Egueb_Dom_Node *n)
+{
+	Egueb_Svg_Element *thiz;
+
+	thiz = EGUEB_SVG_ELEMENT(n);
+	if (thiz->geometry_relative)
+	{
+		return egueb_dom_node_ref(thiz->geometry_relative);
+	}
+	else
+	{
+		Egueb_Dom_Node *parent;
+
+		parent = egueb_dom_node_parent_get(n);
+		/* check if it is the topmost */
+		if (egueb_dom_node_type_get(parent) == EGUEB_DOM_NODE_TYPE_DOCUMENT_NODE)
+		{
+			egueb_dom_node_unref(parent);
+			parent = NULL;
+		}
+		return parent;
+	}
+}
+
+Eina_Bool egueb_svg_element_geometry_relative_set(Egueb_Dom_Node *n,
+		Egueb_Dom_Node *geometry_relative, Eina_Error *err)
+{
+	Egueb_Svg_Element *thiz;
+
+	thiz = EGUEB_SVG_ELEMENT(n);
+	if (thiz->geometry_relative)
+	{
+		egueb_dom_node_weak_ref_remove(thiz->geometry_relative,
+				&thiz->geometry_relative);
+		thiz->geometry_relative = NULL;
+	}
+	if (geometry_relative)
+	{
+		if (!egueb_svg_is_element(geometry_relative))
+		{
+			if (err) *err = EGUEB_DOM_ERROR_NOT_SUPPORTED;
+			return EINA_FALSE;
+		}
+		egueb_dom_node_weak_ref_add(geometry_relative,
+			&thiz->geometry_relative);
+	}
+	return EINA_TRUE;
+}
+
+
+Egueb_Dom_Node * egueb_svg_element_presentation_relative_get(
+		Egueb_Dom_Node *n)
+{
+	Egueb_Svg_Element *thiz;
+
+	thiz = EGUEB_SVG_ELEMENT(n);
+	if (thiz->presentation_relative)
+	{
+		return egueb_dom_node_ref(thiz->presentation_relative);
+	}
+	else
+	{
+		Egueb_Dom_Node *parent;
+
+		parent = egueb_dom_node_parent_get(n);
+		if (!parent)
+		{
+			CRIT_ELEMENT(n, "No parent available");
+			return NULL;
+		}
+		/* check if it is the topmost */
+		if (egueb_dom_node_type_get(parent) == EGUEB_DOM_NODE_TYPE_DOCUMENT_NODE)
+		{
+			egueb_dom_node_unref(parent);
+			parent = NULL;
+		}
+		return parent;
+	}
+}
+
+Eina_Bool egueb_svg_element_presentation_relative_set(Egueb_Dom_Node *n,
+		Egueb_Dom_Node *presentation_relative, Eina_Error *err)
+{
+	Egueb_Svg_Element *thiz;
+
+	thiz = EGUEB_SVG_ELEMENT(n);
+	if (thiz->presentation_relative)
+	{
+		egueb_dom_node_weak_ref_remove(thiz->presentation_relative,
+				&thiz->presentation_relative);
+		thiz->presentation_relative = NULL;
+	}
+	if (presentation_relative)
+	{
+		if (!egueb_svg_is_element(presentation_relative))
+		{
+			if (err) *err = EGUEB_DOM_ERROR_NOT_SUPPORTED;
+			return EINA_FALSE;
+		}
+
+		egueb_dom_node_weak_ref_add(presentation_relative,
+				&thiz->presentation_relative);
+	}
+	return EINA_TRUE;
+}
+
+void egueb_svg_element_clip_path_final_get(Egueb_Dom_Node *n,
+		Egueb_Svg_Clip_Path *clip_path)
+{
+	Egueb_Svg_Element *thiz;
+
+	thiz = EGUEB_SVG_ELEMENT(n);
+	egueb_dom_attr_final_get(thiz->clip_path, clip_path);
+}
+
+void egueb_svg_element_overflow_final_get(Egueb_Dom_Node *n, Egueb_Svg_Overflow *o)
+{
+	Egueb_Svg_Element *thiz;
+
+	thiz = EGUEB_SVG_ELEMENT(n);
+	egueb_dom_attr_final_get(thiz->overflow, o);
+}
+
+void egueb_svg_element_color_final_get(Egueb_Dom_Node *n,
+		Egueb_Svg_Color *color)
+{
+	Egueb_Svg_Element *thiz;
+
+	thiz = EGUEB_SVG_ELEMENT(n);
+	egueb_dom_attr_final_get(thiz->color, color);
+}
+
+void egueb_svg_element_fill_final_get(Egueb_Dom_Node *n,
+		Egueb_Svg_Paint *fill)
+{
+	Egueb_Svg_Element *thiz;
+
+	thiz = EGUEB_SVG_ELEMENT(n);
+	egueb_dom_attr_final_get(thiz->fill, fill);
+}
+
+void egueb_svg_element_stroke_final_get(Egueb_Dom_Node *n,
+		Egueb_Svg_Paint *stroke)
+{
+	Egueb_Svg_Element *thiz;
+
+	thiz = EGUEB_SVG_ELEMENT(n);
+	egueb_dom_attr_final_get(thiz->stroke, stroke);
+}
+
 #if 0
 Eina_Bool egueb_svg_element_attribute_animation_add(Egueb_Dom_Tag *t, const char *attr,
 		int *index)
@@ -1279,10 +1429,6 @@ const Egueb_Svg_Attribute_Presentation * egueb_svg_element_attribute_presentatio
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/
-/**
- * To be documented
- * FIXME: To be fixed
- */
 EAPI Eina_Bool egueb_svg_is_element(Egueb_Dom_Node *n)
 {
 	if (!n) return EINA_FALSE;
@@ -1292,335 +1438,86 @@ EAPI Eina_Bool egueb_svg_is_element(Egueb_Dom_Node *n)
 	return EINA_TRUE;
 }
 
-EAPI Egueb_Dom_Node * egueb_svg_element_geometry_relative_get(Egueb_Dom_Node *n)
+EAPI void egueb_svg_element_clip_path_set(Egueb_Dom_Node *n, Egueb_Svg_Clip_Path *v)
 {
 	Egueb_Svg_Element *thiz;
 
 	thiz = EGUEB_SVG_ELEMENT(n);
-	if (thiz->geometry_relative)
-	{
-		return egueb_dom_node_ref(thiz->geometry_relative);
-	}
-	else
-	{
-		Egueb_Dom_Node *parent;
-
-		parent = egueb_dom_node_parent_get(n);
-		/* check if it is the topmost */
-		if (egueb_dom_node_type_get(parent) == EGUEB_DOM_NODE_TYPE_DOCUMENT_NODE)
-		{
-			egueb_dom_node_unref(parent);
-			parent = NULL;
-		}
-		return parent;
-	}
+	egueb_dom_attr_set(thiz->clip_path, EGUEB_DOM_ATTR_TYPE_BASE, v);
 }
 
-EAPI Eina_Bool egueb_svg_element_geometry_relative_set(Egueb_Dom_Node *n,
-		Egueb_Dom_Node *geometry_relative, Eina_Error *err)
+EAPI void egueb_svg_element_clip_path_get(Egueb_Dom_Node *n, Egueb_Svg_Clip_Path_Animated *v)
 {
 	Egueb_Svg_Element *thiz;
 
 	thiz = EGUEB_SVG_ELEMENT(n);
-	if (thiz->geometry_relative)
-	{
-		egueb_dom_node_weak_ref_remove(thiz->geometry_relative,
-				&thiz->geometry_relative);
-		thiz->geometry_relative = NULL;
-	}
-	if (geometry_relative)
-	{
-		if (!egueb_svg_is_element(geometry_relative))
-		{
-			if (err) *err = EGUEB_DOM_ERROR_NOT_SUPPORTED;
-			return EINA_FALSE;
-		}
-		egueb_dom_node_weak_ref_add(geometry_relative,
-			&thiz->geometry_relative);
-	}
-	return EINA_TRUE;
+	EGUEB_SVG_ELEMENT_ATTR_ANIMATED_GET(thiz->clip_path, v);
 }
 
-
-EAPI Egueb_Dom_Node * egueb_svg_element_presentation_relative_get(
-		Egueb_Dom_Node *n)
-{
-	Egueb_Svg_Element *thiz;
-
-	thiz = EGUEB_SVG_ELEMENT(n);
-	if (thiz->presentation_relative)
-	{
-		return egueb_dom_node_ref(thiz->presentation_relative);
-	}
-	else
-	{
-		Egueb_Dom_Node *parent;
-
-		parent = egueb_dom_node_parent_get(n);
-		if (!parent)
-		{
-			CRIT_ELEMENT(n, "No parent available");
-			return NULL;
-		}
-		/* check if it is the topmost */
-		if (egueb_dom_node_type_get(parent) == EGUEB_DOM_NODE_TYPE_DOCUMENT_NODE)
-		{
-			egueb_dom_node_unref(parent);
-			parent = NULL;
-		}
-		return parent;
-	}
-}
-
-EAPI Eina_Bool egueb_svg_element_presentation_relative_set(Egueb_Dom_Node *n,
-		Egueb_Dom_Node *presentation_relative, Eina_Error *err)
-{
-	Egueb_Svg_Element *thiz;
-
-	thiz = EGUEB_SVG_ELEMENT(n);
-	if (thiz->presentation_relative)
-	{
-		egueb_dom_node_weak_ref_remove(thiz->presentation_relative,
-				&thiz->presentation_relative);
-		thiz->presentation_relative = NULL;
-	}
-	if (presentation_relative)
-	{
-		if (!egueb_svg_is_element(presentation_relative))
-		{
-			if (err) *err = EGUEB_DOM_ERROR_NOT_SUPPORTED;
-			return EINA_FALSE;
-		}
-
-		egueb_dom_node_weak_ref_add(presentation_relative,
-				&thiz->presentation_relative);
-	}
-	return EINA_TRUE;
-}
-
-/**
- * To be documented
- * FIXME: To be fixed
- */
-EAPI void egueb_svg_element_id_get(Egueb_Dom_Node *n, const char **id)
-{
-}
-
-/**
- * To be documented
- * FIXME: To be fixed
- */
-EAPI void egueb_svg_element_id_set(Egueb_Dom_Node *n, const char *id)
-{
-}
-
-/**
- * To be documented
- * FIXME: To be fixed
- */
-EAPI void egueb_svg_element_class_set(Egueb_Dom_Node *n, const char *class)
-{
-}
-
-/**
- * To be documented
- * FIXME: To be fixed
- */
-EAPI void egueb_svg_element_transform_set(Egueb_Dom_Node *n, const Enesim_Matrix *transform)
-{
-}
-
-/**
- * To be documented
- * FIXME: To be fixed
- */
-EAPI void egueb_svg_element_transform_get(Egueb_Dom_Node *n, Enesim_Matrix *transform)
-{
-}
-
-/**
- * To be documented
- * FIXME: To be fixed
- */
-EAPI void egueb_svg_element_style_set(Egueb_Dom_Node *n, const char *style)
-{
-}
-
-/**
- * To be documented
- * FIXME: To be fixed
- */
-EAPI void egueb_svg_element_style_get(Egueb_Dom_Node *n, const char **style)
-{
-}
-
-/**
- * To be documented
- * FIXME: To be fixed
- */
-EAPI void egueb_svg_element_clip_path_set(Egueb_Dom_Node *n, Egueb_Svg_Clip_Path *clip_path)
-{
-	Egueb_Svg_Element *thiz;
-
-	thiz = EGUEB_SVG_ELEMENT(n);
-	egueb_dom_attr_set(thiz->clip_path, EGUEB_DOM_ATTR_TYPE_BASE, clip_path);
-}
-
-/**
- * To be documented
- * FIXME: To be fixed
- */
-EAPI void egueb_svg_element_clip_path_get(Egueb_Dom_Node *n, Egueb_Svg_Clip_Path_Animated *clip_path)
-{
-	Egueb_Svg_Element *thiz;
-
-	thiz = EGUEB_SVG_ELEMENT(n);
-	EGUEB_SVG_ELEMENT_ATTR_PRIMITIVE_GET(thiz->clip_path, clip_path, egueb_svg_clip_path_copy);
-
-}
-
-/**
- * To be documented
- * FIXME: To be fixed
- */
-EAPI void egueb_svg_element_clip_path_final_get(Egueb_Dom_Node *n,
-		Egueb_Svg_Clip_Path *clip_path)
-{
-	Egueb_Svg_Element *thiz;
-
-	thiz = EGUEB_SVG_ELEMENT(n);
-	egueb_dom_attr_final_get(thiz->clip_path, clip_path);
-}
-
-
-/**
- * To be documented
- * FIXME: To be fixed
- */
 EAPI void egueb_svg_element_opacity_set(Egueb_Dom_Node *n, const Egueb_Svg_Number *v)
 {
+	Egueb_Svg_Element *thiz;
+
+	thiz = EGUEB_SVG_ELEMENT(n);
+	egueb_dom_attr_set(thiz->opacity, EGUEB_DOM_ATTR_TYPE_BASE, v);
 }
 
-/**
- * To be documented
- * FIXME: To be fixed
- */
-EAPI void egueb_svg_element_opacity_get(Egueb_Dom_Node *n, Egueb_Svg_Number *v)
-{
-}
-
-
-/**
- * To be documented
- * FIXME: To be fixed
- */
-EAPI void egueb_svg_element_opacity_unset(Egueb_Dom_Node *n)
-{
-}
-
-/**
- * To be documented
- * FIXME: To be fixed
- */
-EAPI void egueb_svg_element_overflow_set(Egueb_Dom_Node *n, const Egueb_Svg_Overflow o)
+EAPI void egueb_svg_element_opacity_get(Egueb_Dom_Node *n, Egueb_Svg_Number_Animated *v)
 {
 	Egueb_Svg_Element *thiz;
 
 	thiz = EGUEB_SVG_ELEMENT(n);
-	egueb_dom_attr_set(thiz->overflow, EGUEB_DOM_ATTR_TYPE_BASE, o);
+	EGUEB_SVG_ELEMENT_ATTR_ANIMATED_GET(thiz->opacity, v);
 }
 
-/**
- * To be documented
- * FIXME: To be fixed
- */
-EAPI void egueb_svg_element_overflow_final_get(Egueb_Dom_Node *n, Egueb_Svg_Overflow *o)
+EAPI void egueb_svg_element_overflow_set(Egueb_Dom_Node *n, const Egueb_Svg_Overflow v)
 {
 	Egueb_Svg_Element *thiz;
 
 	thiz = EGUEB_SVG_ELEMENT(n);
-	egueb_dom_attr_final_get(thiz->overflow, o);
+	egueb_dom_attr_set(thiz->overflow, EGUEB_DOM_ATTR_TYPE_BASE, v);
 }
 
-
-/**
- * To be documented
- * FIXME: To be fixed
- */
-EAPI void egueb_svg_element_color_set(Egueb_Dom_Node *n, const Egueb_Svg_Color *color)
+EAPI void egueb_svg_element_overflow_get(Egueb_Dom_Node *n, Egueb_Svg_Overflow_Animated *v)
 {
 	Egueb_Svg_Element *thiz;
 
 	thiz = EGUEB_SVG_ELEMENT(n);
-	egueb_dom_attr_set(thiz->color, EGUEB_DOM_ATTR_TYPE_BASE, color);
+	EGUEB_SVG_ELEMENT_ATTR_ANIMATED_GET(thiz->overflow, v);
 }
 
-/**
- * To be documented
- * FIXME: To be fixed
- */
-EAPI void egueb_svg_element_color_get(Egueb_Dom_Node *n, Egueb_Svg_Color_Animated *color)
+EAPI void egueb_svg_element_color_set(Egueb_Dom_Node *n, const Egueb_Svg_Color *v)
 {
 	Egueb_Svg_Element *thiz;
 
 	thiz = EGUEB_SVG_ELEMENT(n);
-	EGUEB_SVG_ELEMENT_ATTR_SIMPLE_GET(thiz->color, color);
+	egueb_dom_attr_set(thiz->color, EGUEB_DOM_ATTR_TYPE_BASE, v);
 }
 
-/**
- * To be documented
- * FIXME: To be fixed
- */
-EAPI void egueb_svg_element_color_final_get(Egueb_Dom_Node *n,
-		Egueb_Svg_Color *color)
+EAPI void egueb_svg_element_color_get(Egueb_Dom_Node *n, Egueb_Svg_Color_Animated *v)
 {
 	Egueb_Svg_Element *thiz;
 
 	thiz = EGUEB_SVG_ELEMENT(n);
-	egueb_dom_attr_final_get(thiz->color, color);
+	EGUEB_SVG_ELEMENT_ATTR_SIMPLE_GET(thiz->color, v);
 }
 
-/**
- * To be documented
- * FIXME: To be fixed
- */
-EAPI void egueb_svg_element_fill_set(Egueb_Dom_Node *n, const Egueb_Svg_Paint *fill)
+EAPI void egueb_svg_element_fill_set(Egueb_Dom_Node *n, const Egueb_Svg_Paint *v)
 {
 	Egueb_Svg_Element *thiz;
 
 	thiz = EGUEB_SVG_ELEMENT(n);
-	egueb_dom_attr_set(thiz->fill, EGUEB_DOM_ATTR_TYPE_BASE, fill);
+	egueb_dom_attr_set(thiz->fill, EGUEB_DOM_ATTR_TYPE_BASE, v);
 }
 
-/**
- * To be documented
- * FIXME: To be fixed
- */
-EAPI void egueb_svg_element_fill_get(Egueb_Dom_Node *n, Egueb_Svg_Paint_Animated *fill)
+EAPI void egueb_svg_element_fill_get(Egueb_Dom_Node *n, Egueb_Svg_Paint_Animated *v)
 {
 	Egueb_Svg_Element *thiz;
 
 	thiz = EGUEB_SVG_ELEMENT(n);
-	EGUEB_SVG_ELEMENT_ATTR_PRIMITIVE_GET(thiz->fill, fill, egueb_svg_paint_copy);
+	EGUEB_SVG_ELEMENT_ATTR_ANIMATED_GET(thiz->fill, v);
 }
 
-/**
- * To be documented
- * FIXME: To be fixed
- */
-EAPI void egueb_svg_element_fill_final_get(Egueb_Dom_Node *n,
-		Egueb_Svg_Paint *fill)
-{
-	Egueb_Svg_Element *thiz;
-
-	thiz = EGUEB_SVG_ELEMENT(n);
-	egueb_dom_attr_final_get(thiz->fill, fill);
-}
-
-/**
- * To be documented
- * FIXME: To be fixed
- */
 EAPI void egueb_svg_element_fill_opacity_set(Egueb_Dom_Node *n, const Egueb_Svg_Number *v)
 {
 	Egueb_Svg_Element *thiz;
@@ -1629,89 +1526,39 @@ EAPI void egueb_svg_element_fill_opacity_set(Egueb_Dom_Node *n, const Egueb_Svg_
 	egueb_dom_attr_set(thiz->fill_opacity, EGUEB_DOM_ATTR_TYPE_BASE, v);
 }
 
-/**
- * To be documented
- * FIXME: To be fixed
- */
-EAPI void egueb_svg_element_fill_opacity_get(Egueb_Dom_Node *n, Egueb_Svg_Number *v)
+EAPI void egueb_svg_element_fill_opacity_get(Egueb_Dom_Node *n, Egueb_Svg_Number_Animated *v)
 {
-}
+	Egueb_Svg_Element *thiz;
 
-/**
- * To be documented
- * FIXME: To be fixed
- */
-EAPI void egueb_svg_element_fill_opacity_unset(Egueb_Dom_Node *n)
-{
-}
-
-/**
- * To be documented
- * FIXME: To be fixed
- */
-EAPI void egueb_svg_element_fill_rule_set(Egueb_Dom_Node *n, Egueb_Svg_Fill_Rule fill_rule)
-{
-}
-
-/**
- * To be documented
- * FIXME: To be fixed
- */
-EAPI void egueb_svg_element_fill_rule_unset(Egueb_Dom_Node *n)
-{
+	thiz = EGUEB_SVG_ELEMENT(n);
+	EGUEB_SVG_ELEMENT_ATTR_ANIMATED_GET(thiz->fill_opacity, v);
 }
 
 EAPI void egueb_svg_element_font_size_set(Egueb_Dom_Node *n,
-		const Egueb_Svg_Font_Size *font_size)
+		const Egueb_Svg_Font_Size *v)
 {
 	Egueb_Svg_Element *thiz;
 
 	thiz = EGUEB_SVG_ELEMENT(n);
-	egueb_dom_attr_set(thiz->font_size, EGUEB_DOM_ATTR_TYPE_BASE,
-			font_size);
+	egueb_dom_attr_set(thiz->font_size, EGUEB_DOM_ATTR_TYPE_BASE, v);
 }
 
-/**
- * To be documented
- * FIXME: To be fixed
- */
-EAPI void egueb_svg_element_stroke_set(Egueb_Dom_Node *n, const Egueb_Svg_Paint *stroke)
+EAPI void egueb_svg_element_stroke_set(Egueb_Dom_Node *n, const Egueb_Svg_Paint *v)
 {
 	Egueb_Svg_Element *thiz;
 
 	thiz = EGUEB_SVG_ELEMENT(n);
-	egueb_dom_attr_set(thiz->stroke, EGUEB_DOM_ATTR_TYPE_BASE, stroke);
+	egueb_dom_attr_set(thiz->stroke, EGUEB_DOM_ATTR_TYPE_BASE, v);
 }
 
-/**
- * To be documented
- * FIXME: To be fixed
- */
-EAPI void egueb_svg_element_stroke_get(Egueb_Dom_Node *n, Egueb_Svg_Paint_Animated *stroke)
+EAPI void egueb_svg_element_stroke_get(Egueb_Dom_Node *n, Egueb_Svg_Paint_Animated *v)
 {
 	Egueb_Svg_Element *thiz;
 
 	thiz = EGUEB_SVG_ELEMENT(n);
-	EGUEB_SVG_ELEMENT_ATTR_PRIMITIVE_GET(thiz->stroke, stroke, egueb_svg_paint_copy);
+	EGUEB_SVG_ELEMENT_ATTR_ANIMATED_GET(thiz->stroke, v);
 }
 
-/**
- * To be documented
- * FIXME: To be fixed
- */
-EAPI void egueb_svg_element_stroke_final_get(Egueb_Dom_Node *n,
-		Egueb_Svg_Paint *stroke)
-{
-	Egueb_Svg_Element *thiz;
-
-	thiz = EGUEB_SVG_ELEMENT(n);
-	egueb_dom_attr_final_get(thiz->stroke, stroke);
-}
-
-/**
- * To be documented
- * FIXME: To be fixed
- */
 EAPI void egueb_svg_element_stroke_width_set(Egueb_Dom_Node *n, const Egueb_Svg_Length *stroke_width)
 {
 	Egueb_Svg_Element *thiz;
@@ -1720,18 +1567,14 @@ EAPI void egueb_svg_element_stroke_width_set(Egueb_Dom_Node *n, const Egueb_Svg_
 	egueb_dom_attr_set(thiz->stroke_width, EGUEB_DOM_ATTR_TYPE_BASE, stroke_width);
 }
 
-/**
- * To be documented
- * FIXME: To be fixed
- */
-EAPI void egueb_svg_element_stroke_width_unset(Egueb_Dom_Node *n)
+EAPI void egueb_svg_element_stroke_width_get(Egueb_Dom_Node *n, Egueb_Svg_Length_Animated *v)
 {
+	Egueb_Svg_Element *thiz;
+
+	thiz = EGUEB_SVG_ELEMENT(n);
+	EGUEB_SVG_ELEMENT_ATTR_ANIMATED_GET(thiz->stroke_width, v);
 }
 
-/**
- * To be documented
- * FIXME: To be fixed
- */
 EAPI void egueb_svg_element_stroke_opacity_set(Egueb_Dom_Node *n, const Egueb_Svg_Number *v)
 {
 	Egueb_Svg_Element *thiz;
@@ -1740,182 +1583,11 @@ EAPI void egueb_svg_element_stroke_opacity_set(Egueb_Dom_Node *n, const Egueb_Sv
 	egueb_dom_attr_set(thiz->stroke_opacity, EGUEB_DOM_ATTR_TYPE_BASE, v);
 }
 
-/**
- * To be documented
- * FIXME: To be fixed
- */
-EAPI void egueb_svg_element_stroke_opacity_get(Egueb_Dom_Node *n, Egueb_Svg_Number *v)
+EAPI void egueb_svg_element_stroke_opacity_get(Egueb_Dom_Node *n, Egueb_Svg_Number_Animated *v)
 {
+	Egueb_Svg_Element *thiz;
+
+	thiz = EGUEB_SVG_ELEMENT(n);
+	EGUEB_SVG_ELEMENT_ATTR_ANIMATED_GET(thiz->stroke_opacity, v);
 }
 
-
-/**
- * To be documented
- * FIXME: To be fixed
- */
-EAPI void egueb_svg_element_stroke_opacity_unset(Egueb_Dom_Node *n)
-{
-}
-
-/**
- * To be documented
- * FIXME: To be fixed
- */
-EAPI void egueb_svg_element_stroke_line_cap_set(Egueb_Dom_Node *n, Egueb_Svg_Stroke_Line_Cap cap)
-{
-}
-
-/**
- * To be documented
- * FIXME: To be fixed
- */
-EAPI void egueb_svg_element_stroke_line_cap_unset(Egueb_Dom_Node *n)
-{
-}
-
-/**
- * To be documented
- * FIXME: To be fixed
- */
-EAPI void egueb_svg_element_stroke_line_join_set(Egueb_Dom_Node *n, Egueb_Svg_Stroke_Line_Join join)
-{
-}
-
-/**
- * To be documented
- * FIXME: To be fixed
- */
-EAPI void egueb_svg_element_stroke_line_join_unset(Egueb_Dom_Node *n)
-{
-}
-
-/**
- * To be documented
- * FIXME: To be fixed
- */
-EAPI void egueb_svg_element_visibility_set(Egueb_Dom_Node *n, Egueb_Svg_Visibility visibility)
-{
-}
-
-/**
- * To be documented
- * FIXME: To be fixed
- */
-EAPI void egueb_svg_element_visibility_unset(Egueb_Dom_Node *n)
-{
-}
-
-/**
- * To be documented
- * FIXME: To be fixed
- */
-EAPI void egueb_svg_element_display_set(Egueb_Dom_Node *n, Egueb_Svg_Display display)
-{
-}
-
-
-/**
- * To be documented
- * FIXME: To be fixed
- */
-EAPI void egueb_svg_element_stop_opacity_set(Egueb_Dom_Node *n, const Egueb_Svg_Number *v)
-{
-}
-
-/**
- * To be documented
- * FIXME: To be fixed
- */
-EAPI void egueb_svg_element_stop_opacity_get(Egueb_Dom_Node *n, Egueb_Svg_Number *v)
-{
-}
-
-/**
- * To be documented
- * FIXME: To be fixed
- */
-EAPI void egueb_svg_element_stop_color_set(Egueb_Dom_Node *n, Egueb_Svg_Color *stop_color)
-{
-}
-
-/**
- * To be documented
- * FIXME: To be fixed
- */
-EAPI void egueb_svg_element_stop_color_get(Egueb_Dom_Node *n, Egueb_Svg_Color *stop_color)
-{
-}
-
-#if 0
-/**
- * To be documented
- * FIXME: To be fixed
- */
-EAPI void egueb_svg_element_onfocusin_set(Egueb_Dom_Node *n, const char *v)
-{
-}
-
-/**
- * To be documented
- * FIXME: To be fixed
- */
-EAPI void egueb_svg_element_onfocusout_set(Egueb_Dom_Node *n, const char *v)
-{
-}
-
-/**
- * To be documented
- * FIXME: To be fixed
- */
-EAPI void egueb_svg_element_onactivate_set(Egueb_Dom_Node *n, const char *v)
-{
-}
-
-/**
- * To be documented
- * FIXME: To be fixed
- */
-EAPI void egueb_svg_element_onclick_set(Egueb_Dom_Node *n, const char *v)
-{
-}
-
-/**
- * To be documented
- * FIXME: To be fixed
- */
-EAPI void egueb_svg_element_onmousedown_set(Egueb_Dom_Node *n, const char *v)
-{
-}
-
-/**
- * To be documented
- * FIXME: To be fixed
- */
-EAPI void egueb_svg_element_onmouseup_set(Egueb_Dom_Node *n, const char *v)
-{
-}
-
-/**
- * To be documented
- * FIXME: To be fixed
- */
-EAPI void egueb_svg_element_onmouseover_set(Egueb_Dom_Node *n, const char *v)
-{
-}
-
-/**
- * To be documented
- * FIXME: To be fixed
- */
-EAPI void egueb_svg_element_onmousemove_set(Egueb_Dom_Node *n, const char *v)
-{
-}
-
-/**
- * To be documented
- * FIXME: To be fixed
- */
-EAPI void egueb_svg_element_onmouseout_set(Egueb_Dom_Node *n, const char *v)
-{
-}
-#endif

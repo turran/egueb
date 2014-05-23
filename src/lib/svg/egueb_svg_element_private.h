@@ -148,12 +148,6 @@ typedef struct _Egueb_Svg_Element_Class
 #define EGUEB_SVG_ELEMENT(o) ENESIM_OBJECT_INSTANCE_CHECK(o, 			\
 		Egueb_Svg_Element, EGUEB_SVG_ELEMENT_DESCRIPTOR)
 
-Enesim_Object_Descriptor * egueb_svg_element_descriptor_get(void);
-void egueb_svg_element_clip_path_resolve(Egueb_Dom_Node *n,
-		Egueb_Svg_Clip_Path *clip_path_current,
-		Egueb_Svg_Clip_Path *clip_path_last, Egueb_Svg_Reference **r);
-void egueb_svg_element_children_clone(Egueb_Dom_Node *n, Egueb_Dom_Node *from);
-
 /* Helper macro to get the animated/base values of an attribute */
 #define EGUEB_SVG_ELEMENT_ATTR_ANIMATED_GET(attr, val)				\
 	if (egueb_dom_attr_type_is_set(attr, EGUEB_DOM_ATTR_TYPE_BASE))		\
@@ -172,83 +166,28 @@ void egueb_svg_element_children_clone(Egueb_Dom_Node *n, Egueb_Dom_Node *from);
 	EGUEB_SVG_ELEMENT_ATTR_ANIMATED_GET(attr, val);				\
 	return EINA_ERROR_NONE;
 
-#if 0
-/* element */
-typedef enum _Egueb_Svg_Element_Setup_Return
-{
-	ESVG_SETUP_FAILED,
-	ESVG_SETUP_OK,
-	ESVG_SETUP_ENQUEUE,
-	ESVG_SETUP_RETURNS
-} Egueb_Svg_Element_Setup_Return;
+Enesim_Object_Descriptor * egueb_svg_element_descriptor_get(void);
+void egueb_svg_element_clip_path_resolve(Egueb_Dom_Node *n,
+		Egueb_Svg_Clip_Path *clip_path_current,
+		Egueb_Svg_Clip_Path *clip_path_last, Egueb_Svg_Reference **r);
+void egueb_svg_element_children_clone(Egueb_Dom_Node *n, Egueb_Dom_Node *from);
 
-typedef struct _Egueb_Svg_Element_Event_Topmost_Changed {
-	Ender_Element *previous;
-	Ender_Element *current;
-	Egueb_Dom_Node *child;
-} Egueb_Svg_Element_Event_Topmost_Changed;
+Egueb_Dom_Node * egueb_svg_element_presentation_relative_get(Egueb_Dom_Node *n);
+EAPI Eina_Bool egueb_svg_element_presentation_relative_set(Egueb_Dom_Node *n,
+		Egueb_Dom_Node *presentation_relative, Eina_Error *err);
 
-typedef struct _Egueb_Svg_Element_Context {
-	double dpi_x;
-	double dpi_y;
-	Egueb_Svg_Rect viewbox; /* the current viewbox */
-	double font_size; /* the propagated value of the current font size? FIXME here or in the attributes? */
-	Enesim_Rectangle bounds; /* the bounds of the object */
-	Enesim_Matrix transform; /* the current transformation */
-	Egueb_Svg_Renderable_Behaviour renderable_behaviour;
-} Egueb_Svg_Element_Context;
+Egueb_Dom_Node * egueb_svg_element_geometry_relative_get(Egueb_Dom_Node *n);
+EAPI Eina_Bool egueb_svg_element_geometry_relative_set(Egueb_Dom_Node *n,
+		Egueb_Dom_Node *geometry_relative, Eina_Error *err);
 
-void * egueb_svg_element_data_get(Egueb_Dom_Node *n);
-Egueb_Dom_Node * egueb_svg_element_new(Egueb_Svg_Element_Descriptor *descriptor, Egueb_Svg_Type type, void *data);
-Ender_Element * egueb_svg_element_ender_get(Egueb_Dom_Node *n);
-void egueb_svg_element_attribute_type_set(Egueb_Dom_Node *n, Egueb_Svg_Attribute_Type type);
-Egueb_Svg_Attribute_Type egueb_svg_element_attribute_type_get(Egueb_Dom_Node *n);
-void egueb_svg_element_attribute_animate_set(Egueb_Dom_Node *n, Eina_Bool animate);
-Eina_Bool egueb_svg_element_attribute_animate_get(Egueb_Dom_Node *n);
-
-void egueb_svg_element_initialize(Ender_Element *e);
-
-void egueb_svg_element_ecss_style_apply(Egueb_Dom_Node *n, Egueb_Css_Style *s);
-
-void egueb_svg_element_topmost_set(Egueb_Dom_Node *n, Ender_Element *topmost);
-void egueb_svg_element_state_compose(Egueb_Dom_Node *n, const Egueb_Svg_Element_Context *s, Egueb_Svg_Element_Context *d);
-Eina_Bool egueb_svg_element_changed(Egueb_Dom_Node *n);
-Eina_Bool egueb_svg_element_has_setup(Egueb_Dom_Node *n, Egueb_Svg_Context *c);
-void egueb_svg_element_context_dump(const Egueb_Svg_Element_Context *c);
-
-const Egueb_Svg_Element_Context * egueb_svg_element_context_get(Egueb_Dom_Node *n);
-const Egueb_Svg_Attribute_Presentation * egueb_svg_element_attribute_presentation_get(Egueb_Dom_Node *n);
-Egueb_Svg_Element_Setup_Return egueb_svg_element_setup_rel(Egueb_Dom_Node *n,
-		Egueb_Svg_Context *c,
-		const Egueb_Svg_Element_Context *rel_state,
-		const Egueb_Svg_Attribute_Presentation *rel_attr,
-		Enesim_Log **error);
-Eina_Bool egueb_svg_element_attribute_animation_add(Egueb_Dom_Node *n, const char *attr, int *index);
-void egueb_svg_element_attribute_animation_remove(Egueb_Dom_Node *n, const char *attr);
-/* internal functions */
-Egueb_Svg_Type egueb_svg_element_internal_type_get(Egueb_Dom_Node *n);
-const char * egueb_svg_element_internal_id_get(Egueb_Dom_Node *n);
-Eina_Bool egueb_svg_is_element_internal(Egueb_Dom_Node *n);
-void egueb_svg_element_internal_topmost_get(Egueb_Dom_Node *n, Ender_Element **e);
-Egueb_Svg_Element_Setup_Return egueb_svg_element_internal_setup(Egueb_Dom_Node *n,
-		Egueb_Svg_Context *c,
-		Enesim_Log **error);
-Eina_Bool egueb_svg_element_internal_child_setup(Egueb_Dom_Node *n,
-		Egueb_Svg_Context *c,
-		Enesim_Log **error,
-		Egueb_Svg_Element_Setup_Interceptor pre,
-		Egueb_Svg_Element_Setup_Interceptor post,
-		void *data);
-
-void egueb_svg_element_property_string_set(Ender_Element *e, Ender_Property *p, const char *v);
-void egueb_svg_element_property_length_set(Ender_Element *e, Ender_Property *p, const Egueb_Svg_Length *v);
-void egueb_svg_element_property_paint_set(Ender_Element *e, Ender_Property *p, const Egueb_Svg_Paint *v);
-void egueb_svg_element_property_clip_path_set(Ender_Element *e, Ender_Property *p, const Egueb_Svg_Clip_Path *v);
-void egueb_svg_element_property_number_set(Ender_Element *e, Ender_Property *p, const Egueb_Svg_Number *v);
-void egueb_svg_element_property_enum_set(Ender_Element *e, Ender_Property *p, int v);
-
-void egueb_svg_element_init(void);
-void egueb_svg_element_shutdown(void);
-#endif
+void egueb_svg_element_overflow_final_get(Egueb_Dom_Node *n, Egueb_Svg_Overflow *o);
+void egueb_svg_element_color_final_get(Egueb_Dom_Node *n,
+   	Egueb_Svg_Color *color);
+void egueb_svg_element_fill_final_get(Egueb_Dom_Node *n,
+   	Egueb_Svg_Paint *fill);
+void egueb_svg_element_stroke_final_get(Egueb_Dom_Node *n,
+   	Egueb_Svg_Paint *stroke);
+void egueb_svg_element_clip_path_final_get(Egueb_Dom_Node *n,
+		Egueb_Svg_Clip_Path *clip_path);
 
 #endif

@@ -26,6 +26,12 @@ typedef enum _Egueb_Svg_Overflow
 	EGUEB_SVG_OVERFLOW_AUTO,
 } Egueb_Svg_Overflow;
 
+typedef struct _Egueb_Svg_Overflow_Animated
+{
+	Egueb_Svg_Overflow base;
+	Egueb_Svg_Overflow anim;
+} Egueb_Svg_Overflow_Animated;
+
 EAPI const Egueb_Dom_Value_Descriptor * egueb_svg_overflow_descriptor_get(void);
 EAPI Eina_Bool egueb_svg_overflow_string_from(Egueb_Svg_Overflow *thiz, const char *value);
 EAPI char * egueb_svg_overflow_string_to(Egueb_Svg_Overflow thiz);
