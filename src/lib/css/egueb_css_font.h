@@ -40,7 +40,7 @@ typedef struct _Egueb_Css_Font {
 
 EAPI Eina_Bool egueb_css_font_string_from(Egueb_Css_Font *thiz, const char *attr_val);
 EAPI char * egueb_css_font_string_to(Egueb_Css_Font *thiz);
-EAPI const Egueb_Dom_Value_Descriptor * egueb_dom_value_font_descriptor_get(void);
+EAPI const Egueb_Dom_Value_Descriptor * egueb_css_font_descriptor_get(void);
 
 #endif
 

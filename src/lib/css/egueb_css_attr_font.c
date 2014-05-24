@@ -31,7 +31,7 @@
  *                                  Local                                     *
  *============================================================================*/
 EGUEB_DOM_ATTR_PRIMITIVE_BOILERPLATE(Egueb_Css_Font,
-		Egueb_Dom_Attr_Font, egueb_dom_value_font,
+		Egueb_Css_Attr_Font, egueb_css_font,
 		egueb_css_attr_font)
 /*============================================================================*
  *                                 Global                                     *
