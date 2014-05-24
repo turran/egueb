@@ -30,6 +30,15 @@
 
 static int egueb_css_init_count = 0;
 
+static void _egueb_css_strings_init(void)
+{
+	EGUEB_CSS_STYLE = egueb_dom_string_new_with_string("style");
+}
+
+static void _egueb_css_strings_shutdown(void)
+{
+	egueb_dom_string_unref(EGUEB_CSS_STYLE);
+}
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
@@ -39,6 +48,8 @@ int _egueb_css_log_dom_global = -1;
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/
+Egueb_Dom_String *EGUEB_CSS_STYLE;
+
 EAPI int egueb_css_init(void)
 {
 	if (++egueb_css_init_count != 1)
@@ -56,6 +67,7 @@ EAPI int egueb_css_init(void)
 		EINA_LOG_ERR("Egueb_Css Can not create a general log domain.");
 		goto shutdown_eina;
 	}
+	_egueb_css_strings_init();
 
 	return egueb_css_init_count;
 
@@ -69,6 +81,7 @@ EAPI int egueb_css_shutdown(void)
 	if (--egueb_css_init_count != 0)
 		return egueb_css_init_count;
 
+	_egueb_css_strings_shutdown();
 	eina_log_domain_unregister(_egueb_css_log_dom_global);
 	_egueb_css_log_dom_global = -1;
 	eina_shutdown();

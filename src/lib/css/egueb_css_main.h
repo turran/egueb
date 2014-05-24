@@ -17,6 +17,8 @@
  */
 #ifndef _EGUEB_CSS_MAIN_H_
 
+EAPI extern Egueb_Dom_String *EGUEB_CSS_STYLE;
+
 EAPI int egueb_css_init(void);
 EAPI int egueb_css_shutdown(void);
 
