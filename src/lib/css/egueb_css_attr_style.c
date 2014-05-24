@@ -15,8 +15,9 @@
  * License along with this library.
  * If not, see <http://www.gnu.org/licenses/>.
  */
-#include "egueb_svg_main_private.h"
+#include "egueb_css_private.h"
 
+#include "egueb_css_main.h"
 #include "egueb_dom_attr_private.h"
 #include "egueb_dom_attr_object_private.h"
 #include "egueb_css_attr_style.h"
@@ -113,6 +114,6 @@ EAPI void egueb_css_attr_style_process(Egueb_Dom_Node *n)
 {
 	Egueb_Css_Attr_String *thiz;
 
-	thiz = EGUEB_CSS_ATTR_STYLE(o);
+	thiz = EGUEB_CSS_ATTR_STYLE(n);
 	/* TODO apply the style attribute */
 }

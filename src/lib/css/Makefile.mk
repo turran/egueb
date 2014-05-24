@@ -3,6 +3,7 @@ lib_LTLIBRARIES += src/lib/css/libegueb_css.la
 installed_cssheadersdir = $(pkgincludedir)-@VMAJ@/css
 dist_installed_cssheaders_DATA = \
 src/lib/css/Egueb_Css.h \
+src/lib/css/egueb_css_attr_style.h \
 src/lib/css/egueb_css_color.h \
 src/lib/css/egueb_css_font_size.h \
 src/lib/css/egueb_css_font_style.h \
@@ -15,6 +16,7 @@ src/lib/css/egueb_css_percentage.h
 
 src_lib_css_libegueb_css_la_SOURCES = \
 src/lib/css/egueb_css_main.c \
+src/lib/css/egueb_css_attr_style.c \
 src/lib/css/egueb_css_length.c \
 src/lib/css/egueb_css_color.c \
 src/lib/css/egueb_css_font.c \
@@ -29,11 +31,13 @@ src_lib_css_libegueb_css_la_CPPFLAGS = \
 -I$(top_srcdir)/src/lib/css \
 -I$(top_srcdir)/src/lib/css/engine \
 -I$(top_srcdir)/src/lib/base \
+-I$(top_srcdir)/src/lib/dom \
 -DEGUEB_CSS_BUILD \
 @EGUEB_CSS_CFLAGS@
 
 src_lib_css_libegueb_css_la_LIBADD = \
 $(top_builddir)/src/lib/base/libegueb_base.la \
+$(top_builddir)/src/lib/dom/libegueb_dom.la \
 @EGUEB_CSS_LIBS@
 
 src_lib_css_libegueb_css_la_LDFLAGS = -no-undefined -version-info @version_info@

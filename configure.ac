@@ -41,15 +41,17 @@ ETCH_VERSION="0.0.5"
 AC_CANONICAL_HOST
 
 egueb_base_requirements="eina >= ${EINA_VERSION}"
-egueb_css_requirements="eina >= ${EINA_VERSION}"
-egueb_dom_requirements_private=""
 egueb_dom_requirements="enesim >= ${ENESIM_VERSION} etch >= ${ETCH_VERSION} eina >= ${EINA_VERSION}"
+egueb_dom_requirements_private=""
+egueb_css_requirements="eina >= ${EINA_VERSION} enesim >= ${ENESIM_VERSION} ${egueb_dom_requirements}"
+egueb_css_requirements_private=""
 egueb_smil_requirements="etch >= ${ETCH_VERSION} enesim >= ${ENESIM_VERSION} eina >= ${EINA_VERSION}"
 egueb_svg_requirements="etch >= ${ETCH_VERSION} enesim >= ${ENESIM_VERSION} eina >= ${EINA_VERSION}"
 gstreamer_requirements="gstreamer-0.10"
 
 AC_SUBST([egueb_base_requirements])
 AC_SUBST([egueb_css_requirements])
+AC_SUBST([egueb_css_requirements_private])
 AC_SUBST([egueb_dom_requirements])
 AC_SUBST([egueb_dom_requirements_private])
 AC_SUBST([egueb_smil_requirements])

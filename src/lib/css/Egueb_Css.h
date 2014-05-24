@@ -19,6 +19,7 @@
 #define _EGUEB_CSS_H
 
 #include <Eina.h>
+#include <Egueb_Dom.h>
 
 #include <stddef.h>
 #include <stdint.h>
@@ -58,6 +59,9 @@
 /* core */
 #include "egueb_css_main.h"
 
+/* attributes */
+#include "egueb_css_attr_style.h"
+/* elements */
 /* common parsers */
 #include "egueb_css_color.h"
 #include "egueb_css_length.h"
