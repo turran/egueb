@@ -104,9 +104,7 @@ extern "C" {
 #include "egueb_dom_value.h"
 #include "egueb_dom_value_boolean.h"
 #include "egueb_dom_value_dom_string.h"
-#include "egueb_dom_value_color.h"
 #include "egueb_dom_value_double.h"
-#include "egueb_dom_value_font.h"
 #include "egueb_dom_value_int.h"
 #include "egueb_dom_string_list.h"
 

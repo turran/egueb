@@ -48,9 +48,7 @@ src/lib/dom/egueb_dom_uri.h \
 src/lib/dom/egueb_dom_value.h \
 src/lib/dom/egueb_dom_value_dom_string.h \
 src/lib/dom/egueb_dom_value_boolean.h \
-src/lib/dom/egueb_dom_value_color.h \
 src/lib/dom/egueb_dom_value_double.h \
-src/lib/dom/egueb_dom_value_font.h \
 src/lib/dom/egueb_dom_value_int.h \
 src/lib/dom/egueb_dom_value_list.h
 
@@ -118,15 +116,12 @@ src/lib/dom/egueb_dom_value.c \
 src/lib/dom/egueb_dom_value_private.h \
 src/lib/dom/egueb_dom_value_dom_string.c \
 src/lib/dom/egueb_dom_value_boolean.c \
-src/lib/dom/egueb_dom_value_color.c \
 src/lib/dom/egueb_dom_value_double.c \
-src/lib/dom/egueb_dom_value_font.c \
 src/lib/dom/egueb_dom_value_int.c \
 src/lib/dom/egueb_dom_value_list.c
 
 src_lib_dom_libegueb_dom_la_CPPFLAGS = \
 -I$(top_srcdir)/src/lib/base \
--I$(top_srcdir)/src/lib/css \
 -I$(top_srcdir)/src/lib/dom \
 -DPACKAGE_LIB_DIR=\"$(libdir)\" \
 -DEGUEB_DOM_BUILD \
@@ -134,7 +129,6 @@ src_lib_dom_libegueb_dom_la_CPPFLAGS = \
 
 src_lib_dom_libegueb_dom_la_LIBADD = \
 $(top_builddir)/src/lib/base/libegueb_base.la \
-$(top_builddir)/src/lib/css/libegueb_css.la \
 @EGUEB_DOM_LIBS@
 
 src_lib_dom_libegueb_dom_la_LDFLAGS = -no-undefined -version-info @version_info@

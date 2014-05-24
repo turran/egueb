@@ -24,6 +24,21 @@
 #include "egueb_css_font_weight.h"
 #include "egueb_css_font_size.h"
 #include "egueb_css_font.h"
+#include "egueb_dom_value_private.h"
+/*============================================================================*
+ *                                  Local                                     *
+ *============================================================================*/
+/*----------------------------------------------------------------------------*
+ *                             Value interface                                *
+ *----------------------------------------------------------------------------*/
+static void egueb_css_font_interpolate(Egueb_Css_Font *v,
+		Egueb_Css_Font *a, Egueb_Css_Font *b, double m,
+		Egueb_Css_Font *add, Egueb_Css_Font *acc, int mul)
+{
+	ERR("Not implemented");
+}
+
+EGUEB_DOM_VALUE_PRIMITIVE_SIMPLE_BOILERPLATE(egueb_css_font, Egueb_Css_Font);
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/
@@ -126,4 +141,9 @@ EAPI Eina_Bool egueb_css_font_string_from(Egueb_Css_Font *thiz,
 EAPI char * egueb_css_font_string_to(Egueb_Css_Font *thiz)
 {
 	return NULL;
+}
+
+EAPI const Egueb_Dom_Value_Descriptor * egueb_css_font_descriptor_get(void)
+{
+	return &_egueb_css_font_descriptor;
 }
