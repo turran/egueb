@@ -19,7 +19,7 @@
 
 #include "egueb_dom_attr_private.h"
 #include "egueb_dom_attr_object_private.h"
-#include "egueb_css_attr_style_private.h"
+#include "egueb_css_attr_style.h"
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
