@@ -5,7 +5,6 @@ bin_PROGRAMS += src/bin/egueb_dom_loader
 
 src_bin_egueb_dom_loader_CPPFLAGS = \
 -I$(top_srcdir)/src/lib/dom \
--I$(top_srcdir)/src/lib/dom \
 @EGUEB_DOM_CFLAGS@
 
 src_bin_egueb_dom_loader_SOURCES =  src/bin/egueb_dom_loader.c

@@ -27,6 +27,8 @@
 
 #include "egueb_svg_element_private.h"
 #include "egueb_dom_string_private.h"
+#include "egueb_css_engine_context_private.h"
+
 /*
  * TODO
  * use pointers to determine the state/final/whatever states, that
@@ -75,7 +77,7 @@ static const char * _egueb_svg_element_css_property_get(void *e, const char *pro
 }
 
 /* FIXME we could call directly the function _attribute_set */
-static void _egueb_svg_element_css_property_set(void *e, const char *property, const char *value)
+static void _egueb_svg_element_css_attribute_set(void *e, const char *property, const char *value)
 {
 	Egueb_Dom_Node *n = e;
 	Egueb_Dom_String *prop;
@@ -125,8 +127,8 @@ static const char * _egueb_svg_element_css_get_name(void *e)
 	return NULL;
 }
 
-static Egueb_Css_Context _egueb_svg_element_css_context = {
-	/* .property_set 	= */ _egueb_svg_element_css_property_set,
+static Egueb_Css_Engine_Context _egueb_svg_element_css_context = {
+	/* .attribute_set 	= */ _egueb_svg_element_css_attribute_set,
 	/* .property_get 	= */ _egueb_svg_element_css_property_get,
 	/* .get_name 		= */ _egueb_svg_element_css_get_name,
 	/* .get_child 		= */ _egueb_svg_element_css_get_child,

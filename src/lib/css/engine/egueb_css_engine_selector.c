@@ -1,4 +1,4 @@
-/* Egueb_Css - CSS
+/* Egueb_Css_Engine - CSS
  * Copyright (C) 2011 Jorge Luis Zapata
  *
  * This library is free software; you can redistribute it and/or
@@ -16,35 +16,34 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 #include "egueb_css_private.h"
-#include "egueb_css_selector.h"
-#include "egueb_css_selector_private.h"
+#include "egueb_css_engine_selector_private.h"
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
-Egueb_Css_Selector * egueb_css_selector_next_get(Egueb_Css_Selector *thiz)
+Egueb_Css_Engine_Selector * egueb_css_engine_selector_next_get(Egueb_Css_Engine_Selector *thiz)
 {
 	Eina_Inlist *l;
 
 	l = EINA_INLIST_GET(thiz)->next;
 	if (!l) return NULL;
-	return EINA_INLIST_CONTAINER_GET(l, Egueb_Css_Selector);
+	return EINA_INLIST_CONTAINER_GET(l, Egueb_Css_Engine_Selector);
 }
 
-Egueb_Css_Selector * egueb_css_selector_prev_get(Egueb_Css_Selector *thiz)
+Egueb_Css_Engine_Selector * egueb_css_engine_selector_prev_get(Egueb_Css_Engine_Selector *thiz)
 {
 	Eina_Inlist *l;
 
 	l = EINA_INLIST_GET(thiz)->prev;
 	if (!l) return NULL;
-	return EINA_INLIST_CONTAINER_GET(l, Egueb_Css_Selector);
+	return EINA_INLIST_CONTAINER_GET(l, Egueb_Css_Engine_Selector);
 }
 
-void egueb_css_selector_dump(Egueb_Css_Selector *thiz)
+void egueb_css_engine_selector_dump(Egueb_Css_Engine_Selector *thiz)
 {
-	Egueb_Css_Selector *s;
+	Egueb_Css_Engine_Selector *s;
 	Eina_Inlist *l;
 
 	printf("%s %p", thiz->subject ? thiz->subject : "*", thiz->filters);
@@ -59,15 +58,15 @@ void egueb_css_selector_dump(Egueb_Css_Selector *thiz)
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/
-EAPI Egueb_Css_Selector * egueb_css_selector_new(void)
+EAPI Egueb_Css_Engine_Selector * egueb_css_engine_selector_new(void)
 {
-	Egueb_Css_Selector *thiz;
+	Egueb_Css_Engine_Selector *thiz;
 
-	thiz = calloc(1, sizeof(Egueb_Css_Selector));
+	thiz = calloc(1, sizeof(Egueb_Css_Engine_Selector));
 	return thiz;
 }
 
-EAPI void egueb_css_selector_subject_set(Egueb_Css_Selector *thiz, const char *subject)
+EAPI void egueb_css_engine_selector_subject_set(Egueb_Css_Engine_Selector *thiz, const char *subject)
 {
 	if (!thiz) return;
 
@@ -75,12 +74,12 @@ EAPI void egueb_css_selector_subject_set(Egueb_Css_Selector *thiz, const char *s
 		thiz->subject = strdup(subject);
 }
 
-EAPI void egueb_css_selector_filter_add(Egueb_Css_Selector *thiz, Egueb_Css_Filter *f)
+EAPI void egueb_css_engine_selector_filter_add(Egueb_Css_Engine_Selector *thiz, Egueb_Css_Engine_Filter *f)
 {
 	thiz->filters = eina_list_append(thiz->filters, f);
 }
 
-EAPI void egueb_css_selector_combinator_set(Egueb_Css_Selector *thiz, Egueb_Css_Selector *ss, Egueb_Css_Combinator c)
+EAPI void egueb_css_engine_selector_combinator_set(Egueb_Css_Engine_Selector *thiz, Egueb_Css_Engine_Selector *ss, Egueb_Css_Engine_Combinator c)
 {
 	if (!thiz) return;
 

@@ -15,25 +15,27 @@
  * License along with this library.
  * If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef _EGUEB_CSS_SELECTOR_PRIVATE_H_
-#define _EGUEB_CSS_SELECTOR_PRIVATE_H_
+#ifndef _EGUEB_CSS_RULE_PRIVATE_H_
+#define _EGUEB_CSS_RULE_PRIVATE_H_
 
-typedef struct _Egueb_Css_Selector_Combinator
-{
-	Egueb_Css_Selector *s;
-	Egueb_Css_Combinator c;
-} Egueb_Css_Selector_Combinator;
+typedef struct _Egueb_Css_Engine_Rule Egueb_Css_Engine_Rule;
 
-struct _Egueb_Css_Selector
+Egueb_Css_Engine_Rule * egueb_css_engine_rule_new(Egueb_Css_Engine_Selector *s);
+void egueb_css_engine_rule_declaration_add(Egueb_Css_Engine_Rule *thiz, const char *attribute,
+		const char *value);
+
+typedef struct _Egueb_Css_Engine_Declaration
 {
-	EINA_INLIST;
-	char *subject;
-	Egueb_Css_Combinator c;
-	Eina_List *filters;
+	char *attribute;
+	char *value;
+} Egueb_Css_Engine_Declaration;
+
+struct _Egueb_Css_Engine_Rule
+{
+	Egueb_Css_Engine_Selector *selector;
+	Eina_List *declarations;
 };
 
-Egueb_Css_Selector * egueb_css_selector_next_get(Egueb_Css_Selector *thiz);
-Egueb_Css_Selector * egueb_css_selector_prev_get(Egueb_Css_Selector *thiz);
-void egueb_css_selector_dump(Egueb_Css_Selector *thiz);
+void egueb_css_engine_rule_declaration_insert(Egueb_Css_Engine_Rule *thiz, Egueb_Css_Engine_Declaration *d);
 
 #endif

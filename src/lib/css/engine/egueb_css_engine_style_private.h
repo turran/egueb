@@ -15,12 +15,21 @@
  * License along with this library.
  * If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef _EGUEB_CSS_PARSER_PRIVATE_H_
-#define _EGUEB_CSS_PARSER_PRIVATE_H_
+#ifndef _EGUEB_CSS_STYLE_PRIVATE_H_
+#define _EGUEB_CSS_STYLE_PRIVATE_H_
 
-typedef struct _Egueb_Css_Parser
+typedef struct _Egueb_Css_Engine_Style Egueb_Css_Engine_Style;
+
+EAPI Egueb_Css_Engine_Style * egueb_css_engine_style_new(void);
+EAPI Egueb_Css_Engine_Style * egueb_css_engine_style_load_from_file(const char *file);
+EAPI Egueb_Css_Engine_Style * egueb_css_engine_style_load_from_content(const char *content, size_t len);
+EAPI void egueb_css_engine_style_rule_add(Egueb_Css_Engine_Style *thiz, Egueb_Css_Engine_Rule *r);
+
+
+struct _Egueb_Css_Engine_Style
 {
-	Egueb_Css_Style *style;
-} Egueb_Css_Parser;
+	Eina_List *rules;
+};
 
 #endif
+

@@ -57,10 +57,6 @@
 
 /* core */
 #include "egueb_css_main.h"
-#include "egueb_css_selector.h"
-#include "egueb_css_rule.h"
-#include "egueb_css_style.h"
-#include "egueb_css_context.h"
 
 /* common parsers */
 #include "egueb_css_color.h"

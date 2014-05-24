@@ -195,6 +195,7 @@ src/lib/svg/egueb_svg_visibility.c
 src_lib_svg_libegueb_svg_la_CPPFLAGS = \
 -I$(top_srcdir)/src/lib/base \
 -I$(top_srcdir)/src/lib/css \
+-I$(top_srcdir)/src/lib/css/engine \
 -I$(top_srcdir)/src/lib/dom \
 -I$(top_srcdir)/src/lib/smil \
 -I$(top_srcdir)/src/lib/svg \

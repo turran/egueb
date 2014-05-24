@@ -1,4 +1,4 @@
-/* Egueb_Css - CSS
+/* Egueb_Css_Engine - CSS
  * Copyright (C) 2011 Jorge Luis Zapata
  *
  * This library is free software; you can redistribute it and/or
@@ -17,15 +17,8 @@
  */
 
 #include "egueb_css_private.h"
-#include "egueb_css_selector.h"
-#include "egueb_css_rule.h"
-#include "egueb_css_style.h"
-#include "egueb_css_context.h"
 
-#include "egueb_css_rule_private.h"
-#include "egueb_css_selector_private.h"
-#include "egueb_css_filter_private.h"
-#include "egueb_css_style_private.h"
+#include "egueb_css_engine_context_private.h"
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
@@ -33,36 +26,37 @@
 #define ESVG_SPACE_SKIP(t) \
 	while (*t) { if ((*t == ' ') || (*t == '\n') || (*t == '\t')) t++; else break; }
 
+#if 0
 /* Keep track of the selector state */
-typedef struct _Egueb_Css_State_Selector
+typedef struct _Egueb_Css_Engine_State_Selector
 {
-	Egueb_Css_Rule *r;
-	Egueb_Css_Selector *s; /* the current selector in case we have a compound selector */
+	Egueb_Css_Engine_Rule *r;
+	Egueb_Css_Engine_Selector *s; /* the current selector in case we have a compound selector */
 	int child;
 	int sibling;
-} Egueb_Css_State_Selector;
+} Egueb_Css_Engine_State_Selector;
 
-typedef struct _Egueb_Css_State
+typedef struct _Egueb_Css_Engine_State
 {
 	Eina_List *active;
 	Eina_List *inactive;
-} Egueb_Css_State;
+} Egueb_Css_Engine_State;
 
-static void _element_rule_apply(Egueb_Css_Context *c, void *e, Egueb_Css_Rule *r)
+static void _element_rule_apply(Egueb_Css_Engine_Context *c, void *e, Egueb_Css_Engine_Rule *r)
 {
-	Egueb_Css_Declaration *d;
+	Egueb_Css_Engine_Declaration *d;
 	Eina_List *l;
 
 	EINA_LIST_FOREACH(r->declarations, l, d)
 	{
-		c->property_set(e, d->property, d->value);
+		c->attribute_set(e, d->attribute, d->value);
 	}
 }
 
-static Eina_Bool _element_matches(Egueb_Css_Context *c, void *e, Egueb_Css_State_Selector *ss)
+static Eina_Bool _element_matches(Egueb_Css_Engine_Context *c, void *e, Egueb_Css_Engine_State_Selector *ss)
 {
-	Egueb_Css_Rule *r = ss->r;
-	Egueb_Css_Selector *s = ss->s;
+	Egueb_Css_Engine_Rule *r = ss->r;
+	Egueb_Css_Engine_Selector *s = ss->s;
 	Eina_Bool ret = EINA_FALSE;
 
 	if (!s->subject)
@@ -77,22 +71,22 @@ static Eina_Bool _element_matches(Egueb_Css_Context *c, void *e, Egueb_Css_State
 
 	if (ret)
 	{
-		Egueb_Css_Filter *f;
+		Egueb_Css_Engine_Filter *f;
 		Eina_List *l;
 
 		EINA_LIST_FOREACH(s->filters, l, f)
 		{
-			if (!egueb_css_filter_test(f, c, e))
+			if (!egueb_css_engine_filter_test(f, c, e))
 				return EINA_FALSE;
 		}
 	}
 	return ret;
 }
 
-static void _process_element(Egueb_Css_Context *c, void *e, Egueb_Css_State *state)
+static void _process_element(Egueb_Css_Engine_Context *c, void *e, Egueb_Css_Engine_State *state)
 {
 	void *e1;
-	Egueb_Css_State_Selector *ss;
+	Egueb_Css_Engine_State_Selector *ss;
 	Eina_List *l;
 	Eina_List *l_next;
 	Eina_List *new_active = NULL;
@@ -105,13 +99,13 @@ static void _process_element(Egueb_Css_Context *c, void *e, Egueb_Css_State *sta
 	old_inactive = state->inactive;
 	EINA_LIST_FOREACH(state->inactive, l, ss)
 	{
-		Egueb_Css_Selector *s_next;
-		Egueb_Css_Selector *s = ss->s;
+		Egueb_Css_Engine_Selector *s_next;
+		Egueb_Css_Engine_Selector *s = ss->s;
 
 		if (_element_matches(c, e, ss))
 		{
 			/* can we apply directly? */
-			s_next = egueb_css_selector_next_get(s);
+			s_next = egueb_css_engine_selector_next_get(s);
 			if (!s_next)
 			{
 				/* apply */
@@ -130,8 +124,8 @@ static void _process_element(Egueb_Css_Context *c, void *e, Egueb_Css_State *sta
 	old_active = state->active;
 	EINA_LIST_FOREACH(state->active, l, ss)
 	{
-		Egueb_Css_Selector *s_next;
-		Egueb_Css_Selector *s = ss->s;
+		Egueb_Css_Engine_Selector *s_next;
+		Egueb_Css_Engine_Selector *s = ss->s;
 		Eina_Bool keep = EINA_FALSE; /* keep in the list of actives for later */
 		Eina_Bool apply = EINA_FALSE; /* apply if it matches */
 
@@ -174,7 +168,7 @@ static void _process_element(Egueb_Css_Context *c, void *e, Egueb_Css_State *sta
 		{
 			if (_element_matches(c, e, ss))
 			{
-				s_next = egueb_css_selector_next_get(s);
+				s_next = egueb_css_engine_selector_next_get(s);
 				if (!s_next)
 				{
 					/* apply */
@@ -231,10 +225,10 @@ static void _process_element(Egueb_Css_Context *c, void *e, Egueb_Css_State *sta
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/
-EAPI void egueb_css_context_style_apply(Egueb_Css_Context *c, Egueb_Css_Style *s, void *e)
+EAPI void egueb_css_engine_context_style_apply(Egueb_Css_Engine_Context *c, Egueb_Css_Engine_Style *s, void *e)
 {
-	Egueb_Css_State state;
-	Egueb_Css_Rule *r;
+	Egueb_Css_Engine_State state;
+	Egueb_Css_Engine_Rule *r;
 	Eina_List *l;
 
 	if (!c) return;
@@ -247,10 +241,10 @@ EAPI void egueb_css_context_style_apply(Egueb_Css_Context *c, Egueb_Css_Style *s
 	/* put every rule on the inactive list */
 	EINA_LIST_FOREACH(s->rules, l, r)
 	{
-		Egueb_Css_State_Selector *ss;
-		Egueb_Css_Selector *s = r->selector;
+		Egueb_Css_Engine_State_Selector *ss;
+		Egueb_Css_Engine_Selector *s = r->selector;
 
-		ss = malloc(sizeof(Egueb_Css_State_Selector));
+		ss = malloc(sizeof(Egueb_Css_Engine_State_Selector));
 		ss->r = r;
 		ss->s = s;
 		ss->child = 0;
@@ -262,14 +256,14 @@ EAPI void egueb_css_context_style_apply(Egueb_Css_Context *c, Egueb_Css_Style *s
 	/* TODO destroy the state */
 }
 
-EAPI void egueb_css_context_inline_style_apply(Egueb_Css_Context *c, const char *style, void *e)
+EAPI void egueb_css_engine_context_inline_style_apply(Egueb_Css_Engine_Context *c, const char *style, void *e)
 {
 	char *orig;
 	char *v;
 	char *sc;
 	char *ch;
 
-	if (!c->property_set)
+	if (!c->attribute_set)
 		return;
 
 	orig = v = strdup(style);
@@ -288,7 +282,7 @@ EAPI void egueb_css_context_inline_style_apply(Egueb_Css_Context *c, const char 
 			vv = ch + 1;
 			ESVG_SPACE_SKIP(vv);
 			/* and call the attr_cb */
-			c->property_set(e, v, vv);
+			c->attribute_set(e, v, vv);
 		}
 		v = sc + 1;
 		ESVG_SPACE_SKIP(v);
@@ -303,8 +297,9 @@ EAPI void egueb_css_context_inline_style_apply(Egueb_Css_Context *c, const char 
 		vv = ch + 1;
 		ESVG_SPACE_SKIP(vv);
 		/* and call the attr_cb */
-		c->property_set(e, v, vv);
+		c->attribute_set(e, v, vv);
 	}
 
 	free(orig);
 }
+#endif

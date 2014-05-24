@@ -20,7 +20,7 @@
 typedef struct _Egueb_Css_Rule Egueb_Css_Rule;
 
 EAPI Egueb_Css_Rule * egueb_css_rule_new(Egueb_Css_Selector *s);
-EAPI void egueb_css_rule_declaration_add(Egueb_Css_Rule *thiz, const char *property,
+EAPI void egueb_css_rule_declaration_add(Egueb_Css_Rule *thiz, const char *attribute,
 		const char *value);
 
 #endif

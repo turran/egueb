@@ -1,4 +1,4 @@
-/* Egueb_Css - CSS
+/* Egueb_Css_Engine - CSS
  * Copyright (C) 2011 Jorge Luis Zapata
  *
  * This library is free software; you can redistribute it and/or
@@ -17,22 +17,22 @@
  */
 
 #include "egueb_css_private.h"
-#include "egueb_css_selector.h"
-#include "egueb_css_rule.h"
-#include "egueb_css_style.h"
-#include "egueb_css_context.h"
 
-#include "egueb_css_filter_private.h"
+#include "egueb_css_engine_selector_private.h"
+#include "egueb_css_engine_rule_private.h"
+#include "egueb_css_engine_style_private.h"
+#include "egueb_css_engine_context_private.h"
+#include "egueb_css_engine_filter_private.h"
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
-static Eina_Bool _class_test(void *data, Egueb_Css_Context *c, void *e)
+static Eina_Bool _class_test(void *data, Egueb_Css_Engine_Context *c, void *e)
 {
 	char *class_name = data;
 	const char *class_data;
 
 	/* check if the class attribute is equal to the class set */
-	class_data = c->property_get(e, "class");
+	class_data = c->attribute_get(e, "class");
 	if (!class_data) return EINA_FALSE;
 
 	/* the class can be one of the several classes */
@@ -47,7 +47,7 @@ static void _class_free(void *data)
 	free(data);
 }
 
-static Egueb_Css_Filter_Descriptor _descriptor = {
+static Egueb_Css_Engine_Filter_Descriptor _descriptor = {
 	/* .test	= */ _class_test,
 	/* .free	= */ _class_free,
 };
@@ -57,7 +57,7 @@ static Egueb_Css_Filter_Descriptor _descriptor = {
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/
-EAPI Egueb_Css_Filter * egueb_css_filter_class_new(const char *name)
+EAPI Egueb_Css_Engine_Filter * egueb_css_engine_filter_class_new(const char *name)
 {
 	char *n;
 
@@ -66,5 +66,5 @@ EAPI Egueb_Css_Filter * egueb_css_filter_class_new(const char *name)
 	n = strdup(name);
 	if (!n) return NULL;
 
-	return egueb_css_filter_new(&_descriptor, n);
+	return egueb_css_engine_filter_new(&_descriptor, n);
 }

@@ -15,21 +15,20 @@
  * License along with this library.
  * If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef _EGUEB_CSS_RULE_PRIVATE_H_
-#define _EGUEB_CSS_RULE_PRIVATE_H_
+#ifndef _EGUEB_CSS_FILTER_PRIVATE_H_
+#define _EGUEB_CSS_FILTER_PRIVATE_H_
 
-typedef struct _Egueb_Css_Declaration
+typedef Eina_Bool (*Egueb_Css_Engine_Filter_Test)(void *data, Egueb_Css_Engine_Context *c, void *e);
+typedef void (*Egueb_Css_Engine_Filter_Free)(void *data);
+
+typedef struct _Egueb_Css_Engine_Filter_Descriptor
 {
-	char *property;
-	char *value;
-} Egueb_Css_Declaration;
+	Egueb_Css_Engine_Filter_Test test;
+	Egueb_Css_Engine_Filter_Free free;
+} Egueb_Css_Engine_Filter_Descriptor;
 
-struct _Egueb_Css_Rule
-{
-	Egueb_Css_Selector *selector;
-	Eina_List *declarations;
-};
-
-void egueb_css_rule_declaration_insert(Egueb_Css_Rule *thiz, Egueb_Css_Declaration *d);
+Egueb_Css_Engine_Filter * egueb_css_engine_filter_new(Egueb_Css_Engine_Filter_Descriptor *fd, void *data);
+Eina_Bool egueb_css_engine_filter_test(Egueb_Css_Engine_Filter *f, Egueb_Css_Engine_Context *c, void *e);
+void egueb_css_engine_filter_delete(Egueb_Css_Engine_Filter *f);
 
 #endif
