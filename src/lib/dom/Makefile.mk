@@ -8,7 +8,6 @@ src/lib/dom/egueb_dom_attr.h \
 src/lib/dom/egueb_dom_attr_external.h \
 src/lib/dom/egueb_dom_attr_boolean.h \
 src/lib/dom/egueb_dom_attr_enum.h \
-src/lib/dom/egueb_dom_attr_font.h \
 src/lib/dom/egueb_dom_attr_int.h \
 src/lib/dom/egueb_dom_attr_string.h \
 src/lib/dom/egueb_dom_attr_string_list.h \
@@ -66,7 +65,6 @@ src/lib/dom/egueb_dom_attr_string.c \
 src/lib/dom/egueb_dom_attr_string_list.c \
 src/lib/dom/egueb_dom_attr_basic.c \
 src/lib/dom/egueb_dom_attr_basic_private.h \
-src/lib/dom/egueb_dom_attr_font.c \
 src/lib/dom/egueb_dom_attr_object.c \
 src/lib/dom/egueb_dom_attr_object_private.h \
 src/lib/dom/egueb_dom_attr_primitive.c \

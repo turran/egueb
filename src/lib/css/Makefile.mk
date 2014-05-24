@@ -3,6 +3,7 @@ lib_LTLIBRARIES += src/lib/css/libegueb_css.la
 installed_cssheadersdir = $(pkgincludedir)-@VMAJ@/css
 dist_installed_cssheaders_DATA = \
 src/lib/css/Egueb_Css.h \
+src/lib/css/egueb_css_attr_font.h \
 src/lib/css/egueb_css_attr_style.h \
 src/lib/css/egueb_css_color.h \
 src/lib/css/egueb_css_font_size.h \
@@ -16,6 +17,7 @@ src/lib/css/egueb_css_percentage.h
 
 src_lib_css_libegueb_css_la_SOURCES = \
 src/lib/css/egueb_css_main.c \
+src/lib/css/egueb_css_attr_font.c \
 src/lib/css/egueb_css_attr_style.c \
 src/lib/css/egueb_css_length.c \
 src/lib/css/egueb_css_color.c \

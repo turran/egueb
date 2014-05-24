@@ -16,14 +16,15 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "egueb_dom_private.h"
+#include "egueb_css_private.h"
 
-#include "egueb_dom_string.h"
-#include "egueb_dom_main.h"
-#include "egueb_dom_attr.h"
-#include "egueb_dom_value.h"
-#include "egueb_dom_value_font.h"
-
+#include "egueb_css_main.h"
+#include "egueb_css_length.h"
+#include "egueb_css_font_size.h"
+#include "egueb_css_font_style.h"
+#include "egueb_css_font_variant.h"
+#include "egueb_css_font_weight.h"
+#include "egueb_css_font.h"
 #include "egueb_dom_attr_private.h"
 #include "egueb_dom_attr_primitive_private.h"
 /*============================================================================*
@@ -31,20 +32,20 @@
  *============================================================================*/
 EGUEB_DOM_ATTR_PRIMITIVE_BOILERPLATE(Egueb_Css_Font,
 		Egueb_Dom_Attr_Font, egueb_dom_value_font,
-		egueb_dom_attr_font)
+		egueb_css_attr_font)
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/
-EAPI Egueb_Dom_Node * egueb_dom_attr_font_new(Egueb_Dom_String *name,
+EAPI Egueb_Dom_Node * egueb_css_attr_font_new(Egueb_Dom_String *name,
 		Eina_Bool animatable, Eina_Bool stylable,
 		Eina_Bool inheritable)
 {
 	Egueb_Dom_Node *n;
 
-	n = ENESIM_OBJECT_INSTANCE_NEW(egueb_dom_attr_font);
+	n = ENESIM_OBJECT_INSTANCE_NEW(egueb_css_attr_font);
 	egueb_dom_attr_init(n, name, animatable, stylable, inheritable);
 	return n;
 }

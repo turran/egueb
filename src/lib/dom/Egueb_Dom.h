@@ -78,7 +78,6 @@ extern "C" {
 
 #include "egueb_dom_attr_boolean.h"
 #include "egueb_dom_attr_enum.h"
-#include "egueb_dom_attr_font.h"
 #include "egueb_dom_attr_int.h"
 #include "egueb_dom_attr_string.h"
 #include "egueb_dom_attr_string_list.h"
