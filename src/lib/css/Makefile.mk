@@ -21,6 +21,8 @@ src/lib/css/egueb_css_attr_font.c \
 src/lib/css/egueb_css_attr_style.c \
 src/lib/css/egueb_css_length.c \
 src/lib/css/egueb_css_color.c \
+src/lib/css/egueb_css_context.c \
+src/lib/css/egueb_css_context_private.h \
 src/lib/css/egueb_css_font.c \
 src/lib/css/egueb_css_font_size.c \
 src/lib/css/egueb_css_font_style.c \

@@ -27,7 +27,6 @@
 
 #include "egueb_svg_element_private.h"
 #include "egueb_dom_string_private.h"
-#include "egueb_css_engine_context_private.h"
 
 /*
  * TODO
@@ -59,81 +58,7 @@
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
-/*----------------------------------------------------------------------------*
- *                          Css context interface                             *
- *----------------------------------------------------------------------------*/
-static const char * _egueb_svg_element_css_property_get(void *e, const char *property)
-{
-#if 0
-	Egueb_Dom_Node *n = e;
-	Egueb_Dom_String *prop;
-	Egueb_Dom_String *val;
 
-	prop = egueb_dom_string_new_with_string(property);
-	egueb_dom_element_attribute_get(n, prop, &val);
-	return egueb_dom_string_string_get(val);
-#endif
-	return NULL;
-}
-
-/* FIXME we could call directly the function _attribute_set */
-static void _egueb_svg_element_css_attribute_set(void *e, const char *property, const char *value)
-{
-	Egueb_Dom_Node *n = e;
-	Egueb_Dom_String *prop;
-	Egueb_Dom_String *val;
-
-	prop = egueb_dom_string_new_with_string(property);
-	val = egueb_dom_string_new_with_string(value);
-	egueb_dom_element_attribute_type_set(n, prop, EGUEB_DOM_ATTR_TYPE_STYLED, val, NULL);
-	egueb_dom_string_unref(val);
-	egueb_dom_string_unref(prop);
-}
-
-static void * _egueb_svg_element_css_get_child(void *e)
-{
-#if 0
-	Egueb_Dom_Node *n = e;
-	
-	return egueb_dom_tag_child_get(tag);
-#endif
-	return NULL;
-}
-
-static void * _egueb_svg_element_css_get_next_sibling(void *e)
-{
-#if 0
-	Egueb_Dom_Node *n = e;
-	Egueb_Dom_Node *next = NULL;
-
-	egueb_dom_node_sibling_next_get(n, &next);
-	return next;
-#endif
-	return NULL;
-}
-
-static const char * _egueb_svg_element_css_get_name(void *e)
-{
-#if 0
-	Egueb_Dom_Node *n = e;
-	Egueb_Dom_String *name;
-	const char *ret;
-
-	egueb_dom_node_name_get(n, &name);
-	ret = egueb_dom_string_string_get(name);
-	egueb_dom_string_unref(name);
-	return ret;
-#endif
-	return NULL;
-}
-
-static Egueb_Css_Engine_Context _egueb_svg_element_css_context = {
-	/* .attribute_set 	= */ _egueb_svg_element_css_attribute_set,
-	/* .property_get 	= */ _egueb_svg_element_css_property_get,
-	/* .get_name 		= */ _egueb_svg_element_css_get_name,
-	/* .get_child 		= */ _egueb_svg_element_css_get_child,
-	/* .get_next_sibling 	= */ _egueb_svg_element_css_get_next_sibling,
-};
 /*----------------------------------------------------------------------------*
  *                              Event handlers                                *
  *----------------------------------------------------------------------------*/
@@ -634,7 +559,9 @@ static Eina_Bool _egueb_svg_element_process(Egueb_Dom_Element *e)
 		/* TODO revert the style */
 		DBG_ELEMENT(EGUEB_DOM_NODE(e), "Using a style");
 		/* apply the new style */
+#if 0
 		egueb_css_context_inline_style_apply(&_egueb_svg_element_css_context, str, thiz);
+#endif
 		/* swap the styles */
 		if (thiz->last_style)
 		{
