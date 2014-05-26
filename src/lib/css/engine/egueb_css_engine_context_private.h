@@ -15,7 +15,8 @@
  * License along with this library.
  * If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef _EGUEB_CSS_CONTEXT_H_
+#ifndef _EGUEB_CSS_ENGINE_CONTEXT_PRIVATE_H_
+#define _EGUEB_CSS_ENGINE_CONTEXT_PRIVATE_H_
 
 typedef void (*Egueb_Css_Engine_Context_Attribute_Set)(void *e, const char *attribute, const char *value);
 typedef const char * (*Egueb_Css_Engine_Context_Attribute_Get)(void *e, const char *attribute);

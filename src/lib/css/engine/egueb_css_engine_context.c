@@ -22,10 +22,6 @@
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
-/* FIXME share this */
-#define ESVG_SPACE_SKIP(t) \
-	while (*t) { if ((*t == ' ') || (*t == '\n') || (*t == '\t')) t++; else break; }
-
 #if 0
 /* Keep track of the selector state */
 typedef struct _Egueb_Css_Engine_State_Selector

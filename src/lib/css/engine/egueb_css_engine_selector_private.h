@@ -31,13 +31,13 @@ typedef enum _Egueb_Css_Engine_Combinator
 
 typedef struct _Egueb_Css_Engine_Selector Egueb_Css_Engine_Selector;
 
-EAPI Egueb_Css_Engine_Selector * egueb_css_selector_new(void);
-EAPI void egueb_css_selector_subject_set(Egueb_Css_Engine_Selector *thiz, const char *subject);
-EAPI void egueb_css_selector_filter_add(Egueb_Css_Engine_Selector *thiz, Egueb_Css_Engine_Filter *f);
-EAPI void egueb_css_selector_combinator_set(Egueb_Css_Engine_Selector *thiz, Egueb_Css_Engine_Selector *ss, Egueb_Css_Engine_Combinator c);
+Egueb_Css_Engine_Selector * egueb_css_selector_new(void);
+void egueb_css_selector_subject_set(Egueb_Css_Engine_Selector *thiz, const char *subject);
+void egueb_css_selector_filter_add(Egueb_Css_Engine_Selector *thiz, Egueb_Css_Engine_Filter *f);
+void egueb_css_selector_combinator_set(Egueb_Css_Engine_Selector *thiz, Egueb_Css_Engine_Selector *ss, Egueb_Css_Engine_Combinator c);
 
-EAPI Egueb_Css_Engine_Filter * egueb_css_filter_class_new(const char *name);
-EAPI Egueb_Css_Engine_Filter * egueb_css_filter_id_new(const char *name);
+Egueb_Css_Engine_Filter * egueb_css_filter_class_new(const char *name);
+Egueb_Css_Engine_Filter * egueb_css_filter_id_new(const char *name);
 
 
 typedef struct _Egueb_Css_Engine_Selector_Combinator

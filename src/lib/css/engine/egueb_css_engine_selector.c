@@ -55,10 +55,7 @@ void egueb_css_engine_selector_dump(Egueb_Css_Engine_Selector *thiz)
 	printf("\n");
 }
 
-/*============================================================================*
- *                                   API                                      *
- *============================================================================*/
-EAPI Egueb_Css_Engine_Selector * egueb_css_engine_selector_new(void)
+Egueb_Css_Engine_Selector * egueb_css_engine_selector_new(void)
 {
 	Egueb_Css_Engine_Selector *thiz;
 
@@ -66,7 +63,7 @@ EAPI Egueb_Css_Engine_Selector * egueb_css_engine_selector_new(void)
 	return thiz;
 }
 
-EAPI void egueb_css_engine_selector_subject_set(Egueb_Css_Engine_Selector *thiz, const char *subject)
+void egueb_css_engine_selector_subject_set(Egueb_Css_Engine_Selector *thiz, const char *subject)
 {
 	if (!thiz) return;
 
@@ -74,12 +71,12 @@ EAPI void egueb_css_engine_selector_subject_set(Egueb_Css_Engine_Selector *thiz,
 		thiz->subject = strdup(subject);
 }
 
-EAPI void egueb_css_engine_selector_filter_add(Egueb_Css_Engine_Selector *thiz, Egueb_Css_Engine_Filter *f)
+void egueb_css_engine_selector_filter_add(Egueb_Css_Engine_Selector *thiz, Egueb_Css_Engine_Filter *f)
 {
 	thiz->filters = eina_list_append(thiz->filters, f);
 }
 
-EAPI void egueb_css_engine_selector_combinator_set(Egueb_Css_Engine_Selector *thiz, Egueb_Css_Engine_Selector *ss, Egueb_Css_Engine_Combinator c)
+void egueb_css_engine_selector_combinator_set(Egueb_Css_Engine_Selector *thiz, Egueb_Css_Engine_Selector *ss, Egueb_Css_Engine_Combinator c)
 {
 	if (!thiz) return;
 
@@ -88,3 +85,6 @@ EAPI void egueb_css_engine_selector_combinator_set(Egueb_Css_Engine_Selector *th
 	/* what to do with the return value */
 	eina_inlist_append(EINA_INLIST_GET(thiz), EINA_INLIST_GET(ss));
 }
+/*============================================================================*
+ *                                   API                                      *
+ *============================================================================*/

@@ -18,9 +18,16 @@
 #include "egueb_css_private.h"
 
 #include "egueb_css_main.h"
+#include "egueb_css_attr_style.h"
+
+#include "egueb_css_engine_context_private.h"
+#include "egueb_css_engine_selector_private.h"
+#include "egueb_css_engine_rule_private.h"
+#include "egueb_css_engine_style_private.h"
+
+#include "egueb_css_context_private.h"
 #include "egueb_dom_attr_private.h"
 #include "egueb_dom_attr_object_private.h"
-#include "egueb_css_attr_style.h"
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
@@ -106,63 +113,21 @@ EAPI Egueb_Dom_Node * egueb_css_attr_style_new(void)
 	Egueb_Dom_Node *n;
 
 	n = ENESIM_OBJECT_INSTANCE_NEW(egueb_css_attr_style);
-	egueb_dom_attr_init(n, EGUEB_CSS_STYLE, EINA_FALSE, EINA_FALSE, EINA_FALSE);
+	egueb_dom_attr_init(n, egueb_dom_string_ref(EGUEB_CSS_STYLE),
+			EINA_FALSE, EINA_FALSE, EINA_FALSE);
 	return n;
 }
 
 EAPI void egueb_css_attr_style_process(Egueb_Dom_Node *n)
 {
 	Egueb_Css_Attr_String *thiz;
+	Egueb_Dom_Node *owner;
+	const char *v;
 
 	thiz = EGUEB_CSS_ATTR_STYLE(n);
-	/* TODO apply the style attribute */
+	v = egueb_dom_string_string_get(thiz->value);
+	owner = egueb_dom_attr_owner_get(n);
+	/* apply the style attribute */
+	egueb_css_engine_style_inline_apply(v, &egueb_css_context, owner);
+	egueb_dom_node_unref(owner);
 }
-
-#if 0
-EAPI void egueb_css_engine_context_inline_style_apply(Egueb_Css_Engine_Context *c, const char *style, void *e)
-{
-	char *orig;
-	char *v;
-	char *sc;
-	char *ch;
-
-	if (!c->attribute_set)
-		return;
-
-	orig = v = strdup(style);
-	ESVG_SPACE_SKIP(v);
-	/* split the style by ';' */
-	while ((sc = strchr(v, ';')))
-	{
-		*sc = '\0';
-		/* split it by ':' */
-		ch = strchr(v, ':');
-		if (ch)
-		{
-			char *vv;
-
-			*ch = '\0';
-			vv = ch + 1;
-			ESVG_SPACE_SKIP(vv);
-			/* and call the attr_cb */
-			c->attribute_set(e, v, vv);
-		}
-		v = sc + 1;
-		ESVG_SPACE_SKIP(v);
-	}
-	/* do the last one */
-	ch = strchr(v, ':');
-	if (ch)
-	{
-		char *vv;
-
-		*ch = '\0';
-		vv = ch + 1;
-		ESVG_SPACE_SKIP(vv);
-		/* and call the attr_cb */
-		c->attribute_set(e, v, vv);
-	}
-
-	free(orig);
-}
-#endif

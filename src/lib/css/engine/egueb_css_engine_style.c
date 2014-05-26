@@ -18,6 +18,7 @@
 
 #include "egueb_css_private.h"
 
+#include "egueb_css_engine_context_private.h"
 #include "egueb_css_engine_selector_private.h"
 #include "egueb_css_engine_rule_private.h"
 #include "egueb_css_engine_style_private.h"
@@ -32,10 +33,55 @@ void egueb_css_engine__switch_to_buffer(void *state, void *scanner);
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
-/*============================================================================*
- *                                   API                                      *
- *============================================================================*/
-EAPI Egueb_Css_Engine_Style * egueb_css_engine_style_new(void)
+void egueb_css_engine_style_inline_apply(const char *style, Egueb_Css_Engine_Context *c, void *e)
+{
+	char *orig;
+	char *v;
+	char *sc;
+	char *ch;
+
+	if (!c->attribute_set)
+		return;
+
+	orig = v = strdup(style);
+	EGUEB_BASE_SPACE_SKIP(v);
+	/* split the style by ';' */
+	while ((sc = strchr(v, ';')))
+	{
+		*sc = '\0';
+		/* split it by ':' */
+		ch = strchr(v, ':');
+		if (ch)
+		{
+			char *vv;
+
+			*ch = '\0';
+			vv = ch + 1;
+			EGUEB_BASE_SPACE_SKIP(vv);
+			/* and call the attr_cb */
+			c->attribute_set(e, v, vv);
+		}
+		v = sc + 1;
+		EGUEB_BASE_SPACE_SKIP(v);
+	}
+	/* do the last one */
+	ch = strchr(v, ':');
+	if (ch)
+	{
+		char *vv;
+
+		*ch = '\0';
+		vv = ch + 1;
+		EGUEB_BASE_SPACE_SKIP(vv);
+		/* and call the attr_cb */
+		c->attribute_set(e, v, vv);
+	}
+
+	free(orig);
+
+}
+
+Egueb_Css_Engine_Style * egueb_css_engine_style_new(void)
 {
 	Egueb_Css_Engine_Style *thiz;
 
@@ -43,7 +89,7 @@ EAPI Egueb_Css_Engine_Style * egueb_css_engine_style_new(void)
 	return thiz;
 }
 
-EAPI Egueb_Css_Engine_Style * egueb_css_engine_style_load_from_file(const char *file)
+Egueb_Css_Engine_Style * egueb_css_engine_style_load_from_file(const char *file)
 {
 	Egueb_Css_Engine_Style *thiz;
 	Egueb_Css_Engine_Parser parser;
@@ -75,7 +121,7 @@ EAPI Egueb_Css_Engine_Style * egueb_css_engine_style_load_from_file(const char *
 	return thiz;
 }
 
-EAPI Egueb_Css_Engine_Style * egueb_css_engine_style_load_from_content(const char *content, size_t len)
+Egueb_Css_Engine_Style * egueb_css_engine_style_load_from_content(const char *content, size_t len)
 {
 	Egueb_Css_Engine_Style *thiz;
 	Egueb_Css_Engine_Parser parser;
@@ -109,9 +155,13 @@ EAPI Egueb_Css_Engine_Style * egueb_css_engine_style_load_from_content(const cha
 	return thiz;
 }
 
-EAPI void egueb_css_engine_style_rule_add(Egueb_Css_Engine_Style *thiz, Egueb_Css_Engine_Rule *r)
+void egueb_css_engine_style_rule_add(Egueb_Css_Engine_Style *thiz, Egueb_Css_Engine_Rule *r)
 {
 	if (!thiz) return;
 	if (!r) return;
 	thiz->rules = eina_list_append(thiz->rules, r);
 }
+/*============================================================================*
+ *                                   API                                      *
+ *============================================================================*/
+

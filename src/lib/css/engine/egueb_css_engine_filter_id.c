@@ -18,6 +18,7 @@
 
 #include "egueb_css_private.h"
 
+#include "egueb_css_engine_context_private.h"
 #include "egueb_css_engine_selector_private.h"
 #include "egueb_css_engine_rule_private.h"
 #include "egueb_css_engine_style_private.h"
@@ -52,10 +53,7 @@ static Egueb_Css_Engine_Filter_Descriptor _descriptor = {
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
-/*============================================================================*
- *                                   API                                      *
- *============================================================================*/
-EAPI Egueb_Css_Engine_Filter * egueb_css_engine_filter_id_new(const char *name)
+Egueb_Css_Engine_Filter * egueb_css_engine_filter_id_new(const char *name)
 {
 	char *n;
 
@@ -66,4 +64,6 @@ EAPI Egueb_Css_Engine_Filter * egueb_css_engine_filter_id_new(const char *name)
 
 	return egueb_css_engine_filter_new(&_descriptor, n);
 }
-
+/*============================================================================*
+ *                                   API                                      *
+ *============================================================================*/
