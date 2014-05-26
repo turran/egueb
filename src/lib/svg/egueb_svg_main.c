@@ -230,6 +230,7 @@ static Eina_Bool _egueb_svg_dependencies_init(void)
 	}
 
 	egueb_dom_init();
+	egueb_css_init();
 	egueb_smil_init();
 	etch_init();
 	return EINA_TRUE;
@@ -242,8 +243,9 @@ shutdown_eina:
 static void _egueb_svg_dependencies_shutdown(void)
 {
 	etch_shutdown();
-	egueb_dom_shutdown();
+	egueb_css_shutdown();
 	egueb_smil_shutdown();
+	egueb_dom_shutdown();
 	enesim_shutdown();
 	eina_shutdown();
 }
