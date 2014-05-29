@@ -86,6 +86,7 @@ $(SED) \
 -e 's,@egueb_dom_requirements\@,$(egueb_dom_requirements),g' \
 -e 's,@egueb_dom_requirements_private\@,$(egueb_dom_requirements_private),g' \
 -e 's,@egueb_css_requirements\@,$(egueb_css_requirements),g' \
+-e 's,@egueb_css_requirements_private\@,$(egueb_css_requirements_private),g' \
 -e 's,@egueb_svg_requirements\@,$(egueb_svg_requirements),g' \
 -e 's,@egueb_base_requirements\@,$(egueb_base_requirements),g' \
 -e 's,@build_opencl\@,$(build_opencl),g' \
