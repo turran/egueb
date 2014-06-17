@@ -67,16 +67,16 @@ static void _dump_paths(Enesim_Renderer *r)
 	{
 		switch (cmd->type)
 		{
-			case ENESIM_PATH_COMMAND_MOVE_TO:
+			case ENESIM_PATH_COMMAND_TYPE_MOVE_TO:
 			printf("M %g %g\n", cmd->definition.move_to.x, cmd->definition.move_to.y);
 			break;
 
-			case ENESIM_PATH_COMMAND_LINE_TO:
-			case ENESIM_PATH_COMMAND_QUADRATIC_TO:
-			case ENESIM_PATH_COMMAND_SQUADRATIC_TO:
+			case ENESIM_PATH_COMMAND_TYPE_LINE_TO:
+			case ENESIM_PATH_COMMAND_TYPE_QUADRATIC_TO:
+			case ENESIM_PATH_COMMAND_TYPE_SQUADRATIC_TO:
 			break;
 
-			case ENESIM_PATH_COMMAND_CUBIC_TO:
+			case ENESIM_PATH_COMMAND_TYPE_CUBIC_TO:
 			printf("C %g %g %g %g %g %g\n",
 					cmd->definition.cubic_to.ctrl_x0,
 					cmd->definition.cubic_to.ctrl_y0,
@@ -86,11 +86,11 @@ static void _dump_paths(Enesim_Renderer *r)
 					cmd->definition.cubic_to.y);
 			break;
 
-			case ENESIM_PATH_COMMAND_SCUBIC_TO:
-			case ENESIM_PATH_COMMAND_ARC_TO:
+			case ENESIM_PATH_COMMAND_TYPE_SCUBIC_TO:
+			case ENESIM_PATH_COMMAND_TYPE_ARC_TO:
 			break;
 
-			case ENESIM_PATH_COMMAND_CLOSE:
+			case ENESIM_PATH_COMMAND_TYPE_CLOSE:
 			printf("Z\n");
 			break;
 		}
@@ -113,7 +113,7 @@ static void _egueb_svg_element_path_d_cb(void *data, void *user_data)
 		case ESVG_PATH_MOVE_TO:
 		DBG("move_to %c (%g, %g)", pcmd->relative ? 'R' : 'A',
 				pcmd->data.move_to.x,  pcmd->data.move_to.y);
-		cmd.type = ENESIM_PATH_COMMAND_MOVE_TO;
+		cmd.type = ENESIM_PATH_COMMAND_TYPE_MOVE_TO;
 		if (!cb_data->first && pcmd->relative)
 		{
 			cmd.definition.move_to.x = cb_data->cur.x + pcmd->data.move_to.x;
@@ -131,7 +131,7 @@ static void _egueb_svg_element_path_d_cb(void *data, void *user_data)
 		case ESVG_PATH_LINE_TO:
 		DBG("line_to %c (%g, %g)", pcmd->relative ? 'R' : 'A',
 				pcmd->data.line_to.x,  pcmd->data.line_to.y);
-		cmd.type = ENESIM_PATH_COMMAND_LINE_TO;
+		cmd.type = ENESIM_PATH_COMMAND_TYPE_LINE_TO;
 		if (pcmd->relative)
 		{
 			cmd.definition.line_to.x = cb_data->cur.x + pcmd->data.line_to.x;
@@ -149,7 +149,7 @@ static void _egueb_svg_element_path_d_cb(void *data, void *user_data)
 		case ESVG_PATH_HLINE_TO:
 		DBG("hline_to %c (%g)", pcmd->relative ? 'R' : 'A',
 				pcmd->data.hline_to.c);
-		cmd.type = ENESIM_PATH_COMMAND_LINE_TO;
+		cmd.type = ENESIM_PATH_COMMAND_TYPE_LINE_TO;
 		if (pcmd->relative)
 		{
 			cmd.definition.line_to.x = cb_data->cur.x + pcmd->data.hline_to.c;
@@ -167,7 +167,7 @@ static void _egueb_svg_element_path_d_cb(void *data, void *user_data)
 		case ESVG_PATH_VLINE_TO:
 		DBG("vline_to %c (%g)", pcmd->relative ? 'R' : 'A',
 				pcmd->data.vline_to.c);
-		cmd.type = ENESIM_PATH_COMMAND_LINE_TO;
+		cmd.type = ENESIM_PATH_COMMAND_TYPE_LINE_TO;
 		if (pcmd->relative)
 		{
 			cmd.definition.line_to.x = cb_data->cur.x;
@@ -191,7 +191,7 @@ static void _egueb_svg_element_path_d_cb(void *data, void *user_data)
 				pcmd->data.cubic_to.ctrl_y1,
 				pcmd->data.cubic_to.x,
 				pcmd->data.cubic_to.y);
-		cmd.type = ENESIM_PATH_COMMAND_CUBIC_TO;
+		cmd.type = ENESIM_PATH_COMMAND_TYPE_CUBIC_TO;
 		if (pcmd->relative)
 		{
 			cmd.definition.cubic_to.x = cb_data->cur.x + pcmd->data.cubic_to.x;
@@ -222,7 +222,7 @@ static void _egueb_svg_element_path_d_cb(void *data, void *user_data)
 				pcmd->data.scubic_to.ctrl_y,
 				pcmd->data.scubic_to.x,
 				pcmd->data.scubic_to.y);
-		cmd.type = ENESIM_PATH_COMMAND_SCUBIC_TO;
+		cmd.type = ENESIM_PATH_COMMAND_TYPE_SCUBIC_TO;
 		if (pcmd->relative)
 		{
 			cmd.definition.scubic_to.x = cb_data->cur.x + pcmd->data.scubic_to.x;
@@ -248,7 +248,7 @@ static void _egueb_svg_element_path_d_cb(void *data, void *user_data)
 				pcmd->data.quadratic_to.ctrl_y,
 				pcmd->data.quadratic_to.x,
 				pcmd->data.quadratic_to.y);
-		cmd.type = ENESIM_PATH_COMMAND_QUADRATIC_TO;
+		cmd.type = ENESIM_PATH_COMMAND_TYPE_QUADRATIC_TO;
 		if (pcmd->relative)
 		{
 			cmd.definition.quadratic_to.x = cb_data->cur.x + pcmd->data.quadratic_to.x;
@@ -273,7 +273,7 @@ static void _egueb_svg_element_path_d_cb(void *data, void *user_data)
 				pcmd->relative ? 'R' : 'A',
 				pcmd->data.squadratic_to.x,
 				pcmd->data.squadratic_to.y);
-		cmd.type = ENESIM_PATH_COMMAND_SQUADRATIC_TO;
+		cmd.type = ENESIM_PATH_COMMAND_TYPE_SQUADRATIC_TO;
 		if (pcmd->relative)
 		{
 			cmd.definition.squadratic_to.x = cb_data->cur.x + pcmd->data.squadratic_to.x;
@@ -298,7 +298,7 @@ static void _egueb_svg_element_path_d_cb(void *data, void *user_data)
 				pcmd->data.arc_to.sweep,
 				pcmd->data.arc_to.x,
 				pcmd->data.arc_to.y);
-		cmd.type = ENESIM_PATH_COMMAND_ARC_TO;
+		cmd.type = ENESIM_PATH_COMMAND_TYPE_ARC_TO;
 		if (pcmd->relative)
 		{
 			cmd.definition.arc_to.x = cb_data->cur.x + pcmd->data.arc_to.x;
@@ -320,7 +320,7 @@ static void _egueb_svg_element_path_d_cb(void *data, void *user_data)
 
 		case ESVG_PATH_CLOSE:
 		DBG("close");
-		cmd.type = ENESIM_PATH_COMMAND_CLOSE;
+		cmd.type = ENESIM_PATH_COMMAND_TYPE_CLOSE;
 		cmd.definition.close.close = EINA_TRUE;
 		break;
 

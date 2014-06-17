@@ -249,7 +249,7 @@ EAPI char * egueb_svg_path_seg_string_to(Egueb_Svg_Path_Seg *thiz)
 				pcmd->data.quadratic_to.ctrl_y,
 				pcmd->data.quadratic_to.x,
 				pcmd->data.quadratic_to.y);
-		cmd.type = ENESIM_PATH_COMMAND_QUADRATIC_TO;
+		cmd.type = ENESIM_PATH_COMMAND_TYPE_QUADRATIC_TO;
 		if (pcmd->relative)
 		{
 			cmd.definition.quadratic_to.x = cur.x + pcmd->data.quadratic_to.x;
@@ -274,7 +274,7 @@ EAPI char * egueb_svg_path_seg_string_to(Egueb_Svg_Path_Seg *thiz)
 				pcmd->relative ? 'R' : 'A',
 				pcmd->data.squadratic_to.x,
 				pcmd->data.squadratic_to.y);
-		cmd.type = ENESIM_PATH_COMMAND_SQUADRATIC_TO;
+		cmd.type = ENESIM_PATH_COMMAND_TYPE_SQUADRATIC_TO;
 		if (pcmd->relative)
 		{
 			cmd.definition.squadratic_to.x = cur.x + pcmd->data.squadratic_to.x;
@@ -299,7 +299,7 @@ EAPI char * egueb_svg_path_seg_string_to(Egueb_Svg_Path_Seg *thiz)
 				pcmd->data.arc_to.sweep,
 				pcmd->data.arc_to.x,
 				pcmd->data.arc_to.y);
-		cmd.type = ENESIM_PATH_COMMAND_ARC_TO;
+		cmd.type = ENESIM_PATH_COMMAND_TYPE_ARC_TO;
 		if (pcmd->relative)
 		{
 			cmd.definition.arc_to.x = cur.x + pcmd->data.arc_to.x;
@@ -321,7 +321,7 @@ EAPI char * egueb_svg_path_seg_string_to(Egueb_Svg_Path_Seg *thiz)
 
 		case ESVG_PATH_CLOSE:
 		DBG("close");
-		cmd.type = ENESIM_PATH_COMMAND_CLOSE;
+		cmd.type = ENESIM_PATH_COMMAND_TYPE_CLOSE;
 		cmd.definition.close.close = EINA_TRUE;
 		break;
 #endif
