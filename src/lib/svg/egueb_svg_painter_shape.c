@@ -109,8 +109,7 @@ static void _egueb_svg_renderable_paint_set(Egueb_Dom_Node *n,
 	{
 		const Egueb_Svg_Color *c = &current->color;
 
-		enesim_color_components_from(rcolor,
-				op, c->r, c->g, c->b);
+		*rcolor = enesim_color_components_from(op, c->r, c->g, c->b);
 		DBG("Paint type 'color': %08x", *rcolor);
 		*rdraw_mode |= mode;
 	}
@@ -149,8 +148,7 @@ static void _egueb_svg_renderable_paint_set(Egueb_Dom_Node *n,
 		}
 		if (*reference)
 			egueb_svg_reference_paint_server_renderer_get(*reference, renderer);
-		enesim_color_components_from(rcolor,
-				op, 0xff, 0xff, 0xff);
+		*rcolor = enesim_color_components_from(op, 0xff, 0xff, 0xff);
 		*rdraw_mode |= mode;
 	}
 	else if (current->type == EGUEB_SVG_PAINT_TYPE_NONE)
@@ -162,8 +160,7 @@ static void _egueb_svg_renderable_paint_set(Egueb_Dom_Node *n,
 	{
 		DBG("Paint type 'currentColor' %02x %02x %02x", current_color->r,
 				current_color->g, current_color->b);
-		enesim_color_components_from(rcolor,
-				op, current_color->r, current_color->g, current_color->b);
+		*rcolor = enesim_color_components_from(op, current_color->r, current_color->g, current_color->b);
 		*rdraw_mode |= mode;
 	}
 	/* in case we have a reference process it */
@@ -315,8 +312,7 @@ static Eina_Bool _egueb_svg_painter_shape_resolve(Egueb_Svg_Painter *p,
 	egueb_dom_attr_final_get(e->color, &color);
 	/* calculate the opacity */
 	lopacity = opacity * 255;
-	enesim_color_components_from(&p->color,
-			lopacity, 0xff, 0xff, 0xff);
+	p->color = enesim_color_components_from(lopacity, 0xff, 0xff, 0xff);
 	/* set the fill */
 	_egueb_svg_painter_shape_resolve_fill(p, e, doc, &color);
 	/* set the stroke */
