@@ -1,0 +1,6 @@
+# Doxyfile 1.8.3.1
+
+@INCLUDE = common/doc/Doxyfile_common
+
+INPUT                  = src/lib doc/mainpage.dox
+EXCLUDE_PATTERNS       = *_private.h

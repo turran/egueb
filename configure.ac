@@ -236,7 +236,7 @@ ENS_CHECK_COVERAGE(yes, [enable_coverage="yes"], [enable_coverage="no"])
 
 AC_CONFIG_FILES([
 Makefile
-doc/Doxyfile
+common/doc/Doxyfile_common
 ])
 
 AC_OUTPUT
