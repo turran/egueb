@@ -62,7 +62,7 @@ static Eina_Bool _egueb_svg_element_stop_process(Egueb_Svg_Element *e)
 	egueb_dom_attr_final_get(e->stop_color, &color);
 	egueb_dom_attr_final_get(thiz->offset, &offset);
 
-	enesim_argb_components_from(&thiz->s.argb, lrint(opacity * 255),
+	thiz->s.argb = enesim_argb_components_from(lrint(opacity * 255),
 			color.r, color.g, color.b);
 
 	if (offset.unit == EGUEB_SVG_UNIT_LENGTH_PERCENT)
