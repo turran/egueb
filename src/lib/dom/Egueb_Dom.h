@@ -74,6 +74,7 @@ extern "C" {
 #include "egueb_dom_document.h"
 #include "egueb_dom_document_fragment.h"
 #include "egueb_dom_text.h"
+#include "egueb_dom_cdata_section.h"
 #include "egueb_dom_implementation.h"
 
 #include "egueb_dom_attr_boolean.h"
@@ -107,6 +108,8 @@ extern "C" {
 #include "egueb_dom_value_double.h"
 #include "egueb_dom_value_int.h"
 #include "egueb_dom_string_list.h"
+
+#include "egueb_dom_element_script.h"
 
 #include "egueb_dom_element_external.h"
 #include "egueb_dom_document_external.h"

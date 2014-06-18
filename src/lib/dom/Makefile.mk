@@ -12,12 +12,14 @@ src/lib/dom/egueb_dom_attr_int.h \
 src/lib/dom/egueb_dom_attr_string.h \
 src/lib/dom/egueb_dom_attr_string_list.h \
 src/lib/dom/egueb_dom_build.h \
+src/lib/dom/egueb_dom_cdata_section.h \
 src/lib/dom/egueb_dom_character_data.h \
 src/lib/dom/egueb_dom_document.h \
 src/lib/dom/egueb_dom_document_external.h \
 src/lib/dom/egueb_dom_document_fragment.h \
 src/lib/dom/egueb_dom_element.h \
 src/lib/dom/egueb_dom_element_external.h \
+src/lib/dom/egueb_dom_element_script.h \
 src/lib/dom/egueb_dom_event.h \
 src/lib/dom/egueb_dom_event_external.h \
 src/lib/dom/egueb_dom_event_io.h \
@@ -67,6 +69,7 @@ src/lib/dom/egueb_dom_attr_object.c \
 src/lib/dom/egueb_dom_attr_object_private.h \
 src/lib/dom/egueb_dom_attr_primitive.c \
 src/lib/dom/egueb_dom_attr_primitive_private.h \
+src/lib/dom/egueb_dom_cdata_section.c \
 src/lib/dom/egueb_dom_character_data.c \
 src/lib/dom/egueb_dom_character_data_private.h \
 src/lib/dom/egueb_dom_document.c \
@@ -75,6 +78,7 @@ src/lib/dom/egueb_dom_document_fragment.c \
 src/lib/dom/egueb_dom_element.c \
 src/lib/dom/egueb_dom_element_private.h \
 src/lib/dom/egueb_dom_element_external.c \
+src/lib/dom/egueb_dom_element_script.c \
 src/lib/dom/egueb_dom_event.c \
 src/lib/dom/egueb_dom_event_private.h \
 src/lib/dom/egueb_dom_event_external.c \

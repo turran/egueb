@@ -475,11 +475,12 @@ static Egueb_Dom_Node * _egueb_svg_document_element_create_by_id(int id)
 		case EGUEB_SVG_TYPE_A:
 		ret = egueb_svg_element_a_new();
 		break;
-#if 0
+
 		case EGUEB_SVG_TYPE_SCRIPT:
-		ret = egueb_svg_element_script_new();
+		ret = egueb_dom_element_script_new();
 		break;
 
+#if 0
 		case EGUEB_SVG_TYPE_STYLE:
 		ret = egueb_svg_element_style_new();
 		break;

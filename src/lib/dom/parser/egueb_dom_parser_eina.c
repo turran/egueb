@@ -26,6 +26,7 @@
 #include "egueb_dom_document.h"
 #include "egueb_dom_character_data.h"
 #include "egueb_dom_text.h"
+#include "egueb_dom_cdata_section.h"
 #include "egueb_dom_element.h"
 
 #include "egueb_dom_parser_private.h"
@@ -140,8 +141,24 @@ static void _egueb_dom_parser_eina_tag_cdata_set(Egueb_Dom_Parser_Eina *thiz,
 		const char *cdata, unsigned int length)
 {
 	Egueb_Dom_Node *parent;
+	Egueb_Dom_Node *node;
+	Egueb_Dom_Node *doc;
+	Egueb_Dom_String *str;
 
 	parent = _egueb_dom_parser_eina_context_get(thiz);
+	if (!parent) return;
+
+	doc = egueb_dom_parser_document_get(thiz->parser);
+	if (!doc) return;
+
+	node = egueb_dom_cdata_section_new();
+	if (!node) return;
+
+	egueb_dom_node_child_append(parent, node, NULL);
+	/* set the content */
+	DBG("Appending string to a cdata section node");
+	str = egueb_dom_string_new_with_length(cdata, length);
+	egueb_dom_character_data_append_data(node, str, NULL);
 }
 
 static void _egueb_dom_parser_eina_tag_text_set(Egueb_Dom_Parser_Eina *thiz,
