@@ -79,7 +79,7 @@ EAPI Egueb_Dom_Node * egueb_dom_implementation_document_create(
 	ret = thiz->d->document_create();
 	if (!ret) return NULL;
 
-	if (egueb_dom_node_type_get(ret) != EGUEB_DOM_NODE_TYPE_DOCUMENT_NODE)
+	if (egueb_dom_node_type_get(ret) != EGUEB_DOM_NODE_TYPE_DOCUMENT)
 	{
 		egueb_dom_node_unref(ret);
 		return NULL;

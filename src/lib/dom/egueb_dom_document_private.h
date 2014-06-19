@@ -30,6 +30,7 @@ typedef struct _Egueb_Dom_Document
 	/* private */
 	Eina_Hash *ids;
 	Eina_List *current_enqueued;
+	Eina_Hash *scripters;
 	/* TODO use this
 	Eina_List *later_enqueued;
 	*/

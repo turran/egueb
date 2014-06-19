@@ -305,7 +305,7 @@ static void _egueb_dom_node_insert_into_document(Egueb_Dom_Node *thiz,
 	Egueb_Dom_Node *child;
 
 	parent = thiz->parent;
-	if (egueb_dom_node_type_get(parent) == EGUEB_DOM_NODE_TYPE_DOCUMENT_NODE)
+	if (egueb_dom_node_type_get(parent) == EGUEB_DOM_NODE_TYPE_DOCUMENT)
 	{
 		/* in case the parent is a document, set it */
 		egueb_dom_node_document_set(thiz, parent);
@@ -405,7 +405,7 @@ void egueb_dom_node_document_set(Egueb_Dom_Node *thiz,
 	{
 		Egueb_Dom_Node_Type type;
 		type = egueb_dom_node_type_get(document);
-		if (type != EGUEB_DOM_NODE_TYPE_DOCUMENT_NODE) return;
+		if (type != EGUEB_DOM_NODE_TYPE_DOCUMENT) return;
 	}
 
 	/* remove previous weak ref */
@@ -551,39 +551,39 @@ EAPI Egueb_Dom_String * egueb_dom_node_name_get(Egueb_Dom_Node *thiz)
 	klass = EGUEB_DOM_NODE_CLASS_GET(thiz);
 	switch (klass->type)
 	{
-		case EGUEB_DOM_NODE_TYPE_ELEMENT_NODE:
+		case EGUEB_DOM_NODE_TYPE_ELEMENT:
 		return egueb_dom_element_tag_name_get(thiz);
 		break;
 
-		case EGUEB_DOM_NODE_TYPE_TEXT_NODE:
+		case EGUEB_DOM_NODE_TYPE_TEXT:
 		return egueb_dom_string_new_with_string("#text");
 		break;
 
-		case EGUEB_DOM_NODE_TYPE_CDATA_SECTION_NODE:
+		case EGUEB_DOM_NODE_TYPE_CDATA_SECTION:
 		return egueb_dom_string_new_with_string("#cdata-section");
 		break;
 
-		case EGUEB_DOM_NODE_TYPE_COMMENT_NODE:
+		case EGUEB_DOM_NODE_TYPE_COMMENT:
 		return egueb_dom_string_new_with_string("#comment");
 		break;
 
-		case EGUEB_DOM_NODE_TYPE_DOCUMENT_NODE:
+		case EGUEB_DOM_NODE_TYPE_DOCUMENT:
 		return egueb_dom_string_new_with_string("#document");
 		break;
 
-		case EGUEB_DOM_NODE_TYPE_DOCUMENT_FRAGMENT_NODE:
+		case EGUEB_DOM_NODE_TYPE_DOCUMENT_FRAGMENT:
 		return egueb_dom_string_new_with_string("#document-fragment");
 		break;
 
-		case EGUEB_DOM_NODE_TYPE_ATTRIBUTE_NODE:
+		case EGUEB_DOM_NODE_TYPE_ATTRIBUTE:
 		return egueb_dom_attr_name_get(thiz);
 		break;
 
-		case EGUEB_DOM_NODE_TYPE_NOTATION_NODE:
-		case EGUEB_DOM_NODE_TYPE_DOCUMENT_TYPE_NODE:
-		case EGUEB_DOM_NODE_TYPE_PROCESSING_INSTRUCTION_NODE:
-		case EGUEB_DOM_NODE_TYPE_ENTITY_REFERENCE_NODE:
-		case EGUEB_DOM_NODE_TYPE_ENTITY_NODE:
+		case EGUEB_DOM_NODE_TYPE_NOTATION:
+		case EGUEB_DOM_NODE_TYPE_DOCUMENT_TYPE:
+		case EGUEB_DOM_NODE_TYPE_PROCESSING_INSTRUCTION:
+		case EGUEB_DOM_NODE_TYPE_ENTITY_REFERENCE:
+		case EGUEB_DOM_NODE_TYPE_ENTITY:
 		default:
 		return NULL;
 		break;
@@ -799,7 +799,7 @@ EAPI Eina_Bool egueb_dom_node_insert_before(Egueb_Dom_Node *thiz,
 		Egueb_Dom_Node_Type type;
 
 		type = egueb_dom_node_type_get(thiz);
- 		if (type == EGUEB_DOM_NODE_TYPE_DOCUMENT_NODE)
+ 		if (type == EGUEB_DOM_NODE_TYPE_DOCUMENT)
 		{
 			if (child->owner_document != thiz)
 			{
@@ -855,7 +855,7 @@ EAPI Eina_Bool egueb_dom_node_insert_before(Egueb_Dom_Node *thiz,
 		Egueb_Dom_Node_Type type;
 
 		type = egueb_dom_node_type_get(thiz);
-		if (type == EGUEB_DOM_NODE_TYPE_DOCUMENT_NODE)
+		if (type == EGUEB_DOM_NODE_TYPE_DOCUMENT)
 		{
 			egueb_dom_node_document_set_recursive(child, thiz);
 		}

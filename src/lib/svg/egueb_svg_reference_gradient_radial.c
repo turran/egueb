@@ -137,7 +137,7 @@ static Eina_Bool _egueb_svg_reference_gradient_radial_process(
 		egueb_dom_node_unref(g_relative);
 	}
 	/* Apply the gradient transform */
-	if (enesim_matrix_type_get(&transform) != ENESIM_MATRIX_IDENTITY)
+	if (enesim_matrix_type_get(&transform) != ENESIM_MATRIX_TYPE_IDENTITY)
 		enesim_matrix_compose(&m, &transform, &m);
 
 	/* set the renderer properties */
@@ -291,7 +291,7 @@ static Eina_Bool _egueb_svg_element_radial_gradient_propagate(Egueb_Dom_Tag *t,
 		rad = egueb_svg_length_final_get(&lrad, w, h, ctx->font_size);
 		m = ctx->transform;
 	}
-	if (enesim_matrix_type_get(&gctx->transform) != ENESIM_MATRIX_IDENTITY)
+	if (enesim_matrix_type_get(&gctx->transform) != ENESIM_MATRIX_TYPE_IDENTITY)
 	{
 		enesim_matrix_compose(&m, &gctx->transform, &m);
 	}

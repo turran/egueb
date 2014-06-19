@@ -55,7 +55,7 @@ static void _egueb_dom_cdata_section_class_init(void *k)
 {
 	Egueb_Dom_Node_Class *n_klass = EGUEB_DOM_NODE_CLASS(k);
 
-	n_klass->type = EGUEB_DOM_NODE_TYPE_CDATA_SECTION_NODE;
+	n_klass->type = EGUEB_DOM_NODE_TYPE_CDATA_SECTION;
 }
 
 static void _egueb_dom_cdata_section_instance_init(void *o)

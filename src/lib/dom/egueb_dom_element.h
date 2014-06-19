@@ -25,8 +25,13 @@
 #include "egueb_dom_value.h"
 
 /**
- * @defgroup Egueb_Dom_Element_Group Element
- * @brief Element
+ * @file
+ * @listgroup{Egueb_Dom_Element}
+ */
+
+/**
+ * @defgroup Egueb_Dom_Element Element
+ * @brief Element @inherits{Egueb_Dom_Node}
  * @ingroup Egueb_Dom_Group
  * @{
  */
@@ -75,8 +80,6 @@
 
 #define EGUEB_DOM_ELEMENT_LOG_DOM_WARN(n, DOM, fmt, ...) \
   EGUEB_DOM_ELEMENT_LOG(n, DOM, EINA_LOG_LEVEL_WARN, fmt, ## __VA_ARGS__)
-
-EAPI Enesim_Object_Descriptor * egueb_dom_element_descriptor_get(void);
 
 EAPI Egueb_Dom_String * egueb_dom_element_name_get(Egueb_Dom_Node *node);
 EAPI Egueb_Dom_String * egueb_dom_element_tag_name_get(Egueb_Dom_Node *node);

@@ -406,7 +406,7 @@ static void _egueb_dom_element_class_init(void *k)
 {
 	Egueb_Dom_Node_Class *n_klass = EGUEB_DOM_NODE_CLASS(k);
 
-	n_klass->type = EGUEB_DOM_NODE_TYPE_ELEMENT_NODE;
+	n_klass->type = EGUEB_DOM_NODE_TYPE_ELEMENT;
 	n_klass->clone = _egueb_dom_element_clone;
 }
 
@@ -446,7 +446,7 @@ Eina_Bool egueb_dom_element_process_children(Egueb_Dom_Element *thiz)
 		Egueb_Dom_Node_Class *n_klass;
 
 		n_klass = EGUEB_DOM_NODE_CLASS_GET(child);
-		if (n_klass->type != EGUEB_DOM_NODE_TYPE_ELEMENT_NODE)
+		if (n_klass->type != EGUEB_DOM_NODE_TYPE_ELEMENT)
 			continue;
 
 		ret = egueb_dom_element_process(child);
@@ -892,7 +892,7 @@ EAPI Egueb_Dom_Node * egueb_dom_element_child_first_get(Egueb_Dom_Node *n)
 	Egueb_Dom_Node *ret;
 
 	ret = egueb_dom_node_child_first_get(n);
-	while (ret && (egueb_dom_node_type_get(ret) != EGUEB_DOM_NODE_TYPE_ELEMENT_NODE))
+	while (ret && (egueb_dom_node_type_get(ret) != EGUEB_DOM_NODE_TYPE_ELEMENT))
 	{
 		Egueb_Dom_Node *next;
 
@@ -909,7 +909,7 @@ EAPI Egueb_Dom_Node * egueb_dom_element_child_last_get(Egueb_Dom_Node *n)
 	Egueb_Dom_Node *ret;
 
 	ret = egueb_dom_node_child_last_get(n);
-	while (ret && (egueb_dom_node_type_get(ret) != EGUEB_DOM_NODE_TYPE_ELEMENT_NODE))
+	while (ret && (egueb_dom_node_type_get(ret) != EGUEB_DOM_NODE_TYPE_ELEMENT))
 	{
 		Egueb_Dom_Node *next;
 
@@ -927,7 +927,7 @@ EAPI Egueb_Dom_Node * egueb_dom_element_sibling_previous_get(Egueb_Dom_Node *n)
 	Egueb_Dom_Node *ret;
 
 	ret = egueb_dom_node_sibling_previous_get(n);
-	while (ret && (egueb_dom_node_type_get(ret) != EGUEB_DOM_NODE_TYPE_ELEMENT_NODE))
+	while (ret && (egueb_dom_node_type_get(ret) != EGUEB_DOM_NODE_TYPE_ELEMENT))
 	{
 		Egueb_Dom_Node *next;
 
@@ -944,7 +944,7 @@ EAPI Egueb_Dom_Node * egueb_dom_element_sibling_next_get(Egueb_Dom_Node *n)
 	Egueb_Dom_Node *ret;
 
 	ret = egueb_dom_node_sibling_next_get(n);
-	while (ret && (egueb_dom_node_type_get(ret) != EGUEB_DOM_NODE_TYPE_ELEMENT_NODE))
+	while (ret && (egueb_dom_node_type_get(ret) != EGUEB_DOM_NODE_TYPE_ELEMENT))
 	{
 		Egueb_Dom_Node *next;
 

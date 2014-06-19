@@ -49,7 +49,7 @@ static Eina_Bool _egueb_svg_renderable_container_children_process_cb(
 
 	/* check that it is an element */
 	type = egueb_dom_node_type_get(child);
-	if (type != EGUEB_DOM_NODE_TYPE_ELEMENT_NODE)
+	if (type != EGUEB_DOM_NODE_TYPE_ELEMENT)
 		return EINA_TRUE;
 
 	/* in case the tree has changed, add the new renderer */

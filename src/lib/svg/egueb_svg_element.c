@@ -846,7 +846,7 @@ void egueb_svg_element_children_process(Egueb_Dom_Node *n)
 	{
 		Egueb_Dom_Node_Type type;
 		type = egueb_dom_node_type_get(child);
-		if (type == EGUEB_DOM_NODE_TYPE_ELEMENT_NODE)
+		if (type == EGUEB_DOM_NODE_TYPE_ELEMENT)
 			egueb_dom_element_process(child);
 	}
 }
@@ -866,7 +866,7 @@ Egueb_Dom_Node * egueb_svg_element_geometry_relative_get(Egueb_Dom_Node *n)
 
 		parent = egueb_dom_node_parent_get(n);
 		/* check if it is the topmost */
-		if (egueb_dom_node_type_get(parent) == EGUEB_DOM_NODE_TYPE_DOCUMENT_NODE)
+		if (egueb_dom_node_type_get(parent) == EGUEB_DOM_NODE_TYPE_DOCUMENT)
 		{
 			egueb_dom_node_unref(parent);
 			parent = NULL;
@@ -922,7 +922,7 @@ Egueb_Dom_Node * egueb_svg_element_presentation_relative_get(
 			return NULL;
 		}
 		/* check if it is the topmost */
-		if (egueb_dom_node_type_get(parent) == EGUEB_DOM_NODE_TYPE_DOCUMENT_NODE)
+		if (egueb_dom_node_type_get(parent) == EGUEB_DOM_NODE_TYPE_DOCUMENT)
 		{
 			egueb_dom_node_unref(parent);
 			parent = NULL;

@@ -183,7 +183,7 @@ static void _egueb_dom_document_node_inserted_cb(Egueb_Dom_Event *ev,
 
 	target = egueb_dom_event_target_get(ev);
 	type = egueb_dom_node_type_get(target);
-	if (type != EGUEB_DOM_NODE_TYPE_ELEMENT_NODE)
+	if (type != EGUEB_DOM_NODE_TYPE_ELEMENT)
 	{
 		egueb_dom_node_unref(target);
 		return;
@@ -214,7 +214,7 @@ static void _egueb_dom_document_node_removed_cb(Egueb_Dom_Event *ev,
 
 	target = egueb_dom_event_target_get(ev);
 	type = egueb_dom_node_type_get(target);
-	if (type != EGUEB_DOM_NODE_TYPE_ELEMENT_NODE)
+	if (type != EGUEB_DOM_NODE_TYPE_ELEMENT)
 	{
 		egueb_dom_node_unref(target);
 		return;
@@ -244,7 +244,7 @@ static void _egueb_dom_document_node_insterted_into_document_cb(
 	egueb_dom_string_unref(name);
 
 	type = egueb_dom_node_type_get(target);
-	if (type != EGUEB_DOM_NODE_TYPE_ELEMENT_NODE)
+	if (type != EGUEB_DOM_NODE_TYPE_ELEMENT)
 	{
 		egueb_dom_node_unref(target);
 		return;
@@ -276,7 +276,7 @@ static void _egueb_dom_document_node_removed_from_document_cb(
 	egueb_dom_string_unref(name);
 
 	type = egueb_dom_node_type_get(target);
-	if (type != EGUEB_DOM_NODE_TYPE_ELEMENT_NODE)
+	if (type != EGUEB_DOM_NODE_TYPE_ELEMENT)
 	{
 		egueb_dom_node_unref(target);
 		return;
@@ -317,7 +317,7 @@ static Eina_Bool _egueb_dom_document_child_appendable(Egueb_Dom_Node *n,
 	Egueb_Dom_Node *current;
 
 	thiz = EGUEB_DOM_DOCUMENT(n);
-	if (egueb_dom_node_type_get(child) != EGUEB_DOM_NODE_TYPE_ELEMENT_NODE)
+	if (egueb_dom_node_type_get(child) != EGUEB_DOM_NODE_TYPE_ELEMENT)
 	{
 		WARN("The child is not an element");
 		return EINA_FALSE;
@@ -347,7 +347,7 @@ static void _egueb_dom_document_class_init(void *k)
 {
 	Egueb_Dom_Node_Class *n_klass = EGUEB_DOM_NODE_CLASS(k);
 
-	n_klass->type = EGUEB_DOM_NODE_TYPE_DOCUMENT_NODE;
+	n_klass->type = EGUEB_DOM_NODE_TYPE_DOCUMENT;
 	n_klass->child_appendable = _egueb_dom_document_child_appendable;
 }
 
@@ -394,6 +394,8 @@ static void _egueb_dom_document_instance_init(void *o)
  	thiz = EGUEB_DOM_DOCUMENT (o);
 	/* add our private hash of ids */
 	thiz->ids = eina_hash_string_superfast_new(EINA_FREE_CB(egueb_dom_node_unref));
+	/* add our private hash of scripters */
+	thiz->scripters = eina_hash_string_superfast_new(NULL);
 }
 
 static void _egueb_dom_document_instance_deinit(void *o)
@@ -416,6 +418,8 @@ static void _egueb_dom_document_instance_deinit(void *o)
 		egueb_dom_implementation_unref(thiz->i);
 	eina_hash_free(thiz->ids);
 	thiz->ids = NULL;
+
+	eina_hash_free(thiz->scripters);
 }
 
 /*============================================================================*
@@ -603,7 +607,7 @@ EAPI Egueb_Dom_Node * egueb_dom_document_node_adopt(Egueb_Dom_Node *n, Egueb_Dom
 	type = egueb_dom_node_type_get(adopted);
 	switch (type)
 	{
-		case EGUEB_DOM_NODE_TYPE_ELEMENT_NODE:
+		case EGUEB_DOM_NODE_TYPE_ELEMENT:
 		/* be sure to remove it from its parent */
 		other = egueb_dom_node_parent_get(adopted);
 		if (other)

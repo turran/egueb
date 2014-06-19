@@ -95,7 +95,7 @@ static Eina_Bool _egueb_svg_element_text_children_process_cb(Egueb_Dom_Node *chi
 	Egueb_Dom_Node_Type type;
 
 	type = egueb_dom_node_type_get(child);
-	if (type == EGUEB_DOM_NODE_TYPE_TEXT_NODE)
+	if (type == EGUEB_DOM_NODE_TYPE_TEXT)
 	{
 		Egueb_Dom_String *private_data;
 		Enesim_Renderer *r;
@@ -115,7 +115,7 @@ static Eina_Bool _egueb_svg_element_text_children_process_cb(Egueb_Dom_Node *chi
 			enesim_renderer_compound_layer_add(thiz->r, layer);
 		}
 	}
-	else if (type == EGUEB_DOM_NODE_TYPE_ELEMENT_NODE)
+	else if (type == EGUEB_DOM_NODE_TYPE_ELEMENT)
 	{
 		egueb_dom_element_process(child);
  		if (egueb_svg_is_element_tspan(child) && thiz->renderable_tree_changed)
@@ -149,7 +149,7 @@ static Eina_Bool _egueb_svg_element_text_children_propagate_cb(Egueb_Dom_Node *c
 	Eina_Bool visibility;
 
 	type = egueb_dom_node_type_get(child);
-	if (type == EGUEB_DOM_NODE_TYPE_TEXT_NODE)
+	if (type == EGUEB_DOM_NODE_TYPE_TEXT)
 	{
 		Egueb_Dom_String *private_data;
 		Egueb_Svg_Shape *s;
@@ -185,7 +185,7 @@ static void _egueb_svg_element_text_node_inserted_cb(Egueb_Dom_Event *e,
 	}
 	target = egueb_dom_event_target_get(e);
 	type = egueb_dom_node_type_get(target);
-	if (type == EGUEB_DOM_NODE_TYPE_TEXT_NODE)
+	if (type == EGUEB_DOM_NODE_TYPE_TEXT)
 	{
 		Egueb_Svg_Element_Text *thiz;
 		Egueb_Dom_String *private_data;
@@ -214,7 +214,7 @@ static void _egueb_svg_element_text_node_inserted_cb(Egueb_Dom_Event *e,
 		/* mark it as a change */
 		thiz->renderable_tree_changed = EINA_TRUE;
 	}
-	else if (type == EGUEB_DOM_NODE_TYPE_ELEMENT_NODE)
+	else if (type == EGUEB_DOM_NODE_TYPE_ELEMENT)
 	{
 		Egueb_Svg_Element_Text *thiz;
 		Enesim_Text_Buffer *nb;
@@ -244,7 +244,7 @@ static void _egueb_svg_element_text_node_removed_cb(Egueb_Dom_Event *e,
 	}
 	target = egueb_dom_event_target_get(e);
 	type = egueb_dom_node_type_get(target);
-	if (type == EGUEB_DOM_NODE_TYPE_TEXT_NODE)
+	if (type == EGUEB_DOM_NODE_TYPE_TEXT)
 	{
 		Egueb_Svg_Element_Text *thiz;
 		Egueb_Dom_String *private_data;
@@ -266,7 +266,7 @@ static void _egueb_svg_element_text_node_removed_cb(Egueb_Dom_Event *e,
 		/* mark it as a change */
 		thiz->renderable_tree_changed = EINA_TRUE;
 	}
-	else if (type == EGUEB_DOM_NODE_TYPE_ELEMENT_NODE)
+	else if (type == EGUEB_DOM_NODE_TYPE_ELEMENT)
 	{
 		Egueb_Svg_Element_Text *thiz;
 		Enesim_Text_Buffer *nb;

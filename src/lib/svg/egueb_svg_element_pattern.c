@@ -111,7 +111,7 @@ static Eina_Bool _egueb_svg_pattern_children_process_cb(
 	Egueb_Dom_Node_Type type;
 
 	type = egueb_dom_node_type_get(child);
-	if (type != EGUEB_DOM_NODE_TYPE_ELEMENT_NODE)
+	if (type != EGUEB_DOM_NODE_TYPE_ELEMENT)
 		return EINA_TRUE;
 	egueb_dom_element_process(child);
 	return EINA_TRUE;

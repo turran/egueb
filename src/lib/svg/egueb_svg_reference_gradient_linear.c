@@ -132,7 +132,7 @@ static Eina_Bool _egueb_svg_reference_gradient_linear_process(
 		egueb_dom_node_unref(g_relative);
 	}
 	/* Apply the gradient transform */
-	if (enesim_matrix_type_get(&transform) != ENESIM_MATRIX_IDENTITY)
+	if (enesim_matrix_type_get(&transform) != ENESIM_MATRIX_TYPE_IDENTITY)
 		enesim_matrix_compose(&m, &transform, &m);
 
 	/* set the renderer properties */

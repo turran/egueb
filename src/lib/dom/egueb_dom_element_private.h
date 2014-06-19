@@ -60,6 +60,7 @@ typedef struct _Egueb_Dom_Element_Class
 #define EGUEB_DOM_ELEMENT(o) ENESIM_OBJECT_INSTANCE_CHECK(o,			\
 		Egueb_Dom_Element, EGUEB_DOM_ELEMENT_DESCRIPTOR)
 
+Enesim_Object_Descriptor * egueb_dom_element_descriptor_get(void);
 Eina_Bool egueb_dom_element_process_children(Egueb_Dom_Element *thiz);
 
 #endif

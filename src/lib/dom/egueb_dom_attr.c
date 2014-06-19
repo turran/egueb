@@ -103,7 +103,7 @@ static void _egueb_dom_attr_class_init(void *k)
 {
 	Egueb_Dom_Node_Class *n_klass = EGUEB_DOM_NODE_CLASS(k);
 
-	n_klass->type = EGUEB_DOM_NODE_TYPE_ATTRIBUTE_NODE;
+	n_klass->type = EGUEB_DOM_NODE_TYPE_ATTRIBUTE;
 	n_klass->clone = _egueb_dom_attr_clone;
 }
 
@@ -245,7 +245,7 @@ void egueb_dom_attr_process(Egueb_Dom_Node *n)
 EAPI Eina_Bool egueb_dom_is_attr(Egueb_Dom_Node *n)
 {
 	if (!n) return EINA_FALSE;
-	if (egueb_dom_node_type_get(n) != EGUEB_DOM_NODE_TYPE_ATTRIBUTE_NODE)
+	if (egueb_dom_node_type_get(n) != EGUEB_DOM_NODE_TYPE_ATTRIBUTE)
 		return EINA_FALSE;
 	return EINA_TRUE;
 }

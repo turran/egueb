@@ -19,6 +19,16 @@
 #ifndef _EGUEB_DOM_STRING_H_
 #define _EGUEB_DOM_STRING_H_
 
+/**
+ * @file
+ * @listgroup{Egueb_Dom_String}
+ */
+
+/**
+ * @defgroup Egueb_Dom_String String
+ * @{
+ */
+
 typedef struct _Egueb_Dom_String Egueb_Dom_String;
 
 EAPI Egueb_Dom_String * egueb_dom_string_new(void);
@@ -40,5 +50,9 @@ EAPI void egueb_dom_string_string_steal(Egueb_Dom_String *thiz, char *str);
 EAPI Eina_Bool egueb_dom_string_is_equal(const Egueb_Dom_String *thiz,
 		const Egueb_Dom_String *other);
 EAPI Eina_Bool egueb_dom_string_is_valid(const Egueb_Dom_String *thiz);
+
+/**
+ * @}
+ */
 
 #endif
