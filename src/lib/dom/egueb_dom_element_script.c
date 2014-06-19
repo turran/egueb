@@ -20,6 +20,9 @@
 #include "egueb_dom_string.h"
 #include "egueb_dom_main.h"
 #include "egueb_dom_element.h"
+#include "egueb_dom_scripter.h"
+#include "egueb_dom_scripter.h"
+#include "egueb_dom_attr_string.h"
 #include "egueb_dom_event_mutation.h"
 #include "egueb_dom_element_script.h"
 #include "egueb_dom_element_private.h"
@@ -37,6 +40,9 @@
 typedef struct _Egueb_Dom_Element_Script
 {
 	Egueb_Dom_Element base;
+	Egueb_Dom_Node *content_type;
+	Egueb_Dom_String *last_content_type;
+	Egueb_Dom_Scripter *scripter;
 	Eina_Bool cdata_changed;
 } Egueb_Dom_Element_Script;
 
@@ -62,7 +68,7 @@ static void _egueb_dom_element_script_node_inserted_or_removed_cb(Egueb_Dom_Even
 
 	target = egueb_dom_event_target_get(e);
 	type = egueb_dom_node_type_get(target);
-	if (type != EGUEB_DOM_NODE_TYPE_CDATA_SECTION_NODE)
+	if (type != EGUEB_DOM_NODE_TYPE_CDATA_SECTION)
 	{
 		goto not_cdata;
 	}
@@ -83,15 +89,29 @@ not_us:
 static Eina_Bool _egueb_dom_element_script_process(Egueb_Dom_Element *e)
 {
 	Egueb_Dom_Element_Script *thiz;
+	Egueb_Dom_String *content_type;
+	Eina_Bool content_type_changed = EINA_FALSE;
 
 	thiz = EGUEB_DOM_ELEMENT_SCRIPT(e);
 
-	if (!thiz->cdata_changed) return EINA_TRUE;
+	egueb_dom_attr_final_get(thiz->content_type, &content_type);
+	if (!egueb_dom_string_is_equal(content_type, thiz->last_content_type))
+		content_type_changed = EINA_TRUE;
+		
+	if (!thiz->cdata_changed && !content_type_changed)
+		goto done;
+
+	if (thiz->scripter)
+	{
+		
+	}
 
 	/* TODO check the attribute */
 	/* TODO instantiate the vm */
 	ERR("Processing the script");
 	thiz->cdata_changed = EINA_FALSE;
+done:
+	egueb_dom_string_unref(content_type);
 	return EINA_TRUE;
 }
 
@@ -125,6 +145,12 @@ static void _egueb_dom_element_script_instance_init(void *o)
 
 	thiz = EGUEB_DOM_ELEMENT_SCRIPT(o);
 	n = EGUEB_DOM_NODE(o);
+	/* add the attributes */
+	thiz->content_type = egueb_dom_attr_string_new(
+			egueb_dom_string_ref(EGUEB_DOM_NAME_CONTENT_TYPE),
+			NULL, EINA_FALSE, EINA_FALSE, EINA_FALSE);
+	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->content_type), NULL);
+
 	/* add the events */
 	egueb_dom_node_event_listener_add(n,
 			EGUEB_DOM_EVENT_MUTATION_NODE_INSERTED,
@@ -138,6 +164,10 @@ static void _egueb_dom_element_script_instance_init(void *o)
 
 static void _egueb_dom_element_script_instance_deinit(void *o)
 {
+	Egueb_Dom_Element_Script *thiz;
+
+	thiz = EGUEB_DOM_ELEMENT_SCRIPT(o);
+	egueb_dom_node_unref(thiz->content_type);
 }
 /*============================================================================*
  *                                 Global                                     *
