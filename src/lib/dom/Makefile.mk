@@ -43,6 +43,7 @@ src/lib/dom/egueb_dom_node_list.h \
 src/lib/dom/egueb_dom_node_map_named.h \
 src/lib/dom/egueb_dom_parser.h \
 src/lib/dom/egueb_dom_registry.h \
+src/lib/dom/egueb_dom_scripter.h \
 src/lib/dom/egueb_dom_string.h \
 src/lib/dom/egueb_dom_string_list.h \
 src/lib/dom/egueb_dom_text.h \
@@ -112,6 +113,7 @@ src/lib/dom/egueb_dom_parser.c \
 src/lib/dom/egueb_dom_parser_private.h \
 src/lib/dom/egueb_dom_private.h \
 src/lib/dom/egueb_dom_registry.c \
+src/lib/dom/egueb_dom_scripter.c \
 src/lib/dom/egueb_dom_string.c \
 src/lib/dom/egueb_dom_string_list.c \
 src/lib/dom/egueb_dom_text.c \
