@@ -20,8 +20,13 @@
 #define _EGUEB_DOM_CHARACTER_DATA_H_
 
 /**
- * @defgroup Egueb_Dom_Character_Data_Group Character Data
- * @brief Character Data
+ * @file
+ * @listgroup{Egueb_Dom_Character_Data}
+ */
+
+/**
+ * @defgroup Egueb_Dom_Character_Data Character Data
+ * @brief Character Data @inherits{Egueb_Dom_Node}
  * @ingroup Egueb_Dom_Group
  * @{
  */

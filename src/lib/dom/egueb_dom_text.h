@@ -19,6 +19,22 @@
 #ifndef _EGUEB_DOM_TEXT_H_
 #define _EGUEB_DOM_TEXT_H_
 
+/**
+ * @file
+ * @listgroup{Egueb_Dom_Text}
+ */
+
+/**
+ * @defgroup Egueb_Dom_Text Text
+ * @brief Text node @inherits{Egueb_Dom_Character_Data}
+ * @ingroup Egueb_Dom_Group
+ * @{
+ */
+
 EAPI Egueb_Dom_Node * egueb_dom_text_new(void);
+
+/**
+ * @}
+ */
 
 #endif

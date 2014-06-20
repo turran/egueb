@@ -19,6 +19,22 @@
 #ifndef _EGUEB_DOM_CDATA_SECTION_H_
 #define _EGUEB_DOM_CDATA_SECTION_H_
 
+/**
+ * @file
+ * @listgroup{Egueb_Dom_Cdata_Section}
+ */
+
+/**
+ * @defgroup Egueb_Dom_Cdata_Section CData Section
+ * @brief Character Data @inherits{Egueb_Dom_Character_Data}
+ * @ingroup Egueb_Dom_Group
+ * @{
+ */
+
 EAPI Egueb_Dom_Node * egueb_dom_cdata_section_new(void);
+
+/**
+ * @}
+ */
 
 #endif

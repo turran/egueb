@@ -67,4 +67,8 @@ EAPI Eina_Bool egueb_dom_scripter_load(Egueb_Dom_Scripter *thiz, Egueb_Dom_Strin
 EAPI Eina_Bool egueb_dom_scripter_run(Egueb_Dom_Scripter *thiz);
 EAPI Eina_Bool egueb_dom_scripter_call(Egueb_Dom_Scripter *thiz, Egueb_Dom_String *s);
 
+/**
+ * @}
+ */
+
 #endif

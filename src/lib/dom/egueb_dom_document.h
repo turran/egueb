@@ -23,8 +23,13 @@
 #include "egueb_dom_node.h"
 
 /**
- * @defgroup Egueb_Dom_Document_Group Document
- * @brief Document
+ * @file
+ * @listgroup{Egueb_Dom_Document}
+ */
+
+/**
+ * @defgroup Egueb_Dom_Document Document
+ * @brief Document @inherits{Egueb_Dom_Node}
  * @ingroup Egueb_Dom_Group
  * @{
  */
