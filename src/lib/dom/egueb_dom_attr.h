@@ -22,9 +22,14 @@
 #include "egueb_dom_value.h"
 
 /**
- * @defgroup Egueb_Dom_Attr_Group Attr 
- * @brief Attr
- * @ingroup Egueb_Dom_Group
+ * @file
+ * @listgroup{Egueb_Dom_Attr}
+ */
+
+/**
+ * @}
+ * @defgroup Egueb_Dom_Attr_Flag Attr flag
+ * @ingroup Egueb_Dom_Attr
  * @{
  */
 
@@ -41,6 +46,13 @@ static inline int egueb_dom_attr_flag_mask_generate(Eina_Bool animatable,
 	return inheritable << 2 | animatable << 1 | stylable << 0;
 }
 
+/**
+ * @}
+ * @defgroup Egueb_Dom_Attr_Type Attr type
+ * @ingroup Egueb_Dom_Attr
+ * @{
+ */
+
 typedef enum _Egueb_Dom_Attr_Type
 {
 	EGUEB_DOM_ATTR_TYPE_BASE 		= 1 << 0,
@@ -49,8 +61,22 @@ typedef enum _Egueb_Dom_Attr_Type
 	EGUEB_DOM_ATTR_TYPE_STYLED 		= 1 << 3,
 } Egueb_Dom_Attr_Type;
 
+/**
+ * @}
+ * @defgroup Egueb_Dom_Attr_Definition Attr definitions
+ * @ingroup Egueb_Dom_Attr
+ * @{
+ */
+
 /* function definition to get a property from an element instance */
 typedef void (*Egueb_Dom_Attr_Fetch)(Egueb_Dom_Node *n, Egueb_Dom_Node **p);
+
+/**
+ * @defgroup Egueb_Dom_Attr Attr 
+ * @brief Attr @inherits{Egueb_Dom_Node}
+ * @ingroup Egueb_Dom_Group
+ * @{
+ */
 
 EAPI Enesim_Object_Descriptor * egueb_dom_attr_descriptor_get(void);
 EAPI Enesim_Object_Descriptor * egueb_dom_attr_primitive_descriptor_get(void);

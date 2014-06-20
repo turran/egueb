@@ -21,9 +21,17 @@
 #include "egueb_dom_string.h"
 
 /**
- * @defgroup Egueb_Dom_Event_Group Event
- * @brief Event
- * @ingroup Egueb_Dom_Group
+ * @file
+ * @listgroup{Egueb_Dom_Event_Definition}
+ * @listgroup{Egueb_Dom_Event_Phase}
+ * @listgroup{Egueb_Dom_Event_Direction}
+ * @listgroup{Egueb_Dom_Event}
+ */
+
+/**
+ * @}
+ * @defgroup Egueb_Dom_Event_Phase Event phase
+ * @ingroup Egueb_Dom_Event
  * @{
  */
 
@@ -35,14 +43,36 @@ typedef enum _Egueb_Dom_Event_Phase
 	EGUEB_DOM_EVENT_PHASES,
 } Egueb_Dom_Event_Phase;
 
+/**
+ * @}
+ * @defgroup Egueb_Dom_Event_Direction Event direction
+ * @ingroup Egueb_Dom_Event
+ * @{
+ */
+
 typedef enum _Egueb_Dom_Event_Direction
 {
 	EGUEB_DOM_EVENT_DIRECTION_CAPTURE_BUBBLE,
 	EGUEB_DOM_EVENT_DIRECTION_BUBBLE_CAPTURE,
 } Egueb_Dom_Event_Direction;
 
-typedef struct _Egueb_Dom_Event Egueb_Dom_Event;
+/**
+ * @}
+ * @defgroup Egueb_Dom_Event_Definition Event definitions
+ * @ingroup Egueb_Dom_Event
+ * @{
+ */
+
 typedef void (*Egueb_Dom_Event_Listener)(Egueb_Dom_Event *ev, void *data);
+
+/**
+ * @defgroup Egueb_Dom_Event Event
+ * @brief Event
+ * @ingroup Egueb_Dom_Group
+ * @{
+ */
+
+typedef struct _Egueb_Dom_Event Egueb_Dom_Event;
 
 EAPI void egueb_dom_event_init(Egueb_Dom_Event *thiz, Egueb_Dom_String *type,
 		Eina_Bool bubbleable, Eina_Bool capturable, Eina_Bool cancelable,
