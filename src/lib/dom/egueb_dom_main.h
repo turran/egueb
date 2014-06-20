@@ -19,6 +19,16 @@
 #ifndef _EGUEB_DOM_MAIN_H_
 #define _EGUEB_DOM_MAIN_H_
 
+/**
+ * @file
+ * @listgroup{Egueb_Dom_Main}
+ */
+
+/**
+ * @defgroup Egueb_Dom_Main Main
+ * @{
+ */
+
 EAPI void egueb_dom_init(void);
 EAPI void egueb_dom_shutdown(void);
 
@@ -45,5 +55,9 @@ EAPI extern Eina_Error EGUEB_DOM_ERROR_TYPE_MISMATCH;
 EAPI extern Egueb_Dom_String *EGUEB_DOM_XLINK_HREF;
 EAPI extern Egueb_Dom_String *EGUEB_DOM_NAME_SCRIPT;
 EAPI extern Egueb_Dom_String *EGUEB_DOM_NAME_CONTENT_TYPE;
+
+/**
+ * @}
+ */
 
 #endif
