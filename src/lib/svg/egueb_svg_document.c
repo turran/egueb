@@ -842,6 +842,7 @@ static void _egueb_svg_document_instance_init(void *o)
 	egueb_dom_feature_ui_add(EGUEB_DOM_NODE(thiz),
 			&_egueb_svg_document_ui_descriptor);
 	egueb_dom_feature_io_add(EGUEB_DOM_NODE(thiz));
+	egueb_dom_feature_script_add(EGUEB_DOM_NODE(thiz));
 	thiz->fps = 30;
 	thiz->font_size = 16;
 	thiz->input = egueb_dom_input_new(&_document_svg_input_descriptor, thiz);

@@ -24,6 +24,7 @@
 #include "egueb_dom_scripter.h"
 #include "egueb_dom_attr_string.h"
 #include "egueb_dom_event_mutation.h"
+#include "egueb_dom_event_script.h"
 #include "egueb_dom_element_script.h"
 #include "egueb_dom_element_private.h"
 /*============================================================================*
@@ -76,7 +77,7 @@ static void _egueb_dom_element_script_node_inserted_or_removed_cb(Egueb_Dom_Even
 	/* finally inform ourselves that the cdata has changed and so, we need
 	 * to create a new vm
 	 */
-	thiz = EGUEB_DOM_ELEMENT_SCRIPT(e);
+	thiz = EGUEB_DOM_ELEMENT_SCRIPT(n);
 	thiz->cdata_changed = EINA_TRUE;
 not_cdata:
 	egueb_dom_node_unref(target);
@@ -97,18 +98,29 @@ static Eina_Bool _egueb_dom_element_script_process(Egueb_Dom_Element *e)
 	egueb_dom_attr_final_get(thiz->content_type, &content_type);
 	if (!egueb_dom_string_is_equal(content_type, thiz->last_content_type))
 		content_type_changed = EINA_TRUE;
-		
+
 	if (!thiz->cdata_changed && !content_type_changed)
 		goto done;
 
 	if (thiz->scripter)
 	{
-		
+		ERR("Impossible to re-generate the whole scripting VM");
+	}
+	else
+	{
+		Egueb_Dom_Event *ev;
+		Egueb_Dom_String *type;
+
+		ERR("Processing the script");
+		/* TODO check the attribute */
+		type = egueb_dom_string_new_with_string("javascript");
+		ev = egueb_dom_event_script_new(type);
+		egueb_dom_node_event_dispatch(EGUEB_DOM_NODE(e), egueb_dom_event_ref(ev), NULL, NULL);
+		/* instantiate the vm */
+		thiz->scripter = egueb_dom_event_script_scripter_get(ev);
+		egueb_dom_event_unref(ev);
 	}
 
-	/* TODO check the attribute */
-	/* TODO instantiate the vm */
-	ERR("Processing the script");
 	thiz->cdata_changed = EINA_FALSE;
 done:
 	egueb_dom_string_unref(content_type);

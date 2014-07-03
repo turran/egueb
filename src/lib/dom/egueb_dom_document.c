@@ -394,8 +394,6 @@ static void _egueb_dom_document_instance_init(void *o)
  	thiz = EGUEB_DOM_DOCUMENT (o);
 	/* add our private hash of ids */
 	thiz->ids = eina_hash_string_superfast_new(EINA_FREE_CB(egueb_dom_node_unref));
-	/* add our private hash of scripters */
-	thiz->scripters = eina_hash_string_superfast_new(NULL);
 }
 
 static void _egueb_dom_document_instance_deinit(void *o)
@@ -418,8 +416,6 @@ static void _egueb_dom_document_instance_deinit(void *o)
 		egueb_dom_implementation_unref(thiz->i);
 	eina_hash_free(thiz->ids);
 	thiz->ids = NULL;
-
-	eina_hash_free(thiz->scripters);
 }
 
 /*============================================================================*
