@@ -29,6 +29,7 @@ EAPI extern Egueb_Dom_String *EGUEB_DOM_EVENT_SCRIPT_SCRIPTER;
 
 EAPI Egueb_Dom_Event * egueb_dom_event_script_new(Egueb_Dom_String *type);
 
+EAPI Egueb_Dom_String * egueb_dom_event_script_type_get(Egueb_Dom_Event *e);
 EAPI Egueb_Dom_Scripter * egueb_dom_event_script_scripter_get(Egueb_Dom_Event *e);
 EAPI void egueb_dom_event_script_scripter_set(Egueb_Dom_Event *e, Egueb_Dom_Scripter *sc);
 

@@ -107,6 +107,14 @@ EAPI Egueb_Dom_Event * egueb_dom_event_script_new(Egueb_Dom_String *type)
 	return e;
 }
 
+EAPI Egueb_Dom_String * egueb_dom_event_script_type_get(Egueb_Dom_Event *e)
+{
+	Egueb_Dom_Event_Script *thiz;
+
+	thiz = EGUEB_DOM_EVENT_SCRIPT(e);
+	return egueb_dom_string_ref(thiz->type);
+}
+
 EAPI Egueb_Dom_Scripter * egueb_dom_event_script_scripter_get(Egueb_Dom_Event *e)
 {
 	Egueb_Dom_Event_Script *thiz;
