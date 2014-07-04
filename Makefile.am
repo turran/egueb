@@ -71,6 +71,9 @@ include src/modules/egueb_source/Makefile.mk
 ### Binaries
 include src/bin/Makefile.mk
 
+### Data
+include data/Makefile.mk
+
 ### Tests
 
 if BUILD_EGUEB_CSS

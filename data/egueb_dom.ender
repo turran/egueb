@@ -1,0 +1,548 @@
+<?xml version="1.0" standalone="yes"?>
+<lib name="egueb_dom" version="0" case="underscore">
+  <object name="egueb.dom.string">
+    <ctor name="new"/>
+    <ctor name="new_with_string">
+      <arg name="str" type="string" direction="in" transfer="none"/>
+    </ctor>
+    <ctor name="new_with_length">
+      <arg name="str" type="string" direction="in" transfer="none"/>
+      <arg name="len" type="int32" direction="in" transfer="full"/>
+    </ctor>
+    <ctor name="new_with_static_string">
+      <arg name="str" type="string" direction="in" transfer="none"/>
+    </ctor>
+    <function name="steal">
+      <return type="egueb.dom.string" transfer="full"/>
+      <arg name="str" type="string" direction="in" transfer="full"/>
+    </function>
+    <method name="dup">
+      <return type="egueb.dom.string" transfer="full"/>
+    </method>
+    <ref/>
+    <unref/>
+    <method name="string_get">
+      <return type="string" transfer="none"/>
+    </method>
+    <method name="string_set">
+      <arg name="str" type="string" direction="in" transfer="none"/>
+    </method>
+    <method name="static_string_set">
+      <arg name="str" type="string" direction="in" transfer="none"/>
+    </method>
+    <method name="string_steal">
+      <arg name="str" type="string" direction="in" transfer="full"/>
+    </method>
+    <method name="is_equal">
+      <return type="bool" transfer="full"/>
+      <arg name="other" type="egueb.dom.string" direction="in" transfer="none"/>
+    </method>
+    <method name="is_valid">
+      <return type="bool" transfer="full"/>
+    </method>
+  </object>
+  <function name="egueb.dom.init"/>
+  <function name="egueb.dom.shutdown"/>
+  <enum name="egueb.dom.node.type">
+    <value name="element"/>
+    <value name="attribute"/>
+    <value name="text"/>
+    <value name="cdata_section"/>
+    <value name="entity_reference"/>
+    <value name="entity"/>
+    <value name="processing_instruction"/>
+    <value name="comment"/>
+    <value name="document"/>
+    <value name="document_type"/>
+    <value name="document_fragment"/>
+    <value name="notation"/>
+  </enum>
+  <object name="egueb.dom.node">
+    <method name="is_destroying">
+      <return type="bool" transfer="full"/>
+    </method>
+    <unref/>
+    <ref/>
+    <method name="ref_get">
+      <return type="int32" transfer="full"/>
+    </method>
+    <method name="weak_ref">
+      <arg name="l" type="egueb.dom.event.listener" direction="in" transfer="full"/>
+      <arg name="data" type="pointer" direction="in" transfer="full"/>
+    </method>
+    <method name="weak_unref">
+      <arg name="l" type="egueb.dom.event.listener" direction="in" transfer="full"/>
+      <arg name="data" type="pointer" direction="in" transfer="full"/>
+    </method>
+    <method name="weak_ref_add">
+      <arg name="weak_location" type="egueb.dom.node" direction="in" transfer="full"/>
+    </method>
+    <method name="weak_ref_remove">
+      <arg name="weak_location" type="egueb.dom.node" direction="in" transfer="full"/>
+    </method>
+    <method name="name_get">
+      <return type="egueb.dom.string" transfer="full"/>
+    </method>
+    <method name="value_get">
+      <return type="egueb.dom.string" transfer="full"/>
+    </method>
+    <method name="type_get">
+      <return type="egueb.dom.node.type" transfer="full"/>
+    </method>
+    <method name="document_get">
+      <return type="egueb.dom.node" transfer="full"/>
+    </method>
+    <method name="parent_get">
+      <return type="egueb.dom.node" transfer="full"/>
+    </method>
+    <method name="children_get">
+      <return type="egueb.dom.node.list" transfer="full"/>
+    </method>
+    <method name="children_foreach">
+      <return type="bool" transfer="full"/>
+      <arg name="cb" type="egueb.dom.node.cb" direction="in" transfer="full"/>
+      <arg name="data" type="pointer" direction="in" transfer="full"/>
+    </method>
+    <method name="child_first_get">
+      <return type="egueb.dom.node" transfer="full"/>
+    </method>
+    <method name="child_last_get">
+      <return type="egueb.dom.node" transfer="full"/>
+    </method>
+    <method name="child_remove">
+      <return type="bool" transfer="full"/>
+      <arg name="child" type="egueb.dom.node" direction="in" transfer="full"/>
+      <arg name="err" type="eina.error" direction="in" transfer="full"/>
+    </method>
+    <method name="child_append">
+      <return type="bool" transfer="full"/>
+      <arg name="child" type="egueb.dom.node" direction="in" transfer="full"/>
+      <arg name="err" type="eina.error" direction="in" transfer="full"/>
+    </method>
+    <method name="insert_before">
+      <return type="bool" transfer="full"/>
+      <arg name="child" type="egueb.dom.node" direction="in" transfer="full"/>
+      <arg name="ref" type="egueb.dom.node" direction="in" transfer="full"/>
+      <arg name="err" type="eina.error" direction="in" transfer="full"/>
+    </method>
+    <method name="sibling_previous_get">
+      <return type="egueb.dom.node" transfer="full"/>
+    </method>
+    <method name="sibling_next_get">
+      <return type="egueb.dom.node" transfer="full"/>
+    </method>
+    <method name="attributes_get">
+      <return type="egueb.dom.node.map.named" transfer="full"/>
+    </method>
+    <method name="clone">
+      <return type="egueb.dom.node" transfer="full"/>
+      <arg name="live" type="bool" direction="in" transfer="full"/>
+      <arg name="deep" type="bool" direction="in" transfer="full"/>
+      <arg name="err" type="eina.error" direction="in" transfer="full"/>
+    </method>
+    <method name="event_listener_add">
+      <return type="egueb.dom.node.event.listener" transfer="full"/>
+      <arg name="type" type="egueb.dom.string" direction="in" transfer="none"/>
+      <arg name="listener" type="egueb.dom.event.listener" direction="in" transfer="full"/>
+      <arg name="capture" type="bool" direction="in" transfer="full"/>
+      <arg name="data" type="pointer" direction="in" transfer="full"/>
+    </method>
+    <method name="event_listener_remove">
+      <arg name="type" type="egueb.dom.string" direction="in" transfer="none"/>
+      <arg name="listener" type="egueb.dom.event.listener" direction="in" transfer="full"/>
+      <arg name="capture" type="bool" direction="in" transfer="full"/>
+      <arg name="data" type="pointer" direction="in" transfer="full"/>
+    </method>
+    <method name="event_listener_free"/>
+    <method name="event_dispatch">
+      <return type="bool" transfer="full"/>
+      <arg name="event" type="egueb.dom.event" direction="in" transfer="full"/>
+      <arg name="notprevented" type="eina.bool" direction="in" transfer="full"/>
+      <arg name="err" type="eina.error" direction="in" transfer="full"/>
+    </method>
+    <method name="event_propagate">
+      <return type="bool" transfer="full"/>
+      <arg name="event" type="egueb.dom.event" direction="in" transfer="full"/>
+    </method>
+    <method name="event_monitor_add">
+      <arg name="listener" type="egueb.dom.event.listener" direction="in" transfer="full"/>
+      <arg name="data" type="pointer" direction="in" transfer="full"/>
+    </method>
+    <method name="event_monitor_remove">
+      <arg name="listener" type="egueb.dom.event.listener" direction="in" transfer="full"/>
+      <arg name="data" type="pointer" direction="in" transfer="full"/>
+    </method>
+    <method name="user_data_set">
+      <arg name="key" type="egueb.dom.string" direction="in" transfer="full"/>
+      <arg name="data" type="pointer" direction="in" transfer="full"/>
+    </method>
+    <method name="user_data_get">
+      <return type="pointer" transfer="full"/>
+      <arg name="key" type="egueb.dom.string" direction="in" transfer="full"/>
+    </method>
+    <method name="is_supported">
+      <return type="bool" transfer="full"/>
+      <arg name="name" type="egueb.dom.string" direction="in" transfer="full"/>
+      <arg name="version" type="egueb.dom.string" direction="in" transfer="full"/>
+    </method>
+    <method name="feature_get">
+      <return type="pointer" transfer="full"/>
+      <arg name="name" type="egueb.dom.string" direction="in" transfer="full"/>
+      <arg name="version" type="egueb.dom.string" direction="in" transfer="full"/>
+    </method>
+  </object>
+  <callback name="egueb.dom.node.cb"/>
+  <object name="egueb.dom.attr" inherits="egueb.dom.node">
+    <function name="descriptor_get">
+      <return type="enesim.object.descriptor" transfer="full"/>
+    </function>
+    <function name="primitive_descriptor_get">
+      <return type="enesim.object.descriptor" transfer="full"/>
+    </function>
+    <function name="object_descriptor_get">
+      <return type="enesim.object.descriptor" transfer="full"/>
+    </function>
+    <function name="basic_descriptor_get">
+      <return type="enesim.object.descriptor" transfer="full"/>
+    </function>
+    <method name="egueb_dom_is_attr">
+      <return type="bool" transfer="full"/>
+    </method>
+    <method name="value_descriptor_get">
+      <return type="egueb.dom.value.descriptor" transfer="none"/>
+    </method>
+    <method name="init">
+      <arg name="name" type="egueb.dom.string" direction="in" transfer="full"/>
+      <arg name="animatable" type="bool" direction="in" transfer="full"/>
+      <arg name="stylable" type="bool" direction="in" transfer="full"/>
+      <arg name="inheritable" type="bool" direction="in" transfer="full"/>
+    </method>
+    <method name="name_get">
+      <return type="egueb.dom.string" transfer="full"/>
+    </method>
+    <method name="owner_get">
+      <return type="egueb.dom.node" transfer="full"/>
+    </method>
+    <method name="is_stylable">
+      <return type="bool" transfer="full"/>
+    </method>
+    <method name="is_animatable">
+      <return type="bool" transfer="full"/>
+    </method>
+    <method name="is_inheritable">
+      <return type="bool" transfer="full"/>
+    </method>
+    <method name="is_set">
+      <return type="bool" transfer="full"/>
+    </method>
+    <method name="type_is_set">
+      <return type="bool" transfer="full"/>
+      <arg name="type" type="egueb.dom.attr.type" direction="in" transfer="full"/>
+    </method>
+    <method name="has_value">
+      <return type="bool" transfer="full"/>
+    </method>
+    <method name="inherit">
+      <arg name="type" type="egueb.dom.attr.type" direction="in" transfer="full"/>
+    </method>
+    <method name="value_get">
+      <return type="bool" transfer="full"/>
+      <arg name="type" type="egueb.dom.attr.type" direction="in" transfer="full"/>
+      <arg name="value" type="egueb.dom.value" direction="in" transfer="full"/>
+    </method>
+    <method name="value_set">
+      <return type="bool" transfer="full"/>
+      <arg name="type" type="egueb.dom.attr.type" direction="in" transfer="full"/>
+      <arg name="value" type="egueb.dom.value" direction="in" transfer="full"/>
+    </method>
+    <method name="get">
+      <return type="bool" transfer="full"/>
+      <arg name="prop_mask" type="int32" direction="in" transfer="full"/>
+      <arg name="" type="..." direction="in" transfer="full"/>
+    </method>
+    <method name="set">
+      <return type="bool" transfer="full"/>
+      <arg name="prop_mask" type="int32" direction="in" transfer="full"/>
+      <arg name="" type="..." direction="in" transfer="full"/>
+    </method>
+    <method name="inheritable_process">
+      <arg name="rel" type="egueb.dom.node" direction="in" transfer="full"/>
+    </method>
+    <method name="final_value_get">
+      <return type="bool" transfer="full"/>
+      <arg name="value" type="egueb.dom.value" direction="in" transfer="full"/>
+    </method>
+    <method name="final_string_get">
+      <return type="bool" transfer="full"/>
+      <arg name="s" type="egueb.dom.string" direction="in" transfer="full"/>
+    </method>
+    <method name="final_get_va">
+      <return type="bool" transfer="full"/>
+      <arg name="args" type="va.list" direction="in" transfer="full"/>
+    </method>
+    <method name="final_get">
+      <return type="bool" transfer="full"/>
+      <arg name="" type="..." direction="in" transfer="full"/>
+    </method>
+    <method name="string_set">
+      <return type="bool" transfer="full"/>
+      <arg name="type" type="egueb.dom.attr.type" direction="in" transfer="full"/>
+      <arg name="str" type="egueb.dom.string" direction="in" transfer="full"/>
+    </method>
+    <method name="string_get">
+      <return type="bool" transfer="full"/>
+      <arg name="type" type="egueb.dom.attr.type" direction="in" transfer="full"/>
+      <arg name="str" type="egueb.dom.string" direction="in" transfer="full"/>
+    </method>
+    <method name="inherited_get">
+      <arg name="inherited" type="egueb.dom.node" direction="in" transfer="full"/>
+    </method>
+    <method name="has_changed">
+      <return type="bool" transfer="full"/>
+    </method>
+  </object>
+  <object name="egueb.dom.element" inherits="egueb.dom.node">
+    <method name="name_get">
+      <return type="egueb.dom.string" transfer="full"/>
+    </method>
+    <method name="tag_name_get">
+      <return type="egueb.dom.string" transfer="full"/>
+    </method>
+    <method name="attribute_add">
+      <return type="bool" transfer="full"/>
+      <arg name="attr" type="egueb.dom.node" direction="in" transfer="full"/>
+      <arg name="err" type="eina.error" direction="in" transfer="full"/>
+    </method>
+    <method name="attribute_get">
+      <return type="egueb.dom.string" transfer="full"/>
+      <arg name="name" type="egueb.dom.string" direction="in" transfer="none"/>
+    </method>
+    <method name="attribute_set">
+      <return type="bool" transfer="full"/>
+      <arg name="name" type="egueb.dom.string" direction="in" transfer="none"/>
+      <arg name="value" type="egueb.dom.string" direction="in" transfer="full"/>
+      <arg name="err" type="eina.error" direction="in" transfer="full"/>
+    </method>
+    <method name="attribute_type_set">
+      <return type="bool" transfer="full"/>
+      <arg name="name" type="egueb.dom.string" direction="in" transfer="none"/>
+      <arg name="type" type="egueb.dom.attr.type" direction="in" transfer="full"/>
+      <arg name="value" type="egueb.dom.string" direction="in" transfer="full"/>
+      <arg name="err" type="eina.error" direction="in" transfer="full"/>
+    </method>
+    <method name="attribute_masked_set">
+      <return type="bool" transfer="full"/>
+      <arg name="name" type="egueb.dom.string" direction="in" transfer="full"/>
+      <arg name="prop_mask" type="int32" direction="in" transfer="full"/>
+      <arg name="" type="..." direction="in" transfer="full"/>
+    </method>
+    <method name="attribute_masked_get">
+      <return type="bool" transfer="full"/>
+      <arg name="name" type="egueb.dom.string" direction="in" transfer="full"/>
+      <arg name="prop_mask" type="int32" direction="in" transfer="full"/>
+      <arg name="" type="..." direction="in" transfer="full"/>
+    </method>
+    <method name="attribute_masked_set_va">
+      <return type="bool" transfer="full"/>
+      <arg name="name" type="egueb.dom.string" direction="in" transfer="full"/>
+      <arg name="prop_mask" type="int32" direction="in" transfer="full"/>
+      <arg name="args" type="va.list" direction="in" transfer="full"/>
+    </method>
+    <method name="attribute_masked_get_va">
+      <return type="bool" transfer="full"/>
+      <arg name="name" type="egueb.dom.string" direction="in" transfer="full"/>
+      <arg name="prop_mask" type="int32" direction="in" transfer="full"/>
+      <arg name="args" type="va.list" direction="in" transfer="full"/>
+    </method>
+    <method name="attribute_value_set">
+      <return type="bool" transfer="full"/>
+      <arg name="name" type="egueb.dom.string" direction="in" transfer="full"/>
+      <arg name="type" type="egueb.dom.attr.type" direction="in" transfer="full"/>
+      <arg name="v" type="egueb.dom.value" direction="in" transfer="full"/>
+      <arg name="err" type="eina.error" direction="in" transfer="full"/>
+    </method>
+    <method name="attribute_value_get">
+      <return type="bool" transfer="full"/>
+      <arg name="name" type="egueb.dom.string" direction="in" transfer="full"/>
+      <arg name="type" type="egueb.dom.attr.type" direction="in" transfer="full"/>
+      <arg name="v" type="egueb.dom.value" direction="in" transfer="full"/>
+      <arg name="err" type="eina.error" direction="in" transfer="full"/>
+    </method>
+    <method name="attribute_fetch">
+      <return type="egueb.dom.node" transfer="full"/>
+      <arg name="name" type="egueb.dom.string" direction="in" transfer="none"/>
+    </method>
+    <method name="is_enqueued">
+      <return type="bool" transfer="full"/>
+    </method>
+    <method name="dequeue"/>
+    <method name="enqueue"/>
+    <method name="request_process"/>
+    <method name="process">
+      <return type="bool" transfer="full"/>
+    </method>
+    <method name="child_first_get">
+      <return type="egueb.dom.node" transfer="full"/>
+    </method>
+    <method name="child_last_get">
+      <return type="egueb.dom.node" transfer="full"/>
+    </method>
+    <method name="sibling_previous_get">
+      <return type="egueb.dom.node" transfer="full"/>
+    </method>
+    <method name="sibling_next_get">
+      <return type="egueb.dom.node" transfer="full"/>
+    </method>
+  </object>
+  <object name="egueb.dom.character.data" inherits="egueb.dom.node">
+    <method name="buffer_get">
+      <arg name="buffer" type="enesim.text.buffer" direction="in" transfer="full"/>
+    </method>
+    <method name="buffer_set">
+      <arg name="buffer" type="enesim.text.buffer" direction="in" transfer="full"/>
+    </method>
+    <method name="data_get">
+      <return type="egueb.dom.string" transfer="full"/>
+    </method>
+    <method name="length_get">
+      <return type="int32" transfer="full"/>
+    </method>
+    <method name="append_data">
+      <return type="bool" transfer="full"/>
+      <arg name="data" type="egueb.dom.string" direction="in" transfer="full"/>
+      <arg name="err" type="eina.error" direction="in" transfer="full"/>
+    </method>
+    <method name="append_data_inline">
+      <return type="bool" transfer="full"/>
+      <arg name="data" type="string" direction="in" transfer="none"/>
+      <arg name="err" type="eina.error" direction="in" transfer="full"/>
+    </method>
+  </object>
+  <object name="egueb.dom.document" inherits="egueb.dom.node">
+    <function name="descriptor_get">
+      <return type="enesim.object.descriptor" transfer="full"/>
+    </function>
+    <method name="element_create">
+      <return type="egueb.dom.node" transfer="full"/>
+      <arg name="name" type="egueb.dom.string" direction="in" transfer="full"/>
+      <arg name="err" type="eina.error" direction="in" transfer="full"/>
+    </method>
+    <method name="element_get">
+      <return type="egueb.dom.node" transfer="full"/>
+    </method>
+    <method name="uri_get">
+      <return type="egueb.dom.string" transfer="full"/>
+    </method>
+    <method name="uri_set">
+      <arg name="uri" type="egueb.dom.string" direction="in" transfer="full"/>
+    </method>
+    <method name="document_fragment_create">
+      <return type="egueb.dom.node" transfer="full"/>
+    </method>
+    <method name="element_set">
+      <arg name="element" type="egueb.dom.node" direction="in" transfer="full"/>
+    </method>
+    <method name="element_get_by_id">
+      <return type="egueb.dom.node" transfer="full"/>
+      <arg name="id" type="egueb.dom.string" direction="in" transfer="full"/>
+      <arg name="err" type="eina.error" direction="in" transfer="full"/>
+    </method>
+    <method name="element_get_by_iri">
+      <return type="egueb.dom.node" transfer="full"/>
+      <arg name="id" type="egueb.dom.string" direction="in" transfer="full"/>
+      <arg name="err" type="eina.error" direction="in" transfer="full"/>
+    </method>
+    <method name="node_adopt">
+      <return type="egueb.dom.node" transfer="full"/>
+      <arg name="adopted" type="egueb.dom.node" direction="in" transfer="full"/>
+      <arg name="err" type="eina.error" direction="in" transfer="full"/>
+    </method>
+    <method name="process"/>
+    <method name="is_processing">
+      <return type="bool" transfer="full"/>
+    </method>
+    <method name="needs_process">
+      <return type="bool" transfer="full"/>
+    </method>
+    <method name="process_queue_clear"/>
+  </object>
+  <object name="egueb.dom.text" inherits="egueb.dom.character.data">
+    <ctor name="new"/>
+  </object>
+  <object name="egueb.dom.cdata.section" inherits="egueb.dom.character.data">
+    <ctor name="new"/>
+  </object>
+  <callback name="egueb.dom.scripter.descriptor.new"/>
+  <callback name="egueb.dom.scripter.descriptor.free"/>
+  <callback name="egueb.dom.scripter.descriptor.load"/>
+  <callback name="egueb.dom.scripter.descriptor.run"/>
+  <callback name="egueb.dom.scripter.descriptor.global.add"/>
+  <struct name="egueb.dom.scripter.descriptor">
+    <field name="new" type="egueb.dom.scripter.descriptor.new"/>
+    <field name="free" type="egueb.dom.scripter.descriptor.free"/>
+    <field name="load" type="egueb.dom.scripter.descriptor.load"/>
+    <field name="run" type="egueb.dom.scripter.descriptor.run"/>
+    <field name="global_add" type="egueb.dom.scripter.descriptor.global.add"/>
+  </struct>
+  <object name="egueb.dom.scripter">
+    <ctor name="new">
+      <arg name="d" type="egueb.dom.scripter.descriptor" direction="in" transfer="none"/>
+    </ctor>
+    <method name="data_get">
+      <return type="pointer" transfer="full"/>
+    </method>
+    <method name="gloabal_add">
+      <return type="bool" transfer="full"/>
+      <arg name="name" type="egueb.dom.string" direction="in" transfer="full"/>
+      <arg name="obj" type="pointer" direction="in" transfer="full"/>
+      <arg name="type" type="string" direction="in" transfer="none"/>
+    </method>
+    <method name="load">
+      <return type="bool" transfer="full"/>
+      <arg name="s" type="egueb.dom.string" direction="in" transfer="full"/>
+    </method>
+    <method name="run">
+      <return type="bool" transfer="full"/>
+      <arg name="obj" type="pointer" direction="in" transfer="full"/>
+      <arg name="ctx" type="egueb.dom.node" direction="in" transfer="full"/>
+    </method>
+  </object>
+  <callback name="egueb.dom.event.listener"/>
+  <enum name="egueb.dom.event.phase">
+    <value name="capturing"/>
+    <value name="at_target"/>
+    <value name="bubbling"/>
+    <value name="egueb_dom_event_phases"/>
+  </enum>
+  <enum name="egueb.dom.event.direction">
+    <value name="capture_bubble"/>
+    <value name="bubble_capture"/>
+  </enum>
+  <object name="egueb.dom.event">
+    <method name="init">
+      <arg name="type" type="egueb.dom.string" direction="in" transfer="full"/>
+      <arg name="bubbleable" type="bool" direction="in" transfer="full"/>
+      <arg name="capturable" type="bool" direction="in" transfer="full"/>
+      <arg name="cancelable" type="bool" direction="in" transfer="full"/>
+      <arg name="direction" type="egueb.dom.event.direction" direction="in" transfer="full"/>
+    </method>
+    <unref/>
+    <ref/>
+    <method name="type_get">
+      <return type="egueb.dom.string" transfer="full"/>
+    </method>
+    <method name="phase_get">
+      <return type="egueb.dom.event.phase" transfer="full"/>
+    </method>
+    <method name="target_get">
+      <return type="egueb.dom.node" transfer="full"/>
+    </method>
+    <method name="target_current_get">
+      <return type="egueb.dom.node" transfer="full"/>
+    </method>
+    <method name="relative_get">
+      <return type="egueb.dom.node" transfer="full"/>
+    </method>
+    <method name="stop_propagation"/>
+  </object>
+</lib>

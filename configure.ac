@@ -235,8 +235,14 @@ EGUEB_CSS_CFLAGS="${EGUEB_CSS_CFLAGS} ${EGUEB_CFLAGS}"
 
 ### Checks for linker characteristics
 
-
 ### Checks for library functions
+
+# Check where the ender data should be installed
+PKG_CHECK_EXISTS([ender], [have_ender="yes"], [have_ender="no"])
+if test "x${have_ender}" = "xyes"; then
+   ENDER_DATADIR=$($PKG_CONFIG --variable=pkgdatadir ender)
+   AC_SUBST([ENDER_DATADIR])
+fi
 
 # Unit tests, coverage and benchmarking
 ENS_CHECK_COVERAGE(yes, [enable_coverage="yes"], [enable_coverage="no"])
