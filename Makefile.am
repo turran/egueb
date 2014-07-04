@@ -37,10 +37,6 @@ GENERATED_FILES =
 
 include src/lib/base/Makefile.mk
 
-if BUILD_EGUEB_CSS
-include src/lib/css/Makefile.mk
-endif
-
 if BUILD_EGUEB_DOM
 include src/lib/dom/Makefile.mk
 include src/lib/dom/parser/Makefile.mk
@@ -48,6 +44,11 @@ if BUILD_EGUEB_DOM_SCRIPTER_NEKO
 include src/lib/dom/scripter/neko/Makefile.mk
 endif
 endif
+
+if BUILD_EGUEB_CSS
+include src/lib/css/Makefile.mk
+endif
+
 
 if BUILD_EGUEB_SMIL
 include src/lib/smil/Makefile.mk
