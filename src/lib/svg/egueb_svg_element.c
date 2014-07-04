@@ -62,111 +62,138 @@
 /*----------------------------------------------------------------------------*
  *                              Event handlers                                *
  *----------------------------------------------------------------------------*/
-#if 0
-static void _egueb_svg_element_event_handler(Egueb_Svg_Element *thiz, const char *script,
-		Ender_Value *v)
+static void _egueb_svg_element_event_handler(Egueb_Dom_Event *ev,
+		Egueb_Svg_Element *thiz, Egueb_Dom_Node *attr,
+		Egueb_Dom_String **latest, void **obj)
 {
-	Egueb_Svg_Script_Provider *provider;
-	const char *content_script_type;
+	Egueb_Dom_String *curr = NULL;
+	Eina_Bool changed = EINA_FALSE;
 
-	if (!script) return;
-	if (!thiz->topmost) return;
-
-	egueb_svg_element_svg_content_script_type_get(thiz->topmost, &content_script_type);
-	provider = egueb_svg_element_svg_script_provider_get(thiz->topmost, content_script_type);
-	if (!provider) return;
-	/* call the script with the passed in arg */
-	printf("calling with %s\n", script);
-	egueb_svg_script_provider_run(provider, script, v);
-}
-
-static void _egueb_svg_element_onfocusin_call(Ender_Element *e,
-		const char *event_name, void *event_data, void *data)
-{
-	Egueb_Svg_Element *thiz = data;
-	_egueb_svg_element_event_handler(thiz, thiz->onfocusin, NULL);
-}
-
-static void _egueb_svg_element_onfocusout_call(Ender_Element *e,
-		const char *event_name, void *event_data, void *data)
-{
-	Egueb_Svg_Element *thiz = data;
-	_egueb_svg_element_event_handler(thiz, thiz->onfocusout, NULL);
-}
-
-static void _egueb_svg_element_onactivate_call(Ender_Element *e,
-		const char *event_name, void *event_data, void *data)
-{
-	Egueb_Svg_Element *thiz = data;
-	_egueb_svg_element_event_handler(thiz, thiz->onactivate, NULL);
-}
-
-static void _egueb_svg_element_mouse_event_call(Egueb_Svg_Element *thiz,
-		void *event_data, const char *script)
-{
-	Ender_Value *v;
-	Ender_Descriptor *d;
-	Ender_Container *c;
-
-	if (!script) return;
-
-	d = ender_descriptor_find("MouseEvent");
-	if (!d)
-	{
-		ERR("'MouseEvent' not defined");
+	/* if we are not at target, do nothing */
+	if (egueb_dom_event_phase_get(ev) != EGUEB_DOM_EVENT_PHASE_AT_TARGET)
 		return;
+
+	egueb_dom_attr_final_get(attr, &curr);
+	if (!egueb_dom_string_is_equal(curr, *latest))
+	{
+		changed = EINA_TRUE;
+		/* update the latest */
+		*latest = egueb_dom_string_ref(curr);
 	}
 
-	c = ender_container_struct_new(d);
-	v = ender_value_new_container_from(c);
-	ender_value_struct_set(v, event_data);
+	/* request the scripter in case we dont have one */
+	if (!thiz->scripter && curr)
+	{
+		Egueb_Dom_Event *sev;
+		Egueb_Dom_String *type;
 
-	_egueb_svg_element_event_handler(thiz, script, v);
-	ender_value_unref(v);
+		/* TODO check the attribute */
+		type = egueb_dom_string_new_with_string("application/ecmascript");
+		sev = egueb_dom_event_script_new(type);
+		egueb_dom_node_event_dispatch(EGUEB_DOM_NODE(thiz),
+				egueb_dom_event_ref(sev), NULL, NULL);
+		/* instantiate the vm */
+		thiz->scripter = egueb_dom_event_script_scripter_get(sev);
+		egueb_dom_event_unref(sev);
+	}
+
+	if (thiz->scripter)
+	{
+		/* TODO check if we do have a new script and we had an object */
+		if (changed)
+		{
+			/* TODO free it */
+			if (*obj)
+			{
+				*obj = NULL;
+			}
+			if (curr)
+				egueb_dom_scripter_load(thiz->scripter, curr, obj);
+		}
+		/* TODO pass the context (thiz, evt, etc) */
+		if (*obj)
+			egueb_dom_scripter_run(thiz->scripter, *obj, NULL);
+	}
+
+	egueb_dom_string_unref(curr);
+	/* call the script with the passed in arg */
 }
 
-static void _egueb_svg_element_onclick_call(Ender_Element *e,
-		const char *event_name, void *event_data, void *data)
+#if 0
+static void _egueb_svg_element_onfocusin_cb(Egueb_Dom_Event *e,
+		void *data)
 {
 	Egueb_Svg_Element *thiz = data;
-	_egueb_svg_element_mouse_event_call(thiz, event_data, thiz->onclick);
 }
 
-static void _egueb_svg_element_onmousedown_call(Ender_Element *e,
-		const char *event_name, void *event_data, void *data)
+static void _egueb_svg_element_onfocusout_cb(Egueb_Dom_Event *e,
+		void *data)
 {
 	Egueb_Svg_Element *thiz = data;
-	_egueb_svg_element_mouse_event_call(thiz, event_data, thiz->onmousedown);
 }
 
-static void _egueb_svg_element_onmouseup_call(Ender_Element *e,
-		const char *event_name, void *event_data, void *data)
+static void _egueb_svg_element_onactivate_cb(Egueb_Dom_Event *e,
+		void *data)
 {
 	Egueb_Svg_Element *thiz = data;
-	_egueb_svg_element_mouse_event_call(thiz, event_data, thiz->onmouseup);
 }
+#endif
 
-static void _egueb_svg_element_onmouseover_call(Ender_Element *e,
-		const char *event_name, void *event_data, void *data)
+static void _egueb_svg_element_onclick_cb(Egueb_Dom_Event *e,
+		void *data)
 {
 	Egueb_Svg_Element *thiz = data;
-	_egueb_svg_element_mouse_event_call(thiz, event_data, thiz->onmouseover);
+
+	_egueb_svg_element_event_handler(e, thiz, thiz->onclick,
+		&thiz->onclick_last, &thiz->onclick_obj);
 }
 
-static void _egueb_svg_element_onmousemove_call(Ender_Element *e,
-		const char *event_name, void *event_data, void *data)
+static void _egueb_svg_element_onmousedown_cb(Egueb_Dom_Event *e,
+		void *data)
 {
 	Egueb_Svg_Element *thiz = data;
-	_egueb_svg_element_mouse_event_call(thiz, event_data, thiz->onmousemove);
+
+	_egueb_svg_element_event_handler(e, thiz, thiz->onmousedown,
+		&thiz->onmousedown_last, &thiz->onmousedown_obj);
 }
 
-static void _egueb_svg_element_onmouseout_call(Ender_Element *e,
-		const char *event_name, void *event_data, void *data)
+static void _egueb_svg_element_onmouseup_cb(Egueb_Dom_Event *e,
+		void *data)
 {
 	Egueb_Svg_Element *thiz = data;
-	_egueb_svg_element_mouse_event_call(thiz, event_data, thiz->onmouseout);
+
+	_egueb_svg_element_event_handler(e, thiz, thiz->onmouseup,
+		&thiz->onmouseup_last, &thiz->onmouseup_obj);
 }
 
+static void _egueb_svg_element_onmousemove_cb(Egueb_Dom_Event *e,
+		void *data)
+{
+	Egueb_Svg_Element *thiz = data;
+
+	_egueb_svg_element_event_handler(e, thiz, thiz->onmousemove,
+		&thiz->onmousemove_last, &thiz->onmousemove_obj);
+}
+
+static void _egueb_svg_element_onmouseover_cb(Egueb_Dom_Event *e,
+		void *data)
+{
+	Egueb_Svg_Element *thiz = data;
+
+	_egueb_svg_element_event_handler(e, thiz, thiz->onmouseover,
+		&thiz->onmouseover_last, &thiz->onmouseover_obj);
+}
+
+static void _egueb_svg_element_onmouseout_cb(Egueb_Dom_Event *e,
+		void *data)
+{
+	Egueb_Svg_Element *thiz = data;
+
+	_egueb_svg_element_event_handler(e, thiz, thiz->onmouseout,
+		&thiz->onmouseout_last, &thiz->onmouseout_obj);
+}
+
+#if 0
 /* called on every child of an element, whenever the element is being freed */
 static Eina_Bool _egueb_svg_element_child_free_cb(Egueb_Dom_Tag *t, Egueb_Dom_Tag *child,
 		void *data)
@@ -287,161 +314,6 @@ static void _egueb_svg_element_onactivate_get(Egueb_Dom_Tag *t, const char **v)
 	*v = thiz->onactivate;
 }
 
-static void _egueb_svg_element_onclick_set(Egueb_Dom_Tag *t, const char *v)
-{
-	Egueb_Svg_Element *thiz;
-
-	thiz = EGUEB_SVG_ELEMENT(t);
-	if (thiz->onclick)
-	{
-		free(thiz->onclick);
-		thiz->onclick = NULL;
-	}
-
-	if (v)
-	{
-		thiz->onclick = strdup(v);
-	}
-}
-
-static void _egueb_svg_element_onclick_get(Egueb_Dom_Tag *t, const char **v)
-{
-	Egueb_Svg_Element *thiz;
-
-	if (!v) return;
-	thiz = EGUEB_SVG_ELEMENT(t);
-	*v = thiz->onclick;
-}
-
-static void _egueb_svg_element_onmousedown_set(Egueb_Dom_Tag *t, const char *v)
-{
-	Egueb_Svg_Element *thiz;
-
-	thiz = EGUEB_SVG_ELEMENT(t);
-	if (thiz->onmousedown)
-	{
-		free(thiz->onmousedown);
-		thiz->onmousedown = NULL;
-	}
-
-	if (v)
-	{
-		thiz->onmousedown = strdup(v);
-	}
-}
-
-static void _egueb_svg_element_onmousedown_get(Egueb_Dom_Tag *t, const char **v)
-{
-	Egueb_Svg_Element *thiz;
-
-	if (!v) return;
-	thiz = EGUEB_SVG_ELEMENT(t);
-	*v = thiz->onmousedown;
-}
-
-static void _egueb_svg_element_onmouseup_set(Egueb_Dom_Tag *t, const char *v)
-{
-	Egueb_Svg_Element *thiz;
-
-	thiz = EGUEB_SVG_ELEMENT(t);
-	if (thiz->onmouseup)
-	{
-		free(thiz->onmouseup);
-		thiz->onmouseup = NULL;
-	}
-
-	if (v)
-	{
-		thiz->onmouseup = strdup(v);
-	}
-}
-
-static void _egueb_svg_element_onmouseup_get(Egueb_Dom_Tag *t, const char **v)
-{
-	Egueb_Svg_Element *thiz;
-
-	if (!v) return;
-	thiz = EGUEB_SVG_ELEMENT(t);
-	*v = thiz->onmouseup;
-}
-
-static void _egueb_svg_element_onmouseover_set(Egueb_Dom_Tag *t, const char *v)
-{
-	Egueb_Svg_Element *thiz;
-
-	thiz = EGUEB_SVG_ELEMENT(t);
-	if (thiz->onmouseover)
-	{
-		free(thiz->onmouseover);
-		thiz->onmouseover = NULL;
-	}
-
-	if (v)
-	{
-		thiz->onmouseover = strdup(v);
-	}
-}
-
-static void _egueb_svg_element_onmouseover_get(Egueb_Dom_Tag *t, const char **v)
-{
-	Egueb_Svg_Element *thiz;
-
-	if (!v) return;
-	thiz = EGUEB_SVG_ELEMENT(t);
-	*v = thiz->onmouseover;
-}
-
-static void _egueb_svg_element_onmousemove_set(Egueb_Dom_Tag *t, const char *v)
-{
-	Egueb_Svg_Element *thiz;
-
-	thiz = EGUEB_SVG_ELEMENT(t);
-	if (thiz->onmousemove)
-	{
-		free(thiz->onmousemove);
-		thiz->onmousemove = NULL;
-	}
-
-	if (v)
-	{
-		thiz->onmousemove = strdup(v);
-	}
-}
-
-static void _egueb_svg_element_onmousemove_get(Egueb_Dom_Tag *t, const char **v)
-{
-	Egueb_Svg_Element *thiz;
-
-	if (!v) return;
-	thiz = EGUEB_SVG_ELEMENT(t);
-	*v = thiz->onmousemove;
-}
-
-static void _egueb_svg_element_onmouseout_set(Egueb_Dom_Tag *t, const char *v)
-{
-	Egueb_Svg_Element *thiz;
-
-	thiz = EGUEB_SVG_ELEMENT(t);
-	if (thiz->onmouseout)
-	{
-		free(thiz->onmouseout);
-		thiz->onmouseout = NULL;
-	}
-
-	if (v)
-	{
-		thiz->onmouseout = strdup(v);
-	}
-}
-
-static void _egueb_svg_element_onmouseout_get(Egueb_Dom_Tag *t, const char **v)
-{
-	Egueb_Svg_Element *thiz;
-
-	if (!v) return;
-	thiz = EGUEB_SVG_ELEMENT(t);
-	*v = thiz->onmouseout;
-}
 #endif
 
 static void _egueb_svg_element_geometry_process(
@@ -695,6 +567,25 @@ static void _egueb_svg_element_instance_init(void *o)
 			egueb_dom_string_ref(EGUEB_SVG_VISIBILITY),
 			EGUEB_SVG_VISIBILITY_VISIBLE, EINA_TRUE, EINA_TRUE,
 			EINA_TRUE);
+	/* event attributes */
+	thiz->onclick = egueb_dom_attr_string_new(
+			egueb_dom_string_ref(EGUEB_SVG_NAME_ONCLICK), NULL,
+			EINA_FALSE, EINA_FALSE, EINA_FALSE);
+	thiz->onmousedown = egueb_dom_attr_string_new(
+			egueb_dom_string_ref(EGUEB_SVG_NAME_ONMOUSEDOWN), NULL,
+			EINA_FALSE, EINA_FALSE, EINA_FALSE);
+	thiz->onmouseup = egueb_dom_attr_string_new(
+			egueb_dom_string_ref(EGUEB_SVG_NAME_ONMOUSEUP), NULL,
+			EINA_FALSE, EINA_FALSE, EINA_FALSE);
+	thiz->onmouseover = egueb_dom_attr_string_new(
+			egueb_dom_string_ref(EGUEB_SVG_NAME_ONMOUSEOVER), NULL,
+			EINA_FALSE, EINA_FALSE, EINA_FALSE);
+	thiz->onmousemove = egueb_dom_attr_string_new(
+			egueb_dom_string_ref(EGUEB_SVG_NAME_ONMOUSEMOVE), NULL,
+			EINA_FALSE, EINA_FALSE, EINA_FALSE);
+	thiz->onmouseout = egueb_dom_attr_string_new(
+			egueb_dom_string_ref(EGUEB_SVG_NAME_ONMOUSEOUT), NULL,
+			EINA_FALSE, EINA_FALSE, EINA_FALSE);
 
 	n = EGUEB_DOM_NODE(o);
 
@@ -720,6 +611,33 @@ static void _egueb_svg_element_instance_init(void *o)
 	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->stroke_width), NULL);
 	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->text_anchor), NULL);
 	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->visibility), NULL);
+	/* event attributes */
+	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->onclick), NULL);
+	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->onmousedown), NULL);
+	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->onmouseup), NULL);
+	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->onmouseover), NULL);
+	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->onmousemove), NULL);
+	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->onmouseout), NULL);
+
+	/* register the dom events */
+#if 0
+	egueb_dom_node_event_listener_add(n, "focusin", _egueb_svg_element_onfocusin_cb, thiz);
+	egueb_dom_node_event_listener_add(n, "focusout", _egueb_svg_element_onfocusout_cb, thiz);
+	egueb_dom_node_event_listener_add(n, "activate", _egueb_svg_element_onactivate_cb, thiz);
+#endif
+	egueb_dom_node_event_listener_add(n, EGUEB_DOM_EVENT_MOUSE_CLICK,
+			_egueb_svg_element_onclick_cb, EINA_TRUE, thiz);
+	egueb_dom_node_event_listener_add(n, EGUEB_DOM_EVENT_MOUSE_DOWN,
+			_egueb_svg_element_onmousedown_cb, EINA_TRUE, thiz);
+	egueb_dom_node_event_listener_add(n, EGUEB_DOM_EVENT_MOUSE_UP,
+			_egueb_svg_element_onmouseup_cb, EINA_TRUE, thiz);
+	egueb_dom_node_event_listener_add(n, EGUEB_DOM_EVENT_MOUSE_OVER,
+			_egueb_svg_element_onmouseover_cb, EINA_TRUE, thiz);
+	egueb_dom_node_event_listener_add(n, EGUEB_DOM_EVENT_MOUSE_MOVE,
+			_egueb_svg_element_onmousemove_cb, EINA_TRUE, thiz);
+	egueb_dom_node_event_listener_add(n, EGUEB_DOM_EVENT_MOUSE_OUT,
+			_egueb_svg_element_onmouseout_cb, EINA_TRUE, thiz);
+
 	/* our private stuff */
 	enesim_matrix_identity(&thiz->transform);
 }
@@ -752,6 +670,13 @@ static void _egueb_svg_element_instance_deinit(void *o)
 	egueb_dom_node_unref(thiz->stroke_width);
 	egueb_dom_node_unref(thiz->text_anchor);
 	egueb_dom_node_unref(thiz->visibility);
+	/* the event attributes */
+	egueb_dom_node_unref(thiz->onclick);
+	egueb_dom_node_unref(thiz->onmousedown);
+	egueb_dom_node_unref(thiz->onmouseup);
+	egueb_dom_node_unref(thiz->onmouseover);
+	egueb_dom_node_unref(thiz->onmousemove);
+	egueb_dom_node_unref(thiz->onmouseout);
 	/* remove the weak references */
 	if (thiz->geometry_relative)
 	{
@@ -1204,17 +1129,6 @@ void egueb_svg_element_initialize(Ender_Element *e)
 
 	/* register the mutation events */
 	ender_event_listener_add(e, "Mutation", _egueb_svg_element_mutation_cb, thiz);
-	/* register the dom events */
-	ender_event_listener_add(e, "focusin", _egueb_svg_element_onfocusin_call, thiz);
-	ender_event_listener_add(e, "focusout", _egueb_svg_element_onfocusout_call, thiz);
-	ender_event_listener_add(e, "activate", _egueb_svg_element_onactivate_call, thiz);
-	ender_event_listener_add(e, "click", _egueb_svg_element_onclick_call, thiz);
-	ender_event_listener_add(e, "mousedown", _egueb_svg_element_onmousedown_call, thiz);
-	ender_event_listener_add(e, "mouseup", _egueb_svg_element_onmouseup_call, thiz);
-	ender_event_listener_add(e, "mouseover", _egueb_svg_element_onmouseover_call, thiz);
-	ender_event_listener_add(e, "mousemove", _egueb_svg_element_onmousemove_call, thiz);
-	ender_event_listener_add(e, "mouseout", _egueb_svg_element_onmouseout_call, thiz);
-
 	if (thiz->descriptor.initialize)
 		thiz->descriptor.initialize(e);
 }

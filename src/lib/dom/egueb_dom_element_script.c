@@ -26,7 +26,9 @@
 #include "egueb_dom_event_mutation.h"
 #include "egueb_dom_event_script.h"
 #include "egueb_dom_element_script.h"
+#include "egueb_dom_character_data.h"
 #include "egueb_dom_element_private.h"
+#include "egueb_dom_string_private.h"
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
@@ -90,7 +92,7 @@ not_us:
 static Eina_Bool _egueb_dom_element_script_process(Egueb_Dom_Element *e)
 {
 	Egueb_Dom_Element_Script *thiz;
-	Egueb_Dom_String *content_type;
+	Egueb_Dom_String *content_type = NULL;
 	Eina_Bool content_type_changed = EINA_FALSE;
 
 	thiz = EGUEB_DOM_ELEMENT_SCRIPT(e);
@@ -113,12 +115,28 @@ static Eina_Bool _egueb_dom_element_script_process(Egueb_Dom_Element *e)
 
 		ERR("Processing the script");
 		/* TODO check the attribute */
-		type = egueb_dom_string_new_with_string("javascript");
+		type = egueb_dom_string_new_with_string("application/ecmascript");
 		ev = egueb_dom_event_script_new(type);
 		egueb_dom_node_event_dispatch(EGUEB_DOM_NODE(e), egueb_dom_event_ref(ev), NULL, NULL);
 		/* instantiate the vm */
 		thiz->scripter = egueb_dom_event_script_scripter_get(ev);
 		egueb_dom_event_unref(ev);
+
+		if (thiz->scripter)
+		{
+			Egueb_Dom_Node *cdata;
+			Egueb_Dom_String *cdata_txt;
+			void *obj = NULL;
+
+			cdata = egueb_dom_node_child_first_get(EGUEB_DOM_NODE(e));
+			cdata_txt = egueb_dom_character_data_data_get(cdata);
+			/* compile the script */
+			egueb_dom_scripter_load(thiz->scripter, cdata_txt, &obj);
+			/* TODO add the global variables */
+			/* run it */
+			egueb_dom_scripter_run(thiz->scripter, obj, NULL);
+			egueb_dom_string_unref(cdata_txt);
+		}
 	}
 
 	thiz->cdata_changed = EINA_FALSE;

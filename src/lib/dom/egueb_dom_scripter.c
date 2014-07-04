@@ -61,26 +61,27 @@ EAPI void * egueb_dom_scripter_data_get(Egueb_Dom_Scripter *thiz)
 	return thiz->prv;
 }
 
-EAPI Eina_Bool egueb_dom_scripter_load(Egueb_Dom_Scripter *thiz, Egueb_Dom_String *s)
+EAPI Eina_Bool egueb_dom_scripter_gloabal_add(Egueb_Dom_Scripter *thiz, Egueb_Dom_String *name, void *obj, const char *type)
+{
+	if (!thiz) return EINA_FALSE;
+	if (!name) return EINA_FALSE;
+	if (!thiz->d->global_add) return EINA_FALSE;
+
+	return thiz->d->global_add(thiz->prv, name, obj, type);
+}
+
+EAPI Eina_Bool egueb_dom_scripter_load(Egueb_Dom_Scripter *thiz, Egueb_Dom_String *s, void **obj)
 {
 	if (!thiz) return EINA_FALSE;
 	if (!thiz->d->load) return EINA_FALSE;
 
-	return thiz->d->load(thiz->prv, s);
+	return thiz->d->load(thiz->prv, s, obj);
 }
 
-EAPI Eina_Bool egueb_dom_scripter_run(Egueb_Dom_Scripter *thiz)
+EAPI Eina_Bool egueb_dom_scripter_run(Egueb_Dom_Scripter *thiz, void *obj, Egueb_Dom_Node *ctx)
 {
 	if (!thiz) return EINA_FALSE;
 	if (!thiz->d->run) return EINA_FALSE;
 
-	return thiz->d->run(thiz->prv);
-}
-
-EAPI Eina_Bool egueb_dom_scripter_call(Egueb_Dom_Scripter *thiz, Egueb_Dom_String *s)
-{
-	if (!thiz) return EINA_FALSE;
-	if (!thiz->d->call) return EINA_FALSE;
-
-	return thiz->d->call(thiz->prv, s);
+	return thiz->d->run(thiz->prv, obj, ctx);
 }

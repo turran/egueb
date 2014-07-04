@@ -19,6 +19,7 @@
 
 #include "egueb_dom_string.h"
 #include "egueb_dom_main.h"
+#include "egueb_dom_node.h"
 #include "egueb_dom_scripter.h"
 
 #include <neko.h>
@@ -99,6 +100,7 @@ static void _execute(value module, value neko_element)
 /*----------------------------------------------------------------------------*
  *                          The scriptor interface                            *
  *----------------------------------------------------------------------------*/
+#if 0
 static void * _egueb_dom_scripter_neko_new(void)
 {
 	Egueb_Dom_Scripter_Neko *thiz;
@@ -239,6 +241,7 @@ static Egueb_Dom_Scripter_Descriptor _descriptor = {
 	/* .run  = */ _egueb_dom_scripter_neko_run,
 	/* .call = */ _egueb_dom_scripter_neko_call,
 };
+#endif
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/
@@ -260,5 +263,8 @@ EAPI void egueb_dom_scripter_neko_shutdown(void)
 
 EAPI Egueb_Dom_Scripter * egueb_dom_scripter_neko_new(void)
 {
+#if 0
 	return egueb_dom_scripter_new(&_descriptor);
+#endif
+	return NULL;
 }

@@ -102,6 +102,13 @@ EAPI extern Egueb_Dom_String *EGUEB_SVG_Y;
 EAPI extern Egueb_Dom_String *EGUEB_SVG_Y1;
 EAPI extern Egueb_Dom_String *EGUEB_SVG_Y2;
 
+EAPI extern Egueb_Dom_String *EGUEB_SVG_NAME_ONCLICK;
+EAPI extern Egueb_Dom_String *EGUEB_SVG_NAME_ONMOUSEDOWN;
+EAPI extern Egueb_Dom_String *EGUEB_SVG_NAME_ONMOUSEUP;
+EAPI extern Egueb_Dom_String *EGUEB_SVG_NAME_ONMOUSEOVER;
+EAPI extern Egueb_Dom_String *EGUEB_SVG_NAME_ONMOUSEMOVE;
+EAPI extern Egueb_Dom_String *EGUEB_SVG_NAME_ONMOUSEOUT;
+
 /**
  * @}
  */

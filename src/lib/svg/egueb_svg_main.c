@@ -133,6 +133,12 @@ static void _egueb_svg_strings_init(void)
 	EGUEB_SVG_Y = egueb_dom_string_new_with_string("y");
 	EGUEB_SVG_Y1 = egueb_dom_string_new_with_string("y1");
 	EGUEB_SVG_Y2 = egueb_dom_string_new_with_string("y2");
+	EGUEB_SVG_NAME_ONCLICK = egueb_dom_string_new_with_string("onclick");
+	EGUEB_SVG_NAME_ONMOUSEDOWN = egueb_dom_string_new_with_string("onmousedown");
+	EGUEB_SVG_NAME_ONMOUSEUP = egueb_dom_string_new_with_string("onmouseup");
+	EGUEB_SVG_NAME_ONMOUSEOVER = egueb_dom_string_new_with_string("onmouseover");
+	EGUEB_SVG_NAME_ONMOUSEMOVE = egueb_dom_string_new_with_string("onmousemove");
+	EGUEB_SVG_NAME_ONMOUSEOUT = egueb_dom_string_new_with_string("onmouseout");
 }
 
 static void _egueb_svg_strings_shutdown(void)
@@ -213,6 +219,13 @@ static void _egueb_svg_strings_shutdown(void)
 	egueb_dom_string_unref(EGUEB_SVG_Y);
 	egueb_dom_string_unref(EGUEB_SVG_Y1);
 	egueb_dom_string_unref(EGUEB_SVG_Y2);
+	/* event attributes */
+	egueb_dom_string_unref(EGUEB_SVG_NAME_ONCLICK);
+	egueb_dom_string_unref(EGUEB_SVG_NAME_ONMOUSEDOWN);
+	egueb_dom_string_unref(EGUEB_SVG_NAME_ONMOUSEUP);
+	egueb_dom_string_unref(EGUEB_SVG_NAME_ONMOUSEOVER);
+	egueb_dom_string_unref(EGUEB_SVG_NAME_ONMOUSEMOVE);
+	egueb_dom_string_unref(EGUEB_SVG_NAME_ONMOUSEOUT);
 }
 
 static Eina_Bool _egueb_svg_dependencies_init(void)
@@ -331,6 +344,13 @@ Egueb_Dom_String *EGUEB_SVG_X2;
 Egueb_Dom_String *EGUEB_SVG_Y;
 Egueb_Dom_String *EGUEB_SVG_Y1;
 Egueb_Dom_String *EGUEB_SVG_Y2;
+
+Egueb_Dom_String *EGUEB_SVG_NAME_ONCLICK;
+Egueb_Dom_String *EGUEB_SVG_NAME_ONMOUSEDOWN;
+Egueb_Dom_String *EGUEB_SVG_NAME_ONMOUSEUP;
+Egueb_Dom_String *EGUEB_SVG_NAME_ONMOUSEOVER;
+Egueb_Dom_String *EGUEB_SVG_NAME_ONMOUSEMOVE;
+Egueb_Dom_String *EGUEB_SVG_NAME_ONMOUSEOUT;
 
 /**
  * Initialize the egueb_svg library

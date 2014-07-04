@@ -115,6 +115,26 @@ typedef struct _Egueb_Svg_Element
 	Egueb_Dom_Node *stroke_line_cap;
 	Egueb_Dom_Node *text_anchor;
 	Egueb_Dom_Node *visibility;
+	/* event attributes */
+	Egueb_Dom_Scripter *scripter;
+	Egueb_Dom_Node *onclick;
+	Egueb_Dom_String *onclick_last;
+	void *onclick_obj;
+	Egueb_Dom_Node *onmousedown;
+	Egueb_Dom_String *onmousedown_last;
+	void *onmousedown_obj;
+	Egueb_Dom_Node *onmouseup;
+	Egueb_Dom_String *onmouseup_last;
+	void *onmouseup_obj;
+	Egueb_Dom_Node *onmouseover;
+	Egueb_Dom_String *onmouseover_last;
+	void *onmouseover_obj;
+	Egueb_Dom_Node *onmousemove;
+	Egueb_Dom_String *onmousemove_last;
+	void *onmousemove_obj;
+	Egueb_Dom_Node *onmouseout;
+	Egueb_Dom_String *onmouseout_last;
+	void *onmouseout_obj;
 	/* protected */
 	/* the current viewbox ?? */
 	Egueb_Svg_Rect viewbox;
