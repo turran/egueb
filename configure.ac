@@ -200,14 +200,6 @@ AM_CONDITIONAL(BUILD_EGUEB_SVG, [test "x${want_egueb_svg}" = "xyes"])
 AM_CONDITIONAL(BUILD_EGUEB_SVG_VIDEO_GSTREAMER, [test "x${have_gstreamer}" = "xyes"])
 
 ## Scripter
-have_neko=
-ENS_CHECK_NEKO([have_neko="yes"],[have_neko="no"])
-if test "x${have_neko}" = "xyes" ; then
-  AC_DEFINE(BUILD_EGUEB_DOM_SCRIPTER_NEKO, [1], [Neko scripting support])
-fi
-AM_CONDITIONAL(BUILD_EGUEB_DOM_SCRIPTER_NEKO, [test "x${have_neko}" = "xyes"])
-
-
 if test "x${have_v8}" = "xyes" ; then
   AC_DEFINE(BUILD_EGUEB_SVG_SCRIPTOR_V8, [1], [JS Scripting V8 Support])
 fi
@@ -278,7 +270,6 @@ echo "  Video support:"
 echo "    GStreamer...............................: ${have_gstreamer}"
 echo "  Scripting support:"
 echo "    V8......................................: ${have_v8}"
-echo "    neko....................................: ${have_neko}"
 echo
 echo "Installation Path...........................: ${prefix}"
 echo
