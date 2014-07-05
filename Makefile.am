@@ -41,7 +41,6 @@ if BUILD_EGUEB_DOM
 include src/lib/dom/Makefile.mk
 include src/lib/dom/parser/Makefile.mk
 endif
-endif
 
 if BUILD_EGUEB_CSS
 include src/lib/css/Makefile.mk
