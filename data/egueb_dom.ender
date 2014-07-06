@@ -472,6 +472,50 @@
   <object name="egueb.dom.cdata.section" inherits="egueb.dom.character.data">
     <ctor name="new"/>
   </object>
+  <callback name="egueb.dom.event.listener"/>
+  <enum name="egueb.dom.event.phase">
+    <value name="capturing"/>
+    <value name="at_target"/>
+    <value name="bubbling"/>
+    <value name="egueb_dom_event_phases"/>
+  </enum>
+  <enum name="egueb.dom.event.direction">
+    <value name="capture_bubble"/>
+    <value name="bubble_capture"/>
+  </enum>
+  <object name="egueb.dom.event">
+    <method name="init">
+      <arg name="type" type="egueb.dom.string" direction="in" transfer="full"/>
+      <arg name="bubbleable" type="bool" direction="in" transfer="full"/>
+      <arg name="capturable" type="bool" direction="in" transfer="full"/>
+      <arg name="cancelable" type="bool" direction="in" transfer="full"/>
+      <arg name="direction" type="egueb.dom.event.direction" direction="in" transfer="full"/>
+    </method>
+    <unref/>
+    <ref/>
+    <method name="target_current_get">
+      <return type="egueb.dom.node" transfer="full"/>
+    </method>
+    <method name="relative_get">
+      <return type="egueb.dom.node" transfer="full"/>
+    </method>
+    <method name="stop_propagation"/>
+    <prop name="type">
+      <getter>
+        <return type="egueb.dom.string" transfer="full"/>
+      </getter>
+    </prop>
+    <prop name="phase">
+      <getter>
+        <return type="egueb.dom.event.phase" transfer="full"/>
+      </getter>
+    </prop>
+    <prop name="target">
+      <getter>
+        <return type="egueb.dom.node" transfer="full"/>
+      </getter>
+    </prop>
+  </object>
   <callback name="egueb.dom.scripter.descriptor.new"/>
   <callback name="egueb.dom.scripter.descriptor.free"/>
   <callback name="egueb.dom.scripter.descriptor.load"/>
@@ -519,41 +563,5 @@
       <arg name="obj" type="pointer" direction="in" transfer="full"/>
       <arg name="e" type="egueb.dom.event" direction="in" transfer="full"/>
     </method>
-  </object>
-  <callback name="egueb.dom.event.listener"/>
-  <enum name="egueb.dom.event.phase">
-    <value name="capturing"/>
-    <value name="at_target"/>
-    <value name="bubbling"/>
-    <value name="egueb_dom_event_phases"/>
-  </enum>
-  <enum name="egueb.dom.event.direction">
-    <value name="capture_bubble"/>
-    <value name="bubble_capture"/>
-  </enum>
-  <object name="egueb.dom.event">
-    <method name="init">
-      <arg name="type" type="egueb.dom.string" direction="in" transfer="full"/>
-      <arg name="bubbleable" type="bool" direction="in" transfer="full"/>
-      <arg name="capturable" type="bool" direction="in" transfer="full"/>
-      <arg name="cancelable" type="bool" direction="in" transfer="full"/>
-      <arg name="direction" type="egueb.dom.event.direction" direction="in" transfer="full"/>
-    </method>
-    <unref/>
-    <ref/>
-    <method name="type_get">
-      <return type="egueb.dom.string" transfer="full"/>
-    </method>
-    <method name="phase_get">
-      <return type="egueb.dom.event.phase" transfer="full"/>
-    </method>
-    <prop name="target"/>
-    <method name="target_current_get">
-      <return type="egueb.dom.node" transfer="full"/>
-    </method>
-    <method name="relative_get">
-      <return type="egueb.dom.node" transfer="full"/>
-    </method>
-    <method name="stop_propagation"/>
   </object>
 </lib>

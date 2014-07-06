@@ -82,6 +82,12 @@ EAPI void egueb_dom_event_stop_propagation(Egueb_Dom_Event *thiz)
 	thiz->stopped = EINA_TRUE;
 }
 
+/**
+ * Get the phase of the event
+ * @prop{phase}
+ * @param[in] thiz The event to get the phase from
+ * @return The phase of the event
+ */
 EAPI Egueb_Dom_Event_Phase egueb_dom_event_phase_get(Egueb_Dom_Event *thiz)
 {
 	return thiz->phase;
@@ -151,6 +157,12 @@ EAPI Egueb_Dom_Event * egueb_dom_event_ref(Egueb_Dom_Event *thiz)
 	return thiz;
 }
 
+/**
+ * Get the name of the event
+ * @prop{type}
+ * @param[in] thiz The event to get the name from
+ * @return The name of the event
+ */
 EAPI Egueb_Dom_String * egueb_dom_event_type_get(Egueb_Dom_Event *thiz)
 {
 	if (!thiz) return NULL;
