@@ -46,6 +46,7 @@ typedef struct _Egueb_Dom_Element_Script
 	Egueb_Dom_Node *content_type;
 	Egueb_Dom_String *last_content_type;
 	Egueb_Dom_Scripter *scripter;
+	void *script;
 	Eina_Bool cdata_changed;
 } Egueb_Dom_Element_Script;
 
@@ -126,15 +127,14 @@ static Eina_Bool _egueb_dom_element_script_process(Egueb_Dom_Element *e)
 		{
 			Egueb_Dom_Node *cdata;
 			Egueb_Dom_String *cdata_txt;
-			void *obj = NULL;
 
 			cdata = egueb_dom_node_child_first_get(EGUEB_DOM_NODE(e));
 			cdata_txt = egueb_dom_character_data_data_get(cdata);
 			/* compile the script */
-			egueb_dom_scripter_load(thiz->scripter, cdata_txt, &obj);
+			egueb_dom_scripter_load(thiz->scripter, cdata_txt, &thiz->script);
 			/* TODO add the global variables */
 			/* run it */
-			egueb_dom_scripter_run(thiz->scripter, obj, NULL);
+			egueb_dom_scripter_script_run(thiz->scripter,thiz->script);
 			egueb_dom_string_unref(cdata_txt);
 		}
 	}
@@ -197,6 +197,10 @@ static void _egueb_dom_element_script_instance_deinit(void *o)
 	Egueb_Dom_Element_Script *thiz;
 
 	thiz = EGUEB_DOM_ELEMENT_SCRIPT(o);
+	if (thiz->scripter)
+	{
+		egueb_dom_scripter_script_free(thiz->scripter, thiz->script);
+	}
 	egueb_dom_node_unref(thiz->content_type);
 }
 /*============================================================================*

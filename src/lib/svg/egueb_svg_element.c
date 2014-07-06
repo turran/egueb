@@ -105,6 +105,7 @@ static void _egueb_svg_element_event_handler(Egueb_Dom_Event *ev,
 			/* TODO free it */
 			if (*obj)
 			{
+				egueb_dom_scripter_script_free(thiz->scripter, *obj);
 				*obj = NULL;
 			}
 			if (curr)
@@ -112,7 +113,9 @@ static void _egueb_svg_element_event_handler(Egueb_Dom_Event *ev,
 		}
 		/* TODO pass the context (thiz, evt, etc) */
 		if (*obj)
-			egueb_dom_scripter_run(thiz->scripter, *obj, NULL);
+		{
+			egueb_dom_scripter_script_run_listener(thiz->scripter, *obj, ev);
+		}
 	}
 
 	egueb_dom_string_unref(curr);
