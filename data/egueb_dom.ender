@@ -475,14 +475,20 @@
   <callback name="egueb.dom.scripter.descriptor.new"/>
   <callback name="egueb.dom.scripter.descriptor.free"/>
   <callback name="egueb.dom.scripter.descriptor.load"/>
-  <callback name="egueb.dom.scripter.descriptor.run"/>
   <callback name="egueb.dom.scripter.descriptor.global.add"/>
+  <callback name="egueb.dom.scripter.descriptor.global.clear"/>
+  <callback name="egueb.dom.scripter.descriptor.script.free"/>
+  <callback name="egueb.dom.scripter.descriptor.script.run"/>
+  <callback name="egueb.dom.scripter.descriptor.script.run.listener"/>
   <struct name="egueb.dom.scripter.descriptor">
     <field name="new" type="egueb.dom.scripter.descriptor.new"/>
     <field name="free" type="egueb.dom.scripter.descriptor.free"/>
     <field name="load" type="egueb.dom.scripter.descriptor.load"/>
-    <field name="run" type="egueb.dom.scripter.descriptor.run"/>
     <field name="global_add" type="egueb.dom.scripter.descriptor.global.add"/>
+    <field name="global_clear" type="egueb.dom.scripter.descriptor.global.clear"/>
+    <field name="script_free" type="egueb.dom.scripter.descriptor.script.free"/>
+    <field name="script_run" type="egueb.dom.scripter.descriptor.script.run"/>
+    <field name="script_run_listener" type="egueb.dom.scripter.descriptor.script.run.listener"/>
   </struct>
   <object name="egueb.dom.scripter">
     <ctor name="new">
@@ -491,20 +497,27 @@
     <method name="data_get">
       <return type="pointer" transfer="full"/>
     </method>
-    <method name="gloabal_add">
-      <return type="bool" transfer="full"/>
-      <arg name="name" type="egueb.dom.string" direction="in" transfer="full"/>
-      <arg name="obj" type="pointer" direction="in" transfer="full"/>
-      <arg name="type" type="string" direction="in" transfer="none"/>
-    </method>
     <method name="load">
       <return type="bool" transfer="full"/>
       <arg name="s" type="egueb.dom.string" direction="in" transfer="full"/>
     </method>
-    <method name="run">
+    <method name="gloabal_add">
+      <arg name="name" type="string" direction="in" transfer="none"/>
+      <arg name="o" type="pointer" direction="in" transfer="full"/>
+      <arg name="type" type="string" direction="in" transfer="none"/>
+    </method>
+    <method name="gloabal_clear"/>
+    <method name="script_free">
+      <arg name="obj" type="pointer" direction="in" transfer="full"/>
+    </method>
+    <method name="script_run">
       <return type="bool" transfer="full"/>
       <arg name="obj" type="pointer" direction="in" transfer="full"/>
-      <arg name="ctx" type="egueb.dom.node" direction="in" transfer="full"/>
+    </method>
+    <method name="script_run_listener">
+      <return type="bool" transfer="full"/>
+      <arg name="obj" type="pointer" direction="in" transfer="full"/>
+      <arg name="e" type="egueb.dom.event" direction="in" transfer="full"/>
     </method>
   </object>
   <callback name="egueb.dom.event.listener"/>
@@ -534,9 +547,7 @@
     <method name="phase_get">
       <return type="egueb.dom.event.phase" transfer="full"/>
     </method>
-    <method name="target_get">
-      <return type="egueb.dom.node" transfer="full"/>
-    </method>
+    <prop name="target"/>
     <method name="target_current_get">
       <return type="egueb.dom.node" transfer="full"/>
     </method>
