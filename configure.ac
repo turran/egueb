@@ -166,29 +166,6 @@ if test "x${want_egueb_svg}" = "xyes" && test "x${want_egueb_css}" = "xyes" && t
    if test "x${have_gstreamer}" = "xyes" ; then
       AC_DEFINE(BUILD_EGUEB_SVG_VIDEO_GSTREAMER, [1], [Esvg Video Gstreamer Support])
    fi
-   # Script backends
-   # V8 code taken from elev8
-   # Check for libv8 and v8.h by linking a bit of code using v8
-   AC_LANG_PUSH(C++)
-   AC_SUBST(V8_LIBS)
-   AC_MSG_CHECKING([for libv8])
-   saved_LIBS="$LIBS"
-   LIBS="$LIBS -lv8"
-   AC_LINK_IFELSE(
-    [AC_LANG_PROGRAM(
-     [[
-      #include <v8.h>
-      v8::Persistent<v8::Number> n;
-     ]],
-     [[
-      n = v8::Persistent<v8::Number>::New(v8::Number::New(0));
-      v8::Handle<v8::Object> o = v8::Object::New();
-     ]],
-   )],[[V8_LIBS="-lv8"]
-      [have_v8="yes"]], [have_v8="no"])
-   LIBS="$saved_LIBS"
-   AC_MSG_RESULT([${have_v8}])
-   AC_LANG_POP
 fi
 
 # For Dom test
@@ -199,12 +176,6 @@ AM_CONDITIONAL(BUILD_EGUEB_DOM, [test "x${want_egueb_dom}" = "xyes"])
 AM_CONDITIONAL(BUILD_EGUEB_SMIL, [test "x${want_egueb_smil}" = "xyes"])
 AM_CONDITIONAL(BUILD_EGUEB_SVG, [test "x${want_egueb_svg}" = "xyes"])
 AM_CONDITIONAL(BUILD_EGUEB_SVG_VIDEO_GSTREAMER, [test "x${have_gstreamer}" = "xyes"])
-
-## Scripter
-if test "x${have_v8}" = "xyes" ; then
-  AC_DEFINE(BUILD_EGUEB_SVG_SCRIPTOR_V8, [1], [JS Scripting V8 Support])
-fi
-AM_CONDITIONAL(BUILD_EGUEB_SVG_SCRIPTOR_V8, [test "x${have_v8}" = "xyes"])
 
 ### Checks for header files
 
@@ -269,8 +240,6 @@ echo "SMIL support................................: ${want_egueb_smil}"
 echo "SVG support.................................: ${want_egueb_svg}"
 echo "  Video support:"
 echo "    GStreamer...............................: ${have_gstreamer}"
-echo "  Scripting support:"
-echo "    V8......................................: ${have_v8}"
 echo
 echo "Installation Path...........................: ${prefix}"
 echo
