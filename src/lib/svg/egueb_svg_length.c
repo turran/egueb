@@ -100,7 +100,7 @@ Eina_Bool egueb_svg_length_string_from(Egueb_Svg_Length *thiz, const char *attr_
 	if ((endptr == NULL) || (*endptr == '\0'))
 	{
 		thiz->value = val;
-		thiz->unit = EGUEB_SVG_UNIT_LENGTH_PX;
+		thiz->unit = EGUEB_SVG_UNIT_LENGTH_UNSPECIFIED;
 		return EINA_TRUE;
 	}
 
@@ -173,9 +173,16 @@ char * egueb_svg_length_string_to(Egueb_Svg_Length *thiz)
 
 	if (!thiz) return NULL;
 	units = _egueb_svg_length_units_string_to(thiz);
-	if (!units) return NULL;
-	if (asprintf(&ret, "%g%s", thiz->value, units) < 0)
-		return NULL;
+	if (!units)
+	{
+		if (asprintf(&ret, "%g", thiz->value) < 0)
+			return NULL;
+	}
+	else
+	{
+		if (asprintf(&ret, "%g%s", thiz->value, units) < 0)
+			return NULL;
+	}
 	return ret;
 }
 
@@ -246,6 +253,7 @@ EAPI double egueb_svg_coord_final_get(const Egueb_Svg_Length *l, double parent_l
 		ret = 90 * l->value;
 		break;
 
+		case EGUEB_SVG_UNIT_LENGTH_UNSPECIFIED:
 		case EGUEB_SVG_UNIT_LENGTH_PX:
 		ret = l->value;
 		break;
