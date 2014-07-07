@@ -197,31 +197,6 @@ static void _egueb_svg_element_onmouseout_cb(Egueb_Dom_Event *e,
 }
 
 #if 0
-/* called on every child of an element, whenever the element is being freed */
-static Eina_Bool _egueb_svg_element_child_free_cb(Egueb_Dom_Tag *t, Egueb_Dom_Tag *child,
-		void *data)
-{
-	Ender_Element *t_e;
-	Ender_Element *child_e;
-
-	t_e = egueb_svg_element_ender_get(t);
-	child_e = egueb_svg_element_ender_get(child);
-	ender_element_property_value_remove(t_e, EGUEB_DOM_CHILD, child, NULL);
-	ender_element_unref(child_e);
-
-	return EINA_TRUE;
-}
-
-static void _egueb_svg_element_mutation_cb(Ender_Element *e, const char *event_name,
-		void *event_data, void *data)
-{
-	Egueb_Svg_Element *thiz = data;
-	Ender_Event_Mutation *ev = event_data;
-
-	/* FIXME we could check if the mutation is a remove, add, etc */
-	thiz->changed++;
-}
-
 static int * _egueb_svg_element_attribute_animated_get(Egueb_Dom_Tag *t, const char *attr)
 {
 	Egueb_Svg_Element *thiz;
@@ -237,84 +212,6 @@ static int * _egueb_svg_element_attribute_animated_get(Egueb_Dom_Tag *t, const c
 			animated = thiz->descriptor.attribute_animated_fetch(t, attr);
 	}
 	return animated;
-}
-
-static void _egueb_svg_element_onfocusin_set(Egueb_Dom_Tag *t, const char *v)
-{
-	Egueb_Svg_Element *thiz;
-
-	thiz = EGUEB_SVG_ELEMENT(t);
-	if (thiz->onfocusin)
-	{
-		free(thiz->onfocusin);
-		thiz->onfocusin = NULL;
-	}
-
-	if (v)
-	{
-		thiz->onfocusin = strdup(v);
-	}
-}
-
-static void _egueb_svg_element_onfocusin_get(Egueb_Dom_Tag *t, const char **v)
-{
-	Egueb_Svg_Element *thiz;
-
-	if (!v) return;
-	thiz = EGUEB_SVG_ELEMENT(t);
-	*v = thiz->onfocusin;
-}
-
-static void _egueb_svg_element_onfocusout_set(Egueb_Dom_Tag *t, const char *v)
-{
-	Egueb_Svg_Element *thiz;
-
-	thiz = EGUEB_SVG_ELEMENT(t);
-	if (thiz->onfocusout)
-	{
-		free(thiz->onfocusout);
-		thiz->onfocusout = NULL;
-	}
-
-	if (v)
-	{
-		thiz->onfocusout = strdup(v);
-	}
-}
-
-static void _egueb_svg_element_onfocusout_get(Egueb_Dom_Tag *t, const char **v)
-{
-	Egueb_Svg_Element *thiz;
-
-	if (!v) return;
-	thiz = EGUEB_SVG_ELEMENT(t);
-	*v = thiz->onfocusout;
-}
-
-static void _egueb_svg_element_onactivate_set(Egueb_Dom_Tag *t, const char *v)
-{
-	Egueb_Svg_Element *thiz;
-
-	thiz = EGUEB_SVG_ELEMENT(t);
-	if (thiz->onactivate)
-	{
-		free(thiz->onactivate);
-		thiz->onactivate = NULL;
-	}
-
-	if (v)
-	{
-		thiz->onactivate = strdup(v);
-	}
-}
-
-static void _egueb_svg_element_onactivate_get(Egueb_Dom_Tag *t, const char **v)
-{
-	Egueb_Svg_Element *thiz;
-
-	if (!v) return;
-	thiz = EGUEB_SVG_ELEMENT(t);
-	*v = thiz->onactivate;
 }
 
 #endif
