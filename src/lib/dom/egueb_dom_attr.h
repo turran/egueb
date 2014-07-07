@@ -23,11 +23,13 @@
 
 /**
  * @file
+ * @listgroup{Egueb_Dom_Attr_Flag}
+ * @listgroup{Egueb_Dom_Attr_Type}
+ * @listgroup{Egueb_Dom_Attr_Definition}
  * @listgroup{Egueb_Dom_Attr}
  */
 
 /**
- * @}
  * @defgroup Egueb_Dom_Attr_Flag Attr flag
  * @ingroup Egueb_Dom_Attr
  * @{
@@ -72,6 +74,7 @@ typedef enum _Egueb_Dom_Attr_Type
 typedef void (*Egueb_Dom_Attr_Fetch)(Egueb_Dom_Node *n, Egueb_Dom_Node **p);
 
 /**
+ * @}
  * @defgroup Egueb_Dom_Attr Attr 
  * @brief Attr @inherits{Egueb_Dom_Node}
  * @ingroup Egueb_Dom_Group

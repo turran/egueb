@@ -29,7 +29,6 @@
  */
 
 /**
- * @}
  * @defgroup Egueb_Dom_Event_Phase Event phase
  * @ingroup Egueb_Dom_Event
  * @{
@@ -57,6 +56,7 @@ typedef enum _Egueb_Dom_Event_Direction
 } Egueb_Dom_Event_Direction;
 
 /**
+ * @}
  * @defgroup Egueb_Dom_Event Event
  * @brief Event
  * @ingroup Egueb_Dom_Group

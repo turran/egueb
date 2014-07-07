@@ -53,6 +53,12 @@ extern "C" {
 #endif
 
 /**
+ * @file
+ * @depends{eina}
+ * @depends{enesim}
+ */
+
+/**
  * @defgroup Egueb_Dom_Group DOM
  * @brief DOM related API
  * @{

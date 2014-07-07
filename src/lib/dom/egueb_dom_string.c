@@ -100,12 +100,25 @@ EAPI void egueb_dom_string_unref(Egueb_Dom_String *thiz)
 	}
 }
 
+/**
+ * Get the string associated with a @ref Egueb_Dom_String
+ * @prop{string}
+ * @valueof
+ * @param[in] thiz The @ref Egueb_Dom_String to get the string from
+ * @return The string associated with the @ref Egueb_Dom_String [transfer none]
+ */
 EAPI const char * egueb_dom_string_string_get(const Egueb_Dom_String *thiz)
 {
 	if (!thiz) return NULL;
 	return thiz->str;
 }
 
+/**
+ * Set the string associated with a @ref Egueb_Dom_String
+ * @prop{string}
+ * @param[in] thiz The @ref Egueb_Dom_String to get the string from
+ * @param[in] str The string to set [transfer none]
+ */
 EAPI void egueb_dom_string_string_set(Egueb_Dom_String *thiz, const char *str)
 {
 	_egueb_dom_string_cleanup(thiz);

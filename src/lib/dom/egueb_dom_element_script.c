@@ -114,7 +114,7 @@ static Eina_Bool _egueb_dom_element_script_process(Egueb_Dom_Element *e)
 		Egueb_Dom_Event *ev;
 		Egueb_Dom_String *type;
 
-		ERR("Processing the script");
+		DBG("Processing the script");
 		/* TODO check the attribute */
 		type = egueb_dom_string_new_with_string("application/ecmascript");
 		ev = egueb_dom_event_script_new(type);
