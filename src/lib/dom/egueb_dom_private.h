@@ -25,6 +25,7 @@
 
 #include <Eina.h>
 #include <Enesim.h>
+#include <Ender.h>
 #include <Etch.h>
 
 #include <Egueb_Base.h>

@@ -78,6 +78,7 @@ EAPI Egueb_Dom_Node * egueb_dom_event_target_get(Egueb_Dom_Event *thiz);
 EAPI Egueb_Dom_Node * egueb_dom_event_target_current_get(Egueb_Dom_Event *thiz);
 EAPI Egueb_Dom_Node * egueb_dom_event_relative_get(Egueb_Dom_Event *thiz);
 EAPI void egueb_dom_event_stop_propagation(Egueb_Dom_Event *thiz);
+EAPI Ender_Item * egueb_dom_event_item_get(Egueb_Dom_Event *thiz);
 
 /**
  * @}

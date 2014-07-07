@@ -71,6 +71,7 @@ struct _Egueb_Dom_Node
 typedef Eina_Bool (*Egueb_Dom_Node_Child_Appendable)(Egueb_Dom_Node *thiz,
 		Egueb_Dom_Node *child);
 typedef void (*Egueb_Dom_Node_Clone)(Egueb_Dom_Node *thiz, Eina_Bool live, Eina_Bool deep, Egueb_Dom_Node *clone);
+typedef Ender_Item * (*Egueb_Dom_Node_Item_Get)(Egueb_Dom_Node *thiz);
 
 typedef struct _Egueb_Dom_Node_Class
 {
@@ -78,6 +79,7 @@ typedef struct _Egueb_Dom_Node_Class
 	Egueb_Dom_Node_Type type;
 	Egueb_Dom_Node_Child_Appendable child_appendable;
 	Egueb_Dom_Node_Clone clone;
+	Egueb_Dom_Node_Item_Get item_get;
 } Egueb_Dom_Node_Class;
 
 #define EGUEB_DOM_NODE_DESCRIPTOR egueb_dom_node_descriptor_get()

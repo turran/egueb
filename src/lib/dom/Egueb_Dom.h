@@ -21,6 +21,7 @@
 #include <Eina.h>
 #include <Enesim.h>
 #include <Etch.h>
+#include <Ender.h>
 
 #ifdef EAPI
 # undef EAPI

@@ -1152,6 +1152,29 @@ EAPI void * egueb_dom_node_feature_get(Egueb_Dom_Node *thiz,
 		return egueb_dom_feature_ref(f->feature);
 }
 
+EAPI Ender_Item * egueb_dom_node_item_get(Egueb_Dom_Node *thiz)
+{
+	Egueb_Dom_Node_Class *klass;
+	Ender_Item *ret = NULL;
+
+	if (!thiz) return NULL;
+
+	klass = EGUEB_DOM_NODE_CLASS_GET(thiz);
+	if (klass->item_get)
+		ret = klass->item_get(thiz);
+	if (!ret)
+	{
+		const Ender_Lib *lib;
+
+		lib = ender_lib_find("egueb_dom");
+		if (!lib) return NULL;
+
+		ret = ender_lib_item_find(lib, "egueb.dom.node");
+	}
+
+	return ret;
+}
+
 #if 0
 EAPI void egueb_dom_node_freeze(Egueb_Dom_Node *thiz)
 {

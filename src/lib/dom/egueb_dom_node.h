@@ -120,6 +120,7 @@ EAPI Eina_Bool egueb_dom_node_is_supported(Egueb_Dom_Node *thiz,
 EAPI void * egueb_dom_node_feature_get(Egueb_Dom_Node *thiz,
 		Egueb_Dom_String *name, Egueb_Dom_String *version);
 
+EAPI Ender_Item * egueb_dom_node_item_get(Egueb_Dom_Node *thiz);
 /**
  * @}
  */

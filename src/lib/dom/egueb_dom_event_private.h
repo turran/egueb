@@ -40,9 +40,12 @@ struct _Egueb_Dom_Event
 	int ref;
 };
 
+typedef Ender_Item * (*Egueb_Dom_Event_Item_Get)(Egueb_Dom_Event *thiz);
+
 typedef struct _Egueb_Dom_Event_Class
 {
 	Enesim_Object_Class parent;
+	Egueb_Dom_Event_Item_Get item_get;
 } Egueb_Dom_Event_Class;
 
 Enesim_Object_Descriptor * egueb_dom_event_descriptor_get(void);

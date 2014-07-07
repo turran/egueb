@@ -36,17 +36,18 @@ AC_SUBST([VMAJ])
 
 EINA_VERSION="1.0.99"
 ENESIM_VERSION="0.0.18"
+ENDER_VERSION="0.0.8"
 ETCH_VERSION="0.0.5"
 
 AC_CANONICAL_HOST
 
 egueb_base_requirements="eina >= ${EINA_VERSION}"
-egueb_dom_requirements="enesim >= ${ENESIM_VERSION} etch >= ${ETCH_VERSION} eina >= ${EINA_VERSION}"
+egueb_dom_requirements="enesim >= ${ENESIM_VERSION} etch >= ${ETCH_VERSION} ender >= ${ENDER_VERSION} eina >= ${EINA_VERSION}"
 egueb_dom_requirements_private=""
-egueb_css_requirements="eina >= ${EINA_VERSION} enesim >= ${ENESIM_VERSION} ${egueb_dom_requirements}"
+egueb_css_requirements="eina >= ${EINA_VERSION} ${egueb_dom_requirements}"
 egueb_css_requirements_private=""
-egueb_smil_requirements="etch >= ${ETCH_VERSION} enesim >= ${ENESIM_VERSION} eina >= ${EINA_VERSION}"
-egueb_svg_requirements="etch >= ${ETCH_VERSION} enesim >= ${ENESIM_VERSION} eina >= ${EINA_VERSION}"
+egueb_smil_requirements="etch >= ${ETCH_VERSION} ${egueb_dom_requirements}"
+egueb_svg_requirements="${egueb_dom_requirements}"
 gstreamer_requirements="gstreamer-0.10"
 
 AC_SUBST([egueb_base_requirements])

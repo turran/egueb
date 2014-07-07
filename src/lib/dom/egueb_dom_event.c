@@ -169,6 +169,29 @@ EAPI Egueb_Dom_String * egueb_dom_event_type_get(Egueb_Dom_Event *thiz)
 	return egueb_dom_string_ref(thiz->type);
 }
 
+EAPI Ender_Item * egueb_dom_event_item_get(Egueb_Dom_Event *thiz)
+{
+	Egueb_Dom_Event_Class *klass;
+	Ender_Item *ret = NULL;
+
+	if (!thiz) return NULL;
+
+	klass = EGUEB_DOM_EVENT_CLASS_GET(thiz);
+	if (klass->item_get)
+		ret = klass->item_get(thiz);
+	if (!ret)
+	{
+		const Ender_Lib *lib;
+
+		lib = ender_lib_find("egueb_dom");
+		if (!lib) return NULL;
+
+		ret = ender_lib_item_find(lib, "egueb.dom.event");
+	}
+
+	return ret;
+}
+
 #if 0
 // Introduced in DOM Level 2:
   interface Event {
