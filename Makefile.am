@@ -55,7 +55,6 @@ if BUILD_EGUEB_SVG
 include src/lib/svg/Makefile.mk
 # include src/lib/svg/elements/Makefile.mk
 # include src/lib/svg/types/Makefile.mk
-# include src/lib/svg/image_providers/Makefile.mk
 # include src/lib/svg/video_providers/Makefile.mk
 endif
 
