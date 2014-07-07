@@ -58,30 +58,8 @@
 
 
 #if 0
-/* FIXME given that we include every header
- * needed on every source, we better dont
- * do this
- */
-#include "egueb_svg_types.h"
-#include "egueb_svg_attribute_private.h"
-#include "egueb_svg_private_attribute_presentation.h"
-#include "egueb_svg_context_private.h"
-#include "egueb_svg_private_renderable_behaviour.h"
-
 /* FIXME use this instead of the add/remove */
 typedef int * (*Egueb_Svg_Element_Attribute_Animated_Fetch)(Egueb_Dom_Node *n, const char *name);
-
-typedef Egueb_Svg_Element_Setup_Return (*Egueb_Svg_Element_Setup)(Egueb_Dom_Node *n,
-		Egueb_Svg_Context *c,
-		const Egueb_Svg_Element_Context *parent_ctx,
-		Egueb_Svg_Element_Context *ctx,
-		Egueb_Svg_Attribute_Presentation *attr,
-		Enesim_Log **error);
-typedef Eina_Bool (*Egueb_Svg_Element_Setup_Interceptor)(Egueb_Dom_Node *n,
-		Egueb_Dom_Node *child,
-		Egueb_Svg_Context *c,
-		Enesim_Log **error,
-		void *data);
 #endif
 
 /* forward declaration to make the struct have a pointer to itself */
