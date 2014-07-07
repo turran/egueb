@@ -1,5 +1,7 @@
 <?xml version="1.0" standalone="yes"?>
 <lib name="egueb_dom" version="0" case="underscore">
+  <includes name="eina"/>
+  <includes name="enesim"/>
   <object name="egueb.dom.string">
     <ctor name="new"/>
     <ctor name="new_with_string">
@@ -21,12 +23,6 @@
     </method>
     <ref/>
     <unref/>
-    <method name="string_get">
-      <return type="string" transfer="none"/>
-    </method>
-    <method name="string_set">
-      <arg name="str" type="string" direction="in" transfer="none"/>
-    </method>
     <method name="static_string_set">
       <arg name="str" type="string" direction="in" transfer="none"/>
     </method>
@@ -40,6 +36,14 @@
     <method name="is_valid">
       <return type="bool" transfer="full"/>
     </method>
+    <prop name="string" value-of="true">
+      <getter>
+        <return type="string" transfer="none"/>
+      </getter>
+      <setter>
+        <arg name="str" type="string" direction="in" transfer="none"/>
+      </setter>
+    </prop>
   </object>
   <function name="egueb.dom.init"/>
   <function name="egueb.dom.shutdown"/>
@@ -192,6 +196,18 @@
     </method>
   </object>
   <callback name="egueb.dom.node.cb"/>
+  <enum name="egueb.dom.attr.flag">
+    <value name="stylable"/>
+    <value name="animatable"/>
+    <value name="inheritable"/>
+  </enum>
+  <enum name="egueb.dom.attr.type">
+    <value name="base"/>
+    <value name="default"/>
+    <value name="animated"/>
+    <value name="styled"/>
+  </enum>
+  <callback name="egueb.dom.attr.fetch"/>
   <object name="egueb.dom.attr" inherits="egueb.dom.node">
     <function name="descriptor_get">
       <return type="enesim.object.descriptor" transfer="full"/>
@@ -512,7 +528,7 @@
     </prop>
     <prop name="target">
       <getter>
-        <return type="egueb.dom.node" transfer="full"/>
+        <return type="egueb.dom.element" transfer="full"/>
       </getter>
     </prop>
   </object>
