@@ -61,6 +61,9 @@
     <value name="document_fragment"/>
     <value name="notation"/>
   </enum>
+  <object name="egueb.dom.node"/>
+  <object name="egueb.dom.element" inherits="egueb.dom.node"/>
+  <object name="egueb.dom.document" inherits="egueb.dom.node"/>
   <object name="egueb.dom.node">
     <method name="is_destroying">
       <return type="bool" transfer="full"/>
@@ -92,9 +95,6 @@
     </method>
     <method name="type_get">
       <return type="egueb.dom.node.type" transfer="full"/>
-    </method>
-    <method name="document_get">
-      <return type="egueb.dom.node" transfer="full"/>
     </method>
     <method name="parent_get">
       <return type="egueb.dom.node" transfer="full"/>
@@ -194,6 +194,14 @@
       <arg name="name" type="egueb.dom.string" direction="in" transfer="full"/>
       <arg name="version" type="egueb.dom.string" direction="in" transfer="full"/>
     </method>
+    <method name="item_get">
+      <return type="ender.item" transfer="full"/>
+    </method>
+    <prop name="document">
+      <getter>
+        <return type="egueb.dom.document" transfer="full"/>
+      </getter>
+    </prop>
   </object>
   <callback name="egueb.dom.node.cb"/>
   <enum name="egueb.dom.attr.flag">
@@ -459,9 +467,9 @@
       <arg name="element" type="egueb.dom.node" direction="in" transfer="full"/>
     </method>
     <method name="element_get_by_id">
-      <return type="egueb.dom.node" transfer="full"/>
+      <return type="egueb.dom.element" transfer="full"/>
       <arg name="id" type="egueb.dom.string" direction="in" transfer="full"/>
-      <arg name="err" type="eina.error" direction="in" transfer="full"/>
+      <arg name="err" type="eina.error" direction="out" transfer="full"/>
     </method>
     <method name="element_get_by_iri">
       <return type="egueb.dom.node" transfer="full"/>
@@ -516,6 +524,9 @@
       <return type="egueb.dom.node" transfer="full"/>
     </method>
     <method name="stop_propagation"/>
+    <method name="item_get">
+      <return type="ender.item" transfer="full"/>
+    </method>
     <prop name="type">
       <getter>
         <return type="egueb.dom.string" transfer="full"/>
@@ -554,6 +565,7 @@
     <ctor name="new">
       <arg name="d" type="egueb.dom.scripter.descriptor" direction="in" transfer="none"/>
     </ctor>
+    <method name="free"/>
     <method name="data_get">
       <return type="pointer" transfer="full"/>
     </method>
@@ -561,12 +573,12 @@
       <return type="bool" transfer="full"/>
       <arg name="s" type="egueb.dom.string" direction="in" transfer="full"/>
     </method>
-    <method name="gloabal_add">
+    <method name="global_add">
       <arg name="name" type="string" direction="in" transfer="none"/>
       <arg name="o" type="pointer" direction="in" transfer="full"/>
-      <arg name="type" type="string" direction="in" transfer="none"/>
+      <arg name="i" type="ender.item" direction="in" transfer="full"/>
     </method>
-    <method name="gloabal_clear"/>
+    <method name="global_clear"/>
     <method name="script_free">
       <arg name="obj" type="pointer" direction="in" transfer="full"/>
     </method>
