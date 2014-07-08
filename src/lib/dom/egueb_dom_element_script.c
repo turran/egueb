@@ -126,16 +126,22 @@ static Eina_Bool _egueb_dom_element_script_process(Egueb_Dom_Element *e)
 		if (thiz->scripter)
 		{
 			Egueb_Dom_Node *cdata;
+			Egueb_Dom_Node *doc;
 			Egueb_Dom_String *cdata_txt;
 
 			cdata = egueb_dom_node_child_first_get(EGUEB_DOM_NODE(e));
 			cdata_txt = egueb_dom_character_data_data_get(cdata);
 			/* compile the script */
 			egueb_dom_scripter_load(thiz->scripter, cdata_txt, &thiz->script);
-			/* TODO add the global variables */
+			/* add the global variables */
+			/* FIXME what to do with the ref? */
+			doc = egueb_dom_node_document_get(EGUEB_DOM_NODE(e));
+			egueb_dom_scripter_global_add(thiz->scripter, "document", doc, egueb_dom_node_item_get(doc));
 			/* run it */
 			egueb_dom_scripter_script_run(thiz->scripter,thiz->script);
 			egueb_dom_string_unref(cdata_txt);
+			/* FIXME for now */
+			egueb_dom_node_unref(doc);
 		}
 	}
 

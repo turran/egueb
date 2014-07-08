@@ -599,8 +599,13 @@ EAPI Egueb_Dom_String * egueb_dom_node_value_get(Egueb_Dom_Node *thiz)
 	return NULL;
 }
 
-/* Modified in DOM Level 2:
- * readonly attribute Document        ownerDocument;
+/**
+ * Gets the document associtaed with this node
+ * (readonly attribute Document ownerDocument)
+ *
+ * @prop{document}
+ * @param[in] thiz The node to get the document from
+ * @return The document @ender_type{egueb.dom.document}
  */
 EAPI Egueb_Dom_Node * egueb_dom_node_document_get(Egueb_Dom_Node *thiz)
 {
