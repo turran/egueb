@@ -43,11 +43,14 @@ typedef Egueb_Dom_Node * (*Egueb_Dom_Document_Element_Create)(
 		Egueb_Dom_Document *thiz, const char *name);
 typedef Eina_Bool (*Egueb_Dom_Document_Child_Appendable)(Egueb_Dom_Document *thiz,
 		Egueb_Dom_Node *child);
+typedef Ender_Item * (*Egueb_Dom_Document_Item_Get)(Egueb_Dom_Document *thiz);
+
 typedef struct _Egueb_Dom_Document_Class
 {
 	Egueb_Dom_Node_Class base;
 	Egueb_Dom_Document_Element_Create element_create;
 	Egueb_Dom_Document_Child_Appendable child_appendable;
+	Egueb_Dom_Document_Item_Get item_get;
 } Egueb_Dom_Document_Class;
 
 #define EGUEB_DOM_DOCUMENT_DESCRIPTOR egueb_dom_document_descriptor_get()

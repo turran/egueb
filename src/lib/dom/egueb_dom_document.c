@@ -336,6 +336,30 @@ static Eina_Bool _egueb_dom_document_child_appendable(Egueb_Dom_Node *n,
 		return klass->child_appendable(thiz, child);
 	return EINA_FALSE;
 }
+
+static Ender_Item * _egueb_dom_document_item_get(Egueb_Dom_Node *n)
+{
+	Egueb_Dom_Document_Class *klass;
+	Egueb_Dom_Document *thiz;
+	Ender_Item *ret = NULL;
+
+	thiz = EGUEB_DOM_DOCUMENT(n);
+	klass = EGUEB_DOM_DOCUMENT_CLASS_GET(thiz);
+	if (klass->item_get)
+		ret = klass->item_get(thiz);
+	if (!ret)
+	{
+		const Ender_Lib *lib;
+
+		lib = ender_lib_find("egueb_dom");
+		if (!lib) return NULL;
+
+		ret = ender_lib_item_find(lib, "egueb.dom.document");
+	}
+
+	return ret;
+}
+
 /*----------------------------------------------------------------------------*
  *                              Object interface                              *
  *----------------------------------------------------------------------------*/
@@ -349,6 +373,7 @@ static void _egueb_dom_document_class_init(void *k)
 
 	n_klass->type = EGUEB_DOM_NODE_TYPE_DOCUMENT;
 	n_klass->child_appendable = _egueb_dom_document_child_appendable;
+	n_klass->item_get = _egueb_dom_document_item_get;
 }
 
 static void _egueb_dom_document_instance_init(void *o)
