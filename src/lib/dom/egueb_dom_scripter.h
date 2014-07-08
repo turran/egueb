@@ -34,7 +34,7 @@
 typedef void * (*Egueb_Dom_Scripter_Descriptor_New)(void);
 typedef void (*Egueb_Dom_Scripter_Descriptor_Free)(void *prv);
 typedef Eina_Bool (*Egueb_Dom_Scripter_Descriptor_Load)(void *prv, Egueb_Dom_String *s, void **obj);
-typedef void (*Egueb_Dom_Scripter_Descriptor_Global_Add)(void *prv, const char *name, void *o, const char *type);
+typedef void (*Egueb_Dom_Scripter_Descriptor_Global_Add)(void *prv, const char *name, void *o, Ender_Item *i);
 typedef void (*Egueb_Dom_Scripter_Descriptor_Global_Clear)(void *prv);
 typedef void (*Egueb_Dom_Scripter_Descriptor_Script_Free)(void *prv, void *obj);
 typedef Eina_Bool (*Egueb_Dom_Scripter_Descriptor_Script_Run)(void *prv, void *obj);
@@ -68,10 +68,11 @@ typedef struct _Egueb_Dom_Scripter_Descriptor
 typedef struct _Egueb_Dom_Scripter Egueb_Dom_Scripter;
 
 EAPI Egueb_Dom_Scripter * egueb_dom_scripter_new(const Egueb_Dom_Scripter_Descriptor *d);
+EAPI void egueb_dom_scripter_free(Egueb_Dom_Scripter *thiz);
 EAPI void * egueb_dom_scripter_data_get(Egueb_Dom_Scripter *thiz);
 EAPI Eina_Bool egueb_dom_scripter_load(Egueb_Dom_Scripter *thiz, Egueb_Dom_String *s, void **obj);
-EAPI void egueb_dom_scripter_gloabal_add(Egueb_Dom_Scripter *thiz, const char *name, void *o, const char *type);
-EAPI void egueb_dom_scripter_gloabal_clear(Egueb_Dom_Scripter *thiz);
+EAPI void egueb_dom_scripter_global_add(Egueb_Dom_Scripter *thiz, const char *name, void *o, Ender_Item *i);
+EAPI void egueb_dom_scripter_global_clear(Egueb_Dom_Scripter *thiz);
 
 EAPI void egueb_dom_scripter_script_free(Egueb_Dom_Scripter *thiz, void *obj);
 EAPI Eina_Bool egueb_dom_scripter_script_run(Egueb_Dom_Scripter *thiz, void *obj);

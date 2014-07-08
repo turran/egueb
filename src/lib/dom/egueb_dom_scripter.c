@@ -61,13 +61,21 @@ EAPI void * egueb_dom_scripter_data_get(Egueb_Dom_Scripter *thiz)
 	return thiz->prv;
 }
 
-EAPI void egueb_dom_scripter_gloabal_add(Egueb_Dom_Scripter *thiz, const char *name, void *obj, const char *type)
+EAPI void egueb_dom_scripter_free(Egueb_Dom_Scripter *thiz)
+{
+	if (!thiz) return;
+	if (thiz->d->free)
+		thiz->d->free(thiz->prv);
+	free(thiz);
+}
+
+EAPI void egueb_dom_scripter_global_add(Egueb_Dom_Scripter *thiz, const char *name, void *obj, Ender_Item *i)
 {
 	if (!thiz) return;
 	if (!name) return;
 	if (!thiz->d->global_add) return;
 
-	thiz->d->global_add(thiz->prv, name, obj, type);
+	thiz->d->global_add(thiz->prv, name, obj, i);
 }
 
 EAPI void egueb_dom_scripter_global_clear(Egueb_Dom_Scripter *thiz)
