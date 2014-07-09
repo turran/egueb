@@ -32,7 +32,7 @@ static Eina_Bool _egueb_svg_matrix_matrix_get(Egueb_Svg_Matrix *thiz,
 	int numelements = 6;
 	double mx[6];
 
-	if (!egueb_base_function_get(attr_val, endptr, "matrix", &numelements, mx))
+	if (!egueb_dom_function_get(attr_val, endptr, "matrix", &numelements, mx))
 		return EINA_FALSE;
 	if (numelements < 6)
 		return EINA_FALSE;
@@ -47,7 +47,7 @@ static Eina_Bool _egueb_svg_matrix_translate_get(Egueb_Svg_Matrix *thiz,
 	int numelements = 2;
 	double tx[2];
 
-	if (!egueb_base_function_get(attr_val, endptr, "translate", &numelements, tx))
+	if (!egueb_dom_function_get(attr_val, endptr, "translate", &numelements, tx))
 		return EINA_FALSE;
 	if (numelements < 1)
 		return EINA_FALSE;
@@ -65,7 +65,7 @@ static Eina_Bool _egueb_svg_matrix_skewx_get(Egueb_Svg_Matrix *thiz,
 	double angle;
 	int numelements = 1;
 
-	if (!egueb_base_function_get(attr_val, endptr, "skewX", &numelements, &angle))
+	if (!egueb_dom_function_get(attr_val, endptr, "skewX", &numelements, &angle))
 		return EINA_FALSE;
 	if (numelements < 1)
 		return EINA_FALSE;
@@ -80,7 +80,7 @@ static Eina_Bool _egueb_svg_matrix_skewy_get(Egueb_Svg_Matrix *thiz,
 	double angle;
 	int numelements = 1;
 
-	if (!egueb_base_function_get(attr_val, endptr, "skewY", &numelements, &angle))
+	if (!egueb_dom_function_get(attr_val, endptr, "skewY", &numelements, &angle))
 		return EINA_FALSE;
 	if (numelements < 1)
 		return EINA_FALSE;
@@ -95,7 +95,7 @@ static Eina_Bool _egueb_svg_matrix_scale_get(Egueb_Svg_Matrix *thiz,
 	double sx[2];
 	int numelements = 2;
 
-	if (!egueb_base_function_get(attr_val, endptr, "scale", &numelements, sx))
+	if (!egueb_dom_function_get(attr_val, endptr, "scale", &numelements, sx))
 		return EINA_FALSE;
 	if (numelements < 1)
 		return EINA_FALSE;
@@ -113,7 +113,7 @@ static Eina_Bool _egueb_svg_matrix_rotate_get(Egueb_Svg_Matrix *thiz,
 	double rx[3];
 	int numelements = 3;
 
-	if (!egueb_base_function_get(attr_val, endptr, "rotate", &numelements, rx))
+	if (!egueb_dom_function_get(attr_val, endptr, "rotate", &numelements, rx))
 		return EINA_FALSE;
 	if (numelements < 1)
 		return EINA_FALSE;

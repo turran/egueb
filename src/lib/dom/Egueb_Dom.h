@@ -70,6 +70,7 @@ extern "C" {
 #include "egueb_dom_main.h"
 #include "egueb_dom_list.h"
 #include "egueb_dom_uri.h"
+#include "egueb_dom_utils.h"
 
 #include "egueb_dom_node_list.h"
 #include "egueb_dom_node_map_named.h"

@@ -35,8 +35,6 @@ GENERATED_FILES =
 
 ### Libraries
 
-include src/lib/base/Makefile.mk
-
 if BUILD_EGUEB_DOM
 include src/lib/dom/Makefile.mk
 include src/lib/dom/parser/Makefile.mk
@@ -90,7 +88,6 @@ $(SED) \
 -e 's,@egueb_css_requirements\@,$(egueb_css_requirements),g' \
 -e 's,@egueb_css_requirements_private\@,$(egueb_css_requirements_private),g' \
 -e 's,@egueb_svg_requirements\@,$(egueb_svg_requirements),g' \
--e 's,@egueb_base_requirements\@,$(egueb_base_requirements),g' \
 -e 's,@build_opencl\@,$(build_opencl),g' \
 -e 's,@build_opengl\@,$(build_opengl),g' \
 < $< > $@ || rm $@
@@ -105,8 +102,6 @@ pc_verbose_0 = @echo "  PC      " $@;
 
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA =
-
-pkgconfig_DATA += egueb-base.pc
 
 if BUILD_EGUEB_CSS
 pkgconfig_DATA += egueb-css.pc

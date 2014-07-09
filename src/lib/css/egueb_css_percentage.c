@@ -27,7 +27,7 @@ EAPI Eina_Bool egueb_css_percentage_string_from(double *thiz,
 	char *endptr;
 
 	last = str + strlen(str);
-	if (!egueb_base_double_get(str, &endptr, thiz))
+	if (!egueb_dom_double_get(str, &endptr, thiz))
 		return EINA_FALSE;
 	
 	if ((last - endptr) != 1)

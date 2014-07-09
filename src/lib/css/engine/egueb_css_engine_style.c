@@ -44,7 +44,7 @@ void egueb_css_engine_style_inline_apply(const char *style, Egueb_Css_Engine_Con
 		return;
 
 	orig = v = strdup(style);
-	EGUEB_BASE_SPACE_SKIP(v);
+	EGUEB_DOM_SPACE_SKIP(v);
 	/* split the style by ';' */
 	while ((sc = strchr(v, ';')))
 	{
@@ -57,12 +57,12 @@ void egueb_css_engine_style_inline_apply(const char *style, Egueb_Css_Engine_Con
 
 			*ch = '\0';
 			vv = ch + 1;
-			EGUEB_BASE_SPACE_SKIP(vv);
+			EGUEB_DOM_SPACE_SKIP(vv);
 			/* and call the attr_cb */
 			c->attribute_set(e, v, vv);
 		}
 		v = sc + 1;
-		EGUEB_BASE_SPACE_SKIP(v);
+		EGUEB_DOM_SPACE_SKIP(v);
 	}
 	/* do the last one */
 	ch = strchr(v, ':');
@@ -72,7 +72,7 @@ void egueb_css_engine_style_inline_apply(const char *style, Egueb_Css_Engine_Con
 
 		*ch = '\0';
 		vv = ch + 1;
-		EGUEB_BASE_SPACE_SKIP(vv);
+		EGUEB_DOM_SPACE_SKIP(vv);
 		/* and call the attr_cb */
 		c->attribute_set(e, v, vv);
 	}

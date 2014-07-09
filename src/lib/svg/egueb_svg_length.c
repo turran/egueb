@@ -90,7 +90,7 @@ Eina_Bool egueb_svg_length_string_from(Egueb_Svg_Length *thiz, const char *attr_
 	if (!attr_val || !*attr_val)
 		return EINA_FALSE;
 
-	if (!egueb_base_double_get(attr_val, &endptr, &val))
+	if (!egueb_dom_double_get(attr_val, &endptr, &val))
 	{
 		ERR("Length %s is invalid", attr_val);
 		return EINA_FALSE;

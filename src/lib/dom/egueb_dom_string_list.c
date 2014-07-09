@@ -108,7 +108,7 @@ EAPI const Egueb_Dom_Value_Descriptor * egueb_dom_string_list_descriptor_get(voi
 EAPI Eina_Bool egueb_dom_string_list_string_from(Egueb_Dom_List *l, const char *str)
 {
 	egueb_dom_list_clear(l);
-	return egueb_base_list_get(str, ';', _egueb_dom_string_list_cb, l);
+	return egueb_dom_list_get(str, ';', _egueb_dom_string_list_cb, l);
 }
 
 EAPI char * egueb_dom_string_list_string_to(Egueb_Dom_List *l)

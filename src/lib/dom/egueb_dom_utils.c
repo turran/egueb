@@ -15,8 +15,8 @@
  * License along with this library.
  * If not, see <http://www.gnu.org/licenses/>.
  */
-#include "egueb_base_private.h"
-#include "egueb_base_utils.h"
+#include "egueb_dom_private.h"
+#include "egueb_dom_utils.h"
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
@@ -26,7 +26,7 @@
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/
-EAPI Eina_Bool egueb_base_long_get(const char *iter, const char **tmp, long *l)
+EAPI Eina_Bool egueb_dom_long_get(const char *iter, const char **tmp, long *l)
 {
 	char *endptr;
 	long val;
@@ -43,7 +43,7 @@ EAPI Eina_Bool egueb_base_long_get(const char *iter, const char **tmp, long *l)
 	return EINA_FALSE;
 }
 
-EAPI Eina_Bool egueb_base_double_get(const char *nptr, char **endptr, double *r)
+EAPI Eina_Bool egueb_dom_double_get(const char *nptr, char **endptr, double *r)
 {
 	const char *str;
 	unsigned long long mantisse = 0;
@@ -150,22 +150,22 @@ EAPI Eina_Bool egueb_base_double_get(const char *nptr, char **endptr, double *r)
 	return EINA_TRUE;
 }
 
-EAPI Eina_Bool egueb_base_list_get(const char *attr, char sep, Egueb_Base_List_Cb cb, void *data)
+EAPI Eina_Bool egueb_dom_list_get(const char *attr, char sep, Egueb_Base_List_Cb cb, void *data)
 {
 	char *found;
 
 	if (!attr) return EINA_FALSE;
 	if (!cb) return EINA_FALSE;
 
-	EGUEB_BASE_SPACE_SKIP(attr);
+	EGUEB_DOM_SPACE_SKIP(attr);
 	while ((found = strchr(attr, sep)))
 	{
 		*found = '\0';
-		EGUEB_BASE_SPACE_SKIP(attr);
+		EGUEB_DOM_SPACE_SKIP(attr);
 		cb(attr, data);
 		*found = sep;
 		attr = found + 1;
-		EGUEB_BASE_SPACE_SKIP(attr);
+		EGUEB_DOM_SPACE_SKIP(attr);
 	}
 	if (attr)
 		cb(attr, data);
@@ -179,7 +179,7 @@ EAPI Eina_Bool egueb_base_list_get(const char *attr, char sep, Egueb_Base_List_C
  * out endptr
  * out elements
  */
-EAPI Eina_Bool egueb_base_function_get(const char *attr_val, const char **endptr,
+EAPI Eina_Bool egueb_dom_function_get(const char *attr_val, const char **endptr,
 		const char *funcname, int *numelements, double *elements)
 {
 	int nvalues = 0;
@@ -188,11 +188,11 @@ EAPI Eina_Bool egueb_base_function_get(const char *attr_val, const char **endptr
 	size_t sz;
 
 	sz = strlen(funcname);
-	EGUEB_BASE_SPACE_SKIP(tmp);
+	EGUEB_DOM_SPACE_SKIP(tmp);
 	if (strncmp(tmp, funcname, sz) != 0)
 		return EINA_FALSE;
 	tmp += sz;
-	EGUEB_BASE_SPACE_SKIP(tmp);
+	EGUEB_DOM_SPACE_SKIP(tmp);
 	if (tmp[0] != '(')
 		return EINA_FALSE;
 	tmp++;
@@ -200,10 +200,10 @@ EAPI Eina_Bool egueb_base_function_get(const char *attr_val, const char **endptr
 	{
 		double val;
 
-		EGUEB_BASE_SPACE_SKIP(tmp);
+		EGUEB_DOM_SPACE_SKIP(tmp);
 		if (tmp[0] == ')')
 			goto end;
-		if (!egueb_base_double_get(tmp, &end, &val))
+		if (!egueb_dom_double_get(tmp, &end, &val))
 			return EINA_FALSE;
 		tmp = end;
 		elements[nvalues] = val;
@@ -212,7 +212,7 @@ EAPI Eina_Bool egueb_base_function_get(const char *attr_val, const char **endptr
 		if (nvalues >= *numelements)
 			break;
 		/* skip the comma and the blanks */
-		EGUEB_BASE_SPACE_COMMA_SKIP(tmp);
+		EGUEB_DOM_SPACE_COMMA_SKIP(tmp);
 	}
 
 	if (tmp[0] != ')')

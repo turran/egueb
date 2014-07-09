@@ -28,7 +28,7 @@ EAPI Eina_Bool egueb_css_length_string_from(Egueb_Css_Length *thiz,
 	double val;
 
 	last = str + strlen(str);
-	if (!egueb_base_double_get(str, &endptr, &val))
+	if (!egueb_dom_double_get(str, &endptr, &val))
 		return EINA_FALSE;
 	
 	/* else, conversion has been done */

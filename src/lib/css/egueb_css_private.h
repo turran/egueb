@@ -23,7 +23,6 @@
 #endif
 
 #include <Eina.h>
-#include <Egueb_Base.h>
 #include <Egueb_Dom.h>
 
 extern int _egueb_css_log_dom_global;

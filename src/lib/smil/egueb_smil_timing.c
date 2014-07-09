@@ -91,7 +91,7 @@ static Eina_Bool _animation_name_parse(const char *v, const char **start, int *l
 	const char *s;
 
 	/* check the first letter */
-	EGUEB_BASE_SPACE_SKIP(v);
+	EGUEB_DOM_SPACE_SKIP(v);
 
 	s = v;
 	if (!_is_name_first(*v))
@@ -243,7 +243,7 @@ EAPI Eina_Bool egueb_smil_timing_string_from(Egueb_Smil_Timing *thiz,
 				long r;
 				if (*end == '(')
 					start++;
-				if (!egueb_base_long_get(start, &end, &r))
+				if (!egueb_dom_long_get(start, &end, &r))
 					goto err;
 				if (*end != ')')
 					goto err;

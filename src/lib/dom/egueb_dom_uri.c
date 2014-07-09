@@ -20,6 +20,7 @@
 #include "egueb_dom_string.h"
 #include "egueb_dom_main.h"
 #include "egueb_dom_uri.h"
+#include "egueb_dom_utils.h"
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
@@ -54,7 +55,7 @@ EAPI Eina_Bool egueb_dom_uri_string_from(Egueb_Dom_Uri *thiz, Egueb_Dom_String *
 	const char *fragment;
 
 	s_s = egueb_dom_string_string_get(s);
-	EGUEB_BASE_SPACE_SKIP(s_s);
+	EGUEB_DOM_SPACE_SKIP(s_s);
 
 	fragment = _fragment_get(s_s);
 	/* TODO check for the local/non-local case */
@@ -112,7 +113,7 @@ EAPI Eina_Bool egueb_dom_uri_iri_from(Egueb_Dom_Uri *thiz, Egueb_Dom_String *iri
 	const char *s_iri;
 
 	s_iri = egueb_dom_string_string_get(iri);
-	EGUEB_BASE_SPACE_SKIP(s_iri);
+	EGUEB_DOM_SPACE_SKIP(s_iri);
 
 	/* funciri ? */
 	if (!strncmp(s_iri, "url(", 4))
