@@ -150,7 +150,7 @@ EAPI Eina_Bool egueb_dom_double_get(const char *nptr, char **endptr, double *r)
 	return EINA_TRUE;
 }
 
-EAPI Eina_Bool egueb_dom_list_get(const char *attr, char sep, Egueb_Base_List_Cb cb, void *data)
+EAPI Eina_Bool egueb_dom_list_get(const char *attr, char sep, Egueb_Dom_List_Cb cb, void *data)
 {
 	char *found;
 
