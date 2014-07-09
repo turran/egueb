@@ -42,6 +42,7 @@ typedef struct _Egueb_Dom_Element
 typedef Egueb_Dom_String * (*Egueb_Dom_Element_Tag_Name_Get)(Egueb_Dom_Element *thiz);
 typedef Eina_Bool (*Egueb_Dom_Element_Process)(Egueb_Dom_Element *thiz);
 typedef void (*Egueb_Dom_Element_Clone)(Egueb_Dom_Element *thiz, Egueb_Dom_Element *other);
+typedef Ender_Item * (*Egueb_Dom_Element_Item_Get)(Egueb_Dom_Element *thiz);
 
 typedef struct _Egueb_Dom_Element_Class
 {
@@ -50,6 +51,7 @@ typedef struct _Egueb_Dom_Element_Class
 	Egueb_Dom_Element_Tag_Name_Get tag_name_get;
 	Egueb_Dom_Element_Process process;
 	Egueb_Dom_Element_Clone clone;
+	Egueb_Dom_Element_Item_Get item_get;
 } Egueb_Dom_Element_Class;
 
 #define EGUEB_DOM_ELEMENT_DESCRIPTOR egueb_dom_element_descriptor_get()

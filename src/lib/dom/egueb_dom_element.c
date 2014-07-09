@@ -396,6 +396,29 @@ static void _egueb_dom_element_clone(Egueb_Dom_Node *n, Eina_Bool live,
 		egueb_dom_node_child_append(clone, clone_child, NULL);
 	}
 }
+
+static Ender_Item * _egueb_dom_element_item_get(Egueb_Dom_Node *n)
+{
+	Egueb_Dom_Element_Class *klass;
+	Egueb_Dom_Element *thiz;
+	Ender_Item *ret = NULL;
+
+	thiz = EGUEB_DOM_ELEMENT(n);
+	klass = EGUEB_DOM_ELEMENT_CLASS_GET(thiz);
+	if (klass->item_get)
+		ret = klass->item_get(thiz);
+	if (!ret)
+	{
+		const Ender_Lib *lib;
+
+		lib = ender_lib_find("egueb_dom");
+		if (!lib) return NULL;
+
+		ret = ender_lib_item_find(lib, "egueb.dom.element");
+	}
+
+	return ret;
+}
 /*----------------------------------------------------------------------------*
  *                              Object interface                              *
  *----------------------------------------------------------------------------*/
@@ -408,6 +431,7 @@ static void _egueb_dom_element_class_init(void *k)
 
 	n_klass->type = EGUEB_DOM_NODE_TYPE_ELEMENT;
 	n_klass->clone = _egueb_dom_element_clone;
+	n_klass->item_get = _egueb_dom_element_item_get;
 }
 
 static void _egueb_dom_element_instance_init(void *o)
