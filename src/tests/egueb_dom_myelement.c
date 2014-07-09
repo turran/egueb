@@ -133,7 +133,7 @@ no_name:
 		egueb_dom_node_map_named_free(attrs);
 	}
 	/* nor some meta information */
-	doc = egueb_dom_node_document_get(n);
+	doc = egueb_dom_node_owner_document_get(n);
 	len = asprintf(&ret, "%s> (ref: %d, doc: %p)", str,
 			egueb_dom_node_ref_get(n), doc);
 	free(str);

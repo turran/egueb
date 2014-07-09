@@ -105,7 +105,7 @@ static Eina_Bool _egueb_svg_reference_gradient_linear_process(
 		double font_size;
 
 		DBG("Using the user space on use");
-		doc = egueb_dom_node_document_get(r->referencer);
+		doc = egueb_dom_node_owner_document_get(r->referencer);
 		if (!doc)
 		{
 			WARN("No document set");

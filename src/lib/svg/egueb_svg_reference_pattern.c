@@ -99,7 +99,7 @@ static void _egueb_svg_reference_pattern_event_monitor_cb(Egueb_Dom_Event *e,
 	 * that the referenceable tree ends up in a defs element and thus
 	 * it will not be propagated
 	 */
-	doc = egueb_dom_node_document_get(r->referenceable);
+	doc = egueb_dom_node_owner_document_get(r->referenceable);
 	svg = egueb_svg_document_element_root_get(doc);
 	egueb_dom_node_unref(doc);
 
@@ -132,7 +132,7 @@ static void _egueb_svg_reference_pattern_setup(
 
 	DBG_ELEMENT(EGUEB_DOM_NODE(r->referenceable), "Cloning the children into our own <g>");
 	/* Make the document adopt the g, given that it has no document yet */
-	doc = egueb_dom_node_document_get(r->referenceable);
+	doc = egueb_dom_node_owner_document_get(r->referenceable);
 	thiz->g = egueb_dom_document_node_adopt(doc, thiz->g, NULL);
 	egueb_dom_node_unref(doc);
 
@@ -202,7 +202,7 @@ static Eina_Bool _egueb_svg_reference_pattern_process(
 		double font_size;
 
 		DBG("Using the user space on use");
-		doc = egueb_dom_node_document_get(r->referencer);
+		doc = egueb_dom_node_owner_document_get(r->referencer);
 		if (!doc)
 		{
 			WARN("No document set");

@@ -197,7 +197,7 @@
     <method name="item_get">
       <return type="ender.item" transfer="full"/>
     </method>
-    <prop name="document">
+    <prop name="owner_document">
       <getter>
         <return type="egueb.dom.document" transfer="full"/>
       </getter>

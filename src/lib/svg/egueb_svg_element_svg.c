@@ -180,7 +180,7 @@ static Eina_Bool _egueb_svg_element_svg_process(Egueb_Svg_Renderable *r)
 	 * container size to generate the children viewbox (i.e our
 	 * own bounds
 	 */
-	svg_doc = egueb_dom_node_document_get(EGUEB_DOM_NODE(r));
+	svg_doc = egueb_dom_node_owner_document_get(EGUEB_DOM_NODE(r));
 	relative = egueb_svg_element_geometry_relative_get(EGUEB_DOM_NODE(r));
 	if (!relative)
 	{

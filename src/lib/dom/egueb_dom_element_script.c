@@ -135,7 +135,7 @@ static Eina_Bool _egueb_dom_element_script_process(Egueb_Dom_Element *e)
 			egueb_dom_scripter_load(thiz->scripter, cdata_txt, &thiz->script);
 			/* add the global variables */
 			/* FIXME what to do with the ref? */
-			doc = egueb_dom_node_document_get(EGUEB_DOM_NODE(e));
+			doc = egueb_dom_node_owner_document_get(EGUEB_DOM_NODE(e));
 			egueb_dom_scripter_global_add(thiz->scripter, "document", doc, egueb_dom_node_item_get(doc));
 			/* run it */
 			egueb_dom_scripter_script_run(thiz->scripter,thiz->script);

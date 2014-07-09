@@ -603,11 +603,11 @@ EAPI Egueb_Dom_String * egueb_dom_node_value_get(Egueb_Dom_Node *thiz)
  * Gets the document associtaed with this node
  * (readonly attribute Document ownerDocument)
  *
- * @prop{document}
+ * @prop{owner_document}
  * @param[in] thiz The node to get the document from
  * @return The document @ender_type{egueb.dom.document}
  */
-EAPI Egueb_Dom_Node * egueb_dom_node_document_get(Egueb_Dom_Node *thiz)
+EAPI Egueb_Dom_Node * egueb_dom_node_owner_document_get(Egueb_Dom_Node *thiz)
 {
 	return egueb_dom_node_ref(EGUEB_DOM_NODE(thiz->owner_document));
 }

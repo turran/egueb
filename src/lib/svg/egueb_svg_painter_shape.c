@@ -300,7 +300,7 @@ static Eina_Bool _egueb_svg_painter_shape_resolve(Egueb_Svg_Painter *p,
 
 	_egueb_svg_painter_shape_cleanup(p);
 
-	doc = egueb_dom_node_document_get(EGUEB_DOM_NODE(e));
+	doc = egueb_dom_node_owner_document_get(EGUEB_DOM_NODE(e));
 	if (!doc)
 	{
 		WARN("No document set");

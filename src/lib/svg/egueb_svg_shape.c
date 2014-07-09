@@ -138,7 +138,7 @@ static Eina_Bool _egueb_svg_shape_process(Egueb_Svg_Renderable *r)
 			return EINA_FALSE;
 		}
 
-		doc = egueb_dom_node_document_get(EGUEB_DOM_NODE(r));
+		doc = egueb_dom_node_owner_document_get(EGUEB_DOM_NODE(r));
 		if (!doc)
 		{
 			Egueb_Dom_String *name;

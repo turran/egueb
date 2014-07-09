@@ -124,7 +124,7 @@ static void _egueb_svg_reference_clip_path_setup(
 
 	thiz = EGUEB_SVG_REFERENCE_CLIP_PATH(r);
 	/* Make the document adopt the g, given that it has no document yet */
-	doc = egueb_dom_node_document_get(r->referenceable);
+	doc = egueb_dom_node_owner_document_get(r->referenceable);
 	thiz->g = egueb_dom_document_node_adopt(doc, thiz->g, NULL);
 	egueb_dom_node_unref(doc);
 

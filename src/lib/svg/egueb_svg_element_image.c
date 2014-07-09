@@ -169,7 +169,7 @@ static void _egueb_svg_element_image_data_cb(Egueb_Dom_Node *n,
 	}
 
 	INFO_ELEMENT(n, "Uri fetched with MIME '%s'", mime);
-	doc = egueb_dom_node_document_get(n);
+	doc = egueb_dom_node_owner_document_get(n);
 	if (!doc)
 	{
 		WARN("No document set");
@@ -289,7 +289,7 @@ static Eina_Bool _egueb_svg_element_image_process(
 		egueb_dom_string_unref(uri);
 		return EINA_FALSE;
 	}
-	doc = egueb_dom_node_document_get(EGUEB_DOM_NODE(r));
+	doc = egueb_dom_node_owner_document_get(EGUEB_DOM_NODE(r));
 	if (!doc)
 	{
 		WARN("No document set");

@@ -93,7 +93,7 @@ static void _egueb_svg_element_use_setup_cloned(Egueb_Svg_Element_Use *thiz,
 	Egueb_Dom_Node *doc;
 	Enesim_Matrix m;
 
-	doc = egueb_dom_node_document_get(EGUEB_DOM_NODE(thiz));
+	doc = egueb_dom_node_owner_document_get(EGUEB_DOM_NODE(thiz));
 	if (doc)
 	{
 		thiz->g = egueb_dom_document_node_adopt(doc, thiz->g, NULL);
@@ -179,7 +179,7 @@ static Eina_Bool _egueb_svg_element_use_process(Egueb_Svg_Renderable *r)
 		WARN("No relative available");
 		return EINA_FALSE;
 	}
-	doc = egueb_dom_node_document_get(EGUEB_DOM_NODE(r));
+	doc = egueb_dom_node_owner_document_get(EGUEB_DOM_NODE(r));
 	if (!doc)
 	{
 		WARN("No document set");

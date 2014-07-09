@@ -73,7 +73,7 @@ EAPI void egueb_dom_node_weak_ref_remove(Egueb_Dom_Node *thiz,
 EAPI Egueb_Dom_String * egueb_dom_node_name_get(Egueb_Dom_Node *thiz);
 EAPI Egueb_Dom_String * egueb_dom_node_value_get(Egueb_Dom_Node *thiz);
 EAPI Egueb_Dom_Node_Type egueb_dom_node_type_get(Egueb_Dom_Node *thiz);
-EAPI Egueb_Dom_Node * egueb_dom_node_document_get(Egueb_Dom_Node *thiz);
+EAPI Egueb_Dom_Node * egueb_dom_node_owner_document_get(Egueb_Dom_Node *thiz);
 EAPI Egueb_Dom_Node * egueb_dom_node_parent_get(Egueb_Dom_Node *thiz);
 
 EAPI Egueb_Dom_Node_List * egueb_dom_node_children_get(Egueb_Dom_Node *thiz);

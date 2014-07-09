@@ -122,7 +122,7 @@ static Eina_Bool _egueb_svg_renderable_process(Egueb_Svg_Element *e)
 		Egueb_Dom_Node *doc;
 		Egueb_Dom_Node *topmost;
 
-		doc = egueb_dom_node_document_get(EGUEB_DOM_NODE(e));
+		doc = egueb_dom_node_owner_document_get(EGUEB_DOM_NODE(e));
 		if (!doc)
 		{
 			WARN_ELEMENT(EGUEB_DOM_NODE(e), "No document available");

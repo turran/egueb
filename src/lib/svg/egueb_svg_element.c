@@ -613,7 +613,7 @@ void egueb_svg_element_clip_path_resolve(Egueb_Dom_Node *n,
 			Egueb_Dom_Node *doc = NULL;
 			Egueb_Dom_String iri = EGUEB_DOM_STRING_STATIC(clip_path_current->value.iri);
 
-			doc = egueb_dom_node_document_get(n);
+			doc = egueb_dom_node_owner_document_get(n);
 			if (!doc)
 			{
 				WARN("No document set");

@@ -29,14 +29,14 @@ int main(int argc, char **argv)
 	doc = NULL;
 
 	printf("[testing] get the document of the topmost\n");
-	doc = egueb_dom_node_document_get(root);
+	doc = egueb_dom_node_owner_document_get(root);
 	printf("[testing] doc = %p\n", doc);
 	
 	printf("[testing] get the document of a child\n");
 	child = egueb_dom_node_child_first_get(root);
 	if (child)
 	{
-		doc = egueb_dom_node_document_get(child);
+		doc = egueb_dom_node_owner_document_get(child);
 		printf("[testing] doc = %p\n", doc);
 		egueb_dom_node_unref(child);
 	}
@@ -49,7 +49,7 @@ int main(int argc, char **argv)
 	egueb_dom_node_unref(doc);
 
 	printf("[testing] get the document of dangling node\n");
-	doc = egueb_dom_node_document_get(child);
+	doc = egueb_dom_node_owner_document_get(child);
 	printf("[testing] doc = %p\n", doc);
 
 	return 0;

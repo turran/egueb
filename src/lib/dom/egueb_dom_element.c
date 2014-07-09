@@ -771,7 +771,7 @@ EAPI void egueb_dom_element_dequeue(Egueb_Dom_Node *n)
 		return;
 	}
 
-	doc = egueb_dom_node_document_get(n);
+	doc = egueb_dom_node_owner_document_get(n);
 	if (!doc)
 	{
 		WARN("Element does not have a document");
@@ -808,7 +808,7 @@ EAPI void egueb_dom_element_enqueue(Egueb_Dom_Node *n)
 		return;
 	}
 
-	doc = egueb_dom_node_document_get(n);
+	doc = egueb_dom_node_owner_document_get(n);
 	if (!doc)
 	{
 		WARN_ELEMENT(n, "Element does not have a document");
@@ -861,7 +861,7 @@ EAPI Eina_Bool egueb_dom_element_process(Egueb_Dom_Node *n)
 	 * it means that or eiher the document called us, or some other
 	 * element wants to process this element, remove the enqueued flag
 	 */
-	doc = egueb_dom_node_document_get(n);
+	doc = egueb_dom_node_owner_document_get(n);
 	if (doc)
 	{
 		if (egueb_dom_document_is_processing(doc))

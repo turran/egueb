@@ -93,7 +93,7 @@ static void _egueb_dom_feature_io_relative_data_cb(Egueb_Dom_Uri *uri,
 	int ret;
 
 	node = egueb_dom_event_target_get(ev);
-	doc = egueb_dom_node_document_get(node);
+	doc = egueb_dom_node_owner_document_get(node);
 	if (!doc)
 	{
 		WARN("No document available");

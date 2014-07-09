@@ -63,7 +63,7 @@ static Egueb_Dom_Node * _egueb_smil_animation_target_get(Egueb_Smil_Animation *t
 	{
 		Egueb_Dom_Node *doc;
 
-		doc = egueb_dom_node_document_get(EGUEB_DOM_NODE(thiz));
+		doc = egueb_dom_node_owner_document_get(EGUEB_DOM_NODE(thiz));
 		if (!doc)
 		{
 			ERR("No document associated with the node");
@@ -115,7 +115,7 @@ static void _egueb_smil_animation_event_cb(void *item, void *user_data)
 			Egueb_Dom_Node *doc;
 			Egueb_Dom_String *id = NULL;
 
-			doc = egueb_dom_node_document_get(EGUEB_DOM_NODE(thiz));
+			doc = egueb_dom_node_owner_document_get(EGUEB_DOM_NODE(thiz));
 			if (!doc)
 			{
 				ERR("No document set");
