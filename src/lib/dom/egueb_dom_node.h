@@ -76,7 +76,7 @@ EAPI Egueb_Dom_Node_Type egueb_dom_node_type_get(Egueb_Dom_Node *thiz);
 EAPI Egueb_Dom_Node * egueb_dom_node_owner_document_get(Egueb_Dom_Node *thiz);
 EAPI Egueb_Dom_Node * egueb_dom_node_parent_get(Egueb_Dom_Node *thiz);
 
-EAPI Egueb_Dom_Node_List * egueb_dom_node_children_get(Egueb_Dom_Node *thiz);
+EAPI Egueb_Dom_Node_List * egueb_dom_node_child_nodes_get(Egueb_Dom_Node *thiz);
 EAPI Eina_Bool egueb_dom_node_children_foreach(Egueb_Dom_Node *thiz, Egueb_Dom_Node_Cb cb, void *data);
 EAPI Egueb_Dom_Node * egueb_dom_node_child_first_get(Egueb_Dom_Node *thiz);
 EAPI Egueb_Dom_Node * egueb_dom_node_child_last_get(Egueb_Dom_Node *thiz);
