@@ -2,6 +2,7 @@
 <lib name="egueb_dom" version="0" case="underscore">
   <includes name="eina"/>
   <includes name="enesim"/>
+  <includes name="ender"/>
   <object name="egueb.dom.string">
     <ctor name="new"/>
     <ctor name="new_with_string">
@@ -47,6 +48,22 @@
   </object>
   <function name="egueb.dom.init"/>
   <function name="egueb.dom.shutdown"/>
+  <object name="egueb.dom.node"/>
+  <object name="egueb.dom.node.list">
+    <prop name="length">
+      <getter>
+        <return type="int32" transfer="full"/>
+      </getter>
+    </prop>
+    <method name="item">
+      <return type="egueb.dom.node" transfer="full"/>
+      <arg name="index" type="int32" direction="in" transfer="full"/>
+    </method>
+  </object>
+  <object name="egueb.dom.element" inherits="egueb.dom.node"/>
+  <object name="egueb.dom.document" inherits="egueb.dom.node"/>
+  <object name="egueb.dom.attr" inherits="egueb.dom.node"/>
+  <callback name="egueb.dom.node.cb"/>
   <enum name="egueb.dom.node.type">
     <value name="element"/>
     <value name="attribute"/>
@@ -61,9 +78,6 @@
     <value name="document_fragment"/>
     <value name="notation"/>
   </enum>
-  <object name="egueb.dom.node"/>
-  <object name="egueb.dom.element" inherits="egueb.dom.node"/>
-  <object name="egueb.dom.document" inherits="egueb.dom.node"/>
   <object name="egueb.dom.node">
     <method name="is_destroying">
       <return type="bool" transfer="full"/>
@@ -98,9 +112,6 @@
     </method>
     <method name="parent_get">
       <return type="egueb.dom.node" transfer="full"/>
-    </method>
-    <method name="children_get">
-      <return type="egueb.dom.node.list" transfer="full"/>
     </method>
     <method name="children_foreach">
       <return type="bool" transfer="full"/>
@@ -194,16 +205,22 @@
       <arg name="name" type="egueb.dom.string" direction="in" transfer="full"/>
       <arg name="version" type="egueb.dom.string" direction="in" transfer="full"/>
     </method>
-    <method name="item_get">
-      <return type="ender.item" transfer="full"/>
-    </method>
     <prop name="owner_document">
       <getter>
         <return type="egueb.dom.document" transfer="full"/>
       </getter>
     </prop>
+    <prop name="child_nodes">
+      <getter>
+        <return type="egueb.dom.node.list" transfer="full"/>
+      </getter>
+    </prop>
+    <prop name="item" downcast="true">
+      <getter>
+        <return type="ender.item" transfer="full"/>
+      </getter>
+    </prop>
   </object>
-  <callback name="egueb.dom.node.cb"/>
   <enum name="egueb.dom.attr.flag">
     <value name="stylable"/>
     <value name="animatable"/>
@@ -443,6 +460,11 @@
     </method>
   </object>
   <object name="egueb.dom.document" inherits="egueb.dom.node">
+    <prop name="document_element">
+      <getter>
+        <return type="egueb.dom.element" transfer="full"/>
+      </getter>
+    </prop>
     <function name="descriptor_get">
       <return type="enesim.object.descriptor" transfer="full"/>
     </function>
@@ -450,9 +472,6 @@
       <return type="egueb.dom.node" transfer="full"/>
       <arg name="name" type="egueb.dom.string" direction="in" transfer="full"/>
       <arg name="err" type="eina.error" direction="in" transfer="full"/>
-    </method>
-    <method name="element_get">
-      <return type="egueb.dom.node" transfer="full"/>
     </method>
     <method name="uri_get">
       <return type="egueb.dom.string" transfer="full"/>
@@ -539,7 +558,7 @@
     </prop>
     <prop name="target">
       <getter>
-        <return type="egueb.dom.element" transfer="full"/>
+        <return type="egueb.dom.node" transfer="full"/>
       </getter>
     </prop>
   </object>
