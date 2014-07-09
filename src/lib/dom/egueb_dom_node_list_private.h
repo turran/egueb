@@ -16,31 +16,9 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _EGUEB_DOM_NODE_LIST_H_
-#define _EGUEB_DOM_NODE_LIST_H_
+#ifndef _EGUEB_DOM_NODE_LIST_PRIVATE_
+#define _EGUEB_DOM_NODE_LIST_PRIVATE_
 
-/**
- * @file
- * @ender_group_proto{Egueb_Dom_Node}
- * @listgroup{Egueb_Dom_Node_List}
- */
-
-/* forward declarations */
-typedef struct _Egueb_Dom_Node Egueb_Dom_Node;
-
-/**
- * @defgroup Egueb_Dom_Node_List Node list
- * @ingroup Egueb_Dom_Node
- * @{
- */
-
-typedef struct _Egueb_Dom_Node_List Egueb_Dom_Node_List;
-
-EAPI int egueb_dom_node_list_length_get(Egueb_Dom_Node_List *thiz);
-EAPI Egueb_Dom_Node * egueb_dom_node_list_item(Egueb_Dom_Node_List *thiz, int index);
-
-/**
- * @}
- */
+Egueb_Dom_Node_List * egueb_dom_node_list_new(Eina_List *nodes);
 
 #endif
