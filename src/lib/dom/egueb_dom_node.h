@@ -26,19 +26,29 @@
 
 /**
  * @file
+ * @ender_group_proto{Egueb_Dom_Element}
+ * @ender_group_proto{Egueb_Dom_Document}
+ * @ender_group_proto{Egueb_Dom_Attr}
+ * @listgroup{Egueb_Dom_Node_Definitions}
+ * @listgroup{Egueb_Dom_Node_Type}
  * @listgroup{Egueb_Dom_Node}
  */
 
 /**
- * @defgroup Egueb_Dom_Node Node
- * @brief Node
- * @ingroup Egueb_Dom_Group
+ * @defgroup Egueb_Dom_Node_Definitions Definitions
+ * @ingroup Egueb_Dom_Node
  * @{
  */
 
-typedef struct _Egueb_Dom_Node Egueb_Dom_Node;
 typedef struct _Egueb_Dom_Node_Event_Listener Egueb_Dom_Node_Event_Listener;
 typedef Eina_Bool (*Egueb_Dom_Node_Cb)(Egueb_Dom_Node *n, void *data);
+
+/**
+ * @}
+ * @defgroup Egueb_Dom_Node_Type Type
+ * @ingroup Egueb_Dom_Node
+ * @{
+ */
 
 typedef enum _Egueb_Dom_Node_Type
 {
@@ -55,6 +65,18 @@ typedef enum _Egueb_Dom_Node_Type
 	EGUEB_DOM_NODE_TYPE_DOCUMENT_FRAGMENT = 11,
 	EGUEB_DOM_NODE_TYPE_NOTATION = 12,
 } Egueb_Dom_Node_Type;
+
+/**
+ * @}
+ * @defgroup Egueb_Dom_Node Node
+ * @ingroup Egueb_Dom_Group
+ * @{
+ */
+
+/**
+ * The node handle
+ */
+typedef struct _Egueb_Dom_Node Egueb_Dom_Node;
 
 EAPI Eina_Bool egueb_dom_node_is_destroying(Egueb_Dom_Node *thiz);
 EAPI void egueb_dom_node_unref(Egueb_Dom_Node *thiz);

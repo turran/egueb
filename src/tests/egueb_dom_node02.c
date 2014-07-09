@@ -25,7 +25,7 @@ int main(int argc, char **argv)
 	egueb_dom_parser_parse(im, &mydocument);
 	enesim_stream_unref(im);
 
-	root = egueb_dom_document_element_get(mydocument);
+	root = egueb_dom_document_document_element_get(mydocument);
 	/* check the tree that we have parsed */
 	printf("[testing] original tree\n");
 	myelement_dump(root, EINA_TRUE);

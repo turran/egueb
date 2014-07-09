@@ -97,7 +97,7 @@ EAPI Egueb_Dom_Event_Phase egueb_dom_event_phase_get(Egueb_Dom_Event *thiz)
  * Get the target to which the event was originally dispatched.
  * @prop{target}
  * @param[in] thiz The event to get the target from
- * @return The target @ender_type{egueb.dom.element}
+ * @return The target
  */
 EAPI Egueb_Dom_Node * egueb_dom_event_target_get(Egueb_Dom_Event *thiz)
 {

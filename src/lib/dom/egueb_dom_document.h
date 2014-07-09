@@ -38,7 +38,7 @@ EAPI Enesim_Object_Descriptor * egueb_dom_document_descriptor_get(void);
 EAPI Egueb_Dom_Node * egueb_dom_document_element_create(Egueb_Dom_Node *n,
 		Egueb_Dom_String *name, Eina_Error *err);
 
-EAPI Egueb_Dom_Node * egueb_dom_document_element_get(Egueb_Dom_Node *n);
+EAPI Egueb_Dom_Node * egueb_dom_document_document_element_get(Egueb_Dom_Node *n);
 EAPI Egueb_Dom_String * egueb_dom_document_uri_get(Egueb_Dom_Node *n);
 EAPI void egueb_dom_document_uri_set(Egueb_Dom_Node *n, Egueb_Dom_String *uri);
 

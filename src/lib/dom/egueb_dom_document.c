@@ -323,7 +323,7 @@ static Eina_Bool _egueb_dom_document_child_appendable(Egueb_Dom_Node *n,
 		return EINA_FALSE;
 	}
 
-	current = egueb_dom_document_element_get(n);
+	current = egueb_dom_document_document_element_get(n);
 	if (current)
 	{
 		egueb_dom_node_unref(current);
@@ -544,8 +544,15 @@ EAPI Egueb_Dom_Node * egueb_dom_document_document_fragment_create(
 	return ret;
 }
 
-/* readonly attribute Element documentElement; */
-EAPI Egueb_Dom_Node * egueb_dom_document_element_get(Egueb_Dom_Node *n)
+/**
+ * Gets the topmost element of a document
+ * (readonly attribute Element documentElement)
+ *
+ * @prop{document_element}
+ * @param[in] thiz The document to get the topmost element from
+ * @return The document @ender_type{egueb.dom.element}
+ */
+EAPI Egueb_Dom_Node * egueb_dom_document_document_element_get(Egueb_Dom_Node *n)
 {
 	return egueb_dom_node_child_first_get(n);
 }
@@ -577,7 +584,7 @@ EAPI void egueb_dom_document_element_set(Egueb_Dom_Node *n,
 {
 	Egueb_Dom_Node *current;
 
-	current = egueb_dom_document_element_get(n);
+	current = egueb_dom_document_document_element_get(n);
 	if (current)
 	{
 		egueb_dom_node_child_remove(n, current, NULL);

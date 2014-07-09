@@ -544,7 +544,7 @@ static Etch * _egueb_svg_document_animation_etch_get(Egueb_Dom_Node *n)
 	Egueb_Dom_Node *topmost;
 	Etch *ret;
 
-	topmost = egueb_dom_document_element_get(n);
+	topmost = egueb_dom_document_document_element_get(n);
 	if (!topmost) return NULL;
 
 	ret = egueb_svg_element_svg_etch_get(topmost);
@@ -576,7 +576,7 @@ static Eina_Bool _egueb_svg_document_window_content_size_set(
 	thiz->height = h;
 	thiz->width = w;
 
-	topmost = egueb_dom_document_element_get(n);
+	topmost = egueb_dom_document_document_element_get(n);
 	if (topmost)
 	{
 		egueb_dom_element_request_process(topmost);
@@ -592,7 +592,7 @@ static Eina_Bool _egueb_svg_document_window_content_size_get(
 	Egueb_Dom_Node *topmost = NULL;
 
 	thiz = EGUEB_SVG_DOCUMENT(n);
-	topmost = egueb_dom_document_element_get(n);
+	topmost = egueb_dom_document_document_element_get(n);
 	if (!topmost)
 	{
 		*h = thiz->height;
@@ -647,7 +647,7 @@ static Enesim_Renderer * _egueb_svg_document_render_renderer_get(
 	Enesim_Renderer *r;
 
 	/* get the topmost element, get the renderer and return it */
-	topmost = egueb_dom_document_element_get(n);
+	topmost = egueb_dom_document_document_element_get(n);
 	if (!topmost) return NULL;
 
 	r = egueb_svg_renderable_renderer_get(topmost);
@@ -764,7 +764,7 @@ static Egueb_Dom_Node * _egueb_svg_document_input_element_at(
 
 	if (!n)
 	{
-		n = egueb_dom_document_element_get(EGUEB_DOM_NODE(thiz));
+		n = egueb_dom_document_document_element_get(EGUEB_DOM_NODE(thiz));
 		if (!n) return NULL;
 	}
 
@@ -957,7 +957,7 @@ EAPI Egueb_Dom_String * egueb_svg_document_url_get(Egueb_Dom_Node *n)
 /* readonly attribute SVGSVGElement rootElement; */
 EAPI Egueb_Dom_Node * egueb_svg_document_element_root_get(Egueb_Dom_Node *n)
 {
-	return egueb_dom_document_element_get(n);
+	return egueb_dom_document_document_element_get(n);
 }
 
 EAPI void egueb_svg_document_element_root_set(Egueb_Dom_Node *n,
@@ -975,7 +975,7 @@ EAPI void egueb_svg_document_font_size_set(Egueb_Dom_Node *n,
 	thiz = EGUEB_SVG_DOCUMENT(n);
 	thiz->font_size = font_size;
 
-	topmost = egueb_dom_document_element_get(n);
+	topmost = egueb_dom_document_document_element_get(n);
 	if (topmost)
 	{
 		egueb_dom_element_request_process(topmost);

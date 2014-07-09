@@ -1168,6 +1168,14 @@ EAPI void * egueb_dom_node_feature_get(Egueb_Dom_Node *thiz,
 		return egueb_dom_feature_ref(f->feature);
 }
 
+/**
+ * Get the item a node represents for Ender
+ * This will allow easily downcasting on the bindings
+ * @prop{item}
+ * @ender_prop_downcast
+ * @param[in] thiz The node to get the item from
+ * @return the item related to a node
+ */
 EAPI Ender_Item * egueb_dom_node_item_get(Egueb_Dom_Node *thiz)
 {
 	Egueb_Dom_Node_Class *klass;

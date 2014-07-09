@@ -128,7 +128,7 @@ static Eina_Bool _egueb_svg_renderable_process(Egueb_Svg_Element *e)
 			WARN_ELEMENT(EGUEB_DOM_NODE(e), "No document available");
 			return EINA_FALSE;
 		}
-		topmost = egueb_dom_document_element_get(doc);
+		topmost = egueb_dom_document_document_element_get(doc);
 		egueb_dom_node_unref(doc);
 
 		/* The only special case is the topmost svg element */

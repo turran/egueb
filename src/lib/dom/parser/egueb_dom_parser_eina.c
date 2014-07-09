@@ -118,7 +118,7 @@ static Egueb_Dom_Node * _egueb_dom_parser_eina_tag_new(Egueb_Dom_Parser_Eina *th
 	if (!node) return NULL;
 
 	/* in case we dont have a topmost element, set it */
-	topmost = egueb_dom_document_element_get(doc);
+	topmost = egueb_dom_document_document_element_get(doc);
 	if (!topmost)
 	{
 		egueb_dom_document_element_set(doc, node);
