@@ -111,6 +111,8 @@ src/lib/dom/egueb_dom_list_private.h \
 src/lib/dom/egueb_dom_main.c \
 src/lib/dom/egueb_dom_node.c \
 src/lib/dom/egueb_dom_node_private.h \
+src/lib/dom/egueb_dom_node_list.c \
+src/lib/dom/egueb_dom_node_list_private.h \
 src/lib/dom/egueb_dom_node_map_named.c \
 src/lib/dom/egueb_dom_node_map_named_private.h \
 src/lib/dom/egueb_dom_node_map_named_attr.c \
