@@ -28,6 +28,7 @@
 #include "egueb_dom_feature.h"
 
 #include "egueb_dom_node_private.h"
+#include "egueb_dom_node_list_private.h"
 #include "egueb_dom_node_map_named_private.h"
 #include "egueb_dom_document_private.h"
 #include "egueb_dom_event_mutation_private.h"
@@ -632,13 +633,23 @@ EAPI Egueb_Dom_Node * egueb_dom_node_parent_get(Egueb_Dom_Node *thiz)
 	return egueb_dom_node_ref(thiz->parent);
 }
 
-/*
- * readonly attribute NodeList childNodes;
+/**
+ * Get the children nodes of a node
+ * (readonly attribute NodeList childNodes)
+ * @prop{child_nodes}
+ * @param[in] thiz The node to get the list of children nodes from
+ * @return The children nodes
  */
-EAPI Egueb_Dom_Node_List * egueb_dom_node_children_get(Egueb_Dom_Node *thiz)
+EAPI Egueb_Dom_Node_List * egueb_dom_node_child_nodes_get(Egueb_Dom_Node *thiz)
 {
-	//*children = EINA_INLIST_CONTAINER_GET(thiz->children, Egueb_Dom_Tag);
-	return NULL;
+	Egueb_Dom_Node *child;
+	Eina_List *tmp = NULL;
+
+	EINA_INLIST_FOREACH(thiz->children, child)
+	{
+		tmp = eina_list_append(tmp, egueb_dom_node_ref(child));
+	}
+	return egueb_dom_node_list_new(tmp);
 }
 
 EAPI Eina_Bool egueb_dom_node_children_foreach(Egueb_Dom_Node *thiz, Egueb_Dom_Node_Cb cb, void *data)
