@@ -1009,7 +1009,14 @@ EAPI void egueb_dom_node_event_monitor_remove(Egueb_Dom_Node *thiz,
 	}
 }
 
-/* boolean dispatchEvent(in Event evt) raises(EventException); */
+/**
+ * Dispatch an event in a node
+ * @param[in] thiz The even to dispatch the event into
+ * @param[in] event The event to dispatch
+ * @param[out] notprevented In case the event has not been prevented
+ * @param[out] err The exception in case the dispatch fails
+ * @return EINA_TRUE if the disptach succeeds, EINA_FALSE otherwise.
+ */
 EAPI Eina_Bool egueb_dom_node_event_dispatch(Egueb_Dom_Node *thiz,
 		Egueb_Dom_Event *event, Eina_Bool *notprevented,
 		Eina_Error *err)

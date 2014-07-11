@@ -20,8 +20,14 @@
 #define _EGUEB_SVG_ELEMENT_SVG_H_
 
 /**
- * @defgroup Egueb_Svg_Element_SVG_Group SVG
- * @brief SVG element
+ * @file
+ * @listgroup{Egueb_Svg_Element_Svg}
+ */
+
+/**
+ * @defgroup Egueb_Svg_Element_Svg SVG
+ * TODO make it inherit from svg container
+ * @brief SVG element @inherits{Egueb_Svg_Element}
  * @ingroup Egueb_Svg_Renderable_Container_Group
  * @{
  */
@@ -47,8 +53,13 @@ EAPI void egueb_svg_element_svg_height_get(Egueb_Dom_Node *n,
 
 EAPI void egueb_svg_element_svg_current_scale_set(Egueb_Dom_Node *n,
 		double scale);
+EAPI double egueb_svg_element_svg_current_scale_get(Egueb_Dom_Node *n);
 EAPI void egueb_svg_element_svg_current_translate_set(Egueb_Dom_Node *n,
 		Egueb_Svg_Point *p);
+EAPI void egueb_svg_element_svg_current_translate_get(Egueb_Dom_Node *n,
+		Egueb_Svg_Point *p);
+
+EAPI Egueb_Svg_Point * egueb_svg_element_svg_svg_point_create(Egueb_Dom_Node *n);
 
 #if 0
 typedef const char * (*Egueb_Svg_Element_Svg_Base_Dir_Get)(Ender_Element *e, void *data);

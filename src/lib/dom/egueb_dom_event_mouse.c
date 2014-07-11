@@ -76,6 +76,17 @@ static Egueb_Dom_String _EGUEB_DOM_EVENT_MOUSE_OVER = EGUEB_DOM_STRING_STATIC("m
 static Egueb_Dom_String _EGUEB_DOM_EVENT_MOUSE_MOVE = EGUEB_DOM_STRING_STATIC("mousemove");
 static Egueb_Dom_String _EGUEB_DOM_EVENT_MOUSE_OUT = EGUEB_DOM_STRING_STATIC("mouseout");
 /*----------------------------------------------------------------------------*
+ *                               Event interface                              *
+ *----------------------------------------------------------------------------*/
+static Ender_Item * _egueb_dom_event_mouse_item_get(Egueb_Dom_Event *thiz)
+{
+	const Ender_Lib *lib;
+
+	lib = ender_lib_find("egueb_dom");
+	return ender_lib_item_find(lib, "egueb.dom.event.mouse");
+}
+
+/*----------------------------------------------------------------------------*
  *                              Object interface                              *
  *----------------------------------------------------------------------------*/
 ENESIM_OBJECT_INSTANCE_BOILERPLATE(EGUEB_DOM_EVENT_UI_DESCRIPTOR,
@@ -84,6 +95,10 @@ ENESIM_OBJECT_INSTANCE_BOILERPLATE(EGUEB_DOM_EVENT_UI_DESCRIPTOR,
 
 static void _egueb_dom_event_mouse_class_init(void *k)
 {
+	Egueb_Dom_Event_Class *klass;
+
+	klass = EGUEB_DOM_EVENT_CLASS(k);
+	klass->item_get = _egueb_dom_event_mouse_item_get;
 }
 
 static void _egueb_dom_event_mouse_instance_init(void *o)
@@ -254,6 +269,28 @@ EAPI Egueb_Dom_Event * egueb_dom_event_mouse_new(void)
 	Egueb_Dom_Event *event;
 	event = ENESIM_OBJECT_INSTANCE_NEW(egueb_dom_event_mouse);
 	return event;
+}
+
+/**
+ * @prop{client_x}
+ */
+EAPI int egueb_dom_event_mouse_client_x_get(Egueb_Dom_Event *e)
+{
+	Egueb_Dom_Event_Mouse *thiz;
+
+	thiz = EGUEB_DOM_EVENT_MOUSE(e);
+	return thiz->client_x;
+}
+
+/**
+ * @prop{client_y}
+ */
+EAPI int egueb_dom_event_mouse_client_y_get(Egueb_Dom_Event *e)
+{
+	Egueb_Dom_Event_Mouse *thiz;
+
+	thiz = EGUEB_DOM_EVENT_MOUSE(e);
+	return thiz->client_y;
 }
 
 EAPI void egueb_dom_event_mouse_client_coords_get(Egueb_Dom_Event *e, int *x, int *y)

@@ -131,11 +131,13 @@ typedef struct _Egueb_Svg_Element
 } Egueb_Svg_Element;
 
 typedef Eina_Bool (*Egueb_Svg_Element_Process)(Egueb_Svg_Element *e);
+typedef Ender_Item * (*Egueb_Svg_Element_Item_Get)(Egueb_Svg_Element *thiz);
 
 typedef struct _Egueb_Svg_Element_Class
 {
 	Egueb_Dom_Element_Class parent;
 	Egueb_Svg_Element_Process process;
+	Egueb_Svg_Element_Item_Get item_get;
 } Egueb_Svg_Element_Class;
 
 #define EGUEB_SVG_ELEMENT_DESCRIPTOR egueb_svg_element_descriptor_get()

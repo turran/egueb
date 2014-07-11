@@ -81,11 +81,6 @@ typedef void (*Egueb_Dom_Attr_Fetch)(Egueb_Dom_Node *n, Egueb_Dom_Node **p);
  * @{
  */
 
-EAPI Enesim_Object_Descriptor * egueb_dom_attr_descriptor_get(void);
-EAPI Enesim_Object_Descriptor * egueb_dom_attr_primitive_descriptor_get(void);
-EAPI Enesim_Object_Descriptor * egueb_dom_attr_object_descriptor_get(void);
-EAPI Enesim_Object_Descriptor * egueb_dom_attr_basic_descriptor_get(void);
-
 EAPI Eina_Bool egueb_dom_is_attr(Egueb_Dom_Node *n);
 EAPI const Egueb_Dom_Value_Descriptor * egueb_dom_attr_value_descriptor_get(
 		Egueb_Dom_Node *n);

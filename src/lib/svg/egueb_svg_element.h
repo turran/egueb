@@ -19,6 +19,11 @@
 #ifndef _EGUEB_SVG_ELEMENT_H_
 #define _EGUEB_SVG_ELEMENT_H_
 
+/**
+ * @file
+ * @listgroup{Egueb_Svg_Element}
+ */
+
 #include "egueb_dom_node.h"
 #include "egueb_svg_length.h"
 #include "egueb_svg_number.h"
@@ -34,8 +39,8 @@
 #include "egueb_svg_overflow.h"
 
 /**
- * @defgroup Egueb_Svg_Element_Group Element 
- * @brief Element
+ * @defgroup Egueb_Svg_Element Element 
+ * @brief Element @inherits{Egueb_Dom_Element}
  * @ingroup Egueb_Svg_Group
  * @{
  */

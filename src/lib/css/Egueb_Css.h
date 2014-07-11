@@ -73,4 +73,6 @@
 #include "egueb_css_font_weight.h"
 #include "egueb_css_font.h"
 
+/** @} */
+
 #endif /*_EGUEB_CSS_H*/

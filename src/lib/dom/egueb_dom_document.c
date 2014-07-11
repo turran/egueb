@@ -549,7 +549,7 @@ EAPI Egueb_Dom_Node * egueb_dom_document_document_fragment_create(
  * (readonly attribute Element documentElement)
  *
  * @prop{document_element}
- * @param[in] thiz The document to get the topmost element from
+ * @param[in] n The document to get the topmost element from
  * @return The document @ender_type{egueb.dom.element}
  */
 EAPI Egueb_Dom_Node * egueb_dom_document_document_element_get(Egueb_Dom_Node *n)

@@ -34,7 +34,6 @@
  * @{
  */
 
-EAPI Enesim_Object_Descriptor * egueb_dom_document_descriptor_get(void);
 EAPI Egueb_Dom_Node * egueb_dom_document_element_create(Egueb_Dom_Node *n,
 		Egueb_Dom_String *name, Eina_Error *err);
 

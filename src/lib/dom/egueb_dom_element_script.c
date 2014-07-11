@@ -115,8 +115,11 @@ static Eina_Bool _egueb_dom_element_script_process(Egueb_Dom_Element *e)
 		Egueb_Dom_String *type;
 
 		DBG("Processing the script");
-		/* TODO check the attribute */
-		type = egueb_dom_string_new_with_string("application/ecmascript");
+		if (!content_type)
+			type = egueb_dom_string_new_with_static_string("application/ecmascript");
+		else
+			type = egueb_dom_string_ref(content_type);
+
 		ev = egueb_dom_event_script_new(type);
 		egueb_dom_node_event_dispatch(EGUEB_DOM_NODE(e), egueb_dom_event_ref(ev), NULL, NULL);
 		/* instantiate the vm */
@@ -146,6 +149,10 @@ static Eina_Bool _egueb_dom_element_script_process(Egueb_Dom_Element *e)
 	}
 
 	thiz->cdata_changed = EINA_FALSE;
+	/* swap the last content type */
+	if (thiz->last_content_type)
+		egueb_dom_string_unref(thiz->last_content_type);
+	thiz->last_content_type = content_type;
 done:
 	egueb_dom_string_unref(content_type);
 	return EINA_TRUE;
@@ -183,7 +190,7 @@ static void _egueb_dom_element_script_instance_init(void *o)
 	n = EGUEB_DOM_NODE(o);
 	/* add the attributes */
 	thiz->content_type = egueb_dom_attr_string_new(
-			egueb_dom_string_ref(EGUEB_DOM_NAME_CONTENT_TYPE),
+			egueb_dom_string_ref(EGUEB_DOM_NAME_TYPE),
 			NULL, EINA_FALSE, EINA_FALSE, EINA_FALSE);
 	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->content_type), NULL);
 

@@ -812,6 +812,14 @@ static Eina_Bool _egueb_svg_document_child_appendable(
 
 	return ret;
 }
+
+static Ender_Item * _egueb_svg_document_item_get(Egueb_Dom_Document *d)
+{
+	const Ender_Lib *lib;
+
+	lib = ender_lib_find("egueb_svg");
+	return ender_lib_item_find(lib, "egueb.svg.document");
+}
 /*----------------------------------------------------------------------------*
  *                              Object interface                              *
  *----------------------------------------------------------------------------*/
@@ -825,6 +833,7 @@ static void _egueb_svg_document_class_init(void *k)
 
 	klass->element_create = _egueb_svg_document_element_create;
 	klass->child_appendable = _egueb_svg_document_child_appendable;
+	klass->item_get = _egueb_svg_document_item_get;
 }
 
 static void _egueb_svg_document_instance_init(void *o)
@@ -954,8 +963,14 @@ EAPI Egueb_Dom_String * egueb_svg_document_url_get(Egueb_Dom_Node *n)
 }
 #endif
 
-/* readonly attribute SVGSVGElement rootElement; */
-EAPI Egueb_Dom_Node * egueb_svg_document_element_root_get(Egueb_Dom_Node *n)
+/**
+ * Get the root 'svg' element in the document hierarchy
+ * (readonly attribute SVGSVGElement rootElement)
+ * @prop{root_element}
+ * @param[in] n The document to get the root element from
+ * @return The root element @ender_type{egueb.svg.element}
+ */
+EAPI Egueb_Dom_Node * egueb_svg_document_root_element_get(Egueb_Dom_Node *n)
 {
 	return egueb_dom_document_document_element_get(n);
 }

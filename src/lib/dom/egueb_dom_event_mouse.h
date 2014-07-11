@@ -22,8 +22,14 @@
 #include "egueb_dom_event.h"
 
 /**
- * @defgroup Egueb_Dom_Event_Mouse_Group Mouse Event
- * @brief Mouse Event
+ * @file
+ * @listgroup{Egueb_Dom_Event_Mouse}
+ */
+
+/**
+ * @defgroup Egueb_Dom_Event_Mouse Mouse Event
+ * TODO make it inherit from ui event
+ * @brief Mouse Event @inherits{Egueb_Dom_Event}
  * @ingroup Egueb_Dom_Event_UI_Group
  * @{
  */
@@ -38,9 +44,12 @@ EAPI extern Egueb_Dom_String *EGUEB_DOM_EVENT_MOUSE_OUT;
 EAPI Egueb_Dom_Event * egueb_dom_event_mouse_new(void);
 
 EAPI Egueb_Dom_Node * egueb_dom_event_mouse_related_get(Egueb_Dom_Event *e);
-EAPI void egueb_dom_event_mouse_client_coords_get(Egueb_Dom_Event *e, int *x, int *y);
 EAPI void egueb_dom_event_mouse_screen_coords_get(Egueb_Dom_Event *e, int *x, int *y);
 EAPI int egueb_dom_event_mouse_button_get(Egueb_Dom_Event *e);
+
+EAPI int egueb_dom_event_mouse_client_x_get(Egueb_Dom_Event *e);
+EAPI int egueb_dom_event_mouse_client_y_get(Egueb_Dom_Event *e);
+EAPI void egueb_dom_event_mouse_client_coords_get(Egueb_Dom_Event *e, int *x, int *y);
 
 /**
  * @}

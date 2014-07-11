@@ -538,6 +538,11 @@ EAPI Eina_Bool egueb_dom_element_attribute_set(Egueb_Dom_Node *node,
 {
 	Egueb_Dom_Node *p = NULL;
 
+	if (!node)
+	{
+		 return EINA_FALSE;
+	}
+
 	p = egueb_dom_element_attribute_fetch(node, name);
 	if (!p)
 	{

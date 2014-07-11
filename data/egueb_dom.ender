@@ -172,8 +172,8 @@
     <method name="event_dispatch">
       <return type="bool" transfer="full"/>
       <arg name="event" type="egueb.dom.event" direction="in" transfer="full"/>
-      <arg name="notprevented" type="eina.bool" direction="in" transfer="full"/>
-      <arg name="err" type="eina.error" direction="in" transfer="full"/>
+      <arg name="notprevented" type="bool" direction="out" transfer="full"/>
+      <arg name="err" type="eina.error" direction="out" transfer="full"/>
     </method>
     <method name="event_propagate">
       <return type="bool" transfer="full"/>
@@ -234,18 +234,6 @@
   </enum>
   <callback name="egueb.dom.attr.fetch"/>
   <object name="egueb.dom.attr" inherits="egueb.dom.node">
-    <function name="descriptor_get">
-      <return type="enesim.object.descriptor" transfer="full"/>
-    </function>
-    <function name="primitive_descriptor_get">
-      <return type="enesim.object.descriptor" transfer="full"/>
-    </function>
-    <function name="object_descriptor_get">
-      <return type="enesim.object.descriptor" transfer="full"/>
-    </function>
-    <function name="basic_descriptor_get">
-      <return type="enesim.object.descriptor" transfer="full"/>
-    </function>
     <method name="egueb_dom_is_attr">
       <return type="bool" transfer="full"/>
     </method>
@@ -465,9 +453,6 @@
         <return type="egueb.dom.element" transfer="full"/>
       </getter>
     </prop>
-    <function name="descriptor_get">
-      <return type="enesim.object.descriptor" transfer="full"/>
-    </function>
     <method name="element_create">
       <return type="egueb.dom.node" transfer="full"/>
       <arg name="name" type="egueb.dom.string" direction="in" transfer="full"/>
@@ -561,6 +546,33 @@
         <return type="egueb.dom.node" transfer="full"/>
       </getter>
     </prop>
+  </object>
+  <object name="egueb.dom.event.mouse" inherits="egueb.dom.event">
+    <prop name="client_x">
+      <getter>
+        <return type="int32" transfer="full"/>
+      </getter>
+    </prop>
+    <prop name="client_y">
+      <getter>
+        <return type="int32" transfer="full"/>
+      </getter>
+    </prop>
+    <ctor name="new"/>
+    <method name="related_get">
+      <return type="egueb.dom.node" transfer="full"/>
+    </method>
+    <method name="client_coords_get">
+      <arg name="x" type="int" direction="in" transfer="full"/>
+      <arg name="y" type="int" direction="in" transfer="full"/>
+    </method>
+    <method name="screen_coords_get">
+      <arg name="x" type="int" direction="in" transfer="full"/>
+      <arg name="y" type="int" direction="in" transfer="full"/>
+    </method>
+    <method name="button_get">
+      <return type="int32" transfer="full"/>
+    </method>
   </object>
   <callback name="egueb.dom.scripter.descriptor.new"/>
   <callback name="egueb.dom.scripter.descriptor.free"/>

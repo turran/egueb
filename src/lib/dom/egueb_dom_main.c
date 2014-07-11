@@ -32,14 +32,14 @@ static void _egueb_dom_strings_init(void)
 {
 	EGUEB_DOM_XLINK_HREF = egueb_dom_string_new_with_string("xlink:href");
 	EGUEB_DOM_NAME_SCRIPT = egueb_dom_string_new_with_string("script");
-	EGUEB_DOM_NAME_CONTENT_TYPE = egueb_dom_string_new_with_string("content-type");
+	EGUEB_DOM_NAME_TYPE = egueb_dom_string_new_with_string("type");
 }
 
 static void _egueb_dom_strings_shutdown(void)
 {
 	egueb_dom_string_unref(EGUEB_DOM_XLINK_HREF);
 	egueb_dom_string_unref(EGUEB_DOM_NAME_SCRIPT);
-	egueb_dom_string_unref(EGUEB_DOM_NAME_CONTENT_TYPE);
+	egueb_dom_string_unref(EGUEB_DOM_NAME_TYPE);
 }
 /*============================================================================*
  *                                 Global                                     *
@@ -68,7 +68,7 @@ EAPI Eina_Error EGUEB_DOM_ERROR_TYPE_MISMATCH;
 
 Egueb_Dom_String *EGUEB_DOM_XLINK_HREF;
 Egueb_Dom_String *EGUEB_DOM_NAME_SCRIPT;
-Egueb_Dom_String *EGUEB_DOM_NAME_CONTENT_TYPE;
+Egueb_Dom_String *EGUEB_DOM_NAME_TYPE;
 
 EAPI void egueb_dom_init(void)
 {

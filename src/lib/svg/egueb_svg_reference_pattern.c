@@ -100,7 +100,7 @@ static void _egueb_svg_reference_pattern_event_monitor_cb(Egueb_Dom_Event *e,
 	 * it will not be propagated
 	 */
 	doc = egueb_dom_node_owner_document_get(r->referenceable);
-	svg = egueb_svg_document_element_root_get(doc);
+	svg = egueb_svg_document_root_element_get(doc);
 	egueb_dom_node_unref(doc);
 
 	egueb_dom_node_event_propagate(svg, e);

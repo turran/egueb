@@ -27,6 +27,8 @@
 #include "egueb_dom_node_private.h"
 
 #define EGUEB_DOM_ATTR_DESCRIPTOR egueb_dom_attr_descriptor_get()
+Enesim_Object_Descriptor * egueb_dom_attr_descriptor_get(void);
+
 #define EGUEB_DOM_ATTR_CLASS_GET(o) EGUEB_DOM_ATTR_CLASS(		\
 		(ENESIM_OBJECT_INSTANCE(o))->klass)
 #define EGUEB_DOM_ATTR_CLASS(k) ENESIM_OBJECT_CLASS_CHECK(k,		\
@@ -88,5 +90,9 @@ Eina_Bool egueb_dom_attr_set_va(Egueb_Dom_Node *n,
 void egueb_dom_attr_copy(Egueb_Dom_Node *n,
 		Egueb_Dom_Node *other);
 void egueb_dom_attr_process(Egueb_Dom_Node *n);
+
+Enesim_Object_Descriptor * egueb_dom_attr_primitive_descriptor_get(void);
+Enesim_Object_Descriptor * egueb_dom_attr_object_descriptor_get(void);
+Enesim_Object_Descriptor * egueb_dom_attr_basic_descriptor_get(void);
 
 #endif

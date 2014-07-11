@@ -34,13 +34,11 @@ src/lib/css/egueb_css_private.h
 src_lib_css_libegueb_css_la_CPPFLAGS = \
 -I$(top_srcdir)/src/lib/css \
 -I$(top_srcdir)/src/lib/css/engine \
--I$(top_srcdir)/src/lib/base \
 -I$(top_srcdir)/src/lib/dom \
 -DEGUEB_CSS_BUILD \
 @EGUEB_CSS_CFLAGS@
 
 src_lib_css_libegueb_css_la_LIBADD = \
-$(top_builddir)/src/lib/base/libegueb_base.la \
 $(top_builddir)/src/lib/dom/libegueb_dom.la \
 @EGUEB_CSS_LIBS@
 

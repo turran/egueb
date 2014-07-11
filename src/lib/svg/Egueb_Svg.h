@@ -54,6 +54,14 @@ extern "C" {
 #endif
 
 /**
+ * @file
+ * @depends{eina}
+ * @depends{enesim}
+ * @depends{ender}
+ * @depends{egueb_dom}
+ */
+
+/**
  * @defgroup Egueb_Svg_Group SVG
  * @brief SVG related API
  * @{
@@ -100,9 +108,6 @@ extern "C" {
 #include "egueb_svg_renderable.h"
 #include "egueb_svg_renderable_container.h"
 
-/* document */
-#include "egueb_svg_document.h"
-
 /* elements */
 #include "egueb_svg_element.h"
 #include "egueb_svg_element_a.h"
@@ -127,6 +132,9 @@ extern "C" {
 #include "egueb_svg_element_svg.h"
 #include "egueb_svg_element_tspan.h"
 #include "egueb_svg_element_text.h"
+
+/* document */
+#include "egueb_svg_document.h"
 
 #if 0
 /* providers */

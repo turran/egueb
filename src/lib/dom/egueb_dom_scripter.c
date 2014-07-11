@@ -81,7 +81,7 @@ EAPI void egueb_dom_scripter_global_add(Egueb_Dom_Scripter *thiz, const char *na
 EAPI void egueb_dom_scripter_global_clear(Egueb_Dom_Scripter *thiz)
 {
 	if (!thiz) return;
-	if (thiz->d->global_clear) return;
+	if (!thiz->d->global_clear) return;
 	thiz->d->global_clear(thiz->prv);
 }
 

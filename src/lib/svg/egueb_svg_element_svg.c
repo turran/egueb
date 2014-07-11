@@ -285,6 +285,14 @@ static Egueb_Dom_String * _egueb_svg_element_svg_tag_name_get(
 {
 	return egueb_dom_string_ref(EGUEB_SVG_NAME_SVG);
 }
+
+static Ender_Item * _egueb_svg_element_svg_item_get(Egueb_Svg_Element *e)
+{
+	const Ender_Lib *lib;
+
+	lib = ender_lib_find("egueb_svg");
+	return ender_lib_item_find(lib, "egueb.svg.element.svg");
+}
 /*----------------------------------------------------------------------------*
  *                              Object interface                              *
  *----------------------------------------------------------------------------*/
@@ -295,6 +303,7 @@ ENESIM_OBJECT_INSTANCE_BOILERPLATE(EGUEB_SVG_RENDERABLE_CONTAINER_DESCRIPTOR,
 static void _egueb_svg_element_svg_class_init(void *k)
 {
 	Egueb_Svg_Renderable_Class *klass;
+	Egueb_Svg_Element_Class *es_klass;
 	Egueb_Dom_Element_Class *e_klass;
 
 	klass = EGUEB_SVG_RENDERABLE_CLASS(k);
@@ -302,6 +311,9 @@ static void _egueb_svg_element_svg_class_init(void *k)
 	klass->process = _egueb_svg_element_svg_process;
 	klass->painter_get = _egueb_svg_element_svg_painter_get;
 	klass->painter_apply = _egueb_svg_element_svg_painter_apply;
+
+	es_klass= EGUEB_SVG_ELEMENT_CLASS(k);
+	es_klass->item_get = _egueb_svg_element_svg_item_get;
 
 	e_klass= EGUEB_DOM_ELEMENT_CLASS(k);
 	e_klass->tag_name_get = _egueb_svg_element_svg_tag_name_get;
@@ -2056,6 +2068,9 @@ EAPI void egueb_svg_element_svg_height_get(Egueb_Dom_Node *n,
 	EGUEB_SVG_ELEMENT_ATTR_SIMPLE_GET(thiz->height, height);
 }
 
+/**
+ * @prop{current_scale}
+ */
 EAPI void egueb_svg_element_svg_current_scale_set(Egueb_Dom_Node *n,
 		double scale)
 {
@@ -2066,6 +2081,20 @@ EAPI void egueb_svg_element_svg_current_scale_set(Egueb_Dom_Node *n,
 	egueb_dom_element_request_process(n);
 }
 
+/**
+ * @prop{current_scale}
+ */
+EAPI double egueb_svg_element_svg_current_scale_get(Egueb_Dom_Node *n)
+{
+	Egueb_Svg_Element_Svg *thiz;
+
+	thiz = EGUEB_SVG_ELEMENT_SVG(n);
+	return thiz->current_scale;
+}
+
+/**
+ * @prop{current_translate}
+ */
 EAPI void egueb_svg_element_svg_current_translate_set(Egueb_Dom_Node *n,
 		Egueb_Svg_Point *p)
 {
@@ -2082,6 +2111,28 @@ EAPI void egueb_svg_element_svg_current_translate_set(Egueb_Dom_Node *n,
 		thiz->current_translate = *p;
 	}
 	egueb_dom_element_request_process(n);
+}
+
+/**
+ * @prop{current_translate}
+ * @param[in] The SVG element to get the current translate from
+ * @param[out] p The point to store the current translate
+ */
+EAPI void egueb_svg_element_svg_current_translate_get(Egueb_Dom_Node *n,
+		Egueb_Svg_Point *p)
+{
+	Egueb_Svg_Element_Svg *thiz;
+
+	thiz = EGUEB_SVG_ELEMENT_SVG(n);
+	*p = thiz->current_translate;
+}
+
+EAPI Egueb_Svg_Point * egueb_svg_element_svg_svg_point_create(Egueb_Dom_Node *n)
+{
+	Egueb_Svg_Point *ret;
+
+	ret = calloc(1, sizeof(Egueb_Svg_Point));
+	return ret;
 }
 
 #if 0

@@ -67,11 +67,17 @@ static void _egueb_svg_element_event_handler(Egueb_Dom_Event *ev,
 		Egueb_Dom_String **latest, void **obj)
 {
 	Egueb_Dom_String *curr = NULL;
+	Egueb_Dom_String *type;
 	Eina_Bool changed = EINA_FALSE;
 
 	/* if we are not at target, do nothing */
 	if (egueb_dom_event_phase_get(ev) != EGUEB_DOM_EVENT_PHASE_AT_TARGET)
 		return;
+
+	type = egueb_dom_event_type_get(ev);
+	INFO_ELEMENT(EGUEB_DOM_NODE(thiz), "Event '%s' received at target",
+			egueb_dom_string_string_get(type));
+	egueb_dom_string_unref(type);
 
 	egueb_dom_attr_final_get(attr, &curr);
 	if (!egueb_dom_string_is_equal(curr, *latest))
@@ -114,6 +120,7 @@ static void _egueb_svg_element_event_handler(Egueb_Dom_Event *ev,
 		/* TODO pass the context (thiz, evt, etc) */
 		if (*obj)
 		{
+			INFO_ELEMENT(EGUEB_DOM_NODE(thiz), "Running script");
 			egueb_dom_scripter_script_run_listener(thiz->scripter, *obj, ev);
 		}
 	}
@@ -359,6 +366,29 @@ static Eina_Bool _egueb_svg_element_process(Egueb_Dom_Element *e)
 	DBG_ELEMENT(EGUEB_DOM_NODE(e), "Done processing element with ret %d", ret);
 	return ret;
 }
+
+static Ender_Item * _egueb_svg_element_item_get(Egueb_Dom_Element *e)
+{
+	Egueb_Svg_Element_Class *klass;
+	Egueb_Svg_Element *thiz;
+	Ender_Item *ret = NULL;
+
+	thiz = EGUEB_SVG_ELEMENT(e);
+	klass = EGUEB_SVG_ELEMENT_CLASS_GET(thiz);
+	if (klass->item_get)
+		ret = klass->item_get(thiz);
+	if (!ret)
+	{
+		const Ender_Lib *lib;
+
+		lib = ender_lib_find("egueb_svg");
+		if (!lib) return NULL;
+
+		ret = ender_lib_item_find(lib, "egueb.svg.element");
+	}
+
+	return ret;
+}
 /*----------------------------------------------------------------------------*
  *                              Object interface                              *
  *----------------------------------------------------------------------------*/
@@ -372,6 +402,7 @@ static void _egueb_svg_element_class_init(void *k)
 
 	klass = EGUEB_DOM_ELEMENT_CLASS(k);
 	klass->process = _egueb_svg_element_process;
+	klass->item_get = _egueb_svg_element_item_get;
 }
 
 static void _egueb_svg_element_instance_init(void *o)

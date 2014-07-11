@@ -20,8 +20,13 @@
 #define _EGUEB_SVG_DOCUMENT_H_
 
 /**
- * @defgroup Egueb_Svg_Document_Group Document
- * @brief Document
+ * @file
+ * @listgroup{Egueb_Svg_Document}
+ */
+
+/**
+ * @defgroup Egueb_Svg_Document Document
+ * @brief Document @inherits{Egueb_Dom_Document}
  * @ingroup Egueb_Svg_Group
  * @{
  */
@@ -31,7 +36,7 @@ EAPI Egueb_Dom_String * egueb_svg_document_title_get(Egueb_Dom_Node *n);
 EAPI Egueb_Dom_String * egueb_svg_document_referrer_get(Egueb_Dom_Node *n);
 EAPI Egueb_Dom_String * egueb_svg_document_domain_get(Egueb_Dom_Node *n);
 
-EAPI Egueb_Dom_Node * egueb_svg_document_element_root_get(Egueb_Dom_Node *n);
+EAPI Egueb_Dom_Node * egueb_svg_document_root_element_get(Egueb_Dom_Node *n);
 
 EAPI void egueb_svg_document_font_size_set(Egueb_Dom_Node *n,
 		double font_size);
