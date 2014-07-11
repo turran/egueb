@@ -22,8 +22,10 @@
     <method name="dup">
       <return type="egueb.dom.string" transfer="full"/>
     </method>
-    <ref/>
-    <unref/>
+    <ref name="ref">
+      <return type="egueb.dom.string" transfer="full"/>
+    </ref>
+    <unref name="unref"/>
     <method name="static_string_set">
       <arg name="str" type="string" direction="in" transfer="none"/>
     </method>
@@ -82,8 +84,10 @@
     <method name="is_destroying">
       <return type="bool" transfer="full"/>
     </method>
-    <unref/>
-    <ref/>
+    <unref name="unref"/>
+    <ref name="ref">
+      <return type="egueb.dom.node" transfer="full"/>
+    </ref>
     <method name="ref_get">
       <return type="int32" transfer="full"/>
     </method>
@@ -519,8 +523,10 @@
       <arg name="cancelable" type="bool" direction="in" transfer="full"/>
       <arg name="direction" type="egueb.dom.event.direction" direction="in" transfer="full"/>
     </method>
-    <unref/>
-    <ref/>
+    <unref name="unref"/>
+    <ref name="ref">
+      <return type="egueb.dom.event" transfer="full"/>
+    </ref>
     <method name="target_current_get">
       <return type="egueb.dom.node" transfer="full"/>
     </method>
@@ -562,16 +568,16 @@
     <method name="related_get">
       <return type="egueb.dom.node" transfer="full"/>
     </method>
-    <method name="client_coords_get">
-      <arg name="x" type="int" direction="in" transfer="full"/>
-      <arg name="y" type="int" direction="in" transfer="full"/>
-    </method>
     <method name="screen_coords_get">
       <arg name="x" type="int" direction="in" transfer="full"/>
       <arg name="y" type="int" direction="in" transfer="full"/>
     </method>
     <method name="button_get">
       <return type="int32" transfer="full"/>
+    </method>
+    <method name="client_coords_get">
+      <arg name="x" type="int" direction="in" transfer="full"/>
+      <arg name="y" type="int" direction="in" transfer="full"/>
     </method>
   </object>
   <callback name="egueb.dom.scripter.descriptor.new"/>
