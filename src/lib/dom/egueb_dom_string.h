@@ -21,7 +21,7 @@
 
 /**
  * @file
- * @listgroup{Egueb_Dom_String}
+ * @ender_group{Egueb_Dom_String}
  */
 
 /**

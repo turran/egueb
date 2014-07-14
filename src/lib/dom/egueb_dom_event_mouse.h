@@ -23,13 +23,13 @@
 
 /**
  * @file
- * @listgroup{Egueb_Dom_Event_Mouse}
+ * @ender_group{Egueb_Dom_Event_Mouse}
  */
 
 /**
  * @defgroup Egueb_Dom_Event_Mouse Mouse Event
  * TODO make it inherit from ui event
- * @brief Mouse Event @inherits{Egueb_Dom_Event}
+ * @brief Mouse Event @ender_inherits{Egueb_Dom_Event}
  * @ingroup Egueb_Dom_Event_UI_Group
  * @{
  */

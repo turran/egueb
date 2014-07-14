@@ -966,7 +966,7 @@ EAPI Egueb_Dom_String * egueb_svg_document_url_get(Egueb_Dom_Node *n)
 /**
  * Get the root 'svg' element in the document hierarchy
  * (readonly attribute SVGSVGElement rootElement)
- * @prop{root_element}
+ * @ender_prop{root_element}
  * @param[in] n The document to get the root element from
  * @return The root element @ender_type{egueb.svg.element}
  */

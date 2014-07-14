@@ -20,7 +20,7 @@
 
 /**
  * @file
- * @listgroup{Egueb_Svg_Point}
+ * @ender_group{Egueb_Svg_Point}
  */
 
 /**

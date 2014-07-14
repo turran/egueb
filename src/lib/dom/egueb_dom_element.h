@@ -26,12 +26,12 @@
 
 /**
  * @file
- * @listgroup{Egueb_Dom_Element}
+ * @ender_group{Egueb_Dom_Element}
  */
 
 /**
  * @defgroup Egueb_Dom_Element Element
- * @brief Element @inherits{Egueb_Dom_Node}
+ * @brief Element @ender_inherits{Egueb_Dom_Node}
  * @ingroup Egueb_Dom_Group
  * @{
  */

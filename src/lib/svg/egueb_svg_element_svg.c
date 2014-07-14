@@ -983,7 +983,7 @@ EAPI void egueb_svg_element_svg_height_get(Egueb_Dom_Node *n,
 }
 
 /**
- * @prop{current_scale}
+ * @ender_prop{current_scale}
  */
 EAPI void egueb_svg_element_svg_current_scale_set(Egueb_Dom_Node *n,
 		double scale)
@@ -996,7 +996,7 @@ EAPI void egueb_svg_element_svg_current_scale_set(Egueb_Dom_Node *n,
 }
 
 /**
- * @prop{current_scale}
+ * @ender_prop{current_scale}
  */
 EAPI double egueb_svg_element_svg_current_scale_get(Egueb_Dom_Node *n)
 {
@@ -1007,7 +1007,7 @@ EAPI double egueb_svg_element_svg_current_scale_get(Egueb_Dom_Node *n)
 }
 
 /**
- * @prop{current_translate}
+ * @ender_prop{current_translate}
  */
 EAPI void egueb_svg_element_svg_current_translate_set(Egueb_Dom_Node *n,
 		Egueb_Svg_Point *p)
@@ -1028,7 +1028,7 @@ EAPI void egueb_svg_element_svg_current_translate_set(Egueb_Dom_Node *n,
 }
 
 /**
- * @prop{current_translate}
+ * @ender_prop{current_translate}
  * @param[in] The SVG element to get the current translate from
  * @param[out] p The point to store the current translate
  */

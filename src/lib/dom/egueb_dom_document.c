@@ -548,7 +548,7 @@ EAPI Egueb_Dom_Node * egueb_dom_document_document_fragment_create(
  * Gets the topmost element of a document
  * (readonly attribute Element documentElement)
  *
- * @prop{document_element}
+ * @ender_prop{document_element}
  * @param[in] n The document to get the topmost element from
  * @return The document @ender_type{egueb.dom.element}
  */
@@ -598,7 +598,7 @@ EAPI void egueb_dom_document_element_set(Egueb_Dom_Node *n,
  * @param[in] n The document to get the element from
  * @param[in] id The id of the element to get
  * @param[out] err The error in case some exception happens
- * @return The element if found. NULL otherwise @ender_type{egueb.dom.element} [transfer full]
+ * @return The element if found. NULL otherwise @ender_type{egueb.dom.element} @ender_transfer{full}
  */  
 EAPI Egueb_Dom_Node * egueb_dom_document_element_get_by_id(Egueb_Dom_Node *n,
 		Egueb_Dom_String *id, Eina_Error *err)

@@ -102,10 +102,10 @@ EAPI void egueb_dom_string_unref(Egueb_Dom_String *thiz)
 
 /**
  * Get the string associated with a @ref Egueb_Dom_String
- * @prop{string}
- * @valueof
+ * @ender_prop{string}
+ * @ender_valueof
  * @param[in] thiz The @ref Egueb_Dom_String to get the string from
- * @return The string associated with the @ref Egueb_Dom_String [transfer none]
+ * @return The string associated with the @ref Egueb_Dom_String @ender_transfer{none}
  */
 EAPI const char * egueb_dom_string_string_get(const Egueb_Dom_String *thiz)
 {
@@ -115,9 +115,9 @@ EAPI const char * egueb_dom_string_string_get(const Egueb_Dom_String *thiz)
 
 /**
  * Set the string associated with a @ref Egueb_Dom_String
- * @prop{string}
+ * @ender_prop{string}
  * @param[in] thiz The @ref Egueb_Dom_String to get the string from
- * @param[in] str The string to set [transfer none]
+ * @param[in] str The string to set @ender_transfer{none}
  */
 EAPI void egueb_dom_string_string_set(Egueb_Dom_String *thiz, const char *str)
 {

@@ -84,7 +84,7 @@ EAPI void egueb_dom_event_stop_propagation(Egueb_Dom_Event *thiz)
 
 /**
  * Get the phase of the event
- * @prop{phase}
+ * @ender_prop{phase}
  * @param[in] thiz The event to get the phase from
  * @return The phase of the event
  */
@@ -95,7 +95,7 @@ EAPI Egueb_Dom_Event_Phase egueb_dom_event_phase_get(Egueb_Dom_Event *thiz)
 
 /**
  * Get the target to which the event was originally dispatched.
- * @prop{target}
+ * @ender_prop{target}
  * @param[in] thiz The event to get the target from
  * @return The target
  */
@@ -159,7 +159,7 @@ EAPI Egueb_Dom_Event * egueb_dom_event_ref(Egueb_Dom_Event *thiz)
 
 /**
  * Get the name of the event
- * @prop{type}
+ * @ender_prop{type}
  * @param[in] thiz The event to get the name from
  * @return The name of the event
  */

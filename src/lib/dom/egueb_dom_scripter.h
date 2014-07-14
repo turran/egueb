@@ -20,9 +20,9 @@
 
 /**
  * @file
- * @listgroup{Egueb_Dom_Scripter_Descriptor_Definition}
- * @listgroup{Egueb_Dom_Scripter_Descriptor}
- * @listgroup{Egueb_Dom_Scripter}
+ * @ender_group{Egueb_Dom_Scripter_Descriptor_Definition}
+ * @ender_group{Egueb_Dom_Scripter_Descriptor}
+ * @ender_group{Egueb_Dom_Scripter}
  */
 
 /**

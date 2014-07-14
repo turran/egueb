@@ -21,13 +21,13 @@
 
 /**
  * @file
- * @listgroup{Egueb_Svg_Element_Svg}
+ * @ender_group{Egueb_Svg_Element_Svg}
  */
 
 /**
  * @defgroup Egueb_Svg_Element_Svg SVG
  * TODO make it inherit from svg container
- * @brief SVG element @inherits{Egueb_Svg_Element}
+ * @brief SVG element @ender_inherits{Egueb_Svg_Element}
  * @ingroup Egueb_Svg_Renderable_Container_Group
  * @{
  */

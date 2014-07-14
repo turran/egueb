@@ -21,12 +21,12 @@
 
 /**
  * @file
- * @listgroup{Egueb_Svg_Document}
+ * @ender_group{Egueb_Svg_Document}
  */
 
 /**
  * @defgroup Egueb_Svg_Document Document
- * @brief Document @inherits{Egueb_Dom_Document}
+ * @brief Document @ender_inherits{Egueb_Dom_Document}
  * @ingroup Egueb_Svg_Group
  * @{
  */

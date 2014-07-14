@@ -22,10 +22,10 @@
 
 /**
  * @file
- * @listgroup{Egueb_Dom_Event_Definition}
- * @listgroup{Egueb_Dom_Event_Phase}
- * @listgroup{Egueb_Dom_Event_Direction}
- * @listgroup{Egueb_Dom_Event}
+ * @ender_group{Egueb_Dom_Event_Definition}
+ * @ender_group{Egueb_Dom_Event_Phase}
+ * @ender_group{Egueb_Dom_Event_Direction}
+ * @ender_group{Egueb_Dom_Event}
  */
 
 /**

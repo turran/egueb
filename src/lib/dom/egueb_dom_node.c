@@ -604,7 +604,7 @@ EAPI Egueb_Dom_String * egueb_dom_node_value_get(Egueb_Dom_Node *thiz)
  * Gets the document associtaed with this node
  * (readonly attribute Document ownerDocument)
  *
- * @prop{owner_document}
+ * @ender_prop{owner_document}
  * @param[in] thiz The node to get the document from
  * @return The document @ender_type{egueb.dom.document}
  */
@@ -636,7 +636,7 @@ EAPI Egueb_Dom_Node * egueb_dom_node_parent_get(Egueb_Dom_Node *thiz)
 /**
  * Get the children nodes of a node
  * (readonly attribute NodeList childNodes)
- * @prop{child_nodes}
+ * @ender_prop{child_nodes}
  * @param[in] thiz The node to get the list of children nodes from
  * @return The children nodes
  */
@@ -1178,7 +1178,7 @@ EAPI void * egueb_dom_node_feature_get(Egueb_Dom_Node *thiz,
 /**
  * Get the item a node represents for Ender
  * This will allow easily downcasting on the bindings
- * @prop{item}
+ * @ender_prop{item}
  * @ender_prop_downcast
  * @param[in] thiz The node to get the item from
  * @return the item related to a node

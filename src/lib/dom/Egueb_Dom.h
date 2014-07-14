@@ -55,9 +55,9 @@ extern "C" {
 
 /**
  * @file
- * @depends{eina}
- * @depends{enesim}
- * @depends{ender}
+ * @ender_depends{eina}
+ * @ender_depends{enesim}
+ * @ender_depends{ender}
  */
 
 /**

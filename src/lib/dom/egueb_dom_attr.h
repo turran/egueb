@@ -23,10 +23,10 @@
 
 /**
  * @file
- * @listgroup{Egueb_Dom_Attr_Flag}
- * @listgroup{Egueb_Dom_Attr_Type}
- * @listgroup{Egueb_Dom_Attr_Definition}
- * @listgroup{Egueb_Dom_Attr}
+ * @ender_group{Egueb_Dom_Attr_Flag}
+ * @ender_group{Egueb_Dom_Attr_Type}
+ * @ender_group{Egueb_Dom_Attr_Definition}
+ * @ender_group{Egueb_Dom_Attr}
  */
 
 /**
@@ -76,7 +76,7 @@ typedef void (*Egueb_Dom_Attr_Fetch)(Egueb_Dom_Node *n, Egueb_Dom_Node **p);
 /**
  * @}
  * @defgroup Egueb_Dom_Attr Attr 
- * @brief Attr @inherits{Egueb_Dom_Node}
+ * @brief Attr @ender_inherits{Egueb_Dom_Node}
  * @ingroup Egueb_Dom_Group
  * @{
  */

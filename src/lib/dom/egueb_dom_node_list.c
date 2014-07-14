@@ -49,7 +49,7 @@ Egueb_Dom_Node_List * egueb_dom_node_list_new(Eina_List *nodes)
 /**
  * Get the number of nodes in the list
  * (readonly attribute unsigned long length)
- * @prop{length}
+ * @ender_prop{length}
  * @param[in] thiz The list to get the number of nodes from
  * @return The number of nodes in the list
  */

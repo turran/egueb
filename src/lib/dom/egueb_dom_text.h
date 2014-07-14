@@ -21,12 +21,12 @@
 
 /**
  * @file
- * @listgroup{Egueb_Dom_Text}
+ * @ender_group{Egueb_Dom_Text}
  */
 
 /**
  * @defgroup Egueb_Dom_Text Text
- * @brief Text node @inherits{Egueb_Dom_Character_Data}
+ * @brief Text node @ender_inherits{Egueb_Dom_Character_Data}
  * @ingroup Egueb_Dom_Group
  * @{
  */

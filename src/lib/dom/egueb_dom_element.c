@@ -786,7 +786,7 @@ EAPI Eina_Bool egueb_dom_element_is_enqueued(Egueb_Dom_Node *n)
 
 /**
  * @brief Make the element be dequeued from the processing list
- * @param[in] n The element to be dequeued [transfer full]
+ * @param[in] n The element to be dequeued @ender_transfer{full}
  */
 EAPI void egueb_dom_element_dequeue(Egueb_Dom_Node *n)
 {
@@ -823,7 +823,7 @@ EAPI void egueb_dom_element_dequeue(Egueb_Dom_Node *n)
 
 /**
  * @brief Make the element be enqueued on the processing list
- * @param[in] n The element to be enqueued [transfer full]
+ * @param[in] n The element to be enqueued @ender_transfer{full}
  */
 EAPI void egueb_dom_element_enqueue(Egueb_Dom_Node *n)
 {

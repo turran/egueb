@@ -272,7 +272,7 @@ EAPI Egueb_Dom_Event * egueb_dom_event_mouse_new(void)
 }
 
 /**
- * @prop{client_x}
+ * @ender_prop{client_x}
  */
 EAPI int egueb_dom_event_mouse_client_x_get(Egueb_Dom_Event *e)
 {
@@ -283,7 +283,7 @@ EAPI int egueb_dom_event_mouse_client_x_get(Egueb_Dom_Event *e)
 }
 
 /**
- * @prop{client_y}
+ * @ender_prop{client_y}
  */
 EAPI int egueb_dom_event_mouse_client_y_get(Egueb_Dom_Event *e)
 {

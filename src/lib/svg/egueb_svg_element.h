@@ -21,7 +21,7 @@
 
 /**
  * @file
- * @listgroup{Egueb_Svg_Element}
+ * @ender_group{Egueb_Svg_Element}
  */
 
 #include "egueb_dom_node.h"
@@ -40,7 +40,7 @@
 
 /**
  * @defgroup Egueb_Svg_Element Element 
- * @brief Element @inherits{Egueb_Dom_Element}
+ * @brief Element @ender_inherits{Egueb_Dom_Element}
  * @ingroup Egueb_Svg_Group
  * @{
  */

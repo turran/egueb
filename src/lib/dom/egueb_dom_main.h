@@ -21,7 +21,7 @@
 
 /**
  * @file
- * @listgroup{Egueb_Dom_Main}
+ * @ender_group{Egueb_Dom_Main}
  */
 
 /**

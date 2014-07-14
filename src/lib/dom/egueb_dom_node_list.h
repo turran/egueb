@@ -22,7 +22,7 @@
 /**
  * @file
  * @ender_group_proto{Egueb_Dom_Node}
- * @listgroup{Egueb_Dom_Node_List}
+ * @ender_group{Egueb_Dom_Node_List}
  */
 
 /* forward declarations */
