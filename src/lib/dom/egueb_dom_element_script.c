@@ -47,7 +47,7 @@ typedef struct _Egueb_Dom_Element_Script
 	Egueb_Dom_String *last_content_type;
 	Egueb_Dom_Scripter *scripter;
 	void *script;
-	Eina_Bool cdata_changed;
+	Eina_Bool data_changed;
 } Egueb_Dom_Element_Script;
 
 typedef struct _Egueb_Dom_Element_Script_Class
@@ -81,7 +81,7 @@ static void _egueb_dom_element_script_node_inserted_or_removed_cb(Egueb_Dom_Even
 	 * to create a new vm
 	 */
 	thiz = EGUEB_DOM_ELEMENT_SCRIPT(n);
-	thiz->cdata_changed = EINA_TRUE;
+	thiz->data_changed = EINA_TRUE;
 not_cdata:
 	egueb_dom_node_unref(target);
 not_us:
@@ -102,7 +102,7 @@ static Eina_Bool _egueb_dom_element_script_process(Egueb_Dom_Element *e)
 	if (!egueb_dom_string_is_equal(content_type, thiz->last_content_type))
 		content_type_changed = EINA_TRUE;
 
-	if (!thiz->cdata_changed && !content_type_changed)
+	if (!thiz->data_changed && !content_type_changed)
 		goto done;
 
 	if (thiz->scripter)
@@ -128,27 +128,32 @@ static Eina_Bool _egueb_dom_element_script_process(Egueb_Dom_Element *e)
 
 		if (thiz->scripter)
 		{
-			Egueb_Dom_Node *cdata;
-			Egueb_Dom_Node *doc;
-			Egueb_Dom_String *cdata_txt;
+			Egueb_Dom_Node *data;
 
-			cdata = egueb_dom_node_child_first_get(EGUEB_DOM_NODE(e));
-			cdata_txt = egueb_dom_character_data_data_get(cdata);
-			/* compile the script */
-			egueb_dom_scripter_load(thiz->scripter, cdata_txt, &thiz->script);
-			/* add the global variables */
-			/* FIXME what to do with the ref? */
-			doc = egueb_dom_node_owner_document_get(EGUEB_DOM_NODE(e));
-			egueb_dom_scripter_global_add(thiz->scripter, "document", doc, egueb_dom_node_item_get(doc));
-			/* run it */
-			egueb_dom_scripter_script_run(thiz->scripter,thiz->script);
-			egueb_dom_string_unref(cdata_txt);
-			/* FIXME for now */
-			egueb_dom_node_unref(doc);
+			data = egueb_dom_node_child_first_get(EGUEB_DOM_NODE(e));
+			if (data)
+			{
+				Egueb_Dom_Node *doc;
+				Egueb_Dom_String *data_txt;
+
+				data_txt = egueb_dom_character_data_data_get(data);
+				/* compile the script */
+				egueb_dom_scripter_load(thiz->scripter, data_txt, &thiz->script);
+				/* add the global variables */
+				/* FIXME what to do with the ref? */
+				doc = egueb_dom_node_owner_document_get(EGUEB_DOM_NODE(e));
+				egueb_dom_scripter_global_add(thiz->scripter, "document", doc, egueb_dom_node_item_get(doc));
+				/* run it */
+				egueb_dom_scripter_script_run(thiz->scripter,thiz->script);
+				egueb_dom_string_unref(data_txt);
+				/* FIXME for now */
+				egueb_dom_node_unref(doc);
+			}
 		}
 	}
 
-	thiz->cdata_changed = EINA_FALSE;
+
+	thiz->data_changed = EINA_FALSE;
 	/* swap the last content type */
 	if (thiz->last_content_type)
 		egueb_dom_string_unref(thiz->last_content_type);
