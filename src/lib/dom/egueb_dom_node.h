@@ -26,6 +26,7 @@
 
 /**
  * @file
+ * @ender_group_proto{Egueb_Dom_Event}
  * @ender_group_proto{Egueb_Dom_Element}
  * @ender_group_proto{Egueb_Dom_Document}
  * @ender_group_proto{Egueb_Dom_Attr}

@@ -28,31 +28,31 @@ static const char * _egueb_svg_length_units_string_to(Egueb_Svg_Length *thiz)
 {
 	switch (thiz->unit)
 	{
-		case EGUEB_SVG_UNIT_LENGTH_EM:
+		case EGUEB_SVG_LENGTH_UNIT_EM:
 		return "em";
 
-		case EGUEB_SVG_UNIT_LENGTH_EX:
+		case EGUEB_SVG_LENGTH_UNIT_EX:
 		return "ex";
 
-		case EGUEB_SVG_UNIT_LENGTH_PX:
+		case EGUEB_SVG_LENGTH_UNIT_PX:
 		return "px";
 
-		case EGUEB_SVG_UNIT_LENGTH_PT:
+		case EGUEB_SVG_LENGTH_UNIT_PT:
 		return "pt";
 
-		case EGUEB_SVG_UNIT_LENGTH_PC:
+		case EGUEB_SVG_LENGTH_UNIT_PC:
 		return "pc";
 
-		case EGUEB_SVG_UNIT_LENGTH_CM:
+		case EGUEB_SVG_LENGTH_UNIT_CM:
 		return "cm";
 
-		case EGUEB_SVG_UNIT_LENGTH_MM:
+		case EGUEB_SVG_LENGTH_UNIT_MM:
 		return "mm";
 
-		case EGUEB_SVG_UNIT_LENGTH_IN:
+		case EGUEB_SVG_LENGTH_UNIT_IN:
 		return "in";
 
-		case EGUEB_SVG_UNIT_LENGTH_PERCENT:
+		case EGUEB_SVG_LENGTH_UNIT_PERCENT:
 		return "%";
 
 		default:
@@ -100,7 +100,7 @@ Eina_Bool egueb_svg_length_string_from(Egueb_Svg_Length *thiz, const char *attr_
 	if ((endptr == NULL) || (*endptr == '\0'))
 	{
 		thiz->value = val;
-		thiz->unit = EGUEB_SVG_UNIT_LENGTH_UNSPECIFIED;
+		thiz->unit = EGUEB_SVG_LENGTH_UNIT_UNKNOWN;
 		return EINA_TRUE;
 	}
 
@@ -110,7 +110,7 @@ Eina_Bool egueb_svg_length_string_from(Egueb_Svg_Length *thiz, const char *attr_
 		if (endptr[0] == '%')
 		{
 			thiz->value = val;
-			thiz->unit = EGUEB_SVG_UNIT_LENGTH_PERCENT;
+			thiz->unit = EGUEB_SVG_LENGTH_UNIT_PERCENT;
 		}
 	}
 	else if (endptr[2] == '\0')
@@ -120,12 +120,12 @@ Eina_Bool egueb_svg_length_string_from(Egueb_Svg_Length *thiz, const char *attr_
 			if (endptr[1] == 'm')
 			{
 				thiz->value = val;
-				thiz->unit = EGUEB_SVG_UNIT_LENGTH_EM;
+				thiz->unit = EGUEB_SVG_LENGTH_UNIT_EM;
 			}
 			else if (endptr[1] == 'x')
 			{
 				thiz->value = val;
-				thiz->unit = EGUEB_SVG_UNIT_LENGTH_EX;
+				thiz->unit = EGUEB_SVG_LENGTH_UNIT_EX;
 			}
 		}
 		else if (endptr[0] == 'p')
@@ -133,33 +133,33 @@ Eina_Bool egueb_svg_length_string_from(Egueb_Svg_Length *thiz, const char *attr_
 			if (endptr[1] == 'c')
 			{
 				thiz->value = val;
-				thiz->unit = EGUEB_SVG_UNIT_LENGTH_PC;
+				thiz->unit = EGUEB_SVG_LENGTH_UNIT_PC;
 			}
 			else if (endptr[1] == 't')
 			{
 				thiz->value = val;
-				thiz->unit = EGUEB_SVG_UNIT_LENGTH_PT;
+				thiz->unit = EGUEB_SVG_LENGTH_UNIT_PT;
 			}
 			else if (endptr[1] == 'x')
 			{
 				thiz->value = val;
-				thiz->unit = EGUEB_SVG_UNIT_LENGTH_PX;
+				thiz->unit = EGUEB_SVG_LENGTH_UNIT_PX;
 			}
 		}
 		else if ((endptr[0] == 'c') && (endptr[1] == 'm'))
 		{
 			thiz->value = val;
-			thiz->unit = EGUEB_SVG_UNIT_LENGTH_CM;
+			thiz->unit = EGUEB_SVG_LENGTH_UNIT_CM;
 		}
 		else if ((endptr[0] == 'm') && (endptr[1] == 'm'))
 		{
 			thiz->value = val;
-			thiz->unit = EGUEB_SVG_UNIT_LENGTH_MM;
+			thiz->unit = EGUEB_SVG_LENGTH_UNIT_MM;
 		}
 		else if ((endptr[0] == 'i') && (endptr[1] == 'n'))
 		{
 			thiz->value = val;
-			thiz->unit = EGUEB_SVG_UNIT_LENGTH_IN;
+			thiz->unit = EGUEB_SVG_LENGTH_UNIT_IN;
 		}
 	}
 
@@ -189,10 +189,10 @@ char * egueb_svg_length_string_to(Egueb_Svg_Length *thiz)
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/
-const Egueb_Svg_Length EGUEB_SVG_LENGTH_0 = { 0, EGUEB_SVG_UNIT_LENGTH_PX};
-const Egueb_Svg_Length EGUEB_SVG_LENGTH_1 = { 1, EGUEB_SVG_UNIT_LENGTH_PX};
-const Egueb_Svg_Length EGUEB_SVG_LENGTH_100_PERCENT = { 100, EGUEB_SVG_UNIT_LENGTH_PERCENT};
-const Egueb_Svg_Length EGUEB_SVG_LENGTH_50_PERCENT = { 50, EGUEB_SVG_UNIT_LENGTH_PERCENT};
+const Egueb_Svg_Length EGUEB_SVG_LENGTH_0 = { 0, EGUEB_SVG_LENGTH_UNIT_PX};
+const Egueb_Svg_Length EGUEB_SVG_LENGTH_1 = { 1, EGUEB_SVG_LENGTH_UNIT_PX};
+const Egueb_Svg_Length EGUEB_SVG_LENGTH_100_PERCENT = { 100, EGUEB_SVG_LENGTH_UNIT_PERCENT};
+const Egueb_Svg_Length EGUEB_SVG_LENGTH_50_PERCENT = { 50, EGUEB_SVG_LENGTH_UNIT_PERCENT};
 
 EAPI const Egueb_Dom_Value_Descriptor * egueb_svg_length_descriptor_get(void)
 {
@@ -212,7 +212,7 @@ EAPI Eina_Bool egueb_svg_length_is_equal(Egueb_Svg_Length *length1, Egueb_Svg_Le
 EAPI double egueb_svg_length_final_get(const Egueb_Svg_Length *l, double width, double height, double font_size)
 {
 	double length = 0;
-	if (l->unit == EGUEB_SVG_UNIT_LENGTH_PERCENT)
+	if (l->unit == EGUEB_SVG_LENGTH_UNIT_PERCENT)
 	{
 		length = hypot(width, height) * M_SQRT1_2;
 	}
@@ -229,41 +229,41 @@ EAPI double egueb_svg_coord_final_get(const Egueb_Svg_Length *l, double parent_l
 	/* FIXME make this numbers preprocessor macros */
 	switch (l->unit)
 	{
-		case EGUEB_SVG_UNIT_LENGTH_PERCENT:
+		case EGUEB_SVG_LENGTH_UNIT_PERCENT:
 		ret = (parent_length * l->value) / 100.0;
 		break;
 
-		case EGUEB_SVG_UNIT_LENGTH_PT:
+		case EGUEB_SVG_LENGTH_UNIT_PT:
 		ret = 1.25 * l->value;
 		break;
 
-		case EGUEB_SVG_UNIT_LENGTH_PC:
+		case EGUEB_SVG_LENGTH_UNIT_PC:
 		ret = 15 * l->value;
 		break;
 
-		case EGUEB_SVG_UNIT_LENGTH_CM:
+		case EGUEB_SVG_LENGTH_UNIT_CM:
 		ret = 35.43307 * l->value;
 		break;
 
-		case EGUEB_SVG_UNIT_LENGTH_MM:
+		case EGUEB_SVG_LENGTH_UNIT_MM:
 		ret = 3.543307 * l->value;
 		break;
 
-		case EGUEB_SVG_UNIT_LENGTH_IN:
+		case EGUEB_SVG_LENGTH_UNIT_IN:
 		ret = 90 * l->value;
 		break;
 
-		case EGUEB_SVG_UNIT_LENGTH_UNSPECIFIED:
-		case EGUEB_SVG_UNIT_LENGTH_PX:
+		case EGUEB_SVG_LENGTH_UNIT_UNKNOWN:
+		case EGUEB_SVG_LENGTH_UNIT_PX:
 		ret = l->value;
 		break;
 
-		case EGUEB_SVG_UNIT_LENGTH_EM:
+		case EGUEB_SVG_LENGTH_UNIT_EM:
 		ret = font_size * l->value;
 		break;
 
 		/* FIXME this one depends on the x-height */
-		case EGUEB_SVG_UNIT_LENGTH_EX:
+		case EGUEB_SVG_LENGTH_UNIT_EX:
 		default:
 		ret = l->value;
 		break;

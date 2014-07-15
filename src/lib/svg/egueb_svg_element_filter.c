@@ -90,8 +90,8 @@ static void _egueb_svg_element_filter_instance_init(void *o)
 	Egueb_Dom_Node *n;
 
 	thiz = EGUEB_SVG_ELEMENT_FILTER(o);
-	egueb_svg_length_set(&minus10, -10.0, EGUEB_SVG_UNIT_LENGTH_PERCENT);
-	egueb_svg_length_set(&plus120, 120, EGUEB_SVG_UNIT_LENGTH_PERCENT);
+	egueb_svg_length_set(&minus10, -10.0, EGUEB_SVG_LENGTH_UNIT_PERCENT);
+	egueb_svg_length_set(&plus120, 120, EGUEB_SVG_LENGTH_UNIT_PERCENT);
 
 	/* create the properties */
 	thiz->x = egueb_svg_attr_length_new(

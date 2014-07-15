@@ -18,6 +18,18 @@
 #ifndef _EGUEB_SVG_COLOR_H
 #define _EGUEB_SVG_COLOR_H
 
+/**
+ * @file
+ * @ender_group{Egueb_Svg_Color}
+ * @ender_group{Egueb_Svg_Color_Animated}
+ */
+
+/**
+ * @defgroup Egueb_Svg_Color Color
+ * @ingroup Egueb_Svg_Type_Group
+ * @{
+ */
+
 typedef struct _Egueb_Svg_Color
 {
 	uint8_t r;
@@ -25,16 +37,27 @@ typedef struct _Egueb_Svg_Color
 	uint8_t b;
 } Egueb_Svg_Color;
 
+EAPI extern const Egueb_Svg_Color EGUEB_SVG_COLOR_BLACK;
+
+EAPI const Egueb_Dom_Value_Descriptor * egueb_svg_color_descriptor_get(void);
+EAPI Eina_Bool egueb_svg_color_is_equal(const Egueb_Svg_Color *c1, const Egueb_Svg_Color *c2);
+EAPI void egueb_svg_color_components_from(Egueb_Svg_Color *thiz, uint8_t r, uint8_t g, uint8_t b);
+
+/**
+ * @}
+ * @defgroup Egueb_Svg_Color_Animated Color animated
+ * @ingroup Egueb_Svg_Type_Group
+ * @{
+ */
+
 typedef struct _Egueb_Svg_Color_Animated
 {
 	Egueb_Svg_Color base;
 	Egueb_Svg_Color anim;
 } Egueb_Svg_Color_Animated;
 
-EAPI extern const Egueb_Svg_Color EGUEB_SVG_COLOR_BLACK;
-
-EAPI const Egueb_Dom_Value_Descriptor * egueb_svg_color_descriptor_get(void);
-EAPI Eina_Bool egueb_svg_color_is_equal(const Egueb_Svg_Color *c1, const Egueb_Svg_Color *c2);
-EAPI void egueb_svg_color_components_from(Egueb_Svg_Color *thiz, uint8_t r, uint8_t g, uint8_t b);
+/**
+ * @}
+ */
 
 #endif

@@ -298,7 +298,7 @@ static void _egueb_svg_element_presentation_attributes_process(
 		/* for a relative length, we need the geometry */
 		if (font_size.type == EGUEB_SVG_FONT_SIZE_TYPE_LENGTH &&
 				font_size.value.length.unit ==
-				EGUEB_SVG_UNIT_LENGTH_PERCENT)
+				EGUEB_SVG_LENGTH_UNIT_PERCENT)
 		{
 			w = geom->viewbox.w;
 			h = geom->viewbox.h;

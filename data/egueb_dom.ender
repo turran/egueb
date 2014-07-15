@@ -62,6 +62,7 @@
       <arg name="index" type="int32" direction="in" transfer="full"/>
     </method>
   </object>
+  <object name="egueb.dom.event"/>
   <object name="egueb.dom.element" inherits="egueb.dom.node"/>
   <object name="egueb.dom.document" inherits="egueb.dom.node"/>
   <object name="egueb.dom.attr" inherits="egueb.dom.node"/>
@@ -569,15 +570,15 @@
       <return type="egueb.dom.node" transfer="full"/>
     </method>
     <method name="screen_coords_get">
-      <arg name="x" type="int" direction="in" transfer="full"/>
-      <arg name="y" type="int" direction="in" transfer="full"/>
+      <arg name="x" type="int32" direction="out" transfer="full"/>
+      <arg name="y" type="int32" direction="out" transfer="full"/>
     </method>
     <method name="button_get">
       <return type="int32" transfer="full"/>
     </method>
     <method name="client_coords_get">
-      <arg name="x" type="int" direction="in" transfer="full"/>
-      <arg name="y" type="int" direction="in" transfer="full"/>
+      <arg name="x" type="int32" direction="out" transfer="full"/>
+      <arg name="y" type="int32" direction="out" transfer="full"/>
     </method>
   </object>
   <callback name="egueb.dom.scripter.descriptor.new"/>

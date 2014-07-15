@@ -19,7 +19,13 @@
 #define _EGUEB_SVG_NUMBER_H
 
 /**
- * @defgroup Egueb_Svg_Number_Group Number
+ * @file
+ * @ender_group{Egueb_Svg_Number}
+ * @ender_group{Egueb_Svg_Number_Animated}
+ */
+
+/**
+ * @defgroup Egueb_Svg_Number Number
  * @brief Number type
  * @ingroup Egueb_Svg_Type_Group
  * @{
@@ -27,15 +33,22 @@
 
 typedef double Egueb_Svg_Number;
 
+EAPI const Egueb_Dom_Value_Descriptor * egueb_svg_number_descriptor_get(void);
+EAPI Eina_Bool egueb_svg_number_string_from(Egueb_Svg_Number *thiz, const char *attr_val);
+EAPI char * egueb_svg_number_string_to(Egueb_Svg_Number thiz);
+
+/**
+ * @}
+ * @defgroup Egueb_Svg_Number_Animated Number animated
+ * @ingroup Egueb_Svg_Type_Group
+ * @{
+ */
+
 typedef struct _Egueb_Svg_Number_Animated
 {
 	Egueb_Svg_Number base;
 	Egueb_Svg_Number anim;
 } Egueb_Svg_Number_Animated;
-
-EAPI const Egueb_Dom_Value_Descriptor * egueb_svg_number_descriptor_get(void);
-EAPI Eina_Bool egueb_svg_number_string_from(Egueb_Svg_Number *thiz, const char *attr_val);
-EAPI char * egueb_svg_number_string_to(Egueb_Svg_Number thiz);
 
 /**
  * @}

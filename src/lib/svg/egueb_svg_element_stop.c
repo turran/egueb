@@ -65,7 +65,7 @@ static Eina_Bool _egueb_svg_element_stop_process(Egueb_Svg_Element *e)
 	thiz->s.argb = enesim_argb_components_from(lrint(opacity * 255),
 			color.r, color.g, color.b);
 
-	if (offset.unit == EGUEB_SVG_UNIT_LENGTH_PERCENT)
+	if (offset.unit == EGUEB_SVG_LENGTH_UNIT_PERCENT)
 		thiz->s.pos = offset.value / 100.0;
 	else
 		thiz->s.pos = offset.value;

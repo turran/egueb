@@ -293,6 +293,12 @@ EAPI int egueb_dom_event_mouse_client_y_get(Egueb_Dom_Event *e)
 	return thiz->client_y;
 }
 
+/**
+ * Get the client coordinates
+ * @param[in] e The mouse event to get the client coords from
+ * @param[out] x The x coordinate
+ * @param[out] y The y coordinate
+ */
 EAPI void egueb_dom_event_mouse_client_coords_get(Egueb_Dom_Event *e, int *x, int *y)
 {
 	Egueb_Dom_Event_Mouse *thiz;
@@ -302,6 +308,12 @@ EAPI void egueb_dom_event_mouse_client_coords_get(Egueb_Dom_Event *e, int *x, in
 	if (y) *y = thiz->client_y;
 }
 
+/**
+ * Get the screen coordinates
+ * @param[in] e The mouse event to get the screen coords from
+ * @param[out] x The x coordinate
+ * @param[out] y The y coordinate
+ */
 EAPI void egueb_dom_event_mouse_screen_coords_get(Egueb_Dom_Event *e, int *x, int *y)
 {
 	Egueb_Dom_Event_Mouse *thiz;

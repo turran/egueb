@@ -4,6 +4,102 @@
   <includes name="enesim"/>
   <includes name="ender"/>
   <includes name="egueb_dom"/>
+  <struct name="egueb.svg.color">
+    <field name="r" type="uint8"/>
+    <field name="g" type="uint8"/>
+    <field name="b" type="uint8"/>
+    <function name="descriptor_get">
+      <return type="egueb.dom.value.descriptor" transfer="none"/>
+    </function>
+    <method name="is_equal">
+      <return type="bool" transfer="full"/>
+      <arg name="c2" type="egueb.svg.color" direction="in" transfer="none"/>
+    </method>
+    <method name="components_from">
+      <arg name="r" type="uint8" direction="in" transfer="full"/>
+      <arg name="g" type="uint8" direction="in" transfer="full"/>
+      <arg name="b" type="uint8" direction="in" transfer="full"/>
+    </method>
+  </struct>
+  <struct name="egueb.svg.color.animated">
+    <field name="base" type="egueb.svg.color"/>
+    <field name="anim" type="egueb.svg.color"/>
+  </struct>
+  <enum name="egueb.svg.length.unit">
+    <value name="unknown"/>
+    <value name="em"/>
+    <value name="ex"/>
+    <value name="px"/>
+    <value name="pt"/>
+    <value name="pc"/>
+    <value name="cm"/>
+    <value name="mm"/>
+    <value name="in"/>
+    <value name="percent"/>
+    <value name="egueb_svg_length_units"/>
+  </enum>
+  <struct name="egueb.svg.length">
+    <field name="value" type="double"/>
+    <field name="unit" type="egueb.svg.length.unit"/>
+    <method name="is_relative">
+      <return type="bool" transfer="full"/>
+    </method>
+    <method name="set">
+      <arg name="value" type="double" direction="in" transfer="full"/>
+      <arg name="unit" type="egueb.svg.length.unit" direction="in" transfer="full"/>
+    </method>
+    <function name="descriptor_get">
+      <return type="egueb.dom.value.descriptor" transfer="none"/>
+    </function>
+    <method name="is_equal">
+      <return type="bool" transfer="full"/>
+      <arg name="length2" type="egueb.svg.length" direction="in" transfer="full"/>
+    </method>
+    <method name="final_get">
+      <return type="double" transfer="full"/>
+      <arg name="width" type="double" direction="in" transfer="full"/>
+      <arg name="height" type="double" direction="in" transfer="full"/>
+      <arg name="font_size" type="double" direction="in" transfer="full"/>
+    </method>
+  </struct>
+  <struct name="egueb.svg.length.animated">
+    <field name="base" type="egueb.svg.length"/>
+    <field name="anim" type="egueb.svg.length"/>
+  </struct>
+  <def name="egueb.svg.coord" type="">
+    <function name="final_get">
+      <return type="double" transfer="full"/>
+      <arg name="l" type="egueb.svg.length" direction="in" transfer="none"/>
+      <arg name="parent_length" type="double" direction="in" transfer="full"/>
+      <arg name="font_size" type="double" direction="in" transfer="full"/>
+    </function>
+  </def>
+  <def name="egueb.svg.coord.animated" type="">
+    <function name="egueb_svg_coord_final_get">
+      <return type="double" transfer="full"/>
+      <arg name="l" type="egueb.svg.length" direction="in" transfer="none"/>
+      <arg name="parent_length" type="double" direction="in" transfer="full"/>
+      <arg name="font_size" type="double" direction="in" transfer="full"/>
+    </function>
+  </def>
+  <def name="egueb.svg.number" type="double">
+    <function name="descriptor_get">
+      <return type="egueb.dom.value.descriptor" transfer="none"/>
+    </function>
+    <function name="string_from">
+      <return type="bool" transfer="full"/>
+      <arg name="thiz" type="egueb.svg.number" direction="in" transfer="full"/>
+      <arg name="attr_val" type="string" direction="in" transfer="none"/>
+    </function>
+    <function name="string_to">
+      <return type="string" transfer="full"/>
+      <arg name="thiz" type="egueb.svg.number" direction="in" transfer="full"/>
+    </function>
+  </def>
+  <struct name="egueb.svg.number.animated">
+    <field name="base" type="egueb.svg.number"/>
+    <field name="anim" type="egueb.svg.number"/>
+  </struct>
   <struct name="egueb.svg.point">
     <field name="x" type="double"/>
     <field name="y" type="double"/>

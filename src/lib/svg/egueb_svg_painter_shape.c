@@ -69,7 +69,7 @@ static void _egueb_svg_painter_shape_dash_foreach(void *data, void *user_data)
 	double viewport = 0;
 	double length_final;
 
-	if (length->unit == EGUEB_SVG_UNIT_LENGTH_PERCENT)
+	if (length->unit == EGUEB_SVG_LENGTH_UNIT_PERCENT)
 	{
 		viewport = hypot(e->viewbox.w, e->viewbox.h) / M_SQRT2;
 	}
@@ -278,7 +278,7 @@ static inline void _egueb_svg_painter_shape_resolve_stroke(
 	p->stroke_cap = stroke_line_cap;
 	p->stroke_join = stroke_line_join;
 	/* handle the stroke width */
-	if (stroke_width.unit == EGUEB_SVG_UNIT_LENGTH_PERCENT)
+	if (stroke_width.unit == EGUEB_SVG_LENGTH_UNIT_PERCENT)
 	{
 		stroke_viewport = hypot(e->viewbox.w, e->viewbox.h) / M_SQRT2;
 	}

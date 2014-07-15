@@ -566,6 +566,12 @@ EAPI Eina_Bool egueb_dom_element_attribute_set(Egueb_Dom_Node *node,
 	return EINA_TRUE;
 }
 
+#if 0
+EAPI Eina_Bool egueb_dom_element_attribute_ns_set(Egueb_Dom_Node *node,
+		const Egueb_Dom_String *name, Egueb_Dom_String *value,
+		Eina_Error *err)
+#endif
+
 
 EAPI Eina_Bool egueb_dom_element_attribute_type_set(Egueb_Dom_Node *node,
 		const Egueb_Dom_String *name, Egueb_Dom_Attr_Type type,
