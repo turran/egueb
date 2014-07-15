@@ -19,14 +19,17 @@
 
 #include "egueb_dom_string.h"
 #include "egueb_dom_main.h"
+#include "egueb_dom_uri.h"
 #include "egueb_dom_element.h"
 #include "egueb_dom_scripter.h"
 #include "egueb_dom_scripter.h"
 #include "egueb_dom_attr_string.h"
 #include "egueb_dom_event_mutation.h"
 #include "egueb_dom_event_script.h"
+#include "egueb_dom_event_io.h"
 #include "egueb_dom_element_script.h"
 #include "egueb_dom_character_data.h"
+
 #include "egueb_dom_element_private.h"
 #include "egueb_dom_string_private.h"
 /*============================================================================*
@@ -35,7 +38,7 @@
 #define EGUEB_DOM_ELEMENT_SCRIPT_DESCRIPTOR egueb_dom_element_script_descriptor_get()
 #define EGUEB_DOM_ELEMENT_SCRIPT_CLASS(k) ENESIM_OBJECT_CLASS_CHECK(k, 		\
 		Egueb_Dom_Element_Script_Class, EGUEB_DOM_ELEMENT_SCRIPT_DESCRIPTOR)
-#define EGUEB_DOM_ELEMENT_SCRIPT_CLASS_GET(o) EGUEB_DOM_ELEMENT_SCRIPT_CLASS(			\
+#define EGUEB_DOM_ELEMENT_SCRIPT_CLASS_GET(o) EGUEB_DOM_ELEMENT_SCRIPT_CLASS(	\
 		(ENESIM_OBJECT_INSTANCE(o))->klass)
 #define EGUEB_DOM_ELEMENT_SCRIPT(o) ENESIM_OBJECT_INSTANCE_CHECK(o, 		\
 		Egueb_Dom_Element_Script, EGUEB_DOM_ELEMENT_SCRIPT_DESCRIPTOR)
@@ -43,8 +46,11 @@
 typedef struct _Egueb_Dom_Element_Script
 {
 	Egueb_Dom_Element base;
-	Egueb_Dom_Node *content_type;
-	Egueb_Dom_String *last_content_type;
+	Egueb_Dom_Node *type;
+	Egueb_Dom_Node *src;
+
+	Egueb_Dom_String *last_type;
+	Egueb_Dom_String *last_src;
 	Egueb_Dom_Scripter *scripter;
 	void *script;
 	Eina_Bool data_changed;
@@ -72,9 +78,12 @@ static void _egueb_dom_element_script_node_inserted_or_removed_cb(Egueb_Dom_Even
 
 	target = egueb_dom_event_target_get(e);
 	type = egueb_dom_node_type_get(target);
-	if (type != EGUEB_DOM_NODE_TYPE_CDATA_SECTION)
+	/* for svg it must be a cdata section, but some svg's has the script
+	 * on a text node
+	 */
+	if (type != EGUEB_DOM_NODE_TYPE_CDATA_SECTION && type != EGUEB_DOM_NODE_TYPE_TEXT)
 	{
-		goto not_cdata;
+		goto not_data;
 	}
 
 	/* finally inform ourselves that the cdata has changed and so, we need
@@ -82,27 +91,67 @@ static void _egueb_dom_element_script_node_inserted_or_removed_cb(Egueb_Dom_Even
 	 */
 	thiz = EGUEB_DOM_ELEMENT_SCRIPT(n);
 	thiz->data_changed = EINA_TRUE;
-not_cdata:
+not_data:
 	egueb_dom_node_unref(target);
 not_us:
 	egueb_dom_node_unref(related);
 }
+
+static void _egueb_dom_element_script_run(Egueb_Dom_Element_Script *thiz,
+		Egueb_Dom_String *data)
+{
+	Egueb_Dom_Node *doc;
+
+	/* compile the script */
+	egueb_dom_scripter_load(thiz->scripter, data, &thiz->script);
+	/* add the global variables */
+	doc = egueb_dom_node_owner_document_get(EGUEB_DOM_NODE(thiz));
+	egueb_dom_scripter_global_add(thiz->scripter, "document", doc, egueb_dom_node_item_get(doc));
+	/* run it */
+	egueb_dom_scripter_script_run(thiz->scripter, thiz->script);
+	egueb_dom_string_unref(data);
+}
+
+static void _egueb_dom_element_script_data_cb(Egueb_Dom_Node *n,
+		Enesim_Stream *s)
+{
+	Egueb_Dom_Element_Script *thiz;
+	Egueb_Dom_String *data;
+	size_t size;
+	void *sdata;
+
+	thiz = EGUEB_DOM_ELEMENT_SCRIPT(n);
+
+	sdata = enesim_stream_mmap(s, &size);
+	data = egueb_dom_string_new_with_static_string(sdata);
+	_egueb_dom_element_script_run(thiz, data);
+	egueb_dom_string_unref(data);
+	enesim_stream_munmap(s, sdata);
+	enesim_stream_unref(s);
+}
+
 /*----------------------------------------------------------------------------*
  *                             Element interface                              *
  *----------------------------------------------------------------------------*/
 static Eina_Bool _egueb_dom_element_script_process(Egueb_Dom_Element *e)
 {
 	Egueb_Dom_Element_Script *thiz;
-	Egueb_Dom_String *content_type = NULL;
-	Eina_Bool content_type_changed = EINA_FALSE;
+	Egueb_Dom_String *type = NULL;
+	Egueb_Dom_String *src = NULL;
+	Eina_Bool type_changed = EINA_FALSE;
 
 	thiz = EGUEB_DOM_ELEMENT_SCRIPT(e);
 
-	egueb_dom_attr_final_get(thiz->content_type, &content_type);
-	if (!egueb_dom_string_is_equal(content_type, thiz->last_content_type))
-		content_type_changed = EINA_TRUE;
+	/* Check if we need to setup the script again */
+	egueb_dom_attr_final_get(thiz->type, &type);
+	if (!egueb_dom_string_is_equal(type, thiz->last_type))
+		type_changed = EINA_TRUE;
 
-	if (!thiz->data_changed && !content_type_changed)
+	egueb_dom_attr_final_get(thiz->src, &src);
+	if (!egueb_dom_string_is_equal(src, thiz->last_src))
+		thiz->data_changed = EINA_TRUE;
+
+	if (!thiz->data_changed && !type_changed)
 		goto done;
 
 	if (thiz->scripter)
@@ -112,15 +161,15 @@ static Eina_Bool _egueb_dom_element_script_process(Egueb_Dom_Element *e)
 	else
 	{
 		Egueb_Dom_Event *ev;
-		Egueb_Dom_String *type;
+		Egueb_Dom_String *final_type;
 
-		DBG("Processing the script");
-		if (!content_type)
-			type = egueb_dom_string_new_with_static_string("application/ecmascript");
+		INFO("Processing the script");
+		if (!type)
+			final_type = egueb_dom_string_new_with_static_string("application/ecmascript");
 		else
-			type = egueb_dom_string_ref(content_type);
+			final_type = egueb_dom_string_ref(type);
 
-		ev = egueb_dom_event_script_new(type);
+		ev = egueb_dom_event_script_new(final_type);
 		egueb_dom_node_event_dispatch(EGUEB_DOM_NODE(e), egueb_dom_event_ref(ev), NULL, NULL);
 		/* instantiate the vm */
 		thiz->scripter = egueb_dom_event_script_scripter_get(ev);
@@ -133,33 +182,46 @@ static Eina_Bool _egueb_dom_element_script_process(Egueb_Dom_Element *e)
 			data = egueb_dom_node_child_first_get(EGUEB_DOM_NODE(e));
 			if (data)
 			{
-				Egueb_Dom_Node *doc;
 				Egueb_Dom_String *data_txt;
 
+				INFO("Using the text node");
 				data_txt = egueb_dom_character_data_data_get(data);
-				/* compile the script */
-				egueb_dom_scripter_load(thiz->scripter, data_txt, &thiz->script);
-				/* add the global variables */
-				/* FIXME what to do with the ref? */
-				doc = egueb_dom_node_owner_document_get(EGUEB_DOM_NODE(e));
-				egueb_dom_scripter_global_add(thiz->scripter, "document", doc, egueb_dom_node_item_get(doc));
-				/* run it */
-				egueb_dom_scripter_script_run(thiz->scripter,thiz->script);
-				egueb_dom_string_unref(data_txt);
-				/* FIXME for now */
-				egueb_dom_node_unref(doc);
+				_egueb_dom_element_script_run(thiz, data_txt);
+			}
+			/* check if we have a a src attribute */
+			else
+			{
+				Egueb_Dom_Event *e;
+				Egueb_Dom_Uri u;
+
+				if (!egueb_dom_uri_string_from(&u, src))
+				{
+					ERR_ELEMENT(EGUEB_DOM_NODE(thiz), "Wrong src");
+					goto failed;
+				}
+
+				INFO("Request a load of '%s'", egueb_dom_string_string_get(src));
+				e = egueb_dom_event_io_data_new(&u, _egueb_dom_element_script_data_cb);
+				egueb_dom_node_event_dispatch(EGUEB_DOM_NODE(thiz), e, NULL, NULL);
+				egueb_dom_uri_cleanup(&u);
 			}
 		}
 	}
 
 
+failed:
 	thiz->data_changed = EINA_FALSE;
 	/* swap the last content type */
-	if (thiz->last_content_type)
-		egueb_dom_string_unref(thiz->last_content_type);
-	thiz->last_content_type = content_type;
+	if (thiz->last_type)
+		egueb_dom_string_unref(thiz->last_type);
+	thiz->last_type = egueb_dom_string_ref(type);
+	/* swap the last src */
+	if (thiz->last_src)
+		egueb_dom_string_unref(thiz->last_src);
+	thiz->last_src = egueb_dom_string_ref(src);
 done:
-	egueb_dom_string_unref(content_type);
+	egueb_dom_string_unref(src);
+	egueb_dom_string_unref(type);
 	return EINA_TRUE;
 }
 
@@ -194,10 +256,14 @@ static void _egueb_dom_element_script_instance_init(void *o)
 	thiz = EGUEB_DOM_ELEMENT_SCRIPT(o);
 	n = EGUEB_DOM_NODE(o);
 	/* add the attributes */
-	thiz->content_type = egueb_dom_attr_string_new(
+	thiz->type = egueb_dom_attr_string_new(
 			egueb_dom_string_ref(EGUEB_DOM_NAME_TYPE),
 			NULL, EINA_FALSE, EINA_FALSE, EINA_FALSE);
-	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->content_type), NULL);
+	thiz->src = egueb_dom_attr_string_new(
+			egueb_dom_string_ref(EGUEB_DOM_NAME_SRC),
+			NULL, EINA_FALSE, EINA_FALSE, EINA_FALSE);
+	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->type), NULL);
+	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->src), NULL);
 
 	/* add the events */
 	egueb_dom_node_event_listener_add(n,
@@ -219,7 +285,13 @@ static void _egueb_dom_element_script_instance_deinit(void *o)
 	{
 		egueb_dom_scripter_script_free(thiz->scripter, thiz->script);
 	}
-	egueb_dom_node_unref(thiz->content_type);
+	egueb_dom_node_unref(thiz->type);
+	egueb_dom_node_unref(thiz->src);
+
+	if (thiz->last_type)
+		egueb_dom_string_unref(thiz->last_type);
+	if (thiz->last_src)
+		egueb_dom_string_unref(thiz->last_src);
 }
 /*============================================================================*
  *                                 Global                                     *
