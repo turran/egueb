@@ -1266,7 +1266,7 @@ EAPI void egueb_svg_element_color_get(Egueb_Dom_Node *n, Egueb_Svg_Color_Animate
 	Egueb_Svg_Element *thiz;
 
 	thiz = EGUEB_SVG_ELEMENT(n);
-	EGUEB_SVG_ELEMENT_ATTR_SIMPLE_GET(thiz->color, v);
+	EGUEB_SVG_ELEMENT_ATTR_ANIMATED_GET(thiz->color, v);
 }
 
 EAPI void egueb_svg_element_fill_set(Egueb_Dom_Node *n, const Egueb_Svg_Paint *v)

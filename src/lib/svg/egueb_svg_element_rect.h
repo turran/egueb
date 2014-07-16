@@ -20,29 +20,34 @@
 #define _EGUEB_SVG_ELEMENT_RECT_H_
 
 /**
- * @defgroup Egueb_Svg_Element_Rect_Group Rect
- * @brief Rect element
+ * @file
+ * @ender_group{Egueb_Svg_Element_Rect}
+ */
+
+/**
+ * @defgroup Egueb_Svg_Element_Rect Rect
+ * @brief Rect element @ender_inherits{Egueb_Svg_Element}
  * @ingroup Egueb_Svg_Shape_Group
  * @{
  */
 EAPI Egueb_Dom_Node * egueb_svg_element_rect_new(void);
 
-EAPI void egueb_svg_element_rect_x_set(Egueb_Dom_Node *n, const Egueb_Svg_Coord *x);
+EAPI void egueb_svg_element_rect_x_set_simple(Egueb_Dom_Node *n, const Egueb_Svg_Coord *x);
 EAPI void egueb_svg_element_rect_x_get(Egueb_Dom_Node *n, Egueb_Svg_Coord_Animated *x);
 
-EAPI void egueb_svg_element_rect_y_set(Egueb_Dom_Node *n, const Egueb_Svg_Coord *y);
+EAPI void egueb_svg_element_rect_y_set_simple(Egueb_Dom_Node *n, const Egueb_Svg_Coord *y);
 EAPI void egueb_svg_element_rect_y_get(Egueb_Dom_Node *n, Egueb_Svg_Coord_Animated *y);
 
-EAPI void egueb_svg_element_rect_width_set(Egueb_Dom_Node *n, const Egueb_Svg_Length *width);
+EAPI void egueb_svg_element_rect_width_set_simple(Egueb_Dom_Node *n, const Egueb_Svg_Length *width);
 EAPI void egueb_svg_element_rect_width_get(Egueb_Dom_Node *n, Egueb_Svg_Length_Animated *width);
 
-EAPI void egueb_svg_element_rect_height_set(Egueb_Dom_Node *n, const Egueb_Svg_Length *height);
+EAPI void egueb_svg_element_rect_height_set_simple(Egueb_Dom_Node *n, const Egueb_Svg_Length *height);
 EAPI void egueb_svg_element_rect_height_get(Egueb_Dom_Node *n, Egueb_Svg_Length_Animated *height);
 
-EAPI void egueb_svg_element_rect_rx_set(Egueb_Dom_Node *n, const Egueb_Svg_Coord *rx);
+EAPI void egueb_svg_element_rect_rx_set_simple(Egueb_Dom_Node *n, const Egueb_Svg_Coord *rx);
 EAPI void egueb_svg_element_rect_rx_get(Egueb_Dom_Node *n, Egueb_Svg_Coord_Animated *rx);
 
-EAPI void egueb_svg_element_rect_ry_set(Egueb_Dom_Node *n, const Egueb_Svg_Coord *ry);
+EAPI void egueb_svg_element_rect_ry_set_simple(Egueb_Dom_Node *n, const Egueb_Svg_Coord *ry);
 EAPI void egueb_svg_element_rect_ry_get(Egueb_Dom_Node *n, Egueb_Svg_Coord_Animated *ry);
 
 /**

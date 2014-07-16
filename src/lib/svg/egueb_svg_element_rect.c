@@ -228,6 +228,10 @@ static void _egueb_svg_element_rect_instance_deinit(void *o)
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/
+/**
+ * Creates a new rect element
+ * @return The newly created rect element @ender_transfer{full}
+ */
 EAPI Egueb_Dom_Node * egueb_svg_element_rect_new(void)
 {
 	Egueb_Dom_Node *n;
@@ -236,7 +240,12 @@ EAPI Egueb_Dom_Node * egueb_svg_element_rect_new(void)
 	return n;
 }
 
-EAPI void egueb_svg_element_rect_x_set(Egueb_Dom_Node *n, const Egueb_Svg_Coord *x)
+/**
+ * Sets the x coordinate of a rect element
+ * @param[in] n The rect element to set the x coordinate @ender_transfer{none}
+ * @param[in] x The x coordinate to set @ender_transfer{content}
+ */
+EAPI void egueb_svg_element_rect_x_set_simple(Egueb_Dom_Node *n, const Egueb_Svg_Coord *x)
 {
 	Egueb_Svg_Element_Rect *thiz;
 
@@ -244,6 +253,12 @@ EAPI void egueb_svg_element_rect_x_set(Egueb_Dom_Node *n, const Egueb_Svg_Coord 
 	egueb_dom_attr_set(thiz->x, EGUEB_DOM_ATTR_TYPE_BASE, x);
 }
 
+/**
+ * Gets the x coordinate of a rect element
+ * @ender_prop{x}
+ * @param[in] n The rect element to get the x coordinate @ender_transfer{none}
+ * @param[out] x The pointer to store the x coordinate @ender_transfer{content}
+ */
 EAPI void egueb_svg_element_rect_x_get(Egueb_Dom_Node *n, Egueb_Svg_Coord_Animated *x)
 {
 	Egueb_Svg_Element_Rect *thiz;
@@ -252,7 +267,12 @@ EAPI void egueb_svg_element_rect_x_get(Egueb_Dom_Node *n, Egueb_Svg_Coord_Animat
 	EGUEB_SVG_ELEMENT_ATTR_ANIMATED_GET(thiz->x, x);
 }
 
-EAPI void egueb_svg_element_rect_y_set(Egueb_Dom_Node *n, const Egueb_Svg_Coord *y)
+/**
+ * Sets the y coordinate of a rect element
+ * @param[in] n The rect element to set the y coordinate @ender_transfer{none}
+ * @param[in] y The y coordinate to set @ender_transfer{content}
+ */
+EAPI void egueb_svg_element_rect_y_set_simple(Egueb_Dom_Node *n, const Egueb_Svg_Coord *y)
 {
 	Egueb_Svg_Element_Rect *thiz;
 
@@ -260,6 +280,12 @@ EAPI void egueb_svg_element_rect_y_set(Egueb_Dom_Node *n, const Egueb_Svg_Coord 
 	egueb_dom_attr_set(thiz->y, EGUEB_DOM_ATTR_TYPE_BASE, y);
 }
 
+/**
+ * Gets the y coordinate of a rect element
+ * @ender_prop{y}
+ * @param[in] n The rect element to get the y coordinate @ender_transfer{none}
+ * @param[out] y The pointer to store the y coordinate @ender_transfer{content}
+ */
 EAPI void egueb_svg_element_rect_y_get(Egueb_Dom_Node *n, Egueb_Svg_Coord_Animated *y)
 {
 	Egueb_Svg_Element_Rect *thiz;
@@ -268,7 +294,12 @@ EAPI void egueb_svg_element_rect_y_get(Egueb_Dom_Node *n, Egueb_Svg_Coord_Animat
 	EGUEB_SVG_ELEMENT_ATTR_ANIMATED_GET(thiz->y, y);
 }
 
-EAPI void egueb_svg_element_rect_width_set(Egueb_Dom_Node *n, const Egueb_Svg_Length *width)
+/**
+ * Sets the width of a rect element
+ * @param[in] n The rect element to set the width @ender_transfer{none}
+ * @param[in] width The width to set @ender_transfer{content}
+ */
+EAPI void egueb_svg_element_rect_width_set_simple(Egueb_Dom_Node *n, const Egueb_Svg_Length *width)
 {
 	Egueb_Svg_Element_Rect *thiz;
 
@@ -276,6 +307,12 @@ EAPI void egueb_svg_element_rect_width_set(Egueb_Dom_Node *n, const Egueb_Svg_Le
 	egueb_dom_attr_set(thiz->width, EGUEB_DOM_ATTR_TYPE_BASE, width);
 }
 
+/**
+ * Gets the width of a rect element
+ * @ender_prop{width}
+ * @param[in] n The rect element to get the width @ender_transfer{none}
+ * @param[out] width The pointer to store the width @ender_transfer{content}
+ */
 EAPI void egueb_svg_element_rect_width_get(Egueb_Dom_Node *n, Egueb_Svg_Length_Animated *width)
 {
 	Egueb_Svg_Element_Rect *thiz;
@@ -284,7 +321,12 @@ EAPI void egueb_svg_element_rect_width_get(Egueb_Dom_Node *n, Egueb_Svg_Length_A
 	EGUEB_SVG_ELEMENT_ATTR_ANIMATED_GET(thiz->width, width);
 }
 
-EAPI void egueb_svg_element_rect_height_set(Egueb_Dom_Node *n, const Egueb_Svg_Length *height)
+/**
+ * Sets the height of a rect element
+ * @param[in] n The rect element to set the height @ender_transfer{none}
+ * @param[in] height The height to set @ender_transfer{content}
+ */
+EAPI void egueb_svg_element_rect_height_set_simple(Egueb_Dom_Node *n, const Egueb_Svg_Length *height)
 {
 	Egueb_Svg_Element_Rect *thiz;
 
@@ -292,6 +334,12 @@ EAPI void egueb_svg_element_rect_height_set(Egueb_Dom_Node *n, const Egueb_Svg_L
 	egueb_dom_attr_set(thiz->height, EGUEB_DOM_ATTR_TYPE_BASE, height);
 }
 
+/**
+ * Gets the height of a rect element
+ * @ender_prop{height}
+ * @param[in] n The rect element to get the height @ender_transfer{none}
+ * @param[out] height The pointer to store the height @ender_transfer{content}
+ */
 EAPI void egueb_svg_element_rect_height_get(Egueb_Dom_Node *n, Egueb_Svg_Length_Animated *height)
 {
 	Egueb_Svg_Element_Rect *thiz;
@@ -300,7 +348,12 @@ EAPI void egueb_svg_element_rect_height_get(Egueb_Dom_Node *n, Egueb_Svg_Length_
 	EGUEB_SVG_ELEMENT_ATTR_ANIMATED_GET(thiz->height, height);
 }
 
-EAPI void egueb_svg_element_rect_rx_set(Egueb_Dom_Node *n, const Egueb_Svg_Coord *rx)
+/**
+ * Sets the radius in the x coordinate of a rect element
+ * @param[in] n The rect element to set the radius in the x coordinate @ender_transfer{none}
+ * @param[in] rx The radius in the x coordinate to set @ender_transfer{content}
+ */
+EAPI void egueb_svg_element_rect_rx_set_simple(Egueb_Dom_Node *n, const Egueb_Svg_Coord *rx)
 {
 	Egueb_Svg_Element_Rect *thiz;
 
@@ -308,6 +361,12 @@ EAPI void egueb_svg_element_rect_rx_set(Egueb_Dom_Node *n, const Egueb_Svg_Coord
 	egueb_dom_attr_set(thiz->rx, EGUEB_DOM_ATTR_TYPE_BASE, rx);
 }
 
+/**
+ * Gets the radius in the x coordinate of a rect element
+ * @ender_prop{rx}
+ * @param[in] n The rect element to get the radius in the x coordinate @ender_transfer{none}
+ * @param[out] rx The pointer to store the radius in the x coordinate @ender_transfer{content}
+ */
 EAPI void egueb_svg_element_rect_rx_get(Egueb_Dom_Node *n, Egueb_Svg_Coord_Animated *rx)
 {
 	Egueb_Svg_Element_Rect *thiz;
@@ -316,7 +375,12 @@ EAPI void egueb_svg_element_rect_rx_get(Egueb_Dom_Node *n, Egueb_Svg_Coord_Anima
 	EGUEB_SVG_ELEMENT_ATTR_ANIMATED_GET(thiz->rx, rx);
 }
 
-EAPI void egueb_svg_element_rect_ry_set(Egueb_Dom_Node *n, const Egueb_Svg_Coord *ry)
+/**
+ * Sets the radius in the y coordinate of a rect element
+ * @param[in] n The rect element to set the radius in the y coordinate @ender_transfer{none}
+ * @param[in] ry The radius in the y coordinate to set @ender_transfer{content}
+ */
+EAPI void egueb_svg_element_rect_ry_set_simple(Egueb_Dom_Node *n, const Egueb_Svg_Coord *ry)
 {
 	Egueb_Svg_Element_Rect *thiz;
 
@@ -324,6 +388,12 @@ EAPI void egueb_svg_element_rect_ry_set(Egueb_Dom_Node *n, const Egueb_Svg_Coord
 	egueb_dom_attr_set(thiz->ry, EGUEB_DOM_ATTR_TYPE_BASE, ry);
 }
 
+/**
+ * Gets the radius in the y coordinate of a rect element
+ * @ender_prop{ry}
+ * @param[in] n The rect element to get the radius in the y coordinate @ender_transfer{none}
+ * @param[out] ry The pointer to store the radius in the y coordinate @ender_transfer{content}
+ */
 EAPI void egueb_svg_element_rect_ry_get(Egueb_Dom_Node *n, Egueb_Svg_Coord_Animated *ry)
 {
 	Egueb_Svg_Element_Rect *thiz;

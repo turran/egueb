@@ -221,16 +221,17 @@ static Eina_Bool _egueb_svg_element_use_process(Egueb_Svg_Renderable *r)
 			_egueb_svg_element_use_setup_cloned(thiz, cloned);
 		}
 		thiz->document_changed = EINA_FALSE;
+
+		/* finally swap */
+		if (thiz->last_xlink)
+		{
+			egueb_dom_string_unref(thiz->last_xlink);
+			thiz->last_xlink = NULL;
+		}
+		thiz->last_xlink = egueb_dom_string_dup(xlink);
 	}
 	egueb_dom_node_unref(doc);
-
-	/* finally swap */
-	if (thiz->last_xlink)
-	{
-		egueb_dom_string_unref(thiz->last_xlink);
-		thiz->last_xlink = NULL;
-	}
-	thiz->last_xlink = xlink;
+	egueb_dom_string_unref(xlink);
 
 	return egueb_dom_element_process(thiz->g);
 }
@@ -363,71 +364,120 @@ EAPI Eina_Bool egueb_svg_element_is_use(Egueb_Dom_Node *n)
 	return EINA_TRUE;
 }
 
-EAPI void egueb_svg_element_use_x_set(Egueb_Dom_Node *n, const Egueb_Svg_Coord *v)
+/**
+ * Sets the x coordinate of an use element
+ * @param[in] n The use element to set the x coordinate @ender_transfer{none}
+ * @param[in] x The x coordinate to set @ender_transfer{content}
+ */
+EAPI void egueb_svg_element_use_x_set_simple(Egueb_Dom_Node *n, const Egueb_Svg_Coord *x)
 {
 	Egueb_Svg_Element_Use *thiz;
 
 	thiz = EGUEB_SVG_ELEMENT_USE(n);
-	egueb_dom_attr_set(thiz->x, EGUEB_DOM_ATTR_TYPE_BASE, v);
+	egueb_dom_attr_set(thiz->x, EGUEB_DOM_ATTR_TYPE_BASE, x);
 }
 
-EAPI void egueb_svg_element_use_x_get(Egueb_Dom_Node *n, Egueb_Svg_Coord_Animated *v)
+/**
+ * Gets the x coordinate of an use element
+ * @ender_prop{x}
+ * @param[in] n The use element to get the x coordinate @ender_transfer{none}
+ * @param[out] x The pointer to store the x coordinate @ender_transfer{content}
+ */
+EAPI void egueb_svg_element_use_x_get(Egueb_Dom_Node *n, Egueb_Svg_Coord_Animated *x)
 {
 	Egueb_Svg_Element_Use *thiz;
 
 	thiz = EGUEB_SVG_ELEMENT_USE(n);
-	EGUEB_SVG_ELEMENT_ATTR_ANIMATED_GET(thiz->x, v);
+	EGUEB_SVG_ELEMENT_ATTR_ANIMATED_GET(thiz->x, x);
 }
 
-EAPI void egueb_svg_element_use_y_set(Egueb_Dom_Node *n, const Egueb_Svg_Coord *v)
+/**
+ * Sets the y coordinate of an use element
+ * @param[in] n The use element to set the y coordinate @ender_transfer{none}
+ * @param[in] y The y coordinate to set @ender_transfer{content}
+ */
+EAPI void egueb_svg_element_use_y_set_simple(Egueb_Dom_Node *n, const Egueb_Svg_Coord *y)
 {
 	Egueb_Svg_Element_Use *thiz;
 
 	thiz = EGUEB_SVG_ELEMENT_USE(n);
-	egueb_dom_attr_set(thiz->y, EGUEB_DOM_ATTR_TYPE_BASE, v);
+	egueb_dom_attr_set(thiz->y, EGUEB_DOM_ATTR_TYPE_BASE, y);
 }
 
-EAPI void egueb_svg_element_use_y_get(Egueb_Dom_Node *n, Egueb_Svg_Coord_Animated *v)
+/**
+ * Gets the y coordinate of an use element
+ * @ender_prop{y}
+ * @param[in] n The use element to get the y coordinate @ender_transfer{none}
+ * @param[out] y The pointer to store the y coordinate @ender_transfer{content}
+ */
+EAPI void egueb_svg_element_use_y_get(Egueb_Dom_Node *n, Egueb_Svg_Coord_Animated *y)
 {
 	Egueb_Svg_Element_Use *thiz;
 
 	thiz = EGUEB_SVG_ELEMENT_USE(n);
-	EGUEB_SVG_ELEMENT_ATTR_ANIMATED_GET(thiz->y, v);
+	EGUEB_SVG_ELEMENT_ATTR_ANIMATED_GET(thiz->y, y);
 }
 
-EAPI void egueb_svg_element_use_width_set(Egueb_Dom_Node *n, const Egueb_Svg_Length *v)
+/**
+ * Sets the width of an use element
+ * @param[in] n The use element to set the width @ender_transfer{none}
+ * @param[in] width The width to set @ender_transfer{content}
+ */
+EAPI void egueb_svg_element_use_width_set_simple(Egueb_Dom_Node *n, const Egueb_Svg_Length *width)
 {
 	Egueb_Svg_Element_Use *thiz;
 
 	thiz = EGUEB_SVG_ELEMENT_USE(n);
-	egueb_dom_attr_set(thiz->width, EGUEB_DOM_ATTR_TYPE_BASE, v);
+	egueb_dom_attr_set(thiz->width, EGUEB_DOM_ATTR_TYPE_BASE, width);
 }
 
-EAPI void egueb_svg_element_use_width_get(Egueb_Dom_Node *n, Egueb_Svg_Length_Animated *v)
+/**
+ * Gets the width of an use element
+ * @ender_prop{width}
+ * @param[in] n The use element to get the width @ender_transfer{none}
+ * @param[out] width The pointer to store the width @ender_transfer{content}
+ */
+EAPI void egueb_svg_element_use_width_get(Egueb_Dom_Node *n, Egueb_Svg_Length_Animated *width)
 {
 	Egueb_Svg_Element_Use *thiz;
 
 	thiz = EGUEB_SVG_ELEMENT_USE(n);
-	EGUEB_SVG_ELEMENT_ATTR_ANIMATED_GET(thiz->width, v);
+	EGUEB_SVG_ELEMENT_ATTR_ANIMATED_GET(thiz->width, width);
 }
 
-EAPI void egueb_svg_element_use_height_set(Egueb_Dom_Node *n, const Egueb_Svg_Length *v)
+/**
+ * Sets the height of an use element
+ * @param[in] n The use element to set the height @ender_transfer{none}
+ * @param[in] height The height to set @ender_transfer{content}
+ */
+EAPI void egueb_svg_element_use_height_set_simple(Egueb_Dom_Node *n, const Egueb_Svg_Length *height)
 {
 	Egueb_Svg_Element_Use *thiz;
 
 	thiz = EGUEB_SVG_ELEMENT_USE(n);
-	egueb_dom_attr_set(thiz->height, EGUEB_DOM_ATTR_TYPE_BASE, v);
+	egueb_dom_attr_set(thiz->height, EGUEB_DOM_ATTR_TYPE_BASE, height);
 }
 
-EAPI void egueb_svg_element_use_height_get(Egueb_Dom_Node *n, Egueb_Svg_Length_Animated *v)
+/**
+ * Gets the height of an use element
+ * @ender_prop{height}
+ * @param[in] n The use element to get the height @ender_transfer{none}
+ * @param[out] height The pointer to store the height @ender_transfer{content}
+ */
+EAPI void egueb_svg_element_use_height_get(Egueb_Dom_Node *n, Egueb_Svg_Length_Animated *height)
 {
 	Egueb_Svg_Element_Use *thiz;
 
 	thiz = EGUEB_SVG_ELEMENT_USE(n);
-	EGUEB_SVG_ELEMENT_ATTR_ANIMATED_GET(thiz->height, v);
+	EGUEB_SVG_ELEMENT_ATTR_ANIMATED_GET(thiz->height, height);
 }
 
-EAPI void egueb_svg_element_use_xlink_href_set(Egueb_Dom_Node *n, Egueb_Dom_String *v)
+/**
+ * Sets the href of an use element
+ * @param[in] n The use element to get the href @ender_transfer{none}
+ * @param[out] href The href to set @ender_transfer{full}
+ */
+EAPI void egueb_svg_element_use_href_set_simple(Egueb_Dom_Node *n, Egueb_Dom_String *v)
 {
 	Egueb_Svg_Element_Use *thiz;
 
@@ -435,11 +485,16 @@ EAPI void egueb_svg_element_use_xlink_href_set(Egueb_Dom_Node *n, Egueb_Dom_Stri
 	egueb_dom_attr_set(thiz->xlink_href, EGUEB_DOM_ATTR_TYPE_BASE, v);
 }
 
-EAPI void egueb_svg_element_use_xlink_href_get(Egueb_Dom_Node *n, Egueb_Svg_String_Animated *v)
+/**
+ * Gets the href of an use element
+ * @ender_prop{href}
+ * @param[in] n The use element to get the href @ender_transfer{none}
+ * @param[out] v The pointer to store the href @ender_transfer{content}
+ */
+EAPI void egueb_svg_element_use_href_get(Egueb_Dom_Node *n, Egueb_Svg_String_Animated *v)
 {
 	Egueb_Svg_Element_Use *thiz;
 
 	thiz = EGUEB_SVG_ELEMENT_USE(n);
 	EGUEB_SVG_ELEMENT_ATTR_ANIMATED_GET(thiz->xlink_href, v);
 }
-

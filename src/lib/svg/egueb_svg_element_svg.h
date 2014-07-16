@@ -33,6 +33,7 @@
  */
 
 EAPI Egueb_Dom_Node * egueb_svg_element_svg_new(void);
+EAPI Eina_Bool egueb_svg_element_is_svg(Egueb_Dom_Node *n);
 EAPI Eina_Bool egueb_svg_element_svg_draw(Egueb_Dom_Node *n, Enesim_Surface *s,
 		Enesim_Rop rop, Eina_Rectangle *clip, int x, int y,
 		Enesim_Log **error);
@@ -46,10 +47,14 @@ EAPI Eina_Bool egueb_svg_element_svg_animations_paused(Egueb_Dom_Node *n);
 EAPI double egueb_svg_element_svg_time_get(Egueb_Dom_Node *n);
 EAPI void egueb_svg_element_svg_time_set(Egueb_Dom_Node *n, double secs);
 
-EAPI void egueb_svg_element_svg_width_get(Egueb_Dom_Node *n,
-		Egueb_Svg_Length_Animated *width);
-EAPI void egueb_svg_element_svg_height_get(Egueb_Dom_Node *n,
-		Egueb_Svg_Length_Animated *height);
+EAPI void egueb_svg_element_svg_x_set_simple(Egueb_Dom_Node *n, const Egueb_Svg_Coord *x);
+EAPI void egueb_svg_element_svg_x_get(Egueb_Dom_Node *n, Egueb_Svg_Coord_Animated *x);
+EAPI void egueb_svg_element_svg_y_set_simple(Egueb_Dom_Node *n, const Egueb_Svg_Coord *y);
+EAPI void egueb_svg_element_svg_y_get(Egueb_Dom_Node *n, Egueb_Svg_Coord_Animated *y);
+EAPI void egueb_svg_element_svg_width_set_simple(Egueb_Dom_Node *n, const Egueb_Svg_Length *width);
+EAPI void egueb_svg_element_svg_width_get(Egueb_Dom_Node *n, Egueb_Svg_Length_Animated *width);
+EAPI void egueb_svg_element_svg_height_set_simple(Egueb_Dom_Node *n, const Egueb_Svg_Length *height);
+EAPI void egueb_svg_element_svg_height_get(Egueb_Dom_Node *n, Egueb_Svg_Length_Animated *height);
 
 EAPI void egueb_svg_element_svg_current_scale_set(Egueb_Dom_Node *n,
 		double scale);

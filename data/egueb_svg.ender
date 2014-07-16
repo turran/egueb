@@ -193,7 +193,170 @@
       <arg name="v" type="egueb.svg.number.animated" direction="in" transfer="full"/>
     </function>
   </object>
+  <object name="egueb.svg.element.image" inherits="egueb.svg.element">
+    <prop name="x">
+      <getter>
+        <arg name="x" type="egueb.svg.coord.animated" direction="out" transfer="content"/>
+      </getter>
+    </prop>
+    <prop name="y">
+      <getter>
+        <arg name="y" type="egueb.svg.coord.animated" direction="out" transfer="content"/>
+      </getter>
+    </prop>
+    <prop name="width">
+      <getter>
+        <arg name="width" type="egueb.svg.length.animated" direction="out" transfer="content"/>
+      </getter>
+    </prop>
+    <prop name="height">
+      <getter>
+        <arg name="height" type="egueb.svg.length.animated" direction="out" transfer="content"/>
+      </getter>
+    </prop>
+    <prop name="href">
+      <getter>
+        <arg name="v" type="egueb.svg.string.animated" direction="out" transfer="content"/>
+      </getter>
+    </prop>
+    <ctor name="new"/>
+    <method name="x_set_simple">
+      <arg name="x" type="egueb.svg.coord" direction="in" transfer="content"/>
+    </method>
+    <method name="y_set_simple">
+      <arg name="y" type="egueb.svg.coord" direction="in" transfer="content"/>
+    </method>
+    <method name="width_set_simple">
+      <arg name="width" type="egueb.svg.length" direction="in" transfer="content"/>
+    </method>
+    <method name="height_set_simple">
+      <arg name="height" type="egueb.svg.length" direction="in" transfer="content"/>
+    </method>
+    <method name="href_set_simple">
+      <arg name="v" type="egueb.dom.string" direction="out" transfer="full"/>
+    </method>
+    <method name="svg_set">
+      <arg name="svg" type="egueb.dom.node" direction="in" transfer="full"/>
+    </method>
+  </object>
+  <object name="egueb.svg.element.rect" inherits="egueb.svg.element">
+    <prop name="x">
+      <getter>
+        <arg name="x" type="egueb.svg.coord.animated" direction="out" transfer="content"/>
+      </getter>
+    </prop>
+    <prop name="y">
+      <getter>
+        <arg name="y" type="egueb.svg.coord.animated" direction="out" transfer="content"/>
+      </getter>
+    </prop>
+    <prop name="width">
+      <getter>
+        <arg name="width" type="egueb.svg.length.animated" direction="out" transfer="content"/>
+      </getter>
+    </prop>
+    <prop name="height">
+      <getter>
+        <arg name="height" type="egueb.svg.length.animated" direction="out" transfer="content"/>
+      </getter>
+    </prop>
+    <prop name="rx">
+      <getter>
+        <arg name="rx" type="egueb.svg.coord.animated" direction="out" transfer="content"/>
+      </getter>
+    </prop>
+    <prop name="ry">
+      <getter>
+        <arg name="ry" type="egueb.svg.coord.animated" direction="out" transfer="content"/>
+      </getter>
+    </prop>
+    <ctor name="new"/>
+    <method name="x_set_simple">
+      <arg name="x" type="egueb.svg.coord" direction="in" transfer="content"/>
+    </method>
+    <method name="y_set_simple">
+      <arg name="y" type="egueb.svg.coord" direction="in" transfer="content"/>
+    </method>
+    <method name="width_set_simple">
+      <arg name="width" type="egueb.svg.length" direction="in" transfer="content"/>
+    </method>
+    <method name="height_set_simple">
+      <arg name="height" type="egueb.svg.length" direction="in" transfer="content"/>
+    </method>
+    <method name="rx_set_simple">
+      <arg name="rx" type="egueb.svg.coord" direction="in" transfer="content"/>
+    </method>
+    <method name="ry_set_simple">
+      <arg name="ry" type="egueb.svg.coord" direction="in" transfer="content"/>
+    </method>
+  </object>
+  <object name="egueb.svg.element.use" inherits="egueb.svg.element">
+    <prop name="x">
+      <getter>
+        <arg name="x" type="egueb.svg.coord.animated" direction="out" transfer="content"/>
+      </getter>
+    </prop>
+    <prop name="y">
+      <getter>
+        <arg name="y" type="egueb.svg.coord.animated" direction="out" transfer="content"/>
+      </getter>
+    </prop>
+    <prop name="width">
+      <getter>
+        <arg name="width" type="egueb.svg.length.animated" direction="out" transfer="content"/>
+      </getter>
+    </prop>
+    <prop name="height">
+      <getter>
+        <arg name="height" type="egueb.svg.length.animated" direction="out" transfer="content"/>
+      </getter>
+    </prop>
+    <prop name="href">
+      <getter>
+        <arg name="v" type="egueb.svg.string.animated" direction="out" transfer="content"/>
+      </getter>
+    </prop>
+    <ctor name="new"/>
+    <method name="egueb_svg_element_is_use">
+      <return type="bool" transfer="full"/>
+    </method>
+    <method name="x_set_simple">
+      <arg name="x" type="egueb.svg.coord" direction="in" transfer="content"/>
+    </method>
+    <method name="y_set_simple">
+      <arg name="y" type="egueb.svg.coord" direction="in" transfer="content"/>
+    </method>
+    <method name="width_set_simple">
+      <arg name="width" type="egueb.svg.length" direction="in" transfer="content"/>
+    </method>
+    <method name="height_set_simple">
+      <arg name="height" type="egueb.svg.length" direction="in" transfer="content"/>
+    </method>
+    <method name="href_set_simple">
+      <arg name="v" type="egueb.dom.string" direction="out" transfer="full"/>
+    </method>
+  </object>
   <object name="egueb.svg.element.svg" inherits="egueb.svg.element">
+    <prop name="x">
+      <getter>
+        <arg name="x" type="egueb.svg.coord.animated" direction="out" transfer="content"/>
+      </getter>
+    </prop>
+    <prop name="y">
+      <getter>
+        <arg name="y" type="egueb.svg.coord.animated" direction="out" transfer="content"/>
+      </getter>
+    </prop>
+    <prop name="width">
+      <getter>
+        <arg name="width" type="egueb.svg.length.animated" direction="out" transfer="content"/>
+      </getter>
+    </prop>
+    <prop name="height">
+      <getter>
+        <arg name="height" type="egueb.svg.length.animated" direction="out" transfer="content"/>
+      </getter>
+    </prop>
     <prop name="current_scale">
       <setter>
         <arg name="scale" type="double" direction="in" transfer="full"/>
@@ -204,13 +367,16 @@
     </prop>
     <prop name="current_translate">
       <setter>
-        <arg name="p" type="egueb.svg.point" direction="in" transfer="full"/>
+        <arg name="p" type="egueb.svg.point" direction="in" transfer="content"/>
       </setter>
       <getter>
-        <arg name="p" type="egueb.svg.point" direction="out" transfer="full"/>
+        <arg name="p" type="egueb.svg.point" direction="out" transfer="content"/>
       </getter>
     </prop>
     <ctor name="new"/>
+    <method name="egueb_svg_element_is_svg">
+      <return type="bool" transfer="full"/>
+    </method>
     <method name="draw">
       <return type="bool" transfer="full"/>
       <arg name="s" type="enesim.surface" direction="in" transfer="full"/>
@@ -240,11 +406,17 @@
     <method name="time_set">
       <arg name="secs" type="double" direction="in" transfer="full"/>
     </method>
-    <method name="width_get">
-      <arg name="width" type="egueb.svg.length.animated" direction="in" transfer="full"/>
+    <method name="x_set_simple">
+      <arg name="x" type="egueb.svg.coord" direction="in" transfer="content"/>
     </method>
-    <method name="height_get">
-      <arg name="height" type="egueb.svg.length.animated" direction="in" transfer="full"/>
+    <method name="y_set_simple">
+      <arg name="y" type="egueb.svg.coord" direction="in" transfer="content"/>
+    </method>
+    <method name="width_set_simple">
+      <arg name="width" type="egueb.svg.length" direction="in" transfer="content"/>
+    </method>
+    <method name="height_set_simple">
+      <arg name="height" type="egueb.svg.length" direction="in" transfer="content"/>
     </method>
     <method name="svg_point_create">
       <return type="egueb.svg.point" transfer="full"/>

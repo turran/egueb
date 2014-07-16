@@ -551,10 +551,6 @@ Etch * egueb_svg_element_svg_etch_get(Egueb_Dom_Node *n)
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/
-/**
- * To be documented
- * FIXME: To be fixed
- */
 EAPI Egueb_Dom_Node * egueb_svg_element_svg_new(void)
 {
 	Egueb_Dom_Node *n;
@@ -563,115 +559,16 @@ EAPI Egueb_Dom_Node * egueb_svg_element_svg_new(void)
 	return n;
 }
 
-#if 0
-/**
- * To be documented
- * FIXME: To be fixed
- */
-EAPI Ender_Element * egueb_svg_element_svg_new(void)
+EAPI Eina_Bool egueb_svg_element_is_svg(Egueb_Dom_Node *n)
 {
-	return ESVG_ELEMENT_NEW("SVGSVGElement");
-}
-
-/**
- * To be documented
- * FIXME: To be fixed
- */
-EAPI Ender_Element * egueb_svg_element_svg_element_find(Ender_Element *e, const char *id)
-{
-	Egueb_Dom_Tag *t;
-
-	t = ender_element_object_get(e);
-	return _egueb_svg_element_svg_element_get_by_id(t, id);
-}
-
-/**
- * To be documented
- * FIXME: To be fixed
- */
-EAPI Eina_Bool egueb_svg_is_svg(Ender_Element *e)
-{
-	if (egueb_svg_element_type_get(e) != ESVG_TYPE_SVG)
+	if (!n) return EINA_FALSE;
+	if (!enesim_object_instance_inherits(ENESIM_OBJECT_INSTANCE(n),
+			EGUEB_SVG_ELEMENT_SVG_DESCRIPTOR))
 		return EINA_FALSE;
 	return EINA_TRUE;
 }
 
-/**
- * To be documented
- * FIXME: To be fixed
- */
-EAPI void egueb_svg_element_svg_version_set(Ender_Element *e, double version)
-{
-}
-
-/**
- * To be documented
- * FIXME: To be fixed
- */
-EAPI void egueb_svg_element_svg_version_get(Ender_Element *e, double *version)
-{
-}
-
-/**
- * To be documented
- * FIXME: To be fixed
- */
-EAPI void egueb_svg_element_svg_x_set(Ender_Element *e, Egueb_Svg_Coord *x)
-{
-	ender_element_property_value_set(e, ESVG_ELEMENT_SVG_X, x, NULL);
-}
-
-/**
- * To be documented
- * FIXME: To be fixed
- */
-EAPI void egueb_svg_element_svg_y_set(Ender_Element *e, Egueb_Svg_Coord *y)
-{
-	ender_element_property_value_set(e, ESVG_ELEMENT_SVG_Y, y, NULL);
-}
-
-/**
- * To be documented
- * FIXME: To be fixed
- */
-EAPI void egueb_svg_element_svg_width_set(Ender_Element *e, Egueb_Svg_Length *width)
-{
-	ender_element_property_value_set(e, ESVG_ELEMENT_SVG_WIDTH, width, NULL);
-}
-
-/**
- * To be documented
- * FIXME: To be fixed
- */
-EAPI void egueb_svg_element_svg_width_get(Ender_Element *e, Egueb_Svg_Length *width)
-{
-	Egueb_Dom_Tag *t;
-
-	t = ender_element_object_get(e);
-	_egueb_svg_element_svg_width_get(t, width);
-}
-
-/**
- * To be documented
- * FIXME: To be fixed
- */
-EAPI void egueb_svg_element_svg_height_set(Ender_Element *e, Egueb_Svg_Length *height)
-{
-	ender_element_property_value_set(e, ESVG_ELEMENT_SVG_HEIGHT, height, NULL);
-}
-
-/**
- * To be documented
- * FIXME: To be fixed
- */
-EAPI void egueb_svg_element_svg_height_get(Ender_Element *e, Egueb_Svg_Length *height)
-{
-	Egueb_Dom_Tag *t;
-
-	t = ender_element_object_get(e);
-	_egueb_svg_element_svg_height_get(t, height);
-}
-
+#if 0
 /**
  * To be documented
  * FIXME: To be fixed
@@ -703,10 +600,6 @@ EAPI void egueb_svg_element_svg_content_script_type_get(Ender_Element *e, const 
 
 #endif
 
-/**
- * To be documented
- * FIXME: To be fixed
- */
 EAPI void egueb_svg_element_svg_animations_pause(Egueb_Dom_Node *n)
 {
 	Egueb_Svg_Element_Svg *thiz;
@@ -715,10 +608,6 @@ EAPI void egueb_svg_element_svg_animations_pause(Egueb_Dom_Node *n)
 	thiz->paused = EINA_TRUE;
 }
 
-/**
- * To be documented
- * FIXME: To be fixed
- */
 EAPI void egueb_svg_element_svg_animations_unpause(Egueb_Dom_Node *n)
 {
 	Egueb_Svg_Element_Svg *thiz;
@@ -727,10 +616,6 @@ EAPI void egueb_svg_element_svg_animations_unpause(Egueb_Dom_Node *n)
 	thiz->paused = EINA_FALSE;
 }
 
-/**
- * To be documented
- * FIXME: To be fixed
- */
 EAPI Eina_Bool egueb_svg_element_svg_animations_paused(Egueb_Dom_Node *n)
 {
 	Egueb_Svg_Element_Svg *thiz;
@@ -771,25 +656,6 @@ EAPI void egueb_svg_element_svg_time_set(Egueb_Dom_Node *n, double secs)
 }
 
 #if 0
-/**
- * To be documented
- * FIXME: To be fixed
- */
-EAPI void egueb_svg_element_svg_script_alert(Ender_Element *e, const char *msg)
-{
-	Egueb_Dom_Tag *t;
-	Egueb_Svg_Element_Svg *thiz;
-
-	t = ender_element_object_get(e);
-	thiz = _egueb_svg_element_svg_get(t);
-	ERR("script alert msg '%s'", msg);
-	if (!thiz->application_descriptor)
-		return;
-	if (thiz->application_descriptor->script_alert)
-		thiz->application_descriptor->script_alert(thiz->thiz_e, thiz->application_data, msg);
-
-}
-
 /**
  * To be documented
  * FIXME: To be fixed
@@ -857,40 +723,6 @@ EAPI Eina_Bool egueb_svg_element_svg_setup(Ender_Element *e, Enesim_Log **error)
  * To be documented
  * FIXME: To be fixed
  */
-EAPI void egueb_svg_element_svg_container_width_set(Ender_Element *e, double container_width)
-{
-	ender_element_property_value_set(e, ESVG_ELEMENT_SVG_CONTAINER_WIDTH, container_width, NULL);
-}
-
-/**
- * To be documented
- * FIXME: To be fixed
- */
-EAPI void egueb_svg_element_svg_container_width_get(Ender_Element *e, double *container_width)
-{
-}
-
-/**
- * To be documented
- * FIXME: To be fixed
- */
-EAPI void egueb_svg_element_svg_container_height_set(Ender_Element *e, double container_height)
-{
-	ender_element_property_value_set(e, ESVG_ELEMENT_SVG_CONTAINER_HEIGHT, container_height, NULL);
-}
-
-/**
- * To be documented
- * FIXME: To be fixed
- */
-EAPI void egueb_svg_element_svg_container_height_get(Ender_Element *e, double *container_height)
-{
-}
-
-/**
- * To be documented
- * FIXME: To be fixed
- */
 EAPI void egueb_svg_element_svg_x_dpi_set(Ender_Element *e, double x_dpi)
 {
 	ender_element_property_value_set(e, ESVG_ELEMENT_SVG_X_DPI, x_dpi, NULL);
@@ -922,10 +754,6 @@ EAPI void egueb_svg_element_svg_y_dpi_get(Ender_Element *e, double *y_dpi)
 }
 #endif
 
-/**
- * To be documented
- * FIXME: To be fixed
- */
 EAPI Eina_Bool egueb_svg_element_svg_draw(Egueb_Dom_Node *n,
 		Enesim_Surface *s, Enesim_Rop rop, Eina_Rectangle *clip,
 		int x, int y, Enesim_Log **error)
@@ -942,10 +770,6 @@ EAPI Eina_Bool egueb_svg_element_svg_draw(Egueb_Dom_Node *n,
 	return ret;
 }
 
-/**
- * To be documented
- * FIXME: To be fixed
- */
 EAPI Eina_Bool egueb_svg_element_svg_draw_list(Egueb_Dom_Node *n,
 		Enesim_Surface *s, Enesim_Rop rop, Eina_List *clips,
 		int x, int y, Enesim_Log **error)
@@ -964,22 +788,112 @@ EAPI Eina_Bool egueb_svg_element_svg_draw_list(Egueb_Dom_Node *n,
 	return ret;
 }
 
-EAPI void egueb_svg_element_svg_width_get(Egueb_Dom_Node *n,
-		Egueb_Svg_Length_Animated *width)
+/**
+ * Sets the x coordinate of a svg element
+ * @param[in] n The svg element to set the x coordinate @ender_transfer{none}
+ * @param[in] x The x coordinate to set @ender_transfer{content}
+ */
+EAPI void egueb_svg_element_svg_x_set_simple(Egueb_Dom_Node *n, const Egueb_Svg_Coord *x)
 {
 	Egueb_Svg_Element_Svg *thiz;
 
 	thiz = EGUEB_SVG_ELEMENT_SVG(n);
-	EGUEB_SVG_ELEMENT_ATTR_SIMPLE_GET(thiz->width, width);
+	egueb_dom_attr_set(thiz->x, EGUEB_DOM_ATTR_TYPE_BASE, x);
 }
 
-EAPI void egueb_svg_element_svg_height_get(Egueb_Dom_Node *n,
-		Egueb_Svg_Length_Animated *height)
+/**
+ * Gets the x coordinate of a svg element
+ * @ender_prop{x}
+ * @param[in] n The svg element to get the x coordinate @ender_transfer{none}
+ * @param[out] x The pointer to store the x coordinate @ender_transfer{content}
+ */
+EAPI void egueb_svg_element_svg_x_get(Egueb_Dom_Node *n, Egueb_Svg_Coord_Animated *x)
 {
 	Egueb_Svg_Element_Svg *thiz;
 
 	thiz = EGUEB_SVG_ELEMENT_SVG(n);
-	EGUEB_SVG_ELEMENT_ATTR_SIMPLE_GET(thiz->height, height);
+	EGUEB_SVG_ELEMENT_ATTR_ANIMATED_GET(thiz->x, x);
+}
+
+/**
+ * Sets the y coordinate of a svg element
+ * @param[in] n The svg element to set the y coordinate @ender_transfer{none}
+ * @param[in] y The y coordinate to set @ender_transfer{content}
+ */
+EAPI void egueb_svg_element_svg_y_set_simple(Egueb_Dom_Node *n, const Egueb_Svg_Coord *y)
+{
+	Egueb_Svg_Element_Svg *thiz;
+
+	thiz = EGUEB_SVG_ELEMENT_SVG(n);
+	egueb_dom_attr_set(thiz->y, EGUEB_DOM_ATTR_TYPE_BASE, y);
+}
+
+/**
+ * Gets the y coordinate of a svg element
+ * @ender_prop{y}
+ * @param[in] n The svg element to get the y coordinate @ender_transfer{none}
+ * @param[out] y The pointer to store the y coordinate @ender_transfer{content}
+ */
+EAPI void egueb_svg_element_svg_y_get(Egueb_Dom_Node *n, Egueb_Svg_Coord_Animated *y)
+{
+	Egueb_Svg_Element_Svg *thiz;
+
+	thiz = EGUEB_SVG_ELEMENT_SVG(n);
+	EGUEB_SVG_ELEMENT_ATTR_ANIMATED_GET(thiz->y, y);
+}
+
+/**
+ * Sets the width of a svg element
+ * @param[in] n The svg element to set the width @ender_transfer{none}
+ * @param[in] width The width to set @ender_transfer{content}
+ */
+EAPI void egueb_svg_element_svg_width_set_simple(Egueb_Dom_Node *n, const Egueb_Svg_Length *width)
+{
+	Egueb_Svg_Element_Svg *thiz;
+
+	thiz = EGUEB_SVG_ELEMENT_SVG(n);
+	egueb_dom_attr_set(thiz->width, EGUEB_DOM_ATTR_TYPE_BASE, width);
+}
+
+/**
+ * Gets the width of a svg element
+ * @ender_prop{width}
+ * @param[in] n The svg element to get the width @ender_transfer{none}
+ * @param[out] width The pointer to store the width @ender_transfer{content}
+ */
+EAPI void egueb_svg_element_svg_width_get(Egueb_Dom_Node *n, Egueb_Svg_Length_Animated *width)
+{
+	Egueb_Svg_Element_Svg *thiz;
+
+	thiz = EGUEB_SVG_ELEMENT_SVG(n);
+	EGUEB_SVG_ELEMENT_ATTR_ANIMATED_GET(thiz->width, width);
+}
+
+/**
+ * Sets the height of a svg element
+ * @param[in] n The svg element to set the height @ender_transfer{none}
+ * @param[in] height The height to set @ender_transfer{content}
+ */
+EAPI void egueb_svg_element_svg_height_set_simple(Egueb_Dom_Node *n, const Egueb_Svg_Length *height)
+{
+	Egueb_Svg_Element_Svg *thiz;
+
+	thiz = EGUEB_SVG_ELEMENT_SVG(n);
+	egueb_dom_attr_set(thiz->height, EGUEB_DOM_ATTR_TYPE_BASE, height);
+}
+
+/**
+ * Gets the height of a svg element
+ * @ender_prop{height}
+ * @param[in] n The svg element to get the height @ender_transfer{none}
+ * @param[out] height The pointer to store the height @ender_transfer{content}
+ */
+EAPI void egueb_svg_element_svg_height_get(Egueb_Dom_Node *n, Egueb_Svg_Length_Animated *height)
+{
+	Egueb_Svg_Element_Svg *thiz;
+
+	thiz = EGUEB_SVG_ELEMENT_SVG(n);
+	EGUEB_SVG_ELEMENT_ATTR_ANIMATED_GET(thiz->height, height);
 }
 
 /**
@@ -1007,7 +921,10 @@ EAPI double egueb_svg_element_svg_current_scale_get(Egueb_Dom_Node *n)
 }
 
 /**
+ * Sets the current translation on a svg element
  * @ender_prop{current_translate}
+ * @param[in] n The SVG element to set the current translation @ender_transfer{none}
+ * @param[in] p The transaltion to set @ender_transfer{content}
  */
 EAPI void egueb_svg_element_svg_current_translate_set(Egueb_Dom_Node *n,
 		Egueb_Svg_Point *p)
@@ -1028,9 +945,10 @@ EAPI void egueb_svg_element_svg_current_translate_set(Egueb_Dom_Node *n,
 }
 
 /**
+ * Gets the current translation of the svg element
  * @ender_prop{current_translate}
- * @param[in] The SVG element to get the current translate from
- * @param[out] p The point to store the current translate
+ * @param[in] n The SVG element to get the current translation from @ender_transfer{none}
+ * @param[out] p The point to store the current translation @ender_transfer{content}
  */
 EAPI void egueb_svg_element_svg_current_translate_get(Egueb_Dom_Node *n,
 		Egueb_Svg_Point *p)
@@ -1048,34 +966,3 @@ EAPI Egueb_Svg_Point * egueb_svg_element_svg_svg_point_create(Egueb_Dom_Node *n)
 	ret = calloc(1, sizeof(Egueb_Svg_Point));
 	return ret;
 }
-
-#if 0
-/**
- * To be documented
- * FIXME: To be fixed
- */
-EAPI void egueb_svg_element_svg_application_descriptor_set(Ender_Element *e, const Egueb_Svg_Element_Svg_Application_Descriptor *descriptor, void *data)
-{
-	Egueb_Svg_Element_Svg *thiz;
-	Egueb_Dom_Tag *t;
-
-	t = ender_element_object_get(e);
-	thiz = _egueb_svg_element_svg_get(t);
-	thiz->application_descriptor = descriptor;
-	thiz->application_data = data;
-}
-
-/**
- * To be documented
- * FIXME: To be fixed
- */
-EAPI const char * egueb_svg_element_svg_base_dir_get(Ender_Element *e)
-{
-	Egueb_Dom_Tag *t;
-	Egueb_Svg_Element_Svg *thiz;
-
-	t = ender_element_object_get(e);
-	thiz = _egueb_svg_element_svg_get(t);
-	return _egueb_svg_element_svg_base_dir_get(thiz);
-}
-#endif

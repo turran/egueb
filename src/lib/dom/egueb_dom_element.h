@@ -95,7 +95,6 @@ EAPI Eina_Bool egueb_dom_element_attribute_type_set(Egueb_Dom_Node *node,
 		const Egueb_Dom_String *name, Egueb_Dom_Attr_Type type,
 		Egueb_Dom_String *value, Eina_Error *err);
 
-/* TODO rename every element_property_foo function */
 EAPI Eina_Bool egueb_dom_element_attribute_masked_set(Egueb_Dom_Node *node,
 		Egueb_Dom_String *name, int prop_mask, ...);
 EAPI Eina_Bool egueb_dom_element_attribute_masked_get(Egueb_Dom_Node *node,

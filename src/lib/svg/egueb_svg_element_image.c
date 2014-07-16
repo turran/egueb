@@ -22,6 +22,8 @@
 #include "egueb_svg_element.h"
 #include "egueb_svg_element_g.h"
 #include "egueb_svg_element_image.h"
+#include "egueb_svg_point.h"
+#include "egueb_svg_element_svg.h"
 #include "egueb_svg_document.h"
 #include "egueb_svg_renderable.h"
 
@@ -48,7 +50,7 @@ typedef struct _Egueb_Svg_Element_Image
 	Egueb_Dom_Node *xlink_href;
 	/* private */
 	double gx, gy, gw, gh;
-	char *real_href;
+	Egueb_Dom_String *last_xlink;
 	Enesim_Renderer *r;
 	/* the renderer in case the image is invalid */
 	Enesim_Renderer *rectangle;
@@ -57,8 +59,9 @@ typedef struct _Egueb_Svg_Element_Image
 	Enesim_Renderer *image;
 	/* the node in case we need to instantiate a new svg */
 	Egueb_Dom_Node *g;
-	/* a document in case the user provides the document directly */
-	//Egueb_Dom_Node *doc;
+	/* a node in case the user provides the topmost element directly */
+	Egueb_Dom_Node *svg;
+	Eina_Bool svg_changed;
 } Egueb_Svg_Element_Image;
 
 typedef struct _Egueb_Svg_Element_Image_Class
@@ -107,23 +110,21 @@ static Eina_Bool _egueb_svg_element_image_parse_data(const char **ostr,
 	return EINA_TRUE;
 }
 
-static void _egueb_svg_element_image_svg_load(Egueb_Dom_Node *n,
-		Egueb_Dom_Node *doc, Enesim_Stream *data)
+static Eina_Bool _egueb_svg_element_image_svg_load(Egueb_Dom_Node *n,
+		Egueb_Dom_Node *doc, Egueb_Dom_Node *topmost)
 {
 	Egueb_Svg_Element_Image *thiz;
-	Egueb_Dom_Node *new_doc;
-	Egueb_Dom_Node *topmost = NULL;
 	Enesim_Renderer *r;
 	Enesim_Matrix m;
 
-	INFO("Parsing the svg file");
-	/* parse the file */
-	new_doc = egueb_svg_document_new();
-	egueb_dom_parser_parse(data, &new_doc);
-	topmost = egueb_dom_document_document_element_get(new_doc);
-	egueb_dom_node_unref(new_doc);
+	/* check that the node is a svg element */
+	if (!egueb_svg_element_is_svg(topmost))
+	{
+		egueb_dom_node_unref(topmost);
+		WARN("Topmost element is not a svg");
+		return EINA_FALSE;
+	}
 
-	/* TODO check that the node is a svg element */
 	/* keep the node */
 	thiz = EGUEB_SVG_ELEMENT_IMAGE(n);
 	thiz->g = egueb_svg_element_g_new();
@@ -140,6 +141,8 @@ static void _egueb_svg_element_image_svg_load(Egueb_Dom_Node *n,
 	/* set the proxy for the svg */
 	r = egueb_svg_renderable_renderer_get(thiz->g);
 	enesim_renderer_proxy_proxied_set(thiz->r, r);
+
+	return EINA_TRUE;
 }
 
 static void _egueb_svg_element_image_image_cb(Egueb_Dom_Node *n,
@@ -179,7 +182,18 @@ static void _egueb_svg_element_image_data_cb(Egueb_Dom_Node *n,
 	/* if is svg, then do create the node otherwise load it */
 	if (!strcmp(mime, "image/svg+xml"))
 	{
-		_egueb_svg_element_image_svg_load(n, doc, data);
+		Egueb_Dom_Node *new_doc;
+		Egueb_Dom_Node *topmost = NULL;
+
+		INFO("Parsing the svg file");
+
+		/* parse the file */
+		new_doc = egueb_svg_document_new();
+		egueb_dom_parser_parse(data, &new_doc);
+		topmost = egueb_dom_document_document_element_get(new_doc);
+		egueb_dom_node_unref(new_doc);
+
+		_egueb_svg_element_image_svg_load(n, doc, topmost);
 	}
 	else
 	{
@@ -193,16 +207,14 @@ done:
 	enesim_stream_unref(data);
 }
 
-static void _egueb_svg_element_image_uri_load(Egueb_Svg_Element_Image *thiz,
-		Egueb_Dom_Node *doc, Egueb_Dom_String * uri)
+static Eina_Bool _egueb_svg_element_image_uri_load(Egueb_Svg_Element_Image *thiz,
+		Egueb_Dom_Node *doc, Egueb_Dom_String *uri)
 {
 	const char *str;
 
-	/* in case we had an element, be sure to remove it */
-	if (thiz->g)
-	{
-		egueb_dom_node_unref(thiz->g);
-		thiz->g = NULL;
+	if (!egueb_dom_string_is_valid(uri)) {
+		WARN("No uri set, nothing to do");
+		return EINA_FALSE;
 	}
 
 	str = egueb_dom_string_string_get(uri);
@@ -221,7 +233,7 @@ static void _egueb_svg_element_image_uri_load(Egueb_Svg_Element_Image *thiz,
 		if (!_egueb_svg_element_image_parse_data(&str, base, mime))
 		{
 			ERR_ELEMENT(EGUEB_DOM_NODE(thiz), "Failed to parse the image data");
-			return;
+			return EINA_FALSE;
 		}
 
 		/* TODO if it is a svg, then just parse it */
@@ -248,13 +260,65 @@ static void _egueb_svg_element_image_uri_load(Egueb_Svg_Element_Image *thiz,
 		if (!egueb_dom_uri_string_from(&u, uri))
 		{
 			ERR_ELEMENT(EGUEB_DOM_NODE(thiz), "Wrong URI");
-			return;
+			return EINA_FALSE;
 		}
 
 		e = egueb_dom_event_io_data_new(&u, _egueb_svg_element_image_data_cb);
 		egueb_dom_node_event_dispatch(EGUEB_DOM_NODE(thiz), e, NULL, NULL);
 		egueb_dom_uri_cleanup(&u);
 	}
+	return EINA_TRUE;
+}
+
+static Eina_Bool _egueb_svg_element_image_load(Egueb_Svg_Element_Image *thiz,
+		Egueb_Dom_Node *doc)
+{
+	Egueb_Dom_String *xlink = NULL;
+	Eina_Bool xlink_changed = EINA_FALSE;
+	Eina_Bool ret = EINA_TRUE;
+
+	/* be sure to know if the xlink has changed */
+	egueb_dom_attr_final_get(thiz->xlink_href, &xlink);
+	if (!egueb_dom_string_is_equal(xlink, thiz->last_xlink))
+		xlink_changed = EINA_TRUE;
+
+	if (!xlink_changed && !thiz->svg_changed)
+	{
+		DBG("Nothing to process, everything's like before");
+		goto done;
+	}
+
+	/* in case we had an element, be sure to remove it */
+	if (thiz->g)
+	{
+		egueb_dom_node_unref(thiz->g);
+		thiz->g = NULL;
+	}
+
+	/* check if we either use the xlink attribute or the user provided svg */
+	if (thiz->svg)
+	{
+		DBG("Loading user provided element");
+		ret = _egueb_svg_element_image_svg_load(EGUEB_DOM_NODE(thiz), doc, egueb_dom_node_ref(thiz->svg));
+	}
+	else
+	{
+		DBG("Loading href reference");
+		ret = _egueb_svg_element_image_uri_load(thiz, doc, xlink);
+	}
+
+	thiz->svg_changed = EINA_FALSE;
+
+	/* finally swap the last xlink */
+	if (thiz->last_xlink)
+	{
+		egueb_dom_string_unref(thiz->last_xlink);
+		thiz->last_xlink = NULL;
+	}
+	thiz->last_xlink = egueb_dom_string_dup(xlink);
+done:
+	egueb_dom_string_unref(xlink);
+	return ret;
 }
 /*----------------------------------------------------------------------------*
  *                            Renderable interface                            *
@@ -265,8 +329,8 @@ static Eina_Bool _egueb_svg_element_image_process(
 	Egueb_Svg_Element_Image *thiz;
 	Egueb_Svg_Element *e, *e_parent;
 	Egueb_Svg_Length x, y, w, h;
-	Egueb_Dom_String *uri;
 	Egueb_Dom_Node *relative, *doc;
+	Eina_Bool ret;
 	double font_size;
 
 	thiz = EGUEB_SVG_ELEMENT_IMAGE(r);
@@ -274,19 +338,12 @@ static Eina_Bool _egueb_svg_element_image_process(
 	egueb_dom_attr_final_get(thiz->y, &y);
 	egueb_dom_attr_final_get(thiz->width, &w);
 	egueb_dom_attr_final_get(thiz->height, &h);
-	egueb_dom_attr_final_get(thiz->xlink_href, &uri);
-
-	if (!egueb_dom_string_is_valid(uri)) {
-		WARN("No uri set, nothing to do");
-		return EINA_FALSE;
-	}
 
 	/* calculate the real size */
 	relative = egueb_svg_element_geometry_relative_get(EGUEB_DOM_NODE(r));
 	if (!relative)
 	{
 		WARN("No relative available");
-		egueb_dom_string_unref(uri);
 		return EINA_FALSE;
 	}
 	doc = egueb_dom_node_owner_document_get(EGUEB_DOM_NODE(r));
@@ -294,7 +351,6 @@ static Eina_Bool _egueb_svg_element_image_process(
 	{
 		WARN("No document set");
 		egueb_dom_node_unref(relative);
-		egueb_dom_string_unref(uri);
 		return EINA_FALSE;
 	}
 
@@ -312,12 +368,10 @@ static Eina_Bool _egueb_svg_element_image_process(
 	e->viewbox.w = thiz->gw;
 	e->viewbox.h = thiz->gh;
 
-	/* TODO be sure to know if the xlink has changed */
-	_egueb_svg_element_image_uri_load(thiz, doc, uri);
+	ret = _egueb_svg_element_image_load(thiz, doc);
 
 	egueb_dom_node_unref(relative);
 	egueb_dom_node_unref(doc);
-	egueb_dom_string_unref(uri);
 
 	DBG_ELEMENT(EGUEB_DOM_NODE(r), "x: %g, y: %g, width: %g, height: %g",
 			thiz->gx, thiz->gy, thiz->gw, thiz->gh);
@@ -334,7 +388,7 @@ static Eina_Bool _egueb_svg_element_image_process(
 	enesim_renderer_image_height_set(thiz->image, thiz->gh);
 	enesim_renderer_transformation_set(thiz->image, &e->transform);
 
-	return EINA_TRUE;
+	return ret;
 }
 
 static Enesim_Renderer * _egueb_svg_element_image_renderer_get(
@@ -445,6 +499,19 @@ static void _egueb_svg_element_image_instance_deinit(void *o)
 	Egueb_Svg_Element_Image *thiz;
 
 	thiz = EGUEB_SVG_ELEMENT_IMAGE(o);
+
+	if (thiz->last_xlink)
+	{
+		egueb_dom_string_unref(thiz->last_xlink);
+		thiz->last_xlink = NULL;
+	}
+
+	if (thiz->svg)
+	{
+		egueb_dom_node_unref(thiz->svg);
+		thiz->svg = NULL;
+	}
+
 	if (thiz->g)
 	{
 		egueb_dom_node_unref(thiz->g);
@@ -473,71 +540,120 @@ EAPI Egueb_Dom_Node * egueb_svg_element_image_new(void)
 	return n;
 }
 
-EAPI void egueb_svg_element_image_x_set(Egueb_Dom_Node *n, const Egueb_Svg_Coord *v)
+/**
+ * Sets the x coordinate of an image element
+ * @param[in] n The image element to set the x coordinate @ender_transfer{none}
+ * @param[in] x The x coordinate to set @ender_transfer{content}
+ */
+EAPI void egueb_svg_element_image_x_set_simple(Egueb_Dom_Node *n, const Egueb_Svg_Coord *x)
 {
 	Egueb_Svg_Element_Image *thiz;
 
 	thiz = EGUEB_SVG_ELEMENT_IMAGE(n);
-	egueb_dom_attr_set(thiz->x, EGUEB_DOM_ATTR_TYPE_BASE, v);
+	egueb_dom_attr_set(thiz->x, EGUEB_DOM_ATTR_TYPE_BASE, x);
 }
 
-EAPI void egueb_svg_element_image_x_get(Egueb_Dom_Node *n, Egueb_Svg_Coord_Animated *v)
+/**
+ * Gets the x coordinate of an image element
+ * @ender_prop{x}
+ * @param[in] n The image element to get the x coordinate @ender_transfer{none}
+ * @param[out] x The pointer to store the x coordinate @ender_transfer{content}
+ */
+EAPI void egueb_svg_element_image_x_get(Egueb_Dom_Node *n, Egueb_Svg_Coord_Animated *x)
 {
 	Egueb_Svg_Element_Image *thiz;
 
 	thiz = EGUEB_SVG_ELEMENT_IMAGE(n);
-	EGUEB_SVG_ELEMENT_ATTR_ANIMATED_GET(thiz->x, v);
+	EGUEB_SVG_ELEMENT_ATTR_ANIMATED_GET(thiz->x, x);
 }
 
-EAPI void egueb_svg_element_image_y_set(Egueb_Dom_Node *n, const Egueb_Svg_Coord *v)
+/**
+ * Sets the y coordinate of an image element
+ * @param[in] n The image element to set the y coordinate @ender_transfer{none}
+ * @param[in] y The y coordinate to set @ender_transfer{content}
+ */
+EAPI void egueb_svg_element_image_y_set_simple(Egueb_Dom_Node *n, const Egueb_Svg_Coord *y)
 {
 	Egueb_Svg_Element_Image *thiz;
 
 	thiz = EGUEB_SVG_ELEMENT_IMAGE(n);
-	egueb_dom_attr_set(thiz->y, EGUEB_DOM_ATTR_TYPE_BASE, v);
+	egueb_dom_attr_set(thiz->y, EGUEB_DOM_ATTR_TYPE_BASE, y);
 }
 
-EAPI void egueb_svg_element_image_y_get(Egueb_Dom_Node *n, Egueb_Svg_Coord_Animated *v)
+/**
+ * Gets the y coordinate of an image element
+ * @ender_prop{y}
+ * @param[in] n The image element to get the y coordinate @ender_transfer{none}
+ * @param[out] y The pointer to store the y coordinate @ender_transfer{content}
+ */
+EAPI void egueb_svg_element_image_y_get(Egueb_Dom_Node *n, Egueb_Svg_Coord_Animated *y)
 {
 	Egueb_Svg_Element_Image *thiz;
 
 	thiz = EGUEB_SVG_ELEMENT_IMAGE(n);
-	EGUEB_SVG_ELEMENT_ATTR_ANIMATED_GET(thiz->y, v);
+	EGUEB_SVG_ELEMENT_ATTR_ANIMATED_GET(thiz->y, y);
 }
 
-EAPI void egueb_svg_element_image_width_set(Egueb_Dom_Node *n, const Egueb_Svg_Length *v)
+/**
+ * Sets the width of an image element
+ * @param[in] n The image element to set the width @ender_transfer{none}
+ * @param[in] width The width to set @ender_transfer{content}
+ */
+EAPI void egueb_svg_element_image_width_set_simple(Egueb_Dom_Node *n, const Egueb_Svg_Length *width)
 {
 	Egueb_Svg_Element_Image *thiz;
 
 	thiz = EGUEB_SVG_ELEMENT_IMAGE(n);
-	egueb_dom_attr_set(thiz->width, EGUEB_DOM_ATTR_TYPE_BASE, v);
+	egueb_dom_attr_set(thiz->width, EGUEB_DOM_ATTR_TYPE_BASE, width);
 }
 
-EAPI void egueb_svg_element_image_width_get(Egueb_Dom_Node *n, Egueb_Svg_Length_Animated *v)
+/**
+ * Gets the width of an image element
+ * @ender_prop{width}
+ * @param[in] n The image element to get the width @ender_transfer{none}
+ * @param[out] width The pointer to store the width @ender_transfer{content}
+ */
+EAPI void egueb_svg_element_image_width_get(Egueb_Dom_Node *n, Egueb_Svg_Length_Animated *width)
 {
 	Egueb_Svg_Element_Image *thiz;
 
 	thiz = EGUEB_SVG_ELEMENT_IMAGE(n);
-	EGUEB_SVG_ELEMENT_ATTR_ANIMATED_GET(thiz->width, v);
+	EGUEB_SVG_ELEMENT_ATTR_ANIMATED_GET(thiz->width, width);
 }
 
-EAPI void egueb_svg_element_image_height_set(Egueb_Dom_Node *n, const Egueb_Svg_Length *v)
+/**
+ * Sets the height of an image element
+ * @param[in] n The image element to set the height @ender_transfer{none}
+ * @param[in] height The height to set @ender_transfer{content}
+ */
+EAPI void egueb_svg_element_image_height_set_simple(Egueb_Dom_Node *n, const Egueb_Svg_Length *height)
 {
 	Egueb_Svg_Element_Image *thiz;
 
 	thiz = EGUEB_SVG_ELEMENT_IMAGE(n);
-	egueb_dom_attr_set(thiz->height, EGUEB_DOM_ATTR_TYPE_BASE, v);
+	egueb_dom_attr_set(thiz->height, EGUEB_DOM_ATTR_TYPE_BASE, height);
 }
 
-EAPI void egueb_svg_element_image_height_get(Egueb_Dom_Node *n, Egueb_Svg_Length_Animated *v)
+/**
+ * Gets the height of an image element
+ * @ender_prop{height}
+ * @param[in] n The image element to get the height @ender_transfer{none}
+ * @param[out] height The pointer to store the height @ender_transfer{content}
+ */
+EAPI void egueb_svg_element_image_height_get(Egueb_Dom_Node *n, Egueb_Svg_Length_Animated *height)
 {
 	Egueb_Svg_Element_Image *thiz;
 
 	thiz = EGUEB_SVG_ELEMENT_IMAGE(n);
-	EGUEB_SVG_ELEMENT_ATTR_ANIMATED_GET(thiz->height, v);
+	EGUEB_SVG_ELEMENT_ATTR_ANIMATED_GET(thiz->height, height);
 }
 
-EAPI void egueb_svg_element_image_xlink_href_set(Egueb_Dom_Node *n, Egueb_Dom_String *v)
+/**
+ * Sets the href of an image element
+ * @param[in] n The image element to get the href @ender_transfer{none}
+ * @param[out] href The href to set @ender_transfer{full}
+ */
+EAPI void egueb_svg_element_image_href_set_simple(Egueb_Dom_Node *n, Egueb_Dom_String *v)
 {
 	Egueb_Svg_Element_Image *thiz;
 
@@ -545,10 +661,35 @@ EAPI void egueb_svg_element_image_xlink_href_set(Egueb_Dom_Node *n, Egueb_Dom_St
 	egueb_dom_attr_set(thiz->xlink_href, EGUEB_DOM_ATTR_TYPE_BASE, v);
 }
 
-EAPI void egueb_svg_element_image_xlink_href_get(Egueb_Dom_Node *n, Egueb_Svg_String_Animated *v)
+/**
+ * Gets the href of an image element
+ * @ender_prop{href}
+ * @param[in] n The image element to get the href @ender_transfer{none}
+ * @param[out] v The pointer to store the href @ender_transfer{content}
+ */
+EAPI void egueb_svg_element_image_href_get(Egueb_Dom_Node *n, Egueb_Svg_String_Animated *v)
 {
 	Egueb_Svg_Element_Image *thiz;
 
 	thiz = EGUEB_SVG_ELEMENT_IMAGE(n);
 	EGUEB_SVG_ELEMENT_ATTR_ANIMATED_GET(thiz->xlink_href, v);
+}
+
+EAPI void egueb_svg_element_image_svg_set(Egueb_Dom_Node *n, Egueb_Dom_Node *svg)
+{
+	Egueb_Svg_Element_Image *thiz;
+
+	thiz = EGUEB_SVG_ELEMENT_IMAGE(n);
+	thiz->svg_changed = EINA_TRUE;
+	if (!svg)
+	{
+		egueb_dom_node_unref(thiz->svg);
+		thiz->svg = NULL;
+	}
+	else
+	{
+		if (!egueb_svg_element_is_svg(svg))
+			return;
+		thiz->svg = svg;
+	}
 }
