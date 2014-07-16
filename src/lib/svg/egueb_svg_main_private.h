@@ -93,44 +93,4 @@
 
 extern int egueb_svg_log_dom_global;
 
-#define EGUEB_SVG_ELEMENT_ATTR_SIMPLE_GET(attr, val)				\
-	if (egueb_dom_attr_type_is_set(attr, EGUEB_DOM_ATTR_TYPE_BASE))		\
-	{									\
-		egueb_dom_attr_get(attr, EGUEB_DOM_ATTR_TYPE_BASE, &val->base);	\
-	}									\
-	else									\
-	{									\
-		egueb_dom_attr_get(attr, EGUEB_DOM_ATTR_TYPE_DEFAULT,		\
-				&val->base);					\
-	}									\
-	if (egueb_dom_attr_type_is_set(attr, EGUEB_DOM_ATTR_TYPE_ANIMATED))	\
-	{									\
-		egueb_dom_attr_get(attr, EGUEB_DOM_ATTR_TYPE_ANIMATED,		\
-			&val->anim);						\
-	}									\
-	else									\
-	{									\
-		val->anim = val->base;						\
-	}
-
-#define EGUEB_SVG_ELEMENT_ATTR_PRIMITIVE_GET(attr, val, copy)			\
-	if (egueb_dom_attr_type_is_set(attr, EGUEB_DOM_ATTR_TYPE_BASE))		\
-	{									\
-		egueb_dom_attr_get(attr, EGUEB_DOM_ATTR_TYPE_BASE, &val->base);	\
-	}									\
-	else									\
-	{									\
-		egueb_dom_attr_get(attr, EGUEB_DOM_ATTR_TYPE_DEFAULT,		\
-				&val->base);					\
-	}									\
-	if (egueb_dom_attr_type_is_set(attr, EGUEB_DOM_ATTR_TYPE_ANIMATED))	\
-	{									\
-		egueb_dom_attr_get(attr, EGUEB_DOM_ATTR_TYPE_ANIMATED,		\
-			&val->anim);						\
-	}									\
-	else									\
-	{									\
-		copy(&val->base, &val->anim, EINA_FALSE);			\
-	}
-
 #endif
