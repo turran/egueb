@@ -102,6 +102,14 @@ EAPI Egueb_Dom_Event * egueb_dom_event_multimedia_video_new(
 	return e;
 }
 
+EAPI Enesim_Renderer * egueb_dom_event_multimedia_video_renderer_get(Egueb_Dom_Event *e)
+{
+	Egueb_Dom_Event_Multimedia *thiz;
+
+	thiz = EGUEB_DOM_EVENT_MULTIMEDIA(e);
+	return enesim_renderer_ref(thiz->image);
+}
+
 EAPI Egueb_Dom_Video_Provider * egueb_dom_event_multimedia_video_provider_get(Egueb_Dom_Event *e)
 {
 	Egueb_Dom_Event_Multimedia *thiz;

@@ -31,6 +31,7 @@ EAPI Egueb_Dom_Event * egueb_dom_event_multimedia_video_new(
 		const Egueb_Dom_Video_Provider_Notifier *notifier,
 		Enesim_Renderer *image);
 
+EAPI Enesim_Renderer * egueb_dom_event_multimedia_video_renderer_get(Egueb_Dom_Event *e);
 EAPI Egueb_Dom_Video_Provider * egueb_dom_event_multimedia_video_provider_get(Egueb_Dom_Event *e);
 EAPI void egueb_dom_event_multimedia_video_provider_set(Egueb_Dom_Event *e, Egueb_Dom_Video_Provider *sc);
 
