@@ -55,7 +55,7 @@ EAPI Egueb_Dom_Video_Provider * egueb_dom_video_provider_new(
 	thiz->notifier = notifier;
 	thiz->desc = desc;
 	thiz->n = n;
-	thiz->data = thiz->desc->create(thiz);
+	thiz->data = thiz->desc->create();
 
 	return thiz;
 }

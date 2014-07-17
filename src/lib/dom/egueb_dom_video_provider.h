@@ -25,10 +25,8 @@
  * @{
  */
 
-typedef struct _Egueb_Dom_Video_Provider Egueb_Dom_Video_Provider;
-
-typedef void * (*Egueb_Dom_Video_Provider_Descriptor_Create)(Egueb_Dom_Video_Provider *vp);
-typedef void (*Egueb_Dom_Video_Provider_Descriptor_Destroy)(void);
+typedef void * (*Egueb_Dom_Video_Provider_Descriptor_Create)(void);
+typedef void (*Egueb_Dom_Video_Provider_Descriptor_Destroy)(void *data);
 
 typedef void (*Egueb_Dom_Video_Provider_Descriptor_Open)(void *data, Egueb_Dom_String *uri);
 typedef void (*Egueb_Dom_Video_Provider_Descriptor_Close)(void *data);
@@ -70,6 +68,8 @@ typedef struct _Egueb_Dom_Video_Provider_Notifier
  * @defgroup Egueb_Dom_Video_Provider Video Provider
  * @{
  */
+
+typedef struct _Egueb_Dom_Video_Provider Egueb_Dom_Video_Provider;
 
 EAPI Egueb_Dom_Video_Provider * egueb_dom_video_provider_new(
 		const Egueb_Dom_Video_Provider_Descriptor *desc,

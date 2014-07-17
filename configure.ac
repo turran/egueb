@@ -47,7 +47,6 @@ egueb_css_requirements="eina >= ${EINA_VERSION} ${egueb_dom_requirements}"
 egueb_css_requirements_private=""
 egueb_smil_requirements="etch >= ${ETCH_VERSION} ${egueb_dom_requirements}"
 egueb_svg_requirements="${egueb_dom_requirements}"
-gstreamer_requirements="gstreamer-0.10"
 
 AC_SUBST([egueb_css_requirements])
 AC_SUBST([egueb_css_requirements_private])
@@ -157,11 +156,6 @@ fi
 
 if test "x${want_egueb_svg}" = "xyes" && test "x${want_egueb_css}" = "xyes" && test "x${want_egueb_dom}" = "xyes" && test "x${want_egueb_smil}" = "xyes" ; then
    PKG_CHECK_MODULES([EGUEB_SVG], [${egueb_svg_requirements}], [want_egueb_svg="yes"], [want_egueb_svg="no"])
-   # Video backends
-   PKG_CHECK_MODULES([GSTREAMER], [${gstreamer_requirements}], [have_gstreamer="yes"], [have_gstreamer="no"])
-   if test "x${have_gstreamer}" = "xyes" ; then
-      AC_DEFINE(BUILD_EGUEB_SVG_VIDEO_GSTREAMER, [1], [Esvg Video Gstreamer Support])
-   fi
 fi
 
 # For Dom test
@@ -171,7 +165,6 @@ AM_CONDITIONAL(BUILD_EGUEB_CSS, [test "x${want_egueb_css}" = "xyes"])
 AM_CONDITIONAL(BUILD_EGUEB_DOM, [test "x${want_egueb_dom}" = "xyes"])
 AM_CONDITIONAL(BUILD_EGUEB_SMIL, [test "x${want_egueb_smil}" = "xyes"])
 AM_CONDITIONAL(BUILD_EGUEB_SVG, [test "x${want_egueb_svg}" = "xyes"])
-AM_CONDITIONAL(BUILD_EGUEB_SVG_VIDEO_GSTREAMER, [test "x${have_gstreamer}" = "xyes"])
 
 ### Checks for header files
 
@@ -234,8 +227,6 @@ echo "CSS support.................................: ${want_egueb_css}"
 echo "DOM support.................................: ${want_egueb_dom}"
 echo "SMIL support................................: ${want_egueb_smil}"
 echo "SVG support.................................: ${want_egueb_svg}"
-echo "  Video support:"
-echo "    GStreamer...............................: ${have_gstreamer}"
 echo
 echo "Installation Path...........................: ${prefix}"
 echo
