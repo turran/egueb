@@ -21,6 +21,9 @@
 #include "egueb_dom_main.h"
 #include "egueb_dom_uri.h"
 #include "egueb_dom_utils.h"
+
+#include <libgen.h>
+#include <stdio.h>
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
@@ -137,6 +140,46 @@ EAPI Eina_Bool egueb_dom_uri_iri_from(Egueb_Dom_Uri *thiz, Egueb_Dom_String *iri
 		return egueb_dom_uri_string_from(thiz, iri);
 	}
 
+}
+
+EAPI Eina_Bool egueb_dom_uri_resolve(Egueb_Dom_Uri *thiz,
+		Egueb_Dom_String *base, Egueb_Dom_Uri *resolved)
+{
+	char *s_location;
+	char *filename;
+	char *dir;
+	int ret;
+
+	if (!thiz) return EINA_FALSE;
+	if (thiz->type == EGUEB_DOM_URI_TYPE_RELATIVE && !egueb_dom_string_is_valid(base))
+		return EINA_FALSE;
+	if (thiz->type == EGUEB_DOM_URI_TYPE_ABSOLUTE)
+	{
+		resolved->location = egueb_dom_string_ref(thiz->location);
+		resolved->fragment = egueb_dom_string_ref(thiz->fragment);
+		resolved->type = thiz->type;
+		return EINA_TRUE;
+	}
+
+	s_location =  strdup(egueb_dom_string_string_get(base));
+	egueb_dom_string_unref(base);
+
+	dir = dirname(s_location);
+	ret = asprintf(&filename, "%s/%s", dir,
+			egueb_dom_string_string_get(thiz->location));
+
+	free(s_location);
+	if (ret >= 0)
+	{
+		resolved->location = egueb_dom_string_steal(filename);
+		resolved->fragment = egueb_dom_string_ref(thiz->fragment);
+		resolved->type = EGUEB_DOM_URI_TYPE_ABSOLUTE;
+		return EINA_TRUE;
+	}
+	else
+	{
+		return EINA_FALSE;
+	}
 }
 
 EAPI void egueb_dom_uri_cleanup(Egueb_Dom_Uri *thiz)

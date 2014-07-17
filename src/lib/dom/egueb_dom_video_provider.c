@@ -80,7 +80,8 @@ EAPI Enesim_Renderer * egueb_dom_video_provider_renderer_get(Egueb_Dom_Video_Pro
 
 EAPI void egueb_dom_video_provider_open(Egueb_Dom_Video_Provider *thiz, Egueb_Dom_String *uri)
 {
-
+	if (!thiz) return;
+	thiz->desc->open(thiz->data, uri);
 }
 
 EAPI void egueb_dom_video_provider_close(Egueb_Dom_Video_Provider *thiz)
@@ -90,7 +91,8 @@ EAPI void egueb_dom_video_provider_close(Egueb_Dom_Video_Provider *thiz)
 
 EAPI void egueb_dom_video_provider_play(Egueb_Dom_Video_Provider *thiz)
 {
-
+	if (!thiz) return;
+	thiz->desc->play(thiz->data);
 }
 
 EAPI void egueb_dom_video_provider_pause(Egueb_Dom_Video_Provider *thiz)

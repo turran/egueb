@@ -70,9 +70,12 @@ typedef struct _Egueb_Svg_Element_Video_Class
 /*----------------------------------------------------------------------------*
  *                                  Helpers                                   *
  *----------------------------------------------------------------------------*/
-static Eina_Bool _egueb_svg_element_video_load(Egueb_Svg_Element_Video *thiz)
+static Eina_Bool _egueb_svg_element_video_load(Egueb_Svg_Element_Video *thiz,
+		Egueb_Dom_Node *doc)
 {
 	Egueb_Dom_String *xlink = NULL;
+	Egueb_Dom_String *location;
+	Egueb_Dom_Uri uri, final;
 	Eina_Bool ret = EINA_TRUE;
 
 	/* be sure to know if the xlink has changed */
@@ -99,16 +102,38 @@ static Eina_Bool _egueb_svg_element_video_load(Egueb_Svg_Element_Video *thiz)
 		if (!thiz->video_provider)
 		{
 			ERR("No video provider provided");
-			goto no_video_provider;
+			goto wrong;
 		}
 	}
 
+	if (!egueb_dom_uri_string_from(&uri, xlink))
+	{
+		ERR_ELEMENT(EGUEB_DOM_NODE(thiz), "Wrong URI");
+		goto wrong;
+	}
+
+	location = egueb_dom_document_uri_get(doc);
+	if (!egueb_dom_uri_resolve(&uri, location, &final))
+	{
+		ERR_ELEMENT(EGUEB_DOM_NODE(thiz), "Can not resolve URI");
+		goto bad_uri;
+	}
+
+	if (final.fragment)
+	{
+		ERR_ELEMENT(EGUEB_DOM_NODE(thiz), "URI with fragment not supported");
+		goto has_fragment;
+	}
 	/* set the uri */
-	egueb_dom_video_provider_open(thiz->video_provider, egueb_dom_string_dup(xlink));
+	egueb_dom_video_provider_open(thiz->video_provider, final.location);
 	/* go to play */
 	egueb_dom_video_provider_play(thiz->video_provider);
-
-no_video_provider:
+has_fragment:
+	egueb_dom_uri_cleanup(&final);
+bad_uri:
+	egueb_dom_string_unref(location);
+	egueb_dom_uri_cleanup(&uri);
+wrong:
 	/* finally swap the last xlink */
 	if (thiz->last_xlink)
 	{
@@ -163,7 +188,7 @@ static Eina_Bool _egueb_svg_element_video_process(
 	thiz->gw = egueb_svg_coord_final_get(&w, e_parent->viewbox.w, font_size);
 	thiz->gh = egueb_svg_coord_final_get(&h, e_parent->viewbox.h, font_size);
 
-	ret = _egueb_svg_element_video_load(thiz);
+	ret = _egueb_svg_element_video_load(thiz, doc);
 
 	egueb_dom_node_unref(relative);
 	egueb_dom_node_unref(doc);
