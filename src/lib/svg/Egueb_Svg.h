@@ -132,6 +132,7 @@ extern "C" {
 #include "egueb_svg_element_svg.h"
 #include "egueb_svg_element_tspan.h"
 #include "egueb_svg_element_text.h"
+#include "egueb_svg_element_video.h"
 
 /* document */
 #include "egueb_svg_document.h"

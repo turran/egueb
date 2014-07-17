@@ -25,12 +25,14 @@ src/lib/dom/egueb_dom_event_external.h \
 src/lib/dom/egueb_dom_event_io.h \
 src/lib/dom/egueb_dom_event_mouse.h \
 src/lib/dom/egueb_dom_event_mutation.h \
+src/lib/dom/egueb_dom_event_multimedia.h \
 src/lib/dom/egueb_dom_event_process.h \
 src/lib/dom/egueb_dom_event_script.h \
 src/lib/dom/egueb_dom_event_ui.h \
 src/lib/dom/egueb_dom_feature.h \
 src/lib/dom/egueb_dom_feature_animation.h \
 src/lib/dom/egueb_dom_feature_io.h \
+src/lib/dom/egueb_dom_feature_multimedia.h \
 src/lib/dom/egueb_dom_feature_render.h \
 src/lib/dom/egueb_dom_feature_ui.h \
 src/lib/dom/egueb_dom_feature_window.h \
@@ -56,7 +58,8 @@ src/lib/dom/egueb_dom_value_dom_string.h \
 src/lib/dom/egueb_dom_value_boolean.h \
 src/lib/dom/egueb_dom_value_double.h \
 src/lib/dom/egueb_dom_value_int.h \
-src/lib/dom/egueb_dom_value_list.h
+src/lib/dom/egueb_dom_value_list.h \
+src/lib/dom/egueb_dom_video_provider.h
 
 src_lib_dom_libegueb_dom_la_SOURCES = \
 src/lib/dom/egueb_dom_attr.c \
@@ -89,6 +92,7 @@ src/lib/dom/egueb_dom_event_external.c \
 src/lib/dom/egueb_dom_event_io.c \
 src/lib/dom/egueb_dom_event_mouse.c \
 src/lib/dom/egueb_dom_event_mouse_private.h \
+src/lib/dom/egueb_dom_event_multimedia.c \
 src/lib/dom/egueb_dom_event_mutation.c \
 src/lib/dom/egueb_dom_event_mutation_private.h \
 src/lib/dom/egueb_dom_event_process.c \
@@ -99,6 +103,7 @@ src/lib/dom/egueb_dom_event_ui_private.h \
 src/lib/dom/egueb_dom_feature.c \
 src/lib/dom/egueb_dom_feature_animation.c \
 src/lib/dom/egueb_dom_feature_io.c \
+src/lib/dom/egueb_dom_feature_multimedia.c \
 src/lib/dom/egueb_dom_feature_render.c \
 src/lib/dom/egueb_dom_feature_script.c \
 src/lib/dom/egueb_dom_feature_ui.c \
@@ -132,7 +137,8 @@ src/lib/dom/egueb_dom_value_dom_string.c \
 src/lib/dom/egueb_dom_value_boolean.c \
 src/lib/dom/egueb_dom_value_double.c \
 src/lib/dom/egueb_dom_value_int.c \
-src/lib/dom/egueb_dom_value_list.c
+src/lib/dom/egueb_dom_value_list.c \
+src/lib/dom/egueb_dom_video_provider.c
 
 src_lib_dom_libegueb_dom_la_CPPFLAGS = \
 -I$(top_srcdir)/src/lib/dom \

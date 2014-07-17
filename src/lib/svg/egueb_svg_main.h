@@ -49,6 +49,7 @@ EAPI extern Egueb_Dom_String *EGUEB_SVG_NAME_TSPAN;
 EAPI extern Egueb_Dom_String *EGUEB_SVG_NAME_USE;
 EAPI extern Egueb_Dom_String *EGUEB_SVG_NAME_STOP;
 EAPI extern Egueb_Dom_String *EGUEB_SVG_NAME_SVG;
+EAPI extern Egueb_Dom_String *EGUEB_SVG_NAME_VIDEO;
 /* TODO add a string per attribute */
 EAPI extern Egueb_Dom_String *EGUEB_SVG_CLASS;
 EAPI extern Egueb_Dom_String *EGUEB_SVG_CLIP_PATH;

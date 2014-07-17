@@ -103,12 +103,16 @@ extern "C" {
 #include "egueb_dom_scripter.h"
 #include "egueb_dom_event_script.h"
 
+#include "egueb_dom_video_provider.h"
+#include "egueb_dom_event_multimedia.h"
+
 #include "egueb_dom_parser.h"
 #include "egueb_dom_input.h"
 
 #include "egueb_dom_feature.h"
 #include "egueb_dom_feature_animation.h"
 #include "egueb_dom_feature_io.h"
+#include "egueb_dom_feature_multimedia.h"
 #include "egueb_dom_feature_render.h"
 #include "egueb_dom_feature_script.h"
 #include "egueb_dom_feature_ui.h"
@@ -129,8 +133,6 @@ extern "C" {
 
 #include "egueb_dom_implementation_source.h"
 #include "egueb_dom_registry.h"
-
-#include "egueb_dom_scripter.h"
 
 /**
  * @}

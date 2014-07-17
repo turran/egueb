@@ -81,6 +81,7 @@ static void _egueb_svg_strings_init(void)
 	EGUEB_SVG_NAME_USE = egueb_dom_string_new_with_string("use");
 	EGUEB_SVG_NAME_STOP = egueb_dom_string_new_with_string("stop");
 	EGUEB_SVG_NAME_SVG = egueb_dom_string_new_with_string("svg");
+	EGUEB_SVG_NAME_VIDEO = egueb_dom_string_new_with_string("video");
 	/* attributes */
 	EGUEB_SVG_CLASS = egueb_dom_string_new_with_string("class");
 	EGUEB_SVG_CLIP_PATH = egueb_dom_string_new_with_string("clip-path");
@@ -167,6 +168,7 @@ static void _egueb_svg_strings_shutdown(void)
 	egueb_dom_string_unref(EGUEB_SVG_NAME_USE);
 	egueb_dom_string_unref(EGUEB_SVG_NAME_STOP);
 	egueb_dom_string_unref(EGUEB_SVG_NAME_SVG);
+	egueb_dom_string_unref(EGUEB_SVG_NAME_VIDEO);
 	/* attributes */
 	egueb_dom_string_unref(EGUEB_SVG_CLASS);
 	egueb_dom_string_unref(EGUEB_SVG_CLIP_PATH);
@@ -292,6 +294,7 @@ Egueb_Dom_String *EGUEB_SVG_NAME_TSPAN;
 Egueb_Dom_String *EGUEB_SVG_NAME_USE;
 Egueb_Dom_String *EGUEB_SVG_NAME_STOP;
 Egueb_Dom_String *EGUEB_SVG_NAME_SVG;
+Egueb_Dom_String *EGUEB_SVG_NAME_VIDEO;
 /* attributes */
 Egueb_Dom_String *EGUEB_SVG_CLASS;
 Egueb_Dom_String *EGUEB_SVG_CLIP_PATH;

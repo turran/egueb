@@ -49,6 +49,7 @@
 #include "egueb_svg_element_svg.h"
 #include "egueb_svg_element_text.h"
 #include "egueb_svg_element_tspan.h"
+#include "egueb_svg_element_video.h"
 #include "egueb_dom_document.h"
 /* abstracts */
 #include "egueb_svg_renderable.h"
@@ -509,11 +510,11 @@ static Egueb_Dom_Node * _egueb_svg_document_element_create_by_id(int id)
 		case EGUEB_SVG_TYPE_ANIMATETRANSFORM:
 		ret = egueb_svg_element_animate_transform_new();
 		break;
+#endif
 
 		case EGUEB_SVG_TYPE_VIDEO:
 		ret = egueb_svg_element_video_new();
 		break;
-#endif
 
 		default:
 		break;
@@ -852,6 +853,7 @@ static void _egueb_svg_document_instance_init(void *o)
 			&_egueb_svg_document_ui_descriptor);
 	egueb_dom_feature_io_add(EGUEB_DOM_NODE(thiz));
 	egueb_dom_feature_script_add(EGUEB_DOM_NODE(thiz));
+	egueb_dom_feature_multimedia_add(EGUEB_DOM_NODE(thiz));
 	thiz->fps = 30;
 	thiz->font_size = 16;
 	thiz->input = egueb_dom_input_new(&_document_svg_input_descriptor, thiz);
