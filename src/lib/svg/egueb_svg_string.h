@@ -18,6 +18,17 @@
 #ifndef _EGUEB_SVG_STRING_H
 #define _EGUEB_SVG_STRING_H
 
+/**
+ * @file
+ * @ender_group{Egueb_Svg_String_Animated}
+ */
+
+/**
+ * @defgroup Egueb_Svg_String_Animated String animated
+ * @ingroup Egueb_Svg_Type_Group
+ * @{
+ */
+
 typedef struct _Egueb_Svg_String_Animated
 {
 	Egueb_Dom_String *base;
@@ -28,5 +39,8 @@ typedef struct _Egueb_Svg_String_Animated
 EAPI Eina_Bool egueb_svg_string_is_equal(const char *s1, const char *s2);
 EAPI void egueb_svg_string_animated_cleanup(Egueb_Svg_String_Animated *anim);
 
-#endif
+/**
+ * @}
+ */
 
+#endif

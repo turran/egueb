@@ -651,7 +651,7 @@ EAPI void egueb_svg_element_image_height_get(Egueb_Dom_Node *n, Egueb_Svg_Length
 /**
  * Sets the href of an image element
  * @param[in] n The image element to get the href @ender_transfer{none}
- * @param[out] href The href to set @ender_transfer{full}
+ * @param[out] v The href to set @ender_transfer{full}
  */
 EAPI void egueb_svg_element_image_href_set_simple(Egueb_Dom_Node *n, Egueb_Dom_String *v)
 {

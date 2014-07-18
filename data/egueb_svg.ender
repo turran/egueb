@@ -100,6 +100,34 @@
     <field name="base" type="egueb.svg.number"/>
     <field name="anim" type="egueb.svg.number"/>
   </struct>
+  <enum name="egueb.svg.paint.type">
+    <value name="none"/>
+    <value name="current_color"/>
+    <value name="color"/>
+    <value name="server"/>
+    <value name="egueb_svg_paint_types"/>
+  </enum>
+  <struct name="egueb.svg.paint">
+    <field name="type" type="egueb.svg.paint.type"/>
+    <field name="color" type="egueb.svg.color"/>
+    <field name="uri" type="string"/>
+    <function name="descriptor_get">
+      <return type="egueb.dom.value.descriptor" transfer="none"/>
+    </function>
+    <method name="is_equal">
+      <return type="bool" transfer="full"/>
+      <arg name="p2" type="egueb.svg.paint" direction="in" transfer="none"/>
+    </method>
+    <method name="copy">
+      <arg name="copy" type="egueb.svg.paint" direction="in" transfer="full"/>
+      <arg name="full" type="bool" direction="in" transfer="full"/>
+    </method>
+    <method name="reset"/>
+  </struct>
+  <struct name="egueb.svg.paint.animated">
+    <field name="base" type="egueb.svg.paint"/>
+    <field name="anim" type="egueb.svg.paint"/>
+  </struct>
   <struct name="egueb.svg.point">
     <field name="x" type="double"/>
     <field name="y" type="double"/>
@@ -110,6 +138,16 @@
     <function name="descriptor_get">
       <return type="egueb.dom.value.descriptor" transfer="none"/>
     </function>
+  </struct>
+  <struct name="egueb.svg.string.animated">
+    <field name="base" type="egueb.dom.string"/>
+    <field name="anim" type="egueb.dom.string"/>
+    <function name="egueb_svg_string_is_equal">
+      <return type="bool" transfer="full"/>
+      <arg name="s1" type="string" direction="in" transfer="none"/>
+      <arg name="s2" type="string" direction="in" transfer="none"/>
+    </function>
+    <method name="cleanup"/>
   </struct>
   <object name="egueb.svg.element" inherits="egueb.dom.element">
     <function name="egueb_svg_is_element">
@@ -420,6 +458,52 @@
     </method>
     <method name="svg_point_create">
       <return type="egueb.svg.point" transfer="full"/>
+    </method>
+  </object>
+  <object name="egueb.svg.element.video" inherits="egueb.svg.element">
+    <prop name="x">
+      <getter>
+        <arg name="x" type="egueb.svg.coord.animated" direction="out" transfer="content"/>
+      </getter>
+    </prop>
+    <prop name="y">
+      <getter>
+        <arg name="y" type="egueb.svg.coord.animated" direction="out" transfer="content"/>
+      </getter>
+    </prop>
+    <prop name="width">
+      <getter>
+        <arg name="width" type="egueb.svg.length.animated" direction="out" transfer="content"/>
+      </getter>
+    </prop>
+    <prop name="height">
+      <getter>
+        <arg name="height" type="egueb.svg.length.animated" direction="out" transfer="content"/>
+      </getter>
+    </prop>
+    <prop name="href">
+      <getter>
+        <arg name="v" type="egueb.svg.string.animated" direction="out" transfer="content"/>
+      </getter>
+    </prop>
+    <ctor name="new"/>
+    <method name="x_set_simple">
+      <arg name="x" type="egueb.svg.coord" direction="in" transfer="content"/>
+    </method>
+    <method name="y_set_simple">
+      <arg name="y" type="egueb.svg.coord" direction="in" transfer="content"/>
+    </method>
+    <method name="width_set_simple">
+      <arg name="width" type="egueb.svg.length" direction="in" transfer="content"/>
+    </method>
+    <method name="height_set_simple">
+      <arg name="height" type="egueb.svg.length" direction="in" transfer="content"/>
+    </method>
+    <method name="href_set_simple">
+      <arg name="v" type="egueb.dom.string" direction="out" transfer="full"/>
+    </method>
+    <method name="svg_set">
+      <arg name="svg" type="egueb.dom.node" direction="in" transfer="full"/>
     </method>
   </object>
   <object name="egueb.svg.document" inherits="egueb.dom.document">

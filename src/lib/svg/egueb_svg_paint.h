@@ -20,6 +20,19 @@
 
 #include "egueb_svg_color.h"
 
+/**
+ * @file
+ * @ender_group{Egueb_Svg_Paint_Type}
+ * @ender_group{Egueb_Svg_Paint}
+ * @ender_group{Egueb_Svg_Paint_Animated}
+ */
+
+/**
+ * @defgroup Egueb_Svg_Paint_Type Paint type
+ * @ingroup Egueb_Svg_Type_Group
+ * @{
+ */
+
 typedef enum _Egueb_Svg_Paint_Type
 {
 	EGUEB_SVG_PAINT_TYPE_NONE,
@@ -29,20 +42,19 @@ typedef enum _Egueb_Svg_Paint_Type
 	EGUEB_SVG_PAINT_TYPES,
 } Egueb_Svg_Paint_Type;
 
+/**
+ * @}
+ * @defgroup Egueb_Svg_Paint Paint
+ * @ingroup Egueb_Svg_Type_Group
+ * @{
+ */
+
 typedef struct _Egueb_Svg_Paint
 {
 	Egueb_Svg_Paint_Type type;
 	Egueb_Svg_Color color;
 	char *uri;
 } Egueb_Svg_Paint;
-
-typedef struct _Egueb_Svg_Paint_Animated
-{
-	Egueb_Svg_Paint base;
-	Egueb_Svg_Paint anim;
-} Egueb_Svg_Paint_Animated;
-
-#define EGUEB_SVG_PAINT_INIT { EGUEB_SVG_PAINT_TYPE_NONE, {0, 0, 0}, NULL }
 
 EAPI extern const Egueb_Svg_Paint EGUEB_SVG_PAINT_BLACK;
 EAPI extern const Egueb_Svg_Paint EGUEB_SVG_PAINT_NONE;
@@ -54,5 +66,25 @@ EAPI Eina_Bool egueb_svg_paint_is_equal(const Egueb_Svg_Paint *p1,
 		const Egueb_Svg_Paint *p2);
 EAPI void egueb_svg_paint_copy(const Egueb_Svg_Paint *thiz, Egueb_Svg_Paint *copy, Eina_Bool full);
 EAPI void egueb_svg_paint_reset(Egueb_Svg_Paint *thiz);
+
+
+/**
+ * @}
+ * @defgroup Egueb_Svg_Paint_Animated Paint animated
+ * @ingroup Egueb_Svg_Type_Group
+ * @{
+ */
+
+typedef struct _Egueb_Svg_Paint_Animated
+{
+	Egueb_Svg_Paint base;
+	Egueb_Svg_Paint anim;
+} Egueb_Svg_Paint_Animated;
+
+#define EGUEB_SVG_PAINT_INIT { EGUEB_SVG_PAINT_TYPE_NONE, {0, 0, 0}, NULL }
+
+/**
+ * @}
+ */
 
 #endif

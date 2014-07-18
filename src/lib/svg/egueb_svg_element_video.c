@@ -98,7 +98,7 @@ static Eina_Bool _egueb_svg_element_video_load(Egueb_Svg_Element_Video *thiz,
 		thiz->video_provider = egueb_dom_event_multimedia_video_provider_get(ev);
 		egueb_dom_event_unref(ev);
 
-		ERR("Requested video provider");
+		INFO("Requested video provider");
 		if (!thiz->video_provider)
 		{
 			ERR("No video provider provided");
@@ -440,7 +440,7 @@ EAPI void egueb_svg_element_video_height_get(Egueb_Dom_Node *n, Egueb_Svg_Length
 /**
  * Sets the href of a video element
  * @param[in] n The image element to get the href @ender_transfer{none}
- * @param[out] href The href to set @ender_transfer{full}
+ * @param[out] v The href to set @ender_transfer{full}
  */
 EAPI void egueb_svg_element_video_href_set_simple(Egueb_Dom_Node *n, Egueb_Dom_String *v)
 {

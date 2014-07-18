@@ -475,7 +475,7 @@ EAPI void egueb_svg_element_use_height_get(Egueb_Dom_Node *n, Egueb_Svg_Length_A
 /**
  * Sets the href of an use element
  * @param[in] n The use element to get the href @ender_transfer{none}
- * @param[out] href The href to set @ender_transfer{full}
+ * @param[out] v The href to set @ender_transfer{full}
  */
 EAPI void egueb_svg_element_use_href_set_simple(Egueb_Dom_Node *n, Egueb_Dom_String *v)
 {
