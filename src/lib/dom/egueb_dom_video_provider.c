@@ -33,6 +33,7 @@ struct _Egueb_Dom_Video_Provider
 	Egueb_Dom_Node *n;
 	Enesim_Renderer *image;
 	void *data;
+	int ref;
 };
 /*============================================================================*
  *                                 Global                                     *
@@ -54,16 +55,30 @@ EAPI Egueb_Dom_Video_Provider * egueb_dom_video_provider_new(
 	thiz->image = image;
 	thiz->notifier = notifier;
 	thiz->desc = desc;
-	thiz->n = n;
+	egueb_dom_node_weak_ref_add(n, &thiz->n);
 	thiz->data = thiz->desc->create();
+	thiz->ref = 1;
 
 	return thiz;
 }
 
-EAPI void egueb_dom_video_provider_free(Egueb_Dom_Video_Provider *thiz)
+EAPI Egueb_Dom_Video_Provider * egueb_dom_video_provider_ref(Egueb_Dom_Video_Provider *thiz)
 {
-	enesim_renderer_unref(thiz->image);
-	free(thiz);
+	if (!thiz) return thiz;
+	thiz->ref++;
+	return thiz;
+}
+
+EAPI void egueb_dom_video_provider_unref(Egueb_Dom_Video_Provider *thiz)
+{
+	if (!thiz) return;
+	thiz->ref--;
+	if (!thiz->ref)
+	{
+		egueb_dom_node_weak_ref_remove(thiz->n, &thiz->n);
+		enesim_renderer_unref(thiz->image);
+		free(thiz);
+	} 
 }
 
 EAPI void * egueb_dom_video_provider_data_get(Egueb_Dom_Video_Provider *thiz)

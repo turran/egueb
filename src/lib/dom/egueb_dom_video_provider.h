@@ -75,7 +75,8 @@ EAPI Egueb_Dom_Video_Provider * egueb_dom_video_provider_new(
 		const Egueb_Dom_Video_Provider_Descriptor *desc,
 		const Egueb_Dom_Video_Provider_Notifier *notifier,
 		Enesim_Renderer *image, Egueb_Dom_Node *n);
-EAPI void egueb_dom_video_provider_free(Egueb_Dom_Video_Provider *thiz);
+EAPI Egueb_Dom_Video_Provider * egueb_dom_video_provider_ref(Egueb_Dom_Video_Provider *thiz);
+EAPI void egueb_dom_video_provider_unref(Egueb_Dom_Video_Provider *thiz);
 EAPI void * egueb_dom_video_provider_data_get(Egueb_Dom_Video_Provider *thiz);
 EAPI Enesim_Renderer * egueb_dom_video_provider_renderer_get(Egueb_Dom_Video_Provider *thiz);
 

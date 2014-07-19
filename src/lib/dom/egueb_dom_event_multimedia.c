@@ -75,6 +75,7 @@ static void _egueb_dom_event_multimedia_instance_deinit(void *o)
 
 	thiz = EGUEB_DOM_EVENT_MULTIMEDIA(o);
 	enesim_renderer_unref(thiz->image);
+	egueb_dom_video_provider_unref(thiz->video_provider);
 }
 /*============================================================================*
  *                                 Global                                     *
@@ -115,7 +116,7 @@ EAPI Egueb_Dom_Video_Provider * egueb_dom_event_multimedia_video_provider_get(Eg
 	Egueb_Dom_Event_Multimedia *thiz;
 
 	thiz = EGUEB_DOM_EVENT_MULTIMEDIA(e);
-	return thiz->video_provider;
+	return egueb_dom_video_provider_ref(thiz->video_provider);
 }
 
 EAPI void egueb_dom_event_multimedia_video_provider_set(Egueb_Dom_Event *e, Egueb_Dom_Video_Provider *sc)

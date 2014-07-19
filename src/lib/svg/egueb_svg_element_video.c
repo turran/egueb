@@ -306,6 +306,12 @@ static void _egueb_svg_element_video_instance_deinit(void *o)
 		thiz->last_xlink = NULL;
 	}
 
+	if (thiz->video_provider)
+	{
+		egueb_dom_video_provider_unref(thiz->video_provider);
+		thiz->video_provider = NULL;
+	}
+
 	enesim_renderer_unref(thiz->r);
 	/* destroy the properties */
 	egueb_dom_node_unref(thiz->x);
