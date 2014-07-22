@@ -56,7 +56,8 @@ EAPI Egueb_Dom_Video_Provider * egueb_dom_video_provider_new(
 	thiz->notifier = notifier;
 	thiz->desc = desc;
 	egueb_dom_node_weak_ref_add(n, &thiz->n);
-	thiz->data = thiz->desc->create();
+	if (thiz->desc->create)
+		thiz->data = thiz->desc->create();
 	thiz->ref = 1;
 
 	return thiz;
@@ -75,6 +76,8 @@ EAPI void egueb_dom_video_provider_unref(Egueb_Dom_Video_Provider *thiz)
 	thiz->ref--;
 	if (!thiz->ref)
 	{
+		if (thiz->desc->destroy)
+			thiz->desc->destroy(thiz->data);
 		egueb_dom_node_weak_ref_remove(thiz->n, &thiz->n);
 		enesim_renderer_unref(thiz->image);
 		free(thiz);
