@@ -16,42 +16,20 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _EGUEB_SMIL_H_
-#define _EGUEB_SMIL_H_
-
-#include <Eina.h>
-#include <Egueb_Dom.h>
-#include <Etch.h>
+#ifndef _EGUEB_SMIL_KEYFRAME_H_
+#define _EGUEB_SMIL_KEYFRAME_H_
 
 /**
- * @defgroup Egueb_Smil_Group SMIL
- * @brief SMIL related API
- * @{
+ * Possible interpolator types
  */
-
-/* core */
-#include "egueb_smil_build.h"
-#include "egueb_smil_main.h"
-/* events */
-#include "egueb_smil_event.h"
-/* values */
-#include "egueb_smil_additive.h"
-#include "egueb_smil_accumulate.h"
-#include "egueb_smil_clock.h"
-#include "egueb_smil_duration.h"
-#include "egueb_smil_fill.h"
-#include "egueb_smil_repeat_count.h"
-#include "egueb_smil_keyframe.h"
-#include "egueb_smil_timeline.h"
-#include "egueb_smil_signal.h"
-#include "egueb_smil_timing.h"
-/* elements */
-#include "egueb_smil_animation.h"
-#include "egueb_smil_animate.h"
-#include "egueb_smil_set.h"
-
-/**
- * @}
- */
+typedef enum _Egueb_Smil_Keyframe_Interpolator_Type
+{
+	EGUEB_SMIL_KEYFRAME_INTERPOLATOR_DISCRETE, /**< The values are not interpolated, just discrete values */
+	EGUEB_SMIL_KEYFRAME_INTERPOLATOR_LINEAR, /**< Linear interpolation */
+	EGUEB_SMIL_KEYFRAME_INTERPOLATOR_COSIN, /***< Cosin interpolation */
+	EGUEB_SMIL_KEYFRAME_INTERPOLATOR_QUADRATIC, /**< Quadratic bezier interpolation */
+	EGUEB_SMIL_KEYFRAME_INTERPOLATOR_CUBIC, /**< Cubic bezier interpolation */
+	EGUEB_SMIL_KEYFRAME_INTERPOLATOR_TYPES
+} Egueb_Smil_Keyframe_Interpolator_Type;
 
 #endif

@@ -30,7 +30,7 @@ typedef struct _Egueb_Smil_Duration
 {
 	Egueb_Smil_Duration_Type type;
 	union {
-		int64_t clock;
+		Egueb_Smil_Clock clock;
 	} data;
 } Egueb_Smil_Duration;
 

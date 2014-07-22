@@ -16,42 +16,31 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _EGUEB_SMIL_H_
-#define _EGUEB_SMIL_H_
-
-#include <Eina.h>
-#include <Egueb_Dom.h>
-#include <Etch.h>
+#ifndef _EGUEB_SMIL_KEYFRAME_PRIVATE_H_
+#define _EGUEB_SMIL_KEYFRAME_PRIVATE_H_
 
 /**
- * @defgroup Egueb_Smil_Group SMIL
- * @brief SMIL related API
- * @{
+ * Specific data needed for quadratic bezier animations
  */
+typedef struct _Egueb_Smil_Keyframe_Interpolator_Data_Quadratic
+{
+	/** Control point */
+	double x0;
+	double y0;
+} Egueb_Smil_Keyframe_Interpolator_Data_Quadratic;
 
-/* core */
-#include "egueb_smil_build.h"
-#include "egueb_smil_main.h"
-/* events */
-#include "egueb_smil_event.h"
-/* values */
-#include "egueb_smil_additive.h"
-#include "egueb_smil_accumulate.h"
-#include "egueb_smil_clock.h"
-#include "egueb_smil_duration.h"
-#include "egueb_smil_fill.h"
-#include "egueb_smil_repeat_count.h"
-#include "egueb_smil_keyframe.h"
-#include "egueb_smil_timeline.h"
-#include "egueb_smil_signal.h"
-#include "egueb_smil_timing.h"
-/* elements */
-#include "egueb_smil_animation.h"
-#include "egueb_smil_animate.h"
-#include "egueb_smil_set.h"
+typedef union _Egueb_Smil_Keyframe_Interpolator_Data
+{
+	Egueb_Smil_Keyframe_Interpolator_Data_Quadratic q;
+} Egueb_Smil_Keyframe_Interpolator_Data;
 
-/**
- * @}
- */
+typedef struct _Egueb_Smil_Keyframe
+{
+	Egueb_Smil_Clock time;
+	Egueb_Smil_Keyframe_Interpolator_Type type;
+	Egueb_Smil_Keyframe_Interpolator_Data data;
+	Etch_Free value_free;
+	void *value;
+} Egueb_Smil_Keyframe;
 
 #endif

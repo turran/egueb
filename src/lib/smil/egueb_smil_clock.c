@@ -30,7 +30,7 @@
 /* The clock is defined in miliseconds? nanoseconds? */
 /* TODO maybe we should use doubles directly? */
 /* Clock-val         ::= Full-clock-val | Partial-clock-val | Timecount-val */
-EAPI Eina_Bool egueb_smil_clock_string_from(int64_t *clock, const char *attr)
+EAPI Eina_Bool egueb_smil_clock_string_from(Egueb_Smil_Clock *clock, const char *attr)
 {
 	Eina_Bool ret = EINA_FALSE;
 	long v;
@@ -75,7 +75,7 @@ EAPI Eina_Bool egueb_smil_clock_string_from(int64_t *clock, const char *attr)
 	/* Timecount-val::= Timecount ("." Fraction)? (Metric)? */
 	else
 	{
-		int64_t scale;
+		Egueb_Smil_Clock scale;
 		long f = 0;
 
 		/* Fraction::= DIGIT+ */
@@ -104,7 +104,7 @@ EAPI Eina_Bool egueb_smil_clock_string_from(int64_t *clock, const char *attr)
 		if (f)
 			*clock += (double)(f / 10.0) * scale;
 
-		DBG("clock %" ETCH_TIME_FORMAT " parsed from attr '%s'", ETCH_TIME_ARGS(*clock), attr);
+		DBG("clock %" EGUEB_SMIL_CLOCK_FORMAT " parsed from attr '%s'", EGUEB_SMIL_CLOCK_ARGS(*clock), attr);
 		ret = EINA_TRUE;
 	}
 

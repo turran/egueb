@@ -23,6 +23,15 @@
 #define EGUEB_SMIL_CLOCK_MSECONDS (1000000LL)
 #define EGUEB_SMIL_CLOCK_AS_SECONDS(t) ((t) / EGUEB_SMIL_CLOCK_SECONDS)
 
-EAPI Eina_Bool egueb_smil_clock_string_from(int64_t *clock, const char *attr);
+#define EGUEB_SMIL_CLOCK_FORMAT "u:%02u:%02u.%09u"
+#define EGUEB_SMIL_CLOCK_ARGS(t) \
+	(uint32_t) (((Egueb_Smil_Clock)(t)) / (ETCH_SECOND * 60 * 60)), \
+	(uint32_t) ((((Egueb_Smil_Clock)(t)) / (ETCH_SECOND * 60)) % 60), \
+	(uint32_t) ((((Egueb_Smil_Clock)(t)) / ETCH_SECOND) % 60), \
+	(uint32_t) (((Egueb_Smil_Clock)(t)) % ETCH_SECOND)
+
+typedef int64_t Egueb_Smil_Clock; /**< Clock abstraction in nano seconds */
+
+EAPI Eina_Bool egueb_smil_clock_string_from(Egueb_Smil_Clock *clock, const char *attr);
 
 #endif

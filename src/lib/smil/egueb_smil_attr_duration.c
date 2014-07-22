@@ -17,6 +17,7 @@
  */
 #include "egueb_smil_private.h"
 
+#include "egueb_smil_clock.h"
 #include "egueb_smil_duration.h"
 
 #include "egueb_dom_attr_private.h"
