@@ -59,7 +59,8 @@ src/lib/dom/egueb_dom_value_boolean.h \
 src/lib/dom/egueb_dom_value_double.h \
 src/lib/dom/egueb_dom_value_int.h \
 src/lib/dom/egueb_dom_value_list.h \
-src/lib/dom/egueb_dom_video_provider.h
+src/lib/dom/egueb_dom_video_provider.h \
+src/lib/dom/egueb_dom_window.h
 
 src_lib_dom_libegueb_dom_la_SOURCES = \
 src/lib/dom/egueb_dom_attr.c \
@@ -138,7 +139,8 @@ src/lib/dom/egueb_dom_value_boolean.c \
 src/lib/dom/egueb_dom_value_double.c \
 src/lib/dom/egueb_dom_value_int.c \
 src/lib/dom/egueb_dom_value_list.c \
-src/lib/dom/egueb_dom_video_provider.c
+src/lib/dom/egueb_dom_video_provider.c \
+src/lib/dom/egueb_dom_window.c
 
 src_lib_dom_libegueb_dom_la_CPPFLAGS = \
 -I$(top_srcdir)/src/lib/dom \

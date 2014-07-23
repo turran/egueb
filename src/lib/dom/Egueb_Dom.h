@@ -134,6 +134,8 @@ extern "C" {
 #include "egueb_dom_implementation_source.h"
 #include "egueb_dom_registry.h"
 
+#include "egueb_dom_window.h"
+
 /**
  * @}
  */
