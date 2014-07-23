@@ -8,6 +8,7 @@ src/lib/smil/egueb_smil_additive.h \
 src/lib/smil/egueb_smil_animate.h \
 src/lib/smil/egueb_smil_animation.h \
 src/lib/smil/egueb_smil_build.h \
+src/lib/smil/egueb_smil_calc_mode.h \
 src/lib/smil/egueb_smil_clock.h \
 src/lib/smil/egueb_smil_duration.h \
 src/lib/smil/egueb_smil_event.h \
@@ -30,6 +31,8 @@ src/lib/smil/egueb_smil_animate_base.c \
 src/lib/smil/egueb_smil_animate_base_private.h \
 src/lib/smil/egueb_smil_attr_additive.c \
 src/lib/smil/egueb_smil_attr_additive_private.h \
+src/lib/smil/egueb_smil_attr_calc_mode.c \
+src/lib/smil/egueb_smil_attr_calc_mode_private.h \
 src/lib/smil/egueb_smil_attr_duration.c \
 src/lib/smil/egueb_smil_attr_duration_private.h \
 src/lib/smil/egueb_smil_attr_fill.c \
@@ -38,6 +41,8 @@ src/lib/smil/egueb_smil_attr_repeat_count.c \
 src/lib/smil/egueb_smil_attr_repeat_count_private.h \
 src/lib/smil/egueb_smil_attr_timing_list.c \
 src/lib/smil/egueb_smil_attr_timing_list_private.h \
+src/lib/smil/egueb_smil_calc_mode.c \
+src/lib/smil/egueb_smil_calc_mode_private.h \
 src/lib/smil/egueb_smil_clock.c \
 src/lib/smil/egueb_smil_duration.c \
 src/lib/smil/egueb_smil_event.c \
@@ -50,6 +55,7 @@ src/lib/smil/egueb_smil_set.c \
 src/lib/smil/egueb_smil_signal.c \
 src/lib/smil/egueb_smil_signal_private.h \
 src/lib/smil/egueb_smil_signal_continuous.c \
+src/lib/smil/egueb_smil_signal_discrete.c \
 src/lib/smil/egueb_smil_timeline.c \
 src/lib/smil/egueb_smil_timeline_private.h \
 src/lib/smil/egueb_smil_timing.c \

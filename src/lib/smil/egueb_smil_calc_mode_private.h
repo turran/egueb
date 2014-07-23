@@ -15,10 +15,10 @@
  * License along with this library.
  * If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef _EGUEB_SMIL_ATTR_REPEAT_COUNT_PRIVATE_H_
-#define _EGUEB_SMIL_ATTR_REPEAT_COUNT_PRIVATE_H_
 
-Egueb_Dom_Node * egueb_smil_attr_repeat_count_new(void);
+#ifndef _EGUEB_SMIL_CALC_MODE_PRIVATE_H_
+#define _EGUEB_SMIL_CALC_MODE_PRIVATE_H_
+
+const Egueb_Dom_Value_Descriptor * egueb_smil_calc_mode_descriptor_get(void);
 
 #endif
-

@@ -40,6 +40,7 @@ static void _egueb_smil_strings_init(void)
 	EGUEB_SMIL_BY = egueb_dom_string_new_with_string("by");
 	EGUEB_SMIL_VALUES = egueb_dom_string_new_with_string("values");
 	EGUEB_SMIL_REPEAT_COUNT = egueb_dom_string_new_with_string("repeatCount");
+	EGUEB_SMIL_NAME_CALC_MODE = egueb_dom_string_new_with_string("calcMode");
 }
 
 static void _egueb_smil_strings_shutdown(void)
@@ -56,8 +57,9 @@ static void _egueb_smil_strings_shutdown(void)
 	egueb_dom_string_unref(EGUEB_SMIL_TO);
 	egueb_dom_string_unref(EGUEB_SMIL_FROM);
 	egueb_dom_string_unref(EGUEB_SMIL_BY);
-	egueb_dom_string_unref(EGUEB_SMIL_REPEAT_COUNT);
 	egueb_dom_string_unref(EGUEB_SMIL_VALUES);
+	egueb_dom_string_unref(EGUEB_SMIL_REPEAT_COUNT);
+	egueb_dom_string_unref(EGUEB_SMIL_NAME_CALC_MODE);
 }
 /*============================================================================*
  *                                 Global                                     *
@@ -78,8 +80,9 @@ Egueb_Dom_String *EGUEB_SMIL_FILL;
 Egueb_Dom_String *EGUEB_SMIL_TO;
 Egueb_Dom_String *EGUEB_SMIL_FROM;
 Egueb_Dom_String *EGUEB_SMIL_BY;
-Egueb_Dom_String *EGUEB_SMIL_REPEAT_COUNT;
 Egueb_Dom_String *EGUEB_SMIL_VALUES;
+Egueb_Dom_String *EGUEB_SMIL_REPEAT_COUNT;
+Egueb_Dom_String *EGUEB_SMIL_NAME_CALC_MODE;
 
 EAPI void egueb_smil_init(void)
 {

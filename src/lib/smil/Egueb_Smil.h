@@ -37,6 +37,7 @@
 /* values */
 #include "egueb_smil_additive.h"
 #include "egueb_smil_accumulate.h"
+#include "egueb_smil_calc_mode.h"
 #include "egueb_smil_clock.h"
 #include "egueb_smil_duration.h"
 #include "egueb_smil_fill.h"

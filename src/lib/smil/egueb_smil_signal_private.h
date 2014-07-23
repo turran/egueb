@@ -34,6 +34,7 @@ struct _Egueb_Smil_Signal
 	Eina_Bool stopped;
 	Egueb_Smil_Signal_State_Callback start_cb;
 	Egueb_Smil_Signal_State_Callback stop_cb;
+	Egueb_Dom_Value *curr;
 	void *data;
 };
 

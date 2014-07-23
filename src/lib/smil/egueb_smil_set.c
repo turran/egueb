@@ -20,6 +20,10 @@
 #include "egueb_smil_main.h"
 #include "egueb_smil_set.h"
 #include "egueb_smil_event.h"
+#include "egueb_smil_clock.h"
+#include "egueb_smil_keyframe.h"
+#include "egueb_smil_timeline.h"
+#include "egueb_smil_signal.h"
 #include "egueb_smil_animation_private.h"
 
 /* We can optimize this, as there's no need to interpolate any value
@@ -42,8 +46,8 @@ typedef struct _Egueb_Smil_Set
 	Egueb_Dom_Value to_value;
 	Egueb_Dom_Value dst_value;
 	Egueb_Dom_Value prv_value;
-	/* etch related data */
-	Etch_Animation *etch_a;
+	/* timeline related data */
+	Egueb_Smil_Signal *signal;
 } Egueb_Smil_Set;
 
 typedef struct _Egueb_Smil_Set_Class
@@ -125,8 +129,6 @@ static Eina_Bool _egueb_smil_set_setup(Egueb_Smil_Animation *a,
 	Egueb_Smil_Duration dur;
 	Egueb_Dom_String *to = NULL;
 	Etch_Data etch_data;
-	Etch_Animation *etch_a;
-	Etch_Animation_Keyframe *k;
 
 	thiz = EGUEB_SMIL_SET(a);
 	egueb_dom_attr_final_get(thiz->to, &to);
@@ -147,43 +149,8 @@ static Eina_Bool _egueb_smil_set_setup(Egueb_Smil_Animation *a,
 	/* setup the holder of the destination value */
 	egueb_dom_value_init(&thiz->dst_value, a->d);
 	egueb_dom_value_copy(&thiz->to_value, &thiz->dst_value, EINA_TRUE);
-	/* create the animation */
-	etch_a = etch_animation_external_add(a->etch,
-			_egueb_smil_set_interpolator_cb,
-			_egueb_smil_set_animation_cb,
-			_egueb_smil_set_animation_start_cb,
-			_egueb_smil_set_animation_stop_cb,
-			NULL,
-			NULL,
-			&thiz->dst_value,
-			thiz);
-	/* the repeat count */
-	//etch_animation_repeat_set(etch_a, actx->timing.repeat_count);
-	thiz->etch_a = etch_a;
-
-	/* create the values from the 'to' attribute */
-	etch_data.type = ETCH_EXTERNAL;
-	etch_data.data.external = &thiz->to_value;
-
-	k = etch_animation_keyframe_add(thiz->etch_a);
-	etch_animation_keyframe_type_set(k, ETCH_INTERPOLATOR_DISCRETE);
-	etch_animation_keyframe_value_set(k, &etch_data);
-	etch_animation_keyframe_time_set(k, 0);
-
-	k = etch_animation_keyframe_add(thiz->etch_a);
-	etch_animation_keyframe_type_set(k, ETCH_INTERPOLATOR_DISCRETE);
-	etch_animation_keyframe_value_set(k, &etch_data);
-
-	egueb_dom_attr_final_get(a->dur, &dur);
-	if (dur.type == EGUEB_SMIL_DURATION_TYPE_CLOCK)
-	{
-		etch_animation_keyframe_time_set(k, dur.data.clock);
-	}
-	else
-	{
-		etch_animation_keyframe_time_set(k, 1);
-		etch_animation_repeat_set(etch_a, -1);
-	}
+	thiz->signal = egueb_smil_signal_discrete_new(&thiz->dst_value, thiz, &thiz->to_value, 0);
+	/* TODO the repeat count */
 
 	return EINA_TRUE;
 }
@@ -203,10 +170,10 @@ static void _egueb_smil_set_begin(Egueb_Smil_Animation *a, int64_t offset)
 	Egueb_Smil_Set *thiz;
 
 	thiz = EGUEB_SMIL_SET(a);
-	if (!thiz->etch_a) return;
+	if (!thiz->signal) return;
 	DBG("Beginning set at %" ETCH_TIME_FORMAT, ETCH_TIME_ARGS (offset));
-	etch_animation_offset_add(thiz->etch_a, offset);
-	etch_animation_enable(thiz->etch_a);
+	egueb_smil_animation_offset_add(thiz->signal, offset);
+	egueb_smil_animation_enable(thiz->signal);
 }
 
 static void _egueb_smil_set_end(Egueb_Smil_Animation *a)
@@ -214,9 +181,9 @@ static void _egueb_smil_set_end(Egueb_Smil_Animation *a)
 	Egueb_Smil_Set *thiz;
 
 	thiz = EGUEB_SMIL_SET(a);
-	if (!thiz->etch_a) return;
+	if (!thiz->signal) return;
 	DBG("Ending");
-	etch_animation_disable(thiz->etch_a);
+	egueb_smil_animation_disable(thiz->signal);
 }
 /*----------------------------------------------------------------------------*
  *                              Element interface                             *
@@ -274,34 +241,9 @@ static void _egueb_smil_set_instance_deinit(void *o)
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
-#if 0
-void egueb_smil_set_init(void)
-{
-	_egueb_smil_set_log = eina_log_domain_register("egueb_smil_set", EGUEB_SMIL_LOG_COLOR_DEFAULT);
-	if (_egueb_smil_set_log < 0)
-	{
-		EINA_LOG_ERR("Can not create log domain.");
-		return;
-	}
-	_egueb_smil_set_init();
-}
-
-void egueb_smil_set_shutdown(void)
-{
-	if (_egueb_smil_set_log < 0)
-		return;
-	_egueb_smil_set_shutdown();
-	eina_log_domain_unregister(_egueb_smil_set_log);
-	_egueb_smil_set_log = -1;
-}
-#endif
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/
-/**
- * To be documented
- * FIXME: To be fixed
- */
 EAPI Egueb_Dom_Node * egueb_smil_set_new(void)
 {
 	Egueb_Dom_Node *n;
@@ -311,19 +253,11 @@ EAPI Egueb_Dom_Node * egueb_smil_set_new(void)
 }
 
 #if 0
-/**
- * To be documented
- * FIXME: To be fixed
- */
 EAPI void egueb_smil_set_to_set(Ender_Element *e, const char *v)
 {
 	ender_element_property_value_set(e, EGUEB_SMIL_ELEMENT_SET_TO, v, NULL);
 }
 
-/**
- * To be documented
- * FIXME: To be fixed
- */
 EAPI void egueb_smil_set_to_get(Ender_Element *e, const char **v)
 {
 	Egueb_Dom_Tag *t;

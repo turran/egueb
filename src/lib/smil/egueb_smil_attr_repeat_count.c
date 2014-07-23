@@ -17,6 +17,7 @@
  */
 #include "egueb_smil_private.h"
 
+#include "egueb_smil_main.h"
 #include "egueb_smil_repeat_count.h"
 
 #include "egueb_dom_attr_private.h"
@@ -31,15 +32,13 @@ EGUEB_DOM_ATTR_PRIMITIVE_BOILERPLATE(Egueb_Smil_Repeat_Count,
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
-Egueb_Dom_Node * egueb_smil_attr_repeat_count_new(Egueb_Dom_String *name,
-		const Egueb_Smil_Repeat_Count *def)
+Egueb_Dom_Node * egueb_smil_attr_repeat_count_new(void)
 {
 	Egueb_Dom_Node *n;
 
 	n = ENESIM_OBJECT_INSTANCE_NEW(egueb_smil_attr_repeat_count);
-	egueb_dom_attr_init(n, name, EINA_FALSE, EINA_FALSE, EINA_FALSE);
-	if (def)
-		egueb_dom_attr_set(n, EGUEB_DOM_ATTR_TYPE_DEFAULT, def);
+	egueb_dom_attr_init(n, egueb_dom_string_ref(EGUEB_SMIL_REPEAT_COUNT),
+			EINA_FALSE, EINA_FALSE, EINA_FALSE);
 	return n;
 }
 /*============================================================================*

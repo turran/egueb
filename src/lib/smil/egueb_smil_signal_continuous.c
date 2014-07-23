@@ -46,7 +46,6 @@ typedef struct _Egueb_Smil_Signal_Continuous
 	Egueb_Smil_Signal_Continuous_Interpolator interpolator; /** the interpolator to use for the requested data type */
 	Egueb_Smil_Signal_Process_Callback cb; /** function to call when a value has been set */
 	Egueb_Smil_Signal_State_Callback repeat_cb;
-	void *curr;
 } Egueb_Smil_Signal_Continuous;
 
 typedef struct _Egueb_Smil_Signal_Continuous_Class
@@ -172,9 +171,9 @@ static void _egueb_smil_signal_continuous_animate(Egueb_Smil_Signal *s, Egueb_Sm
 			/* calc the new m */
 			m = _calcs[start->type](m, &start->data);
 			/* interpolate the value with the new m */
-			thiz->interpolator(start->value, end->value, m, thiz->curr, s->data);
+			thiz->interpolator(start->value, end->value, m, s->curr, s->data);
 			/* once the value has been set, call the callback */
-			thiz->cb(thiz->curr, s->data);
+			thiz->cb(s->curr, s->data);
 			return;
 		}
 
@@ -314,12 +313,13 @@ static void _egueb_smil_signal_continuous_instance_deinit(void *o)
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/
-EAPI Egueb_Smil_Signal * egueb_smil_signal_continuous_new(void *data)
+EAPI Egueb_Smil_Signal * egueb_smil_signal_continuous_new(Egueb_Dom_Value *curr, void *data)
 {
 	Egueb_Smil_Signal *s;
 
 	s = ENESIM_OBJECT_INSTANCE_NEW(egueb_smil_signal_continuous);
 	s->data = data;
+	s->curr = curr;
 	return s;
 }
 
