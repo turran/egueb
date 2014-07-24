@@ -12,6 +12,7 @@ src/lib/smil/egueb_smil_calc_mode.h \
 src/lib/smil/egueb_smil_clock.h \
 src/lib/smil/egueb_smil_duration.h \
 src/lib/smil/egueb_smil_event.h \
+src/lib/smil/egueb_smil_feature_animation.h \
 src/lib/smil/egueb_smil_fill.h \
 src/lib/smil/egueb_smil_keyframe.h \
 src/lib/smil/egueb_smil_main.h \
@@ -46,7 +47,8 @@ src/lib/smil/egueb_smil_calc_mode_private.h \
 src/lib/smil/egueb_smil_clock.c \
 src/lib/smil/egueb_smil_duration.c \
 src/lib/smil/egueb_smil_event.c \
-src/lib/smil/egueb_smil_event_etch.c \
+src/lib/smil/egueb_smil_event_timeline.c \
+src/lib/smil/egueb_smil_feature_animation.c \
 src/lib/smil/egueb_smil_fill.c \
 src/lib/smil/egueb_smil_keyframe_private.h \
 src/lib/smil/egueb_smil_main.c \

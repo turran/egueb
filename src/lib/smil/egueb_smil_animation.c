@@ -17,10 +17,13 @@
  */
 
 #include "egueb_smil_private.h"
-#include "egueb_smil_event.h"
 #include "egueb_smil_main.h"
 #include "egueb_smil_animation.h"
 #include "egueb_smil_animation_private.h"
+#include "egueb_smil_clock.h"
+#include "egueb_smil_keyframe.h"
+#include "egueb_smil_timeline.h"
+#include "egueb_smil_event.h"
 
 /*
  * This file handles the common attribute handling of every
@@ -106,9 +109,9 @@ static void _egueb_smil_animation_event_cb(void *item, void *user_data)
 		Egueb_Dom_String *event;
 
 		INFO("Registering event '%s' on element '%s' with offset %"
-				ETCH_TIME_FORMAT, t->event,
+				EGUEB_SMIL_CLOCK_FORMAT, t->event,
 				t->id ? t->id : "NULL",
-				ETCH_TIME_ARGS(t->offset));
+				EGUEB_SMIL_CLOCK_ARGS(t->offset));
 
 		if (t->id)
 		{
@@ -151,7 +154,7 @@ static void _egueb_smil_animation_event_cb(void *item, void *user_data)
 	}
 	else
 	{
-		DBG("Offset only at %" ETCH_TIME_FORMAT, ETCH_TIME_ARGS(t->offset));
+		DBG("Offset only at %" EGUEB_SMIL_CLOCK_FORMAT, EGUEB_SMIL_CLOCK_ARGS(t->offset));
 		if (t->offset < data->offset)
 			data->offset = t->offset;
 	}
@@ -203,12 +206,12 @@ static void _egueb_smil_animation_begin(Egueb_Smil_Animation *thiz, int64_t offs
 	thiz->started = EINA_TRUE;
 	klass = EGUEB_SMIL_ANIMATION_CLASS_GET(thiz);
 
-	INFO("Enabling animation with offset %" ETCH_TIME_FORMAT, ETCH_TIME_ARGS(offset));
+	INFO("Enabling animation with offset %" EGUEB_SMIL_CLOCK_FORMAT, EGUEB_SMIL_CLOCK_ARGS(offset));
 	if (klass->begin)
 	{
 		int64_t time;
 
-		etch_timer_get(thiz->etch, &time);
+		egueb_smil_timeline_current_clock_get(thiz->timeline, &time);
 		time += offset;
 		klass->begin(thiz, time);
 	}
@@ -403,10 +406,10 @@ static Eina_Bool _egueb_dom_animation_setup(Egueb_Smil_Animation *thiz,
 	Egueb_Dom_Node *p;
 	Egueb_Dom_String *attribute_name = NULL;
 
-	/* check that we have an etch */
-	if (!thiz->etch)
+	/* check that we have a timeline */
+	if (!thiz->timeline)
 	{
-		ERR("No etch set");
+		ERR("No timeline set");
 		return EINA_FALSE;
 	}
 
@@ -478,7 +481,7 @@ static void _egueb_dom_animation_cleanup(Egueb_Smil_Animation *thiz,
 /*----------------------------------------------------------------------------*
  *                               Event handlers                               *
  *----------------------------------------------------------------------------*/
-/* Whenever a node has been inserted into the document, request the etch */
+/* Whenever a node has been inserted into the document, request the timeline */
 static void _egueb_smil_animation_inserted_into_document_cb(Egueb_Dom_Event *e,
 		void *data)
 {
@@ -487,16 +490,16 @@ static void _egueb_smil_animation_inserted_into_document_cb(Egueb_Dom_Event *e,
 	Egueb_Dom_Event *request;
 
 	INFO("Smil animation inserted into document");
-	request = egueb_smil_event_etch_new();
+	request = egueb_smil_event_timeline_new();
 	egueb_dom_node_event_dispatch(n, egueb_dom_event_ref(request), NULL, NULL);
 
 	thiz = EGUEB_SMIL_ANIMATION(n);
-	thiz->etch = egueb_smil_event_etch_get(request);
+	thiz->timeline = egueb_smil_event_timeline_get(request);
 	thiz->document_changed = EINA_TRUE;
 	egueb_dom_event_unref(request);
 }
 
-/* Whenever a node has been removed from the document, remove the etch,
+/* Whenever a node has been removed from the document, remove the timeline,
  * and the animation
  */
 static void _egueb_smil_animation_removed_from_document_cb(Egueb_Dom_Event *e,
@@ -506,7 +509,8 @@ static void _egueb_smil_animation_removed_from_document_cb(Egueb_Dom_Event *e,
 
 	INFO("Smil animation removed from document");
 	_egueb_dom_animation_cleanup(thiz, thiz->target);
-	thiz->etch = NULL;
+	egueb_smil_timeline_unref(thiz->timeline);
+	thiz->timeline = NULL;
 }
 /*----------------------------------------------------------------------------*
  *                             Element interface                              *

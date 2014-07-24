@@ -15,13 +15,14 @@
  * License along with this library.
  * If not, see <http://www.gnu.org/licenses/>.
  */
-#include "egueb_dom_private.h"
+#include "egueb_smil_private.h"
 
-#include "egueb_dom_string.h"
-#include "egueb_dom_main.h"
-#include "egueb_dom_node.h"
-#include "egueb_dom_feature.h"
-#include "egueb_dom_feature_animation.h"
+#include "egueb_smil_clock.h"
+#include "egueb_smil_keyframe.h"
+#include "egueb_smil_timeline.h"
+#include "egueb_smil_signal.h"
+
+#include "egueb_smil_feature_animation.h"
 
 #include "egueb_dom_node_private.h"
 #include "egueb_dom_string_private.h"
@@ -29,40 +30,40 @@
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
-#define EGUEB_DOM_FEATURE_ANIMATION_DESCRIPTOR egueb_dom_feature_animation_descriptor_get()
-#define EGUEB_DOM_FEATURE_ANIMATION(o) ENESIM_OBJECT_INSTANCE_CHECK(o,		\
-		Egueb_Dom_Feature_Animation, EGUEB_DOM_FEATURE_ANIMATION_DESCRIPTOR)
+#define EGUEB_SMIL_FEATURE_ANIMATION_DESCRIPTOR egueb_smil_feature_animation_descriptor_get()
+#define EGUEB_SMIL_FEATURE_ANIMATION(o) ENESIM_OBJECT_INSTANCE_CHECK(o,		\
+		Egueb_Smil_Feature_Animation, EGUEB_SMIL_FEATURE_ANIMATION_DESCRIPTOR)
 
-typedef struct _Egueb_Dom_Feature_Animation
+typedef struct _Egueb_Smil_Feature_Animation
 {
 	Egueb_Dom_Feature base;
 	Egueb_Dom_Node *n;
-	const Egueb_Dom_Feature_Animation_Descriptor *d;
-} Egueb_Dom_Feature_Animation;
+	const Egueb_Smil_Feature_Animation_Descriptor *d;
+} Egueb_Smil_Feature_Animation;
 
-typedef struct _Egueb_Dom_Feature_Animation_Class
+typedef struct _Egueb_Smil_Feature_Animation_Class
 {
 	Egueb_Dom_Feature_Class base;
-} Egueb_Dom_Feature_Animation_Class;
+} Egueb_Smil_Feature_Animation_Class;
 
-static Egueb_Dom_String _EGUEB_DOM_FEATURE_ANIMATION_NAME = EGUEB_DOM_STRING_STATIC("EguebDomAnimation");
+static Egueb_Dom_String _EGUEB_SMIL_FEATURE_ANIMATION_NAME = EGUEB_DOM_STRING_STATIC("EguebSmilAnimation");
 
 /*----------------------------------------------------------------------------*
  *                              Object interface                              *
  *----------------------------------------------------------------------------*/
 ENESIM_OBJECT_INSTANCE_BOILERPLATE(EGUEB_DOM_FEATURE_DESCRIPTOR,
-		Egueb_Dom_Feature_Animation, Egueb_Dom_Feature_Animation_Class,
-		egueb_dom_feature_animation);
+		Egueb_Smil_Feature_Animation, Egueb_Smil_Feature_Animation_Class,
+		egueb_smil_feature_animation);
 
-static void _egueb_dom_feature_animation_class_init(void *k)
+static void _egueb_smil_feature_animation_class_init(void *k)
 {
 }
 
-static void _egueb_dom_feature_animation_instance_init(void *o)
+static void _egueb_smil_feature_animation_instance_init(void *o)
 {
 }
 
-static void _egueb_dom_feature_animation_instance_deinit(void *o)
+static void _egueb_smil_feature_animation_instance_deinit(void *o)
 {
 }
 /*============================================================================*
@@ -71,68 +72,71 @@ static void _egueb_dom_feature_animation_instance_deinit(void *o)
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/
-Egueb_Dom_String *EGUEB_DOM_FEATURE_ANIMATION_NAME = &_EGUEB_DOM_FEATURE_ANIMATION_NAME;
+Egueb_Dom_String *EGUEB_SMIL_FEATURE_ANIMATION_NAME = &_EGUEB_SMIL_FEATURE_ANIMATION_NAME;
 
-EAPI Eina_Bool egueb_dom_feature_animation_fps_set(Egueb_Dom_Feature *f, int fps)
+EAPI Eina_Bool egueb_smil_feature_animation_fps_set(Egueb_Dom_Feature *f, int fps)
 {
-	Egueb_Dom_Feature_Animation *thiz;
-	Etch *e;
+	Egueb_Smil_Feature_Animation *thiz;
+	Egueb_Smil_Timeline *e;
 
-	thiz = EGUEB_DOM_FEATURE_ANIMATION(f);
+	thiz = EGUEB_SMIL_FEATURE_ANIMATION(f);
 	if (!thiz->n) return EINA_FALSE;
 
-	e = thiz->d->etch_get(thiz->n);
+	e = thiz->d->timeline_get(thiz->n);
 	if (!e) return EINA_FALSE;
 
-	etch_timer_fps_set(e, fps);
+	egueb_smil_timeline_fps_set(e, fps);
+	egueb_smil_timeline_unref(e);
 	return EINA_TRUE;
 }
 
-EAPI Eina_Bool egueb_dom_feature_animation_fps_get(Egueb_Dom_Feature *f, int *fps)
+EAPI Eina_Bool egueb_smil_feature_animation_fps_get(Egueb_Dom_Feature *f, int *fps)
 {
-	Egueb_Dom_Feature_Animation *thiz;
-	Etch *e;
+	Egueb_Smil_Feature_Animation *thiz;
+	Egueb_Smil_Timeline *e;
 
-	thiz = EGUEB_DOM_FEATURE_ANIMATION(f);
+	thiz = EGUEB_SMIL_FEATURE_ANIMATION(f);
 	if (!thiz->n) return EINA_FALSE;
 
-	e = thiz->d->etch_get(thiz->n);
+	e = thiz->d->timeline_get(thiz->n);
 	if (!e)
 		*fps = 30;
 	else
-		*fps = etch_timer_fps_get(e);
+		*fps = egueb_smil_timeline_fps_get(e);
+	egueb_smil_timeline_unref(e);
 	return EINA_TRUE;
 }
 
-EAPI Eina_Bool egueb_dom_feature_animation_tick(Egueb_Dom_Feature *f)
+EAPI Eina_Bool egueb_smil_feature_animation_tick(Egueb_Dom_Feature *f)
 {
-	Egueb_Dom_Feature_Animation *thiz;
-	Etch *e;
+	Egueb_Smil_Feature_Animation *thiz;
+	Egueb_Smil_Timeline *e;
 
-	thiz = EGUEB_DOM_FEATURE_ANIMATION(f);
+	thiz = EGUEB_SMIL_FEATURE_ANIMATION(f);
 	if (!thiz->n) return EINA_FALSE;
 
-	e = thiz->d->etch_get(thiz->n);
+	e = thiz->d->timeline_get(thiz->n);
 	if (!e) return EINA_FALSE;
 
 	/* TODO handle the case of no etch but tick callback for the svg case */
 
-	etch_timer_tick(e);
+	egueb_smil_timeline_tick(e);
+	egueb_smil_timeline_unref(e);
 	return EINA_TRUE;
 }
 
-EAPI Eina_Bool egueb_dom_feature_animation_add(Egueb_Dom_Node *n,
-		const Egueb_Dom_Feature_Animation_Descriptor *d)
+EAPI Eina_Bool egueb_smil_feature_animation_add(Egueb_Dom_Node *n,
+		const Egueb_Smil_Feature_Animation_Descriptor *d)
 {
-	Egueb_Dom_Feature_Animation *thiz;
+	Egueb_Smil_Feature_Animation *thiz;
 
 	if (!n) return EINA_FALSE;
 	if (!d) return EINA_FALSE;
 
-	thiz = ENESIM_OBJECT_INSTANCE_NEW(egueb_dom_feature_animation);
+	thiz = ENESIM_OBJECT_INSTANCE_NEW(egueb_smil_feature_animation);
 	egueb_dom_node_weak_ref_add(n, &thiz->n);
 	thiz->d = d;
 
-	return egueb_dom_node_feature_add(n, EGUEB_DOM_FEATURE_ANIMATION_NAME, NULL, EGUEB_DOM_FEATURE(thiz));
+	return egueb_dom_node_feature_add(n, EGUEB_SMIL_FEATURE_ANIMATION_NAME, NULL, EGUEB_DOM_FEATURE(thiz));
 }
 

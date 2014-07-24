@@ -29,20 +29,24 @@ $(top_builddir)/src/tests/libmydom.la \
 
 tests_css_CPPFLAGS = \
 -I$(top_srcdir)/src/lib/css \
+$(tests_dom_CPPFLAGS) \
 @EGUEB_CSS_CFLAGS@
 
 tests_css_LDADD = \
 $(top_builddir)/src/lib/css/libegueb_css.la \
+$(tests_dom_LDADD) \
 @EGUEB_CSS_LIBS@
 
 tests_svg_CPPFLAGS = \
 -I$(top_srcdir)/src/lib/svg \
 $(tests_dom_CPPFLAGS) \
+$(tests_css_CPPFLAGS) \
 @EGUEB_SVG_CFLAGS@
 
 tests_svg_LDADD = \
 $(top_builddir)/src/lib/svg/libegueb_svg.la \
 $(tests_dom_LDADD) \
+$(tests_css_LDADD) \
 @EGUEB_SVG_LIBS@
 
 check_PROGRAMS += \

@@ -124,7 +124,7 @@ EAPI Eina_Bool egueb_smil_duration_string_from(Egueb_Smil_Duration *d, const cha
 			return ret;
 		}
 		d->type = EGUEB_SMIL_DURATION_TYPE_CLOCK;
-		DBG("duration is %" ETCH_TIME_FORMAT, ETCH_TIME_ARGS(d->data.clock));
+		DBG("duration is %" EGUEB_SMIL_CLOCK_FORMAT, EGUEB_SMIL_CLOCK_ARGS(d->data.clock));
 	}
 	return ret;
 }

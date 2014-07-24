@@ -1,5 +1,5 @@
-/* ETCH - Timeline Based Animation Library
- * Copyright (C) 2007-2008 Jorge Luis Zapata, Hisham Mardam-Bey
+/* Egueb
+ * Copyright (C) 2011 - 2013 Jorge Luis Zapata
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -15,7 +15,9 @@
  * License along with this library.
  * If not, see <http://www.gnu.org/licenses/>.
  */
+
 #include "egueb_smil_private.h"
+
 #include "egueb_smil_clock.h"
 #include "egueb_smil_keyframe.h"
 #include "egueb_smil_timeline.h"
@@ -231,7 +233,7 @@ static void _egueb_smil_signal_continuous_process(Egueb_Smil_Signal *s,
 		}
 		else
 		{
-			WRN("Signal did not had time to start");
+			WARN("Signal did not had time to start");
 		}
 		return;
 	}

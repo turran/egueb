@@ -51,6 +51,11 @@
 #endif
 #define DBG(...) EINA_LOG_DOM_DBG(egueb_smil_log_global, __VA_ARGS__)
 
+#ifdef CRIT
+# undef CRIT
+#endif
+#define CRIT(...) EINA_LOG_DOM_CRIT(egueb_smil_log_global, __VA_ARGS__)
+
 extern int egueb_smil_log_global;
 
 #endif

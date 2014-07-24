@@ -16,47 +16,56 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 #include "egueb_smil_private.h"
+
+#include "egueb_smil_clock.h"
+#include "egueb_smil_keyframe.h"
+#include "egueb_smil_timeline.h"
 #include "egueb_smil_event.h"
+
 #include "egueb_dom_event_private.h"
 #include "egueb_dom_string_private.h"
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
-#define EGUEB_SMIL_EVENT_ETCH_DESCRIPTOR egueb_smil_event_etch_descriptor_get()
-Enesim_Object_Descriptor * egueb_smil_event_etch_descriptor_get(void);
+#define EGUEB_SMIL_EVENT_TIMELINE_DESCRIPTOR egueb_smil_event_timeline_descriptor_get()
+Enesim_Object_Descriptor * egueb_smil_event_timeline_descriptor_get(void);
 
-#define EGUEB_SMIL_EVENT_ETCH(o) ENESIM_OBJECT_INSTANCE_CHECK(o,		\
-		Egueb_Smil_Event_Etch, EGUEB_SMIL_EVENT_ETCH_DESCRIPTOR)
+#define EGUEB_SMIL_EVENT_TIMELINE(o) ENESIM_OBJECT_INSTANCE_CHECK(o,		\
+		Egueb_Smil_Event_Timeline, EGUEB_SMIL_EVENT_TIMELINE_DESCRIPTOR)
 
-typedef struct _Egueb_Smil_Event_Etch
+typedef struct _Egueb_Smil_Event_Timeline
 {
 	Egueb_Dom_Event parent;
-	Etch *etch;
-} Egueb_Smil_Event_Etch;
+	Egueb_Smil_Timeline *timeline;
+} Egueb_Smil_Event_Timeline;
 
-typedef struct _Egueb_Smil_Event_Etch_Class
+typedef struct _Egueb_Smil_Event_Timeline_Class
 {
 	Egueb_Dom_Event_Class parent;
-} Egueb_Smil_Event_Etch_Class;
+} Egueb_Smil_Event_Timeline_Class;
 
-static Egueb_Dom_String _EGUEB_SMIL_EVENT_ETCH = EGUEB_DOM_STRING_STATIC("etchEvent");
+static Egueb_Dom_String _EGUEB_SMIL_EVENT_TIMELINE = EGUEB_DOM_STRING_STATIC("timelineEvent");
 /*----------------------------------------------------------------------------*
  *                              Object interface                              *
  *----------------------------------------------------------------------------*/
 ENESIM_OBJECT_INSTANCE_BOILERPLATE(EGUEB_DOM_EVENT_DESCRIPTOR,
-		Egueb_Smil_Event_Etch, Egueb_Smil_Event_Etch_Class,
-		egueb_smil_event_etch);
+		Egueb_Smil_Event_Timeline, Egueb_Smil_Event_Timeline_Class,
+		egueb_smil_event_timeline);
 
-static void _egueb_smil_event_etch_class_init(void *k)
+static void _egueb_smil_event_timeline_class_init(void *k)
 {
 }
 
-static void _egueb_smil_event_etch_instance_init(void *o)
+static void _egueb_smil_event_timeline_instance_init(void *o)
 {
 }
 
-static void _egueb_smil_event_etch_instance_deinit(void *o)
+static void _egueb_smil_event_timeline_instance_deinit(void *o)
 {
+	Egueb_Smil_Event_Timeline *thiz;
+
+	thiz = EGUEB_SMIL_EVENT_TIMELINE(o);
+	egueb_smil_timeline_unref(thiz->timeline);
 }
 /*============================================================================*
  *                                 Global                                     *
@@ -64,39 +73,39 @@ static void _egueb_smil_event_etch_instance_deinit(void *o)
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/
-Egueb_Dom_String *EGUEB_SMIL_EVENT_ETCH = &_EGUEB_SMIL_EVENT_ETCH;
+Egueb_Dom_String *EGUEB_SMIL_EVENT_TIMELINE = &_EGUEB_SMIL_EVENT_TIMELINE;
 
-EAPI Eina_Bool egueb_smil_event_is_etch(Egueb_Dom_Event *e)
+EAPI Eina_Bool egueb_smil_event_is_timeline(Egueb_Dom_Event *e)
 {
 	if (!e) return EINA_FALSE;
 	if (!enesim_object_instance_inherits(ENESIM_OBJECT_INSTANCE(e),
-			EGUEB_SMIL_EVENT_ETCH_DESCRIPTOR))
+			EGUEB_SMIL_EVENT_TIMELINE_DESCRIPTOR))
 		return EINA_FALSE;
 	return EINA_TRUE;
 }
 
-EAPI Egueb_Dom_Event * egueb_smil_event_etch_new(void)
+EAPI Egueb_Dom_Event * egueb_smil_event_timeline_new(void)
 {
 	Egueb_Dom_Event *event;
-	event = ENESIM_OBJECT_INSTANCE_NEW(egueb_smil_event_etch);
-	egueb_dom_event_init(event, egueb_dom_string_ref(EGUEB_SMIL_EVENT_ETCH),
+	event = ENESIM_OBJECT_INSTANCE_NEW(egueb_smil_event_timeline);
+	egueb_dom_event_init(event, egueb_dom_string_ref(EGUEB_SMIL_EVENT_TIMELINE),
 			EINA_FALSE, EINA_TRUE, EINA_FALSE,
 			EGUEB_DOM_EVENT_DIRECTION_CAPTURE_BUBBLE);
 	return event;
 }
 
-EAPI void egueb_smil_event_etch_set(Egueb_Dom_Event *e, Etch *etch)
+EAPI void egueb_smil_event_timeline_set(Egueb_Dom_Event *e, Egueb_Smil_Timeline *timeline)
 {
-	Egueb_Smil_Event_Etch *thiz;
+	Egueb_Smil_Event_Timeline *thiz;
 
-	thiz = EGUEB_SMIL_EVENT_ETCH(e);
-	thiz->etch = etch;
+	thiz = EGUEB_SMIL_EVENT_TIMELINE(e);
+	thiz->timeline = timeline;
 }
 
-EAPI Etch * egueb_smil_event_etch_get(Egueb_Dom_Event *e)
+EAPI Egueb_Smil_Timeline * egueb_smil_event_timeline_get(Egueb_Dom_Event *e)
 {
-	Egueb_Smil_Event_Etch *thiz;
+	Egueb_Smil_Event_Timeline *thiz;
 
-	thiz = EGUEB_SMIL_EVENT_ETCH(e);
-	return thiz->etch;
+	thiz = EGUEB_SMIL_EVENT_TIMELINE(e);
+	return egueb_smil_timeline_ref(thiz->timeline);
 }

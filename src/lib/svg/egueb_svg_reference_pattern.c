@@ -92,7 +92,7 @@ static void _egueb_svg_reference_pattern_event_monitor_cb(Egueb_Dom_Event *e,
 	Egueb_Dom_Node *doc;
 	Egueb_Dom_Node *svg;
 
-	if (egueb_smil_event_is_etch(e))
+	if (egueb_smil_event_is_timeline(e))
 		return;
 	/* We need to propagate the event not through the referenceable but
 	 * through the topmost element. That is because it is very possible

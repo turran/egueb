@@ -1,4 +1,4 @@
-/* Creates a document, process it, and tick it */
+/* Creates a document, process it */
 #include "egueb_dom_mylib.h"
 #include <unistd.h>
 #include <signal.h>
@@ -61,7 +61,6 @@ int main(int argc, char **argv)
 	{
 		pause();
 		if (!run) break;
-		mydocument_tick(mydocument);
 		egueb_dom_document_process(mydocument);
 	}
 	egueb_dom_node_unref(mydocument);

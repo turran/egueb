@@ -19,9 +19,12 @@
 #include "egueb_smil_private.h"
 #include "egueb_smil_main.h"
 #include "egueb_smil_set.h"
-#include "egueb_smil_event.h"
 #include "egueb_smil_additive.h"
 #include "egueb_smil_calc_mode.h"
+#include "egueb_smil_clock.h"
+#include "egueb_smil_keyframe.h"
+#include "egueb_smil_timeline.h"
+#include "egueb_smil_event.h"
 
 #include "egueb_smil_animation_private.h"
 #include "egueb_smil_animate_base_private.h"
@@ -753,7 +756,7 @@ static void _egueb_smil_animate_base_enable(Egueb_Dom_Tag *t, int64_t offset)
 	thiz = _egueb_smil_animate_base_get(t);
 	if (!thiz->signal) return;
 
-	egueb_smil_signal_offset_add(thiz->signal, offset);
+	egueb_smil_signal_offset_set(thiz->signal, offset);
 	egueb_smil_signal_enable(thiz->signal);
 }
 
@@ -877,6 +880,7 @@ static Eina_Bool _egueb_smil_animate_base_setup(Egueb_Smil_Animation *a,
 
 	/* create the animation */
 	thiz->signal = egueb_smil_signal_continuous_new(&thiz->dst_value, thiz);
+	egueb_smil_timeline_signal_add(a->timeline, egueb_smil_signal_ref(thiz->signal));
 	/* TODO the repeat count */
 	/* TODO the repeat dur */
 	/* get the interpolator type */
@@ -913,7 +917,7 @@ static void _egueb_smil_animate_base_begin(Egueb_Smil_Animation *a, int64_t offs
 	thiz = EGUEB_SMIL_ANIMATE_BASE(a);
 	if (!thiz->signal) return;
 	DBG("Beginning set at %" EGUEB_SMIL_CLOCK_FORMAT, EGUEB_SMIL_CLOCK_ARGS (offset));
-	egueb_smil_signal_offset_add(thiz->signal, offset);
+	egueb_smil_signal_offset_set(thiz->signal, offset);
 	egueb_smil_signal_enable(thiz->signal);
 }
 
@@ -991,6 +995,7 @@ static void _egueb_smil_animate_base_instance_deinit(void *o)
 	egueb_dom_node_unref(thiz->key_times);
 	egueb_dom_node_unref(thiz->key_splines);
 #endif
+	egueb_smil_signal_unref(thiz->signal);
 }
 /*============================================================================*
  *                                 Global                                     *

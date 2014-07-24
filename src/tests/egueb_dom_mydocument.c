@@ -12,7 +12,6 @@
 typedef struct _MyDocument
 {
 	Egueb_Dom_Document parent;
-	Etch *etch;
 } MyDocument;
 
 typedef struct _MyDocument_Class
@@ -34,10 +33,6 @@ static Egueb_Dom_Node * _mydocument_element_create(Egueb_Dom_Document *d,
 	printf("[mydocument] requesting tag name = %s\n", name);
 	if (!strcmp(name, "myelement"))
 		new_node = myelement_new();
-	else if (!strcmp(name, "set"))
-	{
-		new_node = egueb_smil_set_new();
-	}
 	return new_node;
 }
 
@@ -58,11 +53,7 @@ static void _mydocument_class_init(void *k)
 
 static void _mydocument_instance_init(void *o)
 {
-	MyDocument *thiz;
-
-	thiz = MYDOCUMENT(o);
 	printf("mydocument instance init\n");
-	thiz->etch = etch_new();
 }
 
 static void _mydocument_instance_deinit(void *o)
@@ -76,12 +67,4 @@ Egueb_Dom_Node * mydocument_new(void)
 
 	ret = EGUEB_DOM_NODE (ENESIM_OBJECT_INSTANCE_NEW(mydocument));
 	return ret;
-}
-
-void mydocument_tick(Egueb_Dom_Node *n)
-{
-	MyDocument *thiz;
-
-	thiz = MYDOCUMENT(n);
-	etch_timer_tick(thiz->etch);
 }

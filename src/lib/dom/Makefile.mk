@@ -30,7 +30,6 @@ src/lib/dom/egueb_dom_event_process.h \
 src/lib/dom/egueb_dom_event_script.h \
 src/lib/dom/egueb_dom_event_ui.h \
 src/lib/dom/egueb_dom_feature.h \
-src/lib/dom/egueb_dom_feature_animation.h \
 src/lib/dom/egueb_dom_feature_io.h \
 src/lib/dom/egueb_dom_feature_multimedia.h \
 src/lib/dom/egueb_dom_feature_render.h \
@@ -102,7 +101,6 @@ src/lib/dom/egueb_dom_event_script.c \
 src/lib/dom/egueb_dom_event_ui.c \
 src/lib/dom/egueb_dom_event_ui_private.h \
 src/lib/dom/egueb_dom_feature.c \
-src/lib/dom/egueb_dom_feature_animation.c \
 src/lib/dom/egueb_dom_feature_io.c \
 src/lib/dom/egueb_dom_feature_multimedia.c \
 src/lib/dom/egueb_dom_feature_render.c \

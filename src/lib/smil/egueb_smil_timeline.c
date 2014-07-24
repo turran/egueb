@@ -77,7 +77,7 @@ void egueb_smil_timeline_fps_set(Egueb_Smil_Timeline *thiz, unsigned int fps)
 
 	thiz->fps = fps;
 	spf = (double)1.0/fps;
-	thiz->tpf = spf * ETCH_SECOND;
+	thiz->tpf = spf * EGUEB_SMIL_CLOCK_SECONDS;
 }
 
 /**
@@ -147,7 +147,7 @@ EAPI void egueb_smil_timeline_signal_add(Egueb_Smil_Timeline *thiz, Egueb_Smil_S
 	if (!s) return;
 	if (s->timeline)
 	{
-		WRN("The signal already has a timeline");
+		WARN("The signal already has a timeline");
 		egueb_smil_signal_unref(s);
 		return;
 	}
@@ -173,5 +173,5 @@ EAPI void egueb_smil_timeline_signal_remove(Egueb_Smil_Timeline *thiz, Egueb_Smi
 	thiz->signals = eina_list_remove(thiz->signals, s);
 
 	s->timeline = NULL;
-	egueb_smil_unref(s);
+	egueb_smil_signal_unref(s);
 }

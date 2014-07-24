@@ -17,13 +17,15 @@
  */
 
 #include "egueb_smil_private.h"
+
 #include "egueb_smil_main.h"
 #include "egueb_smil_set.h"
-#include "egueb_smil_event.h"
 #include "egueb_smil_clock.h"
 #include "egueb_smil_keyframe.h"
 #include "egueb_smil_timeline.h"
 #include "egueb_smil_signal.h"
+#include "egueb_smil_event.h"
+
 #include "egueb_smil_animation_private.h"
 
 /* We can optimize this, as there's no need to interpolate any value
@@ -171,9 +173,9 @@ static void _egueb_smil_set_begin(Egueb_Smil_Animation *a, int64_t offset)
 
 	thiz = EGUEB_SMIL_SET(a);
 	if (!thiz->signal) return;
-	DBG("Beginning set at %" ETCH_TIME_FORMAT, ETCH_TIME_ARGS (offset));
-	egueb_smil_animation_offset_add(thiz->signal, offset);
-	egueb_smil_animation_enable(thiz->signal);
+	DBG("Beginning set at %" EGUEB_SMIL_CLOCK_FORMAT, EGUEB_SMIL_CLOCK_ARGS (offset));
+	egueb_smil_signal_offset_set(thiz->signal, offset);
+	egueb_smil_signal_enable(thiz->signal);
 }
 
 static void _egueb_smil_set_end(Egueb_Smil_Animation *a)
@@ -183,7 +185,7 @@ static void _egueb_smil_set_end(Egueb_Smil_Animation *a)
 	thiz = EGUEB_SMIL_SET(a);
 	if (!thiz->signal) return;
 	DBG("Ending");
-	egueb_smil_animation_disable(thiz->signal);
+	egueb_smil_signal_disable(thiz->signal);
 }
 /*----------------------------------------------------------------------------*
  *                              Element interface                             *

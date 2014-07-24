@@ -22,40 +22,6 @@
 #include "egueb_svg_renderable.h"
 #include "egueb_svg_renderable_container_private.h"
 
-Etch * egueb_svg_element_svg_etch_get(Egueb_Dom_Node *n);
+Egueb_Smil_Timeline * egueb_svg_element_svg_timeline_get(Egueb_Dom_Node *n);
 
-#if 0
-#include "egueb_svg_script_provider.h"
-#include "egueb_svg_video_provider.h"
-
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-Ender_Element * egueb_svg_element_svg_internal_element_find(Egueb_Dom_Tag *t, const char *id);
-void egueb_svg_element_svg_element_get(Ender_Element *e, const char *uri, Ender_Element **el);
-void egueb_svg_element_svg_image_load(Ender_Element *e, const char *uri, Enesim_Surface **s, double width, double height);
-Ender_Element * egueb_svg_element_svg_svg_load(Ender_Element *e, const char *uri);
-char * egueb_svg_element_svg_uri_resolve(Ender_Element *e, const char *uri);
-Enesim_Surface * egueb_svg_element_svg_surface_new(Ender_Element *e, int w, int h);
-
-void egueb_svg_element_svg_internal_container_width_get(Egueb_Dom_Tag *t, double *container_width);
-void egueb_svg_element_svg_internal_container_height_get(Egueb_Dom_Tag *t, double *container_height);
-
-/* application related functions */
-void egueb_svg_element_svg_go_to(Ender_Element *e, const char *uri);
-
-/* script related functions */
-Egueb_Svg_Script_Provider * egueb_svg_element_svg_script_provider_get(Ender_Element *e, const char *type);
-
-/* video related functions */
-Egueb_Svg_Video_Provider_Descriptor * egueb_svg_element_svg_video_provider_descriptor_get(Ender_Element *e);
-
-void egueb_svg_element_svg_init(void);
-void egueb_svg_element_svg_shutdown(void);
-
-#ifdef __cplusplus
-}
-#endif
-#endif
 #endif

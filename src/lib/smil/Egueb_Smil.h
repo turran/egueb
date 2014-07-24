@@ -32,8 +32,6 @@
 /* core */
 #include "egueb_smil_build.h"
 #include "egueb_smil_main.h"
-/* events */
-#include "egueb_smil_event.h"
 /* values */
 #include "egueb_smil_additive.h"
 #include "egueb_smil_accumulate.h"
@@ -46,11 +44,18 @@
 #include "egueb_smil_timeline.h"
 #include "egueb_smil_signal.h"
 #include "egueb_smil_timing.h"
+/* timeline */
+#include "egueb_smil_keyframe.h"
+#include "egueb_smil_timeline.h"
+#include "egueb_smil_signal.h"
 /* elements */
 #include "egueb_smil_animation.h"
 #include "egueb_smil_animate.h"
 #include "egueb_smil_set.h"
-
+/* events */
+#include "egueb_smil_event.h"
+/* features */
+#include "egueb_smil_feature_animation.h"
 /**
  * @}
  */

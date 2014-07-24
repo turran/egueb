@@ -75,7 +75,7 @@ typedef struct _Egueb_Svg_Element_Svg
 	Enesim_Renderer *proxy;
 
 	/* animation */
-	Etch *etch;
+	Egueb_Smil_Timeline *timeline;
 	Eina_Bool paused;
 
 	/* painter */
@@ -119,13 +119,13 @@ typedef struct _Egueb_Svg_Element_Svg_Class
 } Egueb_Svg_Element_Svg_Class;
 
 
-static void _egueb_svg_element_svg_etch_cb(Egueb_Dom_Event *e,
+static void _egueb_svg_element_svg_timeline_cb(Egueb_Dom_Event *e,
 		void *data)
 {
 	Egueb_Svg_Element_Svg *thiz = data;
 
-	INFO("Requesting etch");
-	egueb_smil_event_etch_set(e, thiz->etch);
+	INFO("Requesting timeline");
+	egueb_smil_event_timeline_set(e, thiz->timeline);
 }
 /*----------------------------------------------------------------------------*
  *                            Renderable interface                            *
@@ -362,8 +362,8 @@ static void _egueb_svg_element_svg_instance_init(void *o)
 
 	/* add the event to set the painter */
 	egueb_dom_node_event_listener_add(n,
-			EGUEB_SMIL_EVENT_ETCH,
-			_egueb_svg_element_svg_etch_cb,
+			EGUEB_SMIL_EVENT_TIMELINE,
+			_egueb_svg_element_svg_timeline_cb,
 			EINA_TRUE, thiz);
 	/* the rendering */
 	r = enesim_renderer_proxy_new();
@@ -383,8 +383,7 @@ static void _egueb_svg_element_svg_instance_init(void *o)
 	thiz->painter = egueb_svg_painter_g_new();
 
 	/* the animation system */
-	thiz->etch = etch_new();
-	etch_timer_fps_set(thiz->etch, 30);
+	thiz->timeline = egueb_smil_timeline_new();
 }
 
 static void _egueb_svg_element_svg_instance_deinit(void *o)
@@ -403,8 +402,8 @@ static void _egueb_svg_element_svg_instance_deinit(void *o)
 	enesim_renderer_unref(thiz->proxy);
 	/* the painter */
 	egueb_svg_painter_unref(thiz->painter);
-	/* remove etch and all the animation system  */
-	etch_delete(thiz->etch);
+	/* remove timeline and all the animation system  */
+	egueb_smil_timeline_unref(thiz->timeline);
 	/* TODO free the scriptors */
 }
 
@@ -541,12 +540,12 @@ void egueb_svg_element_svg_style_apply(Egueb_Dom_Tag *tag)
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
-Etch * egueb_svg_element_svg_etch_get(Egueb_Dom_Node *n)
+Egueb_Smil_Timeline * egueb_svg_element_svg_timeline_get(Egueb_Dom_Node *n)
 {
 	Egueb_Svg_Element_Svg *thiz;
 
 	thiz = EGUEB_SVG_ELEMENT_SVG(n);
-	return thiz->etch;
+	return egueb_smil_timeline_ref(thiz->timeline);
 }
 /*============================================================================*
  *                                   API                                      *
@@ -622,37 +621,6 @@ EAPI Eina_Bool egueb_svg_element_svg_animations_paused(Egueb_Dom_Node *n)
 
 	thiz = EGUEB_SVG_ELEMENT_SVG(n);
 	return thiz->paused;
-}
-
-/**
- * To be documented
- * FIXME: To be fixed
- */
-EAPI double egueb_svg_element_svg_time_get(Egueb_Dom_Node *n)
-{
-	Egueb_Svg_Element_Svg *thiz;
-	Etch_Time et;
-	double time;
-
-	thiz = EGUEB_SVG_ELEMENT_SVG(n);
-	etch_timer_get(thiz->etch, &et);
-
-	time = EGUEB_SMIL_CLOCK_AS_SECONDS(et);
-	return time;
-}
-
-/**
- * To be documented
- * FIXME: To be fixed
- */
-EAPI void egueb_svg_element_svg_time_set(Egueb_Dom_Node *n, double secs)
-{
-	Egueb_Svg_Element_Svg *thiz;
-	Etch_Time t;
-
-	thiz = EGUEB_SVG_ELEMENT_SVG(n);
-	t = secs * EGUEB_SMIL_CLOCK_SECONDS;
-	etch_timer_set(thiz->etch, t);
 }
 
 #if 0

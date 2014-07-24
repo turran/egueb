@@ -16,6 +16,7 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 #include "egueb_smil_private.h"
+
 #include "egueb_smil_clock.h"
 #include "egueb_smil_keyframe.h"
 #include "egueb_smil_timeline.h"
@@ -104,7 +105,7 @@ static void _egueb_smil_signal_discrete_process(Egueb_Smil_Signal *s,
 		}
 		else
 		{
-			WRN("Signal did not had time to start");
+			WARN("Signal did not had time to start");
 		}
 		return;
 	}

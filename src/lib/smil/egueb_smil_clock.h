@@ -25,10 +25,10 @@
 
 #define EGUEB_SMIL_CLOCK_FORMAT "u:%02u:%02u.%09u"
 #define EGUEB_SMIL_CLOCK_ARGS(t) \
-	(uint32_t) (((Egueb_Smil_Clock)(t)) / (ETCH_SECOND * 60 * 60)), \
-	(uint32_t) ((((Egueb_Smil_Clock)(t)) / (ETCH_SECOND * 60)) % 60), \
-	(uint32_t) ((((Egueb_Smil_Clock)(t)) / ETCH_SECOND) % 60), \
-	(uint32_t) (((Egueb_Smil_Clock)(t)) % ETCH_SECOND)
+	(uint32_t) (((Egueb_Smil_Clock)(t)) / (EGUEB_SMIL_CLOCK_SECONDS * 60 * 60)), \
+	(uint32_t) ((((Egueb_Smil_Clock)(t)) / (EGUEB_SMIL_CLOCK_SECONDS * 60)) % 60), \
+	(uint32_t) ((((Egueb_Smil_Clock)(t)) / EGUEB_SMIL_CLOCK_SECONDS) % 60), \
+	(uint32_t) (((Egueb_Smil_Clock)(t)) % EGUEB_SMIL_CLOCK_SECONDS)
 
 typedef int64_t Egueb_Smil_Clock; /**< Clock abstraction in nano seconds */
 

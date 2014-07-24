@@ -16,6 +16,7 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 #include "egueb_smil_private.h"
+
 #include "egueb_smil_clock.h"
 #include "egueb_smil_keyframe.h"
 #include "egueb_smil_timeline.h"
