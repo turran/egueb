@@ -30,7 +30,6 @@
 #include <Egueb_Dom.h>
 #include <Egueb_Css.h>
 #include <Egueb_Smil.h>
-#include <Etch.h>
 
 #include "egueb_svg_build.h"
 

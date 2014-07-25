@@ -24,7 +24,7 @@ struct _Egueb_Smil_Signal
 	Enesim_Object_Instance parent;
 	Egueb_Smil_Timeline *timeline;
 	Eina_Bool enabled;/** easy way to disable/enable an animation */
-	Etch_Time offset; /*  the real offset */
+	Egueb_Smil_Clock offset; /*  the real offset */
 	int ref;
 
 	Eina_Bool started;

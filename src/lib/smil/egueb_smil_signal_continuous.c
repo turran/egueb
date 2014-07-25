@@ -122,7 +122,7 @@ static double _calc_cubic(double m, Egueb_Smil_Keyframe_Interpolator_Data *data)
 	return m;
 }
 
-static Egueb_Smil_Signal_Continuous_Interpolator_Calc _calcs[ETCH_INTERPOLATOR_TYPES] = {
+static Egueb_Smil_Signal_Continuous_Interpolator_Calc _calcs[EGUEB_SMIL_KEYFRAME_INTERPOLATOR_TYPES] = {
 	/* ETCH_INTERPOLATOR_DISCRETE 	*/ _calc_discrete,
 	/* ETCH_INTERPOLATOR_LINEAR 	*/ _calc_linear,
 	/* ETCH_INTERPOLATOR_COSIN 	*/ _calc_cosin,
@@ -159,9 +159,7 @@ static void _egueb_smil_signal_continuous_animate(Egueb_Smil_Signal *s, Egueb_Sm
 		end = l_next->data;
 		if ((start->time <= curr) && (curr <= end->time))
 		{
-			Etch_Data old;
 			double m;
-			void *data = NULL;
 
 			DBG("At keyframe [%" EGUEB_SMIL_CLOCK_FORMAT " -> %" EGUEB_SMIL_CLOCK_FORMAT "]",
 					EGUEB_SMIL_CLOCK_ARGS (start->time),

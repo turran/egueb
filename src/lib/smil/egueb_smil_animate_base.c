@@ -161,7 +161,6 @@ static void _egueb_smil_animate_base_animation_add_keyframe(Egueb_Smil_Signal *s
 	Egueb_Dom_Value *value,
 	int64_t time)
 {
-	Etch_Animation_Keyframe *k;
 	DBG("Adding keyframe at time %" EGUEB_SMIL_CLOCK_FORMAT, EGUEB_SMIL_CLOCK_ARGS(time));
 	egueb_smil_signal_continuous_keyframe_simple_add(s, type, time, value);
 }

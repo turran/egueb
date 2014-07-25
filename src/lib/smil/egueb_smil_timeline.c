@@ -34,8 +34,8 @@ struct _Egueb_Smil_Timeline
 	Eina_List *signals; /** List of signals */
 	unsigned long frame; /** Current frame */
 	unsigned int fps; /** Number of frames per second */
-	Etch_Time tpf; /** Time per frame */
-	Etch_Time curr; /** Current time in seconds */
+	Egueb_Smil_Clock tpf; /** Time per frame */
+	Egueb_Smil_Clock curr; /** Current time in seconds */
 	int ref;
 };
 
