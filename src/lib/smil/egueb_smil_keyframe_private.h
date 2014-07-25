@@ -39,8 +39,7 @@ typedef struct _Egueb_Smil_Keyframe
 	Egueb_Smil_Clock time;
 	Egueb_Smil_Keyframe_Interpolator_Type type;
 	Egueb_Smil_Keyframe_Interpolator_Data data;
-	Etch_Free value_free;
-	void *value;
+	Egueb_Dom_Value *value;
 } Egueb_Smil_Keyframe;
 
 #endif

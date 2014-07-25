@@ -95,7 +95,7 @@ EAPI void egueb_dom_value_int_interpolate(Egueb_Dom_Value *v,
 		Egueb_Dom_Value *a, Egueb_Dom_Value *b, double m,
 		Egueb_Dom_Value *add, Egueb_Dom_Value *acc, int mul)
 {
-	etch_interpolate_int32(a->data.i32, b->data.i32, m, &v->data.i32);
+	egueb_dom_value_interpolate_int32(a->data.i32, b->data.i32, m, &v->data.i32);
 	if (add)
 		v->data.i32 += add->data.i32;
 }

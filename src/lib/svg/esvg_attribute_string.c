@@ -77,7 +77,7 @@ static void _egueb_svg_animate_string_interpolate(void *a, void *b, double m,
 
 	r->base = va;
 	/* TODO
-	etch_interpolate_string(va, vb, m, &r->base);
+	egueb_dom_value_interpolate_string(va, vb, m, &r->base);
 	*/
 }
 

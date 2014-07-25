@@ -169,14 +169,14 @@ static void _egueb_svg_element_animate_transform_translate_interpolate(void *a, 
 	double tx;
 	double ty = 0;
 
-	etch_interpolate_double(va->values[0], vb->values[0], m, &tx);
+	egueb_dom_value_interpolate_double(va->values[0], vb->values[0], m, &tx);
 	if (vacc)
 	{
 		tx += vacc->values[0] * mul;
 	}
 	if (va->count > 1)
 	{
-		etch_interpolate_double(va->values[1], vb->values[1], m, &ty);
+		egueb_dom_value_interpolate_double(va->values[1], vb->values[1], m, &ty);
 		if (vacc)
 			ty += vacc->values[1] * mul;
 	}
@@ -210,7 +210,7 @@ static void _egueb_svg_element_animate_transform_rotate_interpolate(void *a, voi
 	Enesim_Matrix m1;
 	double angle;
 
-	etch_interpolate_double(va->values[0], vb->values[0], m, &angle);
+	egueb_dom_value_interpolate_double(va->values[0], vb->values[0], m, &angle);
 	if (vacc)
 	{
 		angle += vacc->values[0] * mul;
@@ -227,8 +227,8 @@ static void _egueb_svg_element_animate_transform_rotate_interpolate(void *a, voi
 			cx += vacc->values[1] * mul;
 			cy += vacc->values[1] * mul;
 		}
-		etch_interpolate_double(va->values[1], vb->values[1], m, &cx);
-		etch_interpolate_double(va->values[2], vb->values[2], m, &cy);
+		egueb_dom_value_interpolate_double(va->values[1], vb->values[1], m, &cx);
+		egueb_dom_value_interpolate_double(va->values[2], vb->values[2], m, &cy);
 		enesim_matrix_translate(&m2, cx, cy);
 		enesim_matrix_compose(&m2, &m1, &m1);
 		enesim_matrix_translate(&m2, -cx, -cy);
@@ -264,10 +264,10 @@ static void _egueb_svg_element_animate_transform_scale_interpolate(void *a, void
 	double sx = 0;
 	double sy = 1;
 
-	etch_interpolate_double(va->values[0], vb->values[0], m, &sx);
+	egueb_dom_value_interpolate_double(va->values[0], vb->values[0], m, &sx);
 	if (va->count > 1)
 	{
-		etch_interpolate_double(va->values[1], vb->values[1], m, &sy);
+		egueb_dom_value_interpolate_double(va->values[1], vb->values[1], m, &sy);
 	}
 	if (vacc)
 	{
@@ -305,7 +305,7 @@ static void _egueb_svg_element_animate_transform_skewx_interpolate(void *a, void
 	Egueb_Svg_Matrix_Animated *r = res;
 	double angle;
 
-	etch_interpolate_double(va->values[0], vb->values[0], m, &angle);
+	egueb_dom_value_interpolate_double(va->values[0], vb->values[0], m, &angle);
 	if (vacc)
 		angle += vacc->values[0] * mul;
 	enesim_matrix_values_set(&r->base, 1, tan(angle * M_PI / 180.0), 0, 0, 1, 0, 0, 0, 1);
@@ -338,7 +338,7 @@ static void _egueb_svg_element_animate_transform_skewy_interpolate(void *a, void
 	Egueb_Svg_Matrix_Animated *r = res;
 	double angle;
 
-	etch_interpolate_double(va->values[0], vb->values[0], m, &angle);
+	egueb_dom_value_interpolate_double(va->values[0], vb->values[0], m, &angle);
 	if (vacc)
 		angle += vacc->values[0] * mul;
 	enesim_matrix_values_set(&r->base, 1, 0, 0, tan(angle * M_PI / 180.0), 1, 0, 0, 0, 1);

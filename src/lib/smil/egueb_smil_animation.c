@@ -25,6 +25,7 @@
 #include "egueb_smil_timeline.h"
 #include "egueb_smil_event.h"
 
+#include "egueb_smil_timeline_private.h"
 /*
  * This file handles the common attribute handling of every
  * element on the animation system. That is:
@@ -211,7 +212,7 @@ static void _egueb_smil_animation_begin(Egueb_Smil_Animation *thiz, int64_t offs
 	{
 		int64_t time;
 
-		egueb_smil_timeline_current_clock_get(thiz->timeline, &time);
+		time = egueb_smil_timeline_current_clock_get(thiz->timeline);
 		time += offset;
 		klass->begin(thiz, time);
 	}

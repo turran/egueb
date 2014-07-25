@@ -191,7 +191,7 @@ static void _egueb_svg_animate_number_interpolate(void *a, void *b, double m,
 	Egueb_Svg_Number_Animated *vadd = add;
 	Egueb_Svg_Number_Animated *r = res;
 
-	etch_interpolate_double(va->value, vb->value, m, &r->base.value);
+	egueb_dom_value_interpolate_double(va->value, vb->value, m, &r->base.value);
 	if (vadd)
 		r->base.value += vadd->anim.value;
 }

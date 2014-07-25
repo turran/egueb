@@ -88,7 +88,6 @@ EAPI void egueb_smil_init(void)
 {
 	if (_init_count) goto done;
 	egueb_dom_init();
-	etch_init();
 
 	egueb_smil_log_global = eina_log_domain_register("egueb_smil", 0);
 	if (egueb_smil_log_global < 0)
@@ -112,7 +111,6 @@ EAPI void egueb_smil_shutdown(void)
 	eina_log_domain_unregister(egueb_smil_log_global);
         egueb_smil_log_global = -1;
 
-	etch_shutdown();
 	egueb_dom_shutdown();
 done:
 	_init_count--;

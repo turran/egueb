@@ -19,13 +19,10 @@
 #ifndef _EGUEB_SMIL_SIGNAL_PRIVATE_H_
 #define _EGUEB_SMIL_SIGNAL_PRIVATE_H_
 
-typedef void (*Egueb_Smil_Signal_Process)(Egueb_Smil_Signal *thiz,
-		Egueb_Smil_Clock curr, unsigned int tpf);
-
 struct _Egueb_Smil_Signal
 {
-	Egueb_Smil_Timeline *timeline;
 	Enesim_Object_Instance parent;
+	Egueb_Smil_Timeline *timeline;
 	Eina_Bool enabled;/** easy way to disable/enable an animation */
 	Etch_Time offset; /*  the real offset */
 	int ref;
@@ -34,9 +31,11 @@ struct _Egueb_Smil_Signal
 	Eina_Bool stopped;
 	Egueb_Smil_Signal_State_Callback start_cb;
 	Egueb_Smil_Signal_State_Callback stop_cb;
-	Egueb_Dom_Value *curr;
 	void *data;
 };
+
+typedef void (*Egueb_Smil_Signal_Process)(Egueb_Smil_Signal *thiz,
+	Egueb_Smil_Clock curr, Egueb_Smil_Clock tpf);
 
 typedef struct _Egueb_Smil_Signal_Class
 {

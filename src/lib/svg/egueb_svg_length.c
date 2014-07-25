@@ -67,7 +67,7 @@ static void egueb_svg_length_interpolate(Egueb_Svg_Length *thiz,
 		Egueb_Svg_Length *add, Egueb_Svg_Length *acc, int mul)
 {
 	thiz->unit = a->unit;
-	etch_interpolate_double(a->value, b->value, m, &thiz->value);
+	egueb_dom_value_interpolate_double(a->value, b->value, m, &thiz->value);
 	if (acc)
 	{
 		thiz->value += acc->value * mul;

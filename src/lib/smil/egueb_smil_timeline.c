@@ -45,6 +45,9 @@ static void _process(Egueb_Smil_Timeline *thiz)
 	Eina_List *l;
 
 	/* iterate over the list of signals */
+	DBG("[%" EGUEB_SMIL_CLOCK_FORMAT "] %" EGUEB_SMIL_CLOCK_FORMAT,
+			EGUEB_SMIL_CLOCK_ARGS (thiz->curr),
+			EGUEB_SMIL_CLOCK_ARGS (thiz->tpf));
 	EINA_LIST_FOREACH(thiz->signals, l, a)
 	{
 		egueb_smil_signal_process(a, thiz->curr, thiz->tpf);

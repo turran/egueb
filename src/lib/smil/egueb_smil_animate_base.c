@@ -163,19 +163,15 @@ static void _egueb_smil_animate_base_animation_add_keyframe(Egueb_Smil_Signal *s
 {
 	Etch_Animation_Keyframe *k;
 	DBG("Adding keyframe at time %" EGUEB_SMIL_CLOCK_FORMAT, EGUEB_SMIL_CLOCK_ARGS(time));
-	egueb_smil_signal_continuous_keyframe_simple_add(s, type, time, value, NULL);
+	egueb_smil_signal_continuous_keyframe_simple_add(s, type, time, value);
 }
 
-static void _egueb_smil_animate_base_interpolator_cb(Etch_Data *a, Etch_Data *b, double m, Etch_Data *res, void *data)
+static void _egueb_smil_animate_base_interpolator_cb(Egueb_Dom_Value *a, Egueb_Dom_Value *b,
+		double m, void *data)
 {
 	Egueb_Smil_Animate_Base *thiz = data;
-	egueb_dom_value_interpolate(res->data.external, a->data.external,
-			b->data.external, m, thiz->add_value, NULL, 0);
-#if 0
-	Egueb_Smil_Animate_Base *thiz = data;
-
-	thiz->d->interpolator(a->data.external, b->data.external, m, thiz->destination_add, thiz->destination_acc, thiz->repeat_count, res->data.external);
-#endif
+	egueb_dom_value_interpolate(&thiz->dst_value, a, b, m, thiz->add_value, NULL, 0);
+	_egueb_smil_animate_base_property_set(thiz, &thiz->dst_value);
 }
 
 #if 0
@@ -190,16 +186,7 @@ static void _egueb_smil_animate_base_interpolator_add(Etch_Data *a, Etch_Data *b
 /*----------------------------------------------------------------------------*
  *                        The Etch external animation                         *
  *----------------------------------------------------------------------------*/
-static void _egueb_smil_animate_base_animation_cb(Etch_Animation_Keyframe *k,
-		const Etch_Data *curr,
-		const Etch_Data *prev,
-		void *user_data)
-{
-	Egueb_Smil_Animate_Base *thiz = user_data;
-	_egueb_smil_animate_base_property_set(thiz, &thiz->dst_value);
-}
-
-static void _egueb_smil_animate_base_animation_start_cb(Etch_Animation *ea, void *data)
+static void _egueb_smil_animate_base_animation_start_cb(Egueb_Smil_Signal *s, void *data)
 {
 	Egueb_Smil_Animate_Base *thiz = data;
 	Egueb_Smil_Animation *a;
@@ -218,7 +205,7 @@ static void _egueb_smil_animate_base_animation_start_cb(Etch_Animation *ea, void
 	egueb_dom_node_event_dispatch(a->target, ev, NULL, NULL);
 }
 
-static void _egueb_smil_animate_base_animation_start_and_fetch_cb(Etch_Animation *ea, void *data)
+static void _egueb_smil_animate_base_animation_start_and_fetch_cb(Egueb_Smil_Signal *s, void *data)
 {
 	Egueb_Smil_Animate_Base *thiz = data;
 	Egueb_Smil_Animation *a;
@@ -229,10 +216,10 @@ static void _egueb_smil_animate_base_animation_start_and_fetch_cb(Etch_Animation
 	first = eina_list_data_get(thiz->generated_values);
 	egueb_dom_attr_final_value_get(a->p, first);
 	/* finally call the animation */
-	_egueb_smil_animate_base_animation_start_cb(ea, data);
+	_egueb_smil_animate_base_animation_start_cb(s, data);
 }
 
-static void _egueb_smil_animate_base_animation_stop_cb(Etch_Animation *ea, void *data)
+static void _egueb_smil_animate_base_animation_stop_cb(Egueb_Smil_Signal *s, void *data)
 {
 	Egueb_Smil_Animate_Base *thiz = data;
 	Egueb_Smil_Animation *a;
@@ -252,8 +239,9 @@ static void _egueb_smil_animate_base_animation_stop_cb(Etch_Animation *ea, void 
 	egueb_dom_node_event_dispatch(a->target, ev, NULL, NULL);
 }
 
-static void _egueb_smil_animate_base_animation_repeat_cb(Etch_Animation *ea, void *data)
+static void _egueb_smil_animate_base_animation_repeat_cb(Egueb_Smil_Signal *s, void *data)
 {
+	/* TODO send the repeat event */
 }
 
 #if 0
@@ -804,9 +792,9 @@ static Eina_Bool _egueb_smil_animate_base_setup(Egueb_Smil_Animation *a,
 	Egueb_Smil_Additive additive;
 	Egueb_Smil_Calc_Mode calc_mode = EGUEB_SMIL_CALC_MODE_LINEAR;
 	Egueb_Dom_Value *v;
-	Etch_Interpolator interpolator_cb;
-	Etch_Animation_State_Callback start_cb;
-	Etch_Interpolator_Type atype;
+	Egueb_Smil_Signal_Continuous_Process interpolator_cb;
+	Egueb_Smil_Signal_State_Callback start_cb;
+	Egueb_Smil_Keyframe_Interpolator_Type atype;
 	Eina_Bool has_from, has_by;
 	Eina_List *l, *tt;
 
@@ -879,7 +867,9 @@ static Eina_Bool _egueb_smil_animate_base_setup(Egueb_Smil_Animation *a,
 	egueb_dom_value_copy((Egueb_Dom_Value *)thiz->generated_values->data, &thiz->dst_value, EINA_TRUE);
 
 	/* create the animation */
-	thiz->signal = egueb_smil_signal_continuous_new(&thiz->dst_value, thiz);
+	thiz->signal = egueb_smil_signal_continuous_new(interpolator_cb, start_cb,
+			_egueb_smil_animate_base_animation_stop_cb,
+			_egueb_smil_animate_base_animation_repeat_cb, thiz);
 	egueb_smil_timeline_signal_add(a->timeline, egueb_smil_signal_ref(thiz->signal));
 	/* TODO the repeat count */
 	/* TODO the repeat dur */

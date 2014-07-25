@@ -94,7 +94,7 @@ static void _egueb_svg_animate_paint_interpolate(void *a, void *b, double m,
 
 		enesim_argb_components_from(&acolor, 0xff, va->color.r, va->color.g, va->color.b);
 		enesim_argb_components_from(&bcolor, 0xff, vb->color.r, vb->color.g, vb->color.b);
-		etch_interpolate_argb(acolor, bcolor, m, &dcolor);
+		egueb_dom_value_interpolate_argb(acolor, bcolor, m, &dcolor);
 		enesim_argb_components_to(dcolor, NULL, &r->base.color.r, &r->base.color.g, &r->base.color.b);
 #if 0
 		if (vacc)

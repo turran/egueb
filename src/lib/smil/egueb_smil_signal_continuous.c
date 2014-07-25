@@ -45,8 +45,7 @@ typedef struct _Egueb_Smil_Signal_Continuous
 	Eina_List *keyframes;
 	int repeat; /** number of times the animation will repeat, -1 for infinite */
 
-	Egueb_Smil_Signal_Continuous_Interpolator interpolator; /** the interpolator to use for the requested data type */
-	Egueb_Smil_Signal_Process_Callback cb; /** function to call when a value has been set */
+	Egueb_Smil_Signal_Continuous_Process process_cb; /** function to call when a value has been set */
 	Egueb_Smil_Signal_State_Callback repeat_cb;
 } Egueb_Smil_Signal_Continuous;
 
@@ -143,6 +142,7 @@ static void _egueb_smil_signal_continuous_animate(Egueb_Smil_Signal *s, Egueb_Sm
 	Eina_List *l;
 
 	thiz = EGUEB_SMIL_SIGNAL_CONTINUOUS(s);
+	DBG("[%" EGUEB_SMIL_CLOCK_FORMAT "]", EGUEB_SMIL_CLOCK_ARGS (curr));
 	/* TODO instead of checking everytime every keyframe we can translate the
 	 * keyframes based on the frame, when a keyframe has passed move it before
 	 * like a circular list */
@@ -152,17 +152,20 @@ static void _egueb_smil_signal_continuous_animate(Egueb_Smil_Signal *s, Egueb_Sm
 		Eina_List *l_next = l->next;
 
 		if (!l_next)
+		{
 			break;
+		}
 
-		end = l->data;
+		end = l_next->data;
 		if ((start->time <= curr) && (curr <= end->time))
 		{
 			Etch_Data old;
 			double m;
 			void *data = NULL;
 
-			/* get the keyframe affected */
-			//DBG("-> [%g] %g %g", curr, start->time, end->time);
+			DBG("At keyframe [%" EGUEB_SMIL_CLOCK_FORMAT " -> %" EGUEB_SMIL_CLOCK_FORMAT "]",
+					EGUEB_SMIL_CLOCK_ARGS (start->time),
+					EGUEB_SMIL_CLOCK_ARGS (end->time));
 			/* get the interval between 0 and 1 based on current frame and two keyframes */
 			if (curr == start->time)
 				m = 0;
@@ -172,10 +175,7 @@ static void _egueb_smil_signal_continuous_animate(Egueb_Smil_Signal *s, Egueb_Sm
 				m = (double)(curr - start->time)/(end->time - start->time);
 			/* calc the new m */
 			m = _calcs[start->type](m, &start->data);
-			/* interpolate the value with the new m */
-			thiz->interpolator(start->value, end->value, m, s->curr, s->data);
-			/* once the value has been set, call the callback */
-			thiz->cb(s->curr, s->data);
+			thiz->process_cb(start->value, end->value, m, s->data);
 			return;
 		}
 
@@ -185,7 +185,7 @@ static void _egueb_smil_signal_continuous_animate(Egueb_Smil_Signal *s, Egueb_Sm
  *                              Signal interface                              *
  *----------------------------------------------------------------------------*/
 static void _egueb_smil_signal_continuous_process(Egueb_Smil_Signal *s,
-		Egueb_Smil_Clock curr, unsigned int tpf)
+		Egueb_Smil_Clock curr, Egueb_Smil_Clock tpf)
 {
 	Egueb_Smil_Signal_Continuous *thiz;
 	Egueb_Smil_Clock rcurr;
@@ -194,22 +194,21 @@ static void _egueb_smil_signal_continuous_process(Egueb_Smil_Signal *s,
 	Egueb_Smil_Clock length;
 
 	thiz = EGUEB_SMIL_SIGNAL_CONTINUOUS(s);
-	/* TODO use thiz->start and thiz->end */
-	DBG("[%" EGUEB_SMIL_CLOCK_FORMAT " %" EGUEB_SMIL_CLOCK_FORMAT "]"
-			" %" EGUEB_SMIL_CLOCK_FORMAT \
-			" %" EGUEB_SMIL_CLOCK_FORMAT \
-			" %d",
-			EGUEB_SMIL_CLOCK_ARGS (curr),
-			EGUEB_SMIL_CLOCK_ARGS (s->offset),
-			EGUEB_SMIL_CLOCK_ARGS (thiz->start),
-			EGUEB_SMIL_CLOCK_ARGS (thiz->end),
-			thiz->repeat);
 	/*  are we after the start ? */
 	if (curr < thiz->start + s->offset)
 		return;
 	/* some sanity checks */
 	if (!(thiz->end - thiz->start))
 		return;
+
+	DBG("(%" EGUEB_SMIL_CLOCK_FORMAT ")"
+			" %" EGUEB_SMIL_CLOCK_FORMAT \
+			" %" EGUEB_SMIL_CLOCK_FORMAT \
+			" %d",
+			EGUEB_SMIL_CLOCK_ARGS (s->offset),
+			EGUEB_SMIL_CLOCK_ARGS (thiz->start),
+			EGUEB_SMIL_CLOCK_ARGS (thiz->end),
+			thiz->repeat);
 
 	/* check if we have finished */
 	if (thiz->repeat < 0)
@@ -231,7 +230,7 @@ static void _egueb_smil_signal_continuous_process(Egueb_Smil_Signal *s,
 			_egueb_smil_signal_continuous_animate(s, thiz->end);
 			egueb_smil_signal_stop(s);
 		}
-		else
+		else if (!s->started)
 		{
 			WARN("Signal did not had time to start");
 		}
@@ -304,8 +303,6 @@ static void _egueb_smil_signal_continuous_instance_deinit(void *o)
 	/* remove every keyframe */
 	EINA_LIST_FREE(thiz->keyframes, k)
 	{
-		if (k->value_free)
-			k->value_free(k->value);
 		free(k);
 	}
 }
@@ -315,13 +312,28 @@ static void _egueb_smil_signal_continuous_instance_deinit(void *o)
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/
-EAPI Egueb_Smil_Signal * egueb_smil_signal_continuous_new(Egueb_Dom_Value *curr, void *data)
+EAPI Egueb_Smil_Signal * egueb_smil_signal_continuous_new(
+		Egueb_Smil_Signal_Continuous_Process process_cb,
+		Egueb_Smil_Signal_State_Callback start_cb,
+		Egueb_Smil_Signal_State_Callback stop_cb,
+		Egueb_Smil_Signal_State_Callback repeat_cb,
+		void *data)
 {
 	Egueb_Smil_Signal *s;
+	Egueb_Smil_Signal_Continuous *thiz;
+
+	if (!process_cb)
+		return NULL;
 
 	s = ENESIM_OBJECT_INSTANCE_NEW(egueb_smil_signal_continuous);
 	s->data = data;
-	s->curr = curr;
+	s->start_cb = start_cb;
+	s->stop_cb = stop_cb;
+
+	thiz = EGUEB_SMIL_SIGNAL_CONTINUOUS(s);
+	thiz->repeat_cb = repeat_cb;
+	thiz->process_cb = process_cb;
+
 	return s;
 }
 
@@ -342,7 +354,7 @@ EAPI void egueb_smil_signal_continuous_repeat_set(Egueb_Smil_Signal *s, int time
 EAPI void egueb_smil_signal_continuous_keyframe_simple_add(Egueb_Smil_Signal *s,
 		Egueb_Smil_Keyframe_Interpolator_Type type,
 		Egueb_Smil_Clock clock,
-		void *value, Etch_Free value_free)
+		Egueb_Dom_Value *value)
 {
 	Egueb_Smil_Signal_Continuous *thiz;
 	Egueb_Smil_Keyframe *k;
@@ -351,7 +363,6 @@ EAPI void egueb_smil_signal_continuous_keyframe_simple_add(Egueb_Smil_Signal *s,
 	k->type = type;
 	k->time = clock;
 	k->value = value;
-	k->value_free = value_free;
 
 	thiz = EGUEB_SMIL_SIGNAL_CONTINUOUS(s);
 	_egueb_smil_signal_continuous_keyframes_add(thiz, k);
@@ -359,7 +370,7 @@ EAPI void egueb_smil_signal_continuous_keyframe_simple_add(Egueb_Smil_Signal *s,
 
 EAPI void egueb_smil_signal_continuous_keyframe_quadratic_add(Egueb_Smil_Signal *s,
 		Egueb_Smil_Clock clock, double x0, double y0,
-		void *value, Etch_Free value_free)
+		Egueb_Dom_Value *value)
 {
 	Egueb_Smil_Signal_Continuous *thiz;
 	Egueb_Smil_Keyframe *k;
@@ -368,7 +379,6 @@ EAPI void egueb_smil_signal_continuous_keyframe_quadratic_add(Egueb_Smil_Signal 
 	k->type = EGUEB_SMIL_KEYFRAME_INTERPOLATOR_QUADRATIC;
 	k->time = clock;
 	k->value = value;
-	k->value_free = value_free;
 	k->data.q.x0 = x0;
 	k->data.q.y0 = y0;
 

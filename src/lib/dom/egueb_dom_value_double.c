@@ -94,7 +94,7 @@ EAPI void egueb_dom_value_double_interpolate(Egueb_Dom_Value *v,
 		Egueb_Dom_Value *a, Egueb_Dom_Value *b, double m,
 		Egueb_Dom_Value *add, Egueb_Dom_Value *acc, int mul)
 {
-	etch_interpolate_double(a->data.d, b->data.d, m, &v->data.d);
+	egueb_dom_value_interpolate_double(a->data.d, b->data.d, m, &v->data.d);
 	if (add)
 		v->data.d += add->data.d;
 }

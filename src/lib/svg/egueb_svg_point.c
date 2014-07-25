@@ -97,8 +97,8 @@ static void _egueb_svg_point_interpolate(Egueb_Dom_Value *v,
 	Egueb_Svg_Point *cb = b->data.ptr;
 	Egueb_Svg_Point *ca = a->data.ptr;
 
-	etch_interpolate_double(ca->x, cb->x, m, &cv->x);
-	etch_interpolate_double(ca->y, cb->y, m, &cv->y);
+	egueb_dom_value_interpolate_double(ca->x, cb->x, m, &cv->x);
+	egueb_dom_value_interpolate_double(ca->y, cb->y, m, &cv->y);
 }
 
 static Egueb_Dom_Value_Descriptor _egueb_svg_point_descriptor = {

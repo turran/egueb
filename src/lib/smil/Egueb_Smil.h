@@ -21,7 +21,6 @@
 
 #include <Eina.h>
 #include <Egueb_Dom.h>
-#include <Etch.h>
 
 /**
  * @defgroup Egueb_Smil_Group SMIL

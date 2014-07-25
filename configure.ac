@@ -41,11 +41,11 @@ ETCH_VERSION="0.0.5"
 
 AC_CANONICAL_HOST
 
-egueb_dom_requirements="enesim >= ${ENESIM_VERSION} etch >= ${ETCH_VERSION} ender >= ${ENDER_VERSION} eina >= ${EINA_VERSION}"
+egueb_dom_requirements="enesim >= ${ENESIM_VERSION} ender >= ${ENDER_VERSION} eina >= ${EINA_VERSION}"
 egueb_dom_requirements_private=""
 egueb_css_requirements="eina >= ${EINA_VERSION} ${egueb_dom_requirements}"
 egueb_css_requirements_private=""
-egueb_smil_requirements="etch >= ${ETCH_VERSION} ${egueb_dom_requirements}"
+egueb_smil_requirements="${egueb_dom_requirements}"
 egueb_svg_requirements="${egueb_dom_requirements}"
 
 AC_SUBST([egueb_css_requirements])
@@ -159,8 +159,6 @@ if test "x${want_egueb_svg}" = "xyes" && test "x${want_egueb_css}" = "xyes" && t
 fi
 
 # For Dom test
-PKG_CHECK_MODULES([ETCH], [etch])
-
 AM_CONDITIONAL(BUILD_EGUEB_CSS, [test "x${want_egueb_css}" = "xyes"])
 AM_CONDITIONAL(BUILD_EGUEB_DOM, [test "x${want_egueb_dom}" = "xyes"])
 AM_CONDITIONAL(BUILD_EGUEB_SMIL, [test "x${want_egueb_smil}" = "xyes"])
