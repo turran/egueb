@@ -29,6 +29,7 @@
 /* elements */
 #include "egueb_svg_element.h"
 #include "egueb_svg_element_a.h"
+#include "egueb_svg_element_animate_transform.h"
 #include "egueb_svg_element_circle.h"
 #include "egueb_svg_element_clip_path.h"
 #include "egueb_svg_element_defs.h"
@@ -506,11 +507,10 @@ static Egueb_Dom_Node * _egueb_svg_document_element_create_by_id(int id)
 		case EGUEB_SVG_TYPE_ANIMATE:
 		ret = egueb_smil_animate_new();
 		break;
-#if 0
+
 		case EGUEB_SVG_TYPE_ANIMATETRANSFORM:
 		ret = egueb_svg_element_animate_transform_new();
 		break;
-#endif
 
 		case EGUEB_SVG_TYPE_VIDEO:
 		ret = egueb_svg_element_video_new();

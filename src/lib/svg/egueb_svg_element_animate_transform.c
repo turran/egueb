@@ -1,5 +1,5 @@
-/* Esvg - SVG
- * Copyright (C) 2011 Jorge Luis Zapata, Vincent Torri
+/* Egueb
+ * Copyright (C) 2011 - 2013 Jorge Luis Zapata
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -15,17 +15,13 @@
  * License along with this library.
  * If not, see <http://www.gnu.org/licenses/>.
  */
-#include "egueb_svg_main_private.h"
-#include "egueb_svg_private_attribute_presentation.h"
-#include "egueb_svg_context_private.h"
-#include "egueb_svg_element_private.h"
-#include "egueb_svg_private_attribute_animation.h"
-#include "egueb_svg_element_animation_private.h"
-#include "egueb_svg_animate_base_private.h"
-#include "egueb_svg_element_animate_transform_private.h"
-#include "egueb_svg_element_svg_private.h"
 
-#include "egueb_svg_element_animate_transform.h"
+#include "egueb_svg_main_private.h"
+#include "egueb_svg_main.h"
+
+#include "egueb_smil_animation_private.h"
+#include "egueb_smil_animate_base_private.h"
+
 /* This file handles the 'animateTransform' tag. The idea
  * is that you can animate transformations by animating
  * the numbers that define a transformation and its type
@@ -76,11 +72,11 @@
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
-#define ESVG_LOG_DEFAULT _egueb_svg_element_animate_transform_log
-
-static int _egueb_svg_element_animate_transform_log = -1;
-
-static Ender_Property *ESVG_ELEMENT_ANIMATE_TRANSFORM_TYPE;
+#define EGUEB_SVG_ELEMENT_ANIMATE_TRANSFORM_DESCRIPTOR egueb_svg_element_animate_transform_descriptor_get()
+#define EGUEB_SVG_ELEMENT_ANIMATE_TRANSFORM_CLASS(k) ENESIM_OBJECT_CLASS_CHECK(k, 		\
+		Egueb_Svg_Element_Animate_Transform_Class, EGUEB_SVG_ELEMENT_ANIMATE_TRANSFORM_DESCRIPTOR)
+#define EGUEB_SVG_ELEMENT_ANIMATE_TRANSFORM(o) ENESIM_OBJECT_INSTANCE_CHECK(o, 		\
+		Egueb_Svg_Element_Animate_Transform, EGUEB_SVG_ELEMENT_ANIMATE_TRANSFORM_DESCRIPTOR)
 
 typedef struct _Egueb_Svg_Animate_Transform_Data
 {
@@ -88,14 +84,20 @@ typedef struct _Egueb_Svg_Animate_Transform_Data
 	int count;
 } Egueb_Svg_Animate_Transform_Data;
 
-typedef struct _Egueb_Svg_Animate_Transform
+typedef struct _Egueb_Svg_Element_Animate_Transform
 {
-	/* properties */
-	Egueb_Svg_Animate_Transform_Type type;
+	Egueb_Smil_Animate_Base base;
+	Egueb_Dom_Node *type;
 	/* interface */
 	/* private */
 } Egueb_Svg_Element_Animate_Transform;
 
+typedef struct _Egueb_Svg_Element_Animate_Transform_Class
+{
+	Egueb_Smil_Animate_Base_Class base;
+} Egueb_Svg_Element_Animate_Transform_Class;
+
+#if 0
 static Egueb_Svg_Element_Animate_Transform * _egueb_svg_element_animate_transform_get(Egueb_Dom_Tag *t)
 {
 	Egueb_Svg_Element_Animate_Transform *thiz;
@@ -435,88 +437,52 @@ static Egueb_Svg_Animate_Base_Descriptor _descriptor = {
 	/* .attribute_set	= */ _egueb_svg_element_animate_transform_attribute_set,
 	/* .type_descriptor_get	= */ _egueb_svg_element_animate_transform_type_descriptor_get,
 };
+#endif
 /*----------------------------------------------------------------------------*
- *                           The Ender interface                              *
+ *                              Element interface                             *
  *----------------------------------------------------------------------------*/
-static void _egueb_svg_element_animate_transform_type_set(Egueb_Dom_Tag *t, Egueb_Svg_Animate_Transform_Type type)
+static Egueb_Dom_String * _egueb_svg_element_animate_transform_tag_name_get(
+		Egueb_Dom_Element *e)
 {
-	Egueb_Svg_Element_Animate_Transform *thiz;
+	return egueb_dom_string_ref(EGUEB_SVG_NAME_ANIMATE_TRANSFORM);
+}
+/*----------------------------------------------------------------------------*
+ *                              Object interface                              *
+ *----------------------------------------------------------------------------*/
+ENESIM_OBJECT_INSTANCE_BOILERPLATE(EGUEB_SMIL_ANIMATE_BASE_DESCRIPTOR,
+		Egueb_Svg_Element_Animate_Transform,
+		Egueb_Svg_Element_Animate_Transform_Class,
+		egueb_svg_element_animate_transform);
 
-	thiz = _egueb_svg_element_animate_transform_get(t);
-	thiz->type = type;
+static void _egueb_svg_element_animate_transform_class_init(void *k)
+{
+	Egueb_Dom_Element_Class *e_klass;
+
+	e_klass= EGUEB_DOM_ELEMENT_CLASS(k);
+	e_klass->tag_name_get = _egueb_svg_element_animate_transform_tag_name_get;
 }
 
-static void _egueb_svg_element_animate_transform_type_get(Egueb_Dom_Tag *t, Egueb_Svg_Animate_Transform_Type *type)
+static void _egueb_svg_element_animate_transform_instance_init(void *o)
 {
-	Egueb_Svg_Element_Animate_Transform *thiz;
-
-	if (!type) return;
-	thiz = _egueb_svg_element_animate_transform_get(t);
-	*type = thiz->type;
 }
 
-static Egueb_Dom_Tag * _egueb_svg_element_animate_transform_new(void)
+static void _egueb_svg_element_animate_transform_instance_deinit(void *o)
 {
-	Egueb_Svg_Element_Animate_Transform *thiz;
-	Egueb_Dom_Tag *t;
-
-	thiz = calloc(1, sizeof(Egueb_Svg_Element_Animate_Transform));
-
-	t = egueb_svg_animate_base_new(&_descriptor, ESVG_TYPE_ANIMATETRANSFORM, thiz);
-	return t;
 }
-
-/* The ender wrapper */
-#define _egueb_svg_element_animate_transform_delete NULL
-#define _egueb_svg_element_animate_transform_type_is_set NULL
-#include "egueb_svg_generated_element_animate_transform.c"
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
-void egueb_svg_element_animate_transform_init(void)
-{
-	_egueb_svg_element_animate_transform_log = eina_log_domain_register("egueb_svg_element_animate_transform", ESVG_LOG_COLOR_DEFAULT);
-	if (_egueb_svg_element_animate_transform_log < 0)
-	{
-		EINA_LOG_ERR("Can not create log domain.");
-		return;
-	}
-	_egueb_svg_element_animate_transform_init();
-}
-
-void egueb_svg_element_animate_transform_shutdown(void)
-{
-	if (_egueb_svg_element_animate_transform_log < 0)
-		return;
-	_egueb_svg_element_animate_transform_shutdown();
-	eina_log_domain_unregister(_egueb_svg_element_animate_transform_log);
-	_egueb_svg_element_animate_transform_log = -1;
-}
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/
 /**
- * To be documented
- * FIXME: To be fixed
+ * Creates a new animate_transform element
+ * @return The newly created animate_transform element @ender_transfer{full}
  */
-EAPI Ender_Element * egueb_svg_element_animate_transform_new(void)
+EAPI Egueb_Dom_Node * egueb_svg_element_animate_transform_new(void)
 {
-	return ESVG_ELEMENT_NEW("SVGAnimateTransformElement");
-}
+	Egueb_Dom_Node *n;
 
-/**
- * To be documented
- * FIXME: To be fixed
- */
-EAPI void egueb_svg_element_animate_transform_type_set(Ender_Element *e, Egueb_Svg_Animate_Transform_Type type)
-{
-	ender_element_property_value_set(e, ESVG_ELEMENT_ANIMATE_TRANSFORM_TYPE, type, NULL);
-}
-
-/**
- * To be documented
- * FIXME: To be fixed
- */
-EAPI void egueb_svg_element_animate_transform_type_get(Ender_Element *e, Egueb_Svg_Animate_Transform_Type *type)
-{
+	n = ENESIM_OBJECT_INSTANCE_NEW(egueb_svg_element_animate_transform);
+	return n;
 }

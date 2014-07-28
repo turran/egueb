@@ -61,6 +61,7 @@ static void _egueb_svg_strings_init(void)
 	_egueb_svg_mime = egueb_dom_string_new_with_string("image/svg+xml");
 	/* elements */
 	EGUEB_SVG_NAME_A = egueb_dom_string_new_with_string("a");
+	EGUEB_SVG_NAME_ANIMATE_TRANSFORM = egueb_dom_string_new_with_string("animateTransform");
 	EGUEB_SVG_NAME_CIRCLE = egueb_dom_string_new_with_string("circle");
 	EGUEB_SVG_NAME_CLIP_PATH = egueb_dom_string_new_with_string("clipPath");
 	EGUEB_SVG_NAME_DEFS = egueb_dom_string_new_with_string("defs");
@@ -148,6 +149,7 @@ static void _egueb_svg_strings_shutdown(void)
 	egueb_dom_string_unref(_egueb_svg_mime);
 	/* elements */
 	egueb_dom_string_unref(EGUEB_SVG_NAME_A);
+	egueb_dom_string_unref(EGUEB_SVG_NAME_ANIMATE_TRANSFORM);
 	egueb_dom_string_unref(EGUEB_SVG_NAME_CIRCLE);
 	egueb_dom_string_unref(EGUEB_SVG_NAME_CLIP_PATH);
 	egueb_dom_string_unref(EGUEB_SVG_NAME_DEFS);
@@ -272,6 +274,7 @@ int egueb_svg_log_dom_global = -1;
  *============================================================================*/
 /* elements */
 Egueb_Dom_String *EGUEB_SVG_NAME_A;
+Egueb_Dom_String *EGUEB_SVG_NAME_ANIMATE_TRANSFORM;
 Egueb_Dom_String *EGUEB_SVG_NAME_CIRCLE;
 Egueb_Dom_String *EGUEB_SVG_NAME_CLIP_PATH;
 Egueb_Dom_String *EGUEB_SVG_NAME_DEFS;

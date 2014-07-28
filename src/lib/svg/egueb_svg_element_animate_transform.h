@@ -1,5 +1,5 @@
-/* Esvg - SVG
- * Copyright (C) 2011 Jorge Luis Zapata, Vincent Torri
+/* Egueb
+ * Copyright (C) 2011 - 2013 Jorge Luis Zapata
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -15,11 +15,9 @@
  * License along with this library.
  * If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef _ESVG_ELEMENT_ANIMATE_TRANSFORM_H
-#define _ESVG_ELEMENT_ANIMATE_TRANSFORM_H
+#ifndef _EGUEB_SVG_ELEMENT_ANIMATE_TRANSFORM_H
+#define _EGUEB_SVG_ELEMENT_ANIMATE_TRANSFORM_H
 
-EAPI Ender_Element * egueb_svg_element_animate_transform_new(void);
-EAPI void egueb_svg_element_animate_transform_type_set(Ender_Element *e, Egueb_Svg_Animate_Transform_Type type);
-EAPI void egueb_svg_element_animate_transform_type_get(Ender_Element *e, Egueb_Svg_Animate_Transform_Type *type);
+EAPI Egueb_Dom_Node * egueb_svg_element_animate_transform_new(void);
 
 #endif

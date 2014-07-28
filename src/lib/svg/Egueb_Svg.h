@@ -111,6 +111,7 @@ extern "C" {
 /* elements */
 #include "egueb_svg_element.h"
 #include "egueb_svg_element_a.h"
+#include "egueb_svg_element_animate_transform.h"
 #include "egueb_svg_element_circle.h"
 #include "egueb_svg_element_clip_path.h"
 #include "egueb_svg_element_desc.h"
