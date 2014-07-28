@@ -439,6 +439,20 @@ static Egueb_Svg_Animate_Base_Descriptor _descriptor = {
 };
 #endif
 /*----------------------------------------------------------------------------*
+ *                            Animation interface                             *
+ *----------------------------------------------------------------------------*/
+static const Egueb_Dom_Value_Descriptor *
+_egueb_svg_element_animate_transform_value_descriptor_get(Egueb_Smil_Animation *a)
+{
+	/* TODO for transformation we should return the descriptor of the
+	 * transformation values
+	 */
+	return NULL;
+}
+
+/* TODO add functions for setting the attribute */
+/* TODO add function to add a value */
+/*----------------------------------------------------------------------------*
  *                              Element interface                             *
  *----------------------------------------------------------------------------*/
 static Egueb_Dom_String * _egueb_svg_element_animate_transform_tag_name_get(
@@ -457,9 +471,13 @@ ENESIM_OBJECT_INSTANCE_BOILERPLATE(EGUEB_SMIL_ANIMATE_BASE_DESCRIPTOR,
 static void _egueb_svg_element_animate_transform_class_init(void *k)
 {
 	Egueb_Dom_Element_Class *e_klass;
+	Egueb_Smil_Animation_Class *a_klass;
 
 	e_klass= EGUEB_DOM_ELEMENT_CLASS(k);
 	e_klass->tag_name_get = _egueb_svg_element_animate_transform_tag_name_get;
+
+	a_klass = EGUEB_SMIL_ANIMATION_CLASS(k);
+	a_klass->value_descriptor_get = _egueb_svg_element_animate_transform_value_descriptor_get;
 }
 
 static void _egueb_svg_element_animate_transform_instance_init(void *o)

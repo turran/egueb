@@ -404,8 +404,8 @@ static Eina_Bool _egueb_dom_animation_setup(Egueb_Smil_Animation *thiz,
 		Egueb_Dom_Node *target)
 {
 	Egueb_Smil_Animation_Class *klass;
-	Egueb_Dom_Node *p;
 	Egueb_Dom_String *attribute_name = NULL;
+	Egueb_Dom_Node *attr;
 
 	/* check that we have a timeline */
 	if (!thiz->timeline)
@@ -422,29 +422,45 @@ static Eina_Bool _egueb_dom_animation_setup(Egueb_Smil_Animation *thiz,
 		ERR("No 'attribute_name' set");
 		return EINA_FALSE;
 	}
-	/* get the property from the element */
-	p = egueb_dom_element_attribute_fetch(target, attribute_name);
-	if (!p)
+
+	/* get the attribute from the element */
+	if (thiz->attr)
 	{
-		ERR("No Property '%s' found",
+		egueb_dom_node_unref(thiz->attr);
+		thiz->attr = NULL;
+	}
+
+	attr = egueb_dom_element_attribute_fetch(target, attribute_name);
+	if (!attr)
+	{
+		ERR("No attribute '%s' found",
 				egueb_dom_string_string_get(attribute_name));
 		egueb_dom_string_unref(attribute_name);
 		return EINA_FALSE;
 	}
-	egueb_dom_string_unref(attribute_name);
-	if (thiz->p)
+
+	thiz->attr = attr;
+
+	/* get the value descriptor */
+	klass = EGUEB_SMIL_ANIMATION_CLASS_GET(thiz);
+	if (!klass->value_descriptor_get)
 	{
-		egueb_dom_node_unref(thiz->p);
-		thiz->p = NULL;
+		ERR("No value descriptor defined");
+		egueb_dom_string_unref(attribute_name);
+		return EINA_FALSE;
+	}
+	thiz->d = klass->value_descriptor_get(thiz);
+	if (!thiz->d)
+	{
+		ERR("No value descriptor");
+		egueb_dom_string_unref(attribute_name);
+		return EINA_FALSE;
 	}
 
-	thiz->p = p;
-	thiz->d = egueb_dom_attr_value_descriptor_get(p);
 	/* do the begin and end conditions */
 	_egueb_smil_animation_begin_setup(thiz);
 	_egueb_smil_animation_end_setup(thiz);
 
-	klass = EGUEB_SMIL_ANIMATION_CLASS_GET(thiz);
 	if (klass->setup)
 	{
 		if (!klass->setup(thiz, target))
@@ -471,10 +487,10 @@ static void _egueb_dom_animation_cleanup(Egueb_Smil_Animation *thiz,
 	_egueb_smil_animation_end_release(thiz);
 
 	if (klass->cleanup) klass->cleanup(thiz, target);
-	if (thiz->p)
+	if (thiz->attr)
 	{
-		egueb_dom_node_unref(thiz->p);
-		thiz->p = NULL;
+		egueb_dom_node_unref(thiz->attr);
+		thiz->attr = NULL;
 	}
 	thiz->target = NULL;
 }
@@ -512,6 +528,14 @@ static void _egueb_smil_animation_removed_from_document_cb(Egueb_Dom_Event *e,
 	_egueb_dom_animation_cleanup(thiz, thiz->target);
 	egueb_smil_timeline_unref(thiz->timeline);
 	thiz->timeline = NULL;
+}
+/*----------------------------------------------------------------------------*
+ *                            Animation interface                             *
+ *----------------------------------------------------------------------------*/
+static const Egueb_Dom_Value_Descriptor *
+_egueb_smil_animation_value_descriptor_get(Egueb_Smil_Animation *thiz)
+{
+	return egueb_dom_attr_value_descriptor_get(thiz->attr);
 }
 /*----------------------------------------------------------------------------*
  *                             Element interface                              *
@@ -555,9 +579,13 @@ ENESIM_OBJECT_ABSTRACT_BOILERPLATE(EGUEB_DOM_ELEMENT_DESCRIPTOR,
 static void _egueb_smil_animation_class_init(void *k)
 {
 	Egueb_Dom_Element_Class *klass;
+	Egueb_Smil_Animation_Class *thiz_klass;
 
 	klass = EGUEB_DOM_ELEMENT_CLASS(k);
 	klass->process = _egueb_smil_animation_process;
+
+	thiz_klass = EGUEB_SMIL_ANIMATION_CLASS(k);
+	thiz_klass->value_descriptor_get = _egueb_smil_animation_value_descriptor_get;
 }
 
 static void _egueb_smil_animation_instance_init(void *o)

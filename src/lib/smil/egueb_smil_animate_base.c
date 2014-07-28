@@ -72,7 +72,7 @@ static void _egueb_smil_animate_base_property_set(Egueb_Smil_Animate_Base *thiz,
 	Egueb_Smil_Animation *a;
 
 	a = EGUEB_SMIL_ANIMATION(thiz);
-	egueb_dom_attr_value_set(a->p, EGUEB_DOM_ATTR_TYPE_ANIMATED, v);
+	egueb_dom_attr_value_set(a->attr, EGUEB_DOM_ATTR_TYPE_ANIMATED, v);
 }
 
 static void _egueb_smil_animate_base_property_get(Egueb_Smil_Animate_Base *thiz, Egueb_Dom_Value *v)
@@ -80,7 +80,7 @@ static void _egueb_smil_animate_base_property_get(Egueb_Smil_Animate_Base *thiz,
 	Egueb_Smil_Animation *a;
 
 	a = EGUEB_SMIL_ANIMATION(thiz);
-	egueb_dom_attr_final_value_get(a->p, v);
+	egueb_dom_attr_final_value_get(a->attr, v);
 }
 
 static Egueb_Smil_Keyframe_Interpolator_Type
@@ -146,7 +146,7 @@ static void * _egueb_smil_animate_base_property_destination_get(Egueb_Smil_Anima
 	void *ret;
 
 	ret = thiz->d->destination_new();
-	ender_element_property_value_get(thiz->parent_e, thiz->p, ret, NULL);
+	ender_element_property_value_get(thiz->parent_e, thiz->attr, ret, NULL);
 	if (thiz->d->destination_keep)
 	{
 		thiz->d->destination_keep(ret);
@@ -178,7 +178,7 @@ static void _egueb_smil_animate_base_interpolator_add(Etch_Data *a, Etch_Data *b
 {
 	Egueb_Smil_Animate_Base *thiz = data;
 
-	ender_element_property_value_get(thiz->parent_e, thiz->p, thiz->destination_add, NULL);
+	ender_element_property_value_get(thiz->parent_e, thiz->attr, thiz->destination_add, NULL);
 	_egueb_smil_animate_base_interpolator_cb(a, b, m, res, data);
 }
 #endif
@@ -197,7 +197,8 @@ static void _egueb_smil_animate_base_animation_start_cb(Egueb_Smil_Signal *s, vo
 	/* in case of "remove" pick the last value it had */
 	if (fill == EGUEB_SMIL_FILL_REMOVE)
 	{
-		egueb_dom_attr_final_value_get(a->p, &thiz->prv_value);
+		/* TODO do a copy, as it might be a reference to a value */
+		egueb_dom_attr_final_value_get(a->attr, &thiz->prv_value);
 	}
 	ev = egueb_smil_event_new();
 	egueb_smil_event_init(ev, egueb_dom_string_ref(EGUEB_SMIL_EVENT_BEGIN), 0);
@@ -213,7 +214,7 @@ static void _egueb_smil_animate_base_animation_start_and_fetch_cb(Egueb_Smil_Sig
 	a = EGUEB_SMIL_ANIMATION(thiz);
 	/* get the first value and store the current value there */
 	first = eina_list_data_get(thiz->generated_values);
-	egueb_dom_attr_final_value_get(a->p, first);
+	egueb_dom_attr_final_value_get(a->attr, first);
 	/* finally call the animation */
 	_egueb_smil_animate_base_animation_start_cb(s, data);
 }
@@ -231,7 +232,7 @@ static void _egueb_smil_animate_base_animation_stop_cb(Egueb_Smil_Signal *s, voi
 	if (fill == EGUEB_SMIL_FILL_REMOVE)
 	{
 		DBG("Going back to previous value");
-		_egueb_smil_animate_base_property_set(thiz, &thiz->prv_value);
+		egueb_dom_attr_value_set(a->attr, EGUEB_DOM_ATTR_TYPE_ANIMATED, &thiz->prv_value);
 	}
 	ev = egueb_smil_event_new();
 	egueb_smil_event_init(ev, egueb_dom_string_ref(EGUEB_SMIL_EVENT_END), 0);
@@ -853,7 +854,7 @@ static Eina_Bool _egueb_smil_animate_base_setup(Egueb_Smil_Animation *a,
 			from = calloc(1, sizeof(Egueb_Dom_Value));
 			egueb_dom_value_init(from, a->d);
 			/* just get a dummy value for now, so we can have an allocated value */
-			egueb_dom_attr_final_value_get(a->p, from);
+			egueb_dom_attr_final_value_get(a->attr, from);
 			thiz->generated_values = eina_list_prepend(thiz->generated_values, from);
 
 			start_cb = _egueb_smil_animate_base_animation_start_and_fetch_cb;

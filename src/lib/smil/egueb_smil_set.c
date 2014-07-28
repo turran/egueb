@@ -62,7 +62,7 @@ static void _egueb_smil_set_property_set(Egueb_Smil_Set *thiz, Egueb_Dom_Value *
 	Egueb_Smil_Animation *a;
 
 	a = EGUEB_SMIL_ANIMATION(thiz);
-	egueb_dom_attr_value_set(a->p, EGUEB_DOM_ATTR_TYPE_ANIMATED, v);
+	egueb_dom_attr_value_set(a->attr, EGUEB_DOM_ATTR_TYPE_ANIMATED, v);
 }
 /*----------------------------------------------------------------------------*
  *                        The Etch external animation                         *
@@ -85,7 +85,7 @@ static void _egueb_smil_set_animation_start_cb(Egueb_Smil_Signal *s, void *data)
 	/* in case of "remove" pick the last value it had */
 	if (fill == EGUEB_SMIL_FILL_REMOVE)
 	{
-		egueb_dom_attr_final_value_get(a->p, &thiz->prv_value);
+		egueb_dom_attr_final_value_get(a->attr, &thiz->prv_value);
 	}
 	ev = egueb_smil_event_new();
 	egueb_smil_event_init(ev, egueb_dom_string_ref(EGUEB_SMIL_EVENT_BEGIN), 0);
