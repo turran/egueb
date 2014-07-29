@@ -327,7 +327,6 @@ EGUEB_DOM_VALUE_PRIMITIVE_BOILERPLATE(name, c_type)
 
 /* TODO boilerplate code for an object */
 
-
 /* interpolate functions */
 static inline void egueb_dom_value_interpolate_argb(uint32_t a, uint32_t b, double m, uint32_t *r)
 {
