@@ -18,7 +18,10 @@
 
 #include "egueb_svg_main_private.h"
 #include "egueb_svg_main.h"
+#include "egueb_svg_animate_transform_type.h"
 
+#include "egueb_svg_animate_transform_value_private.h"
+#include "egueb_svg_attr_animate_transform_type_private.h"
 #include "egueb_smil_animation_private.h"
 #include "egueb_smil_animate_base_private.h"
 
@@ -78,18 +81,13 @@
 #define EGUEB_SVG_ELEMENT_ANIMATE_TRANSFORM(o) ENESIM_OBJECT_INSTANCE_CHECK(o, 		\
 		Egueb_Svg_Element_Animate_Transform, EGUEB_SVG_ELEMENT_ANIMATE_TRANSFORM_DESCRIPTOR)
 
-typedef struct _Egueb_Svg_Animate_Transform_Data
-{
-	double values[3];
-	int count;
-} Egueb_Svg_Animate_Transform_Data;
-
 typedef struct _Egueb_Svg_Element_Animate_Transform
 {
 	Egueb_Smil_Animate_Base base;
 	Egueb_Dom_Node *type;
 	/* interface */
 	/* private */
+	Egueb_Dom_Value tmp_value;
 } Egueb_Svg_Element_Animate_Transform;
 
 typedef struct _Egueb_Svg_Element_Animate_Transform_Class
@@ -98,65 +96,6 @@ typedef struct _Egueb_Svg_Element_Animate_Transform_Class
 } Egueb_Svg_Element_Animate_Transform_Class;
 
 #if 0
-static Egueb_Svg_Element_Animate_Transform * _egueb_svg_element_animate_transform_get(Egueb_Dom_Tag *t)
-{
-	Egueb_Svg_Element_Animate_Transform *thiz;
-
-	if (egueb_svg_element_internal_type_get(t) != ESVG_TYPE_ANIMATETRANSFORM)
-		return NULL;
-	thiz = egueb_svg_animate_base_data_get(t);
-
-	return thiz;
-}
-
-/* whenever the list values function is called, store the value
- * in our own list of values
- */
-static Eina_Bool _egueb_svg_element_animate_transform_values_cb(double v, void *user_data)
-{
-	Egueb_Svg_Animate_Transform_Data *data = user_data;
-
-	if (data->count > 3)
-		return EINA_FALSE;
-
-	data->values[data->count] = v;
-	data->count++;
-
-	return EINA_TRUE;
-}
-
-static void * _egueb_svg_element_animate_transform_value_new(void)
-{
-	Egueb_Svg_Animate_Transform_Data *data;
-
-	data = calloc(1, sizeof(Egueb_Svg_Animate_Transform_Data));
-	return data;
-}
-
-static Eina_Bool _egueb_svg_element_animate_transform_value_get(const char *attr, void **value)
-{
-	Egueb_Svg_Animate_Transform_Data *v = *value;
-
-	egueb_svg_number_list_string_from(attr, _egueb_svg_element_animate_transform_values_cb,
-				v);
-	return EINA_TRUE;
-}
-
-static void * _egueb_svg_element_animate_transform_destination_new(void)
-{
-	Egueb_Svg_Matrix_Animated *v;
-
-	v = calloc(1, sizeof(Egueb_Svg_Matrix_Animated));
-	enesim_matrix_identity(&v->base);
-	enesim_matrix_identity(&v->anim);
-	return v;
-}
-
-static void _egueb_svg_element_animate_transform_destination_free(void *destination, Eina_Bool deep)
-{
-	Egueb_Svg_Matrix_Animated *d = destination;
-	free(d);
-}
 /*----------------------------------------------------------------------------*
  *                        The translate type descriptor                       *
  *----------------------------------------------------------------------------*/
@@ -359,95 +298,100 @@ static Egueb_Svg_Attribute_Animated_Descriptor _skewy_descriptor = {
 	/* .destination_value_to	= */ NULL,
 	/* .interpolate		= */ _egueb_svg_element_animate_transform_skewy_interpolate,
 };
-/*----------------------------------------------------------------------------*
- *                         The Esvg Element interface                         *
- *----------------------------------------------------------------------------*/
-static void _egueb_svg_element_animate_transform_free(Egueb_Dom_Tag *t)
-{
-	Egueb_Svg_Element_Animate_Transform *thiz;
-
-	thiz = _egueb_svg_element_animate_transform_get(t);
-	free(thiz);
-}
-
-static Eina_Bool _egueb_svg_element_animate_transform_attribute_set(Ender_Element *e,
-		const char *key, const char *value)
-{
-	if (!strcmp(key, "type"))
-	{
-		Egueb_Svg_Animate_Transform_Type type;
-
-		egueb_svg_animate_transform_type_string_from(&type, value);
-		egueb_svg_element_animate_transform_type_set(e, type);
-	}
-	else
-	{
-		return EINA_FALSE;
-	}
-	return EINA_TRUE;
-}
-
-static Eina_Bool _egueb_svg_element_animate_transform_attribute_get(Egueb_Dom_Tag *tag, const char *attribute, char **value)
-{
-	return EINA_FALSE;
-}
-
-static Eina_Bool _egueb_svg_element_animate_transform_type_descriptor_get(Egueb_Dom_Tag *t,
-		const char *name, Egueb_Svg_Attribute_Animated_Descriptor **d)
-{
-	Egueb_Svg_Element_Animate_Transform *thiz;
-
-	/* based on the property name get the correct descriptor */
-	if (strcmp(name, "SVGAnimatedMatrix"))
-		return EINA_FALSE;
-	/* check the type and use the correct generator */
-	thiz = _egueb_svg_element_animate_transform_get(t);
-	switch (thiz->type)
-	{
-		case ESVG_ANIMATE_TRANSFORM_TYPE_TRANSLATE:
-		*d = &_translate_descriptor;
-		break;
-
-		case ESVG_ANIMATE_TRANSFORM_TYPE_SCALE:
-		*d = &_scale_descriptor;
-		break;
-
-		case ESVG_ANIMATE_TRANSFORM_TYPE_ROTATE:
-		*d = &_rotate_descriptor;
-		break;
-
-		case ESVG_ANIMATE_TRANSFORM_TYPE_SKEWX:
-		*d = &_skewx_descriptor;
-		break;
-
-		case ESVG_ANIMATE_TRANSFORM_TYPE_SKEWY:
-		*d = &_skewy_descriptor;
-		break;
-
-		default:
-		return EINA_FALSE;
-	}
-	return EINA_TRUE;
-}
-
-static Egueb_Svg_Animate_Base_Descriptor _descriptor = {
-	/* .attribute_get	= */ _egueb_svg_element_animate_transform_attribute_get,
-	/* .free		= */ _egueb_svg_element_animate_transform_free,
-	/* .initialize		= */ NULL,
-	/* .attribute_set	= */ _egueb_svg_element_animate_transform_attribute_set,
-	/* .type_descriptor_get	= */ _egueb_svg_element_animate_transform_type_descriptor_get,
-};
 #endif
+/*----------------------------------------------------------------------------*
+ *                            Animate base interface                          *
+ *----------------------------------------------------------------------------*/
+static Eina_Bool
+_egueb_svg_element_animate_transform_interpolate(Egueb_Smil_Animate_Base *ab,
+		Egueb_Dom_Value *va, Egueb_Dom_Value *vb, double m,
+		Egueb_Dom_Value *add, Egueb_Dom_Value *mul, int accum)
+{
+	Egueb_Svg_Element_Animate_Transform *thiz;
+	Egueb_Svg_Animate_Transform_Type type;
+	Egueb_Svg_Animate_Transform_Value *tmp_value;
+	Enesim_Matrix matrix;
+	Enesim_Matrix *dst_matrix;
+
+	thiz = EGUEB_SVG_ELEMENT_ANIMATE_TRANSFORM(ab);
+	egueb_dom_attr_final_get(thiz->type, &type);
+
+	/* interpolate the value */
+	egueb_dom_value_interpolate(&thiz->tmp_value, va, vb, m, add, mul, accum);
+	tmp_value = thiz->tmp_value.data.ptr;
+	switch (type)
+	{
+		case EGUEB_SVG_ANIMATE_TRANSFORM_TYPE_TRANSLATE:
+		enesim_matrix_translate(&matrix, tmp_value->values[0], tmp_value->values[1]);
+		break;
+
+		case EGUEB_SVG_ANIMATE_TRANSFORM_TYPE_SCALE:
+		enesim_matrix_scale(&matrix, tmp_value->values[0], tmp_value->values[1]);
+		break;
+
+		case EGUEB_SVG_ANIMATE_TRANSFORM_TYPE_ROTATE:
+		enesim_matrix_rotate(&matrix, tmp_value->values[0] * M_PI / 180.0);
+		if (tmp_value->count > 1)
+		{
+			Enesim_Matrix matrix_tx;
+			double cx;
+			double cy;
+
+			cx = tmp_value->values[1];
+			cy = tmp_value->values[2];
+			enesim_matrix_translate(&matrix_tx, cx, cy);
+			enesim_matrix_compose(&matrix_tx, &matrix, &matrix);
+			enesim_matrix_translate(&matrix_tx, -cx, -cy);
+			enesim_matrix_compose(&matrix, &matrix_tx, &matrix);
+		}
+		break;
+
+		case EGUEB_SVG_ANIMATE_TRANSFORM_TYPE_SKEW_X:
+		enesim_matrix_values_set(&matrix, 1, tan(tmp_value->values[0] * M_PI / 180.0), 0, 0, 1, 0, 0, 0, 1);
+		break;
+
+		case EGUEB_SVG_ANIMATE_TRANSFORM_TYPE_SKEW_Y:
+		enesim_matrix_values_set(&matrix, 1, 0, 0, tan(tmp_value->values[0] * M_PI / 180.0), 1, 0, 0, 0, 1);
+		break;
+	}
+	/* finally set the real value */
+	dst_matrix = ab->dst_value.data.ptr;
+	*dst_matrix = matrix;
+
+	return EINA_TRUE;
+}
 /*----------------------------------------------------------------------------*
  *                            Animation interface                             *
  *----------------------------------------------------------------------------*/
 static const Egueb_Dom_Value_Descriptor *
 _egueb_svg_element_animate_transform_value_descriptor_get(Egueb_Smil_Animation *a)
 {
-	/* TODO for transformation we should return the descriptor of the
-	 * transformation values
-	 */
-	return NULL;
+	Egueb_Svg_Element_Animate_Transform *thiz;
+	Egueb_Svg_Animate_Transform_Type type;
+
+	thiz = EGUEB_SVG_ELEMENT_ANIMATE_TRANSFORM(a);
+
+	/* get the type of animation */
+	egueb_dom_attr_final_get(thiz->type, &type);
+
+	switch (type)
+	{
+		case EGUEB_SVG_ANIMATE_TRANSFORM_TYPE_TRANSLATE:
+		return &egueb_svg_animate_transform_translate_descriptor;
+
+		case EGUEB_SVG_ANIMATE_TRANSFORM_TYPE_SCALE:
+		return &egueb_svg_animate_transform_scale_descriptor;
+
+		case EGUEB_SVG_ANIMATE_TRANSFORM_TYPE_ROTATE:
+		return &egueb_svg_animate_transform_rotate_descriptor;
+
+		case EGUEB_SVG_ANIMATE_TRANSFORM_TYPE_SKEW_X:
+		case EGUEB_SVG_ANIMATE_TRANSFORM_TYPE_SKEW_Y:
+		return &egueb_svg_animate_transform_skew_descriptor;
+
+		default:
+		return NULL;
+	}
 }
 
 /* TODO add functions for setting the attribute */
@@ -472,20 +416,43 @@ static void _egueb_svg_element_animate_transform_class_init(void *k)
 {
 	Egueb_Dom_Element_Class *e_klass;
 	Egueb_Smil_Animation_Class *a_klass;
+	Egueb_Smil_Animate_Base_Class *a_base_klass;
 
 	e_klass= EGUEB_DOM_ELEMENT_CLASS(k);
 	e_klass->tag_name_get = _egueb_svg_element_animate_transform_tag_name_get;
 
 	a_klass = EGUEB_SMIL_ANIMATION_CLASS(k);
 	a_klass->value_descriptor_get = _egueb_svg_element_animate_transform_value_descriptor_get;
+
+	a_base_klass = EGUEB_SMIL_ANIMATE_BASE_CLASS(k);
+	a_base_klass->interpolate = _egueb_svg_element_animate_transform_interpolate;
 }
 
 static void _egueb_svg_element_animate_transform_instance_init(void *o)
 {
+	Egueb_Svg_Element_Animate_Transform *thiz;
+	Egueb_Dom_Node *n;
+
+	thiz = EGUEB_SVG_ELEMENT_ANIMATE_TRANSFORM(o);
+	/* create the properties */
+	thiz->type = egueb_svg_attr_animate_transform_type_new();
+
+	/* setup the temporary destination value */
+	egueb_dom_value_init(&thiz->tmp_value, &egueb_svg_animate_transform_translate_descriptor);
+	thiz->tmp_value.owned = EINA_TRUE;
+	thiz->tmp_value.data.ptr = calloc(1, sizeof(Egueb_Svg_Animate_Transform_Value));
+
+	n = EGUEB_DOM_NODE(o);
+	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->type), NULL);
 }
 
 static void _egueb_svg_element_animate_transform_instance_deinit(void *o)
 {
+	Egueb_Svg_Element_Animate_Transform *thiz;
+
+	thiz = EGUEB_SVG_ELEMENT_ANIMATE_TRANSFORM(o);
+	/* destroy the attributes */
+	egueb_dom_node_unref(thiz->type);
 }
 /*============================================================================*
  *                                 Global                                     *

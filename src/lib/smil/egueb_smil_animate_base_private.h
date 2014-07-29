@@ -37,7 +37,7 @@ typedef struct _Egueb_Smil_Animate_Base
 	Egueb_Dom_Node *key_times;
 	Egueb_Dom_Node *key_splines;
 
-	/* etch related data */
+	/* timeline related data */
 	Egueb_Smil_Signal *signal;
 
 	/* private */
@@ -51,9 +51,12 @@ typedef struct _Egueb_Smil_Animate_Base
 	Eina_List *generated_times;
 } Egueb_Smil_Animate_Base;
 
+typedef Eina_Bool (*Egueb_Smil_Animate_Base_Interpolate)(Egueb_Smil_Animate_Base *thiz, Egueb_Dom_Value *va, Egueb_Dom_Value *vb, double m, Egueb_Dom_Value *add, Egueb_Dom_Value *mul, int accum);
+
 typedef struct _Egueb_Smil_Animate_Base_Class
 {
 	Egueb_Smil_Animation_Class base;
+	Egueb_Smil_Animate_Base_Interpolate interpolate;
 } Egueb_Smil_Animate_Base_Class;
 
 Enesim_Object_Descriptor * egueb_smil_animate_base_descriptor_get();

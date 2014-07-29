@@ -58,7 +58,9 @@ typedef struct _Egueb_Smil_Animation
 	/* in case we have changed of document */
 	Eina_Bool document_changed;
 
+	/* the attribute this animation animates */
 	Egueb_Dom_Node *attr;
+	/* the descriptor used for parsing the values */
 	const Egueb_Dom_Value_Descriptor *d;
 	Eina_Bool started;
 } Egueb_Smil_Animation;

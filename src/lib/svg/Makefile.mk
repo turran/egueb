@@ -4,6 +4,7 @@ lib_LTLIBRARIES += src/lib/svg/libegueb_svg.la
 installed_svgheadersdir = $(pkgincludedir)-@VMAJ@/svg
 dist_installed_svgheaders_DATA = \
 src/lib/svg/Egueb_Svg.h \
+src/lib/svg/egueb_svg_animate_transform_type.h \
 src/lib/svg/egueb_svg_attr_xlink_href.h \
 src/lib/svg/egueb_svg_build.h \
 src/lib/svg/egueb_svg_clip_path.h \
@@ -65,6 +66,12 @@ src/lib/svg/egueb_svg_text_anchor.h \
 src/lib/svg/egueb_svg_visibility.h
 
 src_lib_svg_libegueb_svg_la_SOURCES = \
+src/lib/svg/egueb_svg_animate_transform_type.c \
+src/lib/svg/egueb_svg_animate_transform_type_private.h \
+src/lib/svg/egueb_svg_animate_transform_value.c \
+src/lib/svg/egueb_svg_animate_transform_value_private.h \
+src/lib/svg/egueb_svg_attr_animate_transform_type.c \
+src/lib/svg/egueb_svg_attr_animate_transform_type_private.h \
 src/lib/svg/egueb_svg_attr_clip_path.c \
 src/lib/svg/egueb_svg_attr_clip_path_private.h \
 src/lib/svg/egueb_svg_attr_color.c \
