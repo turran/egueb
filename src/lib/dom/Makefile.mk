@@ -5,9 +5,10 @@ installed_domheadersdir = $(pkgincludedir)-@VMAJ@/dom
 dist_installed_domheaders_DATA = \
 src/lib/dom/Egueb_Dom.h \
 src/lib/dom/egueb_dom_attr.h \
-src/lib/dom/egueb_dom_attr_external.h \
 src/lib/dom/egueb_dom_attr_boolean.h \
+src/lib/dom/egueb_dom_attr_double_list.h \
 src/lib/dom/egueb_dom_attr_enum.h \
+src/lib/dom/egueb_dom_attr_external.h \
 src/lib/dom/egueb_dom_attr_int.h \
 src/lib/dom/egueb_dom_attr_string.h \
 src/lib/dom/egueb_dom_attr_string_list.h \
@@ -56,6 +57,7 @@ src/lib/dom/egueb_dom_value.h \
 src/lib/dom/egueb_dom_value_dom_string.h \
 src/lib/dom/egueb_dom_value_boolean.h \
 src/lib/dom/egueb_dom_value_double.h \
+src/lib/dom/egueb_dom_value_double_list.h \
 src/lib/dom/egueb_dom_value_int.h \
 src/lib/dom/egueb_dom_value_list.h \
 src/lib/dom/egueb_dom_video_provider.h \
@@ -64,18 +66,19 @@ src/lib/dom/egueb_dom_window.h
 src_lib_dom_libegueb_dom_la_SOURCES = \
 src/lib/dom/egueb_dom_attr.c \
 src/lib/dom/egueb_dom_attr_private.h \
-src/lib/dom/egueb_dom_attr_external.c \
-src/lib/dom/egueb_dom_attr_boolean.c \
-src/lib/dom/egueb_dom_attr_enum.c \
-src/lib/dom/egueb_dom_attr_int.c \
-src/lib/dom/egueb_dom_attr_string.c \
-src/lib/dom/egueb_dom_attr_string_list.c \
 src/lib/dom/egueb_dom_attr_basic.c \
 src/lib/dom/egueb_dom_attr_basic_private.h \
-src/lib/dom/egueb_dom_attr_object.c \
-src/lib/dom/egueb_dom_attr_object_private.h \
+src/lib/dom/egueb_dom_attr_boolean.c \
+src/lib/dom/egueb_dom_attr_double_list.c \
+src/lib/dom/egueb_dom_attr_enum.c \
+src/lib/dom/egueb_dom_attr_external.c \
+src/lib/dom/egueb_dom_attr_int.c \
 src/lib/dom/egueb_dom_attr_primitive.c \
 src/lib/dom/egueb_dom_attr_primitive_private.h \
+src/lib/dom/egueb_dom_attr_string.c \
+src/lib/dom/egueb_dom_attr_string_list.c \
+src/lib/dom/egueb_dom_attr_object.c \
+src/lib/dom/egueb_dom_attr_object_private.h \
 src/lib/dom/egueb_dom_cdata_section.c \
 src/lib/dom/egueb_dom_character_data.c \
 src/lib/dom/egueb_dom_character_data_private.h \
@@ -135,6 +138,7 @@ src/lib/dom/egueb_dom_value_private.h \
 src/lib/dom/egueb_dom_value_dom_string.c \
 src/lib/dom/egueb_dom_value_boolean.c \
 src/lib/dom/egueb_dom_value_double.c \
+src/lib/dom/egueb_dom_value_double_list.c \
 src/lib/dom/egueb_dom_value_int.c \
 src/lib/dom/egueb_dom_value_list.c \
 src/lib/dom/egueb_dom_video_provider.c \

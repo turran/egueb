@@ -86,6 +86,7 @@ extern "C" {
 #include "egueb_dom_implementation.h"
 
 #include "egueb_dom_attr_boolean.h"
+#include "egueb_dom_attr_double_list.h"
 #include "egueb_dom_attr_enum.h"
 #include "egueb_dom_attr_int.h"
 #include "egueb_dom_attr_string.h"
@@ -120,6 +121,7 @@ extern "C" {
 #include "egueb_dom_value_boolean.h"
 #include "egueb_dom_value_dom_string.h"
 #include "egueb_dom_value_double.h"
+#include "egueb_dom_value_double_list.h"
 #include "egueb_dom_value_int.h"
 #include "egueb_dom_string_list.h"
 
