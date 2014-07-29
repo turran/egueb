@@ -18,7 +18,6 @@
 
 #include "egueb_svg_main_private.h"
 
-#include "egueb_dom_attr.h"
 #include "egueb_svg_stroke_line_join.h"
 
 #include "egueb_dom_attr_private.h"
