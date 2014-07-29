@@ -12,9 +12,6 @@ Refactor
   tree nodes but with the same logic as a document (i.e events)
 + Move the value, the list, even the string implementation to the base
   lib
-+ Remove the has_changed, changed functions. Make a common
-  function to notify a change by passing a node and a bool
-  pointer which will create the listeners and set the bool
 + The clip path is by default not inherited unless the inherited
   is set, several presentation attributes work like that, we need
   to fix the initializers of the attr
@@ -23,66 +20,17 @@ Refactor
 + Modify the clone interface, in order to clone a node we need a doc, just
   create it as it has been parsed
 
-ECSS
+CSS
 ====
 + Add a way to unset every property, useful whenever we change styles and we need to rollback to its initial state
 
-ESVG
+SVG
 ====
-+ Instead of setting the painter directly on nodes that change the painter of a renderable use a bubbling
-  event for that 
-+ Split the gstreamer code from the video tag
-+ Once all the todos of esvg are done we need to add support for external objects, one can be the
-  <video> tag
-+ Change again the setup to receive the context and attribute of the parent instead of picking it up from its
-  parent, this is required for the <use> where the <g> it creates internally is not part of the DOM tree
-+ Replace every attribute with the new Esvg_Attribute_Foo, which includes the is_set
-+ We need to change how renderable elements work. Given that renderables can be part of a <def>, can be part of a <clipPath>, can be also part of <pattern> at the
-  end the concept of a renderable where it only has *one* renderer associated with it, makes no sense. We should make the renderable inherit
-  from a referenceable. In this case would be aiser to create a "renderable" tree with different instances of renderers which several of them
-  can be a reference to a single dom node. There are other use cases for this, like the gradients, when a gradient can "inherit" properties
-  and stops from other gradients, and for that we also need to use this "reference" concept.
-+ Handle correctly the animated properties. We need a way to know whenever a property has an animation assigned to be able to use the base or the anim. Whenever we propagate there's no real need to pass both, just the current one in use
-+ Add an input system
-+ Now that we have two trees, the dom one, and the renderers one, we need to design the "engine" that will
-  update the renderer tree based on the dom tree.
-  We have several constraints:
-  1. The paint servers / clipping paths / etc (i.e anything that can be referenced) might not be
-  setup *before* the renderable references it, and thus boom! (because a paint server might be after the element
-  referencing it on the tree)
-  2. The styles have to be found first on the dom tree, given that those are set on the whole tree
-  A solution could be to create a "setup context" which will be passed along the other parameters on the
-  setup process. This context will have some kind of "id" or something like that, that on every
-  call to the setup() it will be set with a different value. So, whenever a renerable for example requires
-  a cliping path or a paint server, it should check that the store "id" of the last time those referenceable
-  objects get called, if it is different then schedule such setup for later, basically whenever the referenced
-  object is done with the setup. If it has more than one referenceable, then replace the previous schedule set
-  with the new one.
-+ We need to change the paint server to not inherit from a renderable, instead (as with the clippath) make
-  referencable interace, which will have an interface to return a new renderer and set the current renderer
-  so the element will now what renderer to use
 + There's some complication about attributes and properties and how to export them:
   attributes: object's attributes
   properties: attributes that can be specified with a style and also as object's attributes
   http://dev.w3.org/SVG/proposals/css-animation/animation-proposal.html
   http://blogs.adobe.com/webplatform/2012/03/30/svg-animations-css-animations-css-transitions/
-+ When changing the inheritance, the container does not make any sense now
-+ Add an interface to call whenever the parser can not recognize a property, this way we can easily
-  attach a "mouseover" property callback for example, so the upper toolkit library (the one that controls the input) can do something
-+ Finsh implementing the paint servers
-+ Add a get() method for every property
-+ Add a presentation attribute setup (to setup the default value of each attribute)
-+ Later we'll need to handle the changed() logic
-+ Use pointers for the current/final states so on the boundings we always use the current but it will be witched if it is called after the setup and before the cleanup
-+ We need an uri abstraction, someway to know if the uri is local, relative, etc
-+ Add a way to parse external/local urls, not only local elements. We better add that function
-  to the doc context parser
 + On a future we might want to save a svg too, for that case it might be interesting to do
   some research on way to simplify the properties, like simplifying matrices to just
   modifying the inner properties
-
-DOM
-===
-+ Add a method to attach an event to a running event propagation (on current target only) this
-  way we use the tree traversing code for several events at once
-
