@@ -51,4 +51,85 @@ typedef struct _Egueb_Dom_Attr_Object_Class
 Eina_Bool egueb_dom_attr_object_value_get(Egueb_Dom_Attr *p,
 		Egueb_Dom_Attr_Type type, void ***o);
 
+/*
+ * Helper macro to define an object attribute with style, default and
+ * animation values
+ */
+#define EGUEB_DOM_ATTR_OBJECT_BOILERPLATE(attr, value_prefix,		\
+		 attr_prefix) 							\
+										\
+typedef struct _##attr								\
+{										\
+	Egueb_Dom_Attr_Object base;						\
+	void *styled;								\
+	void *anim;								\
+	void *value;								\
+	void *def;								\
+} attr;										\
+										\
+typedef struct _##attr##_Class							\
+{										\
+	Egueb_Dom_Attr_Object_Class base;					\
+} attr##_Class;									\
+										\
+static Eina_Bool _##attr_prefix##_value_get(Egueb_Dom_Attr *p,			\
+		Egueb_Dom_Attr_Type type, void ***o)				\
+{										\
+	attr *thiz;								\
+										\
+	thiz = ENESIM_OBJECT_INSTANCE_CHECK(p, attr,				\
+			attr_prefix##_descriptor_get());			\
+	switch (type)								\
+	{									\
+		case EGUEB_DOM_ATTR_TYPE_ANIMATED:				\
+		*o = (void **)&thiz->anim;					\
+		break;								\
+										\
+		case EGUEB_DOM_ATTR_TYPE_STYLED:				\
+		*o = (void **)&thiz->styled;					\
+		break;								\
+										\
+		case EGUEB_DOM_ATTR_TYPE_BASE:					\
+		*o = (void **)&thiz->value;					\
+		break;								\
+										\
+		case EGUEB_DOM_ATTR_TYPE_DEFAULT:				\
+		*o = (void **)&thiz->def;					\
+		break;								\
+										\
+		default:							\
+		return EINA_FALSE;						\
+		break;								\
+	}									\
+	return EINA_TRUE;							\
+}										\
+										\
+static const Egueb_Dom_Value_Descriptor *					\
+_##attr_prefix##_value_descriptor_get(Egueb_Dom_Attr *p)			\
+{										\
+	return value_prefix##_descriptor_get();					\
+}										\
+										\
+ENESIM_OBJECT_INSTANCE_BOILERPLATE(EGUEB_DOM_ATTR_OBJECT_DESCRIPTOR,		\
+		attr, attr##_Class, attr_prefix)				\
+										\
+static void _##attr_prefix##_class_init(void *k)				\
+{										\
+	Egueb_Dom_Attr_Class *p_klass;						\
+	Egueb_Dom_Attr_Object_Class *o_klass;					\
+										\
+	p_klass = EGUEB_DOM_ATTR_CLASS(k);					\
+	p_klass->value_descriptor_get = _##attr_prefix##_value_descriptor_get;	\
+	o_klass = EGUEB_DOM_ATTR_OBJECT_CLASS(k);				\
+	o_klass->value_get = _##attr_prefix##_value_get;			\
+}										\
+										\
+static void _##attr_prefix##_instance_init(void *o)				\
+{										\
+}										\
+										\
+static void _##attr_prefix##_instance_deinit(void *o)				\
+{										\
+}
+
 #endif
