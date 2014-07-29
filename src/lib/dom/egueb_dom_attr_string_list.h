@@ -15,12 +15,11 @@
  * License along with this library.
  * If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef _EGUEB_DOM_ATTR_TIMING_LIST_H_
-#define _EGUEB_DOM_ATTR_TIMING_LIST_H_
+#ifndef _EGUEB_DOM_ATTR_STRINGLIST_H_
+#define _EGUEB_DOM_ATTR_STRING_LIST_H_
 
 EAPI Egueb_Dom_Node * egueb_dom_attr_string_list_new(Egueb_Dom_String *name,
 		Egueb_Dom_List *def, Eina_Bool animatable, Eina_Bool stylable,
 		Eina_Bool inheritable);
 
 #endif
-
