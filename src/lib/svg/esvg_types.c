@@ -281,57 +281,6 @@ EAPI void egueb_svg_timing_string_from(const char *attr, Egueb_Svg_Timing_Cb cb,
 
 }
 
-EAPI Eina_Bool egueb_svg_animate_transform_type_string_from(Egueb_Svg_Animate_Transform_Type *type, const char *s)
-{
-	Eina_Bool ret = EINA_TRUE;
-
-	if (!strcmp(s, "translate"))
-		*type = ESVG_ANIMATE_TRANSFORM_TYPE_TRANSLATE;
-	else if (!strcmp(s, "scale"))
-		*type = ESVG_ANIMATE_TRANSFORM_TYPE_SCALE;
-	else if (!strcmp(s, "rotate"))
-		*type = ESVG_ANIMATE_TRANSFORM_TYPE_ROTATE;
-	else if (!strcmp(s, "skewX"))
-		*type = ESVG_ANIMATE_TRANSFORM_TYPE_SKEWX;
-	else if (!strcmp(s, "skewY"))
-		*type = ESVG_ANIMATE_TRANSFORM_TYPE_SKEWY;
-	else
-		ret = EINA_FALSE;
-
-	return ret;
-}
-
-EAPI Eina_Bool egueb_svg_number_list_string_from(const char *attr, Egueb_Svg_Number_List_Cb cb, void *data)
-{
-	const char *tmp = attr;
-	char *end;
-
-	if (!attr) return EINA_FALSE;
-	if (!cb) return EINA_FALSE;
-
-	EGUEB_DOM_SPACE_SKIP(tmp);
-	while (tmp)
-	{
-		double val;
-
-		EGUEB_DOM_SPACE_SKIP(tmp);
-		if (!*tmp)
-			break;
-
-		val = egueb_dom_double_get(tmp, &end);
-		if (errno == ERANGE)
-			val = 0;
-		if (end == tmp)
-			break;
-		tmp = end;
-		if (!cb(val, data))
-			break;
-		/* skip the comma and the blanks */
-		EGUEB_DOM_SPACE_COMMA_SKIP(tmp);
-	}
-	return EINA_TRUE;
-}
-
 EAPI Eina_Bool egueb_svg_calc_mode_string_from(Egueb_Svg_Calc_Mode *c, const char *attr)
 {
 	Eina_Bool ret = EINA_TRUE;
