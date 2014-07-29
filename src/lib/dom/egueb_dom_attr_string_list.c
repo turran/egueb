@@ -30,88 +30,8 @@
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
-#define EGUEB_DOM_ATTR_TIMING_LIST_DESCRIPTOR 				\
-		egueb_dom_attr_string_list_descriptor_get()
-#define EGUEB_DOM_ATTR_TIMING_LIST(o) ENESIM_OBJECT_INSTANCE_CHECK(o,	\
-		Egueb_Dom_Attr_String_List, 				\
-		EGUEB_DOM_ATTR_TIMING_LIST_DESCRIPTOR)
-
-typedef struct _Egueb_Dom_Attr_String_List
-{
-	Egueb_Dom_Attr_Object base;
-	Egueb_Dom_List *styled;
-	Egueb_Dom_List *anim;
-	Egueb_Dom_List *value;
-	Egueb_Dom_List *def;
-} Egueb_Dom_Attr_String_List;
-
-typedef struct _Egueb_Dom_Attr_String_List_Class
-{
-	Egueb_Dom_Attr_Object_Class base;
-} Egueb_Dom_Attr_String_List_Class;
-
-static Eina_Bool _egueb_dom_attr_string_list_value_get(Egueb_Dom_Attr *p,
-		Egueb_Dom_Attr_Type type, void ***o)
-{
-	Egueb_Dom_Attr_String_List *thiz;
-
-	thiz = EGUEB_DOM_ATTR_TIMING_LIST(p);
-	switch (type)
-	{
-		case EGUEB_DOM_ATTR_TYPE_ANIMATED:
-		*o = (void **)&thiz->anim;
-		break;
-
-		case EGUEB_DOM_ATTR_TYPE_STYLED:
-		*o = (void **)&thiz->styled;
-		break;
-
-		case EGUEB_DOM_ATTR_TYPE_BASE:
-		*o = (void **)&thiz->value;
-		break;
-
-		case EGUEB_DOM_ATTR_TYPE_DEFAULT:
-		*o = (void **)&thiz->def;
-		break;
-
-		default:
-		return EINA_FALSE;
-		break;
-	}
-	return EINA_TRUE;
-}
-
-static const Egueb_Dom_Value_Descriptor *
-_egueb_dom_attr_string_list_value_descriptor_get(Egueb_Dom_Attr *p)
-{
-	return egueb_dom_string_list_descriptor_get();
-}
-/*----------------------------------------------------------------------------*
- *                              Object interface                              *
- *----------------------------------------------------------------------------*/
-ENESIM_OBJECT_INSTANCE_BOILERPLATE(EGUEB_DOM_ATTR_OBJECT_DESCRIPTOR,
-		Egueb_Dom_Attr_String_List, Egueb_Dom_Attr_String_List_Class,
-		egueb_dom_attr_string_list)
-
-static void _egueb_dom_attr_string_list_class_init(void *k)
-{
-	Egueb_Dom_Attr_Class *p_klass;
-	Egueb_Dom_Attr_Object_Class *o_klass;
-
-	p_klass = EGUEB_DOM_ATTR_CLASS(k);
-	p_klass->value_descriptor_get = _egueb_dom_attr_string_list_value_descriptor_get;
-
-	o_klass = EGUEB_DOM_ATTR_OBJECT_CLASS(k);
-	o_klass->value_get = _egueb_dom_attr_string_list_value_get;
-}
-
-static void _egueb_dom_attr_string_list_instance_init(void *o)
-{
-}
-
-static void _egueb_dom_attr_string_list_instance_deinit(void *o)
-{
-}
+EGUEB_DOM_ATTR_OBJECT_BOILERPLATE(Egueb_Dom_Attr_String_List,
+		egueb_dom_string_list, egueb_dom_attr_string_list)
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
@@ -130,4 +50,3 @@ EAPI Egueb_Dom_Node * egueb_dom_attr_string_list_new(Egueb_Dom_String *name,
 		egueb_dom_attr_set(n, EGUEB_DOM_ATTR_TYPE_DEFAULT, def);
 	return n;
 }
-
