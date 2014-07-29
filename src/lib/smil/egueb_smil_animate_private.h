@@ -16,8 +16,8 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _EGUEB_SMIL_PRIVATE_ANIMATE_H_
-#define _EGUEB_SMIL_PRIVATE_ANIMATE_H_
+#ifndef _EGUEB_SMIL_ANIMATE_PRIVATE_H_
+#define _EGUEB_SMIL_ANIMATE_PRIVATE_H_
 
 void egueb_smil_animate_init(void);
 void egueb_smil_animate_shutdown(void);
