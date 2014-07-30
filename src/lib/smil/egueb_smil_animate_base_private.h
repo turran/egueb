@@ -39,6 +39,7 @@ typedef struct _Egueb_Smil_Animate_Base
 
 	/* timeline related data */
 	Egueb_Smil_Signal *signal;
+	Egueb_Smil_Keyframe_Interpolator_Type itype;
 
 	/* private */
 	Egueb_Dom_Value dst_value;
@@ -49,6 +50,7 @@ typedef struct _Egueb_Smil_Animate_Base
 	Egueb_Dom_Value *add_value;
 	Eina_List *generated_values;
 	Eina_List *generated_times;
+	Eina_List *generated_keysplines;
 } Egueb_Smil_Animate_Base;
 
 typedef Eina_Bool (*Egueb_Smil_Animate_Base_Interpolate)(Egueb_Smil_Animate_Base *thiz, Egueb_Dom_Value *va, Egueb_Dom_Value *vb, double m, Egueb_Dom_Value *add, Egueb_Dom_Value *mul, int accum);

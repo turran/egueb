@@ -45,6 +45,9 @@ EAPI void egueb_smil_signal_continuous_keyframe_simple_add(Egueb_Smil_Signal *s,
 EAPI void egueb_smil_signal_continuous_keyframe_quadratic_add(Egueb_Smil_Signal *s,
 		Egueb_Smil_Clock clock, double x0, double y0,
 		Egueb_Dom_Value *value);
+EAPI void egueb_smil_signal_continuous_keyframe_cubic_add(Egueb_Smil_Signal *s,
+		Egueb_Smil_Clock clock, double x0, double y0, double x1, double y1,
+		Egueb_Dom_Value *value);
 
 typedef void (*Egueb_Smil_Signal_Discrete_Process)(Egueb_Dom_Value *v, void *data);
 EAPI Egueb_Smil_Signal * egueb_smil_signal_discrete_new(

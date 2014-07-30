@@ -31,7 +31,7 @@
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
-EGUEB_DOM_ATTR_OBJECT_BOILERPLATE(Egueb_Dom_Attr_String_List,
+EGUEB_DOM_ATTR_OBJECT_BOILERPLATE(Egueb_Dom_Attr_Double_List,
 		egueb_dom_value_double_list, egueb_dom_attr_double_list)
 /*============================================================================*
  *                                 Global                                     *
@@ -51,5 +51,3 @@ EAPI Egueb_Dom_Node * egueb_dom_attr_double_list_new(Egueb_Dom_String *name,
 		egueb_dom_attr_set(n, EGUEB_DOM_ATTR_TYPE_DEFAULT, def);
 	return n;
 }
-
-

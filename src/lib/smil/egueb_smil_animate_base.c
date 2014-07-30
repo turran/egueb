@@ -26,23 +26,13 @@
 #include "egueb_smil_timeline.h"
 #include "egueb_smil_event.h"
 
+#include "egueb_smil_key_spline_private.h"
 #include "egueb_smil_animation_private.h"
 #include "egueb_smil_animate_base_private.h"
 #include "egueb_smil_attr_additive_private.h"
 #include "egueb_smil_attr_calc_mode_private.h"
+#include "egueb_smil_attr_key_splines_private.h"
 
-/*
- * This file handles the common attribute handling for the
- * 'animate_base value attributes'. The elements that inherit
- * from this are the 'animate' and 'animateTransform'
- * TODO
- * several properties must not be a string, but a list of values
- * like for example the values, times, keys, etc
- *
- * When doing a sum animation, in case there are other animations
- * use the base value for the first animation and the animation value for the
- * others
- */
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
@@ -67,87 +57,163 @@ static void _egueb_smil_animate_base_values_cb(void *data, void *user_data)
 	thiz->generated_values = eina_list_append(thiz->generated_values, gv);
 }
 
-static Egueb_Smil_Keyframe_Interpolator_Type
-_egueb_smil_animate_base_calc_mode_to_interpolator_type(Egueb_Smil_Calc_Mode c)
+/* Yes it might be silly to do this, bu we do not have any dom list iterator yet */
+static void _egueb_smil_animate_base_key_splines_cb(void *data, void *user_data)
 {
-	switch (c)
+	Egueb_Smil_Animate_Base *thiz = user_data;
+	Egueb_Smil_Key_Spline *ks = data;
+	Egueb_Smil_Key_Spline *gks;
+
+	gks = calloc(1, sizeof(Egueb_Smil_Key_Spline));
+	*gks = *ks;
+	thiz->generated_keysplines = eina_list_append(thiz->generated_keysplines, gks);
+}
+
+static Eina_Bool _egueb_smil_animate_base_key_splines_generate(Egueb_Smil_Animate_Base *thiz)
+{
+	Egueb_Dom_List *key_splines = NULL;
+	Eina_Bool ret;
+
+	/* check that we do have key splines and that are valid */
+	egueb_dom_attr_get(thiz->key_splines, EGUEB_DOM_ATTR_TYPE_BASE, &key_splines);
+	if (key_splines)
+	{
+		int length;
+
+		length = eina_list_count(thiz->generated_values);
+		if (length != egueb_dom_list_length(key_splines) + 1)
+		{
+			WARN("The number of key splines (%d) do not match the"
+					" number of values (%d)",
+					egueb_dom_list_length(key_splines), length);
+			ret = EINA_FALSE;
+		}
+		else
+		{
+			DBG("Using the provided keySplines");
+			egueb_dom_list_foreach(key_splines, _egueb_smil_animate_base_key_splines_cb, thiz);
+			ret = EINA_TRUE;
+		}
+		egueb_dom_list_unref(key_splines);
+		return ret;
+	}
+	else
+	{
+		WARN("No keySplines set");
+		return EINA_FALSE;
+	}
+}
+
+static void _egueb_smil_animate_base_key_splines_free(Egueb_Smil_Animate_Base *thiz)
+{
+	Egueb_Smil_Key_Spline *spline;
+
+	if (!thiz->generated_keysplines)
+		return;
+	EINA_LIST_FREE(thiz->generated_keysplines, spline)
+		free(spline);
+	thiz->generated_keysplines = NULL;
+}
+
+static Eina_Bool _egueb_smil_animate_base_calc_mode_generate(
+		Egueb_Smil_Animate_Base *thiz)
+{
+	Egueb_Smil_Calc_Mode calc_mode = EGUEB_SMIL_CALC_MODE_LINEAR;
+	Egueb_Smil_Keyframe_Interpolator_Type itype;
+
+	egueb_dom_attr_final_get(thiz->calc_mode, &calc_mode);
+	switch (calc_mode)
 	{
 		case EGUEB_SMIL_CALC_MODE_DISCRETE:
-		return EGUEB_SMIL_KEYFRAME_INTERPOLATOR_DISCRETE;
+		itype = EGUEB_SMIL_KEYFRAME_INTERPOLATOR_DISCRETE;
+		break;
 
 		case EGUEB_SMIL_CALC_MODE_LINEAR:
-		return EGUEB_SMIL_KEYFRAME_INTERPOLATOR_LINEAR;
+		itype = EGUEB_SMIL_KEYFRAME_INTERPOLATOR_LINEAR;
+		break;
 
 		case EGUEB_SMIL_CALC_MODE_SPLINE:
-		return EGUEB_SMIL_KEYFRAME_INTERPOLATOR_CUBIC;
+		{
+			if (_egueb_smil_animate_base_key_splines_generate(thiz))
+				itype = EGUEB_SMIL_KEYFRAME_INTERPOLATOR_CUBIC;
+			else
+				itype = EGUEB_SMIL_KEYFRAME_INTERPOLATOR_LINEAR;
+		}
+		break;
 
-		/* FIXME TODO */
+		/* TODO handle the paced case */
 		case EGUEB_SMIL_CALC_MODE_PACED:
 		default:
-		return EGUEB_SMIL_KEYFRAME_INTERPOLATOR_LINEAR;
+		itype = EGUEB_SMIL_KEYFRAME_INTERPOLATOR_LINEAR;
+		break;
 	}
+	thiz->itype = itype;
+	return EINA_TRUE;
 }
 
-#if 0
-typedef struct _Egueb_Smil_Animate_Base_Values_Data
+static void _egueb_smil_animate_base_keyframes_generate(Egueb_Smil_Animate_Base *thiz)
 {
-	Eina_List *values;
-	Egueb_Smil_Attribute_Animated_Descriptor *d;
-} Egueb_Smil_Animate_Base_Values_Data;
+	Egueb_Dom_Value *v;
+	Eina_List *l, *tt;
 
-typedef struct _Egueb_Smil_Animate_Base_Times_Data
-{
-	Eina_List *times;
-	int64_t duration;
-} Egueb_Smil_Animate_Base_Times_Data;
-
-typedef struct _Egueb_Smil_Animate_Base_Descriptor_Internal
-{
-	Egueb_Dom_Tag_Free free;
-	Egueb_Smil_Element_Initialize initialize;
-	Egueb_Smil_Element_Attribute_Set attribute_set;
-	Egueb_Dom_Tag_Attribute_Get attribute_get;
-	Egueb_Smil_Animate_Base_Attribute_Descriptor_Get type_descriptor_get;
-} Egueb_Smil_Animate_Base_Descriptor_Internal;
-
-static void * _egueb_smil_animate_base_property_destination_new(Egueb_Smil_Animate_Base *thiz)
-{
-	void *ret;
-	void *value;
-
-	ret = thiz->d->destination_new();
-	value = eina_list_data_get(thiz->values);
-	if (thiz->d->destination_value_from)
+	/* add the keyframes */
+	tt = thiz->generated_times;
+	if (thiz->itype != EGUEB_SMIL_KEYFRAME_INTERPOLATOR_CUBIC)
 	{
-		thiz->d->destination_value_from(ret, value);
+		EINA_LIST_FOREACH(thiz->generated_values, l, v)
+		{
+			int64_t *time;
+
+			time = eina_list_data_get(tt);
+
+			/* add a keyframe */
+			DBG("Adding keyframe at time %"
+					EGUEB_SMIL_CLOCK_FORMAT,
+					EGUEB_SMIL_CLOCK_ARGS(*time));
+			egueb_smil_signal_continuous_keyframe_simple_add(thiz->signal,
+					thiz->itype, *time, v);
+			tt = eina_list_next(tt);
+		}
 	}
-	return ret;
-}
-
-static void * _egueb_smil_animate_base_property_destination_get(Egueb_Smil_Animate_Base *thiz)
-{
-	void *ret;
-
-	ret = thiz->d->destination_new();
-	ender_element_property_value_get(thiz->parent_e, thiz->attr, ret, NULL);
-	if (thiz->d->destination_keep)
+	else
 	{
-		thiz->d->destination_keep(ret);
+		Eina_List *ss;
+
+		ss = thiz->generated_keysplines; 
+		EINA_LIST_FOREACH(thiz->generated_values, l, v)
+		{
+			Egueb_Smil_Key_Spline *spline;
+			double x0 = 0;
+			double y0 = 0;
+			double x1 = 1;
+			double y1 = 1;
+			int64_t *time;
+
+			time = eina_list_data_get(tt);
+			spline = eina_list_data_get(ss);
+
+			/* add a keyframe */
+			if (spline)
+			{
+				x0 = spline->x;
+				y0 = spline->y;
+				x1 = spline->cx;
+				y1 = spline->cy;
+			}
+			DBG("Adding spline based keyframe at time %"
+					EGUEB_SMIL_CLOCK_FORMAT,
+					EGUEB_SMIL_CLOCK_ARGS(*time));
+			egueb_smil_signal_continuous_keyframe_cubic_add(thiz->signal,
+					*time, x0, y0, x1, y1, v);
+			tt = eina_list_next(tt);
+			ss = eina_list_next(ss);
+		}
 	}
-	return ret;
 }
 
-#endif
-
-static void _egueb_smil_animate_base_animation_add_keyframe(Egueb_Smil_Signal *s,
-	Egueb_Smil_Keyframe_Interpolator_Type type,
-	Egueb_Dom_Value *value,
-	int64_t time)
-{
-	DBG("Adding keyframe at time %" EGUEB_SMIL_CLOCK_FORMAT, EGUEB_SMIL_CLOCK_ARGS(time));
-	egueb_smil_signal_continuous_keyframe_simple_add(s, type, time, value);
-}
-
+/*----------------------------------------------------------------------------*
+ *                        The Etch external animation                         *
+ *----------------------------------------------------------------------------*/
 static void _egueb_smil_animate_base_interpolator_cb(Egueb_Dom_Value *va, Egueb_Dom_Value *vb,
 		double m, void *data)
 {
@@ -163,18 +229,6 @@ static void _egueb_smil_animate_base_interpolator_cb(Egueb_Dom_Value *va, Egueb_
 	egueb_dom_attr_value_set(a->attr, EGUEB_DOM_ATTR_TYPE_ANIMATED, &thiz->dst_value);
 }
 
-#if 0
-static void _egueb_smil_animate_base_interpolator_add(Etch_Data *a, Etch_Data *b, double m, Etch_Data *res, void *data)
-{
-	Egueb_Smil_Animate_Base *thiz = data;
-
-	ender_element_property_value_get(thiz->parent_e, thiz->attr, thiz->destination_add, NULL);
-	_egueb_smil_animate_base_interpolator_cb(a, b, m, res, data);
-}
-#endif
-/*----------------------------------------------------------------------------*
- *                        The Etch external animation                         *
- *----------------------------------------------------------------------------*/
 static void _egueb_smil_animate_base_animation_start_cb(Egueb_Smil_Signal *s, void *data)
 {
 	Egueb_Smil_Animate_Base *thiz = data;
@@ -233,63 +287,6 @@ static void _egueb_smil_animate_base_animation_repeat_cb(Egueb_Smil_Signal *s, v
 {
 	/* TODO send the repeat event */
 }
-
-#if 0
-static void _egueb_smil_animate_key_splines_cb(const char *v, void *user_data)
-{
-	Etch_Data ndata;
-	Etch_Data cdata;
-	Etch_Data cp0;
-	Etch_Data cp1;
-
-	/* iterate over the attribute by either space or commas */
-	/* get the current keyframe and the next */
-	/* the range is from 0 to 1, so we need to multiply the value with that
-	 * factor and set the value on the cubic argument */
-}
-
-static void _egueb_smil_animate_base_values_cb(const char *v, void *user_data)
-{
-	Egueb_Smil_Animate_Base_Values_Data *data = user_data;
-	void *get_data;
-
-	get_data = data->d->value_new();
-	if (data->d->value_get(v, &get_data))
-		data->values = eina_list_append(data->values, get_data);
-	else
-		data->d->value_free(get_data);
-}
-
-static void _egueb_smil_animate_base_time_cb(const char *v, void *user_data)
-{
-	Egueb_Smil_Animate_Base_Times_Data *data = user_data;
-	Egueb_Smil_Number n;
-	double percent;
-	int64_t *t;
-
-	egueb_smil_number_string_from(&n, v, 1.0);
-	percent = n.value;
-	if (percent < 0.0)
-		percent = 0;
-	else if (percent > 1.0)
-		percent = 1.0;
-
-	t = malloc(sizeof(int64_t));
-	*t = data->duration * percent;
-	data->times = eina_list_append(data->times, t);
-}
-
-static void _egueb_smil_animate_base_key_splines_cb(const char *v, void *user_data)
-{
-	Eina_List **ret = user_data;
-	Egueb_Smil_Animate_Key_Spline *spline;
-
-	/* fetch the four values */
-	spline = calloc(1, sizeof(Egueb_Smil_Animate_Key_Spline));
-	egueb_smil_animate_key_spline_string_from(spline, v);
-	*ret = eina_list_append(*ret, spline);
-}
-#endif
 
 static Eina_Bool _egueb_smil_animate_base_values_generate(Egueb_Smil_Animate_Base *thiz,
 		Eina_Bool *has_from, Eina_Bool *has_by)
@@ -396,36 +393,34 @@ static Eina_Bool _egueb_smil_animate_base_values_generate(Egueb_Smil_Animate_Bas
 
 	return EINA_TRUE;
 }
-#if 0
-static void _egueb_smil_animate_base_values_free(Eina_List *values, Egueb_Smil_Attribute_Animated_Value_Free free_cb)
+
+static void _egueb_smil_animate_base_values_free(Egueb_Smil_Animate_Base *thiz)
 {
-	void *data;
+	Egueb_Dom_Value *value;
 
-	if (!values) return;
+	if (!thiz->generated_values)
+		return;
 
-	EINA_LIST_FREE (values, data);
-		free_cb(data);
+	EINA_LIST_FREE(thiz->generated_values, value);
+	{
+		if (value)
+		{
+			egueb_dom_value_reset(value);
+			free(value);
+		}
+		else
+		{
+			/* FIXME on animate-element-17-t.svg we got an empty value */
+			printf("no value!!!\n");
+		}
+	}
+	thiz->generated_values = NULL;
 }
 
-static Eina_Bool _egueb_smil_animate_base_key_splines_generate(Egueb_Smil_Animate_Base_Context *c,
-		Eina_List **ksplines)
-{
-	Eina_List *l = NULL;
-
-	if (!c->value.key_splines)
-		return EINA_TRUE;
-
-	egueb_smil_list_string_from(c->value.key_splines, ';',
-		_egueb_smil_animate_base_key_splines_cb, &l);
-	*ksplines = l;
-}
-
-#endif
 static void _egueb_smil_animate_base_key_times_generate(void *data, void *user_data)
 {
 	Egueb_Smil_Animate_Base *thiz = user_data;
 	Egueb_Smil_Animation *a;
-	Egueb_Smil_Clock clock;
 	Egueb_Smil_Duration dur;
 	double key_time;
 	int64_t *d;
@@ -479,7 +474,9 @@ static Eina_Bool _egueb_smil_animate_base_times_generate(Egueb_Smil_Animate_Base
 			if (egueb_dom_list_length(key_times) != length)
 			{
 				egueb_dom_list_unref(key_times);
-				ERR("The number of key times do not match the number of values");
+				ERR("The number of key times (%d) do not match the"
+						" number of values (%d)",
+						egueb_dom_list_length(key_times), length);
 				return EINA_FALSE;
 			}
 			egueb_dom_list_foreach(key_times, _egueb_smil_animate_base_key_times_generate, thiz);
@@ -508,154 +505,18 @@ static Eina_Bool _egueb_smil_animate_base_times_generate(Egueb_Smil_Animate_Base
 	}
 	return EINA_TRUE;
 }
-#if 0
-static void _egueb_smil_animate_base_times_free(Eina_List *times)
+
+static void _egueb_smil_animate_base_times_free(Egueb_Smil_Animate_Base *thiz)
 {
 	int64_t *v;
 
-	if (!times) return;
-	EINA_LIST_FREE (times, v)
-		free(v);
-}
-
-static void _egueb_smil_animate_base_animation_create(Egueb_Smil_Animate_Base *thiz,
-		Egueb_Smil_Animation_Context *actx)
-{
-	Etch_Animation_State_Callback start_cb;
-	Etch_Interpolator interpolator_cb;
-	Etch_Animation *s;
-	Eina_List *l, *tt;
-	Eina_Bool has_from;
-	void *v;
-	int64_t *time;
-
-	/* default variants */
-	interpolator_cb = _egueb_smil_animate_base_interpolator;
-	start_cb = _egueb_smil_animate_base_animation_start_cb;
-	/* generate the values and times */
-	_egueb_smil_animate_base_values_generate(&thiz->current, thiz->d,
-			&thiz->values, &has_from);
-	/* before adding a new empty value, create the destination holder */
-	thiz->destination_data = _egueb_smil_animate_base_property_destination_new(thiz);
-	/* in case it has not a 'from' attribute, prepend a new empty value */
-	if (!has_from)
-	{
-		void *from;
-
-		if (!thiz->d->destination_value_to)
-		{
-			ERR("Can not convert an attribute to an animation data");
-		}
-		/* in case of no from, add another keyframe at time 0
-		 * the value for such keyframe should be taken
-		 * at the begin animation
-		 */
-		from = thiz->d->value_new();
-		thiz->values = eina_list_prepend(thiz->values, from);
-		start_cb = _egueb_smil_animate_base_animation_start_and_fetch_cb;
-	}
-	_egueb_smil_animate_base_times_generate(&actx->timing.dur, &thiz->current, thiz->values, &thiz->times);
-	if (!thiz->times)
-	{
-		ERR("No time defined");
+	if (!thiz->generated_times)
 		return;
-	}
-
-	/* check if we are the first animation */
-	if (actx->addition.additive == EGUEB_SMIL_ADDITIVE_SUM)
-	{
-		thiz->destination_add = _egueb_smil_animate_base_property_destination_get(thiz);
-		if (actx->index > 1)
-		{
-			interpolator_cb = _egueb_smil_animate_base_interpolator_add;
-		}
-	}
-	if (actx->addition.accumulate == EGUEB_SMIL_ACCUMULATE_SUM)
-	{
-		Eina_List *l2;
-
-		/* get the latest value and keep it */
-		l2 = eina_list_last(thiz->values);
-		thiz->destination_acc = eina_list_data_get(l2);
-	}
-	/* create the animation */
-	s = egueb_smil_signal_external_add(thiz->etch,
-			interpolator_cb,
-			_egueb_smil_animate_base_animation_cb,
-			start_cb,
-			_egueb_smil_animate_base_animation_stop_cb,
-			_egueb_smil_animate_base_animation_repeat_cb,
-			NULL,
-			thiz->destination_data,
-			thiz);
-	/* the repeat count */
-	egueb_smil_signal_repeat_set(s, actx->timing.repeat_count);
-	thiz->signal = s;
-	/* add the keyframes */
-	tt = thiz->times;
-	EINA_LIST_FOREACH(thiz->values, l, v)
-	{
-		Etch_Data edata;
-
-		time = eina_list_data_get(tt);
-		edata.type = ETCH_EXTERNAL;
-		edata.data.external = v;
-		/* add a keyframe */
-		_egueb_smil_animate_base_animation_add_keyframe(thiz->signal, &thiz->current, &edata, *time);
-		tt = eina_list_next(tt);
-	}
+	EINA_LIST_FREE(thiz->generated_times, v)
+		free(v);
+	thiz->generated_times = NULL;
 }
 
-static void _egueb_smil_animate_base_cleanup(Egueb_Smil_Animate_Base *thiz)
-{
-	/* in case of animations free them */
-	if (thiz->signal)
-	{
-
-	}
-	if (thiz->destination_data)
-	{
-
-	}
-
-	if (thiz->values)
-	{
-		_egueb_smil_animate_base_values_free(thiz->values, thiz->d->value_free);
-		thiz->values = NULL;
-	}
-	if (thiz->times)
-	{
-		_egueb_smil_animate_base_times_free(thiz->times);
-		thiz->times = NULL;
-	}
-}
-/*----------------------------------------------------------------------------*
- *                           The Ender interface                              *
- *----------------------------------------------------------------------------*/
-static void _egueb_smil_animate_base_key_splines_set(Egueb_Dom_Tag *t, const char *key_splines)
-{
-	Egueb_Smil_Animate_Base *thiz;
-
-	thiz = _egueb_smil_animate_base_get(t);
-	if (thiz->current.value.key_splines)
-	{
-		free(thiz->current.value.key_splines);
-		thiz->current.value.key_splines = NULL;
-	}
-	if (key_splines)
-		thiz->current.value.key_splines = strdup(key_splines);
-	thiz->current.changed = EINA_TRUE;
-}
-
-static void _egueb_smil_animate_base_key_splines_get(Egueb_Dom_Tag *t, const char **key_splines)
-{
-	Egueb_Smil_Animate_Base *thiz;
-
-	if (!key_splines) return;
-	thiz = _egueb_smil_animate_base_get(t);
-	*key_splines = thiz->current.value.key_splines;
-}
-#endif
 /*----------------------------------------------------------------------------*
  *                            Animate base interface                          *
  *----------------------------------------------------------------------------*/
@@ -675,35 +536,36 @@ static Eina_Bool _egueb_smil_animate_base_setup(Egueb_Smil_Animation *a,
 {
 	Egueb_Smil_Animate_Base *thiz;
 	Egueb_Smil_Additive additive;
-	Egueb_Smil_Calc_Mode calc_mode = EGUEB_SMIL_CALC_MODE_LINEAR;
 	Egueb_Smil_Signal_Continuous_Process interpolator_cb;
 	Egueb_Smil_Signal_State_Callback start_cb;
-	Egueb_Smil_Keyframe_Interpolator_Type atype;
-	Egueb_Dom_Value *v;
 	Egueb_Dom_Value value = EGUEB_DOM_VALUE_INIT;
 	Eina_Bool has_from, has_by;
-	Eina_List *l, *tt;
 
 	thiz = EGUEB_SMIL_ANIMATE_BASE(a);
 	egueb_dom_attr_final_get(thiz->additive, &additive);
 
-	_egueb_smil_animate_base_values_generate(thiz, &has_from, &has_by);
+	if (!_egueb_smil_animate_base_values_generate(thiz, &has_from, &has_by))
+	{
+		ERR("Failed generating the values");
+		return EINA_FALSE;
+	}
+
 	if (!thiz->generated_values)
 	{
 		ERR("No values generated");
 		return EINA_FALSE;
 	}
 
-	_egueb_smil_animate_base_times_generate(thiz);
+	if (!_egueb_smil_animate_base_times_generate(thiz))
+	{
+		ERR("Failed generating the times");
+		_egueb_smil_animate_base_values_free(thiz);
+		return EINA_FALSE;
+	}
 	if (!thiz->generated_times)
 	{
 		ERR("No times generated");
-		return EINA_FALSE;
-	}
-	/* check that we have the same number of times and values */
-	if (eina_list_count(thiz->generated_values) != eina_list_count(thiz->generated_times))
-	{
-		ERR("Number of values and times does not match");
+		_egueb_smil_animate_base_values_free(thiz);
 		return EINA_FALSE;
 	}
 
@@ -746,6 +608,13 @@ static Eina_Bool _egueb_smil_animate_base_setup(Egueb_Smil_Animation *a,
 			start_cb = _egueb_smil_animate_base_animation_start_and_fetch_cb;
 		}
 	}
+	if (!_egueb_smil_animate_base_calc_mode_generate(thiz))
+	{
+		ERR("Failed to generate the calc mode");
+		_egueb_smil_animate_base_values_free(thiz);
+		_egueb_smil_animate_base_times_free(thiz);
+		return EINA_FALSE;
+	}
 
 	/* get a value and copy it so we can allocate in case we need to */
 	egueb_dom_value_init(&value, egueb_dom_attr_value_descriptor_get(a->attr));
@@ -764,20 +633,7 @@ static Eina_Bool _egueb_smil_animate_base_setup(Egueb_Smil_Animation *a,
 	/* TODO the repeat count */
 	/* TODO the repeat dur */
 	/* get the interpolator type */
-	egueb_dom_attr_final_get(thiz->calc_mode, &calc_mode);
-	atype = _egueb_smil_animate_base_calc_mode_to_interpolator_type(calc_mode);
-
-	/* add the keyframes */
-	tt = thiz->generated_times;
-	EINA_LIST_FOREACH(thiz->generated_values, l, v)
-	{
-		int64_t *time;
-
-		time = eina_list_data_get(tt);
-		/* add a keyframe */
-		_egueb_smil_animate_base_animation_add_keyframe(thiz->signal, atype, v, *time);
-		tt = eina_list_next(tt);
-	}
+	_egueb_smil_animate_base_keyframes_generate(thiz);
 	return EINA_TRUE;
 }
 
@@ -787,6 +643,9 @@ static void _egueb_smil_animate_base_cleanup(Egueb_Smil_Animation *a,
 	Egueb_Smil_Animate_Base *thiz;
 
 	thiz = EGUEB_SMIL_ANIMATE_BASE(a);
+	_egueb_smil_animate_base_values_free(thiz);
+	_egueb_smil_animate_base_times_free(thiz);
+	_egueb_smil_animate_base_key_splines_free(thiz);
 }
 
 /* TODO same as set, share this */
@@ -857,6 +716,7 @@ static void _egueb_smil_animate_base_instance_init(void *o)
 	thiz->key_times = egueb_dom_attr_double_list_new(
 			egueb_dom_string_ref(EGUEB_SMIL_NAME_KEY_TIMES), NULL,
 			EINA_FALSE, EINA_FALSE, EINA_FALSE);
+	thiz->key_splines = egueb_smil_attr_key_splines_new();
 
 	n = EGUEB_DOM_NODE(o);
 	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->by), NULL);
@@ -865,6 +725,7 @@ static void _egueb_smil_animate_base_instance_init(void *o)
 	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->values), NULL);
 	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->calc_mode), NULL);
 	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->key_times), NULL);
+	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->key_splines), NULL);
 }
 
 static void _egueb_smil_animate_base_instance_deinit(void *o)
@@ -880,9 +741,7 @@ static void _egueb_smil_animate_base_instance_deinit(void *o)
 	egueb_dom_node_unref(thiz->values);
 	egueb_dom_node_unref(thiz->calc_mode);
 	egueb_dom_node_unref(thiz->key_times);
-#if 0
 	egueb_dom_node_unref(thiz->key_splines);
-#endif
 	egueb_smil_signal_unref(thiz->signal);
 }
 /*============================================================================*
@@ -891,142 +750,3 @@ static void _egueb_smil_animate_base_instance_deinit(void *o)
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/
-#if 0
-/**
- * To be documented
- * FIXME: To be fixed
- */
-EAPI Eina_Bool egueb_smil_is_animate_base(Ender_Element *e)
-{
-	Egueb_Dom_Tag *t;
-
-	t = ender_element_object_get(e);
-	return egueb_smil_is_animate_base_internal(t);
-}
-
-/**
- * To be documented
- * FIXME: To be fixed
- */
-EAPI void egueb_smil_animate_base_to_set(Ender_Element *e, const char *v)
-{
-	ender_element_property_value_set(e, EGUEB_SMIL_ANIMATE_BASE_TO, v, NULL);
-}
-
-/**
- * To be documented
- * FIXME: To be fixed
- */
-EAPI void egueb_smil_animate_base_to_get(Ender_Element *e, const char **v)
-{
-	Egueb_Dom_Tag *t;
-
-	t = ender_element_object_get(e);
-	_egueb_smil_animate_base_to_get(t, v);
-}
-
-/**
- * To be documented
- * FIXME: To be fixed
- */
-EAPI void egueb_smil_animate_base_from_set(Ender_Element *e, const char *v)
-{
-	ender_element_property_value_set(e, EGUEB_SMIL_ANIMATE_BASE_FROM, v, NULL);
-}
-
-/**
- * To be documented
- * FIXME: To be fixed
- */
-EAPI void egueb_smil_animate_base_from_get(Ender_Element *e, const char **v)
-{
-	Egueb_Dom_Tag *t;
-
-	t = ender_element_object_get(e);
-	_egueb_smil_animate_base_from_get(t, v);
-}
-
-/**
- * To be documented
- * FIXME: To be fixed
- */
-EAPI void egueb_smil_animate_base_values_set(Ender_Element *e, const char *v)
-{
-	ender_element_property_value_set(e, EGUEB_SMIL_ANIMATE_BASE_VALUES, v, NULL);
-}
-
-/**
- * To be documented
- * FIXME: To be fixed
- */
-EAPI void egueb_smil_animate_base_values_get(Ender_Element *e, const char **v)
-{
-	Egueb_Dom_Tag *t;
-
-	t = ender_element_object_get(e);
-	_egueb_smil_animate_base_values_get(t, v);
-}
-
-/**
- * To be documented
- * FIXME: To be fixed
- */
-EAPI void egueb_smil_animate_base_calc_mode_set(Ender_Element *e, Egueb_Smil_Calc_Mode calc_mode)
-{
-	ender_element_property_value_set(e, EGUEB_SMIL_ANIMATE_BASE_CALC_MODE, calc_mode, NULL);
-}
-
-/**
- * To be documented
- * FIXME: To be fixed
- */
-EAPI void egueb_smil_animate_base_calc_mode_get(Ender_Element *e, Egueb_Smil_Calc_Mode *calc_mode)
-{
-	Egueb_Dom_Tag *t;
-
-	t = ender_element_object_get(e);
-	_egueb_smil_animate_base_calc_mode_get(t, calc_mode);
-}
-
-/**
- * To be documented
- * FIXME: To be fixed
- */
-EAPI void egueb_smil_animate_base_key_times_set(Ender_Element *e, const char *v)
-{
-	ender_element_property_value_set(e, EGUEB_SMIL_ANIMATE_BASE_KEY_TIMES, v, NULL);
-}
-
-/**
- * To be documented
- * FIXME: To be fixed
- */
-EAPI void egueb_smil_animate_base_key_times_get(Ender_Element *e, const char **v)
-{
-	Egueb_Dom_Tag *t;
-
-	t = ender_element_object_get(e);
-	_egueb_smil_animate_base_key_times_get(t, v);
-}
-
-/**
- * To be documented
- * FIXME: To be fixed
- */
-EAPI void egueb_smil_animate_base_key_splines_set(Ender_Element *e, const char *v)
-{
-	ender_element_property_value_set(e, EGUEB_SMIL_ANIMATE_BASE_KEY_SPLINES, v, NULL);
-}
-
-/**
- * To be documented
- * FIXME: To be fixed
- */
-EAPI void egueb_smil_animate_base_key_splines_get(Ender_Element *e, const char **v)
-{
-	Egueb_Dom_Tag *t;
-
-	t = ender_element_object_get(e);
-	_egueb_smil_animate_base_key_splines_get(t, v);
-}
-#endif

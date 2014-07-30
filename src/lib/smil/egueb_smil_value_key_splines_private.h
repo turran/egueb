@@ -15,14 +15,9 @@
  * License along with this library.
  * If not, see <http://www.gnu.org/licenses/>.
  */
+#ifndef _EGUEB_SMIL_VALUE_KEY_SPLINES_PRIVATE_H_
+#define _EGUEB_SMIL_VALUE_KEY_SPLINES_PRIVATE_H_
 
-#ifndef _EGUEB_SMIL_TIMELINE_PRIVATE_H_
-#define _EGUEB_SMIL_TIMELINE_PRIVATE_H_
-
-void egueb_smil_timeline_tick(Egueb_Smil_Timeline *thiz);
-unsigned int egueb_smil_timeline_tpf_get(Egueb_Smil_Timeline *thiz);
-void egueb_smil_timeline_fps_set(Egueb_Smil_Timeline *thiz, unsigned int fps);
-unsigned int egueb_smil_timeline_fps_get(Egueb_Smil_Timeline *thiz);
-Egueb_Smil_Clock egueb_smil_timeline_current_clock_get(Egueb_Smil_Timeline *thiz);
+const Egueb_Dom_Value_Descriptor * egueb_smil_value_key_splines_descriptor_get(void);
 
 #endif

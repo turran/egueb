@@ -17,39 +17,49 @@
  */
 #include "egueb_smil_private.h"
 #include "egueb_smil_key_spline_private.h"
-#include "egueb_dom_value_private.h"
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
-static char * egueb_smil_value_key_spline_string_to(Egueb_Smil_Key_Spline *value)
-{
-	return NULL;
-}
-
-static Eina_Bool egueb_smil_value_key_spline_string_from(
-		Egueb_Smil_Key_Spline *value, const char *str)
-{
-	return egueb_smil_key_spline_string_from(value, str);
-}
-
-
-static void egueb_smil_value_key_spline_interpolate(Egueb_Smil_Key_Spline *v,
-		Egueb_Smil_Key_Spline *a, Egueb_Smil_Key_Spline *b, double m,
-		Egueb_Smil_Key_Spline *add, Egueb_Smil_Key_Spline *acc, int mul)
-{
-	ERR("Not implemented");
-}
-
-EGUEB_DOM_VALUE_PRIMITIVE_SIMPLE_BOILERPLATE(egueb_smil_value_key_spline,
-		Egueb_Smil_Key_Spline);
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
-const Egueb_Dom_Value_Descriptor * egueb_smil_value_key_spline_descriptor_get(void)
+Eina_Bool egueb_smil_key_spline_string_from(
+		Egueb_Smil_Key_Spline *value, const char *str)
 {
-	return &_egueb_smil_value_key_spline_descriptor;
-}
+	double vals[4];
+	const char *tmp;
+	char *endptr;
+	int i;
 
+	if (!str) return EINA_FALSE;
+	EGUEB_DOM_SPACE_SKIP(str);
+	if (!str) return EINA_FALSE;
+	tmp = str;
+
+	for (i = 0; i < 4; i++)
+	{
+		if (!tmp)
+			break;
+		if (!egueb_dom_double_get(tmp, &endptr, &vals[i]))
+			break;
+
+		tmp = endptr;
+		EGUEB_DOM_SPACE_COMMA_SKIP(tmp);
+	}
+
+	if (i == 4)
+	{
+		value->x = vals[0];
+		value->y = vals[1];
+		value->cx = vals[2];
+		value->cy = vals[3];
+		return EINA_TRUE;
+	}
+	else
+	{
+		return EINA_FALSE;
+	}
+}
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/

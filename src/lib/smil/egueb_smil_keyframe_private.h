@@ -29,9 +29,19 @@ typedef struct _Egueb_Smil_Keyframe_Interpolator_Data_Quadratic
 	double y0;
 } Egueb_Smil_Keyframe_Interpolator_Data_Quadratic;
 
+typedef struct _Egueb_Smil_Keyframe_Interpolator_Data_Cubic
+{
+	/** Control points */
+	double x0;
+	double y0;
+	double x1;
+	double y1;
+} Egueb_Smil_Keyframe_Interpolator_Data_Cubic;
+
 typedef union _Egueb_Smil_Keyframe_Interpolator_Data
 {
 	Egueb_Smil_Keyframe_Interpolator_Data_Quadratic q;
+	Egueb_Smil_Keyframe_Interpolator_Data_Cubic c;
 } Egueb_Smil_Keyframe_Interpolator_Data;
 
 typedef struct _Egueb_Smil_Keyframe

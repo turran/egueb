@@ -87,7 +87,6 @@ static Eina_Bool _animation_clock_parse(const char *v, int64_t *clock)
 
 static Eina_Bool _animation_name_parse(const char *v, const char **start, int *len)
 {
-	int l = 0;
 	const char *s;
 
 	/* check the first letter */

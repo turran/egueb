@@ -56,6 +56,15 @@ typedef struct _Egueb_Smil_Signal_Continuous_Class
 
 typedef double (*Egueb_Smil_Signal_Continuous_Interpolator_Calc)(double m, Egueb_Smil_Keyframe_Interpolator_Data *data);
 
+static inline double _egueb_smil_signal_continuous_sanitize_cp(double v)
+{
+	if (v > 1)
+		return 1;
+	else if (v < 0)
+		return 0;
+	else
+		return v;
+}
 
 static int _egueb_smil_signal_continuous_keyframes_compare(const void *data1, const void *data2)
 {
@@ -106,20 +115,89 @@ static double _calc_cosin(double m, Egueb_Smil_Keyframe_Interpolator_Data *data)
 	return (1 - cos(m * M_PI))/2;
 }
 
+/* check http://www.flong.com/texts/code/shapers_bez/ */
+/* TODO move this to enesim */
 static double _calc_quadratic(double m, Egueb_Smil_Keyframe_Interpolator_Data *data)
 {
+	double ret;
 	double t;
+	double a;
+	double b;
+	double om2a;
 
-        /* FIXME: check if data->q.x0 and data->q.y0 are in [0,1] ? */
-	/* TODO: bench that algo and the one with de casteljau */
-	t = (-data->q.x0 + sqrt(data->q.x0 * data->q.x0 + m * (1 - 2 * data->q.x0))) / (1 - 2 * data->q.x0);
-	return ((1 - 2 * data->q.y0) * t + 2 * data->q.y0) * t;
+	a = data->q.x0;
+	b = data->q.y0;
+
+	om2a = 1 - (2 * a);
+	t = (sqrt((a * a) + (om2a * m)) - a) / om2a;
+	ret = ((1 - 2 * b) * (t * t)) + ((2 * b) * t);
+	return ret;
 }
 
+/* check http://www.flong.com/texts/code/shapers_bez/ */
+/* TODO move this to enesim */
+// Helper functions:
+double _calc_cubic_slope_from_t(double t, double A, double B, double C)
+{
+	double dtdx = 1.0/(3.0*A*t*t + 2.0*B*t + C); 
+	return dtdx;
+}
+
+double _calc_cubic_x_from_t(double t, double A, double B, double C, double D)
+{
+	double x = A*(t*t*t) + B*(t*t) + C*t + D;
+	return x;
+}
+
+double _calc_cubic_y_from_t(double t, double E, double F, double G, double H)
+{
+	double y = E*(t*t*t) + F*(t*t) + G*t + H;
+	return y;
+}
 static double _calc_cubic(double m, Egueb_Smil_Keyframe_Interpolator_Data *data)
 {
-	/* TODO */
-	return m;
+	double a = data->c.x0;
+	double b = data->c.y0;
+	double c = data->c.x1;
+	double d = data->c.y1;
+
+	double y0a = 0.00; // initial y
+	double x0a = 0.00; // initial x
+	double y1a = b;    // 1st influence y
+	double x1a = a;    // 1st influence x
+	double y2a = d;    // 2nd influence y
+	double x2a = c;    // 2nd influence x
+	double y3a = 1.00; // final y
+	double x3a = 1.00; // final x
+
+	double A =   x3a - 3*x2a + 3*x1a - x0a;
+	double B = 3*x2a - 6*x1a + 3*x0a;
+	double C = 3*x1a - 3*x0a;
+	double D =   x0a;
+
+	double E =   y3a - 3*y2a + 3*y1a - y0a;
+	double F = 3*y2a - 6*y1a + 3*y0a;
+	double G = 3*y1a - 3*y0a;
+	double H =   y0a;
+
+	// Solve for t given x (using Newton-Raphelson), then solve for y given t.
+	// Assume for the first guess that t = x.
+	double currentt = m;
+	double ret;
+	int nRefinementIterations = 5;
+	int i;
+
+	for (i = 0; i < nRefinementIterations; i++)
+	{
+		double currentx = _calc_cubic_x_from_t(currentt, A, B, C, D); 
+		double currentslope = _calc_cubic_slope_from_t(currentt, A, B, C);
+
+		currentt -= (currentx - m)*(currentslope);
+		currentt = _egueb_smil_signal_continuous_sanitize_cp(currentt);
+	} 
+
+	ret = _calc_cubic_y_from_t(currentt, E, F, G, H);
+	return ret;
 }
 
 static Egueb_Smil_Signal_Continuous_Interpolator_Calc _calcs[EGUEB_SMIL_KEYFRAME_INTERPOLATOR_TYPES] = {
@@ -377,8 +455,28 @@ EAPI void egueb_smil_signal_continuous_keyframe_quadratic_add(Egueb_Smil_Signal 
 	k->type = EGUEB_SMIL_KEYFRAME_INTERPOLATOR_QUADRATIC;
 	k->time = clock;
 	k->value = value;
-	k->data.q.x0 = x0;
-	k->data.q.y0 = y0;
+	k->data.q.x0 = _egueb_smil_signal_continuous_sanitize_cp(x0);
+	k->data.q.y0 = _egueb_smil_signal_continuous_sanitize_cp(y0);
+
+	thiz = EGUEB_SMIL_SIGNAL_CONTINUOUS(s);
+	_egueb_smil_signal_continuous_keyframes_add(thiz, k);
+}
+
+EAPI void egueb_smil_signal_continuous_keyframe_cubic_add(Egueb_Smil_Signal *s,
+		Egueb_Smil_Clock clock, double x0, double y0, double x1, double y1,
+		Egueb_Dom_Value *value)
+{
+	Egueb_Smil_Signal_Continuous *thiz;
+	Egueb_Smil_Keyframe *k;
+
+	k = calloc(1, sizeof(Egueb_Smil_Keyframe));
+	k->type = EGUEB_SMIL_KEYFRAME_INTERPOLATOR_CUBIC;
+	k->time = clock;
+	k->value = value;
+	k->data.c.x0 = _egueb_smil_signal_continuous_sanitize_cp(x0);
+	k->data.c.y0 = _egueb_smil_signal_continuous_sanitize_cp(y0);
+	k->data.c.x1 = _egueb_smil_signal_continuous_sanitize_cp(x1);
+	k->data.c.y1 = _egueb_smil_signal_continuous_sanitize_cp(y1);
 
 	thiz = EGUEB_SMIL_SIGNAL_CONTINUOUS(s);
 	_egueb_smil_signal_continuous_keyframes_add(thiz, k);

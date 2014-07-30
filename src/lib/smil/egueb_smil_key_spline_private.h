@@ -26,4 +26,7 @@ typedef struct _Egueb_Smil_Key_Spline
 	double cy;
 } Egueb_Smil_Key_Spline;
 
+Eina_Bool egueb_smil_key_spline_string_from(
+		Egueb_Smil_Key_Spline *value, const char *str);
+
 #endif

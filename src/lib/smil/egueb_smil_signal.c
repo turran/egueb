@@ -23,6 +23,7 @@
 #include "egueb_smil_signal.h"
 
 #include "egueb_smil_signal_private.h"
+#include "egueb_smil_timeline_private.h"
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
@@ -160,5 +161,5 @@ EAPI void egueb_smil_signal_offset_set(Egueb_Smil_Signal *thiz, Egueb_Smil_Clock
  */
 EAPI Egueb_Smil_Timeline * egueb_smil_signal_timeline_get(Egueb_Smil_Signal *thiz)
 {
-	egueb_smil_timeline_ref(thiz->timeline);
+	return egueb_smil_timeline_ref(thiz->timeline);
 }

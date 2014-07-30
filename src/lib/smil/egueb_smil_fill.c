@@ -51,16 +51,16 @@ static Eina_Bool _egueb_smil_fill_string_from(Egueb_Dom_Value *v, const char *st
 }
 
 static Egueb_Dom_Value_Descriptor _descriptor = {
-	/* .data_from 		= */ _egueb_smil_fill_data_from,
-	/* .data_from_type 	= */ EGUEB_DOM_VALUE_DATA_TYPE_INT32,
-	/* .data_to 		= */ _egueb_smil_fill_data_to,
-	/* .data_to_type 	= */ EGUEB_DOM_VALUE_DATA_TYPE_PTR,
-	/* .init 		= */ NULL,
-	/* .free 		= */ NULL,
-	/* .copy 		= */ NULL,
-	/* .string_to 		= */ _egueb_smil_fill_string_to,
-	/* .string_from 	= */ _egueb_smil_fill_string_from,
-	/* .interpolate 	= */ NULL,
+	/* .data_from		= */ _egueb_smil_fill_data_from,
+	/* .data_from_type	= */ EGUEB_DOM_VALUE_DATA_TYPE_INT32,
+	/* .data_to		= */ _egueb_smil_fill_data_to,
+	/* .data_to_type	= */ EGUEB_DOM_VALUE_DATA_TYPE_PTR,
+	/* .init		= */ NULL,
+	/* .free		= */ NULL,
+	/* .copy		= */ NULL,
+	/* .string_to		= */ _egueb_smil_fill_string_to,
+	/* .string_from		= */ _egueb_smil_fill_string_from,
+	/* .interpolate		= */ NULL,
 };
 /*============================================================================*
  *                                 Global                                     *
@@ -88,8 +88,6 @@ EAPI Eina_Bool egueb_smil_fill_string_from(Egueb_Smil_Fill *fill, const char *at
 
 EAPI char * egueb_smil_fill_string_to(Egueb_Smil_Fill fill)
 {
-	Eina_Bool ret = EINA_TRUE;
-
 	switch (fill)
 	{
 		case EGUEB_SMIL_FILL_FREEZE:

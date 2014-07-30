@@ -118,7 +118,6 @@ static Eina_Bool _egueb_smil_set_setup(Egueb_Smil_Animation *a,
 		Egueb_Dom_Node *target)
 {
 	Egueb_Smil_Set *thiz;
-	Egueb_Smil_Duration dur;
 	Egueb_Dom_String *to = NULL;
 
 	thiz = EGUEB_SMIL_SET(a);

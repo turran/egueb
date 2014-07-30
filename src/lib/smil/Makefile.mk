@@ -38,6 +38,8 @@ src/lib/smil/egueb_smil_attr_duration.c \
 src/lib/smil/egueb_smil_attr_duration_private.h \
 src/lib/smil/egueb_smil_attr_fill.c \
 src/lib/smil/egueb_smil_attr_fill_private.h \
+src/lib/smil/egueb_smil_attr_key_splines.c \
+src/lib/smil/egueb_smil_attr_key_splines_private.h \
 src/lib/smil/egueb_smil_attr_repeat_count.c \
 src/lib/smil/egueb_smil_attr_repeat_count_private.h \
 src/lib/smil/egueb_smil_attr_timing_list.c \
@@ -51,6 +53,8 @@ src/lib/smil/egueb_smil_event_timeline.c \
 src/lib/smil/egueb_smil_feature_animation.c \
 src/lib/smil/egueb_smil_fill.c \
 src/lib/smil/egueb_smil_keyframe_private.h \
+src/lib/smil/egueb_smil_key_spline.c \
+src/lib/smil/egueb_smil_key_spline_private.h \
 src/lib/smil/egueb_smil_main.c \
 src/lib/smil/egueb_smil_repeat_count.c \
 src/lib/smil/egueb_smil_set.c \
@@ -61,7 +65,11 @@ src/lib/smil/egueb_smil_signal_discrete.c \
 src/lib/smil/egueb_smil_timeline.c \
 src/lib/smil/egueb_smil_timeline_private.h \
 src/lib/smil/egueb_smil_timing.c \
-src/lib/smil/egueb_smil_timing_list.c
+src/lib/smil/egueb_smil_timing_list.c \
+src/lib/smil/egueb_smil_value_key_spline.c \
+src/lib/smil/egueb_smil_value_key_spline_private.h \
+src/lib/smil/egueb_smil_value_key_splines.c \
+src/lib/smil/egueb_smil_value_key_splines_private.h
 
 src_lib_smil_libegueb_smil_la_CPPFLAGS = \
 -I$(top_srcdir)/src/lib/smil \

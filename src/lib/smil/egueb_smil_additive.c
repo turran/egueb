@@ -88,8 +88,6 @@ EAPI Eina_Bool egueb_smil_additive_string_from(Egueb_Smil_Additive *additive, co
 
 EAPI char * egueb_smil_additive_string_to(Egueb_Smil_Additive additive)
 {
-	Eina_Bool ret = EINA_TRUE;
-
 	switch (additive)
 	{
 		case EGUEB_SMIL_ADDITIVE_SUM:
@@ -102,5 +100,3 @@ EAPI char * egueb_smil_additive_string_to(Egueb_Smil_Additive additive)
 		return NULL;
 	}
 }
-
-

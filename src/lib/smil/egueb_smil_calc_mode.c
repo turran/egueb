@@ -42,8 +42,6 @@ static void _egueb_smil_calc_mode_data_to(Egueb_Dom_Value *v, Egueb_Dom_Value_Da
 
 static char * _egueb_smil_calc_mode_string_to(const Egueb_Dom_Value *v)
 {
-	Eina_Bool ret = EINA_TRUE;
-
 	EINA_SAFETY_ON_FALSE_RETURN_VAL(v->descriptor == &_descriptor, NULL);
 	switch (v->data.i32)
 	{

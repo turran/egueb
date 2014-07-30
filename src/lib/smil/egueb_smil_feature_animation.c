@@ -24,6 +24,7 @@
 
 #include "egueb_smil_feature_animation.h"
 
+#include "egueb_smil_timeline_private.h"
 #include "egueb_dom_node_private.h"
 #include "egueb_dom_string_private.h"
 #include "egueb_dom_feature_private.h"

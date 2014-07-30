@@ -57,10 +57,6 @@ static void _egueb_smil_signal_discrete_process(Egueb_Smil_Signal *s,
 		Egueb_Smil_Clock curr, Egueb_Smil_Clock tpf)
 {
 	Egueb_Smil_Signal_Discrete *thiz;
-	Egueb_Smil_Clock rcurr;
-	Egueb_Smil_Clock atime; /* signal time */
-	Egueb_Smil_Clock end;
-	Egueb_Smil_Clock length;
 
 	thiz = EGUEB_SMIL_SIGNAL_DISCRETE(s);
 	if (curr < thiz->start + s->offset)
@@ -111,10 +107,6 @@ static void _egueb_smil_signal_discrete_instance_init(void *o)
 
 static void _egueb_smil_signal_discrete_instance_deinit(void *o)
 {
-	Egueb_Smil_Signal_Discrete *thiz;
-	Egueb_Smil_Keyframe *k;
-
-	thiz = EGUEB_SMIL_SIGNAL_DISCRETE(o);
 }
 /*============================================================================*
  *                                 Global                                     *

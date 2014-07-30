@@ -88,8 +88,6 @@ EAPI Eina_Bool egueb_smil_accumulate_string_from(Egueb_Smil_Accumulate *accumula
 
 EAPI char * egueb_smil_accumulate_string_to(Egueb_Smil_Accumulate accumulate)
 {
-	Eina_Bool ret = EINA_TRUE;
-
 	switch (accumulate)
 	{
 		case EGUEB_SMIL_ACCUMULATE_SUM:

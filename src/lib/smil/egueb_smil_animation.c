@@ -200,7 +200,6 @@ static Eina_Bool _egueb_smil_animation_event_setup(Egueb_Smil_Animation *thiz,
 static void _egueb_smil_animation_begin(Egueb_Smil_Animation *thiz, int64_t offset)
 {
 	Egueb_Smil_Animation_Class *klass;
-	double seconds;
 
 	if (thiz->started)
 		return;

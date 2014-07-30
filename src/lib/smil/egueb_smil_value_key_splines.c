@@ -19,13 +19,23 @@
 
 #include "egueb_smil_key_spline_private.h"
 #include "egueb_smil_value_key_spline_private.h"
+#include "egueb_smil_value_key_splines_private.h"
 #include "egueb_dom_value_private.h"
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
 static void _egueb_smil_value_key_splines_cb(const char *attr, void *data)
 {
-	/* space separated values */
+	Egueb_Smil_Key_Spline spline;
+	Egueb_Dom_List *l = data;
+
+	if (egueb_smil_key_spline_string_from(&spline, attr))
+	{
+		Egueb_Smil_Key_Spline *pspline;
+		pspline = malloc(sizeof(Egueb_Smil_Key_Spline));
+		*pspline = spline;
+		egueb_dom_list_item_append(l, pspline);
+	}
 }
 
 static Eina_Bool egueb_smil_value_key_splines_string_from(Egueb_Dom_List *l, const char *str)
@@ -45,11 +55,10 @@ EGUEB_DOM_VALUE_LIST_BOILERPLATE(egueb_smil_value_key_splines,
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
-/*============================================================================*
- *                                   API                                      *
- *============================================================================*/
-EAPI const Egueb_Dom_Value_Descriptor * egueb_smil_value_key_splines_descriptor_get(void)
+const Egueb_Dom_Value_Descriptor * egueb_smil_value_key_splines_descriptor_get(void)
 {
 	return &_egueb_smil_value_key_splines_descriptor;
 }
-
+/*============================================================================*
+ *                                   API                                      *
+ *============================================================================*/
