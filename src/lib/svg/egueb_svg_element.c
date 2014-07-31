@@ -478,10 +478,9 @@ static void _egueb_svg_element_instance_init(void *o)
 			egueb_dom_string_ref(EGUEB_SVG_STROKE_LINECAP),
 			EGUEB_SVG_STROKE_LINE_CAP_BUTT,
 			EINA_TRUE, EINA_TRUE, EINA_TRUE);
-	/* FIXME shoud be miter */
 	thiz->stroke_line_join = egueb_svg_attr_stroke_line_join_new(
 			egueb_dom_string_ref(EGUEB_SVG_STROKE_LINEJOIN),
-			EGUEB_SVG_STROKE_LINE_JOIN_ROUND,
+			EGUEB_SVG_STROKE_LINE_JOIN_MITER,
 			EINA_TRUE, EINA_TRUE, EINA_TRUE);
 	thiz->stroke_width = egueb_svg_attr_length_new(
 			egueb_dom_string_ref(EGUEB_SVG_STROKE_WIDTH),
