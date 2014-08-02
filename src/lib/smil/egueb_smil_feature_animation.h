@@ -29,6 +29,8 @@ typedef struct _Egueb_Smil_Feature_Animation_Descriptor
 
 EAPI Eina_Bool egueb_smil_feature_animation_fps_set(Egueb_Dom_Feature *f, int fps);
 EAPI Eina_Bool egueb_smil_feature_animation_fps_get(Egueb_Dom_Feature *f, int *fps);
+EAPI Eina_Bool egueb_smil_feature_animation_duration_get(Egueb_Dom_Feature *f,
+		Egueb_Smil_Clock *clock);
 EAPI Eina_Bool egueb_smil_feature_animation_tick(Egueb_Dom_Feature *f);
 EAPI Eina_Bool egueb_smil_feature_animation_add(Egueb_Dom_Node *n,
 		const Egueb_Smil_Feature_Animation_Descriptor *d);
