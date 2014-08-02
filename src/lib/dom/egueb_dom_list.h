@@ -36,6 +36,7 @@ EAPI void egueb_dom_list_item_remove(Egueb_Dom_List *thiz, int idx);
 EAPI void egueb_dom_list_item_append(Egueb_Dom_List *thiz, void *data);
 
 EAPI void egueb_dom_list_foreach(Egueb_Dom_List *thiz, Egueb_Dom_List_Foreach cb, void *user_data);
+EAPI Eina_Iterator * egueb_dom_list_iterator_new(Egueb_Dom_List *thiz);
 EAPI void egueb_dom_list_interpolate(Egueb_Dom_List *v,
 		Egueb_Dom_List *a, Egueb_Dom_List *b, double m,
 		Egueb_Dom_List *add, Egueb_Dom_List *acc, int mul);

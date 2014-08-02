@@ -29,6 +29,36 @@ struct _Egueb_Dom_List
 	const Egueb_Dom_Value_Descriptor *content_descriptor;
 	int ref;
 };
+
+typedef struct _Egueb_Dom_List_Iterator
+{
+	Egueb_Dom_List *list;
+	Eina_Iterator *lit;
+	Eina_Iterator iterator;
+} Egueb_Dom_List_Iterator;
+/*----------------------------------------------------------------------------*
+ *                            Iterator interface                              *
+ *----------------------------------------------------------------------------*/
+static Eina_Bool
+_egueb_dom_list_iterator_next(Egueb_Dom_List_Iterator *it, void **data)
+{
+	return eina_iterator_next(it->lit, data);
+}
+
+static void *
+_egueb_dom_list_iterator_get_container(Egueb_Dom_List_Iterator *it)
+{
+	return (void *)egueb_dom_list_ref(it->list);
+}
+
+static void
+_egueb_dom_list_iterator_free(Egueb_Dom_List_Iterator *it)
+{
+	egueb_dom_list_unref(it->list);
+	eina_iterator_free(it->lit);
+	free(it);
+}
+
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
@@ -112,6 +142,23 @@ EAPI void egueb_dom_list_item_append(Egueb_Dom_List *thiz, void *data)
 {
 	/* TODO trigger the mutation event */
 	thiz->list = eina_list_append(thiz->list, data);
+}
+
+EAPI Eina_Iterator * egueb_dom_list_iterator_new(Egueb_Dom_List *thiz)
+{
+	Egueb_Dom_List_Iterator *it;
+
+	it = calloc(1, sizeof (Egueb_Dom_List_Iterator));
+	it->list = egueb_dom_list_ref(thiz);
+	it->lit = eina_list_iterator_new(thiz->list);
+	it->iterator.version = EINA_ITERATOR_VERSION;
+	it->iterator.next = FUNC_ITERATOR_NEXT(_egueb_dom_list_iterator_next);
+	it->iterator.get_container = FUNC_ITERATOR_GET_CONTAINER(
+			_egueb_dom_list_iterator_get_container);
+	it->iterator.free = FUNC_ITERATOR_FREE(_egueb_dom_list_iterator_free);
+
+	EINA_MAGIC_SET(&it->iterator, EINA_MAGIC_ITERATOR);
+	return &it->iterator;
 }
 
 EAPI void egueb_dom_list_foreach(Egueb_Dom_List *thiz, Egueb_Dom_List_Foreach cb, void *user_data)
