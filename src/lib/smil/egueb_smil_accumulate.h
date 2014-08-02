@@ -25,9 +25,4 @@ typedef enum _Egueb_Smil_Accumulate
 	EGUEB_SMIL_ACCUMULATE_NONE,
 } Egueb_Smil_Accumulate;
 
-EAPI const Egueb_Dom_Value_Descriptor * egueb_smil_accumulate_descriptor_get(void);
-EAPI Eina_Bool egueb_smil_accumulate_string_from(Egueb_Smil_Accumulate *accumulate, const char *attr);
-EAPI char * egueb_smil_accumulate_string_to(Egueb_Smil_Accumulate accumulate);
-
 #endif
-

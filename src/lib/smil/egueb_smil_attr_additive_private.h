@@ -15,11 +15,9 @@
  * License along with this library.
  * If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef _EGUEB_SMIL_PROPERTY_ADDITIVE_PRIVATE_H_
-#define _EGUEB_SMIL_PROPERTY_ADDITIVE_PRIVATE_H_
+#ifndef _EGUEB_SMIL_ATTR_ADDITIVE_PRIVATE_H_
+#define _EGUEB_SMIL_ATTR_ADDITIVE_PRIVATE_H_
 
-Egueb_Dom_Node * egueb_smil_attr_additive_new(Egueb_Dom_String *name,
-		Egueb_Smil_Additive def);
+Egueb_Dom_Node * egueb_smil_attr_additive_new(void);
 
 #endif
-

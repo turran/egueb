@@ -16,42 +16,24 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 #include "egueb_smil_private.h"
-#include "egueb_smil_additive.h"
+#include "egueb_smil_accumulate.h"
+#include "egueb_smil_accumulate_private.h"
 #include "egueb_dom_value_private.h"
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
+/*----------------------------------------------------------------------------*
+ *                             Value interface                                *
+ *----------------------------------------------------------------------------*/
+EGUEB_DOM_VALUE_ENUM_BOILERPLATE(egueb_smil_accumulate,
+		Egueb_Smil_Accumulate);
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
-Eina_Bool egueb_smil_additive_string_from(Egueb_Smil_Additive *additive, const char *attr)
+const Egueb_Dom_Value_Descriptor * egueb_smil_value_accumulate_descriptor_get(void)
 {
-	Eina_Bool ret = EINA_TRUE;
-
-	if (!strcmp(attr, "sum"))
-		*additive = EGUEB_SMIL_ADDITIVE_SUM;
-	else if (!strcmp(attr, "replace"))
-		*additive = EGUEB_SMIL_ADDITIVE_REPLACE;
-	else
-		ret = EINA_FALSE;
-	return ret;
-}
-
-char * egueb_smil_additive_string_to(Egueb_Smil_Additive additive)
-{
-	switch (additive)
-	{
-		case EGUEB_SMIL_ADDITIVE_SUM:
-		return strdup("sum");
-
-		case EGUEB_SMIL_ADDITIVE_REPLACE:
-		return strdup("replace");
-
-		default:
-		return NULL;
-	}
+	return &_egueb_smil_accumulate_descriptor;
 }
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/
-

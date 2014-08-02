@@ -16,40 +16,34 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 #include "egueb_smil_private.h"
-#include "egueb_smil_additive.h"
-#include "egueb_dom_value_private.h"
+
+#include "egueb_smil_main.h"
+#include "egueb_smil_accumulate.h"
+
+#include "egueb_dom_attr_private.h"
+#include "egueb_dom_attr_basic_private.h"
+#include "egueb_smil_value_accumulate_private.h"
+#include "egueb_smil_attr_accumulate_private.h"
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
+EGUEB_DOM_ATTR_BASIC_BOILERPLATE(Egueb_Smil_Accumulate,
+		Egueb_Smil_Attr_Accumulate, egueb_smil_value_accumulate,
+		egueb_smil_attr_accumulate)
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
-Eina_Bool egueb_smil_additive_string_from(Egueb_Smil_Additive *additive, const char *attr)
+Egueb_Dom_Node * egueb_smil_attr_accumulate_new(void)
 {
-	Eina_Bool ret = EINA_TRUE;
+	Egueb_Dom_Node *n;
 
-	if (!strcmp(attr, "sum"))
-		*additive = EGUEB_SMIL_ADDITIVE_SUM;
-	else if (!strcmp(attr, "replace"))
-		*additive = EGUEB_SMIL_ADDITIVE_REPLACE;
-	else
-		ret = EINA_FALSE;
-	return ret;
-}
+	n = ENESIM_OBJECT_INSTANCE_NEW(egueb_smil_attr_accumulate);
+	egueb_dom_attr_init(n, egueb_dom_string_ref(EGUEB_SMIL_NAME_ACCUMULATE),
+			EINA_FALSE, EINA_FALSE, EINA_FALSE);
+	egueb_dom_attr_set(n, EGUEB_DOM_ATTR_TYPE_DEFAULT,
+			EGUEB_SMIL_ACCUMULATE_NONE);
 
-char * egueb_smil_additive_string_to(Egueb_Smil_Additive additive)
-{
-	switch (additive)
-	{
-		case EGUEB_SMIL_ADDITIVE_SUM:
-		return strdup("sum");
-
-		case EGUEB_SMIL_ADDITIVE_REPLACE:
-		return strdup("replace");
-
-		default:
-		return NULL;
-	}
+	return n;
 }
 /*============================================================================*
  *                                   API                                      *

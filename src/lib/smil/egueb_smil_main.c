@@ -30,6 +30,7 @@ static void _egueb_smil_strings_init(void)
 	EGUEB_SMIL_NAME_ANIMATE = egueb_dom_string_new_with_string("animate");
 
 	EGUEB_SMIL_ADDITIVE = egueb_dom_string_new_with_string("additive");
+	EGUEB_SMIL_NAME_ACCUMULATE = egueb_dom_string_new_with_string("accumulate");
 	EGUEB_SMIL_ATTRIBUTE_NAME = egueb_dom_string_new_with_string("attributeName");
 	EGUEB_SMIL_BEGIN = egueb_dom_string_new_with_string("begin");
 	EGUEB_SMIL_DUR = egueb_dom_string_new_with_string("dur");
@@ -40,6 +41,7 @@ static void _egueb_smil_strings_init(void)
 	EGUEB_SMIL_BY = egueb_dom_string_new_with_string("by");
 	EGUEB_SMIL_VALUES = egueb_dom_string_new_with_string("values");
 	EGUEB_SMIL_REPEAT_COUNT = egueb_dom_string_new_with_string("repeatCount");
+	EGUEB_SMIL_NAME_REPEAT_DUR = egueb_dom_string_new_with_string("repeatDur");
 	EGUEB_SMIL_NAME_CALC_MODE = egueb_dom_string_new_with_string("calcMode");
 	EGUEB_SMIL_NAME_KEY_TIMES = egueb_dom_string_new_with_string("keyTimes");
 	EGUEB_SMIL_NAME_KEY_SPLINES = egueb_dom_string_new_with_string("keySplines");
@@ -51,6 +53,7 @@ static void _egueb_smil_strings_shutdown(void)
 	egueb_dom_string_unref(EGUEB_SMIL_NAME_ANIMATE);
 
 	egueb_dom_string_unref(EGUEB_SMIL_ADDITIVE);
+	egueb_dom_string_unref(EGUEB_SMIL_NAME_ACCUMULATE);
 	egueb_dom_string_unref(EGUEB_SMIL_ATTRIBUTE_NAME);
 	egueb_dom_string_unref(EGUEB_SMIL_BEGIN);
 	egueb_dom_string_unref(EGUEB_SMIL_DUR);
@@ -61,6 +64,7 @@ static void _egueb_smil_strings_shutdown(void)
 	egueb_dom_string_unref(EGUEB_SMIL_BY);
 	egueb_dom_string_unref(EGUEB_SMIL_VALUES);
 	egueb_dom_string_unref(EGUEB_SMIL_REPEAT_COUNT);
+	egueb_dom_string_unref(EGUEB_SMIL_NAME_REPEAT_DUR);
 	egueb_dom_string_unref(EGUEB_SMIL_NAME_CALC_MODE);
 	egueb_dom_string_unref(EGUEB_SMIL_NAME_KEY_TIMES);
 	egueb_dom_string_unref(EGUEB_SMIL_NAME_KEY_SPLINES);
@@ -76,6 +80,7 @@ Egueb_Dom_String *EGUEB_SMIL_NAME_SET;
 Egueb_Dom_String *EGUEB_SMIL_NAME_ANIMATE;
 
 Egueb_Dom_String *EGUEB_SMIL_ADDITIVE;
+Egueb_Dom_String *EGUEB_SMIL_NAME_ACCUMULATE;
 Egueb_Dom_String *EGUEB_SMIL_ATTRIBUTE_NAME;
 Egueb_Dom_String *EGUEB_SMIL_BEGIN;
 Egueb_Dom_String *EGUEB_SMIL_DUR;
@@ -86,6 +91,7 @@ Egueb_Dom_String *EGUEB_SMIL_FROM;
 Egueb_Dom_String *EGUEB_SMIL_BY;
 Egueb_Dom_String *EGUEB_SMIL_VALUES;
 Egueb_Dom_String *EGUEB_SMIL_REPEAT_COUNT;
+Egueb_Dom_String *EGUEB_SMIL_NAME_REPEAT_DUR;
 Egueb_Dom_String *EGUEB_SMIL_NAME_CALC_MODE;
 Egueb_Dom_String *EGUEB_SMIL_NAME_KEY_TIMES;
 Egueb_Dom_String *EGUEB_SMIL_NAME_KEY_SPLINES;

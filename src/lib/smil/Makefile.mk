@@ -30,6 +30,8 @@ src/lib/smil/egueb_smil_animation.c \
 src/lib/smil/egueb_smil_animate.c \
 src/lib/smil/egueb_smil_animate_base.c \
 src/lib/smil/egueb_smil_animate_base_private.h \
+src/lib/smil/egueb_smil_attr_accumulate.c \
+src/lib/smil/egueb_smil_attr_accumulate_private.h \
 src/lib/smil/egueb_smil_attr_additive.c \
 src/lib/smil/egueb_smil_attr_additive_private.h \
 src/lib/smil/egueb_smil_attr_calc_mode.c \
@@ -66,6 +68,10 @@ src/lib/smil/egueb_smil_timeline.c \
 src/lib/smil/egueb_smil_timeline_private.h \
 src/lib/smil/egueb_smil_timing.c \
 src/lib/smil/egueb_smil_timing_list.c \
+src/lib/smil/egueb_smil_value_accumulate.c \
+src/lib/smil/egueb_smil_value_accumulate_private.h \
+src/lib/smil/egueb_smil_value_additive.c \
+src/lib/smil/egueb_smil_value_additive_private.h \
 src/lib/smil/egueb_smil_value_key_spline.c \
 src/lib/smil/egueb_smil_value_key_spline_private.h \
 src/lib/smil/egueb_smil_value_key_splines.c \

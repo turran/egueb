@@ -15,14 +15,10 @@
  * License along with this library.
  * If not, see <http://www.gnu.org/licenses/>.
  */
+#ifndef _EGUEB_SMIL_ACCUMULATE_PRIVATE_H_
+#define _EGUEB_SMIL_ACCUMULATE_PRIVATE_H_
 
-#ifndef _EGUEB_SMIL_ADDITIVE_H_
-#define _EGUEB_SMIL_ADDITIVE_H_
-
-typedef enum _Egueb_Smil_Additive
-{
-	EGUEB_SMIL_ADDITIVE_SUM,
-	EGUEB_SMIL_ADDITIVE_REPLACE,
-} Egueb_Smil_Additive;
+Eina_Bool egueb_smil_accumulate_string_from(Egueb_Smil_Accumulate *accumulate, const char *attr);
+char * egueb_smil_accumulate_string_to(Egueb_Smil_Accumulate accumulate);
 
 #endif

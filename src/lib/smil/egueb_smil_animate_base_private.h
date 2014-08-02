@@ -29,6 +29,7 @@ typedef struct _Egueb_Smil_Animate_Base
 
 	/* properties */
 	Egueb_Dom_Node *additive;
+	Egueb_Dom_Node *accumulate;
 	Egueb_Dom_Node *calc_mode;
 	Egueb_Dom_Node *by;
 	Egueb_Dom_Node *to;

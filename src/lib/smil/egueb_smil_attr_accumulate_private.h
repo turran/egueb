@@ -15,14 +15,10 @@
  * License along with this library.
  * If not, see <http://www.gnu.org/licenses/>.
  */
+#ifndef _EGUEB_SMIL_ATTR_ACCUMULATE_PRIVATE_H_
+#define _EGUEB_SMIL_ATTR_ACCUMULATE_PRIVATE_H_
 
-#ifndef _EGUEB_SMIL_ADDITIVE_H_
-#define _EGUEB_SMIL_ADDITIVE_H_
-
-typedef enum _Egueb_Smil_Additive
-{
-	EGUEB_SMIL_ADDITIVE_SUM,
-	EGUEB_SMIL_ADDITIVE_REPLACE,
-} Egueb_Smil_Additive;
+Egueb_Dom_Node * egueb_smil_attr_accumulate_new(void);
 
 #endif
+

@@ -15,14 +15,9 @@
  * License along with this library.
  * If not, see <http://www.gnu.org/licenses/>.
  */
+#ifndef _EGUEB_SMIL_VALUE_ACCUMULATE_PRIVATE_H_
+#define _EGUEB_SMIL_VALUE_ACCUMULATE_PRIVATE_H_
 
-#ifndef _EGUEB_SMIL_ADDITIVE_H_
-#define _EGUEB_SMIL_ADDITIVE_H_
-
-typedef enum _Egueb_Smil_Additive
-{
-	EGUEB_SMIL_ADDITIVE_SUM,
-	EGUEB_SMIL_ADDITIVE_REPLACE,
-} Egueb_Smil_Additive;
+const Egueb_Dom_Value_Descriptor * egueb_smil_value_accumulate_descriptor_get(void);
 
 #endif

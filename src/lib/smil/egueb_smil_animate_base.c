@@ -20,6 +20,7 @@
 #include "egueb_smil_main.h"
 #include "egueb_smil_set.h"
 #include "egueb_smil_additive.h"
+#include "egueb_smil_accumulate.h"
 #include "egueb_smil_calc_mode.h"
 #include "egueb_smil_clock.h"
 #include "egueb_smil_keyframe.h"
@@ -30,6 +31,7 @@
 #include "egueb_smil_animation_private.h"
 #include "egueb_smil_animate_base_private.h"
 #include "egueb_smil_attr_additive_private.h"
+#include "egueb_smil_attr_accumulate_private.h"
 #include "egueb_smil_attr_calc_mode_private.h"
 #include "egueb_smil_attr_key_splines_private.h"
 
@@ -698,8 +700,8 @@ static void _egueb_smil_animate_base_instance_init(void *o)
 
 	thiz = EGUEB_SMIL_ANIMATE_BASE(o);
 	/* create the properties */
-	thiz->additive = egueb_smil_attr_additive_new(
-			egueb_dom_string_ref(EGUEB_SMIL_ADDITIVE), EGUEB_SMIL_ADDITIVE_REPLACE);
+	thiz->additive = egueb_smil_attr_additive_new();
+	thiz->accumulate = egueb_smil_attr_accumulate_new();
 	thiz->by = egueb_dom_attr_string_new(
 			egueb_dom_string_ref(EGUEB_SMIL_BY), NULL, EINA_FALSE,
 			EINA_FALSE, EINA_FALSE);
@@ -719,6 +721,9 @@ static void _egueb_smil_animate_base_instance_init(void *o)
 	thiz->key_splines = egueb_smil_attr_key_splines_new();
 
 	n = EGUEB_DOM_NODE(o);
+	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->additive), NULL);
+	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->accumulate), NULL);
+	/* values over time */
 	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->by), NULL);
 	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->to), NULL);
 	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->from), NULL);
@@ -735,6 +740,7 @@ static void _egueb_smil_animate_base_instance_deinit(void *o)
 	thiz = EGUEB_SMIL_ANIMATE_BASE(o);
 	/* the cleanup will be called as part of the deinitialization */
 	egueb_dom_node_unref(thiz->additive);
+	egueb_dom_node_unref(thiz->accumulate);
 	egueb_dom_node_unref(thiz->by);
 	egueb_dom_node_unref(thiz->to);
 	egueb_dom_node_unref(thiz->from);

@@ -57,6 +57,29 @@ typedef struct _Egueb_Smil_Animation_Event_Foreach_Data
 	int64_t offset;
 } Egueb_Smil_Animation_Event_Foreach_Data;
 
+/* convert a timing into a duration */
+static Eina_Bool _egueb_smil_animation_timing_duration(Egueb_Smil_Animation *thiz,
+		Egueb_Smil_Timing *t, Egueb_Smil_Duration *d)
+{
+	return EINA_TRUE;
+}
+
+/* convert a timing list into a duration */
+static Eina_Bool _egueb_smil_animation_timing_list_duration(Egueb_Smil_Animation *thiz,
+		Egueb_Dom_List *tl, Egueb_Smil_Duration *d)
+{
+	Egueb_Smil_Timing t;
+	Eina_Iterator *it;
+
+	it = egueb_dom_list_iterator_new(tl);
+	while (eina_iterator_next(it, (void **)&t))
+	{
+		printf("timing\n");
+	}
+	eina_iterator_free(it);
+	return EINA_TRUE;
+}
+
 static Egueb_Dom_Node * _egueb_smil_animation_target_get(Egueb_Smil_Animation *thiz)
 {
 	Egueb_Dom_Node *target = NULL;
@@ -621,6 +644,8 @@ static void _egueb_smil_animation_instance_init(void *o)
 			egueb_dom_string_ref(EGUEB_DOM_XLINK_HREF),
 			NULL, EINA_FALSE, EINA_FALSE, EINA_FALSE);
 	thiz->repeat_count = egueb_smil_attr_repeat_count_new();
+	thiz->repeat_dur = egueb_smil_attr_duration_new(
+			egueb_dom_string_ref(EGUEB_SMIL_NAME_REPEAT_DUR), NULL);
 
 	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->attribute_name), NULL);
 	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->fill), NULL);
@@ -629,6 +654,7 @@ static void _egueb_smil_animation_instance_init(void *o)
 	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->end), NULL);
 	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->xlink_href), NULL);
 	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->repeat_count), NULL);
+	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->repeat_dur), NULL);
 }
 
 static void _egueb_smil_animation_instance_deinit(void *o)
@@ -642,11 +668,108 @@ static void _egueb_smil_animation_instance_deinit(void *o)
 	egueb_dom_node_unref(thiz->dur);
 	egueb_dom_node_unref(thiz->begin);
 	egueb_dom_node_unref(thiz->end);
+	egueb_dom_node_unref(thiz->repeat_count);
+	egueb_dom_node_unref(thiz->repeat_dur);
 	egueb_dom_node_unref(thiz->xlink_href);
 }
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
+Eina_Bool egueb_smil_animation_active_duration_get(Egueb_Dom_Node *n,
+		Egueb_Smil_Clock *duration)
+{
+	Egueb_Smil_Animation *thiz;
+	Egueb_Smil_Duration dur;
+	Egueb_Smil_Duration repeat_dur;
+	Egueb_Smil_Duration final;
+	Egueb_Smil_Repeat_Count repeat_count;
+	Egueb_Dom_List *begin = NULL;
+	Egueb_Dom_List *end = NULL;
+	Egueb_Smil_Duration end_dur;
+	Eina_Bool dur_is_set;
+	Eina_Bool repeat_count_is_set;
+	Eina_Bool repeat_dur_is_set;
+	Eina_Bool end_is_set;
+	Eina_Bool begin_is_set;
+
+	/* http://www.w3.org/TR/2001/REC-smil-animation-20010904/#ComputingActiveDur */
+	thiz = EGUEB_SMIL_ANIMATION(n);
+	dur_is_set = egueb_dom_attr_final_get(thiz->dur, &dur);
+	repeat_count_is_set = egueb_dom_attr_final_get(thiz->repeat_count, &repeat_count);
+	repeat_dur_is_set = egueb_dom_attr_final_get(thiz->repeat_dur, &repeat_dur);
+	end_is_set = egueb_dom_attr_final_get(thiz->end, &end);
+	begin_is_set = egueb_dom_attr_final_get(thiz->begin, &begin);
+
+	/* initialize the final value */
+	final.type = EGUEB_SMIL_DURATION_TYPE_INDEFINITE;
+	final.data.clock = -1;
+
+	if (end_is_set && begin_is_set)
+	{
+		Egueb_Smil_Duration begin_dur;
+
+		_egueb_smil_animation_timing_list_duration(thiz, begin, &begin_dur);
+		_egueb_smil_animation_timing_list_duration(thiz, end, &end_dur);
+	}
+	egueb_dom_list_unref(begin);
+	egueb_dom_list_unref(end);
+
+	/* we should return the min of duration/repeatcount*d/repeatdur/end-begin */
+	if (dur_is_set)
+	{
+ 		if (dur.type == EGUEB_SMIL_DURATION_TYPE_CLOCK)
+		{
+			final.type = EGUEB_SMIL_DURATION_TYPE_CLOCK;
+			final.data.clock = dur.data.clock;
+			if (repeat_count_is_set)
+			{
+				if (repeat_count.type == EGUEB_SMIL_REPEAT_COUNT_TYPE_FINITE)
+				{
+					final.data.clock = final.data.clock * repeat_count.value;
+				}
+				else
+				{
+					final.type = EGUEB_SMIL_DURATION_TYPE_INDEFINITE;
+				}
+			}
+		}
+	}
+
+	/* in case is indefinite, use it, otherwise calc the min in case the above
+	 * is not indefinite
+	 */
+	if (repeat_dur_is_set)
+	{
+		if (repeat_dur.type == EGUEB_SMIL_DURATION_TYPE_CLOCK)
+		{
+			if (final.type == EGUEB_SMIL_DURATION_TYPE_CLOCK)
+			{
+				final.data.clock = final.data.clock < repeat_dur.data.clock ?
+						final.data.clock : repeat_dur.data.clock;
+			}
+			else
+			{
+				final.type = EGUEB_SMIL_DURATION_TYPE_CLOCK;
+				final.data.clock = repeat_dur.data.clock;
+			}
+		}
+		else if (repeat_dur.type == EGUEB_SMIL_DURATION_TYPE_INDEFINITE)
+		{
+			final.type = EGUEB_SMIL_DURATION_TYPE_INDEFINITE;
+		}
+	}
+	/* TODO handle the end */
+
+	if (final.type == EGUEB_SMIL_DURATION_TYPE_CLOCK)
+	{
+		*duration = final.data.clock;
+		return EINA_TRUE;
+	}
+	else
+	{
+		return EINA_FALSE;
+	}
+}
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/
