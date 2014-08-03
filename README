@@ -1,8 +1,0 @@
-Egueb is a collection of web related libraries written in C and provides an API
-very close to what the W3C proposes.
-
-It supports the following standards:
- - DOM
- - CSS
- - SVG
- - SMIL (only the SVG related elements)

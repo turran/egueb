@@ -17,7 +17,7 @@ AC_SUBST(ACLOCAL_AMFLAGS, "-I m4 -I common/m4")
 AC_PROG_CC
 AC_PROG_CXX
 
-AM_INIT_AUTOMAKE([1.6 dist-bzip2])
+AM_INIT_AUTOMAKE([foreign 1.6 dist-bzip2])
 m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])])
 
 LT_PREREQ([2.2])
