@@ -548,8 +548,11 @@ static void _egueb_smil_animation_removed_from_document_cb(Egueb_Dom_Event *e,
 
 	INFO("Smil animation removed from document");
 	_egueb_dom_animation_cleanup(thiz, thiz->target);
-	egueb_smil_timeline_unref(thiz->timeline);
-	thiz->timeline = NULL;
+	if (thiz->timeline)
+	{
+		egueb_smil_timeline_unref(thiz->timeline);
+		thiz->timeline = NULL;
+	}
 }
 /*----------------------------------------------------------------------------*
  *                            Animation interface                             *
