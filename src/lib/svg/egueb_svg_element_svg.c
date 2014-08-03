@@ -125,7 +125,7 @@ static void _egueb_svg_element_svg_timeline_cb(Egueb_Dom_Event *e,
 	Egueb_Svg_Element_Svg *thiz = data;
 
 	INFO("Requesting timeline");
-	egueb_smil_event_timeline_set(e, thiz->timeline);
+	egueb_smil_event_timeline_set(e, egueb_smil_timeline_ref(thiz->timeline));
 }
 /*----------------------------------------------------------------------------*
  *                            Renderable interface                            *
