@@ -198,9 +198,7 @@ EAPI Eina_Bool egueb_smil_feature_animation_duration_get(Egueb_Dom_Feature *f,
 	*clock = -1;
 	if (!thiz->animations)
 	{
-		/* the duration must be zero? the length of one frame? */
-		*clock = 0;
-		return EINA_TRUE;
+		return EINA_FALSE;
 	}
 	/* get the max duration of every animation */
 	else
@@ -221,6 +219,17 @@ EAPI Eina_Bool egueb_smil_feature_animation_duration_get(Egueb_Dom_Feature *f,
 		}
 	}
 	return ret;
+}
+
+EAPI Eina_Bool egueb_smil_feature_animation_has_animations(Egueb_Dom_Feature *f)
+{
+	Egueb_Smil_Feature_Animation *thiz;
+
+	thiz = EGUEB_SMIL_FEATURE_ANIMATION(f);
+	if (thiz->animations)
+		return EINA_TRUE;
+	else
+		return EINA_FALSE;
 }
 
 EAPI Eina_Bool egueb_smil_feature_animation_add(Egueb_Dom_Node *n,
