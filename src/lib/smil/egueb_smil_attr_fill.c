@@ -36,11 +36,9 @@ Egueb_Dom_Node * egueb_smil_attr_fill_new(Egueb_Dom_String *name,
 		Egueb_Smil_Fill def)
 {
 	Egueb_Dom_Node *n;
-	Egueb_Smil_Attr_Fill *thiz;
 
 	n = ENESIM_OBJECT_INSTANCE_NEW(egueb_smil_attr_fill);
 	egueb_dom_attr_init(n, name, EINA_FALSE, EINA_FALSE, EINA_FALSE);
-	thiz = (Egueb_Smil_Attr_Fill *)n;
 	egueb_dom_attr_set(n, EGUEB_DOM_ATTR_TYPE_DEFAULT, def);
 
 	return n;
