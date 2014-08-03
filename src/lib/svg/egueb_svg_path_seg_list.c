@@ -545,6 +545,11 @@ EAPI Eina_Bool egueb_svg_path_seg_list_string_from(Egueb_Dom_List *l,
 				*seg = cmd;
 				egueb_dom_list_item_append(l, seg);
 			}
+			else
+			{
+				WARN("Bad formed data");
+				return EINA_TRUE;
+			}
 		}
 		else
 		{
