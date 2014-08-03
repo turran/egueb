@@ -554,15 +554,25 @@ EOF
 ## call gst-egueb-record on every uri
 for i in $FILES; do
 	echo "Processing $TESTSUITEURI/$i"
-	EINA_LOG_LEVEL=0 GST_DEBUG=0 gst-egueb-record $TESTSUITEURI/$i testsuite/egueb-$i 2> $err
+	## Use the same width/height as the generated pngs
+	EINA_LOG_LEVEL=0 GST_DEBUG=0 gst-egueb-record -w 480 -h 360 $TESTSUITEURI/$i testsuite/egueb-$i 2> $err
 	out=`ls testsuite/egueb-$i*`
 	## get the stderr and also put it on the wiki
 	## if everything's fine on the return value put a green mark, otherwise a red one
 	errstr=`cat $err`
-	if [ -z $errstr ]; then
+	preview=
+	if [ -z "$errstr" ]; then
 		errstr="*OK*"
 	else
 		errstr="FAILED"
 	fi
-	echo "|$i|$errstr|![Preview]($out)|" >> $WIKIPAGE
+
+	if [ "$out" -eq "testsuite/egueb-$i.png" ]; then
+		preview="![Preview]($out)"
+	elif [ ! -z "$out" ]; then
+		preview="-"
+	else
+		preview="[Preview video]($out)"
+	fi
+	echo "|$i|$errstr|$preview|" >> $WIKIPAGE
 done
