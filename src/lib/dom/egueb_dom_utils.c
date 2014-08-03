@@ -54,6 +54,7 @@ EAPI Eina_Bool egueb_dom_double_get(const char *nptr, char **endptr, double *r)
 	int has_exp_sign = 0;
 	int dotted = 0;
 	int has_exponent = 0;
+	int has_mantisse = 0;
 
 	str = nptr;
 
@@ -78,13 +79,13 @@ EAPI Eina_Bool egueb_dom_double_get(const char *nptr, char **endptr, double *r)
 			mantisse *= 10;
 			mantisse += (*str - '0');
 			if (dotted) dec *= 10;
+			has_mantisse = 1;
 		}
 		else if (*str == '.')
 		{
 			if (dotted)
 			{
-				if (endptr) *endptr = (char *)str;
-				return EINA_FALSE;
+				break;
 			}
 			dotted = 1;
 		}
@@ -99,6 +100,8 @@ EAPI Eina_Bool egueb_dom_double_get(const char *nptr, char **endptr, double *r)
 
 		str++;
 	}
+
+	if (!has_mantisse) return EINA_FALSE;
 
 	if (*str && has_exponent)
 	{
