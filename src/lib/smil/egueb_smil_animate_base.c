@@ -403,17 +403,12 @@ static void _egueb_smil_animate_base_values_free(Egueb_Smil_Animate_Base *thiz)
 	if (!thiz->generated_values)
 		return;
 
-	EINA_LIST_FREE(thiz->generated_values, value);
+	EINA_LIST_FREE(thiz->generated_values, value)
 	{
 		if (value)
 		{
 			egueb_dom_value_reset(value);
 			free(value);
-		}
-		else
-		{
-			/* FIXME on animate-element-17-t.svg we got an empty value */
-			printf("no value!!!\n");
 		}
 	}
 	thiz->generated_values = NULL;
