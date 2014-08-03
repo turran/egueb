@@ -567,9 +567,9 @@ for i in $FILES; do
 		errstr="FAILED"
 	fi
 
-	if [ "$out" -eq "testsuite/egueb-$i.png" ]; then
+	if [ "$out" = "testsuite/egueb-$i.png" ]; then
 		preview="![Preview]($out)"
-	elif [ ! -z "$out" ]; then
+	elif [ -z "$out" ]; then
 		preview="-"
 	else
 		preview="[Preview video]($out)"
