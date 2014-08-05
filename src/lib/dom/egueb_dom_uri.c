@@ -161,9 +161,7 @@ EAPI Eina_Bool egueb_dom_uri_resolve(Egueb_Dom_Uri *thiz,
 		return EINA_TRUE;
 	}
 
-	s_location =  strdup(egueb_dom_string_string_get(base));
-	egueb_dom_string_unref(base);
-
+	s_location = strdup(egueb_dom_string_string_get(base));
 	dir = dirname(s_location);
 	ret = asprintf(&filename, "%s/%s", dir,
 			egueb_dom_string_string_get(thiz->location));
