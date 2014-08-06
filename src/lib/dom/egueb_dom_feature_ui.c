@@ -20,6 +20,7 @@
 #include "egueb_dom_string.h"
 #include "egueb_dom_main.h"
 #include "egueb_dom_node.h"
+#include "egueb_dom_event_keyboard.h"
 #include "egueb_dom_input.h"
 #include "egueb_dom_feature.h"
 #include "egueb_dom_feature_ui.h"

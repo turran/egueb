@@ -21,10 +21,13 @@
 #include "egueb_dom_string.h"
 #include "egueb_dom_main.h"
 #include "egueb_dom_node.h"
-#include "egueb_dom_input.h"
 #include "egueb_dom_event.h"
+#include "egueb_dom_event_keyboard.h"
 #include "egueb_dom_event_mouse.h"
+#include "egueb_dom_input.h"
+
 #include "egueb_dom_event_mouse_private.h"
+#include "egueb_dom_event_keyboard_private.h"
 
 /* TODO
  * Right now on every mouse move we go down through the tree to look for
@@ -39,14 +42,21 @@
 struct _Egueb_Dom_Input
 {
 	Egueb_Dom_Input_Descriptor *descriptor;
+	int ref;
+	/* compose key flags */
+	Eina_Bool alt_key;
+	Eina_Bool ctrl_key;
+	Eina_Bool shift_key;
+	Eina_Bool meta_key; 
+	/* last position where the mouse went down */
 	int downx;
 	int downy;
 	int x;
 	int y;
-	void *data;
 	Egueb_Dom_Node *over;
 	Egueb_Dom_Node *grabbed;
-	int ref;
+	Egueb_Dom_Node *focused;
+	void *data;
 };
 
 static void _egueb_dom_input_free(Egueb_Dom_Input *thiz)
@@ -59,10 +69,90 @@ static void _egueb_dom_input_free(Egueb_Dom_Input *thiz)
 	if (thiz->grabbed)
 	{
 		egueb_dom_node_unref(thiz->grabbed);
-		thiz->over = NULL;
+		thiz->grabbed = NULL;
 	}
-
+	if (thiz->focused)
+	{
+		egueb_dom_node_unref(thiz->focused);
+		thiz->focused = NULL;
+	}
 	free(thiz);
+}
+
+static Eina_Bool _egueb_dom_input_key_has_modifier(Egueb_Dom_Input *thiz)
+{
+	if (thiz->alt_key && thiz->ctrl_key && thiz->shift_key && thiz->meta_key)
+		return EINA_TRUE;
+	else
+		return EINA_FALSE;
+}
+
+static void _egueb_dom_input_key_modifier_set(Egueb_Dom_String *key,
+		Eina_Bool *alt_key, Eina_Bool *ctrl_key,
+		Eina_Bool *shift_key, Eina_Bool *meta_key,
+		Egueb_Dom_Key_Location *location)
+{
+	const char *s;
+
+	s = egueb_dom_string_string_get(key);
+	if (!strcmp(s, "Control_L"))
+	{
+		*ctrl_key = EINA_TRUE;
+		*location = EGUEB_DOM_KEY_LOCATION_LEFT;
+	}
+	else if (!strcmp(s, "Control_R"))
+	{
+		*ctrl_key = EINA_TRUE;
+		*location = EGUEB_DOM_KEY_LOCATION_RIGHT;
+	}
+	else if (!strcmp(s, "Shift_L"))
+	{
+		*shift_key = EINA_TRUE;
+		*location = EGUEB_DOM_KEY_LOCATION_LEFT;
+	}
+	else if (!strcmp(s, "Shift_R"))
+	{
+		*shift_key = EINA_TRUE;
+		*location = EGUEB_DOM_KEY_LOCATION_RIGHT;
+	}
+	else if (!strncmp(s, "KP", 2))
+	{
+		*location = EGUEB_DOM_KEY_LOCATION_NUMPAD;
+	}
+}
+
+static void _egueb_dom_input_key_modifier_unset(Egueb_Dom_String *key,
+		Eina_Bool *alt_key, Eina_Bool *ctrl_key,
+		Eina_Bool *shift_key, Eina_Bool *meta_key,
+		Egueb_Dom_Key_Location *location)
+{
+	const char *s;
+
+	s = egueb_dom_string_string_get(key);
+	if (!strcmp(s, "Control_L"))
+	{
+		*ctrl_key = EINA_FALSE;
+		*location = EGUEB_DOM_KEY_LOCATION_LEFT;
+	}
+	else if (!strcmp(s, "Control_R"))
+	{
+		*ctrl_key = EINA_FALSE;
+		*location = EGUEB_DOM_KEY_LOCATION_RIGHT;
+	}
+	else if (!strcmp(s, "Shift_L"))
+	{
+		*shift_key = EINA_FALSE;
+		*location = EGUEB_DOM_KEY_LOCATION_LEFT;
+	}
+	else if (!strcmp(s, "Shift_R"))
+	{
+		*shift_key = EINA_FALSE;
+		*location = EGUEB_DOM_KEY_LOCATION_RIGHT;
+	}
+	else if (!strncmp(s, "KP", 2))
+	{
+		*location = EGUEB_DOM_KEY_LOCATION_NUMPAD;
+	}
 }
 /*============================================================================*
  *                                 Global                                     *
@@ -258,3 +348,77 @@ EAPI void egueb_dom_input_feed_mouse_wheel(Egueb_Dom_Input *thiz, int deltax, in
 	/* TODO dispatch it on the over node */
 }
 
+EAPI void egueb_dom_input_feed_key_down(Egueb_Dom_Input *thiz,
+		Egueb_Dom_String *key)
+{
+	Egueb_Dom_Event *ev;
+	Egueb_Dom_Key_Location location = EGUEB_DOM_KEY_LOCATION_STANDARD;
+	const char *s;
+
+	if (!key) return;
+
+	s = egueb_dom_string_string_get(key);
+	/* check if we need to navigate */
+	if (!strcmp(s, "Tab"))
+	{
+		if (!_egueb_dom_input_key_has_modifier(thiz))
+		{
+			Egueb_Dom_Node *n;
+
+			n = thiz->descriptor->focus_next(thiz->focused, thiz->data);
+			if (thiz->focused)
+			{
+				egueb_dom_node_unref(thiz->focused);
+				thiz->focused = NULL;
+			}
+			thiz->focused = n;
+		}
+		egueb_dom_string_unref(key);
+		return;
+	}
+
+	/* check for the control keys */
+	_egueb_dom_input_key_modifier_set(key, &thiz->alt_key, &thiz->ctrl_key,
+			&thiz->shift_key, &thiz->meta_key, &location);
+
+	/* set the flags */
+	if (!thiz->focused)
+	{
+		egueb_dom_string_unref(key);
+		return;
+	}
+	ev = egueb_dom_event_key_down_new(key, EGUEB_DOM_KEY_LOCATION_STANDARD,
+		thiz->alt_key, thiz->ctrl_key, thiz->shift_key, thiz->meta_key);
+	egueb_dom_node_event_dispatch(thiz->focused, ev, NULL, NULL);
+}
+
+EAPI void egueb_dom_input_feed_key_up(Egueb_Dom_Input *thiz,
+		Egueb_Dom_String *key)
+{
+	Egueb_Dom_Event *ev;
+	Egueb_Dom_Key_Location location = EGUEB_DOM_KEY_LOCATION_STANDARD;
+	const char *s;
+
+	if (!key) return;
+
+	s = egueb_dom_string_string_get(key);
+	if (!strcmp(s, "Tab"))
+	{
+		egueb_dom_string_unref(key);
+		return;
+	}
+
+	/* check for the control keys */
+	_egueb_dom_input_key_modifier_unset(key, &thiz->alt_key, &thiz->ctrl_key,
+			&thiz->shift_key, &thiz->meta_key, &location);
+
+	/* unset the flags */
+	if (!thiz->focused)
+	{
+		egueb_dom_string_unref(key);
+		return;
+	}
+	ev = egueb_dom_event_key_up_new(key, EGUEB_DOM_KEY_LOCATION_STANDARD,
+		thiz->alt_key, thiz->ctrl_key, thiz->shift_key, thiz->meta_key);
+	egueb_dom_node_event_dispatch(thiz->focused, ev, NULL, NULL);
+}

@@ -775,7 +775,10 @@ static Egueb_Dom_Node * _egueb_svg_document_input_element_at(
 }
 
 static Egueb_Dom_Input_Descriptor _document_svg_input_descriptor = {
-	/* .element_ad 		= */ _egueb_svg_document_input_element_at,
+	/* .version 		= */ EGUEB_DOM_INPUT_DESCRIPTOR_VERSION,
+	/* .element_at	 	= */ _egueb_svg_document_input_element_at,
+	/* .focus_next		= */ NULL,
+	/* .focus_prev		= */ NULL,
 };
 /*----------------------------------------------------------------------------*
  *                            Document interface                              *
