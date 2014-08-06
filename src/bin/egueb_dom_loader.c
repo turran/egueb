@@ -80,7 +80,6 @@ int main(int argc, char *argv[])
 	}
 	/* create the document */
 	ret = egueb_dom_parser_parse(stream, &doc);
-	enesim_stream_unref(stream);
 	if (!ret)
 	{
 		printf("Fail to parse file %s\n", argv[1]);

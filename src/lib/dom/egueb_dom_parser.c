@@ -75,18 +75,30 @@ void egueb_dom_parser_document_set(Egueb_Dom_Parser *thiz, Egueb_Dom_Node *doc)
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/
-EAPI Eina_Bool egueb_dom_parser_parse(Enesim_Stream *data, Egueb_Dom_Node **doc)
+/**
+ * Parse a document from an enesim stream
+ * @param[in] s The stream to parse @ender_transfer{full}
+ * @param[out] doc The resulting parsed document
+ * @return EINA_TRUE if the parsing is correct, EINA_FALSE otherwise
+ */
+EAPI Eina_Bool egueb_dom_parser_parse(Enesim_Stream *s, Egueb_Dom_Node **doc)
 {
 	Egueb_Dom_Parser *thiz;
+	Eina_Bool ret = EINA_FALSE;
 	const char *uri;
 
-	if (!doc) return EINA_FALSE;
-	if (!data) return EINA_FALSE;
+	if (!s)
+		return ret;
+	if (!doc)
+		goto done;
 
 	thiz = egueb_dom_parser_eina_new();
 
-	if (!thiz->descriptor) return EINA_FALSE;
-	if (!thiz->descriptor->parse) return EINA_FALSE;
+	if (!thiz->descriptor)
+		goto no_parse;
+
+	if (!thiz->descriptor->parse)
+		goto no_parse;
 
 	/* create a document in case the user does not provide it */
 	if (!*doc)
@@ -95,11 +107,11 @@ EAPI Eina_Bool egueb_dom_parser_parse(Enesim_Stream *data, Egueb_Dom_Node **doc)
 		Egueb_Dom_String *mime_s;
 		const char *mime;
 
-		mime = enesim_image_mime_data_from(data);
+		mime = enesim_image_mime_data_from(s);
 		if (!mime)
 		{
 			ERR("No document provided and no mime found");
-			return EINA_FALSE;
+			goto no_parse;
 		}
 		mime_s = egueb_dom_string_new_with_static_string(mime);
 		i = egueb_dom_registry_implementation_get_by_mime(mime_s);
@@ -108,7 +120,8 @@ EAPI Eina_Bool egueb_dom_parser_parse(Enesim_Stream *data, Egueb_Dom_Node **doc)
 		if (!i)
 		{
 			ERR("No implementation found for mime '%s'", mime);
-			return EINA_FALSE;
+			egueb_dom_implementation_unref(i);
+			goto no_parse;
 		}
 
 		INFO("New document created for mime '%s'", mime);
@@ -118,7 +131,7 @@ EAPI Eina_Bool egueb_dom_parser_parse(Enesim_Stream *data, Egueb_Dom_Node **doc)
 
 	egueb_dom_parser_document_set(thiz, *doc);
 	/* Set the URI in case we do have one */
-	uri = enesim_stream_uri_get(data);
+	uri = enesim_stream_uri_get(s);
 	if (uri)
 	{
 		Egueb_Dom_String *suri;
@@ -126,8 +139,11 @@ EAPI Eina_Bool egueb_dom_parser_parse(Enesim_Stream *data, Egueb_Dom_Node **doc)
 		egueb_dom_document_uri_set(*doc, suri);
 	}
 
-	thiz->descriptor->parse(thiz->data, data);
+	thiz->descriptor->parse(thiz->data, s);
+	ret = EINA_TRUE;
+no_parse:
 	egueb_dom_parser_free(thiz);
-
-	return EINA_TRUE;
+done:
+	enesim_stream_unref(s);
+	return ret;
 }

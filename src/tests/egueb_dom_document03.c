@@ -51,7 +51,6 @@ int main(int argc, char **argv)
 	if (!im) return -1;
 
 	egueb_dom_parser_parse(im, &mydocument);
-	enesim_stream_unref(im);
 
 	/* setup our own handlers */
 	_signal_setup();

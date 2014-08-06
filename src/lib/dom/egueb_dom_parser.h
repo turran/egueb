@@ -19,6 +19,6 @@
 #ifndef _EGUEB_DOM_PARSER_H_
 #define _EGUEB_DOM_PARSER_H_
 
-EAPI Eina_Bool egueb_dom_parser_parse(Enesim_Stream *data, Egueb_Dom_Node **doc);
+EAPI Eina_Bool egueb_dom_parser_parse(Enesim_Stream *s, Egueb_Dom_Node **doc);
 
 #endif

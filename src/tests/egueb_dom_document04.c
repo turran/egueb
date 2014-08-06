@@ -21,7 +21,6 @@ int main(int argc, char **argv)
 	if (!im) return -1;
 
 	egueb_dom_parser_parse(im, &doc);
-	enesim_stream_unref(im);
 
 	printf("[testing] get the topmost element and destroy the document\n");
 	root = egueb_dom_document_document_element_get(doc);

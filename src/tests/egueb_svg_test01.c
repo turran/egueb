@@ -35,7 +35,6 @@ int main(int argc, char **argv)
 	/* set our handlers */
 	egueb_svg_document_filename_get_cb_set(doc, filename_get, (void *)argv[1]);
 	egueb_dom_parser_parse(im, &doc);
-	enesim_stream_unref(im);
 
 	render = egueb_dom_node_feature_get(doc, EGUEB_DOM_FEATURE_RENDER_NAME, NULL);
 	window = egueb_dom_node_feature_get(doc, EGUEB_DOM_FEATURE_WINDOW_NAME, NULL);

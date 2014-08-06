@@ -103,7 +103,7 @@ static Eina_Bool _enesim_image_dom_info_load(Enesim_Stream *data, int *w, int *h
 	int cw = _default_width;
 	int ch = _default_height;
 
-	if (!egueb_dom_parser_parse(data, &doc))
+	if (!egueb_dom_parser_parse(enesim_stream_ref(data), &doc))
 	{
 		*err = ENESIM_IMAGE_ERROR_LOADING;
 		goto err_parse;
@@ -154,7 +154,7 @@ static Eina_Bool _enesim_image_dom_load(Enesim_Stream *data,
 	int w = _default_width;
 	int h = _default_height;
 
-	if (!egueb_dom_parser_parse(data, &doc))
+	if (!egueb_dom_parser_parse(enesim_stream_ref(data), &doc))
 	{
 		*err = ENESIM_IMAGE_ERROR_LOADING;
 		goto err_parse;
