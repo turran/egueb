@@ -2,8 +2,11 @@ noinst_LTLIBRARIES += src/tests/libmydom.la
 
 src_tests_libmydom_la_SOURCES = \
 src/tests/egueb_dom_mydocument.c \
+src/tests/egueb_dom_mydocument.h \
 src/tests/egueb_dom_myelement.c \
-src/tests/egueb_dom_mylib.c
+src/tests/egueb_dom_myelement.h \
+src/tests/egueb_dom_mylib.c \
+src/tests/egueb_dom_mylib.h
 
 src_tests_libmydom_la_CPPFLAGS = \
 -I$(top_srcdir)/src/lib/dom \

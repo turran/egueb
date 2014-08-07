@@ -24,9 +24,13 @@ src/lib/smil/egueb_smil_timing.h \
 src/lib/smil/egueb_smil_timing_list.h
 
 src_lib_smil_libegueb_smil_la_SOURCES = \
+src/lib/smil/egueb_smil_private.h \
 src/lib/smil/egueb_smil_accumulate.c \
+src/lib/smil/egueb_smil_accumulate_private.h \
 src/lib/smil/egueb_smil_additive.c \
+src/lib/smil/egueb_smil_additive_private.h \
 src/lib/smil/egueb_smil_animation.c \
+src/lib/smil/egueb_smil_animation_private.h \
 src/lib/smil/egueb_smil_animate.c \
 src/lib/smil/egueb_smil_animate_base.c \
 src/lib/smil/egueb_smil_animate_base_private.h \

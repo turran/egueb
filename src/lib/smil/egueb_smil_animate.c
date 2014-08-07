@@ -18,7 +18,6 @@
 #include "egueb_smil_private.h"
 #include "egueb_smil_main.h"
 #include "egueb_smil_animate.h"
-#include "egueb_smil_animate_base.h"
 #include "egueb_smil_animation_private.h"
 #include "egueb_smil_animate_base_private.h"
 #include "egueb_smil_clock.h"

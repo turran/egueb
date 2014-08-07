@@ -123,3 +123,12 @@ include common/Makefile_doxygen.mk
 ### Coverage
 
 include common/Makefile_coverage.mk
+
+EXTRA_DIST += \
+AUTHORS \
+COPYING \
+README.md \
+egueb-dom.pc.in \
+egueb-css.pc.in \
+egueb-smil.pc.in \
+egueb-svg.pc.in

@@ -84,6 +84,7 @@ src/lib/dom/egueb_dom_cdata_section.c \
 src/lib/dom/egueb_dom_character_data.c \
 src/lib/dom/egueb_dom_character_data_private.h \
 src/lib/dom/egueb_dom_document.c \
+src/lib/dom/egueb_dom_document_private.h \
 src/lib/dom/egueb_dom_document_external.c \
 src/lib/dom/egueb_dom_document_fragment.c \
 src/lib/dom/egueb_dom_element.c \
@@ -107,6 +108,7 @@ src/lib/dom/egueb_dom_event_script.c \
 src/lib/dom/egueb_dom_event_ui.c \
 src/lib/dom/egueb_dom_event_ui_private.h \
 src/lib/dom/egueb_dom_feature.c \
+src/lib/dom/egueb_dom_feature_private.h \
 src/lib/dom/egueb_dom_feature_io.c \
 src/lib/dom/egueb_dom_feature_multimedia.c \
 src/lib/dom/egueb_dom_feature_render.c \
@@ -115,6 +117,7 @@ src/lib/dom/egueb_dom_feature_ui.c \
 src/lib/dom/egueb_dom_feature_window.c \
 src/lib/dom/egueb_dom_implementation.c \
 src/lib/dom/egueb_dom_implementation_source.c \
+src/lib/dom/egueb_dom_implementation_source_private.h \
 src/lib/dom/egueb_dom_input.c \
 src/lib/dom/egueb_dom_list.c \
 src/lib/dom/egueb_dom_list_private.h \
@@ -130,8 +133,10 @@ src/lib/dom/egueb_dom_parser.c \
 src/lib/dom/egueb_dom_parser_private.h \
 src/lib/dom/egueb_dom_private.h \
 src/lib/dom/egueb_dom_registry.c \
+src/lib/dom/egueb_dom_registry_private.h \
 src/lib/dom/egueb_dom_scripter.c \
 src/lib/dom/egueb_dom_string.c \
+src/lib/dom/egueb_dom_string_private.h \
 src/lib/dom/egueb_dom_string_list.c \
 src/lib/dom/egueb_dom_text.c \
 src/lib/dom/egueb_dom_uri.c \

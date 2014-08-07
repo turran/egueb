@@ -60,6 +60,7 @@ src/lib/svg/egueb_svg_referenceable_units.h \
 src/lib/svg/egueb_svg_renderable.h \
 src/lib/svg/egueb_svg_renderable_container.h \
 src/lib/svg/egueb_svg_spread_method.h \
+src/lib/svg/egueb_svg_stroke_dasharray.h \
 src/lib/svg/egueb_svg_stroke_line_cap.h \
 src/lib/svg/egueb_svg_stroke_line_join.h \
 src/lib/svg/egueb_svg_text_anchor.h \
@@ -101,6 +102,7 @@ src/lib/svg/egueb_svg_attr_referenceable_units_private.h \
 src/lib/svg/egueb_svg_attr_string.c \
 src/lib/svg/egueb_svg_attr_string_private.h \
 src/lib/svg/egueb_svg_attr_stroke_dasharray.c \
+src/lib/svg/egueb_svg_attr_stroke_dasharray_private.h \
 src/lib/svg/egueb_svg_attr_stroke_line_cap.c \
 src/lib/svg/egueb_svg_attr_stroke_line_cap_private.h \
 src/lib/svg/egueb_svg_attr_stroke_line_join.c \
@@ -119,6 +121,7 @@ src/lib/svg/egueb_svg_display.c \
 src/lib/svg/egueb_svg_document.c \
 src/lib/svg/egueb_svg_document_private.h \
 src/lib/svg/egueb_svg_element.c \
+src/lib/svg/egueb_svg_element_private.h \
 src/lib/svg/egueb_svg_element_a.c \
 src/lib/svg/egueb_svg_element_animate_transform.c \
 src/lib/svg/egueb_svg_element_circle.c \
@@ -135,6 +138,7 @@ src/lib/svg/egueb_svg_element_linear_gradient.c \
 src/lib/svg/egueb_svg_element_linear_gradient_private.h \
 src/lib/svg/egueb_svg_element_path.c \
 src/lib/svg/egueb_svg_element_pattern.c \
+src/lib/svg/egueb_svg_element_pattern_private.h \
 src/lib/svg/egueb_svg_element_polygon.c \
 src/lib/svg/egueb_svg_element_polyline.c \
 src/lib/svg/egueb_svg_element_radial_gradient.c \
