@@ -363,15 +363,17 @@ EAPI void egueb_dom_input_feed_key_down(Egueb_Dom_Input *thiz,
 	{
 		if (!_egueb_dom_input_key_has_modifier(thiz))
 		{
-			Egueb_Dom_Node *n;
-
-			n = thiz->descriptor->focus_next(thiz->focused, thiz->data);
-			if (thiz->focused)
+			if (thiz->descriptor->focus_next)
 			{
-				egueb_dom_node_unref(thiz->focused);
-				thiz->focused = NULL;
+				Egueb_Dom_Node *n;
+				n = thiz->descriptor->focus_next(thiz->focused, thiz->data);
+				if (thiz->focused)
+				{
+					egueb_dom_node_unref(thiz->focused);
+					thiz->focused = NULL;
+				}
+				thiz->focused = n;
 			}
-			thiz->focused = n;
 		}
 		egueb_dom_string_unref(key);
 		return;
