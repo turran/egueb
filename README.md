@@ -6,8 +6,8 @@ SVG and SMIL
 Dependencies
 ============
 + [Eina](http://www.enlightenment.org)
-+ [Enesim](http://github.com/turran/enesim)
-+ [Ender](http://github.com/turran/ender)(Optional: For scripting support)
++ [Enesim](https://www.github.com/turran/enesim)
++ [Ender](https://www.github.com/turran/ender) (Optional: For scripting support)
 
 Communication
 =============
