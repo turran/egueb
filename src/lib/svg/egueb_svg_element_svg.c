@@ -184,17 +184,12 @@ static Eina_Bool _egueb_svg_element_svg_process(Egueb_Svg_Renderable *r)
 	relative = egueb_svg_element_geometry_relative_get(EGUEB_DOM_NODE(r));
 	if (!relative)
 	{
-		Enesim_Matrix m;
-
 		egueb_svg_document_width_get(svg_doc, &relative_width);
 		egueb_svg_document_height_get(svg_doc, &relative_height);
 		relative_x = 0;
 		relative_y = 0;
 
-		/* Set our current scale/translate */
-		enesim_matrix_scale(&m, thiz->current_scale, thiz->current_scale);
-		enesim_matrix_translate(&relative_transform, thiz->current_translate.x, thiz->current_translate.y);
-		enesim_matrix_compose(&relative_transform, &m, &relative_transform);
+		enesim_matrix_identity(&relative_transform);
 	}
 	else
 	{
@@ -226,6 +221,16 @@ static Eina_Bool _egueb_svg_element_svg_process(Egueb_Svg_Renderable *r)
 	enesim_renderer_rectangle_position_set(thiz->rectangle, gx, gy);
 	enesim_renderer_rectangle_size_set(thiz->rectangle, gw, gh);
 	enesim_renderer_transformation_set(thiz->rectangle, &relative_transform);
+
+	if (!relative)
+	{
+		Enesim_Matrix m;
+
+		/* Set our current scale/translate */
+		enesim_matrix_scale(&m, thiz->current_scale, thiz->current_scale);
+		enesim_matrix_translate(&relative_transform, thiz->current_translate.x, thiz->current_translate.y);
+		enesim_matrix_compose(&relative_transform, &m, &relative_transform);
+	}
 
 	DBG_ELEMENT(EGUEB_DOM_NODE(r), "x: %g, y: %g, width: %g, height: %g", gx, gy, gw, gh);
 	e = EGUEB_SVG_ELEMENT(r);
