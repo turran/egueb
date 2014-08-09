@@ -134,9 +134,10 @@ static Eina_Bool _egueb_svg_element_image_svg_load(Egueb_Dom_Node *n,
 	/* set the transformation */
 	enesim_matrix_translate(&m, thiz->gx, thiz->gy);
 	egueb_svg_renderable_transform_set(thiz->g, &m);
-	/* finally process it */
+	/* set the relative nodes, the presentation skipped
+	 * because we don't inherit from the parent img
+	 */
 	egueb_svg_element_geometry_relative_set(thiz->g, n, NULL);
-	egueb_dom_element_process(thiz->g);
 
 	/* set the proxy for the svg */
 	r = egueb_svg_renderable_renderer_get(thiz->g);
@@ -387,6 +388,12 @@ static Eina_Bool _egueb_svg_element_image_process(
 	enesim_renderer_image_width_set(thiz->image, thiz->gw);
 	enesim_renderer_image_height_set(thiz->image, thiz->gh);
 	enesim_renderer_transformation_set(thiz->image, &e->transform);
+
+	/* in case we do have created a <g> (the svg case) make sure to process it */
+	if (thiz->g)
+	{
+		egueb_dom_element_process(thiz->g);
+	}
 
 	return ret;
 }
