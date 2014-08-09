@@ -774,11 +774,33 @@ static Egueb_Dom_Node * _egueb_svg_document_input_element_at(
 	return ret;
 }
 
+static Egueb_Dom_Node * _egueb_svg_document_input_focus_next(
+		Egueb_Dom_Node *current, void *data)
+{
+	Egueb_Svg_Document *thiz = data;
+	Egueb_Dom_Node *ret = NULL;
+
+	/* if we start from the beginning, pick the first child */
+	/* first on the first level */
+	/* focusable elements are only <a> and <use> that points to a's */
+	return ret;
+}
+
+static Egueb_Dom_Node * _egueb_svg_document_input_focus_prev(
+		Egueb_Dom_Node *current, void *data)
+{
+	Egueb_Svg_Document *thiz = data;
+	Egueb_Dom_Node *ret = NULL;
+
+	/* focusable elements are only <a> and <use> that points to a's */
+	return ret;
+}
+
 static Egueb_Dom_Input_Descriptor _document_svg_input_descriptor = {
 	/* .version 		= */ EGUEB_DOM_INPUT_DESCRIPTOR_VERSION,
 	/* .element_at	 	= */ _egueb_svg_document_input_element_at,
-	/* .focus_next		= */ NULL,
-	/* .focus_prev		= */ NULL,
+	/* .focus_next		= */ _egueb_svg_document_input_focus_next,
+	/* .focus_prev		= */ _egueb_svg_document_input_focus_prev,
 };
 /*----------------------------------------------------------------------------*
  *                            Document interface                              *
