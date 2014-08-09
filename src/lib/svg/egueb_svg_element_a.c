@@ -60,12 +60,17 @@ static void _egueb_svg_element_a_renderable_click_cb(Egueb_Dom_Event *e,
 		void *data)
 {
 	Egueb_Svg_Element_A *thiz = data;
+	Egueb_Dom_Event *ev;
+	Egueb_Dom_Uri uri;
 
 	ERR("Clicking on '%s'", egueb_dom_string_string_get(thiz->gxlink_href));
-#if 0
-	svg = egueb_svg_element_topmost_get(e);
-	egueb_svg_element_svg_go_to(svg, thiz->real_href);
-#endif
+	if (!egueb_dom_uri_string_from(&uri, thiz->gxlink_href))
+	{
+		ERR("Invalid URI '%s'", thiz->gxlink_href);
+		return;
+	}
+	ev = egueb_dom_event_navigation_go_to_new(&uri);
+	egueb_dom_node_event_dispatch(EGUEB_DOM_NODE(thiz), ev, NULL, NULL);
 }
 
 static Eina_Bool _egueb_svg_element_a_get_target(Egueb_Dom_Event *e,
