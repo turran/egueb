@@ -193,3 +193,22 @@ EAPI void egueb_dom_uri_cleanup(Egueb_Dom_Uri *thiz)
 		thiz->fragment = NULL;
 	}
 }
+
+EAPI void egueb_dom_uri_copy(Egueb_Dom_Uri *src, Egueb_Dom_Uri *dst, Eina_Bool content)
+{
+	if (!dst) return;
+	if (!src) return;
+
+	dst->type = src->type;
+	if (content)
+	{
+		dst->location = egueb_dom_string_dup(src->location);
+		dst->fragment = egueb_dom_string_dup(src->fragment);
+	}
+	else
+	{
+		dst->location = egueb_dom_string_ref(src->location);
+		dst->fragment = egueb_dom_string_ref(src->fragment);
+	}
+}
+

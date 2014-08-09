@@ -33,6 +33,7 @@ typedef struct _Egueb_Dom_Uri
 } Egueb_Dom_Uri;
 
 EAPI void egueb_dom_uri_cleanup(Egueb_Dom_Uri *thiz);
+EAPI void egueb_dom_uri_copy(Egueb_Dom_Uri *src, Egueb_Dom_Uri *dst, Eina_Bool content);
 EAPI Eina_Bool egueb_dom_uri_string_from(Egueb_Dom_Uri *thiz, Egueb_Dom_String *s);
 EAPI Eina_Bool egueb_dom_uri_iri_from(Egueb_Dom_Uri *thiz, Egueb_Dom_String *iri);
 EAPI Eina_Bool egueb_dom_uri_resolve(Egueb_Dom_Uri *thiz, Egueb_Dom_String *base, Egueb_Dom_Uri *resolved);
