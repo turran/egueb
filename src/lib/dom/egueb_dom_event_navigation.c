@@ -102,5 +102,5 @@ EAPI void egueb_dom_event_navigation_uri_get(Egueb_Dom_Event *e, Egueb_Dom_Uri *
 	Egueb_Dom_Event_Navigation *thiz;
 
 	thiz = EGUEB_DOM_EVENT_NAVIGATION(e);
-	*uri = thiz->uri;
+	egueb_dom_uri_copy(&thiz->uri, uri, EINA_FALSE);
 }

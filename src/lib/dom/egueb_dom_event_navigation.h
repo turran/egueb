@@ -27,7 +27,7 @@
 
 EAPI extern Egueb_Dom_String *EGUEB_DOM_EVENT_NAVIGATION_GO_TO;
 
-EAPI Egueb_Dom_Event * egueb_dom_event_multimedia_go_to_new(
+EAPI Egueb_Dom_Event * egueb_dom_event_navigation_go_to_new(
 		Egueb_Dom_Uri *uri);
 EAPI void egueb_dom_event_navigation_uri_get(Egueb_Dom_Event *e, Egueb_Dom_Uri *uri);
 
