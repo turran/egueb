@@ -151,6 +151,7 @@ EAPI Eina_Bool egueb_dom_character_data_append_data(Egueb_Dom_Node *n,
 	if (!str)
 	{
 		if (err) *err = EGUEB_DOM_ERROR_NOT_FOUND;
+		egueb_dom_string_unref(data);
 		return EINA_FALSE;
 	}
 
