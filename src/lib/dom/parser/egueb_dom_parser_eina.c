@@ -43,6 +43,7 @@ typedef struct _Egueb_Dom_Parser_Eina
 {
 	Eina_Array *contexts;
 	Egueb_Dom_Parser *parser;
+	Eina_Hash *entities;
 } Egueb_Dom_Parser_Eina;
 
 typedef void (*Egueb_Dom_Parser_Eina_Cb)(Egueb_Dom_Parser_Eina *thiz,
@@ -69,6 +70,83 @@ static Egueb_Dom_Node * _egueb_dom_parser_eina_context_get(
 	return ret;
 }
 
+static const char * _egueb_dom_parser_eina_get_entity(Egueb_Dom_Parser_Eina *thiz,
+		const char *s, const char **e)
+{
+	const char *tmp;
+	char *entity;
+	int len;
+
+	tmp = s;
+	while (*tmp != ';')
+		tmp++;
+	len = tmp - s - 1;
+	entity = strndup(s + 1, len);
+	entity[len] = '\0';
+	*e = tmp;
+
+	return eina_hash_find(thiz->entities, entity);
+}
+
+static Egueb_Dom_String * _egueb_dom_parser_eina_transform_text(Egueb_Dom_Parser_Eina *thiz,
+		const char *text, unsigned int len)
+{
+	Egueb_Dom_String *ret;
+	Eina_Strbuf *strbuf = NULL;
+	const char *last = NULL;
+	const char *s = text;
+	const char *end;
+
+	/* until eos */
+	if (!len)
+	{
+		len = strlen(text);
+	}
+	end = text + len;
+
+	while (s < end && *s)
+	{
+		if (*s == '&')
+		{
+			const char *entity;
+			const char *e;
+
+			entity = _egueb_dom_parser_eina_get_entity(thiz, s, &e);
+			if (!entity)
+			{
+				s++;
+				continue;
+			}
+			DBG("Entity '%s' found", entity);
+			if (!strbuf)
+				strbuf = eina_strbuf_new();
+			eina_strbuf_append_length(strbuf, text, s - text);
+			if (last)
+				eina_strbuf_append_length(strbuf, last, s - last);
+			eina_strbuf_append(strbuf, entity);
+			last = e + 1;
+			s = e;
+		}
+		s++;
+	}
+	if (last)
+	{
+		eina_strbuf_append_length(strbuf, last, s - last);
+	}
+
+	if (strbuf)
+	{
+		ret = egueb_dom_string_new_with_string(eina_strbuf_string_steal(strbuf));
+		eina_strbuf_free(strbuf);
+	}
+	else
+	{
+		ret = egueb_dom_string_new_with_length(text, len);
+	}
+
+	return ret;
+}
+
 static Eina_Bool _egueb_dom_parser_eina_tag_attributes_set_cb(void *data, const char *key,
 		const char *value)
 {
@@ -79,7 +157,7 @@ static Eina_Bool _egueb_dom_parser_eina_tag_attributes_set_cb(void *data, const 
 	Egueb_Dom_String *v;
 
 	name = egueb_dom_string_new_with_static_string(key);
-	v = egueb_dom_string_new_with_static_string(value);
+	v = _egueb_dom_parser_eina_transform_text(thiz, value, 0);
 	DBG("Parsed attribute '%s' with value '%s'", key, value);
 	egueb_dom_element_attribute_set(node, name, v, NULL);
 	egueb_dom_string_unref(name);
@@ -181,10 +259,11 @@ static void _egueb_dom_parser_eina_tag_text_set(Egueb_Dom_Parser_Eina *thiz,
 	egueb_dom_node_child_append(parent, node, NULL);
 	/* set the content */
 	DBG("Appending string to a text node");
-	str = egueb_dom_string_new_with_length(text, length);
+	str = _egueb_dom_parser_eina_transform_text(thiz, text, length);
 	egueb_dom_character_data_append_data(node, str, NULL);
 }
 
+#ifdef EINA_POST_1_8_0
 static void _egueb_dom_parser_eina_doctype_child(Egueb_Dom_Parser_Eina *thiz,
 		const char *text, unsigned int length)
 {
@@ -216,8 +295,10 @@ static void _egueb_dom_parser_eina_doctype_child(Egueb_Dom_Parser_Eina *thiz,
 		/* get the string inside the " " */
 		attr = strndup(tmp, text - tmp);
 		DBG("Adding entity '%s' for '%s'", attr, name);
+		eina_hash_add(thiz->entities, name, attr);
 	}
 }
+#endif
 
 static void _egueb_dom_parser_eina_xml_open(Egueb_Dom_Parser_Eina *thiz,
 		const char *content, unsigned int length)
@@ -278,10 +359,7 @@ static Eina_Bool _egueb_dom_parser_eina_cb(void *data, Eina_Simple_XML_Type type
 		_egueb_dom_parser_eina_tag_cdata_set(thiz, content, length);
 		break;
 
-#if 0
-		/* FIXME once we start adding support for the doctype, we need
-		 * to check the eina version with a macro
-		 */
+#ifdef EINA_POST_1_8_0
 		case EINA_SIMPLE_XML_DOCTYPE_CHILD:
 		_egueb_dom_parser_eina_doctype_child(thiz, content, length);
 		break;
@@ -323,6 +401,7 @@ static void _egueb_dom_parser_eina_free(void *data)
 	/* pop the global void parent */
 	eina_array_pop(thiz->contexts);
 	eina_array_free(thiz->contexts);
+	eina_hash_free(thiz->entities);
 	free(thiz);
 }
 
@@ -342,6 +421,14 @@ EAPI Egueb_Dom_Parser * egueb_dom_parser_eina_new(void)
 	Egueb_Dom_Parser *parser;
 
 	thiz = calloc(1, sizeof(Egueb_Dom_Parser_Eina));
+	thiz->entities = eina_hash_string_superfast_new(free);
+	/* add common entities */
+	eina_hash_add(thiz->entities, "quot", strdup("\""));
+	eina_hash_add(thiz->entities, "amp", strdup("&"));
+	eina_hash_add(thiz->entities, "apos", strdup("'"));
+	eina_hash_add(thiz->entities, "lt", strdup("<"));
+	eina_hash_add(thiz->entities, "gt", strdup(">"));
+
 	parser = egueb_dom_parser_new(&_descriptor, thiz);
 
 	thiz->contexts = eina_array_new(1);

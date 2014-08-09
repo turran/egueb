@@ -1048,7 +1048,7 @@ EAPI Egueb_Dom_Node * egueb_svg_document_element_get_by_iri(Egueb_Dom_Node *n,
 	/* get the element by iri, only local ones for now */
 	if (uri.location || !uri.fragment)
 	{
-		ERR("Unsupported iri %s", egueb_dom_string_string_get(iri));
+		ERR("Unsupported iri '%s'", egueb_dom_string_string_get(iri));
 		egueb_dom_uri_cleanup(&uri);
 		return NULL;
 	}

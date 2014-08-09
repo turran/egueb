@@ -148,6 +148,8 @@ fi
 
 if test "x${want_egueb_dom}" = "xyes" ; then
    PKG_CHECK_MODULES([EGUEB_DOM], [${egueb_dom_requirements} ${egueb_dom_requirements_private}], [want_egueb_dom="yes"], [want_egueb_dom="no"])
+   # Check the eina version
+   PKG_CHECK_EXISTS([eina >= 1.8], [AC_DEFINE([EINA_POST_1_8_0], [1], [Eina supports doctype child])])
 fi
 
 if test "x${want_egueb_smil}" = "xyes" && test "x${want_egueb_dom}" = "xyes" ; then
