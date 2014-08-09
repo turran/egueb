@@ -34,6 +34,25 @@
  *                                  Local                                     *
  *============================================================================*/
 /*----------------------------------------------------------------------------*
+ *                               Node interface                               *
+ *----------------------------------------------------------------------------*/
+static void _egueb_dom_character_data_clone(Egueb_Dom_Node *n, Eina_Bool live,
+		Eina_Bool deep, Egueb_Dom_Node *clone)
+{
+	Egueb_Dom_Character_Data *thiz;
+	Egueb_Dom_Character_Data *other;
+	const char *str;
+
+	thiz = EGUEB_DOM_CHARACTER_DATA(n);
+	other = EGUEB_DOM_CHARACTER_DATA(clone);
+	/* copy the buffer data */
+	str = enesim_text_buffer_string_get(thiz->buffer);
+	enesim_text_buffer_string_set(other->buffer, str, -1);
+	/* TODO in case of live, for every character data modified event
+	 * make sure to copy again on the clone
+	 */
+}
+/*----------------------------------------------------------------------------*
  *                              Object interface                              *
  *----------------------------------------------------------------------------*/
 ENESIM_OBJECT_ABSTRACT_BOILERPLATE(EGUEB_DOM_NODE_DESCRIPTOR,
@@ -42,6 +61,8 @@ ENESIM_OBJECT_ABSTRACT_BOILERPLATE(EGUEB_DOM_NODE_DESCRIPTOR,
 
 static void _egueb_dom_character_data_class_init(void *k)
 {
+	Egueb_Dom_Node_Class *n_klass = EGUEB_DOM_NODE_CLASS(k);
+	n_klass->clone = _egueb_dom_character_data_clone;
 }
 
 static void _egueb_dom_character_data_instance_init(void *o)
