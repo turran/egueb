@@ -96,6 +96,7 @@ extern "C" {
 #include "egueb_dom_event_external.h"
 #include "egueb_dom_event_io.h"
 #include "egueb_dom_event_mutation.h"
+#include "egueb_dom_event_navigation.h"
 #include "egueb_dom_event_process.h"
 #include "egueb_dom_event_ui.h"
 
@@ -114,6 +115,7 @@ extern "C" {
 #include "egueb_dom_feature.h"
 #include "egueb_dom_feature_io.h"
 #include "egueb_dom_feature_multimedia.h"
+#include "egueb_dom_feature_navigation.h"
 #include "egueb_dom_feature_render.h"
 #include "egueb_dom_feature_script.h"
 #include "egueb_dom_feature_ui.h"

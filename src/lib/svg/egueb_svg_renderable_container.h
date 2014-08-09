@@ -22,7 +22,7 @@
 /**
  * @defgroup Egueb_Svg_Renderable_Container_Group Renderable Container
  * @brief Renderable Container element
- * @ingroup Egueb_Svg_Renderable_Group
+ * @ingroup Egueb_Svg_Renderable
  * @{
  */
 

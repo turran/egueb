@@ -18,6 +18,13 @@
 #ifndef _EGUEB_DOM_FEATURE_UI_H_
 #define _EGUEB_DOM_FEATURE_UI_H_
 
+/**
+ * @defgroup Egueb_Dom_Feature_UI User input
+ * @brief Node user input features
+ * @ingroup Egueb_Dom_Feature
+ * @{
+ */
+
 EAPI extern Egueb_Dom_String *EGUEB_DOM_FEATURE_UI_NAME;
 
 typedef Egueb_Dom_Input * (*Egueb_Dom_Feature_UI_Descriptor_Input_Get)(Egueb_Dom_Node *n);
@@ -31,5 +38,8 @@ EAPI Eina_Bool egueb_dom_feature_ui_input_get(Egueb_Dom_Feature *f, Egueb_Dom_In
 EAPI Eina_Bool egueb_dom_feature_ui_add(Egueb_Dom_Node *n,
 		const Egueb_Dom_Feature_UI_Descriptor *d);
 
-#endif
+/**
+ * @}
+ */
 
+#endif

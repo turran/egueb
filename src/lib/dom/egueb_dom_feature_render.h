@@ -18,11 +18,11 @@
 #ifndef _EGUEB_DOM_FEATURE_RENDER_H_
 #define _EGUEB_DOM_FEATURE_RENDER_H_
 
-/* We need to implement this kind of common behaviour of nodes
- * using features so we can create common libs on top of it.
- * The render and input interfaces will be used on window system
- * maybe later we need to add a window manager one, for things
- * like eon's hints
+/**
+ * @defgroup Egueb_Dom_Feature_Render Rendering
+ * @brief Node rendering features
+ * @ingroup Egueb_Dom_Feature
+ * @{
  */
 
 EAPI extern Egueb_Dom_String *EGUEB_DOM_FEATURE_RENDER_NAME;
@@ -49,5 +49,9 @@ EAPI Eina_Bool egueb_dom_feature_render_damages_get(Egueb_Dom_Feature *f,
 
 EAPI Eina_Bool egueb_dom_feature_render_add(Egueb_Dom_Node *n,
 		const Egueb_Dom_Feature_Render_Descriptor *d);
+
+/**
+ * @}
+ */
 
 #endif

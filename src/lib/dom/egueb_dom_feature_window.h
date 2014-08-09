@@ -18,10 +18,16 @@
 #ifndef _EGUEB_DOM_FEATURE_WINDOW_H_
 #define _EGUEB_DOM_FEATURE_WINDOW_H_
 
-/* For SVG we need to have a WINDOW_RELATIVE hint, that way the size
+/**
+ * @defgroup Egueb_Dom_Feature_Window Window
+ * @brief Node window features
+ *
+ * For SVG we need to have a WINDOW_RELATIVE hint, that way the size
  * of the svg depends on size of the window
  * another case would be the CONTENT_RELATIVE hint, that way the size
  * of the window depends on the size of the content
+ * @ingroup Egueb_Dom_Feature
+ * @{
  */
 
 /* get the hints? */
@@ -64,5 +70,8 @@ EAPI Eina_Bool egueb_dom_feature_window_content_size_get(Egueb_Dom_Feature *f, i
 EAPI Eina_Bool egueb_dom_feature_window_add(Egueb_Dom_Node *n,
 		const Egueb_Dom_Feature_Window_Descriptor *d);
 
-#endif
+/**
+ * @}
+ */
 
+#endif

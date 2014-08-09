@@ -40,4 +40,3 @@ EAPI void egueb_dom_event_multimedia_video_provider_set(Egueb_Dom_Event *e, Egue
  */
 
 #endif
-

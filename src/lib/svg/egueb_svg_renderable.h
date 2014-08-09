@@ -22,9 +22,9 @@
 #include "egueb_svg_matrix.h"
 
 /**
- * @defgroup Egueb_Svg_Renderable_Group Renderable
+ * @defgroup Egueb_Svg_Renderable Renderable
  * @brief Renderable element
- * @ingroup Egueb_Svg_Element_Group
+ * @ingroup Egueb_Svg_Element
  * @{
  */
 

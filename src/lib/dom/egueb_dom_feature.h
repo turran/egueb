@@ -18,9 +18,22 @@
 #ifndef _EGUEB_DOM_FEATURE_H_
 #define _EGUEB_DOM_FEATURE_H_
 
+/**
+ * @defgroup Egueb_Dom_Feature Features
+ * @brief Node features
+ *
+ * Node features are ways to inform the application developer about
+ * the features a particular node implements.
+ * @ingroup Egueb_Dom_Group
+ * @{
+ */
 typedef struct _Egueb_Dom_Feature Egueb_Dom_Feature;
 
 Egueb_Dom_Feature * egueb_dom_feature_ref(Egueb_Dom_Feature *thiz);
 void egueb_dom_feature_unref(Egueb_Dom_Feature *thiz);
+
+/**
+ * @}
+ */
 
 #endif

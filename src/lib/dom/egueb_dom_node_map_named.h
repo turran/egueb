@@ -20,9 +20,9 @@
 #define _EGUEB_DOM_NODE_MAP_NAMED_
 
 /**
- * @defgroup Egueb_Dom_Node_Group Node
- * @brief Node
- * @ingroup Egueb_Dom_Group
+ * @defgroup Egueb_Dom_Node_Map_Named_Group Node named map
+ * @brief Node named map
+ * @ingroup Egueb_Dom_Node
  * @{
  */
 

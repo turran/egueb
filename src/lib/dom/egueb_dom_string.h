@@ -26,6 +26,7 @@
 
 /**
  * @defgroup Egueb_Dom_String String
+ * @ingroup Egueb_Dom_Group
  * @{
  */
 

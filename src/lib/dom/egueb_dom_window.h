@@ -19,9 +19,16 @@
 #ifndef _EGUEB_DOM_WINDOW_H_
 #define _EGUEB_DOM_WINDOW_H_
 
+/**
+ * @defgroup Egueb_Dom_Window Window
+ * @ingroup Egueb_Dom_Group
+ * @{
+ */
+
 typedef struct _Egueb_Dom_Window Egueb_Dom_Window;
 
 /**
+ * @}
  * @defgroup Egueb_Dom_Window_Descriptor_Definition Window Descriptor Definition
  * @ingroup Egueb_Dom_Window_Descriptor
  * @{

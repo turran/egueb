@@ -21,7 +21,7 @@
 /**
  * @defgroup Egueb_Svg_Element_Desc_Group Desc
  * @brief Desc element
- * @ingroup Egueb_Svg_Element_Group
+ * @ingroup Egueb_Svg_Element
  * @{
  */
 

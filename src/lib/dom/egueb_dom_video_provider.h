@@ -66,6 +66,7 @@ typedef struct _Egueb_Dom_Video_Provider_Notifier
 /**
  * @}
  * @defgroup Egueb_Dom_Video_Provider Video Provider
+ * @ingroup Egueb_Dom_Group
  * @{
  */
 

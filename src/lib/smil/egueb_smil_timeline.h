@@ -21,6 +21,7 @@
 
 /**
  * @defgroup Egueb_Smil_Timeline Timeline
+ * @ingroup Egueb_Smil_Group
  * @{
  */
 

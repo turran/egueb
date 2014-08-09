@@ -18,8 +18,18 @@
 #ifndef _EGUEB_DOM_FEATURE_MULTIMEDIA_H_
 #define _EGUEB_DOM_FEATURE_MULTIMEDIA_H_
 
+/**
+ * @defgroup Egueb_Dom_Feature_Multimedia Multimedia
+ * @brief Node multimedia features
+ * @ingroup Egueb_Dom_Feature
+ * @{
+ */
+
 EAPI extern Egueb_Dom_String *EGUEB_DOM_FEATURE_MULTIMEDIA_NAME;
 EAPI Eina_Bool egueb_dom_feature_multimedia_add(Egueb_Dom_Node *n);
 
-#endif
+/**
+ * @}
+ */
 
+#endif

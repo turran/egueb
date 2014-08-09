@@ -27,7 +27,7 @@
 /**
  * @defgroup Egueb_Svg_Element_Video Video
  * @brief Image element @ender_inherits{Egueb_Svg_Element}
- * @ingroup Egueb_Svg_Renderable_Group
+ * @ingroup Egueb_Svg_Renderable
  * @{
  */
 

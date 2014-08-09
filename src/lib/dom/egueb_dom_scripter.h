@@ -62,6 +62,7 @@ typedef struct _Egueb_Dom_Scripter_Descriptor
 /**
  * @}
  * @defgroup Egueb_Dom_Scripter Scripter
+ * @ingroup Egueb_Dom_Group
  * @{
  */
 

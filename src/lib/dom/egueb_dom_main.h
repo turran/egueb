@@ -26,6 +26,7 @@
 
 /**
  * @defgroup Egueb_Dom_Main Main
+ * @ingroup Egueb_Dom_Group
  * @{
  */
 

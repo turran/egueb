@@ -20,9 +20,14 @@
 #define _EGUEB_SVG_ELEMENT_A_H_
 
 /**
+ * @file
+ * @ender_group{Egueb_Svg_Element}
+ */
+
+/**
  * @defgroup Egueb_Svg_Element_A_Group A
- * @brief Anchor element
- * @ingroup Egueb_Svg_Element_Group
+ * @brief Anchor element @ender_inherits{Egueb_Svg_Element}
+ * @ingroup Egueb_Svg_Element
  * @{
  */
 

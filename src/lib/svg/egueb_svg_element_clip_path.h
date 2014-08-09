@@ -22,7 +22,7 @@
 /**
  * @defgroup Egueb_Svg_Element_Clip_Path_Group Clip path
  * @brief Clip path element
- * @ingroup Egueb_Svg_Element_Group
+ * @ingroup Egueb_Svg_Element
  * @{
  */
 EAPI Egueb_Dom_Node * egueb_svg_element_clip_path_new(void);

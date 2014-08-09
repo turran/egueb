@@ -19,10 +19,15 @@
 #define _EGUEB_DOM_FEATURE_IO_H_
 
 /**
+ * @defgroup Egueb_Dom_Feature_IO Input/Output
+ * @brief Node Input/Output features
+ *
  * The IO feature informs the application that file operations
  * will be requested. This includes the image loading support.
  * If a document implements this feature, the application
  * must listen to the IO_DATA_LOAD and IO_IMAGE_LOAD events.
+ * @ingroup Egueb_Dom_Feature
+ * @{
  */
 
 EAPI extern Egueb_Dom_String *EGUEB_DOM_FEATURE_IO_NAME;
@@ -30,5 +35,8 @@ EAPI Eina_Bool egueb_dom_feature_io_add(Egueb_Dom_Node *n);
 EAPI void egueb_dom_feature_io_default_enable(Egueb_Dom_Feature *f,
 		Eina_Bool enable);
 
-#endif
+/**
+ * @}
+ */
 
+#endif

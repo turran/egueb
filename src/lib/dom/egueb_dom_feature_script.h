@@ -19,13 +19,22 @@
 #define _EGUEB_DOM_FEATURE_SCRIPT_H_
 
 /**
+ * @defgroup Egueb_Dom_Feature_Render Scripting
+ * @brief Node scripting features
+ *
  * The script feature informs the application that scripting
  * will be requested. The application must listen to the
  * SCRIPT_SCRIPTER event and create the @ref Egueb_Dom_Scripter
  * and set it on the event.
+ * @ingroup Egueb_Dom_Feature
+ * @{
  */
 
 EAPI extern Egueb_Dom_String *EGUEB_DOM_FEATURE_SCRIPT_NAME;
 EAPI Eina_Bool egueb_dom_feature_script_add(Egueb_Dom_Node *n);
+
+/**
+ * @}
+ */
 
 #endif

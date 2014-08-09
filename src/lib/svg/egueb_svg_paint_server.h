@@ -22,7 +22,7 @@
 /**
  * @defgroup Egueb_Svg_Paint_Server_Group Paint servers
  * @brief Paint servers
- * @ingroup Egueb_Svg_Element_Group
+ * @ingroup Egueb_Svg_Element
  * @{
  */
 

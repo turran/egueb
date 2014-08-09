@@ -22,7 +22,7 @@
 /**
  * @defgroup Egueb_Svg_Shape_Group Shape
  * @brief Shape element
- * @ingroup Egueb_Svg_Renderable_Group
+ * @ingroup Egueb_Svg_Renderable
  * @{
  */
 

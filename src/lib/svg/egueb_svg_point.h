@@ -25,6 +25,7 @@
 
 /**
  * @defgroup Egueb_Svg_Point Point
+ * @ingroup Egueb_Svg_Type_Group
  * @{
  */
 
