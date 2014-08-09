@@ -87,6 +87,7 @@ EAPI Egueb_Dom_Event * egueb_dom_event_navigation_go_to_new(
 	Egueb_Dom_Event *e;
 
 	thiz = ENESIM_OBJECT_INSTANCE_NEW(egueb_dom_event_navigation);
+	egueb_dom_uri_cleanup(&thiz->uri);
 	thiz->uri = *uri;
 
 	e = EGUEB_DOM_EVENT(thiz);
