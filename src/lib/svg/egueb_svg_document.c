@@ -57,6 +57,7 @@
 #include "egueb_svg_renderable_container.h"
 
 #include "egueb_dom_document_private.h"
+#include "egueb_svg_element_use_private.h"
 #include "egueb_svg_element_svg_private.h"
 
 #include <unistd.h>
@@ -671,6 +672,16 @@ static Egueb_Dom_Node * _egueb_svg_document_input_element_at_recursive(
 
 	if (!egueb_svg_is_renderable(n))
 		goto done;
+
+	/* in case of an <use> element, replace n, by the inner g */
+	if (egueb_svg_element_is_use(n))
+	{
+		Egueb_Dom_Node *g;
+
+		g = egueb_svg_element_use_g_get(n);
+		egueb_dom_node_unref(n);
+		n = g;
+	}
 
 	if (egueb_svg_is_renderable_container(n))
 	{

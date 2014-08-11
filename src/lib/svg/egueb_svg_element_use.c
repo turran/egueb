@@ -30,6 +30,7 @@
 #include "egueb_svg_painter.h"
 #include "egueb_svg_painter.h"
 
+#include "egueb_svg_element_use_private.h"
 #include "egueb_svg_painter_private.h"
 #include "egueb_svg_renderable_private.h"
 #include "egueb_svg_shape_private.h"
@@ -344,6 +345,13 @@ static void _egueb_svg_element_use_instance_deinit(void *o)
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
+Egueb_Dom_Node * egueb_svg_element_use_g_get(Egueb_Dom_Node *n)
+{
+	Egueb_Svg_Element_Use *thiz;
+
+	thiz = EGUEB_SVG_ELEMENT_USE(n);
+	return egueb_dom_node_ref(thiz->g);
+}
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/
