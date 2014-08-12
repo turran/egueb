@@ -32,6 +32,7 @@
  */
 
 EAPI Egueb_Dom_Node * egueb_svg_element_a_new(void);
+EAPI Eina_Bool egueb_svg_element_is_a(Egueb_Dom_Node *n);
 EAPI void egueb_svg_element_a_xlink_href_set(Egueb_Dom_Node *n, Egueb_Dom_String *v);
 EAPI void egueb_svg_element_a_xlink_href_get(Egueb_Dom_Node *n, Egueb_Svg_String_Animated *v);
 

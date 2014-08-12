@@ -220,6 +220,15 @@ EAPI Egueb_Dom_Node * egueb_svg_element_a_new(void)
 	return n;
 }
 
+EAPI Eina_Bool egueb_svg_element_is_a(Egueb_Dom_Node *n)
+{
+	if (!n) return EINA_FALSE;
+	if (!enesim_object_instance_inherits(ENESIM_OBJECT_INSTANCE(n),
+			EGUEB_SVG_ELEMENT_A_DESCRIPTOR))
+		return EINA_FALSE;
+	return EINA_TRUE;
+}
+
 EAPI void egueb_svg_element_a_xlink_href_set(Egueb_Dom_Node *n, Egueb_Dom_String *v)
 {
 	Egueb_Svg_Element_A *thiz;
