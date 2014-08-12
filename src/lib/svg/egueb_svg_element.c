@@ -71,11 +71,11 @@ static void _egueb_svg_element_event_handler(Egueb_Dom_Event *ev,
 	Eina_Bool changed = EINA_FALSE;
 
 	/* if we are not at target, do nothing */
-	if (egueb_dom_event_phase_get(ev) != EGUEB_DOM_EVENT_PHASE_AT_TARGET)
+	if (egueb_dom_event_phase_get(ev) == EGUEB_DOM_EVENT_PHASE_CAPTURING)
 		return;
 
 	type = egueb_dom_event_type_get(ev);
-	INFO_ELEMENT(EGUEB_DOM_NODE(thiz), "Event '%s' received at target",
+	INFO_ELEMENT(EGUEB_DOM_NODE(thiz), "Event '%s' received",
 			egueb_dom_string_string_get(type));
 	egueb_dom_string_unref(type);
 
@@ -556,17 +556,17 @@ static void _egueb_svg_element_instance_init(void *o)
 	egueb_dom_node_event_listener_add(n, "activate", _egueb_svg_element_onactivate_cb, thiz);
 #endif
 	egueb_dom_node_event_listener_add(n, EGUEB_DOM_EVENT_MOUSE_CLICK,
-			_egueb_svg_element_onclick_cb, EINA_TRUE, thiz);
+			_egueb_svg_element_onclick_cb, EINA_FALSE, thiz);
 	egueb_dom_node_event_listener_add(n, EGUEB_DOM_EVENT_MOUSE_DOWN,
-			_egueb_svg_element_onmousedown_cb, EINA_TRUE, thiz);
+			_egueb_svg_element_onmousedown_cb, EINA_FALSE, thiz);
 	egueb_dom_node_event_listener_add(n, EGUEB_DOM_EVENT_MOUSE_UP,
-			_egueb_svg_element_onmouseup_cb, EINA_TRUE, thiz);
+			_egueb_svg_element_onmouseup_cb, EINA_FALSE, thiz);
 	egueb_dom_node_event_listener_add(n, EGUEB_DOM_EVENT_MOUSE_OVER,
-			_egueb_svg_element_onmouseover_cb, EINA_TRUE, thiz);
+			_egueb_svg_element_onmouseover_cb, EINA_FALSE, thiz);
 	egueb_dom_node_event_listener_add(n, EGUEB_DOM_EVENT_MOUSE_MOVE,
-			_egueb_svg_element_onmousemove_cb, EINA_TRUE, thiz);
+			_egueb_svg_element_onmousemove_cb, EINA_FALSE, thiz);
 	egueb_dom_node_event_listener_add(n, EGUEB_DOM_EVENT_MOUSE_OUT,
-			_egueb_svg_element_onmouseout_cb, EINA_TRUE, thiz);
+			_egueb_svg_element_onmouseout_cb, EINA_FALSE, thiz);
 
 	/* our private stuff */
 	enesim_matrix_identity(&thiz->transform);
