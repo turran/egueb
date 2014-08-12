@@ -102,6 +102,7 @@ extern "C" {
 
 #include "egueb_dom_event_keyboard.h"
 #include "egueb_dom_event_mouse.h"
+#include "egueb_dom_event_focus.h"
 
 #include "egueb_dom_scripter.h"
 #include "egueb_dom_event_script.h"

@@ -785,15 +785,97 @@ static Egueb_Dom_Node * _egueb_svg_document_input_element_at(
 	return ret;
 }
 
+/* we go down on the subtree starting at n looking for an a */
+static Egueb_Dom_Node * _egueb_svg_document_input_focus_next_recursive(
+		Egueb_Dom_Node *n)
+{
+	if (egueb_svg_element_is_a(n))
+	{
+		return egueb_dom_node_ref(n);
+	}
+	else if (egueb_svg_is_renderable_container(n))
+	{
+		Egueb_Dom_Node *child = NULL;
+		child = egueb_dom_element_child_first_get(n);
+		while (child)
+		{
+			Egueb_Dom_Node *ret = NULL;
+			Egueb_Dom_Node *tmp;
+
+			ret = _egueb_svg_document_input_focus_next_recursive(child);
+			if (ret)
+			{
+				egueb_dom_node_unref(child);
+				return ret;
+			}
+
+			tmp = egueb_dom_element_sibling_next_get(child);
+			egueb_dom_node_unref(child);
+			child = tmp;
+		}
+		return NULL;
+	}
+	else
+	{
+		return NULL;
+	}
+}
+
+/* focusable elements are only <a> and <use> that points to a's */
 static Egueb_Dom_Node * _egueb_svg_document_input_focus_next(
 		Egueb_Dom_Node *current, void *data)
 {
 	Egueb_Svg_Document *thiz = data;
 	Egueb_Dom_Node *ret = NULL;
 
-	/* if we start from the beginning, pick the first child */
-	/* first on the first level */
-	/* focusable elements are only <a> and <use> that points to a's */
+	/* if we already have a current, pick the next ancestor that has child */
+	if (current)
+	{
+		Egueb_Dom_Node *n;
+
+		n = egueb_dom_node_ref(current);
+		while (!ret)
+		{
+			Egueb_Dom_Node *tmp;
+
+			tmp = egueb_dom_element_sibling_next_get(n);
+			/* no more siblings? go to the parent's sibling */
+			if (!tmp)
+			{
+				Egueb_Dom_Node *parent;
+
+				parent = egueb_dom_node_parent_get(n);
+				egueb_dom_node_unref(n);
+				if (!parent)
+				{
+					break;
+				}
+				/* we reached the topmost */
+ 				if (egueb_dom_node_type_get(parent) != EGUEB_DOM_NODE_TYPE_ELEMENT)
+				{
+					egueb_dom_node_unref(parent);
+					break;
+				}
+				n = parent;
+			}
+			else
+			{
+				egueb_dom_node_unref(n);
+				n = tmp;
+				ret = _egueb_svg_document_input_focus_next_recursive(n);
+			}
+		}
+	}
+	else
+	{
+		Egueb_Dom_Node *topmost;
+
+		/* go down from the topmost element looking for an <a> */
+		topmost = egueb_dom_document_document_element_get(EGUEB_DOM_NODE(thiz));
+		ret = _egueb_svg_document_input_focus_next_recursive(topmost);
+		egueb_dom_node_unref(topmost);
+	}
+
 	return ret;
 }
 

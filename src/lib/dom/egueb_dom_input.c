@@ -24,6 +24,7 @@
 #include "egueb_dom_event.h"
 #include "egueb_dom_event_keyboard.h"
 #include "egueb_dom_event_mouse.h"
+#include "egueb_dom_event_focus.h"
 #include "egueb_dom_input.h"
 
 #include "egueb_dom_event_mouse_private.h"
@@ -369,10 +370,20 @@ EAPI void egueb_dom_input_feed_key_down(Egueb_Dom_Input *thiz,
 				n = thiz->descriptor->focus_next(thiz->focused, thiz->data);
 				if (thiz->focused)
 				{
+					Egueb_Dom_Event *ev;
+
+					ev = egueb_dom_event_focus_out_new();
+					egueb_dom_node_event_dispatch(thiz->focused, ev, NULL, NULL);
 					egueb_dom_node_unref(thiz->focused);
-					thiz->focused = NULL;
 				}
 				thiz->focused = n;
+				if (thiz->focused)
+				{
+					Egueb_Dom_Event *ev;
+
+					ev = egueb_dom_event_focus_in_new();
+					egueb_dom_node_event_dispatch(thiz->focused, ev, NULL, NULL);
+				}
 			}
 		}
 		egueb_dom_string_unref(key);
