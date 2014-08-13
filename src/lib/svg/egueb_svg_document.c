@@ -787,22 +787,34 @@ static Egueb_Dom_Node * _egueb_svg_document_input_element_at(
 
 /* we go down on the subtree starting at n looking for an a */
 static Egueb_Dom_Node * _egueb_svg_document_input_focus_next_recursive(
-		Egueb_Dom_Node *n)
+		Egueb_Dom_Node *n, Eina_Bool inside_a)
 {
+	/* in case of an <use> element, replace n, by the inner g */
+	if (egueb_svg_element_is_use(n))
+	{
+		n = egueb_svg_element_use_g_get(n);
+	}
+
 	if (egueb_svg_element_is_a(n))
 	{
-		return egueb_dom_node_ref(n);
+		inside_a = EINA_TRUE;
 	}
-	else if (egueb_svg_is_renderable_container(n))
+
+	if (egueb_svg_is_renderable_container(n))
 	{
 		Egueb_Dom_Node *child = NULL;
 		child = egueb_dom_element_child_first_get(n);
+
+		if (inside_a)
+		{
+			return child;
+		}
 		while (child)
 		{
 			Egueb_Dom_Node *ret = NULL;
 			Egueb_Dom_Node *tmp;
 
-			ret = _egueb_svg_document_input_focus_next_recursive(child);
+			ret = _egueb_svg_document_input_focus_next_recursive(child, inside_a);
 			if (ret)
 			{
 				egueb_dom_node_unref(child);
@@ -817,7 +829,14 @@ static Egueb_Dom_Node * _egueb_svg_document_input_focus_next_recursive(
 	}
 	else
 	{
-		return NULL;
+		if (inside_a)
+		{
+			return egueb_dom_node_ref(n);
+		}
+		else
+		{
+			return NULL;
+		}
 	}
 }
 
@@ -832,6 +851,7 @@ static Egueb_Dom_Node * _egueb_svg_document_input_focus_next(
 	if (current)
 	{
 		Egueb_Dom_Node *n;
+		Eina_Bool inside_a = EINA_TRUE;
 
 		n = egueb_dom_node_ref(current);
 		while (!ret)
@@ -856,13 +876,21 @@ static Egueb_Dom_Node * _egueb_svg_document_input_focus_next(
 					egueb_dom_node_unref(parent);
 					break;
 				}
+
+				/* in case we are inside an <a> make sure that when leaving
+				 * the parent, we are no longer inside an <a>
+				 */
+				if (inside_a && egueb_svg_element_is_a(parent))
+				{
+					inside_a = EINA_FALSE;
+				}
 				n = parent;
 			}
 			else
 			{
 				egueb_dom_node_unref(n);
 				n = tmp;
-				ret = _egueb_svg_document_input_focus_next_recursive(n);
+				ret = _egueb_svg_document_input_focus_next_recursive(n, inside_a);
 			}
 		}
 	}
@@ -872,7 +900,7 @@ static Egueb_Dom_Node * _egueb_svg_document_input_focus_next(
 
 		/* go down from the topmost element looking for an <a> */
 		topmost = egueb_dom_document_document_element_get(EGUEB_DOM_NODE(thiz));
-		ret = _egueb_svg_document_input_focus_next_recursive(topmost);
+		ret = _egueb_svg_document_input_focus_next_recursive(topmost, EINA_FALSE);
 		egueb_dom_node_unref(topmost);
 	}
 
