@@ -141,6 +141,8 @@ static void _egueb_svg_strings_init(void)
 	EGUEB_SVG_NAME_ONMOUSEOVER = egueb_dom_string_new_with_string("onmouseover");
 	EGUEB_SVG_NAME_ONMOUSEMOVE = egueb_dom_string_new_with_string("onmousemove");
 	EGUEB_SVG_NAME_ONMOUSEOUT = egueb_dom_string_new_with_string("onmouseout");
+	EGUEB_SVG_NAME_ONFOCUSOUT = egueb_dom_string_new_with_string("onfocusout");
+	EGUEB_SVG_NAME_ONFOCUSIN = egueb_dom_string_new_with_string("onfocusin");
 }
 
 static void _egueb_svg_strings_shutdown(void)
@@ -230,6 +232,8 @@ static void _egueb_svg_strings_shutdown(void)
 	egueb_dom_string_unref(EGUEB_SVG_NAME_ONMOUSEOVER);
 	egueb_dom_string_unref(EGUEB_SVG_NAME_ONMOUSEMOVE);
 	egueb_dom_string_unref(EGUEB_SVG_NAME_ONMOUSEOUT);
+	egueb_dom_string_unref(EGUEB_SVG_NAME_ONFOCUSOUT);
+	egueb_dom_string_unref(EGUEB_SVG_NAME_ONFOCUSIN);
 }
 
 static Eina_Bool _egueb_svg_dependencies_init(void)
@@ -355,6 +359,8 @@ Egueb_Dom_String *EGUEB_SVG_NAME_ONMOUSEUP;
 Egueb_Dom_String *EGUEB_SVG_NAME_ONMOUSEOVER;
 Egueb_Dom_String *EGUEB_SVG_NAME_ONMOUSEMOVE;
 Egueb_Dom_String *EGUEB_SVG_NAME_ONMOUSEOUT;
+Egueb_Dom_String *EGUEB_SVG_NAME_ONFOCUSOUT;
+Egueb_Dom_String *EGUEB_SVG_NAME_ONFOCUSIN;
 
 /**
  * Initialize the egueb_svg library

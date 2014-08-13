@@ -113,6 +113,12 @@ typedef struct _Egueb_Svg_Element
 	Egueb_Dom_Node *onmouseout;
 	Egueb_Dom_String *onmouseout_last;
 	void *onmouseout_obj;
+	Egueb_Dom_Node *onfocusin;
+	Egueb_Dom_String *onfocusin_last;
+	void *onfocusin_obj;
+	Egueb_Dom_Node *onfocusout;
+	Egueb_Dom_String *onfocusout_last;
+	void *onfocusout_obj;
 	/* protected */
 	/* the current viewbox ?? */
 	Egueb_Svg_Rect viewbox;

@@ -129,23 +129,32 @@ static void _egueb_svg_element_event_handler(Egueb_Dom_Event *ev,
 	/* call the script with the passed in arg */
 }
 
-#if 0
 static void _egueb_svg_element_onfocusin_cb(Egueb_Dom_Event *e,
 		void *data)
 {
 	Egueb_Svg_Element *thiz = data;
+
+	_egueb_svg_element_event_handler(e, thiz, thiz->onfocusin,
+		&thiz->onfocusin_last, &thiz->onfocusin_obj);
 }
 
 static void _egueb_svg_element_onfocusout_cb(Egueb_Dom_Event *e,
 		void *data)
 {
 	Egueb_Svg_Element *thiz = data;
+
+	_egueb_svg_element_event_handler(e, thiz, thiz->onfocusout,
+		&thiz->onfocusout_last, &thiz->onfocusout_obj);
 }
 
+#if 0
 static void _egueb_svg_element_onactivate_cb(Egueb_Dom_Event *e,
 		void *data)
 {
 	Egueb_Svg_Element *thiz = data;
+
+	_egueb_svg_element_event_handler(e, thiz, thiz->onclick,
+		&thiz->onclick_last, &thiz->onclick_obj);
 }
 #endif
 
@@ -516,6 +525,12 @@ static void _egueb_svg_element_instance_init(void *o)
 	thiz->onmouseout = egueb_dom_attr_string_new(
 			egueb_dom_string_ref(EGUEB_SVG_NAME_ONMOUSEOUT), NULL,
 			EINA_FALSE, EINA_FALSE, EINA_FALSE);
+	thiz->onfocusin = egueb_dom_attr_string_new(
+			egueb_dom_string_ref(EGUEB_SVG_NAME_ONFOCUSIN), NULL,
+			EINA_FALSE, EINA_FALSE, EINA_FALSE);
+	thiz->onfocusout = egueb_dom_attr_string_new(
+			egueb_dom_string_ref(EGUEB_SVG_NAME_ONFOCUSOUT), NULL,
+			EINA_FALSE, EINA_FALSE, EINA_FALSE);
 
 	n = EGUEB_DOM_NODE(o);
 
@@ -548,11 +563,15 @@ static void _egueb_svg_element_instance_init(void *o)
 	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->onmouseover), NULL);
 	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->onmousemove), NULL);
 	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->onmouseout), NULL);
+	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->onfocusout), NULL);
+	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->onfocusin), NULL);
 
 	/* register the dom events */
+	egueb_dom_node_event_listener_add(n, EGUEB_DOM_EVENT_FOCUS_IN,
+			_egueb_svg_element_onfocusout_cb, EINA_FALSE, thiz);
+	egueb_dom_node_event_listener_add(n, EGUEB_DOM_EVENT_FOCUS_OUT,
+			_egueb_svg_element_onfocusin_cb, EINA_FALSE, thiz);
 #if 0
-	egueb_dom_node_event_listener_add(n, "focusin", _egueb_svg_element_onfocusin_cb, thiz);
-	egueb_dom_node_event_listener_add(n, "focusout", _egueb_svg_element_onfocusout_cb, thiz);
 	egueb_dom_node_event_listener_add(n, "activate", _egueb_svg_element_onactivate_cb, thiz);
 #endif
 	egueb_dom_node_event_listener_add(n, EGUEB_DOM_EVENT_MOUSE_CLICK,
@@ -607,6 +626,18 @@ static void _egueb_svg_element_instance_deinit(void *o)
 	egueb_dom_node_unref(thiz->onmouseover);
 	egueb_dom_node_unref(thiz->onmousemove);
 	egueb_dom_node_unref(thiz->onmouseout);
+	egueb_dom_node_unref(thiz->onfocusin);
+	egueb_dom_node_unref(thiz->onfocusout);
+	/* the event 'last' variants' */
+	egueb_dom_string_unref(thiz->onclick_last);
+	egueb_dom_string_unref(thiz->onmousedown_last);
+	egueb_dom_string_unref(thiz->onmouseup_last);
+	egueb_dom_string_unref(thiz->onmouseover_last);
+	egueb_dom_string_unref(thiz->onmousemove_last);
+	egueb_dom_string_unref(thiz->onmouseout_last);
+	egueb_dom_string_unref(thiz->onfocusin_last);
+	egueb_dom_string_unref(thiz->onfocusout_last);
+	/* TODO the ceated 'objs' */
 	/* remove the weak references */
 	if (thiz->geometry_relative)
 	{
