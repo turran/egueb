@@ -3,7 +3,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
-<title>egueb: Input/Output</title>
+<title>egueb: Focus Event</title>
 
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen.css" rel="stylesheet" type="text/css" />
@@ -73,27 +73,29 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a href="#func-members">Functions</a> &#124;
 <a href="#var-members">Variables</a>  </div>
   <div class="headertitle">
-<div class="title">Input/Output</div>  </div>
-<div class="ingroups"><a class="el" href="group__Egueb__Dom__Feature.html">Features</a></div></div><!--header-->
+<div class="title">Focus Event</div>  </div>
+<div class="ingroups"><a class="el" href="group__Egueb__Dom__Event__UI__Group.html">UI Event</a></div></div><!--header-->
 <div class="contents">
 
-<p>Node Input/Output features.  
+<p>Focus Event  inherits from \1.  
 <a href="#details">More...</a></p>
 <table class="memberdecls">
 <tr><td colspan="2"><h2><a name="func-members"></a>
 Functions</h2></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="gaf9955953afbd06bebf317de127b495da"></a><!-- doxytag: member="Egueb_Dom_Feature_IO::egueb_dom_feature_io_add" ref="gaf9955953afbd06bebf317de127b495da" args="(Egueb_Dom_Node *n)" -->
-EAPI Eina_Bool&#160;</td><td class="memItemRight" valign="bottom"><b>egueb_dom_feature_io_add</b> (<a class="el" href="group__Egueb__Dom__Node.html#ga9d712a993715d8cfb04d49f9648b80d7">Egueb_Dom_Node</a> *n)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ga24c411db3a584cf72d1dfea3c8eccf5f"></a><!-- doxytag: member="Egueb_Dom_Feature_IO::egueb_dom_feature_io_default_enable" ref="ga24c411db3a584cf72d1dfea3c8eccf5f" args="(Egueb_Dom_Feature *f, Eina_Bool enable)" -->
-EAPI void&#160;</td><td class="memItemRight" valign="bottom"><b>egueb_dom_feature_io_default_enable</b> (Egueb_Dom_Feature *f, Eina_Bool enable)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ga0df0dfd1708065ce7ae0bd746a7261d3"></a><!-- doxytag: member="Egueb_Dom_Event_Focus::egueb_dom_event_focus_in_new" ref="ga0df0dfd1708065ce7ae0bd746a7261d3" args="(void)" -->
+EAPI Egueb_Dom_Event *&#160;</td><td class="memItemRight" valign="bottom"><b>egueb_dom_event_focus_in_new</b> (void)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="gaeeb1937000070f8f40eeaa64a0ebe868"></a><!-- doxytag: member="Egueb_Dom_Event_Focus::egueb_dom_event_focus_out_new" ref="gaeeb1937000070f8f40eeaa64a0ebe868" args="(void)" -->
+EAPI Egueb_Dom_Event *&#160;</td><td class="memItemRight" valign="bottom"><b>egueb_dom_event_focus_out_new</b> (void)</td></tr>
 <tr><td colspan="2"><h2><a name="var-members"></a>
 Variables</h2></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ga82cd4c21531c1fb413002d3ca6f5b18a"></a><!-- doxytag: member="Egueb_Dom_Feature_IO::EGUEB_DOM_FEATURE_IO_NAME" ref="ga82cd4c21531c1fb413002d3ca6f5b18a" args="" -->
-EAPI Egueb_Dom_String *&#160;</td><td class="memItemRight" valign="bottom"><b>EGUEB_DOM_FEATURE_IO_NAME</b></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ga58381393245449c275ae3949d726e6ed"></a><!-- doxytag: member="Egueb_Dom_Event_Focus::EGUEB_DOM_EVENT_FOCUS_IN" ref="ga58381393245449c275ae3949d726e6ed" args="" -->
+EAPI Egueb_Dom_String *&#160;</td><td class="memItemRight" valign="bottom"><b>EGUEB_DOM_EVENT_FOCUS_IN</b></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ga3d044204ff228b33032f48db39f0633c"></a><!-- doxytag: member="Egueb_Dom_Event_Focus::EGUEB_DOM_EVENT_FOCUS_OUT" ref="ga3d044204ff228b33032f48db39f0633c" args="" -->
+EAPI Egueb_Dom_String *&#160;</td><td class="memItemRight" valign="bottom"><b>EGUEB_DOM_EVENT_FOCUS_OUT</b></td></tr>
 </table>
 <hr/><a name="details" id="details"></a><h2>Detailed Description</h2>
-<p>Node Input/Output features. </p>
-<p>The IO feature informs the application that file operations will be requested. This includes the image loading support. If a document implements this feature, the application must listen to the IO_DATA_LOAD and IO_IMAGE_LOAD events. </p>
+<p>Focus Event  inherits from \1. </p>
+<p>TODO make it inherit from ui event </p>
 </div><!-- contents -->
 <!-- window showing the filter options -->
 <div id="MSearchSelectWindow"
