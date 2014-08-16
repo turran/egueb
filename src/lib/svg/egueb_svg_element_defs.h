@@ -26,6 +26,7 @@
  */
 
 EAPI Egueb_Dom_Node * egueb_svg_element_defs_new(void);
+EAPI Eina_Bool egueb_svg_element_is_defs(Egueb_Dom_Node *n);
 
 /**
  * @}

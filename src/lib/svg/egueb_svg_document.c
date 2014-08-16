@@ -789,6 +789,11 @@ static Egueb_Dom_Node * _egueb_svg_document_input_element_at(
 static Egueb_Dom_Node * _egueb_svg_document_input_focus_next_recursive(
 		Egueb_Dom_Node *n, Eina_Bool inside_a)
 {
+	/* in case of a <defs> element ignore it */
+	if (egueb_svg_element_is_defs(n))
+	{
+		return NULL;
+	}
 	/* in case of an <use> element, replace n, by the inner g */
 	if (egueb_svg_element_is_use(n))
 	{

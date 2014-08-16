@@ -150,3 +150,12 @@ EAPI Egueb_Dom_Node * egueb_svg_element_defs_new(void)
 	n = ENESIM_OBJECT_INSTANCE_NEW(egueb_svg_element_defs);
 	return n;
 }
+
+EAPI Eina_Bool egueb_svg_element_is_defs(Egueb_Dom_Node *n)
+{
+	if (!n) return EINA_FALSE;
+	if (!enesim_object_instance_inherits(ENESIM_OBJECT_INSTANCE(n),
+			EGUEB_SVG_ELEMENT_DEFS_DESCRIPTOR))
+		return EINA_FALSE;
+	return EINA_TRUE;
+}
