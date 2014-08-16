@@ -372,6 +372,7 @@ EAPI void egueb_dom_input_feed_key_down(Egueb_Dom_Input *thiz,
 				{
 					Egueb_Dom_Event *ev;
 
+					DBG("Focus out");
 					ev = egueb_dom_event_focus_out_new();
 					egueb_dom_node_event_dispatch(thiz->focused, ev, NULL, NULL);
 					egueb_dom_node_unref(thiz->focused);
@@ -381,6 +382,7 @@ EAPI void egueb_dom_input_feed_key_down(Egueb_Dom_Input *thiz,
 				{
 					Egueb_Dom_Event *ev;
 
+					DBG("Focus in");
 					ev = egueb_dom_event_focus_in_new();
 					egueb_dom_node_event_dispatch(thiz->focused, ev, NULL, NULL);
 				}
@@ -389,20 +391,35 @@ EAPI void egueb_dom_input_feed_key_down(Egueb_Dom_Input *thiz,
 		egueb_dom_string_unref(key);
 		return;
 	}
-
 	/* check for the control keys */
 	_egueb_dom_input_key_modifier_set(key, &thiz->alt_key, &thiz->ctrl_key,
 			&thiz->shift_key, &thiz->meta_key, &location);
 
-	/* set the flags */
+	/* nothing to do if we dont have any focused element */
 	if (!thiz->focused)
 	{
 		egueb_dom_string_unref(key);
 		return;
 	}
-	ev = egueb_dom_event_key_down_new(key, EGUEB_DOM_KEY_LOCATION_STANDARD,
+
+	/* finally the key down */
+	DBG("Key down");
+	ev = egueb_dom_event_key_down_new(egueb_dom_string_ref(key), EGUEB_DOM_KEY_LOCATION_STANDARD,
 		thiz->alt_key, thiz->ctrl_key, thiz->shift_key, thiz->meta_key);
 	egueb_dom_node_event_dispatch(thiz->focused, ev, NULL, NULL);
+	/* check for the activation */
+	if (!strcmp(s, "Enter") || !strcmp(s, "Return"))
+	{
+		Egueb_Dom_Event *ev;
+
+		DBG("Activating");
+		ev = egueb_dom_event_mouse_new();
+		egueb_dom_event_mouse_click_init(ev, thiz->x, thiz->y, thiz->x, thiz->y,
+				EINA_FALSE, EINA_FALSE, EINA_FALSE,
+				EINA_FALSE, 0, 0);
+		egueb_dom_node_event_dispatch(thiz->focused, ev, NULL, NULL);
+	}
+	egueb_dom_string_unref(key);
 }
 
 EAPI void egueb_dom_input_feed_key_up(Egueb_Dom_Input *thiz,
