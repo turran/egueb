@@ -299,7 +299,7 @@ EAPI void egueb_dom_input_feed_mouse_move(Egueb_Dom_Input *thiz, int x, int y)
 			egueb_dom_event_mouse_move_init(ev, x, y, x, y,
 					EINA_FALSE, EINA_FALSE, EINA_FALSE,
 					EINA_FALSE, 0, 0);
-			egueb_dom_node_event_dispatch(egueb_dom_node_ref(n), ev, NULL, NULL);
+			egueb_dom_node_event_dispatch(n, ev, NULL, NULL);
 		}
 	}
 	else
@@ -315,7 +315,7 @@ EAPI void egueb_dom_input_feed_mouse_move(Egueb_Dom_Input *thiz, int x, int y)
 			egueb_dom_event_mouse_out_init(ev, x, y, x, y,
 					EINA_FALSE, EINA_FALSE, EINA_FALSE,
 					EINA_FALSE, 0, 0, n ? egueb_dom_node_ref(n) : NULL);
-			egueb_dom_node_event_dispatch(egueb_dom_node_ref(thiz->over), ev, NULL, NULL);
+			egueb_dom_node_event_dispatch(thiz->over, ev, NULL, NULL);
 			DBG("Out");
 		}
 		/* send in event on r */
@@ -327,8 +327,7 @@ EAPI void egueb_dom_input_feed_mouse_move(Egueb_Dom_Input *thiz, int x, int y)
 			egueb_dom_event_mouse_over_init(ev, x, y, x, y,
 					EINA_FALSE, EINA_FALSE, EINA_FALSE,
 					EINA_FALSE, 0, 0, thiz->over ? egueb_dom_node_ref(thiz->over) : NULL);
-			egueb_dom_node_event_dispatch(egueb_dom_node_ref(n), ev, NULL, NULL);
-			//egueb_dom_node_event_dispatch(n, "mousemove", &ev);
+			egueb_dom_node_event_dispatch(n, ev, NULL, NULL);
 			DBG("Over");
 		}
 	}
