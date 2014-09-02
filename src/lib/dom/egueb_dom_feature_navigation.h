@@ -24,7 +24,7 @@
  *
  * In case this feature is supported by a document, the document
  * has elements that will require the application to go to a specific
- * URI, like <a> elements.
+ * URI, like \<a\> elements.
  * @ingroup Egueb_Dom_Feature
  * @{
  */
