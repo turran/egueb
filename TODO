@@ -1,5 +1,7 @@
 Refactor
 ========
++ Split every attribute into:
+  value_foo, attr_foo, foo
 + Cleanup the feature ui. Just get the input object given
   that we need to replicate lot of API
 + Add the navigation feature, this way document implementations
