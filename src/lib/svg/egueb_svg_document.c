@@ -483,12 +483,10 @@ static Egueb_Dom_Node * _egueb_svg_document_element_create_by_id(int id)
 		ret = egueb_dom_element_script_new();
 		break;
 
-#if 0
 		case EGUEB_SVG_TYPE_STYLE:
-		ret = egueb_svg_element_style_new();
+		ret = egueb_css_element_style_new();
 		break;
 
-#endif
 		case EGUEB_SVG_TYPE_IMAGE:
 		ret = egueb_svg_element_image_new();
 		break;
