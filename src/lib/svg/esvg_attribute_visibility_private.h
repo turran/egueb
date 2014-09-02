@@ -1,6 +1,0 @@
-#ifndef _ESVG_PRIVATE_ATTRIBUTE_VISIBILITY_H_
-#define _ESVG_PRIVATE_ATTRIBUTE_VISIBILITY_H_
-
-extern Egueb_Svg_Attribute_Animated_Descriptor egueb_svg_attribute_animated_visibility_descriptor;
-
-#endif
