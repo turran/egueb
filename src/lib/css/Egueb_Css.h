@@ -63,6 +63,7 @@
 #include "egueb_css_attr_font.h"
 #include "egueb_css_attr_style.h"
 /* elements */
+#include "egueb_css_element_style.h"
 /* common parsers */
 #include "egueb_css_color.h"
 #include "egueb_css_length.h"

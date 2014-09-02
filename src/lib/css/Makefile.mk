@@ -6,6 +6,7 @@ src/lib/css/Egueb_Css.h \
 src/lib/css/egueb_css_attr_font.h \
 src/lib/css/egueb_css_attr_style.h \
 src/lib/css/egueb_css_color.h \
+src/lib/css/egueb_css_element_style.h \
 src/lib/css/egueb_css_font_size.h \
 src/lib/css/egueb_css_font_style.h \
 src/lib/css/egueb_css_font_variant.h \
@@ -23,6 +24,7 @@ src/lib/css/egueb_css_length.c \
 src/lib/css/egueb_css_color.c \
 src/lib/css/egueb_css_context.c \
 src/lib/css/egueb_css_context_private.h \
+src/lib/css/egueb_css_element_style.c \
 src/lib/css/egueb_css_font.c \
 src/lib/css/egueb_css_font_size.c \
 src/lib/css/egueb_css_font_style.c \
