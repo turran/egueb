@@ -103,6 +103,7 @@ EAPI extern Egueb_Dom_String *EGUEB_SVG_X2;
 EAPI extern Egueb_Dom_String *EGUEB_SVG_Y;
 EAPI extern Egueb_Dom_String *EGUEB_SVG_Y1;
 EAPI extern Egueb_Dom_String *EGUEB_SVG_Y2;
+EAPI extern Egueb_Dom_String *EGUEB_SVG_NAME_ZOOM_AND_PAN;
 
 EAPI extern Egueb_Dom_String *EGUEB_SVG_NAME_ONCLICK;
 EAPI extern Egueb_Dom_String *EGUEB_SVG_NAME_ONMOUSEDOWN;

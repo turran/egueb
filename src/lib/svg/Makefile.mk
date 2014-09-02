@@ -64,7 +64,8 @@ src/lib/svg/egueb_svg_stroke_dasharray.h \
 src/lib/svg/egueb_svg_stroke_line_cap.h \
 src/lib/svg/egueb_svg_stroke_line_join.h \
 src/lib/svg/egueb_svg_text_anchor.h \
-src/lib/svg/egueb_svg_visibility.h
+src/lib/svg/egueb_svg_visibility.h \
+src/lib/svg/egueb_svg_zoom_and_pan.h
 
 src_lib_svg_libegueb_svg_la_SOURCES = \
 src/lib/svg/egueb_svg_animate_transform_type.c \
@@ -114,6 +115,8 @@ src/lib/svg/egueb_svg_attr_text_anchor_private.h \
 src/lib/svg/egueb_svg_attr_visibility.c \
 src/lib/svg/egueb_svg_attr_visibility_private.h \
 src/lib/svg/egueb_svg_attr_xlink_href.c \
+src/lib/svg/egueb_svg_attr_zoom_and_pan.c \
+src/lib/svg/egueb_svg_attr_zoom_and_pan_private.h \
 src/lib/svg/egueb_svg_clip_path.c \
 src/lib/svg/egueb_svg_color.c \
 src/lib/svg/egueb_svg_color_private.h \
@@ -206,7 +209,11 @@ src/lib/svg/egueb_svg_stroke_line_cap.c \
 src/lib/svg/egueb_svg_stroke_line_join.c \
 src/lib/svg/egueb_svg_stroke_dasharray.c \
 src/lib/svg/egueb_svg_text_anchor.c \
-src/lib/svg/egueb_svg_visibility.c
+src/lib/svg/egueb_svg_value_zoom_and_pan.c \
+src/lib/svg/egueb_svg_value_zoom_and_pan_private.h \
+src/lib/svg/egueb_svg_visibility.c \
+src/lib/svg/egueb_svg_zoom_and_pan.c \
+src/lib/svg/egueb_svg_zoom_and_pan_private.h
 
 src_lib_svg_libegueb_svg_la_CPPFLAGS = \
 -I$(top_srcdir)/src/lib/css \

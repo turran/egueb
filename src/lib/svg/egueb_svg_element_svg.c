@@ -28,12 +28,14 @@
 #include "egueb_svg_element_use.h"
 #include "egueb_svg_renderable_container.h"
 #include "egueb_svg_shape.h"
+#include "egueb_svg_zoom_and_pan.h"
 
 #include "egueb_svg_element_svg_private.h"
 #include "egueb_svg_shape_private.h"
 #include "egueb_svg_document_private.h"
 #include "egueb_svg_attr_rect_private.h"
 #include "egueb_svg_attr_length_private.h"
+#include "egueb_svg_attr_zoom_and_pan_private.h"
 /*
  * Given that a svg element can clip, we should use a clipper with a compound
  * inside as the renderer
@@ -66,6 +68,7 @@ typedef struct _Egueb_Svg_Element_Svg
 	Egueb_Dom_Node *width;
 	Egueb_Dom_Node *height;
 	Egueb_Dom_Node *viewbox;
+	Egueb_Dom_Node *zoom_and_pan;
 	/* not xml attributes */
 	double current_scale;
 	Egueb_Svg_Point current_translate;
@@ -224,12 +227,18 @@ static Eina_Bool _egueb_svg_element_svg_process(Egueb_Svg_Renderable *r)
 
 	if (!relative)
 	{
+		Egueb_Svg_Zoom_And_Pan zoom_and_pan;
 		Enesim_Matrix m;
 
-		/* Set our current scale/translate */
-		enesim_matrix_scale(&m, thiz->current_scale, thiz->current_scale);
-		enesim_matrix_translate(&relative_transform, thiz->current_translate.x, thiz->current_translate.y);
-		enesim_matrix_compose(&relative_transform, &m, &relative_transform);
+		egueb_dom_attr_final_get(thiz->zoom_and_pan, &zoom_and_pan);
+		if (zoom_and_pan == EGUEB_SVG_ZOOM_AND_PAN_MAGNIFY)
+		{
+			/* Set our current scale/translate */
+			enesim_matrix_scale(&m, thiz->current_scale, thiz->current_scale);
+			enesim_matrix_translate(&relative_transform, thiz->current_translate.x,
+					thiz->current_translate.y);
+			enesim_matrix_compose(&relative_transform, &m, &relative_transform);
+		}
 	}
 
 	DBG_ELEMENT(EGUEB_DOM_NODE(r), "x: %g, y: %g, width: %g, height: %g", gx, gy, gw, gh);
@@ -353,6 +362,7 @@ static void _egueb_svg_element_svg_instance_init(void *o)
 	thiz->viewbox = egueb_svg_attr_rect_new(
 			egueb_dom_string_ref(EGUEB_SVG_VIEWBOX),
 			NULL);
+	thiz->zoom_and_pan = egueb_svg_attr_zoom_and_pan_new();
 
 	thiz->current_scale = 1.0;
 	thiz->current_translate.x = 0;
@@ -364,6 +374,7 @@ static void _egueb_svg_element_svg_instance_init(void *o)
 	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->width), NULL);
 	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->height), NULL);
 	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->viewbox), NULL);
+	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->zoom_and_pan), NULL);
 
 	/* add the event to set the painter */
 	egueb_dom_node_event_listener_add(n,
@@ -402,6 +413,7 @@ static void _egueb_svg_element_svg_instance_deinit(void *o)
 	egueb_dom_node_unref(thiz->width);
 	egueb_dom_node_unref(thiz->height);
 	egueb_dom_node_unref(thiz->viewbox);
+	egueb_dom_node_unref(thiz->zoom_and_pan);
 	/* the rendering */
 	enesim_renderer_unref(thiz->rectangle);
 	enesim_renderer_unref(thiz->proxy);
