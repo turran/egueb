@@ -19,9 +19,14 @@
 #define _EGUEB_DOM_EVENT_SCRIPT_H_
 
 /**
+ * @file
+ * @ender_group{Egueb_Dom_Event_Script}
+ */
+
+/**
  * @defgroup Egueb_Dom_Event_Script_Group Script Event
- * @brief Script Event
- * @ingroup Egueb_Dom_Event_Group
+ * @brief Script Event @ender_inherits{Egueb_Dom_Event}
+ * @ingroup Egueb_Dom_Event
  * @{
  */
 

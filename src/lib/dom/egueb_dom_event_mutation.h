@@ -24,7 +24,7 @@
 /**
  * @defgroup Egueb_Svg_Event_Mutation_Group Mutation Event
  * @brief Mutation Event
- * @ingroup Egueb_Dom_Event_Group
+ * @ingroup Egueb_Dom_Event
  * @{
  */
 

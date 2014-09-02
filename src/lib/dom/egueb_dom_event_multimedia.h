@@ -19,9 +19,14 @@
 #define _EGUEB_DOM_EVENT_MULTIMEDIA_H_
 
 /**
+ * @file
+ * @ender_group{Egueb_Dom_Event_Multimedia}
+ */
+
+/**
  * @defgroup Egueb_Dom_Event_Multimedia_Group Multimedia Event
- * @brief Multimedia Event
- * @ingroup Egueb_Dom_Event_Group
+ * @brief Multimedia Event @ender_inherits{Egueb_dom_Event}
+ * @ingroup Egueb_Dom_Event
  * @{
  */
 

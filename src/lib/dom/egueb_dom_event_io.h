@@ -19,9 +19,14 @@
 #define _EGUEB_DOM_EVENT_IO_H_
 
 /**
+ * @file
+ * @ender_group{Egueb_Dom_Event_IO}
+ */
+
+/**
  * @defgroup Egueb_Dom_Event_IO_Group IO Event
- * @brief IO Event
- * @ingroup Egueb_Dom_Event_Group
+ * @brief IO Event @ender_inherits{Egueb_Dom_Event}
+ * @ingroup Egueb_Dom_Event
  * @{
  */
 
