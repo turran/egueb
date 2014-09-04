@@ -6,11 +6,6 @@ static void help(void)
 	exit(1);
 }
 
-static const char * filename_get(void *user_data)
-{
-	return user_data;
-}
-
 int main(int argc, char **argv)
 {
 	Egueb_Dom_Node *doc;
@@ -32,8 +27,6 @@ int main(int argc, char **argv)
 		goto done;
 	}
 	doc = egueb_svg_document_new();
-	/* set our handlers */
-	egueb_svg_document_filename_get_cb_set(doc, filename_get, (void *)argv[1]);
 	egueb_dom_parser_parse(im, &doc);
 
 	render = egueb_dom_node_feature_get(doc, EGUEB_DOM_FEATURE_RENDER_NAME, NULL);
@@ -63,7 +56,7 @@ int main(int argc, char **argv)
 			enesim_log_dump(log);
 		}
 		b = enesim_surface_buffer_get(s);
-		enesim_image_file_save(argv[2], b, NULL);
+		enesim_image_file_save(argv[2], b, NULL, NULL);
 		enesim_buffer_unref(b);
 		enesim_surface_unref(s);
 	}
