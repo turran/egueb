@@ -19,7 +19,7 @@
 #define _EGUEB_DOM_FEATURE_SCRIPT_H_
 
 /**
- * @defgroup Egueb_Dom_Feature_Render Scripting
+ * @defgroup Egueb_Dom_Feature_Script Scripting
  * @brief Node scripting features
  *
  * The script feature informs the application that scripting

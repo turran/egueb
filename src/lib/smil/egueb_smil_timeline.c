@@ -161,7 +161,7 @@ EAPI void egueb_smil_timeline_signal_add(Egueb_Smil_Timeline *thiz, Egueb_Smil_S
 /**
  * Remove the signal from the Egueb_Smil_Timeline instance
  * @param thiz The Egueb_Smil_Timeline instance to remove the signal from
- * @param a The signal to remove
+ * @param s The signal to remove
  */
 EAPI void egueb_smil_timeline_signal_remove(Egueb_Smil_Timeline *thiz, Egueb_Smil_Signal *s)
 {

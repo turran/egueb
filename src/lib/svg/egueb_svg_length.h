@@ -86,7 +86,7 @@ EAPI double egueb_svg_length_final_get(const Egueb_Svg_Length *l, double width, 
 
 /**
  * @}
- * @defgroup Egueb_Svg_Coord_Animated Coord
+ * @defgroup Egueb_Svg_Coord Coord
  * @ingroup Egueb_Svg_Type_Group
  * @{
  */

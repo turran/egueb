@@ -36,8 +36,11 @@
 
 typedef enum _Egueb_Dom_Event_Phase
 {
+	/** The event is going from topmost element to target element */
 	EGUEB_DOM_EVENT_PHASE_CAPTURING,
+	/** The event is at target */
 	EGUEB_DOM_EVENT_PHASE_AT_TARGET,
+	/** The event is going from the target to the topmost element */
 	EGUEB_DOM_EVENT_PHASE_BUBBLING,
 	EGUEB_DOM_EVENT_PHASES,
 } Egueb_Dom_Event_Phase;
