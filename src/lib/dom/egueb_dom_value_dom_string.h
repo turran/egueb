@@ -21,8 +21,5 @@
 
 EAPI const Egueb_Dom_Value_Descriptor *
 		egueb_dom_value_dom_string_descriptor_get(void);
-EAPI Egueb_Dom_String * egueb_dom_value_dom_string_dup(Egueb_Dom_Value *v);
-EAPI const Egueb_Dom_String * egueb_dom_value_dom_string_get(Egueb_Dom_Value *v);
-EAPI void egueb_dom_value_dom_string_set(Egueb_Dom_Value *v, Egueb_Dom_String *str);
 
 #endif

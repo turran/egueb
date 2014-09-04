@@ -134,25 +134,3 @@ EAPI const Egueb_Dom_Value_Descriptor *
 {
 	return &_descriptor;
 }
-
-EAPI void egueb_dom_value_dom_string_set(Egueb_Dom_Value *v, Egueb_Dom_String *str)
-{
-	egueb_dom_value_reset(v);
-	if (str)
-	{
-		v->descriptor = egueb_dom_value_dom_string_descriptor_get();
-		v->data.ptr = egueb_dom_string_ref(str);
-		v->owned = EINA_TRUE;
-	}
-}
-
-EAPI Egueb_Dom_String * egueb_dom_value_dom_string_dup(Egueb_Dom_Value *v)
-{
-	if (v->data.ptr) return egueb_dom_string_ref(v->data.ptr);
-	else return NULL;
-}
-
-EAPI const Egueb_Dom_String * egueb_dom_value_dom_string_get(Egueb_Dom_Value *v)
-{
-	return v->data.ptr;
-}
