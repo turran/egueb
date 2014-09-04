@@ -51,7 +51,6 @@ $(tests_css_LDADD) \
 @EGUEB_SVG_LIBS@
 
 check_PROGRAMS += \
-src/tests/egueb_css_test01 \
 src/tests/egueb_dom_document01 \
 src/tests/egueb_dom_document02 \
 src/tests/egueb_dom_document03 \
@@ -93,10 +92,6 @@ src_tests_egueb_dom_element01_LDADD = $(tests_dom_LDADD)
 src_tests_egueb_dom_element02_SOURCES = src/tests/egueb_dom_element02.c
 src_tests_egueb_dom_element02_CPPFLAGS = $(tests_dom_CPPFLAGS)
 src_tests_egueb_dom_element02_LDADD = $(tests_dom_LDADD)
-
-src_tests_egueb_css_test01_SOURCES = src/tests/egueb_css_test01.c
-src_tests_egueb_css_test01_CPPFLAGS = $(tests_css_CPPFLAGS)
-src_tests_egueb_css_test01_LDADD = $(tests_css_LDADD)
 
 src_tests_egueb_svg_test01_SOURCES = src/tests/egueb_svg_test01.c
 src_tests_egueb_svg_test01_CPPFLAGS = $(tests_svg_CPPFLAGS)
