@@ -114,7 +114,7 @@ EAPI void&#160;</td><td class="memItemRight" valign="bottom"><b>egueb_dom_event_
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ga25800042979f4eaedc5543d668185bea"></a><!-- doxytag: member="Egueb_Dom_Event::egueb_dom_event_ref" ref="ga25800042979f4eaedc5543d668185bea" args="(Egueb_Dom_Event *thiz)" -->
 EAPI Egueb_Dom_Event *&#160;</td><td class="memItemRight" valign="bottom"><b>egueb_dom_event_ref</b> (Egueb_Dom_Event *thiz)</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">EAPI Egueb_Dom_String *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__Egueb__Dom__Event.html#gae116961610b629a0d9dcdcbff9551f81">egueb_dom_event_type_get</a> (Egueb_Dom_Event *thiz)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">EAPI Egueb_Dom_Event_Phase&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__Egueb__Dom__Event.html#gaf609cf29052adc9f5a6ad4997d60c0dd">egueb_dom_event_phase_get</a> (Egueb_Dom_Event *thiz)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">EAPI <a class="el" href="group__Egueb__Dom__Event__Phase.html#ga31860b75b3d858fd423e64de0d7e2559">Egueb_Dom_Event_Phase</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__Egueb__Dom__Event.html#gaf609cf29052adc9f5a6ad4997d60c0dd">egueb_dom_event_phase_get</a> (Egueb_Dom_Event *thiz)</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">EAPI <a class="el" href="group__Egueb__Dom__Node.html#ga9d712a993715d8cfb04d49f9648b80d7">Egueb_Dom_Node</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__Egueb__Dom__Event.html#ga23b6282c2664196647fdec9142433772">egueb_dom_event_target_get</a> (Egueb_Dom_Event *thiz)</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="gad721f799b151ccd8f94d1dcf3640c756"></a><!-- doxytag: member="Egueb_Dom_Event::egueb_dom_event_target_current_get" ref="gad721f799b151ccd8f94d1dcf3640c756" args="(Egueb_Dom_Event *thiz)" -->
 EAPI <a class="el" href="group__Egueb__Dom__Node.html#ga9d712a993715d8cfb04d49f9648b80d7">Egueb_Dom_Node</a> *&#160;</td><td class="memItemRight" valign="bottom"><b>egueb_dom_event_target_current_get</b> (Egueb_Dom_Event *thiz)</td></tr>
@@ -157,7 +157,7 @@ EAPI Ender_Item *&#160;</td><td class="memItemRight" valign="bottom"><b>egueb_do
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">EAPI Egueb_Dom_Event_Phase <a class="el" href="group__Egueb__Dom__Event.html#gaf609cf29052adc9f5a6ad4997d60c0dd">egueb_dom_event_phase_get</a> </td>
+          <td class="memname">EAPI <a class="el" href="group__Egueb__Dom__Event__Phase.html#ga31860b75b3d858fd423e64de0d7e2559">Egueb_Dom_Event_Phase</a> <a class="el" href="group__Egueb__Dom__Event.html#gaf609cf29052adc9f5a6ad4997d60c0dd">egueb_dom_event_phase_get</a> </td>
           <td>(</td>
           <td class="paramtype">Egueb_Dom_Event *&#160;</td>
           <td class="paramname"><em>thiz</em></td><td>)</td>
@@ -223,7 +223,7 @@ EAPI Ender_Item *&#160;</td><td class="memItemRight" valign="bottom"><b>egueb_do
   </dd>
 </dl>
 <dl class="return"><dt><b>Returns:</b></dt><dd>The relative node</dd></dl>
-<p>For events that are on the EGUEB_DOM_EVENT_PHASE_AT_TARGET phase the relative node is NULL. For events that on the EGUEB_DOM_EVENT_PHASE_CAPTURING phase the relative node is the child node where the event will propagate later. For EGUEB_DOM_EVENT_PHASE_BUBBLING phase the relative node is the child node where the event propagated before. </p>
+<p>For events that are on the <a class="el" href="group__Egueb__Dom__Event__Phase.html#gga31860b75b3d858fd423e64de0d7e2559a66914d6a41813f556a7254fcdbef58ac">EGUEB_DOM_EVENT_PHASE_AT_TARGET</a> phase the relative node is NULL. For events that on the <a class="el" href="group__Egueb__Dom__Event__Phase.html#gga31860b75b3d858fd423e64de0d7e2559a043c20b50506928621584d4bd10b95fc">EGUEB_DOM_EVENT_PHASE_CAPTURING</a> phase the relative node is the child node where the event will propagate later. For <a class="el" href="group__Egueb__Dom__Event__Phase.html#gga31860b75b3d858fd423e64de0d7e2559a32cacfd4dbe5bd99def1706d60d27109">EGUEB_DOM_EVENT_PHASE_BUBBLING</a> phase the relative node is the child node where the event propagated before. </p>
 
 </div>
 </div>
@@ -245,7 +245,7 @@ EAPI Ender_Item *&#160;</td><td class="memItemRight" valign="bottom"><b>egueb_do
 
 
 <hr class="footer"/><address class="footer"><small>
-Generated on Thu Sep 4 2014 19:27:54 for egueb by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Thu Sep 4 2014 22:29:07 for egueb by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.7.6.1
 </small></address>
