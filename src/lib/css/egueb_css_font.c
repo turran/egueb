@@ -24,25 +24,13 @@
 #include "egueb_css_font_weight.h"
 #include "egueb_css_font_size.h"
 #include "egueb_css_font.h"
-#include "egueb_dom_value_private.h"
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
-/*----------------------------------------------------------------------------*
- *                             Value interface                                *
- *----------------------------------------------------------------------------*/
-static void egueb_css_font_interpolate(Egueb_Css_Font *v,
-		Egueb_Css_Font *a, Egueb_Css_Font *b, double m,
-		Egueb_Css_Font *add, Egueb_Css_Font *acc, int mul)
-{
-	ERR("Not implemented");
-}
-
-EGUEB_DOM_VALUE_PRIMITIVE_SIMPLE_BOILERPLATE(egueb_css_font, Egueb_Css_Font);
 /*============================================================================*
- *                                   API                                      *
+ *                                 Global                                     *
  *============================================================================*/
-EAPI Eina_Bool egueb_css_font_string_from(Egueb_Css_Font *thiz,
+Eina_Bool egueb_css_font_string_from(Egueb_Css_Font *thiz,
 		const char *str)
 {
 	Eina_Bool ret = EINA_TRUE;
@@ -138,12 +126,28 @@ EAPI Eina_Bool egueb_css_font_string_from(Egueb_Css_Font *thiz,
 	return ret;
 }
 
-EAPI char * egueb_css_font_string_to(Egueb_Css_Font *thiz)
+char * egueb_css_font_string_to(Egueb_Css_Font *thiz)
 {
 	return NULL;
 }
 
-EAPI const Egueb_Dom_Value_Descriptor * egueb_css_font_descriptor_get(void)
+void egueb_css_font_reset(Egueb_Css_Font *thiz)
 {
-	return &_egueb_css_font_descriptor;
+
 }
+
+void egueb_css_font_copy(Egueb_Css_Font *src,
+		Egueb_Css_Font *dst, Eina_Bool content)
+{
+
+}
+
+void egueb_css_font_interpolate(Egueb_Css_Font *v,
+		Egueb_Css_Font *a, Egueb_Css_Font *b, double m,
+		Egueb_Css_Font *add, Egueb_Css_Font *acc, int mul)
+{
+	ERR("Not implemented");
+}
+/*============================================================================*
+ *                                   API                                      *
+ *============================================================================*/

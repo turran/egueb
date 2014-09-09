@@ -16,26 +16,21 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _EGUEB_CSS_FONT_H_
-#define _EGUEB_CSS_FONT_H_
+#ifndef _EGUEB_CSS_FONT_FAMILY_H_
+#define _EGUEB_CSS_FONT_FAMILY_H_
 
-typedef enum _Egueb_Css_Font_Type {
-	EGUEB_CSS_FONT_TYPE_USER,
-	EGUEB_CSS_FONT_TYPE_CAPTION,
-	EGUEB_CSS_FONT_TYPE_ICON,
-	EGUEB_CSS_FONT_TYPE_MENU,
-	EGUEB_CSS_FONT_TYPE_MESSAGE_BOX,
-	EGUEB_CSS_FONT_TYPE_SMALL_CAPTION,
-	EGUEB_CSS_FONT_TYPE_STATUS_BAR,
-} Egueb_Css_Font_Type;
+typedef enum _Egueb_Css_Font_Family_Type {
+	EGUEB_CSS_FONT_FAMILY_TYPE_FAMILY,
+	EGUEB_CSS_FONT_FAMILY_TYPE_GENERIC_SERIF,
+	EGUEB_CSS_FONT_FAMILY_TYPE_GENERIC_SANS_SERIF,
+	EGUEB_CSS_FONT_FAMILY_TYPE_GENERIC_CURSIVE,
+	EGUEB_CSS_FONT_FAMILY_TYPE_GENERIC_FANTASY,
+	EGUEB_CSS_FONT_FAMILY_TYPE_GENERIC_MONOSPACE,
+} Egueb_Css_Font_Family_Type;
 
-typedef struct _Egueb_Css_Font {
-	Egueb_Css_Font_Type type;
-	Egueb_Css_Font_Style style;
-	Egueb_Css_Font_Variant variant;
-	Egueb_Css_Font_Weight weight;
-	Egueb_Css_Font_Size size;
-	Eina_List *families;
-} Egueb_Css_Font;
+typedef struct _Egueb_Css_Font_Family_Value {
+	Egueb_Css_Font_Family_Type type;
+	Egueb_Dom_String *family;
+} Egueb_Css_Font_Family_Value;
 
 #endif

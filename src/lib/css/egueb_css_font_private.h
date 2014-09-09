@@ -16,26 +16,17 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _EGUEB_CSS_FONT_H_
-#define _EGUEB_CSS_FONT_H_
+#ifndef _EGUEB_CSS_FONT_PRIVATE_H_
+#define _EGUEB_CSS_FONT_PRIVATE_H_
 
-typedef enum _Egueb_Css_Font_Type {
-	EGUEB_CSS_FONT_TYPE_USER,
-	EGUEB_CSS_FONT_TYPE_CAPTION,
-	EGUEB_CSS_FONT_TYPE_ICON,
-	EGUEB_CSS_FONT_TYPE_MENU,
-	EGUEB_CSS_FONT_TYPE_MESSAGE_BOX,
-	EGUEB_CSS_FONT_TYPE_SMALL_CAPTION,
-	EGUEB_CSS_FONT_TYPE_STATUS_BAR,
-} Egueb_Css_Font_Type;
-
-typedef struct _Egueb_Css_Font {
-	Egueb_Css_Font_Type type;
-	Egueb_Css_Font_Style style;
-	Egueb_Css_Font_Variant variant;
-	Egueb_Css_Font_Weight weight;
-	Egueb_Css_Font_Size size;
-	Eina_List *families;
-} Egueb_Css_Font;
+Eina_Bool egueb_css_font_string_from(Egueb_Css_Font *thiz, const char *attr_val);
+char * egueb_css_font_string_to(Egueb_Css_Font *thiz);
+void egueb_css_font_reset(Egueb_Css_Font *thiz);
+void egueb_css_font_copy(Egueb_Css_Font *src,
+		Egueb_Css_Font *dst, Eina_Bool content);
+void egueb_css_font_interpolate(Egueb_Css_Font *v,
+		Egueb_Css_Font *a, Egueb_Css_Font *b, double m,
+		Egueb_Css_Font *add, Egueb_Css_Font *acc, int mul);
 
 #endif
+

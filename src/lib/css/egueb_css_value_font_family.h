@@ -16,26 +16,11 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _EGUEB_CSS_FONT_H_
-#define _EGUEB_CSS_FONT_H_
+#ifndef _EGUEB_CSS_VALUE_FONT_FAMILY_H_
+#define _EGUEB_CSS_VALUE_FONT_FAMILY_H_
 
-typedef enum _Egueb_Css_Font_Type {
-	EGUEB_CSS_FONT_TYPE_USER,
-	EGUEB_CSS_FONT_TYPE_CAPTION,
-	EGUEB_CSS_FONT_TYPE_ICON,
-	EGUEB_CSS_FONT_TYPE_MENU,
-	EGUEB_CSS_FONT_TYPE_MESSAGE_BOX,
-	EGUEB_CSS_FONT_TYPE_SMALL_CAPTION,
-	EGUEB_CSS_FONT_TYPE_STATUS_BAR,
-} Egueb_Css_Font_Type;
-
-typedef struct _Egueb_Css_Font {
-	Egueb_Css_Font_Type type;
-	Egueb_Css_Font_Style style;
-	Egueb_Css_Font_Variant variant;
-	Egueb_Css_Font_Weight weight;
-	Egueb_Css_Font_Size size;
-	Eina_List *families;
-} Egueb_Css_Font;
+EAPI const Egueb_Dom_Value_Descriptor * egueb_css_value_font_family_descriptor_get(void);
 
 #endif
+
+

@@ -23,8 +23,6 @@ typedef uint32_t Egueb_Css_Color;
 
 EAPI Eina_Bool egueb_css_color_string_from(Egueb_Css_Color *thiz, const char *attr_val);
 EAPI char * egueb_css_color_string_to(Egueb_Css_Color thiz);
-EAPI const Egueb_Dom_Value_Descriptor *
-		egueb_css_color_descriptor_get(void);
 EAPI void egueb_dom_value_color_interpolate(Egueb_Dom_Value *v,
 		Egueb_Dom_Value *a, Egueb_Dom_Value *b, double m,
 		Egueb_Dom_Value *add, Egueb_Dom_Value *acc, int mul);

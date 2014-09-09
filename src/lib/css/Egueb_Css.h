@@ -58,21 +58,25 @@
 
 /* core */
 #include "egueb_css_main.h"
-
+/* types */
+#include "egueb_css_color.h"
+#include "egueb_css_length.h"
+#include "egueb_css_percentage.h"
+#include "egueb_css_font_size.h"
+#include "egueb_css_font_family.h"
+#include "egueb_css_font_style.h"
+#include "egueb_css_font_variant.h"
+#include "egueb_css_font_weight.h"
+#include "egueb_css_font.h"
+/* values */
+#include "egueb_css_value_color.h"
+#include "egueb_css_value_font_family.h"
+#include "egueb_css_value_font.h"
 /* attributes */
 #include "egueb_css_attr_font.h"
 #include "egueb_css_attr_style.h"
 /* elements */
 #include "egueb_css_element_style.h"
-/* common parsers */
-#include "egueb_css_color.h"
-#include "egueb_css_length.h"
-#include "egueb_css_percentage.h"
-#include "egueb_css_font_size.h"
-#include "egueb_css_font_style.h"
-#include "egueb_css_font_variant.h"
-#include "egueb_css_font_weight.h"
-#include "egueb_css_font.h"
 
 /** @} */
 
