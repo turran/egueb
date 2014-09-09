@@ -88,12 +88,14 @@ Eina_Bool egueb_css_font_family_value_string_from(
 
 char * egueb_css_font_family_value_string_to(Egueb_Css_Font_Family_Value *thiz)
 {
+	ERR("Not implemented");
 	return NULL;
 }
 
 void egueb_css_font_family_value_reset(Egueb_Css_Font_Family_Value *thiz)
 {
 	egueb_dom_string_unref(thiz->family);
+	thiz->family = NULL;
 }
 
 void egueb_css_font_family_value_copy(Egueb_Css_Font_Family_Value *src,
@@ -110,7 +112,7 @@ void egueb_css_font_family_value_interpolate(Egueb_Css_Font_Family_Value *v,
 		Egueb_Css_Font_Family_Value *a, Egueb_Css_Font_Family_Value *b,
 		double m, Egueb_Dom_Value *add, Egueb_Dom_Value *acc, int mul)
 {
-
+	ERR("Not implemented");
 }
 
 Eina_Bool egueb_css_font_family_string_from(Egueb_Dom_List *thiz, const char *attr_val)
@@ -120,6 +122,7 @@ Eina_Bool egueb_css_font_family_string_from(Egueb_Dom_List *thiz, const char *at
 
 char * egueb_css_font_family_string_to(Egueb_Dom_List *thiz)
 {
+	ERR("Not implemented");
 	return NULL;
 }
 /*============================================================================*
