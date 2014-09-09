@@ -95,7 +95,6 @@ static void _egueb_svg_strings_init(void)
 	EGUEB_SVG_FILL = egueb_dom_string_new_with_string("fill");
 	EGUEB_SVG_FILL_OPACITY = egueb_dom_string_new_with_string("fill-opacity");
 	EGUEB_SVG_FONT = egueb_dom_string_new_with_string("font");
-	EGUEB_SVG_FONT_FAMILY = egueb_dom_string_new_with_string("font-family");
 	EGUEB_SVG_FONT_SIZE = egueb_dom_string_new_with_string("font-size");
 	EGUEB_SVG_FONT_STYLE = egueb_dom_string_new_with_string("font-style");
 	EGUEB_SVG_FONT_WEIGHT = egueb_dom_string_new_with_string("font-weight");
@@ -187,7 +186,6 @@ static void _egueb_svg_strings_shutdown(void)
 	egueb_dom_string_unref(EGUEB_SVG_FILL);
 	egueb_dom_string_unref(EGUEB_SVG_FILL_OPACITY);
 	egueb_dom_string_unref(EGUEB_SVG_FONT);
-	egueb_dom_string_unref(EGUEB_SVG_FONT_FAMILY);
 	egueb_dom_string_unref(EGUEB_SVG_FONT_SIZE);
 	egueb_dom_string_unref(EGUEB_SVG_FONT_STYLE);
 	egueb_dom_string_unref(EGUEB_SVG_FONT_WEIGHT);
@@ -315,7 +313,6 @@ Egueb_Dom_String *EGUEB_SVG_DISPLAY;
 Egueb_Dom_String *EGUEB_SVG_FILL;
 Egueb_Dom_String *EGUEB_SVG_FILL_OPACITY;
 Egueb_Dom_String *EGUEB_SVG_FONT;
-Egueb_Dom_String *EGUEB_SVG_FONT_FAMILY;
 Egueb_Dom_String *EGUEB_SVG_FONT_SIZE;
 Egueb_Dom_String *EGUEB_SVG_FONT_STYLE;
 Egueb_Dom_String *EGUEB_SVG_FONT_WEIGHT;

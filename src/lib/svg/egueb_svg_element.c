@@ -449,9 +449,7 @@ static void _egueb_svg_element_instance_init(void *o)
 			egueb_dom_string_ref(EGUEB_SVG_FILL_OPACITY),
 			1, EINA_TRUE, EINA_TRUE,
 			EINA_TRUE);
-	thiz->font_family = egueb_svg_attr_string_new(
-			egueb_dom_string_ref(EGUEB_SVG_FONT_FAMILY),
-			NULL);
+	thiz->font_family = egueb_css_attr_font_family_new(EINA_TRUE, EINA_TRUE, EINA_TRUE);
 	thiz->font_size = egueb_svg_attr_font_size_new(
 			egueb_dom_string_ref(EGUEB_SVG_FONT_SIZE),
 			&EGUEB_SVG_FONT_SIZE_MEDIUM, EINA_TRUE, EINA_TRUE, EINA_TRUE);

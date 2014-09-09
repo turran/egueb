@@ -74,6 +74,7 @@
 #include "egueb_css_value_font.h"
 /* attributes */
 #include "egueb_css_attr_font.h"
+#include "egueb_css_attr_font_family.h"
 #include "egueb_css_attr_style.h"
 /* elements */
 #include "egueb_css_element_style.h"

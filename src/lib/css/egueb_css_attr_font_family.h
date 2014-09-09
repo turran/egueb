@@ -15,12 +15,12 @@
  * License along with this library.
  * If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef _EGUEB_CSS_MAIN_H_
 
-EAPI extern Egueb_Dom_String *EGUEB_CSS_STYLE;
-EAPI extern Egueb_Dom_String *EGUEB_CSS_NAME_FONT_FAMILY;
+#ifndef _EGUEB_DOM_ATTR_FONT_FAMILY_H_
+#define _EGUEB_DOM_ATTR_FONT_FAMILY_H_
 
-EAPI int egueb_css_init(void);
-EAPI int egueb_css_shutdown(void);
+EAPI Egueb_Dom_Node * egueb_css_attr_font_family_new(
+		Eina_Bool animatable, Eina_Bool stylable,
+		Eina_Bool inheritable);
 
 #endif

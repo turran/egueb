@@ -33,10 +33,12 @@ static int egueb_css_init_count = 0;
 static void _egueb_css_strings_init(void)
 {
 	EGUEB_CSS_STYLE = egueb_dom_string_new_with_string("style");
+	EGUEB_CSS_NAME_FONT_FAMILY = egueb_dom_string_new_with_string("font-family");
 }
 
 static void _egueb_css_strings_shutdown(void)
 {
+	egueb_dom_string_unref(EGUEB_CSS_NAME_FONT_FAMILY);
 	egueb_dom_string_unref(EGUEB_CSS_STYLE);
 }
 /*============================================================================*
@@ -49,6 +51,7 @@ int _egueb_css_log_dom_global = -1;
  *                                   API                                      *
  *============================================================================*/
 Egueb_Dom_String *EGUEB_CSS_STYLE;
+Egueb_Dom_String *EGUEB_CSS_NAME_FONT_FAMILY;
 
 EAPI int egueb_css_init(void)
 {

@@ -63,7 +63,6 @@ EAPI extern Egueb_Dom_String *EGUEB_SVG_DISPLAY;
 EAPI extern Egueb_Dom_String *EGUEB_SVG_FILL;
 EAPI extern Egueb_Dom_String *EGUEB_SVG_FILL_OPACITY;
 EAPI extern Egueb_Dom_String *EGUEB_SVG_FONT;
-EAPI extern Egueb_Dom_String *EGUEB_SVG_FONT_FAMILY;
 EAPI extern Egueb_Dom_String *EGUEB_SVG_FONT_SIZE;
 EAPI extern Egueb_Dom_String *EGUEB_SVG_FONT_STYLE;
 EAPI extern Egueb_Dom_String *EGUEB_SVG_FONT_WEIGHT;
