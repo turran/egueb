@@ -23,7 +23,10 @@
 #include "egueb_css_font_variant.h"
 #include "egueb_css_font_weight.h"
 #include "egueb_css_font_size.h"
+#include "egueb_css_font_family.h"
 #include "egueb_css_font.h"
+
+#include "egueb_css_font_family_private.h"
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
@@ -64,7 +67,7 @@ Eina_Bool egueb_css_font_string_from(Egueb_Css_Font *thiz,
 		thiz->style = EGUEB_CSS_FONT_STYLE_NORMAL;
 		thiz->weight = EGUEB_CSS_FONT_WEIGHT_NORMAL;
 		thiz->variant = EGUEB_CSS_FONT_VARIANT_NORMAL;
-		thiz->families = NULL;
+		thiz->family = NULL;
 
 		/* start parsing */
 		tmp = found = strdup(str);
@@ -110,7 +113,8 @@ Eina_Bool egueb_css_font_string_from(Egueb_Css_Font *thiz,
 			/* TODO line height */
 			if (!used)
 			{
-				thiz->families = eina_list_append(thiz->families, strdup(found));
+				thiz->family = egueb_css_font_family_new();
+				egueb_css_font_family_string_from(thiz->family, found);
 				has_family = EINA_TRUE;
 			}
 			found = NULL;

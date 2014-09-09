@@ -33,4 +33,6 @@ typedef struct _Egueb_Css_Font_Family_Value {
 	Egueb_Dom_String *family;
 } Egueb_Css_Font_Family_Value;
 
+EAPI Egueb_Dom_List * egueb_css_font_family_new(void);
+
 #endif

@@ -18,6 +18,7 @@
 #include "egueb_css_private.h"
 #include "egueb_css_font_family.h"
 #include "egueb_css_font_family_private.h"
+#include "egueb_css_value_font_family_private.h"
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
@@ -124,4 +125,9 @@ char * egueb_css_font_family_string_to(Egueb_Dom_List *thiz)
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/
-
+EAPI Egueb_Dom_List * egueb_css_font_family_new(void)
+{
+	Egueb_Dom_List *ret;
+	ret = egueb_dom_list_new(egueb_css_value_font_family_value_descriptor_get());
+	return ret;
+}

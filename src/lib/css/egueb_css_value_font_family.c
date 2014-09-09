@@ -18,8 +18,10 @@
 #include "egueb_css_private.h"
 
 #include "egueb_css_font_family.h"
-#include "egueb_css_font_family_private.h"
 #include "egueb_css_value_font_family.h"
+
+#include "egueb_css_font_family_private.h"
+#include "egueb_css_value_font_family_private.h"
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
@@ -31,6 +33,14 @@ EGUEB_DOM_VALUE_PRIMITIVE_BOILERPLATE(egueb_css_font_family_value,
 EGUEB_DOM_VALUE_LIST_BOILERPLATE(egueb_css_font_family,
 		&_egueb_css_font_family_value_descriptor);
 /*============================================================================*
+ *                                 Global                                     *
+ *============================================================================*/
+const Egueb_Dom_Value_Descriptor *
+		egueb_css_value_font_family_value_descriptor_get(void)
+{
+	return &_egueb_css_font_family_value_descriptor;
+}
+/*============================================================================*
  *                                   API                                      *
  *============================================================================*/
 EAPI const Egueb_Dom_Value_Descriptor *
@@ -38,4 +48,3 @@ EAPI const Egueb_Dom_Value_Descriptor *
 {
 	return &_egueb_css_font_family_descriptor;
 }
-
