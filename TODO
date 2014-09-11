@@ -1,6 +1,5 @@
 Refactor
 ========
-+ Dont pas the name on the font attr
 + Split every attribute into:
   value_foo, attr_foo, foo
 + Cleanup the feature ui. Just get the input object given
