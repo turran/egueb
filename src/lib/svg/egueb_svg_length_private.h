@@ -21,5 +21,7 @@
 
 Eina_Bool egueb_svg_length_string_from(Egueb_Svg_Length *thiz, const char *attr_val);
 char * egueb_svg_length_string_to(Egueb_Svg_Length *thiz);
+void egueb_svg_length_css_length_from(Egueb_Svg_Length *thiz,
+		Egueb_Css_Length *length);
 
 #endif

@@ -26,6 +26,7 @@
 #include "egueb_svg_document.h"
 
 #include "egueb_svg_element_private.h"
+#include "egueb_svg_length_private.h"
 #include "egueb_dom_string_private.h"
 
 /*
@@ -301,22 +302,48 @@ static void _egueb_svg_element_presentation_attributes_process(
 	}
 	else
 	{
-		Egueb_Svg_Font_Size font_size;
+		Egueb_Css_Font_Size font_size;
 		double w = 1;
 		double h = 1;
 
 		egueb_dom_attr_final_get(thiz->font_size, &font_size);
-		/* for a relative length, we need the geometry */
-		if (font_size.type == EGUEB_SVG_FONT_SIZE_TYPE_LENGTH &&
-				font_size.value.length.unit ==
-				EGUEB_SVG_LENGTH_UNIT_PERCENT)
+		switch (font_size.type)
 		{
-			w = geom->viewbox.w;
-			h = geom->viewbox.h;
+			case EGUEB_CSS_FONT_SIZE_TYPE_ABSOLUTE:
+			ERR("TODO");
+			break;
+
+			case EGUEB_CSS_FONT_SIZE_TYPE_RELATIVE:
+			{
+				if (font_size.value.relative == EGUEB_CSS_FONT_SIZE_RELATIVE_LARGER)
+					thiz->final_font_size = rel->final_font_size * 1.25;
+				else
+					thiz->final_font_size = rel->final_font_size * 0.75;
+			}
+			break;
+
+			case EGUEB_CSS_FONT_SIZE_TYPE_LENGTH:
+			case EGUEB_CSS_FONT_SIZE_TYPE_PERCENTAGE:
+			{
+				Egueb_Svg_Length length;
+
+				/* for a relative length, we need the geometry */
+				if (font_size.type == EGUEB_CSS_FONT_SIZE_TYPE_PERCENTAGE)
+				{
+					w = geom->viewbox.w;
+					h = geom->viewbox.h;
+					length.unit = EGUEB_SVG_LENGTH_UNIT_PERCENT;
+					length.value = font_size.value.percentage;
+				}
+				else
+				{
+					egueb_svg_length_css_length_from(&length, &font_size.value.length);
+				}
+				thiz->final_font_size = egueb_svg_length_final_get(&length,
+						w, h, rel->final_font_size);
+			}
+			break;
 		}
-		thiz->final_font_size = egueb_svg_font_size_final_get(
-				&font_size, w, h, rel->final_font_size,
-				rel->final_font_size);
 	}
 }
 /*----------------------------------------------------------------------------*
@@ -419,6 +446,7 @@ static void _egueb_svg_element_class_init(void *k)
 static void _egueb_svg_element_instance_init(void *o)
 {
 	Egueb_Svg_Element *thiz;
+	Egueb_Css_Font_Size font_size_def;
 	Egueb_Dom_Node *n;
 
 	thiz = EGUEB_SVG_ELEMENT(o);
@@ -452,13 +480,16 @@ static void _egueb_svg_element_instance_init(void *o)
 			1, EINA_TRUE, EINA_TRUE,
 			EINA_TRUE);
 	/* font related attributes */
-	thiz->font_family = egueb_css_attr_font_family_new(EINA_FALSE, EINA_TRUE, EINA_TRUE);
-	thiz->font_size = egueb_svg_attr_font_size_new(
-			egueb_dom_string_ref(EGUEB_SVG_FONT_SIZE),
-			&EGUEB_SVG_FONT_SIZE_MEDIUM, EINA_TRUE, EINA_TRUE, EINA_TRUE);
-	thiz->font_style = egueb_css_attr_font_style_new(EINA_FALSE, EINA_TRUE, EINA_TRUE);
-	thiz->font_variant = egueb_css_attr_font_variant_new(EINA_FALSE, EINA_TRUE, EINA_TRUE);
-	thiz->font_weight = egueb_css_attr_font_weight_new(EINA_FALSE, EINA_TRUE, EINA_TRUE);
+	thiz->font_family = egueb_css_attr_font_family_new(EINA_TRUE, EINA_TRUE, EINA_TRUE);
+	/* font size */
+	font_size_def.type = EGUEB_CSS_FONT_SIZE_TYPE_ABSOLUTE;
+	font_size_def.value.absolute = EGUEB_CSS_FONT_SIZE_ABSOLUTE_MEDIUM;
+	thiz->font_size = egueb_css_attr_font_size_new(&font_size_def, EINA_TRUE, EINA_TRUE, EINA_TRUE);
+	egueb_dom_attr_set(thiz->font_size, EGUEB_DOM_ATTR_TYPE_DEFAULT, &font_size_def);
+
+	thiz->font_style = egueb_css_attr_font_style_new(EINA_TRUE, EINA_TRUE, EINA_TRUE);
+	thiz->font_variant = egueb_css_attr_font_variant_new(EINA_TRUE, EINA_TRUE, EINA_TRUE);
+	thiz->font_weight = egueb_css_attr_font_weight_new(EINA_TRUE, EINA_TRUE, EINA_TRUE);
 
 	thiz->opacity = egueb_svg_attr_number_new(
 			egueb_dom_string_ref(EGUEB_SVG_OPACITY),

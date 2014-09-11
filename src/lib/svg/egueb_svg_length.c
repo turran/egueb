@@ -186,6 +186,38 @@ char * egueb_svg_length_string_to(Egueb_Svg_Length *thiz)
 	return ret;
 }
 
+void egueb_svg_length_css_length_from(Egueb_Svg_Length *thiz,
+		Egueb_Css_Length *length)
+{
+	switch (length->unit)
+	{
+		case EGUEB_CSS_LENGTH_UNIT_EM:
+		thiz->unit = EGUEB_SVG_LENGTH_UNIT_EM;
+		break;
+		case EGUEB_CSS_LENGTH_UNIT_EX:
+		thiz->unit = EGUEB_SVG_LENGTH_UNIT_EX;
+		break;
+		case EGUEB_CSS_LENGTH_UNIT_PX:
+		thiz->unit = EGUEB_SVG_LENGTH_UNIT_PX;
+		break;
+		case EGUEB_CSS_LENGTH_UNIT_PT:
+		thiz->unit = EGUEB_SVG_LENGTH_UNIT_PT;
+		break;
+		case EGUEB_CSS_LENGTH_UNIT_PC:
+		thiz->unit = EGUEB_SVG_LENGTH_UNIT_PC;
+		break;
+		case EGUEB_CSS_LENGTH_UNIT_CM:
+		thiz->unit = EGUEB_SVG_LENGTH_UNIT_CM;
+		break;
+		case EGUEB_CSS_LENGTH_UNIT_MM:
+		thiz->unit = EGUEB_SVG_LENGTH_UNIT_MM;
+		break;
+		case EGUEB_CSS_LENGTH_UNIT_IN:
+		thiz->unit = EGUEB_SVG_LENGTH_UNIT_IN;
+		break;
+	}
+	thiz->value = length->value;
+}
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/
