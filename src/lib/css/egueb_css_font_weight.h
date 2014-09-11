@@ -35,7 +35,4 @@ typedef enum _Egueb_Css_Font_Weight {
 	EGUEB_CSS_FONT_WEIGHT_900,
 } Egueb_Css_Font_Weight;
 
-EAPI Eina_Bool egueb_css_font_weight_string_from(Egueb_Css_Font_Weight *thiz, const char *attr_val);
-EAPI const char * egueb_css_font_weight_string_to(Egueb_Css_Font_Weight thiz);
-
 #endif

@@ -15,13 +15,16 @@
  * License along with this library.
  * If not, see <http://www.gnu.org/licenses/>.
  */
-#include "Egueb_Css.h"
 #include "egueb_css_private.h"
 #include "egueb_css_font_weight.h"
+#include "egueb_css_font_weight_private.h"
 /*============================================================================*
- *                                   API                                      *
+ *                                  Local                                     *
  *============================================================================*/
-EAPI Eina_Bool egueb_css_font_weight_string_from(Egueb_Css_Font_Weight *thiz,
+/*============================================================================*
+ *                                 Global                                     *
+ *============================================================================*/
+Eina_Bool egueb_css_font_weight_string_from(Egueb_Css_Font_Weight *thiz,
 		const char *str)
 {
 	Eina_Bool ret = EINA_TRUE;
@@ -57,50 +60,54 @@ EAPI Eina_Bool egueb_css_font_weight_string_from(Egueb_Css_Font_Weight *thiz,
 	return ret;
 }
 
-EAPI const char * egueb_css_font_weight_string_to(Egueb_Css_Font_Weight thiz)
+char * egueb_css_font_weight_string_to(Egueb_Css_Font_Weight thiz)
 {
 	switch (thiz)
 	{
 		case EGUEB_CSS_FONT_WEIGHT_NORMAL:
-		return "normal";
+		return strdup("normal");
 
 		case EGUEB_CSS_FONT_WEIGHT_BOLD:
-		return "bold";
+		return strdup("bold");
 
 		case EGUEB_CSS_FONT_WEIGHT_BOLDER:
-		return "bolder";
+		return strdup("bolder");
 
 		case EGUEB_CSS_FONT_WEIGHT_LIGHTER: 
-		return "lighter";
+		return strdup("lighter");
 
 		case EGUEB_CSS_FONT_WEIGHT_100:
-		return "100";
+		return strdup("100");
 
 		case EGUEB_CSS_FONT_WEIGHT_200:
-		return "200";
+		return strdup("200");
 
 		case EGUEB_CSS_FONT_WEIGHT_300:
-		return "300";
+		return strdup("300");
 
 		case EGUEB_CSS_FONT_WEIGHT_400:
-		return "400";
+		return strdup("400");
 
 		case EGUEB_CSS_FONT_WEIGHT_500:
-		return "500";
+		return strdup("500");
 
 		case EGUEB_CSS_FONT_WEIGHT_600:
-		return "600";
+		return strdup("600");
 
 		case EGUEB_CSS_FONT_WEIGHT_700:
-		return "700";
+		return strdup("700");
 
 		case EGUEB_CSS_FONT_WEIGHT_800:
-		return "800";
+		return strdup("800");
 
 		case EGUEB_CSS_FONT_WEIGHT_900:
-		return "900";
+		return strdup("900");
 
 		default:
 		return NULL;
 	}
 }
+/*============================================================================*
+ *                                   API                                      *
+ *============================================================================*/
+

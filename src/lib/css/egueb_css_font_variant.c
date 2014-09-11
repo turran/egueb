@@ -17,10 +17,14 @@
  */
 #include "egueb_css_private.h"
 #include "egueb_css_font_variant.h"
+#include "egueb_css_font_variant_private.h"
 /*============================================================================*
- *                                   API                                      *
+ *                                  Local                                     *
  *============================================================================*/
-EAPI Eina_Bool egueb_css_font_variant_string_from(Egueb_Css_Font_Variant *thiz,
+/*============================================================================*
+ *                                 Global                                     *
+ *============================================================================*/
+Eina_Bool egueb_css_font_variant_string_from(Egueb_Css_Font_Variant *thiz,
 		const char *str)
 {
 	Eina_Bool ret = EINA_TRUE;
@@ -34,17 +38,20 @@ EAPI Eina_Bool egueb_css_font_variant_string_from(Egueb_Css_Font_Variant *thiz,
 	return ret;
 }
 
-EAPI const char * egueb_css_font_variant_string_to(Egueb_Css_Font_Variant thiz)
+char * egueb_css_font_variant_string_to(Egueb_Css_Font_Variant thiz)
 {
 	switch (thiz)
 	{
 		case EGUEB_CSS_FONT_VARIANT_NORMAL:
-		return "normal";
+		return strdup("normal");
 
 		case EGUEB_CSS_FONT_VARIANT_SMALL_CAPS:
-		return "small-caps";
+		return strdup("small-caps");
 
 		default:
 		return NULL;
 	}
 }
+/*============================================================================*
+ *                                   API                                      *
+ *============================================================================*/

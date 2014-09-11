@@ -24,7 +24,4 @@ typedef enum _Egueb_Css_Font_Variant {
 	EGUEB_CSS_FONT_VARIANT_SMALL_CAPS,
 } Egueb_Css_Font_Variant;
 
-EAPI Eina_Bool egueb_css_font_variant_string_from(Egueb_Css_Font_Variant *thiz, const char *attr_val);
-EAPI const char * egueb_css_font_variant_string_to(Egueb_Css_Font_Variant thiz);
-
 #endif

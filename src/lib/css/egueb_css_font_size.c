@@ -20,6 +20,7 @@
 #include "egueb_css_length.h"
 #include "egueb_css_percentage.h"
 #include "egueb_css_font_size.h"
+#include "egueb_css_font_size_private.h"
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
@@ -57,9 +58,9 @@ static Eina_Bool _egueb_css_font_size_relative_string_from(
 	return EINA_TRUE;
 }
 /*============================================================================*
- *                                   API                                      *
+ *                                 Global                                     *
  *============================================================================*/
-EAPI Eina_Bool egueb_css_font_size_string_from(Egueb_Css_Font_Size *thiz,
+Eina_Bool egueb_css_font_size_string_from(Egueb_Css_Font_Size *thiz,
 		const char *str)
 {
 	if (_egueb_css_font_size_absolute_string_from(&thiz->value.absolute, str))
@@ -75,7 +76,19 @@ EAPI Eina_Bool egueb_css_font_size_string_from(Egueb_Css_Font_Size *thiz,
 	return EINA_TRUE;
 }
 
-EAPI const char * egueb_css_font_size_string_to(Egueb_Css_Font_Size thiz)
+char * egueb_css_font_size_string_to(Egueb_Css_Font_Size *thiz)
 {
+	ERR("Not implemented");
 	return NULL;
 }
+
+void egueb_css_font_size_interpolate(Egueb_Css_Font_Size *v,
+		Egueb_Css_Font_Size *a, Egueb_Css_Font_Size *b, double m,
+		Egueb_Css_Font_Size *add, Egueb_Css_Font_Size *acc, int mul)
+{
+	ERR("Not implemented");
+}
+/*============================================================================*
+ *                                   API                                      *
+ *============================================================================*/
+

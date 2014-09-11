@@ -16,47 +16,26 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 #include "egueb_css_private.h"
-#include "egueb_css_font_style.h"
-#include "egueb_css_font_style_private.h"
+
+#include "egueb_css_font_variant.h"
+#include "egueb_css_value_font_variant.h"
+
+#include "egueb_css_font_variant_private.h"
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
+/*----------------------------------------------------------------------------*
+ *                             Value interface                                *
+ *----------------------------------------------------------------------------*/
+EGUEB_DOM_VALUE_ENUM_BOILERPLATE(egueb_css_font_variant, Egueb_Css_Font_Variant);
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
-Eina_Bool egueb_css_font_style_string_from(Egueb_Css_Font_Style *thiz,
-		const char *str)
-{
-	Eina_Bool ret = EINA_TRUE;
-
-	if (!strcmp(str, "normal"))
-		*thiz = EGUEB_CSS_FONT_STYLE_NORMAL;
-	else if (!strcmp(str, "italic"))
-		*thiz = EGUEB_CSS_FONT_STYLE_ITALIC;
-	else if (!strcmp(str, "oblique"))
-		*thiz = EGUEB_CSS_FONT_STYLE_OBLIQUE;
-	else
-		return EINA_FALSE;
-	return ret;
-}
-
-char * egueb_css_font_style_string_to(Egueb_Css_Font_Style thiz)
-{
-	switch (thiz)
-	{
-		case EGUEB_CSS_FONT_STYLE_NORMAL:
-		return strdup("normal");
-
-		case EGUEB_CSS_FONT_STYLE_ITALIC:
-		return strdup("italic");
-
-		case EGUEB_CSS_FONT_STYLE_OBLIQUE:
-		return strdup("oblique");
-
-		default:
-		return NULL;
-	}
-}
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/
+EAPI const Egueb_Dom_Value_Descriptor *
+		egueb_css_value_font_variant_descriptor_get(void)
+{
+	return &_egueb_css_font_variant_descriptor;
+}

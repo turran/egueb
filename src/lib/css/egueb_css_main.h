@@ -18,7 +18,12 @@
 #ifndef _EGUEB_CSS_MAIN_H_
 
 EAPI extern Egueb_Dom_String *EGUEB_CSS_STYLE;
+EAPI extern Egueb_Dom_String *EGUEB_CSS_NAME_FONT;
 EAPI extern Egueb_Dom_String *EGUEB_CSS_NAME_FONT_FAMILY;
+EAPI extern Egueb_Dom_String *EGUEB_CSS_NAME_FONT_SIZE;
+EAPI extern Egueb_Dom_String *EGUEB_CSS_NAME_FONT_STYLE;
+EAPI extern Egueb_Dom_String *EGUEB_CSS_NAME_FONT_VARIANT;
+EAPI extern Egueb_Dom_String *EGUEB_CSS_NAME_FONT_WEIGHT;
 
 EAPI int egueb_css_init(void);
 EAPI int egueb_css_shutdown(void);

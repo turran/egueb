@@ -27,6 +27,10 @@
 #include "egueb_css_font.h"
 
 #include "egueb_css_font_family_private.h"
+#include "egueb_css_font_size_private.h"
+#include "egueb_css_font_style_private.h"
+#include "egueb_css_font_variant_private.h"
+#include "egueb_css_font_weight_private.h"
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/

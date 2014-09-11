@@ -16,13 +16,11 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _EGUEB_CSS_FONT_STYLE_H_
-#define _EGUEB_CSS_FONT_STYLE_H_
+#ifndef _EGUEB_CSS_FONT_WEIGHT_PRIVATE_H_
+#define _EGUEB_CSS_FONT_WEIGHT_PRIVATE_H_
 
-typedef enum _Egueb_Css_Font_Style {
-	EGUEB_CSS_FONT_STYLE_NORMAL,
-	EGUEB_CSS_FONT_STYLE_ITALIC,
-	EGUEB_CSS_FONT_STYLE_OBLIQUE,
-} Egueb_Css_Font_Style;
+Eina_Bool egueb_css_font_weight_string_from(Egueb_Css_Font_Weight *thiz, const char *attr_val);
+char * egueb_css_font_weight_string_to(Egueb_Css_Font_Weight thiz);
 
 #endif
+

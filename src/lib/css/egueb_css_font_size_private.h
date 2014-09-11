@@ -15,14 +15,14 @@
  * License along with this library.
  * If not, see <http://www.gnu.org/licenses/>.
  */
+#ifndef _EGUEB_CSS_FONT_SIZE_PRIVATE_H
+#define _EGUEB_CSS_FONT_SIZE_PRIVATE_H
 
-#ifndef _EGUEB_CSS_FONT_STYLE_H_
-#define _EGUEB_CSS_FONT_STYLE_H_
-
-typedef enum _Egueb_Css_Font_Style {
-	EGUEB_CSS_FONT_STYLE_NORMAL,
-	EGUEB_CSS_FONT_STYLE_ITALIC,
-	EGUEB_CSS_FONT_STYLE_OBLIQUE,
-} Egueb_Css_Font_Style;
+Eina_Bool egueb_css_font_size_string_from(Egueb_Css_Font_Size *thiz,
+		const char *str);
+char * egueb_css_font_size_string_to(Egueb_Css_Font_Size *thiz);
+void egueb_css_font_size_interpolate(Egueb_Css_Font_Size *v,
+		Egueb_Css_Font_Size *a, Egueb_Css_Font_Size *b, double m,
+		Egueb_Css_Font_Size *add, Egueb_Css_Font_Size *acc, int mul);
 
 #endif

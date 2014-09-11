@@ -15,14 +15,9 @@
  * License along with this library.
  * If not, see <http://www.gnu.org/licenses/>.
  */
+#ifndef _EGUEB_CSS_VALUE_FONT_WEIGHT_H
+#define _EGUEB_CSS_VALUE_FONT_WEIGHT_H
 
-#ifndef _EGUEB_CSS_FONT_STYLE_H_
-#define _EGUEB_CSS_FONT_STYLE_H_
-
-typedef enum _Egueb_Css_Font_Style {
-	EGUEB_CSS_FONT_STYLE_NORMAL,
-	EGUEB_CSS_FONT_STYLE_ITALIC,
-	EGUEB_CSS_FONT_STYLE_OBLIQUE,
-} Egueb_Css_Font_Style;
+EAPI const Egueb_Dom_Value_Descriptor * egueb_css_value_font_weight_descriptor_get(void);
 
 #endif
