@@ -291,7 +291,6 @@ static Eina_Bool _egueb_svg_element_text_generate_geometry(Egueb_Svg_Shape *s,
 	Egueb_Svg_Element_Text *thiz;
 	Egueb_Svg_Element *e;
 	Egueb_Svg_Length x, y;
-	Egueb_Svg_Font_Size font_size;
 	Egueb_Dom_Node *n;
 	Enesim_Text_Font *font;
 	double doc_font_size, gfont_size;

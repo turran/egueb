@@ -1419,7 +1419,7 @@ EAPI void egueb_svg_element_fill_opacity_get(Egueb_Dom_Node *n, Egueb_Svg_Number
 }
 
 EAPI void egueb_svg_element_font_size_set(Egueb_Dom_Node *n,
-		const Egueb_Svg_Font_Size *v)
+		const Egueb_Css_Font_Size *v)
 {
 	Egueb_Svg_Element *thiz;
 

@@ -32,7 +32,6 @@
 #include "egueb_svg_display.h"
 #include "egueb_svg_visibility.h"
 #include "egueb_svg_fill_rule.h"
-#include "egueb_svg_font_size.h"
 #include "egueb_svg_stroke_line_join.h"
 #include "egueb_svg_stroke_line_cap.h"
 #include "egueb_svg_clip_path.h"
@@ -59,7 +58,7 @@ EAPI void egueb_svg_element_fill_set(Egueb_Dom_Node *n, const Egueb_Svg_Paint *v
 EAPI void egueb_svg_element_fill_get(Egueb_Dom_Node *n, Egueb_Svg_Paint_Animated *v);
 EAPI void egueb_svg_element_fill_opacity_set(Egueb_Dom_Node *n, const Egueb_Svg_Number *v);
 EAPI void egueb_svg_element_fill_opacity_get(Egueb_Dom_Node *n, Egueb_Svg_Number_Animated *v);
-EAPI void egueb_svg_element_font_size_set(Egueb_Dom_Node *n, const Egueb_Svg_Font_Size *v);
+EAPI void egueb_svg_element_font_size_set(Egueb_Dom_Node *n, const Egueb_Css_Font_Size *v);
 EAPI void egueb_svg_element_stroke_set(Egueb_Dom_Node *n, const Egueb_Svg_Paint *v);
 EAPI void egueb_svg_element_stroke_get(Egueb_Dom_Node *n, Egueb_Svg_Paint_Animated *v);
 EAPI void egueb_svg_element_stroke_width_set(Egueb_Dom_Node *n, const Egueb_Svg_Length *stroke_width);

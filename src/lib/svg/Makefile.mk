@@ -37,7 +37,6 @@ src/lib/svg/egueb_svg_element_text.h \
 src/lib/svg/egueb_svg_element_tspan.h \
 src/lib/svg/egueb_svg_element_video.h \
 src/lib/svg/egueb_svg_fill_rule.h \
-src/lib/svg/egueb_svg_font_size.h \
 src/lib/svg/egueb_svg_gradient.h \
 src/lib/svg/egueb_svg_length.h \
 src/lib/svg/egueb_svg_shape.h \
@@ -80,8 +79,6 @@ src/lib/svg/egueb_svg_attr_color.c \
 src/lib/svg/egueb_svg_attr_color_private.h \
 src/lib/svg/egueb_svg_attr_display.c \
 src/lib/svg/egueb_svg_attr_display_private.h \
-src/lib/svg/egueb_svg_attr_font_size.c \
-src/lib/svg/egueb_svg_attr_font_size_private.h \
 src/lib/svg/egueb_svg_attr_length.c \
 src/lib/svg/egueb_svg_attr_length_private.h \
 src/lib/svg/egueb_svg_attr_matrix.c \
@@ -160,7 +157,6 @@ src/lib/svg/egueb_svg_element_video.c \
 src/lib/svg/egueb_svg_event_request_painter.c \
 src/lib/svg/egueb_svg_event_request_painter_private.h \
 src/lib/svg/egueb_svg_fill_rule.c \
-src/lib/svg/egueb_svg_font_size.c \
 src/lib/svg/egueb_svg_gradient.c \
 src/lib/svg/egueb_svg_gradient_private.h \
 src/lib/svg/egueb_svg_length.c \

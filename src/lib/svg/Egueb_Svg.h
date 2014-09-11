@@ -21,6 +21,7 @@
 
 #include <Eina.h>
 #include <Egueb_Dom.h>
+#include <Egueb_Css.h>
 #include <Enesim.h>
 
 #ifdef EAPI
@@ -78,7 +79,6 @@ extern "C" {
 #include "egueb_svg_display.h"
 #include "egueb_svg_length.h"
 #include "egueb_svg_fill_rule.h"
-#include "egueb_svg_font_size.h"
 #include "egueb_svg_matrix.h"
 #include "egueb_svg_number.h"
 #include "egueb_svg_overflow.h"
