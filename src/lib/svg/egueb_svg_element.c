@@ -278,6 +278,8 @@ static void _egueb_svg_element_presentation_attributes_process(
 	egueb_dom_attr_inheritable_process(thiz->fill, rel->fill);
 	egueb_dom_attr_inheritable_process(thiz->fill_opacity, rel->fill_opacity);
 	egueb_dom_attr_inheritable_process(thiz->font_family, rel->font_family);
+	egueb_dom_attr_inheritable_process(thiz->font_variant, rel->font_variant);
+	egueb_dom_attr_inheritable_process(thiz->font_weight, rel->font_weight);
 	egueb_dom_attr_inheritable_process(thiz->opacity, rel->opacity);
 	egueb_dom_attr_inheritable_process(thiz->overflow, rel->overflow);
 	egueb_dom_attr_inheritable_process(thiz->stop_opacity, rel->stop_opacity);
@@ -449,10 +451,15 @@ static void _egueb_svg_element_instance_init(void *o)
 			egueb_dom_string_ref(EGUEB_SVG_FILL_OPACITY),
 			1, EINA_TRUE, EINA_TRUE,
 			EINA_TRUE);
-	thiz->font_family = egueb_css_attr_font_family_new(EINA_TRUE, EINA_TRUE, EINA_TRUE);
+	/* font related attributes */
+	thiz->font_family = egueb_css_attr_font_family_new(EINA_FALSE, EINA_TRUE, EINA_TRUE);
 	thiz->font_size = egueb_svg_attr_font_size_new(
 			egueb_dom_string_ref(EGUEB_SVG_FONT_SIZE),
 			&EGUEB_SVG_FONT_SIZE_MEDIUM, EINA_TRUE, EINA_TRUE, EINA_TRUE);
+	thiz->font_style = egueb_css_attr_font_style_new(EINA_FALSE, EINA_TRUE, EINA_TRUE);
+	thiz->font_variant = egueb_css_attr_font_variant_new(EINA_FALSE, EINA_TRUE, EINA_TRUE);
+	thiz->font_weight = egueb_css_attr_font_weight_new(EINA_FALSE, EINA_TRUE, EINA_TRUE);
+
 	thiz->opacity = egueb_svg_attr_number_new(
 			egueb_dom_string_ref(EGUEB_SVG_OPACITY),
 			1, EINA_TRUE, EINA_TRUE,
@@ -542,6 +549,9 @@ static void _egueb_svg_element_instance_init(void *o)
 	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->fill_opacity), NULL);
 	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->font_family), NULL);
 	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->font_size), NULL);
+	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->font_style), NULL);
+	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->font_variant), NULL);
+	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->font_weight), NULL);
 	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->opacity), NULL);
 	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->overflow), NULL);
 	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->stop_opacity), NULL);
@@ -605,6 +615,9 @@ static void _egueb_svg_element_instance_deinit(void *o)
 	egueb_dom_node_unref(thiz->fill_opacity);
 	egueb_dom_node_unref(thiz->font_family);
 	egueb_dom_node_unref(thiz->font_size);
+	egueb_dom_node_unref(thiz->font_style);
+	egueb_dom_node_unref(thiz->font_variant);
+	egueb_dom_node_unref(thiz->font_weight);
 	egueb_dom_node_unref(thiz->opacity);
 	egueb_dom_node_unref(thiz->overflow);
 	egueb_dom_node_unref(thiz->stop_color);
@@ -651,6 +664,51 @@ static void _egueb_svg_element_instance_deinit(void *o)
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
+Enesim_Text_Font * egueb_svg_element_font_resolve(Egueb_Dom_Node *n)
+{
+	Egueb_Svg_Element *thiz;
+	Egueb_Css_Font_Style style;
+	Egueb_Css_Font_Variant variant;
+	Egueb_Css_Font_Weight weight;
+	Egueb_Css_Font_Family_Value *value;
+	/* TODO we miss the font size */
+	Egueb_Dom_List *family = NULL;
+	Enesim_Text_Font *font;
+	Enesim_Text_Engine *e;
+
+	e = enesim_text_engine_default_get();
+	if (!e) return NULL;
+
+	thiz = EGUEB_SVG_ELEMENT(n);
+	egueb_dom_attr_final_get(thiz->font_family, &family);
+	/* TODO add API to set the default font */
+	if (!family || !egueb_dom_list_length(family))
+	{
+		Egueb_Css_Font_Family_Value *def_value;
+		if (!family)
+			family = egueb_css_font_family_new();
+		def_value = calloc(1, sizeof(Egueb_Css_Font_Family_Value));
+		def_value->type = EGUEB_CSS_FONT_FAMILY_TYPE_FAMILY;
+		def_value->family = egueb_dom_string_new_with_string("Sans");
+		egueb_dom_list_item_append(family, def_value);
+	}
+
+	/* finally create a style based on the description passed in */
+	egueb_dom_attr_final_get(thiz->font_style, &style);
+	egueb_dom_attr_final_get(thiz->font_variant, &variant);
+	egueb_dom_attr_final_get(thiz->font_weight, &weight);
+
+	/* TODO  create the pattern based in the whole list, not the first one */
+	value = egueb_dom_list_item_get(family, 0);
+	font = enesim_text_font_new_description_from(e, egueb_dom_string_string_get(value->family),
+			thiz->final_font_size);
+	egueb_dom_list_unref(family);
+	
+	enesim_text_engine_unref(e);
+
+	return font;
+}
+
 void egueb_svg_element_clip_path_resolve(Egueb_Dom_Node *n,
 		Egueb_Svg_Clip_Path *clip_path_current,
 		Egueb_Svg_Clip_Path *clip_path_last, Egueb_Svg_Reference **r)

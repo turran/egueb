@@ -47,7 +47,7 @@ typedef struct _Egueb_Svg_Element_Tspan
 	/* private */
 	double gx;
 	double gy;
-	Enesim_Text_Font *font;
+	Enesim_Text_Font *gfont;
 	Enesim_Renderer *r;
 } Egueb_Svg_Element_Tspan;
 
@@ -140,11 +140,12 @@ static Eina_Bool _egueb_svg_element_tspan_generate_geometry(Egueb_Svg_Shape *s,
 	Egueb_Svg_Element_Text_Pen *pen;
 	Egueb_Svg_Element *e;
 	Egueb_Svg_Length x, y;
+	Egueb_Dom_Node *n;
+	Enesim_Text_Font *font;
 	Enesim_Rectangle bounds;
 	double gx, gy;
-	double doc_font_size, gfont;
+	double doc_font_size, gfont_size;
 	int max;
-	int size;
 
 	thiz = EGUEB_SVG_ELEMENT_TSPAN(s);
 	egueb_dom_attr_final_get(thiz->x, &x);
@@ -163,24 +164,36 @@ static Eina_Bool _egueb_svg_element_tspan_generate_geometry(Egueb_Svg_Shape *s,
 	/* FIXME the font size accumulates from its parent, so we need to do
 	 * similar to the transformation
 	 */
-	gfont = e->final_font_size;
+	gfont_size = e->final_font_size;
 	gx = pen->x;
 	gy = pen->y;
 
-	size = ceil(gfont);
-	if (size < 0)
+	n = EGUEB_DOM_NODE(s);
+	font = egueb_svg_element_font_resolve(n);
+	if (thiz->gfont)
 	{
-		ERR("Negative font size of %d", size);
-		size = 0;
+		enesim_text_font_unref(thiz->gfont);
+		thiz->gfont = NULL;
 	}
-	enesim_renderer_text_span_font_set(thiz->r, enesim_text_font_ref(thiz->font));
-	max = enesim_text_font_max_ascent_get(thiz->font);
+	if (font)
+	{
+		thiz->gfont = font;
+	}
+
+	if (!thiz->gfont)
+	{
+		ERR("No valid font found");
+		return EINA_FALSE;
+	}
+
+	enesim_renderer_text_span_font_set(thiz->r, enesim_text_font_ref(thiz->gfont));
+	max = enesim_text_font_max_ascent_get(thiz->gfont);
 	enesim_renderer_origin_set(thiz->r, gx, gy - max);
 
 	INFO("matrix %" ENESIM_MATRIX_FORMAT, ENESIM_MATRIX_ARGS (&e->transform));
 	enesim_renderer_transformation_set(thiz->r, &e->transform);
 
-	INFO("x: %g, y: %g, font-size: %d", gx, gy, size);
+	INFO("x: %g, y: %g, font-size: %g", gx, gy, gfont_size);
 	enesim_renderer_shape_geometry_get(thiz->r, &bounds);
 	INFO("advancing by w: %g, h: %g", bounds.w, bounds.h);
 	pen->x += bounds.w;
@@ -266,16 +279,11 @@ static void _egueb_svg_element_tspan_instance_init(void *o)
 {
 	Egueb_Svg_Element_Tspan *thiz;
 	Egueb_Dom_Node *n;
-	Enesim_Text_Engine *e;
 	Enesim_Renderer *r;
 
 	thiz = EGUEB_SVG_ELEMENT_TSPAN(o);
-	e = enesim_text_engine_default_get();
-	thiz->font = enesim_text_font_new_description_from(e, "Sans:style=Regular", 16);
-	enesim_text_engine_unref(e);
 
 	r = enesim_renderer_text_span_new();
-	enesim_renderer_text_span_font_set(r, enesim_text_font_ref(thiz->font));
 	enesim_renderer_color_set(r, 0xff000000);
 	thiz->r = r;
 
@@ -311,6 +319,7 @@ static void _egueb_svg_element_tspan_instance_deinit(void *o)
 	Egueb_Svg_Element_Tspan *thiz;
 
 	thiz = EGUEB_SVG_ELEMENT_TSPAN(o);
+	enesim_text_font_unref(thiz->gfont);
 	enesim_renderer_unref(thiz->r);
 	/* destroy the properties */
 	egueb_dom_node_unref(thiz->x);

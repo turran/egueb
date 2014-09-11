@@ -76,10 +76,10 @@ typedef struct _Egueb_Svg_Element
 	Egueb_Dom_Node *display;
 	Egueb_Dom_Node *fill;
 	Egueb_Dom_Node *fill_opacity;
-	Egueb_Dom_Node *font;
 	Egueb_Dom_Node *font_family;
 	Egueb_Dom_Node *font_size;
 	Egueb_Dom_Node *font_style;
+	Egueb_Dom_Node *font_variant;
 	Egueb_Dom_Node *font_weight;
 	Egueb_Dom_Node *opacity;
 	Egueb_Dom_Node *overflow;
@@ -186,6 +186,7 @@ Egueb_Dom_Node * egueb_svg_element_geometry_relative_get(Egueb_Dom_Node *n);
 EAPI Eina_Bool egueb_svg_element_geometry_relative_set(Egueb_Dom_Node *n,
 		Egueb_Dom_Node *geometry_relative, Eina_Error *err);
 
+/* FIXME remove every _final_get function */
 void egueb_svg_element_overflow_final_get(Egueb_Dom_Node *n, Egueb_Svg_Overflow *o);
 void egueb_svg_element_color_final_get(Egueb_Dom_Node *n,
    	Egueb_Svg_Color *color);
@@ -195,5 +196,6 @@ void egueb_svg_element_stroke_final_get(Egueb_Dom_Node *n,
    	Egueb_Svg_Paint *stroke);
 void egueb_svg_element_clip_path_final_get(Egueb_Dom_Node *n,
 		Egueb_Svg_Clip_Path *clip_path);
+Enesim_Text_Font * egueb_svg_element_font_resolve(Egueb_Dom_Node *n);
 
 #endif

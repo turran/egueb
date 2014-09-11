@@ -46,8 +46,8 @@ typedef struct _Egueb_Svg_Element_Text
 	/* TODO put the private string here */
 	double gx;
 	double gy;
-	double gfont;
-	Enesim_Text_Font *font;
+	double gfont_size;
+	Enesim_Text_Font *gfont;
 	Enesim_Renderer *r;
 	Eina_Bool renderable_tree_changed;
 	Egueb_Svg_Element_Text_Pen pen;
@@ -68,14 +68,14 @@ static void _egueb_svg_element_text_children_generate_geometry(
 	int size;
 
 	e = EGUEB_SVG_ELEMENT(thiz);
-	size = ceil(thiz->gfont);
+	size = ceil(thiz->gfont_size);
 	if (size < 0)
 	{
 		ERR("Negative font size of %d", size);
 		size = 0;
 	}
-	enesim_renderer_text_span_font_set(r, enesim_text_font_ref(thiz->font));
-	max = enesim_text_font_max_ascent_get(thiz->font);
+	enesim_renderer_text_span_font_set(r, enesim_text_font_ref(thiz->gfont));
+	max = enesim_text_font_max_ascent_get(thiz->gfont);
 	enesim_renderer_origin_set(r, pen->x, pen->y - max);
 
 	INFO("matrix %" ENESIM_MATRIX_FORMAT, ENESIM_MATRIX_ARGS (&e->transform));
@@ -170,6 +170,9 @@ static Eina_Bool _egueb_svg_element_text_children_propagate_cb(Egueb_Dom_Node *c
 	return EINA_TRUE;
 }
 
+/* FIXME when a node is inserted/removed, we need to process again the
+ * the text node? to make every x, y, move?
+ */
 static void _egueb_svg_element_text_node_inserted_cb(Egueb_Dom_Event *e,
 		void *data)
 {
@@ -195,9 +198,7 @@ static void _egueb_svg_element_text_node_inserted_cb(Egueb_Dom_Event *e,
 		thiz = EGUEB_SVG_ELEMENT_TEXT(n);
 		/* create a renderer for this text node */
 		r = enesim_renderer_text_span_new();
-		enesim_renderer_text_span_font_set(r, enesim_text_font_ref(thiz->font));
 		enesim_renderer_color_set(r, 0xff000000);
-
 		/* set the internal buffer of the text span to be the one
 		 * on the text node */
 		egueb_dom_character_data_buffer_get(target, &nb);
@@ -291,7 +292,9 @@ static Eina_Bool _egueb_svg_element_text_generate_geometry(Egueb_Svg_Shape *s,
 	Egueb_Svg_Element *e;
 	Egueb_Svg_Length x, y;
 	Egueb_Svg_Font_Size font_size;
-	double doc_font_size, gfont;
+	Egueb_Dom_Node *n;
+	Enesim_Text_Font *font;
+	double doc_font_size, gfont_size;
 
 	thiz = EGUEB_SVG_ELEMENT_TEXT(s);
 	egueb_dom_attr_final_get(thiz->x, &x);
@@ -304,19 +307,35 @@ static Eina_Bool _egueb_svg_element_text_generate_geometry(Egueb_Svg_Shape *s,
 
 	/* set the position */
 	e = EGUEB_SVG_ELEMENT(s);
-	/* FIXME the font size accumulates from its parent, so we need to do
-	 * similar to the transformation
-	 */
-	thiz->gfont = e->final_font_size;
+
+	thiz->gfont_size = e->final_font_size;
 
 	/* iterate over the children and generate the position */
 	/* reset our pen to */
 	thiz->pen.x = thiz->gx;
 	thiz->pen.y = thiz->gy;
-	egueb_dom_node_children_foreach(EGUEB_DOM_NODE(s),
+
+	n = EGUEB_DOM_NODE(s);
+	font = egueb_svg_element_font_resolve(n);
+	if (thiz->gfont)
+	{
+		enesim_text_font_unref(thiz->gfont);
+		thiz->gfont = NULL;
+	}
+	if (font)
+	{
+		thiz->gfont = font;
+	}
+
+	if (!thiz->gfont)
+	{
+		ERR("No valid font found");
+		return EINA_FALSE;
+	}
+
+	egueb_dom_node_children_foreach(n,
 		_egueb_svg_element_text_children_process_cb,
 		thiz);
-
 	thiz->renderable_tree_changed = EINA_FALSE;
 
 	return EINA_TRUE;
@@ -398,16 +417,11 @@ static void _egueb_svg_element_text_instance_init(void *o)
 	Egueb_Svg_Element_Text *thiz;
 	Egueb_Dom_Node *n;
 	Enesim_Renderer *r;
-	Enesim_Text_Engine *e;
 
 	thiz = EGUEB_SVG_ELEMENT_TEXT(o);
 
 	/* Default values */
 	thiz->r = enesim_renderer_compound_new();
-
-	e = enesim_text_engine_default_get();
-	thiz->font = enesim_text_font_new_description_from(e, "Sans:style=Regular", 16);
-	enesim_text_engine_unref(e);
 
 	/* create the properties */
 	thiz->x = egueb_svg_attr_length_new(
@@ -439,6 +453,7 @@ static void _egueb_svg_element_text_instance_deinit(void *o)
 	Egueb_Svg_Element_Text *thiz;
 
 	thiz = EGUEB_SVG_ELEMENT_TEXT(o);
+	enesim_text_font_unref(thiz->gfont);
 	enesim_renderer_unref(thiz->r);
 	/* destroy the properties */
 	egueb_dom_node_unref(thiz->x);
