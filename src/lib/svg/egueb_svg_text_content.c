@@ -17,10 +17,7 @@
  */
 #include "egueb_svg_main_private.h"
 #include "egueb_svg_main.h"
-#include "egueb_svg_reference.h"
-#include "egueb_svg_referenceable.h"
 #include "egueb_svg_text_content.h"
-#include "egueb_svg_attr_matrix.h"
 #include "egueb_svg_text_content_private.h"
 #include "egueb_dom_string_private.h"
 /*============================================================================*
@@ -29,6 +26,14 @@
 /*----------------------------------------------------------------------------*
  *                            Renderable interface                            *
  *----------------------------------------------------------------------------*/
+static Egueb_Svg_Painter * _egueb_svg_text_content_painter_get(
+		Egueb_Svg_Renderable *r)
+{
+	Egueb_Svg_Text_Content *thiz;
+
+	thiz = EGUEB_SVG_TEXT_CONTENT(r);
+	return egueb_svg_painter_ref(thiz->painter);
+}
 /*----------------------------------------------------------------------------*
  *                             Element interface                              *
  *----------------------------------------------------------------------------*/
@@ -41,6 +46,10 @@ ENESIM_OBJECT_ABSTRACT_BOILERPLATE(EGUEB_SVG_RENDERABLE_DESCRIPTOR,
 
 static void _egueb_svg_text_content_class_init(void *k)
 {
+	Egueb_Svg_Renderable_Class *r_klass;
+
+	r_klass = EGUEB_SVG_RENDERABLE_CLASS(k);
+	r_klass->painter_get = _egueb_svg_text_content_painter_get;
 }
 
 static void _egueb_svg_text_content_instance_init(void *o)
@@ -48,6 +57,7 @@ static void _egueb_svg_text_content_instance_init(void *o)
 	Egueb_Svg_Text_Content *thiz;
 
 	thiz = EGUEB_SVG_TEXT_CONTENT(o);
+	thiz->painter = egueb_svg_painter_shape_new();
 }
 
 static void _egueb_svg_text_content_instance_deinit(void *o)
@@ -55,6 +65,11 @@ static void _egueb_svg_text_content_instance_deinit(void *o)
 	Egueb_Svg_Text_Content *thiz;
 
 	thiz = EGUEB_SVG_TEXT_CONTENT(o);
+	if (thiz->painter)
+	{
+		egueb_svg_painter_unref(thiz->painter);
+		thiz->painter = NULL;
+	}
 }
 /*============================================================================*
  *                                 Global                                     *

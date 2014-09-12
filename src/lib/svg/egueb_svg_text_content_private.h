@@ -20,12 +20,14 @@
 #define _EGUEB_SVG_TEXT_CONTENT_PRIVATE_H_
 
 #include "egueb_svg_renderable.h"
+#include "egueb_svg_painter.h"
+#include "egueb_svg_painter_private.h"
 #include "egueb_svg_renderable_private.h"
 
 typedef struct _Egueb_Svg_Text_Content
 {
 	Egueb_Svg_Renderable base;
-	Enesim_Renderer_Compound *compound;
+	Egueb_Svg_Painter *painter;
 } Egueb_Svg_Text_Content;
 
 typedef struct _Egueb_Svg_Text_Content_Class

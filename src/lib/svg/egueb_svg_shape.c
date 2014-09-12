@@ -19,10 +19,6 @@
 #include "egueb_svg_main.h"
 #include "egueb_svg_matrix.h"
 #include "egueb_svg_painter.h"
-/* FIXME remove this later */
-#include "egueb_svg_length.h"
-#include "egueb_svg_element.h"
-#include "egueb_svg_element_text.h"
 
 #include "egueb_svg_painter_private.h"
 #include "egueb_svg_shape_private.h"
@@ -161,14 +157,9 @@ static Eina_Bool _egueb_svg_shape_process(Egueb_Svg_Renderable *r)
 	}
 
 	/* process the children of the shapes, only smil nodes */
-	/* FIXME once the text element is moved out of the shape inheritance
-	 * we can safely remove this check. Basically a text handles
-	 * its own child process
-	 */
-	if (!egueb_svg_element_is_text(EGUEB_DOM_NODE(r)))
-		egueb_dom_node_children_foreach(EGUEB_DOM_NODE(r),
-				_egueb_svg_shape_children_process_cb,
-				NULL);
+	egueb_dom_node_children_foreach(EGUEB_DOM_NODE(r),
+			_egueb_svg_shape_children_process_cb,
+			NULL);
 
 	return EINA_TRUE;
 }
