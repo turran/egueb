@@ -31,6 +31,7 @@
  * @{
  */
 
+EAPI Eina_Bool egueb_svg_is_document(Egueb_Dom_Node *n);
 EAPI Egueb_Dom_Node * egueb_svg_document_new(void);
 EAPI Egueb_Dom_String * egueb_svg_document_title_get(Egueb_Dom_Node *n);
 EAPI Egueb_Dom_String * egueb_svg_document_referrer_get(Egueb_Dom_Node *n);

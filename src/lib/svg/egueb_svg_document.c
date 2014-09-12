@@ -1045,6 +1045,15 @@ void egueb_svg_document_height_get(Egueb_Dom_Node *n,
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/
+EAPI Eina_Bool egueb_svg_is_document(Egueb_Dom_Node *n)
+{
+	if (!n) return EINA_FALSE;
+	if (!enesim_object_instance_inherits(ENESIM_OBJECT_INSTANCE(n),
+			EGUEB_SVG_DOCUMENT_DESCRIPTOR))
+		return EINA_FALSE;
+	return EINA_TRUE;
+}
+
 EAPI Egueb_Dom_Node * egueb_svg_document_new(void)
 {
 	Egueb_Dom_Node *n;
