@@ -54,6 +54,7 @@ static void _egueb_css_color_interpolate(Egueb_Dom_Value *v,
 		Egueb_Dom_Value *a, Egueb_Dom_Value *b, double m,
 		Egueb_Dom_Value *add, Egueb_Dom_Value *acc, int mul)
 {
+	EINA_SAFETY_ON_FALSE_RETURN(v->descriptor == &_descriptor);
 	egueb_dom_value_interpolate_argb((uint32_t)a->data.i32, (uint32_t)b->data.i32, m, (uint32_t *)&v->data.i32);
 }
 
