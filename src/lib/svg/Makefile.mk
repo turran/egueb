@@ -79,6 +79,8 @@ src/lib/svg/egueb_svg_attr_color.c \
 src/lib/svg/egueb_svg_attr_color_private.h \
 src/lib/svg/egueb_svg_attr_display.c \
 src/lib/svg/egueb_svg_attr_display_private.h \
+src/lib/svg/egueb_svg_attr_length_list.c \
+src/lib/svg/egueb_svg_attr_length_list_private.h \
 src/lib/svg/egueb_svg_attr_length.c \
 src/lib/svg/egueb_svg_attr_length_private.h \
 src/lib/svg/egueb_svg_attr_matrix.c \
@@ -178,7 +180,6 @@ src/lib/svg/egueb_svg_path_seg.c \
 src/lib/svg/egueb_svg_path_seg_list.c \
 src/lib/svg/egueb_svg_point.c \
 src/lib/svg/egueb_svg_point_list.c \
-src/lib/svg/egueb_svg_rect.c \
 src/lib/svg/egueb_svg_reference.c \
 src/lib/svg/egueb_svg_reference_private.h \
 src/lib/svg/egueb_svg_reference_gradient.c \
@@ -207,6 +208,10 @@ src/lib/svg/egueb_svg_stroke_dasharray.c \
 src/lib/svg/egueb_svg_text_anchor.c \
 src/lib/svg/egueb_svg_text_content.c \
 src/lib/svg/egueb_svg_text_content_private.h \
+src/lib/svg/egueb_svg_value_length_list.c \
+src/lib/svg/egueb_svg_value_length_list_private.h \
+src/lib/svg/egueb_svg_value_rect.c \
+src/lib/svg/egueb_svg_value_rect_private.h \
 src/lib/svg/egueb_svg_value_zoom_and_pan.c \
 src/lib/svg/egueb_svg_value_zoom_and_pan_private.h \
 src/lib/svg/egueb_svg_visibility.c \

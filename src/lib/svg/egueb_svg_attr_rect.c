@@ -24,11 +24,12 @@
 #include "egueb_dom_attr_private.h"
 #include "egueb_dom_attr_primitive_private.h"
 #include "egueb_svg_attr_rect_private.h"
+#include "egueb_svg_value_rect_private.h"
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
 EGUEB_DOM_ATTR_PRIMITIVE_BOILERPLATE(Egueb_Svg_Rect,
-		Egueb_Svg_Attr_Rect, egueb_svg_rect,
+		Egueb_Svg_Attr_Rect, egueb_svg_value_rect,
 		egueb_svg_attr_rect)
 /*============================================================================*
  *                                 Global                                     *

@@ -15,23 +15,33 @@
  * License along with this library.
  * If not, see <http://www.gnu.org/licenses/>.
  */
-#include "egueb_smil_private.h"
-#include "egueb_smil_accumulate.h"
-#include "egueb_smil_accumulate_private.h"
+#include "egueb_svg_main_private.h"
+
+#include "egueb_dom_attr.h"
+#include "egueb_svg_length.h"
+
+#include "egueb_dom_attr_private.h"
+#include "egueb_dom_attr_object_private.h"
+#include "egueb_svg_attr_length_list_private.h"
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
-/*----------------------------------------------------------------------------*
- *                             Value interface                                *
- *----------------------------------------------------------------------------*/
-EGUEB_DOM_VALUE_ENUM_BOILERPLATE(egueb_smil_accumulate,
-		Egueb_Smil_Accumulate);
+EGUEB_DOM_ATTR_OBJECT_BOILERPLATE(Egueb_Svg_Attr_Length_List,
+		egueb_dom_value_double_list, egueb_svg_attr_length_list)
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
-const Egueb_Dom_Value_Descriptor * egueb_smil_value_accumulate_descriptor_get(void)
+Egueb_Dom_Node * egueb_svg_attr_length_list_new(Egueb_Dom_String *name,
+		Egueb_Dom_List *def, Eina_Bool animatable, Eina_Bool stylable,
+		Eina_Bool inheritable)
 {
-	return &_egueb_smil_accumulate_descriptor;
+	Egueb_Dom_Node *n;
+	
+	n = ENESIM_OBJECT_INSTANCE_NEW(egueb_svg_attr_length_list);
+	egueb_dom_attr_init(n, name, animatable, stylable, inheritable);
+	if (def)
+		egueb_dom_attr_set(n, EGUEB_DOM_ATTR_TYPE_DEFAULT, def);
+	return n;
 }
 /*============================================================================*
  *                                   API                                      *

@@ -177,7 +177,7 @@ static void _egueb_svg_element_a_instance_init(void *o)
 	thiz = EGUEB_SVG_ELEMENT_A(o);
 	/* create the properties */
 	thiz->xlink_href = egueb_svg_attr_string_new(
-			egueb_dom_string_ref(EGUEB_DOM_XLINK_HREF),
+			egueb_dom_string_ref(EGUEB_DOM_NAME_XLINK_HREF),
 			NULL);
 
 	n = EGUEB_DOM_NODE(o);

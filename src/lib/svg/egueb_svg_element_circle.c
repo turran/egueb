@@ -152,15 +152,15 @@ static void _egueb_svg_element_circle_instance_init(void *o)
 
 	/* create the properties */
 	thiz->cx = egueb_svg_attr_length_new(
-			egueb_dom_string_ref(EGUEB_SVG_CX),
+			egueb_dom_string_ref(EGUEB_SVG_NAME_CX),
 			&EGUEB_SVG_LENGTH_0, EINA_TRUE,
 			EINA_FALSE, EINA_FALSE);
 	thiz->cy = egueb_svg_attr_length_new(
-			egueb_dom_string_ref(EGUEB_SVG_CY),
+			egueb_dom_string_ref(EGUEB_SVG_NAME_CY),
 			&EGUEB_SVG_LENGTH_0, EINA_TRUE,
 			EINA_FALSE, EINA_FALSE);
 	thiz->radius = egueb_svg_attr_length_new(
-			egueb_dom_string_ref(EGUEB_SVG_R),
+			egueb_dom_string_ref(EGUEB_SVG_NAME_R),
 			&EGUEB_SVG_LENGTH_0,
 			EINA_TRUE, EINA_FALSE, EINA_FALSE);
 

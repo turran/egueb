@@ -644,7 +644,7 @@ static void _egueb_smil_animation_instance_init(void *o)
 	thiz->end = egueb_smil_attr_timing_list_new(
 			egueb_dom_string_ref(EGUEB_SMIL_END), NULL);
 	thiz->xlink_href = egueb_dom_attr_string_new(
-			egueb_dom_string_ref(EGUEB_DOM_XLINK_HREF),
+			egueb_dom_string_ref(EGUEB_DOM_NAME_XLINK_HREF),
 			NULL, EINA_FALSE, EINA_FALSE, EINA_FALSE);
 	thiz->repeat_count = egueb_smil_attr_repeat_count_new();
 	thiz->repeat_dur = egueb_smil_attr_duration_new(

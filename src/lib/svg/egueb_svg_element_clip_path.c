@@ -281,7 +281,7 @@ static void _egueb_svg_element_clip_path_instance_init(void *o)
 	thiz = EGUEB_SVG_ELEMENT_CLIP_PATH(o);
 	/* create the properties */
 	thiz->units = egueb_svg_attr_referenceable_units_new(
-			egueb_dom_string_ref(EGUEB_SVG_CLIP_PATH_UNITS),
+			egueb_dom_string_ref(EGUEB_SVG_NAME_CLIP_PATH_UNITS),
 			EGUEB_SVG_REFERENCEABLE_UNITS_USER_SPACE_ON_USE, EINA_TRUE,
 			EINA_FALSE, EINA_FALSE);
 

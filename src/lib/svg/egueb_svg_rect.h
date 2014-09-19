@@ -19,7 +19,26 @@
 #ifndef _EGUEB_SVG_RECT_H
 #define _EGUEB_SVG_RECT_H
 
+/**
+ * @file
+ * @ender_group{Egueb_Svg_Rect}
+ * @ender_group{Egueb_Svg_Rect_Animated}
+ */
+
+/**
+ * @defgroup Egueb_Svg_Rect_Definitions Rect definitions
+ * @ingroup Egueb_Svg_Rect
+ * @{
+ */
+
 typedef Enesim_Rectangle Egueb_Svg_Rect;
+
+/**
+ * @}
+ * @defgroup Egueb_Svg_Rect_Animated Rect animated
+ * @ingroup Egueb_Svg_Type_Group
+ * @{
+ */
 
 typedef struct _Egueb_Svg_Rect_Animated
 {
@@ -27,6 +46,8 @@ typedef struct _Egueb_Svg_Rect_Animated
 	Egueb_Svg_Rect anim;
 } Egueb_Svg_Rect_Animated;
 
-EAPI const Egueb_Dom_Value_Descriptor * egueb_svg_rect_descriptor_get(void);
+/**
+ * @}
+ */
 
 #endif

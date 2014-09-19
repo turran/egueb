@@ -155,19 +155,19 @@ static void _egueb_svg_element_ellipse_instance_init(void *o)
 
 	/* create the properties */
 	thiz->cx = egueb_svg_attr_length_new(
-			egueb_dom_string_ref(EGUEB_SVG_CX),
+			egueb_dom_string_ref(EGUEB_SVG_NAME_CX),
 			&EGUEB_SVG_LENGTH_0, EINA_TRUE,
 			EINA_FALSE, EINA_FALSE);
 	thiz->cy = egueb_svg_attr_length_new(
-			egueb_dom_string_ref(EGUEB_SVG_CY),
+			egueb_dom_string_ref(EGUEB_SVG_NAME_CY),
 			&EGUEB_SVG_LENGTH_0, EINA_TRUE,
 			EINA_FALSE, EINA_FALSE);
 	thiz->rx = egueb_svg_attr_length_new(
-			egueb_dom_string_ref(EGUEB_SVG_RX),
+			egueb_dom_string_ref(EGUEB_SVG_NAME_RX),
 			&EGUEB_SVG_LENGTH_0, EINA_TRUE,
 			EINA_FALSE, EINA_FALSE);
 	thiz->ry = egueb_svg_attr_length_new(
-			egueb_dom_string_ref(EGUEB_SVG_RY),
+			egueb_dom_string_ref(EGUEB_SVG_NAME_RY),
 			&EGUEB_SVG_LENGTH_0, EINA_TRUE,
 			EINA_FALSE, EINA_FALSE);
 

@@ -219,7 +219,7 @@ static void _egueb_svg_renderable_instance_init(void *o)
 	thiz = EGUEB_SVG_RENDERABLE(o);
 	/* the properties */
 	thiz->transform = egueb_svg_attr_matrix_new(
-			egueb_dom_string_ref(EGUEB_SVG_TRANSFORM),
+			egueb_dom_string_ref(EGUEB_SVG_NAME_TRANSFORM),
 			&EGUEB_SVG_MATRIX_IDENTITY, EINA_TRUE,
 			EINA_FALSE, EINA_FALSE);
 

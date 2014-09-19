@@ -81,11 +81,12 @@ static void egueb_svg_rect_interpolate(Egueb_Svg_Rect *v,
 
 EGUEB_DOM_VALUE_PRIMITIVE_SIMPLE_BOILERPLATE(egueb_svg_rect, Egueb_Svg_Rect);
 /*============================================================================*
- *                                   API                                      *
+ *                                 Global                                     *
  *============================================================================*/
-EAPI const Egueb_Dom_Value_Descriptor * egueb_svg_rect_descriptor_get(void)
+const Egueb_Dom_Value_Descriptor * egueb_svg_value_rect_descriptor_get(void)
 {
 	return &_egueb_svg_rect_descriptor;
 }
-
-
+/*============================================================================*
+ *                                   API                                      *
+ *============================================================================*/

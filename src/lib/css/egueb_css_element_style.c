@@ -103,7 +103,7 @@ static Eina_Bool _egueb_css_element_style_process(Egueb_Dom_Element *e)
 
 static Egueb_Dom_String * _egueb_css_element_style_tag_name_get(Egueb_Dom_Element *e)
 {
-	return egueb_dom_string_ref(EGUEB_CSS_STYLE);
+	return egueb_dom_string_ref(EGUEB_CSS_NAME_STYLE);
 }
 /*----------------------------------------------------------------------------*
  *                               Node interface                               *

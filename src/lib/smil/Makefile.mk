@@ -7,6 +7,7 @@ src/lib/smil/egueb_smil_accumulate.h \
 src/lib/smil/egueb_smil_additive.h \
 src/lib/smil/egueb_smil_animate.h \
 src/lib/smil/egueb_smil_animation.h \
+src/lib/smil/egueb_smil_attribute_type.h \
 src/lib/smil/egueb_smil_build.h \
 src/lib/smil/egueb_smil_calc_mode.h \
 src/lib/smil/egueb_smil_clock.h \
@@ -74,6 +75,8 @@ src/lib/smil/egueb_smil_timing.c \
 src/lib/smil/egueb_smil_timing_list.c \
 src/lib/smil/egueb_smil_value_accumulate.c \
 src/lib/smil/egueb_smil_value_accumulate_private.h \
+src/lib/smil/egueb_smil_value_attribute_type.c \
+src/lib/smil/egueb_smil_value_attribute_type_private.h \
 src/lib/smil/egueb_smil_value_additive.c \
 src/lib/smil/egueb_smil_value_additive_private.h \
 src/lib/smil/egueb_smil_value_key_spline.c \

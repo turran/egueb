@@ -113,7 +113,7 @@ static void _egueb_svg_element_stop_instance_init(void *o)
 	thiz = EGUEB_SVG_ELEMENT_STOP(o);
 	/* create the properties */
 	thiz->offset = egueb_svg_attr_length_new(
-			egueb_dom_string_ref(EGUEB_SVG_OFFSET),
+			egueb_dom_string_ref(EGUEB_SVG_NAME_OFFSET),
 			&EGUEB_SVG_LENGTH_0, EINA_TRUE,
 			EINA_FALSE, EINA_FALSE);
 

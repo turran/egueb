@@ -237,19 +237,19 @@ static void _egueb_svg_gradient_instance_init(void *o)
 
 	thiz = EGUEB_SVG_GRADIENT(o);
 	thiz->units = egueb_svg_attr_referenceable_units_new(
-			egueb_dom_string_ref(EGUEB_SVG_GRADIENT_UNITS),
+			egueb_dom_string_ref(EGUEB_SVG_NAME_GRADIENT_UNITS),
 			EGUEB_SVG_REFERENCEABLE_UNITS_OBJECT_BOUNDING_BOX, EINA_TRUE,
 			EINA_FALSE, EINA_FALSE);
 
 	thiz->transform = egueb_svg_attr_matrix_new(
-			egueb_dom_string_ref(EGUEB_SVG_GRADIENT_TRANSFORM),
+			egueb_dom_string_ref(EGUEB_SVG_NAME_GRADIENT_TRANSFORM),
 			&EGUEB_SVG_MATRIX_IDENTITY, EINA_TRUE,
 			EINA_FALSE, EINA_FALSE);
 	thiz->xlink_href = egueb_svg_attr_xlink_href_new(
-			egueb_dom_string_ref(EGUEB_DOM_XLINK_HREF),
+			egueb_dom_string_ref(EGUEB_DOM_NAME_XLINK_HREF),
 			NULL);
 	thiz->spread_method = egueb_svg_attr_spread_method_new(
-			egueb_dom_string_ref(EGUEB_SVG_SPREAD_METHOD),
+			egueb_dom_string_ref(EGUEB_SVG_NAME_SPREAD_METHOD),
 			EGUEB_SVG_SPREAD_METHOD_PAD, EINA_TRUE, EINA_FALSE,
 			EINA_FALSE);
 	n = EGUEB_DOM_NODE(o);

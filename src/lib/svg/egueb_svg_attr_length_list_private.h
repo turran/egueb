@@ -15,18 +15,11 @@
  * License along with this library.
  * If not, see <http://www.gnu.org/licenses/>.
  */
+#ifndef _EGUEB_SVG_ATTR_LENGTH_LIST_PRIVATE_H_
+#define _EGUEB_SVG_ATTR_LENGTH_LIST_PRIVATE_H_
 
-#ifndef _EGUEB_SVG_ELEMENT_TEXT_PRIVATE_H_
-#define _EGUEB_SVG_ELEMENT_TEXT_PRIVATE_H_
-
-typedef struct _Egueb_Svg_Element_Text_Pen
-{
-	/* TODO add the stack of x,y,dx,dy */
-	double x;
-	double y;
-} Egueb_Svg_Element_Text_Pen;
-
-EAPI void egueb_svg_element_text_pen_get(Egueb_Dom_Node *n,
-		Egueb_Svg_Element_Text_Pen **pen);
+Egueb_Dom_Node * egueb_svg_attr_length_list_new(Egueb_Dom_String *name,
+		Egueb_Dom_List *def, Eina_Bool animatable, Eina_Bool stylable,
+		Eina_Bool inheritable);
 
 #endif

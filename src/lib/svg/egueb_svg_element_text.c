@@ -22,11 +22,9 @@
 #include "egueb_svg_element_text.h"
 #include "egueb_svg_element_tspan.h"
 #include "egueb_svg_document.h"
+#include "egueb_svg_attr_length_list_private.h"
 #include "egueb_svg_text_content_private.h"
 #include "egueb_svg_element_text_private.h"
-/* TODO make the text inherit from a renderable
- * make the text content be an interface somehow
- */
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
@@ -42,6 +40,8 @@ typedef struct _Egueb_Svg_Element_Text
 	/* properties */
 	Egueb_Dom_Node *x;
 	Egueb_Dom_Node *y;
+	Egueb_Dom_Node *dx;
+	Egueb_Dom_Node *dy;
 	/* private */
 	/* TODO put the private string here */
 	double gx;
@@ -287,7 +287,8 @@ static Eina_Bool _egueb_svg_element_text_process(Egueb_Svg_Renderable *r)
 {
 	Egueb_Svg_Element_Text *thiz;
 	Egueb_Svg_Element *e;
-	Egueb_Svg_Length x, y;
+	Egueb_Svg_Length *c;
+	Egueb_Dom_List *l;
 	Egueb_Dom_Node *n;
 	Egueb_Dom_Node *relative;
 	Egueb_Dom_Node *doc;
@@ -295,8 +296,6 @@ static Eina_Bool _egueb_svg_element_text_process(Egueb_Svg_Renderable *r)
 	double doc_font_size;
 
 	thiz = EGUEB_SVG_ELEMENT_TEXT(r);
-	egueb_dom_attr_final_get(thiz->x, &x);
-	egueb_dom_attr_final_get(thiz->y, &y);
 
 	/* calculate the real size */
 	doc = egueb_dom_node_owner_document_get(EGUEB_DOM_NODE(r));
@@ -304,8 +303,14 @@ static Eina_Bool _egueb_svg_element_text_process(Egueb_Svg_Renderable *r)
 	egueb_dom_node_unref(doc);
 
 	relative = egueb_svg_element_geometry_relative_get(EGUEB_DOM_NODE(r));
-	thiz->gx = egueb_svg_coord_final_get(&x, (EGUEB_SVG_ELEMENT(relative))->viewbox.w, doc_font_size);
-	thiz->gy = egueb_svg_coord_final_get(&y, (EGUEB_SVG_ELEMENT(relative))->viewbox.h, doc_font_size);
+	egueb_dom_attr_final_get(thiz->x, &l);
+	c = egueb_dom_list_item_get(l, 0);
+	thiz->gx = egueb_svg_coord_final_get(c, (EGUEB_SVG_ELEMENT(relative))->viewbox.w, doc_font_size);
+	egueb_dom_list_unref(l);
+
+	egueb_dom_attr_final_get(thiz->y, &l);
+	c = egueb_dom_list_item_get(l, 0);
+	thiz->gy = egueb_svg_coord_final_get(c, (EGUEB_SVG_ELEMENT(relative))->viewbox.h, doc_font_size);
 	egueb_dom_node_unref(relative);
 
 	/* set the position */
@@ -369,9 +374,6 @@ static void _egueb_svg_element_text_class_init(void *k)
 	r_klass->bounds_get = _egueb_svg_element_text_bounds_get;
 	r_klass->renderer_get = _egueb_svg_element_text_renderer_get;
 	r_klass->process = _egueb_svg_element_text_process;
-#if 0
-	r_klass->painter_apply = _egueb_svg_element_text_painter_apply;
-#endif
 
 	e_klass= EGUEB_DOM_ELEMENT_CLASS(k);
 	e_klass->tag_name_get = _egueb_svg_element_text_tag_name_get;
@@ -380,6 +382,8 @@ static void _egueb_svg_element_text_class_init(void *k)
 static void _egueb_svg_element_text_instance_init(void *o)
 {
 	Egueb_Svg_Element_Text *thiz;
+	Egueb_Svg_Length *zero;
+	Egueb_Dom_List *def;
 	Egueb_Dom_Node *n;
 
 	thiz = EGUEB_SVG_ELEMENT_TEXT(o);
@@ -388,18 +392,35 @@ static void _egueb_svg_element_text_instance_init(void *o)
 	thiz->r = enesim_renderer_compound_new();
 
 	/* create the properties */
-	thiz->x = egueb_svg_attr_length_new(
-			egueb_dom_string_ref(EGUEB_SVG_X),
-			&EGUEB_SVG_LENGTH_0, EINA_TRUE,
+	/* create a default list with 0 as the value of the coordinate */
+	def = egueb_dom_list_new(egueb_svg_length_descriptor_get());
+	zero = calloc(1, sizeof(Egueb_Svg_Length));
+	*zero = EGUEB_SVG_LENGTH_0;
+	egueb_dom_list_item_append(def, zero);
+
+	thiz->x = egueb_svg_attr_length_list_new(
+			egueb_dom_string_ref(EGUEB_SVG_NAME_X),
+			egueb_dom_list_ref(def), EINA_TRUE,
 			EINA_FALSE, EINA_FALSE);
-	thiz->y = egueb_svg_attr_length_new(
-			egueb_dom_string_ref(EGUEB_SVG_Y),
-			&EGUEB_SVG_LENGTH_0, EINA_TRUE,
+	thiz->y = egueb_svg_attr_length_list_new(
+			egueb_dom_string_ref(EGUEB_SVG_NAME_Y),
+			egueb_dom_list_ref(def), EINA_TRUE,
 			EINA_FALSE, EINA_FALSE);
+	thiz->dx = egueb_svg_attr_length_list_new(
+			egueb_dom_string_ref(EGUEB_SVG_NAME_DX),
+			egueb_dom_list_ref(def), EINA_TRUE,
+			EINA_FALSE, EINA_FALSE);
+	thiz->dy = egueb_svg_attr_length_list_new(
+			egueb_dom_string_ref(EGUEB_SVG_NAME_DY),
+			egueb_dom_list_ref(def), EINA_TRUE,
+			EINA_FALSE, EINA_FALSE);
+	egueb_dom_list_unref(def);
 
 	n = EGUEB_DOM_NODE(o);
 	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->x), NULL);
 	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->y), NULL);
+	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->dx), NULL);
+	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->dy), NULL);
 
 	/* add the events */
 	egueb_dom_node_event_listener_add(n,
@@ -422,6 +443,8 @@ static void _egueb_svg_element_text_instance_deinit(void *o)
 	/* destroy the properties */
 	egueb_dom_node_unref(thiz->x);
 	egueb_dom_node_unref(thiz->y);
+	egueb_dom_node_unref(thiz->dx);
+	egueb_dom_node_unref(thiz->dy);
 }
 /*============================================================================*
  *                                 Global                                     *

@@ -15,18 +15,10 @@
  * License along with this library.
  * If not, see <http://www.gnu.org/licenses/>.
  */
+#ifndef _EGUEB_SMIL_VALUE_ATTRIBUTE_TYPE_PRIVATE_H_
+#define _EGUEB_SMIL_VALUE_ATTRIBUTE_TYPE_PRIVATE_H_
 
-#ifndef _EGUEB_SVG_ELEMENT_TEXT_PRIVATE_H_
-#define _EGUEB_SVG_ELEMENT_TEXT_PRIVATE_H_
-
-typedef struct _Egueb_Svg_Element_Text_Pen
-{
-	/* TODO add the stack of x,y,dx,dy */
-	double x;
-	double y;
-} Egueb_Svg_Element_Text_Pen;
-
-EAPI void egueb_svg_element_text_pen_get(Egueb_Dom_Node *n,
-		Egueb_Svg_Element_Text_Pen **pen);
+const Egueb_Dom_Value_Descriptor * egueb_smil_value_attribute_type_descriptor_get(void);
 
 #endif
+

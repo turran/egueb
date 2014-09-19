@@ -196,19 +196,19 @@ static void _egueb_svg_element_line_instance_init(void *o)
 
 	/* create the properties */
 	thiz->x1 = egueb_svg_attr_length_new(
-			egueb_dom_string_ref(EGUEB_SVG_X1),
+			egueb_dom_string_ref(EGUEB_SVG_NAME_X1),
 			&EGUEB_SVG_LENGTH_0, EINA_TRUE,
 			EINA_FALSE, EINA_FALSE);
 	thiz->y1 = egueb_svg_attr_length_new(
-			egueb_dom_string_ref(EGUEB_SVG_Y1),
+			egueb_dom_string_ref(EGUEB_SVG_NAME_Y1),
 			&EGUEB_SVG_LENGTH_0, EINA_TRUE,
 			EINA_FALSE, EINA_FALSE);
 	thiz->x2 = egueb_svg_attr_length_new(
-			egueb_dom_string_ref(EGUEB_SVG_X2),
+			egueb_dom_string_ref(EGUEB_SVG_NAME_X2),
 			&EGUEB_SVG_LENGTH_0, EINA_TRUE,
 			EINA_FALSE, EINA_FALSE);
 	thiz->y2 = egueb_svg_attr_length_new(
-			egueb_dom_string_ref(EGUEB_SVG_Y2),
+			egueb_dom_string_ref(EGUEB_SVG_NAME_Y2),
 			&EGUEB_SVG_LENGTH_0, EINA_TRUE,
 			EINA_FALSE, EINA_FALSE);
 

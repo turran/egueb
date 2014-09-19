@@ -145,7 +145,7 @@ static void _egueb_svg_element_polygon_instance_init(void *o)
 
 	/* create the properties */
 	thiz->points = egueb_svg_attr_point_list_new(
-			egueb_dom_string_ref(EGUEB_SVG_POINTS),
+			egueb_dom_string_ref(EGUEB_SVG_NAME_POINTS),
 			NULL, EINA_TRUE, EINA_FALSE, EINA_FALSE);
 
 	n = EGUEB_DOM_NODE(o);

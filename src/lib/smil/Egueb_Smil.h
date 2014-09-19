@@ -31,7 +31,8 @@
 /* core */
 #include "egueb_smil_build.h"
 #include "egueb_smil_main.h"
-/* values */
+/* types */
+#include "egueb_smil_attribute_type.h"
 #include "egueb_smil_additive.h"
 #include "egueb_smil_accumulate.h"
 #include "egueb_smil_calc_mode.h"

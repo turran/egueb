@@ -32,7 +32,7 @@ static int egueb_css_init_count = 0;
 
 static void _egueb_css_strings_init(void)
 {
-	EGUEB_CSS_STYLE = egueb_dom_string_new_with_string("style");
+	EGUEB_CSS_NAME_STYLE = egueb_dom_string_new_with_string("style");
 	EGUEB_CSS_NAME_FONT = egueb_dom_string_new_with_string("font");
 	EGUEB_CSS_NAME_FONT_FAMILY = egueb_dom_string_new_with_string("font-family");
 	EGUEB_CSS_NAME_FONT_SIZE = egueb_dom_string_new_with_string("font-size");
@@ -49,7 +49,7 @@ static void _egueb_css_strings_shutdown(void)
 	egueb_dom_string_unref(EGUEB_CSS_NAME_FONT_STYLE);
 	egueb_dom_string_unref(EGUEB_CSS_NAME_FONT_VARIANT);
 	egueb_dom_string_unref(EGUEB_CSS_NAME_FONT_WEIGHT);
-	egueb_dom_string_unref(EGUEB_CSS_STYLE);
+	egueb_dom_string_unref(EGUEB_CSS_NAME_STYLE);
 }
 /*============================================================================*
  *                                 Global                                     *
@@ -60,7 +60,7 @@ int _egueb_css_log_dom_global = -1;
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/
-Egueb_Dom_String *EGUEB_CSS_STYLE;
+Egueb_Dom_String *EGUEB_CSS_NAME_STYLE;
 Egueb_Dom_String *EGUEB_CSS_NAME_FONT;
 Egueb_Dom_String *EGUEB_CSS_NAME_FONT_FAMILY;
 Egueb_Dom_String *EGUEB_CSS_NAME_FONT_SIZE;

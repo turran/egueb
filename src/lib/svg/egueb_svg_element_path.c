@@ -427,7 +427,7 @@ static void _egueb_svg_element_path_instance_init(void *o)
 
 	/* create the properties */
 	thiz->d = egueb_svg_attr_path_seg_list_new(
-			egueb_dom_string_ref(EGUEB_SVG_D),
+			egueb_dom_string_ref(EGUEB_SVG_NAME_D),
 			NULL, EINA_TRUE, EINA_FALSE, EINA_FALSE);
 	n = EGUEB_DOM_NODE(o);
 	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->d), NULL);

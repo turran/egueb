@@ -17,7 +17,7 @@
  */
 #ifndef _EGUEB_CSS_MAIN_H_
 
-EAPI extern Egueb_Dom_String *EGUEB_CSS_STYLE;
+EAPI extern Egueb_Dom_String *EGUEB_CSS_NAME_STYLE;
 EAPI extern Egueb_Dom_String *EGUEB_CSS_NAME_FONT;
 EAPI extern Egueb_Dom_String *EGUEB_CSS_NAME_FONT_FAMILY;
 EAPI extern Egueb_Dom_String *EGUEB_CSS_NAME_FONT_SIZE;

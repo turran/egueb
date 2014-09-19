@@ -281,23 +281,23 @@ static void _egueb_svg_element_use_instance_init(void *o)
 
 	/* create the properties */
 	thiz->x = egueb_svg_attr_length_new(
-			egueb_dom_string_ref(EGUEB_SVG_X),
+			egueb_dom_string_ref(EGUEB_SVG_NAME_X),
 			&EGUEB_SVG_LENGTH_0, EINA_TRUE,
 			EINA_FALSE, EINA_FALSE);
 	thiz->y = egueb_svg_attr_length_new(
-			egueb_dom_string_ref(EGUEB_SVG_Y),
+			egueb_dom_string_ref(EGUEB_SVG_NAME_Y),
 			&EGUEB_SVG_LENGTH_0, EINA_TRUE,
 			EINA_FALSE, EINA_FALSE);
 	thiz->width = egueb_svg_attr_length_new(
-			egueb_dom_string_ref(EGUEB_SVG_WIDTH),
+			egueb_dom_string_ref(EGUEB_SVG_NAME_WIDTH),
 			&EGUEB_SVG_LENGTH_0,
 			EINA_TRUE, EINA_FALSE, EINA_FALSE);
 	thiz->height = egueb_svg_attr_length_new(
-			egueb_dom_string_ref(EGUEB_SVG_HEIGHT),
+			egueb_dom_string_ref(EGUEB_SVG_NAME_HEIGHT),
 			&EGUEB_SVG_LENGTH_0,
 			EINA_TRUE, EINA_FALSE, EINA_FALSE);
 	thiz->xlink_href = egueb_svg_attr_string_new(
-			egueb_dom_string_ref(EGUEB_DOM_XLINK_HREF),
+			egueb_dom_string_ref(EGUEB_DOM_NAME_XLINK_HREF),
 			NULL);
 
 	n = EGUEB_DOM_NODE(o);

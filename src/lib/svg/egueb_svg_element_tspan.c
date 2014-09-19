@@ -21,7 +21,8 @@
 #include "egueb_svg_length.h"
 #include "egueb_svg_element_tspan.h"
 #include "egueb_svg_document.h"
-#include "egueb_svg_shape_private.h"
+#include "egueb_svg_attr_length_list_private.h"
+#include "egueb_svg_text_content_private.h"
 #include "egueb_svg_element_text_private.h"
 /*
  * TODO
@@ -40,10 +41,12 @@
 
 typedef struct _Egueb_Svg_Element_Tspan
 {
-	Egueb_Svg_Shape base;
+	Egueb_Svg_Text_Content base;
 	/* properties */
 	Egueb_Dom_Node *x;
 	Egueb_Dom_Node *y;
+	Egueb_Dom_Node *dx;
+	Egueb_Dom_Node *dy;
 	/* private */
 	double gx;
 	double gy;
@@ -53,7 +56,7 @@ typedef struct _Egueb_Svg_Element_Tspan
 
 typedef struct _Egueb_Svg_Element_Tspan_Class
 {
-	Egueb_Svg_Shape_Class base;
+	Egueb_Svg_Text_Content_Class base;
 } Egueb_Svg_Element_Tspan_Class;
 
 /* from a node inserted or node removed event, get the tspan node in case
@@ -131,44 +134,76 @@ static void _egueb_svg_element_tspan_node_removed_cb(Egueb_Dom_Event *e,
 }
 
 /*----------------------------------------------------------------------------*
- *                               Shape interface                              *
+ *                            Text content interface                          *
  *----------------------------------------------------------------------------*/
-static Eina_Bool _egueb_svg_element_tspan_generate_geometry(Egueb_Svg_Shape *s,
-		Egueb_Svg_Element *relative, Egueb_Dom_Node *doc)
+/*----------------------------------------------------------------------------*
+ *                            Renderable interface                            *
+ *----------------------------------------------------------------------------*/
+
+static void _egueb_svg_element_tspan_painter_apply(Egueb_Svg_Renderable *r,
+		Egueb_Svg_Painter *painter)
+{
+	Egueb_Svg_Element_Tspan *thiz;
+	Enesim_Color color;
+	Enesim_Color fill_color;
+	Eina_Bool visibility;
+
+	thiz = EGUEB_SVG_ELEMENT_TSPAN(r);
+
+	egueb_svg_painter_visibility_get(painter, &visibility);
+	egueb_svg_painter_color_get(painter, &color);
+	egueb_svg_painter_fill_color_get(painter, &fill_color);
+
+	enesim_renderer_color_set(thiz->r, fill_color);
+	enesim_renderer_visibility_set(thiz->r, visibility);
+}
+
+static Eina_Bool _egueb_svg_element_tspan_process(Egueb_Svg_Renderable *r)
 {
 	Egueb_Svg_Element_Tspan *thiz;
 	Egueb_Svg_Element_Text_Pen *pen;
 	Egueb_Svg_Element *e;
-	Egueb_Svg_Length x, y;
+	Egueb_Svg_Length *c;
+	Egueb_Dom_List *l;
 	Egueb_Dom_Node *n;
+	Egueb_Dom_Node *relative;
+	Egueb_Dom_Node *doc;
 	Enesim_Text_Font *font;
 	Enesim_Rectangle bounds;
 	double gx, gy;
 	double doc_font_size, gfont_size;
 	int max;
 
-	thiz = EGUEB_SVG_ELEMENT_TSPAN(s);
-	egueb_dom_attr_final_get(thiz->x, &x);
-	egueb_dom_attr_final_get(thiz->y, &y);
+	thiz = EGUEB_SVG_ELEMENT_TSPAN(r);
 
 	/* calculate the real size */
+	doc = egueb_dom_node_owner_document_get(EGUEB_DOM_NODE(r));
 	doc_font_size = egueb_svg_document_font_size_get(doc);
-	thiz->gx = egueb_svg_coord_final_get(&x, relative->viewbox.w, doc_font_size);
-	thiz->gy = egueb_svg_coord_final_get(&y, relative->viewbox.h, doc_font_size);
+	egueb_dom_node_unref(doc);
+
+	/* calculate the final attributes */
+	relative = egueb_svg_element_geometry_relative_get(EGUEB_DOM_NODE(r));
+	egueb_dom_attr_final_get(thiz->x, &l);
+	c = egueb_dom_list_item_get(l, 0);
+	thiz->gx = egueb_svg_coord_final_get(c, (EGUEB_SVG_ELEMENT(relative))->viewbox.w, doc_font_size);
+	egueb_dom_list_unref(l);
+
+	egueb_dom_attr_final_get(thiz->y, &l);
+	c = egueb_dom_list_item_get(l, 0);
+	thiz->gy = egueb_svg_coord_final_get(c, (EGUEB_SVG_ELEMENT(relative))->viewbox.h, doc_font_size);
+	egueb_dom_node_unref(relative);
 
 	/* get the pen we should use for every span */
 	egueb_svg_element_text_pen_get(EGUEB_DOM_NODE(relative), &pen);
 
 	/* set the position */
-	e = EGUEB_SVG_ELEMENT(s);
-	/* FIXME the font size accumulates from its parent, so we need to do
-	 * similar to the transformation
-	 */
+	e = EGUEB_SVG_ELEMENT(r);
 	gfont_size = e->final_font_size;
+
 	gx = pen->x;
 	gy = pen->y;
 
-	n = EGUEB_DOM_NODE(s);
+	n = EGUEB_DOM_NODE(r);
 	font = egueb_svg_element_font_resolve(n);
 	if (thiz->gfont)
 	{
@@ -201,9 +236,6 @@ static Eina_Bool _egueb_svg_element_tspan_generate_geometry(Egueb_Svg_Shape *s,
 	return EINA_TRUE;
 }
 
-/*----------------------------------------------------------------------------*
- *                            Renderable interface                            *
- *----------------------------------------------------------------------------*/
 static Enesim_Renderer * _egueb_svg_element_tspan_renderer_get(
 		Egueb_Svg_Renderable *r)
 {
@@ -225,23 +257,6 @@ static void _egueb_svg_element_tspan_bounds_get(Egueb_Svg_Renderable *r,
 #endif
 }
 
-static void _egueb_svg_element_tspan_painter_apply(Egueb_Svg_Renderable *r,
-		Egueb_Svg_Painter *painter)
-{
-	Egueb_Svg_Element_Tspan *thiz;
-	Enesim_Color color;
-	Enesim_Color fill_color;
-	Eina_Bool visibility;
-
-	thiz = EGUEB_SVG_ELEMENT_TSPAN(r);
-
-	egueb_svg_painter_visibility_get(painter, &visibility);
-	egueb_svg_painter_color_get(painter, &color);
-	egueb_svg_painter_fill_color_get(painter, &fill_color);
-
-	enesim_renderer_color_set(thiz->r, fill_color);
-	enesim_renderer_visibility_set(thiz->r, visibility);
-}
 /*----------------------------------------------------------------------------*
  *                              Element interface                             *
  *----------------------------------------------------------------------------*/
@@ -253,23 +268,20 @@ static Egueb_Dom_String * _egueb_svg_element_tspan_tag_name_get(
 /*----------------------------------------------------------------------------*
  *                              Object interface                              *
  *----------------------------------------------------------------------------*/
-ENESIM_OBJECT_INSTANCE_BOILERPLATE(EGUEB_SVG_SHAPE_DESCRIPTOR,
+ENESIM_OBJECT_INSTANCE_BOILERPLATE(EGUEB_SVG_TEXT_CONTENT_DESCRIPTOR,
 		Egueb_Svg_Element_Tspan, Egueb_Svg_Element_Tspan_Class,
 		egueb_svg_element_tspan);
 
 static void _egueb_svg_element_tspan_class_init(void *k)
 {
-	Egueb_Svg_Shape_Class *klass;
 	Egueb_Svg_Renderable_Class *r_klass;
 	Egueb_Dom_Element_Class *e_klass;
-
-	klass = EGUEB_SVG_SHAPE_CLASS(k);
-	klass->generate_geometry = _egueb_svg_element_tspan_generate_geometry;
 
 	r_klass = EGUEB_SVG_RENDERABLE_CLASS(k);
 	r_klass->bounds_get = _egueb_svg_element_tspan_bounds_get;
 	r_klass->renderer_get = _egueb_svg_element_tspan_renderer_get;
 	r_klass->painter_apply = _egueb_svg_element_tspan_painter_apply;
+	r_klass->process = _egueb_svg_element_tspan_process;
 
 	e_klass= EGUEB_DOM_ELEMENT_CLASS(k);
 	e_klass->tag_name_get = _egueb_svg_element_tspan_tag_name_get;
@@ -278,7 +290,9 @@ static void _egueb_svg_element_tspan_class_init(void *k)
 static void _egueb_svg_element_tspan_instance_init(void *o)
 {
 	Egueb_Svg_Element_Tspan *thiz;
+	Egueb_Svg_Length *zero;
 	Egueb_Dom_Node *n;
+	Egueb_Dom_List *def;
 	Enesim_Renderer *r;
 
 	thiz = EGUEB_SVG_ELEMENT_TSPAN(o);
@@ -290,18 +304,34 @@ static void _egueb_svg_element_tspan_instance_init(void *o)
 	/* Default values */
 
 	/* create the properties */
-	thiz->x = egueb_svg_attr_length_new(
-			egueb_dom_string_ref(EGUEB_SVG_X),
-			&EGUEB_SVG_LENGTH_0, EINA_TRUE,
+	/* create a default list with 0 as the value of the coordinate */
+	def = egueb_dom_list_new(egueb_svg_length_descriptor_get());
+	zero = calloc(1, sizeof(Egueb_Svg_Length));
+	*zero = EGUEB_SVG_LENGTH_0;
+	egueb_dom_list_item_append(def, zero);
+	thiz->x = egueb_svg_attr_length_list_new(
+			egueb_dom_string_ref(EGUEB_SVG_NAME_X),
+			egueb_dom_list_ref(def), EINA_TRUE,
 			EINA_FALSE, EINA_FALSE);
-	thiz->y = egueb_svg_attr_length_new(
-			egueb_dom_string_ref(EGUEB_SVG_Y),
-			&EGUEB_SVG_LENGTH_0, EINA_TRUE,
+	thiz->y = egueb_svg_attr_length_list_new(
+			egueb_dom_string_ref(EGUEB_SVG_NAME_Y),
+			egueb_dom_list_ref(def), EINA_TRUE,
 			EINA_FALSE, EINA_FALSE);
+	thiz->dx = egueb_svg_attr_length_list_new(
+			egueb_dom_string_ref(EGUEB_SVG_NAME_DX),
+			egueb_dom_list_ref(def), EINA_TRUE,
+			EINA_FALSE, EINA_FALSE);
+	thiz->dy = egueb_svg_attr_length_list_new(
+			egueb_dom_string_ref(EGUEB_SVG_NAME_DY),
+			egueb_dom_list_ref(def), EINA_TRUE,
+			EINA_FALSE, EINA_FALSE);
+	egueb_dom_list_unref(def);
 
 	n = EGUEB_DOM_NODE(o);
 	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->x), NULL);
 	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->y), NULL);
+	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->dx), NULL);
+	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->dy), NULL);
 
 	/* add the events */
 	egueb_dom_node_event_listener_add(n,
@@ -324,6 +354,8 @@ static void _egueb_svg_element_tspan_instance_deinit(void *o)
 	/* destroy the properties */
 	egueb_dom_node_unref(thiz->x);
 	egueb_dom_node_unref(thiz->y);
+	egueb_dom_node_unref(thiz->dx);
+	egueb_dom_node_unref(thiz->dy);
 }
 /*============================================================================*
  *                                 Global                                     *

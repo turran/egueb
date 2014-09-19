@@ -113,7 +113,7 @@ EAPI Egueb_Dom_Node * egueb_css_attr_style_new(void)
 	Egueb_Dom_Node *n;
 
 	n = ENESIM_OBJECT_INSTANCE_NEW(egueb_css_attr_style);
-	egueb_dom_attr_init(n, egueb_dom_string_ref(EGUEB_CSS_STYLE),
+	egueb_dom_attr_init(n, egueb_dom_string_ref(EGUEB_CSS_NAME_STYLE),
 			EINA_FALSE, EINA_FALSE, EINA_FALSE);
 	return n;
 }

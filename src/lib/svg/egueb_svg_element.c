@@ -452,31 +452,31 @@ static void _egueb_svg_element_instance_init(void *o)
 	thiz = EGUEB_SVG_ELEMENT(o);
 	/* create the properties */
 	thiz->id = egueb_dom_attr_string_new(
-			egueb_dom_string_ref(EGUEB_SVG_ID), NULL, EINA_FALSE,
+			egueb_dom_string_ref(EGUEB_SVG_NAME_ID), NULL, EINA_FALSE,
 			EINA_FALSE, EINA_FALSE);
 	thiz->klass = egueb_dom_attr_string_new(
-			egueb_dom_string_ref(EGUEB_SVG_CLASS), NULL, EINA_FALSE,
+			egueb_dom_string_ref(EGUEB_SVG_NAME_CLASS), NULL, EINA_FALSE,
 			EINA_FALSE, EINA_FALSE);
 	thiz->style = egueb_css_attr_style_new();
 	/* the presentation attributes */
 	thiz->clip_path = egueb_svg_attr_clip_path_new(
-			egueb_dom_string_ref(EGUEB_SVG_CLIP_PATH),
+			egueb_dom_string_ref(EGUEB_SVG_NAME_CLIP_PATH),
 			&EGUEB_SVG_CLIP_PATH_NONE, EINA_TRUE, EINA_TRUE,
 			EINA_TRUE);
 	thiz->color = egueb_svg_attr_color_new(
-			egueb_dom_string_ref(EGUEB_SVG_COLOR),
+			egueb_dom_string_ref(EGUEB_SVG_NAME_COLOR),
 			&EGUEB_SVG_COLOR_BLACK, EINA_TRUE, EINA_TRUE,
 			EINA_TRUE);
 	thiz->display = egueb_svg_attr_display_new(
-			egueb_dom_string_ref(EGUEB_SVG_DISPLAY),
+			egueb_dom_string_ref(EGUEB_SVG_NAME_DISPLAY),
 			EGUEB_SVG_DISPLAY_INLINE, EINA_TRUE, EINA_TRUE,
 			EINA_TRUE);
 	thiz->fill = egueb_svg_attr_paint_new(
-			egueb_dom_string_ref(EGUEB_SVG_FILL),
+			egueb_dom_string_ref(EGUEB_SVG_NAME_FILL),
 			&EGUEB_SVG_PAINT_BLACK,
 			EINA_TRUE, EINA_TRUE, EINA_TRUE);
 	thiz->fill_opacity = egueb_svg_attr_number_new(
-			egueb_dom_string_ref(EGUEB_SVG_FILL_OPACITY),
+			egueb_dom_string_ref(EGUEB_SVG_NAME_FILL_OPACITY),
 			1, EINA_TRUE, EINA_TRUE,
 			EINA_TRUE);
 	/* font related attributes */
@@ -492,7 +492,7 @@ static void _egueb_svg_element_instance_init(void *o)
 	thiz->font_weight = egueb_css_attr_font_weight_new(EINA_TRUE, EINA_TRUE, EINA_TRUE);
 
 	thiz->opacity = egueb_svg_attr_number_new(
-			egueb_dom_string_ref(EGUEB_SVG_OPACITY),
+			egueb_dom_string_ref(EGUEB_SVG_NAME_OPACITY),
 			1, EINA_TRUE, EINA_TRUE,
 			EINA_TRUE);
 	/* by default the user agent style sheet sets it to HIDDEN
@@ -501,45 +501,45 @@ static void _egueb_svg_element_instance_init(void *o)
 	 * to visible
 	 */
 	thiz->overflow = egueb_svg_attr_overflow_new(
-			egueb_dom_string_ref(EGUEB_SVG_OVERFLOW),
+			egueb_dom_string_ref(EGUEB_SVG_NAME_OVERFLOW),
 			EGUEB_SVG_OVERFLOW_HIDDEN, EINA_TRUE, EINA_TRUE,
 			EINA_TRUE);
 	thiz->stop_color = egueb_svg_attr_color_new(
-			egueb_dom_string_ref(EGUEB_SVG_STOP_COLOR),
+			egueb_dom_string_ref(EGUEB_SVG_NAME_STOP_COLOR),
 			&EGUEB_SVG_COLOR_BLACK, EINA_TRUE, EINA_TRUE,
 			EINA_TRUE);
 	thiz->stop_opacity = egueb_svg_attr_number_new(
-			egueb_dom_string_ref(EGUEB_SVG_STOP_OPACITY),
+			egueb_dom_string_ref(EGUEB_SVG_NAME_STOP_OPACITY),
 			1, EINA_TRUE, EINA_TRUE,
 			EINA_TRUE);
 	thiz->stroke = egueb_svg_attr_paint_new(
-			egueb_dom_string_ref(EGUEB_SVG_STROKE),
+			egueb_dom_string_ref(EGUEB_SVG_NAME_STROKE),
 			&EGUEB_SVG_PAINT_NONE,
 			EINA_TRUE, EINA_TRUE, EINA_TRUE);
 	thiz->stroke_dasharray = egueb_svg_attr_stroke_dasharray_new(
-			egueb_dom_string_ref(EGUEB_SVG_STROKE_DASHARRAY),
+			egueb_dom_string_ref(EGUEB_SVG_NAME_STROKE_DASHARRAY),
 			NULL, EINA_TRUE, EINA_TRUE, EINA_TRUE);
 	thiz->stroke_line_cap = egueb_svg_attr_stroke_line_cap_new(
-			egueb_dom_string_ref(EGUEB_SVG_STROKE_LINECAP),
+			egueb_dom_string_ref(EGUEB_SVG_NAME_STROKE_LINECAP),
 			EGUEB_SVG_STROKE_LINE_CAP_BUTT,
 			EINA_TRUE, EINA_TRUE, EINA_TRUE);
 	thiz->stroke_line_join = egueb_svg_attr_stroke_line_join_new(
-			egueb_dom_string_ref(EGUEB_SVG_STROKE_LINEJOIN),
+			egueb_dom_string_ref(EGUEB_SVG_NAME_STROKE_LINEJOIN),
 			EGUEB_SVG_STROKE_LINE_JOIN_MITER,
 			EINA_TRUE, EINA_TRUE, EINA_TRUE);
 	thiz->stroke_width = egueb_svg_attr_length_new(
-			egueb_dom_string_ref(EGUEB_SVG_STROKE_WIDTH),
+			egueb_dom_string_ref(EGUEB_SVG_NAME_STROKE_WIDTH),
 			&EGUEB_SVG_LENGTH_1, EINA_TRUE, EINA_TRUE, EINA_TRUE);
 	thiz->stroke_opacity = egueb_svg_attr_number_new(
-			egueb_dom_string_ref(EGUEB_SVG_STROKE_OPACITY),
+			egueb_dom_string_ref(EGUEB_SVG_NAME_STROKE_OPACITY),
 			1, EINA_TRUE, EINA_TRUE,
 			EINA_TRUE);
 	thiz->text_anchor = egueb_svg_attr_text_anchor_new(
-			egueb_dom_string_ref(EGUEB_SVG_TEXT_ANCHOR),
+			egueb_dom_string_ref(EGUEB_SVG_NAME_TEXT_ANCHOR),
 			EGUEB_SVG_TEXT_ANCHOR_START, EINA_TRUE, EINA_TRUE,
 			EINA_TRUE);
 	thiz->visibility = egueb_svg_attr_visibility_new(
-			egueb_dom_string_ref(EGUEB_SVG_VISIBILITY),
+			egueb_dom_string_ref(EGUEB_SVG_NAME_VISIBILITY),
 			EGUEB_SVG_VISIBILITY_VISIBLE, EINA_TRUE, EINA_TRUE,
 			EINA_TRUE);
 	/* event attributes */
