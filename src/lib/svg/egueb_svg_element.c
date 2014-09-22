@@ -489,7 +489,7 @@ static void _egueb_svg_element_instance_init(void *o)
 
 	thiz->font_style = egueb_css_attr_font_style_new(EINA_TRUE, EINA_TRUE, EINA_TRUE);
 	thiz->font_variant = egueb_css_attr_font_variant_new(EINA_TRUE, EINA_TRUE, EINA_TRUE);
-	thiz->font_weight = egueb_css_attr_font_weight_new(EINA_TRUE, EINA_TRUE, EINA_TRUE);
+	thiz->font_weight = egueb_css_font_weight_attr_new(EINA_TRUE, EINA_TRUE, EINA_TRUE);
 
 	thiz->opacity = egueb_svg_attr_number_new(
 			egueb_dom_string_ref(EGUEB_SVG_NAME_OPACITY),

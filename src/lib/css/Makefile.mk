@@ -8,7 +8,6 @@ src/lib/css/egueb_css_attr_font_family.h \
 src/lib/css/egueb_css_attr_font_size.h \
 src/lib/css/egueb_css_attr_font_style.h \
 src/lib/css/egueb_css_attr_font_variant.h \
-src/lib/css/egueb_css_attr_font_weight.h \
 src/lib/css/egueb_css_attr_style.h \
 src/lib/css/egueb_css_color.h \
 src/lib/css/egueb_css_element_style.h \
@@ -26,8 +25,7 @@ src/lib/css/egueb_css_value_font.h \
 src/lib/css/egueb_css_value_font_family.h \
 src/lib/css/egueb_css_value_font_size.h \
 src/lib/css/egueb_css_value_font_style.h \
-src/lib/css/egueb_css_value_font_variant.h \
-src/lib/css/egueb_css_value_font_weight.h
+src/lib/css/egueb_css_value_font_variant.h
 
 src_lib_css_libegueb_css_la_SOURCES = \
 src/lib/css/egueb_css_main.c \
@@ -36,7 +34,6 @@ src/lib/css/egueb_css_attr_font_family.c \
 src/lib/css/egueb_css_attr_font_size.c \
 src/lib/css/egueb_css_attr_font_style.c \
 src/lib/css/egueb_css_attr_font_variant.c \
-src/lib/css/egueb_css_attr_font_weight.c \
 src/lib/css/egueb_css_attr_style.c \
 src/lib/css/egueb_css_length.c \
 src/lib/css/egueb_css_color.c \
@@ -63,8 +60,7 @@ src/lib/css/egueb_css_value_font_family.c \
 src/lib/css/egueb_css_value_font_family_private.h \
 src/lib/css/egueb_css_value_font_size.c \
 src/lib/css/egueb_css_value_font_style.c \
-src/lib/css/egueb_css_value_font_variant.c \
-src/lib/css/egueb_css_value_font_weight.c
+src/lib/css/egueb_css_value_font_variant.c
 
 src_lib_css_libegueb_css_la_CPPFLAGS = \
 -I$(top_srcdir)/src/lib/css \

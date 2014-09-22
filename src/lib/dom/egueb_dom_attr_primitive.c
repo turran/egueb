@@ -55,7 +55,7 @@ static void _egueb_dom_attr_primitive_free(Egueb_Dom_Attr *p,
 	}
 }
 /*----------------------------------------------------------------------------*
- *                            Property interface                              *
+ *                           Attribute interface                              *
  *----------------------------------------------------------------------------*/
 static Eina_Bool _egueb_dom_attr_primitive_value_get(Egueb_Dom_Attr *p,
 		Egueb_Dom_Attr_Type type, Egueb_Dom_Value *value)
