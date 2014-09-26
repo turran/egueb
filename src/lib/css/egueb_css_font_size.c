@@ -17,10 +17,13 @@
  */
 #include "egueb_css_private.h"
 
+#include "egueb_css_main.h"
 #include "egueb_css_length.h"
 #include "egueb_css_percentage.h"
 #include "egueb_css_font_size.h"
 #include "egueb_css_font_size_private.h"
+#include "egueb_dom_attr_private.h"
+#include "egueb_dom_attr_primitive_private.h"
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
@@ -57,6 +60,16 @@ static Eina_Bool _egueb_css_font_size_relative_string_from(
 		return EINA_FALSE;
 	return EINA_TRUE;
 }
+/*----------------------------------------------------------------------------*
+ *                             Value interface                                *
+ *----------------------------------------------------------------------------*/
+EGUEB_DOM_VALUE_PRIMITIVE_SIMPLE_BOILERPLATE(egueb_css_font_size, Egueb_Css_Font_Size);
+/*----------------------------------------------------------------------------*
+ *                           Attribute interface                              *
+ *----------------------------------------------------------------------------*/
+EGUEB_DOM_ATTR_PRIMITIVE_BOILERPLATE(Egueb_Css_Font_Size,
+		Egueb_Svg_Font_Size_Attr, egueb_css_font_size_value,
+		egueb_css_font_size_attr)
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
@@ -88,7 +101,25 @@ void egueb_css_font_size_interpolate(Egueb_Css_Font_Size *v,
 {
 	ERR("Not implemented");
 }
+
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/
+EAPI const Egueb_Dom_Value_Descriptor * egueb_css_font_size_value_descriptor_get(void)
+{
+	return &_egueb_css_font_size_descriptor;
+}
+
+EAPI Egueb_Dom_Node * egueb_css_font_size_attr_new(
+		const Egueb_Css_Font_Size *def, Eina_Bool animatable,
+		Eina_Bool stylable, Eina_Bool inheritable)
+{
+	Egueb_Dom_Node *n;
+
+	n = ENESIM_OBJECT_INSTANCE_NEW(egueb_css_font_size_attr);
+	egueb_dom_attr_init(n, egueb_dom_string_ref(EGUEB_CSS_NAME_FONT_SIZE),
+			animatable, stylable, inheritable);
+	if (def) egueb_dom_attr_set(n, EGUEB_DOM_ATTR_TYPE_DEFAULT, def);
+	return n;
+}
 

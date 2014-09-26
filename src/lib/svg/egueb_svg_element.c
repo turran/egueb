@@ -484,11 +484,11 @@ static void _egueb_svg_element_instance_init(void *o)
 	/* font size */
 	font_size_def.type = EGUEB_CSS_FONT_SIZE_TYPE_ABSOLUTE;
 	font_size_def.value.absolute = EGUEB_CSS_FONT_SIZE_ABSOLUTE_MEDIUM;
-	thiz->font_size = egueb_css_attr_font_size_new(&font_size_def, EINA_TRUE, EINA_TRUE, EINA_TRUE);
+	thiz->font_size = egueb_css_font_size_attr_new(&font_size_def, EINA_TRUE, EINA_TRUE, EINA_TRUE);
 	egueb_dom_attr_set(thiz->font_size, EGUEB_DOM_ATTR_TYPE_DEFAULT, &font_size_def);
 
-	thiz->font_style = egueb_css_attr_font_style_new(EINA_TRUE, EINA_TRUE, EINA_TRUE);
-	thiz->font_variant = egueb_css_attr_font_variant_new(EINA_TRUE, EINA_TRUE, EINA_TRUE);
+	thiz->font_style = egueb_css_font_style_attr_new(EINA_TRUE, EINA_TRUE, EINA_TRUE);
+	thiz->font_variant = egueb_css_font_variant_attr_new(EINA_TRUE, EINA_TRUE, EINA_TRUE);
 	thiz->font_weight = egueb_css_font_weight_attr_new(EINA_TRUE, EINA_TRUE, EINA_TRUE);
 
 	thiz->opacity = egueb_svg_attr_number_new(

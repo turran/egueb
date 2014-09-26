@@ -31,4 +31,7 @@ void egueb_css_font_family_value_interpolate(Egueb_Css_Font_Family_Value *v,
 Eina_Bool egueb_css_font_family_string_from(Egueb_Dom_List *thiz, const char *attr_val);
 char * egueb_css_font_family_string_to(Egueb_Dom_List *thiz);
 
+const Egueb_Dom_Value_Descriptor *
+		egueb_css_value_font_family_value_descriptor_get(void);
+
 #endif

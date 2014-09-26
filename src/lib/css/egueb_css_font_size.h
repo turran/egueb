@@ -57,4 +57,10 @@ typedef struct _Egueb_Css_Font_Size
 	Egueb_Css_Font_Size_Value value;
 } Egueb_Css_Font_Size;
 
+EAPI const Egueb_Dom_Value_Descriptor * egueb_css_font_size_value_descriptor_get(void);
+
+EAPI Egueb_Dom_Node * egueb_css_font_size_attr_new(
+		const Egueb_Css_Font_Size *def, Eina_Bool animatable,
+		Eina_Bool stylable, Eina_Bool inheritable);
+
 #endif

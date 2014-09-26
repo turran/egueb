@@ -33,6 +33,12 @@ typedef struct _Egueb_Css_Font_Family_Value {
 	Egueb_Dom_String *family;
 } Egueb_Css_Font_Family_Value;
 
+EAPI Egueb_Dom_Node * egueb_css_font_family_attr_new(
+		Eina_Bool animatable, Eina_Bool stylable,
+		Eina_Bool inheritable);
+
 EAPI Egueb_Dom_List * egueb_css_font_family_new(void);
+EAPI const Egueb_Dom_Value_Descriptor *
+		egueb_css_font_family_value_descriptor_get(void);
 
 #endif
