@@ -480,7 +480,7 @@ static void _egueb_svg_element_instance_init(void *o)
 			1, EINA_TRUE, EINA_TRUE,
 			EINA_TRUE);
 	/* font related attributes */
-	thiz->font_family = egueb_css_attr_font_family_new(EINA_TRUE, EINA_TRUE, EINA_TRUE);
+	thiz->font_family = egueb_css_font_family_attr_new(EINA_TRUE, EINA_TRUE, EINA_TRUE);
 	/* font size */
 	font_size_def.type = EGUEB_CSS_FONT_SIZE_TYPE_ABSOLUTE;
 	font_size_def.value.absolute = EGUEB_CSS_FONT_SIZE_ABSOLUTE_MEDIUM;
