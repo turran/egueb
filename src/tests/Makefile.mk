@@ -9,7 +9,7 @@ src/tests/egueb_dom_mylib.c \
 src/tests/egueb_dom_mylib.h
 
 src_tests_libmydom_la_CPPFLAGS = \
--I$(top_srcdir)/src/lib/dom \
+$(src_lib_dom_libegueb_dom_la_IFLAGS) \
 -I$(top_srcdir)/src/lib/smil \
 -I. \
 @EGUEB_DOM_CFLAGS@

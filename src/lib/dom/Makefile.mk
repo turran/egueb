@@ -1,17 +1,9 @@
-
 lib_LTLIBRARIES += src/lib/dom/libegueb_dom.la
 
 installed_domheadersdir = $(pkgincludedir)-@VMAJ@/dom
 dist_installed_domheaders_DATA = \
 src/lib/dom/Egueb_Dom.h \
 src/lib/dom/egueb_dom_attr.h \
-src/lib/dom/egueb_dom_attr_boolean.h \
-src/lib/dom/egueb_dom_attr_double_list.h \
-src/lib/dom/egueb_dom_attr_enum.h \
-src/lib/dom/egueb_dom_attr_external.h \
-src/lib/dom/egueb_dom_attr_int.h \
-src/lib/dom/egueb_dom_attr_string.h \
-src/lib/dom/egueb_dom_attr_string_list.h \
 src/lib/dom/egueb_dom_build.h \
 src/lib/dom/egueb_dom_cdata_section.h \
 src/lib/dom/egueb_dom_character_data.h \
@@ -19,28 +11,8 @@ src/lib/dom/egueb_dom_document.h \
 src/lib/dom/egueb_dom_document_external.h \
 src/lib/dom/egueb_dom_document_fragment.h \
 src/lib/dom/egueb_dom_element.h \
-src/lib/dom/egueb_dom_element_external.h \
-src/lib/dom/egueb_dom_element_script.h \
 src/lib/dom/egueb_dom_event.h \
-src/lib/dom/egueb_dom_event_external.h \
-src/lib/dom/egueb_dom_event_focus.h \
-src/lib/dom/egueb_dom_event_io.h \
-src/lib/dom/egueb_dom_event_keyboard.h \
-src/lib/dom/egueb_dom_event_mouse.h \
-src/lib/dom/egueb_dom_event_mutation.h \
-src/lib/dom/egueb_dom_event_multimedia.h \
-src/lib/dom/egueb_dom_event_navigation.h \
-src/lib/dom/egueb_dom_event_process.h \
-src/lib/dom/egueb_dom_event_script.h \
-src/lib/dom/egueb_dom_event_ui.h \
 src/lib/dom/egueb_dom_feature.h \
-src/lib/dom/egueb_dom_feature_io.h \
-src/lib/dom/egueb_dom_feature_multimedia.h \
-src/lib/dom/egueb_dom_feature_navigation.h \
-src/lib/dom/egueb_dom_feature_render.h \
-src/lib/dom/egueb_dom_feature_ui.h \
-src/lib/dom/egueb_dom_feature_window.h \
-src/lib/dom/egueb_dom_feature_script.h \
 src/lib/dom/egueb_dom_implementation.h \
 src/lib/dom/egueb_dom_implementation_source.h \
 src/lib/dom/egueb_dom_input.h \
@@ -58,31 +30,12 @@ src/lib/dom/egueb_dom_text.h \
 src/lib/dom/egueb_dom_uri.h \
 src/lib/dom/egueb_dom_utils.h \
 src/lib/dom/egueb_dom_value.h \
-src/lib/dom/egueb_dom_value_dom_string.h \
-src/lib/dom/egueb_dom_value_boolean.h \
-src/lib/dom/egueb_dom_value_double.h \
-src/lib/dom/egueb_dom_value_double_list.h \
-src/lib/dom/egueb_dom_value_int.h \
-src/lib/dom/egueb_dom_value_list.h \
 src/lib/dom/egueb_dom_video_provider.h \
 src/lib/dom/egueb_dom_window.h
 
 src_lib_dom_libegueb_dom_la_SOURCES = \
 src/lib/dom/egueb_dom_attr.c \
 src/lib/dom/egueb_dom_attr_private.h \
-src/lib/dom/egueb_dom_attr_basic.c \
-src/lib/dom/egueb_dom_attr_basic_private.h \
-src/lib/dom/egueb_dom_attr_boolean.c \
-src/lib/dom/egueb_dom_attr_double_list.c \
-src/lib/dom/egueb_dom_attr_enum.c \
-src/lib/dom/egueb_dom_attr_external.c \
-src/lib/dom/egueb_dom_attr_int.c \
-src/lib/dom/egueb_dom_attr_primitive.c \
-src/lib/dom/egueb_dom_attr_primitive_private.h \
-src/lib/dom/egueb_dom_attr_string.c \
-src/lib/dom/egueb_dom_attr_string_list.c \
-src/lib/dom/egueb_dom_attr_object.c \
-src/lib/dom/egueb_dom_attr_object_private.h \
 src/lib/dom/egueb_dom_cdata_section.c \
 src/lib/dom/egueb_dom_character_data.c \
 src/lib/dom/egueb_dom_character_data_private.h \
@@ -92,35 +45,10 @@ src/lib/dom/egueb_dom_document_external.c \
 src/lib/dom/egueb_dom_document_fragment.c \
 src/lib/dom/egueb_dom_element.c \
 src/lib/dom/egueb_dom_element_private.h \
-src/lib/dom/egueb_dom_element_external.c \
-src/lib/dom/egueb_dom_element_script.c \
 src/lib/dom/egueb_dom_event.c \
 src/lib/dom/egueb_dom_event_private.h \
-src/lib/dom/egueb_dom_event_external.c \
-src/lib/dom/egueb_dom_event_focus.c \
-src/lib/dom/egueb_dom_event_io.c \
-src/lib/dom/egueb_dom_event_keyboard.c \
-src/lib/dom/egueb_dom_event_keyboard_private.h \
-src/lib/dom/egueb_dom_event_mouse.c \
-src/lib/dom/egueb_dom_event_mouse_private.h \
-src/lib/dom/egueb_dom_event_multimedia.c \
-src/lib/dom/egueb_dom_event_mutation.c \
-src/lib/dom/egueb_dom_event_mutation_private.h \
-src/lib/dom/egueb_dom_event_navigation.c \
-src/lib/dom/egueb_dom_event_process.c \
-src/lib/dom/egueb_dom_event_process_private.h \
-src/lib/dom/egueb_dom_event_script.c \
-src/lib/dom/egueb_dom_event_ui.c \
-src/lib/dom/egueb_dom_event_ui_private.h \
 src/lib/dom/egueb_dom_feature.c \
 src/lib/dom/egueb_dom_feature_private.h \
-src/lib/dom/egueb_dom_feature_io.c \
-src/lib/dom/egueb_dom_feature_multimedia.c \
-src/lib/dom/egueb_dom_feature_navigation.c \
-src/lib/dom/egueb_dom_feature_render.c \
-src/lib/dom/egueb_dom_feature_script.c \
-src/lib/dom/egueb_dom_feature_ui.c \
-src/lib/dom/egueb_dom_feature_window.c \
 src/lib/dom/egueb_dom_implementation.c \
 src/lib/dom/egueb_dom_implementation_source.c \
 src/lib/dom/egueb_dom_implementation_source_private.h \
@@ -149,17 +77,19 @@ src/lib/dom/egueb_dom_uri.c \
 src/lib/dom/egueb_dom_utils.c \
 src/lib/dom/egueb_dom_value.c \
 src/lib/dom/egueb_dom_value_private.h \
-src/lib/dom/egueb_dom_value_dom_string.c \
-src/lib/dom/egueb_dom_value_boolean.c \
-src/lib/dom/egueb_dom_value_double.c \
-src/lib/dom/egueb_dom_value_double_list.c \
-src/lib/dom/egueb_dom_value_int.c \
-src/lib/dom/egueb_dom_value_list.c \
 src/lib/dom/egueb_dom_video_provider.c \
 src/lib/dom/egueb_dom_window.c
 
-src_lib_dom_libegueb_dom_la_CPPFLAGS = \
+src_lib_dom_libegueb_dom_la_IFLAGS = \
 -I$(top_srcdir)/src/lib/dom \
+-I$(top_srcdir)/src/lib/dom/attr \
+-I$(top_srcdir)/src/lib/dom/element \
+-I$(top_srcdir)/src/lib/dom/event \
+-I$(top_srcdir)/src/lib/dom/feature \
+-I$(top_srcdir)/src/lib/dom/value
+
+src_lib_dom_libegueb_dom_la_CPPFLAGS = \
+$(src_lib_dom_libegueb_dom_la_IFLAGS) \
 -DPACKAGE_LIB_DIR=\"$(libdir)\" \
 -DEGUEB_DOM_BUILD \
 @EGUEB_DOM_CFLAGS@

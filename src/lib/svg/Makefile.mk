@@ -221,7 +221,7 @@ src/lib/svg/egueb_svg_zoom_and_pan_private.h
 src_lib_svg_libegueb_svg_la_CPPFLAGS = \
 -I$(top_srcdir)/src/lib/css \
 -I$(top_srcdir)/src/lib/css/engine \
--I$(top_srcdir)/src/lib/dom \
+$(src_lib_dom_libegueb_dom_la_IFLAGS) \
 -I$(top_srcdir)/src/lib/smil \
 -I$(top_srcdir)/src/lib/svg \
 -I$(top_srcdir)/src/lib/svg/types \

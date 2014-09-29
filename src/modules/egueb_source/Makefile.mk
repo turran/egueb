@@ -8,7 +8,7 @@ src/modules/egueb_source/egueb_source_svg.c
 
 src_modules_egueb_source_egueb_source_svg_la_CPPFLAGS = \
 -I$(top_srcdir)/src/lib/css \
--I$(top_srcdir)/src/lib/dom \
+$(src_lib_dom_libegueb_dom_la_IFLAGS) \
 -I$(top_srcdir)/src/lib/svg \
 -DEGUEB_SVG_BUILD \
 @EGUEB_SVG_CFLAGS@

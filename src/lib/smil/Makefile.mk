@@ -86,7 +86,7 @@ src/lib/smil/egueb_smil_value_key_splines_private.h
 
 src_lib_smil_libegueb_smil_la_CPPFLAGS = \
 -I$(top_srcdir)/src/lib/smil \
--I$(top_srcdir)/src/lib/dom \
+$(src_lib_dom_libegueb_dom_la_IFLAGS) \
 -DEGUEB_SMIL_BUILD \
 @EGUEB_SMIL_CFLAGS@
 

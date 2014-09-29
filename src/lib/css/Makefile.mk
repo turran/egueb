@@ -43,7 +43,7 @@ src/lib/css/egueb_css_value_color.c
 src_lib_css_libegueb_css_la_CPPFLAGS = \
 -I$(top_srcdir)/src/lib/css \
 -I$(top_srcdir)/src/lib/css/engine \
--I$(top_srcdir)/src/lib/dom \
+$(src_lib_dom_libegueb_dom_la_IFLAGS) \
 -DEGUEB_CSS_BUILD \
 @EGUEB_CSS_CFLAGS@
 

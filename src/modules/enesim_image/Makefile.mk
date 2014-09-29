@@ -8,7 +8,7 @@ src/modules/enesim_image/enesim_image_dom.c
 
 src_modules_enesim_image_enesim_image_dom_la_CPPFLAGS = \
 -I$(top_srcdir)/src/lib/css \
--I$(top_srcdir)/src/lib/dom \
+$(src_lib_dom_libegueb_dom_la_IFLAGS) \
 -I$(top_srcdir)/src/lib/dom \
 @EGUEB_DOM_CFLAGS@
 

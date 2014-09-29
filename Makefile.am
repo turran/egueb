@@ -38,6 +38,11 @@ GENERATED_FILES =
 if BUILD_EGUEB_DOM
 include src/lib/dom/Makefile.mk
 include src/lib/dom/parser/Makefile.mk
+include src/lib/dom/attr/Makefile.mk
+include src/lib/dom/element/Makefile.mk
+include src/lib/dom/event/Makefile.mk
+include src/lib/dom/feature/Makefile.mk
+include src/lib/dom/value/Makefile.mk
 endif
 
 if BUILD_EGUEB_CSS
