@@ -19,19 +19,6 @@
 #ifndef _EGUEB_CSS_FONT_FAMILY_PRIVATE_H_
 #define _EGUEB_CSS_FONT_FAMILY_PRIVATE_H_
 
-Eina_Bool egueb_css_font_family_value_string_from(Egueb_Css_Font_Family_Value *thiz, const char *attr_val);
-char * egueb_css_font_family_value_string_to(Egueb_Css_Font_Family_Value *thiz);
-void egueb_css_font_family_value_reset(Egueb_Css_Font_Family_Value *thiz);
-void egueb_css_font_family_value_copy(Egueb_Css_Font_Family_Value *src, Egueb_Css_Font_Family_Value *dst, Eina_Bool content);
-void egueb_css_font_family_value_interpolate(Egueb_Css_Font_Family_Value *v,
-		Egueb_Css_Font_Family_Value *a, Egueb_Css_Font_Family_Value *b,
-		double m, Egueb_Dom_Value *add, Egueb_Dom_Value *acc, int mul);
-
-
 Eina_Bool egueb_css_font_family_string_from(Egueb_Dom_List *thiz, const char *attr_val);
-char * egueb_css_font_family_string_to(Egueb_Dom_List *thiz);
-
-const Egueb_Dom_Value_Descriptor *
-		egueb_css_value_font_family_value_descriptor_get(void);
 
 #endif

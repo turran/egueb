@@ -19,8 +19,10 @@
 
 #include "egueb_css_main.h"
 #include "egueb_css_font_family.h"
+
 #include "egueb_dom_attr_private.h"
 #include "egueb_dom_attr_object_private.h"
+#include "egueb_css_font_family_private.h"
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
@@ -130,11 +132,6 @@ static void _egueb_css_font_family_string_from_cb(const char *attr, void *data)
 		free(value);
 }
 
-static Eina_Bool egueb_css_font_family_string_from(Egueb_Dom_List *thiz, const char *attr_val)
-{
-	return egueb_dom_list_get(attr_val, ',', _egueb_css_font_family_string_from_cb, thiz);
-}
-
 static char * egueb_css_font_family_string_to(Egueb_Dom_List *thiz)
 {
 	ERR("Not implemented");
@@ -151,6 +148,11 @@ EGUEB_DOM_ATTR_OBJECT_BOILERPLATE(Egueb_Css_Font_Family_Attr,
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
+Eina_Bool egueb_css_font_family_string_from(Egueb_Dom_List *thiz, const char *attr_val)
+{
+	return egueb_dom_list_get(attr_val, ',', _egueb_css_font_family_string_from_cb, thiz);
+}
+
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/
