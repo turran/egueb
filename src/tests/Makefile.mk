@@ -10,7 +10,7 @@ src/tests/egueb_dom_mylib.h
 
 src_tests_libmydom_la_CPPFLAGS = \
 $(src_lib_dom_libegueb_dom_la_IFLAGS) \
--I$(top_srcdir)/src/lib/smil \
+$(src_lib_smil_libegueb_smil_la_IFLAGS) \
 -I. \
 @EGUEB_DOM_CFLAGS@
 

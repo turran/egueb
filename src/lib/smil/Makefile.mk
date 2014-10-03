@@ -35,22 +35,6 @@ src/lib/smil/egueb_smil_animation_private.h \
 src/lib/smil/egueb_smil_animate.c \
 src/lib/smil/egueb_smil_animate_base.c \
 src/lib/smil/egueb_smil_animate_base_private.h \
-src/lib/smil/egueb_smil_attr_accumulate.c \
-src/lib/smil/egueb_smil_attr_accumulate_private.h \
-src/lib/smil/egueb_smil_attr_additive.c \
-src/lib/smil/egueb_smil_attr_additive_private.h \
-src/lib/smil/egueb_smil_attr_calc_mode.c \
-src/lib/smil/egueb_smil_attr_calc_mode_private.h \
-src/lib/smil/egueb_smil_attr_duration.c \
-src/lib/smil/egueb_smil_attr_duration_private.h \
-src/lib/smil/egueb_smil_attr_fill.c \
-src/lib/smil/egueb_smil_attr_fill_private.h \
-src/lib/smil/egueb_smil_attr_key_splines.c \
-src/lib/smil/egueb_smil_attr_key_splines_private.h \
-src/lib/smil/egueb_smil_attr_repeat_count.c \
-src/lib/smil/egueb_smil_attr_repeat_count_private.h \
-src/lib/smil/egueb_smil_attr_timing_list.c \
-src/lib/smil/egueb_smil_attr_timing_list_private.h \
 src/lib/smil/egueb_smil_calc_mode.c \
 src/lib/smil/egueb_smil_calc_mode_private.h \
 src/lib/smil/egueb_smil_clock.c \
@@ -72,20 +56,15 @@ src/lib/smil/egueb_smil_signal_discrete.c \
 src/lib/smil/egueb_smil_timeline.c \
 src/lib/smil/egueb_smil_timeline_private.h \
 src/lib/smil/egueb_smil_timing.c \
-src/lib/smil/egueb_smil_timing_list.c \
-src/lib/smil/egueb_smil_value_accumulate.c \
-src/lib/smil/egueb_smil_value_accumulate_private.h \
-src/lib/smil/egueb_smil_value_attribute_type.c \
-src/lib/smil/egueb_smil_value_attribute_type_private.h \
-src/lib/smil/egueb_smil_value_additive.c \
-src/lib/smil/egueb_smil_value_additive_private.h \
-src/lib/smil/egueb_smil_value_key_spline.c \
-src/lib/smil/egueb_smil_value_key_spline_private.h \
-src/lib/smil/egueb_smil_value_key_splines.c \
-src/lib/smil/egueb_smil_value_key_splines_private.h
+src/lib/smil/egueb_smil_timing_list.c
+
+src_lib_smil_libegueb_smil_la_IFLAGS = \
+-I$(top_srcdir)/src/lib/smil \
+-I$(top_srcdir)/src/lib/smil/value \
+-I$(top_srcdir)/src/lib/smil/attr
 
 src_lib_smil_libegueb_smil_la_CPPFLAGS = \
--I$(top_srcdir)/src/lib/smil \
+$(src_lib_smil_libegueb_smil_la_IFLAGS) \
 $(src_lib_dom_libegueb_dom_la_IFLAGS) \
 -DEGUEB_SMIL_BUILD \
 @EGUEB_SMIL_CFLAGS@

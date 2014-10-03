@@ -47,18 +47,22 @@ endif
 
 if BUILD_EGUEB_CSS
 include src/lib/css/Makefile.mk
+include src/lib/css/attr/Makefile.mk
+include src/lib/css/value/Makefile.mk
 endif
 
 
 if BUILD_EGUEB_SMIL
 include src/lib/smil/Makefile.mk
+include src/lib/smil/attr/Makefile.mk
+include src/lib/smil/value/Makefile.mk
 endif
 
 if BUILD_EGUEB_SVG
 include src/lib/svg/Makefile.mk
-# include src/lib/svg/elements/Makefile.mk
-# include src/lib/svg/types/Makefile.mk
-# include src/lib/svg/video_providers/Makefile.mk
+include src/lib/svg/attr/Makefile.mk
+include src/lib/svg/element/Makefile.mk
+include src/lib/svg/value/Makefile.mk
 endif
 
 ### Modules
