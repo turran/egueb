@@ -283,6 +283,24 @@ static void _egueb_svg_element_text_bounds_get(Egueb_Svg_Renderable *r,
 #endif
 }
 
+static void _egueb_svg_element_text_painter_apply(Egueb_Svg_Renderable *r,
+		Egueb_Svg_Painter *painter)
+{
+	Egueb_Svg_Element_Text *thiz;
+	Egueb_Dom_Node *n;
+
+	thiz = EGUEB_SVG_ELEMENT_TEXT(r);
+	n = EGUEB_DOM_NODE(r);
+	/* In this moment the painter has done its own setup so we do know
+	 * the different painter properties. Is time to setup the text
+	 * renderers
+	 */
+	egueb_dom_node_children_foreach(n,
+		_egueb_svg_element_text_children_process_cb,
+		thiz);
+	thiz->renderable_tree_changed = EINA_FALSE;
+}
+
 static Eina_Bool _egueb_svg_element_text_process(Egueb_Svg_Renderable *r)
 {
 	Egueb_Svg_Element_Text *thiz;
@@ -344,12 +362,10 @@ static Eina_Bool _egueb_svg_element_text_process(Egueb_Svg_Renderable *r)
 	{
 		enesim_renderer_compound_layer_clear(thiz->r);
 	}
-	egueb_dom_node_children_foreach(n,
-		_egueb_svg_element_text_children_process_cb,
-		thiz);
-	thiz->renderable_tree_changed = EINA_FALSE;
 	return EINA_TRUE;
 }
+
+
 /*----------------------------------------------------------------------------*
  *                              Element interface                             *
  *----------------------------------------------------------------------------*/
@@ -374,6 +390,7 @@ static void _egueb_svg_element_text_class_init(void *k)
 	r_klass->bounds_get = _egueb_svg_element_text_bounds_get;
 	r_klass->renderer_get = _egueb_svg_element_text_renderer_get;
 	r_klass->process = _egueb_svg_element_text_process;
+	r_klass->painter_apply = _egueb_svg_element_text_painter_apply;
 
 	e_klass= EGUEB_DOM_ELEMENT_CLASS(k);
 	e_klass->tag_name_get = _egueb_svg_element_text_tag_name_get;
