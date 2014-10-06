@@ -18,21 +18,18 @@
 #include "egueb_css_private.h"
 #include "egueb_css_main.h"
 #include "egueb_css_font_weight.h"
-#include "egueb_css_font_weight_private.h"
+
+#include "egueb_css_value_font_weight.h"
 #include "egueb_dom_attr_private.h"
 #include "egueb_dom_attr_basic_private.h"
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
 /*----------------------------------------------------------------------------*
- *                             Value interface                                *
- *----------------------------------------------------------------------------*/
-EGUEB_DOM_VALUE_ENUM_BOILERPLATE(egueb_css_font_weight, Egueb_Css_Font_Weight);
-/*----------------------------------------------------------------------------*
  *                           Attribute interface                              *
  *----------------------------------------------------------------------------*/
 EGUEB_DOM_ATTR_BASIC_BOILERPLATE(Egueb_Css_Font_Weight,
-		Egueb_Css_Font_Weight_Attr, egueb_css_font_weight_value,
+		Egueb_Css_Font_Weight_Attr, egueb_css_value_font_weight,
 		egueb_css_font_weight_attr)
 /*============================================================================*
  *                                 Global                                     *
@@ -135,8 +132,4 @@ EAPI Egueb_Dom_Node * egueb_css_font_weight_attr_new(
 	return n;
 }
 
-EAPI const Egueb_Dom_Value_Descriptor *
-		egueb_css_font_weight_value_descriptor_get(void)
-{
-	return &_egueb_css_font_weight_descriptor;
-}
+
