@@ -70,6 +70,10 @@
 #include "egueb_css_font.h"
 /* values */
 #include "egueb_css_value_color.h"
+#include "egueb_css_value_font_family.h"
+#include "egueb_css_value_font_size.h"
+#include "egueb_css_value_font_style.h"
+#include "egueb_css_value_font_weight.h"
 /* attributes */
 #include "egueb_css_attr_style.h"
 /* elements */
