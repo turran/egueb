@@ -19,17 +19,47 @@
 
 #include "egueb_css_main.h"
 #include "egueb_css_font_family.h"
+#include "egueb_css_value_font_family.h"
 
 #include "egueb_dom_attr_private.h"
 #include "egueb_dom_attr_object_private.h"
 #include "egueb_css_font_family_private.h"
+#include "egueb_css_value_font_family_private.h"
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
 /*----------------------------------------------------------------------------*
- *                             Value interface                                *
+ *                           Attribute interface                              *
  *----------------------------------------------------------------------------*/
-static Eina_Bool egueb_css_font_family_value_string_from(
+EGUEB_DOM_ATTR_OBJECT_BOILERPLATE(Egueb_Css_Font_Family_Attr,
+		egueb_css_value_font_family, egueb_css_font_family_attr)
+
+static void _egueb_css_font_family_string_from_cb(const char *attr, void *data)
+{
+	Egueb_Dom_List *list = data;
+	Egueb_Css_Font_Family_Value *value;
+
+	value = calloc(1, sizeof(Egueb_Css_Font_Family_Value));
+	if (egueb_css_font_family_value_string_from(value, attr))
+		egueb_dom_list_item_append(list, value);
+	else
+		free(value);
+}
+/*============================================================================*
+ *                                 Global                                     *
+ *============================================================================*/
+Eina_Bool egueb_css_font_family_string_from(Egueb_Dom_List *thiz, const char *attr_val)
+{
+	return egueb_dom_list_get(attr_val, ',', _egueb_css_font_family_string_from_cb, thiz);
+}
+
+char * egueb_css_font_family_string_to(Egueb_Dom_List *thiz)
+{
+	ERR("Not implemented");
+	return NULL;
+}
+
+Eina_Bool egueb_css_font_family_value_string_from(
 		Egueb_Css_Font_Family_Value *thiz, const char *attr_val)
 {
 	EGUEB_DOM_SPACE_SKIP(attr_val);
@@ -79,19 +109,19 @@ static Eina_Bool egueb_css_font_family_value_string_from(
 	return EINA_TRUE;
 }
 
-static char * egueb_css_font_family_value_string_to(Egueb_Css_Font_Family_Value *thiz)
+char * egueb_css_font_family_value_string_to(Egueb_Css_Font_Family_Value *thiz)
 {
 	ERR("Not implemented");
 	return NULL;
 }
 
-static void egueb_css_font_family_value_reset(Egueb_Css_Font_Family_Value *thiz)
+void egueb_css_font_family_value_reset(Egueb_Css_Font_Family_Value *thiz)
 {
 	egueb_dom_string_unref(thiz->family);
 	thiz->family = NULL;
 }
 
-static void egueb_css_font_family_value_copy(Egueb_Css_Font_Family_Value *src,
+void egueb_css_font_family_value_copy(Egueb_Css_Font_Family_Value *src,
 		Egueb_Css_Font_Family_Value *dst, Eina_Bool content)
 {
 	dst->type = src->type;
@@ -101,56 +131,11 @@ static void egueb_css_font_family_value_copy(Egueb_Css_Font_Family_Value *src,
 		dst->family = egueb_dom_string_ref(src->family);
 }
 
-static void egueb_css_font_family_value_interpolate(Egueb_Css_Font_Family_Value *v,
+void egueb_css_font_family_value_interpolate(Egueb_Css_Font_Family_Value *v,
 		Egueb_Css_Font_Family_Value *a, Egueb_Css_Font_Family_Value *b,
 		double m, Egueb_Dom_Value *add, Egueb_Dom_Value *acc, int mul)
 {
 	ERR("Not implemented");
-}
-
-EGUEB_DOM_VALUE_PRIMITIVE_BOILERPLATE(egueb_css_font_family_value,
-		Egueb_Css_Font_Family_Value);
-
-static const Egueb_Dom_Value_Descriptor *
-		egueb_css_font_family_value_value_descriptor_get(void)
-{
-	return &_egueb_css_font_family_value_descriptor;
-}
-/*----------------------------------------------------------------------------*
- *                             Value interface                                *
- *----------------------------------------------------------------------------*/
-
-static void _egueb_css_font_family_string_from_cb(const char *attr, void *data)
-{
-	Egueb_Dom_List *list = data;
-	Egueb_Css_Font_Family_Value *value;
-
-	value = calloc(1, sizeof(Egueb_Css_Font_Family_Value));
-	if (egueb_css_font_family_value_string_from(value, attr))
-		egueb_dom_list_item_append(list, value);
-	else
-		free(value);
-}
-
-static char * egueb_css_font_family_string_to(Egueb_Dom_List *thiz)
-{
-	ERR("Not implemented");
-	return NULL;
-}
-
-EGUEB_DOM_VALUE_LIST_BOILERPLATE(egueb_css_font_family,
-		&_egueb_css_font_family_descriptor);
-/*----------------------------------------------------------------------------*
- *                           Attribute interface                              *
- *----------------------------------------------------------------------------*/
-EGUEB_DOM_ATTR_OBJECT_BOILERPLATE(Egueb_Css_Font_Family_Attr,
-		egueb_css_font_family_value, egueb_css_font_family_attr)
-/*============================================================================*
- *                                 Global                                     *
- *============================================================================*/
-Eina_Bool egueb_css_font_family_string_from(Egueb_Dom_List *thiz, const char *attr_val)
-{
-	return egueb_dom_list_get(attr_val, ',', _egueb_css_font_family_string_from_cb, thiz);
 }
 
 /*============================================================================*
@@ -171,13 +156,8 @@ EAPI Egueb_Dom_Node * egueb_css_font_family_attr_new(
 EAPI Egueb_Dom_List * egueb_css_font_family_new(void)
 {
 	Egueb_Dom_List *ret;
-	ret = egueb_dom_list_new(egueb_css_font_family_value_value_descriptor_get());
+	ret = egueb_dom_list_new(egueb_css_value_font_family_value_descriptor_get());
 	return ret;
 }
 
-EAPI const Egueb_Dom_Value_Descriptor *
-		egueb_css_font_family_value_descriptor_get(void)
-{
-	return &_egueb_css_font_family_descriptor;
-}
 
