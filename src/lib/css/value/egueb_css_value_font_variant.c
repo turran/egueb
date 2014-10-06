@@ -16,63 +16,22 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 #include "egueb_css_private.h"
-#include "egueb_css_main.h"
 #include "egueb_css_font_variant.h"
 #include "egueb_css_value_font_variant.h"
 
 #include "egueb_css_font_variant_private.h"
-#include "egueb_dom_attr_basic_private.h"
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
 /*----------------------------------------------------------------------------*
- *                           Attribute interface                              *
+ *                             Value interface                                *
  *----------------------------------------------------------------------------*/
-EGUEB_DOM_ATTR_BASIC_BOILERPLATE(Egueb_Css_Font_Variant,
-		Egueb_Css_Font_Variant_Attr, egueb_css_value_font_variant,
-		egueb_css_font_variant_attr)
-/*============================================================================*
- *                                 Global                                     *
- *============================================================================*/
-Eina_Bool egueb_css_font_variant_string_from(Egueb_Css_Font_Variant *thiz,
-		const char *str)
-{
-	Eina_Bool ret = EINA_TRUE;
-
-	if (!strcmp(str, "normal"))
-		*thiz = EGUEB_CSS_FONT_VARIANT_NORMAL;
-	else if (!strcmp(str, "small-caps"))
-		*thiz = EGUEB_CSS_FONT_VARIANT_SMALL_CAPS;
-	else
-		return EINA_FALSE;
-	return ret;
-}
-
-char * egueb_css_font_variant_string_to(Egueb_Css_Font_Variant thiz)
-{
-	switch (thiz)
-	{
-		case EGUEB_CSS_FONT_VARIANT_NORMAL:
-		return strdup("normal");
-
-		case EGUEB_CSS_FONT_VARIANT_SMALL_CAPS:
-		return strdup("small-caps");
-
-		default:
-		return NULL;
-	}
-}
+EGUEB_DOM_VALUE_ENUM_BOILERPLATE(egueb_css_font_variant, Egueb_Css_Font_Variant);
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/
-EAPI Egueb_Dom_Node * egueb_css_font_variant_attr_new(
-		Eina_Bool animatable, Eina_Bool stylable,
-		Eina_Bool inheritable)
+EAPI const Egueb_Dom_Value_Descriptor *
+		egueb_css_value_font_variant_descriptor_get(void)
 {
-	Egueb_Dom_Node *n;
-
-	n = ENESIM_OBJECT_INSTANCE_NEW(egueb_css_font_variant_attr);
-	egueb_dom_attr_init(n, egueb_dom_string_ref(EGUEB_CSS_NAME_FONT_VARIANT),
-			animatable, stylable, inheritable);
-	return n;
+	return &_egueb_css_font_variant_descriptor;
 }
