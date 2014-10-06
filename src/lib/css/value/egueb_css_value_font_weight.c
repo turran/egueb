@@ -17,8 +17,9 @@
  */
 #include "egueb_css_private.h"
 #include "egueb_css_font_weight.h"
-#include "egueb_css_font_weight_private.h"
 #include "egueb_css_value_font_weight.h"
+
+#include "egueb_css_font_weight_private.h"
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
