@@ -1,5 +1,6 @@
 Refactor
 ========
++ Remove the value function prefix on the macro for attributes. Pass directly the value
 + In case we have a tree like:
   A
   +--- A1
