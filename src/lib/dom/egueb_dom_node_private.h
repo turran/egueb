@@ -30,7 +30,14 @@ struct _Egueb_Dom_Node
 	EINA_INLIST;
 	Egueb_Dom_Node *parent;
 	Eina_Inlist *children;
+
+	/* some attributes */
 	Egueb_Dom_Node *owner_document;
+
+	/* namespace handling */
+	Egueb_Dom_String *namespace_uri;
+	Egueb_Dom_String *prefix;
+	Eina_Hash *namespaces;
 
 	/* event related data */
 	Eina_Hash *events;

@@ -69,6 +69,12 @@ static void _egueb_dom_node_feature_free(void *d)
 	}
 }
 
+static void _egueb_dom_node_namespace_free(void *d)
+{
+	Egueb_Dom_String *ns = d;
+	egueb_dom_string_unref(ns);
+}
+
 static void _egueb_dom_node_weak_ref_cb(Egueb_Dom_Event *e, void *data)
 {
 	Egueb_Dom_Node **weak_location = data;
@@ -279,6 +285,7 @@ static void _egueb_dom_node_instance_init(void *o)
 			_egueb_dom_node_event_container_free);
 	thiz->user_data = eina_hash_string_superfast_new(NULL);
 	thiz->features = eina_hash_string_superfast_new(_egueb_dom_node_feature_free);
+	thiz->namespaces = eina_hash_string_superfast_new(_egueb_dom_node_namespace_free);
 }
 
 static void _egueb_dom_node_instance_deinit(void *o)
@@ -297,6 +304,8 @@ static void _egueb_dom_node_instance_deinit(void *o)
 	eina_hash_free(thiz->user_data);
 	/* and the features */
 	eina_hash_free(thiz->features);
+	/* and the namespaces */
+	eina_hash_free(thiz->namespaces);
 }
 
 static void _egueb_dom_node_insert_into_document(Egueb_Dom_Node *thiz,
