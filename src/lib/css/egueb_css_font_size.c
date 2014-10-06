@@ -21,6 +21,8 @@
 #include "egueb_css_length.h"
 #include "egueb_css_percentage.h"
 #include "egueb_css_font_size.h"
+#include "egueb_css_value_font_size.h"
+
 #include "egueb_css_font_size_private.h"
 #include "egueb_dom_attr_private.h"
 #include "egueb_dom_attr_primitive_private.h"
@@ -68,7 +70,7 @@ EGUEB_DOM_VALUE_PRIMITIVE_SIMPLE_BOILERPLATE(egueb_css_font_size, Egueb_Css_Font
  *                           Attribute interface                              *
  *----------------------------------------------------------------------------*/
 EGUEB_DOM_ATTR_PRIMITIVE_BOILERPLATE(Egueb_Css_Font_Size,
-		Egueb_Svg_Font_Size_Attr, egueb_css_font_size_value,
+		Egueb_Svg_Font_Size_Attr, egueb_css_value_font_size,
 		egueb_css_font_size_attr)
 /*============================================================================*
  *                                 Global                                     *
@@ -105,11 +107,6 @@ void egueb_css_font_size_interpolate(Egueb_Css_Font_Size *v,
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/
-EAPI const Egueb_Dom_Value_Descriptor * egueb_css_font_size_value_descriptor_get(void)
-{
-	return &_egueb_css_font_size_descriptor;
-}
-
 EAPI Egueb_Dom_Node * egueb_css_font_size_attr_new(
 		const Egueb_Css_Font_Size *def, Eina_Bool animatable,
 		Eina_Bool stylable, Eina_Bool inheritable)
