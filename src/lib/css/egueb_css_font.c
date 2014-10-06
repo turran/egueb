@@ -26,7 +26,9 @@
 #include "egueb_css_font_size.h"
 #include "egueb_css_font_family.h"
 #include "egueb_css_font.h"
+#include "egueb_css_value_font.h"
 
+#include "egueb_css_font_private.h"
 #include "egueb_css_font_family_private.h"
 #include "egueb_css_font_size_private.h"
 #include "egueb_css_font_style_private.h"
@@ -38,9 +40,15 @@
  *                                  Local                                     *
  *============================================================================*/
 /*----------------------------------------------------------------------------*
- *                             Value interface                                *
+ *                           Attribute interface                              *
  *----------------------------------------------------------------------------*/
-static Eina_Bool egueb_css_font_string_from(Egueb_Css_Font *thiz,
+EGUEB_DOM_ATTR_PRIMITIVE_BOILERPLATE(Egueb_Css_Font,
+		Egueb_Css_Font_Attr, egueb_css_value_font,
+		egueb_css_font_attr)
+/*============================================================================*
+ *                                 Global                                     *
+ *============================================================================*/
+Eina_Bool egueb_css_font_string_from(Egueb_Css_Font *thiz,
 		const char *str)
 {
 	Eina_Bool ret = EINA_TRUE;
@@ -137,19 +145,19 @@ static Eina_Bool egueb_css_font_string_from(Egueb_Css_Font *thiz,
 	return ret;
 }
 
-static char * egueb_css_font_string_to(Egueb_Css_Font *thiz)
+char * egueb_css_font_string_to(Egueb_Css_Font *thiz)
 {
 	ERR("Not implemented");
 	return NULL;
 }
 
-static void egueb_css_font_reset(Egueb_Css_Font *thiz)
+void egueb_css_font_reset(Egueb_Css_Font *thiz)
 {
 	egueb_dom_list_unref(thiz->family);
 	thiz->family = NULL;
 }
 
-static void egueb_css_font_copy(Egueb_Css_Font *src,
+void egueb_css_font_copy(Egueb_Css_Font *src,
 		Egueb_Css_Font *dst, Eina_Bool content)
 {
 	dst->type = src->type;
@@ -163,22 +171,12 @@ static void egueb_css_font_copy(Egueb_Css_Font *src,
 		dst->family = egueb_dom_list_ref(src->family);
 }
 
-static void egueb_css_font_interpolate(Egueb_Css_Font *v,
+void egueb_css_font_interpolate(Egueb_Css_Font *v,
 		Egueb_Css_Font *a, Egueb_Css_Font *b, double m,
 		Egueb_Css_Font *add, Egueb_Css_Font *acc, int mul)
 {
 	ERR("Not implemented");
 }
-EGUEB_DOM_VALUE_PRIMITIVE_BOILERPLATE(egueb_css_font, Egueb_Css_Font);
-/*----------------------------------------------------------------------------*
- *                           Attribute interface                              *
- *----------------------------------------------------------------------------*/
-EGUEB_DOM_ATTR_PRIMITIVE_BOILERPLATE(Egueb_Css_Font,
-		Egueb_Css_Font_Attr, egueb_css_font_value,
-		egueb_css_font_attr)
-/*============================================================================*
- *                                 Global                                     *
- *============================================================================*/
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/
@@ -192,9 +190,4 @@ EAPI Egueb_Dom_Node * egueb_css_font_attr_new(
 	egueb_dom_attr_init(n, egueb_dom_string_ref(EGUEB_CSS_NAME_FONT),
 			animatable, stylable, inheritable);
 	return n;
-}
-
-EAPI const Egueb_Dom_Value_Descriptor * egueb_css_font_value_descriptor_get(void)
-{
-	return &_egueb_css_font_descriptor;
 }
