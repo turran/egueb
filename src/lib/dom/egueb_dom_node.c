@@ -1184,6 +1184,225 @@ EAPI void * egueb_dom_node_feature_get(Egueb_Dom_Node *thiz,
 		return egueb_dom_feature_ref(f->feature);
 }
 
+/* Introduced in DOM Level 3:
+ * DOMString          lookupPrefix(in DOMString namespaceURI);
+ */
+EAPI Egueb_Dom_String * egueb_dom_node_prefix_lookup(Egueb_Dom_Node *thiz,
+		Egueb_Dom_String *ns_uri)
+{
+	Egueb_Dom_Node_Class *klass;
+
+	if (!egueb_dom_string_is_valid(ns_uri))
+		return NULL;
+
+	klass = EGUEB_DOM_NODE_CLASS_GET(thiz);
+	switch (klass->type)
+	{
+		case EGUEB_DOM_NODE_TYPE_ELEMENT:
+             	//return lookupNamespacePrefix(namespaceURI, this); 
+		break;
+
+		case EGUEB_DOM_NODE_TYPE_DOCUMENT:
+             	//return getDocumentElement().lookupNamespacePrefix(namespaceURI); 
+		break;
+
+		break;
+
+		case EGUEB_DOM_NODE_TYPE_ATTRIBUTE:
+#if 0
+        {
+             if ( Attr has an owner Element ) 
+             { 
+                 return ownerElement.lookupNamespacePrefix(namespaceURI); 
+             } 
+             return null; 
+        } 
+#endif
+		break;
+
+		case EGUEB_DOM_NODE_TYPE_ENTITY:
+		case EGUEB_DOM_NODE_TYPE_NOTATION:
+		case EGUEB_DOM_NODE_TYPE_DOCUMENT_FRAGMENT:
+		case EGUEB_DOM_NODE_TYPE_DOCUMENT_TYPE:
+		return NULL;
+
+		default:
+#if 0
+           if (Node has an ancestor Element )
+           // EntityReferences may have to be skipped to get to it 
+           { 
+                    return ancestor.lookupNamespacePrefix(namespaceURI); 
+           } 
+#endif
+		return NULL;
+		break;
+	}
+} 
+
+#if 0
+DOMString lookupNamespacePrefix(DOMString namespaceURI, Element originalElement){ 
+        if ( Element has a namespace and Element's namespace == namespaceURI and 
+             Element has a prefix and 
+             originalElement.lookupNamespaceURI(Element's prefix) == namespaceURI) 
+        { 
+             return (Element's prefix); 
+        } 
+        if ( Element has attributes)
+        { 
+            for ( all DOM Level 2 valid local namespace declaration attributes of Element )
+            {
+                if (Attr's prefix == "xmlns" and 
+                   Attr's value == namespaceURI and 
+                   originalElement.lookupNamespaceURI(Attr's localname) == namespaceURI) 
+                   { 
+                      return (Attr's localname);
+                   } 
+            }
+        } 
+
+        if (Node has an ancestor Element ) 
+           // EntityReferences may have to be skipped to get to it 
+        { 
+            return ancestor.lookupNamespacePrefix(namespaceURI, originalElement); 
+        } 
+        return null; 
+    } 
+}
+#endif
+
+/* Introduced in DOM Level 3:
+ * boolean            isDefaultNamespace(in DOMString namespaceURI);
+ */
+
+EAPI Eina_Bool egueb_dom_node_is_default_namespace(Egueb_Dom_Node *thiz,
+		Egueb_Dom_String *ns_uri)
+{
+#if 0
+switch (nodeType) {
+  case ELEMENT_NODE:  
+     if ( Element has no prefix )
+     {
+          return (Element's namespace == namespaceURI);
+     }
+     if ( Element has attributes and there is a valid DOM Level 2 
+          default namespace declaration, i.e. Attr's localName == "xmlns" )
+     {
+	  return (Attr's value == namespaceURI);
+     }
+
+     if ( Element has an ancestor Element )
+         // EntityReferences may have to be skipped to get to it
+     {
+          return ancestorElement.isDefaultNamespace(namespaceURI);
+     }
+     else {
+          return unknown (false);
+     }    
+  case DOCUMENT_NODE:
+     return documentElement.isDefaultNamespace(namespaceURI);
+  case ENTITY_NODE:
+  case NOTATION_NODE:
+  case DOCUMENT_TYPE_NODE:
+  case DOCUMENT_FRAGMENT_NODE:
+     return unknown (false);
+  case ATTRIBUTE_NODE:
+     if ( Attr has an owner Element )
+     {          
+          return ownerElement.isDefaultNamespace(namespaceURI);
+     }
+     else {
+          return unknown (false);
+     }    
+  default:
+     if ( Node has an ancestor Element )
+         // EntityReferences may have to be skipped to get to it
+     {          
+          return ancestorElement.isDefaultNamespace(namespaceURI);
+     }
+     else {
+          return unknown (false);
+     }    
+  }
+#endif
+}
+
+/* Introduced in DOM Level 3:
+ * DOMString          lookupNamespaceURI(in DOMString prefix);
+ */
+EAPI Egueb_Dom_String * egueb_dom_node_namespace_uri_lookup(Egueb_Dom_Node *thiz,
+		Egueb_Dom_String *prefix)
+{
+#if 0
+switch (nodeType) { 
+     case ELEMENT_NODE: 
+     { 
+         if ( Element's namespace != null and Element's prefix == prefix ) 
+         { 
+               // Note: prefix could be "null" in this case we are looking for default namespace 
+               return (Element's namespace);
+         } 
+         if ( Element has attributes)
+         { 
+            for ( all DOM Level 2 valid local namespace declaration attributes of Element )
+            {
+                 if (Attr's prefix == "xmlns" and Attr's localName == prefix ) 
+                       // non default namespace
+                 { 
+                        if (Attr's value is not empty) 
+                        {
+                          return (Attr's value);
+                        }         
+                        return unknown (null);                   
+                 } 
+                 else if (Attr's localname == "xmlns" and prefix == null)
+                       // default namespace
+                 { 
+                        if (Attr's value is not empty) 
+                        {
+                          return (Attr's value);
+                        }         
+                        return unknown (null); 
+                 } 
+           }
+         } 
+         if ( Element has an ancestor Element ) 
+            // EntityReferences may have to be skipped to get to it 
+         { 
+                   return ancestorElement.lookupNamespaceURI(prefix); 
+         } 
+         return null; 
+     } 
+     case DOCUMENT_NODE: 
+          return documentElement.lookupNamespaceURI(prefix) 
+
+     case ENTITY_NODE: 
+     case NOTATION_NODE: 
+     case DOCUMENT_TYPE_NODE: 
+     case DOCUMENT_FRAGMENT_NODE: 
+           return unknown (null); 
+
+     case ATTRIBUTE_NODE: 
+         if (Attr has an owner Element) 
+         { 
+             return ownerElement.lookupNamespaceURI(prefix); 
+         } 
+         else 
+         { 
+             return unknown (null); 
+         } 
+     default: 
+         if (Node has an ancestor Element) 
+          // EntityReferences may have to be skipped to get to it 
+         { 
+             return ancestorElement.lookupNamespaceURI(prefix); 
+         } 
+         else { 
+             return unknown (null); 
+         } 
+  }
+#endif
+}
+
 /**
  * Get the item a node represents for Ender
  * This will allow easily downcasting on the bindings
@@ -1282,12 +1501,6 @@ EAPI void egueb_dom_node_thaw(Egueb_Dom_Node *thiz)
 
   // Introduced in DOM Level 3:
   boolean            isSameNode(in Node other);
-  // Introduced in DOM Level 3:
-  DOMString          lookupPrefix(in DOMString namespaceURI);
-  // Introduced in DOM Level 3:
-  boolean            isDefaultNamespace(in DOMString namespaceURI);
-  // Introduced in DOM Level 3:
-  DOMString          lookupNamespaceURI(in DOMString prefix);
   // Introduced in DOM Level 3:
   boolean            isEqualNode(in Node arg);
 
