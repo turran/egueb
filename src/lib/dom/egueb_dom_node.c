@@ -26,6 +26,7 @@
 #include "egueb_dom_event.h"
 #include "egueb_dom_event_mutation.h"
 #include "egueb_dom_feature.h"
+#include "egueb_dom_document.h"
 
 #include "egueb_dom_node_private.h"
 #include "egueb_dom_node_list_private.h"
@@ -67,6 +68,69 @@ static void _egueb_dom_node_feature_free(void *d)
 			egueb_dom_feature_unref(thiz->feature);
 		free(thiz);
 	}
+}
+
+static Egueb_Dom_Node * _egueb_dom_node_get_ancestor_element(Egueb_Dom_Node *thiz)
+{
+	Egueb_Dom_Node *ancestor;
+
+	ancestor = egueb_dom_node_parent_get(thiz);
+	while (ancestor)
+	{
+		Egueb_Dom_Node *tmp;
+
+		if (egueb_dom_node_type_get(ancestor) == EGUEB_DOM_NODE_TYPE_ELEMENT)
+		{
+			return ancestor;
+		}
+		tmp = egueb_dom_node_parent_get(ancestor);
+		egueb_dom_node_unref(tmp);
+		ancestor = tmp;
+	}
+	return NULL;
+}
+
+static Egueb_Dom_String * _egueb_dom_node_ns_prefix_lookup(Egueb_Dom_Node *thiz,
+		Egueb_Dom_String *ns_uri, Egueb_Dom_Node *from)
+{
+	Egueb_Dom_Node *ancestor;
+	Egueb_Dom_String *ret;
+
+	if (thiz->namespace_uri && egueb_dom_string_is_equal(thiz->namespace_uri, ns_uri) &&
+			thiz->prefix)
+	{
+		Egueb_Dom_String *from_ns_uri;
+		Eina_Bool is_equal;
+
+		from_ns_uri = egueb_dom_node_namespace_uri_lookup(from, thiz->prefix);
+		is_equal = egueb_dom_string_is_equal(from_ns_uri, ns_uri);
+		egueb_dom_string_unref(from_ns_uri);
+
+		if (is_equal)
+		{
+			return egueb_dom_string_ref(thiz->prefix);
+		}
+	}
+
+#if 0
+        if ( Element has attributes)
+        { 
+            for ( all DOM Level 2 valid local namespace declaration attributes of Element )
+            {
+                if (Attrs prefix == "xmlns" and 
+                   Attrs value == namespaceURI and 
+                   originalElement.lookupNamespaceURI(Attrs localname) == namespaceURI) 
+                   { 
+                      return (Attrs localname);
+                   } 
+            }
+        } 
+#endif
+	ancestor = _egueb_dom_node_get_ancestor_element(thiz);
+	ret = _egueb_dom_node_ns_prefix_lookup(ancestor, ns_uri, from);
+	egueb_dom_node_unref(ancestor);
+
+	return ret;
 }
 
 static void _egueb_dom_node_namespace_free(void *d)
@@ -1190,36 +1254,35 @@ EAPI void * egueb_dom_node_feature_get(Egueb_Dom_Node *thiz,
 EAPI Egueb_Dom_String * egueb_dom_node_prefix_lookup(Egueb_Dom_Node *thiz,
 		Egueb_Dom_String *ns_uri)
 {
-	Egueb_Dom_Node_Class *klass;
+	Egueb_Dom_String *ret = NULL;
+	Egueb_Dom_Node *tmp;
+
+	if (!thiz)
+		return NULL;
 
 	if (!egueb_dom_string_is_valid(ns_uri))
 		return NULL;
 
-	klass = EGUEB_DOM_NODE_CLASS_GET(thiz);
-	switch (klass->type)
+	switch (egueb_dom_node_type_get(thiz))
 	{
 		case EGUEB_DOM_NODE_TYPE_ELEMENT:
-             	//return lookupNamespacePrefix(namespaceURI, this); 
+		ret = _egueb_dom_node_ns_prefix_lookup(thiz, ns_uri, thiz);
 		break;
 
 		case EGUEB_DOM_NODE_TYPE_DOCUMENT:
-             	//return getDocumentElement().lookupNamespacePrefix(namespaceURI); 
+		tmp = egueb_dom_document_document_element_get(thiz);
+             	ret = egueb_dom_node_prefix_lookup(tmp, ns_uri);
+		egueb_dom_node_unref(tmp);
 		break;
 
 		break;
 
 		case EGUEB_DOM_NODE_TYPE_ATTRIBUTE:
-#if 0
-        {
-             if ( Attr has an owner Element ) 
-             { 
-                 return ownerElement.lookupNamespacePrefix(namespaceURI); 
-             } 
-             return null; 
-        } 
-#endif
+		tmp = egueb_dom_attr_owner_get(thiz);
+             	ret = egueb_dom_node_prefix_lookup(tmp, ns_uri);
+		egueb_dom_node_unref(tmp);
 		break;
-
+		
 		case EGUEB_DOM_NODE_TYPE_ENTITY:
 		case EGUEB_DOM_NODE_TYPE_NOTATION:
 		case EGUEB_DOM_NODE_TYPE_DOCUMENT_FRAGMENT:
@@ -1227,48 +1290,13 @@ EAPI Egueb_Dom_String * egueb_dom_node_prefix_lookup(Egueb_Dom_Node *thiz,
 		return NULL;
 
 		default:
-#if 0
-           if (Node has an ancestor Element )
-           // EntityReferences may have to be skipped to get to it 
-           { 
-                    return ancestor.lookupNamespacePrefix(namespaceURI); 
-           } 
-#endif
-		return NULL;
+		tmp = _egueb_dom_node_get_ancestor_element(thiz);
+		ret = egueb_dom_node_prefix_lookup(tmp, ns_uri);
+		egueb_dom_node_unref(tmp);
 		break;
 	}
+	return ret;
 } 
-
-#if 0
-DOMString lookupNamespacePrefix(DOMString namespaceURI, Element originalElement){ 
-        if ( Element has a namespace and Element's namespace == namespaceURI and 
-             Element has a prefix and 
-             originalElement.lookupNamespaceURI(Element's prefix) == namespaceURI) 
-        { 
-             return (Element's prefix); 
-        } 
-        if ( Element has attributes)
-        { 
-            for ( all DOM Level 2 valid local namespace declaration attributes of Element )
-            {
-                if (Attr's prefix == "xmlns" and 
-                   Attr's value == namespaceURI and 
-                   originalElement.lookupNamespaceURI(Attr's localname) == namespaceURI) 
-                   { 
-                      return (Attr's localname);
-                   } 
-            }
-        } 
-
-        if (Node has an ancestor Element ) 
-           // EntityReferences may have to be skipped to get to it 
-        { 
-            return ancestor.lookupNamespacePrefix(namespaceURI, originalElement); 
-        } 
-        return null; 
-    } 
-}
-#endif
 
 /* Introduced in DOM Level 3:
  * boolean            isDefaultNamespace(in DOMString namespaceURI);
@@ -1277,53 +1305,56 @@ DOMString lookupNamespacePrefix(DOMString namespaceURI, Element originalElement)
 EAPI Eina_Bool egueb_dom_node_is_default_namespace(Egueb_Dom_Node *thiz,
 		Egueb_Dom_String *ns_uri)
 {
-#if 0
-switch (nodeType) {
-  case ELEMENT_NODE:  
-     if ( Element has no prefix )
-     {
-          return (Element's namespace == namespaceURI);
-     }
-     if ( Element has attributes and there is a valid DOM Level 2 
-          default namespace declaration, i.e. Attr's localName == "xmlns" )
-     {
-	  return (Attr's value == namespaceURI);
-     }
+	Egueb_Dom_Node *tmp;
+	Eina_Bool ret = EINA_FALSE;
 
-     if ( Element has an ancestor Element )
-         // EntityReferences may have to be skipped to get to it
+	if (!thiz)
+		return EINA_FALSE;
+
+	switch (egueb_dom_node_type_get(thiz))
+	{
+		case EGUEB_DOM_NODE_TYPE_ELEMENT:
+		if (!thiz->prefix)
+		{
+			return egueb_dom_string_is_equal(thiz->namespace_uri, ns_uri);
+		}
+#if 0
+     if ( Element has attributes and there is a valid DOM Level 2 
+          default namespace declaration, i.e. Attrs localName == "xmlns" )
      {
-          return ancestorElement.isDefaultNamespace(namespaceURI);
+	  return (Attrs value == namespaceURI);
      }
-     else {
-          return unknown (false);
-     }    
-  case DOCUMENT_NODE:
-     return documentElement.isDefaultNamespace(namespaceURI);
-  case ENTITY_NODE:
-  case NOTATION_NODE:
-  case DOCUMENT_TYPE_NODE:
-  case DOCUMENT_FRAGMENT_NODE:
-     return unknown (false);
-  case ATTRIBUTE_NODE:
-     if ( Attr has an owner Element )
-     {          
-          return ownerElement.isDefaultNamespace(namespaceURI);
-     }
-     else {
-          return unknown (false);
-     }    
-  default:
-     if ( Node has an ancestor Element )
-         // EntityReferences may have to be skipped to get to it
-     {          
-          return ancestorElement.isDefaultNamespace(namespaceURI);
-     }
-     else {
-          return unknown (false);
-     }    
-  }
 #endif
+		tmp = _egueb_dom_node_get_ancestor_element(thiz);
+		ret = egueb_dom_node_is_default_namespace(tmp, ns_uri);
+		egueb_dom_node_unref(tmp);
+		break;
+
+		case EGUEB_DOM_NODE_TYPE_DOCUMENT:
+		tmp = egueb_dom_document_document_element_get(thiz);
+		ret = egueb_dom_node_is_default_namespace(tmp, ns_uri);
+		egueb_dom_node_unref(tmp);
+		break;
+
+		case EGUEB_DOM_NODE_TYPE_ATTRIBUTE:
+		tmp = egueb_dom_attr_owner_get(thiz);
+		ret = egueb_dom_node_is_default_namespace(tmp, ns_uri);
+		egueb_dom_node_unref(tmp);
+		break;
+
+		case EGUEB_DOM_NODE_TYPE_ENTITY:
+		case EGUEB_DOM_NODE_TYPE_NOTATION:
+		case EGUEB_DOM_NODE_TYPE_DOCUMENT_FRAGMENT:
+		case EGUEB_DOM_NODE_TYPE_DOCUMENT_TYPE:
+		break;
+
+		default:
+		tmp = _egueb_dom_node_get_ancestor_element(thiz);
+		ret = egueb_dom_node_is_default_namespace(tmp, ns_uri);
+		egueb_dom_node_unref(tmp);
+		break;
+	}
+	return ret;
 }
 
 /* Introduced in DOM Level 3:
@@ -1332,75 +1363,73 @@ switch (nodeType) {
 EAPI Egueb_Dom_String * egueb_dom_node_namespace_uri_lookup(Egueb_Dom_Node *thiz,
 		Egueb_Dom_String *prefix)
 {
+	Egueb_Dom_String *ret = NULL;
+	Egueb_Dom_Node *tmp;
+
+	switch (egueb_dom_node_type_get(thiz))
+	{
+		case EGUEB_DOM_NODE_TYPE_ELEMENT:
+		if (thiz->namespace_uri != NULL && egueb_dom_string_is_equal(thiz->prefix, prefix))
+		{
+			// Note: prefix could be "null" in this case we are looking for default namespace 
+			return egueb_dom_string_ref(thiz->namespace_uri);
+		}
 #if 0
-switch (nodeType) { 
-     case ELEMENT_NODE: 
-     { 
-         if ( Element's namespace != null and Element's prefix == prefix ) 
-         { 
-               // Note: prefix could be "null" in this case we are looking for default namespace 
-               return (Element's namespace);
-         } 
          if ( Element has attributes)
          { 
             for ( all DOM Level 2 valid local namespace declaration attributes of Element )
             {
-                 if (Attr's prefix == "xmlns" and Attr's localName == prefix ) 
+                 if (Attrs prefix == "xmlns" and Attrs localName == prefix ) 
                        // non default namespace
                  { 
-                        if (Attr's value is not empty) 
+                        if (Attrs value is not empty) 
                         {
-                          return (Attr's value);
+                          return (Attrs value);
                         }         
                         return unknown (null);                   
                  } 
-                 else if (Attr's localname == "xmlns" and prefix == null)
+                 else if (Attrs localname == "xmlns" and prefix == null)
                        // default namespace
                  { 
-                        if (Attr's value is not empty) 
+                        if (Attrs value is not empty) 
                         {
-                          return (Attr's value);
+                          return (Attrs value);
                         }         
                         return unknown (null); 
-                 } 
+                 }
            }
          } 
-         if ( Element has an ancestor Element ) 
-            // EntityReferences may have to be skipped to get to it 
-         { 
-                   return ancestorElement.lookupNamespaceURI(prefix); 
-         } 
-         return null; 
-     } 
-     case DOCUMENT_NODE: 
-          return documentElement.lookupNamespaceURI(prefix) 
-
-     case ENTITY_NODE: 
-     case NOTATION_NODE: 
-     case DOCUMENT_TYPE_NODE: 
-     case DOCUMENT_FRAGMENT_NODE: 
-           return unknown (null); 
-
-     case ATTRIBUTE_NODE: 
-         if (Attr has an owner Element) 
-         { 
-             return ownerElement.lookupNamespaceURI(prefix); 
-         } 
-         else 
-         { 
-             return unknown (null); 
-         } 
-     default: 
-         if (Node has an ancestor Element) 
-          // EntityReferences may have to be skipped to get to it 
-         { 
-             return ancestorElement.lookupNamespaceURI(prefix); 
-         } 
-         else { 
-             return unknown (null); 
-         } 
-  }
 #endif
+		tmp = _egueb_dom_node_get_ancestor_element(thiz);
+		ret = egueb_dom_node_namespace_uri_lookup(tmp, prefix);
+		egueb_dom_node_unref(tmp);
+		break;
+
+		case EGUEB_DOM_NODE_TYPE_DOCUMENT:
+		tmp = egueb_dom_document_document_element_get(thiz);
+		ret = egueb_dom_node_namespace_uri_lookup(tmp, prefix);
+		egueb_dom_node_unref(tmp);
+		break;
+
+		case EGUEB_DOM_NODE_TYPE_ATTRIBUTE:
+		tmp = egueb_dom_attr_owner_get(thiz);
+		ret = egueb_dom_node_namespace_uri_lookup(tmp, prefix);
+		egueb_dom_node_unref(tmp);
+		break;
+
+		case EGUEB_DOM_NODE_TYPE_ENTITY:
+		case EGUEB_DOM_NODE_TYPE_NOTATION:
+		case EGUEB_DOM_NODE_TYPE_DOCUMENT_FRAGMENT:
+		case EGUEB_DOM_NODE_TYPE_DOCUMENT_TYPE:
+		break;
+
+		default:
+		tmp = _egueb_dom_node_get_ancestor_element(thiz);
+		ret = egueb_dom_node_namespace_uri_lookup(tmp, prefix);
+		egueb_dom_node_unref(tmp);
+		break;
+	}
+	return ret;
 }
 
 /**
