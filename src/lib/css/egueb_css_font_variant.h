@@ -24,8 +24,4 @@ typedef enum _Egueb_Css_Font_Variant {
 	EGUEB_CSS_FONT_VARIANT_SMALL_CAPS,
 } Egueb_Css_Font_Variant;
 
-EAPI Egueb_Dom_Node * egueb_css_font_variant_attr_new(
-		Eina_Bool animatable, Eina_Bool stylable,
-		Eina_Bool inheritable);
-
 #endif

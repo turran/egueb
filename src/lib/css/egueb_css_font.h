@@ -38,8 +38,4 @@ typedef struct _Egueb_Css_Font {
 	Egueb_Dom_List *family;
 } Egueb_Css_Font;
 
-EAPI Egueb_Dom_Node * egueb_css_font_attr_new(
-		Eina_Bool animatable, Eina_Bool stylable,
-		Eina_Bool inheritable);
-
 #endif

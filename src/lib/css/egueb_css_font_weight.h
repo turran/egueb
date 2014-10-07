@@ -35,8 +35,4 @@ typedef enum _Egueb_Css_Font_Weight {
 	EGUEB_CSS_FONT_WEIGHT_900,
 } Egueb_Css_Font_Weight;
 
-EAPI Egueb_Dom_Node * egueb_css_font_weight_attr_new(
-		Eina_Bool animatable, Eina_Bool stylable,
-		Eina_Bool inheritable);
-
 #endif

@@ -17,23 +17,13 @@
  */
 #include "egueb_css_private.h"
 
-#include "egueb_css_main.h"
 #include "egueb_css_font_family.h"
-#include "egueb_css_value_font_family.h"
 
-#include "egueb_dom_attr_private.h"
-#include "egueb_dom_attr_object_private.h"
 #include "egueb_css_font_family_private.h"
 #include "egueb_css_value_font_family_private.h"
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
-/*----------------------------------------------------------------------------*
- *                           Attribute interface                              *
- *----------------------------------------------------------------------------*/
-EGUEB_DOM_ATTR_OBJECT_BOILERPLATE(Egueb_Css_Font_Family_Attr,
-		egueb_css_value_font_family, egueb_css_font_family_attr)
-
 static void _egueb_css_font_family_string_from_cb(const char *attr, void *data)
 {
 	Egueb_Dom_List *list = data;
@@ -141,18 +131,6 @@ void egueb_css_font_family_value_interpolate(Egueb_Css_Font_Family_Value *v,
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/
-EAPI Egueb_Dom_Node * egueb_css_font_family_attr_new(
-		Eina_Bool animatable, Eina_Bool stylable,
-		Eina_Bool inheritable)
-{
-	Egueb_Dom_Node *n;
-
-	n = ENESIM_OBJECT_INSTANCE_NEW(egueb_css_font_family_attr);
-	egueb_dom_attr_init(n, egueb_dom_string_ref(EGUEB_CSS_NAME_FONT_FAMILY),
-			animatable, stylable, inheritable);
-	return n;
-}
-
 EAPI Egueb_Dom_List * egueb_css_font_family_new(void)
 {
 	Egueb_Dom_List *ret;

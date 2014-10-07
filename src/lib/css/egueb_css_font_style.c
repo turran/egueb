@@ -17,21 +17,12 @@
  */
 #include "egueb_css_private.h"
 
-#include "egueb_css_main.h"
 #include "egueb_css_font_style.h"
-#include "egueb_css_value_font_style.h"
 
 #include "egueb_css_font_style_private.h"
-#include "egueb_dom_attr_basic_private.h"
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
-/*----------------------------------------------------------------------------*
- *                           Attribute interface                              *
- *----------------------------------------------------------------------------*/
-EGUEB_DOM_ATTR_BASIC_BOILERPLATE(Egueb_Css_Font_Style,
-		Egueb_Css_Font_Style_Attr, egueb_css_value_font_style,
-		egueb_css_font_style_attr)
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
@@ -71,14 +62,4 @@ char * egueb_css_font_style_string_to(Egueb_Css_Font_Style thiz)
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/
-EAPI Egueb_Dom_Node * egueb_css_font_style_attr_new(
-		Eina_Bool animatable, Eina_Bool stylable,
-		Eina_Bool inheritable)
-{
-	Egueb_Dom_Node *n;
 
-	n = ENESIM_OBJECT_INSTANCE_NEW(egueb_css_font_style_attr);
-	egueb_dom_attr_init(n, egueb_dom_string_ref(EGUEB_CSS_NAME_FONT_STYLE),
-			animatable, stylable, inheritable);
-	return n;
-}

@@ -17,7 +17,6 @@
  */
 #include "egueb_css_private.h"
 
-#include "egueb_css_main.h"
 #include "egueb_css_length.h"
 #include "egueb_css_percentage.h"
 #include "egueb_css_font_style.h"
@@ -26,7 +25,6 @@
 #include "egueb_css_font_size.h"
 #include "egueb_css_font_family.h"
 #include "egueb_css_font.h"
-#include "egueb_css_value_font.h"
 
 #include "egueb_css_font_private.h"
 #include "egueb_css_font_family_private.h"
@@ -34,17 +32,9 @@
 #include "egueb_css_font_style_private.h"
 #include "egueb_css_font_variant_private.h"
 #include "egueb_css_font_weight_private.h"
-
-#include "egueb_dom_attr_primitive_private.h"
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
-/*----------------------------------------------------------------------------*
- *                           Attribute interface                              *
- *----------------------------------------------------------------------------*/
-EGUEB_DOM_ATTR_PRIMITIVE_BOILERPLATE(Egueb_Css_Font,
-		Egueb_Css_Font_Attr, egueb_css_value_font,
-		egueb_css_font_attr)
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
@@ -180,14 +170,3 @@ void egueb_css_font_interpolate(Egueb_Css_Font *v,
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/
-EAPI Egueb_Dom_Node * egueb_css_font_attr_new(
-		Eina_Bool animatable, Eina_Bool stylable,
-		Eina_Bool inheritable)
-{
-	Egueb_Dom_Node *n;
-
-	n = ENESIM_OBJECT_INSTANCE_NEW(egueb_css_font_attr);
-	egueb_dom_attr_init(n, egueb_dom_string_ref(EGUEB_CSS_NAME_FONT),
-			animatable, stylable, inheritable);
-	return n;
-}
