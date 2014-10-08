@@ -103,12 +103,17 @@ static void _egueb_dom_element_script_run(Egueb_Dom_Element_Script *thiz,
 	Egueb_Dom_Node *doc;
 
 	/* compile the script */
-	egueb_dom_scripter_load(thiz->scripter, data, &thiz->script);
+	if (!egueb_dom_scripter_load(thiz->scripter, data, &thiz->script))
+	{
+		WARN("Failed to load the script");
+		goto done;
+	}
 	/* add the global variables */
 	doc = egueb_dom_node_owner_document_get(EGUEB_DOM_NODE(thiz));
 	egueb_dom_scripter_global_add(thiz->scripter, "document", doc, egueb_dom_node_item_get(doc));
 	/* run it */
 	egueb_dom_scripter_script_run(thiz->scripter, thiz->script);
+done:
 	egueb_dom_string_unref(data);
 }
 
