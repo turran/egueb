@@ -86,8 +86,13 @@ EAPI Egueb_Dom_String * egueb_dom_element_tag_name_get(Egueb_Dom_Node *node);
 
 EAPI Eina_Bool egueb_dom_element_attribute_add(Egueb_Dom_Node *n,
 		Egueb_Dom_Node *attr, Eina_Error *err);
+EAPI Egueb_Dom_String * egueb_dom_element_attribute_ns_get(Egueb_Dom_Node *node,
+		const Egueb_Dom_String *ns_uri, const Egueb_Dom_String *name);
 EAPI Egueb_Dom_String * egueb_dom_element_attribute_get(Egueb_Dom_Node *node,
 		const Egueb_Dom_String *name);
+EAPI Eina_Bool egueb_dom_element_attribute_ns_set(Egueb_Dom_Node *node,
+		const Egueb_Dom_String *ns_uri, const Egueb_Dom_String *name,
+		Egueb_Dom_String *value, Eina_Error *err);
 EAPI Eina_Bool egueb_dom_element_attribute_set(Egueb_Dom_Node *node,
 		const Egueb_Dom_String *name, Egueb_Dom_String *value,
 		Eina_Error *err);
@@ -112,6 +117,8 @@ EAPI Eina_Bool egueb_dom_element_attribute_value_get(Egueb_Dom_Node *node,
 		Egueb_Dom_String *name, Egueb_Dom_Attr_Type type,
 		Egueb_Dom_Value *v, Eina_Error *err);
 
+EAPI Egueb_Dom_Node * egueb_dom_element_attribute_ns_fetch(Egueb_Dom_Node *node,
+		const Egueb_Dom_String *ns_uri, const Egueb_Dom_String *name);
 EAPI Egueb_Dom_Node * egueb_dom_element_attribute_fetch(Egueb_Dom_Node *node,
 		const Egueb_Dom_String *name);
 

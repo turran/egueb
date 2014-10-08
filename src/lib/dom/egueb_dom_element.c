@@ -512,15 +512,15 @@ EAPI Egueb_Dom_String * egueb_dom_element_tag_name_get(Egueb_Dom_Node *node)
 }
 
 /*
- * DOMString getAttribute(in DOMString name);
+ * DOMString getAttributeNS(in DOMString ns, in DOMString name);
  */
-EAPI Egueb_Dom_String * egueb_dom_element_attribute_get(Egueb_Dom_Node *node,
-		const Egueb_Dom_String *name)
+EAPI Egueb_Dom_String * egueb_dom_element_attribute_ns_get(Egueb_Dom_Node *node,
+		const Egueb_Dom_String *ns_uri, const Egueb_Dom_String *local_name)
 {
 	Egueb_Dom_Node *p = NULL;
 	Egueb_Dom_String *ret = NULL;
 
-	p = egueb_dom_element_attribute_fetch(node, name);
+	p = egueb_dom_element_attribute_ns_fetch(node, ns_uri, local_name);
 	if (!p) return NULL;
 
 	egueb_dom_attr_string_get(p, EGUEB_DOM_ATTR_TYPE_BASE, &ret);
@@ -529,12 +529,25 @@ EAPI Egueb_Dom_String * egueb_dom_element_attribute_get(Egueb_Dom_Node *node,
 }
 
 /*
- * void setAttribute(in DOMString name, in DOMString value)
+ * DOMString getAttribute(in DOMString name);
+ */
+EAPI Egueb_Dom_String * egueb_dom_element_attribute_get(Egueb_Dom_Node *node,
+		const Egueb_Dom_String *name)
+{
+	/* TODO split the name into qualified name: prefix:local_name */
+	/* TODO lookup the NS for such prefix */
+	return egueb_dom_element_attribute_ns_get(node, NULL, name);
+}
+
+
+/*
+ * void setAttributeNS(in DOMString ns, in DOMString name, in DOMString value;
  * raises(DOMException);
  */
-EAPI Eina_Bool egueb_dom_element_attribute_set(Egueb_Dom_Node *node,
-		const Egueb_Dom_String *name, Egueb_Dom_String *value,
-		Eina_Error *err)
+EAPI Eina_Bool egueb_dom_element_attribute_ns_set(Egueb_Dom_Node *node,
+		const Egueb_Dom_String *ns_uri,
+		const Egueb_Dom_String *q_name,
+		Egueb_Dom_String *value, Eina_Error *err)
 {
 	Egueb_Dom_Node *p = NULL;
 
@@ -543,13 +556,14 @@ EAPI Eina_Bool egueb_dom_element_attribute_set(Egueb_Dom_Node *node,
 		 return EINA_FALSE;
 	}
 
-	p = egueb_dom_element_attribute_fetch(node, name);
+	/* TODO check that the prefix match the ns_uri */
+	p = egueb_dom_element_attribute_ns_fetch(node, ns_uri, q_name);
 	if (!p)
 	{
 		Egueb_Dom_String *attr_name;
 
 		attr_name = egueb_dom_string_new_with_string(
-				egueb_dom_string_string_get(name));
+				egueb_dom_string_string_get(q_name));
 		/* create a new string attribute */
 		p = egueb_dom_attr_string_new(attr_name, NULL, EINA_FALSE,
 				EINA_FALSE, EINA_FALSE);
@@ -566,12 +580,18 @@ EAPI Eina_Bool egueb_dom_element_attribute_set(Egueb_Dom_Node *node,
 	return EINA_TRUE;
 }
 
-#if 0
-EAPI Eina_Bool egueb_dom_element_attribute_ns_set(Egueb_Dom_Node *node,
+/*
+ * void setAttribute(in DOMString name, in DOMString value)
+ * raises(DOMException);
+ */
+EAPI Eina_Bool egueb_dom_element_attribute_set(Egueb_Dom_Node *node,
 		const Egueb_Dom_String *name, Egueb_Dom_String *value,
 		Eina_Error *err)
-#endif
-
+{
+	/* TODO split the name into qualified name: prefix:local_name */
+	/* TODO lookup the NS for such prefix */
+	return egueb_dom_element_attribute_ns_set(node, NULL, name, value, err);
+}
 
 EAPI Eina_Bool egueb_dom_element_attribute_type_set(Egueb_Dom_Node *node,
 		const Egueb_Dom_String *name, Egueb_Dom_Attr_Type type,
@@ -602,17 +622,27 @@ EAPI Eina_Bool egueb_dom_element_attribute_type_set(Egueb_Dom_Node *node,
 	}
 }
 
-EAPI Egueb_Dom_Node * egueb_dom_element_attribute_fetch(Egueb_Dom_Node *node,
-		const Egueb_Dom_String *name)
+EAPI Egueb_Dom_Node * egueb_dom_element_attribute_ns_fetch(Egueb_Dom_Node *node,
+		const Egueb_Dom_String *ns_uri, const Egueb_Dom_String *local_name)
 {
 	Egueb_Dom_Element *thiz;
 	Egueb_Dom_Node *ret;
 
-	thiz = EGUEB_DOM_ELEMENT(node);
-	if (!name) return NULL;
+	if (!local_name) return NULL;
 
-	ret = eina_hash_find(thiz->attributes, egueb_dom_string_string_get(name));
+	/* TODO handle the ns_uri */
+	thiz = EGUEB_DOM_ELEMENT(node);
+	ret = eina_hash_find(thiz->attributes, egueb_dom_string_string_get(local_name));
 	return egueb_dom_node_ref(ret);
+}
+
+
+EAPI Egueb_Dom_Node * egueb_dom_element_attribute_fetch(Egueb_Dom_Node *node,
+		const Egueb_Dom_String *name)
+{
+	/* TODO split the name into qualified name: prefix:local_name */
+	/* TODO lookup the NS for such prefix */
+	return egueb_dom_element_attribute_ns_fetch(node, NULL, name);
 }
 
 EAPI Eina_Bool egueb_dom_element_attribute_masked_set_va(Egueb_Dom_Node *node,
@@ -651,6 +681,8 @@ EAPI Eina_Bool egueb_dom_element_attribute_masked_set(Egueb_Dom_Node *node,
 	Eina_Bool ret;
 	va_list args;
 
+	/* TODO split the name into qualified name: prefix:local_name */
+	/* TODO lookup the NS for such prefix */
 	va_start(args, prop_mask);
 	ret = egueb_dom_element_attribute_masked_set_va(node, name, prop_mask, args);
 	va_end(args);
@@ -667,6 +699,8 @@ EAPI Eina_Bool egueb_dom_element_attribute_masked_get(Egueb_Dom_Node *node,
 	Eina_Bool ret;
 	va_list args;
 
+	/* TODO split the name into qualified name: prefix:local_name */
+	/* TODO lookup the NS for such prefix */
 	va_start(args, prop_mask);
 	ret = egueb_dom_element_attribute_masked_get_va(node, name, prop_mask, args);
 	va_end(args);
@@ -1004,15 +1038,6 @@ EAPI Egueb_Dom_Node * egueb_dom_element_sibling_next_get(Egueb_Dom_Node *n)
   Attr               removeAttributeNode(in Attr oldAttr)
                                         raises(DOMException);
   NodeList           getElementsByTagName(in DOMString name);
-  // Introduced in DOM Level 2:
-  DOMString          getAttributeNS(in DOMString namespaceURI, 
-                                    in DOMString localName)
-                                        raises(DOMException);
-  // Introduced in DOM Level 2:
-  void               setAttributeNS(in DOMString namespaceURI, 
-                                    in DOMString qualifiedName, 
-                                    in DOMString value)
-                                        raises(DOMException);
   // Introduced in DOM Level 2:
   void               removeAttributeNS(in DOMString namespaceURI, 
                                        in DOMString localName)
