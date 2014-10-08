@@ -1,5 +1,8 @@
 Refactor
 ========
++ When parsing a doc, how to create the nodes using the xmlns
+  attribute so we can actually call createElementNS?
++ Remove the attribut_fetch and add the attribute_node_set
 + Add more DOM level 3 functions, element_attribute_set_ns, etc
 + Remove the value function prefix on the macro for attributes. Pass directly the value
 + In case we have a tree like:
