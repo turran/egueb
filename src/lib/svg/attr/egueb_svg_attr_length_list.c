@@ -22,12 +22,13 @@
 
 #include "egueb_dom_attr_private.h"
 #include "egueb_dom_attr_object_private.h"
+#include "egueb_svg_value_length_list_private.h"
 #include "egueb_svg_attr_length_list_private.h"
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
 EGUEB_DOM_ATTR_OBJECT_BOILERPLATE(Egueb_Svg_Attr_Length_List,
-		egueb_dom_value_double_list, egueb_svg_attr_length_list)
+		egueb_svg_value_length_list, egueb_svg_attr_length_list)
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
