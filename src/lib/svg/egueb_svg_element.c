@@ -701,11 +701,12 @@ Enesim_Text_Font * egueb_svg_element_font_resolve(Egueb_Dom_Node *n)
 	Egueb_Css_Font_Style style;
 	Egueb_Css_Font_Variant variant;
 	Egueb_Css_Font_Weight weight;
-	Egueb_Css_Font_Family_Value *value;
 	/* TODO we miss the font size */
 	Egueb_Dom_List *family = NULL;
-	Enesim_Text_Font *font;
+	Enesim_Text_Font *font = NULL;
 	Enesim_Text_Engine *e;
+	int count;
+	int i;
 
 	e = enesim_text_engine_default_get();
 	if (!e) return NULL;
@@ -729,12 +730,48 @@ Enesim_Text_Font * egueb_svg_element_font_resolve(Egueb_Dom_Node *n)
 	egueb_dom_attr_final_get(thiz->font_variant, &variant);
 	egueb_dom_attr_final_get(thiz->font_weight, &weight);
 
-	/* TODO  create the pattern based in the whole list, not the first one */
-	value = egueb_dom_list_item_get(family, 0);
-	font = enesim_text_font_new_description_from(e, egueb_dom_string_string_get(value->family),
-			thiz->final_font_size);
+	count = egueb_dom_list_length(family);
+	for (i = 0; i < count; i++)
+	{
+		Egueb_Css_Font_Family_Value *value;
+		const char *fc_description = NULL;
+
+		value = egueb_dom_list_item_get(family, i);
+		switch (value->type)
+		{
+			case EGUEB_CSS_FONT_FAMILY_TYPE_FAMILY:
+			fc_description = egueb_dom_string_string_get(value->family);
+			break;
+
+			case EGUEB_CSS_FONT_FAMILY_TYPE_GENERIC_SERIF:
+			fc_description = ":family=sans";
+			break;
+
+			case EGUEB_CSS_FONT_FAMILY_TYPE_GENERIC_SANS_SERIF:
+			fc_description = ":family=sans-serif";
+			break;
+
+			case EGUEB_CSS_FONT_FAMILY_TYPE_GENERIC_CURSIVE:
+			fc_description = ":family=cursive";
+			break;
+
+			case EGUEB_CSS_FONT_FAMILY_TYPE_GENERIC_FANTASY:
+			fc_description = ":family=fantasy";
+			break;
+
+			case EGUEB_CSS_FONT_FAMILY_TYPE_GENERIC_MONOSPACE:
+			fc_description = ":family=monospace";
+			break;
+		}
+		if (fc_description)
+		{
+			font = enesim_text_font_new_description_from(e, fc_description,
+					thiz->final_font_size);
+			if (font)
+				break;
+		}
+	}
 	egueb_dom_list_unref(family);
-	
 	enesim_text_engine_unref(e);
 
 	return font;
