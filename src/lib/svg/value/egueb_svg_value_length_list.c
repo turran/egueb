@@ -32,7 +32,7 @@ static void _egueb_svg_value_length_list_cb(const char *attr, void *data)
 	{
 		Egueb_Svg_Length *plength;
 
-		plength = malloc(sizeof(double));
+		plength = malloc(sizeof(Egueb_Svg_Length));
 		*plength = length;
 		egueb_dom_list_item_append(l, plength);
 	}
