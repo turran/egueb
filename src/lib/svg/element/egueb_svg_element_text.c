@@ -466,13 +466,17 @@ static void _egueb_svg_element_text_instance_deinit(void *o)
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
-EAPI void egueb_svg_element_text_pen_get(Egueb_Dom_Node *n,
+Eina_Bool egueb_svg_element_text_pen_get(Egueb_Dom_Node *n,
 		Egueb_Svg_Element_Text_Pen **pen)
 {
 	Egueb_Svg_Element_Text *thiz;
 
+	if (!egueb_svg_element_is_text(n))
+		return EINA_FALSE;
+
 	thiz = EGUEB_SVG_ELEMENT_TEXT(n);
 	*pen = &thiz->pen;
+	return EINA_TRUE;
 }
 /*============================================================================*
  *                                   API                                      *

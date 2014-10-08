@@ -133,6 +133,29 @@ static void _egueb_svg_element_tspan_node_removed_cb(Egueb_Dom_Event *e,
 	}
 }
 
+static Eina_Bool _egueb_svg_element_tspan_pen_get(Egueb_Dom_Node *n,
+		Egueb_Svg_Element_Text_Pen **pen)
+{
+	Egueb_Dom_Node *relative;
+
+	relative = egueb_svg_element_geometry_relative_get(n);
+	if (!egueb_svg_element_text_pen_get(relative, pen))
+	{
+		Egueb_Dom_String *name;
+		Egueb_Dom_String *tname;
+
+		name = egueb_dom_element_name_get(n);
+		tname = egueb_dom_element_tag_name_get(n);
+		WARN("Relative element '%s' is not a text, is a '%s'",
+				egueb_dom_string_string_get(name),
+				egueb_dom_string_string_get(tname));
+		egueb_dom_string_unref(name);
+		egueb_dom_string_unref(tname);
+
+		return EINA_FALSE;
+	}
+	return EINA_TRUE;
+}
 /*----------------------------------------------------------------------------*
  *                            Text content interface                          *
  *----------------------------------------------------------------------------*/
@@ -161,7 +184,7 @@ static void _egueb_svg_element_tspan_painter_apply(Egueb_Svg_Renderable *r,
 static Eina_Bool _egueb_svg_element_tspan_process(Egueb_Svg_Renderable *r)
 {
 	Egueb_Svg_Element_Tspan *thiz;
-	Egueb_Svg_Element_Text_Pen *pen;
+	Egueb_Svg_Element_Text_Pen *pen = NULL;
 	Egueb_Svg_Element *e;
 	Egueb_Svg_Length *c;
 	Egueb_Dom_List *l;
@@ -193,15 +216,9 @@ static Eina_Bool _egueb_svg_element_tspan_process(Egueb_Svg_Renderable *r)
 	thiz->gy = egueb_svg_coord_final_get(c, (EGUEB_SVG_ELEMENT(relative))->viewbox.h, doc_font_size);
 	egueb_dom_node_unref(relative);
 
-	/* get the pen we should use for every span */
-	egueb_svg_element_text_pen_get(EGUEB_DOM_NODE(relative), &pen);
-
 	/* set the position */
 	e = EGUEB_SVG_ELEMENT(r);
 	gfont_size = e->final_font_size;
-
-	gx = pen->x;
-	gy = pen->y;
 
 	n = EGUEB_DOM_NODE(r);
 	font = egueb_svg_element_font_resolve(n);
@@ -223,6 +240,18 @@ static Eina_Bool _egueb_svg_element_tspan_process(Egueb_Svg_Renderable *r)
 
 	enesim_renderer_text_span_font_set(thiz->r, enesim_text_font_ref(thiz->gfont));
 	max = enesim_text_font_max_ascent_get(thiz->gfont);
+
+	/* get the pen we should use for every span */
+	if (_egueb_svg_element_tspan_pen_get(EGUEB_DOM_NODE(relative), &pen))
+	{
+		gx = pen->x;
+		gy = pen->y;
+	}
+	else
+	{
+		gx = 0;
+		gy = 0;
+	}
 	enesim_renderer_origin_set(thiz->r, gx, gy - max);
 
 	INFO("matrix %" ENESIM_MATRIX_FORMAT, ENESIM_MATRIX_ARGS (&e->transform));
@@ -230,8 +259,11 @@ static Eina_Bool _egueb_svg_element_tspan_process(Egueb_Svg_Renderable *r)
 
 	INFO("x: %g, y: %g, font-size: %g", gx, gy, gfont_size);
 	enesim_renderer_shape_geometry_get(thiz->r, &bounds);
-	INFO("advancing by w: %g, h: %g", bounds.w, bounds.h);
-	pen->x += bounds.w;
+	if (pen)
+	{
+		INFO("advancing by w: %g, h: %g", bounds.w, bounds.h);
+		pen->x += bounds.w;
+	}
 
 	return EINA_TRUE;
 }

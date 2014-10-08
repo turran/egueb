@@ -26,7 +26,7 @@ typedef struct _Egueb_Svg_Element_Text_Pen
 	double y;
 } Egueb_Svg_Element_Text_Pen;
 
-EAPI void egueb_svg_element_text_pen_get(Egueb_Dom_Node *n,
+Eina_Bool egueb_svg_element_text_pen_get(Egueb_Dom_Node *n,
 		Egueb_Svg_Element_Text_Pen **pen);
 
 #endif
