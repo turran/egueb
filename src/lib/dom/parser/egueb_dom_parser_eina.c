@@ -224,11 +224,13 @@ static Eina_Bool _egueb_dom_parser_eina_tag_ns_find_cb(void *data, const char *k
 	return EINA_TRUE;
 }
 
-static char * _egueb_dom_parser_eina_tag_ns_find(Egueb_Dom_Parser_Eina *thiz,
-		const char *name, unsigned int name_length,
-		const char *attrs,  unsigned int attr_length)
+static Egueb_Dom_String * _egueb_dom_parser_eina_tag_ns_find(
+		Egueb_Dom_Parser_Eina *thiz, const char *name,
+		unsigned int name_length, const char *attrs,
+		unsigned int attr_length)
 {
 	Egueb_Dom_Parser_Eina_NS_Data data;
+	Egueb_Dom_String *ns = NULL;
 	const char *start, *end;
 
 	data.prefix_length = 0;
@@ -251,8 +253,34 @@ static char * _egueb_dom_parser_eina_tag_ns_find(Egueb_Dom_Parser_Eina *thiz,
 	/* we need to parse the attributes first to find the namespaces */
 	eina_simple_xml_attributes_parse(attrs, attr_length,
 			_egueb_dom_parser_eina_tag_ns_find_cb, &data);
-	/* TODO in case no namespace is found, find the namespace from the ancestors */
-	return data.ns;
+	if (!data.ns)
+	{
+		Egueb_Dom_Node *parent;
+
+		parent = _egueb_dom_parser_eina_context_get(thiz);
+ 		if (data.prefix_length)
+		{
+			Egueb_Dom_String *prefix;
+			/* in case we do have an ancestor, pick it from there */
+			prefix = egueb_dom_string_new_with_length(data.prefix,
+					data.prefix_length);
+			ns = egueb_dom_node_namespace_uri_lookup(parent, prefix);
+			egueb_dom_string_unref(prefix);
+		}
+		else
+		{
+			/* get the default namespace */
+			/* TODO we can optmize this by keeping a reference of
+			 * the default namespace of the context (i.e parent)
+			 */
+			ns = egueb_dom_node_namespace_uri_lookup(parent, NULL);
+		}
+	}
+	else
+	{
+		ns = egueb_dom_string_steal(data.ns);
+	}
+	return ns;
 }
 
 static Egueb_Dom_Node * _egueb_dom_parser_eina_tag_new(Egueb_Dom_Parser_Eina *thiz,
@@ -265,16 +293,14 @@ static Egueb_Dom_Node * _egueb_dom_parser_eina_tag_new(Egueb_Dom_Parser_Eina *th
 	Egueb_Dom_Node *topmost;
 	Egueb_Dom_String *e_name;
 	Egueb_Dom_String *e_ns;
-	char *ns;
 
 	parent = _egueb_dom_parser_eina_context_get(thiz);
 	doc = egueb_dom_parser_document_get(thiz->parser);
 	if (!doc) return NULL;
 
 	/* get the namespace from the arguments */
-	ns = _egueb_dom_parser_eina_tag_ns_find(thiz, name, name_length,
+	e_ns = _egueb_dom_parser_eina_tag_ns_find(thiz, name, name_length,
 		attrs,  attr_length);
-	e_ns = egueb_dom_string_steal(ns);
 
 	/* now create the element with the namespace found */
 	e_name = egueb_dom_string_new_with_length(name, name_length);

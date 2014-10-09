@@ -458,11 +458,16 @@ EAPI Egueb_Dom_Node * egueb_dom_document_element_ns_create(Egueb_Dom_Node *n,
 		return NULL;
 	}
 
-	/* find the default namespace in case there's no namespace provided */
-	if (!egueb_dom_string_is_valid(ns_uri))
-		ns_uri = egueb_dom_node_namespace_uri_lookup(n, NULL);
-	else
-		ns_uri = egueb_dom_string_ref(ns_uri);
+	/* if the element has a prefix but there is no namespace, error too */
+	if (!egueb_dom_string_is_valid(ns_uri) &&
+			egueb_dom_string_is_valid(prefix))
+	{
+		ERR("Prefix without a namespace on '%s'",
+				egueb_dom_string_string_get(qname));
+		*err = EGUEB_DOM_ERROR_NAMESPACE;
+		return NULL;
+		
+	}
 
 	klass = EGUEB_DOM_DOCUMENT_CLASS_GET(n);
 	thiz = EGUEB_DOM_DOCUMENT(n);
@@ -480,7 +485,6 @@ EAPI Egueb_Dom_Node * egueb_dom_document_element_ns_create(Egueb_Dom_Node *n,
 		if (err) *err = EGUEB_DOM_ERROR_INVALID_CHARACTER;
 	}
 
-	egueb_dom_string_unref(ns_uri);
 	egueb_dom_string_unref(prefix);
 	egueb_dom_string_unref(local_name);
 
