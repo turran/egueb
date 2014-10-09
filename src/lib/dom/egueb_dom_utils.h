@@ -43,5 +43,7 @@ EAPI Eina_Bool egueb_dom_double_get(const char *nptr, char **endptr, double *r);
 EAPI Eina_Bool egueb_dom_list_get(const char *attr, char sep, Egueb_Dom_List_Cb cb, void *data);
 EAPI Eina_Bool egueb_dom_function_get(const char *attr_val, const char **endptr,
 		const char *funcname, int *numelements, double *elements);
+EAPI Eina_Bool egueb_dom_qualified_name_resolve(Egueb_Dom_String *qname,
+		Egueb_Dom_String **prefix, Egueb_Dom_String **local_name);
 
 #endif

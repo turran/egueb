@@ -63,13 +63,14 @@ static void _egueb_dom_document_external_init(Egueb_Dom_Document_External *thiz)
  *                            Document interface                              *
  *----------------------------------------------------------------------------*/
 static Egueb_Dom_Node * _egueb_dom_document_external_element_create(
-		Egueb_Dom_Document *d, const char *name)
+		Egueb_Dom_Document *d, const char *ns, const char *name)
 {
 	Egueb_Dom_Document_External *thiz;
 
 	thiz = EGUEB_DOM_DOCUMENT_EXTERNAL(d);
 	if (thiz->descriptor->element_create)
-		return thiz->descriptor->element_create(EGUEB_DOM_NODE(d), thiz->data, name);
+		return thiz->descriptor->element_create(EGUEB_DOM_NODE(d),
+				thiz->data, ns, name);
 	return NULL;
 }
 

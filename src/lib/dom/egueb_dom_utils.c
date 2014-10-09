@@ -16,6 +16,8 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 #include "egueb_dom_private.h"
+
+#include "egueb_dom_string.h"
 #include "egueb_dom_utils.h"
 /*============================================================================*
  *                                  Local                                     *
@@ -228,4 +230,29 @@ end:
 	return EINA_TRUE;
 }
 
+EAPI Eina_Bool egueb_dom_qualified_name_resolve(Egueb_Dom_String *qname,
+		Egueb_Dom_String **prefix, Egueb_Dom_String **local_name)
+{
+	const char *s;
+	const char *start;
 
+	if (!egueb_dom_string_is_valid(qname))
+		return EINA_FALSE;
+	
+	s = start = egueb_dom_string_string_get(qname);
+	while (*s)
+	{
+		if (*s == ':')
+		{
+			int len;
+
+			len = s - start;
+			*prefix = egueb_dom_string_new_with_length(start, len);
+			*local_name = egueb_dom_string_new_with_string(s + 1);
+		}
+		s++;
+	}
+	*prefix = NULL;
+	*local_name = egueb_dom_string_ref(qname);
+	return EINA_TRUE;
+}

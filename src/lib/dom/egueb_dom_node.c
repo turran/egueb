@@ -1366,6 +1366,9 @@ EAPI Egueb_Dom_String * egueb_dom_node_namespace_uri_lookup(Egueb_Dom_Node *thiz
 	Egueb_Dom_String *ret = NULL;
 	Egueb_Dom_Node *tmp;
 
+	if (!thiz)
+		return NULL;
+
 	switch (egueb_dom_node_type_get(thiz))
 	{
 		case EGUEB_DOM_NODE_TYPE_ELEMENT:

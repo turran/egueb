@@ -930,13 +930,14 @@ static Egueb_Dom_Input_Descriptor _document_svg_input_descriptor = {
  *                            Document interface                              *
  *----------------------------------------------------------------------------*/
 static Egueb_Dom_Node * _egueb_svg_document_element_create(
-		Egueb_Dom_Document *d, const char *name)
+		Egueb_Dom_Document *d, const char *ns, const char *name)
 {
 	Egueb_Dom_Node *ret;
 	size_t sz;
 	int id;
 
 	sz = strlen(name);
+	ERR("Creating element with namespace '%s'", ns);
 	if (!_egueb_svg_document_element_id_get(name, sz, &id))
 		return NULL;
 	ret = _egueb_svg_document_element_create_by_id(id);

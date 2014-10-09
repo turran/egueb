@@ -56,6 +56,14 @@ typedef struct _Egueb_Dom_Parser_Eina_Attribute_Data
 	Egueb_Dom_Node *node;
 } Egueb_Dom_Parser_Eina_Attribute_Data;
 
+typedef struct _Egueb_Dom_Parser_Eina_NS_Data
+{
+	Egueb_Dom_Parser_Eina *thiz;
+	const char *prefix;
+	unsigned int prefix_length;
+	char *ns;
+} Egueb_Dom_Parser_Eina_NS_Data;
+
 static Egueb_Dom_Node * _egueb_dom_parser_eina_context_get(
 		Egueb_Dom_Parser_Eina *thiz)
 {
@@ -176,6 +184,77 @@ static void _egueb_dom_parser_eina_tag_attribute_set(Egueb_Dom_Parser_Eina *thiz
 	eina_simple_xml_attributes_parse(attributes, length, _egueb_dom_parser_eina_tag_attributes_set_cb, &data);
 }
 
+static Eina_Bool _egueb_dom_parser_eina_tag_ns_find_cb(void *data, const char *key,
+		const char *value)
+{
+	Egueb_Dom_Parser_Eina_NS_Data *ns_data = data;
+
+	if (!strncmp(key, "xmlns", 5))
+	{
+		/* check if the element name has a prefix, if so,
+		 * check that the prefix matches the xmlns prefix
+		 * if that's the case we have a found the creation
+		 * namespace (<foo:bar xmlns:foo="http://www.foo.com">)
+		 */
+		if (ns_data->prefix_length)
+		{
+			if (key[5] == ':' && !strncmp(ns_data->prefix, &key[6],
+					ns_data->prefix_length))
+			{
+				DBG("Namespace '%s' with prefix '%.*s' found",
+						value, ns_data->prefix_length,
+						ns_data->prefix);
+				ns_data->ns = strdup(value);
+				return EINA_FALSE;
+			}
+		}
+		/* check that the element does not have a prefix, if
+		 * so, we have a found the creation namespace
+		 */
+		else
+		{
+			if (key[5] == '\0')
+			{
+				DBG("Namespace '%s' found", value);
+				ns_data->ns = strdup(value);
+				return EINA_FALSE;
+			}
+		}
+	}
+	return EINA_TRUE;
+}
+
+static char * _egueb_dom_parser_eina_tag_ns_find(Egueb_Dom_Parser_Eina *thiz,
+		const char *name, unsigned int name_length,
+		const char *attrs,  unsigned int attr_length)
+{
+	Egueb_Dom_Parser_Eina_NS_Data data;
+	const char *start, *end;
+
+	data.prefix_length = 0;
+	data.prefix = name;
+	data.ns = NULL;
+
+	/* get the element prefix first */
+	start = name;
+	end = start + name_length;
+	while (start < end)
+	{
+		if (*start == ':')
+		{
+			data.prefix_length = start - name;
+			break;
+		}
+		start++;
+	}
+
+	/* we need to parse the attributes first to find the namespaces */
+	eina_simple_xml_attributes_parse(attrs, attr_length,
+			_egueb_dom_parser_eina_tag_ns_find_cb, &data);
+	/* TODO in case no namespace is found, find the namespace from the ancestors */
+	return data.ns;
+}
+
 static Egueb_Dom_Node * _egueb_dom_parser_eina_tag_new(Egueb_Dom_Parser_Eina *thiz,
 		const char *name, unsigned int name_length,
 		const char *attrs,  unsigned int attr_length)
@@ -184,15 +263,25 @@ static Egueb_Dom_Node * _egueb_dom_parser_eina_tag_new(Egueb_Dom_Parser_Eina *th
 	Egueb_Dom_Node *node;
 	Egueb_Dom_Node *parent;
 	Egueb_Dom_Node *topmost;
-	Egueb_Dom_String *str;
+	Egueb_Dom_String *e_name;
+	Egueb_Dom_String *e_ns;
+	char *ns;
 
 	parent = _egueb_dom_parser_eina_context_get(thiz);
 	doc = egueb_dom_parser_document_get(thiz->parser);
 	if (!doc) return NULL;
 
-	str = egueb_dom_string_new_with_length(name, name_length);
-	node = egueb_dom_document_element_create(doc, str, NULL);
-	egueb_dom_string_unref(str);
+	/* get the namespace from the arguments */
+	ns = _egueb_dom_parser_eina_tag_ns_find(thiz, name, name_length,
+		attrs,  attr_length);
+	e_ns = egueb_dom_string_steal(ns);
+
+	/* now create the element with the namespace found */
+	e_name = egueb_dom_string_new_with_length(name, name_length);
+	node = egueb_dom_document_element_ns_create(doc, e_ns, e_name, NULL);
+	egueb_dom_string_unref(e_ns);
+	egueb_dom_string_unref(e_name);
+
 	if (!node) return NULL;
 
 	/* in case we dont have a topmost element, set it */

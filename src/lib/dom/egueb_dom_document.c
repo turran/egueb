@@ -25,6 +25,7 @@
 #include "egueb_dom_event.h"
 #include "egueb_dom_event_mutation.h"
 #include "egueb_dom_implementation.h"
+#include "egueb_dom_utils.h"
 
 #include "egueb_dom_node_private.h"
 #include "egueb_dom_string_private.h"
@@ -433,22 +434,43 @@ done:
  *                                   API                                      *
  *============================================================================*/
 /*
- *  Element createElement(in DOMString tagName) raises(DOMException);
+ * Introduced in DOM Level 2:
+ * Element createElementNS(in DOMString namespaceURI,
+ *   in DOMString qualifiedName)
+ *   raises(DOMException);
  */
-EAPI Egueb_Dom_Node * egueb_dom_document_element_create(Egueb_Dom_Node *n,
-		Egueb_Dom_String *name, Eina_Error *err)
+EAPI Egueb_Dom_Node * egueb_dom_document_element_ns_create(Egueb_Dom_Node *n,
+		Egueb_Dom_String *ns_uri, Egueb_Dom_String *qname,
+		Eina_Error *err)
 {
 	Egueb_Dom_Document *thiz;
 	Egueb_Dom_Document_Class *klass;
 	Egueb_Dom_Node *new_element = NULL;
-	const char *str;
+	Egueb_Dom_String *prefix = NULL;
+	Egueb_Dom_String *local_name = NULL;
+
+	/* split the prefix:local_name from the qualified name */
+	if (!egueb_dom_qualified_name_resolve(qname, &prefix, &local_name))
+	{
+		ERR("Bad formed qualified name '%s'",
+				egueb_dom_string_string_get(qname));
+		*err = EGUEB_DOM_ERROR_NAMESPACE;
+		return NULL;
+	}
+
+	/* find the default namespace in case there's no namespace provided */
+	if (!egueb_dom_string_is_valid(ns_uri))
+		ns_uri = egueb_dom_node_namespace_uri_lookup(n, NULL);
+	else
+		ns_uri = egueb_dom_string_ref(ns_uri);
 
 	klass = EGUEB_DOM_DOCUMENT_CLASS_GET(n);
 	thiz = EGUEB_DOM_DOCUMENT(n);
 
-	str = egueb_dom_string_string_get(name);
 	if (klass->element_create)
-		new_element = klass->element_create(thiz, str);
+		new_element = klass->element_create(thiz,
+				egueb_dom_string_string_get(ns_uri),
+				egueb_dom_string_string_get(local_name));
 	if (new_element)
 	{
 		egueb_dom_node_document_set(new_element, n);
@@ -457,7 +479,21 @@ EAPI Egueb_Dom_Node * egueb_dom_document_element_create(Egueb_Dom_Node *n,
 	{
 		if (err) *err = EGUEB_DOM_ERROR_INVALID_CHARACTER;
 	}
+
+	egueb_dom_string_unref(ns_uri);
+	egueb_dom_string_unref(prefix);
+	egueb_dom_string_unref(local_name);
+
 	return new_element;
+}
+
+/*
+ *  Element createElement(in DOMString tagName) raises(DOMException);
+ */
+EAPI Egueb_Dom_Node * egueb_dom_document_element_create(Egueb_Dom_Node *n,
+		Egueb_Dom_String *name, Eina_Error *err)
+{
+	return egueb_dom_document_element_ns_create(n, NULL, name, err);
 }
 
 /* DocumentFragment   createDocumentFragment(); */
@@ -688,10 +724,6 @@ interface Document : Node {
   // Introduced in DOM Level 2:
   Node               importNode(in Node importedNode, 
                                 in boolean deep)
-                                        raises(DOMException);
-  // Introduced in DOM Level 2:
-  Element            createElementNS(in DOMString namespaceURI, 
-                                     in DOMString qualifiedName)
                                         raises(DOMException);
   // Introduced in DOM Level 2:
   Attr               createAttributeNS(in DOMString namespaceURI, 

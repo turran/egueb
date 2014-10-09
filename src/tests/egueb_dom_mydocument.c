@@ -25,7 +25,7 @@ typedef struct _MyDocument_Class
 ENESIM_OBJECT_INSTANCE_BOILERPLATE(EGUEB_DOM_DOCUMENT_DESCRIPTOR, MyDocument, MyDocument_Class, mydocument);
 
 static Egueb_Dom_Node * _mydocument_element_create(Egueb_Dom_Document *d,
-		const char *name)
+		const char *ns, const char *name)
 {
 	Egueb_Dom_Node *new_node = NULL;
 

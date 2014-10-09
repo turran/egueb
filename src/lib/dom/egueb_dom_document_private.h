@@ -40,7 +40,7 @@ typedef struct _Egueb_Dom_Document
 } Egueb_Dom_Document;
 
 typedef Egueb_Dom_Node * (*Egueb_Dom_Document_Element_Create)(
-		Egueb_Dom_Document *thiz, const char *name);
+		Egueb_Dom_Document *thiz, const char *ns, const char *name);
 typedef Eina_Bool (*Egueb_Dom_Document_Child_Appendable)(Egueb_Dom_Document *thiz,
 		Egueb_Dom_Node *child);
 typedef Ender_Item * (*Egueb_Dom_Document_Item_Get)(Egueb_Dom_Document *thiz);
