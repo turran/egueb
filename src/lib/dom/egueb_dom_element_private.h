@@ -28,7 +28,10 @@ typedef struct _Egueb_Dom_Element
 	Egueb_Dom_Node base;
 
 	/* instance specific attributes */
+	/* attributes without namespace */
 	Eina_Hash *attributes;
+	/* attributes with namespace */
+	Eina_Hash *attributes_ns;
 	/* flag that informs that an inhertiable property has changed */
 	Eina_Bool inheritable_changed;
 	/* flag that informs that an attribute has changed */
@@ -64,5 +67,9 @@ typedef struct _Egueb_Dom_Element_Class
 
 Enesim_Object_Descriptor * egueb_dom_element_descriptor_get(void);
 Eina_Bool egueb_dom_element_process_children(Egueb_Dom_Element *thiz);
+Eina_Bool egueb_dom_element_is_default_namespace(Egueb_Dom_Node *n,
+		Egueb_Dom_String *ns_uri);
+Egueb_Dom_String * egueb_dom_element_namespace_uri_lookup(Egueb_Dom_Node *n,
+		Egueb_Dom_String *prefix);
 
 #endif

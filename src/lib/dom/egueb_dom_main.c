@@ -30,6 +30,7 @@ static Eina_Bool _deinitializing;
 
 static void _egueb_dom_strings_init(void)
 {
+	EGUEB_DOM_NAME_XMLNS = egueb_dom_string_new_with_string("xmlns");
 	EGUEB_DOM_NAME_XLINK_HREF = egueb_dom_string_new_with_string("xlink:href");
 	EGUEB_DOM_NAME_SCRIPT = egueb_dom_string_new_with_string("script");
 	EGUEB_DOM_NAME_TYPE = egueb_dom_string_new_with_string("type");
@@ -38,6 +39,7 @@ static void _egueb_dom_strings_init(void)
 
 static void _egueb_dom_strings_shutdown(void)
 {
+	egueb_dom_string_unref(EGUEB_DOM_NAME_XMLNS);
 	egueb_dom_string_unref(EGUEB_DOM_NAME_XLINK_HREF);
 	egueb_dom_string_unref(EGUEB_DOM_NAME_SCRIPT);
 	egueb_dom_string_unref(EGUEB_DOM_NAME_TYPE);
@@ -68,6 +70,7 @@ EAPI Eina_Error EGUEB_DOM_ERROR_INVALID_ACCESS;
 EAPI Eina_Error EGUEB_DOM_ERROR_VALIDATION;
 EAPI Eina_Error EGUEB_DOM_ERROR_TYPE_MISMATCH;
 
+Egueb_Dom_String *EGUEB_DOM_NAME_XMLNS;
 Egueb_Dom_String *EGUEB_DOM_NAME_XLINK_HREF;
 Egueb_Dom_String *EGUEB_DOM_NAME_SCRIPT;
 Egueb_Dom_String *EGUEB_DOM_NAME_TYPE;

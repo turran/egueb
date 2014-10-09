@@ -149,6 +149,7 @@ EAPI Eina_Bool egueb_dom_node_is_default_namespace(Egueb_Dom_Node *thiz,
 		Egueb_Dom_String *ns_uri);
 EAPI Egueb_Dom_String * egueb_dom_node_namespace_uri_lookup(Egueb_Dom_Node *thiz,
 		Egueb_Dom_String *prefix);
+EAPI Egueb_Dom_String * egueb_dom_node_prefix_get(Egueb_Dom_Node *thiz);
 
 EAPI Ender_Item * egueb_dom_node_item_get(Egueb_Dom_Node *thiz);
 /**

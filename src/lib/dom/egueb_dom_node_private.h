@@ -100,5 +100,6 @@ void egueb_dom_node_document_set_recursive(Egueb_Dom_Node *thiz,
 Eina_Bool egueb_dom_node_feature_add(Egueb_Dom_Node *thiz,
 		Egueb_Dom_String *name, Egueb_Dom_String *version,
 		Egueb_Dom_Feature *feature);
+Egueb_Dom_Node * egueb_dom_node_get_ancestor_element(Egueb_Dom_Node *thiz);
 
 #endif

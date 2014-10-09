@@ -31,6 +31,7 @@
 #include "egueb_dom_node_private.h"
 #include "egueb_dom_node_list_private.h"
 #include "egueb_dom_node_map_named_private.h"
+#include "egueb_dom_element_private.h"
 #include "egueb_dom_document_private.h"
 #include "egueb_dom_event_mutation_private.h"
 /*============================================================================*
@@ -70,26 +71,6 @@ static void _egueb_dom_node_feature_free(void *d)
 	}
 }
 
-static Egueb_Dom_Node * _egueb_dom_node_get_ancestor_element(Egueb_Dom_Node *thiz)
-{
-	Egueb_Dom_Node *ancestor;
-
-	ancestor = egueb_dom_node_parent_get(thiz);
-	while (ancestor)
-	{
-		Egueb_Dom_Node *tmp;
-
-		if (egueb_dom_node_type_get(ancestor) == EGUEB_DOM_NODE_TYPE_ELEMENT)
-		{
-			return ancestor;
-		}
-		tmp = egueb_dom_node_parent_get(ancestor);
-		egueb_dom_node_unref(tmp);
-		ancestor = tmp;
-	}
-	return NULL;
-}
-
 static Egueb_Dom_String * _egueb_dom_node_ns_prefix_lookup(Egueb_Dom_Node *thiz,
 		Egueb_Dom_String *ns_uri, Egueb_Dom_Node *from)
 {
@@ -126,7 +107,7 @@ static Egueb_Dom_String * _egueb_dom_node_ns_prefix_lookup(Egueb_Dom_Node *thiz,
             }
         } 
 #endif
-	ancestor = _egueb_dom_node_get_ancestor_element(thiz);
+	ancestor = egueb_dom_node_get_ancestor_element(thiz);
 	ret = _egueb_dom_node_ns_prefix_lookup(ancestor, ns_uri, from);
 	egueb_dom_node_unref(ancestor);
 
@@ -539,6 +520,25 @@ Eina_Bool egueb_dom_node_feature_add(Egueb_Dom_Node *thiz,
 	return EINA_TRUE;
 }
 
+Egueb_Dom_Node * egueb_dom_node_get_ancestor_element(Egueb_Dom_Node *thiz)
+{
+	Egueb_Dom_Node *ancestor;
+
+	ancestor = egueb_dom_node_parent_get(thiz);
+	while (ancestor)
+	{
+		Egueb_Dom_Node *tmp;
+
+		if (egueb_dom_node_type_get(ancestor) == EGUEB_DOM_NODE_TYPE_ELEMENT)
+		{
+			return ancestor;
+		}
+		tmp = egueb_dom_node_parent_get(ancestor);
+		egueb_dom_node_unref(tmp);
+		ancestor = tmp;
+	}
+	return NULL;
+}
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/
@@ -1290,7 +1290,7 @@ EAPI Egueb_Dom_String * egueb_dom_node_prefix_lookup(Egueb_Dom_Node *thiz,
 		return NULL;
 
 		default:
-		tmp = _egueb_dom_node_get_ancestor_element(thiz);
+		tmp = egueb_dom_node_get_ancestor_element(thiz);
 		ret = egueb_dom_node_prefix_lookup(tmp, ns_uri);
 		egueb_dom_node_unref(tmp);
 		break;
@@ -1314,31 +1314,18 @@ EAPI Eina_Bool egueb_dom_node_is_default_namespace(Egueb_Dom_Node *thiz,
 	switch (egueb_dom_node_type_get(thiz))
 	{
 		case EGUEB_DOM_NODE_TYPE_ELEMENT:
-		if (!thiz->prefix)
-		{
-			return egueb_dom_string_is_equal(thiz->namespace_uri, ns_uri);
-		}
-#if 0
-     if ( Element has attributes and there is a valid DOM Level 2 
-          default namespace declaration, i.e. Attrs localName == "xmlns" )
-     {
-	  return (Attrs value == namespaceURI);
-     }
-#endif
-		tmp = _egueb_dom_node_get_ancestor_element(thiz);
-		ret = egueb_dom_node_is_default_namespace(tmp, ns_uri);
-		egueb_dom_node_unref(tmp);
+		ret = egueb_dom_element_is_default_namespace(thiz, ns_uri);
 		break;
 
 		case EGUEB_DOM_NODE_TYPE_DOCUMENT:
 		tmp = egueb_dom_document_document_element_get(thiz);
-		ret = egueb_dom_node_is_default_namespace(tmp, ns_uri);
+		ret = egueb_dom_element_is_default_namespace(tmp, ns_uri);
 		egueb_dom_node_unref(tmp);
 		break;
 
 		case EGUEB_DOM_NODE_TYPE_ATTRIBUTE:
 		tmp = egueb_dom_attr_owner_get(thiz);
-		ret = egueb_dom_node_is_default_namespace(tmp, ns_uri);
+		ret = egueb_dom_element_is_default_namespace(tmp, ns_uri);
 		egueb_dom_node_unref(tmp);
 		break;
 
@@ -1349,8 +1336,8 @@ EAPI Eina_Bool egueb_dom_node_is_default_namespace(Egueb_Dom_Node *thiz,
 		break;
 
 		default:
-		tmp = _egueb_dom_node_get_ancestor_element(thiz);
-		ret = egueb_dom_node_is_default_namespace(tmp, ns_uri);
+		tmp = egueb_dom_node_get_ancestor_element(thiz);
+		ret = egueb_dom_element_is_default_namespace(tmp, ns_uri);
 		egueb_dom_node_unref(tmp);
 		break;
 	}
@@ -1372,40 +1359,7 @@ EAPI Egueb_Dom_String * egueb_dom_node_namespace_uri_lookup(Egueb_Dom_Node *thiz
 	switch (egueb_dom_node_type_get(thiz))
 	{
 		case EGUEB_DOM_NODE_TYPE_ELEMENT:
-		if (thiz->namespace_uri != NULL && egueb_dom_string_is_equal(thiz->prefix, prefix))
-		{
-			// Note: prefix could be "null" in this case we are looking for default namespace 
-			return egueb_dom_string_ref(thiz->namespace_uri);
-		}
-#if 0
-         if ( Element has attributes)
-         { 
-            for ( all DOM Level 2 valid local namespace declaration attributes of Element )
-            {
-                 if (Attrs prefix == "xmlns" and Attrs localName == prefix ) 
-                       // non default namespace
-                 { 
-                        if (Attrs value is not empty) 
-                        {
-                          return (Attrs value);
-                        }         
-                        return unknown (null);                   
-                 } 
-                 else if (Attrs localname == "xmlns" and prefix == null)
-                       // default namespace
-                 { 
-                        if (Attrs value is not empty) 
-                        {
-                          return (Attrs value);
-                        }         
-                        return unknown (null); 
-                 }
-           }
-         } 
-#endif
-		tmp = _egueb_dom_node_get_ancestor_element(thiz);
-		ret = egueb_dom_node_namespace_uri_lookup(tmp, prefix);
-		egueb_dom_node_unref(tmp);
+		ret = egueb_dom_element_namespace_uri_lookup(thiz, prefix);
 		break;
 
 		case EGUEB_DOM_NODE_TYPE_DOCUMENT:
@@ -1427,12 +1381,24 @@ EAPI Egueb_Dom_String * egueb_dom_node_namespace_uri_lookup(Egueb_Dom_Node *thiz
 		break;
 
 		default:
-		tmp = _egueb_dom_node_get_ancestor_element(thiz);
+		tmp = egueb_dom_node_get_ancestor_element(thiz);
 		ret = egueb_dom_node_namespace_uri_lookup(tmp, prefix);
 		egueb_dom_node_unref(tmp);
 		break;
 	}
 	return ret;
+}
+
+
+
+/**
+ * Introduced in DOM Level 2:
+ * attribute DOMString       prefix;
+ * raises(DOMException) on setting
+ */
+EAPI Egueb_Dom_String * egueb_dom_node_prefix_get(Egueb_Dom_Node *thiz)
+{
+	return egueb_dom_string_ref(thiz->prefix);
 }
 
 /**
@@ -1504,9 +1470,6 @@ EAPI void egueb_dom_node_thaw(Egueb_Dom_Node *thiz)
   void               normalize();
   // Introduced in DOM Level 2:
   readonly attribute DOMString       namespaceURI;
-  // Introduced in DOM Level 2:
-           attribute DOMString       prefix;
-                                        // raises(DOMException) on setting
 
   // Introduced in DOM Level 2:
   readonly attribute DOMString       localName;

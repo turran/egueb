@@ -164,6 +164,9 @@ static Eina_Bool _egueb_dom_parser_eina_tag_attributes_set_cb(void *data, const 
 	Egueb_Dom_String *name;
 	Egueb_Dom_String *v;
 
+	/* TODO handle the prefix:value and namespace case */
+	/* TODO for xmlns and xml prefix/value use the correct namespace */
+
 	name = egueb_dom_string_new_with_static_string(key);
 	v = _egueb_dom_parser_eina_transform_text(thiz, value, 0);
 	DBG("Parsed attribute '%s' with value '%s'", key, value);

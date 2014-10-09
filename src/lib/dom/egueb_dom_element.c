@@ -480,6 +480,66 @@ Eina_Bool egueb_dom_element_process_children(Egueb_Dom_Element *thiz)
 	return ret;
 }
 
+Eina_Bool egueb_dom_element_is_default_namespace(Egueb_Dom_Node *n,
+		Egueb_Dom_String *ns_uri)
+{
+	Egueb_Dom_String *value;
+	Egueb_Dom_Node *tmp;
+	Eina_Bool ret;
+
+	if (!n)
+		return EINA_FALSE;
+
+	if (!n->prefix)
+		return egueb_dom_string_is_equal(n->namespace_uri, ns_uri);
+
+	value = egueb_dom_element_attribute_get(n, EGUEB_DOM_NAME_XMLNS);
+	ret = egueb_dom_string_is_equal(value, ns_uri);
+	egueb_dom_string_unref(value);
+	if (ret)
+		return ret;
+
+	tmp = egueb_dom_node_get_ancestor_element(n);
+	ret = egueb_dom_element_is_default_namespace(tmp, ns_uri);
+	egueb_dom_node_unref(tmp);
+	return ret;
+}
+
+Egueb_Dom_String * egueb_dom_element_namespace_uri_lookup(Egueb_Dom_Node *n,
+		Egueb_Dom_String *prefix)
+{
+	Egueb_Dom_Node *tmp;
+	Egueb_Dom_String *ret;
+
+	if (!n)
+		return NULL;
+
+	if (n->namespace_uri != NULL && egueb_dom_string_is_equal(n->prefix, prefix))
+	{
+		return egueb_dom_string_ref(n->namespace_uri);
+	}
+	/* TODO fetch or either the default namespace attr or the xmlns based attribute */
+	/* check for the default namespace */
+	if (!egueb_dom_string_is_valid(prefix))
+	{
+		tmp = egueb_dom_element_attribute_fetch(n, EGUEB_DOM_NAME_XMLNS);
+		if (tmp)
+		{
+			egueb_dom_attr_string_get(tmp, EGUEB_DOM_ATTR_TYPE_BASE, &ret);
+			egueb_dom_node_unref(tmp);
+		}
+	}
+	/* non default namespace */
+	else
+	{
+		/* return egueb_dom_element_attribute_ns_get(n, EGUEB_DOM_NAME_NS_XMLNS, EGUEB_DOM_NAME_XMLNS:prefix); */
+	}
+
+	tmp = egueb_dom_node_get_ancestor_element(n);
+	ret = egueb_dom_node_namespace_uri_lookup(tmp, prefix);
+	egueb_dom_node_unref(tmp);
+	return ret;
+}
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/
