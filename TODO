@@ -1,5 +1,6 @@
 Refactor
 ========
++ Change the API on the attr_value_set to match the DOM spec
 + When parsing a doc, how to create the nodes using the xmlns
   attribute so we can actually call createElementNS?
 + Remove the attribut_fetch and add the attribute_node_set
