@@ -53,6 +53,8 @@ EAPI extern Eina_Error EGUEB_DOM_ERROR_VALIDATION;
 EAPI extern Eina_Error EGUEB_DOM_ERROR_TYPE_MISMATCH;
 
 /* Shared strings */
+EAPI extern Egueb_Dom_String *EGUEB_DOM_NAME_NS_XMLNS;
+
 EAPI extern Egueb_Dom_String *EGUEB_DOM_NAME_XMLNS;
 EAPI extern Egueb_Dom_String *EGUEB_DOM_NAME_XLINK_HREF;
 EAPI extern Egueb_Dom_String *EGUEB_DOM_NAME_SCRIPT;

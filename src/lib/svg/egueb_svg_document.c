@@ -937,7 +937,7 @@ static Egueb_Dom_Node * _egueb_svg_document_element_create(
 	int id;
 
 	sz = strlen(name);
-	ERR("Creating element with namespace '%s'", ns);
+	INFO("Creating element '%s' with namespace '%s'", name, ns);
 	if (!_egueb_svg_document_element_id_get(name, sz, &id))
 		return NULL;
 	ret = _egueb_svg_document_element_create_by_id(id);

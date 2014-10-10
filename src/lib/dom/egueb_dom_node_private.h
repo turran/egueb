@@ -37,7 +37,6 @@ struct _Egueb_Dom_Node
 	/* namespace handling */
 	Egueb_Dom_String *namespace_uri;
 	Egueb_Dom_String *prefix;
-	Eina_Hash *namespaces;
 
 	/* event related data */
 	Eina_Hash *events;

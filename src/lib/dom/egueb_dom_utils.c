@@ -233,6 +233,7 @@ end:
 EAPI Eina_Bool egueb_dom_qualified_name_resolve(Egueb_Dom_String *qname,
 		Egueb_Dom_String **prefix, Egueb_Dom_String **local_name)
 {
+	Eina_Bool found = EINA_FALSE;
 	const char *s;
 	const char *start;
 
@@ -249,10 +250,15 @@ EAPI Eina_Bool egueb_dom_qualified_name_resolve(Egueb_Dom_String *qname,
 			len = s - start;
 			*prefix = egueb_dom_string_new_with_length(start, len);
 			*local_name = egueb_dom_string_new_with_string(s + 1);
+			found = EINA_TRUE;
+			break;
 		}
 		s++;
 	}
-	*prefix = NULL;
-	*local_name = egueb_dom_string_ref(qname);
+	if (!found)
+	{
+		*prefix = NULL;
+		*local_name = egueb_dom_string_ref(qname);
+	}
 	return EINA_TRUE;
 }
