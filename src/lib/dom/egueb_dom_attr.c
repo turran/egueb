@@ -251,11 +251,16 @@ EAPI Eina_Bool egueb_dom_is_attr(Egueb_Dom_Node *n)
 }
 
 EAPI void egueb_dom_attr_init(Egueb_Dom_Node *n, Egueb_Dom_String *name,
-		Eina_Bool animatable, Eina_Bool stylable, Eina_Bool inheritable)
+		Egueb_Dom_String *ns, Eina_Bool animatable, Eina_Bool stylable,
+		Eina_Bool inheritable)
 {
 	Egueb_Dom_Attr *thiz;
 
+	/* setup the node interface */
+	n->namespace_uri = ns;
+
 	thiz = EGUEB_DOM_ATTR(n);
+	/* If local_name is different from null, this attribute is a qualified name */
 	thiz->name = name;
 	thiz->flag_mask = egueb_dom_attr_flag_mask_generate(animatable,
 			stylable, inheritable);
@@ -277,6 +282,7 @@ EAPI Egueb_Dom_String * egueb_dom_attr_name_get(Egueb_Dom_Node *n)
 	Egueb_Dom_Attr *thiz;
 
 	thiz = EGUEB_DOM_ATTR(n);
+	/* TODO If local_name is different from null, this attribute is a qualified name */
 	if (!thiz->name) return NULL;
 	else return egueb_dom_string_ref(thiz->name);
 }

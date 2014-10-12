@@ -20,7 +20,8 @@
 #define _EGUEB_DOM_ATTR_STRING_H_
 
 EAPI Egueb_Dom_Node * egueb_dom_attr_string_new(Egueb_Dom_String *name,
-		Egueb_Dom_String *def, Eina_Bool animatable, Eina_Bool stylable,
+		Egueb_Dom_String *ns_uri, Egueb_Dom_String *def,
+		Eina_Bool animatable, Eina_Bool stylable,
 		Eina_Bool inheritable);
 
 #endif

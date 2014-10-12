@@ -129,13 +129,14 @@ static void _egueb_dom_attr_string_instance_deinit(void *o)
  *                                   API                                      *
  *============================================================================*/
 EAPI Egueb_Dom_Node * egueb_dom_attr_string_new(Egueb_Dom_String *name,
-		Egueb_Dom_String *def, Eina_Bool animatable, Eina_Bool stylable,
+		Egueb_Dom_String *ns_uri, Egueb_Dom_String *def,
+		Eina_Bool animatable, Eina_Bool stylable,
 		Eina_Bool inheritable)
 {
 	Egueb_Dom_Node *n;
 
 	n = ENESIM_OBJECT_INSTANCE_NEW(egueb_dom_attr_string);
-	egueb_dom_attr_init(n, name, animatable, stylable, inheritable);
+	egueb_dom_attr_init(n, name, ns_uri, animatable, stylable, inheritable);
 	if (def)
 		egueb_dom_attr_set(n, EGUEB_DOM_ATTR_TYPE_DEFAULT, def);
 	return n;

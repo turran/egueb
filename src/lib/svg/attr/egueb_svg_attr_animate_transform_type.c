@@ -37,7 +37,8 @@ Egueb_Dom_Node * egueb_svg_attr_animate_transform_type_new(void)
 	Egueb_Dom_Node *n;
 
 	n = ENESIM_OBJECT_INSTANCE_NEW(egueb_svg_attr_animate_transform_type);
-	egueb_dom_attr_init(n, egueb_dom_string_ref(EGUEB_DOM_NAME_TYPE), EINA_FALSE, EINA_FALSE, EINA_FALSE);
+	egueb_dom_attr_init(n, egueb_dom_string_ref(EGUEB_DOM_NAME_TYPE),
+			NULL, EINA_FALSE, EINA_FALSE, EINA_FALSE);
 	egueb_dom_attr_set(n, EGUEB_DOM_ATTR_TYPE_DEFAULT, EGUEB_SVG_ANIMATE_TRANSFORM_TYPE_TRANSLATE);
 	return n;
 }

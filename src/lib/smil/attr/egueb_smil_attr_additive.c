@@ -39,7 +39,7 @@ Egueb_Dom_Node * egueb_smil_attr_additive_new(void)
 
 	n = ENESIM_OBJECT_INSTANCE_NEW(egueb_smil_attr_additive);
 	egueb_dom_attr_init(n, egueb_dom_string_ref(EGUEB_SMIL_ADDITIVE),
-			EINA_FALSE, EINA_FALSE, EINA_FALSE);
+			NULL, EINA_FALSE, EINA_FALSE, EINA_FALSE);
 	egueb_dom_attr_set(n, EGUEB_DOM_ATTR_TYPE_DEFAULT,
 			EGUEB_SMIL_ADDITIVE_REPLACE);
 

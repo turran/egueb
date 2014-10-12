@@ -39,7 +39,8 @@ Egueb_Dom_Node * egueb_svg_attr_zoom_and_pan_new(void)
 	Egueb_Dom_Node *n;
 
 	n = ENESIM_OBJECT_INSTANCE_NEW(egueb_svg_attr_zoom_and_pan);
-	egueb_dom_attr_init(n, egueb_dom_string_ref(EGUEB_SVG_NAME_ZOOM_AND_PAN), EINA_FALSE, EINA_FALSE, EINA_FALSE);
+	egueb_dom_attr_init(n, egueb_dom_string_ref(EGUEB_SVG_NAME_ZOOM_AND_PAN),
+			NULL, EINA_FALSE, EINA_FALSE, EINA_FALSE);
 	egueb_dom_attr_set(n, EGUEB_DOM_ATTR_TYPE_DEFAULT, EGUEB_SVG_ZOOM_AND_PAN_MAGNIFY);
 	return n;
 }

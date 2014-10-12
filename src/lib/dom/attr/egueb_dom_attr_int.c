@@ -41,7 +41,7 @@ EAPI Egueb_Dom_Node * egueb_dom_attr_int_new(Egueb_Dom_String *name,
 	Egueb_Dom_Node *n;
 
 	n = ENESIM_OBJECT_INSTANCE_NEW(egueb_dom_attr_int);
-	egueb_dom_attr_init(n, name, animatable, stylable, inheritable);
+	egueb_dom_attr_init(n, name, NULL, animatable, stylable, inheritable);
 	return n;
 }
 

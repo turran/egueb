@@ -40,7 +40,7 @@ Egueb_Dom_Node * egueb_svg_attr_rect_new(Egueb_Dom_String *name,
 	Egueb_Dom_Node *n;
 
 	n = ENESIM_OBJECT_INSTANCE_NEW(egueb_svg_attr_rect);
-	egueb_dom_attr_init(n, name, EINA_TRUE, EINA_FALSE, EINA_FALSE);
+	egueb_dom_attr_init(n, name, NULL, EINA_TRUE, EINA_FALSE, EINA_FALSE);
 	if (def)
 		egueb_dom_attr_set(n, EGUEB_DOM_ATTR_TYPE_DEFAULT, n);
 	return n;

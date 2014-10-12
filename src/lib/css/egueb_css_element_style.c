@@ -134,7 +134,7 @@ static void _egueb_css_element_style_instance_init(void *o)
 	/* add the attributes */
 	thiz->type = egueb_dom_attr_string_new(
 			egueb_dom_string_ref(EGUEB_DOM_NAME_TYPE),
-			NULL, EINA_FALSE, EINA_FALSE, EINA_FALSE);
+			NULL, NULL, EINA_FALSE, EINA_FALSE, EINA_FALSE);
 	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->type), NULL);
 
 	/* add the events */

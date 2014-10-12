@@ -158,13 +158,15 @@ static void _egueb_svg_attr_xlink_href_instance_deinit(void *o)
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/
+/* TODO move this to the xlink lib */
 EAPI Egueb_Dom_Node * egueb_svg_attr_xlink_href_new(Egueb_Dom_String *name,
 		Egueb_Dom_String *def)
 {
 	Egueb_Dom_Node *n;
 
 	n = ENESIM_OBJECT_INSTANCE_NEW(egueb_svg_attr_xlink_href);
-	egueb_dom_attr_init(n, name, EINA_TRUE, EINA_TRUE, EINA_TRUE);
+	egueb_dom_attr_init(n, name, egueb_dom_string_ref(EGUEB_DOM_NAME_NS_XMLNS),
+			EINA_TRUE, EINA_TRUE, EINA_TRUE);
 	if (def) egueb_dom_attr_set(n, EGUEB_DOM_ATTR_TYPE_DEFAULT, def);
 	return n;
 }

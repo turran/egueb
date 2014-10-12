@@ -38,6 +38,6 @@ EAPI Egueb_Dom_Node * egueb_css_attr_font_variant_new(
 
 	n = ENESIM_OBJECT_INSTANCE_NEW(egueb_css_attr_font_variant);
 	egueb_dom_attr_init(n, egueb_dom_string_ref(EGUEB_CSS_NAME_FONT_VARIANT),
-			animatable, stylable, inheritable);
+			NULL, animatable, stylable, inheritable);
 	return n;
 }

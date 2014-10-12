@@ -452,11 +452,11 @@ static void _egueb_svg_element_instance_init(void *o)
 	thiz = EGUEB_SVG_ELEMENT(o);
 	/* create the properties */
 	thiz->id = egueb_dom_attr_string_new(
-			egueb_dom_string_ref(EGUEB_SVG_NAME_ID), NULL, EINA_FALSE,
-			EINA_FALSE, EINA_FALSE);
+			egueb_dom_string_ref(EGUEB_SVG_NAME_ID), NULL, NULL,
+			EINA_FALSE, EINA_FALSE, EINA_FALSE);
 	thiz->klass = egueb_dom_attr_string_new(
-			egueb_dom_string_ref(EGUEB_SVG_NAME_CLASS), NULL, EINA_FALSE,
-			EINA_FALSE, EINA_FALSE);
+			egueb_dom_string_ref(EGUEB_SVG_NAME_CLASS), NULL, NULL,
+			EINA_FALSE, EINA_FALSE, EINA_FALSE);
 	thiz->style = egueb_css_attr_style_new();
 	/* the presentation attributes */
 	thiz->clip_path = egueb_svg_attr_clip_path_new(
@@ -545,28 +545,28 @@ static void _egueb_svg_element_instance_init(void *o)
 	/* event attributes */
 	thiz->onclick = egueb_dom_attr_string_new(
 			egueb_dom_string_ref(EGUEB_SVG_NAME_ONCLICK), NULL,
-			EINA_FALSE, EINA_FALSE, EINA_FALSE);
+			NULL, EINA_FALSE, EINA_FALSE, EINA_FALSE);
 	thiz->onmousedown = egueb_dom_attr_string_new(
 			egueb_dom_string_ref(EGUEB_SVG_NAME_ONMOUSEDOWN), NULL,
-			EINA_FALSE, EINA_FALSE, EINA_FALSE);
+			NULL, EINA_FALSE, EINA_FALSE, EINA_FALSE);
 	thiz->onmouseup = egueb_dom_attr_string_new(
 			egueb_dom_string_ref(EGUEB_SVG_NAME_ONMOUSEUP), NULL,
-			EINA_FALSE, EINA_FALSE, EINA_FALSE);
+			NULL, EINA_FALSE, EINA_FALSE, EINA_FALSE);
 	thiz->onmouseover = egueb_dom_attr_string_new(
 			egueb_dom_string_ref(EGUEB_SVG_NAME_ONMOUSEOVER), NULL,
-			EINA_FALSE, EINA_FALSE, EINA_FALSE);
+			NULL, EINA_FALSE, EINA_FALSE, EINA_FALSE);
 	thiz->onmousemove = egueb_dom_attr_string_new(
 			egueb_dom_string_ref(EGUEB_SVG_NAME_ONMOUSEMOVE), NULL,
-			EINA_FALSE, EINA_FALSE, EINA_FALSE);
+			NULL, EINA_FALSE, EINA_FALSE, EINA_FALSE);
 	thiz->onmouseout = egueb_dom_attr_string_new(
 			egueb_dom_string_ref(EGUEB_SVG_NAME_ONMOUSEOUT), NULL,
-			EINA_FALSE, EINA_FALSE, EINA_FALSE);
+			NULL, EINA_FALSE, EINA_FALSE, EINA_FALSE);
 	thiz->onfocusin = egueb_dom_attr_string_new(
 			egueb_dom_string_ref(EGUEB_SVG_NAME_ONFOCUSIN), NULL,
-			EINA_FALSE, EINA_FALSE, EINA_FALSE);
+			NULL, EINA_FALSE, EINA_FALSE, EINA_FALSE);
 	thiz->onfocusout = egueb_dom_attr_string_new(
 			egueb_dom_string_ref(EGUEB_SVG_NAME_ONFOCUSOUT), NULL,
-			EINA_FALSE, EINA_FALSE, EINA_FALSE);
+			NULL, EINA_FALSE, EINA_FALSE, EINA_FALSE);
 
 	n = EGUEB_DOM_NODE(o);
 

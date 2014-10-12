@@ -218,8 +218,8 @@ static void _egueb_smil_set_instance_init(void *o)
 	thiz = EGUEB_SMIL_SET(o);
 	/* create the properties */
 	thiz->to = egueb_dom_attr_string_new(
-			egueb_dom_string_ref(EGUEB_SMIL_TO), NULL, EINA_FALSE,
-			EINA_FALSE, EINA_FALSE);
+			egueb_dom_string_ref(EGUEB_SMIL_TO), NULL, NULL,
+			EINA_FALSE, EINA_FALSE, EINA_FALSE);
 
 	n = EGUEB_DOM_NODE(o);
 	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->to), NULL);

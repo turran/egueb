@@ -263,10 +263,10 @@ static void _egueb_dom_element_script_instance_init(void *o)
 	/* add the attributes */
 	thiz->type = egueb_dom_attr_string_new(
 			egueb_dom_string_ref(EGUEB_DOM_NAME_TYPE),
-			NULL, EINA_FALSE, EINA_FALSE, EINA_FALSE);
+			NULL, NULL, EINA_FALSE, EINA_FALSE, EINA_FALSE);
 	thiz->src = egueb_dom_attr_string_new(
 			egueb_dom_string_ref(EGUEB_DOM_NAME_SRC),
-			NULL, EINA_FALSE, EINA_FALSE, EINA_FALSE);
+			NULL, NULL, EINA_FALSE, EINA_FALSE, EINA_FALSE);
 	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->type), NULL);
 	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->src), NULL);
 

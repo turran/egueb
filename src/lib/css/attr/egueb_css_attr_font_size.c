@@ -46,7 +46,7 @@ EAPI Egueb_Dom_Node * egueb_css_attr_font_size_new(
 
 	n = ENESIM_OBJECT_INSTANCE_NEW(egueb_css_attr_font_size);
 	egueb_dom_attr_init(n, egueb_dom_string_ref(EGUEB_CSS_NAME_FONT_SIZE),
-			animatable, stylable, inheritable);
+			NULL, animatable, stylable, inheritable);
 	if (def) egueb_dom_attr_set(n, EGUEB_DOM_ATTR_TYPE_DEFAULT, def);
 	return n;
 }

@@ -38,7 +38,7 @@ Egueb_Dom_Node * egueb_smil_attr_repeat_count_new(void)
 
 	n = ENESIM_OBJECT_INSTANCE_NEW(egueb_smil_attr_repeat_count);
 	egueb_dom_attr_init(n, egueb_dom_string_ref(EGUEB_SMIL_REPEAT_COUNT),
-			EINA_FALSE, EINA_FALSE, EINA_FALSE);
+			NULL, EINA_FALSE, EINA_FALSE, EINA_FALSE);
 	return n;
 }
 /*============================================================================*

@@ -37,7 +37,7 @@ EAPI Egueb_Dom_Node * egueb_smil_attr_key_splines_new(void)
 	
 	n = ENESIM_OBJECT_INSTANCE_NEW(egueb_smil_attr_key_splines);
 	egueb_dom_attr_init(n, egueb_dom_string_ref(EGUEB_SMIL_NAME_KEY_SPLINES),
-			EINA_FALSE, EINA_FALSE, EINA_FALSE);
+			NULL, EINA_FALSE, EINA_FALSE, EINA_FALSE);
 	return n;
 }
 /*============================================================================*

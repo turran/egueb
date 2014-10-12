@@ -125,6 +125,6 @@ EAPI Egueb_Dom_Node * egueb_dom_attr_enum_new(Egueb_Dom_String *name,
 	thiz = EGUEB_DOM_ATTR_ENUM(n);
 	thiz->d = d;
 
-	egueb_dom_attr_init(n, name, animatable, stylable, inheritable);
+	egueb_dom_attr_init(n, name, NULL, animatable, stylable, inheritable);
 	return n;
 }
