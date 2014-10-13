@@ -43,9 +43,6 @@ EAPI void egueb_svg_document_font_size_set(Egueb_Dom_Node *n,
 		double font_size);
 EAPI double egueb_svg_document_font_size_get(Egueb_Dom_Node *n);
 
-EAPI Egueb_Dom_Node * egueb_svg_document_element_get_by_iri(Egueb_Dom_Node *n,
-		Egueb_Dom_String *iri);
-
 /* FIXME remove this as move it to the use element */
 EAPI Egueb_Dom_Node * egueb_svg_document_iri_clone(Egueb_Dom_Node *n,
 		Egueb_Dom_String *iri, Eina_Error *err);

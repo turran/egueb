@@ -1168,34 +1168,6 @@ EAPI double egueb_svg_document_font_size_get(Egueb_Dom_Node *n)
 	return thiz->font_size;
 }
 
-EAPI Egueb_Dom_Node * egueb_svg_document_element_get_by_iri(Egueb_Dom_Node *n,
-		Egueb_Dom_String *iri)
-{
-	Egueb_Dom_Uri uri = { 0 };
-
-	if (!egueb_dom_string_is_valid(iri))
-		return NULL;
-
-	/* resolve the uri for relative/absolute */
-	DBG("Looking for %s", egueb_dom_string_string_get(iri));
-	if (!egueb_dom_uri_iri_from(&uri, iri))
-		return NULL;
-	/* get the element by iri, only local ones for now */
-	if (uri.location || !uri.fragment)
-	{
-		ERR("Unsupported iri '%s'", egueb_dom_string_string_get(iri));
-		egueb_dom_uri_cleanup(&uri);
-		return NULL;
-	}
-	else
-	{
-		Egueb_Dom_Node *ret;
-		ret = egueb_dom_document_element_get_by_id(n, uri.fragment, NULL);
-		egueb_dom_uri_cleanup(&uri);
-		return ret;
-	}
-}
-
 /* FIXME This might not be needed */
 EAPI Egueb_Dom_Node * egueb_svg_document_iri_clone(Egueb_Dom_Node *n,
 		Egueb_Dom_String *iri, Eina_Error *err)
@@ -1203,7 +1175,7 @@ EAPI Egueb_Dom_Node * egueb_svg_document_iri_clone(Egueb_Dom_Node *n,
 	Egueb_Dom_Node *ref = NULL;
 	Egueb_Dom_Node *cloned;
 
-	ref = egueb_svg_document_element_get_by_iri(n, iri);
+	ref = egueb_dom_document_element_get_by_iri(n, iri, err);
 	if (!ref) return NULL;
 
 	DBG("'%s' found, cloning it", egueb_dom_string_string_get(iri));

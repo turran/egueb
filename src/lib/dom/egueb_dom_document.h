@@ -51,7 +51,7 @@ EAPI void egueb_dom_document_element_set(Egueb_Dom_Node *n,
 EAPI Egueb_Dom_Node * egueb_dom_document_element_get_by_id(Egueb_Dom_Node *n,
 		Egueb_Dom_String *id, Eina_Error *err);
 EAPI Egueb_Dom_Node * egueb_dom_document_element_get_by_iri(Egueb_Dom_Node *n,
-		Egueb_Dom_String *id, Eina_Error *err);
+		Egueb_Dom_String *iri, Eina_Error *err);
 EAPI Egueb_Dom_Node * egueb_dom_document_node_adopt(Egueb_Dom_Node *n,
 		Egueb_Dom_Node *adopted, Eina_Error *err);
 

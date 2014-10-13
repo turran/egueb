@@ -25,6 +25,7 @@
 #include "egueb_dom_event.h"
 #include "egueb_dom_event_mutation.h"
 #include "egueb_dom_implementation.h"
+#include "egueb_dom_uri.h"
 #include "egueb_dom_utils.h"
 
 #include "egueb_dom_node_private.h"
@@ -590,12 +591,32 @@ EAPI Egueb_Dom_Node * egueb_dom_document_element_get_by_id(Egueb_Dom_Node *n,
 	return egueb_dom_node_ref(found);
 }
 
-/* TODO move the svg version here */
 EAPI Egueb_Dom_Node * egueb_dom_document_element_get_by_iri(Egueb_Dom_Node *n,
-		Egueb_Dom_String *id, Eina_Error *err)
+		Egueb_Dom_String *iri, Eina_Error *err)
 {
-	/* import the node in case it belongs to other document */
-	return NULL;
+	Egueb_Dom_Uri uri = { 0 };
+
+	if (!egueb_dom_string_is_valid(iri))
+		return NULL;
+
+	/* resolve the uri for relative/absolute */
+	DBG("Looking for %s", egueb_dom_string_string_get(iri));
+	if (!egueb_dom_uri_iri_from(&uri, iri))
+		return NULL;
+	/* get the element by iri, only local ones for now */
+	if (uri.location || !uri.fragment)
+	{
+		ERR("Unsupported iri '%s'", egueb_dom_string_string_get(iri));
+		egueb_dom_uri_cleanup(&uri);
+		return NULL;
+	}
+	else
+	{
+		Egueb_Dom_Node *ret;
+		ret = egueb_dom_document_element_get_by_id(n, uri.fragment, err);
+		egueb_dom_uri_cleanup(&uri);
+		return ret;
+	}
 }
 
 /* Introduced in DOM Level 3:
