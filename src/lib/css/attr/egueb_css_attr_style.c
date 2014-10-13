@@ -108,13 +108,13 @@ static void _egueb_css_attr_style_instance_deinit(void *o)
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/
-EAPI Egueb_Dom_Node * egueb_css_attr_style_new(void)
+EAPI Egueb_Dom_Node * egueb_css_attr_style_new(Egueb_Dom_String *ns)
 {
 	Egueb_Dom_Node *n;
 
 	n = ENESIM_OBJECT_INSTANCE_NEW(egueb_css_attr_style);
 	egueb_dom_attr_init(n, egueb_dom_string_ref(EGUEB_CSS_NAME_STYLE),
-			NULL, EINA_FALSE, EINA_FALSE, EINA_FALSE);
+			ns, EINA_FALSE, EINA_FALSE, EINA_FALSE);
 	return n;
 }
 

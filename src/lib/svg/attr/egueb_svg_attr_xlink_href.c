@@ -196,7 +196,7 @@ EAPI Eina_Bool egueb_svg_attr_xlink_href_resolve(Egueb_Dom_Node *attr)
 				ret = EINA_FALSE;
 				goto no_doc;
 			}
-			thiz->node = egueb_svg_document_element_get_by_iri(doc, str);
+			thiz->node = egueb_dom_document_element_get_by_iri(doc, str, NULL);
 			if (thiz->node)
 			{
 				egueb_dom_node_event_listener_add(thiz->node,

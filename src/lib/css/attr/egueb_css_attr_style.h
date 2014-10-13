@@ -19,7 +19,7 @@
 #ifndef _EGUEB_CSS_ATTR_STYLE_H_
 #define _EGUEB_CSS_ATTR_STYLE_H_
 
-EAPI Egueb_Dom_Node * egueb_css_attr_style_new(void);
+EAPI Egueb_Dom_Node * egueb_css_attr_style_new(Egueb_Dom_String *ns);
 EAPI void egueb_css_attr_style_process(Egueb_Dom_Node *n);
 
 #endif

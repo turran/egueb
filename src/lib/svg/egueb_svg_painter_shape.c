@@ -135,7 +135,7 @@ static void _egueb_svg_renderable_paint_set(Egueb_Dom_Node *n,
 				*renderer = NULL;
 			}
 
-			ref = egueb_svg_document_element_get_by_iri(doc, &iri);
+			ref = egueb_dom_document_element_get_by_iri(doc, &iri, NULL);
 			if (!ref || !egueb_svg_is_paint_server(ref))
 			{
 				if (ref) egueb_dom_node_unref(ref);

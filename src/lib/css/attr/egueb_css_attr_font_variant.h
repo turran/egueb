@@ -19,7 +19,7 @@
 #ifndef _EGUEB_CSS_ATTR_FONT_VARIANT_H_
 #define _EGUEB_CSS_ATTR_FONT_VARIANT_H_
 
-EAPI Egueb_Dom_Node * egueb_css_attr_font_variant_new(
+EAPI Egueb_Dom_Node * egueb_css_attr_font_variant_new(Egueb_Dom_String *ns,
 		Eina_Bool animatable, Eina_Bool stylable,
 		Eina_Bool inheritable);
 

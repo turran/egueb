@@ -457,7 +457,7 @@ static void _egueb_svg_element_instance_init(void *o)
 	thiz->klass = egueb_dom_attr_string_new(
 			egueb_dom_string_ref(EGUEB_SVG_NAME_CLASS), NULL, NULL,
 			EINA_FALSE, EINA_FALSE, EINA_FALSE);
-	thiz->style = egueb_css_attr_style_new();
+	thiz->style = egueb_css_attr_style_new(NULL);
 	/* the presentation attributes */
 	thiz->clip_path = egueb_svg_attr_clip_path_new(
 			egueb_dom_string_ref(EGUEB_SVG_NAME_CLIP_PATH),
@@ -480,16 +480,16 @@ static void _egueb_svg_element_instance_init(void *o)
 			1, EINA_TRUE, EINA_TRUE,
 			EINA_TRUE);
 	/* font related attributes */
-	thiz->font_family = egueb_css_attr_font_family_new(EINA_TRUE, EINA_TRUE, EINA_TRUE);
+	thiz->font_family = egueb_css_attr_font_family_new(NULL, EINA_TRUE, EINA_TRUE, EINA_TRUE);
 	/* font size */
 	font_size_def.type = EGUEB_CSS_FONT_SIZE_TYPE_ABSOLUTE;
 	font_size_def.value.absolute = EGUEB_CSS_FONT_SIZE_ABSOLUTE_MEDIUM;
-	thiz->font_size = egueb_css_attr_font_size_new(&font_size_def, EINA_TRUE, EINA_TRUE, EINA_TRUE);
+	thiz->font_size = egueb_css_attr_font_size_new(NULL, &font_size_def, EINA_TRUE, EINA_TRUE, EINA_TRUE);
 	egueb_dom_attr_set(thiz->font_size, EGUEB_DOM_ATTR_TYPE_DEFAULT, &font_size_def);
 
-	thiz->font_style = egueb_css_attr_font_style_new(EINA_TRUE, EINA_TRUE, EINA_TRUE);
-	thiz->font_variant = egueb_css_attr_font_variant_new(EINA_TRUE, EINA_TRUE, EINA_TRUE);
-	thiz->font_weight = egueb_css_attr_font_weight_new(EINA_TRUE, EINA_TRUE, EINA_TRUE);
+	thiz->font_style = egueb_css_attr_font_style_new(NULL, EINA_TRUE, EINA_TRUE, EINA_TRUE);
+	thiz->font_variant = egueb_css_attr_font_variant_new(NULL, EINA_TRUE, EINA_TRUE, EINA_TRUE);
+	thiz->font_weight = egueb_css_attr_font_weight_new(NULL, EINA_TRUE, EINA_TRUE, EINA_TRUE);
 
 	thiz->opacity = egueb_svg_attr_number_new(
 			egueb_dom_string_ref(EGUEB_SVG_NAME_OPACITY),
@@ -804,7 +804,7 @@ void egueb_svg_element_clip_path_resolve(Egueb_Dom_Node *n,
 				WARN("No document set");
 				return;
 			}
-			ref = egueb_svg_document_element_get_by_iri(doc, &iri);
+			ref = egueb_dom_document_element_get_by_iri(doc, &iri, NULL);
 			egueb_dom_node_unref(doc);
 
 			if (!ref || !egueb_svg_element_is_clip_path(ref))

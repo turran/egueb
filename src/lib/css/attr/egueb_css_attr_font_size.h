@@ -19,7 +19,7 @@
 #ifndef _EGUEB_CSS_ATTR_FONT_SIZE_H_
 #define _EGUEB_CSS_ATTR_FONT_SIZE_H_
 
-EAPI Egueb_Dom_Node * egueb_css_attr_font_size_new(
+EAPI Egueb_Dom_Node * egueb_css_attr_font_size_new(Egueb_Dom_String *ns,
 		const Egueb_Css_Font_Size *def, Eina_Bool animatable,
 		Eina_Bool stylable, Eina_Bool inheritable);
 

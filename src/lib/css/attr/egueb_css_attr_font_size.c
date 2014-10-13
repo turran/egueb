@@ -38,7 +38,7 @@ EGUEB_DOM_ATTR_PRIMITIVE_BOILERPLATE(Egueb_Css_Font_Size,
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/
-EAPI Egueb_Dom_Node * egueb_css_attr_font_size_new(
+EAPI Egueb_Dom_Node * egueb_css_attr_font_size_new(Egueb_Dom_String *ns,
 		const Egueb_Css_Font_Size *def, Eina_Bool animatable,
 		Eina_Bool stylable, Eina_Bool inheritable)
 {
@@ -46,7 +46,7 @@ EAPI Egueb_Dom_Node * egueb_css_attr_font_size_new(
 
 	n = ENESIM_OBJECT_INSTANCE_NEW(egueb_css_attr_font_size);
 	egueb_dom_attr_init(n, egueb_dom_string_ref(EGUEB_CSS_NAME_FONT_SIZE),
-			NULL, animatable, stylable, inheritable);
+			ns, animatable, stylable, inheritable);
 	if (def) egueb_dom_attr_set(n, EGUEB_DOM_ATTR_TYPE_DEFAULT, def);
 	return n;
 }

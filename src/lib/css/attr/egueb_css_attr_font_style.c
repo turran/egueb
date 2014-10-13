@@ -34,7 +34,7 @@ EGUEB_DOM_ATTR_BASIC_BOILERPLATE(Egueb_Css_Font_Style,
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/
-EAPI Egueb_Dom_Node * egueb_css_attr_font_style_new(
+EAPI Egueb_Dom_Node * egueb_css_attr_font_style_new(Egueb_Dom_String *ns,
 		Eina_Bool animatable, Eina_Bool stylable,
 		Eina_Bool inheritable)
 {
@@ -42,6 +42,6 @@ EAPI Egueb_Dom_Node * egueb_css_attr_font_style_new(
 
 	n = ENESIM_OBJECT_INSTANCE_NEW(egueb_css_attr_font_style);
 	egueb_dom_attr_init(n, egueb_dom_string_ref(EGUEB_CSS_NAME_FONT_STYLE),
-			NULL, animatable, stylable, inheritable);
+			ns, animatable, stylable, inheritable);
 	return n;
 }
