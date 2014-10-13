@@ -245,13 +245,13 @@ static Eina_Bool _egueb_svg_dependencies_init(void)
 {
 	if (!eina_init())
 	{
-		fprintf(stderr, "Esvg: Eina init failed");
+		fprintf(stderr, "Egueb_Svg: Eina init failed");
 		return EINA_FALSE;
 	}
 
 	if (!enesim_init())
 	{
-		fprintf(stderr, "Esvg: Enesim init failed");
+		fprintf(stderr, "Egueb_Svg: Enesim init failed");
 		goto shutdown_eina;
 	}
 
@@ -408,7 +408,6 @@ EAPI int egueb_svg_shutdown(void)
 	_egueb_svg_strings_shutdown();
 	eina_log_domain_unregister(egueb_svg_log_dom_global);
         egueb_svg_log_dom_global = -1;
-	/* TODO shutdown dependencies */
 	_egueb_svg_dependencies_shutdown();
 
 	return _egueb_svg_init_count;
