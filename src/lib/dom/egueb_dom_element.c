@@ -66,7 +66,7 @@ static void _egueb_dom_element_document_removed_cb(Egueb_Dom_Event *e,
 	thiz->enqueued = EINA_FALSE;
 }
 
-static Eina_Bool _egueb_dom_element_properties_clone_cb(const Eina_Hash *hash,
+static Eina_Bool _egueb_dom_element_attributes_clone_cb(const Eina_Hash *hash,
 		const void *key, void *data, void *fdata)
 {
 	Egueb_Dom_Node *clone = fdata;
@@ -88,6 +88,15 @@ static Eina_Bool _egueb_dom_element_properties_clone_cb(const Eina_Hash *hash,
 		egueb_dom_element_attribute_add(clone, n, NULL); 
 	}
 
+	return EINA_TRUE;
+}
+
+static Eina_Bool _egueb_dom_element_attributes_ns_clone_cb(const Eina_Hash *hash,
+		const void *key, void *data, void *fdata)
+{
+	Eina_Hash *attributes = data;
+
+	eina_hash_foreach(attributes, _egueb_dom_element_attributes_clone_cb, clone);
 	return EINA_TRUE;
 }
 
@@ -367,8 +376,9 @@ static void _egueb_dom_element_clone(Egueb_Dom_Node *n, Eina_Bool live,
 
 	/* copy every element attribute */
 	thiz = EGUEB_DOM_ELEMENT(n);
-	eina_hash_foreach(thiz->attributes, _egueb_dom_element_properties_clone_cb, clone);
-	/* TODO handle the ns attrs */
+	eina_hash_foreach(thiz->attributes, _egueb_dom_element_attributes_clone_cb, clone);
+	/* copy the ns based attributes */
+	eina_hash_foreach(thiz->attributes_ns, _egueb_dom_element_attributes_ns_clone_cb, clone);
 	/* in case we are live, every change on the properties should
 	 * trigger a change here
 	 */
