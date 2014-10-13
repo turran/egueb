@@ -37,7 +37,6 @@ AC_SUBST([VMAJ])
 EINA_VERSION="1.0.99"
 ENESIM_VERSION="0.0.18"
 ENDER_VERSION="0.0.8"
-ETCH_VERSION="0.0.5"
 
 AC_CANONICAL_HOST
 
@@ -47,6 +46,7 @@ egueb_css_requirements="eina >= ${EINA_VERSION} ${egueb_dom_requirements}"
 egueb_css_requirements_private=""
 egueb_smil_requirements="${egueb_dom_requirements}"
 egueb_svg_requirements="${egueb_dom_requirements}"
+egueb_xlink_requirements="${egueb_dom_requirements}"
 
 AC_SUBST([egueb_css_requirements])
 AC_SUBST([egueb_css_requirements_private])
@@ -54,8 +54,20 @@ AC_SUBST([egueb_dom_requirements])
 AC_SUBST([egueb_dom_requirements_private])
 AC_SUBST([egueb_smil_requirements])
 AC_SUBST([egueb_svg_requirements])
+AC_SUBST([egueb_xlink_requirements])
 
 ### Additional options to configure
+AC_ARG_ENABLE([egueb_dom],
+   [AS_HELP_STRING([--enable-egueb_dom], [enable Edom compilation.])],
+   [if test "x${enableval}" = "xyes"; then
+       want_egueb_dom="yes"
+    else
+       want_egueb_dom="no"
+    fi
+   ],
+   [want_egueb_dom="yes"])
+
+AM_CONDITIONAL([WANT_EGUEB_DOM], [test "x${want_egueb_dom}" = "xyes"])
 
 AC_ARG_ENABLE([egueb_css],
    [AS_HELP_STRING([--enable-egueb_css], [enable Ecss compilation.])],
@@ -69,17 +81,17 @@ AC_ARG_ENABLE([egueb_css],
 
 AM_CONDITIONAL([WANT_EGUEB_CSS], [test "x${want_egueb_css}" = "xyes"])
 
-AC_ARG_ENABLE([egueb_dom],
-   [AS_HELP_STRING([--enable-egueb_dom], [enable Edom compilation.])],
+AC_ARG_ENABLE([egueb_xlink],
+   [AS_HELP_STRING([--enable-egueb_xlink], [enable Exlink compilation.])],
    [if test "x${enableval}" = "xyes"; then
-       want_egueb_dom="yes"
+       want_egueb_xlink="yes"
     else
-       want_egueb_dom="no"
+       want_egueb_xlink="no"
     fi
    ],
-   [want_egueb_dom="yes"])
+   [want_egueb_xlink="yes"])
 
-AM_CONDITIONAL([WANT_EGUEB_DOM], [test "x${want_egueb_dom}" = "xyes"])
+AM_CONDITIONAL([WANT_EGUEB_XLINK], [test "x${want_egueb_xlink}" = "xyes"])
 
 AC_ARG_ENABLE([egueb_smil],
    [AS_HELP_STRING([--enable-egueb_smil], [enable Esmil compilation.])],
@@ -142,14 +154,18 @@ fi
 ENS_CHECK_DOXYGEN([build_doc="yes"], [build_doc="no"])
 
 ### Checks for libraries
-if test "x${want_egueb_css}" = "xyes" ; then
-   PKG_CHECK_MODULES([EGUEB_CSS], [${egueb_css_requirements}], [want_egueb_css="yes"], [want_egueb_css="no"])
-fi
-
 if test "x${want_egueb_dom}" = "xyes" ; then
    PKG_CHECK_MODULES([EGUEB_DOM], [${egueb_dom_requirements} ${egueb_dom_requirements_private}], [want_egueb_dom="yes"], [want_egueb_dom="no"])
    # Check the eina version
    PKG_CHECK_EXISTS([eina >= 1.8], [AC_DEFINE([EINA_POST_1_8_0], [1], [Eina supports doctype child])])
+fi
+
+if test "x${want_egueb_css}" = "xyes" && test "x${want_egueb_dom}" = "xyes" ; then
+   PKG_CHECK_MODULES([EGUEB_CSS], [${egueb_css_requirements}], [want_egueb_css="yes"], [want_egueb_css="no"])
+fi
+
+if test "x${want_egueb_xlink}" = "xyes" && test "x${want_egueb_dom}" = "xyes" ; then
+   PKG_CHECK_MODULES([EGUEB_XLINK], [${egueb_xlink_requirements}], [want_egueb_xlink="yes"], [want_egueb_xlink="no"])
 fi
 
 if test "x${want_egueb_smil}" = "xyes" && test "x${want_egueb_dom}" = "xyes" ; then
@@ -161,8 +177,9 @@ if test "x${want_egueb_svg}" = "xyes" && test "x${want_egueb_css}" = "xyes" && t
 fi
 
 # For Dom test
-AM_CONDITIONAL(BUILD_EGUEB_CSS, [test "x${want_egueb_css}" = "xyes"])
 AM_CONDITIONAL(BUILD_EGUEB_DOM, [test "x${want_egueb_dom}" = "xyes"])
+AM_CONDITIONAL(BUILD_EGUEB_CSS, [test "x${want_egueb_css}" = "xyes"])
+AM_CONDITIONAL(BUILD_EGUEB_XLINK, [test "x${want_egueb_xlink}" = "xyes"])
 AM_CONDITIONAL(BUILD_EGUEB_SMIL, [test "x${want_egueb_smil}" = "xyes"])
 AM_CONDITIONAL(BUILD_EGUEB_SVG, [test "x${want_egueb_svg}" = "xyes"])
 
@@ -181,11 +198,11 @@ AM_PROG_CC_C_O
 AC_C_BIGENDIAN
 ENS_CHECK_COMPILER_FLAGS([EGUEB], [-Wall])
 
-EGUEB_BASE_CFLAGS="${EGUEB_CFLAGS} ${EGUEB_BASE_CFLAGS}"
-EGUEB_SVG_CFLAGS="${EGUEB_SVG_CFLAGS} ${EGUEB_CFLAGS}"
 EGUEB_DOM_CFLAGS="${EGUEB_DOM_CFLAGS} ${EGUEB_CFLAGS}"
 EGUEB_CSS_CFLAGS="${EGUEB_CSS_CFLAGS} ${EGUEB_CFLAGS}"
+EGUEB_XLINK_CFLAGS="${EGUEB_XLINK_CFLAGS} ${EGUEB_CFLAGS}"
 EGUEB_SMIL_CFLAGS="${EGUEB_SMIL_CFLAGS} ${EGUEB_CFLAGS}"
+EGUEB_SVG_CFLAGS="${EGUEB_SVG_CFLAGS} ${EGUEB_CFLAGS}"
 
 ### Checks for linker characteristics
 
@@ -223,9 +240,9 @@ echo
 echo
 echo "Configuration Options Summary:"
 echo
-echo "Base support................................: yes"
-echo "CSS support.................................: ${want_egueb_css}"
 echo "DOM support.................................: ${want_egueb_dom}"
+echo "CSS support.................................: ${want_egueb_css}"
+echo "XLINK support...............................: ${want_egueb_xlink}"
 echo "SMIL support................................: ${want_egueb_smil}"
 echo "SVG support.................................: ${want_egueb_svg}"
 echo

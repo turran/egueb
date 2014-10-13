@@ -16,30 +16,9 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _EGUEB_XLINK_MAIN_H_
-#define _EGUEB_XLINK_MAIN_H_
+#ifndef _EGUEB_XLINK_MAIN_PRIVATE_H_
+#define _EGUEB_XLINK_MAIN_PRIVATE_H_
 
-/**
- * @file
- * @ender_group{Egueb_Xlink_Main}
- */
-
-/**
- * @defgroup Egueb_Xlink_Main Main
- * @ingroup Egueb_Xlink_Group
- * @{
- */
-
-EAPI int egueb_xlink_init(void);
-EAPI int egueb_xlink_shutdown(void);
-
-/* Shared strings */
-EAPI extern Egueb_Dom_String *EGUEB_XLINK_NAME_NS;
-EAPI extern Egueb_Dom_String *EGUEB_XLINK_NAME_HREF;
-
-/**
- * @}
- */
+extern int egueb_xlink_log_dom_global;
 
 #endif
-

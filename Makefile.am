@@ -51,6 +51,10 @@ include src/lib/css/attr/Makefile.mk
 include src/lib/css/value/Makefile.mk
 endif
 
+if BUILD_EGUEB_XLINK
+include src/lib/xlink/Makefile.mk
+include src/lib/xlink/attr/Makefile.mk
+endif
 
 if BUILD_EGUEB_SMIL
 include src/lib/smil/Makefile.mk
@@ -96,6 +100,8 @@ $(SED) \
 -e 's,@egueb_dom_requirements_private\@,$(egueb_dom_requirements_private),g' \
 -e 's,@egueb_css_requirements\@,$(egueb_css_requirements),g' \
 -e 's,@egueb_css_requirements_private\@,$(egueb_css_requirements_private),g' \
+-e 's,@egueb_xlink_requirements\@,$(egueb_xlink_requirements),g' \
+-e 's,@egueb_xlink_requirements_private\@,$(egueb_xlink_requirements_private),g' \
 -e 's,@egueb_svg_requirements\@,$(egueb_svg_requirements),g' \
 -e 's,@build_opencl\@,$(build_opencl),g' \
 -e 's,@build_opengl\@,$(build_opengl),g' \
@@ -112,12 +118,19 @@ pc_verbose_0 = @echo "  PC      " $@;
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA =
 
+if BUILD_EGUEB_DOM
+pkgconfig_DATA += egueb-dom.pc
+endif
+
 if BUILD_EGUEB_CSS
 pkgconfig_DATA += egueb-css.pc
 endif
 
-if BUILD_EGUEB_DOM
-pkgconfig_DATA += egueb-dom.pc
+if BUILD_EGUEB_XLINK
+pkgconfig_DATA += egueb-xlink.pc
+endif
+
+if BUILD_EGUEB_SMIL
 pkgconfig_DATA += egueb-smil.pc
 endif
 
@@ -139,5 +152,6 @@ COPYING \
 README.md \
 egueb-dom.pc.in \
 egueb-css.pc.in \
+egueb-xlink.pc.in \
 egueb-smil.pc.in \
 egueb-svg.pc.in

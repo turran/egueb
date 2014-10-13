@@ -7,6 +7,7 @@ src/lib/xlink/egueb_xlink_main.h
 
 src_lib_xlink_libegueb_xlink_la_SOURCES = \
 src/lib/xlink/egueb_xlink_main.c \
+src/lib/xlink/egueb_xlink_main_private.h \
 src/lib/xlink/egueb_xlink_private.h
 
 src_lib_xlink_libegueb_xlink_la_IFLAGS = \

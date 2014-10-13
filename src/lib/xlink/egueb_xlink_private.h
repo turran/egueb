@@ -25,5 +25,37 @@
 
 #include <Egueb_Dom.h>
 
-#endif
+#define EGUEB_XLINK_LOG_COLOR_DEFAULT EINA_COLOR_ORANGE
+/* Whenever a file needs to generate a log, it must declare this first */
 
+#define EGUEB_XLINK_LOG_DEFAULT egueb_xlink_log_dom_global
+
+/* Generic logs */
+#ifdef ERR
+# undef ERR
+#endif
+#define ERR(...) EINA_LOG_DOM_ERR(EGUEB_XLINK_LOG_DEFAULT, __VA_ARGS__)
+
+#ifdef WARN
+# undef WARN
+#endif
+#define WARN(...) EINA_LOG_DOM_WARN(EGUEB_XLINK_LOG_DEFAULT, __VA_ARGS__)
+
+#ifdef INFO
+# undef INFO
+#endif
+#define INFO(...) EINA_LOG_DOM_INFO(EGUEB_XLINK_LOG_DEFAULT, __VA_ARGS__)
+
+#ifdef DBG
+# undef DBG
+#endif
+#define DBG(...) EINA_LOG_DOM_DBG(EGUEB_XLINK_LOG_DEFAULT, __VA_ARGS__)
+
+#ifdef CRIT
+# undef CRIT
+#endif
+#define CRIT(...) EINA_LOG_DOM_CRIT(EGUEB_XLINK_LOG_DEFAULT, __VA_ARGS__)
+
+#include "egueb_xlink_main_private.h"
+
+#endif

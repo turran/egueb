@@ -15,9 +15,8 @@
  * License along with this library.
  * If not, see <http://www.gnu.org/licenses/>.
  */
-#include "egueb_xlink_main_private.h"
+#include "egueb_xlink_private.h"
 #include "egueb_xlink_attr_href.h"
-#include "egueb_xlink_document.h"
 
 #include "egueb_dom_attr_private.h"
 #include "egueb_dom_attr_object_private.h"
@@ -195,7 +194,7 @@ EAPI Eina_Bool egueb_xlink_attr_href_resolve(Egueb_Dom_Node *attr)
 				ret = EINA_FALSE;
 				goto no_doc;
 			}
-			thiz->node = egueb_xlink_document_element_get_by_iri(doc, str);
+			thiz->node = egueb_dom_document_element_get_by_iri(doc, str, NULL);
 			if (thiz->node)
 			{
 				egueb_dom_node_event_listener_add(thiz->node,
