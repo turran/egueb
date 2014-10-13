@@ -1,5 +1,14 @@
 Refactor
 ========
++ Move the features to the topmost element, not the document, this is helpful
+  for cases like
+  <eon>
+    <object xmlns:svg="...">
+      <svg:svg width=...>
+      </svg:svg>
+    </object>
+  </eon>
+  will it work?
 + Make every attribute on the svg namespace call attr init
 + Make every attribute on dom/css dont call attr_init given
   that those are exported.
