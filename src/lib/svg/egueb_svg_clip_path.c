@@ -24,10 +24,10 @@
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
-/*----------------------------------------------------------------------------*
- *                             Value interface                                *
- *----------------------------------------------------------------------------*/
-static Eina_Bool egueb_svg_clip_path_string_from(Egueb_Svg_Clip_Path *thiz,
+/*============================================================================*
+ *                                 Global                                     *
+ *============================================================================*/
+Eina_Bool egueb_svg_clip_path_string_from(Egueb_Svg_Clip_Path *thiz,
 		const char *str)
 {
 	if (!strcmp(str, "none"))
@@ -38,42 +38,25 @@ static Eina_Bool egueb_svg_clip_path_string_from(Egueb_Svg_Clip_Path *thiz,
 	else
 	{
 		thiz->type = EGUEB_SVG_CLIP_PATH_TYPE_IRI;
-		thiz->value.iri = strdup(str);
+		thiz->value.iri = egueb_dom_string_new_with_string(str);
 	}
 	return EINA_TRUE;
 }
 
-static char * egueb_svg_clip_path_string_to(Egueb_Svg_Clip_Path *thiz)
+char * egueb_svg_clip_path_string_to(Egueb_Svg_Clip_Path *thiz)
 {
 	ERR("Not implemented");
 	return NULL;
 }
 
-static void egueb_svg_clip_path_interpolate(Egueb_Svg_Clip_Path *v,
+void egueb_svg_clip_path_interpolate(Egueb_Svg_Clip_Path *v,
 		Egueb_Svg_Clip_Path *a, Egueb_Svg_Clip_Path *b, double m,
 		Egueb_Svg_Clip_Path *add, Egueb_Svg_Clip_Path *acc, int mul)
 {
 	ERR("Not implemented");
 }
 
-EGUEB_DOM_VALUE_PRIMITIVE_BOILERPLATE(egueb_svg_clip_path, Egueb_Svg_Clip_Path);
-/*============================================================================*
- *                                 Global                                     *
- *============================================================================*/
-/*============================================================================*
- *                                   API                                      *
- *============================================================================*/
-const Egueb_Svg_Clip_Path EGUEB_SVG_CLIP_PATH_NONE = {
-	EGUEB_SVG_CLIP_PATH_TYPE_NONE,
-	{ NULL }
-};
-
-EAPI const Egueb_Dom_Value_Descriptor * egueb_svg_clip_path_descriptor_get(void)
-{
-	return &_egueb_svg_clip_path_descriptor;
-}
-
-EAPI Eina_Bool egueb_svg_clip_path_is_equal(const Egueb_Svg_Clip_Path *p1,
+Eina_Bool egueb_svg_clip_path_is_equal(const Egueb_Svg_Clip_Path *p1,
 		const Egueb_Svg_Clip_Path *p2)
 {
 	/* sanity checks */
@@ -89,7 +72,7 @@ EAPI Eina_Bool egueb_svg_clip_path_is_equal(const Egueb_Svg_Clip_Path *p1,
 		return EINA_TRUE;
 
 		case EGUEB_SVG_CLIP_PATH_TYPE_IRI:
-		return egueb_svg_string_is_equal(p1->value.iri, p2->value.iri);
+		return egueb_dom_string_is_equal(p1->value.iri, p2->value.iri);
 
 		/* FIXME what to do in this cases? add an assert? */
 		default:
@@ -97,7 +80,7 @@ EAPI Eina_Bool egueb_svg_clip_path_is_equal(const Egueb_Svg_Clip_Path *p1,
 	}
 }
 
-EAPI void egueb_svg_clip_path_copy(const Egueb_Svg_Clip_Path *thiz,
+void egueb_svg_clip_path_copy(const Egueb_Svg_Clip_Path *thiz,
 		Egueb_Svg_Clip_Path *copy, Eina_Bool full)
 {
 	egueb_svg_clip_path_reset(copy);
@@ -108,10 +91,20 @@ EAPI void egueb_svg_clip_path_copy(const Egueb_Svg_Clip_Path *thiz,
 	{
 		if (thiz->value.iri)
 		{
-			copy->value.iri = strdup(thiz->value.iri);
+			if (full)
+				copy->value.iri = egueb_dom_string_dup(thiz->value.iri);
+			else
+				copy->value.iri = egueb_dom_string_ref(thiz->value.iri);
 		}
 	}
 }
+/*============================================================================*
+ *                                   API                                      *
+ *============================================================================*/
+const Egueb_Svg_Clip_Path EGUEB_SVG_CLIP_PATH_NONE = {
+	EGUEB_SVG_CLIP_PATH_TYPE_NONE,
+	{ NULL }
+};
 
 EAPI void egueb_svg_clip_path_reset(Egueb_Svg_Clip_Path *thiz)
 {
@@ -119,7 +112,7 @@ EAPI void egueb_svg_clip_path_reset(Egueb_Svg_Clip_Path *thiz)
 	{
 		if (thiz->value.iri)
 		{
-			free(thiz->value.iri);
+			egueb_dom_string_unref(thiz->value.iri);
 			thiz->value.iri = NULL;
 		}
 	}

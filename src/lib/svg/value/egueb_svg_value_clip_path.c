@@ -16,23 +16,22 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 #include "egueb_svg_main_private.h"
-#include "egueb_svg_color.h"
-#include "egueb_svg_paint.h"
+#include "egueb_svg_clip_path.h"
 
-#include "egueb_svg_paint_private.h"
+#include "egueb_svg_clip_path_private.h"
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
 /*----------------------------------------------------------------------------*
  *                             Value interface                                *
  *----------------------------------------------------------------------------*/
-EGUEB_DOM_VALUE_PRIMITIVE_BOILERPLATE(egueb_svg_paint, Egueb_Svg_Paint);
+EGUEB_DOM_VALUE_PRIMITIVE_BOILERPLATE(egueb_svg_clip_path, Egueb_Svg_Clip_Path);
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
-const Egueb_Dom_Value_Descriptor * egueb_svg_value_paint_descriptor_get(void)
+const Egueb_Dom_Value_Descriptor * egueb_svg_value_clip_path_descriptor_get(void)
 {
-	return &_egueb_svg_paint_descriptor;
+	return &_egueb_svg_clip_path_descriptor;
 }
 /*============================================================================*
  *                                   API                                      *

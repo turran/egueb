@@ -21,12 +21,13 @@
 
 #include "egueb_dom_attr_private.h"
 #include "egueb_dom_attr_primitive_private.h"
+#include "egueb_svg_value_clip_path_private.h"
 #include "egueb_svg_attr_clip_path_private.h"
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
 EGUEB_DOM_ATTR_PRIMITIVE_BOILERPLATE(Egueb_Svg_Clip_Path,
-		Egueb_Svg_Attr_Clip_Path, egueb_svg_clip_path,
+		Egueb_Svg_Attr_Clip_Path, egueb_svg_value_clip_path,
 		egueb_svg_attr_clip_path)
 /*============================================================================*
  *                                 Global                                     *

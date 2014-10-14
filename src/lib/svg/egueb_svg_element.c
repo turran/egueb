@@ -26,6 +26,7 @@
 #include "egueb_svg_document.h"
 
 #include "egueb_svg_element_private.h"
+#include "egueb_svg_clip_path_private.h"
 #include "egueb_svg_length_private.h"
 #include "egueb_dom_string_private.h"
 
@@ -796,7 +797,6 @@ void egueb_svg_element_clip_path_resolve(Egueb_Dom_Node *n,
 		{
 			Egueb_Dom_Node *ref = NULL;
 			Egueb_Dom_Node *doc = NULL;
-			Egueb_Dom_String iri = EGUEB_DOM_STRING_STATIC(clip_path_current->value.iri);
 
 			doc = egueb_dom_node_owner_document_get(n);
 			if (!doc)
@@ -804,13 +804,15 @@ void egueb_svg_element_clip_path_resolve(Egueb_Dom_Node *n,
 				WARN("No document set");
 				return;
 			}
-			ref = egueb_dom_document_element_get_by_iri(doc, &iri, NULL);
+			ref = egueb_dom_document_element_get_by_iri(doc,
+					clip_path_current->value.iri, NULL);
 			egueb_dom_node_unref(doc);
 
 			if (!ref || !egueb_svg_element_is_clip_path(ref))
 			{
 				ERR("Node with iri '%s' not found for the clip path",
-						clip_path_current->value.iri);
+						egueb_dom_string_string_get(
+						clip_path_current->value.iri));
 				if (ref) egueb_dom_node_unref(ref);
 			}
 			else

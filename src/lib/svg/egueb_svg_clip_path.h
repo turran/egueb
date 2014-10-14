@@ -35,7 +35,7 @@ typedef enum _Egueb_Svg_Clip_Path_Type
 
 typedef union _Egueb_Svg_Clip_Path_Value
 {
-	char *iri;
+	Egueb_Dom_String *iri;
 } Egueb_Svg_Clip_Path_Value;
 
 typedef struct _Egueb_Svg_Clip_Path
@@ -54,10 +54,6 @@ typedef struct _Egueb_Svg_Clip_Path_Animated
 
 EAPI extern const Egueb_Svg_Clip_Path EGUEB_SVG_CLIP_PATH_NONE;
 
-EAPI const Egueb_Dom_Value_Descriptor * egueb_svg_clip_path_descriptor_get(void);
-EAPI Eina_Bool egueb_svg_clip_path_is_equal(const Egueb_Svg_Clip_Path *p1,
-		const Egueb_Svg_Clip_Path *p2);
-EAPI void egueb_svg_clip_path_copy(const Egueb_Svg_Clip_Path *thiz, Egueb_Svg_Clip_Path *copy, Eina_Bool full);
 EAPI void egueb_svg_clip_path_reset(Egueb_Svg_Clip_Path *thiz);
 
 /**
