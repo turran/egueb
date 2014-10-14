@@ -18,12 +18,10 @@
 #include "egueb_smil_private.h"
 
 #include "egueb_smil_clock.h"
-#include "egueb_smil_keyframe.h"
-#include "egueb_smil_timeline.h"
-#include "egueb_smil_signal.h"
-#include "egueb_smil_signal_private.h"
 
+#include "egueb_smil_keyframe_private.h"
 #include "egueb_smil_timeline_private.h"
+#include "egueb_smil_signal_private.h"
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
@@ -104,14 +102,7 @@ Egueb_Smil_Clock egueb_smil_timeline_current_clock_get(Egueb_Smil_Timeline *thiz
 	return thiz->curr;
 }
 
-/*============================================================================*
- *                                   API                                      *
- *============================================================================*/
-/**
- * Create a new timeline
- * @return The newly created timeline
- */
-EAPI Egueb_Smil_Timeline * egueb_smil_timeline_new(void)
+Egueb_Smil_Timeline * egueb_smil_timeline_new(void)
 {
 	Egueb_Smil_Timeline *thiz;
 
@@ -121,14 +112,14 @@ EAPI Egueb_Smil_Timeline * egueb_smil_timeline_new(void)
 	return thiz;
 }
 
-EAPI Egueb_Smil_Timeline * egueb_smil_timeline_ref(Egueb_Smil_Timeline *thiz)
+Egueb_Smil_Timeline * egueb_smil_timeline_ref(Egueb_Smil_Timeline *thiz)
 {
 	if (!thiz) return thiz;
 	thiz->ref++;
 	return thiz;
 }
 
-EAPI void egueb_smil_timeline_unref(Egueb_Smil_Timeline *thiz)
+void egueb_smil_timeline_unref(Egueb_Smil_Timeline *thiz)
 {
 	if (!thiz) return;
 	thiz->ref--;
@@ -145,7 +136,7 @@ EAPI void egueb_smil_timeline_unref(Egueb_Smil_Timeline *thiz)
 	}
 }
 
-EAPI void egueb_smil_timeline_signal_add(Egueb_Smil_Timeline *thiz, Egueb_Smil_Signal *s)
+void egueb_smil_timeline_signal_add(Egueb_Smil_Timeline *thiz, Egueb_Smil_Signal *s)
 {
 	if (!s) return;
 	if (s->timeline)
@@ -158,12 +149,7 @@ EAPI void egueb_smil_timeline_signal_add(Egueb_Smil_Timeline *thiz, Egueb_Smil_S
 	s->timeline = thiz;
 }
 
-/**
- * Remove the signal from the Egueb_Smil_Timeline instance
- * @param thiz The Egueb_Smil_Timeline instance to remove the signal from
- * @param s The signal to remove
- */
-EAPI void egueb_smil_timeline_signal_remove(Egueb_Smil_Timeline *thiz, Egueb_Smil_Signal *s)
+void egueb_smil_timeline_signal_remove(Egueb_Smil_Timeline *thiz, Egueb_Smil_Signal *s)
 {
 	if (!thiz) return;
 	if (!s) return;
@@ -178,3 +164,7 @@ EAPI void egueb_smil_timeline_signal_remove(Egueb_Smil_Timeline *thiz, Egueb_Smi
 	s->timeline = NULL;
 	egueb_smil_signal_unref(s);
 }
+/*============================================================================*
+ *                                   API                                      *
+ *============================================================================*/
+

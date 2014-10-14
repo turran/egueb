@@ -20,8 +20,6 @@
 
 EAPI extern Egueb_Dom_String *EGUEB_SMIL_FEATURE_ANIMATION_NAME;
 
-typedef Egueb_Smil_Timeline * (*Egueb_Smil_Feature_Animation_Descriptor_Timeline_Get)(Egueb_Dom_Node *n);
-
 typedef void (*Egueb_Smil_Feature_Animation_Cb)(Egueb_Dom_Node *n);
 
 EAPI Eina_Bool egueb_smil_feature_animation_has_animations(Egueb_Dom_Feature *f);

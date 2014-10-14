@@ -16,12 +16,9 @@ src/lib/smil/egueb_smil_event.h \
 src/lib/smil/egueb_smil_event_timeline.h \
 src/lib/smil/egueb_smil_feature_animation.h \
 src/lib/smil/egueb_smil_fill.h \
-src/lib/smil/egueb_smil_keyframe.h \
 src/lib/smil/egueb_smil_main.h \
 src/lib/smil/egueb_smil_repeat_count.h \
 src/lib/smil/egueb_smil_set.h \
-src/lib/smil/egueb_smil_signal.h \
-src/lib/smil/egueb_smil_timeline.h \
 src/lib/smil/egueb_smil_timing.h \
 src/lib/smil/egueb_smil_timing_list.h
 

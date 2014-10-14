@@ -18,13 +18,10 @@
 #include "egueb_smil_private.h"
 
 #include "egueb_smil_clock.h"
-#include "egueb_smil_keyframe.h"
-#include "egueb_smil_timeline.h"
-#include "egueb_smil_signal.h"
 
-#include "egueb_smil_signal_private.h"
-#include "egueb_smil_timeline_private.h"
 #include "egueb_smil_keyframe_private.h"
+#include "egueb_smil_timeline_private.h"
+#include "egueb_smil_signal_private.h"
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
@@ -111,9 +108,6 @@ static void _egueb_smil_signal_discrete_instance_deinit(void *o)
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
-/*============================================================================*
- *                                   API                                      *
- *============================================================================*/
 EAPI Egueb_Smil_Signal * egueb_smil_signal_discrete_new(
 		Egueb_Smil_Signal_Discrete_Process process_cb,
 		Egueb_Smil_Signal_State_Callback start_cb,
@@ -138,3 +132,6 @@ EAPI Egueb_Smil_Signal * egueb_smil_signal_discrete_new(
 
 	return s;
 }
+/*============================================================================*
+ *                                   API                                      *
+ *============================================================================*/

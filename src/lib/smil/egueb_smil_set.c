@@ -21,12 +21,12 @@
 #include "egueb_smil_main.h"
 #include "egueb_smil_set.h"
 #include "egueb_smil_clock.h"
-#include "egueb_smil_keyframe.h"
-#include "egueb_smil_timeline.h"
-#include "egueb_smil_signal.h"
 #include "egueb_smil_event.h"
 
 #include "egueb_smil_animation_private.h"
+#include "egueb_smil_keyframe_private.h"
+#include "egueb_smil_timeline_private.h"
+#include "egueb_smil_signal_private.h"
 
 /* We can optimize this, as there's no need to interpolate any value
  * during the set lifetime .... we need to know what to do with "sandwich"

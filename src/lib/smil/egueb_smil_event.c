@@ -17,9 +17,10 @@
  */
 #include "egueb_smil_private.h"
 #include "egueb_smil_clock.h"
-#include "egueb_smil_keyframe.h"
-#include "egueb_smil_timeline.h"
 #include "egueb_smil_event.h"
+
+#include "egueb_smil_keyframe_private.h"
+#include "egueb_smil_timeline_private.h"
 #include "egueb_dom_event_private.h"
 #include "egueb_dom_string_private.h"
 /*============================================================================*

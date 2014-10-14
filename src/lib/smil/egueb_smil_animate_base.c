@@ -23,10 +23,11 @@
 #include "egueb_smil_accumulate.h"
 #include "egueb_smil_calc_mode.h"
 #include "egueb_smil_clock.h"
-#include "egueb_smil_keyframe.h"
-#include "egueb_smil_timeline.h"
 #include "egueb_smil_event.h"
 
+#include "egueb_smil_keyframe_private.h"
+#include "egueb_smil_timeline_private.h"
+#include "egueb_smil_event_timeline_private.h"
 #include "egueb_smil_key_spline_private.h"
 #include "egueb_smil_animation_private.h"
 #include "egueb_smil_animate_base_private.h"

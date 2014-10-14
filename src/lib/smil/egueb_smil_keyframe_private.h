@@ -20,6 +20,19 @@
 #define _EGUEB_SMIL_KEYFRAME_PRIVATE_H_
 
 /**
+ * Possible interpolator types
+ */
+typedef enum _Egueb_Smil_Keyframe_Interpolator_Type
+{
+	EGUEB_SMIL_KEYFRAME_INTERPOLATOR_DISCRETE, /**< The values are not interpolated, just discrete values */
+	EGUEB_SMIL_KEYFRAME_INTERPOLATOR_LINEAR, /**< Linear interpolation */
+	EGUEB_SMIL_KEYFRAME_INTERPOLATOR_COSIN, /***< Cosin interpolation */
+	EGUEB_SMIL_KEYFRAME_INTERPOLATOR_QUADRATIC, /**< Quadratic bezier interpolation */
+	EGUEB_SMIL_KEYFRAME_INTERPOLATOR_CUBIC, /**< Cubic bezier interpolation */
+	EGUEB_SMIL_KEYFRAME_INTERPOLATOR_TYPES
+} Egueb_Smil_Keyframe_Interpolator_Type;
+
+/**
  * Specific data needed for quadratic bezier animations
  */
 typedef struct _Egueb_Smil_Keyframe_Interpolator_Data_Quadratic

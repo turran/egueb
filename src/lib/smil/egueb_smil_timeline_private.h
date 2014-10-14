@@ -19,10 +19,21 @@
 #ifndef _EGUEB_SMIL_TIMELINE_PRIVATE_H_
 #define _EGUEB_SMIL_TIMELINE_PRIVATE_H_
 
+typedef struct _Egueb_Smil_Timeline Egueb_Smil_Timeline;
+
+/* for forward declarations */
+#include "egueb_smil_signal_private.h"
+
 void egueb_smil_timeline_tick(Egueb_Smil_Timeline *thiz);
 unsigned int egueb_smil_timeline_tpf_get(Egueb_Smil_Timeline *thiz);
 void egueb_smil_timeline_fps_set(Egueb_Smil_Timeline *thiz, unsigned int fps);
 unsigned int egueb_smil_timeline_fps_get(Egueb_Smil_Timeline *thiz);
 Egueb_Smil_Clock egueb_smil_timeline_current_clock_get(Egueb_Smil_Timeline *thiz);
+
+Egueb_Smil_Timeline * egueb_smil_timeline_new(void);
+Egueb_Smil_Timeline * egueb_smil_timeline_ref(Egueb_Smil_Timeline *thiz);
+void egueb_smil_timeline_unref(Egueb_Smil_Timeline *thiz);
+void egueb_smil_timeline_signal_add(Egueb_Smil_Timeline *thiz, Egueb_Smil_Signal *s);
+void egueb_smil_timeline_signal_remove(Egueb_Smil_Timeline *thiz, Egueb_Smil_Signal *s);
 
 #endif

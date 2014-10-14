@@ -57,6 +57,7 @@
 #include "egueb_svg_renderable_container.h"
 
 #include "egueb_dom_document_private.h"
+#include "egueb_svg_renderable_private.h"
 #include "egueb_svg_element_use_private.h"
 
 #include <unistd.h>

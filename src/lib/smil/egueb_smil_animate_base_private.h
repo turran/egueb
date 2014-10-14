@@ -19,9 +19,9 @@
 #ifndef _EGUEB_SMIL_PRIVATE_ANIMATE_BASE_H_
 #define _EGUEB_SMIL_PRIVATE_ANIMATE_BASE_H_
 
-#include "egueb_smil_keyframe.h"
-#include "egueb_smil_timeline.h"
-#include "egueb_smil_signal.h"
+#include "egueb_smil_keyframe_private.h"
+#include "egueb_smil_timeline_private.h"
+#include "egueb_smil_signal_private.h"
 
 typedef struct _Egueb_Smil_Animate_Base
 {

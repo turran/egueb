@@ -3,11 +3,8 @@ Refactor
 + Bring the set element as it was before, instead of a discrete signal
   use a continuous one
 + Use the discrete signals for time based events
-+ Do not export any timeline api
 + Make the smil timeline/signal be part of the "engine" ns
 + Make the topmost svg element *have* a animation feature
-+ Make the timeline event also have pause/play/seek events
-+ Make the timeline event be global so we can hide the timeline
 + Move the features to the topmost element, not the document, this is helpful
   for cases like
   <eon>

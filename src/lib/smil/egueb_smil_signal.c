@@ -18,12 +18,10 @@
 #include "egueb_smil_private.h"
 
 #include "egueb_smil_clock.h"
-#include "egueb_smil_keyframe.h"
-#include "egueb_smil_timeline.h"
-#include "egueb_smil_signal.h"
 
-#include "egueb_smil_signal_private.h"
+#include "egueb_smil_keyframe_private.h"
 #include "egueb_smil_timeline_private.h"
+#include "egueb_smil_signal_private.h"
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
@@ -86,17 +84,15 @@ void egueb_smil_signal_stop(Egueb_Smil_Signal *thiz)
 	if (thiz->stop_cb)
 		thiz->stop_cb(thiz, thiz->data);
 }
-/*============================================================================*
- *                                   API                                      *
- *============================================================================*/
-EAPI Egueb_Smil_Signal * egueb_smil_signal_ref(Egueb_Smil_Signal *thiz)
+
+Egueb_Smil_Signal * egueb_smil_signal_ref(Egueb_Smil_Signal *thiz)
 {
 	if (!thiz) return thiz;
 	thiz->ref++;
 	return thiz;
 }
 
-EAPI void egueb_smil_signal_unref(Egueb_Smil_Signal *thiz)
+void egueb_smil_signal_unref(Egueb_Smil_Signal *thiz)
 {
 	if (!thiz) return;
 	thiz->ref--;
@@ -110,7 +106,7 @@ EAPI void egueb_smil_signal_unref(Egueb_Smil_Signal *thiz)
  * Disable a signal
  * @param thiz The Egueb_Smil_Signal
  */
-EAPI void egueb_smil_signal_disable(Egueb_Smil_Signal *thiz)
+void egueb_smil_signal_disable(Egueb_Smil_Signal *thiz)
 {
 	thiz->enabled = EINA_FALSE;
 }
@@ -119,7 +115,7 @@ EAPI void egueb_smil_signal_disable(Egueb_Smil_Signal *thiz)
  * Enable a signal
  * @param thiz The Egueb_Smil_Signal
  */
-EAPI void egueb_smil_signal_enable(Egueb_Smil_Signal *thiz)
+void egueb_smil_signal_enable(Egueb_Smil_Signal *thiz)
 {
 	thiz->enabled = EINA_TRUE;
 	if (thiz->timeline)
@@ -138,7 +134,7 @@ EAPI void egueb_smil_signal_enable(Egueb_Smil_Signal *thiz)
  * @param thiz The Egueb_Smil_Signal
  * @return EINA_TRUE or EINA_FALSE
  */
-EAPI Eina_Bool egueb_smil_signal_enabled(Egueb_Smil_Signal *thiz)
+Eina_Bool egueb_smil_signal_enabled(Egueb_Smil_Signal *thiz)
 {
 	return thiz->enabled;
 }
@@ -149,7 +145,7 @@ EAPI Eina_Bool egueb_smil_signal_enabled(Egueb_Smil_Signal *thiz)
  * @param secs The number of seconds to increment
  * @param usecs The number of microsends to increment
  */
-EAPI void egueb_smil_signal_offset_set(Egueb_Smil_Signal *thiz, Egueb_Smil_Clock inc)
+void egueb_smil_signal_offset_set(Egueb_Smil_Signal *thiz, Egueb_Smil_Clock inc)
 {
 	thiz->offset = inc;
 }
@@ -159,7 +155,11 @@ EAPI void egueb_smil_signal_offset_set(Egueb_Smil_Signal *thiz, Egueb_Smil_Clock
  * @param thiz The Egueb_Smil_Signal
  * @return The timeline @ender_transfer{full}
  */
-EAPI Egueb_Smil_Timeline * egueb_smil_signal_timeline_get(Egueb_Smil_Signal *thiz)
+Egueb_Smil_Timeline * egueb_smil_signal_timeline_get(Egueb_Smil_Signal *thiz)
 {
 	return egueb_smil_timeline_ref(thiz->timeline);
 }
+/*============================================================================*
+ *                                   API                                      *
+ *============================================================================*/
+

@@ -19,13 +19,10 @@
 #include "egueb_smil_private.h"
 
 #include "egueb_smil_clock.h"
-#include "egueb_smil_keyframe.h"
-#include "egueb_smil_timeline.h"
-#include "egueb_smil_signal.h"
 
-#include "egueb_smil_signal_private.h"
-#include "egueb_smil_timeline_private.h"
 #include "egueb_smil_keyframe_private.h"
+#include "egueb_smil_timeline_private.h"
+#include "egueb_smil_signal_private.h"
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
@@ -385,10 +382,7 @@ static void _egueb_smil_signal_continuous_instance_deinit(void *o)
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
-/*============================================================================*
- *                                   API                                      *
- *============================================================================*/
-EAPI Egueb_Smil_Signal * egueb_smil_signal_continuous_new(
+Egueb_Smil_Signal * egueb_smil_signal_continuous_new(
 		Egueb_Smil_Signal_Continuous_Process process_cb,
 		Egueb_Smil_Signal_State_Callback start_cb,
 		Egueb_Smil_Signal_State_Callback stop_cb,
@@ -418,7 +412,7 @@ EAPI Egueb_Smil_Signal * egueb_smil_signal_continuous_new(
  * @param a The Egueb_Smil_Signal
  * @param times Number of times, -1 for infinite
  */
-EAPI void egueb_smil_signal_continuous_repeat_set(Egueb_Smil_Signal *s, int times)
+void egueb_smil_signal_continuous_repeat_set(Egueb_Smil_Signal *s, int times)
 {
 	Egueb_Smil_Signal_Continuous *thiz;
 
@@ -427,7 +421,7 @@ EAPI void egueb_smil_signal_continuous_repeat_set(Egueb_Smil_Signal *s, int time
 }
 
 
-EAPI void egueb_smil_signal_continuous_keyframe_simple_add(Egueb_Smil_Signal *s,
+void egueb_smil_signal_continuous_keyframe_simple_add(Egueb_Smil_Signal *s,
 		Egueb_Smil_Keyframe_Interpolator_Type type,
 		Egueb_Smil_Clock clock,
 		Egueb_Dom_Value *value)
@@ -444,7 +438,7 @@ EAPI void egueb_smil_signal_continuous_keyframe_simple_add(Egueb_Smil_Signal *s,
 	_egueb_smil_signal_continuous_keyframes_add(thiz, k);
 }
 
-EAPI void egueb_smil_signal_continuous_keyframe_quadratic_add(Egueb_Smil_Signal *s,
+void egueb_smil_signal_continuous_keyframe_quadratic_add(Egueb_Smil_Signal *s,
 		Egueb_Smil_Clock clock, double x0, double y0,
 		Egueb_Dom_Value *value)
 {
@@ -462,7 +456,7 @@ EAPI void egueb_smil_signal_continuous_keyframe_quadratic_add(Egueb_Smil_Signal 
 	_egueb_smil_signal_continuous_keyframes_add(thiz, k);
 }
 
-EAPI void egueb_smil_signal_continuous_keyframe_cubic_add(Egueb_Smil_Signal *s,
+void egueb_smil_signal_continuous_keyframe_cubic_add(Egueb_Smil_Signal *s,
 		Egueb_Smil_Clock clock, double x0, double y0, double x1, double y1,
 		Egueb_Dom_Value *value)
 {
@@ -481,3 +475,6 @@ EAPI void egueb_smil_signal_continuous_keyframe_cubic_add(Egueb_Smil_Signal *s,
 	thiz = EGUEB_SMIL_SIGNAL_CONTINUOUS(s);
 	_egueb_smil_signal_continuous_keyframes_add(thiz, k);
 }
+/*============================================================================*
+ *                                   API                                      *
+ *============================================================================*/

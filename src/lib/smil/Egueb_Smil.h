@@ -40,14 +40,7 @@
 #include "egueb_smil_duration.h"
 #include "egueb_smil_fill.h"
 #include "egueb_smil_repeat_count.h"
-#include "egueb_smil_keyframe.h"
-#include "egueb_smil_timeline.h"
-#include "egueb_smil_signal.h"
 #include "egueb_smil_timing.h"
-/* timeline */
-#include "egueb_smil_keyframe.h"
-#include "egueb_smil_timeline.h"
-#include "egueb_smil_signal.h"
 /* elements */
 #include "egueb_smil_animation.h"
 #include "egueb_smil_animate.h"
