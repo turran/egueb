@@ -22,11 +22,12 @@
 #include "egueb_smil_timeline.h"
 #include "egueb_smil_signal.h"
 #include "egueb_smil_animation.h"
-
 #include "egueb_smil_feature_animation.h"
+#include "egueb_smil_event_timeline.h"
 
 #include "egueb_smil_timeline_private.h"
 #include "egueb_smil_animation_private.h"
+#include "egueb_smil_event_timeline_private.h"
 #include "egueb_dom_node_private.h"
 #include "egueb_dom_string_private.h"
 #include "egueb_dom_feature_private.h"
@@ -41,7 +42,8 @@ typedef struct _Egueb_Smil_Feature_Animation
 {
 	Egueb_Dom_Feature base;
 	Egueb_Dom_Node *n;
-	const Egueb_Smil_Feature_Animation_Descriptor *d;
+	Egueb_Smil_Timeline *timeline;
+	Egueb_Smil_Feature_Animation_Cb on_tick;
 	Eina_Bool needs_dur_calc;
 	Eina_List *animations;
 } Egueb_Smil_Feature_Animation;
@@ -100,6 +102,15 @@ static void _egueb_smil_feature_animation_removed_from_document_cb(
 	thiz->needs_dur_calc = EINA_TRUE;
 }
 
+static void _egueb_smil_feature_animation_timeline_cb(Egueb_Dom_Event *e,
+		void *data)
+{
+	Egueb_Smil_Feature_Animation *thiz = EGUEB_SMIL_FEATURE_ANIMATION(data);
+
+	INFO("Requesting timeline");
+	egueb_smil_event_timeline_set(e, egueb_smil_timeline_ref(thiz->timeline));
+}
+
 /*----------------------------------------------------------------------------*
  *                              Object interface                              *
  *----------------------------------------------------------------------------*/
@@ -113,6 +124,10 @@ static void _egueb_smil_feature_animation_class_init(void *k)
 
 static void _egueb_smil_feature_animation_instance_init(void *o)
 {
+	Egueb_Smil_Feature_Animation *thiz = EGUEB_SMIL_FEATURE_ANIMATION(o);
+	thiz->needs_dur_calc = EINA_TRUE;
+	/* the animation system */
+	thiz->timeline = egueb_smil_timeline_new();
 }
 
 static void _egueb_smil_feature_animation_instance_deinit(void *o)
@@ -126,6 +141,8 @@ static void _egueb_smil_feature_animation_instance_deinit(void *o)
 		EINA_LIST_FREE(thiz->animations, animation)
 			egueb_dom_node_unref(animation);
 	}
+	/* remove timeline and all the animation system  */
+	egueb_smil_timeline_unref(thiz->timeline);
 }
 /*============================================================================*
  *                                 Global                                     *
@@ -138,52 +155,29 @@ Egueb_Dom_String *EGUEB_SMIL_FEATURE_ANIMATION_NAME = &_EGUEB_SMIL_FEATURE_ANIMA
 EAPI Eina_Bool egueb_smil_feature_animation_fps_set(Egueb_Dom_Feature *f, int fps)
 {
 	Egueb_Smil_Feature_Animation *thiz;
-	Egueb_Smil_Timeline *e;
 
 	thiz = EGUEB_SMIL_FEATURE_ANIMATION(f);
-	if (!thiz->n) return EINA_FALSE;
-
-	e = thiz->d->timeline_get(thiz->n);
-	if (!e) return EINA_FALSE;
-
-	egueb_smil_timeline_fps_set(e, fps);
-	egueb_smil_timeline_unref(e);
+	egueb_smil_timeline_fps_set(thiz->timeline, fps);
 	return EINA_TRUE;
 }
 
 EAPI Eina_Bool egueb_smil_feature_animation_fps_get(Egueb_Dom_Feature *f, int *fps)
 {
 	Egueb_Smil_Feature_Animation *thiz;
-	Egueb_Smil_Timeline *e;
 
 	thiz = EGUEB_SMIL_FEATURE_ANIMATION(f);
-	if (!thiz->n) return EINA_FALSE;
-
-	e = thiz->d->timeline_get(thiz->n);
-	if (!e)
-		*fps = 30;
-	else
-		*fps = egueb_smil_timeline_fps_get(e);
-	egueb_smil_timeline_unref(e);
+	*fps = egueb_smil_timeline_fps_get(thiz->timeline);
 	return EINA_TRUE;
 }
 
 EAPI Eina_Bool egueb_smil_feature_animation_tick(Egueb_Dom_Feature *f)
 {
 	Egueb_Smil_Feature_Animation *thiz;
-	Egueb_Smil_Timeline *e;
 
 	thiz = EGUEB_SMIL_FEATURE_ANIMATION(f);
-	if (!thiz->n) return EINA_FALSE;
-
-	e = thiz->d->timeline_get(thiz->n);
-	if (!e) return EINA_FALSE;
-
-	/* TODO handle the case of no etch but tick callback for the svg case */
-	/* the inner svg must get the window interface and define a new timer */
-
-	egueb_smil_timeline_tick(e);
-	egueb_smil_timeline_unref(e);
+	egueb_smil_timeline_tick(thiz->timeline);
+	if (thiz->on_tick)
+		thiz->on_tick(thiz->n);
 	return EINA_TRUE;
 }
 
@@ -232,18 +226,23 @@ EAPI Eina_Bool egueb_smil_feature_animation_has_animations(Egueb_Dom_Feature *f)
 		return EINA_FALSE;
 }
 
-EAPI Eina_Bool egueb_smil_feature_animation_add(Egueb_Dom_Node *n,
-		const Egueb_Smil_Feature_Animation_Descriptor *d)
+EAPI void egueb_smil_feature_animation_on_tick_set(Egueb_Dom_Feature *f,
+		Egueb_Smil_Feature_Animation_Cb on_tick)
+{
+	Egueb_Smil_Feature_Animation *thiz;
+
+	thiz = EGUEB_SMIL_FEATURE_ANIMATION(f);
+	thiz->on_tick = on_tick;
+}
+
+EAPI Eina_Bool egueb_smil_feature_animation_add(Egueb_Dom_Node *n)
 {
 	Egueb_Smil_Feature_Animation *thiz;
 
 	if (!n) return EINA_FALSE;
-	if (!d) return EINA_FALSE;
 
 	thiz = ENESIM_OBJECT_INSTANCE_NEW(egueb_smil_feature_animation);
 	egueb_dom_node_weak_ref_add(n, &thiz->n);
-	thiz->d = d;
-	thiz->needs_dur_calc = EINA_TRUE;
 
 	/* add the events needed to calculate the duration */
 	egueb_dom_node_event_listener_add(n,
@@ -254,7 +253,13 @@ EAPI Eina_Bool egueb_smil_feature_animation_add(Egueb_Dom_Node *n,
 			EGUEB_DOM_EVENT_MUTATION_NODE_REMOVED_FROM_DOCUMENT,
 			_egueb_smil_feature_animation_removed_from_document_cb,
 			EINA_TRUE, thiz);
+	/* add the event to set the timeline */
+	egueb_dom_node_event_listener_add(n,
+			EGUEB_SMIL_EVENT_TIMELINE,
+			_egueb_smil_feature_animation_timeline_cb,
+			EINA_TRUE, thiz);
 
-	return egueb_dom_node_feature_add(n, EGUEB_SMIL_FEATURE_ANIMATION_NAME, NULL, EGUEB_DOM_FEATURE(thiz));
+	return egueb_dom_node_feature_add(n, EGUEB_SMIL_FEATURE_ANIMATION_NAME,
+			NULL, EGUEB_DOM_FEATURE(thiz));
 }
 

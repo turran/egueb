@@ -26,11 +26,12 @@
 #include "egueb_svg_point.h"
 #include "egueb_svg_element_svg.h"
 #include "egueb_svg_element_use.h"
+#include "egueb_svg_renderable.h"
 #include "egueb_svg_renderable_container.h"
 #include "egueb_svg_shape.h"
 #include "egueb_svg_zoom_and_pan.h"
 
-#include "egueb_svg_element_svg_private.h"
+#include "egueb_svg_renderable_container_private.h"
 #include "egueb_svg_shape_private.h"
 #include "egueb_svg_document_private.h"
 #include "egueb_svg_attr_rect_private.h"
@@ -78,7 +79,6 @@ typedef struct _Egueb_Svg_Element_Svg
 	Enesim_Renderer *proxy;
 
 	/* animation */
-	Egueb_Smil_Timeline *timeline;
 	Eina_Bool paused;
 
 	/* painter */
@@ -120,16 +120,6 @@ typedef struct _Egueb_Svg_Element_Svg_Class
 {
 	Egueb_Svg_Renderable_Container_Class base;
 } Egueb_Svg_Element_Svg_Class;
-
-
-static void _egueb_svg_element_svg_timeline_cb(Egueb_Dom_Event *e,
-		void *data)
-{
-	Egueb_Svg_Element_Svg *thiz = data;
-
-	INFO("Requesting timeline");
-	egueb_smil_event_timeline_set(e, egueb_smil_timeline_ref(thiz->timeline));
-}
 /*----------------------------------------------------------------------------*
  *                            Renderable interface                            *
  *----------------------------------------------------------------------------*/
@@ -376,11 +366,6 @@ static void _egueb_svg_element_svg_instance_init(void *o)
 	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->viewbox), NULL);
 	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->zoom_and_pan), NULL);
 
-	/* add the event to set the painter */
-	egueb_dom_node_event_listener_add(n,
-			EGUEB_SMIL_EVENT_TIMELINE,
-			_egueb_svg_element_svg_timeline_cb,
-			EINA_TRUE, thiz);
 	/* the rendering */
 	r = enesim_renderer_proxy_new();
 	thiz->proxy = r;
@@ -398,8 +383,6 @@ static void _egueb_svg_element_svg_instance_init(void *o)
 	/* our own specific painter */
 	thiz->painter = egueb_svg_painter_g_new();
 
-	/* the animation system */
-	thiz->timeline = egueb_smil_timeline_new();
 }
 
 static void _egueb_svg_element_svg_instance_deinit(void *o)
@@ -419,8 +402,6 @@ static void _egueb_svg_element_svg_instance_deinit(void *o)
 	enesim_renderer_unref(thiz->proxy);
 	/* the painter */
 	egueb_svg_painter_unref(thiz->painter);
-	/* remove timeline and all the animation system  */
-	egueb_smil_timeline_unref(thiz->timeline);
 	/* TODO free the scriptors */
 }
 
@@ -557,13 +538,6 @@ void egueb_svg_element_svg_style_apply(Egueb_Dom_Tag *tag)
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
-Egueb_Smil_Timeline * egueb_svg_element_svg_timeline_get(Egueb_Dom_Node *n)
-{
-	Egueb_Svg_Element_Svg *thiz;
-
-	thiz = EGUEB_SVG_ELEMENT_SVG(n);
-	return egueb_smil_timeline_ref(thiz->timeline);
-}
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/

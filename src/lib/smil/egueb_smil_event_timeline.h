@@ -16,12 +16,9 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _EGUEB_SVG_ELEMENT_SVG_PRIVATE_H_
-#define _EGUEB_SVG_ELEMENT_SVG_PRIVATE_H_
+#ifndef _EGUEB_SMIL_EVENT_TIMELINE_H_
+#define _EGUEB_SMIL_EVENT_TIMELINE_H_
 
-#include "egueb_svg_renderable.h"
-#include "egueb_svg_renderable_container_private.h"
-
-Egueb_Smil_Timeline * egueb_svg_element_svg_timeline_get(Egueb_Dom_Node *n);
+EAPI Eina_Bool egueb_smil_event_is_timeline(Egueb_Dom_Event *e);
 
 #endif

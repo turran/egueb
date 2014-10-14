@@ -20,10 +20,11 @@
 #include "egueb_smil_clock.h"
 #include "egueb_smil_keyframe.h"
 #include "egueb_smil_timeline.h"
-#include "egueb_smil_event.h"
+#include "egueb_smil_event_timeline.h"
 
 #include "egueb_dom_event_private.h"
 #include "egueb_dom_string_private.h"
+#include "egueb_smil_event_timeline_private.h"
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
@@ -70,21 +71,9 @@ static void _egueb_smil_event_timeline_instance_deinit(void *o)
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
-/*============================================================================*
- *                                   API                                      *
- *============================================================================*/
 Egueb_Dom_String *EGUEB_SMIL_EVENT_TIMELINE = &_EGUEB_SMIL_EVENT_TIMELINE;
 
-EAPI Eina_Bool egueb_smil_event_is_timeline(Egueb_Dom_Event *e)
-{
-	if (!e) return EINA_FALSE;
-	if (!enesim_object_instance_inherits(ENESIM_OBJECT_INSTANCE(e),
-			EGUEB_SMIL_EVENT_TIMELINE_DESCRIPTOR))
-		return EINA_FALSE;
-	return EINA_TRUE;
-}
-
-EAPI Egueb_Dom_Event * egueb_smil_event_timeline_new(void)
+Egueb_Dom_Event * egueb_smil_event_timeline_new(void)
 {
 	Egueb_Dom_Event *event;
 	event = ENESIM_OBJECT_INSTANCE_NEW(egueb_smil_event_timeline);
@@ -94,7 +83,7 @@ EAPI Egueb_Dom_Event * egueb_smil_event_timeline_new(void)
 	return event;
 }
 
-EAPI void egueb_smil_event_timeline_set(Egueb_Dom_Event *e, Egueb_Smil_Timeline *timeline)
+void egueb_smil_event_timeline_set(Egueb_Dom_Event *e, Egueb_Smil_Timeline *timeline)
 {
 	Egueb_Smil_Event_Timeline *thiz;
 
@@ -102,10 +91,21 @@ EAPI void egueb_smil_event_timeline_set(Egueb_Dom_Event *e, Egueb_Smil_Timeline 
 	thiz->timeline = timeline;
 }
 
-EAPI Egueb_Smil_Timeline * egueb_smil_event_timeline_get(Egueb_Dom_Event *e)
+Egueb_Smil_Timeline * egueb_smil_event_timeline_get(Egueb_Dom_Event *e)
 {
 	Egueb_Smil_Event_Timeline *thiz;
 
 	thiz = EGUEB_SMIL_EVENT_TIMELINE(e);
 	return egueb_smil_timeline_ref(thiz->timeline);
+}
+/*============================================================================*
+ *                                   API                                      *
+ *============================================================================*/
+EAPI Eina_Bool egueb_smil_event_is_timeline(Egueb_Dom_Event *e)
+{
+	if (!e) return EINA_FALSE;
+	if (!enesim_object_instance_inherits(ENESIM_OBJECT_INSTANCE(e),
+			EGUEB_SMIL_EVENT_TIMELINE_DESCRIPTOR))
+		return EINA_FALSE;
+	return EINA_TRUE;
 }

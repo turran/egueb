@@ -5,7 +5,6 @@ Refactor
 + Use the discrete signals for time based events
 + Do not export any timeline api
 + Make the smil timeline/signal be part of the "engine" ns
-+ Embed the timeline on the animation feature
 + Make the topmost svg element *have* a animation feature
 + Make the timeline event also have pause/play/seek events
 + Make the timeline event be global so we can hide the timeline

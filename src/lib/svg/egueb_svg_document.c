@@ -58,7 +58,6 @@
 
 #include "egueb_dom_document_private.h"
 #include "egueb_svg_element_use_private.h"
-#include "egueb_svg_element_svg_private.h"
 
 #include <unistd.h>
 #include <libgen.h>
@@ -537,26 +536,6 @@ _egueb_svg_document_ui_descriptor = {
 	/* .input_get 	= */ _egueb_svg_document_ui_input_get,
 };
 /*----------------------------------------------------------------------------*
- *                       Animation feature interface                          *
- *----------------------------------------------------------------------------*/
-static Egueb_Smil_Timeline * _egueb_svg_document_animation_timeline_get(Egueb_Dom_Node *n)
-{
-	Egueb_Dom_Node *topmost;
-	Egueb_Smil_Timeline *ret;
-
-	topmost = egueb_dom_document_document_element_get(n);
-	if (!topmost) return NULL;
-
-	ret = egueb_svg_element_svg_timeline_get(topmost);
-	egueb_dom_node_unref(topmost);
-	return ret;
-}
-
-static Egueb_Smil_Feature_Animation_Descriptor 
-_egueb_svg_document_animation_descriptor = {
-	/* .timeline_get 	= */ _egueb_svg_document_animation_timeline_get,
-};
-/*----------------------------------------------------------------------------*
  *                        Window feature interface                            *
  *----------------------------------------------------------------------------*/
 static Eina_Bool _egueb_svg_document_window_type_get(
@@ -999,8 +978,7 @@ static void _egueb_svg_document_instance_init(void *o)
 			&_egueb_svg_document_render_descriptor);
 	egueb_dom_feature_ui_add(EGUEB_DOM_NODE(thiz),
 			&_egueb_svg_document_ui_descriptor);
-	egueb_smil_feature_animation_add(EGUEB_DOM_NODE(thiz),
-			&_egueb_svg_document_animation_descriptor);
+	egueb_smil_feature_animation_add(EGUEB_DOM_NODE(thiz));
 	egueb_dom_feature_io_add(EGUEB_DOM_NODE(thiz));
 	egueb_dom_feature_script_add(EGUEB_DOM_NODE(thiz));
 	egueb_dom_feature_multimedia_add(EGUEB_DOM_NODE(thiz));

@@ -15,15 +15,13 @@
  * License along with this library.
  * If not, see <http://www.gnu.org/licenses/>.
  */
+#ifndef _EGUEB_SMIL_EVENT_TIMELINE_PRIVATE_H_
+#define _EGUEB_SMIL_EVENT_TIMELINE_PRIVATE_H_
 
-#ifndef _EGUEB_SMIL_EVENT_H_
-#define _EGUEB_SMIL_EVENT_H_
+extern Egueb_Dom_String *EGUEB_SMIL_EVENT_TIMELINE;
 
-extern Egueb_Dom_String *EGUEB_SMIL_EVENT_BEGIN;
-extern Egueb_Dom_String *EGUEB_SMIL_EVENT_END;
-extern Egueb_Dom_String *EGUEB_SMIL_EVENT_REPEAT;
-
-EAPI Egueb_Dom_Event * egueb_smil_event_new(void);
-EAPI void egueb_smil_event_init(Egueb_Dom_Event *e, Egueb_Dom_String *type, int detail);
+EAPI Egueb_Dom_Event * egueb_smil_event_timeline_new(void);
+EAPI void egueb_smil_event_timeline_set(Egueb_Dom_Event *e, Egueb_Smil_Timeline *timeline);
+EAPI Egueb_Smil_Timeline * egueb_smil_event_timeline_get(Egueb_Dom_Event *e);
 
 #endif

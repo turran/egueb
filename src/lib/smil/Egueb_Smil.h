@@ -54,6 +54,7 @@
 #include "egueb_smil_set.h"
 /* events */
 #include "egueb_smil_event.h"
+#include "egueb_smil_event_timeline.h"
 /* features */
 #include "egueb_smil_feature_animation.h"
 /**
