@@ -44,64 +44,6 @@ typedef struct _Egueb_Smil_Animate_Class
 {
 	Egueb_Smil_Animate_Base_Class parent;
 } Egueb_Smil_Animate_Class;
-#if 0
-/*----------------------------------------------------------------------------*
- *                         The Animate Base interface                         *
- *----------------------------------------------------------------------------*/
-static void _egueb_smil_element_animate_free(Egueb_Dom_Tag *t)
-{
-	Egueb_Smil_Element_Animate *thiz;
-
-	thiz = _egueb_smil_element_animate_get(t);
-	free(thiz);
-}
-
-static Eina_Bool _egueb_smil_element_animate_attribute_set(Ender_Element *e,
-		const char *key, const char *value)
-{
-	return EINA_FALSE;
-}
-
-static Eina_Bool _egueb_smil_element_animate_attribute_get(Egueb_Dom_Tag *tag, const char *attribute, char **value)
-{
-	return EINA_FALSE;
-}
-
-static Eina_Bool _egueb_smil_element_animate_type_descriptor_get(Egueb_Dom_Tag *t,
-		const char *name, Egueb_Smil_Attribute_Animated_Descriptor **d)
-{
-	if (!strcmp(name, "SVGAnimatedTransform"))
-		goto done;
-	*d = egueb_smil_attribute_animated_descriptor_get(name);
-	if (*d) return EINA_TRUE;
-done:
-	ERR("Can not animate '%s'", name);
-	return EINA_FALSE;
-}
-
-static Egueb_Smil_Animate_Base_Descriptor _descriptor = {
-	/* .attribute_get 	= */ _egueb_smil_element_animate_attribute_get,
-	/* .free 		= */ _egueb_smil_element_animate_free,
-	/* .initialize 		= */ NULL,
-	/* .attribute_set 	= */ _egueb_smil_element_animate_attribute_set,
-	/* .type_descriptor_get	= */ _egueb_smil_element_animate_type_descriptor_get,
-};
-/*----------------------------------------------------------------------------*
- *                           The Ender interface                              *
- *----------------------------------------------------------------------------*/
-static Egueb_Dom_Tag * _egueb_smil_element_animate_new(void)
-{
-	Egueb_Smil_Element_Animate *thiz;
-	Egueb_Dom_Tag *t;
-
-	thiz = calloc(1, sizeof(Egueb_Smil_Element_Animate));
-	t = egueb_smil_animate_base_new(&_descriptor, EGUEB_SMIL_TYPE_ANIMATE, thiz);
-	return t;
-}
-/* The ender wrapper */
-#define _egueb_smil_element_animate_delete NULL
-#include "egueb_smil_generated_element_animate.c"
-#endif
 /*----------------------------------------------------------------------------*
  *                              Element interface                             *
  *----------------------------------------------------------------------------*/
@@ -137,10 +79,6 @@ static void _egueb_smil_animate_instance_deinit(void *o)
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/
-/**
- * To be documented
- * FIXME: To be fixed
- */
 EAPI Egueb_Dom_Node * egueb_smil_animate_new(void)
 {
 	Egueb_Dom_Node *n;

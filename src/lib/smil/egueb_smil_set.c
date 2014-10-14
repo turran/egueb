@@ -65,15 +65,20 @@ static void _egueb_smil_set_property_set(Egueb_Smil_Set *thiz, Egueb_Dom_Value *
 	egueb_dom_attr_value_set(a->attr, EGUEB_DOM_ATTR_TYPE_ANIMATED, v);
 }
 /*----------------------------------------------------------------------------*
- *                        The Etch external animation                         *
+ *                           The signal interface                             *
  *----------------------------------------------------------------------------*/
-static void _egueb_smil_set_animation_cb(Egueb_Dom_Value *v, void *data)
+static void _egueb_smil_set_signal_interpolator_cb(Egueb_Dom_Value *va, Egueb_Dom_Value *vb,
+		double m, void *data)
 {
 	Egueb_Smil_Set *thiz = data;
-	_egueb_smil_set_property_set(thiz, v);
+	/* TODO we do not interpolate anything, we just set the value directly.
+	 * Given that setting an attribute is a transfer=full operation we must
+	 * do copy of the value before setting it
+	 */
+	_egueb_smil_set_property_set(thiz, &thiz->to_value);
 }
 
-static void _egueb_smil_set_animation_start_cb(Egueb_Smil_Signal *s, void *data)
+static void _egueb_smil_set_signal_start_cb(Egueb_Smil_Signal *s, void *data)
 {
 	Egueb_Smil_Set *thiz = data;
 	Egueb_Smil_Animation *a;
@@ -85,6 +90,7 @@ static void _egueb_smil_set_animation_start_cb(Egueb_Smil_Signal *s, void *data)
 	/* in case of "remove" pick the last value it had */
 	if (fill == EGUEB_SMIL_FILL_REMOVE)
 	{
+		DBG("Getting previous value for later set");
 		egueb_dom_attr_final_value_get(a->attr, &thiz->prv_value);
 	}
 	ev = egueb_smil_event_new();
@@ -92,7 +98,7 @@ static void _egueb_smil_set_animation_start_cb(Egueb_Smil_Signal *s, void *data)
 	egueb_dom_node_event_dispatch(a->target, ev, NULL, NULL);
 }
 
-static void _egueb_smil_set_animation_stop_cb(Egueb_Smil_Signal *s, void *data)
+static void _egueb_smil_set_signal_stop_cb(Egueb_Smil_Signal *s, void *data)
 {
 	Egueb_Smil_Set *thiz = data;
 	Egueb_Smil_Animation *a;
@@ -118,7 +124,9 @@ static Eina_Bool _egueb_smil_set_setup(Egueb_Smil_Animation *a,
 		Egueb_Dom_Node *target)
 {
 	Egueb_Smil_Set *thiz;
+	Egueb_Smil_Duration dur;
 	Egueb_Dom_String *to = NULL;
+	int64_t final_dur;
 
 	thiz = EGUEB_SMIL_SET(a);
 	egueb_dom_attr_final_get(thiz->to, &to);
@@ -136,17 +144,36 @@ static Eina_Bool _egueb_smil_set_setup(Egueb_Smil_Animation *a,
 		return EINA_FALSE;
 	}
 	egueb_dom_string_unref(to);
-	/* setup the holder of the destination value */
+	/* make a copy to put it on the end keyframe */
 	egueb_dom_value_init(&thiz->dst_value, egueb_dom_attr_value_descriptor_get(a->attr));
 	egueb_dom_value_copy(&thiz->to_value, &thiz->dst_value, EINA_TRUE);
 
-	thiz->signal = egueb_smil_signal_discrete_new(
-			_egueb_smil_set_animation_cb,
-			_egueb_smil_set_animation_start_cb,
-			_egueb_smil_set_animation_stop_cb,
-			&thiz->dst_value, thiz);
+	thiz->signal = egueb_smil_signal_continuous_new(
+			_egueb_smil_set_signal_interpolator_cb,
+			_egueb_smil_set_signal_start_cb,
+			_egueb_smil_set_signal_stop_cb,
+			NULL, thiz);
 	egueb_smil_timeline_signal_add(a->timeline, egueb_smil_signal_ref(thiz->signal));
 	/* TODO the repeat count */
+	/* TODO the repeat dur */
+
+	/* Add two keyframes, one for the start (0, later we will add the offset)
+	 * and one for the end. The end depends if we do repeat or not
+	 */
+	egueb_smil_signal_continuous_keyframe_simple_add(thiz->signal,
+			EGUEB_SMIL_KEYFRAME_INTERPOLATOR_DISCRETE, 0,
+			&thiz->dst_value);
+	egueb_dom_attr_final_get(a->dur, &dur);
+	if (dur.type == EGUEB_SMIL_DURATION_TYPE_CLOCK)
+		final_dur = dur.data.clock;
+	else
+	{
+		final_dur = 1;
+		egueb_smil_signal_continuous_repeat_set(thiz->signal, -1);
+	}
+	egueb_smil_signal_continuous_keyframe_simple_add(thiz->signal,
+			EGUEB_SMIL_KEYFRAME_INTERPOLATOR_DISCRETE,
+			final_dur, &thiz->to_value);
 
 	return EINA_TRUE;
 }

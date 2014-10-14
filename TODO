@@ -1,7 +1,28 @@
 Refactor
 ========
-+ Bring the set element as it was before, instead of a discrete signal
-  use a continuous one
++ Implement every type with reffed values, i.e
+typedef struct _Egueb_Svg_Paint
+{
+	Egueb_Svg_Paint_Type type;
+	Egueb_Svg_Color color;
+	char *uri;
+} Egueb_Svg_Paint;
+to
+typedef struct _Egueb_Svg_Paint
+{
+	Egueb_Svg_Paint_Type type;
+	Egueb_Svg_Color color;
+	Egueb_Dom_String *uri;
+} Egueb_Svg_Paint;
+
+  
++ Given that attributes might pass by reference (i.e transfer=none)
+  a modification on such value must not be allowed. Otherwise things like
+  MyAttrValue v;
+  egueb_dom_attr_final_get(attr, &v);
+  v.foo = bar
+  will not trigger a mutation event ...
+  
 + Use the discrete signals for time based events
 + Make the smil timeline/signal be part of the "engine" ns
 + Make the topmost svg element *have* a animation feature

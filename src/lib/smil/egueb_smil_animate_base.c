@@ -215,7 +215,7 @@ static void _egueb_smil_animate_base_keyframes_generate(Egueb_Smil_Animate_Base 
 }
 
 /*----------------------------------------------------------------------------*
- *                        The Etch external animation                         *
+ *                           The signal interface                             *
  *----------------------------------------------------------------------------*/
 static void _egueb_smil_animate_base_interpolator_cb(Egueb_Dom_Value *va, Egueb_Dom_Value *vb,
 		double m, void *data)
