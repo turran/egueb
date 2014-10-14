@@ -25,6 +25,7 @@
 #include "egueb_svg_document.h"
 #include "egueb_svg_paint_server.h"
 
+#include "egueb_svg_paint_private.h"
 #include "egueb_svg_painter_private.h"
 #include "egueb_svg_reference_paint_server_private.h"
 #include "egueb_dom_string_private.h"

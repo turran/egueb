@@ -60,11 +60,6 @@ EAPI extern const Egueb_Svg_Paint EGUEB_SVG_PAINT_BLACK;
 EAPI extern const Egueb_Svg_Paint EGUEB_SVG_PAINT_NONE;
 EAPI extern const Egueb_Svg_Paint EGUEB_SVG_PAINT_CURRENT_COLOR;
 
-EAPI const Egueb_Dom_Value_Descriptor * egueb_svg_paint_descriptor_get(void);
-
-EAPI Eina_Bool egueb_svg_paint_is_equal(const Egueb_Svg_Paint *p1,
-		const Egueb_Svg_Paint *p2);
-EAPI void egueb_svg_paint_copy(const Egueb_Svg_Paint *thiz, Egueb_Svg_Paint *copy, Eina_Bool full);
 EAPI void egueb_svg_paint_reset(Egueb_Svg_Paint *thiz);
 
 

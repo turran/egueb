@@ -20,18 +20,18 @@
 #include "egueb_svg_paint.h"
 #include "egueb_svg_string.h"
 
-#include "egueb_dom_value_private.h"
 #include "egueb_svg_color_private.h"
+#include "egueb_svg_paint_private.h"
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
-/*----------------------------------------------------------------------------*
- *                             Value interface                                *
- *----------------------------------------------------------------------------*/
+/*============================================================================*
+ *                                 Global                                     *
+ *============================================================================*/
 /*
  * none, currentColor, <color>, <uri>?
  */
-static Eina_Bool egueb_svg_paint_string_from(Egueb_Svg_Paint *paint, const char *attr)
+Eina_Bool egueb_svg_paint_string_from(Egueb_Svg_Paint *paint, const char *attr)
 {
 	/* none */
 	if (strncmp(attr, "none", 4) == 0)
@@ -58,7 +58,7 @@ static Eina_Bool egueb_svg_paint_string_from(Egueb_Svg_Paint *paint, const char 
 	return EINA_TRUE;
 }
 
-static char * egueb_svg_paint_string_to(Egueb_Svg_Paint *thiz)
+char * egueb_svg_paint_string_to(Egueb_Svg_Paint *thiz)
 {
 	switch (thiz->type)
 	{
@@ -84,44 +84,14 @@ static char * egueb_svg_paint_string_to(Egueb_Svg_Paint *thiz)
 	return NULL;
 }
 
-static void egueb_svg_paint_interpolate(Egueb_Svg_Paint *v,
+void egueb_svg_paint_interpolate(Egueb_Svg_Paint *v,
 		Egueb_Svg_Paint *a, Egueb_Svg_Paint *b, double m,
 		Egueb_Svg_Paint *add, Egueb_Svg_Paint *acc, int mul)
 {
 	ERR("Not implemented");
 }
 
-EGUEB_DOM_VALUE_PRIMITIVE_BOILERPLATE(egueb_svg_paint, Egueb_Svg_Paint);
-/*============================================================================*
- *                                 Global                                     *
- *============================================================================*/
-/*============================================================================*
- *                                   API                                      *
- *============================================================================*/
-const Egueb_Svg_Paint EGUEB_SVG_PAINT_BLACK = {
-	EGUEB_SVG_PAINT_TYPE_COLOR,
-	{ 0, 0, 0 },
-	NULL
-};
-
-const Egueb_Svg_Paint EGUEB_SVG_PAINT_NONE = {
-	EGUEB_SVG_PAINT_TYPE_NONE,
-	{ 0, 0, 0 },
-	NULL
-};
-
-const Egueb_Svg_Paint EGUEB_SVG_PAINT_CURRENT_COLOR = {
-	EGUEB_SVG_PAINT_TYPE_CURRENT_COLOR,
-	{ 0, 0, 0 },
-	NULL
-};
-
-EAPI const Egueb_Dom_Value_Descriptor * egueb_svg_paint_descriptor_get(void)
-{
-	return &_egueb_svg_paint_descriptor;
-}
-
-EAPI Eina_Bool egueb_svg_paint_is_equal(const Egueb_Svg_Paint *p1,
+Eina_Bool egueb_svg_paint_is_equal(const Egueb_Svg_Paint *p1,
 		const Egueb_Svg_Paint *p2)
 {
 	/* sanity checks */
@@ -149,7 +119,7 @@ EAPI Eina_Bool egueb_svg_paint_is_equal(const Egueb_Svg_Paint *p1,
 	}
 }
 
-EAPI void egueb_svg_paint_copy(const Egueb_Svg_Paint *thiz, Egueb_Svg_Paint *copy, Eina_Bool full)
+void egueb_svg_paint_copy(const Egueb_Svg_Paint *thiz, Egueb_Svg_Paint *copy, Eina_Bool full)
 {
 	egueb_svg_paint_reset(copy);
 
@@ -167,6 +137,27 @@ EAPI void egueb_svg_paint_copy(const Egueb_Svg_Paint *thiz, Egueb_Svg_Paint *cop
 		}
 	}
 }
+
+/*============================================================================*
+ *                                   API                                      *
+ *============================================================================*/
+const Egueb_Svg_Paint EGUEB_SVG_PAINT_BLACK = {
+	EGUEB_SVG_PAINT_TYPE_COLOR,
+	{ 0, 0, 0 },
+	NULL
+};
+
+const Egueb_Svg_Paint EGUEB_SVG_PAINT_NONE = {
+	EGUEB_SVG_PAINT_TYPE_NONE,
+	{ 0, 0, 0 },
+	NULL
+};
+
+const Egueb_Svg_Paint EGUEB_SVG_PAINT_CURRENT_COLOR = {
+	EGUEB_SVG_PAINT_TYPE_CURRENT_COLOR,
+	{ 0, 0, 0 },
+	NULL
+};
 
 EAPI void egueb_svg_paint_reset(Egueb_Svg_Paint *thiz)
 {

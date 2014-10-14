@@ -67,6 +67,7 @@ src/lib/svg/egueb_svg_matrix.c \
 src/lib/svg/egueb_svg_number.c \
 src/lib/svg/egueb_svg_overflow.c \
 src/lib/svg/egueb_svg_paint.c \
+src/lib/svg/egueb_svg_paint_private.h \
 src/lib/svg/egueb_svg_paint_server.c \
 src/lib/svg/egueb_svg_paint_server_private.h \
 src/lib/svg/egueb_svg_painter.c \
