@@ -455,7 +455,8 @@ EAPI Egueb_Dom_Node * egueb_dom_document_element_ns_create(Egueb_Dom_Node *n,
 	{
 		ERR("Bad formed qualified name '%s'",
 				egueb_dom_string_string_get(qname));
-		*err = EGUEB_DOM_ERROR_NAMESPACE;
+		if (err)
+			*err = EGUEB_DOM_ERROR_NAMESPACE;
 		return NULL;
 	}
 
@@ -465,7 +466,8 @@ EAPI Egueb_Dom_Node * egueb_dom_document_element_ns_create(Egueb_Dom_Node *n,
 	{
 		ERR("Prefix without a namespace on '%s'",
 				egueb_dom_string_string_get(qname));
-		*err = EGUEB_DOM_ERROR_NAMESPACE;
+		if (err)
+			*err = EGUEB_DOM_ERROR_NAMESPACE;
 		return NULL;
 		
 	}
