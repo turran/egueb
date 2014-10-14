@@ -53,7 +53,7 @@ typedef struct _Egueb_Svg_Paint
 {
 	Egueb_Svg_Paint_Type type;
 	Egueb_Svg_Color color;
-	char *uri;
+	Egueb_Dom_String *uri;
 } Egueb_Svg_Paint;
 
 EAPI extern const Egueb_Svg_Paint EGUEB_SVG_PAINT_BLACK;

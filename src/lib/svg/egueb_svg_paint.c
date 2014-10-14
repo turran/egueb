@@ -52,7 +52,7 @@ static Eina_Bool egueb_svg_paint_string_from(Egueb_Svg_Paint *paint, const char 
 	else
 	{
 		paint->type = EGUEB_SVG_PAINT_TYPE_SERVER;
-		paint->uri = strdup(attr);
+		paint->uri = egueb_dom_string_new_with_string(attr);
 	}
 
 	return EINA_TRUE;
@@ -75,7 +75,7 @@ static char * egueb_svg_paint_string_to(Egueb_Svg_Paint *thiz)
 		break;
 
 		case EGUEB_SVG_PAINT_TYPE_SERVER:
-		return strdup(thiz->uri);
+		return strdup(egueb_dom_string_string_get(thiz->uri));
 		break;
 
 		default:
@@ -141,7 +141,7 @@ EAPI Eina_Bool egueb_svg_paint_is_equal(const Egueb_Svg_Paint *p1,
 		return egueb_svg_color_is_equal(&p1->color, &p2->color);
 
 		case EGUEB_SVG_PAINT_TYPE_SERVER:
-		return egueb_svg_string_is_equal(p1->uri, p2->uri);
+		return egueb_dom_string_is_equal(p1->uri, p2->uri);
 
 		/* FIXME what to do in this cases? add an assert? */
 		default:
@@ -160,7 +160,10 @@ EAPI void egueb_svg_paint_copy(const Egueb_Svg_Paint *thiz, Egueb_Svg_Paint *cop
 	{
 		if (thiz->uri)
 		{
-			copy->uri = strdup(thiz->uri);
+			if (full)
+				copy->uri = egueb_dom_string_dup(thiz->uri);
+			else
+				copy->uri = egueb_dom_string_ref(thiz->uri);
 		}
 	}
 }
@@ -171,7 +174,7 @@ EAPI void egueb_svg_paint_reset(Egueb_Svg_Paint *thiz)
 	{
 		if (thiz->uri)
 		{
-			free(thiz->uri);
+			egueb_dom_string_unref(thiz->uri);
 			thiz->uri = NULL;
 		}
 	}
