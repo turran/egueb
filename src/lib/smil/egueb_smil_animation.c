@@ -418,28 +418,10 @@ static void _egueb_dom_animation_cleanup(Egueb_Smil_Animation *thiz,
 /*----------------------------------------------------------------------------*
  *                               Event handlers                               *
  *----------------------------------------------------------------------------*/
-/* Whenever a node has been inserted into the document, request the timeline */
-static void _egueb_smil_animation_inserted_into_document_cb(Egueb_Dom_Event *e,
-		void *data)
-{
-	Egueb_Smil_Animation *thiz;
-	Egueb_Dom_Node *n = data;
-	Egueb_Dom_Event *request;
-
-	INFO("Smil animation inserted into document");
-	request = egueb_smil_event_timeline_new();
-	egueb_dom_node_event_dispatch(n, egueb_dom_event_ref(request), NULL, NULL);
-
-	thiz = EGUEB_SMIL_ANIMATION(n);
-	thiz->timeline = egueb_smil_event_timeline_get(request);
-	thiz->document_changed = EINA_TRUE;
-	egueb_dom_event_unref(request);
-}
-
-/* Whenever a node has been removed from the document, remove the timeline,
+/* Whenever a node has been removed from its parent, remove the timeline,
  * and the animation
  */
-static void _egueb_smil_animation_removed_from_document_cb(Egueb_Dom_Event *e,
+static void _egueb_smil_animation_removed_cb(Egueb_Dom_Event *e,
 		void *data)
 {
 	Egueb_Smil_Animation *thiz = data;
@@ -474,6 +456,21 @@ static Eina_Bool _egueb_smil_animation_process(Egueb_Dom_Element *e)
 	if (!target)
 	{
 		return EINA_FALSE;
+	}
+
+	/* request a timeline if we dont have one already */
+	if (!thiz->timeline)
+	{
+		Egueb_Dom_Event *request;
+		Egueb_Dom_Node *n;
+
+		request = egueb_smil_event_timeline_new();
+		n = EGUEB_DOM_NODE(e);
+		egueb_dom_node_event_dispatch(n, egueb_dom_event_ref(request), NULL, NULL);
+
+		thiz->timeline = egueb_smil_event_timeline_get(request);
+		thiz->document_changed = EINA_TRUE;
+		egueb_dom_event_unref(request);
 	}
 
 	if (!egueb_dom_element_is_enqueued(EGUEB_DOM_NODE(e)) &&
@@ -519,12 +516,8 @@ static void _egueb_smil_animation_instance_init(void *o)
 	/* add a callback whenever the node has been removed from another */
 	n = EGUEB_DOM_NODE(o);
 	egueb_dom_node_event_listener_add(n,
-			EGUEB_DOM_EVENT_MUTATION_NODE_INSERTED_INTO_DOCUMENT,
-			_egueb_smil_animation_inserted_into_document_cb,
-			EINA_FALSE, n);
-	egueb_dom_node_event_listener_add(n,
-			EGUEB_DOM_EVENT_MUTATION_NODE_REMOVED_FROM_DOCUMENT,
-			_egueb_smil_animation_removed_from_document_cb,
+			EGUEB_DOM_EVENT_MUTATION_NODE_REMOVED,
+			_egueb_smil_animation_removed_cb,
 			EINA_FALSE, n);
 
 	thiz = EGUEB_SMIL_ANIMATION(o);
