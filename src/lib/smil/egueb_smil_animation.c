@@ -101,18 +101,17 @@ static Egueb_Dom_Node * _egueb_smil_animation_target_get(Egueb_Smil_Animation *t
 		{
 			ERR("Invalid target");
 			egueb_dom_node_unref(doc);
-			egueb_dom_string_unref(xlink_href);
-			return NULL;
+			goto done;
 		}
-		egueb_dom_string_unref(xlink_href);
 		egueb_dom_node_unref(doc);
 		ERR("we have an xlink!");
 	}
 	else
 	{
 		target = egueb_dom_node_parent_get(EGUEB_DOM_NODE(thiz));
-		egueb_dom_string_unref(xlink_href);
 	}
+done:
+	egueb_dom_string_unref(xlink_href);
 	return target;
 }
 
@@ -182,11 +181,6 @@ static void _egueb_smil_animation_event_cb(void *item, void *user_data)
 		if (t->offset < data->offset)
 			data->offset = t->offset;
 	}
-	/* in case there's nothing on the list of events, set the offset to zero */
-	if (!data->events)
-	{
-		data->offset = 0;
-	}
 }
 
 static void _egueb_smil_animation_event_release(Eina_List *events)
@@ -204,18 +198,27 @@ static Eina_Bool _egueb_smil_animation_event_setup(Egueb_Smil_Animation *thiz,
 		int64_t *offset, Eina_List **events)
 {
 	Egueb_Dom_List *l = NULL;
-	Egueb_Smil_Animation_Event_Foreach_Data data;
 
 	egueb_dom_attr_get(p, EGUEB_DOM_ATTR_TYPE_BASE, &l);
+	if (!l || !egueb_dom_list_length(l))
+	{
+		*offset = 0;
+		*events = NULL;	
+	}
+	else
+	{
+		Egueb_Smil_Animation_Event_Foreach_Data data;
 
-	data.thiz = thiz;
-	data.listener = listener;
-	data.offset = 0;
-	data.events = NULL;
-	egueb_dom_list_foreach(l, _egueb_smil_animation_event_cb, &data);
+		data.thiz = thiz;
+		data.listener = listener;
+		data.offset = INT64_MAX;
+		data.events = NULL;
+		egueb_dom_list_foreach(l, _egueb_smil_animation_event_cb, &data);
 
-	*offset = data.offset;
-	*events = data.events;
+		*offset = data.offset;
+		*events = data.events;
+	}
+	egueb_dom_list_unref(l);
 
 	return EINA_TRUE;
 }
@@ -255,12 +258,11 @@ static void _egueb_smil_animation_begin_cb(Egueb_Dom_Event *e,
 	_egueb_smil_animation_begin(thiz, ev->t->offset);
 }
 
-static Eina_Bool _egueb_smil_animation_begin_setup(Egueb_Smil_Animation *thiz)
+static Eina_Bool _egueb_smil_animation_begin_setup(Egueb_Smil_Animation *thiz,
+		int64_t *offset)
 {
-	int64_t offset = INT64_MAX;
-
 	if (!_egueb_smil_animation_event_setup(thiz, thiz->begin,
-			_egueb_smil_animation_begin_cb, &offset,
+			_egueb_smil_animation_begin_cb, offset,
 			&thiz->begin_events))
 		return EINA_FALSE;
 	return EINA_TRUE;
@@ -428,6 +430,8 @@ static Eina_Bool _egueb_dom_animation_setup(Egueb_Smil_Animation *thiz,
 	Egueb_Smil_Animation_Class *klass;
 	Egueb_Dom_String *attribute_name = NULL;
 	Egueb_Dom_Node *attr;
+	Eina_Bool ret = EINA_FALSE;
+	int64_t begin_offset = INT64_MAX;
 
 	/* check that we have a timeline */
 	if (!thiz->timeline)
@@ -457,8 +461,7 @@ static Eina_Bool _egueb_dom_animation_setup(Egueb_Smil_Animation *thiz,
 	{
 		ERR("No attribute '%s' found",
 				egueb_dom_string_string_get(attribute_name));
-		egueb_dom_string_unref(attribute_name);
-		return EINA_FALSE;
+		goto done;
 	}
 
 	thiz->attr = attr;
@@ -468,34 +471,38 @@ static Eina_Bool _egueb_dom_animation_setup(Egueb_Smil_Animation *thiz,
 	if (!klass->value_descriptor_get)
 	{
 		ERR("No value descriptor defined");
-		egueb_dom_string_unref(attribute_name);
-		return EINA_FALSE;
+		goto done;
 	}
 	thiz->d = klass->value_descriptor_get(thiz);
 	if (!thiz->d)
 	{
 		ERR("No value descriptor");
-		egueb_dom_string_unref(attribute_name);
-		return EINA_FALSE;
+		goto done;
 	}
 
 	/* do the begin and end conditions */
-	_egueb_smil_animation_begin_setup(thiz);
+	_egueb_smil_animation_begin_setup(thiz, &begin_offset);
 	_egueb_smil_animation_end_setup(thiz);
 
 	if (klass->setup)
 	{
 		if (!klass->setup(thiz, target))
-			return EINA_FALSE;
+			goto done;
 	}
 
-	/* in case there is no event to trigger, just start now */
+	/* in case there is no event to trigger, just start based on the offset */
 	if (!thiz->begin_events)
 	{
-		_egueb_smil_animation_begin(thiz, 0);
+		DBG("No events found for 'begin', enabling at %"
+				EGUEB_SMIL_CLOCK_FORMAT,
+				EGUEB_SMIL_CLOCK_ARGS(begin_offset));
+		_egueb_smil_animation_begin(thiz, begin_offset);
 	}
 
-	return EINA_TRUE;
+	ret = EINA_TRUE;
+done:
+	egueb_dom_string_unref(attribute_name);
+	return ret;
 }
 
 static void _egueb_dom_animation_cleanup(Egueb_Smil_Animation *thiz,
