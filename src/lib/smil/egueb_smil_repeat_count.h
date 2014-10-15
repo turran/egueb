@@ -33,7 +33,4 @@ typedef struct _Egueb_Smil_Repeat_Count
 
 extern const Egueb_Smil_Repeat_Count EGUEB_SMIL_REPEAT_COUNT_INDEFINITE;
 
-EAPI const Egueb_Dom_Value_Descriptor * egueb_smil_repeat_count_descriptor_get(void);
-
 #endif
-

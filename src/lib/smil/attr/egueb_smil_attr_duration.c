@@ -22,12 +22,13 @@
 
 #include "egueb_dom_attr_private.h"
 #include "egueb_dom_attr_primitive_private.h"
+#include "egueb_smil_value_duration_private.h"
 #include "egueb_smil_attr_duration_private.h"
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
 EGUEB_DOM_ATTR_PRIMITIVE_BOILERPLATE(Egueb_Smil_Duration,
-		Egueb_Smil_Attr_Duration, egueb_smil_duration,
+		Egueb_Smil_Attr_Duration, egueb_smil_value_duration,
 		egueb_smil_attr_duration)
 /*============================================================================*
  *                                 Global                                     *

@@ -19,6 +19,7 @@
 #ifndef _EGUEB_SMIL_CALC_MODE_PRIVATE_H_
 #define _EGUEB_SMIL_CALC_MODE_PRIVATE_H_
 
-const Egueb_Dom_Value_Descriptor * egueb_smil_calc_mode_descriptor_get(void);
+char * egueb_smil_calc_mode_string_to(Egueb_Smil_Calc_Mode thiz);
+Eina_Bool egueb_smil_calc_mode_string_from(Egueb_Smil_Calc_Mode *thiz, const char *str);
 
 #endif

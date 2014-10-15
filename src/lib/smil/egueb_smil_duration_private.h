@@ -16,15 +16,13 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _EGUEB_SMIL_CALC_MODE_H_
-#define _EGUEB_SMIL_CALC_MODE_H_
+#ifndef _EGUEB_SMIL_DURATION_PRIVATE_H_
+#define _EGUEB_SMIL_DURATION_PRIVATE_H_
 
-typedef enum _Egueb_Smil_Calc_Mode
-{
-	EGUEB_SMIL_CALC_MODE_DISCRETE,
-	EGUEB_SMIL_CALC_MODE_LINEAR,
-	EGUEB_SMIL_CALC_MODE_PACED,
-	EGUEB_SMIL_CALC_MODE_SPLINE,
-} Egueb_Smil_Calc_Mode;
+Eina_Bool egueb_smil_duration_string_from(Egueb_Smil_Duration *d, const char *attr);
+char * egueb_smil_duration_string_to(Egueb_Smil_Duration *d);
+void egueb_smil_duration_interpolate(Egueb_Smil_Duration *v,
+		Egueb_Smil_Duration *a, Egueb_Smil_Duration *b, double m,
+		Egueb_Smil_Duration *add, Egueb_Smil_Duration *acc, int mul);
 
 #endif

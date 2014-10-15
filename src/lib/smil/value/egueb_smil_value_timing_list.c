@@ -17,45 +17,23 @@
  */
 #include "egueb_smil_private.h"
 #include "egueb_smil_clock.h"
-#include "egueb_smil_repeat_count.h"
+#include "egueb_smil_timing.h"
+
+#include "egueb_smil_timing_private.h"
+#include "egueb_smil_timing_list_private.h"
+#include "egueb_smil_value_timing_private.h"
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
+/*----------------------------------------------------------------------------*
+ *                             Value interface                                *
+ *----------------------------------------------------------------------------*/
+EGUEB_DOM_VALUE_LIST_BOILERPLATE(egueb_smil_timing_list,
+		egueb_smil_value_timing_descriptor_get());
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
-char * egueb_smil_repeat_count_string_to(Egueb_Smil_Repeat_Count *thiz)
+const Egueb_Dom_Value_Descriptor * egueb_smil_value_timing_list_descriptor_get(void)
 {
-	ERR("Not implemented");
-	return NULL;
+	return &_egueb_smil_timing_list_descriptor;
 }
-
-Eina_Bool egueb_smil_repeat_count_string_from(Egueb_Smil_Repeat_Count *thiz, const char *str)
-{
-	Eina_Bool ret = EINA_TRUE;
-
-	if (!strcmp(str, "indefinite"))
-		thiz->type = EGUEB_SMIL_REPEAT_COUNT_TYPE_INDEFINITE;
-	else
-	{
-		if (sscanf(str, "%lg", &thiz->value) < 0)
-		{
-			ERR("Impossible to parse the repeat_count '%s'", str);
-			ret = EINA_FALSE;
-		}
-		thiz->type = EGUEB_SMIL_REPEAT_COUNT_TYPE_FINITE;
-	}
-	return ret;
-}
-
-void egueb_smil_repeat_count_interpolate(Egueb_Smil_Repeat_Count *v,
-		Egueb_Smil_Repeat_Count *a, Egueb_Smil_Repeat_Count *b, double m,
-		Egueb_Smil_Repeat_Count *add, Egueb_Smil_Repeat_Count *acc, int mul)
-{
-	ERR("Not implemented");
-}
-
-/*============================================================================*
- *                                   API                                      *
- *============================================================================*/
-const Egueb_Smil_Repeat_Count EGUEB_SMIL_REPEAT_COUNT_INDEFINITE = { EGUEB_SMIL_REPEAT_COUNT_TYPE_INDEFINITE, 0 };

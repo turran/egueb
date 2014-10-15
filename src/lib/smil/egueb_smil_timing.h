@@ -34,17 +34,13 @@ typedef enum _Egueb_Smil_Timing_Type
 typedef struct _Egueb_Smil_Timing
 {
 	Egueb_Smil_Timing_Type type;
-	char *id;
-	char *event;
+	Egueb_Dom_String *id;
+	Egueb_Dom_String *event;
 	int repeat;
 	int key;
 	int64_t offset;
 } Egueb_Smil_Timing;
 
-EAPI const Egueb_Dom_Value_Descriptor * egueb_smil_timing_descriptor_get(void);
-EAPI Eina_Bool egueb_smil_timing_string_from(Egueb_Smil_Timing *thiz, const char *s);
-EAPI char * egueb_smil_timing_string_to(Egueb_Smil_Timing *thiz);
-EAPI void egueb_smil_timing_copy(const Egueb_Smil_Timing *thiz, Egueb_Smil_Timing *copy);
 EAPI void egueb_smil_timing_reset(Egueb_Smil_Timing *thiz);
 
 #endif

@@ -17,20 +17,18 @@
  */
 #include "egueb_smil_private.h"
 #include "egueb_smil_clock.h"
-#include "egueb_dom_value_private.h"
+
+#include "egueb_smil_clock_private.h"
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
-/*============================================================================*
- *                                   API                                      *
- *============================================================================*/
 /* The clock is defined in miliseconds? nanoseconds? */
 /* TODO maybe we should use doubles directly? */
 /* Clock-val         ::= Full-clock-val | Partial-clock-val | Timecount-val */
-EAPI Eina_Bool egueb_smil_clock_string_from(Egueb_Smil_Clock *clock, const char *attr)
+Eina_Bool egueb_smil_clock_string_from(Egueb_Smil_Clock *clock, const char *attr)
 {
 	Eina_Bool ret = EINA_FALSE;
 	long v;
@@ -110,5 +108,6 @@ EAPI Eina_Bool egueb_smil_clock_string_from(Egueb_Smil_Clock *clock, const char 
 
 	return ret;
 }
-
-
+/*============================================================================*
+ *                                   API                                      *
+ *============================================================================*/

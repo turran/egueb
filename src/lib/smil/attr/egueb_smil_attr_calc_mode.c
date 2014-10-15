@@ -22,13 +22,13 @@
 
 #include "egueb_dom_attr_private.h"
 #include "egueb_dom_attr_basic_private.h"
-#include "egueb_smil_calc_mode_private.h"
+#include "egueb_smil_value_calc_mode_private.h"
 #include "egueb_smil_attr_calc_mode_private.h"
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
 EGUEB_DOM_ATTR_BASIC_BOILERPLATE(Egueb_Smil_Calc_Mode,
-		Egueb_Smil_Attr_Calc_Mode, egueb_smil_calc_mode,
+		Egueb_Smil_Attr_Calc_Mode, egueb_smil_value_calc_mode,
 		egueb_smil_attr_calc_mode)
 /*============================================================================*
  *                                 Global                                     *

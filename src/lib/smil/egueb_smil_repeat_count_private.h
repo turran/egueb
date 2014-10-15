@@ -16,15 +16,13 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _EGUEB_SMIL_CALC_MODE_H_
-#define _EGUEB_SMIL_CALC_MODE_H_
+#ifndef _EGUEB_SMIL_REPEAT_COUNT_PRIVATE_H_
+#define _EGUEB_SMIL_REPEAT_COUNT_PRIVATE_H_
 
-typedef enum _Egueb_Smil_Calc_Mode
-{
-	EGUEB_SMIL_CALC_MODE_DISCRETE,
-	EGUEB_SMIL_CALC_MODE_LINEAR,
-	EGUEB_SMIL_CALC_MODE_PACED,
-	EGUEB_SMIL_CALC_MODE_SPLINE,
-} Egueb_Smil_Calc_Mode;
+char * egueb_smil_repeat_count_string_to(Egueb_Smil_Repeat_Count *thiz);
+Eina_Bool egueb_smil_repeat_count_string_from(Egueb_Smil_Repeat_Count *thiz, const char *str);
+void egueb_smil_repeat_count_interpolate(Egueb_Smil_Repeat_Count *v,
+		Egueb_Smil_Repeat_Count *a, Egueb_Smil_Repeat_Count *b, double m,
+		Egueb_Smil_Repeat_Count *add, Egueb_Smil_Repeat_Count *acc, int mul);
 
 #endif

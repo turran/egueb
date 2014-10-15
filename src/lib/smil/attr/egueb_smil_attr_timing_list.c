@@ -17,10 +17,10 @@
  */
 #include "egueb_smil_private.h"
 
-#include "egueb_smil_timing_list.h"
-
 #include "egueb_dom_attr_private.h"
 #include "egueb_dom_attr_object_private.h"
+#include "egueb_smil_timing_list_private.h"
+#include "egueb_smil_value_timing_list_private.h"
 #include "egueb_smil_attr_timing_list_private.h"
 /*============================================================================*
  *                                  Local                                     *
@@ -69,7 +69,7 @@ static Eina_Bool _egueb_smil_attr_timing_list_value_get(Egueb_Dom_Attr *p,
 static const Egueb_Dom_Value_Descriptor *
 _egueb_smil_attr_timing_list_value_descriptor_get(Egueb_Dom_Attr *p)
 {
-	return egueb_smil_timing_list_descriptor_get();
+	return egueb_smil_value_timing_list_descriptor_get();
 }
 /*----------------------------------------------------------------------------*
  *                              Object interface                              *

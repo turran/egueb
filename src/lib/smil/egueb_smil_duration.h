@@ -36,9 +36,4 @@ typedef struct _Egueb_Smil_Duration
 
 extern const Egueb_Smil_Duration EGUEB_SMIL_DURATION_INDEFINITE;
 
-EAPI const Egueb_Dom_Value_Descriptor * egueb_smil_duration_descriptor_get(void);
-EAPI Eina_Bool egueb_smil_duration_string_from(Egueb_Smil_Duration *d, const char *attr);
-EAPI char * egueb_smil_duration_string_to(Egueb_Smil_Duration *d);
-
 #endif
-

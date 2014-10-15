@@ -18,7 +18,9 @@
 #include "egueb_smil_private.h"
 #include "egueb_smil_clock.h"
 #include "egueb_smil_timing.h"
-#include "egueb_dom_value_private.h"
+
+#include "egueb_smil_clock_private.h"
+#include "egueb_smil_timing_private.h"
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
@@ -106,90 +108,10 @@ static Eina_Bool _animation_name_parse(const char *v, const char **start, int *l
 	*len = v - *start;
 	return EINA_TRUE;
 }
-/*----------------------------------------------------------------------------*
- *                             Value interface                                *
- *----------------------------------------------------------------------------*/
-static Egueb_Dom_Value_Descriptor _descriptor;
-
-static void _egueb_smil_timing_data_from(Egueb_Dom_Value *v, Egueb_Dom_Value_Data *data)
-{
-	EINA_SAFETY_ON_FALSE_RETURN(v->descriptor == &_descriptor);
-	egueb_dom_value_primitive_data_from(v, data);
-}
-
-static void _egueb_smil_timing_data_to(Egueb_Dom_Value *v, Egueb_Dom_Value_Data *data)
-{
-	EINA_SAFETY_ON_FALSE_RETURN(v->descriptor == &_descriptor);
-	egueb_dom_value_primitive_data_to(v, data);
-}
-
-static void _egueb_smil_timing_free(Egueb_Dom_Value *v)
-{
-	if (v->owned)
-	{
-		egueb_smil_timing_reset(v->data.ptr);
-		free(v->data.ptr);
-		v->data.ptr = NULL;
-	}
-}
-
-static void _egueb_smil_timing_copy(const Egueb_Dom_Value *v, Egueb_Dom_Value *copy,
-		Eina_Bool content)
-{
-	const Egueb_Smil_Timing *vd = v->data.ptr;
-	Egueb_Smil_Timing *cd;
-
-	if (!vd) return;
-	if (!copy->data.ptr)
-	{
-		copy->data.ptr = calloc(1, sizeof(Egueb_Smil_Timing));
-		copy->owned = EINA_TRUE;
-	}
- 	cd = copy->data.ptr;
-	egueb_smil_timing_copy(vd, cd);
-}
-
-static char * _egueb_smil_timing_string_to(const Egueb_Dom_Value *v)
-{
-	EINA_SAFETY_ON_FALSE_RETURN_VAL(v->descriptor == &_descriptor, NULL);
-	return egueb_smil_timing_string_to(v->data.ptr);
-}
-
-static Eina_Bool _egueb_smil_timing_string_from(Egueb_Dom_Value *v, const char *str)
-{
-	EINA_SAFETY_ON_FALSE_RETURN_VAL(v->descriptor == &_descriptor, EINA_FALSE);
-	if (!v->data.ptr)
-	{
-		v->data.ptr = calloc(1, sizeof(Egueb_Smil_Timing));
-		v->owned = EINA_TRUE;
-	}
-	return egueb_smil_timing_string_from(v->data.ptr, str);
-}
-
-static Egueb_Dom_Value_Descriptor _descriptor = {
-	/* .data_from 		= */ _egueb_smil_timing_data_from,
-	/* .data_from_type 	= */ EGUEB_DOM_VALUE_DATA_TYPE_PTR,
-	/* .data_to 		= */ _egueb_smil_timing_data_to,
-	/* .data_to_type 	= */ EGUEB_DOM_VALUE_DATA_TYPE_PTR,
-	/* .init 		= */ NULL,
-	/* .free 		= */ _egueb_smil_timing_free,
-	/* .copy 		= */ _egueb_smil_timing_copy,
-	/* .string_to 		= */ _egueb_smil_timing_string_to,
-	/* .string_from 	= */ _egueb_smil_timing_string_from,
-	/* .interpolate 	= */ NULL,
-};
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
-/*============================================================================*
- *                                   API                                      *
- *============================================================================*/
-EAPI const Egueb_Dom_Value_Descriptor * egueb_smil_timing_descriptor_get(void)
-{
-	return &_descriptor;
-}
-
-EAPI Eina_Bool egueb_smil_timing_string_from(Egueb_Smil_Timing *thiz,
+Eina_Bool egueb_smil_timing_string_from(Egueb_Smil_Timing *thiz,
 		const char *s)
 {
 	Eina_Bool ret;
@@ -216,21 +138,24 @@ EAPI Eina_Bool egueb_smil_timing_string_from(Egueb_Smil_Timing *thiz,
 		if (!strcmp(s, "indefinite"))
 		{
 			/* TODO */
+			ERR("Indefinite not supported yet");
 		}
 		else if (!strncmp(s, "accessKey", 9))
 		{
 			/* TODO */
+			ERR("AccesKey not supported yet");
 		}
 		else if (!strncmp(s, "wallclock", 9))
 		{
 			/* TODO */
+			ERR("Wallclock not supported yet");
 		}
 		else
 		{
 			/* id */
 			if (*end == '.')
 			{
-				thiz->id = strndup(start, len);
+				thiz->id = egueb_dom_string_new_with_length(start, len);
 				/* advance after the point */
 				ret = _animation_name_parse(end + 1, &start, &len);
 				end = start + len;
@@ -251,7 +176,7 @@ EAPI Eina_Bool egueb_smil_timing_string_from(Egueb_Smil_Timing *thiz,
 			/* event name */
 			else
 			{
-				thiz->event = strndup(start, len);
+				thiz->event = egueb_dom_string_new_with_length(start, len);
 			}
 			/* offset */
 			if (*end)
@@ -264,34 +189,43 @@ err:
 	return EINA_FALSE;
 }
 
-EAPI char * egueb_smil_timing_string_to(Egueb_Smil_Timing *thiz)
+char * egueb_smil_timing_string_to(Egueb_Smil_Timing *thiz)
 {
+	ERR("Not implemented");
 	return NULL;
 }
 
-EAPI void egueb_smil_timing_copy(const Egueb_Smil_Timing *thiz, Egueb_Smil_Timing *copy)
+void egueb_smil_timing_copy(const Egueb_Smil_Timing *thiz, Egueb_Smil_Timing *copy, Eina_Bool full)
 {
 	egueb_smil_timing_reset(copy);
-	if (thiz->id)
-		copy->id = strdup(thiz->id);
-	if (thiz->event)
-		copy->event = strdup(thiz->event);
+	if (full)
+	{
+		copy->id = egueb_dom_string_dup(thiz->id);
+		copy->event = egueb_dom_string_dup(thiz->event);
+	}
+	else
+	{
+		copy->id = egueb_dom_string_ref(thiz->id);
+		copy->event = egueb_dom_string_ref(thiz->event);
+	}
 	copy->type = thiz->type;
 	copy->repeat = thiz->repeat;
 	copy->key = thiz->key;
 	copy->offset = thiz->offset;
 }
 
+void egueb_smil_timing_interpolate(Egueb_Smil_Timing *v,
+		Egueb_Smil_Timing *a, Egueb_Smil_Timing *b, double m,
+		Egueb_Smil_Timing *add, Egueb_Smil_Timing *acc, int mul)
+{
+	ERR("Not implemented");
+}
+
+/*============================================================================*
+ *                                   API                                      *
+ *============================================================================*/
 EAPI void egueb_smil_timing_reset(Egueb_Smil_Timing *thiz)
 {
-	if (thiz->id)
-	{
-		free(thiz->id);
-		thiz->id = NULL;
-	}
-	if (thiz->event)
-	{
-		free(thiz->event);
-		thiz->event = NULL;
-	}
+	egueb_dom_string_unref(thiz->id);
+	egueb_dom_string_unref(thiz->event);
 }

@@ -22,12 +22,13 @@
 
 #include "egueb_dom_attr_private.h"
 #include "egueb_dom_attr_primitive_private.h"
+#include "egueb_smil_value_repeat_count_private.h"
 #include "egueb_smil_attr_repeat_count_private.h"
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
 EGUEB_DOM_ATTR_PRIMITIVE_BOILERPLATE(Egueb_Smil_Repeat_Count,
-		Egueb_Smil_Attr_Repeat_Count, egueb_smil_repeat_count,
+		Egueb_Smil_Attr_Repeat_Count, egueb_smil_value_repeat_count,
 		egueb_smil_attr_repeat_count)
 /*============================================================================*
  *                                 Global                                     *

@@ -130,17 +130,16 @@ static void _egueb_smil_animation_event_cb(void *item, void *user_data)
 	{
 		Egueb_Smil_Animation_Event *h;
 		Egueb_Dom_Node *ref;
-		Egueb_Dom_String *event;
 
 		INFO("Registering event '%s' on element '%s' with offset %"
-				EGUEB_SMIL_CLOCK_FORMAT, t->event,
-				t->id ? t->id : "NULL",
+				EGUEB_SMIL_CLOCK_FORMAT,
+				egueb_dom_string_string_get(t->event),
+				egueb_dom_string_string_get(t->id),
 				EGUEB_SMIL_CLOCK_ARGS(t->offset));
 
 		if (t->id)
 		{
 			Egueb_Dom_Node *doc;
-			Egueb_Dom_String *id = NULL;
 
 			doc = egueb_dom_node_owner_document_get(EGUEB_DOM_NODE(thiz));
 			if (!doc)
@@ -148,10 +147,8 @@ static void _egueb_smil_animation_event_cb(void *item, void *user_data)
 				ERR("No document set");
 				return;
 			}
-			id = egueb_dom_string_new_with_string(t->id);
-			ref = egueb_dom_document_element_get_by_id(doc, id, NULL);
+			ref = egueb_dom_document_element_get_by_id(doc, t->id, NULL);
 			egueb_dom_node_unref(doc);
-			egueb_dom_string_unref(id);
 		}
 		else
 		{
@@ -170,10 +167,8 @@ static void _egueb_smil_animation_event_cb(void *item, void *user_data)
 		egueb_dom_node_weak_ref_add(ref, &h->ref);
 		data->events = eina_list_append(data->events, h);
 
-		event = egueb_dom_string_new_with_string(t->event);
-		h->l = egueb_dom_node_event_listener_add(ref, event, data->listener,
+		h->l = egueb_dom_node_event_listener_add(ref, t->event, data->listener,
 			EINA_FALSE, h);
-		egueb_dom_string_unref(event);
 		egueb_dom_node_unref(ref);
 	}
 	else

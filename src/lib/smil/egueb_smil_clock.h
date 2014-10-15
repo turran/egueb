@@ -32,6 +32,4 @@
 
 typedef int64_t Egueb_Smil_Clock; /**< Clock abstraction in nano seconds */
 
-EAPI Eina_Bool egueb_smil_clock_string_from(Egueb_Smil_Clock *clock, const char *attr);
-
 #endif

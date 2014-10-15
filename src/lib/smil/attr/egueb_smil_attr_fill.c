@@ -22,12 +22,13 @@
 
 #include "egueb_dom_attr_private.h"
 #include "egueb_dom_attr_basic_private.h"
+#include "egueb_smil_value_fill_private.h"
 #include "egueb_smil_attr_fill_private.h"
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
 EGUEB_DOM_ATTR_BASIC_BOILERPLATE(Egueb_Smil_Fill,
-		Egueb_Smil_Attr_Fill, egueb_smil_fill,
+		Egueb_Smil_Attr_Fill, egueb_smil_value_fill,
 		egueb_smil_attr_fill)
 /*============================================================================*
  *                                 Global                                     *
