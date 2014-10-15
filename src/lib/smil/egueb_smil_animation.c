@@ -99,7 +99,8 @@ static Egueb_Dom_Node * _egueb_smil_animation_target_get(Egueb_Smil_Animation *t
 		target = egueb_dom_document_element_get_by_id(doc, xlink_href, NULL);
 		if (!target)
 		{
-			ERR("Invalid target");
+			ERR("Target '%s' not found", egueb_dom_string_string_get(
+					xlink_href));
 			egueb_dom_node_unref(doc);
 			goto done;
 		}
