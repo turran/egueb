@@ -76,6 +76,17 @@ typedef struct _Egueb_Svg_Element_Use_Class
 	Egueb_Svg_Renderable_Class base;
 } Egueb_Svg_Element_Use_Class;
 
+static Eina_Bool _egueb_svg_element_use_children_process_cb(
+		Egueb_Dom_Node *child, void *data)
+{
+	Egueb_Dom_Node_Type type;
+
+	type = egueb_dom_node_type_get(child);
+	if (type != EGUEB_DOM_NODE_TYPE_ELEMENT)
+		return EINA_TRUE;
+	egueb_dom_element_process(child);
+	return EINA_TRUE;
+}
 /*----------------------------------------------------------------------------*
  *                               Event monitors                               *
  *----------------------------------------------------------------------------*/
@@ -234,7 +245,14 @@ static Eina_Bool _egueb_svg_element_use_process(Egueb_Svg_Renderable *r)
 	egueb_dom_node_unref(doc);
 	egueb_dom_string_unref(xlink);
 
-	return egueb_dom_element_process(thiz->g);
+	/* process our synthetic tree */
+	if (!egueb_dom_element_process(thiz->g))
+		return EINA_FALSE;
+	/* process our own children */
+	egueb_dom_node_children_foreach(EGUEB_DOM_NODE(r),
+			_egueb_svg_element_use_children_process_cb,
+			NULL);
+	return EINA_TRUE;
 }
 /*----------------------------------------------------------------------------*
  *                              Element interface                             *
