@@ -26,14 +26,16 @@
 #include "egueb_svg_point.h"
 #include "egueb_svg_element_svg.h"
 #include "egueb_svg_element_use.h"
+#include "egueb_svg_element_defs.h"
+#include "egueb_svg_element_a.h"
 #include "egueb_svg_renderable.h"
 #include "egueb_svg_renderable_container.h"
 #include "egueb_svg_shape.h"
 #include "egueb_svg_zoom_and_pan.h"
 
 #include "egueb_svg_renderable_container_private.h"
+#include "egueb_svg_element_use_private.h"
 #include "egueb_svg_shape_private.h"
-#include "egueb_svg_document_private.h"
 #include "egueb_svg_attr_rect_private.h"
 #include "egueb_svg_attr_length_private.h"
 #include "egueb_svg_attr_zoom_and_pan_private.h"
@@ -84,6 +86,11 @@ typedef struct _Egueb_Svg_Element_Svg
 	/* painter */
 	Egueb_Svg_Painter *painter;
 
+	/* input */
+	Egueb_Dom_Input *input;
+
+	double window_width;
+	double window_height;
 	/* some state flags */
 	/* keep track if the renderable tree has changed, includeing the <a> tag */
 #if 0
@@ -120,6 +127,374 @@ typedef struct _Egueb_Svg_Element_Svg_Class
 {
 	Egueb_Svg_Renderable_Container_Class base;
 } Egueb_Svg_Element_Svg_Class;
+
+/*----------------------------------------------------------------------------*
+ *                          UI feature interface                              *
+ *----------------------------------------------------------------------------*/
+static Egueb_Dom_Input * _egueb_svg_element_svg_ui_input_get(Egueb_Dom_Node *n)
+{
+	Egueb_Svg_Element_Svg *thiz;
+
+	thiz = EGUEB_SVG_ELEMENT_SVG(n);
+	return egueb_dom_input_ref(thiz->input);
+}
+
+static Egueb_Dom_Feature_UI_Descriptor 
+_egueb_svg_element_svg_ui_descriptor = {
+	/* .input_get 	= */ _egueb_svg_element_svg_ui_input_get,
+};
+/*----------------------------------------------------------------------------*
+ *                        Window feature interface                            *
+ *----------------------------------------------------------------------------*/
+static Eina_Bool _egueb_svg_element_svg_window_type_get(
+		Egueb_Dom_Node *n, Egueb_Dom_Feature_Window_Type *type)
+{
+	*type = EGUEB_DOM_FEATURE_WINDOW_TYPE_MASTER;
+	return EINA_TRUE;
+}
+
+static Eina_Bool _egueb_svg_element_svg_window_content_size_set(
+		Egueb_Dom_Node *n, int w, int h)
+{
+	Egueb_Svg_Element_Svg *thiz;
+
+	thiz = EGUEB_SVG_ELEMENT_SVG(n);
+	thiz->window_height = h;
+	thiz->window_width = w;
+
+	egueb_dom_element_request_process(n);
+	return EINA_TRUE;
+}
+
+static Eina_Bool _egueb_svg_element_svg_window_content_size_get(
+		Egueb_Dom_Node *n, int *w, int *h)
+{
+	Egueb_Svg_Element_Svg *thiz;
+	Egueb_Svg_Length_Animated width;
+	Egueb_Svg_Length_Animated height;
+	Egueb_Svg_Overflow overflow;
+	Egueb_Dom_Node *doc;
+	double dw, dh;
+	double font_size;
+
+	thiz = EGUEB_SVG_ELEMENT_SVG(n);
+	
+	doc = egueb_dom_node_owner_document_get(n);
+	font_size = egueb_svg_document_font_size_get(doc);
+	egueb_dom_node_unref(doc);
+
+	egueb_svg_element_svg_width_get(n, &width);
+	egueb_svg_element_svg_height_get(n, &height);
+
+	dw = egueb_svg_coord_final_get(&width.anim, thiz->window_width,
+			font_size);
+	dh = egueb_svg_coord_final_get(&height.anim, thiz->window_height,
+			font_size);
+	*w = ceil(dw);
+	*h = ceil(dh);
+
+	egueb_svg_element_overflow_final_get(n, &overflow);
+	/* check if we should overflow */
+	if (overflow == EGUEB_SVG_OVERFLOW_VISIBLE)
+	{
+		Eina_Rectangle r;
+		egueb_svg_renderable_user_bounds_get(n, &r);
+		if (*w < r.x + r.w)
+			*w = r.x + r.w;
+		if (*h < r.y + r.h)
+			*h = r.y + r.h;
+	}
+
+	return EINA_TRUE;
+}
+
+static Egueb_Dom_Feature_Window_Descriptor 
+_egueb_svg_element_svg_window_descriptor = {
+	/* .type_get 		= */ _egueb_svg_element_svg_window_type_get,
+	/* .content_size_set 	= */ _egueb_svg_element_svg_window_content_size_set,
+	/* .content_size_get 	= */ _egueb_svg_element_svg_window_content_size_get,
+};
+/*----------------------------------------------------------------------------*
+ *                        Render feature interface                            *
+ *----------------------------------------------------------------------------*/
+static Enesim_Renderer * _egueb_svg_element_svg_render_renderer_get(
+		Egueb_Dom_Node *n)
+{
+	Enesim_Renderer *r;
+
+	/* get the renderer and return it */
+	r = egueb_svg_renderable_renderer_get(n);
+	return r;
+}
+
+static Egueb_Dom_Feature_Render_Descriptor
+_egueb_svg_element_svg_render_descriptor = {
+	/* .renderer_get 	= */ _egueb_svg_element_svg_render_renderer_get,
+};
+/*----------------------------------------------------------------------------*
+ *                              Input interface                               *
+ *----------------------------------------------------------------------------*/
+static Egueb_Dom_Node * _egueb_svg_element_svg_input_element_at_recursive(
+		Egueb_Dom_Node *n, Eina_Rectangle *ptr)
+{
+	Egueb_Dom_Node *ret = NULL;
+	Eina_Rectangle bounds;
+
+	if (!egueb_svg_is_renderable(n))
+		goto done;
+
+	/* in case of an <use> element, replace n, by the inner g */
+	if (egueb_svg_element_is_use(n))
+	{
+		Egueb_Dom_Node *g;
+
+		g = egueb_svg_element_use_g_get(n);
+		egueb_dom_node_unref(n);
+		n = g;
+	}
+
+	if (egueb_svg_is_renderable_container(n))
+	{
+		Egueb_Dom_Node *child = NULL;
+		child = egueb_dom_node_child_last_get(n);
+		while (child)
+		{
+			Egueb_Dom_Node *tmp;
+
+			ret = _egueb_svg_element_svg_input_element_at_recursive(
+					egueb_dom_node_ref(child), ptr);
+			if (ret)
+			{
+				egueb_dom_node_unref(child);
+				break;
+			}
+
+			tmp = egueb_dom_node_sibling_previous_get(child);
+			egueb_dom_node_unref(child);
+			child = tmp;
+		}
+	}
+
+	if (!ret)
+	{
+		/* check the bounds */
+		egueb_svg_renderable_user_bounds_get(n, &bounds);
+		if (eina_rectangles_intersect(&bounds, ptr))
+		{
+			Egueb_Dom_String *name;
+
+			name = egueb_dom_node_name_get(n);
+			DBG("Element '%s' found with bounds %"
+					EINA_RECTANGLE_FORMAT,
+					egueb_dom_string_string_get(name),
+					EINA_RECTANGLE_ARGS(&bounds));
+			egueb_dom_string_unref(name);
+			ret = egueb_dom_node_ref(n);
+		}
+	}
+done:
+	egueb_dom_node_unref(n);
+	return ret;
+}
+
+static Egueb_Dom_Node * _egueb_svg_element_svg_input_element_at(
+		Egueb_Dom_Node *current, int x, int y, void *data)
+{
+	Egueb_Svg_Element_Svg *thiz = data;
+	Egueb_Dom_Node *n = NULL;
+	Egueb_Dom_Node *ret;
+	Eina_Rectangle ptr;
+
+	eina_rectangle_coords_from(&ptr, x, y, 1, 1);
+#if 0
+	/* check that the new coords are still on current bounds */
+	if (current)
+	{
+		Eina_Rectangle bounds;
+
+		egueb_svg_renderable_user_bounds_get(current, &bounds);
+		if (eina_rectangles_intersect(&bounds, &ptr))
+		{
+			return egueb_dom_node_ref(current);
+		}
+		else
+		{
+			Egueb_Dom_Node *parent;
+
+			/* go up until the parent is inside the bounds */
+			parent = egueb_dom_node_parent_get(current);
+			while (!n)
+			{
+				Egueb_Dom_Node *tmp;
+				if (!parent)
+					break;
+				if (egueb_svg_is_renderable(parent))
+				{
+					egueb_svg_renderable_user_bounds_get(parent, &bounds);
+					if (eina_rectangles_intersect(&bounds, &ptr))
+					{
+						n = parent;
+					}
+				}
+				tmp = egueb_dom_node_parent_get(parent);
+				egueb_dom_node_unref(parent);
+				parent = tmp;
+			}
+		}
+	}
+#endif
+
+	if (!n)
+	{
+		n = egueb_dom_node_ref(EGUEB_DOM_NODE(thiz)); 
+	}
+
+	/* iterate over the whole tree */
+	ret = _egueb_svg_element_svg_input_element_at_recursive(n, &ptr);
+	return ret;
+}
+
+/* we go down on the subtree starting at n looking for an a */
+static Egueb_Dom_Node * _egueb_svg_element_svg_input_focus_next_recursive(
+		Egueb_Dom_Node *n, Eina_Bool inside_a)
+{
+	/* in case of a <defs> element ignore it */
+	if (egueb_svg_element_is_defs(n))
+	{
+		return NULL;
+	}
+	/* in case of an <use> element, replace n, by the inner g */
+	if (egueb_svg_element_is_use(n))
+	{
+		n = egueb_svg_element_use_g_get(n);
+	}
+
+	if (egueb_svg_element_is_a(n))
+	{
+		inside_a = EINA_TRUE;
+	}
+
+	if (egueb_svg_is_renderable_container(n))
+	{
+		Egueb_Dom_Node *child = NULL;
+		child = egueb_dom_element_child_first_get(n);
+
+		if (inside_a)
+		{
+			return child;
+		}
+		while (child)
+		{
+			Egueb_Dom_Node *ret = NULL;
+			Egueb_Dom_Node *tmp;
+
+			ret = _egueb_svg_element_svg_input_focus_next_recursive(child, inside_a);
+			if (ret)
+			{
+				egueb_dom_node_unref(child);
+				return ret;
+			}
+
+			tmp = egueb_dom_element_sibling_next_get(child);
+			egueb_dom_node_unref(child);
+			child = tmp;
+		}
+		return NULL;
+	}
+	else
+	{
+		if (inside_a)
+		{
+			return egueb_dom_node_ref(n);
+		}
+		else
+		{
+			return NULL;
+		}
+	}
+}
+
+/* focusable elements are only <a> and <use> that points to a's */
+static Egueb_Dom_Node * _egueb_svg_element_svg_input_focus_next(
+		Egueb_Dom_Node *current, void *data)
+{
+	Egueb_Svg_Element_Svg *thiz = data;
+	Egueb_Dom_Node *ret = NULL;
+
+	/* if we already have a current, pick the next ancestor that has child */
+	if (current)
+	{
+		Egueb_Dom_Node *n;
+		Eina_Bool inside_a = EINA_TRUE;
+
+		n = egueb_dom_node_ref(current);
+		while (!ret)
+		{
+			Egueb_Dom_Node *tmp;
+
+			tmp = egueb_dom_element_sibling_next_get(n);
+			/* no more siblings? go to the parent's sibling */
+			if (!tmp)
+			{
+				Egueb_Dom_Node *parent;
+
+				parent = egueb_dom_node_parent_get(n);
+				egueb_dom_node_unref(n);
+				if (!parent)
+				{
+					break;
+				}
+				/* we reached the topmost */
+ 				if (egueb_dom_node_type_get(parent) != EGUEB_DOM_NODE_TYPE_ELEMENT)
+				{
+					egueb_dom_node_unref(parent);
+					break;
+				}
+
+				/* in case we are inside an <a> make sure that when leaving
+				 * the parent, we are no longer inside an <a>
+				 */
+				if (inside_a && egueb_svg_element_is_a(parent))
+				{
+					inside_a = EINA_FALSE;
+				}
+				n = parent;
+			}
+			else
+			{
+				egueb_dom_node_unref(n);
+				n = tmp;
+				ret = _egueb_svg_element_svg_input_focus_next_recursive(n, inside_a);
+			}
+		}
+	}
+	else
+	{
+		Egueb_Dom_Node *n;
+
+		n = EGUEB_DOM_NODE(thiz);
+		/* go down from the topmost element looking for an <a> */
+		ret = _egueb_svg_element_svg_input_focus_next_recursive(n, EINA_FALSE);
+	}
+
+	return ret;
+}
+
+static Egueb_Dom_Node * _egueb_svg_element_svg_input_focus_prev(
+		Egueb_Dom_Node *current, void *data)
+{
+	Egueb_Dom_Node *ret = NULL;
+
+	/* focusable elements are only <a> and <use> that points to a's */
+	return ret;
+}
+
+static Egueb_Dom_Input_Descriptor _egueb_svg_element_svg_input_descriptor = {
+	/* .version 		= */ EGUEB_DOM_INPUT_DESCRIPTOR_VERSION,
+	/* .element_at	 	= */ _egueb_svg_element_svg_input_element_at,
+	/* .focus_next		= */ _egueb_svg_element_svg_input_focus_next,
+	/* .focus_prev		= */ _egueb_svg_element_svg_input_focus_prev,
+};
 /*----------------------------------------------------------------------------*
  *                            Renderable interface                            *
  *----------------------------------------------------------------------------*/
@@ -177,8 +552,8 @@ static Eina_Bool _egueb_svg_element_svg_process(Egueb_Svg_Renderable *r)
 	relative = egueb_svg_element_geometry_relative_get(EGUEB_DOM_NODE(r));
 	if (!relative)
 	{
-		egueb_svg_document_width_get(svg_doc, &relative_width);
-		egueb_svg_document_height_get(svg_doc, &relative_height);
+		relative_width = thiz->window_width;
+		relative_height = thiz->window_height;
 		relative_x = 0;
 		relative_y = 0;
 
@@ -379,10 +754,22 @@ static void _egueb_svg_element_svg_instance_init(void *o)
 	enesim_renderer_rectangle_y_set(r, 0);
 	thiz->rectangle = r;
 
+	/* register the features */
+	egueb_dom_feature_window_add(n,
+			&_egueb_svg_element_svg_window_descriptor);
+	egueb_dom_feature_render_add(n,
+			&_egueb_svg_element_svg_render_descriptor);
+	egueb_dom_feature_ui_add(n,
+			&_egueb_svg_element_svg_ui_descriptor);
+	egueb_smil_feature_animation_add(n);
+	egueb_dom_feature_io_add(n);
+	egueb_dom_feature_script_add(n);
+	egueb_dom_feature_multimedia_add(n);
+	egueb_dom_feature_navigation_add(n);
 
 	/* our own specific painter */
 	thiz->painter = egueb_svg_painter_g_new();
-
+	thiz->input = egueb_dom_input_new(&_egueb_svg_element_svg_input_descriptor, thiz);
 }
 
 static void _egueb_svg_element_svg_instance_deinit(void *o)
@@ -403,6 +790,11 @@ static void _egueb_svg_element_svg_instance_deinit(void *o)
 	/* the painter */
 	egueb_svg_painter_unref(thiz->painter);
 	/* TODO free the scriptors */
+	if (thiz->input)
+	{
+		egueb_dom_input_unref(thiz->input);
+		thiz->input = NULL;
+	}
 }
 
 #if 0

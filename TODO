@@ -25,16 +25,6 @@ typedef struct _Egueb_Svg_Paint
   
 + Use the discrete signals for time based events
 + Make the smil timeline/signal be part of the "engine" ns
-+ Make the topmost svg element *have* a animation feature
-+ Move the features to the topmost element, not the document, this is helpful
-  for cases like
-  <eon>
-    <object xmlns:svg="...">
-      <svg:svg width=...>
-      </svg:svg>
-    </object>
-  </eon>
-  will it work?
 + Change the API on the attr_value_set to match the DOM spec
 + When parsing a doc, how to create the nodes using the xmlns
   attribute so we can actually call createElementNS?

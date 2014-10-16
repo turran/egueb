@@ -51,7 +51,6 @@ src/lib/svg/egueb_svg_color.c \
 src/lib/svg/egueb_svg_color_private.h \
 src/lib/svg/egueb_svg_display.c \
 src/lib/svg/egueb_svg_document.c \
-src/lib/svg/egueb_svg_document_private.h \
 src/lib/svg/egueb_svg_element.c \
 src/lib/svg/egueb_svg_element_private.h \
 src/lib/svg/egueb_svg_event_request_painter.c \
