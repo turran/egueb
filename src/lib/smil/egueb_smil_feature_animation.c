@@ -41,11 +41,12 @@
 typedef struct _Egueb_Smil_Feature_Animation
 {
 	Egueb_Dom_Feature base;
+	const Egueb_Smil_Feature_Animation_Descriptor *d;
 	Egueb_Dom_Node *n;
 	Egueb_Smil_Timeline *timeline;
-	Egueb_Smil_Feature_Animation_Cb on_tick;
 	Eina_Bool needs_dur_calc;
 	Eina_List *animations;
+	int paused;
 } Egueb_Smil_Feature_Animation;
 
 typedef struct _Egueb_Smil_Feature_Animation_Class
@@ -107,7 +108,7 @@ static void _egueb_smil_feature_animation_timeline_cb(Egueb_Dom_Event *e,
 {
 	Egueb_Smil_Feature_Animation *thiz = EGUEB_SMIL_FEATURE_ANIMATION(data);
 
-	INFO("Requesting timeline");
+	INFO("Requesting timeline %p", thiz->timeline);
 	egueb_smil_event_timeline_set(e, egueb_smil_timeline_ref(thiz->timeline));
 }
 
@@ -175,9 +176,12 @@ EAPI Eina_Bool egueb_smil_feature_animation_tick(Egueb_Dom_Feature *f)
 	Egueb_Smil_Feature_Animation *thiz;
 
 	thiz = EGUEB_SMIL_FEATURE_ANIMATION(f);
+	if (thiz->paused)
+		return EINA_TRUE;
+
 	egueb_smil_timeline_tick(thiz->timeline);
-	if (thiz->on_tick)
-		thiz->on_tick(thiz->n);
+	if (thiz->d && thiz->d->on_tick)
+		thiz->d->on_tick(thiz->n);
 	return EINA_TRUE;
 }
 
@@ -226,22 +230,41 @@ EAPI Eina_Bool egueb_smil_feature_animation_has_animations(Egueb_Dom_Feature *f)
 		return EINA_FALSE;
 }
 
-EAPI void egueb_smil_feature_animation_on_tick_set(Egueb_Dom_Feature *f,
-		Egueb_Smil_Feature_Animation_Cb on_tick)
+EAPI void egueb_smil_feature_animation_pause(Egueb_Dom_Feature *f)
 {
 	Egueb_Smil_Feature_Animation *thiz;
 
 	thiz = EGUEB_SMIL_FEATURE_ANIMATION(f);
-	thiz->on_tick = on_tick;
+	thiz->paused++;
 }
 
-EAPI Eina_Bool egueb_smil_feature_animation_add(Egueb_Dom_Node *n)
+EAPI void egueb_smil_feature_animation_unpause(Egueb_Dom_Feature *f)
+{
+	Egueb_Smil_Feature_Animation *thiz;
+
+	thiz = EGUEB_SMIL_FEATURE_ANIMATION(f);
+	if (!thiz->paused)
+		return;
+	thiz->paused--;
+}
+
+EAPI Eina_Bool egueb_smil_feature_animation_paused(Egueb_Dom_Feature *f)
+{
+	Egueb_Smil_Feature_Animation *thiz;
+
+	thiz = EGUEB_SMIL_FEATURE_ANIMATION(f);
+	return thiz->paused ? EINA_TRUE : EINA_FALSE;
+}
+
+EAPI Eina_Bool egueb_smil_feature_animation_add(Egueb_Dom_Node *n,
+		const Egueb_Smil_Feature_Animation_Descriptor *descriptor)
 {
 	Egueb_Smil_Feature_Animation *thiz;
 
 	if (!n) return EINA_FALSE;
 
 	thiz = ENESIM_OBJECT_INSTANCE_NEW(egueb_smil_feature_animation);
+	thiz->d = descriptor;
 	egueb_dom_node_weak_ref_add(n, &thiz->n);
 
 	/* add the events needed to calculate the duration */

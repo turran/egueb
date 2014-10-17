@@ -20,7 +20,12 @@
 
 EAPI extern Egueb_Dom_String *EGUEB_SMIL_FEATURE_ANIMATION_NAME;
 
-typedef void (*Egueb_Smil_Feature_Animation_Cb)(Egueb_Dom_Node *n);
+typedef void (*Egueb_Smil_Feature_Animation_On_Tick)(Egueb_Dom_Node *n);
+
+typedef struct _Egueb_Smil_Feature_Animation_Descriptor
+{
+	Egueb_Smil_Feature_Animation_On_Tick on_tick; 
+} Egueb_Smil_Feature_Animation_Descriptor;
 
 EAPI Eina_Bool egueb_smil_feature_animation_has_animations(Egueb_Dom_Feature *f);
 EAPI Eina_Bool egueb_smil_feature_animation_fps_set(Egueb_Dom_Feature *f, int fps);
@@ -28,9 +33,11 @@ EAPI Eina_Bool egueb_smil_feature_animation_fps_get(Egueb_Dom_Feature *f, int *f
 EAPI Eina_Bool egueb_smil_feature_animation_duration_get(Egueb_Dom_Feature *f,
 		Egueb_Smil_Clock *clock);
 EAPI Eina_Bool egueb_smil_feature_animation_tick(Egueb_Dom_Feature *f);
-EAPI void egueb_smil_feature_animation_on_tick_set(Egueb_Dom_Feature *f,
-		Egueb_Smil_Feature_Animation_Cb on_tick);
+EAPI void egueb_smil_feature_animation_pause(Egueb_Dom_Feature *f);
+EAPI void egueb_smil_feature_animation_unpause(Egueb_Dom_Feature *f);
+EAPI Eina_Bool egueb_smil_feature_animation_paused(Egueb_Dom_Feature *f);
 
-EAPI Eina_Bool egueb_smil_feature_animation_add(Egueb_Dom_Node *n);
+EAPI Eina_Bool egueb_smil_feature_animation_add(Egueb_Dom_Node *n,
+		const Egueb_Smil_Feature_Animation_Descriptor *descriptor);
 
 #endif

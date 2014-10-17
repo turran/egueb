@@ -80,9 +80,6 @@ typedef struct _Egueb_Svg_Element_Svg
 	Enesim_Renderer *rectangle;
 	Enesim_Renderer *proxy;
 
-	/* animation */
-	Eina_Bool paused;
-
 	/* painter */
 	Egueb_Svg_Painter *painter;
 
@@ -91,6 +88,10 @@ typedef struct _Egueb_Svg_Element_Svg
 
 	double window_width;
 	double window_height;
+
+	/* svg inclusion */
+	Eina_List *svgs; /* the list of svg documents found on the svg */
+
 	/* some state flags */
 	/* keep track if the renderable tree has changed, includeing the <a> tag */
 #if 0
@@ -115,8 +116,6 @@ typedef struct _Egueb_Svg_Element_Svg
 	/* input */
 	Egueb_Svg_Renderable_Container *container;
 	Egueb_Svg_Input *input;
-	/* svg inclusion */
-	Eina_List *svgs; /* the list of svg documents found on the svg */
 	Eina_List *image_svgs; /* the list of svg images on the svg */
 	/* scripts */
 	Eina_Hash *scriptors;
@@ -127,6 +126,69 @@ typedef struct _Egueb_Svg_Element_Svg_Class
 {
 	Egueb_Svg_Renderable_Container_Class base;
 } Egueb_Svg_Element_Svg_Class;
+
+static void _egueb_svg_element_svg_node_inserted_cb(Egueb_Dom_Event *e,
+		void *data)
+{
+	Egueb_Svg_Element_Svg *thiz = data;
+	Egueb_Dom_Node *target;
+
+	if (egueb_dom_event_phase_get(e) == EGUEB_DOM_EVENT_PHASE_AT_TARGET)
+		return;
+	target = egueb_dom_event_target_get(e);
+	if (egueb_svg_element_is_svg(target))
+		thiz->svgs = eina_list_append(thiz->svgs, egueb_dom_node_ref(target));
+	egueb_dom_node_unref(target);
+}
+
+static void _egueb_svg_element_svg_node_removed_cb(Egueb_Dom_Event *e,
+		void *data)
+{
+	Egueb_Svg_Element_Svg *thiz = data;
+	Egueb_Dom_Node *target;
+
+	if (egueb_dom_event_phase_get(e) == EGUEB_DOM_EVENT_PHASE_AT_TARGET)
+		return;
+	target = egueb_dom_event_target_get(e);
+	if (egueb_svg_element_is_svg(target))
+		thiz->svgs = eina_list_remove(thiz->svgs, egueb_dom_node_ref(target));
+	egueb_dom_node_unref(target);
+}
+
+/*----------------------------------------------------------------------------*
+ *                      Animation feature interface                           *
+ *----------------------------------------------------------------------------*/
+static void _egueb_svg_element_svg_animation_on_tick(Egueb_Dom_Node *n)
+{
+	Egueb_Svg_Element_Svg *thiz;
+	Egueb_Dom_Node *relative;
+	Eina_List *l;
+
+	thiz = EGUEB_SVG_ELEMENT_SVG(n);
+	relative = egueb_svg_element_geometry_relative_get(n);
+	if (relative)
+	{
+		egueb_dom_node_unref(relative);
+		return;
+	}
+	/* iterate over the SVG elements and tick there too, only we are the topmost */
+	EINA_LIST_FOREACH(thiz->svgs, l, n)
+	{
+		Egueb_Dom_Feature *f;
+
+		/* TODO we can optimize this by keeping a pointer to the
+		 * feature instead of using the hash
+		 */
+		f = egueb_dom_node_feature_get(n, EGUEB_SMIL_FEATURE_ANIMATION_NAME, NULL);
+		egueb_smil_feature_animation_tick(f);
+		egueb_dom_feature_unref(f);
+	}
+}
+
+static Egueb_Smil_Feature_Animation_Descriptor 
+_egueb_svg_element_svg_animation_descriptor = {
+	/* .on_tick = */ _egueb_svg_element_svg_animation_on_tick,
+};
 
 /*----------------------------------------------------------------------------*
  *                          UI feature interface                              *
@@ -544,7 +606,7 @@ static Eina_Bool _egueb_svg_element_svg_process(Egueb_Svg_Renderable *r)
 	/* TODO First apply the local styles */
 
 	thiz = EGUEB_SVG_ELEMENT_SVG(r);
-	/* check if we are the topmost SVG, if so, use the document
+	/* check if we are the topmost SVG, if so, use the user provided
 	 * container size to generate the children viewbox (i.e our
 	 * own bounds
 	 */
@@ -761,7 +823,8 @@ static void _egueb_svg_element_svg_instance_init(void *o)
 			&_egueb_svg_element_svg_render_descriptor);
 	egueb_dom_feature_ui_add(n,
 			&_egueb_svg_element_svg_ui_descriptor);
-	egueb_smil_feature_animation_add(n);
+	egueb_smil_feature_animation_add(n,
+			&_egueb_svg_element_svg_animation_descriptor);
 	egueb_dom_feature_io_add(n);
 	egueb_dom_feature_script_add(n);
 	egueb_dom_feature_multimedia_add(n);
@@ -770,11 +833,23 @@ static void _egueb_svg_element_svg_instance_init(void *o)
 	/* our own specific painter */
 	thiz->painter = egueb_svg_painter_g_new();
 	thiz->input = egueb_dom_input_new(&_egueb_svg_element_svg_input_descriptor, thiz);
+
+	/* TODO keep track of the svg's inserted */
+	/* whenever a renderable is added/removed, add/remove the click event */
+	egueb_dom_node_event_listener_add(n,
+			EGUEB_DOM_EVENT_MUTATION_NODE_INSERTED,
+			_egueb_svg_element_svg_node_inserted_cb,
+			EINA_TRUE, o);
+	egueb_dom_node_event_listener_add(EGUEB_DOM_NODE(o),
+			EGUEB_DOM_EVENT_MUTATION_NODE_REMOVED,
+			_egueb_svg_element_svg_node_removed_cb,
+			EINA_TRUE, o);
 }
 
 static void _egueb_svg_element_svg_instance_deinit(void *o)
 {
 	Egueb_Svg_Element_Svg *thiz;
+	Egueb_Dom_Node *n;
 
 	thiz = EGUEB_SVG_ELEMENT_SVG(o);
 	/* the properties */
@@ -795,6 +870,9 @@ static void _egueb_svg_element_svg_instance_deinit(void *o)
 		egueb_dom_input_unref(thiz->input);
 		thiz->input = NULL;
 	}
+	/* free the svgs */
+	EINA_LIST_FREE(thiz->svgs, n)
+		egueb_dom_node_unref(n);
 }
 
 #if 0
@@ -984,26 +1062,34 @@ EAPI void egueb_svg_element_svg_content_script_type_get(Ender_Element *e, const 
 
 EAPI void egueb_svg_element_svg_animations_pause(Egueb_Dom_Node *n)
 {
-	Egueb_Svg_Element_Svg *thiz;
+	Egueb_Dom_Feature *animation;
 
-	thiz = EGUEB_SVG_ELEMENT_SVG(n);
-	thiz->paused = EINA_TRUE;
+	animation = egueb_dom_node_feature_get(n,
+			EGUEB_SMIL_FEATURE_ANIMATION_NAME, NULL);
+	egueb_smil_feature_animation_pause(animation);
+	egueb_dom_feature_unref(animation);
 }
 
 EAPI void egueb_svg_element_svg_animations_unpause(Egueb_Dom_Node *n)
 {
-	Egueb_Svg_Element_Svg *thiz;
+	Egueb_Dom_Feature *animation;
 
-	thiz = EGUEB_SVG_ELEMENT_SVG(n);
-	thiz->paused = EINA_FALSE;
+	animation = egueb_dom_node_feature_get(n,
+			EGUEB_SMIL_FEATURE_ANIMATION_NAME, NULL);
+	egueb_smil_feature_animation_unpause(animation);
+	egueb_dom_feature_unref(animation);
 }
 
 EAPI Eina_Bool egueb_svg_element_svg_animations_paused(Egueb_Dom_Node *n)
 {
-	Egueb_Svg_Element_Svg *thiz;
+	Egueb_Dom_Feature *animation;
+	Eina_Bool ret;
 
-	thiz = EGUEB_SVG_ELEMENT_SVG(n);
-	return thiz->paused;
+	animation = egueb_dom_node_feature_get(n,
+			EGUEB_SMIL_FEATURE_ANIMATION_NAME, NULL);
+	ret = egueb_smil_feature_animation_paused(animation);
+	egueb_dom_feature_unref(animation);
+	return ret;
 }
 
 #if 0

@@ -70,6 +70,17 @@ typedef struct _Egueb_Svg_Element_Image_Class
 } Egueb_Svg_Element_Image_Class;
 
 /*----------------------------------------------------------------------------*
+ *                               Event monitors                               *
+ *----------------------------------------------------------------------------*/
+static void _egueb_dom_element_image_g_node_monitor_cb(Egueb_Dom_Event *ev,
+		void *data)
+{
+	Egueb_Svg_Element_Image *thiz = data;
+
+	/* whenever we receive an event, just propagate it */
+	egueb_dom_node_event_propagate(EGUEB_DOM_NODE(thiz), ev);
+}
+/*----------------------------------------------------------------------------*
  *                                  Helpers                                   *
  *----------------------------------------------------------------------------*/
 static Eina_Bool _egueb_svg_element_image_parse_data(const char **ostr,
@@ -129,7 +140,11 @@ static Eina_Bool _egueb_svg_element_image_svg_load(Egueb_Dom_Node *n,
 	thiz = EGUEB_SVG_ELEMENT_IMAGE(n);
 	thiz->g = egueb_svg_element_g_new();
 	thiz->g = egueb_dom_document_node_adopt(doc, thiz->g, NULL);
+	/* add the events that we need to propagate upstream */ 
+	egueb_dom_node_event_monitor_add(thiz->g,
+			_egueb_dom_element_image_g_node_monitor_cb, thiz);
 	topmost = egueb_dom_document_node_adopt(doc, topmost, NULL);
+	/* add the svg topmost element on the g element */
 	egueb_dom_node_child_append(thiz->g, topmost, NULL);
 	/* set the transformation */
 	enesim_matrix_translate(&m, thiz->gx, thiz->gy);
