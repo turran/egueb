@@ -82,6 +82,7 @@ static const char * _egueb_dom_parser_eina_get_entity(Egueb_Dom_Parser_Eina *thi
 		const char *s, const char **e)
 {
 	const char *tmp;
+	const char *ret;
 	char *entity;
 	int len;
 
@@ -93,7 +94,8 @@ static const char * _egueb_dom_parser_eina_get_entity(Egueb_Dom_Parser_Eina *thi
 	entity[len] = '\0';
 	*e = tmp;
 
-	return eina_hash_find(thiz->entities, entity);
+	ret = eina_hash_find(thiz->entities, entity);
+	return ret;
 }
 
 static Egueb_Dom_String * _egueb_dom_parser_eina_transform_text(Egueb_Dom_Parser_Eina *thiz,
@@ -129,10 +131,9 @@ static Egueb_Dom_String * _egueb_dom_parser_eina_transform_text(Egueb_Dom_Parser
 			if (!strbuf)
 				strbuf = eina_strbuf_new();
 			eina_strbuf_append_length(strbuf, text, s - text);
-			if (last)
-				eina_strbuf_append_length(strbuf, last, s - last);
 			eina_strbuf_append(strbuf, entity);
 			last = e + 1;
+			text = e + 1;
 			s = e;
 		}
 		s++;
