@@ -1,5 +1,8 @@
 Refactor
 ========
++ The image element that references a svg is not the same as a use element
+  that references a svg. The image must create a self contained document
+  thus we must propagate every feature like what eon does
 + Implement every type with reffed values, i.e
 typedef struct _Egueb_Svg_Paint
 {
