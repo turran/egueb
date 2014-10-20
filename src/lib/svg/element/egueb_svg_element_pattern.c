@@ -21,7 +21,6 @@
 #include "egueb_svg_matrix.h"
 #include "egueb_svg_string.h"
 #include "egueb_svg_referenceable_units.h"
-#include "egueb_svg_attr_xlink_href.h"
 #include "egueb_svg_element_pattern.h"
 
 #include "egueb_svg_element_pattern_private.h"
@@ -30,6 +29,7 @@
 #include "egueb_svg_attr_matrix_private.h"
 #include "egueb_svg_attr_referenceable_units_private.h"
 #include "egueb_svg_attr_rect_private.h"
+#include "egueb_svg_attr_xlink_href_private.h"
 /* A pattern from the implementation point of view is a mix between a
  * gradient and a clipPath. We need to have live clones of the children
  * on every reference like a clipPath but in case the pattern element
@@ -214,14 +214,14 @@ static void _egueb_svg_element_pattern_instance_init(void *o)
 			NULL);
 
 	n = EGUEB_DOM_NODE(o);
-	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->transform), NULL);
-	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->units), NULL);
-	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->xlink_href), NULL);
-	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->x), NULL);
-	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->y), NULL);
-	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->width), NULL);
-	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->height), NULL);
-	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->viewbox), NULL);
+	egueb_dom_element_attribute_node_set(n, egueb_dom_node_ref(thiz->transform), NULL);
+	egueb_dom_element_attribute_node_set(n, egueb_dom_node_ref(thiz->units), NULL);
+	egueb_dom_element_attribute_node_set(n, egueb_dom_node_ref(thiz->xlink_href), NULL);
+	egueb_dom_element_attribute_node_set(n, egueb_dom_node_ref(thiz->x), NULL);
+	egueb_dom_element_attribute_node_set(n, egueb_dom_node_ref(thiz->y), NULL);
+	egueb_dom_element_attribute_node_set(n, egueb_dom_node_ref(thiz->width), NULL);
+	egueb_dom_element_attribute_node_set(n, egueb_dom_node_ref(thiz->height), NULL);
+	egueb_dom_element_attribute_node_set(n, egueb_dom_node_ref(thiz->viewbox), NULL);
 }
 
 static void _egueb_svg_element_pattern_instance_deinit(void *o)

@@ -172,10 +172,10 @@ static void _egueb_svg_element_ellipse_instance_init(void *o)
 			EINA_FALSE, EINA_FALSE);
 
 	n = EGUEB_DOM_NODE(o);
-	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->cx), NULL);
-	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->cy), NULL);
-	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->rx), NULL);
-	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->ry), NULL);
+	egueb_dom_element_attribute_node_set(n, egueb_dom_node_ref(thiz->cx), NULL);
+	egueb_dom_element_attribute_node_set(n, egueb_dom_node_ref(thiz->cy), NULL);
+	egueb_dom_element_attribute_node_set(n, egueb_dom_node_ref(thiz->rx), NULL);
+	egueb_dom_element_attribute_node_set(n, egueb_dom_node_ref(thiz->ry), NULL);
 }
 
 static void _egueb_svg_element_ellipse_instance_deinit(void *o)

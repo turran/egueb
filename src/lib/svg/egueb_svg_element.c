@@ -571,40 +571,40 @@ static void _egueb_svg_element_instance_init(void *o)
 
 	n = EGUEB_DOM_NODE(o);
 
-	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->id), NULL);
-	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->klass), NULL);
-	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->style), NULL);
-	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->clip_path), NULL);
-	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->color), NULL);
-	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->display), NULL);
-	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->fill), NULL);
-	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->fill_opacity), NULL);
-	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->font_family), NULL);
-	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->font_size), NULL);
-	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->font_style), NULL);
-	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->font_variant), NULL);
-	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->font_weight), NULL);
-	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->opacity), NULL);
-	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->overflow), NULL);
-	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->stop_opacity), NULL);
-	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->stop_color), NULL);
-	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->stroke), NULL);
-	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->stroke_dasharray), NULL);
-	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->stroke_line_join), NULL);
-	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->stroke_line_cap), NULL);
-	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->stroke_opacity), NULL);
-	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->stroke_width), NULL);
-	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->text_anchor), NULL);
-	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->visibility), NULL);
+	egueb_dom_element_attribute_node_set(n, egueb_dom_node_ref(thiz->id), NULL);
+	egueb_dom_element_attribute_node_set(n, egueb_dom_node_ref(thiz->klass), NULL);
+	egueb_dom_element_attribute_node_set(n, egueb_dom_node_ref(thiz->style), NULL);
+	egueb_dom_element_attribute_node_set(n, egueb_dom_node_ref(thiz->clip_path), NULL);
+	egueb_dom_element_attribute_node_set(n, egueb_dom_node_ref(thiz->color), NULL);
+	egueb_dom_element_attribute_node_set(n, egueb_dom_node_ref(thiz->display), NULL);
+	egueb_dom_element_attribute_node_set(n, egueb_dom_node_ref(thiz->fill), NULL);
+	egueb_dom_element_attribute_node_set(n, egueb_dom_node_ref(thiz->fill_opacity), NULL);
+	egueb_dom_element_attribute_node_set(n, egueb_dom_node_ref(thiz->font_family), NULL);
+	egueb_dom_element_attribute_node_set(n, egueb_dom_node_ref(thiz->font_size), NULL);
+	egueb_dom_element_attribute_node_set(n, egueb_dom_node_ref(thiz->font_style), NULL);
+	egueb_dom_element_attribute_node_set(n, egueb_dom_node_ref(thiz->font_variant), NULL);
+	egueb_dom_element_attribute_node_set(n, egueb_dom_node_ref(thiz->font_weight), NULL);
+	egueb_dom_element_attribute_node_set(n, egueb_dom_node_ref(thiz->opacity), NULL);
+	egueb_dom_element_attribute_node_set(n, egueb_dom_node_ref(thiz->overflow), NULL);
+	egueb_dom_element_attribute_node_set(n, egueb_dom_node_ref(thiz->stop_opacity), NULL);
+	egueb_dom_element_attribute_node_set(n, egueb_dom_node_ref(thiz->stop_color), NULL);
+	egueb_dom_element_attribute_node_set(n, egueb_dom_node_ref(thiz->stroke), NULL);
+	egueb_dom_element_attribute_node_set(n, egueb_dom_node_ref(thiz->stroke_dasharray), NULL);
+	egueb_dom_element_attribute_node_set(n, egueb_dom_node_ref(thiz->stroke_line_join), NULL);
+	egueb_dom_element_attribute_node_set(n, egueb_dom_node_ref(thiz->stroke_line_cap), NULL);
+	egueb_dom_element_attribute_node_set(n, egueb_dom_node_ref(thiz->stroke_opacity), NULL);
+	egueb_dom_element_attribute_node_set(n, egueb_dom_node_ref(thiz->stroke_width), NULL);
+	egueb_dom_element_attribute_node_set(n, egueb_dom_node_ref(thiz->text_anchor), NULL);
+	egueb_dom_element_attribute_node_set(n, egueb_dom_node_ref(thiz->visibility), NULL);
 	/* event attributes */
-	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->onclick), NULL);
-	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->onmousedown), NULL);
-	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->onmouseup), NULL);
-	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->onmouseover), NULL);
-	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->onmousemove), NULL);
-	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->onmouseout), NULL);
-	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->onfocusout), NULL);
-	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->onfocusin), NULL);
+	egueb_dom_element_attribute_node_set(n, egueb_dom_node_ref(thiz->onclick), NULL);
+	egueb_dom_element_attribute_node_set(n, egueb_dom_node_ref(thiz->onmousedown), NULL);
+	egueb_dom_element_attribute_node_set(n, egueb_dom_node_ref(thiz->onmouseup), NULL);
+	egueb_dom_element_attribute_node_set(n, egueb_dom_node_ref(thiz->onmouseover), NULL);
+	egueb_dom_element_attribute_node_set(n, egueb_dom_node_ref(thiz->onmousemove), NULL);
+	egueb_dom_element_attribute_node_set(n, egueb_dom_node_ref(thiz->onmouseout), NULL);
+	egueb_dom_element_attribute_node_set(n, egueb_dom_node_ref(thiz->onfocusout), NULL);
+	egueb_dom_element_attribute_node_set(n, egueb_dom_node_ref(thiz->onfocusin), NULL);
 
 	/* register the dom events */
 	egueb_dom_node_event_listener_add(n, EGUEB_DOM_EVENT_FOCUS_IN,

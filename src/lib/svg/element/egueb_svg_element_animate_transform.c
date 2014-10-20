@@ -443,7 +443,7 @@ static void _egueb_svg_element_animate_transform_instance_init(void *o)
 	thiz->tmp_value.data.ptr = calloc(1, sizeof(Egueb_Svg_Animate_Transform_Value));
 
 	n = EGUEB_DOM_NODE(o);
-	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->type), NULL);
+	egueb_dom_element_attribute_node_set(n, egueb_dom_node_ref(thiz->type), NULL);
 }
 
 static void _egueb_svg_element_animate_transform_instance_deinit(void *o)

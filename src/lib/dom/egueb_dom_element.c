@@ -76,7 +76,7 @@ static Eina_Bool _egueb_dom_element_attributes_clone_cb(const Eina_Hash *hash,
 
 	/* check if the cloned element has such attr */
 	name = egueb_dom_attr_name_get(attr);
-	n = egueb_dom_element_attribute_fetch(clone, name);
+	n = egueb_dom_element_attribute_node_get(clone, name);
 	egueb_dom_string_unref(name);
 	if (n)
 	{
@@ -85,7 +85,7 @@ static Eina_Bool _egueb_dom_element_attributes_clone_cb(const Eina_Hash *hash,
 	else
 	{
 		n = egueb_dom_node_clone(attr, EINA_FALSE, EINA_FALSE, NULL);
-		egueb_dom_element_attribute_add(clone, n, NULL); 
+		egueb_dom_element_attribute_node_set(clone, n, NULL); 
 	}
 
 	return EINA_TRUE;
@@ -556,7 +556,7 @@ Egueb_Dom_String * egueb_dom_element_namespace_uri_lookup(Egueb_Dom_Node *n,
 	/* check for the default namespace */
 	if (!egueb_dom_string_is_valid(prefix))
 	{
-		tmp = egueb_dom_element_attribute_fetch(n, EGUEB_DOM_NAME_XMLNS);
+		tmp = egueb_dom_element_attribute_node_get(n, EGUEB_DOM_NAME_XMLNS);
 		if (tmp)
 		{
 			egueb_dom_attr_string_get(tmp, EGUEB_DOM_ATTR_TYPE_BASE, &ret);
@@ -566,7 +566,8 @@ Egueb_Dom_String * egueb_dom_element_namespace_uri_lookup(Egueb_Dom_Node *n,
 	/* non default namespace */
 	else
 	{
-		tmp = egueb_dom_element_attribute_ns_fetch(n, EGUEB_DOM_NAME_NS_XMLNS, prefix);
+		tmp = egueb_dom_element_attribute_node_ns_get(n,
+				EGUEB_DOM_NAME_NS_XMLNS, prefix, NULL);
 		if (tmp)
 		{
 			egueb_dom_attr_string_get(tmp, EGUEB_DOM_ATTR_TYPE_BASE, &ret);
@@ -622,7 +623,8 @@ EAPI Egueb_Dom_String * egueb_dom_element_attribute_ns_get(Egueb_Dom_Node *node,
 	Egueb_Dom_Node *p = NULL;
 	Egueb_Dom_String *ret = NULL;
 
-	p = egueb_dom_element_attribute_ns_fetch(node, ns_uri, local_name);
+	p = egueb_dom_element_attribute_node_ns_get(node, ns_uri, local_name,
+			NULL);
 	if (!p) return NULL;
 
 	egueb_dom_attr_string_get(p, EGUEB_DOM_ATTR_TYPE_BASE, &ret);
@@ -671,7 +673,8 @@ EAPI Eina_Bool egueb_dom_element_attribute_ns_set(Egueb_Dom_Node *node,
 		 return EINA_FALSE;
 	}
 
-	p = egueb_dom_element_attribute_ns_fetch(node, ns_uri, local_name);
+	p = egueb_dom_element_attribute_node_ns_get(node, ns_uri, local_name,
+			NULL);
 	if (!p)
 	{
 		Egueb_Dom_String *attr_name;
@@ -685,7 +688,7 @@ EAPI Eina_Bool egueb_dom_element_attribute_ns_set(Egueb_Dom_Node *node,
 		p = egueb_dom_attr_string_new(attr_name,
 				egueb_dom_string_ref(ns_uri), NULL, EINA_FALSE,
 				EINA_FALSE, EINA_FALSE);
-		egueb_dom_element_attribute_add(node, egueb_dom_node_ref(p), err);
+		egueb_dom_element_attribute_node_set(node, egueb_dom_node_ref(p), err);
 	}
 
 	/* set the value */
@@ -731,7 +734,7 @@ EAPI Eina_Bool egueb_dom_element_attribute_type_set(Egueb_Dom_Node *node,
 {
 	Egueb_Dom_Node *p = NULL;
 
-	p = egueb_dom_element_attribute_fetch(node, name);
+	p = egueb_dom_element_attribute_node_get(node, name);
 	/* set the value */
 	if (p)
 	{
@@ -754,8 +757,14 @@ EAPI Eina_Bool egueb_dom_element_attribute_type_set(Egueb_Dom_Node *node,
 	}
 }
 
-EAPI Egueb_Dom_Node * egueb_dom_element_attribute_ns_fetch(Egueb_Dom_Node *node,
-		Egueb_Dom_String *ns_uri, Egueb_Dom_String *local_name)
+/*
+ * Introduced in DOM Level 2:
+ * Attr getAttributeNodeNS(in DOMString namespaceURI, in DOMString localName)
+ *   raises(DOMException);
+ */
+EAPI Egueb_Dom_Node * egueb_dom_element_attribute_node_ns_get(Egueb_Dom_Node *node,
+		Egueb_Dom_String *ns_uri, Egueb_Dom_String *local_name,
+		Eina_Error *err)
 {
 	Egueb_Dom_Element *thiz;
 	Egueb_Dom_Node *ret = NULL;
@@ -786,7 +795,10 @@ EAPI Egueb_Dom_Node * egueb_dom_element_attribute_ns_fetch(Egueb_Dom_Node *node,
 }
 
 
-EAPI Egueb_Dom_Node * egueb_dom_element_attribute_fetch(Egueb_Dom_Node *node,
+/*
+ * Attr getAttributeNode(in DOMString name);
+ */
+EAPI Egueb_Dom_Node * egueb_dom_element_attribute_node_get(Egueb_Dom_Node *node,
 		Egueb_Dom_String *name)
 {
 	Egueb_Dom_String *prefix = NULL;
@@ -801,7 +813,7 @@ EAPI Egueb_Dom_Node * egueb_dom_element_attribute_fetch(Egueb_Dom_Node *node,
 	if (egueb_dom_string_is_valid(prefix))
 		ns_uri = egueb_dom_element_namespace_uri_lookup(node, prefix);
 
-	ret = egueb_dom_element_attribute_ns_fetch(node, ns_uri, local_name);
+	ret = egueb_dom_element_attribute_node_ns_get(node, ns_uri, local_name, NULL);
 	egueb_dom_string_unref(ns_uri);
 	egueb_dom_string_unref(local_name);
 	egueb_dom_string_unref(prefix);
@@ -814,7 +826,7 @@ EAPI Eina_Bool egueb_dom_element_attribute_masked_set_va(Egueb_Dom_Node *node,
 	Egueb_Dom_Node *p;
 	Eina_Bool ret;
 
-	p = egueb_dom_element_attribute_fetch(node, name);
+	p = egueb_dom_element_attribute_node_get(node, name);
 	if (!p) return EINA_FALSE;
 	ret = egueb_dom_attr_set_va(p, prop_mask, args);
 	egueb_dom_node_unref(p);
@@ -827,7 +839,7 @@ EAPI Eina_Bool egueb_dom_element_attribute_masked_get_va(Egueb_Dom_Node *node,
 	Egueb_Dom_Node *p;
 	Eina_Bool ret;
 
-	p = egueb_dom_element_attribute_fetch(node, name);
+	p = egueb_dom_element_attribute_node_get(node, name);
 	if (!p) return EINA_FALSE;
 	ret = egueb_dom_attr_get_va(p, prop_mask, args);
 	egueb_dom_node_unref(p);
@@ -874,7 +886,7 @@ EAPI Eina_Bool egueb_dom_element_attribute_value_set(Egueb_Dom_Node *node,
 	Egueb_Dom_Node *p;
 	Eina_Bool ret;
 
-	p = egueb_dom_element_attribute_fetch(node, name);
+	p = egueb_dom_element_attribute_node_get(node, name);
 	if (!p)
 	{
 		if (err) *err = EGUEB_DOM_ERROR_NOT_FOUND;
@@ -903,7 +915,7 @@ EAPI Eina_Bool egueb_dom_element_attribute_value_get(Egueb_Dom_Node *node,
 	Egueb_Dom_Node *p;
 	Eina_Bool ret;
 
-	p = egueb_dom_element_attribute_fetch(node, name);
+	p = egueb_dom_element_attribute_node_get(node, name);
 	if (!p)
 	{
 		if (err) *err = EGUEB_DOM_ERROR_NOT_FOUND;
@@ -925,7 +937,12 @@ EAPI Eina_Bool egueb_dom_element_attribute_value_get(Egueb_Dom_Node *node,
 	}
 }
 
-EAPI Eina_Bool egueb_dom_element_attribute_add(Egueb_Dom_Node *n,
+
+/*
+ * Attr setAttributeNode(in Attr newAttr)
+ * raises(DOMException);
+ */
+EAPI Eina_Bool egueb_dom_element_attribute_node_set(Egueb_Dom_Node *n,
 		Egueb_Dom_Node *attr, Eina_Error *err)
 {
 	Egueb_Dom_Element *thiz;
@@ -1244,19 +1261,12 @@ EAPI Egueb_Dom_Node * egueb_dom_element_sibling_next_get(Egueb_Dom_Node *n)
    */
   void               removeAttribute(in DOMString name)
                                         raises(DOMException);
-  Attr               getAttributeNode(in DOMString name);
-  Attr               setAttributeNode(in Attr newAttr)
-                                        raises(DOMException);
   Attr               removeAttributeNode(in Attr oldAttr)
                                         raises(DOMException);
   NodeList           getElementsByTagName(in DOMString name);
   // Introduced in DOM Level 2:
   void               removeAttributeNS(in DOMString namespaceURI, 
                                        in DOMString localName)
-                                        raises(DOMException);
-  // Introduced in DOM Level 2:
-  Attr               getAttributeNodeNS(in DOMString namespaceURI, 
-                                        in DOMString localName)
                                         raises(DOMException);
   // Introduced in DOM Level 2:
   Attr               setAttributeNodeNS(in Attr newAttr)

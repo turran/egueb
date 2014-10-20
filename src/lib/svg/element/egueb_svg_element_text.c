@@ -434,10 +434,10 @@ static void _egueb_svg_element_text_instance_init(void *o)
 	egueb_dom_list_unref(def);
 
 	n = EGUEB_DOM_NODE(o);
-	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->x), NULL);
-	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->y), NULL);
-	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->dx), NULL);
-	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->dy), NULL);
+	egueb_dom_element_attribute_node_set(n, egueb_dom_node_ref(thiz->x), NULL);
+	egueb_dom_element_attribute_node_set(n, egueb_dom_node_ref(thiz->y), NULL);
+	egueb_dom_element_attribute_node_set(n, egueb_dom_node_ref(thiz->dx), NULL);
+	egueb_dom_element_attribute_node_set(n, egueb_dom_node_ref(thiz->dy), NULL);
 
 	/* add the events */
 	egueb_dom_node_event_listener_add(n,

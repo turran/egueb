@@ -319,11 +319,11 @@ static void _egueb_svg_element_use_instance_init(void *o)
 			NULL);
 
 	n = EGUEB_DOM_NODE(o);
-	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->x), NULL);
-	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->y), NULL);
-	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->width), NULL);
-	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->height), NULL);
-	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->xlink_href), NULL);
+	egueb_dom_element_attribute_node_set(n, egueb_dom_node_ref(thiz->x), NULL);
+	egueb_dom_element_attribute_node_set(n, egueb_dom_node_ref(thiz->y), NULL);
+	egueb_dom_element_attribute_node_set(n, egueb_dom_node_ref(thiz->width), NULL);
+	egueb_dom_element_attribute_node_set(n, egueb_dom_node_ref(thiz->height), NULL);
+	egueb_dom_element_attribute_node_set(n, egueb_dom_node_ref(thiz->xlink_href), NULL);
 
 	/* whenever the use element is inserted into a document, be sure
 	 * to set the document on our g too

@@ -249,7 +249,7 @@ static void _egueb_smil_animate_base_animation_start_cb(Egueb_Smil_Signal *s, vo
 	}
 	ev = egueb_smil_event_new();
 	egueb_smil_event_init(ev, egueb_dom_string_ref(EGUEB_SMIL_EVENT_BEGIN), 0);
-	egueb_dom_node_event_dispatch(a->target, ev, NULL, NULL);
+	egueb_dom_node_event_dispatch(EGUEB_DOM_NODE(a), ev, NULL, NULL);
 }
 
 static void _egueb_smil_animate_base_animation_start_and_fetch_cb(Egueb_Smil_Signal *s, void *data)
@@ -283,7 +283,7 @@ static void _egueb_smil_animate_base_animation_stop_cb(Egueb_Smil_Signal *s, voi
 	}
 	ev = egueb_smil_event_new();
 	egueb_smil_event_init(ev, egueb_dom_string_ref(EGUEB_SMIL_EVENT_END), 0);
-	egueb_dom_node_event_dispatch(a->target, ev, NULL, NULL);
+	egueb_dom_node_event_dispatch(EGUEB_DOM_NODE(a), ev, NULL, NULL);
 }
 
 static void _egueb_smil_animate_base_animation_repeat_cb(Egueb_Smil_Signal *s, void *data)
@@ -717,16 +717,16 @@ static void _egueb_smil_animate_base_instance_init(void *o)
 	thiz->key_splines = egueb_smil_attr_key_splines_new();
 
 	n = EGUEB_DOM_NODE(o);
-	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->additive), NULL);
-	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->accumulate), NULL);
+	egueb_dom_element_attribute_node_set(n, egueb_dom_node_ref(thiz->additive), NULL);
+	egueb_dom_element_attribute_node_set(n, egueb_dom_node_ref(thiz->accumulate), NULL);
 	/* values over time */
-	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->by), NULL);
-	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->to), NULL);
-	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->from), NULL);
-	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->values), NULL);
-	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->calc_mode), NULL);
-	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->key_times), NULL);
-	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->key_splines), NULL);
+	egueb_dom_element_attribute_node_set(n, egueb_dom_node_ref(thiz->by), NULL);
+	egueb_dom_element_attribute_node_set(n, egueb_dom_node_ref(thiz->to), NULL);
+	egueb_dom_element_attribute_node_set(n, egueb_dom_node_ref(thiz->from), NULL);
+	egueb_dom_element_attribute_node_set(n, egueb_dom_node_ref(thiz->values), NULL);
+	egueb_dom_element_attribute_node_set(n, egueb_dom_node_ref(thiz->calc_mode), NULL);
+	egueb_dom_element_attribute_node_set(n, egueb_dom_node_ref(thiz->key_times), NULL);
+	egueb_dom_element_attribute_node_set(n, egueb_dom_node_ref(thiz->key_splines), NULL);
 }
 
 static void _egueb_smil_animate_base_instance_deinit(void *o)

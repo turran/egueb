@@ -23,7 +23,6 @@
 #include "egueb_svg_string.h"
 #include "egueb_svg_spread_method.h"
 #include "egueb_svg_referenceable_units.h"
-#include "egueb_svg_attr_xlink_href.h"
 #include "egueb_svg_element_stop.h"
 #include "egueb_svg_gradient.h"
 
@@ -31,6 +30,7 @@
 #include "egueb_svg_attr_referenceable_units_private.h"
 #include "egueb_svg_attr_matrix_private.h"
 #include "egueb_svg_attr_spread_method_private.h"
+#include "egueb_svg_attr_xlink_href_private.h"
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
@@ -253,10 +253,10 @@ static void _egueb_svg_gradient_instance_init(void *o)
 			EGUEB_SVG_SPREAD_METHOD_PAD, EINA_TRUE, EINA_FALSE,
 			EINA_FALSE);
 	n = EGUEB_DOM_NODE(o);
-	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->transform), NULL);
-	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->units), NULL);
-	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->spread_method), NULL);
-	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->xlink_href), NULL);
+	egueb_dom_element_attribute_node_set(n, egueb_dom_node_ref(thiz->transform), NULL);
+	egueb_dom_element_attribute_node_set(n, egueb_dom_node_ref(thiz->units), NULL);
+	egueb_dom_element_attribute_node_set(n, egueb_dom_node_ref(thiz->spread_method), NULL);
+	egueb_dom_element_attribute_node_set(n, egueb_dom_node_ref(thiz->xlink_href), NULL);
 
 	/* to identify in case a stop was added, we need to process again ourselves */
 	egueb_dom_node_event_listener_add(n,

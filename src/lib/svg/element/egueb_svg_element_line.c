@@ -213,10 +213,10 @@ static void _egueb_svg_element_line_instance_init(void *o)
 			EINA_FALSE, EINA_FALSE);
 
 	n = EGUEB_DOM_NODE(o);
-	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->x1), NULL);
-	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->y1), NULL);
-	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->x2), NULL);
-	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->y2), NULL);
+	egueb_dom_element_attribute_node_set(n, egueb_dom_node_ref(thiz->x1), NULL);
+	egueb_dom_element_attribute_node_set(n, egueb_dom_node_ref(thiz->y1), NULL);
+	egueb_dom_element_attribute_node_set(n, egueb_dom_node_ref(thiz->x2), NULL);
+	egueb_dom_element_attribute_node_set(n, egueb_dom_node_ref(thiz->y2), NULL);
 }
 
 static void _egueb_svg_element_line_instance_deinit(void *o)

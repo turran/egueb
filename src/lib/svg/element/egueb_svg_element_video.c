@@ -287,11 +287,11 @@ static void _egueb_svg_element_video_instance_init(void *o)
 			NULL);
 
 	n = EGUEB_DOM_NODE(o);
-	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->x), NULL);
-	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->y), NULL);
-	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->width), NULL);
-	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->height), NULL);
-	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->xlink_href), NULL);
+	egueb_dom_element_attribute_node_set(n, egueb_dom_node_ref(thiz->x), NULL);
+	egueb_dom_element_attribute_node_set(n, egueb_dom_node_ref(thiz->y), NULL);
+	egueb_dom_element_attribute_node_set(n, egueb_dom_node_ref(thiz->width), NULL);
+	egueb_dom_element_attribute_node_set(n, egueb_dom_node_ref(thiz->height), NULL);
+	egueb_dom_element_attribute_node_set(n, egueb_dom_node_ref(thiz->xlink_href), NULL);
 }
 
 static void _egueb_svg_element_video_instance_deinit(void *o)

@@ -224,7 +224,7 @@ static void _egueb_svg_renderable_instance_init(void *o)
 			EINA_FALSE, EINA_FALSE);
 
 	n = EGUEB_DOM_NODE(o);
-	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->transform), NULL);
+	egueb_dom_element_attribute_node_set(n, egueb_dom_node_ref(thiz->transform), NULL);
 	/* request for a painter whenever a renderable has been inserted into a document */
 	egueb_dom_node_event_listener_add(n,
 			EGUEB_DOM_EVENT_MUTATION_NODE_INSERTED,

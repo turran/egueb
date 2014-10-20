@@ -157,7 +157,8 @@ static void _egueb_smil_animation_event_cb(void *item, void *user_data)
 
 		if (!ref)
 		{
-			ERR("Impossible to find a target");
+			ERR("Impossible to find a target '%s'",
+					egueb_dom_string_string_get(t->id));
 			return;
 		}
 
@@ -343,7 +344,7 @@ static Eina_Bool _egueb_dom_animation_setup(Egueb_Smil_Animation *thiz,
 		thiz->attr = NULL;
 	}
 
-	attr = egueb_dom_element_attribute_fetch(target, attribute_name);
+	attr = egueb_dom_element_attribute_node_get(target, attribute_name);
 	if (!attr)
 	{
 		ERR("No attribute '%s' found",
@@ -537,14 +538,14 @@ static void _egueb_smil_animation_instance_init(void *o)
 	thiz->repeat_dur = egueb_smil_attr_duration_new(
 			egueb_dom_string_ref(EGUEB_SMIL_NAME_REPEAT_DUR), NULL);
 
-	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->attribute_name), NULL);
-	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->fill), NULL);
-	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->dur), NULL);
-	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->begin), NULL);
-	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->end), NULL);
-	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->xlink_href), NULL);
-	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->repeat_count), NULL);
-	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->repeat_dur), NULL);
+	egueb_dom_element_attribute_node_set(n, egueb_dom_node_ref(thiz->attribute_name), NULL);
+	egueb_dom_element_attribute_node_set(n, egueb_dom_node_ref(thiz->fill), NULL);
+	egueb_dom_element_attribute_node_set(n, egueb_dom_node_ref(thiz->dur), NULL);
+	egueb_dom_element_attribute_node_set(n, egueb_dom_node_ref(thiz->begin), NULL);
+	egueb_dom_element_attribute_node_set(n, egueb_dom_node_ref(thiz->end), NULL);
+	egueb_dom_element_attribute_node_set(n, egueb_dom_node_ref(thiz->xlink_href), NULL);
+	egueb_dom_element_attribute_node_set(n, egueb_dom_node_ref(thiz->repeat_count), NULL);
+	egueb_dom_element_attribute_node_set(n, egueb_dom_node_ref(thiz->repeat_dur), NULL);
 }
 
 static void _egueb_smil_animation_instance_deinit(void *o)

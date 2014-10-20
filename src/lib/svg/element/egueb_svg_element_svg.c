@@ -796,12 +796,12 @@ static void _egueb_svg_element_svg_instance_init(void *o)
 	thiz->current_translate.y = 0;
 
 	n = EGUEB_DOM_NODE(o);
-	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->x), NULL);
-	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->y), NULL);
-	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->width), NULL);
-	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->height), NULL);
-	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->viewbox), NULL);
-	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->zoom_and_pan), NULL);
+	egueb_dom_element_attribute_node_set(n, egueb_dom_node_ref(thiz->x), NULL);
+	egueb_dom_element_attribute_node_set(n, egueb_dom_node_ref(thiz->y), NULL);
+	egueb_dom_element_attribute_node_set(n, egueb_dom_node_ref(thiz->width), NULL);
+	egueb_dom_element_attribute_node_set(n, egueb_dom_node_ref(thiz->height), NULL);
+	egueb_dom_element_attribute_node_set(n, egueb_dom_node_ref(thiz->viewbox), NULL);
+	egueb_dom_element_attribute_node_set(n, egueb_dom_node_ref(thiz->zoom_and_pan), NULL);
 
 	/* the rendering */
 	r = enesim_renderer_proxy_new();

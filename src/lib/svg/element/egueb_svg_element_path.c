@@ -430,7 +430,7 @@ static void _egueb_svg_element_path_instance_init(void *o)
 			egueb_dom_string_ref(EGUEB_SVG_NAME_D),
 			NULL, EINA_TRUE, EINA_FALSE, EINA_FALSE);
 	n = EGUEB_DOM_NODE(o);
-	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->d), NULL);
+	egueb_dom_element_attribute_node_set(n, egueb_dom_node_ref(thiz->d), NULL);
 }
 
 static void _egueb_svg_element_path_instance_deinit(void *o)

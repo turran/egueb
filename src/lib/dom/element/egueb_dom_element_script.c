@@ -267,8 +267,8 @@ static void _egueb_dom_element_script_instance_init(void *o)
 	thiz->src = egueb_dom_attr_string_new(
 			egueb_dom_string_ref(EGUEB_DOM_NAME_SRC),
 			NULL, NULL, EINA_FALSE, EINA_FALSE, EINA_FALSE);
-	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->type), NULL);
-	egueb_dom_element_attribute_add(n, egueb_dom_node_ref(thiz->src), NULL);
+	egueb_dom_element_attribute_node_set(n, egueb_dom_node_ref(thiz->type), NULL);
+	egueb_dom_element_attribute_node_set(n, egueb_dom_node_ref(thiz->src), NULL);
 
 	/* add the events */
 	egueb_dom_node_event_listener_add(n,
