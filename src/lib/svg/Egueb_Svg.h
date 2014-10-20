@@ -95,9 +95,6 @@ extern "C" {
 #include "egueb_svg_stroke_line_join.h"
 #include "egueb_svg_visibility.h"
 
-/* attributes */
-#include "egueb_svg_attr_xlink_href.h"
-
 /* main abstractions */
 #include "egueb_svg_gradient.h"
 #include "egueb_svg_shape.h"

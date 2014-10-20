@@ -16,11 +16,11 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 #include "egueb_svg_main_private.h"
-#include "egueb_svg_attr_xlink_href.h"
 #include "egueb_svg_document.h"
 
 #include "egueb_dom_attr_private.h"
 #include "egueb_dom_attr_object_private.h"
+#include "egueb_svg_attr_xlink_href_private.h"
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/

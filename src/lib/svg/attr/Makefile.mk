@@ -1,6 +1,3 @@
-dist_installed_svgheaders_DATA += \
-src/lib/svg/attr/egueb_svg_attr_xlink_href.h
-
 src_lib_svg_libegueb_svg_la_SOURCES += \
 src/lib/svg/attr/egueb_svg_attr_animate_transform_type.c \
 src/lib/svg/attr/egueb_svg_attr_animate_transform_type_private.h \
@@ -45,5 +42,6 @@ src/lib/svg/attr/egueb_svg_attr_text_anchor_private.h \
 src/lib/svg/attr/egueb_svg_attr_visibility.c \
 src/lib/svg/attr/egueb_svg_attr_visibility_private.h \
 src/lib/svg/attr/egueb_svg_attr_xlink_href.c \
+src/lib/svg/attr/egueb_svg_attr_xlink_href_private.h \
 src/lib/svg/attr/egueb_svg_attr_zoom_and_pan.c \
 src/lib/svg/attr/egueb_svg_attr_zoom_and_pan_private.h

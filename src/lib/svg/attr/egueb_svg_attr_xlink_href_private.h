@@ -16,13 +16,13 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _EGUEB_SVG_ATTR_XLINK_HREF_H_
-#define _EGUEB_SVG_ATTR_XLINK_HREF_H_
+#ifndef _EGUEB_SVG_ATTR_XLINK_HREF_PRIVATE_H_
+#define _EGUEB_SVG_ATTR_XLINK_HREF_PRIVATE_H_
 
-EAPI Egueb_Dom_Node * egueb_svg_attr_xlink_href_new(Egueb_Dom_String *name,
+Egueb_Dom_Node * egueb_svg_attr_xlink_href_new(Egueb_Dom_String *name,
 		Egueb_Dom_String *def);
-EAPI Eina_Bool egueb_svg_attr_xlink_href_resolve(Egueb_Dom_Node *attr);
-EAPI void egueb_svg_attr_xlink_href_node_get(Egueb_Dom_Node *attr, Egueb_Dom_Node **n);
+Eina_Bool egueb_svg_attr_xlink_href_resolve(Egueb_Dom_Node *attr);
+void egueb_svg_attr_xlink_href_node_get(Egueb_Dom_Node *attr, Egueb_Dom_Node **n);
 
 #endif
 
