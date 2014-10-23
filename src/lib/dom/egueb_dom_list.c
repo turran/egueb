@@ -32,9 +32,9 @@ struct _Egueb_Dom_List
 
 typedef struct _Egueb_Dom_List_Iterator
 {
+	Eina_Iterator iterator;
 	Egueb_Dom_List *list;
 	Eina_Iterator *lit;
-	Eina_Iterator iterator;
 } Egueb_Dom_List_Iterator;
 /*----------------------------------------------------------------------------*
  *                            Iterator interface                              *
