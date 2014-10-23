@@ -58,9 +58,18 @@ typedef struct _Egueb_Smil_Animation_Event_Foreach_Data
 } Egueb_Smil_Animation_Event_Foreach_Data;
 
 /* convert a timing into a duration */
-static Eina_Bool _egueb_smil_animation_timing_duration(Egueb_Smil_Animation *thiz,
+static Eina_Bool _egueb_smil_animation_timing_duration(
 		Egueb_Smil_Timing *t, Egueb_Smil_Duration *d)
 {
+	if (t->type ==  EGUEB_SMIL_TIMING_TYPE_INDEFINITE)
+		d->type = EGUEB_SMIL_DURATION_TYPE_INDEFINITE;
+	else if (t->type == EGUEB_SMIL_TIMING_TYPE_OFFSET)
+	{
+		d->type = EGUEB_SMIL_DURATION_TYPE_CLOCK;
+		d->data.clock = t->offset;
+	}
+	else
+		return EINA_FALSE;
 	return EINA_TRUE;
 }
 
@@ -71,10 +80,24 @@ static Eina_Bool _egueb_smil_animation_timing_list_duration(Egueb_Smil_Animation
 	Egueb_Smil_Timing t;
 	Eina_Iterator *it;
 
+	d->type = EGUEB_SMIL_DURATION_TYPE_INDEFINITE;
 	it = egueb_dom_list_iterator_new(tl);
 	while (eina_iterator_next(it, (void **)&t))
 	{
-		printf("timing\n");
+		Egueb_Smil_Duration td;
+
+		if (!_egueb_smil_animation_timing_duration(&t, &td))
+			continue;
+		if (td.type != EGUEB_SMIL_DURATION_TYPE_CLOCK)
+			continue;
+		/* first clock duration, just use it directly */
+		if (d->type == EGUEB_SMIL_DURATION_TYPE_INDEFINITE)
+		{
+			*d = td;
+			continue;
+		}
+		else if (d->data.clock > td.data.clock)
+			*d = td;
 	}
 	eina_iterator_free(it);
 	return EINA_TRUE;
@@ -576,7 +599,6 @@ Eina_Bool egueb_smil_animation_active_duration_get(Egueb_Dom_Node *n,
 	Egueb_Smil_Repeat_Count repeat_count;
 	Egueb_Dom_List *begin = NULL;
 	Egueb_Dom_List *end = NULL;
-	Egueb_Smil_Duration end_dur;
 	Eina_Bool dur_is_set;
 	Eina_Bool repeat_count_is_set;
 	Eina_Bool repeat_dur_is_set;
@@ -598,6 +620,7 @@ Eina_Bool egueb_smil_animation_active_duration_get(Egueb_Dom_Node *n,
 	if (end_is_set && begin_is_set)
 	{
 		Egueb_Smil_Duration begin_dur;
+		Egueb_Smil_Duration end_dur;
 
 		_egueb_smil_animation_timing_list_duration(thiz, begin, &begin_dur);
 		_egueb_smil_animation_timing_list_duration(thiz, end, &end_dur);
