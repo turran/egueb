@@ -35,8 +35,8 @@ void egueb_svg_color_interpolate(Egueb_Svg_Color *v,
 	uint32_t bargb;
 	uint32_t rargb;
 
-	aargb = 0xff | (a->r >> 16) | (a->g >> 8) | a->b;
-	bargb = 0xff | (b->r >> 16) | (b->g >> 8) | b->b;
+	aargb = 0xff000000 | (a->r << 16) | (a->g << 8) | a->b;
+	bargb = 0xff000000 | (b->r << 16) | (b->g << 8) | b->b;
 	egueb_dom_value_interpolate_argb(aargb, bargb, m, &rargb);
 	v->r = (rargb >> 16) & 0xff;
 	v->g = (rargb >> 8) & 0xff;
