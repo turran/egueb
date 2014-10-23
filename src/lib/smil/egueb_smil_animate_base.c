@@ -301,6 +301,34 @@ static Eina_Bool _egueb_smil_animate_base_values_generate(Egueb_Smil_Animate_Bas
 	egueb_dom_attr_get(thiz->values, EGUEB_DOM_ATTR_TYPE_BASE, &values);
 	if (values)
 	{
+		Egueb_Dom_String *from = NULL;
+
+		/* get the 'from' attribute */
+		egueb_dom_attr_get(thiz->from, EGUEB_DOM_ATTR_TYPE_BASE, &from);
+		if (egueb_dom_string_is_valid(from))
+		{
+			Egueb_Smil_Animation *a;
+
+			Egueb_Dom_Value v = EGUEB_DOM_VALUE_INIT;
+			Egueb_Dom_Value *nv;
+
+			a = EGUEB_SMIL_ANIMATION(thiz);
+			egueb_dom_value_init(&v, a->d);
+			if (!egueb_dom_value_string_from(&v, from))
+			{
+				ERR("No valid 'from' value '%s'", egueb_dom_string_string_get(from));
+				egueb_dom_list_unref(values);
+				egueb_dom_string_unref(from);
+				return EINA_FALSE;
+			}
+			nv = calloc(1, sizeof(Egueb_Dom_Value));
+			*nv = v;
+
+			thiz->generated_values = eina_list_append(thiz->generated_values, nv);
+		}
+		egueb_dom_string_unref(from);
+
+		/* now the actual values */ 
 		egueb_dom_list_foreach(values, _egueb_smil_animate_base_values_cb, thiz);
 		egueb_dom_list_unref(values);
 	}
