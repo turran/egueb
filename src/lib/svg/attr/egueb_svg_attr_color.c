@@ -22,12 +22,13 @@
 
 #include "egueb_dom_attr_private.h"
 #include "egueb_dom_attr_primitive_private.h"
+#include "egueb_svg_value_color_private.h"
 #include "egueb_svg_attr_color_private.h"
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
 EGUEB_DOM_ATTR_PRIMITIVE_BOILERPLATE(Egueb_Svg_Color,
-		Egueb_Svg_Attr_Color, egueb_svg_color,
+		Egueb_Svg_Attr_Color, egueb_svg_value_color,
 		egueb_svg_attr_color)
 /*============================================================================*
  *                                 Global                                     *

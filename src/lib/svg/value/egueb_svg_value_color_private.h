@@ -15,13 +15,9 @@
  * License along with this library.
  * If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef _EGUEB_SVG_COLOR_PRIVATE_H
-#define _EGUEB_SVG_COLOR_PRIVATE_H
+#ifndef _EGUEB_DOM_VALUE_COLOR_PRIVATE_H_
+#define _EGUEB_DOM_VALUE_COLOR_PRIVATE_H_
 
-void egueb_svg_color_interpolate(Egueb_Svg_Color *v,
-		Egueb_Svg_Color *a, Egueb_Svg_Color *b, double m,
-		Egueb_Svg_Color *add, Egueb_Svg_Color *acc, int mul);
-Eina_Bool egueb_svg_color_string_from(Egueb_Svg_Color *thiz, const char *attr_val);
-char * egueb_svg_color_string_to(Egueb_Svg_Color *thiz);
+const Egueb_Dom_Value_Descriptor * egueb_svg_value_color_descriptor_get(void);
 
 #endif

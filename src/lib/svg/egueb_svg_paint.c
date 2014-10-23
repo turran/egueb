@@ -88,7 +88,36 @@ void egueb_svg_paint_interpolate(Egueb_Svg_Paint *v,
 		Egueb_Svg_Paint *a, Egueb_Svg_Paint *b, double m,
 		Egueb_Svg_Paint *add, Egueb_Svg_Paint *acc, int mul)
 {
-	ERR("Not implemented");
+	if (a->type != b->type)
+	{
+		ERR("Not implemented");
+	}
+	else
+	{
+		switch (a->type)
+		{
+			case EGUEB_SVG_PAINT_TYPE_NONE:
+			break;
+
+			case EGUEB_SVG_PAINT_TYPE_CURRENT_COLOR:
+			break;
+
+			case EGUEB_SVG_PAINT_TYPE_COLOR:
+			{
+				egueb_svg_color_interpolate(&v->color, &a->color,
+					&b->color, m,
+					add ? &add->color : NULL,
+					acc ? &acc->color : NULL,
+					mul);
+			}
+			break;
+
+			case EGUEB_SVG_PAINT_TYPE_SERVER:
+			ERR("Not implemented");
+			break;
+		}
+		v->type = a->type;
+	}
 }
 
 Eina_Bool egueb_svg_paint_is_equal(const Egueb_Svg_Paint *p1,

@@ -39,7 +39,6 @@ typedef struct _Egueb_Svg_Color
 
 EAPI extern const Egueb_Svg_Color EGUEB_SVG_COLOR_BLACK;
 
-EAPI const Egueb_Dom_Value_Descriptor * egueb_svg_color_descriptor_get(void);
 EAPI Eina_Bool egueb_svg_color_is_equal(const Egueb_Svg_Color *c1, const Egueb_Svg_Color *c2);
 EAPI void egueb_svg_color_components_from(Egueb_Svg_Color *thiz, uint8_t r, uint8_t g, uint8_t b);
 
