@@ -1,5 +1,6 @@
 Refactor
 ========
++ Add versioning system on every descriptor structure
 + The image element that references a svg is not the same as a use element
   that references a svg. The image must create a self contained document
   thus we must propagate every feature like what eon does
