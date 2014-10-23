@@ -19,6 +19,7 @@
 #include "egueb_dom_value.h"
 #include "egueb_dom_list.h"
 #include "egueb_dom_string.h"
+#include "egueb_dom_utils.h"
 #include "egueb_dom_string_list.h"
 #include "egueb_dom_value_list.h"
 #include "egueb_dom_value_dom_string.h"
