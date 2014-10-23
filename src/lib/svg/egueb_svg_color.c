@@ -31,7 +31,16 @@ void egueb_svg_color_interpolate(Egueb_Svg_Color *v,
 		Egueb_Svg_Color *a, Egueb_Svg_Color *b, double m,
 		Egueb_Svg_Color *add, Egueb_Svg_Color *acc, int mul)
 {
-	ERR("Not implemented");
+	uint32_t aargb;
+	uint32_t bargb;
+	uint32_t rargb;
+
+	aargb = 0xff | (a->r >> 16) | (a->g >> 8) | a->b;
+	bargb = 0xff | (b->r >> 16) | (b->g >> 8) | b->b;
+	egueb_dom_value_interpolate_argb(aargb, bargb, m, &rargb);
+	v->r = (rargb >> 16) & 0xff;
+	v->g = (rargb >> 8) & 0xff;
+	v->b = (rargb & 0xff);
 }
 
 Eina_Bool egueb_svg_color_string_from(Egueb_Svg_Color *thiz, const char *attr_val)
