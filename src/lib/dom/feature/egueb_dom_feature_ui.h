@@ -29,8 +29,10 @@ EAPI extern Egueb_Dom_String *EGUEB_DOM_FEATURE_UI_NAME;
 
 typedef Egueb_Dom_Input * (*Egueb_Dom_Feature_UI_Descriptor_Input_Get)(Egueb_Dom_Node *n);
 
+#define EGUEB_DOM_FEATURE_UI_DESCRIPTOR_VERSION 0
 typedef struct _Egueb_Dom_Feature_UI_Descriptor
 {
+	int version;
 	Egueb_Dom_Feature_UI_Descriptor_Input_Get input_get;
 } Egueb_Dom_Feature_UI_Descriptor;
 

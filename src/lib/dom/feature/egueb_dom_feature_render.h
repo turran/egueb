@@ -27,12 +27,14 @@
 
 EAPI extern Egueb_Dom_String *EGUEB_DOM_FEATURE_RENDER_NAME;
 
-typedef Enesim_Renderer * (*Egueb_Dom_Feature_Render_Renderer_Get)(
+typedef Enesim_Renderer * (*Egueb_Dom_Feature_Render_Descriptor_Renderer_Get)(
 		Egueb_Dom_Node *n);
 
+#define EGUEB_DOM_FEATURE_RENDER_DESCRIPTOR_VERSION 0
 typedef struct _Egueb_Dom_Feature_Render_Descriptor
 {
-	Egueb_Dom_Feature_Render_Renderer_Get renderer_get;
+	int version;
+	Egueb_Dom_Feature_Render_Descriptor_Renderer_Get renderer_get;
 } Egueb_Dom_Feature_Render_Descriptor;
 
 typedef Eina_Bool (*Egueb_Dom_Feature_Render_Damage_Cb)(Egueb_Dom_Feature *f,

@@ -56,8 +56,10 @@ typedef Eina_Bool (*Egueb_Dom_Feature_Window_Descriptor_Content_Size_Set)(
 typedef Eina_Bool (*Egueb_Dom_Feature_Window_Descriptor_Content_Size_Get)(
 		Egueb_Dom_Node *n, int *w, int *h);
 
+#define EGUEB_DOM_FEATURE_WINDOW_DESCRIPTOR_VERSION 0
 typedef struct _Egueb_Dom_Feature_Window_Descriptor
 {
+	int version;
 	Egueb_Dom_Feature_Window_Descriptor_Type_Get type_get;
 	Egueb_Dom_Feature_Window_Descriptor_Content_Size_Set content_size_set;
 	Egueb_Dom_Feature_Window_Descriptor_Content_Size_Get content_size_get;

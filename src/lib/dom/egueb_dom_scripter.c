@@ -44,9 +44,9 @@ EAPI Egueb_Dom_Scripter * egueb_dom_scripter_new(const Egueb_Dom_Scripter_Descri
 	void *prv;
 
 	if (!d) return NULL;
-	if (!d->new) return NULL;
+	if (!d->create) return NULL;
 
-	prv = d->new();
+	prv = d->create();
 	if (!prv) return NULL;
 
 	thiz = calloc(1, sizeof(Egueb_Dom_Scripter));
@@ -64,8 +64,8 @@ EAPI void * egueb_dom_scripter_data_get(Egueb_Dom_Scripter *thiz)
 EAPI void egueb_dom_scripter_free(Egueb_Dom_Scripter *thiz)
 {
 	if (!thiz) return;
-	if (thiz->d->free)
-		thiz->d->free(thiz->prv);
+	if (thiz->d->destroy)
+		thiz->d->destroy(thiz->prv);
 	free(thiz);
 }
 
@@ -112,6 +112,6 @@ EAPI Eina_Bool egueb_dom_scripter_script_run_listener(Egueb_Dom_Scripter *thiz, 
 EAPI void egueb_dom_scripter_script_free(Egueb_Dom_Scripter *thiz, void *obj)
 {
 	if (!thiz) return;
-	if (thiz->d->script_free) return;
-	thiz->d->script_free(thiz->prv, obj);
+	if (thiz->d->script_destroy) return;
+	thiz->d->script_destroy(thiz->prv, obj);
 }

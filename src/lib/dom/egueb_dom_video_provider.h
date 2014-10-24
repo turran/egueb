@@ -41,8 +41,10 @@ typedef void (*Egueb_Dom_Video_Provider_Descriptor_Pause)(void *data);
  * @{
  */
 
+#define EGUEB_DOM_VIDEO_PROVIDER_DESCRIPTOR_VERSION 0
 typedef struct _Egueb_Dom_Video_Provider_Descriptor
 {
+	int version;
 	Egueb_Dom_Video_Provider_Descriptor_Create create;
 	Egueb_Dom_Video_Provider_Descriptor_Destroy destroy;
 	Egueb_Dom_Video_Provider_Descriptor_Open open;
@@ -58,8 +60,10 @@ typedef struct _Egueb_Dom_Video_Provider_Descriptor
  * @{
  */
 
+#define EGUEB_DOM_VIDEO_PROVIDER_NOTIFIER_VERSION 0
 typedef struct _Egueb_Dom_Video_Provider_Notifier
 {
+	int version;
 } Egueb_Dom_Video_Provider_Notifier;
 
 

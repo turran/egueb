@@ -20,8 +20,10 @@
 
 typedef Egueb_Dom_Node * (*Egueb_Dom_Implementation_Descriptor_Document_Create)(void);
 
+#define EGUEB_DOM_IMPLEMENTATION_DESCRIPTOR_VERSION 0
 typedef struct _Egueb_Dom_Implementation_Descriptor
 {
+	int version;
 	Egueb_Dom_Implementation_Descriptor_Document_Create document_create;
 } Egueb_Dom_Implementation_Descriptor;
 

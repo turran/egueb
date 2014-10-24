@@ -34,6 +34,7 @@ static Egueb_Dom_Node * _impl_document_create(void)
 }
 
 static Egueb_Dom_Implementation_Descriptor _impl_descriptor = {
+	/* .version 		= */ EGUEB_DOM_IMPLEMENTATION_DESCRIPTOR_VERSION,
 	/* .document_create 	= */ _impl_document_create,
 };
 /*----------------------------------------------------------------------------*
@@ -50,6 +51,7 @@ static Egueb_Dom_String * _impl_source_mime_get(void)
 }
 
 static Egueb_Dom_Implementation_Source_Descriptor _impl_source_descriptor = {
+	/* .version 		= */ EGUEB_DOM_IMPLEMENTATION_SOURCE_DESCRIPTOR_VERSION,
 	/* .implementation_get	= */ _impl_source_implementation_get,
 	/* .mime_get 	 	= */ _impl_source_mime_get,
 };

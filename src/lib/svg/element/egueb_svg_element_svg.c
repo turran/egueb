@@ -187,6 +187,7 @@ static void _egueb_svg_element_svg_animation_on_tick(Egueb_Dom_Node *n)
 
 static Egueb_Smil_Feature_Animation_Descriptor 
 _egueb_svg_element_svg_animation_descriptor = {
+	/* .version = */ EGUEB_SMIL_FEATURE_ANIMATION_DESCRIPTOR_VERSION,
 	/* .on_tick = */ _egueb_svg_element_svg_animation_on_tick,
 };
 
@@ -203,6 +204,7 @@ static Egueb_Dom_Input * _egueb_svg_element_svg_ui_input_get(Egueb_Dom_Node *n)
 
 static Egueb_Dom_Feature_UI_Descriptor 
 _egueb_svg_element_svg_ui_descriptor = {
+	/* .version 	= */ EGUEB_DOM_FEATURE_UI_DESCRIPTOR_VERSION,
 	/* .input_get 	= */ _egueb_svg_element_svg_ui_input_get,
 };
 /*----------------------------------------------------------------------------*
@@ -272,6 +274,7 @@ static Eina_Bool _egueb_svg_element_svg_window_content_size_get(
 
 static Egueb_Dom_Feature_Window_Descriptor 
 _egueb_svg_element_svg_window_descriptor = {
+	/* .version 		= */ EGUEB_DOM_FEATURE_WINDOW_DESCRIPTOR_VERSION,
 	/* .type_get 		= */ _egueb_svg_element_svg_window_type_get,
 	/* .content_size_set 	= */ _egueb_svg_element_svg_window_content_size_set,
 	/* .content_size_get 	= */ _egueb_svg_element_svg_window_content_size_get,
@@ -291,6 +294,7 @@ static Enesim_Renderer * _egueb_svg_element_svg_render_renderer_get(
 
 static Egueb_Dom_Feature_Render_Descriptor
 _egueb_svg_element_svg_render_descriptor = {
+	/* .version 		= */ EGUEB_DOM_FEATURE_RENDER_DESCRIPTOR_VERSION,
 	/* .renderer_get 	= */ _egueb_svg_element_svg_render_renderer_get,
 };
 /*----------------------------------------------------------------------------*

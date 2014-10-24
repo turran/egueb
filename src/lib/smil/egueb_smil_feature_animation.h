@@ -22,8 +22,10 @@ EAPI extern Egueb_Dom_String *EGUEB_SMIL_FEATURE_ANIMATION_NAME;
 
 typedef void (*Egueb_Smil_Feature_Animation_On_Tick)(Egueb_Dom_Node *n);
 
+#define EGUEB_SMIL_FEATURE_ANIMATION_DESCRIPTOR_VERSION 0
 typedef struct _Egueb_Smil_Feature_Animation_Descriptor
 {
+	int version;
 	Egueb_Smil_Feature_Animation_On_Tick on_tick; 
 } Egueb_Smil_Feature_Animation_Descriptor;
 

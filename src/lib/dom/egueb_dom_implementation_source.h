@@ -23,8 +23,10 @@ typedef struct _Egueb_Dom_Implementation_Source Egueb_Dom_Implementation_Source;
 typedef Egueb_Dom_Implementation * (*Egueb_Dom_Implementation_Source_Descriptor_Implementation_Get)(void);
 typedef Egueb_Dom_String * (*Egueb_Dom_Implementation_Source_Descriptor_Mime_Get)(void);
 
+#define EGUEB_DOM_IMPLEMENTATION_SOURCE_DESCRIPTOR_VERSION 0
 typedef struct _Egueb_Dom_Implementation_Source_Descriptor
 {
+	int version;
 	Egueb_Dom_Implementation_Source_Descriptor_Implementation_Get implementation_get;
 	Egueb_Dom_Implementation_Source_Descriptor_Mime_Get mime_get;
 } Egueb_Dom_Implementation_Source_Descriptor;

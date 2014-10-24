@@ -29,8 +29,10 @@ typedef Eina_Bool (*Egueb_Dom_Element_External_Descriptor_Process)(
 typedef Eina_Bool (*Egueb_Dom_Element_External_Descriptor_Child_Appendable)(
 		Egueb_Dom_Node *node, void *data, Egueb_Dom_Node *child);
 
+#define EGUEB_DOM_ELEMENT_EXTERNAL_DESCRIPTOR_VERSION 0
 typedef struct _Egueb_Dom_Element_External_Descriptor
 {
+	int version;
 	Egueb_Dom_Element_External_Descriptor_Init init;
 	Egueb_Dom_Element_External_Descriptor_Deinit deinit;
 	Egueb_Dom_Element_External_Descriptor_Tag_Name_Get tag_name_get;

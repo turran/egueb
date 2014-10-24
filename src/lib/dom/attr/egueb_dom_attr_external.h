@@ -33,8 +33,10 @@ typedef const Egueb_Dom_Value_Descriptor *
 		(*Egueb_Dom_Attr_External_Descriptor_Value_Descriptor_Get)
 		(Egueb_Dom_Node *n, void *data);
 
+#define EGUEB_DOM_ATTR_EXTERNAL_DESCRIPTOR_VERSION 0
 typedef struct _Egueb_Dom_Attr_External_Descriptor
 {
+	int version;
 	Egueb_Dom_Attr_External_Descriptor_Init init;
 	Egueb_Dom_Attr_External_Descriptor_Deinit deinit;
 	Egueb_Dom_Attr_External_Descriptor_Value_Descriptor_Get value_descriptor_get;
