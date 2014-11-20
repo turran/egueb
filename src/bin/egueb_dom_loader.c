@@ -41,6 +41,7 @@ static void help(void)
 int main(int argc, char *argv[])
 {
 	Egueb_Dom_Node *doc = NULL;
+	Egueb_Dom_Node *topmost = NULL;
 	Egueb_Dom_Feature *render = NULL;
 	Egueb_Dom_Feature *window = NULL;
 	Egueb_Dom_Feature *io = NULL;
@@ -85,20 +86,26 @@ int main(int argc, char *argv[])
 		printf("Fail to parse file %s\n", argv[1]);
 		goto shutdown;
 	}
+	topmost = egueb_dom_document_document_element_get(doc);
+	if (!topmost)
+	{
+		printf("No topmost node\n");
+		goto shutdown;
+	}
 
-	render = egueb_dom_node_feature_get(doc, EGUEB_DOM_FEATURE_RENDER_NAME, NULL);
+	render = egueb_dom_node_feature_get(topmost, EGUEB_DOM_FEATURE_RENDER_NAME, NULL);
 	if (!render)
 	{
 		printf("Fail to get the render feature\n");
 		goto shutdown;
 	}
-	io = egueb_dom_node_feature_get(doc, EGUEB_DOM_FEATURE_IO_NAME, NULL);
+	io = egueb_dom_node_feature_get(topmost, EGUEB_DOM_FEATURE_IO_NAME, NULL);
 	if (io)
 	{
 		egueb_dom_feature_io_default_enable(io, EINA_TRUE);
 	}
 
-	window = egueb_dom_node_feature_get(doc, EGUEB_DOM_FEATURE_WINDOW_NAME, NULL);
+	window = egueb_dom_node_feature_get(topmost, EGUEB_DOM_FEATURE_WINDOW_NAME, NULL);
 	if (window)
 	{
 		egueb_dom_feature_window_type_get(window, &type);
@@ -140,6 +147,8 @@ shutdown:
 		egueb_dom_feature_unref(window);
 	if (io)
 		egueb_dom_feature_unref(io);
+	if (topmost)
+		egueb_dom_node_unref(topmost);
 	if (doc)
 		egueb_dom_node_unref(doc);
 	egueb_dom_shutdown();
