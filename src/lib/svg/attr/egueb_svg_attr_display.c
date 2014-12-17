@@ -18,17 +18,17 @@
 
 #include "egueb_svg_main_private.h"
 
-#include "egueb_dom_attr.h"
 #include "egueb_svg_display.h"
 
 #include "egueb_dom_attr_private.h"
 #include "egueb_dom_attr_basic_private.h"
+#include "egueb_svg_value_display_private.h"
 #include "egueb_svg_attr_display_private.h"
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
 EGUEB_DOM_ATTR_BASIC_BOILERPLATE(Egueb_Svg_Display,
-		Egueb_Svg_Attr_Display, egueb_svg_display,
+		Egueb_Svg_Attr_Display, egueb_svg_value_display,
 		egueb_svg_attr_display)
 /*============================================================================*
  *                                 Global                                     *
@@ -47,4 +47,3 @@ Egueb_Dom_Node * egueb_svg_attr_display_new(Egueb_Dom_String *name,
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/
-

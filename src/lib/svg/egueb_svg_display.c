@@ -18,24 +18,14 @@
 
 #include "egueb_svg_main_private.h"
 #include "egueb_svg_display.h"
-
-#include "egueb_dom_value_private.h"
+#include "egueb_svg_display_private.h"
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
-/*----------------------------------------------------------------------------*
- *                             Value interface                                *
- *----------------------------------------------------------------------------*/
-EGUEB_DOM_VALUE_ENUM_BOILERPLATE(egueb_svg_display, Egueb_Svg_Display);
 /*============================================================================*
- *                                   API                                      *
+ *                                 Global                                     *
  *============================================================================*/
-EAPI const Egueb_Dom_Value_Descriptor * egueb_svg_display_descriptor_get(void)
-{
-	return &_egueb_svg_display_descriptor;
-}
-
-EAPI Eina_Bool egueb_svg_display_string_from(Egueb_Svg_Display *d, const char *attr)
+Eina_Bool egueb_svg_display_string_from(Egueb_Svg_Display *d, const char *attr)
 {
 	if (!strcmp(attr, "inline"))
 		*d = EGUEB_SVG_DISPLAY_INLINE;
@@ -76,7 +66,7 @@ EAPI Eina_Bool egueb_svg_display_string_from(Egueb_Svg_Display *d, const char *a
 	return EINA_TRUE;
 }
 
-EAPI char * egueb_svg_display_string_to(Egueb_Svg_Display thiz)
+char * egueb_svg_display_string_to(Egueb_Svg_Display thiz)
 {
 	switch (thiz)
 	{
@@ -118,3 +108,6 @@ EAPI char * egueb_svg_display_string_to(Egueb_Svg_Display thiz)
 		return NULL;
 	}
 }
+/*============================================================================*
+ *                                   API                                      *
+ *============================================================================*/

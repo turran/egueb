@@ -15,19 +15,10 @@
  * License along with this library.
  * If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef _EGUEB_SVG_FILL_RULE_H
-#define _EGUEB_SVG_FILL_RULE_H
 
-typedef enum _Egueb_Svg_Fill_Rule
-{
-	EGUEB_SVG_FILL_RULE_NON_ZERO,
-	EGUEB_SVG_FILL_RULE_EVEN_ODD
-} Egueb_Svg_Fill_Rule;
+#ifndef _EGUEB_SVG_VALUE_DISPLAY_PRIVATE_H_
+#define _EGUEB_SVG_VALUE_DISPLAY_PRIVATE_H_
 
-typedef struct _Egueb_Svg_Fill_Rule_Animated
-{
-	Egueb_Svg_Fill_Rule base;
-	Egueb_Svg_Fill_Rule anim;
-} Egueb_Svg_Fill_Rule_Animated;
+const Egueb_Dom_Value_Descriptor * egueb_svg_value_display_descriptor_get(void);
 
 #endif
