@@ -25,9 +25,4 @@ typedef enum _Egueb_Svg_Text_Anchor
 	EGUEB_SVG_TEXT_ANCHOR_END,
 } Egueb_Svg_Text_Anchor;
 
-EAPI const Egueb_Dom_Value_Descriptor * egueb_svg_text_anchor_descriptor_get(void);
-EAPI Eina_Bool egueb_svg_text_anchor_string_from(Egueb_Svg_Text_Anchor *thiz, const char *value);
-EAPI char * egueb_svg_text_anchor_string_to(Egueb_Svg_Text_Anchor thiz);
-
 #endif
-

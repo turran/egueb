@@ -20,6 +20,8 @@
 #include "egueb_svg_point_list.h"
 #include "egueb_dom_value_list.h"
 #include "egueb_dom_value_private.h"
+#include "egueb_svg_point_private.h"
+#include "egueb_svg_value_point_private.h"
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
@@ -78,7 +80,7 @@ static Eina_Bool _egueb_svg_point_list_string_from(Egueb_Dom_Value *v, const cha
 	EINA_SAFETY_ON_FALSE_RETURN_VAL(v->descriptor == &_descriptor, EINA_FALSE);
 	if (!v->data.ptr)
 	{
-		v->data.ptr = egueb_dom_list_new(egueb_svg_point_descriptor_get());
+		v->data.ptr = egueb_dom_list_new(egueb_svg_value_point_descriptor_get());
 		v->owned = EINA_TRUE;
 	}
 	return egueb_svg_point_list_string_from(v->data.ptr, str);

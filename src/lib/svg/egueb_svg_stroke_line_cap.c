@@ -18,26 +18,14 @@
 #include "egueb_svg_main_private.h"
 #include "egueb_svg_stroke_line_cap.h"
 
-#include "egueb_dom_value_private.h"
+#include "egueb_svg_stroke_line_cap_private.h"
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
-/*----------------------------------------------------------------------------*
- *                             Value interface                                *
- *----------------------------------------------------------------------------*/
-EGUEB_DOM_VALUE_ENUM_BOILERPLATE(egueb_svg_stroke_line_cap, Egueb_Svg_Stroke_Line_Cap);
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
-/*============================================================================*
- *                                   API                                      *
- *============================================================================*/
-EAPI const Egueb_Dom_Value_Descriptor * egueb_svg_stroke_line_cap_descriptor_get(void)
-{
-	return &_egueb_svg_stroke_line_cap_descriptor;
-}
-
-EAPI Eina_Bool egueb_svg_stroke_line_cap_string_from(Egueb_Svg_Stroke_Line_Cap *thiz, const char *value)
+Eina_Bool egueb_svg_stroke_line_cap_string_from(Egueb_Svg_Stroke_Line_Cap *thiz, const char *value)
 {
 	if (!strcmp(value, "butt"))
 		*thiz = EGUEB_SVG_STROKE_LINE_CAP_BUTT;
@@ -50,7 +38,7 @@ EAPI Eina_Bool egueb_svg_stroke_line_cap_string_from(Egueb_Svg_Stroke_Line_Cap *
 	return EINA_TRUE;
 }
 
-EAPI char * egueb_svg_stroke_line_cap_string_to(Egueb_Svg_Stroke_Line_Cap thiz)
+char * egueb_svg_stroke_line_cap_string_to(Egueb_Svg_Stroke_Line_Cap thiz)
 {
 	switch (thiz)
 	{
@@ -67,3 +55,6 @@ EAPI char * egueb_svg_stroke_line_cap_string_to(Egueb_Svg_Stroke_Line_Cap thiz)
 		return NULL;
 	}
 }
+/*============================================================================*
+ *                                   API                                      *
+ *============================================================================*/

@@ -18,26 +18,14 @@
 #include "egueb_svg_main_private.h"
 #include "egueb_svg_spread_method.h"
 
-#include "egueb_dom_value_private.h"
+#include "egueb_svg_spread_method_private.h"
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
-/*----------------------------------------------------------------------------*
- *                             Value interface                                *
- *----------------------------------------------------------------------------*/
-EGUEB_DOM_VALUE_ENUM_BOILERPLATE(egueb_svg_spread_method, Egueb_Svg_Spread_Method);
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
-/*============================================================================*
- *                                   API                                      *
- *============================================================================*/
-EAPI const Egueb_Dom_Value_Descriptor * egueb_svg_spread_method_descriptor_get(void)
-{
-	return &_egueb_svg_spread_method_descriptor;
-}
-
-EAPI Eina_Bool egueb_svg_spread_method_string_from(Egueb_Svg_Spread_Method *v,
+Eina_Bool egueb_svg_spread_method_string_from(Egueb_Svg_Spread_Method *v,
 		const char *attr)
 {
 	if (strncmp(attr, "pad", 3) == 0)
@@ -51,7 +39,7 @@ EAPI Eina_Bool egueb_svg_spread_method_string_from(Egueb_Svg_Spread_Method *v,
 	return EINA_TRUE;
 }
 
-EAPI char * egueb_svg_spread_method_string_to(Egueb_Svg_Spread_Method v)
+char * egueb_svg_spread_method_string_to(Egueb_Svg_Spread_Method v)
 {
 	switch (v)
 	{
@@ -68,4 +56,6 @@ EAPI char * egueb_svg_spread_method_string_to(Egueb_Svg_Spread_Method v)
 		return NULL;
 	}
 }
-
+/*============================================================================*
+ *                                   API                                      *
+ *============================================================================*/

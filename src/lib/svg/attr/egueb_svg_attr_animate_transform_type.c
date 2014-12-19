@@ -19,15 +19,17 @@
 #include "egueb_svg_main_private.h"
 #include "egueb_svg_animate_transform_type.h"
 
-#include "egueb_svg_animate_transform_type_private.h"
-#include "egueb_svg_attr_animate_transform_type_private.h"
 #include "egueb_dom_attr_private.h"
 #include "egueb_dom_attr_basic_private.h"
+#include "egueb_svg_animate_transform_type_private.h"
+#include "egueb_svg_value_animate_transform_type_private.h"
+#include "egueb_svg_attr_animate_transform_type_private.h"
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
 EGUEB_DOM_ATTR_BASIC_BOILERPLATE(Egueb_Svg_Animate_Transform_Type,
-		Egueb_Svg_Attr_Animate_Transform_Type, egueb_svg_animate_transform_type,
+		Egueb_Svg_Attr_Animate_Transform_Type,
+		egueb_svg_value_animate_transform_type,
 		egueb_svg_attr_animate_transform_type)
 /*============================================================================*
  *                                 Global                                     *

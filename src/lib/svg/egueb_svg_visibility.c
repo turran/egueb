@@ -17,27 +17,13 @@
  */
 #include "egueb_svg_main_private.h"
 #include "egueb_svg_visibility.h"
-
-#include "egueb_dom_value_private.h"
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
-/*----------------------------------------------------------------------------*
- *                             Value interface                                *
- *----------------------------------------------------------------------------*/
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
-EGUEB_DOM_VALUE_ENUM_BOILERPLATE(egueb_svg_visibility, Egueb_Svg_Visibility);
-/*============================================================================*
- *                                   API                                      *
- *============================================================================*/
-EAPI const Egueb_Dom_Value_Descriptor * egueb_svg_visibility_descriptor_get(void)
-{
-	return &_egueb_svg_visibility_descriptor;
-}
-
-EAPI Eina_Bool egueb_svg_visibility_string_from(Egueb_Svg_Visibility *v,
+Eina_Bool egueb_svg_visibility_string_from(Egueb_Svg_Visibility *v,
 		const char *attr)
 {
 	if (!strcmp(attr, "visible"))
@@ -51,7 +37,7 @@ EAPI Eina_Bool egueb_svg_visibility_string_from(Egueb_Svg_Visibility *v,
 	return EINA_TRUE;
 }
 
-EAPI char * egueb_svg_visibility_string_to(Egueb_Svg_Visibility v)
+char * egueb_svg_visibility_string_to(Egueb_Svg_Visibility v)
 {
 	switch (v)
 	{
@@ -68,3 +54,7 @@ EAPI char * egueb_svg_visibility_string_to(Egueb_Svg_Visibility v)
 		return NULL;
 	}
 }
+/*============================================================================*
+ *                                   API                                      *
+ *============================================================================*/
+

@@ -1,5 +1,6 @@
 Refactor
 ========
++ Change the dasharray attribute to support NONE as part of the type
 + Add versioning system on every descriptor structure
 + The image element that references a svg is not the same as a use element
   that references a svg. The image must create a self contained document

@@ -18,26 +18,14 @@
 #include "egueb_svg_main_private.h"
 #include "egueb_svg_text_anchor.h"
 
-#include "egueb_dom_value_private.h"
+#include "egueb_svg_text_anchor_private.h"
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
-/*----------------------------------------------------------------------------*
- *                             Value interface                                *
- *----------------------------------------------------------------------------*/
-EGUEB_DOM_VALUE_ENUM_BOILERPLATE(egueb_svg_text_anchor, Egueb_Svg_Text_Anchor);
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
-/*============================================================================*
- *                                   API                                      *
- *============================================================================*/
-EAPI const Egueb_Dom_Value_Descriptor * egueb_svg_text_anchor_descriptor_get(void)
-{
-	return &_egueb_svg_text_anchor_descriptor;
-}
-
-EAPI Eina_Bool egueb_svg_text_anchor_string_from(Egueb_Svg_Text_Anchor *thiz, const char *value)
+Eina_Bool egueb_svg_text_anchor_string_from(Egueb_Svg_Text_Anchor *thiz, const char *value)
 {
 	if (!strcmp(value, "start"))
 		*thiz = EGUEB_SVG_TEXT_ANCHOR_START;
@@ -50,7 +38,7 @@ EAPI Eina_Bool egueb_svg_text_anchor_string_from(Egueb_Svg_Text_Anchor *thiz, co
 	return EINA_TRUE;
 }
 
-EAPI char * egueb_svg_text_anchor_string_to(Egueb_Svg_Text_Anchor thiz)
+char * egueb_svg_text_anchor_string_to(Egueb_Svg_Text_Anchor thiz)
 {
 	switch (thiz)
 	{
@@ -68,3 +56,6 @@ EAPI char * egueb_svg_text_anchor_string_to(Egueb_Svg_Text_Anchor thiz)
 	}
 }
 
+/*============================================================================*
+ *                                   API                                      *
+ *============================================================================*/

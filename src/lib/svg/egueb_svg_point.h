@@ -35,9 +35,6 @@ typedef struct _Egueb_Svg_Point
 	double y;
 } Egueb_Svg_Point;
 
-EAPI Eina_Bool egueb_svg_point_string_from(Egueb_Svg_Point *thiz, const char *attr);
-EAPI const Egueb_Dom_Value_Descriptor * egueb_svg_point_descriptor_get(void);
-
 /** @} */
 
 #endif

@@ -36,10 +36,6 @@ typedef struct _Egueb_Svg_Matrix_Animated
 
 EAPI extern const Egueb_Svg_Matrix EGUEB_SVG_MATRIX_IDENTITY;
 
-EAPI const Egueb_Dom_Value_Descriptor * egueb_svg_matrix_descriptor_get(void);
-EAPI Eina_Bool egueb_svg_matrix_string_from(Egueb_Svg_Matrix *matrix, const char *attr);
-EAPI char * egueb_svg_matrix_string_to(Egueb_Svg_Matrix *thiz);
-
 /**
  * @}
  */

@@ -25,9 +25,4 @@ typedef enum _Egueb_Svg_Stroke_Line_Join
 	EGUEB_SVG_STROKE_LINE_JOIN_BEVEL,
 } Egueb_Svg_Stroke_Line_Join;
 
-EAPI const Egueb_Dom_Value_Descriptor * egueb_svg_stroke_line_join_descriptor_get(void);
-EAPI Eina_Bool egueb_svg_stroke_line_join_string_from(Egueb_Svg_Stroke_Line_Join *thiz, const char *value);
-EAPI char * egueb_svg_stroke_line_join_string_to(Egueb_Svg_Stroke_Line_Join v);
-
 #endif
-

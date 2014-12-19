@@ -23,12 +23,13 @@
 
 #include "egueb_dom_attr_private.h"
 #include "egueb_dom_attr_basic_private.h"
+#include "egueb_svg_value_text_anchor_private.h"
 #include "egueb_svg_attr_text_anchor_private.h"
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
 EGUEB_DOM_ATTR_BASIC_BOILERPLATE(Egueb_Svg_Text_Anchor,
-		Egueb_Svg_Attr_Text_Anchor, egueb_svg_text_anchor,
+		Egueb_Svg_Attr_Text_Anchor, egueb_svg_value_text_anchor,
 		egueb_svg_attr_text_anchor)
 /*============================================================================*
  *                                 Global                                     *

@@ -18,11 +18,14 @@
 #include "egueb_svg_main_private.h"
 #include "egueb_svg_animate_transform_type.h"
 
-#include "egueb_dom_value_private.h"
+#include "egueb_svg_animate_transform_type_private.h"
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
-static Eina_Bool egueb_svg_animate_transform_type_string_from(
+/*============================================================================*
+ *                                 Global                                     *
+ *============================================================================*/
+Eina_Bool egueb_svg_animate_transform_type_string_from(
 		Egueb_Svg_Animate_Transform_Type *thiz, const char *value)
 {
 	Eina_Bool ret = EINA_TRUE;
@@ -43,7 +46,7 @@ static Eina_Bool egueb_svg_animate_transform_type_string_from(
 	return ret;
 }
 
-static char * egueb_svg_animate_transform_type_string_to(Egueb_Svg_Animate_Transform_Type thiz)
+char * egueb_svg_animate_transform_type_string_to(Egueb_Svg_Animate_Transform_Type thiz)
 {
 	switch (thiz)
 	{
@@ -66,19 +69,6 @@ static char * egueb_svg_animate_transform_type_string_to(Egueb_Svg_Animate_Trans
 		return NULL;
 	}
 }
-/*----------------------------------------------------------------------------*
- *                             Value interface                                *
- *----------------------------------------------------------------------------*/
-EGUEB_DOM_VALUE_ENUM_BOILERPLATE(egueb_svg_animate_transform_type, Egueb_Svg_Animate_Transform_Type);
-/*============================================================================*
- *                                 Global                                     *
- *============================================================================*/
-const Egueb_Dom_Value_Descriptor * egueb_svg_animate_transform_type_descriptor_get(void)
-{
-	return &_egueb_svg_animate_transform_type_descriptor;
-}
-
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/
-

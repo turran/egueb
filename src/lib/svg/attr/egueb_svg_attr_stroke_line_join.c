@@ -22,12 +22,13 @@
 
 #include "egueb_dom_attr_private.h"
 #include "egueb_dom_attr_basic_private.h"
+#include "egueb_svg_value_stroke_line_join_private.h"
 #include "egueb_svg_attr_stroke_line_join_private.h"
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
 EGUEB_DOM_ATTR_BASIC_BOILERPLATE(Egueb_Svg_Stroke_Line_Join,
-		Egueb_Svg_Attr_Stroke_Line_Join, egueb_svg_stroke_line_join,
+		Egueb_Svg_Attr_Stroke_Line_Join, egueb_svg_value_stroke_line_join,
 		egueb_svg_attr_stroke_line_join)
 /*============================================================================*
  *                                 Global                                     *

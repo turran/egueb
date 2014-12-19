@@ -23,12 +23,13 @@
 
 #include "egueb_dom_attr_private.h"
 #include "egueb_dom_attr_basic_private.h"
+#include "egueb_svg_value_overflow_private.h"
 #include "egueb_svg_attr_overflow_private.h"
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
 EGUEB_DOM_ATTR_BASIC_BOILERPLATE(Egueb_Svg_Overflow,
-		Egueb_Svg_Attr_Overflow, egueb_svg_overflow,
+		Egueb_Svg_Attr_Overflow, egueb_svg_value_overflow,
 		egueb_svg_attr_overflow)
 /*============================================================================*
  *                                 Global                                     *

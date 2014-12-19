@@ -25,8 +25,4 @@ typedef enum _Egueb_Svg_Stroke_Line_Cap
 	EGUEB_SVG_STROKE_LINE_CAP_SQUARE,
 } Egueb_Svg_Stroke_Line_Cap;
 
-EAPI const Egueb_Dom_Value_Descriptor * egueb_svg_stroke_line_cap_descriptor_get(void);
-EAPI Eina_Bool egueb_svg_stroke_line_cap_string_from(Egueb_Svg_Stroke_Line_Cap *thiz, const char *value);
-EAPI char * egueb_svg_stroke_line_cap_string_to(Egueb_Svg_Stroke_Line_Cap thiz);
-
 #endif

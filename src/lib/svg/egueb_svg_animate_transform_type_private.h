@@ -18,7 +18,8 @@
 #ifndef _EGUEB_SVG_ANIMATE_TRANSFORM_TYPE_PRIVATE_H
 #define _EGUEB_SVG_ANIMATE_TRANSFORM_TYPE_PRIVATE_H
 
-const Egueb_Dom_Value_Descriptor * egueb_svg_animate_transform_type_descriptor_get(void);
+Eina_Bool egueb_svg_animate_transform_type_string_from(
+		Egueb_Svg_Animate_Transform_Type *thiz, const char *value);
+char * egueb_svg_animate_transform_type_string_to(Egueb_Svg_Animate_Transform_Type thiz);
 
 #endif
-

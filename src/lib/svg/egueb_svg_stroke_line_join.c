@@ -18,26 +18,14 @@
 #include "egueb_svg_main_private.h"
 #include "egueb_svg_stroke_line_join.h"
 
-#include "egueb_dom_value_private.h"
+#include "egueb_svg_stroke_line_join_private.h"
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
-/*----------------------------------------------------------------------------*
- *                             Value interface                                *
- *----------------------------------------------------------------------------*/
-EGUEB_DOM_VALUE_ENUM_BOILERPLATE(egueb_svg_stroke_line_join, Egueb_Svg_Stroke_Line_Join);
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
-/*============================================================================*
- *                                   API                                      *
- *============================================================================*/
-EAPI const Egueb_Dom_Value_Descriptor * egueb_svg_stroke_line_join_descriptor_get(void)
-{
-	return &_egueb_svg_stroke_line_join_descriptor;
-}
-
-EAPI Eina_Bool egueb_svg_stroke_line_join_string_from(
+Eina_Bool egueb_svg_stroke_line_join_string_from(
 		Egueb_Svg_Stroke_Line_Join *thiz, const char *value)
 {
 	if (!strcmp(value, "miter"))
@@ -51,7 +39,7 @@ EAPI Eina_Bool egueb_svg_stroke_line_join_string_from(
 	return EINA_TRUE;
 }
 
-EAPI char * egueb_svg_stroke_line_join_string_to(Egueb_Svg_Stroke_Line_Join v)
+char * egueb_svg_stroke_line_join_string_to(Egueb_Svg_Stroke_Line_Join v)
 {
 	switch (v)
 	{
@@ -68,4 +56,6 @@ EAPI char * egueb_svg_stroke_line_join_string_to(Egueb_Svg_Stroke_Line_Join v)
 		return NULL;
 	}
 }
-
+/*============================================================================*
+ *                                   API                                      *
+ *============================================================================*/

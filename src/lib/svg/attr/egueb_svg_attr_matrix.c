@@ -23,12 +23,13 @@
 
 #include "egueb_dom_attr_private.h"
 #include "egueb_dom_attr_primitive_private.h"
+#include "egueb_svg_value_matrix_private.h"
 #include "egueb_svg_attr_matrix_private.h"
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
 EGUEB_DOM_ATTR_PRIMITIVE_BOILERPLATE(Egueb_Svg_Matrix,
-		Egueb_Svg_Attr_Matrix, egueb_svg_matrix,
+		Egueb_Svg_Attr_Matrix, egueb_svg_value_matrix,
 		egueb_svg_attr_matrix)
 /*============================================================================*
  *                                 Global                                     *

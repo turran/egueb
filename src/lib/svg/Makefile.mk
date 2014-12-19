@@ -64,8 +64,11 @@ src/lib/svg/egueb_svg_length_private.h \
 src/lib/svg/egueb_svg_main.c \
 src/lib/svg/egueb_svg_main_private.h \
 src/lib/svg/egueb_svg_matrix.c \
+src/lib/svg/egueb_svg_matrix_private.h \
 src/lib/svg/egueb_svg_number.c \
+src/lib/svg/egueb_svg_number_private.h \
 src/lib/svg/egueb_svg_overflow.c \
+src/lib/svg/egueb_svg_overflow_private.h \
 src/lib/svg/egueb_svg_paint.c \
 src/lib/svg/egueb_svg_paint_private.h \
 src/lib/svg/egueb_svg_paint_server.c \
@@ -102,12 +105,15 @@ src/lib/svg/egueb_svg_spread_method.c \
 src/lib/svg/egueb_svg_string.c \
 src/lib/svg/egueb_svg_string_private.h \
 src/lib/svg/egueb_svg_stroke_line_cap.c \
+src/lib/svg/egueb_svg_stroke_line_cap_private.h \
 src/lib/svg/egueb_svg_stroke_line_join.c \
+src/lib/svg/egueb_svg_stroke_line_join_private.h \
 src/lib/svg/egueb_svg_stroke_dasharray.c \
 src/lib/svg/egueb_svg_text_anchor.c \
 src/lib/svg/egueb_svg_text_content.c \
 src/lib/svg/egueb_svg_text_content_private.h \
 src/lib/svg/egueb_svg_visibility.c \
+src/lib/svg/egueb_svg_visibility_private.h \
 src/lib/svg/egueb_svg_zoom_and_pan.c \
 src/lib/svg/egueb_svg_zoom_and_pan_private.h
 

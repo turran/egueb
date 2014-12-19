@@ -19,7 +19,6 @@
 #include "egueb_svg_main_private.h"
 #include "egueb_svg_color.h"
 
-#include "egueb_dom_value_private.h"
 #include "egueb_svg_color_private.h"
 /*============================================================================*
  *                                  Local                                     *

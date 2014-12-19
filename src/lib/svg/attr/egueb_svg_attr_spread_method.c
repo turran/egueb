@@ -23,12 +23,13 @@
 
 #include "egueb_dom_attr_private.h"
 #include "egueb_dom_attr_basic_private.h"
+#include "egueb_svg_value_spread_method_private.h"
 #include "egueb_svg_attr_spread_method_private.h"
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
 EGUEB_DOM_ATTR_BASIC_BOILERPLATE(Egueb_Svg_Spread_Method,
-		Egueb_Svg_Attr_Spread_Method, egueb_svg_spread_method,
+		Egueb_Svg_Attr_Spread_Method, egueb_svg_value_spread_method,
 		egueb_svg_attr_spread_method)
 /*============================================================================*
  *                                 Global                                     *

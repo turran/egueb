@@ -19,112 +19,22 @@
 #include "egueb_svg_main_private.h"
 #include "egueb_svg_point.h"
 
-#include "egueb_dom_value_private.h"
+#include "egueb_svg_point_private.h"
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
-/*----------------------------------------------------------------------------*
- *                             Value interface                                *
- *----------------------------------------------------------------------------*/
-static Egueb_Dom_Value_Descriptor _egueb_svg_point_descriptor;
-
-static void _egueb_svg_point_data_from(Egueb_Dom_Value *v, Egueb_Dom_Value_Data *data)
-{
-	EINA_SAFETY_ON_FALSE_RETURN(v->descriptor == &_egueb_svg_point_descriptor);
-	egueb_dom_value_primitive_data_from(v, data);
-}
-
-static void _egueb_svg_point_data_to(Egueb_Dom_Value *v, Egueb_Dom_Value_Data *data)
-{
-	EINA_SAFETY_ON_FALSE_RETURN(v->descriptor == &_egueb_svg_point_descriptor);
-	egueb_dom_value_primitive_data_to(v, data);
-}
-
-static void _egueb_svg_point_free(Egueb_Dom_Value *v)
-{
-	EINA_SAFETY_ON_FALSE_RETURN(v->descriptor == &_egueb_svg_point_descriptor);
-	if (v->owned)
-	{
-		free(v->data.ptr);
-		v->data.ptr = NULL;
-	}
-}
-
-static void _egueb_svg_point_copy(const Egueb_Dom_Value *v, Egueb_Dom_Value *copy,
-		Eina_Bool content)
-{
-	Egueb_Svg_Point *vl;
-	Egueb_Svg_Point *cl;
-
-	EINA_SAFETY_ON_FALSE_RETURN(v->descriptor == &_egueb_svg_point_descriptor);
-	if (!v->data.ptr)
-		return;
-
-	if (!copy->data.ptr)
-	{
-		copy->data.ptr = calloc(1, sizeof(Egueb_Svg_Point));
-		copy->owned = EINA_TRUE;
-	}
-	cl = copy->data.ptr;
-	vl = v->data.ptr;
-	*cl = *vl;
-}
-
-#if 0
-static char * _egueb_svg_point_string_to(const Egueb_Dom_Value *v)
-{
-	EINA_SAFETY_ON_FALSE_RETURN_VAL(v->descriptor == &_egueb_svg_point_descriptor, NULL);
-	return egueb_svg_point_string_to(v->data.ptr);
-}
-#endif
-
-static Eina_Bool _egueb_svg_point_string_from(Egueb_Dom_Value *v, const char *str)
-{
-	EINA_SAFETY_ON_FALSE_RETURN_VAL(v->descriptor == &_egueb_svg_point_descriptor, EINA_FALSE);
-	if (!v->data.ptr)
-	{
-		v->data.ptr = calloc(1, sizeof(Egueb_Svg_Point));
-		v->owned = EINA_TRUE;
-	}
-	return egueb_svg_point_string_from(v->data.ptr, str);
-}
-
-static void _egueb_svg_point_interpolate(Egueb_Dom_Value *v,
-		Egueb_Dom_Value *a, Egueb_Dom_Value *b, double m,
-		Egueb_Dom_Value *add, Egueb_Dom_Value *acc, int mul)
-{
-	Egueb_Svg_Point *cv = v->data.ptr;
-	Egueb_Svg_Point *cb = b->data.ptr;
-	Egueb_Svg_Point *ca = a->data.ptr;
-
-	egueb_dom_value_interpolate_double(ca->x, cb->x, m, &cv->x);
-	egueb_dom_value_interpolate_double(ca->y, cb->y, m, &cv->y);
-}
-
-static Egueb_Dom_Value_Descriptor _egueb_svg_point_descriptor = {
-	/* .data_from 		= */ _egueb_svg_point_data_from,
-	/* .data_from_type 	= */ EGUEB_DOM_VALUE_DATA_TYPE_PTR,
-	/* .data_to 		= */ _egueb_svg_point_data_to,
-	/* .data_to_type 	= */ EGUEB_DOM_VALUE_DATA_TYPE_PTR,
-	/* .init 		= */ NULL,
-	/* .free 		= */ _egueb_svg_point_free,
-	/* .copy 		= */ _egueb_svg_point_copy,
-	/* .string_to 		= */ NULL,
-	/* .string_from 	= */ _egueb_svg_point_string_from,
-	/* .interpolate 	= */ _egueb_svg_point_interpolate,
-};
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
-/*============================================================================*
- *                                   API                                      *
- *============================================================================*/
-EAPI const Egueb_Dom_Value_Descriptor * egueb_svg_point_descriptor_get(void)
+void egueb_svg_point_interpolate(Egueb_Svg_Point *v,
+		Egueb_Svg_Point *a, Egueb_Svg_Point *b, double m,
+		Egueb_Svg_Point *add, Egueb_Svg_Point *acc, int mul)
 {
-	return &_egueb_svg_point_descriptor;
+	egueb_dom_value_interpolate_double(a->x, b->x, m, &v->x);
+	egueb_dom_value_interpolate_double(a->y, b->y, m, &v->y);
 }
 
-EAPI Eina_Bool egueb_svg_point_string_from(Egueb_Svg_Point *thiz, const char *attr)
+Eina_Bool egueb_svg_point_string_from(Egueb_Svg_Point *thiz, const char *attr)
 {
 	const char *tmp;
 	char *endptr;
@@ -146,3 +56,13 @@ EAPI Eina_Bool egueb_svg_point_string_from(Egueb_Svg_Point *thiz, const char *at
 
 	return EINA_TRUE;
 }
+
+char * egueb_svg_point_string_to(Egueb_Svg_Point *thiz)
+{
+	ERR("Not implemented");
+	return NULL;
+}
+/*============================================================================*
+ *                                   API                                      *
+ *============================================================================*/
+
