@@ -23,6 +23,8 @@ src/lib/svg/value/egueb_svg_value_point.c \
 src/lib/svg/value/egueb_svg_value_point_private.h \
 src/lib/svg/value/egueb_svg_value_rect.c \
 src/lib/svg/value/egueb_svg_value_rect_private.h \
+src/lib/svg/value/egueb_svg_value_spread_method.c \
+src/lib/svg/value/egueb_svg_value_spread_method_private.h \
 src/lib/svg/value/egueb_svg_value_stroke_line_cap.c \
 src/lib/svg/value/egueb_svg_value_stroke_line_cap_private.h \
 src/lib/svg/value/egueb_svg_value_stroke_line_join.c \
