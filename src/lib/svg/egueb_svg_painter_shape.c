@@ -24,6 +24,7 @@
 #include "egueb_svg_referenceable.h"
 #include "egueb_svg_document.h"
 #include "egueb_svg_paint_server.h"
+#include "egueb_svg_stroke_dasharray.h"
 
 #include "egueb_svg_paint_private.h"
 #include "egueb_svg_painter_private.h"
@@ -235,7 +236,7 @@ static inline void _egueb_svg_painter_shape_resolve_stroke(
 	Egueb_Svg_Number stroke_opacity;
 	Egueb_Svg_Stroke_Line_Cap stroke_line_cap;
 	Egueb_Svg_Stroke_Line_Join stroke_line_join;
-	Egueb_Dom_List *stroke_dasharray = NULL;
+	Egueb_Svg_Stroke_Dasharray stroke_dasharray;
 	double stroke_viewport = 0;
 	double font_size;
 
@@ -270,10 +271,20 @@ static inline void _egueb_svg_painter_shape_resolve_stroke(
 	stroke_dasharray_data.p = p;
 	stroke_dasharray_data.font_size = font_size;
 	stroke_dasharray_data.dash = NULL;
-	egueb_dom_list_foreach(stroke_dasharray, _egueb_svg_painter_shape_dash_foreach, &stroke_dasharray_data);
-	/* handle the odd/even thing */
-	if (egueb_dom_list_length(stroke_dasharray) % 2)
-		egueb_dom_list_foreach(stroke_dasharray, _egueb_svg_painter_shape_dash_foreach, &stroke_dasharray_data);
+	if (stroke_dasharray.type == EGUEB_SVG_STROKE_DASHARRAY_TYPE_LIST)
+	{
+		egueb_dom_list_foreach(stroke_dasharray.list,
+				_egueb_svg_painter_shape_dash_foreach,
+				&stroke_dasharray_data);
+		/* handle the odd/even thing */
+		if (egueb_dom_list_length(stroke_dasharray.list) % 2)
+		{
+			egueb_dom_list_foreach(stroke_dasharray.list,
+					_egueb_svg_painter_shape_dash_foreach,
+					&stroke_dasharray_data);
+		}
+		egueb_svg_stroke_dasharray_reset(&stroke_dasharray);
+	}
 	/* the stroke types */
 	p->stroke_cap = stroke_line_cap;
 	p->stroke_join = stroke_line_join;

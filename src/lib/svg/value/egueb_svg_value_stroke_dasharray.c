@@ -1,5 +1,5 @@
-/* Egueb
- * Copyright (C) 2011 - 2013 Jorge Luis Zapata
+/* Esvg - SVG
+ * Copyright (C) 2012 Jorge Luis Zapata
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -18,28 +18,22 @@
 #include "egueb_svg_main_private.h"
 #include "egueb_svg_stroke_dasharray.h"
 
-#include "egueb_dom_attr_private.h"
-#include "egueb_dom_attr_primitive_private.h"
-#include "egueb_svg_attr_stroke_dasharray_private.h"
-#include "egueb_svg_value_stroke_dasharray_private.h"
+#include "egueb_svg_stroke_dasharray_private.h"
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
-EGUEB_DOM_ATTR_PRIMITIVE_BOILERPLATE(Egueb_Svg_Stroke_Dasharray,
-		Egueb_Svg_Attr_Stroke_Dasharray, egueb_svg_value_stroke_dasharray,
-		egueb_svg_attr_stroke_dasharray)
+/*----------------------------------------------------------------------------*
+ *                             Value interface                                *
+ *----------------------------------------------------------------------------*/
+EGUEB_DOM_VALUE_PRIMITIVE_BOILERPLATE(egueb_svg_stroke_dasharray, Egueb_Svg_Stroke_Dasharray);
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
-Egueb_Dom_Node * egueb_svg_attr_stroke_dasharray_new(Egueb_Dom_String *name,
-		Eina_Bool animatable, Eina_Bool stylable, Eina_Bool inheritable)
+const Egueb_Dom_Value_Descriptor * egueb_svg_value_stroke_dasharray_descriptor_get(void)
 {
-	Egueb_Dom_Node *n;
-	
-	n = ENESIM_OBJECT_INSTANCE_NEW(egueb_svg_attr_stroke_dasharray);
-	egueb_dom_attr_init(n, name, NULL, animatable, stylable, inheritable);
-	return n;
+	return &_egueb_svg_stroke_dasharray_descriptor;
 }
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/
+

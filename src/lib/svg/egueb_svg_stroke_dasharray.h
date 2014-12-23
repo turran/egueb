@@ -18,10 +18,18 @@
 #ifndef _EGUEB_SVG_STROKE_DASHARRAY_H
 #define _EGUEB_SVG_STROKE_DASHARRAY_H
 
-EAPI const Egueb_Dom_Value_Descriptor * egueb_svg_stroke_dasharray_descriptor_get(void);
-EAPI Eina_Bool egueb_svg_stroke_dasharray_string_from(Egueb_Dom_List *l,
-		const char *value);
-EAPI char * egueb_svg_stroke_dasharray_string_to(Egueb_Dom_List *l);
+typedef enum _Egueb_Svg_Stroke_Dasharray_Type
+{
+	EGUEB_SVG_STROKE_DASHARRAY_TYPE_NONE,
+	EGUEB_SVG_STROKE_DASHARRAY_TYPE_LIST,
+} Egueb_Svg_Stroke_Dasharray_Type;
+
+typedef struct _Egueb_Svg_Stroke_Dasharray
+{
+	Egueb_Svg_Stroke_Dasharray_Type type;
+	Egueb_Dom_List *list;
+} Egueb_Svg_Stroke_Dasharray;
+
+EAPI void egueb_svg_stroke_dasharray_reset(Egueb_Svg_Stroke_Dasharray *thiz);
 
 #endif
-

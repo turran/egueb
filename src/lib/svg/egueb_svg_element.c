@@ -519,7 +519,7 @@ static void _egueb_svg_element_instance_init(void *o)
 			EINA_TRUE, EINA_TRUE, EINA_TRUE);
 	thiz->stroke_dasharray = egueb_svg_attr_stroke_dasharray_new(
 			egueb_dom_string_ref(EGUEB_SVG_NAME_STROKE_DASHARRAY),
-			NULL, EINA_TRUE, EINA_TRUE, EINA_TRUE);
+			EINA_TRUE, EINA_TRUE, EINA_TRUE);
 	thiz->stroke_line_cap = egueb_svg_attr_stroke_line_cap_new(
 			egueb_dom_string_ref(EGUEB_SVG_NAME_STROKE_LINECAP),
 			EGUEB_SVG_STROKE_LINE_CAP_BUTT,

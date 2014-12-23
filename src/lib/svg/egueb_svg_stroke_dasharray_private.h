@@ -15,11 +15,17 @@
  * License along with this library.
  * If not, see <http://www.gnu.org/licenses/>.
  */
+#ifndef _EGUEB_SVG_STROKE_DASHARRAY_PRIVATE_H
+#define _EGUEB_SVG_STROKE_DASHARRAY_PRIVATE_H
 
-#ifndef _EGUEB_SVG_ATTR_STROKE_DASHARRAY_PRIVATE_H_
-#define _EGUEB_SVG_ATTR_STROKE_DASHARRAY_PRIVATE_H_
-
-Egueb_Dom_Node * egueb_svg_attr_stroke_dasharray_new(Egueb_Dom_String *name,
-		Eina_Bool animatable, Eina_Bool stylable, Eina_Bool inheritable);
+Eina_Bool egueb_svg_stroke_dasharray_string_from(Egueb_Svg_Stroke_Dasharray *thiz,
+		const char *value);
+char * egueb_svg_stroke_dasharray_string_to(Egueb_Svg_Stroke_Dasharray *thiz);
+void egueb_svg_stroke_dasharray_interpolate(Egueb_Svg_Stroke_Dasharray *v,
+		Egueb_Svg_Stroke_Dasharray *a, Egueb_Svg_Stroke_Dasharray *b, double m,
+		Egueb_Svg_Stroke_Dasharray *add, Egueb_Svg_Stroke_Dasharray *acc, int mul);
+void egueb_svg_stroke_dasharray_copy(const Egueb_Svg_Stroke_Dasharray *thiz,
+		Egueb_Svg_Stroke_Dasharray *copy, Eina_Bool full);
 
 #endif
+
