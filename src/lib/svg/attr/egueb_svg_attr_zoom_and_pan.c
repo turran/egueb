@@ -29,7 +29,7 @@
  *                                  Local                                     *
  *============================================================================*/
 EGUEB_DOM_ATTR_BASIC_BOILERPLATE(Egueb_Svg_Zoom_And_Pan,
-		Egueb_Svg_Attr_Zoom_And_Pan, egueb_svg_zoom_and_pan,
+		Egueb_Svg_Attr_Zoom_And_Pan, egueb_svg_value_zoom_and_pan,
 		egueb_svg_attr_zoom_and_pan)
 /*============================================================================*
  *                                 Global                                     *

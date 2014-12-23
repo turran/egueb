@@ -31,7 +31,7 @@
  *============================================================================*/
 EGUEB_DOM_VALUE_ENUM_BOILERPLATE(egueb_svg_zoom_and_pan, Egueb_Svg_Zoom_And_Pan);
 
-const Egueb_Dom_Value_Descriptor * egueb_svg_zoom_and_pan_descriptor_get(void)
+const Egueb_Dom_Value_Descriptor * egueb_svg_value_zoom_and_pan_descriptor_get(void)
 {
 	return &_egueb_svg_zoom_and_pan_descriptor;
 }

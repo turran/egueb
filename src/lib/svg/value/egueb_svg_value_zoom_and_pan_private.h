@@ -18,6 +18,6 @@
 #ifndef _EGUEB_SVG_VALUE_ZOOM_AND_PAN_PRIVATE_H
 #define _EGUEB_SVG_VALUE_ZOOM_AND_PAN_PRIVATE_H
 
-const Egueb_Dom_Value_Descriptor * egueb_svg_zoom_and_pan_descriptor_get(void);
+const Egueb_Dom_Value_Descriptor * egueb_svg_value_zoom_and_pan_descriptor_get(void);
 
 #endif
