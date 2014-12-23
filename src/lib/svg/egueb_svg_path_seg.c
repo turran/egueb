@@ -175,15 +175,12 @@ static Egueb_Dom_Value_Descriptor _egueb_svg_path_seg_descriptor = {
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
-/*============================================================================*
- *                                   API                                      *
- *============================================================================*/
-EAPI const Egueb_Dom_Value_Descriptor * egueb_svg_path_seg_descriptor_get(void)
+const Egueb_Dom_Value_Descriptor * egueb_svg_path_seg_descriptor_get(void)
 {
 	return &_egueb_svg_path_seg_descriptor;
 }
 
-EAPI char * egueb_svg_path_seg_string_to(Egueb_Svg_Path_Seg *thiz)
+char * egueb_svg_path_seg_string_to(Egueb_Svg_Path_Seg *thiz)
 {
 	char *ret = NULL;
 	int written = -1;
@@ -334,4 +331,7 @@ EAPI char * egueb_svg_path_seg_string_to(Egueb_Svg_Path_Seg *thiz)
 
 	if (written < 0) return NULL;
 	else return ret;
-}
+}/*============================================================================*
+ *                                   API                                      *
+ *============================================================================*/
+
