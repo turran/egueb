@@ -16,49 +16,29 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 #include "egueb_svg_main_private.h"
-#include "egueb_svg_length.h"
+#include "egueb_svg_point.h"
 
 #include "egueb_dom_value_private.h"
-#include "egueb_svg_length_private.h"
+#include "egueb_svg_point_private.h"
+#include "egueb_svg_point_list_private.h"
+#include "egueb_svg_value_point_private.h"
+#include "egueb_svg_value_point_list_private.h"
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
-static void _egueb_svg_value_length_list_cb(const char *attr, void *data)
-{
-	Egueb_Svg_Length length;
-	Egueb_Dom_List *l = data;
-
-	if (egueb_svg_length_string_from(&length, attr))
-	{
-		Egueb_Svg_Length *plength;
-
-		plength = malloc(sizeof(Egueb_Svg_Length));
-		*plength = length;
-		egueb_dom_list_item_append(l, plength);
-	}
-}
-
-static Eina_Bool egueb_svg_value_length_list_string_from(Egueb_Dom_List *l, const char *str)
-{
-	return egueb_dom_list_get(str, ';', _egueb_svg_value_length_list_cb, l);
-}
-
-static char * egueb_svg_value_length_list_string_to(Egueb_Dom_List *l)
-{
-	return NULL;
-}
 /*----------------------------------------------------------------------------*
  *                             Value interface                                *
  *----------------------------------------------------------------------------*/
-EGUEB_DOM_VALUE_LIST_BOILERPLATE(egueb_svg_value_length_list,
-		egueb_dom_value_double_descriptor_get());
+EGUEB_DOM_VALUE_LIST_BOILERPLATE(egueb_svg_point_list,
+		egueb_svg_value_point_descriptor_get());
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
-const Egueb_Dom_Value_Descriptor * egueb_svg_value_length_list_descriptor_get(void)
+const Egueb_Dom_Value_Descriptor * egueb_svg_value_point_list_descriptor_get(void)
 {
-	return &_egueb_svg_value_length_list_descriptor;
+	return &_egueb_svg_point_list_descriptor;
 }
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/
+
