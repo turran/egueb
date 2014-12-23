@@ -24,7 +24,6 @@ src/lib/svg/egueb_svg_paint.h \
 src/lib/svg/egueb_svg_paint_server.h \
 src/lib/svg/egueb_svg_painter.h \
 src/lib/svg/egueb_svg_path_seg.h \
-src/lib/svg/egueb_svg_path_seg_list.h \
 src/lib/svg/egueb_svg_point.h \
 src/lib/svg/egueb_svg_rect.h \
 src/lib/svg/egueb_svg_reference.h \
@@ -78,7 +77,9 @@ src/lib/svg/egueb_svg_painter_clip_path.c \
 src/lib/svg/egueb_svg_painter_shape.c \
 src/lib/svg/egueb_svg_painter_g.c \
 src/lib/svg/egueb_svg_path_seg.c \
+src/lib/svg/egueb_svg_path_seg_private.h \
 src/lib/svg/egueb_svg_path_seg_list.c \
+src/lib/svg/egueb_svg_path_seg_list_private.h \
 src/lib/svg/egueb_svg_point.c \
 src/lib/svg/egueb_svg_point_list.c \
 src/lib/svg/egueb_svg_point_list_private.h \

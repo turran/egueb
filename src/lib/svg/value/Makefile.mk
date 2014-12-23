@@ -17,6 +17,8 @@ src/lib/svg/value/egueb_svg_value_number.c \
 src/lib/svg/value/egueb_svg_value_number_private.h \
 src/lib/svg/value/egueb_svg_value_overflow.c \
 src/lib/svg/value/egueb_svg_value_overflow_private.h \
+src/lib/svg/value/egueb_svg_value_path_seg_list.c \
+src/lib/svg/value/egueb_svg_value_path_seg_list_private.h \
 src/lib/svg/value/egueb_svg_value_paint.c \
 src/lib/svg/value/egueb_svg_value_paint_private.h \
 src/lib/svg/value/egueb_svg_value_point.c \

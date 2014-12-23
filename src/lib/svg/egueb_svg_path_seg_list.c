@@ -18,9 +18,8 @@
 #include "egueb_svg_main_private.h"
 #include "egueb_svg_point.h"
 #include "egueb_svg_path_seg.h"
-#include "egueb_svg_path_seg_list.h"
-#include "egueb_dom_value_list.h"
-#include "egueb_dom_value_private.h"
+
+#include "egueb_svg_path_seg_list_private.h"
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
@@ -427,84 +426,10 @@ static Eina_Bool egueb_svg_seg_list_parse(char command, char **value,
 	}
 	return ret;
 }
-/*----------------------------------------------------------------------------*
- *                             Value interface                                *
- *----------------------------------------------------------------------------*/
-static Egueb_Dom_Value_Descriptor _descriptor;
-
-static void _egueb_svg_path_seg_list_data_from(Egueb_Dom_Value *v, Egueb_Dom_Value_Data *data)
-{
-	EINA_SAFETY_ON_FALSE_RETURN(v->descriptor == &_descriptor);
-	egueb_dom_value_list_data_from(v, data);
-}
-
-static void _egueb_svg_path_seg_list_data_to(Egueb_Dom_Value *v, Egueb_Dom_Value_Data *data)
-{
-	EINA_SAFETY_ON_FALSE_RETURN(v->descriptor == &_descriptor);
-	egueb_dom_value_list_data_to(v, data);
-}
-
-static void _egueb_svg_path_seg_list_free(Egueb_Dom_Value *v)
-{
-	EINA_SAFETY_ON_FALSE_RETURN(v->descriptor == &_descriptor);
-	egueb_dom_value_list_free(v);
-}
-
-static void _egueb_svg_path_seg_list_copy(const Egueb_Dom_Value *v, Egueb_Dom_Value *copy,
-		Eina_Bool content)
-{
-	EINA_SAFETY_ON_FALSE_RETURN(v->descriptor == &_descriptor);
-	egueb_dom_value_list_copy(v, copy, content);
-}
-
-static char * _egueb_svg_path_seg_list_string_to(const Egueb_Dom_Value *v)
-{
-	EINA_SAFETY_ON_FALSE_RETURN_VAL(v->descriptor == &_descriptor, NULL);
-	return egueb_svg_path_seg_list_string_to(v->data.ptr);
-}
-
-static Eina_Bool _egueb_svg_path_seg_list_string_from(Egueb_Dom_Value *v, const char *str)
-{
-	EINA_SAFETY_ON_FALSE_RETURN_VAL(v->descriptor == &_descriptor, EINA_FALSE);
-	if (!v->data.ptr)
-	{
-		v->data.ptr = egueb_dom_list_new(egueb_svg_path_seg_descriptor_get());
-		v->owned = EINA_TRUE;
-	}
-	return egueb_svg_path_seg_list_string_from(v->data.ptr, str);
-}
-
-static void _egueb_svg_path_seg_list_interpolate(Egueb_Dom_Value *v,
-		Egueb_Dom_Value *a, Egueb_Dom_Value *b, double m,
-		Egueb_Dom_Value *add, Egueb_Dom_Value *acc, int mul)
-{
-	egueb_dom_value_list_interpolate(v, a, b, m, add, acc, mul);
-}
-
-static Egueb_Dom_Value_Descriptor _descriptor = {
-	/* .data_from 		= */ _egueb_svg_path_seg_list_data_from,
-	/* .data_from_type 	= */ EGUEB_DOM_VALUE_DATA_TYPE_PTR,
-	/* .data_to 		= */ _egueb_svg_path_seg_list_data_to,
-	/* .data_to_type 	= */ EGUEB_DOM_VALUE_DATA_TYPE_PTR,
-	/* .init 		= */ NULL,
-	/* .free 		= */ _egueb_svg_path_seg_list_free,
-	/* .copy 		= */ _egueb_svg_path_seg_list_copy,
-	/* .string_to 		= */ _egueb_svg_path_seg_list_string_to,
-	/* .string_from 	= */ _egueb_svg_path_seg_list_string_from,
-	/* .interpolate 	= */ _egueb_svg_path_seg_list_interpolate,
-};
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
-/*============================================================================*
- *                                   API                                      *
- *============================================================================*/
-EAPI const Egueb_Dom_Value_Descriptor * egueb_svg_path_seg_list_descriptor_get(void)
-{
-	return &_descriptor;
-}
-
-EAPI Eina_Bool egueb_svg_path_seg_list_string_from(Egueb_Dom_List *l,
+Eina_Bool egueb_svg_path_seg_list_string_from(Egueb_Dom_List *l,
 		const char *value)
 {
 	Eina_Bool ret = EINA_TRUE;
@@ -582,7 +507,7 @@ EAPI Eina_Bool egueb_svg_path_seg_list_string_from(Egueb_Dom_List *l,
 	return ret;
 }
 
-EAPI char * egueb_svg_path_seg_list_string_to(Egueb_Dom_List *l)
+char * egueb_svg_path_seg_list_string_to(Egueb_Dom_List *l)
 {
 	Eina_Strbuf *strbuf;
 	char *ret;
@@ -593,4 +518,7 @@ EAPI char * egueb_svg_path_seg_list_string_to(Egueb_Dom_List *l)
 	eina_strbuf_free(strbuf);
 	return ret;
 }
+/*============================================================================*
+ *                                   API                                      *
+ *============================================================================*/
 

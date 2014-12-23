@@ -16,10 +16,11 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 #include "egueb_svg_main_private.h"
-#include "egueb_svg_path_seg_list.h"
+
 #include "egueb_dom_attr_private.h"
 #include "egueb_dom_attr_object_private.h"
 #include "egueb_svg_attr_path_seg_list_private.h"
+#include "egueb_svg_value_path_seg_list_private.h"
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
@@ -72,7 +73,7 @@ static Eina_Bool _egueb_svg_attr_path_seg_list_value_get(Egueb_Dom_Attr *p,
 static const Egueb_Dom_Value_Descriptor *
 _egueb_svg_attr_path_seg_list_value_descriptor_get(Egueb_Dom_Attr *p)
 {
-	return egueb_svg_path_seg_list_descriptor_get();
+	return egueb_svg_value_path_seg_list_descriptor_get();
 }
 /*----------------------------------------------------------------------------*
  *                              Object interface                              *

@@ -16,12 +16,11 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _EGUEB_SVG_PATH_SEG_LIST_H_
-#define _EGUEB_SVG_PATH_SEG_LIST_H_
+#ifndef _EGUEB_SVG_PATH_SEG_LIST_PRIVATE_H_
+#define _EGUEB_SVG_PATH_SEG_LIST_PRIVATE_H_
 
-EAPI const Egueb_Dom_Value_Descriptor * egueb_svg_path_seg_list_descriptor_get(void);
-EAPI Eina_Bool egueb_svg_path_seg_list_string_from(Egueb_Dom_List *l, const char *str);
-EAPI char * egueb_svg_path_seg_list_string_to(Egueb_Dom_List *l);
+Eina_Bool egueb_svg_path_seg_list_string_from(Egueb_Dom_List *l, const char *str);
+char * egueb_svg_path_seg_list_string_to(Egueb_Dom_List *l);
 
 #endif
 

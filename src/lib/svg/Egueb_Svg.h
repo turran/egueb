@@ -84,7 +84,6 @@ extern "C" {
 #include "egueb_svg_overflow.h"
 #include "egueb_svg_paint.h"
 #include "egueb_svg_path_seg.h"
-#include "egueb_svg_path_seg_list.h"
 #include "egueb_svg_point.h"
 #include "egueb_svg_referenceable_units.h"
 #include "egueb_svg_rect.h"

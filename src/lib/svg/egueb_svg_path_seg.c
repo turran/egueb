@@ -17,7 +17,9 @@
  */
 #include "egueb_svg_main_private.h"
 #include "egueb_svg_path_seg.h"
+
 #include "egueb_dom_value_private.h"
+#include "egueb_svg_path_seg_private.h"
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
