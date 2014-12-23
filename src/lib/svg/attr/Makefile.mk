@@ -7,6 +7,8 @@ src/lib/svg/attr/egueb_svg_attr_color.c \
 src/lib/svg/attr/egueb_svg_attr_color_private.h \
 src/lib/svg/attr/egueb_svg_attr_display.c \
 src/lib/svg/attr/egueb_svg_attr_display_private.h \
+src/lib/svg/attr/egueb_svg_attr_fill_rule.c \
+src/lib/svg/attr/egueb_svg_attr_fill_rule_private.h \
 src/lib/svg/attr/egueb_svg_attr_length_list.c \
 src/lib/svg/attr/egueb_svg_attr_length_list_private.h \
 src/lib/svg/attr/egueb_svg_attr_length.c \

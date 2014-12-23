@@ -43,6 +43,7 @@
 #include "egueb_svg_attr_clip_path_private.h"
 #include "egueb_svg_attr_color_private.h"
 #include "egueb_svg_attr_display_private.h"
+#include "egueb_svg_attr_fill_rule_private.h"
 #include "egueb_svg_attr_length_private.h"
 #include "egueb_svg_attr_number_private.h"
 #include "egueb_svg_attr_overflow_private.h"
@@ -74,6 +75,7 @@ typedef struct _Egueb_Svg_Element
 	Egueb_Dom_Node *display;
 	Egueb_Dom_Node *fill;
 	Egueb_Dom_Node *fill_opacity;
+	Egueb_Dom_Node *fill_rule;
 	Egueb_Dom_Node *font_family;
 	Egueb_Dom_Node *font_size;
 	Egueb_Dom_Node *font_style;

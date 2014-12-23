@@ -279,6 +279,7 @@ static void _egueb_svg_element_presentation_attributes_process(
 	egueb_dom_attr_inheritable_process(thiz->color, rel->color);
 	egueb_dom_attr_inheritable_process(thiz->fill, rel->fill);
 	egueb_dom_attr_inheritable_process(thiz->fill_opacity, rel->fill_opacity);
+	egueb_dom_attr_inheritable_process(thiz->fill_rule, rel->fill_rule);
 	egueb_dom_attr_inheritable_process(thiz->font_family, rel->font_family);
 	egueb_dom_attr_inheritable_process(thiz->font_variant, rel->font_variant);
 	egueb_dom_attr_inheritable_process(thiz->font_weight, rel->font_weight);
@@ -480,6 +481,7 @@ static void _egueb_svg_element_instance_init(void *o)
 			egueb_dom_string_ref(EGUEB_SVG_NAME_FILL_OPACITY),
 			1, EINA_TRUE, EINA_TRUE,
 			EINA_TRUE);
+	thiz->fill_rule = egueb_svg_attr_fill_rule_new();
 	/* font related attributes */
 	thiz->font_family = egueb_css_attr_font_family_new(NULL, EINA_TRUE, EINA_TRUE, EINA_TRUE);
 	/* font size */
@@ -579,6 +581,7 @@ static void _egueb_svg_element_instance_init(void *o)
 	egueb_dom_element_attribute_node_set(n, egueb_dom_node_ref(thiz->display), NULL);
 	egueb_dom_element_attribute_node_set(n, egueb_dom_node_ref(thiz->fill), NULL);
 	egueb_dom_element_attribute_node_set(n, egueb_dom_node_ref(thiz->fill_opacity), NULL);
+	egueb_dom_element_attribute_node_set(n, egueb_dom_node_ref(thiz->fill_rule), NULL);
 	egueb_dom_element_attribute_node_set(n, egueb_dom_node_ref(thiz->font_family), NULL);
 	egueb_dom_element_attribute_node_set(n, egueb_dom_node_ref(thiz->font_size), NULL);
 	egueb_dom_element_attribute_node_set(n, egueb_dom_node_ref(thiz->font_style), NULL);
@@ -645,6 +648,7 @@ static void _egueb_svg_element_instance_deinit(void *o)
 	egueb_dom_node_unref(thiz->display);
 	egueb_dom_node_unref(thiz->fill);
 	egueb_dom_node_unref(thiz->fill_opacity);
+	egueb_dom_node_unref(thiz->fill_rule);
 	egueb_dom_node_unref(thiz->font_family);
 	egueb_dom_node_unref(thiz->font_size);
 	egueb_dom_node_unref(thiz->font_style);

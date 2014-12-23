@@ -25,6 +25,7 @@
 #include "egueb_svg_document.h"
 #include "egueb_svg_paint_server.h"
 #include "egueb_svg_stroke_dasharray.h"
+#include "egueb_svg_fill_rule.h"
 
 #include "egueb_svg_paint_private.h"
 #include "egueb_svg_painter_private.h"
@@ -197,9 +198,11 @@ static inline void _egueb_svg_painter_shape_resolve_fill(
 	Egueb_Svg_Painter_Shape *thiz;
 	Egueb_Svg_Paint fill = EGUEB_SVG_PAINT_INIT;
 	Egueb_Svg_Number fill_opacity;
+	Egueb_Svg_Fill_Rule fill_rule;
 
 	egueb_dom_attr_final_get(e->fill, &fill);
 	egueb_dom_attr_final_get(e->fill_opacity, &fill_opacity);
+	egueb_dom_attr_final_get(e->fill_rule, &fill_rule);
 
 	thiz = EGUEB_SVG_PAINTER_SHAPE(p);
 	_egueb_svg_renderable_paint_set(EGUEB_DOM_NODE(e), doc,
@@ -212,16 +215,14 @@ static inline void _egueb_svg_painter_shape_resolve_fill(
 			&thiz->fill,
 			&fill,
 			&thiz->fill_paint_last);
-#if 0
-	if (attr->fill_rule.v == EGUEB_SVG_EVEN_ODD)
+	if (fill_rule == EGUEB_SVG_FILL_RULE_EVEN_ODD)
 	{
-		rp->fill_rule = ENESIM_RENDERER_SHAPE_FILL_RULE_EVEN_ODD;
+		p->fill_rule = ENESIM_RENDERER_SHAPE_FILL_RULE_EVEN_ODD;
 	}
 	else
 	{
-		rp->fill_rule = ENESIM_RENDERER_SHAPE_FILL_RULE_NON_ZERO;
+		p->fill_rule = ENESIM_RENDERER_SHAPE_FILL_RULE_NON_ZERO;
 	}
-#endif
 	egueb_svg_paint_reset(&fill);
 }
 

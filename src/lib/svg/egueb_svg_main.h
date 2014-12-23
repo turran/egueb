@@ -64,6 +64,7 @@ EAPI extern Egueb_Dom_String *EGUEB_SVG_NAME_DY;
 EAPI extern Egueb_Dom_String *EGUEB_SVG_NAME_DISPLAY;
 EAPI extern Egueb_Dom_String *EGUEB_SVG_NAME_FILL;
 EAPI extern Egueb_Dom_String *EGUEB_SVG_NAME_FILL_OPACITY;
+EAPI extern Egueb_Dom_String *EGUEB_SVG_NAME_FILL_RULE;
 EAPI extern Egueb_Dom_String *EGUEB_SVG_NAME_FONT;
 EAPI extern Egueb_Dom_String *EGUEB_SVG_NAME_FONT_SIZE;
 EAPI extern Egueb_Dom_String *EGUEB_SVG_NAME_FONT_STYLE;

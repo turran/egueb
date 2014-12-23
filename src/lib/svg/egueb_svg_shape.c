@@ -97,6 +97,7 @@ static void _egueb_svg_shape_painter_apply(Egueb_Svg_Renderable *ren,
 	enesim_renderer_shape_stroke_cap_set(r, stroke_cap);
 	enesim_renderer_shape_stroke_join_set(r, stroke_join);
 	enesim_renderer_shape_draw_mode_set(r, draw_mode);
+	enesim_renderer_shape_fill_rule_set(r, fill_rule);
 
 	/* base properties */
 	enesim_renderer_color_set(r, color);

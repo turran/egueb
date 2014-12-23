@@ -98,6 +98,7 @@ static void _egueb_svg_strings_init(void)
 	EGUEB_SVG_NAME_DISPLAY = egueb_dom_string_new_with_string("display");
 	EGUEB_SVG_NAME_FILL = egueb_dom_string_new_with_string("fill");
 	EGUEB_SVG_NAME_FILL_OPACITY = egueb_dom_string_new_with_string("fill-opacity");
+	EGUEB_SVG_NAME_FILL_RULE = egueb_dom_string_new_with_string("fill-rule");
 	EGUEB_SVG_NAME_FONT = egueb_dom_string_new_with_string("font");
 	EGUEB_SVG_NAME_FONT_SIZE = egueb_dom_string_new_with_string("font-size");
 	EGUEB_SVG_NAME_FONT_STYLE = egueb_dom_string_new_with_string("font-style");
@@ -191,6 +192,7 @@ static void _egueb_svg_strings_shutdown(void)
 	egueb_dom_string_unref(EGUEB_SVG_NAME_DISPLAY);
 	egueb_dom_string_unref(EGUEB_SVG_NAME_FILL);
 	egueb_dom_string_unref(EGUEB_SVG_NAME_FILL_OPACITY);
+	egueb_dom_string_unref(EGUEB_SVG_NAME_FILL_RULE);
 	egueb_dom_string_unref(EGUEB_SVG_NAME_FONT);
 	egueb_dom_string_unref(EGUEB_SVG_NAME_FONT_SIZE);
 	egueb_dom_string_unref(EGUEB_SVG_NAME_FONT_STYLE);
@@ -320,6 +322,7 @@ Egueb_Dom_String *EGUEB_SVG_NAME_DY;
 Egueb_Dom_String *EGUEB_SVG_NAME_DISPLAY;
 Egueb_Dom_String *EGUEB_SVG_NAME_FILL;
 Egueb_Dom_String *EGUEB_SVG_NAME_FILL_OPACITY;
+Egueb_Dom_String *EGUEB_SVG_NAME_FILL_RULE;
 Egueb_Dom_String *EGUEB_SVG_NAME_FONT;
 Egueb_Dom_String *EGUEB_SVG_NAME_FONT_SIZE;
 Egueb_Dom_String *EGUEB_SVG_NAME_FONT_STYLE;
