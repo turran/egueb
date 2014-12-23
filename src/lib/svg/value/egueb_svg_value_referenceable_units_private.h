@@ -15,19 +15,10 @@
  * License along with this library.
  * If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef _EGUEB_SVG_REFERENCEABLE_UNITS_H
-#define _EGUEB_SVG_REFERENCEABLE_UNITS_H
+#ifndef _EGUEB_SVG_VALUE_REFERENCEABLE_UNITS_PRIVATE_H
+#define _EGUEB_SVG_VALUE_REFERENCEABLE_UNITS_PRIVATE_H
 
-typedef enum _Egueb_Svg_Referenceable_Units
-{
-	EGUEB_SVG_REFERENCEABLE_UNITS_USER_SPACE_ON_USE,
-	EGUEB_SVG_REFERENCEABLE_UNITS_OBJECT_BOUNDING_BOX,
-} Egueb_Svg_Referenceable_Units;
-
-typedef struct _Egueb_Svg_Referencable_Units_Animated
-{
-	Egueb_Svg_Referenceable_Units base;
-	Egueb_Svg_Referenceable_Units anim;
-} Egueb_Svg_Referenceable_Units_Animated;
+const Egueb_Dom_Value_Descriptor *
+		egueb_svg_value_referenceable_units_descriptor_get(void);
 
 #endif

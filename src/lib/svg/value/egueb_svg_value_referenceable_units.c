@@ -1,5 +1,5 @@
-/* Esvg - SVG
- * Copyright (C) 2012 Jorge Luis Zapata
+/* Egueb
+ * Copyright (C) 2011 - 2013 Jorge Luis Zapata
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -22,34 +22,20 @@
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
+/*----------------------------------------------------------------------------*
+ *                             Value interface                                *
+ *----------------------------------------------------------------------------*/
+EGUEB_DOM_VALUE_ENUM_BOILERPLATE(egueb_svg_referenceable_units,
+		Egueb_Svg_Referenceable_Units);
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
-Eina_Bool egueb_svg_referenceable_units_string_from(Egueb_Svg_Referenceable_Units *thiz, const char *value)
+const Egueb_Dom_Value_Descriptor *
+		egueb_svg_value_referenceable_units_descriptor_get(void)
 {
-	if (!strcmp(value, "userSpaceOnUse"))
-		*thiz = EGUEB_SVG_REFERENCEABLE_UNITS_USER_SPACE_ON_USE;
-	else if (!strcmp(value, "objectBoundingBox"))
-		*thiz = EGUEB_SVG_REFERENCEABLE_UNITS_OBJECT_BOUNDING_BOX;
-	else
-		return EINA_FALSE;
-	return EINA_TRUE;
+	return &_egueb_svg_referenceable_units_descriptor;
 }
 
-char * egueb_svg_referenceable_units_string_to(Egueb_Svg_Referenceable_Units thiz)
-{
-	switch (thiz)
-	{
-		case EGUEB_SVG_REFERENCEABLE_UNITS_USER_SPACE_ON_USE:
-		return strdup("userSpaceOnUse");
-
-		case EGUEB_SVG_REFERENCEABLE_UNITS_OBJECT_BOUNDING_BOX:
-		return strdup("objectBoundingBox");
-
-		default:
-		return NULL;
-	}
-}
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/

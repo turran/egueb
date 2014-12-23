@@ -24,6 +24,7 @@
 #include "egueb_dom_attr_private.h"
 #include "egueb_dom_attr_basic_private.h"
 #include "egueb_svg_attr_referenceable_units_private.h"
+#include "egueb_svg_value_referenceable_units_private.h"
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
@@ -80,7 +81,7 @@ static Eina_Bool _egueb_svg_attr_referenceable_units_value_get(Egueb_Dom_Attr *p
 static const Egueb_Dom_Value_Descriptor *
 _egueb_svg_attr_referenceable_units_value_descriptor_get(Egueb_Dom_Attr *p)
 {
-	return egueb_svg_referenceable_units_descriptor_get();
+	return egueb_svg_value_referenceable_units_descriptor_get();
 }
 /*----------------------------------------------------------------------------*
  *                              Object interface                              *

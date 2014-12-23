@@ -95,6 +95,7 @@ src/lib/svg/egueb_svg_reference_pattern.c \
 src/lib/svg/egueb_svg_referenceable.c \
 src/lib/svg/egueb_svg_referenceable_private.h \
 src/lib/svg/egueb_svg_referenceable_units.c \
+src/lib/svg/egueb_svg_referenceable_units_private.h \
 src/lib/svg/egueb_svg_renderable.c \
 src/lib/svg/egueb_svg_renderable_private.h \
 src/lib/svg/egueb_svg_renderable_container.c \
