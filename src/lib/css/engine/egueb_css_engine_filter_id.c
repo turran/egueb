@@ -24,21 +24,15 @@
 #include "egueb_css_engine_style_private.h"
 #include "egueb_css_engine_context_private.h"
 #include "egueb_css_engine_filter_private.h"
+#include "egueb_css_engine_node_private.h"
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
-static Eina_Bool _id_test(void *data, Egueb_Css_Engine_Context *c, void *e)
+static Eina_Bool _id_test(void *data, Egueb_Dom_Node *n)
 {
 	char *id_name = data;
-	const char *id_data;
 
-	/* check if the id attribute is equal to the id set */
-	id_data = c->attribute_get(e, "id");
-	if (!id_data) return EINA_FALSE;
-
-	if (!strcmp(id_data, id_name))
-		return EINA_TRUE;
-	return EINA_FALSE;
+	return egueb_css_engine_node_attribute_is_simple(n, "id", id_name);
 }
 
 static void _id_free(void *data)

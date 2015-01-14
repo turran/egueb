@@ -18,47 +18,54 @@
 
 #include "egueb_css_private.h"
 
-#include "egueb_css_engine_context_private.h"
-#include "egueb_css_engine_selector_private.h"
-#include "egueb_css_engine_rule_private.h"
-#include "egueb_css_engine_style_private.h"
-#include "egueb_css_engine_context_private.h"
-#include "egueb_css_engine_filter_private.h"
+#include "egueb_css_engine_node_private.h"
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
-struct _Egueb_Css_Engine_Filter
-{
-	Egueb_Css_Engine_Filter_Descriptor descriptor;
-	void *data;
-};
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
-Eina_Bool egueb_css_engine_filter_test(Egueb_Css_Engine_Filter *f, Egueb_Dom_Node *n)
+void egueb_css_engine_node_attribute_set(Egueb_Dom_Node *n,
+		Egueb_Dom_String *attr, Egueb_Dom_String *val)
 {
-	if (f->descriptor.test)
-		return f->descriptor.test(f->data, n);
-	return EINA_FALSE;
+	egueb_dom_element_attribute_type_set(n, attr, EGUEB_DOM_ATTR_TYPE_STYLED, val, NULL);
+	egueb_dom_string_unref(val);
+	egueb_dom_string_unref(attr);
 }
 
-void egueb_css_engine_filter_delete(Egueb_Css_Engine_Filter *f)
+void egueb_css_engine_node_attribute_set_simple(Egueb_Dom_Node *n,
+		const char *attr, const char *val)
 {
-	if (f->descriptor.free)
-		f->descriptor.free(f->data);
-	free(f);
+	Egueb_Dom_String *s_attr;
+	Egueb_Dom_String *s_val;
+
+	s_attr = egueb_dom_string_new_with_string(attr);
+	s_val = egueb_dom_string_new_with_string(val);
+	egueb_css_engine_node_attribute_set(n, s_attr, s_val);
 }
 
-Egueb_Css_Engine_Filter * egueb_css_engine_filter_new(Egueb_Css_Engine_Filter_Descriptor *d, void *data)
+Egueb_Dom_String * egueb_css_engine_node_attribute_get(Egueb_Dom_Node *n,
+		Egueb_Dom_String *attr)
 {
-	Egueb_Css_Engine_Filter *f;
+	return egueb_dom_element_attribute_type_get(n, attr, EGUEB_DOM_ATTR_TYPE_STYLED);
+}
 
-	f = calloc(1, sizeof(Egueb_Css_Engine_Filter));
-	f->data = data;
-	f->descriptor = *d;
+Eina_Bool egueb_css_engine_node_attribute_is_simple(Egueb_Dom_Node *n,
+		const char *attr, const char *is_val)
+{
+	Egueb_Dom_String *s_attr;
+	Egueb_Dom_String *s_val;
+	Eina_Bool ret = EINA_FALSE;
 
-	return f;
+	s_attr = egueb_dom_string_new_with_string(attr);
+	s_val = egueb_css_engine_node_attribute_get(n, s_attr);
+	if (!strcmp (egueb_dom_string_string_get(s_val), is_val))
+		ret = EINA_TRUE;
+	egueb_dom_string_unref(s_attr);
+	egueb_dom_string_unref(s_val);
+	return ret;
 }
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/
+

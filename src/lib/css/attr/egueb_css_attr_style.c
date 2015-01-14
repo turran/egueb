@@ -128,6 +128,6 @@ EAPI void egueb_css_attr_style_process(Egueb_Dom_Node *n)
 	v = egueb_dom_string_string_get(thiz->value);
 	owner = egueb_dom_attr_owner_get(n);
 	/* apply the style attribute */
-	egueb_css_engine_style_inline_apply(v, &egueb_css_context, owner);
+	egueb_css_engine_style_inline_apply(owner, v);
 	egueb_dom_node_unref(owner);
 }

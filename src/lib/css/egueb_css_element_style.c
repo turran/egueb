@@ -130,7 +130,7 @@ static Eina_Bool _egueb_css_element_style_process(Egueb_Dom_Element *e)
 	content = enesim_text_buffer_string_get(tb);
 	s = egueb_css_engine_style_load_from_content(content,
 			enesim_text_buffer_string_length(tb));
-	egueb_css_engine_style_apply(s, &egueb_css_context, topmost);
+	egueb_css_engine_style_apply(s, topmost);
 	thiz->data_changed = EINA_FALSE;
 
 	enesim_text_buffer_unref(tb);

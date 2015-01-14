@@ -19,8 +19,6 @@ src_lib_css_libegueb_css_la_SOURCES = \
 src/lib/css/egueb_css_main.c \
 src/lib/css/egueb_css_length.c \
 src/lib/css/egueb_css_color.c \
-src/lib/css/egueb_css_context.c \
-src/lib/css/egueb_css_context_private.h \
 src/lib/css/egueb_css_element_style.c \
 src/lib/css/egueb_css_font.c \
 src/lib/css/egueb_css_font_private.h \

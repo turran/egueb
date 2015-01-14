@@ -20,21 +20,17 @@
 
 typedef struct _Egueb_Css_Engine_Style Egueb_Css_Engine_Style;
 
+void egueb_css_engine_style_inline_apply(Egueb_Dom_Node *n, const char *style);
 Egueb_Css_Engine_Style * egueb_css_engine_style_new(void);
 Egueb_Css_Engine_Style * egueb_css_engine_style_load_from_file(const char *file);
 Egueb_Css_Engine_Style * egueb_css_engine_style_load_from_content(const char *content, size_t len);
 void egueb_css_engine_style_rule_add(Egueb_Css_Engine_Style *thiz, Egueb_Css_Engine_Rule *r);
-
+void egueb_css_engine_style_apply(Egueb_Css_Engine_Style *thiz, Egueb_Dom_Node *n);
 
 struct _Egueb_Css_Engine_Style
 {
 	Eina_List *rules;
 };
-
-void egueb_css_engine_style_inline_apply(const char *style,
-		Egueb_Css_Engine_Context *c, void *e);
-void egueb_css_engine_style_apply(Egueb_Css_Engine_Style *thiz,
-		Egueb_Css_Engine_Context *c, void *e);
 
 #endif
 

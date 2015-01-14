@@ -24,6 +24,7 @@
 #include "egueb_css_engine_style_private.h"
 #include "egueb_css_engine_parser_private.h"
 #include "egueb_css_engine_filter_private.h"
+#include "egueb_css_engine_node_private.h"
 
 void * egueb_css_engine__scan_string(const char *yy_str, void *scanner);
 void egueb_css_engine__delete_buffer(void *state, void *scanner);
@@ -46,18 +47,19 @@ typedef struct _Egueb_Css_Engine_State
 	Eina_List *inactive;
 } Egueb_Css_Engine_State;
 
-static void _element_rule_apply(Egueb_Css_Engine_Context *c, void *e, Egueb_Css_Engine_Rule *r)
+static void _element_rule_apply(Egueb_Css_Engine_Rule *r, Egueb_Dom_Node *n)
 {
 	Egueb_Css_Engine_Declaration *d;
 	Eina_List *l;
 
 	EINA_LIST_FOREACH(r->declarations, l, d)
 	{
-		c->attribute_set(e, d->attribute, d->value);
+		egueb_css_engine_node_attribute_set_simple(n, d->attribute,
+				d->value);
 	}
 }
 
-static Eina_Bool _element_matches(Egueb_Css_Engine_Context *c, void *e, Egueb_Css_Engine_State_Selector *ss)
+static Eina_Bool _element_matches(Egueb_Css_Engine_State_Selector *ss, Egueb_Dom_Node *n)
 {
 	Egueb_Css_Engine_Rule *r = ss->r;
 	Egueb_Css_Engine_Selector *s = ss->s;
@@ -69,8 +71,15 @@ static Eina_Bool _element_matches(Egueb_Css_Engine_Context *c, void *e, Egueb_Cs
 	}
 	else
 	{
-		if (!strcmp(c->get_name(e), s->subject))
+		Egueb_Dom_String *name;
+		const char *str;
+
+		name = egueb_dom_node_name_get(n);
+		str = egueb_dom_string_string_get(name);
+		if (!strcmp(str, s->subject))
 			ret = EINA_TRUE;
+		egueb_dom_string_unref(name);
+		return ret;
 	}
 
 	if (ret)
@@ -80,16 +89,16 @@ static Eina_Bool _element_matches(Egueb_Css_Engine_Context *c, void *e, Egueb_Cs
 
 		EINA_LIST_FOREACH(s->filters, l, f)
 		{
-			if (!egueb_css_engine_filter_test(f, c, e))
+			if (!egueb_css_engine_filter_test(f, n))
 				return EINA_FALSE;
 		}
 	}
 	return ret;
 }
 
-static void _process_element(Egueb_Css_Engine_Context *c, void *e, Egueb_Css_Engine_State *state)
+static void _process_element(Egueb_Css_Engine_State *state, Egueb_Dom_Node *n)
 {
-	void *e1;
+	Egueb_Dom_Node *n1;
 	Egueb_Css_Engine_State_Selector *ss;
 	Eina_List *l;
 	Eina_List *l_next;
@@ -106,14 +115,14 @@ static void _process_element(Egueb_Css_Engine_Context *c, void *e, Egueb_Css_Eng
 		Egueb_Css_Engine_Selector *s_next;
 		Egueb_Css_Engine_Selector *s = ss->s;
 
-		if (_element_matches(c, e, ss))
+		if (_element_matches(ss, n))
 		{
 			/* can we apply directly? */
 			s_next = egueb_css_engine_selector_next_get(s);
 			if (!s_next)
 			{
 				/* apply */
-				_element_rule_apply(c, e, ss->r);
+				_element_rule_apply(ss->r, n);
 			}
 			else
 			{
@@ -170,13 +179,13 @@ static void _process_element(Egueb_Css_Engine_Context *c, void *e, Egueb_Css_Eng
 
 		if (apply)
 		{
-			if (_element_matches(c, e, ss))
+			if (_element_matches(ss, n))
 			{
 				s_next = egueb_css_engine_selector_next_get(s);
 				if (!s_next)
 				{
 					/* apply */
-					_element_rule_apply(c, e, ss->r);
+					_element_rule_apply(ss->r, n);
 				}
 				else
 				{
@@ -201,11 +210,16 @@ static void _process_element(Egueb_Css_Engine_Context *c, void *e, Egueb_Css_Eng
 	state->active = new_active;
 	state->inactive = new_inactive;
 
-	e1 = c->get_child(e);
-	while (e1)
+	n1 = egueb_dom_node_child_first_get(n);
+	while (n1)
 	{
-		_process_element(c, e1, state);
-		e1 = c->get_next_sibling(e1);
+		Egueb_Dom_Node *tmp;
+
+		_process_element(state, n1);
+
+		tmp = egueb_dom_node_sibling_next_get(n1);
+		egueb_dom_node_unref(n1);
+		n1 = tmp;
 		/* increment the active sibling count */
 		EINA_LIST_FOREACH(new_active, l, ss)
 		{
@@ -226,15 +240,15 @@ static void _process_element(Egueb_Css_Engine_Context *c, void *e, Egueb_Css_Eng
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
-void egueb_css_engine_style_inline_apply(const char *style, Egueb_Css_Engine_Context *c, void *e)
+void egueb_css_engine_style_inline_apply(Egueb_Dom_Node *n, const char *style)
 {
+	Egueb_Dom_String *prop;
+	Egueb_Dom_String *val;
+
 	char *orig;
 	char *v;
 	char *sc;
 	char *ch;
-
-	if (!c->attribute_set)
-		return;
 
 	orig = v = strdup(style);
 	EGUEB_DOM_SPACE_SKIP(v);
@@ -252,7 +266,7 @@ void egueb_css_engine_style_inline_apply(const char *style, Egueb_Css_Engine_Con
 			vv = ch + 1;
 			EGUEB_DOM_SPACE_SKIP(vv);
 			/* and call the attr_cb */
-			c->attribute_set(e, v, vv);
+			egueb_css_engine_node_attribute_set_simple(n, v, vv);
 		}
 		v = sc + 1;
 		EGUEB_DOM_SPACE_SKIP(v);
@@ -267,11 +281,12 @@ void egueb_css_engine_style_inline_apply(const char *style, Egueb_Css_Engine_Con
 		vv = ch + 1;
 		EGUEB_DOM_SPACE_SKIP(vv);
 		/* and call the attr_cb */
-		c->attribute_set(e, v, vv);
+		prop = egueb_dom_string_new_with_string(v);
+		val = egueb_dom_string_new_with_string(vv);
+		egueb_css_engine_node_attribute_set_simple(n, v, vv);
 	}
 
 	free(orig);
-
 }
 
 Egueb_Css_Engine_Style * egueb_css_engine_style_new(void)
@@ -355,16 +370,14 @@ void egueb_css_engine_style_rule_add(Egueb_Css_Engine_Style *thiz, Egueb_Css_Eng
 	thiz->rules = eina_list_append(thiz->rules, r);
 }
 
-void egueb_css_engine_style_apply(Egueb_Css_Engine_Style *thiz,
-		Egueb_Css_Engine_Context *c, void *e)
+void egueb_css_engine_style_apply(Egueb_Css_Engine_Style *thiz, Egueb_Dom_Node *n)
 {
 	Egueb_Css_Engine_State state;
 	Egueb_Css_Engine_Rule *r;
 	Eina_List *l;
 
-	if (!c) return;
 	if (!thiz) return;
-	if (!e) return;
+	if (!n) return;
 
 	state.active = NULL;
 	state.inactive = NULL;
@@ -383,7 +396,7 @@ void egueb_css_engine_style_apply(Egueb_Css_Engine_Style *thiz,
 		state.inactive = eina_list_append(state.inactive, ss);
 	}
 	/* parse the tree top -> bottom */
-	_process_element(c, e, &state);
+	_process_element(&state, n);
 	/* TODO destroy the state */
 }
 /*============================================================================*

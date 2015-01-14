@@ -1,5 +1,5 @@
-/* Egueb
- * Copyright (C) 2011 - 2013 Jorge Luis Zapata
+/* Egueb_Css_Engine - CSS
+ * Copyright (C) 2011 Jorge Luis Zapata
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -15,9 +15,17 @@
  * License along with this library.
  * If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef _EGUEB_CSS_CONTEXT_PRIVATE_H_
-#define _EGUEB_CSS_CONTEXT_PRIVATE_H_
 
-extern Egueb_Css_Engine_Context egueb_css_context;
+#ifndef EGUEB_CSS_ENGINE_NODE_PRIVATE
+#define EGUEB_CSS_ENGINE_NODE_PRIVATE
+
+void egueb_css_engine_node_attribute_set(Egueb_Dom_Node *n,
+		Egueb_Dom_String *attr, Egueb_Dom_String *val);
+void egueb_css_engine_node_attribute_set_simple(Egueb_Dom_Node *n,
+		const char *attr, const char *val);
+Egueb_Dom_String * egueb_css_engine_node_attribute_get(Egueb_Dom_Node *n,
+		Egueb_Dom_String *attr);
+Eina_Bool egueb_css_engine_node_attribute_is_simple(Egueb_Dom_Node *n,
+		const char *attr, const char *is_val);
 
 #endif

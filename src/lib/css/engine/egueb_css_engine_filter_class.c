@@ -24,23 +24,14 @@
 #include "egueb_css_engine_style_private.h"
 #include "egueb_css_engine_context_private.h"
 #include "egueb_css_engine_filter_private.h"
+#include "egueb_css_engine_node_private.h"
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
-static Eina_Bool _class_test(void *data, Egueb_Css_Engine_Context *c, void *e)
+static Eina_Bool _class_test(void *data, Egueb_Dom_Node *n)
 {
 	char *class_name = data;
-	const char *class_data;
-
-	/* check if the class attribute is equal to the class set */
-	class_data = c->attribute_get(e, "class");
-	if (!class_data) return EINA_FALSE;
-
-	/* the class can be one of the several classes */
-	if (!strcmp(class_data, class_name))
-		return EINA_TRUE;
-
-	return EINA_FALSE;
+	return egueb_css_engine_node_attribute_is_simple(n, "class", class_name);
 }
 
 static void _class_free(void *data)

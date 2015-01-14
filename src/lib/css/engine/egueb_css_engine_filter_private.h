@@ -18,7 +18,7 @@
 #ifndef _EGUEB_CSS_FILTER_PRIVATE_H_
 #define _EGUEB_CSS_FILTER_PRIVATE_H_
 
-typedef Eina_Bool (*Egueb_Css_Engine_Filter_Test)(void *data, Egueb_Css_Engine_Context *c, void *e);
+typedef Eina_Bool (*Egueb_Css_Engine_Filter_Test)(void *data, Egueb_Dom_Node *n);
 typedef void (*Egueb_Css_Engine_Filter_Free)(void *data);
 
 typedef struct _Egueb_Css_Engine_Filter_Descriptor
@@ -28,7 +28,7 @@ typedef struct _Egueb_Css_Engine_Filter_Descriptor
 } Egueb_Css_Engine_Filter_Descriptor;
 
 Egueb_Css_Engine_Filter * egueb_css_engine_filter_new(Egueb_Css_Engine_Filter_Descriptor *fd, void *data);
-Eina_Bool egueb_css_engine_filter_test(Egueb_Css_Engine_Filter *f, Egueb_Css_Engine_Context *c, void *e);
+Eina_Bool egueb_css_engine_filter_test(Egueb_Css_Engine_Filter *f, Egueb_Dom_Node *n);
 void egueb_css_engine_filter_delete(Egueb_Css_Engine_Filter *f);
 
 #endif
