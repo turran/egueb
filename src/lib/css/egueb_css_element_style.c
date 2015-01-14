@@ -122,8 +122,7 @@ static Eina_Bool _egueb_css_element_style_process(Egueb_Dom_Element *e)
 	}
 
 	/* TODO unapply the style on every element */
-	ERR ("Applying style");
-
+	DBG ("Applying style");
 	
 	tb = egueb_dom_character_data_buffer_get(data);
 	content = enesim_text_buffer_string_get(tb);
