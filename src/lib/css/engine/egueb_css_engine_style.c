@@ -210,14 +210,14 @@ static void _process_element(Egueb_Css_Engine_State *state, Egueb_Dom_Node *n)
 	state->active = new_active;
 	state->inactive = new_inactive;
 
-	n1 = egueb_dom_node_child_first_get(n);
+	n1 = egueb_dom_element_child_first_get(n);
 	while (n1)
 	{
 		Egueb_Dom_Node *tmp;
 
 		_process_element(state, n1);
 
-		tmp = egueb_dom_node_sibling_next_get(n1);
+		tmp = egueb_dom_element_sibling_next_get(n1);
 		egueb_dom_node_unref(n1);
 		n1 = tmp;
 		/* increment the active sibling count */
