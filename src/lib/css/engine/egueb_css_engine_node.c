@@ -47,7 +47,7 @@ void egueb_css_engine_node_attribute_set_simple(Egueb_Dom_Node *n,
 Egueb_Dom_String * egueb_css_engine_node_attribute_get(Egueb_Dom_Node *n,
 		Egueb_Dom_String *attr)
 {
-	return egueb_dom_element_attribute_type_get(n, attr, EGUEB_DOM_ATTR_TYPE_STYLED);
+	return egueb_dom_element_attribute_type_get(n, attr, EGUEB_DOM_ATTR_TYPE_BASE);
 }
 
 Eina_Bool egueb_css_engine_node_attribute_is_simple(Egueb_Dom_Node *n,
@@ -59,8 +59,11 @@ Eina_Bool egueb_css_engine_node_attribute_is_simple(Egueb_Dom_Node *n,
 
 	s_attr = egueb_dom_string_new_with_string(attr);
 	s_val = egueb_css_engine_node_attribute_get(n, s_attr);
-	if (!strcmp (egueb_dom_string_string_get(s_val), is_val))
-		ret = EINA_TRUE;
+	if (egueb_dom_string_is_valid(s_val))
+	{
+		if (!strcmp (egueb_dom_string_string_get(s_val), is_val))
+			ret = EINA_TRUE;
+	}
 	egueb_dom_string_unref(s_attr);
 	egueb_dom_string_unref(s_val);
 	return ret;
