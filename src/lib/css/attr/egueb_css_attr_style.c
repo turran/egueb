@@ -25,7 +25,6 @@
 #include "egueb_css_engine_rule_private.h"
 #include "egueb_css_engine_style_private.h"
 
-#include "egueb_css_context_private.h"
 #include "egueb_dom_attr_private.h"
 #include "egueb_dom_attr_object_private.h"
 /*============================================================================*
