@@ -657,6 +657,19 @@ EAPI Egueb_Dom_String * egueb_dom_element_attribute_get(Egueb_Dom_Node *node,
 	return ret;
 }
 
+EAPI Egueb_Dom_String * egueb_dom_element_attribute_type_get(
+		Egueb_Dom_Node *node, Egueb_Dom_String *name,
+		Egueb_Dom_Attr_Type type)
+{
+	Egueb_Dom_Node *p = NULL;
+	Egueb_Dom_String *ret = NULL;
+
+	p = egueb_dom_element_attribute_node_get(node, name);
+	/* get the value */
+	if (p)
+		egueb_dom_attr_string_get(p, type, &ret);
+	return ret;
+}
 
 /*
  * void setAttributeNS(in DOMString ns, in DOMString name, in DOMString value;

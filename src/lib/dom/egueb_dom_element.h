@@ -90,6 +90,9 @@ EAPI Egueb_Dom_String * egueb_dom_element_attribute_ns_get(Egueb_Dom_Node *node,
 		Egueb_Dom_String *ns_uri, Egueb_Dom_String *name);
 EAPI Egueb_Dom_String * egueb_dom_element_attribute_get(Egueb_Dom_Node *node,
 		Egueb_Dom_String *name);
+EAPI Egueb_Dom_String * egueb_dom_element_attribute_type_get(
+		Egueb_Dom_Node *node, Egueb_Dom_String *name,
+		Egueb_Dom_Attr_Type type);
 EAPI Eina_Bool egueb_dom_element_attribute_ns_set(Egueb_Dom_Node *node,
 		Egueb_Dom_String *ns_uri, Egueb_Dom_String *local_name,
 		Egueb_Dom_String *value, Eina_Error *err);
