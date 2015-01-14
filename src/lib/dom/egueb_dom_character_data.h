@@ -31,8 +31,7 @@
  * @{
  */
 
-EAPI void egueb_dom_character_data_buffer_get(Egueb_Dom_Node *n,
-		Enesim_Text_Buffer **buffer);
+EAPI Enesim_Text_Buffer * egueb_dom_character_data_buffer_get(Egueb_Dom_Node *n);
 EAPI void egueb_dom_character_data_buffer_set(Egueb_Dom_Node *n,
 		Enesim_Text_Buffer *buffer);
 

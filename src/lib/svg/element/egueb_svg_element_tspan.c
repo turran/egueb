@@ -106,7 +106,7 @@ static void _egueb_svg_element_tspan_node_inserted_cb(Egueb_Dom_Event *e,
 		thiz = EGUEB_SVG_ELEMENT_TSPAN(n);
 		/* set the internal buffer of the tspan span to be the one
 		 * on the tspan node */
-		egueb_dom_character_data_buffer_get(tspan, &nb);
+		nb = egueb_dom_character_data_buffer_get(tspan);
 		enesim_renderer_text_span_real_buffer_set(thiz->r, nb);
 		/* now make the tspan node to use our own buffer from now on */
 		nb = enesim_renderer_text_span_buffer_get(thiz->r);

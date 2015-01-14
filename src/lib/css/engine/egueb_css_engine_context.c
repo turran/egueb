@@ -218,10 +218,8 @@ static void _process_element(Egueb_Css_Engine_Context *c, void *e, Egueb_Css_Eng
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
-/*============================================================================*
- *                                   API                                      *
- *============================================================================*/
-EAPI void egueb_css_engine_context_style_apply(Egueb_Css_Engine_Context *c, Egueb_Css_Engine_Style *s, void *e)
+void egueb_css_engine_context_style_apply(Egueb_Css_Engine_Context *c,
+		Egueb_Css_Engine_Style *s, void *e)
 {
 	Egueb_Css_Engine_State state;
 	Egueb_Css_Engine_Rule *r;
@@ -251,5 +249,7 @@ EAPI void egueb_css_engine_context_style_apply(Egueb_Css_Engine_Context *c, Egue
 	_process_element(c, e, &state);
 	/* TODO destroy the state */
 }
-
+/*============================================================================*
+ *                                   API                                      *
+ *============================================================================*/
 #endif

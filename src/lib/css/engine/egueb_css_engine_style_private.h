@@ -31,7 +31,10 @@ struct _Egueb_Css_Engine_Style
 	Eina_List *rules;
 };
 
-void egueb_css_engine_style_inline_apply(const char *style, Egueb_Css_Engine_Context *c, void *e);
+void egueb_css_engine_style_inline_apply(const char *style,
+		Egueb_Css_Engine_Context *c, void *e);
+void egueb_css_engine_style_apply(Egueb_Css_Engine_Style *thiz,
+		Egueb_Css_Engine_Context *c, void *e);
 
 #endif
 

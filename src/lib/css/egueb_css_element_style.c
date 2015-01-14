@@ -18,6 +18,13 @@
 
 #include "egueb_css_private.h"
 #include "egueb_css_main.h"
+
+#include "egueb_css_engine_context_private.h"
+#include "egueb_css_engine_selector_private.h"
+#include "egueb_css_engine_rule_private.h"
+#include "egueb_css_engine_style_private.h"
+
+#include "egueb_css_context_private.h"
 #include "egueb_dom_element_private.h"
 /*============================================================================*
  *                                  Local                                     *
@@ -81,9 +88,13 @@ not_us:
 static Eina_Bool _egueb_css_element_style_process(Egueb_Dom_Element *e)
 {
 	Egueb_Dom_Element_Style *thiz;
-#if 0
-	Egueb_Css_Style *s;
-#endif
+	Egueb_Dom_Node *data;
+	Egueb_Dom_Node *doc;
+	Egueb_Dom_Node *topmost;
+	Egueb_Css_Engine_Style *s;
+	Egueb_Dom_Node *n;
+	Enesim_Text_Buffer *tb;
+	const char *content;
 
 	thiz = EGUEB_CSS_ELEMENT_STYLE(e);
 
@@ -91,12 +102,41 @@ static Eina_Bool _egueb_css_element_style_process(Egueb_Dom_Element *e)
 	if (!thiz->data_changed)
 		return EINA_TRUE;
 
-	/* TODO apply the style on every element */
-#if 0
-	s = egueb_css_style_load_from_content(cdata, length);
-	egueb_svg_element_egueb_css_style_apply(root, thiz->s);
+	n = EGUEB_DOM_NODE(e);
+	data = egueb_dom_node_child_first_get(n);
+	if (!data)
+		return EINA_FALSE;
+
+	doc = egueb_dom_node_owner_document_get(n);
+	if (!doc)
+	{
+		egueb_dom_node_unref(data);
+		return EINA_FALSE;
+	}
+
+	topmost = egueb_dom_document_document_element_get(doc);
+	if (!topmost)
+	{
+		egueb_dom_node_unref(data);
+		egueb_dom_node_unref(doc);
+		return EINA_FALSE;
+	}
+
+	/* TODO unapply the style on every element */
+	ERR ("Applying style");
+
+	
+	tb = egueb_dom_character_data_buffer_get(data);
+	content = enesim_text_buffer_string_get(tb);
+	s = egueb_css_engine_style_load_from_content(content,
+			enesim_text_buffer_string_length(tb));
+	egueb_css_engine_style_apply(s, &egueb_css_context, topmost);
 	thiz->data_changed = EINA_FALSE;
-#endif
+
+	enesim_text_buffer_unref(tb);
+	egueb_dom_node_unref(data);
+	egueb_dom_node_unref(topmost);
+	egueb_dom_node_unref(doc);
 
 	return EINA_TRUE;
 }

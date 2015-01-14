@@ -86,14 +86,12 @@ static void _egueb_dom_character_data_instance_deinit(void *o)
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/
-EAPI void egueb_dom_character_data_buffer_get(Egueb_Dom_Node *n,
-		Enesim_Text_Buffer **buffer)
+EAPI Enesim_Text_Buffer * egueb_dom_character_data_buffer_get(Egueb_Dom_Node *n)
 {
 	Egueb_Dom_Character_Data *thiz;
 
-	if (!buffer) return;
 	thiz = EGUEB_DOM_CHARACTER_DATA(n);
-	*buffer = enesim_text_buffer_ref(thiz->buffer);
+	return enesim_text_buffer_ref(thiz->buffer);
 }
 
 EAPI void egueb_dom_character_data_buffer_set(Egueb_Dom_Node *n,

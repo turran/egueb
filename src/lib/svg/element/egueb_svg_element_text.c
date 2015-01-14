@@ -182,7 +182,7 @@ static void _egueb_svg_element_text_node_inserted_cb(Egueb_Dom_Event *e,
 		enesim_renderer_color_set(r, 0xff000000);
 		/* set the internal buffer of the text span to be the one
 		 * on the text node */
-		egueb_dom_character_data_buffer_get(target, &nb);
+		nb = egueb_dom_character_data_buffer_get(target);
 		enesim_renderer_text_span_real_buffer_set(r, nb);
 		/* now make the text node to use our own buffer from now on */
 		nb = enesim_renderer_text_span_buffer_get(r);
