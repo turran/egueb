@@ -4,8 +4,6 @@ src/lib/css/engine/egueb_css_engine_grammar.c \
 src/lib/css/engine/egueb_css_engine_grammar.h
 
 src_lib_css_libegueb_css_la_SOURCES += \
-src/lib/css/engine/egueb_css_engine_context.c \
-src/lib/css/engine/egueb_css_engine_context_private.h \
 src/lib/css/engine/egueb_css_engine_parser_private.h \
 src/lib/css/engine/egueb_css_engine_node.c \
 src/lib/css/engine/egueb_css_engine_node_private.h \

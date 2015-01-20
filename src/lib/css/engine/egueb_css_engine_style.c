@@ -18,7 +18,6 @@
 
 #include "egueb_css_private.h"
 
-#include "egueb_css_engine_context_private.h"
 #include "egueb_css_engine_selector_private.h"
 #include "egueb_css_engine_rule_private.h"
 #include "egueb_css_engine_style_private.h"
@@ -146,7 +145,7 @@ static void _process_element(Egueb_Css_Engine_State *state, Egueb_Dom_Node *n)
 		{
 			case EGUEB_CSS_NONE:
 			/* this case should not happen */
-			printf(">>> error <<<\n");
+			ERR("Bad parsing");
 			break;
 
 			case EGUEB_CSS_DESCENDANT:
@@ -322,7 +321,7 @@ Egueb_Css_Engine_Style * egueb_css_engine_style_load_from_file(const char *file)
 
 	if (ret)
 	{
-		printf("bad parsing\n");
+		ERR("bad parsing");
 		free(thiz);
 		return NULL;
 	}

@@ -27,7 +27,7 @@
  *============================================================================*/
 void egueb_css_engine_rule_declaration_insert(Egueb_Css_Engine_Rule *thiz, Egueb_Css_Engine_Declaration *d)
 {
-	printf("New declaration of %s %s\n", d->attribute, d->value);
+	DBG("New declaration of attr: %s, value: %s", d->attribute, d->value);
 	thiz->declarations = eina_list_append(thiz->declarations, d);
 }
 
