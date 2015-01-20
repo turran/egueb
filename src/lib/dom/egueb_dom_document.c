@@ -69,6 +69,29 @@ static void _egueb_dom_document_insert_id(Egueb_Dom_Document *thiz, Egueb_Dom_No
 	egueb_dom_string_unref(id);
 }
 
+static void _egueb_dom_document_character_data_modified_cb(Egueb_Dom_Event *ev,
+		void *data)
+{
+	Egueb_Dom_Node *target;
+
+	DBG("Character data modified");
+	target = egueb_dom_event_target_get(ev);
+	if (!egueb_dom_event_mutation_is_process_prevented(ev))
+	{
+		Egueb_Dom_Node *parent;
+
+		DBG("Process not prevented, enqueuing");
+		/* get the parent of the node, i.e the element owning the text */
+		parent = egueb_dom_node_parent_get(target);
+		egueb_dom_element_enqueue(parent);
+	}
+	else
+	{
+		DBG("Process prevented, nothing to do");
+	}
+	egueb_dom_node_unref(target);
+}
+
 static void _egueb_dom_document_attr_modified_cb(Egueb_Dom_Event *ev,
 		void *data)
 {
@@ -338,6 +361,10 @@ static void _egueb_dom_document_instance_init(void *o)
 	egueb_dom_node_event_listener_add(n,
 			EGUEB_DOM_EVENT_MUTATION_ATTR_MODIFIED,
 			_egueb_dom_document_attr_modified_cb,
+			EINA_FALSE, n);
+	egueb_dom_node_event_listener_add(n,
+			EGUEB_DOM_EVENT_MUTATION_CHARACTER_DATA_MODIFIED,
+			_egueb_dom_document_character_data_modified_cb,
 			EINA_FALSE, n);
 	/* in case an element needs to be processed, we will enqueue it */
 	egueb_dom_node_event_listener_add(n,
