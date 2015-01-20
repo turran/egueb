@@ -38,6 +38,8 @@ typedef struct _Egueb_Css_Attr_String
 {
 	Egueb_Dom_Attr_Object base;
 	Egueb_Dom_String *value;
+	Egueb_Dom_String *last_value;
+	Eina_Bool force_process;
 } Egueb_Css_Attr_String;
 
 typedef struct _Egueb_Css_Attr_String_Class
@@ -99,10 +101,29 @@ static void _egueb_css_attr_style_instance_deinit(void *o)
 	thiz = EGUEB_CSS_ATTR_STYLE(o);
 	if (thiz->value)
 		egueb_dom_string_unref(thiz->value);
+	if (thiz->last_value)
+		egueb_dom_string_unref(thiz->last_value);
 }
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
+void egueb_css_attr_style_force_process(Egueb_Dom_Node *n)
+{
+	Egueb_Css_Attr_String *thiz;
+
+	thiz = EGUEB_CSS_ATTR_STYLE(n);
+	thiz->force_process = EINA_TRUE;
+}
+
+#if 0
+void egueb_css_attr_style_clear(Egueb_Dom_Node *n)
+{
+	Egueb_Css_Attr_String *thiz;
+
+	thiz = EGUEB_CSS_ATTR_STYLE(n);
+
+}
+#endif
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/
@@ -119,13 +140,38 @@ EAPI Egueb_Dom_Node * egueb_css_attr_style_new(Egueb_Dom_String *ns)
 EAPI void egueb_css_attr_style_process(Egueb_Dom_Node *n)
 {
 	Egueb_Css_Attr_String *thiz;
-	Egueb_Dom_Node *owner;
-	const char *v;
 
 	thiz = EGUEB_CSS_ATTR_STYLE(n);
-	v = egueb_dom_string_string_get(thiz->value);
-	owner = egueb_dom_attr_owner_get(n);
-	/* apply the style attribute */
-	egueb_css_engine_style_inline_apply(owner, v);
-	egueb_dom_node_unref(owner);
+
+	/* in case a stylesheet has been applied, re-apply the style atribute */
+	/* else in case the style attribute has changed, revert the style and apply
+	 * the new style
+	 */
+	if (thiz->last_value != thiz->value || thiz->force_process)
+	{
+		Egueb_Dom_Node *owner;
+		const char *v;
+
+		/* apply the new style */
+		v = egueb_dom_string_string_get(thiz->value);
+		owner = egueb_dom_attr_owner_get(n);
+
+		DBG_ELEMENT(EGUEB_DOM_NODE(owner), "Applying the style");
+		/* apply the style attribute */
+		egueb_css_engine_style_inline_apply(owner, v);
+		egueb_dom_node_unref(owner);
+
+		/* swap the styles */
+		if (thiz->last_value)
+		{
+			egueb_dom_string_unref(thiz->last_value);
+			thiz->last_value = NULL;
+		}
+		if (thiz->value)
+		{
+			thiz->last_value = egueb_dom_string_ref(thiz->value);
+		}
+
+		thiz->force_process = EINA_FALSE;
+	}
 }

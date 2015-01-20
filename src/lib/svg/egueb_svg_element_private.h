@@ -133,7 +133,6 @@ typedef struct _Egueb_Svg_Element
 	 */
 	Egueb_Dom_Node *presentation_relative;
 	Egueb_Dom_Node *geometry_relative;
-	Egueb_Dom_String *last_style;
 } Egueb_Svg_Element;
 
 typedef Eina_Bool (*Egueb_Svg_Element_Process)(Egueb_Svg_Element *e);

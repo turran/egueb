@@ -355,40 +355,14 @@ static Eina_Bool _egueb_svg_element_process(Egueb_Dom_Element *e)
 {
 	Egueb_Svg_Element *thiz;
 	Egueb_Svg_Element_Class *klass;
-	Egueb_Dom_String *style;
 	Egueb_Dom_Node *relative = NULL;
 	Egueb_Dom_Node *geometry = NULL;
 	Eina_Bool ret = EINA_TRUE;
 
 	thiz = EGUEB_SVG_ELEMENT(e);
 	DBG_ELEMENT(EGUEB_DOM_NODE(e), "Processing element");
-	//DBG("Doing the setup on the tag '%s'", egueb_dom_element_tag_name_get(e));
 
-	/* in case a stylesheet has been applied, re-apply the style atribute */
-	/* else in case the style attribute has changed, revert the style and apply
-	 * the new style
-	 */
-	egueb_dom_attr_get(thiz->style, EGUEB_DOM_ATTR_TYPE_BASE,
-			&style);
-	if (thiz->last_style != style)
-	{
-		/* TODO revert the style */
-		DBG_ELEMENT(EGUEB_DOM_NODE(e), "Using a style");
-		/* apply the new style */
-		egueb_css_attr_style_process(thiz->style);
-		/* swap the styles */
-		if (thiz->last_style)
-		{
-			egueb_dom_string_unref(thiz->last_style);
-			thiz->last_style = NULL;
-		}
-		if (style)
-		{
-			thiz->last_style = egueb_dom_string_ref(style);
-		}
-		
-	}
-	if (style) egueb_dom_string_unref(style);
+	egueb_css_attr_style_process(thiz->style);
 
 	relative = egueb_svg_element_presentation_relative_get(EGUEB_DOM_NODE(e));
 	geometry = egueb_svg_element_geometry_relative_get(EGUEB_DOM_NODE(e));

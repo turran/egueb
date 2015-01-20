@@ -62,4 +62,31 @@ extern int _egueb_css_log_dom_global;
 #endif /* ifdef CRIT */
 #define CRIT(...) EINA_LOG_DOM_CRIT(_egueb_css_log_dom_global, __VA_ARGS__)
 
+/* Element based logs */
+#ifdef ERR_ELEMENT
+# undef ERR_ELEMENT
+#endif
+#define ERR_ELEMENT(n, ...) EGUEB_DOM_ELEMENT_LOG_DOM_ERR(n, _egueb_css_log_dom_global, __VA_ARGS__)
+
+#ifdef WARN_ELEMENT
+# undef WARN_ELEMENT
+#endif
+#define WARN_ELEMENT(n, ...) EGUEB_DOM_ELEMENT_LOG_DOM_WARN(n, _egueb_css_log_dom_global, __VA_ARGS__)
+
+#ifdef INFO_ELEMENT
+# undef INFO_ELEMENT
+#endif
+#define INFO_ELEMENT(n, ...) EGUEB_DOM_ELEMENT_LOG_DOM_INFO(n, _egueb_css_log_dom_global, __VA_ARGS__)
+
+#ifdef DBG_ELEMENT
+# undef DBG_ELEMENT
+#endif
+#define DBG_ELEMENT(n, ...) EGUEB_DOM_ELEMENT_LOG_DOM_DBG(n, _egueb_css_log_dom_global, __VA_ARGS__)
+
+#ifdef CRIT_ELEMENT
+# undef CRIT_ELEMENT
+#endif
+#define CRIT_ELEMENT(n, ...) EGUEB_DOM_ELEMENT_LOG_DOM_CRIT(n, _egueb_css_log_dom_global, __VA_ARGS__)
+
+
 #endif
