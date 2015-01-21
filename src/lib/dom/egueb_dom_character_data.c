@@ -131,7 +131,7 @@ EAPI int egueb_dom_character_data_length_get(Egueb_Dom_Node *n)
 /* void               appendData(in DOMString arg)
    raises(DOMException);
 */
-EAPI Eina_Bool egueb_dom_character_data_append_data(Egueb_Dom_Node *n,
+EAPI Eina_Bool egueb_dom_character_data_data_append(Egueb_Dom_Node *n,
 		Egueb_Dom_String *data, Eina_Error *err)
 {
 	Egueb_Dom_Character_Data *thiz;
@@ -164,13 +164,21 @@ EAPI Eina_Bool egueb_dom_character_data_append_data(Egueb_Dom_Node *n,
 	return EINA_TRUE;
 }
 
-EAPI Eina_Bool egueb_dom_character_data_append_data_inline(Egueb_Dom_Node *n,
-		const char *data, Eina_Error *err)
+/* void               deleteData(in unsigned long offset, 
+                                in unsigned long count)
+                                        raises(DOMException);
+ */
+EAPI Eina_Bool egueb_dom_character_data_data_delete(Egueb_Dom_Node *n,
+		int offset, int count, Eina_Error *err)
 {
-	Egueb_Dom_String *s;
+	Egueb_Dom_Character_Data *thiz;
+	Egueb_Dom_Event *event;
 
-	s = egueb_dom_string_new_with_static_string(data);
-	return egueb_dom_character_data_append_data(n, s, err);
+	thiz = EGUEB_DOM_CHARACTER_DATA(n);
+	enesim_text_buffer_string_delete(thiz->buffer, count, offset);
+	event = egueb_dom_event_mutation_character_data_modified_new();
+	egueb_dom_node_event_dispatch(EGUEB_DOM_NODE(thiz), event, NULL, NULL);
+	return EINA_TRUE;
 }
 
 #if 0
@@ -179,9 +187,6 @@ EAPI Eina_Bool egueb_dom_character_data_append_data_inline(Egueb_Dom_Node *n,
                                         raises(DOMException);
   void               insertData(in unsigned long offset, 
                                 in DOMString arg)
-                                        raises(DOMException);
-  void               deleteData(in unsigned long offset, 
-                                in unsigned long count)
                                         raises(DOMException);
   void               replaceData(in unsigned long offset, 
                                  in unsigned long count, 

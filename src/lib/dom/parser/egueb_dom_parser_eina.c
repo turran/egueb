@@ -355,7 +355,7 @@ static void _egueb_dom_parser_eina_tag_cdata_set(Egueb_Dom_Parser_Eina *thiz,
 	/* set the content */
 	DBG("Appending string to a cdata section node");
 	str = egueb_dom_string_new_with_length(cdata, length);
-	egueb_dom_character_data_append_data(node, str, NULL);
+	egueb_dom_character_data_data_append(node, str, NULL);
 }
 
 static void _egueb_dom_parser_eina_tag_text_set(Egueb_Dom_Parser_Eina *thiz,
@@ -379,7 +379,7 @@ static void _egueb_dom_parser_eina_tag_text_set(Egueb_Dom_Parser_Eina *thiz,
 	/* set the content */
 	DBG("Appending string to a text node");
 	str = _egueb_dom_parser_eina_transform_text(thiz, text, length);
-	egueb_dom_character_data_append_data(node, str, NULL);
+	egueb_dom_character_data_data_append(node, str, NULL);
 }
 
 #ifdef EINA_POST_1_8_0

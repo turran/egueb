@@ -37,10 +37,10 @@ EAPI void egueb_dom_character_data_buffer_set(Egueb_Dom_Node *n,
 
 EAPI Egueb_Dom_String * egueb_dom_character_data_data_get(Egueb_Dom_Node *n);
 EAPI int egueb_dom_character_data_length_get(Egueb_Dom_Node *n);
-EAPI Eina_Bool egueb_dom_character_data_append_data(Egueb_Dom_Node *n,
+EAPI Eina_Bool egueb_dom_character_data_data_append(Egueb_Dom_Node *n,
 		Egueb_Dom_String *data, Eina_Error *err);
-EAPI Eina_Bool egueb_dom_character_data_append_data_inline(Egueb_Dom_Node *n,
-		const char *data, Eina_Error *err);
+EAPI Eina_Bool egueb_dom_character_data_data_delete(Egueb_Dom_Node *n,
+		int offset, int count, Eina_Error *err);
 
 /**
  * @}
