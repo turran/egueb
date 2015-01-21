@@ -18,6 +18,9 @@
 
 #include "egueb_css_private.h"
 
+#include "egueb_css_main.h"
+#include "egueb_css_attr_style_private.h"
+
 #include "egueb_css_engine_selector_private.h"
 #include "egueb_css_engine_rule_private.h"
 #include "egueb_css_engine_style_private.h"
@@ -49,8 +52,19 @@ typedef struct _Egueb_Css_Engine_State
 static void _element_rule_apply(Egueb_Css_Engine_Rule *r, Egueb_Dom_Node *n)
 {
 	Egueb_Css_Engine_Declaration *d;
+	Egueb_Dom_Node *attr;
 	Eina_List *l;
 
+	/* Make sure to make the style attribute be processed again on the next
+	 * process of the owner element
+	 */
+	attr = egueb_dom_element_attribute_node_get(n, EGUEB_CSS_NAME_STYLE);
+	if (egueb_css_attr_is_style(attr))
+	{
+		egueb_css_attr_style_force_process(attr);
+	}
+	egueb_dom_node_unref(attr);
+	/* set every attribute */
 	EINA_LIST_FOREACH(r->declarations, l, d)
 	{
 		egueb_css_engine_node_attribute_set_simple(n, d->attribute,
