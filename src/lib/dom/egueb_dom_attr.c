@@ -628,8 +628,11 @@ EAPI Eina_Bool egueb_dom_attr_string_get(Egueb_Dom_Node *attr,
 	d = egueb_dom_attr_value_descriptor_get(attr);
 	egueb_dom_value_init(&v, d);
 	ret = egueb_dom_attr_value_get(attr, type, &v);
-	egueb_dom_value_string_to(&v, str);
-	egueb_dom_value_reset(&v);
+	if (ret)
+	{
+		egueb_dom_value_string_to(&v, str);
+		egueb_dom_value_reset(&v);
+	}
 	return ret;
 }
 
