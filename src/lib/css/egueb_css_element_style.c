@@ -29,28 +29,123 @@
  *============================================================================*/
 #define EGUEB_CSS_ELEMENT_STYLE_DESCRIPTOR egueb_css_element_style_descriptor_get()
 #define EGUEB_CSS_ELEMENT_STYLE_CLASS(k) ENESIM_OBJECT_CLASS_CHECK(k, 		\
-		Egueb_Dom_Element_Style_Class, EGUEB_CSS_ELEMENT_STYLE_DESCRIPTOR)
+		Egueb_Css_Element_Style_Class, EGUEB_CSS_ELEMENT_STYLE_DESCRIPTOR)
 #define EGUEB_CSS_ELEMENT_STYLE_CLASS_GET(o) EGUEB_CSS_ELEMENT_STYLE_CLASS(	\
 		(ENESIM_OBJECT_INSTANCE(o))->klass)
 #define EGUEB_CSS_ELEMENT_STYLE(o) ENESIM_OBJECT_INSTANCE_CHECK(o, 		\
-		Egueb_Dom_Element_Style, EGUEB_CSS_ELEMENT_STYLE_DESCRIPTOR)
+		Egueb_Css_Element_Style, EGUEB_CSS_ELEMENT_STYLE_DESCRIPTOR)
 
-typedef struct _Egueb_Dom_Element_Style
+typedef struct _Egueb_Css_Element_Style
 {
 	Egueb_Dom_Element base;
+	/* properties */
 	Egueb_Dom_Node *type;
+	/* private */
+	Egueb_Dom_String *last_data;
+	int last_length;
 	Eina_Bool data_changed;
-} Egueb_Dom_Element_Style;
+} Egueb_Css_Element_Style;
 
-typedef struct _Egueb_Dom_Element_Style_Class
+typedef struct _Egueb_Css_Element_Style_Class
 {
 	Egueb_Dom_Element_Class base;
-} Egueb_Dom_Element_Style_Class;
+} Egueb_Css_Element_Style_Class;
+
+Enesim_Object_Descriptor * egueb_css_element_style_descriptor_get(void);
+
+static Eina_Bool _egueb_css_element_is_style(Egueb_Dom_Node *n)
+{
+	if (!n) return EINA_FALSE;
+	if (!enesim_object_instance_inherits(ENESIM_OBJECT_INSTANCE(n),
+			EGUEB_CSS_ELEMENT_STYLE_DESCRIPTOR))
+		return EINA_FALSE;
+	return EINA_TRUE;
+}
+
+static Eina_Bool _egueb_css_element_style_apply(Egueb_Dom_Node *n,
+		Egueb_Dom_Node *topmost)
+{
+	Egueb_Css_Element_Style *thiz;
+	Egueb_Dom_Node *data;
+
+	thiz = EGUEB_CSS_ELEMENT_STYLE(n);
+
+	/* Un apply previous style */
+	if (thiz->last_data)
+	{
+		Egueb_Css_Engine_Style *s;
+
+		DBG_ELEMENT (n, "Unapplying style");
+		/* TODO unapply the style on every element */
+		s = egueb_css_engine_style_load_from_content(
+				egueb_dom_string_string_get(thiz->last_data),
+				thiz->last_length);
+		egueb_css_engine_style_apply(s, topmost);
+	}
+	/* Apply the style */
+	data = egueb_dom_node_child_first_get(n);
+	if (data && thiz->data_changed)
+	{
+		Egueb_Css_Engine_Style *s;
+		Egueb_Dom_String *str;
+		int length;
+
+		DBG_ELEMENT (n, "Applying style");
+		str = egueb_dom_character_data_data_get(data);
+		length = egueb_dom_character_data_length_get(data);
+		s = egueb_css_engine_style_load_from_content(
+				egueb_dom_string_string_get(str), length);
+		egueb_css_engine_style_apply(s, topmost);
+		thiz->data_changed = EINA_FALSE;
+
+		/* keep track of the last data */
+		thiz->last_length = length;
+		if (thiz->last_data)
+			egueb_dom_string_unref(thiz->last_data);
+		thiz->last_data = str;
+		egueb_dom_node_unref(data);
+	}
+
+	return EINA_TRUE;
+}
+
+/* Iterate over every css style element and unapply/apply on each of
+ * them. The thing is that if some style changes its content, we need
+ * to revert its previous style apply back and so on
+ */
+static void _egueb_css_element_style_apply_recursive(Egueb_Dom_Node *n,
+		Egueb_Dom_Node *topmost)
+{
+	Egueb_Dom_Node *child;
+
+	child = egueb_dom_element_child_first_get(n);
+	while (child)
+	{
+		Egueb_Dom_Node *tmp;
+
+		if (_egueb_css_element_is_style(child))
+			_egueb_css_element_style_apply (child, topmost);
+		else
+			_egueb_css_element_style_apply_recursive(child, topmost);
+		tmp = egueb_dom_element_sibling_next_get(child);
+		egueb_dom_node_unref(child);
+		child = tmp;
+	}
+}
+
+static void _egueb_css_element_style_character_data_modified_cb(Egueb_Dom_Event *e,
+		void *data)
+{
+	Egueb_Css_Element_Style *thiz;
+
+	thiz = EGUEB_CSS_ELEMENT_STYLE(data);
+	thiz->data_changed = EINA_TRUE;
+}
 
 static void _egueb_css_element_style_node_inserted_or_removed_cb(Egueb_Dom_Event *e,
 		void *data)
 {
-	Egueb_Dom_Element_Style *thiz;
+	Egueb_Css_Element_Style *thiz;
 	Egueb_Dom_Node *n = data;
 	Egueb_Dom_Node *target = NULL;
 	Egueb_Dom_Node *related = NULL;
@@ -85,53 +180,24 @@ not_us:
  *----------------------------------------------------------------------------*/
 static Eina_Bool _egueb_css_element_style_process(Egueb_Dom_Element *e)
 {
-	Egueb_Dom_Element_Style *thiz;
-	Egueb_Dom_Node *data;
 	Egueb_Dom_Node *doc;
 	Egueb_Dom_Node *topmost;
-	Egueb_Css_Engine_Style *s;
 	Egueb_Dom_Node *n;
-	Enesim_Text_Buffer *tb;
-	const char *content;
-
-	thiz = EGUEB_CSS_ELEMENT_STYLE(e);
-
-	/* Check if we need to setup the style again */
-	if (!thiz->data_changed)
-		return EINA_TRUE;
 
 	n = EGUEB_DOM_NODE(e);
-	data = egueb_dom_node_child_first_get(n);
-	if (!data)
-		return EINA_FALSE;
 
 	doc = egueb_dom_node_owner_document_get(n);
 	if (!doc)
-	{
-		egueb_dom_node_unref(data);
 		return EINA_FALSE;
-	}
 
 	topmost = egueb_dom_document_document_element_get(doc);
 	if (!topmost)
 	{
-		egueb_dom_node_unref(data);
 		egueb_dom_node_unref(doc);
 		return EINA_FALSE;
 	}
 
-	/* TODO unapply the style on every element */
-	DBG ("Applying style");
-	
-	tb = egueb_dom_character_data_buffer_get(data);
-	content = enesim_text_buffer_string_get(tb);
-	s = egueb_css_engine_style_load_from_content(content,
-			enesim_text_buffer_string_length(tb));
-	egueb_css_engine_style_apply(s, topmost);
-	thiz->data_changed = EINA_FALSE;
-
-	enesim_text_buffer_unref(tb);
-	egueb_dom_node_unref(data);
+	_egueb_css_element_style_apply_recursive(topmost, topmost);
 	egueb_dom_node_unref(topmost);
 	egueb_dom_node_unref(doc);
 
@@ -149,7 +215,7 @@ static Egueb_Dom_String * _egueb_css_element_style_tag_name_get(Egueb_Dom_Elemen
  *                              Object interface                              *
  *----------------------------------------------------------------------------*/
 ENESIM_OBJECT_INSTANCE_BOILERPLATE(EGUEB_DOM_ELEMENT_DESCRIPTOR,
-		Egueb_Dom_Element_Style, Egueb_Dom_Element_Style_Class,
+		Egueb_Css_Element_Style, Egueb_Css_Element_Style_Class,
 		egueb_css_element_style);
 
 static void _egueb_css_element_style_class_init(void *k)
@@ -163,7 +229,7 @@ static void _egueb_css_element_style_class_init(void *k)
 
 static void _egueb_css_element_style_instance_init(void *o)
 {
-	Egueb_Dom_Element_Style *thiz;
+	Egueb_Css_Element_Style *thiz;
 	Egueb_Dom_Node *n;
 
 	thiz = EGUEB_CSS_ELEMENT_STYLE(o);
@@ -183,14 +249,20 @@ static void _egueb_css_element_style_instance_init(void *o)
 			EGUEB_DOM_EVENT_MUTATION_NODE_REMOVED,
 			_egueb_css_element_style_node_inserted_or_removed_cb,
 			EINA_TRUE, thiz);
+	egueb_dom_node_event_listener_add(n,
+			EGUEB_DOM_EVENT_MUTATION_CHARACTER_DATA_MODIFIED,
+			_egueb_css_element_style_character_data_modified_cb,
+			EINA_TRUE, n);
 }
 
 static void _egueb_css_element_style_instance_deinit(void *o)
 {
-	Egueb_Dom_Element_Style *thiz;
+	Egueb_Css_Element_Style *thiz;
 
 	thiz = EGUEB_CSS_ELEMENT_STYLE(o);
 	egueb_dom_node_unref(thiz->type);
+	if (thiz->last_data)
+		egueb_dom_string_unref(thiz->last_data);
 }
 /*============================================================================*
  *                                 Global                                     *
@@ -209,7 +281,7 @@ EAPI Eina_Bool egueb_css_element_is_style(Egueb_Dom_Node *n)
 
 EAPI Egueb_Dom_Node * egueb_css_element_style_new(void)
 {
-	Egueb_Dom_Element_Style *thiz;
+	Egueb_Css_Element_Style *thiz;
 
 	thiz = ENESIM_OBJECT_INSTANCE_NEW(egueb_css_element_style);
 	return EGUEB_DOM_NODE(thiz);
