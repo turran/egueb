@@ -1088,13 +1088,23 @@ EAPI Eina_Bool egueb_dom_node_event_dispatch(Egueb_Dom_Node *thiz,
 	/* FIXME also if the string is empty */
 	if (!event || !event->type)
 	{
-		if (err) *err = EGUEB_DOM_ERROR_INVALID_ACCESS;
+		if (event)
+			egueb_dom_event_unref(event);
+		if (err)
+			*err = EGUEB_DOM_ERROR_INVALID_ACCESS;
 		return EINA_FALSE;
 	}
 	if (event->dispatching)
 	{
+		egueb_dom_event_unref(event);
 		/* return EGUEB_DOM_EVENT_UNSPECIFIED_EVENT_TYPE_ERR; */
-		if (err) *err = EGUEB_DOM_ERROR_INVALID_ACCESS;
+		if (err)
+			*err = EGUEB_DOM_ERROR_INVALID_ACCESS;
+		return EINA_FALSE;
+	}
+	if (thiz->freezed)
+	{
+		egueb_dom_event_unref(event);
 		return EINA_FALSE;
 	}
 
@@ -1423,10 +1433,9 @@ EAPI Ender_Item * egueb_dom_node_item_get(Egueb_Dom_Node *thiz)
 	return ret;
 }
 
-#if 0
 EAPI void egueb_dom_node_freeze(Egueb_Dom_Node *thiz)
 {
-	thiz->freeze++;
+	thiz->freezed++;
 }
 
 EAPI Eina_Bool egueb_dom_node_is_freezed(Egueb_Dom_Node *thiz)
@@ -1436,14 +1445,13 @@ EAPI Eina_Bool egueb_dom_node_is_freezed(Egueb_Dom_Node *thiz)
 
 EAPI void egueb_dom_node_thaw(Egueb_Dom_Node *thiz)
 {
-	if (!thiz->freeze)
+	if (!thiz->freezed)
 	{
-		CRIT("Node already thawed");
+		ERR("Node already thawed");
 		return;
 	}
-	thiz->freeze--;
+	thiz->freezed--;
 }
-#endif
 
 #if 0
 // Introduced in DOM Level 2:
