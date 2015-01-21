@@ -1142,7 +1142,7 @@ EAPI void egueb_dom_element_enqueue(Egueb_Dom_Node *n)
  * @brief Request an element for a process
  * @param[in] n The element to request the process
  *
- * This will send an process event on the element for later requesting. If this
+ * This will send a process event on the element for later requesting. If this
  * event reaches the topmost element in the bubbling phase it will be
  * automatically enqueued on the list of elements to process
  */
