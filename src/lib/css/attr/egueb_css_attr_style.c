@@ -26,6 +26,7 @@
 
 #include "egueb_dom_attr_private.h"
 #include "egueb_dom_attr_object_private.h"
+#include "egueb_css_attr_style_private.h"
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
@@ -107,6 +108,15 @@ static void _egueb_css_attr_style_instance_deinit(void *o)
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
+Eina_Bool egueb_css_attr_is_style(Egueb_Dom_Node *n)
+{
+	if (!n) return EINA_FALSE;
+	if (!enesim_object_instance_inherits(ENESIM_OBJECT_INSTANCE(n),
+			EGUEB_CSS_ATTR_STYLE_DESCRIPTOR))
+		return EINA_FALSE;
+	return EINA_TRUE;
+}
+
 void egueb_css_attr_style_force_process(Egueb_Dom_Node *n)
 {
 	Egueb_Css_Attr_String *thiz;
@@ -158,7 +168,9 @@ EAPI void egueb_css_attr_style_process(Egueb_Dom_Node *n)
 
 		DBG_ELEMENT(EGUEB_DOM_NODE(owner), "Applying the style");
 		/* apply the style attribute */
+		egueb_dom_node_freeze(owner);
 		egueb_css_engine_style_inline_apply(owner, v);
+		egueb_dom_node_thaw(owner);
 		egueb_dom_node_unref(owner);
 
 		/* swap the styles */
