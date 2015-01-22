@@ -99,6 +99,7 @@ EAPI Eina_Bool egueb_dom_attr_type_is_set(Egueb_Dom_Node *n,
 EAPI Eina_Bool egueb_dom_attr_has_value(Egueb_Dom_Node *n);
 EAPI void egueb_dom_attr_inherit(Egueb_Dom_Node *n,
 		Egueb_Dom_Attr_Type type);
+EAPI Eina_Bool egueb_dom_attr_unset(Egueb_Dom_Node *n, int prop_mask);
 EAPI Eina_Bool egueb_dom_attr_value_get(Egueb_Dom_Node *n,
 		Egueb_Dom_Attr_Type type, Egueb_Dom_Value *value);
 EAPI Eina_Bool egueb_dom_attr_value_set(Egueb_Dom_Node *n,
