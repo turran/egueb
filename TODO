@@ -77,10 +77,6 @@ typedef struct _Egueb_Svg_Paint
 + Modify the clone interface, in order to clone a node we need a doc, just
   create it as it has been parsed
 
-CSS
-====
-+ Add a way to unset every property, useful whenever we change styles and we need to rollback to its initial state
-
 SVG
 ====
 + There's some complication about attributes and properties and how to export them:

@@ -124,16 +124,6 @@ void egueb_css_attr_style_force_process(Egueb_Dom_Node *n)
 	thiz = EGUEB_CSS_ATTR_STYLE(n);
 	thiz->force_process = EINA_TRUE;
 }
-
-#if 0
-void egueb_css_attr_style_clear(Egueb_Dom_Node *n)
-{
-	Egueb_Css_Attr_String *thiz;
-
-	thiz = EGUEB_CSS_ATTR_STYLE(n);
-
-}
-#endif
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/
@@ -160,30 +150,35 @@ EAPI void egueb_css_attr_style_process(Egueb_Dom_Node *n)
 	if (thiz->last_value != thiz->value || thiz->force_process)
 	{
 		Egueb_Dom_Node *owner;
+
+		owner = egueb_dom_attr_owner_get(n);
 		const char *v;
 
-		/* apply the new style */
-		v = egueb_dom_string_string_get(thiz->value);
-		owner = egueb_dom_attr_owner_get(n);
-
-		DBG_ELEMENT(EGUEB_DOM_NODE(owner), "Applying the style");
-		/* apply the style attribute */
-		egueb_dom_node_freeze(owner);
-		egueb_css_engine_style_inline_apply(owner, v);
-		egueb_dom_node_thaw(owner);
-		egueb_dom_node_unref(owner);
-
-		/* swap the styles */
+		/* unapply previous style */
 		if (thiz->last_value)
 		{
+			DBG_ELEMENT(EGUEB_DOM_NODE(owner), "Unapplying the style");
+			egueb_dom_node_freeze(owner);
+			v = egueb_dom_string_string_get(thiz->value);
+			egueb_css_engine_style_inline_unapply(owner, v);
+			egueb_dom_node_thaw(owner);
+			/* swap */
 			egueb_dom_string_unref(thiz->last_value);
 			thiz->last_value = NULL;
 		}
+		/* apply the new style */
 		if (thiz->value)
 		{
+			DBG_ELEMENT(EGUEB_DOM_NODE(owner), "Applying the style");
+			egueb_dom_node_freeze(owner);
+			v = egueb_dom_string_string_get(thiz->value);
+			egueb_css_engine_style_inline_apply(owner, v);
+			egueb_dom_node_thaw(owner);
+			/* keep it */
 			thiz->last_value = egueb_dom_string_ref(thiz->value);
 		}
 
 		thiz->force_process = EINA_FALSE;
+		egueb_dom_node_unref(owner);
 	}
 }

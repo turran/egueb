@@ -75,36 +75,39 @@ static Eina_Bool _egueb_css_element_style_apply(Egueb_Dom_Node *n,
 	{
 		Egueb_Css_Engine_Style *s;
 
-		DBG_ELEMENT (n, "Unapplying style");
-		/* TODO unapply the style on every element */
+		DBG_ELEMENT (n, "Unapplying style element");
 		s = egueb_css_engine_style_load_from_content(
 				egueb_dom_string_string_get(thiz->last_data),
 				thiz->last_length);
-		egueb_css_engine_style_apply(s, topmost);
+		egueb_css_engine_style_unapply(s, topmost);
+		egueb_css_engine_style_free(s);
 	}
 	/* Apply the style */
 	data = egueb_dom_node_child_first_get(n);
-	if (data && thiz->data_changed)
+	if (data)
 	{
 		Egueb_Css_Engine_Style *s;
 		Egueb_Dom_String *str;
 		int length;
 
-		DBG_ELEMENT (n, "Applying style");
+		DBG_ELEMENT (n, "Applying style element");
 		str = egueb_dom_character_data_data_get(data);
 		length = egueb_dom_character_data_length_get(data);
 		s = egueb_css_engine_style_load_from_content(
 				egueb_dom_string_string_get(str), length);
 		egueb_css_engine_style_apply(s, topmost);
-		thiz->data_changed = EINA_FALSE;
+		egueb_css_engine_style_free(s);
 
 		/* keep track of the last data */
 		thiz->last_length = length;
 		if (thiz->last_data)
 			egueb_dom_string_unref(thiz->last_data);
 		thiz->last_data = str;
+
 		egueb_dom_node_unref(data);
 	}
+	/* do not process it again */
+	thiz->data_changed = EINA_FALSE;
 
 	return EINA_TRUE;
 }
@@ -180,12 +183,20 @@ not_us:
  *----------------------------------------------------------------------------*/
 static Eina_Bool _egueb_css_element_style_process(Egueb_Dom_Element *e)
 {
+	Egueb_Css_Element_Style *thiz;
 	Egueb_Dom_Node *doc;
 	Egueb_Dom_Node *topmost;
 	Egueb_Dom_Node *n;
 
-	n = EGUEB_DOM_NODE(e);
+	/* only process every css style element, for the first
+	 * element that actually needs to be processed
+	 */
+	thiz = EGUEB_CSS_ELEMENT_STYLE(e);
+	if (!thiz->data_changed)
+		return EINA_TRUE;
 
+
+	n = EGUEB_DOM_NODE(e);
 	doc = egueb_dom_node_owner_document_get(n);
 	if (!doc)
 		return EINA_FALSE;

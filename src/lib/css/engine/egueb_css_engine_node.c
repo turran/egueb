@@ -28,6 +28,9 @@
 void egueb_css_engine_node_attribute_set(Egueb_Dom_Node *n,
 		Egueb_Dom_String *attr, Egueb_Dom_String *val)
 {
+	DBG("Setting attr '%s' with value '%s'",
+			egueb_dom_string_string_get(attr),
+			egueb_dom_string_string_get(val));
 	egueb_dom_element_attribute_type_set(n, attr, EGUEB_DOM_ATTR_TYPE_STYLED, val, NULL);
 	egueb_dom_string_unref(val);
 	egueb_dom_string_unref(attr);
@@ -42,6 +45,30 @@ void egueb_css_engine_node_attribute_set_simple(Egueb_Dom_Node *n,
 	s_attr = egueb_dom_string_new_with_string(attr);
 	s_val = egueb_dom_string_new_with_string(val);
 	egueb_css_engine_node_attribute_set(n, s_attr, s_val);
+}
+
+void egueb_css_engine_node_attribute_clear(Egueb_Dom_Node *n,
+		Egueb_Dom_String *s_attr)
+{
+	Egueb_Dom_Node *attr;
+
+	attr = egueb_dom_element_attribute_node_get(n, s_attr);
+	if (attr)
+	{
+		DBG("Clearing attr '%s'", egueb_dom_string_string_get(s_attr));
+		egueb_dom_attr_unset(attr, EGUEB_DOM_ATTR_TYPE_STYLED);
+		egueb_dom_node_unref(attr);
+	}
+	egueb_dom_string_unref(s_attr);
+}
+
+void egueb_css_engine_node_attribute_clear_simple(Egueb_Dom_Node *n,
+		const char *attr)
+{
+	Egueb_Dom_String *s_attr;
+
+	s_attr = egueb_dom_string_new_with_string(attr);
+	egueb_css_engine_node_attribute_clear(n, s_attr);
 }
 
 Egueb_Dom_String * egueb_css_engine_node_attribute_get(Egueb_Dom_Node *n,

@@ -23,6 +23,10 @@ void egueb_css_engine_node_attribute_set(Egueb_Dom_Node *n,
 		Egueb_Dom_String *attr, Egueb_Dom_String *val);
 void egueb_css_engine_node_attribute_set_simple(Egueb_Dom_Node *n,
 		const char *attr, const char *val);
+void egueb_css_engine_node_attribute_clear(Egueb_Dom_Node *n,
+		Egueb_Dom_String *attr);
+void egueb_css_engine_node_attribute_clear_simple(Egueb_Dom_Node *n,
+		const char *attr);
 Egueb_Dom_String * egueb_css_engine_node_attribute_get(Egueb_Dom_Node *n,
 		Egueb_Dom_String *attr);
 Eina_Bool egueb_css_engine_node_attribute_is_simple(Egueb_Dom_Node *n,
