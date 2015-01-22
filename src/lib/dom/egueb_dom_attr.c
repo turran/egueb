@@ -30,6 +30,38 @@
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
+static void _egueb_dom_attr_send_mutation(Egueb_Dom_Attr *thiz,
+		Egueb_Dom_Event_Mutation_Attr_Type attr_type,
+		Egueb_Dom_Attr_Type type, Egueb_Dom_Value *value)
+{
+	Egueb_Dom_Event *event;
+	Egueb_Dom_Element *e;
+	Egueb_Dom_Node *n;
+
+	/* trigger the mutation event */
+ 	if (!thiz->owner)
+		return;
+
+	n = EGUEB_DOM_NODE(thiz);
+	event = egueb_dom_event_mutation_attr_modified_new(
+			egueb_dom_node_ref(n), NULL, value,
+			egueb_dom_string_ref(thiz->name),
+			attr_type,
+			type);
+	egueb_dom_node_event_dispatch(thiz->owner, event, NULL, NULL);
+
+	/* in case the property is inheritable, mark the element
+	 * with a flag informing that. That is helpful on the processing
+	 * functions of the sublcasses of an element to know if they
+	 * need to process again the inheritance feature to calculate
+	 * the final values
+	 */
+	e = EGUEB_DOM_ELEMENT(thiz->owner);
+	if (egueb_dom_attr_is_inheritable(n))
+		e->inheritable_changed = EINA_TRUE;
+	e->attr_changed = EINA_TRUE;
+}
+
 /* check if the property type is set and if the value is "inherited" use the
  * the relative property
  */
@@ -360,11 +392,27 @@ EAPI void egueb_dom_attr_inherit(Egueb_Dom_Node *n,
 EAPI Eina_Bool egueb_dom_attr_unset(Egueb_Dom_Node *n, int prop_mask)
 {
 	Egueb_Dom_Attr *thiz;
+	int i = 0;
+
 	thiz = EGUEB_DOM_ATTR(n);
-	/* we just unset the mask, the real property value will be removed
-	 * at the next set or whenever the property is freed
-	 */
-	thiz->set_mask &= ~prop_mask;
+	/* trigger the mutation event */
+	while (prop_mask)
+	{
+		Egueb_Dom_Attr_Type type = (prop_mask & 1) << i;
+
+		if (type)
+		{
+			_egueb_dom_attr_send_mutation(thiz,
+					EGUEB_DOM_EVENT_MUTATION_ATTR_TYPE_REMOVAL,
+					type, NULL);
+			/* we just unset the mask, the real property value will be removed
+			 * at the next set or whenever the property is freed
+			 */
+			thiz->set_mask &= ~type;
+		}
+		prop_mask = prop_mask >> 1;
+		i++;
+	}
 	return EINA_TRUE;
 }
 
@@ -429,31 +477,9 @@ EAPI Eina_Bool egueb_dom_attr_value_set(Egueb_Dom_Node *n,
 	klass = EGUEB_DOM_ATTR_CLASS_GET(thiz);
 	if (klass->value_set(thiz, type, value))
 	{
-
-		/* trigger the mutation event */
- 		if (thiz->owner)
-		{
-			Egueb_Dom_Event *event;
-			Egueb_Dom_Element *e;
-			e = EGUEB_DOM_ELEMENT(thiz->owner);
-
-			event = egueb_dom_event_mutation_attr_modified_new(
-					egueb_dom_node_ref(n), NULL, value,
-					egueb_dom_string_ref(thiz->name),
-					EGUEB_DOM_EVENT_MUTATION_ATTR_TYPE_MODIFICATION,
-					type);
-			egueb_dom_node_event_dispatch(thiz->owner, event, NULL, NULL);
-
-			/* in case the property is inheritable, mark the element
-			 * with a flag informing that. That is helpful on the processing
-			 * functions of the sublcasses of an element to know if they
-			 * need to process again the inheritance feature to calculate
-			 * the final values
-			 */
-			if (egueb_dom_attr_is_inheritable(n))
-				e->inheritable_changed = EINA_TRUE;
-			e->attr_changed = EINA_TRUE;
-		}
+		_egueb_dom_attr_send_mutation(thiz,
+				EGUEB_DOM_EVENT_MUTATION_ATTR_TYPE_MODIFICATION,
+				type, value);
 		/* finally set the mask */
 		thiz->set_mask |= type;
 		/* mark it as changed */
