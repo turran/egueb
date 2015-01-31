@@ -39,6 +39,7 @@
 #include "egueb_svg_attr_rect_private.h"
 #include "egueb_svg_attr_length_private.h"
 #include "egueb_svg_attr_zoom_and_pan_private.h"
+
 /*
  * Given that a svg element can clip, we should use a clipper with a compound
  * inside as the renderer
@@ -223,6 +224,7 @@ static Eina_Bool _egueb_svg_element_svg_window_content_size_set(
 	Egueb_Svg_Element_Svg *thiz;
 
 	thiz = EGUEB_SVG_ELEMENT_SVG(n);
+	DBG_ELEMENT(n, "Setting content size %d %d", w, h);
 	thiz->window_height = h;
 	thiz->window_width = w;
 
@@ -656,6 +658,25 @@ static Eina_Bool _egueb_svg_element_svg_process(Egueb_Svg_Renderable *r)
 	enesim_renderer_rectangle_size_set(thiz->rectangle, gw, gh);
 	enesim_renderer_transformation_set(thiz->rectangle, &relative_transform);
 
+	if (gw <= 0 || gh <= 0)
+	{
+		Egueb_Dom_String *sw, *sh;
+
+		egueb_dom_attr_final_string_get(thiz->width, &sw);
+		egueb_dom_attr_final_string_get(thiz->height, &sh);
+
+		ERR_ELEMENT(EGUEB_DOM_NODE(r), "Invalid size, width: %s %g -> %g, "
+				"height: %s %g -> %g",
+				egueb_dom_string_string_get(sw),
+				relative_width, gw,
+				egueb_dom_string_string_get(sh),
+				relative_height, gh);
+		egueb_dom_string_unref(sw);
+		egueb_dom_string_unref(sh);
+
+		return EINA_FALSE;
+	}
+
 	if (!relative)
 	{
 		Egueb_Svg_Zoom_And_Pan zoom_and_pan;
@@ -673,6 +694,7 @@ static Eina_Bool _egueb_svg_element_svg_process(Egueb_Svg_Renderable *r)
 	}
 
 	DBG_ELEMENT(EGUEB_DOM_NODE(r), "x: %g, y: %g, width: %g, height: %g", gx, gy, gw, gh);
+
 	e = EGUEB_SVG_ELEMENT(r);
 	/* the viewbox will set a new user space coordinate */
 	/* FIXME check zeros */
