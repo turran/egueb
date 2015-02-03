@@ -137,7 +137,6 @@ extern "C" {
 #include "egueb_dom_document_external.h"
 #include "egueb_dom_attr_external.h"
 
-#include "egueb_dom_implementation_source.h"
 #include "egueb_dom_registry.h"
 
 #include "egueb_dom_window.h"

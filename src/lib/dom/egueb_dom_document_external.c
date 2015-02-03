@@ -19,6 +19,7 @@
 
 #include "egueb_dom_string.h"
 #include "egueb_dom_main.h"
+#include "egueb_dom_list.h"
 #include "egueb_dom_document.h"
 #include "egueb_dom_document_external.h"
 

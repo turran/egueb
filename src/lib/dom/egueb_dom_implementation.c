@@ -19,6 +19,7 @@
 
 #include "egueb_dom_string.h"
 #include "egueb_dom_main.h"
+#include "egueb_dom_list.h"
 #include "egueb_dom_node.h"
 #include "egueb_dom_implementation.h"
 
@@ -67,6 +68,19 @@ EAPI void egueb_dom_implementation_unref(Egueb_Dom_Implementation *thiz)
 		free(thiz);
 }
 
+EAPI Egueb_Dom_List * egueb_dom_implementation_mime_get(
+		Egueb_Dom_Implementation *thiz)
+{
+	Egueb_Dom_List *ret;
+
+	if (!thiz) return NULL;
+	if (!thiz->d) return NULL;
+	if (!thiz->d->mime_get) return NULL;
+
+	ret = thiz->d->mime_get();
+	return ret;
+}
+
 EAPI Egueb_Dom_Node * egueb_dom_implementation_document_create(
 		Egueb_Dom_Implementation *thiz)
 {
@@ -74,6 +88,7 @@ EAPI Egueb_Dom_Node * egueb_dom_implementation_document_create(
 	Egueb_Dom_Node *ret;
 
 	if (!thiz) return NULL;
+	if (!thiz->d) return NULL;
 	if (!thiz->d->document_create) return NULL;
 
 	ret = thiz->d->document_create();

@@ -18,12 +18,14 @@
 #ifndef _EGUEB_DOM_IMPLEMENTATION_H_
 #define _EGUEB_DOM_IMPLEMENTATION_H_
 
+typedef Egueb_Dom_List * (*Egueb_Dom_Implementation_Descriptor_Mime_Get)(void);
 typedef Egueb_Dom_Node * (*Egueb_Dom_Implementation_Descriptor_Document_Create)(void);
 
 #define EGUEB_DOM_IMPLEMENTATION_DESCRIPTOR_VERSION 0
 typedef struct _Egueb_Dom_Implementation_Descriptor
 {
 	int version;
+	Egueb_Dom_Implementation_Descriptor_Mime_Get mime_get;
 	Egueb_Dom_Implementation_Descriptor_Document_Create document_create;
 } Egueb_Dom_Implementation_Descriptor;
 
@@ -34,6 +36,8 @@ EAPI Egueb_Dom_Implementation * egueb_dom_implementation_new(
 EAPI Egueb_Dom_Implementation * egueb_dom_implementation_ref(
 		Egueb_Dom_Implementation *thiz);
 EAPI void egueb_dom_implementation_unref(Egueb_Dom_Implementation *thiz);
+EAPI Egueb_Dom_List * egueb_dom_implementation_mime_get(
+		Egueb_Dom_Implementation *thiz);
 EAPI Egueb_Dom_Node * egueb_dom_implementation_document_create(
 		Egueb_Dom_Implementation *thiz);
 

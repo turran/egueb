@@ -18,8 +18,9 @@
 #ifndef _EGUEB_DOM_REGISTRY_H_
 #define _EGUEB_DOM_REGISTRY_H_
 
-EAPI void egueb_dom_registry_source_add(
-		Egueb_Dom_Implementation_Source *s);
+EAPI void egueb_dom_registry_implementation_add(
+		Egueb_Dom_Implementation *i);
+EAPI Egueb_Dom_List * egueb_dom_registry_mime_get (void);
 EAPI Egueb_Dom_Implementation * egueb_dom_registry_implementation_get_by_mime(
 		Egueb_Dom_String *mime);
 

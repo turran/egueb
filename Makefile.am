@@ -72,7 +72,7 @@ endif
 ### Modules
 
 include src/modules/enesim_image/Makefile.mk
-include src/modules/egueb_source/Makefile.mk
+include src/modules/egueb_implementation/Makefile.mk
 
 ### Binaries
 include src/bin/Makefile.mk

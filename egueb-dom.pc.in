@@ -5,7 +5,7 @@ includedir=@includedir@
 datarootdir=@datarootdir@
 datadir=@datadir@/@PACKAGE@
 pkgincludedir=@pkgincludedir@-@VMAJ@/dom
-modulesourcedir=@pkglibdir@/source
+moduleimplementationdir=@pkglibdir@/implementation
 
 Name: Egueb DOM
 Description: Egueb DOM implementation

@@ -28,6 +28,15 @@ static int _egueb_svg_init_count = 0;
 /*----------------------------------------------------------------------------*
  *                      Implementation interface                              *
  *----------------------------------------------------------------------------*/
+static Egueb_Dom_List * _impl_mime_get(void)
+{
+	Egueb_Dom_List *ret;
+
+	ret = egueb_dom_list_new(egueb_dom_value_dom_string_descriptor_get());
+	egueb_dom_list_item_append(ret, egueb_dom_string_ref(_egueb_svg_mime));
+	return ret;
+}
+
 static Egueb_Dom_Node * _impl_document_create(void)
 {
 	return egueb_svg_document_new();
@@ -35,25 +44,8 @@ static Egueb_Dom_Node * _impl_document_create(void)
 
 static Egueb_Dom_Implementation_Descriptor _impl_descriptor = {
 	/* .version 		= */ EGUEB_DOM_IMPLEMENTATION_DESCRIPTOR_VERSION,
+	/* .mime_get		= */ _impl_mime_get,
 	/* .document_create 	= */ _impl_document_create,
-};
-/*----------------------------------------------------------------------------*
- *                    Implementation source interface                         *
- *----------------------------------------------------------------------------*/
-static Egueb_Dom_Implementation * _impl_source_implementation_get(void)
-{
-	return egueb_dom_implementation_new(&_impl_descriptor);
-}
-
-static Egueb_Dom_String * _impl_source_mime_get(void)
-{
-	return egueb_dom_string_ref(_egueb_svg_mime);
-}
-
-static Egueb_Dom_Implementation_Source_Descriptor _impl_source_descriptor = {
-	/* .version 		= */ EGUEB_DOM_IMPLEMENTATION_SOURCE_DESCRIPTOR_VERSION,
-	/* .implementation_get	= */ _impl_source_implementation_get,
-	/* .mime_get 	 	= */ _impl_source_mime_get,
 };
 
 /* our helpful strings */
@@ -379,7 +371,7 @@ Egueb_Dom_String *EGUEB_SVG_NAME_ONFOCUSIN;
  */
 EAPI int egueb_svg_init(void)
 {
-	Egueb_Dom_Implementation_Source *s;
+	Egueb_Dom_Implementation *i;
 
 	if (++_egueb_svg_init_count != 1)
 		return _egueb_svg_init_count;
@@ -396,8 +388,8 @@ EAPI int egueb_svg_init(void)
 	}
 	_egueb_svg_strings_init();
 	/* register our own source */
-	s = egueb_dom_implementation_source_new(&_impl_source_descriptor);
-	egueb_dom_registry_source_add(s);
+	i = egueb_dom_implementation_new(&_impl_descriptor);
+	egueb_dom_registry_implementation_add(i);
 
 	return _egueb_svg_init_count;
 }

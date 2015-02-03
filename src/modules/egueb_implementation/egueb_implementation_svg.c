@@ -26,17 +26,17 @@
 /*----------------------------------------------------------------------------*
  *                             Module API                                     *
  *----------------------------------------------------------------------------*/
-static Eina_Bool svg_source_init(void)
+static Eina_Bool svg_implementation_init(void)
 {
-	/* This function will register the implementation source */
+	/* This function will register the implementation implementation */
 	egueb_svg_init();
 	return EINA_TRUE;
 }
 
-static void svg_source_shutdown(void)
+static void svg_implementation_shutdown(void)
 {
 	egueb_svg_shutdown();
 }
 
-EINA_MODULE_INIT(svg_source_init);
-EINA_MODULE_SHUTDOWN(svg_source_shutdown);
+EINA_MODULE_INIT(svg_implementation_init);
+EINA_MODULE_SHUTDOWN(svg_implementation_shutdown);
