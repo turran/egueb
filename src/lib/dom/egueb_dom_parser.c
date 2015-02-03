@@ -24,7 +24,6 @@
 #include "egueb_dom_node_map_named.h"
 #include "egueb_dom_parser.h"
 #include "egueb_dom_implementation.h"
-#include "egueb_dom_implementation_source.h"
 #include "egueb_dom_registry.h"
 #include "egueb_dom_document.h"
 
