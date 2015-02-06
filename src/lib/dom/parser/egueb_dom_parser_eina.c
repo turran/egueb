@@ -318,16 +318,20 @@ static Egueb_Dom_Node * _egueb_dom_parser_eina_tag_new(Egueb_Dom_Parser_Eina *th
 	topmost = egueb_dom_document_document_element_get(doc);
 	if (!topmost)
 	{
-		egueb_dom_document_element_set(doc, node);
+		egueb_dom_document_element_set(doc, egueb_dom_node_ref(node));
 	}
 	else
 	{
 		egueb_dom_node_unref(topmost);
+		/* first add the child */
+		if (parent)
+		{
+			egueb_dom_node_child_append(parent,
+					egueb_dom_node_ref(node), NULL);
+		}
 	}
 
 
-	/* first add the child */
-	if (parent) egueb_dom_node_child_append(parent, node, NULL);
 	/* parse the attributes */
 	_egueb_dom_parser_eina_tag_attribute_set(thiz, node, attrs, attr_length);
 
@@ -444,7 +448,13 @@ static void _egueb_dom_parser_eina_xml_open(Egueb_Dom_Parser_Eina *thiz,
 static void _egueb_dom_parser_eina_xml_close(Egueb_Dom_Parser_Eina *thiz,
 		const char *content, unsigned int length)
 {
-	eina_array_pop(thiz->contexts);
+	Egueb_Dom_Node *ret;
+
+	ret = eina_array_pop(thiz->contexts);
+	if (ret != _fake_node)
+	{
+		egueb_dom_node_unref(ret);
+	}
 }
 /*----------------------------------------------------------------------------*
  *                      Eina's simple XML interface                           *
