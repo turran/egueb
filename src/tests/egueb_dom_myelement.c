@@ -134,7 +134,7 @@ no_name:
 	}
 	/* nor some meta information */
 	doc = egueb_dom_node_owner_document_get(n);
-	len = asprintf(&ret, "%s> (ref: %d, doc: %p)", str,
+	len = asprintf(&ret, "%s> (%p ref: %d, doc: %p)", str, n,
 			egueb_dom_node_ref_get(n), doc);
 	free(str);
 	egueb_dom_string_unref(name);
