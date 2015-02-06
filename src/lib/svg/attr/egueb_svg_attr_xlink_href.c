@@ -147,6 +147,8 @@ static void _egueb_svg_attr_xlink_href_instance_deinit(void *o)
 		egueb_dom_string_unref(thiz->value);
 	if (thiz->anim)
 		egueb_dom_string_unref(thiz->anim);
+	if (thiz->node)
+		egueb_dom_node_unref(thiz->node);
 
 	if (thiz->last)
 		egueb_dom_string_unref(thiz->last);

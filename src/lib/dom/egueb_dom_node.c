@@ -526,7 +526,7 @@ Egueb_Dom_Node * egueb_dom_node_get_ancestor_element(Egueb_Dom_Node *thiz)
 			return ancestor;
 		}
 		tmp = egueb_dom_node_parent_get(ancestor);
-		egueb_dom_node_unref(tmp);
+		egueb_dom_node_unref(ancestor);
 		ancestor = tmp;
 	}
 	return NULL;
@@ -821,7 +821,7 @@ EAPI Eina_Bool egueb_dom_node_child_remove(Egueb_Dom_Node *thiz, Egueb_Dom_Node 
 	if (thiz->in_tree && child->in_tree)
 	{
 		event = egueb_dom_event_mutation_node_removed_from_document_new();
-		_egueb_dom_node_remove_from_document(child, event); 
+		_egueb_dom_node_remove_from_document(child, event);
 	}
 
 	/* trigger the mutation event */
@@ -1112,6 +1112,11 @@ EAPI Eina_Bool egueb_dom_node_event_dispatch(Egueb_Dom_Node *thiz,
 	/* DISPATCH_REQUEST_ERR: Raised if the Event object is already being dispatched in the tree.*/
 	/* NOT_SUPPORTED_ERR Raised if the Event object has not been created using DocumentEvent.createEvent() or does not support the interface CustomEvent */
 
+	if (event->target)
+	{
+		egueb_dom_node_unref(event->target);
+		event->target = NULL;
+	}
 	/* setup the event with the basic attributes */
 	event->target = egueb_dom_node_ref(thiz);
 	event->dispatching = EINA_TRUE;
