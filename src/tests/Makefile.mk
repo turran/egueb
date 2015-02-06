@@ -20,7 +20,7 @@ $(top_builddir)/src/lib/smil/libegueb_smil.la \
 @EGUEB_DOM_LIBS@
 
 tests_dom_CPPFLAGS = \
--I$(top_srcdir)/src/lib/dom \
+$(src_lib_dom_libegueb_dom_la_IFLAGS) \
 @EGUEB_DOM_CFLAGS@
 
 tests_dom_LDADD = \
