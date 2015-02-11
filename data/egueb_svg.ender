@@ -1,5 +1,5 @@
 <?xml version="1.0" standalone="yes"?>
-<lib name="egueb_svg" version="0" case="underscore">
+<lib xmlns:dyn="http://exslt.org/dynamic" name="egueb_svg" version="0" case="underscore">
   <includes name="eina"/>
   <includes name="enesim"/>
   <includes name="ender"/>
@@ -8,9 +8,6 @@
     <field name="r" type="uint8"/>
     <field name="g" type="uint8"/>
     <field name="b" type="uint8"/>
-    <function name="descriptor_get">
-      <return type="egueb.dom.value.descriptor" transfer="none"/>
-    </function>
     <method name="is_equal">
       <return type="bool" transfer="full"/>
       <arg name="c2" type="egueb.svg.color" direction="in" transfer="none"/>
@@ -74,28 +71,8 @@
       <arg name="font_size" type="double" direction="in" transfer="full"/>
     </function>
   </def>
-  <def name="egueb.svg.coord.animated" type="">
-    <function name="egueb_svg_coord_final_get">
-      <return type="double" transfer="full"/>
-      <arg name="l" type="egueb.svg.length" direction="in" transfer="none"/>
-      <arg name="parent_length" type="double" direction="in" transfer="full"/>
-      <arg name="font_size" type="double" direction="in" transfer="full"/>
-    </function>
-  </def>
-  <def name="egueb.svg.number" type="double">
-    <function name="descriptor_get">
-      <return type="egueb.dom.value.descriptor" transfer="none"/>
-    </function>
-    <function name="string_from">
-      <return type="bool" transfer="full"/>
-      <arg name="thiz" type="egueb.svg.number" direction="in" transfer="full"/>
-      <arg name="attr_val" type="string" direction="in" transfer="none"/>
-    </function>
-    <function name="string_to">
-      <return type="string" transfer="full"/>
-      <arg name="thiz" type="egueb.svg.number" direction="in" transfer="full"/>
-    </function>
-  </def>
+  <def name="egueb.svg.coord.animated" type=""/>
+  <def name="egueb.svg.number" type="double"/>
   <struct name="egueb.svg.number.animated">
     <field name="base" type="egueb.svg.number"/>
     <field name="anim" type="egueb.svg.number"/>
@@ -110,18 +87,7 @@
   <struct name="egueb.svg.paint">
     <field name="type" type="egueb.svg.paint.type"/>
     <field name="color" type="egueb.svg.color"/>
-    <field name="uri" type="string"/>
-    <function name="descriptor_get">
-      <return type="egueb.dom.value.descriptor" transfer="none"/>
-    </function>
-    <method name="is_equal">
-      <return type="bool" transfer="full"/>
-      <arg name="p2" type="egueb.svg.paint" direction="in" transfer="none"/>
-    </method>
-    <method name="copy">
-      <arg name="copy" type="egueb.svg.paint" direction="in" transfer="full"/>
-      <arg name="full" type="bool" direction="in" transfer="full"/>
-    </method>
+    <field name="uri" type="egueb.dom.string"/>
     <method name="reset"/>
   </struct>
   <struct name="egueb.svg.paint.animated">
@@ -131,13 +97,10 @@
   <struct name="egueb.svg.point">
     <field name="x" type="double"/>
     <field name="y" type="double"/>
-    <method name="string_from">
-      <return type="bool" transfer="full"/>
-      <arg name="attr" type="string" direction="in" transfer="none"/>
-    </method>
-    <function name="descriptor_get">
-      <return type="egueb.dom.value.descriptor" transfer="none"/>
-    </function>
+  </struct>
+  <struct name="egueb.svg.rect.animated">
+    <field name="base" type="egueb.svg.rect"/>
+    <field name="anim" type="egueb.svg.rect"/>
   </struct>
   <struct name="egueb.svg.string.animated">
     <field name="base" type="egueb.dom.string"/>
@@ -204,7 +167,89 @@
     </function>
     <function name="font_size_set">
       <arg name="n" type="egueb.dom.node" direction="in" transfer="full"/>
-      <arg name="v" type="egueb.svg.font.size" direction="in" transfer="none"/>
+      <arg name="v" type="egueb.css.font.size" direction="in" transfer="none"/>
+    </function>
+    <function name="stroke_set">
+      <arg name="n" type="egueb.dom.node" direction="in" transfer="full"/>
+      <arg name="v" type="egueb.svg.paint" direction="in" transfer="none"/>
+    </function>
+    <function name="stroke_get">
+      <arg name="n" type="egueb.dom.node" direction="in" transfer="full"/>
+      <arg name="v" type="egueb.svg.paint.animated" direction="in" transfer="full"/>
+    </function>
+    <function name="stroke_width_set">
+      <arg name="n" type="egueb.dom.node" direction="in" transfer="full"/>
+      <arg name="stroke_width" type="egueb.svg.length" direction="in" transfer="none"/>
+    </function>
+    <function name="stroke_width_get">
+      <arg name="n" type="egueb.dom.node" direction="in" transfer="full"/>
+      <arg name="v" type="egueb.svg.length.animated" direction="in" transfer="full"/>
+    </function>
+    <function name="stroke_opacity_set">
+      <arg name="n" type="egueb.dom.node" direction="in" transfer="full"/>
+      <arg name="v" type="egueb.svg.number" direction="in" transfer="none"/>
+    </function>
+    <function name="stroke_opacity_get">
+      <arg name="n" type="egueb.dom.node" direction="in" transfer="full"/>
+      <arg name="v" type="egueb.svg.number.animated" direction="in" transfer="full"/>
+    </function>
+  </object>
+  <object name="egueb.svg.element" inherits="egueb.dom.element">
+    <function name="egueb_svg_is_element">
+      <return type="bool" transfer="full"/>
+      <arg name="n" type="egueb.dom.node" direction="in" transfer="full"/>
+    </function>
+    <function name="clip_path_set">
+      <arg name="n" type="egueb.dom.node" direction="in" transfer="full"/>
+      <arg name="v" type="egueb.svg.clip.path" direction="in" transfer="full"/>
+    </function>
+    <function name="clip_path_get">
+      <arg name="n" type="egueb.dom.node" direction="in" transfer="full"/>
+      <arg name="v" type="egueb.svg.clip.path.animated" direction="in" transfer="full"/>
+    </function>
+    <function name="opacity_set">
+      <arg name="n" type="egueb.dom.node" direction="in" transfer="full"/>
+      <arg name="v" type="egueb.svg.number" direction="in" transfer="none"/>
+    </function>
+    <function name="opacity_get">
+      <arg name="n" type="egueb.dom.node" direction="in" transfer="full"/>
+      <arg name="v" type="egueb.svg.number.animated" direction="in" transfer="full"/>
+    </function>
+    <function name="overflow_set">
+      <arg name="n" type="egueb.dom.node" direction="in" transfer="full"/>
+      <arg name="v" type="egueb.svg.overflow" direction="in" transfer="none"/>
+    </function>
+    <function name="overflow_get">
+      <arg name="n" type="egueb.dom.node" direction="in" transfer="full"/>
+      <arg name="v" type="egueb.svg.overflow.animated" direction="in" transfer="full"/>
+    </function>
+    <function name="color_set">
+      <arg name="n" type="egueb.dom.node" direction="in" transfer="full"/>
+      <arg name="v" type="egueb.svg.color" direction="in" transfer="none"/>
+    </function>
+    <function name="color_get">
+      <arg name="n" type="egueb.dom.node" direction="in" transfer="full"/>
+      <arg name="v" type="egueb.svg.color.animated" direction="in" transfer="full"/>
+    </function>
+    <function name="fill_set">
+      <arg name="n" type="egueb.dom.node" direction="in" transfer="full"/>
+      <arg name="v" type="egueb.svg.paint" direction="in" transfer="none"/>
+    </function>
+    <function name="fill_get">
+      <arg name="n" type="egueb.dom.node" direction="in" transfer="full"/>
+      <arg name="v" type="egueb.svg.paint.animated" direction="in" transfer="full"/>
+    </function>
+    <function name="fill_opacity_set">
+      <arg name="n" type="egueb.dom.node" direction="in" transfer="full"/>
+      <arg name="v" type="egueb.svg.number" direction="in" transfer="none"/>
+    </function>
+    <function name="fill_opacity_get">
+      <arg name="n" type="egueb.dom.node" direction="in" transfer="full"/>
+      <arg name="v" type="egueb.svg.number.animated" direction="in" transfer="full"/>
+    </function>
+    <function name="font_size_set">
+      <arg name="n" type="egueb.dom.node" direction="in" transfer="full"/>
+      <arg name="v" type="egueb.css.font.size" direction="in" transfer="none"/>
     </function>
     <function name="stroke_set">
       <arg name="n" type="egueb.dom.node" direction="in" transfer="full"/>
@@ -502,9 +547,8 @@
     <method name="href_set_simple">
       <arg name="v" type="egueb.dom.string" direction="out" transfer="full"/>
     </method>
-    <method name="svg_set">
-      <arg name="svg" type="egueb.dom.node" direction="in" transfer="full"/>
-    </method>
+    <method name="play"/>
+    <method name="pause"/>
   </object>
   <object name="egueb.svg.document" inherits="egueb.dom.document">
     <prop name="root_element">
@@ -512,6 +556,9 @@
         <return type="egueb.svg.element" transfer="full"/>
       </getter>
     </prop>
+    <method name="egueb_svg_is_document">
+      <return type="bool" transfer="full"/>
+    </method>
     <ctor name="new"/>
     <method name="title_get">
       <return type="egueb.dom.string" transfer="full"/>
@@ -527,10 +574,6 @@
     </method>
     <method name="font_size_get">
       <return type="double" transfer="full"/>
-    </method>
-    <method name="element_get_by_iri">
-      <return type="egueb.dom.node" transfer="full"/>
-      <arg name="iri" type="egueb.dom.string" direction="in" transfer="full"/>
     </method>
     <method name="iri_clone">
       <return type="egueb.dom.node" transfer="full"/>

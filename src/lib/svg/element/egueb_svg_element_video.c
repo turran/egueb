@@ -53,7 +53,8 @@ typedef struct _Egueb_Svg_Element_Video
 	Egueb_Dom_Node *height;
 	Egueb_Dom_Node *xlink_href;
 	/* private */
-	Egueb_Dom_Video_Provider *video_provider;
+	Egueb_Dom_Media_Notifier *video_notifier;
+	Egueb_Dom_Media_Provider *video_provider;
 	double gx, gy, gw, gh;
 	Egueb_Dom_String *last_xlink;
 	Enesim_Renderer *r;
@@ -67,6 +68,9 @@ typedef struct _Egueb_Svg_Element_Video_Class
 /*----------------------------------------------------------------------------*
  *                           Video provider notifier                          *
  *----------------------------------------------------------------------------*/
+static Egueb_Dom_Media_Notifier_Descriptor _notifier_descriptor = {
+	/* .version = */ EGUEB_DOM_MEDIA_NOTIFIER_DESCRIPTOR_VERSION,
+};
 /*----------------------------------------------------------------------------*
  *                                  Helpers                                   *
  *----------------------------------------------------------------------------*/
@@ -92,10 +96,10 @@ static Eina_Bool _egueb_svg_element_video_load(Egueb_Svg_Element_Video *thiz,
 		Egueb_Dom_Event *ev;
 
 		ev = egueb_dom_event_multimedia_video_new(
-			NULL,
+			egueb_dom_media_notifier_ref(thiz->video_notifier),
 			enesim_renderer_ref(thiz->r));
 		egueb_dom_node_event_dispatch(EGUEB_DOM_NODE(thiz), egueb_dom_event_ref(ev), NULL, NULL);
-		thiz->video_provider = egueb_dom_event_multimedia_video_provider_get(ev);
+		thiz->video_provider = egueb_dom_event_multimedia_provider_get(ev);
 		egueb_dom_event_unref(ev);
 
 		INFO("Requested video provider");
@@ -125,9 +129,9 @@ static Eina_Bool _egueb_svg_element_video_load(Egueb_Svg_Element_Video *thiz,
 		goto has_fragment;
 	}
 	/* set the uri */
-	egueb_dom_video_provider_open(thiz->video_provider, final.location);
+	egueb_dom_media_provider_open(thiz->video_provider, final.location);
 	/* go to play */
-	egueb_dom_video_provider_play(thiz->video_provider);
+	egueb_dom_media_provider_play(thiz->video_provider);
 has_fragment:
 	egueb_dom_uri_cleanup(&final);
 bad_uri:
@@ -263,6 +267,10 @@ static void _egueb_svg_element_video_instance_init(void *o)
 	r = enesim_renderer_image_new();
 	thiz->r = r;
 
+	/* The media notifier */
+	thiz->video_notifier = egueb_dom_media_notifier_new (&_notifier_descriptor,
+			thiz);
+
 	/* Default values */
 
 	/* create the properties */
@@ -308,8 +316,14 @@ static void _egueb_svg_element_video_instance_deinit(void *o)
 
 	if (thiz->video_provider)
 	{
-		egueb_dom_video_provider_unref(thiz->video_provider);
+		egueb_dom_media_provider_unref(thiz->video_provider);
 		thiz->video_provider = NULL;
+	}
+
+	if (thiz->video_notifier)
+	{
+		egueb_dom_media_notifier_unref(thiz->video_notifier);
+		thiz->video_notifier = NULL;
 	}
 
 	enesim_renderer_unref(thiz->r);
@@ -337,7 +351,7 @@ EAPI Egueb_Dom_Node * egueb_svg_element_video_new(void)
 
 /**
  * Sets the x coordinate of a video element
- * @param[in] n The image element to set the x coordinate @ender_transfer{none}
+ * @param[in] n The video element to set the x coordinate @ender_transfer{none}
  * @param[in] x The x coordinate to set @ender_transfer{content}
  */
 EAPI void egueb_svg_element_video_x_set_simple(Egueb_Dom_Node *n, const Egueb_Svg_Coord *x)
@@ -351,7 +365,7 @@ EAPI void egueb_svg_element_video_x_set_simple(Egueb_Dom_Node *n, const Egueb_Sv
 /**
  * Gets the x coordinate of a video element
  * @ender_prop{x}
- * @param[in] n The image element to get the x coordinate @ender_transfer{none}
+ * @param[in] n The video element to get the x coordinate @ender_transfer{none}
  * @param[out] x The pointer to store the x coordinate @ender_transfer{content}
  */
 EAPI void egueb_svg_element_video_x_get(Egueb_Dom_Node *n, Egueb_Svg_Coord_Animated *x)
@@ -364,7 +378,7 @@ EAPI void egueb_svg_element_video_x_get(Egueb_Dom_Node *n, Egueb_Svg_Coord_Anima
 
 /**
  * Sets the y coordinate of a video element
- * @param[in] n The image element to set the y coordinate @ender_transfer{none}
+ * @param[in] n The video element to set the y coordinate @ender_transfer{none}
  * @param[in] y The y coordinate to set @ender_transfer{content}
  */
 EAPI void egueb_svg_element_video_y_set_simple(Egueb_Dom_Node *n, const Egueb_Svg_Coord *y)
@@ -378,7 +392,7 @@ EAPI void egueb_svg_element_video_y_set_simple(Egueb_Dom_Node *n, const Egueb_Sv
 /**
  * Gets the y coordinate of a video element
  * @ender_prop{y}
- * @param[in] n The image element to get the y coordinate @ender_transfer{none}
+ * @param[in] n The video element to get the y coordinate @ender_transfer{none}
  * @param[out] y The pointer to store the y coordinate @ender_transfer{content}
  */
 EAPI void egueb_svg_element_video_y_get(Egueb_Dom_Node *n, Egueb_Svg_Coord_Animated *y)
@@ -391,7 +405,7 @@ EAPI void egueb_svg_element_video_y_get(Egueb_Dom_Node *n, Egueb_Svg_Coord_Anima
 
 /**
  * Sets the width of a video element
- * @param[in] n The image element to set the width @ender_transfer{none}
+ * @param[in] n The video element to set the width @ender_transfer{none}
  * @param[in] width The width to set @ender_transfer{content}
  */
 EAPI void egueb_svg_element_video_width_set_simple(Egueb_Dom_Node *n, const Egueb_Svg_Length *width)
@@ -405,7 +419,7 @@ EAPI void egueb_svg_element_video_width_set_simple(Egueb_Dom_Node *n, const Egue
 /**
  * Gets the width of a video element
  * @ender_prop{width}
- * @param[in] n The image element to get the width @ender_transfer{none}
+ * @param[in] n The video element to get the width @ender_transfer{none}
  * @param[out] width The pointer to store the width @ender_transfer{content}
  */
 EAPI void egueb_svg_element_video_width_get(Egueb_Dom_Node *n, Egueb_Svg_Length_Animated *width)
@@ -418,7 +432,7 @@ EAPI void egueb_svg_element_video_width_get(Egueb_Dom_Node *n, Egueb_Svg_Length_
 
 /**
  * Sets the height of a video element
- * @param[in] n The image element to set the height @ender_transfer{none}
+ * @param[in] n The video element to set the height @ender_transfer{none}
  * @param[in] height The height to set @ender_transfer{content}
  */
 EAPI void egueb_svg_element_video_height_set_simple(Egueb_Dom_Node *n, const Egueb_Svg_Length *height)
@@ -432,7 +446,7 @@ EAPI void egueb_svg_element_video_height_set_simple(Egueb_Dom_Node *n, const Egu
 /**
  * Gets the height of a video element
  * @ender_prop{height}
- * @param[in] n The image element to get the height @ender_transfer{none}
+ * @param[in] n The video element to get the height @ender_transfer{none}
  * @param[out] height The pointer to store the height @ender_transfer{content}
  */
 EAPI void egueb_svg_element_video_height_get(Egueb_Dom_Node *n, Egueb_Svg_Length_Animated *height)
@@ -445,7 +459,7 @@ EAPI void egueb_svg_element_video_height_get(Egueb_Dom_Node *n, Egueb_Svg_Length
 
 /**
  * Sets the href of a video element
- * @param[in] n The image element to get the href @ender_transfer{none}
+ * @param[in] n The video element to get the href @ender_transfer{none}
  * @param[out] v The href to set @ender_transfer{full}
  */
 EAPI void egueb_svg_element_video_href_set_simple(Egueb_Dom_Node *n, Egueb_Dom_String *v)
@@ -459,7 +473,7 @@ EAPI void egueb_svg_element_video_href_set_simple(Egueb_Dom_Node *n, Egueb_Dom_S
 /**
  * Gets the href of a video element
  * @ender_prop{href}
- * @param[in] n The image element to get the href @ender_transfer{none}
+ * @param[in] n The video element to get the href @ender_transfer{none}
  * @param[out] v The pointer to store the href @ender_transfer{content}
  */
 EAPI void egueb_svg_element_video_href_get(Egueb_Dom_Node *n, Egueb_Svg_String_Animated *v)
@@ -468,4 +482,28 @@ EAPI void egueb_svg_element_video_href_get(Egueb_Dom_Node *n, Egueb_Svg_String_A
 
 	thiz = EGUEB_SVG_ELEMENT_VIDEO(n);
 	EGUEB_SVG_ELEMENT_ATTR_ANIMATED_GET(thiz->xlink_href, v);
+}
+
+/**
+ * Play the video element
+ * @param[in] n The video element to play
+ */ 
+EAPI void egueb_svg_element_video_play(Egueb_Dom_Node *n)
+{
+	Egueb_Svg_Element_Video *thiz;
+
+	thiz = EGUEB_SVG_ELEMENT_VIDEO(n);
+	egueb_dom_media_provider_play(thiz->video_provider);
+}
+
+/**
+ * Pauses the video element
+ * @param[in] n The video element to pause
+ */ 
+EAPI void egueb_svg_element_video_pause(Egueb_Dom_Node *n)
+{
+	Egueb_Svg_Element_Video *thiz;
+
+	thiz = EGUEB_SVG_ELEMENT_VIDEO(n);
+	egueb_dom_media_provider_pause(thiz->video_provider);
 }

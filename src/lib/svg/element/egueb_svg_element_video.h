@@ -46,6 +46,9 @@ EAPI void egueb_svg_element_video_height_get(Egueb_Dom_Node *n, Egueb_Svg_Length
 EAPI void egueb_svg_element_video_href_set_simple(Egueb_Dom_Node *n, Egueb_Dom_String *v);
 EAPI void egueb_svg_element_video_href_get(Egueb_Dom_Node *n, Egueb_Svg_String_Animated *v);
 
+EAPI void egueb_svg_element_video_play(Egueb_Dom_Node *n);
+EAPI void egueb_svg_element_video_pause(Egueb_Dom_Node *n);
+
 /**
  * @}
  */

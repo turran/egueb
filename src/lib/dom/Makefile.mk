@@ -29,7 +29,8 @@ src/lib/dom/egueb_dom_text.h \
 src/lib/dom/egueb_dom_uri.h \
 src/lib/dom/egueb_dom_utils.h \
 src/lib/dom/egueb_dom_value.h \
-src/lib/dom/egueb_dom_video_provider.h \
+src/lib/dom/egueb_dom_media_provider.h \
+src/lib/dom/egueb_dom_media_notifier.h \
 src/lib/dom/egueb_dom_window.h
 
 src_lib_dom_libegueb_dom_la_SOURCES = \
@@ -74,7 +75,8 @@ src/lib/dom/egueb_dom_uri.c \
 src/lib/dom/egueb_dom_utils.c \
 src/lib/dom/egueb_dom_value.c \
 src/lib/dom/egueb_dom_value_private.h \
-src/lib/dom/egueb_dom_video_provider.c \
+src/lib/dom/egueb_dom_media_provider.c \
+src/lib/dom/egueb_dom_media_notifier.c \
 src/lib/dom/egueb_dom_window.c
 
 src_lib_dom_libegueb_dom_la_IFLAGS = \

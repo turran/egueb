@@ -24,7 +24,8 @@
 #include "egueb_dom_node.h"
 #include "egueb_dom_attr.h"
 #include "egueb_dom_value.h"
-#include "egueb_dom_video_provider.h"
+#include "egueb_dom_media_provider.h"
+#include "egueb_dom_media_notifier.h"
 #include "egueb_dom_event.h"
 #include "egueb_dom_event_multimedia.h"
 
@@ -42,9 +43,10 @@ Enesim_Object_Descriptor * egueb_dom_event_multimedia_descriptor_get(void);
 typedef struct _Egueb_Dom_Event_Multimedia
 {
 	Egueb_Dom_Event base;
-	const Egueb_Dom_Video_Provider_Notifier *notifier;
+	Egueb_Dom_Media_Notifier *notifier;
+	Egueb_Dom_Media_Provider *provider;
+	/* for video event */
 	Enesim_Renderer *image;
-	Egueb_Dom_Video_Provider *video_provider;
 } Egueb_Dom_Event_Multimedia;
 
 typedef struct _Egueb_Dom_Event_Multimedia_Class
@@ -53,6 +55,7 @@ typedef struct _Egueb_Dom_Event_Multimedia_Class
 } Egueb_Dom_Event_Multimedia_Class;
 
 static Egueb_Dom_String _EGUEB_DOM_EVENT_MULTIMEDIA_VIDEO = EGUEB_DOM_STRING_STATIC("MultimediaVideo");
+static Egueb_Dom_String _EGUEB_DOM_EVENT_MULTIMEDIA_AUDIO = EGUEB_DOM_STRING_STATIC("MultimediaAudio");
 
 /*----------------------------------------------------------------------------*
  *                              Object interface                              *
@@ -75,7 +78,8 @@ static void _egueb_dom_event_multimedia_instance_deinit(void *o)
 
 	thiz = EGUEB_DOM_EVENT_MULTIMEDIA(o);
 	enesim_renderer_unref(thiz->image);
-	egueb_dom_video_provider_unref(thiz->video_provider);
+	egueb_dom_media_provider_unref(thiz->provider);
+	egueb_dom_media_notifier_unref(thiz->notifier);
 }
 /*============================================================================*
  *                                 Global                                     *
@@ -84,9 +88,10 @@ static void _egueb_dom_event_multimedia_instance_deinit(void *o)
  *                                   API                                      *
  *============================================================================*/
 Egueb_Dom_String *EGUEB_DOM_EVENT_MULTIMEDIA_VIDEO = &_EGUEB_DOM_EVENT_MULTIMEDIA_VIDEO;
+Egueb_Dom_String *EGUEB_DOM_EVENT_MULTIMEDIA_AUDIO = &_EGUEB_DOM_EVENT_MULTIMEDIA_AUDIO;
 
 EAPI Egueb_Dom_Event * egueb_dom_event_multimedia_video_new(
-		const Egueb_Dom_Video_Provider_Notifier *notifier,
+		Egueb_Dom_Media_Notifier *notifier,
 		Enesim_Renderer *image)
 {
 	Egueb_Dom_Event_Multimedia *thiz;
@@ -111,18 +116,26 @@ EAPI Enesim_Renderer * egueb_dom_event_multimedia_video_renderer_get(Egueb_Dom_E
 	return enesim_renderer_ref(thiz->image);
 }
 
-EAPI Egueb_Dom_Video_Provider * egueb_dom_event_multimedia_video_provider_get(Egueb_Dom_Event *e)
+EAPI Egueb_Dom_Media_Provider * egueb_dom_event_multimedia_provider_get(Egueb_Dom_Event *e)
 {
 	Egueb_Dom_Event_Multimedia *thiz;
 
 	thiz = EGUEB_DOM_EVENT_MULTIMEDIA(e);
-	return egueb_dom_video_provider_ref(thiz->video_provider);
+	return egueb_dom_media_provider_ref(thiz->provider);
 }
 
-EAPI void egueb_dom_event_multimedia_video_provider_set(Egueb_Dom_Event *e, Egueb_Dom_Video_Provider *sc)
+EAPI void egueb_dom_event_multimedia_provider_set(Egueb_Dom_Event *e, Egueb_Dom_Media_Provider *sc)
 {
 	Egueb_Dom_Event_Multimedia *thiz;
 
 	thiz = EGUEB_DOM_EVENT_MULTIMEDIA(e);
-	thiz->video_provider = sc;
+	thiz->provider = sc;
+}
+
+EAPI Egueb_Dom_Media_Notifier * egueb_dom_event_multimedia_notifier_get(Egueb_Dom_Event *e)
+{
+	Egueb_Dom_Event_Multimedia *thiz;
+
+	thiz = EGUEB_DOM_EVENT_MULTIMEDIA(e);
+	return egueb_dom_media_notifier_ref(thiz->notifier);
 }

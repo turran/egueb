@@ -31,14 +31,20 @@
  */
 
 EAPI extern Egueb_Dom_String *EGUEB_DOM_EVENT_MULTIMEDIA_VIDEO;
+EAPI extern Egueb_Dom_String *EGUEB_DOM_EVENT_MULTIMEDIA_AUDIO;
+
+EAPI Egueb_Dom_Media_Notifier * egueb_dom_event_multimedia_notifier_get(Egueb_Dom_Event *e);
+EAPI Egueb_Dom_Media_Provider * egueb_dom_event_multimedia_provider_get(Egueb_Dom_Event *e);
+EAPI void egueb_dom_event_multimedia_provider_set(Egueb_Dom_Event *e, Egueb_Dom_Media_Provider *sc);
 
 EAPI Egueb_Dom_Event * egueb_dom_event_multimedia_video_new(
-		const Egueb_Dom_Video_Provider_Notifier *notifier,
+		Egueb_Dom_Media_Notifier *notifier,
 		Enesim_Renderer *image);
-
 EAPI Enesim_Renderer * egueb_dom_event_multimedia_video_renderer_get(Egueb_Dom_Event *e);
-EAPI Egueb_Dom_Video_Provider * egueb_dom_event_multimedia_video_provider_get(Egueb_Dom_Event *e);
-EAPI void egueb_dom_event_multimedia_video_provider_set(Egueb_Dom_Event *e, Egueb_Dom_Video_Provider *sc);
+
+EAPI Egueb_Dom_Event * egueb_dom_event_multimedia_audio_new(
+		Egueb_Dom_Media_Notifier *notifier);
+
 
 /**
  * @}

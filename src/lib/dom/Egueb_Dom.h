@@ -107,7 +107,8 @@ extern "C" {
 #include "egueb_dom_scripter.h"
 #include "egueb_dom_event_script.h"
 
-#include "egueb_dom_video_provider.h"
+#include "egueb_dom_media_provider.h"
+#include "egueb_dom_media_notifier.h"
 #include "egueb_dom_event_multimedia.h"
 
 #include "egueb_dom_parser.h"
