@@ -227,6 +227,17 @@ static void _egueb_svg_element_video_bounds_get(Egueb_Svg_Renderable *r,
 	enesim_rectangle_coords_from(bounds, thiz->gx, thiz->gy,
 			thiz->gw, thiz->gh);
 }
+
+/*----------------------------------------------------------------------------*
+ *                            SVG Element interface                           *
+ *----------------------------------------------------------------------------*/
+static Ender_Item * _egueb_svg_element_video_item_get(Egueb_Svg_Element *e)
+{
+	const Ender_Lib *lib;
+
+	lib = ender_lib_find("egueb_svg");
+	return ender_lib_item_find(lib, "egueb.svg.element.video");
+}
 /*----------------------------------------------------------------------------*
  *                              Element interface                             *
  *----------------------------------------------------------------------------*/
@@ -245,6 +256,7 @@ ENESIM_OBJECT_INSTANCE_BOILERPLATE(EGUEB_SVG_RENDERABLE_DESCRIPTOR,
 static void _egueb_svg_element_video_class_init(void *k)
 {
 	Egueb_Svg_Renderable_Class *r_klass;
+	Egueb_Svg_Element_Class *es_klass;
 	Egueb_Dom_Element_Class *e_klass;
 
 	r_klass = EGUEB_SVG_RENDERABLE_CLASS(k);
@@ -254,6 +266,9 @@ static void _egueb_svg_element_video_class_init(void *k)
 
 	e_klass= EGUEB_DOM_ELEMENT_CLASS(k);
 	e_klass->tag_name_get = _egueb_svg_element_video_tag_name_get;
+
+	es_klass= EGUEB_SVG_ELEMENT_CLASS(k);
+	es_klass->item_get = _egueb_svg_element_video_item_get;
 }
 
 static void _egueb_svg_element_video_instance_init(void *o)
