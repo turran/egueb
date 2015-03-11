@@ -211,7 +211,7 @@ EGUEB_SVG_CFLAGS="${EGUEB_SVG_CFLAGS} ${EGUEB_CFLAGS}"
 # Check where the ender data should be installed
 PKG_CHECK_EXISTS([ender], [have_ender="yes"], [have_ender="no"])
 if test "x${have_ender}" = "xyes"; then
-   ENDER_DATADIR=$($PKG_CONFIG --variable=pkgdatadir ender)
+   ENDER_DATADIR=$($PKG_CONFIG --variable=descriptionsdir ender)
    AC_SUBST([ENDER_DATADIR])
 fi
 
