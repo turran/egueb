@@ -97,7 +97,7 @@ static Eina_Bool _egueb_dom_element_attributes_ns_clone_cb(const Eina_Hash *hash
 {
 	Eina_Hash *attributes = data;
 
-	eina_hash_foreach(attributes, _egueb_dom_element_attributes_clone_cb, clone);
+	eina_hash_foreach(attributes, _egueb_dom_element_attributes_clone_cb, fdata);
 	return EINA_TRUE;
 }
 
