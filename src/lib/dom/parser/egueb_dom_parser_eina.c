@@ -78,6 +78,24 @@ static Egueb_Dom_Node * _egueb_dom_parser_eina_context_get(
 	return ret;
 }
 
+static char * _egueb_dom_parser_eina_strndup (const char *src, int len)
+{
+	int srclen = strlen (src);
+	char *result;
+
+	if (srclen < len)
+	{
+		len = srclen;
+	}
+
+	result = (char *) malloc (len + 1);
+	if (!result)
+		return 0;
+	memcpy (result, src, len);
+	result[len] = '\0';
+	return result;
+}
+
 static const char * _egueb_dom_parser_eina_get_entity(Egueb_Dom_Parser_Eina *thiz,
 		const char *s, const char **e)
 {
@@ -90,7 +108,7 @@ static const char * _egueb_dom_parser_eina_get_entity(Egueb_Dom_Parser_Eina *thi
 	while (*tmp != ';')
 		tmp++;
 	len = tmp - s - 1;
-	entity = strndup(s + 1, len);
+	entity = _egueb_dom_parser_eina_strndup(s + 1, len);
 	entity[len] = '\0';
 	*e = tmp;
 
@@ -406,7 +424,7 @@ static void _egueb_dom_parser_eina_doctype_child(Egueb_Dom_Parser_Eina *thiz,
 		tmp = text;
 		while (!isspace(*text))
 			text++;
-		name = strndup(tmp, text - tmp);
+		name = _egueb_dom_parser_eina_strndup(tmp, text - tmp);
 		/* get the attribute value */
 		/* skip the spaces until the "" */
 		while (*text != '"')
@@ -416,7 +434,7 @@ static void _egueb_dom_parser_eina_doctype_child(Egueb_Dom_Parser_Eina *thiz,
 		while (*text != '"')
 			text++;
 		/* get the string inside the " " */
-		attr = strndup(tmp, text - tmp);
+		attr = _egueb_dom_parser_eina_strndup(tmp, text - tmp);
 		DBG("Adding entity '%s' for '%s'", attr, name);
 		eina_hash_add(thiz->entities, name, attr);
 	}
