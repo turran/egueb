@@ -25,6 +25,8 @@
 #include <Eina.h>
 #include <Egueb_Dom.h>
 
+#include "egueb_css_build.h"
+
 extern int _egueb_css_log_dom_global;
 
 /*

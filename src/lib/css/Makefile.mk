@@ -3,6 +3,7 @@ lib_LTLIBRARIES += src/lib/css/libegueb_css.la
 installed_cssheadersdir = $(pkgincludedir)-@VMAJ@/css
 dist_installed_cssheaders_DATA = \
 src/lib/css/Egueb_Css.h \
+src/lib/css/egueb_css_build.h \
 src/lib/css/egueb_css_color.h \
 src/lib/css/egueb_css_element_style.h \
 src/lib/css/egueb_css_font.h \
