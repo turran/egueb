@@ -48,7 +48,8 @@ typedef struct _Egueb_Dom_Event_Class
 	Egueb_Dom_Event_Item_Get item_get;
 } Egueb_Dom_Event_Class;
 
-Enesim_Object_Descriptor * egueb_dom_event_descriptor_get(void);
+/* FIXME We need to export this function for correct linking */
+EAPI Enesim_Object_Descriptor * egueb_dom_event_descriptor_get(void);
 
 #define EGUEB_DOM_EVENT_DESCRIPTOR egueb_dom_event_descriptor_get()
 

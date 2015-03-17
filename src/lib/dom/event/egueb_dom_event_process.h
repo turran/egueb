@@ -18,6 +18,8 @@
 #ifndef _EGUEB_DOM_EVENT_PROCESS_H_
 #define _EGUEB_DOM_EVENT_PROCESS_H_
 
+EAPI extern Egueb_Dom_String *EGUEB_DOM_EVENT_PROCESS;
+
 EAPI Eina_Bool egueb_dom_event_is_process(Egueb_Dom_Event *e);
 
 #endif

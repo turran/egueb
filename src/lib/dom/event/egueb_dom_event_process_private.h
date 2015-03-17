@@ -20,8 +20,6 @@
 
 #include "egueb_dom_event_private.h"
 
-extern Egueb_Dom_String *EGUEB_DOM_EVENT_PROCESS;
-
 Egueb_Dom_Event * egueb_dom_event_process_new(void);
 
 #endif

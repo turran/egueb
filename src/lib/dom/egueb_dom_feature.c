@@ -53,7 +53,7 @@ static void _egueb_dom_feature_instance_deinit(void *o)
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/
-Egueb_Dom_Feature * egueb_dom_feature_ref(Egueb_Dom_Feature *thiz)
+EAPI Egueb_Dom_Feature * egueb_dom_feature_ref(Egueb_Dom_Feature *thiz)
 {
 	if (!thiz) return NULL;
 
@@ -61,7 +61,7 @@ Egueb_Dom_Feature * egueb_dom_feature_ref(Egueb_Dom_Feature *thiz)
 	return thiz;
 }
 
-void egueb_dom_feature_unref(Egueb_Dom_Feature *thiz)
+EAPI void egueb_dom_feature_unref(Egueb_Dom_Feature *thiz)
 {
 	if (!thiz) return;
 	thiz->ref--;

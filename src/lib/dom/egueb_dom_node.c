@@ -483,35 +483,6 @@ void egueb_dom_node_document_set_recursive(Egueb_Dom_Node *thiz,
 	}
 }
 
-Eina_Bool egueb_dom_node_feature_add(Egueb_Dom_Node *thiz,
-		Egueb_Dom_String *name, Egueb_Dom_String *version,
-		Egueb_Dom_Feature *feature)
-{
-	Egueb_Dom_Node_Feature *f;
-	Eina_List *features;
-	const char *str;
-
-	if (!name) return EINA_FALSE;
-	str = egueb_dom_string_string_get(name);
-
-	f = calloc(1, sizeof(Egueb_Dom_Node_Feature));
-	if (version)
-		f->version = egueb_dom_string_ref(version);
-	f->feature = feature;
-
-	features = eina_hash_find(thiz->features, str);
-	if (!features)
-	{
-		features = eina_list_append(features, f);
-		eina_hash_add(thiz->features, str, features);
-	}
-	else
-	{
-		features = eina_list_append(features, f);
-	}
-	return EINA_TRUE;
-}
-
 Egueb_Dom_Node * egueb_dom_node_get_ancestor_element(Egueb_Dom_Node *thiz)
 {
 	Egueb_Dom_Node *ancestor;
@@ -1457,6 +1428,35 @@ EAPI void egueb_dom_node_thaw(Egueb_Dom_Node *thiz)
 		return;
 	}
 	thiz->freezed--;
+}
+
+EAPI Eina_Bool egueb_dom_node_feature_add(Egueb_Dom_Node *thiz,
+		Egueb_Dom_String *name, Egueb_Dom_String *version,
+		Egueb_Dom_Feature *feature)
+{
+	Egueb_Dom_Node_Feature *f;
+	Eina_List *features;
+	const char *str;
+
+	if (!name) return EINA_FALSE;
+	str = egueb_dom_string_string_get(name);
+
+	f = calloc(1, sizeof(Egueb_Dom_Node_Feature));
+	if (version)
+		f->version = egueb_dom_string_ref(version);
+	f->feature = feature;
+
+	features = eina_hash_find(thiz->features, str);
+	if (!features)
+	{
+		features = eina_list_append(features, f);
+		eina_hash_add(thiz->features, str, features);
+	}
+	else
+	{
+		features = eina_list_append(features, f);
+	}
+	return EINA_TRUE;
 }
 
 #if 0

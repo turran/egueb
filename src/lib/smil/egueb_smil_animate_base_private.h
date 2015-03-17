@@ -62,7 +62,8 @@ typedef struct _Egueb_Smil_Animate_Base_Class
 	Egueb_Smil_Animate_Base_Interpolate interpolate;
 } Egueb_Smil_Animate_Base_Class;
 
-Enesim_Object_Descriptor * egueb_smil_animate_base_descriptor_get();
+/* FIXME We need to export this function for correct linking */
+EAPI Enesim_Object_Descriptor * egueb_smil_animate_base_descriptor_get();
 
 #define EGUEB_SMIL_ANIMATE_BASE_DESCRIPTOR egueb_smil_animate_base_descriptor_get()
 #define EGUEB_SMIL_ANIMATE_BASE_CLASS(k) ENESIM_OBJECT_CLASS_CHECK(k, Egueb_Smil_Animate_Base_Class, EGUEB_SMIL_ANIMATE_BASE_DESCRIPTOR)

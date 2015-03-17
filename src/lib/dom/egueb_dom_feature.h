@@ -29,8 +29,8 @@
  */
 typedef struct _Egueb_Dom_Feature Egueb_Dom_Feature;
 
-Egueb_Dom_Feature * egueb_dom_feature_ref(Egueb_Dom_Feature *thiz);
-void egueb_dom_feature_unref(Egueb_Dom_Feature *thiz);
+EAPI Egueb_Dom_Feature * egueb_dom_feature_ref(Egueb_Dom_Feature *thiz);
+EAPI void egueb_dom_feature_unref(Egueb_Dom_Feature *thiz);
 
 /**
  * @}

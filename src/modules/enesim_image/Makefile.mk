@@ -9,7 +9,7 @@ src/modules/enesim_image/enesim_image_dom.c
 src_modules_enesim_image_enesim_image_dom_la_CPPFLAGS = \
 -I$(top_srcdir)/src/lib/css \
 $(src_lib_dom_libegueb_dom_la_IFLAGS) \
--I$(top_srcdir)/src/lib/dom \
+-DEGUEB_DOM_BUILD \
 @EGUEB_DOM_CFLAGS@
 
 src_modules_enesim_image_enesim_image_dom_la_LIBADD = \
