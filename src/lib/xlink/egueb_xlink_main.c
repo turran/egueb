@@ -72,7 +72,7 @@ int egueb_xlink_log_dom_global = -1;
  *                                   API                                      *
  *============================================================================*/
 Egueb_Dom_String *EGUEB_XLINK_NAME_NS;
-Egueb_Dom_String *EGUEB_XLINK_NAME_XMLNS;
+Egueb_Dom_String *EGUEB_XLINK_NAME_HREF;
 
 EAPI int egueb_xlink_init(void)
 {
