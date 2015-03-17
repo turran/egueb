@@ -25,6 +25,8 @@
 
 #include <Egueb_Dom.h>
 
+#include "egueb_xlink_build.h"
+
 #define EGUEB_XLINK_LOG_COLOR_DEFAULT EINA_COLOR_ORANGE
 /* Whenever a file needs to generate a log, it must declare this first */
 
