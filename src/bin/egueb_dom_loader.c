@@ -132,7 +132,7 @@ int main(int argc, char *argv[])
 	if (err)
 	{
 		enesim_log_dump(err);
-		enesim_log_delete(err);
+		enesim_log_unref(err);
 	}
 	/* now save the rendered image */
 	b = enesim_surface_buffer_get(s);
