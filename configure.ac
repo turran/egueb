@@ -246,7 +246,13 @@ echo "XLINK support...............................: ${want_egueb_xlink}"
 echo "SMIL support................................: ${want_egueb_smil}"
 echo "SVG support.................................: ${want_egueb_svg}"
 echo
-echo "Installation Path...........................: ${prefix}"
+echo "Compilation.................................: make (or gmake)"
+echo "  CPPFLAGS..................................: $CPPFLAGS"
+echo "  CFLAGS....................................: $CFLAGS"
+echo "  LDFLAGS...................................: $LDFLAGS"
+echo
+echo "Installation................................: make install (as root if needed, with 'su' or 'sudo')"
+echo "  prefix....................................: $prefix"
 echo
 echo "Now type 'make' ('gmake' on some systems) to compile $PACKAGE,"
 echo "and then afterwards as root (or the user who will install this), type"
