@@ -52,6 +52,7 @@ int main(int argc, char *argv[])
 	Enesim_Stream *stream;
 	Eina_Bool ret;
 	Eina_Bool needs_process = EINA_TRUE;
+	Eina_Error error;
 	int width = 640;
 	int height = 480;
 
@@ -136,7 +137,10 @@ int main(int argc, char *argv[])
 	}
 	/* now save the rendered image */
 	b = enesim_surface_buffer_get(s);
-	enesim_image_file_save(argv[2], b, NULL, NULL);
+	if (!enesim_image_file_save(argv[2], b, NULL, &error))
+	{
+		printf("Error while saving '%s'\n", eina_error_msg_get(error));
+	}
 	enesim_buffer_unref(b);
 	enesim_surface_unref(s);
 
