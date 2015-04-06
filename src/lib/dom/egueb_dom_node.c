@@ -839,6 +839,13 @@ EAPI Eina_Bool egueb_dom_node_insert_before(Egueb_Dom_Node *thiz,
 		return EINA_FALSE;
 	}
 
+	/* can not add to itself */
+	if (child == thiz)
+	{
+		if (err) *err = EGUEB_DOM_ERROR_HIERARCHY_REQUEST;
+		return EINA_FALSE;
+	}
+
 	/* NOT_FOUND_ERR: Raised if refChild is not a child of this node. */
 	if (ref && ref->parent != thiz)
 	{
