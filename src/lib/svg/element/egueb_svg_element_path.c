@@ -420,7 +420,7 @@ static void _egueb_svg_element_path_instance_init(void *o)
 	thiz = EGUEB_SVG_ELEMENT_PATH(o);
 
 	r = enesim_renderer_path_new();
-	thiz->path = enesim_renderer_path_path_get(r);
+	thiz->path = enesim_renderer_path_inner_path_get(r);
 	thiz->r = r;
 
 	/* Default values */
