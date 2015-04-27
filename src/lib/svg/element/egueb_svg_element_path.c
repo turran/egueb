@@ -68,7 +68,7 @@ static void _dump_paths(Enesim_Renderer *r)
 		switch (cmd->type)
 		{
 			case ENESIM_PATH_COMMAND_TYPE_MOVE_TO:
-			printf("M %g %g\n", cmd->definition.move_to.x, cmd->definition.move_to.y);
+			printf("M %g %g\n", cmd->data.move_to.x, cmd->data.move_to.y);
 			break;
 
 			case ENESIM_PATH_COMMAND_TYPE_LINE_TO:
@@ -78,12 +78,12 @@ static void _dump_paths(Enesim_Renderer *r)
 
 			case ENESIM_PATH_COMMAND_TYPE_CUBIC_TO:
 			printf("C %g %g %g %g %g %g\n",
-					cmd->definition.cubic_to.ctrl_x0,
-					cmd->definition.cubic_to.ctrl_y0,
-					cmd->definition.cubic_to.ctrl_x1,
-					cmd->definition.cubic_to.ctrl_y1,
-					cmd->definition.cubic_to.x,
-					cmd->definition.cubic_to.y);
+					cmd->data.cubic_to.ctrl_x0,
+					cmd->data.cubic_to.ctrl_y0,
+					cmd->data.cubic_to.ctrl_x1,
+					cmd->data.cubic_to.ctrl_y1,
+					cmd->data.cubic_to.x,
+					cmd->data.cubic_to.y);
 			break;
 
 			case ENESIM_PATH_COMMAND_TYPE_SCUBIC_TO:
@@ -116,16 +116,16 @@ static void _egueb_svg_element_path_d_cb(void *data, void *user_data)
 		cmd.type = ENESIM_PATH_COMMAND_TYPE_MOVE_TO;
 		if (!cb_data->first && pcmd->relative)
 		{
-			cmd.definition.move_to.x = cb_data->cur.x + pcmd->data.move_to.x;
-			cmd.definition.move_to.y = cb_data->cur.y + pcmd->data.move_to.y;
+			cmd.data.move_to.x = cb_data->cur.x + pcmd->data.move_to.x;
+			cmd.data.move_to.y = cb_data->cur.y + pcmd->data.move_to.y;
 		}
 		else
 		{
-			cmd.definition.move_to.x = pcmd->data.move_to.x;
-			cmd.definition.move_to.y = pcmd->data.move_to.y;
+			cmd.data.move_to.x = pcmd->data.move_to.x;
+			cmd.data.move_to.y = pcmd->data.move_to.y;
 		}
-		cb_data->cur.x = cmd.definition.move_to.x;
-		cb_data->cur.y = cmd.definition.move_to.y;
+		cb_data->cur.x = cmd.data.move_to.x;
+		cb_data->cur.y = cmd.data.move_to.y;
 		break;
 
 		case ESVG_PATH_LINE_TO:
@@ -134,16 +134,16 @@ static void _egueb_svg_element_path_d_cb(void *data, void *user_data)
 		cmd.type = ENESIM_PATH_COMMAND_TYPE_LINE_TO;
 		if (pcmd->relative)
 		{
-			cmd.definition.line_to.x = cb_data->cur.x + pcmd->data.line_to.x;
-			cmd.definition.line_to.y = cb_data->cur.y + pcmd->data.line_to.y;
+			cmd.data.line_to.x = cb_data->cur.x + pcmd->data.line_to.x;
+			cmd.data.line_to.y = cb_data->cur.y + pcmd->data.line_to.y;
 		}
 		else
 		{
-			cmd.definition.line_to.x = pcmd->data.line_to.x;
-			cmd.definition.line_to.y = pcmd->data.line_to.y;
+			cmd.data.line_to.x = pcmd->data.line_to.x;
+			cmd.data.line_to.y = pcmd->data.line_to.y;
 		}
-		cb_data->cur.x = cmd.definition.line_to.x;
-		cb_data->cur.y = cmd.definition.line_to.y;
+		cb_data->cur.x = cmd.data.line_to.x;
+		cb_data->cur.y = cmd.data.line_to.y;
 		break;
 
 		case ESVG_PATH_HLINE_TO:
@@ -152,16 +152,16 @@ static void _egueb_svg_element_path_d_cb(void *data, void *user_data)
 		cmd.type = ENESIM_PATH_COMMAND_TYPE_LINE_TO;
 		if (pcmd->relative)
 		{
-			cmd.definition.line_to.x = cb_data->cur.x + pcmd->data.hline_to.c;
-			cmd.definition.line_to.y = cb_data->cur.y;
+			cmd.data.line_to.x = cb_data->cur.x + pcmd->data.hline_to.c;
+			cmd.data.line_to.y = cb_data->cur.y;
 		}
 		else
 		{
-			cmd.definition.line_to.x = pcmd->data.hline_to.c;
-			cmd.definition.line_to.y = cb_data->cur.y;
+			cmd.data.line_to.x = pcmd->data.hline_to.c;
+			cmd.data.line_to.y = cb_data->cur.y;
 		}
-		cb_data->cur.x = cmd.definition.line_to.x;
-		cb_data->cur.y = cmd.definition.line_to.y;
+		cb_data->cur.x = cmd.data.line_to.x;
+		cb_data->cur.y = cmd.data.line_to.y;
 		break;
 
 		case ESVG_PATH_VLINE_TO:
@@ -170,16 +170,16 @@ static void _egueb_svg_element_path_d_cb(void *data, void *user_data)
 		cmd.type = ENESIM_PATH_COMMAND_TYPE_LINE_TO;
 		if (pcmd->relative)
 		{
-			cmd.definition.line_to.x = cb_data->cur.x;
-			cmd.definition.line_to.y = cb_data->cur.y + pcmd->data.vline_to.c;
+			cmd.data.line_to.x = cb_data->cur.x;
+			cmd.data.line_to.y = cb_data->cur.y + pcmd->data.vline_to.c;
 		}
 		else
 		{
-			cmd.definition.line_to.x = cb_data->cur.x;
-			cmd.definition.line_to.y = pcmd->data.vline_to.c;
+			cmd.data.line_to.x = cb_data->cur.x;
+			cmd.data.line_to.y = pcmd->data.vline_to.c;
 		}
-		cb_data->cur.x = cmd.definition.line_to.x;
-		cb_data->cur.y = cmd.definition.line_to.y;
+		cb_data->cur.x = cmd.data.line_to.x;
+		cb_data->cur.y = cmd.data.line_to.y;
 		break;
 
 		case ESVG_PATH_CUBIC_TO:
@@ -194,25 +194,25 @@ static void _egueb_svg_element_path_d_cb(void *data, void *user_data)
 		cmd.type = ENESIM_PATH_COMMAND_TYPE_CUBIC_TO;
 		if (pcmd->relative)
 		{
-			cmd.definition.cubic_to.x = cb_data->cur.x + pcmd->data.cubic_to.x;
-			cmd.definition.cubic_to.y = cb_data->cur.y + pcmd->data.cubic_to.y;
-			cmd.definition.cubic_to.ctrl_x0 = cb_data->cur.x + pcmd->data.cubic_to.ctrl_x0;
-			cmd.definition.cubic_to.ctrl_y0 = cb_data->cur.y + pcmd->data.cubic_to.ctrl_y0;
-			cmd.definition.cubic_to.ctrl_x1 = cb_data->cur.x + pcmd->data.cubic_to.ctrl_x1;
-			cmd.definition.cubic_to.ctrl_y1 = cb_data->cur.y + pcmd->data.cubic_to.ctrl_y1;
+			cmd.data.cubic_to.x = cb_data->cur.x + pcmd->data.cubic_to.x;
+			cmd.data.cubic_to.y = cb_data->cur.y + pcmd->data.cubic_to.y;
+			cmd.data.cubic_to.ctrl_x0 = cb_data->cur.x + pcmd->data.cubic_to.ctrl_x0;
+			cmd.data.cubic_to.ctrl_y0 = cb_data->cur.y + pcmd->data.cubic_to.ctrl_y0;
+			cmd.data.cubic_to.ctrl_x1 = cb_data->cur.x + pcmd->data.cubic_to.ctrl_x1;
+			cmd.data.cubic_to.ctrl_y1 = cb_data->cur.y + pcmd->data.cubic_to.ctrl_y1;
 
 		}
 		else
 		{
-			cmd.definition.cubic_to.x = pcmd->data.cubic_to.x;
-			cmd.definition.cubic_to.y = pcmd->data.cubic_to.y;
-			cmd.definition.cubic_to.ctrl_x0 = pcmd->data.cubic_to.ctrl_x0;
-			cmd.definition.cubic_to.ctrl_y0 = pcmd->data.cubic_to.ctrl_y0;
-			cmd.definition.cubic_to.ctrl_x1 = pcmd->data.cubic_to.ctrl_x1;
-			cmd.definition.cubic_to.ctrl_y1 = pcmd->data.cubic_to.ctrl_y1;
+			cmd.data.cubic_to.x = pcmd->data.cubic_to.x;
+			cmd.data.cubic_to.y = pcmd->data.cubic_to.y;
+			cmd.data.cubic_to.ctrl_x0 = pcmd->data.cubic_to.ctrl_x0;
+			cmd.data.cubic_to.ctrl_y0 = pcmd->data.cubic_to.ctrl_y0;
+			cmd.data.cubic_to.ctrl_x1 = pcmd->data.cubic_to.ctrl_x1;
+			cmd.data.cubic_to.ctrl_y1 = pcmd->data.cubic_to.ctrl_y1;
 		}
-		cb_data->cur.x = cmd.definition.cubic_to.x;
-		cb_data->cur.y = cmd.definition.cubic_to.y;
+		cb_data->cur.x = cmd.data.cubic_to.x;
+		cb_data->cur.y = cmd.data.cubic_to.y;
 		break;
 
 		case ESVG_PATH_SCUBIC_TO:
@@ -225,20 +225,20 @@ static void _egueb_svg_element_path_d_cb(void *data, void *user_data)
 		cmd.type = ENESIM_PATH_COMMAND_TYPE_SCUBIC_TO;
 		if (pcmd->relative)
 		{
-			cmd.definition.scubic_to.x = cb_data->cur.x + pcmd->data.scubic_to.x;
-			cmd.definition.scubic_to.y = cb_data->cur.y + pcmd->data.scubic_to.y;
-			cmd.definition.scubic_to.ctrl_x = cb_data->cur.x + pcmd->data.scubic_to.ctrl_x;
-			cmd.definition.scubic_to.ctrl_y = cb_data->cur.y + pcmd->data.scubic_to.ctrl_y;
+			cmd.data.scubic_to.x = cb_data->cur.x + pcmd->data.scubic_to.x;
+			cmd.data.scubic_to.y = cb_data->cur.y + pcmd->data.scubic_to.y;
+			cmd.data.scubic_to.ctrl_x = cb_data->cur.x + pcmd->data.scubic_to.ctrl_x;
+			cmd.data.scubic_to.ctrl_y = cb_data->cur.y + pcmd->data.scubic_to.ctrl_y;
 		}
 		else
 		{
-			cmd.definition.scubic_to.x = pcmd->data.scubic_to.x;
-			cmd.definition.scubic_to.y = pcmd->data.scubic_to.y;
-			cmd.definition.scubic_to.ctrl_x = pcmd->data.scubic_to.ctrl_x;
-			cmd.definition.scubic_to.ctrl_y = pcmd->data.scubic_to.ctrl_y;
+			cmd.data.scubic_to.x = pcmd->data.scubic_to.x;
+			cmd.data.scubic_to.y = pcmd->data.scubic_to.y;
+			cmd.data.scubic_to.ctrl_x = pcmd->data.scubic_to.ctrl_x;
+			cmd.data.scubic_to.ctrl_y = pcmd->data.scubic_to.ctrl_y;
 		}
-		cb_data->cur.x = cmd.definition.scubic_to.x;
-		cb_data->cur.y = cmd.definition.scubic_to.y;
+		cb_data->cur.x = cmd.data.scubic_to.x;
+		cb_data->cur.y = cmd.data.scubic_to.y;
 		break;
 
 		case ESVG_PATH_QUADRATIC_TO:
@@ -251,21 +251,21 @@ static void _egueb_svg_element_path_d_cb(void *data, void *user_data)
 		cmd.type = ENESIM_PATH_COMMAND_TYPE_QUADRATIC_TO;
 		if (pcmd->relative)
 		{
-			cmd.definition.quadratic_to.x = cb_data->cur.x + pcmd->data.quadratic_to.x;
-			cmd.definition.quadratic_to.y = cb_data->cur.y + pcmd->data.quadratic_to.y;
-			cmd.definition.quadratic_to.ctrl_x = cb_data->cur.x + pcmd->data.quadratic_to.ctrl_x;
-			cmd.definition.quadratic_to.ctrl_y = cb_data->cur.y + pcmd->data.quadratic_to.ctrl_y;
+			cmd.data.quadratic_to.x = cb_data->cur.x + pcmd->data.quadratic_to.x;
+			cmd.data.quadratic_to.y = cb_data->cur.y + pcmd->data.quadratic_to.y;
+			cmd.data.quadratic_to.ctrl_x = cb_data->cur.x + pcmd->data.quadratic_to.ctrl_x;
+			cmd.data.quadratic_to.ctrl_y = cb_data->cur.y + pcmd->data.quadratic_to.ctrl_y;
 
 		}
 		else
 		{
-			cmd.definition.quadratic_to.x = pcmd->data.quadratic_to.x;
-			cmd.definition.quadratic_to.y = pcmd->data.quadratic_to.y;
-			cmd.definition.quadratic_to.ctrl_x = pcmd->data.quadratic_to.ctrl_x;
-			cmd.definition.quadratic_to.ctrl_y = pcmd->data.quadratic_to.ctrl_y;
+			cmd.data.quadratic_to.x = pcmd->data.quadratic_to.x;
+			cmd.data.quadratic_to.y = pcmd->data.quadratic_to.y;
+			cmd.data.quadratic_to.ctrl_x = pcmd->data.quadratic_to.ctrl_x;
+			cmd.data.quadratic_to.ctrl_y = pcmd->data.quadratic_to.ctrl_y;
 		}
-		cb_data->cur.x = cmd.definition.quadratic_to.x;
-		cb_data->cur.y = cmd.definition.quadratic_to.y;
+		cb_data->cur.x = cmd.data.quadratic_to.x;
+		cb_data->cur.y = cmd.data.quadratic_to.y;
 		break;
 
 		case ESVG_PATH_SQUADRATIC_TO:
@@ -276,16 +276,16 @@ static void _egueb_svg_element_path_d_cb(void *data, void *user_data)
 		cmd.type = ENESIM_PATH_COMMAND_TYPE_SQUADRATIC_TO;
 		if (pcmd->relative)
 		{
-			cmd.definition.squadratic_to.x = cb_data->cur.x + pcmd->data.squadratic_to.x;
-			cmd.definition.squadratic_to.y = cb_data->cur.y + pcmd->data.squadratic_to.y;
+			cmd.data.squadratic_to.x = cb_data->cur.x + pcmd->data.squadratic_to.x;
+			cmd.data.squadratic_to.y = cb_data->cur.y + pcmd->data.squadratic_to.y;
 		}
 		else
 		{
-			cmd.definition.squadratic_to.x = pcmd->data.squadratic_to.x;
-			cmd.definition.squadratic_to.y = pcmd->data.squadratic_to.y;
+			cmd.data.squadratic_to.x = pcmd->data.squadratic_to.x;
+			cmd.data.squadratic_to.y = pcmd->data.squadratic_to.y;
 		}
-		cb_data->cur.x = cmd.definition.squadratic_to.x;
-		cb_data->cur.y = cmd.definition.squadratic_to.y;
+		cb_data->cur.x = cmd.data.squadratic_to.x;
+		cb_data->cur.y = cmd.data.squadratic_to.y;
 		break;
 
 		case ESVG_PATH_ARC_TO:
@@ -301,27 +301,27 @@ static void _egueb_svg_element_path_d_cb(void *data, void *user_data)
 		cmd.type = ENESIM_PATH_COMMAND_TYPE_ARC_TO;
 		if (pcmd->relative)
 		{
-			cmd.definition.arc_to.x = cb_data->cur.x + pcmd->data.arc_to.x;
-			cmd.definition.arc_to.y = cb_data->cur.y + pcmd->data.arc_to.y;
+			cmd.data.arc_to.x = cb_data->cur.x + pcmd->data.arc_to.x;
+			cmd.data.arc_to.y = cb_data->cur.y + pcmd->data.arc_to.y;
 		}
 		else
 		{
-			cmd.definition.arc_to.x = pcmd->data.arc_to.x;
-			cmd.definition.arc_to.y = pcmd->data.arc_to.y;
+			cmd.data.arc_to.x = pcmd->data.arc_to.x;
+			cmd.data.arc_to.y = pcmd->data.arc_to.y;
 		}
-		cmd.definition.arc_to.rx = pcmd->data.arc_to.rx;
-		cmd.definition.arc_to.ry = pcmd->data.arc_to.ry;
-		cmd.definition.arc_to.angle = pcmd->data.arc_to.angle;
-		cmd.definition.arc_to.large = pcmd->data.arc_to.large;
-		cmd.definition.arc_to.sweep = pcmd->data.arc_to.sweep;
-		cb_data->cur.x = cmd.definition.arc_to.x;
-		cb_data->cur.y = cmd.definition.arc_to.y;
+		cmd.data.arc_to.rx = pcmd->data.arc_to.rx;
+		cmd.data.arc_to.ry = pcmd->data.arc_to.ry;
+		cmd.data.arc_to.angle = pcmd->data.arc_to.angle;
+		cmd.data.arc_to.large = pcmd->data.arc_to.large;
+		cmd.data.arc_to.sweep = pcmd->data.arc_to.sweep;
+		cb_data->cur.x = cmd.data.arc_to.x;
+		cb_data->cur.y = cmd.data.arc_to.y;
 		break;
 
 		case ESVG_PATH_CLOSE:
 		DBG("close");
 		cmd.type = ENESIM_PATH_COMMAND_TYPE_CLOSE;
-		cmd.definition.close.close = EINA_TRUE;
+		cmd.data.close.closed = EINA_TRUE;
 		break;
 
 		default:
