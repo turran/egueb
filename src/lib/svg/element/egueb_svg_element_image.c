@@ -259,7 +259,7 @@ static Eina_Bool _egueb_svg_element_image_uri_load(Egueb_Svg_Element_Image *thiz
 		DBG_ELEMENT(EGUEB_DOM_NODE(thiz), "Loading a base64 based image with MIME '%s'", mime);
 
 		base64_data = strdup(str);
-		base64 = enesim_stream_buffer_new(base64_data, strlen(base64_data));
+		base64 = enesim_stream_buffer_new(base64_data, strlen(base64_data), free);
 		data = enesim_stream_base64_new(base64);
 
 		e = egueb_dom_event_io_image_new(data, _egueb_svg_element_image_image_cb);
