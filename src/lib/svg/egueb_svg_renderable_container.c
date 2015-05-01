@@ -80,11 +80,13 @@ static void _egueb_svg_renderable_container_tree_modified_cb(Egueb_Dom_Event *e,
 	Egueb_Svg_Renderable_Container *thiz = data;
 	Egueb_Dom_Node *related = NULL;
 	Egueb_Dom_Node *target = NULL;
+	Egueb_Dom_Node *n;
 
+	n = EGUEB_DOM_NODE(thiz);
 	/* check that the parent is this container */
 	related = egueb_dom_event_mutation_related_get(e);
 	if (!related) return;
-	if (related != EGUEB_DOM_NODE(thiz))
+	if (related != n)
 	{
 		egueb_dom_node_unref(related);
 		return;
@@ -97,7 +99,10 @@ static void _egueb_svg_renderable_container_tree_modified_cb(Egueb_Dom_Event *e,
 
 	if (enesim_object_instance_inherits(ENESIM_OBJECT_INSTANCE(target),
 			EGUEB_SVG_RENDERABLE_DESCRIPTOR))
+	{
 		thiz->renderable_tree_changed = EINA_TRUE;
+		egueb_dom_element_enqueue(egueb_dom_node_ref(n));
+	}
 	egueb_dom_node_unref(target);
 }
 /*----------------------------------------------------------------------------*
