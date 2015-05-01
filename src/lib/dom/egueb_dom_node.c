@@ -886,6 +886,24 @@ EAPI Eina_Bool egueb_dom_node_insert_before(Egueb_Dom_Node *thiz,
 		return EINA_FALSE;
 	}
 
+	/* check if the parent has a doc and the child doesnt, if that's
+	 * the case, the child needs to have a document too
+	 */
+	if (!child->owner_document && thiz->owner_document)
+	{
+		Egueb_Dom_Node_Type type;
+
+		type = egueb_dom_node_type_get(thiz);
+		if (type == EGUEB_DOM_NODE_TYPE_DOCUMENT)
+		{
+			egueb_dom_node_document_set_recursive(child, thiz);
+		}
+		else if (thiz->owner_document)
+		{
+			egueb_dom_node_document_set_recursive(child, thiz->owner_document);
+		}
+	}
+
 	if (!ref)
 		thiz->children = eina_inlist_append(thiz->children,
 				EINA_INLIST_GET(child));
@@ -905,23 +923,6 @@ EAPI Eina_Bool egueb_dom_node_insert_before(Egueb_Dom_Node *thiz,
 	{
 		event = egueb_dom_event_mutation_node_inserted_into_document_new();
 		_egueb_dom_node_insert_into_document(child, event); 
-	}
-	/* otherwise, check if the parent has a doc and the child doesnt, if that's
-	 * the case, the child needs to be part of the document too
-	 */
-	else if (!child->owner_document)
-	{
-		Egueb_Dom_Node_Type type;
-
-		type = egueb_dom_node_type_get(thiz);
-		if (type == EGUEB_DOM_NODE_TYPE_DOCUMENT)
-		{
-			egueb_dom_node_document_set_recursive(child, thiz);
-		}
-		else if (thiz->owner_document)
-		{
-			egueb_dom_node_document_set_recursive(child, thiz->owner_document);
-		}
 	}
 	return EINA_TRUE;
 }
