@@ -1355,6 +1355,7 @@ EAPI void egueb_svg_element_clip_path_get(Egueb_Dom_Node *n, Egueb_Svg_Clip_Path
 	EGUEB_SVG_ELEMENT_ATTR_ANIMATED_GET(thiz->clip_path, v);
 }
 
+/* TODO The opacity is a number not a struct, pass directly */
 EAPI void egueb_svg_element_opacity_set(Egueb_Dom_Node *n, const Egueb_Svg_Number *v)
 {
 	Egueb_Svg_Element *thiz;
