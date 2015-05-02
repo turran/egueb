@@ -70,9 +70,9 @@ static void _egueb_smil_event_instance_deinit(void *o)
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/
-Egueb_Dom_String *EGUEB_SMIL_EVENT_BEGIN = &_EGUEB_SMIL_EVENT_BEGIN;
-Egueb_Dom_String *EGUEB_SMIL_EVENT_END = &_EGUEB_SMIL_EVENT_END;
-Egueb_Dom_String *EGUEB_SMIL_EVENT_REPEAT = &_EGUEB_SMIL_EVENT_REPEAT;
+EAPI Egueb_Dom_String *EGUEB_SMIL_EVENT_BEGIN = &_EGUEB_SMIL_EVENT_BEGIN;
+EAPI Egueb_Dom_String *EGUEB_SMIL_EVENT_END = &_EGUEB_SMIL_EVENT_END;
+EAPI Egueb_Dom_String *EGUEB_SMIL_EVENT_REPEAT = &_EGUEB_SMIL_EVENT_REPEAT;
 
 EAPI Egueb_Dom_Event * egueb_smil_event_new(void)
 {
