@@ -5,6 +5,7 @@ dist_installed_smilheaders_DATA = \
 src/lib/smil/Egueb_Smil.h \
 src/lib/smil/egueb_smil_accumulate.h \
 src/lib/smil/egueb_smil_additive.h \
+src/lib/smil/egueb_smil_animate_base.h \
 src/lib/smil/egueb_smil_animate.h \
 src/lib/smil/egueb_smil_animation.h \
 src/lib/smil/egueb_smil_attribute_type.h \

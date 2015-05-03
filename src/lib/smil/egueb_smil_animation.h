@@ -21,13 +21,19 @@
 
 EAPI Eina_Bool egueb_smil_is_animation(Egueb_Dom_Node *n);
 
+EAPI void egueb_smil_animation_attribute_name_set(Egueb_Dom_Node *n,
+		Egueb_Dom_String *v);
+EAPI Egueb_Dom_String * egueb_smil_animation_attribute_name_get(
+		Egueb_Dom_Node *n);
+
+EAPI void egueb_smil_animation_dur_set(Egueb_Dom_Node *n,
+		Egueb_Smil_Duration *v);
+EAPI void egueb_smil_animation_dur_get(Egueb_Dom_Node *n,
+		Egueb_Smil_Duration *v);
+
 #if 0
-EAPI void egueb_smil_element_animation_attribute_name_set(Ender_Element *e, const char *name);
-EAPI void egueb_smil_element_animation_attribute_name_get(Ender_Element *e, const char **name);
 EAPI void egueb_smil_element_animation_attribute_type_set(Ender_Element *e, Egueb_Smil_Attribute_Type type);
 EAPI void egueb_smil_element_animation_attribute_type_get(Ender_Element *e, Egueb_Smil_Attribute_Type *type);
-EAPI void egueb_smil_element_animation_dur_set(Ender_Element *e, Egueb_Smil_Duration *v);
-EAPI void egueb_smil_element_animation_dur_get(Ender_Element *e, Egueb_Smil_Duration *v);
 EAPI void egueb_smil_element_animation_additive_set(Ender_Element *e, Egueb_Smil_Additive additive);
 EAPI void egueb_smil_element_animation_additive_get(Ender_Element *e, Egueb_Smil_Additive *additive);
 EAPI void egueb_smil_element_animation_accumulate_set(Ender_Element *e, Egueb_Smil_Accumulate accumulate);

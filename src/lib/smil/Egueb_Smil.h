@@ -43,6 +43,7 @@
 #include "egueb_smil_timing.h"
 /* elements */
 #include "egueb_smil_animation.h"
+#include "egueb_smil_animate_base.h"
 #include "egueb_smil_animate.h"
 #include "egueb_smil_set.h"
 /* events */

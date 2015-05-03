@@ -780,3 +780,39 @@ static void _egueb_smil_animate_base_instance_deinit(void *o)
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/
+EAPI void egueb_smil_animate_base_to_set(Egueb_Dom_Node *n, Egueb_Dom_String *v)
+{
+	Egueb_Smil_Animate_Base *thiz;
+
+	thiz = EGUEB_SMIL_ANIMATE_BASE(n);
+	egueb_dom_attr_set(thiz->to, EGUEB_DOM_ATTR_TYPE_BASE, v);
+}
+
+EAPI Egueb_Dom_String * egueb_smil_animate_base_to_get(Egueb_Dom_Node *n)
+{
+	Egueb_Smil_Animate_Base *thiz;
+	Egueb_Dom_String *v = NULL;
+
+	thiz = EGUEB_SMIL_ANIMATE_BASE(n);
+	egueb_dom_attr_get(thiz->to, EGUEB_DOM_ATTR_TYPE_BASE, &v);
+	return v;
+}
+
+EAPI void egueb_smil_animate_base_from_set(Egueb_Dom_Node *n, Egueb_Dom_String *v)
+{
+	Egueb_Smil_Animate_Base *thiz;
+
+	thiz = EGUEB_SMIL_ANIMATE_BASE(n);
+	egueb_dom_attr_set(thiz->from, EGUEB_DOM_ATTR_TYPE_BASE, v);
+}
+
+EAPI Egueb_Dom_String * egueb_smil_animate_base_from_get(Egueb_Dom_Node *n)
+{
+	Egueb_Smil_Animate_Base *thiz;
+	Egueb_Dom_String *v = NULL;
+
+	thiz = EGUEB_SMIL_ANIMATE_BASE(n);
+	egueb_dom_attr_get(thiz->from, EGUEB_DOM_ATTR_TYPE_BASE, &v);
+	return v;
+
+}

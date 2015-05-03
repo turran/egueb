@@ -18,12 +18,13 @@
 #ifndef _EGUEB_SMIL_ANIMATE_BASE_H_
 #define _EGUEB_SMIL_ANIMATE_BASE_H_
 
+EAPI void egueb_smil_animate_base_to_set(Egueb_Dom_Node *n, Egueb_Dom_String *v);
+EAPI Egueb_Dom_String * egueb_smil_animate_base_to_get(Egueb_Dom_Node *n);
+EAPI void egueb_smil_animate_base_from_set(Egueb_Dom_Node *n, Egueb_Dom_String *v);
+EAPI Egueb_Dom_String * egueb_smil_animate_base_from_get(Egueb_Dom_Node *n);
+
 #if 0
 EAPI Eina_Bool egueb_smil_is_animate_base(Ender_Element *e);
-EAPI void egueb_smil_animate_base_to_set(Ender_Element *e, const char *v);
-EAPI void egueb_smil_animate_base_to_get(Ender_Element *e, const char **v);
-EAPI void egueb_smil_animate_base_from_set(Ender_Element *e, const char *v);
-EAPI void egueb_smil_animate_base_from_get(Ender_Element *e, const char **v);
 EAPI void egueb_smil_animate_base_values_set(Ender_Element *e, const char *v);
 EAPI void egueb_smil_animate_base_values_get(Ender_Element *e, const char **v);
 EAPI void egueb_smil_animate_base_calc_mode_set(Ender_Element *e, Egueb_Smil_Calc_Mode calc_mode);

@@ -18,10 +18,11 @@
 
 #include "egueb_smil_private.h"
 #include "egueb_smil_main.h"
+#include "egueb_smil_clock.h"
+#include "egueb_smil_duration.h"
+#include "egueb_smil_event.h"
 #include "egueb_smil_animation.h"
 #include "egueb_smil_animation_private.h"
-#include "egueb_smil_clock.h"
-#include "egueb_smil_event.h"
 
 #include "egueb_smil_keyframe_private.h"
 #include "egueb_smil_timeline_private.h"
@@ -696,28 +697,45 @@ EAPI Eina_Bool egueb_smil_is_animation(Egueb_Dom_Node *n)
 	return EINA_TRUE;
 }
 
+EAPI void egueb_smil_animation_attribute_name_set(Egueb_Dom_Node *n,
+		Egueb_Dom_String *v)
+{
+	Egueb_Smil_Animation *thiz;
+
+	thiz = EGUEB_SMIL_ANIMATION(n);
+	egueb_dom_attr_set(thiz->attribute_name, EGUEB_DOM_ATTR_TYPE_BASE, v);
+}
+
+EAPI Egueb_Dom_String * egueb_smil_animation_attribute_name_get(
+		Egueb_Dom_Node *n)
+{
+	Egueb_Smil_Animation *thiz;
+	Egueb_Dom_String *v = NULL;
+
+	thiz = EGUEB_SMIL_ANIMATION(n);
+	egueb_dom_attr_get(thiz->attribute_name, EGUEB_DOM_ATTR_TYPE_BASE, &v);
+	return v;
+}
+
+EAPI void egueb_smil_animation_dur_set(Egueb_Dom_Node *n,
+		Egueb_Smil_Duration *v)
+{
+	Egueb_Smil_Animation *thiz;
+
+	thiz = EGUEB_SMIL_ANIMATION(n);
+	egueb_dom_attr_set(thiz->dur, EGUEB_DOM_ATTR_TYPE_BASE, v);
+}
+
+EAPI void egueb_smil_animation_dur_get(Egueb_Dom_Node *n,
+		Egueb_Smil_Duration *v)
+{
+	Egueb_Smil_Animation *thiz;
+
+	thiz = EGUEB_SMIL_ANIMATION(n);
+	egueb_dom_attr_get(thiz->dur, EGUEB_DOM_ATTR_TYPE_BASE, v);
+}
+
 #if 0
-/**
- * To be documented
- * FIXME: To be fixed
- */
-EAPI void egueb_smil_animation_attribute_name_set(Ender_Element *e, const char *name)
-{
-	ender_element_property_value_set(e, EGUEB_SMIL_ELEMENT_ANIMATION_ATTRIBUTE_NAME, name, NULL);
-}
-
-/**
- * To be documented
- * FIXME: To be fixed
- */
-EAPI void egueb_smil_animation_attribute_name_get(Ender_Element *e, const char **name)
-{
-	Egueb_Dom_Tag *t;
-
-	t = ender_element_object_get(e);
-	_egueb_smil_animation_attribute_name_get(t, name);
-}
-
 /**
  * To be documented
  * FIXME: To be fixed
