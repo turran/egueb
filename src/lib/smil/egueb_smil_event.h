@@ -19,9 +19,9 @@
 #ifndef _EGUEB_SMIL_EVENT_H_
 #define _EGUEB_SMIL_EVENT_H_
 
-extern Egueb_Dom_String *EGUEB_SMIL_EVENT_BEGIN;
-extern Egueb_Dom_String *EGUEB_SMIL_EVENT_END;
-extern Egueb_Dom_String *EGUEB_SMIL_EVENT_REPEAT;
+EAPI extern Egueb_Dom_String *EGUEB_SMIL_EVENT_BEGIN;
+EAPI extern Egueb_Dom_String *EGUEB_SMIL_EVENT_END;
+EAPI extern Egueb_Dom_String *EGUEB_SMIL_EVENT_REPEAT;
 
 EAPI Egueb_Dom_Event * egueb_smil_event_new(void);
 EAPI void egueb_smil_event_init(Egueb_Dom_Event *e, Egueb_Dom_String *type, int detail);
