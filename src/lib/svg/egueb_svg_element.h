@@ -46,6 +46,8 @@
 
 EAPI Eina_Bool egueb_svg_is_element(Egueb_Dom_Node *n);
 
+EAPI void egueb_svg_element_id_set(Egueb_Dom_Node *n, Egueb_Dom_String *v);
+EAPI Egueb_Dom_String * egueb_svg_element_id_get(Egueb_Dom_Node *n);
 EAPI void egueb_svg_element_clip_path_set(Egueb_Dom_Node *n, Egueb_Svg_Clip_Path *v);
 EAPI void egueb_svg_element_clip_path_get(Egueb_Dom_Node *n, Egueb_Svg_Clip_Path_Animated *v);
 EAPI void egueb_svg_element_opacity_set(Egueb_Dom_Node *n, Egueb_Svg_Number v);

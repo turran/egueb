@@ -1339,6 +1339,24 @@ EAPI Eina_Bool egueb_svg_is_element(Egueb_Dom_Node *n)
 	return EINA_TRUE;
 }
 
+EAPI void egueb_svg_element_id_set(Egueb_Dom_Node *n, Egueb_Dom_String *v)
+{
+	Egueb_Svg_Element *thiz;
+
+	thiz = EGUEB_SVG_ELEMENT(n);
+	egueb_dom_attr_set(thiz->id, EGUEB_DOM_ATTR_TYPE_BASE, v);
+}
+
+EAPI Egueb_Dom_String * egueb_svg_element_id_get(Egueb_Dom_Node *n)
+{
+	Egueb_Svg_Element *thiz;
+	Egueb_Dom_String *v = NULL;
+
+	thiz = EGUEB_SVG_ELEMENT(n);
+	egueb_dom_attr_get(thiz->id, EGUEB_DOM_ATTR_TYPE_BASE, &v);
+	return v;
+}
+
 EAPI void egueb_svg_element_clip_path_set(Egueb_Dom_Node *n, Egueb_Svg_Clip_Path *v)
 {
 	Egueb_Svg_Element *thiz;
