@@ -106,6 +106,7 @@ static void _egueb_svg_strings_init(void)
 	EGUEB_SVG_NAME_OVERFLOW = egueb_dom_string_new_with_string("overflow");
 	EGUEB_SVG_NAME_PATTERN_UNITS = egueb_dom_string_new_with_string("patternUnits");
 	EGUEB_SVG_NAME_PATTERN_TRANSFORM = egueb_dom_string_new_with_string("patternTransform");
+	EGUEB_SVG_NAME_POINTER_EVENTS = egueb_dom_string_new_with_string("pointer-events");
 	EGUEB_SVG_NAME_POINTS = egueb_dom_string_new_with_string("points");
 	EGUEB_SVG_NAME_R = egueb_dom_string_new_with_string("r");
 	EGUEB_SVG_NAME_RX = egueb_dom_string_new_with_string("rx");
@@ -200,6 +201,7 @@ static void _egueb_svg_strings_shutdown(void)
 	egueb_dom_string_unref(EGUEB_SVG_NAME_OVERFLOW);
 	egueb_dom_string_unref(EGUEB_SVG_NAME_PATTERN_UNITS);
 	egueb_dom_string_unref(EGUEB_SVG_NAME_PATTERN_TRANSFORM);
+	egueb_dom_string_unref(EGUEB_SVG_NAME_POINTER_EVENTS);
 	egueb_dom_string_unref(EGUEB_SVG_NAME_POINTS);
 	egueb_dom_string_unref(EGUEB_SVG_NAME_R);
 	egueb_dom_string_unref(EGUEB_SVG_NAME_RX);
@@ -330,6 +332,7 @@ Egueb_Dom_String *EGUEB_SVG_NAME_OPACITY;
 Egueb_Dom_String *EGUEB_SVG_NAME_OVERFLOW;
 Egueb_Dom_String *EGUEB_SVG_NAME_PATTERN_UNITS;
 Egueb_Dom_String *EGUEB_SVG_NAME_PATTERN_TRANSFORM;
+Egueb_Dom_String *EGUEB_SVG_NAME_POINTER_EVENTS;
 Egueb_Dom_String *EGUEB_SVG_NAME_POINTS;
 Egueb_Dom_String *EGUEB_SVG_NAME_R;
 Egueb_Dom_String *EGUEB_SVG_NAME_RX;

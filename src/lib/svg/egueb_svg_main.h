@@ -80,6 +80,7 @@ EAPI extern Egueb_Dom_String *EGUEB_SVG_NAME_OPACITY;
 EAPI extern Egueb_Dom_String *EGUEB_SVG_NAME_OVERFLOW;
 EAPI extern Egueb_Dom_String *EGUEB_SVG_NAME_PATTERN_UNITS;
 EAPI extern Egueb_Dom_String *EGUEB_SVG_NAME_PATTERN_TRANSFORM;
+EAPI extern Egueb_Dom_String *EGUEB_SVG_NAME_POINTER_EVENTS;
 EAPI extern Egueb_Dom_String *EGUEB_SVG_NAME_POINTS;
 EAPI extern Egueb_Dom_String *EGUEB_SVG_NAME_R;
 EAPI extern Egueb_Dom_String *EGUEB_SVG_NAME_RX;

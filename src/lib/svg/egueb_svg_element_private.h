@@ -32,6 +32,7 @@
 #include "egueb_svg_number.h"
 #include "egueb_svg_overflow.h"
 #include "egueb_svg_paint.h"
+#include "egueb_svg_pointer_events.h"
 #include "egueb_svg_rect.h"
 #include "egueb_svg_stroke_line_join.h"
 #include "egueb_svg_stroke_line_cap.h"
@@ -48,6 +49,7 @@
 #include "egueb_svg_attr_number_private.h"
 #include "egueb_svg_attr_overflow_private.h"
 #include "egueb_svg_attr_paint_private.h"
+#include "egueb_svg_attr_pointer_events_private.h"
 #include "egueb_svg_attr_text_anchor_private.h"
 #include "egueb_svg_attr_visibility_private.h"
 #include "egueb_svg_attr_string_private.h"
@@ -83,6 +85,7 @@ typedef struct _Egueb_Svg_Element
 	Egueb_Dom_Node *font_weight;
 	Egueb_Dom_Node *opacity;
 	Egueb_Dom_Node *overflow;
+	Egueb_Dom_Node *pointer_events;
 	Egueb_Dom_Node *stop_color;
 	Egueb_Dom_Node *stop_opacity;
 	Egueb_Dom_Node *stroke;

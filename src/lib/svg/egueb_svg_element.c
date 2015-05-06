@@ -285,6 +285,7 @@ static void _egueb_svg_element_presentation_attributes_process(
 	egueb_dom_attr_inheritable_process(thiz->font_weight, rel->font_weight);
 	egueb_dom_attr_inheritable_process(thiz->opacity, rel->opacity);
 	egueb_dom_attr_inheritable_process(thiz->overflow, rel->overflow);
+	egueb_dom_attr_inheritable_process(thiz->pointer_events, rel->pointer_events);
 	egueb_dom_attr_inheritable_process(thiz->stop_opacity, rel->stop_opacity);
 	egueb_dom_attr_inheritable_process(thiz->stroke, rel->stroke);
 	egueb_dom_attr_inheritable_process(thiz->stroke_dasharray, rel->stroke_dasharray);
@@ -481,6 +482,10 @@ static void _egueb_svg_element_instance_init(void *o)
 			egueb_dom_string_ref(EGUEB_SVG_NAME_OVERFLOW),
 			EGUEB_SVG_OVERFLOW_HIDDEN, EINA_TRUE, EINA_TRUE,
 			EINA_TRUE);
+	thiz->pointer_events = egueb_svg_attr_pointer_events_new(
+			egueb_dom_string_ref(EGUEB_SVG_NAME_POINTER_EVENTS),
+			EGUEB_SVG_POINTER_EVENTS_VISIBLE_PAINTED, EINA_TRUE, EINA_TRUE,
+			EINA_TRUE);
 	thiz->stop_color = egueb_svg_attr_color_new(
 			egueb_dom_string_ref(EGUEB_SVG_NAME_STOP_COLOR),
 			&EGUEB_SVG_COLOR_BLACK, EINA_TRUE, EINA_TRUE,
@@ -563,6 +568,7 @@ static void _egueb_svg_element_instance_init(void *o)
 	egueb_dom_element_attribute_node_set(n, egueb_dom_node_ref(thiz->font_weight), NULL);
 	egueb_dom_element_attribute_node_set(n, egueb_dom_node_ref(thiz->opacity), NULL);
 	egueb_dom_element_attribute_node_set(n, egueb_dom_node_ref(thiz->overflow), NULL);
+	egueb_dom_element_attribute_node_set(n, egueb_dom_node_ref(thiz->pointer_events), NULL);
 	egueb_dom_element_attribute_node_set(n, egueb_dom_node_ref(thiz->stop_opacity), NULL);
 	egueb_dom_element_attribute_node_set(n, egueb_dom_node_ref(thiz->stop_color), NULL);
 	egueb_dom_element_attribute_node_set(n, egueb_dom_node_ref(thiz->stroke), NULL);
@@ -630,6 +636,7 @@ static void _egueb_svg_element_instance_deinit(void *o)
 	egueb_dom_node_unref(thiz->font_weight);
 	egueb_dom_node_unref(thiz->opacity);
 	egueb_dom_node_unref(thiz->overflow);
+	egueb_dom_node_unref(thiz->pointer_events);
 	egueb_dom_node_unref(thiz->stop_color);
 	egueb_dom_node_unref(thiz->stop_opacity);
 	egueb_dom_node_unref(thiz->stroke);
@@ -1403,6 +1410,14 @@ EAPI void egueb_svg_element_overflow_get(Egueb_Dom_Node *n, Egueb_Svg_Overflow_A
 
 	thiz = EGUEB_SVG_ELEMENT(n);
 	EGUEB_SVG_ELEMENT_ATTR_ANIMATED_GET(thiz->overflow, v);
+}
+
+EAPI void egueb_svg_element_pointer_events_set(Egueb_Dom_Node *n, Egueb_Svg_Pointer_Events v)
+{
+	Egueb_Svg_Element *thiz;
+
+	thiz = EGUEB_SVG_ELEMENT(n);
+	egueb_dom_attr_set(thiz->pointer_events, EGUEB_DOM_ATTR_TYPE_BASE, v);
 }
 
 EAPI void egueb_svg_element_color_set(Egueb_Dom_Node *n, const Egueb_Svg_Color *v)

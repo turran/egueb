@@ -25,6 +25,8 @@ src/lib/svg/attr/egueb_svg_attr_path_seg_list.c \
 src/lib/svg/attr/egueb_svg_attr_path_seg_list_private.h \
 src/lib/svg/attr/egueb_svg_attr_point_list.c \
 src/lib/svg/attr/egueb_svg_attr_point_list_private.h \
+src/lib/svg/attr/egueb_svg_attr_pointer_events.c \
+src/lib/svg/attr/egueb_svg_attr_pointer_events_private.h \
 src/lib/svg/attr/egueb_svg_attr_rect.c \
 src/lib/svg/attr/egueb_svg_attr_rect_private.h \
 src/lib/svg/attr/egueb_svg_attr_referenceable_units.c \
