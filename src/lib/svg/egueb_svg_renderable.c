@@ -84,6 +84,9 @@ static Eina_Bool _egueb_svg_renderable_process(Egueb_Svg_Element *e)
 	Egueb_Svg_Matrix m;
 	Egueb_Svg_Painter *painter;
 	Egueb_Dom_Node *relative;
+	Egueb_Dom_Input *input;
+	Egueb_Dom_Node *doc;
+	Egueb_Dom_Node *topmost;
 	Enesim_Renderer *ren = NULL;
 
 	thiz = EGUEB_SVG_RENDERABLE(e);
@@ -119,9 +122,6 @@ static Eina_Bool _egueb_svg_renderable_process(Egueb_Svg_Element *e)
 	painter = egueb_svg_painter_ref(thiz->painter);
 	if (!painter)
 	{
-		Egueb_Dom_Node *doc;
-		Egueb_Dom_Node *topmost;
-
 		doc = egueb_dom_node_owner_document_get(EGUEB_DOM_NODE(e));
 		if (!doc)
 		{
@@ -192,7 +192,45 @@ static Eina_Bool _egueb_svg_renderable_process(Egueb_Svg_Element *e)
 		}
 	}
 	enesim_renderer_proxy_proxied_set(thiz->proxy, ren);
+	/* TODO get the previous/current bounds, if it is now inside the mouse, make sure
+	 * to inform about it
+	 */
+	doc = egueb_dom_node_owner_document_get(EGUEB_DOM_NODE(e));
+	if (doc)
+	{
+		topmost = egueb_dom_document_document_element_get(doc);
+		if (topmost)
+		{
+			Eina_Rectangle bounds;
 
+			/* only notify the input in case the bounds are different */
+			enesim_renderer_destination_bounds_get(thiz->proxy, &bounds, 0, 0, NULL);
+			if (thiz->last_processed_bounds.x != bounds.x ||
+				thiz->last_processed_bounds.y != bounds.y ||
+				thiz->last_processed_bounds.w != bounds.w ||
+				thiz->last_processed_bounds.h != bounds.h)
+			{
+				Eina_Rectangle ibounds;
+				Egueb_Dom_Feature *ifeature;
+				int mx, my;
+
+				ifeature = egueb_dom_node_feature_get(topmost, EGUEB_DOM_FEATURE_UI_NAME, NULL);
+				egueb_dom_feature_ui_input_get(ifeature, &input);
+				egueb_dom_feature_unref(ifeature);
+
+				egueb_dom_input_mouse_position_get(input, &mx, &my);
+				eina_rectangle_coords_from(&ibounds, 0, 0, mx, my);
+				if (eina_rectangles_intersect(&ibounds, &bounds))
+				{
+					egueb_dom_input_feed_mouse_move(input, mx, my);
+				}
+				egueb_dom_input_unref(input);
+				thiz->last_processed_bounds = bounds;
+			}
+			egueb_dom_node_unref(topmost);
+		}
+		egueb_dom_node_unref(doc);
+	}
 	return EINA_TRUE;
 }
 /*----------------------------------------------------------------------------*

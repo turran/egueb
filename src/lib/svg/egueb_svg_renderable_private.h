@@ -35,6 +35,7 @@ typedef struct _Egueb_Svg_Renderable
 	Egueb_Svg_Painter *painter;
 	Egueb_Svg_Reference *clip_path;
 	Egueb_Svg_Clip_Path clip_path_last;
+	Eina_Rectangle last_processed_bounds;
 } Egueb_Svg_Renderable;
 
 typedef Enesim_Renderer * (*Egueb_Svg_Renderable_Renderer_Get)(Egueb_Svg_Renderable *thiz);
