@@ -41,6 +41,9 @@ typedef struct _Egueb_Dom_Input_Descriptor
 EAPI Egueb_Dom_Input * egueb_dom_input_new(Egueb_Dom_Input_Descriptor *descriptor, void *data);
 EAPI void egueb_dom_input_unref(Egueb_Dom_Input *thiz);
 EAPI Egueb_Dom_Input * egueb_dom_input_ref(Egueb_Dom_Input *thiz);
+
+EAPI void egueb_dom_input_mouse_position_get(Egueb_Dom_Input *thiz,
+		int *x, int *y);
 EAPI void egueb_dom_input_feed_mouse_move(Egueb_Dom_Input *thiz, int x, int y);
 EAPI void egueb_dom_input_feed_mouse_down(Egueb_Dom_Input *thiz, int button);
 EAPI void egueb_dom_input_feed_mouse_up(Egueb_Dom_Input *thiz, int button);

@@ -188,6 +188,15 @@ EAPI Egueb_Dom_Input * egueb_dom_input_ref(Egueb_Dom_Input *thiz)
 	return thiz;
 }
 
+EAPI void egueb_dom_input_mouse_position_get(Egueb_Dom_Input *thiz,
+		int *x, int *y)
+{
+	if (!thiz) return;
+
+	if (x) *x = thiz->x;
+	if (y) *y = thiz->y;
+}
+
 EAPI void egueb_dom_input_feed_mouse_down(Egueb_Dom_Input *thiz, int button)
 {
 	Egueb_Dom_Event *ev;
