@@ -192,8 +192,11 @@ static Eina_Bool _egueb_svg_renderable_process(Egueb_Svg_Element *e)
 		}
 	}
 	enesim_renderer_proxy_proxied_set(thiz->proxy, ren);
-	/* TODO get the previous/current bounds, if it is now inside the mouse, make sure
+	/* get the previous/current bounds, if it is now inside the mouse, make sure
 	 * to inform about it
+	 * TODO we should enqueue this for processing after every renderable to process
+	 * is done, because a renderable might appear above us, and that one should
+	 * get the input events
 	 */
 	doc = egueb_dom_node_owner_document_get(EGUEB_DOM_NODE(e));
 	if (doc)
