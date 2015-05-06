@@ -735,6 +735,20 @@ EAPI void egueb_smil_animation_dur_get(Egueb_Dom_Node *n,
 	egueb_dom_attr_get(thiz->dur, EGUEB_DOM_ATTR_TYPE_BASE, v);
 }
 
+EAPI void egueb_smil_animation_element_end(Egueb_Dom_Node *n)
+{
+	egueb_smil_animation_element_end_at(n, 0);
+}
+
+EAPI void egueb_smil_animation_element_end_at(Egueb_Dom_Node *n,
+		double offset)
+{
+	/* add a new end condition at current time plus offset */
+	/* create a discrete signal */
+	/* set the new time */
+	/* add the signal to the timeline */
+}
+
 #if 0
 /**
  * To be documented

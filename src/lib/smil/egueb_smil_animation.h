@@ -31,6 +31,10 @@ EAPI void egueb_smil_animation_dur_set(Egueb_Dom_Node *n,
 EAPI void egueb_smil_animation_dur_get(Egueb_Dom_Node *n,
 		Egueb_Smil_Duration *v);
 
+EAPI void egueb_smil_animation_element_end(Egueb_Dom_Node *n);
+EAPI void egueb_smil_animation_element_end_at(Egueb_Dom_Node *n,
+		double offset);
+
 #if 0
 EAPI void egueb_smil_element_animation_attribute_type_set(Ender_Element *e, Egueb_Smil_Attribute_Type type);
 EAPI void egueb_smil_element_animation_attribute_type_get(Ender_Element *e, Egueb_Smil_Attribute_Type *type);
