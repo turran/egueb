@@ -93,11 +93,8 @@ typedef struct _Egueb_Svg_Element_Svg
 	/* svg inclusion */
 	Eina_List *svgs; /* the list of svg documents found on the svg */
 
-	/* some state flags */
-	/* keep track if the renderable tree has changed, includeing the <a> tag */
 #if 0
-	Eina_Bool renderable_tree_changed : 1;
-
+	/* some state flags */
 	double version;
 	double x_dpi;
 	double y_dpi;
@@ -116,7 +113,6 @@ typedef struct _Egueb_Svg_Element_Svg
 	void *application_data;
 	/* input */
 	Egueb_Svg_Renderable_Container *container;
-	Egueb_Svg_Input *input;
 	Eina_List *image_svgs; /* the list of svg images on the svg */
 	/* scripts */
 	Eina_Hash *scriptors;
@@ -1119,14 +1115,13 @@ EAPI Eina_Bool egueb_svg_element_svg_animations_paused(Egueb_Dom_Node *n)
 }
 
 #if 0
-/**
- * To be documented
- * FIXME: To be fixed
- */
-EAPI Eina_List * egueb_svg_element_svg_intersection_list_get(Ender_Element *e, Enesim_Rectangle *rect)
+EAPI Egueb_Dom_Node_List * egueb_svg_element_svg_intersection_list_get(
+		Egueb_Dom_Node *n, Egueb_Svg_Rect *rect,
+		Egueb_Dom_Node *refElement)
 {
 	return NULL;
 }
+
 
 /**
  * To be documented

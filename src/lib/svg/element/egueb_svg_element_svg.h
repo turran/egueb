@@ -67,6 +67,9 @@ EAPI void egueb_svg_element_svg_current_translate_get(Egueb_Dom_Node *n,
 EAPI Egueb_Svg_Point * egueb_svg_element_svg_svg_point_create(Egueb_Dom_Node *n);
 
 #if 0
+EAPI Egueb_Dom_Node_List * egueb_svg_element_svg_intersection_list_get(
+		Egueb_Dom_Node *n, Egueb_Svg_Rect *rect,
+		Egueb_Dom_Node *refElement);
 typedef const char * (*Egueb_Svg_Element_Svg_Base_Dir_Get)(Ender_Element *e, void *data);
 
 /* Function to be called whenever the svg wants to go to another uri */
@@ -126,8 +129,6 @@ EAPI void egueb_svg_element_svg_y_dpi_get(Ender_Element *e, double *y_dpi);
 EAPI Ender_Element * egueb_svg_element_svg_element_find(Ender_Element *e, const char *id);
 
 EAPI void egueb_svg_element_svg_script_alert(Ender_Element *e, const char *msg);
-
-EAPI Eina_List * egueb_svg_element_svg_intersection_list_get(Ender_Element *e, Enesim_Rectangle *rect);
 
 EAPI void egueb_svg_element_svg_application_descriptor_set(Ender_Element *e, const Egueb_Svg_Element_Svg_Application_Descriptor *descriptor, void *data);
 EAPI const char * egueb_svg_element_svg_base_dir_get(Ender_Element *e);
