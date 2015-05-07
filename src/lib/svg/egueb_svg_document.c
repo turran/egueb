@@ -58,6 +58,7 @@
 
 #include "egueb_dom_document_private.h"
 #include "egueb_svg_renderable_private.h"
+#include "egueb_svg_document_private.h"
 
 #include <unistd.h>
 #include <libgen.h>
@@ -79,8 +80,10 @@ typedef struct _Egueb_Svg_Document
 	double width;
 	double height;
 	double font_size;
-	/* TODO remove this */
-	int fps;
+	/* after the document is processed, we might need to check again
+	 * the mouse position for new events
+	 */
+	int mouse_check;
 } Egueb_Svg_Document;
 
 typedef struct _Egueb_Svg_Document_Class
@@ -563,6 +566,33 @@ static Ender_Item * _egueb_svg_document_item_get(Egueb_Dom_Document *d)
 	lib = ender_lib_find("egueb_svg");
 	return ender_lib_item_find(lib, "egueb.svg.document");
 }
+
+#if 0
+static void _egueb_svg_document_post_process(Egueb_Dom_Document *d)
+{
+	Egueb_Svg_Document *thiz;
+	Egueb_Dom_Node *topmost;
+	Egueb_Dom_Node *n;
+	Egueb_Dom_Feature *feature;
+	Egueb_Dom_Input *input;
+	int mx, my;
+
+	n = EGUEB_DOM_NODE(d);
+	topmost = egueb_dom_document_document_element_get(n);
+	if (!topmost)
+		return;
+	thiz = EGUEB_SVG_DOCUMENT(n);
+	if (!thiz->mouse_check)
+		return;
+
+	feature = egueb_dom_node_feature_get(topmost, EGUEB_DOM_FEATURE_UI_NAME, NULL);
+	egueb_dom_feature_ui_input_get(feature, &input);
+	egueb_dom_feature_unref(feature);
+	egueb_dom_input_mouse_position_get(input, &mx, &my);
+	egueb_dom_input_feed_mouse_move(input, mx, my);
+	thiz->mouse_check = 0;
+}
+#endif
 /*----------------------------------------------------------------------------*
  *                              Object interface                              *
  *----------------------------------------------------------------------------*/
@@ -584,8 +614,8 @@ static void _egueb_svg_document_instance_init(void *o)
 	Egueb_Svg_Document *thiz;
 
 	thiz = EGUEB_SVG_DOCUMENT(o);
-	thiz->fps = 30;
 	thiz->font_size = 16;
+	thiz->mouse_check = 0;
 }
 
 static void _egueb_svg_document_instance_deinit(void *o)
@@ -594,6 +624,15 @@ static void _egueb_svg_document_instance_deinit(void *o)
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
+/* Function to send again a mouse move after the current processing */
+void egueb_svg_document_mouse_check(Egueb_Dom_Node *n)
+{
+	Egueb_Svg_Document *thiz;
+
+	thiz = EGUEB_SVG_DOCUMENT(n);
+	thiz->mouse_check++;
+}
+
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/
