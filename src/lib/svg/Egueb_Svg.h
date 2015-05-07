@@ -77,6 +77,7 @@ extern "C" {
 #include "egueb_svg_clip_path.h"
 #include "egueb_svg_color.h"
 #include "egueb_svg_display.h"
+#include "egueb_svg_enum.h"
 #include "egueb_svg_length.h"
 #include "egueb_svg_fill_rule.h"
 #include "egueb_svg_matrix.h"

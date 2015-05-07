@@ -11,6 +11,7 @@ src/lib/svg/egueb_svg_color.h \
 src/lib/svg/egueb_svg_display.h \
 src/lib/svg/egueb_svg_document.h \
 src/lib/svg/egueb_svg_element.h \
+src/lib/svg/egueb_svg_enum.h \
 src/lib/svg/egueb_svg_fill_rule.h \
 src/lib/svg/egueb_svg_gradient.h \
 src/lib/svg/egueb_svg_length.h \
