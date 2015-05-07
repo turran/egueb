@@ -336,6 +336,13 @@ static void _egueb_smil_animation_end_release(Egueb_Smil_Animation *thiz)
 	_egueb_smil_animation_event_release(thiz->end_events);
 }
 
+static void _egueb_smil_animation_end_process_cb(Egueb_Dom_Value *v, void *data)
+{
+	Egueb_Smil_Animation *thiz = data;
+	_egueb_smil_animation_end(thiz);
+}
+
+
 static Eina_Bool _egueb_dom_animation_setup(Egueb_Smil_Animation *thiz,
 		Egueb_Dom_Node *target)
 {
@@ -743,10 +750,20 @@ EAPI void egueb_smil_animation_element_end(Egueb_Dom_Node *n)
 EAPI void egueb_smil_animation_element_end_at(Egueb_Dom_Node *n,
 		double offset)
 {
-	/* add a new end condition at current time plus offset */
-	/* create a discrete signal */
-	/* set the new time */
-	/* add the signal to the timeline */
+	Egueb_Smil_Animation *thiz;
+	Egueb_Smil_Signal *s;
+	int64_t time;
+
+	thiz = EGUEB_SMIL_ANIMATION(n);
+	if (!thiz->timeline)
+		return;
+
+	time = egueb_smil_timeline_current_clock_get(thiz->timeline);
+	s = egueb_smil_signal_discrete_new(
+			_egueb_smil_animation_end_process_cb, NULL, NULL,
+			time + 1, NULL, thiz);
+	egueb_smil_signal_enable(s);
+	egueb_smil_timeline_signal_add(thiz->timeline, s);
 }
 
 #if 0
