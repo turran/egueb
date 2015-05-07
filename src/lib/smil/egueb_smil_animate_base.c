@@ -669,6 +669,11 @@ static void _egueb_smil_animate_base_cleanup(Egueb_Smil_Animation *a,
 	Egueb_Smil_Animate_Base *thiz;
 
 	thiz = EGUEB_SMIL_ANIMATE_BASE(a);
+	if (thiz->signal)
+	{
+		egueb_smil_timeline_signal_remove(a->timeline, thiz->signal);
+		thiz->signal = NULL;
+	}
 	_egueb_smil_animate_base_values_free(thiz);
 	_egueb_smil_animate_base_times_free(thiz);
 	_egueb_smil_animate_base_key_splines_free(thiz);
