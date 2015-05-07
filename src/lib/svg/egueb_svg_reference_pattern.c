@@ -321,6 +321,8 @@ static void _egueb_svg_reference_pattern_instance_deinit(void *o)
 	Egueb_Svg_Reference_Pattern *thiz;
 
 	thiz = EGUEB_SVG_REFERENCE_PATTERN(o);
+	egueb_dom_node_event_monitor_remove(thiz->g,
+			_egueb_svg_reference_pattern_event_monitor_cb, thiz);
 	egueb_dom_node_unref(thiz->g);
 	enesim_renderer_unref(thiz->r);
 	enesim_renderer_unref(thiz->tile);
