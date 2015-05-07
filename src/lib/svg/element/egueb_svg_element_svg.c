@@ -341,6 +341,15 @@ static Egueb_Dom_Node * _egueb_svg_element_svg_input_element_at_recursive(
 
 	if (!ret)
 	{
+		Egueb_Svg_Element *e;
+		Egueb_Svg_Pointer_Events pevents;
+
+		e = EGUEB_SVG_ELEMENT(n);
+		/* check the pointer events type */
+		egueb_dom_attr_final_get(e->overflow, &pevents);
+		if (pevents == EGUEB_SVG_POINTER_EVENTS_NONE)
+			goto done;
+
 		/* check the bounds */
 		egueb_svg_renderable_user_bounds_get(n, &bounds);
 		if (eina_rectangles_intersect(&bounds, ptr))
