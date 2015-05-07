@@ -1420,6 +1420,14 @@ EAPI void egueb_svg_element_pointer_events_set(Egueb_Dom_Node *n, Egueb_Svg_Poin
 	egueb_dom_attr_set(thiz->pointer_events, EGUEB_DOM_ATTR_TYPE_BASE, v);
 }
 
+EAPI void egueb_svg_element_pointer_events_get(Egueb_Dom_Node *n, Egueb_Svg_Enum_Animated *v)
+{
+	Egueb_Svg_Element *thiz;
+
+	thiz = EGUEB_SVG_ELEMENT(n);
+	EGUEB_SVG_ELEMENT_ATTR_ANIMATED_GET(thiz->pointer_events, v);
+}
+
 EAPI void egueb_svg_element_color_set(Egueb_Dom_Node *n, const Egueb_Svg_Color *v)
 {
 	Egueb_Svg_Element *thiz;

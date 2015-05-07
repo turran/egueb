@@ -25,6 +25,7 @@
  */
 
 #include "egueb_dom_node.h"
+#include "egueb_svg_enum.h"
 #include "egueb_svg_length.h"
 #include "egueb_svg_number.h"
 #include "egueb_svg_color.h"
@@ -56,6 +57,7 @@ EAPI void egueb_svg_element_opacity_get(Egueb_Dom_Node *n, Egueb_Svg_Number_Anim
 EAPI void egueb_svg_element_overflow_set(Egueb_Dom_Node *n, const Egueb_Svg_Overflow v);
 EAPI void egueb_svg_element_overflow_get(Egueb_Dom_Node *n, Egueb_Svg_Overflow_Animated *v);
 EAPI void egueb_svg_element_pointer_events_set(Egueb_Dom_Node *n, Egueb_Svg_Pointer_Events v);
+EAPI void egueb_svg_element_pointer_events_get(Egueb_Dom_Node *n, Egueb_Svg_Enum_Animated *v);
 EAPI void egueb_svg_element_color_set(Egueb_Dom_Node *n, const Egueb_Svg_Color *v);
 EAPI void egueb_svg_element_color_get(Egueb_Dom_Node *n, Egueb_Svg_Color_Animated *v);
 EAPI void egueb_svg_element_fill_set(Egueb_Dom_Node *n, const Egueb_Svg_Paint *v);
