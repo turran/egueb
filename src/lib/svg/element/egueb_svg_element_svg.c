@@ -346,7 +346,7 @@ static Egueb_Dom_Node * _egueb_svg_element_svg_input_element_at_recursive(
 
 		e = EGUEB_SVG_ELEMENT(n);
 		/* check the pointer events type */
-		egueb_dom_attr_final_get(e->overflow, &pevents);
+		egueb_dom_attr_final_get(e->pointer_events, &pevents);
 		if (pevents == EGUEB_SVG_POINTER_EVENTS_NONE)
 			goto done;
 
