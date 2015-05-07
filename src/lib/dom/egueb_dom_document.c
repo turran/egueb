@@ -205,11 +205,7 @@ static void _egueb_dom_document_node_insterted_into_document_cb(
 
 	/* add the element to the ids */
 	id = egueb_dom_element_attribute_get(target, &id_attr);
-	if (egueb_dom_string_is_valid(id))
-	{
-		_egueb_dom_document_insert_id(thiz, target, id);
-	}
-	egueb_dom_string_unref(id);
+	_egueb_dom_document_insert_id(thiz, target, id);
 	egueb_dom_node_unref(target);
 }
 
