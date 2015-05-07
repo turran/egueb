@@ -567,7 +567,6 @@ static Ender_Item * _egueb_svg_document_item_get(Egueb_Dom_Document *d)
 	return ender_lib_item_find(lib, "egueb.svg.document");
 }
 
-#if 0
 static void _egueb_svg_document_post_process(Egueb_Dom_Document *d)
 {
 	Egueb_Svg_Document *thiz;
@@ -592,7 +591,6 @@ static void _egueb_svg_document_post_process(Egueb_Dom_Document *d)
 	egueb_dom_input_feed_mouse_move(input, mx, my);
 	thiz->mouse_check = 0;
 }
-#endif
 /*----------------------------------------------------------------------------*
  *                              Object interface                              *
  *----------------------------------------------------------------------------*/
@@ -607,6 +605,7 @@ static void _egueb_svg_document_class_init(void *k)
 	klass->element_create = _egueb_svg_document_element_create;
 	klass->child_appendable = _egueb_svg_document_child_appendable;
 	klass->item_get = _egueb_svg_document_item_get;
+	klass->post_process = _egueb_svg_document_post_process;
 }
 
 static void _egueb_svg_document_instance_init(void *o)
