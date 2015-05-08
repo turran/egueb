@@ -38,10 +38,6 @@ EAPI void egueb_smil_animation_element_end_at(Egueb_Dom_Node *n,
 #if 0
 EAPI void egueb_smil_element_animation_attribute_type_set(Ender_Element *e, Egueb_Smil_Attribute_Type type);
 EAPI void egueb_smil_element_animation_attribute_type_get(Ender_Element *e, Egueb_Smil_Attribute_Type *type);
-EAPI void egueb_smil_element_animation_additive_set(Ender_Element *e, Egueb_Smil_Additive additive);
-EAPI void egueb_smil_element_animation_additive_get(Ender_Element *e, Egueb_Smil_Additive *additive);
-EAPI void egueb_smil_element_animation_accumulate_set(Ender_Element *e, Egueb_Smil_Accumulate accumulate);
-EAPI void egueb_smil_element_animation_accumulate_get(Ender_Element *e, Egueb_Smil_Accumulate *accumulate);
 EAPI void egueb_smil_element_animation_repeat_count_set(Ender_Element *e, int repeat_count);
 EAPI void egueb_smil_element_animation_repeat_count_get(Ender_Element *e, int *repeat_count);
 

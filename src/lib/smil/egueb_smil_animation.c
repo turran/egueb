@@ -792,69 +792,6 @@ EAPI void egueb_smil_animation_attribute_type_get(Ender_Element *e, Egueb_Smil_A
  * To be documented
  * FIXME: To be fixed
  */
-EAPI void egueb_smil_animation_dur_set(Ender_Element *e, Egueb_Smil_Duration *dur)
-{
-	ender_element_property_value_set(e, EGUEB_SMIL_ELEMENT_ANIMATION_DUR, dur, NULL);
-}
-
-/**
- * To be documented
- * FIXME: To be fixed
- */
-EAPI void egueb_smil_animation_dur_get(Ender_Element *e, Egueb_Smil_Duration *dur)
-{
-	Egueb_Dom_Tag *t;
-
-	t = ender_element_object_get(e);
-	_egueb_smil_animation_dur_get(t, dur);
-}
-
-/**
- * To be documented
- * FIXME: To be fixed
- */
-EAPI void egueb_smil_animation_additive_set(Ender_Element *e, Egueb_Smil_Additive additive)
-{
-	ender_element_property_value_set(e, EGUEB_SMIL_ELEMENT_ANIMATION_ADDITIVE, additive, NULL);
-}
-
-/**
- * To be documented
- * FIXME: To be fixed
- */
-EAPI void egueb_smil_animation_additive_get(Ender_Element *e, Egueb_Smil_Additive *additive)
-{
-	Egueb_Dom_Tag *t;
-
-	t = ender_element_object_get(e);
-	_egueb_smil_animation_additive_get(t, additive);
-}
-
-/**
- * To be documented
- * FIXME: To be fixed
- */
-EAPI void egueb_smil_animation_accumulate_set(Ender_Element *e, Egueb_Smil_Accumulate accumulate)
-{
-	ender_element_property_value_set(e, EGUEB_SMIL_ELEMENT_ANIMATION_ACCUMULATE, accumulate, NULL);
-}
-
-/**
- * To be documented
- * FIXME: To be fixed
- */
-EAPI void egueb_smil_animation_accumulate_get(Ender_Element *e, Egueb_Smil_Accumulate *accumulate)
-{
-	Egueb_Dom_Tag *t;
-
-	t = ender_element_object_get(e);
-	_egueb_smil_animation_accumulate_get(t, accumulate);
-}
-
-/**
- * To be documented
- * FIXME: To be fixed
- */
 EAPI void egueb_smil_animation_repeat_count_set(Ender_Element *e, int repeat_count)
 {
 	ender_element_property_value_set(e, EGUEB_SMIL_ELEMENT_ANIMATION_REPEAT_COUNT, repeat_count, NULL);
