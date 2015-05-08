@@ -246,22 +246,23 @@ static Eina_Bool _egueb_smil_animation_event_setup(Egueb_Smil_Animation *thiz,
 
 static void _egueb_smil_animation_begin(Egueb_Smil_Animation *thiz, int64_t offset)
 {
-	Egueb_Smil_Animation_Class *klass;
+	int64_t time;
 
 	if (thiz->started)
 		return;
+	if (!thiz->signal)
+		return;
+
 	thiz->started = EINA_TRUE;
-	klass = EGUEB_SMIL_ANIMATION_CLASS_GET(thiz);
 
-	INFO("Enabling animation with offset %" EGUEB_SMIL_CLOCK_FORMAT, EGUEB_SMIL_CLOCK_ARGS(offset));
-	if (klass->begin)
-	{
-		int64_t time;
-
-		time = egueb_smil_timeline_current_clock_get(thiz->timeline);
-		time += offset;
-		klass->begin(thiz, time);
-	}
+	time = egueb_smil_timeline_current_clock_get(thiz->timeline);
+	INFO("Enabling animation at %" EGUEB_SMIL_CLOCK_FORMAT
+			" with offset %" EGUEB_SMIL_CLOCK_FORMAT,
+			EGUEB_SMIL_CLOCK_ARGS(time),
+			EGUEB_SMIL_CLOCK_ARGS(offset));
+	time += offset;
+	egueb_smil_signal_offset_set(thiz->signal, time);
+	egueb_smil_signal_enable(thiz->signal);
 }
 
 static void _egueb_smil_animation_begin_cb(Egueb_Dom_Event *e,
@@ -296,16 +297,15 @@ static void _egueb_smil_animation_begin_release(Egueb_Smil_Animation *thiz)
 
 static void _egueb_smil_animation_end(Egueb_Smil_Animation *thiz)
 {
-	Egueb_Smil_Animation_Class *klass;
-
 	if (!thiz->started)
 		return;
+	if (!thiz->signal)
+		return;
+
 	thiz->started = EINA_FALSE;
-	klass = EGUEB_SMIL_ANIMATION_CLASS_GET(thiz);
 
 	INFO("Ending animation");
-	if (klass->end)
-		klass->end(thiz);
+	egueb_smil_signal_disable(thiz->signal);
 }
 
 static void _egueb_smil_animation_end_cb(Egueb_Dom_Event *e,
@@ -342,22 +342,13 @@ static void _egueb_smil_animation_end_process_cb(Egueb_Dom_Value *v, void *data)
 	_egueb_smil_animation_end(thiz);
 }
 
-
-static Eina_Bool _egueb_dom_animation_setup(Egueb_Smil_Animation *thiz,
-		Egueb_Dom_Node *target)
+static Egueb_Smil_Signal * _egueb_dom_animation_setup(Egueb_Smil_Animation *thiz,
+		Egueb_Dom_Node *target, int64_t *begin_offset)
 {
 	Egueb_Smil_Animation_Class *klass;
 	Egueb_Dom_String *attribute_name = NULL;
 	Egueb_Dom_Node *attr;
-	Eina_Bool ret = EINA_FALSE;
-	int64_t begin_offset = INT64_MAX;
-
-	/* check that we have a timeline */
-	if (!thiz->timeline)
-	{
-		ERR("No timeline set");
-		return EINA_FALSE;
-	}
+	Egueb_Smil_Signal *ret = NULL;
 
 	/* set our target */
 	thiz->target = target;
@@ -365,7 +356,7 @@ static Eina_Bool _egueb_dom_animation_setup(Egueb_Smil_Animation *thiz,
 	if (!attribute_name)
 	{
 		ERR("No 'attribute_name' set");
-		return EINA_FALSE;
+		return NULL;
 	}
 
 	/* get the attribute from the element */
@@ -400,25 +391,14 @@ static Eina_Bool _egueb_dom_animation_setup(Egueb_Smil_Animation *thiz,
 	}
 
 	/* do the begin and end conditions */
-	_egueb_smil_animation_begin_setup(thiz, &begin_offset);
+	_egueb_smil_animation_begin_setup(thiz, begin_offset);
 	_egueb_smil_animation_end_setup(thiz);
 
 	if (klass->setup)
 	{
-		if (!klass->setup(thiz, target))
-			goto done;
+		ret = klass->setup(thiz, target);
 	}
 
-	/* in case there is no event to trigger, just start based on the offset */
-	if (!thiz->begin_events)
-	{
-		DBG("No events found for 'begin', enabling at %"
-				EGUEB_SMIL_CLOCK_FORMAT,
-				EGUEB_SMIL_CLOCK_ARGS(begin_offset));
-		_egueb_smil_animation_begin(thiz, begin_offset);
-	}
-
-	ret = EINA_TRUE;
 done:
 	egueb_dom_string_unref(attribute_name);
 	return ret;
@@ -430,7 +410,6 @@ static void _egueb_dom_animation_cleanup(Egueb_Smil_Animation *thiz,
 	Egueb_Smil_Animation_Class *klass;
 	klass = EGUEB_SMIL_ANIMATION_CLASS_GET(thiz);
 
-	/* TODO destroy the animation */
 	_egueb_smil_animation_begin_release(thiz);
 	_egueb_smil_animation_end_release(thiz);
 
@@ -441,6 +420,13 @@ static void _egueb_dom_animation_cleanup(Egueb_Smil_Animation *thiz,
 		thiz->attr = NULL;
 	}
 	thiz->target = NULL;
+
+	/* If we have a signal fo sure we have a timeline */
+	if (thiz->signal)
+	{
+		egueb_smil_timeline_signal_remove(thiz->timeline, thiz->signal);
+		thiz->signal = NULL;
+	}
 }
 
 /*----------------------------------------------------------------------------*
@@ -477,7 +463,9 @@ static Eina_Bool _egueb_smil_animation_process(Egueb_Dom_Element *e)
 {
 	Egueb_Smil_Animation *thiz;
 	Egueb_Dom_Node *target = NULL;
-	Eina_Bool ret;
+	Egueb_Smil_Signal *signal;
+	Eina_Bool ret = EINA_FALSE;
+	int64_t begin_offset = INT64_MAX;
 
 	thiz = EGUEB_SMIL_ANIMATION(e);
 	target = _egueb_smil_animation_target_get(thiz);
@@ -497,6 +485,11 @@ static Eina_Bool _egueb_smil_animation_process(Egueb_Dom_Element *e)
 		egueb_dom_node_event_dispatch(n, egueb_dom_event_ref(request), NULL, NULL);
 
 		thiz->timeline = egueb_smil_event_timeline_get(request);
+		if (!thiz->timeline)
+		{
+			ERR("No timeline provided");
+			return EINA_FALSE;
+		}
 		thiz->document_changed = EINA_TRUE;
 		egueb_dom_event_unref(request);
 	}
@@ -510,12 +503,37 @@ static Eina_Bool _egueb_smil_animation_process(Egueb_Dom_Element *e)
 
 	/* now the setup */
 	_egueb_dom_animation_cleanup(thiz, target);
-	ret = _egueb_dom_animation_setup(thiz, target);
+	signal = _egueb_dom_animation_setup(thiz, target, &begin_offset);
+	/* TODO the repeat count */
+	/* TODO the repeat dur */
+	if (signal)
+	{
+		Egueb_Smil_Clock duration;
+
+		thiz->signal = egueb_smil_signal_ref(signal);
+		egueb_smil_timeline_signal_add(thiz->timeline, signal);
+		ret = EINA_TRUE;
+
+		if (!egueb_smil_animation_active_duration_get(EGUEB_DOM_NODE(e), &duration))
+		{
+			egueb_smil_signal_continuous_repeat_set(signal, -1);
+		}
+	}
 	/* dont keep a reference to its target, in case the target
 	 * is destroyed this will be destroyed first
 	 */
 	thiz->document_changed = EINA_FALSE;
 	egueb_dom_node_unref(target);
+
+	/* in case there is no event to trigger, just start based on the offset */
+	if (!thiz->begin_events)
+	{
+		DBG("No events found for 'begin', enabling at %"
+				EGUEB_SMIL_CLOCK_FORMAT,
+				EGUEB_SMIL_CLOCK_ARGS(begin_offset));
+		_egueb_smil_animation_begin(thiz, begin_offset);
+	}
+
 	return ret;
 }
 /*----------------------------------------------------------------------------*

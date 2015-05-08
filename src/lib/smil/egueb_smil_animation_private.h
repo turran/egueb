@@ -55,6 +55,7 @@ typedef struct _Egueb_Smil_Animation
 	Egueb_Dom_Node *target;
 	/* the timeline system */
 	Egueb_Smil_Timeline *timeline;
+	Egueb_Smil_Signal *signal;
 
 	/* in case we have changed of document */
 	Eina_Bool document_changed;
@@ -66,11 +67,9 @@ typedef struct _Egueb_Smil_Animation
 	Eina_Bool started;
 } Egueb_Smil_Animation;
 
-typedef Eina_Bool (*Egueb_Smil_Animation_Class_Setup)(Egueb_Smil_Animation *thiz, Egueb_Dom_Node *parent);
+typedef Egueb_Smil_Signal * (*Egueb_Smil_Animation_Class_Setup)(Egueb_Smil_Animation *thiz, Egueb_Dom_Node *parent);
 typedef const Egueb_Dom_Value_Descriptor * (*Egueb_Smil_Animation_Class_Value_Descriptor_Get)(Egueb_Smil_Animation *thiz);
 typedef void (*Egueb_Smil_Animation_Class_Cleanup)(Egueb_Smil_Animation *thiz, Egueb_Dom_Node *parent);
-typedef void (*Egueb_Smil_Animation_Class_Begin)(Egueb_Smil_Animation *thiz, int64_t offset);
-typedef void (*Egueb_Smil_Animation_Class_End)(Egueb_Smil_Animation *thiz);
 
 typedef struct _Egueb_Smil_Animation_Class
 {
@@ -78,8 +77,6 @@ typedef struct _Egueb_Smil_Animation_Class
 	Egueb_Smil_Animation_Class_Value_Descriptor_Get value_descriptor_get;
 	Egueb_Smil_Animation_Class_Setup setup;
 	Egueb_Smil_Animation_Class_Cleanup cleanup;
-	Egueb_Smil_Animation_Class_Begin begin;
-	Egueb_Smil_Animation_Class_End end;
 } Egueb_Smil_Animation_Class;
 
 Enesim_Object_Descriptor * egueb_smil_animation_descriptor_get();

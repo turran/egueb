@@ -39,7 +39,6 @@ typedef struct _Egueb_Smil_Animate_Base
 	Egueb_Dom_Node *key_splines;
 
 	/* timeline related data */
-	Egueb_Smil_Signal *signal;
 	Egueb_Smil_Keyframe_Interpolator_Type itype;
 
 	/* private */
@@ -48,7 +47,9 @@ typedef struct _Egueb_Smil_Animate_Base
 	/* In case the animation is 'from by' we need
 	 * an addition value
 	 */
+	Egueb_Smil_Additive gadditive;
 	Egueb_Dom_Value *add_value;
+
 	Eina_List *generated_values;
 	Eina_List *generated_times;
 	Eina_List *generated_keysplines;

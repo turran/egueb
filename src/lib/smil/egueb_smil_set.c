@@ -48,8 +48,6 @@ typedef struct _Egueb_Smil_Set
 	Egueb_Dom_Value to_value;
 	Egueb_Dom_Value dst_value;
 	Egueb_Dom_Value prv_value;
-	/* timeline related data */
-	Egueb_Smil_Signal *signal;
 } Egueb_Smil_Set;
 
 typedef struct _Egueb_Smil_Set_Class
@@ -120,11 +118,12 @@ static void _egueb_smil_set_signal_stop_cb(Egueb_Smil_Signal *s, void *data)
 /*----------------------------------------------------------------------------*
  *                             Animation interface                            *
  *----------------------------------------------------------------------------*/
-static Eina_Bool _egueb_smil_set_setup(Egueb_Smil_Animation *a,
+static Egueb_Smil_Signal * _egueb_smil_set_setup(Egueb_Smil_Animation *a,
 		Egueb_Dom_Node *target)
 {
 	Egueb_Smil_Set *thiz;
 	Egueb_Smil_Duration dur;
+	Egueb_Smil_Signal *signal;
 	Egueb_Dom_String *to = NULL;
 	int64_t final_dur;
 
@@ -133,7 +132,7 @@ static Eina_Bool _egueb_smil_set_setup(Egueb_Smil_Animation *a,
 	if (!to)
 	{
 		ERR("No 'set' attribute set");
-		return EINA_FALSE;
+		return NULL;
 	}
 
 	egueb_dom_value_init(&thiz->to_value, a->d);
@@ -141,26 +140,23 @@ static Eina_Bool _egueb_smil_set_setup(Egueb_Smil_Animation *a,
 	{
 		ERR("No valid 'set' value '%s'", egueb_dom_string_string_get(to));
 		egueb_dom_string_unref(to);
-		return EINA_FALSE;
+		return NULL;
 	}
 	egueb_dom_string_unref(to);
 	/* make a copy to put it on the end keyframe */
 	egueb_dom_value_init(&thiz->dst_value, egueb_dom_attr_value_descriptor_get(a->attr));
 	egueb_dom_value_copy(&thiz->to_value, &thiz->dst_value, EINA_TRUE);
 
-	thiz->signal = egueb_smil_signal_continuous_new(
+	signal = egueb_smil_signal_continuous_new(
 			_egueb_smil_set_signal_interpolator_cb,
 			_egueb_smil_set_signal_start_cb,
 			_egueb_smil_set_signal_stop_cb,
 			NULL, thiz);
-	egueb_smil_timeline_signal_add(a->timeline, egueb_smil_signal_ref(thiz->signal));
-	/* TODO the repeat count */
-	/* TODO the repeat dur */
 
 	/* Add two keyframes, one for the start (0, later we will add the offset)
 	 * and one for the end. The end depends if we do repeat or not
 	 */
-	egueb_smil_signal_continuous_keyframe_simple_add(thiz->signal,
+	egueb_smil_signal_continuous_keyframe_simple_add(signal,
 			EGUEB_SMIL_KEYFRAME_INTERPOLATOR_DISCRETE, 0,
 			&thiz->dst_value);
 	egueb_dom_attr_final_get(a->dur, &dur);
@@ -169,13 +165,13 @@ static Eina_Bool _egueb_smil_set_setup(Egueb_Smil_Animation *a,
 	else
 	{
 		final_dur = 1;
-		egueb_smil_signal_continuous_repeat_set(thiz->signal, -1);
+		egueb_smil_signal_continuous_repeat_set(signal, -1);
 	}
-	egueb_smil_signal_continuous_keyframe_simple_add(thiz->signal,
+	egueb_smil_signal_continuous_keyframe_simple_add(signal,
 			EGUEB_SMIL_KEYFRAME_INTERPOLATOR_DISCRETE,
 			final_dur, &thiz->to_value);
 
-	return EINA_TRUE;
+	return signal;
 }
 
 static void _egueb_smil_set_cleanup(Egueb_Smil_Animation *a,
@@ -186,27 +182,6 @@ static void _egueb_smil_set_cleanup(Egueb_Smil_Animation *a,
 	thiz = EGUEB_SMIL_SET(a);
 	egueb_dom_value_reset(&thiz->to_value);
 	egueb_dom_value_reset(&thiz->dst_value);
-}
-
-static void _egueb_smil_set_begin(Egueb_Smil_Animation *a, int64_t offset)
-{
-	Egueb_Smil_Set *thiz;
-
-	thiz = EGUEB_SMIL_SET(a);
-	if (!thiz->signal) return;
-	DBG("Beginning set at %" EGUEB_SMIL_CLOCK_FORMAT, EGUEB_SMIL_CLOCK_ARGS (offset));
-	egueb_smil_signal_offset_set(thiz->signal, offset);
-	egueb_smil_signal_enable(thiz->signal);
-}
-
-static void _egueb_smil_set_end(Egueb_Smil_Animation *a)
-{
-	Egueb_Smil_Set *thiz;
-
-	thiz = EGUEB_SMIL_SET(a);
-	if (!thiz->signal) return;
-	DBG("Ending");
-	egueb_smil_signal_disable(thiz->signal);
 }
 /*----------------------------------------------------------------------------*
  *                              Element interface                             *
@@ -230,8 +205,6 @@ static void _egueb_smil_set_class_init(void *k)
 	klass = EGUEB_SMIL_ANIMATION_CLASS(k);
 	klass->cleanup = _egueb_smil_set_cleanup;
 	klass->setup = _egueb_smil_set_setup;
-	klass->begin = _egueb_smil_set_begin;
-	klass->end = _egueb_smil_set_end;
 
 	e_klass= EGUEB_DOM_ELEMENT_CLASS(k);
 	e_klass->tag_name_get = _egueb_smil_set_tag_name_get;

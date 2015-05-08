@@ -23,6 +23,15 @@ EAPI Egueb_Dom_String * egueb_smil_animate_base_to_get(Egueb_Dom_Node *n);
 EAPI void egueb_smil_animate_base_from_set(Egueb_Dom_Node *n, Egueb_Dom_String *v);
 EAPI Egueb_Dom_String * egueb_smil_animate_base_from_get(Egueb_Dom_Node *n);
 
+EAPI void egueb_smil_element_animate_base_additive_set(Egueb_Dom_Node *n,
+		Egueb_Smil_Additive v);
+EAPI Egueb_Smil_Additive egueb_smil_element_animate_base_additive_get(
+		Egueb_Dom_Node *n);
+EAPI void egueb_smil_element_animate_base_accumulate_set(Egueb_Dom_Node *n,
+		Egueb_Smil_Accumulate v);
+EAPI Egueb_Smil_Accumulate egueb_smil_element_animate_base_accumulate_get(
+		Egueb_Dom_Node *n);
+
 #if 0
 EAPI Eina_Bool egueb_smil_is_animate_base(Ender_Element *e);
 EAPI void egueb_smil_animate_base_values_set(Ender_Element *e, const char *v);
