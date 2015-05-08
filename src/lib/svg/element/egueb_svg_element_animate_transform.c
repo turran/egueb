@@ -302,6 +302,9 @@ static Egueb_Svg_Attribute_Animated_Descriptor _skewy_descriptor = {
 /*----------------------------------------------------------------------------*
  *                            Animate base interface                          *
  *----------------------------------------------------------------------------*/
+/* The additive value is a matrix, the multiplied value is in the transformation
+ * type value
+ */
 static Eina_Bool
 _egueb_svg_element_animate_transform_interpolate(Egueb_Smil_Animate_Base *ab,
 		Egueb_Dom_Value *va, Egueb_Dom_Value *vb, double m,
@@ -353,6 +356,11 @@ _egueb_svg_element_animate_transform_interpolate(Egueb_Smil_Animate_Base *ab,
 		case EGUEB_SVG_ANIMATE_TRANSFORM_TYPE_SKEW_Y:
 		enesim_matrix_values_set(&matrix, 1, 0, 0, tan(tmp_value->values[0] * M_PI / 180.0), 1, 0, 0, 0, 1);
 		break;
+	}
+	if (add)
+	{
+		Enesim_Matrix *add_matrix = add->data.ptr;
+		enesim_matrix_compose(&matrix, add_matrix, &matrix);
 	}
 	/* finally set the real value */
 	dst_matrix = ab->dst_value.data.ptr;
