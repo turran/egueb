@@ -123,13 +123,22 @@ static Egueb_Dom_Node * _egueb_smil_animation_target_get(Egueb_Smil_Animation *t
 		target = egueb_dom_document_element_get_by_id(doc, xlink_href, NULL);
 		if (!target)
 		{
-			ERR("Target '%s' not found", egueb_dom_string_string_get(
+			WARN("Target '%s' not found", egueb_dom_string_string_get(
 					xlink_href));
+			/* register an event handler whenever an element is inserted
+			 * into the document
+			 */
 			egueb_dom_node_unref(doc);
 			goto done;
 		}
+		else
+		{
+			/* ok we do have a target, in case it changes of id or it is
+			 * destroyed or removed from the document, make sure to cleanup
+			 * the animation system too
+			 */
+		}
 		egueb_dom_node_unref(doc);
-		ERR("we have an xlink!");
 	}
 	else
 	{
@@ -432,6 +441,33 @@ static void _egueb_dom_animation_cleanup(Egueb_Smil_Animation *thiz,
 /*----------------------------------------------------------------------------*
  *                               Event handlers                               *
  *----------------------------------------------------------------------------*/
+/* In case an element is added with the id of the xlink:href attribute, we need
+ * to setup our animation with that target
+ */
+static void _egueb_smil_animation_target_inserted_into_document_cb(Egueb_Dom_Event *e,
+		void *data)
+{
+
+}
+
+/* In case the target is removed from the document make sure to cleanup the
+ * animation
+ */
+static void _egueb_smil_animation_target_removed_from_document_cb(Egueb_Dom_Event *e,
+		void *data)
+{
+
+}
+
+/* For target based on the xlink:href attribute, we need to know if the target
+ * has been destroyed in order to cleanup ourselves
+ */
+static void _egueb_smil_animation_target_destroyed_cb(Egueb_Dom_Event *e,
+		void *data)
+{
+	/* Cleanup */
+}
+
 /* Whenever a node has been removed from its parent, remove the timeline,
  * and the animation
  */

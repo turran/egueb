@@ -228,3 +228,23 @@ EAPI void egueb_xlink_attr_href_node_get(Egueb_Dom_Node *attr, Egueb_Dom_Node **
 		*n = NULL;
 }
 
+EAPI Eina_Bool egueb_xlink_attr_href_process(Egueb_Dom_Node *attr,
+		Egueb_Dom_Node **node)
+{
+	/* 1. The attribute is not set -> return FALSE with no node */
+	/* 2. The attribute is set but no element is found -> return TRUE with no node */
+	/* We need to know whenever an element is inserted into the document with a specific
+	 * id, register an event handler on the document itself. If it is found enqueue
+	 * again the parent object and remove the callback
+	 */ 
+	/* 3. The attribute is set and the element is found -> return TRUE with node, add
+	 * a weak ref so in case the node is destroyed cleanup the parent's setup process
+	 * (the animiation case)
+	 * egueb_xlink_attr_href_on_target_removed_set(n, cb);
+	 * also add a mutation handler in case the attribute changed is the id, if so, remove
+	 * the weak ref and call the cleanup for parent's setup process
+	 * in case we also want to listen any change to enqueue the parent too, check the passed
+	 * in flag: egueb_xlink_attr_href_automatic_enqueue_set(n, bool); (the pattern, gradient case,
+	 * any change on the target must recalc ourselves)
+	 */
+}
