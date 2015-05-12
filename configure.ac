@@ -217,6 +217,7 @@ fi
 
 # Unit tests, coverage and benchmarking
 ENS_CHECK_COVERAGE(yes, [enable_coverage="yes"], [enable_coverage="no"])
+ENS_CHECK_TESTS([enable_tests="yes"], [enable_tests="no"])
 
 ## Make the debug preprocessor configurable
 

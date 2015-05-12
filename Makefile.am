@@ -27,6 +27,7 @@ noinst_LTLIBRARIES =
 lib_LTLIBRARIES =
 bin_PROGRAMS =
 check_PROGRAMS =
+TESTS =
 CLEANFILES =
 EXTRA_DIST =
 CLEAN_LOCAL =
@@ -82,9 +83,7 @@ include data/Makefile.mk
 
 ### Tests
 
-if BUILD_EGUEB_CSS
 include src/tests/Makefile.mk
-endif
 
 sed_process = \
 $(SED) \
