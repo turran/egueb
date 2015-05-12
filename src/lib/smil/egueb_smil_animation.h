@@ -21,6 +21,11 @@
 
 EAPI Eina_Bool egueb_smil_is_animation(Egueb_Dom_Node *n);
 
+EAPI void egueb_smil_animation_href_set(Egueb_Dom_Node *n,
+		Egueb_Dom_String *v);
+EAPI Egueb_Dom_String * egueb_smil_animation_href_get(
+		Egueb_Dom_Node *n);
+
 EAPI void egueb_smil_animation_attribute_name_set(Egueb_Dom_Node *n,
 		Egueb_Dom_String *v);
 EAPI Egueb_Dom_String * egueb_smil_animation_attribute_name_get(
