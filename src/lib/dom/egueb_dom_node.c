@@ -901,22 +901,25 @@ EAPI Eina_Bool egueb_dom_node_insert_before(Egueb_Dom_Node *thiz,
 	}
 
 	/* check if the parent has a doc and the child doesnt, if that's
-	 * the case, the child needs must have a document too
+	 * the case, the child must have a document too
 	 */
-	if (!child->owner_document && thiz->owner_document)
+	if (!child->owner_document)
 	{
-		Egueb_Dom_Node_Type type;
-
-		type = egueb_dom_node_type_get(thiz);
-		if (type == EGUEB_DOM_NODE_TYPE_DOCUMENT)
-		{
-			egueb_dom_node_document_set_recursive(child, thiz,
-					EINA_FALSE);
-		}
-		else if (thiz->owner_document)
+ 		if (thiz->owner_document)
 		{
 			egueb_dom_node_document_set_recursive(child,
 					thiz->owner_document, EINA_FALSE);
+		}
+		else
+		{
+			Egueb_Dom_Node_Type type;
+
+			type = egueb_dom_node_type_get(thiz);
+			if (type == EGUEB_DOM_NODE_TYPE_DOCUMENT)
+			{
+				egueb_dom_node_document_set_recursive(child, thiz,
+						EINA_FALSE);
+			}
 		}
 	}
 
