@@ -85,6 +85,27 @@ START_TEST(egueb_test_svg_animation01_change_id)
 }
 END_TEST
 
+START_TEST(egueb_test_svg_animation01_change_target_id)
+{
+	Egueb_Svg_Length_Animated ax;
+	Egueb_Dom_Feature *afeature;
+
+	/* change the href */
+	egueb_svg_element_id_set(rect, egueb_dom_string_new_with_string("rect02"));
+
+	/* tick */
+	afeature = egueb_dom_node_feature_get(svg,
+			EGUEB_SMIL_FEATURE_ANIMATION_NAME, NULL);
+	egueb_smil_feature_animation_tick(afeature);
+	egueb_dom_feature_unref(afeature);
+	/* process */
+	egueb_dom_document_process(doc);
+	/* make sure the x is still zero */
+	egueb_svg_element_rect_x_get(rect, &ax);
+	ck_assert_int_eq(ax.anim.value, 10);
+}
+END_TEST
+
 Suite * egueb_test_svg_animation01_suite(void)
 {
 	Suite *s;
@@ -99,6 +120,11 @@ Suite * egueb_test_svg_animation01_suite(void)
 	tcase = tcase_create("Change the id to a valid id");
 	tcase_add_checked_fixture(tcase, setup, cleanup);
 	tcase_add_test(tcase, egueb_test_svg_animation01_change_id);
+	suite_add_tcase(s, tcase);
+
+	tcase = tcase_create("Change the id of the target to match");
+	tcase_add_checked_fixture(tcase, setup, cleanup);
+	tcase_add_test(tcase, egueb_test_svg_animation01_change_target_id);
 	suite_add_tcase(s, tcase);
 
 	return s;
