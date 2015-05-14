@@ -35,16 +35,34 @@ typedef enum _Egueb_Dom_Event_Mutation_Attr_Type
 	EGUEB_DOM_EVENT_MUTATION_ATTR_TYPE_REMOVAL = 3,
 } Egueb_Dom_Event_Mutation_Attr_Type;
 
+/** The node is destroyed, the last reference of the node is unreffed */
 EAPI extern Egueb_Dom_String * EGUEB_DOM_EVENT_MUTATION_NODE_DESTROYED;
+/** This is a general event for notification of all changes to the document */
 EAPI extern Egueb_Dom_String * EGUEB_DOM_EVENT_MUTATION_SUBTREE_MODIFIED;
+/** A node has been inserted as part of a children of another node */
 EAPI extern Egueb_Dom_String * EGUEB_DOM_EVENT_MUTATION_NODE_INSERTED;
+/** A node has been removed from the children of another node */
 EAPI extern Egueb_Dom_String * EGUEB_DOM_EVENT_MUTATION_NODE_REMOVED;
+/** A node has been removed from the document tree */
 EAPI extern Egueb_Dom_String * EGUEB_DOM_EVENT_MUTATION_NODE_REMOVED_FROM_DOCUMENT;
+/** A node has been added to the document tree */
 EAPI extern Egueb_Dom_String * EGUEB_DOM_EVENT_MUTATION_NODE_INSERTED_INTO_DOCUMENT;
+/** An attribute has been modified */
 EAPI extern Egueb_Dom_String * EGUEB_DOM_EVENT_MUTATION_ATTR_MODIFIED;
+/** The character data has been modified */
 EAPI extern Egueb_Dom_String * EGUEB_DOM_EVENT_MUTATION_CHARACTER_DATA_MODIFIED;
-/* Egueb events */
+/* Egueb events, FIXME fix the name/prefix */
 EAPI extern Egueb_Dom_String * EGUEB_DOM_EVENT_PROCESS;
+/** A node has its owner document set, in case the node is in the tree
+ * this event will not be triggered, only the
+ * EGUEB_DOM_EVENT_MUTATION_NODE_INSERTED_INTO_DOCUMENT event
+ */
+EAPI extern Egueb_Dom_String * EGUEB_DOM_EVENT_MUTATION_NODE_DOCUMENT_SET;
+/** A node has its owner document unset, in case the node is in the tree
+ * this event will not be triggered, only the
+ * EGUEB_DOM_EVENT_MUTATION_NODE_REMOVED_FROM_DOCUMENT event
+ */
+EAPI extern Egueb_Dom_String * EGUEB_DOM_EVENT_MUTATION_NODE_DOCUMENT_UNSET;
 
 EAPI Eina_Bool egueb_dom_event_is_mutation(Egueb_Dom_Event *e);
 EAPI Egueb_Dom_Node * egueb_dom_event_mutation_related_get(Egueb_Dom_Event *e);

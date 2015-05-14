@@ -355,12 +355,12 @@ static void _egueb_dom_node_insert_into_document(Egueb_Dom_Node *thiz,
 	if (egueb_dom_node_type_get(parent) == EGUEB_DOM_NODE_TYPE_DOCUMENT)
 	{
 		/* in case the parent is a document, set it */
-		egueb_dom_node_document_set(thiz, parent);
+		egueb_dom_node_document_set(thiz, parent, EINA_FALSE);
 	}
 	else if ((parent->owner_document != thiz->owner_document) && (parent->owner_document))
 	{
 		/* in case the parent has a document and we dont, set the owner document */
-		egueb_dom_node_document_set(thiz, parent->owner_document);
+		egueb_dom_node_document_set(thiz, parent->owner_document, EINA_FALSE);
 	}
 
 	thiz->in_tree = EINA_TRUE;
@@ -380,7 +380,7 @@ static void _egueb_dom_node_remove_from_document(Egueb_Dom_Node *thiz,
 	Egueb_Dom_Node *child;
 
 	/* remove the weak reference in case we have one */
-	egueb_dom_node_document_set(thiz, NULL);
+	egueb_dom_node_document_set(thiz, NULL, EINA_FALSE);
 
 	thiz->in_tree = EINA_FALSE;
 	/* dispatch on the node first */
@@ -446,18 +446,25 @@ static void _egueb_dom_node_free(Egueb_Dom_Node *thiz)
  *                                 Global                                     *
  *============================================================================*/
 void egueb_dom_node_document_set(Egueb_Dom_Node *thiz,
-		Egueb_Dom_Node *document)
+		Egueb_Dom_Node *document, Eina_Bool send_event)
 {
 	if (document)
 	{
 		Egueb_Dom_Node_Type type;
 		type = egueb_dom_node_type_get(document);
-		if (type != EGUEB_DOM_NODE_TYPE_DOCUMENT) return;
+		if (type != EGUEB_DOM_NODE_TYPE_DOCUMENT)
+			return;
 	}
 
 	/* remove previous weak ref */
 	if (thiz->owner_document)
 	{
+		if (send_event)
+		{
+			Egueb_Dom_Event *ev;
+			ev = egueb_dom_event_mutation_node_document_unset_new();
+			egueb_dom_node_event_dispatch(thiz, ev, NULL, NULL);
+		}
 		egueb_dom_node_weak_unref(thiz->owner_document,
 			_egueb_dom_node_document_destroyed_cb, thiz);
 		thiz->owner_document = NULL;
@@ -468,18 +475,25 @@ void egueb_dom_node_document_set(Egueb_Dom_Node *thiz,
 		egueb_dom_node_weak_ref(document,
 			_egueb_dom_node_document_destroyed_cb, thiz);
 		thiz->owner_document = document;
+		if (send_event)
+		{
+			Egueb_Dom_Event *ev;
+			ev = egueb_dom_event_mutation_node_document_set_new();
+			egueb_dom_node_event_dispatch(thiz, ev, NULL, NULL);
+		}
 	}
 }
 
 void egueb_dom_node_document_set_recursive(Egueb_Dom_Node *thiz,
-		Egueb_Dom_Node *document)
+		Egueb_Dom_Node *document, Eina_Bool send_event)
 {
 	Egueb_Dom_Node *child;
 
-	egueb_dom_node_document_set(thiz, document);
+	egueb_dom_node_document_set(thiz, document, send_event);
 	EINA_INLIST_FOREACH(thiz->children, child)
 	{
-		egueb_dom_node_document_set_recursive(child, document);
+		egueb_dom_node_document_set_recursive(child, document,
+				send_event);
 	}
 }
 
@@ -887,7 +901,7 @@ EAPI Eina_Bool egueb_dom_node_insert_before(Egueb_Dom_Node *thiz,
 	}
 
 	/* check if the parent has a doc and the child doesnt, if that's
-	 * the case, the child needs to have a document too
+	 * the case, the child needs must have a document too
 	 */
 	if (!child->owner_document && thiz->owner_document)
 	{
@@ -896,11 +910,13 @@ EAPI Eina_Bool egueb_dom_node_insert_before(Egueb_Dom_Node *thiz,
 		type = egueb_dom_node_type_get(thiz);
 		if (type == EGUEB_DOM_NODE_TYPE_DOCUMENT)
 		{
-			egueb_dom_node_document_set_recursive(child, thiz);
+			egueb_dom_node_document_set_recursive(child, thiz,
+					EINA_FALSE);
 		}
 		else if (thiz->owner_document)
 		{
-			egueb_dom_node_document_set_recursive(child, thiz->owner_document);
+			egueb_dom_node_document_set_recursive(child,
+					thiz->owner_document, EINA_FALSE);
 		}
 	}
 

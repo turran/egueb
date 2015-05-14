@@ -505,7 +505,7 @@ EAPI Egueb_Dom_Node * egueb_dom_document_element_ns_create(Egueb_Dom_Node *n,
 				egueb_dom_string_string_get(local_name));
 	if (new_element)
 	{
-		egueb_dom_node_document_set(new_element, n);
+		egueb_dom_node_document_set(new_element, n, EINA_FALSE);
 	}
 	else
 	{
@@ -534,7 +534,7 @@ EAPI Egueb_Dom_Node * egueb_dom_document_document_fragment_create(
 	Egueb_Dom_Node *ret;
 
 	ret = egueb_dom_document_fragment_new();
-	egueb_dom_node_document_set(ret, n);
+	egueb_dom_node_document_set(ret, n, EINA_FALSE);
 	return ret;
 }
 
@@ -664,7 +664,7 @@ EAPI Egueb_Dom_Node * egueb_dom_document_node_adopt(Egueb_Dom_Node *n, Egueb_Dom
 			egueb_dom_node_child_remove(other, adopted, NULL);
 			egueb_dom_node_unref(other);
 		}
-		egueb_dom_node_document_set_recursive(adopted, n);
+		egueb_dom_node_document_set_recursive(adopted, n, EINA_TRUE);
 		return adopted;
 		break;
 

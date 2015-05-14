@@ -41,6 +41,9 @@ static Egueb_Dom_String _EGUEB_DOM_EVENT_MUTATION_NODE_REMOVED_FROM_DOCUMENT = E
 static Egueb_Dom_String _EGUEB_DOM_EVENT_MUTATION_ATTR_MODIFIED = EGUEB_DOM_STRING_STATIC("DOMAtttrModified");
 static Egueb_Dom_String _EGUEB_DOM_EVENT_MUTATION_CHARACTER_DATA_MODIFIED = EGUEB_DOM_STRING_STATIC("DOMCharacterDataModified");
 
+static Egueb_Dom_String _EGUEB_DOM_EVENT_MUTATION_NODE_DOCUMENT_SET = EGUEB_DOM_STRING_STATIC("DOMNodeDocumentSet");
+static Egueb_Dom_String _EGUEB_DOM_EVENT_MUTATION_NODE_DOCUMENT_UNSET = EGUEB_DOM_STRING_STATIC("DOMNodeDocumentUnset");
+
 /*----------------------------------------------------------------------------*
  *                              Object interface                              *
  *----------------------------------------------------------------------------*/
@@ -196,6 +199,30 @@ Egueb_Dom_Event * egueb_dom_event_mutation_character_data_modified_new(void)
 			NULL, 0, 0);
 	return e;
 }
+
+Egueb_Dom_Event * egueb_dom_event_mutation_node_document_set_new(void)
+{
+	Egueb_Dom_Event *e;
+
+	e = _egueb_dom_event_mutation_new();
+	_egueb_dom_event_mutation_init_internal(e,
+			egueb_dom_string_ref(EGUEB_DOM_EVENT_MUTATION_NODE_DOCUMENT_SET),
+			EINA_FALSE, EINA_FALSE, NULL, NULL, NULL,
+			NULL, 0, 0);
+	return e;
+}
+
+Egueb_Dom_Event * egueb_dom_event_mutation_node_document_unset_new(void)
+{
+	Egueb_Dom_Event *e;
+
+	e = _egueb_dom_event_mutation_new();
+	_egueb_dom_event_mutation_init_internal(e,
+			egueb_dom_string_ref(EGUEB_DOM_EVENT_MUTATION_NODE_DOCUMENT_UNSET),
+			EINA_FALSE, EINA_FALSE, NULL, NULL, NULL,
+			NULL, 0, 0);
+	return e;
+}
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/
@@ -207,6 +234,9 @@ Egueb_Dom_String *EGUEB_DOM_EVENT_MUTATION_NODE_INSERTED_INTO_DOCUMENT = &_EGUEB
 Egueb_Dom_String *EGUEB_DOM_EVENT_MUTATION_NODE_REMOVED_FROM_DOCUMENT = &_EGUEB_DOM_EVENT_MUTATION_NODE_REMOVED_FROM_DOCUMENT;
 Egueb_Dom_String *EGUEB_DOM_EVENT_MUTATION_ATTR_MODIFIED = &_EGUEB_DOM_EVENT_MUTATION_ATTR_MODIFIED;
 Egueb_Dom_String *EGUEB_DOM_EVENT_MUTATION_CHARACTER_DATA_MODIFIED = &_EGUEB_DOM_EVENT_MUTATION_CHARACTER_DATA_MODIFIED;
+
+Egueb_Dom_String *EGUEB_DOM_EVENT_MUTATION_NODE_DOCUMENT_SET = &_EGUEB_DOM_EVENT_MUTATION_NODE_DOCUMENT_SET;
+Egueb_Dom_String *EGUEB_DOM_EVENT_MUTATION_NODE_DOCUMENT_UNSET = &_EGUEB_DOM_EVENT_MUTATION_NODE_DOCUMENT_UNSET;
 
 EAPI Eina_Bool egueb_dom_event_is_mutation(Egueb_Dom_Event *e)
 {

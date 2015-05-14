@@ -91,9 +91,9 @@ Enesim_Object_Descriptor * egueb_dom_node_descriptor_get(void);
 		Egueb_Dom_Node, EGUEB_DOM_NODE_DESCRIPTOR)
 
 void egueb_dom_node_document_set(Egueb_Dom_Node *thiz,
-		Egueb_Dom_Node *document);
+		Egueb_Dom_Node *document, Eina_Bool send_event);
 void egueb_dom_node_document_set_recursive(Egueb_Dom_Node *thiz,
-		Egueb_Dom_Node *document);
+		Egueb_Dom_Node *document, Eina_Bool send_event);
 Egueb_Dom_Node * egueb_dom_node_get_ancestor_element(Egueb_Dom_Node *thiz);
 
 #endif

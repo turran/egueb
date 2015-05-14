@@ -73,4 +73,7 @@ Egueb_Dom_Event * egueb_dom_event_mutation_attr_modified_new(
 		Egueb_Dom_Event_Mutation_Attr_Type attr_type,
 		Egueb_Dom_Attr_Type attr_modification_type);
 
+Egueb_Dom_Event * egueb_dom_event_mutation_node_document_set_new(void);
+Egueb_Dom_Event * egueb_dom_event_mutation_node_document_unset_new(void);
+
 #endif
