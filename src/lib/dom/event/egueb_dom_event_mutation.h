@@ -51,8 +51,6 @@ EAPI extern Egueb_Dom_String * EGUEB_DOM_EVENT_MUTATION_NODE_INSERTED_INTO_DOCUM
 EAPI extern Egueb_Dom_String * EGUEB_DOM_EVENT_MUTATION_ATTR_MODIFIED;
 /** The character data has been modified */
 EAPI extern Egueb_Dom_String * EGUEB_DOM_EVENT_MUTATION_CHARACTER_DATA_MODIFIED;
-/* Egueb events, FIXME fix the name/prefix */
-EAPI extern Egueb_Dom_String * EGUEB_DOM_EVENT_PROCESS;
 /** A node has its owner document set, in case the node is in the tree
  * this event will not be triggered, only the
  * EGUEB_DOM_EVENT_MUTATION_NODE_INSERTED_INTO_DOCUMENT event
