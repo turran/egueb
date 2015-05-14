@@ -71,11 +71,13 @@ src_lib_smil_libegueb_smil_la_IFLAGS = \
 src_lib_smil_libegueb_smil_la_CPPFLAGS = \
 $(src_lib_smil_libegueb_smil_la_IFLAGS) \
 $(src_lib_dom_libegueb_dom_la_IFLAGS) \
+$(src_lib_xlink_libegueb_xlink_la_IFLAGS) \
 -DEGUEB_SMIL_BUILD \
 @EGUEB_SMIL_CFLAGS@
 
 src_lib_smil_libegueb_smil_la_LIBADD = \
 $(top_builddir)/src/lib/dom/libegueb_dom.la \
+$(top_builddir)/src/lib/xlink/libegueb_xlink.la \
 @EGUEB_SMIL_LIBS@
 
 src_lib_smil_libegueb_smil_la_LDFLAGS = -no-undefined -version-info @version_info@
