@@ -24,7 +24,9 @@
 #include "egueb_dom_document_fragment.h"
 #include "egueb_dom_element.h"
 #include "egueb_dom_event.h"
+#include "egueb_dom_event_document.h"
 #include "egueb_dom_event_mutation.h"
+#include "egueb_dom_event_process.h"
 #include "egueb_dom_implementation.h"
 #include "egueb_dom_uri.h"
 #include "egueb_dom_utils.h"
@@ -33,6 +35,7 @@
 #include "egueb_dom_string_private.h"
 #include "egueb_dom_element_private.h"
 #include "egueb_dom_document_private.h"
+#include "egueb_dom_event_document_private.h"
 
 #include "egueb_dom_event_process_private.h"
 /*============================================================================*
@@ -47,13 +50,17 @@ static void _egueb_dom_document_insert_id(Egueb_Dom_Document *thiz, Egueb_Dom_No
 	 */
 	if (eina_hash_del_by_data(thiz->ids, n))
 	{
+		Egueb_Dom_Event *ev;
+
 		DBG("Previous id found, removing the node");
-		egueb_dom_node_unref(n);
+		ev = egueb_dom_event_document_id_removed_new(n);
+		egueb_dom_node_event_dispatch(EGUEB_DOM_NODE(thiz), ev, NULL, NULL);
 	}
 
 	if (egueb_dom_string_is_valid(id) && thiz->ids)
 	{
 		Egueb_Dom_Node *old;
+		Egueb_Dom_Event *ev;
 		const char *str;
 
 		str = egueb_dom_string_string_get(id);
@@ -66,6 +73,8 @@ static void _egueb_dom_document_insert_id(Egueb_Dom_Document *thiz, Egueb_Dom_No
 		}
 		INFO("Adding id '%s' to the list of ids", str);
 		eina_hash_add(thiz->ids, str, egueb_dom_node_ref(n));
+		ev = egueb_dom_event_document_id_removed_new(egueb_dom_node_ref(n));
+		egueb_dom_node_event_dispatch(EGUEB_DOM_NODE(thiz), ev, NULL, NULL);
 	}
 	egueb_dom_string_unref(id);
 }
