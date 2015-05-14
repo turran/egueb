@@ -764,7 +764,7 @@ EAPI void egueb_smil_animation_href_set(Egueb_Dom_Node *n,
 	Egueb_Smil_Animation *thiz;
 
 	thiz = EGUEB_SMIL_ANIMATION(n);
-	egueb_dom_attr_set(thiz->attribute_name, EGUEB_DOM_ATTR_TYPE_BASE, v);
+	egueb_dom_attr_set(thiz->xlink_href, EGUEB_DOM_ATTR_TYPE_BASE, v);
 }
 
 
@@ -775,7 +775,7 @@ EAPI Egueb_Dom_String * egueb_smil_animation_href_get(
 	Egueb_Dom_String *v = NULL;
 
 	thiz = EGUEB_SMIL_ANIMATION(n);
-	egueb_dom_attr_get(thiz->attribute_name, EGUEB_DOM_ATTR_TYPE_BASE, &v);
+	egueb_dom_attr_get(thiz->xlink_href, EGUEB_DOM_ATTR_TYPE_BASE, &v);
 	return v;
 }
 
