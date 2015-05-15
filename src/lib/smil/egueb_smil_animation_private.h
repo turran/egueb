@@ -19,6 +19,8 @@
 #ifndef _EGUEB_SMIL_ANIMATION_PRIVATE_H_
 #define _EGUEB_SMIL_ANIMATION_PRIVATE_H_
 
+#include "Egueb_Xlink.h"
+
 #include "egueb_dom_element_private.h"
 #include "egueb_dom_attr_private.h"
 #include "egueb_smil_clock.h"
