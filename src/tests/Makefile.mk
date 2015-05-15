@@ -13,6 +13,7 @@ src/tests/egueb_dom_mylib.h
 src_tests_libmydom_la_CPPFLAGS = \
 $(src_lib_dom_libegueb_dom_la_IFLAGS) \
 $(src_lib_smil_libegueb_smil_la_IFLAGS) \
+$(src_lib_xlink_libegueb_xlink_la_IFLAGS) \
 -I. \
 @EGUEB_DOM_CFLAGS@
 
@@ -32,6 +33,19 @@ $(top_builddir)/src/tests/libmydom.la \
 @CHECK_LIBS@ \
 @EGUEB_DOM_LIBS@
 
+tests_xlink_CPPFLAGS = \
+$(src_lib_xlink_libegueb_xlink_la_IFLAGS) \
+$(tests_dom_CPPFLAGS) \
+@CHECK_CFLAGS@ \
+@EGUEB_XLINK_CFLAGS@
+
+tests_xlink_LDADD = \
+$(top_builddir)/src/lib/xlink/libegueb_xlink.la \
+$(tests_dom_LDADD) \
+@CHECK_LIBS@ \
+@EGUEB_XLINK_LIBS@
+
+
 tests_css_CPPFLAGS = \
 $(src_lib_css_libegueb_css_la_IFLAGS) \
 $(tests_dom_CPPFLAGS) \
@@ -47,6 +61,7 @@ $(tests_dom_LDADD) \
 tests_smil_CPPFLAGS = \
 $(src_lib_smil_libegueb_smil_la_IFLAGS) \
 $(tests_dom_CPPFLAGS) \
+$(tests_xlink_CPPFLAGS) \
 @CHECK_CFLAGS@ \
 @EGUEB_SMIL_CFLAGS@
 
@@ -60,6 +75,7 @@ tests_svg_CPPFLAGS = \
 $(src_lib_svg_libegueb_svg_la_IFLAGS) \
 $(tests_dom_CPPFLAGS) \
 $(tests_css_CPPFLAGS) \
+$(tests_xlink_CPPFLAGS) \
 $(tests_smil_CPPFLAGS) \
 @CHECK_CFLAGS@ \
 @EGUEB_SVG_CFLAGS@
