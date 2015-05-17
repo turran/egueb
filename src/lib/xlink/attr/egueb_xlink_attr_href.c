@@ -37,8 +37,15 @@ typedef struct _Egueb_Xlink_Attr_Href
 
 	Egueb_Dom_String *last;
 	Egueb_Dom_Node *node;
-	Eina_Bool automatic_enqueue;
 	Egueb_Xlink_Attr_Href_Cb on_target_removed;
+	Eina_Bool automatic_enqueue;
+	/* TODO in the future we might decide to create
+	 * events for attributes, so the attribute can now
+	 * when it has been added/removed from a node. The mutation
+	 * event for attributes is triggered on the element, never
+	 * on the attribute
+	 */
+	Eina_Bool initialized;
 } Egueb_Xlink_Attr_Href;
 
 typedef struct _Egueb_Xlink_Attr_Href_Class
@@ -47,17 +54,25 @@ typedef struct _Egueb_Xlink_Attr_Href_Class
 } Egueb_Xlink_Attr_Href_Class;
 
 /*----------------------------------------------------------------------------*
- *                               Event handlers                               *
+ *                           Target related functions                         *
  *----------------------------------------------------------------------------*/
-/* any change on the xlink href element also trigger a process here */
-static void _egueb_xlink_attr_href_node_request_cb(Egueb_Dom_Event *e,
+/* whenever the target has changed and we do automatic enqueue make sure
+ * to enqueue the parent node
+ */
+
+static void _egueb_xlink_attr_href_target_request_cb(Egueb_Dom_Event *e,
 		void *user_data)
 {
-	Egueb_Dom_Attr *attr = user_data;
+	Egueb_Xlink_Attr_Href *thiz = user_data;
+	Egueb_Dom_Attr *attr;
 
-	ERR("The xlink:href requested a process, let's request ourselves too");
+	attr = EGUEB_DOM_ATTR(thiz);
 	/* request a process on the owner of the attribute */
-	egueb_dom_element_request_process(attr->owner);
+	if (thiz->automatic_enqueue)
+	{
+		ERR("The xlink:href requested a process, let's request ourselves too");
+		egueb_dom_element_request_process(attr->owner);
+	}
 }
 
 static void _egueb_xlink_attr_href_target_destroyed_cb(Egueb_Dom_Event *e,
@@ -70,17 +85,103 @@ static void _egueb_xlink_attr_href_target_destroyed_cb(Egueb_Dom_Event *e,
 	}
 }
 
-static void _egueb_xlink_attr_href_cleanup(Egueb_Xlink_Attr_Href *thiz)
+static void _egueb_xlink_attr_href_target_cleanup(Egueb_Xlink_Attr_Href *thiz)
 {
 	if (thiz->node)
 	{
+		/* remove the weak ref */
+		egueb_dom_node_weak_unref(thiz->node,
+				_egueb_xlink_attr_href_target_destroyed_cb,
+					thiz);
+		/* remove the events associated with the target */
 		egueb_dom_node_event_listener_remove(thiz->node,
 				EGUEB_DOM_EVENT_PROCESS,
-				_egueb_xlink_attr_href_node_request_cb,
+				_egueb_xlink_attr_href_target_request_cb,
 				EINA_FALSE, thiz);
-		egueb_dom_node_unref(thiz->node);
 		thiz->node = NULL;
 	}
+}
+
+static void _egueb_xlink_attr_href_target_setup(Egueb_Xlink_Attr_Href *thiz,
+		Egueb_Dom_Node *target)
+{
+	/* Add a weak ref so in case the node is destroyed
+	 * cleanup the parent's setup process (the animiation
+	 * case)
+	 */
+	egueb_dom_node_weak_ref(target,
+			_egueb_xlink_attr_href_target_destroyed_cb,
+			thiz);
+	/* in case we also want to listen any change to enqueue
+	 * the parent too, check the passed in flag
+	 * (the pattern, gradient case, any change on the
+	 * target must recalc ourselves)
+	 */
+	if (thiz->automatic_enqueue)
+	{
+		egueb_dom_node_event_listener_add(target,
+				EGUEB_DOM_EVENT_PROCESS,
+				_egueb_xlink_attr_href_target_request_cb,
+				EINA_FALSE, thiz);
+	}
+}
+/*----------------------------------------------------------------------------*
+ *                               Event handlers                               *
+ *----------------------------------------------------------------------------*/
+/* whenever the owner document of the parent emits the id added/removed
+ * check that the id is the target. If the target's id is removed from
+ * the document, call the target_removed callback as the target is not longer
+ * a valid target. If the target's id is added make sure to request a process
+ * of the parent
+ */ 
+static void _egueb_xlink_attr_href_document_id_inserted_cb(Egueb_Dom_Event *e,
+		void *user_data)
+{
+	ERR("Id inserted");
+}
+
+static void _egueb_xlink_attr_href_document_id_removed_cb(Egueb_Dom_Event *e,
+		void *user_data)
+{
+	ERR("Id removed");
+}
+
+/* Whenever a document is unset on the owner of the attribute, its target
+ * is no longer valid, so we need to call the target_removed callback
+ */
+static void _egueb_xlink_attr_href_parent_document_unset_cb(Egueb_Dom_Event *e,
+		void *user_data)
+{
+	Egueb_Xlink_Attr_Href *thiz = user_data;
+	Egueb_Dom_Attr *attr;
+	Egueb_Dom_Node *document;
+
+	attr = EGUEB_DOM_ATTR(thiz);
+	/* remove the events associated with the parent */
+	egueb_dom_node_event_listener_remove(attr->owner,
+			EGUEB_DOM_EVENT_MUTATION_NODE_DOCUMENT_UNSET,
+			_egueb_xlink_attr_href_parent_document_unset_cb,
+			EINA_FALSE, thiz);
+	egueb_dom_node_event_listener_remove(attr->owner,
+			EGUEB_DOM_EVENT_MUTATION_NODE_REMOVED_FROM_DOCUMENT,
+			_egueb_xlink_attr_href_parent_document_unset_cb,
+			EINA_FALSE, thiz);
+	/* remove the events associated with the document in case they are set */
+	document = egueb_dom_node_owner_document_get(attr->owner);
+	egueb_dom_node_event_listener_remove(document,
+			EGUEB_DOM_EVENT_DOCUMENT_ID_REMOVED,
+			_egueb_xlink_attr_href_document_id_removed_cb,
+			EINA_FALSE, thiz);
+	egueb_dom_node_event_listener_remove(document,
+			EGUEB_DOM_EVENT_DOCUMENT_ID_INSERTED,
+			_egueb_xlink_attr_href_document_id_inserted_cb,
+			EINA_FALSE, thiz);
+	egueb_dom_node_unref(document);
+	/* call the target removed callback if set */
+	if (thiz->on_target_removed)
+		thiz->on_target_removed(EGUEB_DOM_NODE(thiz));
+	/* make sure to intialize again */
+	thiz->initialized = EINA_FALSE;
 }
 /*----------------------------------------------------------------------------*
  *                            Attr object interface                           *
@@ -164,7 +265,7 @@ static void _egueb_xlink_attr_href_instance_deinit(void *o)
 
 	if (thiz->last)
 		egueb_dom_string_unref(thiz->last);
-	_egueb_xlink_attr_href_cleanup(thiz);
+	_egueb_xlink_attr_href_target_cleanup(thiz);
 }
 /*============================================================================*
  *                                 Global                                     *
@@ -184,14 +285,32 @@ EAPI Egueb_Dom_Node * egueb_xlink_attr_href_new(Egueb_Dom_String *name,
 	return n;
 }
 
-EAPI Eina_Bool egueb_xlink_attr_href_process(Egueb_Dom_Node *attr)
+EAPI Eina_Bool egueb_xlink_attr_href_process(Egueb_Dom_Node *n)
 {
 	Egueb_Xlink_Attr_Href *thiz;
 	Egueb_Dom_String *str = NULL;
 	Eina_Bool ret = EINA_TRUE;
 
-	thiz = EGUEB_XLINK_ATTR_HREF(attr);
-	egueb_dom_attr_final_get(attr, &str);
+	thiz = EGUEB_XLINK_ATTR_HREF(n);
+	/* register the needed events */
+	if (!thiz->initialized)
+	{
+		Egueb_Dom_Attr *a;
+
+		a = EGUEB_DOM_ATTR(n);
+		/* Check that we are still part of a document */
+		egueb_dom_node_event_listener_add(a->owner,
+				EGUEB_DOM_EVENT_MUTATION_NODE_DOCUMENT_UNSET,
+				_egueb_xlink_attr_href_parent_document_unset_cb,
+				EINA_FALSE, thiz);
+		egueb_dom_node_event_listener_add(a->owner,
+				EGUEB_DOM_EVENT_MUTATION_NODE_REMOVED_FROM_DOCUMENT,
+				_egueb_xlink_attr_href_parent_document_unset_cb,
+				EINA_FALSE, thiz);
+		thiz->initialized = EINA_TRUE;
+	}
+
+	egueb_dom_attr_final_get(n, &str);
 	/* early exit, nothing to do */
 	if (egueb_dom_string_is_equal(str, thiz->last))
 	{
@@ -213,7 +332,7 @@ EAPI Eina_Bool egueb_xlink_attr_href_process(Egueb_Dom_Node *attr)
 		Egueb_Dom_Node *doc = NULL;
 		Egueb_Dom_Node *target;
 
-		a = EGUEB_DOM_ATTR(attr);
+		a = EGUEB_DOM_ATTR(n);
 		/* TODO is the document also set on the attr? */
 		doc = egueb_dom_node_owner_document_get(a->owner);
 		if (!doc)
@@ -224,44 +343,30 @@ EAPI Eina_Bool egueb_xlink_attr_href_process(Egueb_Dom_Node *attr)
 		}
 
 		/* release any reference */
-		_egueb_xlink_attr_href_cleanup(thiz);
+		_egueb_xlink_attr_href_target_cleanup(thiz);
 		target = egueb_dom_document_element_get_by_iri(doc, str, NULL);
 
 		/* 2. The attribute is set but no element is found -> return TRUE with no node */
 		if (!target)
 		{
-			/* TODO We need to know whenever an element is inserted into
+			/* We need to know whenever an element is inserted into
 			 * the document with a specific id, register an event
 			 * handler on the document itself. If it is found enqueue
 			 * again the parent object and remove the callback
 			 */
+			egueb_dom_node_event_listener_add(doc,
+				EGUEB_DOM_EVENT_DOCUMENT_ID_INSERTED,
+				_egueb_xlink_attr_href_document_id_inserted_cb,
+				EINA_FALSE, thiz);
 		}
 		/* 3. The attribute is set and the element is found -> return TRUE with node */
 		else
 		{
-			/* Add a weak ref so in case the node is destroyed
-			 * cleanup the parent's setup process (the animiation
-			 * case)
-			 */
-			egueb_dom_node_weak_ref(target,
-					_egueb_xlink_attr_href_target_destroyed_cb,
-					thiz);
-			/* TODO Add a mutation handler in case the
-			 * attribute changed is the id, if so, remove the weak
-			 * ref and call the cleanup for parent's setup process
-			 */
-			/* in case we also want to listen any change to enqueue
-			 * the parent too, check the passed in flag
-			 * (the pattern, gradient case, any change on the
-			 * target must recalc ourselves)
-			 */
-			if (thiz->automatic_enqueue)
-			{
-				egueb_dom_node_event_listener_add(target,
-						EGUEB_DOM_EVENT_PROCESS,
-						_egueb_xlink_attr_href_node_request_cb,
-						EINA_FALSE, thiz);
-			}
+			_egueb_xlink_attr_href_target_setup(thiz, target);
+			egueb_dom_node_event_listener_add(doc,
+					EGUEB_DOM_EVENT_DOCUMENT_ID_REMOVED,
+					_egueb_xlink_attr_href_document_id_removed_cb,
+					EINA_FALSE, thiz);
 			egueb_dom_node_unref(target);
 		}
 		egueb_dom_node_unref(doc);
