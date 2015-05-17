@@ -441,33 +441,6 @@ static void _egueb_dom_animation_cleanup(Egueb_Smil_Animation *thiz,
 /*----------------------------------------------------------------------------*
  *                               Event handlers                               *
  *----------------------------------------------------------------------------*/
-/* In case an element is added with the id of the xlink:href attribute, we need
- * to setup our animation with that target
- */
-static void _egueb_smil_animation_target_inserted_into_document_cb(Egueb_Dom_Event *e,
-		void *data)
-{
-
-}
-
-/* In case the target is removed from the document make sure to cleanup the
- * animation
- */
-static void _egueb_smil_animation_target_removed_from_document_cb(Egueb_Dom_Event *e,
-		void *data)
-{
-
-}
-
-/* For target based on the xlink:href attribute, we need to know if the target
- * has been destroyed in order to cleanup ourselves
- */
-static void _egueb_smil_animation_target_destroyed_cb(Egueb_Dom_Event *e,
-		void *data)
-{
-	/* Cleanup */
-}
-
 /* Whenever a node has been removed from its parent, remove the timeline,
  * and the animation
  */
