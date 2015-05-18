@@ -64,6 +64,9 @@ typedef struct _Egueb_Smil_Animation
 	/* the descriptor used for parsing the values */
 	const Egueb_Dom_Value_Descriptor *d;
 	Eina_Bool started;
+
+	/* the animation siblings related to the target */
+	EINA_INLIST;
 } Egueb_Smil_Animation;
 
 typedef Egueb_Smil_Signal * (*Egueb_Smil_Animation_Class_Setup)(Egueb_Smil_Animation *thiz, Egueb_Dom_Node *parent);

@@ -24,6 +24,7 @@
 #include "egueb_smil_animation.h"
 #include "egueb_smil_animation_private.h"
 
+#include "egueb_dom_string_private.h"
 #include "egueb_smil_keyframe_private.h"
 #include "egueb_smil_timeline_private.h"
 #include "egueb_smil_event_timeline_private.h"
@@ -31,10 +32,6 @@
  * This file handles the common attribute handling of every
  * element on the animation system. That is:
  * 'set', 'animate', 'animateTransform'
- * TODO:
- * 1. For every animation added into an element define a list of animation
- * element that any node can have. This way we can know the order for later
- * usage of the sandwich model
  */
 /*============================================================================*
  *                                  Local                                     *
@@ -54,6 +51,9 @@ typedef struct _Egueb_Smil_Animation_Event_Foreach_Data
 	Eina_List *events;
 	int64_t offset;
 } Egueb_Smil_Animation_Event_Foreach_Data;
+
+/* The key used for the animation private data */
+static Egueb_Dom_String EGUEB_SMIL_ANIMATION_KEY = EGUEB_DOM_STRING_STATIC("EguebSmilAnimationKey");
 
 /* Forward declarations */
 static void _egueb_smil_animation_target_destroyed_cb(Egueb_Dom_Event *e,
@@ -341,7 +341,14 @@ static void _egueb_smil_animation_cleanup(Egueb_Smil_Animation *thiz)
 
 	if (thiz->target)
 	{
-		/* TODO Remove the context from the target */
+		Eina_Inlist *animations;
+
+		/* Remove the animation to the list of animations on the target */
+		animations = egueb_dom_node_user_data_get(thiz->target, &EGUEB_SMIL_ANIMATION_KEY);
+		animations = eina_inlist_remove(animations, EINA_INLIST_GET(thiz));
+		egueb_dom_node_user_data_set(thiz->target, &EGUEB_SMIL_ANIMATION_KEY, NULL);
+		egueb_dom_node_user_data_set(thiz->target, &EGUEB_SMIL_ANIMATION_KEY, animations);
+
 		egueb_dom_node_weak_unref(thiz->target,
 				_egueb_smil_animation_target_destroyed_cb,
 				thiz);
@@ -369,8 +376,6 @@ static Egueb_Smil_Signal * _egueb_smil_animation_setup(Egueb_Smil_Animation *thi
 			_egueb_smil_animation_target_destroyed_cb,
 			thiz);
 	thiz->target = target;
-
-	/* TODO Add the context to the target */
 
 	egueb_dom_attr_final_get(thiz->attribute_name, &attribute_name);
 	if (!attribute_name)
@@ -419,6 +424,16 @@ static Egueb_Smil_Signal * _egueb_smil_animation_setup(Egueb_Smil_Animation *thi
 		ret = klass->setup(thiz, target);
 	}
 
+	if (ret)
+	{
+		Eina_Inlist *animations;
+
+		/* Add the animation to the list of animations on the target */
+		animations = egueb_dom_node_user_data_get(target, &EGUEB_SMIL_ANIMATION_KEY);
+		animations = eina_inlist_append(animations, EINA_INLIST_GET(thiz));
+		egueb_dom_node_user_data_set(target, &EGUEB_SMIL_ANIMATION_KEY, NULL);
+		egueb_dom_node_user_data_set(target, &EGUEB_SMIL_ANIMATION_KEY, animations);
+	}
 done:
 	egueb_dom_string_unref(attribute_name);
 	return ret;
