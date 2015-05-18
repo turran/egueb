@@ -58,6 +58,10 @@ typedef struct _Egueb_Smil_Animation_Event_Foreach_Data
 	int64_t offset;
 } Egueb_Smil_Animation_Event_Foreach_Data;
 
+/* Forward declarations */
+static void _egueb_smil_animation_target_destroyed_cb(Egueb_Dom_Event *e,
+		void *user_data);
+
 /* convert a timing into a duration */
 static Eina_Bool _egueb_smil_animation_timing_duration(
 		Egueb_Smil_Timing *t, Egueb_Smil_Duration *d)
@@ -321,7 +325,40 @@ static void _egueb_smil_animation_end_process_cb(Egueb_Dom_Value *v, void *data)
 	_egueb_smil_animation_end(thiz);
 }
 
-static Egueb_Smil_Signal * _egueb_dom_animation_setup(Egueb_Smil_Animation *thiz,
+static void _egueb_smil_animation_cleanup(Egueb_Smil_Animation *thiz)
+{
+	Egueb_Smil_Animation_Class *klass;
+
+	_egueb_smil_animation_begin_release(thiz);
+	_egueb_smil_animation_end_release(thiz);
+
+	klass = EGUEB_SMIL_ANIMATION_CLASS_GET(thiz);
+	if (klass->cleanup)
+		klass->cleanup(thiz, thiz->target);
+
+	if (thiz->attr)
+	{
+		egueb_dom_node_unref(thiz->attr);
+		thiz->attr = NULL;
+	}
+
+	if (thiz->target)
+	{
+		egueb_dom_node_weak_unref(thiz->target,
+				_egueb_smil_animation_target_destroyed_cb,
+				thiz);
+		thiz->target = NULL;
+	}
+
+	/* If we have a signal for sure we have a timeline */
+	if (thiz->signal)
+	{
+		egueb_smil_timeline_signal_remove(thiz->timeline, thiz->signal);
+		thiz->signal = NULL;
+	}
+}
+
+static Egueb_Smil_Signal * _egueb_smil_animation_setup(Egueb_Smil_Animation *thiz,
 		Egueb_Dom_Node *target, int64_t *begin_offset)
 {
 	Egueb_Smil_Animation_Class *klass;
@@ -330,7 +367,11 @@ static Egueb_Smil_Signal * _egueb_dom_animation_setup(Egueb_Smil_Animation *thiz
 	Egueb_Smil_Signal *ret = NULL;
 
 	/* set our target */
+	egueb_dom_node_weak_ref(target,
+			_egueb_smil_animation_target_destroyed_cb,
+			thiz);
 	thiz->target = target;
+
 	egueb_dom_attr_final_get(thiz->attribute_name, &attribute_name);
 	if (!attribute_name)
 	{
@@ -383,31 +424,21 @@ done:
 	return ret;
 }
 
-static void _egueb_dom_animation_cleanup(Egueb_Smil_Animation *thiz,
-		Egueb_Dom_Node *target)
+/* Called whenever the xlink:href's target has changed (because it was
+ * removed from the document, the node changed id, etc). We need to cleanup
+ * given that the target is no longer valid
+ */
+static void _egueb_smil_animation_xlink_href_target_removed_cb(Egueb_Dom_Node *n)
 {
-	Egueb_Smil_Animation_Class *klass;
-	klass = EGUEB_SMIL_ANIMATION_CLASS_GET(thiz);
+	Egueb_Smil_Animation *thiz;
+	Egueb_Dom_Node *parent;
 
-	_egueb_smil_animation_begin_release(thiz);
-	_egueb_smil_animation_end_release(thiz);
-
-	if (klass->cleanup) klass->cleanup(thiz, target);
-	if (thiz->attr)
-	{
-		egueb_dom_node_unref(thiz->attr);
-		thiz->attr = NULL;
-	}
-	thiz->target = NULL;
-
-	/* If we have a signal fo sure we have a timeline */
-	if (thiz->signal)
-	{
-		egueb_smil_timeline_signal_remove(thiz->timeline, thiz->signal);
-		thiz->signal = NULL;
-	}
+	parent = egueb_dom_attr_owner_get(n);
+	thiz = EGUEB_SMIL_ANIMATION(parent);
+	DBG("xlink target removed, cleaning up");
+	_egueb_smil_animation_cleanup(thiz);
+	egueb_dom_node_unref(parent);
 }
-
 /*----------------------------------------------------------------------------*
  *                               Event handlers                               *
  *----------------------------------------------------------------------------*/
@@ -420,13 +451,22 @@ static void _egueb_smil_animation_removed_cb(Egueb_Dom_Event *e,
 	Egueb_Smil_Animation *thiz = data;
 
 	INFO("Smil animation removed from document");
-	_egueb_dom_animation_cleanup(thiz, thiz->target);
+	_egueb_smil_animation_cleanup(thiz);
 	if (thiz->timeline)
 	{
 		egueb_smil_timeline_unref(thiz->timeline);
 		thiz->timeline = NULL;
 	}
 }
+
+static void _egueb_smil_animation_target_destroyed_cb(Egueb_Dom_Event *e,
+		void *user_data)
+{
+	Egueb_Smil_Animation *thiz = user_data;
+	ERR("Destroying target");
+	_egueb_smil_animation_cleanup(thiz);
+}
+
 /*----------------------------------------------------------------------------*
  *                            Animation interface                             *
  *----------------------------------------------------------------------------*/
@@ -450,6 +490,7 @@ static Eina_Bool _egueb_smil_animation_process(Egueb_Dom_Element *e)
 	target = _egueb_smil_animation_target_get(thiz);
 	if (!target)
 	{
+		WARN("No target found");
 		return EINA_FALSE;
 	}
 
@@ -477,12 +518,13 @@ static Eina_Bool _egueb_smil_animation_process(Egueb_Dom_Element *e)
 			thiz->target == target && !thiz->document_changed)
 	{
 		egueb_dom_node_unref(target);
+		INFO("Nothing to do");
 		return EINA_TRUE;
 	}
 
 	/* now the setup */
-	_egueb_dom_animation_cleanup(thiz, target);
-	signal = _egueb_dom_animation_setup(thiz, target, &begin_offset);
+	_egueb_smil_animation_cleanup(thiz);
+	signal = _egueb_smil_animation_setup(thiz, target, &begin_offset);
 	/* TODO the repeat count */
 	/* TODO the repeat dur */
 	if (signal)
@@ -561,6 +603,9 @@ static void _egueb_smil_animation_instance_init(void *o)
 			egueb_dom_string_ref(EGUEB_SMIL_END), NULL);
 	thiz->xlink_href = egueb_xlink_attr_href_new(
 			egueb_dom_string_ref(EGUEB_DOM_NAME_XLINK_HREF), NULL);
+	egueb_xlink_attr_href_on_target_removed_set(thiz->xlink_href,
+			_egueb_smil_animation_xlink_href_target_removed_cb);
+
 	thiz->repeat_count = egueb_smil_attr_repeat_count_new();
 	thiz->repeat_dur = egueb_smil_attr_duration_new(
 			egueb_dom_string_ref(EGUEB_SMIL_NAME_REPEAT_DUR), NULL);
