@@ -23,6 +23,7 @@ typedef void (*Egueb_Xlink_Attr_Href_Cb)(Egueb_Dom_Node *n);
 
 EAPI Egueb_Dom_Node * egueb_xlink_attr_href_new(Egueb_Dom_String *name,
 		Egueb_Dom_String *def);
+EAPI Eina_Bool egueb_xlink_attr_href_process(Egueb_Dom_Node *n);
 EAPI void egueb_xlink_attr_href_automatic_enqueue_set(Egueb_Dom_Node *n,
 		Eina_Bool enable);
 EAPI void egueb_xlink_attr_href_on_target_removed_set(Egueb_Dom_Node *n,

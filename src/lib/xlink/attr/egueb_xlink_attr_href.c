@@ -344,7 +344,7 @@ EAPI Eina_Bool egueb_xlink_attr_href_process(Egueb_Dom_Node *n)
 
 		/* release any reference */
 		_egueb_xlink_attr_href_target_cleanup(thiz);
-		target = egueb_dom_document_element_get_by_iri(doc, str, NULL);
+		target = egueb_dom_document_element_get_by_id(doc, str, NULL);
 
 		/* 2. The attribute is set but no element is found -> return TRUE with no node */
 		if (!target)
