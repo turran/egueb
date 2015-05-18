@@ -107,45 +107,15 @@ static Eina_Bool _egueb_smil_animation_timing_list_duration(Egueb_Smil_Animation
 static Egueb_Dom_Node * _egueb_smil_animation_target_get(Egueb_Smil_Animation *thiz)
 {
 	Egueb_Dom_Node *target = NULL;
-	Egueb_Dom_String *xlink_href = NULL;
 
-	egueb_dom_attr_final_get(thiz->xlink_href, &xlink_href);
-	if (egueb_dom_string_is_valid(xlink_href))
+	if (egueb_xlink_attr_href_process(thiz->xlink_href))
 	{
-		Egueb_Dom_Node *doc;
-
-		doc = egueb_dom_node_owner_document_get(EGUEB_DOM_NODE(thiz));
-		if (!doc)
-		{
-			ERR("No document associated with the node");
-			return NULL;
-		}
-		target = egueb_dom_document_element_get_by_id(doc, xlink_href, NULL);
-		if (!target)
-		{
-			WARN("Target '%s' not found", egueb_dom_string_string_get(
-					xlink_href));
-			/* register an event handler whenever an element is inserted
-			 * into the document
-			 */
-			egueb_dom_node_unref(doc);
-			goto done;
-		}
-		else
-		{
-			/* ok we do have a target, in case it changes of id or it is
-			 * destroyed or removed from the document, make sure to cleanup
-			 * the animation system too
-			 */
-		}
-		egueb_dom_node_unref(doc);
+		target = egueb_xlink_attr_href_node_get(thiz->xlink_href);
 	}
 	else
 	{
 		target = egueb_dom_node_parent_get(EGUEB_DOM_NODE(thiz));
 	}
-done:
-	egueb_dom_string_unref(xlink_href);
 	return target;
 }
 
