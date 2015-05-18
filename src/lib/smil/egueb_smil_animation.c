@@ -484,6 +484,7 @@ static Eina_Bool _egueb_smil_animation_process(Egueb_Dom_Element *e)
 	Egueb_Dom_Node *target = NULL;
 	Egueb_Smil_Signal *signal;
 	Eina_Bool ret = EINA_FALSE;
+	Eina_Bool force_setup = EINA_FALSE;
 	int64_t begin_offset = INT64_MAX;
 
 	thiz = EGUEB_SMIL_ANIMATION(e);
@@ -510,12 +511,12 @@ static Eina_Bool _egueb_smil_animation_process(Egueb_Dom_Element *e)
 			ERR("No timeline provided");
 			return EINA_FALSE;
 		}
-		thiz->document_changed = EINA_TRUE;
+		force_setup = EINA_TRUE;
 		egueb_dom_event_unref(request);
 	}
 
 	if (!egueb_dom_element_is_enqueued(EGUEB_DOM_NODE(e)) &&
-			thiz->target == target && !thiz->document_changed)
+			thiz->target == target && !force_setup)
 	{
 		egueb_dom_node_unref(target);
 		INFO("Nothing to do");
@@ -543,7 +544,6 @@ static Eina_Bool _egueb_smil_animation_process(Egueb_Dom_Element *e)
 	/* dont keep a reference to its target, in case the target
 	 * is destroyed this will be destroyed first
 	 */
-	thiz->document_changed = EINA_FALSE;
 	egueb_dom_node_unref(target);
 
 	/* in case there is no event to trigger, just start based on the offset */

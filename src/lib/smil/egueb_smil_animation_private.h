@@ -59,9 +59,6 @@ typedef struct _Egueb_Smil_Animation
 	Egueb_Smil_Timeline *timeline;
 	Egueb_Smil_Signal *signal;
 
-	/* in case we have changed of document */
-	Eina_Bool document_changed;
-
 	/* the attribute this animation animates */
 	Egueb_Dom_Node *attr;
 	/* the descriptor used for parsing the values */
