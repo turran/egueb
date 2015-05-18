@@ -35,9 +35,6 @@
  * 1. For every animation added into an element define a list of animation
  * element that any node can have. This way we can know the order for later
  * usage of the sandwich model
- * 2. Add a weak reference to the target node
- * TODO whenever the this element is reparented, remove/add the attribute
- * of the list of animated attributes
  */
 /*============================================================================*
  *                                  Local                                     *
