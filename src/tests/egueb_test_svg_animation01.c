@@ -72,13 +72,15 @@ START_TEST(egueb_test_svg_animation01_change_id)
 	/* change the href */
 	egueb_smil_animation_href_set(anim, egueb_dom_string_new_with_string("rect01"));
 
+	/* process */
+	egueb_dom_document_process(doc);
+
 	/* tick */
 	afeature = egueb_dom_node_feature_get(svg,
 			EGUEB_SMIL_FEATURE_ANIMATION_NAME, NULL);
 	egueb_smil_feature_animation_tick(afeature);
 	egueb_dom_feature_unref(afeature);
-	/* process */
-	egueb_dom_document_process(doc);
+
 	/* make sure the x is still zero */
 	egueb_svg_element_rect_x_get(rect, &ax);
 	ck_assert_int_eq(ax.anim.value, 10);
@@ -93,13 +95,15 @@ START_TEST(egueb_test_svg_animation01_change_target_id)
 	/* change the href */
 	egueb_svg_element_id_set(rect, egueb_dom_string_new_with_string("rect02"));
 
+	/* process */
+	egueb_dom_document_process(doc);
+
 	/* tick */
 	afeature = egueb_dom_node_feature_get(svg,
 			EGUEB_SMIL_FEATURE_ANIMATION_NAME, NULL);
 	egueb_smil_feature_animation_tick(afeature);
 	egueb_dom_feature_unref(afeature);
-	/* process */
-	egueb_dom_document_process(doc);
+
 	/* make sure the x is still zero */
 	egueb_svg_element_rect_x_get(rect, &ax);
 	ck_assert_int_eq(ax.anim.value, 10);
