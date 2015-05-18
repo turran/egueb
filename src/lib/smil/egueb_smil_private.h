@@ -27,6 +27,7 @@
 #include <Enesim.h>
 
 #include <Egueb_Dom.h>
+#include <Egueb_Xlink.h>
 
 #include "egueb_smil_build.h"
 
