@@ -37,6 +37,8 @@ struct _Egueb_Smil_Signal
 	Egueb_Smil_Signal_State_Callback start_cb;
 	Egueb_Smil_Signal_State_Callback stop_cb;
 	void *data;
+
+	Eina_Bool remove_me;
 };
 
 typedef void (*Egueb_Smil_Signal_Process)(Egueb_Smil_Signal *thiz,

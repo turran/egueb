@@ -34,6 +34,7 @@ struct _Egueb_Smil_Timeline
 	unsigned int fps; /** Number of frames per second */
 	Egueb_Smil_Clock tpf; /** Time per frame */
 	Egueb_Smil_Clock curr; /** Current time in seconds */
+	Eina_Bool processing;
 	int ref;
 };
 
@@ -41,15 +42,25 @@ static void _process(Egueb_Smil_Timeline *thiz)
 {
 	Egueb_Smil_Signal *a;
 	Eina_List *l;
+	Eina_List *l_next;
 
+	thiz->processing = EINA_TRUE;
 	/* iterate over the list of signals */
 	DBG("[%" EGUEB_SMIL_CLOCK_FORMAT "] %" EGUEB_SMIL_CLOCK_FORMAT,
 			EGUEB_SMIL_CLOCK_ARGS (thiz->curr),
 			EGUEB_SMIL_CLOCK_ARGS (thiz->tpf));
-	EINA_LIST_FOREACH(thiz->signals, l, a)
+	EINA_LIST_FOREACH_SAFE(thiz->signals, l, l_next, a)
 	{
-		egueb_smil_signal_process(a, thiz->curr, thiz->tpf);
+		if (!a->remove_me)
+			egueb_smil_signal_process(a, thiz->curr, thiz->tpf);
+		else
+		{
+			thiz->signals = eina_list_remove_list(thiz->signals, l);
+			a->timeline = NULL;
+			egueb_smil_signal_unref(a);
+		}
 	}
+	thiz->processing = EINA_FALSE;
 }
 /*============================================================================*
  *                                 Global                                     *
@@ -127,8 +138,10 @@ void egueb_smil_timeline_unref(Egueb_Smil_Timeline *thiz)
 	{
 		Egueb_Smil_Signal *s;
 
+		ERR("Destroting the timeline");
 		EINA_LIST_FREE(thiz->signals, s)
 		{
+			ERR("taking away the timeline");
 			s->timeline = NULL;
 			egueb_smil_signal_unref(s);
 		}
@@ -151,17 +164,28 @@ void egueb_smil_timeline_signal_add(Egueb_Smil_Timeline *thiz, Egueb_Smil_Signal
 
 void egueb_smil_timeline_signal_remove(Egueb_Smil_Timeline *thiz, Egueb_Smil_Signal *s)
 {
-	if (!thiz) return;
-	if (!s) return;
+	if (!s)
+		return;
+	if (!thiz)
+		goto done;
+
 	if (s->timeline != thiz)
 	{
-		egueb_smil_signal_unref(s);
-		return;
+		WARN("The signal does not belong to this timeline (%p != %p)",
+				s->timeline, thiz);
+		goto done;
 	}
-	
-	thiz->signals = eina_list_remove(thiz->signals, s);
 
+	if (thiz->processing)
+	{
+		INFO("The timeline is processing, cant remove now");
+		s->remove_me = EINA_TRUE;
+		goto done;
+	}
+
+	thiz->signals = eina_list_remove(thiz->signals, s);
 	s->timeline = NULL;
+done:
 	egueb_smil_signal_unref(s);
 }
 /*============================================================================*

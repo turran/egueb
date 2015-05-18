@@ -71,7 +71,7 @@ void egueb_smil_signal_process(Egueb_Smil_Signal *thiz, Egueb_Smil_Clock curr, u
 
 void egueb_smil_signal_start(Egueb_Smil_Signal *thiz)
 {
-	DBG("Starting signal");
+	DBG("Starting signal %p", thiz);
 	if (thiz->start_cb)
 		thiz->start_cb(thiz, thiz->data);
 	thiz->started = EINA_TRUE;
@@ -79,7 +79,7 @@ void egueb_smil_signal_start(Egueb_Smil_Signal *thiz)
 
 void egueb_smil_signal_stop(Egueb_Smil_Signal *thiz)
 {
-	DBG("Stopping signal");
+	DBG("Stopping signal %p", thiz);
 	thiz->stopped = EINA_TRUE;
 	if (thiz->stop_cb)
 		thiz->stop_cb(thiz, thiz->data);
