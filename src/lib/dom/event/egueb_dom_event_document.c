@@ -127,3 +127,12 @@ EAPI Egueb_Dom_Event * egueb_dom_event_document_id_removed_new(Egueb_Dom_Node *n
  *============================================================================*/
 Egueb_Dom_String *EGUEB_DOM_EVENT_DOCUMENT_ID_INSERTED = &_EGUEB_DOM_EVENT_DOCUMENT_ID_INSERTED;
 Egueb_Dom_String *EGUEB_DOM_EVENT_DOCUMENT_ID_REMOVED = &_EGUEB_DOM_EVENT_DOCUMENT_ID_REMOVED;
+
+EAPI Egueb_Dom_Node * egueb_dom_event_document_related_get(Egueb_Dom_Event *e)
+{
+	Egueb_Dom_Event_Document *thiz;
+
+	thiz = EGUEB_DOM_EVENT_DOCUMENT(e);
+	return egueb_dom_node_ref(thiz->related);
+
+}

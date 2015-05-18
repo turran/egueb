@@ -22,4 +22,6 @@
 EAPI extern Egueb_Dom_String *EGUEB_DOM_EVENT_DOCUMENT_ID_INSERTED;
 EAPI extern Egueb_Dom_String *EGUEB_DOM_EVENT_DOCUMENT_ID_REMOVED;
 
+EAPI Egueb_Dom_Node * egueb_dom_event_document_related_get(Egueb_Dom_Event *e);
+
 #endif
