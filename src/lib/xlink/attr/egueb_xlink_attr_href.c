@@ -70,7 +70,7 @@ static void _egueb_xlink_attr_href_target_request_cb(Egueb_Dom_Event *e,
 	/* request a process on the owner of the attribute */
 	if (thiz->automatic_enqueue)
 	{
-		ERR("The xlink:href requested a process, let's request ourselves too");
+		INFO("The xlink:href requested a process, let's request ourselves too");
 		egueb_dom_element_request_process(attr->owner);
 	}
 }
@@ -112,6 +112,7 @@ static void _egueb_xlink_attr_href_target_setup(Egueb_Xlink_Attr_Href *thiz,
 	egueb_dom_node_weak_ref(target,
 			_egueb_xlink_attr_href_target_destroyed_cb,
 			thiz);
+	thiz->node = target;
 	/* in case we also want to listen any change to enqueue
 	 * the parent too, check the passed in flag
 	 * (the pattern, gradient case, any change on the
@@ -137,13 +138,59 @@ static void _egueb_xlink_attr_href_target_setup(Egueb_Xlink_Attr_Href *thiz,
 static void _egueb_xlink_attr_href_document_id_inserted_cb(Egueb_Dom_Event *e,
 		void *user_data)
 {
-	ERR("Id inserted");
+	Egueb_Xlink_Attr_Href *thiz = user_data;
+	Egueb_Dom_Node *node;
+	Egueb_Dom_Node *id_attr;
+	Egueb_Dom_String *id_name;
+	Egueb_Dom_String *id;
+
+	node = egueb_dom_event_document_related_get(e);
+	/* TODO use a public string EGUEB_[XLINK|DOM]_ID */
+	id_name = egueb_dom_string_new_with_static_string("id");
+	id_attr = egueb_dom_element_attribute_node_get(node, id_name);
+	egueb_dom_attr_final_get(id_attr, &id);
+	if (egueb_dom_string_is_equal(id, thiz->last)) {
+		Egueb_Dom_Attr *attr;
+
+		attr = EGUEB_DOM_ATTR(user_data);
+		DBG("Id inserted %s", egueb_dom_string_string_get(id));
+		egueb_dom_element_request_process(attr->owner);
+	}
+	egueb_dom_node_unref(id_attr);
+	egueb_dom_node_unref(node);
+	egueb_dom_string_unref(id_name);
+	egueb_dom_string_unref(id);
 }
 
 static void _egueb_xlink_attr_href_document_id_removed_cb(Egueb_Dom_Event *e,
 		void *user_data)
 {
-	ERR("Id removed");
+	Egueb_Xlink_Attr_Href *thiz = user_data;
+	Egueb_Dom_Node *node;
+	Egueb_Dom_Node *id_attr;
+	Egueb_Dom_String *id_name;
+	Egueb_Dom_String *id;
+
+	node = egueb_dom_event_document_related_get(e);
+	/* TODO use a public string EGUEB_[XLINK|DOM]_ID */
+	id_name = egueb_dom_string_new_with_static_string("id");
+	id_attr = egueb_dom_element_attribute_node_get(node, id_name);
+	egueb_dom_attr_final_get(id_attr, &id);
+	if (egueb_dom_string_is_equal(id, thiz->last)) {
+		Egueb_Xlink_Attr_Href *thiz = user_data;
+
+		DBG("Id removed %s", egueb_dom_string_string_get(id));
+		_egueb_xlink_attr_href_target_cleanup(thiz);
+		if (thiz->on_target_removed)
+		{
+			thiz->on_target_removed(EGUEB_DOM_NODE(thiz));
+		}
+	}
+	egueb_dom_node_unref(id_attr);
+	egueb_dom_node_unref(node);
+	egueb_dom_string_unref(id_name);
+	egueb_dom_string_unref(id);
+	
 }
 
 /* Whenever a document is unset on the owner of the attribute, its target
@@ -312,8 +359,9 @@ EAPI Eina_Bool egueb_xlink_attr_href_process(Egueb_Dom_Node *n)
 
 	egueb_dom_attr_final_get(n, &str);
 	/* early exit, nothing to do */
-	if (egueb_dom_string_is_equal(str, thiz->last))
+	if (egueb_dom_string_is_equal(str, thiz->last) && thiz->node)
 	{
+		INFO("Same id, nothing to do");
 		if (!egueb_dom_string_is_valid(str))
 			ret = EINA_FALSE;
 		egueb_dom_string_unref(str);
@@ -342,6 +390,7 @@ EAPI Eina_Bool egueb_xlink_attr_href_process(Egueb_Dom_Node *n)
 			goto done;
 		}
 
+		INFO("Valid id, processing");
 		/* release any reference */
 		_egueb_xlink_attr_href_target_cleanup(thiz);
 		target = egueb_dom_document_element_get_by_id(doc, str, NULL);
@@ -349,6 +398,7 @@ EAPI Eina_Bool egueb_xlink_attr_href_process(Egueb_Dom_Node *n)
 		/* 2. The attribute is set but no element is found -> return TRUE with no node */
 		if (!target)
 		{
+			DBG("Target '%s' not found", egueb_dom_string_string_get(str));
 			/* We need to know whenever an element is inserted into
 			 * the document with a specific id, register an event
 			 * handler on the document itself. If it is found enqueue
@@ -362,6 +412,7 @@ EAPI Eina_Bool egueb_xlink_attr_href_process(Egueb_Dom_Node *n)
 		/* 3. The attribute is set and the element is found -> return TRUE with node */
 		else
 		{
+			DBG("Target '%s' found", egueb_dom_string_string_get(str));
 			_egueb_xlink_attr_href_target_setup(thiz, target);
 			egueb_dom_node_event_listener_add(doc,
 					EGUEB_DOM_EVENT_DOCUMENT_ID_REMOVED,
