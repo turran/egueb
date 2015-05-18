@@ -463,7 +463,7 @@ static void _egueb_smil_animation_target_destroyed_cb(Egueb_Dom_Event *e,
 		void *user_data)
 {
 	Egueb_Smil_Animation *thiz = user_data;
-	ERR("Destroying target");
+	DBG("Destroying target");
 	_egueb_smil_animation_cleanup(thiz);
 }
 
