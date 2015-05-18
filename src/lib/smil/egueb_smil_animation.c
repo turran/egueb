@@ -341,6 +341,7 @@ static void _egueb_smil_animation_cleanup(Egueb_Smil_Animation *thiz)
 
 	if (thiz->target)
 	{
+		/* TODO Remove the context from the target */
 		egueb_dom_node_weak_unref(thiz->target,
 				_egueb_smil_animation_target_destroyed_cb,
 				thiz);
@@ -368,6 +369,8 @@ static Egueb_Smil_Signal * _egueb_smil_animation_setup(Egueb_Smil_Animation *thi
 			_egueb_smil_animation_target_destroyed_cb,
 			thiz);
 	thiz->target = target;
+
+	/* TODO Add the context to the target */
 
 	egueb_dom_attr_final_get(thiz->attribute_name, &attribute_name);
 	if (!attribute_name)
