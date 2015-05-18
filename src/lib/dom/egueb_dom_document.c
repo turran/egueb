@@ -53,7 +53,7 @@ static void _egueb_dom_document_insert_id(Egueb_Dom_Document *thiz, Egueb_Dom_No
 		Egueb_Dom_Event *ev;
 
 		DBG("Previous id found, removing the node");
-		ev = egueb_dom_event_document_id_removed_new(n);
+		ev = egueb_dom_event_document_id_removed_new(egueb_dom_node_ref(n));
 		egueb_dom_node_event_dispatch(EGUEB_DOM_NODE(thiz), ev, NULL, NULL);
 	}
 
