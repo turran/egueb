@@ -379,12 +379,15 @@ static void _egueb_dom_node_remove_from_document(Egueb_Dom_Node *thiz,
 {
 	Egueb_Dom_Node *child;
 
+	/* mark the node out of tree */
+	thiz->in_tree = EINA_FALSE;
+
+	/* dispatch on the node first */
+	egueb_dom_node_event_dispatch(thiz, egueb_dom_event_ref(evt), NULL, NULL);
+
 	/* remove the weak reference in case we have one */
 	egueb_dom_node_document_set(thiz, NULL, EINA_FALSE);
 
-	thiz->in_tree = EINA_FALSE;
-	/* dispatch on the node first */
-	egueb_dom_node_event_dispatch(thiz, egueb_dom_event_ref(evt), NULL, NULL);
 	/* now on every children */
 	EINA_INLIST_FOREACH(thiz->children, child)
 	{
