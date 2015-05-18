@@ -76,7 +76,6 @@ typedef struct _Egueb_Svg_Paint
   process events arrives, in such case, wake up the thread.
 + Modify the clone interface, in order to clone a node we need a doc, just
   create it as it has been parsed
-+ Add events whenever an id is inserted/removed
 
 SVG
 ====
