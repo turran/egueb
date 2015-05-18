@@ -73,7 +73,7 @@ static void _egueb_dom_document_insert_id(Egueb_Dom_Document *thiz, Egueb_Dom_No
 		}
 		INFO("Adding id '%s' to the list of ids", str);
 		eina_hash_add(thiz->ids, str, egueb_dom_node_ref(n));
-		ev = egueb_dom_event_document_id_removed_new(egueb_dom_node_ref(n));
+		ev = egueb_dom_event_document_id_inserted_new(egueb_dom_node_ref(n));
 		egueb_dom_node_event_dispatch(EGUEB_DOM_NODE(thiz), ev, NULL, NULL);
 	}
 	egueb_dom_string_unref(id);
