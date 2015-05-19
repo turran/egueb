@@ -53,7 +53,7 @@ typedef struct _Egueb_Smil_Animation_Event_Foreach_Data
 } Egueb_Smil_Animation_Event_Foreach_Data;
 
 /* The key used for the animation private data */
-static Egueb_Dom_String EGUEB_SMIL_ANIMATION_KEY = EGUEB_DOM_STRING_STATIC("EguebSmilAnimationKey");
+static Egueb_Dom_String _EGUEB_SMIL_ANIMATION_KEY = EGUEB_DOM_STRING_STATIC("EguebSmilAnimationKey");
 
 /* Forward declarations */
 static void _egueb_smil_animation_target_destroyed_cb(Egueb_Dom_Event *e,
@@ -344,10 +344,10 @@ static void _egueb_smil_animation_cleanup(Egueb_Smil_Animation *thiz)
 		Eina_Inlist *animations;
 
 		/* Remove the animation to the list of animations on the target */
-		animations = egueb_dom_node_user_data_get(thiz->target, &EGUEB_SMIL_ANIMATION_KEY);
+		animations = egueb_dom_node_user_data_get(thiz->target, EGUEB_SMIL_ANIMATION_KEY);
 		animations = eina_inlist_remove(animations, EINA_INLIST_GET(thiz));
-		egueb_dom_node_user_data_set(thiz->target, &EGUEB_SMIL_ANIMATION_KEY, NULL);
-		egueb_dom_node_user_data_set(thiz->target, &EGUEB_SMIL_ANIMATION_KEY, animations);
+		egueb_dom_node_user_data_set(thiz->target, EGUEB_SMIL_ANIMATION_KEY, NULL);
+		egueb_dom_node_user_data_set(thiz->target, EGUEB_SMIL_ANIMATION_KEY, animations);
 
 		egueb_dom_node_weak_unref(thiz->target,
 				_egueb_smil_animation_target_destroyed_cb,
@@ -429,10 +429,10 @@ static Egueb_Smil_Signal * _egueb_smil_animation_setup(Egueb_Smil_Animation *thi
 		Eina_Inlist *animations;
 
 		/* Add the animation to the list of animations on the target */
-		animations = egueb_dom_node_user_data_get(target, &EGUEB_SMIL_ANIMATION_KEY);
+		animations = egueb_dom_node_user_data_get(target, EGUEB_SMIL_ANIMATION_KEY);
 		animations = eina_inlist_append(animations, EINA_INLIST_GET(thiz));
-		egueb_dom_node_user_data_set(target, &EGUEB_SMIL_ANIMATION_KEY, NULL);
-		egueb_dom_node_user_data_set(target, &EGUEB_SMIL_ANIMATION_KEY, animations);
+		egueb_dom_node_user_data_set(target, EGUEB_SMIL_ANIMATION_KEY, NULL);
+		egueb_dom_node_user_data_set(target, EGUEB_SMIL_ANIMATION_KEY, animations);
 	}
 done:
 	egueb_dom_string_unref(attribute_name);
@@ -653,6 +653,12 @@ static void _egueb_smil_animation_instance_deinit(void *o)
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
+Egueb_Dom_String *EGUEB_SMIL_ANIMATION_KEY = &_EGUEB_SMIL_ANIMATION_KEY;
+
+/* Forward declarations */
+static void _egueb_smil_animation_target_destroyed_cb(Egueb_Dom_Event *e,
+		void *user_data);
+
 Eina_Bool egueb_smil_animation_active_duration_get(Egueb_Dom_Node *n,
 		Egueb_Smil_Clock *duration)
 {

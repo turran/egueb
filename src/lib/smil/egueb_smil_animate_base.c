@@ -230,6 +230,15 @@ static void _egueb_smil_animate_base_interpolator_cb(Egueb_Dom_Value *va, Egueb_
 	/* now that we start, fetch the latest value to add */
 	if (thiz->gadditive == EGUEB_SMIL_ADDITIVE_SUM)
 	{
+		Eina_Inlist *animations;
+
+		/* Check that we are not the first animation */
+		animations = egueb_dom_node_user_data_get(a->target, EGUEB_SMIL_ANIMATION_KEY);
+		if (EINA_INLIST_CONTAINER_GET(animations, Egueb_Smil_Animation) == a)
+		{
+			ERR("First animation can not be additive");
+		}
+
 		if (!thiz->add_value)
 		{
 			const Egueb_Dom_Value_Descriptor *d;

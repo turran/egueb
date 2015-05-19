@@ -81,6 +81,8 @@ typedef struct _Egueb_Smil_Animation_Class
 	Egueb_Smil_Animation_Class_Cleanup cleanup;
 } Egueb_Smil_Animation_Class;
 
+extern Egueb_Dom_String *EGUEB_SMIL_ANIMATION_KEY;;
+
 Enesim_Object_Descriptor * egueb_smil_animation_descriptor_get();
 
 #define EGUEB_SMIL_ANIMATION_DESCRIPTOR egueb_smil_animation_descriptor_get()
