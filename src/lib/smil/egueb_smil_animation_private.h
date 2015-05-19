@@ -67,6 +67,7 @@ typedef struct _Egueb_Smil_Animation
 
 	/* the animation siblings related to the target */
 	EINA_INLIST;
+	Egueb_Dom_Value last_value;
 } Egueb_Smil_Animation;
 
 typedef Egueb_Smil_Signal * (*Egueb_Smil_Animation_Class_Setup)(Egueb_Smil_Animation *thiz, Egueb_Dom_Node *parent);

@@ -361,6 +361,8 @@ static void _egueb_smil_animation_cleanup(Egueb_Smil_Animation *thiz)
 		egueb_smil_timeline_signal_remove(thiz->timeline, thiz->signal);
 		thiz->signal = NULL;
 	}
+
+	egueb_dom_value_reset(&thiz->last_value);
 }
 
 static Egueb_Smil_Signal * _egueb_smil_animation_setup(Egueb_Smil_Animation *thiz,
