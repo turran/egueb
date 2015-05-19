@@ -20,6 +20,7 @@
 #define _EGUEB_SMIL_SET_H_
 
 EAPI Egueb_Dom_Node * egueb_smil_set_new(void);
+EAPI Eina_Bool egueb_smil_is_set(Egueb_Dom_Node *n);
 #if 0
 EAPI void egueb_smil_element_set_to_set(Ender_Element *e, const char *v);
 EAPI void egueb_smil_element_set_to_get(Ender_Element *e, const char **v);

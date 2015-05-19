@@ -248,6 +248,15 @@ EAPI Egueb_Dom_Node * egueb_smil_set_new(void)
 	return n;
 }
 
+EAPI Eina_Bool egueb_smil_is_set(Egueb_Dom_Node *n)
+{
+	if (!n) return EINA_FALSE;
+	if (!enesim_object_instance_inherits(ENESIM_OBJECT_INSTANCE(n),
+			EGUEB_SMIL_SET_DESCRIPTOR))
+		return EINA_FALSE;
+	return EINA_TRUE;
+}
+
 #if 0
 EAPI void egueb_smil_set_to_set(Ender_Element *e, const char *v)
 {
