@@ -1175,7 +1175,7 @@ EAPI void egueb_dom_node_user_data_set(Egueb_Dom_Node *thiz,
 	str = egueb_dom_string_string_get(key);
 	if (!str) return;
 	if (!data)
-		eina_hash_del_by_key(thiz->user_data, key);
+		eina_hash_del_by_key(thiz->user_data, str);
 	else
 		eina_hash_add(thiz->user_data, str, data);
 }
