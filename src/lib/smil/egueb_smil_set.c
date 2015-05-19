@@ -55,13 +55,6 @@ typedef struct _Egueb_Smil_Set_Class
 	Egueb_Smil_Animation_Class parent;
 } Egueb_Smil_Set_Class;
 
-static void _egueb_smil_set_property_set(Egueb_Smil_Set *thiz, Egueb_Dom_Value *v)
-{
-	Egueb_Smil_Animation *a;
-
-	a = EGUEB_SMIL_ANIMATION(thiz);
-	egueb_dom_attr_value_set(a->attr, EGUEB_DOM_ATTR_TYPE_ANIMATED, v);
-}
 /*----------------------------------------------------------------------------*
  *                           The signal interface                             *
  *----------------------------------------------------------------------------*/
@@ -69,11 +62,14 @@ static void _egueb_smil_set_signal_interpolator_cb(Egueb_Dom_Value *va, Egueb_Do
 		double m, void *data)
 {
 	Egueb_Smil_Set *thiz = data;
+	Egueb_Smil_Animation *a;
+
 	/* TODO we do not interpolate anything, we just set the value directly.
 	 * Given that setting an attribute is a transfer=full operation we must
 	 * do copy of the value before setting it
 	 */
-	_egueb_smil_set_property_set(thiz, &thiz->to_value);
+	a = EGUEB_SMIL_ANIMATION(thiz);
+	egueb_dom_attr_value_set(a->attr, EGUEB_DOM_ATTR_TYPE_ANIMATED, &thiz->to_value);
 }
 
 static void _egueb_smil_set_signal_start_cb(Egueb_Smil_Signal *s, void *data)
@@ -109,7 +105,7 @@ static void _egueb_smil_set_signal_stop_cb(Egueb_Smil_Signal *s, void *data)
 	if (fill == EGUEB_SMIL_FILL_REMOVE)
 	{
 		DBG("Going back to previous value");
-		_egueb_smil_set_property_set(thiz, &thiz->prv_value);
+		egueb_dom_attr_value_set(a->attr, EGUEB_DOM_ATTR_TYPE_ANIMATED, &thiz->prv_value);
 	}
 	ev = egueb_smil_event_new();
 	egueb_smil_event_init(ev, egueb_dom_string_ref(EGUEB_SMIL_EVENT_END), 0);
