@@ -223,6 +223,7 @@ static void _egueb_smil_animate_base_interpolator_cb(Egueb_Dom_Value *va, Egueb_
 	Egueb_Smil_Animation *a;
 	Egueb_Smil_Animate_Base *thiz = data;
 	Egueb_Smil_Animate_Base_Class *klass;
+	Egueb_Dom_Value *add_value = NULL;
 
 	klass = EGUEB_SMIL_ANIMATE_BASE_CLASS_GET(thiz);
 
@@ -230,33 +231,46 @@ static void _egueb_smil_animate_base_interpolator_cb(Egueb_Dom_Value *va, Egueb_
 	/* now that we start, fetch the latest value to add */
 	if (thiz->gadditive == EGUEB_SMIL_ADDITIVE_SUM)
 	{
+		Egueb_Smil_Animation *prev;
 		Eina_Inlist *animations;
 
 		/* Check that we are not the first animation */
 		animations = egueb_dom_node_user_data_get(a->target, EGUEB_SMIL_ANIMATION_KEY);
-		if (EINA_INLIST_CONTAINER_GET(animations, Egueb_Smil_Animation) == a)
+		prev = EINA_INLIST_CONTAINER_GET(animations, Egueb_Smil_Animation);
+		if (prev == a)
 		{
-			ERR("First animation can not be additive");
+			INFO("First animation can not be additive, skip the addition");
+			goto interpolate;
 		}
 
 		if (!thiz->add_value)
 		{
-			const Egueb_Dom_Value_Descriptor *d;
-			/* Do not use the class descriptor but the attribute one
-			 * to make sure it is the correct one
-			 */
-			d = egueb_dom_attr_value_descriptor_get(a->attr);
-			thiz->add_value = calloc(1, sizeof(Egueb_Dom_Value));
-			egueb_dom_value_init(thiz->add_value, d);
+			add_value = &prev->last_value;
 		}
-		/* TODO we should only fetch the current value for the non-first animation
-		 * otherwise we end adding to ourselves
-		 */
-		egueb_dom_attr_final_value_get(a->attr, thiz->add_value);
+		else
+		{
+			add_value = thiz->add_value;
+		}
 	}
 
-	if (!klass->interpolate(thiz, va, vb, m, thiz->add_value, NULL, 0))
+interpolate:
+	if (!klass->interpolate(thiz, va, vb, m, add_value, NULL, 0))
+	{
+		if (add_value)
+		{
+			egueb_dom_value_reset(add_value);
+			free(add_value);
+			thiz->add_value = NULL;
+		}
 		return;
+	}
+
+	/* setup the holder of the last value, this is needed for the
+	 * SMIL sandwich model
+	 */
+	egueb_dom_value_reset(&a->last_value);
+	egueb_dom_value_init(&a->last_value, egueb_dom_attr_value_descriptor_get(a->attr));
+	egueb_dom_value_copy(&thiz->dst_value, &a->last_value, EINA_TRUE);
 
 	egueb_dom_attr_value_set(a->attr, EGUEB_DOM_ATTR_TYPE_ANIMATED, &thiz->dst_value);
 }
