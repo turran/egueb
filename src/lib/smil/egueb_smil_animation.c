@@ -367,9 +367,9 @@ static Egueb_Smil_Signal * _egueb_smil_animation_setup(Egueb_Smil_Animation *thi
 		Egueb_Dom_Node *target, int64_t *begin_offset)
 {
 	Egueb_Smil_Animation_Class *klass;
+	Egueb_Smil_Signal *ret = NULL;
 	Egueb_Dom_String *attribute_name = NULL;
 	Egueb_Dom_Node *attr;
-	Egueb_Smil_Signal *ret = NULL;
 
 	/* set our target */
 	egueb_dom_node_weak_ref(target,
