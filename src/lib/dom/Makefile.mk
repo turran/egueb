@@ -12,6 +12,7 @@ src/lib/dom/egueb_dom_document_external.h \
 src/lib/dom/egueb_dom_document_fragment.h \
 src/lib/dom/egueb_dom_element.h \
 src/lib/dom/egueb_dom_event.h \
+src/lib/dom/egueb_dom_event_target.h \
 src/lib/dom/egueb_dom_feature.h \
 src/lib/dom/egueb_dom_implementation.h \
 src/lib/dom/egueb_dom_input.h \
@@ -45,6 +46,8 @@ src/lib/dom/egueb_dom_document_external.c \
 src/lib/dom/egueb_dom_document_fragment.c \
 src/lib/dom/egueb_dom_element.c \
 src/lib/dom/egueb_dom_element_private.h \
+src/lib/dom/egueb_dom_event_target.c \
+src/lib/dom/egueb_dom_event_target_private.h \
 src/lib/dom/egueb_dom_event.c \
 src/lib/dom/egueb_dom_event_private.h \
 src/lib/dom/egueb_dom_feature.c \

@@ -93,6 +93,7 @@ extern "C" {
 #include "egueb_dom_attr_string_list.h"
 
 #include "egueb_dom_event.h"
+#include "egueb_dom_event_target.h"
 #include "egueb_dom_event_document.h"
 #include "egueb_dom_event_external.h"
 #include "egueb_dom_event_io.h"
