@@ -36,6 +36,17 @@ EAPI void egueb_dom_event_target_unref(Egueb_Dom_Event_Target *thiz);
 EAPI Eina_Bool egueb_dom_event_target_type_get(Egueb_Dom_Event_Target *thiz,
 		const char **lib, const char **name);
 
+EAPI void egueb_dom_event_target_event_listener_add(Egueb_Dom_Event_Target *thiz,
+		const Egueb_Dom_String *type,
+		Egueb_Dom_Event_Listener listener, Eina_Bool capture,
+		void *data);
+EAPI void egueb_dom_event_target_event_listener_remove(Egueb_Dom_Event_Target *thiz,
+		const Egueb_Dom_String *type, Egueb_Dom_Event_Listener listener,
+		Eina_Bool capture, void *data);
+EAPI Eina_Bool egueb_dom_event_target_event_dispatch(Egueb_Dom_Event_Target *thiz,
+		Egueb_Dom_Event *event, Eina_Bool *notprevented,
+		Eina_Error *err);
+
 /**
  * @}
  */

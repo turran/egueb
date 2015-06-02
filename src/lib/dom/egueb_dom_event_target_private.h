@@ -28,6 +28,14 @@ typedef void (*Egueb_Dom_Event_Target_Ref)(Egueb_Dom_Event_Target *thiz);
 typedef void (*Egueb_Dom_Event_Target_Unref)(Egueb_Dom_Event_Target *thiz);
 typedef Eina_Bool (*Egueb_Dom_Event_Target_Type_Get)(Egueb_Dom_Event_Target *thiz,
 		const char **lib, const char **name);
+typedef void (*Egueb_Dom_Event_Target_Event_Listener_Add)(Egueb_Dom_Event_Target *thiz,
+		const Egueb_Dom_String *type, Egueb_Dom_Event_Listener listener,
+		Eina_Bool capture, void *data);
+typedef void (*Egueb_Dom_Event_Target_Event_Listener_Remove)(Egueb_Dom_Event_Target *thiz,
+		const Egueb_Dom_String *type, Egueb_Dom_Event_Listener listener,
+		Eina_Bool capture, void *data);
+typedef Eina_Bool (*Egueb_Dom_Event_Target_Event_Dispatch)(Egueb_Dom_Event_Target *thiz,
+		Egueb_Dom_Event *event, Eina_Bool *notprevented, Eina_Error *err);
 
 typedef struct _Egueb_Dom_Event_Target_Class
 {
@@ -35,6 +43,9 @@ typedef struct _Egueb_Dom_Event_Target_Class
 	Egueb_Dom_Event_Target_Ref ref;
 	Egueb_Dom_Event_Target_Unref unref;
 	Egueb_Dom_Event_Target_Type_Get type_get;
+	Egueb_Dom_Event_Target_Event_Listener_Add listener_add;
+	Egueb_Dom_Event_Target_Event_Listener_Remove listener_remove;
+	Egueb_Dom_Event_Target_Event_Dispatch dispatch;
 } Egueb_Dom_Event_Target_Class;
 
 #define EGUEB_DOM_EVENT_TARGET_DESCRIPTOR egueb_dom_event_target_descriptor_get()
