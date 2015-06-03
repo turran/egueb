@@ -127,6 +127,11 @@ EAPI void egueb_dom_attr_inherited_get(Egueb_Dom_Node *attr,
 		Egueb_Dom_Node **inherited);
 EAPI Eina_Bool egueb_dom_attr_has_changed(Egueb_Dom_Node *n);
 
+/* implementations of an attr */
+EAPI Enesim_Object_Descriptor * egueb_dom_attr_object_descriptor_get(void);
+EAPI Enesim_Object_Descriptor * egueb_dom_attr_basic_descriptor_get(void);
+EAPI Enesim_Object_Descriptor * egueb_dom_attr_primitive_descriptor_get(void);
+
 /**
  * @}
  */

@@ -29,9 +29,6 @@ typedef struct _Egueb_Dom_Feature_Class
 	Enesim_Object_Class parent;
 } Egueb_Dom_Feature_Class;
 
-/* FIXME We need to export this function for correct linking */
-EAPI Enesim_Object_Descriptor * egueb_dom_feature_descriptor_get(void);
-
 #define EGUEB_DOM_FEATURE_DESCRIPTOR egueb_dom_feature_descriptor_get()
 
 #define EGUEB_DOM_FEATURE_CLASS_GET(o) EGUEB_DOM_FEATURE_CLASS(		\

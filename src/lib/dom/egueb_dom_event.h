@@ -68,6 +68,8 @@ typedef enum _Egueb_Dom_Event_Direction
 
 typedef struct _Egueb_Dom_Event Egueb_Dom_Event;
 
+EAPI Enesim_Object_Descriptor * egueb_dom_event_descriptor_get(void);
+
 EAPI void egueb_dom_event_init(Egueb_Dom_Event *thiz, Egueb_Dom_String *type,
 		Eina_Bool bubbleable, Eina_Bool capturable, Eina_Bool cancelable,
 		Egueb_Dom_Event_Direction direction);

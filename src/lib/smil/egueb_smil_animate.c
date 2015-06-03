@@ -21,6 +21,7 @@
 #include "egueb_smil_clock.h"
 #include "egueb_smil_additive.h"
 #include "egueb_smil_accumulate.h"
+#include "egueb_smil_animate_base.h"
 
 #include "egueb_smil_keyframe_private.h"
 #include "egueb_smil_timeline_private.h"

@@ -56,8 +56,6 @@ typedef struct _Egueb_Dom_Document_Class
 } Egueb_Dom_Document_Class;
 
 #define EGUEB_DOM_DOCUMENT_DESCRIPTOR egueb_dom_document_descriptor_get()
-/* FIXME We need to export this function for correct linking */
-EAPI Enesim_Object_Descriptor * egueb_dom_document_descriptor_get(void);
 
 #define EGUEB_DOM_DOCUMENT_CLASS_GET(o) EGUEB_DOM_DOCUMENT_CLASS(		\
 		(ENESIM_OBJECT_INSTANCE(o))->klass)

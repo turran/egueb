@@ -24,8 +24,6 @@
 #include "egueb_dom_value.h"
 #include "egueb_dom_attr_private.h"
 
-/* FIXME We need to export this function for correct linking */
-EAPI Enesim_Object_Descriptor * egueb_dom_attr_basic_descriptor_get(void);
 #define EGUEB_DOM_ATTR_BASIC_DESCRIPTOR egueb_dom_attr_basic_descriptor_get()
 #define EGUEB_DOM_ATTR_BASIC_CLASS_GET(o) EGUEB_DOM_ATTR_BASIC_CLASS(		\
 		(ENESIM_OBJECT_INSTANCE(o))->klass)

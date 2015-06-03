@@ -139,6 +139,8 @@ EAPI Egueb_Dom_Node * egueb_dom_element_child_last_get(Egueb_Dom_Node *n);
 EAPI Egueb_Dom_Node * egueb_dom_element_sibling_previous_get(Egueb_Dom_Node *n);
 EAPI Egueb_Dom_Node * egueb_dom_element_sibling_next_get(Egueb_Dom_Node *n);
 
+EAPI Enesim_Object_Descriptor * egueb_dom_element_descriptor_get(void);
+
 /**
  * @}
  */
