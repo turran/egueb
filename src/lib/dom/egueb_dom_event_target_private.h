@@ -19,21 +19,29 @@
 #ifndef _EGUEB_DOM_EVENT_TARGET_PRIVATE_H_
 #define _EGUEB_DOM_EVENT_TARGET_PRIVATE_H_
 
+typedef struct _Egueb_Dom_Event_Target_Listener_Container
+{
+	Eina_List *listeners;
+} Egueb_Dom_Event_Target_Listener_Container;
+
+struct _Egueb_Dom_Event_Target_Listener
+{
+	Egueb_Dom_Event_Listener listener;
+	Egueb_Dom_Event_Target_Listener_Container *container;
+	Eina_Bool capture;
+	void *data;
+};
+
 struct _Egueb_Dom_Event_Target
 {
 	Enesim_Object_Instance base;
+	Eina_Hash *events;
 };
 
 typedef void (*Egueb_Dom_Event_Target_Ref)(Egueb_Dom_Event_Target *thiz);
 typedef void (*Egueb_Dom_Event_Target_Unref)(Egueb_Dom_Event_Target *thiz);
 typedef Eina_Bool (*Egueb_Dom_Event_Target_Type_Get)(Egueb_Dom_Event_Target *thiz,
 		const char **lib, const char **name);
-typedef void (*Egueb_Dom_Event_Target_Event_Listener_Add)(Egueb_Dom_Event_Target *thiz,
-		const Egueb_Dom_String *type, Egueb_Dom_Event_Listener listener,
-		Eina_Bool capture, void *data);
-typedef void (*Egueb_Dom_Event_Target_Event_Listener_Remove)(Egueb_Dom_Event_Target *thiz,
-		const Egueb_Dom_String *type, Egueb_Dom_Event_Listener listener,
-		Eina_Bool capture, void *data);
 typedef Eina_Bool (*Egueb_Dom_Event_Target_Event_Dispatch)(Egueb_Dom_Event_Target *thiz,
 		Egueb_Dom_Event *event, Eina_Bool *notprevented, Eina_Error *err);
 
@@ -43,20 +51,13 @@ typedef struct _Egueb_Dom_Event_Target_Class
 	Egueb_Dom_Event_Target_Ref ref;
 	Egueb_Dom_Event_Target_Unref unref;
 	Egueb_Dom_Event_Target_Type_Get type_get;
-	Egueb_Dom_Event_Target_Event_Listener_Add listener_add;
-	Egueb_Dom_Event_Target_Event_Listener_Remove listener_remove;
 	Egueb_Dom_Event_Target_Event_Dispatch dispatch;
 } Egueb_Dom_Event_Target_Class;
-
-#define EGUEB_DOM_EVENT_TARGET_DESCRIPTOR egueb_dom_event_target_descriptor_get()
-Enesim_Object_Descriptor * egueb_dom_event_target_descriptor_get(void);
 
 #define EGUEB_DOM_EVENT_TARGET_CLASS_GET(o) EGUEB_DOM_EVENT_TARGET_CLASS(			\
 		(ENESIM_OBJECT_INSTANCE(o))->klass)
 #define EGUEB_DOM_EVENT_TARGET_CLASS(k) ENESIM_OBJECT_CLASS_CHECK(k,			\
 		Egueb_Dom_Event_Target_Class, EGUEB_DOM_EVENT_TARGET_DESCRIPTOR)
-#define EGUEB_DOM_EVENT_TARGET(o) ENESIM_OBJECT_INSTANCE_CHECK(o,			\
-		Egueb_Dom_Event_Target, EGUEB_DOM_EVENT_TARGET_DESCRIPTOR)
 
 #endif
 

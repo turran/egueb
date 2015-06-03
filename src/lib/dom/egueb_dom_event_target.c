@@ -24,9 +24,21 @@
 #include "egueb_dom_event_target.h"
 
 #include "egueb_dom_event_target_private.h"
+#include "egueb_dom_event_private.h"
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
+static void _egueb_dom_event_target_listener_container_free(void *d)
+{
+	Egueb_Dom_Event_Target_Listener_Container *thiz = d;
+	Egueb_Dom_Event_Target_Listener *nl;
+
+	EINA_LIST_FREE(thiz->listeners, nl)
+	{
+		free(nl);
+	}
+	free(thiz);
+}
 /*----------------------------------------------------------------------------*
  *                              Object interface                              *
  *----------------------------------------------------------------------------*/
@@ -39,10 +51,20 @@ static void _egueb_dom_event_target_class_init(void *k)
 
 static void _egueb_dom_event_target_instance_init(void *o)
 {
+	Egueb_Dom_Event_Target *thiz;
+
+	thiz = EGUEB_DOM_EVENT_TARGET(o);
+	thiz->events = eina_hash_string_superfast_new(
+			_egueb_dom_event_target_listener_container_free);
 }
 
 static void _egueb_dom_event_target_instance_deinit(void *o)
 {
+	Egueb_Dom_Event_Target *thiz;
+
+	thiz = EGUEB_DOM_EVENT_TARGET(o);
+	/* remove the whole set of events */
+	eina_hash_free(thiz->events);
 }
 /*============================================================================*
  *                                 Global                                     *
@@ -77,25 +99,67 @@ EAPI Eina_Bool egueb_dom_event_target_type_get(Egueb_Dom_Event_Target *thiz,
 	return klass->type_get(thiz, lib, name);
 }
 
-EAPI void egueb_dom_event_target_event_listener_add(Egueb_Dom_Event_Target *thiz,
+EAPI Egueb_Dom_Event_Target_Listener *
+egueb_dom_event_target_event_listener_add(Egueb_Dom_Event_Target *thiz,
 		const Egueb_Dom_String *type,
 		Egueb_Dom_Event_Listener listener, Eina_Bool capture,
 		void *data)
 {
-	Egueb_Dom_Event_Target_Class *klass;
+	Egueb_Dom_Event_Target_Listener *tl;
+	Egueb_Dom_Event_Target_Listener_Container *container;
+	const char *str;
 
-	klass = EGUEB_DOM_EVENT_TARGET_CLASS_GET(thiz);
-	klass->listener_add(thiz, type, listener, capture, data);
+	str = egueb_dom_string_string_get(type);
+	container = eina_hash_find(thiz->events, str);
+	if (!container)
+	{
+		container = calloc(1, sizeof(Egueb_Dom_Event_Target_Listener_Container));
+		eina_hash_add(thiz->events, str, container);
+	}
+
+	tl = calloc(1, sizeof(Egueb_Dom_Event_Target_Listener));
+	tl->listener = listener;
+	tl->capture = capture;
+	tl->data = data;
+	tl->container = container;
+
+	container->listeners = eina_list_append(container->listeners, tl);
+	return tl;
 }
 
 EAPI void egueb_dom_event_target_event_listener_remove(Egueb_Dom_Event_Target *thiz,
 		const Egueb_Dom_String *type, Egueb_Dom_Event_Listener listener,
 		Eina_Bool capture, void *data)
 {
-	Egueb_Dom_Event_Target_Class *klass;
+	Egueb_Dom_Event_Target_Listener *tl;
+	Egueb_Dom_Event_Target_Listener_Container *container;
+	Eina_List *l;
+	const char *str;
 
-	klass = EGUEB_DOM_EVENT_TARGET_CLASS_GET(thiz);
-	klass->listener_remove(thiz, type, listener, capture, data);
+	str = egueb_dom_string_string_get(type);
+	container = eina_hash_find(thiz->events, str);
+	if (!container || !container->listeners) return;
+
+	EINA_LIST_FOREACH(container->listeners, l, tl)
+	{
+		if (tl->listener != listener || tl->capture != capture || tl->data != data)
+			continue;
+		free(tl);
+		container->listeners = eina_list_remove_list(
+				container->listeners, l);
+		break;
+	}
+}
+
+EAPI void egueb_dom_event_target_event_listener_free(
+		Egueb_Dom_Event_Target_Listener *target_listener)
+{
+	Egueb_Dom_Event_Target_Listener_Container *container;
+
+	container = target_listener->container;
+	container->listeners = eina_list_remove(container->listeners,
+			target_listener);
+	free(target_listener);
 }
 
 EAPI Eina_Bool egueb_dom_event_target_event_dispatch(Egueb_Dom_Event_Target *thiz,
@@ -105,5 +169,22 @@ EAPI Eina_Bool egueb_dom_event_target_event_dispatch(Egueb_Dom_Event_Target *thi
 	Egueb_Dom_Event_Target_Class *klass;
 
 	klass = EGUEB_DOM_EVENT_TARGET_CLASS_GET(thiz);
+	/* FIXME also if the string is empty */
+	if (!event || !event->type)
+	{
+		if (event)
+			egueb_dom_event_unref(event);
+		if (err)
+			*err = EGUEB_DOM_ERROR_INVALID_ACCESS;
+		return EINA_FALSE;
+	}
+	if (event->dispatching)
+	{
+		egueb_dom_event_unref(event);
+		/* return EGUEB_DOM_EVENT_UNSPECIFIED_EVENT_TYPE_ERR; */
+		if (err)
+			*err = EGUEB_DOM_ERROR_INVALID_ACCESS;
+		return EINA_FALSE;
+	}
 	return klass->dispatch(thiz, event, notprevented, err);
 }
