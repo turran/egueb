@@ -218,7 +218,6 @@ static void _egueb_dom_node_event_capture(Egueb_Dom_Node *thiz,
 
 	if (!evt->stopped)
 	{
-		evt->relative = from;
 		_egueb_dom_node_event_dispatch(thiz, evt);
 		return;
 	}
@@ -239,7 +238,6 @@ static void _egueb_dom_node_event_bubble(Egueb_Dom_Node *thiz,
 	parent = egueb_dom_node_parent_get(thiz);
 	if (parent)
 	{
-		evt->relative = thiz;
 		_egueb_dom_node_event_bubble(parent, evt);
 		egueb_dom_node_unref(parent);
 	}
@@ -285,7 +283,6 @@ static void _egueb_dom_node_event_start_bubbling(Egueb_Dom_Node *thiz,
 	if (parent)
 	{
 		evt->phase = EGUEB_DOM_EVENT_PHASE_BUBBLING;
-		evt->relative = thiz;
 		_egueb_dom_node_event_bubble(parent, evt);
 		egueb_dom_node_unref(parent);
 	}
