@@ -38,19 +38,6 @@
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
-typedef struct _Egueb_Dom_Node_Event_Container
-{
-	Eina_List *listeners;
-} Egueb_Dom_Node_Event_Container;
-
-struct _Egueb_Dom_Node_Event_Listener
-{
-	Egueb_Dom_Event_Listener listener;
-	Egueb_Dom_Node_Event_Container *container;
-	Eina_Bool capture;
-	void *data;
-};
-
 typedef struct _Egueb_Dom_Node_Feature
 {
 	Egueb_Dom_String *version;
@@ -140,26 +127,16 @@ static void _egueb_dom_node_document_destroyed_cb(Egueb_Dom_Event *e,
 	thiz->owner_document = NULL;
 }
 
-static void _egueb_dom_node_event_container_free(void *d)
-{
-	Egueb_Dom_Node_Event_Container *thiz = d;
-	Egueb_Dom_Node_Event_Listener *nl;
-
-	EINA_LIST_FREE(thiz->listeners, nl)
-	{
-		free(nl);
-	}
-	free(thiz);
-}
-
 static void _egueb_dom_node_event_dispatch(Egueb_Dom_Node *thiz,
 		Egueb_Dom_Event *evt)
 {
-	Egueb_Dom_Node_Event_Container *container;
-	Egueb_Dom_Node_Event_Listener *nl;
+	Egueb_Dom_Event_Target *target;
+	Egueb_Dom_Event_Target_Listener_Container *container;
+	Egueb_Dom_Event_Target_Listener *nl;
 	Eina_List *l;
 
-	container = eina_hash_find(thiz->events,
+	target = EGUEB_DOM_EVENT_TARGET(thiz);
+	container = eina_hash_find(target->events,
 		egueb_dom_string_string_get(evt->type));
 	if (!container || !container->listeners)
 		goto monitors;
@@ -184,9 +161,9 @@ static void _egueb_dom_node_event_dispatch(Egueb_Dom_Node *thiz,
 	}
 monitors:
 	/* now the monitors */
-	if (thiz->monitors)
+	if (target->monitors)
 	{
-		EINA_LIST_FOREACH(thiz->monitors, l, nl)
+		EINA_LIST_FOREACH(target->monitors, l, nl)
 		{
 			if (evt->target == evt->current_target)
 			{
@@ -301,15 +278,116 @@ static void _egueb_dom_node_event_start_at_target(Egueb_Dom_Node *thiz,
 	evt->phase = EGUEB_DOM_EVENT_PHASE_AT_TARGET;
 	_egueb_dom_node_event_dispatch(thiz, evt);
 }
+/*----------------------------------------------------------------------------*
+ *                            Event target interface                          *
+ *----------------------------------------------------------------------------*/
+static void _egueb_dom_node_ref(Egueb_Dom_Event_Target *target)
+{
+	Egueb_Dom_Node *thiz;
 
+	thiz = EGUEB_DOM_NODE(target);
+	egueb_dom_node_ref(thiz);
+}
+
+static void _egueb_dom_node_unref(Egueb_Dom_Event_Target *target)
+{
+	Egueb_Dom_Node *thiz;
+
+	thiz = EGUEB_DOM_NODE(target);
+	egueb_dom_node_unref(thiz);
+}
+
+static Eina_Bool _egueb_dom_node_type_get(Egueb_Dom_Event_Target *target,
+		const char **lib, const char **name)
+{
+	Egueb_Dom_Node *thiz;
+	Ender_Item *item;
+
+	thiz = EGUEB_DOM_NODE(target);
+
+	/* FIXME do not use the ender function but the future type_get directly */
+	item = egueb_dom_node_item_get(thiz);
+	if (!item)
+		return EINA_FALSE;
+	else
+	{
+		if (lib)
+		{
+			const Ender_Lib *l;
+
+			l = ender_item_lib_get(item);
+			*lib = ender_lib_name_get(l);
+		}
+		if (name)
+		{
+			*name = ender_item_name_get(item);
+		}
+		ender_item_unref(item);
+		return EINA_TRUE;
+	}
+	return EINA_FALSE;
+}
+
+static Eina_Bool _egueb_dom_node_dispatch(Egueb_Dom_Event_Target *target,
+		Egueb_Dom_Event *event, Eina_Bool *notprevented, Eina_Error *err)
+{
+	Egueb_Dom_Node *thiz;
+
+	thiz = EGUEB_DOM_NODE(target);
+	if (thiz->freezed)
+	{
+		egueb_dom_event_unref(event);
+		return EINA_FALSE;
+	}
+
+	/* DISPATCH_REQUEST_ERR: Raised if the Event object is already being dispatched in the tree.*/
+	/* NOT_SUPPORTED_ERR Raised if the Event object has not been created using DocumentEvent.createEvent() or does not support the interface CustomEvent */
+
+	if (event->target)
+	{
+		egueb_dom_node_unref(event->target);
+		event->target = NULL;
+	}
+	/* setup the event with the basic attributes */
+	event->target = egueb_dom_node_ref(thiz);
+	event->dispatching = EINA_TRUE;
+
+	if (event->direction == EGUEB_DOM_EVENT_DIRECTION_CAPTURE_BUBBLE)
+	{
+		/* first the capture phase from all its parents */
+		_egueb_dom_node_event_start_capturing(thiz, event);
+		_egueb_dom_node_event_start_at_target(thiz, event);
+		/* finally the bubbling phase */
+		_egueb_dom_node_event_start_bubbling(thiz, event);
+	}
+	else
+	{
+		/* first the bubbling phase */
+		_egueb_dom_node_event_start_bubbling(thiz, event);
+		/* finally the capture phase from all its parents */
+		_egueb_dom_node_event_start_capturing(thiz, event);
+		_egueb_dom_node_event_start_at_target(thiz, event);
+	}
+
+	event->dispatching = EINA_FALSE;
+	egueb_dom_event_unref(event);
+	return EINA_TRUE;
+}
 /*----------------------------------------------------------------------------*
  *                              Object interface                              *
  *----------------------------------------------------------------------------*/
-ENESIM_OBJECT_ABSTRACT_BOILERPLATE(ENESIM_OBJECT_DESCRIPTOR, Egueb_Dom_Node,
-		Egueb_Dom_Node_Class, egueb_dom_node);
+ENESIM_OBJECT_ABSTRACT_BOILERPLATE(EGUEB_DOM_EVENT_TARGET_DESCRIPTOR,
+		Egueb_Dom_Node, Egueb_Dom_Node_Class, egueb_dom_node);
 
 static void _egueb_dom_node_class_init(void *k)
 {
+	Egueb_Dom_Event_Target_Class *klass;
+
+	klass = EGUEB_DOM_EVENT_TARGET_CLASS(k);
+	klass->ref = _egueb_dom_node_ref;
+	klass->unref = _egueb_dom_node_unref;
+	klass->type_get = _egueb_dom_node_type_get;
+	klass->dispatch = _egueb_dom_node_dispatch;
 }
 
 static void _egueb_dom_node_instance_init(void *o)
@@ -318,8 +396,6 @@ static void _egueb_dom_node_instance_init(void *o)
 
 	thiz = EGUEB_DOM_NODE(o);
 	thiz->ref = 1;
-	thiz->events = eina_hash_string_superfast_new(
-			_egueb_dom_node_event_container_free);
 	thiz->user_data = eina_hash_string_superfast_new(NULL);
 	thiz->features = eina_hash_string_superfast_new(_egueb_dom_node_feature_free);
 }
@@ -327,15 +403,7 @@ static void _egueb_dom_node_instance_init(void *o)
 static void _egueb_dom_node_instance_deinit(void *o)
 {
 	Egueb_Dom_Node *thiz = EGUEB_DOM_NODE(o);
-	Egueb_Dom_Node_Event_Listener *el;
 
-	/* remove the whole set of events */
-	eina_hash_free(thiz->events);
-	/* remove the monitors */
-	EINA_LIST_FREE(thiz->monitors, el)
-	{
-		free(el);
-	}
 	/* and the user data */
 	eina_hash_free(thiz->user_data);
 	/* and the features */
@@ -362,7 +430,7 @@ static void _egueb_dom_node_insert_into_document(Egueb_Dom_Node *thiz,
 
 	thiz->in_tree = EINA_TRUE;
 	/* dispatch on the node first */
-	egueb_dom_node_event_dispatch(thiz, egueb_dom_event_ref(evt), NULL, NULL);
+	egueb_dom_event_target_event_dispatch(thiz, egueb_dom_event_ref(evt), NULL, NULL);
 	/* now on every children */
 	EINA_INLIST_FOREACH(thiz->children, child)
 	{
@@ -380,7 +448,7 @@ static void _egueb_dom_node_remove_from_document(Egueb_Dom_Node *thiz,
 	thiz->in_tree = EINA_FALSE;
 
 	/* dispatch on the node first */
-	egueb_dom_node_event_dispatch(thiz, egueb_dom_event_ref(evt), NULL, NULL);
+	egueb_dom_event_target_event_dispatch(thiz, egueb_dom_event_ref(evt), NULL, NULL);
 
 	/* remove the weak reference in case we have one */
 	egueb_dom_node_document_set(thiz, NULL, EINA_FALSE);
@@ -429,7 +497,7 @@ static void _egueb_dom_node_free(Egueb_Dom_Node *thiz)
 
 	/* before freeing the element, call the destroy event */
 	event = egueb_dom_event_mutation_node_destroyed_new();
-	egueb_dom_node_event_dispatch(thiz, event, NULL, NULL);
+	egueb_dom_event_target_event_dispatch(thiz, event, NULL, NULL);
 	/* remove the document weak ref */
 	if (thiz->owner_document)
 	{
@@ -463,7 +531,7 @@ void egueb_dom_node_document_set(Egueb_Dom_Node *thiz,
 		{
 			Egueb_Dom_Event *ev;
 			ev = egueb_dom_event_mutation_node_document_unset_new();
-			egueb_dom_node_event_dispatch(thiz, ev, NULL, NULL);
+			egueb_dom_event_target_event_dispatch(thiz, ev, NULL, NULL);
 		}
 		egueb_dom_node_weak_unref(thiz->owner_document,
 			_egueb_dom_node_document_destroyed_cb, thiz);
@@ -479,7 +547,7 @@ void egueb_dom_node_document_set(Egueb_Dom_Node *thiz,
 		{
 			Egueb_Dom_Event *ev;
 			ev = egueb_dom_event_mutation_node_document_set_new();
-			egueb_dom_node_event_dispatch(thiz, ev, NULL, NULL);
+			egueb_dom_event_target_event_dispatch(thiz, ev, NULL, NULL);
 		}
 	}
 }
@@ -554,7 +622,7 @@ EAPI void egueb_dom_node_weak_ref(Egueb_Dom_Node *thiz,
 	if (!thiz) return;
 	if (!l) return;
 
-	egueb_dom_node_event_listener_add(thiz,
+	egueb_dom_event_target_event_listener_add(thiz,
 			EGUEB_DOM_EVENT_MUTATION_NODE_DESTROYED,
 			l, EINA_FALSE, data);
 }
@@ -565,7 +633,7 @@ EAPI void egueb_dom_node_weak_unref(Egueb_Dom_Node *thiz,
 	if (!thiz) return;
 	if (!l) return;
 
-	egueb_dom_node_event_listener_remove(thiz,
+	egueb_dom_event_target_event_listener_remove(thiz,
 			EGUEB_DOM_EVENT_MUTATION_NODE_DESTROYED,
 			l, EINA_FALSE, data);
 }
@@ -811,7 +879,7 @@ EAPI Eina_Bool egueb_dom_node_child_remove(Egueb_Dom_Node *thiz, Egueb_Dom_Node 
 
 	/* trigger the mutation event */
 	event = egueb_dom_event_mutation_node_removed_new(egueb_dom_node_ref(thiz));
-	egueb_dom_node_event_dispatch(child, event, NULL, NULL);
+	egueb_dom_event_target_event_dispatch(child, event, NULL, NULL);
 
 	thiz->children = eina_inlist_remove(thiz->children, EINA_INLIST_GET(child));
 	child->parent = NULL;
@@ -933,7 +1001,7 @@ EAPI Eina_Bool egueb_dom_node_insert_before(Egueb_Dom_Node *thiz,
 
 	/* trigger the node inserted mutation event */
 	event = egueb_dom_event_mutation_node_inserted_new(egueb_dom_node_ref(thiz));
-	egueb_dom_node_event_dispatch(child, event, NULL, NULL);
+	egueb_dom_event_target_event_dispatch(child, event, NULL, NULL);
 
 	/* insert the node in the tree in case the parent is on the tree too,
 	 * the document will be set too in case the child does not have one
@@ -972,173 +1040,6 @@ EAPI Egueb_Dom_Node * egueb_dom_node_clone(Egueb_Dom_Node *thiz, Eina_Bool live,
 		klass->clone(thiz, live, deep, ret);
 
 	return ret;
-}
-
-/* void  addEventListener(in DOMString type,
-         in EventListener listener,
-         in boolean useCapture);
-*/
-EAPI Egueb_Dom_Node_Event_Listener * egueb_dom_node_event_listener_add(Egueb_Dom_Node *thiz,
-		const Egueb_Dom_String *type, Egueb_Dom_Event_Listener listener,
-		Eina_Bool capture, void *data)
-{
-	Egueb_Dom_Node_Event_Listener *nl;
-	Egueb_Dom_Node_Event_Container *container;
-	const char *str;
-
-	str = egueb_dom_string_string_get(type);
-	container = eina_hash_find(thiz->events, str);
-	if (!container)
-	{
-		container = calloc(1, sizeof(Egueb_Dom_Node_Event_Container));
-		eina_hash_add(thiz->events, str, container);
-	}
-
-	nl = calloc(1, sizeof(Egueb_Dom_Node_Event_Listener));
-	nl->listener = listener;
-	nl->capture = capture;
-	nl->data = data;
-	nl->container = container;
-
-	container->listeners = eina_list_append(container->listeners, nl);
-	return nl;
-}
-
-/* void  removeEventListener(in DOMString type,
-         in EventListener listener,
-         in boolean useCapture);
-*/
-EAPI void egueb_dom_node_event_listener_remove(Egueb_Dom_Node *thiz,
-		const Egueb_Dom_String *type, Egueb_Dom_Event_Listener listener,
-		Eina_Bool capture, void *data)
-{
-	Egueb_Dom_Node_Event_Listener *nl;
-	Egueb_Dom_Node_Event_Container *container;
-	Eina_List *l;
-	const char *str;
-
-	str = egueb_dom_string_string_get(type);
-	container = eina_hash_find(thiz->events, str);
-	if (!container || !container->listeners) return;
-
-	EINA_LIST_FOREACH(container->listeners, l, nl)
-	{
-		if (nl->listener != listener || nl->capture != capture || nl->data != data)
-			continue;
-		free(nl);
-		container->listeners = eina_list_remove_list(
-				container->listeners, l);
-		break;
-	}
-}
-
-EAPI void egueb_dom_node_event_listener_free(Egueb_Dom_Node_Event_Listener *node_listener)
-{
-	Egueb_Dom_Node_Event_Container *container;
-
-	container = node_listener->container;
-	container->listeners = eina_list_remove(container->listeners,
-			node_listener);
-	free(node_listener);
-}
-
-EAPI void egueb_dom_node_event_monitor_add(Egueb_Dom_Node *thiz,
-		Egueb_Dom_Event_Listener listener,
-		void *data)
-{
-	Egueb_Dom_Node_Event_Listener *nl;
-
-	nl = calloc(1, sizeof(Egueb_Dom_Node_Event_Listener));
-	nl->listener = listener;
-	nl->data = data;
-
-	thiz->monitors = eina_list_append(thiz->monitors, nl);
-}
-
-EAPI void egueb_dom_node_event_monitor_remove(Egueb_Dom_Node *thiz,
-		Egueb_Dom_Event_Listener listener,
-		void *data)
-{
-	Egueb_Dom_Node_Event_Listener *nl;
-	Eina_List *l;
-
-	EINA_LIST_FOREACH(thiz->monitors, l, nl)
-	{
-		if (nl->listener != listener || nl->data != data)
-			continue;
-		free(nl);
-		thiz->monitors = eina_list_remove_list(thiz->monitors, l);
-		break;
-	}
-}
-
-/**
- * Dispatch an event in a node
- * @param[in] thiz The even to dispatch the event into
- * @param[in] event The event to dispatch
- * @param[out] notprevented In case the event has not been prevented
- * @param[out] err The exception in case the dispatch fails
- * @return EINA_TRUE if the disptach succeeds, EINA_FALSE otherwise.
- */
-EAPI Eina_Bool egueb_dom_node_event_dispatch(Egueb_Dom_Node *thiz,
-		Egueb_Dom_Event *event, Eina_Bool *notprevented,
-		Eina_Error *err)
-{
-	/* FIXME also if the string is empty */
-	if (!event || !event->type)
-	{
-		if (event)
-			egueb_dom_event_unref(event);
-		if (err)
-			*err = EGUEB_DOM_ERROR_INVALID_ACCESS;
-		return EINA_FALSE;
-	}
-	if (event->dispatching)
-	{
-		egueb_dom_event_unref(event);
-		/* return EGUEB_DOM_EVENT_UNSPECIFIED_EVENT_TYPE_ERR; */
-		if (err)
-			*err = EGUEB_DOM_ERROR_INVALID_ACCESS;
-		return EINA_FALSE;
-	}
-	if (thiz->freezed)
-	{
-		egueb_dom_event_unref(event);
-		return EINA_FALSE;
-	}
-
-	/* DISPATCH_REQUEST_ERR: Raised if the Event object is already being dispatched in the tree.*/
-	/* NOT_SUPPORTED_ERR Raised if the Event object has not been created using DocumentEvent.createEvent() or does not support the interface CustomEvent */
-
-	if (event->target)
-	{
-		egueb_dom_node_unref(event->target);
-		event->target = NULL;
-	}
-	/* setup the event with the basic attributes */
-	event->target = egueb_dom_node_ref(thiz);
-	event->dispatching = EINA_TRUE;
-
-	if (event->direction == EGUEB_DOM_EVENT_DIRECTION_CAPTURE_BUBBLE)
-	{
-		/* first the capture phase from all its parents */
-		_egueb_dom_node_event_start_capturing(thiz, event);
-		_egueb_dom_node_event_start_at_target(thiz, event);
-		/* finally the bubbling phase */
-		_egueb_dom_node_event_start_bubbling(thiz, event);
-	}
-	else
-	{
-		/* first the bubbling phase */
-		_egueb_dom_node_event_start_bubbling(thiz, event);
-		/* finally the capture phase from all its parents */
-		_egueb_dom_node_event_start_capturing(thiz, event);
-		_egueb_dom_node_event_start_at_target(thiz, event);
-	}
-
-	event->dispatching = EINA_FALSE;
-	egueb_dom_event_unref(event);
-	return EINA_TRUE;
 }
 
 /* propagate an event in another tree */

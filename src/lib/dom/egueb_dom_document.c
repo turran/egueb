@@ -54,7 +54,7 @@ static void _egueb_dom_document_insert_id(Egueb_Dom_Document *thiz, Egueb_Dom_No
 
 		DBG("Previous id found, removing the node");
 		ev = egueb_dom_event_document_id_removed_new(egueb_dom_node_ref(n));
-		egueb_dom_node_event_dispatch(EGUEB_DOM_NODE(thiz), ev, NULL, NULL);
+		egueb_dom_event_target_event_dispatch(EGUEB_DOM_NODE(thiz), ev, NULL, NULL);
 	}
 
 	if (egueb_dom_string_is_valid(id) && thiz->ids)
@@ -74,7 +74,7 @@ static void _egueb_dom_document_insert_id(Egueb_Dom_Document *thiz, Egueb_Dom_No
 		INFO("Adding id '%s' to the list of ids", str);
 		eina_hash_add(thiz->ids, str, egueb_dom_node_ref(n));
 		ev = egueb_dom_event_document_id_inserted_new(egueb_dom_node_ref(n));
-		egueb_dom_node_event_dispatch(EGUEB_DOM_NODE(thiz), ev, NULL, NULL);
+		egueb_dom_event_target_event_dispatch(EGUEB_DOM_NODE(thiz), ev, NULL, NULL);
 	}
 	egueb_dom_string_unref(id);
 }
@@ -338,6 +338,7 @@ static void _egueb_dom_document_instance_init(void *o)
 {
 	Egueb_Dom_Document *thiz;
 	Egueb_Dom_Node *n;
+	Egueb_Dom_Event_Target *evt;
 
 	n = EGUEB_DOM_NODE(o);
 	/* a document is always in tree */
@@ -347,33 +348,34 @@ static void _egueb_dom_document_instance_init(void *o)
 	/* in case the element is being inserted into another document or removed
 	 * be sure to keep track of such changes
 	 */
-	egueb_dom_node_event_listener_add(n,
+	evt = EGUEB_DOM_EVENT_TARGET(o);
+	egueb_dom_event_target_event_listener_add(evt,
 			EGUEB_DOM_EVENT_MUTATION_NODE_REMOVED_FROM_DOCUMENT,
 			_egueb_dom_document_node_removed_from_document_cb,
 			EINA_TRUE, n);
-	egueb_dom_node_event_listener_add(n,
+	egueb_dom_event_target_event_listener_add(evt,
 			EGUEB_DOM_EVENT_MUTATION_NODE_INSERTED_INTO_DOCUMENT,
 			_egueb_dom_document_node_insterted_into_document_cb,
 			EINA_TRUE, n);
 	/* this events are needed to know whenever an element must be queued */
-	egueb_dom_node_event_listener_add(n,
+	egueb_dom_event_target_event_listener_add(evt,
 			EGUEB_DOM_EVENT_MUTATION_NODE_INSERTED,
 			_egueb_dom_document_node_inserted_cb,
 			EINA_FALSE, n);
-	egueb_dom_node_event_listener_add(n,
+	egueb_dom_event_target_event_listener_add(evt,
 			EGUEB_DOM_EVENT_MUTATION_NODE_REMOVED,
 			_egueb_dom_document_node_removed_cb,
 			EINA_FALSE, n);
-	egueb_dom_node_event_listener_add(n,
+	egueb_dom_event_target_event_listener_add(evt,
 			EGUEB_DOM_EVENT_MUTATION_ATTR_MODIFIED,
 			_egueb_dom_document_attr_modified_cb,
 			EINA_FALSE, n);
-	egueb_dom_node_event_listener_add(n,
+	egueb_dom_event_target_event_listener_add(evt,
 			EGUEB_DOM_EVENT_MUTATION_CHARACTER_DATA_MODIFIED,
 			_egueb_dom_document_character_data_modified_cb,
 			EINA_FALSE, n);
 	/* in case an element needs to be processed, we will enqueue it */
-	egueb_dom_node_event_listener_add(n,
+	egueb_dom_event_target_event_listener_add(evt,
 			EGUEB_DOM_EVENT_PROCESS,
 			_egueb_dom_document_request_process_cb,
 			EINA_FALSE, n);
@@ -502,7 +504,7 @@ EAPI Egueb_Dom_Node * egueb_dom_document_element_ns_create(Egueb_Dom_Node *n,
 		if (err)
 			*err = EGUEB_DOM_ERROR_NAMESPACE;
 		return NULL;
-		
+
 	}
 
 	klass = EGUEB_DOM_DOCUMENT_CLASS_GET(n);
@@ -602,7 +604,7 @@ EAPI void egueb_dom_document_element_set(Egueb_Dom_Node *n,
  * @param[in] id The id of the element to get
  * @param[out] err The error in case some exception happens
  * @return The element if found. NULL otherwise @ender_type{egueb.dom.element} @ender_transfer{full}
- */  
+ */
 EAPI Egueb_Dom_Node * egueb_dom_document_element_get_by_id(Egueb_Dom_Node *n,
 		Egueb_Dom_String *id, Eina_Error *err)
 {
@@ -784,7 +786,7 @@ interface Document : Node {
   Comment            createComment(in DOMString data);
   CDATASection       createCDATASection(in DOMString data)
                                         raises(DOMException);
-  ProcessingInstruction createProcessingInstruction(in DOMString target, 
+  ProcessingInstruction createProcessingInstruction(in DOMString target,
                                                     in DOMString data)
                                         raises(DOMException);
   Attr               createAttribute(in DOMString name)
@@ -793,15 +795,15 @@ interface Document : Node {
                                         raises(DOMException);
   NodeList           getElementsByTagName(in DOMString tagname);
   // Introduced in DOM Level 2:
-  Node               importNode(in Node importedNode, 
+  Node               importNode(in Node importedNode,
                                 in boolean deep)
                                         raises(DOMException);
   // Introduced in DOM Level 2:
-  Attr               createAttributeNS(in DOMString namespaceURI, 
+  Attr               createAttributeNS(in DOMString namespaceURI,
                                        in DOMString qualifiedName)
                                         raises(DOMException);
   // Introduced in DOM Level 2:
-  NodeList           getElementsByTagNameNS(in DOMString namespaceURI, 
+  NodeList           getElementsByTagNameNS(in DOMString namespaceURI,
                                             in DOMString localName);
 
 // Introduced in DOM Level 3:
@@ -823,8 +825,8 @@ interface Document : Node {
   // Introduced in DOM Level 3:
   void               normalizeDocument();
   // Introduced in DOM Level 3:
-  Node               renameNode(in Node n, 
-                                in DOMString namespaceURI, 
+  Node               renameNode(in Node n,
+                                in DOMString namespaceURI,
                                 in DOMString qualifiedName)
                                         raises(DOMException);
 };

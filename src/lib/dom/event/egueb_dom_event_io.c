@@ -130,7 +130,7 @@ EAPI Egueb_Dom_Event * egueb_dom_event_io_data_new(Egueb_Dom_Uri *uri,
 	e = _egueb_dom_event_io_new();
 	egueb_dom_event_init(e, egueb_dom_string_ref(EGUEB_DOM_EVENT_IO_DATA),
 			EINA_TRUE, EINA_TRUE, EINA_FALSE,
-			EGUEB_DOM_EVENT_DIRECTION_CAPTURE_BUBBLE); 
+			EGUEB_DOM_EVENT_DIRECTION_CAPTURE_BUBBLE);
 	thiz = EGUEB_DOM_EVENT_IO(e);
 	thiz->uri = *uri;
 	if (thiz->uri.location)
@@ -178,42 +178,42 @@ EAPI void egueb_dom_event_io_image_finish(Egueb_Dom_Event *e, Enesim_Surface *s)
 {
 	Egueb_Dom_Event_IO *thiz;
 	Egueb_Dom_Event *done;
-	Egueb_Dom_Node *n;
+	Egueb_Dom_Event_Target *evt;
 
 	if (!e) return;
 
-	n = egueb_dom_event_target_get(e);
+	evt = egueb_dom_event_target_get(e);
 
 	thiz = EGUEB_DOM_EVENT_IO(e);
 	/* call the callback */
 	if (thiz->image_cb)
 	{
-		thiz->image_cb(n, s);
+		thiz->image_cb(EGUEB_DOM_NODE(evt), s);
 	}
 	/* send the event */
 	done = egueb_dom_event_io_done_new(thiz);
-	egueb_dom_node_event_dispatch(n, done, NULL, NULL);
-	egueb_dom_node_unref(n);
+	egueb_dom_event_target_event_dispatch(evt, done, NULL, NULL);
+	egueb_dom_event_target_unref(evt);
 }
 
 EAPI void egueb_dom_event_io_data_finish(Egueb_Dom_Event *e, Enesim_Stream *s)
 {
 	Egueb_Dom_Event_IO *thiz;
 	Egueb_Dom_Event *done;
-	Egueb_Dom_Node *n;
+	Egueb_Dom_Event_Target *evt;
 
 	if (!e) return;
 
-	n = egueb_dom_event_target_get(e);
+	evt = egueb_dom_event_target_get(e);
 
 	thiz = EGUEB_DOM_EVENT_IO(e);
 	/* call the callback */
 	if (thiz->data_cb)
 	{
-		thiz->data_cb(n, s);
+		thiz->data_cb(EGUEB_DOM_NODE(evt), s);
 	}
 	/* send the event */
 	done = egueb_dom_event_io_done_new(thiz);
-	egueb_dom_node_event_dispatch(n, done, NULL, NULL);
-	egueb_dom_node_unref(n);
+	egueb_dom_event_target_event_dispatch(evt, done, NULL, NULL);
+	egueb_dom_event_target_unref(evt);
 }

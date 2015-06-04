@@ -44,21 +44,21 @@ int main(void)
 
 	egueb_dom_node_child_append(el1, el2, NULL);
 	/* register for a mutation event */
-	egueb_dom_node_event_listener_add(el1,
+	egueb_dom_event_target_event_listener_add(el1,
 		EGUEB_DOM_EVENT_MUTATION_ATTR_MODIFIED,
 		_mutation_attr_modified_propagated_cb, EINA_TRUE, NULL);
-	egueb_dom_node_event_listener_add(el1,
+	egueb_dom_event_target_event_listener_add(el1,
 		EGUEB_DOM_EVENT_MUTATION_ATTR_MODIFIED,
 		_mutation_attr_modified_propagated_cb, EINA_FALSE, NULL);
 
 	/* register for a mutation event */
-	egueb_dom_node_event_listener_add(el3,
+	egueb_dom_event_target_event_listener_add(el3,
 		EGUEB_DOM_EVENT_MUTATION_ATTR_MODIFIED,
 		_mutation_attr_modified_original_cb, EINA_TRUE, el2);
-	egueb_dom_node_event_listener_add(el3,
+	egueb_dom_event_target_event_listener_add(el3,
 		EGUEB_DOM_EVENT_MUTATION_ATTR_MODIFIED,
 		_mutation_attr_modified_original_cb, EINA_FALSE, el2);
-	egueb_dom_node_event_monitor_add(el3, _monitor_original_cb, el2);
+	egueb_dom_event_target_monitor_add(el3, _monitor_original_cb, el2);
 	/* the other tree */
 	egueb_dom_node_child_append(el3, el4, NULL);
 	/* set a property */

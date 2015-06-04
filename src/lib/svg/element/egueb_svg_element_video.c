@@ -98,7 +98,7 @@ static Eina_Bool _egueb_svg_element_video_load(Egueb_Svg_Element_Video *thiz,
 		ev = egueb_dom_event_multimedia_video_new(
 			egueb_dom_media_notifier_ref(thiz->video_notifier),
 			enesim_renderer_ref(thiz->r));
-		egueb_dom_node_event_dispatch(EGUEB_DOM_NODE(thiz), egueb_dom_event_ref(ev), NULL, NULL);
+		egueb_dom_event_target_event_dispatch(EGUEB_DOM_NODE(thiz), egueb_dom_event_ref(ev), NULL, NULL);
 		thiz->video_provider = egueb_dom_event_multimedia_provider_get(ev);
 		egueb_dom_event_unref(ev);
 

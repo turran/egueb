@@ -48,7 +48,8 @@ static void _egueb_dom_attr_send_mutation(Egueb_Dom_Attr *thiz,
 			egueb_dom_string_ref(thiz->name),
 			attr_type,
 			type);
-	egueb_dom_node_event_dispatch(thiz->owner, event, NULL, NULL);
+	egueb_dom_event_target_event_dispatch(
+			EGUEB_DOM_EVENT_TARGET(thiz->owner), event, NULL, NULL);
 
 	/* in case the property is inheritable, mark the element
 	 * with a flag informing that. That is helpful on the processing

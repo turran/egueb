@@ -19,11 +19,9 @@
 
 #include "egueb_dom_string.h"
 #include "egueb_dom_main.h"
-#include "egueb_dom_node_list.h"
-#include "egueb_dom_node_map_named.h"
-#include "egueb_dom_node.h"
 #include "egueb_dom_element.h"
 #include "egueb_dom_event.h"
+#include "egueb_dom_event_target.h"
 
 #include "egueb_dom_event_private.h"
 /*============================================================================*
@@ -59,7 +57,7 @@ static void _egueb_dom_event_instance_deinit(void *o)
 	}
 	if (thiz->target)
 	{
-		egueb_dom_node_unref(thiz->target);
+		egueb_dom_event_target_unref(thiz->target);
 		thiz->target = NULL;
 	}
 	if (thiz->current_target)
@@ -99,14 +97,14 @@ EAPI Egueb_Dom_Event_Phase egueb_dom_event_phase_get(Egueb_Dom_Event *thiz)
  * @param[in] thiz The event to get the target from
  * @return The target
  */
-EAPI Egueb_Dom_Node * egueb_dom_event_target_get(Egueb_Dom_Event *thiz)
+EAPI Egueb_Dom_Event_Target * egueb_dom_event_target_get(Egueb_Dom_Event *thiz)
 {
-	return egueb_dom_node_ref(thiz->target);
+	return egueb_dom_event_target_ref(thiz->target);
 }
 
-EAPI Egueb_Dom_Node * egueb_dom_event_target_current_get(Egueb_Dom_Event *thiz)
+EAPI Egueb_Dom_Event_Target * egueb_dom_event_target_current_get(Egueb_Dom_Event *thiz)
 {
-	return egueb_dom_node_ref(thiz->current_target);
+	return egueb_dom_event_target_ref(thiz->current_target);
 }
 
 /* void  initEvent(in DOMString eventTypeArg,

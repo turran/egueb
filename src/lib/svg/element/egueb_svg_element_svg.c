@@ -867,11 +867,11 @@ static void _egueb_svg_element_svg_instance_init(void *o)
 
 	/* TODO keep track of the svg's inserted */
 	/* whenever a renderable is added/removed, add/remove the click event */
-	egueb_dom_node_event_listener_add(n,
+	egueb_dom_event_target_event_listener_add(n,
 			EGUEB_DOM_EVENT_MUTATION_NODE_INSERTED,
 			_egueb_svg_element_svg_node_inserted_cb,
 			EINA_TRUE, o);
-	egueb_dom_node_event_listener_add(EGUEB_DOM_NODE(o),
+	egueb_dom_event_target_event_listener_add(EGUEB_DOM_NODE(o),
 			EGUEB_DOM_EVENT_MUTATION_NODE_REMOVED,
 			_egueb_svg_element_svg_node_removed_cb,
 			EINA_TRUE, o);

@@ -138,15 +138,15 @@ static void _egueb_svg_renderable_container_instance_init(void *o)
 
 	n = EGUEB_DOM_NODE(o);
 	/* our event listeners */
-	egueb_dom_node_event_listener_add(n,
+	egueb_dom_event_target_event_listener_add(n,
 			EGUEB_DOM_EVENT_MUTATION_NODE_INSERTED,
 			_egueb_svg_renderable_container_tree_modified_cb,
 			EINA_FALSE, thiz);
-	egueb_dom_node_event_listener_add(n,
+	egueb_dom_event_target_event_listener_add(n,
 			EGUEB_DOM_EVENT_MUTATION_NODE_REMOVED,
 			_egueb_svg_renderable_container_tree_modified_cb,
 			EINA_FALSE, thiz);
-	egueb_dom_node_event_listener_add(n,
+	egueb_dom_event_target_event_listener_add(n,
 			EGUEB_SVG_EVENT_REQUEST_PAINTER,
 			_egueb_svg_renderable_container_request_painter_cb,
 			EINA_FALSE, NULL);

@@ -76,7 +76,7 @@ static void _egueb_dom_element_script_node_inserted_or_removed_cb(Egueb_Dom_Even
 		goto not_us;
 	}
 
-	target = egueb_dom_event_target_get(e);
+	target = EGUEB_DOM_NODE(egueb_dom_event_target_get(e));
 	type = egueb_dom_node_type_get(target);
 	/* for svg it must be a cdata section, but some svg's has the script
 	 * on a text node
@@ -175,7 +175,8 @@ static Eina_Bool _egueb_dom_element_script_process(Egueb_Dom_Element *e)
 			final_type = egueb_dom_string_ref(type);
 
 		ev = egueb_dom_event_script_new(final_type);
-		egueb_dom_node_event_dispatch(EGUEB_DOM_NODE(e), egueb_dom_event_ref(ev), NULL, NULL);
+		egueb_dom_event_target_event_dispatch(EGUEB_DOM_EVENT_TARGET(e),
+				egueb_dom_event_ref(ev), NULL, NULL);
 		/* instantiate the vm */
 		thiz->scripter = egueb_dom_event_script_scripter_get(ev);
 		egueb_dom_event_unref(ev);
@@ -207,7 +208,9 @@ static Eina_Bool _egueb_dom_element_script_process(Egueb_Dom_Element *e)
 
 				INFO("Request a load of '%s'", egueb_dom_string_string_get(src));
 				e = egueb_dom_event_io_data_new(&u, _egueb_dom_element_script_data_cb);
-				egueb_dom_node_event_dispatch(EGUEB_DOM_NODE(thiz), e, NULL, NULL);
+				egueb_dom_event_target_event_dispatch(
+						EGUEB_DOM_EVENT_TARGET(thiz),
+						e, NULL, NULL);
 				egueb_dom_uri_cleanup(&u);
 			}
 		}
@@ -257,6 +260,7 @@ static void _egueb_dom_element_script_instance_init(void *o)
 {
 	Egueb_Dom_Element_Script *thiz;
 	Egueb_Dom_Node *n;
+	Egueb_Dom_Event_Target *evt;
 
 	thiz = EGUEB_DOM_ELEMENT_SCRIPT(o);
 	n = EGUEB_DOM_NODE(o);
@@ -271,11 +275,12 @@ static void _egueb_dom_element_script_instance_init(void *o)
 	egueb_dom_element_attribute_node_set(n, egueb_dom_node_ref(thiz->src), NULL);
 
 	/* add the events */
-	egueb_dom_node_event_listener_add(n,
+	evt = EGUEB_DOM_EVENT_TARGET(o);
+	egueb_dom_event_target_event_listener_add(evt,
 			EGUEB_DOM_EVENT_MUTATION_NODE_INSERTED,
 			_egueb_dom_element_script_node_inserted_or_removed_cb,
 			EINA_TRUE, thiz);
-	egueb_dom_node_event_listener_add(n,
+	egueb_dom_event_target_event_listener_add(evt,
 			EGUEB_DOM_EVENT_MUTATION_NODE_REMOVED,
 			_egueb_dom_element_script_node_inserted_or_removed_cb,
 			EINA_TRUE, thiz);

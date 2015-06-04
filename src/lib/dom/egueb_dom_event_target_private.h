@@ -35,14 +35,16 @@ struct _Egueb_Dom_Event_Target_Listener
 struct _Egueb_Dom_Event_Target
 {
 	Enesim_Object_Instance base;
+	/* event related data */
 	Eina_Hash *events;
+	Eina_List *monitors;
 };
 
 typedef void (*Egueb_Dom_Event_Target_Ref)(Egueb_Dom_Event_Target *thiz);
 typedef void (*Egueb_Dom_Event_Target_Unref)(Egueb_Dom_Event_Target *thiz);
 typedef Eina_Bool (*Egueb_Dom_Event_Target_Type_Get)(Egueb_Dom_Event_Target *thiz,
 		const char **lib, const char **name);
-typedef Eina_Bool (*Egueb_Dom_Event_Target_Event_Dispatch)(Egueb_Dom_Event_Target *thiz,
+typedef Eina_Bool (*Egueb_Dom_Event_Target_Dispatch)(Egueb_Dom_Event_Target *thiz,
 		Egueb_Dom_Event *event, Eina_Bool *notprevented, Eina_Error *err);
 
 typedef struct _Egueb_Dom_Event_Target_Class
@@ -51,7 +53,7 @@ typedef struct _Egueb_Dom_Event_Target_Class
 	Egueb_Dom_Event_Target_Ref ref;
 	Egueb_Dom_Event_Target_Unref unref;
 	Egueb_Dom_Event_Target_Type_Get type_get;
-	Egueb_Dom_Event_Target_Event_Dispatch dispatch;
+	Egueb_Dom_Event_Target_Dispatch dispatch;
 } Egueb_Dom_Event_Target_Class;
 
 #define EGUEB_DOM_EVENT_TARGET_CLASS_GET(o) EGUEB_DOM_EVENT_TARGET_CLASS(			\

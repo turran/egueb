@@ -295,7 +295,7 @@ static void _egueb_dom_element_original_destroyed_cb(Egueb_Dom_Event *e,
 	
 	DBG("Original destroyed, removing the events on the cloned node");
 	n = egueb_dom_event_target_get(e);
-	egueb_dom_node_event_listener_remove(cloned,
+	egueb_dom_event_target_event_listener_remove(cloned,
 			EGUEB_DOM_EVENT_MUTATION_NODE_DESTROYED,
 			_egueb_dom_element_clone_destroyed_cb,
 			EINA_TRUE, n);
@@ -320,21 +320,21 @@ static void _egueb_dom_element_clone_destroyed_cb(Egueb_Dom_Event *e,
 	DBG("Clone destroyed, removing the events on the original node");
 	cloned = egueb_dom_event_target_get(e);
 	/* the attr modified */
-	egueb_dom_node_event_listener_remove(n,
+	egueb_dom_event_target_event_listener_remove(n,
 			EGUEB_DOM_EVENT_MUTATION_ATTR_MODIFIED,
 			_egueb_dom_element_original_attr_modified_cb,
 			EINA_TRUE, cloned);
 	/* the children */
-	egueb_dom_node_event_listener_remove(n,
+	egueb_dom_event_target_event_listener_remove(n,
 			EGUEB_DOM_EVENT_MUTATION_NODE_INSERTED,
 			_egueb_dom_element_original_node_inserted_cb,
 			EINA_TRUE, cloned);
-	egueb_dom_node_event_listener_remove(n,
+	egueb_dom_event_target_event_listener_remove(n,
 			EGUEB_DOM_EVENT_MUTATION_NODE_REMOVED,
 			_egueb_dom_element_original_node_removed_cb,
 			EINA_TRUE, cloned);
 	/* the destroy */
-	egueb_dom_node_event_listener_remove(n,
+	egueb_dom_event_target_event_listener_remove(n,
 			EGUEB_DOM_EVENT_MUTATION_NODE_DESTROYED,
 			_egueb_dom_element_original_destroyed_cb,
 			EINA_TRUE, cloned);
@@ -385,15 +385,15 @@ static void _egueb_dom_element_clone(Egueb_Dom_Node *n, Eina_Bool live,
 	 */
 	if (live)
 	{
-		egueb_dom_node_event_listener_add(clone,
+		egueb_dom_event_target_event_listener_add(clone,
 				EGUEB_DOM_EVENT_MUTATION_NODE_DESTROYED,
 				_egueb_dom_element_clone_destroyed_cb,
 				EINA_TRUE, n);
-		egueb_dom_node_event_listener_add(n,
+		egueb_dom_event_target_event_listener_add(n,
 				EGUEB_DOM_EVENT_MUTATION_NODE_DESTROYED,
 				_egueb_dom_element_original_destroyed_cb,
 				EINA_TRUE, clone);
-		egueb_dom_node_event_listener_add(n,
+		egueb_dom_event_target_event_listener_add(n,
 				EGUEB_DOM_EVENT_MUTATION_ATTR_MODIFIED,
 				_egueb_dom_element_original_attr_modified_cb,
 				EINA_TRUE, clone);
@@ -402,12 +402,12 @@ static void _egueb_dom_element_clone(Egueb_Dom_Node *n, Eina_Bool live,
 		 */
 		if (deep)
 		{
-			egueb_dom_node_event_listener_add(n,
+			egueb_dom_event_target_event_listener_add(n,
 					EGUEB_DOM_EVENT_MUTATION_NODE_INSERTED,
 					_egueb_dom_element_original_node_inserted_cb,
 					EINA_TRUE, clone);
 
-			egueb_dom_node_event_listener_add(n,
+			egueb_dom_event_target_event_listener_add(n,
 					EGUEB_DOM_EVENT_MUTATION_NODE_REMOVED,
 					_egueb_dom_element_original_node_removed_cb,
 					EINA_TRUE, clone);
@@ -472,7 +472,7 @@ static void _egueb_dom_element_instance_init(void *o)
 	thiz->attributes_ns = eina_hash_string_superfast_new(EINA_FREE_CB(
 			_egueb_dom_element_attributes_ns_free));
 	/* register some event handlers */
-	egueb_dom_node_event_listener_add(EGUEB_DOM_NODE(o),
+	egueb_dom_event_target_event_listener_add(EGUEB_DOM_NODE(o),
 			EGUEB_DOM_EVENT_MUTATION_NODE_REMOVED_FROM_DOCUMENT,
 			_egueb_dom_element_document_removed_cb,
 			EINA_FALSE, thiz);
@@ -1153,7 +1153,7 @@ EAPI void egueb_dom_element_request_process(Egueb_Dom_Node *n)
 
 	/* send the request process event */
 	e = egueb_dom_event_process_new();
-	egueb_dom_node_event_dispatch(n, e, NULL, NULL);
+	egueb_dom_event_target_event_dispatch(n, e, NULL, NULL);
 }
 
 EAPI Eina_Bool egueb_dom_element_process(Egueb_Dom_Node *n)

@@ -20,9 +20,13 @@
 
 /**
  * @file
+ * @ender_group_proto{Egueb_Dom_Event}
  * @ender_group{Egueb_Dom_Event_Target}
  * @ender_group{Egueb_Dom_Event_Target_Definitions}
  */
+
+/* forward declarations */
+typedef struct _Egueb_Dom_Event Egueb_Dom_Event;
 
 /**
  * @defgroup Egueb_Dom_Event_Target_Definitions Definitions
@@ -32,11 +36,10 @@
 
 typedef struct _Egueb_Dom_Event_Target_Listener Egueb_Dom_Event_Target_Listener;
 
-/**
- * @}
- */
+typedef void (*Egueb_Dom_Event_Listener)(Egueb_Dom_Event *ev, void *data);
 
 /**
+ * @}
  * @defgroup Egueb_Dom_Event_Target Event target
  * @{
  */
@@ -63,6 +66,15 @@ EAPI void egueb_dom_event_target_event_listener_free(
 EAPI Eina_Bool egueb_dom_event_target_event_dispatch(Egueb_Dom_Event_Target *thiz,
 		Egueb_Dom_Event *event, Eina_Bool *notprevented,
 		Eina_Error *err);
+
+EAPI void egueb_dom_event_target_monitor_add(
+		Egueb_Dom_Event_Target *thiz,
+		Egueb_Dom_Event_Listener listener,
+		void *data);
+EAPI void egueb_dom_event_target_monitor_remove(
+		Egueb_Dom_Event_Target *thiz,
+		Egueb_Dom_Event_Listener listener,
+		void *data);
 
 EAPI Enesim_Object_Descriptor * egueb_dom_event_target_descriptor_get(void);
 #define EGUEB_DOM_EVENT_TARGET_DESCRIPTOR egueb_dom_event_target_descriptor_get()

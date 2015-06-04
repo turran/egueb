@@ -42,7 +42,6 @@
  * @{
  */
 
-typedef struct _Egueb_Dom_Node_Event_Listener Egueb_Dom_Node_Event_Listener;
 typedef Eina_Bool (*Egueb_Dom_Node_Cb)(Egueb_Dom_Node *n, void *data);
 
 /**
@@ -80,6 +79,11 @@ typedef enum _Egueb_Dom_Node_Type
  */
 typedef struct _Egueb_Dom_Node Egueb_Dom_Node;
 
+#define EGUEB_DOM_NODE_DESCRIPTOR egueb_dom_node_descriptor_get()
+Enesim_Object_Descriptor * egueb_dom_node_descriptor_get(void);
+#define EGUEB_DOM_NODE(o) ENESIM_OBJECT_INSTANCE_CHECK(o,			\
+		Egueb_Dom_Node, EGUEB_DOM_NODE_DESCRIPTOR)
+
 EAPI Eina_Bool egueb_dom_node_is_destroying(Egueb_Dom_Node *thiz);
 EAPI void egueb_dom_node_unref(Egueb_Dom_Node *thiz);
 EAPI Egueb_Dom_Node * egueb_dom_node_ref(Egueb_Dom_Node *thiz);
@@ -116,23 +120,8 @@ EAPI Egueb_Dom_Node_Map_Named * egueb_dom_node_attributes_get(Egueb_Dom_Node *th
 EAPI Egueb_Dom_Node * egueb_dom_node_clone(Egueb_Dom_Node *thiz, Eina_Bool live,
 		Eina_Bool deep, Eina_Error *err);
 
-EAPI Egueb_Dom_Node_Event_Listener * egueb_dom_node_event_listener_add(Egueb_Dom_Node *thiz,
-		const Egueb_Dom_String *type, Egueb_Dom_Event_Listener listener,
-		Eina_Bool capture, void *data);
-EAPI void egueb_dom_node_event_listener_remove(Egueb_Dom_Node *thiz,
-		const Egueb_Dom_String *type, Egueb_Dom_Event_Listener listener,
-		Eina_Bool capture, void *data);
-EAPI void egueb_dom_node_event_listener_free(Egueb_Dom_Node_Event_Listener *node_listener);
-EAPI Eina_Bool egueb_dom_node_event_dispatch(Egueb_Dom_Node *thiz,
-		Egueb_Dom_Event *event, Eina_Bool *notprevented, Eina_Error *err);
 EAPI Eina_Bool egueb_dom_node_event_propagate(Egueb_Dom_Node *thiz,
 		Egueb_Dom_Event *event);
-EAPI void egueb_dom_node_event_monitor_add(Egueb_Dom_Node *thiz,
-		Egueb_Dom_Event_Listener listener,
-		void *data);
-EAPI void egueb_dom_node_event_monitor_remove(Egueb_Dom_Node *thiz,
-		Egueb_Dom_Event_Listener listener,
-		void *data);
 
 EAPI void egueb_dom_node_user_data_set(Egueb_Dom_Node *thiz,
 		Egueb_Dom_String *key, void *data);

@@ -293,7 +293,7 @@ static void _egueb_smil_animate_base_animation_start_cb(Egueb_Smil_Signal *s, vo
 
 	ev = egueb_smil_event_new();
 	egueb_smil_event_init(ev, egueb_dom_string_ref(EGUEB_SMIL_EVENT_BEGIN), 0);
-	egueb_dom_node_event_dispatch(EGUEB_DOM_NODE(a), ev, NULL, NULL);
+	egueb_dom_event_target_event_dispatch(EGUEB_DOM_NODE(a), ev, NULL, NULL);
 }
 
 static void _egueb_smil_animate_base_animation_start_and_fetch_cb(Egueb_Smil_Signal *s, void *data)
@@ -327,7 +327,7 @@ static void _egueb_smil_animate_base_animation_stop_cb(Egueb_Smil_Signal *s, voi
 	}
 	ev = egueb_smil_event_new();
 	egueb_smil_event_init(ev, egueb_dom_string_ref(EGUEB_SMIL_EVENT_END), 0);
-	egueb_dom_node_event_dispatch(EGUEB_DOM_NODE(a), ev, NULL, NULL);
+	egueb_dom_event_target_event_dispatch(EGUEB_DOM_NODE(a), ev, NULL, NULL);
 }
 
 static void _egueb_smil_animate_base_animation_repeat_cb(Egueb_Smil_Signal *s, void *data)

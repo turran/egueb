@@ -160,7 +160,7 @@ static void _egueb_css_element_style_node_inserted_or_removed_cb(Egueb_Dom_Event
 		goto not_us;
 	}
 
-	target = egueb_dom_event_target_get(e);
+	target = EGUEB_DOM_NODE(egueb_dom_event_target_get(e));
 	type = egueb_dom_node_type_get(target);
 	/* for svg it must be a cdata section, but some svg's has the style
 	 * on a text node
@@ -241,6 +241,7 @@ static void _egueb_css_element_style_class_init(void *k)
 static void _egueb_css_element_style_instance_init(void *o)
 {
 	Egueb_Css_Element_Style *thiz;
+	Egueb_Dom_Event_Target *evt;
 	Egueb_Dom_Node *n;
 
 	thiz = EGUEB_CSS_ELEMENT_STYLE(o);
@@ -252,15 +253,16 @@ static void _egueb_css_element_style_instance_init(void *o)
 	egueb_dom_element_attribute_node_set(n, egueb_dom_node_ref(thiz->type), NULL);
 
 	/* add the events */
-	egueb_dom_node_event_listener_add(n,
+	evt = EGUEB_DOM_EVENT_TARGET(n);
+	egueb_dom_event_target_event_listener_add(evt,
 			EGUEB_DOM_EVENT_MUTATION_NODE_INSERTED,
 			_egueb_css_element_style_node_inserted_or_removed_cb,
 			EINA_TRUE, thiz);
-	egueb_dom_node_event_listener_add(n,
+	egueb_dom_event_target_event_listener_add(evt,
 			EGUEB_DOM_EVENT_MUTATION_NODE_REMOVED,
 			_egueb_css_element_style_node_inserted_or_removed_cb,
 			EINA_TRUE, thiz);
-	egueb_dom_node_event_listener_add(n,
+	egueb_dom_event_target_event_listener_add(evt,
 			EGUEB_DOM_EVENT_MUTATION_CHARACTER_DATA_MODIFIED,
 			_egueb_css_element_style_character_data_modified_cb,
 			EINA_TRUE, n);

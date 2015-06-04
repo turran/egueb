@@ -41,7 +41,7 @@ typedef struct _Egueb_Smil_Animation_Event
 	Egueb_Dom_Node *ref;
 	Egueb_Smil_Animation *thiz;
 	Egueb_Smil_Timing *t;
-	Egueb_Dom_Node_Event_Listener *l;
+	Egueb_Dom_Event_Target_Listener *l;
 } Egueb_Smil_Animation_Event;
 
 typedef struct _Egueb_Smil_Animation_Event_Foreach_Data
@@ -172,7 +172,7 @@ static void _egueb_smil_animation_event_cb(void *item, void *user_data)
 		egueb_dom_node_weak_ref_add(ref, &h->ref);
 		data->events = eina_list_append(data->events, h);
 
-		h->l = egueb_dom_node_event_listener_add(ref, t->event, data->listener,
+		h->l = egueb_dom_event_target_event_listener_add(ref, t->event, data->listener,
 			EINA_FALSE, h);
 		egueb_dom_node_unref(ref);
 	}
@@ -189,7 +189,7 @@ static void _egueb_smil_animation_event_release(Eina_List *events)
 	Egueb_Smil_Animation_Event *ev;
 	EINA_LIST_FREE(events, ev)
 	{
-		egueb_dom_node_event_listener_free(ev->l);
+		egueb_dom_event_target_event_listener_free(ev->l);
 		free(ev);
 	}
 }
@@ -520,7 +520,7 @@ static Eina_Bool _egueb_smil_animation_process(Egueb_Dom_Element *e)
 
 		request = egueb_smil_event_timeline_new();
 		n = EGUEB_DOM_NODE(e);
-		egueb_dom_node_event_dispatch(n, egueb_dom_event_ref(request), NULL, NULL);
+		egueb_dom_event_target_event_dispatch(n, egueb_dom_event_ref(request), NULL, NULL);
 
 		thiz->timeline = egueb_smil_event_timeline_get(request);
 		if (!thiz->timeline)
@@ -599,7 +599,7 @@ static void _egueb_smil_animation_instance_init(void *o)
 
 	/* add a callback whenever the node has been removed from another */
 	n = EGUEB_DOM_NODE(o);
-	egueb_dom_node_event_listener_add(n,
+	egueb_dom_event_target_event_listener_add(n,
 			EGUEB_DOM_EVENT_MUTATION_NODE_REMOVED,
 			_egueb_smil_animation_removed_cb,
 			EINA_FALSE, n);

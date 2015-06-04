@@ -214,12 +214,12 @@ static void _egueb_svg_reference_clip_path_instance_init(void *o)
 
 	thiz = EGUEB_SVG_REFERENCE_CLIP_PATH(o);
 	thiz->g = egueb_svg_element_g_new();
-	egueb_dom_node_event_listener_add(thiz->g,
+	egueb_dom_event_target_event_listener_add(thiz->g,
 			EGUEB_SVG_EVENT_REQUEST_PAINTER,
 			_egueb_svg_reference_clip_path_event_request_painter_cb,
 			EINA_FALSE, thiz);
 	/* add the events that we need to propagate upstream */ 
-	egueb_dom_node_event_monitor_add(thiz->g,
+	egueb_dom_event_target_monitor_add(thiz->g,
 			_egueb_dom_reference_clip_path_monitor_cb, thiz);
 }
 

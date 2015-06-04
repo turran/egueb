@@ -98,7 +98,7 @@ static void _egueb_svg_element_event_handler(Egueb_Dom_Event *ev,
 		/* TODO check the attribute */
 		type = egueb_dom_string_new_with_string("application/ecmascript");
 		sev = egueb_dom_event_script_new(type);
-		egueb_dom_node_event_dispatch(EGUEB_DOM_NODE(thiz),
+		egueb_dom_event_target_event_dispatch(EGUEB_DOM_NODE(thiz),
 				egueb_dom_event_ref(sev), NULL, NULL);
 		/* instantiate the vm */
 		thiz->scripter = egueb_dom_event_script_scripter_get(sev);
@@ -590,24 +590,24 @@ static void _egueb_svg_element_instance_init(void *o)
 	egueb_dom_element_attribute_node_set(n, egueb_dom_node_ref(thiz->onfocusin), NULL);
 
 	/* register the dom events */
-	egueb_dom_node_event_listener_add(n, EGUEB_DOM_EVENT_FOCUS_IN,
+	egueb_dom_event_target_event_listener_add(n, EGUEB_DOM_EVENT_FOCUS_IN,
 			_egueb_svg_element_onfocusout_cb, EINA_FALSE, thiz);
-	egueb_dom_node_event_listener_add(n, EGUEB_DOM_EVENT_FOCUS_OUT,
+	egueb_dom_event_target_event_listener_add(n, EGUEB_DOM_EVENT_FOCUS_OUT,
 			_egueb_svg_element_onfocusin_cb, EINA_FALSE, thiz);
 #if 0
-	egueb_dom_node_event_listener_add(n, "activate", _egueb_svg_element_onactivate_cb, thiz);
+	egueb_dom_event_target_event_listener_add(n, "activate", _egueb_svg_element_onactivate_cb, thiz);
 #endif
-	egueb_dom_node_event_listener_add(n, EGUEB_DOM_EVENT_MOUSE_CLICK,
+	egueb_dom_event_target_event_listener_add(n, EGUEB_DOM_EVENT_MOUSE_CLICK,
 			_egueb_svg_element_onclick_cb, EINA_FALSE, thiz);
-	egueb_dom_node_event_listener_add(n, EGUEB_DOM_EVENT_MOUSE_DOWN,
+	egueb_dom_event_target_event_listener_add(n, EGUEB_DOM_EVENT_MOUSE_DOWN,
 			_egueb_svg_element_onmousedown_cb, EINA_FALSE, thiz);
-	egueb_dom_node_event_listener_add(n, EGUEB_DOM_EVENT_MOUSE_UP,
+	egueb_dom_event_target_event_listener_add(n, EGUEB_DOM_EVENT_MOUSE_UP,
 			_egueb_svg_element_onmouseup_cb, EINA_FALSE, thiz);
-	egueb_dom_node_event_listener_add(n, EGUEB_DOM_EVENT_MOUSE_OVER,
+	egueb_dom_event_target_event_listener_add(n, EGUEB_DOM_EVENT_MOUSE_OVER,
 			_egueb_svg_element_onmouseover_cb, EINA_FALSE, thiz);
-	egueb_dom_node_event_listener_add(n, EGUEB_DOM_EVENT_MOUSE_MOVE,
+	egueb_dom_event_target_event_listener_add(n, EGUEB_DOM_EVENT_MOUSE_MOVE,
 			_egueb_svg_element_onmousemove_cb, EINA_FALSE, thiz);
-	egueb_dom_node_event_listener_add(n, EGUEB_DOM_EVENT_MOUSE_OUT,
+	egueb_dom_event_target_event_listener_add(n, EGUEB_DOM_EVENT_MOUSE_OUT,
 			_egueb_svg_element_onmouseout_cb, EINA_FALSE, thiz);
 
 	/* our private stuff */

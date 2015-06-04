@@ -127,11 +127,11 @@ static void _egueb_svg_element_defs_instance_init(void *o)
 	 * on every mutation bubbled event so we can mark the event as
 	 * 'not needed for a process' so the document wont process it
 	 */
-	egueb_dom_node_event_listener_add(n,
+	egueb_dom_event_target_event_listener_add(n,
 			EGUEB_DOM_EVENT_MUTATION_ATTR_MODIFIED,
 			_egueb_svg_element_defs_attr_modified_cb,
 			EINA_FALSE, NULL);
-	egueb_dom_node_event_listener_add(n,
+	egueb_dom_event_target_event_listener_add(n,
 			EGUEB_DOM_EVENT_PROCESS,
 			_egueb_svg_element_defs_process_cb,
 			EINA_FALSE, NULL);

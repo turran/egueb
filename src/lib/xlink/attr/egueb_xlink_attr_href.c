@@ -94,7 +94,7 @@ static void _egueb_xlink_attr_href_target_cleanup(Egueb_Xlink_Attr_Href *thiz)
 				_egueb_xlink_attr_href_target_destroyed_cb,
 					thiz);
 		/* remove the events associated with the target */
-		egueb_dom_node_event_listener_remove(thiz->node,
+		egueb_dom_event_target_event_listener_remove(thiz->node,
 				EGUEB_DOM_EVENT_PROCESS,
 				_egueb_xlink_attr_href_target_request_cb,
 				EINA_FALSE, thiz);
@@ -120,7 +120,7 @@ static void _egueb_xlink_attr_href_target_setup(Egueb_Xlink_Attr_Href *thiz,
 	 */
 	if (thiz->automatic_enqueue)
 	{
-		egueb_dom_node_event_listener_add(target,
+		egueb_dom_event_target_event_listener_add(target,
 				EGUEB_DOM_EVENT_PROCESS,
 				_egueb_xlink_attr_href_target_request_cb,
 				EINA_FALSE, thiz);
@@ -134,7 +134,7 @@ static void _egueb_xlink_attr_href_target_setup(Egueb_Xlink_Attr_Href *thiz,
  * the document, call the target_removed callback as the target is not longer
  * a valid target. If the target's id is added make sure to request a process
  * of the parent
- */ 
+ */
 static void _egueb_xlink_attr_href_document_id_inserted_cb(Egueb_Dom_Event *e,
 		void *user_data)
 {
@@ -190,7 +190,7 @@ static void _egueb_xlink_attr_href_document_id_removed_cb(Egueb_Dom_Event *e,
 	egueb_dom_node_unref(node);
 	egueb_dom_string_unref(id_name);
 	egueb_dom_string_unref(id);
-	
+
 }
 
 /* Whenever a document is unset on the owner of the attribute, its target
@@ -205,21 +205,21 @@ static void _egueb_xlink_attr_href_parent_document_unset_cb(Egueb_Dom_Event *e,
 
 	attr = EGUEB_DOM_ATTR(thiz);
 	/* remove the events associated with the parent */
-	egueb_dom_node_event_listener_remove(attr->owner,
+	egueb_dom_event_target_event_listener_remove(attr->owner,
 			EGUEB_DOM_EVENT_MUTATION_NODE_DOCUMENT_UNSET,
 			_egueb_xlink_attr_href_parent_document_unset_cb,
 			EINA_FALSE, thiz);
-	egueb_dom_node_event_listener_remove(attr->owner,
+	egueb_dom_event_target_event_listener_remove(attr->owner,
 			EGUEB_DOM_EVENT_MUTATION_NODE_REMOVED_FROM_DOCUMENT,
 			_egueb_xlink_attr_href_parent_document_unset_cb,
 			EINA_FALSE, thiz);
 	/* remove the events associated with the document in case they are set */
 	document = egueb_dom_node_owner_document_get(attr->owner);
-	egueb_dom_node_event_listener_remove(document,
+	egueb_dom_event_target_event_listener_remove(document,
 			EGUEB_DOM_EVENT_DOCUMENT_ID_REMOVED,
 			_egueb_xlink_attr_href_document_id_removed_cb,
 			EINA_FALSE, thiz);
-	egueb_dom_node_event_listener_remove(document,
+	egueb_dom_event_target_event_listener_remove(document,
 			EGUEB_DOM_EVENT_DOCUMENT_ID_INSERTED,
 			_egueb_xlink_attr_href_document_id_inserted_cb,
 			EINA_FALSE, thiz);
@@ -346,11 +346,11 @@ EAPI Eina_Bool egueb_xlink_attr_href_process(Egueb_Dom_Node *n)
 
 		a = EGUEB_DOM_ATTR(n);
 		/* Check that we are still part of a document */
-		egueb_dom_node_event_listener_add(a->owner,
+		egueb_dom_event_target_event_listener_add(a->owner,
 				EGUEB_DOM_EVENT_MUTATION_NODE_DOCUMENT_UNSET,
 				_egueb_xlink_attr_href_parent_document_unset_cb,
 				EINA_FALSE, thiz);
-		egueb_dom_node_event_listener_add(a->owner,
+		egueb_dom_event_target_event_listener_add(a->owner,
 				EGUEB_DOM_EVENT_MUTATION_NODE_REMOVED_FROM_DOCUMENT,
 				_egueb_xlink_attr_href_parent_document_unset_cb,
 				EINA_FALSE, thiz);
@@ -404,7 +404,7 @@ EAPI Eina_Bool egueb_xlink_attr_href_process(Egueb_Dom_Node *n)
 			 * handler on the document itself. If it is found enqueue
 			 * again the parent object and remove the callback
 			 */
-			egueb_dom_node_event_listener_add(doc,
+			egueb_dom_event_target_event_listener_add(doc,
 				EGUEB_DOM_EVENT_DOCUMENT_ID_INSERTED,
 				_egueb_xlink_attr_href_document_id_inserted_cb,
 				EINA_FALSE, thiz);
@@ -414,7 +414,7 @@ EAPI Eina_Bool egueb_xlink_attr_href_process(Egueb_Dom_Node *n)
 		{
 			DBG("Target '%s' found", egueb_dom_string_string_get(str));
 			_egueb_xlink_attr_href_target_setup(thiz, target);
-			egueb_dom_node_event_listener_add(doc,
+			egueb_dom_event_target_event_listener_add(doc,
 					EGUEB_DOM_EVENT_DOCUMENT_ID_REMOVED,
 					_egueb_xlink_attr_href_document_id_removed_cb,
 					EINA_FALSE, thiz);

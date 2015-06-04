@@ -18,14 +18,15 @@
 #ifndef _EGUEB_DOM_EVENT_PRIVATE_H_
 #define _EGUEB_DOM_EVENT_PRIVATE_H_
 
+#include "egueb_dom_event_target.h"
 #include "egueb_dom_node.h"
 
 struct _Egueb_Dom_Event
 {
 	Enesim_Object_Instance parent;
 	Egueb_Dom_String *type;
-	Egueb_Dom_Node *target;
-	Egueb_Dom_Node *current_target;
+	Egueb_Dom_Event_Target *target;
+	Egueb_Dom_Event_Target *current_target;
 	Egueb_Dom_Event_Phase phase;
 	Eina_Bool bubbles;
 	/* init attributes */

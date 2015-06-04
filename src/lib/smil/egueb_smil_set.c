@@ -89,7 +89,7 @@ static void _egueb_smil_set_signal_start_cb(Egueb_Smil_Signal *s, void *data)
 	}
 	ev = egueb_smil_event_new();
 	egueb_smil_event_init(ev, egueb_dom_string_ref(EGUEB_SMIL_EVENT_BEGIN), 0);
-	egueb_dom_node_event_dispatch(a->target, ev, NULL, NULL);
+	egueb_dom_event_target_event_dispatch(a->target, ev, NULL, NULL);
 }
 
 static void _egueb_smil_set_signal_stop_cb(Egueb_Smil_Signal *s, void *data)
@@ -109,7 +109,7 @@ static void _egueb_smil_set_signal_stop_cb(Egueb_Smil_Signal *s, void *data)
 	}
 	ev = egueb_smil_event_new();
 	egueb_smil_event_init(ev, egueb_dom_string_ref(EGUEB_SMIL_EVENT_END), 0);
-	egueb_dom_node_event_dispatch(a->target, ev, NULL, NULL);
+	egueb_dom_event_target_event_dispatch(a->target, ev, NULL, NULL);
 }
 /*----------------------------------------------------------------------------*
  *                             Animation interface                            *

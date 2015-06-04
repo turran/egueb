@@ -19,6 +19,7 @@
 #define _EGUEB_DOM_EVENT_H_
 
 #include "egueb_dom_string.h"
+#include "egueb_dom_event_target.h"
 
 /**
  * @file
@@ -79,21 +80,10 @@ EAPI Egueb_Dom_Event * egueb_dom_event_ref(Egueb_Dom_Event *thiz);
 
 EAPI Egueb_Dom_String * egueb_dom_event_type_get(Egueb_Dom_Event *thiz);
 EAPI Egueb_Dom_Event_Phase egueb_dom_event_phase_get(Egueb_Dom_Event *thiz);
-EAPI Egueb_Dom_Node * egueb_dom_event_target_get(Egueb_Dom_Event *thiz);
-EAPI Egueb_Dom_Node * egueb_dom_event_target_current_get(Egueb_Dom_Event *thiz);
-EAPI Egueb_Dom_Node * egueb_dom_event_relative_get(Egueb_Dom_Event *thiz);
+EAPI Egueb_Dom_Event_Target * egueb_dom_event_target_get(Egueb_Dom_Event *thiz);
+EAPI Egueb_Dom_Event_Target * egueb_dom_event_target_current_get(Egueb_Dom_Event *thiz);
 EAPI void egueb_dom_event_stop_propagation(Egueb_Dom_Event *thiz);
 EAPI Ender_Item * egueb_dom_event_item_get(Egueb_Dom_Event *thiz);
-
-/**
- * @}
- * @defgroup Egueb_Dom_Event_Definition Event definitions
- * @ingroup Egueb_Dom_Event
- * @{
- */
-
-typedef void (*Egueb_Dom_Event_Listener)(Egueb_Dom_Event *ev, void *data);
-
 
 /**
  * @}

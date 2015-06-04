@@ -92,7 +92,7 @@ static void _egueb_dom_feature_io_relative_data_cb(Egueb_Dom_Uri *uri,
 	char *dir;
 	int ret;
 
-	node = egueb_dom_event_target_get(ev);
+	node = EGUEB_DOM_NODE(egueb_dom_event_target_get(ev));
 	doc = egueb_dom_node_owner_document_get(node);
 	if (!doc)
 	{
@@ -181,11 +181,14 @@ static void _egueb_dom_feature_io_node_destroyed_cb(Egueb_Dom_Event *ev,
 
 	if (thiz->enabled)
 	{
-		egueb_dom_node_event_listener_remove(thiz->n,
+		Egueb_Dom_Event_Target *evt;
+
+		evt = EGUEB_DOM_EVENT_TARGET(thiz->n);
+		egueb_dom_event_target_event_listener_remove(evt,
 				EGUEB_DOM_EVENT_IO_DATA,
 				_egueb_dom_feature_io_data_cb,
 				EINA_TRUE, thiz);
-		egueb_dom_node_event_listener_remove(thiz->n,
+		egueb_dom_event_target_event_listener_remove(evt,
 				EGUEB_DOM_EVENT_IO_IMAGE,
 				_egueb_dom_feature_io_image_cb,
 				EINA_TRUE, thiz);
@@ -237,27 +240,29 @@ EAPI void egueb_dom_feature_io_default_enable(Egueb_Dom_Feature *f,
 		Eina_Bool enable)
 {
 	Egueb_Dom_Feature_IO *thiz;
+	Egueb_Dom_Event_Target *evt;
 
 	thiz = EGUEB_DOM_FEATURE_IO(f);
 	if (enable == thiz->enabled)
 		return;
+	evt = EGUEB_DOM_EVENT_TARGET(thiz->n);
 	thiz->enabled = enable;
 	if (enable)
 	{
-		egueb_dom_node_event_listener_add(thiz->n,
+		egueb_dom_event_target_event_listener_add(evt,
 				EGUEB_DOM_EVENT_IO_DATA,
 				_egueb_dom_feature_io_data_cb, EINA_TRUE, thiz);
-		egueb_dom_node_event_listener_add(thiz->n,
+		egueb_dom_event_target_event_listener_add(evt,
 				EGUEB_DOM_EVENT_IO_IMAGE,
 				_egueb_dom_feature_io_image_cb, EINA_TRUE, thiz);
 	}
 	else
 	{
-		egueb_dom_node_event_listener_remove(thiz->n,
+		egueb_dom_event_target_event_listener_remove(evt,
 				EGUEB_DOM_EVENT_IO_DATA,
 				_egueb_dom_feature_io_data_cb,
 				EINA_TRUE, thiz);
-		egueb_dom_node_event_listener_remove(thiz->n,
+		egueb_dom_event_target_event_listener_remove(evt,
 				EGUEB_DOM_EVENT_IO_IMAGE,
 				_egueb_dom_feature_io_image_cb,
 				EINA_TRUE, thiz);
