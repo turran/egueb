@@ -86,7 +86,7 @@ static Eina_Bool _egueb_svg_gradient_is_our_stop(Egueb_Svg_Gradient *thiz,
 		ret = EINA_FALSE;
 		goto not_us;
 	}
-	target = egueb_dom_event_target_get(e);
+	target = EGUEB_DOM_NODE(egueb_dom_event_target_get(e));
 	if (!egueb_svg_element_is_stop(target))
 	{
 		ret = EINA_FALSE;
@@ -108,7 +108,8 @@ static void _egueb_svg_gradient_node_inserted_cb(Egueb_Dom_Event *e,
 
 	if (!_egueb_svg_gradient_is_our_stop(thiz, e, &stop))
 		return;
-	egueb_dom_event_target_event_listener_add(stop,
+	egueb_dom_event_target_event_listener_add(
+			EGUEB_DOM_EVENT_TARGET_CAST(stop),
 			EGUEB_DOM_EVENT_PROCESS,
 			_egueb_svg_gradient_stop_request_process_cb,
 			EINA_FALSE, thiz);
@@ -123,7 +124,8 @@ static void _egueb_svg_gradient_node_removed_cb(Egueb_Dom_Event *e,
 
 	if (!_egueb_svg_gradient_is_our_stop(thiz, e, &stop))
 		return;
-	egueb_dom_event_target_event_listener_remove(stop,
+	egueb_dom_event_target_event_listener_remove(
+			EGUEB_DOM_EVENT_TARGET_CAST(stop),
 			EGUEB_DOM_EVENT_PROCESS,
 			_egueb_svg_gradient_stop_request_process_cb,
 			EINA_FALSE, thiz);
@@ -234,6 +236,7 @@ static void _egueb_svg_gradient_instance_init(void *o)
 {
 	Egueb_Svg_Gradient *thiz;
 	Egueb_Dom_Node *n;
+	Egueb_Dom_Event_Target *evt;
 
 	thiz = EGUEB_SVG_GRADIENT(o);
 	thiz->units = egueb_svg_attr_referenceable_units_new(
@@ -259,11 +262,12 @@ static void _egueb_svg_gradient_instance_init(void *o)
 	egueb_dom_element_attribute_node_set(n, egueb_dom_node_ref(thiz->xlink_href), NULL);
 
 	/* to identify in case a stop was added, we need to process again ourselves */
-	egueb_dom_event_target_event_listener_add(n,
+	evt = EGUEB_DOM_EVENT_TARGET_CAST(o);
+	egueb_dom_event_target_event_listener_add(evt,
 			EGUEB_DOM_EVENT_MUTATION_NODE_INSERTED,
 			_egueb_svg_gradient_node_inserted_cb,
 			EINA_FALSE, thiz);
-	egueb_dom_event_target_event_listener_add(n,
+	egueb_dom_event_target_event_listener_add(evt,
 			EGUEB_DOM_EVENT_MUTATION_NODE_REMOVED,
 			_egueb_svg_gradient_node_removed_cb,
 			EINA_FALSE, thiz);

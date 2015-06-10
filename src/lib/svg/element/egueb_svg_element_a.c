@@ -70,7 +70,8 @@ static void _egueb_svg_element_a_renderable_click_cb(Egueb_Dom_Event *e,
 		return;
 	}
 	ev = egueb_dom_event_navigation_go_to_new(&uri);
-	egueb_dom_event_target_event_dispatch(EGUEB_DOM_NODE(thiz), ev, NULL, NULL);
+	egueb_dom_event_target_event_dispatch(
+			EGUEB_DOM_EVENT_TARGET_CAST(thiz), ev, NULL, NULL);
 }
 
 static Eina_Bool _egueb_svg_element_a_get_target(Egueb_Dom_Event *e,
@@ -86,7 +87,7 @@ static Eina_Bool _egueb_svg_element_a_get_target(Egueb_Dom_Event *e,
 		return EINA_FALSE;
 	}
 	egueb_dom_node_unref(related);
-	target = egueb_dom_event_target_get(e);
+	target = EGUEB_DOM_NODE(egueb_dom_event_target_get(e));
 	if (!egueb_svg_is_renderable(target))
 	{
 		egueb_dom_node_unref(target);
@@ -104,7 +105,9 @@ static void _egueb_svg_element_a_node_inserted_cb(Egueb_Dom_Event *e,
 
 	if (!_egueb_svg_element_a_get_target(e, n, &target))
 		return;
-	egueb_dom_event_target_event_listener_add(target, EGUEB_DOM_EVENT_MOUSE_CLICK,
+	egueb_dom_event_target_event_listener_add(
+			EGUEB_DOM_EVENT_TARGET_CAST(target),
+			EGUEB_DOM_EVENT_MOUSE_CLICK,
 			_egueb_svg_element_a_renderable_click_cb, EINA_TRUE, n);
 	egueb_dom_node_unref(target);
 }
@@ -117,7 +120,9 @@ static void _egueb_svg_element_a_node_removed_cb(Egueb_Dom_Event *e,
 
 	if (!_egueb_svg_element_a_get_target(e, n, &target))
 		return;
-	egueb_dom_event_target_event_listener_remove(target, EGUEB_DOM_EVENT_MOUSE_CLICK,
+	egueb_dom_event_target_event_listener_remove(
+			EGUEB_DOM_EVENT_TARGET_CAST(target),
+			EGUEB_DOM_EVENT_MOUSE_CLICK,
 			_egueb_svg_element_a_renderable_click_cb, EINA_TRUE, n);
 	egueb_dom_node_unref(target);
 }
@@ -173,6 +178,7 @@ static void _egueb_svg_element_a_instance_init(void *o)
 {
 	Egueb_Svg_Element_A *thiz;
 	Egueb_Dom_Node *n;
+	Egueb_Dom_Event_Target *evt;
 
 	thiz = EGUEB_SVG_ELEMENT_A(o);
 	/* create the properties */
@@ -182,12 +188,14 @@ static void _egueb_svg_element_a_instance_init(void *o)
 
 	n = EGUEB_DOM_NODE(o);
 	egueb_dom_element_attribute_node_set(n, egueb_dom_node_ref(thiz->xlink_href), NULL);
+
+	evt = EGUEB_DOM_EVENT_TARGET_CAST(o);
 	/* whenever a renderable is added/removed, add/remove the click event */
-	egueb_dom_event_target_event_listener_add(EGUEB_DOM_NODE(o),
+	egueb_dom_event_target_event_listener_add(evt,
 			EGUEB_DOM_EVENT_MUTATION_NODE_INSERTED,
 			_egueb_svg_element_a_node_inserted_cb,
 			EINA_TRUE, o);
-	egueb_dom_event_target_event_listener_add(EGUEB_DOM_NODE(o),
+	egueb_dom_event_target_event_listener_add(evt,
 			EGUEB_DOM_EVENT_MUTATION_NODE_REMOVED,
 			_egueb_svg_element_a_node_removed_cb,
 			EINA_TRUE, o);

@@ -172,8 +172,9 @@ static void _egueb_smil_animation_event_cb(void *item, void *user_data)
 		egueb_dom_node_weak_ref_add(ref, &h->ref);
 		data->events = eina_list_append(data->events, h);
 
-		h->l = egueb_dom_event_target_event_listener_add(ref, t->event, data->listener,
-			EINA_FALSE, h);
+		h->l = egueb_dom_event_target_event_listener_add(
+				EGUEB_DOM_EVENT_TARGET_CAST(ref), t->event, data->listener,
+				EINA_FALSE, h);
 		egueb_dom_node_unref(ref);
 	}
 	else
@@ -516,11 +517,11 @@ static Eina_Bool _egueb_smil_animation_process(Egueb_Dom_Element *e)
 	if (!thiz->timeline)
 	{
 		Egueb_Dom_Event *request;
-		Egueb_Dom_Node *n;
 
 		request = egueb_smil_event_timeline_new();
-		n = EGUEB_DOM_NODE(e);
-		egueb_dom_event_target_event_dispatch(n, egueb_dom_event_ref(request), NULL, NULL);
+		egueb_dom_event_target_event_dispatch(
+				EGUEB_DOM_EVENT_TARGET_CAST(e),
+				egueb_dom_event_ref(request), NULL, NULL);
 
 		thiz->timeline = egueb_smil_event_timeline_get(request);
 		if (!thiz->timeline)
@@ -596,13 +597,14 @@ static void _egueb_smil_animation_instance_init(void *o)
 {
 	Egueb_Smil_Animation *thiz;
 	Egueb_Dom_Node *n;
+	Egueb_Dom_Event_Target *evt;
 
 	/* add a callback whenever the node has been removed from another */
-	n = EGUEB_DOM_NODE(o);
-	egueb_dom_event_target_event_listener_add(n,
+	evt = EGUEB_DOM_EVENT_TARGET_CAST(o);
+	egueb_dom_event_target_event_listener_add(evt,
 			EGUEB_DOM_EVENT_MUTATION_NODE_REMOVED,
 			_egueb_smil_animation_removed_cb,
-			EINA_FALSE, n);
+			EINA_FALSE, o);
 
 	thiz = EGUEB_SMIL_ANIMATION(o);
 	thiz->attribute_name = egueb_dom_attr_string_new(
@@ -627,6 +629,7 @@ static void _egueb_smil_animation_instance_init(void *o)
 	thiz->repeat_dur = egueb_smil_attr_duration_new(
 			egueb_dom_string_ref(EGUEB_SMIL_NAME_REPEAT_DUR), NULL);
 
+	n = EGUEB_DOM_NODE(o);
 	egueb_dom_element_attribute_node_set(n, egueb_dom_node_ref(thiz->attribute_name), NULL);
 	egueb_dom_element_attribute_node_set(n, egueb_dom_node_ref(thiz->fill), NULL);
 	egueb_dom_element_attribute_node_set(n, egueb_dom_node_ref(thiz->dur), NULL);

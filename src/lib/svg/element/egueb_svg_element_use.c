@@ -286,6 +286,7 @@ static void _egueb_svg_element_use_instance_init(void *o)
 {
 	Egueb_Svg_Element_Use *thiz;
 	Egueb_Dom_Node *n;
+	Egueb_Dom_Event_Target *evt;
 
 	thiz = EGUEB_SVG_ELEMENT_USE(o);
 
@@ -293,8 +294,9 @@ static void _egueb_svg_element_use_instance_init(void *o)
 	/* set the relativeness of the node */
 	egueb_svg_element_geometry_relative_set(thiz->g, EGUEB_DOM_NODE(o), NULL);
 	egueb_svg_element_presentation_relative_set(thiz->g, EGUEB_DOM_NODE(o), NULL);
-	/* add the events that we need to propagate upstream */ 
-	egueb_dom_event_target_monitor_add(thiz->g,
+
+	/* add the events that we need to propagate upstream */
+	egueb_dom_event_target_monitor_add(EGUEB_DOM_EVENT_TARGET_CAST(thiz->g),
 			_egueb_dom_element_use_g_node_monitor_cb, thiz);
 
 	/* create the properties */
@@ -328,11 +330,12 @@ static void _egueb_svg_element_use_instance_init(void *o)
 	/* whenever the use element is inserted into a document, be sure
 	 * to set the document on our g too
 	 */
-	egueb_dom_event_target_event_listener_add(n,
+	evt = EGUEB_DOM_EVENT_TARGET_CAST(o);
+	egueb_dom_event_target_event_listener_add(evt,
 			EGUEB_DOM_EVENT_MUTATION_NODE_INSERTED_INTO_DOCUMENT,
 			_egueb_dom_element_use_insterted_into_document_cb,
 			EINA_TRUE, thiz);
-	egueb_dom_event_target_event_listener_add(n,
+	egueb_dom_event_target_event_listener_add(evt,
 			EGUEB_DOM_EVENT_MUTATION_NODE_REMOVED_FROM_DOCUMENT,
 			_egueb_dom_element_use_removed_from_document_cb,
 			EINA_TRUE, thiz);

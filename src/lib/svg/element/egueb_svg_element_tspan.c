@@ -76,7 +76,7 @@ static Eina_Bool _egueb_svg_element_tspan_mutation_get_tspan(Egueb_Dom_Event *e,
 		goto not_us;
 	}
 
-	target = egueb_dom_event_target_get(e);
+	target = EGUEB_DOM_NODE(egueb_dom_event_target_get(e));
 	type = egueb_dom_node_type_get(target);
 	if (type != EGUEB_DOM_NODE_TYPE_TEXT)
 	{
@@ -325,6 +325,7 @@ static void _egueb_svg_element_tspan_instance_init(void *o)
 	Egueb_Svg_Length *zero;
 	Egueb_Dom_Node *n;
 	Egueb_Dom_List *def;
+	Egueb_Dom_Event_Target *evt;
 	Enesim_Renderer *r;
 
 	thiz = EGUEB_SVG_ELEMENT_TSPAN(o);
@@ -366,11 +367,12 @@ static void _egueb_svg_element_tspan_instance_init(void *o)
 	egueb_dom_element_attribute_node_set(n, egueb_dom_node_ref(thiz->dy), NULL);
 
 	/* add the events */
-	egueb_dom_event_target_event_listener_add(n,
+	evt = EGUEB_DOM_EVENT_TARGET_CAST(o);
+	egueb_dom_event_target_event_listener_add(evt,
 			EGUEB_DOM_EVENT_MUTATION_NODE_INSERTED,
 			_egueb_svg_element_tspan_node_inserted_cb,
 			EINA_TRUE, thiz);
-	egueb_dom_event_target_event_listener_add(n,
+	egueb_dom_event_target_event_listener_add(evt,
 			EGUEB_DOM_EVENT_MUTATION_NODE_REMOVED,
 			_egueb_svg_element_tspan_node_removed_cb,
 			EINA_TRUE, thiz);

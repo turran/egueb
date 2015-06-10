@@ -75,7 +75,7 @@ static void _egueb_svg_reference_pattern_event_request_painter_cb(Egueb_Dom_Even
 	Egueb_Svg_Painter *painter;
 	Egueb_Dom_Node *n;
 
-	n = egueb_dom_event_target_get(e);
+	n = EGUEB_DOM_NODE(egueb_dom_event_target_get(e));
 	painter = egueb_svg_renderable_class_painter_get(n);
 	DBG_ELEMENT(n, "Setting the generic painter on the renderable %p", painter);
 	egueb_svg_event_request_painter_painter_set(e, painter);
@@ -296,12 +296,14 @@ static void _egueb_svg_reference_pattern_instance_init(void *o)
 	egueb_svg_renderable_painter_set(thiz->g, painter);
 
 	/* Monitor the events that we need to propagate upstream */
-	egueb_dom_event_target_monitor_add(thiz->g,
+	egueb_dom_event_target_monitor_add(
+			EGUEB_DOM_EVENT_TARGET_CAST(thiz->g),
 			_egueb_svg_reference_pattern_event_monitor_cb, thiz);
 	/* Whenever a child element requests a painter, make sure to set the
 	 * default one
 	 */
-	egueb_dom_event_target_event_listener_add(thiz->g,
+	egueb_dom_event_target_event_listener_add(
+			EGUEB_DOM_EVENT_TARGET_CAST(thiz->g),
 			EGUEB_SVG_EVENT_REQUEST_PAINTER,
 			_egueb_svg_reference_pattern_event_request_painter_cb,
 			EINA_FALSE, NULL);
@@ -321,7 +323,8 @@ static void _egueb_svg_reference_pattern_instance_deinit(void *o)
 	Egueb_Svg_Reference_Pattern *thiz;
 
 	thiz = EGUEB_SVG_REFERENCE_PATTERN(o);
-	egueb_dom_event_target_monitor_remove(thiz->g,
+	egueb_dom_event_target_monitor_remove(
+			EGUEB_DOM_EVENT_TARGET_CAST(thiz->g),
 			_egueb_svg_reference_pattern_event_monitor_cb, thiz);
 	egueb_dom_node_unref(thiz->g);
 	enesim_renderer_unref(thiz->r);

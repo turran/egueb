@@ -83,6 +83,7 @@ typedef struct _Egueb_Dom_Node_Class
 		(ENESIM_OBJECT_INSTANCE(o))->klass)
 #define EGUEB_DOM_NODE_CLASS(k) ENESIM_OBJECT_CLASS_CHECK(k,			\
 		Egueb_Dom_Node_Class, EGUEB_DOM_NODE_DESCRIPTOR)
+#define EGUEB_DOM_NODE_CAST(o) ((Egueb_Dom_Node*)o)
 
 void egueb_dom_node_document_set(Egueb_Dom_Node *thiz,
 		Egueb_Dom_Node *document, Eina_Bool send_event);

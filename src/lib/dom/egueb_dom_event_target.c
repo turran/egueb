@@ -189,7 +189,6 @@ EAPI Eina_Bool egueb_dom_event_target_event_dispatch(Egueb_Dom_Event_Target *thi
 		Eina_Error *err)
 {
 	Egueb_Dom_Event_Target_Class *klass;
-	Egueb_Dom_Event_Target_Listener_Container *container;
 	Egueb_Dom_Event_Target_Listener *nl;
 	Eina_List *l;
 	Eina_Bool ret = EINA_TRUE;
@@ -213,14 +212,8 @@ EAPI Eina_Bool egueb_dom_event_target_event_dispatch(Egueb_Dom_Event_Target *thi
 		return EINA_FALSE;
 	}
 
-	container = eina_hash_find(thiz->events,
-		egueb_dom_string_string_get(event->type));
-	if (!container || !container->listeners)
-		goto monitors;
-
 	ret = klass->dispatch(thiz, event, notprevented, err);
 
-monitors:
 	/* now the monitors */
 	if (thiz->monitors)
 	{
@@ -238,6 +231,9 @@ monitors:
 			}
 		}
 	}
+
+	egueb_dom_event_unref(event);
+
 	return ret;
 }
 

@@ -141,7 +141,8 @@ static Eina_Bool _egueb_svg_element_image_svg_load(Egueb_Dom_Node *n,
 	thiz->g = egueb_svg_element_g_new();
 	thiz->g = egueb_dom_document_node_adopt(doc, thiz->g, NULL);
 	/* add the events that we need to propagate upstream */ 
-	egueb_dom_event_target_monitor_add(thiz->g,
+	egueb_dom_event_target_monitor_add(
+			EGUEB_DOM_EVENT_TARGET_CAST(thiz->g),
 			_egueb_dom_element_image_g_node_monitor_cb, thiz);
 	topmost = egueb_dom_document_node_adopt(doc, topmost, NULL);
 	/* add the svg topmost element on the g element */
@@ -216,7 +217,8 @@ static void _egueb_svg_element_image_data_cb(Egueb_Dom_Node *n,
 		Egueb_Dom_Event *e;
 
 		e = egueb_dom_event_io_image_new(data, _egueb_svg_element_image_image_cb);
-		egueb_dom_event_target_event_dispatch(EGUEB_DOM_NODE(thiz), e, NULL, NULL);
+		egueb_dom_event_target_event_dispatch(
+				EGUEB_DOM_EVENT_TARGET_CAST(thiz), e, NULL, NULL);
 	}
 	egueb_dom_node_unref(doc);
 done:
@@ -263,7 +265,8 @@ static Eina_Bool _egueb_svg_element_image_uri_load(Egueb_Svg_Element_Image *thiz
 		data = enesim_stream_base64_new(base64);
 
 		e = egueb_dom_event_io_image_new(data, _egueb_svg_element_image_image_cb);
-		egueb_dom_event_target_event_dispatch(EGUEB_DOM_NODE(thiz), e, NULL, NULL);
+		egueb_dom_event_target_event_dispatch(
+				EGUEB_DOM_EVENT_TARGET_CAST(thiz), e, NULL, NULL);
 		enesim_stream_unref(data);
 	}
 	/* otherwise, let the document get the data and call our own callback */
@@ -280,7 +283,8 @@ static Eina_Bool _egueb_svg_element_image_uri_load(Egueb_Svg_Element_Image *thiz
 		}
 
 		e = egueb_dom_event_io_data_new(&u, _egueb_svg_element_image_data_cb);
-		egueb_dom_event_target_event_dispatch(EGUEB_DOM_NODE(thiz), e, NULL, NULL);
+		egueb_dom_event_target_event_dispatch(
+				EGUEB_DOM_EVENT_TARGET_CAST(thiz), e, NULL, NULL);
 		egueb_dom_uri_cleanup(&u);
 	}
 	return EINA_TRUE;

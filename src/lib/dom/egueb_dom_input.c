@@ -214,7 +214,8 @@ EAPI void egueb_dom_input_feed_mouse_down(Egueb_Dom_Input *thiz, int button)
 	egueb_dom_event_mouse_down_init(ev, thiz->x, thiz->y, thiz->x, thiz->y,
 			EINA_FALSE, EINA_FALSE, EINA_FALSE,
 			EINA_FALSE, button, 0);
-	egueb_dom_event_target_event_dispatch(thiz->grabbed, ev, NULL, NULL);
+	egueb_dom_event_target_event_dispatch(
+			EGUEB_DOM_EVENT_TARGET_CAST(thiz->grabbed), ev, NULL, NULL);
 }
 
 EAPI void egueb_dom_input_feed_mouse_up(Egueb_Dom_Input *thiz, int button)
@@ -229,7 +230,8 @@ EAPI void egueb_dom_input_feed_mouse_up(Egueb_Dom_Input *thiz, int button)
 	egueb_dom_event_mouse_up_init(ev, thiz->x, thiz->y, thiz->x, thiz->y,
 			EINA_FALSE, EINA_FALSE, EINA_FALSE,
 			EINA_FALSE, button, 0);
-	egueb_dom_event_target_event_dispatch(thiz->grabbed, ev, NULL, NULL);
+	egueb_dom_event_target_event_dispatch(
+			EGUEB_DOM_EVENT_TARGET_CAST(thiz->grabbed), ev, NULL, NULL);
 	/* in case the down coordinates are the same as the current coordinates
 	 * send a click event
 	 */
@@ -241,7 +243,8 @@ EAPI void egueb_dom_input_feed_mouse_up(Egueb_Dom_Input *thiz, int button)
 		egueb_dom_event_mouse_click_init(ev, thiz->x, thiz->y, thiz->x, thiz->y,
 				EINA_FALSE, EINA_FALSE, EINA_FALSE,
 				EINA_FALSE, 0, 0);
-		egueb_dom_event_target_event_dispatch(thiz->grabbed, ev, NULL, NULL);
+		egueb_dom_event_target_event_dispatch(
+				EGUEB_DOM_EVENT_TARGET_CAST(thiz->grabbed), ev, NULL, NULL);
 	}
 	egueb_dom_node_unref(thiz->grabbed);
 	thiz->grabbed = NULL;
@@ -308,7 +311,8 @@ EAPI void egueb_dom_input_feed_mouse_move(Egueb_Dom_Input *thiz, int x, int y)
 			egueb_dom_event_mouse_move_init(ev, x, y, x, y,
 					EINA_FALSE, EINA_FALSE, EINA_FALSE,
 					EINA_FALSE, 0, 0);
-			egueb_dom_event_target_event_dispatch(n, ev, NULL, NULL);
+			egueb_dom_event_target_event_dispatch(
+					EGUEB_DOM_EVENT_TARGET_CAST(n), ev, NULL, NULL);
 		}
 	}
 	else
@@ -324,7 +328,8 @@ EAPI void egueb_dom_input_feed_mouse_move(Egueb_Dom_Input *thiz, int x, int y)
 			egueb_dom_event_mouse_out_init(ev, x, y, x, y,
 					EINA_FALSE, EINA_FALSE, EINA_FALSE,
 					EINA_FALSE, 0, 0, n ? egueb_dom_node_ref(n) : NULL);
-			egueb_dom_event_target_event_dispatch(thiz->over, ev, NULL, NULL);
+			egueb_dom_event_target_event_dispatch(
+					EGUEB_DOM_EVENT_TARGET_CAST(thiz->over), ev, NULL, NULL);
 			DBG("Out");
 		}
 		/* send in event on r */
@@ -336,7 +341,8 @@ EAPI void egueb_dom_input_feed_mouse_move(Egueb_Dom_Input *thiz, int x, int y)
 			egueb_dom_event_mouse_over_init(ev, x, y, x, y,
 					EINA_FALSE, EINA_FALSE, EINA_FALSE,
 					EINA_FALSE, 0, 0, thiz->over ? egueb_dom_node_ref(thiz->over) : NULL);
-			egueb_dom_event_target_event_dispatch(n, ev, NULL, NULL);
+			egueb_dom_event_target_event_dispatch(
+					EGUEB_DOM_EVENT_TARGET_CAST(n), ev, NULL, NULL);
 			DBG("Over");
 		}
 	}
@@ -382,7 +388,9 @@ EAPI void egueb_dom_input_feed_key_down(Egueb_Dom_Input *thiz,
 
 					DBG("Focus out");
 					ev = egueb_dom_event_focus_out_new();
-					egueb_dom_event_target_event_dispatch(thiz->focused, ev, NULL, NULL);
+					egueb_dom_event_target_event_dispatch(
+							EGUEB_DOM_EVENT_TARGET_CAST(thiz->focused),
+							ev, NULL, NULL);
 					egueb_dom_node_unref(thiz->focused);
 				}
 				thiz->focused = n;
@@ -392,7 +400,9 @@ EAPI void egueb_dom_input_feed_key_down(Egueb_Dom_Input *thiz,
 
 					DBG("Focus in");
 					ev = egueb_dom_event_focus_in_new();
-					egueb_dom_event_target_event_dispatch(thiz->focused, ev, NULL, NULL);
+					egueb_dom_event_target_event_dispatch(
+							EGUEB_DOM_EVENT_TARGET_CAST(thiz->focused),
+							ev, NULL, NULL);
 				}
 			}
 		}
@@ -414,7 +424,8 @@ EAPI void egueb_dom_input_feed_key_down(Egueb_Dom_Input *thiz,
 	DBG("Key down");
 	ev = egueb_dom_event_key_down_new(egueb_dom_string_ref(key), EGUEB_DOM_KEY_LOCATION_STANDARD,
 		thiz->alt_key, thiz->ctrl_key, thiz->shift_key, thiz->meta_key);
-	egueb_dom_event_target_event_dispatch(thiz->focused, ev, NULL, NULL);
+	egueb_dom_event_target_event_dispatch(
+			EGUEB_DOM_EVENT_TARGET_CAST(thiz->focused), ev, NULL, NULL);
 	/* check for the activation */
 	if (!strcmp(s, "Enter") || !strcmp(s, "Return"))
 	{
@@ -425,7 +436,8 @@ EAPI void egueb_dom_input_feed_key_down(Egueb_Dom_Input *thiz,
 		egueb_dom_event_mouse_click_init(ev, thiz->x, thiz->y, thiz->x, thiz->y,
 				EINA_FALSE, EINA_FALSE, EINA_FALSE,
 				EINA_FALSE, 0, 0);
-		egueb_dom_event_target_event_dispatch(thiz->focused, ev, NULL, NULL);
+		egueb_dom_event_target_event_dispatch(
+				EGUEB_DOM_EVENT_TARGET_CAST(thiz->focused), ev, NULL, NULL);
 	}
 	egueb_dom_string_unref(key);
 }
@@ -458,5 +470,6 @@ EAPI void egueb_dom_input_feed_key_up(Egueb_Dom_Input *thiz,
 	}
 	ev = egueb_dom_event_key_up_new(key, EGUEB_DOM_KEY_LOCATION_STANDARD,
 		thiz->alt_key, thiz->ctrl_key, thiz->shift_key, thiz->meta_key);
-	egueb_dom_event_target_event_dispatch(thiz->focused, ev, NULL, NULL);
+	egueb_dom_event_target_event_dispatch(
+			EGUEB_DOM_EVENT_TARGET_CAST(thiz->focused), ev, NULL, NULL);
 }

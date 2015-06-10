@@ -97,7 +97,7 @@ static void _egueb_svg_element_clip_path_request_process_cb(
 	Egueb_Dom_Node *target = NULL;
 
 	/* if the element that requests is ourselves, just return */
-	target = egueb_dom_event_target_get(e);
+	target = EGUEB_DOM_NODE(egueb_dom_event_target_get(e));
 	if (target == EGUEB_DOM_NODE(thiz))
 		goto done;
 	
@@ -162,7 +162,7 @@ static void _egueb_svg_element_clip_path_node_inserted_cb(Egueb_Dom_Event *e,
 	}
 
 	/* in case the node is a clipable element, clone it */
-	child = egueb_dom_event_target_get(e);
+	child = EGUEB_DOM_NODE(egueb_dom_event_target_get(e));
 	if (egueb_svg_element_clip_path_node_is_clonable(child))
 	{
 		ERR("We still need to create live nodes");
@@ -196,7 +196,7 @@ static void _egueb_svg_element_clip_path_node_removed_cb(Egueb_Dom_Event *e,
 	}
 
 	/* in case the node is a clipable element, clone it */
-	child = egueb_dom_event_target_get(e);
+	child = EGUEB_DOM_NODE(egueb_dom_event_target_get(e));
 	if (egueb_svg_element_clip_path_node_is_clonable(child))
 	{
 		ERR("We still need to remove live nodes");
@@ -277,6 +277,7 @@ static void _egueb_svg_element_clip_path_instance_init(void *o)
 {
 	Egueb_Svg_Element_Clip_Path *thiz;
 	Egueb_Dom_Node *n;
+	Egueb_Dom_Event_Target *evt;
 
 	thiz = EGUEB_SVG_ELEMENT_CLIP_PATH(o);
 	/* create the properties */
@@ -287,16 +288,18 @@ static void _egueb_svg_element_clip_path_instance_init(void *o)
 
 	n = EGUEB_DOM_NODE(o);
 	egueb_dom_element_attribute_node_set(n, egueb_dom_node_ref(thiz->units), NULL);
+
 	/* add the required event handlers */
-	egueb_dom_event_target_event_listener_add(EGUEB_DOM_NODE(o),
+	evt = EGUEB_DOM_EVENT_TARGET_CAST(o);
+	egueb_dom_event_target_event_listener_add(evt,
 			EGUEB_DOM_EVENT_MUTATION_NODE_INSERTED,
 			_egueb_svg_element_clip_path_node_inserted_cb,
 			EINA_FALSE, thiz);
-	egueb_dom_event_target_event_listener_add(EGUEB_DOM_NODE(o),
+	egueb_dom_event_target_event_listener_add(evt,
 			EGUEB_DOM_EVENT_MUTATION_NODE_REMOVED,
 			_egueb_svg_element_clip_path_node_removed_cb,
 			EINA_FALSE, thiz);
-	egueb_dom_event_target_event_listener_add(EGUEB_DOM_NODE(o),
+	egueb_dom_event_target_event_listener_add(evt,
 			EGUEB_DOM_EVENT_PROCESS,
 			_egueb_svg_element_clip_path_request_process_cb,
 			EINA_FALSE, thiz);

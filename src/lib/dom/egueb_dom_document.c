@@ -44,6 +44,9 @@
 static void _egueb_dom_document_insert_id(Egueb_Dom_Document *thiz, Egueb_Dom_Node *n,
 		Egueb_Dom_String *id)
 {
+	Egueb_Dom_Event_Target *evt;
+
+	evt = EGUEB_DOM_EVENT_TARGET_CAST(n);
 	/* FIXME to avoid finding the node, we need to know the old
 	 * id, and for that we need to copy the previous data
 	 * which is maybe slower than this? we need to test
@@ -54,7 +57,7 @@ static void _egueb_dom_document_insert_id(Egueb_Dom_Document *thiz, Egueb_Dom_No
 
 		DBG("Previous id found, removing the node");
 		ev = egueb_dom_event_document_id_removed_new(egueb_dom_node_ref(n));
-		egueb_dom_event_target_event_dispatch(EGUEB_DOM_NODE(thiz), ev, NULL, NULL);
+		egueb_dom_event_target_event_dispatch(evt, ev, NULL, NULL);
 	}
 
 	if (egueb_dom_string_is_valid(id) && thiz->ids)
@@ -74,7 +77,7 @@ static void _egueb_dom_document_insert_id(Egueb_Dom_Document *thiz, Egueb_Dom_No
 		INFO("Adding id '%s' to the list of ids", str);
 		eina_hash_add(thiz->ids, str, egueb_dom_node_ref(n));
 		ev = egueb_dom_event_document_id_inserted_new(egueb_dom_node_ref(n));
-		egueb_dom_event_target_event_dispatch(EGUEB_DOM_NODE(thiz), ev, NULL, NULL);
+		egueb_dom_event_target_event_dispatch(evt, ev, NULL, NULL);
 	}
 	egueb_dom_string_unref(id);
 }
@@ -85,7 +88,7 @@ static void _egueb_dom_document_character_data_modified_cb(Egueb_Dom_Event *ev,
 	Egueb_Dom_Node *target;
 
 	DBG("Character data modified");
-	target = egueb_dom_event_target_get(ev);
+	target = EGUEB_DOM_NODE(egueb_dom_event_target_get(ev));
 	if (!egueb_dom_event_mutation_is_process_prevented(ev))
 	{
 		Egueb_Dom_Node *parent;
@@ -110,7 +113,7 @@ static void _egueb_dom_document_attr_modified_cb(Egueb_Dom_Event *ev,
 	Egueb_Dom_String *attr_name = NULL;
 
 	DBG("Node attr modified");
-	target = egueb_dom_event_target_get(ev);
+	target = EGUEB_DOM_NODE(egueb_dom_event_target_get(ev));
 
 	/* check if the attribute is the id */
 	egueb_dom_event_mutation_attr_name_get(ev, &attr_name);
@@ -143,7 +146,7 @@ static void _egueb_dom_document_node_inserted_cb(Egueb_Dom_Event *ev,
 	Egueb_Dom_Node_Type type;
 	Egueb_Dom_String *name;
 
-	target = egueb_dom_event_target_get(ev);
+	target = EGUEB_DOM_NODE(egueb_dom_event_target_get(ev));
 	type = egueb_dom_node_type_get(target);
 	if (type != EGUEB_DOM_NODE_TYPE_ELEMENT)
 	{
@@ -174,7 +177,7 @@ static void _egueb_dom_document_node_removed_cb(Egueb_Dom_Event *ev,
 	Egueb_Dom_Node_Type type;
 	Egueb_Dom_String *name;
 
-	target = egueb_dom_event_target_get(ev);
+	target = EGUEB_DOM_NODE(egueb_dom_event_target_get(ev));
 	type = egueb_dom_node_type_get(target);
 	if (type != EGUEB_DOM_NODE_TYPE_ELEMENT)
 	{
@@ -200,7 +203,7 @@ static void _egueb_dom_document_node_insterted_into_document_cb(
 	Egueb_Dom_String id_attr = EGUEB_DOM_STRING_STATIC("id");
 	Egueb_Dom_String *name;
 
-	target = egueb_dom_event_target_get(ev);
+	target = EGUEB_DOM_NODE(egueb_dom_event_target_get(ev));
 	name = egueb_dom_node_name_get(target);
 	INFO("Node '%s' inserted into the document", egueb_dom_string_string_get(name));
 	egueb_dom_string_unref(name);
@@ -228,7 +231,7 @@ static void _egueb_dom_document_node_removed_from_document_cb(
 	Egueb_Dom_String id_attr = EGUEB_DOM_STRING_STATIC("id");
 	Egueb_Dom_String *name;
 
-	target = egueb_dom_event_target_get(ev);
+	target = EGUEB_DOM_NODE(egueb_dom_event_target_get(ev));
 	name = egueb_dom_node_name_get(target);
 	INFO("Node '%s' removed from the document", egueb_dom_string_string_get(name));
 	egueb_dom_string_unref(name);
@@ -259,7 +262,7 @@ static void _egueb_dom_document_request_process_cb(
 	Egueb_Dom_Node *target;
 
 	DBG("Requesting process");
-	target = egueb_dom_event_target_get(ev);
+	target = EGUEB_DOM_NODE(egueb_dom_event_target_get(ev));
 	/* Add it to the list in case it is not already there */
 	egueb_dom_element_enqueue(target);
 }

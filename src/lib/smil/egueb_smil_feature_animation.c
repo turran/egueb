@@ -72,13 +72,14 @@ static void _egueb_smil_feature_animation_insterted_into_document_cb(
 	Egueb_Smil_Feature_Animation *thiz = EGUEB_SMIL_FEATURE_ANIMATION(data);
 	Egueb_Dom_Node *animation;
 
-	animation = egueb_dom_event_target_get(ev);
+	animation = EGUEB_DOM_NODE(egueb_dom_event_target_get(ev));
 	if (!egueb_smil_is_animation(animation))
 	{
 		egueb_dom_node_unref(animation);
 		return;
 	}
-	egueb_dom_event_target_event_listener_add(animation,
+	egueb_dom_event_target_event_listener_add(
+			EGUEB_DOM_EVENT_TARGET_CAST(animation),
 			EGUEB_DOM_EVENT_MUTATION_ATTR_MODIFIED,
 			_egueb_smil_feature_animation_changed_cb,
 			EINA_TRUE, thiz);
@@ -92,13 +93,14 @@ static void _egueb_smil_feature_animation_removed_from_document_cb(
 	Egueb_Smil_Feature_Animation *thiz = EGUEB_SMIL_FEATURE_ANIMATION(data);
 	Egueb_Dom_Node *animation;
 
-	animation = egueb_dom_event_target_get(ev);
+	animation = EGUEB_DOM_NODE(egueb_dom_event_target_get(ev));
 	if (!egueb_smil_is_animation(animation))
 	{
 		egueb_dom_node_unref(animation);
 		return;
 	}
-	egueb_dom_event_target_event_listener_remove(animation,
+	egueb_dom_event_target_event_listener_remove(
+			EGUEB_DOM_EVENT_TARGET_CAST(animation),
 			EGUEB_DOM_EVENT_MUTATION_ATTR_MODIFIED,
 			_egueb_smil_feature_animation_changed_cb,
 			EINA_TRUE, thiz);
@@ -263,6 +265,7 @@ EAPI Eina_Bool egueb_smil_feature_animation_add(Egueb_Dom_Node *n,
 		const Egueb_Smil_Feature_Animation_Descriptor *descriptor)
 {
 	Egueb_Smil_Feature_Animation *thiz;
+	Egueb_Dom_Event_Target *evt;
 
 	if (!n) return EINA_FALSE;
 
@@ -271,16 +274,17 @@ EAPI Eina_Bool egueb_smil_feature_animation_add(Egueb_Dom_Node *n,
 	egueb_dom_node_weak_ref_add(n, &thiz->n);
 
 	/* add the events needed to calculate the duration */
-	egueb_dom_event_target_event_listener_add(n,
+	evt = EGUEB_DOM_EVENT_TARGET_CAST(n);
+	egueb_dom_event_target_event_listener_add(evt,
 			EGUEB_DOM_EVENT_MUTATION_NODE_INSERTED_INTO_DOCUMENT,
 			_egueb_smil_feature_animation_insterted_into_document_cb,
 			EINA_TRUE, thiz);
-	egueb_dom_event_target_event_listener_add(n,
+	egueb_dom_event_target_event_listener_add(evt,
 			EGUEB_DOM_EVENT_MUTATION_NODE_REMOVED_FROM_DOCUMENT,
 			_egueb_smil_feature_animation_removed_from_document_cb,
 			EINA_TRUE, thiz);
 	/* add the event to set the timeline */
-	egueb_dom_event_target_event_listener_add(n,
+	egueb_dom_event_target_event_listener_add(evt,
 			EGUEB_SMIL_EVENT_TIMELINE,
 			_egueb_smil_feature_animation_timeline_cb,
 			EINA_TRUE, thiz);

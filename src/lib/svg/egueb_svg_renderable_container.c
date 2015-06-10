@@ -34,7 +34,7 @@ static void _egueb_svg_renderable_container_request_painter_cb(Egueb_Dom_Event *
 	Egueb_Dom_Node *n;
 	Egueb_Svg_Painter *painter;
 
-	n = egueb_dom_event_target_get(e);
+	n = EGUEB_DOM_NODE(egueb_dom_event_target_get(e));
 	DBG_ELEMENT(n, "Setting the generic painter on the renderable");
 	painter = egueb_svg_renderable_class_painter_get(n);
 	egueb_svg_event_request_painter_painter_set(e, painter);
@@ -94,7 +94,7 @@ static void _egueb_svg_renderable_container_tree_modified_cb(Egueb_Dom_Event *e,
 	egueb_dom_node_unref(related);
 
 	/* get the target and check if it is of type renderable */
-	target = egueb_dom_event_target_get(e);
+	target = EGUEB_DOM_NODE(egueb_dom_event_target_get(e));
 	if (!target) return;
 
 	if (enesim_object_instance_inherits(ENESIM_OBJECT_INSTANCE(target),
@@ -125,7 +125,7 @@ static void _egueb_svg_renderable_container_class_init(void *k)
 static void _egueb_svg_renderable_container_instance_init(void *o)
 {
 	Egueb_Svg_Renderable_Container *thiz;
-	Egueb_Dom_Node *n;
+	Egueb_Dom_Event_Target *evt;
 	Enesim_Renderer *r;
 
 	thiz = EGUEB_SVG_RENDERABLE_CONTAINER(o);
@@ -136,17 +136,17 @@ static void _egueb_svg_renderable_container_instance_init(void *o)
 	enesim_renderer_compound_background_color_set(r, 0x00000000);
 	thiz->compound = r;
 
-	n = EGUEB_DOM_NODE(o);
+	evt = EGUEB_DOM_EVENT_TARGET_CAST(o);
 	/* our event listeners */
-	egueb_dom_event_target_event_listener_add(n,
+	egueb_dom_event_target_event_listener_add(evt,
 			EGUEB_DOM_EVENT_MUTATION_NODE_INSERTED,
 			_egueb_svg_renderable_container_tree_modified_cb,
 			EINA_FALSE, thiz);
-	egueb_dom_event_target_event_listener_add(n,
+	egueb_dom_event_target_event_listener_add(evt,
 			EGUEB_DOM_EVENT_MUTATION_NODE_REMOVED,
 			_egueb_svg_renderable_container_tree_modified_cb,
 			EINA_FALSE, thiz);
-	egueb_dom_event_target_event_listener_add(n,
+	egueb_dom_event_target_event_listener_add(evt,
 			EGUEB_SVG_EVENT_REQUEST_PAINTER,
 			_egueb_svg_renderable_container_request_painter_cb,
 			EINA_FALSE, NULL);

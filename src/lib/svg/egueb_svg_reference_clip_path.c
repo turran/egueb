@@ -93,7 +93,7 @@ static void _egueb_svg_reference_clip_path_event_request_painter_cb(Egueb_Dom_Ev
 	Egueb_Svg_Painter *painter;
 	Egueb_Dom_Node *n;
 
-	n = egueb_dom_event_target_get(e);
+	n = EGUEB_DOM_NODE(egueb_dom_event_target_get(e));
 	DBG_ELEMENT(n, "Setting the clip path painter on the renderable");
 	painter = egueb_svg_painter_clip_path_new(EGUEB_SVG_REFERENCE(thiz));
 	egueb_svg_event_request_painter_painter_set(e, painter);
@@ -214,12 +214,14 @@ static void _egueb_svg_reference_clip_path_instance_init(void *o)
 
 	thiz = EGUEB_SVG_REFERENCE_CLIP_PATH(o);
 	thiz->g = egueb_svg_element_g_new();
-	egueb_dom_event_target_event_listener_add(thiz->g,
+	egueb_dom_event_target_event_listener_add(
+			EGUEB_DOM_EVENT_TARGET_CAST(thiz->g),
 			EGUEB_SVG_EVENT_REQUEST_PAINTER,
 			_egueb_svg_reference_clip_path_event_request_painter_cb,
 			EINA_FALSE, thiz);
 	/* add the events that we need to propagate upstream */ 
-	egueb_dom_event_target_monitor_add(thiz->g,
+	egueb_dom_event_target_monitor_add(
+			EGUEB_DOM_EVENT_TARGET_CAST(thiz->g),
 			_egueb_dom_reference_clip_path_monitor_cb, thiz);
 }
 

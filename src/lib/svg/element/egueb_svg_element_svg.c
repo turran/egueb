@@ -132,7 +132,7 @@ static void _egueb_svg_element_svg_node_inserted_cb(Egueb_Dom_Event *e,
 
 	if (egueb_dom_event_phase_get(e) == EGUEB_DOM_EVENT_PHASE_AT_TARGET)
 		return;
-	target = egueb_dom_event_target_get(e);
+	target = EGUEB_DOM_NODE(egueb_dom_event_target_get(e));
 	if (egueb_svg_element_is_svg(target))
 		thiz->svgs = eina_list_append(thiz->svgs, egueb_dom_node_ref(target));
 	egueb_dom_node_unref(target);
@@ -146,7 +146,7 @@ static void _egueb_svg_element_svg_node_removed_cb(Egueb_Dom_Event *e,
 
 	if (egueb_dom_event_phase_get(e) == EGUEB_DOM_EVENT_PHASE_AT_TARGET)
 		return;
-	target = egueb_dom_event_target_get(e);
+	target = EGUEB_DOM_NODE(egueb_dom_event_target_get(e));
 	if (egueb_svg_element_is_svg(target))
 		thiz->svgs = eina_list_remove(thiz->svgs, egueb_dom_node_ref(target));
 	egueb_dom_node_unref(target);
@@ -795,6 +795,7 @@ static void _egueb_svg_element_svg_instance_init(void *o)
 {
 	Egueb_Svg_Element_Svg *thiz;
 	Egueb_Dom_Node *n;
+	Egueb_Dom_Event_Target *evt;
 	Enesim_Renderer *r;
 	Enesim_Renderer *compound;
 
@@ -867,11 +868,12 @@ static void _egueb_svg_element_svg_instance_init(void *o)
 
 	/* TODO keep track of the svg's inserted */
 	/* whenever a renderable is added/removed, add/remove the click event */
-	egueb_dom_event_target_event_listener_add(n,
+	evt = EGUEB_DOM_EVENT_TARGET_CAST(o);
+	egueb_dom_event_target_event_listener_add(evt,
 			EGUEB_DOM_EVENT_MUTATION_NODE_INSERTED,
 			_egueb_svg_element_svg_node_inserted_cb,
 			EINA_TRUE, o);
-	egueb_dom_event_target_event_listener_add(EGUEB_DOM_NODE(o),
+	egueb_dom_event_target_event_listener_add(evt,
 			EGUEB_DOM_EVENT_MUTATION_NODE_REMOVED,
 			_egueb_svg_element_svg_node_removed_cb,
 			EINA_TRUE, o);

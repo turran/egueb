@@ -142,7 +142,7 @@ static void _egueb_dom_node_event_dispatch(Egueb_Dom_Node *thiz,
 		goto monitors;
 
 	/* set the current target of the event */
-	evt->current_target = thiz;
+	evt->current_target = EGUEB_DOM_EVENT_TARGET_CAST(thiz);
 
 	EINA_LIST_FOREACH(container->listeners, l, nl)
 	{
@@ -335,21 +335,19 @@ static Eina_Bool _egueb_dom_node_dispatch(Egueb_Dom_Event_Target *target,
 
 	thiz = EGUEB_DOM_NODE(target);
 	if (thiz->freezed)
-	{
-		egueb_dom_event_unref(event);
 		return EINA_FALSE;
-	}
 
 	/* DISPATCH_REQUEST_ERR: Raised if the Event object is already being dispatched in the tree.*/
 	/* NOT_SUPPORTED_ERR Raised if the Event object has not been created using DocumentEvent.createEvent() or does not support the interface CustomEvent */
 
 	if (event->target)
 	{
-		egueb_dom_node_unref(event->target);
+		egueb_dom_event_target_unref(event->target);
 		event->target = NULL;
 	}
 	/* setup the event with the basic attributes */
-	event->target = egueb_dom_node_ref(thiz);
+	egueb_dom_node_ref(thiz);
+	event->target = target;
 	event->dispatching = EINA_TRUE;
 
 	if (event->direction == EGUEB_DOM_EVENT_DIRECTION_CAPTURE_BUBBLE)
@@ -370,7 +368,6 @@ static Eina_Bool _egueb_dom_node_dispatch(Egueb_Dom_Event_Target *target,
 	}
 
 	event->dispatching = EINA_FALSE;
-	egueb_dom_event_unref(event);
 	return EINA_TRUE;
 }
 /*----------------------------------------------------------------------------*
@@ -430,7 +427,9 @@ static void _egueb_dom_node_insert_into_document(Egueb_Dom_Node *thiz,
 
 	thiz->in_tree = EINA_TRUE;
 	/* dispatch on the node first */
-	egueb_dom_event_target_event_dispatch(thiz, egueb_dom_event_ref(evt), NULL, NULL);
+	egueb_dom_event_target_event_dispatch(
+			EGUEB_DOM_EVENT_TARGET_CAST(thiz),
+			egueb_dom_event_ref(evt), NULL, NULL);
 	/* now on every children */
 	EINA_INLIST_FOREACH(thiz->children, child)
 	{
@@ -448,7 +447,9 @@ static void _egueb_dom_node_remove_from_document(Egueb_Dom_Node *thiz,
 	thiz->in_tree = EINA_FALSE;
 
 	/* dispatch on the node first */
-	egueb_dom_event_target_event_dispatch(thiz, egueb_dom_event_ref(evt), NULL, NULL);
+	egueb_dom_event_target_event_dispatch(
+			EGUEB_DOM_EVENT_TARGET_CAST(thiz),
+			egueb_dom_event_ref(evt), NULL, NULL);
 
 	/* remove the weak reference in case we have one */
 	egueb_dom_node_document_set(thiz, NULL, EINA_FALSE);
@@ -497,7 +498,8 @@ static void _egueb_dom_node_free(Egueb_Dom_Node *thiz)
 
 	/* before freeing the element, call the destroy event */
 	event = egueb_dom_event_mutation_node_destroyed_new();
-	egueb_dom_event_target_event_dispatch(thiz, event, NULL, NULL);
+	egueb_dom_event_target_event_dispatch(
+			EGUEB_DOM_EVENT_TARGET_CAST(thiz), event, NULL, NULL);
 	/* remove the document weak ref */
 	if (thiz->owner_document)
 	{
@@ -531,7 +533,9 @@ void egueb_dom_node_document_set(Egueb_Dom_Node *thiz,
 		{
 			Egueb_Dom_Event *ev;
 			ev = egueb_dom_event_mutation_node_document_unset_new();
-			egueb_dom_event_target_event_dispatch(thiz, ev, NULL, NULL);
+			egueb_dom_event_target_event_dispatch(
+					EGUEB_DOM_EVENT_TARGET(thiz), ev, NULL,
+					NULL);
 		}
 		egueb_dom_node_weak_unref(thiz->owner_document,
 			_egueb_dom_node_document_destroyed_cb, thiz);
@@ -547,7 +551,9 @@ void egueb_dom_node_document_set(Egueb_Dom_Node *thiz,
 		{
 			Egueb_Dom_Event *ev;
 			ev = egueb_dom_event_mutation_node_document_set_new();
-			egueb_dom_event_target_event_dispatch(thiz, ev, NULL, NULL);
+			egueb_dom_event_target_event_dispatch(
+					EGUEB_DOM_EVENT_TARGET(thiz), ev, NULL,
+					NULL);
 		}
 	}
 }
@@ -622,7 +628,8 @@ EAPI void egueb_dom_node_weak_ref(Egueb_Dom_Node *thiz,
 	if (!thiz) return;
 	if (!l) return;
 
-	egueb_dom_event_target_event_listener_add(thiz,
+	egueb_dom_event_target_event_listener_add(
+			EGUEB_DOM_EVENT_TARGET_CAST(thiz),
 			EGUEB_DOM_EVENT_MUTATION_NODE_DESTROYED,
 			l, EINA_FALSE, data);
 }
@@ -633,7 +640,8 @@ EAPI void egueb_dom_node_weak_unref(Egueb_Dom_Node *thiz,
 	if (!thiz) return;
 	if (!l) return;
 
-	egueb_dom_event_target_event_listener_remove(thiz,
+	egueb_dom_event_target_event_listener_remove(
+			EGUEB_DOM_EVENT_TARGET_CAST(thiz),
 			EGUEB_DOM_EVENT_MUTATION_NODE_DESTROYED,
 			l, EINA_FALSE, data);
 }
@@ -879,7 +887,8 @@ EAPI Eina_Bool egueb_dom_node_child_remove(Egueb_Dom_Node *thiz, Egueb_Dom_Node 
 
 	/* trigger the mutation event */
 	event = egueb_dom_event_mutation_node_removed_new(egueb_dom_node_ref(thiz));
-	egueb_dom_event_target_event_dispatch(child, event, NULL, NULL);
+	egueb_dom_event_target_event_dispatch(
+			EGUEB_DOM_EVENT_TARGET_CAST(child), event, NULL, NULL);
 
 	thiz->children = eina_inlist_remove(thiz->children, EINA_INLIST_GET(child));
 	child->parent = NULL;
@@ -1001,7 +1010,8 @@ EAPI Eina_Bool egueb_dom_node_insert_before(Egueb_Dom_Node *thiz,
 
 	/* trigger the node inserted mutation event */
 	event = egueb_dom_event_mutation_node_inserted_new(egueb_dom_node_ref(thiz));
-	egueb_dom_event_target_event_dispatch(child, event, NULL, NULL);
+	egueb_dom_event_target_event_dispatch(
+			EGUEB_DOM_EVENT_TARGET_CAST(child), event, NULL, NULL);
 
 	/* insert the node in the tree in case the parent is on the tree too,
 	 * the document will be set too in case the child does not have one

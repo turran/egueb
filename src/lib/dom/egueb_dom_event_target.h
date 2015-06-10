@@ -81,6 +81,8 @@ EAPI Enesim_Object_Descriptor * egueb_dom_event_target_descriptor_get(void);
 #define EGUEB_DOM_EVENT_TARGET(o) ENESIM_OBJECT_INSTANCE_CHECK(o,			\
 		Egueb_Dom_Event_Target, EGUEB_DOM_EVENT_TARGET_DESCRIPTOR)
 
+/* Useful macro for upcasting into an event target type */
+#define EGUEB_DOM_EVENT_TARGET_CAST(o) ((Egueb_Dom_Event_Target*)o)
 
 /**
  * @}

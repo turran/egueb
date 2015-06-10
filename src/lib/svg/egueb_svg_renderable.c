@@ -101,7 +101,8 @@ static void _egueb_svg_renderable_inserted_cb(Egueb_Dom_Event *e,
 
 	INFO_ELEMENT(n, "Renderable inserted into document, requesting a painter");
 	request = egueb_svg_event_request_painter_new();
-	egueb_dom_event_target_event_dispatch(n, egueb_dom_event_ref(request), NULL, NULL);
+	egueb_dom_event_target_event_dispatch(EGUEB_DOM_EVENT_TARGET_CAST(n),
+			egueb_dom_event_ref(request), NULL, NULL);
 
 	egueb_svg_renderable_painter_set(n,
 			egueb_svg_event_request_painter_painter_get(request));
@@ -280,11 +281,13 @@ static void _egueb_svg_renderable_instance_init(void *o)
 	n = EGUEB_DOM_NODE(o);
 	egueb_dom_element_attribute_node_set(n, egueb_dom_node_ref(thiz->transform), NULL);
 	/* request for a painter whenever a renderable has been inserted into a document */
-	egueb_dom_event_target_event_listener_add(n,
+	egueb_dom_event_target_event_listener_add(
+			EGUEB_DOM_EVENT_TARGET_CAST(n),
 			EGUEB_DOM_EVENT_MUTATION_NODE_INSERTED,
 			_egueb_svg_renderable_inserted_cb,
 			EINA_FALSE, n);
-	egueb_dom_event_target_event_listener_add(n,
+	egueb_dom_event_target_event_listener_add(
+			EGUEB_DOM_EVENT_TARGET_CAST(n),
 			EGUEB_DOM_EVENT_MUTATION_NODE_REMOVED,
 			_egueb_svg_renderable_removed_cb,
 			EINA_FALSE, n);

@@ -117,7 +117,7 @@ static void _egueb_dom_element_original_node_inserted_cb(Egueb_Dom_Event *e,
 	/* check if the parent is the same as the node we have registered
 	 * the event
 	 */
-	origin = egueb_dom_event_target_current_get(e);
+	origin = EGUEB_DOM_NODE(egueb_dom_event_target_current_get(e));
 	parent = egueb_dom_event_mutation_related_get(e);
 	if (origin != parent)
 	{
@@ -128,7 +128,7 @@ static void _egueb_dom_element_original_node_inserted_cb(Egueb_Dom_Event *e,
 	egueb_dom_node_unref(parent);
 
 	DBG("Inserting a node on a cloned element");
-	origin_child = egueb_dom_event_target_get(e);
+	origin_child = EGUEB_DOM_NODE(egueb_dom_event_target_get(e));
 	cloned_child = egueb_dom_node_clone(origin_child, EINA_TRUE, EINA_TRUE, NULL);
 	if (!cloned_child) goto err_clone;
 
@@ -190,7 +190,7 @@ static void _egueb_dom_element_original_node_removed_cb(Egueb_Dom_Event *e,
 	/* check if the parent is the same as the node we have registered
 	 * the event
 	 */
-	origin = egueb_dom_event_target_current_get(e);
+	origin = EGUEB_DOM_NODE(egueb_dom_event_target_current_get(e));
 	parent = egueb_dom_event_mutation_related_get(e);
 	if (origin != parent)
 	{
@@ -200,7 +200,7 @@ static void _egueb_dom_element_original_node_removed_cb(Egueb_Dom_Event *e,
 	}
 	egueb_dom_node_unref(parent);
 	DBG("Removing a node from a cloned element");
-	origin_child = egueb_dom_event_target_get(e);
+	origin_child = EGUEB_DOM_NODE(egueb_dom_event_target_get(e));
 
 	/* found the child in the cloned children */
 	origin_tmp = egueb_dom_node_sibling_previous_get(origin_child);
@@ -284,8 +284,8 @@ static void _egueb_dom_element_original_attr_modified_cb(Egueb_Dom_Event *e,
 static void _egueb_dom_element_original_destroyed_cb(Egueb_Dom_Event *e,
 		void *data)
 {
-	Egueb_Dom_Node *cloned = data;
-	Egueb_Dom_Node *n = NULL;
+	Egueb_Dom_Event_Target *cloned = data;
+	Egueb_Dom_Event_Target *n = NULL;
 	Egueb_Dom_Event_Phase phase;
 
 	/* unregister every event on the other end */
@@ -299,7 +299,7 @@ static void _egueb_dom_element_original_destroyed_cb(Egueb_Dom_Event *e,
 			EGUEB_DOM_EVENT_MUTATION_NODE_DESTROYED,
 			_egueb_dom_element_clone_destroyed_cb,
 			EINA_TRUE, n);
-	egueb_dom_node_unref(n);
+	egueb_dom_event_target_unref(n);
 } 
 
 /* whenever a cloned node is destroyed the event listeners are no longer
@@ -308,8 +308,8 @@ static void _egueb_dom_element_original_destroyed_cb(Egueb_Dom_Event *e,
 static void _egueb_dom_element_clone_destroyed_cb(Egueb_Dom_Event *e,
 		void *data)
 {
-	Egueb_Dom_Node *cloned = NULL;
-	Egueb_Dom_Node *n = data;
+	Egueb_Dom_Event_Target *cloned = NULL;
+	Egueb_Dom_Event_Target *n = data;
 	Egueb_Dom_Event_Phase phase;
 
 	/* unregister every event on the other end */
@@ -339,7 +339,7 @@ static void _egueb_dom_element_clone_destroyed_cb(Egueb_Dom_Event *e,
 			_egueb_dom_element_original_destroyed_cb,
 			EINA_TRUE, cloned);
 
-	egueb_dom_node_unref(cloned);
+	egueb_dom_event_target_unref(cloned);
 }
 
 static Eina_Bool _egueb_dom_element_attributes_process_cb(const Eina_Hash *hash,
@@ -385,15 +385,18 @@ static void _egueb_dom_element_clone(Egueb_Dom_Node *n, Eina_Bool live,
 	 */
 	if (live)
 	{
-		egueb_dom_event_target_event_listener_add(clone,
+		egueb_dom_event_target_event_listener_add(
+				EGUEB_DOM_EVENT_TARGET_CAST(clone),
 				EGUEB_DOM_EVENT_MUTATION_NODE_DESTROYED,
 				_egueb_dom_element_clone_destroyed_cb,
 				EINA_TRUE, n);
-		egueb_dom_event_target_event_listener_add(n,
+		egueb_dom_event_target_event_listener_add(
+				EGUEB_DOM_EVENT_TARGET_CAST(n),
 				EGUEB_DOM_EVENT_MUTATION_NODE_DESTROYED,
 				_egueb_dom_element_original_destroyed_cb,
 				EINA_TRUE, clone);
-		egueb_dom_event_target_event_listener_add(n,
+		egueb_dom_event_target_event_listener_add(
+				EGUEB_DOM_EVENT_TARGET_CAST(n),
 				EGUEB_DOM_EVENT_MUTATION_ATTR_MODIFIED,
 				_egueb_dom_element_original_attr_modified_cb,
 				EINA_TRUE, clone);
@@ -402,12 +405,14 @@ static void _egueb_dom_element_clone(Egueb_Dom_Node *n, Eina_Bool live,
 		 */
 		if (deep)
 		{
-			egueb_dom_event_target_event_listener_add(n,
+			egueb_dom_event_target_event_listener_add(
+					EGUEB_DOM_EVENT_TARGET_CAST(n),
 					EGUEB_DOM_EVENT_MUTATION_NODE_INSERTED,
 					_egueb_dom_element_original_node_inserted_cb,
 					EINA_TRUE, clone);
 
-			egueb_dom_event_target_event_listener_add(n,
+			egueb_dom_event_target_event_listener_add(
+					EGUEB_DOM_EVENT_TARGET_CAST(n),
 					EGUEB_DOM_EVENT_MUTATION_NODE_REMOVED,
 					_egueb_dom_element_original_node_removed_cb,
 					EINA_TRUE, clone);
@@ -465,14 +470,17 @@ static void _egueb_dom_element_class_init(void *k)
 static void _egueb_dom_element_instance_init(void *o)
 {
 	Egueb_Dom_Element *thiz;
+	Egueb_Dom_Event_Target *evt;
 
 	thiz = EGUEB_DOM_ELEMENT(o);
 	thiz->attributes = eina_hash_string_superfast_new(EINA_FREE_CB(
 			egueb_dom_node_unref));
 	thiz->attributes_ns = eina_hash_string_superfast_new(EINA_FREE_CB(
 			_egueb_dom_element_attributes_ns_free));
+
 	/* register some event handlers */
-	egueb_dom_event_target_event_listener_add(EGUEB_DOM_NODE(o),
+	evt = EGUEB_DOM_EVENT_TARGET_CAST(thiz);
+	egueb_dom_event_target_event_listener_add(evt,
 			EGUEB_DOM_EVENT_MUTATION_NODE_REMOVED_FROM_DOCUMENT,
 			_egueb_dom_element_document_removed_cb,
 			EINA_FALSE, thiz);
@@ -1153,7 +1161,7 @@ EAPI void egueb_dom_element_request_process(Egueb_Dom_Node *n)
 
 	/* send the request process event */
 	e = egueb_dom_event_process_new();
-	egueb_dom_event_target_event_dispatch(n, e, NULL, NULL);
+	egueb_dom_event_target_event_dispatch(EGUEB_DOM_EVENT_TARGET_CAST(n), e, NULL, NULL);
 }
 
 EAPI Eina_Bool egueb_dom_element_process(Egueb_Dom_Node *n)
