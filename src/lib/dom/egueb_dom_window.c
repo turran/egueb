@@ -21,18 +21,129 @@
 #include "egueb_dom_node_list.h"
 #include "egueb_dom_node_map_named.h"
 #include "egueb_dom_node.h"
-
 #include "egueb_dom_window.h"
+
+#include "egueb_dom_event_private.h"
+#include "egueb_dom_event_target_private.h"
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
+#define EGUEB_DOM_WINDOW_CLASS_GET(o) EGUEB_DOM_WINDOW_CLASS(			\
+		(ENESIM_OBJECT_INSTANCE(o))->klass)
+#define EGUEB_DOM_WINDOW_CLASS(k) ENESIM_OBJECT_CLASS_CHECK(k,			\
+		Egueb_Dom_Window_Class, EGUEB_DOM_WINDOW_DESCRIPTOR)
+#define EGUEB_DOM_WINDOW_DESCRIPTOR egueb_dom_window_descriptor_get()
+#define EGUEB_DOM_WINDOW(o) ENESIM_OBJECT_INSTANCE_CHECK(o,			\
+		Egueb_Dom_Window, EGUEB_DOM_WINDOW_DESCRIPTOR)
+
 struct _Egueb_Dom_Window
 {
+	Egueb_Dom_Event_Target base;
 	const Egueb_Dom_Window_Descriptor *desc;
 	Egueb_Dom_Node *doc;
 	int ref;
 	void *data;
 };
+
+typedef struct _Egueb_Dom_Window_Class
+{
+	Egueb_Dom_Event_Target_Class base;
+} Egueb_Dom_Window_Class;
+
+/*----------------------------------------------------------------------------*
+ *                            Event target interface                          *
+ *----------------------------------------------------------------------------*/
+static void _egueb_dom_window_ref(Egueb_Dom_Event_Target *target)
+{
+	Egueb_Dom_Window *thiz;
+
+	thiz = EGUEB_DOM_WINDOW(target);
+	egueb_dom_window_ref(thiz);
+}
+
+static void _egueb_dom_window_unref(Egueb_Dom_Event_Target *target)
+{
+	Egueb_Dom_Window *thiz;
+
+	thiz = EGUEB_DOM_WINDOW(target);
+	egueb_dom_window_unref(thiz);
+}
+
+static Eina_Bool _egueb_dom_window_type_get(Egueb_Dom_Event_Target *target,
+		const char **lib, const char **name)
+{
+	if (lib) *lib = "egueb_dom";
+	if (name) *name = "window";
+
+	return EINA_TRUE;
+}
+
+static Eina_Bool _egueb_dom_window_dispatch(Egueb_Dom_Event_Target *target,
+		Egueb_Dom_Event *event, Eina_Bool *notprevented, Eina_Error *err)
+{
+	Egueb_Dom_Window *thiz;
+	Egueb_Dom_Event_Target_Listener_Container *container;
+	Egueb_Dom_Event_Target_Listener *nl;
+	Eina_List *l;
+
+	thiz = EGUEB_DOM_WINDOW(target);
+	/* DISPATCH_REQUEST_ERR: Raised if the Event object is already being dispatched in the tree.*/
+	/* NOT_SUPPORTED_ERR Raised if the Event object has not been created using DocumentEvent.createEvent() or does not support the interface CustomEvent */
+
+	if (event->target)
+	{
+		egueb_dom_event_target_unref(event->target);
+		event->target = NULL;
+	}
+	/* setup the event with the basic attributes */
+	egueb_dom_window_ref(thiz);
+	event->target = target;
+	event->dispatching = EINA_TRUE;
+
+	/* finally dispatch */
+	container = eina_hash_find(target->events,
+		egueb_dom_string_string_get(event->type));
+	if (!container || !container->listeners)
+		goto done;
+
+	EINA_LIST_FOREACH(container->listeners, l, nl)
+	{
+		nl->listener(event, nl->data);
+	}
+
+done:
+	event->dispatching = EINA_FALSE;
+	return EINA_TRUE;
+}
+/*----------------------------------------------------------------------------*
+ *                              Object interface                              *
+ *----------------------------------------------------------------------------*/
+ENESIM_OBJECT_INSTANCE_BOILERPLATE(EGUEB_DOM_EVENT_TARGET_DESCRIPTOR,
+		Egueb_Dom_Window, Egueb_Dom_Window_Class, egueb_dom_window);
+
+static void _egueb_dom_window_class_init(void *k)
+{
+	Egueb_Dom_Event_Target_Class *klass;
+
+	klass = EGUEB_DOM_EVENT_TARGET_CLASS(k);
+	klass->ref = _egueb_dom_window_ref;
+	klass->unref = _egueb_dom_window_unref;
+	klass->type_get = _egueb_dom_window_type_get;
+	klass->dispatch = _egueb_dom_window_dispatch;
+}
+
+static void _egueb_dom_window_instance_init(void *o)
+{
+
+}
+
+static void _egueb_dom_window_instance_deinit(void *o)
+{
+	Egueb_Dom_Window *thiz;
+
+	thiz = EGUEB_DOM_WINDOW(o);
+	egueb_dom_node_weak_ref_remove(thiz->doc, &thiz->doc);
+}
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
@@ -47,7 +158,7 @@ EAPI Egueb_Dom_Window * egueb_dom_window_new(
 
 	if (!desc) return NULL;
 
-	thiz = calloc(1, sizeof(Egueb_Dom_Window));
+	thiz = ENESIM_OBJECT_INSTANCE_NEW(egueb_dom_window);
 	thiz->desc = desc;
 	egueb_dom_node_weak_ref_add(doc, &thiz->doc);
 	thiz->data = thiz->desc->create();
@@ -69,8 +180,7 @@ EAPI void egueb_dom_window_unref(Egueb_Dom_Window *thiz)
 	thiz->ref--;
 	if (!thiz->ref)
 	{
-		egueb_dom_node_weak_ref_remove(thiz->doc, &thiz->doc);
-		free(thiz);
+		enesim_object_instance_free(ENESIM_OBJECT_INSTANCE(thiz));
 	} 
 }
 
