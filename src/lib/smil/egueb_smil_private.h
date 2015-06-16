@@ -16,8 +16,8 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _EGUEB_DOM_PRIVATE_H
-#define _EGUEB_DOM_PRIVATE_H
+#ifndef _EGUEB_SMIL_PRIVATE_H
+#define _EGUEB_SMIL_PRIVATE_H
 
 #ifdef HAVE_CONFIG_H
 #include <config.h>

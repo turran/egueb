@@ -91,8 +91,4 @@ void egueb_dom_attr_copy(Egueb_Dom_Node *n,
 		Egueb_Dom_Node *other);
 void egueb_dom_attr_process(Egueb_Dom_Node *n);
 
-Enesim_Object_Descriptor * egueb_dom_attr_primitive_descriptor_get(void);
-Enesim_Object_Descriptor * egueb_dom_attr_object_descriptor_get(void);
-Enesim_Object_Descriptor * egueb_dom_attr_basic_descriptor_get(void);
-
 #endif

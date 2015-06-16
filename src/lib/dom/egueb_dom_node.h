@@ -80,7 +80,7 @@ typedef enum _Egueb_Dom_Node_Type
 typedef struct _Egueb_Dom_Node Egueb_Dom_Node;
 
 #define EGUEB_DOM_NODE_DESCRIPTOR egueb_dom_node_descriptor_get()
-Enesim_Object_Descriptor * egueb_dom_node_descriptor_get(void);
+EAPI Enesim_Object_Descriptor * egueb_dom_node_descriptor_get(void);
 #define EGUEB_DOM_NODE(o) ENESIM_OBJECT_INSTANCE_CHECK(o,			\
 		Egueb_Dom_Node, EGUEB_DOM_NODE_DESCRIPTOR)
 

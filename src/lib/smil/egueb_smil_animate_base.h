@@ -32,7 +32,7 @@ EAPI void egueb_smil_element_animate_base_accumulate_set(Egueb_Dom_Node *n,
 EAPI Egueb_Smil_Accumulate egueb_smil_element_animate_base_accumulate_get(
 		Egueb_Dom_Node *n);
 
-EAPI Enesim_Object_Descriptor * egueb_smil_animate_base_descriptor_get();
+EAPI Enesim_Object_Descriptor * egueb_smil_animate_base_descriptor_get(void);
 
 #if 0
 EAPI Eina_Bool egueb_smil_is_animate_base(Ender_Element *e);
