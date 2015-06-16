@@ -34,7 +34,6 @@ typedef struct _Egueb_Dom_Window Egueb_Dom_Window;
  * @{
  */
 
-typedef void * (*Egueb_Dom_Window_Descriptor_Create)(void);
 typedef void (*Egueb_Dom_Window_Descriptor_Destroy)(void *data);
 
 typedef void (*Egueb_Dom_Window_Descriptor_Timeout_Cb)(Egueb_Dom_Window *thiz,
@@ -42,11 +41,10 @@ typedef void (*Egueb_Dom_Window_Descriptor_Timeout_Cb)(Egueb_Dom_Window *thiz,
 typedef void * (*Egueb_Dom_Window_Descriptor_Timeout_Set)(void *data,
 		Egueb_Dom_Window_Descriptor_Timeout_Cb cb,
 		int64_t delay, void *user_data);
-typedef void * (*Egueb_Dom_Window_Descriptor_Timeout_Clear)(void *data, void *timeout);
+typedef void (*Egueb_Dom_Window_Descriptor_Timeout_Clear)(void *data, void *timeout);
 
 typedef struct _Egueb_Dom_Window_Descriptor
 {
-	Egueb_Dom_Window_Descriptor_Create create;
 	Egueb_Dom_Window_Descriptor_Destroy destroy;
 	Egueb_Dom_Window_Descriptor_Timeout_Set timeout_set;
 	Egueb_Dom_Window_Descriptor_Timeout_Clear timeout_clear;
@@ -62,7 +60,7 @@ typedef struct _Egueb_Dom_Window_Descriptor
 
 EAPI Egueb_Dom_Window * egueb_dom_window_new(
 		const Egueb_Dom_Window_Descriptor *desc,
-		Egueb_Dom_Node *doc);
+		Egueb_Dom_Node *doc, void *data);
 EAPI Egueb_Dom_Window * egueb_dom_window_ref(Egueb_Dom_Window *thiz);
 EAPI void egueb_dom_window_unref(Egueb_Dom_Window *thiz);
 EAPI void * egueb_dom_window_data_get(Egueb_Dom_Window *thiz);
