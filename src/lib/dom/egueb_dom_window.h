@@ -46,8 +46,10 @@ typedef void (*Egueb_Dom_Window_Descriptor_Timeout_Clear)(void *data, void *time
 typedef struct _Egueb_Dom_Window_Descriptor
 {
 	Egueb_Dom_Window_Descriptor_Destroy destroy;
+	/* one-shot timer */
 	Egueb_Dom_Window_Descriptor_Timeout_Set timeout_set;
 	Egueb_Dom_Window_Descriptor_Timeout_Clear timeout_clear;
+	/* repeating timer */
 } Egueb_Dom_Window_Descriptor;
 
 

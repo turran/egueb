@@ -213,3 +213,11 @@ EAPI void egueb_dom_window_timeout_clear(Egueb_Dom_Window *thiz,
 	if (thiz->desc->timeout_clear)
 		thiz->desc->timeout_clear(thiz->data, timeout);
 }
+
+#if 0
+EAPI void egueb_dom_window_onclose_set(Egueb_Dom_Window *thiz);
+EAPI void egueb_dom_window_onresize_set(Egueb_Dom_Window *thiz);
+
+EAPI void egueb_dom_window_resize_notify(Egueb_Dom_Window *thiz);
+EAPI void egueb_dom_window_close_notify(Egueb_Dom_Window *thiz);
+#endif
