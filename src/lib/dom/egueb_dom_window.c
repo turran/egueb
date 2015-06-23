@@ -25,6 +25,7 @@
 
 #include "egueb_dom_event_private.h"
 #include "egueb_dom_event_target_private.h"
+#include "egueb_dom_event_window_private.h"
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
@@ -176,7 +177,7 @@ EAPI Egueb_Dom_Window * egueb_dom_window_ref(Egueb_Dom_Window *thiz)
 
 EAPI void egueb_dom_window_unref(Egueb_Dom_Window *thiz)
 {
-	if (!thiz) return;
+	EINA_SAFETY_ON_NULL_RETURN(thiz);
 	thiz->ref--;
 	if (!thiz->ref)
 	{
@@ -186,13 +187,13 @@ EAPI void egueb_dom_window_unref(Egueb_Dom_Window *thiz)
 
 EAPI void * egueb_dom_window_data_get(Egueb_Dom_Window *thiz)
 {
-	if (!thiz) return NULL;
+	EINA_SAFETY_ON_NULL_RETURN_VAL(thiz, NULL);
 	return thiz->data;
 }
 
 EAPI Egueb_Dom_Node * egueb_dom_window_document_get(Egueb_Dom_Window *thiz)
 {
-	if (!thiz) return NULL;
+	EINA_SAFETY_ON_NULL_RETURN_VAL(thiz, NULL);
 	return egueb_dom_node_ref(thiz->doc);
 }
 
@@ -200,7 +201,7 @@ EAPI void * egueb_dom_window_timeout_set(Egueb_Dom_Window *thiz,
 		Egueb_Dom_Window_Descriptor_Timeout_Cb cb,
 		int64_t delay, void *user_data)
 {
-	if (!thiz) return NULL;
+	EINA_SAFETY_ON_NULL_RETURN_VAL(thiz, NULL);
 	if (thiz->desc->timeout_set)
 		return thiz->desc->timeout_set(thiz->data, cb, delay, user_data);
 	return NULL;
@@ -209,15 +210,65 @@ EAPI void * egueb_dom_window_timeout_set(Egueb_Dom_Window *thiz,
 EAPI void egueb_dom_window_timeout_clear(Egueb_Dom_Window *thiz,
 		void *timeout)
 {
-	if (!thiz) return;
+	EINA_SAFETY_ON_NULL_RETURN(thiz);
 	if (thiz->desc->timeout_clear)
 		thiz->desc->timeout_clear(thiz->data, timeout);
+}
+
+EAPI int egueb_dom_window_outter_width_get(Egueb_Dom_Window *thiz)
+{
+	EINA_SAFETY_ON_NULL_RETURN_VAL(thiz, 0);
+	if (thiz->desc->outter_width_get)
+		thiz->desc->outter_width_get(thiz->data);
+	return 0;
+}
+
+EAPI int egueb_dom_window_outter_height_get(Egueb_Dom_Window *thiz)
+{
+	EINA_SAFETY_ON_NULL_RETURN_VAL(thiz, 0);
+	if (thiz->desc->outter_height_get)
+		thiz->desc->outter_height_get(thiz->data);
+	return 0;
+}
+
+EAPI int egueb_dom_window_inner_width_get(Egueb_Dom_Window *thiz)
+{
+	EINA_SAFETY_ON_NULL_RETURN_VAL(thiz, 0);
+	if (thiz->desc->inner_width_get)
+		thiz->desc->inner_width_get(thiz->data);
+	return 0;
+}
+
+EAPI int egueb_dom_window_inner_height_get(Egueb_Dom_Window *thiz)
+{
+	EINA_SAFETY_ON_NULL_RETURN_VAL(thiz, 0);
+	if (thiz->desc->inner_height_get)
+		thiz->desc->inner_height_get(thiz->data);
+	return 0;
+}
+
+EAPI void egueb_dom_window_resize_notify(Egueb_Dom_Window *thiz)
+{
+	Egueb_Dom_Event *ev;
+
+	EINA_SAFETY_ON_NULL_RETURN(thiz);
+	ev = egueb_dom_event_window_resize_new(egueb_dom_window_ref(thiz));
+	egueb_dom_event_target_event_dispatch(EGUEB_DOM_EVENT_TARGET_CAST(thiz), ev,
+			NULL, NULL);
+}
+
+EAPI void egueb_dom_window_close_notify(Egueb_Dom_Window *thiz)
+{
+	Egueb_Dom_Event *ev;
+
+	EINA_SAFETY_ON_NULL_RETURN(thiz);
+	ev = egueb_dom_event_window_close_new(egueb_dom_window_ref(thiz));
+	egueb_dom_event_target_event_dispatch(EGUEB_DOM_EVENT_TARGET_CAST(thiz), ev,
+			NULL, NULL);
 }
 
 #if 0
 EAPI void egueb_dom_window_onclose_set(Egueb_Dom_Window *thiz);
 EAPI void egueb_dom_window_onresize_set(Egueb_Dom_Window *thiz);
 
-EAPI void egueb_dom_window_resize_notify(Egueb_Dom_Window *thiz);
-EAPI void egueb_dom_window_close_notify(Egueb_Dom_Window *thiz);
 #endif

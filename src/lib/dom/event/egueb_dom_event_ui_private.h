@@ -23,7 +23,7 @@
 typedef struct _Egueb_Dom_Event_UI
 {
 	Egueb_Dom_Event base;
-	/* readonly attribute views::AbstractView  view; */
+	Egueb_Dom_Window *view;
 	int detail;
 } Egueb_Dom_Event_UI;
 

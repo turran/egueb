@@ -92,6 +92,8 @@ extern "C" {
 #include "egueb_dom_attr_string.h"
 #include "egueb_dom_attr_string_list.h"
 
+#include "egueb_dom_window.h"
+
 #include "egueb_dom_event.h"
 #include "egueb_dom_event_target.h"
 #include "egueb_dom_event_document.h"
@@ -101,6 +103,7 @@ extern "C" {
 #include "egueb_dom_event_navigation.h"
 #include "egueb_dom_event_process.h"
 #include "egueb_dom_event_ui.h"
+#include "egueb_dom_event_window.h"
 
 #include "egueb_dom_event_keyboard.h"
 #include "egueb_dom_event_mouse.h"
@@ -141,8 +144,6 @@ extern "C" {
 #include "egueb_dom_attr_external.h"
 
 #include "egueb_dom_registry.h"
-
-#include "egueb_dom_window.h"
 
 /**
  * @}

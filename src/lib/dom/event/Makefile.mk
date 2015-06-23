@@ -10,7 +10,8 @@ src/lib/dom/event/egueb_dom_event_multimedia.h \
 src/lib/dom/event/egueb_dom_event_navigation.h \
 src/lib/dom/event/egueb_dom_event_process.h \
 src/lib/dom/event/egueb_dom_event_script.h \
-src/lib/dom/event/egueb_dom_event_ui.h
+src/lib/dom/event/egueb_dom_event_ui.h \
+src/lib/dom/event/egueb_dom_event_window.h
 
 src_lib_dom_libegueb_dom_la_SOURCES += \
 src/lib/dom/event/egueb_dom_event_document.c \
@@ -30,4 +31,6 @@ src/lib/dom/event/egueb_dom_event_process.c \
 src/lib/dom/event/egueb_dom_event_process_private.h \
 src/lib/dom/event/egueb_dom_event_script.c \
 src/lib/dom/event/egueb_dom_event_ui.c \
-src/lib/dom/event/egueb_dom_event_ui_private.h
+src/lib/dom/event/egueb_dom_event_ui_private.h \
+src/lib/dom/event/egueb_dom_event_window.c \
+src/lib/dom/event/egueb_dom_event_window_private.h

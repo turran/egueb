@@ -21,6 +21,7 @@
 #include "egueb_dom_main.h"
 #include "egueb_dom_node.h"
 #include "egueb_dom_event.h"
+#include "egueb_dom_window.h"
 
 #include "egueb_dom_event_ui_private.h"
 /*============================================================================*
@@ -42,6 +43,14 @@ static void _egueb_dom_event_ui_instance_init(void *o)
 
 static void _egueb_dom_event_ui_instance_deinit(void *o)
 {
+	Egueb_Dom_Event_UI *thiz;
+
+	thiz = EGUEB_DOM_EVENT_UI(o);
+	if (thiz->view)
+	{
+		egueb_dom_window_unref(thiz->view);
+		thiz->view = NULL;
+	}
 }
 /*============================================================================*
  *                                 Global                                     *
@@ -58,12 +67,22 @@ EAPI int egueb_dom_event_ui_detail_get(Egueb_Dom_Event *e)
 }
 
 EAPI void egueb_dom_event_ui_init(Egueb_Dom_Event *e, Egueb_Dom_String *type,
-		Eina_Bool bubbleable, Eina_Bool cancelable, int detail)
+		Eina_Bool bubbleable, Eina_Bool cancelable,
+		Egueb_Dom_Window *view, int detail)
 {
 	Egueb_Dom_Event_UI *thiz;
 
 	thiz = EGUEB_DOM_EVENT_UI(e);
 	thiz->detail = detail;
+	thiz->view = view;
 	egueb_dom_event_init(e, type, bubbleable, EINA_TRUE, cancelable,
 			EGUEB_DOM_EVENT_DIRECTION_CAPTURE_BUBBLE);
+}
+
+EAPI Egueb_Dom_Window * egueb_dom_event_ui_view_get(Egueb_Dom_Event *e)
+{
+	Egueb_Dom_Event_UI *thiz;
+
+	thiz = EGUEB_DOM_EVENT_UI(e);
+	return egueb_dom_window_ref(thiz->view);
 }

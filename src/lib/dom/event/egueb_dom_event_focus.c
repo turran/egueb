@@ -21,6 +21,7 @@
 #include "egueb_dom_main.h"
 #include "egueb_dom_node.h"
 #include "egueb_dom_event.h"
+#include "egueb_dom_window.h"
 #include "egueb_dom_event_ui.h"
 
 #include "egueb_dom_string_private.h"
@@ -102,7 +103,7 @@ EAPI Egueb_Dom_Event * egueb_dom_event_focus_in_new(void)
 	thiz = ENESIM_OBJECT_INSTANCE_NEW(egueb_dom_event_focus);
 	e = EGUEB_DOM_EVENT(thiz);
 	egueb_dom_event_ui_init(e, egueb_dom_string_ref(EGUEB_DOM_EVENT_FOCUS_IN),
-			EINA_TRUE, EINA_FALSE, 0);
+			EINA_TRUE, EINA_FALSE, NULL, 0);
 	return e;
 }
 
@@ -114,6 +115,6 @@ EAPI Egueb_Dom_Event * egueb_dom_event_focus_out_new(void)
 	thiz = ENESIM_OBJECT_INSTANCE_NEW(egueb_dom_event_focus);
 	e = EGUEB_DOM_EVENT(thiz);
 	egueb_dom_event_ui_init(e, egueb_dom_string_ref(EGUEB_DOM_EVENT_FOCUS_OUT),
-			EINA_TRUE, EINA_FALSE, 0);
+			EINA_TRUE, EINA_FALSE, NULL, 0);
 	return e;
 }

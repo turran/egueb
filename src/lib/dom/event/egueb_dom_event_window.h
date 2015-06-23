@@ -15,28 +15,31 @@
  * License along with this library.
  * If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef _EGUEB_DOM_EVENT_UI_H_
-#define _EGUEB_DOM_EVENT_UI_H_
+
+#ifndef _EGUEB_DOM_EVENT_WINDOW_H_
+#define _EGUEB_DOM_EVENT_WINDOW_H_
+
+#include "egueb_dom_event.h"
 
 /**
  * @file
- * @ender_group{Egueb_Dom_Event_UI}
+ * @ender_group{Egueb_Dom_Event_Window}
  */
 
 /**
- * @defgroup Egueb_Dom_Event_UI_Group UI Event
- * @brief UI Event @ender_inherits{Egueb_Dom_Event}
- * @ingroup Egueb_Dom_Event
+ * @defgroup Egueb_Dom_Event_Window Window Event
+ * @brief Window Event @ender_inherits{Egueb_Dom_Event_UI}
+ * @ingroup Egueb_Dom_Event_UI_Group
  * @{
  */
 
-EAPI int egueb_dom_event_ui_detail_get(Egueb_Dom_Event *n);
-EAPI void egueb_dom_event_ui_init(Egueb_Dom_Event *e, Egueb_Dom_String *type,
-		Eina_Bool bubbleable, Eina_Bool cancelable, Egueb_Dom_Window *view, int detail);
-EAPI Egueb_Dom_Window * egueb_dom_event_ui_view_get(Egueb_Dom_Event *e);
+EAPI extern Egueb_Dom_String *EGUEB_DOM_EVENT_WINDOW_RESIZE;
+EAPI extern Egueb_Dom_String *EGUEB_DOM_EVENT_WINDOW_SCROLL;
+EAPI extern Egueb_Dom_String *EGUEB_DOM_EVENT_WINDOW_CLOSE;
 
 /**
  * @}
  */
 
 #endif
+

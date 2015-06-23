@@ -42,10 +42,16 @@ typedef void * (*Egueb_Dom_Window_Descriptor_Timeout_Set)(void *data,
 		Egueb_Dom_Window_Descriptor_Timeout_Cb cb,
 		int64_t delay, void *user_data);
 typedef void (*Egueb_Dom_Window_Descriptor_Timeout_Clear)(void *data, void *timeout);
+typedef int (*Egueb_Dom_Window_Size_Get)(void *data);
 
 typedef struct _Egueb_Dom_Window_Descriptor
 {
 	Egueb_Dom_Window_Descriptor_Destroy destroy;
+	/* size */
+	Egueb_Dom_Window_Size_Get outter_width_get;
+	Egueb_Dom_Window_Size_Get outter_height_get;
+	Egueb_Dom_Window_Size_Get inner_width_get;
+	Egueb_Dom_Window_Size_Get inner_height_get;
 	/* one-shot timer */
 	Egueb_Dom_Window_Descriptor_Timeout_Set timeout_set;
 	Egueb_Dom_Window_Descriptor_Timeout_Clear timeout_clear;
@@ -72,6 +78,13 @@ EAPI void * egueb_dom_window_timeout_set(Egueb_Dom_Window *thiz,
 		int64_t delay, void *user_data);
 EAPI void egueb_dom_window_timeout_clear(Egueb_Dom_Window *thiz,
 		void *timeout);
+
+EAPI int egueb_dom_window_outter_width_get(Egueb_Dom_Window *thiz);
+EAPI int egueb_dom_window_outter_height_get(Egueb_Dom_Window *thiz);
+EAPI int egueb_dom_window_inner_width_get(Egueb_Dom_Window *thiz);
+EAPI int egueb_dom_window_inner_height_get(Egueb_Dom_Window *thiz);
+EAPI void egueb_dom_window_resize_notify(Egueb_Dom_Window *thiz);
+EAPI void egueb_dom_window_close_notify(Egueb_Dom_Window *thiz);
 
 /**
  * @}

@@ -21,6 +21,7 @@
 #include "egueb_dom_main.h"
 #include "egueb_dom_node.h"
 #include "egueb_dom_event.h"
+#include "egueb_dom_window.h"
 #include "egueb_dom_event_ui.h"
 
 #include "egueb_dom_string_private.h"
@@ -112,7 +113,7 @@ Egueb_Dom_Event * egueb_dom_event_key_down_new(Egueb_Dom_String *key,
 
 	e = ENESIM_OBJECT_INSTANCE_NEW(egueb_dom_event_keyboard);
 	egueb_dom_event_ui_init(e, egueb_dom_string_ref(EGUEB_DOM_EVENT_KEY_DOWN),
-			EINA_TRUE, EINA_TRUE, 0);
+			EINA_TRUE, EINA_TRUE, NULL, 0);
 
 	thiz = EGUEB_DOM_EVENT_KEYBOARD(e);
 	thiz->key = key;
@@ -134,7 +135,7 @@ Egueb_Dom_Event * egueb_dom_event_key_up_new(Egueb_Dom_String *key,
 
 	e = ENESIM_OBJECT_INSTANCE_NEW(egueb_dom_event_keyboard);
 	egueb_dom_event_ui_init(e, egueb_dom_string_ref(EGUEB_DOM_EVENT_KEY_DOWN),
-			EINA_TRUE, EINA_TRUE, 0);
+			EINA_TRUE, EINA_TRUE, NULL, 0);
 
 	thiz = EGUEB_DOM_EVENT_KEYBOARD(e);
 	thiz->key = key;

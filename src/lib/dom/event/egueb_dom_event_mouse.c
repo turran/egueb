@@ -21,6 +21,7 @@
 #include "egueb_dom_main.h"
 #include "egueb_dom_node.h"
 #include "egueb_dom_event.h"
+#include "egueb_dom_window.h"
 #include "egueb_dom_event_ui.h"
 
 #include "egueb_dom_string_private.h"
@@ -137,7 +138,7 @@ void egueb_dom_event_mouse_click_init(Egueb_Dom_Event *e,
 	thiz->meta_key = meta_key;
 	thiz->button = button;
 	egueb_dom_event_ui_init(e, egueb_dom_string_ref(EGUEB_DOM_EVENT_MOUSE_CLICK),
-			EINA_TRUE, EINA_TRUE, detail);
+			EINA_TRUE, EINA_TRUE, NULL, detail);
 }
 
 void egueb_dom_event_mouse_down_init(Egueb_Dom_Event *e,
@@ -158,7 +159,7 @@ void egueb_dom_event_mouse_down_init(Egueb_Dom_Event *e,
 	thiz->meta_key = meta_key;
 	thiz->button = button;
 	egueb_dom_event_ui_init(e, egueb_dom_string_ref(EGUEB_DOM_EVENT_MOUSE_DOWN),
-			EINA_TRUE, EINA_TRUE, detail);
+			EINA_TRUE, EINA_TRUE, NULL, detail);
 }
 
 void egueb_dom_event_mouse_up_init(Egueb_Dom_Event *e,
@@ -179,7 +180,7 @@ void egueb_dom_event_mouse_up_init(Egueb_Dom_Event *e,
 	thiz->meta_key = meta_key;
 	thiz->button = button;
 	egueb_dom_event_ui_init(e, egueb_dom_string_ref(EGUEB_DOM_EVENT_MOUSE_UP),
-			EINA_TRUE, EINA_TRUE, detail);
+			EINA_TRUE, EINA_TRUE, NULL, detail);
 }
 
 void egueb_dom_event_mouse_move_init(Egueb_Dom_Event *e,
@@ -200,7 +201,7 @@ void egueb_dom_event_mouse_move_init(Egueb_Dom_Event *e,
 	thiz->meta_key = meta_key;
 	thiz->button = button;
 	egueb_dom_event_ui_init(e, egueb_dom_string_ref(EGUEB_DOM_EVENT_MOUSE_MOVE),
-			EINA_TRUE, EINA_FALSE, detail);
+			EINA_TRUE, EINA_FALSE, NULL, detail);
 }
 
 void egueb_dom_event_mouse_over_init(Egueb_Dom_Event *e,
@@ -222,7 +223,7 @@ void egueb_dom_event_mouse_over_init(Egueb_Dom_Event *e,
 	thiz->button = button;
 	thiz->related = related;
 	egueb_dom_event_ui_init(e, egueb_dom_string_ref(EGUEB_DOM_EVENT_MOUSE_OVER),
-			EINA_TRUE, EINA_FALSE, detail);
+			EINA_TRUE, EINA_FALSE, NULL, detail);
 }
 
 void egueb_dom_event_mouse_out_init(Egueb_Dom_Event *e,
@@ -244,7 +245,7 @@ void egueb_dom_event_mouse_out_init(Egueb_Dom_Event *e,
 	thiz->button = button;
 	thiz->related = related;
 	egueb_dom_event_ui_init(e, egueb_dom_string_ref(EGUEB_DOM_EVENT_MOUSE_OUT),
-			EINA_TRUE, EINA_FALSE, detail);
+			EINA_TRUE, EINA_FALSE, NULL, detail);
 }
 /*============================================================================*
  *                                   API                                      *
