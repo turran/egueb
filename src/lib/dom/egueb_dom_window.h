@@ -44,8 +44,10 @@ typedef void * (*Egueb_Dom_Window_Descriptor_Timeout_Set)(void *data,
 typedef void (*Egueb_Dom_Window_Descriptor_Timeout_Clear)(void *data, void *timeout);
 typedef int (*Egueb_Dom_Window_Size_Get)(void *data);
 
+#define EGUEB_DOM_WINDOW_DESCRIPTOR_VERSION 0
 typedef struct _Egueb_Dom_Window_Descriptor
 {
+	int version;
 	Egueb_Dom_Window_Descriptor_Destroy destroy;
 	/* size */
 	Egueb_Dom_Window_Size_Get outter_width_get;
