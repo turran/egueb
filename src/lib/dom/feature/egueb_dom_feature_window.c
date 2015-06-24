@@ -100,6 +100,19 @@ EAPI Eina_Bool egueb_dom_feature_window_content_size_get(Egueb_Dom_Feature *f, i
 	return thiz->d->content_size_get(thiz->n, w, h);
 }
 
+#if 0
+EAPI void egueb_dom_feature_window_view_set(Egueb_Dom_Node *n,
+		Egueb_Dom_Window *w)
+{
+
+}
+
+EAPI Egueb_Dom_Window * egueb_dom_feature_window_view_get(Egueb_Dom_Node *n)
+{
+
+}
+#endif
+
 EAPI Eina_Bool egueb_dom_feature_window_add(Egueb_Dom_Node *n,
 		const Egueb_Dom_Feature_Window_Descriptor *d)
 {
