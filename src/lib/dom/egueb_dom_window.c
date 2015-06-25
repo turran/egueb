@@ -143,7 +143,7 @@ static void _egueb_dom_window_instance_deinit(void *o)
 	Egueb_Dom_Window *thiz;
 
 	thiz = EGUEB_DOM_WINDOW(o);
-	egueb_dom_node_weak_ref_remove(thiz->doc, &thiz->doc);
+	egueb_dom_node_unref(thiz->doc);
 }
 /*============================================================================*
  *                                 Global                                     *
@@ -161,7 +161,7 @@ EAPI Egueb_Dom_Window * egueb_dom_window_new(
 
 	thiz = ENESIM_OBJECT_INSTANCE_NEW(egueb_dom_window);
 	thiz->desc = desc;
-	egueb_dom_node_weak_ref_add(doc, &thiz->doc);
+	thiz->doc = doc;
 	thiz->data = data;
 	thiz->ref = 1;
 
