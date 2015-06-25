@@ -50,8 +50,8 @@ typedef struct _Egueb_Dom_Window_Descriptor
 	int version;
 	Egueb_Dom_Window_Descriptor_Destroy destroy;
 	/* size */
-	Egueb_Dom_Window_Size_Get outter_width_get;
-	Egueb_Dom_Window_Size_Get outter_height_get;
+	Egueb_Dom_Window_Size_Get outer_width_get;
+	Egueb_Dom_Window_Size_Get outer_height_get;
 	Egueb_Dom_Window_Size_Get inner_width_get;
 	Egueb_Dom_Window_Size_Get inner_height_get;
 	/* one-shot timer */
@@ -67,6 +67,12 @@ typedef struct _Egueb_Dom_Window_Descriptor
  * @ingroup Egueb_Dom_Window
  * @{
  */
+
+#define EGUEB_DOM_WINDOW_DESCRIPTOR egueb_dom_window_descriptor_get()
+EAPI Enesim_Object_Descriptor * egueb_dom_window_descriptor_get(void);
+#define EGUEB_DOM_WINDOW(o) ENESIM_OBJECT_INSTANCE_CHECK(o,			\
+		Egueb_Dom_Window, EGUEB_DOM_WINDOW_DESCRIPTOR)
+
 
 EAPI Egueb_Dom_Window * egueb_dom_window_new(
 		const Egueb_Dom_Window_Descriptor *desc,

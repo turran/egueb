@@ -215,19 +215,19 @@ EAPI void egueb_dom_window_timeout_clear(Egueb_Dom_Window *thiz,
 		thiz->desc->timeout_clear(thiz->data, timeout);
 }
 
-EAPI int egueb_dom_window_outter_width_get(Egueb_Dom_Window *thiz)
+EAPI int egueb_dom_window_outer_width_get(Egueb_Dom_Window *thiz)
 {
 	EINA_SAFETY_ON_NULL_RETURN_VAL(thiz, 0);
-	if (thiz->desc->outter_width_get)
-		thiz->desc->outter_width_get(thiz->data);
+	if (thiz->desc->outer_width_get)
+		thiz->desc->outer_width_get(thiz->data);
 	return 0;
 }
 
-EAPI int egueb_dom_window_outter_height_get(Egueb_Dom_Window *thiz)
+EAPI int egueb_dom_window_outer_height_get(Egueb_Dom_Window *thiz)
 {
 	EINA_SAFETY_ON_NULL_RETURN_VAL(thiz, 0);
-	if (thiz->desc->outter_height_get)
-		thiz->desc->outter_height_get(thiz->data);
+	if (thiz->desc->outer_height_get)
+		thiz->desc->outer_height_get(thiz->data);
 	return 0;
 }
 
