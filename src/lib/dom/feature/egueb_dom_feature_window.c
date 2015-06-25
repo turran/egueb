@@ -20,6 +20,8 @@
 #include "egueb_dom_string.h"
 #include "egueb_dom_main.h"
 #include "egueb_dom_node.h"
+#include "egueb_dom_window.h"
+#include "egueb_dom_event_window.h"
 #include "egueb_dom_feature.h"
 #include "egueb_dom_feature_window.h"
 
@@ -37,6 +39,7 @@ typedef struct _Egueb_Dom_Feature_Window
 {
 	Egueb_Dom_Feature base;
 	Egueb_Dom_Node *n;
+	Egueb_Dom_Window *view;
 	const Egueb_Dom_Feature_Window_Descriptor *d;
 } Egueb_Dom_Feature_Window;
 
@@ -46,6 +49,19 @@ typedef struct _Egueb_Dom_Feature_Window_Class
 } Egueb_Dom_Feature_Window_Class;
 
 static Egueb_Dom_String _EGUEB_DOM_FEATURE_WINDOW_NAME = EGUEB_DOM_STRING_STATIC("EguebDomWindow");
+
+static void _egueb_dom_feature_window_on_resize(Egueb_Dom_Event *ev, void *data)
+{
+	Egueb_Dom_Feature_Window *thiz = data;
+	Egueb_Dom_Window *win = thiz->view;
+	int width, height;
+
+	if (!thiz->n) return;
+	width = egueb_dom_window_inner_width_get(win);
+	height = egueb_dom_window_inner_height_get(win);
+
+	thiz->d->content_size_set(thiz->n, width, height);
+}
 /*----------------------------------------------------------------------------*
  *                              Object interface                              *
  *----------------------------------------------------------------------------*/
@@ -100,18 +116,39 @@ EAPI Eina_Bool egueb_dom_feature_window_content_size_get(Egueb_Dom_Feature *f, i
 	return thiz->d->content_size_get(thiz->n, w, h);
 }
 
-#if 0
-EAPI void egueb_dom_feature_window_view_set(Egueb_Dom_Node *n,
+EAPI void egueb_dom_feature_window_view_set(Egueb_Dom_Feature *f,
 		Egueb_Dom_Window *w)
 {
+	Egueb_Dom_Feature_Window *thiz;
 
+	thiz = EGUEB_DOM_FEATURE_WINDOW(f);
+	if (thiz->view)
+	{
+		egueb_dom_event_target_event_listener_remove(
+				EGUEB_DOM_EVENT_TARGET_CAST(w),
+				EGUEB_DOM_EVENT_WINDOW_RESIZE,
+				_egueb_dom_feature_window_on_resize,
+				EINA_FALSE, thiz);
+		thiz->view = NULL;
+	}
+	if (w)
+	{
+		egueb_dom_event_target_event_listener_add(
+				EGUEB_DOM_EVENT_TARGET_CAST(w),
+				EGUEB_DOM_EVENT_WINDOW_RESIZE,
+				_egueb_dom_feature_window_on_resize,
+				EINA_FALSE, thiz);
+		thiz->view = w;
+	}
 }
 
-EAPI Egueb_Dom_Window * egueb_dom_feature_window_view_get(Egueb_Dom_Node *n)
+EAPI Egueb_Dom_Window * egueb_dom_feature_window_view_get(Egueb_Dom_Feature *f)
 {
+	Egueb_Dom_Feature_Window *thiz;
 
+	thiz = EGUEB_DOM_FEATURE_WINDOW(f);
+	return egueb_dom_window_ref(thiz->view);
 }
-#endif
 
 EAPI Eina_Bool egueb_dom_feature_window_add(Egueb_Dom_Node *n,
 		const Egueb_Dom_Feature_Window_Descriptor *d)
