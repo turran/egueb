@@ -69,7 +69,17 @@ static void _options_parse_cb(void *data, const char *key, const char *value)
 		thiz->container_height = atoi(value);
 }
 
-static void * _enesim_image_dom_options_parse(const char *options_str)
+static int _enesim_image_dom_provider_version_get(void)
+{
+	return ENESIM_IMAGE_PROVIDER_DESCRIPTOR_VERSION;
+}
+
+static const char * _enesim_image_dom_provider_name_get(void)
+{
+	return "dom";
+}
+
+static void * _enesim_image_dom_provider_options_parse(const char *options_str)
 {
 	Enesim_Image_Svg_Options *options;
 
@@ -84,7 +94,7 @@ static void * _enesim_image_dom_options_parse(const char *options_str)
 	return options;
 }
 
-static void _enesim_image_dom_options_free(void *data)
+static void _enesim_image_dom_provider_options_free(void *data)
 {
 	Enesim_Image_Svg_Options *options = data;
 	free(options);
@@ -93,7 +103,7 @@ static void _enesim_image_dom_options_free(void *data)
 /* Here we should parse the first svg element only and return its
  * size, for now, we dont support this feature
  */
-static Eina_Bool _enesim_image_dom_info_load(Enesim_Stream *data, int *w, int *h,
+static Eina_Bool _enesim_image_dom_provider_info_load(Enesim_Stream *data, int *w, int *h,
 		Enesim_Buffer_Format *sfmt, void *options, Eina_Error *err)
 {
 	Egueb_Dom_Node *doc = NULL;
@@ -144,7 +154,7 @@ err_parse:
 	return ret;
 }
 
-static Eina_Bool _enesim_image_dom_load(Enesim_Stream *data,
+static Eina_Bool _enesim_image_dom_provider_load(Enesim_Stream *data,
 		Enesim_Buffer *buffer, void *options, Eina_Error *err)
 {
 	Egueb_Dom_Node *doc = NULL;
@@ -216,22 +226,27 @@ err_parse:
 }
 
 static Enesim_Image_Provider_Descriptor _provider = {
-	/* .version		= */ ENESIM_IMAGE_PROVIDER_DESCRIPTOR_VERSION,
-	/* .name = 		*/ "svg",
-	/* .options_parse = 	*/ _enesim_image_dom_options_parse,
-	/* .options_free = 	*/ _enesim_image_dom_options_free,
+	/* .version_get = 	*/ _enesim_image_dom_provider_version_get,
+	/* .name_get = 		*/ _enesim_image_dom_provider_name_get,
+	/* .options_parse = 	*/ _enesim_image_dom_provider_options_parse,
+	/* .options_free = 	*/ _enesim_image_dom_provider_options_free,
 	/* .loadable = 		*/ NULL,
 	/* .saveable = 		*/ NULL,
-	/* .info_get = 		*/ _enesim_image_dom_info_load,
+	/* .info_get = 		*/ _enesim_image_dom_provider_info_load,
 	/* .formats_get = 	*/ NULL,
-	/* .load = 		*/ _enesim_image_dom_load,
+	/* .load = 		*/ _enesim_image_dom_provider_load,
 	/* .save = 		*/ NULL,
 };
 
 /*----------------------------------------------------------------------------*
  *                           Enesim Image Finder API                          *
  *----------------------------------------------------------------------------*/
-static const char * _enesim_image_dom_data_from(Enesim_Stream *data)
+static int _enesim_image_dom_finder_version_get(void)
+{
+	return ENESIM_IMAGE_FINDER_DESCRIPTOR_VERSION;
+}
+
+static const char * _enesim_image_dom_finder_data_from(Enesim_Stream *data)
 {
 	char buf[4096];
 	char *ret = NULL;
@@ -256,7 +271,7 @@ static const char * _enesim_image_dom_data_from(Enesim_Stream *data)
 	return ret;
 }
 
-static const char * _enesim_image_dom_extension_from(const char *ext)
+static const char * _enesim_image_dom_finder_extension_from(const char *ext)
 {
 	if (!strcmp(ext, "svg"))
 		return "image/svg+xml";
@@ -264,9 +279,9 @@ static const char * _enesim_image_dom_extension_from(const char *ext)
 }
 
 static Enesim_Image_Finder_Descriptor _finder = {
-	/* .version		= */ ENESIM_IMAGE_FINDER_DESCRIPTOR_VERSION,
-	/* .data_from 		= */ _enesim_image_dom_data_from,
-	/* .extension_from 	= */ _enesim_image_dom_extension_from,
+	/* .version_get		= */ _enesim_image_dom_finder_version_get,
+	/* .data_from 		= */ _enesim_image_dom_finder_data_from,
+	/* .extension_from 	= */ _enesim_image_dom_finder_extension_from,
 };
 /*----------------------------------------------------------------------------*
  *                             Module API                                     *
