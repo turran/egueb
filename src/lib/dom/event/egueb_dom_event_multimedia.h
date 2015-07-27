@@ -24,7 +24,7 @@
  */
 
 /**
- * @defgroup Egueb_Dom_Event_Multimedia_Group Multimedia Event
+ * @defgroup Egueb_Dom_Event_Multimedia Multimedia Event
  * @brief Multimedia Event @ender_inherits{Egueb_Dom_Event}
  * @ingroup Egueb_Dom_Event
  * @{

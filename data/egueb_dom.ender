@@ -62,12 +62,38 @@
       <arg name="index" type="int32" direction="in" transfer="full"/>
     </method>
   </object>
+  <object name="egueb.dom.node"/>
+  <object name="egueb.dom.node.map_named">
+    <method name="get">
+      <return type="egueb.dom.node" transfer="full" nullable="false"/>
+      <arg name="name" type="egueb.dom.string" direction="in" transfer="full"/>
+      <arg name="err" type="eina.error" direction="in" transfer="full"/>
+    </method>
+    <method name="remove">
+      <return type="bool" transfer="full" nullable="false"/>
+      <arg name="name" type="egueb.dom.string" direction="in" transfer="full"/>
+      <arg name="n" type="egueb.dom.node" direction="in" transfer="full"/>
+      <arg name="err" type="eina.error" direction="in" transfer="full"/>
+    </method>
+    <method name="set">
+      <return type="bool" transfer="full" nullable="false"/>
+      <arg name="n" type="egueb.dom.node" direction="in" transfer="full"/>
+      <arg name="err" type="eina.error" direction="in" transfer="full"/>
+    </method>
+    <method name="at">
+      <return type="egueb.dom.node" transfer="full" nullable="false"/>
+      <arg name="idx" type="int32" direction="in" transfer="full"/>
+    </method>
+    <method name="length">
+      <return type="int32" transfer="full" nullable="false"/>
+    </method>
+    <method name="free"/>
+  </object>
   <object name="egueb.dom.event"/>
   <object name="egueb.dom.element" inherits="egueb.dom.node"/>
   <object name="egueb.dom.document" inherits="egueb.dom.node"/>
   <object name="egueb.dom.attr" inherits="egueb.dom.node"/>
   <object name="egueb.dom.node.list"/>
-  <object name="egueb.dom.node.map.named"/>
   <callback name="egueb.dom.node.cb">
     <return type="bool" transfer="full" nullable="false"/>
   </callback>
@@ -159,7 +185,7 @@
       <return type="egueb.dom.node" transfer="full" nullable="false"/>
     </method>
     <method name="attributes_get">
-      <return type="egueb.dom.node.map.named" transfer="full" nullable="false"/>
+      <return type="egueb.dom.node.map_named" transfer="full" nullable="false"/>
     </method>
     <method name="clone">
       <return type="egueb.dom.node" transfer="full" nullable="false"/>
@@ -661,6 +687,23 @@
   </object>
   <object name="egueb.dom.event.target.listener"/>
   <callback name="egueb.dom.event.listener"/>
+  <callback name="egueb.dom.event.io.data.cb"/>
+  <callback name="egueb.dom.event.io.image.cb"/>
+  <object name="egueb.dom.event.ui" inherits="egueb.dom.event">
+    <method name="detail_get">
+      <return type="int32" transfer="full" nullable="false"/>
+    </method>
+    <method name="init">
+      <arg name="type" type="egueb.dom.string" direction="in" transfer="full"/>
+      <arg name="bubbleable" type="bool" direction="in" transfer="full"/>
+      <arg name="cancelable" type="bool" direction="in" transfer="full"/>
+      <arg name="view" type="egueb.dom.window" direction="in" transfer="full"/>
+      <arg name="detail" type="int32" direction="in" transfer="full"/>
+    </method>
+    <method name="view_get">
+      <return type="egueb.dom.window" transfer="full" nullable="false"/>
+    </method>
+  </object>
   <object name="egueb.dom.event.window" inherits="egueb.dom.event.ui"/>
   <enum name="egueb.dom.key.location">
     <value name="standard"/>
@@ -756,5 +799,40 @@
       <arg name="obj" type="pointer" direction="in" transfer="full"/>
       <arg name="e" type="egueb.dom.event" direction="in" transfer="full"/>
     </method>
+  </object>
+  <object name="egueb.dom.event.script" inherits="egueb.dom.event">
+    <ctor name="new">
+      <arg name="type" type="egueb.dom.string" direction="in" transfer="full"/>
+    </ctor>
+    <method name="type_get">
+      <return type="egueb.dom.string" transfer="full" nullable="false"/>
+    </method>
+    <method name="scripter_get">
+      <return type="egueb.dom.scripter" transfer="full" nullable="false"/>
+    </method>
+    <method name="scripter_set">
+      <arg name="sc" type="egueb.dom.scripter" direction="in" transfer="full"/>
+    </method>
+  </object>
+  <object name="egueb.dom.event.multimedia" inherits="egueb.dom.event">
+    <method name="notifier_get">
+      <return type="egueb.dom.media.notifier" transfer="full" nullable="false"/>
+    </method>
+    <method name="provider_get">
+      <return type="egueb.dom.media.provider" transfer="full" nullable="false"/>
+    </method>
+    <method name="provider_set">
+      <arg name="sc" type="egueb.dom.media.provider" direction="in" transfer="full"/>
+    </method>
+    <ctor name="video_new">
+      <arg name="notifier" type="egueb.dom.media.notifier" direction="in" transfer="full"/>
+      <arg name="image" type="enesim.renderer" direction="in" transfer="full"/>
+    </ctor>
+    <method name="video_renderer_get">
+      <return type="enesim.renderer" transfer="full" nullable="false"/>
+    </method>
+    <ctor name="audio_new">
+      <arg name="notifier" type="egueb.dom.media.notifier" direction="in" transfer="full"/>
+    </ctor>
   </object>
 </lib>

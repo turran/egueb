@@ -26,8 +26,8 @@
  */
 
 /**
- * @defgroup Egueb_Svg_Rect_Definitions Rect definitions
- * @ingroup Egueb_Svg_Rect
+ * @defgroup Egueb_Svg_Rect Rect
+ * @ingroup Egueb_Svg_Type_Group
  * @{
  */
 

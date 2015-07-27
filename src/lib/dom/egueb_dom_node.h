@@ -32,7 +32,6 @@
  * @ender_group_proto{Egueb_Dom_Document}
  * @ender_group_proto{Egueb_Dom_Attr}
  * @ender_group_proto{Egueb_Dom_Node_List}
- * @ender_group_proto{Egueb_Dom_Node_Map_Named}
  * @ender_group{Egueb_Dom_Node_Definitions}
  * @ender_group{Egueb_Dom_Node_Type}
  * @ender_group{Egueb_Dom_Node}

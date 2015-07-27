@@ -24,7 +24,7 @@
  */
 
 /**
- * @defgroup Egueb_Dom_Event_Script_Group Script Event
+ * @defgroup Egueb_Dom_Event_Script Script Event
  * @brief Script Event @ender_inherits{Egueb_Dom_Event}
  * @ingroup Egueb_Dom_Event
  * @{

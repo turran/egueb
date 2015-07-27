@@ -102,6 +102,7 @@
     <field name="x" type="double"/>
     <field name="y" type="double"/>
   </struct>
+  <def name="egueb.svg.rect" type="enesim.rectangle"/>
   <struct name="egueb.svg.rect.animated">
     <field name="base" type="egueb.svg.rect"/>
     <field name="anim" type="egueb.svg.rect"/>

@@ -20,14 +20,23 @@
 #define _EGUEB_DOM_NODE_MAP_NAMED_
 
 /**
+ * @file
+ * @ender_group_proto{Egueb_Dom_Node}
+ * @ender_group{Egueb_Dom_Node_Map_Named}
+ */
+
+/**
  * @defgroup Egueb_Dom_Node_Map_Named Node named map
  * @brief Node named map
  *
- * @ender_name{egueb.dom.named_node_map}
  * @ingroup Egueb_Dom_Node
  * @{
  */
 
+/**
+ * The node named map handle
+ * @ender_name{egueb.dom.node.map_named}
+ */
 typedef struct _Egueb_Dom_Node_Map_Named Egueb_Dom_Node_Map_Named;
 
 EAPI Egueb_Dom_Node * egueb_dom_node_map_named_get(

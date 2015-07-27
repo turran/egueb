@@ -24,7 +24,7 @@
  */
 
 /**
- * @defgroup Egueb_Dom_Event_UI_Group UI Event
+ * @defgroup Egueb_Dom_Event_UI UI Event
  * @brief UI Event @ender_inherits{Egueb_Dom_Event}
  * @ingroup Egueb_Dom_Event
  * @{
