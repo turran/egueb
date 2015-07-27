@@ -224,6 +224,7 @@ ENS_CHECK_TESTS([enable_tests="yes"], [enable_tests="no"])
 AC_CONFIG_FILES([
 Makefile
 common/doc/Doxyfile_common
+doc/Doxyfile
 ])
 
 AC_OUTPUT
