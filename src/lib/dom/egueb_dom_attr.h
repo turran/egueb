@@ -37,9 +37,9 @@
 
 typedef enum _Egueb_Dom_Attr_Flag
 {
-	EGUEB_DOM_ATTR_FLAG_STYLABLE	= 1 << 0,
-	EGUEB_DOM_ATTR_FLAG_ANIMATABLE	= 1 << 1,
-	EGUEB_DOM_ATTR_FLAG_INHERITABLE	= 1 << 2,
+	EGUEB_DOM_ATTR_FLAG_STYLABLE	= 1,
+	EGUEB_DOM_ATTR_FLAG_ANIMATABLE	= 2,
+	EGUEB_DOM_ATTR_FLAG_INHERITABLE	= 4,
 } Egueb_Dom_Attr_Flag;
 
 static inline int egueb_dom_attr_flag_mask_generate(Eina_Bool animatable,
@@ -57,10 +57,10 @@ static inline int egueb_dom_attr_flag_mask_generate(Eina_Bool animatable,
 
 typedef enum _Egueb_Dom_Attr_Type
 {
-	EGUEB_DOM_ATTR_TYPE_BASE 		= 1 << 0,
-	EGUEB_DOM_ATTR_TYPE_DEFAULT		= 1 << 1,
-	EGUEB_DOM_ATTR_TYPE_ANIMATED		= 1 << 2,
-	EGUEB_DOM_ATTR_TYPE_STYLED 		= 1 << 3,
+	EGUEB_DOM_ATTR_TYPE_BASE 		= 1,
+	EGUEB_DOM_ATTR_TYPE_DEFAULT		= 2,
+	EGUEB_DOM_ATTR_TYPE_ANIMATED		= 4,
+	EGUEB_DOM_ATTR_TYPE_STYLED 		= 8,
 } Egueb_Dom_Attr_Type;
 
 /**

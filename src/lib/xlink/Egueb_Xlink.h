@@ -30,7 +30,7 @@ extern "C" {
  */
 
 /**
- * @defgroup Egueb_Dom_Group XLINK
+ * @defgroup Egueb_Xlink_Group XLINK
  * @brief XLINK related API
  * @{
  */
