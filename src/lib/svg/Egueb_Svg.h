@@ -59,7 +59,8 @@ extern "C" {
  * @ender_depends{eina}
  * @ender_depends{enesim}
  * @ender_depends{ender}
- * @ender_depends{egueb_dom}
+ * @ender_depends{egueb-dom}
+ * @ender_depends{egueb-css}
  */
 
 /**

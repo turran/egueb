@@ -23,6 +23,12 @@
 #include <Egueb_Dom.h>
 
 /**
+ * @file
+ * @ender_depends{eina}
+ * @ender_depends{egueb-dom}
+ */
+
+/**
  * @defgroup Egueb_Smil_Group SMIL
  * @brief SMIL related API
  * @{

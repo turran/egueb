@@ -25,6 +25,12 @@
 #include <stdint.h>
 
 /**
+ * @file
+ * @ender_depends{eina}
+ * @ender_depends{egueb-dom}
+ */
+
+/**
  * @defgroup Egueb_Css_Group CSS
  * @brief CSS related API
  * @{

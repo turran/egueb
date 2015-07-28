@@ -23,7 +23,6 @@
 
 /**
  * @file
- * @ender_group{Egueb_Dom_Event_Definition}
  * @ender_group{Egueb_Dom_Event_Phase}
  * @ender_group{Egueb_Dom_Event_Direction}
  * @ender_group{Egueb_Dom_Event}
@@ -67,6 +66,9 @@ typedef enum _Egueb_Dom_Event_Direction
  * @{
  */
 
+/**
+ * The event handle
+ */
 typedef struct _Egueb_Dom_Event Egueb_Dom_Event;
 
 EAPI Enesim_Object_Descriptor * egueb_dom_event_descriptor_get(void);

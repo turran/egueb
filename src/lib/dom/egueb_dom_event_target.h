@@ -44,6 +44,9 @@ typedef void (*Egueb_Dom_Event_Listener)(Egueb_Dom_Event *ev, void *data);
  * @{
  */
 
+/**
+ * The event target handle
+ */
 typedef struct _Egueb_Dom_Event_Target Egueb_Dom_Event_Target;
 
 EAPI Egueb_Dom_Event_Target * egueb_dom_event_target_ref(
