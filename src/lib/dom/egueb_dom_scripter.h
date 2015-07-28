@@ -31,14 +31,38 @@
  * @{
  */
 
-typedef void * (*Egueb_Dom_Scripter_Descriptor_Create)(void);
-typedef void (*Egueb_Dom_Scripter_Descriptor_Destroy)(void *prv);
-typedef Eina_Bool (*Egueb_Dom_Scripter_Descriptor_Load)(void *prv, Egueb_Dom_String *s, void **obj);
-typedef void (*Egueb_Dom_Scripter_Descriptor_Global_Add)(void *prv, const char *name, void *o, Ender_Item *i);
-typedef void (*Egueb_Dom_Scripter_Descriptor_Global_Clear)(void *prv);
-typedef void (*Egueb_Dom_Scripter_Descriptor_Script_Destroy)(void *prv, void *obj);
-typedef Eina_Bool (*Egueb_Dom_Scripter_Descriptor_Script_Run)(void *prv, void *obj);
-typedef Eina_Bool (*Egueb_Dom_Scripter_Descriptor_Script_Run_Listener)(void *prv, void *obj, Egueb_Dom_Event *e);
+/**
+ * @ender_name{egueb.dom.scripter.descriptor.create_cb}
+ */
+typedef void * (*Egueb_Dom_Scripter_Descriptor_Create_Cb)(void);
+/**
+ * @ender_name{egueb.dom.scripter.descriptor.destroy_cb}
+ */
+typedef void (*Egueb_Dom_Scripter_Descriptor_Destroy_Cb)(void *prv);
+/**
+ * @ender_name{egueb.dom.scripter.descriptor.load_cb}
+ */
+typedef Eina_Bool (*Egueb_Dom_Scripter_Descriptor_Load_Cb)(void *prv, Egueb_Dom_String *s, void **obj);
+/**
+ * @ender_name{egueb.dom.scripter.descriptor.global_add_cb}
+ */
+typedef void (*Egueb_Dom_Scripter_Descriptor_Global_Add_Cb)(void *prv, const char *name, void *o, Ender_Item *i);
+/**
+ * @ender_name{egueb.dom.scripter.descriptor.global_clear_cb}
+ */
+typedef void (*Egueb_Dom_Scripter_Descriptor_Global_Clear_Cb)(void *prv);
+/**
+ * @ender_name{egueb.dom.scripter.descriptor.script_destroy_cb}
+ */
+typedef void (*Egueb_Dom_Scripter_Descriptor_Script_Destroy_Cb)(void *prv, void *obj);
+/**
+ * @ender_name{egueb.dom.scripter.descriptor.script_run_cb}
+ */
+typedef Eina_Bool (*Egueb_Dom_Scripter_Descriptor_Script_Run_Cb)(void *prv, void *obj);
+/**
+ * @ender_name{egueb.dom.scripter.descriptor.script_listener_cb}
+ */
+typedef Eina_Bool (*Egueb_Dom_Scripter_Descriptor_Script_Run_Listener_Cb)(void *prv, void *obj, Egueb_Dom_Event *e);
 
 /**
  * @}
@@ -51,14 +75,14 @@ typedef Eina_Bool (*Egueb_Dom_Scripter_Descriptor_Script_Run_Listener)(void *prv
 typedef struct _Egueb_Dom_Scripter_Descriptor
 {
 	int version;
-	Egueb_Dom_Scripter_Descriptor_Create create;
-	Egueb_Dom_Scripter_Descriptor_Destroy destroy;
-	Egueb_Dom_Scripter_Descriptor_Load load;
-	Egueb_Dom_Scripter_Descriptor_Global_Add global_add;
-	Egueb_Dom_Scripter_Descriptor_Global_Clear global_clear;
-	Egueb_Dom_Scripter_Descriptor_Script_Destroy script_destroy;
-	Egueb_Dom_Scripter_Descriptor_Script_Run script_run;
-	Egueb_Dom_Scripter_Descriptor_Script_Run_Listener script_run_listener;
+	Egueb_Dom_Scripter_Descriptor_Create_Cb create;
+	Egueb_Dom_Scripter_Descriptor_Destroy_Cb destroy;
+	Egueb_Dom_Scripter_Descriptor_Load_Cb load;
+	Egueb_Dom_Scripter_Descriptor_Global_Add_Cb global_add;
+	Egueb_Dom_Scripter_Descriptor_Global_Clear_Cb global_clear;
+	Egueb_Dom_Scripter_Descriptor_Script_Destroy_Cb script_destroy;
+	Egueb_Dom_Scripter_Descriptor_Script_Run_Cb script_run;
+	Egueb_Dom_Scripter_Descriptor_Script_Run_Listener_Cb script_run_listener;
 } Egueb_Dom_Scripter_Descriptor;
 
 /**
