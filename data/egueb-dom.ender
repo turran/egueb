@@ -764,32 +764,46 @@
     <ctor name="in_new"/>
     <ctor name="out_new"/>
   </object>
-  <callback name="egueb.dom.scripter.descriptor.create">
-    <return type="pointer" transfer="full" nullable="false"/>
+  <callback name="egueb.dom.scripter.descriptor.create_cb">
+    <return type="pointer" transfer="none" nullable="false"/>
   </callback>
-  <callback name="egueb.dom.scripter.descriptor.destroy"/>
-  <callback name="egueb.dom.scripter.descriptor.load">
+  <callback name="egueb.dom.scripter.descriptor.destroy_cb">
+    <arg name="prv" type="pointer" direction="in" transfer="full" nullable="false"/>
+  </callback>
+  <callback name="egueb.dom.scripter.descriptor.load_cb">
+    <arg name="prv" type="pointer" direction="in" transfer="none" nullable="false"/>
+    <arg name="s" type="egueb.dom.string" direction="in" transfer="none" nullable="false"/>
+    <arg name="obj" type="pointer" direction="out" transfer="full" nullable="false"/>
     <return type="bool" transfer="full" nullable="false"/>
   </callback>
-  <callback name="egueb.dom.scripter.descriptor.global.add"/>
-  <callback name="egueb.dom.scripter.descriptor.global.clear"/>
-  <callback name="egueb.dom.scripter.descriptor.script.destroy"/>
-  <callback name="egueb.dom.scripter.descriptor.script.run">
-    <return type="bool" transfer="full" nullable="false"/>
+  <callback name="egueb.dom.scripter.descriptor.global_add_cb">
+    <arg name="prv" type="pointer" direction="in" transfer="none" nullable="false"/>
+    <arg name="name" type="string" direction="in" transfer="none" nullable="false"/>
+    <arg name="o" type="pointer" direction="in" transfer="none" nullable="false"/>
+    <arg name="i" type="ender.item" direction="in" transfer="none" nullable="false"/>
   </callback>
-  <callback name="egueb.dom.scripter.descriptor.script.run.listener">
+  <callback name="egueb.dom.scripter.descriptor.global_clear_cb">
+    <arg name="prv" type="pointer" direction="in" transfer="none" nullable="false"/>
+  </callback>
+  <callback name="egueb.dom.scripter.descriptor.script_destroy_cb"/>
+  <callback name="egueb.dom.scripter.descriptor.script_run_cb">
+    <arg name="prv" type="pointer" direction="in" transfer="none" nullable="false"/>
+    <arg name="obj" type="pointer" direction="in" transfer="none" nullable="false"/>
+    <return type="pointer" transfer="none" nullable="false"/>
+  </callback>
+  <callback name="egueb.dom.scripter.descriptor.script_listener_cb">
     <return type="bool" transfer="full" nullable="false"/>
   </callback>
   <struct name="egueb.dom.scripter.descriptor">
     <field name="version" type="int32"/>
-    <field name="create" type="egueb.dom.scripter.descriptor.create"/>
-    <field name="destroy" type="egueb.dom.scripter.descriptor.destroy"/>
-    <field name="load" type="egueb.dom.scripter.descriptor.load"/>
-    <field name="global_add" type="egueb.dom.scripter.descriptor.global.add"/>
-    <field name="global_clear" type="egueb.dom.scripter.descriptor.global.clear"/>
-    <field name="script_destroy" type="egueb.dom.scripter.descriptor.script.destroy"/>
-    <field name="script_run" type="egueb.dom.scripter.descriptor.script.run"/>
-    <field name="script_run_listener" type="egueb.dom.scripter.descriptor.script.run.listener"/>
+    <field name="create" type="egueb.dom.scripter.descriptor.create_cb"/>
+    <field name="destroy" type="egueb.dom.scripter.descriptor.destroy_cb"/>
+    <field name="load" type="egueb.dom.scripter.descriptor.load_cb"/>
+    <field name="global_add" type="egueb.dom.scripter.descriptor.global_add_cb"/>
+    <field name="global_clear" type="egueb.dom.scripter.descriptor.global_clear_cb"/>
+    <field name="script_destroy" type="egueb.dom.scripter.descriptor.script_destroy_cb"/>
+    <field name="script_run" type="egueb.dom.scripter.descriptor.script_run_cb"/>
+    <field name="script_run_listener" type="egueb.dom.scripter.descriptor.script_listener_cb"/>
   </struct>
   <object name="egueb.dom.scripter">
     <ctor name="new">
