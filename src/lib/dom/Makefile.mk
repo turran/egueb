@@ -1,4 +1,4 @@
-lib_LTLIBRARIES += src/lib/dom/libegueb_dom.la
+lib_LTLIBRARIES += src/lib/dom/libegueb-dom.la
 
 installed_domheadersdir = $(pkgincludedir)-@VMAJ@/dom
 dist_installed_domheaders_DATA = \

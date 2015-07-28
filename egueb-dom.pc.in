@@ -12,5 +12,5 @@ Description: Egueb DOM implementation
 Requires.private: @egueb_dom_requirements_private@
 Requires: @egueb_dom_requirements@
 Version: @VERSION@
-Libs: -L${libdir} -legueb_dom
+Libs: -L${libdir} -legueb-dom
 Cflags: -I${pkgincludedir}

@@ -10,6 +10,6 @@ Name: Egueb SMIL
 Description: Egueb SMIL implementation
 Requires.private: egueb-dom egueb-xlink
 Version: @VERSION@
-Libs: -L${libdir} -legueb_smil
+Libs: -L${libdir} -legueb-smil
 Cflags: -I${pkgincludedir}
 

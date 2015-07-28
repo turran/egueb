@@ -1,0 +1,5 @@
+<?xml version="1.0" standalone="yes"?>
+<lib xmlns:dyn="http://exslt.org/dynamic" name="egueb-smil" version="0" case="underscore">
+  <includes name="eina"/>
+  <includes name="egueb-dom"/>
+</lib>

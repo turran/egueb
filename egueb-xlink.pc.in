@@ -11,5 +11,5 @@ Description: Egueb XLINK implementation
 Requires.private: eina egueb-dom @egueb_xlink_requirements_private@
 Requires: @egueb_xlink_requirements@
 Version: @VERSION@
-Libs: -L${libdir} -legueb_xlink
+Libs: -L${libdir} -legueb-xlink
 Cflags: -I${pkgincludedir}

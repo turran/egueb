@@ -1,4 +1,4 @@
-lib_LTLIBRARIES += src/lib/xlink/libegueb_xlink.la
+lib_LTLIBRARIES += src/lib/xlink/libegueb-xlink.la
 
 installed_xlinkheadersdir = $(pkgincludedir)-@VMAJ@/xlink
 dist_installed_xlinkheaders_DATA = \
@@ -22,7 +22,7 @@ $(src_lib_xlink_libegueb_xlink_la_IFLAGS) \
 @EGUEB_XLINK_CFLAGS@
 
 src_lib_xlink_libegueb_xlink_la_LIBADD = \
-$(top_builddir)/src/lib/dom/libegueb_dom.la \
+$(top_builddir)/src/lib/dom/libegueb-dom.la \
 @EGUEB_XLINK_LIBS@ -lm
 
 src_lib_xlink_libegueb_xlink_la_LDFLAGS = -no-undefined -version-info @version_info@

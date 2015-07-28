@@ -1,9 +1,10 @@
 <?xml version="1.0" standalone="yes"?>
-<lib xmlns:dyn="http://exslt.org/dynamic" name="egueb_svg" version="0" case="underscore">
+<lib xmlns:dyn="http://exslt.org/dynamic" name="egueb-svg" version="0" case="underscore">
   <includes name="eina"/>
   <includes name="enesim"/>
   <includes name="ender"/>
-  <includes name="egueb_dom"/>
+  <includes name="egueb-dom"/>
+  <includes name="egueb-css"/>
   <struct name="egueb.svg.color">
     <field name="r" type="uint8"/>
     <field name="g" type="uint8"/>

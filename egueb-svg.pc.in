@@ -10,5 +10,5 @@ Name: Egueb SVG
 Description: Egueb SVG implementation
 Requires.private: egueb-dom egueb-css egueb-smil egueb-xlink @egueb_svg_requirements@
 Version: @VERSION@
-Libs: -L${libdir} -legueb_svg
+Libs: -L${libdir} -legueb-svg
 Cflags: -I${pkgincludedir}

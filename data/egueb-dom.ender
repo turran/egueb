@@ -1,5 +1,5 @@
 <?xml version="1.0" standalone="yes"?>
-<lib xmlns:dyn="http://exslt.org/dynamic" name="egueb_dom" version="0" case="underscore">
+<lib xmlns:dyn="http://exslt.org/dynamic" name="egueb-dom" version="0" case="underscore">
   <includes name="eina"/>
   <includes name="enesim"/>
   <includes name="ender"/>
@@ -689,6 +689,28 @@
   <callback name="egueb.dom.event.listener"/>
   <callback name="egueb.dom.event.io.data.cb"/>
   <callback name="egueb.dom.event.io.image.cb"/>
+  <object name="egueb.dom.event.io" inherits="egueb.dom.event">
+    <ctor name="data_new">
+      <arg name="uri" type="egueb.dom.uri" direction="in" transfer="full"/>
+      <arg name="cb" type="egueb.dom.event.io.data.cb" direction="in" transfer="full"/>
+    </ctor>
+    <ctor name="image_new">
+      <arg name="s" type="enesim.stream" direction="in" transfer="full"/>
+      <arg name="cb" type="egueb.dom.event.io.image.cb" direction="in" transfer="full"/>
+    </ctor>
+    <method name="stream_get">
+      <return type="enesim.stream" transfer="full" nullable="false"/>
+    </method>
+    <method name="uri_get">
+      <arg name="uri" type="egueb.dom.uri" direction="in" transfer="full"/>
+    </method>
+    <method name="image_finish">
+      <arg name="s" type="enesim.surface" direction="in" transfer="full"/>
+    </method>
+    <method name="data_finish">
+      <arg name="s" type="enesim.stream" direction="in" transfer="full"/>
+    </method>
+  </object>
   <object name="egueb.dom.event.ui" inherits="egueb.dom.event">
     <method name="detail_get">
       <return type="int32" transfer="full" nullable="false"/>

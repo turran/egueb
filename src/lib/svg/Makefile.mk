@@ -1,5 +1,5 @@
 
-lib_LTLIBRARIES += src/lib/svg/libegueb_svg.la
+lib_LTLIBRARIES += src/lib/svg/libegueb-svg.la
 
 installed_svgheadersdir = $(pkgincludedir)-@VMAJ@/svg
 dist_installed_svgheaders_DATA = \
@@ -140,10 +140,10 @@ $(src_lib_smil_libegueb_smil_la_IFLAGS) \
 @EGUEB_SVG_CFLAGS@
 
 src_lib_svg_libegueb_svg_la_LIBADD = \
-$(top_builddir)/src/lib/dom/libegueb_dom.la \
-$(top_builddir)/src/lib/css/libegueb_css.la \
-$(top_builddir)/src/lib/smil/libegueb_smil.la \
-$(top_builddir)/src/lib/xlink/libegueb_xlink.la \
+$(top_builddir)/src/lib/dom/libegueb-dom.la \
+$(top_builddir)/src/lib/css/libegueb-css.la \
+$(top_builddir)/src/lib/smil/libegueb-smil.la \
+$(top_builddir)/src/lib/xlink/libegueb-xlink.la \
 @EGUEB_SVG_LIBS@ -lm
 
 src_lib_svg_libegueb_svg_la_LDFLAGS = -no-undefined -version-info @version_info@

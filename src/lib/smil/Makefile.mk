@@ -1,4 +1,4 @@
-lib_LTLIBRARIES += src/lib/smil/libegueb_smil.la
+lib_LTLIBRARIES += src/lib/smil/libegueb-smil.la
 
 installed_smilheadersdir = $(pkgincludedir)-@VMAJ@/smil
 dist_installed_smilheaders_DATA = \
@@ -76,8 +76,8 @@ $(src_lib_xlink_libegueb_xlink_la_IFLAGS) \
 @EGUEB_SMIL_CFLAGS@
 
 src_lib_smil_libegueb_smil_la_LIBADD = \
-$(top_builddir)/src/lib/dom/libegueb_dom.la \
-$(top_builddir)/src/lib/xlink/libegueb_xlink.la \
+$(top_builddir)/src/lib/dom/libegueb-dom.la \
+$(top_builddir)/src/lib/xlink/libegueb-xlink.la \
 @EGUEB_SMIL_LIBS@
 
 src_lib_smil_libegueb_smil_la_LDFLAGS = -no-undefined -version-info @version_info@

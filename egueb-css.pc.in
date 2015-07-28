@@ -11,5 +11,5 @@ Description: Egueb CSS implementation
 Requires.private: eina egueb-dom @egueb_css_requirements_private@
 Requires: @egueb_css_requirements@
 Version: @VERSION@
-Libs: -L${libdir} -legueb_css
+Libs: -L${libdir} -legueb-css
 Cflags: -I${pkgincludedir}

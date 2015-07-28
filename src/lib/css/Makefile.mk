@@ -1,4 +1,4 @@
-lib_LTLIBRARIES += src/lib/css/libegueb_css.la
+lib_LTLIBRARIES += src/lib/css/libegueb-css.la
 
 installed_cssheadersdir = $(pkgincludedir)-@VMAJ@/css
 dist_installed_cssheaders_DATA = \
@@ -48,7 +48,7 @@ $(src_lib_dom_libegueb_dom_la_IFLAGS) \
 @EGUEB_CSS_CFLAGS@
 
 src_lib_css_libegueb_css_la_LIBADD = \
-$(top_builddir)/src/lib/dom/libegueb_dom.la \
+$(top_builddir)/src/lib/dom/libegueb-dom.la \
 @EGUEB_CSS_LIBS@
 
 src_lib_css_libegueb_css_la_LDFLAGS = -no-undefined -version-info @version_info@

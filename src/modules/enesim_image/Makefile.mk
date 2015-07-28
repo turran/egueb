@@ -13,7 +13,7 @@ $(src_lib_dom_libegueb_dom_la_IFLAGS) \
 @EGUEB_DOM_CFLAGS@
 
 src_modules_enesim_image_enesim_image_dom_la_LIBADD = \
-$(top_builddir)/src/lib/dom/libegueb_dom.la \
+$(top_builddir)/src/lib/dom/libegueb-dom.la \
 @EGUEB_DOM_LIBS@
 
 src_modules_enesim_image_enesim_image_dom_la_LDFLAGS = -no-undefined -module -avoid-version

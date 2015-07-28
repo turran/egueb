@@ -9,7 +9,7 @@ $(src_lib_dom_libegueb_dom_la_IFLAGS) \
 
 src_bin_egueb_dom_loader_SOURCES =  src/bin/egueb_dom_loader.c
 src_bin_egueb_dom_loader_LDADD = \
-$(top_builddir)/src/lib/dom/libegueb_dom.la \
+$(top_builddir)/src/lib/dom/libegueb-dom.la \
 @EGUEB_DOM_LIBS@ -lm
 
 endif
