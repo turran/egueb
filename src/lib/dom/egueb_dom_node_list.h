@@ -38,6 +38,8 @@ typedef struct _Egueb_Dom_Node_List Egueb_Dom_Node_List;
 
 EAPI int egueb_dom_node_list_length_get(Egueb_Dom_Node_List *thiz);
 EAPI Egueb_Dom_Node * egueb_dom_node_list_item(Egueb_Dom_Node_List *thiz, int index);
+EAPI Egueb_Dom_Node_List * egueb_dom_node_list_ref(Egueb_Dom_Node_List *thiz);
+EAPI void egueb_dom_node_list_unref(Egueb_Dom_Node_List *thiz);
 
 /**
  * @}

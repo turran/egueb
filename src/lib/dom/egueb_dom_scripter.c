@@ -31,6 +31,7 @@ struct _Egueb_Dom_Scripter
 	Egueb_Dom_Node *doc;
 	const Egueb_Dom_Scripter_Descriptor *d;
 	void *prv;
+	int ref;
 };
 /*============================================================================*
  *                                 Global                                     *
@@ -61,12 +62,21 @@ EAPI void * egueb_dom_scripter_data_get(Egueb_Dom_Scripter *thiz)
 	return thiz->prv;
 }
 
-EAPI void egueb_dom_scripter_free(Egueb_Dom_Scripter *thiz)
+EAPI Egueb_Dom_Scripter * egueb_dom_scripter_ref(Egueb_Dom_Scripter *thiz)
 {
-	if (!thiz) return;
-	if (thiz->d->destroy)
-		thiz->d->destroy(thiz->prv);
-	free(thiz);
+	thiz->ref++;
+	return thiz;
+}
+
+EAPI void egueb_dom_scripter_unref(Egueb_Dom_Scripter *thiz)
+{
+	thiz->ref--;
+	if (!thiz->ref)
+	{
+		if (thiz->d->destroy)
+			thiz->d->destroy(thiz->prv);
+		free(thiz);
+	}
 }
 
 EAPI void egueb_dom_scripter_global_add(Egueb_Dom_Scripter *thiz, const char *name, void *obj, Ender_Item *i)

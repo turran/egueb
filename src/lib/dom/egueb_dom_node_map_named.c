@@ -34,6 +34,10 @@ static void _egueb_dom_node_map_named_class_init(void *k)
 
 static void _egueb_dom_node_map_named_instance_init(void *o)
 {
+	Egueb_Dom_Node_Map_Named *thiz;
+
+	thiz = EGUEB_DOM_NODE_MAP_NAMED(o);
+	thiz->ref = 1;
 }
 
 static void _egueb_dom_node_map_named_instance_deinit(void *o)
@@ -123,7 +127,17 @@ EAPI int egueb_dom_node_map_named_length(Egueb_Dom_Node_Map_Named *thiz)
 	return klass->length(thiz);
 }
 
-EAPI void egueb_dom_node_map_named_free(Egueb_Dom_Node_Map_Named *thiz)
+EAPI Egueb_Dom_Node_Map_Named * egueb_dom_node_map_named_ref(Egueb_Dom_Node_Map_Named *thiz)
 {
-	enesim_object_instance_free(ENESIM_OBJECT_INSTANCE(thiz));
+	thiz->ref++;
+	return thiz;
+}
+
+EAPI void egueb_dom_node_map_named_unref(Egueb_Dom_Node_Map_Named *thiz)
+{
+	thiz->ref--;
+	if (!thiz->ref)
+	{
+		enesim_object_instance_free(ENESIM_OBJECT_INSTANCE(thiz));
+	}
 }

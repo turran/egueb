@@ -28,6 +28,7 @@
 struct _Egueb_Dom_Node_List
 {
 	Eina_List *nodes;
+	int ref;
 };
 /*============================================================================*
  *                                 Global                                     *
@@ -40,6 +41,7 @@ Egueb_Dom_Node_List * egueb_dom_node_list_new(Eina_List *nodes)
 
 	thiz = calloc(1, sizeof(Egueb_Dom_Node_List));
 	thiz->nodes = nodes;
+	thiz->ref = 1;
 	return thiz;
 }
 
@@ -65,13 +67,21 @@ EAPI Egueb_Dom_Node * egueb_dom_node_list_item(Egueb_Dom_Node_List *thiz, int in
 	return egueb_dom_node_ref(eina_list_nth(thiz->nodes, index));
 }
 
-EAPI void egueb_dom_node_list_free(Egueb_Dom_Node_List *thiz)
+EAPI void egueb_dom_node_list_unref(Egueb_Dom_Node_List *thiz)
 {
-	Egueb_Dom_Node *n;
+	thiz->ref--;
+	if (!thiz->ref)
+	{
+		Egueb_Dom_Node *n;
 
-	if (!thiz) return;
+		EINA_LIST_FREE(thiz->nodes, n)
+			egueb_dom_node_unref(n);
+		free(thiz);
+	}
+}
 
-	EINA_LIST_FREE(thiz->nodes, n)
-		egueb_dom_node_unref(n);
-	free(thiz);
+EAPI Egueb_Dom_Node_List * egueb_dom_node_list_ref(Egueb_Dom_Node_List *thiz)
+{
+	thiz->ref++;
+	return thiz;
 }

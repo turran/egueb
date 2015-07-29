@@ -95,7 +95,8 @@ typedef struct _Egueb_Dom_Scripter_Descriptor
 typedef struct _Egueb_Dom_Scripter Egueb_Dom_Scripter;
 
 EAPI Egueb_Dom_Scripter * egueb_dom_scripter_new(const Egueb_Dom_Scripter_Descriptor *d);
-EAPI void egueb_dom_scripter_free(Egueb_Dom_Scripter *thiz);
+EAPI Egueb_Dom_Scripter * egueb_dom_scripter_ref(Egueb_Dom_Scripter *thiz);
+EAPI void egueb_dom_scripter_unref(Egueb_Dom_Scripter *thiz);
 EAPI void * egueb_dom_scripter_data_get(Egueb_Dom_Scripter *thiz);
 EAPI Eina_Bool egueb_dom_scripter_load(Egueb_Dom_Scripter *thiz, Egueb_Dom_String *s, void **obj);
 EAPI void egueb_dom_scripter_global_add(Egueb_Dom_Scripter *thiz, const char *name, void *o, Ender_Item *i);

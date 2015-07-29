@@ -61,6 +61,10 @@
       <return type="egueb.dom.node" transfer="full" nullable="false"/>
       <arg name="index" type="int32" direction="in" transfer="full"/>
     </method>
+    <ref name="ref">
+      <return type="egueb.dom.node.list" transfer="full" nullable="false"/>
+    </ref>
+    <unref name="unref"/>
   </object>
   <object name="egueb.dom.node"/>
   <object name="egueb.dom.node.map_named">
@@ -87,7 +91,10 @@
     <method name="length">
       <return type="int32" transfer="full" nullable="false"/>
     </method>
-    <method name="free"/>
+    <ref name="ref">
+      <return type="egueb.dom.node.map_named" transfer="full" nullable="false"/>
+    </ref>
+    <unref name="unref"/>
   </object>
   <object name="egueb.dom.event"/>
   <object name="egueb.dom.element" inherits="egueb.dom.node"/>
@@ -809,7 +816,10 @@
     <ctor name="new">
       <arg name="d" type="egueb.dom.scripter.descriptor" direction="in" transfer="none"/>
     </ctor>
-    <method name="free"/>
+    <ref name="ref">
+      <return type="egueb.dom.scripter" transfer="full" nullable="false"/>
+    </ref>
+    <unref name="unref"/>
     <method name="data_get">
       <return type="pointer" transfer="full" nullable="false"/>
     </method>

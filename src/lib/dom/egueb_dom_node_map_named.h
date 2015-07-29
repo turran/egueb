@@ -49,7 +49,9 @@ EAPI Eina_Bool egueb_dom_node_map_named_set(Egueb_Dom_Node_Map_Named *thiz,
 EAPI Egueb_Dom_Node * egueb_dom_node_map_named_at(Egueb_Dom_Node_Map_Named *thiz,
 		int idx);
 EAPI int egueb_dom_node_map_named_length(Egueb_Dom_Node_Map_Named *thiz);
-EAPI void egueb_dom_node_map_named_free(Egueb_Dom_Node_Map_Named *thiz);
+
+EAPI Egueb_Dom_Node_Map_Named * egueb_dom_node_map_named_ref(Egueb_Dom_Node_Map_Named *thiz);
+EAPI void egueb_dom_node_map_named_unref(Egueb_Dom_Node_Map_Named *thiz);
 
 /**
  * @}

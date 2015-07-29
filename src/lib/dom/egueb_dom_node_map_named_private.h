@@ -22,6 +22,7 @@
 struct _Egueb_Dom_Node_Map_Named
 {
 	Enesim_Object_Instance base;
+	int ref;
 };
 
 typedef Egueb_Dom_Node * (*Egueb_Dom_Node_Map_Named_Get)(
