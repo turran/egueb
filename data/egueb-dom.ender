@@ -687,16 +687,16 @@
   </object>
   <object name="egueb.dom.event.target.listener"/>
   <callback name="egueb.dom.event.listener"/>
-  <callback name="egueb.dom.event.io.data.cb"/>
-  <callback name="egueb.dom.event.io.image.cb"/>
+  <callback name="egueb.dom.event.io.data_cb"/>
+  <callback name="egueb.dom.event.io.image_cb"/>
   <object name="egueb.dom.event.io" inherits="egueb.dom.event">
     <ctor name="data_new">
       <arg name="uri" type="egueb.dom.uri" direction="in" transfer="full"/>
-      <arg name="cb" type="egueb.dom.event.io.data.cb" direction="in" transfer="full"/>
+      <arg name="cb" type="egueb.dom.event.io.data_cb" direction="in" transfer="full"/>
     </ctor>
     <ctor name="image_new">
       <arg name="s" type="enesim.stream" direction="in" transfer="full"/>
-      <arg name="cb" type="egueb.dom.event.io.image.cb" direction="in" transfer="full"/>
+      <arg name="cb" type="egueb.dom.event.io.image_cb" direction="in" transfer="full"/>
     </ctor>
     <method name="stream_get">
       <return type="enesim.stream" transfer="full" nullable="false"/>

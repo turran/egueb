@@ -30,8 +30,14 @@
  * @{
  */
 
+/**
+ * @ender_name{egueb.dom.event.io.data_cb}
+ */
 typedef void (*Egueb_Dom_Event_IO_Data_Cb)(Egueb_Dom_Node *n,
 		Enesim_Stream *s);
+/**
+ * @ender_name{egueb.dom.event.io.image_cb}
+ */
 typedef void (*Egueb_Dom_Event_IO_Image_Cb)(Egueb_Dom_Node *n,
 		Enesim_Surface *s);
 
