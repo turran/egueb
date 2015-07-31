@@ -881,4 +881,13 @@
       <arg name="notifier" type="egueb.dom.media.notifier" direction="in" transfer="full"/>
     </ctor>
   </object>
+  <object name="egueb.dom.feature">
+    <function name="descriptor_get">
+      <return type="enesim.object.descriptor" transfer="full" nullable="false"/>
+    </function>
+    <ref name="ref">
+      <return type="egueb.dom.feature" transfer="full" nullable="false"/>
+    </ref>
+    <unref name="unref"/>
+  </object>
 </lib>
