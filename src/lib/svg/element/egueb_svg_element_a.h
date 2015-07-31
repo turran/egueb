@@ -21,7 +21,7 @@
 
 /**
  * @file
- * @ender_group{Egueb_Svg_Element}
+ * @ender_group{Egueb_Svg_Element_A}
  */
 
 /**
