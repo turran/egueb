@@ -19,6 +19,7 @@
       <arg name="b" type="uint8" direction="in" transfer="full"/>
     </method>
   </struct>
+  <constant name="egueb.svg.color.black" type="egueb.svg.color"/>
   <struct name="egueb.svg.color.animated">
     <field name="base" type="egueb.svg.color"/>
     <field name="anim" type="egueb.svg.color"/>
@@ -64,6 +65,10 @@
       <arg name="font_size" type="double" direction="in" transfer="full"/>
     </method>
   </struct>
+  <constant name="egueb.svg.length.0" type="egueb.svg.length"/>
+  <constant name="egueb.svg.length.1" type="egueb.svg.length"/>
+  <constant name="egueb.svg.length.100.percent" type="egueb.svg.length"/>
+  <constant name="egueb.svg.length.50.percent" type="egueb.svg.length"/>
   <struct name="egueb.svg.length.animated">
     <field name="base" type="egueb.svg.length"/>
     <field name="anim" type="egueb.svg.length"/>
@@ -95,6 +100,9 @@
     <field name="uri" type="egueb.dom.string"/>
     <method name="reset"/>
   </struct>
+  <constant name="egueb.svg.paint.black" type="egueb.svg.paint"/>
+  <constant name="egueb.svg.paint.none" type="egueb.svg.paint"/>
+  <constant name="egueb.svg.paint.current.color" type="egueb.svg.paint"/>
   <struct name="egueb.svg.paint.animated">
     <field name="base" type="egueb.svg.paint"/>
     <field name="anim" type="egueb.svg.paint"/>

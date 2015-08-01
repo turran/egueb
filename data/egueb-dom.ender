@@ -734,6 +734,8 @@
     </method>
   </object>
   <object name="egueb.dom.event.window" inherits="egueb.dom.event.ui"/>
+  <constant name="egueb.dom.event.key.down" type="egueb.dom.string"/>
+  <constant name="egueb.dom.event.key.up" type="egueb.dom.string"/>
   <enum name="egueb.dom.key.location">
     <value name="standard"/>
     <value name="left"/>
