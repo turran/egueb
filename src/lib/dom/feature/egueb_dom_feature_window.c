@@ -107,6 +107,13 @@ EAPI Eina_Bool egueb_dom_feature_window_content_size_set(Egueb_Dom_Feature *f, i
 	return thiz->d->content_size_set(thiz->n, w, h);
 }
 
+/**
+ * Gets the content size of the window feature
+ * @param[in] f The window feature @ender_type{egueb.dom.feature.window}
+ * @param[out] w The width of the window content
+ * @param[out] h The height of the window content
+ * @return EINA_TRUE if success, EINA_FALSE otherwise
+ */
 EAPI Eina_Bool egueb_dom_feature_window_content_size_get(Egueb_Dom_Feature *f, int *w, int *h)
 {
 	Egueb_Dom_Feature_Window *thiz;
