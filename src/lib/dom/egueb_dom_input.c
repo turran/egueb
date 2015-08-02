@@ -28,6 +28,7 @@
 #include "egueb_dom_input.h"
 
 #include "egueb_dom_event_mouse_private.h"
+#include "egueb_dom_event_focus_private.h"
 #include "egueb_dom_event_keyboard_private.h"
 
 /* TODO
