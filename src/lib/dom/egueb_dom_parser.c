@@ -78,7 +78,7 @@ void egueb_dom_parser_document_set(Egueb_Dom_Parser *thiz, Egueb_Dom_Node *doc)
 /**
  * Parse a document from an enesim stream
  * @param[in] s The stream to parse @ender_transfer{full}
- * @param[out] doc The resulting parsed document
+ * @param[out] doc The resulting parsed document @ender_type{egueb.dom.document}
  * @return EINA_TRUE if the parsing is correct, EINA_FALSE otherwise
  */
 EAPI Eina_Bool egueb_dom_parser_parse(Enesim_Stream *s, Egueb_Dom_Node **doc)
