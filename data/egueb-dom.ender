@@ -769,10 +769,7 @@
       <arg name="y" type="int32" direction="out" transfer="full"/>
     </method>
   </object>
-  <object name="egueb.dom.event.focus" inherits="egueb.dom.event">
-    <ctor name="in_new"/>
-    <ctor name="out_new"/>
-  </object>
+  <object name="egueb.dom.event.focus" inherits="egueb.dom.event"/>
   <callback name="egueb.dom.scripter.descriptor.create_cb">
     <return type="pointer" transfer="none" nullable="false"/>
   </callback>
@@ -899,4 +896,45 @@
     </ref>
     <unref name="unref"/>
   </object>
+  <object name="egueb.dom.feature.window" inherits="egueb.dom.feature">
+    <method name="type_get">
+      <return type="bool" transfer="full" nullable="false"/>
+      <arg name="type" type="egueb.dom.feature.window.type" direction="in" transfer="full"/>
+    </method>
+    <method name="content_size_set">
+      <return type="bool" transfer="full" nullable="false"/>
+      <arg name="w" type="int32" direction="in" transfer="full"/>
+      <arg name="h" type="int32" direction="in" transfer="full"/>
+    </method>
+    <method name="content_size_get">
+      <return type="bool" transfer="full" nullable="false"/>
+      <arg name="w" type="int32" direction="out" transfer="full"/>
+      <arg name="h" type="int32" direction="out" transfer="full"/>
+    </method>
+    <function name="add">
+      <return type="bool" transfer="full" nullable="false"/>
+      <arg name="n" type="egueb.dom.node" direction="in" transfer="full"/>
+      <arg name="d" type="egueb.dom.feature.window.descriptor" direction="in" transfer="none"/>
+    </function>
+  </object>
+  <struct name="egueb.dom.feature.window.descriptor">
+    <field name="version" type="int32"/>
+    <field name="type_get" type="egueb.dom.feature.window.descriptor.type_get_cb"/>
+    <field name="content_size_set" type="egueb.dom.feature.window.descriptor.size_set_cb"/>
+    <field name="content_size_get" type="egueb.dom.feature.window.descriptor.size_get_cb"/>
+  </struct>
+  <constant name="egueb.dom.feature.window.name" type="egueb.dom.string"/>
+  <enum name="egueb.dom.feature.window.type">
+    <value name="master"/>
+    <value name="slave"/>
+  </enum>
+  <callback name="egueb.dom.feature.window.descriptor.type_get_cb">
+    <return type="bool" transfer="full" nullable="false"/>
+  </callback>
+  <callback name="egueb.dom.feature.window.descriptor.size_set_cb">
+    <return type="bool" transfer="full" nullable="false"/>
+  </callback>
+  <callback name="egueb.dom.feature.window.descriptor.size_get_cb">
+    <return type="bool" transfer="full" nullable="false"/>
+  </callback>
 </lib>
