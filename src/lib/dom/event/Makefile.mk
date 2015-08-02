@@ -18,6 +18,7 @@ src/lib/dom/event/egueb_dom_event_document.c \
 src/lib/dom/event/egueb_dom_event_document_private.h \
 src/lib/dom/event/egueb_dom_event_external.c \
 src/lib/dom/event/egueb_dom_event_focus.c \
+src/lib/dom/event/egueb_dom_event_focus_private.h \
 src/lib/dom/event/egueb_dom_event_io.c \
 src/lib/dom/event/egueb_dom_event_keyboard.c \
 src/lib/dom/event/egueb_dom_event_keyboard_private.h \

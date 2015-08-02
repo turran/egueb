@@ -16,31 +16,10 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _EGUEB_DOM_EVENT_FOCUS_H_
-#define _EGUEB_DOM_EVENT_FOCUS_H_
+#ifndef _EGUEB_DOM_EVENT_FOCUS_PRIVATE_H_
+#define _EGUEB_DOM_EVENT_FOCUS_PRIVATE_H_
 
-#include "egueb_dom_event.h"
-
-/**
- * @file
- * @ender_group{Egueb_Dom_Event_Focus}
- */
-
-/**
- * @defgroup Egueb_Dom_Event_Focus Focus Event
- * TODO make it inherit from ui event
- * @brief Focus Event @ender_inherits{Egueb_Dom_Event}
- * @ingroup Egueb_Dom_Event_UI_Group
- * @{
- */
-
-EAPI extern Egueb_Dom_String *EGUEB_DOM_EVENT_FOCUS_IN;
-EAPI extern Egueb_Dom_String *EGUEB_DOM_EVENT_FOCUS_OUT;
-
-
-/**
- * @}
- */
+Egueb_Dom_Event * egueb_dom_event_focus_in_new(void);
+Egueb_Dom_Event * egueb_dom_event_focus_out_new(void);
 
 #endif
-

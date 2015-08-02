@@ -89,13 +89,7 @@ static void _egueb_dom_event_focus_instance_deinit(void *o)
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
-/*============================================================================*
- *                                   API                                      *
- *============================================================================*/
-Egueb_Dom_String *EGUEB_DOM_EVENT_FOCUS_IN = &_EGUEB_DOM_EVENT_FOCUS_IN;
-Egueb_Dom_String *EGUEB_DOM_EVENT_FOCUS_OUT = &_EGUEB_DOM_EVENT_FOCUS_OUT;
-
-EAPI Egueb_Dom_Event * egueb_dom_event_focus_in_new(void)
+Egueb_Dom_Event * egueb_dom_event_focus_in_new(void)
 {
 	Egueb_Dom_Event_Focus *thiz;
 	Egueb_Dom_Event *e;
@@ -107,7 +101,7 @@ EAPI Egueb_Dom_Event * egueb_dom_event_focus_in_new(void)
 	return e;
 }
 
-EAPI Egueb_Dom_Event * egueb_dom_event_focus_out_new(void)
+Egueb_Dom_Event * egueb_dom_event_focus_out_new(void)
 {
 	Egueb_Dom_Event_Focus *thiz;
 	Egueb_Dom_Event *e;
@@ -118,3 +112,8 @@ EAPI Egueb_Dom_Event * egueb_dom_event_focus_out_new(void)
 			EINA_TRUE, EINA_FALSE, NULL, 0);
 	return e;
 }
+/*============================================================================*
+ *                                   API                                      *
+ *============================================================================*/
+Egueb_Dom_String *EGUEB_DOM_EVENT_FOCUS_IN = &_EGUEB_DOM_EVENT_FOCUS_IN;
+Egueb_Dom_String *EGUEB_DOM_EVENT_FOCUS_OUT = &_EGUEB_DOM_EVENT_FOCUS_OUT;
