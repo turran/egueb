@@ -883,6 +883,13 @@
       <arg name="notifier" type="egueb.dom.media.notifier" direction="in" transfer="full"/>
     </ctor>
   </object>
+  <object name="egueb.dom.parser">
+    <function name="parse">
+      <return type="bool" transfer="full" nullable="false"/>
+      <arg name="s" type="enesim.stream" direction="in" transfer="full"/>
+      <arg name="doc" type="egueb.dom.node" direction="out" transfer="full"/>
+    </function>
+  </object>
   <object name="egueb.dom.feature">
     <function name="descriptor_get">
       <return type="enesim.object.descriptor" transfer="full" nullable="false"/>

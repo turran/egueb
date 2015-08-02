@@ -19,6 +19,22 @@
 #ifndef _EGUEB_DOM_PARSER_H_
 #define _EGUEB_DOM_PARSER_H_
 
+/**
+ * @file
+ * @ender_group{Egueb_Dom_Parser}
+ */
+
+/**
+ * @defgroup Egueb_Dom_Parser Parser
+ * @brief Parser
+ * @ingroup Egueb_Dom_Group
+ * @{
+ */
+
 EAPI Eina_Bool egueb_dom_parser_parse(Enesim_Stream *s, Egueb_Dom_Node **doc);
+
+/**
+ * @}
+ */
 
 #endif
