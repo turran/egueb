@@ -895,6 +895,11 @@
       <return type="egueb.dom.feature" transfer="full" nullable="false"/>
     </ref>
     <unref name="unref"/>
+    <method name="type_get" downcast="true">
+      <return type="bool" transfer="full" nullable="false"/>
+      <arg name="lib" type="string" direction="out" transfer="none"/>
+      <arg name="name" type="string" direction="out" transfer="none"/>
+    </method>
   </object>
   <object name="egueb.dom.feature.window" inherits="egueb.dom.feature">
     <method name="type_get">

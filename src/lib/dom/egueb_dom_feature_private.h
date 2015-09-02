@@ -24,9 +24,12 @@ struct _Egueb_Dom_Feature
 	int ref;
 };
 
+typedef const char * (*Egueb_Dom_Feature_Type_Get)(void);
+
 typedef struct _Egueb_Dom_Feature_Class
 {
 	Enesim_Object_Class parent;
+	Egueb_Dom_Feature_Type_Get type_get;
 } Egueb_Dom_Feature_Class;
 
 #define EGUEB_DOM_FEATURE_DESCRIPTOR egueb_dom_feature_descriptor_get()

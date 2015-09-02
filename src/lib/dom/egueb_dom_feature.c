@@ -70,3 +70,34 @@ EAPI void egueb_dom_feature_unref(Egueb_Dom_Feature *thiz)
 		enesim_object_instance_free(ENESIM_OBJECT_INSTANCE(thiz));
 	}
 }
+
+/**
+ * @brief Get the type of a feature 
+ * @ender_downcast
+ * @param[in] thiz The feature to get the type from
+ * @param[out] lib The ender library associated with this feature
+ * @param[out] name The ender item name of the feature
+ * @return EINA_TRUE if the function succeeds, EINA_FALSE otherwise
+ *
+ * This function is needed for ender in order to downcast a feature
+ */
+EAPI Eina_Bool egueb_dom_feature_type_get(Egueb_Dom_Feature *thiz,
+		const char **lib, const char **name)
+{
+	if (!thiz)
+		return EINA_FALSE;
+
+	if (lib)
+		*lib = "egueb-dom";
+	if (name)
+	{
+		Egueb_Dom_Feature_Class *klass;
+		klass = EGUEB_DOM_FEATURE_CLASS_GET(thiz);
+
+		if (klass->type_get)
+			*name = klass->type_get();
+		else
+			*name = "egueb.dom.feature";
+	}
+	return EINA_TRUE;
+}

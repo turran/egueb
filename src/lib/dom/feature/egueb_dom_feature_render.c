@@ -62,6 +62,13 @@ static Eina_Bool _egueb_dom_feature_render_damage_cb(Enesim_Renderer *r,
 	return EINA_TRUE;
 }
 /*----------------------------------------------------------------------------*
+ *                              Feature interface                             *
+ *----------------------------------------------------------------------------*/
+static const char * _egueb_dom_feature_render_type_get(void)
+{
+	return "egueb.dom.feature.render";
+}
+/*----------------------------------------------------------------------------*
  *                              Object interface                              *
  *----------------------------------------------------------------------------*/
 ENESIM_OBJECT_INSTANCE_BOILERPLATE(EGUEB_DOM_FEATURE_DESCRIPTOR,
@@ -70,6 +77,10 @@ ENESIM_OBJECT_INSTANCE_BOILERPLATE(EGUEB_DOM_FEATURE_DESCRIPTOR,
 
 static void _egueb_dom_feature_render_class_init(void *k)
 {
+	Egueb_Dom_Feature_Class *klass;
+
+	klass = EGUEB_DOM_FEATURE_CLASS(k);
+	klass->type_get = _egueb_dom_feature_render_type_get;
 }
 
 static void _egueb_dom_feature_render_instance_init(void *o)

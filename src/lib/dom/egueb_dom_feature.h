@@ -38,6 +38,8 @@ EAPI Enesim_Object_Descriptor * egueb_dom_feature_descriptor_get(void);
 
 EAPI Egueb_Dom_Feature * egueb_dom_feature_ref(Egueb_Dom_Feature *thiz);
 EAPI void egueb_dom_feature_unref(Egueb_Dom_Feature *thiz);
+EAPI Eina_Bool egueb_dom_feature_type_get(Egueb_Dom_Feature *thiz,
+		const char **lib, const char **name);
 
 /**
  * @}
