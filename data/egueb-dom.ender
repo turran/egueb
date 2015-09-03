@@ -1034,7 +1034,7 @@
   <object name="egueb.dom.feature.window" inherits="egueb.dom.feature">
     <method name="type_get">
       <return type="bool" transfer="full" nullable="false"/>
-      <arg name="type" type="egueb.dom.feature.window.type" direction="in" transfer="full"/>
+      <arg name="type" type="egueb.dom.feature.window.type" direction="out" transfer="full"/>
     </method>
     <method name="content_size_set">
       <return type="bool" transfer="full" nullable="false"/>

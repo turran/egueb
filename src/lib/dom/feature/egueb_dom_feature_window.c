@@ -99,6 +99,12 @@ static void _egueb_dom_feature_window_instance_deinit(void *o)
  *============================================================================*/
 Egueb_Dom_String *EGUEB_DOM_FEATURE_WINDOW_NAME = &_EGUEB_DOM_FEATURE_WINDOW_NAME;
 
+/**
+ * Get the type of the window
+ * @param[in] f The window to get the type from
+ * @param[out] type The type of the window
+ * @return EINA_TRUE if success, EINA_FALSE otherwise
+ */
 EAPI Eina_Bool egueb_dom_feature_window_type_get(
 		Egueb_Dom_Feature *f, Egueb_Dom_Feature_Window_Type *type)
 {
