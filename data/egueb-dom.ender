@@ -101,6 +101,7 @@
   <object name="egueb.dom.document" inherits="egueb.dom.node"/>
   <object name="egueb.dom.attr" inherits="egueb.dom.node"/>
   <object name="egueb.dom.node.list"/>
+  <object name="egueb.dom.feature"/>
   <callback name="egueb.dom.node.cb">
     <return type="bool" transfer="full" nullable="false"/>
   </callback>
@@ -218,7 +219,7 @@
       <arg name="version" type="egueb.dom.string" direction="in" transfer="full"/>
     </method>
     <method name="feature_get">
-      <return type="pointer" transfer="full" nullable="false"/>
+      <return type="egueb.dom.feature" transfer="full" nullable="false"/>
       <arg name="name" type="egueb.dom.string" direction="in" transfer="full"/>
       <arg name="version" type="egueb.dom.string" direction="in" transfer="full"/>
     </method>
@@ -694,6 +695,9 @@
   </object>
   <object name="egueb.dom.event.target.listener"/>
   <callback name="egueb.dom.event.listener"/>
+  <constant name="egueb.dom.event.io.data" type="egueb.dom.string"/>
+  <constant name="egueb.dom.event.io.image" type="egueb.dom.string"/>
+  <constant name="egueb.dom.event.io.done" type="egueb.dom.string"/>
   <callback name="egueb.dom.event.io.data_cb"/>
   <callback name="egueb.dom.event.io.image_cb"/>
   <object name="egueb.dom.event.io" inherits="egueb.dom.event">
@@ -734,6 +738,9 @@
     </method>
   </object>
   <object name="egueb.dom.event.window" inherits="egueb.dom.event.ui"/>
+  <constant name="egueb.dom.event.window.resize" type="egueb.dom.string"/>
+  <constant name="egueb.dom.event.window.scroll" type="egueb.dom.string"/>
+  <constant name="egueb.dom.event.window.close" type="egueb.dom.string"/>
   <constant name="egueb.dom.event.key.down" type="egueb.dom.string"/>
   <constant name="egueb.dom.event.key.up" type="egueb.dom.string"/>
   <enum name="egueb.dom.key.location">
@@ -769,7 +776,15 @@
       <arg name="y" type="int32" direction="out" transfer="full"/>
     </method>
   </object>
+  <constant name="egueb.dom.event.mouse.click" type="egueb.dom.string"/>
+  <constant name="egueb.dom.event.mouse.down" type="egueb.dom.string"/>
+  <constant name="egueb.dom.event.mouse.up" type="egueb.dom.string"/>
+  <constant name="egueb.dom.event.mouse.over" type="egueb.dom.string"/>
+  <constant name="egueb.dom.event.mouse.move" type="egueb.dom.string"/>
+  <constant name="egueb.dom.event.mouse.out" type="egueb.dom.string"/>
   <object name="egueb.dom.event.focus" inherits="egueb.dom.event"/>
+  <constant name="egueb.dom.event.focus.in" type="egueb.dom.string"/>
+  <constant name="egueb.dom.event.focus.out" type="egueb.dom.string"/>
   <callback name="egueb.dom.scripter.descriptor.create_cb">
     <return type="pointer" transfer="none" nullable="false"/>
   </callback>
@@ -859,6 +874,7 @@
       <arg name="sc" type="egueb.dom.scripter" direction="in" transfer="full"/>
     </method>
   </object>
+  <constant name="egueb.dom.event.script.scripter" type="egueb.dom.string"/>
   <object name="egueb.dom.event.multimedia" inherits="egueb.dom.event">
     <method name="notifier_get">
       <return type="egueb.dom.media.notifier" transfer="full" nullable="false"/>
@@ -880,6 +896,8 @@
       <arg name="notifier" type="egueb.dom.media.notifier" direction="in" transfer="full"/>
     </ctor>
   </object>
+  <constant name="egueb.dom.event.multimedia.video" type="egueb.dom.string"/>
+  <constant name="egueb.dom.event.multimedia.audio" type="egueb.dom.string"/>
   <object name="egueb.dom.parser">
     <function name="parse">
       <return type="bool" transfer="full" nullable="false"/>
@@ -901,25 +919,96 @@
       <arg name="name" type="string" direction="out" transfer="none"/>
     </method>
   </object>
-  <object name="egueb.dom.feature.window" inherits="egueb.dom.feature">
-    <method name="type_get">
+  <object name="egueb.dom.feature.io" inherits="egueb.dom.feature">
+    <function name="add">
       <return type="bool" transfer="full" nullable="false"/>
-      <arg name="type" type="egueb.dom.feature.window.type" direction="in" transfer="full"/>
+      <arg name="n" type="egueb.dom.node" direction="in" transfer="full"/>
+    </function>
+    <method name="default_enable">
+      <arg name="enable" type="bool" direction="in" transfer="full"/>
     </method>
-    <method name="content_size_set">
+  </object>
+  <constant name="egueb.dom.feature.io.name" type="egueb.dom.string"/>
+  <object name="egueb.dom.feature.multimedia" inherits="egueb.dom.feature">
+    <function name="add">
       <return type="bool" transfer="full" nullable="false"/>
-      <arg name="w" type="int32" direction="in" transfer="full"/>
-      <arg name="h" type="int32" direction="in" transfer="full"/>
+      <arg name="n" type="egueb.dom.node" direction="in" transfer="full"/>
+    </function>
+  </object>
+  <constant name="egueb.dom.feature.multimedia.name" type="egueb.dom.string"/>
+  <object name="egueb.dom.feature.navigation" inherits="egueb.dom.feature">
+    <function name="add">
+      <return type="bool" transfer="full" nullable="false"/>
+      <arg name="n" type="egueb.dom.node" direction="in" transfer="full"/>
+    </function>
+  </object>
+  <constant name="egueb.dom.feature.navigation.name" type="egueb.dom.string"/>
+  <object name="egueb.dom.feature.render" inherits="egueb.dom.feature">
+    <method name="draw">
+      <return type="bool" transfer="full" nullable="false"/>
+      <arg name="s" type="enesim.surface" direction="in" transfer="full"/>
+      <arg name="rop" type="enesim.rop" direction="in" transfer="full"/>
+      <arg name="clip" type="eina.rectangle" direction="in" transfer="full"/>
+      <arg name="x" type="int32" direction="in" transfer="full"/>
+      <arg name="y" type="int32" direction="in" transfer="full"/>
+      <arg name="error" type="enesim.log" direction="in" transfer="full"/>
     </method>
-    <method name="content_size_get">
+    <method name="draw_list">
       <return type="bool" transfer="full" nullable="false"/>
-      <arg name="w" type="int32" direction="out" transfer="full"/>
-      <arg name="h" type="int32" direction="out" transfer="full"/>
+      <arg name="s" type="enesim.surface" direction="in" transfer="full"/>
+      <arg name="rop" type="enesim.rop" direction="in" transfer="full"/>
+      <arg name="clips" type="eina.list" direction="in" transfer="full"/>
+      <arg name="x" type="int32" direction="in" transfer="full"/>
+      <arg name="y" type="int32" direction="in" transfer="full"/>
+      <arg name="error" type="enesim.log" direction="in" transfer="full"/>
+    </method>
+    <method name="damages_get">
+      <return type="bool" transfer="full" nullable="false"/>
+      <arg name="s" type="enesim.surface" direction="in" transfer="full"/>
+      <arg name="cb" type="egueb.dom.feature.render.damage_cb" direction="in" transfer="full"/>
+      <arg name="data" type="pointer" direction="in" transfer="full"/>
     </method>
     <function name="add">
       <return type="bool" transfer="full" nullable="false"/>
       <arg name="n" type="egueb.dom.node" direction="in" transfer="full"/>
-      <arg name="d" type="egueb.dom.feature.window.descriptor" direction="in" transfer="none"/>
+      <arg name="d" type="egueb.dom.feature.render.descriptor" direction="in" transfer="none"/>
+    </function>
+  </object>
+  <struct name="egueb.dom.feature.render.descriptor">
+    <field name="version" type="int32"/>
+    <field name="renderer_get" type="egueb.dom.feature.render.descriptor.renderer_get"/>
+  </struct>
+  <constant name="egueb.dom.feature.render.name" type="egueb.dom.string"/>
+  <callback name="egueb.dom.feature.render.descriptor.renderer_get">
+    <return type="enesim.renderer" transfer="full" nullable="false"/>
+  </callback>
+  <callback name="egueb.dom.feature.render.damage_cb">
+    <return type="bool" transfer="full" nullable="false"/>
+  </callback>
+  <object name="egueb.dom.feature.script" inherits="egueb.dom.feature">
+    <function name="add">
+      <return type="bool" transfer="full" nullable="false"/>
+      <arg name="n" type="egueb.dom.node" direction="in" transfer="full"/>
+    </function>
+  </object>
+  <constant name="egueb.dom.feature.script.name" type="egueb.dom.string"/>
+  <struct name="egueb.dom.feature.ui.descriptor">
+    <field name="version" type="int32"/>
+    <field name="input_get" type="egueb.dom.feature.ui.descriptor.input_get_cb"/>
+  </struct>
+  <constant name="egueb.dom.feature.ui.name" type="egueb.dom.string"/>
+  <callback name="egueb.dom.feature.ui.descriptor.input_get_cb">
+    <return type="egueb.dom.input" transfer="full" nullable="false"/>
+  </callback>
+  <object name="egueb.dom.feature.ui" inherits="egueb.dom.feature">
+    <method name="input_get">
+      <return type="bool" transfer="full" nullable="false"/>
+      <arg name="i" type="egueb.dom.input" direction="in" transfer="full"/>
+    </method>
+    <function name="add">
+      <return type="bool" transfer="full" nullable="false"/>
+      <arg name="n" type="egueb.dom.node" direction="in" transfer="full"/>
+      <arg name="d" type="egueb.dom.feature.ui.descriptor" direction="in" transfer="none"/>
     </function>
   </object>
   <struct name="egueb.dom.feature.window.descriptor">
@@ -942,4 +1031,25 @@
   <callback name="egueb.dom.feature.window.descriptor.size_get_cb">
     <return type="bool" transfer="full" nullable="false"/>
   </callback>
+  <object name="egueb.dom.feature.window" inherits="egueb.dom.feature">
+    <method name="type_get">
+      <return type="bool" transfer="full" nullable="false"/>
+      <arg name="type" type="egueb.dom.feature.window.type" direction="in" transfer="full"/>
+    </method>
+    <method name="content_size_set">
+      <return type="bool" transfer="full" nullable="false"/>
+      <arg name="w" type="int32" direction="in" transfer="full"/>
+      <arg name="h" type="int32" direction="in" transfer="full"/>
+    </method>
+    <method name="content_size_get">
+      <return type="bool" transfer="full" nullable="false"/>
+      <arg name="w" type="int32" direction="out" transfer="full"/>
+      <arg name="h" type="int32" direction="out" transfer="full"/>
+    </method>
+    <function name="add">
+      <return type="bool" transfer="full" nullable="false"/>
+      <arg name="n" type="egueb.dom.node" direction="in" transfer="full"/>
+      <arg name="d" type="egueb.dom.feature.window.descriptor" direction="in" transfer="none"/>
+    </function>
+  </object>
 </lib>
