@@ -1123,7 +1123,7 @@ EAPI Eina_Bool egueb_dom_node_is_supported(Egueb_Dom_Node *thiz,
  * DOMObject          getFeature(in DOMString feature, 
  *                               in DOMString version);
  */
-EAPI void * egueb_dom_node_feature_get(Egueb_Dom_Node *thiz,
+EAPI Egueb_Dom_Feature * egueb_dom_node_feature_get(Egueb_Dom_Node *thiz,
 		Egueb_Dom_String *name, Egueb_Dom_String *version)
 {
 	Egueb_Dom_Node_Feature *f = NULL;
@@ -1159,7 +1159,7 @@ EAPI void * egueb_dom_node_feature_get(Egueb_Dom_Node *thiz,
 	if (!f) return NULL;
 
 	if (!f->feature)
-		return egueb_dom_node_ref(thiz);
+		return NULL;
 	else
 		return egueb_dom_feature_ref(f->feature);
 }

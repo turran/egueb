@@ -32,6 +32,7 @@
  * @ender_group_proto{Egueb_Dom_Document}
  * @ender_group_proto{Egueb_Dom_Attr}
  * @ender_group_proto{Egueb_Dom_Node_List}
+ * @ender_group_proto{Egueb_Dom_Feature}
  * @ender_group{Egueb_Dom_Node_Definitions}
  * @ender_group{Egueb_Dom_Node_Type}
  * @ender_group{Egueb_Dom_Node}
@@ -131,7 +132,7 @@ EAPI void * egueb_dom_node_user_data_get(Egueb_Dom_Node *thiz,
 
 EAPI Eina_Bool egueb_dom_node_is_supported(Egueb_Dom_Node *thiz,
 		Egueb_Dom_String *name, Egueb_Dom_String *version);
-EAPI void * egueb_dom_node_feature_get(Egueb_Dom_Node *thiz,
+EAPI Egueb_Dom_Feature * egueb_dom_node_feature_get(Egueb_Dom_Node *thiz,
 		Egueb_Dom_String *name, Egueb_Dom_String *version);
 
 EAPI Egueb_Dom_String * egueb_dom_node_prefix_lookup(Egueb_Dom_Node *thiz,
