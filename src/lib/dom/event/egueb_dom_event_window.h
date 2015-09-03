@@ -24,18 +24,27 @@
 /**
  * @file
  * @ender_group{Egueb_Dom_Event_Window}
+ * @ender_group{Egueb_Dom_Event_Window_Definitions}
  */
 
 /**
- * @defgroup Egueb_Dom_Event_Window Window Event
- * @brief Window Event @ender_inherits{Egueb_Dom_Event_UI}
- * @ingroup Egueb_Dom_Event_UI_Group
+ * @defgroup Egueb_Dom_Event_Window_Definitions Definitions
+ * @ingroup Egueb_Dom_Event_Window 
  * @{
  */
 
 EAPI extern Egueb_Dom_String *EGUEB_DOM_EVENT_WINDOW_RESIZE;
 EAPI extern Egueb_Dom_String *EGUEB_DOM_EVENT_WINDOW_SCROLL;
 EAPI extern Egueb_Dom_String *EGUEB_DOM_EVENT_WINDOW_CLOSE;
+
+
+/**
+ * @}
+ * @defgroup Egueb_Dom_Event_Window Window Event
+ * @brief Window Event @ender_inherits{Egueb_Dom_Event_UI}
+ * @ingroup Egueb_Dom_Event_UI_Group
+ * @{
+ */
 
 /**
  * @}

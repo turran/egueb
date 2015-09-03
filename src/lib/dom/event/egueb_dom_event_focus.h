@@ -24,18 +24,26 @@
 /**
  * @file
  * @ender_group{Egueb_Dom_Event_Focus}
+ * @ender_group{Egueb_Dom_Event_Focus_Definitions}
  */
 
 /**
+ * @defgroup Egueb_Dom_Event_Focus_Definitions Definitions
+ * @ingroup Egueb_Dom_Event_Focus 
+ * @{
+ */
+
+EAPI extern Egueb_Dom_String *EGUEB_DOM_EVENT_FOCUS_IN;
+EAPI extern Egueb_Dom_String *EGUEB_DOM_EVENT_FOCUS_OUT;
+
+/**
+ * @}
  * @defgroup Egueb_Dom_Event_Focus Focus Event
  * TODO make it inherit from ui event
  * @brief Focus Event @ender_inherits{Egueb_Dom_Event}
  * @ingroup Egueb_Dom_Event_UI_Group
  * @{
  */
-
-EAPI extern Egueb_Dom_String *EGUEB_DOM_EVENT_FOCUS_IN;
-EAPI extern Egueb_Dom_String *EGUEB_DOM_EVENT_FOCUS_OUT;
 
 
 /**

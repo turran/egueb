@@ -20,8 +20,8 @@
 
 /**
  * @file
- * @ender_group{Egueb_Dom_Feature_Window}
  * @ender_group{Egueb_Dom_Feature_Window_Definition}
+ * @ender_group{Egueb_Dom_Feature_Window}
  */
 
 /**
@@ -36,6 +36,10 @@
 
 EAPI extern Egueb_Dom_String *EGUEB_DOM_FEATURE_WINDOW_NAME;
 
+
+/**
+ * The different window types
+ */
 typedef enum _Egueb_Dom_Feature_Window_Type
 {
 	/** The window decides the size of the content, even if the content

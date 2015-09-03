@@ -19,8 +19,23 @@
 #define _EGUEB_DOM_FEATURE_SCRIPT_H_
 
 /**
+ * @file
+ * @ender_group{Egueb_Dom_Feature_Script}
+ * @ender_group{Egueb_Dom_Feature_Script_Definition}
+ */
+
+/**
+ * @defgroup Egueb_Dom_Feature_Script_Definition Definitions
+ * @ingroup Egueb_Dom_Feature_Script
+ * @{
+ */
+
+EAPI extern Egueb_Dom_String *EGUEB_DOM_FEATURE_SCRIPT_NAME;
+
+/**
+ * @}
  * @defgroup Egueb_Dom_Feature_Script Scripting
- * @brief Node scripting features
+ * @brief Node scripting features @ender_inherits{Egueb_Dom_Feature}
  *
  * The script feature informs the application that scripting
  * will be requested. The application must listen to the
@@ -30,7 +45,6 @@
  * @{
  */
 
-EAPI extern Egueb_Dom_String *EGUEB_DOM_FEATURE_SCRIPT_NAME;
 EAPI Eina_Bool egueb_dom_feature_script_add(Egueb_Dom_Node *n);
 
 /**

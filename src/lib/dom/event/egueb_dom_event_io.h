@@ -41,6 +41,10 @@ typedef void (*Egueb_Dom_Event_IO_Data_Cb)(Egueb_Dom_Node *n,
 typedef void (*Egueb_Dom_Event_IO_Image_Cb)(Egueb_Dom_Node *n,
 		Enesim_Surface *s);
 
+EAPI extern Egueb_Dom_String *EGUEB_DOM_EVENT_IO_DATA;
+EAPI extern Egueb_Dom_String *EGUEB_DOM_EVENT_IO_IMAGE;
+EAPI extern Egueb_Dom_String *EGUEB_DOM_EVENT_IO_DONE;
+
 
 /**
  * @}
@@ -49,10 +53,6 @@ typedef void (*Egueb_Dom_Event_IO_Image_Cb)(Egueb_Dom_Node *n,
  * @ingroup Egueb_Dom_Event
  * @{
  */
-
-EAPI extern Egueb_Dom_String *EGUEB_DOM_EVENT_IO_DATA;
-EAPI extern Egueb_Dom_String *EGUEB_DOM_EVENT_IO_IMAGE;
-EAPI extern Egueb_Dom_String *EGUEB_DOM_EVENT_IO_DONE;
 
 EAPI Egueb_Dom_Event * egueb_dom_event_io_data_new(Egueb_Dom_Uri *uri,
 		Egueb_Dom_Event_IO_Data_Cb cb);

@@ -19,8 +19,23 @@
 #define _EGUEB_DOM_FEATURE_NAVIGATION_H_
 
 /**
+ * @file
+ * @ender_group{Egueb_Dom_Feature_Navigation}
+ * @ender_group{Egueb_Dom_Feature_Navigation_Definition}
+ */
+
+/**
+ * @defgroup Egueb_Dom_Feature_Navigation_Definition Definitions
+ * @ingroup Egueb_Dom_Feature_Navigation
+ * @{
+ */
+
+EAPI extern Egueb_Dom_String *EGUEB_DOM_FEATURE_NAVIGATION_NAME;
+
+/**
+ * @}
  * @defgroup Egueb_Dom_Feature_Navigation Navigation
- * @brief Node navigation features
+ * @brief Node navigation features @ender_inherits{Egueb_Dom_Feature}
  *
  * In case this feature is supported by a document, the document
  * has elements that will require the application to go to a specific
@@ -29,7 +44,6 @@
  * @{
  */
 
-EAPI extern Egueb_Dom_String *EGUEB_DOM_FEATURE_NAVIGATION_NAME;
 EAPI Eina_Bool egueb_dom_feature_navigation_add(Egueb_Dom_Node *n);
 
 /**

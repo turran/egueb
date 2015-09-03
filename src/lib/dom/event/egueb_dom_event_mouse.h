@@ -24,13 +24,12 @@
 /**
  * @file
  * @ender_group{Egueb_Dom_Event_Mouse}
+ * @ender_group{Egueb_Dom_Event_Mouse_Definitions}
  */
 
 /**
- * @defgroup Egueb_Dom_Event_Mouse Mouse Event
- * TODO make it inherit from ui event
- * @brief Mouse Event @ender_inherits{Egueb_Dom_Event}
- * @ingroup Egueb_Dom_Event_UI_Group
+ * @defgroup Egueb_Dom_Event_Mouse_Definitions Definitions
+ * @ingroup Egueb_Dom_Event_Mouse 
  * @{
  */
 
@@ -40,6 +39,15 @@ EAPI extern Egueb_Dom_String *EGUEB_DOM_EVENT_MOUSE_UP;
 EAPI extern Egueb_Dom_String *EGUEB_DOM_EVENT_MOUSE_OVER;
 EAPI extern Egueb_Dom_String *EGUEB_DOM_EVENT_MOUSE_MOVE;
 EAPI extern Egueb_Dom_String *EGUEB_DOM_EVENT_MOUSE_OUT;
+
+/**
+ * @}
+ * @defgroup Egueb_Dom_Event_Mouse Mouse Event
+ * TODO make it inherit from ui event
+ * @brief Mouse Event @ender_inherits{Egueb_Dom_Event}
+ * @ingroup Egueb_Dom_Event_UI_Group
+ * @{
+ */
 
 EAPI Egueb_Dom_Event * egueb_dom_event_mouse_new(void);
 

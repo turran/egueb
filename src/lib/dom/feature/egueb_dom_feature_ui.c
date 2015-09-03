@@ -50,6 +50,13 @@ typedef struct _Egueb_Dom_Feature_UI_Class
 static Egueb_Dom_String _EGUEB_DOM_FEATURE_UI_NAME = EGUEB_DOM_STRING_STATIC("EguebDomUI");
 
 /*----------------------------------------------------------------------------*
+ *                              Feature interface                             *
+ *----------------------------------------------------------------------------*/
+static const char * _egueb_dom_feature_ui_type_get(void)
+{
+	return "egueb.dom.feature.ui";
+}
+/*----------------------------------------------------------------------------*
  *                              Object interface                              *
  *----------------------------------------------------------------------------*/
 ENESIM_OBJECT_INSTANCE_BOILERPLATE(EGUEB_DOM_FEATURE_DESCRIPTOR,
@@ -58,6 +65,10 @@ ENESIM_OBJECT_INSTANCE_BOILERPLATE(EGUEB_DOM_FEATURE_DESCRIPTOR,
 
 static void _egueb_dom_feature_ui_class_init(void *k)
 {
+	Egueb_Dom_Feature_Class *klass;
+
+	klass = EGUEB_DOM_FEATURE_CLASS(k);
+	klass->type_get = _egueb_dom_feature_ui_type_get;
 }
 
 static void _egueb_dom_feature_ui_instance_init(void *o)

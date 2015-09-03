@@ -19,14 +19,22 @@
 #define _EGUEB_DOM_FEATURE_RENDER_H_
 
 /**
- * @defgroup Egueb_Dom_Feature_Render Rendering
- * @brief Node rendering features
- * @ingroup Egueb_Dom_Feature
+ * @file
+ * @ender_group{Egueb_Dom_Feature_Render}
+ * @ender_group{Egueb_Dom_Feature_Render_Definition}
+ */
+
+/**
+ * @defgroup Egueb_Dom_Feature_Render_Definition Definitions
+ * @ingroup Egueb_Dom_Feature_Render
  * @{
  */
 
 EAPI extern Egueb_Dom_String *EGUEB_DOM_FEATURE_RENDER_NAME;
 
+/**
+ * @ender_name{egueb.dom.feature.render.descriptor.renderer_get}
+ */
 typedef Enesim_Renderer * (*Egueb_Dom_Feature_Render_Descriptor_Renderer_Get)(
 		Egueb_Dom_Node *n);
 
@@ -37,8 +45,19 @@ typedef struct _Egueb_Dom_Feature_Render_Descriptor
 	Egueb_Dom_Feature_Render_Descriptor_Renderer_Get renderer_get;
 } Egueb_Dom_Feature_Render_Descriptor;
 
+/**
+ * @ender_name{egueb.dom.feature.render.damage_cb}
+ */
 typedef Eina_Bool (*Egueb_Dom_Feature_Render_Damage_Cb)(Egueb_Dom_Feature *f,
 		Eina_Rectangle *damage, void *data);
+
+/**
+ * @}
+ * @defgroup Egueb_Dom_Feature_Render Rendering
+ * @brief Node rendering features @ender_inherits{Egueb_Dom_Feature}
+ * @ingroup Egueb_Dom_Feature
+ * @{
+ */
 
 EAPI Eina_Bool egueb_dom_feature_render_draw(Egueb_Dom_Feature *f, Enesim_Surface *s,
 		Enesim_Rop rop, Eina_Rectangle *clip, int x, int y,

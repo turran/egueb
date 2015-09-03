@@ -19,13 +19,27 @@
 #define _EGUEB_DOM_FEATURE_MULTIMEDIA_H_
 
 /**
- * @defgroup Egueb_Dom_Feature_Multimedia Multimedia
- * @brief Node multimedia features
- * @ingroup Egueb_Dom_Feature
+ * @file
+ * @ender_group{Egueb_Dom_Feature_Multimedia}
+ * @ender_group{Egueb_Dom_Feature_Multimedia_Definition}
+ */
+
+/**
+ * @defgroup Egueb_Dom_Feature_Multimedia_Definition Definitions
+ * @ingroup Egueb_Dom_Feature_Multimedia
  * @{
  */
 
 EAPI extern Egueb_Dom_String *EGUEB_DOM_FEATURE_MULTIMEDIA_NAME;
+
+/**
+ * @}
+ * @defgroup Egueb_Dom_Feature_Multimedia Multimedia
+ * @brief Node multimedia features @ender_inherits{Egueb_Dom_Feature}
+ * @ingroup Egueb_Dom_Feature
+ * @{
+ */
+
 EAPI Eina_Bool egueb_dom_feature_multimedia_add(Egueb_Dom_Node *n);
 
 /**

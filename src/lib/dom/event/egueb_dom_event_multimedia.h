@@ -21,17 +21,25 @@
 /**
  * @file
  * @ender_group{Egueb_Dom_Event_Multimedia}
+ * @ender_group{Egueb_Dom_Event_Multimedia_Definitions}
  */
 
 /**
- * @defgroup Egueb_Dom_Event_Multimedia Multimedia Event
- * @brief Multimedia Event @ender_inherits{Egueb_Dom_Event}
- * @ingroup Egueb_Dom_Event
+ * @defgroup Egueb_Dom_Event_Multimedia_Definitions Definitions
+ * @ingroup Egueb_Dom_Event_Multimedia 
  * @{
  */
 
 EAPI extern Egueb_Dom_String *EGUEB_DOM_EVENT_MULTIMEDIA_VIDEO;
 EAPI extern Egueb_Dom_String *EGUEB_DOM_EVENT_MULTIMEDIA_AUDIO;
+
+/**
+ * @}
+ * @defgroup Egueb_Dom_Event_Multimedia Multimedia Event
+ * @brief Multimedia Event @ender_inherits{Egueb_Dom_Event}
+ * @ingroup Egueb_Dom_Event
+ * @{
+ */
 
 EAPI Egueb_Dom_Media_Notifier * egueb_dom_event_multimedia_notifier_get(Egueb_Dom_Event *e);
 EAPI Egueb_Dom_Media_Provider * egueb_dom_event_multimedia_provider_get(Egueb_Dom_Event *e);

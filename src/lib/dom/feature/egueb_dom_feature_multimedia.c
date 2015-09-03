@@ -60,6 +60,13 @@ static void _egueb_dom_feature_multimedia_node_destroyed_cb(Egueb_Dom_Event *ev,
 }
 
 /*----------------------------------------------------------------------------*
+ *                              Feature interface                             *
+ *----------------------------------------------------------------------------*/
+static const char * _egueb_dom_feature_multimedia_type_get(void)
+{
+	return "egueb.dom.feature.multimedia";
+}
+/*----------------------------------------------------------------------------*
  *                              Object interface                              *
  *----------------------------------------------------------------------------*/
 ENESIM_OBJECT_INSTANCE_BOILERPLATE(EGUEB_DOM_FEATURE_DESCRIPTOR,
@@ -68,6 +75,10 @@ ENESIM_OBJECT_INSTANCE_BOILERPLATE(EGUEB_DOM_FEATURE_DESCRIPTOR,
 
 static void _egueb_dom_feature_multimedia_class_init(void *k)
 {
+	Egueb_Dom_Feature_Class *klass;
+
+	klass = EGUEB_DOM_FEATURE_CLASS(k);
+	klass->type_get = _egueb_dom_feature_multimedia_type_get;
 }
 
 static void _egueb_dom_feature_multimedia_instance_init(void *o)

@@ -21,16 +21,25 @@
 /**
  * @file
  * @ender_group{Egueb_Dom_Event_Script}
+ * @ender_group{Egueb_Dom_Event_Script_Definitions}
  */
 
 /**
+ * @defgroup Egueb_Dom_Event_Script_Definitions Definitions
+ * @ingroup Egueb_Dom_Event_Script 
+ * @{
+ */
+
+EAPI extern Egueb_Dom_String *EGUEB_DOM_EVENT_SCRIPT_SCRIPTER;
+
+
+/**
+ * @}
  * @defgroup Egueb_Dom_Event_Script Script Event
  * @brief Script Event @ender_inherits{Egueb_Dom_Event}
  * @ingroup Egueb_Dom_Event
  * @{
  */
-
-EAPI extern Egueb_Dom_String *EGUEB_DOM_EVENT_SCRIPT_SCRIPTER;
 
 EAPI Egueb_Dom_Event * egueb_dom_event_script_new(Egueb_Dom_String *type);
 
