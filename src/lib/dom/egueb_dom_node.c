@@ -65,6 +65,9 @@ static Egueb_Dom_String * _egueb_dom_node_ns_prefix_lookup(Egueb_Dom_Node *thiz,
 	Egueb_Dom_Node *ancestor;
 	Egueb_Dom_String *ret;
 
+	if (ns_uri && egueb_dom_string_is_equal(ns_uri, EGUEB_DOM_NAME_NS_XMLNS))
+		return egueb_dom_string_new_with_string("xmlns");
+
 	if (thiz->namespace_uri && egueb_dom_string_is_equal(thiz->namespace_uri, ns_uri) &&
 			thiz->prefix)
 	{
@@ -96,6 +99,9 @@ static Egueb_Dom_String * _egueb_dom_node_ns_prefix_lookup(Egueb_Dom_Node *thiz,
         } 
 #endif
 	ancestor = egueb_dom_node_get_ancestor_element(thiz);
+	if (!ancestor)
+		return NULL;
+
 	ret = _egueb_dom_node_ns_prefix_lookup(ancestor, ns_uri, from);
 	egueb_dom_node_unref(ancestor);
 
