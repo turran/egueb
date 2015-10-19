@@ -64,7 +64,7 @@ static Eina_Bool _egueb_dom_feature_render_damage_cb(Enesim_Renderer *r,
 /*----------------------------------------------------------------------------*
  *                              Feature interface                             *
  *----------------------------------------------------------------------------*/
-static const char * _egueb_dom_feature_render_type_get(void)
+static const char * _egueb_dom_feature_render_type_get(Egueb_Dom_Feature *f)
 {
 	return "egueb.dom.feature.render";
 }

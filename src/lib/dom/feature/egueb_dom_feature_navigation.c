@@ -49,7 +49,7 @@ static Egueb_Dom_String _EGUEB_DOM_FEATURE_NAVIGATION_NAME = EGUEB_DOM_STRING_ST
 /*----------------------------------------------------------------------------*
  *                              Feature interface                             *
  *----------------------------------------------------------------------------*/
-static const char * _egueb_dom_feature_navigation_type_get(void)
+static const char * _egueb_dom_feature_navigation_type_get(Egueb_Dom_Feature *f)
 {
 	return "egueb.dom.feature.navigation";
 }

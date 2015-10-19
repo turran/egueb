@@ -65,7 +65,7 @@ static void _egueb_dom_feature_window_on_resize(Egueb_Dom_Event *ev, void *data)
 /*----------------------------------------------------------------------------*
  *                              Feature interface                             *
  *----------------------------------------------------------------------------*/
-static const char * _egueb_dom_feature_window_type_get(void)
+static const char * _egueb_dom_feature_window_type_get(Egueb_Dom_Feature *f)
 {
 	return "egueb.dom.feature.window";
 }

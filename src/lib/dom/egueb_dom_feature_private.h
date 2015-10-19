@@ -24,7 +24,7 @@ struct _Egueb_Dom_Feature
 	int ref;
 };
 
-typedef const char * (*Egueb_Dom_Feature_Type_Get)(void);
+typedef const char * (*Egueb_Dom_Feature_Type_Get)(Egueb_Dom_Feature *thiz);
 
 typedef struct _Egueb_Dom_Feature_Class
 {

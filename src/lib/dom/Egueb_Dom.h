@@ -120,6 +120,7 @@ extern "C" {
 #include "egueb_dom_input.h"
 
 #include "egueb_dom_feature.h"
+#include "egueb_dom_feature_external.h"
 #include "egueb_dom_feature_io.h"
 #include "egueb_dom_feature_multimedia.h"
 #include "egueb_dom_feature_navigation.h"

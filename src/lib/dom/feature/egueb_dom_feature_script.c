@@ -62,7 +62,7 @@ static void _egueb_dom_feature_script_node_destroyed_cb(Egueb_Dom_Event *ev,
 /*----------------------------------------------------------------------------*
  *                              Feature interface                             *
  *----------------------------------------------------------------------------*/
-static const char * _egueb_dom_feature_script_type_get(void)
+static const char * _egueb_dom_feature_script_type_get(Egueb_Dom_Feature *f)
 {
 	return "egueb.dom.feature.script";
 }

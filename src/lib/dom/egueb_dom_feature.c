@@ -95,7 +95,7 @@ EAPI Eina_Bool egueb_dom_feature_type_get(Egueb_Dom_Feature *thiz,
 		klass = EGUEB_DOM_FEATURE_CLASS_GET(thiz);
 
 		if (klass->type_get)
-			*name = klass->type_get();
+			*name = klass->type_get(thiz);
 		else
 			*name = "egueb.dom.feature";
 	}
