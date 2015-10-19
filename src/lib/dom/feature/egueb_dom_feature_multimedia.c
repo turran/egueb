@@ -37,32 +37,32 @@
  *============================================================================*/
 #define EGUEB_DOM_FEATURE_MULTIMEDIA_DESCRIPTOR egueb_dom_feature_multimedia_descriptor_get()
 #define EGUEB_DOM_FEATURE_MULTIMEDIA(o) ENESIM_OBJECT_INSTANCE_CHECK(o,		\
-		Egueb_Dom_Feature_Script, EGUEB_DOM_FEATURE_MULTIMEDIA_DESCRIPTOR)
+		Egueb_Dom_Feature_Multimedia, EGUEB_DOM_FEATURE_MULTIMEDIA_DESCRIPTOR)
 
-typedef struct _Egueb_Dom_Feature_Script
+typedef struct _Egueb_Dom_Feature_Multimedia
 {
 	Egueb_Dom_Feature base;
 	Egueb_Dom_Node *n;
-} Egueb_Dom_Feature_Script;
+} Egueb_Dom_Feature_Multimedia;
 
-typedef struct _Egueb_Dom_Feature_Script_Class
+typedef struct _Egueb_Dom_Feature_Multimedia_Class
 {
 	Egueb_Dom_Feature_Class base;
-} Egueb_Dom_Feature_Script_Class;
+} Egueb_Dom_Feature_Multimedia_Class;
 
 static Egueb_Dom_String _EGUEB_DOM_FEATURE_MULTIMEDIA_NAME = EGUEB_DOM_STRING_STATIC("EguebDomMultimedia");
 
 static void _egueb_dom_feature_multimedia_node_destroyed_cb(Egueb_Dom_Event *ev,
 		void *data)
 {
-	Egueb_Dom_Feature_Script *thiz = data;
+	Egueb_Dom_Feature_Multimedia *thiz = data;
 	thiz->n = NULL;
 }
 
 /*----------------------------------------------------------------------------*
  *                              Feature interface                             *
  *----------------------------------------------------------------------------*/
-static const char * _egueb_dom_feature_multimedia_type_get(void)
+static const char * _egueb_dom_feature_multimedia_type_get(Egueb_Dom_Feature *f)
 {
 	return "egueb.dom.feature.multimedia";
 }
@@ -70,7 +70,7 @@ static const char * _egueb_dom_feature_multimedia_type_get(void)
  *                              Object interface                              *
  *----------------------------------------------------------------------------*/
 ENESIM_OBJECT_INSTANCE_BOILERPLATE(EGUEB_DOM_FEATURE_DESCRIPTOR,
-		Egueb_Dom_Feature_Script, Egueb_Dom_Feature_Script_Class,
+		Egueb_Dom_Feature_Multimedia, Egueb_Dom_Feature_Multimedia_Class,
 		egueb_dom_feature_multimedia);
 
 static void _egueb_dom_feature_multimedia_class_init(void *k)
@@ -98,7 +98,7 @@ Egueb_Dom_String *EGUEB_DOM_FEATURE_MULTIMEDIA_NAME = &_EGUEB_DOM_FEATURE_MULTIM
 
 EAPI Eina_Bool egueb_dom_feature_multimedia_add(Egueb_Dom_Node *n)
 {
-	Egueb_Dom_Feature_Script *thiz;
+	Egueb_Dom_Feature_Multimedia *thiz;
 
 	if (!n) return EINA_FALSE;
 
