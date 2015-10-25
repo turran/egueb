@@ -284,6 +284,22 @@ static void _egueb_dom_node_event_start_at_target(Egueb_Dom_Node *thiz,
 	evt->phase = EGUEB_DOM_EVENT_PHASE_AT_TARGET;
 	_egueb_dom_node_event_dispatch(thiz, evt);
 }
+
+/*----------------------------------------------------------------------------*
+ *                               Node interface                               *
+ *----------------------------------------------------------------------------*/
+static Egueb_Dom_Node * _egueb_dom_node_ctor(Egueb_Dom_Node *thiz)
+{
+	Egueb_Dom_Node *ret;
+	Egueb_Dom_Node_Class *klass;
+	Enesim_Object_Class *k;
+
+	/* create the object using the same descriptor and class */
+	klass = EGUEB_DOM_NODE_CLASS_GET(thiz);
+	k = ENESIM_OBJECT_CLASS(klass);
+	ret = enesim_object_descriptor_instance_new(k->descriptor, k);
+	return ret;
+}
 /*----------------------------------------------------------------------------*
  *                            Event target interface                          *
  *----------------------------------------------------------------------------*/
@@ -385,12 +401,16 @@ ENESIM_OBJECT_ABSTRACT_BOILERPLATE(EGUEB_DOM_EVENT_TARGET_DESCRIPTOR,
 static void _egueb_dom_node_class_init(void *k)
 {
 	Egueb_Dom_Event_Target_Class *klass;
+	Egueb_Dom_Node_Class *n_klass;
 
 	klass = EGUEB_DOM_EVENT_TARGET_CLASS(k);
 	klass->ref = _egueb_dom_node_ref;
 	klass->unref = _egueb_dom_node_unref;
 	klass->type_get = _egueb_dom_node_type_get;
 	klass->dispatch = _egueb_dom_node_dispatch;
+
+	n_klass = EGUEB_DOM_NODE_CLASS(k);
+	n_klass->ctor = _egueb_dom_node_ctor;
 }
 
 static void _egueb_dom_node_instance_init(void *o)
@@ -1036,8 +1056,6 @@ EAPI Egueb_Dom_Node * egueb_dom_node_clone(Egueb_Dom_Node *thiz, Eina_Bool live,
 {
 	Egueb_Dom_Node_Class *klass;
 	Egueb_Dom_Node *ret;
-	Enesim_Object_Descriptor *d;
-	Enesim_Object_Class *k;
 
 	if (!thiz)
 	{
@@ -1045,13 +1063,20 @@ EAPI Egueb_Dom_Node * egueb_dom_node_clone(Egueb_Dom_Node *thiz, Eina_Bool live,
 		return NULL;
 	}
 
-	/* create the object using the same descriptor and class */
-	d = ENESIM_OBJECT_INSTANCE_DESCRIPTOR_GET(thiz);
-	k = ENESIM_OBJECT_INSTANCE_CLASS(thiz);
-	ret = enesim_object_descriptor_instance_new(d, k);
+	klass = EGUEB_DOM_NODE_CLASS_GET(thiz);
+	if (!klass->ctor)
+	{
+		if (err) *err = EGUEB_DOM_ERROR_NOT_SUPPORTED;
+		return NULL;
+	}
 
+	ret = klass->ctor(thiz);
+	if (!ret)
+	{
+		if (err) *err = EGUEB_DOM_ERROR_NOT_SUPPORTED;
+		return NULL;
+	}
 	/* now call the implementation clone */
-	klass = EGUEB_DOM_NODE_CLASS(k);
 	if (klass->clone)
 		klass->clone(thiz, live, deep, ret);
 

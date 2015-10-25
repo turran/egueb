@@ -19,6 +19,7 @@
 #ifndef _EGUEB_DOM_ELEMENT_EXTERNAL_H_
 #define _EGUEB_DOM_ELEMENT_EXTERNAL_H_
 
+typedef Egueb_Dom_Node * (*Egueb_Dom_Element_External_Descriptor_Ctor)(void *data);
 typedef void (*Egueb_Dom_Element_External_Descriptor_Init)(Egueb_Dom_Node *node, void *data);
 typedef void (*Egueb_Dom_Element_External_Descriptor_Deinit)(
 		Egueb_Dom_Node *node, void *data);
@@ -33,6 +34,7 @@ typedef Eina_Bool (*Egueb_Dom_Element_External_Descriptor_Child_Appendable)(
 typedef struct _Egueb_Dom_Element_External_Descriptor
 {
 	int version;
+	Egueb_Dom_Element_External_Descriptor_Ctor ctor;
 	Egueb_Dom_Element_External_Descriptor_Init init;
 	Egueb_Dom_Element_External_Descriptor_Deinit deinit;
 	Egueb_Dom_Element_External_Descriptor_Tag_Name_Get tag_name_get;

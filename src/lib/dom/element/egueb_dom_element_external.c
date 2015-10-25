@@ -97,6 +97,17 @@ static Eina_Bool _egueb_dom_element_external_child_appendable(
 		return thiz->descriptor.child_appendable(n, thiz->data, child);
 	return EINA_TRUE;
 }
+
+static Egueb_Dom_Node * _egueb_dom_element_external_ctor(
+		Egueb_Dom_Node *n)
+{
+	Egueb_Dom_Element_External *thiz;
+
+	thiz = EGUEB_DOM_ELEMENT_EXTERNAL(n);
+	if (thiz->descriptor.ctor)
+		return thiz->descriptor.ctor(thiz->data);
+	return NULL;
+}
 /*----------------------------------------------------------------------------*
  *                              Object interface                              *
  *----------------------------------------------------------------------------*/
@@ -115,6 +126,7 @@ static void _egueb_dom_element_external_class_init(void *k)
 	klass->clone = _egueb_dom_element_external_clone;
 
 	n_klass = EGUEB_DOM_NODE_CLASS(k);
+	n_klass->ctor = _egueb_dom_element_external_ctor;
 	n_klass->child_appendable = _egueb_dom_element_external_child_appendable;
 }
 
