@@ -23,4 +23,7 @@ EAPI Egueb_Dom_Node * egueb_css_attr_font_new(Egueb_Dom_String *ns,
 		Eina_Bool animatable, Eina_Bool stylable,
 		Eina_Bool inheritable);
 
+EAPI Enesim_Text_Font * egueb_css_attr_font_resolve(Egueb_Dom_Node *attr,
+		double rel_font_size, double rel_x_height);
+
 #endif

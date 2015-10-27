@@ -40,6 +40,8 @@ typedef struct _Egueb_Css_Length
 EAPI Eina_Bool egueb_css_length_string_from(Egueb_Css_Length *thiz,
 		const char *str);
 EAPI const char * egueb_css_length_string_to(Egueb_Css_Length thiz);
+EAPI double egueb_css_length_final_get(const Egueb_Css_Length *thiz,
+		double rel_font_size, double rel_x_height);
 
 #endif
 

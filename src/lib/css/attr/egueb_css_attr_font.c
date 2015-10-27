@@ -52,3 +52,102 @@ EAPI Egueb_Dom_Node * egueb_css_attr_font_new(Egueb_Dom_String *ns,
 			ns, animatable, stylable, inheritable);
 	return n;
 }
+
+EAPI Enesim_Text_Font * egueb_css_attr_font_resolve(Egueb_Dom_Node *attr,
+		double rel_font_size, double rel_x_height)
+{
+	Egueb_Css_Font final_font = { 0 };
+	Enesim_Text_Font *font = NULL;
+	Enesim_Text_Engine *e;
+	double font_size = 0;
+	int count;
+	int i;
+
+	e = enesim_text_engine_default_get();
+	if (!e)
+		return NULL;
+
+	if (!egueb_dom_attr_final_get(attr, &final_font))
+	{
+		enesim_text_engine_unref(e);
+		return NULL;
+	}
+
+	switch (final_font.size.type)
+	{
+		case EGUEB_CSS_FONT_SIZE_TYPE_ABSOLUTE:
+		ERR("TODO");
+		break;
+
+		case EGUEB_CSS_FONT_SIZE_TYPE_RELATIVE:
+		{
+			if (final_font.size.value.relative == EGUEB_CSS_FONT_SIZE_RELATIVE_LARGER)
+				font_size = rel_font_size * 1.25;
+			else
+				font_size = rel_font_size * 0.75;
+		}
+		break;
+
+		case EGUEB_CSS_FONT_SIZE_TYPE_LENGTH:
+		{
+			font_size = egueb_css_length_final_get(
+					&final_font.size.value.length, rel_font_size,
+					rel_x_height);
+		}
+		break;
+
+		case EGUEB_CSS_FONT_SIZE_TYPE_PERCENTAGE:
+		{
+			font_size = rel_font_size * final_font.size.value.percentage / 100;
+		}
+		break;
+	}
+
+	count = egueb_dom_list_length(final_font.family);
+	for (i = 0; i < count; i++)
+	{
+		Egueb_Css_Font_Family_Value *value;
+		const char *fc_description = NULL;
+
+		value = egueb_dom_list_item_get(final_font.family, i);
+		switch (value->type)
+		{
+			case EGUEB_CSS_FONT_FAMILY_TYPE_FAMILY:
+			fc_description = egueb_dom_string_string_get(value->family);
+			break;
+
+			case EGUEB_CSS_FONT_FAMILY_TYPE_GENERIC_SERIF:
+			fc_description = ":family=sans";
+			break;
+
+			case EGUEB_CSS_FONT_FAMILY_TYPE_GENERIC_SANS_SERIF:
+			fc_description = ":family=sans-serif";
+			break;
+
+			case EGUEB_CSS_FONT_FAMILY_TYPE_GENERIC_CURSIVE:
+			fc_description = ":family=cursive";
+			break;
+
+			case EGUEB_CSS_FONT_FAMILY_TYPE_GENERIC_FANTASY:
+			fc_description = ":family=fantasy";
+			break;
+
+			case EGUEB_CSS_FONT_FAMILY_TYPE_GENERIC_MONOSPACE:
+			fc_description = ":family=monospace";
+			break;
+		}
+
+		/* TODO add the style, variant and weight */
+		if (fc_description)
+		{
+			font = enesim_text_font_new_description_from(e, fc_description,
+					font_size);
+			if (font)
+				break;
+		}
+	}
+	enesim_text_engine_unref(e);
+	egueb_css_font_reset(&final_font);
+
+	return font;
+}

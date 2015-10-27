@@ -21,7 +21,6 @@
 
 Eina_Bool egueb_css_font_string_from(Egueb_Css_Font *thiz, const char *attr_val);
 char * egueb_css_font_string_to(Egueb_Css_Font *thiz);
-void egueb_css_font_reset(Egueb_Css_Font *thiz);
 void egueb_css_font_copy(Egueb_Css_Font *src,
 		Egueb_Css_Font *dst, Eina_Bool content);
 void egueb_css_font_interpolate(Egueb_Css_Font *v,

@@ -38,4 +38,6 @@ typedef struct _Egueb_Css_Font {
 	Egueb_Dom_List *family;
 } Egueb_Css_Font;
 
+EAPI void egueb_css_font_reset(Egueb_Css_Font *thiz);
+
 #endif

@@ -141,12 +141,6 @@ char * egueb_css_font_string_to(Egueb_Css_Font *thiz)
 	return NULL;
 }
 
-void egueb_css_font_reset(Egueb_Css_Font *thiz)
-{
-	egueb_dom_list_unref(thiz->family);
-	thiz->family = NULL;
-}
-
 void egueb_css_font_copy(Egueb_Css_Font *src,
 		Egueb_Css_Font *dst, Eina_Bool content)
 {
@@ -170,3 +164,8 @@ void egueb_css_font_interpolate(Egueb_Css_Font *v,
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/
+EAPI void egueb_css_font_reset(Egueb_Css_Font *thiz)
+{
+	egueb_dom_list_unref(thiz->family);
+	thiz->family = NULL;
+}

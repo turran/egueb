@@ -100,3 +100,50 @@ EAPI const char * egueb_css_length_string_to(Egueb_Css_Length thiz)
 {
 	return NULL;
 }
+
+EAPI double egueb_css_length_final_get(const Egueb_Css_Length *thiz,
+		double rel_font_size, double rel_x_height)
+{
+	double ret;
+
+	switch (thiz->unit)
+	{
+		case EGUEB_CSS_LENGTH_UNIT_PT:
+		ret = 1.25 * thiz->value;
+		break;
+
+		case EGUEB_CSS_LENGTH_UNIT_PC:
+		ret = 15 * thiz->value;
+		break;
+
+		case EGUEB_CSS_LENGTH_UNIT_CM:
+		ret = 35.43307 * thiz->value;
+		break;
+
+		case EGUEB_CSS_LENGTH_UNIT_MM:
+		ret = 3.543307 * thiz->value;
+		break;
+
+		case EGUEB_CSS_LENGTH_UNIT_IN:
+		ret = 90 * thiz->value;
+		break;
+
+		case EGUEB_CSS_LENGTH_UNIT_PX:
+		ret = thiz->value;
+		break;
+
+		case EGUEB_CSS_LENGTH_UNIT_EM:
+		ret = rel_font_size * thiz->value;
+		break;
+
+		case EGUEB_CSS_LENGTH_UNIT_EX:
+		ret = rel_x_height * thiz->value;
+		break;
+
+		default:
+		ret = thiz->value;
+		break;
+	}
+
+	return ret;
+}
