@@ -53,7 +53,7 @@ EAPI extern Egueb_Dom_String *EGUEB_SVG_NAME_SVG;
 EAPI extern Egueb_Dom_String *EGUEB_SVG_NAME_VIDEO;
 /* TODO add a string per attribute */
 EAPI extern Egueb_Dom_String *EGUEB_SVG_NAME_CLASS;
-EAPI extern Egueb_Dom_String *EGUEB_SVG_NAME_CLIP_PATH;
+EAPI extern Egueb_Dom_String *EGUEB_SVG_NAME_ATTR_CLIP_PATH;
 EAPI extern Egueb_Dom_String *EGUEB_SVG_NAME_CLIP_PATH_UNITS;
 EAPI extern Egueb_Dom_String *EGUEB_SVG_NAME_COLOR;
 EAPI extern Egueb_Dom_String *EGUEB_SVG_NAME_CX;

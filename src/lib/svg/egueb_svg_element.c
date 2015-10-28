@@ -439,7 +439,7 @@ static void _egueb_svg_element_instance_init(void *o)
 	thiz->style = egueb_css_attr_style_new(NULL);
 	/* the presentation attributes */
 	thiz->clip_path = egueb_svg_attr_clip_path_new(
-			egueb_dom_string_ref(EGUEB_SVG_NAME_CLIP_PATH),
+			egueb_dom_string_ref(EGUEB_SVG_NAME_ATTR_CLIP_PATH),
 			&EGUEB_SVG_CLIP_PATH_NONE, EINA_TRUE, EINA_TRUE,
 			EINA_TRUE);
 	thiz->color = egueb_svg_attr_color_new(
