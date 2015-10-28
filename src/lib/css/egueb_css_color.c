@@ -266,8 +266,10 @@ EAPI Eina_Bool egueb_css_color_string_from(Egueb_Css_Color *color, const char *a
 
 	/*
 	 * check if it starts with the #:
+	 * #argb
 	 * #rgb
 	 * #rrggbb
+	 * #aarrggbb
 	 */
 	if (attr_val[0] == '#')
 	{
@@ -286,6 +288,23 @@ EAPI Eina_Bool egueb_css_color_string_from(Egueb_Css_Color *color, const char *a
 				return EINA_TRUE;
 			}
 		}
+		else if (sz == 5)
+		{
+			if (EGUEB_DOM_IS_HEXA(attr_val[1]) &&
+			    EGUEB_DOM_IS_HEXA(attr_val[2]) &&
+			    EGUEB_DOM_IS_HEXA(attr_val[3]) &&
+			    EGUEB_DOM_IS_HEXA(attr_val[4]))
+			{
+				uint8_t a, r, g, b;
+
+				a = _egueb_svg_c_to_hh(attr_val[1]);
+				r = _egueb_svg_c_to_hh(attr_val[2]);
+				g = _egueb_svg_c_to_hh(attr_val[3]);
+				b = _egueb_svg_c_to_hh(attr_val[4]);
+				*color = a << 24 | r << 16 | g << 8 | b;
+				return EINA_TRUE;
+			}
+		}
 		else if (sz == 7)
 		{
 			if (EGUEB_DOM_IS_HEXA(attr_val[1]) &&
@@ -301,6 +320,27 @@ EAPI Eina_Bool egueb_css_color_string_from(Egueb_Css_Color *color, const char *a
 				g = _egueb_svg_cc_to_hh(attr_val + 3);
 				b = _egueb_svg_cc_to_hh(attr_val + 5);
 				*color = 0xff000000 | r << 16 | g << 8 | b;
+				return EINA_TRUE;
+			}
+		}
+		else if (sz == 9)
+		{
+			if (EGUEB_DOM_IS_HEXA(attr_val[1]) &&
+			    EGUEB_DOM_IS_HEXA(attr_val[2]) &&
+			    EGUEB_DOM_IS_HEXA(attr_val[3]) &&
+			    EGUEB_DOM_IS_HEXA(attr_val[4]) &&
+			    EGUEB_DOM_IS_HEXA(attr_val[5]) &&
+			    EGUEB_DOM_IS_HEXA(attr_val[6]) &&
+			    EGUEB_DOM_IS_HEXA(attr_val[7]) &&
+			    EGUEB_DOM_IS_HEXA(attr_val[8]))
+			{
+				uint8_t a, r, g, b;
+
+				a = _egueb_svg_cc_to_hh(attr_val + 1);
+				r = _egueb_svg_cc_to_hh(attr_val + 3);
+				g = _egueb_svg_cc_to_hh(attr_val + 5);
+				b = _egueb_svg_cc_to_hh(attr_val + 7);
+				*color = a << 24 | r << 16 | g << 8 | b;
 				return EINA_TRUE;
 			}
 		}
