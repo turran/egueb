@@ -19,7 +19,15 @@
 #define _EGUEB_DOM_ATTR_STRING_LIST_H_
 
 EAPI Egueb_Dom_Node * egueb_dom_attr_string_list_new(Egueb_Dom_String *name,
-		Egueb_Dom_List *def, Eina_Bool animatable, Eina_Bool stylable,
+		Egueb_Dom_String *ns, Egueb_Dom_List *def,
+		Eina_Bool animatable, Eina_Bool stylable,
 		Eina_Bool inheritable);
+
+EAPI void egueb_dom_attr_string_list_prepend(Egueb_Dom_Node *attr,
+		Egueb_Dom_Attr_Type type, Egueb_Dom_String *str);
+EAPI void egueb_dom_attr_string_list_append(Egueb_Dom_Node *attr,
+		Egueb_Dom_Attr_Type type, Egueb_Dom_String *str);
+EAPI void egueb_dom_attr_string_list_clear(Egueb_Dom_Node *attr,
+		Egueb_Dom_Attr_Type type);
 
 #endif

@@ -21,12 +21,15 @@
 #include "egueb_dom_main.h"
 #include "egueb_dom_attr.h"
 #include "egueb_dom_value.h"
+#include "egueb_dom_value_dom_string.h"
 #include "egueb_dom_list.h"
 #include "egueb_dom_string_list.h"
+#include "egueb_dom_attr_string_list.h"
+#include "egueb_dom_event_mutation.h"
 
 #include "egueb_dom_attr_private.h"
 #include "egueb_dom_attr_object_private.h"
-#include "egueb_dom_attr_string_list.h"
+#include "egueb_dom_event_mutation_private.h"
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
@@ -39,8 +42,8 @@ EGUEB_DOM_ATTR_OBJECT_BOILERPLATE(Egueb_Dom_Attr_String_List,
  *                                   API                                      *
  *============================================================================*/
 EAPI Egueb_Dom_Node * egueb_dom_attr_string_list_new(Egueb_Dom_String *name,
-		Egueb_Dom_List *def, Eina_Bool animatable, Eina_Bool stylable,
-		Eina_Bool inheritable)
+		Egueb_Dom_String *ns, Egueb_Dom_List *def, Eina_Bool animatable,
+		Eina_Bool stylable, Eina_Bool inheritable)
 {
 	Egueb_Dom_Node *n;
 	
@@ -49,4 +52,39 @@ EAPI Egueb_Dom_Node * egueb_dom_attr_string_list_new(Egueb_Dom_String *name,
 	if (def)
 		egueb_dom_attr_set(n, EGUEB_DOM_ATTR_TYPE_DEFAULT, def);
 	return n;
+}
+
+EAPI void egueb_dom_attr_string_list_prepend(Egueb_Dom_Node *attr,
+		Egueb_Dom_Attr_Type type, Egueb_Dom_String *str)
+{
+	Egueb_Dom_List *l;
+
+	egueb_dom_attr_get(attr, type, &l);
+	if (!l) l = egueb_dom_list_new(egueb_dom_value_dom_string_descriptor_get());
+	egueb_dom_list_item_prepend(l, str);
+	egueb_dom_attr_set(attr, type, l);
+}
+
+EAPI void egueb_dom_attr_string_list_append(Egueb_Dom_Node *attr,
+		Egueb_Dom_Attr_Type type, Egueb_Dom_String *str)
+{
+	Egueb_Dom_List *l;
+
+	egueb_dom_attr_get(attr, type, &l);
+	if (!l) l = egueb_dom_list_new(egueb_dom_value_dom_string_descriptor_get());
+	egueb_dom_list_item_append(l, str);
+	egueb_dom_attr_set(attr, type, l);
+}
+
+EAPI void egueb_dom_attr_string_list_clear(Egueb_Dom_Node *attr,
+		Egueb_Dom_Attr_Type type)
+{
+	Egueb_Dom_List *l;
+
+	egueb_dom_attr_get(attr, type, &l);
+	if (l)
+	{
+		egueb_dom_list_clear(l);
+		egueb_dom_attr_set(attr, type, l);
+	}
 }

@@ -756,7 +756,7 @@ static void _egueb_smil_animate_base_instance_init(void *o)
 			egueb_dom_string_ref(EGUEB_SMIL_FROM), NULL, NULL,
 			EINA_FALSE, EINA_FALSE, EINA_FALSE);
 	thiz->values = egueb_dom_attr_string_list_new(
-			egueb_dom_string_ref(EGUEB_SMIL_VALUES), NULL,
+			egueb_dom_string_ref(EGUEB_SMIL_VALUES), NULL, NULL,
 			EINA_FALSE, EINA_FALSE, EINA_FALSE);
 	thiz->calc_mode = egueb_smil_attr_calc_mode_new();
 	thiz->key_times = egueb_dom_attr_double_list_new(

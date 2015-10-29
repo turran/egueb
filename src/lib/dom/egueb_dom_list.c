@@ -124,7 +124,6 @@ EAPI void egueb_dom_list_item_remove(Egueb_Dom_List *thiz, int idx)
 	Egueb_Dom_Value v = EGUEB_DOM_VALUE_INIT;
 	Eina_List *l;
 
-	/* TODO trigger the mutation event */
 	l = eina_list_nth_list(thiz->list, idx);
 	if (!l) return;
 
@@ -140,8 +139,12 @@ EAPI void egueb_dom_list_item_remove(Egueb_Dom_List *thiz, int idx)
 
 EAPI void egueb_dom_list_item_append(Egueb_Dom_List *thiz, void *data)
 {
-	/* TODO trigger the mutation event */
 	thiz->list = eina_list_append(thiz->list, data);
+}
+
+EAPI void egueb_dom_list_item_prepend(Egueb_Dom_List *thiz, void *data)
+{
+	thiz->list = eina_list_prepend(thiz->list, data);
 }
 
 EAPI Eina_Iterator * egueb_dom_list_iterator_new(Egueb_Dom_List *thiz)
