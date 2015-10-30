@@ -1096,6 +1096,13 @@ EAPI Eina_Bool egueb_dom_node_event_propagate(Egueb_Dom_Node *thiz,
 	{
 		_egueb_dom_node_event_bubble(thiz, event);
 	}
+	else if (event->phase == EGUEB_DOM_EVENT_PHASE_AT_TARGET)
+	{
+		if (event->direction == EGUEB_DOM_EVENT_DIRECTION_CAPTURE_BUBBLE)
+		{
+			_egueb_dom_node_event_bubble(thiz, event);
+		}
+	}
 
 	return EINA_FALSE;
 }
