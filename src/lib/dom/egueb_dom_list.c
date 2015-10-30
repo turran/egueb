@@ -127,13 +127,12 @@ EAPI void egueb_dom_list_item_remove(Egueb_Dom_List *thiz, int idx)
 	l = eina_list_nth_list(thiz->list, idx);
 	if (!l) return;
 
-#if 0
+	/* unref/free the data */
 	egueb_dom_value_init(&v, thiz->content_descriptor);
-	vd.ptr = l->data;
-	egueb_dom_value_data_from(&v, &vd);
+	v.data.ptr = l->data;
+	v.owned = EINA_TRUE;
 	egueb_dom_value_reset(&v);
-#endif
-	free(l->data);
+
 	thiz->list = eina_list_remove_list(thiz->list, l);
 }
 
