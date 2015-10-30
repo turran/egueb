@@ -283,7 +283,6 @@ static void _egueb_smil_animate_base_animation_start_cb(Egueb_Smil_Signal *s, vo
 	Egueb_Smil_Animate_Base *thiz = data;
 	Egueb_Smil_Animation *a;
 	Egueb_Smil_Fill fill;
-	Egueb_Dom_Event *ev;
 
 	a = EGUEB_SMIL_ANIMATION(thiz);
 	egueb_dom_attr_get(a->fill, EGUEB_DOM_ATTR_TYPE_BASE, &fill);
@@ -293,10 +292,7 @@ static void _egueb_smil_animate_base_animation_start_cb(Egueb_Smil_Signal *s, vo
 		/* TODO do a copy, as it might be a reference to a value */
 		egueb_dom_attr_final_value_get(a->attr, &thiz->prv_value);
 	}
-
-	ev = egueb_smil_event_new();
-	egueb_smil_event_init(ev, egueb_dom_string_ref(EGUEB_SMIL_EVENT_BEGIN), 0);
-	egueb_dom_event_target_event_dispatch(EGUEB_DOM_EVENT_TARGET_CAST(a), ev, NULL, NULL);
+	egueb_smil_animation_begin(a);
 }
 
 static void _egueb_smil_animate_base_animation_start_and_fetch_cb(Egueb_Smil_Signal *s, void *data)
@@ -318,7 +314,6 @@ static void _egueb_smil_animate_base_animation_stop_cb(Egueb_Smil_Signal *s, voi
 	Egueb_Smil_Animate_Base *thiz = data;
 	Egueb_Smil_Animation *a;
 	Egueb_Smil_Fill fill;
-	Egueb_Dom_Event *ev;
 
 	a = EGUEB_SMIL_ANIMATION(thiz);
 	egueb_dom_attr_get(a->fill, EGUEB_DOM_ATTR_TYPE_BASE, &fill);
@@ -328,9 +323,7 @@ static void _egueb_smil_animate_base_animation_stop_cb(Egueb_Smil_Signal *s, voi
 		DBG("Going back to previous value");
 		egueb_dom_attr_value_set(a->attr, EGUEB_DOM_ATTR_TYPE_ANIMATED, &thiz->prv_value);
 	}
-	ev = egueb_smil_event_new();
-	egueb_smil_event_init(ev, egueb_dom_string_ref(EGUEB_SMIL_EVENT_END), 0);
-	egueb_dom_event_target_event_dispatch(EGUEB_DOM_EVENT_TARGET(a), ev, NULL, NULL);
+	egueb_smil_animation_end(a);
 }
 
 static void _egueb_smil_animate_base_animation_repeat_cb(Egueb_Smil_Signal *s, void *data)

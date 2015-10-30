@@ -92,5 +92,7 @@ Enesim_Object_Descriptor * egueb_smil_animation_descriptor_get();
 #define EGUEB_SMIL_ANIMATION(o) ENESIM_OBJECT_INSTANCE_CHECK(o, Egueb_Smil_Animation, EGUEB_SMIL_ANIMATION_DESCRIPTOR)
 
 Eina_Bool egueb_smil_animation_active_duration_get(Egueb_Dom_Node *n, Egueb_Smil_Clock *duration);
+void egueb_smil_animation_begin(Egueb_Smil_Animation *thiz);
+void egueb_smil_animation_end(Egueb_Smil_Animation *thiz);
 
 #endif

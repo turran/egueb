@@ -235,8 +235,6 @@ static void _egueb_smil_animation_begin(Egueb_Smil_Animation *thiz, int64_t offs
 	if (!thiz->signal)
 		return;
 
-	thiz->started = EINA_TRUE;
-
 	time = egueb_smil_timeline_current_clock_get(thiz->timeline);
 	INFO("Enabling animation at %" EGUEB_SMIL_CLOCK_FORMAT
 			" with offset %" EGUEB_SMIL_CLOCK_FORMAT,
@@ -284,9 +282,7 @@ static void _egueb_smil_animation_end(Egueb_Smil_Animation *thiz)
 	if (!thiz->signal)
 		return;
 
-	thiz->started = EINA_FALSE;
-
-	INFO("Ending animation");
+	INFO("Disabling animation");
 	egueb_smil_signal_disable(thiz->signal);
 }
 
@@ -656,10 +652,6 @@ static void _egueb_smil_animation_instance_deinit(void *o)
 	egueb_dom_node_unref(thiz->repeat_dur);
 	egueb_dom_node_unref(thiz->xlink_href);
 }
-/*============================================================================*
- *                                 Global                                     *
- *============================================================================*/
-Egueb_Dom_String *EGUEB_SMIL_ANIMATION_KEY = &_EGUEB_SMIL_ANIMATION_KEY;
 
 /* Forward declarations */
 static void _egueb_smil_animation_target_destroyed_cb(Egueb_Dom_Event *e,
@@ -759,6 +751,36 @@ Eina_Bool egueb_smil_animation_active_duration_get(Egueb_Dom_Node *n,
 	{
 		return EINA_FALSE;
 	}
+}
+/*============================================================================*
+ *                                 Global                                     *
+ *============================================================================*/
+Egueb_Dom_String *EGUEB_SMIL_ANIMATION_KEY = &_EGUEB_SMIL_ANIMATION_KEY;
+
+void egueb_smil_animation_begin(Egueb_Smil_Animation *thiz)
+{
+	Egueb_Dom_Event *ev;
+
+	INFO("Begin animation");
+	thiz->started = EINA_TRUE;
+	/* send the event */
+	ev = egueb_smil_event_new();
+	egueb_smil_event_init(ev, egueb_dom_string_ref(EGUEB_SMIL_EVENT_BEGIN), 0);
+	egueb_dom_event_target_event_dispatch(
+			EGUEB_DOM_EVENT_TARGET_CAST(thiz->target), ev, NULL, NULL);
+}
+
+void egueb_smil_animation_end(Egueb_Smil_Animation *thiz)
+{
+	Egueb_Dom_Event *ev;
+
+	INFO("End animation");
+	thiz->started = EINA_FALSE;
+	/* send the event */
+	ev = egueb_smil_event_new();
+	egueb_smil_event_init(ev, egueb_dom_string_ref(EGUEB_SMIL_EVENT_END), 0);
+	egueb_dom_event_target_event_dispatch(
+			EGUEB_DOM_EVENT_TARGET_CAST(thiz->target), ev, NULL, NULL);
 }
 /*============================================================================*
  *                                   API                                      *
