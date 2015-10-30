@@ -33,7 +33,6 @@ struct _Egueb_Smil_Signal
 	int ref;
 
 	Eina_Bool started;
-	Eina_Bool stopped;
 	Egueb_Smil_Signal_State_Callback start_cb;
 	Egueb_Smil_Signal_State_Callback stop_cb;
 	void *data;

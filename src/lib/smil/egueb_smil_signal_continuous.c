@@ -290,7 +290,7 @@ static void _egueb_smil_signal_continuous_process(Egueb_Smil_Signal *s,
 	end = (thiz->end * thiz->repeat);
 	if (curr > end + s->offset)
 	{
-		if (s->started && !s->stopped)
+		if (s->started)
 		{
 			DBG("Stopping signal %p at %" EGUEB_SMIL_CLOCK_FORMAT
 					" with end %" EGUEB_SMIL_CLOCK_FORMAT,
@@ -303,7 +303,7 @@ static void _egueb_smil_signal_continuous_process(Egueb_Smil_Signal *s,
 			_egueb_smil_signal_continuous_animate(s, thiz->end);
 			egueb_smil_signal_stop(s);
 		}
-		else if (!s->started)
+		else
 		{
 			WARN("Signal did not had time to start");
 		}
@@ -321,7 +321,7 @@ infinite:
 	/* if the previous tick was outside the start-end
 	 * means that we are going to repeat
 	 */
-	if (((rcurr - tpf) < thiz->start) && (s->started && !s->stopped))
+	if (((rcurr - tpf) < thiz->start) && s->started)
 	{
 		DBG("Repeating signal %p", thiz);
 		/* force it to pass through the last keyframe on the repeat */ 
@@ -331,7 +331,7 @@ infinite:
 		return;
 	}
 
-	if (!s->started && !s->stopped)
+	if (!s->started)
 	{
 		egueb_smil_signal_start(s);
 	}
