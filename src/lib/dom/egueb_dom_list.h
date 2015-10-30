@@ -21,7 +21,7 @@
 #include "egueb_dom_value.h"
 
 typedef struct _Egueb_Dom_List Egueb_Dom_List;
-typedef void (*Egueb_Dom_List_Foreach)(void *data, void *user_data);
+typedef Eina_Bool (*Egueb_Dom_List_Foreach)(void *data, void *user_data);
 
 EAPI Egueb_Dom_List * egueb_dom_list_new(const Egueb_Dom_Value_Descriptor *d);
 EAPI Egueb_Dom_List * egueb_dom_list_copy(Egueb_Dom_List *thiz);

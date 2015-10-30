@@ -171,7 +171,10 @@ EAPI void egueb_dom_list_foreach(Egueb_Dom_List *thiz, Egueb_Dom_List_Foreach cb
 
 	if (!thiz) return;
 	EINA_LIST_FOREACH_SAFE(thiz->list, l, l_next, data)
-		cb(data, user_data);
+	{
+		if (!cb(data, user_data))
+			break;
+	}
 }
 
 EAPI Egueb_Dom_List * egueb_dom_list_copy(Egueb_Dom_List *thiz)

@@ -62,7 +62,7 @@ typedef struct _Egueb_Svg_Painter_Shape_Stroke_Dasharray_Data {
 	Enesim_Renderer_Shape_Stroke_Dash *dash;
 } Egueb_Svg_Painter_Shape_Stroke_Dasharray_Data;
 
-static void _egueb_svg_painter_shape_dash_foreach(void *data, void *user_data)
+static Eina_Bool _egueb_svg_painter_shape_dash_foreach(void *data, void *user_data)
 {
 	Egueb_Svg_Painter_Shape_Stroke_Dasharray_Data *stroke_dasharray_data = user_data;
 	Egueb_Svg_Painter *p = stroke_dasharray_data->p;
@@ -90,6 +90,7 @@ static void _egueb_svg_painter_shape_dash_foreach(void *data, void *user_data)
 		p->stroke_dasharray = eina_list_append(p->stroke_dasharray, stroke_dasharray_data->dash);
 		stroke_dasharray_data->dash = NULL;
 	}
+	return EINA_TRUE;
 }
 
 static void _egueb_svg_renderable_paint_set(Egueb_Dom_Node *n,

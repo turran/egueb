@@ -123,7 +123,7 @@ static Egueb_Dom_Node * _egueb_smil_animation_target_get(Egueb_Smil_Animation *t
 /* TODO an offset only timing should be treated as an event too
  * so we can have a fine grained system to start/stop animations
  */
-static void _egueb_smil_animation_event_cb(void *item, void *user_data)
+static Eina_Bool _egueb_smil_animation_event_cb(void *item, void *user_data)
 {
 	Egueb_Smil_Animation_Event_Foreach_Data *data = user_data;
 	Egueb_Smil_Animation *thiz = data->thiz;
@@ -149,7 +149,7 @@ static void _egueb_smil_animation_event_cb(void *item, void *user_data)
 			if (!doc)
 			{
 				ERR("No document set");
-				return;
+				return EINA_FALSE;
 			}
 			ref = egueb_dom_document_element_get_by_id(doc, t->id, NULL);
 			egueb_dom_node_unref(doc);
@@ -163,7 +163,7 @@ static void _egueb_smil_animation_event_cb(void *item, void *user_data)
 		{
 			ERR("Impossible to find a target '%s'",
 					egueb_dom_string_string_get(t->id));
-			return;
+			return EINA_TRUE;
 		}
 
 		h = calloc(1, sizeof(Egueb_Smil_Animation_Event));
@@ -183,6 +183,7 @@ static void _egueb_smil_animation_event_cb(void *item, void *user_data)
 		if (t->offset < data->offset)
 			data->offset = t->offset;
 	}
+	return EINA_TRUE;
 }
 
 static void _egueb_smil_animation_event_release(Eina_List *events)

@@ -98,7 +98,7 @@ static void _dump_paths(Enesim_Renderer *r)
 }
 #endif
 
-static void _egueb_svg_element_path_d_cb(void *data, void *user_data)
+static Eina_Bool _egueb_svg_element_path_d_cb(void *data, void *user_data)
 {
 	Egueb_Svg_Element_Path_D_Cb_Data *cb_data = user_data;
 	Egueb_Svg_Element_Path *thiz = cb_data->thiz;
@@ -325,11 +325,13 @@ static void _egueb_svg_element_path_d_cb(void *data, void *user_data)
 		break;
 
 		default:
-		return;
+		WARN("undefined command");
+		return EINA_TRUE;
 		break;
 	}
 	cb_data->first = EINA_FALSE;
 	enesim_path_command_add(thiz->path, &cmd);
+	return EINA_TRUE;
 }
 /*----------------------------------------------------------------------------*
  *                               Shape interface                              *

@@ -39,7 +39,7 @@
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
-static void _egueb_smil_animate_base_values_cb(void *data, void *user_data)
+static Eina_Bool _egueb_smil_animate_base_values_cb(void *data, void *user_data)
 {
 	Egueb_Smil_Animate_Base *thiz = user_data;
 	Egueb_Smil_Animation *a;
@@ -52,16 +52,17 @@ static void _egueb_smil_animate_base_values_cb(void *data, void *user_data)
 	if (!egueb_dom_value_string_from(&v, s))
 	{
 		ERR("Impossible to parse value '%s'", egueb_dom_string_string_get(s));
-		return;
+		return EINA_FALSE;
 	}
 	/* store our parsed value */
 	gv = calloc(1, sizeof(Egueb_Dom_Value));
 	*gv = v;
 	thiz->generated_values = eina_list_append(thiz->generated_values, gv);
+	return EINA_TRUE;
 }
 
 /* Yes it might be silly to do this, bu we do not have any dom list iterator yet */
-static void _egueb_smil_animate_base_key_splines_cb(void *data, void *user_data)
+static Eina_Bool _egueb_smil_animate_base_key_splines_cb(void *data, void *user_data)
 {
 	Egueb_Smil_Animate_Base *thiz = user_data;
 	Egueb_Smil_Key_Spline *ks = data;
@@ -70,6 +71,7 @@ static void _egueb_smil_animate_base_key_splines_cb(void *data, void *user_data)
 	gks = calloc(1, sizeof(Egueb_Smil_Key_Spline));
 	*gks = *ks;
 	thiz->generated_keysplines = eina_list_append(thiz->generated_keysplines, gks);
+	return EINA_TRUE;
 }
 
 static Eina_Bool _egueb_smil_animate_base_key_splines_generate(Egueb_Smil_Animate_Base *thiz)
@@ -488,7 +490,7 @@ static void _egueb_smil_animate_base_values_free(Egueb_Smil_Animate_Base *thiz)
 	thiz->generated_values = NULL;
 }
 
-static void _egueb_smil_animate_base_key_times_generate(void *data, void *user_data)
+static Eina_Bool _egueb_smil_animate_base_key_times_generate(void *data, void *user_data)
 {
 	Egueb_Smil_Animate_Base *thiz = user_data;
 	Egueb_Smil_Animation *a;
@@ -510,6 +512,7 @@ static void _egueb_smil_animate_base_key_times_generate(void *data, void *user_d
 	*d = t;
 	DBG("Adding time %" EGUEB_SMIL_CLOCK_FORMAT, EGUEB_SMIL_CLOCK_ARGS(t));
 	thiz->generated_times = eina_list_append(thiz->generated_times, d);
+	return EINA_TRUE;
 }
 
 static Eina_Bool _egueb_smil_animate_base_times_generate(Egueb_Smil_Animate_Base *thiz)

@@ -47,13 +47,14 @@ typedef struct _Egueb_Svg_Element_Polygon_Class
 	Egueb_Svg_Shape_Class base;
 } Egueb_Svg_Element_Polygon_Class;
 
-static void _egueb_svg_element_polygon_points_cb(void *data, void *user_data)
+static Eina_Bool _egueb_svg_element_polygon_points_cb(void *data, void *user_data)
 {
 	Egueb_Svg_Element_Polygon *thiz = user_data;
 	Egueb_Svg_Point *pt = data;
 
 	DBG("Adding point %g,%g", pt->x, pt->y);
 	enesim_renderer_figure_polygon_vertex_add(thiz->r, pt->x, pt->y);
+	return EINA_TRUE;
 }
 /*----------------------------------------------------------------------------*
  *                               Shape interface                              *

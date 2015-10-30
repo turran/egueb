@@ -23,7 +23,7 @@
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
-static void _egueb_svg_path_seg_list_string_to_cb(void *data, void *user_data)
+static Eina_Bool _egueb_svg_path_seg_list_string_to_cb(void *data, void *user_data)
 {
 	Egueb_Svg_Path_Seg *seg = data;
 	Eina_Strbuf *strbuf = user_data;
@@ -39,6 +39,7 @@ static void _egueb_svg_path_seg_list_string_to_cb(void *data, void *user_data)
 		eina_strbuf_append(strbuf, str);
 		free(str);
 	}
+	return EINA_TRUE;
 }
 /*----------------------------------------------------------------------------*
  *                         Parsing related functions                          *
