@@ -107,37 +107,56 @@ EAPI Enesim_Text_Font * egueb_css_attr_font_resolve(Egueb_Dom_Node *attr,
 	for (i = 0; i < count; i++)
 	{
 		Egueb_Css_Font_Family_Value *value;
-		const char *fc_description = NULL;
+		const char *family = NULL;
+		char *fc_description = NULL;
+		int weight = 80;
 
 		value = egueb_dom_list_item_get(final_font.family, i);
 		switch (value->type)
 		{
 			case EGUEB_CSS_FONT_FAMILY_TYPE_FAMILY:
-			fc_description = egueb_dom_string_string_get(value->family);
+			family = egueb_dom_string_string_get(value->family);
 			break;
 
 			case EGUEB_CSS_FONT_FAMILY_TYPE_GENERIC_SERIF:
-			fc_description = ":family=sans";
+			family = ":family=sans";
 			break;
 
 			case EGUEB_CSS_FONT_FAMILY_TYPE_GENERIC_SANS_SERIF:
-			fc_description = ":family=sans-serif";
+			family = ":family=sans-serif";
 			break;
 
 			case EGUEB_CSS_FONT_FAMILY_TYPE_GENERIC_CURSIVE:
-			fc_description = ":family=cursive";
+			family = ":family=cursive";
 			break;
 
 			case EGUEB_CSS_FONT_FAMILY_TYPE_GENERIC_FANTASY:
-			fc_description = ":family=fantasy";
+			family = ":family=fantasy";
 			break;
 
 			case EGUEB_CSS_FONT_FAMILY_TYPE_GENERIC_MONOSPACE:
-			fc_description = ":family=monospace";
+			family = ":family=monospace";
 			break;
 		}
+		switch (final_font.weight)
+		{
+			case EGUEB_CSS_FONT_WEIGHT_NORMAL:
+			weight = 80;
+			break;
 
-		/* TODO add the style, variant and weight */
+			case EGUEB_CSS_FONT_WEIGHT_BOLD:
+			weight = 200;
+			break;
+
+			case EGUEB_CSS_FONT_WEIGHT_BOLDER:
+			case EGUEB_CSS_FONT_WEIGHT_LIGHTER:
+			default:
+			break;	
+		}
+
+		if (asprintf(&fc_description, "%s:weight=%d", family, weight) < 0)
+			break;
+		/* TODO add the style and variant */
 		if (fc_description)
 		{
 			font = enesim_text_font_new_description_from(e, fc_description,
