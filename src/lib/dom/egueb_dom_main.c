@@ -30,6 +30,7 @@ static Eina_Bool _deinitializing;
 
 static void _egueb_dom_strings_init(void)
 {
+	/* TODO fix this */
 	EGUEB_DOM_NAME_NS_XMLNS = egueb_dom_string_new_with_string("http://www.w3.org/1999/xlink");
 	EGUEB_DOM_NAME_XMLNS = egueb_dom_string_new_with_string("xmlns");
 	EGUEB_DOM_NAME_XLINK_HREF = egueb_dom_string_new_with_string("href");
