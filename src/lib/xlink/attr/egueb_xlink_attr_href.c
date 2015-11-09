@@ -16,6 +16,7 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 #include "egueb_xlink_private.h"
+#include "egueb_xlink_main.h"
 #include "egueb_xlink_attr_href.h"
 
 #include "egueb_dom_attr_private.h"
@@ -46,6 +47,7 @@ typedef struct _Egueb_Xlink_Attr_Href
 	 * on the attribute
 	 */
 	Eina_Bool initialized;
+	int flags;
 } Egueb_Xlink_Attr_Href;
 
 typedef struct _Egueb_Xlink_Attr_Href_Class
@@ -327,14 +329,16 @@ static void _egueb_xlink_attr_href_instance_deinit(void *o)
  *                                   API                                      *
  *============================================================================*/
 EAPI Egueb_Dom_Node * egueb_xlink_attr_href_new(Egueb_Dom_String *name,
-		Egueb_Dom_String *def)
+		int flags)
 {
+	Egueb_Xlink_Attr_Href *thiz;
 	Egueb_Dom_Node *n;
 
 	n = ENESIM_OBJECT_INSTANCE_NEW(egueb_xlink_attr_href);
-	egueb_dom_attr_init(n, name, egueb_dom_string_ref(EGUEB_DOM_NAME_NS_XMLNS),
+	egueb_dom_attr_init(n, name, egueb_dom_string_ref(EGUEB_XLINK_NAME_NS),
 			EINA_TRUE, EINA_TRUE, EINA_TRUE);
-	if (def) egueb_dom_attr_set(n, EGUEB_DOM_ATTR_TYPE_DEFAULT, def);
+	thiz = EGUEB_XLINK_ATTR_HREF(n);
+	thiz->flags = flags;
 	return n;
 }
 
@@ -367,7 +371,7 @@ EAPI Eina_Bool egueb_xlink_attr_href_process(Egueb_Dom_Node *n)
 
 	egueb_dom_attr_final_get(n, &str);
 	/* early exit, nothing to do */
-	if (egueb_dom_string_is_equal(str, thiz->last) && thiz->node)
+	if (!egueb_xlink_attr_href_has_changed(n))
 	{
 		INFO("Same id, nothing to do");
 		if (!egueb_dom_string_is_valid(str))
@@ -387,6 +391,7 @@ EAPI Eina_Bool egueb_xlink_attr_href_process(Egueb_Dom_Node *n)
 		Egueb_Dom_Attr *a;
 		Egueb_Dom_Node *doc = NULL;
 		Egueb_Dom_Node *target;
+		Egueb_Dom_Uri uri;
 
 		a = EGUEB_DOM_ATTR(n);
 		/* TODO is the document also set on the attr? */
@@ -398,7 +403,34 @@ EAPI Eina_Bool egueb_xlink_attr_href_process(Egueb_Dom_Node *n)
 			goto done;
 		}
 
-		INFO("Valid id, processing");
+		if (!egueb_dom_uri_string_from(&uri, str))
+		{
+			ret = EINA_FALSE;
+			goto done;
+		}
+
+		INFO("Valid uri, processing");
+		/* TODO first do the cleanup */
+
+		if ((thiz->flags & EGUEB_XLINK_ATTR_HREF_FLAG_REMOTE) &&
+				!uri.location)
+		{
+			ERR("Remote attribute without a location");
+			egueb_dom_uri_cleanup(&uri);
+			ret = EINA_FALSE;
+			goto done;
+		}
+
+		if ((thiz->flags & EGUEB_XLINK_ATTR_HREF_FLAG_FRAGMENT) &&
+				!uri.fragment)
+		{
+			ERR("Fragment attribute without a fragmented uri");
+			egueb_dom_uri_cleanup(&uri);
+			ret = EINA_FALSE;
+			goto done;
+		}
+		egueb_dom_uri_cleanup(&uri);
+
 		/* release any reference */
 		_egueb_xlink_attr_href_target_cleanup(thiz);
 		target = egueb_dom_document_element_get_by_id(doc, str, NULL);
@@ -467,4 +499,23 @@ EAPI Egueb_Dom_Node * egueb_xlink_attr_href_node_get(Egueb_Dom_Node *n)
 
 	thiz = EGUEB_XLINK_ATTR_HREF(n);
 	return egueb_dom_node_ref(thiz->node);
+}
+
+EAPI Eina_Bool egueb_xlink_attr_href_has_changed(Egueb_Dom_Node *n)
+{
+	Egueb_Xlink_Attr_Href *thiz;
+	Egueb_Dom_String *str;
+	Eina_Bool same;
+
+	if (!egueb_dom_attr_has_changed(n))
+		return EINA_FALSE;
+
+	thiz = EGUEB_XLINK_ATTR_HREF(n);
+	egueb_dom_attr_final_get(n, &str);
+	same = egueb_dom_string_is_equal(str, thiz->last);
+	egueb_dom_string_unref(str);
+	if (same)
+		return EINA_FALSE;
+
+	return EINA_TRUE;
 }

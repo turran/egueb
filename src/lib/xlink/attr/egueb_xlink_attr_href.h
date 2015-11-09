@@ -19,10 +19,25 @@
 #ifndef _EGUEB_XLINK_ATTR_HREF_H_
 #define _EGUEB_XLINK_ATTR_HREF_H_
 
+/*
+ * A xlink:href attribute can work on different ways depending on the flags
+ * that it has. In case the remote flag is set, the attribute will trigger
+ * an EGUEB_DOM_EVENT_IO_DATA event to fetch the data.
+ * If the flag FRAGMENT is set, then we require a particular node from the
+ * document. If the remote is set, then it can be a remote
+ * document too
+ */
+typedef enum _Egueb_Xlink_Attr_Href_Flag
+{
+	EGUEB_XLINK_ATTR_HREF_FLAG_REMOTE = 1, 
+	EGUEB_XLINK_ATTR_HREF_FLAG_FRAGMENT = 1, 
+} Egueb_Xlink_Attr_Href_Flag;
+
 typedef void (*Egueb_Xlink_Attr_Href_Cb)(Egueb_Dom_Node *n);
 
 EAPI Egueb_Dom_Node * egueb_xlink_attr_href_new(Egueb_Dom_String *name,
-		Egueb_Dom_String *def);
+		int flags);
+EAPI Eina_Bool egueb_xlink_attr_href_has_changed(Egueb_Dom_Node *n);
 EAPI Eina_Bool egueb_xlink_attr_href_process(Egueb_Dom_Node *n);
 EAPI void egueb_xlink_attr_href_automatic_enqueue_set(Egueb_Dom_Node *n,
 		Eina_Bool enable);
