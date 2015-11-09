@@ -618,7 +618,8 @@ static void _egueb_smil_animation_instance_init(void *o)
 	thiz->end = egueb_smil_attr_timing_list_new(
 			egueb_dom_string_ref(EGUEB_SMIL_END), NULL);
 	thiz->xlink_href = egueb_xlink_attr_href_new(
-			egueb_dom_string_ref(EGUEB_DOM_NAME_XLINK_HREF), NULL);
+			egueb_dom_string_ref(EGUEB_DOM_NAME_XLINK_HREF),
+			EGUEB_XLINK_ATTR_HREF_FLAG_FRAGMENT);
 	egueb_xlink_attr_href_on_target_removed_set(thiz->xlink_href,
 			_egueb_smil_animation_xlink_href_target_removed_cb);
 
