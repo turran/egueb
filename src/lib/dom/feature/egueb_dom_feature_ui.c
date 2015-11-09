@@ -52,7 +52,7 @@ static Egueb_Dom_String _EGUEB_DOM_FEATURE_UI_NAME = EGUEB_DOM_STRING_STATIC("Eg
 /*----------------------------------------------------------------------------*
  *                              Feature interface                             *
  *----------------------------------------------------------------------------*/
-static const char * _egueb_dom_feature_ui_type_get(void)
+static const char * _egueb_dom_feature_ui_type_get(Egueb_Dom_Feature *f)
 {
 	return "egueb.dom.feature.ui";
 }
