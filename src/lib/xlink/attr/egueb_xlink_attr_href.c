@@ -37,11 +37,15 @@ typedef struct _Egueb_Xlink_Attr_Href
 	Egueb_Dom_String *def;
 
 	Egueb_Dom_String *last;
+	/* the target depending on the type of uri */
 	Egueb_Dom_Node *node;
+	Enesim_Stream *data;
+	/* attributes set by the user */
 	Egueb_Xlink_Attr_Href_Cb on_target_removed;
+	Egueb_Xlink_Attr_Href_Cb on_data_received;
 	Eina_Bool automatic_enqueue;
 	/* TODO in the future we might decide to create
-	 * events for attributes, so the attribute can now
+	 * events for attributes, so the attribute can know
 	 * when it has been added/removed from a node. The mutation
 	 * event for attributes is triggered on the element, never
 	 * on the attribute
@@ -129,6 +133,40 @@ static void _egueb_xlink_attr_href_target_setup(Egueb_Xlink_Attr_Href *thiz,
 				_egueb_xlink_attr_href_target_request_cb,
 				EINA_FALSE, thiz);
 	}
+}
+
+/* TODO pass the uri too */
+static void _egueb_xlink_attr_href_io_data_cb(Egueb_Dom_Node *n,
+		Enesim_Stream *data)
+{
+	Egueb_Xlink_Attr_Href *thiz;
+	Egueb_Dom_Node *attr;
+
+	INFO("Data requested");
+	attr = egueb_dom_element_attribute_node_ns_get(n,
+			EGUEB_XLINK_NAME_NS, EGUEB_XLINK_NAME_HREF,
+			NULL);
+	if (!attr)
+	{
+		WARN("Attribute does not exist anymore");
+		enesim_stream_unref(data);
+		return;
+	}
+
+	/* TODO check that the uri is the same to validate the event */
+	/* keep the stream */
+	thiz = EGUEB_XLINK_ATTR_HREF(attr);
+	thiz->data = data;
+	/* trigger the user provided cb */
+	if (thiz->on_data_received)
+		thiz->on_data_received(attr);
+	egueb_dom_node_unref(attr);
+}
+
+static void _egueb_xlink_attr_href_cleanup(Egueb_Xlink_Attr_Href *thiz)
+{
+	_egueb_xlink_attr_href_target_cleanup(thiz);
+	enesim_stream_unref(thiz->data);
 }
 /*----------------------------------------------------------------------------*
  *                               Event handlers                               *
@@ -320,7 +358,7 @@ static void _egueb_xlink_attr_href_instance_deinit(void *o)
 
 	if (thiz->last)
 		egueb_dom_string_unref(thiz->last);
-	_egueb_xlink_attr_href_target_cleanup(thiz);
+	_egueb_xlink_attr_href_cleanup(thiz);
 }
 /*============================================================================*
  *                                 Global                                     *
@@ -328,14 +366,14 @@ static void _egueb_xlink_attr_href_instance_deinit(void *o)
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/
-EAPI Egueb_Dom_Node * egueb_xlink_attr_href_new(Egueb_Dom_String *name,
-		int flags)
+EAPI Egueb_Dom_Node * egueb_xlink_attr_href_new(int flags)
 {
 	Egueb_Xlink_Attr_Href *thiz;
 	Egueb_Dom_Node *n;
 
 	n = ENESIM_OBJECT_INSTANCE_NEW(egueb_xlink_attr_href);
-	egueb_dom_attr_init(n, name, egueb_dom_string_ref(EGUEB_XLINK_NAME_NS),
+	egueb_dom_attr_init(n, egueb_dom_string_ref(EGUEB_XLINK_NAME_HREF),
+			egueb_dom_string_ref(EGUEB_XLINK_NAME_NS),
 			EINA_TRUE, EINA_TRUE, EINA_TRUE);
 	thiz = EGUEB_XLINK_ATTR_HREF(n);
 	thiz->flags = flags;
@@ -346,6 +384,9 @@ EAPI Eina_Bool egueb_xlink_attr_href_process(Egueb_Dom_Node *n)
 {
 	Egueb_Xlink_Attr_Href *thiz;
 	Egueb_Dom_String *str = NULL;
+	Egueb_Dom_Attr *a;
+	Egueb_Dom_Node *target;
+	Egueb_Dom_Uri uri;
 	Eina_Bool ret = EINA_TRUE;
 
 	thiz = EGUEB_XLINK_ATTR_HREF(n);
@@ -380,20 +421,56 @@ EAPI Eina_Bool egueb_xlink_attr_href_process(Egueb_Dom_Node *n)
 		return ret;
 	}
 
+	/* first do the cleanup */
+	/* release any reference */
+	_egueb_xlink_attr_href_cleanup(thiz);
+
 	/* 1. The attribute is not set -> return FALSE with no node */
 	if (!egueb_dom_string_is_valid(str))
 	{
 		ret = EINA_FALSE;
 		goto done;
 	}
-	else
-	{
-		Egueb_Dom_Attr *a;
-		Egueb_Dom_Node *doc = NULL;
-		Egueb_Dom_Node *target;
-		Egueb_Dom_Uri uri;
 
-		a = EGUEB_DOM_ATTR(n);
+	a = EGUEB_DOM_ATTR(n);
+	if (!egueb_dom_uri_string_from(&uri, str))
+	{
+		ret = EINA_FALSE;
+		goto done;
+	}
+
+	INFO("Valid uri, processing");
+	if (thiz->flags & EGUEB_XLINK_ATTR_HREF_FLAG_REMOTE)
+	{
+		Egueb_Dom_Event *e;
+
+		if (!uri.location)
+		{
+			ERR("Remote attribute without a location");
+			egueb_dom_uri_cleanup(&uri);
+			ret = EINA_FALSE;
+			goto done;
+		}
+		/* trigger the event to get the data */
+		INFO("Requesting the uri '%s'", egueb_dom_string_string_get(uri.location));
+		e = egueb_dom_event_io_data_new(&uri, _egueb_xlink_attr_href_io_data_cb);
+		egueb_dom_event_target_event_dispatch(
+				EGUEB_DOM_EVENT_TARGET(a->owner), e, NULL,
+				NULL);
+	}
+
+	if (thiz->flags & EGUEB_XLINK_ATTR_HREF_FLAG_FRAGMENT)
+	{
+		Egueb_Dom_Node *doc = NULL;
+
+		if (!uri.fragment)
+		{
+			ERR("Fragment attribute without a fragmented uri");
+			egueb_dom_uri_cleanup(&uri);
+			ret = EINA_FALSE;
+			goto done;
+		}
+		/* the document to fetch the fragment is our own document */
 		/* TODO is the document also set on the attr? */
 		doc = egueb_dom_node_owner_document_get(a->owner);
 		if (!doc)
@@ -402,39 +479,8 @@ EAPI Eina_Bool egueb_xlink_attr_href_process(Egueb_Dom_Node *n)
 			ret = EINA_FALSE;
 			goto done;
 		}
-
-		if (!egueb_dom_uri_string_from(&uri, str))
-		{
-			ret = EINA_FALSE;
-			goto done;
-		}
-
-		INFO("Valid uri, processing");
-		/* TODO first do the cleanup */
-
-		if ((thiz->flags & EGUEB_XLINK_ATTR_HREF_FLAG_REMOTE) &&
-				!uri.location)
-		{
-			ERR("Remote attribute without a location");
-			egueb_dom_uri_cleanup(&uri);
-			ret = EINA_FALSE;
-			goto done;
-		}
-
-		if ((thiz->flags & EGUEB_XLINK_ATTR_HREF_FLAG_FRAGMENT) &&
-				!uri.fragment)
-		{
-			ERR("Fragment attribute without a fragmented uri");
-			egueb_dom_uri_cleanup(&uri);
-			ret = EINA_FALSE;
-			goto done;
-		}
-		egueb_dom_uri_cleanup(&uri);
-
-		/* release any reference */
-		_egueb_xlink_attr_href_target_cleanup(thiz);
-		target = egueb_dom_document_element_get_by_id(doc, str, NULL);
-
+		target = egueb_dom_document_element_get_by_id(doc, uri.fragment, NULL);
+		egueb_dom_node_unref(doc);
 		/* 2. The attribute is set but no element is found -> return TRUE with no node */
 		if (!target)
 		{
@@ -462,8 +508,8 @@ EAPI Eina_Bool egueb_xlink_attr_href_process(Egueb_Dom_Node *n)
 					EINA_FALSE, thiz);
 			egueb_dom_node_unref(target);
 		}
-		egueb_dom_node_unref(doc);
 	}
+	egueb_dom_uri_cleanup(&uri);
 done:
 	/* swap the xlink:href */
 	if (thiz->last)
@@ -472,6 +518,8 @@ done:
 		thiz->last = NULL;
 	}
 	thiz->last = str;
+	egueb_dom_attr_process(n);
+
 	return ret;
 }
 
@@ -493,12 +541,29 @@ EAPI void egueb_xlink_attr_href_on_target_removed_set(Egueb_Dom_Node *n,
 	thiz->on_target_removed = cb;
 }
 
+EAPI void egueb_xlink_attr_href_on_data_received_set(Egueb_Dom_Node *n,
+		Egueb_Xlink_Attr_Href_Cb cb)
+{
+	Egueb_Xlink_Attr_Href *thiz;
+
+	thiz = EGUEB_XLINK_ATTR_HREF(n);
+	thiz->on_data_received = cb;
+}
+
 EAPI Egueb_Dom_Node * egueb_xlink_attr_href_node_get(Egueb_Dom_Node *n)
 {
 	Egueb_Xlink_Attr_Href *thiz;
 
 	thiz = EGUEB_XLINK_ATTR_HREF(n);
 	return egueb_dom_node_ref(thiz->node);
+}
+
+EAPI Enesim_Stream * egueb_xlink_attr_href_data_get(Egueb_Dom_Node *n)
+{
+	Egueb_Xlink_Attr_Href *thiz;
+
+	thiz = EGUEB_XLINK_ATTR_HREF(n);
+	return enesim_stream_ref(thiz->data);
 }
 
 EAPI Eina_Bool egueb_xlink_attr_href_has_changed(Egueb_Dom_Node *n)

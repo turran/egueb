@@ -35,14 +35,18 @@ typedef enum _Egueb_Xlink_Attr_Href_Flag
 
 typedef void (*Egueb_Xlink_Attr_Href_Cb)(Egueb_Dom_Node *n);
 
-EAPI Egueb_Dom_Node * egueb_xlink_attr_href_new(Egueb_Dom_String *name,
-		int flags);
+EAPI Egueb_Dom_Node * egueb_xlink_attr_href_new(int flags);
 EAPI Eina_Bool egueb_xlink_attr_href_has_changed(Egueb_Dom_Node *n);
 EAPI Eina_Bool egueb_xlink_attr_href_process(Egueb_Dom_Node *n);
+
 EAPI void egueb_xlink_attr_href_automatic_enqueue_set(Egueb_Dom_Node *n,
 		Eina_Bool enable);
 EAPI void egueb_xlink_attr_href_on_target_removed_set(Egueb_Dom_Node *n,
 		Egueb_Xlink_Attr_Href_Cb cb);
+EAPI void egueb_xlink_attr_href_on_data_received_set(Egueb_Dom_Node *n,
+		Egueb_Xlink_Attr_Href_Cb cb);
+
 EAPI Egueb_Dom_Node * egueb_xlink_attr_href_node_get(Egueb_Dom_Node *n);
+EAPI Enesim_Stream * egueb_xlink_attr_href_data_get(Egueb_Dom_Node *n);
 
 #endif
