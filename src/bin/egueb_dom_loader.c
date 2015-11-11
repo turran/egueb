@@ -45,16 +45,17 @@ int main(int argc, char *argv[])
 	Egueb_Dom_Feature *render = NULL;
 	Egueb_Dom_Feature *window = NULL;
 	Egueb_Dom_Feature *io = NULL;
-	Egueb_Dom_Feature_Window_Type type;
+	Egueb_Dom_Feature_Window_Hint_Data wdata;
 	Enesim_Surface *s;
 	Enesim_Buffer *b;
 	Enesim_Log *err = NULL;
 	Enesim_Stream *stream;
 	Eina_Bool ret;
-	Eina_Bool needs_process = EINA_TRUE;
 	Eina_Error error;
+	Eina_Bool user_provided_size = EINA_FALSE;
 	int width = 640;
 	int height = 480;
+	int whints;
 
 	if (argc < 3)
 	{
@@ -71,6 +72,7 @@ int main(int argc, char *argv[])
 			return -1;
 		}
 		height = atoi(argv[4]);
+		user_provided_size = EINA_TRUE;
 	}
 
 	egueb_dom_init();
@@ -109,24 +111,31 @@ int main(int argc, char *argv[])
 	window = egueb_dom_node_feature_get(topmost, EGUEB_DOM_FEATURE_WINDOW_NAME, NULL);
 	if (window)
 	{
-		egueb_dom_feature_window_type_get(window, &type);
-		if (type == EGUEB_DOM_FEATURE_WINDOW_TYPE_MASTER)
+		whints = egueb_dom_feature_window_hints_get(window, &wdata);
+		if (!user_provided_size && (whints & EGUEB_DOM_FEATURE_WINDOW_HINT_PREFERRED))
 		{
-			egueb_dom_feature_window_content_size_set(window, width, height);
+			if (wdata.pref_width != -1)
+				width = wdata.pref_width;
+			if (wdata.pref_height != -1)
+				height = wdata.pref_height;
 		}
-		/* now process the document */
-		egueb_dom_document_process(doc);
-		egueb_dom_feature_window_content_size_get(window, &width, &height);
-		if (width <= 0 || height <= 0)
+
+		if (whints & EGUEB_DOM_FEATURE_WINDOW_HINT_MIN_MAX)
 		{
-			printf("Invalid size of the window %d %d\n", width, height);
-			goto shutdown;
+			if (wdata.min_width != -1 && width < wdata.min_width)
+				width = wdata.min_width;
+			if (wdata.min_height != -1 && height < wdata.min_height)
+				height = wdata.min_height;
+
+			if (wdata.max_width != -1 && width > wdata.max_width)
+				width = wdata.max_width;
+			if (wdata.max_height != -1 && height > wdata.max_height)
+				height = wdata.max_height;
 		}
-		needs_process = EINA_FALSE;
+		egueb_dom_feature_window_size_set(window, width, height);
 	}
 
-	if (needs_process)
-		egueb_dom_document_process(doc);
+	egueb_dom_document_process(doc);
 
 	s = enesim_surface_new(ENESIM_FORMAT_ARGB8888, width, height);
 	egueb_dom_feature_render_draw(render, s, ENESIM_ROP_FILL, NULL, 0, 0, &err);

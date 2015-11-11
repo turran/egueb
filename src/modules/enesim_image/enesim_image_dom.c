@@ -108,10 +108,13 @@ static Eina_Bool _enesim_image_dom_provider_info_load(Enesim_Stream *data, int *
 {
 	Egueb_Dom_Node *doc = NULL;
 	Egueb_Dom_Feature *window;
+	Egueb_Dom_Feature_Window_Hint_Data wdata;
 	Egueb_Dom_Feature *io;
 	Eina_Bool ret = EINA_FALSE;
+	Eina_Bool user_provided_size = EINA_FALSE;
 	int cw = _default_width;
 	int ch = _default_height;
+	int hints;
 
 	if (!egueb_dom_parser_parse(enesim_stream_ref(data), &doc))
 	{
@@ -125,6 +128,7 @@ static Eina_Bool _enesim_image_dom_provider_info_load(Enesim_Stream *data, int *
 
 		cw = o->container_width;
 		ch = o->container_height;
+		user_provided_size = EINA_TRUE;
 	}
 
 	window = egueb_dom_node_feature_get(doc, EGUEB_DOM_FEATURE_WINDOW_NAME, NULL);
@@ -141,9 +145,31 @@ static Eina_Bool _enesim_image_dom_provider_info_load(Enesim_Stream *data, int *
 		egueb_dom_feature_unref(io);
 	}
 
-	egueb_dom_feature_window_content_size_set(window, cw, ch);
-	egueb_dom_document_process(doc);
-	egueb_dom_feature_window_content_size_get(window, w, h);
+	
+	hints = egueb_dom_feature_window_hints_get(window, &wdata);
+	if (!user_provided_size && (hints & EGUEB_DOM_FEATURE_WINDOW_HINT_PREFERRED))
+	{
+		if (wdata.pref_width != -1)
+			cw = wdata.pref_width;
+		if (wdata.pref_height != -1)
+			ch = wdata.pref_height;
+	}
+
+	if (hints & EGUEB_DOM_FEATURE_WINDOW_HINT_MIN_MAX)
+	{
+		if (wdata.min_width != -1 && cw < wdata.min_width)
+			cw = wdata.min_width;
+		if (wdata.min_height != -1 && ch < wdata.min_height)
+			ch = wdata.min_height;
+
+		if (wdata.max_width != -1 && cw > wdata.max_width)
+			cw = wdata.max_width;
+		if (wdata.max_height != -1 && ch > wdata.max_height)
+			ch = wdata.max_height;
+	}
+
+	*w = cw;
+	*h = ch;
 	*sfmt = ENESIM_BUFFER_FORMAT_ARGB8888_PRE;
 	egueb_dom_feature_unref(window);
 	ret = EINA_TRUE;
@@ -159,10 +185,13 @@ static Eina_Bool _enesim_image_dom_provider_load(Enesim_Stream *data,
 {
 	Egueb_Dom_Node *doc = NULL;
 	Egueb_Dom_Feature *window, *render, *io;
+	Egueb_Dom_Feature_Window_Hint_Data wdata;
 	Enesim_Surface *s;
 	Eina_Bool ret = EINA_FALSE;
+	Eina_Bool user_provided_size = EINA_FALSE;
 	int w = _default_width;
 	int h = _default_height;
+	int hints;
 
 	if (!egueb_dom_parser_parse(enesim_stream_ref(data), &doc))
 	{
@@ -176,6 +205,7 @@ static Eina_Bool _enesim_image_dom_provider_load(Enesim_Stream *data,
 
 		w = o->container_width;
 		h = o->container_height;
+		user_provided_size = EINA_TRUE;
 	}
 	window = egueb_dom_node_feature_get(doc, EGUEB_DOM_FEATURE_WINDOW_NAME, NULL);
 	if (!window)
@@ -183,7 +213,27 @@ static Eina_Bool _enesim_image_dom_provider_load(Enesim_Stream *data,
 		*err = ENESIM_IMAGE_ERROR_LOADING;
 		goto err_feature;
 	}
-	egueb_dom_feature_window_content_size_set(window, w, h);
+	hints = egueb_dom_feature_window_hints_get(window, &wdata);
+	if (!user_provided_size && (hints & EGUEB_DOM_FEATURE_WINDOW_HINT_PREFERRED))
+	{
+		if (wdata.pref_width != -1)
+			w = wdata.pref_width;
+		if (wdata.pref_height != -1)
+			h = wdata.pref_height;
+	}
+	if (hints & EGUEB_DOM_FEATURE_WINDOW_HINT_MIN_MAX)
+	{
+		if (wdata.min_width != -1 && w < wdata.min_width)
+			w = wdata.min_width;
+		if (wdata.min_height != -1 && h < wdata.min_height)
+			h = wdata.min_height;
+
+		if (wdata.max_width != -1 && w > wdata.max_width)
+			w = wdata.max_width;
+		if (wdata.max_height != -1 && h > wdata.max_height)
+			h = wdata.max_height;
+	}
+	egueb_dom_feature_window_size_set(window, w, h);
 	egueb_dom_feature_unref(window);
 
 	io = egueb_dom_node_feature_get(doc, EGUEB_DOM_FEATURE_IO_NAME, NULL);

@@ -60,7 +60,7 @@ static void _egueb_dom_feature_window_on_resize(Egueb_Dom_Event *ev, void *data)
 	width = egueb_dom_window_inner_width_get(win);
 	height = egueb_dom_window_inner_height_get(win);
 
-	thiz->d->content_size_set(thiz->n, width, height);
+	thiz->d->size_set(thiz->n, width, height);
 }
 /*----------------------------------------------------------------------------*
  *                              Feature interface                             *
@@ -100,44 +100,28 @@ static void _egueb_dom_feature_window_instance_deinit(void *o)
 Egueb_Dom_String *EGUEB_DOM_FEATURE_WINDOW_NAME = &_EGUEB_DOM_FEATURE_WINDOW_NAME;
 
 /**
- * Get the type of the window
- * @param[in] f The window to get the type from
- * @param[out] type The type of the window
- * @return EINA_TRUE if success, EINA_FALSE otherwise
+ * Get the hints of the window
+ * @param[in] f The window to get the hints from
+ * @param[out] data The data to put the hints information
+ * @return The hints of the window
  */
-EAPI Eina_Bool egueb_dom_feature_window_type_get(
-		Egueb_Dom_Feature *f, Egueb_Dom_Feature_Window_Type *type)
+EAPI int egueb_dom_feature_window_hints_get(
+		Egueb_Dom_Feature *f, Egueb_Dom_Feature_Window_Hint_Data *data)
 {
 	Egueb_Dom_Feature_Window *thiz;
 
 	thiz = EGUEB_DOM_FEATURE_WINDOW(f);
 	if (!thiz->n) return EINA_FALSE;
-	return thiz->d->type_get(thiz->n, type);
+	return thiz->d->hints_get(thiz->n, data);
 }
 
-EAPI Eina_Bool egueb_dom_feature_window_content_size_set(Egueb_Dom_Feature *f, int w, int h)
+EAPI Eina_Bool egueb_dom_feature_window_size_set(Egueb_Dom_Feature *f, int w, int h)
 {
 	Egueb_Dom_Feature_Window *thiz;
 
 	thiz = EGUEB_DOM_FEATURE_WINDOW(f);
 	if (!thiz->n) return EINA_FALSE;
-	return thiz->d->content_size_set(thiz->n, w, h);
-}
-
-/**
- * Gets the content size of the window feature
- * @param[in] f The window feature @ender_type{egueb.dom.feature.window}
- * @param[out] w The width of the window content
- * @param[out] h The height of the window content
- * @return EINA_TRUE if success, EINA_FALSE otherwise
- */
-EAPI Eina_Bool egueb_dom_feature_window_content_size_get(Egueb_Dom_Feature *f, int *w, int *h)
-{
-	Egueb_Dom_Feature_Window *thiz;
-
-	thiz = EGUEB_DOM_FEATURE_WINDOW(f);
-	if (!thiz->n) return EINA_FALSE;
-	return thiz->d->content_size_get(thiz->n, w, h);
+	return thiz->d->size_set(thiz->n, w, h);
 }
 
 EAPI void egueb_dom_feature_window_view_set(Egueb_Dom_Feature *f,
@@ -181,9 +165,8 @@ EAPI Eina_Bool egueb_dom_feature_window_add(Egueb_Dom_Node *n,
 
 	if (!n) return EINA_FALSE;
 	if (!d) return EINA_FALSE;
-	if (!d->type_get) return EINA_FALSE;
-	if (!d->content_size_get) return EINA_FALSE;
-	if (!d->content_size_set) return EINA_FALSE;
+	if (!d->hints_get) return EINA_FALSE;
+	if (!d->size_set) return EINA_FALSE;
 
 	thiz = ENESIM_OBJECT_INSTANCE_NEW(egueb_dom_feature_window);
 	egueb_dom_node_weak_ref_add(n, &thiz->n);

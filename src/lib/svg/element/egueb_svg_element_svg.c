@@ -207,20 +207,13 @@ _egueb_svg_element_svg_ui_descriptor = {
 /*----------------------------------------------------------------------------*
  *                        Window feature interface                            *
  *----------------------------------------------------------------------------*/
-static Eina_Bool _egueb_svg_element_svg_window_type_get(
-		Egueb_Dom_Node *n, Egueb_Dom_Feature_Window_Type *type)
-{
-	*type = EGUEB_DOM_FEATURE_WINDOW_TYPE_MASTER;
-	return EINA_TRUE;
-}
-
-static Eina_Bool _egueb_svg_element_svg_window_content_size_set(
+static Eina_Bool _egueb_svg_element_svg_window_size_set(
 		Egueb_Dom_Node *n, int w, int h)
 {
 	Egueb_Svg_Element_Svg *thiz;
 
 	thiz = EGUEB_SVG_ELEMENT_SVG(n);
-	DBG_ELEMENT(n, "Setting content size %d %d", w, h);
+	DBG_ELEMENT(n, "Setting window size %d %d", w, h);
 	thiz->window_height = h;
 	thiz->window_width = w;
 
@@ -228,19 +221,17 @@ static Eina_Bool _egueb_svg_element_svg_window_content_size_set(
 	return EINA_TRUE;
 }
 
-static Eina_Bool _egueb_svg_element_svg_window_content_size_get(
-		Egueb_Dom_Node *n, int *w, int *h)
+static int _egueb_svg_element_svg_window_hints_get(
+		Egueb_Dom_Node *n, Egueb_Dom_Feature_Window_Hint_Data *data)
 {
-	Egueb_Svg_Element_Svg *thiz;
 	Egueb_Svg_Length_Animated width;
 	Egueb_Svg_Length_Animated height;
 	Egueb_Svg_Overflow overflow;
 	Egueb_Dom_Node *doc;
 	double dw, dh;
 	double font_size;
+	int ret = 0;
 
-	thiz = EGUEB_SVG_ELEMENT_SVG(n);
-	
 	doc = egueb_dom_node_owner_document_get(n);
 	font_size = egueb_svg_document_font_size_get(doc);
 	egueb_dom_node_unref(doc);
@@ -248,34 +239,57 @@ static Eina_Bool _egueb_svg_element_svg_window_content_size_get(
 	egueb_svg_element_svg_width_get(n, &width);
 	egueb_svg_element_svg_height_get(n, &height);
 
-	dw = egueb_svg_coord_final_get(&width.anim, thiz->window_width,
-			font_size);
-	dh = egueb_svg_coord_final_get(&height.anim, thiz->window_height,
-			font_size);
-	*w = ceil(dw);
-	*h = ceil(dh);
+	dw = egueb_svg_coord_final_get(&width.anim, 0, font_size);
+	dh = egueb_svg_coord_final_get(&height.anim, 0, font_size);
+
+	ret |= EGUEB_DOM_FEATURE_WINDOW_HINT_MIN_MAX;
+	if (width.anim.unit == EGUEB_SVG_LENGTH_UNIT_PERCENT)
+	{
+		data->min_width = -1;
+		data->max_width = -1;
+	}
+	else
+	{
+		data->min_width = ceil(dw);
+		data->max_width = data->min_width;
+	}
+
+	if (height.anim.unit == EGUEB_SVG_LENGTH_UNIT_PERCENT)
+	{
+		data->min_height = -1;
+		data->max_height = -1;
+	}
+	else
+	{
+		data->min_height = ceil(dh);
+		data->max_height = data->min_height;
+	}
 
 	egueb_svg_element_overflow_final_get(n, &overflow);
 	/* check if we should overflow */
 	if (overflow == EGUEB_SVG_OVERFLOW_VISIBLE)
 	{
 		Eina_Rectangle r;
+		/* FIXME shall we process here? */
 		egueb_svg_renderable_user_bounds_get(n, &r);
-		if (*w < r.x + r.w)
-			*w = r.x + r.w;
-		if (*h < r.y + r.h)
-			*h = r.y + r.h;
+		if ((width.anim.unit != EGUEB_SVG_LENGTH_UNIT_PERCENT) && dw < r.x + r.w)
+		{
+			data->min_width = data->max_width = r.x + r.w;
+		}
+		if ((height.anim.unit != EGUEB_SVG_LENGTH_UNIT_PERCENT) && dh < r.y + r.h)
+		{
+			data->min_height = data->max_height = r.y + r.h;
+		}
 	}
 
-	return EINA_TRUE;
+	return ret;
 }
 
 static Egueb_Dom_Feature_Window_Descriptor 
 _egueb_svg_element_svg_window_descriptor = {
 	/* .version 		= */ EGUEB_DOM_FEATURE_WINDOW_DESCRIPTOR_VERSION,
-	/* .type_get 		= */ _egueb_svg_element_svg_window_type_get,
-	/* .content_size_set 	= */ _egueb_svg_element_svg_window_content_size_set,
-	/* .content_size_get 	= */ _egueb_svg_element_svg_window_content_size_get,
+	/* .hints_get	 	= */ _egueb_svg_element_svg_window_hints_get,
+	/* .size_set 		= */ _egueb_svg_element_svg_window_size_set,
 };
 /*----------------------------------------------------------------------------*
  *                        Render feature interface                            *

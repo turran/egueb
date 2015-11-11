@@ -30,52 +30,54 @@
  * @{
  */
 
-/* get the hints? */
-/* set the window size */
-/* get the final size */
-
 EAPI extern Egueb_Dom_String *EGUEB_DOM_FEATURE_WINDOW_NAME;
-
 
 /**
  * The different window types
  */
-typedef enum _Egueb_Dom_Feature_Window_Type
+typedef enum _Egueb_Dom_Feature_Window_Hint
 {
-	/** The window decides the size of the content, even if the content
-	 * might have a geometry relative to the window
-	 */
-	EGUEB_DOM_FEATURE_WINDOW_TYPE_MASTER,
-	/** The window size depends on the size of the content, for that
-	 * request the size hints of the content
-	 */
-	EGUEB_DOM_FEATURE_WINDOW_TYPE_SLAVE
-} Egueb_Dom_Feature_Window_Type;
+	/** The window have a min/max size */
+	EGUEB_DOM_FEATURE_WINDOW_HINT_MIN_MAX = 1,
+	/** The window have a preferred size */
+	EGUEB_DOM_FEATURE_WINDOW_HINT_PREFERRED = 2,
+} Egueb_Dom_Feature_Window_Hint;
 
 /**
- * @ender_name{egueb.dom.feature.window.descriptor.type_get_cb}
+ * The window size
  */
-typedef Eina_Bool (*Egueb_Dom_Feature_Window_Descriptor_Type_Get_Cb)(
-		Egueb_Dom_Node *n, Egueb_Dom_Feature_Window_Type *type);
+typedef struct _Egueb_Dom_Feature_Window_Hint_Data
+{
+	/* for the min/max hint */
+	/* the min must be at least 0, the max can have a -1 and thus is not taken into account */
+	int min_width;
+	int min_height;
+	int max_width;
+	int max_height;
+	/* fot the preferred hint */
+	/* in case of -1, such cordinate is not taken into account */
+	int pref_width;
+	int pref_height;
+} Egueb_Dom_Feature_Window_Hint_Data;
+
+/**
+ * @ender_name{egueb.dom.feature.window.descriptor.hints_get_cb}
+ */
+typedef int (*Egueb_Dom_Feature_Window_Descriptor_Hints_Get_Cb)(
+		Egueb_Dom_Node *n, Egueb_Dom_Feature_Window_Hint_Data *data);
 
 /**
  * @ender_name{egueb.dom.feature.window.descriptor.size_set_cb}
  */
-typedef Eina_Bool (*Egueb_Dom_Feature_Window_Descriptor_Content_Size_Set_Cb)(
+typedef Eina_Bool (*Egueb_Dom_Feature_Window_Descriptor_Size_Set_Cb)(
 		Egueb_Dom_Node *n, int w, int h);
-/**
- * @ender_name{egueb.dom.feature.window.descriptor.size_get_cb}
- */
-typedef Eina_Bool (*Egueb_Dom_Feature_Window_Descriptor_Content_Size_Get_Cb)(
-		Egueb_Dom_Node *n, int *w, int *h);
 
 #define EGUEB_DOM_FEATURE_WINDOW_DESCRIPTOR_VERSION 0
 typedef struct _Egueb_Dom_Feature_Window_Descriptor
 {
 	int version;
-	Egueb_Dom_Feature_Window_Descriptor_Type_Get_Cb type_get;
-	Egueb_Dom_Feature_Window_Descriptor_Content_Size_Set_Cb content_size_set;
-	Egueb_Dom_Feature_Window_Descriptor_Content_Size_Get_Cb content_size_get;
+	Egueb_Dom_Feature_Window_Descriptor_Hints_Get_Cb hints_get;
+	Egueb_Dom_Feature_Window_Descriptor_Size_Set_Cb size_set;
 } Egueb_Dom_Feature_Window_Descriptor;
 
 /**
@@ -91,10 +93,9 @@ typedef struct _Egueb_Dom_Feature_Window_Descriptor
  * @{
  */
 
-EAPI Eina_Bool egueb_dom_feature_window_type_get(
-		Egueb_Dom_Feature *f, Egueb_Dom_Feature_Window_Type *type);
-EAPI Eina_Bool egueb_dom_feature_window_content_size_set(Egueb_Dom_Feature *f, int w, int h);
-EAPI Eina_Bool egueb_dom_feature_window_content_size_get(Egueb_Dom_Feature *f, int *w, int *h);
+EAPI int egueb_dom_feature_window_hints_get(Egueb_Dom_Feature *f,
+		Egueb_Dom_Feature_Window_Hint_Data *data);
+EAPI Eina_Bool egueb_dom_feature_window_size_set(Egueb_Dom_Feature *f, int w, int h);
 EAPI Eina_Bool egueb_dom_feature_window_add(Egueb_Dom_Node *n,
 		const Egueb_Dom_Feature_Window_Descriptor *d);
 
