@@ -30,7 +30,7 @@
 typedef enum _Egueb_Xlink_Attr_Href_Flag
 {
 	EGUEB_XLINK_ATTR_HREF_FLAG_REMOTE = 1, 
-	EGUEB_XLINK_ATTR_HREF_FLAG_FRAGMENT = 1, 
+	EGUEB_XLINK_ATTR_HREF_FLAG_FRAGMENT = 2, 
 } Egueb_Xlink_Attr_Href_Flag;
 
 typedef void (*Egueb_Xlink_Attr_Href_Cb)(Egueb_Dom_Node *n);
