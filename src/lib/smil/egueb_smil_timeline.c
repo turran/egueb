@@ -138,7 +138,7 @@ void egueb_smil_timeline_unref(Egueb_Smil_Timeline *thiz)
 	{
 		Egueb_Smil_Signal *s;
 
-		ERR("Destroting the timeline");
+		DBG("Destroying the timeline");
 		EINA_LIST_FREE(thiz->signals, s)
 		{
 			ERR("taking away the timeline");
