@@ -13,6 +13,8 @@ src/lib/smil/value/egueb_smil_value_fill.c \
 src/lib/smil/value/egueb_smil_value_fill_private.h \
 src/lib/smil/value/egueb_smil_value_repeat_count.c \
 src/lib/smil/value/egueb_smil_value_repeat_count_private.h \
+src/lib/smil/value/egueb_smil_value_restart.c \
+src/lib/smil/value/egueb_smil_value_restart_private.h \
 src/lib/smil/value/egueb_smil_value_timing.c \
 src/lib/smil/value/egueb_smil_value_timing_private.h \
 src/lib/smil/value/egueb_smil_value_timing_list.c \

@@ -13,5 +13,7 @@ src/lib/smil/attr/egueb_smil_attr_key_splines.c \
 src/lib/smil/attr/egueb_smil_attr_key_splines_private.h \
 src/lib/smil/attr/egueb_smil_attr_repeat_count.c \
 src/lib/smil/attr/egueb_smil_attr_repeat_count_private.h \
+src/lib/smil/attr/egueb_smil_attr_restart.c \
+src/lib/smil/attr/egueb_smil_attr_restart_private.h \
 src/lib/smil/attr/egueb_smil_attr_timing_list.c \
 src/lib/smil/attr/egueb_smil_attr_timing_list_private.h

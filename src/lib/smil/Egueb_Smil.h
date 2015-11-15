@@ -46,6 +46,7 @@
 #include "egueb_smil_duration.h"
 #include "egueb_smil_fill.h"
 #include "egueb_smil_repeat_count.h"
+#include "egueb_smil_restart.h"
 #include "egueb_smil_timing.h"
 /* elements */
 #include "egueb_smil_animation.h"

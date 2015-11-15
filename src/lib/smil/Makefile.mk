@@ -19,6 +19,7 @@ src/lib/smil/egueb_smil_feature_animation.h \
 src/lib/smil/egueb_smil_fill.h \
 src/lib/smil/egueb_smil_main.h \
 src/lib/smil/egueb_smil_repeat_count.h \
+src/lib/smil/egueb_smil_restart.h \
 src/lib/smil/egueb_smil_set.h \
 src/lib/smil/egueb_smil_timing.h
 
@@ -51,6 +52,8 @@ src/lib/smil/egueb_smil_key_spline_private.h \
 src/lib/smil/egueb_smil_main.c \
 src/lib/smil/egueb_smil_repeat_count.c \
 src/lib/smil/egueb_smil_repeat_count_private.h \
+src/lib/smil/egueb_smil_restart.c \
+src/lib/smil/egueb_smil_restart_private.h \
 src/lib/smil/egueb_smil_set.c \
 src/lib/smil/egueb_smil_signal.c \
 src/lib/smil/egueb_smil_signal_private.h \
