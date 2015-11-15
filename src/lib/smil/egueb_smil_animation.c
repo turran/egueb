@@ -20,6 +20,7 @@
 #include "egueb_smil_main.h"
 #include "egueb_smil_clock.h"
 #include "egueb_smil_duration.h"
+#include "egueb_smil_restart.h"
 #include "egueb_smil_event.h"
 #include "egueb_smil_animation.h"
 #include "egueb_smil_animation_private.h"
@@ -226,15 +227,98 @@ static Eina_Bool _egueb_smil_animation_event_setup(Egueb_Smil_Animation *thiz,
 	return EINA_TRUE;
 }
 
+static void _egueb_smil_animation_end(Egueb_Smil_Animation *thiz)
+{
+	if (!thiz->signal)
+		return;
+	if (!thiz->started)
+		return;
+
+	INFO("Disabling animation");
+	egueb_smil_signal_disable(thiz->signal);
+}
+
+static void _egueb_smil_animation_end_cb(Egueb_Dom_Event *e,
+		void *data)
+{
+	Egueb_Smil_Animation_Event *ev = data;
+	Egueb_Smil_Animation *thiz = ev->thiz;
+	Egueb_Dom_String *name;
+
+	name = egueb_dom_event_type_get(e);
+	INFO("End event '%s' received", egueb_dom_string_string_get(name));
+	egueb_dom_string_unref(name);
+	_egueb_smil_animation_end(thiz);
+}
+
+static Eina_Bool _egueb_smil_animation_end_setup(Egueb_Smil_Animation *thiz)
+{
+	int64_t offset = INT64_MAX;
+
+	if (!_egueb_smil_animation_event_setup(thiz, thiz->end,
+			_egueb_smil_animation_end_cb, &offset, &thiz->end_events))
+		return EINA_FALSE;
+	return EINA_TRUE;
+}
+
+static void _egueb_smil_animation_end_release(Egueb_Smil_Animation *thiz)
+{
+	_egueb_smil_animation_event_release(thiz->end_events);
+}
+
+static void _egueb_smil_animation_end_process_cb(Egueb_Dom_Value *v, void *data)
+{
+	Egueb_Smil_Animation *thiz = data;
+	_egueb_smil_animation_end(thiz);
+}
+
 static void _egueb_smil_animation_begin(Egueb_Smil_Animation *thiz, int64_t offset)
 {
+	Egueb_Smil_Restart restart;
+	Eina_Bool end = EINA_FALSE;
 	int64_t time;
 
-	if (thiz->started)
-		return;
 	if (!thiz->signal)
 		return;
 
+	/* check the restart attribute */
+	egueb_dom_attr_final_get(thiz->restart, &restart);
+	switch (restart)
+	{
+		case EGUEB_SMIL_RESTART_ALWAYS:
+		if (thiz->started)
+			end = EINA_TRUE;
+		break;
+
+		case EGUEB_SMIL_RESTART_WHEN_NOT_ACTIVE:
+		if (!thiz->is_active)
+		{
+			INFO("Not active, nothing to do");
+			return;
+		}
+		else
+		{
+			end = EINA_TRUE;
+		}
+		break;
+
+		case EGUEB_SMIL_RESTART_NEVER:
+		if (thiz->started)
+		{
+			INFO("Already started, nothing to do");
+			return;
+		}
+		break;
+	}
+
+	/* In case we do a repetition, stop it first */
+	if (end)
+	{
+		INFO("Repeating the animation");
+		_egueb_smil_animation_end(thiz);
+	}
+
+	thiz->started = EINA_TRUE;
 	time = egueb_smil_timeline_current_clock_get(thiz->timeline);
 	INFO("Enabling animation at %" EGUEB_SMIL_CLOCK_FORMAT
 			" with offset %" EGUEB_SMIL_CLOCK_FORMAT,
@@ -275,50 +359,6 @@ static void _egueb_smil_animation_begin_release(Egueb_Smil_Animation *thiz)
 	_egueb_smil_animation_event_release(thiz->begin_events);
 }
 
-static void _egueb_smil_animation_end(Egueb_Smil_Animation *thiz)
-{
-	if (!thiz->started)
-		return;
-	if (!thiz->signal)
-		return;
-
-	INFO("Disabling animation");
-	egueb_smil_signal_disable(thiz->signal);
-}
-
-static void _egueb_smil_animation_end_cb(Egueb_Dom_Event *e,
-		void *data)
-{
-	Egueb_Smil_Animation_Event *ev = data;
-	Egueb_Smil_Animation *thiz = ev->thiz;
-	Egueb_Dom_String *name;
-
-	name = egueb_dom_event_type_get(e);
-	INFO("End event '%s' received", egueb_dom_string_string_get(name));
-	egueb_dom_string_unref(name);
-	_egueb_smil_animation_end(thiz);
-}
-
-static Eina_Bool _egueb_smil_animation_end_setup(Egueb_Smil_Animation *thiz)
-{
-	int64_t offset = INT64_MAX;
-
-	if (!_egueb_smil_animation_event_setup(thiz, thiz->end,
-			_egueb_smil_animation_end_cb, &offset, &thiz->end_events))
-		return EINA_FALSE;
-	return EINA_TRUE;
-}
-
-static void _egueb_smil_animation_end_release(Egueb_Smil_Animation *thiz)
-{
-	_egueb_smil_animation_event_release(thiz->end_events);
-}
-
-static void _egueb_smil_animation_end_process_cb(Egueb_Dom_Value *v, void *data)
-{
-	Egueb_Smil_Animation *thiz = data;
-	_egueb_smil_animation_end(thiz);
-}
 
 static void _egueb_smil_animation_cleanup(Egueb_Smil_Animation *thiz)
 {
@@ -765,7 +805,7 @@ void egueb_smil_animation_begin(Egueb_Smil_Animation *thiz)
 	Egueb_Dom_Event *ev;
 
 	INFO("Begin animation");
-	thiz->started = EINA_TRUE;
+	thiz->is_active = EINA_TRUE;
 	/* send the event */
 	ev = egueb_smil_event_new();
 	egueb_smil_event_init(ev, egueb_dom_string_ref(EGUEB_SMIL_EVENT_BEGIN), 0);
@@ -778,7 +818,7 @@ void egueb_smil_animation_end(Egueb_Smil_Animation *thiz)
 	Egueb_Dom_Event *ev;
 
 	INFO("End animation");
-	thiz->started = EINA_FALSE;
+	thiz->is_active = EINA_FALSE;
 	/* send the event */
 	ev = egueb_smil_event_new();
 	egueb_smil_event_init(ev, egueb_dom_string_ref(EGUEB_SMIL_EVENT_END), 0);

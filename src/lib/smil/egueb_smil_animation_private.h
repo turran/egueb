@@ -65,7 +65,10 @@ typedef struct _Egueb_Smil_Animation
 	Egueb_Dom_Node *attr;
 	/* the descriptor used for parsing the values */
 	const Egueb_Dom_Value_Descriptor *d;
+	/* the begin has been triggered */
 	Eina_Bool started;
+	/* the animation is active */
+	Eina_Bool is_active;
 
 	/* the animation siblings related to the target */
 	EINA_INLIST;
