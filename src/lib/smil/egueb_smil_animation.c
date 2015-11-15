@@ -416,8 +416,8 @@ static Egueb_Smil_Signal * _egueb_smil_animation_setup(Egueb_Smil_Animation *thi
 	}
 
 	/* do the begin and end conditions */
-	_egueb_smil_animation_begin_setup(thiz, begin_offset);
 	_egueb_smil_animation_end_setup(thiz);
+	_egueb_smil_animation_begin_setup(thiz, begin_offset);
 
 	if (klass->setup)
 	{
