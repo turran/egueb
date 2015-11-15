@@ -34,6 +34,7 @@
 #include "egueb_smil_attr_duration_private.h"
 #include "egueb_smil_attr_fill_private.h"
 #include "egueb_smil_attr_repeat_count_private.h"
+#include "egueb_smil_attr_restart_private.h"
 #include "egueb_smil_attr_timing_list_private.h"
 
 typedef struct _Egueb_Smil_Animation
@@ -46,6 +47,7 @@ typedef struct _Egueb_Smil_Animation
 	Egueb_Dom_Node *begin;
 	Egueb_Dom_Node *end;
 	Egueb_Dom_Node *xlink_href;
+	Egueb_Dom_Node *restart;
 	Egueb_Dom_Node *repeat_count;
 	Egueb_Dom_Node *repeat_dur;
 

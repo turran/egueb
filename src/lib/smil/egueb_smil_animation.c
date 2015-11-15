@@ -626,6 +626,7 @@ static void _egueb_smil_animation_instance_init(void *o)
 	thiz->repeat_dur = egueb_smil_attr_duration_new(
 			egueb_dom_string_ref(EGUEB_SMIL_NAME_REPEAT_DUR), NULL);
 
+	thiz->restart = egueb_smil_attr_restart_new();
 	n = EGUEB_DOM_NODE(o);
 	egueb_dom_element_attribute_node_set(n, egueb_dom_node_ref(thiz->attribute_name), NULL);
 	egueb_dom_element_attribute_node_set(n, egueb_dom_node_ref(thiz->fill), NULL);
@@ -635,6 +636,7 @@ static void _egueb_smil_animation_instance_init(void *o)
 	egueb_dom_element_attribute_node_set(n, egueb_dom_node_ref(thiz->xlink_href), NULL);
 	egueb_dom_element_attribute_node_set(n, egueb_dom_node_ref(thiz->repeat_count), NULL);
 	egueb_dom_element_attribute_node_set(n, egueb_dom_node_ref(thiz->repeat_dur), NULL);
+	egueb_dom_element_attribute_node_set(n, egueb_dom_node_ref(thiz->restart), NULL);
 }
 
 static void _egueb_smil_animation_instance_deinit(void *o)
@@ -650,6 +652,7 @@ static void _egueb_smil_animation_instance_deinit(void *o)
 	egueb_dom_node_unref(thiz->end);
 	egueb_dom_node_unref(thiz->repeat_count);
 	egueb_dom_node_unref(thiz->repeat_dur);
+	egueb_dom_node_unref(thiz->restart);
 	egueb_dom_node_unref(thiz->xlink_href);
 }
 
