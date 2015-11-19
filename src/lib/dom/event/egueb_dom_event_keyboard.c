@@ -152,3 +152,10 @@ Egueb_Dom_Event * egueb_dom_event_key_up_new(Egueb_Dom_String *key,
 Egueb_Dom_String *EGUEB_DOM_EVENT_KEY_DOWN = &_EGUEB_DOM_EVENT_KEY_DOWN;
 Egueb_Dom_String *EGUEB_DOM_EVENT_KEY_UP = &_EGUEB_DOM_EVENT_KEY_UP;
 
+EAPI Egueb_Dom_String * egueb_dom_event_keyboard_key_get(Egueb_Dom_Event *e)
+{
+	Egueb_Dom_Event_Keyboard *thiz;
+
+	thiz = EGUEB_DOM_EVENT_KEYBOARD(e);
+	return egueb_dom_string_ref(thiz->key);
+}

@@ -44,6 +44,8 @@ typedef enum _Egueb_Dom_Key_Location {
 EAPI extern Egueb_Dom_String *EGUEB_DOM_EVENT_KEY_DOWN;
 EAPI extern Egueb_Dom_String *EGUEB_DOM_EVENT_KEY_UP;
 
+EAPI Egueb_Dom_String * egueb_dom_event_keyboard_key_get(Egueb_Dom_Event *e);
+
 /**
  * @}
  */
