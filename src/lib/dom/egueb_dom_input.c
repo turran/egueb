@@ -486,3 +486,8 @@ EAPI void egueb_dom_input_focus_set(Egueb_Dom_Input *thiz,
 				ev, NULL, NULL);
 	}
 }
+
+EAPI Egueb_Dom_Node * egueb_dom_input_focus_get(Egueb_Dom_Input *thiz)
+{
+	return egueb_dom_node_ref(thiz->focused);
+}
