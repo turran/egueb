@@ -53,5 +53,8 @@ EAPI void egueb_dom_input_feed_key_down(Egueb_Dom_Input *thiz,
 EAPI void egueb_dom_input_feed_key_up(Egueb_Dom_Input *thiz,
 		Egueb_Dom_String *key);
 
+EAPI void egueb_dom_input_focus_set(Egueb_Dom_Input *thiz,
+		Egueb_Dom_Node *n);
+
 #endif
 

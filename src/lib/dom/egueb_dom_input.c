@@ -383,28 +383,7 @@ EAPI void egueb_dom_input_feed_key_down(Egueb_Dom_Input *thiz,
 			{
 				Egueb_Dom_Node *n;
 				n = thiz->descriptor->focus_next(thiz->focused, thiz->data);
-				if (thiz->focused)
-				{
-					Egueb_Dom_Event *ev;
-
-					DBG("Focus out");
-					ev = egueb_dom_event_focus_out_new();
-					egueb_dom_event_target_event_dispatch(
-							EGUEB_DOM_EVENT_TARGET_CAST(thiz->focused),
-							ev, NULL, NULL);
-					egueb_dom_node_unref(thiz->focused);
-				}
-				thiz->focused = n;
-				if (thiz->focused)
-				{
-					Egueb_Dom_Event *ev;
-
-					DBG("Focus in");
-					ev = egueb_dom_event_focus_in_new();
-					egueb_dom_event_target_event_dispatch(
-							EGUEB_DOM_EVENT_TARGET_CAST(thiz->focused),
-							ev, NULL, NULL);
-				}
+				egueb_dom_input_focus_set(thiz, n);
 			}
 		}
 		egueb_dom_string_unref(key);
@@ -473,4 +452,31 @@ EAPI void egueb_dom_input_feed_key_up(Egueb_Dom_Input *thiz,
 		thiz->alt_key, thiz->ctrl_key, thiz->shift_key, thiz->meta_key);
 	egueb_dom_event_target_event_dispatch(
 			EGUEB_DOM_EVENT_TARGET_CAST(thiz->focused), ev, NULL, NULL);
+}
+
+EAPI void egueb_dom_input_focus_set(Egueb_Dom_Input *thiz,
+		Egueb_Dom_Node *n)
+{
+	if (thiz->focused)
+	{
+		Egueb_Dom_Event *ev;
+
+		DBG("Focus out");
+		ev = egueb_dom_event_focus_out_new();
+		egueb_dom_event_target_event_dispatch(
+				EGUEB_DOM_EVENT_TARGET_CAST(thiz->focused),
+				ev, NULL, NULL);
+		egueb_dom_node_unref(thiz->focused);
+	}
+	thiz->focused = n;
+	if (thiz->focused)
+	{
+		Egueb_Dom_Event *ev;
+
+		DBG("Focus in");
+		ev = egueb_dom_event_focus_in_new();
+		egueb_dom_event_target_event_dispatch(
+				EGUEB_DOM_EVENT_TARGET_CAST(thiz->focused),
+				ev, NULL, NULL);
+	}
 }
