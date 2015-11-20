@@ -67,8 +67,7 @@ static void _egueb_svg_renderable_check_new_bounds(Egueb_Svg_Renderable *thiz)
 				int mx, my;
 
 				ifeature = egueb_dom_node_feature_get(topmost, EGUEB_DOM_FEATURE_UI_NAME, NULL);
-				egueb_dom_feature_ui_input_get(ifeature, &input);
-				egueb_dom_feature_unref(ifeature);
+				input = egueb_dom_feature_ui_input_get(ifeature);
 
 				egueb_dom_input_mouse_position_get(input, &mx, &my);
 				eina_rectangle_coords_from(&ibounds, 0, 0, mx, my);
@@ -77,6 +76,7 @@ static void _egueb_svg_renderable_check_new_bounds(Egueb_Svg_Renderable *thiz)
 					egueb_svg_document_mouse_check(doc);
 				}
 				egueb_dom_input_unref(input);
+				egueb_dom_feature_unref(ifeature);
 				thiz->last_processed_bounds = bounds;
 			}
 			egueb_dom_node_unref(topmost);

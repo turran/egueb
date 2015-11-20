@@ -585,10 +585,11 @@ static void _egueb_svg_document_post_process(Egueb_Dom_Document *d)
 		return;
 
 	feature = egueb_dom_node_feature_get(topmost, EGUEB_DOM_FEATURE_UI_NAME, NULL);
-	egueb_dom_feature_ui_input_get(feature, &input);
-	egueb_dom_feature_unref(feature);
+	input = egueb_dom_feature_ui_input_get(feature);
 	egueb_dom_input_mouse_position_get(input, &mx, &my);
 	egueb_dom_input_feed_mouse_move(input, mx, my);
+	egueb_dom_input_unref(input);
+	egueb_dom_feature_unref(feature);
 	thiz->mouse_check = 0;
 }
 /*----------------------------------------------------------------------------*

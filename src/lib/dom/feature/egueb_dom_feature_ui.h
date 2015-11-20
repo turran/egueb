@@ -53,7 +53,7 @@ typedef struct _Egueb_Dom_Feature_UI_Descriptor
  * @{
  */
 
-EAPI Eina_Bool egueb_dom_feature_ui_input_get(Egueb_Dom_Feature *f, Egueb_Dom_Input **i);
+EAPI Egueb_Dom_Input * egueb_dom_feature_ui_input_get(Egueb_Dom_Feature *f);
 EAPI Eina_Bool egueb_dom_feature_ui_add(Egueb_Dom_Node *n,
 		const Egueb_Dom_Feature_UI_Descriptor *d);
 

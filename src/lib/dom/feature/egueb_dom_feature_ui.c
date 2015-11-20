@@ -86,17 +86,14 @@ static void _egueb_dom_feature_ui_instance_deinit(void *o)
  *============================================================================*/
 Egueb_Dom_String *EGUEB_DOM_FEATURE_UI_NAME = &_EGUEB_DOM_FEATURE_UI_NAME;
 
-EAPI Eina_Bool egueb_dom_feature_ui_input_get(Egueb_Dom_Feature *f, Egueb_Dom_Input **i)
+EAPI Egueb_Dom_Input * egueb_dom_feature_ui_input_get(Egueb_Dom_Feature *f)
 {
 	Egueb_Dom_Feature_UI *thiz;
 
 	thiz = EGUEB_DOM_FEATURE_UI(f);
-	if (!thiz->n) return EINA_FALSE;
+	if (!thiz->n) return NULL;
 
-	*i = thiz->d->input_get(thiz->n);
-	if (!*i) return EINA_FALSE;
-
-	return EINA_TRUE;
+	return thiz->d->input_get(thiz->n);
 }
 
 EAPI Eina_Bool egueb_dom_feature_ui_add(Egueb_Dom_Node *n,
