@@ -457,6 +457,12 @@ EAPI void egueb_dom_input_feed_key_up(Egueb_Dom_Input *thiz,
 EAPI void egueb_dom_input_focus_set(Egueb_Dom_Input *thiz,
 		Egueb_Dom_Node *n)
 {
+	if (thiz->focused == n)
+	{
+		egueb_dom_node_unref(n);
+		return;
+	}
+
 	if (thiz->focused)
 	{
 		Egueb_Dom_Event *ev;
