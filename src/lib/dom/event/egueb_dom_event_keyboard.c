@@ -134,7 +134,7 @@ Egueb_Dom_Event * egueb_dom_event_key_up_new(Egueb_Dom_String *key,
 	Egueb_Dom_Event *e;
 
 	e = ENESIM_OBJECT_INSTANCE_NEW(egueb_dom_event_keyboard);
-	egueb_dom_event_ui_init(e, egueb_dom_string_ref(EGUEB_DOM_EVENT_KEY_DOWN),
+	egueb_dom_event_ui_init(e, egueb_dom_string_ref(EGUEB_DOM_EVENT_KEY_UP),
 			EINA_TRUE, EINA_TRUE, NULL, 0);
 
 	thiz = EGUEB_DOM_EVENT_KEYBOARD(e);
