@@ -68,6 +68,7 @@ static void _boolean_interpolate(Egueb_Dom_Value *v,
 		Egueb_Dom_Value *a, Egueb_Dom_Value *b, double m,
 		Egueb_Dom_Value *add, Egueb_Dom_Value *acc, int mul)
 {
+	v->data.i32 = a->data.i32;
 }
 
 static Egueb_Dom_Value_Descriptor _descriptor = {
