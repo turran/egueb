@@ -83,8 +83,9 @@ static void _egueb_smil_set_signal_start_cb(Egueb_Smil_Signal *s, void *data)
 	/* in case of "remove" pick the last value it had */
 	if (fill == EGUEB_SMIL_FILL_REMOVE)
 	{
-		egueb_dom_value_init(&thiz->prv_value, a->d);
+		/* TODO do a copy, as it might be a reference to a value */
 		DBG("Getting previous value for later set");
+		egueb_dom_value_init(&thiz->prv_value, a->d);
 		egueb_dom_attr_final_value_get(a->attr, &thiz->prv_value);
 	}
 	egueb_smil_animation_begin(a);

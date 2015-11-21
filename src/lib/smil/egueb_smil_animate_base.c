@@ -290,6 +290,8 @@ static void _egueb_smil_animate_base_animation_start_cb(Egueb_Smil_Signal *s, vo
 	if (fill == EGUEB_SMIL_FILL_REMOVE)
 	{
 		/* TODO do a copy, as it might be a reference to a value */
+		DBG("Getting previous value for later set");
+		egueb_dom_value_init(&thiz->prv_value, a->d);
 		egueb_dom_attr_final_value_get(a->attr, &thiz->prv_value);
 	}
 	egueb_smil_animation_begin(a);
