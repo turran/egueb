@@ -259,19 +259,6 @@ void egueb_dom_attr_copy(Egueb_Dom_Node *n,
 	other->set_mask = thiz->set_mask;
 }
 
-/* The owner element must call this to reset the changed counter
- * It is automatically called everytime an element is processed, but only
- * for non inheritable attributes. For inheritable attributes the element
- * implementation is responsible of process theme using the
- * egueb_dom_attr_inheritable_process function
- */
-void egueb_dom_attr_process(Egueb_Dom_Node *n)
-{
-	Egueb_Dom_Attr *thiz;
-
-	thiz = EGUEB_DOM_ATTR(n);
-	thiz->changed = 0;
-}
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/
@@ -487,6 +474,22 @@ EAPI Eina_Bool egueb_dom_attr_value_set(Egueb_Dom_Node *n,
 		thiz->changed++;
 	}
 	return EINA_TRUE;
+}
+
+/* The owner element must call this to reset the changed counter
+ * It is automatically called everytime an element is processed, but only
+ * for non inheritable attributes. For inheritable attributes the element
+ * implementation is responsible of process theme using the
+ * egueb_dom_attr_inheritable_process function
+ * FIXME given that an element can be processed and an attribute too,
+ * should we create an interface on the node for a process virtual function?
+ */
+EAPI void egueb_dom_attr_process(Egueb_Dom_Node *n)
+{
+	Egueb_Dom_Attr *thiz;
+
+	thiz = EGUEB_DOM_ATTR(n);
+	thiz->changed = 0;
 }
 
 EAPI void egueb_dom_attr_inheritable_process(Egueb_Dom_Node *n,

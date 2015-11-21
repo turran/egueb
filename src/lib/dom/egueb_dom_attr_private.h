@@ -89,6 +89,5 @@ Eina_Bool egueb_dom_attr_set_va(Egueb_Dom_Node *n,
 		int prop_mask, va_list args);
 void egueb_dom_attr_copy(Egueb_Dom_Node *n,
 		Egueb_Dom_Node *other);
-void egueb_dom_attr_process(Egueb_Dom_Node *n);
 
 #endif

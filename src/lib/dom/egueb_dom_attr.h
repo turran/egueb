@@ -109,6 +109,7 @@ EAPI Eina_Bool egueb_dom_attr_get(Egueb_Dom_Node *n, int prop_mask,
 	...);
 EAPI Eina_Bool egueb_dom_attr_set(Egueb_Dom_Node *n, int prop_mask,
 	...);
+EAPI void egueb_dom_attr_process(Egueb_Dom_Node *n);
 EAPI void egueb_dom_attr_inheritable_process(Egueb_Dom_Node *n,
 			Egueb_Dom_Node *rel);
 
