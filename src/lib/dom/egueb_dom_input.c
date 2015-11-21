@@ -91,69 +91,43 @@ static Eina_Bool _egueb_dom_input_key_has_modifier(Egueb_Dom_Input *thiz)
 
 static void _egueb_dom_input_key_modifier_set(Egueb_Dom_String *key,
 		Eina_Bool *alt_key, Eina_Bool *ctrl_key,
-		Eina_Bool *shift_key, Eina_Bool *meta_key,
-		Egueb_Dom_Key_Location *location)
+		Eina_Bool *shift_key, Eina_Bool *meta_key)
 {
 	const char *s;
 
 	s = egueb_dom_string_string_get(key);
-	if (!strcmp(s, "Control_L"))
+	if (!strcmp(s, "Control"))
 	{
 		*ctrl_key = EINA_TRUE;
-		*location = EGUEB_DOM_KEY_LOCATION_LEFT;
 	}
-	else if (!strcmp(s, "Control_R"))
-	{
-		*ctrl_key = EINA_TRUE;
-		*location = EGUEB_DOM_KEY_LOCATION_RIGHT;
-	}
-	else if (!strcmp(s, "Shift_L"))
+	else if (!strcmp(s, "Shift"))
 	{
 		*shift_key = EINA_TRUE;
-		*location = EGUEB_DOM_KEY_LOCATION_LEFT;
 	}
-	else if (!strcmp(s, "Shift_R"))
+	else if (!strcmp(s, "Super"))
 	{
-		*shift_key = EINA_TRUE;
-		*location = EGUEB_DOM_KEY_LOCATION_RIGHT;
-	}
-	else if (!strncmp(s, "KP", 2))
-	{
-		*location = EGUEB_DOM_KEY_LOCATION_NUMPAD;
+		*meta_key = EINA_TRUE;
 	}
 }
 
 static void _egueb_dom_input_key_modifier_unset(Egueb_Dom_String *key,
 		Eina_Bool *alt_key, Eina_Bool *ctrl_key,
-		Eina_Bool *shift_key, Eina_Bool *meta_key,
-		Egueb_Dom_Key_Location *location)
+		Eina_Bool *shift_key, Eina_Bool *meta_key)
 {
 	const char *s;
 
 	s = egueb_dom_string_string_get(key);
-	if (!strcmp(s, "Control_L"))
+	if (!strcmp(s, "Control"))
 	{
 		*ctrl_key = EINA_FALSE;
-		*location = EGUEB_DOM_KEY_LOCATION_LEFT;
 	}
-	else if (!strcmp(s, "Control_R"))
-	{
-		*ctrl_key = EINA_FALSE;
-		*location = EGUEB_DOM_KEY_LOCATION_RIGHT;
-	}
-	else if (!strcmp(s, "Shift_L"))
+	else if (!strcmp(s, "Shift"))
 	{
 		*shift_key = EINA_FALSE;
-		*location = EGUEB_DOM_KEY_LOCATION_LEFT;
 	}
-	else if (!strcmp(s, "Shift_R"))
+	else if (!strcmp(s, "Super"))
 	{
-		*shift_key = EINA_FALSE;
-		*location = EGUEB_DOM_KEY_LOCATION_RIGHT;
-	}
-	else if (!strncmp(s, "KP", 2))
-	{
-		*location = EGUEB_DOM_KEY_LOCATION_NUMPAD;
+		*meta_key = EINA_FALSE;
 	}
 }
 /*============================================================================*
@@ -365,10 +339,10 @@ EAPI void egueb_dom_input_feed_mouse_wheel(Egueb_Dom_Input *thiz, int deltax, in
 }
 
 EAPI void egueb_dom_input_feed_key_down(Egueb_Dom_Input *thiz,
-		Egueb_Dom_String *key)
+		Egueb_Dom_String *key, Egueb_Dom_String *code,
+		Egueb_Dom_Key_Location location)
 {
 	Egueb_Dom_Event *ev;
-	Egueb_Dom_Key_Location location = EGUEB_DOM_KEY_LOCATION_STANDARD;
 	const char *s;
 
 	if (!key) return;
@@ -391,7 +365,7 @@ EAPI void egueb_dom_input_feed_key_down(Egueb_Dom_Input *thiz,
 	}
 	/* check for the control keys */
 	_egueb_dom_input_key_modifier_set(key, &thiz->alt_key, &thiz->ctrl_key,
-			&thiz->shift_key, &thiz->meta_key, &location);
+			&thiz->shift_key, &thiz->meta_key);
 
 	/* nothing to do if we dont have any focused element */
 	if (!thiz->focused)
@@ -402,7 +376,7 @@ EAPI void egueb_dom_input_feed_key_down(Egueb_Dom_Input *thiz,
 
 	/* finally the key down */
 	DBG("Key down");
-	ev = egueb_dom_event_key_down_new(egueb_dom_string_ref(key), EGUEB_DOM_KEY_LOCATION_STANDARD,
+	ev = egueb_dom_event_key_down_new(egueb_dom_string_ref(key), location,
 		thiz->alt_key, thiz->ctrl_key, thiz->shift_key, thiz->meta_key);
 	egueb_dom_event_target_event_dispatch(
 			EGUEB_DOM_EVENT_TARGET_CAST(thiz->focused), ev, NULL, NULL);
@@ -423,10 +397,10 @@ EAPI void egueb_dom_input_feed_key_down(Egueb_Dom_Input *thiz,
 }
 
 EAPI void egueb_dom_input_feed_key_up(Egueb_Dom_Input *thiz,
-		Egueb_Dom_String *key)
+		Egueb_Dom_String *key, Egueb_Dom_String *code,
+		Egueb_Dom_Key_Location location)
 {
 	Egueb_Dom_Event *ev;
-	Egueb_Dom_Key_Location location = EGUEB_DOM_KEY_LOCATION_STANDARD;
 	const char *s;
 
 	if (!key) return;
@@ -440,7 +414,7 @@ EAPI void egueb_dom_input_feed_key_up(Egueb_Dom_Input *thiz,
 
 	/* check for the control keys */
 	_egueb_dom_input_key_modifier_unset(key, &thiz->alt_key, &thiz->ctrl_key,
-			&thiz->shift_key, &thiz->meta_key, &location);
+			&thiz->shift_key, &thiz->meta_key);
 
 	/* unset the flags */
 	if (!thiz->focused)
@@ -448,7 +422,7 @@ EAPI void egueb_dom_input_feed_key_up(Egueb_Dom_Input *thiz,
 		egueb_dom_string_unref(key);
 		return;
 	}
-	ev = egueb_dom_event_key_up_new(key, EGUEB_DOM_KEY_LOCATION_STANDARD,
+	ev = egueb_dom_event_key_up_new(key, location,
 		thiz->alt_key, thiz->ctrl_key, thiz->shift_key, thiz->meta_key);
 	egueb_dom_event_target_event_dispatch(
 			EGUEB_DOM_EVENT_TARGET_CAST(thiz->focused), ev, NULL, NULL);

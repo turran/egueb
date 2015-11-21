@@ -49,9 +49,11 @@ EAPI void egueb_dom_input_feed_mouse_down(Egueb_Dom_Input *thiz, int button);
 EAPI void egueb_dom_input_feed_mouse_up(Egueb_Dom_Input *thiz, int button);
 EAPI void egueb_dom_input_feed_mouse_wheel(Egueb_Dom_Input *thiz, int deltax, int deltay, int deltaz);
 EAPI void egueb_dom_input_feed_key_down(Egueb_Dom_Input *thiz,
-		Egueb_Dom_String *key);
+		Egueb_Dom_String *key, Egueb_Dom_String *code,
+		Egueb_Dom_Key_Location location);
 EAPI void egueb_dom_input_feed_key_up(Egueb_Dom_Input *thiz,
-		Egueb_Dom_String *key);
+		Egueb_Dom_String *key, Egueb_Dom_String *code,
+		Egueb_Dom_Key_Location location);
 
 EAPI void egueb_dom_input_focus_set(Egueb_Dom_Input *thiz,
 		Egueb_Dom_Node *n);
