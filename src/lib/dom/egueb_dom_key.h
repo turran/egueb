@@ -16,18 +16,17 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _EGUEB_DOM_EVENT_KEYBOARD_PRIVATE_H_
-#define _EGUEB_DOM_EVENT_KEYBOARD_PRIVATE_H_
+#ifndef _EGUEB_DOM_KEY_H_
+#define _EGUEB_DOM_KEY_H_
 
-Egueb_Dom_Event * egueb_dom_event_key_down_new(Egueb_Dom_String *key,
-		Egueb_Dom_String *code,
-		Egueb_Dom_Key_Location location,
-		Eina_Bool alt_key, Eina_Bool ctrl_key, Eina_Bool shift_key,
-		Eina_Bool meta_key);
-Egueb_Dom_Event * egueb_dom_event_key_up_new(Egueb_Dom_String *key,
-		Egueb_Dom_String *code,
-		Egueb_Dom_Key_Location location,
-		Eina_Bool alt_key, Eina_Bool ctrl_key, Eina_Bool shift_key,
-		Eina_Bool meta_key);
+typedef enum _Egueb_Dom_Key_Location {
+	EGUEB_DOM_KEY_LOCATION_STANDARD,
+	EGUEB_DOM_KEY_LOCATION_LEFT,
+	EGUEB_DOM_KEY_LOCATION_RIGHT,
+	EGUEB_DOM_KEY_LOCATION_NUMPAD,
+} Egueb_Dom_Key_Location;
+
+EAPI Eina_Bool egueb_dom_key_is_printable(Egueb_Dom_String *s);
 
 #endif
+

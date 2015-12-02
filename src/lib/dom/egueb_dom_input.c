@@ -20,6 +20,7 @@
 
 #include "egueb_dom_string.h"
 #include "egueb_dom_main.h"
+#include "egueb_dom_key.h"
 #include "egueb_dom_node.h"
 #include "egueb_dom_event.h"
 #include "egueb_dom_event_keyboard.h"
@@ -345,7 +346,7 @@ EAPI void egueb_dom_input_feed_key_down(Egueb_Dom_Input *thiz,
 	Egueb_Dom_Event *ev;
 	const char *s;
 
-	if (!key) return;
+	if (!key && !code) return;
 
 	s = egueb_dom_string_string_get(key);
 	/* check if we need to navigate */
@@ -361,6 +362,7 @@ EAPI void egueb_dom_input_feed_key_down(Egueb_Dom_Input *thiz,
 			}
 		}
 		egueb_dom_string_unref(key);
+		egueb_dom_string_unref(code);
 		return;
 	}
 	/* check for the control keys */
@@ -371,6 +373,7 @@ EAPI void egueb_dom_input_feed_key_down(Egueb_Dom_Input *thiz,
 	if (!thiz->focused)
 	{
 		egueb_dom_string_unref(key);
+		egueb_dom_string_unref(code);
 		return;
 	}
 
@@ -403,12 +406,13 @@ EAPI void egueb_dom_input_feed_key_up(Egueb_Dom_Input *thiz,
 	Egueb_Dom_Event *ev;
 	const char *s;
 
-	if (!key) return;
+	if (!key && !code) return;
 
 	s = egueb_dom_string_string_get(key);
 	if (!strcmp(s, "Tab"))
 	{
 		egueb_dom_string_unref(key);
+		egueb_dom_string_unref(code);
 		return;
 	}
 
@@ -420,9 +424,10 @@ EAPI void egueb_dom_input_feed_key_up(Egueb_Dom_Input *thiz,
 	if (!thiz->focused)
 	{
 		egueb_dom_string_unref(key);
+		egueb_dom_string_unref(code);
 		return;
 	}
-	ev = egueb_dom_event_key_up_new(key, location,
+	ev = egueb_dom_event_key_up_new(key, code, location,
 		thiz->alt_key, thiz->ctrl_key, thiz->shift_key, thiz->meta_key);
 	egueb_dom_event_target_event_dispatch(
 			EGUEB_DOM_EVENT_TARGET_CAST(thiz->focused), ev, NULL, NULL);

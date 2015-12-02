@@ -19,6 +19,7 @@
 
 #include "egueb_dom_string.h"
 #include "egueb_dom_main.h"
+#include "egueb_dom_key.h"
 #include "egueb_dom_node.h"
 #include "egueb_dom_event.h"
 #include "egueb_dom_window.h"
@@ -45,6 +46,7 @@ typedef struct _Egueb_Dom_Event_Keyboard
 {
 	Egueb_Dom_Event_UI base;
 	Egueb_Dom_String *key;
+	Egueb_Dom_String *code;
 	Egueb_Dom_Key_Location location;
 	Eina_Bool alt_key;
 	Eina_Bool ctrl_key;
@@ -94,16 +96,14 @@ static void _egueb_dom_event_keyboard_instance_deinit(void *o)
 	Egueb_Dom_Event_Keyboard *thiz;
 
 	thiz = EGUEB_DOM_EVENT_KEYBOARD(o);
-	if (thiz->key)
-	{
-		egueb_dom_string_unref(thiz->key);
-		thiz->key = NULL;
-	}
+	egueb_dom_string_unref(thiz->key);
+	egueb_dom_string_unref(thiz->code);
 }
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
 Egueb_Dom_Event * egueb_dom_event_key_down_new(Egueb_Dom_String *key,
+		Egueb_Dom_String *code,
 		Egueb_Dom_Key_Location location,
 		Eina_Bool alt_key, Eina_Bool ctrl_key, Eina_Bool shift_key,
 		Eina_Bool meta_key)
@@ -117,6 +117,7 @@ Egueb_Dom_Event * egueb_dom_event_key_down_new(Egueb_Dom_String *key,
 
 	thiz = EGUEB_DOM_EVENT_KEYBOARD(e);
 	thiz->key = key;
+	thiz->code = code;
 	thiz->alt_key = alt_key;
 	thiz->ctrl_key = ctrl_key;
 	thiz->shift_key = shift_key;
@@ -126,6 +127,7 @@ Egueb_Dom_Event * egueb_dom_event_key_down_new(Egueb_Dom_String *key,
 }
 
 Egueb_Dom_Event * egueb_dom_event_key_up_new(Egueb_Dom_String *key,
+		Egueb_Dom_String *code,
 		Egueb_Dom_Key_Location location,
 		Eina_Bool alt_key, Eina_Bool ctrl_key, Eina_Bool shift_key,
 		Eina_Bool meta_key)
@@ -139,6 +141,7 @@ Egueb_Dom_Event * egueb_dom_event_key_up_new(Egueb_Dom_String *key,
 
 	thiz = EGUEB_DOM_EVENT_KEYBOARD(e);
 	thiz->key = key;
+	thiz->code = code;
 	thiz->alt_key = alt_key;
 	thiz->ctrl_key = ctrl_key;
 	thiz->shift_key = shift_key;
@@ -158,4 +161,20 @@ EAPI Egueb_Dom_String * egueb_dom_event_keyboard_key_get(Egueb_Dom_Event *e)
 
 	thiz = EGUEB_DOM_EVENT_KEYBOARD(e);
 	return egueb_dom_string_ref(thiz->key);
+}
+
+EAPI Egueb_Dom_String * egueb_dom_event_keyboard_code_get(Egueb_Dom_Event *e)
+{
+	Egueb_Dom_Event_Keyboard *thiz;
+
+	thiz = EGUEB_DOM_EVENT_KEYBOARD(e);
+	return egueb_dom_string_ref(thiz->code);
+}
+
+EAPI Egueb_Dom_Key_Location egueb_dom_event_keyboard_location_get(Egueb_Dom_Event *e)
+{
+	Egueb_Dom_Event_Keyboard *thiz;
+
+	thiz = EGUEB_DOM_EVENT_KEYBOARD(e);
+	return thiz->location;
 }

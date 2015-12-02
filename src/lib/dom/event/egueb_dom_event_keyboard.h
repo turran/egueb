@@ -34,17 +34,12 @@
  * @{
  */
 
-typedef enum _Egueb_Dom_Key_Location {
-	EGUEB_DOM_KEY_LOCATION_STANDARD,
-	EGUEB_DOM_KEY_LOCATION_LEFT,
-	EGUEB_DOM_KEY_LOCATION_RIGHT,
-	EGUEB_DOM_KEY_LOCATION_NUMPAD,
-} Egueb_Dom_Key_Location;
-
 EAPI extern Egueb_Dom_String *EGUEB_DOM_EVENT_KEY_DOWN;
 EAPI extern Egueb_Dom_String *EGUEB_DOM_EVENT_KEY_UP;
 
 EAPI Egueb_Dom_String * egueb_dom_event_keyboard_key_get(Egueb_Dom_Event *e);
+EAPI Egueb_Dom_String * egueb_dom_event_keyboard_code_get(Egueb_Dom_Event *e);
+EAPI Egueb_Dom_Key_Location egueb_dom_event_keyboard_location_get(Egueb_Dom_Event *e);
 
 /**
  * @}
