@@ -379,7 +379,7 @@ EAPI void egueb_dom_input_feed_key_down(Egueb_Dom_Input *thiz,
 
 	/* finally the key down */
 	DBG("Key down");
-	ev = egueb_dom_event_key_down_new(egueb_dom_string_ref(key), location,
+	ev = egueb_dom_event_key_down_new(egueb_dom_string_ref(key), code, location,
 		thiz->alt_key, thiz->ctrl_key, thiz->shift_key, thiz->meta_key);
 	egueb_dom_event_target_event_dispatch(
 			EGUEB_DOM_EVENT_TARGET_CAST(thiz->focused), ev, NULL, NULL);
