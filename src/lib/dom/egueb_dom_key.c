@@ -208,8 +208,28 @@ void egueb_dom_key_init(void)
 	_egueb_dom_key_dict_add(_non_printable, "Enter");
 	_egueb_dom_key_dict_add(_non_printable, "Separator");
 	_egueb_dom_key_dict_add(_non_printable, "Tab");
+	/* Navigation keys */
+	_egueb_dom_key_dict_add(_non_printable, "ArrowDown");
+	_egueb_dom_key_dict_add(_non_printable, "ArrowLeft");
+	_egueb_dom_key_dict_add(_non_printable, "ArrowRight");
+	_egueb_dom_key_dict_add(_non_printable, "ArrowUp");
+	_egueb_dom_key_dict_add(_non_printable, "End");
+	_egueb_dom_key_dict_add(_non_printable, "Home");
+	_egueb_dom_key_dict_add(_non_printable, "PageDown");
+	_egueb_dom_key_dict_add(_non_printable, "PageUp");
 	/* Editing keys */
 	_egueb_dom_key_dict_add(_non_printable, "BackSpace");
+	_egueb_dom_key_dict_add(_non_printable, "Clear");
+	_egueb_dom_key_dict_add(_non_printable, "Copy");
+	_egueb_dom_key_dict_add(_non_printable, "CrSel");
+	_egueb_dom_key_dict_add(_non_printable, "Cut");
+	_egueb_dom_key_dict_add(_non_printable, "Delete");
+	_egueb_dom_key_dict_add(_non_printable, "EraseEof");
+	_egueb_dom_key_dict_add(_non_printable, "ExSel");
+	_egueb_dom_key_dict_add(_non_printable, "Insert");
+	_egueb_dom_key_dict_add(_non_printable, "Paste");
+	_egueb_dom_key_dict_add(_non_printable, "Redo");
+	_egueb_dom_key_dict_add(_non_printable, "Undo");
 }
 
 void egueb_dom_key_shutdown(void)
