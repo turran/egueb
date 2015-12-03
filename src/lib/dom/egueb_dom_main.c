@@ -20,6 +20,7 @@
 #include "egueb_dom_string.h"
 #include "egueb_dom_main.h"
 
+#include "egueb_dom_key_private.h"
 #include "egueb_dom_registry_private.h"
 /*============================================================================*
  *                                  Local                                     *
@@ -117,6 +118,7 @@ EAPI void egueb_dom_init(void)
 
 	_egueb_dom_strings_init();
 	egueb_dom_registry_init();
+	egueb_dom_key_init();
 done:
 	_init_count++;
 	_initializing = EINA_FALSE;
@@ -133,6 +135,7 @@ EAPI void egueb_dom_shutdown(void)
 
 	_deinitializing = EINA_TRUE;
 	if (_init_count != 1) goto done;
+	egueb_dom_key_shutdown();
 	egueb_dom_registry_shutdown();
 	_egueb_dom_strings_shutdown();
 	eina_log_domain_unregister(egueb_dom_log_dom_global);
