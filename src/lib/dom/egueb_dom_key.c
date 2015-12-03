@@ -208,6 +208,8 @@ void egueb_dom_key_init(void)
 	_egueb_dom_key_dict_add(_non_printable, "Enter");
 	_egueb_dom_key_dict_add(_non_printable, "Separator");
 	_egueb_dom_key_dict_add(_non_printable, "Tab");
+	/* Editing keys */
+	_egueb_dom_key_dict_add(_non_printable, "BackSpace");
 }
 
 void egueb_dom_key_shutdown(void)
