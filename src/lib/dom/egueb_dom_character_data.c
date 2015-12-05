@@ -125,7 +125,7 @@ EAPI int egueb_dom_character_data_length_get(Egueb_Dom_Node *n)
 	Egueb_Dom_Character_Data *thiz;
 
 	thiz = EGUEB_DOM_CHARACTER_DATA(n);
-	return enesim_text_buffer_string_length(thiz->buffer);
+	return enesim_text_buffer_length_get(thiz->buffer);
 }
 
 /* void               appendData(in DOMString arg)
@@ -154,7 +154,7 @@ EAPI Eina_Bool egueb_dom_character_data_data_append(Egueb_Dom_Node *n,
 	}
 
 	thiz = EGUEB_DOM_CHARACTER_DATA(n);
-	len = enesim_text_buffer_string_length(thiz->buffer);
+	len = enesim_text_buffer_length_get(thiz->buffer);
 	enesim_text_buffer_string_insert(thiz->buffer, str, -1, len);
 	egueb_dom_string_unref(data);
 
