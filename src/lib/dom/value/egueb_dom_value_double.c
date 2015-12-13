@@ -19,6 +19,7 @@
 
 #include "egueb_dom_string.h"
 #include "egueb_dom_main.h"
+#include "egueb_dom_utils.h"
 #include "egueb_dom_value.h"
 #include "egueb_dom_value_double.h"
 
@@ -56,6 +57,11 @@ static char * _double_string_to(const Egueb_Dom_Value *v)
 static Eina_Bool _double_string_from(Egueb_Dom_Value *v, const char *str)
 {
 	EINA_SAFETY_ON_FALSE_RETURN_VAL(v->descriptor == &_descriptor, EINA_FALSE);
+	if (!egueb_dom_double_get (str, NULL, &v->data.d))
+	{
+		ERR("Double '%s' is invalid", str);
+		return EINA_FALSE;
+	}
 	return EINA_TRUE;
 }
 
