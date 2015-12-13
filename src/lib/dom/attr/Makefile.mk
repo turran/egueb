@@ -1,5 +1,6 @@
 dist_installed_domheaders_DATA += \
 src/lib/dom/attr/egueb_dom_attr_boolean.h \
+src/lib/dom/attr/egueb_dom_attr_double.h \
 src/lib/dom/attr/egueb_dom_attr_double_list.h \
 src/lib/dom/attr/egueb_dom_attr_enum.h \
 src/lib/dom/attr/egueb_dom_attr_external.h \
@@ -11,6 +12,7 @@ src_lib_dom_libegueb_dom_la_SOURCES += \
 src/lib/dom/attr/egueb_dom_attr_basic.c \
 src/lib/dom/attr/egueb_dom_attr_basic_private.h \
 src/lib/dom/attr/egueb_dom_attr_boolean.c \
+src/lib/dom/attr/egueb_dom_attr_double.c \
 src/lib/dom/attr/egueb_dom_attr_double_list.c \
 src/lib/dom/attr/egueb_dom_attr_enum.c \
 src/lib/dom/attr/egueb_dom_attr_external.c \
