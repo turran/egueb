@@ -192,6 +192,8 @@ static void _egueb_smil_animation_event_release(Eina_List *events)
 	Egueb_Smil_Animation_Event *ev;
 	EINA_LIST_FREE(events, ev)
 	{
+		if (ev->ref)
+			egueb_dom_node_weak_ref_remove(ev->ref, &ev->ref);
 		egueb_dom_event_target_event_listener_free(ev->l);
 		free(ev);
 	}
