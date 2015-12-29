@@ -43,8 +43,10 @@ Eina_Bool egueb_svg_number_string_from(Egueb_Svg_Number *thiz,
 
 char * egueb_svg_number_string_to(Egueb_Svg_Number thiz)
 {
-	ERR("Not implemented");
-	return NULL;
+	char *ret;
+	if (asprintf(&ret, "%g", thiz) < 0)
+		return NULL;
+	return ret;
 }
 /*============================================================================*
  *                                   API                                      *
