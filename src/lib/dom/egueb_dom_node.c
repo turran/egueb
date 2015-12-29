@@ -356,7 +356,7 @@ static Eina_Bool _egueb_dom_node_dispatch(Egueb_Dom_Event_Target *target,
 	Egueb_Dom_Node *thiz;
 
 	thiz = EGUEB_DOM_NODE(target);
-	if (thiz->freezed)
+	if (thiz->frozen)
 		return EINA_FALSE;
 
 	/* DISPATCH_REQUEST_ERR: Raised if the Event object is already being dispatched in the tree.*/
@@ -1388,22 +1388,22 @@ EAPI Ender_Item * egueb_dom_node_item_get(Egueb_Dom_Node *thiz)
 
 EAPI void egueb_dom_node_freeze(Egueb_Dom_Node *thiz)
 {
-	thiz->freezed++;
+	thiz->frozen++;
 }
 
-EAPI Eina_Bool egueb_dom_node_is_freezed(Egueb_Dom_Node *thiz)
+EAPI Eina_Bool egueb_dom_node_is_frozen(Egueb_Dom_Node *thiz)
 {
-	return !!thiz->freezed;
+	return !!thiz->frozen;
 }
 
 EAPI void egueb_dom_node_thaw(Egueb_Dom_Node *thiz)
 {
-	if (!thiz->freezed)
+	if (!thiz->frozen)
 	{
 		ERR("Node already thawed");
 		return;
 	}
-	thiz->freezed--;
+	thiz->frozen--;
 }
 
 EAPI Eina_Bool egueb_dom_node_feature_add(Egueb_Dom_Node *thiz,

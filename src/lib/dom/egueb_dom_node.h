@@ -144,7 +144,7 @@ EAPI Egueb_Dom_String * egueb_dom_node_namespace_uri_lookup(Egueb_Dom_Node *thiz
 EAPI Egueb_Dom_String * egueb_dom_node_prefix_get(Egueb_Dom_Node *thiz);
 
 EAPI void egueb_dom_node_freeze(Egueb_Dom_Node *thiz);
-EAPI Eina_Bool egueb_dom_node_is_freezed(Egueb_Dom_Node *thiz);
+EAPI Eina_Bool egueb_dom_node_is_frozen(Egueb_Dom_Node *thiz);
 EAPI void egueb_dom_node_thaw(Egueb_Dom_Node *thiz);
 
 EAPI Eina_Bool egueb_dom_node_feature_add(Egueb_Dom_Node *thiz,
