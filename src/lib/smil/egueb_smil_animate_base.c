@@ -234,24 +234,28 @@ static void _egueb_smil_animate_base_interpolator_cb(Egueb_Dom_Value *va, Egueb_
 	/* now that we start, fetch the latest value to add */
 	if (thiz->gadditive == EGUEB_SMIL_ADDITIVE_SUM)
 	{
-		Egueb_Smil_Animation *prev;
 		Eina_Inlist *animations;
 
+		animations = (EINA_INLIST_GET(a))->prev;
 		/* Check that we are not the first animation */
-		animations = egueb_dom_node_user_data_get(a->target, EGUEB_SMIL_ANIMATION_KEY);
-		prev = EINA_INLIST_CONTAINER_GET(animations, Egueb_Smil_Animation);
-		if (prev == a)
+		if (!animations)
 		{
 			INFO("First animation can not be additive, skip the addition");
 			goto interpolate;
 		}
-
+		/* use the previous animation */
 		if (!thiz->add_value)
 		{
+			Egueb_Smil_Animation *prev = NULL;
+
+			prev = EINA_INLIST_CONTAINER_GET(animations, Egueb_Smil_Animation);
+			INFO("Using previous animation last value");
 			add_value = &prev->last_value;
 		}
+		/* ourselves */
 		else
 		{
+			INFO("Using own last value");
 			add_value = thiz->add_value;
 		}
 	}
@@ -259,6 +263,7 @@ static void _egueb_smil_animate_base_interpolator_cb(Egueb_Dom_Value *va, Egueb_
 interpolate:
 	if (!klass->interpolate(thiz, va, vb, m, add_value, NULL, 0))
 	{
+		ERR("Interpolation failed");
 		if (add_value)
 		{
 			egueb_dom_value_reset(add_value);
