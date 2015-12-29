@@ -383,7 +383,7 @@ static void _egueb_smil_animation_cleanup(Egueb_Smil_Animation *thiz)
 	{
 		Eina_Inlist *animations;
 
-		/* Remove the animation to the list of animations on the target */
+		/* Remove the animation from the list of animations on the target */
 		animations = egueb_dom_node_user_data_get(thiz->target, EGUEB_SMIL_ANIMATION_KEY);
 		animations = eina_inlist_remove(animations, EINA_INLIST_GET(thiz));
 		egueb_dom_node_user_data_set(thiz->target, EGUEB_SMIL_ANIMATION_KEY, NULL);
