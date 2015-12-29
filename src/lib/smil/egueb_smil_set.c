@@ -58,6 +58,9 @@ typedef struct _Egueb_Smil_Set_Class
 /*----------------------------------------------------------------------------*
  *                           The signal interface                             *
  *----------------------------------------------------------------------------*/
+/* TODO share this code along egueb_smil_animate_base.c:287
+ * and move it to egueb_smil_animation.c as a global function
+ */
 static void _egueb_smil_set_signal_interpolator_cb(Egueb_Dom_Value *va, Egueb_Dom_Value *vb,
 		double m, void *data)
 {
