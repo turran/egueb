@@ -421,6 +421,7 @@ static void _egueb_dom_node_instance_init(void *o)
 	thiz->ref = 1;
 	thiz->user_data = eina_hash_string_superfast_new(NULL);
 	thiz->features = eina_hash_string_superfast_new(_egueb_dom_node_feature_free);
+	eina_lock_new(&thiz->lock);
 }
 
 static void _egueb_dom_node_instance_deinit(void *o)
@@ -431,6 +432,7 @@ static void _egueb_dom_node_instance_deinit(void *o)
 	eina_hash_free(thiz->user_data);
 	/* and the features */
 	eina_hash_free(thiz->features);
+	eina_lock_free(&thiz->lock);
 }
 
 static void _egueb_dom_node_insert_into_document(Egueb_Dom_Node *thiz,
@@ -1433,6 +1435,24 @@ EAPI Eina_Bool egueb_dom_node_feature_add(Egueb_Dom_Node *thiz,
 		features = eina_list_append(features, f);
 	}
 	return EINA_TRUE;
+}
+
+/**
+ * @brief Locks a node
+ * @param[in] thiz The node to lock
+ */
+EAPI void egueb_dom_node_lock(Egueb_Dom_Node *thiz)
+{
+	eina_lock_take(&thiz->lock);
+}
+
+/**
+ * @brief Unlocks a node
+ * @param[in] thiz The node to unlock
+ */
+EAPI void egueb_dom_node_unlock(Egueb_Dom_Node *thiz)
+{
+	eina_lock_release(&thiz->lock);
 }
 
 #if 0

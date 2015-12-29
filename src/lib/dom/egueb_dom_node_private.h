@@ -63,6 +63,9 @@ struct _Egueb_Dom_Node
 	 */
 	Eina_Bool destroying;
 	void *external_data;
+
+	/* For MT support */
+	Eina_Lock lock;
 };
 
 typedef Eina_Bool (*Egueb_Dom_Node_Child_Appendable)(Egueb_Dom_Node *thiz,

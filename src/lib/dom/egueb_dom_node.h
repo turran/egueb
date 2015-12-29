@@ -100,6 +100,9 @@ EAPI void egueb_dom_node_weak_ref_add(Egueb_Dom_Node *thiz,
 EAPI void egueb_dom_node_weak_ref_remove(Egueb_Dom_Node *thiz,
 		Egueb_Dom_Node **weak_location);
 
+EAPI void egueb_dom_node_lock(Egueb_Dom_Node *thiz);
+EAPI void egueb_dom_node_unlock(Egueb_Dom_Node *thiz);
+
 EAPI Egueb_Dom_String * egueb_dom_node_name_get(Egueb_Dom_Node *thiz);
 EAPI Egueb_Dom_String * egueb_dom_node_value_get(Egueb_Dom_Node *thiz);
 EAPI Egueb_Dom_Node_Type egueb_dom_node_type_get(Egueb_Dom_Node *thiz);
