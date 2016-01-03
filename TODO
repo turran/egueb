@@ -1,5 +1,6 @@
 Refactor
 ========
++ Add way to get stats from an element process function
 + Rename egueb_dom_attr_set to egueb_dom_attr_value_set
 + Rename egueb_dom_attr_value_set to egueb_dom_attr_dom_value_set
 + Change the dasharray attribute to support NONE as part of the type
