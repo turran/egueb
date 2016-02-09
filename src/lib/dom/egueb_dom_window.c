@@ -143,6 +143,8 @@ static void _egueb_dom_window_instance_deinit(void *o)
 	Egueb_Dom_Window *thiz;
 
 	thiz = EGUEB_DOM_WINDOW(o);
+	if (thiz->desc->destroy)
+		thiz->desc->destroy(thiz->data);
 	egueb_dom_node_unref(thiz->doc);
 }
 /*============================================================================*
