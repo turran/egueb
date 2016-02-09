@@ -37,6 +37,7 @@ typedef struct _Egueb_Dom_Document
 	int current_run;
 	Eina_Bool processing;
 	Egueb_Dom_Implementation *i;
+	Eina_Bool in_request_process;
 } Egueb_Dom_Document;
 
 typedef Egueb_Dom_Node * (*Egueb_Dom_Document_Element_Create)(

@@ -259,12 +259,20 @@ static void _egueb_dom_document_node_removed_from_document_cb(
 static void _egueb_dom_document_request_process_cb(
 		Egueb_Dom_Event *ev, void *data)
 {
+	Egueb_Dom_Document *thiz = EGUEB_DOM_DOCUMENT(data);
 	Egueb_Dom_Node *target;
 
 	DBG("Requesting process");
 	target = EGUEB_DOM_NODE(egueb_dom_event_target_get(ev));
+	if (egueb_dom_node_type_get(target) != EGUEB_DOM_NODE_TYPE_ELEMENT)
+	{
+		egueb_dom_node_unref(target);
+		return;
+	}
 	/* Add it to the list in case it is not already there */
+	thiz->in_request_process = EINA_TRUE;
 	egueb_dom_element_enqueue(target);
+	thiz->in_request_process = EINA_FALSE;
 }
 
 /*----------------------------------------------------------------------------*
@@ -437,6 +445,15 @@ void egueb_dom_document_element_enqueue(Egueb_Dom_Node *n,
 	egueb_dom_string_unref(name);
 	thiz->current_enqueued = eina_list_append(thiz->current_enqueued,
 			egueb_dom_node_ref(node));
+	if (!thiz->in_request_process)
+	{
+		Egueb_Dom_Event *ev;
+		Egueb_Dom_Event_Target *evt;
+
+		ev = egueb_dom_event_process_new();
+		evt = EGUEB_DOM_EVENT_TARGET_CAST(n);
+		egueb_dom_event_target_event_dispatch(evt, ev, NULL, NULL);
+	}
 done:
 	egueb_dom_node_unref(node);
 }
