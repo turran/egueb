@@ -28,6 +28,7 @@
 /**
  * @file
  * @ender_group_proto{Egueb_Dom_Event}
+ * @ender_group_proto{Egueb_Dom_Event_Target}
  * @ender_group_proto{Egueb_Dom_Element}
  * @ender_group_proto{Egueb_Dom_Document}
  * @ender_group_proto{Egueb_Dom_Attr}
@@ -72,6 +73,7 @@ typedef enum _Egueb_Dom_Node_Type
 /**
  * @}
  * @defgroup Egueb_Dom_Node Node
+ * @brief Node @ender_inherits{Egueb_Dom_Event_Target}
  * @ingroup Egueb_Dom_Group
  * @{
  */
