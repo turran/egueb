@@ -138,8 +138,8 @@ static Eina_Bool _egueb_smil_animation_event_cb(void *item, void *user_data)
 
 		INFO("Registering event '%s' on element '%s' with offset %"
 				EGUEB_SMIL_CLOCK_FORMAT,
-				egueb_dom_string_string_get(t->event),
-				egueb_dom_string_string_get(t->id),
+				egueb_dom_string_chars_get(t->event),
+				egueb_dom_string_chars_get(t->id),
 				EGUEB_SMIL_CLOCK_ARGS(t->offset));
 
 		if (t->id)
@@ -163,7 +163,7 @@ static Eina_Bool _egueb_smil_animation_event_cb(void *item, void *user_data)
 		if (!ref)
 		{
 			ERR("Impossible to find a target '%s'",
-					egueb_dom_string_string_get(t->id));
+					egueb_dom_string_chars_get(t->id));
 			return EINA_TRUE;
 		}
 
@@ -248,7 +248,7 @@ static void _egueb_smil_animation_end_cb(Egueb_Dom_Event *e,
 	Egueb_Dom_String *name;
 
 	name = egueb_dom_event_type_get(e);
-	INFO("End event '%s' received", egueb_dom_string_string_get(name));
+	INFO("End event '%s' received", egueb_dom_string_chars_get(name));
 	egueb_dom_string_unref(name);
 	_egueb_smil_animation_end(thiz);
 }
@@ -340,7 +340,7 @@ static void _egueb_smil_animation_begin_cb(Egueb_Dom_Event *e,
 
 	/* call the begin interface */
 	name = egueb_dom_event_type_get(e);
-	INFO("Begin event '%s' received", egueb_dom_string_string_get(name));
+	INFO("Begin event '%s' received", egueb_dom_string_chars_get(name));
 	egueb_dom_string_unref(name);
 
 	_egueb_smil_animation_begin(thiz, ev->t->offset);
@@ -437,7 +437,7 @@ static Egueb_Smil_Signal * _egueb_smil_animation_setup(Egueb_Smil_Animation *thi
 	if (!attr)
 	{
 		ERR("No attribute '%s' found",
-				egueb_dom_string_string_get(attribute_name));
+				egueb_dom_string_chars_get(attribute_name));
 		goto done;
 	}
 

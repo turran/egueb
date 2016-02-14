@@ -159,7 +159,7 @@ EAPI void egueb_css_attr_style_process(Egueb_Dom_Node *n)
 		{
 			DBG_ELEMENT(EGUEB_DOM_NODE(owner), "Unapplying the style");
 			egueb_dom_node_freeze(owner);
-			v = egueb_dom_string_string_get(thiz->value);
+			v = egueb_dom_string_chars_get(thiz->value);
 			egueb_css_engine_style_inline_unapply(owner, v);
 			egueb_dom_node_thaw(owner);
 			/* swap */
@@ -171,7 +171,7 @@ EAPI void egueb_css_attr_style_process(Egueb_Dom_Node *n)
 		{
 			DBG_ELEMENT(EGUEB_DOM_NODE(owner), "Applying the style");
 			egueb_dom_node_freeze(owner);
-			v = egueb_dom_string_string_get(thiz->value);
+			v = egueb_dom_string_chars_get(thiz->value);
 			egueb_css_engine_style_inline_apply(owner, v);
 			egueb_dom_node_thaw(owner);
 			/* keep it */

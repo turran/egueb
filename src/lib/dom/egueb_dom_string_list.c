@@ -32,7 +32,7 @@ static void _egueb_dom_string_list_cb(const char *attr, void *data)
 	Egueb_Dom_String *s;
 	Egueb_Dom_List *l = data;
 
-	s = egueb_dom_string_new_with_string(attr);
+	s = egueb_dom_string_new_with_chars(attr);
 	egueb_dom_list_item_append(l, s);
 	return;
 }

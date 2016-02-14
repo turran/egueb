@@ -36,7 +36,7 @@ Eina_Bool egueb_svg_clip_path_string_from(Egueb_Svg_Clip_Path *thiz,
 	else
 	{
 		thiz->type = EGUEB_SVG_CLIP_PATH_TYPE_IRI;
-		thiz->value.iri = egueb_dom_string_new_with_string(str);
+		thiz->value.iri = egueb_dom_string_new_with_chars(str);
 	}
 	return EINA_TRUE;
 }

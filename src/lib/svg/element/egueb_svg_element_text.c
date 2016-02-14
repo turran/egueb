@@ -104,7 +104,7 @@ static Eina_Bool _egueb_svg_element_text_children_process_cb(Egueb_Dom_Node *chi
 		Eina_Bool visibility;
 		Enesim_Renderer *ren;
 
-		private_data = egueb_dom_string_new_with_static_string("_renderer");
+		private_data = egueb_dom_string_new_with_static_chars("_renderer");
 		ren = egueb_dom_node_user_data_get(child, private_data);
 		egueb_dom_string_unref(private_data);
 
@@ -189,7 +189,7 @@ static void _egueb_svg_element_text_node_inserted_cb(Egueb_Dom_Event *e,
 		egueb_dom_character_data_buffer_set(target, nb);
 
 		/* set the private data */
-		private_data = egueb_dom_string_new_with_static_string("_renderer");
+		private_data = egueb_dom_string_new_with_static_chars("_renderer");
 		egueb_dom_node_user_data_set(target, private_data, r);
 		egueb_dom_string_unref(private_data);
 
@@ -234,7 +234,7 @@ static void _egueb_svg_element_text_node_removed_cb(Egueb_Dom_Event *e,
 		thiz = EGUEB_SVG_ELEMENT_TEXT(n);
 
 		/* get the private data */
-		private_data = egueb_dom_string_new_with_static_string("_renderer");
+		private_data = egueb_dom_string_new_with_static_chars("_renderer");
 		r = egueb_dom_node_user_data_get(target, private_data);
 
 		nb = enesim_renderer_text_span_real_buffer_get(r);

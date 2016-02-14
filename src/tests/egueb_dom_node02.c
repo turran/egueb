@@ -38,7 +38,7 @@ int main(int argc, char **argv)
 	 * and check if the cloned element has the same value
 	 */
 	printf("[testing] Modifying the original node\n");
-	myelement_prop1_set(root, egueb_dom_string_new_with_string("modifying"));
+	myelement_prop1_set(root, egueb_dom_string_new_with_chars("modifying"));
 	/* check the new state */
 	printf("[testing] Cloned tree\n");
 	myelement_dump(clone, EINA_TRUE);
@@ -56,7 +56,7 @@ int main(int argc, char **argv)
 
 	printf("[testing] Adding the previois las node before the current last node in the original tree\n");
 	new_node = myelement_new();
-	myelement_prop1_set(new_node, egueb_dom_string_new_with_string("new node"));
+	myelement_prop1_set(new_node, egueb_dom_string_new_with_chars("new node"));
 	egueb_dom_node_insert_before(root, new_node, node, NULL);
 	egueb_dom_node_unref(node);
 	myelement_dump(clone, EINA_TRUE);
@@ -68,7 +68,7 @@ int main(int argc, char **argv)
 
 	/* destroy the root and the document */
 	printf("[testing] Modifying the original node after the clone deletion\n");
-	myelement_prop1_set(root, egueb_dom_string_new_with_string("modifying"));
+	myelement_prop1_set(root, egueb_dom_string_new_with_chars("modifying"));
 
 	egueb_dom_node_unref(root);
 	printf("[testing] Destroy the original tree %d\n", egueb_dom_node_ref_get(root));

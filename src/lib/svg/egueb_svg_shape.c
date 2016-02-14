@@ -140,7 +140,7 @@ static Eina_Bool _egueb_svg_shape_process(Egueb_Svg_Renderable *r)
 		{
 			Egueb_Dom_String *name;
 			name = egueb_dom_node_name_get(EGUEB_DOM_NODE(r));
-			WARN_ELEMENT(EGUEB_DOM_NODE(r), "No document set on %s", egueb_dom_string_string_get(name));
+			WARN_ELEMENT(EGUEB_DOM_NODE(r), "No document set on %s", egueb_dom_string_chars_get(name));
 			egueb_dom_node_unref(relative);
 			return EINA_FALSE;
 		}

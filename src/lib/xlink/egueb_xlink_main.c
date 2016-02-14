@@ -25,8 +25,8 @@ static int _egueb_xlink_init_count = 0;
 
 static void _egueb_xlink_strings_init(void)
 {
-	EGUEB_XLINK_NAME_NS = egueb_dom_string_new_with_string("http://www.w3.org/1999/xlink");
-	EGUEB_XLINK_NAME_HREF = egueb_dom_string_new_with_string("href");
+	EGUEB_XLINK_NAME_NS = egueb_dom_string_new_with_chars("http://www.w3.org/1999/xlink");
+	EGUEB_XLINK_NAME_HREF = egueb_dom_string_new_with_chars("href");
 }
 
 static void _egueb_xlink_strings_shutdown(void)

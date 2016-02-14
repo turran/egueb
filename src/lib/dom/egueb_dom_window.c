@@ -103,7 +103,7 @@ static Eina_Bool _egueb_dom_window_dispatch(Egueb_Dom_Event_Target *target,
 
 	/* finally dispatch */
 	container = eina_hash_find(target->events,
-		egueb_dom_string_string_get(event->type));
+		egueb_dom_string_chars_get(event->type));
 	if (!container || !container->listeners)
 		goto done;
 

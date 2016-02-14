@@ -35,7 +35,7 @@ static Egueb_Dom_String * _myelement_tag_name_get(Egueb_Dom_Element *e)
 	static Egueb_Dom_String *tag_name = NULL;
 	if (!tag_name)
 	{
-		tag_name = egueb_dom_string_new_with_string("myelement");
+		tag_name = egueb_dom_string_new_with_chars("myelement");
 	}
 	return egueb_dom_string_ref(tag_name);
 }
@@ -64,8 +64,8 @@ static void _myelement_instance_init(void *o)
 	printf("[myelement] instance init\n");
 	thiz = MYELEMENT(o);
 	thiz->prop1 = egueb_dom_attr_string_new(
-			egueb_dom_string_new_with_string("prop1"),
-			NULL, egueb_dom_string_new_with_string("default"),
+			egueb_dom_string_new_with_chars("prop1"),
+			NULL, egueb_dom_string_new_with_chars("default"),
 			EINA_FALSE, EINA_FALSE, EINA_FALSE);
 	/* add the class attributes (properties) */
 	egueb_dom_element_attribute_node_set(EGUEB_DOM_NODE(o), egueb_dom_node_ref(thiz->prop1), NULL);
@@ -90,7 +90,7 @@ static char * _myelement_to_string(Egueb_Dom_Node *n)
 	int len;
 
 	name = egueb_dom_element_tag_name_get(n);
-	if (asprintf(&str, "<%s", egueb_dom_string_string_get(name)) < 0)
+	if (asprintf(&str, "<%s", egueb_dom_string_chars_get(name)) < 0)
 		return NULL;
 	/* dump every proeprty */
 	attrs = egueb_dom_node_attributes_get(n);
@@ -117,8 +117,8 @@ static char * _myelement_to_string(Egueb_Dom_Node *n)
 			if (!attr_value) goto no_value;
 
 			if (asprintf(&ret, "%s %s=\"%s\"", str,
-					egueb_dom_string_string_get(attr_name),
-					egueb_dom_string_string_get(attr_value)) < 0)
+					egueb_dom_string_chars_get(attr_name),
+					egueb_dom_string_chars_get(attr_value)) < 0)
 				goto no_conversion;
 
 			free(str);

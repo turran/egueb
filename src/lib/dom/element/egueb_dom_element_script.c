@@ -128,7 +128,7 @@ static void _egueb_dom_element_script_data_cb(Egueb_Dom_Node *n,
 	thiz = EGUEB_DOM_ELEMENT_SCRIPT(n);
 
 	sdata = enesim_stream_mmap(s, &size);
-	data = egueb_dom_string_new_with_static_string(sdata);
+	data = egueb_dom_string_new_with_static_chars(sdata);
 	_egueb_dom_element_script_run(thiz, data);
 	egueb_dom_string_unref(data);
 	enesim_stream_munmap(s, sdata);
@@ -170,7 +170,7 @@ static Eina_Bool _egueb_dom_element_script_process(Egueb_Dom_Element *e)
 
 		INFO("Processing the script");
 		if (!type)
-			final_type = egueb_dom_string_new_with_static_string("application/ecmascript");
+			final_type = egueb_dom_string_new_with_static_chars("application/ecmascript");
 		else
 			final_type = egueb_dom_string_ref(type);
 
@@ -206,7 +206,7 @@ static Eina_Bool _egueb_dom_element_script_process(Egueb_Dom_Element *e)
 					goto failed;
 				}
 
-				INFO("Request a load of '%s'", egueb_dom_string_string_get(src));
+				INFO("Request a load of '%s'", egueb_dom_string_chars_get(src));
 				e = egueb_dom_event_io_data_new(&u, _egueb_dom_element_script_data_cb);
 				egueb_dom_event_target_event_dispatch(
 						EGUEB_DOM_EVENT_TARGET(thiz),

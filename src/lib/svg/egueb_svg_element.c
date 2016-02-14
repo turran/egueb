@@ -78,7 +78,7 @@ static void _egueb_svg_element_event_handler(Egueb_Dom_Event *ev,
 
 	type = egueb_dom_event_type_get(ev);
 	INFO_ELEMENT(EGUEB_DOM_NODE(thiz), "Event '%s' received",
-			egueb_dom_string_string_get(type));
+			egueb_dom_string_chars_get(type));
 	egueb_dom_string_unref(type);
 
 	egueb_dom_attr_final_get(attr, &curr);
@@ -96,7 +96,7 @@ static void _egueb_svg_element_event_handler(Egueb_Dom_Event *ev,
 		Egueb_Dom_String *type;
 
 		/* TODO check the attribute */
-		type = egueb_dom_string_new_with_string("application/ecmascript");
+		type = egueb_dom_string_new_with_chars("application/ecmascript");
 		sev = egueb_dom_event_script_new(type);
 		egueb_dom_event_target_event_dispatch(
 				EGUEB_DOM_EVENT_TARGET_CAST(thiz),
@@ -710,7 +710,7 @@ Enesim_Text_Font * egueb_svg_element_font_resolve(Egueb_Dom_Node *n)
 			family = egueb_css_font_family_new();
 		def_value = calloc(1, sizeof(Egueb_Css_Font_Family_Value));
 		def_value->type = EGUEB_CSS_FONT_FAMILY_TYPE_FAMILY;
-		def_value->family = egueb_dom_string_new_with_string("Sans");
+		def_value->family = egueb_dom_string_new_with_chars("Sans");
 		egueb_dom_list_item_append(family, def_value);
 	}
 
@@ -729,7 +729,7 @@ Enesim_Text_Font * egueb_svg_element_font_resolve(Egueb_Dom_Node *n)
 		switch (value->type)
 		{
 			case EGUEB_CSS_FONT_FAMILY_TYPE_FAMILY:
-			fc_description = egueb_dom_string_string_get(value->family);
+			fc_description = egueb_dom_string_chars_get(value->family);
 			break;
 
 			case EGUEB_CSS_FONT_FAMILY_TYPE_GENERIC_SERIF:
@@ -799,7 +799,7 @@ void egueb_svg_element_clip_path_resolve(Egueb_Dom_Node *n,
 			if (!ref || !egueb_svg_element_is_clip_path(ref))
 			{
 				ERR("Node with iri '%s' not found for the clip path",
-						egueb_dom_string_string_get(
+						egueb_dom_string_chars_get(
 						clip_path_current->value.iri));
 				if (ref) egueb_dom_node_unref(ref);
 			}
@@ -829,7 +829,7 @@ void egueb_svg_element_children_clone(Egueb_Dom_Node *n, Egueb_Dom_Node *from)
 		Egueb_Dom_String *s;
 
 		s = egueb_dom_node_name_get(from_child);
-		DBG_ELEMENT(n, "Cloning child %s", egueb_dom_string_string_get(s));
+		DBG_ELEMENT(n, "Cloning child %s", egueb_dom_string_chars_get(s));
 		egueb_dom_string_unref(s);
 
 		n_child = egueb_dom_node_clone(from_child, EINA_TRUE, EINA_TRUE, NULL);

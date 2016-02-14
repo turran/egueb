@@ -52,7 +52,7 @@ Eina_Bool egueb_svg_paint_string_from(Egueb_Svg_Paint *paint, const char *attr)
 	else
 	{
 		paint->type = EGUEB_SVG_PAINT_TYPE_SERVER;
-		paint->uri = egueb_dom_string_new_with_string(attr);
+		paint->uri = egueb_dom_string_new_with_chars(attr);
 	}
 
 	return EINA_TRUE;
@@ -75,7 +75,7 @@ char * egueb_svg_paint_string_to(Egueb_Svg_Paint *thiz)
 		break;
 
 		case EGUEB_SVG_PAINT_TYPE_SERVER:
-		return strdup(egueb_dom_string_string_get(thiz->uri));
+		return strdup(egueb_dom_string_chars_get(thiz->uri));
 		break;
 
 		default:

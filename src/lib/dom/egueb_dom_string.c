@@ -49,25 +49,25 @@ EAPI Egueb_Dom_String * egueb_dom_string_steal(char *str)
 	Egueb_Dom_String *thiz;
 
 	thiz = egueb_dom_string_new();
-	egueb_dom_string_string_steal(thiz, str);
+	egueb_dom_string_chars_steal(thiz, str);
 	return thiz;
 }
 
-EAPI Egueb_Dom_String * egueb_dom_string_new_with_static_string(const char *str)
+EAPI Egueb_Dom_String * egueb_dom_string_new_with_static_chars(const char *str)
 {
 	Egueb_Dom_String *thiz;
 
 	thiz = egueb_dom_string_new();
-	egueb_dom_string_static_string_set(thiz, str);
+	egueb_dom_string_static_chars_set(thiz, str);
 	return thiz;
 }
 
-EAPI Egueb_Dom_String * egueb_dom_string_new_with_string(const char *str)
+EAPI Egueb_Dom_String * egueb_dom_string_new_with_chars(const char *str)
 {
 	Egueb_Dom_String *thiz;
 
 	thiz = egueb_dom_string_new();
-	egueb_dom_string_string_set(thiz, str);
+	egueb_dom_string_chars_set(thiz, str);
 	return thiz;
 }
 
@@ -106,12 +106,12 @@ EAPI void egueb_dom_string_unref(Egueb_Dom_String *thiz)
 
 /**
  * Get the string associated with a @ref Egueb_Dom_String
- * @ender_prop{string}
+ * @ender_prop{chars}
  * @ender_valueof
  * @param[in] thiz The @ref Egueb_Dom_String to get the string from
  * @return The string associated with the @ref Egueb_Dom_String @ender_transfer{none}
  */
-EAPI const char * egueb_dom_string_string_get(const Egueb_Dom_String *thiz)
+EAPI const char * egueb_dom_string_chars_get(const Egueb_Dom_String *thiz)
 {
 	if (!thiz) return NULL;
 	return thiz->str;
@@ -119,18 +119,18 @@ EAPI const char * egueb_dom_string_string_get(const Egueb_Dom_String *thiz)
 
 /**
  * Set the string associated with a @ref Egueb_Dom_String
- * @ender_prop{string}
+ * @ender_prop{chars}
  * @param[in] thiz The @ref Egueb_Dom_String to get the string from
  * @param[in] str The string to set @ender_transfer{none}
  */
-EAPI void egueb_dom_string_string_set(Egueb_Dom_String *thiz, const char *str)
+EAPI void egueb_dom_string_chars_set(Egueb_Dom_String *thiz, const char *str)
 {
 	_egueb_dom_string_cleanup(thiz);
 	thiz->str = strdup(str);
 	thiz->owned = EINA_TRUE;
 }
 
-EAPI void egueb_dom_string_static_string_set(Egueb_Dom_String *thiz,
+EAPI void egueb_dom_string_static_chars_set(Egueb_Dom_String *thiz,
 		const char *str)
 {
 	_egueb_dom_string_cleanup(thiz);
@@ -138,7 +138,7 @@ EAPI void egueb_dom_string_static_string_set(Egueb_Dom_String *thiz,
 	thiz->owned = EINA_FALSE;
 }
 
-EAPI void egueb_dom_string_string_steal(Egueb_Dom_String *thiz, char *str)
+EAPI void egueb_dom_string_chars_steal(Egueb_Dom_String *thiz, char *str)
 {
 	_egueb_dom_string_cleanup(thiz);
 	thiz->str = str;
@@ -148,7 +148,7 @@ EAPI void egueb_dom_string_string_steal(Egueb_Dom_String *thiz, char *str)
 EAPI Egueb_Dom_String * egueb_dom_string_dup(Egueb_Dom_String *thiz)
 {
 	if (!thiz) return NULL;
-	return egueb_dom_string_new_with_string(thiz->str);
+	return egueb_dom_string_new_with_chars(thiz->str);
 }
 
 EAPI Eina_Bool egueb_dom_string_is_equal(const Egueb_Dom_String *thiz,
@@ -160,8 +160,8 @@ EAPI Eina_Bool egueb_dom_string_is_equal(const Egueb_Dom_String *thiz,
 	if (thiz == other) return EINA_TRUE;
 	if (!thiz || !other) return EINA_FALSE;
 
-	str_thiz = egueb_dom_string_string_get(thiz);
-	str_other = egueb_dom_string_string_get(other);
+	str_thiz = egueb_dom_string_chars_get(thiz);
+	str_other = egueb_dom_string_chars_get(other);
 
 	if (!strcmp(str_thiz, str_other))
 		return EINA_TRUE;

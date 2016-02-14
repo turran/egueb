@@ -163,7 +163,7 @@ static Egueb_Dom_String * _egueb_dom_parser_eina_transform_text(Egueb_Dom_Parser
 
 	if (strbuf)
 	{
-		ret = egueb_dom_string_new_with_string(eina_strbuf_string_steal(strbuf));
+		ret = egueb_dom_string_new_with_chars(eina_strbuf_string_steal(strbuf));
 		eina_strbuf_free(strbuf);
 	}
 	else
@@ -186,7 +186,7 @@ static Eina_Bool _egueb_dom_parser_eina_tag_attributes_set_cb(void *data, const 
 	/* TODO handle the prefix:value and namespace case */
 	/* TODO for xmlns and xml prefix/value use the correct namespace */
 
-	name = egueb_dom_string_new_with_static_string(key);
+	name = egueb_dom_string_new_with_static_chars(key);
 	v = _egueb_dom_parser_eina_transform_text(thiz, value, 0);
 	DBG("Parsed attribute '%s' with value '%s'", key, value);
 	egueb_dom_element_attribute_set(node, name, v, NULL);

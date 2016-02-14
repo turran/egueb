@@ -119,7 +119,7 @@ egueb_dom_event_target_event_listener_add(Egueb_Dom_Event_Target *thiz,
 	Egueb_Dom_Event_Target_Listener_Container *container;
 	const char *str;
 
-	str = egueb_dom_string_string_get(type);
+	str = egueb_dom_string_chars_get(type);
 	container = eina_hash_find(thiz->events, str);
 	if (!container)
 	{
@@ -150,7 +150,7 @@ EAPI void egueb_dom_event_target_event_listener_remove(Egueb_Dom_Event_Target *t
 	Eina_List *l;
 	const char *str;
 
-	str = egueb_dom_string_string_get(type);
+	str = egueb_dom_string_chars_get(type);
 	container = eina_hash_find(thiz->events, str);
 	if (!container || !container->listeners) return;
 

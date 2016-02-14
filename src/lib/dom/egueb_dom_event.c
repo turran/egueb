@@ -76,7 +76,7 @@ static void _egueb_dom_event_instance_deinit(void *o)
 EAPI void egueb_dom_event_stop_propagation(Egueb_Dom_Event *thiz)
 {
 	if (!thiz) return;
-	DBG("Stopping propagation of event '%s'", egueb_dom_string_string_get(thiz->type));
+	DBG("Stopping propagation of event '%s'", egueb_dom_string_chars_get(thiz->type));
 	thiz->stopped = EINA_TRUE;
 }
 

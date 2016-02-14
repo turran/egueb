@@ -20,19 +20,19 @@ void setup(void)
 	egueb_svg_element_svg_width_set_simple(svg, &length);
 	egueb_svg_element_svg_height_set_simple(svg, &length);
 	rect = egueb_svg_element_rect_new();
-	egueb_svg_element_id_set(rect, egueb_dom_string_new_with_string("rect01"));
+	egueb_svg_element_id_set(rect, egueb_dom_string_new_with_chars("rect01"));
 	/* create an animation that will animate the rect x */
 	anim = egueb_smil_animate_new();
 	/* set the href to an nonexistent element */
-	egueb_smil_animation_href_set(anim, egueb_dom_string_new_with_string("rect02"));
+	egueb_smil_animation_href_set(anim, egueb_dom_string_new_with_chars("rect02"));
 	/* default clock of 1s */
 	dur.type = EGUEB_SMIL_DURATION_TYPE_CLOCK;
 	dur.data.clock = EGUEB_SMIL_CLOCK_SECONDS * 1;
-	value = egueb_dom_string_new_with_static_string("x");
+	value = egueb_dom_string_new_with_static_chars("x");
 	egueb_smil_animation_attribute_name_set(anim, value);
-	value = egueb_dom_string_new_with_static_string("10px");
+	value = egueb_dom_string_new_with_static_chars("10px");
 	egueb_smil_animate_base_from_set(anim, value); 
-	value = egueb_dom_string_new_with_static_string("20px");
+	value = egueb_dom_string_new_with_static_chars("20px");
 	egueb_smil_animate_base_to_set(anim, value); 
 	egueb_smil_animation_dur_set(anim, &dur);
 	/* add the animation */
@@ -70,7 +70,7 @@ START_TEST(egueb_test_svg_animation01_change_id)
 	Egueb_Dom_Feature *afeature;
 
 	/* change the href */
-	egueb_smil_animation_href_set(anim, egueb_dom_string_new_with_string("rect01"));
+	egueb_smil_animation_href_set(anim, egueb_dom_string_new_with_chars("rect01"));
 
 	/* process */
 	egueb_dom_document_process(doc);
@@ -93,7 +93,7 @@ START_TEST(egueb_test_svg_animation01_change_target_id)
 	Egueb_Dom_Feature *afeature;
 
 	/* change the href */
-	egueb_svg_element_id_set(rect, egueb_dom_string_new_with_string("rect02"));
+	egueb_svg_element_id_set(rect, egueb_dom_string_new_with_chars("rect02"));
 
 	/* process */
 	egueb_dom_document_process(doc);

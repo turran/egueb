@@ -257,7 +257,7 @@ static void _egueb_dom_element_original_attr_modified_cb(Egueb_Dom_Event *e,
 		case EGUEB_DOM_EVENT_MUTATION_ATTR_TYPE_MODIFICATION:
 		/* FIXME decide what to do when setting an animated value */
 		DBG("Setting attribute '%s' on the cloned element",
-			egueb_dom_string_string_get(s_attr));
+			egueb_dom_string_chars_get(s_attr));
 
 		egueb_dom_value_init(&copy, v->descriptor);
 		egueb_dom_value_copy(v, &copy, EINA_FALSE);
@@ -553,8 +553,8 @@ Egueb_Dom_String * egueb_dom_element_namespace_uri_lookup(Egueb_Dom_Node *n,
 	if (!n)
 		return NULL;
 
-	DBG_ELEMENT(n, "Looking up namespace for '%s'", egueb_dom_string_string_get(prefix));
-	if (prefix && !strcmp(egueb_dom_string_string_get(prefix), "xmlns"))
+	DBG_ELEMENT(n, "Looking up namespace for '%s'", egueb_dom_string_chars_get(prefix));
+	if (prefix && !strcmp(egueb_dom_string_chars_get(prefix), "xmlns"))
 		return egueb_dom_string_ref(EGUEB_DOM_NAME_NS_XMLNS);
 
 	if (n->namespace_uri != NULL && egueb_dom_string_is_equal(n->prefix, prefix))
@@ -696,8 +696,8 @@ EAPI Eina_Bool egueb_dom_element_attribute_ns_set(Egueb_Dom_Node *node,
 	}
 
 	DBG("Setting attribute '%s', ns: '%s'",
-			egueb_dom_string_string_get(local_name),
-			egueb_dom_string_string_get(ns_uri));
+			egueb_dom_string_chars_get(local_name),
+			egueb_dom_string_chars_get(ns_uri));
 	p = egueb_dom_element_attribute_node_ns_get(node, ns_uri, local_name,
 			NULL);
 	if (!p)
@@ -705,10 +705,10 @@ EAPI Eina_Bool egueb_dom_element_attribute_ns_set(Egueb_Dom_Node *node,
 		Egueb_Dom_String *attr_name;
 
 		INFO("Attribute '%s' for ns '%s' not found, creating it",
-				egueb_dom_string_string_get(local_name),
-				egueb_dom_string_string_get(ns_uri));
-		attr_name = egueb_dom_string_new_with_string(
-				egueb_dom_string_string_get(local_name));
+				egueb_dom_string_chars_get(local_name),
+				egueb_dom_string_chars_get(ns_uri));
+		attr_name = egueb_dom_string_new_with_chars(
+				egueb_dom_string_chars_get(local_name));
 		/* create a new string attribute */
 		p = egueb_dom_attr_string_new(attr_name,
 				egueb_dom_string_ref(ns_uri), NULL, EINA_FALSE,
@@ -803,17 +803,17 @@ EAPI Egueb_Dom_Node * egueb_dom_element_attribute_node_ns_get(Egueb_Dom_Node *no
 		Eina_Hash *ns_attrs;
 
 		ns_attrs = eina_hash_find(thiz->attributes_ns,
-				egueb_dom_string_string_get(ns_uri));
+				egueb_dom_string_chars_get(ns_uri));
 		if (ns_attrs)
 		{
 			ret = eina_hash_find(ns_attrs,
-					egueb_dom_string_string_get(local_name));
+					egueb_dom_string_chars_get(local_name));
 		}
 	}
 	/* otherwise from our namespace free attributes */
 	else
 	{
-		ret = eina_hash_find(thiz->attributes, egueb_dom_string_string_get(local_name));
+		ret = eina_hash_find(thiz->attributes, egueb_dom_string_chars_get(local_name));
 	}
 
 	return egueb_dom_node_ref(ret);
@@ -1009,25 +1009,25 @@ EAPI Eina_Bool egueb_dom_element_attribute_node_set(Egueb_Dom_Node *n,
 		if (egueb_dom_string_is_valid(prefix))
 		{
 			DBG("Adding attribute with prefix '%s'",
-					egueb_dom_string_string_get(prefix));
+					egueb_dom_string_chars_get(prefix));
 
 		}
 		else
 		{
 			ERR("No prefix found for ns '%s'",
-					egueb_dom_string_string_get(attr->namespace_uri));
+					egueb_dom_string_chars_get(attr->namespace_uri));
 
 			return EINA_FALSE;
 		}
 
 		hash = eina_hash_find(thiz->attributes_ns,
-				egueb_dom_string_string_get(attr->namespace_uri));
+				egueb_dom_string_chars_get(attr->namespace_uri));
 		if (!hash)
 		{
 			hash = eina_hash_string_superfast_new(EINA_FREE_CB(
 					egueb_dom_node_unref));
 			eina_hash_add(thiz->attributes_ns,
-					egueb_dom_string_string_get(attr->namespace_uri),
+					egueb_dom_string_chars_get(attr->namespace_uri),
 					hash);
 		}
 	}
@@ -1037,22 +1037,22 @@ EAPI Eina_Bool egueb_dom_element_attribute_node_set(Egueb_Dom_Node *n,
 	}
 
 	old_attr = eina_hash_find(thiz->attributes,
-		egueb_dom_string_string_get(a->name));
+		egueb_dom_string_chars_get(a->name));
 	
 	if (old_attr)
 	{
 		WARN("Attribute '%s' already found",
-				egueb_dom_string_string_get(a->name));
+				egueb_dom_string_chars_get(a->name));
 		if (err) *err = EGUEB_DOM_ERROR_INUSE_ATTRIBUTE;
 		egueb_dom_node_unref(attr);
 		return EINA_FALSE;
 	}
-	DBG("Adding attribute '%s'", egueb_dom_string_string_get(a->name));
+	DBG("Adding attribute '%s'", egueb_dom_string_chars_get(a->name));
 	/* set the owner on the attribute */
 	a->owner = n;
 	/* TODO set the local name */
 	/* TODO set the prefix */
-	eina_hash_add(hash, egueb_dom_string_string_get(a->name), attr);
+	eina_hash_add(hash, egueb_dom_string_chars_get(a->name), attr);
 	return EINA_TRUE;
 }
 

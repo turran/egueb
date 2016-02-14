@@ -119,12 +119,12 @@ static void _egueb_svg_renderable_paint_set(Egueb_Dom_Node *n,
 	}
 	else if (current->type == EGUEB_SVG_PAINT_TYPE_SERVER)
 	{
-		DBG("Paint type 'server': '%s'", egueb_dom_string_string_get(current->uri));
+		DBG("Paint type 'server': '%s'", egueb_dom_string_chars_get(current->uri));
 		if (!egueb_svg_paint_is_equal(current, old))
 		{
 			Egueb_Dom_Node *ref = NULL;
 
-			DBG("Trying to use '%s' as paint server", egueb_dom_string_string_get(current->uri));
+			DBG("Trying to use '%s' as paint server", egueb_dom_string_chars_get(current->uri));
 			if (*reference)
 			{
 				/* remove the reference in case it has it */

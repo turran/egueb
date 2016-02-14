@@ -188,14 +188,14 @@ static void _egueb_xlink_attr_href_document_id_inserted_cb(Egueb_Dom_Event *e,
 
 	node = egueb_dom_event_document_related_get(e);
 	/* TODO use a public string EGUEB_[XLINK|DOM]_ID */
-	id_name = egueb_dom_string_new_with_static_string("id");
+	id_name = egueb_dom_string_new_with_static_chars("id");
 	id_attr = egueb_dom_element_attribute_node_get(node, id_name);
 	egueb_dom_attr_final_get(id_attr, &id);
 	if (egueb_dom_string_is_equal(id, thiz->last)) {
 		Egueb_Dom_Attr *attr;
 
 		attr = EGUEB_DOM_ATTR(user_data);
-		DBG("Id inserted %s", egueb_dom_string_string_get(id));
+		DBG("Id inserted %s", egueb_dom_string_chars_get(id));
 		egueb_dom_element_request_process(attr->owner);
 	}
 	egueb_dom_node_unref(id_attr);
@@ -215,13 +215,13 @@ static void _egueb_xlink_attr_href_document_id_removed_cb(Egueb_Dom_Event *e,
 
 	node = egueb_dom_event_document_related_get(e);
 	/* TODO use a public string EGUEB_[XLINK|DOM]_ID */
-	id_name = egueb_dom_string_new_with_static_string("id");
+	id_name = egueb_dom_string_new_with_static_chars("id");
 	id_attr = egueb_dom_element_attribute_node_get(node, id_name);
 	egueb_dom_attr_final_get(id_attr, &id);
 	if (egueb_dom_string_is_equal(id, thiz->last)) {
 		Egueb_Xlink_Attr_Href *thiz = user_data;
 
-		DBG("Id removed %s", egueb_dom_string_string_get(id));
+		DBG("Id removed %s", egueb_dom_string_chars_get(id));
 		_egueb_xlink_attr_href_target_cleanup(thiz);
 		if (thiz->on_target_removed)
 		{
@@ -452,7 +452,7 @@ EAPI Eina_Bool egueb_xlink_attr_href_process(Egueb_Dom_Node *n)
 			goto done;
 		}
 		/* trigger the event to get the data */
-		INFO("Requesting the uri '%s'", egueb_dom_string_string_get(uri.location));
+		INFO("Requesting the uri '%s'", egueb_dom_string_chars_get(uri.location));
 		e = egueb_dom_event_io_data_new(&uri, _egueb_xlink_attr_href_io_data_cb);
 		egueb_dom_event_target_event_dispatch(
 				EGUEB_DOM_EVENT_TARGET(a->owner), e, NULL,
@@ -484,7 +484,7 @@ EAPI Eina_Bool egueb_xlink_attr_href_process(Egueb_Dom_Node *n)
 		/* 2. The attribute is set but no element is found -> return TRUE with no node */
 		if (!target)
 		{
-			DBG("Target '%s' not found", egueb_dom_string_string_get(str));
+			DBG("Target '%s' not found", egueb_dom_string_chars_get(str));
 			/* We need to know whenever an element is inserted into
 			 * the document with a specific id, register an event
 			 * handler on the document itself. If it is found enqueue
@@ -499,7 +499,7 @@ EAPI Eina_Bool egueb_xlink_attr_href_process(Egueb_Dom_Node *n)
 		/* 3. The attribute is set and the element is found -> return TRUE with node */
 		else
 		{
-			DBG("Target '%s' found", egueb_dom_string_string_get(str));
+			DBG("Target '%s' found", egueb_dom_string_chars_get(str));
 			_egueb_xlink_attr_href_target_setup(thiz, target);
 			egueb_dom_event_target_event_listener_add(
 					EGUEB_DOM_EVENT_TARGET_CAST(doc),

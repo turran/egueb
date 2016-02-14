@@ -235,7 +235,7 @@ static Eina_Bool _egueb_svg_element_image_uri_load(Egueb_Svg_Element_Image *thiz
 		return EINA_FALSE;
 	}
 
-	str = egueb_dom_string_string_get(uri);
+	str = egueb_dom_string_chars_get(uri);
 	/* check if the data is inlined, if so, just let the document
 	 * load it
 	 */

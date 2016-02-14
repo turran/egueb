@@ -128,7 +128,7 @@ static Eina_Bool _element_matches(Egueb_Css_Engine_State_Selector *ss, Egueb_Dom
 		const char *str;
 
 		name = egueb_dom_node_name_get(n);
-		str = egueb_dom_string_string_get(name);
+		str = egueb_dom_string_chars_get(name);
 		if (!strcmp(str, s->subject))
 			ret = EINA_TRUE;
 		egueb_dom_string_unref(name);

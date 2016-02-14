@@ -24,7 +24,7 @@ int main(int argc, char **argv)
 	/* process the document */
 	egueb_dom_document_process(mydocument);
 	/* now set some variable and do the process again */
-	myelement_prop1_set(el2, egueb_dom_string_new_with_string("var1"));
+	myelement_prop1_set(el2, egueb_dom_string_new_with_chars("var1"));
 	egueb_dom_document_process(mydocument);
 
 	/* destroy the whole document */

@@ -92,7 +92,7 @@ Eina_Bool egueb_css_font_family_value_string_from(
 		}
 		else
 		{
-			thiz->family = egueb_dom_string_new_with_string(tmp);
+			thiz->family = egueb_dom_string_new_with_chars(tmp);
 		}
 		thiz->type = EGUEB_CSS_FONT_FAMILY_TYPE_FAMILY;
 	}

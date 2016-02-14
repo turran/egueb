@@ -63,10 +63,10 @@ static void _egueb_svg_element_a_renderable_click_cb(Egueb_Dom_Event *e,
 	Egueb_Dom_Event *ev;
 	Egueb_Dom_Uri uri;
 
-	DBG("Requesting a new uri '%s'", egueb_dom_string_string_get(thiz->gxlink_href));
+	DBG("Requesting a new uri '%s'", egueb_dom_string_chars_get(thiz->gxlink_href));
 	if (!egueb_dom_uri_string_from(&uri, thiz->gxlink_href))
 	{
-		ERR("Invalid URI '%s'", egueb_dom_string_string_get(thiz->gxlink_href));
+		ERR("Invalid URI '%s'", egueb_dom_string_chars_get(thiz->gxlink_href));
 		return;
 	}
 	ev = egueb_dom_event_navigation_go_to_new(&uri);

@@ -147,8 +147,8 @@ static Eina_Bool _egueb_svg_element_tspan_pen_get(Egueb_Dom_Node *n,
 		name = egueb_dom_element_name_get(n);
 		tname = egueb_dom_element_tag_name_get(n);
 		WARN("Relative element '%s' is not a text, is a '%s'",
-				egueb_dom_string_string_get(name),
-				egueb_dom_string_string_get(tname));
+				egueb_dom_string_chars_get(name),
+				egueb_dom_string_chars_get(tname));
 		egueb_dom_string_unref(name);
 		egueb_dom_string_unref(tname);
 

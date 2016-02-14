@@ -66,7 +66,7 @@ static void _egueb_dom_document_insert_id(Egueb_Dom_Document *thiz, Egueb_Dom_No
 		Egueb_Dom_Event *ev;
 		const char *str;
 
-		str = egueb_dom_string_string_get(id);
+		str = egueb_dom_string_chars_get(id);
 		old = eina_hash_find(thiz->ids, str);
 		if (old)
 		{
@@ -118,7 +118,7 @@ static void _egueb_dom_document_attr_modified_cb(Egueb_Dom_Event *ev,
 	/* check if the attribute is the id */
 	egueb_dom_event_mutation_attr_name_get(ev, &attr_name);
 	if (egueb_dom_string_is_valid(attr_name) &&
-			(!strcmp(egueb_dom_string_string_get(attr_name), "id")))
+			(!strcmp(egueb_dom_string_chars_get(attr_name), "id")))
 	{
 		Egueb_Dom_String *attr_val = NULL;
 
@@ -155,7 +155,7 @@ static void _egueb_dom_document_node_inserted_cb(Egueb_Dom_Event *ev,
 	}
 
 	name = egueb_dom_node_name_get(target);
-	DBG("Node '%s' inserted", egueb_dom_string_string_get(name));
+	DBG("Node '%s' inserted", egueb_dom_string_chars_get(name));
 	egueb_dom_string_unref(name);
 
 	if (!egueb_dom_event_mutation_is_process_prevented(ev))
@@ -186,7 +186,7 @@ static void _egueb_dom_document_node_removed_cb(Egueb_Dom_Event *ev,
 	}
 
 	name = egueb_dom_node_name_get(target);
-	DBG("Node '%s' removed", egueb_dom_string_string_get(name));
+	DBG("Node '%s' removed", egueb_dom_string_chars_get(name));
 	egueb_dom_string_unref(name);
 
 	/* remove the element from the queue */
@@ -205,7 +205,7 @@ static void _egueb_dom_document_node_insterted_into_document_cb(
 
 	target = EGUEB_DOM_NODE(egueb_dom_event_target_get(ev));
 	name = egueb_dom_node_name_get(target);
-	INFO("Node '%s' inserted into the document", egueb_dom_string_string_get(name));
+	INFO("Node '%s' inserted into the document", egueb_dom_string_chars_get(name));
 	egueb_dom_string_unref(name);
 
 	type = egueb_dom_node_type_get(target);
@@ -233,7 +233,7 @@ static void _egueb_dom_document_node_removed_from_document_cb(
 
 	target = EGUEB_DOM_NODE(egueb_dom_event_target_get(ev));
 	name = egueb_dom_node_name_get(target);
-	INFO("Node '%s' removed from the document", egueb_dom_string_string_get(name));
+	INFO("Node '%s' removed from the document", egueb_dom_string_chars_get(name));
 	egueb_dom_string_unref(name);
 
 	type = egueb_dom_node_type_get(target);
@@ -249,7 +249,7 @@ static void _egueb_dom_document_node_removed_from_document_cb(
 	{
 		INFO("Removing id '%s' from the list of ids", id->str);
 		eina_hash_del(thiz->ids,
-				egueb_dom_string_string_get(id),
+				egueb_dom_string_chars_get(id),
 				target);
 	}
 	egueb_dom_string_unref(id);
@@ -408,7 +408,7 @@ static void _egueb_dom_document_instance_deinit(void *o)
 		Egueb_Dom_String *name;
 
 		name = egueb_dom_node_name_get(n);
-		DBG("Removing the enqueued node '%s'", egueb_dom_string_string_get(name));
+		DBG("Removing the enqueued node '%s'", egueb_dom_string_chars_get(name));
 		egueb_dom_string_unref(name);
 		egueb_dom_node_unref(n);
 	}
@@ -441,7 +441,7 @@ void egueb_dom_document_element_enqueue(Egueb_Dom_Node *n,
 	thiz = EGUEB_DOM_DOCUMENT(n);
 	name = egueb_dom_node_name_get(node);
 	INFO("Node '%s' added to the list of damaged nodes",
-			egueb_dom_string_string_get(name));
+			egueb_dom_string_chars_get(name));
 	egueb_dom_string_unref(name);
 	thiz->current_enqueued = eina_list_append(thiz->current_enqueued,
 			egueb_dom_node_ref(node));
@@ -479,7 +479,7 @@ void egueb_dom_document_element_dequeue(Egueb_Dom_Node *n,
 		thiz->current_enqueued, l);
 	name = egueb_dom_node_name_get(node);
 	INFO("Node '%s' removed from the list of damaged nodes",
-			egueb_dom_string_string_get(name));
+			egueb_dom_string_chars_get(name));
 	egueb_dom_string_unref(name);
 	egueb_dom_node_unref(node);
 done:
@@ -506,13 +506,13 @@ EAPI Egueb_Dom_Node * egueb_dom_document_element_ns_create(Egueb_Dom_Node *n,
 	Egueb_Dom_String *local_name = NULL;
 
 	DBG("Creating ns element, ns_uri: '%s' qname: '%s'",
-			egueb_dom_string_string_get(ns_uri),
-			egueb_dom_string_string_get(qname));
+			egueb_dom_string_chars_get(ns_uri),
+			egueb_dom_string_chars_get(qname));
 	/* split the prefix:local_name from the qualified name */
 	if (!egueb_dom_qualified_name_resolve(qname, &prefix, &local_name))
 	{
 		ERR("Bad formed qualified name '%s'",
-				egueb_dom_string_string_get(qname));
+				egueb_dom_string_chars_get(qname));
 		if (err)
 			*err = EGUEB_DOM_ERROR_NAMESPACE;
 		return NULL;
@@ -523,8 +523,8 @@ EAPI Egueb_Dom_Node * egueb_dom_document_element_ns_create(Egueb_Dom_Node *n,
 			egueb_dom_string_is_valid(prefix))
 	{
 		ERR("Prefix '%s' without a namespace on '%s'",
-				egueb_dom_string_string_get(prefix),
-				egueb_dom_string_string_get(qname));
+				egueb_dom_string_chars_get(prefix),
+				egueb_dom_string_chars_get(qname));
 		if (err)
 			*err = EGUEB_DOM_ERROR_NAMESPACE;
 		return NULL;
@@ -536,8 +536,8 @@ EAPI Egueb_Dom_Node * egueb_dom_document_element_ns_create(Egueb_Dom_Node *n,
 
 	if (klass->element_create)
 		new_element = klass->element_create(thiz,
-				egueb_dom_string_string_get(ns_uri),
-				egueb_dom_string_string_get(local_name));
+				egueb_dom_string_chars_get(ns_uri),
+				egueb_dom_string_chars_get(local_name));
 	if (new_element)
 	{
 		egueb_dom_node_document_set(new_element, n, EINA_FALSE);
@@ -661,13 +661,13 @@ EAPI Egueb_Dom_Node * egueb_dom_document_element_get_by_iri(Egueb_Dom_Node *n,
 		return NULL;
 
 	/* resolve the uri for relative/absolute */
-	DBG("Looking for %s", egueb_dom_string_string_get(iri));
+	DBG("Looking for %s", egueb_dom_string_chars_get(iri));
 	if (!egueb_dom_uri_iri_from(&uri, iri))
 		return NULL;
 	/* get the element by iri, only local ones for now */
 	if (uri.location || !uri.fragment)
 	{
-		ERR("Unsupported iri '%s'", egueb_dom_string_string_get(iri));
+		ERR("Unsupported iri '%s'", egueb_dom_string_chars_get(iri));
 		egueb_dom_uri_cleanup(&uri);
 		return NULL;
 	}

@@ -66,7 +66,7 @@ static Egueb_Dom_String * _egueb_dom_node_ns_prefix_lookup(Egueb_Dom_Node *thiz,
 	Egueb_Dom_String *ret;
 
 	if (ns_uri && egueb_dom_string_is_equal(ns_uri, EGUEB_DOM_NAME_NS_XMLNS))
-		return egueb_dom_string_new_with_string("xmlns");
+		return egueb_dom_string_new_with_chars("xmlns");
 
 	if (thiz->namespace_uri && egueb_dom_string_is_equal(thiz->namespace_uri, ns_uri) &&
 			thiz->prefix)
@@ -143,7 +143,7 @@ static void _egueb_dom_node_event_dispatch(Egueb_Dom_Node *thiz,
 
 	target = EGUEB_DOM_EVENT_TARGET(thiz);
 	container = eina_hash_find(target->events,
-		egueb_dom_string_string_get(evt->type));
+		egueb_dom_string_chars_get(evt->type));
 	if (!container || !container->listeners)
 		goto monitors;
 
@@ -204,7 +204,7 @@ static void _egueb_dom_node_event_capture(Egueb_Dom_Node *thiz,
 		_egueb_dom_node_event_dispatch(thiz, evt);
 		return;
 	}
-	DBG("Event '%s' stopped", egueb_dom_string_string_get(evt->type));
+	DBG("Event '%s' stopped", egueb_dom_string_chars_get(evt->type));
 }
 
 static void _egueb_dom_node_event_bubble(Egueb_Dom_Node *thiz,
@@ -215,7 +215,7 @@ static void _egueb_dom_node_event_bubble(Egueb_Dom_Node *thiz,
 	_egueb_dom_node_event_dispatch(thiz, evt);
 	if (evt->stopped)
 	{
-		DBG("Event '%s' stopped", egueb_dom_string_string_get(evt->type));
+		DBG("Event '%s' stopped", egueb_dom_string_chars_get(evt->type));
 		return;
 	}
 	parent = egueb_dom_node_parent_get(thiz);
@@ -236,7 +236,7 @@ static void _egueb_dom_node_event_start_capturing(Egueb_Dom_Node *thiz,
 
 	if (evt->stopped)
 	{
-		DBG("Event '%s' stopped", egueb_dom_string_string_get(evt->type));
+		DBG("Event '%s' stopped", egueb_dom_string_chars_get(evt->type));
 		return;
 	}
 
@@ -259,7 +259,7 @@ static void _egueb_dom_node_event_start_bubbling(Egueb_Dom_Node *thiz,
 
 	if (evt->stopped)
 	{
-		DBG("Event '%s' stopped", egueb_dom_string_string_get(evt->type));
+		DBG("Event '%s' stopped", egueb_dom_string_chars_get(evt->type));
 		return;
 	}
 	parent = egueb_dom_node_parent_get(thiz);
@@ -276,11 +276,11 @@ static void _egueb_dom_node_event_start_at_target(Egueb_Dom_Node *thiz,
 {
 	if (evt->stopped)
 	{
-		DBG("Event '%s' stopped", egueb_dom_string_string_get(evt->type));
+		DBG("Event '%s' stopped", egueb_dom_string_chars_get(evt->type));
 		return;
 	}
 	DBG("Dispatching event '%s' at target",
-			egueb_dom_string_string_get(evt->type));
+			egueb_dom_string_chars_get(evt->type));
 	evt->phase = EGUEB_DOM_EVENT_PHASE_AT_TARGET;
 	_egueb_dom_node_event_dispatch(thiz, evt);
 }
@@ -496,7 +496,7 @@ static void _egueb_dom_node_free(Egueb_Dom_Node *thiz)
 	Egueb_Dom_Event *event;
 
 	name = egueb_dom_node_name_get(thiz);
-	DBG("Destroying node '%s'", egueb_dom_string_string_get(name));
+	DBG("Destroying node '%s'", egueb_dom_string_chars_get(name));
 	egueb_dom_string_unref(name);
 
 	thiz->destroying = EINA_TRUE;
@@ -711,23 +711,23 @@ EAPI Egueb_Dom_String * egueb_dom_node_name_get(Egueb_Dom_Node *thiz)
 		break;
 
 		case EGUEB_DOM_NODE_TYPE_TEXT:
-		return egueb_dom_string_new_with_string("#text");
+		return egueb_dom_string_new_with_chars("#text");
 		break;
 
 		case EGUEB_DOM_NODE_TYPE_CDATA_SECTION:
-		return egueb_dom_string_new_with_string("#cdata-section");
+		return egueb_dom_string_new_with_chars("#cdata-section");
 		break;
 
 		case EGUEB_DOM_NODE_TYPE_COMMENT:
-		return egueb_dom_string_new_with_string("#comment");
+		return egueb_dom_string_new_with_chars("#comment");
 		break;
 
 		case EGUEB_DOM_NODE_TYPE_DOCUMENT:
-		return egueb_dom_string_new_with_string("#document");
+		return egueb_dom_string_new_with_chars("#document");
 		break;
 
 		case EGUEB_DOM_NODE_TYPE_DOCUMENT_FRAGMENT:
-		return egueb_dom_string_new_with_string("#document-fragment");
+		return egueb_dom_string_new_with_chars("#document-fragment");
 		break;
 
 		case EGUEB_DOM_NODE_TYPE_ATTRIBUTE:
@@ -1120,7 +1120,7 @@ EAPI void egueb_dom_node_user_data_set(Egueb_Dom_Node *thiz,
 	const char *str;
 
 	if (!key) return;
-	str = egueb_dom_string_string_get(key);
+	str = egueb_dom_string_chars_get(key);
 	if (!str) return;
 	if (!data)
 		eina_hash_del_by_key(thiz->user_data, str);
@@ -1137,7 +1137,7 @@ EAPI void * egueb_dom_node_user_data_get(Egueb_Dom_Node *thiz,
 	const char *str;
 
 	if (!key) return NULL;
-	str = egueb_dom_string_string_get(key);
+	str = egueb_dom_string_chars_get(key);
 	return eina_hash_find(thiz->user_data, str);
 }
 
@@ -1152,7 +1152,7 @@ EAPI Eina_Bool egueb_dom_node_is_supported(Egueb_Dom_Node *thiz,
 	const char *str;
 
 	if (!name) return EINA_FALSE;
-	str = egueb_dom_string_string_get(name);
+	str = egueb_dom_string_chars_get(name);
 
 	features = eina_hash_find(thiz->features, str);
 	if (!features) return EINA_FALSE;
@@ -1171,7 +1171,7 @@ EAPI Egueb_Dom_Feature * egueb_dom_node_feature_get(Egueb_Dom_Node *thiz,
 	const char *str;
 
 	if (!name) return NULL;
-	str = egueb_dom_string_string_get(name);
+	str = egueb_dom_string_chars_get(name);
 
 	features = eina_hash_find(thiz->features, str);
 	if (!features) return NULL;
@@ -1417,7 +1417,7 @@ EAPI Eina_Bool egueb_dom_node_feature_add(Egueb_Dom_Node *thiz,
 	const char *str;
 
 	if (!name) return EINA_FALSE;
-	str = egueb_dom_string_string_get(name);
+	str = egueb_dom_string_chars_get(name);
 
 	f = calloc(1, sizeof(Egueb_Dom_Node_Feature));
 	if (version)

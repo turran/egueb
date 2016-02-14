@@ -240,7 +240,7 @@ EAPI Eina_Bool egueb_dom_qualified_name_resolve(Egueb_Dom_String *qname,
 	if (!egueb_dom_string_is_valid(qname))
 		return EINA_FALSE;
 	
-	s = start = egueb_dom_string_string_get(qname);
+	s = start = egueb_dom_string_chars_get(qname);
 	while (*s)
 	{
 		if (*s == ':')
@@ -249,7 +249,7 @@ EAPI Eina_Bool egueb_dom_qualified_name_resolve(Egueb_Dom_String *qname,
 
 			len = s - start;
 			*prefix = egueb_dom_string_new_with_length(start, len);
-			*local_name = egueb_dom_string_new_with_string(s + 1);
+			*local_name = egueb_dom_string_new_with_chars(s + 1);
 			found = EINA_TRUE;
 			break;
 		}

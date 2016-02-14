@@ -134,7 +134,7 @@ static Egueb_Smil_Signal * _egueb_smil_set_setup(Egueb_Smil_Animation *a,
 	egueb_dom_value_init(&thiz->to_value, a->d);
 	if (!egueb_dom_value_string_from(&thiz->to_value, to))
 	{
-		ERR("No valid 'set' value '%s'", egueb_dom_string_string_get(to));
+		ERR("No valid 'set' value '%s'", egueb_dom_string_chars_get(to));
 		egueb_dom_string_unref(to);
 		return NULL;
 	}

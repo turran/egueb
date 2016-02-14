@@ -116,7 +116,7 @@ EAPI Egueb_Dom_String * egueb_dom_character_data_data_get(Egueb_Dom_Node *n)
 
 	thiz = EGUEB_DOM_CHARACTER_DATA(n);
 	content = enesim_text_buffer_string_get(thiz->buffer);
-	return egueb_dom_string_new_with_static_string(content);
+	return egueb_dom_string_new_with_static_chars(content);
 }
 
 /* readonly attribute unsigned long    length; */
@@ -145,7 +145,7 @@ EAPI Eina_Bool egueb_dom_character_data_data_append(Egueb_Dom_Node *n,
 		return EINA_FALSE;
 	}
 
-	str = egueb_dom_string_string_get(data);
+	str = egueb_dom_string_chars_get(data);
 	if (!str)
 	{
 		if (err) *err = EGUEB_DOM_ERROR_NOT_FOUND;

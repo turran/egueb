@@ -77,7 +77,7 @@ static Eina_Bool _egueb_css_element_style_apply(Egueb_Dom_Node *n,
 
 		DBG_ELEMENT (n, "Unapplying style element");
 		s = egueb_css_engine_style_load_from_content(
-				egueb_dom_string_string_get(thiz->last_data),
+				egueb_dom_string_chars_get(thiz->last_data),
 				thiz->last_length);
 		egueb_css_engine_style_unapply(s, topmost);
 		egueb_css_engine_style_free(s);
@@ -94,7 +94,7 @@ static Eina_Bool _egueb_css_element_style_apply(Egueb_Dom_Node *n,
 		str = egueb_dom_character_data_data_get(data);
 		length = egueb_dom_character_data_length_get(data);
 		s = egueb_css_engine_style_load_from_content(
-				egueb_dom_string_string_get(str), length);
+				egueb_dom_string_chars_get(str), length);
 		egueb_css_engine_style_apply(s, topmost);
 		egueb_css_engine_style_free(s);
 

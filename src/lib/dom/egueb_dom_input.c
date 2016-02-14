@@ -96,7 +96,7 @@ static void _egueb_dom_input_key_modifier_set(Egueb_Dom_String *key,
 {
 	const char *s;
 
-	s = egueb_dom_string_string_get(key);
+	s = egueb_dom_string_chars_get(key);
 	if (!strcmp(s, "Control"))
 	{
 		*ctrl_key = EINA_TRUE;
@@ -117,7 +117,7 @@ static void _egueb_dom_input_key_modifier_unset(Egueb_Dom_String *key,
 {
 	const char *s;
 
-	s = egueb_dom_string_string_get(key);
+	s = egueb_dom_string_chars_get(key);
 	if (!strcmp(s, "Control"))
 	{
 		*ctrl_key = EINA_FALSE;
@@ -348,7 +348,7 @@ EAPI void egueb_dom_input_feed_key_down(Egueb_Dom_Input *thiz,
 
 	if (!key && !code) return;
 
-	s = egueb_dom_string_string_get(key);
+	s = egueb_dom_string_chars_get(key);
 	/* check if we need to navigate */
 	if (!strcmp(s, "Tab"))
 	{
@@ -408,7 +408,7 @@ EAPI void egueb_dom_input_feed_key_up(Egueb_Dom_Input *thiz,
 
 	if (!key && !code) return;
 
-	s = egueb_dom_string_string_get(key);
+	s = egueb_dom_string_chars_get(key);
 	if (!strcmp(s, "Tab"))
 	{
 		egueb_dom_string_unref(key);

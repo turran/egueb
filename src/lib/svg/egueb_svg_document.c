@@ -691,7 +691,7 @@ EAPI Egueb_Dom_String * egueb_svg_document_url_get(Egueb_Dom_Node *n)
 	/* check if it is relative or absolute */
 	if (!strncmp(filename, "http://", 7) || strncmp(filename, "/", 1))
 	{
-		return egueb_dom_string_new_with_string(filename);
+		return egueb_dom_string_new_with_chars(filename);
 	}
 	/* in case of relative check if we have a location */	
 	if (!thiz->location_get)
@@ -768,7 +768,7 @@ EAPI Egueb_Dom_Node * egueb_svg_document_iri_clone(Egueb_Dom_Node *n,
 	ref = egueb_dom_document_element_get_by_iri(n, iri, err);
 	if (!ref) return NULL;
 
-	DBG("'%s' found, cloning it", egueb_dom_string_string_get(iri));
+	DBG("'%s' found, cloning it", egueb_dom_string_chars_get(iri));
 	/* clone the returned element */
 	cloned = egueb_dom_node_clone(ref, EINA_FALSE, EINA_TRUE, err);
 	egueb_dom_node_unref(ref);

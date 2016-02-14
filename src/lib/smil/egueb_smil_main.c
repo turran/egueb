@@ -26,26 +26,26 @@ static int _init_count = 0;
 /* our helpful strings */
 static void _egueb_smil_strings_init(void)
 {
-	EGUEB_SMIL_NAME_SET = egueb_dom_string_new_with_string("set");
-	EGUEB_SMIL_NAME_ANIMATE = egueb_dom_string_new_with_string("animate");
+	EGUEB_SMIL_NAME_SET = egueb_dom_string_new_with_chars("set");
+	EGUEB_SMIL_NAME_ANIMATE = egueb_dom_string_new_with_chars("animate");
 
-	EGUEB_SMIL_ADDITIVE = egueb_dom_string_new_with_string("additive");
-	EGUEB_SMIL_NAME_ACCUMULATE = egueb_dom_string_new_with_string("accumulate");
-	EGUEB_SMIL_ATTRIBUTE_NAME = egueb_dom_string_new_with_string("attributeName");
-	EGUEB_SMIL_BEGIN = egueb_dom_string_new_with_string("begin");
-	EGUEB_SMIL_DUR = egueb_dom_string_new_with_string("dur");
-	EGUEB_SMIL_END = egueb_dom_string_new_with_string("end");
-	EGUEB_SMIL_FILL = egueb_dom_string_new_with_string("fill");
-	EGUEB_SMIL_TO = egueb_dom_string_new_with_string("to");
-	EGUEB_SMIL_FROM = egueb_dom_string_new_with_string("from");
-	EGUEB_SMIL_BY = egueb_dom_string_new_with_string("by");
-	EGUEB_SMIL_VALUES = egueb_dom_string_new_with_string("values");
-	EGUEB_SMIL_REPEAT_COUNT = egueb_dom_string_new_with_string("repeatCount");
-	EGUEB_SMIL_NAME_REPEAT_DUR = egueb_dom_string_new_with_string("repeatDur");
-	EGUEB_SMIL_NAME_RESTART = egueb_dom_string_new_with_string("restart");
-	EGUEB_SMIL_NAME_CALC_MODE = egueb_dom_string_new_with_string("calcMode");
-	EGUEB_SMIL_NAME_KEY_TIMES = egueb_dom_string_new_with_string("keyTimes");
-	EGUEB_SMIL_NAME_KEY_SPLINES = egueb_dom_string_new_with_string("keySplines");
+	EGUEB_SMIL_ADDITIVE = egueb_dom_string_new_with_chars("additive");
+	EGUEB_SMIL_NAME_ACCUMULATE = egueb_dom_string_new_with_chars("accumulate");
+	EGUEB_SMIL_ATTRIBUTE_NAME = egueb_dom_string_new_with_chars("attributeName");
+	EGUEB_SMIL_BEGIN = egueb_dom_string_new_with_chars("begin");
+	EGUEB_SMIL_DUR = egueb_dom_string_new_with_chars("dur");
+	EGUEB_SMIL_END = egueb_dom_string_new_with_chars("end");
+	EGUEB_SMIL_FILL = egueb_dom_string_new_with_chars("fill");
+	EGUEB_SMIL_TO = egueb_dom_string_new_with_chars("to");
+	EGUEB_SMIL_FROM = egueb_dom_string_new_with_chars("from");
+	EGUEB_SMIL_BY = egueb_dom_string_new_with_chars("by");
+	EGUEB_SMIL_VALUES = egueb_dom_string_new_with_chars("values");
+	EGUEB_SMIL_REPEAT_COUNT = egueb_dom_string_new_with_chars("repeatCount");
+	EGUEB_SMIL_NAME_REPEAT_DUR = egueb_dom_string_new_with_chars("repeatDur");
+	EGUEB_SMIL_NAME_RESTART = egueb_dom_string_new_with_chars("restart");
+	EGUEB_SMIL_NAME_CALC_MODE = egueb_dom_string_new_with_chars("calcMode");
+	EGUEB_SMIL_NAME_KEY_TIMES = egueb_dom_string_new_with_chars("keyTimes");
+	EGUEB_SMIL_NAME_KEY_SPLINES = egueb_dom_string_new_with_chars("keySplines");
 }
 
 static void _egueb_smil_strings_shutdown(void)

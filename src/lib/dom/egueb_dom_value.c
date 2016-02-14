@@ -88,7 +88,7 @@ EAPI Eina_Bool egueb_dom_value_string_from(Egueb_Dom_Value *thiz, Egueb_Dom_Stri
 	const char *value;
 
 	if (!str) return EINA_FALSE;
-	value = egueb_dom_string_string_get(str);
+	value = egueb_dom_string_chars_get(str);
 	if (!value) return EINA_FALSE;
 
 	if (thiz->descriptor && thiz->descriptor->string_from)

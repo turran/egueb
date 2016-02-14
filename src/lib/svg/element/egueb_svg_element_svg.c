@@ -373,7 +373,7 @@ static Egueb_Dom_Node * _egueb_svg_element_svg_input_element_at_recursive(
 			name = egueb_dom_node_name_get(n);
 			DBG("Element '%s' found with bounds %"
 					EINA_RECTANGLE_FORMAT,
-					egueb_dom_string_string_get(name),
+					egueb_dom_string_chars_get(name),
 					EINA_RECTANGLE_ARGS(&bounds));
 			egueb_dom_string_unref(name);
 			ret = egueb_dom_node_ref(n);
@@ -686,9 +686,9 @@ static Eina_Bool _egueb_svg_element_svg_process(Egueb_Svg_Renderable *r)
 
 		ERR_ELEMENT(EGUEB_DOM_NODE(r), "Invalid size, width: %s %g -> %g, "
 				"height: %s %g -> %g",
-				egueb_dom_string_string_get(sw),
+				egueb_dom_string_chars_get(sw),
 				relative_width, gw,
-				egueb_dom_string_string_get(sh),
+				egueb_dom_string_chars_get(sh),
 				relative_height, gh);
 		egueb_dom_string_unref(sw);
 		egueb_dom_string_unref(sh);

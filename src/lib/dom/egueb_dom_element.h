@@ -45,7 +45,7 @@
 			s = egueb_dom_element_name_get(n);			\
 			eina_log_print(DOM, LEVEL, __FILE__, __FUNCTION__,	\
 					 __LINE__, "<%s> " fmt,			\
-					egueb_dom_string_string_get(s), 	\
+					egueb_dom_string_chars_get(s), 	\
 					## __VA_ARGS__);			\
 			egueb_dom_string_unref(s);				\
 		}								\
@@ -56,7 +56,7 @@
 		Egueb_Dom_String *s;						\
 		s = egueb_dom_element_name_get(n);				\
 		eina_log_print(DOM, LEVEL, __FILE__, __FUNCTION__, __LINE__,	\
-				"<%s> " fmt, egueb_dom_string_string_get(s),	\
+				"<%s> " fmt, egueb_dom_string_chars_get(s),	\
 				## __VA_ARGS__);				\
 		egueb_dom_string_unref(s);					\
 	} while (0)

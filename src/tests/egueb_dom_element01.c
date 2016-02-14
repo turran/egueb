@@ -10,7 +10,7 @@ static void _mutation_attr_modified_cb(Egueb_Dom_Event *ev, void *data)
 	egueb_dom_event_mutation_value_new_string_get(ev, &new_value);
 	phase = egueb_dom_event_phase_get(ev);
 	printf("[testing] mutation event attr modified received %d\n", phase);
-	printf("[testing] new value %s\n", egueb_dom_string_string_get(new_value));
+	printf("[testing] new value %s\n", egueb_dom_string_chars_get(new_value));
 }
 
 static void _mutation_node_removed_cb(Egueb_Dom_Event *ev, void *data)
@@ -114,21 +114,21 @@ int main(void)
 	printf("[testing] elements created el1: %p el2: %p el3: %p\n", el1, el2, el3);
 
 	/* test the property set/get */
-	name = egueb_dom_string_new_with_string("prop1");
-	value_set = egueb_dom_string_new_with_string("value");
+	name = egueb_dom_string_new_with_chars("prop1");
+	value_set = egueb_dom_string_new_with_chars("value");
 	egueb_dom_element_attribute_set(el1, name, value_set, NULL);
 	value_get = egueb_dom_element_attribute_get(el1, name);
-	printf("[testing] getting 'prop1' = '%s'\n", egueb_dom_string_string_get(value_get));
+	printf("[testing] getting 'prop1' = '%s'\n", egueb_dom_string_chars_get(value_get));
 	egueb_dom_string_unref(value_set);
 	egueb_dom_string_unref(value_get);
 	egueb_dom_string_unref(name);
 
 	/* test the generic property set/get */
-	name = egueb_dom_string_new_with_string("attribute");
-	value_set = egueb_dom_string_new_with_string("value");
+	name = egueb_dom_string_new_with_chars("attribute");
+	value_set = egueb_dom_string_new_with_chars("value");
 	egueb_dom_element_attribute_set(el1, name, value_set, NULL);
 	value_get = egueb_dom_element_attribute_get(el1, name);
-	printf("[testing] getting 'attribute' = '%s'\n", egueb_dom_string_string_get(value_get));
+	printf("[testing] getting 'attribute' = '%s'\n", egueb_dom_string_chars_get(value_get));
 	egueb_dom_string_unref(value_set);
 	egueb_dom_string_unref(value_get);
 	egueb_dom_string_unref(name);

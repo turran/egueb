@@ -32,12 +32,12 @@ static Eina_Bool _deinitializing;
 static void _egueb_dom_strings_init(void)
 {
 	/* TODO fix this */
-	EGUEB_DOM_NAME_NS_XMLNS = egueb_dom_string_new_with_string("http://www.w3.org/1999/xlink");
-	EGUEB_DOM_NAME_XMLNS = egueb_dom_string_new_with_string("xmlns");
-	EGUEB_DOM_NAME_XLINK_HREF = egueb_dom_string_new_with_string("href");
-	EGUEB_DOM_NAME_SCRIPT = egueb_dom_string_new_with_string("script");
-	EGUEB_DOM_NAME_TYPE = egueb_dom_string_new_with_string("type");
-	EGUEB_DOM_NAME_SRC = egueb_dom_string_new_with_string("src");
+	EGUEB_DOM_NAME_NS_XMLNS = egueb_dom_string_new_with_chars("http://www.w3.org/1999/xlink");
+	EGUEB_DOM_NAME_XMLNS = egueb_dom_string_new_with_chars("xmlns");
+	EGUEB_DOM_NAME_XLINK_HREF = egueb_dom_string_new_with_chars("href");
+	EGUEB_DOM_NAME_SCRIPT = egueb_dom_string_new_with_chars("script");
+	EGUEB_DOM_NAME_TYPE = egueb_dom_string_new_with_chars("type");
+	EGUEB_DOM_NAME_SRC = egueb_dom_string_new_with_chars("src");
 }
 
 static void _egueb_dom_strings_shutdown(void)

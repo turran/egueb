@@ -58,7 +58,7 @@ static void _egueb_dom_feature_io_data_load(Egueb_Dom_String *location,
 {
 	const char *filename;
 
-	filename = egueb_dom_string_string_get(location);
+	filename = egueb_dom_string_chars_get(location);
 	/* check the scheme */
 	if (!strncmp(filename, "file://", 7))
 	{
@@ -109,12 +109,12 @@ static void _egueb_dom_feature_io_relative_data_cb(Egueb_Dom_Uri *uri,
 		goto beach;
 	}
 
-	s_location =  strdup(egueb_dom_string_string_get(location));
+	s_location =  strdup(egueb_dom_string_chars_get(location));
 	egueb_dom_string_unref(location);
 
 	dir = dirname(s_location);
 	ret = asprintf(&filename, "%s/%s", dir,
-			egueb_dom_string_string_get(uri->location));
+			egueb_dom_string_chars_get(uri->location));
 
 	free(s_location);
 	if (ret < 0)
@@ -136,7 +136,7 @@ static void _egueb_dom_feature_io_data_cb(Egueb_Dom_Event *ev, void *data)
 	if (uri.fragment != NULL)
 		goto has_fragment;
 
-	DBG("Data requested '%s' (%d)", egueb_dom_string_string_get(
+	DBG("Data requested '%s' (%d)", egueb_dom_string_chars_get(
 			uri.location), uri.type);
 	if (uri.type == EGUEB_DOM_URI_TYPE_ABSOLUTE)
 	{

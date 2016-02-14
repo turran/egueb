@@ -62,8 +62,8 @@ int main(void)
 	/* the other tree */
 	egueb_dom_node_child_append(el3, el4, NULL);
 	/* set a property */
-	name = egueb_dom_string_new_with_string("prop1");
-	value_set = egueb_dom_string_new_with_string("value");
+	name = egueb_dom_string_new_with_chars("prop1");
+	value_set = egueb_dom_string_new_with_chars("value");
 	egueb_dom_element_attribute_set(el4, name, value_set, NULL);
 
 	return 0;

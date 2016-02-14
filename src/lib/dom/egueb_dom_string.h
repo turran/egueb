@@ -33,20 +33,20 @@
 typedef struct _Egueb_Dom_String Egueb_Dom_String;
 
 EAPI Egueb_Dom_String * egueb_dom_string_new(void);
-EAPI Egueb_Dom_String * egueb_dom_string_new_with_string(const char *str);
+EAPI Egueb_Dom_String * egueb_dom_string_new_with_chars(const char *str);
 EAPI Egueb_Dom_String * egueb_dom_string_new_with_length(const char *str, int len);
-EAPI Egueb_Dom_String * egueb_dom_string_new_with_static_string(const char *str);
+EAPI Egueb_Dom_String * egueb_dom_string_new_with_static_chars(const char *str);
 EAPI Egueb_Dom_String * egueb_dom_string_steal(char *str);
 EAPI Egueb_Dom_String * egueb_dom_string_dup(Egueb_Dom_String *thiz);
 
 EAPI Egueb_Dom_String * egueb_dom_string_ref(Egueb_Dom_String *thiz);
 EAPI void egueb_dom_string_unref(Egueb_Dom_String *thiz);
 
-EAPI const char * egueb_dom_string_string_get(const Egueb_Dom_String *thiz);
-EAPI void egueb_dom_string_string_set(Egueb_Dom_String *thiz, const char *str);
-EAPI void egueb_dom_string_static_string_set(Egueb_Dom_String *thiz,
+EAPI const char * egueb_dom_string_chars_get(const Egueb_Dom_String *thiz);
+EAPI void egueb_dom_string_chars_set(Egueb_Dom_String *thiz, const char *str);
+EAPI void egueb_dom_string_static_chars_set(Egueb_Dom_String *thiz,
 		const char *str);
-EAPI void egueb_dom_string_string_steal(Egueb_Dom_String *thiz, char *str);
+EAPI void egueb_dom_string_chars_steal(Egueb_Dom_String *thiz, char *str);
 
 EAPI Eina_Bool egueb_dom_string_is_equal(const Egueb_Dom_String *thiz,
 		const Egueb_Dom_String *other);

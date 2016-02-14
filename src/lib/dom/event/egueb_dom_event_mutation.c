@@ -319,9 +319,9 @@ EAPI Eina_Bool egueb_dom_event_mutation_is_attr_modified(
 {
 	const char *s_str;
 
-	s_str = egueb_dom_string_string_get(str);
+	s_str = egueb_dom_string_chars_get(str);
 	if (str == EGUEB_DOM_EVENT_MUTATION_ATTR_MODIFIED ||
-			!strcmp(s_str, egueb_dom_string_string_get(
+			!strcmp(s_str, egueb_dom_string_chars_get(
 			EGUEB_DOM_EVENT_MUTATION_ATTR_MODIFIED)))
 		return EINA_TRUE;
 	else

@@ -245,5 +245,5 @@ EAPI Eina_Bool egueb_dom_key_is_printable(Egueb_Dom_String *s)
 		return EINA_FALSE;
 	/* check if the string exists on the non_printable tree */
 	return !_egueb_dom_key_dict_exists(_non_printable,
-			egueb_dom_string_string_get(s));
+			egueb_dom_string_chars_get(s));
 }

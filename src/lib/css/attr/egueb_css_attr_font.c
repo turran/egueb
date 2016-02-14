@@ -115,7 +115,7 @@ EAPI Enesim_Text_Font * egueb_css_attr_font_resolve(Egueb_Dom_Node *attr,
 		switch (value->type)
 		{
 			case EGUEB_CSS_FONT_FAMILY_TYPE_FAMILY:
-			family = egueb_dom_string_string_get(value->family);
+			family = egueb_dom_string_chars_get(value->family);
 			break;
 
 			case EGUEB_CSS_FONT_FAMILY_TYPE_GENERIC_SERIF:

@@ -57,7 +57,7 @@ EAPI Eina_Bool egueb_dom_uri_string_from(Egueb_Dom_Uri *thiz, Egueb_Dom_String *
 	const char *s_s;
 	const char *fragment;
 
-	s_s = egueb_dom_string_string_get(s);
+	s_s = egueb_dom_string_chars_get(s);
 	EGUEB_DOM_SPACE_SKIP(s_s);
 
 	fragment = _fragment_get(s_s);
@@ -69,7 +69,7 @@ EAPI Eina_Bool egueb_dom_uri_string_from(Egueb_Dom_Uri *thiz, Egueb_Dom_String *
 		DBG("Getting URI fragment %s", fragment);
 		thiz->type = EGUEB_DOM_URI_TYPE_RELATIVE;
 		thiz->location = NULL;
-		thiz->fragment = egueb_dom_string_new_with_string(fragment);
+		thiz->fragment = egueb_dom_string_new_with_chars(fragment);
 	}
 	else
 	{
@@ -83,11 +83,11 @@ EAPI Eina_Bool egueb_dom_uri_string_from(Egueb_Dom_Uri *thiz, Egueb_Dom_String *
 			if (fragment)
 			{
 				thiz->location = egueb_dom_string_new_with_length(s_s, fragment - s_s - 1);
-				thiz->fragment = egueb_dom_string_new_with_string(fragment);
+				thiz->fragment = egueb_dom_string_new_with_chars(fragment);
 			}
 			else
 			{
-				thiz->location = egueb_dom_string_new_with_string(s_s);
+				thiz->location = egueb_dom_string_new_with_chars(s_s);
 				thiz->fragment = NULL;
 			}
 		}
@@ -97,11 +97,11 @@ EAPI Eina_Bool egueb_dom_uri_string_from(Egueb_Dom_Uri *thiz, Egueb_Dom_String *
 			if (fragment)
 			{
 				thiz->location = egueb_dom_string_new_with_length(s_s, fragment - s_s - 1);
-				thiz->fragment = egueb_dom_string_new_with_string(fragment);
+				thiz->fragment = egueb_dom_string_new_with_chars(fragment);
 			}
 			else
 			{
-				thiz->location = egueb_dom_string_new_with_string(s_s);
+				thiz->location = egueb_dom_string_new_with_chars(s_s);
 				thiz->fragment = NULL;
 			}
 		}
@@ -115,7 +115,7 @@ EAPI Eina_Bool egueb_dom_uri_iri_from(Egueb_Dom_Uri *thiz, Egueb_Dom_String *iri
 	Eina_Bool ret;
 	const char *s_iri;
 
-	s_iri = egueb_dom_string_string_get(iri);
+	s_iri = egueb_dom_string_chars_get(iri);
 	EGUEB_DOM_SPACE_SKIP(s_iri);
 
 	/* funciri ? */
@@ -161,10 +161,10 @@ EAPI Eina_Bool egueb_dom_uri_resolve(Egueb_Dom_Uri *thiz,
 		return EINA_TRUE;
 	}
 
-	s_location = strdup(egueb_dom_string_string_get(base));
+	s_location = strdup(egueb_dom_string_chars_get(base));
 	dir = dirname(s_location);
 	ret = asprintf(&filename, "%s/%s", dir,
-			egueb_dom_string_string_get(thiz->location));
+			egueb_dom_string_chars_get(thiz->location));
 
 	free(s_location);
 	if (ret >= 0)

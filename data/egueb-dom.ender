@@ -5,14 +5,14 @@
   <includes name="ender"/>
   <object name="egueb.dom.string">
     <ctor name="new"/>
-    <ctor name="new_with_string">
+    <ctor name="new_with_chars">
       <arg name="str" type="string" direction="in" transfer="none"/>
     </ctor>
     <ctor name="new_with_length">
       <arg name="str" type="string" direction="in" transfer="none"/>
       <arg name="len" type="int32" direction="in" transfer="full"/>
     </ctor>
-    <ctor name="new_with_static_string">
+    <ctor name="new_with_static_chars">
       <arg name="str" type="string" direction="in" transfer="none"/>
     </ctor>
     <function name="steal">
@@ -26,10 +26,10 @@
       <return type="egueb.dom.string" transfer="full" nullable="false"/>
     </ref>
     <unref name="unref"/>
-    <method name="static_string_set">
+    <method name="static_chars_set">
       <arg name="str" type="string" direction="in" transfer="none"/>
     </method>
-    <method name="string_steal">
+    <method name="chars_steal">
       <arg name="str" type="string" direction="in" transfer="full"/>
     </method>
     <method name="is_equal">
@@ -39,7 +39,7 @@
     <method name="is_valid">
       <return type="bool" transfer="full" nullable="false"/>
     </method>
-    <prop name="string" value-of="true">
+    <prop name="chars" value-of="true">
       <getter>
         <return type="string" transfer="none" nullable="false"/>
       </getter>

@@ -113,7 +113,7 @@ EAPI Eina_Bool egueb_dom_parser_parse(Enesim_Stream *s, Egueb_Dom_Node **doc)
 			ERR("No document provided and no mime found");
 			goto no_parse;
 		}
-		mime_s = egueb_dom_string_new_with_static_string(mime);
+		mime_s = egueb_dom_string_new_with_static_chars(mime);
 		i = egueb_dom_registry_implementation_get_by_mime(mime_s);
 		egueb_dom_string_unref(mime_s);
 
@@ -135,7 +135,7 @@ EAPI Eina_Bool egueb_dom_parser_parse(Enesim_Stream *s, Egueb_Dom_Node **doc)
 	if (uri)
 	{
 		Egueb_Dom_String *suri;
-		suri = egueb_dom_string_new_with_string(uri);
+		suri = egueb_dom_string_new_with_chars(uri);
 		egueb_dom_document_uri_set(*doc, suri);
 	}
 
