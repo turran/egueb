@@ -23,6 +23,7 @@
 
 /**
  * @file
+ * @ender_group_proto{Egueb_Dom_Event_Target}
  * @ender_group{Egueb_Dom_Event_Phase}
  * @ender_group{Egueb_Dom_Event_Direction}
  * @ender_group{Egueb_Dom_Event}
