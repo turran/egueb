@@ -97,6 +97,7 @@
     <unref name="unref"/>
   </object>
   <object name="egueb.dom.event"/>
+  <object name="egueb.dom.event.target"/>
   <object name="egueb.dom.element" inherits="egueb.dom.node"/>
   <object name="egueb.dom.document" inherits="egueb.dom.node"/>
   <object name="egueb.dom.attr" inherits="egueb.dom.node"/>
@@ -147,6 +148,8 @@
     <method name="weak_ref_remove">
       <arg name="weak_location" type="egueb.dom.node" direction="in" transfer="full"/>
     </method>
+    <method name="lock"/>
+    <method name="unlock"/>
     <method name="name_get">
       <return type="egueb.dom.string" transfer="full" nullable="false"/>
     </method>
@@ -239,7 +242,7 @@
       <return type="egueb.dom.string" transfer="full" nullable="false"/>
     </method>
     <method name="freeze"/>
-    <method name="is_freezed">
+    <method name="is_frozen">
       <return type="bool" transfer="full" nullable="false"/>
     </method>
     <method name="thaw"/>
@@ -349,6 +352,7 @@
       <arg name="prop_mask" type="int32" direction="in" transfer="full"/>
       <arg name="" type="..." direction="in" transfer="full"/>
     </method>
+    <method name="process"/>
     <method name="inheritable_process">
       <arg name="rel" type="egueb.dom.node" direction="in" transfer="full"/>
     </method>
@@ -600,6 +604,70 @@
   <object name="egueb.dom.cdata.section" inherits="egueb.dom.character.data">
     <ctor name="new"/>
   </object>
+  <object name="egueb.dom.event.target"/>
+  <callback name="egueb.dom.window.timeout.cb"/>
+  <struct name="egueb.dom.window.descriptor">
+    <field name="version" type="int32"/>
+    <field name="destroy" type="egueb.dom.window.descriptor.destroy.cb"/>
+    <field name="outer_width_get" type="egueb.dom.window.descriptor.size.get.cb"/>
+    <field name="outer_height_get" type="egueb.dom.window.descriptor.size.get.cb"/>
+    <field name="inner_width_get" type="egueb.dom.window.descriptor.size.get.cb"/>
+    <field name="inner_height_get" type="egueb.dom.window.descriptor.size.get.cb"/>
+    <field name="timeout_set" type="egueb.dom.window.descriptor.timeout.set.cb"/>
+    <field name="timeout_clear" type="egueb.dom.window.descriptor.timeout.clear.cb"/>
+  </struct>
+  <callback name="egueb.dom.window.descriptor.destroy.cb"/>
+  <callback name="egueb.dom.window.descriptor.timeout.set.cb">
+    <return type="pointer" transfer="full" nullable="false"/>
+  </callback>
+  <callback name="egueb.dom.window.descriptor.timeout.clear.cb"/>
+  <callback name="egueb.dom.window.descriptor.size.get.cb">
+    <return type="int32" transfer="full" nullable="false"/>
+  </callback>
+  <object name="egueb.dom.window" inherits="egueb.dom.event.target">
+    <function name="descriptor_get">
+      <return type="enesim.object.descriptor" transfer="full" nullable="false"/>
+    </function>
+    <ctor name="new">
+      <arg name="desc" type="egueb.dom.window.descriptor" direction="in" transfer="none"/>
+      <arg name="doc" type="egueb.dom.node" direction="in" transfer="full"/>
+      <arg name="data" type="pointer" direction="in" transfer="full"/>
+    </ctor>
+    <ref name="ref">
+      <return type="egueb.dom.window" transfer="full" nullable="false"/>
+    </ref>
+    <unref name="unref"/>
+    <method name="data_get">
+      <return type="pointer" transfer="full" nullable="false"/>
+    </method>
+    <method name="document_get">
+      <return type="egueb.dom.node" transfer="full" nullable="false"/>
+    </method>
+    <method name="timeout_set">
+      <return type="pointer" transfer="full" nullable="false"/>
+      <arg name="cb" type="egueb.dom.window.timeout.cb" direction="in" transfer="full"/>
+      <arg name="delay" type="int64.t" direction="in" transfer="full"/>
+      <arg name="user_data" type="pointer" direction="in" transfer="full"/>
+    </method>
+    <method name="timeout_clear">
+      <arg name="timeout" type="pointer" direction="in" transfer="full"/>
+    </method>
+    <method name="outter_width_get">
+      <return type="int32" transfer="full" nullable="false"/>
+    </method>
+    <method name="outter_height_get">
+      <return type="int32" transfer="full" nullable="false"/>
+    </method>
+    <method name="inner_width_get">
+      <return type="int32" transfer="full" nullable="false"/>
+    </method>
+    <method name="inner_height_get">
+      <return type="int32" transfer="full" nullable="false"/>
+    </method>
+    <method name="resize_notify"/>
+    <method name="close_notify"/>
+  </object>
+  <object name="egueb.dom.event.target"/>
   <enum name="egueb.dom.event.phase">
     <value name="capturing"/>
     <value name="at_target"/>
@@ -743,12 +811,6 @@
   <constant name="egueb.dom.event.window.close" type="egueb.dom.string"/>
   <constant name="egueb.dom.event.key.down" type="egueb.dom.string"/>
   <constant name="egueb.dom.event.key.up" type="egueb.dom.string"/>
-  <enum name="egueb.dom.key.location">
-    <value name="standard"/>
-    <value name="left"/>
-    <value name="right"/>
-    <value name="numpad"/>
-  </enum>
   <object name="egueb.dom.event.mouse" inherits="egueb.dom.event">
     <prop name="client_x">
       <getter>
@@ -1002,8 +1064,7 @@
   </callback>
   <object name="egueb.dom.feature.ui" inherits="egueb.dom.feature">
     <method name="input_get">
-      <return type="bool" transfer="full" nullable="false"/>
-      <arg name="i" type="egueb.dom.input" direction="in" transfer="full"/>
+      <return type="egueb.dom.input" transfer="full" nullable="false"/>
     </method>
     <function name="add">
       <return type="bool" transfer="full" nullable="false"/>
@@ -1011,40 +1072,39 @@
       <arg name="d" type="egueb.dom.feature.ui.descriptor" direction="in" transfer="none"/>
     </function>
   </object>
+  <struct name="egueb.dom.feature.window.hint.data">
+    <field name="min_width" type="int32"/>
+    <field name="min_height" type="int32"/>
+    <field name="max_width" type="int32"/>
+    <field name="max_height" type="int32"/>
+    <field name="pref_width" type="int32"/>
+    <field name="pref_height" type="int32"/>
+  </struct>
   <struct name="egueb.dom.feature.window.descriptor">
     <field name="version" type="int32"/>
-    <field name="type_get" type="egueb.dom.feature.window.descriptor.type_get_cb"/>
-    <field name="content_size_set" type="egueb.dom.feature.window.descriptor.size_set_cb"/>
-    <field name="content_size_get" type="egueb.dom.feature.window.descriptor.size_get_cb"/>
+    <field name="hints_get" type="egueb.dom.feature.window.descriptor.hints_get_cb"/>
+    <field name="size_set" type="egueb.dom.feature.window.descriptor.size_set_cb"/>
   </struct>
   <constant name="egueb.dom.feature.window.name" type="egueb.dom.string"/>
-  <enum name="egueb.dom.feature.window.type">
-    <value name="master"/>
-    <value name="slave"/>
+  <enum name="egueb.dom.feature.window.hint">
+    <value name="min_max" initializer="1"/>
+    <value name="preferred" initializer="2"/>
   </enum>
-  <callback name="egueb.dom.feature.window.descriptor.type_get_cb">
-    <return type="bool" transfer="full" nullable="false"/>
+  <callback name="egueb.dom.feature.window.descriptor.hints_get_cb">
+    <return type="int32" transfer="full" nullable="false"/>
   </callback>
   <callback name="egueb.dom.feature.window.descriptor.size_set_cb">
     <return type="bool" transfer="full" nullable="false"/>
   </callback>
-  <callback name="egueb.dom.feature.window.descriptor.size_get_cb">
-    <return type="bool" transfer="full" nullable="false"/>
-  </callback>
   <object name="egueb.dom.feature.window" inherits="egueb.dom.feature">
-    <method name="type_get">
-      <return type="bool" transfer="full" nullable="false"/>
-      <arg name="type" type="egueb.dom.feature.window.type" direction="out" transfer="full"/>
+    <method name="hints_get">
+      <return type="int32" transfer="full" nullable="false"/>
+      <arg name="data" type="egueb.dom.feature.window.hint.data" direction="out" transfer="full"/>
     </method>
-    <method name="content_size_set">
+    <method name="size_set">
       <return type="bool" transfer="full" nullable="false"/>
       <arg name="w" type="int32" direction="in" transfer="full"/>
       <arg name="h" type="int32" direction="in" transfer="full"/>
-    </method>
-    <method name="content_size_get">
-      <return type="bool" transfer="full" nullable="false"/>
-      <arg name="w" type="int32" direction="out" transfer="full"/>
-      <arg name="h" type="int32" direction="out" transfer="full"/>
     </method>
     <function name="add">
       <return type="bool" transfer="full" nullable="false"/>
