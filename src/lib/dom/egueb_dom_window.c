@@ -187,6 +187,10 @@ EAPI void egueb_dom_window_unref(Egueb_Dom_Window *thiz)
 	} 
 }
 
+/**
+ * @brief Gets the descriptor data
+ * @param[in] thiz The window to get the descriptor data from
+ */
 EAPI void * egueb_dom_window_data_get(Egueb_Dom_Window *thiz)
 {
 	EINA_SAFETY_ON_NULL_RETURN_VAL(thiz, NULL);
@@ -200,7 +204,7 @@ EAPI Egueb_Dom_Node * egueb_dom_window_document_get(Egueb_Dom_Window *thiz)
 }
 
 EAPI void * egueb_dom_window_timeout_set(Egueb_Dom_Window *thiz,
-		Egueb_Dom_Window_Descriptor_Timeout_Cb cb,
+		Egueb_Dom_Window_Timeout_Cb cb,
 		int64_t delay, void *user_data)
 {
 	EINA_SAFETY_ON_NULL_RETURN_VAL(thiz, NULL);

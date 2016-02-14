@@ -20,13 +20,27 @@
 #define _EGUEB_DOM_WINDOW_H_
 
 /**
- * @defgroup Egueb_Dom_Window Window
- * @ingroup Egueb_Dom_Group
+ * @file
+ * @ender_group_proto{Egueb_Dom_Event_Target}
+ * @ender_group{Egueb_Dom_Window_Definitions}
+ * @ender_group{Egueb_Dom_Window_Descriptor}
+ * @ender_group{Egueb_Dom_Window_Descriptor_Definition}
+ * @ender_group{Egueb_Dom_Window}
+ */
+
+/**
+ * @defgroup Egueb_Dom_Window_Definitions Definitions
+ * @ingroup Egueb_Dom_Window
  * @{
  */
 
+/**
+ * The window handle
+ */
 typedef struct _Egueb_Dom_Window Egueb_Dom_Window;
 
+typedef void (*Egueb_Dom_Window_Timeout_Cb)(Egueb_Dom_Window *thiz,
+		void *user_data);
 /**
  * @}
  * @defgroup Egueb_Dom_Window_Descriptor_Definition Window Descriptor Definition
@@ -34,32 +48,12 @@ typedef struct _Egueb_Dom_Window Egueb_Dom_Window;
  * @{
  */
 
-typedef void (*Egueb_Dom_Window_Descriptor_Destroy)(void *data);
-
-typedef void (*Egueb_Dom_Window_Descriptor_Timeout_Cb)(Egueb_Dom_Window *thiz,
-		void *user_data);
-typedef void * (*Egueb_Dom_Window_Descriptor_Timeout_Set)(void *data,
-		Egueb_Dom_Window_Descriptor_Timeout_Cb cb,
+typedef void (*Egueb_Dom_Window_Descriptor_Destroy_Cb)(void *data);
+typedef void * (*Egueb_Dom_Window_Descriptor_Timeout_Set_Cb)(void *data,
+		Egueb_Dom_Window_Timeout_Cb cb,
 		int64_t delay, void *user_data);
-typedef void (*Egueb_Dom_Window_Descriptor_Timeout_Clear)(void *data, void *timeout);
-typedef int (*Egueb_Dom_Window_Size_Get)(void *data);
-
-#define EGUEB_DOM_WINDOW_DESCRIPTOR_VERSION 0
-typedef struct _Egueb_Dom_Window_Descriptor
-{
-	int version;
-	Egueb_Dom_Window_Descriptor_Destroy destroy;
-	/* size */
-	Egueb_Dom_Window_Size_Get outer_width_get;
-	Egueb_Dom_Window_Size_Get outer_height_get;
-	Egueb_Dom_Window_Size_Get inner_width_get;
-	Egueb_Dom_Window_Size_Get inner_height_get;
-	/* one-shot timer */
-	Egueb_Dom_Window_Descriptor_Timeout_Set timeout_set;
-	Egueb_Dom_Window_Descriptor_Timeout_Clear timeout_clear;
-	/* repeating timer */
-} Egueb_Dom_Window_Descriptor;
-
+typedef void (*Egueb_Dom_Window_Descriptor_Timeout_Clear_Cb)(void *data, void *timeout);
+typedef int (*Egueb_Dom_Window_Descriptor_Size_Get_Cb)(void *data);
 
 /**
  * @}
@@ -68,21 +62,47 @@ typedef struct _Egueb_Dom_Window_Descriptor
  * @{
  */
 
+#define EGUEB_DOM_WINDOW_DESCRIPTOR_VERSION 0
+
+typedef struct _Egueb_Dom_Window_Descriptor
+{
+	int version;
+	Egueb_Dom_Window_Descriptor_Destroy_Cb destroy;
+	/* size */
+	Egueb_Dom_Window_Descriptor_Size_Get_Cb outer_width_get;
+	Egueb_Dom_Window_Descriptor_Size_Get_Cb outer_height_get;
+	Egueb_Dom_Window_Descriptor_Size_Get_Cb inner_width_get;
+	Egueb_Dom_Window_Descriptor_Size_Get_Cb inner_height_get;
+	/* one-shot timer */
+	Egueb_Dom_Window_Descriptor_Timeout_Set_Cb timeout_set;
+	Egueb_Dom_Window_Descriptor_Timeout_Clear_Cb timeout_clear;
+	/* repeating timer */
+} Egueb_Dom_Window_Descriptor;
+
+/**
+ * @}
+ * @defgroup Egueb_Dom_Window Window
+ * @brief Window @ender_inherits{Egueb_Dom_Event_Target}
+ * @ingroup Egueb_Dom_Group
+ * @{
+ */
+
 #define EGUEB_DOM_WINDOW_DESCRIPTOR egueb_dom_window_descriptor_get()
 EAPI Enesim_Object_Descriptor * egueb_dom_window_descriptor_get(void);
 #define EGUEB_DOM_WINDOW(o) ENESIM_OBJECT_INSTANCE_CHECK(o,			\
 		Egueb_Dom_Window, EGUEB_DOM_WINDOW_DESCRIPTOR)
 
-
 EAPI Egueb_Dom_Window * egueb_dom_window_new(
 		const Egueb_Dom_Window_Descriptor *desc,
 		Egueb_Dom_Node *doc, void *data);
+
 EAPI Egueb_Dom_Window * egueb_dom_window_ref(Egueb_Dom_Window *thiz);
 EAPI void egueb_dom_window_unref(Egueb_Dom_Window *thiz);
 EAPI void * egueb_dom_window_data_get(Egueb_Dom_Window *thiz);
 EAPI Egueb_Dom_Node * egueb_dom_window_document_get(Egueb_Dom_Window *thiz);
+
 EAPI void * egueb_dom_window_timeout_set(Egueb_Dom_Window *thiz,
-		Egueb_Dom_Window_Descriptor_Timeout_Cb cb,
+		Egueb_Dom_Window_Timeout_Cb cb,
 		int64_t delay, void *user_data);
 EAPI void egueb_dom_window_timeout_clear(Egueb_Dom_Window *thiz,
 		void *timeout);
