@@ -605,24 +605,37 @@
     <ctor name="new"/>
   </object>
   <object name="egueb.dom.event.target"/>
-  <callback name="egueb.dom.window.timeout.cb"/>
+  <callback name="egueb.dom.window.timeout_cb">
+    <arg name="thiz" type="egueb.dom.window" direction="in" transfer="none" nullable="false"/>
+    <arg name="user_data" type="pointer" direction="in" transfer="none" nullable="true"/>
+  </callback>
   <struct name="egueb.dom.window.descriptor">
     <field name="version" type="int32"/>
-    <field name="destroy" type="egueb.dom.window.descriptor.destroy.cb"/>
-    <field name="outer_width_get" type="egueb.dom.window.descriptor.size.get.cb"/>
-    <field name="outer_height_get" type="egueb.dom.window.descriptor.size.get.cb"/>
-    <field name="inner_width_get" type="egueb.dom.window.descriptor.size.get.cb"/>
-    <field name="inner_height_get" type="egueb.dom.window.descriptor.size.get.cb"/>
-    <field name="timeout_set" type="egueb.dom.window.descriptor.timeout.set.cb"/>
-    <field name="timeout_clear" type="egueb.dom.window.descriptor.timeout.clear.cb"/>
+    <field name="destroy" type="egueb.dom.window.descriptor.destroy_cb"/>
+    <field name="outer_width_get" type="egueb.dom.window.descriptor.size_get_cb"/>
+    <field name="outer_height_get" type="egueb.dom.window.descriptor.size_get_cb"/>
+    <field name="inner_width_get" type="egueb.dom.window.descriptor.size_get_cb"/>
+    <field name="inner_height_get" type="egueb.dom.window.descriptor.size_get_cb"/>
+    <field name="timeout_set" type="egueb.dom.window.descriptor.timeout_set_cb"/>
+    <field name="timeout_clear" type="egueb.dom.window.descriptor.timeout_clear_cb"/>
   </struct>
-  <callback name="egueb.dom.window.descriptor.destroy.cb"/>
-  <callback name="egueb.dom.window.descriptor.timeout.set.cb">
-    <return type="pointer" transfer="full" nullable="false"/>
+  <callback name="egueb.dom.window.descriptor.destroy_cb">
+    <arg name="data" type="pointer" direction="in" transfer="none" nullable="true"/>
   </callback>
-  <callback name="egueb.dom.window.descriptor.timeout.clear.cb"/>
-  <callback name="egueb.dom.window.descriptor.size.get.cb">
-    <return type="int32" transfer="full" nullable="false"/>
+  <callback name="egueb.dom.window.descriptor.timeout_set_cb">
+    <arg name="data" type="pointer" direction="in" transfer="none" nullable="true"/>
+    <arg name="cb" type="egueb.dom.window.timeout_cb" direction="in" transfer="none" nullable="false"/>
+    <arg name="delay" type="int64" direction="in" transfer="none" nullable="false"/>
+    <arg name="user_data" type="pointer" direction="in" transfer="none" nullable="true"/>
+    <return type="pointer" transfer="none" nullable="false"/>
+  </callback>
+  <callback name="egueb.dom.window.descriptor.timeout_clear_cb">
+    <arg name="data" type="pointer" direction="in" transfer="none" nullable="true"/>
+    <arg name="timeout" type="pointer" direction="in" transfer="none" nullable="true"/>
+  </callback>
+  <callback name="egueb.dom.window.descriptor.size_get_cb">
+    <arg name="data" type="pointer" direction="in" transfer="none" nullable="true"/>
+    <return type="int32" transfer="none" nullable="false"/>
   </callback>
   <object name="egueb.dom.window" inherits="egueb.dom.event.target">
     <function name="descriptor_get">
@@ -645,7 +658,7 @@
     </method>
     <method name="timeout_set">
       <return type="pointer" transfer="full" nullable="false"/>
-      <arg name="cb" type="egueb.dom.window.timeout.cb" direction="in" transfer="full"/>
+      <arg name="cb" type="egueb.dom.window.timeout_cb" direction="in" transfer="full"/>
       <arg name="delay" type="int64.t" direction="in" transfer="full"/>
       <arg name="user_data" type="pointer" direction="in" transfer="full"/>
     </method>

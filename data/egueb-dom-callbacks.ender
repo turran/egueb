@@ -40,4 +40,26 @@
     <arg name="e" type="egueb.dom.event" direction="in" transfer="full" nullable="false"/>
     <return type="pointer" transfer="none" nullable="false"/>
   </callback>
+  <callback name="egueb.dom.window.timeout_cb">
+    <arg name="thiz" type="egueb.dom.window" direction="in" transfer="none" nullable="false"/>
+    <arg name="user_data" type="pointer" direction="in" transfer="none" nullable="true"/>
+  </callback>
+  <callback name="egueb.dom.window.descriptor.destroy_cb">
+    <arg name="data" type="pointer" direction="in" transfer="none" nullable="true"/>
+  </callback>
+  <callback name="egueb.dom.window.descriptor.timeout_set_cb">
+    <arg name="data" type="pointer" direction="in" transfer="none" nullable="true"/>
+    <arg name="cb" type="egueb.dom.window.timeout_cb" direction="in" transfer="none" nullable="false"/>
+    <arg name="delay" type="int64" direction="in" transfer="none" nullable="false"/>
+    <arg name="user_data" type="pointer" direction="in" transfer="none" nullable="true"/>
+    <return type="pointer" transfer="none" nullable="false"/>
+  </callback>
+  <callback name="egueb.dom.window.descriptor.timeout_clear_cb">
+    <arg name="data" type="pointer" direction="in" transfer="none" nullable="true"/>
+    <arg name="timeout" type="pointer" direction="in" transfer="none" nullable="true"/>
+  </callback>
+  <callback name="egueb.dom.window.descriptor.size_get_cb">
+    <arg name="data" type="pointer" direction="in" transfer="none" nullable="true"/>
+    <return type="int32" transfer="none" nullable="false"/>
+  </callback>
 </lib>

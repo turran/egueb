@@ -39,6 +39,9 @@
  */
 typedef struct _Egueb_Dom_Window Egueb_Dom_Window;
 
+/**
+ * @ender_name{egueb.dom.window.timeout_cb}
+ */
 typedef void (*Egueb_Dom_Window_Timeout_Cb)(Egueb_Dom_Window *thiz,
 		void *user_data);
 /**
@@ -48,11 +51,26 @@ typedef void (*Egueb_Dom_Window_Timeout_Cb)(Egueb_Dom_Window *thiz,
  * @{
  */
 
+/**
+ * @ender_name{egueb.dom.window.descriptor.destroy_cb}
+ */
 typedef void (*Egueb_Dom_Window_Descriptor_Destroy_Cb)(void *data);
+
+/**
+ * @ender_name{egueb.dom.window.descriptor.timeout_set_cb}
+ */
 typedef void * (*Egueb_Dom_Window_Descriptor_Timeout_Set_Cb)(void *data,
 		Egueb_Dom_Window_Timeout_Cb cb,
 		int64_t delay, void *user_data);
+
+/**
+ * @ender_name{egueb.dom.window.descriptor.timeout_clear_cb}
+ */
 typedef void (*Egueb_Dom_Window_Descriptor_Timeout_Clear_Cb)(void *data, void *timeout);
+
+/**
+ * @ender_name{egueb.dom.window.descriptor.size_get_cb}
+ */
 typedef int (*Egueb_Dom_Window_Descriptor_Size_Get_Cb)(void *data);
 
 /**
