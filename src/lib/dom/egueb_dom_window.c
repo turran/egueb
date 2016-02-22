@@ -26,6 +26,13 @@
 #include "egueb_dom_event_private.h"
 #include "egueb_dom_event_target_private.h"
 #include "egueb_dom_event_window_private.h"
+
+/* TODO
+ * Remove the doc from the constructor
+ * Add a doc setter. Get the window feature and set the view too
+ * Add event handlers on the doc to check whenever the topmost element
+ * has been removed/added to update the window feature's view
+ */ 
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
