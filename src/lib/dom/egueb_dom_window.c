@@ -21,15 +21,15 @@
 #include "egueb_dom_node_list.h"
 #include "egueb_dom_node_map_named.h"
 #include "egueb_dom_node.h"
+#include "egueb_dom_document.h"
 #include "egueb_dom_window.h"
+#include "egueb_dom_feature_window.h"
 
 #include "egueb_dom_event_private.h"
 #include "egueb_dom_event_target_private.h"
 #include "egueb_dom_event_window_private.h"
 
 /* TODO
- * Remove the doc from the constructor
- * Add a doc setter. Get the window feature and set the view too
  * Add event handlers on the doc to check whenever the topmost element
  * has been removed/added to update the window feature's view
  */ 
@@ -161,8 +161,7 @@ static void _egueb_dom_window_instance_deinit(void *o)
  *                                   API                                      *
  *============================================================================*/
 EAPI Egueb_Dom_Window * egueb_dom_window_new(
-		const Egueb_Dom_Window_Descriptor *desc,
-		Egueb_Dom_Node *doc, void *data)
+		const Egueb_Dom_Window_Descriptor *desc, void *data)
 {
 	Egueb_Dom_Window *thiz;
 
@@ -170,7 +169,6 @@ EAPI Egueb_Dom_Window * egueb_dom_window_new(
 
 	thiz = ENESIM_OBJECT_INSTANCE_NEW(egueb_dom_window);
 	thiz->desc = desc;
-	thiz->doc = doc;
 	thiz->data = data;
 	thiz->ref = 1;
 
@@ -208,6 +206,50 @@ EAPI Egueb_Dom_Node * egueb_dom_window_document_get(Egueb_Dom_Window *thiz)
 {
 	EINA_SAFETY_ON_NULL_RETURN_VAL(thiz, NULL);
 	return egueb_dom_node_ref(thiz->doc);
+}
+
+EAPI void egueb_dom_window_document_set(Egueb_Dom_Window *thiz,
+		Egueb_Dom_Node *doc)
+{
+	EINA_SAFETY_ON_NULL_RETURN(thiz);
+	if (thiz->doc)
+	{
+		Egueb_Dom_Node *topmost;
+
+		topmost = egueb_dom_document_document_element_get(thiz->doc);
+		if (topmost)
+		{
+			Egueb_Dom_Feature *f;
+			f = egueb_dom_node_feature_get(topmost,
+					EGUEB_DOM_FEATURE_WINDOW_NAME, NULL);
+			if (f)
+			{
+				egueb_dom_feature_window_view_set(f, thiz);
+				egueb_dom_feature_unref(f);
+			}
+			egueb_dom_node_unref(topmost);
+		}
+		egueb_dom_node_unref(thiz->doc);
+	}
+	if (doc)
+	{
+		Egueb_Dom_Node *topmost;
+
+		topmost = egueb_dom_document_document_element_get(doc);
+		if (topmost)
+		{
+			Egueb_Dom_Feature *f;
+			f = egueb_dom_node_feature_get(topmost,
+					EGUEB_DOM_FEATURE_WINDOW_NAME, NULL);
+			if (f)
+			{
+				egueb_dom_feature_window_view_set(f, thiz);
+				egueb_dom_feature_unref(f);
+			}
+			egueb_dom_node_unref(topmost);
+		}
+		thiz->doc = doc;
+	}
 }
 
 EAPI void * egueb_dom_window_timeout_set(Egueb_Dom_Window *thiz,

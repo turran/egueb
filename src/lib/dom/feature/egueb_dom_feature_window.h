@@ -96,6 +96,8 @@ typedef struct _Egueb_Dom_Feature_Window_Descriptor
 EAPI int egueb_dom_feature_window_hints_get(Egueb_Dom_Feature *f,
 		Egueb_Dom_Feature_Window_Hint_Data *data);
 EAPI Eina_Bool egueb_dom_feature_window_size_set(Egueb_Dom_Feature *f, int w, int h);
+EAPI void egueb_dom_feature_window_view_set(Egueb_Dom_Feature *f, Egueb_Dom_Window *w);
+
 EAPI Eina_Bool egueb_dom_feature_window_add(Egueb_Dom_Node *n,
 		const Egueb_Dom_Feature_Window_Descriptor *d);
 

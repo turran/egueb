@@ -111,12 +111,14 @@ EAPI Enesim_Object_Descriptor * egueb_dom_window_descriptor_get(void);
 		Egueb_Dom_Window, EGUEB_DOM_WINDOW_DESCRIPTOR)
 
 EAPI Egueb_Dom_Window * egueb_dom_window_new(
-		const Egueb_Dom_Window_Descriptor *desc,
-		Egueb_Dom_Node *doc, void *data);
+		const Egueb_Dom_Window_Descriptor *desc, void *data);
 
 EAPI Egueb_Dom_Window * egueb_dom_window_ref(Egueb_Dom_Window *thiz);
 EAPI void egueb_dom_window_unref(Egueb_Dom_Window *thiz);
 EAPI void * egueb_dom_window_data_get(Egueb_Dom_Window *thiz);
+
+EAPI void egueb_dom_window_document_set(Egueb_Dom_Window *thiz,
+		Egueb_Dom_Node *doc);
 EAPI Egueb_Dom_Node * egueb_dom_window_document_get(Egueb_Dom_Window *thiz);
 
 EAPI void * egueb_dom_window_timeout_set(Egueb_Dom_Window *thiz,
