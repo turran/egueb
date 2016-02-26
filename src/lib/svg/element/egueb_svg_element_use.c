@@ -66,9 +66,6 @@ typedef struct _Egueb_Svg_Element_Use
 
 	Egueb_Dom_Node *g;
 	Egueb_Dom_Node *clone;
-
-	Eina_Bool document_changed;
-	Egueb_Dom_String *last_xlink;
 } Egueb_Svg_Element_Use;
 
 typedef struct _Egueb_Svg_Element_Use_Class
@@ -121,39 +118,13 @@ static void _egueb_svg_element_use_setup_cloned(Egueb_Svg_Element_Use *thiz,
 
 static void _egueb_svg_element_use_cleanup_cloned(Egueb_Svg_Element_Use *thiz)
 {
-	/* remove the clone, this will remove the renderer automatically */
-	egueb_dom_node_child_remove(thiz->g, thiz->clone, NULL);
-	egueb_dom_node_unref(thiz->clone);
-	thiz->clone = NULL;
-}
-
-/* Whenever the node has been inserted/removed into/from the document we need
- * to make sure that the <g> node also has the same document
- */
-static void _egueb_dom_element_use_insterted_into_document_cb(
-		Egueb_Dom_Event *ev, void *data)
-{
-	Egueb_Svg_Element_Use *thiz = EGUEB_SVG_ELEMENT_USE(data);
-	Egueb_Dom_Event_Phase phase;
-
-	phase = egueb_dom_event_phase_get(ev);
-	if (phase != EGUEB_DOM_EVENT_PHASE_AT_TARGET)
-		return;
-
-	thiz->document_changed = EINA_TRUE;
-}
-
-static void _egueb_dom_element_use_removed_from_document_cb(
-		Egueb_Dom_Event *ev, void *data)
-{
-	Egueb_Svg_Element_Use *thiz = EGUEB_SVG_ELEMENT_USE(data);
-	Egueb_Dom_Event_Phase phase;
-
-	phase = egueb_dom_event_phase_get(ev);
-	if (phase != EGUEB_DOM_EVENT_PHASE_AT_TARGET)
-		return;
-
-	thiz->document_changed = EINA_TRUE;
+	if (thiz->clone)
+	{
+		/* remove the clone, this will remove the renderer automatically */
+		egueb_dom_node_child_remove(thiz->g, thiz->clone, NULL);
+		egueb_dom_node_unref(thiz->clone);
+		thiz->clone = NULL;
+	}
 }
 /*----------------------------------------------------------------------------*
  *                             Renderable interface                           *
@@ -172,7 +143,6 @@ static Eina_Bool _egueb_svg_element_use_process(Egueb_Svg_Renderable *r)
 	Egueb_Svg_Element *e_parent;
 	Egueb_Svg_Element *e;
 	Egueb_Svg_Length x, y, w, h;
-	Egueb_Dom_String *xlink = NULL;
 	Egueb_Dom_Node *relative, *doc;
 	double font_size;
 
@@ -182,7 +152,6 @@ static Eina_Bool _egueb_svg_element_use_process(Egueb_Svg_Renderable *r)
 	egueb_dom_attr_final_get(thiz->y, &y);
 	egueb_dom_attr_final_get(thiz->width, &w);
 	egueb_dom_attr_final_get(thiz->height, &h);
-	egueb_dom_attr_final_get(thiz->xlink_href, &xlink);
 
 	/* calculate the real size */
 	relative = egueb_svg_element_geometry_relative_get(EGUEB_DOM_NODE(r));
@@ -201,6 +170,7 @@ static Eina_Bool _egueb_svg_element_use_process(Egueb_Svg_Renderable *r)
 
 	e_parent = EGUEB_SVG_ELEMENT(relative);
 	font_size = egueb_svg_document_font_size_get(doc);
+	egueb_dom_node_unref(doc);
 
 	thiz->gx = egueb_svg_coord_final_get(&x, e_parent->viewbox.w, font_size);
 	thiz->gy = egueb_svg_coord_final_get(&y, e_parent->viewbox.h, font_size);
@@ -214,36 +184,31 @@ static Eina_Bool _egueb_svg_element_use_process(Egueb_Svg_Renderable *r)
 	enesim_rectangle_coords_from(&e->viewbox, thiz->gx, thiz->gy, thiz->gw, thiz->gh);
 
 	DBG("x: %g, y: %g, w: %g, h: %g", thiz->gx, thiz->gy, thiz->gw, thiz->gh);
-
-	/* in case the xlink attribute has changed, remove the clone
-	 * and create a new one.
-	 */
-	if (thiz->document_changed || !egueb_dom_string_is_equal(xlink, thiz->last_xlink))
+	/* FIXME the process will return a TRUE but might not need to be reprocessed */
+	if (egueb_xlink_attr_href_has_changed(thiz->xlink_href))
 	{
-		Egueb_Dom_Node *cloned;
-		if (thiz->clone)
-		{
-			_egueb_svg_element_use_cleanup_cloned(thiz);
-		}
+		Egueb_Dom_Node *target;
 
-		/* finally clone the reference */
-		cloned = egueb_svg_document_iri_clone(doc, xlink, NULL);
-		if (cloned)
-		{
-			_egueb_svg_element_use_setup_cloned(thiz, cloned);
-		}
-		thiz->document_changed = EINA_FALSE;
+		if (!egueb_xlink_attr_href_process(thiz->xlink_href))
+			return EINA_FALSE;
 
-		/* finally swap */
-		if (thiz->last_xlink)
+		_egueb_svg_element_use_cleanup_cloned(thiz);
+		/* Get the new target */
+		target = egueb_xlink_attr_href_node_get(thiz->xlink_href);
+		if (target)
 		{
-			egueb_dom_string_unref(thiz->last_xlink);
-			thiz->last_xlink = NULL;
+			Egueb_Dom_Node *cloned;
+			/* clone the returned element */
+			cloned = egueb_dom_node_clone(target, EINA_FALSE, EINA_TRUE, NULL);
+
+			/* finally clone the reference */
+			if (cloned)
+			{
+				_egueb_svg_element_use_setup_cloned(thiz, cloned);
+			}
+			egueb_dom_node_unref(target);
 		}
-		thiz->last_xlink = egueb_dom_string_dup(xlink);
 	}
-	egueb_dom_node_unref(doc);
-	egueb_dom_string_unref(xlink);
 
 	/* process our synthetic tree */
 	if (!egueb_dom_element_process(thiz->g))
@@ -286,7 +251,6 @@ static void _egueb_svg_element_use_instance_init(void *o)
 {
 	Egueb_Svg_Element_Use *thiz;
 	Egueb_Dom_Node *n;
-	Egueb_Dom_Event_Target *evt;
 
 	thiz = EGUEB_SVG_ELEMENT_USE(o);
 
@@ -316,9 +280,8 @@ static void _egueb_svg_element_use_instance_init(void *o)
 			egueb_dom_string_ref(EGUEB_SVG_NAME_HEIGHT),
 			&EGUEB_SVG_LENGTH_0,
 			EINA_TRUE, EINA_FALSE, EINA_FALSE);
-	thiz->xlink_href = egueb_svg_attr_string_new(
-			egueb_dom_string_ref(EGUEB_DOM_NAME_XLINK_HREF),
-			NULL);
+	thiz->xlink_href = egueb_xlink_attr_href_new(EGUEB_XLINK_ATTR_HREF_FLAG_FRAGMENT);
+	egueb_xlink_attr_href_automatic_enqueue_set(thiz->xlink_href, EINA_TRUE);
 
 	n = EGUEB_DOM_NODE(o);
 	egueb_dom_element_attribute_node_set(n, egueb_dom_node_ref(thiz->x), NULL);
@@ -326,19 +289,6 @@ static void _egueb_svg_element_use_instance_init(void *o)
 	egueb_dom_element_attribute_node_set(n, egueb_dom_node_ref(thiz->width), NULL);
 	egueb_dom_element_attribute_node_set(n, egueb_dom_node_ref(thiz->height), NULL);
 	egueb_dom_element_attribute_node_set(n, egueb_dom_node_ref(thiz->xlink_href), NULL);
-
-	/* whenever the use element is inserted into a document, be sure
-	 * to set the document on our g too
-	 */
-	evt = EGUEB_DOM_EVENT_TARGET_CAST(o);
-	egueb_dom_event_target_event_listener_add(evt,
-			EGUEB_DOM_EVENT_MUTATION_NODE_INSERTED_INTO_DOCUMENT,
-			_egueb_dom_element_use_insterted_into_document_cb,
-			EINA_TRUE, thiz);
-	egueb_dom_event_target_event_listener_add(evt,
-			EGUEB_DOM_EVENT_MUTATION_NODE_REMOVED_FROM_DOCUMENT,
-			_egueb_dom_element_use_removed_from_document_cb,
-			EINA_TRUE, thiz);
 }
 
 static void _egueb_svg_element_use_instance_deinit(void *o)
@@ -348,12 +298,6 @@ static void _egueb_svg_element_use_instance_deinit(void *o)
 	thiz = EGUEB_SVG_ELEMENT_USE(o);
 
 	egueb_dom_node_unref(thiz->g);
-
-	if (thiz->last_xlink)
-	{
-		egueb_dom_string_unref(thiz->last_xlink);
-		thiz->last_xlink = NULL;
-	}
 
 	/* destroy the properties */
 	egueb_dom_node_unref(thiz->x);
