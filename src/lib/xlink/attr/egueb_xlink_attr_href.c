@@ -70,12 +70,13 @@ static void _egueb_xlink_attr_href_target_request_cb(Egueb_Dom_Event *e,
 		void *user_data)
 {
 	Egueb_Xlink_Attr_Href *thiz = user_data;
-	Egueb_Dom_Attr *attr;
 
-	attr = EGUEB_DOM_ATTR(thiz);
 	/* request a process on the owner of the attribute */
 	if (thiz->automatic_enqueue)
 	{
+		Egueb_Dom_Attr *attr;
+
+		attr = EGUEB_DOM_ATTR(thiz);
 		INFO("The xlink:href requested a process, let's request ourselves too");
 		egueb_dom_element_request_process(attr->owner);
 	}
@@ -85,6 +86,16 @@ static void _egueb_xlink_attr_href_target_destroyed_cb(Egueb_Dom_Event *e,
 		void *user_data)
 {
 	Egueb_Xlink_Attr_Href *thiz = user_data;
+
+	/* request a process on the owner of the attribute */
+	if (thiz->automatic_enqueue)
+	{
+		Egueb_Dom_Attr *attr;
+
+		attr = EGUEB_DOM_ATTR(thiz);
+		INFO("The xlink:href target is destroyed, let's request a process");
+		egueb_dom_element_request_process(attr->owner);
+	}
 	if (thiz->on_target_removed)
 	{
 		thiz->on_target_removed(EGUEB_DOM_NODE(thiz));
@@ -218,7 +229,8 @@ static void _egueb_xlink_attr_href_document_id_removed_cb(Egueb_Dom_Event *e,
 	id_name = egueb_dom_string_new_with_static_chars("id");
 	id_attr = egueb_dom_element_attribute_node_get(node, id_name);
 	egueb_dom_attr_final_get(id_attr, &id);
-	if (egueb_dom_string_is_equal(id, thiz->last)) {
+	if (egueb_dom_string_is_equal(id, thiz->last))
+	{
 		Egueb_Xlink_Attr_Href *thiz = user_data;
 
 		DBG("Id removed %s", egueb_dom_string_chars_get(id));
@@ -389,8 +401,9 @@ EAPI Eina_Bool egueb_xlink_attr_href_process(Egueb_Dom_Node *n)
 	Egueb_Dom_Uri uri;
 	Eina_Bool ret = EINA_TRUE;
 
-	thiz = EGUEB_XLINK_ATTR_HREF(n);
+	egueb_dom_attr_final_get(n, &str);
 	/* register the needed events */
+	thiz = EGUEB_XLINK_ATTR_HREF(n);
 	if (!thiz->initialized)
 	{
 		Egueb_Dom_Attr *a;
@@ -409,16 +422,17 @@ EAPI Eina_Bool egueb_xlink_attr_href_process(Egueb_Dom_Node *n)
 				EINA_FALSE, thiz);
 		thiz->initialized = EINA_TRUE;
 	}
-
-	egueb_dom_attr_final_get(n, &str);
-	/* early exit, nothing to do */
-	if (!egueb_xlink_attr_href_has_changed(n))
+	else
 	{
-		INFO("Same id, nothing to do");
-		if (!egueb_dom_string_is_valid(str))
-			ret = EINA_FALSE;
-		egueb_dom_string_unref(str);
-		return ret;
+		/* early exit, nothing to do */
+		if (!egueb_xlink_attr_href_has_changed(n))
+		{
+			INFO("Same id, nothing to do");
+			if (!egueb_dom_string_is_valid(str))
+				ret = EINA_FALSE;
+			egueb_dom_string_unref(str);
+			return ret;
+		}
 	}
 
 	/* first do the cleanup */
@@ -572,10 +586,13 @@ EAPI Eina_Bool egueb_xlink_attr_href_has_changed(Egueb_Dom_Node *n)
 	Egueb_Dom_String *str;
 	Eina_Bool same;
 
+	thiz = EGUEB_XLINK_ATTR_HREF(n);
+	if (!thiz->initialized)
+		return EINA_TRUE;
+
 	if (!egueb_dom_attr_has_changed(n))
 		return EINA_FALSE;
 
-	thiz = EGUEB_XLINK_ATTR_HREF(n);
 	egueb_dom_attr_final_get(n, &str);
 	same = egueb_dom_string_is_equal(str, thiz->last);
 	egueb_dom_string_unref(str);
