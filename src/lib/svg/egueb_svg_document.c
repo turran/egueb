@@ -757,21 +757,3 @@ EAPI double egueb_svg_document_font_size_get(Egueb_Dom_Node *n)
 	thiz = EGUEB_SVG_DOCUMENT(n);
 	return thiz->font_size;
 }
-
-/* FIXME This might not be needed */
-EAPI Egueb_Dom_Node * egueb_svg_document_iri_clone(Egueb_Dom_Node *n,
-		Egueb_Dom_String *iri, Eina_Error *err)
-{
-	Egueb_Dom_Node *ref = NULL;
-	Egueb_Dom_Node *cloned;
-
-	ref = egueb_dom_document_element_get_by_iri(n, iri, err);
-	if (!ref) return NULL;
-
-	DBG("'%s' found, cloning it", egueb_dom_string_chars_get(iri));
-	/* clone the returned element */
-	cloned = egueb_dom_node_clone(ref, EINA_FALSE, EINA_TRUE, err);
-	egueb_dom_node_unref(ref);
-
-	return cloned;
-}
