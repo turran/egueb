@@ -195,7 +195,6 @@ static Eina_Bool _egueb_svg_element_tspan_process(Egueb_Svg_Renderable *r)
 	Enesim_Rectangle bounds;
 	double gx, gy;
 	double doc_font_size, gfont_size;
-	int max;
 
 	thiz = EGUEB_SVG_ELEMENT_TSPAN(r);
 
@@ -239,7 +238,6 @@ static Eina_Bool _egueb_svg_element_tspan_process(Egueb_Svg_Renderable *r)
 	}
 
 	enesim_renderer_text_span_font_set(thiz->r, enesim_text_font_ref(thiz->gfont));
-	max = enesim_text_font_max_ascent_get(thiz->gfont);
 
 	/* get the pen we should use for every span */
 	if (_egueb_svg_element_tspan_pen_get(EGUEB_DOM_NODE(relative), &pen))
@@ -252,7 +250,7 @@ static Eina_Bool _egueb_svg_element_tspan_process(Egueb_Svg_Renderable *r)
 		gx = 0;
 		gy = 0;
 	}
-	enesim_renderer_origin_set(thiz->r, gx, gy - max);
+	enesim_renderer_text_span_position_set(thiz->r, gx, gy);
 
 	INFO("matrix %" ENESIM_MATRIX_FORMAT, ENESIM_MATRIX_ARGS (&e->transform));
 	enesim_renderer_transformation_set(thiz->r, &e->transform);

@@ -64,7 +64,6 @@ static void _egueb_svg_element_text_children_generate_geometry(
 	Egueb_Svg_Element *e;
 	Egueb_Svg_Element_Text_Pen *pen = &thiz->pen;
 	Enesim_Rectangle bounds;
-	int max;
 	int size;
 
 	e = EGUEB_SVG_ELEMENT(thiz);
@@ -75,8 +74,7 @@ static void _egueb_svg_element_text_children_generate_geometry(
 		size = 0;
 	}
 	enesim_renderer_text_span_font_set(r, enesim_text_font_ref(thiz->gfont));
-	max = enesim_text_font_max_ascent_get(thiz->gfont);
-	enesim_renderer_origin_set(r, pen->x, pen->y - max);
+	enesim_renderer_text_span_position_set(r, pen->x, pen->y);
 
 	INFO("matrix %" ENESIM_MATRIX_FORMAT, ENESIM_MATRIX_ARGS (&e->transform));
 	enesim_renderer_transformation_set(r, &e->transform);
