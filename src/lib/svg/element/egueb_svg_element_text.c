@@ -133,7 +133,7 @@ static Eina_Bool _egueb_svg_element_text_children_process_cb(Egueb_Dom_Node *chi
 			Enesim_Renderer *r;
 			Enesim_Renderer_Compound_Layer *layer;
 
-			/* get the tspan renderer in case it is a tspan */
+			/* get the text span renderer in case it is a tspan */
 			r = egueb_svg_renderable_renderer_get(child);
 			layer = enesim_renderer_compound_layer_new();
 			enesim_renderer_compound_layer_renderer_set(layer, r);
