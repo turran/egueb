@@ -97,10 +97,21 @@ static Eina_Bool _egueb_svg_element_text_children_process_cb(Egueb_Dom_Node *chi
 	{
 		Egueb_Dom_String *private_data;
 		Egueb_Svg_Renderable *r;
-		Enesim_Color color;
-		Enesim_Color fill_color;
-		Eina_Bool visibility;
 		Enesim_Renderer *ren;
+		Enesim_Color color;
+		Enesim_Renderer_Shape_Draw_Mode draw_mode;
+		Enesim_Renderer_Shape_Stroke_Dash *dash;
+		Enesim_Renderer_Shape_Stroke_Cap stroke_cap;
+		Enesim_Renderer_Shape_Stroke_Join stroke_join;
+		Enesim_Color stroke_color;
+		Enesim_Renderer *stroke_renderer;
+		Enesim_Renderer *fill_renderer;
+		Enesim_Color fill_color;
+		/* TODO we still miss the fill rule */
+		Eina_List *stroke_dasharray;
+		Eina_List *l;
+		Eina_Bool visibility;
+		double stroke_weight;
 
 		private_data = egueb_dom_string_new_with_static_chars("_renderer");
 		ren = egueb_dom_node_user_data_get(child, private_data);
@@ -120,9 +131,35 @@ static Eina_Bool _egueb_svg_element_text_children_process_cb(Egueb_Dom_Node *chi
 		r = EGUEB_SVG_RENDERABLE(thiz);
 		egueb_svg_painter_visibility_get(r->painter, &visibility);
 		egueb_svg_painter_color_get(r->painter, &color);
+		egueb_svg_painter_draw_mode_get(r->painter, &draw_mode);
+		egueb_svg_painter_stroke_dasharray_get(r->painter, &stroke_dasharray);
+		egueb_svg_painter_stroke_cap_get(r->painter, &stroke_cap);
+		egueb_svg_painter_stroke_join_get(r->painter, &stroke_join);
+		egueb_svg_painter_stroke_color_get(r->painter, &stroke_color);
+		egueb_svg_painter_stroke_weight_get(r->painter, &stroke_weight);
+		egueb_svg_painter_stroke_renderer_get(r->painter, &stroke_renderer);
 		egueb_svg_painter_fill_color_get(r->painter, &fill_color);
+		egueb_svg_painter_fill_renderer_get(r->painter, &fill_renderer);
 
-		enesim_renderer_color_set(ren, fill_color);
+		enesim_renderer_shape_fill_color_set(ren, fill_color);
+		enesim_renderer_shape_fill_renderer_set(ren, fill_renderer);
+		enesim_renderer_shape_stroke_color_set(ren, stroke_color);
+		enesim_renderer_shape_stroke_renderer_set(ren, stroke_renderer);
+		EINA_LIST_FOREACH(stroke_dasharray, l, dash)
+		{
+			/* TODO add this check on enesim itself */
+			if (!dash->length) continue;
+			enesim_renderer_shape_stroke_dash_add(ren, dash);
+		}
+
+		enesim_renderer_shape_stroke_weight_set(ren, stroke_weight);
+		enesim_renderer_shape_stroke_location_set(ren, ENESIM_RENDERER_SHAPE_STROKE_LOCATION_CENTER);
+		enesim_renderer_shape_stroke_cap_set(ren, stroke_cap);
+		enesim_renderer_shape_stroke_join_set(ren, stroke_join);
+		enesim_renderer_shape_draw_mode_set(ren, draw_mode);
+
+		/* base properties */
+		enesim_renderer_color_set(ren, color);
 		enesim_renderer_visibility_set(ren, visibility);
 	}
 	else if (type == EGUEB_DOM_NODE_TYPE_ELEMENT)
@@ -177,7 +214,6 @@ static void _egueb_svg_element_text_node_inserted_cb(Egueb_Dom_Event *e,
 		thiz = EGUEB_SVG_ELEMENT_TEXT(n);
 		/* create a renderer for this text node */
 		r = enesim_renderer_text_span_new();
-		enesim_renderer_color_set(r, 0xff000000);
 		/* set the internal buffer of the text span to be the one
 		 * on the text node */
 		nb = egueb_dom_character_data_buffer_get(target);
@@ -275,6 +311,10 @@ static Enesim_Renderer * _egueb_svg_element_text_renderer_get(
 static void _egueb_svg_element_text_bounds_get(Egueb_Svg_Renderable *r,
 		Enesim_Rectangle *bounds)
 {
+	/* TODO
+	 * we need to iterate over every children in case the tree has changed
+	 * otherwise use the cached geometry
+	 */
 #if 0
 	enesim_rectangle_coords_from(bounds, thiz->gx, thiz->gy,
 			thiz->gw, thiz->gh);
