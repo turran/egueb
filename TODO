@@ -1,5 +1,7 @@
 Refactor
 ========
++ Don't allow a process on an element without document, this will
+  simplify so many if (!doc) code
 + Add way to get stats from an element process function
 + Rename egueb_dom_attr_set to egueb_dom_attr_value_set
 + Rename egueb_dom_attr_value_set to egueb_dom_attr_dom_value_set
