@@ -27,7 +27,7 @@
 /*
  * TODO
  * this element must have a list of text spans renderers too, given that
- * several attributes are of a list type, we need to createa text span
+ * several attributes are of a list type, we need to create a text node
  * for each group of glyphs
  */
 /*============================================================================*
@@ -104,11 +104,11 @@ static void _egueb_svg_element_tspan_node_inserted_cb(Egueb_Dom_Event *e,
 		Enesim_Text_Buffer *nb = NULL;
 
 		thiz = EGUEB_SVG_ELEMENT_TSPAN(n);
-		/* set the internal buffer of the tspan span to be the one
+		/* set the internal buffer of the text node to be the one
 		 * on the tspan node */
 		nb = egueb_dom_character_data_buffer_get(tspan);
 		enesim_renderer_text_span_real_buffer_set(thiz->r, nb);
-		/* now make the tspan node to use our own buffer from now on */
+		/* now make the text node to use our own buffer from now on */
 		nb = enesim_renderer_text_span_buffer_get(thiz->r);
 		egueb_dom_character_data_buffer_set(tspan, nb);
 		egueb_dom_node_unref(tspan);
@@ -136,10 +136,7 @@ static void _egueb_svg_element_tspan_node_removed_cb(Egueb_Dom_Event *e,
 static Eina_Bool _egueb_svg_element_tspan_pen_get(Egueb_Dom_Node *n,
 		Egueb_Svg_Element_Text_Pen **pen)
 {
-	Egueb_Dom_Node *relative;
-
-	relative = egueb_svg_element_geometry_relative_get(n);
-	if (!egueb_svg_element_text_pen_get(relative, pen))
+	if (!egueb_svg_element_text_pen_get(n, pen))
 	{
 		Egueb_Dom_String *name;
 		Egueb_Dom_String *tname;
@@ -162,7 +159,6 @@ static Eina_Bool _egueb_svg_element_tspan_pen_get(Egueb_Dom_Node *n,
 /*----------------------------------------------------------------------------*
  *                            Renderable interface                            *
  *----------------------------------------------------------------------------*/
-
 static void _egueb_svg_element_tspan_painter_apply(Egueb_Svg_Renderable *r,
 		Egueb_Svg_Painter *painter)
 {
@@ -203,8 +199,8 @@ static Eina_Bool _egueb_svg_element_tspan_process(Egueb_Svg_Renderable *r)
 	doc_font_size = egueb_svg_document_font_size_get(doc);
 	egueb_dom_node_unref(doc);
 
-	/* calculate the final attributes */
 	relative = egueb_svg_element_geometry_relative_get(EGUEB_DOM_NODE(r));
+	/* calculate the final attributes */
 	egueb_dom_attr_final_get(thiz->x, &l);
 	c = egueb_dom_list_item_get(l, 0);
 	thiz->gx = egueb_svg_coord_final_get(c, (EGUEB_SVG_ELEMENT(relative))->viewbox.w, doc_font_size);
@@ -213,7 +209,6 @@ static Eina_Bool _egueb_svg_element_tspan_process(Egueb_Svg_Renderable *r)
 	egueb_dom_attr_final_get(thiz->y, &l);
 	c = egueb_dom_list_item_get(l, 0);
 	thiz->gy = egueb_svg_coord_final_get(c, (EGUEB_SVG_ELEMENT(relative))->viewbox.h, doc_font_size);
-	egueb_dom_node_unref(relative);
 
 	/* set the position */
 	e = EGUEB_SVG_ELEMENT(r);
@@ -234,6 +229,7 @@ static Eina_Bool _egueb_svg_element_tspan_process(Egueb_Svg_Renderable *r)
 	if (!thiz->gfont)
 	{
 		ERR("No valid font found");
+		egueb_dom_node_unref(relative);
 		return EINA_FALSE;
 	}
 
@@ -250,6 +246,7 @@ static Eina_Bool _egueb_svg_element_tspan_process(Egueb_Svg_Renderable *r)
 		gx = 0;
 		gy = 0;
 	}
+	egueb_dom_node_unref(relative);
 	enesim_renderer_text_span_position_set(thiz->r, gx, gy);
 
 	INFO("matrix %" ENESIM_MATRIX_FORMAT, ENESIM_MATRIX_ARGS (&e->transform));
