@@ -1,5 +1,7 @@
 Refactor
 ========
++ Make a new base element for text and tspan, both should
+  work in the same way
 + Don't allow a process on an element without document, this will
   simplify so many if (!doc) code
 + Add way to get stats from an element process function
