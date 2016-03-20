@@ -28,6 +28,14 @@ typedef struct _Egueb_Svg_Text_Content
 {
 	Egueb_Svg_Renderable base;
 	Egueb_Svg_Painter *painter;
+	/* attributes */
+	Egueb_Dom_Node *x;
+	Egueb_Dom_Node *y;
+	Egueb_Dom_Node *dx;
+	Egueb_Dom_Node *dy;
+	/* private */
+	double gx;
+	double gy;
 } Egueb_Svg_Text_Content;
 
 typedef struct _Egueb_Svg_Text_Content_Class
