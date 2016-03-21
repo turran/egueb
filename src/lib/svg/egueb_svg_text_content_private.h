@@ -24,18 +24,26 @@
 #include "egueb_svg_painter_private.h"
 #include "egueb_svg_renderable_private.h"
 
+typedef struct _Egueb_Svg_Text_Span
+{
+	Enesim_Renderer *r;
+} Egueb_Svg_Text_Span;
+
 typedef struct _Egueb_Svg_Text_Content
 {
 	Egueb_Svg_Renderable base;
 	Egueb_Svg_Painter *painter;
-	/* attributes */
-	Egueb_Dom_Node *x;
-	Egueb_Dom_Node *y;
-	Egueb_Dom_Node *dx;
-	Egueb_Dom_Node *dy;
-	/* private */
+	Enesim_Renderer *r;
+	/* list of texts strctures */
+	Eina_List *spans;
+	Eina_Bool renderable_tree_changed;
+	Enesim_Text_Font *gfont;
+	double gfont_size;
 	double gx;
 	double gy;
+	/* pen last position */
+	double px;
+	double py;
 } Egueb_Svg_Text_Content;
 
 typedef struct _Egueb_Svg_Text_Content_Class

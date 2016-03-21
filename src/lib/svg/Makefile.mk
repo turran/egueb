@@ -117,6 +117,8 @@ src/lib/svg/egueb_svg_stroke_line_join.c \
 src/lib/svg/egueb_svg_stroke_line_join_private.h \
 src/lib/svg/egueb_svg_stroke_dasharray.c \
 src/lib/svg/egueb_svg_text_anchor.c \
+src/lib/svg/egueb_svg_text_positioning.c \
+src/lib/svg/egueb_svg_text_positioning_private.h \
 src/lib/svg/egueb_svg_text_content.c \
 src/lib/svg/egueb_svg_text_content_private.h \
 src/lib/svg/egueb_svg_visibility.c \
