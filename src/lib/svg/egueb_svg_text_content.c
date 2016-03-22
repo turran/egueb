@@ -20,6 +20,30 @@
 #include "egueb_svg_text_content.h"
 #include "egueb_svg_text_content_private.h"
 #include "egueb_dom_string_private.h"
+
+/*
+ * TODO
+ * typedef struct _Egueb_Svg_Text_Content_State
+ * {
+ *    Eina_List *
+ *    double last_x, last_y;
+ * }
+ * Egueb_Svg_Text_Content_State;
+ * + A content must be able to generate the initial list of coordinates
+ * Like [dx,dy],[dx,dy] ... [x,y],[x,y] ...
+ * + At process iterate every children, at each children consume one element
+ *   from the list of relative/absolute values
+ * + In case a children is a text, process it ourselves
+ * + In case is a text content children process the node
+ * + When processing a node, first check if there's a state already set, if so
+ * merge it with our own state, check overflows on the values
+ * + Update the last_x, last_y when done processing
+ * + For textPath elements, the initial state should be all the rotations, x and y
+ * positions for every char on all of its descendants.
+ * + If a child of a textPath has dx, dy, increment the x,y by them. The next glyph
+ * must continue what the path said adding the previous dx,dy
+ * + If a child of a textPath has a x,y the offset must be reset
+ */
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
