@@ -43,7 +43,7 @@ static void _egueb_dom_value_double_list_cb(const char *attr, void *data)
 
 static Eina_Bool egueb_dom_value_double_list_string_from(Egueb_Dom_List *l, const char *str)
 {
-	return egueb_dom_list_get(str, ';', _egueb_dom_value_double_list_cb, l);
+	return egueb_dom_list_get(str, " ;", _egueb_dom_value_double_list_cb, l);
 }
 
 static char * egueb_dom_value_double_list_string_to(Egueb_Dom_List *l)

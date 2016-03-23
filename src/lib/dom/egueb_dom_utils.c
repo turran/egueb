@@ -155,25 +155,28 @@ EAPI Eina_Bool egueb_dom_double_get(const char *nptr, char **endptr, double *r)
 	return EINA_TRUE;
 }
 
-EAPI Eina_Bool egueb_dom_list_get(const char *attr, char sep, Egueb_Dom_List_Cb cb, void *data)
+EAPI Eina_Bool egueb_dom_list_get(const char *attr, const char *sep, Egueb_Dom_List_Cb cb, void *data)
 {
+	Eina_Bool ret = EINA_FALSE;
+	char *tmp;
 	char *found;
 
+	if (!sep) return EINA_FALSE;
 	if (!attr) return EINA_FALSE;
 	if (!cb) return EINA_FALSE;
 
-	EGUEB_DOM_SPACE_SKIP(attr);
-	while ((found = strchr(attr, sep)))
+	/* TODO slow, need to check where this call comes from? */
+	tmp = strdup(attr);
+	found = strtok(tmp, sep);
+	if (!found)
+		return EINA_FALSE;
+	else
+		cb(found, data);
+
+	while ((found = strtok(NULL, sep)))
 	{
-		*found = '\0';
-		EGUEB_DOM_SPACE_SKIP(attr);
-		cb(attr, data);
-		*found = sep;
-		attr = found + 1;
-		EGUEB_DOM_SPACE_SKIP(attr);
+		cb(found, data);
 	}
-	if (attr)
-		cb(attr, data);
 
 	return EINA_TRUE;
 }

@@ -40,7 +40,7 @@ static void _egueb_svg_value_length_list_cb(const char *attr, void *data)
 
 static Eina_Bool egueb_svg_value_length_list_string_from(Egueb_Dom_List *l, const char *str)
 {
-	return egueb_dom_list_get(str, ';', _egueb_svg_value_length_list_cb, l);
+	return egueb_dom_list_get(str, " ,", _egueb_svg_value_length_list_cb, l);
 }
 
 static char * egueb_svg_value_length_list_string_to(Egueb_Dom_List *l)

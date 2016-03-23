@@ -40,7 +40,7 @@ static void _egueb_css_font_family_string_from_cb(const char *attr, void *data)
  *============================================================================*/
 Eina_Bool egueb_css_font_family_string_from(Egueb_Dom_List *thiz, const char *attr_val)
 {
-	return egueb_dom_list_get(attr_val, ',', _egueb_css_font_family_string_from_cb, thiz);
+	return egueb_dom_list_get(attr_val, " ,", _egueb_css_font_family_string_from_cb, thiz);
 }
 
 char * egueb_css_font_family_string_to(Egueb_Dom_List *thiz)

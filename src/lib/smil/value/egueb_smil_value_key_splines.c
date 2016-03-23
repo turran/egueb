@@ -40,7 +40,7 @@ static void _egueb_smil_value_key_splines_cb(const char *attr, void *data)
 
 static Eina_Bool egueb_smil_value_key_splines_string_from(Egueb_Dom_List *l, const char *str)
 {
-	return egueb_dom_list_get(str, ';', _egueb_smil_value_key_splines_cb, l);
+	return egueb_dom_list_get(str, " ;", _egueb_smil_value_key_splines_cb, l);
 }
 
 static char * egueb_smil_value_key_splines_string_to(Egueb_Dom_List *l)

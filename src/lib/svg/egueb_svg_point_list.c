@@ -43,7 +43,7 @@ static void _egueb_svg_point_list_cb(const char *attr, void *data)
 Eina_Bool egueb_svg_point_list_string_from(Egueb_Dom_List *l, const char *str)
 {
 	egueb_dom_list_clear(l);
-	return egueb_dom_list_get(str, ' ', _egueb_svg_point_list_cb, l);
+	return egueb_dom_list_get(str, " ", _egueb_svg_point_list_cb, l);
 }
 
 char * egueb_svg_point_list_string_to(Egueb_Dom_List *l)
