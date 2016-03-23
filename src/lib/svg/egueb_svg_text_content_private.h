@@ -41,7 +41,7 @@ typedef struct _Egueb_Svg_Text_Content
 	Enesim_Renderer *r;
 	/* list of texts strctures */
 	Eina_List *spans;
-	Eina_Bool renderable_tree_changed;
+	Eina_Bool force_update;
 	Enesim_Text_Font *gfont;
 	double gfont_size;
 	double gx;

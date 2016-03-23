@@ -349,7 +349,7 @@ static void _egueb_svg_text_content_process_text_content(
 		Egueb_Svg_Text_Content *thiz, Egueb_Dom_Node *tc)
 {
 	egueb_dom_element_process(tc);
- 	if (thiz->renderable_tree_changed)
+ 	if (thiz->force_update)
 	{
 		Enesim_Renderer *r;
 		Enesim_Renderer_Compound_Layer *layer;
@@ -407,7 +407,7 @@ static void _egueb_svg_text_content_node_inserted_cb(Egueb_Dom_Event *e,
 		egueb_dom_string_unref(private_data);
 
 		/* mark it as a change */
-		thiz->renderable_tree_changed = EINA_TRUE;
+		thiz->force_update = EINA_TRUE;
 	}
 	else if (type == EGUEB_DOM_NODE_TYPE_ELEMENT)
 	{
@@ -415,7 +415,7 @@ static void _egueb_svg_text_content_node_inserted_cb(Egueb_Dom_Event *e,
 
 		thiz = EGUEB_SVG_TEXT_CONTENT(n);
 		/* mark it as a change */
-		thiz->renderable_tree_changed = EINA_TRUE;
+		thiz->force_update = EINA_TRUE;
 	}
 	egueb_dom_node_unref(target);
 not_us:
@@ -457,7 +457,7 @@ static void _egueb_svg_text_content_node_removed_cb(Egueb_Dom_Event *e,
 		egueb_dom_node_user_data_set(target, private_data, NULL);
 		egueb_dom_string_unref(private_data);
 		/* mark it as a change */
-		thiz->renderable_tree_changed = EINA_TRUE;
+		thiz->force_update = EINA_TRUE;
 	}
 	else if (type == EGUEB_DOM_NODE_TYPE_ELEMENT)
 	{
@@ -465,7 +465,7 @@ static void _egueb_svg_text_content_node_removed_cb(Egueb_Dom_Event *e,
 
 		thiz = EGUEB_SVG_TEXT_CONTENT(n);
 		/* mark it as a change */
-		thiz->renderable_tree_changed = EINA_TRUE;
+		thiz->force_update = EINA_TRUE;
 	}
 	egueb_dom_node_unref(target);
 not_us:
@@ -505,7 +505,7 @@ static void _egueb_svg_text_content_painter_apply(Egueb_Svg_Renderable *r,
 	 * the different painter properties. Is time to setup the text
 	 * renderers
 	 */
-	if (thiz->renderable_tree_changed)
+	if (thiz->force_update)
 	{
 		Egueb_Svg_Text_Content *other = NULL;
 		Egueb_Dom_Node *n;
@@ -565,7 +565,7 @@ static void _egueb_svg_text_content_painter_apply(Egueb_Svg_Renderable *r,
 			egueb_dom_node_unref(child);
 			child = tmp;
 		}
-		thiz->renderable_tree_changed = EINA_FALSE;
+		thiz->force_update = EINA_FALSE;
 		egueb_dom_node_unref(parent);
 	}
 	else
@@ -586,21 +586,30 @@ static Eina_Bool _egueb_svg_text_content_process(Egueb_Svg_Renderable *r)
 	Enesim_Text_Font *font;
 
 	thiz = EGUEB_SVG_TEXT_CONTENT(r);
-
-	/* set the position */
 	e = EGUEB_SVG_ELEMENT(r);
-	thiz->gfont_size = e->final_font_size;
+
+	/* double check that we need a force update */
+	if (thiz->gfont_size != e->final_font_size)
+	{
+		thiz->gfont_size = e->final_font_size;
+		thiz->force_update = EINA_TRUE;
+	}
 
 	n = EGUEB_DOM_NODE(r);
 	font = egueb_svg_element_font_resolve(n);
-	if (thiz->gfont)
+	if (thiz->gfont != font)
 	{
-		enesim_text_font_unref(thiz->gfont);
-		thiz->gfont = NULL;
-	}
-	if (font)
-	{
+		if (thiz->gfont)
+		{
+			enesim_text_font_unref(thiz->gfont);
+			thiz->gfont = NULL;
+		}
 		thiz->gfont = font;
+		thiz->force_update = EINA_TRUE;
+	}
+	else
+	{
+		enesim_text_font_unref(font);
 	}
 
 	if (!thiz->gfont)
