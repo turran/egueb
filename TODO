@@ -1,5 +1,6 @@
 Refactor
 ========
++ Dont set the font size per document, but an Enesim_Font
 + Don't allow a process on an element without document, this will
   simplify so many if (!doc) code
 + Add way to get stats from an element process function
