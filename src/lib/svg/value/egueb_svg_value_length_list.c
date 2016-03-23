@@ -51,7 +51,7 @@ static char * egueb_svg_value_length_list_string_to(Egueb_Dom_List *l)
  *                             Value interface                                *
  *----------------------------------------------------------------------------*/
 EGUEB_DOM_VALUE_LIST_BOILERPLATE(egueb_svg_value_length_list,
-		egueb_dom_value_double_descriptor_get());
+		egueb_svg_length_descriptor_get());
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
