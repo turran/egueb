@@ -109,6 +109,7 @@ static void _egueb_svg_strings_init(void)
 	EGUEB_SVG_NAME_POINTER_EVENTS = egueb_dom_string_new_with_chars("pointer-events");
 	EGUEB_SVG_NAME_POINTS = egueb_dom_string_new_with_chars("points");
 	EGUEB_SVG_NAME_R = egueb_dom_string_new_with_chars("r");
+	EGUEB_SVG_NAME_ROTATE = egueb_dom_string_new_with_chars("rotate");
 	EGUEB_SVG_NAME_RX = egueb_dom_string_new_with_chars("rx");
 	EGUEB_SVG_NAME_RY = egueb_dom_string_new_with_chars("ry");
 	EGUEB_SVG_NAME_SPREAD_METHOD = egueb_dom_string_new_with_chars("spreadMethod");
@@ -204,6 +205,7 @@ static void _egueb_svg_strings_shutdown(void)
 	egueb_dom_string_unref(EGUEB_SVG_NAME_POINTER_EVENTS);
 	egueb_dom_string_unref(EGUEB_SVG_NAME_POINTS);
 	egueb_dom_string_unref(EGUEB_SVG_NAME_R);
+	egueb_dom_string_unref(EGUEB_SVG_NAME_ROTATE);
 	egueb_dom_string_unref(EGUEB_SVG_NAME_RX);
 	egueb_dom_string_unref(EGUEB_SVG_NAME_RY);
 	egueb_dom_string_unref(EGUEB_SVG_NAME_SPREAD_METHOD);
@@ -335,6 +337,7 @@ Egueb_Dom_String *EGUEB_SVG_NAME_PATTERN_TRANSFORM;
 Egueb_Dom_String *EGUEB_SVG_NAME_POINTER_EVENTS;
 Egueb_Dom_String *EGUEB_SVG_NAME_POINTS;
 Egueb_Dom_String *EGUEB_SVG_NAME_R;
+Egueb_Dom_String *EGUEB_SVG_NAME_ROTATE;
 Egueb_Dom_String *EGUEB_SVG_NAME_RX;
 Egueb_Dom_String *EGUEB_SVG_NAME_RY;
 Egueb_Dom_String *EGUEB_SVG_NAME_STOP_COLOR;

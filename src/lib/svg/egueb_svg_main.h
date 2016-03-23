@@ -83,6 +83,7 @@ EAPI extern Egueb_Dom_String *EGUEB_SVG_NAME_PATTERN_TRANSFORM;
 EAPI extern Egueb_Dom_String *EGUEB_SVG_NAME_POINTER_EVENTS;
 EAPI extern Egueb_Dom_String *EGUEB_SVG_NAME_POINTS;
 EAPI extern Egueb_Dom_String *EGUEB_SVG_NAME_R;
+EAPI extern Egueb_Dom_String *EGUEB_SVG_NAME_ROTATE;
 EAPI extern Egueb_Dom_String *EGUEB_SVG_NAME_RX;
 EAPI extern Egueb_Dom_String *EGUEB_SVG_NAME_RY;
 EAPI extern Egueb_Dom_String *EGUEB_SVG_NAME_SPREAD_METHOD;
