@@ -19,4 +19,6 @@
 #ifndef _EGUEB_SVG_TEXT_CONTENT_H
 #define _EGUEB_SVG_TEXT_CONTENT_H
 
+EAPI Eina_Bool egueb_svg_is_text_content(Egueb_Dom_Node *n);
+
 #endif

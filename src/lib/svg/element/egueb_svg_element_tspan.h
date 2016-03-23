@@ -21,10 +21,5 @@
 
 EAPI Eina_Bool egueb_svg_is_element_tspan(Egueb_Dom_Node *n);
 EAPI Egueb_Dom_Node * egueb_svg_element_tspan_new(void);
-EAPI void egueb_svg_element_tspan_x_set(Egueb_Dom_Node *n,
-		const Egueb_Svg_Length *x);
-EAPI void egueb_svg_element_tspan_y_set(Egueb_Dom_Node *n,
-		const Egueb_Svg_Length *y);
 
 #endif
-

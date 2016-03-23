@@ -43,7 +43,7 @@ typedef struct _Egueb_Svg_Text_Positioning_Class
 	Egueb_Svg_Text_Content_Class base;
 } Egueb_Svg_Text_Positioning_Class;
 
-#define EGUEB_SVG_TEXT_POSITIONING_DESCRIPTOR egueb_svg_text_content_descriptor_get()
+#define EGUEB_SVG_TEXT_POSITIONING_DESCRIPTOR egueb_svg_text_positioning_descriptor_get()
 #define EGUEB_SVG_TEXT_POSITIONING_CLASS(k) ENESIM_OBJECT_CLASS_CHECK(k, 		\
 		Egueb_Svg_Text_Positioning_Class, EGUEB_SVG_TEXT_POSITIONING_DESCRIPTOR)
 #define EGUEB_SVG_TEXT_POSITIONING_CLASS_GET(o) \

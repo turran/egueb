@@ -24,10 +24,14 @@
 #include "egueb_svg_painter_private.h"
 #include "egueb_svg_renderable_private.h"
 
-typedef struct _Egueb_Svg_Text_Span
+typedef struct _Egueb_Svg_Text_Content_State
 {
-	Enesim_Renderer *r;
-} Egueb_Svg_Text_Span;
+	Egueb_Dom_List *x;
+	Egueb_Dom_List *y;
+	Egueb_Dom_List *dx;
+	Egueb_Dom_List *dy;
+	double pen_x, pen_y;
+} Egueb_Svg_Text_Content_State;
 
 typedef struct _Egueb_Svg_Text_Content
 {
@@ -44,11 +48,15 @@ typedef struct _Egueb_Svg_Text_Content
 	/* pen last position */
 	double px;
 	double py;
+	Egueb_Svg_Text_Content_State state;
 } Egueb_Svg_Text_Content;
+
+typedef void (*Egueb_Svg_Text_Content_Initialize_State)(Egueb_Svg_Text_Content *thiz);
 
 typedef struct _Egueb_Svg_Text_Content_Class
 {
 	Egueb_Svg_Renderable_Class base;
+	Egueb_Svg_Text_Content_Initialize_State initialize_state;
 } Egueb_Svg_Text_Content_Class;
 
 #define EGUEB_SVG_TEXT_CONTENT_DESCRIPTOR egueb_svg_text_content_descriptor_get()

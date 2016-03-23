@@ -19,13 +19,44 @@
 #include "egueb_svg_main_private.h"
 #include "egueb_svg_main.h"
 #include "egueb_svg_length.h"
-#include "egueb_svg_element_tspan.h"
 #include "egueb_svg_document.h"
 #include "egueb_svg_attr_length_list_private.h"
 #include "egueb_svg_text_positioning_private.h"
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
+/*----------------------------------------------------------------------------*
+ *                            Text content interface                          *
+ *----------------------------------------------------------------------------*/
+static void _egueb_svg_text_positioning_initialize_state(
+		Egueb_Svg_Text_Content *t)
+{
+	Egueb_Svg_Text_Positioning *thiz;
+	Egueb_Dom_List *l;
+
+	thiz = EGUEB_SVG_TEXT_POSITIONING(t);
+	egueb_dom_attr_final_get(thiz->x, &l);
+	t->state.x = egueb_dom_list_copy(l);
+	egueb_dom_list_unref(l);
+
+	egueb_dom_attr_final_get(thiz->y, &l);
+	t->state.y = egueb_dom_list_copy(l);
+	egueb_dom_list_unref(l);
+
+	egueb_dom_attr_final_get(thiz->dx, &l);
+	t->state.dx = egueb_dom_list_copy(l);
+	egueb_dom_list_unref(l);
+
+	egueb_dom_attr_final_get(thiz->dy, &l);
+	t->state.dy = egueb_dom_list_copy(l);
+	egueb_dom_list_unref(l);
+
+	/* set the initial pen */
+	t->state.pen_x = t->state.pen_y = 0;
+}
+/*----------------------------------------------------------------------------*
+ *                            Renderable interface                            *
+ *----------------------------------------------------------------------------*/
 /*----------------------------------------------------------------------------*
  *                              Element interface                             *
  *----------------------------------------------------------------------------*/
@@ -38,22 +69,22 @@ ENESIM_OBJECT_ABSTRACT_BOILERPLATE(EGUEB_SVG_TEXT_CONTENT_DESCRIPTOR,
 
 static void _egueb_svg_text_positioning_class_init(void *k)
 {
+	Egueb_Svg_Text_Content_Class *klass;
+
+	klass = EGUEB_SVG_TEXT_CONTENT_CLASS(k);
+	klass->initialize_state = _egueb_svg_text_positioning_initialize_state;
 }
 
 static void _egueb_svg_text_positioning_instance_init(void *o)
 {
 	Egueb_Svg_Text_Positioning *thiz;
-	Egueb_Svg_Length *zero;
 	Egueb_Dom_List *def;
 	Egueb_Dom_Node *n;
 
 	thiz = EGUEB_SVG_TEXT_POSITIONING(o);
 	/* create the properties */
-	/* create a default list with 0 as the value of the coordinate */
+	/* use an empty list for default values */
 	def = egueb_dom_list_new(egueb_svg_length_descriptor_get());
-	zero = calloc(1, sizeof(Egueb_Svg_Length));
-	*zero = EGUEB_SVG_LENGTH_0;
-	egueb_dom_list_item_append(def, zero);
 
 	thiz->x = egueb_svg_attr_length_list_new(
 			egueb_dom_string_ref(EGUEB_SVG_NAME_X),
