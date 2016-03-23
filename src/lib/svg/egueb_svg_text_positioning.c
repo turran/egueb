@@ -51,8 +51,12 @@ static void _egueb_svg_text_positioning_initialize_state(
 	t->state.dy = egueb_dom_list_copy(l);
 	egueb_dom_list_unref(l);
 
+	egueb_dom_attr_final_get(thiz->rotate, &l);
+	t->state.rotate = egueb_dom_list_copy(l);
+	egueb_dom_list_unref(l);
+
 	/* set the initial pen */
-	t->state.pen_x = t->state.pen_y = 0;
+	t->state.pen_x = t->state.pen_y = t->state.pen_rot = 0;
 }
 /*----------------------------------------------------------------------------*
  *                            Renderable interface                            *
@@ -79,6 +83,7 @@ static void _egueb_svg_text_positioning_instance_init(void *o)
 {
 	Egueb_Svg_Text_Positioning *thiz;
 	Egueb_Dom_List *def;
+	Egueb_Dom_List *def_rot;
 	Egueb_Dom_Node *n;
 
 	thiz = EGUEB_SVG_TEXT_POSITIONING(o);
@@ -104,11 +109,18 @@ static void _egueb_svg_text_positioning_instance_init(void *o)
 			EINA_FALSE, EINA_FALSE);
 	egueb_dom_list_unref(def);
 
+	def_rot = egueb_dom_list_new(egueb_dom_value_double_descriptor_get());
+	thiz->rotate = egueb_dom_attr_double_list_new(
+			egueb_dom_string_ref(EGUEB_SVG_NAME_ROTATE),
+			def_rot, EINA_TRUE,
+			EINA_FALSE, EINA_FALSE);
+
 	n = EGUEB_DOM_NODE(o);
 	egueb_dom_element_attribute_node_set(n, egueb_dom_node_ref(thiz->x), NULL);
 	egueb_dom_element_attribute_node_set(n, egueb_dom_node_ref(thiz->y), NULL);
 	egueb_dom_element_attribute_node_set(n, egueb_dom_node_ref(thiz->dx), NULL);
 	egueb_dom_element_attribute_node_set(n, egueb_dom_node_ref(thiz->dy), NULL);
+	egueb_dom_element_attribute_node_set(n, egueb_dom_node_ref(thiz->rotate), NULL);
 }
 
 static void _egueb_svg_text_positioning_instance_deinit(void *o)
@@ -121,6 +133,7 @@ static void _egueb_svg_text_positioning_instance_deinit(void *o)
 	egueb_dom_node_unref(thiz->y);
 	egueb_dom_node_unref(thiz->dx);
 	egueb_dom_node_unref(thiz->dy);
+	egueb_dom_node_unref(thiz->rotate);
 }
 /*============================================================================*
  *                                 Global                                     *

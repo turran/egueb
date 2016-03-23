@@ -73,6 +73,11 @@ static void _egueb_svg_text_content_initialize_state(
 		egueb_dom_list_unref(thiz->state.dy);
 		thiz->state.dy = NULL;
 	}
+	if (thiz->state.rotate)
+	{
+		egueb_dom_list_unref(thiz->state.rotate);
+		thiz->state.rotate = NULL;
+	}
 
 	if (klass->initialize_state)
 	{
@@ -84,8 +89,10 @@ static void _egueb_svg_text_content_initialize_state(
 		thiz->state.y = egueb_dom_list_new(egueb_svg_length_descriptor_get());
 		thiz->state.dx = egueb_dom_list_new(egueb_svg_length_descriptor_get());
 		thiz->state.dy = egueb_dom_list_new(egueb_svg_length_descriptor_get());
+		thiz->state.rotate = egueb_dom_list_new(egueb_dom_value_double_descriptor_get());
 		thiz->state.pen_x = 0;
 		thiz->state.pen_y = 0;
+		thiz->state.pen_rot = 0;
 	}
 }
 
@@ -172,8 +179,10 @@ static void _egueb_svg_text_content_process_text(Egueb_Svg_Text_Content *thiz,
 		Enesim_Renderer_Compound_Layer *layer;
 		Enesim_Text_Buffer *r_buffer;
 		Enesim_Rectangle bounds;
+		Enesim_Matrix tx;
 		double x = thiz->state.pen_x;
 		double y = thiz->state.pen_y;
+		double rotate = thiz->state.pen_rot;
 		double dx = 0;
 		double dy = 0;
 
@@ -215,6 +224,15 @@ static void _egueb_svg_text_content_process_text(Egueb_Svg_Text_Content *thiz,
 				dy += egueb_svg_coord_final_get(c, (EGUEB_SVG_ELEMENT(relative))->viewbox.h, doc_font_size);
 				egueb_dom_list_item_remove(other->state.dy, 0);
 			}
+
+			if (egueb_dom_list_length(other->state.rotate))
+			{
+				double *rot;
+
+				rot = egueb_dom_list_item_get(other->state.rotate, 0);
+				rotate = *rot;
+				egueb_dom_list_item_remove(other->state.rotate, 0);
+			}
 		}
 
 		if (egueb_dom_list_length(thiz->state.x))
@@ -252,15 +270,39 @@ static void _egueb_svg_text_content_process_text(Egueb_Svg_Text_Content *thiz,
 			dy += egueb_svg_coord_final_get(c, (EGUEB_SVG_ELEMENT(relative))->viewbox.h, doc_font_size);
 			egueb_dom_list_item_remove(thiz->state.dy, 0);
 		}
+
+		if (egueb_dom_list_length(thiz->state.rotate))
+		{
+			double *rot;
+
+			rot = egueb_dom_list_item_get(thiz->state.rotate, 0);
+			rotate = *rot;
+			egueb_dom_list_item_remove(thiz->state.rotate, 0);
+		}
 		x += dx;
 		y += dy;
 
-		INFO("Setting position to x: %g y: %g", x, y);
+		INFO("Setting position to x: %g y: %g rotate: %g", x, y, rotate);
 		enesim_renderer_text_span_font_set(r, enesim_text_font_ref(thiz->gfont));
 		enesim_renderer_text_span_position_set(r, x, y);
+		/* set the rotation */
 		e = EGUEB_SVG_ELEMENT(thiz);
-		INFO("matrix %" ENESIM_MATRIX_FORMAT, ENESIM_MATRIX_ARGS (&e->transform));
-		enesim_renderer_transformation_set(r, &e->transform);
+		tx = e->transform;
+		if (rotate != 0)
+		{
+			Enesim_Matrix trx, rx, cx;
+
+			enesim_matrix_rotate(&rx, rotate * M_PI / 180.0);
+			/* rotation over the current pen position */
+			enesim_matrix_translate(&trx, x, y);
+			enesim_matrix_compose(&trx, &rx, &cx);
+			enesim_matrix_translate(&trx, -x, -y);
+			enesim_matrix_compose(&cx, &trx, &cx);
+			enesim_matrix_compose(&tx, &cx, &tx);
+		}
+		
+		INFO("matrix %" ENESIM_MATRIX_FORMAT, ENESIM_MATRIX_ARGS (&tx));
+		enesim_renderer_transformation_set(r, &tx);
 
 		layer = enesim_renderer_compound_layer_new();
 		enesim_renderer_compound_layer_renderer_set(layer, enesim_renderer_ref(r));
@@ -271,7 +313,8 @@ static void _egueb_svg_text_content_process_text(Egueb_Svg_Text_Content *thiz,
 		if (!egueb_dom_list_length(thiz->state.x) &&
 			!egueb_dom_list_length(thiz->state.y) &&
 			!egueb_dom_list_length(thiz->state.dx) &&
-			!egueb_dom_list_length(thiz->state.dy))
+			!egueb_dom_list_length(thiz->state.dy) &&
+			!egueb_dom_list_length(thiz->state.rotate) && !rotate)
 		{
 			r_buffer = enesim_text_buffer_utf8_new(0);
 			enesim_text_buffer_string_insert(r_buffer, text + idx, -1, 0);
@@ -291,6 +334,7 @@ static void _egueb_svg_text_content_process_text(Egueb_Svg_Text_Content *thiz,
 		enesim_renderer_shape_geometry_get(r, &bounds);
 		thiz->state.pen_x = x + bounds.w;
 		thiz->state.pen_y = y;
+		thiz->state.pen_rot = rotate;
 		/* add the span to the list of spans */
 		_egueb_svg_text_content_propagate(thiz, r);
 		thiz->spans = eina_list_append(thiz->spans, r);
@@ -487,7 +531,10 @@ static void _egueb_svg_text_content_painter_apply(Egueb_Svg_Renderable *r,
 			other = EGUEB_SVG_TEXT_CONTENT(parent);
 			thiz->state.pen_x = other->state.pen_x;
 			thiz->state.pen_y = other->state.pen_y;
-			INFO("Starting with pen %g %g", thiz->state.pen_x, thiz->state.pen_y);
+			thiz->state.pen_rot = other->state.pen_rot;
+			INFO("Starting with pen x: %g y: %g rot: %g",
+					thiz->state.pen_x, thiz->state.pen_y,
+					thiz->state.pen_rot);
 		}
 
 		child = egueb_dom_node_child_first_get(n);
@@ -510,6 +557,7 @@ static void _egueb_svg_text_content_painter_apply(Egueb_Svg_Renderable *r,
 			{
 				other->state.pen_x = thiz->state.pen_x;
 				other->state.pen_y = thiz->state.pen_y;
+				other->state.pen_rot = thiz->state.pen_rot;
 			}
 
 			tmp = egueb_dom_node_sibling_next_get(child);

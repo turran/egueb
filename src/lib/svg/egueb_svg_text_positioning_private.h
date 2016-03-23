@@ -33,6 +33,7 @@ typedef struct _Egueb_Svg_Text_Positioning
 	Egueb_Dom_Node *y;
 	Egueb_Dom_Node *dx;
 	Egueb_Dom_Node *dy;
+	Egueb_Dom_Node *rotate;
 	/* private */
 	double gx;
 	double gy;

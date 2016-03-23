@@ -30,7 +30,8 @@ typedef struct _Egueb_Svg_Text_Content_State
 	Egueb_Dom_List *y;
 	Egueb_Dom_List *dx;
 	Egueb_Dom_List *dy;
-	double pen_x, pen_y;
+	Egueb_Dom_List *rotate;
+	double pen_x, pen_y, pen_rot;
 } Egueb_Svg_Text_Content_State;
 
 typedef struct _Egueb_Svg_Text_Content
