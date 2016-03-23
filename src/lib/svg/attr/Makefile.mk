@@ -17,6 +17,8 @@ src/lib/svg/attr/egueb_svg_attr_matrix.c \
 src/lib/svg/attr/egueb_svg_attr_matrix_private.h \
 src/lib/svg/attr/egueb_svg_attr_number.c \
 src/lib/svg/attr/egueb_svg_attr_number_private.h \
+src/lib/svg/attr/egueb_svg_attr_number_list.c \
+src/lib/svg/attr/egueb_svg_attr_number_list_private.h \
 src/lib/svg/attr/egueb_svg_attr_overflow.c \
 src/lib/svg/attr/egueb_svg_attr_overflow_private.h \
 src/lib/svg/attr/egueb_svg_attr_paint.c \
