@@ -19,6 +19,7 @@
 #include "egueb_svg_main.h"
 #include "egueb_svg_text_content.h"
 #include "egueb_svg_text_content_private.h"
+#include "egueb_svg_value_number_private.h"
 #include "egueb_dom_string_private.h"
 
 /*
@@ -89,7 +90,7 @@ static void _egueb_svg_text_content_initialize_state(
 		thiz->state.y = egueb_dom_list_new(egueb_svg_length_descriptor_get());
 		thiz->state.dx = egueb_dom_list_new(egueb_svg_length_descriptor_get());
 		thiz->state.dy = egueb_dom_list_new(egueb_svg_length_descriptor_get());
-		thiz->state.rotate = egueb_dom_list_new(egueb_dom_value_double_descriptor_get());
+		thiz->state.rotate = egueb_dom_list_new(egueb_svg_value_number_descriptor_get());
 		thiz->state.pen_x = 0;
 		thiz->state.pen_y = 0;
 		thiz->state.pen_rot = 0;

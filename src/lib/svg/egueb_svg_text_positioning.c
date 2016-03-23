@@ -19,7 +19,10 @@
 #include "egueb_svg_main_private.h"
 #include "egueb_svg_main.h"
 #include "egueb_svg_length.h"
+#include "egueb_svg_number.h"
 #include "egueb_svg_document.h"
+#include "egueb_svg_value_number_private.h"
+#include "egueb_svg_attr_number_list_private.h"
 #include "egueb_svg_attr_length_list_private.h"
 #include "egueb_svg_text_positioning_private.h"
 /*============================================================================*
@@ -109,8 +112,8 @@ static void _egueb_svg_text_positioning_instance_init(void *o)
 			EINA_FALSE, EINA_FALSE);
 	egueb_dom_list_unref(def);
 
-	def_rot = egueb_dom_list_new(egueb_dom_value_double_descriptor_get());
-	thiz->rotate = egueb_dom_attr_double_list_new(
+	def_rot = egueb_dom_list_new(egueb_svg_value_number_descriptor_get());
+	thiz->rotate = egueb_svg_attr_number_list_new(
 			egueb_dom_string_ref(EGUEB_SVG_NAME_ROTATE),
 			def_rot, EINA_TRUE,
 			EINA_FALSE, EINA_FALSE);
