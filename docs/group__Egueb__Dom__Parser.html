@@ -3,7 +3,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
-<title>egueb: Timeline</title>
+<title>egueb: Parser</title>
 
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen.css" rel="stylesheet" type="text/css" />
@@ -72,56 +72,35 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   <div class="summary">
 <a href="#func-members">Functions</a>  </div>
   <div class="headertitle">
-<div class="title">Timeline</div>  </div>
-<div class="ingroups"><a class="el" href="group__Egueb__Smil__Group.html">SMIL</a></div></div><!--header-->
+<div class="title">Parser</div>  </div>
+<div class="ingroups"><a class="el" href="group__Egueb__Dom__Group.html">DOM</a></div></div><!--header-->
 <div class="contents">
+
+<p>Parser.  
+<a href="#details">More...</a></p>
 <table class="memberdecls">
 <tr><td colspan="2"><h2><a name="func-members"></a>
 Functions</h2></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">EAPI Egueb_Smil_Timeline *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__Egueb__Smil__Timeline.html#ga5971acf2aeff57d095da487fb8dededf">egueb_smil_timeline_new</a> (void)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="gab2973dc70087bc4caf001ec8658ed6fe"></a><!-- doxytag: member="Egueb_Smil_Timeline::egueb_smil_timeline_ref" ref="gab2973dc70087bc4caf001ec8658ed6fe" args="(Egueb_Smil_Timeline *thiz)" -->
-EAPI Egueb_Smil_Timeline *&#160;</td><td class="memItemRight" valign="bottom"><b>egueb_smil_timeline_ref</b> (Egueb_Smil_Timeline *thiz)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="gad7af069c301a02d76c14dafd9d6d2cfc"></a><!-- doxytag: member="Egueb_Smil_Timeline::egueb_smil_timeline_unref" ref="gad7af069c301a02d76c14dafd9d6d2cfc" args="(Egueb_Smil_Timeline *thiz)" -->
-EAPI void&#160;</td><td class="memItemRight" valign="bottom"><b>egueb_smil_timeline_unref</b> (Egueb_Smil_Timeline *thiz)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ga47304c07b8b3cf14f9bb8e2e84af45bd"></a><!-- doxytag: member="Egueb_Smil_Timeline::egueb_smil_timeline_signal_add" ref="ga47304c07b8b3cf14f9bb8e2e84af45bd" args="(Egueb_Smil_Timeline *thiz, Egueb_Smil_Signal *s)" -->
-EAPI void&#160;</td><td class="memItemRight" valign="bottom"><b>egueb_smil_timeline_signal_add</b> (Egueb_Smil_Timeline *thiz, Egueb_Smil_Signal *s)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">EAPI void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__Egueb__Smil__Timeline.html#ga95c68d101f64a7648c19170911d3921a">egueb_smil_timeline_signal_remove</a> (Egueb_Smil_Timeline *thiz, Egueb_Smil_Signal *s)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">EAPI Eina_Bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__Egueb__Dom__Parser.html#gad8bcd067a77a37a2d66d99f5852845d8">egueb_dom_parser_parse</a> (Enesim_Stream *s, <a class="el" href="group__Egueb__Dom__Node.html#ga9d712a993715d8cfb04d49f9648b80d7">Egueb_Dom_Node</a> **doc)</td></tr>
 </table>
+<hr/><a name="details" id="details"></a><h2>Detailed Description</h2>
+<p>Parser. </p>
 <hr/><h2>Function Documentation</h2>
-<a class="anchor" id="ga5971acf2aeff57d095da487fb8dededf"></a><!-- doxytag: member="egueb_smil_timeline.h::egueb_smil_timeline_new" ref="ga5971acf2aeff57d095da487fb8dededf" args="(void)" -->
+<a class="anchor" id="gad8bcd067a77a37a2d66d99f5852845d8"></a><!-- doxytag: member="egueb_dom_parser.h::egueb_dom_parser_parse" ref="gad8bcd067a77a37a2d66d99f5852845d8" args="(Enesim_Stream *s, Egueb_Dom_Node **doc)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">EAPI Egueb_Smil_Timeline* <a class="el" href="group__Egueb__Smil__Timeline.html#ga5971acf2aeff57d095da487fb8dededf">egueb_smil_timeline_new</a> </td>
+          <td class="memname">EAPI Eina_Bool <a class="el" href="group__Egueb__Dom__Parser.html#gad8bcd067a77a37a2d66d99f5852845d8">egueb_dom_parser_parse</a> </td>
           <td>(</td>
-          <td class="paramtype">void&#160;</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-<p>Create a new timeline </p>
-<dl class="return"><dt><b>Returns:</b></dt><dd>The newly created timeline </dd></dl>
-
-</div>
-</div>
-<a class="anchor" id="ga95c68d101f64a7648c19170911d3921a"></a><!-- doxytag: member="egueb_smil_timeline.h::egueb_smil_timeline_signal_remove" ref="ga95c68d101f64a7648c19170911d3921a" args="(Egueb_Smil_Timeline *thiz, Egueb_Smil_Signal *s)" -->
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">EAPI void <a class="el" href="group__Egueb__Smil__Timeline.html#ga95c68d101f64a7648c19170911d3921a">egueb_smil_timeline_signal_remove</a> </td>
-          <td>(</td>
-          <td class="paramtype">Egueb_Smil_Timeline *&#160;</td>
-          <td class="paramname"><em>thiz</em>, </td>
+          <td class="paramtype">Enesim_Stream *&#160;</td>
+          <td class="paramname"><em>s</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">Egueb_Smil_Signal *&#160;</td>
-          <td class="paramname"><em>s</em>&#160;</td>
+          <td class="paramtype"><a class="el" href="group__Egueb__Dom__Node.html#ga9d712a993715d8cfb04d49f9648b80d7">Egueb_Dom_Node</a> **&#160;</td>
+          <td class="paramname"><em>doc</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -131,14 +110,15 @@ EAPI void&#160;</td><td class="memItemRight" valign="bottom"><b>egueb_smil_timel
       </table>
 </div>
 <div class="memdoc">
-<p>Remove the signal from the Egueb_Smil_Timeline instance </p>
+<p>Parse a document from an enesim stream </p>
 <dl class="params"><dt><b>Parameters:</b></dt><dd>
   <table class="params">
-    <tr><td class="paramname">thiz</td><td>The Egueb_Smil_Timeline instance to remove the signal from </td></tr>
-    <tr><td class="paramname">s</td><td>The signal to remove </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">s</td><td>The stream to parse  [Transfer full] </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">doc</td><td>The resulting parsed document  </td></tr>
   </table>
   </dd>
 </dl>
+<dl class="return"><dt><b>Returns:</b></dt><dd>EINA_TRUE if the parsing is correct, EINA_FALSE otherwise </dd></dl>
 
 </div>
 </div>
@@ -160,7 +140,7 @@ EAPI void&#160;</td><td class="memItemRight" valign="bottom"><b>egueb_smil_timel
 
 
 <hr class="footer"/><address class="footer"><small>
-Generated on Mon Sep 29 2014 19:34:16 for egueb by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Wed Mar 30 2016 23:40:27 for egueb by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.7.6.1
 </small></address>

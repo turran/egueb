@@ -70,27 +70,19 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </div>
 <div class="header">
   <div class="summary">
-<a href="#nested-classes">Data Structures</a> &#124;
-<a href="#typedef-members">Typedefs</a> &#124;
-<a href="#func-members">Functions</a> &#124;
-<a href="#var-members">Variables</a>  </div>
+<a href="#groups">Modules</a> &#124;
+<a href="#func-members">Functions</a>  </div>
   <div class="headertitle">
 <div class="title">Rendering</div>  </div>
 <div class="ingroups"><a class="el" href="group__Egueb__Dom__Feature.html">Features</a></div></div><!--header-->
 <div class="contents">
 
-<p>Node rendering features.  
+<p>Node rendering features  inherits from \1.  
 <a href="#details">More...</a></p>
 <table class="memberdecls">
-<tr><td colspan="2"><h2><a name="nested-classes"></a>
-Data Structures</h2></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structEgueb__Dom__Feature__Render__Descriptor.html">Egueb_Dom_Feature_Render_Descriptor</a></td></tr>
-<tr><td colspan="2"><h2><a name="typedef-members"></a>
-Typedefs</h2></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ga4adc73eae42a562939d6bedf12e44ec5"></a><!-- doxytag: member="Egueb_Dom_Feature_Render::Egueb_Dom_Feature_Render_Renderer_Get" ref="ga4adc73eae42a562939d6bedf12e44ec5" args=")(Egueb_Dom_Node *n)" -->
-typedef Enesim_Renderer *(*&#160;</td><td class="memItemRight" valign="bottom"><b>Egueb_Dom_Feature_Render_Renderer_Get</b> )(<a class="el" href="group__Egueb__Dom__Node.html#ga9d712a993715d8cfb04d49f9648b80d7">Egueb_Dom_Node</a> *n)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ga80af8f8d42af71ed17f5096451b336cb"></a><!-- doxytag: member="Egueb_Dom_Feature_Render::Egueb_Dom_Feature_Render_Damage_Cb" ref="ga80af8f8d42af71ed17f5096451b336cb" args=")(Egueb_Dom_Feature *f, Eina_Rectangle *damage, void *data)" -->
-typedef Eina_Bool(*&#160;</td><td class="memItemRight" valign="bottom"><b>Egueb_Dom_Feature_Render_Damage_Cb</b> )(Egueb_Dom_Feature *f, Eina_Rectangle *damage, void *data)</td></tr>
+<tr><td colspan="2"><h2><a name="groups"></a>
+Modules</h2></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__Egueb__Dom__Feature__Render__Definition.html">Definitions</a></td></tr>
 <tr><td colspan="2"><h2><a name="func-members"></a>
 Functions</h2></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ga59f97106f0b835e8d8dc0cd9357d88e0"></a><!-- doxytag: member="Egueb_Dom_Feature_Render::egueb_dom_feature_render_draw" ref="ga59f97106f0b835e8d8dc0cd9357d88e0" args="(Egueb_Dom_Feature *f, Enesim_Surface *s, Enesim_Rop rop, Eina_Rectangle *clip, int x, int y, Enesim_Log **error)" -->
@@ -98,16 +90,12 @@ EAPI Eina_Bool&#160;</td><td class="memItemRight" valign="bottom"><b>egueb_dom_f
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ga346471a7b77ccf3224fa28d6d5c977f3"></a><!-- doxytag: member="Egueb_Dom_Feature_Render::egueb_dom_feature_render_draw_list" ref="ga346471a7b77ccf3224fa28d6d5c977f3" args="(Egueb_Dom_Feature *f, Enesim_Surface *s, Enesim_Rop rop, Eina_List *clips, int x, int y, Enesim_Log **error)" -->
 EAPI Eina_Bool&#160;</td><td class="memItemRight" valign="bottom"><b>egueb_dom_feature_render_draw_list</b> (Egueb_Dom_Feature *f, Enesim_Surface *s, Enesim_Rop rop, Eina_List *clips, int x, int y, Enesim_Log **error)</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="gae680d49dbf2b017423a44743282f2302"></a><!-- doxytag: member="Egueb_Dom_Feature_Render::egueb_dom_feature_render_damages_get" ref="gae680d49dbf2b017423a44743282f2302" args="(Egueb_Dom_Feature *f, Enesim_Surface *s, Egueb_Dom_Feature_Render_Damage_Cb cb, void *data)" -->
-EAPI Eina_Bool&#160;</td><td class="memItemRight" valign="bottom"><b>egueb_dom_feature_render_damages_get</b> (Egueb_Dom_Feature *f, Enesim_Surface *s, Egueb_Dom_Feature_Render_Damage_Cb cb, void *data)</td></tr>
+EAPI Eina_Bool&#160;</td><td class="memItemRight" valign="bottom"><b>egueb_dom_feature_render_damages_get</b> (Egueb_Dom_Feature *f, Enesim_Surface *s, <a class="el" href="group__Egueb__Dom__Feature__Render__Definition.html#ga80af8f8d42af71ed17f5096451b336cb">Egueb_Dom_Feature_Render_Damage_Cb</a> cb, void *data)</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="gae893146701849dd61d1cbee8179a2c1f"></a><!-- doxytag: member="Egueb_Dom_Feature_Render::egueb_dom_feature_render_add" ref="gae893146701849dd61d1cbee8179a2c1f" args="(Egueb_Dom_Node *n, const Egueb_Dom_Feature_Render_Descriptor *d)" -->
 EAPI Eina_Bool&#160;</td><td class="memItemRight" valign="bottom"><b>egueb_dom_feature_render_add</b> (<a class="el" href="group__Egueb__Dom__Node.html#ga9d712a993715d8cfb04d49f9648b80d7">Egueb_Dom_Node</a> *n, const <a class="el" href="structEgueb__Dom__Feature__Render__Descriptor.html">Egueb_Dom_Feature_Render_Descriptor</a> *d)</td></tr>
-<tr><td colspan="2"><h2><a name="var-members"></a>
-Variables</h2></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="gaeb8f424c5a926ba29d9a038a15140ffe"></a><!-- doxytag: member="Egueb_Dom_Feature_Render::EGUEB_DOM_FEATURE_RENDER_NAME" ref="gaeb8f424c5a926ba29d9a038a15140ffe" args="" -->
-EAPI Egueb_Dom_String *&#160;</td><td class="memItemRight" valign="bottom"><b>EGUEB_DOM_FEATURE_RENDER_NAME</b></td></tr>
 </table>
 <hr/><a name="details" id="details"></a><h2>Detailed Description</h2>
-<p>Node rendering features. </p>
+<p>Node rendering features  inherits from \1. </p>
 </div><!-- contents -->
 <!-- window showing the filter options -->
 <div id="MSearchSelectWindow"
@@ -126,7 +114,7 @@ EAPI Egueb_Dom_String *&#160;</td><td class="memItemRight" valign="bottom"><b>EG
 
 
 <hr class="footer"/><address class="footer"><small>
-Generated on Mon Sep 29 2014 19:34:16 for egueb by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Wed Mar 30 2016 23:40:28 for egueb by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.7.6.1
 </small></address>

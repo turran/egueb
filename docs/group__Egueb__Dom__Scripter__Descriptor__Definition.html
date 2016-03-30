@@ -78,23 +78,120 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <table class="memberdecls">
 <tr><td colspan="2"><h2><a name="typedef-members"></a>
 Typedefs</h2></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ga7d179131c15d39cf05625d39fb9ccaf4"></a><!-- doxytag: member="Egueb_Dom_Scripter_Descriptor_Definition::Egueb_Dom_Scripter_Descriptor_New" ref="ga7d179131c15d39cf05625d39fb9ccaf4" args=")(void)" -->
-typedef void *(*&#160;</td><td class="memItemRight" valign="bottom"><b>Egueb_Dom_Scripter_Descriptor_New</b> )(void)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="gaee5790e39b5a2bb788b5129fc594b0af"></a><!-- doxytag: member="Egueb_Dom_Scripter_Descriptor_Definition::Egueb_Dom_Scripter_Descriptor_Free" ref="gaee5790e39b5a2bb788b5129fc594b0af" args=")(void *prv)" -->
-typedef void(*&#160;</td><td class="memItemRight" valign="bottom"><b>Egueb_Dom_Scripter_Descriptor_Free</b> )(void *prv)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="gae192310b3128d04c202423cb80e11e3f"></a><!-- doxytag: member="Egueb_Dom_Scripter_Descriptor_Definition::Egueb_Dom_Scripter_Descriptor_Load" ref="gae192310b3128d04c202423cb80e11e3f" args=")(void *prv, Egueb_Dom_String *s, void **obj)" -->
-typedef Eina_Bool(*&#160;</td><td class="memItemRight" valign="bottom"><b>Egueb_Dom_Scripter_Descriptor_Load</b> )(void *prv, Egueb_Dom_String *s, void **obj)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ga7fd0f136a7d46d7b9d77d2089791f2f6"></a><!-- doxytag: member="Egueb_Dom_Scripter_Descriptor_Definition::Egueb_Dom_Scripter_Descriptor_Global_Add" ref="ga7fd0f136a7d46d7b9d77d2089791f2f6" args=")(void *prv, const char *name, void *o, Ender_Item *i)" -->
-typedef void(*&#160;</td><td class="memItemRight" valign="bottom"><b>Egueb_Dom_Scripter_Descriptor_Global_Add</b> )(void *prv, const char *name, void *o, Ender_Item *i)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ga845d64c4144a17ca152919c1beb8a7e6"></a><!-- doxytag: member="Egueb_Dom_Scripter_Descriptor_Definition::Egueb_Dom_Scripter_Descriptor_Global_Clear" ref="ga845d64c4144a17ca152919c1beb8a7e6" args=")(void *prv)" -->
-typedef void(*&#160;</td><td class="memItemRight" valign="bottom"><b>Egueb_Dom_Scripter_Descriptor_Global_Clear</b> )(void *prv)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="gaa9ed44cfcf6c7a9ac5957fe20aa02a03"></a><!-- doxytag: member="Egueb_Dom_Scripter_Descriptor_Definition::Egueb_Dom_Scripter_Descriptor_Script_Free" ref="gaa9ed44cfcf6c7a9ac5957fe20aa02a03" args=")(void *prv, void *obj)" -->
-typedef void(*&#160;</td><td class="memItemRight" valign="bottom"><b>Egueb_Dom_Scripter_Descriptor_Script_Free</b> )(void *prv, void *obj)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="gaf7d417d9a97ab2d8599572cf8d734cad"></a><!-- doxytag: member="Egueb_Dom_Scripter_Descriptor_Definition::Egueb_Dom_Scripter_Descriptor_Script_Run" ref="gaf7d417d9a97ab2d8599572cf8d734cad" args=")(void *prv, void *obj)" -->
-typedef Eina_Bool(*&#160;</td><td class="memItemRight" valign="bottom"><b>Egueb_Dom_Scripter_Descriptor_Script_Run</b> )(void *prv, void *obj)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ga932556290b5e3b8104e1b52b83af7ae3"></a><!-- doxytag: member="Egueb_Dom_Scripter_Descriptor_Definition::Egueb_Dom_Scripter_Descriptor_Script_Run_Listener" ref="ga932556290b5e3b8104e1b52b83af7ae3" args=")(void *prv, void *obj, Egueb_Dom_Event *e)" -->
-typedef Eina_Bool(*&#160;</td><td class="memItemRight" valign="bottom"><b>Egueb_Dom_Scripter_Descriptor_Script_Run_Listener</b> )(void *prv, void *obj, Egueb_Dom_Event *e)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">typedef void *(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__Egueb__Dom__Scripter__Descriptor__Definition.html#ga6dd1da6fc382a8d850060600c550c597">Egueb_Dom_Scripter_Descriptor_Create_Cb</a> )(void)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">typedef void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__Egueb__Dom__Scripter__Descriptor__Definition.html#ga61b256a87a0906f18c328e4267fa768d">Egueb_Dom_Scripter_Descriptor_Destroy_Cb</a> )(void *prv)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">typedef Eina_Bool(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__Egueb__Dom__Scripter__Descriptor__Definition.html#ga190350264bc1899f8b05ae3b8726d0f4">Egueb_Dom_Scripter_Descriptor_Load_Cb</a> )(void *prv, Egueb_Dom_String *s, void **obj)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">typedef void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__Egueb__Dom__Scripter__Descriptor__Definition.html#ga7d48f7260f37bd78718122e036b34dff">Egueb_Dom_Scripter_Descriptor_Global_Add_Cb</a> )(void *prv, const char *name, void *o, Ender_Item *i)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">typedef void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__Egueb__Dom__Scripter__Descriptor__Definition.html#ga975686931df7deb5b04ee93b990df21c">Egueb_Dom_Scripter_Descriptor_Global_Clear_Cb</a> )(void *prv)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">typedef void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__Egueb__Dom__Scripter__Descriptor__Definition.html#gacd171e2c923d6d514a4d4d8b7aedcea7">Egueb_Dom_Scripter_Descriptor_Script_Destroy_Cb</a> )(void *prv, void *obj)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">typedef Eina_Bool(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__Egueb__Dom__Scripter__Descriptor__Definition.html#ga288feb1fac170375f6fc74ba4bcf4043">Egueb_Dom_Scripter_Descriptor_Script_Run_Cb</a> )(void *prv, void *obj)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">typedef Eina_Bool(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__Egueb__Dom__Scripter__Descriptor__Definition.html#ga551300217da863e650ab5d7499a808d2">Egueb_Dom_Scripter_Descriptor_Script_Run_Listener_Cb</a> )(void *prv, void *obj, <a class="el" href="group__Egueb__Dom__Event.html#gabaacf246fe9edc58ca699505e37e281f">Egueb_Dom_Event</a> *e)</td></tr>
 </table>
+<hr/><h2>Typedef Documentation</h2>
+<a class="anchor" id="ga6dd1da6fc382a8d850060600c550c597"></a><!-- doxytag: member="egueb_dom_scripter.h::Egueb_Dom_Scripter_Descriptor_Create_Cb" ref="ga6dd1da6fc382a8d850060600c550c597" args=")(void)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">typedef void*(* <a class="el" href="group__Egueb__Dom__Scripter__Descriptor__Definition.html#ga6dd1da6fc382a8d850060600c550c597">Egueb_Dom_Scripter_Descriptor_Create_Cb</a>)(void)</td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+ 
+</div>
+</div>
+<a class="anchor" id="ga61b256a87a0906f18c328e4267fa768d"></a><!-- doxytag: member="egueb_dom_scripter.h::Egueb_Dom_Scripter_Descriptor_Destroy_Cb" ref="ga61b256a87a0906f18c328e4267fa768d" args=")(void *prv)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">typedef void(* <a class="el" href="group__Egueb__Dom__Scripter__Descriptor__Definition.html#ga61b256a87a0906f18c328e4267fa768d">Egueb_Dom_Scripter_Descriptor_Destroy_Cb</a>)(void *prv)</td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+ 
+</div>
+</div>
+<a class="anchor" id="ga190350264bc1899f8b05ae3b8726d0f4"></a><!-- doxytag: member="egueb_dom_scripter.h::Egueb_Dom_Scripter_Descriptor_Load_Cb" ref="ga190350264bc1899f8b05ae3b8726d0f4" args=")(void *prv, Egueb_Dom_String *s, void **obj)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">typedef Eina_Bool(* <a class="el" href="group__Egueb__Dom__Scripter__Descriptor__Definition.html#ga190350264bc1899f8b05ae3b8726d0f4">Egueb_Dom_Scripter_Descriptor_Load_Cb</a>)(void *prv, Egueb_Dom_String *s, void **obj)</td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+ 
+</div>
+</div>
+<a class="anchor" id="ga7d48f7260f37bd78718122e036b34dff"></a><!-- doxytag: member="egueb_dom_scripter.h::Egueb_Dom_Scripter_Descriptor_Global_Add_Cb" ref="ga7d48f7260f37bd78718122e036b34dff" args=")(void *prv, const char *name, void *o, Ender_Item *i)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">typedef void(* <a class="el" href="group__Egueb__Dom__Scripter__Descriptor__Definition.html#ga7d48f7260f37bd78718122e036b34dff">Egueb_Dom_Scripter_Descriptor_Global_Add_Cb</a>)(void *prv, const char *name, void *o, Ender_Item *i)</td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+ 
+</div>
+</div>
+<a class="anchor" id="ga975686931df7deb5b04ee93b990df21c"></a><!-- doxytag: member="egueb_dom_scripter.h::Egueb_Dom_Scripter_Descriptor_Global_Clear_Cb" ref="ga975686931df7deb5b04ee93b990df21c" args=")(void *prv)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">typedef void(* <a class="el" href="group__Egueb__Dom__Scripter__Descriptor__Definition.html#ga975686931df7deb5b04ee93b990df21c">Egueb_Dom_Scripter_Descriptor_Global_Clear_Cb</a>)(void *prv)</td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+ 
+</div>
+</div>
+<a class="anchor" id="gacd171e2c923d6d514a4d4d8b7aedcea7"></a><!-- doxytag: member="egueb_dom_scripter.h::Egueb_Dom_Scripter_Descriptor_Script_Destroy_Cb" ref="gacd171e2c923d6d514a4d4d8b7aedcea7" args=")(void *prv, void *obj)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">typedef void(* <a class="el" href="group__Egueb__Dom__Scripter__Descriptor__Definition.html#gacd171e2c923d6d514a4d4d8b7aedcea7">Egueb_Dom_Scripter_Descriptor_Script_Destroy_Cb</a>)(void *prv, void *obj)</td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+ 
+</div>
+</div>
+<a class="anchor" id="ga288feb1fac170375f6fc74ba4bcf4043"></a><!-- doxytag: member="egueb_dom_scripter.h::Egueb_Dom_Scripter_Descriptor_Script_Run_Cb" ref="ga288feb1fac170375f6fc74ba4bcf4043" args=")(void *prv, void *obj)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">typedef Eina_Bool(* <a class="el" href="group__Egueb__Dom__Scripter__Descriptor__Definition.html#ga288feb1fac170375f6fc74ba4bcf4043">Egueb_Dom_Scripter_Descriptor_Script_Run_Cb</a>)(void *prv, void *obj)</td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+ 
+</div>
+</div>
+<a class="anchor" id="ga551300217da863e650ab5d7499a808d2"></a><!-- doxytag: member="egueb_dom_scripter.h::Egueb_Dom_Scripter_Descriptor_Script_Run_Listener_Cb" ref="ga551300217da863e650ab5d7499a808d2" args=")(void *prv, void *obj, Egueb_Dom_Event *e)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">typedef Eina_Bool(* <a class="el" href="group__Egueb__Dom__Scripter__Descriptor__Definition.html#ga551300217da863e650ab5d7499a808d2">Egueb_Dom_Scripter_Descriptor_Script_Run_Listener_Cb</a>)(void *prv, void *obj, <a class="el" href="group__Egueb__Dom__Event.html#gabaacf246fe9edc58ca699505e37e281f">Egueb_Dom_Event</a> *e)</td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+ 
+</div>
+</div>
 </div><!-- contents -->
 <!-- window showing the filter options -->
 <div id="MSearchSelectWindow"
@@ -113,7 +210,7 @@ typedef Eina_Bool(*&#160;</td><td class="memItemRight" valign="bottom"><b>Egueb_
 
 
 <hr class="footer"/><address class="footer"><small>
-Generated on Mon Sep 29 2014 19:34:16 for egueb by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Wed Mar 30 2016 23:40:27 for egueb by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.7.6.1
 </small></address>

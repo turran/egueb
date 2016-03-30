@@ -70,29 +70,72 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </div>
 <div class="header">
   <div class="summary">
-<a href="#nested-classes">Data Structures</a> &#124;
 <a href="#typedef-members">Typedefs</a>  </div>
   <div class="headertitle">
 <div class="title">Window Descriptor Definition</div>  </div>
 <div class="ingroups"><a class="el" href="group__Egueb__Dom__Window__Descriptor.html">Window Descriptor</a></div></div><!--header-->
 <div class="contents">
 <table class="memberdecls">
-<tr><td colspan="2"><h2><a name="nested-classes"></a>
-Data Structures</h2></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structEgueb__Dom__Window__Descriptor.html">Egueb_Dom_Window_Descriptor</a></td></tr>
 <tr><td colspan="2"><h2><a name="typedef-members"></a>
 Typedefs</h2></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="gadeaed4f444a312db29215de97c7fb2bf"></a><!-- doxytag: member="Egueb_Dom_Window_Descriptor_Definition::Egueb_Dom_Window_Descriptor_Create" ref="gadeaed4f444a312db29215de97c7fb2bf" args=")(void)" -->
-typedef void *(*&#160;</td><td class="memItemRight" valign="bottom"><b>Egueb_Dom_Window_Descriptor_Create</b> )(void)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ga0861313ccba0418acc6b258e41706193"></a><!-- doxytag: member="Egueb_Dom_Window_Descriptor_Definition::Egueb_Dom_Window_Descriptor_Destroy" ref="ga0861313ccba0418acc6b258e41706193" args=")(void *data)" -->
-typedef void(*&#160;</td><td class="memItemRight" valign="bottom"><b>Egueb_Dom_Window_Descriptor_Destroy</b> )(void *data)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="gab554b41093af7622143adf87d9a3db51"></a><!-- doxytag: member="Egueb_Dom_Window_Descriptor_Definition::Egueb_Dom_Window_Descriptor_Timeout_Cb" ref="gab554b41093af7622143adf87d9a3db51" args=")(Egueb_Dom_Window *thiz, void *user_data)" -->
-typedef void(*&#160;</td><td class="memItemRight" valign="bottom"><b>Egueb_Dom_Window_Descriptor_Timeout_Cb</b> )(Egueb_Dom_Window *thiz, void *user_data)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ga6a4ade608b91927febaa4f6efe591d8a"></a><!-- doxytag: member="Egueb_Dom_Window_Descriptor_Definition::Egueb_Dom_Window_Descriptor_Timeout_Set" ref="ga6a4ade608b91927febaa4f6efe591d8a" args=")(void *data, Egueb_Dom_Window_Descriptor_Timeout_Cb cb, int64_t delay, void *user_data)" -->
-typedef void *(*&#160;</td><td class="memItemRight" valign="bottom"><b>Egueb_Dom_Window_Descriptor_Timeout_Set</b> )(void *data, Egueb_Dom_Window_Descriptor_Timeout_Cb cb, int64_t delay, void *user_data)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ga788fd3c273691a7d6990ee1096db5df9"></a><!-- doxytag: member="Egueb_Dom_Window_Descriptor_Definition::Egueb_Dom_Window_Descriptor_Timeout_Clear" ref="ga788fd3c273691a7d6990ee1096db5df9" args=")(void *data, void *timeout)" -->
-typedef void *(*&#160;</td><td class="memItemRight" valign="bottom"><b>Egueb_Dom_Window_Descriptor_Timeout_Clear</b> )(void *data, void *timeout)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">typedef void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__Egueb__Dom__Window__Descriptor__Definition.html#ga9e514fdd6ef4641284d278faa270624c">Egueb_Dom_Window_Descriptor_Destroy_Cb</a> )(void *data)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">typedef void *(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__Egueb__Dom__Window__Descriptor__Definition.html#ga887f87976dce3b4743d333e4fb4f1fe2">Egueb_Dom_Window_Descriptor_Timeout_Set_Cb</a> )(void *data, <a class="el" href="group__Egueb__Dom__Window__Definitions.html#ga554161d77ef1476c96bc17c845572faa">Egueb_Dom_Window_Timeout_Cb</a> cb, int64_t delay, void *user_data)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">typedef void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__Egueb__Dom__Window__Descriptor__Definition.html#ga9db6acbde60bfa59a918b4075774ea5a">Egueb_Dom_Window_Descriptor_Timeout_Clear_Cb</a> )(void *data, void *timeout)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">typedef int(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__Egueb__Dom__Window__Descriptor__Definition.html#ga08214e9a36b3206c6c54e0f14f7e9715">Egueb_Dom_Window_Descriptor_Size_Get_Cb</a> )(void *data)</td></tr>
 </table>
+<hr/><h2>Typedef Documentation</h2>
+<a class="anchor" id="ga9e514fdd6ef4641284d278faa270624c"></a><!-- doxytag: member="egueb_dom_window.h::Egueb_Dom_Window_Descriptor_Destroy_Cb" ref="ga9e514fdd6ef4641284d278faa270624c" args=")(void *data)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">typedef void(* <a class="el" href="group__Egueb__Dom__Window__Descriptor__Definition.html#ga9e514fdd6ef4641284d278faa270624c">Egueb_Dom_Window_Descriptor_Destroy_Cb</a>)(void *data)</td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+ 
+</div>
+</div>
+<a class="anchor" id="ga887f87976dce3b4743d333e4fb4f1fe2"></a><!-- doxytag: member="egueb_dom_window.h::Egueb_Dom_Window_Descriptor_Timeout_Set_Cb" ref="ga887f87976dce3b4743d333e4fb4f1fe2" args=")(void *data, Egueb_Dom_Window_Timeout_Cb cb, int64_t delay, void *user_data)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">typedef void*(* <a class="el" href="group__Egueb__Dom__Window__Descriptor__Definition.html#ga887f87976dce3b4743d333e4fb4f1fe2">Egueb_Dom_Window_Descriptor_Timeout_Set_Cb</a>)(void *data, <a class="el" href="group__Egueb__Dom__Window__Definitions.html#ga554161d77ef1476c96bc17c845572faa">Egueb_Dom_Window_Timeout_Cb</a> cb, int64_t delay, void *user_data)</td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+ 
+</div>
+</div>
+<a class="anchor" id="ga9db6acbde60bfa59a918b4075774ea5a"></a><!-- doxytag: member="egueb_dom_window.h::Egueb_Dom_Window_Descriptor_Timeout_Clear_Cb" ref="ga9db6acbde60bfa59a918b4075774ea5a" args=")(void *data, void *timeout)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">typedef void(* <a class="el" href="group__Egueb__Dom__Window__Descriptor__Definition.html#ga9db6acbde60bfa59a918b4075774ea5a">Egueb_Dom_Window_Descriptor_Timeout_Clear_Cb</a>)(void *data, void *timeout)</td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+ 
+</div>
+</div>
+<a class="anchor" id="ga08214e9a36b3206c6c54e0f14f7e9715"></a><!-- doxytag: member="egueb_dom_window.h::Egueb_Dom_Window_Descriptor_Size_Get_Cb" ref="ga08214e9a36b3206c6c54e0f14f7e9715" args=")(void *data)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">typedef int(* <a class="el" href="group__Egueb__Dom__Window__Descriptor__Definition.html#ga08214e9a36b3206c6c54e0f14f7e9715">Egueb_Dom_Window_Descriptor_Size_Get_Cb</a>)(void *data)</td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+ 
+</div>
+</div>
 </div><!-- contents -->
 <!-- window showing the filter options -->
 <div id="MSearchSelectWindow"
@@ -111,7 +154,7 @@ typedef void *(*&#160;</td><td class="memItemRight" valign="bottom"><b>Egueb_Dom
 
 
 <hr class="footer"/><address class="footer"><small>
-Generated on Mon Sep 29 2014 19:34:16 for egueb by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Wed Mar 30 2016 23:40:27 for egueb by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.7.6.1
 </small></address>
