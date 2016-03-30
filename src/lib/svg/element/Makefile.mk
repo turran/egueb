@@ -52,7 +52,6 @@ src/lib/svg/element/egueb_svg_element_use_private.h \
 src/lib/svg/element/egueb_svg_element_stop.c \
 src/lib/svg/element/egueb_svg_element_stop_private.h \
 src/lib/svg/element/egueb_svg_element_svg.c \
-src/lib/svg/element/egueb_svg_element_svg_private.h \
 src/lib/svg/element/egueb_svg_element_text.c \
 src/lib/svg/element/egueb_svg_element_text_private.h \
 src/lib/svg/element/egueb_svg_element_tspan.c \
