@@ -116,7 +116,7 @@ Eina_Bool egueb_css_font_string_from(Egueb_Css_Font *thiz,
 			}
 
 			/* TODO line height */
-			if (!used)
+			if (!has_family && !used)
 			{
 				thiz->family = egueb_css_font_family_new();
 				egueb_css_font_family_string_from(thiz->family, found);
