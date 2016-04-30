@@ -53,6 +53,7 @@ EAPI Egueb_Dom_Node * egueb_css_attr_font_new(Egueb_Dom_String *ns,
 	return n;
 }
 
+/* TODO pass the an Enesim_Font */
 EAPI Enesim_Text_Font * egueb_css_attr_font_resolve(Egueb_Dom_Node *attr,
 		double rel_font_size, double rel_x_height)
 {
@@ -76,7 +77,7 @@ EAPI Enesim_Text_Font * egueb_css_attr_font_resolve(Egueb_Dom_Node *attr,
 	switch (final_font.size.type)
 	{
 		case EGUEB_CSS_FONT_SIZE_TYPE_ABSOLUTE:
-		ERR("TODO");
+		ERR("TODO %d", final_font.size.value.absolute);
 		break;
 
 		case EGUEB_CSS_FONT_SIZE_TYPE_RELATIVE:
