@@ -65,6 +65,7 @@ Eina_Bool egueb_css_font_string_from(Egueb_Css_Font *thiz,
 		char *tmp;
 		char *found;
 		char delim[] = { ' ', ',', '\0' };
+		char *saveptr;
 
 		/* set default values */
 		thiz->size.type = EGUEB_CSS_FONT_SIZE_TYPE_ABSOLUTE;
@@ -76,7 +77,7 @@ Eina_Bool egueb_css_font_string_from(Egueb_Css_Font *thiz,
 
 		/* start parsing */
 		tmp = found = strdup(str);
-		while ((found = strtok(found, delim)))
+		while ((found = strtok_r(found, delim, &saveptr)))
 		{
 			Eina_Bool used = EINA_FALSE;
 			if (!has_style)

@@ -157,9 +157,9 @@ EAPI Eina_Bool egueb_dom_double_get(const char *nptr, char **endptr, double *r)
 
 EAPI Eina_Bool egueb_dom_list_get(const char *attr, const char *sep, Egueb_Dom_List_Cb cb, void *data)
 {
-	Eina_Bool ret = EINA_FALSE;
 	char *tmp;
 	char *found;
+	char *saveptr;
 
 	if (!sep) return EINA_FALSE;
 	if (!attr) return EINA_FALSE;
@@ -167,13 +167,13 @@ EAPI Eina_Bool egueb_dom_list_get(const char *attr, const char *sep, Egueb_Dom_L
 
 	/* TODO slow, need to check where this call comes from? */
 	tmp = strdup(attr);
-	found = strtok(tmp, sep);
+	found = strtok_r(tmp, sep, &saveptr);
 	if (!found)
 		return EINA_FALSE;
 	else
 		cb(found, data);
 
-	while ((found = strtok(NULL, sep)))
+	while ((found = strtok_r(NULL, sep, &saveptr)))
 	{
 		cb(found, data);
 	}
