@@ -39,6 +39,7 @@ typedef struct _Egueb_Svg_Element_Polygon
 	/* properties */
 	Egueb_Dom_Node *points;
 	/* private */
+	Enesim_Figure *figure;
 	Enesim_Renderer *r;
 } Egueb_Svg_Element_Polygon;
 
@@ -53,7 +54,7 @@ static Eina_Bool _egueb_svg_element_polygon_points_cb(void *data, void *user_dat
 	Egueb_Svg_Point *pt = data;
 
 	DBG("Adding point %g,%g", pt->x, pt->y);
-	enesim_renderer_figure_polygon_vertex_add(thiz->r, pt->x, pt->y);
+	enesim_figure_polygon_vertex_add(thiz->figure, pt->x, pt->y);
 	return EINA_TRUE;
 }
 /*----------------------------------------------------------------------------*
@@ -69,12 +70,12 @@ static Eina_Bool _egueb_svg_element_polygon_generate_geometry(Egueb_Svg_Shape *s
 	thiz = EGUEB_SVG_ELEMENT_POLYGON(s);
 	/* TODO Be sure that we modified the points */
 	egueb_dom_attr_final_get(thiz->points, &points);
-	enesim_renderer_figure_clear(thiz->r);
+	enesim_figure_clear(thiz->figure);
 	if (points)
 	{
-		enesim_renderer_figure_polygon_add(thiz->r);
+		enesim_figure_polygon_add(thiz->figure);
 		egueb_dom_list_foreach(points, _egueb_svg_element_polygon_points_cb, thiz);
-		enesim_renderer_figure_polygon_close(thiz->r);
+		enesim_figure_polygon_close(thiz->figure);
 		egueb_dom_list_unref(points);
 	}
 
@@ -136,11 +137,10 @@ static void _egueb_svg_element_polygon_instance_init(void *o)
 {
 	Egueb_Svg_Element_Polygon *thiz;
 	Egueb_Dom_Node *n;
-	Enesim_Renderer *r;
 
 	thiz = EGUEB_SVG_ELEMENT_POLYGON(o);
-	r = enesim_renderer_figure_new();
-	thiz->r = r;
+	thiz->r = enesim_renderer_figure_new();
+	thiz->figure = enesim_renderer_figure_inner_figure_get(thiz->r);
 
 	/* Default values */
 
@@ -159,6 +159,7 @@ static void _egueb_svg_element_polygon_instance_deinit(void *o)
 
 	thiz = EGUEB_SVG_ELEMENT_POLYGON(o);
 	enesim_renderer_unref(thiz->r);
+	enesim_figure_unref(thiz->figure);
 	/* destroy the properties */
 	egueb_dom_node_unref(thiz->points);
 }
